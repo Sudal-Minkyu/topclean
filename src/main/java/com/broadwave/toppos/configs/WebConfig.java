@@ -42,7 +42,7 @@ public class WebConfig implements WebMvcConfigurer {
         return uploadFileDir;
     }
 
-    @Value("${newdeal.fileupload.url}")
+    @Value("${toppos.fileupload.url}")
     String uploadFileDir;
 
 }
