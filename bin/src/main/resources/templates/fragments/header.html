@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<header th:fragment="headerFragment" class="header">
+	<div class="header__inner">
+
+		<a href="/" class="logo"><span>TOPPOS</span></a>
+		<div class="info" id="logout_Form">
+		</div>
+	</div>
+<!--	<script type="text/javascript">-->
+<!--		$(function() {-->
+<!--			// 저장된 쿠키의 insert_id 받아오기-->
+<!--			insert_id_Check();-->
+<!--			// 로그아웃-->
+<!--			$("#logout").on('click',function(){-->
+<!--				logout();-->
+<!--			});-->
+<!--		});-->
+
+<!--		function insert_id_Check(){-->
+<!--			const insert_id = getCookie("insert_id");-->
+<!--			if(insert_id===null){-->
+<!--				$("#logout_Form").css('display','none');-->
+<!--				$("#login_Form").css('display','block');-->
+<!--				$("#loginBtn").css('display','block');-->
+<!--				$("#registerBtn").css('display','block');-->
+<!--			}else{-->
+<!--				// $("#insert_id").text(insert_id);-->
+<!--				$("#loginBtn").css('display','none');-->
+<!--				$("#registerBtn").css('display','none');-->
+<!--				$("#login_Form").css('display','none');-->
+<!--				$("#logout_Form").css('display','block');-->
+<!--			}-->
+<!--		}-->
+<!--		function logout(){-->
+<!--			setCookie("JwtAccessToken",null, 0);-->
+<!--			setCookie("JwtRefreshAccessToken",null, 0);-->
+<!--			setCookie("JwtRefreshToken",null, 0);-->
+<!--			setCookie("insert_id",null, 0);-->
+<!--			location.href="/index"-->
+<!--		}-->
+<!--	</script>-->
+</header>
+</html>
