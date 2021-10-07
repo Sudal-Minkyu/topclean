@@ -20,6 +20,7 @@ public class MainController {
     @RequestMapping("/")
     public String index(HttpServletRequest request){
         String login_ip = CommonUtils.getIp(request);
+        System.out.println("디벨롭테스트");
         return "index";
     }
 
