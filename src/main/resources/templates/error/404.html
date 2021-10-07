@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate ="~{layout/default}">
+
+<div layout:fragment="content" class="error-wrap">
+
+	<div class="error">
+		<h2 class="error__heading"><span>404</span>not found</h2>
+		<p class="error__message"><span>요청하신 페이지를 찾을 수 없습니다.</span>페이지 주소가 정확하지 않거나<br />요청하신 페이지의 주소가 변경, 삭제되어 찾을 수 없습니다.<br />이 오류가 계속 발생 할 경우 관리자에게 문의하십시오.</p>
+		<a href ="/" class="error__home-btn">Home</a>
+	</div>
+
+</div>
+</html>
