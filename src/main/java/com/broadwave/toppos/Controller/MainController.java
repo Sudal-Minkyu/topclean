@@ -31,4 +31,9 @@ public class MainController {
         return "gridtest";
     }
 
+    @RequestMapping("login")
+    public String login(){
+        return "login";
+    }
+
 }

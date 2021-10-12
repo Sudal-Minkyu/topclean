@@ -47,9 +47,10 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 log.error("token valid error:" + ex.getMessage() ,ex);
                 throw new UsernameFromTokenException("Username from token error");
             }
-        }else{
-            log.warn("JWT token does not begin with Bearer String");
         }
+//        else{
+//            log.warn("JWT token does not begin with Bearer String");
+//        }
 
         // 토큰을 가져오면 검증을 한다.
         if(userid != null && SecurityContextHolder.getContext().getAuthentication() == null){

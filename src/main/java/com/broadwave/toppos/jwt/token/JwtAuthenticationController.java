@@ -31,18 +31,13 @@ public class JwtAuthenticationController {
     @Autowired
     private JwtUserDetailsService userDetailService;
 
-    @RequestMapping("login")
-    public String login(){
-        return "login";
-    }
-
     @PostMapping(value = "/api/authenticate")
     public ResponseEntity<Map<String,Object>> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) {
 
         log.info("로그인 아이디 : "+authenticationRequest.getUserid());
         log.info("로그인 아비밀번호 : "+authenticationRequest.getPassword());
 
-//        authenticate(authenticationRequest.getUserid(),authenticationRequest.getPassword());
+        authenticate(authenticationRequest.getUserid(),authenticationRequest.getPassword());
 
         final UserDetails userDetails = userDetailService.loadUserByUsername(authenticationRequest.getUserid());
         final String token = jwtTokenUtil.generateToken(userDetails);
@@ -57,14 +52,14 @@ public class JwtAuthenticationController {
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
-//    private void authenticate(String username, String password){
-//        try{
-//            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username,password));
-//        }catch (DisabledException ex){
-//            throw new DisabledException("USER_DISABLED",ex);
-//        }catch (BadCredentialsException ex){
-//            throw new BadCredentialsException("INVALID_CREDENTIALS",ex);
-//        }
-//    }
+    private void authenticate(String username, String password){
+        try{
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username,password));
+        }catch (DisabledException ex){
+            throw new DisabledException("아이디와 비밀번호를 확인해주세요.",ex);
+        }catch (BadCredentialsException ex){
+            throw new BadCredentialsException("인증되지않은 계정",ex);
+        }
+    }
 
 }
