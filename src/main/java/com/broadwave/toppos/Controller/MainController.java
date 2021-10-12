@@ -24,5 +24,11 @@ public class MainController {
         log.info("현재 사용자 아이피 : "+login_ip);
         return "index";
     }
+    
+    // grid test
+    @RequestMapping("gridtest")
+    public String gridtest(){
+        return "gridtest";
+    }
 
 }
