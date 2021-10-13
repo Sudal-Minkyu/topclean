@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate ="~{layout/default}">
+
+<!-- 사용자 CSS 추가 -->
+<th:block layout:fragment="css">
+
+</th:block>
+
+<!-- 사용자 스크립트 추가 -->
+<th:block layout:fragment="script">
+
+    <script type="text/javascript">
+
+        // AUIGrid 생성 후 반환 ID
+        let myGridID;
+        // var myGridID2;
+
+        const columnLayout = [{
+            dataField : "userid",
+            headerText : "유저아이디",
+            editable : true,
+            width : 140
+        }, {
+            dataField: "username",
+            headerText: "이름",
+            editable : true,
+            width: 140
+        }, {
+            dataField : "role",
+            headerText : "권한",
+            width: 120
+        }];
+
+        // document ready (jQuery 의 $(document).ready(function() {}); 과 같은 역할을 합니다.
+        $(function() {
+            // Member 도메인(VO) 로 서버 사이드에서 처리하는 요청
+            // $("#btn2").click(function(){
+            //     updateDataToServer("./saveDomain");
+            // });
+
+
+            // AUIGrid 그리드를 생성합니다.
+            createAUIGrid(columnLayout);
+
+            // JS Array 를 그리드에 삽입
+            // AUIGrid.setGridData(myGridID, myData);
+
+            // AUIGrid.setGridData(myGridID2, myData);
+
+        });
+
+        function account_list(){
+
+            $.ajax({
+                url: "/api/account/list",
+                type: 'GET',
+                cache: false,
+                beforeSend: function (request) {
+                    request.setRequestHeader("Authorization",localStorage.getItem('Authorization'));
+                },
+                error: function (request) {
+                    ajaxErrorMsg(request);
+                    // console.log("에러");
+                },
+                success: function (req) {
+                    console.log("사용자 리스트 : "+req.sendData.accountListData);
+
+                    // 서버 사이드에서 매핑한 데이터
+                    const myData = req.sendData.accountListData;
+                    AUIGrid.setGridData(myGridID, myData);
+                }
+            });
+
+
+        }
+
+        // AUIGrid 를 생성합니다.
+        function createAUIGrid(columnLayout) {
+
+            // 그리드 속성 설정
+            const gridPros = {
+                // 편집 가능 여부 (기본값 : false)
+                editable: true,
+
+                // 엔터키가 다음 행이 아닌 다음 칼럼으로 이동할지 여부 (기본값 : false)
+                enterKeyColumnBase: true,
+
+                // 셀 선택모드 (기본값: singleCell)
+                selectionMode: "multipleCells",
+
+                // 컨텍스트 메뉴 사용 여부 (기본값 : false)
+                useContextMenu: true,
+
+                // 필터 사용 여부 (기본값 : false)
+                enableFilter: true,
+
+                // 그룹핑 패널 사용
+                useGroupingPanel: true,
+
+                // 상태 칼럼 사용
+                showStateColumn: true,
+
+                // 그룹핑 또는 트리로 만들었을 때 펼쳐지게 할지 여부 (기본값 : false)
+                displayTreeOpen: true,
+
+                noDataMessage: "출력할 데이터가 없습니다.",
+
+                groupingMessage: "여기에 칼럼을 드래그하면 그룹핑이 됩니다."
+            };
+
+            // 실제로 #grid_wrap 에 그리드 생성
+            myGridID = AUIGrid.create("#account_list", columnLayout, gridPros);
+            // 행 추가 이벤트 바인딩
+            // AUIGrid.bind(myGridID, "addRow", auiAddRowHandler);
+
+            // myGridID2 = AUIGrid.create("#grid_wrap2", columnLayout2, gridPros);
+        }
+
+        // function updateDataToServer( url ) {
+        //
+        //     // 추가된 행 아이템들(배열)
+        //     var addList = AUIGrid.getAddedRowItems(myGridID);
+        //     // 수정된 행 아이템들(배열)
+        //     var updateList = AUIGrid.getEditedRowColumnItems(myGridID);
+        //     // 삭제된 행 아이템들(배열)
+        //     var removeList = AUIGrid.getRemovedItems(myGridID);
+        //
+        //     var data = {};
+        //
+        //     if(addList.length > 0) data.add = addList;
+        //     else data.add = [];
+        //
+        //     if(updateList.length > 0) data.update = updateList;
+        //     else data.update = [];
+        //
+        //     if(removeList.length > 0) data.remove = removeList;
+        //     else data.remove = [];
+        //     // alert(updateList.length);
+        //     alert(updateList[0]["name"]);
+        //
+        // }
+        // 행 추가 이벤트 핸들러
+        // function auiAddRowHandler(event) {
+            //alert(event.type + " 이벤트\r\n" + "삽입된 행 인덱스 : " + event.rowIndex + "\r\n삽입된 행 개수 : " + event.items.length);
+            //document.getElementById("rowInfo").innerHTML = (event.type + " 이벤트 :  " + "삽입된 행 인덱스 : " + event.rowIndex + ", 삽입된 행 개수 : " + event.items.length);
+        // }
+
+        // // 행 추가, 삽입
+        // function addRow(name) {
+        //
+        //
+        //     var rowPos ="last";// document.getElementById("addSelect").value;
+        //
+        //     var item = new Object();
+        //     item.name = name;
+        //
+        //
+        //     // parameter
+        //     // item : 삽입하고자 하는 아이템 Object 또는 배열(배열인 경우 다수가 삽입됨)
+        //     // rowPos : rowIndex 인 경우 해당 index 에 삽입, first : 최상단, last : 최하단, selectionUp : 선택된 곳 위, selectionDown : 선택된 곳 아래
+        //     AUIGrid.addRow(myGridID, item, rowPos);
+        // }
+
+    </script>
+</th:block>
+
+<div layout:fragment="content" class="content padding-zero content--main">
+
+    <div class="desc">
+        <p>사용자 조회리스트</p>
+    </div>
+    <div>
+        <!-- 사용자리스트. -->
+        <div id="account_list" style="width:800px; height:280px; margin:0 auto;"></div>
+    </div>
+    <div class="desc">
+        <input type="button" value="조회" onclick="account_list()">
+    </div>
+</div>
+
+</html>

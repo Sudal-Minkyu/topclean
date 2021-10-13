@@ -16,27 +16,6 @@ import java.io.IOException;
 public class ExceptionHandlerFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-//      try{
           filterChain.doFilter(request,response);
-//      } catch (UsernameFromTokenException ex){
-//          log.error("exception exception handler filter");
-//          setErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR,response,ex);
-//      }catch (RuntimeException ex){
-//          log.error("runtime exception exception handler filter");
-//          setErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR,response,ex);
       }
     }
-//
-//    public void setErrorResponse(HttpStatus status, HttpServletResponse response,Throwable ex){
-//        response.setStatus(status.value());
-//        response.setContentType("application/json");
-//        ErrorResponse errorResponse = new ErrorResponse(ErrorCode.INTER_SERVER_ERROR);
-//        errorResponse.setMessage(ex.getMessage());
-//        try{
-//            String json = errorResponse.convertToJson();
-//            System.out.println(json);
-//            response.getWriter().write(json);
-//        }catch (IOException e){
-//            e.printStackTrace();
-//        }
-//    }

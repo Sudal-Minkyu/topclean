@@ -6,17 +6,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
 public class AccountService {
 
     AccountRepository accountRepository;
+    AccountRepositoryCustom accountRepositoryCustom;
     PasswordEncoder passwordEncoder;
 
     @Autowired
-    public AccountService(AccountRepository accountRepository,PasswordEncoder passwordEncoder){
+    public AccountService(AccountRepository accountRepository, AccountRepositoryCustom accountRepositoryCustom, PasswordEncoder passwordEncoder){
         this.accountRepository = accountRepository;
+        this.accountRepositoryCustom = accountRepositoryCustom;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -32,5 +35,9 @@ public class AccountService {
 
     public Optional<Account> findByUserid(String userid){
         return accountRepository.findByUserid(userid);
+    }
+
+    public List<AccountListDto> findAllByAccountList() {
+        return accountRepositoryCustom.findAllByAccountList();
     }
 }

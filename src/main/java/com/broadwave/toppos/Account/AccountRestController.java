@@ -8,13 +8,13 @@ import com.broadwave.toppos.jwt.user.SignVo;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * @author Minkyu
@@ -46,7 +46,7 @@ public class AccountRestController {
                 .userid(signVo.getUserid())
                 .password(signVo.getPassword())
                 .username(signVo.getName())
-                .role(AccountRole.ROLE_ADMIN) //  .role(signVo.getRole())
+                .role(signVo.getRole())
                 .build();
         accountService.save(user);
     }
@@ -105,6 +105,49 @@ public class AccountRestController {
         return ResponseEntity.ok(res.success());
 
     }
+
+    // AccountList API
+    @GetMapping("list")
+    public ResponseEntity<Map<String,Object>> accountList(){
+//        log.info("AccountList 호출");
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        List<HashMap<String,Object>> accountListData = new ArrayList<>(); // 유지보수 개입시 차트데이터
+        HashMap<String,Object> accountInfo;
+
+        List<AccountListDto> accounts = accountService.findAllByAccountList();
+
+        for (AccountListDto account : accounts) {
+
+            accountInfo = new HashMap<>();
+
+            accountInfo.put("userid", account.getUserid());
+            accountInfo.put("username", account.getUsername());
+            accountInfo.put("role", account.getRole());
+            accountListData.add(accountInfo);
+
+        }
+
+        data.put("accountListData",accountListData);
+
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

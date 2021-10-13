@@ -1,9 +1,7 @@
 package com.broadwave.toppos.jwt.utils;
 
 import com.broadwave.toppos.jwt.exception.UsernameFromTokenException;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -63,7 +61,7 @@ public class JwtTokenUtil implements Serializable {
      * @param token
      * @return
      */
-    private Boolean isTokenExpired(String token){
+    private boolean isTokenExpired(String token){
         final Date expiration = getExpirationDateFromToken(token);
         return expiration.before(new Date());
     }

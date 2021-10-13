@@ -37,6 +37,7 @@ public class JwtAuthenticationController {
         log.info("로그인 아이디 : "+authenticationRequest.getUserid());
         log.info("로그인 아비밀번호 : "+authenticationRequest.getPassword());
 
+        // 아이디와 비밀번호를 확인한다.
         authenticate(authenticationRequest.getUserid(),authenticationRequest.getPassword());
 
         final UserDetails userDetails = userDetailService.loadUserByUsername(authenticationRequest.getUserid());

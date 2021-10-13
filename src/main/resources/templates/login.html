@@ -43,74 +43,12 @@
 				},
 				success: function (res) {
 					// console.log("로그인 되었습니다.");
-					localStorage.setItem("jwt",res.sendData.token)
-					alertSuccess("로그인 되었습니다");
-
-					// console.log("refreshToken : "+res.data.token.refreshToken)
-					// console.log("insert_id : "+res.data.token.insert_id)
-
-					// setCookie(변수이름, 변수값, 유효시간);
-					// setCookie("JwtAccessToken",res.data.token.accessToken, 10); // 발행시간은 5시간으로설정
-					// setCookie("JwtRefreshAccessToken", res.data.token.accessToken, 10); // 발행시간은 5시간으로설정
-					// setCookie("JwtRefreshToken",res.data.token.refreshToken, 10); // 발행시간은 5시간으로설정
-					// setCookie("insert_id",res.data.token.insert_id, 10); // 발행시간은 5시간으로설정
-
-					// location.href="/performance/input"
-
-					// calliRoleName(res.data.token.insert_id);
+					localStorage.setItem("Authorization","Bearer "+res.sendData.token); // 로컬 웹스토리지안에 토큰을 저장한다.
+					// alertSuccess("로그인 되었습니다");
+					location.href="/"
 				}
 			});
 		}
-
-		// NEWDEAL 유저ROLE,이름 쿠키에 저장
-		function calliRoleName(userid) {
-			const params = {
-				userid: userid
-			};
-
-			let url = $("#backend_protocol").val()+"://"+$("#backend_url").val() + "/api/account/rolename"; // 호출할 백엔드 API
-			$.ajax({
-				url: url,
-				type: 'POST',
-				data: params,
-				cache: false,
-				error: function (request) {
-					if (request.status === 500) {
-						console.log("500에러");
-						alertCaution("유저를 찾을 수 없습니다.<br>관리자에게 문의해주세요.", 1);
-					} else {
-						console.log("404에러");
-						alertCaution("유저를 찾을 수 없습니다.<br>관리자에게 문의해주세요.", 1);
-					}
-				},
-				success: function (res) {
-					setCookie("username",res.sendData.accountData.username, 10); // 발행시간은 5시간으로설정
-					setCookie("userrole",res.sendData.accountData.role, 10); // 발행시간은 5시간으로설정
-					location.href="/loginindex"
-				}
-			});
-		}
-
-		// function mps_Add_test(){
-		// 	var settings = {
-		// 		"url": "http://ec2-3-37-19-235.ap-northeast-2.compute.amazonaws.com:9910/add_Test/add",
-		// 		"method": "POST",
-		// 		"timeout": 0,
-		// 		"headers": {
-		// 			"Content-Type": "application/json"
-		// 		},
-		// 		"data": JSON.stringify(
-		// 				{
-		// 					"nargout":1,
-		// 					"rhs":[1.1,2.1]
-		// 				}
-		// 		),
-		// 	};
-		//
-		// 	$.ajax(settings).done(function (response) {
-		// 		console.log(response);
-		// 	});
-		// }
 
 	</script>
 </th:block>

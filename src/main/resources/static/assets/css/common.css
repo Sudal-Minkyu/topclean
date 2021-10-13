@@ -233,7 +233,7 @@ table {
 	display: block;
 	height: 80px;
 	padding: 0 10px;
-	color: #f99d1c;
+	color: #000000;
 	font-size: 32px;
 	line-height: 80px;
 	font-weight: 700;
@@ -469,7 +469,7 @@ table {
 	-webkit-border-radius: 10px;
 	-moz-border-radius: 10px;
 	border-radius: 10px;
-	background-color: #f99d1c;
+	background-color: #000000;
 	color: #fff;
 	font-size: 24px;
 	text-align: center;
@@ -1797,7 +1797,7 @@ h4.l-popup__heading {
 	text-align: center;
 }
 .login__logo a {
-	color: #f99d1c;
+	color: #000000;
 	font-size: 28px;
 	font-weight: 700;
 }
@@ -1829,7 +1829,7 @@ h4.l-popup__heading {
 	height: 40px;
 	margin-top: 10px;
 	border: 0;
-	background-color: #456296;
+	background-color: #000000;
 	color: #fff;
 	font-size: 16px;
 	text-align: center;

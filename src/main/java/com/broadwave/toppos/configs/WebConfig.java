@@ -23,8 +23,8 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/api/**")
-                .allowedOrigins("*");
-//                .allowedHeaders("JWT_AccessToken","insert_id");
+//                .allowedOrigins("*")
+                .allowedHeaders("Authorization","Content-type");
     }
 
     @Bean

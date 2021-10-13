@@ -2,7 +2,6 @@ package com.broadwave.toppos.jwt.utils;
 
 import com.broadwave.toppos.jwt.exception.UsernameFromTokenException;
 import com.broadwave.toppos.jwt.user.JwtUserDetailsService;
-import com.broadwave.toppos.jwt.utils.JwtTokenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -34,7 +33,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         final String requestTokenHeader = request.getHeader("Authorization");
 
         String userid = null;
-        String jwtToken =null;
+        String jwtToken = null;
 
         // JWT 토큰은 "Beare token"에 있다. Bearer단어를 제거하고 토큰만 받는다.
         if(requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")){
@@ -42,15 +41,12 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             try{
                 userid = jwtTokenUtil.getUsernameFromToken(jwtToken);
             } catch (IllegalArgumentException ex){
-                log.error("Unable to get JWT token", ex);
+                log.info("틀린토큰입니다. 확인해주세요. ",ex);
             } catch (UsernameFromTokenException ex) {
-                log.error("token valid error:" + ex.getMessage() ,ex);
-                throw new UsernameFromTokenException("Username from token error");
+                log.info("유효하지 않은 토큰입니다. " +ex.getMessage(),ex);
+                throw new UsernameFromTokenException("사용자에게 제공하지않은 토큰입니다.");
             }
         }
-//        else{
-//            log.warn("JWT token does not begin with Bearer String");
-//        }
 
         // 토큰을 가져오면 검증을 한다.
         if(userid != null && SecurityContextHolder.getContext().getAuthentication() == null){
@@ -74,6 +70,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             }
         }
         filterChain.doFilter(request,response);
+
     }
 
 }

@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+// 사용자등록 테스트DTO
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
