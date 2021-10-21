@@ -48,6 +48,11 @@
 		
 		<!-- 사용자 스크립트 영역이 들어감 -->
 		<th:block layout:fragment="script">
+			<script type="text/javascript">
+				$(function() {
+					$(document).ajaxSend(function(e, xhr) { xhr.setRequestHeader("Authorization",localStorage.getItem('Authorization')); });
+				});
+			</script>
 		</th:block>
 
 	</head>

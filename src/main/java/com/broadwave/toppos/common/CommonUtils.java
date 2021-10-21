@@ -51,8 +51,8 @@ public abstract class CommonUtils {
     public static String getCurrentuser(HttpServletRequest request){
         log.info("현재 접속 유저 정보 가져오기 공통 함수 호출");
 
-        //HttpSession session = request.getSession();
-        //String currentuserid = (String) session.getAttribute("userid");
+//        HttpSession session = request.getSession();
+//        String currentuserid = (String) session.getAttribute("userid");
         String currentuserid = "system";
         Principal userPrincipal = request.getUserPrincipal();
         if (userPrincipal != null) {

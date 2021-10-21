@@ -32,12 +32,20 @@ public class Account {
     @Column(name="user_password")
     private String password;
 
+    @Column(name="user_name")
+    private String username;
+
     @Enumerated(EnumType.STRING)
     @Column(name="user_role")
     private AccountRole role;
 
-    @Column(name="user_name")
-    private String username;
+//    @Builder
+//    public Account(String userid, String password, String username, AccountRole role) {
+//        this.userid = userid;
+//        this.password = password;
+//        this.username = username;
+//        this.role = role;
+//    }
 
     @Column(name="modify_date")
     private LocalDateTime modifyDateTime;

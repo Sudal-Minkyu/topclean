@@ -2,15 +2,10 @@ package com.broadwave.toppos.Account;
 
 import com.broadwave.toppos.common.AjaxResponse;
 import com.broadwave.toppos.common.ResponseErrorCode;
-import com.broadwave.toppos.jwt.exception.ErrorCode;
-import com.broadwave.toppos.jwt.exception.UserIdDuplicateException;
-import com.broadwave.toppos.jwt.user.SignVo;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -29,33 +24,11 @@ public class AccountRestController {
 
     private final AccountService accountService;
     private final ModelMapper modelMapper;
-    private final PasswordEncoder passwordEncoder;
-//    private final LoginlogService loginlogService;
 
     @Autowired
-    public AccountRestController(ModelMapper modelMapper, AccountService accountService, PasswordEncoder passwordEncoder) {
+    public AccountRestController(ModelMapper modelMapper, AccountService accountService) {
         this.modelMapper = modelMapper;
         this.accountService = accountService;
-        this.passwordEncoder = passwordEncoder;
-    }
-
-    // AccountSave API Test
-    @PostMapping("/savetest")
-    public void saveUser(@RequestBody SignVo signVo){
-        Account user = Account.builder()
-                .userid(signVo.getUserid())
-                .password(signVo.getPassword())
-                .username(signVo.getName())
-                .role(signVo.getRole())
-                .build();
-        accountService.save(user);
-    }
-
-    // AccountExist API Test
-    @GetMapping("/exist_user/{userid}")
-    public boolean findUserByEmail(@PathVariable String userid){
-        Optional<Account> account = accountService.findByUserid(userid);
-        return account.isPresent();
     }
 
     // AccountSave API
@@ -64,17 +37,14 @@ public class AccountRestController {
 
         AjaxResponse res = new AjaxResponse();
 
-//        String JWT_AccessToken = request.getHeader("JWT_AccessToken");
-//        log.info("JWT_AccessToken : "+JWT_AccessToken);
-
         Account account = modelMapper.map(accountMapperDto, Account.class);
 
-//        String currentuserid = request.getHeader("insert_id");
-//        log.info("currentuserid : "+currentuserid);
+        String currentuserid = request.getHeader("insert_id");
+        log.info("currentuserid : "+currentuserid);
+
         Optional<Account> optionalAccount = accountService.findByUserid(account.getUserid());
         if( optionalAccount.isPresent()){
             return ResponseEntity.ok(res.fail(ResponseErrorCode.TP001.getCode(), ResponseErrorCode.TP001.getDesc(),null,null));
-//            throw new UserIdDuplicateException("이미 존재하는 아이디입니다.", ErrorCode.EMAIL_DUPLICATION);
         }
 
 //        //신규일때

@@ -1,10 +1,10 @@
 package com.broadwave.toppos.Account;
 
-import com.broadwave.toppos.jwt.exception.ErrorCode;
-import com.broadwave.toppos.jwt.exception.UserIdDuplicateException;
+import com.broadwave.toppos.Jwt.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,10 +24,6 @@ public class AccountService {
     }
 
     public Account save(Account account){
-        Optional<Account> optionalAccount = accountRepository.findByUserid(account.getUserid());
-        if( optionalAccount.isPresent()){
-            throw new UserIdDuplicateException("이미 존재하는 아이디입니다.", ErrorCode.EMAIL_DUPLICATION);
-        }
         account.setPassword(passwordEncoder.encode(account.getPassword()));
         accountRepository.save(account);
         return account;
@@ -40,4 +36,20 @@ public class AccountService {
     public List<AccountListDto> findAllByAccountList() {
         return accountRepositoryCustom.findAllByAccountList();
     }
+
+    @Transactional(readOnly = true)
+    public AccountResponseDto getMemberInfo(String userid) {
+        return accountRepository.findByUserid(userid)
+                .map(AccountResponseDto::of)
+                .orElseThrow(() -> new RuntimeException("유저 정보가 없습니다."));
+    }
+
+    // 현재 SecurityContext 에 있는 유저 정보 가져오기
+    @Transactional(readOnly = true)
+    public AccountResponseDto getMyInfo() {
+        return accountRepository.findById(SecurityUtil.getCurrentMemberId())
+                .map(AccountResponseDto::of)
+                .orElseThrow(() -> new RuntimeException("로그인 유저 정보가 없습니다."));
+    }
+
 }

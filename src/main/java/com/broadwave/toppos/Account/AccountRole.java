@@ -15,6 +15,7 @@ public enum AccountRole {
 
     ROLE_CALCULATE("ROLE_CALCULATE", "회계관리"),
     ROLE_HEAD("ROLE_HEAD", "본사일반"),
+
     ROLE_ADMIN("ROLE_ADMIN", "시스템관리자");
 
     private final String code;
@@ -32,6 +33,7 @@ public enum AccountRole {
     public String getDesc() {
         return desc;
     }
+
 }
 
 

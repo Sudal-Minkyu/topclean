@@ -32,20 +32,19 @@
 
 			console.log("로그인 실행");
 			$.ajax({
-				url: '/api/authenticate',
+				url: '/auth/login',
 				type: 'post',
 				data: jsonString,
 				contentType: 'application/json',
 				cache: false,
-				error: function () {
-					console.log("로그인 에러");
-					alertCaution("아이디 또는 비밀번호를 확인해주세요.",1);
+				error: function (req) {
+					ajaxErrorMsg(req);
 				},
 				success: function (res) {
-					// console.log("로그인 되었습니다.");
-					localStorage.setItem("Authorization","Bearer "+res.sendData.token); // 로컬 웹스토리지안에 토큰을 저장한다.
-					// alertSuccess("로그인 되었습니다");
-					location.href="/"
+					console.log("로그인 되었습니다.");
+					console.log("AccessToken : "+res.sendData.tokenDto.accessToken);
+					localStorage.setItem("Authorization","Bearer "+res.sendData.tokenDto.accessToken); // 로컬 웹스토리지안에 토큰을 저장한다.
+					// location.href="/"
 				}
 			});
 		}

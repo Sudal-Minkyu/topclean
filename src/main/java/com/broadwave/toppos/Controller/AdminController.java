@@ -4,21 +4,26 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import javax.servlet.http.HttpServletRequest;
-
 /**
  * @author Minkyu
  * Date : 2021-10-13
  * Time :
- * Remark : Toppos Account컨트롤러
+ * Remark : Toppos 관리자 컨트롤러
  */
 @Slf4j
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
 
+    // 관리자 페이지
+    @RequestMapping("")
+    public String adminindex(){
+        log.info("관리자 입니다");
+        return "index/index";
+    }
+
     @RequestMapping("accountlist")
-    public String account_List(HttpServletRequest request){
+    public String account_List(){
         return "admin/accountlist";
     }
 
