@@ -19,12 +19,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-    //  CORS에러 No 'Access-Control-Allow-Origin' header is present on the requested resource. 해결
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/api/**")
-                .allowedOrigins("*")
-                .allowedHeaders("JWT_AccessToken","insert_id");
+        registry.addMapping("/**");
     }
 
     @Bean
