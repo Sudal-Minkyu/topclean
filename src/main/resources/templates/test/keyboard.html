@@ -11,7 +11,7 @@
 
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
-
+	<script type="text/javascript"	src="/assets/js/nak_js_dir/keyboard.js"></script>
 	<script type="text/javascript">
 
 		//제이쿼리
@@ -26,8 +26,11 @@
 <div layout:fragment="content" class="content padding-zero content--main">
 	<h1>가상키보드 테스트페이지test</h1>
 
-
-
+	<input type="text" id="vdisplay" readonly>
+	<p>
+	<input type="text" id="vkey" placeholder="">
+	<p>
+	<input type="button" id="vkeyin" value="입력" onclick="vKeyIn(document.getElementById('vkey').value)">
 
 </div>
 </html>
