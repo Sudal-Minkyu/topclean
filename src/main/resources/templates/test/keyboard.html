@@ -6,22 +6,28 @@
 
 <!-- 사용자 CSS 추가 -->
 <th:block layout:fragment="css">
-	<link rel="stylesheet" href="/assets/css/nak_css_dir/VKeyboard.css" />
+
 </th:block>
 
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
 
 	<script type="text/javascript">
-		let vkey;
-		document.addEventListener('DOMContentLoaded', function() {
-			vkey = new VKeyboard();
-		}, false);
+
+		//제이쿼리
+		$(function() {
+
+		});
+
 	</script>
 
 </th:block>
 
 <div layout:fragment="content" class="content padding-zero content--main">
-	<input type="text" id="targetField">
-	<input type="button" value="⌨" onclick="vkey.showKeyboard('targetField', '제목 테스트', ['상용구', '테스트', '스페 이스', '&ㅁㅁ&'])">
+	<h1>가상키보드 테스트페이지test</h1>
+
+
+
+
+</div>
 </html>
