@@ -18,7 +18,7 @@ public class AdminController {
     // 관리자 페이지
     @RequestMapping("")
     public String admin_index(){
-        log.info("관리자 입니다");
+//        log.info("관리자 입니다");
         return "index/adminindex";
     }
 

@@ -42,14 +42,14 @@ public class AuthController {
 
     @PostMapping("/reissue")
     public ResponseEntity<Map<String,Object>> reissue(@RequestBody TokenRequestDto tokenRequestDto) {
-        log.info("토큰 새로받기 시도");
+//        log.info("토큰 새로받기 시도");
 
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
 
         TokenDto tokenDto = authService.reissue(tokenRequestDto);
-        log.info("새로받은 tokenDto : "+tokenDto);
-        log.info("새로받은 AccessToken : "+tokenDto.getAccessToken());
+//        log.info("새로받은 tokenDto : "+tokenDto);
+//        log.info("새로받은 AccessToken : "+tokenDto.getAccessToken());
         data.put("새로받은 tokenDto",tokenDto);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
