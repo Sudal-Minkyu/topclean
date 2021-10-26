@@ -29,31 +29,18 @@ public class AccountService {
         return account;
     }
 
+    // 고정ID 값으로 찾기
     public Optional<Account> findById(Long id){
         return accountRepository.findById(id);
     }
 
+    // 입력ID 값으로 찾기
     public Optional<Account> findByUserid(String userid){
         return accountRepository.findByUserid(userid);
     }
 
     public List<AccountListDto> findAllByAccountList() {
         return accountRepositoryCustom.findAllByAccountList();
-    }
-
-    @Transactional(readOnly = true)
-    public AccountResponseDto getMemberInfo(String userid) {
-        return accountRepository.findByUserid(userid)
-                .map(AccountResponseDto::of)
-                .orElseThrow(() -> new RuntimeException("유저 정보가 없습니다."));
-    }
-
-    // 현재 SecurityContext 에 있는 유저 정보 가져오기
-    @Transactional(readOnly = true)
-    public AccountResponseDto getMyInfo() {
-        return accountRepository.findById(SecurityUtil.getCurrentMemberId())
-                .map(AccountResponseDto::of)
-                .orElseThrow(() -> new RuntimeException("로그인 유저 정보가 없습니다."));
     }
 
 }
