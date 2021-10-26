@@ -18,9 +18,7 @@ public class UserController {
 
     // 가맹점주 메인페이지
     @RequestMapping("")
-    public String userindex(@RequestHeader(value="Authorization") String accept){
-        log.info("accept : "+accept);
-        log.info("기맹점주 입니다");
+    public String user_index(){
         return "/index/userindex";
     }
 

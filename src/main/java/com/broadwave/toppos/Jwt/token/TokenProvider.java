@@ -42,6 +42,9 @@ public class TokenProvider {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
+//        log.info("사용자 아이디 : "+authentication.getName());
+//        log.info("권한 : "+authorities);
+
         long now = (new Date()).getTime();
 
         // Access Token 생성

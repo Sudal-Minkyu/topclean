@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ko"
+	  xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
+	  layout:decorate ="~{layout/default}">
+
+<!-- 사용자 CSS 추가 -->
+<th:block layout:fragment="css">
+
+</th:block>
+
+<!-- 사용자 스크립트 추가 -->
+<th:block layout:fragment="script">
+
+	<script type="text/javascript">
+
+		$(function() {
+
+		});
+
+	</script>
+</th:block>
+
+<div layout:fragment="content" class="content padding-zero content--main">
+	<h1>관리자 메인페이지입니다.</h1>
+	<a href="admin">관리자 인덱스</a>
+	<a sec:authorize="hasRole('ADMIN')" href="adminOnly">adminOnly Page</a>
+	<a sec:authorize="!isAuthenticated()" href="login">Login</a>
+	<a sec:authorize="isAuthenticated()" href="logout">Logout</a>
+	<p sec:authorize="hasRole('ADMIN')">[이 부분은 운영자(ADMIN)에게만 나타남]</p>
+	<p sec:authorize="hasRole('GUEST')">[이 부분은 손님(GUEST)에게만 나타남]</p>
+	<p sec:authorize="isAuthenticated()">[이 부분은 로그인한 사용자(isAuthenticated) 모두에게 나타남]<p>
+
+</div>
+</html>

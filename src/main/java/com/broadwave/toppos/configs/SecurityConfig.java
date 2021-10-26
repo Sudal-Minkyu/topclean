@@ -4,6 +4,7 @@ import com.broadwave.toppos.Jwt.token.JwtAccessDeniedHandler;
 import com.broadwave.toppos.Jwt.token.JwtAuthenticationEntryPoint;
 import com.broadwave.toppos.Jwt.token.JwtSecurityConfig;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
+import com.broadwave.toppos.handler.TaskImplementingLogoutHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -14,6 +15,9 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 /**
  * @author Minkyu
@@ -57,14 +61,25 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 // 로그인, 회원가입 API 는 토큰이 없는 상태에서 요청이 들어오기 때문에 permitAll 설정
                 .and()
                 .authorizeRequests()
-                .antMatchers("/","/assets/**","/login","/favicon.ico","/error/**","/test/**","/auth/**").permitAll()
-                .antMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
-                .antMatchers("/user/**").hasAnyAuthority("ROLE_USER","ROLE_ADMIN")
+                .antMatchers("/","/assets/**","/login","/favicon.ico","/error/**","/test/**","/auth/**","/user","/admin","/manager","/head").permitAll()
+                .antMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
+                .antMatchers("/api/user/**").hasAnyAuthority("ROLE_USER","ROLE_ADMIN")
+                .antMatchers("/api/manager/**").hasAnyAuthority("ROLE_MANAGER","ROLE_NORMAL","ROLE_ADMIN")
+                .antMatchers("/api/head/**").hasAnyAuthority("ROLE_HEAD","ROLE_CALCULATE","ROLE_ADMIN")
                 .anyRequest().authenticated()   // 나머지 API 는 전부 인증 필요
+
+//                .and()
+//                .formLogin().loginPage("/login").failureUrl("/login?error").permitAll()
+//                .defaultSuccessUrl("/admin/index")
+//                .and()
+//                .logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+//                .addLogoutHandler(new TaskImplementingLogoutHandler()).permitAll().logoutSuccessUrl("/admin");
 
                 // JwtFilter 를 addFilterBefore 로 등록했던 JwtSecurityConfig 클래스를 적용
                 .and()
                 .apply(new JwtSecurityConfig(tokenProvider));
     }
+
+
 
 }

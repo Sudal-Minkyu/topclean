@@ -54,6 +54,7 @@ public abstract class CommonUtils {
 //        HttpSession session = request.getSession();
 //        String currentuserid = (String) session.getAttribute("userid");
         String currentuserid = "system";
+        String a;
         Principal userPrincipal = request.getUserPrincipal();
         if (userPrincipal != null) {
             currentuserid = userPrincipal.getName();

@@ -69,8 +69,8 @@ function ajaxErrorMsg(req) {
         location.href="/error/404"
     }else{
         $('.l-popup').removeClass('open');
-        console.log("토큰이 만료됨. 재로그인시도 바람.");
-        alertCaution("토큰이 만료되었습니다.<BR>다시 로그인해주세요.", 2);
+        console.log("아이디와 비밀번호를 확인해주세요.");
+        alertCaution("아이디와 비밀번호를 확인해주세요.<BR>다시 로그인해주세요.", 2);
     }
 
 }

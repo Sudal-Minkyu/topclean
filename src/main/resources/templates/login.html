@@ -7,51 +7,70 @@
 <th:block layout:fragment="script">
 	<script type="text/javascript">
 
-		function loginActive() {
+		 function loginActive() {
 
-			const $userid = $("#userid");
-			const $password = $("#password");
+		 	const $userid = $("#userid");
+		 	const $password = $("#password");
 
-			if ($userid.val().trim() === '') {
-				alertCaution("아이디를 입력하세요.");
-				$userid.trigger('focus');
-				return false;
-			}
-			if ($password.val().trim() === '') {
-				alertCaution("비밀번호을 입력하세요.");
-				$password.trigger('focus');
-				return false;
-			}
+		 	if ($userid.val().trim() === '') {
+		 		alertCaution("아이디를 입력하세요.");
+		 		$userid.trigger('focus');
+		 		return false;
+		 	}
+		 	if ($password.val().trim() === '') {
+		 		alertCaution("비밀번호을 입력하세요.");
+		 		$password.trigger('focus');
+		 		return false;
+		 	}
 
-			const params = {
-				userid : $userid.val(),
-				password : $password.val()
-			};
+		 	const params = {
+		 		userid : $userid.val(),
+		 		password : $password.val()
+		 	};
 
-			const jsonString = JSON.stringify(params);
+		 	const jsonString = JSON.stringify(params);
 
-			console.log("로그인 실행");
-			$.ajax({
-				url: '/auth/login',
-				type: 'post',
-				data: jsonString,
-				contentType: 'application/json',
-				cache: false,
-				error: function (req) {
-					ajaxErrorMsg(req);
-				},
-				success: function (res) {
-					console.log("로그인 되었습니다.");
-					console.log("AccessToken : "+res.sendData.tokenDto.accessToken);
-					localStorage.setItem("Authorization","Bearer "+res.sendData.tokenDto.accessToken); // 로컬 웹스토리지안에 토큰을 저장한다.
-					// location.href="/"
-				}
-			});
-		}
+		 	console.log("로그인 실행");
+		 	$.ajax({
+		 		url: '/auth/login',
+		 		type: 'post',
+		 		data: jsonString,
+		 		contentType: 'application/json',
+		 		cache: false,
+		 		error: function (req) {
+		 			ajaxErrorMsg(req);
+		 		},
+		 		success: function (res) {
+		 			// console.log("로그인 되었습니다.");
+		 			// console.log("AccessToken : "+res.sendData.tokenDto.accessToken);
+		 			localStorage.setItem("Authorization",res.sendData.tokenDto.accessToken); // 로컬 웹스토리지안에 토큰을 저장한다.
+					mainPage();
+		 		}
+		 	});
+		 }
+
+		 function mainPage(){
+			 $(document).ajaxSend(function(e, xhr) { xhr.setRequestHeader("Authorization",localStorage.getItem('Authorization')); });
+			 $.ajax({
+			 	url: '/',
+			 	type: 'get',
+			 	contentType: 'application/json',
+			 	cache: false,
+			 	error: function (req) {
+			 		ajaxErrorMsg(req);
+			 	},
+			 	success: function (res) {
+					location.href= res.sendData.link;
+			 		// console.log("이동완료");
+			 	}
+			 });
+		 }
 
 	</script>
 </th:block>
+
 <div layout:fragment="content" class="login-wrap">
+
 	<div class="login">
 		<h1 class="login__logo">
 			<a href="/login" class="logo">
