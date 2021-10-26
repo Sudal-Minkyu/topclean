@@ -1,9 +1,8 @@
 /*!
  * AUIGrid 3.0.10 License
- * License Type : Evaluation(Trial) Version
- * Authorized Domain(or IP) : localhost,127.0.0.1
- * Expiration Date : 2021-11-11
- * www.auisoft.net
+ * License Type :  Enterprise Dev License
+ * Authorized Domain(or IP) : toppos.broadwave.co.kr,192.168.0.24,192.168.0.102,192.168.0.132,192.168.0.143,192.168.0.151
+ * Expiration Date :  2022/04/30
  */
- /* eslint-disable */
-AUIGridLicense = "eyJjdCI6IjhhWjhGSmdEOTFxS0VPZXdKZmZHamhKYWxubWttbDJnNzFhTVZ2NFZwVTl0ZjRuMDVtSXRLUmFHSXVTZTlaU2pISytxMGlGc05qTkFQcXdGRTIrUzk5UGo5b1VObTN0MGgxc3VDcStpOFFNPSIsIml2IjoiZmI0OTQyM2Q5MDdiN2ZiY2Y1NzhiMDY5MjEyZGEyMTkiLCJzIjoiYTA3Y2E3OTRmYjVlNTJhNSJ9";
+/* eslint-disable */
+AUIGridLicense = "eyJjdCI6ImZDOXg3MWEvNWVSblM4eEVDV3d4dWpUYUczTjhkVU5FY0lvZUNYOTU1d0hhbHNhWmxWMWR3bjFpUTgyTmlEeC9PV3JGK3d4dVhIdWN1OTRKbXZrWDArL2ZkSkNYNlBFcmUxSmpqM0V6cVE3VWhQMkFnV3VySUhKdzN0ZWZvMnBQWU15Qjl5K0VBcVJMc2t3RnU5TG1Cc0xSeHJ3c1NBcjFsZlJRVlAyNDcyT0hVOW9RV0UwZmdxNTQ2Z2xvOHVHVDU2VWdFVGxka2JTejBMZ25EUnBzQzZ2MVM3ekdTckdTeGo2UGJrNFRmalk9IiwiaXYiOiJiMzkxZmFmMWY2NGQ1MWY0MWZlMzFiNTFhZTM0ZGNhMiIsInMiOiI5Yjk4YzMyYTg1YTAxZjA5In0=";
