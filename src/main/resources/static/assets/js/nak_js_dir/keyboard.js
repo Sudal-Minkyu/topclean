@@ -13,6 +13,10 @@ document.addEventListener('DOMContentLoaded', function() {
     targetInputField.addEventListener('touchstart', checkCaret);
     targetInputField.addEventListener('selectstart', checkCaret);
 
+    document.getElementById("upperCase").style.visibility = "hidden";
+    document.getElementById("lowerCase").style.visibility = "hidden";
+
+
 }, false);
 
 /* 캐렛의 위치가 이동한 것을 감지하기 위해 저장해두는 곳 */
@@ -23,6 +27,9 @@ let divideOrDelete = false;
 
 /* true = 한글 입력시 조합이 됨, false = 한글 입력시 별개로 입력됨 (ex. 한글 모음만 입력하고 커서를 이동했다가 다시 위치시킨 경우 */
 let compoundOrAdd = false;
+
+/*  */
+let wasLastInputSsangsiot = false;
 
 /* 초성 */
 const INITIAL_CONSONANT = [
@@ -148,25 +155,26 @@ async function korAlphabetProcess(INPUT_CHAR){
     const LAST_FINAL_CONSONANT_IDX = LAST_CHAR_SEQUENCE % 28;
 
     /* 조합된 문자를 끝에서 부터 분해시 임시 저장될 변수 */
-    let divideResultCHAR = "";
+    let divideResultChar = "";
 
     if( INPUT_CHAR_CODE < 12623 && compoundOrAdd ){ // 입력받은 값이 자음일 경우
 
         switch(true){
 
-            case ( INITIAL_CONSONANT_POTENTIAL.includes(LAST_CHAR) ) : /* 기존의 값이 쌍자음 가능성이 있는 초성일 경우 */
-                /* 기존의 존재하는 자음과 입력받은 자음이 같을 경우 쌍자음으로 변환하여 준다. */
-                if(LAST_CHAR_CODE===INPUT_CHAR_CODE) {
-                    await removeCharFromTargetField("INPUT");
-                    addCharToTargetField(String.fromCharCode(INPUT_CHAR_CODE+1));
-                }else{ // 앞의 자음과 조합 불가능한 자음일 경우 조합하지 않고 단순히 입력받은 문자를 추가.
-                    addCharToTargetField(INPUT_CHAR);
-                }
-                break;
-
-            case ( INITIAL_CONSONANT_COMPLETE.includes(LAST_CHAR) ) : // 기존의 값이 완성된 자음일 경우
-                addCharToTargetField(INPUT_CHAR);
-                break;
+            //
+            // case ( INITIAL_CONSONANT_POTENTIAL.includes(LAST_CHAR) ) : /* 기존의 값이 쌍자음 가능성이 있는 초성일 경우 */
+            //     /* 기존의 존재하는 자음과 입력받은 자음이 같을 경우 쌍자음으로 변환하여 준다. */
+            //     if(LAST_CHAR_CODE===INPUT_CHAR_CODE) {
+            //         await removeCharFromTargetField("INPUT");
+            //         addCharToTargetField(String.fromCharCode(INPUT_CHAR_CODE+1));
+            //     }else{ // 앞의 자음과 조합 불가능한 자음일 경우 조합하지 않고 단순히 입력받은 문자를 추가.
+            //         addCharToTargetField(INPUT_CHAR);
+            //     }
+            //     break;
+            //
+            // case ( INITIAL_CONSONANT_COMPLETE.includes(LAST_CHAR) ) : // 기존의 값이 완성된 자음일 경우
+            //     addCharToTargetField(INPUT_CHAR);
+            //     break;
 
             /* 기존의 종성값이 변화 가능성 있는 종성을 포함한 완전한 한글일 경우 */
             case ( FINAL_CONSONANT_POTENTIAL.includes(
@@ -187,11 +195,15 @@ async function korAlphabetProcess(INPUT_CHAR){
 
                 break;
 
-            /* 기존의 값이 중성까지 완성되어 있는 조합된 한글일 경우 (종성 값이 0일 경우) 종성값을 추가한 값을 출력  */
-            case ( LAST_FINAL_CONSONANT_IDX === 0 && IS_COMPLETE_KOREAN ) :
+
+            /* 기존의 값이 중성까지 완성되어 있는 조합된 한글일 경우 (종성 값이 0일 경우 혹은) 종성값을 추가한 값을 출력  */
+            case ( LAST_FINAL_CONSONANT_IDX === 0 && IS_COMPLETE_KOREAN
+                && !INITIAL_CONSONANT_DOUBLE.includes(INPUT_CHAR) || INPUT_CHAR_CODE === 12614 ) :
                 await removeCharFromTargetField("INPUT");
                 addCharToTargetField(compoundCharacter(LAST_INITIAL_CONSONANT_IDX,
                     LAST_VOWEL_IDX, FINAL_CONSONANT.indexOf(INPUT_CHAR)));
+                /* 마지막 받침으로 ㅆ을 사용한 경우라면 다음 모음이 올 때 ㅅ이 아닌 ㅆ과 조합된다. */
+                wasLastInputSsangsiot = INPUT_CHAR_CODE === 12614;
                 break;
 
             default :
@@ -229,35 +241,49 @@ async function korAlphabetProcess(INPUT_CHAR){
 
                 /* 모음이 올 경우 종성의 두 자는 앞과 뒤로 찢어지는데 앞부분의 인덱스를 담을 곳 */
                 let tempConsonantIdx = "";
-                /* 종성의 앞부분을 분리해내기 */
-                FINAL_CONSONANT_ORDER.forEach(element => {
-                    if (element[2] === LAST_FINAL_CONSONANT_IDX) {
-                        /* 찢어진 앞의 문자 */
-                        divideResultCHAR = compoundCharacter(LAST_INITIAL_CONSONANT_IDX,
-                            LAST_VOWEL_IDX, element[0]);
-                        tempConsonantIdx = INITIAL_CONSONANT.indexOf(FINAL_CONSONANT[element[1]]);
-                    }
-                });
+                let secondChar = "";
+
+                /* 마지막 받침입력이 ㅆ 이었다면 특별 규칙을 적용해 이전 글자는 받침이 사라지고, 새 글자에는 모음이 ㅆ이 된다. */
+                if(wasLastInputSsangsiot) {
+                    /* 찢어진 앞의 문자 */
+                    divideResultChar = compoundCharacter(LAST_INITIAL_CONSONANT_IDX,
+                        LAST_VOWEL_IDX, 0);
+                    /* 찢어진 뒤의 문자 */
+                    secondChar = compoundCharacter(
+                        10, VOWEL.indexOf(INPUT_CHAR), 0);
+                }else{
+                    /* 종성의 앞부분을 분리해내기 */
+                    FINAL_CONSONANT_ORDER.forEach(element => {
+                        if (element[2] === LAST_FINAL_CONSONANT_IDX) {
+                            /* 찢어진 앞의 문자 */
+                            divideResultChar = compoundCharacter(LAST_INITIAL_CONSONANT_IDX,
+                                LAST_VOWEL_IDX, element[0]);
+                            tempConsonantIdx = INITIAL_CONSONANT.indexOf(FINAL_CONSONANT[element[1]]);
+                        }
+                    });
+                    /* 찢어진 뒤의 문자 */
+                    secondChar = compoundCharacter(tempConsonantIdx, VOWEL.indexOf(INPUT_CHAR), 0);
+                }
+
                 await  removeCharFromTargetField("INPUT");
-                /* 찢어진 뒤의 문자 */
-                const SECOND_CHAR = compoundCharacter(tempConsonantIdx, VOWEL.indexOf(INPUT_CHAR), 0);
 
                 /* addCaretPosition 을 1로 준 이유는 두자가 추가되어 캐랫 위치를 한칸 더 뒤로 당길 필요가 있기 때문 */
-                addCharToTargetField(divideResultCHAR + SECOND_CHAR, 1 );
+                addCharToTargetField(divideResultChar + secondChar, 1 );
                 break;
 
             /* 기존의 값이 종성까지 포함하고 있는 경우 */
             case (LAST_FINAL_CONSONANT_IDX > 0) :
 
                 /* 찢어진 앞부분의 문자 */
-                divideResultCHAR = compoundCharacter(LAST_INITIAL_CONSONANT_IDX, LAST_VOWEL_IDX, 0);
+                divideResultChar = compoundCharacter(
+                    LAST_INITIAL_CONSONANT_IDX, LAST_VOWEL_IDX, 0);
                 /* 찢어진 뒷부분의 문자 */
                 const NEW_COMPOUND_CHAR = compoundCharacter(INITIAL_CONSONANT.indexOf(
                     FINAL_CONSONANT[LAST_FINAL_CONSONANT_IDX]), VOWEL.indexOf(INPUT_CHAR), 0);
                 await removeCharFromTargetField("INPUT");
 
                 /* addCaretPosition 을 1로 준 이유는 두자가 추가되어 캐랫 위치를 한칸 더 뒤로 당길 필요가 있기 때문 */
-                addCharToTargetField(divideResultCHAR + NEW_COMPOUND_CHAR, 1);
+                addCharToTargetField(divideResultChar + NEW_COMPOUND_CHAR, 1);
                 break;
 
 
@@ -281,9 +307,10 @@ function addCharToTargetField(INPUT_CHAR, addCaretPosition = 0){
     /* 캐랫이 있던 위치에 맞추어 입력시킬 문자를 끼워 출력시킨다. */
     targetInputField.value = TARGET_FIELD_VALUE.substr(0, targetFieldCaretStartPosition)
         + INPUT_CHAR+TARGET_FIELD_VALUE.substr(targetFieldCaretEndPosition);
-    targetInputField.focus();
     targetInputField.setSelectionRange(targetFieldCaretStartPosition + addCaretPosition + 1,
         targetFieldCaretStartPosition + addCaretPosition + 1);
+    targetInputField.blur();
+    targetInputField.focus();
 }
 
 /* 주어진 규칙에 따라 마지막 글자와 입력받은 글자의 배열 번호가 일치하는 해당 규칙의 IDX를 찾아 결과값을 리턴한다. */
@@ -324,7 +351,7 @@ function removeCharFromTargetField (role = "DELETE") {
     const TARGET_CHAR_CODE = TARGET_CHAR.charCodeAt(0);
 
     /* 조합된 문자를 끝에서 부터 분해시 임시 저장될 변수 */
-    let divideResultCHAR = "";
+    let divideResultChar = "";
 
     /* 인수로 전달받은 역할에 따라 나뉜다. */
     switch (role) {
@@ -361,13 +388,13 @@ function removeCharFromTargetField (role = "DELETE") {
                             /* 종성이 두자의 자음 조합으로 되어있을 때 앞자리의 자음만 남긴다. */
                             FINAL_CONSONANT_ORDER.forEach(element => {
                                 if (element[2] === TARGET_FINAL_CONSONANT_IDX) {
-                                    divideResultCHAR = compoundCharacter(TARGET_INITIAL_CONSONANT_IDX,
+                                    divideResultChar = compoundCharacter(TARGET_INITIAL_CONSONANT_IDX,
                                         TARGET_VOWEL_IDX, element[0]);
                                 }
                             });
                             /* 종성이 한자의 자음일 경우 종성을 날린다. */
-                            if(!divideResultCHAR){
-                                divideResultCHAR = compoundCharacter(TARGET_INITIAL_CONSONANT_IDX,
+                            if(!divideResultChar){
+                                divideResultChar = compoundCharacter(TARGET_INITIAL_CONSONANT_IDX,
                                     TARGET_VOWEL_IDX, 0);
                             }
                             break;
@@ -377,14 +404,14 @@ function removeCharFromTargetField (role = "DELETE") {
                             /* 중성이 두자의 모음 조합으로 되어있을 때 먼저입력되는 모음만 남긴다. */
                             VOWEL_ORDER.forEach(element => {
                                 if (element[2] === TARGET_VOWEL_IDX) {
-                                    divideResultCHAR = compoundCharacter(TARGET_INITIAL_CONSONANT_IDX,
+                                    divideResultChar = compoundCharacter(TARGET_INITIAL_CONSONANT_IDX,
                                         element[0], 0);
                                 }
                             });
 
                             /* 중성이 한자의 모음 조합으로 되어있을 때, 자음부만 남긴다. */
-                            divideResultCHAR = (divideResultCHAR === "")
-                                ? INITIAL_CONSONANT[TARGET_INITIAL_CONSONANT_IDX] : divideResultCHAR;
+                            divideResultChar = (divideResultChar === "")
+                                ? INITIAL_CONSONANT[TARGET_INITIAL_CONSONANT_IDX] : divideResultChar;
                             break;
                     }
                 }else{
@@ -393,7 +420,7 @@ function removeCharFromTargetField (role = "DELETE") {
 
                     /* 지울 대상이 쌍자음일 경우, 단자음으로 바꾸어 준다. */
                     if(INITIAL_CONSONANT_DOUBLE.includes(TARGET_CHAR)){
-                        divideResultCHAR = String.fromCharCode(TARGET_CHAR_CODE-1);
+                        divideResultChar = String.fromCharCode(TARGET_CHAR_CODE-1);
                         targetFieldCaretSetPosition++;
                     }else{
                         /* 한글이 아니거나 한글 낱자를 지웠으므로 이 다음 삭제 대상은 마지막 입력하던 글자가 아니다. 그러므로..... */
@@ -407,9 +434,33 @@ function removeCharFromTargetField (role = "DELETE") {
 
     /* 위에서 적용된 캐랫을 기준으로 문자의 앞 부분과 뒷 부분을 자르고, 그 양측의 문자열 사이에 추가될 결과문자를(있을경우) 집어넣는다. */
     targetInputField.value = TARGET_FIELD_VALUE.substr(0, targetFieldCaretStartPosition)
-        + divideResultCHAR + TARGET_FIELD_VALUE.substr(TARGET_FIELD_CARET_END_POSITION);
+        + divideResultChar + TARGET_FIELD_VALUE.substr(TARGET_FIELD_CARET_END_POSITION);
     /* 위 텍스트 필드의 문자열 치환 작업을 하게 되면 다시 텍스트 필드에 포커스를 주고 캐랫의 위치를 지정해 주어야 한다. */
-    targetInputField.focus();
     targetInputField.setSelectionRange(targetFieldCaretSetPosition,targetFieldCaretSetPosition);
+    targetInputField.blur();
+    targetInputField.focus();
+}
 
+function changeKeyboard(type){
+    const FLIP = document.getElementsByClassName("flip");
+    switch (type) {
+        case 1 :
+            for (const element of FLIP) {
+                element.style.visibility = "hidden";
+            }
+            document.getElementById("kor").style.visibility = "visible";
+            break;
+        case 2 :
+            for (const element of FLIP) {
+                element.style.visibility = "hidden";
+            }
+            document.getElementById("upperCase").style.visibility = "visible";
+            break;
+        case 3 :
+            for (const element of FLIP) {
+                element.style.visibility = "hidden";
+            }
+            document.getElementById("lowerCase").style.visibility = "visible";
+            break;
+    }
 }
