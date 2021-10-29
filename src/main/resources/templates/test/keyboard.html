@@ -6,27 +6,69 @@
 
 <!-- 사용자 CSS 추가 -->
 <th:block layout:fragment="css">
-	<link rel="stylesheet" type="text/css"
-		  href="/assets/css/nak_css_dir/keyboard.css" />
+	<style>
+		input {
+			font-size: 30px;
+		}
+		.flip {
+			position: absolute;
+			float: left;
+		}
+		.leftKeyboard {
+			float: left;
+			width: 240px;
+		}
+		.rightKeyboard {
+			float: left;
+			width: 190px;
+		}
+		#keyPad {
+			float: left;
+			width: 150px;
+		}
+
+		#upperCase, #lowerCase {
+			width: 400px;
+		}
+
+		#midgard {
+			width: 450px;
+			height: 170px;
+			float: left;
+		}
+
+		.testInputBtn {
+			width: 42px;
+			height: 42px;
+		}
+
+		/* 글을 입력할 때 마다 텍스트 필드가 포커싱 아웃되며 파란 아웃라인 불이 들어왔다 꺼지는걸 반복하는 것을 지워야 한다. */
+		#targetInputField:focus {
+			outline: none;
+		}
+
+		#targetInputField {
+		}
+
+		#editableField {
+			padding: 5px;
+			font-size: 30px;
+			outline: black solid 1px;
+			width: 300px;
+			overflow-x: hidden;
+			white-space: nowrap;
+		}
+	</style>
 </th:block>
 
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
-	<script type="text/javascript">
-		//제이쿼리
-		$(function() {
-
-		});
-
-	</script>
-
 </th:block>
 
 <div layout:fragment="content" class="content padding-zero content--main">
 	<h1>가상키보드 테스트페이지test</h1>
 	<input type="text" id="targetInputField" spellcheck="false" hidden>
 	<div id="editableField" contenteditable="true" spellcheck="false"></div>
-
 	<input type="button" value="삭제" onclick="removeCharFromTargetField ()">
 
 	<div id="virtualKeyboard">
