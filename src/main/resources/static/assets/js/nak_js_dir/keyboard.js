@@ -2,16 +2,12 @@
 * 이해를 위해서는 유니코드 한글 자음, 모음, 조합문자의 초성, 중성, 종성 순서에 대해 지식이 필요하다.
 * */
 
-let targetInputField;
+let editableField;
 
 /* 문서 로드 후에 객체가 탑재되고, 텍스트필드의 캐렛(커서)가 움직이는 것을 감지하기 위한 각종 이벤트 리스너를 활성화한다. */
 document.addEventListener('DOMContentLoaded', function() {
-    targetInputField = document.getElementById("targetInputField");
 
-    targetInputField.addEventListener('keyup', checkCaret);
-    targetInputField.addEventListener('mousedown', checkCaret);
-    targetInputField.addEventListener('touchstart', checkCaret);
-    targetInputField.addEventListener('selectstart', checkCaret);
+    editableField = document.getElementById("editableField");
 
     document.getElementById("upperCase").style.visibility = "hidden";
     document.getElementById("lowerCase").style.visibility = "hidden";
@@ -19,8 +15,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
 }, false);
 
-/* 캐렛의 위치가 이동한 것을 감지하기 위해 저장해두는 곳 */
-let caretPos = 0;
+/* 캐렛의 위치가 이동했던 것을 감지하기 위해 저장해두는 곳, 포커싱할 때 해당 위치를 기준으로 한다. */
+let lastCaretPos = [0, 0];
 
 /* true = 한글 삭제시 마지막 입력자부터 분해됨, false = 한글 삭제시 글자 단위로 삭제됨 (ex. 첫글자는 분해하고 계속 한글 지우기 할 때) */
 let divideOrDelete = false;
@@ -110,17 +106,6 @@ const FINAL_CONSONANT_DOUBLE = [
 ];
 
 
-/* 인풋 텍스트에 각종 변화가 생길 때 마다 캐랫의 위치가 바뀌었는지 확인 */
-function checkCaret() {
-    const NEW_POS = targetInputField.selectionStart;
-    if (NEW_POS !== caretPos) {
-        divideOrDelete = false;
-        compoundOrAdd = false;
-        caretPos = NEW_POS;
-    }
-}
-
-
 // !!!!!!!!!!!!!!!!!!!!
 /* 디스플레이에 담을 값을 인수와 함께 넘긴다. */
 function whenClickedVirtualKeyChar(INPUT_CHAR){
@@ -138,9 +123,9 @@ function whenClickedVirtualKeyChar(INPUT_CHAR){
 async function korAlphabetProcess(INPUT_CHAR){
 
     /* 목표 텍스트 필드 객체를 담는 곳 */
-    const TARGET_FIELD_VALUE = targetInputField.value;
+    const FIELD_VALUE = editableField.innerHTML;
     /* 커서 기준으로 한칸 앞 자리의 문자 (즉 마지막으로 입력되었다 상정할 수 있는 문자) 인식 */
-    const LAST_CHAR = TARGET_FIELD_VALUE.substr(targetInputField.selectionStart-1,1);
+    const LAST_CHAR = FIELD_VALUE.substr(lastCaretPos[0]-1,1);
     /* 위 문자의 유니코드 */
     const LAST_CHAR_CODE = LAST_CHAR.charCodeAt(0);
     /* 입력한 문자의 유니코드 */
@@ -301,16 +286,87 @@ async function korAlphabetProcess(INPUT_CHAR){
 
 /* 목표 텍스트 필드에 인수로 받은 문자를 추가, addCaretPosition 을 설정할 경우 입력후의 캐랫 위치를 임의로 설정할 수 있다. */
 function addCharToTargetField(INPUT_CHAR, addCaretPosition = 0){
-    let targetFieldCaretStartPosition = targetInputField.selectionStart;
-    const targetFieldCaretEndPosition = targetInputField.selectionEnd;
-    const TARGET_FIELD_VALUE = targetInputField.value;
+
+    /* 사용자가 직접 캐럿의 위치를 선택한 경우에만 필요하다. */
+    /*
+    lastCaretPos = getCaretPosition();
+    */
+
+    const FIELD_VALUE = editableField.innerHTML;
+    const HEAD_WORDS = FIELD_VALUE.substr(0, lastCaretPos[0]);
+    const TAIL_WORDS = FIELD_VALUE.substr(lastCaretPos[1]);
+    const SCROLL_TO = (HEAD_WORDS + INPUT_CHAR).inPixels(300);
+
     /* 캐랫이 있던 위치에 맞추어 입력시킬 문자를 끼워 출력시킨다. */
-    targetInputField.value = TARGET_FIELD_VALUE.substr(0, targetFieldCaretStartPosition)
-        + INPUT_CHAR+TARGET_FIELD_VALUE.substr(targetFieldCaretEndPosition);
-    targetInputField.setSelectionRange(targetFieldCaretStartPosition + addCaretPosition + 1,
-        targetFieldCaretStartPosition + addCaretPosition + 1);
-    targetInputField.blur();
-    targetInputField.focus();
+    editableField.innerHTML = HEAD_WORDS + INPUT_CHAR + TAIL_WORDS;
+    setCaretPosition(lastCaretPos[0]+1+addCaretPosition, lastCaretPos[0]+1+addCaretPosition);
+    editableField.scrollLeft = SCROLL_TO;
+
+    console.log(INPUT_CHAR);
+    switch (INPUT_CHAR) {
+        case " " :
+            console.log("act");
+            lastCaretPos[0] += 5;
+            lastCaretPos[1] += 5;
+            break;
+        case "&" :
+            lastCaretPos[0] += 4;
+            lastCaretPos[1] += 4;
+            break;
+    }
+    console.log(lastCaretPos);
+
+}
+
+/* 캐랫 위치를 반환한다 배열 0번은 시작 포지션, 배열 1번은 종료 포지션 */
+function getCaretPosition() {
+    editableField.focus();
+    const CARET_SELECTION = window.getSelection();
+    let editableFieldCaretStartPosition = CARET_SELECTION.focusOffset;
+    let editableFieldCaretEndPosition = CARET_SELECTION.anchorOffset;
+    if(editableFieldCaretStartPosition > editableFieldCaretEndPosition) {
+        const TEMP_POSITION = editableFieldCaretStartPosition;
+        editableFieldCaretStartPosition = editableFieldCaretEndPosition;
+        editableFieldCaretEndPosition = TEMP_POSITION;
+    }
+    return [editableFieldCaretStartPosition, editableFieldCaretEndPosition];
+}
+
+/* editableField의 캐랫 위치를 설정한다. */
+function setCaretPosition(start, end) {
+    editableField.focus();
+    if(start) {
+        const CARET_SELECTION = window.getSelection();
+        const NEW_RANGE = CARET_SELECTION.getRangeAt(0);
+        NEW_RANGE.setStart(editableField.childNodes[0], start);
+        NEW_RANGE.setEnd(editableField.childNodes[0], end);
+        const selection = document.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(NEW_RANGE);
+    }
+    lastCaretPos = [start, end];
+}
+
+/* 사용자가 editableField 바깥쪽을 누르면 포커스가 해지되는데, 그 순간 editableField 의 캐랫 위치 정보는 상실된다.
+* 이 함수를 사용해서 포커스를 해줘야 원하던 곳에 캐럿을 마지막 존재하던 위치에 설정할 수 있다. */
+function focusWithCaret() {
+    setCaretPosition(lastCaretPos[0], lastCaretPos[1]);
+}
+
+String.prototype.inPixels = function (fieldWidth){
+
+    const span = document.createElement("span");
+    span.innerHTML = this.valueOf();
+    Object.assign(span.style, {
+        position: 'absolute',
+        visibility: 'hidden',
+        fontSize: '30px'
+    });
+    document.querySelector('html').prepend(span);
+    let resultPixel = Math.max(span.getBoundingClientRect().width)-fieldWidth/2;
+    resultPixel = resultPixel < 0 ? 0 : resultPixel;
+
+    return resultPixel;
 }
 
 /* 주어진 규칙에 따라 마지막 글자와 입력받은 글자의 배열 번호가 일치하는 해당 규칙의 IDX를 찾아 결과값을 리턴한다. */
@@ -337,16 +393,12 @@ function compoundCharacter (INITIAL_CONSONANT_IDX, VOWEL_IDX, FINAL_CONSONANT_ID
 function removeCharFromTargetField (role = "DELETE") {
 
     /* 가상 키보드 입력삭제 대상이 될 목표 텍스트 필드의 값을 담는다 */
-    const TARGET_FIELD_VALUE = targetInputField.value;
+    const FIELD_VALUE = editableField.innerHTML;
 
-    /* 입력 필드의 캐랫(커서) 시작 포지션 */
-    let targetFieldCaretStartPosition = targetInputField.selectionStart;
     /* 삭제 작업이 일어나고 나서 최종적으로 캐랫이 위치하게 될 포지션 */
-    let targetFieldCaretSetPosition = targetFieldCaretStartPosition;
-    /* 입력 필드의 캐랫 종료 포지션 */
-    const TARGET_FIELD_CARET_END_POSITION = targetInputField.selectionEnd;
+    let targetFieldCaretSetPosition = lastCaretPos[0];
     /* 한글조합을 분해하며 지우게 될 경우 분해 대상이 될 문자 */
-    const TARGET_CHAR = TARGET_FIELD_VALUE.substr(targetFieldCaretStartPosition - 1, 1);
+    const TARGET_CHAR = FIELD_VALUE.substr(lastCaretPos[0] - 1, 1);
     /* 위 분해 대상이 될 문자의 유니코드 */
     const TARGET_CHAR_CODE = TARGET_CHAR.charCodeAt(0);
 
@@ -361,8 +413,8 @@ function removeCharFromTargetField (role = "DELETE") {
         * 캐랫의 시작과 끝 위치가 같으면 캐랫이 단일 칸에 머물러 깜빡이고 있음을 의미하고, 다르면 문자열의 영역이 선택된 것임을 의미한다.
         * */
         case "INPUT" :
-            if (targetFieldCaretStartPosition === TARGET_FIELD_CARET_END_POSITION) {
-                targetFieldCaretSetPosition = --targetFieldCaretStartPosition;
+            if (lastCaretPos[0] === lastCaretPos[1]) {
+                targetFieldCaretSetPosition = --lastCaretPos[0];
             }
             break;
 
@@ -370,7 +422,7 @@ function removeCharFromTargetField (role = "DELETE") {
         case "DELETE":
 
             /* 캐랫이 단일위치에서 깜빡이고, 조합된 한글이며, 직전까지 한글이 입력중이던 상태여서 한글조합의 분리가 필요한 상황임을 감지 */
-            if (targetFieldCaretStartPosition === TARGET_FIELD_CARET_END_POSITION) {
+            if (lastCaretPos[0] === lastCaretPos[1] && editableField.innerHTML) {
                 if (TARGET_CHAR_CODE > 44031 && TARGET_CHAR_CODE < 55204 && divideOrDelete) {
                     /* 분해 대상이 될 문자의 유니코드의 초성, 중성, 종성의 IDX를 구한다. */
                     const TARGET_CHAR_SEQUENCE = TARGET_CHAR_CODE - 44032;
@@ -379,7 +431,7 @@ function removeCharFromTargetField (role = "DELETE") {
                     const TARGET_FINAL_CONSONANT_IDX = TARGET_CHAR_SEQUENCE % 28;
 
                     /* 한글 조합의 분리시 */
-                    targetFieldCaretStartPosition--;
+                    lastCaretPos[0]--;
 
                     switch (true) {
 
@@ -416,7 +468,7 @@ function removeCharFromTargetField (role = "DELETE") {
                     }
                 }else{
                     /* 한 글자를 완전히 지우기 위해서는 자를 위치를 한칸 당기고, 캐랫의 포지션은 한칸 더 앞으로 이동해야 한다. */
-                    targetFieldCaretSetPosition = --targetFieldCaretStartPosition;
+                    targetFieldCaretSetPosition = --lastCaretPos[0];
 
                     /* 지울 대상이 쌍자음일 경우, 단자음으로 바꾸어 준다. */
                     if(INITIAL_CONSONANT_DOUBLE.includes(TARGET_CHAR)){
@@ -429,16 +481,44 @@ function removeCharFromTargetField (role = "DELETE") {
                     }
                 }
             }
+            focusWithCaret();
             break;
     }
 
     /* 위에서 적용된 캐랫을 기준으로 문자의 앞 부분과 뒷 부분을 자르고, 그 양측의 문자열 사이에 추가될 결과문자를(있을경우) 집어넣는다. */
-    targetInputField.value = TARGET_FIELD_VALUE.substr(0, targetFieldCaretStartPosition)
-        + divideResultChar + TARGET_FIELD_VALUE.substr(TARGET_FIELD_CARET_END_POSITION);
+    editableField.innerHTML = FIELD_VALUE.substr(0, lastCaretPos[0])
+        + divideResultChar + FIELD_VALUE.substr(lastCaretPos[1]);
     /* 위 텍스트 필드의 문자열 치환 작업을 하게 되면 다시 텍스트 필드에 포커스를 주고 캐랫의 위치를 지정해 주어야 한다. */
-    targetInputField.setSelectionRange(targetFieldCaretSetPosition,targetFieldCaretSetPosition);
-    targetInputField.blur();
-    targetInputField.focus();
+    setCaretPosition(targetFieldCaretSetPosition, targetFieldCaretSetPosition);
+    editableField.focus();
+}
+
+/* 입력 필드에서 키보드 방향키의 역할을 함 */
+function moveCaretPosition (direction) {
+
+    /* 입력 필드 시작과 종료 포지션이 같다면 일반적인 방향키의 움직임을 구현 */
+    if(lastCaretPos[0] === lastCaretPos[1]) {
+        switch (direction){
+            case "right" :
+                lastCaretPos[0] += 1;
+                lastCaretPos[1] += 1;
+                break;
+            case "left" :
+                lastCaretPos[0] -= 1;
+                lastCaretPos[1] -= 1;
+                break;
+        }
+    }else{ // 캐랫의 시작과 종료 위치가 다르면 선택된 구간이 있다는 뜻 이므로 최종 캐랫의 포지션은 상대적이다.
+        switch (direction){
+            case "right" :
+                lastCaretPos[0] = lastCaretPos[1];
+                break;
+            case "left" :
+                lastCaretPos[1] = lastCaretPos[0];
+                break;
+        }
+    }
+    focusWithCaret();
 }
 
 function changeKeyboard(type){

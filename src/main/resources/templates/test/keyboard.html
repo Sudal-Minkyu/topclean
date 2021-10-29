@@ -6,14 +6,13 @@
 
 <!-- 사용자 CSS 추가 -->
 <th:block layout:fragment="css">
-
+	<link rel="stylesheet" type="text/css"
+		  href="/assets/css/nak_css_dir/keyboard.css" />
 </th:block>
 
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
-	<script type="text/javascript"	src="/assets/js/nak_js_dir/keyboard.js"></script>
 	<script type="text/javascript">
-
 		//제이쿼리
 		$(function() {
 
@@ -25,12 +24,139 @@
 
 <div layout:fragment="content" class="content padding-zero content--main">
 	<h1>가상키보드 테스트페이지test</h1>
+	<input type="text" id="targetInputField" spellcheck="false" hidden>
+	<div id="editableField" contenteditable="true" spellcheck="false"></div>
 
-	<input type="text" id="vdisplay" readonly>
-	<p>
-	<input type="text" id="vkey" placeholder="">
-	<p>
-	<input type="button" id="vkeyin" value="입력" onclick="vKeyIn(document.getElementById('vkey').value)">
+	<input type="button" value="삭제" onclick="removeCharFromTargetField ()">
+
+	<div id="virtualKeyboard">
+		<div id="topKeyboard">
+			<input type="button" class="testInputBtn" value="한" onclick="changeKeyboard(1)">
+			<input type="button" class="testInputBtn" value="A" onclick="changeKeyboard(2)">
+			<input type="button" class="testInputBtn" value="a" onclick="changeKeyboard(3)">
+		</div>
+		<div id="midgard">
+			<div id="kor" class="flip">
+				<div class="leftKeyboard">
+					<input type="button" class="testInputBtn" value="ㄱ" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="ㄴ" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="ㄷ" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="ㄹ" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="ㅁ" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="ㅂ" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="ㅅ" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="ㅇ" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="ㅈ" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="ㅊ" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="ㅋ" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="ㅌ" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="ㅍ" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="ㅎ" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="ㄲ" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="ㄸ" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="ㅃ" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="ㅉ" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="ㅆ" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value=" " onclick="whenClickedVirtualKeyChar(this.value)">
+				</div>
+				<div class="rightKeyboard">
+					<input type="button" class="testInputBtn" value="ㅏ" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="ㅑ" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="ㅓ" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="ㅕ" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="ㅗ" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="ㅛ" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="ㅜ" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="ㅠ" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="ㅡ" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="ㅣ" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="ㅐ" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="ㅔ" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="ㅒ" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="ㅖ" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="." onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="-" onclick="whenClickedVirtualKeyChar(this.value)">
+				</div>
+			</div>
+			<div id="upperCase" class="flip">
+				<div>
+					<input type="button" class="testInputBtn" value="A" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="B" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="C" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="D" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="E" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="F" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="G" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="H" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="I" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="J" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="K" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="L" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="M" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="N" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="O" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="P" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="Q" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="R" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="S" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="T" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="U" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="V" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="W" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="X" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="Y" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="Z" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value=" " onclick="whenClickedVirtualKeyChar(this.value)">
+				</div>
+			</div>
+			<div id="lowerCase" class="flip">
+				<div>
+					<input type="button" class="testInputBtn" value="a" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="b" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="c" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="d" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="e" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="f" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="g" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="h" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="i" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="j" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="k" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="l" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="m" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="n" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="o" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="p" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="q" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="r" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="s" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="t" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="u" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="v" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="w" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="x" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="y" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value="z" onclick="whenClickedVirtualKeyChar(this.value)">
+					<input type="button" class="testInputBtn" value=" " onclick="whenClickedVirtualKeyChar(this.value)">
+				</div>
+			</div>
+		</div>
+
+		<div id="keyPad">
+			<input type="button" class="testInputBtn" value="1" onclick="whenClickedVirtualKeyChar(this.value)">
+			<input type="button" class="testInputBtn" value="2" onclick="whenClickedVirtualKeyChar(this.value)">
+			<input type="button" class="testInputBtn" value="3" onclick="whenClickedVirtualKeyChar(this.value)">
+			<input type="button" class="testInputBtn" value="4" onclick="whenClickedVirtualKeyChar(this.value)">
+			<input type="button" class="testInputBtn" value="5" onclick="whenClickedVirtualKeyChar(this.value)">
+			<input type="button" class="testInputBtn" value="6" onclick="whenClickedVirtualKeyChar(this.value)">
+			<input type="button" class="testInputBtn" value="7" onclick="whenClickedVirtualKeyChar(this.value)">
+			<input type="button" class="testInputBtn" value="8" onclick="whenClickedVirtualKeyChar(this.value)">
+			<input type="button" class="testInputBtn" value="9" onclick="whenClickedVirtualKeyChar(this.value)">
+			<input type="button" class="testInputBtn" value="0" onclick="whenClickedVirtualKeyChar(this.value)">
+			<input type="button" class="testInputBtn" value="←" onclick="moveCaretPosition('left')">
+			<input type="button" class="testInputBtn" value="→" onclick="moveCaretPosition('right')">
+		</div>
+	</div>
 
 </div>
 </html>
