@@ -2,14 +2,20 @@
 * 이해를 위해서는 유니코드 한글 자음, 모음, 조합문자의 초성, 중성, 종성 순서에 대해 지식이 필요하다.
 * */
 
+let targetField;
 let editableField;
+let boilerList;
+let boilerBtn;
+let inputFieldWidth;
+let keyboardList;
 
 /* 문서 로드 후에 객체가 탑재되고, 텍스트필드의 캐렛(커서)가 움직이는 것을 감지하기 위한 각종 이벤트 리스너를 활성화한다. */
 document.addEventListener('DOMContentLoaded', function() {
     editableField = document.getElementById("editableField");
-
-    document.getElementById("upperCase").style.visibility = "hidden";
-    document.getElementById("lowerCase").style.visibility = "hidden";
+    keyboardList = document.getElementsByClassName("keyboardList");
+    boilerList = document.getElementsByClassName("aBoilerList");
+    boilerBtn = document.getElementsByClassName("boilerBtn");
+    inputFieldWidth = editableField.clientWidth;
 }, false);
 
 /* 캐렛의 위치가 이동했던 것을 감지하기 위해 저장해두는 곳, 포커싱할 때 해당 위치를 기준으로 한다.
@@ -113,12 +119,47 @@ const EXCEPTION_SYMBOL = [
 
 /* 입력시 별도의 규칙이 필요한 심벌 규칙, 심벌코드, 표시되는심벌, 심벌이 차지하는 문자의 길이이다.  */
 const EXCEPTION_SYMBOL_ORDER = [
-    [ ' ', '&nbsp;', 5 ], [ '&', '&amp;', 4 ], [ '<', '&lt;', 3 ], [ '>', '&gt;', 3 ]
+    [ '&', '&amp;', 5 ], [ '<', '&lt;', 4 ], [ '>', '&gt;', 4 ], [ ' ', '&nbsp;', 6 ]
 ];
+
+
+function showVirtualKeyboard(elementId, subject = "기본 제목", boilerplate = []) {
+
+    const LOOP_BOILER  = boilerplate.length > 31 ? 32 : boilerplate.length;
+
+    for (let i = 0; i < LOOP_BOILER; i++){
+        boilerBtn[i].value = boilerplate[i];
+    }
+
+    targetField = document.getElementById(elementId);
+    let targetValue = targetField.value;
+
+    if(targetValue == "") {
+        lastCaretPos = [0, 0];
+        lastActualCaretPos = [0, 0];
+    }else{
+        lastCaretPos[0] = targetValue.length;
+        lastCaretPos[1] = lastCaretPos[0];
+
+        targetValue = exceptionSymbolEncryption( targetField.value,true)[0];
+
+        lastActualCaretPos[0] = targetValue.length;
+        lastActualCaretPos[1] = lastActualCaretPos[0];
+    }
+
+    editableField.innerHTML = targetValue;
+    document.getElementById("fieldSubject").innerHTML = subject;
+    document.getElementById("virtualKeyboard").style.visibility = "visible";
+    keyboardList[0].style.visibility = "visible";
+    boilerList[0].style.visibility = "visible";
+    focusWithCaret();
+    editableField.scrollLeft = 99999;
+
+}
 
 // !!!!!!!!!!!!!!!!!!!!
 /* 디스플레이에 담을 값을 인수와 함께 넘긴다. */
-function whenClickedVirtualKeyChar(INPUT_CHAR){
+function pushVKeyBtn(INPUT_CHAR){
 
     /* 입력값이 한글의 자음이나 모음인 경우 한글 처리 과정에 들어가고, 아닐 경우 그대로 입력된다. */
     if(INPUT_CHAR.charCodeAt(0) > 12592 && INPUT_CHAR.charCodeAt(0) < 12644){
@@ -131,8 +172,14 @@ function whenClickedVirtualKeyChar(INPUT_CHAR){
     }
 }
 
+function pushBoilerBtn(INPUT_SENTENCE) {
+    const INPUT_LENGTH = INPUT_SENTENCE.length;
+    INPUT_SENTENCE = exceptionSymbolEncryption(INPUT_SENTENCE, true)[0];
+    addCharToTargetField(INPUT_SENTENCE, INPUT_LENGTH-1, INPUT_SENTENCE.length);
+}
+
 /* 한글 처리를 담당하는 기능 눌려진 한글 문자를 인수로 받는다. */
-async function korAlphabetProcess(INPUT_CHAR){
+async function korAlphabetProcess(INPUT_CHAR) {
 
     /* 목표 텍스트 필드 객체를 담는 곳 */
     const FIELD_VALUE = editableField.innerHTML;
@@ -195,7 +242,7 @@ async function korAlphabetProcess(INPUT_CHAR){
 
             /* 기존의 값이 중성까지 완성되어 있는 조합된 한글일 경우 (종성 값이 0일 경우 혹은) 종성값을 추가한 값을 출력  */
             case ( LAST_FINAL_CONSONANT_IDX === 0 && IS_COMPLETE_KOREAN
-                && !INITIAL_CONSONANT_DOUBLE.includes(INPUT_CHAR) || INPUT_CHAR_CODE === 12614 ) :
+                && (!INITIAL_CONSONANT_DOUBLE.includes(INPUT_CHAR) || INPUT_CHAR_CODE === 12614) ) :
                 await removeCharFromTargetField("INPUT");
                 addCharToTargetField(compoundCharacter(LAST_INITIAL_CONSONANT_IDX,
                     LAST_VOWEL_IDX, FINAL_CONSONANT.indexOf(INPUT_CHAR)));
@@ -297,19 +344,18 @@ async function korAlphabetProcess(INPUT_CHAR){
 }
 
 function exceptionSymbolProcess(INPUT_CHAR) {
-    let actualCaretLength = 1;
-    EXCEPTION_SYMBOL_ORDER.forEach( element => {
-        if( element[0] == INPUT_CHAR ) {
-            INPUT_CHAR = element[1];
-            lastActualCaretPos[0] += element[2];
-            lastActualCaretPos[1] += element[2];
-        }
-    });
-    addCharToTargetField(INPUT_CHAR, 0, actualCaretLength);
+
+    const RESULT = exceptionSymbolEncryption(INPUT_CHAR, true);
+    INPUT_CHAR = RESULT[0]
+    const ACTUAL_CARET_LENGTH = RESULT[1];
+
+    addCharToTargetField(INPUT_CHAR, 0, ACTUAL_CARET_LENGTH);
+    divideOrDelete = false;
+    compoundOrAdd = false;
 }
 
 /* 목표 텍스트 필드에 인수로 받은 문자를 추가, addCaretPosition 을 설정할 경우 입력후의 캐랫 위치를 임의로 설정할 수 있다. */
-function addCharToTargetField(INPUT_CHAR, addCaretPosition = 0, actualCaretLength = 1){
+function addCharToTargetField(INPUT_CHAR, addCaretPosition = 0, actualCaretLength = 1) {
 
     /* 사용자가 직접 캐럿의 위치를 선택한 경우에만 필요하다. */
     /*
@@ -319,14 +365,13 @@ function addCharToTargetField(INPUT_CHAR, addCaretPosition = 0, actualCaretLengt
     const FIELD_VALUE = editableField.innerHTML;
     const HEAD_WORDS = FIELD_VALUE.substr(0, lastActualCaretPos[0]);
     const TAIL_WORDS = FIELD_VALUE.substr(lastActualCaretPos[1]);
-    const SCROLL_TO = (HEAD_WORDS + INPUT_CHAR).inPixels(300);
 
     /* 캐랫이 있던 위치에 맞추어 입력시킬 문자를 끼워 출력시킨다. */
     editableField.innerHTML = HEAD_WORDS + INPUT_CHAR + TAIL_WORDS;
     setCaretPosition(lastCaretPos[0]+1+addCaretPosition, lastCaretPos[0]+1+addCaretPosition);
     lastActualCaretPos[0] += actualCaretLength;
     lastActualCaretPos[1] += actualCaretLength;
-    editableField.scrollLeft = SCROLL_TO;
+    scrollCenter();
 }
 
 /* 캐랫 위치를 반환한다 배열 0번은 시작 포지션, 배열 1번은 종료 포지션 */
@@ -355,6 +400,7 @@ function setCaretPosition(start, end) {
         selection.removeAllRanges();
         selection.addRange(NEW_RANGE);
         lastCaretPos = [start, end];
+        // 계산작업 전 까지 임시코드
     }
 }
 
@@ -366,16 +412,19 @@ function focusWithCaret() {
 
 String.prototype.inPixels = function (fieldWidth){
 
+    /* 가상 DOM을 만들어서 길이를 재어 스크롤링에 이용한다. */
     const span = document.createElement("span");
     span.innerHTML = this.valueOf();
     Object.assign(span.style, {
         position: 'absolute',
         visibility: 'hidden',
-        fontSize: '30px'
+        fontSize: editableField.style.fontSize,
+        whiteSpace: 'nowrap'
     });
     document.querySelector('html').prepend(span);
-    let resultPixel = Math.max(span.getBoundingClientRect().width)-fieldWidth/2;
+    let resultPixel = span.offsetWidth - fieldWidth / 2;
     resultPixel = resultPixel < 0 ? 0 : resultPixel;
+    span.remove();
 
     return resultPixel;
 }
@@ -416,6 +465,7 @@ function removeCharFromTargetField (role = "DELETE") {
 
     /* 한글조합을 분해하며 지우게 될 경우 분해 대상이 될 문자 */
     const TARGET_CHAR = FIELD_VALUE.substr(lastActualCaretPos[0] - 1, 1);
+
     /* 위 분해 대상이 될 문자의 유니코드 */
     const TARGET_CHAR_CODE = TARGET_CHAR.charCodeAt(0);
 
@@ -433,10 +483,7 @@ function removeCharFromTargetField (role = "DELETE") {
         * */
         case "INPUT" :
 
-            if(TARGET_CHAR == ";" & IS_SINGLE_CARET) {
-                lastActualCaretPos[0] -= exceptionSymbolLength(
-                    FIELD_VALUE.substr(lastActualCaretPos[0], -6));
-            }else if(IS_SINGLE_CARET) {
+            if(IS_SINGLE_CARET) {
                 targetFieldCaretSetPosition = --lastCaretPos[0];
                 lastActualCaretPos[0]--;
             }
@@ -446,7 +493,7 @@ function removeCharFromTargetField (role = "DELETE") {
         case "DELETE":
 
             /* 캐랫이 단일위치에서 깜빡이고, 조합된 한글이며, 직전까지 한글이 입력중이던 상태여서 한글조합의 분리가 필요한 상황임을 감지 */
-            if (IS_SINGLE_CARET && editableField.innerHTML) {
+            if (IS_SINGLE_CARET && editableField.innerHTML && lastActualCaretPos[0] > 0) {
                 if (TARGET_CHAR_CODE > 44031 && TARGET_CHAR_CODE < 55204 && divideOrDelete) {
                     /* 분해 대상이 될 문자의 유니코드의 초성, 중성, 종성의 IDX를 구한다. */
                     const TARGET_CHAR_SEQUENCE = TARGET_CHAR_CODE - 44032;
@@ -489,27 +536,30 @@ function removeCharFromTargetField (role = "DELETE") {
                             break;
                     }
                     stepBackLastActualCaretPos = 1;
-                }else if(IS_SINGLE_CARET && FIELD_VALUE.substr(lastActualCaretPos[0] - 1, 1) == ";"){
+                }else if(IS_SINGLE_CARET && FIELD_VALUE.substr(lastActualCaretPos[0] - 1, 1) == ";") {
                     targetFieldCaretSetPosition = --lastCaretPos[0];
+                    const START_ACTUAL_CARET_POS = lastActualCaretPos[0] > 5 ? lastActualCaretPos[0]-6 : 0;
                     lastActualCaretPos[0] -=
-                        exceptionSymbolLength(FIELD_VALUE.substr(lastActualCaretPos[0]-6, 6))+1;
+                        exceptionSymbolLength(FIELD_VALUE.substr(START_ACTUAL_CARET_POS, 6));
                 }else{
+
                     /* 한 글자를 완전히 지우기 위해서는 자를 위치를 한칸 당기고, 캐랫의 포지션은 한칸 더 앞으로 이동해야 한다. */
                     targetFieldCaretSetPosition = --lastCaretPos[0];
                     lastActualCaretPos[0]--;
 
                     /* 지울 대상이 쌍자음일 경우, 단자음으로 바꾸어 준다. */
-                    if(INITIAL_CONSONANT_DOUBLE.includes(TARGET_CHAR)){
+                    if(INITIAL_CONSONANT_DOUBLE.includes(TARGET_CHAR) && divideOrDelete){
                         divideResultChar = String.fromCharCode(TARGET_CHAR_CODE-1);
+
                         targetFieldCaretSetPosition++;
-                        lastActualCaretPos[0]++;
+                        stepBackLastActualCaretPos = 1;
                     }else{
                         /* 한글이 아니거나 한글 낱자를 지웠으므로 이 다음 삭제 대상은 마지막 입력하던 글자가 아니다. 그러므로..... */
                         divideOrDelete = false;
                         compoundOrAdd = false;
                     }
                 }
-            }else if(IS_SINGLE_CARET) {
+            }else if(IS_SINGLE_CARET && lastActualCaretPos[0] > 0) {
                 targetFieldCaretSetPosition--;
                 lastActualCaretPos[0]--;
             }
@@ -525,7 +575,18 @@ function removeCharFromTargetField (role = "DELETE") {
     setCaretPosition(targetFieldCaretSetPosition, targetFieldCaretSetPosition);
     lastActualCaretPos[0] += stepBackLastActualCaretPos;
     lastActualCaretPos[1] = lastActualCaretPos[0];
+    scrollCenter();
+    focusWithCaret();
+}
+
+/* 입력 필드 전체 삭제 */
+function clearInputField() {
+    editableField.innerHTML = "";
+    lastCaretPos = [0, 0];
+    lastActualCaretPos = [0, 0];
     editableField.focus();
+    divideOrDelete = false;
+    compoundOrAdd = false;
 }
 
 /* 삭제작업이나 ...에서 심벌 표현 문자열의 길이를 추정하여 반환  */
@@ -546,12 +607,12 @@ function moveCaretPosition (direction) {
 
     const IS_SINGLE_CARET = lastCaretPos[0] === lastCaretPos[1];
     const FIELD_VALUE = editableField.innerHTML;
+    const FIELD_LENGTH = FIELD_VALUE.length;
 
     /* 입력 필드 시작과 종료 포지션이 같다면 일반적인 방향키의 움직임을 구현 */
     if(IS_SINGLE_CARET) {
         let examChar;
-        const FIELD_LENGTH = FIELD_VALUE.length;
-        switch (direction){
+        switch (direction) {
             case "right" :
                 if (lastActualCaretPos[0] < FIELD_LENGTH) {
                     lastCaretPos[0]++;
@@ -562,10 +623,11 @@ function moveCaretPosition (direction) {
                     examChar = FIELD_VALUE.substr(lastActualCaretPos[0]-1, 1);
                     if(examChar == "&") {
                         lastActualCaretPos[0] += exceptionSymbolLength(
-                            FIELD_VALUE.substr(lastActualCaretPos[0]-1, 6));
+                            FIELD_VALUE.substr(lastActualCaretPos[0]-1, 6))-1;
                         lastActualCaretPos[1] = lastActualCaretPos[0];
                     }
                 }
+
                 break;
             case "left" :
                 if (lastActualCaretPos[0] > 0) {
@@ -576,8 +638,9 @@ function moveCaretPosition (direction) {
 
                     examChar = FIELD_VALUE.substr(lastActualCaretPos[0], 1);
                     if(examChar == ";") {
+                        const START_ACTUAL_CARET_POS = lastActualCaretPos[0] > 4 ? lastActualCaretPos[0]-5 : 0;
                         lastActualCaretPos[0] -= exceptionSymbolLength(
-                            FIELD_VALUE.substr(lastActualCaretPos[0]-5, 6))
+                            FIELD_VALUE.substr(START_ACTUAL_CARET_POS, 6))-1;
                         lastActualCaretPos[1] = lastActualCaretPos[0];
                     }
                 }
@@ -586,12 +649,16 @@ function moveCaretPosition (direction) {
     }else{ // 캐랫의 시작과 종료 위치가 다르면 선택된 구간이 있다는 뜻 이므로 최종 캐랫의 포지션은 상대적이다.
         switch (direction){ // 범위내의 특수문자들의 길이까지 고려해주는 기능과 적용이 필요함.
             case "right" :
-                lastCaretPos[0] = lastCaretPos[1];
-                lastActualCaretPos[0] = lastActualCaretPos[1];
+                if(lastActualCaretPos[0] < FIELD_LENGTH) {
+                    lastCaretPos[0] = lastCaretPos[1];
+                    lastActualCaretPos[0] = lastActualCaretPos[1];
+                }
                 break;
             case "left" :
-                lastCaretPos[1] = lastCaretPos[0];
-                lastActualCaretPos[1] = lastActualCaretPos[0];
+                if (lastActualCaretPos[0] > FIELD_LENGTH) {
+                    lastCaretPos[1] = lastCaretPos[0];
+                    lastActualCaretPos[1] = lastActualCaretPos[0];
+                }
                 break;
         }
     }
@@ -599,29 +666,63 @@ function moveCaretPosition (direction) {
     wasLastInputSsangsiot = false;
     divideOrDelete = false;
     compoundOrAdd = false;
+
+    scrollCenter();
     focusWithCaret();
 }
 
-function changeKeyboard(type){
-    const FLIP = document.getElementsByClassName("flip");
-    switch (type) {
-        case 1 :
-            for (const element of FLIP) {
-                element.style.visibility = "hidden";
-            }
-            document.getElementById("kor").style.visibility = "visible";
-            break;
-        case 2 :
-            for (const element of FLIP) {
-                element.style.visibility = "hidden";
-            }
-            document.getElementById("upperCase").style.visibility = "visible";
-            break;
-        case 3 :
-            for (const element of FLIP) {
-                element.style.visibility = "hidden";
-            }
-            document.getElementById("lowerCase").style.visibility = "visible";
-            break;
+function changeKeyboard(typeNo){
+    for (let i=0; i<5; i++) {
+        keyboardList[i].style.visibility = "hidden";
     }
+    keyboardList[typeNo].style.visibility = "visible";
+}
+
+function changeBoilerplate(typeNo) {
+    for (let i=0; i<4; i++) {
+        boilerList[i].style.visibility = "hidden";
+    }
+    boilerList[typeNo].style.visibility = "visible";
+}
+
+function cancelEdit() {
+    document.getElementById("virtualKeyboard").style.visibility = "hidden";
+    for (let i=0; i<4; i++) {
+        boilerList[i].style.visibility = "hidden";
+        keyboardList[i].style.visibility = "hidden";
+    }
+    keyboardList[4].style.visibility = "hidden";
+    clearInputField();
+}
+
+function completeEdit() {
+    targetField.value = exceptionSymbolEncryption(editableField.innerHTML, false)[0];
+    document.getElementById("virtualKeyboard").style.visibility = "hidden";
+    for (let i=0; i<4; i++) {
+        boilerList[i].style.visibility = "hidden";
+        keyboardList[i].style.visibility = "hidden";
+    }
+    keyboardList[4].style.visibility = "hidden";
+    clearInputField();
+}
+
+/* 입력필드 전체를 encryptOrDecrypt 예외문자 html에 맞게 변환 true, 다시 일반적인 텍스트의 문자로 변환 false */
+function exceptionSymbolEncryption(targetText, encryptOrDecrypt) {
+
+    let index = encryptOrDecrypt ? [0 , 1] : [1, 0];
+    let length = 0;
+
+    /* 입력필드의 html 문법과 예외문자 사이를 변환 */
+    EXCEPTION_SYMBOL_ORDER.forEach( element => {
+        if (targetText.includes(element[index[0]])) {
+            targetText = targetText.replaceAll(element[index[0]], element[index[1]]);
+            length += element[2];
+        }
+    });
+
+    return [targetText, length];
+}
+
+function scrollCenter () {
+    editableField.scrollLeft = editableField.innerHTML.substr(0, lastActualCaretPos[0]).inPixels(inputFieldWidth);
 }
