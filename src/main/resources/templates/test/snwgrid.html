@@ -85,10 +85,10 @@
                     ajaxErrorMsg(req);
                 },
                 success: function (req) {
-                    console.log("사용자 리스트 : "+req.sendData.accountListData);
+                    console.log("그리드 리스트 : "+req.sendData.gridListData);
 
                     // 서버 사이드에서 매핑한 데이터
-                    myData = req.sendData.accountListData;
+                    myData = req.sendData.gridListData;
                     AUIGrid.setGridData(myGridID, myData);
                 }
             });
