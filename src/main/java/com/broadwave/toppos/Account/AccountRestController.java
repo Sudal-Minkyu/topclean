@@ -100,6 +100,7 @@ public class AccountRestController {
 
         }
 
+        log.info("사용자리스트 : "+accountListData);
         data.put("accountListData",accountListData);
 
 
