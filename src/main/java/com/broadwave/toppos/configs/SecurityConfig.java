@@ -68,6 +68,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/head/**").hasAnyAuthority("ROLE_HEAD","ROLE_CALCULATE","ROLE_ADMIN")
                 .anyRequest().authenticated()   // 나머지 API 는 전부 인증 필요
 
+                // 로그아웃기능 만들어야함
 //                .and()
 //                .formLogin().loginPage("/login").failureUrl("/login?error").permitAll()
 //                .defaultSuccessUrl("/admin/index")

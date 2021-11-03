@@ -21,4 +21,10 @@ public class TestController {
         return "/test/gridtest";
     }
 
+    // 낙원님테스트페이지
+    @RequestMapping("snwgrid")
+    public String snwgrid(){
+        return "test/snwgrid";
+    }
+
 }

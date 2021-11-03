@@ -22,19 +22,19 @@ $(function() {
     //     continueSaveCheck()
     // });
     //
-    $(document).on("click","#checkYesBtn",function(){
-        startYesorNo(true)
-    });
-    $(document).on("click","#checkNoBtn",function(){
-        startYesorNo(false)
-    });
-
-    $(document).on("click","#checkDelSuccessBtn",function(){
-        startDel($("#delId").val(),true)
-    });
-    $(document).on("click","#checkDelCancelBtn",function(){
-        startDel($("#delId").val(),false)
-    });
+    // $(document).on("click","#checkYesBtn",function(){
+    //     startYesorNo(true)
+    // });
+    // $(document).on("click","#checkNoBtn",function(){
+    //     startYesorNo(false)
+    // });
+    //
+    // $(document).on("click","#checkDelSuccessBtn",function(){
+    //     startDel($("#delId").val(),true)
+    // });
+    // $(document).on("click","#checkDelCancelBtn",function(){
+    //     startDel($("#delId").val(),false)
+    // });
 
     // $('#success').on('click', function() {
     //     //console.log("성공버튼 실행");
@@ -61,19 +61,16 @@ $(function() {
 
 //Ajax 호출시 에러가났을경우의 메세지 함수
 function ajaxErrorMsg(req) {
-    if (req.status === 403) {
-        console.log("status : " + req.status);
+    if(req.status ===403){
         console.log("접근권한이 없습니다.");
-        location.href = "/error/403"
-    } else if (req.status === 404) {
-        console.log("status : " + req.status);
+        location.href="/error/403"
+    }else if(req.status ===404){
         console.log("존재하지 않은 페이지");
-        location.href = "/error/404"
-    } else {
-        console.log("status : " + req.status);
+        location.href="/error/404"
+    }else{
         $('.l-popup').removeClass('open');
-        console.log("아이디와 비밀번호를 확인해주세요.");
-        alertCaution("아이디와 비밀번호를 확인해주세요.<BR>다시 로그인해주세요.", 2);
+        console.log("토큰이 만료됨. 재로그인시도 바람.");
+        alertCaution("토큰이 만료되었습니다.<BR>다시 로그인해주세요.", 2);
     }
 }
 
