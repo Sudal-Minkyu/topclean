@@ -19,16 +19,20 @@
         let myData;
 
         const columnLayout = [{
-            dataField : "userid",
-            headerText : "유저아이디",
+            dataField : "testName",
+            headerText : "이름",
+        }, {
+            dataField: "testOld",
+            headerText: "나이",
             editable : true,
         }, {
-            dataField: "username",
-            headerText: "이름",
+            dataField: "testGender",
+            headerText: "성별",
             editable : true,
-        }, {
-            dataField : "role",
-            headerText : "권한",
+        },{
+            dataField: "testMoney",
+            headerText: "요금",
+            editable : true,
         }];
 
         $(function() {
@@ -68,13 +72,13 @@
                 groupingMessage: "여기에 칼럼을 드래그하면 그룹핑이 됩니다."
             };
             // 실제로 #grid_wrap 에 그리드 생성
-            myGridID = AUIGrid.create("#account_list", columnLayout, gridPros);
+            myGridID = AUIGrid.create("#girdtest_list", columnLayout, gridPros);
         }
 
         function account_list(){
             $(document).ajaxSend(function(e, xhr) { xhr.setRequestHeader("Authorization",localStorage.getItem('Authorization')); });
             $.ajax({
-                url: "/api/account/list",
+                url: "/api/test/list",
                 type: 'GET',
                 cache: false,
                 error: function (req) {
@@ -176,7 +180,7 @@
     </div>
     <div>
         <!-- 사용자리스트. -->
-        <div id="account_list"></div>
+        <div id="girdtest_list"></div>
     </div>
     <div class="desc">
         <input type="button" value="조회" onclick="account_list()">
