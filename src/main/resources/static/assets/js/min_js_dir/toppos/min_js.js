@@ -1,3 +1,8 @@
+function logout(){
+    localStorage.setItem("Authorization",null);
+    location.href ="/login";
+}
+
 // function logreg(num,menuName1,menuName2,data) {
 //     JWT_Get();
 //

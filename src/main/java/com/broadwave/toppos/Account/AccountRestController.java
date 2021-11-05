@@ -1,11 +1,14 @@
 package com.broadwave.toppos.Account;
 
+import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.common.AjaxResponse;
+import com.broadwave.toppos.common.CommonUtils;
 import com.broadwave.toppos.common.ResponseErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,25 +22,33 @@ import java.util.*;
  */
 @Slf4j
 @RestController
-@RequestMapping("/api/account")
+@RequestMapping("/api/account") //  ( 권한 : 어드민, 본사일반 )
 public class AccountRestController {
 
     private final AccountService accountService;
     private final ModelMapper modelMapper;
+    TokenProvider tokenProvider;
 
     @Autowired
-    public AccountRestController(ModelMapper modelMapper, AccountService accountService) {
+    public AccountRestController(TokenProvider tokenProvider, ModelMapper modelMapper, AccountService accountService) {
         this.modelMapper = modelMapper;
         this.accountService = accountService;
+        this.tokenProvider = tokenProvider;
     }
 
-    // AccountSave API
+    // 사용자등록 API
     @PostMapping("save")
     public ResponseEntity<Map<String,Object>> accountSave(@ModelAttribute AccountMapperDto accountMapperDto, HttpServletRequest request){
 
         AjaxResponse res = new AjaxResponse();
 
         Account account = modelMapper.map(accountMapperDto, Account.class);
+
+        String login_id = CommonUtils.getCurrentuser(request);
+        log.info("아이디 : "+login_id);
+        Authentication authentication = tokenProvider.getAuthentication(request.getHeader("Authorization"));
+        String role = authentication.getAuthorities().toString();
+        log.info("권한 : "+role);
 
         String currentuserid = request.getHeader("insert_id");
         log.info("currentuserid : "+currentuserid);

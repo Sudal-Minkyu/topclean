@@ -6,18 +6,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
  * @author Minkyu
- * Date : 2021-10-26
+ * Date : 2021-11-05
  * Time :
- * Remark : Toppos 지사장 또는 지사일반 컨트롤러
+ * Remark : Toppos 지사 컨트롤러
  */
 @Slf4j
 @Controller
 @RequestMapping("/manager")
 public class ManagerController {
 
-    // 지사장&지사일반 메인페이지
+    // 지사 & 지사장
     @RequestMapping("")
-    public String manager_index(){
+    public String head_index(){
         return "/index/managerindex";
     }
 
