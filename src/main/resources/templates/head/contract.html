@@ -24,5 +24,172 @@
 <div layout:fragment="content" class="content padding-zero content--main">
 	<h1>계약관리 페이지</h1>
 
+	<!-- 지사계약관리-->
+	<!--좌측-->
+	<div>
+		<div>
+			계약 지사 리스트
+		</div>
+		<div id="grid_contract_one">
+		</div>
+	</div>
+
+	<!--우측-->
+	<div>
+		<div>
+			지사 계약 정보
+		</div>
+		<div>
+			<div>
+				지사코드
+				<input type="text" readonly>
+				<input type="button" value="중복확인">
+				지사명
+				<input type="text">
+			</div>
+			<div>
+				계약일자
+				<input type="text">
+				계약기간
+				<input type="text">
+				~
+				<input type="text">
+			</div>
+			<div>
+				계약상태
+				<select>
+					<option>계약완료/진행중</option>
+				</select>
+				정산비율
+				본사 : <input type="text">%
+				지사 : <input type="text">%
+				가맹 : <input type="text">%
+				특이사항
+				<textarea></textarea>
+				<input type="button" value="신규">
+				<input type="button" value="저장">
+				<input type="button" value="삭제">
+			</div>
+		</div>
+	</div>
+
+
+	<!--가맹점계약관리-->
+	<!--좌측-->
+	<div>
+		<div>
+			가맹점 리스트
+		</div>
+		<div>
+			가맹점명
+			<input type="text">
+			<input type="button" value="검색">
+		</div>
+		<div id="grid_contract_two">
+		</div>
+	</div>
+
+	<!--우측-->
+	<div>
+		<div>
+			가맹점 계약 정보
+		</div>
+		<div>
+			<div>
+				가맹점코드
+				<input type="text" readonly>
+				<input type="button" value="중복확인">
+				가맹점명
+				<input type="text">
+			</div>
+			<div>
+				계약일자
+				<input type="text">
+				계약기간
+				<input type="text">
+				~
+				<input type="text">
+			</div>
+			<div>
+				계약상태
+				<select>
+					<option>계약완료/계약진행중</option>
+				</select>
+				특이사항
+				<textarea></textarea>
+				<input type="button" value="신규">
+				<input type="button" value="저장">
+				<input type="button" value="삭제">
+			</div>
+		</div>
+	</div>
+
+
+	<!--가맹점 지사 배정관리-->
+	<!--좌측-->
+	<div>
+		<div>
+			배정상태
+			<select>
+				<option value="배정완료"></option>
+			</select>
+			가맹점명
+			<input type="text">
+			<input type="button" value="검색">
+		</div>
+		<div>
+			계약 지사 리스트
+		</div>
+		<div id="grid_contract_three">
+		</div>
+		<div>
+			계약 가맹점 리스트
+		</div>
+		<div id="grid_contract_four">
+		</div>
+	</div>
+
+	<!--우측-->
+	<div>
+		<div>
+			지사 계약 정보
+		</div>
+		<div>
+			<div>
+				가맹점코드
+				<input type="text" readonly>
+				가맹점명
+				<input type="text">
+			</div>
+			<div>
+				계약일자
+				<input type="text">
+				계약기간
+				<input type="text">
+				~
+				<input type="text">
+			</div>
+			<div>
+				계약상태
+				<select>
+					<option>계약완료/계약진행중</option>
+				</select>
+				지사
+				<input type="text" readonly>
+				<input type="text">
+				<input type="button" value="지사변경">
+				배정상태
+				<select>
+					<option>배정완료/미배정</option>
+				</select>
+				정산비율
+				본사 : <input type="text">%
+				지사 : <input type="text">%
+				가맹 : <input type="text">%
+				<input type="button" value="저장">
+			</div>
+		</div>
+	</div>
+
 </div>
 </html>
