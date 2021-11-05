@@ -18,9 +18,44 @@
         let myGridID;
         let myData;
 
-        const columnLayout = [{
+        var posList = [
+            "이등병", "일병"
+        ];
+
+        var conditionalRenderer = {
+            type : "DropDownListRenderer",
+            list : posList,
+        };
+
+        var columnLayout = [{
             dataField : "testName",
             headerText : "이름",
+            labelFunction : function(rowIndex, columnIndex, value, headerText, item) {
+                if(item.testOld < 19) {
+                    item.isAmeriki = true;
+                }else{
+                    item.isAmeriki = false;
+                }
+                return "(" + item.testOld + ") "+ value;
+            }
+        }, {
+           dataField: "isAmeriki",
+            headerText: "국적+이름시험",
+            labelFunction : function(rowIndex, columnIndex, value, headerText, item) {
+               const job = item.isAmeriki ? "- 아메리끼" : "- 혁명전사";
+                return item.testName+" "+job;
+            },
+            renderer: {
+                type : "IconRenderer",
+                iconPosition: "left",
+                iconWidth: 16,
+                iconHeight: 16,
+                iconTableRef: {
+                    true : "../assets/nak_img_grid/usa.png",
+                    false : "../assets/nak_img_grid/dprk.png"
+                }
+            }
+
         }, {
             dataField: "testOld",
             headerText: "나이",
@@ -30,10 +65,29 @@
             headerText: "성별",
             editable : true,
             cellMerge: true,
-        },{
+        }, {
             dataField: "testMoney",
             headerText: "요금",
             editable : true,
+        }, {
+            dataField: "data",
+            headerText: "Data",
+            editRenderer : { // 조건에 따라 editRenderer 사용하기.
+                type : "ConditionRenderer",
+                conditionFunction : function(rowIndex, columnIndex, value, item, dataField) {
+                    return conditionalRenderer;
+                }
+            }
+        }, {
+            renderer: {
+                type : "IconRenderer",
+                iconPosition: "left",
+                iconWidth: 16,
+                iconHeight: 16,
+                iconTableRef: {
+                    "default" : "../assets/nak_img_grid/usa.png"
+                }
+            }
         }];
 
         $(function() {
@@ -64,9 +118,6 @@
                 // 그룹핑 패널 사용
                 useGroupingPanel: true,
 
-                // 상태 칼럼 사용
-                showStateColumn: true,
-
                 // 그룹핑 또는 트리로 만들었을 때 펼쳐지게 할지 여부 (기본값 : false)
                 displayTreeOpen: true,
 
@@ -89,7 +140,6 @@
                     ajaxErrorMsg(req);
                 },
                 success: function (req) {
-                    console.log("그리드 리스트 : "+req.sendData.gridListData);
 
                     // 서버 사이드에서 매핑한 데이터
                     myData = req.sendData.gridListData;
@@ -100,8 +150,6 @@
 
         // 유니폼 테스트
         function JSONType() {
-
-            console.log("문서출력 테스트 데이터 : "+myData);
 
             //프로젝트 명
             const projectName = "sample";
@@ -128,8 +176,6 @@
             const _params = {"projectName":projectName 			//프로젝트명
                 ,"formName":formName 	          //서식명
             };
-
-            console.log("datasetList : "+datasetList);
 
             for (const datasetValue in datasetList) {
                 _params[datasetValue] = encodeURIComponent(datasetList[datasetValue]);
