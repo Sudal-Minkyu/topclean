@@ -14,6 +14,32 @@
 
 	<script type="text/javascript">
 
+		$(function (){
+			$("#brContractDt").datepicker({
+				dateFormat: 'yy-mm-dd',
+			});
+			$("#brContractFormDt").datepicker({
+				dateFormat: 'yy-mm-dd',
+			});
+			$("#brContractToDt").datepicker({
+				dateFormat: 'yy-mm-dd',
+			});
+			$("#frContractDt").datepicker({
+				dateFormat: 'yy-mm-dd',
+				// minDate: 0 // 오늘날짜이전은 선택할수없게하는 옵션
+			});
+			$("#frContractFormDt").datepicker({
+				dateFormat: 'yy-mm-dd',
+			});
+			$("#frContractToDt").datepicker({
+				dateFormat: 'yy-mm-dd',
+			});
+
+
+			createGrid(columnLayout, gridOption);
+
+		});
+
 		let gridID = [];
 		let targetDiv = [];
 		let gridData = [];
@@ -99,11 +125,6 @@
 			},
 		];
 
-		$(function (){
-			createGrid(columnLayout, gridOption);
-		});
-
-
 		function createGrid(columnLayout, gridOption) {
 			for (const i in columnLayout) {
 				gridID[i] = AUIGrid.create(targetDiv[i], columnLayout[i], gridOption);
@@ -111,13 +132,14 @@
 
 			/* <=========================> */
 			/* 각 그리드의 url */
-			const gridUrl = [
-					"url1", "url2", "url3", "url4"
-			]
+			// const gridUrl = [
+			// 		"url1", "url2", "url3", "url4"
+			// ]
+			//
+			// for (let i=0; i<2; i++) {
+			// 	setData(gridUrl[i], i);
+			// }
 
-			for (let i=0; i<2; i++) {
-				setData(gridUrl[i], i);
-			}
 		}
 
 		function setData(url, numOfGrid) {
@@ -133,6 +155,95 @@
 				success: function (req) {
 					gridData[numOfGrid] = req.sendData.gridListData;
 					AUIGrid.setGridData(gridID[numOfGrid], gridData[numOfGrid]);
+				}
+			});
+		}
+
+		// 지사, 가맹점 코드 중복확인 체크함수
+		function codeOverlap(num){
+
+			let url;
+			$(document).ajaxSend(function(e, xhr) { xhr.setRequestHeader("Authorization",localStorage.getItem('Authorization')); });
+
+			let params;
+
+			if(num===1){
+				console.log("지사 코드 중복확인");
+				url = "/api/head/branohOverlap"
+				params = {
+					brCode: $("#brCode").val()
+				};
+			}else{
+				console.log("가맹점 코드 중복확인");
+				url = "/api/head/franohiseOverlap"
+				params = {
+					frCode: $("#frCode").val()
+				};
+			}
+			$.ajax({
+				url: url,
+				type: 'GET',
+				cache: false,
+				data: params,
+				error: function (req) {
+					ajaxErrorMsg(req);
+				},
+				success: function (req) {
+					if (req.status === 200) {
+						if(num===1){
+							$("#brCodeChecked").val("1");
+						}else{
+							$("#frCodeChecked").val("1");
+						}
+						console.log("중복환인 완료");
+						alertSuccess("사용할 수 있는  코드입니다.");
+					}else {
+						if (req.err_msg2 === null) {
+							alertCaution(req.err_msg, 1);
+						} else {
+							alertCaution(req.err_msg + "<br>" + req.err_msg2, 1);
+						}
+					}
+				}
+			});
+		}
+
+		// 가맹점 저장함수
+		function franohiseSave(){
+
+			const $frCodeChecked = $("#frCodeChecked").val();
+			if($frCodeChecked==="0"){
+				alertCaution("가맹점코드 중복확인을 해주세요.",1)
+				return false;
+			}
+			$(document).ajaxSend(function(e, xhr) { xhr.setRequestHeader("Authorization",localStorage.getItem('Authorization')); });
+
+			const formData = new FormData(document.getElementById('frFormData'));
+
+			let url = "/api/head/franohiseSave"
+
+			$.ajax({
+				url: url,
+				type: 'POST',
+				cache: false,
+				data: formData,
+				processData: false,
+				contentType: false,
+				enctype: 'multipart/form-data',
+				error: function (req) {
+					ajaxErrorMsg(req);
+				},
+				success: function (req) {
+					if (req.status === 200) {
+						console.log("저장 완료");
+						alertSuccess("가맹점 저장완료");
+					}else {
+						if (req.err_msg2 === null) {
+							alertCaution(req.err_msg, 1);
+						} else {
+							alertCaution(req.err_msg + "<br>" + req.err_msg2, 1);
+						}
+					}
 				}
 			});
 		}
@@ -161,30 +272,32 @@
 		<div>
 			<div>
 				지사코드
-				<input type="text" readonly>
-				<input type="button" value="중복확인">
+				<input type="text" name="brCode" id="brCode" maxlength="2" />
+				<input type="text" id="brCodeChecked" value="0">
+				<input type="button" onclick="codeOverlap(1)" value="중복확인">
 				지사명
-				<input type="text">
+				<input type="text" name="brName" id="brName" />
 			</div>
 			<div>
 				계약일자
-				<input type="text">
+				<input type="text" id="brContractDt" name="brContractDt" maxlength="10" placeholder="연 - 월 - 일">
 				계약기간
-				<input type="text">
+				<input type="text" id="brContractFormDt" name="brContractFormDt" maxlength="10" placeholder="연 - 월 - 일">
 				~
-				<input type="text">
+				<input type="text" id="brContractToDt" name="brContractToDt" maxlength="10" placeholder="연 - 월 - 일">
 			</div>
 			<div>
 				계약상태
-				<select>
-					<option>계약완료/진행중</option>
+				<select id="brContractState" name="brContractState">
+					<option value="01">진행중</option>
+					<option value="02">계약완료</option>
 				</select>
 				정산비율
-				본사 : <input type="text">%
-				지사 : <input type="text">%
-				가맹 : <input type="text">%
+				본사 : <input type="text" id="brCarculateRateHq" name="brCarculateRateHq" />%
+				지사 : <input type="text" id="brCarculateRateBr" name="brCarculateRateBr" />%
+				가맹 : <input type="text" id="brCarculateRateFr" name="brCarculateRateFr" />%
 				특이사항
-				<textarea></textarea>
+				<textarea  id="brRemark" name="brRemark"></textarea>
 				<input type="button" value="신규">
 				<input type="button" value="저장">
 				<input type="button" value="삭제">
@@ -214,32 +327,36 @@
 			가맹점 계약 정보
 		</div>
 		<div>
-			<div>
-				가맹점코드
-				<input type="text" readonly>
-				<input type="button" value="중복확인">
-				가맹점명
-				<input type="text">
-			</div>
-			<div>
-				계약일자
-				<input type="text">
-				계약기간
-				<input type="text">
-				~
-				<input type="text">
-			</div>
-			<div>
-				계약상태
-				<select>
-					<option>계약완료/계약진행중</option>
-				</select>
-				특이사항
-				<textarea></textarea>
-				<input type="button" value="신규">
-				<input type="button" value="저장">
-				<input type="button" value="삭제">
-			</div>
+			<form id="frFormData" enctype="multipart/form-data">
+				<div>
+					가맹점코드
+					<input type="text" id="frCode" name="frCode" maxlength="3" />
+					<input type="text" id="frCodeChecked" value="0">
+					<input type="button" onclick="codeOverlap(2)" value="중복확인">
+					가맹점명
+					<input type="text" id="frName" name="frName" />
+				</div>
+				<div>
+					계약일자
+					<input id="frContractDt" name="frContractDt" type="text" maxlength="10" placeholder="연 - 월 - 일">
+					계약기간
+					<input id="frContractFormDt" name="frContractFormDt" type="text" maxlength="10" placeholder="연 - 월 - 일">
+					~
+					<input id="frContractToDt" name="frContractToDt" type="text" maxlength="10" placeholder="연 - 월 - 일">
+				</div>
+				<div>
+					계약상태
+					<select id="frContractState" name="frContractState">
+						<option value="01">진행중</option>
+						<option value="02">계약완료</option>
+					</select>
+					특이사항
+					<textarea id="frRemark" name="frRemark"></textarea>
+					<input type="button" value="신규">
+					<input type="button" onclick="franohiseSave()" value="저장">
+					<input type="button" value="삭제">
+				</div>
+			</form>
 		</div>
 	</div>
 

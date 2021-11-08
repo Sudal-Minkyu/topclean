@@ -39,13 +39,22 @@ public class Account {
     @Column(name="user_role")
     private AccountRole role;
 
-//    @Builder
-//    public Account(String userid, String password, String username, AccountRole role) {
-//        this.userid = userid;
-//        this.password = password;
-//        this.username = username;
-//        this.role = role;
-//    }
+    @Column(name="user_tel")
+    private String usertel;
+
+    @Column(name="user_email")
+    private String useremail;
+
+//    @OneToOne(targetEntity = Company.class,fetch = FetchType.LAZY)
+    @Column(name="fr_code")
+    private String frCode;
+
+//    @OneToOne(targetEntity = Company.class,fetch = FetchType.LAZY)
+    @Column(name="br_code")
+    private String brCode;
+
+    @Column(name="user_remark")
+    private String userremark;
 
     @Column(name="modify_date")
     private LocalDateTime modifyDateTime;

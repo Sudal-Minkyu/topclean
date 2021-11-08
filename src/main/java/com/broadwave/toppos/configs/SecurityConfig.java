@@ -66,7 +66,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/account/**").hasAnyAuthority("ROLE_ADMIN","ROLE_HEAD")
                 .antMatchers("/api/user/**").hasAnyAuthority("ROLE_USER","ROLE_ADMIN")
                 .antMatchers("/api/manager/**").hasAnyAuthority("ROLE_MANAGER","ROLE_NORMAL","ROLE_ADMIN")
-                .antMatchers("/api/head/**").hasAnyAuthority("ROLE_HEAD","ROLE_CALCULATE","ROLE_ADMIN")
+                .antMatchers("/api/head/**").hasAnyAuthority("ROLE_HEAD","ROLE_ADMIN") // "ROLE_CALCULATE" 회계관리는 일단 제외 -> 후추 회계관리가 사용되는 API에 직접연결하기
                 .anyRequest().authenticated()   // 나머지 API 는 전부 인증 필요
 
                 // 로그아웃기능 만들어야함
