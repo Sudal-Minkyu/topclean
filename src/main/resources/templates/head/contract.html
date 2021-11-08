@@ -132,7 +132,7 @@
 				},
 				success: function (req) {
 					gridData[numOfGrid] = req.sendData.gridListData;
-					AUIGrid.setGridData(myGridID, gridData[numOfGrid]);
+					AUIGrid.setGridData(gridID[numOfGrid], gridData[numOfGrid]);
 				}
 			});
 		}
