@@ -14,9 +14,128 @@
 
 	<script type="text/javascript">
 
-		$(function() {
+		let gridID = [];
+		let targetDiv = [];
+		let gridData = [];
+		let columnLayout = [];
 
+		let gridOption = {
+			editable : false,
+			selectionMode : "multipleCells",
+			noDataMessage : "출력할 데이터가 없습니다."
+		};
+
+		targetDiv = [
+			"grid_contract_one", "grid_contract_two", "grid_contract_three", "grid_contract_four"
+		]
+
+		columnLayout[0] = [
+			{
+				dataField: "",
+				headerText: "순번",
+			}, {
+				dataField: "brName",
+				headerText: "지사명",
+			}, {
+				dataField: "brContractFromDt",
+				headerText: "계약시작일",
+			}, {
+				dataField: "brContractToDt",
+				headerText: "계약종료일",
+			},
+		];
+
+		columnLayout[1] = [
+			{
+				dataField: "",
+				headerText: "순번",
+			}, {
+				dataField: "frName",
+				headerText: "가맹점명",
+			}, {
+				dataField: "frContractFromDt",
+				headerText: "계약시작일",
+			}, {
+				dataField: "frContractToDt",
+				headerText: "계약종료일",
+			}, {
+				dataField: "",
+				headerText: "배정지사명",
+			},
+		];
+
+		columnLayout[2] = [
+			{
+				dataField: "",
+				headerText: "순번",
+			}, {
+				dataField: "brName",
+				headerText: "지사명",
+			}, {
+				dataField: "brContractFromDt",
+				headerText: "계약시작일",
+			}, {
+				dataField: "brContractToDt",
+				headerText: "계약종료일",
+			},
+		];
+
+		columnLayout[3] = [
+			{
+				dataField: "",
+				headerText: "순번",
+			}, {
+				dataField: "frName",
+				headerText: "가맹점명",
+			}, {
+				dataField: "frContractFromDt",
+				headerText: "계약시작일",
+			}, {
+				dataField: "frContractToDt",
+				headerText: "계약종료일",
+			}, {
+				dataField: "",
+				headerText: "배정지사명",
+			},
+		];
+
+		$(function (){
+			createGrid(columnLayout, gridOption);
 		});
+
+
+		function createGrid(columnLayout, gridOption) {
+			for (const i in columnLayout) {
+				gridID[i] = AUIGrid.create(targetDiv[i], columnLayout[i], gridOption);
+			}
+
+			/* <=========================> */
+			/* 각 그리드의 url */
+			const gridUrl = [
+					"url1", "url2", "url3", "url4"
+			]
+
+			for (let i=0; i<2; i++) {
+				setData(gridUrl[i], i);
+			}
+		}
+
+		function setData(url, numOfGrid) {
+			$(document).ajaxSend(function(e, xhr)
+				{ xhr.setRequestHeader("Authorization",localStorage.getItem('Authorization')); });
+			$.ajax({
+				url: url,
+				type: 'GET',
+				cache: false,
+				error: function (req) {
+					ajaxErrorMsg(req);
+				},
+				success: function (req) {
+					gridData[numOfGrid] = req.sendData.gridListData;
+					AUIGrid.setGridData(myGridID, gridData[numOfGrid]);
+				}
+			});
+		}
 
 	</script>
 </th:block>
