@@ -35,8 +35,8 @@ public class Branoh {
     @Column(name="br_contract_dt")
     private String brContractDt; // 계약일자
 
-    @Column(name="br_contract_form_dt")
-    private String brContractFormDt; // 계약기간 from
+    @Column(name="br_contract_from_dt")
+    private String brContractFromDt; // 계약기간 from
 
     @Column(name="br_contract_to_dt")
     private String brContractToDt; // 계약기간 to

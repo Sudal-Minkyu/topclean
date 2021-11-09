@@ -1,5 +1,6 @@
 package com.broadwave.toppos.Head.Franohise;
 
+import com.broadwave.toppos.Head.Branoh.Branoh;
 import lombok.*;
 
 import javax.persistence.*;
@@ -35,8 +36,8 @@ public class Franohise {
     @Column(name="fr_contract_dt")
     private String frContractDt; // 계약일자
 
-    @Column(name="fr_contract_form_dt")
-    private String frContractFormDt; // 계약기간 from
+    @Column(name="fr_contract_from_dt")
+    private String frContractFromDt; // 계약기간 from
 
     @Column(name="fr_contract_to_dt")
     private String frContractToDt; // 계약기간 to
@@ -47,8 +48,9 @@ public class Franohise {
     @Column(name="fr_remark")
     private String frRemark; // 특이사항
 
-    @Column(name="br_id")
-    private Long brId; // 배정된 지사 ID
+    @ManyToOne(targetEntity = Branoh.class,fetch = FetchType.LAZY)
+    @JoinColumn(name="br_id")
+    private Branoh brId; // 배정된 지사 ID
 
     @Column(name="br_code")
     private String BrCode; // 배정된 지사코드

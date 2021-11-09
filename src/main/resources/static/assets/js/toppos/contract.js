@@ -16,9 +16,6 @@ targetDiv = [
 
 columnLayout[0] = [
     {
-        dataField: "",
-        headerText: "순번",
-    }, {
         dataField: "brName",
         headerText: "지사명",
     }, {
@@ -32,9 +29,6 @@ columnLayout[0] = [
 
 columnLayout[1] = [
     {
-        dataField: "",
-        headerText: "순번",
-    }, {
         dataField: "frName",
         headerText: "가맹점명",
     }, {
@@ -44,16 +38,13 @@ columnLayout[1] = [
         dataField: "frContractToDt",
         headerText: "계약종료일",
     }, {
-        dataField: "",
+        dataField: "brName",
         headerText: "배정지사명",
     },
 ];
 
 columnLayout[2] = [
     {
-        dataField: "",
-        headerText: "순번",
-    }, {
         dataField: "brName",
         headerText: "지사명",
     }, {
@@ -67,9 +58,6 @@ columnLayout[2] = [
 
 columnLayout[3] = [
     {
-        dataField: "",
-        headerText: "순번",
-    }, {
         dataField: "frName",
         headerText: "가맹점명",
     }, {
@@ -79,7 +67,7 @@ columnLayout[3] = [
         dataField: "frContractToDt",
         headerText: "계약종료일",
     }, {
-        dataField: "",
+        dataField: "brName",
         headerText: "배정지사명",
     },
 ];
@@ -91,18 +79,17 @@ function createGrid(columnLayout, gridOption) {
 
     /* <=========================> */
     /* 각 그리드의 url */
-    // const gridUrl = [
-    // 		"url1", "url2", "url3", "url4"
-    // ]
-    //
-    // for (let i=0; i<2; i++) {
-    // 	setData(gridUrl[i], i);
-    // }
+    const gridUrl = [
+        "/api/head/branohList", "/api/head/franohiseList", "/api/head/branohList", "/api/head/franohiseList",
+    ]
+
+    for (let i=0; i<4; i++) {
+    	setListData(gridUrl[i], i);
+    }
 }
 
-function setData(url, numOfGrid) {
-    $(document).ajaxSend(function(e, xhr)
-    { xhr.setRequestHeader("Authorization",localStorage.getItem('Authorization')); });
+function setListData(url, numOfGrid) {
+    $(document).ajaxSend(function(e, xhr) { xhr.setRequestHeader("Authorization",localStorage.getItem('Authorization')); });
     $.ajax({
         url: url,
         type: 'GET',
@@ -169,6 +156,46 @@ function codeOverlap(num){
     });
 }
 
+// 지사 저장함수
+function branohSave(){
+
+    const $brCodeChecked = $("#brCodeChecked").val();
+    if($brCodeChecked==="0"){
+        alertCaution("지사코드 중복확인을 해주세요.",1);
+        return false;
+    }
+    $(document).ajaxSend(function(e, xhr) { xhr.setRequestHeader("Authorization",localStorage.getItem('Authorization')); });
+
+    const formData = new FormData(document.getElementById('brFormData'));
+
+    let url = "/api/head/branohSave";
+
+    $.ajax({
+        url: url,
+        type: 'POST',
+        cache: false,
+        data: formData,
+        processData: false,
+        contentType: false,
+        enctype: 'multipart/form-data',
+        error: function (req) {
+            ajaxErrorMsg(req);
+        },
+        success: function (req) {
+            if (req.status === 200) {
+                console.log("저장 완료");
+                alertSuccess("지사 저장완료");
+            }else {
+                if (req.err_msg2 === null) {
+                    alertCaution(req.err_msg, 1);
+                } else {
+                    alertCaution(req.err_msg + "<br>" + req.err_msg2, 1);
+                }
+            }
+        }
+    });
+}
+
 // 가맹점 저장함수
 function franohiseSave(){
 
@@ -208,6 +235,7 @@ function franohiseSave(){
         }
     });
 }
+
 
 function fromToValidation(){
 

@@ -2,7 +2,7 @@
 <html lang="ko"
 	  xmlns:th="http://www.thymeleaf.org"
 	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	  layout:decorate ="~{layout/default}">
+	  layout:decorate="~{layout/default}" xmlns="http://www.w3.org/1999/html">
 
 <!-- 사용자 CSS 추가 -->
 <th:block layout:fragment="css">
@@ -60,39 +60,41 @@
 			지사 계약 정보
 		</div>
 		<div>
-			<div>
-				지사코드
-				<input type="text" name="brCode" id="brCode" maxlength="2" />
-				<input type="hidden" id="brCodeChecked" value="0">
-				<button onclick="codeOverlap(1)">중복확인</button>
-				지사명
-				<input type="text" name="brName" id="brName" />
-			</div>
-			<div>
-				계약일자
-				<input type="text" id="brContractDt" name="brContractDt" maxlength="10" placeholder="연 - 월 - 일">
-				계약기간
-				<input type="text" id="brContractFromDt" name="brContractFromDt" maxlength="10" placeholder="연 - 월 - 일">
-				~
-				<input type="text" id="brContractToDt" name="brContractToDt" maxlength="10" placeholder="연 - 월 - 일">
-			</div>
-			<div>
-				계약상태
-				<select id="brContractState" name="brContractState">
-					<option value="01">진행중</option>
-					<option value="02">계약완료</option>
-				</select>
-				정산비율
-				본사 : <input type="text" id="brCarculateRateHq" name="brCarculateRateHq" />%
-				지사 : <input type="text" id="brCarculateRateBr" name="brCarculateRateBr" />%
-				가맹 : <input type="text" id="brCarculateRateFr" name="brCarculateRateFr" />%
-				특이사항
-				<textarea  id="brRemark" name="brRemark"></textarea>
-				<button>신규</button>
-				<button>저장</button>
-				<button>삭제</button>
-				<button onclick="fromToValidation(0)">테스트용</button>
-			</div>
+			<form id="brFormData" enctype="multipart/form-data">
+				<div>
+					지사코드
+					<input type="text" name="brCode" id="brCode" maxlength="2" />
+					<input type="hidden" id="brCodeChecked" value="0">
+					<button onclick="codeOverlap(1)">중복확인</button>
+					지사명
+					<input type="text" name="brName" id="brName" />
+				</div>
+				<div>
+					계약일자
+					<input type="text" id="brContractDt" name="brContractDt" maxlength="10" placeholder="연 - 월 - 일">
+					계약기간
+					<input type="text" id="brContractFromDt" name="brContractFromDt" maxlength="10" placeholder="연 - 월 - 일">
+					~
+					<input type="text" id="brContractToDt" name="brContractToDt" maxlength="10" placeholder="연 - 월 - 일">
+				</div>
+				<div>
+					계약상태
+					<select id="brContractState" name="brContractState">
+						<option value="01">진행중</option>
+						<option value="02">계약완료</option>
+					</select>
+					정산비율
+					본사 : <input type="text" id="brCarculateRateHq" name="brCarculateRateHq" />%
+					지사 : <input type="text" id="brCarculateRateBr" name="brCarculateRateBr" />%
+					가맹 : <input type="text" id="brCarculateRateFr" name="brCarculateRateFr" />%
+					특이사항
+					<textarea  id="brRemark" name="brRemark"></textarea>
+					<button>신규</button>
+					<button onclick="branohSave()">저장</button>
+					<button>삭제</button>
+					<button onclick="fromToValidation(0)">테스트용</button>
+				</div>
+			</form>
 		</div>
 	</div>
 
