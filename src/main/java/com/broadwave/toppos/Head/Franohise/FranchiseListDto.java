@@ -16,7 +16,7 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class FranohiseListDto {
+public class FranchiseListDto {
 
     private String frCode; // 가맹점코드 3자리
     private String frName; // 가맹점명

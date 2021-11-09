@@ -15,8 +15,33 @@ import lombok.Setter;
 @AllArgsConstructor
 public class AccountListDto {
     private String userid;
-    private String username;
     private AccountRole role;
+    private String username;
+    private String usertel;
+    private String useremail;
+    private String frCode;
+    private String brCode;
+    private String userremark;
+
+    public String getUsertel() {
+        return usertel;
+    }
+
+    public String getUseremail() {
+        return useremail;
+    }
+
+    public String getFrCode() {
+        return frCode;
+    }
+
+    public String getBrCode() {
+        return brCode;
+    }
+
+    public String getUserremark() {
+        return userremark;
+    }
 
     public String getUserid() {
         return userid;

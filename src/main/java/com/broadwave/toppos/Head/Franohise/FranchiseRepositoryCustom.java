@@ -8,6 +8,6 @@ import java.util.List;
  * Time :
  * Remark :
  */
-public interface FranohiseRepositoryCustom {
-    List<FranohiseListDto> findByFranohiseList(String brAssignState, String frName);
+public interface FranchiseRepositoryCustom {
+    List<FranchiseListDto> findByFranchiseList(String brAssignState, String frName);
 }

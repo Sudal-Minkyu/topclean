@@ -45,11 +45,9 @@ public class Account {
     @Column(name="user_email")
     private String useremail;
 
-//    @OneToOne(targetEntity = Company.class,fetch = FetchType.LAZY)
     @Column(name="fr_code")
     private String frCode;
 
-//    @OneToOne(targetEntity = Company.class,fetch = FetchType.LAZY)
     @Column(name="br_code")
     private String brCode;
 

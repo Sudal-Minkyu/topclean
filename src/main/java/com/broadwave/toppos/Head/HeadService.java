@@ -1,13 +1,13 @@
 package com.broadwave.toppos.Head;
 
-import com.broadwave.toppos.Head.Branoh.Branoh;
-import com.broadwave.toppos.Head.Branoh.BranohListDto;
-import com.broadwave.toppos.Head.Branoh.BranohRepository;
-import com.broadwave.toppos.Head.Branoh.BranohRepositoryCustomImpl;
-import com.broadwave.toppos.Head.Franohise.Franohise;
-import com.broadwave.toppos.Head.Franohise.FranohiseListDto;
-import com.broadwave.toppos.Head.Franohise.FranohiseRepository;
-import com.broadwave.toppos.Head.Franohise.FranohiseRepositoryCustom;
+import com.broadwave.toppos.Head.Branoh.Branch;
+import com.broadwave.toppos.Head.Branoh.BranchListDto;
+import com.broadwave.toppos.Head.Branoh.BranchRepository;
+import com.broadwave.toppos.Head.Branoh.BranchRepositoryCustomImpl;
+import com.broadwave.toppos.Head.Franohise.Franchise;
+import com.broadwave.toppos.Head.Franohise.FranchiseListDto;
+import com.broadwave.toppos.Head.Franohise.FranchiseRepository;
+import com.broadwave.toppos.Head.Franohise.FranchiseRepositoryCustom;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,49 +17,49 @@ import java.util.Optional;
 @Service
 public class HeadService {
 
-    private final FranohiseRepository franohiseRepository;
-    private final BranohRepository branohRepository;
+    private final FranchiseRepository franchiseRepository;
+    private final BranchRepository branohRepository;
 
-    private final FranohiseRepositoryCustom franohiseRepositoryCustom;
-    private final BranohRepositoryCustomImpl branohRepositoryCustom;
+    private final FranchiseRepositoryCustom franchiseRepositoryCustom;
+    private final BranchRepositoryCustomImpl branohRepositoryCustom;
 
     @Autowired
-    public HeadService(BranohRepository branohRepository,  FranohiseRepository franohiseRepository, FranohiseRepositoryCustom franohiseRepositoryCustom, BranohRepositoryCustomImpl branohRepositoryCustom){
+    public HeadService(BranchRepository branohRepository, FranchiseRepository franchiseRepository, FranchiseRepositoryCustom franchiseRepositoryCustom, BranchRepositoryCustomImpl branohRepositoryCustom){
         this.branohRepository = branohRepository;
-        this.franohiseRepository = franohiseRepository;
-        this.franohiseRepositoryCustom = franohiseRepositoryCustom;
+        this.franchiseRepository = franchiseRepository;
+        this.franchiseRepositoryCustom = franchiseRepositoryCustom;
         this.branohRepositoryCustom = branohRepositoryCustom;
     }
 
     // 가맹점 저장
-    public Franohise franohiseSave(Franohise franohise){
-        franohiseRepository.save(franohise);
-        return franohise;
+    public Franchise franchiseSave(Franchise franchise){
+        franchiseRepository.save(franchise);
+        return franchise;
     }
 
     // 지사 저장
-    public Branoh branohSave(Branoh branoh){
+    public Branch branchSave(Branch branoh){
         branohRepository.save(branoh);
         return branoh;
     }
 
     // 가맹점 리스트 API
-    public List<FranohiseListDto> findByFranohiseList(String brAssignState, String frName) {
-        return franohiseRepositoryCustom.findByFranohiseList(brAssignState, frName);
+    public List<FranchiseListDto> findByFranchiseList(String brAssignState, String frName) {
+        return franchiseRepositoryCustom.findByFranchiseList(brAssignState, frName);
     }
 
     // 지사 리스트 API
-    public List<BranohListDto> findByBranohList() {
-        return branohRepositoryCustom.findByBranohList();
+    public List<BranchListDto> findByBranchList() {
+        return branohRepositoryCustom.findByBranchList();
     }
 
     // 가맹점코드 중복확인 API
-    public Optional<Franohise> findByFrCode(String frCode){
-        return franohiseRepository.findByFrCode(frCode);
+    public Optional<Franchise> findByFrCode(String frCode){
+        return franchiseRepository.findByFrCode(frCode);
     }
 
     // 지점코드 중복확인 API
-    public Optional<Branoh> findByBrCode(String brCode){
+    public Optional<Branch> findByBrCode(String brCode){
         return branohRepository.findByBrCode(brCode);
     }
 

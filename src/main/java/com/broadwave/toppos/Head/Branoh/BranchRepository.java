@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface BranohRepository extends JpaRepository<Branoh,Long> {
-    @Query("select a from Branoh a where a.brCode = :brCode")
-    Optional<Branoh> findByBrCode(String brCode);
+public interface BranchRepository extends JpaRepository<Branch,Long> {
+    @Query("select a from Branch a where a.brCode = :brCode")
+    Optional<Branch> findByBrCode(String brCode);
 }

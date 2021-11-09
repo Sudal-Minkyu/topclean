@@ -1,11 +1,14 @@
 package com.broadwave.toppos.Head;
 
-import com.broadwave.toppos.Head.Branoh.Branoh;
-import com.broadwave.toppos.Head.Branoh.BranohListDto;
-import com.broadwave.toppos.Head.Branoh.BranohMapperDto;
-import com.broadwave.toppos.Head.Franohise.Franohise;
-import com.broadwave.toppos.Head.Franohise.FranohiseListDto;
-import com.broadwave.toppos.Head.Franohise.FranohiseMapperDto;
+import com.broadwave.toppos.Account.Account;
+import com.broadwave.toppos.Account.AccountMapperDto;
+import com.broadwave.toppos.Account.AccountService;
+import com.broadwave.toppos.Head.Branoh.Branch;
+import com.broadwave.toppos.Head.Branoh.BranchListDto;
+import com.broadwave.toppos.Head.Branoh.BranchMapperDto;
+import com.broadwave.toppos.Head.Franohise.Franchise;
+import com.broadwave.toppos.Head.Franohise.FranchiseListDto;
+import com.broadwave.toppos.Head.Franohise.FranchiseMapperDto;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.common.AjaxResponse;
 import com.broadwave.toppos.common.CommonUtils;
@@ -31,31 +34,64 @@ import java.util.*;
 @RequestMapping("/api/head") //  ( 권한 : 어드민, 본사일반 )
 public class HeadRestController {
 
+    private final AccountService accountService;
     private final HeadService headService;
     private final ModelMapper modelMapper;
     private final TokenProvider tokenProvider;
 
     @Autowired
-    public HeadRestController(TokenProvider tokenProvider, ModelMapper modelMapper, HeadService headService) {
+    public HeadRestController(AccountService accountService, TokenProvider tokenProvider, ModelMapper modelMapper, HeadService headService) {
+        this.accountService = accountService;
         this.modelMapper = modelMapper;
         this.tokenProvider = tokenProvider;
         this.headService = headService;
     }
 
+    // 사용자 등록 API
+    @PostMapping("accountSave")
+    public ResponseEntity<Map<String,Object>> accountSave(@ModelAttribute AccountMapperDto accountMapperDto, HttpServletRequest request){
+
+        AjaxResponse res = new AjaxResponse();
+
+        Account account = modelMapper.map(accountMapperDto, Account.class);
+
+        String login_id = CommonUtils.getCurrentuser(request);
+        log.info("아이디 : "+login_id);
+
+        log.info("account : "+account);
+        log.info("role : "+account.getRole());
+        Optional<Account> optionalAccount = accountService.findByUserid(account.getUserid());
+        if( optionalAccount.isPresent()){
+            // 수정일때
+            account.setId(optionalAccount.get().getId());
+            account.setInsert_id(login_id);
+            account.setInsertDateTime(LocalDateTime.now());
+        }else{
+            // 신규일때
+            account.setModify_id(login_id);
+            account.setModifyDateTime(LocalDateTime.now());
+        }
+
+        Account accountSave =  accountService.save(account);
+        log.info("사용자 저장 성공 : id '" + accountSave.getUserid() + "'");
+        return ResponseEntity.ok(res.success());
+
+    }
+
     // 지사 등록 API
-    @PostMapping("branohSave")
-    public ResponseEntity<Map<String,Object>> branohSave(@ModelAttribute BranohMapperDto branohMapperDto, HttpServletRequest request){
+    @PostMapping("branchSave")
+    public ResponseEntity<Map<String,Object>> branchSave(@ModelAttribute BranchMapperDto branohMapperDto, HttpServletRequest request){
 
         log.info("지사등록");
 
         AjaxResponse res = new AjaxResponse();
 
-        Branoh branoh = modelMapper.map(branohMapperDto, Branoh.class);
+        Branch branoh = modelMapper.map(branohMapperDto, Branch.class);
 
         String login_id = CommonUtils.getCurrentuser(request);
 //        log.info("현재 사용자 아이디 : "+login_id);
 
-        Optional<Branoh> optionalBranoh  =  headService.findByBrCode(branohMapperDto.getBrCode());
+        Optional<Branch> optionalBranoh  =  headService.findByBrCode(branohMapperDto.getBrCode());
         if( optionalBranoh.isPresent()){
 //            log.info("널이 아닙니다 : 업데이트");
             branoh.setId(optionalBranoh.get().getId());
@@ -70,96 +106,101 @@ public class HeadRestController {
             branoh.setInsertDateTime(LocalDateTime.now());
         }
 
-        Branoh branohSave =  headService.branohSave(branoh);
+        Branch branohSave =  headService.branchSave(branoh);
         log.info("지사 저장 성공 : id '" + branohSave.getBrCode() + "'");
         return ResponseEntity.ok(res.success());
 
     }
 
     // 가맹점 등록 API
-    @PostMapping("franohiseSave")
-    public ResponseEntity<Map<String,Object>> franohiseSave(@ModelAttribute FranohiseMapperDto franohiseMapperDto, HttpServletRequest request){
+    @PostMapping("franchiseSave")
+    public ResponseEntity<Map<String,Object>> franchiseSave(@ModelAttribute FranchiseMapperDto franchiseMapperDto, HttpServletRequest request){
 
         log.info("가맹점등록");
 
         AjaxResponse res = new AjaxResponse();
 
-        Franohise franohise = modelMapper.map(franohiseMapperDto, Franohise.class);
+        Franchise franchise = modelMapper.map(franchiseMapperDto, Franchise.class);
 
         String login_id = CommonUtils.getCurrentuser(request);
 //        log.info("현재 사용자 아이디 : "+login_id);
 
-        Optional<Franohise> optionalFranohise  =  headService.findByFrCode(franohiseMapperDto.getFrCode());
+        Optional<Franchise> optionalFranohise  =  headService.findByFrCode(franchiseMapperDto.getFrCode());
         if( optionalFranohise.isPresent()){
 //            log.info("널이 아닙니다 : 업데이트");
 
-            franohise.setId(optionalFranohise.get().getId());
+            franchise.setId(optionalFranohise.get().getId());
 
-            franohise.setBrId(optionalFranohise.get().getBrId());
-            franohise.setBrCode(optionalFranohise.get().getBrCode());
-            franohise.setBrAssignState(optionalFranohise.get().getBrAssignState());
+            franchise.setBrId(optionalFranohise.get().getBrId());
+            franchise.setBrCode(optionalFranohise.get().getBrCode());
+            franchise.setBrAssignState(optionalFranohise.get().getBrAssignState());
 
-            franohise.setModify_id(login_id);
-            franohise.setModifyDateTime(LocalDateTime.now());
-            franohise.setInsert_id(optionalFranohise.get().getInsert_id());
-            franohise.setInsertDateTime(optionalFranohise.get().getInsertDateTime());
+            franchise.setModify_id(login_id);
+            franchise.setModifyDateTime(LocalDateTime.now());
+            franchise.setInsert_id(optionalFranohise.get().getInsert_id());
+            franchise.setInsertDateTime(optionalFranohise.get().getInsertDateTime());
         }else{
 //            log.info("널입니다. : 신규생성");
 
-            franohise.setBrId(null);
-            franohise.setBrCode(null);
-            franohise.setBrAssignState("01");
-            franohise.setInsert_id(login_id);
-            franohise.setInsertDateTime(LocalDateTime.now());
+            franchise.setBrId(null);
+            franchise.setBrCode(null);
+            franchise.setBrAssignState("01");
+            franchise.setInsert_id(login_id);
+            franchise.setInsertDateTime(LocalDateTime.now());
         }
 
-        Franohise franohiseSave =  headService.franohiseSave(franohise);
-        log.info("가맹점 저장 성공 : id '" + franohiseSave.getFrCode() + "'");
+        Franchise franchiseSave =  headService.franchiseSave(franchise);
+        log.info("가맹점 저장 성공 : id '" + franchiseSave.getFrCode() + "'");
         return ResponseEntity.ok(res.success());
     }
 
     // 지사 리스트 API
-    @GetMapping("branohList")
-    public ResponseEntity<Map<String,Object>> branohList(){
+    @GetMapping("branchList")
+    public ResponseEntity<Map<String,Object>> branchList(){
         log.info("branohList 호출");
 
         AjaxResponse res = new AjaxResponse();
 
         HashMap<String, Object> data = new HashMap<>();
 
-        List<HashMap<String,Object>> branohListData = new ArrayList<>();
-        HashMap<String,Object> branohsetInfo;
+        List<HashMap<String,Object>> branchListData = new ArrayList<>();
+        HashMap<String,Object> branchsetInfo;
 
-        List<BranohListDto> branohListDtos = headService.findByBranohList();
+        List<BranchListDto> branchListDtos = headService.findByBranchList();
 //        log.info("branohListDtos : "+branohListDtos);
 
-        for (BranohListDto branoh: branohListDtos) {
+        for (BranchListDto branch: branchListDtos) {
 
-            branohsetInfo = new HashMap<>();
+            branchsetInfo = new HashMap<>();
 
-            branohsetInfo.put("brCode", branoh.getBrCode());
-            branohsetInfo.put("brName", branoh.getBrName());
-            branohsetInfo.put("brContractDt", branoh.getBrContractDt());
-            branohsetInfo.put("brContractFromDt", branoh.getBrContractFromDt());
-            branohsetInfo.put("brContractToDt", branoh.getBrContractToDt());
-            branohsetInfo.put("brContractState", branoh.getBrContractState());
-            branohsetInfo.put("brCarculateRateHq", branoh.getBrCarculateRateHq());
-            branohsetInfo.put("brCarculateRateBr", branoh.getBrCarculateRateBr());
-            branohsetInfo.put("brCarculateRateFr", branoh.getBrCarculateRateFr());
-            branohsetInfo.put("brRemark", branoh.getBrRemark());
-            branohListData.add(branohsetInfo);
+            branchsetInfo.put("brCode", branch.getBrCode());
+            branchsetInfo.put("brName", branch.getBrName());
+            branchsetInfo.put("brContractDt", branch.getBrContractDt());
+            branchsetInfo.put("brContractFromDt",branch.getBrContractFromDt());
+            branchsetInfo.put("brContractToDt", branch.getBrContractToDt());
+            branchsetInfo.put("brContractState", branch.getBrContractState());
+            if(branch.getBrContractState().equals("01")){
+                branchsetInfo.put("brContractStateValue","진행중");
+            }else{
+                branchsetInfo.put("brContractStateValue","계약완료");
+            }
+            branchsetInfo.put("brCarculateRateHq", branch.getBrCarculateRateHq());
+            branchsetInfo.put("brCarculateRateBr", branch.getBrCarculateRateBr());
+            branchsetInfo.put("brCarculateRateFr", branch.getBrCarculateRateFr());
+            branchsetInfo.put("brRemark", branch.getBrRemark());
+            branchListData.add(branchsetInfo);
 
         }
 
-        log.info("지사 리스트 : "+branohListData);
-        data.put("gridListData",branohListData);
+        log.info("지사 리스트 : "+branchListData);
+        data.put("gridListData",branchListData);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
     // 가맹점 리스트 API
-    @GetMapping("franohiseList")
-    public ResponseEntity<Map<String,Object>> franohiseList(@RequestParam(value="brAssignState", defaultValue="") String brAssignState,
+    @GetMapping("franchiseList")
+    public ResponseEntity<Map<String,Object>> franchiseList(@RequestParam(value="brAssignState", defaultValue="") String brAssignState,
                                                                                         @RequestParam(value="frName", defaultValue="") String frName){
         log.info("franohiseList 호출");
 
@@ -170,10 +211,10 @@ public class HeadRestController {
         List<HashMap<String,Object>> franohiseListData = new ArrayList<>();
         HashMap<String,Object> franohisetInfo;
 
-        List<FranohiseListDto> franohiseListDtos = headService.findByFranohiseList(brAssignState, frName);
+        List<FranchiseListDto> franchiseListDtos = headService.findByFranchiseList(brAssignState, frName);
 //        log.info("franohiseListDtos : "+franohiseListDtos);
 
-        for (FranohiseListDto franohise : franohiseListDtos) {
+        for (FranchiseListDto franohise : franchiseListDtos) {
 
             franohisetInfo = new HashMap<>();
 
@@ -204,17 +245,34 @@ public class HeadRestController {
 
 
 
-
-
-
-    // 가맹점코드 중복확인 API
-    @GetMapping("franohiseOverlap")
-    public ResponseEntity<Map<String,Object>> franohiseOverlap(@RequestParam(value="frCode", defaultValue="") String frCode){
+    // 유저아이디 중복확인 API
+    @GetMapping("useridOverlap")
+    public ResponseEntity<Map<String,Object>> useridOverlap(@RequestParam(value="userid", defaultValue="") String userid){
 
         log.info("가맹점 코드 중복확인");
         AjaxResponse res = new AjaxResponse();
 
-        Optional<Franohise> franohiseOptional =  headService.findByFrCode(frCode);
+        if(userid.equals("")){
+            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP004.getCode(), ResponseErrorCode.TP004.getDesc(),null,null));
+        }
+
+        Optional<Account> accountOptional =  accountService.findByUserid(userid);
+        if(accountOptional.isPresent()){
+            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP001.getCode(), ResponseErrorCode.TP001.getDesc(),null,null));
+        }else{
+            log.info("중복확인 완료");
+        }
+        return ResponseEntity.ok(res.success());
+    }
+
+    // 가맹점코드 중복확인 API
+    @GetMapping("franchiseOverlap")
+    public ResponseEntity<Map<String,Object>> franchiseOverlap(@RequestParam(value="frCode", defaultValue="") String frCode){
+
+        log.info("가맹점 코드 중복확인");
+        AjaxResponse res = new AjaxResponse();
+
+        Optional<Franchise> franohiseOptional =  headService.findByFrCode(frCode);
         if(franohiseOptional.isPresent()){
             return ResponseEntity.ok(res.fail(ResponseErrorCode.TP003.getCode(), ResponseErrorCode.TP003.getDesc(),null,null));
         }else{
@@ -223,15 +281,14 @@ public class HeadRestController {
         return ResponseEntity.ok(res.success());
     }
 
-
     // 지점코드 중복확인 API
-    @GetMapping("branohOverlap")
-    public ResponseEntity<Map<String,Object>> branohOverlap(@RequestParam(value="brCode", defaultValue="") String brCode){
+    @GetMapping("branchOverlap")
+    public ResponseEntity<Map<String,Object>> branchOverlap(@RequestParam(value="brCode", defaultValue="") String brCode){
 
         log.info("지점 코드 중복확인");
         AjaxResponse res = new AjaxResponse();
 
-        Optional<Branoh> branohOptional =  headService.findByBrCode(brCode);
+        Optional<Branch> branohOptional =  headService.findByBrCode(brCode);
         if(branohOptional.isPresent()){
             return ResponseEntity.ok(res.fail(ResponseErrorCode.TP003.getCode(), ResponseErrorCode.TP003.getDesc(),null,null));
         }else{

@@ -8,6 +8,6 @@ import java.util.List;
  * Time :
  * Remark :
  */
-public interface BranohRepositoryCustom {
-    List<BranohListDto> findByBranohList();
+public interface BranchRepositoryCustom {
+    List<BranchListDto> findByBranchList();
 }

@@ -1,8 +1,12 @@
 package com.broadwave.toppos.Controller;
 
+import com.broadwave.toppos.Account.AccountRole;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.util.List;
 
 /**
  * @author Minkyu
@@ -23,7 +27,8 @@ public class HeadController {
 
     // 본사일반 사용자등록 페이지
     @RequestMapping("accountreg")
-    public String accountreg(){
+    public String accountreg(Model model){
+        model.addAttribute("roles", AccountRole.values());
         return "/head/accountreg";
     }
 

@@ -71,6 +71,10 @@ function ajaxErrorMsg(req) {
         $('.l-popup').removeClass('open');
         console.log("데이터에러");
         alertCaution("데이터가 존재하지않습니다.", 1);
+    }else if(req.status ===500){
+        $('.l-popup').removeClass('open');
+        console.log("데이터에러");
+        alertCaution("사용할수없는데이터.", 1);
     }else{
         $('.l-popup').removeClass('open');
         console.log("토큰이 만료됨. 재로그인시도 바람.");

@@ -7,18 +7,18 @@ import lombok.Setter;
 
 /**
  * @author Minkyu
- * Date : 2021-11-08
+ * Date : 2021-11-09
  * Time :
- * Remark : Toppos 지사 MapperDto
+ * Remark : Toppos 지사 ListDto
  */
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class BranohMapperDto {
+public class BranchListDto {
 
-    private String brCode; // 지점코드 2자리
-    private String brName; // 지점명
+    private String brCode; // 지사코드
+    private String brName; // 지사명
     private String brContractDt; // 계약일자
     private String brContractFromDt; // 계약기간 from
     private String brContractToDt; // 계약기간 to
@@ -36,21 +36,24 @@ public class BranohMapperDto {
         return brName;
     }
 
-    public String getBrContractDt() {
-        String getBrContractDt = brContractDt;
-        getBrContractDt = getBrContractDt.replaceAll("-","");
+    public StringBuffer getBrContractDt() {
+        StringBuffer getBrContractDt = new StringBuffer(brContractDt);
+        getBrContractDt.insert(4,'-');
+        getBrContractDt.insert(7,'-');
         return getBrContractDt;
     }
 
-    public String getBrContractFromDt() {
-        String getBrContractFromDt = brContractFromDt;
-        getBrContractFromDt = getBrContractFromDt.replaceAll("-","");
+    public StringBuffer getBrContractFromDt() {
+        StringBuffer getBrContractFromDt = new StringBuffer(brContractFromDt);
+        getBrContractFromDt.insert(4,'-');
+        getBrContractFromDt.insert(7,'-');
         return getBrContractFromDt;
     }
 
-    public String getBrContractToDt() {
-        String getBrContractToDt = brContractToDt;
-        getBrContractToDt = getBrContractToDt.replaceAll("-","");
+    public StringBuffer getBrContractToDt() {
+        StringBuffer getBrContractToDt = new StringBuffer(brContractToDt);
+        getBrContractToDt.insert(4,'-');
+        getBrContractToDt.insert(7,'-');
         return getBrContractToDt;
     }
 

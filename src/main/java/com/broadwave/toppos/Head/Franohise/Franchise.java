@@ -1,6 +1,6 @@
 package com.broadwave.toppos.Head.Franohise;
 
-import com.broadwave.toppos.Head.Branoh.Branoh;
+import com.broadwave.toppos.Head.Branoh.Branch;
 import lombok.*;
 
 import javax.persistence.*;
@@ -19,8 +19,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-@Table(name="bs_franohise")
-public class Franohise {
+@Table(name="bs_franchise")
+public class Franchise {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,9 +48,9 @@ public class Franohise {
     @Column(name="fr_remark")
     private String frRemark; // 특이사항
 
-    @ManyToOne(targetEntity = Branoh.class,fetch = FetchType.LAZY)
+    @ManyToOne(targetEntity = Branch.class,fetch = FetchType.LAZY)
     @JoinColumn(name="br_id")
-    private Branoh brId; // 배정된 지사 ID
+    private Branch brId; // 배정된 지사 ID
 
     @Column(name="br_code")
     private String BrCode; // 배정된 지사코드

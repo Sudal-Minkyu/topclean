@@ -41,22 +41,22 @@ public class AccountRestController {
     public ResponseEntity<Map<String,Object>> accountSave(@ModelAttribute AccountMapperDto accountMapperDto, HttpServletRequest request){
 
         AjaxResponse res = new AjaxResponse();
-
-        Account account = modelMapper.map(accountMapperDto, Account.class);
-
-        String login_id = CommonUtils.getCurrentuser(request);
-        log.info("아이디 : "+login_id);
-        Authentication authentication = tokenProvider.getAuthentication(request.getHeader("Authorization"));
-        String role = authentication.getAuthorities().toString();
-        log.info("권한 : "+role);
-
-        String currentuserid = request.getHeader("insert_id");
-        log.info("currentuserid : "+currentuserid);
-
-        Optional<Account> optionalAccount = accountService.findByUserid(account.getUserid());
-        if( optionalAccount.isPresent()){
-            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP001.getCode(), ResponseErrorCode.TP001.getDesc(),null,null));
-        }
+//
+//        Account account = modelMapper.map(accountMapperDto, Account.class);
+//
+//        String login_id = CommonUtils.getCurrentuser(request);
+//        log.info("아이디 : "+login_id);
+//        Authentication authentication = tokenProvider.getAuthentication(request.getHeader("Authorization"));
+//        String role = authentication.getAuthorities().toString();
+//        log.info("권한 : "+role);
+//
+//        String currentuserid = request.getHeader("insert_id");
+//        log.info("currentuserid : "+currentuserid);
+//
+//        Optional<Account> optionalAccount = accountService.findByUserid(account.getUserid());
+//        if( optionalAccount.isPresent()){
+//            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP001.getCode(), ResponseErrorCode.TP001.getDesc(),null,null));
+//        }
 
 //        //신규일때
 //        if (accountMapperDto.getMode().equals("N")) {
@@ -81,8 +81,8 @@ public class AccountRestController {
 //            account.setModifyDateTime(LocalDateTime.now());
 //        }
 
-        Account accountSave =  accountService.save(account);
-        log.info("사용자 저장 성공 : id '" + accountSave.getUserid() + "'");
+//        Account accountSave =  accountService.save(account);
+//        log.info("사용자 저장 성공 : id '" + accountSave.getUserid() + "'");
         return ResponseEntity.ok(res.success());
 
     }

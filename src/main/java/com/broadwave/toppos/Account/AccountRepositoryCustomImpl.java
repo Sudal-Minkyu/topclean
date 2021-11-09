@@ -28,7 +28,12 @@ public class AccountRepositoryCustomImpl extends QuerydslRepositorySupport imple
                 .select(Projections.constructor(AccountListDto.class,
                         account.userid,
                         account.username,
-                        account.role
+                        account.role,
+                        account.usertel,
+                        account.useremail,
+                        account.frCode,
+                        account.brCode,
+                        account.userremark
                 ));
 
         query.orderBy(account.id.desc());

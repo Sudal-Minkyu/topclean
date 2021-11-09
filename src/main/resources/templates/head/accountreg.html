@@ -12,10 +12,11 @@
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
 
+	<script src="/assets/js/toppos/account.js"></script>
 	<script type="text/javascript">
 
 		$(function() {
-
+			createAccountGrid(columnLayout, gridOption);
 		});
 
 	</script>
@@ -23,6 +24,121 @@
 
 <div layout:fragment="content" class="content padding-zero content--main">
 	<h1>사용자등록 페이지</h1>
+	<!--우측-->
+	<div>
+		<div>
+			사용자 정보
+		</div>
+		<div>
+			<form id="accountFormData" enctype="multipart/form-data">
+				<div>
+					아이디
+					<input type="text" name="userid" id="userid" />
+					<input type="hidden" id="useridChecked" value="0" />
+					<button type="button" onclick="useridOverlap()">중복확인</button>
+					이름
+					<input type="text" name="username" id="username" />
+				</div>
+				<div>
+					암호<input type="password" id="password" name="password" />
+					권한
+					<select id="role" name="role">
+						<option th:each ="role : ${roles}"
+								th:value="${role.getCode()}"
+								th:text="${role.getDesc()}">
+						</option>
+					</select>
+				</div>
+				<div>
+					전화번호<input type="text" id="usertel" name="usertel" />
+					이메일<input type="text" id="useremail" name="useremail" />
+				</div>
+				<div>
+					가맹점코드 3자리<input type="text" id="frCode" name="frCode" /><button type="button" onclick="frListPop()">가맹점선택</button>
+					지사코드 2자리<input type="text" id="brCode" name="brCode" /><button type="button" onclick="brListPop()">지사선택</button>
+				</div>
+				<div>
+					특이사항
+					<textarea  id="userremark" name="userremark"></textarea>
+				</div>
+			</form>
+			<button>신규</button>
+			<button onclick="accountSave()">저장</button>
+			<button>삭제</button>
+		</div>
+	</div>
+
+	<!-- 지사 팝업 -->
+	<div class="l-popup" id="branch_popup">
+		<div class="l-popup__container">
+			<div class="l-popup__head">
+				<h3 class="l-popup__heading">지사 리스트 조회</h3>
+			</div>
+			<div class="l-popup__content">
+				<div class="l-popup__section">
+					<table class="c-table c-table--non-border">
+						<colgroup>
+							<col style="width: 100px;"/>
+							<col/>
+							<col style="width: 60px;"/>
+						</colgroup>
+						<tbody>
+						<tr>
+							<th>블라블라</th>
+							<td>
+								<div class="c-text">
+									<input type="text" id="s_vcNumber" class="c-text__input"/>
+								</div>
+							</td>
+							<td>
+								<button class="c-button c-button--point" id="vehicleBtnSearch">조회</button>
+							</td>
+						</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="l-popup__section">
+					<div id="grid_branchList"></div>
+				</div>
+			</div>
+			<a href="#" onclick="branchClose()" class="l-popup__close">팝업닫기</a>
+		</div>
+	</div>
+
+	<!-- 가맹점 팝업 -->
+	<div class="l-popup" id="franchise_popup">
+		<div class="l-popup__container">
+			<div class="l-popup__head">
+				<h3 class="l-popup__heading">가맹점 리스트 조회</h3>
+			</div>
+			<div class="l-popup__content">
+				<div class="l-popup__section">
+					<table class="c-table c-table--non-border">
+						<colgroup>
+							<col style="width: 70px;"/>
+							<col/>
+							<col style="width: 80px;"/>
+						</colgroup>
+						<tbody>
+						<tr>
+							<th>모델 타입</th>
+							<td>
+								<input type="text" id="s_emTypePop" value="iTainer" class="c-text__input" />
+							</td>
+							<td>
+								<button id="waitingDevcieBtnSearch" class="c-button c-button--point">조회</button>
+							</td>
+						</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="l-popup__section">
+					<div id="grid_franchList"></div>
+				</div>
+			</div>
+			<a href="#" onclick="franchiseClose()" class="l-popup__close">팝업닫기</a>
+		</div>
+	</div>
 
 </div>
 </html>
