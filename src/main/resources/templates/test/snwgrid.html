@@ -6,7 +6,7 @@
 
 <!-- 사용자 CSS 추가 -->
 <th:block layout:fragment="css">
-
+    <link href="../assets/css/nak_css_dir/jquery-ui.min.css" rel="stylesheet">
 </th:block>
 
 <!-- 사용자 스크립트 추가 -->
@@ -18,119 +18,68 @@
         let myGridID;
         let myData;
 
-        var posList = [
-            "이등병", "일병"
+        let columnLayoutOne = [
+            {
+                dataField: "testName",
+                headerText: "성함",
+                editable: false,
+            }, {
+                dataField: "testGender",
+                headerText: "성별",
+            }, {
+                dataField: "testOld",
+                headerText: "나이",
+                editRenderer: {
+                    type: "InputEditRenderer",
+                    onlyNumeric: true,
+                    validator: function(oldValue, newValue, item, dataField, fromClipboard) {
+                        let isValid = newValue < 200;
+                        return {"validate" : isValid, "message" : "나이가 너무 많습니다."};
+                    }
+                }
+            }, {
+                dataField: "testMoney",
+                headerText: "요금",
+            }, {
+                dataField: "testGender",
+                headerText: "컬러테스트",
+                renderer: {
+                    type: "TemplateRenderer"
+                },
+                labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    let color = '#FFFFFF';
+                    if(value=="남자"){
+                        color = '#FF00FF';
+                    }else if(value=="여자"){
+                        color = '#00FFFF';
+                    }
+                    let template = `
+                        <div style="width: 70px;">
+                        <div style="background-color: ${color}; width: 25px; height: 25px; padding: 0; margin: 0; float: left;"
+                            onclick="alert('${item.testName}')"></div>${value}
+                        </div>
+                    `;
+                    return template;
+                }
+            }
         ];
 
-        var conditionalRenderer = {
-            type : "DropDownListRenderer",
-            list : posList,
+        let gridOptionOne = {
+            editable : true,
+            selectionMode : "multipleRow",
+            showStateColumn : true,
+            noDataMessage : "출력할 데이터가 없습니다",
         };
 
-        var columnLayout = [{
-            dataField : "testName",
-            headerText : "이름",
-            labelFunction : function(rowIndex, columnIndex, value, headerText, item) {
-                if(item.testOld < 19) {
-                    item.isAmeriki = true;
-                }else{
-                    item.isAmeriki = false;
-                }
-                return "(" + item.testOld + ") "+ value;
-            }
-        }, {
-           dataField: "isAmeriki",
-            headerText: "국적+이름시험",
-            labelFunction : function(rowIndex, columnIndex, value, headerText, item) {
-               const job = item.isAmeriki ? "- 아메리끼" : "- 혁명전사";
-                return item.testName+" "+job;
-            },
-            renderer: {
-                type : "IconRenderer",
-                iconPosition: "left",
-                iconWidth: 16,
-                iconHeight: 16,
-                iconTableRef: {
-                    true : "../assets/nak_img_grid/usa.png",
-                    false : "../assets/nak_img_grid/dprk.png"
-                }
-            }
-
-        }, {
-            dataField: "testOld",
-            headerText: "나이",
-            editable : true,
-        }, {
-            dataField: "testGender",
-            headerText: "성별",
-            editable : true,
-            cellMerge: true,
-        }, {
-            dataField: "testMoney",
-            headerText: "요금",
-            editable : true,
-        }, {
-            dataField: "data",
-            headerText: "Data",
-            editRenderer : { // 조건에 따라 editRenderer 사용하기.
-                type : "ConditionRenderer",
-                conditionFunction : function(rowIndex, columnIndex, value, item, dataField) {
-                    return conditionalRenderer;
-                }
-            }
-        }, {
-            renderer: {
-                type : "IconRenderer",
-                iconPosition: "left",
-                iconWidth: 16,
-                iconHeight: 16,
-                iconTableRef: {
-                    "default" : "../assets/nak_img_grid/usa.png"
-                }
-            }
-        }];
-
-        $(function() {
-            createAUIGrid(columnLayout);
-            // account_list();
+        $(function () {
+            createAUIGrid(columnLayoutOne, gridOptionOne);
         });
 
-        // AUIGrid 를 생성합니다.
-        function createAUIGrid(columnLayout) {
-
-            // 그리드 속성 설정
-            const gridPros = {
-                // 편집 가능 여부 (기본값 : false)
-                editable: true,
-
-                // 엔터키가 다음 행이 아닌 다음 칼럼으로 이동할지 여부 (기본값 : false)
-                enterKeyColumnBase: true,
-
-                // 셀 선택모드 (기본값: singleCell)
-                selectionMode: "multipleCells",
-
-                // 컨텍스트 메뉴 사용 여부 (기본값 : false)
-                useContextMenu: true,
-
-                // 필터 사용 여부 (기본값 : false)
-                enableFilter: true,
-
-                // 그룹핑 패널 사용
-                useGroupingPanel: true,
-
-                // 그룹핑 또는 트리로 만들었을 때 펼쳐지게 할지 여부 (기본값 : false)
-                displayTreeOpen: true,
-
-                enableCellMerge: true,
-
-                noDataMessage: "출력할 데이터가 없습니다.",
-                groupingMessage: "여기에 칼럼을 드래그하면 그룹핑이 됩니다."
-            };
-            // 실제로 #grid_wrap 에 그리드 생성
-            myGridID = AUIGrid.create("#girdtest_list", columnLayout, gridPros);
+        function createAUIGrid(columnLayout, gridOption) {
+            myGridID = AUIGrid.create("grid_one", columnLayout, gridOption);
         }
 
-        function account_list(){
+        function readListOne() {
             $(document).ajaxSend(function(e, xhr) { xhr.setRequestHeader("Authorization",localStorage.getItem('Authorization')); });
             $.ajax({
                 url: "/api/test/list",
@@ -140,101 +89,64 @@
                     ajaxErrorMsg(req);
                 },
                 success: function (req) {
-
-                    // 서버 사이드에서 매핑한 데이터
+                    console.log(req);
                     myData = req.sendData.gridListData;
+                    console.log(req.sendData.gridListData)
                     AUIGrid.setGridData(myGridID, myData);
                 }
             });
         }
 
-        // 유니폼 테스트
-        function JSONType() {
+        function editComplete() {
+            let createdItems = AUIGrid.getAddedRowItems(myGridID);
+            let updatedItems = AUIGrid.getEditedRowItems(myGridID);
+            let deletedItems = AUIGrid.getRemovedItems(myGridID);
 
-            //프로젝트 명
-            const projectName = "sample";
+            console.log("---CREATED---");
+            console.log(createdItems);
+            console.log("---UPDATED---");
+            console.log(updatedItems);
+            console.log("---DELETED---");
+            console.log(deletedItems);
 
-            //서식 명
-            const formName = "JSONType";
+            if(deletedItems.length){
+                let refineDeletedItems = [];
+                deletedItems.forEach(el => {
+                    refineDeletedItems.push({"testName" : el.testName});
+                    delete el ["testOld"];
+                });
 
-            //데이터 셋
-            const datasetList = {};
-
-            // var dataset_0 = [{"no":1,"nm":"홍길동","position":"사장","addr":"서울시 성동구 성수일로251"},{"no":2,"nm":"김철수","position":"이사","addr":"서울시 성동구 성수일로252"},{"no":3,"nm":"김영희","position":"상무","addr":"서울시 성동구 성수일로253"},{"no":4,"nm":"이영신","position":"부장","addr":"서울시 성동구 성수일로254"},{"no":5,"nm":"김현석","position":"팀장","addr":"서울시 성동구 성수일로255"},{"no":6,"nm":"김현우","position":"과장","addr":"서울시 성동구 성수일로256"},{"no":7,"nm":"강성진","position":"사원","addr":"서울시 성동구 성수일로257"}];
-            // datasetList.dataset_0 = JSON.stringify(dataset_0);
-            datasetList.dataset_0 = JSON.stringify(myData);
-
-            //파라메터
-            var paramList = {};
-            paramList.stDt = "2019-01-01";
-            paramList.endDt = "2019-12-31";
-
-            fn_viewer_open(projectName, formName, datasetList, paramList);
+                console.log("---REFINED---");
+                console.log(refineDeletedItems);
+                console.log("---DELKLIS---");
+                console.log(deletedItems);
+            }
         }
 
-        function fn_viewer_open(projectName, formName, datasetList, paramList) {
-            const _params = {"projectName":projectName 			//프로젝트명
-                ,"formName":formName 	          //서식명
-            };
-
-            for (const datasetValue in datasetList) {
-                _params[datasetValue] = encodeURIComponent(datasetList[datasetValue]);
-            }
-
-            for (const paramValue in paramList) {
-                _params[paramValue] = paramList[paramValue];
-            }
-
-            const contextPath = '<%=request.getContextPath()%>';
-            const _url = "http://192.168.0.197:8080/UBIFORM/UView5/index.jsp?projectName=sample&formName=TableRowAutoHeight";
-
-            const d = new Date();
-            const n = d.getTime();
-
-            const name = "UBF_" + n;
-
-            //팝업 오픈 Option 해당 설정은 window.open 설정을 참조
-            const windowoption = 'location=0, directories=0,resizable=0,status=0,toolbar=0,menubar=0, width=1280px,height=650px,left=0, top=0,scrollbars=0';  //팝업사이즈 window.open참고
-            const form = document.createElement("form");
-
-            form.setAttribute("method", "post");
-            form.setAttribute("action", _url);
-
-            for (const i in _params)
-            {
-                if (_params.hasOwnProperty(i))
-                {
-                    const param = document.createElement('input');
-                    param.type = 'hidden';
-                    param.name = i;
-                    param.value = encodeURI( _params[i] );
-                    form.appendChild(param);
-                }
-            }
-
-            document.body.appendChild(form);
-            form.setAttribute("target", name);
-            window.open("", name, windowoption);
-            form.submit();
-            document.body.removeChild(form);
-
-        }
-
+        $("#dpick").datepicker();
     </script>
 </th:block>
 
 <div layout:fragment="content" class="content padding-zero content--main">
 
     <div class="desc">
-        <p>사용자 조회리스트</p>
+        <p>GRID CRUD 테스트</p>
     </div>
     <div>
-        <!-- 사용자리스트. -->
-        <div id="girdtest_list"></div>
+        <div id="grid_one"></div>
     </div>
     <div class="desc">
-        <input type="button" value="조회" onclick="account_list()">
-        <input type="button" value="출력" onclick="JSONType()">
+        <input type="button" value="조회" onclick="readListOne()">
+        <input type="button" value="행 추가" onclick="AUIGrid.addRow(myGridID, {testName:'클론'})">
+        <input type="button" value="여러행 추가" onclick="AUIGrid.addRow(myGridID, [{testName:'추가행1', 'testOld': '1'},
+            {testName: '추가행2', 'testGender': '추가'}])">
+        <input type="button" value="행 삭제" onclick="AUIGrid.removeRow(myGridID, 'selectedIndex')">
+        <input type="button" value="초기화" onclick="AUIGrid.resetUpdatedItems(myGridID)">
+        <input type="button" value="완료" onclick="editComplete()">
+    </div>
+
+    <div>
+        <div id="dpick"></div>
     </div>
 </div>
 

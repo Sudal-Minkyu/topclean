@@ -14,34 +14,6 @@
 <th:block layout:fragment="script">
 
 	<script src="/assets/js/toppos/contract.js"></script>
-	<script type="text/javascript">
-
-		$(function (){
-			createGrid(columnLayout, gridOption);
-
-			const datePickerTargetIds = [
-					"brContractDt", "brContractFromDt", "brContractToDt", "frContractDt",
-					"frContractFromDt", "frContractToDt"
-			];
-
-			const dateAToBTargetIds = [
-				["brContractFromDt", "brContractToDt"], ["frContractFromDt", "frContractToDt"]
-			];
-
-			CommonUI.setDatePicker(datePickerTargetIds);
-			CommonUI.setDateAToBValidation(dateAToBTargetIds);
-
-			AUIGrid.bind(gridID[0], "cellClick", function (e) {
-				console.log(e.item);
-			});
-
-			/*
-			* JqueyUI datepicker의 기간 A~B까지를 선택할 때 선택한 날짜에 따라 제한을 주기 위한 DOM id의 배열이다.
-			* 배열 내 각 내부 배열은 [~부터의 제한 대상이 될 id, ~까지의 제한 대상이 될 id] 이다.
-			* */
-		});
-
-	</script>
 </th:block>
 
 <div layout:fragment="content" class="content padding-zero content--main">

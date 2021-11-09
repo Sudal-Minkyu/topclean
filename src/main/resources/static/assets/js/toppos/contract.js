@@ -74,6 +74,53 @@ columnLayout[3] = [
 ];
 
 
+$(function () {
+
+    createGrid(columnLayout, gridOption);
+
+    const datePickerTargetIds = [
+        "brContractDt", "brContractFromDt", "brContractToDt", "frContractDt",
+        "frContractFromDt", "frContractToDt"
+    ];
+
+    /*
+    * JqueyUI datepicker의 기간 A~B까지를 선택할 때 선택한 날짜에 따라 제한을 주기 위한 DOM id의 배열이다.
+    * 배열 내 각 내부 배열은 [~부터의 제한 대상이 될 id, ~까지의 제한 대상이 될 id] 이다.
+    * */
+    const dateAToBTargetIds = [
+        ["brContractFromDt", "brContractToDt"], ["frContractFromDt", "frContractToDt"]
+    ];
+
+
+    CommonUI.setDatePicker(datePickerTargetIds);
+    CommonUI.setDateAToBValidation(dateAToBTargetIds);
+
+    AUIGrid.bind(gridID[0], "cellClick", function (e) {
+        $("#brCode").val(e.item.brCode);
+        $("#brName").val(e.item.brName);
+        $("#brContractDt").val(e.item.brContractDt);
+        $("#brContractFromDt").val(e.item.brContractFromDt);
+        $("#brContractToDt").val(e.item.brContractToDt);
+        $("#brContractState").val(e.item.brContractState);
+        $("#brCarculateRateHq").val(e.item.brCarculateRateHq);
+        $("#brCarculateRateBr").val(e.item.brCarculateRateBr);
+        $("#brCarculateRateFr").val(e.item.brCarculateRateFr);
+        $("#brRemark").html(e.item.brRemark);
+
+    });
+
+    AUIGrid.bind(gridID[1], "cellClick", function (e) {
+        $("#frCode").val(e.item.frCode);
+        $("#frName").val(e.item.frName);
+        $("#frContractDt").val(e.item.frContractDt);
+        $("#frContractFromDt").val(e.item.frContractFromDt);
+        $("#frContractToDt").val(e.item.frContractToDt);
+        $("#frContractState").val(e.item.frContractState);
+        $("#frRemark").html(e.item.frRemark);
+    });
+
+});
+
 
 function createGrid(columnLayout, gridOption) {
     for (const i in columnLayout) {
