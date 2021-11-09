@@ -25,12 +25,15 @@
 			];
 
 			const dateAToBTargetIds = [
-				["brContractFromDt", "brContractToDt"], ["frContactFromDt", "frContactToDt"]
+				["brContractFromDt", "brContractToDt"], ["frContractFromDt", "frContractToDt"]
 			];
 
 			CommonUI.setDatePicker(datePickerTargetIds);
 			CommonUI.setDateAToBValidation(dateAToBTargetIds);
 
+			AUIGrid.bind(gridID[0], "cellClick", function (e) {
+				console.log(e.item);
+			});
 
 			/*
 			* JqueyUI datepicker의 기간 A~B까지를 선택할 때 선택한 날짜에 따라 제한을 주기 위한 DOM id의 배열이다.
@@ -65,7 +68,7 @@
 					지사코드
 					<input type="text" name="brCode" id="brCode" maxlength="2" />
 					<input type="hidden" id="brCodeChecked" value="0">
-					<button onclick="codeOverlap(1)">중복확인</button>
+					<button type="button" onclick="codeOverlap(1)">중복확인</button>
 					지사명
 					<input type="text" name="brName" id="brName" />
 				</div>
@@ -89,10 +92,10 @@
 					가맹 : <input type="text" id="brCarculateRateFr" name="brCarculateRateFr" />%
 					특이사항
 					<textarea  id="brRemark" name="brRemark"></textarea>
-					<button>신규</button>
-					<button onclick="branohSave()">저장</button>
-					<button>삭제</button>
-					<button onclick="fromToValidation(0)">테스트용</button>
+					<button type="button">신규</button>
+					<button type="button" onclick="branchSave()">저장</button>
+					<button type="button" >삭제</button>
+					<button type="button" onclick="fromToValidation(0)">테스트용</button>
 				</div>
 			</form>
 		</div>
@@ -125,7 +128,7 @@
 					가맹점코드
 					<input type="text" id="frCode" name="frCode" maxlength="3" />
 					<input type="hidden" id="frCodeChecked" value="0">
-					<button onclick="codeOverlap(2)">중복확인</button>
+					<button type="button" onclick="codeOverlap(2)">중복확인</button>
 					가맹점명
 					<input type="text" id="frName" name="frName" />
 				</div>
@@ -145,9 +148,9 @@
 					</select>
 					특이사항
 					<textarea id="frRemark" name="frRemark"></textarea>
-					<button>신규</button>
-					<button onclick="franohiseSave()">저장</button>
-					<button>삭제</button>
+					<button type="button">신규</button>
+					<button type="button" onclick="franchiseSave()">저장</button>
+					<button type="button">삭제</button>
 				</div>
 			</form>
 		</div>

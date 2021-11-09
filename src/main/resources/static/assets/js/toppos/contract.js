@@ -73,6 +73,8 @@ columnLayout[3] = [
     },
 ];
 
+
+
 function createGrid(columnLayout, gridOption) {
     for (const i in columnLayout) {
         gridID[i] = AUIGrid.create(targetDiv[i], columnLayout[i], gridOption);
@@ -81,12 +83,13 @@ function createGrid(columnLayout, gridOption) {
     /* <=========================> */
     /* 각 그리드의 url */
     const gridUrl = [
-        "/api/head/branohList", "/api/head/franohiseList", "/api/head/branohList", "/api/head/franohiseList",
-    ]
+        "/api/head/branchList", "/api/head/franchiseList"
+    ];
 
-    for (let i=0; i<4; i++) {
+    for (let i=0; i<2; i++) {
     	setListData(gridUrl[i], i);
     }
+
 }
 
 function setListData(url, numOfGrid) {
@@ -101,6 +104,7 @@ function setListData(url, numOfGrid) {
         success: function (req) {
             gridData[numOfGrid] = req.sendData.gridListData;
             AUIGrid.setGridData(gridID[numOfGrid], gridData[numOfGrid]);
+            AUIGrid.setGridData(gridID[numOfGrid+2], gridData[numOfGrid]);
         }
     });
 }
@@ -111,23 +115,23 @@ function codeOverlap(num){
     let url;
     let params;
 
-    $(document).ajaxSend(function(e, xhr) { xhr.setRequestHeader("Authorization",
-            localStorage.getItem('Authorization')); });
-
+    $(document).ajaxSend(function(e, xhr) {
+        xhr.setRequestHeader("Authorization", localStorage.getItem('Authorization')); });
 
     if(num===1){
         console.log("지사 코드 중복확인");
-        url = "/api/head/branohOverlap";
+        url = "/api/head/branchOverlap";
         params = {
             brCode: $("#brCode").val()
         };
     }else{
         console.log("가맹점 코드 중복확인");
-        url = "/api/head/franohiseOverlap";
+        url = "/api/head/franchiseOverlap";
         params = {
             frCode: $("#frCode").val()
         };
     }
+
 
     $.ajax({
         url: url,
@@ -155,10 +159,11 @@ function codeOverlap(num){
             }
         }
     });
+
 }
 
 // 지사 저장함수
-function branohSave(){
+function branchSave(){
 
     const $brCodeChecked = $("#brCodeChecked").val();
     if($brCodeChecked==="0"){
@@ -169,7 +174,7 @@ function branohSave(){
 
     const formData = new FormData(document.getElementById('brFormData'));
 
-    let url = "/api/head/branohSave";
+    let url = "/api/head/branchSave";
 
     $.ajax({
         url: url,
@@ -198,7 +203,7 @@ function branohSave(){
 }
 
 // 가맹점 저장함수
-function franohiseSave(){
+function franchiseSave(){
 
     const $frCodeChecked = $("#frCodeChecked").val();
     if($frCodeChecked==="0"){
@@ -209,7 +214,7 @@ function franohiseSave(){
 
     const formData = new FormData(document.getElementById('frFormData'));
 
-    let url = "/api/head/franohiseSave";
+    let url = "/api/head/franchiseSave";
 
     $.ajax({
         url: url,
