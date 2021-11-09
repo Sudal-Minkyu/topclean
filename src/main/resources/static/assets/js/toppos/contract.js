@@ -6,7 +6,8 @@ let columnLayout = [];
 let gridOption = {
     editable : false,
     selectionMode : "multipleCells",
-    noDataMessage : "출력할 데이터가 없습니다."
+    noDataMessage : "출력할 데이터가 없습니다.",
+    rowNumHeaderText : "순번"
 };
 
 targetDiv = [
