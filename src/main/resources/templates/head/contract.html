@@ -6,247 +6,37 @@
 
 <!-- 사용자 CSS 추가 -->
 <th:block layout:fragment="css">
-
+	<style>
+	</style>
 </th:block>
 
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
 
+	<script src="/assets/js/toppos/contract.js"></script>
 	<script type="text/javascript">
 
 		$(function (){
-			$("#brContractDt").datepicker({
-				dateFormat: 'yy-mm-dd',
-			});
-			$("#brContractFormDt").datepicker({
-				dateFormat: 'yy-mm-dd',
-			});
-			$("#brContractToDt").datepicker({
-				dateFormat: 'yy-mm-dd',
-			});
-			$("#frContractDt").datepicker({
-				dateFormat: 'yy-mm-dd',
-				// minDate: 0 // 오늘날짜이전은 선택할수없게하는 옵션
-			});
-			$("#frContractFormDt").datepicker({
-				dateFormat: 'yy-mm-dd',
-			});
-			$("#frContractToDt").datepicker({
-				dateFormat: 'yy-mm-dd',
-			});
-
-
 			createGrid(columnLayout, gridOption);
 
+			const datePickerTargetIds = [
+					"brContractDt", "brContractFromDt", "brContractToDt", "frContractDt",
+					"frContractFromDt", "frContractToDt"
+			];
+
+			const dateAToBTargetIds = [
+				["brContractFromDt", "brContractToDt"], ["frContactFromDt", "frContactToDt"]
+			];
+
+			ComUI.setDatePicker(datePickerTargetIds);
+			ComUI.setDateAToBValidation(dateAToBTargetIds);
+
+
+			/*
+			* JqueyUI datepicker의 기간 A~B까지를 선택할 때 선택한 날짜에 따라 제한을 주기 위한 DOM id의 배열이다.
+			* 배열 내 각 내부 배열은 [~부터의 제한 대상이 될 id, ~까지의 제한 대상이 될 id] 이다.
+			* */
 		});
-
-		let gridID = [];
-		let targetDiv = [];
-		let gridData = [];
-		let columnLayout = [];
-
-		let gridOption = {
-			editable : false,
-			selectionMode : "multipleCells",
-			noDataMessage : "출력할 데이터가 없습니다."
-		};
-
-		targetDiv = [
-			"grid_contract_one", "grid_contract_two", "grid_contract_three", "grid_contract_four"
-		]
-
-		columnLayout[0] = [
-			{
-				dataField: "",
-				headerText: "순번",
-			}, {
-				dataField: "brName",
-				headerText: "지사명",
-			}, {
-				dataField: "brContractFromDt",
-				headerText: "계약시작일",
-			}, {
-				dataField: "brContractToDt",
-				headerText: "계약종료일",
-			},
-		];
-
-		columnLayout[1] = [
-			{
-				dataField: "",
-				headerText: "순번",
-			}, {
-				dataField: "frName",
-				headerText: "가맹점명",
-			}, {
-				dataField: "frContractFromDt",
-				headerText: "계약시작일",
-			}, {
-				dataField: "frContractToDt",
-				headerText: "계약종료일",
-			}, {
-				dataField: "",
-				headerText: "배정지사명",
-			},
-		];
-
-		columnLayout[2] = [
-			{
-				dataField: "",
-				headerText: "순번",
-			}, {
-				dataField: "brName",
-				headerText: "지사명",
-			}, {
-				dataField: "brContractFromDt",
-				headerText: "계약시작일",
-			}, {
-				dataField: "brContractToDt",
-				headerText: "계약종료일",
-			},
-		];
-
-		columnLayout[3] = [
-			{
-				dataField: "",
-				headerText: "순번",
-			}, {
-				dataField: "frName",
-				headerText: "가맹점명",
-			}, {
-				dataField: "frContractFromDt",
-				headerText: "계약시작일",
-			}, {
-				dataField: "frContractToDt",
-				headerText: "계약종료일",
-			}, {
-				dataField: "",
-				headerText: "배정지사명",
-			},
-		];
-
-		function createGrid(columnLayout, gridOption) {
-			for (const i in columnLayout) {
-				gridID[i] = AUIGrid.create(targetDiv[i], columnLayout[i], gridOption);
-			}
-
-			/* <=========================> */
-			/* 각 그리드의 url */
-			// const gridUrl = [
-			// 		"url1", "url2", "url3", "url4"
-			// ]
-			//
-			// for (let i=0; i<2; i++) {
-			// 	setData(gridUrl[i], i);
-			// }
-
-		}
-
-		function setData(url, numOfGrid) {
-			$(document).ajaxSend(function(e, xhr)
-				{ xhr.setRequestHeader("Authorization",localStorage.getItem('Authorization')); });
-			$.ajax({
-				url: url,
-				type: 'GET',
-				cache: false,
-				error: function (req) {
-					ajaxErrorMsg(req);
-				},
-				success: function (req) {
-					gridData[numOfGrid] = req.sendData.gridListData;
-					AUIGrid.setGridData(gridID[numOfGrid], gridData[numOfGrid]);
-				}
-			});
-		}
-
-		// 지사, 가맹점 코드 중복확인 체크함수
-		function codeOverlap(num){
-
-			let url;
-			$(document).ajaxSend(function(e, xhr) { xhr.setRequestHeader("Authorization",localStorage.getItem('Authorization')); });
-
-			let params;
-
-			if(num===1){
-				console.log("지사 코드 중복확인");
-				url = "/api/head/branohOverlap"
-				params = {
-					brCode: $("#brCode").val()
-				};
-			}else{
-				console.log("가맹점 코드 중복확인");
-				url = "/api/head/franohiseOverlap"
-				params = {
-					frCode: $("#frCode").val()
-				};
-			}
-			$.ajax({
-				url: url,
-				type: 'GET',
-				cache: false,
-				data: params,
-				error: function (req) {
-					ajaxErrorMsg(req);
-				},
-				success: function (req) {
-					if (req.status === 200) {
-						if(num===1){
-							$("#brCodeChecked").val("1");
-						}else{
-							$("#frCodeChecked").val("1");
-						}
-						console.log("중복환인 완료");
-						alertSuccess("사용할 수 있는  코드입니다.");
-					}else {
-						if (req.err_msg2 === null) {
-							alertCaution(req.err_msg, 1);
-						} else {
-							alertCaution(req.err_msg + "<br>" + req.err_msg2, 1);
-						}
-					}
-				}
-			});
-		}
-
-		// 가맹점 저장함수
-		function franohiseSave(){
-
-			const $frCodeChecked = $("#frCodeChecked").val();
-			if($frCodeChecked==="0"){
-				alertCaution("가맹점코드 중복확인을 해주세요.",1)
-				return false;
-			}
-			$(document).ajaxSend(function(e, xhr) { xhr.setRequestHeader("Authorization",localStorage.getItem('Authorization')); });
-
-			const formData = new FormData(document.getElementById('frFormData'));
-
-			let url = "/api/head/franohiseSave"
-
-			$.ajax({
-				url: url,
-				type: 'POST',
-				cache: false,
-				data: formData,
-				processData: false,
-				contentType: false,
-				enctype: 'multipart/form-data',
-				error: function (req) {
-					ajaxErrorMsg(req);
-				},
-				success: function (req) {
-					if (req.status === 200) {
-						console.log("저장 완료");
-						alertSuccess("가맹점 저장완료");
-					}else {
-						if (req.err_msg2 === null) {
-							alertCaution(req.err_msg, 1);
-						} else {
-							alertCaution(req.err_msg + "<br>" + req.err_msg2, 1);
-						}
-					}
-				}
-			});
-		}
 
 	</script>
 </th:block>
@@ -273,8 +63,8 @@
 			<div>
 				지사코드
 				<input type="text" name="brCode" id="brCode" maxlength="2" />
-				<input type="text" id="brCodeChecked" value="0">
-				<input type="button" onclick="codeOverlap(1)" value="중복확인">
+				<input type="hidden" id="brCodeChecked" value="0">
+				<button onclick="codeOverlap(1)">중복확인</button>
 				지사명
 				<input type="text" name="brName" id="brName" />
 			</div>
@@ -282,7 +72,7 @@
 				계약일자
 				<input type="text" id="brContractDt" name="brContractDt" maxlength="10" placeholder="연 - 월 - 일">
 				계약기간
-				<input type="text" id="brContractFormDt" name="brContractFormDt" maxlength="10" placeholder="연 - 월 - 일">
+				<input type="text" id="brContractFromDt" name="brContractFromDt" maxlength="10" placeholder="연 - 월 - 일">
 				~
 				<input type="text" id="brContractToDt" name="brContractToDt" maxlength="10" placeholder="연 - 월 - 일">
 			</div>
@@ -298,9 +88,10 @@
 				가맹 : <input type="text" id="brCarculateRateFr" name="brCarculateRateFr" />%
 				특이사항
 				<textarea  id="brRemark" name="brRemark"></textarea>
-				<input type="button" value="신규">
-				<input type="button" value="저장">
-				<input type="button" value="삭제">
+				<button>신규</button>
+				<button>저장</button>
+				<button>삭제</button>
+				<button onclick="fromToValidation(0)">테스트용</button>
 			</div>
 		</div>
 	</div>
@@ -315,7 +106,7 @@
 		<div>
 			가맹점명
 			<input type="text">
-			<input type="button" value="검색">
+			<button>검색</button>
 		</div>
 		<div id="grid_contract_two">
 		</div>
@@ -331,8 +122,8 @@
 				<div>
 					가맹점코드
 					<input type="text" id="frCode" name="frCode" maxlength="3" />
-					<input type="text" id="frCodeChecked" value="0">
-					<input type="button" onclick="codeOverlap(2)" value="중복확인">
+					<input type="hidden" id="frCodeChecked" value="0">
+					<button onclick="codeOverlap(2)">중복확인</button>
 					가맹점명
 					<input type="text" id="frName" name="frName" />
 				</div>
@@ -340,7 +131,7 @@
 					계약일자
 					<input id="frContractDt" name="frContractDt" type="text" maxlength="10" placeholder="연 - 월 - 일">
 					계약기간
-					<input id="frContractFormDt" name="frContractFormDt" type="text" maxlength="10" placeholder="연 - 월 - 일">
+					<input id="frContractFromDt" name="frContractFromDt" type="text" maxlength="10" placeholder="연 - 월 - 일">
 					~
 					<input id="frContractToDt" name="frContractToDt" type="text" maxlength="10" placeholder="연 - 월 - 일">
 				</div>
@@ -352,9 +143,9 @@
 					</select>
 					특이사항
 					<textarea id="frRemark" name="frRemark"></textarea>
-					<input type="button" value="신규">
-					<input type="button" onclick="franohiseSave()" value="저장">
-					<input type="button" value="삭제">
+					<button>신규</button>
+					<button onclick="franohiseSave()">저장</button>
+					<button>삭제</button>
 				</div>
 			</form>
 		</div>
@@ -371,7 +162,7 @@
 			</select>
 			가맹점명
 			<input type="text">
-			<input type="button" value="검색">
+			<button>검색</button>
 		</div>
 		<div>
 			계약 지사 리스트
@@ -413,7 +204,7 @@
 				지사
 				<input type="text" readonly>
 				<input type="text">
-				<input type="button" value="지사변경">
+				<button>지사변경</button>
 				배정상태
 				<select>
 					<option>배정완료/미배정</option>
@@ -422,7 +213,7 @@
 				본사 : <input type="text">%
 				지사 : <input type="text">%
 				가맹 : <input type="text">%
-				<input type="button" value="저장">
+				<button>저장</button>
 			</div>
 		</div>
 	</div>
