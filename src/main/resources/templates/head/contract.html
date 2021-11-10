@@ -25,7 +25,7 @@
 		<div>
 			계약 지사 리스트
 		</div>
-		<div id="grid_contract_one">
+		<div id="grid_contract_0">
 		</div>
 	</div>
 
@@ -40,7 +40,7 @@
 					지사코드
 					<input type="text" name="brCode" id="brCode" maxlength="2" />
 					<input type="hidden" id="brCodeChecked" value="0">
-					<button type="button" onclick="codeOverlap(1)">중복확인</button>
+					<button type="button" id="brCodeChkBtn" onclick="codeOverlap(1)">중복확인</button>
 					지사명
 					<input type="text" name="brName" id="brName" />
 				</div>
@@ -64,7 +64,7 @@
 					가맹 : <input type="text" id="brCarculateRateFr" name="brCarculateRateFr" />%
 					특이사항
 					<textarea  id="brRemark" name="brRemark"></textarea>
-					<button type="button">신규</button>
+					<button type="button" onclick="createNewPost(0)">신규</button>
 					<button type="button" onclick="branchSave()">저장</button>
 					<button type="button" >삭제</button>
 					<button type="button" onclick="fromToValidation(0)">테스트용</button>
@@ -85,7 +85,7 @@
 			<input type="text">
 			<button>검색</button>
 		</div>
-		<div id="grid_contract_two">
+		<div id="grid_contract_1">
 		</div>
 	</div>
 
@@ -100,7 +100,7 @@
 					가맹점코드
 					<input type="text" id="frCode" name="frCode" maxlength="3" />
 					<input type="hidden" id="frCodeChecked" value="0">
-					<button type="button" onclick="codeOverlap(2)">중복확인</button>
+					<button type="button" id="frCodeChkBtn" onclick="codeOverlap(2)">중복확인</button>
 					가맹점명
 					<input type="text" id="frName" name="frName" />
 				</div>
@@ -120,7 +120,7 @@
 					</select>
 					특이사항
 					<textarea id="frRemark" name="frRemark"></textarea>
-					<button type="button">신규</button>
+					<button type="button" onclick="createNewPost(1)">신규</button>
 					<button type="button" onclick="franchiseSave()">저장</button>
 					<button type="button">삭제</button>
 				</div>
@@ -144,12 +144,12 @@
 		<div>
 			계약 지사 리스트
 		</div>
-		<div id="grid_contract_three">
+		<div id="grid_contract_2">
 		</div>
 		<div>
 			계약 가맹점 리스트
 		</div>
-		<div id="grid_contract_four">
+		<div id="grid_contract_3">
 		</div>
 	</div>
 
