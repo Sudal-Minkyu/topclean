@@ -18,7 +18,7 @@ $(function() {
         $('#franchise_popup').removeClass('open');;
     });
 
-    $("#roleCode").on("change", function (e){
+    $("#role").on("change", function (e){
         const selectedCode = $(e.target).find("option:selected").val();
         restrictCodeSelection(selectedCode);
     });
@@ -270,6 +270,7 @@ function accountSave(){
         alertCaution("유저아이디 중복확인을 해주세요.",1);
         return false;
     }
+
     if(!CommonUI.regularValidator($("#useremail").val(), "email")) {
         alertCaution("이메일을 잘 입력 해주세요.",1);
         $("#useremail").trigger("focus");
@@ -351,12 +352,13 @@ function setFieldData(numOfGrid, item) {
             $("#useridChecked").val(item.useridChecked);
             $("#username").val(item.username);
             $("#password").val(item.password);
-            $("#roleCode").val(item.roleCode);
+            $("#role").val(item.roleCode);
             $("#usertel").val(item.usertel);
             $("#useremail").val(item.useremail);
             $("#frCode").val(item.frCode);
             $("#brCode").val(item.brCode);
             $("#userremark").html(item.userremark);
+
             break;
 
         case 1 :
@@ -374,25 +376,30 @@ function createNewPost(numOfGrid) {
 }
 
 function restrictCodeSelection(selectedCode) {
+    const  $frCode =  $("#frCode");
+    const  $frCodeBtn =  $("#frCodeBtn");
+    const  $brCode =  $("#brCode");
+    const  $brCodeBtn =  $("#brCodeBtn");
+
     switch (selectedCode) {
         case "ROLE_USER" :
-            $("#frCode").attr("disabled", false);
-            $("#frCodeBtn").attr("disabled", false);
-            $("#brCode").attr("disabled", true);
-            $("#brCodeBtn").attr("disabled", true);
+            $frCode.attr("disabled", false);
+            $frCodeBtn.attr("disabled", false);
+            $brCode.attr("disabled", true);
+            $brCodeBtn.attr("disabled", true);
             break;
         case "ROLE_MANAGER" :
         case "ROLE_NORMAL" :
-            $("#frCode").attr("disabled", true);
-            $("#frCodeBtn").attr("disabled", true);
-            $("#brCode").attr("disabled", false);
-            $("#brCodeBtn").attr("disabled", false);
+            $frCode.attr("disabled", true);
+            $frCodeBtn.attr("disabled", true);
+            $brCode.attr("disabled", false);
+            $brCodeBtn.attr("disabled", false);
             break;
         default :
-            $("#frCode").attr("disabled", true);
-            $("#frCodeBtn").attr("disabled", true);
-            $("#brCode").attr("disabled", true);
-            $("#brCodeBtn").attr("disabled", true);
+            $frCode.attr("disabled", true);
+            $frCodeBtn.attr("disabled", true);
+            $brCode.attr("disabled", true);
+            $brCodeBtn.attr("disabled", true);
             break;
     }
 }
