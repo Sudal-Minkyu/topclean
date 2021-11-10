@@ -34,7 +34,7 @@
 				<div>
 					암호<input type="password" id="password" name="password" />
 					권한
-					<select id="role" name="role">
+					<select id="roleCode" name="roleCode">
 						<option value="">선택</option>
 						<option th:each ="role : ${roles}"
 								th:value="${role.getCode()}"
@@ -47,15 +47,15 @@
 					이메일<input type="text" id="useremail" name="useremail" />
 				</div>
 				<div>
-					가맹점코드 3자리<input type="text" id="frCode" name="frCode" /><button type="button" onclick="frListPop()">가맹점선택</button>
-					지사코드 2자리<input type="text" id="brCode" name="brCode" /><button type="button" onclick="brListPop()">지사선택</button>
+					가맹점코드 3자리<input type="text" id="frCode" name="frCode" /><button id="frCodeBtn" type="button" onclick="frListPop()">가맹점선택</button>
+					지사코드 2자리<input type="text" id="brCode" name="brCode" /><button id="brCodeBtn" type="button" onclick="brListPop()">지사선택</button>
 				</div>
 				<div>
 					특이사항
 					<textarea  id="userremark" name="userremark"></textarea>
 				</div>
 			</form>
-			<button>신규</button>
+			<button type="button" onclick="createNewPost(0)">신규</button>
 			<button onclick="accountSave()">저장</button>
 			<button>삭제</button>
 		</div>

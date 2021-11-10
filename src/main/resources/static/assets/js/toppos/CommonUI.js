@@ -60,6 +60,18 @@ class CommonUIClass {
         }
     }
 
+    regularValidator(testValue, testMethod) {
+
+        const email = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/;
+
+        switch (testMethod) {
+            case "email" :
+                return email.test(testValue);
+                break;
+            default :
+                break;
+        }
+    }
 }
 
 const CommonUI = new CommonUIClass();

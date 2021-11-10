@@ -3,16 +3,25 @@ $(function() {
     accountList(); // 사용자리스트 자동조회
     createAccountGrid(columnLayout, gridOption);
 
+    /* 0번그리드 내의 아이템 클릭시 필드에 적용 */
     AUIGrid.bind(gridID[0], "cellClick", function (e) {
+        setFieldData(0, e.item);
+    });
+
+    AUIGrid.bind(gridID[1], "cellClick", function (e) {
         $("#brCode").val(e.item.brCode);
         $('#branch_popup').removeClass('open');
     });
 
-    AUIGrid.bind(gridID[1], "cellClick", function (e) {
+    AUIGrid.bind(gridID[2], "cellClick", function (e) {
         $("#frCode").val(e.item.frCode);
         $('#franchise_popup').removeClass('open');;
     });
 
+    $("#roleCode").on("change", function (e){
+        const selectedCode = $(e.target).find("option:selected").val();
+        restrictCodeSelection(selectedCode);
+    });
 });
 
 // 그리드 관련 시작
@@ -21,20 +30,14 @@ let gridID = [];
 let targetDiv = [];
 let gridData = [];
 let columnLayout = [];
+let gridOption = [];
 
-let gridOption = {
-    editable : false,
-    selectionMode : "multipleCells",
-    noDataMessage : "출력할 데이터가 없습니다.",
-    rowNumHeaderText : "순번",
-    enableColumnResize : false
-};
 
 targetDiv = [
-    "grid_branchList", "grid_franchList"
+    "grid_accountList", "grid_branchList", "grid_franchList"
 ];
 
-accountColumnLayout = [
+columnLayout[0] = [
     {
         dataField: "userid",
         headerText: "아이디",
@@ -62,7 +65,15 @@ accountColumnLayout = [
     },
 ];
 
-columnLayout[0] = [
+gridOption[0] = {
+    editable : false,
+    selectionMode : "multipleCells",
+    noDataMessage : "출력할 데이터가 없습니다.",
+    rowNumHeaderText : "순번",
+    enableColumnResize : false
+};
+
+columnLayout[1] = [
     {
         dataField: "brCode",
         headerText: "지사코드",
@@ -84,7 +95,15 @@ columnLayout[0] = [
     },
 ];
 
-columnLayout[1] = [
+gridOption[1] = {
+    editable : false,
+    selectionMode : "multipleCells",
+    noDataMessage : "출력할 데이터가 없습니다.",
+    rowNumHeaderText : "순번",
+    enableColumnResize : false
+};
+
+columnLayout[2] = [
     {
         dataField: "frCode",
         headerText: "가맹점코드",
@@ -106,9 +125,15 @@ columnLayout[1] = [
     },
 ];
 
-function createAccountGrid(columnLayout, gridOption) {
+gridOption[2] = {
+    editable : false,
+    selectionMode : "multipleCells",
+    noDataMessage : "출력할 데이터가 없습니다.",
+    rowNumHeaderText : "순번",
+    enableColumnResize : false
+};
 
-    AUIGrid.create("grid_accountList", accountColumnLayout, gridOption);
+function createAccountGrid(columnLayout, gridOption) {
 
     for (const i in columnLayout) {
         gridID[i] = AUIGrid.create(targetDiv[i], columnLayout[i], gridOption);
@@ -120,8 +145,8 @@ function createAccountGrid(columnLayout, gridOption) {
     //     "/api/head/branchList", "/api/head/franchiseList"
     // ]
 
-    for (let i=0; i<2; i++) {
-        if(i===0){
+    for (let i=1; i<3; i++) {
+        if(i===1){
             brPopList(i);
         }else{
             frPopList(i);
@@ -245,6 +270,11 @@ function accountSave(){
         alertCaution("유저아이디 중복확인을 해주세요.",1);
         return false;
     }
+    if(!CommonUI.regularValidator($("#useremail").val(), "email")) {
+        alertCaution("이메일을 잘 입력 해주세요.",1);
+        $("#useremail").trigger("focus");
+        return false;
+    }
 
     $(document).ajaxSend(function(e, xhr) { xhr.setRequestHeader("Authorization", localStorage.getItem('Authorization')); });
 
@@ -312,5 +342,57 @@ function accountList(){
             }
         }
     });
+}
 
+function setFieldData(numOfGrid, item) {
+    switch (numOfGrid) {
+        case 0 :
+            $("#userid").val(item.userid);
+            $("#useridChecked").val(item.useridChecked);
+            $("#username").val(item.username);
+            $("#password").val(item.password);
+            $("#roleCode").val(item.roleCode);
+            $("#usertel").val(item.usertel);
+            $("#useremail").val(item.useremail);
+            $("#frCode").val(item.frCode);
+            $("#brCode").val(item.brCode);
+            $("#userremark").html(item.userremark);
+            break;
+
+        case 1 :
+            break;
+    }
+}
+
+function createNewPost(numOfGrid) {
+    setFieldData(numOfGrid, {userremark : "", useridChecked : "0", role : ""});
+    switch (numOfGrid) {
+        case 0 :
+            $("#userid").trigger("focus");
+            break;
+    }
+}
+
+function restrictCodeSelection(selectedCode) {
+    switch (selectedCode) {
+        case "ROLE_USER" :
+            $("#frCode").attr("disabled", false);
+            $("#frCodeBtn").attr("disabled", false);
+            $("#brCode").attr("disabled", true);
+            $("#brCodeBtn").attr("disabled", true);
+            break;
+        case "ROLE_MANAGER" :
+        case "ROLE_NORMAL" :
+            $("#frCode").attr("disabled", true);
+            $("#frCodeBtn").attr("disabled", true);
+            $("#brCode").attr("disabled", false);
+            $("#brCodeBtn").attr("disabled", false);
+            break;
+        default :
+            $("#frCode").attr("disabled", true);
+            $("#frCodeBtn").attr("disabled", true);
+            $("#brCode").attr("disabled", true);
+            $("#brCodeBtn").attr("disabled", true);
+            break;
+    }
 }
