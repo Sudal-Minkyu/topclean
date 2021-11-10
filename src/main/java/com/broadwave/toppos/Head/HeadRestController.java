@@ -1,8 +1,6 @@
 package com.broadwave.toppos.Head;
 
-import com.broadwave.toppos.Account.Account;
-import com.broadwave.toppos.Account.AccountMapperDto;
-import com.broadwave.toppos.Account.AccountService;
+import com.broadwave.toppos.Account.*;
 import com.broadwave.toppos.Head.Branoh.Branch;
 import com.broadwave.toppos.Head.Branoh.BranchListDto;
 import com.broadwave.toppos.Head.Branoh.BranchMapperDto;
@@ -224,6 +222,11 @@ public class HeadRestController {
             franohisetInfo.put("frContractFromDt", franohise.getFrContractFromDt());
             franohisetInfo.put("frContractToDt", franohise.getFrContractToDt());
             franohisetInfo.put("frContractState", franohise.getFrContractState());
+            if(franohise.getFrContractState().equals("01")){
+                franohisetInfo.put("frContractStateValue","진행중");
+            }else{
+                franohisetInfo.put("frContractStateValue","계약완료");
+            }
             franohisetInfo.put("frRemark", franohise.getFrRemark());
             franohisetInfo.put("brName", franohise.getBrName());
             franohiseListData.add(franohisetInfo);
@@ -236,7 +239,60 @@ public class HeadRestController {
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
+    // 사용자 리스트 API
+    @GetMapping("accountList")
+    public ResponseEntity<Map<String,Object>> accountList(@RequestParam(value="s_userid", defaultValue="") String s_userid,
+                                                                                        @RequestParam(value="s_username", defaultValue="") String s_username,
+                                                                                        @RequestParam(value="s_role", defaultValue="") String s_role,
+                                                                                        @RequestParam(value="s_frCode", defaultValue="") String s_frCode,
+                                                                                        @RequestParam(value="s_brCode", defaultValue="") String s_brCode){
+        log.info("accountList 호출");
 
+        AccountRole role = null;
+
+        if (!s_role.equals("")){
+            role = AccountRole.valueOf(s_role);
+        }
+
+        AjaxResponse res = new AjaxResponse();
+
+        HashMap<String, Object> data = new HashMap<>();
+
+        List<HashMap<String,Object>> accountListData = new ArrayList<>();
+        HashMap<String,Object> accounttInfo;
+
+        List<AccountListDto> accountListDtos = accountService.findByAccountList(s_userid, s_username, role, s_frCode, s_brCode);
+        log.info("accountListDtos : "+accountListDtos);
+
+        for (AccountListDto account : accountListDtos) {
+
+            accounttInfo = new HashMap<>();
+
+            accounttInfo.put("userid", account.getUserid());
+            accounttInfo.put("role", account.getRole());
+            accounttInfo.put("username", account.getUsername());
+            accounttInfo.put("usertel", account.getUsertel());
+            accounttInfo.put("useremail", account.getUseremail());
+            if(account.getBrCode().equals("no")){
+                accounttInfo.put("brCode","해당없음");
+            }else{
+                accounttInfo.put("brCode",account.getBrCode());
+            }
+            if(account.getFrCode().equals("not")){
+                accounttInfo.put("frCode","해당없음");
+            }else{
+                accounttInfo.put("frCode",account.getFrCode());
+            }
+            accounttInfo.put("userremark", account.getUserremark());
+            accountListData.add(accounttInfo);
+
+        }
+
+        log.info("가맹점리스트 : "+accountListData);
+        data.put("gridListData",accountListData);
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
 
 
 

@@ -9,5 +9,5 @@ import java.util.List;
  * Remark :
  */
 public interface AccountRepositoryCustom {
-    List<AccountListDto> findAllByAccountList();
+    List<AccountListDto> findByAccountList(String s_userid, String s_username, AccountRole s_role, String s_frCode, String s_brCode);
 }

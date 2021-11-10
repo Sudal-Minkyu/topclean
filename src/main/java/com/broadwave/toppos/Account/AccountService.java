@@ -39,8 +39,7 @@ public class AccountService {
         return accountRepository.findByUserid(userid);
     }
 
-    public List<AccountListDto> findAllByAccountList() {
-        return accountRepositoryCustom.findAllByAccountList();
+    public List<AccountListDto> findByAccountList(String s_userid, String s_username, AccountRole s_role, String s_frCode, String s_brCode) {
+        return accountRepositoryCustom.findByAccountList(s_userid, s_username, s_role, s_frCode, s_brCode);
     }
-
 }

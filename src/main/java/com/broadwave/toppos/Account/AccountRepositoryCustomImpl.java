@@ -21,14 +21,14 @@ public class AccountRepositoryCustomImpl extends QuerydslRepositorySupport imple
     }
 
     @Override
-    public List<AccountListDto> findAllByAccountList() {
+    public List<AccountListDto> findByAccountList(String s_userid, String s_username, AccountRole s_role, String s_frCode, String s_brCode) {
         QAccount account = QAccount.account;
 
         JPQLQuery<AccountListDto> query = from(account)
                 .select(Projections.constructor(AccountListDto.class,
                         account.userid,
-                        account.username,
                         account.role,
+                        account.username,
                         account.usertel,
                         account.useremail,
                         account.frCode,
@@ -37,6 +37,26 @@ public class AccountRepositoryCustomImpl extends QuerydslRepositorySupport imple
                 ));
 
         query.orderBy(account.id.desc());
+
+        if (s_role != null){
+            query.where(account.role.eq(s_role));
+        }
+
+        if (!s_userid.equals("")){
+            query.where(account.userid.likeIgnoreCase(s_userid.concat("%")));
+        }
+
+        if (!s_userid.equals("")){
+            query.where(account.userid.likeIgnoreCase(s_userid.concat("%")));
+        }
+
+        if (!s_frCode.equals("")){
+            query.where(account.frCode.likeIgnoreCase(s_frCode.concat("%")));
+        }
+
+        if (!s_brCode.equals("")){
+            query.where(account.brCode.likeIgnoreCase(s_brCode.concat("%")));
+        }
 
         return query.fetch();
 

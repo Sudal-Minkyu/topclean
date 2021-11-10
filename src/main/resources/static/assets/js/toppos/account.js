@@ -1,4 +1,20 @@
 
+$(function() {
+    accountList(); // 사용자리스트 자동조회
+    createAccountGrid(columnLayout, gridOption);
+
+    AUIGrid.bind(gridID[0], "cellClick", function (e) {
+        $("#brCode").val(e.item.brCode);
+        $('#branch_popup').removeClass('open');
+    });
+
+    AUIGrid.bind(gridID[1], "cellClick", function (e) {
+        $("#frCode").val(e.item.frCode);
+        $('#franchise_popup').removeClass('open');;
+    });
+
+});
+
 // 그리드 관련 시작
 // +++++++++++++++++++++++++++++++++++++//
 let gridID = [];
@@ -10,11 +26,40 @@ let gridOption = {
     editable : false,
     selectionMode : "multipleCells",
     noDataMessage : "출력할 데이터가 없습니다.",
-    rowNumHeaderText : "순번"
+    rowNumHeaderText : "순번",
+    enableColumnResize : false
 };
 
 targetDiv = [
     "grid_branchList", "grid_franchList"
+];
+
+accountColumnLayout = [
+    {
+        dataField: "userid",
+        headerText: "아이디",
+    }, {
+        dataField: "username",
+        headerText: "이름",
+    }, {
+        dataField: "role",
+        headerText: "권한",
+    }, {
+        dataField: "frCode",
+        headerText:"가맹점코드",
+    }, {
+        dataField: "brCode",
+        headerText:"지사코드",
+    }, {
+        dataField: "usertel",
+        headerText: "전화번호",
+    }, {
+        dataField: "useremail",
+        headerText: "이메일",
+    }, {
+        dataField: "userremark",
+        headerText: "특이사항",
+    },
 ];
 
 columnLayout[0] = [
@@ -22,7 +67,7 @@ columnLayout[0] = [
         dataField: "brName",
         headerText: "지사명",
     }, {
-        dataField: "brContract",
+        dataField: "brContractDt",
         headerText: "계약일자",
     }, {
         dataField: "brContractFromDt",
@@ -41,7 +86,7 @@ columnLayout[1] = [
         dataField: "frName",
         headerText: "가맹점명",
     }, {
-        dataField: "frContract",
+        dataField: "frContractDt",
         headerText: "계약시작일",
     },{
         dataField: "frContractFromDt",
@@ -56,20 +101,40 @@ columnLayout[1] = [
 ];
 
 function createAccountGrid(columnLayout, gridOption) {
+
+    AUIGrid.create("grid_accountList", accountColumnLayout, gridOption);
+
     for (const i in columnLayout) {
         gridID[i] = AUIGrid.create(targetDiv[i], columnLayout[i], gridOption);
     }
 
-    // /* <=========================> */
-    // /* 각 그리드의 url */
-    // const gridUrl = [
-    //     "/api/head/branohList", "/api/head/franohiseList"
-    // ]
-    //
-    // for (let i=0; i<2; i++) {
-    //     setListData(gridUrl[i], i);
-    // }
+    /* <=========================> */
+    /* 각 그리드의 url */
+    const gridUrl = [
+        "/api/head/branchList", "/api/head/franchiseList"
+    ]
 
+    for (let i=0; i<2; i++) {
+        setListData(gridUrl[i], i);
+    }
+
+}
+
+function setListData(url, numOfGrid) {
+    $(document).ajaxSend(function(e, xhr) { xhr.setRequestHeader("Authorization",localStorage.getItem('Authorization')); });
+    $.ajax({
+        url: url,
+        type: 'GET',
+        cache: false,
+        error: function (req) {
+            ajaxErrorMsg(req);
+        },
+        success: function (req) {
+            gridData[numOfGrid] = req.sendData.gridListData;
+            myGridID = AUIGrid.setGridData(gridID[numOfGrid], gridData[numOfGrid]);
+            // AUIGrid.resize(myGridID, 800, 480);
+        }
+    });
 }
 
 // +++++++++++++++++++++++++++++++++++++//
@@ -90,13 +155,13 @@ function frListPop(){
 // 지사 점 팝업닫기
 function branchClose(){
     // console.log("지사선택 팝업닫기");
-    $('#branch_popup').removeClass('open');;
+    $('#branch_popup').removeClass('open');
 }
 
 // 가맹점 선택 팝업닫기
 function franchiseClose(){
     // console.log("가맹점선택 팝업닫기");
-    $('#franchise_popup').removeClass('open');;
+    $('#franchise_popup').removeClass('open');
 }
 
 
@@ -171,6 +236,42 @@ function accountSave(){
             if (req.status === 200) {
                 console.log("저장 완료");
                 alertSuccess("사용자 저장완료");
+            }else {
+                if (req.err_msg2 === null) {
+                    alertCaution(req.err_msg, 1);
+                } else {
+                    alertCaution(req.err_msg + "<br>" + req.err_msg2, 1);
+                }
+            }
+        }
+    });
+}
+
+// 사용자 조회 함수호출
+function accountList(){
+
+    $(document).ajaxSend(function(e, xhr) { xhr.setRequestHeader("Authorization", localStorage.getItem('Authorization')); });
+
+    let url = "/api/head/accountList";
+    let params = {
+        s_userid: $("#s_userid").val(),
+        s_username: $("#s_username").val(),
+        s_role: $("#s_role").val(),
+        s_frCode: $("#s_frCode").val(),
+        s_brCode: $("#s_brCode").val()
+    };
+
+    $.ajax({
+        url: url,
+        type: 'GET',
+        cache: false,
+        data: params,
+        error: function (req) {
+            ajaxErrorMsg(req);
+        },
+        success: function (req) {
+            if (req.status === 200) {
+                AUIGrid.setGridData("grid_accountList", req.sendData.gridListData);
             }else {
                 if (req.err_msg2 === null) {
                     alertCaution(req.err_msg, 1);
