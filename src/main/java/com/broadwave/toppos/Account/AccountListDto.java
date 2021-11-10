@@ -51,7 +51,7 @@ public class AccountListDto {
         return username;
     }
 
-    public String getRole() {
-        return role.getDesc();
+    public AccountRole getRole() {
+        return role;
     }
 }

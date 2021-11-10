@@ -274,7 +274,8 @@ public class HeadRestController {
             accounttInfo = new HashMap<>();
 
             accounttInfo.put("userid", account.getUserid());
-            accounttInfo.put("role", account.getRole());
+            accounttInfo.put("roleCode", account.getRole().getCode());
+            accounttInfo.put("role", account.getRole().getDesc());
             accounttInfo.put("username", account.getUsername());
             accounttInfo.put("usertel", account.getUsertel());
             accounttInfo.put("useremail", account.getUseremail());
