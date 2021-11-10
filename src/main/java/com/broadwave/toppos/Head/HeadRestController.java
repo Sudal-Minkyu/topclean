@@ -62,6 +62,7 @@ public class HeadRestController {
         if( optionalAccount.isPresent()){
             // 수정일때
             account.setId(optionalAccount.get().getId());
+            account.setPassword(optionalAccount.get().getPassword());
             account.setInsert_id(login_id);
             account.setInsertDateTime(LocalDateTime.now());
         }else{
