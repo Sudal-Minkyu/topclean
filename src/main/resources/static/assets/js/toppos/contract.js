@@ -344,8 +344,7 @@ function setFieldData(numOfGrid, item) {
     let isLockField = item.brCode !== undefined || item.frCode !== undefined;
     switch (numOfGrid) {
         case 0 :
-            $("#brCode").val(item.brCode);
-            $("#brCode").attr("readonly", isLockField);
+            $("#brCode").val(item.brCode).attr("readonly", isLockField);
             $("#brCodeChkBtn").attr("disabled", isLockField);
             $("#brCodeChecked").val('1');
             $("#brName").val(item.brName);
@@ -359,12 +358,11 @@ function setFieldData(numOfGrid, item) {
             $("#brRemark").html(item.brRemark);
             CommonUI.restrictDate(dateAToBTargetIds[0][0], dateAToBTargetIds[0][1], false);
             CommonUI.restrictDate(dateAToBTargetIds[0][0], dateAToBTargetIds[0][1], true);
-            console.log($("#brCode").val());
+            // console.log($("#brCode").val());
             break;
 
         case 1 :
-            $("#frCode").val(item.frCode);
-            $("#frCode").attr("readonly", isLockField);
+            $("#frCode").val(item.frCode).attr("readonly", isLockField);
             $("#frCodeChkBtn").attr("disabled", isLockField);
             $("#frCodeChecked").val(1);
             $("#frName").val(item.frName);

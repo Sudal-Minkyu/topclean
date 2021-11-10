@@ -56,7 +56,7 @@ public class FranchiseRepositoryCustomImpl extends QuerydslRepositorySupport imp
         }
 
         if (!frContractState.equals("")){
-            query.where(franchise.brAssignState.eq(frContractState));
+            query.where(franchise.frContractState.eq(frContractState));
         }
 
         return query.fetch();

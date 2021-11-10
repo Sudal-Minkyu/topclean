@@ -279,12 +279,12 @@ public class HeadRestController {
             accounttInfo.put("usertel", account.getUsertel());
             accounttInfo.put("useremail", account.getUseremail());
             if(account.getBrCode().equals("no")){
-                accounttInfo.put("brCode","해당없음");
+                accounttInfo.put("brCode","해당안됨");
             }else{
                 accounttInfo.put("brCode",account.getBrCode());
             }
             if(account.getFrCode().equals("not")){
-                accounttInfo.put("frCode","해당없음");
+                accounttInfo.put("frCode","해당안됨");
             }else{
                 accounttInfo.put("frCode",account.getFrCode());
             }
@@ -293,7 +293,7 @@ public class HeadRestController {
 
         }
 
-        log.info("가맹점리스트 : "+accountListData);
+        log.info("사용자리스트 : "+accountListData);
         data.put("gridListData",accountListData);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
