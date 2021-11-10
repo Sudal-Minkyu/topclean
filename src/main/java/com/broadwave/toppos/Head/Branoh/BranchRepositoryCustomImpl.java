@@ -22,7 +22,7 @@ public class BranchRepositoryCustomImpl extends QuerydslRepositorySupport implem
     }
 
     @Override
-    public List<BranchListDto> findByBranchList() {
+    public List<BranchListDto> findByBranchList(String brName, String brCode, String brContractState) {
         QBranch branch = QBranch.branch;
 
         JPQLQuery<BranchListDto> query = from(branch)
@@ -40,6 +40,18 @@ public class BranchRepositoryCustomImpl extends QuerydslRepositorySupport implem
                 ));
 
         query.orderBy(branch.id.desc());
+
+        if (!brName.equals("")){
+            query.where(branch.brName.likeIgnoreCase(brName.concat("%")));
+        }
+
+        if (!brCode.equals("")){
+            query.where(branch.brCode.likeIgnoreCase(brCode.concat("%")));
+        }
+
+        if (!brContractState.equals("")){
+            query.where(branch.brContractState.eq(brContractState));
+        }
 
         return query.fetch();
     }

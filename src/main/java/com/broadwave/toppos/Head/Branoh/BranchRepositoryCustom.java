@@ -9,5 +9,5 @@ import java.util.List;
  * Remark :
  */
 public interface BranchRepositoryCustom {
-    List<BranchListDto> findByBranchList();
+    List<BranchListDto> findByBranchList(String brName, String brCode, String brContractState);
 }

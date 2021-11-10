@@ -22,17 +22,17 @@
 			사용자 정보
 		</div>
 		<div>
-			<form id="accountFormData" enctype="multipart/form-data">
+			<form id="accountFormData" autocomplete="off" enctype="multipart/form-data">
 				<div>
 					아이디
-					<input type="text" autocomplete="off" name="userid" id="userid" />
+					<input type="text" name="userid" id="userid" />
 					<input type="hidden" id="useridChecked" value="0" />
 					<button type="button" onclick="useridOverlap()">중복확인</button>
 					이름
 					<input type="text" name="username" id="username" />
 				</div>
 				<div>
-					암호<input type="password" autocomplete="off" id="password" name="password" />
+					암호<input type="password" id="password" name="password" />
 					권한
 					<select id="role" name="role">
 						<option value="">선택</option>
@@ -103,20 +103,38 @@
 				<div class="l-popup__section">
 					<table class="c-table c-table--non-border">
 						<colgroup>
-							<col style="width: 100px;"/>
+							<col style="width: 80px;"/>
+							<col/>
+							<col style="width: 80px;"/>
+							<col/>
+							<col style="width: 80px;"/>
 							<col/>
 							<col style="width: 60px;"/>
 						</colgroup>
 						<tbody>
 						<tr>
-							<th>블라블라</th>
+							<th>지사명</th>
 							<td>
 								<div class="c-text">
-									<input type="text" id="s_vcNumber" class="c-text__input"/>
+									<input type="text" id="pop_s_brName" class="c-text__input"/>
 								</div>
 							</td>
+							<th>지사코드</th>
 							<td>
-								<button class="c-button c-button--point" id="vehicleBtnSearch">조회</button>
+								<div class="c-text">
+									<input type="text" id="pop_s_brCode" maxlength="2" class="c-text__input"/>
+								</div>
+							</td>
+							<th>계약상태</th>
+							<td>
+								<select id="pop_s_brContractState" name="pop_s_brContractState">
+									<option value="">모두</option>
+									<option value="01">진행중</option>
+									<option value="02">계약완료</option>
+								</select>
+							</td>
+							<td>
+								<button class="c-button c-button--point" type="button" onclick="brPopList(0)">조회</button>
 							</td>
 						</tr>
 						</tbody>
@@ -124,7 +142,6 @@
 				</div>
 				<div class="l-popup__section">
 					<div id="grid_branchList"></div>
-<!--					<div id="grid_branchList" style="width: 600px;height: 300px;"></div>-->
 				</div>
 			</div>
 			<a href="#" onclick="branchClose()" class="l-popup__close">팝업닫기</a>
@@ -142,18 +159,34 @@
 				<div class="l-popup__section">
 					<table class="c-table c-table--non-border">
 						<colgroup>
-							<col style="width: 70px;"/>
+							<col style="width: 80px;"/>
+							<col/>
+							<col style="width: 80px;"/>
+							<col/>
+							<col style="width: 80px;"/>
 							<col/>
 							<col style="width: 80px;"/>
 						</colgroup>
 						<tbody>
 						<tr>
-							<th>모델 타입</th>
+							<th>가맹점명</th>
 							<td>
-								<input type="text" id="s_emTypePop" value="iTainer" class="c-text__input" />
+								<input type="text" id="pop_s_frName" class="c-text__input" />
+							</td>
+							<th>가맹점코드</th>
+							<td>
+								<input type="text" id="pop_s_frCode" maxlength="3" class="c-text__input" />
+							</td>
+							<th>게약상태</th>
+							<td>
+								<select id="pop_s_frContractState" name="pop_s_frContractState">
+									<option value="">모두</option>
+									<option value="01">진행중</option>
+									<option value="02">계약완료</option>
+								</select>
 							</td>
 							<td>
-								<button id="waitingDevcieBtnSearch" class="c-button c-button--point">조회</button>
+								<button type="button" onclick="frPopList(1)" class="c-button c-button--point">조회</button>
 							</td>
 						</tr>
 						</tbody>

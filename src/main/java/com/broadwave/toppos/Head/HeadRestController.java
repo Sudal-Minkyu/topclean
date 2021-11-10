@@ -155,7 +155,9 @@ public class HeadRestController {
 
     // 지사 리스트 API
     @GetMapping("branchList")
-    public ResponseEntity<Map<String,Object>> branchList(){
+    public ResponseEntity<Map<String,Object>> branchList(@RequestParam(value="brName", defaultValue="") String brName,
+                                                         @RequestParam(value="brCode", defaultValue="") String brCode,
+                                                         @RequestParam(value="brContractState", defaultValue="") String brContractState){
         log.info("branohList 호출");
 
         AjaxResponse res = new AjaxResponse();
@@ -165,7 +167,7 @@ public class HeadRestController {
         List<HashMap<String,Object>> branchListData = new ArrayList<>();
         HashMap<String,Object> branchsetInfo;
 
-        List<BranchListDto> branchListDtos = headService.findByBranchList();
+        List<BranchListDto> branchListDtos = headService.findByBranchList(brName, brCode, brContractState);
 //        log.info("branohListDtos : "+branohListDtos);
 
         for (BranchListDto branch: branchListDtos) {
@@ -200,7 +202,9 @@ public class HeadRestController {
     // 가맹점 리스트 API
     @GetMapping("franchiseList")
     public ResponseEntity<Map<String,Object>> franchiseList(@RequestParam(value="brAssignState", defaultValue="") String brAssignState,
-                                                                                        @RequestParam(value="frName", defaultValue="") String frName){
+                                                                                           @RequestParam(value="frName", defaultValue="") String frName,
+                                                                                           @RequestParam(value="frCode", defaultValue="") String frCode,
+                                                                                           @RequestParam(value="frContractState", defaultValue="") String frContractState){
         log.info("franohiseList 호출");
 
         AjaxResponse res = new AjaxResponse();
@@ -210,7 +214,7 @@ public class HeadRestController {
         List<HashMap<String,Object>> franohiseListData = new ArrayList<>();
         HashMap<String,Object> franohisetInfo;
 
-        List<FranchiseListDto> franchiseListDtos = headService.findByFranchiseList(brAssignState, frName);
+        List<FranchiseListDto> franchiseListDtos = headService.findByFranchiseList(brAssignState, frName, frCode, frContractState);
 //        log.info("franohiseListDtos : "+franohiseListDtos);
 
         for (FranchiseListDto franohise : franchiseListDtos) {

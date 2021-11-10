@@ -64,6 +64,9 @@ accountColumnLayout = [
 
 columnLayout[0] = [
     {
+        dataField: "brCode",
+        headerText: "지사코드",
+    }, {
         dataField: "brName",
         headerText: "지사명",
     }, {
@@ -83,6 +86,9 @@ columnLayout[0] = [
 
 columnLayout[1] = [
     {
+        dataField: "frCode",
+        headerText: "가맹점코드",
+    }, {
         dataField: "frName",
         headerText: "가맹점명",
     }, {
@@ -110,29 +116,54 @@ function createAccountGrid(columnLayout, gridOption) {
 
     /* <=========================> */
     /* 각 그리드의 url */
-    const gridUrl = [
-        "/api/head/branchList", "/api/head/franchiseList"
-    ]
+    // const gridUrl = [
+    //     "/api/head/branchList", "/api/head/franchiseList"
+    // ]
 
     for (let i=0; i<2; i++) {
-        setListData(gridUrl[i], i);
+        if(i===0){
+            brPopList(i);
+        }else{
+            frPopList(i);
+        }
     }
 
 }
 
-function setListData(url, numOfGrid) {
+function brPopList(numOfGrid){
+    const url = "/api/head/branchList";
+    const params = {
+        brName: $("#pop_s_brName").val(),
+        brCode: $("#pop_s_brCode").val(),
+        brContractState: $("#pop_s_brContractState").val()
+    };
+    popupListAjax(url,numOfGrid,params)
+}
+
+function frPopList(numOfGrid){
+    const url = "/api/head/franchiseList";
+    const params = {
+        frName: $("#pop_s_frName").val(),
+        frCode: $("#pop_s_frCode").val(),
+        frContractState: $("#pop_s_frContractState").val()
+    };
+    popupListAjax(url,numOfGrid,params)
+}
+
+function popupListAjax(url,numOfGrid,params){
     $(document).ajaxSend(function(e, xhr) { xhr.setRequestHeader("Authorization",localStorage.getItem('Authorization')); });
     $.ajax({
         url: url,
         type: 'GET',
         cache: false,
+        data: params,
         error: function (req) {
             ajaxErrorMsg(req);
         },
         success: function (req) {
             gridData[numOfGrid] = req.sendData.gridListData;
-            myGridID = AUIGrid.setGridData(gridID[numOfGrid], gridData[numOfGrid]);
-            // AUIGrid.resize(myGridID, 800, 480);
+            AUIGrid.setGridData(gridID[numOfGrid], gridData[numOfGrid]);
+            AUIGrid.resize(gridID[numOfGrid], 660, 480);
         }
     });
 }

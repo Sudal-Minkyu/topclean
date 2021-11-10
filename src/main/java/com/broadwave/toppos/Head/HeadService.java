@@ -44,13 +44,13 @@ public class HeadService {
     }
 
     // 가맹점 리스트 API
-    public List<FranchiseListDto> findByFranchiseList(String brAssignState, String frName) {
-        return franchiseRepositoryCustom.findByFranchiseList(brAssignState, frName);
+    public List<FranchiseListDto> findByFranchiseList(String brAssignState, String frName, String frCode, String frContractState) {
+        return franchiseRepositoryCustom.findByFranchiseList(brAssignState, frName, frCode, frContractState);
     }
 
     // 지사 리스트 API
-    public List<BranchListDto> findByBranchList() {
-        return branohRepositoryCustom.findByBranchList();
+    public List<BranchListDto> findByBranchList(String brName, String brCode, String brContractState) {
+        return branohRepositoryCustom.findByBranchList(brName, brCode, brContractState);
     }
 
     // 가맹점코드 중복확인 API

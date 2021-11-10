@@ -9,5 +9,5 @@ import java.util.List;
  * Remark :
  */
 public interface FranchiseRepositoryCustom {
-    List<FranchiseListDto> findByFranchiseList(String brAssignState, String frName);
+    List<FranchiseListDto> findByFranchiseList(String brAssignState, String frName, String frCode, String frContractState);
 }
