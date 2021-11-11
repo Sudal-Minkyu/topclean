@@ -11,10 +11,12 @@ let gridData = [];
 let columnLayout = [];
 let gridOption = [];
 
+/* 그리드를 뿌릴 대상 id */
 targetDiv = [
     "grid_contract_0", "grid_contract_1", "grid_contract_2", "grid_contract_3"
 ];
 
+/* 0번 그리드의 레이아웃 */
 columnLayout[0] = [
     {
         dataField: "brName",
@@ -28,6 +30,7 @@ columnLayout[0] = [
     },
 ];
 
+/* 0번 그리드의 프로퍼티(옵션) */
 gridOption[0] = {
     editable : false,
     selectionMode : "multipleCells",
@@ -144,12 +147,9 @@ $(function () {
     AUIGrid.bind(gridID[1], "cellClick", function (e) {
         setFieldData(1, e.item);
     });
-
-
-
 });
 
-
+/* 레이아웃, 프로퍼티를 적용하여 그리드 생성 */
 function createGrid(columnLayout, gridOption) {
     for (const i in columnLayout) {
         gridID[i] = AUIGrid.create(targetDiv[i], columnLayout[i], gridOption[i]);
@@ -166,6 +166,7 @@ function createGrid(columnLayout, gridOption) {
     }
 }
 
+/* 해당 그리드와 연관된 그리드의 데이터를 주입한다. */
 function setListData(url, numOfGrid) {
     $(document).ajaxSend(function(e, xhr) { xhr.setRequestHeader("Authorization",localStorage.getItem('Authorization')); });
     $.ajax({
@@ -284,6 +285,7 @@ function branchSave(){
             }
         }
     });
+
 }
 
 // 가맹점 저장함수
@@ -334,12 +336,7 @@ function franchiseSave(){
     });
 }
 
-
-function fromToValidation(){
-    let from = Date.parse($("#brContractFromDt").val());
-    let to = $("#brContractToDt").val();
-}
-
+/* 클릭, 신규에 따른 필드의 값을 대입하거나, 비우고 적합한 상태를 세팅한다. */
 function setFieldData(numOfGrid, item) {
     let isLockField = item.brCode !== undefined || item.frCode !== undefined;
     switch (numOfGrid) {
@@ -358,7 +355,6 @@ function setFieldData(numOfGrid, item) {
             $("#brRemark").html(item.brRemark);
             CommonUI.restrictDate(dateAToBTargetIds[0][0], dateAToBTargetIds[0][1], false);
             CommonUI.restrictDate(dateAToBTargetIds[0][0], dateAToBTargetIds[0][1], true);
-            // console.log($("#brCode").val());
             break;
 
         case 1 :
@@ -375,13 +371,15 @@ function setFieldData(numOfGrid, item) {
             CommonUI.restrictDate(dateAToBTargetIds[1][0], dateAToBTargetIds[1][1], true);
             break;
     }
-
 }
 
 /* 그리드에 새로운 row를 생성하고 입력창을 비워 새로운 데이터 저장 준비에 들어간다. */
 function createNewPost(numOfGrid) {
+    /* 기본적으로 undefined 로 되어있을시 데이터 배치에 문제가 생기는 값이나
+    * 초기값 지정한 값들은 기본값을 지정하여 문제가 생기지 않도록 한다. */
     setFieldData(numOfGrid, {brRemark : "", frRemark : "",
                 brCodeChecked : "0", frCodeChecked : "0", brContractState : "01", frContractState : "01"});
+    /* 신규 row를 추가하고 나서 편집이 용이하도록 포커스를 준다. */
     switch (numOfGrid) {
         case 0 :
             $("#brCode").trigger("focus");

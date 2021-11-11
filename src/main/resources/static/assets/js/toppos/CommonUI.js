@@ -45,18 +45,10 @@ class CommonUIClass {
     restrictDate(fromId, toId, isCallerTo) {
         if(isCallerTo) {
             $("#"+fromId).datepicker("option", "maxDate", $("#"+toId).val());
+            $("#ui-datepicker-div").hide();
         }else{
             $("#"+toId).datepicker("option", "minDate", $("#"+fromId).val());
-        }
-    }
-
-    /*
-    * 배열에 담긴 객체의 datepicker 날짜 범위를 지정했던 것을 해제한다.
-    * */
-    restrictDateReset(targetIdArray) {
-        for (const targetId of targetIdArray) {
-            $("#"+targetId).datepicker("option", "minDate", "");
-            $("#"+targetId).datepicker("option", "maxDate", "");
+            $("#ui-datepicker-div").hide();
         }
     }
 

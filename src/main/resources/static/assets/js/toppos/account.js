@@ -381,6 +381,7 @@ function createNewPost(numOfGrid) {
     setFieldData(numOfGrid, {userremark : "", useridChecked : "0", role : ""});
     switch (numOfGrid) {
         case 0 :
+            restrictCodeSelection("");
             changeUseridStatus(false);
             $("#userid").trigger("focus");
             break;
