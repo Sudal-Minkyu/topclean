@@ -23,7 +23,12 @@ public class FranchiseMapperDto {
     private String frContractFromDt; // 계약기간 from
     private String frContractToDt; // 계약기간 to
     private String frContractState; // 진행중 : 01, 계약완료 : 02
+    private String frPriceGrade; // 가격등급 A,B,C,D,E
     private String frRemark; // 특이사항
+
+    public String getFrPriceGrade() {
+        return frPriceGrade;
+    }
 
     public String getFrCode() {
         return frCode;

@@ -11,7 +11,6 @@ import lombok.Setter;
  * Time :
  * Remark : Toppos 가맹점 ListDto
  */
-
 @Setter
 @Builder
 @NoArgsConstructor
@@ -24,9 +23,18 @@ public class FranchiseListDto {
     private String brContractFromDt; // 계약기간 from
     private String frContractToDt; // 계약기간 to
     private String frContractState; // 진행중 : 01, 계약완료 : 02
+    private String frPriceGrade; // 가격등급 A,B,C,D,E
     private String frRemark; // 특이사항
 
     private String brName; // 배정지사명
+
+    public String getBrContractFromDt() {
+        return brContractFromDt;
+    }
+
+    public String getFrPriceGrade() {
+        return frPriceGrade;
+    }
 
     public String getFrCode() {
         return frCode;

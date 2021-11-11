@@ -45,6 +45,9 @@ public class Franchise {
     @Column(name="fr_contract_state")
     private String frContractState; // 진행중 : 01, 계약완료 : 02
 
+    @Column(name="fr_price_grade")
+    private String frPriceGrade; // 가격등급 A,B,C,D,E
+
     @Column(name="fr_remark")
     private String frRemark; // 특이사항
 
