@@ -1,11 +1,13 @@
 
 $(function() {
     accountList(); // 사용자리스트 자동조회
-    createAccountGrid(columnLayout, gridOption);
+    createAccountGrid(columnLayout, gridOption); // 배열의 각 그리드 함께 생성
 
     /* 0번그리드 내의 아이템 클릭시 필드에 적용 */
     AUIGrid.bind(gridID[0], "cellClick", function (e) {
         setFieldData(0, e.item);
+        restrictCodeSelection(e.item.roleCode);
+        changeUseridStatus(true);
     });
 
     AUIGrid.bind(gridID[1], "cellClick", function (e) {
@@ -15,9 +17,10 @@ $(function() {
 
     AUIGrid.bind(gridID[2], "cellClick", function (e) {
         $("#frCode").val(e.item.frCode);
-        $('#franchise_popup').removeClass('open');;
+        $('#franchise_popup').removeClass('open');
     });
 
+    /* 권한을 바꿀 때 가맹점 코드나, 지사 코드를 선택 가능, 불가능으로 바꾸어 준다. */
     $("#role").on("change", function (e){
         const selectedCode = $(e.target).find("option:selected").val();
         restrictCodeSelection(selectedCode);
@@ -32,11 +35,12 @@ let gridData = [];
 let columnLayout = [];
 let gridOption = [];
 
-
+/* 그리드를 뿌릴 대상 id */
 targetDiv = [
     "grid_accountList", "grid_branchList", "grid_franchList"
 ];
 
+/* 0번 그리드의 레이아웃 */
 columnLayout[0] = [
     {
         dataField: "userid",
@@ -65,11 +69,13 @@ columnLayout[0] = [
     },
 ];
 
+/* 0번 그리드의 프로퍼티(옵션) */
 gridOption[0] = {
     editable : false,
     selectionMode : "multipleCells",
     noDataMessage : "출력할 데이터가 없습니다.",
     rowNumHeaderText : "순번",
+    rowIdField : "userid",
     enableColumnResize : false
 };
 
@@ -296,7 +302,8 @@ function accountSave(){
         },
         success: function (req) {
             if (req.status === 200) {
-                console.log("저장 완료");
+                /* 저장작업을 하면 사용자 리스트를 리로드 한다. */
+                accountList();
                 alertSuccess("사용자 저장완료");
             }else {
                 if (req.err_msg2 === null) {
@@ -345,7 +352,11 @@ function accountList(){
     });
 }
 
+/* 지정된 입력필드에 해당되는 item(json내용)을 뿌린다 (보통 그리드내의 row를 클릭하거나, 필드를 초기화시킬 때 씀) */
 function setFieldData(numOfGrid, item) {
+    const frCode = item.frCode !== "해당안됨" ? item.frCode : "";
+    const brCode = item.brCode !== "해당안됨" ? item.brCode : "";
+
     switch (numOfGrid) {
         case 0 :
             $("#userid").val(item.userid);
@@ -355,10 +366,9 @@ function setFieldData(numOfGrid, item) {
             $("#role").val(item.roleCode);
             $("#usertel").val(item.usertel);
             $("#useremail").val(item.useremail);
-            $("#frCode").val(item.frCode);
-            $("#brCode").val(item.brCode);
+            $("#frCode").val(frCode);
+            $("#brCode").val(brCode);
             $("#userremark").html(item.userremark);
-
             break;
 
         case 1 :
@@ -366,15 +376,18 @@ function setFieldData(numOfGrid, item) {
     }
 }
 
+/* 사용자 신규 등록을 위해 필드를 비우고 입력 절차를 위한 상태를 초기화 시킨다. */
 function createNewPost(numOfGrid) {
     setFieldData(numOfGrid, {userremark : "", useridChecked : "0", role : ""});
     switch (numOfGrid) {
         case 0 :
+            changeUseridStatus(false);
             $("#userid").trigger("focus");
             break;
     }
 }
 
+/* 권한 select 가 다른 옵션으로 바뀔 때 상태 필드들을 바꾸기 위함. */
 function restrictCodeSelection(selectedCode) {
     const  $frCode =  $("#frCode");
     const  $frCodeBtn =  $("#frCodeBtn");
@@ -403,3 +416,13 @@ function restrictCodeSelection(selectedCode) {
             break;
     }
 }
+
+/* 이미 생성되어 있는 유저들의 경우 아이디를 바꿀 수 있도록 하면 안되므로 */
+function changeUseridStatus (isDisable) {
+
+    const checked = isDisable ? "0" : "1";
+    $("#userid").attr("readonly", isDisable);
+    $("#useridCheckedBtn").attr("disabled", isDisable);
+    $("#useridChecked").val(checked);
+}
+
