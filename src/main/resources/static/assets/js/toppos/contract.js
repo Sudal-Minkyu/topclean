@@ -37,7 +37,6 @@ gridOption[0] = {
     noDataMessage : "출력할 데이터가 없습니다.",
     rowNumHeaderText : "순번",
     rowIdField : "brCode",
-    showStateColumn : true,
     rowIdTrustMode : true
 };
 
@@ -63,7 +62,6 @@ gridOption[1] = {
     noDataMessage : "출력할 데이터가 없습니다.",
     rowNumHeaderText : "순번",
     rowIdField : "frCode",
-    showStateColumn : true,
     rowIdTrustMode : true
 };
 
@@ -86,7 +84,6 @@ gridOption[2] = {
     noDataMessage : "출력할 데이터가 없습니다.",
     rowNumHeaderText : "순번",
     rowIdField : "brCode",
-    showStateColumn : true,
     rowIdTrustMode : true
 };
 
@@ -115,7 +112,6 @@ gridOption[3] = {
     noDataMessage : "출력할 데이터가 없습니다.",
     rowNumHeaderText : "순번",
     rowIdField : "frCode",
-    showStateColumn : true,
     rowIdTrustMode : true
 };
 
@@ -176,11 +172,13 @@ function createGrid(columnLayout, gridOption) {
 /* 해당 그리드와 연관된 그리드의 데이터를 주입한다. */
 function setListData(url, numOfGrid) {
 
-    CommonUI.ajax(url, "GET", function(req){
+    CommonUI.ajax(url, "GET", function(req) {
+        console.log(req);
         gridData[numOfGrid] = req.sendData.gridListData;
         AUIGrid.setGridData(gridID[numOfGrid], gridData[numOfGrid]);
         AUIGrid.setGridData(gridID[numOfGrid+2], gridData[numOfGrid]);
     })
+    console.log(gridData[1]);
 }
 
 // 지사, 가맹점 코드 중복확인 체크함수

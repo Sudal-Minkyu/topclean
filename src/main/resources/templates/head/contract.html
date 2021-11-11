@@ -67,7 +67,6 @@
 					<button type="button" onclick="createNewPost(0)">신규</button>
 					<button type="button" onclick="branchSave()">저장</button>
 					<button type="button" >삭제</button>
-					<button type="button" onclick="fromToValidation(0)">테스트용</button>
 				</div>
 			</form>
 		</div>
@@ -142,6 +141,11 @@
 	<!--좌측-->
 	<div>
 		<div>
+			계약 지사 리스트
+		</div>
+		<div id="grid_contract_2">
+		</div>
+		<div>
 			배정상태
 			<select id="brAssignStateName" name="brAssignStateName">
 				<option value="0">미배정</option>
@@ -150,11 +154,6 @@
 			가맹점명
 			<input type="text">
 			<button>검색</button>
-		</div>
-		<div>
-			계약 지사 리스트
-		</div>
-		<div id="grid_contract_2">
 		</div>
 		<div>
 			계약 가맹점 리스트
@@ -171,37 +170,39 @@
 		<div>
 			<div>
 				가맹점코드
-				<input type="text" readonly>
+				<input id="bot_frCode" type="text" readonly>
 				가맹점명
-				<input type="text">
+				<input id="bot_frName" type="text">
 			</div>
 			<div>
 				계약일자
-				<input type="text">
+				<input id="bot_frContractDt" type="text">
 				계약기간
-				<input type="text">
+				<input id="bot_frContractFromDt" type="text">
 				~
-				<input type="text">
+				<input id="bot_frContractToDt" type="text">
 			</div>
 			<div>
 				계약상태
-				<select>
-					<option>계약완료/계약진행중</option>
+				<select id="bot_frContractState">
+					<option value="0">계약진행중</option>
+					<option value="1">계약완료</option>
 				</select>
 				배정상태
-				<select>
-					<option>배정완료/미배정</option>
+				<select id="bot_brAssignState">
+					<option value="0">미배정</option>
+					<option value="1">배정완료</option>
 				</select>
 			</div>
 			<div>
 				지사
-				<input type="text" readonly>
-				<input type="text">
+				<input id="bot_brCode" type="text" readonly>
+				<input id="bot_brName" type="text">
 				<button>지사변경</button>
 				정산비율
-				본사 : <input type="text">%
-				지사 : <input type="text">%
-				가맹 : <input type="text">%
+				본사 : <input id="bot_brCarculateRateHq" type="text">%
+				지사 : <input id="bot_brCarculateRateBr" type="text">%
+				가맹 : <input id="bot_brCarculateRatefr" type="text">%
 				<button>저장</button>
 			</div>
 		</div>

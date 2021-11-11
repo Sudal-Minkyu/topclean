@@ -283,6 +283,18 @@ function accountSave(){
         return false;
     }
 
+    const userRole = $("#role").val();
+    /* 권한에 따라 지사나 가맹점 선택을 했는지 검사 */
+    if((userRole === "ROLE_MANAGER" || userRole === "ROLE_NORMAL") && $("#brCode").val() === "" ) {
+        alertCaution("지사를 선택 해주세요.",1);
+        return false;
+    }else if(userRole === "ROLE_USER" && $("#frCode").val() === "" ) {
+        alertCaution("가맹점을 선택 해주세요",1);
+        return false;
+    }
+
+
+
     $(document).ajaxSend(function(e, xhr) { xhr.setRequestHeader("Authorization", localStorage.getItem('Authorization')); });
 
     const formData = new FormData(document.getElementById('accountFormData'));
