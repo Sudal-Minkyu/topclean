@@ -228,7 +228,11 @@ public class HeadRestController {
             franohisetInfo.put("frContractToDt", franohise.getFrContractToDt());
             franohisetInfo.put("frContractState", franohise.getFrContractState());
             franohisetInfo.put("brAssignState", franohise.getBrAssignState());
-            franohisetInfo.put("brAssignStateName", franohise.getBrAssignStateName());
+            if(franohise.getBrAssignState().equals("01")){
+                franohisetInfo.put("brAssignStateValue","진행중");
+            }else{
+                franohisetInfo.put("brAssignStateValue","계약완료");
+            }
             if(franohise.getFrContractState().equals("01")){
                 franohisetInfo.put("frContractStateValue","진행중");
             }else{
