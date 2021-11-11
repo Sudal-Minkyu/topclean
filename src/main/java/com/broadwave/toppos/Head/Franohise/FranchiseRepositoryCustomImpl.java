@@ -48,7 +48,7 @@ public class FranchiseRepositoryCustomImpl extends QuerydslRepositorySupport imp
             query.where(franchise.brAssignState.eq(brAssignState));
         }
 
-        if (!brAssignState.equals("")){
+        if (!frName.equals("")){
             query.where(franchise.frName.likeIgnoreCase(frName.concat("%")));
         }
 
