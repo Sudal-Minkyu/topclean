@@ -23,17 +23,25 @@ public class FranchiseListDto {
     private String brContractFromDt; // 계약기간 from
     private String frContractToDt; // 계약기간 to
     private String frContractState; // 진행중 : 01, 계약완료 : 02
-    private String frPriceGrade; // 가격등급 A,B,C,D,E
+    private String brAssignState; // 지사 배정상태 미배정: 01, 배정완료: 02
+    private String brAssignStateName; // 지사 배정상태 미배정: 01, 배정완료: 02
     private String frRemark; // 특이사항
-
     private String brName; // 배정지사명
 
     public String getBrContractFromDt() {
         return brContractFromDt;
     }
 
-    public String getFrPriceGrade() {
-        return frPriceGrade;
+    public String getBrAssignState() {
+        return brAssignState;
+    }
+
+    public String getBrAssignStateName() {
+        if(brAssignState.equals("01")){
+            return "미배정";
+        }else{
+            return "배정완료";
+        }
     }
 
     public String getFrCode() {

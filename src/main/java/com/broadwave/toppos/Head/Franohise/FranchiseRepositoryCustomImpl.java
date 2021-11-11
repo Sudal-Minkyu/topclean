@@ -37,7 +37,8 @@ public class FranchiseRepositoryCustomImpl extends QuerydslRepositorySupport imp
                         franchise.frContractFromDt,
                         franchise.frContractToDt,
                         franchise.frContractState,
-                        franchise.frPriceGrade,
+                        franchise.brAssignState,
+                        franchise.brAssignState,
                         franchise.frRemark,
                         branch.brName
                 ));
