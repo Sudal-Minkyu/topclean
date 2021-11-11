@@ -118,6 +118,15 @@
 						<option value="01">진행중</option>
 						<option value="02">계약완료</option>
 					</select>
+					적용가격등급
+					<select id="frPriceGrade" name="frPriceGrade">
+						<option value="">선택</option>
+						<option value="A">A</option>
+						<option value="B">B</option>
+						<option value="C">C</option>
+						<option value="D">D</option>
+						<option value="E">E</option>
+					</select>
 					특이사항
 					<textarea id="frRemark" name="frRemark"></textarea>
 					<button type="button" onclick="createNewPost(1)">신규</button>
@@ -134,8 +143,9 @@
 	<div>
 		<div>
 			배정상태
-			<select>
-				<option value="배정완료"></option>
+			<select id="brAssignStateName" name="brAssignStateName">
+				<option value="0">미배정</option>
+				<option value="1">배정완료</option>
 			</select>
 			가맹점명
 			<input type="text">

@@ -32,12 +32,13 @@ columnLayout[0] = [
 
 /* 0번 그리드의 프로퍼티(옵션) */
 gridOption[0] = {
-    editable : false,
+    editable : true,
     selectionMode : "multipleCells",
     noDataMessage : "출력할 데이터가 없습니다.",
     rowNumHeaderText : "순번",
     rowIdField : "brCode",
-    showStateColumn : true
+    showStateColumn : true,
+    rowIdTrustMode : true
 };
 
 columnLayout[1] = [
@@ -53,7 +54,7 @@ columnLayout[1] = [
     }, {
         dataField: "brName",
         headerText: "배정지사명",
-    },
+    }
 ];
 
 gridOption[1] = {
@@ -62,7 +63,8 @@ gridOption[1] = {
     noDataMessage : "출력할 데이터가 없습니다.",
     rowNumHeaderText : "순번",
     rowIdField : "frCode",
-    showStateColumn : true
+    showStateColumn : true,
+    rowIdTrustMode : true
 };
 
 columnLayout[2] = [
@@ -84,7 +86,8 @@ gridOption[2] = {
     noDataMessage : "출력할 데이터가 없습니다.",
     rowNumHeaderText : "순번",
     rowIdField : "brCode",
-    showStateColumn : true
+    showStateColumn : true,
+    rowIdTrustMode : true
 };
 
 columnLayout[3] = [
@@ -100,6 +103,9 @@ columnLayout[3] = [
     }, {
         dataField: "brName",
         headerText: "배정지사명",
+    }, {
+        dataField: "brAssignStateValue",
+        headerText: "배정상태"
     },
 ];
 
@@ -109,7 +115,8 @@ gridOption[3] = {
     noDataMessage : "출력할 데이터가 없습니다.",
     rowNumHeaderText : "순번",
     rowIdField : "frCode",
-    showStateColumn : true
+    showStateColumn : true,
+    rowIdTrustMode : true
 };
 
 /* datepicker를 적용시킬 대상들의 dom id들 */
@@ -168,20 +175,12 @@ function createGrid(columnLayout, gridOption) {
 
 /* 해당 그리드와 연관된 그리드의 데이터를 주입한다. */
 function setListData(url, numOfGrid) {
-    $(document).ajaxSend(function(e, xhr) { xhr.setRequestHeader("Authorization",localStorage.getItem('Authorization')); });
-    $.ajax({
-        url: url,
-        type: 'GET',
-        cache: false,
-        error: function (req) {
-            ajaxErrorMsg(req);
-        },
-        success: function (req) {
-            gridData[numOfGrid] = req.sendData.gridListData;
-            AUIGrid.setGridData(gridID[numOfGrid], gridData[numOfGrid]);
-            AUIGrid.setGridData(gridID[numOfGrid+2], gridData[numOfGrid]);
-        }
-    });
+
+    CommonUI.ajax(url, "GET", function(req){
+        gridData[numOfGrid] = req.sendData.gridListData;
+        AUIGrid.setGridData(gridID[numOfGrid], gridData[numOfGrid]);
+        AUIGrid.setGridData(gridID[numOfGrid+2], gridData[numOfGrid]);
+    })
 }
 
 // 지사, 가맹점 코드 중복확인 체크함수
@@ -267,12 +266,14 @@ function branchSave(){
 
                 const sentData = Object.fromEntries(formData);
                 const isUpdated = AUIGrid.rowIdToIndex(gridID[0], sentData.brCode) > -1;
+                console.log(sentData);
 
                 if(isUpdated) {
                     AUIGrid.updateRowsById(gridID[0], sentData);
                     AUIGrid.refresh(gridID[2]);
                 }else {
-                    AUIGrid.addRow(gridID[0], sentData);
+                    AUIGrid.addRow(gridID[0], sentData, "last");
+                    AUIGrid.addRow(gridID[2], sentData, "last");
                 }
 
                 alertSuccess("지사 저장완료");
@@ -322,8 +323,11 @@ function franchiseSave(){
                     AUIGrid.updateRowsById(gridID[1], sentData);
                     AUIGrid.refresh(gridID[3]);
                 }else {
-                    AUIGrid.addRow(gridID[1], sentData);``
+                    AUIGrid.addRow(gridID[1], sentData, "last");
+                    AUIGrid.addRow(gridID[3], sentData, "last");
                 }
+                AUIGrid.resetUpdatedItems(gridID[1]);
+                AUIGrid.resetUpdatedItems(gridID[3]);
                 alertSuccess("가맹점 저장완료");
             }else {
                 if (req.err_msg2 === null) {
@@ -366,6 +370,7 @@ function setFieldData(numOfGrid, item) {
             $("#frContractFromDt").val(item.frContractFromDt);
             $("#frContractToDt").val(item.frContractToDt);
             $("#frContractState").val(item.frContractState);
+            $("#frPriceGrade").val(item.frPriceGrade);
             $("#frRemark").html(item.frRemark);
             CommonUI.restrictDate(dateAToBTargetIds[1][0], dateAToBTargetIds[1][1], false);
             CommonUI.restrictDate(dateAToBTargetIds[1][0], dateAToBTargetIds[1][1], true);

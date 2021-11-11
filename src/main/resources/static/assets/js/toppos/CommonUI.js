@@ -64,6 +64,28 @@ class CommonUIClass {
                 break;
         }
     }
+
+    /* ajax로 원하는 값을 받아온다. 현재는 GET으로 결과 받아오기만 구현 */
+    ajax(url, method, func) {
+        switch (method) {
+            case "GET" :
+                $(document).ajaxSend(function(e, xhr)
+                { xhr.setRequestHeader("Authorization",localStorage.getItem('Authorization')); });
+                $.ajax({
+                    url: url,
+                    type: method,
+                    cache: false,
+                    error: function (req) {
+                        ajaxErrorMsg(req);
+                    },
+                    success: function (req) {
+                        return func(req);
+                    }
+                });
+                break;
+        }
+    }
+
 }
 
 const CommonUI = new CommonUIClass();
