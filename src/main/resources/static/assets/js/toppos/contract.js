@@ -400,8 +400,6 @@ function filterFrList(type, filterValue = "") {
             AUIGrid.clearFilterAll(gridID[1]);
             $("#frNameFilter").val("");
             break;
-
     }
-
 
 }

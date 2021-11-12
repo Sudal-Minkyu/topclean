@@ -140,7 +140,6 @@ gridOption[2] = {
 };
 
 function createAccountGrid(columnLayout, gridOption) {
-
     for (const i in columnLayout) {
         gridID[i] = AUIGrid.create(targetDiv[i], columnLayout[i], gridOption);
     }
@@ -279,7 +278,6 @@ function accountSave(){
 
 // 사용자 조회 함수호출
 function accountList(){
-
     let url = "/api/head/accountList";
     let params = {
         s_userid: $("#s_userid").val(),
@@ -361,8 +359,7 @@ function restrictCodeSelection(selectedCode) {
 }
 
 /* 이미 생성되어 있는 유저들의 경우 아이디를 바꿀 수 있도록 하면 안되므로 */
-function changeUseridStatus (isDisable) {
-
+function changeUseridStatus (isDisable) {0
     const checked = isDisable ? "0" : "1";
     $("#userid").attr("readonly", isDisable);
     $("#useridCheckedBtn").attr("disabled", isDisable);
