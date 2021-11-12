@@ -81,8 +81,9 @@
 		</div>
 		<div>
 			가맹점명
-			<input type="text">
-			<button>검색</button>
+			<input id="frNameFilter" type="text">
+			<button onclick="filterFrList(6, $('#frNameFilter').val())">검색</button>
+			<button onclick="filterFrList(7)">초기화</button>
 		</div>
 		<div id="grid_contract_1">
 		</div>
@@ -147,13 +148,15 @@
 		</div>
 		<div>
 			배정상태
-			<select id="brAssignStateName" name="brAssignStateName">
-				<option value="0">미배정</option>
-				<option value="1">배정완료</option>
+			<select id="brAssignState" name="brAssignState" onchange="filterFrList(1, this.value)">
+				<option value="">선택안함</option>
+				<option value="01">미배정</option>
+				<option value="02">배정완료</option>
 			</select>
 			가맹점명
-			<input type="text">
-			<button>검색</button>
+			<input id="bot_frNameFilter" type="text">
+			<button onclick="filterFrList(2, $('#bot_frNameFilter').val())">검색</button>
+			<button onclick="filterFrList(3)">초기화</button>
 		</div>
 		<div>
 			계약 가맹점 리스트
@@ -172,7 +175,7 @@
 				가맹점코드
 				<input id="bot_frCode" type="text" readonly>
 				가맹점명
-				<input id="bot_frName" type="text">
+				<input id="bot_frName" type="text" readonly>
 			</div>
 			<div>
 				계약일자
@@ -185,24 +188,24 @@
 			<div>
 				계약상태
 				<select id="bot_frContractState">
-					<option value="0">계약진행중</option>
-					<option value="1">계약완료</option>
+					<option value="01">계약진행중</option>
+					<option value="02">계약완료</option>
 				</select>
 				배정상태
 				<select id="bot_brAssignState">
-					<option value="0">미배정</option>
-					<option value="1">배정완료</option>
+					<option value="01">미배정</option>
+					<option value="02">배정완료</option>
 				</select>
 			</div>
 			<div>
 				지사
 				<input id="bot_brCode" type="text" readonly>
-				<input id="bot_brName" type="text">
+				<input id="bot_brName" type="text" readonly>
 				<button>지사변경</button>
 				정산비율
-				본사 : <input id="bot_brCarculateRateHq" type="text">%
-				지사 : <input id="bot_brCarculateRateBr" type="text">%
-				가맹 : <input id="bot_brCarculateRatefr" type="text">%
+				본사 : <input id="bot_brCarculateRateHq" type="text" readonly>%
+				지사 : <input id="bot_brCarculateRateBr" type="text" readonly>%
+				가맹 : <input id="bot_brCarculateRatefr" type="text" readonly>%
 				<button>저장</button>
 			</div>
 		</div>

@@ -48,6 +48,7 @@ gridProp[0] = {
     enableColumnResize : false,
     rowIdTrustMode : true,
     showStateColumn : true,
+    enableFilter : true
 };
 
 gridColumnLayout[1] = [
@@ -69,6 +70,7 @@ gridProp[1] = {
     enableColumnResize : false,
     rowIdTrustMode : true,
     showStateColumn : true,
+    enableFilter : true,
 };
 
 gridCreateUrl = [

@@ -62,7 +62,8 @@ gridOption[1] = {
     noDataMessage : "출력할 데이터가 없습니다.",
     rowNumHeaderText : "순번",
     rowIdField : "frCode",
-    rowIdTrustMode : true
+    rowIdTrustMode : true,
+    enableFilter: true,
 };
 
 columnLayout[2] = [
@@ -112,13 +113,14 @@ gridOption[3] = {
     noDataMessage : "출력할 데이터가 없습니다.",
     rowNumHeaderText : "순번",
     rowIdField : "frCode",
-    rowIdTrustMode : true
+    rowIdTrustMode : true,
+    enableFilter : true,
 };
 
 /* datepicker를 적용시킬 대상들의 dom id들 */
 const datePickerTargetIds = [
-    "brContractDt", "brContractFromDt", "brContractToDt", "frContractDt",
-    "frContractFromDt", "frContractToDt"
+    "brContractDt", "brContractFromDt", "brContractToDt", "frContractDt", "frContractFromDt",
+        "frContractToDt", "bot_frContractDt", "bot_frContractFromDt", "bot_frContractToDt"
 ];
 
 /*
@@ -126,8 +128,13 @@ const datePickerTargetIds = [
 * 배열 내 각 내부 배열은 [~부터의 제한 대상이 될 id, ~까지의 제한 대상이 될 id] 이다.
 * */
 const dateAToBTargetIds = [
-    ["brContractFromDt", "brContractToDt"], ["frContractFromDt", "frContractToDt"]
+    ["brContractFromDt", "brContractToDt"], ["frContractFromDt", "frContractToDt"],
+        ["bot_frContractFromDt", "bot_frContractToDt"]
 ];
+
+/* 1번 그리드의 필터조건 첫번째, 두번째가 임시 저장된다. */
+let filterCondition1A = "";
+let filterCondition1B = "";
 
 /* 실행부 */
 $(function () {
@@ -149,6 +156,17 @@ $(function () {
     /* 1번그리드 내의 아이템 클릭시 필드에 적용 */
     AUIGrid.bind(gridID[1], "cellClick", function (e) {
         setFieldData(1, e.item);
+    });
+
+    /* 2번그리드 내의 아이템 클릭시 필드에 적용 */
+    AUIGrid.bind(gridID[2], "cellClick", function (e) {
+        /* 배정 정보가 필요 */
+        //AUIGrid.setFilterByValues(gridId[3], "")
+    });
+
+    /* 3번그리드 내의 아이템 클릭시 필드에 적용 */
+    AUIGrid.bind(gridID[3], "cellClick", function (e) {
+        setFieldData(3, e.item);
     });
 });
 
@@ -178,7 +196,6 @@ function setListData(url, numOfGrid) {
         AUIGrid.setGridData(gridID[numOfGrid], gridData[numOfGrid]);
         AUIGrid.setGridData(gridID[numOfGrid+2], gridData[numOfGrid]);
     })
-    console.log(gridData[1]);
 }
 
 // 지사, 가맹점 코드 중복확인 체크함수
@@ -278,7 +295,7 @@ function branchSave(){
             }else {
                 if (req.err_msg2 === null) {
                     alertCaution(req.err_msg, 1);
-                } else {
+                }else{
                     alertCaution(req.err_msg + "<br>" + req.err_msg2, 1);
                 }
             }
@@ -373,6 +390,18 @@ function setFieldData(numOfGrid, item) {
             CommonUI.restrictDate(dateAToBTargetIds[1][0], dateAToBTargetIds[1][1], false);
             CommonUI.restrictDate(dateAToBTargetIds[1][0], dateAToBTargetIds[1][1], true);
             break;
+
+        case 3 :
+            $("#bot_frCode").val(item.frCode);
+            $("#bot_frName").val(item.frName);
+            $("#bot_frContractDt").val(item.frContractDt);
+            $("#bot_frContractFromDt").val(item.frContractFromDt);
+            $("#bot_frContractToDt").val(item.frContractToDt);
+            $("#bot_frContractState").val(item.frContractState);
+            $("#bot_brAssignState").val(item.brAssignState);
+            CommonUI.restrictDate(dateAToBTargetIds[2][0], dateAToBTargetIds[2][1], false);
+            CommonUI.restrictDate(dateAToBTargetIds[2][0], dateAToBTargetIds[2][1], true);
+            break;
     }
 }
 
@@ -391,4 +420,59 @@ function createNewPost(numOfGrid) {
             $("#frCode").trigger("focus");
             break;
     }
+}
+
+
+/* 그리드 필터링 기능 */
+function filterFrList(type, filterValue = "") {
+
+    /* 두가지 조건이 중첩할 경우 중첩된 조건이 필터링 되게 함 */
+    function filterGrid3() {
+        AUIGrid.clearFilterAll(gridID[3]);
+        if(filterCondition1A != "") {
+            AUIGrid.setFilter(gridID[3], "brAssignStateValue", function (dataField, value, item) {
+                return item.brAssignState === filterCondition1A;
+            });
+        }
+        if(filterCondition1B != "") {
+            AUIGrid.setFilter(gridID[3], "frName", function (dataField, value, item){
+                /* 입력문자를 정규표현식화 하여 해당 문자를 포함한 결과를 true로 반환해 필터링 */
+                const filterCondition = new RegExp(filterCondition1B);
+                return filterCondition.test(value);
+            });
+        }
+    }
+
+    /* 누른 버튼에 따라 필터링을 함*/
+    switch (type) {
+        case 1 :
+            filterCondition1A = filterValue;
+            filterGrid3();
+            break;
+        case 2 :
+            filterCondition1B = filterValue;
+            filterGrid3();
+            break;
+        case 3 :
+            filterCondition1A = "";
+            filterCondition1B = "";
+            AUIGrid.clearFilterAll(gridID[3]);
+            $("#bot_frNameFilter").val("");
+            break;
+
+        case 6 :
+            AUIGrid.clearFilterAll(gridID[1]);
+            AUIGrid.setFilter(gridID[1], "frName", function (dataField, value, item){
+                const filterCondition = new RegExp(filterValue);
+                return filterCondition.test(value);
+            });
+            break;
+        case 7 :
+            AUIGrid.clearFilterAll(gridID[1]);
+            $("#frNameFilter").val("");
+            break;
+
+    }
+
+
 }
