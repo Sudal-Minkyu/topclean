@@ -190,8 +190,7 @@ function createGrid(columnLayout, gridOption) {
 /* 해당 그리드와 연관된 그리드의 데이터를 주입한다. */
 function setListData(url, numOfGrid) {
 
-    CommonUI.ajax(url, "GET", function(req) {
-        console.log(req);
+    CommonUI.ajax(url, "GET", false, function(req) {
         gridData[numOfGrid] = req.sendData.gridListData;
         AUIGrid.setGridData(gridID[numOfGrid], gridData[numOfGrid]);
         AUIGrid.setGridData(gridID[numOfGrid+2], gridData[numOfGrid]);
@@ -203,9 +202,6 @@ function codeOverlap(num){
 
     let url;
     let params;
-
-    $(document).ajaxSend(function(e, xhr) {
-        xhr.setRequestHeader("Authorization", localStorage.getItem('Authorization')); });
 
     if(num===1){
         console.log("지사 코드 중복확인");
@@ -221,34 +217,14 @@ function codeOverlap(num){
         };
     }
 
-
-    $.ajax({
-        url: url,
-        type: 'GET',
-        cache: false,
-        data: params,
-        error: function (req) {
-            ajaxErrorMsg(req);
-        },
-        success: function (req) {
-            if (req.status === 200) {
-                if(num===1){
-                    $("#brCodeChecked").val("1");
-                }else{
-                    $("#frCodeChecked").val("1");
-                }
-                console.log("중복환인 완료");
-                alertSuccess("사용할 수 있는  코드입니다.");
-            }else{
-                if (req.err_msg2 === null) {
-                    alertCaution(req.err_msg, 1);
-                }else{
-                    alertCaution(req.err_msg + "<br>" + req.err_msg2, 1);
-                }
-            }
+    CommonUI.ajax(url,"GET",params, function (req){
+        if(num===1){
+            $("#brCodeChecked").val("1");
+        }else{
+            $("#frCodeChecked").val("1");
         }
+        alertSuccess("사용할 수 있는  코드입니다.");
     });
-
 }
 
 // 지사 저장함수
@@ -259,49 +235,23 @@ function branchSave(){
         alertCaution("지사코드 중복확인을 해주세요.",1);
         return false;
     }
-    $(document).ajaxSend(function(e, xhr) { xhr.setRequestHeader("Authorization",localStorage.getItem('Authorization')); });
 
     const formData = new FormData(document.getElementById('brFormData'));
 
     let url = "/api/head/branchSave";
 
-    $.ajax({
-        url: url,
-        type: 'POST',
-        cache: false,
-        data: formData,
-        processData: false,
-        contentType: false,
-        enctype: 'multipart/form-data',
-        error: function (req) {
-            ajaxErrorMsg(req);
-        },
-        success: function (req) {
-            if (req.status === 200) {
-
-                const sentData = Object.fromEntries(formData);
-                const isUpdated = AUIGrid.rowIdToIndex(gridID[0], sentData.brCode) > -1;
-                console.log(sentData);
-
-                if(isUpdated) {
-                    AUIGrid.updateRowsById(gridID[0], sentData);
-                    AUIGrid.refresh(gridID[2]);
-                }else {
-                    AUIGrid.addRow(gridID[0], sentData, "last");
-                    AUIGrid.addRow(gridID[2], sentData, "last");
-                }
-
-                alertSuccess("지사 저장완료");
-            }else {
-                if (req.err_msg2 === null) {
-                    alertCaution(req.err_msg, 1);
-                }else{
-                    alertCaution(req.err_msg + "<br>" + req.err_msg2, 1);
-                }
-            }
+    CommonUI.ajax(url, "POST", formData, function (req){
+        const sentData = Object.fromEntries(formData);
+        const isUpdated = AUIGrid.rowIdToIndex(gridID[0], sentData.brCode) > -1;
+        if(isUpdated) {
+            AUIGrid.updateRowsById(gridID[0], sentData);
+            AUIGrid.refresh(gridID[2]);
+        }else {
+            AUIGrid.addRow(gridID[0], sentData, "last");
+            AUIGrid.addRow(gridID[2], sentData, "last");
         }
+        alertSuccess("지사 저장완료");
     });
-
 }
 
 // 가맹점 저장함수
@@ -312,46 +262,25 @@ function franchiseSave(){
         alertCaution("가맹점코드 중복확인을 해주세요.",1);
         return false;
     }
-    $(document).ajaxSend(function(e, xhr) { xhr.setRequestHeader("Authorization",localStorage.getItem('Authorization')); });
 
     const formData = new FormData(document.getElementById('frFormData'));
 
     let url = "/api/head/franchiseSave";
 
-    $.ajax({
-        url: url,
-        type: 'POST',
-        cache: false,
-        data: formData,
-        processData: false,
-        contentType: false,
-        enctype: 'multipart/form-data',
-        error: function (req) {
-            ajaxErrorMsg(req);
-        },
-        success: function (req) {
-            if (req.status === 200) {
-                const sentData = Object.fromEntries(formData);
-                const isUpdated = AUIGrid.rowIdToIndex(gridID[1], sentData.frCode) > -1;
+    CommonUI.ajax(url, "POST", formData, function (req){
+        const sentData = Object.fromEntries(formData);
+        const isUpdated = AUIGrid.rowIdToIndex(gridID[1], sentData.frCode) > -1;
 
-                if(isUpdated) {
-                    AUIGrid.updateRowsById(gridID[1], sentData);
-                    AUIGrid.refresh(gridID[3]);
-                }else {
-                    AUIGrid.addRow(gridID[1], sentData, "last");
-                    AUIGrid.addRow(gridID[3], sentData, "last");
-                }
-                AUIGrid.resetUpdatedItems(gridID[1]);
-                AUIGrid.resetUpdatedItems(gridID[3]);
-                alertSuccess("가맹점 저장완료");
-            }else {
-                if (req.err_msg2 === null) {
-                    alertCaution(req.err_msg, 1);
-                } else {
-                    alertCaution(req.err_msg + "<br>" + req.err_msg2, 1);
-                }
-            }
+        if(isUpdated) {
+            AUIGrid.updateRowsById(gridID[1], sentData);
+            AUIGrid.refresh(gridID[3]);
+        }else {
+            AUIGrid.addRow(gridID[1], sentData, "last");
+            AUIGrid.addRow(gridID[3], sentData, "last");
         }
+        AUIGrid.resetUpdatedItems(gridID[1]);
+        AUIGrid.resetUpdatedItems(gridID[3]);
+        alertSuccess("가맹점 저장완료");
     });
 }
 
@@ -429,12 +358,12 @@ function filterFrList(type, filterValue = "") {
     /* 두가지 조건이 중첩할 경우 중첩된 조건이 필터링 되게 함 */
     function filterGrid3() {
         AUIGrid.clearFilterAll(gridID[3]);
-        if(filterCondition1A != "") {
+        if(filterCondition1A !== "") {
             AUIGrid.setFilter(gridID[3], "brAssignStateValue", function (dataField, value, item) {
                 return item.brAssignState === filterCondition1A;
             });
         }
-        if(filterCondition1B != "") {
+        if(filterCondition1B !== "") {
             AUIGrid.setFilter(gridID[3], "frName", function (dataField, value, item){
                 /* 입력문자를 정규표현식화 하여 해당 문자를 포함한 결과를 true로 반환해 필터링 */
                 const filterCondition = new RegExp(filterCondition1B);

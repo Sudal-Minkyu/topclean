@@ -182,20 +182,11 @@ function frPopList(numOfGrid){
 }
 
 function popupListAjax(url,numOfGrid,params){
-    $(document).ajaxSend(function(e, xhr) { xhr.setRequestHeader("Authorization",localStorage.getItem('Authorization')); });
-    $.ajax({
-        url: url,
-        type: 'GET',
-        cache: false,
-        data: params,
-        error: function (req) {
-            ajaxErrorMsg(req);
-        },
-        success: function (req) {
-            gridData[numOfGrid] = req.sendData.gridListData;
-            AUIGrid.setGridData(gridID[numOfGrid], gridData[numOfGrid]);
-            AUIGrid.resize(gridID[numOfGrid], 660, 480);
-        }
+
+    CommonUI.ajax(url, "GET", params, function(req){
+        gridData[numOfGrid] = req.sendData.gridListData;
+        AUIGrid.setGridData(gridID[numOfGrid], gridData[numOfGrid]);
+        AUIGrid.resize(gridID[numOfGrid], 660, 480);
     });
 }
 
@@ -243,28 +234,10 @@ function useridOverlap(){
         userid: $userid
     };
 
-    $(document).ajaxSend(function(e, xhr) { xhr.setRequestHeader("Authorization", localStorage.getItem('Authorization')); });
-    $.ajax({
-        url: url,
-        type: 'GET',
-        cache: false,
-        data: params,
-        error: function (req) {
-            ajaxErrorMsg(req);
-        },
-        success: function (req) {
-            if (req.status === 200) {
-                $("#useridChecked").val("1");
-                console.log("중복환인 완료");
-                alertSuccess("사용할 수 있는  아이디입니다.");
-            }else{
-                if (req.err_msg2 === null) {
-                    alertCaution(req.err_msg, 1);
-                }else{
-                    alertCaution(req.err_msg + "<br>" + req.err_msg2, 1);
-                }
-            }
-        }
+    CommonUI.ajax(url, "GET", params, function (req){
+        $("#useridChecked").val("1");
+        console.log("중복환인 완료");
+        alertSuccess("사용할 수 있는  아이디입니다.");
     });
 }
 
@@ -293,45 +266,19 @@ function accountSave(){
         return false;
     }
 
-
-
-    $(document).ajaxSend(function(e, xhr) { xhr.setRequestHeader("Authorization", localStorage.getItem('Authorization')); });
-
     const formData = new FormData(document.getElementById('accountFormData'));
 
     let url = "/api/head/accountSave";
 
-    $.ajax({
-        url: url,
-        type: 'POST',
-        cache: false,
-        data: formData,
-        processData: false,
-        contentType: false,
-        enctype: 'multipart/form-data',
-        error: function (req) {
-            ajaxErrorMsg(req);
-        },
-        success: function (req) {
-            if (req.status === 200) {
-                /* 저장작업을 하면 사용자 리스트를 리로드 한다. */
-                accountList();
-                alertSuccess("사용자 저장완료");
-            }else {
-                if (req.err_msg2 === null) {
-                    alertCaution(req.err_msg, 1);
-                } else {
-                    alertCaution(req.err_msg + "<br>" + req.err_msg2, 1);
-                }
-            }
-        }
+    CommonUI.ajax(url, "POST", formData, function (req){
+        /* 저장작업을 하면 사용자 리스트를 리로드 한다. */
+        accountList();
+        alertSuccess("사용자 저장완료");
     });
 }
 
 // 사용자 조회 함수호출
 function accountList(){
-
-    $(document).ajaxSend(function(e, xhr) { xhr.setRequestHeader("Authorization", localStorage.getItem('Authorization')); });
 
     let url = "/api/head/accountList";
     let params = {
@@ -342,25 +289,8 @@ function accountList(){
         s_brCode: $("#s_brCode").val()
     };
 
-    $.ajax({
-        url: url,
-        type: 'GET',
-        cache: false,
-        data: params,
-        error: function (req) {
-            ajaxErrorMsg(req);
-        },
-        success: function (req) {
-            if (req.status === 200) {
-                AUIGrid.setGridData("grid_accountList", req.sendData.gridListData);
-            }else {
-                if (req.err_msg2 === null) {
-                    alertCaution(req.err_msg, 1);
-                } else {
-                    alertCaution(req.err_msg + "<br>" + req.err_msg2, 1);
-                }
-            }
-        }
+    CommonUI.ajax(url, "GET", params, function(req){
+        AUIGrid.setGridData("grid_accountList", req.sendData.gridListData);
     });
 }
 

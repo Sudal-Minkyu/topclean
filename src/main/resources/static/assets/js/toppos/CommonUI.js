@@ -52,6 +52,7 @@ class CommonUIClass {
         }
     }
 
+    /* 자주 쓸 정규표현형 유효성 검사를 편하게 쓰기 위함 */
     regularValidator(testValue, testMethod) {
 
         const email = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/;
@@ -65,24 +66,84 @@ class CommonUIClass {
         }
     }
 
-    /* ajax로 원하는 값을 받아온다. 현재는 GET으로 결과 받아오기만 구현 */
-    ajax(url, method, func) {
-        switch (method) {
-            case "GET" :
-                $(document).ajaxSend(function(e, xhr)
-                { xhr.setRequestHeader("Authorization",localStorage.getItem('Authorization')); });
-                $.ajax({
-                    url: url,
-                    type: method,
-                    cache: false,
-                    error: function (req) {
-                        ajaxErrorMsg(req);
-                    },
-                    success: function (req) {
-                        return func(req);
-                    }
-                });
-                break;
+    /* ajax 통신의 자주 쓰는 패턴을 간단하게 쓰기 위함 */
+    ajax(url, method, data, func) {
+        if(data) {
+            switch (method) {
+                case "GET" :
+                    $(document).ajaxSend(function (e, xhr) {
+                        xhr.setRequestHeader("Authorization", localStorage.getItem('Authorization'));
+                    });
+                    $.ajax({
+                        url: url,
+                        type: 'GET',
+                        cache: false,
+                        data: data,
+                        error: function (req) {
+                            ajaxErrorMsg(req);
+                        },
+                        success: function (req) {
+                            if (req.status === 200) {
+                                return func(req);
+                            }else {
+                                if (req.err_msg2 === null) {
+                                    alertCaution(req.err_msg, 1);
+                                } else {
+                                    alertCaution(req.err_msg + "<br>" + req.err_msg2, 1);
+                                }
+                            }
+                        }
+                    });
+                    break;
+
+
+                case "POST" :
+                case "PUT" :
+                case "DELETE" :
+                    $.ajax({
+                        url: url,
+                        type: method,
+                        cache: false,
+                        data: data,
+                        processData: false,
+                        contentType: false,
+                        enctype: 'multipart/form-data',
+                        error: function (req) {
+                            ajaxErrorMsg(req);
+                        },
+                        success: function (req) {
+                            if (req.status === 200) {
+                                return func(req);
+                            }else {
+                                if (req.err_msg2 === null) {
+                                    alertCaution(req.err_msg, 1);
+                                } else {
+                                    alertCaution(req.err_msg + "<br>" + req.err_msg2, 1);
+                                }
+                            }
+                        }
+                    });
+                    break;
+            }
+        }else{
+            switch (method) {
+                case "GET" :
+                    $(document).ajaxSend(function (e, xhr) {
+                        xhr.setRequestHeader("Authorization", localStorage.getItem('Authorization'));
+                    });
+                    $.ajax({
+                        url: url,
+                        type: method,
+                        cache: false,
+                        error: function (req) {
+                            ajaxErrorMsg(req);
+                        },
+                        success: function (req) {
+                            return func(req);
+                        }
+                    });
+                    break;
+            }
         }
     }
 
