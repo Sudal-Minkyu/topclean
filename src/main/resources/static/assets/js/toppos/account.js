@@ -167,7 +167,7 @@ function brPopList(numOfGrid){
         brCode: $("#pop_s_brCode").val(),
         brContractState: $("#pop_s_brContractState").val()
     };
-    popupListAjax(url,numOfGrid,params)
+    popupListAjax(url,numOfGrid,params);
 }
 
 function frPopList(numOfGrid){
@@ -177,7 +177,7 @@ function frPopList(numOfGrid){
         frCode: $("#pop_s_frCode").val(),
         frContractState: $("#pop_s_frContractState").val()
     };
-    popupListAjax(url,numOfGrid,params)
+    popupListAjax(url,numOfGrid,params);
 }
 
 function popupListAjax(url,numOfGrid,params){
@@ -215,7 +215,6 @@ function franchiseClose(){
     // console.log("가맹점선택 팝업닫기");
     $('#franchise_popup').removeClass('open');
 }
-
 
 
 // 지사, 가맹점 코드 중복확인 체크함수 - 완
@@ -286,7 +285,6 @@ function accountList(){
         s_frCode: $("#s_frCode").val(),
         s_brCode: $("#s_brCode").val()
     };
-
     CommonUI.ajax(url, "GET", params, function(req){
         AUIGrid.setGridData("grid_accountList", req.sendData.gridListData);
     });

@@ -182,6 +182,7 @@ function createGrid(columnLayout, gridOption) {
         "/api/head/branchList", "/api/head/franchiseList"
     ];
 
+    /* 그리드들에 초기 데이터 주입 */
     for (let i=0; i<2; i++) {
     	setListData(setGridUrl[i], i);
     }

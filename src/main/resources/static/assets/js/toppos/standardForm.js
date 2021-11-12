@@ -3,13 +3,14 @@ $(function() {
     /* 배열내의 각 설정만 넣어 빈 그리드 생성 */
     createGrids();
 
-    for (let i=0; i<2; i++) {
-        setDataIntoGrid(setGridUrl[i], i);
+    /* 그리드에 데이터를 집어넣음 반복문은 그리드의 배열 길이만큼 돌 수 있도록 한다. */
+    for(let i=0; i<2; i++) {
+        setDataIntoGrid(gridCreateUrl[i], i);
     }
 
     /* 0번그리드 내의 셀 클릭시 이벤트 */
-    AUIGrid.bind(gridID[0], "cellClick", function (e) {
-        console.log(e.item); // 클릭한 대상 row의 키와 값들을 보여준다.
+    AUIGrid.bind(gridId[0], "cellClick", function (e) {
+        console.log(e.item); // 이밴트 콜백으로 불러와진 객체의, 클릭한 대상 row 키(파라메터)와 값들을 보여준다.
     });
 });
 
@@ -27,6 +28,11 @@ gridTargetDiv = [
     "", ""
 ];
 
+/* 그리드를 받아올 때 쓰이는 api 배열 */
+gridCreateUrl = [
+    "/api/a", "/api/b"
+]
+
 /* 0번 그리드의 레이아웃 */
 gridColumnLayout[0] = [
     {
@@ -38,7 +44,9 @@ gridColumnLayout[0] = [
     },
 ];
 
-/* 0번 그리드의 프로퍼티(옵션) */
+/* 0번 그리드의 프로퍼티(옵션) 아래의 링크를 참조
+* https://www.auisoft.net/documentation/auigrid/DataGrid/Properties.html
+* */
 gridProp[0] = {
     editable : false,
     selectionMode : "multipleCells",
@@ -73,9 +81,6 @@ gridProp[1] = {
     enableFilter : true,
 };
 
-gridCreateUrl = [
-    "/api/", "/api/"
-]
 
 /* 인수로 온 배열의 설정에 따라 빈 그리드를 생성 */
 function createGrids() {
@@ -84,20 +89,10 @@ function createGrids() {
     }
 }
 
-/*  */
+/* ajax 통신을 통해 그리드 데이터를 받아와 뿌린다. */
 function setDataIntoGrid(numOfGrid, url) {
-    $(document).ajaxSend(function(e, xhr)
-        { xhr.setRequestHeader("Authorization",localStorage.getItem('Authorization')); });
-    $.ajax({
-        url: url,
-        type: 'GET',
-        cache: false,
-        error: function (req) {
-            ajaxErrorMsg(req);
-        },
-        success: function (req) {
-            gridData[numOfGrid] = req.sendData.gridListData;
-            AUIGrid.setGridData(gridId[numOfGrid], gridData[numOfGrid]);
-        }
+    CommonUI.ajax(url, "GET", false, function (req) {
+        gridData[numOfGrid] = req.sendData.gridListData;
+        AUIGrid.setGridData(gridId[numOfGrid], gridData[numOfGrid]);
     });
 }
