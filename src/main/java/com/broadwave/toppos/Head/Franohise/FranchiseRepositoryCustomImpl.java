@@ -75,7 +75,7 @@ public class FranchiseRepositoryCustomImpl extends QuerydslRepositorySupport imp
         QBranch branch = QBranch.branch;
 
         JPQLQuery<FranchisInfoDto> query = from(franchise)
-                .innerJoin(franchise.brId,branch)
+                .leftJoin(franchise.brId,branch)
                 .select(Projections.constructor(FranchisInfoDto.class,
                         franchise.frCode,
                         franchise.frName,
