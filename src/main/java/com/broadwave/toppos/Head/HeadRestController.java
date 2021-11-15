@@ -238,6 +238,7 @@ public class HeadRestController {
             }else{
                 franohisetInfo.put("frContractStateValue","계약완료");
             }
+            franohisetInfo.put("frPriceGrade", franohise.getFrPriceGrade());
             franohisetInfo.put("frRemark", franohise.getFrRemark());
             franohisetInfo.put("brName", franohise.getBrName());
             franohiseListData.add(franohisetInfo);
