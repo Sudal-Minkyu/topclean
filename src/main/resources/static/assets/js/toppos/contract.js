@@ -13,7 +13,12 @@ let gridOption = [];
 
 /* 그리드를 뿌릴 대상 id */
 targetDiv = [
-    "grid_contract_0", "grid_contract_1", "grid_contract_2", "grid_contract_3"
+    "grid_contract_0", "grid_contract_1", "grid_contract_2", "grid_contract_3", "grid_branchList"
+];
+
+/* 각 그리드의 url */
+const setGridUrl = [
+    "/api/head/branchList", "/api/head/franchiseList", "/api/head/branchList", "/api/head/franchiseList", "/api/head/branchList"
 ];
 
 /* 0번 그리드의 레이아웃 */
@@ -117,10 +122,40 @@ gridOption[3] = {
     enableFilter : true,
 };
 
+columnLayout[4] = [
+    {
+        dataField: "brCode",
+        headerText: "지사코드",
+    }, {
+        dataField: "brName",
+        headerText: "지사명",
+    }, {
+        dataField: "brContractDt",
+        headerText: "계약일자",
+    }, {
+        dataField: "brContractFromDt",
+        headerText: "계약시작일",
+    }, {
+        dataField: "brContractToDt",
+        headerText: "계약종료일",
+    }, {
+        dataField: "brContractStateValue",
+        headerText: "계약상태",
+    },
+];
+
+gridOption[4] = {
+    editable : false,
+    selectionMode : "multipleCells",
+    noDataMessage : "출력할 데이터가 없습니다.",
+    rowNumHeaderText : "순번",
+    enableColumnResize : false,
+}
+
 /* datepicker를 적용시킬 대상들의 dom id들 */
 const datePickerTargetIds = [
     "brContractDt", "brContractFromDt", "brContractToDt", "frContractDt", "frContractFromDt",
-        "frContractToDt", "bot_frContractDt", "bot_frContractFromDt", "bot_frContractToDt"
+        "frContractToDt"
 ];
 
 /*
@@ -128,8 +163,7 @@ const datePickerTargetIds = [
 * 배열 내 각 내부 배열은 [~부터의 제한 대상이 될 id, ~까지의 제한 대상이 될 id] 이다.
 * */
 const dateAToBTargetIds = [
-    ["brContractFromDt", "brContractToDt"], ["frContractFromDt", "frContractToDt"],
-        ["bot_frContractFromDt", "bot_frContractToDt"]
+    ["brContractFromDt", "brContractToDt"], ["frContractFromDt", "frContractToDt"]
 ];
 
 /* 1번 그리드의 필터조건 첫번째, 두번째가 임시 저장된다. */
@@ -160,14 +194,32 @@ $(function () {
 
     /* 2번그리드 내의 아이템 클릭시 필드에 적용 */
     AUIGrid.bind(gridID[2], "cellClick", function (e) {
-        /* 배정 정보가 필요 */
-        //AUIGrid.setFilterByValues(gridId[3], "")
+        CommonUI.ajax("/api/head/branchAssignList", "GET", {brCode : e.item.brCode}, function (req) {
+            const resultData = req.sendData.gridListData;
+            AUIGrid.clearGridData(gridID[3]);
+            AUIGrid.setGridData(gridID[3], resultData);
+        })
     });
 
     /* 3번그리드 내의 아이템 클릭시 필드에 적용 */
     AUIGrid.bind(gridID[3], "cellClick", function (e) {
-        setFieldData(3, e.item);
+        CommonUI.ajax("/api/head/franchiseInfo", "GET", {frCode : e.item.frCode}, function(req) {
+            const resultData = req.sendData.franchiseInfoData;
+            resultData.frContractStateValue = resultData.frContractState;
+            setFieldData(3, resultData);
+        });
     });
+
+    AUIGrid.bind(gridID[4], "cellClick", function (e) {
+        $("#bot_brCode").val(e.item.brCode);
+        $("#bot_brName").val(e.item.brName);
+        $("#bot_brCarculateRateHq").val(e.item.brCarculateRateHq);
+        $("#bot_brCarculateRateBr").val(e.item.brCarculateRateBr);
+        $("#bot_brCarculateRateFr").val(e.item.brCarculateRateFr);
+        $('#branch_popup').removeClass('open');
+    });
+
+
 });
 
 /* 레이아웃, 프로퍼티를 적용하여 그리드 생성 */
@@ -176,25 +228,17 @@ function createGrid(columnLayout, gridOption) {
         gridID[i] = AUIGrid.create(targetDiv[i], columnLayout[i], gridOption[i]);
     }
 
-    /* <=========================> */
-    /* 각 그리드의 url */
-    const setGridUrl = [
-        "/api/head/branchList", "/api/head/franchiseList"
-    ];
-
     /* 그리드들에 초기 데이터 주입 */
-    for (let i=0; i<2; i++) {
+    for (let i=0; i<5; i++) {
     	setListData(setGridUrl[i], i);
     }
 }
 
 /* 해당 그리드와 연관된 그리드의 데이터를 주입한다. */
 function setListData(url, numOfGrid) {
-
     CommonUI.ajax(url, "GET", false, function(req) {
         gridData[numOfGrid] = req.sendData.gridListData;
         AUIGrid.setGridData(gridID[numOfGrid], gridData[numOfGrid]);
-        AUIGrid.setGridData(gridID[numOfGrid+2], gridData[numOfGrid]);
     })
 }
 
@@ -246,17 +290,18 @@ function branchSave(){
         const isUpdated = AUIGrid.rowIdToIndex(gridID[0], sentData.brCode) > -1;
         if(isUpdated) {
             AUIGrid.updateRowsById(gridID[0], sentData);
-            AUIGrid.refresh(gridID[2]);
         }else {
             AUIGrid.addRow(gridID[0], sentData, "last");
-            AUIGrid.addRow(gridID[2], sentData, "last");
         }
+        AUIGrid.resetUpdatedItems(gridID[0]);
+        AUIGrid.clearGridData(gridID[2]);
+        setListData(setGridUrl[2], 2);
         alertSuccess("지사 저장완료");
     });
 }
 
 // 가맹점 저장함수
-function franchiseSave(){
+function franchiseSave() {
 
     const $frCodeChecked = $("#frCodeChecked").val();
     if($frCodeChecked==="0"){
@@ -265,7 +310,6 @@ function franchiseSave(){
     }
 
     const formData = new FormData(document.getElementById('frFormData'));
-
     let url = "/api/head/franchiseSave";
 
     CommonUI.ajax(url, "POST", formData, function (req){
@@ -274,15 +318,46 @@ function franchiseSave(){
 
         if(isUpdated) {
             AUIGrid.updateRowsById(gridID[1], sentData);
-            AUIGrid.refresh(gridID[3]);
         }else {
             AUIGrid.addRow(gridID[1], sentData, "last");
-            AUIGrid.addRow(gridID[3], sentData, "last");
         }
         AUIGrid.resetUpdatedItems(gridID[1]);
-        AUIGrid.resetUpdatedItems(gridID[3]);
+        AUIGrid.clearGridData(gridID[3]);
+        setListData(setGridUrl[3], 3);
         alertSuccess("가맹점 저장완료");
     });
+}
+
+/* 가맹점 배정 저장 */
+function assignmentSave() {
+    const frCode = $("#bot_frCode").val();
+    const brCode = $("#bot_brCode").val();
+    const brAssignState = $("#bot_brAssignState").val();
+
+    if(frCode === ""){
+        alertCaution("가맹점을 선택 해주세요.",1);
+        return false;
+    }
+    if(brCode === ""){
+        alertCaution("지사를 선택 해주세요.",1);
+        return false;
+    }
+
+    const formData = new FormData();
+    formData.append("frCode", frCode);
+    formData.append("brCode", brCode);
+    formData.append("bot_brAssignState", brAssignState);
+    const url = "/api/head/franchiseAssignment";
+
+    CommonUI.ajax(url, "POST", formData, function(req) {
+        formData.append("brAssignState", brAssignState);
+        formData.append("brName", $("#bot_brName").val());
+        const jsonData = Object.fromEntries(formData);
+        console.log(jsonData);
+        AUIGrid.updateRowsById(gridID[3], jsonData);
+        alertSuccess("가맹점 배정 완료");
+    });
+
 }
 
 /* 클릭, 신규에 따른 필드의 값을 대입하거나, 비우고 적합한 상태를 세팅한다. */
@@ -301,7 +376,7 @@ function setFieldData(numOfGrid, item) {
             $("#brCarculateRateHq").val(item.brCarculateRateHq);
             $("#brCarculateRateBr").val(item.brCarculateRateBr);
             $("#brCarculateRateFr").val(item.brCarculateRateFr);
-            $("#brRemark").html(item.brRemark);
+            $("#brRemark").val(item.brRemark);
             CommonUI.restrictDate(dateAToBTargetIds[0][0], dateAToBTargetIds[0][1], false);
             CommonUI.restrictDate(dateAToBTargetIds[0][0], dateAToBTargetIds[0][1], true);
             break;
@@ -316,7 +391,7 @@ function setFieldData(numOfGrid, item) {
             $("#frContractToDt").val(item.frContractToDt);
             $("#frContractState").val(item.frContractState);
             $("#frPriceGrade").val(item.frPriceGrade);
-            $("#frRemark").html(item.frRemark);
+            $("#frRemark").val(item.frRemark);
             CommonUI.restrictDate(dateAToBTargetIds[1][0], dateAToBTargetIds[1][1], false);
             CommonUI.restrictDate(dateAToBTargetIds[1][0], dateAToBTargetIds[1][1], true);
             break;
@@ -327,10 +402,13 @@ function setFieldData(numOfGrid, item) {
             $("#bot_frContractDt").val(item.frContractDt);
             $("#bot_frContractFromDt").val(item.frContractFromDt);
             $("#bot_frContractToDt").val(item.frContractToDt);
-            $("#bot_frContractState").val(item.frContractState);
+            $("#bot_frContractState").val(item.frContractStateValue);
             $("#bot_brAssignState").val(item.brAssignState);
-            CommonUI.restrictDate(dateAToBTargetIds[2][0], dateAToBTargetIds[2][1], false);
-            CommonUI.restrictDate(dateAToBTargetIds[2][0], dateAToBTargetIds[2][1], true);
+            $("#bot_brCode").val(item.brCode);
+            $("#bot_brName").val(item.brName);
+            $("#bot_brCarculateRateHq").val(item.brCarculateRateHq);
+            $("#bot_brCarculateRateBr").val(item.brCarculateRateBr);
+            $("#bot_brCarculateRateFr").val(item.brCarculateRateFr);
             break;
     }
 }
@@ -404,3 +482,14 @@ function filterFrList(type, filterValue = "") {
     }
 
 }
+
+/* 지사 선택 팝업 */
+function brListPop(){
+    $('#branch_popup').addClass('open');
+}
+
+// 지사 점 팝업닫기
+function branchClose(){
+    $('#branch_popup').removeClass('open');
+}
+

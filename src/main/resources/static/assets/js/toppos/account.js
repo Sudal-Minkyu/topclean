@@ -75,8 +75,8 @@ gridOption[0] = {
     selectionMode : "multipleCells",
     noDataMessage : "출력할 데이터가 없습니다.",
     rowNumHeaderText : "순번",
-    rowIdField : "userid",
-    enableColumnResize : false
+    enableColumnResize : false,
+    enableFilter : true,
 };
 
 columnLayout[1] = [
@@ -106,7 +106,7 @@ gridOption[1] = {
     selectionMode : "multipleCells",
     noDataMessage : "출력할 데이터가 없습니다.",
     rowNumHeaderText : "순번",
-    enableColumnResize : false
+    enableColumnResize : false,
 };
 
 columnLayout[2] = [
@@ -141,7 +141,7 @@ gridOption[2] = {
 
 function createAccountGrid(columnLayout, gridOption) {
     for (const i in columnLayout) {
-        gridID[i] = AUIGrid.create(targetDiv[i], columnLayout[i], gridOption);
+        gridID[i] = AUIGrid.create(targetDiv[i], columnLayout[i], gridOption[i]);
     }
 
     /* <=========================> */
@@ -306,7 +306,7 @@ function setFieldData(numOfGrid, item) {
             $("#useremail").val(item.useremail);
             $("#frCode").val(frCode);
             $("#brCode").val(brCode);
-            $("#userremark").html(item.userremark);
+            $("#userremark").val(item.userremark);
             break;
 
         case 1 :
@@ -364,3 +364,46 @@ function changeUseridStatus (isDisable) {0
     $("#useridChecked").val(checked);
 }
 
+/* 사용자 리스트 조회 필터링 type = 1 사용자 리스트 조회 필터링, type = 2 필터링 초기화*/
+function filterAccountList(type) {
+
+    switch (type) {
+        case 1 :
+            AUIGrid.clearFilterAll(gridID[0]);
+            const s_userid = $("#s_userid").val();
+            const s_username = $("#s_username").val();
+            const s_role = $("#s_role").val();
+            const s_frCode = $("#s_frCode").val();
+            const s_brCode = $("#s_brCode").val();
+            if(s_userid !== "") {
+                AUIGrid.setFilter(gridID[0], "userid", function (dataField, value, item) {
+                    return new RegExp(s_userid).test(value);
+                });
+            }
+            if(s_username !== "") {
+                AUIGrid.setFilter(gridID[0], "username", function (dataField, value, item) {
+                    return new RegExp(s_username).test(value);
+                });
+            }
+            if(s_role !== "") {
+                AUIGrid.setFilter(gridID[0], "roleCode", function (dataField, value, item) {
+                    return s_role === value;
+                });
+            }
+            if(s_frCode !== "") {
+                AUIGrid.setFilter(gridID[0], "frCode", function (dataField, value, item) {
+                    return new RegExp(s_frCode).test(value);
+                });
+            }
+            if(s_brCode !== "") {
+                AUIGrid.setFilter(gridID[0], "brCode", function (dataField, value, item) {
+                    return new RegExp(s_brCode).test(value);
+                });
+            }
+            break;
+        case 2 :
+            AUIGrid.clearFilterAll(gridID[0]);
+            break;
+    }
+
+}

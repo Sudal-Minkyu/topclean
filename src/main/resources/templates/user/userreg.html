@@ -22,6 +22,68 @@
 </th:block>
 
 <div layout:fragment="content" class="content padding-zero content--main">
-
+	<form id="frFormData" enctype="multipart/form-data">
+		<div>
+			고객명
+			<input type="text">
+			<button type="button">⌨</button>
+		</div>
+		<div>
+			※휴대폰
+			<input type="text">
+			<button type="button">⌨</button>
+		</div>
+		<div>
+			성별
+			<input type="radio" name="a">
+			<label>여자</label>
+			<br>
+			<input type="radio" name="a">
+			<label>남자</label>
+		</div>
+		<div>
+			주소
+			<input type="text">
+			<button type="button">⌨</button>
+		</div>
+		<div>
+			생년월일/나이
+		</div>
+		<div>
+			고객구분
+			<select>
+				<option value="01">일반</option>
+				<option value="02">VIP</option>
+				<option value="03">VVIP</option>
+			</select>
+		</div>
+		<div>
+			성향
+			<select>
+				<option value="01">★☆☆☆☆</option>
+				<option value="02">★★☆☆☆</option>
+				<option value="03">★★★☆☆</option>
+				<option value="04">★★★★☆</option>
+				<option value="05">★★★★★</option>
+			</select>
+		</div>
+		<div>
+			문자수신동의
+			<input type="radio" name="b">
+			<label>동의</label>
+			<br>
+			<input type="radio" name="b">
+			<label>동의안함</label>
+		</div>
+		<div>
+			특이사항
+			<textarea></textarea>
+			<button type="button">⌨</button>
+		</div>
+		<div>
+			<button type="submit">저장</button>
+			<button type="button">취소</button>
+		</div>
+	</form>
 </div>
 </html>

@@ -178,18 +178,21 @@
 			</div>
 			<div>
 				계약일자
-				<input id="bot_frContractDt" type="text">
+				<input id="bot_frContractDt" type="text" readonly>
 				계약기간
-				<input id="bot_frContractFromDt" type="text">
+				<input id="bot_frContractFromDt" type="text" readonly>
 				~
-				<input id="bot_frContractToDt" type="text">
+				<input id="bot_frContractToDt" type="text" readonly>
 			</div>
 			<div>
 				계약상태
+				<input id="bot_frContractState" readonly>
+				<!--
 				<select id="bot_frContractState">
 					<option value="01">계약진행중</option>
 					<option value="02">계약완료</option>
 				</select>
+				-->
 				배정상태
 				<select id="bot_brAssignState">
 					<option value="01">미배정</option>
@@ -200,13 +203,68 @@
 				지사
 				<input id="bot_brCode" type="text" readonly>
 				<input id="bot_brName" type="text" readonly>
-				<button>지사변경</button>
+				<button type="button" onclick="brListPop()">지사변경</button>
 				정산비율
 				본사 : <input id="bot_brCarculateRateHq" type="text" readonly>%
 				지사 : <input id="bot_brCarculateRateBr" type="text" readonly>%
-				가맹 : <input id="bot_brCarculateRatefr" type="text" readonly>%
-				<button>저장</button>
+				가맹 : <input id="bot_brCarculateRateFr" type="text" readonly>%
+				<button type="button" onclick="assignmentSave()">저장</button>
 			</div>
+		</div>
+	</div>
+
+	<!-- 지사 팝업 -->
+	<div class="l-popup" id="branch_popup">
+		<div class="l-popup__container">
+			<div class="l-popup__head">
+				<h3 class="l-popup__heading">지사 선택</h3>
+			</div>
+			<div class="l-popup__content">
+				<div class="l-popup__section">
+					<table class="c-table c-table--non-border">
+						<colgroup>
+							<col style="width: 80px;"/>
+							<col/>
+							<col style="width: 80px;"/>
+							<col/>
+							<col style="width: 80px;"/>
+							<col/>
+							<col style="width: 60px;"/>
+						</colgroup>
+						<tbody>
+						<tr>
+							<th>지사명</th>
+							<td>
+								<div class="c-text">
+									<input type="text" id="pop_s_brName" class="c-text__input"/>
+								</div>
+							</td>
+							<th>지사코드</th>
+							<td>
+								<div class="c-text">
+									<input type="text" id="pop_s_brCode" maxlength="2" class="c-text__input"/>
+								</div>
+							</td>
+							<th>계약상태</th>
+							<td>
+								<select id="pop_s_brContractState" name="pop_s_brContractState">
+									<option value="">모두</option>
+									<option value="01">진행중</option>
+									<option value="02">계약완료</option>
+								</select>
+							</td>
+							<td>
+								<button class="c-button c-button--point" type="button">조회</button>
+							</td>
+						</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="l-popup__section">
+					<div id="grid_branchList"></div>
+				</div>
+			</div>
+			<a href="#" onclick="branchClose()" class="l-popup__close">팝업닫기</a>
 		</div>
 	</div>
 
