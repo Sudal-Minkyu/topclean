@@ -44,8 +44,8 @@ public class HeadService {
     }
 
     // 가맹점 리스트 API
-    public List<FranchiseListDto> findByFranchiseList(String brAssignState, String frName, String frCode, String frContractState) {
-        return franchiseRepositoryCustom.findByFranchiseList(brAssignState, frName, frCode, frContractState);
+    public List<FranchiseListDto> findByFranchiseList(String brCode, String brAssignState, String frName, String frCode, String frContractState) {
+        return franchiseRepositoryCustom.findByFranchiseList(brCode, brAssignState, frName, frCode, frContractState);
     }
 
     // 지사 리스트 API

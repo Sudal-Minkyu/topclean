@@ -222,7 +222,7 @@ public class HeadRestController {
         List<HashMap<String,Object>> franohiseListData = new ArrayList<>();
         HashMap<String,Object> franohisetInfo;
 
-        List<FranchiseListDto> franchiseListDtos = headService.findByFranchiseList(brAssignState, frName, frCode, frContractState);
+        List<FranchiseListDto> franchiseListDtos = headService.findByFranchiseList("",brAssignState, frName, frCode, frContractState);
 //        log.info("franohiseListDtos : "+franohiseListDtos);
 
         for (FranchiseListDto franohise : franchiseListDtos) {
@@ -267,6 +267,7 @@ public class HeadRestController {
                                                                                         @RequestParam(value="s_frCode", defaultValue="") String s_frCode,
                                                                                         @RequestParam(value="s_brCode", defaultValue="") String s_brCode){
         log.info("accountList 호출");
+        log.info("s_userid : "+s_userid);
 
         AccountRole role = null;
 
@@ -315,7 +316,97 @@ public class HeadRestController {
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
+    // 해당 지사에 배정된 가맹점 리스트 호출
+    @GetMapping("branchAssignList")
+    public ResponseEntity<Map<String,Object>> branchAssignList(@RequestParam(value="brCode", defaultValue="") String brCode){
+        log.info("branchAssignList 호출");
 
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        List<HashMap<String,Object>> franohiseListData = new ArrayList<>();
+        HashMap<String,Object> franohisetInfo;
+
+        List<FranchiseListDto> franchiseListDtos = headService.findByFranchiseList(brCode,"", "", "", "");
+//        log.info("franchiseListDtos : "+franchiseListDtos);
+
+        for (FranchiseListDto franohise : franchiseListDtos) {
+
+            franohisetInfo = new HashMap<>();
+
+            franohisetInfo.put("frCode", franohise.getFrCode());
+            franohisetInfo.put("frName", franohise.getFrName());
+            franohisetInfo.put("frContractDt", franohise.getFrContractDt());
+            franohisetInfo.put("frContractFromDt", franohise.getFrContractFromDt());
+            franohisetInfo.put("frContractToDt", franohise.getFrContractToDt());
+            franohisetInfo.put("frContractState", franohise.getFrContractState());
+            franohisetInfo.put("brAssignState", franohise.getBrAssignState());
+            if(franohise.getBrAssignState().equals("01")){
+                franohisetInfo.put("brAssignStateValue","진행중");
+            }else{
+                franohisetInfo.put("brAssignStateValue","계약완료");
+            }
+            if(franohise.getFrContractState().equals("01")){
+                franohisetInfo.put("frContractStateValue","진행중");
+            }else{
+                franohisetInfo.put("frContractStateValue","계약완료");
+            }
+            franohisetInfo.put("frPriceGrade", franohise.getFrPriceGrade());
+            franohisetInfo.put("frRemark", franohise.getFrRemark());
+            franohisetInfo.put("brName", franohise.getBrName());
+            franohiseListData.add(franohisetInfo);
+        }
+
+        log.info("해당 지사에 배정된 가맹점 리스트 지사코드("+brCode+") : "+franohiseListData);
+        data.put("gridListData",franohiseListData);
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
+    // 가맹점의 대한 지사배치 등록 API
+    @PostMapping("franchiseAssignment")
+    public ResponseEntity<Map<String,Object>> franchiseAssignment(@RequestParam(value="frCode", defaultValue="") String frCode,
+                                                                    @RequestParam(value="brCode", defaultValue="") String brCode,
+                                                                    @RequestParam(value="bot_brAssignState", defaultValue="") String bot_brAssignState,
+                                                                    HttpServletRequest request){
+        log.info("franchiseAssignment 호출");
+
+        AjaxResponse res = new AjaxResponse();
+        String login_id = CommonUtils.getCurrentuser(request);
+
+        Optional<Franchise> optionalFranohise  =  headService.findByFrCode(frCode);
+        Optional<Branch> optionalBranch =  headService.findByBrCode(brCode);
+        if(optionalFranohise.isPresent() && optionalBranch.isPresent()){
+            Franchise franchise = new Franchise();
+
+            franchise.setId(optionalFranohise.get().getId());
+            franchise.setFrCode(optionalFranohise.get().getFrCode());
+            franchise.setFrName(optionalFranohise.get().getFrName());
+            franchise.setFrContractDt(optionalFranohise.get().getFrContractDt());
+            franchise.setFrContractFromDt(optionalFranohise.get().getFrContractFromDt());
+            franchise.setFrContractToDt(optionalFranohise.get().getFrContractToDt());
+            franchise.setFrContractState(optionalFranohise.get().getFrContractState());
+            franchise.setFrPriceGrade(optionalFranohise.get().getFrPriceGrade());
+            franchise.setFrRemark(optionalFranohise.get().getFrRemark());
+
+            franchise.setBrId(optionalBranch.get());
+            franchise.setBrCode(optionalBranch.get().getBrCode());
+            franchise.setBrAssignState(bot_brAssignState);
+
+            franchise.setInsert_id(optionalFranohise.get().getInsert_id());
+            franchise.setInsertDateTime(optionalFranohise.get().getInsertDateTime());
+
+            franchise.setModify_id(login_id);
+            franchise.setModifyDateTime(LocalDateTime.now());
+
+            headService.franchiseSave(franchise);
+        }else{
+            log.info("정보가 존재하지 않습니다.");
+            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP005.getCode(), ResponseErrorCode.TP005.getDesc(),ResponseErrorCode.TP006.getCode(), ResponseErrorCode.TP006.getDesc()));
+        }
+
+        return ResponseEntity.ok(res.success());
+    }
 
 
 
