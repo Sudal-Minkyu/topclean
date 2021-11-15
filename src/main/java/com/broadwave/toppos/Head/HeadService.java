@@ -4,10 +4,7 @@ import com.broadwave.toppos.Head.Branoh.Branch;
 import com.broadwave.toppos.Head.Branoh.BranchListDto;
 import com.broadwave.toppos.Head.Branoh.BranchRepository;
 import com.broadwave.toppos.Head.Branoh.BranchRepositoryCustomImpl;
-import com.broadwave.toppos.Head.Franohise.Franchise;
-import com.broadwave.toppos.Head.Franohise.FranchiseListDto;
-import com.broadwave.toppos.Head.Franohise.FranchiseRepository;
-import com.broadwave.toppos.Head.Franohise.FranchiseRepositoryCustom;
+import com.broadwave.toppos.Head.Franohise.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -63,4 +60,7 @@ public class HeadService {
         return branohRepository.findByBrCode(brCode);
     }
 
+    public FranchisInfoDto findByFranchiseInfo(String frCode) {
+        return franchiseRepositoryCustom.findByFranchiseInfo(frCode);
+    }
 }

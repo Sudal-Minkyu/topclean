@@ -68,4 +68,32 @@ public class FranchiseRepositoryCustomImpl extends QuerydslRepositorySupport imp
         return query.fetch();
     }
 
+    @Override
+    public FranchisInfoDto findByFranchiseInfo(String frCode) {
+
+        QFranchise franchise = QFranchise.franchise;
+        QBranch branch = QBranch.branch;
+
+        JPQLQuery<FranchisInfoDto> query = from(franchise)
+                .innerJoin(franchise.brId,branch)
+                .select(Projections.constructor(FranchisInfoDto.class,
+                        franchise.frCode,
+                        franchise.frName,
+                        franchise.frContractDt,
+                        franchise.frContractFromDt,
+                        franchise.frContractToDt,
+                        franchise.frContractState,
+                        franchise.brAssignState,
+                        franchise.BrCode,
+                        branch.brName,
+                        branch.brCarculateRateHq,
+                        branch.brCarculateRateBr,
+                        branch.brCarculateRateFr
+                ));
+
+        query.where(franchise.frCode.eq(frCode));
+
+        return query.fetchOne();
+    }
+
 }

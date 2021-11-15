@@ -4,6 +4,7 @@ import com.broadwave.toppos.Account.*;
 import com.broadwave.toppos.Head.Branoh.Branch;
 import com.broadwave.toppos.Head.Branoh.BranchListDto;
 import com.broadwave.toppos.Head.Branoh.BranchMapperDto;
+import com.broadwave.toppos.Head.Franohise.FranchisInfoDto;
 import com.broadwave.toppos.Head.Franohise.Franchise;
 import com.broadwave.toppos.Head.Franohise.FranchiseListDto;
 import com.broadwave.toppos.Head.Franohise.FranchiseMapperDto;
@@ -359,6 +360,21 @@ public class HeadRestController {
 
         log.info("해당 지사에 배정된 가맹점 리스트 지사코드("+brCode+") : "+franohiseListData);
         data.put("gridListData",franohiseListData);
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
+    // 해당 가맹점 선택시 가맹점 정보 호출하기
+    @GetMapping("franchiseInfo")
+    public ResponseEntity<Map<String,Object>> franchiseInfo(@RequestParam(value="frCode", defaultValue="") String frCode){
+        log.info("franchiseInfo 호출");
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        FranchisInfoDto franchisInfoDto = headService.findByFranchiseInfo(frCode);
+//        log.info("가맹점정보 호출 가맹점 코드("+frCode+") : "+franchisInfoDto);
+        data.put("franchiseInfoData",franchisInfoDto);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
