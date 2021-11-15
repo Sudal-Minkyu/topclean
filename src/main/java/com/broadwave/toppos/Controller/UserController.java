@@ -22,5 +22,10 @@ public class UserController {
         return "/index/userindex";
     }
 
+    // 가맹점주 고객등록 페이지
+    @RequestMapping("userreg")
+    public String userreg(){
+        return "/user/userreg";
+    }
 
 }

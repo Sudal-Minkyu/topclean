@@ -60,19 +60,27 @@ public class HeadRestController {
         log.info("role : "+account.getRole());
         Optional<Account> optionalAccount = accountService.findByUserid(account.getUserid());
         if( optionalAccount.isPresent()){
+            log.info("수정합니다.");
             // 수정일때
             account.setId(optionalAccount.get().getId());
+            account.setUserid(optionalAccount.get().getUserid());
             account.setPassword(optionalAccount.get().getPassword());
-            account.setInsert_id(login_id);
-            account.setInsertDateTime(LocalDateTime.now());
+            account.setInsert_id(optionalAccount.get().getInsert_id());
+            account.setInsertDateTime(optionalAccount.get().getInsertDateTime());
+            account.setModify_id(login_id);
+            account.setModifyDateTime(LocalDateTime.now());
+
+            Account accountSave =  accountService.updateAccount(account);
+            log.info("사용자 업데이트 저장 성공 : id '" + accountSave.getUserid() + "'");
         }else{
+            log.info("신규입니다.");
             // 신규일때
             account.setModify_id(login_id);
             account.setModifyDateTime(LocalDateTime.now());
-        }
 
-        Account accountSave =  accountService.save(account);
-        log.info("사용자 저장 성공 : id '" + accountSave.getUserid() + "'");
+            Account accountSave =  accountService.save(account);
+            log.info("사용자 신규 저장 성공 : id '" + accountSave.getUserid() + "'");
+        }
         return ResponseEntity.ok(res.success());
 
     }
