@@ -73,12 +73,13 @@ class CommonUIClass {
 
     /* ajax 통신의 자주 쓰는 패턴을 간단하게 쓰기 위함 */
     ajax(url, method, data, func) {
-        $(document).ajaxSend(function (e, xhr) {
-            xhr.setRequestHeader("Authorization", localStorage.getItem('Authorization'));
-        });
+
         if(data) {
             switch (method) {
                 case "GET" :
+                    $(document).ajaxSend(function (e, xhr) {
+                        xhr.setRequestHeader("Authorization", localStorage.getItem('Authorization'));
+                    });
                     $.ajax({
                         url: url,
                         type: 'GET',
@@ -105,6 +106,9 @@ class CommonUIClass {
                 case "POST" :
                 case "PUT" :
                 case "DELETE" :
+                    $(document).ajaxSend(function (e, xhr) {
+                        xhr.setRequestHeader("Authorization", localStorage.getItem('Authorization'));
+                    });
                     $.ajax({
                         url: url,
                         type: method,
@@ -114,7 +118,7 @@ class CommonUIClass {
                         contentType: false,
                         enctype: 'multipart/form-data',
                         error: function (req) {
-                            // ajaxErrorMsg(req);
+                            ajaxErrorMsg(req);
                         },
                         success: function (req) {
                             if (req.status === 200) {
@@ -150,6 +154,37 @@ class CommonUIClass {
                     break;
             }
         }
+    }
+
+    /* json 보내는 통신의 자주 쓰는 패턴을 간단하게 쓰기 위함 --임시 */
+    ajaxjson(url, data, func) {
+        $(document).ajaxSend(function (e, xhr) {
+            xhr.setRequestHeader("Authorization", localStorage.getItem('Authorization'));
+        });
+        $.ajax({
+            url: url,
+            type: "POST",
+            cache: false,
+            data: data,
+            dataType: "json",
+            processData: false,
+            contentType: false,
+            enctype: "multipart/form-data"
+            error: function (req) {
+                ajaxErrorMsg(req);
+            },
+            success: function (req) {
+                if (req.status === 200) {
+                    return func(req);
+                } else {
+                    if (req.err_msg2 === null) {
+                        alertCaution(req.err_msg, 1);
+                    } else {
+                        alertCaution(req.err_msg + "<br>" + req.err_msg2, 1);
+                    }
+                }
+            }
+        });
     }
 
 }
