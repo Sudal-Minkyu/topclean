@@ -111,9 +111,13 @@ class VKeyboard {
     ];
 
 
-    constructor (targetDivId) {
+    constructor () {
 
-        document.getElementById(targetDivId).innerHTML = this.htmlSet();
+        /* div 하나를 생성하여 키보드 html을 뿌린다. */
+        const virtualKeyboardBody = document.createElement('div');
+        virtualKeyboardBody.id = "VKEY_body";
+        virtualKeyboardBody.innerHTML = this.htmlSet();
+        document.body.appendChild(virtualKeyboardBody);
 
         /* 가상키보드 작동시 완료될 때 까지 사용자가 사용할 contenteditable 입력창 */
         this.editableField = document.getElementById("VKEY_field_editable");

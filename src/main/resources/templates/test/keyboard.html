@@ -15,7 +15,7 @@
 	<script type="text/javascript">
 		let vkey;
 		document.addEventListener('DOMContentLoaded', function() {
-			vkey = new VKeyboard('VKEY');
+			vkey = new VKeyboard();
 		}, false);
 	</script>
 
@@ -24,5 +24,4 @@
 <div layout:fragment="content" class="content padding-zero content--main">
 	<input type="text" id="targetField">
 	<input type="button" value="⌨" onclick="vkey.showKeyboard('targetField', '제목 테스트', ['상용구', '테스트', '스페 이스', '&ㅁㅁ&'])">
-	<div id="VKEY"></div>
 </html>

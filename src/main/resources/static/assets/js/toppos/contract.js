@@ -115,7 +115,7 @@ columnLayout[3] = [
 gridOption[3] = {
     editable : false,
     selectionMode : "multipleCells",
-    noDataMessage : "출력할 데이터가 없습니다.",
+    noDataMessage : "대상 가맹점 데이터가 없습니다.",
     rowNumHeaderText : "순번",
     rowIdField : "frCode",
     rowIdTrustMode : true,
@@ -283,7 +283,7 @@ function branchSave(){
 
     const formData = new FormData(document.getElementById('brFormData'));
 
-    let url = "/api/head/branchSave";
+    const url = "/api/head/branchSave";
 
     CommonUI.ajax(url, "POST", formData, function (req){
         const sentData = Object.fromEntries(formData);
@@ -353,7 +353,6 @@ function assignmentSave() {
         formData.append("brAssignState", brAssignState);
         formData.append("brName", $("#bot_brName").val());
         const jsonData = Object.fromEntries(formData);
-        console.log(jsonData);
         AUIGrid.updateRowsById(gridID[3], jsonData);
         alertSuccess("가맹점 배정 완료");
     });
@@ -464,8 +463,9 @@ function filterFrList(type, filterValue = "") {
         case 3 :
             filterCondition1A = "";
             filterCondition1B = "";
-            AUIGrid.clearFilterAll(gridID[3]);
             $("#bot_frNameFilter").val("");
+            AUIGrid.clearGridData(gridID[3]);
+            setListData(setGridUrl[3], 3);
             break;
 
         case 6 :

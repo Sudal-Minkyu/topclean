@@ -6,12 +6,12 @@
 
 <!-- 사용자 CSS 추가 -->
 <th:block layout:fragment="css">
-
+	<link rel="stylesheet" href="/assets/css/nak_css_dir/VKeyboard.css" />
 </th:block>
 
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
-
+	<script src="/assets/js/toppos/userreg.js"></script>
 	<script type="text/javascript">
 
 		$(function() {
@@ -22,36 +22,59 @@
 </th:block>
 
 <div layout:fragment="content" class="content padding-zero content--main">
-	<form id="frFormData" enctype="multipart/form-data">
+	<form id="userregForm" enctype="multipart/form-data">
 		<div>
 			고객명
-			<input type="text">
-			<button type="button">⌨</button>
+			<input type="text" id="bcName" name="bcName">
+			<button type="button" onclick="openVKeyboard(0)">⌨</button>
 		</div>
 		<div>
 			※휴대폰
-			<input type="text">
-			<button type="button">⌨</button>
+			<input type="text" id="bcHp" name="bcHp" placeholder="숫자만 입력해 주세요">
+			<button type="button" onclick="openVKeyboard(1)">⌨</button>
 		</div>
 		<div>
 			성별
-			<input type="radio" name="a">
+			<input type="radio" name="bcSex" value="1">
 			<label>여자</label>
-			<br>
-			<input type="radio" name="a">
+			<input type="radio" name="bcSex" value="0">
 			<label>남자</label>
 		</div>
 		<div>
 			주소
-			<input type="text">
-			<button type="button">⌨</button>
+			<input type="text" id="bcAddress" name="bcAddress">
+			<button type="button" onclick="openVKeyboard(2)">⌨</button>
 		</div>
 		<div>
 			생년월일/나이
+			<select id="bcBirthYYYY">
+				<option th:each="i : ${#numbers.sequence(2010, 1950, -1)}"
+						th:value="${i}"
+						th:text="${i}">
+				</option>
+			</select>
+			<select id="bcBirthMM">
+				<option th:each="i : ${#numbers.sequence(1, 12, 1)}"
+						th:value="${#numbers.formatInteger(i, 2)}"
+						th:text="${i}">
+				</option>
+			</select>
+			<select id="bcBirthDD">
+				<option th:each="i : ${#numbers.sequence(1, 31, 1)}"
+						th:value="${#numbers.formatInteger(i, 2)}"
+						th:text="${i}">
+				</option>
+			</select>
+			<select name="bcAge">
+				<option th:each="i : ${#numbers.sequence(10, 90, 10)}"
+						th:value="${i}"
+						th:text="${i}+' 대'">
+				</option>
+			</select>
 		</div>
 		<div>
 			고객구분
-			<select>
+			<select id="bcGrade" name="bcGrade">
 				<option value="01">일반</option>
 				<option value="02">VIP</option>
 				<option value="03">VVIP</option>
@@ -59,31 +82,31 @@
 		</div>
 		<div>
 			성향
-			<select>
-				<option value="01">★☆☆☆☆</option>
-				<option value="02">★★☆☆☆</option>
-				<option value="03">★★★☆☆</option>
-				<option value="04">★★★★☆</option>
-				<option value="05">★★★★★</option>
+			<select id="bcValuation" name="bcValuation">
+				<option value="1">★☆☆☆☆</option>
+				<option value="2">★★☆☆☆</option>
+				<option value="3">★★★☆☆</option>
+				<option value="4">★★★★☆</option>
+				<option value="5">★★★★★</option>
 			</select>
 		</div>
 		<div>
 			문자수신동의
-			<input type="radio" name="b">
+			<input type="radio" name="bcMessageAgree" value="Y">
 			<label>동의</label>
-			<br>
-			<input type="radio" name="b">
+			<input type="radio" name="bcMessageAgree" value="N">
 			<label>동의안함</label>
 		</div>
 		<div>
 			특이사항
-			<textarea></textarea>
-			<button type="button">⌨</button>
+			<textarea id="bcRemark" name="bcRemark"></textarea>
+			<button type="button" onclick="openVKeyboard(3)">⌨</button>
 		</div>
 		<div>
-			<button type="submit">저장</button>
-			<button type="button">취소</button>
+			<button type="button" onclick="saveRegister()">저장</button>
+			<button type="button" onclick="">취소</button>
 		</div>
 	</form>
+	<div id="VKEY"></div>
 </div>
 </html>
