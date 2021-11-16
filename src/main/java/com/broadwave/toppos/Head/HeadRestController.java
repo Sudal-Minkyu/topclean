@@ -428,11 +428,6 @@ public class HeadRestController {
         return ResponseEntity.ok(res.success());
     }
 
-
-
-
-
-
     // 유저아이디 중복확인 API
     @GetMapping("useridOverlap")
     public ResponseEntity<Map<String,Object>> useridOverlap(@RequestParam(value="userid", defaultValue="") String userid){
@@ -485,5 +480,24 @@ public class HeadRestController {
         return ResponseEntity.ok(res.success());
     }
 
+
+    // 상품그룹 대분류 호출 API
+    @PostMapping("itemGroupA")
+    public ResponseEntity<Map<String,Object>> itemGroupA(@RequestParam(value="add", defaultValue="") String add,
+                                                                  @RequestParam(value="update", defaultValue="") String update,
+                                                                  @RequestParam(value="remove", defaultValue="") String remove,
+                                                                  HttpServletRequest request){
+        log.info("itemGroupA 호출");
+
+        AjaxResponse res = new AjaxResponse();
+        String login_id = CommonUtils.getCurrentuser(request);
+        log.info("저장 : "+add);
+        log.info("수정 : "+update);
+        log.info("삭제 : "+remove);
+
+//        return ResponseEntity.ok(res.fail(ResponseErrorCode.TP005.getCode(), ResponseErrorCode.TP005.getDesc(),ResponseErrorCode.TP006.getCode(), ResponseErrorCode.TP006.getDesc()));
+
+        return ResponseEntity.ok(res.success());
+    }
 
 }
