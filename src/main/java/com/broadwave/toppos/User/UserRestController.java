@@ -87,7 +87,8 @@ public class UserRestController {
             customer.setFrCode(frCode);
             customer.setModify_id(login_id);
             customer.setModifyDateTime(LocalDateTime.now());
-
+            customer.setBcMessageAgreeDt(LocalDateTime.now());
+            
             Customer customerSave =  userService.customerSave(customer);
             log.info("고객 신규 저장 성공 : 핸드폰 번호 '" + customerSave.getBcHp() +"'");
         }
