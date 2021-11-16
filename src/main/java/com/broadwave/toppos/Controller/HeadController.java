@@ -38,4 +38,16 @@ public class HeadController {
         return "/head/contract";
     }
 
+    // 상품그룹관리 페이지
+    @RequestMapping("itemgroup")
+    public String itemgroup(){
+        return "/head/itemgroup";
+    }
+
+    // 상품가격관리 페이지
+    @RequestMapping("itemprice")
+    public String itemprice(){
+        return "/head/itemprice";
+    }
+
 }
