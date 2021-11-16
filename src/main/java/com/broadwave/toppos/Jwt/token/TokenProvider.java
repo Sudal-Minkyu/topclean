@@ -1,10 +1,13 @@
 package com.broadwave.toppos.Jwt.token;
 
+import com.broadwave.toppos.Account.Account;
+import com.broadwave.toppos.Account.AccountService;
 import com.broadwave.toppos.Jwt.dto.TokenDto;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -18,12 +21,15 @@ import java.security.Key;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Component
 public class TokenProvider {
 
+    @Autowired
+    AccountService accountService;
     private static final String AUTHORITIES_KEY = "auth";
     private static final String BEARER_TYPE = "bearer";
     private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24;            // 1일
@@ -45,17 +51,23 @@ public class TokenProvider {
 //        log.info("사용자 아이디 : "+authentication.getName());
 //        log.info("권한 : "+authorities);
 
+        Optional<Account> optionalAccount = accountService.findByUserid(authentication.getName());
+
         long now = (new Date()).getTime();
 
         // Access Token 생성
         Date accessTokenExpiresIn = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
-        String accessToken = Jwts.builder()
-//                .setClaims("l")
-                .setSubject(authentication.getName())       // payload "sub": "name"
-                .claim(AUTHORITIES_KEY, authorities)        // payload "auth": "ROLE_USER"
-                .setExpiration(accessTokenExpiresIn)        // payload "exp": 1516239022 (예시)
-                .signWith(key, SignatureAlgorithm.HS512)    // header "alg": "HS512"
-                .compact();
+        String accessToken = null;
+        if(optionalAccount.isPresent()){
+            accessToken = Jwts.builder()
+                    .claim("frCode",optionalAccount.get().getFrCode())
+                    .claim("brCode",optionalAccount.get().getBrCode())
+                    .setSubject(authentication.getName())       // payload "sub": "name"
+                    .claim(AUTHORITIES_KEY, authorities)        // payload "auth": "ROLE_USER"
+                    .setExpiration(accessTokenExpiresIn)        // payload "exp": 1516239022 (예시)
+                    .signWith(key, SignatureAlgorithm.HS512)    // header "alg": "HS512"
+                    .compact();
+        }
 
         // Refresh Token 생성
         String refreshToken = Jwts.builder()
@@ -107,7 +119,7 @@ public class TokenProvider {
         return false;
     }
 
-    private Claims parseClaims(String accessToken) {
+    public Claims parseClaims(String accessToken) {
         try {
             return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken).getBody();
         } catch (ExpiredJwtException e) {

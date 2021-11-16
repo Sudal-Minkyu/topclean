@@ -12,6 +12,9 @@ import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.common.AjaxResponse;
 import com.broadwave.toppos.common.CommonUtils;
 import com.broadwave.toppos.common.ResponseErrorCode;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.Jwts;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,10 +58,10 @@ public class HeadRestController {
         Account account = modelMapper.map(accountMapperDto, Account.class);
 
         String login_id = CommonUtils.getCurrentuser(request);
-        log.info("아이디 : "+login_id);
+        log.info("접속한 아이디 : "+login_id);
 
-        log.info("account : "+account);
-        log.info("role : "+account.getRole());
+//        log.info("account : "+account);
+//        log.info("role : "+account.getRole());
         Optional<Account> optionalAccount = accountService.findByUserid(account.getUserid());
         if( optionalAccount.isPresent()){
             log.info("수정합니다.");
@@ -371,6 +374,7 @@ public class HeadRestController {
 
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
+
 
         FranchisInfoDto franchisInfoDto = headService.findByFranchiseInfo(frCode);
 //        log.info("가맹점정보 호출 가맹점 코드("+frCode+") : "+franchisInfoDto);

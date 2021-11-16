@@ -4,6 +4,9 @@ import com.broadwave.toppos.Account.AccountService;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.common.AjaxResponse;
 import com.broadwave.toppos.common.CommonUtils;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.Jwts;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -44,6 +47,12 @@ public class MainController {
         log.info("아이디 : "+login_id);
         Authentication authentication = tokenProvider.getAuthentication(request.getHeader("Authorization"));
         String role = authentication.getAuthorities().toString();
+        // 클레임데이터 가져오기
+//        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+//        String a = (String) claims.get("brCode");
+//        String b = (String) claims.get("frCode");
+//        log.info("a : "+a);
+//        log.info("b : "+b);
         log.info("권한 : "+role);
         switch (role) {
             case "[ROLE_MANAGER]":
