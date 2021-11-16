@@ -30,6 +30,16 @@ function openVKeyboard(keyboardNum) {
 function saveRegister() {
     const formData = new FormData(document.getElementById('userregForm'));
     const birthday = $("#bcBirthYYYY").val()+$("#bcBirthMM").val()+$("#bcBirthDD").val();
+
+    if(!CommonUI.regularValidator(birthday, "dateExist")) {
+        alertCaution("존재하지 않는 생년월일 입니다.", 1);
+        return false;
+    };
+
     formData.append("bcBirthday", birthday);
     const url = "/api/";
+}
+
+function onYearChange() {
+    
 }
