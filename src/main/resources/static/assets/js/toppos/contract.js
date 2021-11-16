@@ -150,6 +150,8 @@ gridOption[4] = {
     noDataMessage : "출력할 데이터가 없습니다.",
     rowNumHeaderText : "순번",
     enableColumnResize : false,
+    width : 660,
+    height : 480,
 }
 
 /* datepicker를 적용시킬 대상들의 dom id들 */

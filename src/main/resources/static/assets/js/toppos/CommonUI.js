@@ -73,12 +73,12 @@ class CommonUIClass {
 
     /* ajax 통신의 자주 쓰는 패턴을 간단하게 쓰기 위함 */
     ajax(url, method, data, func) {
+        $(document).ajaxSend(function (e, xhr) {
+            xhr.setRequestHeader("Authorization", localStorage.getItem('Authorization'));
+        });
         if(data) {
             switch (method) {
                 case "GET" :
-                    $(document).ajaxSend(function (e, xhr) {
-                        xhr.setRequestHeader("Authorization", localStorage.getItem('Authorization'));
-                    });
                     $.ajax({
                         url: url,
                         type: 'GET',
@@ -114,7 +114,7 @@ class CommonUIClass {
                         contentType: false,
                         enctype: 'multipart/form-data',
                         error: function (req) {
-                            ajaxErrorMsg(req);
+                            // ajaxErrorMsg(req);
                         },
                         success: function (req) {
                             if (req.status === 200) {

@@ -11,7 +11,7 @@
 
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
-	<script src="/assets/js/toppos/userreg.js"></script>
+	<script src="/assets/js/toppos/customerreg.js"></script>
 	<script type="text/javascript">
 
 		$(function() {
@@ -30,12 +30,12 @@
 		</div>
 		<div>
 			※휴대폰
-			<input type="text" id="bcHp" name="bcHp" placeholder="숫자만 입력해 주세요">
+			<input type="text" id="bcHp" name="bcHp" placeholder="숫자만 입력해 주세요" onkeyup="onPhonenumChange(this)">
 			<button type="button" onclick="openVKeyboard(1)">⌨</button>
 		</div>
 		<div>
 			성별
-			<input type="radio" name="bcSex" value="1">
+			<input type="radio" name="bcSex" value="1" checked>
 			<label>여자</label>
 			<input type="radio" name="bcSex" value="0">
 			<label>남자</label>
@@ -47,25 +47,29 @@
 		</div>
 		<div>
 			생년월일/나이
-			<select id="bcBirthYYYY">
+			<select id="bcBirthYYYY" onchange="onYearChange(this.value)">
+				<option value="">선택</option>
 				<option th:each="i : ${#numbers.sequence(2010, 1950, -1)}"
 						th:value="${i}"
 						th:text="${i}">
 				</option>
 			</select>
 			<select id="bcBirthMM">
+				<option value="">선택</option>
 				<option th:each="i : ${#numbers.sequence(1, 12, 1)}"
 						th:value="${#numbers.formatInteger(i, 2)}"
 						th:text="${i}">
 				</option>
 			</select>
 			<select id="bcBirthDD">
+				<option value="">선택</option>
 				<option th:each="i : ${#numbers.sequence(1, 31, 1)}"
 						th:value="${#numbers.formatInteger(i, 2)}"
 						th:text="${i}">
 				</option>
 			</select>
-			<select name="bcAge">
+			<select id="bcAge" name="bcAge">
+				<option value="">선택</option>
 				<option th:each="i : ${#numbers.sequence(10, 90, 10)}"
 						th:value="${i}"
 						th:text="${i}+' 대'">
@@ -85,7 +89,7 @@
 			<select id="bcValuation" name="bcValuation">
 				<option value="1">★☆☆☆☆</option>
 				<option value="2">★★☆☆☆</option>
-				<option value="3">★★★☆☆</option>
+				<option value="3" selected>★★★☆☆</option>
 				<option value="4">★★★★☆</option>
 				<option value="5">★★★★★</option>
 			</select>
@@ -94,7 +98,7 @@
 			문자수신동의
 			<input type="radio" name="bcMessageAgree" value="Y">
 			<label>동의</label>
-			<input type="radio" name="bcMessageAgree" value="N">
+			<input type="radio" name="bcMessageAgree" value="N" checked>
 			<label>동의안함</label>
 		</div>
 		<div>
