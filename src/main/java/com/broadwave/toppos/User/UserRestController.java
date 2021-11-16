@@ -1,30 +1,24 @@
 package com.broadwave.toppos.User;
 
-import com.broadwave.toppos.Account.*;
-import com.broadwave.toppos.Head.Branoh.Branch;
-import com.broadwave.toppos.Head.Branoh.BranchListDto;
-import com.broadwave.toppos.Head.Branoh.BranchMapperDto;
-import com.broadwave.toppos.Head.Franohise.FranchisInfoDto;
-import com.broadwave.toppos.Head.Franohise.Franchise;
-import com.broadwave.toppos.Head.Franohise.FranchiseListDto;
-import com.broadwave.toppos.Head.Franohise.FranchiseMapperDto;
-import com.broadwave.toppos.Head.HeadService;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.User.Customer.Customer;
 import com.broadwave.toppos.User.Customer.CustomerMapperDto;
 import com.broadwave.toppos.common.AjaxResponse;
-import com.broadwave.toppos.common.CommonUtils;
 import com.broadwave.toppos.common.ResponseErrorCode;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * @author Minkyu
@@ -88,12 +82,11 @@ public class UserRestController {
             customer.setModify_id(login_id);
             customer.setModifyDateTime(LocalDateTime.now());
             customer.setBcMessageAgreeDt(LocalDateTime.now());
-            
+
             Customer customerSave =  userService.customerSave(customer);
             log.info("고객 신규 저장 성공 : 핸드폰 번호 '" + customerSave.getBcHp() +"'");
+            log.info("고객저장정보 : "+customer);
         }
-
-//        log.info("customer : "+customer);
 
         return ResponseEntity.ok(res.success());
 
