@@ -12,6 +12,7 @@ import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.common.AjaxResponse;
 import com.broadwave.toppos.common.CommonUtils;
 import com.broadwave.toppos.common.ResponseErrorCode;
+import com.fasterxml.jackson.annotation.JsonAlias;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -483,20 +484,17 @@ public class HeadRestController {
 
     // 상품그룹 대분류 호출 API
     @PostMapping("itemGroupA")
-    public ResponseEntity<Map<String,Object>> itemGroupA(@RequestParam(value="add", defaultValue="") List<Object> add,
-                                                                  @RequestParam(value="update", defaultValue="") List<Object> update,
-                                                                  @RequestParam(value="remove", defaultValue="") List<Object> remove,
-                                                                  HttpServletRequest request){
+    public ResponseEntity<Map<String,Object>> itemGroupA(@RequestParam(value="insert", defaultValue="") ArrayList<Map<Object,Object>> insert,
+//                                                          @RequestParam(value="update", defaultValue="") ArrayList<String> update,
+//                                                          @RequestParam(value="delete", defaultValue="") ArrayList<String> delete,
+                                                         HttpServletRequest request){
         log.info("itemGroupA 호출");
-
         AjaxResponse res = new AjaxResponse();
         String login_id = CommonUtils.getCurrentuser(request);
         log.info("현재 로그인한 아이디 : "+login_id);
-        log.info("저장 : "+add);
-        log.info("수정 : "+update);
-        log.info("삭제 : "+remove);
-
-
+        log.info("저장 : "+insert);
+//        log.info("수정 : "+update);
+//        log.info("삭제 : "+delete);
 
 
 

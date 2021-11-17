@@ -33,19 +33,19 @@ gridCreateUrl = [
 
 /* 그리드를 저장할 때 쓰이는 api 배열 */
 gridSaveUrl = [
-    "/api/head/", "/api/head/", "/api/head/"
+    "/api/head/itemGroupA", "/api/head/", "/api/head/"
 ];
 
 /* 0번 그리드의 레이아웃 */
 gridColumnLayout[0] = [
     {
-        dataField: "",
+        dataField: "bgItemGroupcode",
         headerText: "코드",
     }, {
-        dataField: "",
+        dataField: "bgName",
         headerText: "명칭",
     }, {
-        dataField: "",
+        dataField: "bgRemark",
         headerText: "대분류 특이사항",
     },
 ];
@@ -157,19 +157,29 @@ function setDataIntoGrid(numOfGrid, url) {
 
 /* 지정된 그리드에 새 빈 데이터 추가 */
 function addRow(numOfRow) {
-    AUIGrid.addRow(gridId[numOfRow]);
+    const item = {};
+    item.bgItemGroupcode = "대분류코드";
+    item.bgName = "대분류명칭";
+    item.bgRemark = "대분류특이사항";
+
+    AUIGrid.addRow(gridId[numOfRow],item,"first");
+}
+
+// 선택한 그리드 행 삭제
+function removeRow(numOfRow) {
+    AUIGrid.removeRow(gridId[numOfRow], "selectedIndex");
 }
 
 /* 해당 번호의 그리드의 저장기능 */
 function gridSave(numOfGrid) {
     // 추가된 행 아이템들(배열)
-    const addedRowItems = AUIGrid.getAddedRowItems(myGridID);
+    const addedRowItems = AUIGrid.getAddedRowItems(gridTargetDiv[numOfGrid]);
 
     // 수정된 행 아이템들(배열)
-    const editedRowItems = AUIGrid.getEditedRowItems(myGridID);
+    const editedRowItems = AUIGrid.getEditedRowItems(gridTargetDiv[numOfGrid]);
 
     // 삭제된 행 아이템들(배열)
-    const removedRowItems = AUIGrid.getRemovedItems(myGridID);
+    const removedRowItems = AUIGrid.getRemovedItems(gridTargetDiv[numOfGrid]);
 
     // 서버로 보낼 데이터 작성
     const data = {
@@ -178,6 +188,7 @@ function gridSave(numOfGrid) {
         "delete" : removedRowItems
     };
 
+    // const jsonString = JSON.stringify(data);
     console.log(data);
     CommonUI.ajaxjson(gridSaveUrl[numOfGrid], data, function (){
 
