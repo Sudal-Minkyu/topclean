@@ -166,10 +166,6 @@ class CommonUIClass {
             type: "POST",
             cache: false,
             data: data,
-            dataType: "json",
-            processData: false,
-            contentType: false,
-            enctype: "multipart/form-data",
             error: function (req) {
                 ajaxErrorMsg(req);
             },

@@ -27,4 +27,10 @@ public class TestController {
         return "test/snwgrid";
     }
 
+    // 결제테스트페이지
+    @RequestMapping("paymenttest")
+    public String paymenttest(){
+        return "test/paymenttest";
+    }
+
 }

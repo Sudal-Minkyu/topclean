@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ko"
+	  xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
+	  layout:decorate ="~{layout/default}">
+
+<!-- 사용자 CSS 추가 -->
+<th:block layout:fragment="css">
+
+</th:block>
+
+<!-- 사용자 스크립트 추가 -->
+<th:block layout:fragment="script">
+
+	<script type="text/javascript">
+
+		$(function() {
+
+		});
+
+	</script>
+</th:block>
+
+<div layout:fragment="content" class="content padding-zero content--main">
+
+	<h1>결제 테스트 페이지</h1>
+	<br>
+	<input type="button" value="로그아웃" onclick="logout()" />
+</div>
+</html>

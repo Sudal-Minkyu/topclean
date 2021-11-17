@@ -1,4 +1,4 @@
-package com.broadwave.toppos.girdtest;
+package com.broadwave.toppos.Test.Girdtest;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;

@@ -82,7 +82,7 @@
         function readListOne() {
             $(document).ajaxSend(function(e, xhr) { xhr.setRequestHeader("Authorization",localStorage.getItem('Authorization')); });
             $.ajax({
-                url: "/api/test/list",
+                url: "/api/test/grid/list",
                 type: 'GET',
                 cache: false,
                 error: function (req) {

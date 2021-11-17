@@ -483,17 +483,22 @@ public class HeadRestController {
 
     // 상품그룹 대분류 호출 API
     @PostMapping("itemGroupA")
-    public ResponseEntity<Map<String,Object>> itemGroupA(@RequestParam(value="add", defaultValue="") String add,
-                                                                  @RequestParam(value="update", defaultValue="") String update,
-                                                                  @RequestParam(value="remove", defaultValue="") String remove,
+    public ResponseEntity<Map<String,Object>> itemGroupA(@RequestParam(value="add", defaultValue="") List<Object> add,
+                                                                  @RequestParam(value="update", defaultValue="") List<Object> update,
+                                                                  @RequestParam(value="remove", defaultValue="") List<Object> remove,
                                                                   HttpServletRequest request){
         log.info("itemGroupA 호출");
 
         AjaxResponse res = new AjaxResponse();
         String login_id = CommonUtils.getCurrentuser(request);
+        log.info("현재 로그인한 아이디 : "+login_id);
         log.info("저장 : "+add);
         log.info("수정 : "+update);
         log.info("삭제 : "+remove);
+
+
+
+
 
 //        return ResponseEntity.ok(res.fail(ResponseErrorCode.TP005.getCode(), ResponseErrorCode.TP005.getDesc(),ResponseErrorCode.TP006.getCode(), ResponseErrorCode.TP006.getDesc()));
 
