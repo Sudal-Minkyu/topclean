@@ -488,23 +488,23 @@ public class HeadRestController {
         String login_id = CommonUtils.getCurrentuser(request);
         log.info("현재 로그인한 아이디 : "+login_id);
 
-        ItemGroupDto itemGroupDto = null;
+        ItemGroupDto itemGroupDto;
 
-        ArrayList<ItemGroupDto> updateList = itemSet.getUpdate(); // 수정 리스트 얻기
         ArrayList<ItemGroupDto> addList = itemSet.getAdd(); // 추가 리스트 얻기
+        ArrayList<ItemGroupDto> updateList = itemSet.getUpdate(); // 수정 리스트 얻기
         ArrayList<ItemGroupDto> deleteList = itemSet.getDelete(); // 제거 리스트 얻기
 
         log.info("추가 리스트 : "+addList);
         log.info("수정 리스트 : "+updateList);
         log.info("삭제 리스트 : "+deleteList);
 
-        // 여기서 비지니스 로직을 작성하거나, 서비스 로직을 실행하세요.
+        // 여기서 비지니스 로직을 작성하거나, 서비스 로직을 실행
         for(int i=0, len=addList.size(); i<len; i++) {
             itemGroupDto = addList.get(i);
-            log.info(" add " + i + " 번째 GroupCode : " + itemGroupDto.getBgItemGroupcode() );
+            log.info("추가 " + i + "번째 GroupCode(그룹코드) : " + itemGroupDto.getBgItemGroupcode() );
         }
 
-        // 콘솔로 찍어보기
+        // 로그 찍기
         log.info("추가 : " + addList.toString());
         log.info("수정 : " + updateList.toString());
         log.info("삭제 : " + deleteList.toString());
