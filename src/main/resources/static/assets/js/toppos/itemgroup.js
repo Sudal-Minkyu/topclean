@@ -183,14 +183,15 @@ function gridSave(numOfGrid) {
 
     // 서버로 보낼 데이터 작성
     const data = {
-        "insert" : addedRowItems,
+        "add" : addedRowItems,
         "update" : editedRowItems,
         "delete" : removedRowItems
     };
+    // console.log(data);
 
-    // const jsonString = JSON.stringify(data);
-    console.log(data);
-    CommonUI.ajaxjson(gridSaveUrl[numOfGrid], data, function (){
+    const jsonString = JSON.stringify(data);
+    // console.log(jsonString);
+    CommonUI.ajaxjson(gridSaveUrl[numOfGrid], jsonString, function (){
 
     });
 

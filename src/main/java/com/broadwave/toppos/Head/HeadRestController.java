@@ -8,14 +8,13 @@ import com.broadwave.toppos.Head.Franohise.FranchisInfoDto;
 import com.broadwave.toppos.Head.Franohise.Franchise;
 import com.broadwave.toppos.Head.Franohise.FranchiseListDto;
 import com.broadwave.toppos.Head.Franohise.FranchiseMapperDto;
+import com.broadwave.toppos.Head.Item.Group.ItemGroup;
+import com.broadwave.toppos.Head.Item.Group.ItemGroupDto;
+import com.broadwave.toppos.Head.Item.ItemSet;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.common.AjaxResponse;
 import com.broadwave.toppos.common.CommonUtils;
 import com.broadwave.toppos.common.ResponseErrorCode;
-import com.fasterxml.jackson.annotation.JsonAlias;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -484,19 +483,32 @@ public class HeadRestController {
 
     // 상품그룹 대분류 호출 API
     @PostMapping("itemGroupA")
-    public ResponseEntity<Map<String,Object>> itemGroupA(@RequestParam(value="insert", defaultValue="") ArrayList<Map<Object,Object>> insert,
-//                                                          @RequestParam(value="update", defaultValue="") ArrayList<String> update,
-//                                                          @RequestParam(value="delete", defaultValue="") ArrayList<String> delete,
-                                                         HttpServletRequest request){
+    public ResponseEntity<Map<String,Object>> itemGroupA(@RequestBody ItemSet itemSet, HttpServletRequest request){
         log.info("itemGroupA 호출");
         AjaxResponse res = new AjaxResponse();
         String login_id = CommonUtils.getCurrentuser(request);
         log.info("현재 로그인한 아이디 : "+login_id);
-        log.info("저장 : "+insert);
-//        log.info("수정 : "+update);
-//        log.info("삭제 : "+delete);
 
+        ItemGroupDto itemGroupDto = null;
 
+        ArrayList<ItemGroupDto> updateList = itemSet.getUpdate(); // 수정 리스트 얻기
+        ArrayList<ItemGroupDto> addList = itemSet.getAdd(); // 추가 리스트 얻기
+        ArrayList<ItemGroupDto> deleteList = itemSet.getDelete(); // 제거 리스트 얻기
+
+        log.info("추가 리스트 : "+addList);
+        log.info("수정 리스트 : "+updateList);
+        log.info("삭제 리스트 : "+deleteList);
+
+        // 여기서 비지니스 로직을 작성하거나, 서비스 로직을 실행하세요.
+        for(int i=0, len=addList.size(); i<len; i++) {
+            itemGroupDto = addList.get(i);
+            log.info(" add " + i + " 번째 GroupCode : " + itemGroupDto.getBgItemGroupcode() );
+        }
+
+        // 콘솔로 찍어보기
+        log.info("추가 : " + addList.toString());
+        log.info("수정 : " + updateList.toString());
+        log.info("삭제 : " + deleteList.toString());
 
 //        return ResponseEntity.ok(res.fail(ResponseErrorCode.TP005.getCode(), ResponseErrorCode.TP005.getDesc(),ResponseErrorCode.TP006.getCode(), ResponseErrorCode.TP006.getDesc()));
 
