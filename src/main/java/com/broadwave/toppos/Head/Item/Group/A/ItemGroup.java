@@ -1,4 +1,4 @@
-package com.broadwave.toppos.Head.Item.Group;
+package com.broadwave.toppos.Head.Item.Group.A;
 
 import lombok.*;
 

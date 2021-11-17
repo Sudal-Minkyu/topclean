@@ -1,7 +1,6 @@
-package com.broadwave.toppos.Head.Item;
+package com.broadwave.toppos.Head.Item.Group;
 
-import com.broadwave.toppos.Head.Item.Group.ItemGroup;
-import com.broadwave.toppos.Head.Item.Group.ItemGroupDto;
+import com.broadwave.toppos.Head.Item.Group.A.ItemGroupDto;
 import lombok.Setter;
 
 import java.util.ArrayList;
