@@ -33,6 +33,9 @@ public class Franchise {
     @Column(name="fr_name")
     private String frName; // 가맹점명
 
+    @Column(name="fr_ref_code")
+    private String frRefCode; // 가맹점관리코드
+
     @Column(name="fr_contract_dt")
     private String frContractDt; // 계약일자
 
@@ -47,6 +50,9 @@ public class Franchise {
 
     @Column(name="fr_price_grade")
     private String frPriceGrade; // 가격등급 A,B,C,D,E
+
+    @Column(name="fr_tag_no")
+    private String frTagNo; // 가맹점 택번호 3자리
 
     @Column(name="fr_remark")
     private String frRemark; // 특이사항
