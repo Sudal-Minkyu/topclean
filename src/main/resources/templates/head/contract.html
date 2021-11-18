@@ -57,12 +57,18 @@
 						<option value="01">진행중</option>
 						<option value="02">계약완료</option>
 					</select>
+				</div>
+				<div>
 					정산비율
 					본사 : <input type="text" id="brCarculateRateHq" name="brCarculateRateHq" />%
 					지사 : <input type="text" id="brCarculateRateBr" name="brCarculateRateBr" />%
 					가맹 : <input type="text" id="brCarculateRateFr" name="brCarculateRateFr" />%
+				</div>
+				<div>
 					특이사항
 					<textarea  id="brRemark" name="brRemark"></textarea>
+				</div>
+				<div>
 					<button type="button" onclick="createNewPost(0)">신규</button>
 					<button type="button" onclick="branchSave()">저장</button>
 					<button type="button" >삭제</button>
@@ -70,7 +76,7 @@
 			</form>
 		</div>
 	</div>
-
+	<hr>
 
 	<!--가맹점계약관리-->
 	<!--좌측-->
@@ -104,6 +110,10 @@
 					<input type="text" id="frName" name="frName" />
 				</div>
 				<div>
+					가맹점관리코드
+					<input type="text" id="" name="">
+				</div>
+				<div>
 					계약일자
 					<input id="frContractDt" name="frContractDt" type="text" maxlength="10" placeholder="연 - 월 - 일">
 					계약기간
@@ -117,6 +127,8 @@
 						<option value="01">진행중</option>
 						<option value="02">계약완료</option>
 					</select>
+				</div>
+				<div>
 					적용가격등급
 					<select id="frPriceGrade" name="frPriceGrade">
 						<option value="">선택</option>
@@ -126,8 +138,19 @@
 						<option value="D">D</option>
 						<option value="E">E</option>
 					</select>
+				</div>
+				<div>
+					가맹점택코드(3자리)
+					<input id="" name="">
+					출고예정일계산
+					<input id="" name="">
+					일후 출고
+				</div>
+				<div>
 					특이사항
 					<textarea id="frRemark" name="frRemark"></textarea>
+				</div>
+				<div>
 					<button type="button" onclick="createNewPost(1)">신규</button>
 					<button type="button" onclick="franchiseSave()">저장</button>
 					<button type="button">삭제</button>
@@ -135,7 +158,7 @@
 			</form>
 		</div>
 	</div>
-
+	<hr>
 
 	<!--가맹점 지사 배정관리-->
 	<!--좌측-->
@@ -204,10 +227,14 @@
 				<input id="bot_brCode" type="text" readonly>
 				<input id="bot_brName" type="text" readonly>
 				<button type="button" onclick="brListPop()">지사변경</button>
+			</div>
+			<div>
 				정산비율
 				본사 : <input id="bot_brCarculateRateHq" type="text" readonly>%
 				지사 : <input id="bot_brCarculateRateBr" type="text" readonly>%
 				가맹 : <input id="bot_brCarculateRateFr" type="text" readonly>%
+			</div>
+			<div>
 				<button type="button" onclick="assignmentSave()">저장</button>
 			</div>
 		</div>

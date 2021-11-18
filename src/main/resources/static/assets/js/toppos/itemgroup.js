@@ -4,7 +4,7 @@ $(function() {
     createGrids();
 
     //setDataIntoGrid(0, gridCreateUrl[0]);
-
+0
     /* 0번그리드 내의 셀 클릭시 이벤트 */
     AUIGrid.bind(gridId[0], "cellClick", function (e) {
 
@@ -58,7 +58,6 @@ gridProp[0] = {
     selectionMode : "singleRow",
     noDataMessage : "출력할 데이터가 없습니다.",
     showRowNumColumn : false,
-    rowIdField : "",
     enableColumnResize : false,
     rowIdTrustMode : true,
     showStateColumn : true,
@@ -68,19 +67,19 @@ gridProp[0] = {
 
 gridColumnLayout[1] = [
     {
-        dataField: "",
+        dataField: "bgItemGroupcode",
         headerText: "대분류 코드",
     }, {
-        dataField: "",
+        dataField: "bgName",
         headerText: "대분류명",
     }, {
-        dataField: "",
+        dataField: "bsItemGroupcodeS",
         headerText: "중분류 코드",
     }, {
-        dataField: "",
+        dataField: "bsName",
         headerText: "명칭",
     }, {
-        dataField: "",
+        dataField: "bsRemark",
         headerText: "중분류 특이사항",
     },
 ];
@@ -90,7 +89,6 @@ gridProp[1] = {
     selectionMode : "singleRow",
     noDataMessage : "출력할 데이터가 없습니다.",
     showRowNumColumn : false,
-    rowIdField : "",
     enableColumnResize : false,
     rowIdTrustMode : true,
     showStateColumn : true,
@@ -100,28 +98,28 @@ gridProp[1] = {
 
 gridColumnLayout[2] = [
     {
-        dataField: "",
+        dataField: "bgItemGroupcode",
         headerText: "대분류 코드",
     }, {
-        dataField: "",
+        dataField: "bgName",
         headerText: "대분류명",
     }, {
-        dataField: "",
+        dataField: "bsItemGroupcodeS",
         headerText: "중분류 코드",
     }, {
-        dataField: "",
+        dataField: "bsName",
         headerText: "중분류명",
     }, {
-        dataField: "",
+        dataField: "biItemcode",
         headerText: "상품코드",
     }, {
-        dataField: "",
+        dataField: "bgItemSequence",
         headerText: "상품순번",
     }, {
-        dataField: "",
+        dataField: "biName",
         headerText: "상품명",
     }, {
-        dataField: "",
+        dataField: "biRemark",
         headerText: "상품 특이사항",
     },
 ];
@@ -131,7 +129,6 @@ gridProp[2] = {
     selectionMode : "singleRow",
     noDataMessage : "출력할 데이터가 없습니다.",
     showRowNumColumn : false,
-    rowIdField : "",
     enableColumnResize : false,
     rowIdTrustMode : true,
     showStateColumn : true,
@@ -150,7 +147,7 @@ function createGrids() {
 /* ajax 통신을 통해 그리드 데이터를 받아와 뿌린다. */
 function setDataIntoGrid(numOfGrid, url) {
     CommonUI.ajax(url, "GET", false, function (req) {
-        gridData[numOfGrid] = req.sendData.gridListData;
+        gridData[numOfGri+d] = req.sendData.gridListData;
         AUIGrid.setGridData(gridId[numOfGrid], gridData[numOfGrid]);
     });
 }
@@ -158,16 +155,17 @@ function setDataIntoGrid(numOfGrid, url) {
 /* 지정된 그리드에 새 빈 데이터 추가 */
 function addRow(numOfRow) {
     const item = {};
-    item.bgItemGroupcode = "대분류코드";
-    item.bgName = "대분류명칭";
-    item.bgRemark = "대분류특이사항";
-
-    AUIGrid.addRow(gridId[numOfRow],item,"first");
+    AUIGrid.addRow(gridId[numOfRow], item, "first");
 }
 
 // 선택한 그리드 행 삭제
 function removeRow(numOfRow) {
-    AUIGrid.removeRow(gridId[numOfRow], "selectedIndex");
+
+    if(AUIGrid.getCheckedRowItems(gridId[numOfRow]).length){
+        AUIGrid.removeCheckedRows(gridId[numOfRow]);
+    }else{
+        AUIGrid.removeRow(gridId[numOfRow], "selectedIndex");
+    }
 }
 
 /* 해당 번호의 그리드의 저장기능 */
@@ -176,21 +174,19 @@ function gridSave(numOfGrid) {
     const addedRowItems = AUIGrid.getAddedRowItems(gridTargetDiv[numOfGrid]);
 
     // 수정된 행 아이템들(배열)
-    const editedRowItems = AUIGrid.getEditedRowItems(gridTargetDiv[numOfGrid]);
+    const updatedRowItems = AUIGrid.getEditedRowItems(gridTargetDiv[numOfGrid]);
 
     // 삭제된 행 아이템들(배열)
-    const removedRowItems = AUIGrid.getRemovedItems(gridTargetDiv[numOfGrid]);
+    const deletedRowItems = AUIGrid.getRemovedItems(gridTargetDiv[numOfGrid]);
 
     // 서버로 보낼 데이터 작성
     const data = {
         "add" : addedRowItems,
-        "update" : editedRowItems,
-        "delete" : removedRowItems
+        "update" : updatedRowItems,
+        "delete" : deletedRowItems
     };
-    // console.log(data);
 
     const jsonString = JSON.stringify(data);
-    // console.log(jsonString);
     CommonUI.ajaxjson(gridSaveUrl[numOfGrid], jsonString, function (){
 
     });
