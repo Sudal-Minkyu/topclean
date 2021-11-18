@@ -3,8 +3,8 @@ $(function() {
     /* 배열내의 각 설정만 넣어 빈 그리드 생성 */
     createGrids();
 
-    //setDataIntoGrid(0, gridCreateUrl[0]);
-0
+    setDataIntoGrid(0, gridCreateUrl[0]);
+
     /* 0번그리드 내의 셀 클릭시 이벤트 */
     AUIGrid.bind(gridId[0], "cellClick", function (e) {
 
@@ -28,7 +28,7 @@ gridTargetDiv = [
 
 /* 그리드를 받아올 때 쓰이는 api 배열 */
 gridCreateUrl = [
-    "/api/head/", "/api/head/", "/api/head/"
+    "/api/head/itemGroupAList", "/api/head/", "/api/head/"
 ];
 
 /* 그리드를 저장할 때 쓰이는 api 배열 */
@@ -147,7 +147,7 @@ function createGrids() {
 /* ajax 통신을 통해 그리드 데이터를 받아와 뿌린다. */
 function setDataIntoGrid(numOfGrid, url) {
     CommonUI.ajax(url, "GET", false, function (req) {
-        gridData[numOfGri+d] = req.sendData.gridListData;
+        gridData[numOfGrid] = req.sendData.gridListData;
         AUIGrid.setGridData(gridId[numOfGrid], gridData[numOfGrid]);
     });
 }

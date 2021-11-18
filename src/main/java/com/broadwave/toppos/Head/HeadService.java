@@ -5,6 +5,10 @@ import com.broadwave.toppos.Head.Branoh.BranchListDto;
 import com.broadwave.toppos.Head.Branoh.BranchRepository;
 import com.broadwave.toppos.Head.Branoh.BranchRepositoryCustomImpl;
 import com.broadwave.toppos.Head.Franohise.*;
+import com.broadwave.toppos.Head.Item.Group.A.ItemGroup;
+import com.broadwave.toppos.Head.Item.Group.A.ItemGroupDto;
+import com.broadwave.toppos.Head.Item.Group.A.ItemGroupRepository;
+import com.broadwave.toppos.Head.Item.Group.A.ItemGroupRepositoryCustom;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,16 +20,21 @@ public class HeadService {
 
     private final FranchiseRepository franchiseRepository;
     private final BranchRepository branohRepository;
+    private final ItemGroupRepository ItemGroupRepository;
 
     private final FranchiseRepositoryCustom franchiseRepositoryCustom;
     private final BranchRepositoryCustomImpl branohRepositoryCustom;
+    private final ItemGroupRepositoryCustom itemGroupRepositoryCustom;
 
     @Autowired
-    public HeadService(BranchRepository branohRepository, FranchiseRepository franchiseRepository, FranchiseRepositoryCustom franchiseRepositoryCustom, BranchRepositoryCustomImpl branohRepositoryCustom){
+    public HeadService(BranchRepository branohRepository, FranchiseRepository franchiseRepository, FranchiseRepositoryCustom franchiseRepositoryCustom, BranchRepositoryCustomImpl branohRepositoryCustom,
+                       ItemGroupRepository ItemGroupRepository, ItemGroupRepositoryCustom itemGroupRepositoryCustom){
         this.branohRepository = branohRepository;
         this.franchiseRepository = franchiseRepository;
         this.franchiseRepositoryCustom = franchiseRepositoryCustom;
         this.branohRepositoryCustom = branohRepositoryCustom;
+        this.ItemGroupRepository = ItemGroupRepository;
+        this.itemGroupRepositoryCustom = itemGroupRepositoryCustom;
     }
 
     // 가맹점 저장
@@ -60,7 +69,24 @@ public class HeadService {
         return branohRepository.findByBrCode(brCode);
     }
 
+    // 가맹점 정보 호출하기
     public FranchisInfoDto findByFranchiseInfo(String frCode) {
         return franchiseRepositoryCustom.findByFranchiseInfo(frCode);
+    }
+
+    // 상품그룹 대분류  저장
+    public void itemGroupSave(ItemGroup itemGroup){
+        ItemGroupRepository.save(itemGroup);
+    }
+
+
+    // 상품그룹 대분류 중복확인
+    public Optional<ItemGroup> findByBgItemGroupcode(String bgItemGroupcode) {
+        return ItemGroupRepository.findByBgItemGroupcode(bgItemGroupcode);
+    }
+
+
+    public List<ItemGroupDto> findByItemGroupList() {
+        return itemGroupRepositoryCustom.findByItemGroupList();
     }
 }

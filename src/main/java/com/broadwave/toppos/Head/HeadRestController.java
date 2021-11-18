@@ -8,6 +8,7 @@ import com.broadwave.toppos.Head.Franohise.FranchisInfoDto;
 import com.broadwave.toppos.Head.Franohise.Franchise;
 import com.broadwave.toppos.Head.Franohise.FranchiseListDto;
 import com.broadwave.toppos.Head.Franohise.FranchiseMapperDto;
+import com.broadwave.toppos.Head.Item.Group.A.ItemGroup;
 import com.broadwave.toppos.Head.Item.Group.A.ItemGroupDto;
 import com.broadwave.toppos.Head.Item.Group.ItemSet;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
@@ -488,8 +489,6 @@ public class HeadRestController {
         String login_id = CommonUtils.getCurrentuser(request);
         log.info("현재 로그인한 아이디 : "+login_id);
 
-        ItemGroupDto itemGroupDto;
-
         ArrayList<ItemGroupDto> addList = itemSet.getAdd(); // 추가 리스트 얻기
         ArrayList<ItemGroupDto> updateList = itemSet.getUpdate(); // 수정 리스트 얻기
         ArrayList<ItemGroupDto> deleteList = itemSet.getDelete(); // 제거 리스트 얻기
@@ -498,20 +497,59 @@ public class HeadRestController {
         log.info("수정 리스트 : "+updateList);
         log.info("삭제 리스트 : "+deleteList);
 
-        // 여기서 비지니스 로직을 작성하거나, 서비스 로직을 실행
-        for(int i=0, len=addList.size(); i<len; i++) {
-            itemGroupDto = addList.get(i);
-            log.info("추가 " + i + "번째 GroupCode(그룹코드) : " + itemGroupDto.getBgItemGroupcode() );
+        // 저장로직 실행 : 데이터베이스에 같은 코드가 존재하면 리턴처리한다.
+        for (ItemGroupDto itemGroupDto : addList) {
+            Optional<ItemGroup> optionalItemGroup = headService.findByBgItemGroupcode(itemGroupDto.getBgItemGroupcode());
+            if (optionalItemGroup.isPresent()) {
+                return ResponseEntity.ok(res.fail(ResponseErrorCode.TP003.getCode(), ResponseErrorCode.TP003.getDesc(), "문자", "존재하는 코드 : " + itemGroupDto.getBgItemGroupcode()));
+            }
+        }
+        // 저장 시작.
+        for (ItemGroupDto itemGroupDto : addList) {
+            log.info("같은 코드 존재하지 않음 신규생성");
+            ItemGroup itemGroup = modelMapper.map(itemGroupDto, ItemGroup.class);
+            itemGroup.setInsert_id(login_id);
+            itemGroup.setInsertDateTime(LocalDateTime.now());
+//            log.info("itemGroup : " +itemGroup);
+//            headService.itemGroupSave(itemGroup);
         }
 
-        // 로그 찍기
-        log.info("추가 : " + addList.toString());
-        log.info("수정 : " + updateList.toString());
-        log.info("삭제 : " + deleteList.toString());
 
 //        return ResponseEntity.ok(res.fail(ResponseErrorCode.TP005.getCode(), ResponseErrorCode.TP005.getDesc(),ResponseErrorCode.TP006.getCode(), ResponseErrorCode.TP006.getDesc()));
 
         return ResponseEntity.ok(res.success());
     }
+
+    // 상품그룹 대분류 리스트 호출 API
+    @GetMapping("itemGroupAList")
+    public ResponseEntity<Map<String,Object>> itemGroupAList(){
+        log.info("itemGroupAList 호출");
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        List<HashMap<String,Object>> itemGroupListData = new ArrayList<>();
+        HashMap<String,Object> itemGroupInfo;
+
+        List<ItemGroupDto> itemGroupListDtos = headService.findByItemGroupList();
+        log.info("itemGroupListDtos : "+itemGroupListDtos);
+
+        for (ItemGroupDto itemGroupDto : itemGroupListDtos) {
+
+            itemGroupInfo = new HashMap<>();
+
+            itemGroupInfo.put("bgItemGroupcode", itemGroupDto.getBgItemGroupcode());
+            itemGroupInfo.put("bgName", itemGroupDto.getBgName());
+            itemGroupInfo.put("bgRemark", itemGroupDto.getBgRemark());
+
+            itemGroupListData.add(itemGroupInfo);
+        }
+
+//        log.info("상품그룹 대분류 리스트 : "+itemGroupListData);
+        data.put("gridListData",itemGroupListData);
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
 
 }
