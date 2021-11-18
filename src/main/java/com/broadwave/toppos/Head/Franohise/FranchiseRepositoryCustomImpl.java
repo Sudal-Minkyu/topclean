@@ -33,12 +33,14 @@ public class FranchiseRepositoryCustomImpl extends QuerydslRepositorySupport imp
                 .select(Projections.constructor(FranchiseListDto.class,
                         franchise.frCode,
                         franchise.frName,
+                        franchise.frRefCode,
                         franchise.frContractDt,
                         franchise.frContractFromDt,
                         franchise.frContractToDt,
                         franchise.frContractState,
                         franchise.brAssignState,
                         franchise.frPriceGrade,
+                        franchise.frTagNo,
                         franchise.frRemark,
                         branch.brName
                 ));

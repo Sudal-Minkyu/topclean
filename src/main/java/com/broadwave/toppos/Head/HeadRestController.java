@@ -235,6 +235,7 @@ public class HeadRestController {
 
             franohisetInfo.put("frCode", franohise.getFrCode());
             franohisetInfo.put("frName", franohise.getFrName());
+            franohisetInfo.put("frRefCode", franohise.getFrRefCode());
             franohisetInfo.put("frContractDt", franohise.getFrContractDt());
             franohisetInfo.put("frContractFromDt", franohise.getFrContractFromDt());
             franohisetInfo.put("frContractToDt", franohise.getFrContractToDt());
@@ -251,6 +252,7 @@ public class HeadRestController {
                 franohisetInfo.put("frContractStateValue","계약완료");
             }
             franohisetInfo.put("frPriceGrade", franohise.getFrPriceGrade());
+            franohisetInfo.put("frTagNo", franohise.getFrTagNo());
             franohisetInfo.put("frRemark", franohise.getFrRemark());
             franohisetInfo.put("brName", franohise.getBrName());
             franohiseListData.add(franohisetInfo);
@@ -337,8 +339,8 @@ public class HeadRestController {
         for (FranchiseListDto franohise : franchiseListDtos) {
 
             franohisetInfo = new HashMap<>();
-
             franohisetInfo.put("frCode", franohise.getFrCode());
+            franohisetInfo.put("frRefCode", franohise.getFrRefCode());
             franohisetInfo.put("frName", franohise.getFrName());
             franohisetInfo.put("frContractDt", franohise.getFrContractDt());
             franohisetInfo.put("frContractFromDt", franohise.getFrContractFromDt());
@@ -356,6 +358,7 @@ public class HeadRestController {
                 franohisetInfo.put("frContractStateValue","계약완료");
             }
             franohisetInfo.put("frPriceGrade", franohise.getFrPriceGrade());
+            franohisetInfo.put("frTagNo", franohise.getFrTagNo());
             franohisetInfo.put("frRemark", franohise.getFrRemark());
             franohisetInfo.put("brName", franohise.getBrName());
             franohiseListData.add(franohisetInfo);
