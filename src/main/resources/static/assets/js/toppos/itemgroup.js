@@ -3,11 +3,30 @@ $(function() {
     /* 배열내의 각 설정만 넣어 빈 그리드 생성 */
     createGrids();
 
+    /* 0번 그리드에 값 가져와서 채워넣기 */
     setDataIntoGrid(0, gridCreateUrl[0]);
 
     /* 0번그리드 내의 셀 클릭시 이벤트 */
     AUIGrid.bind(gridId[0], "cellClick", function (e) {
 
+    });
+
+    /* 0번 그리드 입력을 시작할 때 값이 존재하는 코드를 편집하려 하면 편집을 막고 경고를 띄운다. */
+    AUIGrid.bind(gridId[0], "cellEditBegin", function (e) {
+        if(e.dataField === "bgItemGroupcode" && e.value !== "") {
+            setTimeout(function (){
+                AUIGrid.showToastMessage(gridId[0], e.rowIndex, e.columnIndex, "입력된 식별값은 바꿀 수 없습니다.");
+            }, 0);
+            return false;
+        }
+    });
+
+    /* 0번 그리드 입력이 끝난 코드의 대문자 변환 */
+    AUIGrid.bind(gridId[0], "cellEditEnd", function (e) {
+        if(e.dataField === "bgItemGroupcode") {
+            e.item.bgItemGroupcode = e.item.bgItemGroupcode.toUpperCase();
+            AUIGrid.updateRow(gridId[0], e.item, e.rowIndex);
+        }
     });
 });
 
@@ -41,6 +60,24 @@ gridColumnLayout[0] = [
     {
         dataField: "bgItemGroupcode",
         headerText: "코드",
+        editRenderer: { // 입력된 코드의 각종 유효성 검사
+            type: "InputEditRenderer",
+            maxlength: 3,
+            validator: function (oldValue, newValue, item, dataField, fromClipboard) {
+                let isValid = false;
+                let failMessage = "";
+                if(newValue.length < 3) {
+                    failMessage = "3자를 입력해 주세요";
+                }else if(/[^a-zA-Z0-9]/.test(newValue)) {
+                    failMessage = "영문자나 숫자로 구성하여 입력해 주세요";
+                }else{
+                    isValid = true;
+                }
+
+                return {"validate": isValid, "message": failMessage};
+
+            }
+        },
     }, {
         dataField: "bgName",
         headerText: "명칭",
@@ -160,7 +197,6 @@ function addRow(numOfRow) {
 
 // 선택한 그리드 행 삭제
 function removeRow(numOfRow) {
-
     if(AUIGrid.getCheckedRowItems(gridId[numOfRow]).length){
         AUIGrid.removeCheckedRows(gridId[numOfRow]);
     }else{
@@ -185,6 +221,23 @@ function gridSave(numOfGrid) {
         "update" : updatedRowItems,
         "delete" : deletedRowItems
     };
+
+    /* 각 그리드 배열번호 항목마다의 유효성 검사 */
+    switch (numOfGrid) {
+        case 0 :
+            /* 입력되지 않은 코드가 있는지 검사*/
+            addedRowItems.forEach(function (item){
+                if(item.bgItemGroupcode === undefined) {
+                    alertCaution("모든 코드를 입력해 주세요.", 1);
+                    return false;
+                }
+            });
+            break;
+        case 1 :
+            break;
+        case 2 :
+            break;
+    }
 
     const jsonString = JSON.stringify(data);
     CommonUI.ajaxjson(gridSaveUrl[numOfGrid], jsonString, function (){
