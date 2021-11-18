@@ -21,5 +21,10 @@ public class ManagerController {
         return "/index/managerindex";
     }
 
+    // 영업일관리 페이지
+    @RequestMapping("businessday")
+    public String businessday(){
+        return "/manager/businessday";
+    }
 
 }
