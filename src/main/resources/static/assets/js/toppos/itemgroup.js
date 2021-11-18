@@ -15,7 +15,7 @@ $(function() {
     AUIGrid.bind(gridId[0], "cellEditBegin", function (e) {
         if(e.dataField === "bgItemGroupcode" && e.value !== "") {
             setTimeout(function (){
-                AUIGrid.showToastMessage(gridId[0], e.rowIndex, e.columnIndex, "입력된 식별값은 바꿀 수 없습니다.");
+                AUIGrid.showToastMessage(gridId[0], e.rowIndex, e.columnIndex, "입력된 코드는 수정할 수 없습니다.");
             }, 0);
             return false;
         }

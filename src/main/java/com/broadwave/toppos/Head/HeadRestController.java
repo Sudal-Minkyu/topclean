@@ -511,12 +511,43 @@ public class HeadRestController {
             itemGroup.setInsert_id(login_id);
             itemGroup.setInsertDateTime(LocalDateTime.now());
 //            log.info("itemGroup : " +itemGroup);
-//            headService.itemGroupSave(itemGroup);
+            headService.itemGroupSave(itemGroup);
         }
 
-//        return ResponseEntity.ok(res.fail(ResponseErrorCode.TP005.getCode(), ResponseErrorCode.TP005.getDesc(),ResponseErrorCode.TP006.getCode(), ResponseErrorCode.TP006.getDesc()));
+
+        // 수정로직 실행 : 데이터베이스에 코드가 존재하지 않으면 리턴처리한다.
+        for (ItemGroupDto itemGroupDto : updateList) {
+            log.info("수정할 대분류의 코드 : "+itemGroupDto.getBgItemGroupcode());
+            Optional<ItemGroup> optionalItemGroup = headService.findByBgItemGroupcode(itemGroupDto.getBgItemGroupcode());
+            if(optionalItemGroup.isPresent()) {
+                ItemGroup itemGroup = new ItemGroup();
+                itemGroup.setBgItemGroupcode(optionalItemGroup.get().getBgItemGroupcode());
+                itemGroup.setBgName(itemGroupDto.getBgName());
+                itemGroup.setBgRemark(itemGroupDto.getBgRemark());
+                itemGroup.setInsert_id(optionalItemGroup.get().getInsert_id());
+                itemGroup.setInsertDateTime(optionalItemGroup.get().getInsertDateTime());
+                itemGroup.setModify_id(login_id);
+                itemGroup.setModifyDateTime(LocalDateTime.now());
+                headService.itemGroupSave(itemGroup);
+            }else{
+                return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "수정"+ResponseErrorCode.TP009.getDesc(), "문자", "다시 시도해주세요. 코드 : " + itemGroupDto.getBgItemGroupcode()));
+            }
+        }
+
+
+        // 삭제로직 실행 : 데이터베이스에 코드사용중인 코드가 존재하면 리턴처리한다. , 데이터베이스에 코드가 존재하지 않으면 리턴처리한다.
+        for (ItemGroupDto itemGroupDto : deleteList) {
+            log.info("삭제할 대분류의 코드 : "+itemGroupDto.getBgItemGroupcode());
+            Optional<ItemGroup> optionalItemGroup = headService.findByBgItemGroupcode(itemGroupDto.getBgItemGroupcode());
+            if(optionalItemGroup.isPresent()) {
+                headService.findByItemGroupDelete(optionalItemGroup.get());
+            }else{
+                return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "삭제"+ResponseErrorCode.TP009.getDesc(), "문자", "다시 시도해주세요. 코드 : " + itemGroupDto.getBgItemGroupcode()));
+            }
+        }
 
         return ResponseEntity.ok(res.success());
+
     }
 
     // 상품그룹 대분류 리스트 호출 API

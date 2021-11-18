@@ -85,8 +85,14 @@ public class HeadService {
         return ItemGroupRepository.findByBgItemGroupcode(bgItemGroupcode);
     }
 
-
+    // 상품그룹 대분류 리스트 호출
     public List<ItemGroupDto> findByItemGroupList() {
         return itemGroupRepositoryCustom.findByItemGroupList();
     }
+
+    // 상품그룹 대분류 삭제
+    public void findByItemGroupDelete(ItemGroup itemGroup){
+        ItemGroupRepository.delete(itemGroup);
+    }
+
 }
