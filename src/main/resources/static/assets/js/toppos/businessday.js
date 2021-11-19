@@ -3,17 +3,25 @@ $(function() {
     /* 배열내의 각 설정만 넣어 빈 그리드 생성 */
     createGrids();
 
-    setDataIntoGrid();
+    /* 대상년도 text창에 년도를 세팅 */
+    $("#target_year").val(targetYear);
+
+    /* 입력되어 있는 년도를 기반으로 프론트 페이지 달려 제목 구성 및 기본 그리드 데이터를 생성하여 뿌린다 */
+    setGridByYear();
 
 
+    /* 아래 4개 이벤트 들은 AUI 그리드에서 일반적인 마우스 드래그 감지용 이벤트가 존재하지 않아 구현함 */
     $(".aui-grid-default-column").on("mouseenter", function (e){
         if(isDrag) {
+            isClick = false;
             $(e.target).trigger("click");
         }
     });
 
     $(".aui-grid-default-column").on("mousedown", function (e){
+        isClick = false;
         $(e.target).trigger("click");
+        isClick = true;
     });
 
     $(window).on("mousedown", function (){
@@ -24,9 +32,15 @@ $(function() {
         isDrag = false;
     });
 
-
+    /*
+    * 달력 그리드의 셀을 클릭할 경우 셀이 선택되어있는지의 여부를 변경해 주어야 한다.
+    * 이 때 각 그리드에 들어간 값은 19991231Y 20211119N 과 같은 형식인데 마지막 문자가 선택 여부를 뜻한다.
+    * */
     for(let i = 0; i <12; i++) {
         AUIGrid.bind(gridId[i], "cellClick", function( event ) {
+            if(isClick) {
+                return false;
+            }
             let item = event.item;
             let value = item[event.columnIndex];
             if(value !== undefined) {
@@ -45,7 +59,14 @@ $(function() {
 
 });
 
+/* 달력이 뿌려질 년도, 기본적으로 해당 년도를 따른다. */
+let targetYear = new Date().getFullYear();
+
+/* 지금이 드래그 중인 상태인지 판별을 위해 */
 let isDrag = false;
+/* 클릭상태인 경우 이벤트가 두번 동작하는걸 막는다. */
+let isClick = false;
+/* selectedStyle 과 showDay 함수가 연계하여 해당 대상이 선택유무에 따라 css 클래스를 바꿔주는 역할을 한다. */
 let isSelected = false;
 
 /* 그리드 생성과 운영에 관한 중요 변수들. grid라는 이름으로 시작하도록 통일했다. */
@@ -61,7 +82,7 @@ gridTargetDiv = [
 /* 그리드를 받아올 때 쓰이는 api 배열 */
 let gridCreateUrl = "";
 
-/* 0번 그리드의 레이아웃 */
+/* 그리드의 레이아웃 */
 let gridColumnLayout = [
     {
         dataField: "0",
@@ -126,23 +147,28 @@ function pad2(number) {
     return (number < 10 ? '0' : '') + number;
 }
 
-/* ajax 통신을 통해 그리드 데이터를 받아와 뿌린다. */
+/* ajax 통신을 통해 그리드 데이터를 받아와 반영한다. */
 function setDataIntoGrid() {
 
-    let targetYear = 2021;
+    /* 아래의 변수와 반복 문 내 작업으로 기본적인 달력 데이터들을 생성해 준다. */
     let firstDayOfWeek = [];
     let lastDayOfMonth = [];
     let processDayOfWeek;
     let processData = {};
     let processDataOfMonth = [];
 
-    for(let m = 1; m <= 12; m++) {
-        firstDayOfWeek[m-1] = new Date(targetYear, m-1, 1).getDay();
-        lastDayOfMonth[m-1] = new Date(targetYear, m, 0).getDate();
-        processDayOfWeek = firstDayOfWeek[m-1];
-        for(let d = 1; d <= lastDayOfMonth[m-1]; d++) {
-            processData[processDayOfWeek+""] = targetYear+pad2(m)+pad2(d)+"N";
-            if(processDayOfWeek >= 6 || d===lastDayOfMonth[m-1]) {
+    /////////// 해당 년도의 각 월마다 며칠부터 며칠까지 존재하는지를 판별하여 달력을 만든다. //////////
+    for(let m = 0; m < 12; m++) {
+        /* 월의 시작 날 */
+        firstDayOfWeek[m] = new Date(targetYear, m, 1).getDay();
+        /* 월의 마지막 날 */
+        lastDayOfMonth[m] = new Date(targetYear, m + 1, 0).getDate();
+
+        /* 그리드에 넣기 위해 각 요일와 열에 맞추어 세팅 */
+        processDayOfWeek = firstDayOfWeek[m];
+        for(let d = 1; d <= lastDayOfMonth[m]; d++) {
+            processData[processDayOfWeek+""] = targetYear+pad2(m+1)+pad2(d)+"N";
+            if(processDayOfWeek >= 6 || d===lastDayOfMonth[m]) {
                 processDataOfMonth.push(processData);
                 processDayOfWeek = 0;
                 processData = {};
@@ -150,14 +176,17 @@ function setDataIntoGrid() {
                 processDayOfWeek++;
             }
         }
-        gridData[m-1] = processDataOfMonth;
-        AUIGrid.setGridData(gridId[m-1], gridData[m-1]);
+        gridData[m] = processDataOfMonth;
+        AUIGrid.setGridData(gridId[m], gridData[m]);
         processDataOfMonth = [];
     }
+
+
 }
 
 
-
+/* 각 필드에 19991231Y 같은 형식으로 담기는 데이터를 날짜만 남기기 위한 컬럼 속성(gridProp)내의 필터링 함수
+*  여기서 isSelected 변수는 아래의 selectedStyle 함수에서 선택여부를 판별하기 위해 쓰인다. */
 function showDay(rowIndex, columnIndex, value, headerText, item) {
     let resultValue = "";
     if(value !== undefined) {
@@ -169,17 +198,33 @@ function showDay(rowIndex, columnIndex, value, headerText, item) {
     return resultValue;
 }
 
+/* 컬럼의 스타일을 값의 상태에 따라 변경하기 위한 함수. 컬럼 속성(gridProp)내의 요소와 연동된다. */
 function selectedStyle(value, footerValues) {
-    const setStyle = isSelected ? "cellRed" : "cellWhite";
+    const setStyle = isSelected ? "cellSelected" : "cellNoSelected";
     return setStyle;
 }
 
-/*  */
+/* 선택 되어있는 날짜만 담아서 서버에 전달한다. */
 function gridSave() {
 
     let data = [];
 
     for(let m = 0; m < 12; m++) {
+        const rawData = AUIGrid.getGridData(gridId[m]);
+
+        for(let w = 0; w < rawData.length; w++) {
+            for(let d = 0; d < 7; d++) {
+                if(rawData[w][d] !== undefined && rawData[w][d].substr(8, 1) === "Y") {
+                    data.push({date : rawData[w][d].substr(0, 8), selected : "Y"});
+                }
+            }
+        }
+    }
+
+    console.log(data);
+
+    /*
+    for(let m = 0; m < 12; m++) { // 업데이트 된 데이터만 호출하여 통신하기 위한 작업
         const updatedItems = AUIGrid.getEditedRowColumnItems(gridId[m]);
         for(let i = 0; i < updatedItems.length; i++) {
             for(let j = 0; j < 7; j++) {
@@ -191,6 +236,15 @@ function gridSave() {
         }
         AUIGrid.resetUpdatedItems(gridId[m]);
     }
+    */
+}
 
-    console.log(data);
+/* 년도에 맞춰서 달력의 제목부분을 뿌려주고, 이어서 데이터를 받아오는 함수를 호출한다. */
+function setGridByYear() {
+    targetYear = $("#target_year").val();
+    let calendarLabels = $(".calendar_label");
+    for(let m = 0; m < 12; m++) {
+        calendarLabels.eq(m).html(targetYear + "년 " + (m + 1) + "월");
+    }
+    setDataIntoGrid();
 }
