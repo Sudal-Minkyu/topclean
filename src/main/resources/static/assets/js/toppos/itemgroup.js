@@ -250,6 +250,8 @@ function addRow(numOfGrid) {
         case 1 :
             item = AUIGrid.getSelectedRows(gridId[0]);
             if(item.length && !AUIGrid.isAddedById(gridId[0], item[0]._$uid)) {
+                delete item[0]['_$uid'];
+                console.log(item);
                 AUIGrid.addRow(gridId[numOfGrid], item, "first");
             }else{
                 alertCaution("저장되어 있는 대분류 항목을 선택해 주세요", 1);
@@ -258,6 +260,7 @@ function addRow(numOfGrid) {
         case 2 :
             item = AUIGrid.getSelectedRows(gridId[1]);
             if(item.length && !AUIGrid.isAddedById(gridId[1], item[0]._$uid)) {
+                delete item[0]['_$uid'];
                 AUIGrid.addRow(gridId[numOfGrid], item, "first");
             }else{
                 alertCaution("저장되어 있는 중분류 항목을 선택해 주세요", 1);
