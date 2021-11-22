@@ -6,14 +6,17 @@ $(function() {
     /* 0번 그리드에 값 가져와서 채워넣기 */
     setDataIntoGrid(0, gridCreateUrl[0]);
 
-    /* 0번그리드 내의 셀 클릭시 이벤트 */
+    /* 0번그리드 내의 셀 클릭시 1번 그리드에 해당 대분류에 따른 중분류 리스트를 띄운다. */
     AUIGrid.bind(gridId[0], "cellClick", function (e) {
+        /* 새로 추가된 행의 경우 하위 항목이 없을테니 동작을 막는다. */
+        if(!AUIGrid.isAddedById(gridId[0], e.item._$uid)) {
 
+        }
     });
 
-    /* 0번 그리드 입력을 시작할 때 값이 존재하는 코드를 편집하려 하면 편집을 막고 경고를 띄운다. */
+    /* 0번 그리드 입력을 시작할 때 새로 추가된 코드가 아니면서, 값이 존재하는 코드를 편집하려 하면 편집을 막고 경고를 띄운다. */
     AUIGrid.bind(gridId[0], "cellEditBegin", function (e) {
-        if(e.dataField === "bgItemGroupcode" && e.value !== "") {
+        if(e.dataField === "bgItemGroupcode" && e.value !== "" && !AUIGrid.isAddedById(gridId[0], e.item._$uid)) {
             setTimeout(function (){
                 AUIGrid.showToastMessage(gridId[0], e.rowIndex, e.columnIndex, "입력된 코드는 수정할 수 없습니다.");
             }, 0);
@@ -21,13 +24,46 @@ $(function() {
         }
     });
 
-    /* 0번 그리드 입력이 끝난 코드의 대문자 변환 */
+    AUIGrid.bind(gridId[1], "cellEditBegin", function (e) {
+        if(e.dataField === "bsItemGroupcodeS" && e.value !== "" && !AUIGrid.isAddedById(gridId[1], e.item._$uid)) {
+            setTimeout(function (){
+                AUIGrid.showToastMessage(gridId[0], e.rowIndex, e.columnIndex, "입력된 중분류 코드는 수정할 수 없습니다.");
+            }, 0);
+            return false;
+        }
+    });
+
+    AUIGrid.bind(gridId[2], "cellEditBegin", function (e) {
+        if(e.dataField === "biItemcode" && e.value !== "" && !AUIGrid.isAddedById(gridId[2], e.item._$uid)) {
+            setTimeout(function (){
+                AUIGrid.showToastMessage(gridId[0], e.rowIndex, e.columnIndex, "입력된 상품코드는 수정할 수 없습니다.");
+            }, 0);
+            return false;
+        }
+    });
+
+    /* 각 그리드 입력이 끝난 코드의 대문자 변환 */
     AUIGrid.bind(gridId[0], "cellEditEnd", function (e) {
         if(e.dataField === "bgItemGroupcode") {
             e.item.bgItemGroupcode = e.item.bgItemGroupcode.toUpperCase();
             AUIGrid.updateRow(gridId[0], e.item, e.rowIndex);
         }
     });
+
+    AUIGrid.bind(gridId[1], "cellEditEnd", function (e) {
+        if(e.dataField === "bsItemGroupcodeS") {
+            e.item.bgItemGroupcode = e.item.bgItemGroupcode.toUpperCase();
+            AUIGrid.updateRow(gridId[1], e.item, e.rowIndex);
+        }
+    });
+
+    AUIGrid.bind(gridId[2], "cellEditEnd", function (e) {
+        if(e.dataField === "biItemcode") {
+            e.item.bgItemGroupcode = e.item.bgItemGroupcode.toUpperCase();
+            AUIGrid.updateRow(gridId[2], e.item, e.rowIndex);
+        }
+    });
+
 });
 
 
@@ -63,20 +99,7 @@ gridColumnLayout[0] = [
         editRenderer: { // 입력된 코드의 각종 유효성 검사
             type: "InputEditRenderer",
             maxlength: 3,
-            validator: function (oldValue, newValue, item, dataField, fromClipboard) {
-                let isValid = false;
-                let failMessage = "";
-                if(newValue.length < 3) {
-                    failMessage = "3자를 입력해 주세요";
-                }else if(/[^a-zA-Z0-9]/.test(newValue)) {
-                    failMessage = "영문자나 숫자로 구성하여 입력해 주세요";
-                }else{
-                    isValid = true;
-                }
-
-                return {"validate": isValid, "message": failMessage};
-
-            }
+            validator: codeValidator,
         },
     }, {
         dataField: "bgName",
@@ -112,6 +135,11 @@ gridColumnLayout[1] = [
     }, {
         dataField: "bsItemGroupcodeS",
         headerText: "중분류 코드",
+        editRenderer: { // 입력된 코드의 각종 유효성 검사
+            type: "InputEditRenderer",
+            maxlength: 3,
+            validator: codeValidator,
+        },
     }, {
         dataField: "bsName",
         headerText: "명칭",
@@ -149,6 +177,11 @@ gridColumnLayout[2] = [
     }, {
         dataField: "biItemcode",
         headerText: "상품코드",
+        editRenderer: { // 입력된 코드의 각종 유효성 검사
+            type: "InputEditRenderer",
+            maxlength: 3,
+            validator: codeValidator,
+        },
     }, {
         dataField: "bgItemSequence",
         headerText: "상품순번",
@@ -190,17 +223,37 @@ function setDataIntoGrid(numOfGrid, url) {
 }
 
 /* 지정된 그리드에 새 빈 데이터 추가 */
-function addRow(numOfRow) {
-    const item = {};
-    AUIGrid.addRow(gridId[numOfRow], item, "first");
+function addRow(numOfGrid) {
+    let item = {};
+    switch (numOfGrid) {
+        case 0 :
+            AUIGrid.addRow(gridId[numOfGrid], item, "first");
+            break;
+        case 1 :
+            item = AUIGrid.getSelectedRows(gridId[0]);
+            if(item.length && !AUIGrid.isAddedById(gridId[0], item[0]._$uid)) {
+                AUIGrid.addRow(gridId[numOfGrid], item, "first");
+            }else{
+                alertCaution("저장되어 있는 대분류 항목을 선택해 주세요", 1);
+            }
+            break;
+        case 2 :
+            item = AUIGrid.getSelectedRows(gridId[1]);
+            if(item.length && !AUIGrid.isAddedById(gridId[1], item[0]._$uid)) {
+                AUIGrid.addRow(gridId[numOfGrid], item, "first");
+            }else{
+                alertCaution("저장되어 있는 중분류 항목을 선택해 주세요", 1);
+            }
+            break;
+    }
 }
 
 // 선택한 그리드 행 삭제
-function removeRow(numOfRow) {
-    if(AUIGrid.getCheckedRowItems(gridId[numOfRow]).length){
-        AUIGrid.removeCheckedRows(gridId[numOfRow]);
+function removeRow(numOfGrid) {
+    if(AUIGrid.getCheckedRowItems(gridId[numOfGrid]).length){
+        AUIGrid.removeCheckedRows(gridId[numOfGrid]);
     }else{
-        AUIGrid.removeRow(gridId[numOfRow], "selectedIndex");
+        AUIGrid.removeRow(gridId[numOfGrid], "selectedIndex");
     }
 }
 
@@ -222,6 +275,7 @@ function gridSave(numOfGrid) {
         "delete" : deletedRowItems
     };
 
+    let isExecute = true;
     /* 각 그리드 배열번호 항목마다의 유효성 검사 */
     switch (numOfGrid) {
         case 0 :
@@ -229,19 +283,46 @@ function gridSave(numOfGrid) {
             addedRowItems.forEach(function (item){
                 if(item.bgItemGroupcode === undefined) {
                     alertCaution("모든 코드를 입력해 주세요.", 1);
-                    return false;
+                    isExecute = false;
                 }
             });
             break;
         case 1 :
+            addedRowItems.forEach(function (item){
+                if(item.bsItemGroupcodeS === undefined) {
+                    alertCaution("모든 중분류 코드를 입력해 주세요.", 1);
+                    isExecute = false;
+                }
+            });
             break;
         case 2 :
+            addedRowItems.forEach(function (item){
+                if(item.biItemcode === undefined) {
+                    alertCaution("모든 상품코드를 입력해 주세요.", 1);
+                    isExecute = false;
+                }
+            });
             break;
     }
 
-    const jsonString = JSON.stringify(data);
-    CommonUI.ajaxjson(gridSaveUrl[numOfGrid], jsonString, function (){
+    if(isExecute) {
+        const jsonString = JSON.stringify(data);
+        CommonUI.ajaxjson(gridSaveUrl[numOfGrid], jsonString, function () {
+            AUIGrid.removeSoftRows(gridId[numOfGrid]);
+            AUIGrid.resetUpdatedItems(gridId[numOfGrid]);
+        });
+    }
+}
 
-    });
-
+function codeValidator(oldValue, newValue, item, dataField, fromClipboard) {
+    let isValid = false;
+    let failMessage = "";
+    if(newValue.length < 3) {
+        failMessage = "3자를 입력해 주세요";
+    }else if(/[^a-zA-Z0-9]/.test(newValue)) {
+        failMessage = "영문자나 숫자로 구성하여 입력해 주세요";
+    }else{
+        isValid = true;
+    }
+    return {"validate": isValid, "message": failMessage};
 }

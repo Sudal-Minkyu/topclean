@@ -147,44 +147,6 @@ function pad2(number) {
     return (number < 10 ? '0' : '') + number;
 }
 
-/* ajax 통신을 통해 그리드 데이터를 받아와 반영한다. */
-function setDataIntoGrid() {
-
-    /* 아래의 변수와 반복 문 내 작업으로 기본적인 달력 데이터들을 생성해 준다. */
-    let firstDayOfWeek = [];
-    let lastDayOfMonth = [];
-    let processDayOfWeek;
-    let processData = {};
-    let processDataOfMonth = [];
-
-    /////////// 해당 년도의 각 월마다 며칠부터 며칠까지 존재하는지를 판별하여 달력을 만든다. //////////
-    for(let m = 0; m < 12; m++) {
-        /* 월의 시작 날 */
-        firstDayOfWeek[m] = new Date(targetYear, m, 1).getDay();
-        /* 월의 마지막 날 */
-        lastDayOfMonth[m] = new Date(targetYear, m + 1, 0).getDate();
-
-        /* 그리드에 넣기 위해 각 요일와 열에 맞추어 세팅 */
-        processDayOfWeek = firstDayOfWeek[m];
-        for(let d = 1; d <= lastDayOfMonth[m]; d++) {
-            processData[processDayOfWeek+""] = targetYear+pad2(m+1)+pad2(d)+"N";
-            if(processDayOfWeek >= 6 || d===lastDayOfMonth[m]) {
-                processDataOfMonth.push(processData);
-                processDayOfWeek = 0;
-                processData = {};
-            }else{
-                processDayOfWeek++;
-            }
-        }
-        gridData[m] = processDataOfMonth;
-        AUIGrid.setGridData(gridId[m], gridData[m]);
-        processDataOfMonth = [];
-    }
-
-
-}
-
-
 /* 각 필드에 19991231Y 같은 형식으로 담기는 데이터를 날짜만 남기기 위한 컬럼 속성(gridProp)내의 필터링 함수
 *  여기서 isSelected 변수는 아래의 selectedStyle 함수에서 선택여부를 판별하기 위해 쓰인다. */
 function showDay(rowIndex, columnIndex, value, headerText, item) {
@@ -214,15 +176,12 @@ function gridSave() {
     aJson.bcDayoffYn = "";
     aJsonArray.push(aJson);
 
-    // let data = [];
-
-    for(let m = 0; m < 12; m++) {
+    for(let m = 0; m < 12; m++) { // 선택된 날짜만 json 형태로 담는다.
         const rawData = AUIGrid.getGridData(gridId[m]);
 
         for(let w = 0; w < rawData.length; w++) {
             for(let d = 0; d < 7; d++) {
                 if(rawData[w][d] !== undefined && rawData[w][d].substr(8, 1) === "Y") {
-                    // data.push({bcDate : rawData[w][d].substr(0, 8), bcDayoffYn : "Y"});
                     const aJson = {};
                     aJson.bcDate = rawData[w][d].substr(0, 8);
                     aJson.bcDayoffYn = "Y";
@@ -233,7 +192,6 @@ function gridSave() {
     }
 
     const sJson = JSON.stringify(aJsonArray);
-    // console.log(sJson);
 
     const url = "/api/manager/calendarSave";
     CommonUI.ajaxjson(url, sJson,function (){
@@ -241,8 +199,12 @@ function gridSave() {
     });
 
 
+    for(let m = 0; m < 12; m++) {
+        AUIGrid.resetUpdatedItems(gridId[m]);
+    }
+
     /*
-    for(let m = 0; m < 12; m++) { // 업데이트 된 데이터만 호출하여 통신하기 위한 작업
+    for(let m = 0; m < 12; m++) { // 업데이트 된 데이터만 호출하여 통신하는 방식
         const updatedItems = AUIGrid.getEditedRowColumnItems(gridId[m]);
         for(let i = 0; i < updatedItems.length; i++) {
             for(let j = 0; j < 7; j++) {
@@ -264,7 +226,6 @@ function setGridByYear() {
     for(let m = 0; m < 12; m++) {
         calendarLabels.eq(m).html(targetYear + "년 " + (m + 1) + "월");
     }
-    setDataIntoGrid();
 
     // 서버로 보낼 데이터 작성
     const params = {
@@ -272,9 +233,50 @@ function setGridByYear() {
     };
     const url = "/api/manager/calendarInfo";
     CommonUI.ajax(url, "GET", params, function (req) {
-        console.log(req.sendData.gridListData)
-        // gridData[numOfGrid] = req.sendData.gridListData;
-        // AUIGrid.setGridData(gridId[numOfGrid], gridData[numOfGrid]);
+        const daysData = req.sendData.gridListData;
+        setDataIntoGrid(daysData);
     });
+}
 
+function setDataIntoGrid(daysData) {
+    /* 아래의 변수와 반복 문 내 작업으로 기본적인 달력 데이터들을 생성해 준다. */
+    let firstDayOfWeek = [];
+    let lastDayOfMonth = [];
+    let processDayOfWeek;
+    let processData = {};
+    let processDataOfMonth = [];
+
+    let isSaveExists = daysData.length > 0;
+    let dayOfYear = 0;
+
+    /* 해당 년도의 각 월마다 며칠부터 며칠까지 존재하는지를 판별하여 달력을 만든다. */
+    for(let m = 0; m < 12; m++) {
+        /* 월의 시작 날 */
+        firstDayOfWeek[m] = new Date(targetYear, m, 1).getDay();
+        /* 월의 마지막 날 */
+        lastDayOfMonth[m] = new Date(targetYear, m + 1, 0).getDate();
+
+        /* 그리드에 넣기 위해 각 요일와 열에 맞추어 세팅 */
+        processDayOfWeek = firstDayOfWeek[m];
+        for(let d = 1; d <= lastDayOfMonth[m]; d++) {
+
+            /* 기존 데이터가 존재하면 기존 데이터를 기반으로 설정하고, 아닐 경우 날짜를 생성하여 담는다. */
+            if(isSaveExists) {
+                processData[processDayOfWeek+""] = daysData[dayOfYear].bcDate + daysData[dayOfYear++].bcDayoffYn;
+            }else{
+                processData[processDayOfWeek+""] = targetYear + pad2(m + 1) + pad2(d) + (processDayOfWeek === 0 ? "Y" : "N");
+            }
+
+            if(processDayOfWeek >= 6 || d===lastDayOfMonth[m]) {
+                processDataOfMonth.push(processData);
+                processDayOfWeek = 0;
+                processData = {};
+            }else{
+                processDayOfWeek++;
+            }
+        }
+        gridData[m] = processDataOfMonth;
+        AUIGrid.setGridData(gridId[m], gridData[m]);
+        processDataOfMonth = [];
+    }
 }
