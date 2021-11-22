@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ManagerService {
@@ -32,4 +33,7 @@ public class ManagerService {
     }
 
 
+    public Optional<BranchCalendar> branchCalendarInfo(String brCode, String bcDate) {
+        return branchCalendarRepository.branchCalendarInfo(brCode, bcDate);
+    }
 }

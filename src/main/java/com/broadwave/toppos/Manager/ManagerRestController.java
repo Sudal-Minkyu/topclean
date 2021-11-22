@@ -64,6 +64,16 @@ public class ManagerRestController {
             log.info("조회 년도 : "+getYear);
         }
 
+        String bcDate = getYear +"01"+ "01";
+        String type;
+//        log.info("bcDate : "+bcDate);
+        Optional<BranchCalendar> optionalBranchCalendar = managerService.branchCalendarInfo(brCode, bcDate);
+        if(optionalBranchCalendar.isPresent()){
+            type = "Y"; // 수정
+        }else{
+            type = "N"; // 신규
+        }
+
         int day = 1;
         String dateMonth;
         String dateDay;
@@ -106,9 +116,16 @@ public class ManagerRestController {
                 }
 
                 branchCalendar.setBrCode(brCode);
-                branchCalendar.setInsert_id(login_id);
-                branchCalendar.setInsertDateTime(LocalDateTime.now());
 
+                if(type.equals("Y")){
+                    branchCalendar.setInsert_id(optionalBranchCalendar.get().getInsert_id());
+                    branchCalendar.setInsertDateTime(optionalBranchCalendar.get().getInsertDateTime());
+                    branchCalendar.setModify_id(login_id);
+                    branchCalendar.setModifyDateTime(LocalDateTime.now());
+                }else{
+                    branchCalendar.setInsert_id(login_id);
+                    branchCalendar.setInsertDateTime(LocalDateTime.now());
+                }
 //                log.info("branchCalendar : "+branchCalendar);
 
                 managerService.branchCalendarSave(branchCalendar);

@@ -63,7 +63,7 @@ public class HeadRestController {
 //        log.info("account : "+account);
 //        log.info("role : "+account.getRole());
         Optional<Account> optionalAccount = accountService.findByUserid(account.getUserid());
-        if( optionalAccount.isPresent()){
+        if(optionalAccount.isPresent()){
             log.info("수정합니다.");
             // 수정일때
             account.setId(optionalAccount.get().getId());
