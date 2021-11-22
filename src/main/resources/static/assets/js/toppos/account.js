@@ -255,6 +255,10 @@ function accountSave(){
     }
 
     const userRole = $("#role").val();
+    if(userRole === "") {
+        alertCaution("권한을 선택 해주세요.",1);
+        return false;
+    }
     /* 권한에 따라 지사나 가맹점 선택을 했는지 검사 */
     if((userRole === "ROLE_MANAGER" || userRole === "ROLE_NORMAL") && $("#brCode").val() === "" ) {
         alertCaution("지사를 선택 해주세요.",1);
@@ -265,6 +269,7 @@ function accountSave(){
     }
 
     const formData = new FormData(document.getElementById('accountFormData'));
+    formData.set("usertel", formData.get("usertel").replace(/[^0-9]/g, ""));
 
     let url = "/api/head/accountSave";
 
@@ -406,4 +411,10 @@ function filterAccountList(type) {
             break;
     }
 
+}
+
+/* 전화번호 입력을 위한 유효성 검사 */
+function onPhonenumChange (element) {
+    let phoneNumber = element.value;
+    element.value = CommonUI.onPhoneNumChange(phoneNumber);
 }

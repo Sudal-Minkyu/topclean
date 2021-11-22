@@ -28,7 +28,7 @@ function openVKeyboard(keyboardNum) {
         /* 휴대폰 번호 수정 후 콜백을 이용하여 번호 유효성 검사를 한다 */
         vkey.showKeyboard(targetFieldID[keyboardNum], targetFieldSubject[keyboardNum], boilerArray[keyboardNum],
             function (){
-                onPhonenumChange($("#bcHp")[0]);
+                onPhonenumChange(document.getElementById("bcHp"));
             });
     }else{
         vkey.showKeyboard(targetFieldID[keyboardNum], targetFieldSubject[keyboardNum], boilerArray[keyboardNum]);
@@ -69,18 +69,5 @@ function onYearChange(selectedYear) {
 /* 전화번호 입력을 위한 유효성 검사 */
 function onPhonenumChange (element) {
     let phoneNumber = element.value;
-    phoneNumber = phoneNumber.replace(/[^0-9]/g, "");
-    let formatNum = "";
-    if(phoneNumber.length==11){
-        formatNum = phoneNumber.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
-    }else if(phoneNumber.length==8){
-        formatNum = phoneNumber.replace(/(\d{4})(\d{4})/, '$1-$2');
-    }else{
-        if(phoneNumber.indexOf('02')==0){
-            formatNum = phoneNumber.replace(/(\d{2})(\d{4})(\d{4})/, '$1-$2-$3');
-        }else{
-            formatNum = phoneNumber.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
-        }
-    }
-    element.value = formatNum;
+    element.value = CommonUI.onPhoneNumChange(phoneNumber);
 }

@@ -71,6 +71,23 @@ class CommonUIClass {
         }
     }
 
+    onPhoneNumChange(phoneNumber) {
+        phoneNumber = phoneNumber.replace(/[^0-9]/g, "");
+        let formatNum = "";
+        if(phoneNumber.length==11){
+            formatNum = phoneNumber.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
+        }else if(phoneNumber.length==8){
+            formatNum = phoneNumber.replace(/(\d{4})(\d{4})/, '$1-$2');
+        }else{
+            if(phoneNumber.indexOf('02')==0){
+                formatNum = phoneNumber.replace(/(\d{2})(\d{4})(\d{4})/, '$1-$2-$3');
+            }else{
+                formatNum = phoneNumber.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
+            }
+        }
+        return formatNum;
+    }
+
     /* ajax 통신의 자주 쓰는 패턴을 간단하게 쓰기 위함 */
     ajax(url, method, data, func) {
 
@@ -183,7 +200,6 @@ class CommonUIClass {
             }
         });
     }
-
 }
 
 const CommonUI = new CommonUIClass();

@@ -6,15 +6,24 @@ $(function() {
     /* 0번 그리드에 값 가져와서 채워넣기 */
     setDataIntoGrid(0, gridCreateUrl[0]);
 
-    /* 0번그리드 내의 셀 클릭시 1번 그리드에 해당 대분류에 따른 중분류 리스트를 띄운다. */
+    /* 각 그리드 내의 셀 클릭시 1번 그리드에 해당 대분류에 따른 중분류 리스트를 띄운다. */
     AUIGrid.bind(gridId[0], "cellClick", function (e) {
-        /* 새로 추가된 행의 경우 하위 항목이 없을테니 동작을 막는다. */
-        if(!AUIGrid.isAddedById(gridId[0], e.item._$uid)) {
+        const selectedBig = e.item.bgItemGroupcode;
+        if(currentBig !== selectedBig && !AUIGrid.isAddedById(gridId[0], e.item._$uid)) {/* 새로 추가된 행의 경우 하위 항목이 없을테니 동작을 막는다. */
+            currentBig = selectedBig;
 
         }
     });
 
-    /* 0번 그리드 입력을 시작할 때 새로 추가된 코드가 아니면서, 값이 존재하는 코드를 편집하려 하면 편집을 막고 경고를 띄운다. */
+    AUIGrid.bind(gridId[1], "cellClick", function (e) {
+        const selectedMedium = e.item.sItemGroupcodeS;
+        if(currentMedium !== selectedMedium && !AUIGrid.isAddedById(gridId[1], e.item._$uid)) {/* 새로 추가된 행의 경우 하위 항목이 없을테니 동작을 막는다. */
+            currentMedium = selectedMedium;
+
+        }
+    });
+
+    /* 각 그리드 입력을 시작할 때 새로 추가된 코드가 아니면서, 값이 존재하는 코드를 편집하려 하면 편집을 막고 경고를 띄운다. */
     AUIGrid.bind(gridId[0], "cellEditBegin", function (e) {
         if(e.dataField === "bgItemGroupcode" && e.value !== "" && !AUIGrid.isAddedById(gridId[0], e.item._$uid)) {
             setTimeout(function (){
@@ -52,20 +61,23 @@ $(function() {
 
     AUIGrid.bind(gridId[1], "cellEditEnd", function (e) {
         if(e.dataField === "bsItemGroupcodeS") {
-            e.item.bgItemGroupcode = e.item.bgItemGroupcode.toUpperCase();
+            e.item.bsItemGroupcodeS = e.item.bsItemGroupcodeS.toUpperCase();
             AUIGrid.updateRow(gridId[1], e.item, e.rowIndex);
         }
     });
 
     AUIGrid.bind(gridId[2], "cellEditEnd", function (e) {
         if(e.dataField === "biItemcode") {
-            e.item.bgItemGroupcode = e.item.bgItemGroupcode.toUpperCase();
+            e.item.biItemcode = e.item.biItemcode.toUpperCase();
             AUIGrid.updateRow(gridId[2], e.item, e.rowIndex);
         }
     });
 
 });
 
+/* 현재의 선택퇸 대분류코드, 중분류 코드에 따라서 중분류와 최종상품을 출력하고, 이전 선택과 지금의 선택이 중복선택인지에 대한 체크에 쓰인다. */
+let currentBig;
+let currentMedium;
 
 /* 그리드 생성과 운영에 관한 중요 변수들. grid라는 이름으로 시작하도록 통일했다. */
 let gridId = [];
@@ -129,9 +141,11 @@ gridColumnLayout[1] = [
     {
         dataField: "bgItemGroupcode",
         headerText: "대분류 코드",
+        editable : false,
     }, {
         dataField: "bgName",
         headerText: "대분류명",
+        editable : false,
     }, {
         dataField: "bsItemGroupcodeS",
         headerText: "중분류 코드",
@@ -165,15 +179,19 @@ gridColumnLayout[2] = [
     {
         dataField: "bgItemGroupcode",
         headerText: "대분류 코드",
+        editable : false,
     }, {
         dataField: "bgName",
         headerText: "대분류명",
+        editable : false,
     }, {
         dataField: "bsItemGroupcodeS",
         headerText: "중분류 코드",
+        editable : false,
     }, {
         dataField: "bsName",
         headerText: "중분류명",
+        editable : false,
     }, {
         dataField: "biItemcode",
         headerText: "상품코드",
@@ -215,8 +233,8 @@ function createGrids() {
 }
 
 /* ajax 통신을 통해 그리드 데이터를 받아와 뿌린다. */
-function setDataIntoGrid(numOfGrid, url) {
-    CommonUI.ajax(url, "GET", false, function (req) {
+function setDataIntoGrid(numOfGrid, url, code = false) {
+    CommonUI.ajax(url, "GET", code, function (req) {
         gridData[numOfGrid] = req.sendData.gridListData;
         AUIGrid.setGridData(gridId[numOfGrid], gridData[numOfGrid]);
     });
