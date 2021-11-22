@@ -207,7 +207,14 @@ function selectedStyle(value, footerValues) {
 /* 선택 되어있는 날짜만 담아서 서버에 전달한다. */
 function gridSave() {
 
-    let data = [];
+    const aJsonArray = [];
+    const aJson = {};
+    aJson.year = $("#target_year").val();
+    aJson.bcDate = "";
+    aJson.bcDayoffYn = "";
+    aJsonArray.push(aJson);
+
+    // let data = [];
 
     for(let m = 0; m < 12; m++) {
         const rawData = AUIGrid.getGridData(gridId[m]);
@@ -215,13 +222,24 @@ function gridSave() {
         for(let w = 0; w < rawData.length; w++) {
             for(let d = 0; d < 7; d++) {
                 if(rawData[w][d] !== undefined && rawData[w][d].substr(8, 1) === "Y") {
-                    data.push({date : rawData[w][d].substr(0, 8), selected : "Y"});
+                    // data.push({bcDate : rawData[w][d].substr(0, 8), bcDayoffYn : "Y"});
+                    const aJson = {};
+                    aJson.bcDate = rawData[w][d].substr(0, 8);
+                    aJson.bcDayoffYn = "Y";
+                    aJsonArray.push(aJson);
                 }
             }
         }
     }
 
-    console.log(data);
+    const sJson = JSON.stringify(aJsonArray);
+    // console.log(sJson);
+
+    const url = "/api/manager/calendarSave";
+    CommonUI.ajaxjson(url, sJson,function (){
+
+    });
+
 
     /*
     for(let m = 0; m < 12; m++) { // 업데이트 된 데이터만 호출하여 통신하기 위한 작업
@@ -247,4 +265,16 @@ function setGridByYear() {
         calendarLabels.eq(m).html(targetYear + "년 " + (m + 1) + "월");
     }
     setDataIntoGrid();
+
+    // 서버로 보낼 데이터 작성
+    const params = {
+        "targetYear" : targetYear,
+    };
+    const url = "/api/manager/calendarInfo";
+    CommonUI.ajax(url, "GET", params, function (req) {
+        console.log(req.sendData.gridListData)
+        // gridData[numOfGrid] = req.sendData.gridListData;
+        // AUIGrid.setGridData(gridId[numOfGrid], gridData[numOfGrid]);
+    });
+
 }

@@ -16,6 +16,7 @@ public enum ResponseErrorCode {
     TP007("TP007", "권한이 없습니다."),
     TP008("TP008", "가맹점 전용기능 입니다."),
     TP009("TP009", "할 코드가 존재하지않습니다."),
+    TP010("TP010", "할 년도를 입력해주세요."),
     ;
 
     private String code;

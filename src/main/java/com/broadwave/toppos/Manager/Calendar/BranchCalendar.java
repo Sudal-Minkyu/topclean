@@ -2,10 +2,8 @@ package com.broadwave.toppos.Manager.Calendar;
 
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
@@ -20,16 +18,17 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
+@IdClass(BranchCalendarPK.class)
 @Table(name="bs_branch_calendar")
-public class Calendar {
+public class BranchCalendar {
 
     @Id
-    @Column(name="br_code")
+    @Column(name = "br_code")
     private String brCode; // 지사코드
 
-//    @Id
-//    @Column(name="bc_date")
-//    private String bcDate; // 날짜 : yyyymmdd
+    @Id
+    @Column(name = "bc_date")
+    private String bcDate; // 날짜 : yyyymmdd
 
     @Column(name="bc_dayoff_yn")
     private String bcDayoffYn; // 휴무상태 : Y/N
