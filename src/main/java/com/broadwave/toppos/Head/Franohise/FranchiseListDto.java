@@ -27,8 +27,13 @@ public class FranchiseListDto {
     private String brAssignState; // 지사 배정상태 미배정: 01, 배정완료: 02
     private String frPriceGrade; // 가격등급 A,B,C,D,E
     private String frTagNo; // 가맹점 택번호 3자리
+    private Integer frEstimateDuration; // 출고예정일
     private String frRemark; // 특이사항
     private String brName; // 배정지사명
+
+    public Integer getFrEstimateDuration() {
+        return frEstimateDuration;
+    }
 
     public String getFrRefCode() {
         return frRefCode;

@@ -54,6 +54,9 @@ public class Franchise {
     @Column(name="fr_tag_no")
     private String frTagNo; // 가맹점 택번호 3자리
 
+    @Column(name="fr_estimate_duration")
+    private Integer frEstimateDuration; // 출고예정일
+
     @Column(name="fr_remark")
     private String frRemark; // 특이사항
 
