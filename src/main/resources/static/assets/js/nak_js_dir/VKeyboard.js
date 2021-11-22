@@ -197,9 +197,12 @@ class VKeyboard {
 
     }
 
-
-    showKeyboard(elementId, subject = "기본 제목", boilerplate = []) {
-
+    /*
+    * elementId 에 지정된 객체에 맞추어 가상 키보드를 띄운다.
+    * subject : 가상키보드에 띄울 제목, boilerplate : 상용구 배열, callback :  키보드 편집 완료후 실행될 function
+    *  */
+    showKeyboard(elementId, subject = "기본 제목", boilerplate = [], callback = function(){}) {
+        this.callback = callback;
         const LOOP_BOILER  = boilerplate.length > 31 ? 32 : boilerplate.length;
 
         for (let i = 0; i < LOOP_BOILER; i++){
@@ -774,6 +777,7 @@ class VKeyboard {
         }
         this.keyboardBundle[4].style.visibility = "hidden";
         this.clearInputField();
+        this.callback();
     }
 
     /* 입력필드 전체를 encryptOrDecrypt 예외문자 html에 맞게 변환 true, 다시 일반적인 텍스트의 문자로 변환 false */

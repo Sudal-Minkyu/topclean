@@ -24,9 +24,19 @@ boilerArray[3] = ["D", "호호", "% 테스트"];
 
 /* 호출하여 목표 가상 키보드 띄우기, 0번부터 배열 순서대로 */
 function openVKeyboard(keyboardNum) {
-    vkey.showKeyboard(targetFieldID[keyboardNum], targetFieldSubject[keyboardNum], boilerArray[keyboardNum]);
+    if(keyboardNum === 1) {
+        /* 휴대폰 번호 수정 후 콜백을 이용하여 번호 유효성 검사를 한다 */
+        vkey.showKeyboard(targetFieldID[keyboardNum], targetFieldSubject[keyboardNum], boilerArray[keyboardNum],
+            function (){
+                onPhonenumChange($("#bcHp")[0]);
+            });
+    }else{
+        vkey.showKeyboard(targetFieldID[keyboardNum], targetFieldSubject[keyboardNum], boilerArray[keyboardNum]);
+    }
+
 }
 
+/* 입력된 폼 정보 저장 */
 function saveRegister() {
     const formData = new FormData(document.getElementById('userregForm'));
     const birthday = $("#bcBirthYYYY").val()+$("#bcBirthMM").val()+$("#bcBirthDD").val();
@@ -45,6 +55,7 @@ function saveRegister() {
 
 }
 
+/* 생년을 바꿀 때 나이대 자동계산 */
 function onYearChange(selectedYear) {
     const currentYear = new Date().getFullYear();
     const currentAge = currentYear - selectedYear + 1;
@@ -55,6 +66,7 @@ function onYearChange(selectedYear) {
     $("#bcAge").val(resultAger).prop("selected", true);
 }
 
+/* 전화번호 입력을 위한 유효성 검사 */
 function onPhonenumChange (element) {
     let phoneNumber = element.value;
     phoneNumber = phoneNumber.replace(/[^0-9]/g, "");
