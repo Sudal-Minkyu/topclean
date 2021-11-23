@@ -108,9 +108,9 @@ public class HeadService {
     }
 
     // 상품그룹 중분류 중복확인
-//    public Optional<ItemGroupS> findByItemGroupcodeS(String bgItemGroupcode, String bsItemGroupcodeS) {
-//        return ItemGroupSRepository.findByItemGroupcodeS(bgItemGroupcode, bsItemGroupcodeS);
-//    }
+    public Optional<ItemGroupS> findByItemGroupcodeS(String bgItemGroupcode, String bsItemGroupcodeS) {
+        return ItemGroupSRepository.findByItemGroupcodeS(bgItemGroupcode, bsItemGroupcodeS);
+    }
 
     // 상품그룹 정보
     public ItemGroupSInfo findByBsItemGroupcodeS(String bgItemGroupcode, String bsItemGroupcodeS) {

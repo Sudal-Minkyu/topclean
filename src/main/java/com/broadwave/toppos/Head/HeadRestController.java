@@ -651,13 +651,16 @@ public class HeadRestController {
         // 삭제로직 실행 : 데이터베이스에 코드사용중인 코드가 존재하면 리턴처리한다. , 데이터베이스에 코드가 존재하지 않으면 리턴처리한다.
         if(deleteList.size()!=0){
             for (ItemGroupSDto itemGroupSDto : deleteList) {
-                log.info("삭제할 중분류의 코드 : "+itemGroupSDto.getBsItemGroupcodeS());
-//                Optional<ItemGroupS> itemGroupSInfo = headService.findByItemGroupcodeS(itemGroupSDto.getBgItemGroupcode(), itemGroupSDto.getBsItemGroupcodeS());
-//                if(itemGroupSInfo.isPresent()) {
-//                    headService.findByItemGroupSDelete(itemGroupSInfo.get());
-//                }else{
-//                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "삭제 할 "+ResponseErrorCode.TP009.getDesc(), "문자", "다시 시도해주세요. 대분류, 중분류 코드 : " + itemGroupSDto.getBgItemGroupcode() + itemGroupSDto.getBgItemGroupcode()));
-//                }
+//                log.info("삭제할 중분류의 코드 : "+itemGroupSDto.getBsItemGroupcodeS());
+                Optional<ItemGroupS> itemGroupSInfo = headService.findByItemGroupcodeS(itemGroupSDto.getBgItemGroupcode(), itemGroupSDto.getBsItemGroupcodeS());
+                if(itemGroupSInfo.isPresent()) {
+                    log.info("삭제할 대상 : "+itemGroupSInfo.get());
+                    log.info("삭제할 중분류의 코드 : "+itemGroupSInfo.get().getBsItemGroupcodeS());
+                    log.info("삭제할 중분류 명칭 코드 : "+itemGroupSInfo.get().getBsName());
+                    headService.findByItemGroupSDelete(itemGroupSInfo.get());
+                }else{
+                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "삭제 할 "+ResponseErrorCode.TP009.getDesc(), "문자", "다시 시도해주세요. 대분류, 중분류 코드 : " + itemGroupSDto.getBgItemGroupcode() + itemGroupSDto.getBgItemGroupcode()));
+                }
             }
         }
 
