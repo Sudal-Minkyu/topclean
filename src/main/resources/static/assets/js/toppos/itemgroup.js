@@ -11,7 +11,9 @@ $(function() {
         const selectedBig = e.item.bgItemGroupcode;
         if(currentBig !== selectedBig && !AUIGrid.isAddedById(gridId[0], e.item._$uid)) {/* 새로 추가된 행의 경우 하위 항목이 없을테니 동작을 막는다. */
             currentBig = selectedBig;
-
+            AUIGrid.clearGridData(gridId[1]);
+            AUIGrid.clearGridData(gridId[2]);
+            setDataIntoGrid(1, gridCreateUrl[1], {bgItemGroupcode : e.item.bgItemGroupcode});
         }
     });
 
@@ -19,7 +21,8 @@ $(function() {
         const selectedMedium = e.item.sItemGroupcodeS;
         if(currentMedium !== selectedMedium && !AUIGrid.isAddedById(gridId[1], e.item._$uid)) {/* 새로 추가된 행의 경우 하위 항목이 없을테니 동작을 막는다. */
             currentMedium = selectedMedium;
-
+            AUIGrid.clearGridData(gridId[2]);
+            setDataIntoGrid(2, gridCreateUrl[2], {bsItemGroupcodeS : e.item.bsItemGroupcodeS});
         }
     });
 
@@ -327,6 +330,7 @@ function gridSave(numOfGrid) {
     }
 
     if(isExecute) {
+        console.log(data);
         const jsonString = JSON.stringify(data);
         CommonUI.ajaxjson(gridSaveUrl[numOfGrid], jsonString, function () {
             AUIGrid.removeSoftRows(gridId[numOfGrid]);
