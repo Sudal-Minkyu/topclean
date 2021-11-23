@@ -1,5 +1,7 @@
 package com.broadwave.toppos.Head.Item.Group.B;
 
+import com.broadwave.toppos.Head.Item.Group.A.ItemGroup;
+
 import java.util.List;
 
 /**
@@ -9,5 +11,8 @@ import java.util.List;
  * Remark :
  */
 public interface ItemGroupSRepositoryCustom {
-    List<ItemGroupSDto> findByItemGroupSList(String bgItemGroupcode);
+    List<ItemGroupSListDto> findByItemGroupSList(ItemGroup bgItemGroupcode);
+
+    ItemGroupSInfo findByBsItemGroupcodeS(String bgItemGroupcode, String bsItemGroupcodeS);
+
 }

@@ -1,12 +1,9 @@
 package com.broadwave.toppos.Head.Item.Group.B;
 
-import lombok.*;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * @author Minkyu
@@ -22,13 +19,8 @@ public class ItemGroupSDto {
 
     private String bsItemGroupcodeS; // 중분류코드
     private String bgItemGroupcode; // 대분류코드
-    private String bgName; // 대분류명칭
     private String bsName; // 중분류명칭
     private String bsRemark; // 특이사항
-
-    public String getBgName() {
-        return bgName;
-    }
 
     public String getBsItemGroupcodeS() {
         return bsItemGroupcodeS;

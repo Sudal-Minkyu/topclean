@@ -652,12 +652,12 @@ public class HeadRestController {
         if(deleteList.size()!=0){
             for (ItemGroupSDto itemGroupSDto : deleteList) {
                 log.info("삭제할 중분류의 코드 : "+itemGroupSDto.getBsItemGroupcodeS());
-                Optional<ItemGroupS> itemGroupSInfo = headService.findByItemGroupcodeS(itemGroupSDto.getBgItemGroupcode(), itemGroupSDto.getBsItemGroupcodeS());
-                if(itemGroupSInfo.isPresent()) {
-                    headService.findByItemGroupSDelete(itemGroupSInfo.get());
-                }else{
-                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "삭제 할 "+ResponseErrorCode.TP009.getDesc(), "문자", "다시 시도해주세요. 대분류, 중분류 코드 : " + itemGroupSDto.getBgItemGroupcode() + itemGroupSDto.getBgItemGroupcode()));
-                }
+//                Optional<ItemGroupS> itemGroupSInfo = headService.findByItemGroupcodeS(itemGroupSDto.getBgItemGroupcode(), itemGroupSDto.getBsItemGroupcodeS());
+//                if(itemGroupSInfo.isPresent()) {
+//                    headService.findByItemGroupSDelete(itemGroupSInfo.get());
+//                }else{
+//                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "삭제 할 "+ResponseErrorCode.TP009.getDesc(), "문자", "다시 시도해주세요. 대분류, 중분류 코드 : " + itemGroupSDto.getBgItemGroupcode() + itemGroupSDto.getBgItemGroupcode()));
+//                }
             }
         }
 

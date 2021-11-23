@@ -1,11 +1,9 @@
 package com.broadwave.toppos.Head.Item.Group.B;
 
+import com.broadwave.toppos.Head.Item.Group.A.ItemGroup;
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 /**
@@ -20,18 +18,18 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
+@IdClass(ItemGroupPK.class)
 @Table(name="bs_item_group_s")
 public class ItemGroupS {
 
     @Id
     @Column(name="bs_item_groupcode_s")
-    private String bsItemGroupcodeS; // 중분류코드1
+    private String bsItemGroupcodeS; // 중분류코드
 
-    @Column(name="bg_item_groupcode")
-    private String bgItemGroupcode; // 대분류코드
-
-    @Column(name="bg_name")
-    private String bgName; // 대분류명칭
+    @Id
+    @ManyToOne(targetEntity = ItemGroup.class,fetch = FetchType.EAGER)
+    @JoinColumn(name="bg_item_groupcode")
+    private ItemGroup bgItemGroupcode; // 대분류코드
 
     @Column(name="bs_name")
     private String bsName; // 중분류명칭

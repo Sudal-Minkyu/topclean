@@ -1,8 +1,6 @@
 package com.broadwave.toppos.Head.Item.Group.B;
 
 import com.broadwave.toppos.Head.Item.Group.A.ItemGroup;
-import com.broadwave.toppos.Head.Item.Group.A.ItemGroupDto;
-import com.broadwave.toppos.Head.Item.Group.A.ItemGroupRepositoryCustom;
 import com.broadwave.toppos.Head.Item.Group.A.QItemGroup;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
@@ -27,14 +25,16 @@ public class ItemGroupSRepositoryCustomImpl extends QuerydslRepositorySupport im
     }
 
     @Override
-    public List<ItemGroupSDto> findByItemGroupSList(String bgItemGroupcode) {
+    public List<ItemGroupSListDto> findByItemGroupSList(ItemGroup bgItemGroupcode) {
         QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
+        QItemGroup itemGroup = QItemGroup.itemGroup;
 
-        JPQLQuery<ItemGroupSDto> query = from(itemGroupS)
-                .select(Projections.constructor(ItemGroupSDto.class,
+        JPQLQuery<ItemGroupSListDto> query = from(itemGroupS)
+                .innerJoin(itemGroupS.bgItemGroupcode,itemGroup)
+                .select(Projections.constructor(ItemGroupSListDto.class,
                         itemGroupS.bsItemGroupcodeS,
-                        itemGroupS.bgItemGroupcode,
-                        itemGroupS.bgName,
+                        itemGroup.bgItemGroupcode,
+                        itemGroup.bgName,
                         itemGroupS.bsName,
                         itemGroupS.bsRemark
                 ));
@@ -44,5 +44,22 @@ public class ItemGroupSRepositoryCustomImpl extends QuerydslRepositorySupport im
         return query.fetch();
     }
 
+    @Override
+    public ItemGroupSInfo findByBsItemGroupcodeS(String bgItemGroupcode, String bsItemGroupcodeS) {
+        QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
+
+        JPQLQuery<ItemGroupSInfo> query = from(itemGroupS)
+                .select(Projections.constructor(ItemGroupSInfo.class,
+                        itemGroupS.bsItemGroupcodeS,
+                        itemGroupS.bgItemGroupcode.bgItemGroupcode,
+                        itemGroupS.insert_id,
+                        itemGroupS.insertDateTime
+                ));
+
+        query.where(itemGroupS.bgItemGroupcode.bgItemGroupcode.eq(bgItemGroupcode));
+        query.where(itemGroupS.bsItemGroupcodeS.eq(bsItemGroupcodeS));
+
+        return query.fetchOne();
+    }
 
 }
