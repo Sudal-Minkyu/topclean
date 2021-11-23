@@ -1,4 +1,3 @@
-
 $(function() {
     /* 배열내의 각 설정만 넣어 빈 그리드 생성 */
     createGrids();
@@ -18,7 +17,7 @@ $(function() {
 
 /* datepicker를 적용시킬 대상들의 dom id들 */
 const datePickerTargetIds = [
-    "tempPriceApplyDate", "tempUploadDate"
+    "s_tempPriceApplyDate", "tempUploadDate"
 ];
 
 /* 그리드 생성과 운영에 관한 중요 변수들. grid라는 이름으로 시작하도록 통일했다. */
@@ -142,14 +141,70 @@ function applyPrice() {
     regPriceClose();
 }
 
-function readSelected() {
+/* 상품 그룹 가격 페이지 필터링 */
+function filterItems() {
+    AUIGrid.clearFilterAll(gridID[0]);
 
+    const s_bgItemGroupcode = $("#s_bgItemGroupcode").val();
+    const s_biItemcode = $("#s_biItemcode").val();
+    const s_biName = $("#s_biName").val();
+    const s_highClassYn = $("#s_highClassYn").val();
+    const s_tempPriceApplyDate = $("#s_tempPriceApplyDate").val();
+
+    if(s_bgItemGroupcode !== "") {
+        AUIGrid.setFilter(gridID[0], "bgItemGroupcode", function (dataField, value, item) {
+            return s_bgItemGroupcode === value;
+        });
+    }
+    if(s_biItemcode !== "") {
+        AUIGrid.setFilter(gridID[0], "biItemcode", function (dataField, value, item) {
+            return s_biItemcode === value;
+        });
+    }
+    if(s_biName !== "") {
+        AUIGrid.setFilter(gridID[0], "biName", function (dataField, value, item) {
+            return new RegExp(s_biName).test(value);
+        });
+    }
+    if(s_highClassYn !== "") {
+        AUIGrid.setFilter(gridID[0], "highClassYn", function (dataField, value, item) {
+            return new RegExp(s_highClassYn).test(value);
+        });
+    }
+    if(s_tempPriceApplyDate !== "") {
+        AUIGrid.setFilter(gridID[0], "tempPriceApplyDate", function (dataField, value, item) {
+            return s_tempPriceApplyDate === value;
+        });
+    }
 }
 
-function removeSelected() {
+function filterReset() {
+    AUIGrid.clearFilterAll(gridID[0]);
+}
 
+function removeRow() {
+    if(AUIGrid.getCheckedRowItems(gridId[0]).length){
+        AUIGrid.removeCheckedRows(gridId[0]);
+    }else{
+        AUIGrid.removeRow(gridId[0], "selectedIndex");
+    }
 }
 
 function saveRegPrice() {
+    // 추가된 행 아이템들(배열)
+    // const addedRowItems = AUIGrid.getAddedRowItems(gridTargetDiv[numOfGrid]);
+
+    // 수정된 행 아이템들(배열)
+    const updatedRowItems = AUIGrid.getEditedRowItems(gridTargetDiv[numOfGrid]);
+
+    // 삭제된 행 아이템들(배열)
+    const deletedRowItems = AUIGrid.getRemovedItems(gridTargetDiv[numOfGrid]);
+
+    // 서버로 보낼 데이터 작성
+    const data = {
+        //"add" : addedRowItems,
+        "update" : updatedRowItems,
+        "delete" : deletedRowItems,
+    };
 
 }

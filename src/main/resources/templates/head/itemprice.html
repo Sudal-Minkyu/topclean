@@ -18,24 +18,25 @@
 	<h1>상품그룹가격 페이지</h1>
 	<div>
 		대분류
-		<select>
+		<select id="s_bgItemGroupcode">
 			<option>전체</option>
 			<option></option>
 		</select>
 		상품코드
-		<input type="text">
+		<input type="text" id="s_biItemcode">
 		상품명
-		<input type="text">
+		<input type="text" id="s_biName">
 		명품여부
-		<select>
+		<select id="s_highClassYn">
 			<option>전체</option>
 			<option value="Y">Y</option>
 			<option value="N">N</option>
 		</select>
 		가격적용일
-		<input type="text" id="tempPriceApplyDate" readonly>
-		<button type="button" onclick="readSelected()">조회</button>
-		<button type="button" onclick="removeSelected()">선택삭제</button>
+		<input type="text" id="s_tempPriceApplyDate" readonly>
+		<button type="button" onclick="filterItems()">검색</button>
+		<button type="button" onclick="filterReset()">초기화</button>
+		<button type="button" onclick="removeRow()">선택삭제</button>
 	</div>
 	<div id="grid_main"></div>
 	<div>
