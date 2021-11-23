@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="ko"
-	  xmlns:th="http://www.thymeleaf.org"
-	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
-	  layout:decorate ="~{layout/default}">
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
+      layout:decorate="~{layout/default}">
 
 <!-- 사용자 CSS 추가 -->
 <th:block layout:fragment="css">
@@ -12,20 +12,57 @@
 
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
+    <script src="/assets/js/toppos/CATPayment.js"></script>
 
-	<script type="text/javascript">
 
-		$(function() {
+    <script type="text/javascript">
 
-		});
+        $(function () {
 
-	</script>
+        });
+
+        function paymentCard() {
+
+            $('#payStatus').show();
+
+            CAT.CatCredit("홍길동", function (res) {
+
+                //alert(res);
+                $('#payStatus').hide();
+            });
+        }
+
+        function paymentPrint() {
+
+            CAT.CatPrint("홍길동");
+        }
+    </script>
 </th:block>
 
 <div layout:fragment="content" class="content padding-zero content--main">
 
-	<h1>결제 테스트 페이지</h1>
-	<br>
-	<input type="button" value="로그아웃" onclick="logout()" />
+    <h1>결제 테스트 페이지</h1>
+    <br>
+    <div>
+        <input type="button" value="결제테스트" onclick="paymentCard();"/>
+        <input type="button" value="인쇄테스트" onclick="paymentPrint();"/>
+    </div>
+    <div>
+        <input type="button" value="로그아웃" onclick="logout()"/>
+    </div>
+
+    <div id ="payStatus" style="position: absolute; left: 25px; top: 100px; height: 300px;width: 300px;	background-color: #99ccff; display: none;" >
+        결제중 창이 닫힐때까지 카드를 빼지마세요
+    </div>
+    <table>
+        <tr>
+            <td align="center" colspan="4"><font size="4"><b>전문</b></font></td>
+        </tr>
+        <tr>
+            <td align="right">요청전문:</td>
+            <td colspan="3"><input id="taRequest" style="width:100%;"></input></td>
+        </tr>
+    </table>
+
 </div>
 </html>
