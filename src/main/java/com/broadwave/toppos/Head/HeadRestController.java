@@ -10,10 +10,8 @@ import com.broadwave.toppos.Head.Franohise.FranchiseListDto;
 import com.broadwave.toppos.Head.Franohise.FranchiseMapperDto;
 import com.broadwave.toppos.Head.Item.Group.A.ItemGroup;
 import com.broadwave.toppos.Head.Item.Group.A.ItemGroupDto;
-import com.broadwave.toppos.Head.Item.Group.B.ItemGroupS;
-import com.broadwave.toppos.Head.Item.Group.B.ItemGroupSDto;
 import com.broadwave.toppos.Head.Item.Group.A.ItemGroupSet;
-import com.broadwave.toppos.Head.Item.Group.B.ItemGroupSSet;
+import com.broadwave.toppos.Head.Item.Group.B.*;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.common.AjaxResponse;
 import com.broadwave.toppos.common.CommonUtils;
@@ -487,7 +485,6 @@ public class HeadRestController {
         return ResponseEntity.ok(res.success());
     }
 
-
     // 상품그룹 대분류 호출 API
     @PostMapping("itemGroupA")
     public ResponseEntity<Map<String,Object>> itemGroupA(@RequestBody ItemGroupSet itemGroupSet, HttpServletRequest request){
@@ -507,7 +504,7 @@ public class HeadRestController {
         // 저장로직 실행 : 데이터베이스에 같은 코드가 존재하면 리턴처리한다.
         for (ItemGroupDto itemGroupDto : addList) {
             Optional<ItemGroup> optionalItemGroup = headService.findByBgItemGroupcode(itemGroupDto.getBgItemGroupcode());
-            if (optionalItemGroup.isPresent()) {
+            if (!optionalItemGroup.isPresent()) {
                 return ResponseEntity.ok(res.fail(ResponseErrorCode.TP003.getCode(), ResponseErrorCode.TP003.getDesc(), "문자", "존재하는 코드 : " + itemGroupDto.getBgItemGroupcode()));
             }
         }
@@ -537,7 +534,7 @@ public class HeadRestController {
                 itemGroup.setModifyDateTime(LocalDateTime.now());
                 headService.itemGroupSave(itemGroup);
             }else{
-                return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "수정"+ResponseErrorCode.TP009.getDesc(), "문자", "다시 시도해주세요. 코드 : " + itemGroupDto.getBgItemGroupcode()));
+                return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "수정 할 "+ResponseErrorCode.TP009.getDesc(), "문자", "다시 시도해주세요. 코드 : " + itemGroupDto.getBgItemGroupcode()));
             }
         }
 
@@ -549,12 +546,11 @@ public class HeadRestController {
             if(optionalItemGroup.isPresent()) {
                 headService.findByItemGroupDelete(optionalItemGroup.get());
             }else{
-                return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "삭제"+ResponseErrorCode.TP009.getDesc(), "문자", "다시 시도해주세요. 코드 : " + itemGroupDto.getBgItemGroupcode()));
+                return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "삭제 할 "+ResponseErrorCode.TP009.getDesc(), "문자", "다시 시도해주세요. 코드 : " + itemGroupDto.getBgItemGroupcode()));
             }
         }
 
         return ResponseEntity.ok(res.success());
-
     }
 
     // 상품그룹 대분류 리스트 호출 API
@@ -605,59 +601,67 @@ public class HeadRestController {
 //        log.info("수정 리스트 : "+updateList);
 //        log.info("삭제 리스트 : "+deleteList);
 
-        // 저장로직 실행 : 데이터베이스에 같은 코드가 존재하면 리턴처리한다.
-        for (ItemGroupSDto itemGroupSDto : addList) {
-            Optional<ItemGroupS> optionalItemGroupS = headService.findByBsItemGroupcodeS(itemGroupSDto.getBgItemGroupcode(), itemGroupSDto.getBsItemGroupcodeS());
-            if (optionalItemGroupS.isPresent()) {
-                return ResponseEntity.ok(res.fail(ResponseErrorCode.TP003.getCode(), ResponseErrorCode.TP003.getDesc(), "문자", "다시 시도해주세요. 대분류, 중분류 코드 : " + itemGroupSDto.getBgItemGroupcode() + itemGroupSDto.getBsItemGroupcodeS()));
-            }
-        }
         // 저장 시작.
-        for (ItemGroupSDto itemGroupSDto : addList) {
-            log.info("같은 코드 존재하지 않음 신규생성");
-//            log.info("itemGroupSDto : "+itemGroupSDto.getBsItemGroupcodeS());
-            ItemGroupS itemGroupS = modelMapper.map(itemGroupSDto, ItemGroupS.class);
-            itemGroupS.setInsert_id(login_id);
-            itemGroupS.setInsertDateTime(LocalDateTime.now());
-//            log.info("itemGroupS : " +itemGroupS);
-            headService.itemGroupSSave(itemGroupS);
-        }
-
-        // 수정로직 실행 : 데이터베이스에 코드가 존재하지 않으면 리턴처리한다.
-        for (ItemGroupSDto itemGroupSDto : updateList) {
-            log.info("수정할 중분류의 코드 : "+itemGroupSDto.getBsItemGroupcodeS());
-            Optional<ItemGroupS> optionalItemGroupS = headService.findByBsItemGroupcodeS(itemGroupSDto.getBgItemGroupcode() ,itemGroupSDto.getBsItemGroupcodeS());
-            if(optionalItemGroupS.isPresent()) {
-                ItemGroupS itemGroupS = new ItemGroupS();
-                itemGroupS.setBgItemGroupcode(optionalItemGroupS.get().getBgItemGroupcode());
-                itemGroupS.setBgItemGroupcode(optionalItemGroupS.get().getBgName());
-                itemGroupS.setBsItemGroupcodeS(optionalItemGroupS.get().getBsItemGroupcodeS());
-                itemGroupS.setBsName(itemGroupSDto.getBsName());
-                itemGroupS.setBsRemark(itemGroupSDto.getBsRemark());
-                itemGroupS.setInsert_id(optionalItemGroupS.get().getInsert_id());
-                itemGroupS.setInsertDateTime(optionalItemGroupS.get().getInsertDateTime());
-                itemGroupS.setModify_id(login_id);
-                itemGroupS.setModifyDateTime(LocalDateTime.now());
-                headService.itemGroupSSave(itemGroupS);
+        if(addList.size()!=0){
+            Optional<ItemGroup> optionalItemGroup = headService.findByBgItemGroupcode(addList.get(0).getBgItemGroupcode());
+            if (!optionalItemGroup.isPresent()) {
+                return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "저장 할 대분류 " + ResponseErrorCode.TP009.getDesc(), null, null));
             }else{
-                return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "수정"+ResponseErrorCode.TP009.getDesc(), "문자", "다시 시도해주세요. 대분류, 중분류 코드 : " + itemGroupSDto.getBgItemGroupcode() + itemGroupSDto.getBsItemGroupcodeS()));
+                for (ItemGroupSDto itemGroupSDto : addList) {
+//                    log.info("같은 코드 존재하지 않음 신규생성");
+                    log.info("itemGroupSDto : "+itemGroupSDto.getBsItemGroupcodeS());
+                    ItemGroupS itemGroupS = modelMapper.map(itemGroupSDto, ItemGroupS.class);
+                    itemGroupS.setBgItemGroupcode(optionalItemGroup.get());
+                    itemGroupS.setInsert_id(login_id);
+                    itemGroupS.setInsertDateTime(LocalDateTime.now());
+//                    log.info("itemGroupS : " +itemGroupS);
+                    headService.itemGroupSSave(itemGroupS);
+                }
             }
         }
 
+        // 수정 시작.
+        if(updateList.size()!=0){
+            Optional<ItemGroup> optionalItemGroup = headService.findByBgItemGroupcode(updateList.get(0).getBgItemGroupcode());
+            if (!optionalItemGroup.isPresent()) {
+                return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "수정 할 대분류 " + ResponseErrorCode.TP009.getDesc(), null, null));
+            }else{
+                ItemGroupSInfo itemGroupSInfo = headService.findByBsItemGroupcodeS(updateList.get(0).getBgItemGroupcode(), updateList.get(0).getBsItemGroupcodeS());
+                if(itemGroupSInfo != null) {
+                    log.info("수정 할 중분류 코드 : "+itemGroupSInfo.getBsItemGroupcodeS());
+                    for (ItemGroupSDto itemGroupSDto : updateList) {
+                        ItemGroupS itemGroupS = new ItemGroupS();
+                        itemGroupS.setBsItemGroupcodeS(itemGroupSInfo.getBsItemGroupcodeS());
+                        itemGroupS.setBgItemGroupcode(optionalItemGroup.get());
+                        itemGroupS.setBsName(itemGroupSDto.getBsName());
+                        itemGroupS.setBsRemark(itemGroupSDto.getBsRemark());
+                        itemGroupS.setInsert_id(itemGroupSInfo.getInsert_id());
+                        itemGroupS.setInsertDateTime(itemGroupSInfo.getInsertDateTime());
+                        itemGroupS.setModify_id(login_id);
+                        itemGroupS.setModifyDateTime(LocalDateTime.now());
+                        log.info("itemGroupS : " +itemGroupS);
+                        headService.itemGroupSSave(itemGroupS);
+                    }
+                }else{
+                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "수정 할 중분류 "+ResponseErrorCode.TP009.getDesc(), "문자", "다시 시도해주세요. 대분류, 중분류 코드 : " + updateList.get(0).getBgItemGroupcode()+", "+updateList.get(0).getBsItemGroupcodeS()));
+                }
+            }
+        }
 
         // 삭제로직 실행 : 데이터베이스에 코드사용중인 코드가 존재하면 리턴처리한다. , 데이터베이스에 코드가 존재하지 않으면 리턴처리한다.
-        for (ItemGroupSDto itemGroupSDto : deleteList) {
-            log.info("삭제할 중분류의 코드 : "+itemGroupSDto.getBsItemGroupcodeS());
-            Optional<ItemGroupS> optionalItemGroupS = headService.findByBsItemGroupcodeS(itemGroupSDto.getBgItemGroupcode() ,itemGroupSDto.getBsItemGroupcodeS());
-            if(optionalItemGroupS.isPresent()) {
-                headService.findByItemGroupSDelete(optionalItemGroupS.get());
-            }else{
-                return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "삭제"+ResponseErrorCode.TP009.getDesc(), "문자", "다시 시도해주세요. 대분류, 중분류 코드 : " + itemGroupSDto.getBgItemGroupcode() + itemGroupSDto.getBgItemGroupcode()));
+        if(deleteList.size()!=0){
+            for (ItemGroupSDto itemGroupSDto : deleteList) {
+                log.info("삭제할 중분류의 코드 : "+itemGroupSDto.getBsItemGroupcodeS());
+                Optional<ItemGroupS> itemGroupSInfo = headService.findByItemGroupcodeS(itemGroupSDto.getBgItemGroupcode(), itemGroupSDto.getBsItemGroupcodeS());
+                if(itemGroupSInfo.isPresent()) {
+                    headService.findByItemGroupSDelete(itemGroupSInfo.get());
+                }else{
+                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "삭제 할 "+ResponseErrorCode.TP009.getDesc(), "문자", "다시 시도해주세요. 대분류, 중분류 코드 : " + itemGroupSDto.getBgItemGroupcode() + itemGroupSDto.getBgItemGroupcode()));
+                }
             }
         }
 
         return ResponseEntity.ok(res.success());
-
     }
 
     // 상품그룹 중분류 리스트 호출 API
@@ -671,24 +675,28 @@ public class HeadRestController {
         List<HashMap<String,Object>> itemGroupSListData = new ArrayList<>();
         HashMap<String,Object> itemGroupSInfo;
 
-        List<ItemGroupSDto> itemGroupSListDtos = headService.findByItemGroupSList(bgItemGroupcode);
-        log.info("itemGroupSListDtos : "+itemGroupSListDtos);
+        Optional<ItemGroup> optionalItemGroup = headService.findByBgItemGroupcode(bgItemGroupcode);
+        if (!optionalItemGroup.isPresent()) {
+            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "조회 할 "+ResponseErrorCode.TP003.getDesc(), null, null));
+        }else{
+            List<ItemGroupSListDto> itemGroupSListDtos = headService.findByItemGroupSList(optionalItemGroup.get());
+//            log.info("itemGroupSListDtos : "+itemGroupSListDtos);
+            for (ItemGroupSListDto itemGroupSListDto : itemGroupSListDtos) {
 
-        for (ItemGroupSDto itemGroupSDto : itemGroupSListDtos) {
+                itemGroupSInfo = new HashMap<>();
 
-            itemGroupSInfo = new HashMap<>();
+                itemGroupSInfo.put("bgItemGroupcode", itemGroupSListDto.getBgItemGroupcode());
+                itemGroupSInfo.put("bsItemGroupcodeS", itemGroupSListDto.getBsItemGroupcodeS());
+                itemGroupSInfo.put("bgName", itemGroupSListDto.getBgName());
+                itemGroupSInfo.put("bsName", itemGroupSListDto.getBsName());
+                itemGroupSInfo.put("bsRemark", itemGroupSListDto.getBsRemark());
 
-            itemGroupSInfo.put("bgItemGroupcode", itemGroupSDto.getBgItemGroupcode());
-            itemGroupSInfo.put("bsItemGroupcodeS", itemGroupSDto.getBsItemGroupcodeS());
-            itemGroupSInfo.put("bgName", itemGroupSDto.getBgName());
-            itemGroupSInfo.put("bsName", itemGroupSDto.getBsName());
-            itemGroupSInfo.put("bsRemark", itemGroupSDto.getBsRemark());
-
-            itemGroupSListData.add(itemGroupSInfo);
-        }
+                itemGroupSListData.add(itemGroupSInfo);
+            }
 
 //        log.info("상품그룹 중분류 리스트 : "+itemGroupSListData);
-        data.put("gridListData",itemGroupSListData);
+            data.put("gridListData",itemGroupSListData);
+        }
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }

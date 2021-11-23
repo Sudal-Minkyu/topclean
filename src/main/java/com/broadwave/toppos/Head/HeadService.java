@@ -9,10 +9,7 @@ import com.broadwave.toppos.Head.Item.Group.A.ItemGroup;
 import com.broadwave.toppos.Head.Item.Group.A.ItemGroupDto;
 import com.broadwave.toppos.Head.Item.Group.A.ItemGroupRepository;
 import com.broadwave.toppos.Head.Item.Group.A.ItemGroupRepositoryCustom;
-import com.broadwave.toppos.Head.Item.Group.B.ItemGroupS;
-import com.broadwave.toppos.Head.Item.Group.B.ItemGroupSDto;
-import com.broadwave.toppos.Head.Item.Group.B.ItemGroupSRepository;
-import com.broadwave.toppos.Head.Item.Group.B.ItemGroupSRepositoryCustom;
+import com.broadwave.toppos.Head.Item.Group.B.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -45,7 +42,7 @@ public class HeadService {
         this.itemGroupSRepositoryCustom = itemGroupSRepositoryCustom;
     }
 
-    // // // // // // // // // // // // // // 가맹점, 지사 등록 매칭 페이지 // // // // // // // // // // // // 
+    // // // // // // // // // // // // // // 가맹점, 지사 등록 매칭 페이지 // // // // // // // // // // // // //
     // 가맹점 저장
     public Franchise franchiseSave(Franchise franchise){
         franchiseRepository.save(franchise);
@@ -111,21 +108,23 @@ public class HeadService {
     }
 
     // 상품그룹 중분류 중복확인
-    public Optional<ItemGroupS> findByBsItemGroupcodeS(String bgItemGroupcode, String bsItemGroupcodeS) {
-        return ItemGroupSRepository.findByBsItemGroupcodeS(bgItemGroupcode, bsItemGroupcodeS);
+    public Optional<ItemGroupS> findByItemGroupcodeS(String bgItemGroupcode, String bsItemGroupcodeS) {
+        return ItemGroupSRepository.findByItemGroupcodeS(bgItemGroupcode, bsItemGroupcodeS);
+    }
+
+    // 상품그룹 정보
+    public ItemGroupSInfo findByBsItemGroupcodeS(String bgItemGroupcode, String bsItemGroupcodeS) {
+        return itemGroupSRepositoryCustom.findByBsItemGroupcodeS(bgItemGroupcode, bsItemGroupcodeS);
     }
 
     // 상품그룹 중분류 리스트 호출
-    public List<ItemGroupSDto> findByItemGroupSList(String bgItemGroupcode) {
+    public List<ItemGroupSListDto> findByItemGroupSList(ItemGroup bgItemGroupcode) {
         return itemGroupSRepositoryCustom.findByItemGroupSList(bgItemGroupcode);
     }
 
-    // 상품그룹 중분류 삭제
     public void findByItemGroupSDelete(ItemGroupS itemGroupS) {
         ItemGroupSRepository.delete(itemGroupS);
     }
-
-
 
 
 
