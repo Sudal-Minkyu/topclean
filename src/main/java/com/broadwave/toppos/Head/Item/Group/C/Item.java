@@ -1,4 +1,4 @@
-package com.broadwave.toppos.Head.Item.Group.A;
+package com.broadwave.toppos.Head.Item.Group.C;
 
 import lombok.*;
 
@@ -10,9 +10,9 @@ import java.time.LocalDateTime;
 
 /**
  * @author Minkyu
- * Date : 2021-11-17
+ * Date : 2021-11-22
  * Time :
- * Remark : Toppos 상품그룹관리 대분류 테이블
+ * Remark : Toppos 상품그룹관리 소재 상품 테이블
  */
 @Entity
 @Data
@@ -20,18 +20,27 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-@Table(name="bs_item_group")
-public class ItemGroup {
+@Table(name="bs_item")
+public class Item {
 
     @Id
+    @Column(name="bi_itemcode")
+    private String biItemCode; // 상품코드
+
     @Column(name="bg_item_groupcode")
     private String bgItemGroupcode; // 대분류코드
 
-    @Column(name="bg_name")
-    private String bgName; // 대문류명칭
+    @Column(name="bs_item_groupcode_s")
+    private String bsItemGroupcodeS; // 중분류코드
 
-    @Column(name="bg_remark")
-    private String bgRemark; // 특이사항
+    @Column(name="bi_item_sequence")
+    private String biSequence; // 상품순번
+
+    @Column(name="bi_name")
+    private String biName; // 상품명
+
+    @Column(name="bi_remark")
+    private String biRemark; // 특이사항
 
     @Column(name="insert_id")
     private String insert_id;

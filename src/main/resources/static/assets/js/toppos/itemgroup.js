@@ -95,12 +95,12 @@ gridTargetDiv = [
 
 /* 그리드를 받아올 때 쓰이는 api 배열 */
 gridCreateUrl = [
-    "/api/head/itemGroupAList", "/api/head/", "/api/head/"
+    "/api/head/itemGroupAList", "/api/head/itemGroupBList", "/api/head/"
 ];
 
 /* 그리드를 저장할 때 쓰이는 api 배열 */
 gridSaveUrl = [
-    "/api/head/itemGroupA", "/api/head/", "/api/head/"
+    "/api/head/itemGroupA", "/api/head/itemGroupB", "/api/head/"
 ];
 
 /* 0번 그리드의 레이아웃 */

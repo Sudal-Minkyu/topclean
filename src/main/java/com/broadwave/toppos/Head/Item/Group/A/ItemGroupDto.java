@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
  * @author Minkyu
  * Date : 2021-11-17
  * Time :
- * Remark : Toppos 상품그룹관리 Dto
+ * Remark : Toppos 상품그룹관리 대분류 Dto
  */
 @Setter
 @Builder
@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class ItemGroupDto {
 
-    private String bgItemGroupcode; // 대문류코드
+    private String bgItemGroupcode; // 대분류코드
 
     private String bgName; // 대문류명칭
 
