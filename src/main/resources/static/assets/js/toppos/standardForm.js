@@ -22,6 +22,7 @@ let gridData = [];
 let gridColumnLayout = [];
 let gridProp = [];
 let gridCreateUrl = [];
+let gridSaveUrl = [];
 
 /* 그리드를 뿌릴 대상 div의 id들 */
 gridTargetDiv = [
@@ -30,6 +31,11 @@ gridTargetDiv = [
 
 /* 그리드를 받아올 때 쓰이는 api 배열 */
 gridCreateUrl = [
+    "/api/a", "/api/b"
+]
+
+/* 그리드를 저장할 때 쓰이는 api 배열 */
+gridSaveUrl = [
     "/api/a", "/api/b"
 ]
 

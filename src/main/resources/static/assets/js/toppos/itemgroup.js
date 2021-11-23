@@ -8,21 +8,21 @@ $(function() {
 
     /* 각 그리드 내의 셀 클릭시 1번 그리드에 해당 대분류에 따른 중분류 리스트를 띄운다. */
     AUIGrid.bind(gridId[0], "cellClick", function (e) {
-        const selectedBig = e.item.bgItemGroupcode;
+        const selectedBig = {bgItemGroupcode : e.item.bgItemGroupcode};
         if(currentBig !== selectedBig && !AUIGrid.isAddedById(gridId[0], e.item._$uid)) {/* 새로 추가된 행의 경우 하위 항목이 없을테니 동작을 막는다. */
             currentBig = selectedBig;
             AUIGrid.clearGridData(gridId[1]);
             AUIGrid.clearGridData(gridId[2]);
-            setDataIntoGrid(1, gridCreateUrl[1], {bgItemGroupcode : e.item.bgItemGroupcode});
+            setDataIntoGrid(1, gridCreateUrl[1], currentBig);
         }
     });
 
     AUIGrid.bind(gridId[1], "cellClick", function (e) {
-        const selectedMedium = e.item.sItemGroupcodeS;
+        const selectedMedium = {bsItemGroupcodeS : e.item.bsItemGroupcodeS};
         if(currentMedium !== selectedMedium && !AUIGrid.isAddedById(gridId[1], e.item._$uid)) {/* 새로 추가된 행의 경우 하위 항목이 없을테니 동작을 막는다. */
             currentMedium = selectedMedium;
             AUIGrid.clearGridData(gridId[2]);
-            setDataIntoGrid(2, gridCreateUrl[2], {bsItemGroupcodeS : e.item.bsItemGroupcodeS});
+            setDataIntoGrid(2, gridCreateUrl[2], currentMedium);
         }
     });
 
@@ -336,6 +336,24 @@ function gridSave(numOfGrid) {
             AUIGrid.removeSoftRows(gridId[numOfGrid]);
             AUIGrid.resetUpdatedItems(gridId[numOfGrid]);
         });
+        switch (numOfGrid) {
+            case 0 :
+                if(currentBig !== undefined) {
+                    AUIGrid.clearGridData(gridId[1]);
+                    setDataIntoGrid(1, gridCreateUrl[1], currentBig);
+                }
+                if(currentMedium !== undefined) {
+                    AUIGrid.clearGridData(gridId[2]);
+                    setDataIntoGrid(2, gridCreateUrl[2], currentMedium);
+                }
+                break;
+            case 1 :
+                if(currentMedium !== undefined) {
+                    AUIGrid.clearGridData(gridId[2]);
+                    setDataIntoGrid(2, gridCreateUrl[2], currentMedium);
+                }
+                break;
+        }
     }
 }
 

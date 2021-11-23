@@ -72,7 +72,7 @@ columnLayout[0] = [
 /* 0번 그리드의 프로퍼티(옵션) */
 gridOption[0] = {
     editable : false,
-    selectionMode : "multipleCells",
+    selectionMode : "singleRow",
     noDataMessage : "출력할 데이터가 없습니다.",
     rowNumHeaderText : "순번",
     enableColumnResize : false,
@@ -103,7 +103,7 @@ columnLayout[1] = [
 
 gridOption[1] = {
     editable : false,
-    selectionMode : "multipleCells",
+    selectionMode : "singleRow",
     noDataMessage : "출력할 데이터가 없습니다.",
     rowNumHeaderText : "순번",
     enableColumnResize : false,
@@ -133,7 +133,7 @@ columnLayout[2] = [
 
 gridOption[2] = {
     editable : false,
-    selectionMode : "multipleCells",
+    selectionMode : "singleRow",
     noDataMessage : "출력할 데이터가 없습니다.",
     rowNumHeaderText : "순번",
     enableColumnResize : false

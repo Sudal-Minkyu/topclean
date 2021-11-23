@@ -131,7 +131,8 @@ gridProp = {
     noDataMessage : "출력할 데이터가 없습니다.",
     enableColumnResize : false,
     showRowNumColumn : false,
-    enableFilter : false
+    enableFilter : false,
+    enableSorting : false,
 };
 
 

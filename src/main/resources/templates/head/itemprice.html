@@ -11,11 +11,79 @@
 
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
-
+	<script src="/assets/js/toppos/itemprice.js"></script>
 </th:block>
 
 <div layout:fragment="content" class="content padding-zero content--main">
 	<h1>상품그룹가격 페이지</h1>
+	<div>
+		대분류
+		<select>
+			<option>전체</option>
+			<option></option>
+		</select>
+		상품코드
+		<input type="text">
+		상품명
+		<input type="text">
+		명품여부
+		<select>
+			<option>전체</option>
+			<option value="Y">Y</option>
+			<option value="N">N</option>
+		</select>
+		가격적용일
+		<input type="text" id="tempPriceApplyDate" readonly>
+		<button type="button" onclick="readSelected()">조회</button>
+		<button type="button" onclick="removeSelected()">선택삭제</button>
+	</div>
+	<div id="grid_main"></div>
+	<div>
+		<button type="button" onclick="saveRegPrice()">저장</button>
+		<button type="button" onclick="regPricePop()">일괄업로드</button>
+	</div>
 
+	<!-- 가격 일괄 등록 팝업 -->
+	<div class="l-popup" id="regPrice_popup">
+		<div class="l-popup__container">
+			<div class="l-popup__head">
+				<h3 class="l-popup__heading">가격 일괄 등록</h3>
+			</div>
+			<div class="l-popup__content">
+				<div class="l-popup__section">
+					<table class="c-table c-table--non-border">
+						<colgroup>
+							<col style="width: 80px;"/>
+							<col/>
+							<col style="width: 80px;"/>
+							<col/>
+							<col style="width: 80px;"/>
+							<col/>
+							<col style="width: 60px;"/>
+						</colgroup>
+						<tbody>
+							<div>
+								업로드데이터 가격적용일
+								<input type="text" id="tempUploadDate" readonly>
+							</div>
+							<div>
+								업로드파일 선택
+								<input type="text" id="fileName" readonly>
+								<button type="button" onclick="$('#fileExplorer').trigger('click')">파일선택</button>
+								<input type="file" id="fileExplorer" accept="application/vnd.ms-excel,
+										application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+									   	onchange="fileSelected()" hidden>
+							</div>
+							<div>
+								<button type="button" onclick="applyPrice()">가격적용하기</button>
+								<button type="button" onclick="regPriceClose()">취소</button>
+							</div>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<a href="#" onclick="regPriceClose()" class="l-popup__close">팝업닫기</a>
+		</div>
+	</div>
 </div>
 </html>
