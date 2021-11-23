@@ -151,8 +151,8 @@ gridColumnLayout[1] = [
         headerText: "중분류 코드",
         editRenderer: { // 입력된 코드의 각종 유효성 검사
             type: "InputEditRenderer",
-            maxlength: 3,
-            validator: codeValidator,
+            maxlength: 1,
+            validator: codeValidatorTwo,
         },
     }, {
         dataField: "bsName",
@@ -201,7 +201,7 @@ gridColumnLayout[2] = [
             validator: codeValidator,
         },
     }, {
-        dataField: "bgItemSequence",
+        dataField: "biitemSequence",
         headerText: "상품순번",
     }, {
         dataField: "biName",
@@ -339,7 +339,20 @@ function codeValidator(oldValue, newValue, item, dataField, fromClipboard) {
     let isValid = false;
     let failMessage = "";
     if(newValue.length < 3) {
-        failMessage = "3자를 입력해 주세요";
+        failMessage = "세글자를 입력해 주세요";
+    }else if(/[^a-zA-Z0-9]/.test(newValue)) {
+        failMessage = "영문자나 숫자로 구성하여 입력해 주세요";
+    }else{
+        isValid = true;
+    }
+    return {"validate": isValid, "message": failMessage};
+}
+
+function codeValidatorTwo(oldValue, newValue, item, dataField, fromClipboard) {
+    let isValid = false;
+    let failMessage = "";
+    if(newValue.length < 1) {
+        failMessage = "한글자를 입력해 주세요";
     }else if(/[^a-zA-Z0-9]/.test(newValue)) {
         failMessage = "영문자나 숫자로 구성하여 입력해 주세요";
     }else{
