@@ -25,7 +25,7 @@ public class ItemGroupS {
 
     @Id
     @Column(name="bs_item_groupcode_s")
-    private String bsItemGroupcodeS; // 중분류코드
+    private String bsItemGroupcodeS; // 중분류코드1
 
     @Column(name="bg_item_groupcode")
     private String bgItemGroupcode; // 대분류코드
