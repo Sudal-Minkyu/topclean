@@ -17,14 +17,17 @@ $(function() {
         }
     });
 
+    // 최종삼품 API 작성후 주석해제
+    /*
     AUIGrid.bind(gridId[1], "cellClick", function (e) {
         const selectedMedium = {bsItemGroupcodeS : e.item.bsItemGroupcodeS};
-        if(currentMedium !== selectedMedium && !AUIGrid.isAddedById(gridId[1], e.item._$uid)) {/* 새로 추가된 행의 경우 하위 항목이 없을테니 동작을 막는다. */
+        if(currentMedium !== selectedMedium && !AUIGrid.isAddedById(gridId[1], e.item._$uid)) {/!* 새로 추가된 행의 경우 하위 항목이 없을테니 동작을 막는다. *!/
             currentMedium = selectedMedium;
             AUIGrid.clearGridData(gridId[2]);
             setDataIntoGrid(2, gridCreateUrl[2], currentMedium);
         }
     });
+    */
 
     /* 각 그리드 입력을 시작할 때 새로 추가된 코드가 아니면서, 값이 존재하는 코드를 편집하려 하면 편집을 막고 경고를 띄운다. */
     AUIGrid.bind(gridId[0], "cellEditBegin", function (e) {
@@ -39,7 +42,7 @@ $(function() {
     AUIGrid.bind(gridId[1], "cellEditBegin", function (e) {
         if(e.dataField === "bsItemGroupcodeS" && e.value !== "" && !AUIGrid.isAddedById(gridId[1], e.item._$uid)) {
             setTimeout(function (){
-                AUIGrid.showToastMessage(gridId[0], e.rowIndex, e.columnIndex, "입력된 중분류 코드는 수정할 수 없습니다.");
+                AUIGrid.showToastMessage(gridId[1], e.rowIndex, e.columnIndex, "입력된 중분류 코드는 수정할 수 없습니다.");
             }, 0);
             return false;
         }
@@ -48,7 +51,7 @@ $(function() {
     AUIGrid.bind(gridId[2], "cellEditBegin", function (e) {
         if(e.dataField === "biItemcode" && e.value !== "" && !AUIGrid.isAddedById(gridId[2], e.item._$uid)) {
             setTimeout(function (){
-                AUIGrid.showToastMessage(gridId[0], e.rowIndex, e.columnIndex, "입력된 상품코드는 수정할 수 없습니다.");
+                AUIGrid.showToastMessage(gridId[2], e.rowIndex, e.columnIndex, "입력된 상품코드는 수정할 수 없습니다.");
             }, 0);
             return false;
         }
