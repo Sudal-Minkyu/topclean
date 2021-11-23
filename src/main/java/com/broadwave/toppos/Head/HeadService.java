@@ -45,7 +45,7 @@ public class HeadService {
         this.itemGroupSRepositoryCustom = itemGroupSRepositoryCustom;
     }
 
-    // // // // // // // // // // // // // // 가맹점, 지사 등록 매칭 페이지 // // // // // // // // // // // // //
+    // // // // // // // // // // // // // // 가맹점, 지사 등록 매칭 페이지 // // // // // // // // // // // // 
     // 가맹점 저장
     public Franchise franchiseSave(Franchise franchise){
         franchiseRepository.save(franchise);
