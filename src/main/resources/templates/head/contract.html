@@ -60,9 +60,12 @@
 				</div>
 				<div>
 					정산비율
-					본사 : <input type="text" id="brCarculateRateHq" name="brCarculateRateHq" />%
-					지사 : <input type="text" id="brCarculateRateBr" name="brCarculateRateBr" />%
-					가맹 : <input type="text" id="brCarculateRateFr" name="brCarculateRateFr" />%
+					본사 : <input type="number" min="0" max="100" id="brCarculateRateHq" name="brCarculateRateHq"
+								onkeyup="validateRatio(this)" onchange="validateRatio(this)"/>%
+					지사 : <input type="number" id="brCarculateRateBr" name="brCarculateRateBr"
+								onkeyup="validateRatio(this)" onchange="validateRatio(this)"/>%
+					가맹 : <input type="number" id="brCarculateRateFr" name="brCarculateRateFr"
+								onkeyup="validateRatio(this)" onchange="validateRatio(this)"/>%
 				</div>
 				<div>
 					특이사항
@@ -230,9 +233,9 @@
 			</div>
 			<div>
 				정산비율
-				본사 : <input id="bot_brCarculateRateHq" type="text" readonly>%
-				지사 : <input id="bot_brCarculateRateBr" type="text" readonly>%
-				가맹 : <input id="bot_brCarculateRateFr" type="text" readonly>%
+				본사 : <input id="bot_brCarculateRateHq" type="number" readonly>%
+				지사 : <input id="bot_brCarculateRateBr" type="number" readonly>%
+				가맹 : <input id="bot_brCarculateRateFr" type="number" readonly>%
 			</div>
 			<div>
 				<button type="button" onclick="assignmentSave()">저장</button>

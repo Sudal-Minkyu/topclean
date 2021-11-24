@@ -18,16 +18,15 @@ $(function() {
     });
 
     // 최종삼품 API 작성후 주석해제
-    /*
     AUIGrid.bind(gridId[1], "cellClick", function (e) {
-        const selectedMedium = {bsItemGroupcodeS : e.item.bsItemGroupcodeS};
+        const selectedMedium = {bgItemGroupcode : currentBig.bgItemGroupcode, bsItemGroupcodeS : e.item.bsItemGroupcodeS};
         if(currentMedium !== selectedMedium && !AUIGrid.isAddedById(gridId[1], e.item._$uid)) {/!* 새로 추가된 행의 경우 하위 항목이 없을테니 동작을 막는다. *!/
             currentMedium = selectedMedium;
             AUIGrid.clearGridData(gridId[2]);
+            console.log(currentMedium);
             setDataIntoGrid(2, gridCreateUrl[2], currentMedium);
         }
     });
-    */
 
     /* 각 그리드 입력을 시작할 때 새로 추가된 코드가 아니면서, 값이 존재하는 코드를 편집하려 하면 편집을 막고 경고를 띄운다. */
     AUIGrid.bind(gridId[0], "cellEditBegin", function (e) {

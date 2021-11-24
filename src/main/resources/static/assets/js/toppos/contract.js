@@ -24,6 +24,9 @@ const setGridUrl = [
 /* 0번 그리드의 레이아웃 */
 columnLayout[0] = [
     {
+        dataField: "brCode",
+        headerText: "지사코드",
+    }, {
         dataField: "brName",
         headerText: "지사명",
     }, {
@@ -47,6 +50,9 @@ gridOption[0] = {
 
 columnLayout[1] = [
     {
+        dataField: "frCode",
+        headerText: "가맹점코드",
+    }, {
         dataField: "frName",
         headerText: "가맹점명",
     }, {
@@ -73,6 +79,9 @@ gridOption[1] = {
 
 columnLayout[2] = [
     {
+        dataField: "brCode",
+        headerText: "지사코드",
+    }, {
         dataField: "brName",
         headerText: "지사명",
     }, {
@@ -95,6 +104,9 @@ gridOption[2] = {
 
 columnLayout[3] = [
     {
+        dataField: "frCode",
+        headerText: "가맹점코드",
+    }, {
         dataField: "frName",
         headerText: "가맹점명",
     }, {
@@ -495,3 +507,8 @@ function branchClose(){
     $('#branch_popup').removeClass('open');
 }
 
+/* 입력 숫자 소수점 뒤 두자리로 제한 */
+function validateRatio(element) {
+    element.value = element.value.replace(/^(\d+.?\d{0,2})\d*$/,"$1");
+
+}
