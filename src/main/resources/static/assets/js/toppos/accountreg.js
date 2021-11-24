@@ -4,18 +4,19 @@ $(function() {
     createAccountGrid(columnLayout, gridOption); // 배열의 각 그리드 함께 생성
 
     /* 0번그리드 내의 아이템 클릭시 필드에 적용 */
-    AUIGrid.bind(gridID[0], "cellClick", function (e) {
+    AUIGrid.bind(gridID[0], "cellDoubleClick", function (e) {
         setFieldData(0, e.item);
         restrictCodeSelection(e.item.roleCode);
         changeUseridStatus(true);
+        $password.attr("disabled", true);
     });
 
-    AUIGrid.bind(gridID[1], "cellClick", function (e) {
+    AUIGrid.bind(gridID[1], "cellDoubleClick", function (e) {
         $("#brCode").val(e.item.brCode);
         $('#branch_popup').removeClass('open');
     });
 
-    AUIGrid.bind(gridID[2], "cellClick", function (e) {
+    AUIGrid.bind(gridID[2], "cellDoubleClick", function (e) {
         $("#frCode").val(e.item.frCode);
         $('#franchise_popup').removeClass('open');
     });
@@ -25,7 +26,16 @@ $(function() {
         const selectedCode = $(e.target).find("option:selected").val();
         restrictCodeSelection(selectedCode);
     });
+
+    $useridChecked = $("#useridChecked");
+    $useridCheckedBtn = $("#useridCheckedBtn");
+    $password = $("#password");
 });
+
+/* 상태 제어에 사용할 객체들 */
+let $useridChecked;
+let $useridCheckedBtn;
+let $password;
 
 // 그리드 관련 시작
 // +++++++++++++++++++++++++++++++++++++//
@@ -107,6 +117,7 @@ gridOption[1] = {
     noDataMessage : "출력할 데이터가 없습니다.",
     rowNumHeaderText : "순번",
     enableColumnResize : false,
+    enableFilter : true,
 };
 
 columnLayout[2] = [
@@ -136,7 +147,8 @@ gridOption[2] = {
     selectionMode : "singleRow",
     noDataMessage : "출력할 데이터가 없습니다.",
     rowNumHeaderText : "순번",
-    enableColumnResize : false
+    enableColumnResize : false,
+    enableFilter : true,
 };
 
 function createAccountGrid(columnLayout, gridOption) {
@@ -189,18 +201,67 @@ function popupListAjax(url,numOfGrid,params){
     });
 }
 
+function brSearch(){
+    const s_brName = $("#pop_s_brName").val();
+    const s_brCode = $("#pop_s_brCode").val();
+    const s_brContractState = $("#pop_s_brContractState").val();
+
+    AUIGrid.clearFilterAll(gridID[1]);
+    if(s_brName !== "") {
+        AUIGrid.setFilter(gridID[1], "brName", function (dataField, value, item) {
+            return new RegExp(s_brName).test(value);
+        });
+    }
+    if(s_brCode !== "") {
+        AUIGrid.setFilter(gridID[1], "brCode", function (dataField, value, item) {
+            return new RegExp(s_brCode).test(value);
+        });
+    }
+    if(s_brContractState !== "") {
+        AUIGrid.setFilter(gridID[1], "brContractStateValue", function (dataField, value, item) {
+            return s_brContractState === item.brContractState;
+        });
+    }
+}
+
+function frSearch(){
+    const s_frName = $("#pop_s_frName").val();
+    const s_frCode = $("#pop_s_frCode").val();
+    const s_frContractState = $("#pop_s_frContractState").val();
+
+    AUIGrid.clearFilterAll(gridID[2]);
+    if(s_frName !== "") {
+        AUIGrid.setFilter(gridID[2], "frName", function (dataField, value, item) {
+            return new RegExp(s_frName).test(value);
+        });
+    }
+    if(s_frCode !== "") {
+        AUIGrid.setFilter(gridID[2], "frCode", function (dataField, value, item) {
+            return new RegExp(s_frCode).test(value);
+        });
+    }
+    if(s_frContractState !== "") {
+        AUIGrid.setFilter(gridID[2], "frContractStateValue", function (dataField, value, item) {
+            return s_frContractState === item.frContractState;
+        });
+    }
+}
+
+
 // +++++++++++++++++++++++++++++++++++++//
 // 그리드 관련 끝
 
 // 지사선택 함수
 function brListPop(){
     // console.log("지사선택 팝업열기");
+    AUIGrid.clearFilterAll(gridID[1]);
     $('#branch_popup').addClass('open');
 }
 
 // 가맹점선택 함수
 function frListPop(){
     // console.log("가맹점선택 팝업열기");
+    AUIGrid.clearFilterAll(gridID[2]);
     $('#franchise_popup').addClass('open');
 }
 
@@ -219,7 +280,6 @@ function franchiseClose(){
 
 // 지사, 가맹점 코드 중복확인 체크함수 - 완
 function useridOverlap(){
-    console.log("사용자 아이디 중복확인");
 
     const $userid = $("#userid").val();
     if($userid==="" || $userid===undefined){
@@ -233,17 +293,25 @@ function useridOverlap(){
     };
 
     CommonUI.ajax(url, "GET", params, function (req){
-        $("#useridChecked").val("1");
-        console.log("중복환인 완료");
+        $useridChecked.val("1");
+        $useridCheckedBtn.attr("disabled", true);
         alertSuccess("사용할 수 있는  아이디입니다.");
     });
+}
+
+/* userid를 변경하면 아이디 중복 체크가 안된 상태로 변경 */
+function onChangeUserId() {
+    if(!$("#userid").prop("readonly")) {
+        $useridChecked.val("0");
+        $useridCheckedBtn.attr("disabled", false);
+    }
 }
 
 // 사용자 등록 - 완
 function accountSave(){
 
-    const $useridCheckedr = $("#useridCheckedr").val();
-    if($useridCheckedr==="0"){
+
+    if($useridChecked.val() === "0"){
         alertCaution("유저아이디 중복확인을 해주세요.",1);
         return false;
     }
@@ -303,7 +371,6 @@ function setFieldData(numOfGrid, item) {
     switch (numOfGrid) {
         case 0 :
             $("#userid").val(item.userid);
-            $("#useridChecked").val(item.useridChecked);
             $("#username").val(item.username);
             $("#password").val(item.password);
             $("#role").val(item.roleCode);
@@ -327,6 +394,7 @@ function createNewPost(numOfGrid) {
             restrictCodeSelection("");
             changeUseridStatus(false);
             $("#userid").trigger("focus");
+            $password.attr("disabled", false);
             break;
     }
 }
@@ -362,11 +430,11 @@ function restrictCodeSelection(selectedCode) {
 }
 
 /* 이미 생성되어 있는 유저들의 경우 아이디를 바꿀 수 있도록 하면 안되므로 */
-function changeUseridStatus (isDisable) {0
-    const checked = isDisable ? "0" : "1";
+function changeUseridStatus (isDisable) {
+    const checked = isDisable ? "1" : "0";
     $("#userid").attr("readonly", isDisable);
-    $("#useridCheckedBtn").attr("disabled", isDisable);
-    $("#useridChecked").val(checked);
+    $useridCheckedBtn.attr("disabled", isDisable);
+    $useridChecked.val(checked);
 }
 
 /* 사용자 리스트 조회 필터링 type = 1 사용자 리스트 조회 필터링, type = 2 필터링 초기화*/
@@ -414,7 +482,8 @@ function filterAccountList(type) {
 }
 
 /* 전화번호 입력을 위한 유효성 검사 */
-function onPhonenumChange (element) {
+function onPhonenumChange(element) {
     let phoneNumber = element.value;
     element.value = CommonUI.onPhoneNumChange(phoneNumber);
 }
+

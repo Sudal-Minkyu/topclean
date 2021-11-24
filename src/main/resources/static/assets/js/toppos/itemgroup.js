@@ -6,7 +6,7 @@ $(function() {
     /* 0번 그리드에 값 가져와서 채워넣기 */
     setDataIntoGrid(0, gridCreateUrl[0]);
 
-    /* 각 그리드 내의 셀 클릭시 1번 그리드에 해당 대분류에 따른 중분류 리스트를 띄운다. */
+    /* 각 그리드 내의 셀 클릭시 1번 그리드에 해당 대분류에 따른 중분류 리스트를 띄운다. */중
     AUIGrid.bind(gridId[0], "cellClick", function (e) {
         const selectedBig = {bgItemGroupcode : e.item.bgItemGroupcode};
         if(currentBig !== selectedBig && !AUIGrid.isAddedById(gridId[0], e.item._$uid)) {/* 새로 추가된 행의 경우 하위 항목이 없을테니 동작을 막는다. */
@@ -57,25 +57,53 @@ $(function() {
         }
     });
 
-    /* 각 그리드 입력이 끝난 코드의 대문자 변환 */
+    /* 각 0, 1, 2 그리드 입력이 끝난 코드의 각 그리드 중복확인과 대문자화하여 변환 */
     AUIGrid.bind(gridId[0], "cellEditEnd", function (e) {
         if(e.dataField === "bgItemGroupcode") {
-            e.item.bgItemGroupcode = e.item.bgItemGroupcode.toUpperCase();
-            AUIGrid.updateRow(gridId[0], e.item, e.rowIndex);
+            const numOfValuesInThisRow = AUIGrid.getRowIndexesByValue(gridId[0], "bgItemGroupcode", [e.value, e.value.toUpperCase()]).length;
+            if(numOfValuesInThisRow === 1) {
+                e.item.bgItemGroupcode = e.value.toUpperCase();
+                AUIGrid.updateRow(gridId[0], e.item, e.rowIndex);
+            }else{
+                e.item.bgItemGroupcode = undefined;
+                AUIGrid.updateRow(gridId[0], e.item, e.rowIndex);
+                setTimeout(function (){
+                    AUIGrid.showToastMessage(gridId[0], e.rowIndex, e.columnIndex, "중복되지 않는 코드를 입력해 주세요");
+                }, 0);
+            }
         }
     });
 
     AUIGrid.bind(gridId[1], "cellEditEnd", function (e) {
         if(e.dataField === "bsItemGroupcodeS") {
-            e.item.bsItemGroupcodeS = e.item.bsItemGroupcodeS.toUpperCase();
-            AUIGrid.updateRow(gridId[1], e.item, e.rowIndex);
+            const numOfValuesInThisRow = AUIGrid.getRowIndexesByValue(gridId[1], "bsItemGroupcodeS", [e.value, e.value.toUpperCase()]).length;
+            if(numOfValuesInThisRow === 1) {
+                e.item.bsItemGroupcodeS = e.value.toUpperCase();
+                AUIGrid.updateRow(gridId[1], e.item, e.rowIndex);
+            }else{
+                e.item.bsItemGroupcodeS = undefined;
+                AUIGrid.updateRow(gridId[1], e.item, e.rowIndex);
+                setTimeout(function (){
+                    AUIGrid.showToastMessage(gridId[1], e.rowIndex, e.columnIndex, "중복되지 않는 코드를 입력해 주세요");
+                }, 0);
+            }
         }
     });
 
     AUIGrid.bind(gridId[2], "cellEditEnd", function (e) {
-        if(e.dataField === "biItemcode") {
-            e.item.biItemcode = e.item.biItemcode.toUpperCase();
-            AUIGrid.updateRow(gridId[2], e.item, e.rowIndex);
+        if(e.dataField === "biItemSequence") {
+            const numOfValuesInThisRow = AUIGrid.getRowIndexesByValue(gridId[2], "biItemSequence", e.value).length;
+            if(numOfValuesInThisRow === 1) {
+                e.item.biItemcode = e.item.bgItemGroupcode + e.item.bsItemGroupcodeS + e.item.biItemSequence;
+                AUIGrid.updateRow(gridId[2], e.item, e.rowIndex);
+            }else{
+                e.item.biItemSequence = undefined;
+                e.item.biItemcode = undefined;
+                AUIGrid.updateRow(gridId[2], e.item, e.rowIndex);
+                setTimeout(function (){
+                    AUIGrid.showToastMessage(gridId[2], e.rowIndex, e.columnIndex, "중복되지 않는 코드를 입력해 주세요");
+                }, 0);
+            }
         }
     });
 
@@ -132,7 +160,7 @@ gridColumnLayout[0] = [
 * https://www.auisoft.net/documentation/auigrid/DataGrid/Properties.html
 * */
 gridProp[0] = {
-    editable : true,
+    editable: true,
     selectionMode : "singleRow",
     noDataMessage : "출력할 데이터가 없습니다.",
     showRowNumColumn : false,
@@ -147,11 +175,11 @@ gridColumnLayout[1] = [
     {
         dataField: "bgItemGroupcode",
         headerText: "대분류 코드",
-        editable : false,
+        editable: false,
     }, {
         dataField: "bgName",
         headerText: "대분류명",
-        editable : false,
+        editable: false,
     }, {
         dataField: "bsItemGroupcodeS",
         headerText: "중분류 코드",
@@ -170,7 +198,7 @@ gridColumnLayout[1] = [
 ];
 
 gridProp[1] = {
-    editable : true,
+    editable: true,
     selectionMode : "singleRow",
     noDataMessage : "출력할 데이터가 없습니다.",
     showRowNumColumn : false,
@@ -185,30 +213,32 @@ gridColumnLayout[2] = [
     {
         dataField: "bgItemGroupcode",
         headerText: "대분류 코드",
-        editable : false,
+        editable: false,
     }, {
         dataField: "bgName",
         headerText: "대분류명",
-        editable : false,
+        editable: false,
     }, {
         dataField: "bsItemGroupcodeS",
         headerText: "중분류 코드",
-        editable : false,
+        editable: false,
     }, {
         dataField: "bsName",
         headerText: "중분류명",
-        editable : false,
+        editable: false,
     }, {
         dataField: "biItemcode",
         headerText: "상품코드",
-        editRenderer: { // 입력된 코드의 각종 유효성 검사
-            type: "InputEditRenderer",
-            maxlength: 3,
-            validator: codeValidator,
-        },
+        editable: false,
     }, {
         dataField: "biItemSequence",
         headerText: "상품순번",
+        editRenderer: { // 입력된 코드의 각종 유효성 검사
+            type: "InputEditRenderer",
+            maxlength: 3,
+            onlyNumeric: true,
+            validator: codeValidator,
+        },
     }, {
         dataField: "biName",
         headerText: "상품명",
@@ -219,7 +249,7 @@ gridColumnLayout[2] = [
 ];
 
 gridProp[2] = {
-    editable : true,
+    editable: true,
     selectionMode : "singleRow",
     noDataMessage : "출력할 데이터가 없습니다.",
     showRowNumColumn : false,

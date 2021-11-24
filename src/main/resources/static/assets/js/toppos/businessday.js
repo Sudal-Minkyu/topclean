@@ -133,6 +133,8 @@ gridProp = {
     showRowNumColumn : false,
     enableFilter : false,
     enableSorting : false,
+    defaultColumnWidth : 40,
+    width : 400,
 };
 
 
@@ -235,7 +237,24 @@ function setGridByYear() {
     const url = "/api/manager/calendarInfo";
     CommonUI.ajax(url, "GET", params, function (req) {
         const daysData = req.sendData.gridListData;
-        setDataIntoGrid(daysData);
+        if(daysData.length) {
+            setDataIntoGrid(daysData);
+        }else{
+            alertMiddleSaveCheck("기존 데이터가 없습니다.<br> 기본 데이터를 생성하시겠습니까?");
+
+            $("#checkYesBtn").on("click", function() {
+                setDataIntoGrid({});
+                gridSave();
+                $('#popupId').remove();
+            });
+
+            $("#checkNoBtn").on("click", function() {
+                for(let m = 0; m < 12; m++) {
+                    AUIGrid.clearGridData(gridId[m]);
+                }
+                $('#popupId').remove();
+            });
+        }
     });
 }
 
