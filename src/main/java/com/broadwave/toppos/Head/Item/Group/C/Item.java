@@ -24,15 +24,13 @@ public class Item {
 
     @Id
     @Column(name="bi_itemcode")
-    private String biItemCode; // 상품코드
+    private String biItemcode; // 상품코드
 
-    @ManyToOne(targetEntity = ItemGroup.class,fetch = FetchType.LAZY)
-    @JoinColumn(name="bg_item_groupcode")
-    private ItemGroup bgItemGroupcode; // 대분류코드
+    @Column(name="bg_item_groupcode")
+    private String bgItemGroupcode; // 대분류코드
 
-    @ManyToOne(targetEntity = ItemGroupS.class,fetch = FetchType.LAZY)
-    @JoinColumns({@JoinColumn(name = "bs_item_groupcode_s", insertable = false, updatable = false), @JoinColumn(name = "bg_item_groupcode", insertable = false, updatable = false)})
-    private ItemGroupS bsItemGroupcodeS; // 중분류코드
+    @Column(name = "bs_item_groupcode_s")
+    private String bsItemGroupcodeS; // 중분류코드
 
     @Column(name="bi_item_sequence")
     private String biItemSequence; // 상품순번

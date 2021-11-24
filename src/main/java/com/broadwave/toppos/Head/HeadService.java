@@ -11,6 +11,7 @@ import com.broadwave.toppos.Head.Item.Group.A.ItemGroupRepository;
 import com.broadwave.toppos.Head.Item.Group.A.ItemGroupRepositoryCustom;
 import com.broadwave.toppos.Head.Item.Group.B.*;
 import com.broadwave.toppos.Head.Item.Group.C.Item;
+import com.broadwave.toppos.Head.Item.Group.C.ItemListDto;
 import com.broadwave.toppos.Head.Item.Group.C.ItemRepository;
 import com.broadwave.toppos.Head.Item.Group.C.ItemRepositoryCustom;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -141,8 +142,13 @@ public class HeadService {
     }
 
     // 상품그룹 상품소재 객체 가져오기
-    public Optional<Item> findByBiItemCode(String biItemCode) {
-        return ItemRepository.findByBiItemCode(biItemCode);
+    public Optional<Item> findByBiItemcode(String biItemcode) {
+        return ItemRepository.findByBiItemcode(biItemcode);
+    }
+
+    // 상품그룹 상품소재 리스트 호출
+    public List<ItemListDto> findByItemList(String bgItemGroupcode, String bsItemGroupcodeS) {
+        return itemRepositoryCustom.findByItemList(bgItemGroupcode, bsItemGroupcodeS);
     }
 
 //    // 상품그룹 정보

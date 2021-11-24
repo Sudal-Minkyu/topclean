@@ -21,13 +21,13 @@ public class ItemListDto {
     private String bgName; // 대분류명칭
     private String bsItemGroupcodeS; // 중분류코드
     private String bsName; // 중분류명칭
-    private String biItemCode; // 상품코드
+    private String biItemcode; // 상품코드
     private String biItemSequence; // 상품순번
     private String biName; // 상품명
     private String biRemark; // 특이사항
 
-    public String getBiItemCode() {
-        return biItemCode;
+    public String getBiItemcode() {
+        return biItemcode;
     }
 
     public String getBiItemSequence() {

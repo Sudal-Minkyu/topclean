@@ -1,8 +1,14 @@
 package com.broadwave.toppos.Head.Item.Group.C;
 
+import com.broadwave.toppos.Head.Item.Group.A.QItemGroup;
+import com.broadwave.toppos.Head.Item.Group.B.QItemGroupS;
+import com.querydsl.core.types.Projections;
+import com.querydsl.jpa.JPQLQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * @author Minkyu
@@ -17,67 +23,31 @@ public class ItemRepositoryCustomImpl extends QuerydslRepositorySupport implemen
     public ItemRepositoryCustomImpl() {
         super(Item.class);
     }
-//
-//    @Override
-//    public List<ItemGroupSListDto> findByItemGroupSList(ItemGroup bgItemGroupcode) {
-//        QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
-//        QItemGroup itemGroup = QItemGroup.itemGroup;
-//
-//        JPQLQuery<ItemGroupSListDto> query = from(itemGroupS)
-//                .innerJoin(itemGroupS.bgItemGroupcode,itemGroup)
-//                .select(Projections.constructor(ItemGroupSListDto.class,
-//                        itemGroupS.bsItemGroupcodeS,
-//                        itemGroup.bgItemGroupcode,
-//                        itemGroup.bgName,
-//                        itemGroupS.bsName,
-//                        itemGroupS.bsRemark
-//                ));
-//
-//        query.where(itemGroupS.bgItemGroupcode.eq(bgItemGroupcode));
-//
-//        return query.fetch();
-//    }
-//
-//    @Override
-//    public ItemGroupSInfo findByBsItemGroupcodeS(String bgItemGroupcode, String bsItemGroupcodeS) {
-//        QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
-//
-//        JPQLQuery<ItemGroupSInfo> query = from(itemGroupS)
-//                .select(Projections.constructor(ItemGroupSInfo.class,
-//                        itemGroupS.bsItemGroupcodeS,
-//                        itemGroupS.bgItemGroupcode.bgItemGroupcode,
-//                        itemGroupS.insert_id,
-//                        itemGroupS.insertDateTime
-//                ));
-//
-//        query.where(itemGroupS.bgItemGroupcode.bgItemGroupcode.eq(bgItemGroupcode));
-//        query.where(itemGroupS.bsItemGroupcodeS.eq(bsItemGroupcodeS));
-//
-//        return query.fetchOne();
-//    }
-//
-//    @Override
-//    public ItemGroupS findByItemGroupcodeS(String bgItemGroupcode, String bsItemGroupcodeS) {
-//        QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
-//        QItemGroup itemGroup = QItemGroup.itemGroup;
-//
-//        JPQLQuery<ItemGroupS> query = from(itemGroupS)
-//                .innerJoin(itemGroupS.bgItemGroupcode,itemGroup)
-//                .select(Projections.constructor(ItemGroupS.class,
-//                        itemGroupS.bsItemGroupcodeS,
-//                        itemGroup,
-//                        itemGroupS.bsName,
-//                        itemGroupS.bsRemark,
-//                        itemGroupS.insert_id,
-//                        itemGroupS.insertDateTime,
-//                        itemGroupS.modify_id,
-//                        itemGroupS.modifyDateTime
-//                ));
-//
-//        query.where(itemGroupS.bgItemGroupcode.bgItemGroupcode.eq(bgItemGroupcode));
-//        query.where(itemGroupS.bsItemGroupcodeS.eq(bsItemGroupcodeS));
-//
-//        return query.fetchOne();
-//    }
+
+    @Override
+    public List<ItemListDto> findByItemList(String bgItemGroupcode, String bsItemGroupcodeS) {
+        QItem item = QItem.item;
+        QItemGroup itemGroup = QItemGroup.itemGroup;
+        QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
+
+        JPQLQuery<ItemListDto> query = from(item)
+                .join(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
+                .join(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS))
+                .select(Projections.constructor(ItemListDto.class,
+                        item.bgItemGroupcode,
+                        itemGroup.bgName,
+                        item.bsItemGroupcodeS,
+                        itemGroupS.bsName,
+                        item.biItemcode,
+                        item.biItemSequence,
+                        item.biName,
+                        item.biRemark
+                ));
+
+        query.where(itemGroup.bgItemGroupcode.eq(bgItemGroupcode));
+        query.where(itemGroupS.bsItemGroupcodeS.eq(bsItemGroupcodeS));
+
+        return query.fetch();
+    }
 
 }
