@@ -48,9 +48,9 @@ $(function() {
     });
 
     AUIGrid.bind(gridId[2], "cellEditBegin", function (e) {
-        if(e.dataField === "biItemcode" && e.value !== "" && !AUIGrid.isAddedById(gridId[2], e.item._$uid)) {
+        if(e.dataField === "biItemSequence" && e.value !== "" && !AUIGrid.isAddedById(gridId[2], e.item._$uid)) {
             setTimeout(function (){
-                AUIGrid.showToastMessage(gridId[2], e.rowIndex, e.columnIndex, "입력된 상품코드는 수정할 수 없습니다.");
+                AUIGrid.showToastMessage(gridId[2], e.rowIndex, e.columnIndex, "입력된 상품순번은 수정할 수 없습니다.");
             }, 0);
             return false;
         }
