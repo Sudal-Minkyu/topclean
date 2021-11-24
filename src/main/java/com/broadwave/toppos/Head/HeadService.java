@@ -127,6 +127,7 @@ public class HeadService {
     }
 
 
-
-
+    public ItemGroupS findByItemGroupcodeS(String bgItemGroupcode, String bsItemGroupcodeS) {
+        return itemGroupSRepositoryCustom.findByItemGroupcodeS(bgItemGroupcode, bsItemGroupcodeS);
+    }
 }

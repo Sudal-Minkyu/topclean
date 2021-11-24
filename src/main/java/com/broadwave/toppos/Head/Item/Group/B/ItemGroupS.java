@@ -27,7 +27,7 @@ public class ItemGroupS {
     private String bsItemGroupcodeS; // 중분류코드
 
     @Id
-    @ManyToOne(targetEntity = ItemGroup.class,fetch = FetchType.EAGER)
+    @ManyToOne(targetEntity = ItemGroup.class,fetch = FetchType.LAZY)
     @JoinColumn(name="bg_item_groupcode")
     private ItemGroup bgItemGroupcode; // 대분류코드
 
