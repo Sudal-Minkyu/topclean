@@ -6,7 +6,7 @@ $(function() {
     /* 0번 그리드에 값 가져와서 채워넣기 */
     setDataIntoGrid(0, gridCreateUrl[0]);
 
-    /* 각 그리드 내의 셀 클릭시 1번 그리드에 해당 대분류에 따른 중분류 리스트를 띄운다. */중
+    /* 각 그리드 내의 셀 클릭시 1번 그리드에 해당 대분류에 따른 중분류 리스트를 띄운다. */
     AUIGrid.bind(gridId[0], "cellClick", function (e) {
         const selectedBig = {bgItemGroupcode : e.item.bgItemGroupcode};
         if(currentBig !== selectedBig && !AUIGrid.isAddedById(gridId[0], e.item._$uid)) {/* 새로 추가된 행의 경우 하위 항목이 없을테니 동작을 막는다. */
@@ -129,7 +129,7 @@ gridTargetDiv = [
 
 /* 그리드를 받아올 때 쓰이는 api 배열 */
 gridCreateUrl = [
-    "/api/head/itemGroupAList", "/api/head/itemGroupBList", "/api/head/"
+    "/api/head/itemGroupAList", "/api/head/itemGroupBList", "/api/head/itemGroupCList"
 ];
 
 /* 그리드를 저장할 때 쓰이는 api 배열 */
@@ -281,14 +281,14 @@ function addRow(numOfGrid) {
     let item = {};
     switch (numOfGrid) {
         case 0 :
-            AUIGrid.addRow(gridId[numOfGrid], item, "first");
+            AUIGrid.addRow(gridId[numOfGrid], item, "last");
             break;
         case 1 :
             item = AUIGrid.getSelectedRows(gridId[0]);
             if(item.length && !AUIGrid.isAddedById(gridId[0], item[0]._$uid)) {
                 delete item[0]['_$uid'];
                 console.log(item);
-                AUIGrid.addRow(gridId[numOfGrid], item, "first");
+                AUIGrid.addRow(gridId[numOfGrid], item, "last");
             }else{
                 alertCaution("저장되어 있는 대분류 항목을 선택해 주세요", 1);
             }
@@ -297,7 +297,7 @@ function addRow(numOfGrid) {
             item = AUIGrid.getSelectedRows(gridId[1]);
             if(item.length && !AUIGrid.isAddedById(gridId[1], item[0]._$uid)) {
                 delete item[0]['_$uid'];
-                AUIGrid.addRow(gridId[numOfGrid], item, "first");
+                AUIGrid.addRow(gridId[numOfGrid], item, "last");
             }else{
                 alertCaution("저장되어 있는 중분류 항목을 선택해 주세요", 1);
             }
