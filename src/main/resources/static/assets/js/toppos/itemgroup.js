@@ -106,7 +106,7 @@ gridCreateUrl = [
 
 /* 그리드를 저장할 때 쓰이는 api 배열 */
 gridSaveUrl = [
-    "/api/head/itemGroupA", "/api/head/itemGroupB", "/api/head/"
+    "/api/head/itemGroupA", "/api/head/itemGroupB", "/api/head/itemGroupC"
 ];
 
 /* 0번 그리드의 레이아웃 */
@@ -207,7 +207,7 @@ gridColumnLayout[2] = [
             validator: codeValidator,
         },
     }, {
-        dataField: "biitemSequence",
+        dataField: "biItemSequence",
         headerText: "상품순번",
     }, {
         dataField: "biName",

@@ -1,11 +1,10 @@
 package com.broadwave.toppos.Head.Item.Group.C;
 
+import com.broadwave.toppos.Head.Item.Group.A.ItemGroup;
+import com.broadwave.toppos.Head.Item.Group.B.ItemGroupS;
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 /**
@@ -27,14 +26,16 @@ public class Item {
     @Column(name="bi_itemcode")
     private String biItemCode; // 상품코드
 
-    @Column(name="bg_item_groupcode")
-    private String bgItemGroupcode; // 대분류코드
+    @ManyToOne(targetEntity = ItemGroup.class,fetch = FetchType.LAZY)
+    @JoinColumn(name="bg_item_groupcode")
+    private ItemGroup bgItemGroupcode; // 대분류코드
 
-    @Column(name="bs_item_groupcode_s")
-    private String bsItemGroupcodeS; // 중분류코드
+    @ManyToOne(targetEntity = ItemGroupS.class,fetch = FetchType.LAZY)
+    @JoinColumns({@JoinColumn(name = "bs_item_groupcode_s", insertable = false, updatable = false), @JoinColumn(name = "bg_item_groupcode", insertable = false, updatable = false)})
+    private ItemGroupS bsItemGroupcodeS; // 중분류코드
 
     @Column(name="bi_item_sequence")
-    private String biSequence; // 상품순번
+    private String biItemSequence; // 상품순번
 
     @Column(name="bi_name")
     private String biName; // 상품명

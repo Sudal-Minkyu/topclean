@@ -10,6 +10,9 @@ import com.broadwave.toppos.Head.Item.Group.A.ItemGroupDto;
 import com.broadwave.toppos.Head.Item.Group.A.ItemGroupRepository;
 import com.broadwave.toppos.Head.Item.Group.A.ItemGroupRepositoryCustom;
 import com.broadwave.toppos.Head.Item.Group.B.*;
+import com.broadwave.toppos.Head.Item.Group.C.Item;
+import com.broadwave.toppos.Head.Item.Group.C.ItemRepository;
+import com.broadwave.toppos.Head.Item.Group.C.ItemRepositoryCustom;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,15 +26,18 @@ public class HeadService {
     private final BranchRepository branohRepository;
     private final ItemGroupRepository ItemGroupRepository;
     private final ItemGroupSRepository ItemGroupSRepository;
+    private final ItemRepository ItemRepository;
 
     private final FranchiseRepositoryCustom franchiseRepositoryCustom;
     private final BranchRepositoryCustomImpl branohRepositoryCustom;
     private final ItemGroupRepositoryCustom itemGroupRepositoryCustom;
     private final ItemGroupSRepositoryCustom itemGroupSRepositoryCustom;
+    private final ItemRepositoryCustom itemRepositoryCustom;
 
     @Autowired
     public HeadService(BranchRepository branohRepository, FranchiseRepository franchiseRepository, FranchiseRepositoryCustom franchiseRepositoryCustom, BranchRepositoryCustomImpl branohRepositoryCustom,
-                       ItemGroupRepository ItemGroupRepository, ItemGroupRepositoryCustom itemGroupRepositoryCustom, ItemGroupSRepository ItemGroupSRepository, ItemGroupSRepositoryCustom itemGroupSRepositoryCustom){
+                       ItemGroupRepository ItemGroupRepository, ItemGroupRepositoryCustom itemGroupRepositoryCustom, ItemGroupSRepository ItemGroupSRepository, ItemGroupSRepositoryCustom itemGroupSRepositoryCustom,
+                       ItemRepository ItemRepository, ItemRepositoryCustom itemRepositoryCustom){
         this.branohRepository = branohRepository;
         this.franchiseRepository = franchiseRepository;
         this.franchiseRepositoryCustom = franchiseRepositoryCustom;
@@ -40,6 +46,8 @@ public class HeadService {
         this.itemGroupRepositoryCustom = itemGroupRepositoryCustom;
         this.ItemGroupSRepository = ItemGroupSRepository;
         this.itemGroupSRepositoryCustom = itemGroupSRepositoryCustom;
+        this.ItemRepository = ItemRepository;
+        this.itemRepositoryCustom = itemRepositoryCustom;
     }
 
     // // // // // // // // // // // // // // 가맹점, 지사 등록 매칭 페이지 // // // // // // // // // // // // //
@@ -87,7 +95,7 @@ public class HeadService {
         ItemGroupRepository.save(itemGroup);
     }
 
-    // 상품그룹 대분류 중복확인
+    // 상품그룹 대분류 객체 가져오기
     public Optional<ItemGroup> findByBgItemGroupcode(String bgItemGroupcode) {
         return ItemGroupRepository.findByBgItemGroupcode(bgItemGroupcode);
     }
@@ -107,10 +115,10 @@ public class HeadService {
         ItemGroupSRepository.save(itemGroupS);
     }
 
-    // 상품그룹 중분류 중복확인
-//    public Optional<ItemGroupS> findByItemGroupcodeS(String bgItemGroupcode, String bsItemGroupcodeS) {
-//        return ItemGroupSRepository.findByItemGroupcodeS(bgItemGroupcode, bsItemGroupcodeS);
-//    }
+    // 상품그룹 중분류 객체 가져오기
+    public ItemGroupS findByItemGroupcodeS(String bgItemGroupcode, String bsItemGroupcodeS) {
+        return itemGroupSRepositoryCustom.findByItemGroupcodeS(bgItemGroupcode, bsItemGroupcodeS);
+    }
 
     // 상품그룹 정보
     public ItemGroupSInfo findByBsItemGroupcodeS(String bgItemGroupcode, String bsItemGroupcodeS) {
@@ -122,12 +130,34 @@ public class HeadService {
         return itemGroupSRepositoryCustom.findByItemGroupSList(bgItemGroupcode);
     }
 
+    // 상품그룹 중분류 삭제
     public void findByItemGroupSDelete(ItemGroupS itemGroupS) {
         ItemGroupSRepository.delete(itemGroupS);
     }
 
-
-    public ItemGroupS findByItemGroupcodeS(String bgItemGroupcode, String bsItemGroupcodeS) {
-        return itemGroupSRepositoryCustom.findByItemGroupcodeS(bgItemGroupcode, bsItemGroupcodeS);
+    // 상품그룹 상품소재 저장
+    public void itemSave(Item item){
+        ItemRepository.save(item);
     }
+
+    // 상품그룹 상품소재 객체 가져오기
+    public Optional<Item> findByBiItemCode(String biItemCode) {
+        return ItemRepository.findByBiItemCode(biItemCode);
+    }
+
+//    // 상품그룹 정보
+//    public ItemGroupSInfo findByBsItemGroupcodeS(String bgItemGroupcode, String bsItemGroupcodeS) {
+//        return itemGroupSRepositoryCustom.findByBsItemGroupcodeS(bgItemGroupcode, bsItemGroupcodeS);
+//    }
+//
+//    // 상품그룹 중분류 리스트 호출
+//    public List<ItemGroupSListDto> findByItemGroupSList(ItemGroup bgItemGroupcode) {
+//        return itemGroupSRepositoryCustom.findByItemGroupSList(bgItemGroupcode);
+//    }
+//
+//    // 상품그룹 중분류 삭제
+//    public void findByItemGroupSDelete(ItemGroupS itemGroupS) {
+//        ItemGroupSRepository.delete(itemGroupS);
+//    }
+
 }
