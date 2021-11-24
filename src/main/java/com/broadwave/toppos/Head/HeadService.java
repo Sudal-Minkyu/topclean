@@ -121,7 +121,7 @@ public class HeadService {
         return itemGroupSRepositoryCustom.findByItemGroupcodeS(bgItemGroupcode, bsItemGroupcodeS);
     }
 
-    // 상품그룹 정보
+    // 상품그룹 중분류 정보
     public ItemGroupSInfo findByBsItemGroupcodeS(String bgItemGroupcode, String bsItemGroupcodeS) {
         return itemGroupSRepositoryCustom.findByBsItemGroupcodeS(bgItemGroupcode, bsItemGroupcodeS);
     }
@@ -144,6 +144,10 @@ public class HeadService {
     // 상품그룹 상품소재 객체 가져오기
     public Optional<Item> findByBiItemcode(String biItemcode) {
         return ItemRepository.findByBiItemcode(biItemcode);
+    }
+
+    public Optional<Item> findByBiItem(String bgItemGroupcode, String bsItemGroupcodeS) {
+        return ItemRepository.findByBiItem(bgItemGroupcode, bsItemGroupcodeS);
     }
 
     // 상품그룹 상품소재 리스트 호출

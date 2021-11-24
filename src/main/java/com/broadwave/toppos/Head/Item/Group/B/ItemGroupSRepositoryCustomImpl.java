@@ -80,8 +80,11 @@ public class ItemGroupSRepositoryCustomImpl extends QuerydslRepositorySupport im
                         itemGroupS.modifyDateTime
                 ));
 
+        if(bsItemGroupcodeS != null){
+            query.where(itemGroupS.bsItemGroupcodeS.eq(bsItemGroupcodeS));
+        }
+
         query.where(itemGroupS.bgItemGroupcode.bgItemGroupcode.eq(bgItemGroupcode));
-        query.where(itemGroupS.bsItemGroupcodeS.eq(bsItemGroupcodeS));
 
         return query.fetchOne();
     }

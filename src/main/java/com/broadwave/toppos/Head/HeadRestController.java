@@ -501,9 +501,9 @@ public class HeadRestController {
         ArrayList<ItemGroupDto> updateList = itemGroupSet.getUpdate(); // 수정 리스트 얻기
         ArrayList<ItemGroupDto> deleteList = itemGroupSet.getDelete(); // 제거 리스트 얻기
 
-        log.info("추가 리스트 : "+addList);
-        log.info("수정 리스트 : "+updateList);
-        log.info("삭제 리스트 : "+deleteList);
+//        log.info("추가 리스트 : "+addList);
+//        log.info("수정 리스트 : "+updateList);
+//        log.info("삭제 리스트 : "+deleteList);
 
         // 저장로직 실행 : 데이터베이스에 같은 코드가 존재하면 리턴처리한다.
         for (ItemGroupDto itemGroupDto : addList) {
@@ -545,12 +545,17 @@ public class HeadRestController {
 
         // 삭제로직 실행 : 데이터베이스에 코드사용중인 코드가 존재하면 리턴처리한다. , 데이터베이스에 코드가 존재하지 않으면 리턴처리한다.
         for (ItemGroupDto itemGroupDto : deleteList) {
-            log.info("삭제할 대분류의 코드 : "+itemGroupDto.getBgItemGroupcode());
-            Optional<ItemGroup> optionalItemGroup = headService.findByBgItemGroupcode(itemGroupDto.getBgItemGroupcode());
-            if(optionalItemGroup.isPresent()) {
-                headService.findByItemGroupDelete(optionalItemGroup.get());
-            }else{
-                return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "삭제 할 "+ResponseErrorCode.TP009.getDesc(), "문자", "다시 시도해주세요. 코드 : " + itemGroupDto.getBgItemGroupcode()));
+            ItemGroupS itemGroupS = headService.findByItemGroupcodeS(deleteList.get(0).getBgItemGroupcode(), null);
+            if(itemGroupS != null){
+                return ResponseEntity.ok(res.fail(ResponseErrorCode.TP011.getCode(), ResponseErrorCode.TP011.getDesc(), null, null));
+            }else {
+                log.info("삭제할 대분류의 코드 : " + itemGroupDto.getBgItemGroupcode());
+                Optional<ItemGroup> optionalItemGroup = headService.findByBgItemGroupcode(itemGroupDto.getBgItemGroupcode());
+                if (optionalItemGroup.isPresent()) {
+                    headService.findByItemGroupDelete(optionalItemGroup.get());
+                } else {
+                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "삭제 할 " + ResponseErrorCode.TP009.getDesc(), "문자", "다시 시도해주세요. 코드 : " + itemGroupDto.getBgItemGroupcode()));
+                }
             }
         }
 
@@ -654,15 +659,20 @@ public class HeadRestController {
 
         // 중분류 삭제로직 실행 : 데이터베이스에 코드사용중인 코드가 존재하면 리턴처리한다. , 데이터베이스에 코드가 존재하지 않으면 리턴처리한다.
         if(deleteList.size()!=0){
-            for (ItemGroupSDto itemGroupSDto : deleteList) {
-                ItemGroupS itemGroupS = headService.findByItemGroupcodeS(itemGroupSDto.getBgItemGroupcode(), itemGroupSDto.getBsItemGroupcodeS());
-                if(itemGroupS != null) {
+
+            Optional<Item> item = headService.findByBiItem(deleteList.get(0).getBgItemGroupcode(), deleteList.get(0).getBsItemGroupcodeS());
+            if(item.isPresent()){
+                return ResponseEntity.ok(res.fail(ResponseErrorCode.TP011.getCode(), ResponseErrorCode.TP011.getDesc(), null, null));
+            }else{
+                for (ItemGroupSDto itemGroupSDto : deleteList) {
+                    ItemGroupS itemGroupS = headService.findByItemGroupcodeS(itemGroupSDto.getBgItemGroupcode(), itemGroupSDto.getBsItemGroupcodeS());
+                    if(itemGroupS != null) {
 //                    log.info("삭제할 대상 : "+itemGroupS.getBsName());
-                    log.info("삭제할 중분류의 코드 : "+itemGroupS.getBsItemGroupcodeS());
-//                    log.info("삭제할 중분류 명칭 코드 : "+itemGroupS.getBsName());
-                    headService.findByItemGroupSDelete(itemGroupS);
-                }else{
-                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "삭제 할 "+ResponseErrorCode.TP009.getDesc(), "문자", "다시 시도해주세요. 대분류, 중분류 코드 : " + itemGroupSDto.getBgItemGroupcode() + itemGroupSDto.getBgItemGroupcode()));
+                        log.info("삭제할 중분류의 코드 : "+itemGroupS.getBsItemGroupcodeS());
+                        headService.findByItemGroupSDelete(itemGroupS);
+                    }else{
+                        return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "삭제 할 "+ResponseErrorCode.TP009.getDesc(), "문자", "다시 시도해주세요. 대분류, 중분류 코드 : " + itemGroupSDto.getBgItemGroupcode() + itemGroupSDto.getBgItemGroupcode()));
+                    }
                 }
             }
         }
@@ -839,4 +849,6 @@ public class HeadRestController {
     }
 
 
+
+    
 }
