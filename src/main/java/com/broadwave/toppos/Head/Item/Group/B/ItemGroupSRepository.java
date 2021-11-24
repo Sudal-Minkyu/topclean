@@ -8,6 +8,6 @@ import java.util.Optional;
 
 @Repository
 public interface ItemGroupSRepository extends JpaRepository<ItemGroupS,Long> {
-    @Query("select a from ItemGroupS a where a.bsItemGroupcodeS = :bsItemGroupcodeS")
-    Optional<ItemGroupS> findByItemGroupcodeS(String bgItemGroupcode, String bsItemGroupcodeS);
+//    @Query("select a from ItemGroupS a where a.bsItemGroupcodeS = :bsItemGroupcodeS and a.bgItemGroupcode.bgItemGroupcode = :bgItemGroupcode")
+//    Optional<ItemGroupS> findByItemGroupcodeS(String bgItemGroupcode, String bsItemGroupcodeS);
 }
