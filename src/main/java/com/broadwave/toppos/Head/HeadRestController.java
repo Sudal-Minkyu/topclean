@@ -760,45 +760,43 @@ public class HeadRestController {
             }
         }
 
-        // 중분류 수정 시작.
+        // 상품소재 수정 시작.
         if(updateList.size()!=0){
-            for(int i=0; i<updateList.size(); i++){
-                Optional<Item> itemOptional = headService.findByBiItemcode(updateList.get(i).getBgItemGroupcode());
+            for (ItemDto itemDto : updateList) {
+                Optional<Item> itemOptional = headService.findByBiItemcode(itemDto.getBgItemGroupcode());
                 if (!itemOptional.isPresent()) {
-                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "수정 할 상품소재 " + ResponseErrorCode.TP009.getDesc(),  "문자", "상품코드 : "+addList.get(i).getBiItemcode()));
-                }else{
-                    log.info("수정 할 상품소재 코드 : "+itemOptional.get().getBiItemcode());
+                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "수정 할 상품소재 " + ResponseErrorCode.TP009.getDesc(), "문자", "상품코드 : " + itemDto.getBiItemcode()));
+                } else {
+                    log.info("수정 할 상품소재 코드 : " + itemOptional.get().getBiItemcode());
                     Item item = new Item();
                     item.setBsItemGroupcodeS(itemOptional.get().getBsItemGroupcodeS());
                     item.setBgItemGroupcode(itemOptional.get().getBgItemGroupcode());
                     item.setBiItemcode(itemOptional.get().getBiItemcode());
                     item.setBiItemSequence(itemOptional.get().getBiItemSequence());
-                    item.setBiName(updateList.get(i).getBiName());
-                    item.setBiRemark(updateList.get(i).getBiRemark());
+                    item.setBiName(itemDto.getBiName());
+                    item.setBiRemark(itemDto.getBiRemark());
                     item.setInsert_id(itemOptional.get().getInsert_id());
                     item.setInsertDateTime(itemOptional.get().getInsertDateTime());
                     item.setModify_id(login_id);
                     item.setModifyDateTime(LocalDateTime.now());
 //                    log.info("item : " + item);
-                     headService.itemSave(item);
+                    headService.itemSave(item);
                 }
             }
         }
 
-        // 중분류 삭제로직 실행 : 데이터베이스에 코드사용중인 코드가 존재하면 리턴처리한다. , 데이터베이스에 코드가 존재하지 않으면 리턴처리한다.
-//        if(deleteList.size()!=0){
-//            for (ItemGroupSDto itemGroupSDto : deleteList) {
-//                ItemGroupS itemGroupS = headService.findByItemGroupcodeS(itemGroupSDto.getBgItemGroupcode(), itemGroupSDto.getBsItemGroupcodeS());
-//                if(itemGroupS != null) {
-////                    log.info("삭제할 대상 : "+itemGroupS.getBsName());
-//                    log.info("삭제할 중분류의 코드 : "+itemGroupS.getBsItemGroupcodeS());
-////                    log.info("삭제할 중분류 명칭 코드 : "+itemGroupS.getBsName());
-//                    headService.findByItemGroupSDelete(itemGroupS);
-//                }else{
-//                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "삭제 할 "+ResponseErrorCode.TP009.getDesc(), "문자", "다시 시도해주세요. 대분류, 중분류 코드 : " + itemGroupSDto.getBgItemGroupcode() + itemGroupSDto.getBgItemGroupcode()));
-//                }
-//            }
-//        }
+        // 상품소재 삭제로직 실행 : 데이터베이스에 코드사용중인 코드가 존재하면 리턴처리한다. , 데이터베이스에 코드가 존재하지 않으면 리턴처리한다.
+        if(deleteList.size()!=0){
+            for (ItemDto itemDto : deleteList) {
+                Optional<Item> itemOptional = headService.findByBiItemcode(itemDto.getBgItemGroupcode());
+                if(itemOptional.isPresent()) {
+                    log.info("삭제할 상품소재 코드 : "+itemOptional.get().getBiItemcode());
+                    headService.findByItemDelete(itemOptional.get());
+                }else{
+                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "삭제 할 "+ResponseErrorCode.TP009.getDesc(), "문자", "상품코드 : "+itemDto.getBiItemcode()));
+                }
+            }
+        }
 
         return ResponseEntity.ok(res.success());
     }

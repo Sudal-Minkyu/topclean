@@ -151,19 +151,9 @@ public class HeadService {
         return itemRepositoryCustom.findByItemList(bgItemGroupcode, bsItemGroupcodeS);
     }
 
-//    // 상품그룹 정보
-//    public ItemGroupSInfo findByBsItemGroupcodeS(String bgItemGroupcode, String bsItemGroupcodeS) {
-//        return itemGroupSRepositoryCustom.findByBsItemGroupcodeS(bgItemGroupcode, bsItemGroupcodeS);
-//    }
-//
-//    // 상품그룹 중분류 리스트 호출
-//    public List<ItemGroupSListDto> findByItemGroupSList(ItemGroup bgItemGroupcode) {
-//        return itemGroupSRepositoryCustom.findByItemGroupSList(bgItemGroupcode);
-//    }
-//
-//    // 상품그룹 중분류 삭제
-//    public void findByItemGroupSDelete(ItemGroupS itemGroupS) {
-//        ItemGroupSRepository.delete(itemGroupS);
-//    }
+    // 상품그룹 상품소재 삭제
+    public void findByItemDelete(Item itemOptional) {
+        ItemRepository.delete(itemOptional);
+    }
 
 }
