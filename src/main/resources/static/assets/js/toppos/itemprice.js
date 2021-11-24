@@ -123,19 +123,21 @@ function setDataIntoGrid(numOfGrid, url) {
     });
 }
 
+/* 실제 숨겨진 input file 이 작동하여 파일이 선택되면 파일명을 사용자에게 보여주는 용도 */
 function fileSelected() {
     const fileName = $("#fileExplorer")[0].files[0].name;
     $("#fileName").val(fileName);
 }
 
+/* 엑셀파일 업로드 팝업 띄우고 닫기 */
 function regPricePop() {
     $('#regPrice_popup').addClass('open');
 }
-
 function regPriceClose() {
     $('#regPrice_popup').removeClass('open');
 }
 
+/* 엑셀파일 처리를 통해 업데이트 */
 function applyPrice() {
 
     regPriceClose();
@@ -143,7 +145,7 @@ function applyPrice() {
 
 /* 상품 그룹 가격 페이지 필터링 */
 function filterItems() {
-    AUIGrid.clearFilterAll(gridID[0]);
+    AUIGrid.clearFilterAll(gridId[0]);
 
     const s_bgItemGroupcode = $("#s_bgItemGroupcode").val();
     const s_biItemcode = $("#s_biItemcode").val();
@@ -152,38 +154,39 @@ function filterItems() {
     const s_tempPriceApplyDate = $("#s_tempPriceApplyDate").val();
 
     if(s_bgItemGroupcode !== "") {
-        AUIGrid.setFilter(gridID[0], "bgItemGroupcode", function (dataField, value, item) {
+        AUIGrid.setFilter(gridId[0], "bgItemGroupcode", function (dataField, value, item) {
             return s_bgItemGroupcode === value;
         });
     }
     if(s_biItemcode !== "") {
-        AUIGrid.setFilter(gridID[0], "biItemcode", function (dataField, value, item) {
+        AUIGrid.setFilter(gridId[0], "biItemcode", function (dataField, value, item) {
             return s_biItemcode === value;
         });
     }
     if(s_biName !== "") {
-        AUIGrid.setFilter(gridID[0], "biName", function (dataField, value, item) {
+        AUIGrid.setFilter(gridId[0], "biName", function (dataField, value, item) {
             return new RegExp(s_biName).test(value);
         });
     }
     if(s_highClassYn !== "") {
-        AUIGrid.setFilter(gridID[0], "highClassYn", function (dataField, value, item) {
+        AUIGrid.setFilter(gridId[0], "highClassYn", function (dataField, value, item) {
             return new RegExp(s_highClassYn).test(value);
         });
     }
     if(s_tempPriceApplyDate !== "") {
-        AUIGrid.setFilter(gridID[0], "tempPriceApplyDate", function (dataField, value, item) {
+        AUIGrid.setFilter(gridId[0], "tempPriceApplyDate", function (dataField, value, item) {
             return s_tempPriceApplyDate === value;
         });
     }
 }
 
 function filterReset() {
-    AUIGrid.clearFilterAll(gridID[0]);
+    AUIGrid.clearFilterAll(gridId[0]);
 }
 
+/* 체크된 행이 존재할 경우 체크된 행을 삭제하고, 아닐 경우 선택된 행 하나만 삭제 */
 function removeRow() {
-    if(AUIGrid.getCheckedRowItems(gridId[0]).length){
+    if(AUIGrid.getCheckedRowItems(gridId[0]).length) {
         AUIGrid.removeCheckedRows(gridId[0]);
     }else{
         AUIGrid.removeRow(gridId[0], "selectedIndex");
@@ -206,5 +209,11 @@ function saveRegPrice() {
         "update" : updatedRowItems,
         "delete" : deletedRowItems,
     };
+}
 
+/* 상품코드 텍스트필드 입력시 유효성에 맞추기 */
+function itemCodeValidator() {
+    const $sBiIteamcode = $("#s_biItemcode");
+    let targetString = $sBiIteamcode.val();
+    $sBiIteamcode.val(targetString.replace(/[^a-zA-Z0-9]/g, ""));
 }

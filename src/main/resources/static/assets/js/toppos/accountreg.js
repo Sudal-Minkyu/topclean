@@ -391,8 +391,8 @@ function filterAccountList(type) {
                 });
             }
             if(s_role !== "") {
-                AUIGrid.setFilter(gridID[0], "roleCode", function (dataField, value, item) {
-                    return s_role === value;
+                AUIGrid.setFilter(gridID[0], "role", function (dataField, value, item) {
+                    return item.roleCode === s_role;
                 });
             }
             if(s_frCode !== "") {

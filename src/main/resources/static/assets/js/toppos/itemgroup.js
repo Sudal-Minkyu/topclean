@@ -360,6 +360,7 @@ function gridSave(numOfGrid) {
     }
 }
 
+/* 입력된 각 코드들의 형식과 길이를 유효성 검증함 */
 function codeValidator(oldValue, newValue, item, dataField, fromClipboard) {
     let isValid = false;
     let failMessage = "";
