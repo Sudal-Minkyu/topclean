@@ -14,6 +14,8 @@ import com.broadwave.toppos.Head.Item.Group.C.Item;
 import com.broadwave.toppos.Head.Item.Group.C.ItemListDto;
 import com.broadwave.toppos.Head.Item.Group.C.ItemRepository;
 import com.broadwave.toppos.Head.Item.Group.C.ItemRepositoryCustom;
+import com.broadwave.toppos.Head.Item.Price.ItemPriceRepository;
+import com.broadwave.toppos.Head.Item.Price.ItemPriceRepositoryCustom;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,17 +30,19 @@ public class HeadService {
     private final ItemGroupRepository ItemGroupRepository;
     private final ItemGroupSRepository ItemGroupSRepository;
     private final ItemRepository ItemRepository;
+    private final ItemPriceRepository itemPriceRepository;
 
     private final FranchiseRepositoryCustom franchiseRepositoryCustom;
     private final BranchRepositoryCustomImpl branohRepositoryCustom;
     private final ItemGroupRepositoryCustom itemGroupRepositoryCustom;
     private final ItemGroupSRepositoryCustom itemGroupSRepositoryCustom;
     private final ItemRepositoryCustom itemRepositoryCustom;
+    private final ItemPriceRepositoryCustom itemPriceRepositoryCustom;
 
     @Autowired
     public HeadService(BranchRepository branohRepository, FranchiseRepository franchiseRepository, FranchiseRepositoryCustom franchiseRepositoryCustom, BranchRepositoryCustomImpl branohRepositoryCustom,
                        ItemGroupRepository ItemGroupRepository, ItemGroupRepositoryCustom itemGroupRepositoryCustom, ItemGroupSRepository ItemGroupSRepository, ItemGroupSRepositoryCustom itemGroupSRepositoryCustom,
-                       ItemRepository ItemRepository, ItemRepositoryCustom itemRepositoryCustom){
+                       ItemRepository ItemRepository, ItemRepositoryCustom itemRepositoryCustom, ItemPriceRepository itemPriceRepository, ItemPriceRepositoryCustom itemPriceRepositoryCustom){
         this.branohRepository = branohRepository;
         this.franchiseRepository = franchiseRepository;
         this.franchiseRepositoryCustom = franchiseRepositoryCustom;
@@ -49,6 +53,8 @@ public class HeadService {
         this.itemGroupSRepositoryCustom = itemGroupSRepositoryCustom;
         this.ItemRepository = ItemRepository;
         this.itemRepositoryCustom = itemRepositoryCustom;
+        this.itemPriceRepository = itemPriceRepository;
+        this.itemPriceRepositoryCustom = itemPriceRepositoryCustom;
     }
 
     // // // // // // // // // // // // // // 가맹점, 지사 등록 매칭 페이지 // // // // // // // // // // // // //
@@ -90,7 +96,7 @@ public class HeadService {
     }
 
 
-    // // // // // // // // // // // // // // 상품그룹관리 페이지 // // // // // // // // // // // // //
+    // // // // // // // // // // // // // // 상품 그룹관리 페이지 // // // // // // // // // // // // //
     // 상품그룹 대분류  저장
     public void itemGroupSave(ItemGroup itemGroup){
         ItemGroupRepository.save(itemGroup);
@@ -159,5 +165,33 @@ public class HeadService {
     public void findByItemDelete(Item itemOptional) {
         ItemRepository.delete(itemOptional);
     }
+
+
+    // // // // // // // // // // // // // // 상품 가격관리 페이지 // // // // // // // // // // // // //
+    // 상품 가격 저장
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 }

@@ -45,7 +45,7 @@ public class ItemRepositoryCustomImpl extends QuerydslRepositorySupport implemen
                 ));
 
         query.where(itemGroup.bgItemGroupcode.eq(bgItemGroupcode));
-        query.where(itemGroupS.bsItemGroupcodeS.eq(bsItemGroupcodeS));
+        query.where(itemGroupS.bsItemGroupcodeS.eq(bsItemGroupcodeS).and(itemGroupS.bgItemGroupcode.bgItemGroupcode.eq(bgItemGroupcode)));
 
         return query.fetch();
     }

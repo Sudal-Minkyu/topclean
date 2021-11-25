@@ -1,9 +1,9 @@
-package com.broadwave.toppos.Head.Item.Group.B;
+package com.broadwave.toppos.Head.Item.Price;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ItemGroupSRepository extends JpaRepository<ItemGroupS,Long> {
+public interface ItemPriceRepository extends JpaRepository<ItemPrice,Long> {
 
 }

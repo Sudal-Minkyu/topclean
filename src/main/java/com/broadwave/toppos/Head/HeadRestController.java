@@ -21,12 +21,21 @@ import com.broadwave.toppos.common.AjaxResponse;
 import com.broadwave.toppos.common.CommonUtils;
 import com.broadwave.toppos.common.ResponseErrorCode;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -386,7 +395,6 @@ public class HeadRestController {
 
 
         FranchisInfoDto franchisInfoDto = headService.findByFranchiseInfo(frCode);
-//        log.info("가맹점정보 호출 가맹점 코드("+frCode+") : "+franchisInfoDto);
         data.put("franchiseInfoData",franchisInfoDto);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
@@ -547,7 +555,7 @@ public class HeadRestController {
         for (ItemGroupDto itemGroupDto : deleteList) {
             ItemGroupS itemGroupS = headService.findByItemGroupcodeS(deleteList.get(0).getBgItemGroupcode(), null);
             if(itemGroupS != null){
-                return ResponseEntity.ok(res.fail(ResponseErrorCode.TP011.getCode(), ResponseErrorCode.TP011.getDesc(), null, null));
+                return ResponseEntity.ok(res.fail(ResponseErrorCode.TP011.getCode(), ResponseErrorCode.TP011.getDesc(), "문자", "중분류코드 : "+itemGroupS.getBsItemGroupcodeS()));
             }else {
                 log.info("삭제할 대분류의 코드 : " + itemGroupDto.getBgItemGroupcode());
                 Optional<ItemGroup> optionalItemGroup = headService.findByBgItemGroupcode(itemGroupDto.getBgItemGroupcode());
@@ -662,7 +670,7 @@ public class HeadRestController {
 
             Optional<Item> item = headService.findByBiItem(deleteList.get(0).getBgItemGroupcode(), deleteList.get(0).getBsItemGroupcodeS());
             if(item.isPresent()){
-                return ResponseEntity.ok(res.fail(ResponseErrorCode.TP011.getCode(), ResponseErrorCode.TP011.getDesc(), null, null));
+                return ResponseEntity.ok(res.fail(ResponseErrorCode.TP011.getCode(), ResponseErrorCode.TP011.getDesc(), "문자", "상품코드 : "+item.get().getBiItemcode()));
             }else{
                 for (ItemGroupSDto itemGroupSDto : deleteList) {
                     ItemGroupS itemGroupS = headService.findByItemGroupcodeS(itemGroupSDto.getBgItemGroupcode(), itemGroupSDto.getBsItemGroupcodeS());
@@ -848,7 +856,85 @@ public class HeadRestController {
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
+    // 상품그룹 가격페이지 호출 API
+    @PostMapping("itemPrice")
+    public ResponseEntity<Map<String,Object>> itemPrice(@RequestParam("priceUpload") MultipartFile priceUpload, @RequestParam("setDt") String setDt, HttpServletRequest request) throws IOException {
+        log.info("itemPrice 호출");
+
+        AjaxResponse res = new AjaxResponse();
+        String login_id = CommonUtils.getCurrentuser(request);
+        log.info("현재 로그인한 아이디 : "+login_id);
+
+        String extension = FilenameUtils.getExtension(priceUpload.getOriginalFilename());
+        log.info("확장자 : " + extension);
+
+        // 확장자가 엑셀이 맞는지 확인
+        Workbook workbook;
+        assert extension != null;
+        if (extension.equals("xlsx")) {
+            workbook = new XSSFWorkbook(priceUpload.getInputStream());  // -> .xlsx
+        } else if(extension.equals("xls")) {
+            workbook = new HSSFWorkbook(priceUpload.getInputStream());  // -> .xls
+        }else{
+            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP012.getCode(), ResponseErrorCode.TP012.getDesc(), null, null));
+        }
+
+        log.info("setDt : "+setDt);
+        Sheet worksheet = workbook.getSheetAt(0); // 첫번째 시트
+        try {
+            Row rowCheck = worksheet.getRow(0);
+            Object cellDataCheck = rowCheck.getCell(0);
+            log.info("cellDataCheck : " + cellDataCheck.toString());
+            if (!cellDataCheck.toString().equals("상품코드")) {
+                return ResponseEntity.ok(res.fail(ResponseErrorCode.TP013.getCode(), ResponseErrorCode.TP013.getDesc(), null, null));
+            }
+        } catch (NullPointerException e) {
+            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP013.getCode(), ResponseErrorCode.TP013.getDesc(), null, null));
+        }
 
 
-    
+        int numOfRows = worksheet.getPhysicalNumberOfRows();
+        log.info("numOfRows : "+numOfRows);
+        int numOfCells = 1;
+
+        Row row = null;
+        Cell cell = null;
+
+
+
+
+        return ResponseEntity.ok(res.success());
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
