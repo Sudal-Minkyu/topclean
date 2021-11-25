@@ -61,11 +61,11 @@
 				<div>
 					정산비율
 					본사 : <input type="number" min="0" max="100" id="brCarculateRateHq" name="brCarculateRateHq"
-								onkeyup="validateRatio(this)" onchange="validateRatio(this)"/>%
+								onkeyup="validateNumber(this, 1)" onchange="validateNumber(this, 1)"/>%
 					지사 : <input type="number" id="brCarculateRateBr" name="brCarculateRateBr"
-								onkeyup="validateRatio(this)" onchange="validateRatio(this)"/>%
+								onkeyup="validateNumber(this, 1)" onchange="validateNumber(this, 1)"/>%
 					가맹 : <input type="number" id="brCarculateRateFr" name="brCarculateRateFr"
-								onkeyup="validateRatio(this)" onchange="validateRatio(this)"/>%
+								onkeyup="validateNumber(this, 1)" onchange="validateNumber(this, 1)"/>%
 				</div>
 				<div>
 					특이사항
@@ -114,7 +114,7 @@
 				</div>
 				<div>
 					가맹점관리코드
-					<input type="text" id="" name="" maxlength="3">
+					<input type="text" id="" name="">
 				</div>
 				<div>
 					계약일자
@@ -146,7 +146,8 @@
 					가맹점택코드(3자리)
 					<input id="" name="">
 					출고예정일계산
-					<input type="number" id="" name="">
+					<input type="text" id="tempDay" name=""
+						   onkeyup="validateNumber(this, 2)" onchange="validateNumber(this, 2)">
 					일후 출고
 				</div>
 				<div>

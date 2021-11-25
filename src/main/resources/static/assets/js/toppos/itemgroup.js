@@ -367,25 +367,25 @@ function gridSave(numOfGrid) {
         CommonUI.ajaxjson(gridSaveUrl[numOfGrid], jsonString, function () {
             AUIGrid.removeSoftRows(gridId[numOfGrid]);
             AUIGrid.resetUpdatedItems(gridId[numOfGrid]);
+            switch (numOfGrid) {
+                case 0 :
+                    if(currentBig !== undefined) {
+                        AUIGrid.clearGridData(gridId[1]);
+                        setDataIntoGrid(1, gridCreateUrl[1], currentBig);
+                    }
+                    if(currentMedium !== undefined) {
+                        AUIGrid.clearGridData(gridId[2]);
+                        setDataIntoGrid(2, gridCreateUrl[2], currentMedium);
+                    }
+                    break;
+                case 1 :
+                    if(currentMedium !== undefined) {
+                        AUIGrid.clearGridData(gridId[2]);
+                        setDataIntoGrid(2, gridCreateUrl[2], currentMedium);
+                    }
+                    break;
+            }
         });
-        switch (numOfGrid) {
-            case 0 :
-                if(currentBig !== undefined) {
-                    AUIGrid.clearGridData(gridId[1]);
-                    setDataIntoGrid(1, gridCreateUrl[1], currentBig);
-                }
-                if(currentMedium !== undefined) {
-                    AUIGrid.clearGridData(gridId[2]);
-                    setDataIntoGrid(2, gridCreateUrl[2], currentMedium);
-                }
-                break;
-            case 1 :
-                if(currentMedium !== undefined) {
-                    AUIGrid.clearGridData(gridId[2]);
-                    setDataIntoGrid(2, gridCreateUrl[2], currentMedium);
-                }
-                break;
-        }
     }
 }
 

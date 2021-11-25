@@ -294,9 +294,18 @@ function branchSave(){
         alertCaution("지사코드 중복확인을 해주세요.",1);
         return false;
     }
+    const valCalRateHq = $("#brCarculateRateHq").val();
+    const valCalRateBr = $("#brCarculateRateBr").val();
+    const valCalRateFr = $("#brCarculateRateFr").val();
+    const sumCalRate = parseFloat(valCalRateHq) + parseFloat(valCalRateBr) + parseFloat(valCalRateFr);
+    if(sumCalRate !== 100) {
+        alertCaution("정산비율의 합은 100 이어야 합니다." +
+            "<br> 현재값 :" + parseFloat(sumCalRate.toFixed(2))
+            + "&nbsp; 차이 :" + parseFloat((100 - sumCalRate).toFixed(2)), 1);
+        return false;
+    }
 
     const formData = new FormData(document.getElementById('brFormData'));
-
     const url = "/api/head/branchSave";
 
     CommonUI.ajax(url, "POST", formData, function (req){
@@ -435,9 +444,11 @@ function createNewPost(numOfGrid) {
     /* 신규 row를 추가하고 나서 편집이 용이하도록 포커스를 준다. */
     switch (numOfGrid) {
         case 0 :
+            $("#brContractDt").val(new Date().toISOString().slice(0, 10));
             $("#brCode").trigger("focus");
             break;
         case 1 :
+            $("#frContractDt").val(new Date().toISOString().slice(0, 10));
             $("#frCode").trigger("focus");
             break;
     }
@@ -507,8 +518,21 @@ function branchClose(){
     $('#branch_popup').removeClass('open');
 }
 
-/* 입력 숫자 소수점 뒤 두자리로 제한 */
-function validateRatio(element) {
-    element.value = element.value.replace(/^(\d+.?\d{0,2})\d*$/,"$1");
+/* 입력 숫자 유효성 검사 및 수정 */
+function validateNumber(element, type) {
+    switch (type) {
+        case 1 :
+            if(parseFloat(element.value) > 100) {
+                element.value = "100";
+            }else{
+                element.value = element.value.replace(/^(\d+.?\d{0,2})\d*$/,"$1");
+            }
+            break;
+        case 2 :
+                element.value = element.value.replace(/[^0-9]/g, "");
+            break;
+    }
+
+
 
 }
