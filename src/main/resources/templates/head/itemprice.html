@@ -65,13 +65,13 @@
 						<tbody>
 							<div>
 								업로드데이터 가격적용일
-								<input type="text" id="tempUploadDate" readonly>
+								<input type="text" id="setDt" name="setDt" readonly>
 							</div>
 							<div>
 								업로드파일 선택
 								<input type="text" id="fileName" readonly>
-								<button type="button" onclick="$('#fileExplorer').trigger('click')">파일선택</button>
-								<input type="file" id="fileExplorer" accept="application/vnd.ms-excel,
+								<button type="button" onclick="$('#priceUpload').trigger('click')">파일선택</button>
+								<input type="file" id="priceUpload" name="priceUpload" accept="application/vnd.ms-excel,
 										application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 									   	onchange="fileSelected()" hidden>
 							</div>
@@ -84,7 +84,7 @@
 							기존가격은 종료일자 까지 유효하며 신규 가격은 각격적용일 부터 유효합니다.
 						</div>
 						<div>
-							<a href="/assets/files/TopPOS_PriceUpload.xlsx">upload_form.xlsx 양식 다운로드</a>
+							<a href="/assets/files/TopPOS_PriceUpload.xlsx">TopPOS_PriceUpload.xlsx 양식 다운로드</a>
 						</div>
 						</tbody>
 					</table>

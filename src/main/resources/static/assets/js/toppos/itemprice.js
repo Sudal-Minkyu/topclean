@@ -17,7 +17,7 @@ $(function() {
 
 /* datepicker를 적용시킬 대상들의 dom id들 */
 const datePickerTargetIds = [
-    "s_tempPriceApplyDate", "tempUploadDate"
+    "s_tempPriceApplyDate", "setDt"
 ];
 
 /* 그리드 생성과 운영에 관한 중요 변수들. grid라는 이름으로 시작하도록 통일했다. */
@@ -125,7 +125,7 @@ function setDataIntoGrid(numOfGrid, url) {
 
 /* 실제 숨겨진 input file 이 작동하여 파일이 선택되면 파일명을 사용자에게 보여주는 용도 */
 function fileSelected() {
-    const fileName = $("#fileExplorer")[0].files[0].name;
+    const fileName = $("#priceUpload")[0].files[0].name;
     $("#fileName").val(fileName);
 }
 
@@ -139,7 +139,17 @@ function regPriceClose() {
 
 /* 엑셀파일 처리를 통해 업데이트 */
 function applyPrice() {
+    const valSetDt = $("#setDt").val();
+    const $PriceUpload = $("#priceUpload");
+    const url = "/api/head/itemPrice";
+    const formData = new FormData();
+    formData.append("setDt", valSetDt);
+    formData.append("priceUpload", $PriceUpload[0].files[0]);
+    console.log(Object.fromEntries(formData));
 
+    CommonUI.ajax(url, "POST", formData, function (req) {
+        console.log(req);
+    })
     regPriceClose();
 }
 
