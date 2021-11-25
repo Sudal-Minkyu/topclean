@@ -6,8 +6,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.util.List;
-
 /**
  * @author Minkyu
  * Date : 2021-11-05
@@ -51,9 +49,9 @@ public class HeadController {
     }
 
     // 특정품목가격관리 페이지
-    @RequestMapping("specialprice")
+    @RequestMapping("franchiseprice")
     public String specialprice(){
-        return "/head/specialprice";
+        return "/head/franchiseprice";
     }
 
 }
