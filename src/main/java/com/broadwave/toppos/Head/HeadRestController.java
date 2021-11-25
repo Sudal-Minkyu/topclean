@@ -16,6 +16,8 @@ import com.broadwave.toppos.Head.Item.Group.C.Item;
 import com.broadwave.toppos.Head.Item.Group.C.ItemDto;
 import com.broadwave.toppos.Head.Item.Group.C.ItemListDto;
 import com.broadwave.toppos.Head.Item.Group.C.ItemSet;
+import com.broadwave.toppos.Head.Item.Price.ItemPrice;
+import com.broadwave.toppos.Head.Item.Price.ItemPriceListDto;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.common.AjaxResponse;
 import com.broadwave.toppos.common.CommonUtils;
@@ -23,10 +25,7 @@ import com.broadwave.toppos.common.ResponseErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -781,8 +780,9 @@ public class HeadRestController {
         // 상품소재 수정 시작.
         if(updateList.size()!=0){
             for (ItemDto itemDto : updateList) {
-                Optional<Item> itemOptional = headService.findByBiItemcode(itemDto.getBgItemGroupcode());
+                Optional<Item> itemOptional = headService.findByBiItemcode(itemDto.getBiItemcode());
                 if (!itemOptional.isPresent()) {
+                    log.info("존재하지 않은 상품소재 코드 : " +itemDto.getBiItemcode());
                     return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "수정 할 상품소재 " + ResponseErrorCode.TP009.getDesc(), "문자", "상품코드 : " + itemDto.getBiItemcode()));
                 } else {
                     log.info("수정 할 상품소재 코드 : " + itemOptional.get().getBiItemcode());
@@ -844,6 +844,7 @@ public class HeadRestController {
             itemInfo.put("biItemcode", itemListDto.getBiItemcode());
             itemInfo.put("biItemSequence", itemListDto.getBiItemSequence());
             itemInfo.put("biName", itemListDto.getBiName());
+            itemInfo.put("biUseYn", itemListDto.getBiUseYn());
             itemInfo.put("biRemark", itemListDto.getBiRemark());
 
             itemListData.add(itemInfo);
@@ -866,7 +867,7 @@ public class HeadRestController {
         log.info("현재 로그인한 아이디 : "+login_id);
 
         String extension = FilenameUtils.getExtension(priceUpload.getOriginalFilename());
-        log.info("확장자 : " + extension);
+//        log.info("확장자 : " + extension);
 
         // 확장자가 엑셀이 맞는지 확인
         Workbook workbook;
@@ -879,12 +880,15 @@ public class HeadRestController {
             return ResponseEntity.ok(res.fail(ResponseErrorCode.TP012.getCode(), ResponseErrorCode.TP012.getDesc(), null, null));
         }
 
-        log.info("setDt : "+setDt);
+//        log.info("setDt : "+setDt);
+        String setDtReplace = setDt.replaceAll("-","");
+//        log.info("setDtReplace : "+setDtReplace);
+
         Sheet worksheet = workbook.getSheetAt(0); // 첫번째 시트
         try {
             Row rowCheck = worksheet.getRow(0);
             Object cellDataCheck = rowCheck.getCell(0);
-            log.info("cellDataCheck : " + cellDataCheck.toString());
+//            log.info("cellDataCheck : " + cellDataCheck.toString());
             if (!cellDataCheck.toString().equals("상품코드")) {
                 return ResponseEntity.ok(res.fail(ResponseErrorCode.TP013.getCode(), ResponseErrorCode.TP013.getDesc(), null, null));
             }
@@ -893,24 +897,123 @@ public class HeadRestController {
         }
 
 
-        int numOfRows = worksheet.getPhysicalNumberOfRows();
-        log.info("numOfRows : "+numOfRows);
-        int numOfCells = 1;
+//        int numOfRows = worksheet.getPhysicalNumberOfRows();
+//        log.info("데이터 총 길이 : "+numOfRows);
 
-        Row row = null;
-        Cell cell = null;
+        ArrayList<ItemPrice> itemPriceArrayList = new ArrayList<>();
+        ArrayList<Object> excelList = new ArrayList<>();
 
+        for(int i=1; i<worksheet.getPhysicalNumberOfRows(); i++){
+            ItemPrice itemPrice = new ItemPrice();
+            for (int j = 0; j < 13; j++) {
+                Row row = worksheet.getRow(i);
+                Cell cellData = row.getCell(j);
+                CellType ct = cellData.getCellType();
 
+                if (ct == CellType.BLANK) {
+                    excelList.add("");
+                } else {
+                    excelList.add(getStringValue(cellData));
+                }
 
+            }
+
+//            log.info(i+"번째 excelList : "+excelList);
+
+            Optional<Item> optionalItem = headService.findByBiItemcode(excelList.get(0).toString());
+            if(!optionalItem.isPresent()){
+                log.info("");
+                return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), i+"번쨰 상품"+ResponseErrorCode.TP009.getDesc(), "문자", "상품코드 : "+excelList.get(0).toString()));
+            }else{
+                itemPrice.setBiItemcode(excelList.get(0).toString());
+                itemPrice.setSetDt(setDtReplace);
+                itemPrice.setCloseDt("99991231");
+                itemPrice.setHighClassYn(excelList.get(6).toString());
+
+                itemPrice.setBpBasePrice(Integer.parseInt((String) excelList.get(3)));
+                itemPrice.setBpAddPrice(Integer.parseInt((String) excelList.get(5)));
+                itemPrice.setBpPriceA(Integer.parseInt((String) excelList.get(7)));
+                itemPrice.setBpPriceB(Integer.parseInt((String) excelList.get(8)));
+                itemPrice.setBpPriceC(Integer.parseInt((String) excelList.get(9)));
+                itemPrice.setBpPriceD(Integer.parseInt((String) excelList.get(10)));
+                itemPrice.setBpPriceE(Integer.parseInt((String) excelList.get(11)));
+
+                itemPrice.setBiRemark(excelList.get(12).toString());
+
+                itemPrice.setInsert_id(login_id);
+                itemPrice.setInsertDateTime(LocalDateTime.now());
+//            log.info(i+"번째 itemPrice : "+itemPrice);
+
+                itemPriceArrayList.add(itemPrice);
+
+                excelList.clear();
+            }
+        }
+
+//        for (ItemPrice itemPrice  : itemPriceArrayList) {
+//            headService.itemPriceSave(itemPrice);
+//        }
 
         return ResponseEntity.ok(res.success());
     }
 
+     // 엑셀 : cell의 데이터를 String 또는 Int형으로 변경
+    public static String getStringValue(Cell cell) {
+        String rtnValue = "";
+        try {
+            rtnValue = cell.getStringCellValue();
+        } catch(IllegalStateException e) {
+            rtnValue = Integer.toString((int)cell.getNumericCellValue());
+        }
+        return rtnValue;
+    }
 
 
+    // 상품그룹 가격페이지 리스트 호출 API
+    @GetMapping("itemPriceList")
+    public ResponseEntity<Map<String,Object>> itemPriceList(){
+        log.info("itemPriceList 호출");
 
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
 
+        List<HashMap<String,Object>> itemPriceListData = new ArrayList<>();
+        HashMap<String,Object> itemPriceInfo;
 
+        List<ItemPriceListDto> itemPriceListDtos = headService.findByItemPriceList();
+        log.info("itemPriceListDtos : "+itemPriceListDtos);
+        for (ItemPriceListDto itemPriceListDto : itemPriceListDtos) {
+
+            itemPriceInfo = new HashMap<>();
+
+            itemPriceInfo.put("biItemcode", itemPriceListDto.getBiItemcode());
+            itemPriceInfo.put("bgName", itemPriceListDto.getBgName());
+            itemPriceInfo.put("bsName", itemPriceListDto.getBsName());
+            itemPriceInfo.put("biName", itemPriceListDto.getBiName());
+            itemPriceInfo.put("setDt", itemPriceListDto.getSetDt());
+//            itemPriceInfo.put("endDt", itemPriceListDto.getEndDt());
+            itemPriceInfo.put("endDt", "99991231");
+
+            itemPriceInfo.put("bpBasePrice", itemPriceListDto.getBpBasePrice());
+            itemPriceInfo.put("highClassYn", itemPriceListDto.getSetDt());
+            itemPriceInfo.put("bpAddPrice", itemPriceListDto.getBpAddPrice());
+
+            itemPriceInfo.put("bpPriceA", itemPriceListDto.getBpPriceA());
+            itemPriceInfo.put("bpPriceB", itemPriceListDto.getBpPriceB());
+            itemPriceInfo.put("bpPriceC", itemPriceListDto.getBpPriceC());
+            itemPriceInfo.put("bpPriceD", itemPriceListDto.getBpPriceD());
+            itemPriceInfo.put("bpPriceE", itemPriceListDto.getBpPriceE());
+
+            itemPriceInfo.put("bpRemark", itemPriceListDto.getBpPriceD());
+
+            itemPriceListData.add(itemPriceInfo);
+        }
+
+        log.info("상품 가격 리스트 : "+itemPriceListData);
+        data.put("gridListData",itemPriceListData);
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
 
 
 

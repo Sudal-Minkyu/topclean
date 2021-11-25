@@ -24,7 +24,12 @@ public class ItemListDto {
     private String biItemcode; // 상품코드
     private String biItemSequence; // 상품순번
     private String biName; // 상품명
+    private String biUseYn; // 사용여부
     private String biRemark; // 특이사항
+
+    public String getBiUseYn() {
+        return biUseYn;
+    }
 
     public String getBiItemcode() {
         return biItemcode;

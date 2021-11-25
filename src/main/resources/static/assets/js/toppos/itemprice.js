@@ -172,7 +172,7 @@ function applyPrice() {
     CommonUI.ajax(url, "POST", formData, function (req) {
         console.log(req);
     })
-    // regPriceClose();
+    regPriceClose();
 }
 
 /* 상품 그룹 가격 페이지 필터링 */

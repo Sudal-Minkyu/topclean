@@ -1,5 +1,7 @@
 package com.broadwave.toppos.Head.Item.Price;
 
+import java.util.List;
+
 /**
  * @author Minkyu
  * Date : 2021-11-25
@@ -7,5 +9,7 @@ package com.broadwave.toppos.Head.Item.Price;
  * Remark :
  */
 public interface ItemPriceRepositoryCustom {
+    List<ItemPriceListDto> findByItemPriceList();
 
+    void itemPriceSave(ItemPrice itemPrice);
 }

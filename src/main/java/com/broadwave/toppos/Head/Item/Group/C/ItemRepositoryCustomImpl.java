@@ -41,6 +41,7 @@ public class ItemRepositoryCustomImpl extends QuerydslRepositorySupport implemen
                         item.biItemcode,
                         item.biItemSequence,
                         item.biName,
+                        item.biUseYn,
                         item.biRemark
                 ));
 

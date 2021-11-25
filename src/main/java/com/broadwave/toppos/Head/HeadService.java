@@ -14,6 +14,8 @@ import com.broadwave.toppos.Head.Item.Group.C.Item;
 import com.broadwave.toppos.Head.Item.Group.C.ItemListDto;
 import com.broadwave.toppos.Head.Item.Group.C.ItemRepository;
 import com.broadwave.toppos.Head.Item.Group.C.ItemRepositoryCustom;
+import com.broadwave.toppos.Head.Item.Price.ItemPrice;
+import com.broadwave.toppos.Head.Item.Price.ItemPriceListDto;
 import com.broadwave.toppos.Head.Item.Price.ItemPriceRepository;
 import com.broadwave.toppos.Head.Item.Price.ItemPriceRepositoryCustom;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -166,11 +168,17 @@ public class HeadService {
         ItemRepository.delete(itemOptional);
     }
 
-
     // // // // // // // // // // // // // // 상품 가격관리 페이지 // // // // // // // // // // // // //
     // 상품 가격 저장
+    public void itemPriceSave(ItemPrice itemPrice) {
+//        itemPriceRepository.save(itemPrice);
+        itemPriceRepositoryCustom.itemPriceSave(itemPrice);
+    }
 
-
+    // 상품 가격 리스트 호출
+    public List<ItemPriceListDto> findByItemPriceList() {
+        return itemPriceRepositoryCustom.findByItemPriceList();
+    }
 
 
 

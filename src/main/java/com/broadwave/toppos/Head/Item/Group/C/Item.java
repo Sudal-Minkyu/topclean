@@ -1,10 +1,11 @@
 package com.broadwave.toppos.Head.Item.Group.C;
 
-import com.broadwave.toppos.Head.Item.Group.A.ItemGroup;
-import com.broadwave.toppos.Head.Item.Group.B.ItemGroupS;
 import lombok.*;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.time.LocalDateTime;
 
 /**
@@ -37,6 +38,9 @@ public class Item {
 
     @Column(name="bi_name")
     private String biName; // 상품명
+
+    @Column(name="bi_use_yn")
+    private String biUseYn; // 사용여부
 
     @Column(name="bi_remark")
     private String biRemark; // 특이사항

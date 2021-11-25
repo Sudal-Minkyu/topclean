@@ -1,7 +1,5 @@
 package com.broadwave.toppos.Head.Item.Price;
 
-import com.broadwave.toppos.Head.Item.Group.A.ItemGroup;
-import com.broadwave.toppos.Head.Item.Group.C.Item;
 import lombok.*;
 
 import javax.persistence.*;
@@ -24,9 +22,8 @@ import java.time.LocalDateTime;
 public class ItemPrice {
 
     @Id
-    @ManyToOne(targetEntity = ItemGroup.class,fetch = FetchType.LAZY)
-    @JoinColumn(name="bi_itemcode")
-    private Item biItemcode; // 상품코드
+    @Column(name="bi_itemcode")
+    private String biItemcode; // 상품코드
 
     @Id
     @Column(name="set_dt")
@@ -35,6 +32,9 @@ public class ItemPrice {
     @Id
     @Column(name="high_class_yn")
     private String highClassYn; // 명품여부
+
+    @Column(name="close_dt")
+    private String closeDt; // 가격 종료일
 
     @Column(name="bp_base_price")
     private Integer bpBasePrice; // 기본가격
