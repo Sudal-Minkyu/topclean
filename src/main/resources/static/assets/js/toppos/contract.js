@@ -40,7 +40,7 @@ columnLayout[0] = [
 
 /* 0번 그리드의 프로퍼티(옵션) */
 gridOption[0] = {
-    editable : true,
+    editable : false,
     selectionMode : "singleRow",
     noDataMessage : "출력할 데이터가 없습니다.",
     rowNumHeaderText : "순번",
@@ -224,7 +224,7 @@ $(function () {
         });
     });
 
-    AUIGrid.bind(gridID[4], "cellClick", function (e) {
+    AUIGrid.bind(gridID[4], "cellDoubleClick", function (e) {
         $("#bot_brCode").val(e.item.brCode);
         $("#bot_brName").val(e.item.brName);
         $("#bot_brCarculateRateHq").val(e.item.brCarculateRateHq);
@@ -232,8 +232,6 @@ $(function () {
         $("#bot_brCarculateRateFr").val(e.item.brCarculateRateFr);
         $('#branch_popup').removeClass('open');
     });
-
-
 });
 
 /* 레이아웃, 프로퍼티를 적용하여 그리드 생성 */
@@ -249,10 +247,11 @@ function createGrid(columnLayout, gridOption) {
 }
 
 /* 해당 그리드와 연관된 그리드의 데이터를 주입한다. */
-function setListData(url, numOfGrid) {
+function setListData(url, numOfGrid, callback = function (){}) {
     CommonUI.ajax(url, "GET", false, function(req) {
         gridData[numOfGrid] = req.sendData.gridListData;
         AUIGrid.setGridData(gridID[numOfGrid], gridData[numOfGrid]);
+        return callback();
     })
 }
 
@@ -377,7 +376,9 @@ function assignmentSave() {
         formData.append("brName", $("#bot_brName").val());
         const jsonData = Object.fromEntries(formData);
         AUIGrid.updateRowsById(gridID[3], jsonData);
-        alertSuccess("가맹점 배정 완료");
+        setListData(setGridUrl[1], 1);
+        filterGrid3();
+        alertSuccess("가맹점 배정정보 저장 완료");
     });
 
 }
@@ -419,12 +420,13 @@ function setFieldData(numOfGrid, item) {
             break;
 
         case 3 :
+            console.log(item);
             $("#bot_frCode").val(item.frCode);
             $("#bot_frName").val(item.frName);
             $("#bot_frContractDt").val(item.frContractDt);
             $("#bot_frContractFromDt").val(item.frContractFromDt);
             $("#bot_frContractToDt").val(item.frContractToDt);
-            $("#bot_frContractState").val(item.frContractStateValue);
+            $("#bot_frContractStateValue").val(item.frContractStateValue);
             $("#bot_brAssignState").val(item.brAssignState);
             $("#bot_brCode").val(item.brCode);
             $("#bot_brName").val(item.brName);
@@ -458,23 +460,6 @@ function createNewPost(numOfGrid) {
 /* 그리드 필터링 기능 */
 function filterFrList(type, filterValue = "") {
 
-    /* 두가지 조건이 중첩할 경우 중첩된 조건이 필터링 되게 함 */
-    function filterGrid3() {
-        AUIGrid.clearFilterAll(gridID[3]);
-        if(filterCondition1A !== "") {
-            AUIGrid.setFilter(gridID[3], "brAssignStateValue", function (dataField, value, item) {
-                return item.brAssignState === filterCondition1A;
-            });
-        }
-        if(filterCondition1B !== "") {
-            AUIGrid.setFilter(gridID[3], "frName", function (dataField, value, item){
-                /* 입력문자를 정규표현식화 하여 해당 문자를 포함한 결과를 true로 반환해 필터링 */
-                const filterCondition = new RegExp(filterCondition1B);
-                return filterCondition.test(value);
-            });
-        }
-    }
-
     /* 누른 버튼에 따라 필터링을 함*/
     switch (type) {
         case 1 :
@@ -505,7 +490,26 @@ function filterFrList(type, filterValue = "") {
             $("#frNameFilter").val("");
             break;
     }
+}
 
+/* filterFrList와 연계하여 두가지 조건이 중첩할 경우 중첩된 조건이 필터링 되게 함 */
+function filterGrid3() {
+    AUIGrid.clearFilterAll(gridID[3]);
+    setListData(setGridUrl[3], 3, function (){
+        if(filterCondition1A !== "") {
+            AUIGrid.setFilter(gridID[3], "brAssignStateValue", function (dataField, value, item) {
+                console.log(item.brAssignState);
+                return item.brAssignState === filterCondition1A;
+            });
+        }
+        if(filterCondition1B !== "") {
+            AUIGrid.setFilter(gridID[3], "frName", function (dataField, value, item){
+                /* 입력문자를 정규표현식화 하여 해당 문자를 포함한 결과를 true로 반환해 필터링 */
+                const filterCondition = new RegExp(filterCondition1B);
+                return filterCondition.test(value);
+            });
+        }
+    });
 }
 
 /* 지사 선택 팝업 */
@@ -532,7 +536,4 @@ function validateNumber(element, type) {
                 element.value = element.value.replace(/[^0-9]/g, "");
             break;
     }
-
-
-
 }

@@ -50,4 +50,10 @@ public class HeadController {
         return "/head/itemprice";
     }
 
+    // 특정품목가격관리 페이지
+    @RequestMapping("specialprice")
+    public String specialprice(){
+        return "/head/specialprice";
+    }
+
 }

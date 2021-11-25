@@ -6,7 +6,12 @@
 
 <!-- 사용자 CSS 추가 -->
 <th:block layout:fragment="css">
-
+	<style>
+		/* 경고창이 팝업창에 가려지는걸 방지 */
+		#popupId {
+			z-index: 1001;
+		}
+	</style>
 </th:block>
 
 <!-- 사용자 스크립트 추가 -->

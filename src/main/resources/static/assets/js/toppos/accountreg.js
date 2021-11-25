@@ -4,7 +4,7 @@ $(function() {
     createAccountGrid(columnLayout, gridOption); // 배열의 각 그리드 함께 생성
 
     /* 0번그리드 내의 아이템 클릭시 필드에 적용 */
-    AUIGrid.bind(gridID[0], "cellDoubleClick", function (e) {
+    AUIGrid.bind(gridID[0], "cellClick", function (e) {
         setFieldData(0, e.item);
         restrictCodeSelection(e.item.roleCode);
         changeUseridStatus(true);

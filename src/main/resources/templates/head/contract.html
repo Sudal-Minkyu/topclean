@@ -60,7 +60,7 @@
 				</div>
 				<div>
 					정산비율
-					본사 : <input type="number" min="0" max="100" id="brCarculateRateHq" name="brCarculateRateHq"
+					본사 : <input type="number" id="brCarculateRateHq" name="brCarculateRateHq"
 								onkeyup="validateNumber(this, 1)" onchange="validateNumber(this, 1)"/>%
 					지사 : <input type="number" id="brCarculateRateBr" name="brCarculateRateBr"
 								onkeyup="validateNumber(this, 1)" onchange="validateNumber(this, 1)"/>%
@@ -144,7 +144,7 @@
 				</div>
 				<div>
 					가맹점택코드(3자리)
-					<input id="" name="">
+					<input id="" name="" maxlength="3">
 					출고예정일계산
 					<input type="text" id="tempDay" name=""
 						   onkeyup="validateNumber(this, 2)" onchange="validateNumber(this, 2)">
@@ -213,13 +213,7 @@
 			</div>
 			<div>
 				계약상태
-				<input id="bot_frContractState" readonly>
-				<!--
-				<select id="bot_frContractState">
-					<option value="01">계약진행중</option>
-					<option value="02">계약완료</option>
-				</select>
-				-->
+				<input id="bot_frContractStateValue" type="text" readonly>
 				배정상태
 				<select id="bot_brAssignState">
 					<option value="01">미배정</option>

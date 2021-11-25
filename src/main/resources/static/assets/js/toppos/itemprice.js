@@ -67,27 +67,34 @@ gridColumnLayout[0] = [
     }, {
         dataField: "bpBasePrice",
         headerText: "기본금액",
+        editable: true,
     }, {
         dataField: "highClassYn",
         headerText: "명품여부",
     }, {
         dataField: "bpAddPrice",
         headerText: "추가금액",
+        editable: true,
     }, {
         dataField: "bpPriceA",
         headerText: "최종금액(A)",
+        editable: true,
     }, {
         dataField: "bpPriceB",
         headerText: "최종금액(B)",
+        editable: true,
     }, {
         dataField: "bpPriceC",
         headerText: "최종금액(C)",
+        editable: true,
     }, {
         dataField: "bpPriceD",
         headerText: "최종금액(D)",
+        editable: true,
     }, {
         dataField: "bpPriceE",
         headerText: "최종금액(E)",
+        editable: true,
     }, {
         dataField: "bpRemark",
         headerText: "특이사항",
@@ -98,7 +105,7 @@ gridColumnLayout[0] = [
 * https://www.auisoft.net/documentation/auigrid/DataGrid/Properties.html
 * */
 gridProp[0] = {
-    editable : true,
+    editable : false,
     selectionMode : "singleRow",
     noDataMessage : "출력할 데이터가 없습니다.",
     showRowNumColumn : false,
@@ -141,6 +148,21 @@ function regPriceClose() {
 function applyPrice() {
     const valSetDt = $("#setDt").val();
     const $PriceUpload = $("#priceUpload");
+
+    if(valSetDt === "") {
+        alertCaution("가격적용일을 선택해 주세요", 1);
+        return false;
+    }else if($PriceUpload[0].files.length === 0) {
+        alertCaution("파일을 첨부해 주세요", 1);
+        return false;
+    }else if(
+        $PriceUpload[0].files[0].type !== "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" &&
+        $PriceUpload[0].files[0].type !== "application/vnd.ms-excel"
+    ) {
+        alertCaution("올바른 확장자의 파일을 첨부해 주세요", 1);
+        return false;
+    }
+
     const url = "/api/head/itemPrice";
     const formData = new FormData();
     formData.append("setDt", valSetDt);

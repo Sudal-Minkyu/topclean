@@ -152,7 +152,10 @@ gridColumnLayout[0] = [
     }, {
         dataField: "bgRemark",
         headerText: "대분류 특이사항",
-    },
+    }, {
+        dataField: "bgUseYn",
+        headerText: "사용여부"
+    }
 ];
 
 /* 0번 그리드의 프로퍼티(옵션) 아래의 링크를 참조
@@ -193,7 +196,10 @@ gridColumnLayout[1] = [
     }, {
         dataField: "bsRemark",
         headerText: "중분류 특이사항",
-    },
+    }, {
+        dataField: "bsUseYn",
+        headerText: "사용여부"
+    }
 ];
 
 gridProp[1] = {
@@ -244,7 +250,10 @@ gridColumnLayout[2] = [
     }, {
         dataField: "biRemark",
         headerText: "상품 특이사항",
-    },
+    }, {
+        dataField: "biUseYn",
+        headerText: "사용여부"
+    }
 ];
 
 gridProp[2] = {
