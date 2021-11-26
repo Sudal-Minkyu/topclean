@@ -59,10 +59,10 @@ gridColumnLayout[0] = [
         dataField: "biName",
         headerText: "상품명",
     }, {
-        dataField: "",
+        dataField: "setDt",
         headerText: "적용일자",
     }, {
-        dataField: "",
+        dataField: "closeDt",
         headerText: "종료일자",
     }, {
         dataField: "bpBasePrice",
@@ -202,7 +202,7 @@ function filterItems() {
     }
     if(s_highClassYn !== "") {
         AUIGrid.setFilter(gridId[0], "highClassYn", function (dataField, value, item) {
-            return new RegExp(s_highClassYn).test(value);
+            return s_highClassYn === value;
         });
     }
     if(s_tempPriceApplyDate !== "") {
@@ -226,7 +226,7 @@ function removeRow() {
 }
 
 function saveRegPrice() {
-    // 추가된 행 아이템들(배열)
+    // 추가된 행 아이템들(배열) 차후 데이터 처리 방식에 따라 바뀜
     // const addedRowItems = AUIGrid.getAddedRowItems(gridTargetDiv[numOfGrid]);
 
     // 수정된 행 아이템들(배열)

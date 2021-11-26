@@ -1,22 +1,22 @@
 
 $(function() {
     accountList(); // 사용자리스트 자동조회
-    createAccountGrid(columnLayout, gridOption); // 배열의 각 그리드 함께 생성
+    createAccountGrid(gridColumnLayout, gridProp); // 배열의 각 그리드 함께 생성
 
     /* 0번그리드 내의 아이템 클릭시 필드에 적용 */
-    AUIGrid.bind(gridID[0], "cellClick", function (e) {
+    AUIGrid.bind(gridId[0], "cellClick", function (e) {
         setFieldData(0, e.item);
         restrictCodeSelection(e.item.roleCode);
         changeUseridStatus(true);
         $password.attr("disabled", true);
     });
 
-    AUIGrid.bind(gridID[1], "cellDoubleClick", function (e) {
+    AUIGrid.bind(gridId[1], "cellDoubleClick", function (e) {
         $("#brCode").val(e.item.brCode);
         $('#branch_popup').removeClass('open');
     });
 
-    AUIGrid.bind(gridID[2], "cellDoubleClick", function (e) {
+    AUIGrid.bind(gridId[2], "cellDoubleClick", function (e) {
         $("#frCode").val(e.item.frCode);
         $('#franchise_popup').removeClass('open');
     });
@@ -39,19 +39,19 @@ let $password;
 
 // 그리드 관련 시작
 // +++++++++++++++++++++++++++++++++++++//
-let gridID = [];
-let targetDiv = [];
+let gridId = [];
+let gridTargetDiv = [];
 let gridData = [];
-let columnLayout = [];
-let gridOption = [];
+let gridColumnLayout = [];
+let gridProp = [];
 
 /* 그리드를 뿌릴 대상 id */
-targetDiv = [
+gridTargetDiv = [
     "grid_accountList", "grid_branchList", "grid_franchList"
 ];
 
 /* 0번 그리드의 레이아웃 */
-columnLayout[0] = [
+gridColumnLayout[0] = [
     {
         dataField: "userid",
         headerText: "아이디",
@@ -80,7 +80,7 @@ columnLayout[0] = [
 ];
 
 /* 0번 그리드의 프로퍼티(옵션) */
-gridOption[0] = {
+gridProp[0] = {
     editable : false,
     selectionMode : "singleRow",
     noDataMessage : "출력할 데이터가 없습니다.",
@@ -89,7 +89,7 @@ gridOption[0] = {
     enableFilter : true,
 };
 
-columnLayout[1] = [
+gridColumnLayout[1] = [
     {
         dataField: "brCode",
         headerText: "지사코드",
@@ -111,7 +111,7 @@ columnLayout[1] = [
     },
 ];
 
-gridOption[1] = {
+gridProp[1] = {
     editable : false,
     selectionMode : "singleRow",
     noDataMessage : "출력할 데이터가 없습니다.",
@@ -120,7 +120,7 @@ gridOption[1] = {
     enableFilter : true,
 };
 
-columnLayout[2] = [
+gridColumnLayout[2] = [
     {
         dataField: "frCode",
         headerText: "가맹점코드",
@@ -142,7 +142,7 @@ columnLayout[2] = [
     },
 ];
 
-gridOption[2] = {
+gridProp[2] = {
     editable : false,
     selectionMode : "singleRow",
     noDataMessage : "출력할 데이터가 없습니다.",
@@ -151,9 +151,9 @@ gridOption[2] = {
     enableFilter : true,
 };
 
-function createAccountGrid(columnLayout, gridOption) {
-    for (const i in columnLayout) {
-        gridID[i] = AUIGrid.create(targetDiv[i], columnLayout[i], gridOption[i]);
+function createAccountGrid(gridColumnLayout, gridProp) {
+    for (const i in gridColumnLayout) {
+        gridId[i] = AUIGrid.create(gridTargetDiv[i], gridColumnLayout[i], gridProp[i]);
     }
 
     /* <=========================> */
@@ -196,8 +196,8 @@ function popupListAjax(url,numOfGrid,params){
 
     CommonUI.ajax(url, "GET", params, function(req){
         gridData[numOfGrid] = req.sendData.gridListData;
-        AUIGrid.setGridData(gridID[numOfGrid], gridData[numOfGrid]);
-        AUIGrid.resize(gridID[numOfGrid], 660, 480);
+        AUIGrid.setGridData(gridId[numOfGrid], gridData[numOfGrid]);
+        AUIGrid.resize(gridId[numOfGrid], 660, 480);
     });
 }
 
@@ -206,19 +206,19 @@ function brSearch(){
     const s_brCode = $("#pop_s_brCode").val();
     const s_brContractState = $("#pop_s_brContractState").val();
 
-    AUIGrid.clearFilterAll(gridID[1]);
+    AUIGrid.clearFilterAll(gridId[1]);
     if(s_brName !== "") {
-        AUIGrid.setFilter(gridID[1], "brName", function (dataField, value, item) {
+        AUIGrid.setFilter(gridId[1], "brName", function (dataField, value, item) {
             return new RegExp(s_brName).test(value);
         });
     }
     if(s_brCode !== "") {
-        AUIGrid.setFilter(gridID[1], "brCode", function (dataField, value, item) {
+        AUIGrid.setFilter(gridId[1], "brCode", function (dataField, value, item) {
             return new RegExp(s_brCode).test(value);
         });
     }
     if(s_brContractState !== "") {
-        AUIGrid.setFilter(gridID[1], "brContractStateValue", function (dataField, value, item) {
+        AUIGrid.setFilter(gridId[1], "brContractStateValue", function (dataField, value, item) {
             return s_brContractState === item.brContractState;
         });
     }
@@ -229,19 +229,19 @@ function frSearch(){
     const s_frCode = $("#pop_s_frCode").val();
     const s_frContractState = $("#pop_s_frContractState").val();
 
-    AUIGrid.clearFilterAll(gridID[2]);
+    AUIGrid.clearFilterAll(gridId[2]);
     if(s_frName !== "") {
-        AUIGrid.setFilter(gridID[2], "frName", function (dataField, value, item) {
+        AUIGrid.setFilter(gridId[2], "frName", function (dataField, value, item) {
             return new RegExp(s_frName).test(value);
         });
     }
     if(s_frCode !== "") {
-        AUIGrid.setFilter(gridID[2], "frCode", function (dataField, value, item) {
+        AUIGrid.setFilter(gridId[2], "frCode", function (dataField, value, item) {
             return new RegExp(s_frCode).test(value);
         });
     }
     if(s_frContractState !== "") {
-        AUIGrid.setFilter(gridID[2], "frContractStateValue", function (dataField, value, item) {
+        AUIGrid.setFilter(gridId[2], "frContractStateValue", function (dataField, value, item) {
             return s_frContractState === item.frContractState;
         });
     }
@@ -254,14 +254,14 @@ function frSearch(){
 // 지사선택 함수
 function brListPop(){
     // console.log("지사선택 팝업열기");
-    AUIGrid.clearFilterAll(gridID[1]);
+    AUIGrid.clearFilterAll(gridId[1]);
     $('#branch_popup').addClass('open');
 }
 
 // 가맹점선택 함수
 function frListPop(){
     // console.log("가맹점선택 팝업열기");
-    AUIGrid.clearFilterAll(gridID[2]);
+    AUIGrid.clearFilterAll(gridId[2]);
     $('#franchise_popup').addClass('open');
 }
 
@@ -442,40 +442,40 @@ function filterAccountList(type) {
 
     switch (type) {
         case 1 :
-            AUIGrid.clearFilterAll(gridID[0]);
+            AUIGrid.clearFilterAll(gridId[0]);
             const s_userid = $("#s_userid").val();
             const s_username = $("#s_username").val();
             const s_role = $("#s_role").val();
             const s_frCode = $("#s_frCode").val();
             const s_brCode = $("#s_brCode").val();
             if(s_userid !== "") {
-                AUIGrid.setFilter(gridID[0], "userid", function (dataField, value, item) {
+                AUIGrid.setFilter(gridId[0], "userid", function (dataField, value, item) {
                     return new RegExp(s_userid).test(value);
                 });
             }
             if(s_username !== "") {
-                AUIGrid.setFilter(gridID[0], "username", function (dataField, value, item) {
+                AUIGrid.setFilter(gridId[0], "username", function (dataField, value, item) {
                     return new RegExp(s_username).test(value);
                 });
             }
             if(s_role !== "") {
-                AUIGrid.setFilter(gridID[0], "role", function (dataField, value, item) {
+                AUIGrid.setFilter(gridId[0], "role", function (dataField, value, item) {
                     return item.roleCode === s_role;
                 });
             }
             if(s_frCode !== "") {
-                AUIGrid.setFilter(gridID[0], "frCode", function (dataField, value, item) {
+                AUIGrid.setFilter(gridId[0], "frCode", function (dataField, value, item) {
                     return new RegExp(s_frCode).test(value);
                 });
             }
             if(s_brCode !== "") {
-                AUIGrid.setFilter(gridID[0], "brCode", function (dataField, value, item) {
+                AUIGrid.setFilter(gridId[0], "brCode", function (dataField, value, item) {
                     return new RegExp(s_brCode).test(value);
                 });
             }
             break;
         case 2 :
-            AUIGrid.clearFilterAll(gridID[0]);
+            AUIGrid.clearFilterAll(gridId[0]);
             break;
     }
 
