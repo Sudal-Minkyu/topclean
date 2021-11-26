@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/default}" xmlns="http://www.w3.org/1999/html">
+
+<!-- 사용자 CSS 추가 -->
+<th:block layout:fragment="css">
+
+</th:block>
+
+<!-- 사용자 스크립트 추가 -->
+<th:block layout:fragment="script">
+    <script src="/assets/js/toppos/franchiseprice.js"></script>
+</th:block>
+
+<div layout:fragment="content" class="content padding-zero content--main">
+    <h1>특정품목가격 페이지</h1>
+
+    <div>
+        가맹점 코드
+        <input type="text">
+        가맹관리코드
+        <input type="text">
+        가맹점명
+        <input type="text">
+        <button type="button">조회</button>
+        <button type="button">라인추가</button>
+        <button type="button">라인삭제</button>
+    </div>
+
+    <div>
+        계약 가맹점
+        <div id="grid_franchise"></div>
+    </div>
+
+    <div>
+        특정가격 적용품목
+        <div id="grid_franchisePrice"></div>
+    </div>
+
+    <!-- 상품 팝업 -->
+    <div class="l-popup" id="item_popup">
+        <div class="l-popup__container">
+            <div class="l-popup__head">
+                <h3 class="l-popup__heading">상품 선택</h3>
+            </div>
+            <div class="l-popup__content">
+                <div class="l-popup__section">
+                    <table class="c-table c-table--non-border">
+                        <colgroup>
+                            <col style="width: 80px;"/>
+                            <col/>
+                            <col style="width: 80px;"/>
+                            <col/>
+                            <col style="width: 80px;"/>
+                            <col/>
+                            <col style="width: 60px;"/>
+                        </colgroup>
+                        <tbody>
+                        <tr>
+                            <th>상품코드</th>
+                            <td>
+                                <div class="c-text">
+                                    <input type="text" id="" class="c-text__input"/>
+                                </div>
+                            </td>
+                            <th>상품명</th>
+                            <td>
+                                <div class="c-text">
+                                    <input type="text" id="" class="c-text__input"/>
+                                </div>
+                            </td>
+                            <td>
+                                <button class="c-button c-button--point" type="button">조회</button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="l-popup__section">
+                    <div id="grid_itemList"></div>
+                </div>
+            </div>
+            <a href="#" onclick="itemClose()" class="l-popup__close">팝업닫기</a>
+        </div>
+    </div>
+
+</div>
+</html>

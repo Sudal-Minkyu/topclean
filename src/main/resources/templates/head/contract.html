@@ -60,9 +60,12 @@
 				</div>
 				<div>
 					정산비율
-					본사 : <input type="text" id="brCarculateRateHq" name="brCarculateRateHq" />%
-					지사 : <input type="text" id="brCarculateRateBr" name="brCarculateRateBr" />%
-					가맹 : <input type="text" id="brCarculateRateFr" name="brCarculateRateFr" />%
+					본사 : <input type="number" id="brCarculateRateHq" name="brCarculateRateHq"
+								onkeyup="validateNumber(this, 1)" onchange="validateNumber(this, 1)"/>%
+					지사 : <input type="number" id="brCarculateRateBr" name="brCarculateRateBr"
+								onkeyup="validateNumber(this, 1)" onchange="validateNumber(this, 1)"/>%
+					가맹 : <input type="number" id="brCarculateRateFr" name="brCarculateRateFr"
+								onkeyup="validateNumber(this, 1)" onchange="validateNumber(this, 1)"/>%
 				</div>
 				<div>
 					특이사항
@@ -111,7 +114,7 @@
 				</div>
 				<div>
 					가맹점관리코드
-					<input type="text" id="" name="" maxlength="3">
+					<input type="text" id="" name="">
 				</div>
 				<div>
 					계약일자
@@ -141,9 +144,10 @@
 				</div>
 				<div>
 					가맹점택코드(3자리)
-					<input id="" name="">
+					<input id="" name="" maxlength="3">
 					출고예정일계산
-					<input type="number" id="" name="">
+					<input type="text" id="tempDay" name=""
+						   onkeyup="validateNumber(this, 2)" onchange="validateNumber(this, 2)">
 					일후 출고
 				</div>
 				<div>
@@ -209,13 +213,7 @@
 			</div>
 			<div>
 				계약상태
-				<input id="bot_frContractState" readonly>
-				<!--
-				<select id="bot_frContractState">
-					<option value="01">계약진행중</option>
-					<option value="02">계약완료</option>
-				</select>
-				-->
+				<input id="bot_frContractStateValue" type="text" readonly>
 				배정상태
 				<select id="bot_brAssignState">
 					<option value="01">미배정</option>
@@ -230,9 +228,9 @@
 			</div>
 			<div>
 				정산비율
-				본사 : <input id="bot_brCarculateRateHq" type="text" readonly>%
-				지사 : <input id="bot_brCarculateRateBr" type="text" readonly>%
-				가맹 : <input id="bot_brCarculateRateFr" type="text" readonly>%
+				본사 : <input id="bot_brCarculateRateHq" type="number" readonly>%
+				지사 : <input id="bot_brCarculateRateBr" type="number" readonly>%
+				가맹 : <input id="bot_brCarculateRateFr" type="number" readonly>%
 			</div>
 			<div>
 				<button type="button" onclick="assignmentSave()">저장</button>

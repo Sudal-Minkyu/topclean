@@ -62,7 +62,7 @@ public class UserRestController {
         }
 
         Optional<Customer> optionalCustomer = userService.findByBcHp(customer.getBcHp());
-        if( optionalCustomer.isPresent()){
+        if(optionalCustomer.isPresent()){
             log.info("수정합니다.");
             // 수정일때
 //            account.setId(optionalAccount.get().getId());
@@ -79,8 +79,8 @@ public class UserRestController {
             log.info("신규입니다.");
             // 신규일때
             customer.setFrCode(frCode);
-            customer.setModify_id(login_id);
-            customer.setModifyDateTime(LocalDateTime.now());
+            customer.setInsert_id(login_id);
+            customer.setInsertDateTime(LocalDateTime.now());
             customer.setBcMessageAgreeDt(LocalDateTime.now());
 
             Customer customerSave =  userService.customerSave(customer);

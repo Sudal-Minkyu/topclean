@@ -6,7 +6,12 @@
 
 <!-- 사용자 CSS 추가 -->
 <th:block layout:fragment="css">
-
+	<style>
+		/* 경고창이 팝업창에 가려지는걸 방지 */
+		#popupId {
+			z-index: 1001;
+		}
+	</style>
 </th:block>
 
 <!-- 사용자 스크립트 추가 -->
@@ -20,10 +25,10 @@
 		대분류
 		<select id="s_bgItemGroupcode">
 			<option>전체</option>
-			<option></option>
+			<option>//반복문으로 구현//</option>
 		</select>
 		상품코드
-		<input type="text" id="s_biItemcode">
+		<input type="text" id="s_biItemcode" maxlength="3" onkeyup="itemCodeValidator()">
 		상품명
 		<input type="text" id="s_biName">
 		명품여부
@@ -65,13 +70,13 @@
 						<tbody>
 							<div>
 								업로드데이터 가격적용일
-								<input type="text" id="tempUploadDate" readonly>
+								<input type="text" id="setDt" name="setDt" readonly>
 							</div>
 							<div>
 								업로드파일 선택
 								<input type="text" id="fileName" readonly>
-								<button type="button" onclick="$('#fileExplorer').trigger('click')">파일선택</button>
-								<input type="file" id="fileExplorer" accept="application/vnd.ms-excel,
+								<button type="button" onclick="$('#priceUpload').trigger('click')">파일선택</button>
+								<input type="file" id="priceUpload" name="priceUpload" accept="application/vnd.ms-excel,
 										application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 									   	onchange="fileSelected()" hidden>
 							</div>
@@ -79,6 +84,13 @@
 								<button type="button" onclick="applyPrice()">가격적용하기</button>
 								<button type="button" onclick="regPriceClose()">취소</button>
 							</div>
+						<div>
+							*업로드를 통한 가격 등록은 전체가격정보를 한번에 올릴 경우에만 사용하시기 바랍니다. <br>
+							기존가격은 종료일자 까지 유효하며 신규 가격은 각격적용일 부터 유효합니다.
+						</div>
+						<div>
+							<a href="/assets/files/TopPOS_PriceUpload.xlsx">TopPOS_PriceUpload.xlsx 양식 다운로드</a>
+						</div>
 						</tbody>
 					</table>
 				</div>

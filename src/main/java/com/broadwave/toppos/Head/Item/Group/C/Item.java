@@ -25,19 +25,22 @@ public class Item {
 
     @Id
     @Column(name="bi_itemcode")
-    private String biItemCode; // 상품코드
+    private String biItemcode; // 상품코드
 
     @Column(name="bg_item_groupcode")
     private String bgItemGroupcode; // 대분류코드
 
-    @Column(name="bs_item_groupcode_s")
+    @Column(name = "bs_item_groupcode_s")
     private String bsItemGroupcodeS; // 중분류코드
 
     @Column(name="bi_item_sequence")
-    private String biSequence; // 상품순번
+    private String biItemSequence; // 상품순번
 
     @Column(name="bi_name")
     private String biName; // 상품명
+
+    @Column(name="bi_use_yn")
+    private String biUseYn; // 사용여부
 
     @Column(name="bi_remark")
     private String biRemark; // 특이사항

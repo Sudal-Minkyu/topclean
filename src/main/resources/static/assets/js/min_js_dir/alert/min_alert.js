@@ -145,7 +145,7 @@ function alertCaution(text,type) { //경고창
     html +='</div>';
 
     $('#alertpop').html(html);
-
+    $('#cautionBtn'+type).trigger("focus"); // 엔터치면 바로 확인버튼이 눌릴 수 있게
 }
 
 // 삭제 알림창.

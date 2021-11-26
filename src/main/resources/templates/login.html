@@ -2,7 +2,7 @@
 <html lang="ko"
 	  xmlns:th="http://www.thymeleaf.org"
 	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	  layout:decorate ="~{layout/default}">
+	  layout:decorate ="~{layout/login}">
 
 <th:block layout:fragment="script">
 	<script type="text/javascript">
@@ -73,19 +73,16 @@
 
 	<div class="login">
 		<h1 class="login__logo">
-			<a href="/login" class="logo">
-				<span>Toppos Login</span>
-			</a>
+			<img src="/assets/images/logo__megashop.svg" alt="탑 크리닝업 메가샵" />
 		</h1>
 		<div class="login__form-box">
-				<div>
-					<label><input type="text" class="login__input"  id="userid" name="userid" placeholder="아이디를 입력하세요." required ></label>
-				</div>
-				<div style="margin-top: 10px">
-					<label><input type="password" class="login__input" id="password" name="password" placeholder="패스워드를 입력하세요." required></label>
-				</div>
-				<div><input class="login__btn" type="button" value="로그인" onclick="loginActive()" /></div>
-<!--				<div><a class="login__btn" href="/register">회원가입</a></div>-->
+			<input type="text" class="login__input login__input--id"  id="userid" name="userid" placeholder="아이디" required >
+			<input type="password" class="login__input login__input--pw" id="password" name="password" placeholder="비밀번호" required>
+			<div class="login__check">
+				<input type="checkbox" id="logincheck" class="login__check-input" />
+				<label for="logincheck" class="login__check-label">아이디 저장</label>
+			</div>
+			<div><input class="login__btn" type="button" value="로그인" onclick="loginActive()" /></div>
 		</div>
 	</div>
 </div>

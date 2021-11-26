@@ -10,6 +10,14 @@ import com.broadwave.toppos.Head.Item.Group.A.ItemGroupDto;
 import com.broadwave.toppos.Head.Item.Group.A.ItemGroupRepository;
 import com.broadwave.toppos.Head.Item.Group.A.ItemGroupRepositoryCustom;
 import com.broadwave.toppos.Head.Item.Group.B.*;
+import com.broadwave.toppos.Head.Item.Group.C.Item;
+import com.broadwave.toppos.Head.Item.Group.C.ItemListDto;
+import com.broadwave.toppos.Head.Item.Group.C.ItemRepository;
+import com.broadwave.toppos.Head.Item.Group.C.ItemRepositoryCustom;
+import com.broadwave.toppos.Head.Item.Price.ItemPrice;
+import com.broadwave.toppos.Head.Item.Price.ItemPriceListDto;
+import com.broadwave.toppos.Head.Item.Price.ItemPriceRepository;
+import com.broadwave.toppos.Head.Item.Price.ItemPriceRepositoryCustom;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,15 +31,20 @@ public class HeadService {
     private final BranchRepository branohRepository;
     private final ItemGroupRepository ItemGroupRepository;
     private final ItemGroupSRepository ItemGroupSRepository;
+    private final ItemRepository ItemRepository;
+    private final ItemPriceRepository itemPriceRepository;
 
     private final FranchiseRepositoryCustom franchiseRepositoryCustom;
     private final BranchRepositoryCustomImpl branohRepositoryCustom;
     private final ItemGroupRepositoryCustom itemGroupRepositoryCustom;
     private final ItemGroupSRepositoryCustom itemGroupSRepositoryCustom;
+    private final ItemRepositoryCustom itemRepositoryCustom;
+    private final ItemPriceRepositoryCustom itemPriceRepositoryCustom;
 
     @Autowired
     public HeadService(BranchRepository branohRepository, FranchiseRepository franchiseRepository, FranchiseRepositoryCustom franchiseRepositoryCustom, BranchRepositoryCustomImpl branohRepositoryCustom,
-                       ItemGroupRepository ItemGroupRepository, ItemGroupRepositoryCustom itemGroupRepositoryCustom, ItemGroupSRepository ItemGroupSRepository, ItemGroupSRepositoryCustom itemGroupSRepositoryCustom){
+                       ItemGroupRepository ItemGroupRepository, ItemGroupRepositoryCustom itemGroupRepositoryCustom, ItemGroupSRepository ItemGroupSRepository, ItemGroupSRepositoryCustom itemGroupSRepositoryCustom,
+                       ItemRepository ItemRepository, ItemRepositoryCustom itemRepositoryCustom, ItemPriceRepository itemPriceRepository, ItemPriceRepositoryCustom itemPriceRepositoryCustom){
         this.branohRepository = branohRepository;
         this.franchiseRepository = franchiseRepository;
         this.franchiseRepositoryCustom = franchiseRepositoryCustom;
@@ -40,6 +53,10 @@ public class HeadService {
         this.itemGroupRepositoryCustom = itemGroupRepositoryCustom;
         this.ItemGroupSRepository = ItemGroupSRepository;
         this.itemGroupSRepositoryCustom = itemGroupSRepositoryCustom;
+        this.ItemRepository = ItemRepository;
+        this.itemRepositoryCustom = itemRepositoryCustom;
+        this.itemPriceRepository = itemPriceRepository;
+        this.itemPriceRepositoryCustom = itemPriceRepositoryCustom;
     }
 
     // // // // // // // // // // // // // // 가맹점, 지사 등록 매칭 페이지 // // // // // // // // // // // // //
@@ -81,13 +98,13 @@ public class HeadService {
     }
 
 
-    // // // // // // // // // // // // // // 상품그룹관리 페이지 // // // // // // // // // // // // //
+    // // // // // // // // // // // // // // 상품 그룹관리 페이지 // // // // // // // // // // // // //
     // 상품그룹 대분류  저장
     public void itemGroupSave(ItemGroup itemGroup){
         ItemGroupRepository.save(itemGroup);
     }
 
-    // 상품그룹 대분류 중복확인
+    // 상품그룹 대분류 객체 가져오기
     public Optional<ItemGroup> findByBgItemGroupcode(String bgItemGroupcode) {
         return ItemGroupRepository.findByBgItemGroupcode(bgItemGroupcode);
     }
@@ -107,12 +124,12 @@ public class HeadService {
         ItemGroupSRepository.save(itemGroupS);
     }
 
-    // 상품그룹 중분류 중복확인
-//    public Optional<ItemGroupS> findByItemGroupcodeS(String bgItemGroupcode, String bsItemGroupcodeS) {
-//        return ItemGroupSRepository.findByItemGroupcodeS(bgItemGroupcode, bsItemGroupcodeS);
-//    }
+    // 상품그룹 중분류 객체 가져오기
+    public ItemGroupS findByItemGroupcodeS(String bgItemGroupcode, String bsItemGroupcodeS) {
+        return itemGroupSRepositoryCustom.findByItemGroupcodeS(bgItemGroupcode, bsItemGroupcodeS);
+    }
 
-    // 상품그룹 정보
+    // 상품그룹 중분류 정보
     public ItemGroupSInfo findByBsItemGroupcodeS(String bgItemGroupcode, String bsItemGroupcodeS) {
         return itemGroupSRepositoryCustom.findByBsItemGroupcodeS(bgItemGroupcode, bsItemGroupcodeS);
     }
@@ -122,9 +139,65 @@ public class HeadService {
         return itemGroupSRepositoryCustom.findByItemGroupSList(bgItemGroupcode);
     }
 
+    // 상품그룹 중분류 삭제
     public void findByItemGroupSDelete(ItemGroupS itemGroupS) {
         ItemGroupSRepository.delete(itemGroupS);
     }
+
+    // 상품그룹 상품소재 저장
+    public void itemSave(Item item){
+        ItemRepository.save(item);
+    }
+
+    // 상품그룹 상품소재 객체 가져오기
+    public Optional<Item> findByBiItemcode(String biItemcode) {
+        return ItemRepository.findByBiItemcode(biItemcode);
+    }
+
+    public Optional<Item> findByBiItem(String bgItemGroupcode, String bsItemGroupcodeS) {
+        return ItemRepository.findByBiItem(bgItemGroupcode, bsItemGroupcodeS);
+    }
+
+    // 상품그룹 상품소재 리스트 호출
+    public List<ItemListDto> findByItemList(String bgItemGroupcode, String bsItemGroupcodeS) {
+        return itemRepositoryCustom.findByItemList(bgItemGroupcode, bsItemGroupcodeS);
+    }
+
+    // 상품그룹 상품소재 삭제
+    public void findByItemDelete(Item itemOptional) {
+        ItemRepository.delete(itemOptional);
+    }
+
+    // // // // // // // // // // // // // // 상품 가격관리 페이지 // // // // // // // // // // // // //
+    // 상품 가격 저장
+    public void itemPriceSave(ItemPrice itemPrice) {
+//        itemPriceRepository.save(itemPrice);
+        itemPriceRepositoryCustom.itemPriceSave(itemPrice);
+    }
+
+    // 상품 가격 리스트 호출
+    public List<ItemPriceListDto> findByItemPriceList() {
+        return itemPriceRepositoryCustom.findByItemPriceList();
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

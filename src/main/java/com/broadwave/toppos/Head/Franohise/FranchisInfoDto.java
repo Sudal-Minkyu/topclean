@@ -23,12 +23,25 @@ public class FranchisInfoDto {
     private String brContractFromDt; // 계약기간 from
     private String frContractToDt; // 계약기간 to
     private String frContractState; // 진행중 : 01, 계약완료 : 02
+    private String frContractStateValue; // 지사 배정상태 미배정: 01, 배정완료: 02
     private String brAssignState; // 지사 배정상태 미배정: 01, 배정완료: 02
     private String brCode; // 배정코드
     private String brName; // 배정지사명
     private Double brCarculateRateHq; // 정산비율 본사
     private Double brCarculateRateBr; // 정산비율 지사
     private Double brCarculateRateFr; // 정산비율 가맹점
+
+    public String getBrContractFromDt() {
+        return brContractFromDt;
+    }
+
+    public String getFrContractStateValue() {
+        if(frContractStateValue.equals("01")){
+            return "미배정";
+        }else{
+            return "배정완료";
+        }
+    }
 
     public String getBrAssignState() {
         return brAssignState;
