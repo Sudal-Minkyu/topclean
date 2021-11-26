@@ -35,7 +35,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -936,46 +935,52 @@ public class HeadRestController {
                 return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), i+"번쨰 상품"+ResponseErrorCode.TP009.getDesc(), "문자", "상품코드 : "+excelList.get(0).toString()));
             }else{
 
-                if(!biItemcodeList.contains(excelList.get(0).toString())){
+                ItemPriceDto priceDto = headService.findByItemPrice(excelList.get(0).toString(), excelList.get(6).toString(), setDtReplace);
+                if(priceDto != null){
+                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP015.getCode(), i+"번째 행 "+ResponseErrorCode.TP015.getDesc(), "문자", "상품코드 : "+excelList.get(0).toString()));
+                }else{
+                    if(!biItemcodeList.contains(excelList.get(0).toString())){
 
-                    ItemPriceDto itemPriceDto = headService.findByItemPrice(excelList.get(0).toString(), excelList.get(6).toString());
-                    if(itemPriceDto != null){
-                        itemPrice = modelMapper.map(itemPriceDto, ItemPrice.class);
-                        itemPrice.setModify_id(login_id);
-                        itemPrice.setModifyDateTime(LocalDateTime.now());
-                        itemPrice.setCloseDt(claseDtReplace);
+                        ItemPriceDto itemPriceDto = headService.findByItemPrice(excelList.get(0).toString(), excelList.get(6).toString(), null);
+                        if(itemPriceDto != null){
+                            itemPrice = modelMapper.map(itemPriceDto, ItemPrice.class);
+                            itemPrice.setModify_id(login_id);
+                            itemPrice.setModifyDateTime(LocalDateTime.now());
+                            itemPrice.setCloseDt(claseDtReplace);
+
+                            itemPriceArrayList.add(itemPrice);
+
+                            itemPrice = new ItemPrice();
+                        }
+
+                        biItemcodeList.add(excelList.get(0).toString());
+
+                        itemPrice.setBiItemcode(excelList.get(0).toString());
+                        itemPrice.setSetDt(setDtReplace);
+                        itemPrice.setCloseDt("99991231");
+                        itemPrice.setHighClassYn(excelList.get(6).toString());
+
+                        itemPrice.setBpBasePrice(Integer.parseInt((String) excelList.get(3)));
+                        itemPrice.setBpAddPrice(Integer.parseInt((String) excelList.get(5)));
+                        itemPrice.setBpPriceA(Integer.parseInt((String) excelList.get(7)));
+                        itemPrice.setBpPriceB(Integer.parseInt((String) excelList.get(8)));
+                        itemPrice.setBpPriceC(Integer.parseInt((String) excelList.get(9)));
+                        itemPrice.setBpPriceD(Integer.parseInt((String) excelList.get(10)));
+                        itemPrice.setBpPriceE(Integer.parseInt((String) excelList.get(11)));
+
+                        itemPrice.setBiRemark(excelList.get(12).toString());
+
+                        itemPrice.setInsert_id(login_id);
+                        itemPrice.setInsertDateTime(LocalDateTime.now());
+                        itemPrice.setModify_id("null");
+//                        log.info(i+"번째 itemPrice : "+itemPrice);
 
                         itemPriceArrayList.add(itemPrice);
 
-                        itemPrice = new ItemPrice();
+                        excelList.clear();
+                    }else{
+                        return ResponseEntity.ok(res.fail(ResponseErrorCode.TP003.getCode(), i+"번 행의 "+ResponseErrorCode.TP003.getDesc(), "문자", "상품코드 : "+excelList.get(0).toString()));
                     }
-
-                    biItemcodeList.add(excelList.get(0).toString());
-
-                    itemPrice.setBiItemcode(excelList.get(0).toString());
-                    itemPrice.setSetDt(setDtReplace);
-                    itemPrice.setCloseDt("99991231");
-                    itemPrice.setHighClassYn(excelList.get(6).toString());
-
-                    itemPrice.setBpBasePrice(Integer.parseInt((String) excelList.get(3)));
-                    itemPrice.setBpAddPrice(Integer.parseInt((String) excelList.get(5)));
-                    itemPrice.setBpPriceA(Integer.parseInt((String) excelList.get(7)));
-                    itemPrice.setBpPriceB(Integer.parseInt((String) excelList.get(8)));
-                    itemPrice.setBpPriceC(Integer.parseInt((String) excelList.get(9)));
-                    itemPrice.setBpPriceD(Integer.parseInt((String) excelList.get(10)));
-                    itemPrice.setBpPriceE(Integer.parseInt((String) excelList.get(11)));
-
-                    itemPrice.setBiRemark(excelList.get(12).toString());
-
-                    itemPrice.setInsert_id(login_id);
-                    itemPrice.setInsertDateTime(LocalDateTime.now());
-                    log.info(i+"번째 itemPrice : "+itemPrice);
-
-                    itemPriceArrayList.add(itemPrice);
-
-                    excelList.clear();
-                }else{
-                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP003.getCode(), i+"번 행의 "+ResponseErrorCode.TP003.getDesc(), "문자", "상품코드 : "+excelList.get(0).toString()));
                 }
             }
         }
@@ -996,7 +1001,6 @@ public class HeadRestController {
         return rtnValue;
     }
 
-
     // 상품그룹 가격페이지 리스트 호출 API
     @GetMapping("itemPriceList")
     public ResponseEntity<Map<String,Object>> itemPriceList(){
@@ -1009,7 +1013,7 @@ public class HeadRestController {
         HashMap<String,Object> itemPriceInfo;
 
         List<ItemPriceListDto> itemPriceListDtos = headService.findByItemPriceList();
-        log.info("itemPriceListDtos : "+itemPriceListDtos);
+//        log.info("itemPriceListDtos : "+itemPriceListDtos);
         for (ItemPriceListDto itemPriceListDto : itemPriceListDtos) {
 
             itemPriceInfo = new HashMap<>();
@@ -1022,7 +1026,7 @@ public class HeadRestController {
             itemPriceInfo.put("closeDt", itemPriceListDto.getCloseDt());
 
             itemPriceInfo.put("bpBasePrice", itemPriceListDto.getBpBasePrice());
-            itemPriceInfo.put("highClassYn", itemPriceListDto.getSetDt());
+            itemPriceInfo.put("highClassYn", itemPriceListDto.getHighClassYn());
             itemPriceInfo.put("bpAddPrice", itemPriceListDto.getBpAddPrice());
 
             itemPriceInfo.put("bpPriceA", itemPriceListDto.getBpPriceA());

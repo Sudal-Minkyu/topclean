@@ -169,12 +169,12 @@ public class HeadService {
 
     // // // // // // // // // // // // // // 상품 가격관리 페이지 // // // // // // // // // // // // //
     // 상품 가격 검색
-    public ItemPriceDto findByItemPrice(String biItemcode, String highClassYn) {
-        return itemPriceRepositoryCustom.findByItemPrice(biItemcode, highClassYn);
+    public ItemPriceDto findByItemPrice(String biItemcode, String highClassYn, String setDtReplace) {
+        return itemPriceRepositoryCustom.findByItemPrice(biItemcode, highClassYn, setDtReplace);
     }
 
     // 상품 가격 저장
-    public void itemPriceSave(List<ItemPrice> itemPrice) {
+    public void itemPriceSave(List<ItemPrice> itemPrice) throws Exception {
         itemPriceRepository.saveAll(itemPrice);
     }
 

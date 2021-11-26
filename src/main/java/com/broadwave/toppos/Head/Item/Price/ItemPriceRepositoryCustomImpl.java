@@ -1,8 +1,5 @@
 package com.broadwave.toppos.Head.Item.Price;
 
-import com.broadwave.toppos.Head.Branoh.QBranch;
-import com.broadwave.toppos.Head.Franohise.FranchisInfoDto;
-import com.broadwave.toppos.Head.Franohise.QFranchise;
 import com.broadwave.toppos.Head.Item.Group.A.QItemGroup;
 import com.broadwave.toppos.Head.Item.Group.B.QItemGroupS;
 import com.broadwave.toppos.Head.Item.Group.C.QItem;
@@ -65,7 +62,7 @@ public class ItemPriceRepositoryCustomImpl extends QuerydslRepositorySupport imp
     }
 
     @Override
-    public ItemPriceDto findByItemPrice(String biItemcode, String highClassYn) {
+    public ItemPriceDto findByItemPrice(String biItemcode, String highClassYn, String setDtReplace) {
 
         QItemPrice itemPrice = QItemPrice.itemPrice;
 
@@ -88,6 +85,12 @@ public class ItemPriceRepositoryCustomImpl extends QuerydslRepositorySupport imp
 
         query.where(itemPrice.biItemcode.eq(biItemcode));
         query.where(itemPrice.highClassYn.eq(highClassYn));
+
+        if(setDtReplace != null){
+            query.where(itemPrice.setDt.eq(setDtReplace));
+        }else{
+            query.where(itemPrice.modify_id.eq("null"));
+        }
 
         return query.fetchOne();
     }
