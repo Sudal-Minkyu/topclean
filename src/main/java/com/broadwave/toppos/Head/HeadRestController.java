@@ -10,6 +10,7 @@ import com.broadwave.toppos.Head.Franohise.FranchiseListDto;
 import com.broadwave.toppos.Head.Franohise.FranchiseMapperDto;
 import com.broadwave.toppos.Head.Item.Group.A.ItemGroup;
 import com.broadwave.toppos.Head.Item.Group.A.ItemGroupDto;
+import com.broadwave.toppos.Head.Item.Group.A.ItemGroupNameListDto;
 import com.broadwave.toppos.Head.Item.Group.A.ItemGroupSet;
 import com.broadwave.toppos.Head.Item.Group.B.*;
 import com.broadwave.toppos.Head.Item.Group.C.Item;
@@ -598,6 +599,20 @@ public class HeadRestController {
 //        log.info("상품그룹 대분류 리스트 : "+itemGroupListData);
         data.put("gridListData",itemGroupListData);
 
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
+    // 상품그룹 대분류 명칭리스트 호출 API
+    @GetMapping("itemGroupNameList")
+    public ResponseEntity<Map<String,Object>> itemGroupNameList(){
+        log.info("itemGroupNameList 호출");
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        List<ItemGroupNameListDto> itemGroupNameListDtos = headService.findByItemGroupName();
+        log.info("itemGroupNameListDtos : "+itemGroupNameListDtos);
+        data.put("itemGroupNameList",itemGroupNameListDtos);
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 

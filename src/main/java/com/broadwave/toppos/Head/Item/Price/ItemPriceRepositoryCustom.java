@@ -12,4 +12,5 @@ public interface ItemPriceRepositoryCustom {
     List<ItemPriceListDto> findByItemPriceList();
 
     ItemPriceDto findByItemPrice(String biItemcode, String highClassYn, String setDtReplace);
+
 }
