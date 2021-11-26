@@ -11,7 +11,6 @@ $(function() {
     AUIGrid.bind(gridId[0], "cellClick", function (e) {
 
     });
-
     CommonUI.setDatePicker(datePickerTargetIds);
 });
 
@@ -85,7 +84,7 @@ gridColumnLayout[0] = [
             onlyNumeric: true,
             allowPoint: false,
             allowNegative: false,
-        }
+        },
     }, {
         dataField: "highClassYn",
         headerText: "명품여부",
@@ -101,7 +100,7 @@ gridColumnLayout[0] = [
             onlyNumeric: true,
             allowPoint: false,
             allowNegative: false,
-        }
+        },
     }, {
         dataField: "bpPriceA",
         headerText: "최종금액(A)",
@@ -113,7 +112,7 @@ gridColumnLayout[0] = [
             onlyNumeric: true,
             allowPoint: false,
             allowNegative: false,
-        }
+        },
     }, {
         dataField: "bpPriceB",
         headerText: "최종금액(B)",
@@ -125,7 +124,7 @@ gridColumnLayout[0] = [
             onlyNumeric: true,
             allowPoint: false,
             allowNegative: false,
-        }
+        },
     }, {
         dataField: "bpPriceC",
         headerText: "최종금액(C)",
@@ -137,7 +136,7 @@ gridColumnLayout[0] = [
             onlyNumeric: true,
             allowPoint: false,
             allowNegative: false,
-        }
+        },
     }, {
         dataField: "bpPriceD",
         headerText: "최종금액(D)",
@@ -149,7 +148,7 @@ gridColumnLayout[0] = [
             onlyNumeric: true,
             allowPoint: false,
             allowNegative: false,
-        }
+        },
     }, {
         dataField: "bpPriceE",
         headerText: "최종금액(E)",
@@ -161,7 +160,7 @@ gridColumnLayout[0] = [
             onlyNumeric: true,
             allowPoint: false,
             allowNegative: false,
-        }
+        },
     }, {
         dataField: "bpRemark",
         headerText: "특이사항",
