@@ -25,16 +25,81 @@
 
             $('#payStatus').show();
 
-            CAT.CatCredit("홍길동", function (res) {
+            // type: card or cash
+            // franchiseNo : 가맹점코드 3자리 문자열
+            // totalAmount : 총 결제금액
+            // month : 할부 (0-일시불, 2-2개월)
 
-                //alert(res);
+            let paymentData =
+                {
+                    "type":"card",
+                    "franchiseNo":"123",
+                    "totalAmount":10500,
+                    "month":0,
+                    "items":[
+                        {"tagno":"123-1234","itemname":"상의/롱/면","price":2500},
+                        {"tagno":"123-1235","itemname":"상의/일반/청바지 ","price":3500},
+                        {"tagno":"124-1236","itemname":"코트/롱/오리털 ","price":4500}
+                    ]
+                };
+
+            // CAT.CatPrint(paymentData,"")
+            // $('#payStatus').hide();
+            // return null;
+
+            CAT.CatCredit(paymentData, function (res) {
+
+
+
+
+                $('#resultmsg').text(res);
                 $('#payStatus').hide();
+
+                let resjson = JSON.parse(res);
+
+                //결제 성공일경우 Print
+                if (resjson.STATUS ==="SUCCESS") {
+                    let creditData =
+                        {
+                            "cardNo": resjson.CARDNO,
+                            "cardName": resjson.ISSUERNAME,
+                            "approvalTime": resjson.APPROVALTIME,
+                            "approvalNo": resjson.APPROVALNO
+                        };
+                    CAT.CatPrint(paymentData, creditData)
+                }
+
+            });
+        }
+
+        function paymentCardCancel() {
+
+            $('#payStatus').show();
+
+            // totalAmount : 총 결제금액
+            // month : 할부 (0-일시불, 2-2개월)
+            let paymentData =
+                {
+                    "franchiseNo":"123",
+                    "approvalTime":"2111261009346",
+                    "approvalNo":"70908137",
+                    "totalAmount":"000003000",
+                    "vatAmount":"000000272"
+                };
+
+
+            CAT.CatCreditCancel(paymentData, function (res) {
+
+
+                $('#resultmsg').text(res);
+                $('#payStatus').hide();
+
             });
         }
 
         function paymentPrint() {
 
-            CAT.CatPrint("홍길동");
+            CAT.CatPrint("test");
         }
     </script>
 </th:block>
@@ -44,8 +109,10 @@
     <h1>결제 테스트 페이지</h1>
     <br>
     <div>
-        <input type="button" value="결제테스트" onclick="paymentCard();"/>
-        <input type="button" value="인쇄테스트" onclick="paymentPrint();"/>
+        <input type="button" value="카드결제테스트" onclick="paymentCard();"/>
+        <input type="button" value="카드결제취소테스트" onclick="paymentCardCancel();"/>
+
+        <input type="button" value="인쇄테스트2" onclick="paymentPrint();"/>
     </div>
     <div>
         <input type="button" value="로그아웃" onclick="logout()"/>
@@ -54,6 +121,7 @@
     <div id ="payStatus" style="position: absolute; left: 25px; top: 100px; height: 300px;width: 300px;	background-color: #99ccff; display: none;" >
         결제중 창이 닫힐때까지 카드를 빼지마세요
     </div>
+
     <table>
         <tr>
             <td align="center" colspan="4"><font size="4"><b>전문</b></font></td>
@@ -63,6 +131,9 @@
             <td colspan="3"><input id="taRequest" style="width:100%;"></input></td>
         </tr>
     </table>
+    <div id ="resultmsg" style="height: 300px;width: 300px;	background-color: #ffa980;">
+        결과 메세지
+    </div>
 
 </div>
 </html>
