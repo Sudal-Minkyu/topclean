@@ -2,7 +2,7 @@
 <html lang="ko"
 	  xmlns:th="http://www.thymeleaf.org"
 	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	  layout:decorate ="~{layout/default}">
+	  layout:decorate ="~{layout/defaulttest}">
 
 <!-- 사용자 CSS 추가 -->
 <th:block layout:fragment="css">
@@ -21,9 +21,285 @@
 	</script>
 </th:block>
 
-<div layout:fragment="content" class="content padding-zero content--main">
-	<h1>가맹점주 메인페이지입니다.</h1>
-	<a type="button" href="/user/customerreg">고객등록</a>
-	<input type="button" value="로그아웃" onclick="logout()" />
+<div layout:fragment="content" class="content">
+	<div class="main">
+		<div class="main__header">
+			<div class="main__store">
+				<div class="main__storename">
+					<span class="main__branch">고양지사</span>
+					<span class="main__name">서정마을 점</span>
+				</div>
+				<ul class="main__storeinfo">
+					<li>
+						<div class="storeinfo">
+							<div class="storeinfo__title">대표이사</div>
+							<div class="storeinfo__value"><span>홍길동</span></div>
+						</div>
+					</li>
+					<li>
+						<div class="storeinfo">
+							<div class="storeinfo__title">매장번호</div>
+							<div class="storeinfo__value"><span>031 - 555 - 5555</span></div>
+						</div>
+					</li>
+				</ul>
+			</div>
+			<ul class="main__current">
+				<li>
+					<span class="main__currentnum">100</span>
+					<span class="main__currenttitle">무인수거함</span>
+				</li>
+				<li>
+					<span class="main__currentnum">100</span>
+					<span class="main__currenttitle">수거</span>
+				</li>
+				<li>
+					<span class="main__currentnum">100</span>
+					<span class="main__currenttitle">배달</span>
+				</li>
+			</ul>
+		</div>
+		
+		<div class="main__contents">
+			<ul class="main__quickmenu">
+				<li><a href="#" class="main__quickbtn active">세탁접수</a></li>
+				<li><a href="/user/customerreg" class="main__quickbtn">고객관리</a></li>
+				<li><a href="#" class="main__quickbtn">통합조회</a></li>
+				<li><a href="#" class="main__quickbtn">통합수정</a></li>
+				<li><a href="#" class="main__quickbtn">고객인도</a></li>
+				<li><a href="#" class="main__quickbtn">무인보관함</a></li>
+				<li><button class="main__quickbtn closing">일마감</button></li>
+			</ul>
+			<div class="main__column-area">
+				<div class="main__board-area">
+					<div class="main__board">
+						<div class="main__board-header">
+							<h3><a href="#">History(오늘)</a></h3>
+							<div>datepicker</div>
+						</div>
+						<ul class="main__board-contents">
+							<li>
+								<div class="main__board-badge">
+									<span class="badge green">접수</span>
+								</div>
+								<div class="main__board-time">
+									<span>14:30</span>
+								</div>
+								<div class="main__board-title name">
+									<span>홍길동</span>
+								</div>
+								<div class="main__board-phone">
+									<span>010 - 1234 - 1234</span>
+								</div>
+							</li>
+							<li>
+								<div class="main__board-badge">
+									<span class="badge red">인도</span>
+								</div>
+								<div class="main__board-time">
+									<span>12:30</span>
+								</div>
+								<div class="main__board-title name">
+									<span>홍길동</span>
+								</div>
+								<div class="main__board-phone">
+									<span>010 - 1234 - 1234</span>
+								</div>
+							</li>
+							<li>
+								<div class="main__board-badge">
+									<span class="badge green">접수</span>
+								</div>
+								<div class="main__board-time">
+									<span>11:30</span>
+								</div>
+								<div class="main__board-title name">
+									<span>홍길동</span>
+								</div>
+								<div class="main__board-phone">
+									<span>010 - 1234 - 1234</span>
+								</div>
+							</li>
+							<li>
+								<div class="main__board-badge">
+									<span class="badge red">인도</span>
+								</div>
+								<div class="main__board-time">
+									<span>10:30</span>
+								</div>
+								<div class="main__board-title name">
+									<span>홍길동</span>
+								</div>
+								<div class="main__board-phone">
+									<span>010 - 1234 - 1234</span>
+								</div>
+							</li>
+							<li>
+								<div class="main__board-badge">
+									<span class="badge red">인도</span>
+								</div>
+								<div class="main__board-time">
+									<span>09:30</span>
+								</div>
+								<div class="main__board-title name">
+									<span>홍길동</span>
+								</div>
+								<div class="main__board-phone">
+									<span>010 - 1234 - 1234</span>
+								</div>
+							</li>
+							<li>
+								<div class="main__board-badge">
+									<span class="badge green">접수</span>
+								</div>
+								<div class="main__board-time">
+									<span>09:30</span>
+								</div>
+								<div class="main__board-title name">
+									<span>홍길동</span>
+								</div>
+								<div class="main__board-phone">
+									<span>010 - 1234 - 1234</span>
+								</div>
+							</li>
+						</ul>
+					</div>
+					
+					<div class="main__board">
+						<div class="main__board-header">
+							<h3><a href="#">택 분실 게시판</a></h3>
+						</div>
+						<ul class="main__board-contents">
+							<li>
+								<div class="main__board-title">
+									<span>제목영역 입니다. 제목영역 입니다. 제목영역 입니다. 제목영역 입니다. 제목영역 입니다.</span>
+								</div>
+								<div class="main__board-date">
+									<span>2021-07-21</span>
+								</div>
+							</li>
+							<li>
+								<div class="main__board-title">
+									<span>제목영역 입니다.</span>
+								</div>
+								<div class="main__board-date">
+									<span>2021-07-21</span>
+								</div>
+							</li>
+							<li>
+								<div class="main__board-title">
+									<span>제목영역 입니다.</span>
+								</div>
+								<div class="main__board-date">
+									<span>2021-07-21</span>
+								</div>
+							</li>
+						</ul>
+					</div>
+				</div>
+				
+				<div class="main__board-area">
+					<div class="main__board">
+						<div class="main__board-header">
+							<h3><a href="#">공지사항</a></h3>
+						</div>
+						<ul class="main__board-contents">
+							<li>
+								<div class="main__board-stamp">
+									<span class="stamp blue">[대리점]</span>
+								</div>
+								<div class="main__board-title">
+									<span>제목영역 입니다. 제목영역 입니다. 제목영역 입니다. 제목영역 입니다. 제목영역 입니다.</span>
+								</div>
+								<div class="main__board-date">
+									<span>2021-07-21</span>
+								</div>
+							</li>
+							<li>
+								<div class="main__board-stamp">
+									<span class="stamp blue">[대리점]</span>
+								</div>
+								<div class="main__board-title">
+									<span>제목영역 입니다. 제목영역 입니다. 제목영역 입니다. 제목영역 입니다. 제목영역 입니다.</span>
+								</div>
+								<div class="main__board-date">
+									<span>2021-07-21</span>
+								</div>
+							</li>
+							<li>
+								<div class="main__board-stamp">
+									<span class="stamp blue">[대리점]</span>
+								</div>
+								<div class="main__board-title">
+									<span>제목영역 입니다. 제목영역 입니다. 제목영역 입니다. 제목영역 입니다. 제목영역 입니다.</span>
+								</div>
+								<div class="main__board-date">
+									<span>2021-07-21</span>
+								</div>
+							</li>
+						</ul>
+					</div>
+					
+					<div class="main__board">
+						<div class="main__board-header">
+							<h3><a href="#">확인폼 요청</a></h3>
+						</div>
+						<ul class="main__board-contents">
+							<li>
+								<div class="main__board-stamp">
+									<span class="stamp blue">[대리점]</span>
+								</div>
+								<div class="main__board-title">
+									<span>제목영역 입니다. 제목영역 입니다. 제목영역 입니다. 제목영역 입니다. 제목영역 입니다.</span>
+								</div>
+								<div class="main__board-date">
+									<span>2021-07-21</span>
+								</div>
+							</li>
+							<li>
+								<div class="main__board-stamp">
+									<span class="stamp blue">[대리점]</span>
+								</div>
+								<div class="main__board-title">
+									<span>제목영역 입니다. 제목영역 입니다. 제목영역 입니다. 제목영역 입니다. 제목영역 입니다.</span>
+								</div>
+								<div class="main__board-date">
+									<span>2021-07-21</span>
+								</div>
+							</li>
+						</ul>
+					</div>
+					
+					<div class="main__board">
+						<div class="main__board-header">
+							<h3><a href="#">교육 콘텐츠</a></h3>
+						</div>
+						<ul class="main__board-contents">
+							<li>
+								<div class="main__board-title">
+									<span>제목영역 입니다. 제목영역 입니다. 제목영역 입니다. 제목영역 입니다. 제목영역 입니다.</span>
+								</div>
+								<div class="main__board-date">
+									<span>2021-07-21</span>
+								</div>
+							</li>
+							<li>
+								<div class="main__board-title">
+									<span>제목영역 입니다. 제목영역 입니다. 제목영역 입니다. 제목영역 입니다. 제목영역 입니다.</span>
+								</div>
+								<div class="main__board-date">
+									<span>2021-07-21</span>
+								</div>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	
+	
+	
 </div>
 </html>
