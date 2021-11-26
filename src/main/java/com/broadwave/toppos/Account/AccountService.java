@@ -29,6 +29,10 @@ public class AccountService {
         return account;
     }
 
+    public Account updateAccount(Account account){
+        return this.accountRepository.save(account);
+    }
+
     // 고정ID 값으로 찾기
     public Optional<Account> findById(Long id){
         return accountRepository.findById(id);
@@ -39,8 +43,8 @@ public class AccountService {
         return accountRepository.findByUserid(userid);
     }
 
-    public List<AccountListDto> findAllByAccountList() {
-        return accountRepositoryCustom.findAllByAccountList();
+    public List<AccountListDto> findByAccountList(String s_userid, String s_username, AccountRole s_role, String s_frCode, String s_brCode) {
+        return accountRepositoryCustom.findByAccountList(s_userid, s_username, s_role, s_frCode, s_brCode);
     }
 
 }
