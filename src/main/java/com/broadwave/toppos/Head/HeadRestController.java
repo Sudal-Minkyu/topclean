@@ -1035,7 +1035,7 @@ public class HeadRestController {
             itemPriceInfo.put("bpPriceD", itemPriceListDto.getBpPriceD());
             itemPriceInfo.put("bpPriceE", itemPriceListDto.getBpPriceE());
 
-            itemPriceInfo.put("bpRemark", itemPriceListDto.getBpPriceD());
+            itemPriceInfo.put("bpRemark", itemPriceListDto.getBiRemark());
 
             itemPriceListData.add(itemPriceInfo);
         }
