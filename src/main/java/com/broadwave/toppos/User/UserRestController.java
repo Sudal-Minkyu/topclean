@@ -64,6 +64,7 @@ public class UserRestController {
         Optional<Customer> optionalCustomer = userService.findByBcHp(customer.getBcHp());
         if(optionalCustomer.isPresent()){
             log.info("수정합니다.");
+            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP014.getCode(), ResponseErrorCode.TP014.getDesc(), null, null));
             // 수정일때
 //            account.setId(optionalAccount.get().getId());
 //            account.setUserid(optionalAccount.get().getUserid());

@@ -151,3 +151,45 @@ function setDataIntoGrid(numOfGrid, url) {
         AUIGrid.setGridData(gridId[numOfGrid], gridData[numOfGrid]);
     });
 }
+
+
+/* 상품 목록 업로드 팝업 띄우고 닫기 */
+function itemListPop() {
+    filterItemList(2);
+    $('#itemList_popup').addClass('open');
+}
+function itemListClose() {
+    $('#itemList_popup').removeClass('open');
+}
+
+function filterFranchise(type) {
+    switch (type) {
+        case 1 :
+            break;
+        case 2 :
+            break;
+    }
+}
+
+function filterItemList(type) {
+    switch (type) {
+        case 1 :
+            AUIGrid.clearFilterAll(gridId[2]);
+            const s_biItemcode = $("#s_biItemcode").val();
+            const s_biName = $("#s_biName").val();
+            if(s_biItemcode !== "") {
+                AUIGrid.setFilter(gridId[2], "biItemcode", function (dataField, value, item) {
+                    return s_biItemcode === value;
+                });
+            }
+            if(s_biName !== "") {
+                AUIGrid.setFilter(gridId[2], "biName", function (dataField, value, item) {
+                    return s_biName === value;
+                });
+            }
+            break;
+        case 2 :
+            AUIGrid.clearFilterAll(gridId[2]);
+            break;
+    }
+}

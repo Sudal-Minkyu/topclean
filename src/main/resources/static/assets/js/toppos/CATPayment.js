@@ -5,74 +5,48 @@ class CATPayment {
 
     constructor() {
 
+
     }
+
 
     CatCredit(params, func) {
 
-
         let reqmsg = CatCredit_vPOSV1(params);
-        //return func(req);
-        try {
-            console.log("start=======")
+        Communication(reqmsg,func);
 
-            $.ajax
-            ({
-                url: CAT_URL,
-                type: "POST",
-                dataType: "jsonp",
-                jsonp: "callback",
-                timeout: CAT_TIMEOUT_DURATION,
-                data: {"REQ": reqmsg},
-                success: function (data) {
-                    console.log("call==========1")
-                    let returnmsg = "";
-                    var trans = reqmsg.substr(0, 2);
-
-                    if (FindJSONtoString("RES", data) !== "0000") {
-                        //returnmsg= FindJSONtoString("MSG", data);
-                    } else {
-                        //document.getElementById("txtMsg").value = "";
-                    }
-
-                    if (trans === "CC") {
-                        // 정상 처리인 경우에만 Fair가 맞으면서..전문구분 코드가 NE가 아닌 경우.. (a1으로 전송 시 a1으로 응답)
-                        if (FindJSONtoString("REQ", data) === "CC" && FindJSONtoString("RES", data) === "0000" && FindJSONtoString("TELEGRAMFLAG", data) !== "NE") {
-                            //document.getElementById("txtCatApprDate").value = FindJSONtoString("APPROVALTIME", data).substr(0, 6);	// 승인일시
-                            //document.getElementById("txtCatApprNo").value = FindJSONtoString("APPROVALNO", data);
-                        }
-                    }
-                    return func(JSONtoString(data));
-                    //document.getElementById("taResponse").innerText = JSONtoString(data);
-                },
-                error: function (request, status, error) {
-                    alert("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
-                    console.log("에러1==========1" + error)
-                    let errMessage = "code:" + request.status + "\n" + "error:" + error;
-                    return func(errMessage);
-                }
-
-
-            });
-        } catch (e) {
-            console.log("error==========")
-            return func("결제 실패 잠시후 다시 시도 하세요");
-        }
-
+    }
+    CatCreditCancel(params, func) {
+        let reqmsg = CatCreditCancel_vPOSV1(params);
+        Communication(reqmsg,func);
 
     }
 
-    CatPrint(params) {
+
+
+    CatPrint(params,creditData) {
 
         let message="";
-        message = CatCreate_Print(params)
+        message = CatCreate_Print(params,creditData)
 
         CatPrintCommunication(message);
 
     }
 }
 // 프린트 내용 생성
-function CatCreate_Print(params){
-    var message = "";
+function CatCreate_Print(params,creditResult){
+    let message = "";
+
+
+    let type = params.type
+    let month = "일시불";
+    if ((params.month) > 1 ){
+        month = params.month + "개월"
+    }
+    let cardNo = "" + creditResult.cardNo; // 카드번호
+    let cardName = "" + creditResult.cardName; // 카드번호
+    let approvalNo = ("" + creditResult.approvalNo).trim(); // 승인번호
+    let tmpStr = "20" + creditResult.approvalTime;
+    let approvalTime = tmpStr.substr(0,4) + "-" + tmpStr.substr(4,2) + "-" + tmpStr.substr(6,2)+ " " + tmpStr.substr(8,2) + ":" + tmpStr.substr(10,2); // 승인일시
 
     //message += String.fromCharCode(10);
     //message += String.fromCharCode(10);
@@ -102,12 +76,12 @@ function CatCreate_Print(params){
     //**************************************************
     message += String.fromCharCode(27);
     message += String.fromCharCode(33);
-    message += String.fromCharCode(32);
-    //message += String.fromCharCode(48);	// 가로 세로 확대 2배
+    message += String.fromCharCode(48);
+    //message += String.fromCharCode(48);	// 가로 세로 확대 4배 32 두배
     //**************************************************
     // 문자열 출력
     //**************************************************
-    message += "현금( 소득공제 )";
+    message += "접수증( 고객용 )";
     message += String.fromCharCode(10);
     //**************************************************
     // 정렬: ESC a (0: 왼쪽, 1: 가운데, 2: 오른쪽 )
@@ -124,122 +98,95 @@ function CatCreate_Print(params){
     //**************************************************
     // 문자열 출력
     //**************************************************
-    message += "(주)청산리 가산점";
+    message += "==========================================";
     message += String.fromCharCode(10);
-    message += "대표 : 홍길동 211-11-56117  T:02-2011-0111";
+    message += "(주)크리닝업";
     message += String.fromCharCode(10);
-    message += "구매   2014-03-20 13:20   거래번호:01-2047";
+    message += "전화번호 : 1899-6322";
     message += String.fromCharCode(10);
-    message += "------------------------------------------";
+    message += "==========================================";
     message += String.fromCharCode(10);
-    message += "     상품명             수량          금액";
+    message += "접수일자 : 2021-11-25 13:20               ";
+    message += String.fromCharCode(10);
+    message += "출고예정 : 2021-11-27                     ";
+    message += String.fromCharCode(10);
+    message += "==========================================";
+    message += String.fromCharCode(10);
+    message += "  택번호             상품             금액";
+    message += String.fromCharCode(10);
+    message += "==========================================";
     message += String.fromCharCode(10);
     message += String.fromCharCode(10);
-    message += "베이스팬츠#1            1EA         85,000";
-    message += String.fromCharCode(10);
-    message += "                쿠폰상품            -5,000";
-    message += String.fromCharCode(10);
-    message += "1BYPNF304-46-101                          ";
-    message += String.fromCharCode(10);
-    message += "------------------------------------------";
-    message += String.fromCharCode(10);
+    params.items.forEach((item,idx)=>{
+        message += item.tagno + " "+ item.itemname.fillSpaceUnicode(25)+ " " + numberWithCommasCat(item.price).padStart(7);
+        message += String.fromCharCode(10);
+        message += "------------------------------------------";
+        message += String.fromCharCode(10);
+    });
+
+
+
     //**************************************************
     // Double-height: ESC !
     //**************************************************
     message += String.fromCharCode(27);
     message += String.fromCharCode(33);
     message += String.fromCharCode(16);
-    message += "합    계                            80,000";
+
+    message += "수   량 : "+ (""+params.items.length).padStart(3) + "         접수금액 :" + (" "+numberWithCommasCat(params.totalAmount)).padStart(9);
     message += String.fromCharCode(10);
+
     //**************************************************
     // Double-height: 해제 ESC !
     //**************************************************
     message += String.fromCharCode(27);
     message += String.fromCharCode(33);
     message += String.fromCharCode(0);
-    message += "공급가액                            72,727";
-    message += String.fromCharCode(10);
-    message += "부가세액                             7,273";
-    message += String.fromCharCode(10);
-    message += "------------------------------------------";
-    message += String.fromCharCode(10);
-    message += "현      금                           5,000";
-    message += String.fromCharCode(10);
-    message += "------------------------------------------";
-    message += String.fromCharCode(10);
-    message += "                                   2017/12";
-    message += String.fromCharCode(10);
-    message += "카드결제액                          45,000";
-    message += String.fromCharCode(10);
-    message += "삼성                      5411********0066";
-    message += String.fromCharCode(10);
-    message += "승인번호             testdata       일시불";
-    message += String.fromCharCode(10);
-    message += "------------------------------------------";
-    message += String.fromCharCode(10);
-    message += "                                   2015/02";
-    message += String.fromCharCode(10);
-    message += "카드결제액                          30,000";
-    message += String.fromCharCode(10);
-    message += "신한                      3731********0066";
-    message += String.fromCharCode(10);
-    message += "승인번호             testdata       일시불";
-    message += String.fromCharCode(10);
-    message += "------------------------------------------";
-    message += String.fromCharCode(10);
-    message += "홍길동 고객님 감사합니다 ^^     (11740011)";
-    message += String.fromCharCode(10);
-    message += "적립포인트                           4,000";
-    message += String.fromCharCode(10);
-    message += "잔여포인트                          30,000";
-    message += String.fromCharCode(10);
-    message += "------------------------------------------";
-    message += String.fromCharCode(10);
-    message += "현금영수증 승인번호 :            170052811";
-    message += String.fromCharCode(10);
-    message += "식별번호 :                   010-****-1234";
-    message += String.fromCharCode(10);
-    message += "문의:국번없이 126     http://현금영수증.kr";
-    message += String.fromCharCode(10);
-    message += "==========================================";
-    message += String.fromCharCode(10);
-    message += "구입일로부터 7일 이내에 본 영수증을       ";
-    message += String.fromCharCode(10);
-    message += "지참하셔야 교환 및 환불 가능합니다.       ";
-    message += String.fromCharCode(10);
-    message += "[서   명]                                 ";
-    message += String.fromCharCode(10);
-    message += "%Sign%                                    ";
-    message += String.fromCharCode(10);
-    message += String.fromCharCode(10);
-    message += String.fromCharCode(10);
-    //**************************************************
-    // 바코드 출력
-    //**************************************************
-    // GS H - 바코드 숫자가 출력될 위치 (0: 출력 안함, 1: 상단, 2: 하단, 3: 상하단)
-    message += String.fromCharCode(29);
-    message += String.fromCharCode(72);
-    message += String.fromCharCode(2);
-    // GS h - 바코드 높이 설정 (1~255)
-    message += String.fromCharCode(29);
-    message += String.fromCharCode(104);
-    message += String.fromCharCode(64);
-    // GS w - 바코드 수평선 굵기 (1~6)
-    message += String.fromCharCode(29);
-    message += String.fromCharCode(119);
-    message += String.fromCharCode(2);
-    // GS k - 바코드 출력 (ex. CODE39 - 숫자, 영문 대문자, 공백, $, %, +, -, ., /만 가능)
-    message += String.fromCharCode(29);
-    message += String.fromCharCode(107);
-    message += String.fromCharCode(4);
-    // 바코드 DATA
-    message += "14051410296020058";
-    message += String.fromCharCode(0);
-    message += String.fromCharCode(0);
-    message += String.fromCharCode(10);
-    message += String.fromCharCode(10);
-    message += String.fromCharCode(10);
-    message += String.fromCharCode(10);
+
+
+    if (type ==='card') {
+        message += "------------------------------------------";
+        message += String.fromCharCode(10);
+        message += "승인일시                  " + approvalTime.padStart(16);
+        message += String.fromCharCode(10);
+        message += ("할부 : "+ month).fillSpaceUnicode(14) +"    승인금액".fillSpaceUnicode(19) + (numberWithCommasCat(params.totalAmount)).padStart(9);
+        message += String.fromCharCode(10);
+        message += cardName.fillSpaceUnicode(24) +" " + cardNo.padStart(17);
+        message += String.fromCharCode(10);
+        message += "승인번호                       " + approvalNo.padStart(11);
+        message += String.fromCharCode(10);
+        message += "------------------------------------------";
+    }
+
+
+    // // message += String.fromCharCode(10);
+    // // message += "홍길동 고객님 감사합니다 ^^     (11740011)";
+    // // message += String.fromCharCode(10);
+    // // message += "적립포인트                           4,000";
+    // // message += String.fromCharCode(10);
+    // // message += "잔여포인트                          30,000";
+    // // message += String.fromCharCode(10);
+    // // message += "------------------------------------------";
+    // // message += String.fromCharCode(10);
+    // // message += "현금영수증 승인번호 :            170052811";
+    // // message += String.fromCharCode(10);
+    // // message += "식별번호 :                   010-****-1234";
+    // // message += String.fromCharCode(10);
+    // // message += "문의:국번없이 126     http://현금영수증.kr";
+    // // message += String.fromCharCode(10);
+    // // message += "==========================================";
+    // // message += String.fromCharCode(10);
+    // // message += "구입일로부터 7일 이내에 본 영수증을       ";
+    // // message += String.fromCharCode(10);
+    // // message += "지참하셔야 교환 및 환불 가능합니다.       ";
+    // message += String.fromCharCode(10);
+    // message += "[서   명]                                 ";
+    // message += String.fromCharCode(10);
+    // message += "%Sign%                                    ";
+    // message += String.fromCharCode(10);
+    // message += String.fromCharCode(10);
+    // message += String.fromCharCode(10);
+
     //**************************************************
     // 용지 절단 - GS V NUL
     //**************************************************
@@ -267,23 +214,57 @@ function CatCreate_Print(params){
 
     return "CC" + message;
 }
-//전문생성
-function CatCredit_vPOSV1(data) {
+//카드결제전문생성
+function CatCredit_vPOSV1(params) {
     //전문생성
-    var request_msg = "";
+    let totalAmount = ("" + params.totalAmount).fillZero(9);
+    let vatAmount = ("" + Math.floor(params.totalAmount / 11)).fillZero(9); //부가세 계산 내림으로 처리
+    let month = ("" + params.month).fillZero(2);
+    let franchiseNo = ("" + params.franchiseNo).fillZero(4);
 
+
+    let request_msg = "";
     // 전문길이 마지막에 입력
     request_msg += "a1";                                       // 전문구분코드
-    request_msg += "00";                                       // 할부개월
+    request_msg += month;                                       // 할부개월 2
     request_msg += " ";                                     	 // 현금영수증 소비자 구분
     request_msg += " ";                                        // 현금영수증 취소 사유
-    request_msg += "000001004";                                // 총금액
-    request_msg += "000000091";                                // 세금
+    request_msg += totalAmount;              // "000001004";    // 총금액
+    request_msg += vatAmount;              //"000000091";     // 세금
     request_msg += "000000000";                             	 // 면세금액
     request_msg += "000000000";                                // 봉사료
     request_msg += "      ";                		 							 // 원거래 일시
     request_msg += "         ";                     				 // 원거래 승인번호
-    request_msg += "0001";                                     // 거래일련번호
+    request_msg += franchiseNo;             //"0001";               // 거래일련번호
+    request_msg += String.fromCharCode(3);                    // ETX
+
+    var telegramLen = ("" + request_msg.length).fillZero(4);   // 길이
+
+    request_msg = String.fromCharCode(2) + telegramLen + request_msg;	// STX 추가 + 전문 길이 + 전송 전문
+
+    return "CC" + request_msg;
+}
+//카드취소
+function CatCreditCancel_vPOSV1(params) {
+    let request_msg = "";
+    let approvalTime = ("" + params.approvalTime).fillSpace(6).substr(0, 6);
+    let approvalNo = ("" + params.approvalNo).fillSpace(9).substr(0, 9);
+    let totalAmount = ("" + params.totalAmount).fillZero(9);
+    let vatAmount = ("" + params.vatAmount).fillZero(9);
+    let franchiseNo = ("" + params.franchiseNo).fillZero(4);
+
+    // 전문길이 마지막에 입력
+    request_msg += "b1";                                       // 전문구분코드
+    request_msg += "00";                                       // 할부개월
+    request_msg += " ";                                        // 현금영수증 소비자 구분
+    request_msg += " ";                                        // 현금영수증 취소 사유
+    request_msg += totalAmount;              //"000003000";                                // 총금액
+    request_msg += vatAmount;               //"000000272";                                // 세금
+    request_msg += "000000000";                                // 면세금액
+    request_msg += "000000000";                                // 봉사료
+    request_msg += approvalTime;            //("211124").fillSpace(6);    // 원거래 일시
+    request_msg += approvalNo;           // ("74684254").fillSpace(9).substr(0, 9);
+    request_msg += franchiseNo;             //"0002";                                     // 거래일련번호
     request_msg += String.fromCharCode(3);                    // ETX
 
     var telegramLen = ("" + request_msg.length).fillZero(4);   // 길이
@@ -293,6 +274,71 @@ function CatCredit_vPOSV1(data) {
     return "CC" + request_msg;
 }
 
+//Ajax 호출
+function Communication(reqmsg, func){
+    let errorDefaultMessage ="단말기 처리 중 에러가 발생하였습니다. 다시 시도해주세요"
+    try {
+        console.log("start=======")
+
+        $.ajax
+        ({
+            url: CAT_URL,
+            type: "POST",
+            dataType: "jsonp",
+            jsonp: "callback",
+            timeout: CAT_TIMEOUT_DURATION,
+            data: {"REQ": reqmsg},
+            success: function (data) {
+                let resultData = '{"STATUS":"FAILURE","errmsg":"'+ errorDefaultMessage +'"}';
+                var trans = reqmsg.substr(0, 2);
+
+                if (FindJSONtoString("RES", data) !== "0000") {
+                    //returnmsg= FindJSONtoString("MSG", data);
+                } else {
+                    //document.getElementById("txtMsg").value = "";
+                }
+
+                console.log('========debug1=:' + trans);
+                if (trans === "CC") {
+                    // 정상 처리인 경우에만 Fair가 맞으면서..전문구분 코드가 NE가 아닌 경우.. (a1으로 전송 시 a1으로 응답)
+                    if (FindJSONtoString("REQ", data) === "CC" && FindJSONtoString("RES", data) === "0000" && FindJSONtoString("TELEGRAMFLAG", data) !== "NE") {
+                        //document.getElementById("txtCatApprDate").value = FindJSONtoString("APPROVALTIME", data).substr(0, 6);	// 승인일시
+                        //document.getElementById("txtCatApprNo").value = FindJSONtoString("APPROVALNO", data);
+                        resultData = '{ ';
+                        resultData += '"STATUS":"SUCCESS",';
+                        resultData += '"APPROVALTIME":"' +FindJSONtoString("APPROVALTIME", data) + '",';
+                        resultData += '"APPROVALNO":"' +FindJSONtoString("APPROVALNO", data) + '",';
+                        resultData += '"CARDNO":"' +FindJSONtoString("CARDNO", data) + '",';
+                        resultData += '"ISSUERCODE":"' +FindJSONtoString("ISSUERCODE", data) + '",';
+                        resultData += '"ISSUERNAME":"' +FindJSONtoString("ISSUERNAME", data) + '",';
+                        resultData += '"MERCHANTNUMBER":"' +FindJSONtoString("MERCHANTNUMBER", data) + '",';
+                        resultData += '"MESSAGE1":"' +FindJSONtoString("MESSAGE1", data) + '",';
+                        resultData += '"MESSAGE2":"' +FindJSONtoString("MESSAGE2", data) + '",';
+                        resultData += '"NOTICE1":"' +FindJSONtoString("NOTICE1", data) + '",';
+                        resultData += '"TOTAMOUNT":"' +FindJSONtoString("TOTAMOUNT", data) + '",';
+                        resultData += '"VATAMOUNT":"' +FindJSONtoString("VATAMOUNT", data) + '",';
+                        resultData += '"TELEGRAMFLAG":"' +FindJSONtoString("TELEGRAMFLAG", data) + '"';
+                        resultData += '}';
+                        return func(resultData);
+                    }
+                }
+                return func(resultData);
+                //document.getElementById("taResponse").innerText = JSONtoString(data);
+            },
+            error: function (request, status, error) {
+                //alert("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
+                let errMessage = "erroecode:" + request.status + "\n" + "error:" + error;
+                return func('{"STATUS":"FAILURE", "ERRORMESSAGE":"'+ errorDefaultMessage +'", "ERRORDATA":"'+ errMessage+'"}');
+            }
+
+
+        });
+    } catch (e) {
+        return func('{"STATUS":"FAILURE", "ERRORMESSAGE":"'+ errorDefaultMessage+'"}');
+
+    }
+
+}
 
 //프린터 출력
 function CatPrintCommunication(printData) {
@@ -342,6 +388,31 @@ String.prototype.fillSpace = function (n) {
 
     if (str.length < n) {
         for (i = 0; i < n - str.length; i++) {
+            space += ' ';
+        }
+    }
+
+    return str + space;
+}
+
+String.prototype.fillSpaceUnicode = function (n) {
+    var str = this;
+    var space = "";
+    var charLength = 0;
+    var ch1 ="";
+    //한글 일경우 문자열갯수를 1개로 인식하여계산한다.
+
+    for(var i = 0;i<str.length;i++){
+        ch1 = str.charAt(i);
+        if(escape(ch1).length>4){
+            charLength += 2;
+        }else{
+            charLength += 1;
+        }
+    }
+
+    if (charLength < n) {
+        for (i = 0; i < n - charLength; i++) {
             space += ' ';
         }
     }
@@ -420,3 +491,7 @@ stringformat = function (text) {
 
     return text;
 }
+function numberWithCommasCat(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+

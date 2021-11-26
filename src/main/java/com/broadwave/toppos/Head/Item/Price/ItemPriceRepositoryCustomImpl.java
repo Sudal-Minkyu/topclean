@@ -26,11 +26,6 @@ public class ItemPriceRepositoryCustomImpl extends QuerydslRepositorySupport imp
     }
 
     @Override
-    public void itemPriceSave(ItemPrice itemPrice) {
-
-    }
-
-    @Override
     public List<ItemPriceListDto> findByItemPriceList() {
         QItemPrice itemPrice = QItemPrice.itemPrice;
         QItem item= QItem.item;
@@ -64,6 +59,40 @@ public class ItemPriceRepositoryCustomImpl extends QuerydslRepositorySupport imp
                 ));
 
         return query.fetch();
+    }
+
+    @Override
+    public ItemPriceDto findByItemPrice(String biItemcode, String highClassYn, String setDtReplace) {
+
+        QItemPrice itemPrice = QItemPrice.itemPrice;
+
+        JPQLQuery<ItemPriceDto> query = from(itemPrice)
+                .select(Projections.constructor(ItemPriceDto.class,
+                        itemPrice.biItemcode,
+                        itemPrice.setDt,
+                        itemPrice.bpBasePrice,
+                        itemPrice.highClassYn,
+                        itemPrice.bpAddPrice,
+                        itemPrice.bpPriceA,
+                        itemPrice.bpPriceB,
+                        itemPrice.bpPriceC,
+                        itemPrice.bpPriceD,
+                        itemPrice.bpPriceE,
+                        itemPrice.biRemark,
+                        itemPrice.insert_id,
+                        itemPrice.insertDateTime
+                ));
+
+        query.where(itemPrice.biItemcode.eq(biItemcode));
+        query.where(itemPrice.highClassYn.eq(highClassYn));
+
+        if(setDtReplace != null){
+            query.where(itemPrice.setDt.eq(setDtReplace));
+        }else{
+            query.where(itemPrice.modify_id.eq("null"));
+        }
+
+        return query.fetchOne();
     }
 
 }

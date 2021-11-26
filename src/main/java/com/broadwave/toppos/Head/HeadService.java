@@ -14,16 +14,15 @@ import com.broadwave.toppos.Head.Item.Group.C.Item;
 import com.broadwave.toppos.Head.Item.Group.C.ItemListDto;
 import com.broadwave.toppos.Head.Item.Group.C.ItemRepository;
 import com.broadwave.toppos.Head.Item.Group.C.ItemRepositoryCustom;
-import com.broadwave.toppos.Head.Item.Price.ItemPrice;
-import com.broadwave.toppos.Head.Item.Price.ItemPriceListDto;
-import com.broadwave.toppos.Head.Item.Price.ItemPriceRepository;
-import com.broadwave.toppos.Head.Item.Price.ItemPriceRepositoryCustom;
+import com.broadwave.toppos.Head.Item.Price.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 public class HeadService {
 
@@ -169,10 +168,14 @@ public class HeadService {
     }
 
     // // // // // // // // // // // // // // 상품 가격관리 페이지 // // // // // // // // // // // // //
+    // 상품 가격 검색
+    public ItemPriceDto findByItemPrice(String biItemcode, String highClassYn, String setDtReplace) {
+        return itemPriceRepositoryCustom.findByItemPrice(biItemcode, highClassYn, setDtReplace);
+    }
+
     // 상품 가격 저장
-    public void itemPriceSave(ItemPrice itemPrice) {
-//        itemPriceRepository.save(itemPrice);
-        itemPriceRepositoryCustom.itemPriceSave(itemPrice);
+    public void itemPriceSave(List<ItemPrice> itemPrice) throws Exception {
+        itemPriceRepository.saveAll(itemPrice);
     }
 
     // 상품 가격 리스트 호출

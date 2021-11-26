@@ -1,297 +1,299 @@
 <!DOCTYPE html>
 <html lang="ko"
-	  xmlns:th="http://www.thymeleaf.org"
-	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	  layout:decorate="~{layout/default}" xmlns="http://www.w3.org/1999/html">
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/default}" xmlns="http://www.w3.org/1999/html">
 
 <!-- 사용자 CSS 추가 -->
 <th:block layout:fragment="css">
-	<style>
-	</style>
+    <style>
+    </style>
 </th:block>
 
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
-	<script src="/assets/js/toppos/contract.js"></script>
+    <script src="/assets/js/toppos/contract.js"></script>
 </th:block>
 
 <div layout:fragment="content" class="content padding-zero content--main">
-	<h1>계약관리 페이지</h1>
+    <h1>계약관리 페이지</h1>
 
-	<!-- 지사계약관리-->
-	<!--좌측-->
-	<div>
-		<div>
-			계약 지사 리스트
-		</div>
-		<div id="grid_contract_0">
-		</div>
-	</div>
+    <!-- 지사계약관리-->
+    <!--좌측-->
+    <div>
+        <div>
+            계약 지사 리스트
+        </div>
+        <div id="grid_contract_0">
+        </div>
+    </div>
 
-	<!--우측-->
-	<div>
-		<div>
-			지사 계약 정보
-		</div>
-		<div>
-			<form id="brFormData" enctype="multipart/form-data">
-				<div>
-					지사코드
-					<input type="text" name="brCode" id="brCode" maxlength="2" />
-					<input type="hidden" id="brCodeChecked" value="0">
-					<button type="button" id="brCodeChkBtn" onclick="codeOverlap(1)">중복확인</button>
-					지사명
-					<input type="text" name="brName" id="brName" />
-				</div>
-				<div>
-					계약일자
-					<input type="text" id="brContractDt" name="brContractDt" maxlength="10" placeholder="연 - 월 - 일" readonly>
-					계약기간
-					<input type="text" id="brContractFromDt" name="brContractFromDt" maxlength="10" placeholder="연 - 월 - 일" readonly>
-					~
-					<input type="text" id="brContractToDt" name="brContractToDt" maxlength="10" placeholder="연 - 월 - 일" readonly>
-				</div>
-				<div>
-					계약상태
-					<select id="brContractState" name="brContractState">
-						<option value="01">진행중</option>
-						<option value="02">계약완료</option>
-					</select>
-				</div>
-				<div>
-					정산비율
-					본사 : <input type="number" id="brCarculateRateHq" name="brCarculateRateHq"
-								onkeyup="validateNumber(this, 1)" onchange="validateNumber(this, 1)"/>%
-					지사 : <input type="number" id="brCarculateRateBr" name="brCarculateRateBr"
-								onkeyup="validateNumber(this, 1)" onchange="validateNumber(this, 1)"/>%
-					가맹 : <input type="number" id="brCarculateRateFr" name="brCarculateRateFr"
-								onkeyup="validateNumber(this, 1)" onchange="validateNumber(this, 1)"/>%
-				</div>
-				<div>
-					특이사항
-					<textarea  id="brRemark" name="brRemark"></textarea>
-				</div>
-				<div>
-					<button type="button" onclick="createNewPost(0)">신규</button>
-					<button type="button" onclick="branchSave()">저장</button>
-					<button type="button" >삭제</button>
-				</div>
-			</form>
-		</div>
-	</div>
-	<hr>
+    <!--우측-->
+    <div>
+        <div>
+            지사 계약 정보
+        </div>
+        <div>
+            <form id="brFormData" enctype="multipart/form-data">
+                <div>
+                    지사코드
+                    <input type="text" name="brCode" id="brCode" maxlength="2" />
+                    <input type="hidden" id="brCodeChecked" value="0">
+                    <button type="button" id="brCodeChkBtn" onclick="codeOverlap(1)">중복확인</button>
+                    지사명
+                    <input type="text" name="brName" id="brName" />
+                </div>
+                <div>
+                    계약일자
+                    <input type="text" id="brContractDt" name="brContractDt" maxlength="10" placeholder="연 - 월 - 일" readonly>
+                    계약기간
+                    <input type="text" id="brContractFromDt" name="brContractFromDt" maxlength="10" placeholder="연 - 월 - 일" readonly>
+                    ~
+                    <input type="text" id="brContractToDt" name="brContractToDt" maxlength="10" placeholder="연 - 월 - 일" readonly>
+                </div>
+                <div>
+                    계약상태
+                    <select id="brContractState" name="brContractState">
+                        <option value="01">진행중</option>
+                        <option value="02">계약완료</option>
+                    </select>
+                </div>
+                <div>
+                    정산비율
+                    본사 : <input type="number" id="brCarculateRateHq" name="brCarculateRateHq"
+                                onkeyup="validateNumber(this, 1)" onchange="validateNumber(this, 1)"/>%
+                    지사 : <input type="number" id="brCarculateRateBr" name="brCarculateRateBr"
+                                onkeyup="validateNumber(this, 1)" onchange="validateNumber(this, 1)"/>%
+                    가맹 : <input type="number" id="brCarculateRateFr" name="brCarculateRateFr"
+                                onkeyup="validateNumber(this, 1)" onchange="validateNumber(this, 1)"/>%
+                </div>
+                <div>
+                    특이사항
+                    <textarea  id="brRemark" name="brRemark"></textarea>
+                </div>
+                <div>
+                    <button type="button" onclick="createNewPost(0)">신규</button>
+                    <button type="button" onclick="branchSave()">저장</button>
+                    <button type="button" >삭제</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <hr>
 
-	<!--가맹점계약관리-->
-	<!--좌측-->
-	<div>
-		<div>
-			가맹점 리스트
-		</div>
-		<div>
-			가맹점명
-			<input id="frNameFilter" type="text">
-			<button onclick="filterFrList(6, $('#frNameFilter').val())">검색</button>
-			<button onclick="filterFrList(7)">초기화</button>
-		</div>
-		<div id="grid_contract_1">
-		</div>
-	</div>
+    <!--가맹점계약관리-->
+    <!--좌측-->
+    <div>
+        <div>
+            가맹점 리스트
+        </div>
+        <div>
+            가맹점명
+            <input id="frNameFilter" type="text">
+            <button type="button" onclick="filterFranchiseList(1)">검색</button>
+            <button type="button" onclick="filterFranchiseList(2)">초기화</button>
+        </div>
+        <div id="grid_contract_1">
+        </div>
+    </div>
 
-	<!--우측-->
-	<div>
-		<div>
-			가맹점 계약 정보
-		</div>
-		<div>
-			<form id="frFormData" enctype="multipart/form-data">
-				<div>
-					가맹점코드
-					<input type="text" id="frCode" name="frCode" maxlength="3" />
-					<input type="hidden" id="frCodeChecked" value="0">
-					<button type="button" id="frCodeChkBtn" onclick="codeOverlap(2)">중복확인</button>
-					가맹점명
-					<input type="text" id="frName" name="frName" />
-				</div>
-				<div>
-					가맹점관리코드
-					<input type="text" id="" name="">
-				</div>
-				<div>
-					계약일자
-					<input id="frContractDt" name="frContractDt" type="text" maxlength="10" placeholder="연 - 월 - 일" readonly>
-					계약기간
-					<input id="frContractFromDt" name="frContractFromDt" type="text" maxlength="10" placeholder="연 - 월 - 일" readonly>
-					~
-					<input id="frContractToDt" name="frContractToDt" type="text" maxlength="10" placeholder="연 - 월 - 일" readonly>
-				</div>
-				<div>
-					계약상태
-					<select id="frContractState" name="frContractState">
-						<option value="01">진행중</option>
-						<option value="02">계약완료</option>
-					</select>
-				</div>
-				<div>
-					적용가격등급
-					<select id="frPriceGrade" name="frPriceGrade">
-						<option value="">선택</option>
-						<option value="A">A</option>
-						<option value="B">B</option>
-						<option value="C">C</option>
-						<option value="D">D</option>
-						<option value="E">E</option>
-					</select>
-				</div>
-				<div>
-					가맹점택코드(3자리)
-					<input id="" name="" maxlength="3">
-					출고예정일계산
-					<input type="text" id="tempDay" name=""
-						   onkeyup="validateNumber(this, 2)" onchange="validateNumber(this, 2)">
-					일후 출고
-				</div>
-				<div>
-					특이사항
-					<textarea id="frRemark" name="frRemark"></textarea>
-				</div>
-				<div>
-					<button type="button" onclick="createNewPost(1)">신규</button>
-					<button type="button" onclick="franchiseSave()">저장</button>
-					<button type="button">삭제</button>
-				</div>
-			</form>
-		</div>
-	</div>
-	<hr>
+    <!--우측-->
+    <div>
+        <div>
+            가맹점 계약 정보
+        </div>
+        <div>
+            <form id="frFormData" enctype="multipart/form-data">
+                <div>
+                    가맹점코드
+                    <input type="text" id="frCode" name="frCode" maxlength="3" />
+                    <input type="hidden" id="frCodeChecked" value="0">
+                    <button type="button" id="frCodeChkBtn" onclick="codeOverlap(2)">중복확인</button>
+                    가맹점명
+                    <input type="text" id="frName" name="frName" />
+                </div>
+                <div>
+                    가맹점관리코드
+                    <input type="text" id="" name="">
+                </div>
+                <div>
+                    계약일자
+                    <input id="frContractDt" name="frContractDt" type="text" maxlength="10" placeholder="연 - 월 - 일" readonly>
+                    계약기간
+                    <input id="frContractFromDt" name="frContractFromDt" type="text" maxlength="10" placeholder="연 - 월 - 일" readonly>
+                    ~
+                    <input id="frContractToDt" name="frContractToDt" type="text" maxlength="10" placeholder="연 - 월 - 일" readonly>
+                </div>
+                <div>
+                    계약상태
+                    <select id="frContractState" name="frContractState">
+                        <option value="01">진행중</option>
+                        <option value="02">계약완료</option>
+                    </select>
+                </div>
+                <div>
+                    적용가격등급
+                    <select id="frPriceGrade" name="frPriceGrade">
+                        <option value="">선택</option>
+                        <option value="A">A</option>
+                        <option value="B">B</option>
+                        <option value="C">C</option>
+                        <option value="D">D</option>
+                        <option value="E">E</option>
+                    </select>
+                </div>
+                <div>
+                    가맹점택코드(3자리)
+                    <input id="" name="" maxlength="3">
+                    출고예정일계산
+                    <input type="text" id="tempDay" name=""
+                           onkeyup="validateNumber(this, 2)" onchange="validateNumber(this, 2)">
+                    일후 출고
+                </div>
+                <div>
+                    특이사항
+                    <textarea id="frRemark" name="frRemark"></textarea>
+                </div>
+                <div>
+                    <button type="button" onclick="createNewPost(1)">신규</button>
+                    <button type="button" onclick="franchiseSave()">저장</button>
+                    <button type="button">삭제</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <hr>
 
-	<!--가맹점 지사 배정관리-->
-	<!--좌측-->
-	<div>
-		<div>
-			계약 지사 리스트
-		</div>
-		<div id="grid_contract_2">
-		</div>
-		<div>
-			배정상태
-			<select id="brAssignState" name="brAssignState" onchange="filterFrList(1, this.value)">
-				<option value="">선택안함</option>
-				<option value="01">미배정</option>
-				<option value="02">배정완료</option>
-			</select>
-			가맹점명
-			<input id="bot_frNameFilter" type="text">
-			<button onclick="filterFrList(2, $('#bot_frNameFilter').val())">검색</button>
-			<button onclick="filterFrList(3)">초기화</button>
-		</div>
-		<div>
-			계약 가맹점 리스트
-		</div>
-		<div id="grid_contract_3">
-		</div>
-	</div>
+    <!--가맹점 지사 배정관리-->
+    <!--좌측-->
+    <div>
+        <div>
+            계약 지사 리스트
+        </div>
+        <div id="grid_contract_2">
+        </div>
+        <div>
+            배정상태
+            <select id="s_brAssignState" name="brAssignState">
+                <option value="">선택안함</option>
+                <option value="01">미배정</option>
+                <option value="02">배정완료</option>
+            </select>
+            가맹점명
+            <input id="s_frName" type="text">
+            <button type="button" onclick="filterFranchiseList(3)">검색</button>
+            <button type="button" onclick="filterFranchiseList(4)">초기화</button>
+        </div>
+        <div>
+            계약 가맹점 리스트
+        </div>
+        <div id="grid_contract_3">
+        </div>
+    </div>
 
-	<!--우측-->
-	<div>
-		<div>
-			지사 계약 정보
-		</div>
-		<div>
-			<div>
-				가맹점코드
-				<input id="bot_frCode" type="text" readonly>
-				가맹점명
-				<input id="bot_frName" type="text" readonly>
-			</div>
-			<div>
-				계약일자
-				<input id="bot_frContractDt" type="text" readonly>
-				계약기간
-				<input id="bot_frContractFromDt" type="text" readonly>
-				~
-				<input id="bot_frContractToDt" type="text" readonly>
-			</div>
-			<div>
-				계약상태
-				<input id="bot_frContractStateValue" type="text" readonly>
-				배정상태
-				<select id="bot_brAssignState">
-					<option value="01">미배정</option>
-					<option value="02">배정완료</option>
-				</select>
-			</div>
-			<div>
-				지사
-				<input id="bot_brCode" type="text" readonly>
-				<input id="bot_brName" type="text" readonly>
-				<button type="button" onclick="brListPop()">지사변경</button>
-			</div>
-			<div>
-				정산비율
-				본사 : <input id="bot_brCarculateRateHq" type="number" readonly>%
-				지사 : <input id="bot_brCarculateRateBr" type="number" readonly>%
-				가맹 : <input id="bot_brCarculateRateFr" type="number" readonly>%
-			</div>
-			<div>
-				<button type="button" onclick="assignmentSave()">저장</button>
-			</div>
-		</div>
-	</div>
+    <!--우측-->
+    <div>
+        <div>
+            지사 계약 정보
+        </div>
+        <div>
+            <div>
+                가맹점코드
+                <input id="bot_frCode" type="text" readonly>
+                가맹점명
+                <input id="bot_frName" type="text" readonly>
+            </div>
+            <div>
+                계약일자
+                <input id="bot_frContractDt" type="text" readonly>
+                계약기간
+                <input id="bot_frContractFromDt" type="text" readonly>
+                ~
+                <input id="bot_frContractToDt" type="text" readonly>
+            </div>
+            <div>
+                계약상태
+                <input id="bot_frContractStateValue" type="text" readonly>
+            </div>
+            <div>
+                지사
+                <input id="bot_brCode" type="text" readonly>
+                <input id="bot_brName" type="text" readonly>
+                <button type="button" onclick="brListPop()">지사변경</button>
+            </div>
+            <div>
+                배정상태
+                <select id="bot_brAssignState">
+                    <option value="01">미배정</option>
+                    <option value="02">배정완료</option>
+                </select>
+            </div>
+            <div>
+                정산비율
+                본사 : <input id="bot_brCarculateRateHq" type="number" readonly>%
+                지사 : <input id="bot_brCarculateRateBr" type="number" readonly>%
+                가맹 : <input id="bot_brCarculateRateFr" type="number" readonly>%
+            </div>
+            <div>
+                <button type="button" onclick="assignmentSave()">저장</button>
+            </div>
+        </div>
+    </div>
 
-	<!-- 지사 팝업 -->
-	<div class="l-popup" id="branch_popup">
-		<div class="l-popup__container">
-			<div class="l-popup__head">
-				<h3 class="l-popup__heading">지사 선택</h3>
-			</div>
-			<div class="l-popup__content">
-				<div class="l-popup__section">
-					<table class="c-table c-table--non-border">
-						<colgroup>
-							<col style="width: 80px;"/>
-							<col/>
-							<col style="width: 80px;"/>
-							<col/>
-							<col style="width: 80px;"/>
-							<col/>
-							<col style="width: 60px;"/>
-						</colgroup>
-						<tbody>
-						<tr>
-							<th>지사명</th>
-							<td>
-								<div class="c-text">
-									<input type="text" id="pop_s_brName" class="c-text__input"/>
-								</div>
-							</td>
-							<th>지사코드</th>
-							<td>
-								<div class="c-text">
-									<input type="text" id="pop_s_brCode" maxlength="2" class="c-text__input"/>
-								</div>
-							</td>
-							<th>계약상태</th>
-							<td>
-								<select id="pop_s_brContractState" name="pop_s_brContractState">
-									<option value="">모두</option>
-									<option value="01">진행중</option>
-									<option value="02">계약완료</option>
-								</select>
-							</td>
-							<td>
-								<button class="c-button c-button--point" type="button">조회</button>
-							</td>
-						</tr>
-						</tbody>
-					</table>
-				</div>
-				<div class="l-popup__section">
-					<div id="grid_branchList"></div>
-				</div>
-			</div>
-			<a href="#" onclick="branchClose()" class="l-popup__close">팝업닫기</a>
-		</div>
-	</div>
+    <!-- 지사 팝업 -->
+    <div class="l-popup" id="branch_popup">
+        <div class="l-popup__container">
+            <div class="l-popup__head">
+                <h3 class="l-popup__heading">지사 선택</h3>
+            </div>
+            <div class="l-popup__content">
+                <div class="l-popup__section">
+                    <table class="c-table c-table--non-border">
+                        <colgroup>
+                            <col style="width: 80px;"/>
+                            <col/>
+                            <col style="width: 80px;"/>
+                            <col/>
+                            <col style="width: 80px;"/>
+                            <col/>
+                            <col style="width: 60px;"/>
+                        </colgroup>
+                        <tbody>
+                        <tr>
+                            <th>지사명</th>
+                            <td>
+                                <div class="c-text">
+                                    <input type="text" id="pop_s_brName" class="c-text__input"/>
+                                </div>
+                            </td>
+                            <th>지사코드</th>
+                            <td>
+                                <div class="c-text">
+                                    <input type="text" id="pop_s_brCode" maxlength="2" class="c-text__input"/>
+                                </div>
+                            </td>
+                            <th>계약상태</th>
+                            <td>
+                                <select id="pop_s_brContractState" name="pop_s_brContractState">
+                                    <option value="">모두</option>
+                                    <option value="01">진행중</option>
+                                    <option value="02">계약완료</option>
+                                </select>
+                            </td>
+                            <td>
+                                <button class="c-button c-button--point" type="button" onclick="filterBranchList(1)">조회</button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="l-popup__section">
+                    <div id="grid_branchList"></div>
+                </div>
+            </div>
+            <a href="#" onclick="branchClose()" class="l-popup__close">팝업닫기</a>
+        </div>
+    </div>
 
 </div>
 </html>

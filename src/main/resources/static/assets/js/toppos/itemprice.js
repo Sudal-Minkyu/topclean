@@ -4,7 +4,7 @@ $(function() {
 
     /* 그리드에 데이터를 집어넣음 반복문은 그리드숫자만큼(혹은 목표그리드 범위만큼) 돌 수 있도록 한다. */
     for(let i=0; i<1; i++) {
-        //setDataIntoGrid(i, gridCreateUrl[i]);
+        setDataIntoGrid(i, gridCreateUrl[i]);
     }
 
     /* 0번그리드 내의 셀 클릭시 이벤트 */
@@ -17,7 +17,7 @@ $(function() {
 
 /* datepicker를 적용시킬 대상들의 dom id들 */
 const datePickerTargetIds = [
-    "s_tempPriceApplyDate", "setDt"
+    "s_setDt", "setDt"
 ];
 
 /* 그리드 생성과 운영에 관한 중요 변수들. grid라는 이름으로 시작하도록 통일했다. */
@@ -36,7 +36,7 @@ gridTargetDiv = [
 
 /* 그리드를 받아올 때 쓰이는 api 배열 */
 gridCreateUrl = [
-    "/api/a"
+    "/api/head/itemPriceList"
 ]
 
 /* 그리드를 저장할 때 쓰이는 api 배열 */
@@ -49,55 +49,56 @@ gridColumnLayout[0] = [
     {
         dataField: "biItemcode",
         headerText: "상품코드",
+        editable : false,
     }, {
-        dataField: "bgItemGroupcode",
+        dataField: "bgName",
         headerText: "대분류",
+        editable : false,
     }, {
-        dataField: "bgItemGroupcodeS",
+        dataField: "bsName",
         headerText: "중분류",
+        editable : false,
     }, {
         dataField: "biName",
         headerText: "상품명",
+        editable : false,
     }, {
-        dataField: "",
+        dataField: "setDt",
         headerText: "적용일자",
+        editable : false,
     }, {
-        dataField: "",
+        dataField: "closeDt",
         headerText: "종료일자",
+        editable : false,
     }, {
         dataField: "bpBasePrice",
         headerText: "기본금액",
-        editable: true,
     }, {
         dataField: "highClassYn",
         headerText: "명품여부",
+        editable : false,
     }, {
         dataField: "bpAddPrice",
         headerText: "추가금액",
-        editable: true,
     }, {
         dataField: "bpPriceA",
         headerText: "최종금액(A)",
-        editable: true,
     }, {
         dataField: "bpPriceB",
         headerText: "최종금액(B)",
-        editable: true,
     }, {
         dataField: "bpPriceC",
         headerText: "최종금액(C)",
-        editable: true,
     }, {
         dataField: "bpPriceD",
         headerText: "최종금액(D)",
-        editable: true,
     }, {
         dataField: "bpPriceE",
         headerText: "최종금액(E)",
-        editable: true,
     }, {
         dataField: "bpRemark",
         headerText: "특이사항",
+        editable : false,
     },
 ];
 
@@ -105,7 +106,7 @@ gridColumnLayout[0] = [
 * https://www.auisoft.net/documentation/auigrid/DataGrid/Properties.html
 * */
 gridProp[0] = {
-    editable : false,
+    editable : true,
     selectionMode : "singleRow",
     noDataMessage : "출력할 데이터가 없습니다.",
     showRowNumColumn : false,
@@ -183,31 +184,36 @@ function filterItems() {
     const s_biItemcode = $("#s_biItemcode").val();
     const s_biName = $("#s_biName").val();
     const s_highClassYn = $("#s_highClassYn").val();
-    const s_tempPriceApplyDate = $("#s_tempPriceApplyDate").val();
+    const s_setDt = $("#s_setDt").val();
 
     if(s_bgItemGroupcode !== "") {
+        console.log(s_bgItemGroupcode);
         AUIGrid.setFilter(gridId[0], "bgItemGroupcode", function (dataField, value, item) {
             return s_bgItemGroupcode === value;
         });
     }
     if(s_biItemcode !== "") {
+        console.log(s_biItemcode);
         AUIGrid.setFilter(gridId[0], "biItemcode", function (dataField, value, item) {
-            return s_biItemcode === value;
+            return new RegExp(s_biItemcode).test(value);
         });
     }
     if(s_biName !== "") {
+        console.log(s_biName);
         AUIGrid.setFilter(gridId[0], "biName", function (dataField, value, item) {
             return new RegExp(s_biName).test(value);
         });
     }
     if(s_highClassYn !== "") {
+        console.log(s_highClassYn);
         AUIGrid.setFilter(gridId[0], "highClassYn", function (dataField, value, item) {
-            return new RegExp(s_highClassYn).test(value);
+            return s_highClassYn === value;
         });
     }
-    if(s_tempPriceApplyDate !== "") {
-        AUIGrid.setFilter(gridId[0], "tempPriceApplyDate", function (dataField, value, item) {
-            return s_tempPriceApplyDate === value;
+    if(s_setDt !== "") {
+        console.log(s_setDt);
+        AUIGrid.setFilter(gridId[0], "setDt", function (dataField, value, item) {
+            return s_setDt === value;
         });
     }
 }
@@ -226,14 +232,14 @@ function removeRow() {
 }
 
 function saveRegPrice() {
-    // 추가된 행 아이템들(배열)
-    // const addedRowItems = AUIGrid.getAddedRowItems(gridTargetDiv[numOfGrid]);
+    // 추가된 행 아이템들(배열) 차후 데이터 처리 방식에 따라 바뀜
+    // const addedRowItems = AUIGrid.getAddedRowItems(gridTargetDiv[0]);
 
     // 수정된 행 아이템들(배열)
-    const updatedRowItems = AUIGrid.getEditedRowItems(gridTargetDiv[numOfGrid]);
+    const updatedRowItems = AUIGrid.getEditedRowItems(gridTargetDiv[0]);
 
     // 삭제된 행 아이템들(배열)
-    const deletedRowItems = AUIGrid.getRemovedItems(gridTargetDiv[numOfGrid]);
+    const deletedRowItems = AUIGrid.getRemovedItems(gridTargetDiv[0]);
 
     // 서버로 보낼 데이터 작성
     const data = {
@@ -241,6 +247,8 @@ function saveRegPrice() {
         "update" : updatedRowItems,
         "delete" : deletedRowItems,
     };
+
+    console.log(data);
 }
 
 /* 상품코드 텍스트필드 입력시 유효성에 맞추기 */

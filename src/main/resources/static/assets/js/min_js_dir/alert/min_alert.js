@@ -101,6 +101,7 @@ function alertSuccess(text) { //성공창(삭제성공시),저장성공시
     html +='</div>';
 
     $('#alertpop').html(html);
+    $('#successBtn').trigger("focus"); // 엔터치면 바로 확인버튼이 눌릴 수 있게
 
 }
 
@@ -121,6 +122,7 @@ function alertCancel(text) { //에러창(로그인만료),오류
     html +='</div>';
 
     $('#alertpop').html(html);
+    $('#successBtn').trigger("focus");
 
 }
 
@@ -145,7 +147,7 @@ function alertCaution(text,type) { //경고창
     html +='</div>';
 
     $('#alertpop').html(html);
-    $('#cautionBtn'+type).trigger("focus"); // 엔터치면 바로 확인버튼이 눌릴 수 있게
+    $('#cautionBtn'+type).trigger("focus");
 }
 
 // 삭제 알림창.
@@ -205,7 +207,7 @@ function alertContinueSuccess(text) { //성공창(삭제성공시),저장성공�
     html +='</div>';
 
     $('#alertpop').html(html);
-
+    $('#continueSuccessBtn').trigger("focus");
 }
 
 function readyPage() {
