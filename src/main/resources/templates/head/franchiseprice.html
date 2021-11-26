@@ -38,9 +38,12 @@
         특정가격 적용품목
         <div id="grid_franchisePrice"></div>
     </div>
+    <div>
+        <button type="button">저장</button>
+    </div>
 
     <!-- 상품 팝업 -->
-    <div class="l-popup" id="item_popup">
+    <div class="l-popup" id="itemList_popup">
         <div class="l-popup__container">
             <div class="l-popup__head">
                 <h3 class="l-popup__heading">상품 선택</h3>
@@ -62,17 +65,17 @@
                             <th>상품코드</th>
                             <td>
                                 <div class="c-text">
-                                    <input type="text" id="" class="c-text__input"/>
+                                    <input type="text" id="s_biItemcode" class="c-text__input"/>
                                 </div>
                             </td>
                             <th>상품명</th>
                             <td>
                                 <div class="c-text">
-                                    <input type="text" id="" class="c-text__input"/>
+                                    <input type="text" id="s_biName" class="c-text__input"/>
                                 </div>
                             </td>
                             <td>
-                                <button class="c-button c-button--point" type="button">조회</button>
+                                <button class="c-button c-button--point" type="button" onclick="filterItemList(1)">조회</button>
                             </td>
                         </tr>
                         </tbody>
@@ -82,7 +85,7 @@
                     <div id="grid_itemList"></div>
                 </div>
             </div>
-            <a href="#" onclick="itemClose()" class="l-popup__close">팝업닫기</a>
+            <a href="#" onclick="itemListClose()" class="l-popup__close">팝업닫기</a>
         </div>
     </div>
 
