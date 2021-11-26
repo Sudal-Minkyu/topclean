@@ -1,5 +1,8 @@
 package com.broadwave.toppos.Head.Item.Price;
 
+import com.broadwave.toppos.Head.Branoh.QBranch;
+import com.broadwave.toppos.Head.Franohise.FranchisInfoDto;
+import com.broadwave.toppos.Head.Franohise.QFranchise;
 import com.broadwave.toppos.Head.Item.Group.A.QItemGroup;
 import com.broadwave.toppos.Head.Item.Group.B.QItemGroupS;
 import com.broadwave.toppos.Head.Item.Group.C.QItem;
@@ -23,11 +26,6 @@ public class ItemPriceRepositoryCustomImpl extends QuerydslRepositorySupport imp
 
     public ItemPriceRepositoryCustomImpl() {
         super(ItemPrice.class);
-    }
-
-    @Override
-    public void itemPriceSave(ItemPrice itemPrice) {
-
     }
 
     @Override
@@ -64,6 +62,34 @@ public class ItemPriceRepositoryCustomImpl extends QuerydslRepositorySupport imp
                 ));
 
         return query.fetch();
+    }
+
+    @Override
+    public ItemPriceDto findByItemPrice(String biItemcode, String highClassYn) {
+
+        QItemPrice itemPrice = QItemPrice.itemPrice;
+
+        JPQLQuery<ItemPriceDto> query = from(itemPrice)
+                .select(Projections.constructor(ItemPriceDto.class,
+                        itemPrice.biItemcode,
+                        itemPrice.setDt,
+                        itemPrice.bpBasePrice,
+                        itemPrice.highClassYn,
+                        itemPrice.bpAddPrice,
+                        itemPrice.bpPriceA,
+                        itemPrice.bpPriceB,
+                        itemPrice.bpPriceC,
+                        itemPrice.bpPriceD,
+                        itemPrice.bpPriceE,
+                        itemPrice.biRemark,
+                        itemPrice.insert_id,
+                        itemPrice.insertDateTime
+                ));
+
+        query.where(itemPrice.biItemcode.eq(biItemcode));
+        query.where(itemPrice.highClassYn.eq(highClassYn));
+
+        return query.fetchOne();
     }
 
 }

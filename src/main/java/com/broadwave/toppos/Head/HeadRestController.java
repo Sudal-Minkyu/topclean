@@ -17,6 +17,7 @@ import com.broadwave.toppos.Head.Item.Group.C.ItemDto;
 import com.broadwave.toppos.Head.Item.Group.C.ItemListDto;
 import com.broadwave.toppos.Head.Item.Group.C.ItemSet;
 import com.broadwave.toppos.Head.Item.Price.ItemPrice;
+import com.broadwave.toppos.Head.Item.Price.ItemPriceDto;
 import com.broadwave.toppos.Head.Item.Price.ItemPriceListDto;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.common.AjaxResponse;
@@ -35,6 +36,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -853,13 +855,12 @@ public class HeadRestController {
         log.info("상품그룹 상품소재 리스트 : "+itemListData);
         data.put("gridListData",itemListData);
 
-
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
     // 상품그룹 가격페이지 호출 API
     @PostMapping("itemPrice")
-    public ResponseEntity<Map<String,Object>> itemPrice(@RequestParam("priceUpload") MultipartFile priceUpload, @RequestParam("setDt") String setDt, HttpServletRequest request) throws IOException {
+    public ResponseEntity<Map<String,Object>> itemPrice(@RequestParam("priceUpload") MultipartFile priceUpload, @RequestParam("setDt") String setDt, HttpServletRequest request) throws Exception {
         log.info("itemPrice 호출");
 
         AjaxResponse res = new AjaxResponse();
@@ -880,9 +881,19 @@ public class HeadRestController {
             return ResponseEntity.ok(res.fail(ResponseErrorCode.TP012.getCode(), ResponseErrorCode.TP012.getDesc(), null, null));
         }
 
-//        log.info("setDt : "+setDt);
+        log.info("시작일 : "+setDt);
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+
+        Date setDate = formatter.parse(setDt);
+        Calendar cal = new GregorianCalendar(Locale.KOREA);
+        cal.setTime(setDate);
+        cal.add(Calendar.DATE, -1); // 하루전으로 셋팅
+        String closeDate = formatter.format(cal.getTime());
+        log.info("종료임 : "+closeDate);
+
         String setDtReplace = setDt.replaceAll("-","");
-//        log.info("setDtReplace : "+setDtReplace);
+        String claseDtReplace = closeDate.replaceAll("-","");
+        log.info("setDtReplace : "+setDtReplace);
 
         Sheet worksheet = workbook.getSheetAt(0); // 첫번째 시트
         try {
@@ -897,12 +908,12 @@ public class HeadRestController {
         }
 
 
-//        int numOfRows = worksheet.getPhysicalNumberOfRows();
-//        log.info("데이터 총 길이 : "+numOfRows);
+        int numOfRows = worksheet.getPhysicalNumberOfRows();
+        log.info("데이터 총 길이 : "+numOfRows);
 
         ArrayList<ItemPrice> itemPriceArrayList = new ArrayList<>();
         ArrayList<Object> excelList = new ArrayList<>();
-
+        ArrayList<String> biItemcodeList = new ArrayList<>();
         for(int i=1; i<worksheet.getPhysicalNumberOfRows(); i++){
             ItemPrice itemPrice = new ItemPrice();
             for (int j = 0; j < 13; j++) {
@@ -922,37 +933,54 @@ public class HeadRestController {
 
             Optional<Item> optionalItem = headService.findByBiItemcode(excelList.get(0).toString());
             if(!optionalItem.isPresent()){
-                log.info("");
                 return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), i+"번쨰 상품"+ResponseErrorCode.TP009.getDesc(), "문자", "상품코드 : "+excelList.get(0).toString()));
             }else{
-                itemPrice.setBiItemcode(excelList.get(0).toString());
-                itemPrice.setSetDt(setDtReplace);
-                itemPrice.setCloseDt("99991231");
-                itemPrice.setHighClassYn(excelList.get(6).toString());
 
-                itemPrice.setBpBasePrice(Integer.parseInt((String) excelList.get(3)));
-                itemPrice.setBpAddPrice(Integer.parseInt((String) excelList.get(5)));
-                itemPrice.setBpPriceA(Integer.parseInt((String) excelList.get(7)));
-                itemPrice.setBpPriceB(Integer.parseInt((String) excelList.get(8)));
-                itemPrice.setBpPriceC(Integer.parseInt((String) excelList.get(9)));
-                itemPrice.setBpPriceD(Integer.parseInt((String) excelList.get(10)));
-                itemPrice.setBpPriceE(Integer.parseInt((String) excelList.get(11)));
+                if(!biItemcodeList.contains(excelList.get(0).toString())){
 
-                itemPrice.setBiRemark(excelList.get(12).toString());
+                    ItemPriceDto itemPriceDto = headService.findByItemPrice(excelList.get(0).toString(), excelList.get(6).toString());
+                    if(itemPriceDto != null){
+                        itemPrice = modelMapper.map(itemPriceDto, ItemPrice.class);
+                        itemPrice.setModify_id(login_id);
+                        itemPrice.setModifyDateTime(LocalDateTime.now());
+                        itemPrice.setCloseDt(claseDtReplace);
 
-                itemPrice.setInsert_id(login_id);
-                itemPrice.setInsertDateTime(LocalDateTime.now());
-//            log.info(i+"번째 itemPrice : "+itemPrice);
+                        itemPriceArrayList.add(itemPrice);
 
-                itemPriceArrayList.add(itemPrice);
+                        itemPrice = new ItemPrice();
+                    }
 
-                excelList.clear();
+                    biItemcodeList.add(excelList.get(0).toString());
+
+                    itemPrice.setBiItemcode(excelList.get(0).toString());
+                    itemPrice.setSetDt(setDtReplace);
+                    itemPrice.setCloseDt("99991231");
+                    itemPrice.setHighClassYn(excelList.get(6).toString());
+
+                    itemPrice.setBpBasePrice(Integer.parseInt((String) excelList.get(3)));
+                    itemPrice.setBpAddPrice(Integer.parseInt((String) excelList.get(5)));
+                    itemPrice.setBpPriceA(Integer.parseInt((String) excelList.get(7)));
+                    itemPrice.setBpPriceB(Integer.parseInt((String) excelList.get(8)));
+                    itemPrice.setBpPriceC(Integer.parseInt((String) excelList.get(9)));
+                    itemPrice.setBpPriceD(Integer.parseInt((String) excelList.get(10)));
+                    itemPrice.setBpPriceE(Integer.parseInt((String) excelList.get(11)));
+
+                    itemPrice.setBiRemark(excelList.get(12).toString());
+
+                    itemPrice.setInsert_id(login_id);
+                    itemPrice.setInsertDateTime(LocalDateTime.now());
+                    log.info(i+"번째 itemPrice : "+itemPrice);
+
+                    itemPriceArrayList.add(itemPrice);
+
+                    excelList.clear();
+                }else{
+                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP003.getCode(), i+"번 행의 "+ResponseErrorCode.TP003.getDesc(), "문자", "상품코드 : "+excelList.get(0).toString()));
+                }
             }
         }
 
-//        for (ItemPrice itemPrice  : itemPriceArrayList) {
-//            headService.itemPriceSave(itemPrice);
-//        }
+        headService.itemPriceSave(itemPriceArrayList);
 
         return ResponseEntity.ok(res.success());
     }
@@ -991,8 +1019,7 @@ public class HeadRestController {
             itemPriceInfo.put("bsName", itemPriceListDto.getBsName());
             itemPriceInfo.put("biName", itemPriceListDto.getBiName());
             itemPriceInfo.put("setDt", itemPriceListDto.getSetDt());
-//            itemPriceInfo.put("endDt", itemPriceListDto.getEndDt());
-            itemPriceInfo.put("endDt", "99991231");
+            itemPriceInfo.put("closeDt", itemPriceListDto.getCloseDt());
 
             itemPriceInfo.put("bpBasePrice", itemPriceListDto.getBpBasePrice());
             itemPriceInfo.put("highClassYn", itemPriceListDto.getSetDt());
