@@ -12,9 +12,12 @@ import com.broadwave.toppos.Head.Item.Group.C.ItemListDto;
 import com.broadwave.toppos.Head.Item.Group.C.ItemRepository;
 import com.broadwave.toppos.Head.Item.Group.C.ItemRepositoryCustom;
 import com.broadwave.toppos.Head.Item.Price.*;
+import com.broadwave.toppos.common.ResponseErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -176,8 +179,13 @@ public class HeadService {
     }
 
     // 상품 가격 저장
+    @Transactional(rollbackFor = Exception.class)
     public void itemPriceSave(List<ItemPrice> itemPrice) throws Exception {
-        itemPriceRepository.saveAll(itemPrice);
+        try{
+            itemPriceRepository.saveAll(itemPrice);
+        }catch (Exception e){
+            log.info("e : "+e);
+        }
     }
 
     // 상품 가격 리스트 호출

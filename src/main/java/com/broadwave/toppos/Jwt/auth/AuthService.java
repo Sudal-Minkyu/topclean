@@ -1,12 +1,8 @@
 package com.broadwave.toppos.Jwt.auth;
 
-import com.broadwave.toppos.Account.Account;
-import com.broadwave.toppos.Account.AccountRepository;
 import com.broadwave.toppos.Account.AccountRequestDto;
-import com.broadwave.toppos.Account.AccountResponseDto;
-import com.broadwave.toppos.Jwt.dto.TokenRequestDto;
 import com.broadwave.toppos.Jwt.dto.TokenDto;
-
+import com.broadwave.toppos.Jwt.dto.TokenRequestDto;
 import com.broadwave.toppos.Jwt.refresh.RefreshToken;
 import com.broadwave.toppos.Jwt.refresh.RefreshTokenRepository;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
@@ -14,29 +10,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PostMapping;
 
 @Service
 @RequiredArgsConstructor
 public class AuthService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
-    private final AccountRepository accountRepository;
-    private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
-
-//    @Transactional
-//    public AccountResponseDto signup(AccountRequestDto accountRequestDto) {
-//        if (accountRepository.existsByUserid(accountRequestDto.getUserid())) {
-//            throw new RuntimeException("이미 가입되어 있는 유저입니다");
-//        }
-//
-//        Account account = accountRequestDto.toAccount(passwordEncoder);
-//        return AccountResponseDto.of(accountRepository.save(account));
-//    }
 
     @Transactional
     public TokenDto login(AccountRequestDto accountRequestDto) {
