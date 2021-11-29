@@ -198,18 +198,18 @@ function filterFranchise(type) {
         case 1 :
             AUIGrid.clearFilterAll(gridId[0]);
 
-            const s_frCode = $("#s_frCode").val();
+            const s_frCode = $("#s_frCode").val().toUpperCase();
             const s_frRefCode = $("#s_frRefCode").val();
             const s_frName = $("#s_frName").val();
 
             if(s_frCode !== "") {
                 AUIGrid.setFilter(gridId[0], "frCode", function (dataField, value, item) {
-                    return new RegExp(s_frCode).test(value);
+                    return new RegExp("^" + s_frCode).test(value);
                 });
             }
             if(s_frRefCode !== "") {
                 AUIGrid.setFilter(gridId[0], "frRefCode", function (dataField, value, item) {
-                    return new RegExp(s_frRefCode).test(value);
+                    return new RegExp("^" + s_frRefCode).test(value);
                 });
             }
             if(s_frName !== "") {
@@ -233,7 +233,7 @@ function filterItemList(type) {
             const s_biName = $("#s_biName").val();
             if(s_biItemcode !== "") {
                 AUIGrid.setFilter(gridId[2], "biItemcode", function (dataField, value, item) {
-                    return s_biItemcode === value;
+                    return new RegExp("^" + s_biItemcode).test(value);
                 });
             }
             if(s_biName !== "") {

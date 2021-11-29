@@ -7,8 +7,13 @@
 * */
 class CommonUIClass {
 
-    constructor() {
+    mouseDownTarget;
+    mouseDownPos = [0, 0];
+    mouseUpPos = [0, 0];
+    activeDragDropEvent = false;
+    abc = 777;
 
+    constructor() {
     }
 
     /*
@@ -198,6 +203,41 @@ class CommonUIClass {
                     }
                 }
             }
+        });
+    }
+
+    /* 드래그 이벤트, 터치시 좌표얻는 알고리즘 포함. 아직 사용 가능성이 적으므로 이벤트로 사용을 위해서는 터치시 마우스다운과 다르게 AUIGrid의 셀을
+    *  선택하지 않는 문제의 해결이 필요하다. 또한 이벤트 사용을 위해서는 AUI에는 셀 클릭 이벤트를 걸고, activeDragDropEvent 불린값을 조건으로
+    *  주어 이벤트를 구동해야 한다. */
+    gridDragDropDblclick() {
+        $(document).on("touchstart mousedown", function (e) {
+            CommonUI.mouseDownTarget = e.target;
+
+            if(e.type == 'touchstart'){
+                const touch = e.originalEvent.touches[0] || e.originalEvent.changedTouches[0];
+                CommonUI.mouseDownPos = [touch.pageX, touch.pageY];
+            } else if (e.type == 'mousedown') {
+                CommonUI.mouseDownPos = [e.originalEvent.clientX, e.originalEvent.clientY];
+            }
+        });
+        $(document).on("touchend mouseup", function (e) {
+            if(e.type == 'touchend'){
+                const touch = e.originalEvent.touches[0] || e.originalEvent.changedTouches[0];
+                CommonUI.mouseUpPos = [touch.pageX, touch.pageY];
+            } else if (e.type == 'mouseup') {
+                CommonUI.mouseUpPos = [e.originalEvent.clientX, e.originalEvent.clientY];
+            }
+            const moveDistance = Math.sqrt(Math.pow(Math.abs(CommonUI.mouseDownPos[0] - CommonUI.mouseUpPos[0]), 2) +
+                Math.pow(Math.abs(CommonUI.mouseDownPos[1] - CommonUI.mouseUpPos[1]), 2));
+            if(moveDistance > 100) {
+                const targetClassName = CommonUI.mouseDownTarget.className;
+                if(targetClassName.includes("aui-grid-renderer-base") ||
+                        targetClassName.includes("aui-grid-default-column")) {
+                    CommonUI.activeDragDropEvent = true;
+                    $(CommonUI.mouseDownTarget).trigger("click");
+                }
+            }
+            CommonUI.activeDragDropEvent = false;
         });
     }
 }

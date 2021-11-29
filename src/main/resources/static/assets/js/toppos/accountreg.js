@@ -468,12 +468,12 @@ function filterAccountList(type) {
             }
             if(s_frCode !== "") {
                 AUIGrid.setFilter(gridId[0], "frCode", function (dataField, value, item) {
-                    return new RegExp(s_frCode).test(value);
+                    return new RegExp("^" + s_frCode).test(value);
                 });
             }
             if(s_brCode !== "") {
                 AUIGrid.setFilter(gridId[0], "brCode", function (dataField, value, item) {
-                    return new RegExp(s_brCode).test(value);
+                    return new RegExp("^" + s_brCode).test(value);
                 });
             }
             break;

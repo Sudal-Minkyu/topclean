@@ -11,12 +11,13 @@ $(function() {
     AUIGrid.bind(gridId[0], "cellClick", function (e) {
 
     });
+
     CommonUI.setDatePicker(datePickerTargetIds);
 });
 
 /* datepicker를 적용시킬 대상들의 dom id들 */
 const datePickerTargetIds = [
-    "s_setDt", "setDt"
+    "setDt"
 ];
 
 /* 그리드 생성과 운영에 관한 중요 변수들. grid라는 이름으로 시작하도록 통일했다. */
@@ -194,6 +195,25 @@ function setDataIntoGrid(numOfGrid, url) {
     CommonUI.ajax(url, "GET", false, function (req) {
         gridData[numOfGrid] = req.sendData.gridListData;
         AUIGrid.setGridData(gridId[numOfGrid], gridData[numOfGrid]);
+
+        /* 가격적용일을 그리드의 데이터로부터 가져와서 드롭다운박스의 검색조건에 넣는다.*/
+        if(numOfGrid == 0) {
+            let setDtList = [];
+            const $s_setDt = $("#s_setDt");
+            gridData[0].forEach(element => {
+                const aSetDt = element.setDt;
+                if(!setDtList.includes(aSetDt))
+                    setDtList.push(aSetDt);
+                }
+            )
+            setDtList = setDtList.sort();
+            $s_setDt.empty();
+            $s_setDt.append(`<option value="">전체</option>`);
+            setDtList.forEach(element => {
+                const innerHtml = element.substr(0, 4) + "-" + element.substr(4, 2) + "-" + element.substr(6, 2);
+                $s_setDt.append(`<option value="${element}">${innerHtml}</option>`)
+            });
+        }
     });
 }
 
@@ -251,7 +271,7 @@ function filterItems() {
     AUIGrid.clearFilterAll(gridId[0]);
 
     const s_bgName = $("#s_bgName").val();
-    const s_biItemcode = $("#s_biItemcode").val();
+    const s_biItemcode = $("#s_biItemcode").val().toUpperCase();
     const s_biName = $("#s_biName").val();
     const s_highClassYn = $("#s_highClassYn").val();
     const s_setDt = $("#s_setDt").val();
@@ -263,7 +283,7 @@ function filterItems() {
     }
     if(s_biItemcode !== "") {
         AUIGrid.setFilter(gridId[0], "biItemcode", function (dataField, value, item) {
-            return new RegExp(s_biItemcode).test(value);
+            return new RegExp("^" + s_biItemcode).test(value);
         });
     }
     if(s_biName !== "") {
