@@ -23,9 +23,12 @@
 	<h1>상품그룹가격 페이지</h1>
 	<div>
 		대분류
-		<select id="s_bgItemGroupcode">
+		<select id="s_bgName">
 			<option value="">전체</option>
-			<option value="1">//반복문으로 구현//</option>
+			<option th:each ="groupName : ${groupNames}"
+					th:value="${groupName.bgName}"
+					th:text="${groupName.bgName}">
+			</option>
 		</select>
 		상품코드
 		<input type="text" id="s_biItemcode" onkeyup="itemCodeValidator()">

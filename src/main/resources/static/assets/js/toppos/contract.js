@@ -43,6 +43,7 @@ gridProp[0] = {
     editable : false,
     selectionMode : "singleRow",
     noDataMessage : "출력할 데이터가 없습니다.",
+    enableColumnResize : false,
     rowNumHeaderText : "순번",
     rowIdField : "brCode",
     rowIdTrustMode : true
@@ -71,6 +72,7 @@ gridProp[1] = {
     editable : false,
     selectionMode : "singleRow",
     noDataMessage : "출력할 데이터가 없습니다.",
+    enableColumnResize : false,
     rowNumHeaderText : "순번",
     rowIdField : "frCode",
     rowIdTrustMode : true,
@@ -97,6 +99,7 @@ gridProp[2] = {
     editable : false,
     selectionMode : "singleRow",
     noDataMessage : "출력할 데이터가 없습니다.",
+    enableColumnResize : false,
     rowNumHeaderText : "순번",
     rowIdField : "brCode",
     rowIdTrustMode : true
