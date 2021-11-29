@@ -340,6 +340,7 @@ function franchiseSave() {
 
     CommonUI.ajax(url, "POST", formData, function (req){
         const sentData = Object.fromEntries(formData);
+        console.log(sentData);
         const isUpdated = AUIGrid.rowIdToIndex(gridId[1], sentData.frCode) > -1;
 
         if(isUpdated) {
@@ -419,6 +420,9 @@ function setFieldData(numOfGrid, item) {
             $("#frContractState").val(item.frContractState);
             $("#frPriceGrade").val(item.frPriceGrade);
             $("#frRemark").val(item.frRemark);
+            $("#frRefCode").val(item.frRefCode);
+            $("#frTagNo").val(item.frTagNo);
+            $("#frEstimateDuration").val(item.frEstimateDuration);
             CommonUI.restrictDate(dateAToBTargetIds[1][0], dateAToBTargetIds[1][1], false);
             CommonUI.restrictDate(dateAToBTargetIds[1][0], dateAToBTargetIds[1][1], true);
             break;
