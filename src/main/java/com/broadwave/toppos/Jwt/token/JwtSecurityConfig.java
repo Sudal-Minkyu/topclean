@@ -1,7 +1,5 @@
 package com.broadwave.toppos.Jwt.token;
 
-import com.broadwave.toppos.Jwt.token.JwtFilter;
-import com.broadwave.toppos.Jwt.token.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;

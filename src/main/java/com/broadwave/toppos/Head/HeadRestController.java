@@ -930,7 +930,6 @@ public class HeadRestController {
         ArrayList<ItemPrice> itemPriceUpdateArrayList = new ArrayList<>();
 
         ArrayList<Object> excelList = new ArrayList<>();
-        ArrayList<String> biItemcodeList = new ArrayList<>();
         for(int i=1; i<worksheet.getPhysicalNumberOfRows(); i++){
             ItemPrice itemPrice = new ItemPrice();
             for (int j = 0; j < 13; j++) {
@@ -953,30 +952,28 @@ public class HeadRestController {
                 return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), i+"번쨰 상품"+ResponseErrorCode.TP009.getDesc(), "문자", "상품코드 : "+excelList.get(0).toString()));
             }else{
 
-//                ItemPriceDto priceDto = headService.findByItemPrice(excelList.get(0).toString(), excelList.get(6).toString(), setDtReplace);
-//                if(priceDto != null){
-//                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP015.getCode(), i+"번째 행 "+ResponseErrorCode.TP015.getDesc(), "문자", "상품코드 : "+excelList.get(0).toString()));
-//                }else{
-//                    if(!biItemcodeList.contains(excelList.get(0).toString())){
-                        ItemPriceDto itemPriceDto = headService.findByItemPrice(excelList.get(0).toString(), excelList.get(6).toString(), null);
-                        if(itemPriceDto != null){
-                            itemPrice = modelMapper.map(itemPriceDto, ItemPrice.class);
-                            itemPrice.setModify_id(login_id);
-                            itemPrice.setModifyDateTime(LocalDateTime.now());
-                            itemPrice.setCloseDt(claseDtReplace);
+                ItemPriceDto priceDto = headService.findByItemPrice(excelList.get(0).toString(), excelList.get(6).toString(), setDtReplace);
+                if(priceDto != null){
+                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP015.getCode(), i+"번째 행 "+ResponseErrorCode.TP015.getDesc(), "문자", "상품코드 : "+excelList.get(0).toString()));
+                }else{
+                    ItemPriceDto itemPriceDto = headService.findByItemPrice(excelList.get(0).toString(), excelList.get(6).toString(), null);
+                    if(itemPriceDto != null){
+                        itemPrice = modelMapper.map(itemPriceDto, ItemPrice.class);
+                        itemPrice.setModify_id(login_id);
+                        itemPrice.setModifyDateTime(LocalDateTime.now());
+                        itemPrice.setCloseDt(claseDtReplace);
 
-                            itemPriceUpdateArrayList.add(itemPrice);
+                        itemPriceUpdateArrayList.add(itemPrice);
 
-                            itemPrice = new ItemPrice();
-                        }
+                        itemPrice = new ItemPrice();
+                    }
 
-                        biItemcodeList.add(excelList.get(0).toString());
+                    itemPrice.setBiItemcode(excelList.get(0).toString());
+                    itemPrice.setSetDt(setDtReplace);
+                    itemPrice.setCloseDt("99991231");
+                    itemPrice.setHighClassYn(excelList.get(6).toString());
 
-                        itemPrice.setBiItemcode(excelList.get(0).toString());
-                        itemPrice.setSetDt(setDtReplace);
-                        itemPrice.setCloseDt("99991231");
-                        itemPrice.setHighClassYn(excelList.get(6).toString());
-
+                    try {
                         itemPrice.setBpBasePrice(Integer.parseInt((String) excelList.get(3)));
                         itemPrice.setBpAddPrice(Integer.parseInt((String) excelList.get(5)));
                         itemPrice.setBpPriceA(Integer.parseInt((String) excelList.get(7)));
@@ -984,34 +981,32 @@ public class HeadRestController {
                         itemPrice.setBpPriceC(Integer.parseInt((String) excelList.get(9)));
                         itemPrice.setBpPriceD(Integer.parseInt((String) excelList.get(10)));
                         itemPrice.setBpPriceE(Integer.parseInt((String) excelList.get(11)));
+                    } catch (NumberFormatException e){
+                        log.info("문자가 들어가있음 : "+e);
+                        return ResponseEntity.ok(res.fail(ResponseErrorCode.TP016.getCode(), i+"번째 행 "+ResponseErrorCode.TP016.getDesc(), "문자", "상품코드 : "+excelList.get(0).toString()));
+                    }
 
-                        itemPrice.setBiRemark(excelList.get(12).toString());
+                    itemPrice.setBiRemark(excelList.get(12).toString());
 
-                        itemPrice.setInsert_id(login_id);
-                        itemPrice.setInsertDateTime(LocalDateTime.now());
-                        itemPrice.setModify_id("null");
-//                        log.info(i+"번째 itemPrice : "+itemPrice);
+                    itemPrice.setInsert_id(login_id);
+                    itemPrice.setInsertDateTime(LocalDateTime.now());
+                    itemPrice.setModify_id("null");
+//                  log.info(i+"번째 itemPrice : "+itemPrice);
 
-                        itemPriceSaveArrayList.add(itemPrice);
+                    itemPriceSaveArrayList.add(itemPrice);
 
-//                        if(itemPriceArrayList.size() == 1000) {
-//                            log.info("itemPriceArrayList 사이즈가 1000개가 됬습니다. 먼저 저장합니다.");
-//                            headService.itemPriceSave(itemPriceArrayList);
-//                            itemPriceArrayList.clear();
-//                        }
-
-                        excelList.clear();
-//                    }else{
-//                        return ResponseEntity.ok(res.fail(ResponseErrorCode.TP003.getCode(), i+"번 행의 "+ResponseErrorCode.TP003.getDesc(), "문자", "상품코드 : "+excelList.get(0).toString()));
+//                    if(itemPriceArrayList.size() == 1000) {
+//                        log.info("itemPriceArrayList 사이즈가 1000개가 됬습니다. 먼저 저장합니다.");
+//                        headService.itemPriceSave(itemPriceArrayList);
+//                        itemPriceArrayList.clear();
 //                    }
-//                }
+
+                    excelList.clear();
+                }
             }
         }
 
-
-
-
-
+        headService.itemPriceSave(itemPriceUpdateArrayList);
         headService.itemPriceSave(itemPriceSaveArrayList);
 
         return ResponseEntity.ok(res.success());
