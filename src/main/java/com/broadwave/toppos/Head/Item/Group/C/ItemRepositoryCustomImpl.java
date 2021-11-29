@@ -30,6 +30,7 @@ public class ItemRepositoryCustomImpl extends QuerydslRepositorySupport implemen
         QItemGroup itemGroup = QItemGroup.itemGroup;
         QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
 
+
         JPQLQuery<ItemListDto> query = from(item)
                 .join(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
                 .join(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS))
@@ -45,8 +46,13 @@ public class ItemRepositoryCustomImpl extends QuerydslRepositorySupport implemen
                         item.biRemark
                 ));
 
-        query.where(itemGroup.bgItemGroupcode.eq(bgItemGroupcode));
-        query.where(itemGroupS.bsItemGroupcodeS.eq(bsItemGroupcodeS).and(itemGroupS.bgItemGroupcode.bgItemGroupcode.eq(bgItemGroupcode)));
+        if(!bgItemGroupcode.equals("")){
+            query.where(itemGroup.bgItemGroupcode.eq(bgItemGroupcode));
+        }
+        if(!bsItemGroupcodeS.equals("")){
+            query.where(itemGroupS.bsItemGroupcodeS.eq(bsItemGroupcodeS).and(itemGroupS.bgItemGroupcode.bgItemGroupcode.eq(bgItemGroupcode)));
+        }
+
 
         return query.fetch();
     }
