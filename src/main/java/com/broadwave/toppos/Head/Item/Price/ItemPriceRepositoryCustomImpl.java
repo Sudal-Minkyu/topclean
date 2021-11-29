@@ -58,6 +58,8 @@ public class ItemPriceRepositoryCustomImpl extends QuerydslRepositorySupport imp
                         itemPrice.biRemark
                 ));
 
+        query.orderBy(itemPrice.closeDt.desc());
+
         return query.fetch();
     }
 
