@@ -118,6 +118,8 @@ gridProp[1] = {
     rowNumHeaderText : "순번",
     enableColumnResize : false,
     enableFilter : true,
+    width : 660,
+    height : 480,
 };
 
 gridColumnLayout[2] = [
@@ -149,6 +151,8 @@ gridProp[2] = {
     rowNumHeaderText : "순번",
     enableColumnResize : false,
     enableFilter : true,
+    width : 660,
+    height : 480,
 };
 
 function createAccountGrid(gridColumnLayout, gridProp) {
@@ -197,7 +201,6 @@ function popupListAjax(url,numOfGrid,params){
     CommonUI.ajax(url, "GET", params, function(req){
         gridData[numOfGrid] = req.sendData.gridListData;
         AUIGrid.setGridData(gridId[numOfGrid], gridData[numOfGrid]);
-        AUIGrid.resize(gridId[numOfGrid], 660, 480);
     });
 }
 

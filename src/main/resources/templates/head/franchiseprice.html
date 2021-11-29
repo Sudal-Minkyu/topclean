@@ -19,14 +19,15 @@
 
     <div>
         가맹점 코드
-        <input type="text">
+        <input id="s_frCode" type="text">
         가맹관리코드
-        <input type="text">
+        <input id="s_frRefCode" type="text">
         가맹점명
-        <input type="text">
-        <button type="button">조회</button>
-        <button type="button">라인추가</button>
-        <button type="button">라인삭제</button>
+        <input id="s_frName" type="text">
+        <button type="button" onclick="filterFranchise(1)">조회</button>
+        <button type="button" onclick="filterFranchise(2)">초기화</button>
+        <button type="button" onclick="addPriceRow()">라인추가</button>
+        <button type="button" onclick="deletePriceRow()">라인삭제</button>
     </div>
 
     <div>
@@ -39,7 +40,7 @@
         <div id="grid_franchisePrice"></div>
     </div>
     <div>
-        <button type="button">저장</button>
+        <button type="button" onclick="">저장</button>
     </div>
 
     <!-- 상품 팝업 -->

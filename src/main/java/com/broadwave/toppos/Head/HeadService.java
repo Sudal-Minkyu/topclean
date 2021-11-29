@@ -5,10 +5,7 @@ import com.broadwave.toppos.Head.Branoh.BranchListDto;
 import com.broadwave.toppos.Head.Branoh.BranchRepository;
 import com.broadwave.toppos.Head.Branoh.BranchRepositoryCustomImpl;
 import com.broadwave.toppos.Head.Franohise.*;
-import com.broadwave.toppos.Head.Item.Group.A.ItemGroup;
-import com.broadwave.toppos.Head.Item.Group.A.ItemGroupDto;
-import com.broadwave.toppos.Head.Item.Group.A.ItemGroupRepository;
-import com.broadwave.toppos.Head.Item.Group.A.ItemGroupRepositoryCustom;
+import com.broadwave.toppos.Head.Item.Group.A.*;
 import com.broadwave.toppos.Head.Item.Group.B.*;
 import com.broadwave.toppos.Head.Item.Group.C.Item;
 import com.broadwave.toppos.Head.Item.Group.C.ItemListDto;
@@ -113,6 +110,11 @@ public class HeadService {
         return itemGroupRepositoryCustom.findByItemGroupList();
     }
 
+    // 상품그룹 대분류 명칭 리스트 호출
+    public List<ItemGroupNameListDto> findByItemGroupName() {
+        return itemGroupRepositoryCustom.findByItemGroupName();
+    }
+
     // 상품그룹 대분류 삭제
     public void findByItemGroupDelete(ItemGroup itemGroup){
         ItemGroupRepository.delete(itemGroup);
@@ -182,27 +184,5 @@ public class HeadService {
     public List<ItemPriceListDto> findByItemPriceList() {
         return itemPriceRepositoryCustom.findByItemPriceList();
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 }
