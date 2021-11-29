@@ -2,7 +2,8 @@ $(function() {
     /* 배열내의 각 설정만 넣어 빈 그리드 생성 */
     createGrids();
 
-    /* 그리드에 데이터를 집어넣음 반복문은 그리드숫자만큼(혹은 목표그리드 범위만큼) 돌 수 있도록 한다. */
+    /* 그리드에 데이터를 집어넣음 반복문은 그리드숫자만큼(혹은 목표그리드 범위만큼) 돌 수 있도록 한다.
+    *  첫 호출시 종료일자가 마지막 날인 것을 호출 */
     for(let i=0; i<1; i++) {
         setDataIntoGrid(i, gridCreateUrl[i]);
     }
@@ -13,6 +14,7 @@ $(function() {
     });
 
     CommonUI.setDatePicker(datePickerTargetIds);
+
 });
 
 /* datepicker를 적용시킬 대상들의 dom id들 */
@@ -206,14 +208,16 @@ function setDataIntoGrid(numOfGrid, url) {
                     setDtList.push(aSetDt);
                 }
             )
-            setDtList = setDtList.sort();
+            setDtList = setDtList.sort().reverse();
             $s_setDt.empty();
-            $s_setDt.append(`<option value="">전체</option>`);
             setDtList.forEach(element => {
                 const innerHtml = element.substr(0, 4) + "-" + element.substr(4, 2) + "-" + element.substr(6, 2);
                 $s_setDt.append(`<option value="${element}">${innerHtml}</option>`)
             });
         }
+        AUIGrid.setFilter(gridId[0], "closeDt", function (dataField, value, item) {
+            return "99991231" === value;
+        });
     });
 }
 
@@ -254,10 +258,11 @@ function applyPrice() {
     const formData = new FormData();
     formData.append("setDt", $setDt.val());
     formData.append("priceUpload", $priceUpload[0].files[0]);
-    console.log(Object.fromEntries(formData));
 
     CommonUI.ajax(url, "POST", formData, function (req) {
-        console.log(req);
+        AUIGrid.clearGridData(gridId[0]);
+        setDataIntoGrid(0, gridCreateUrl[0]);
+        alertSuccess("가격 업로드 성공");
     });
     regPriceClose();
 
@@ -298,13 +303,16 @@ function filterItems() {
     }
     if(s_setDt !== "") {
         AUIGrid.setFilter(gridId[0], "setDt", function (dataField, value, item) {
-            return s_setDt.replace(/[^0-9]/g, "")=== value;
+            return s_setDt.replace(/[^0-9]/g, "") === value;
         });
     }
 }
 
 function filterReset() {
     AUIGrid.clearFilterAll(gridId[0]);
+    AUIGrid.setFilter(gridId[0], "closeDt", function (dataField, value, item) {
+        return "99991231" === value;
+    });
 }
 
 /* 체크된 행이 존재할 경우 체크된 행을 삭제하고, 아닐 경우 선택된 행 하나만 삭제 */

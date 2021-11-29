@@ -4,11 +4,16 @@ $(function() {
     createGrids();
 
     /* 그리드에 데이터를 집어넣음 반복문은 그리드숫자만큼(혹은 목표그리드 범위만큼) 돌 수 있도록 한다. */
-    for(let i=0; i<0; i++) {
+    for(let i=0; i<1; i++) {
         setDataIntoGrid(i, gridCreateUrl[i]);
     }
 
     /* 1번그리드 내의 셀 더블 클릭시 이벤트 */
+    AUIGrid.bind(gridId[0], "cellClick", function (e) {
+        AUIGrid.clearGridData(gridId[1]);
+        selectedFrCode = e.item.frCode;
+    });
+
     AUIGrid.bind(gridId[1], "cellDoubleClick", function (e) {
         if(e.columnIndex < 4) {
             setDataIntoGrid(2, gridCreateUrl[2], {bgItemGroupcode : "D03", bsItemGroupcodeS : "P"});
@@ -26,6 +31,8 @@ $(function() {
 
 /* 차후 팝업에서 목표가 선택되었을 때 목표가 반영될 1번그리드의 행 고유번호를 저장해둔다. */
 let idIndex = "";
+/* 선택한 가맹점의 코드가 저장된다. */
+let selectedFrCode = "";
 
 /* 그리드 생성과 운영에 관한 중요 변수들. grid라는 이름으로 시작하도록 통일했다. */
 let gridId = [];
@@ -43,7 +50,7 @@ gridTargetDiv = [
 
 /* 그리드를 받아올 때 쓰이는 api 배열 */
 gridCreateUrl = [
-    "/api/a", "/api/b", "/api/head/itemGroupCList"
+    "/api/head/franchiseList", "/api/b", "/api/head/itemGroupCList"
 ]
 
 /* 그리드를 저장할 때 쓰이는 api 배열 */
@@ -250,7 +257,7 @@ function filterItemList(type) {
 
 
 function addPriceRow() {
-    AUIGrid.addRow(gridId[1], {biItemcode : ""}, "last");
+    AUIGrid.addRow(gridId[1], {frCode : selectedFrCode}, "last");
 }
 
 function deletePriceRow() {
