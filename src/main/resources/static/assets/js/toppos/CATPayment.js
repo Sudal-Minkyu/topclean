@@ -116,7 +116,6 @@ function CatCreate_Print(params,creditResult){
     message += String.fromCharCode(10);
     message += "==========================================";
     message += String.fromCharCode(10);
-    message += String.fromCharCode(10);
     params.items.forEach((item,idx)=>{
         message += item.tagno + " "+ item.itemname.fillSpaceUnicode(25)+ " " + numberWithCommasCat(item.price).padStart(7);
         message += String.fromCharCode(10);
@@ -145,7 +144,7 @@ function CatCreate_Print(params,creditResult){
 
 
     if (type ==='card') {
-        message += "------------------------------------------";
+        message += "==========================================";
         message += String.fromCharCode(10);
         message += "승인일시                  " + approvalTime.padStart(16);
         message += String.fromCharCode(10);
@@ -155,7 +154,8 @@ function CatCreate_Print(params,creditResult){
         message += String.fromCharCode(10);
         message += "승인번호                       " + approvalNo.padStart(11);
         message += String.fromCharCode(10);
-        message += "------------------------------------------";
+        message += "==========================================";
+        message += String.fromCharCode(10);
     }
 
 
@@ -289,7 +289,7 @@ function Communication(reqmsg, func){
             timeout: CAT_TIMEOUT_DURATION,
             data: {"REQ": reqmsg},
             success: function (data) {
-                let resultData = '{"STATUS":"FAILURE","errmsg":"'+ errorDefaultMessage +'"}';
+                let resultData = '{"STATUS":"FAILURE","ERRORMESSAGE":"'+ errorDefaultMessage +'"}';
                 var trans = reqmsg.substr(0, 2);
 
                 if (FindJSONtoString("RES", data) !== "0000") {
@@ -320,9 +320,19 @@ function Communication(reqmsg, func){
                         resultData += '"TELEGRAMFLAG":"' +FindJSONtoString("TELEGRAMFLAG", data) + '"';
                         resultData += '}';
                         return func(resultData);
+                    }else{
+                        let errmessage = FindJSONtoString("HELPDESK", data);
+                        errmessage += " / " + FindJSONtoString("MESSAGE1", data);
+                        errmessage += " / " + FindJSONtoString("MESSAGE2", data);
+
+                        resultData = '{ ';
+                        resultData += '"STATUS":"FAILURE",';
+                        resultData += '"ERRORMESSAGE":"' +  errmessage + '"';
+                        resultData += '}';
+                        return func(resultData);
                     }
                 }
-                return func(resultData);
+
                 //document.getElementById("taResponse").innerText = JSONtoString(data);
             },
             error: function (request, status, error) {
