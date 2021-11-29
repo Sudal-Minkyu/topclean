@@ -18,13 +18,13 @@ public class ManagerController {
     // 지사 & 지사장
     @RequestMapping("")
     public String head_index(){
-        return "/index/managerindex";
+        return "index/managerindex";
     }
 
     // 영업일관리 페이지
     @RequestMapping("businessday")
     public String businessday(){
-        return "/manager/businessday";
+        return "manager/businessday";
     }
 
 }

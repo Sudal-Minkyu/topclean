@@ -12,13 +12,13 @@ public class TestController {
     // 가상키보드 테스트 페이지
     @RequestMapping("keyboard")
     public String keyboard(){
-        return "/test/keyboard";
+        return "test/keyboard";
     }
 
     // 그리드 테스트 페이지
     @RequestMapping("grid")
     public String grid(){
-        return "/test/gridtest";
+        return "test/gridtest";
     }
 
     // 낙원님테스트페이지

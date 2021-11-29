@@ -18,13 +18,13 @@ public class UserController {
     // 가맹점주 메인페이지
     @RequestMapping("")
     public String user_index(){
-        return "/index/userindex";
+        return "index/userindex";
     }
 
     // 가맹점주 고객등록 페이지
     @RequestMapping("customerreg")
     public String userreg(){
-        return "/user/customer/customerreg";
+        return "user/customer/customerreg";
     }
 
 }
