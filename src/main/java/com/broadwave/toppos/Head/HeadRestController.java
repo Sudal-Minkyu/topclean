@@ -36,6 +36,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -925,7 +926,9 @@ public class HeadRestController {
         int numOfRows = worksheet.getPhysicalNumberOfRows();
         log.info("데이터 총 길이 : "+numOfRows);
 
-        ArrayList<ItemPrice> itemPriceArrayList = new ArrayList<>();
+        ArrayList<ItemPrice> itemPriceSaveArrayList = new ArrayList<>();
+        ArrayList<ItemPrice> itemPriceUpdateArrayList = new ArrayList<>();
+
         ArrayList<Object> excelList = new ArrayList<>();
         ArrayList<String> biItemcodeList = new ArrayList<>();
         for(int i=1; i<worksheet.getPhysicalNumberOfRows(); i++){
@@ -943,19 +946,18 @@ public class HeadRestController {
 
             }
 
-//            log.info(i+"번째 excelList : "+excelList);
+            log.info(i+"번째 excelList : "+excelList);
 
             Optional<Item> optionalItem = headService.findByBiItemcode(excelList.get(0).toString());
             if(!optionalItem.isPresent()){
                 return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), i+"번쨰 상품"+ResponseErrorCode.TP009.getDesc(), "문자", "상품코드 : "+excelList.get(0).toString()));
             }else{
 
-                ItemPriceDto priceDto = headService.findByItemPrice(excelList.get(0).toString(), excelList.get(6).toString(), setDtReplace);
-                if(priceDto != null){
-                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP015.getCode(), i+"번째 행 "+ResponseErrorCode.TP015.getDesc(), "문자", "상품코드 : "+excelList.get(0).toString()));
-                }else{
-                    if(!biItemcodeList.contains(excelList.get(0).toString())){
-
+//                ItemPriceDto priceDto = headService.findByItemPrice(excelList.get(0).toString(), excelList.get(6).toString(), setDtReplace);
+//                if(priceDto != null){
+//                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP015.getCode(), i+"번째 행 "+ResponseErrorCode.TP015.getDesc(), "문자", "상품코드 : "+excelList.get(0).toString()));
+//                }else{
+//                    if(!biItemcodeList.contains(excelList.get(0).toString())){
                         ItemPriceDto itemPriceDto = headService.findByItemPrice(excelList.get(0).toString(), excelList.get(6).toString(), null);
                         if(itemPriceDto != null){
                             itemPrice = modelMapper.map(itemPriceDto, ItemPrice.class);
@@ -963,7 +965,7 @@ public class HeadRestController {
                             itemPrice.setModifyDateTime(LocalDateTime.now());
                             itemPrice.setCloseDt(claseDtReplace);
 
-                            itemPriceArrayList.add(itemPrice);
+                            itemPriceUpdateArrayList.add(itemPrice);
 
                             itemPrice = new ItemPrice();
                         }
@@ -990,17 +992,27 @@ public class HeadRestController {
                         itemPrice.setModify_id("null");
 //                        log.info(i+"번째 itemPrice : "+itemPrice);
 
-                        itemPriceArrayList.add(itemPrice);
+                        itemPriceSaveArrayList.add(itemPrice);
+
+//                        if(itemPriceArrayList.size() == 1000) {
+//                            log.info("itemPriceArrayList 사이즈가 1000개가 됬습니다. 먼저 저장합니다.");
+//                            headService.itemPriceSave(itemPriceArrayList);
+//                            itemPriceArrayList.clear();
+//                        }
 
                         excelList.clear();
-                    }else{
-                        return ResponseEntity.ok(res.fail(ResponseErrorCode.TP003.getCode(), i+"번 행의 "+ResponseErrorCode.TP003.getDesc(), "문자", "상품코드 : "+excelList.get(0).toString()));
-                    }
-                }
+//                    }else{
+//                        return ResponseEntity.ok(res.fail(ResponseErrorCode.TP003.getCode(), i+"번 행의 "+ResponseErrorCode.TP003.getDesc(), "문자", "상품코드 : "+excelList.get(0).toString()));
+//                    }
+//                }
             }
         }
 
-        headService.itemPriceSave(itemPriceArrayList);
+
+
+
+
+        headService.itemPriceSave(itemPriceSaveArrayList);
 
         return ResponseEntity.ok(res.success());
     }

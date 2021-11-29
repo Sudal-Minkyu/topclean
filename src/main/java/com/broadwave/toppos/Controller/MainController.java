@@ -4,21 +4,16 @@ import com.broadwave.toppos.Account.AccountService;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.common.AjaxResponse;
 import com.broadwave.toppos.common.CommonUtils;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author Minkyu
@@ -38,13 +33,18 @@ public class MainController {
 
     // 메인 페이지 이동
     @GetMapping("/")
-    public ResponseEntity<Map<String,Object>> index(HttpServletRequest request){
+    public Object index(HttpServletRequest request){
 
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
 
         String login_id = CommonUtils.getCurrentuser(request);
         log.info("아이디 : "+login_id);
+
+        if(login_id.equals("system")) {
+            return login();
+        }
+
         Authentication authentication = tokenProvider.getAuthentication(request.getHeader("Authorization"));
         String role = authentication.getAuthorities().toString();
         // 클레임데이터 가져오기
