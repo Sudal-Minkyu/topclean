@@ -19,14 +19,15 @@
 
     <div>
         가맹점 코드
-        <input type="text">
+        <input id="s_frCode" type="text">
         가맹관리코드
-        <input type="text">
+        <input id="s_frRefCode" type="text">
         가맹점명
-        <input type="text">
-        <button type="button">조회</button>
-        <button type="button">라인추가</button>
-        <button type="button">라인삭제</button>
+        <input id="s_frName" type="text">
+        <button type="button" onclick="filterFranchise(1)">조회</button>
+        <button type="button" onclick="filterFranchise(2)">초기화</button>
+        <button type="button" onclick="addPriceRow()">라인추가</button>
+        <button type="button" onclick="deletePriceRow()">라인삭제</button>
     </div>
 
     <div>
@@ -38,9 +39,12 @@
         특정가격 적용품목
         <div id="grid_franchisePrice"></div>
     </div>
+    <div>
+        <button type="button" onclick="">저장</button>
+    </div>
 
     <!-- 상품 팝업 -->
-    <div class="l-popup" id="item_popup">
+    <div class="l-popup" id="itemList_popup">
         <div class="l-popup__container">
             <div class="l-popup__head">
                 <h3 class="l-popup__heading">상품 선택</h3>
@@ -62,17 +66,17 @@
                             <th>상품코드</th>
                             <td>
                                 <div class="c-text">
-                                    <input type="text" id="" class="c-text__input"/>
+                                    <input type="text" id="s_biItemcode" class="c-text__input"/>
                                 </div>
                             </td>
                             <th>상품명</th>
                             <td>
                                 <div class="c-text">
-                                    <input type="text" id="" class="c-text__input"/>
+                                    <input type="text" id="s_biName" class="c-text__input"/>
                                 </div>
                             </td>
                             <td>
-                                <button class="c-button c-button--point" type="button">조회</button>
+                                <button class="c-button c-button--point" type="button" onclick="filterItemList(1)">조회</button>
                             </td>
                         </tr>
                         </tbody>
@@ -82,7 +86,7 @@
                     <div id="grid_itemList"></div>
                 </div>
             </div>
-            <a href="#" onclick="itemClose()" class="l-popup__close">팝업닫기</a>
+            <a href="#" onclick="itemListClose()" class="l-popup__close">팝업닫기</a>
         </div>
     </div>
 

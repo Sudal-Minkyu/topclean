@@ -4,20 +4,19 @@ $(function() {
 
     /* 그리드에 데이터를 집어넣음 반복문은 그리드숫자만큼(혹은 목표그리드 범위만큼) 돌 수 있도록 한다. */
     for(let i=0; i<1; i++) {
-        //setDataIntoGrid(i, gridCreateUrl[i]);
+        setDataIntoGrid(i, gridCreateUrl[i]);
     }
 
     /* 0번그리드 내의 셀 클릭시 이벤트 */
     AUIGrid.bind(gridId[0], "cellClick", function (e) {
 
     });
-
     CommonUI.setDatePicker(datePickerTargetIds);
 });
 
 /* datepicker를 적용시킬 대상들의 dom id들 */
 const datePickerTargetIds = [
-    "s_tempPriceApplyDate", "setDt"
+    "s_setDt", "setDt"
 ];
 
 /* 그리드 생성과 운영에 관한 중요 변수들. grid라는 이름으로 시작하도록 통일했다. */
@@ -36,7 +35,7 @@ gridTargetDiv = [
 
 /* 그리드를 받아올 때 쓰이는 api 배열 */
 gridCreateUrl = [
-    "/api/a"
+    "/api/head/itemPriceList"
 ]
 
 /* 그리드를 저장할 때 쓰이는 api 배열 */
@@ -49,55 +48,123 @@ gridColumnLayout[0] = [
     {
         dataField: "biItemcode",
         headerText: "상품코드",
+        editable: false,
     }, {
-        dataField: "bgItemGroupcode",
+        dataField: "bgName",
         headerText: "대분류",
+        editable: false,
     }, {
-        dataField: "bgItemGroupcodeS",
+        dataField: "bsName",
         headerText: "중분류",
+        editable: false,
     }, {
         dataField: "biName",
         headerText: "상품명",
+        editable: false,
     }, {
-        dataField: "",
+        dataField: "setDt",
         headerText: "적용일자",
+        dataType: "date",
+        formatString: "yyyy-mm-dd",
+        editable: false,
     }, {
-        dataField: "",
+        dataField: "closeDt",
         headerText: "종료일자",
+        dataType: "date",
+        formatString: "yyyy-mm-dd",
+        editable: false,
     }, {
         dataField: "bpBasePrice",
         headerText: "기본금액",
-        editable: true,
+        dataType: "numeric",
+        editRenderer: {
+            type: "InputEditRenderer",
+            autoThousandSeparator: "true",
+            maxlength: 8,
+            onlyNumeric: true,
+            allowPoint: false,
+            allowNegative: false,
+        },
     }, {
         dataField: "highClassYn",
         headerText: "명품여부",
+        editable: false,
     }, {
         dataField: "bpAddPrice",
         headerText: "추가금액",
-        editable: true,
+        dataType: "numeric",
+        editRenderer: {
+            type: "InputEditRenderer",
+            autoThousandSeparator: "true",
+            maxlength: 8,
+            onlyNumeric: true,
+            allowPoint: false,
+            allowNegative: false,
+        },
     }, {
         dataField: "bpPriceA",
         headerText: "최종금액(A)",
-        editable: true,
+        dataType: "numeric",
+        editRenderer: {
+            type: "InputEditRenderer",
+            autoThousandSeparator: "true",
+            maxlength: 8,
+            onlyNumeric: true,
+            allowPoint: false,
+            allowNegative: false,
+        },
     }, {
         dataField: "bpPriceB",
         headerText: "최종금액(B)",
-        editable: true,
+        dataType: "numeric",
+        editRenderer: {
+            type: "InputEditRenderer",
+            autoThousandSeparator: "true",
+            maxlength: 8,
+            onlyNumeric: true,
+            allowPoint: false,
+            allowNegative: false,
+        },
     }, {
         dataField: "bpPriceC",
         headerText: "최종금액(C)",
-        editable: true,
+        dataType: "numeric",
+        editRenderer: {
+            type: "InputEditRenderer",
+            autoThousandSeparator: "true",
+            maxlength: 8,
+            onlyNumeric: true,
+            allowPoint: false,
+            allowNegative: false,
+        },
     }, {
         dataField: "bpPriceD",
         headerText: "최종금액(D)",
-        editable: true,
+        dataType: "numeric",
+        editRenderer: {
+            type: "InputEditRenderer",
+            autoThousandSeparator: "true",
+            maxlength: 8,
+            onlyNumeric: true,
+            allowPoint: false,
+            allowNegative: false,
+        },
     }, {
         dataField: "bpPriceE",
         headerText: "최종금액(E)",
-        editable: true,
+        dataType: "numeric",
+        editRenderer: {
+            type: "InputEditRenderer",
+            autoThousandSeparator: "true",
+            maxlength: 8,
+            onlyNumeric: true,
+            allowPoint: false,
+            allowNegative: false,
+        },
     }, {
         dataField: "bpRemark",
         headerText: "특이사항",
+        editable: false,
     },
 ];
 
@@ -105,7 +172,7 @@ gridColumnLayout[0] = [
 * https://www.auisoft.net/documentation/auigrid/DataGrid/Properties.html
 * */
 gridProp[0] = {
-    editable : false,
+    editable : true,
     selectionMode : "singleRow",
     noDataMessage : "출력할 데이터가 없습니다.",
     showRowNumColumn : false,
@@ -146,18 +213,18 @@ function regPriceClose() {
 
 /* 엑셀파일 처리를 통해 업데이트 */
 function applyPrice() {
-    const valSetDt = $("#setDt").val();
-    const $PriceUpload = $("#priceUpload");
+    const $setDt = $("#setDt");
+    const $priceUpload = $("#priceUpload");
 
-    if(valSetDt === "") {
+    if($setDt.val() === "") {
         alertCaution("가격적용일을 선택해 주세요", 1);
         return false;
-    }else if($PriceUpload[0].files.length === 0) {
+    }else if($priceUpload[0].files.length === 0) {
         alertCaution("파일을 첨부해 주세요", 1);
         return false;
     }else if(
-        $PriceUpload[0].files[0].type !== "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" &&
-        $PriceUpload[0].files[0].type !== "application/vnd.ms-excel"
+        $priceUpload[0].files[0].type !== "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" &&
+        $priceUpload[0].files[0].type !== "application/vnd.ms-excel"
     ) {
         alertCaution("올바른 확장자의 파일을 첨부해 주세요", 1);
         return false;
@@ -165,34 +232,38 @@ function applyPrice() {
 
     const url = "/api/head/itemPrice";
     const formData = new FormData();
-    formData.append("setDt", valSetDt);
-    formData.append("priceUpload", $PriceUpload[0].files[0]);
+    formData.append("setDt", $setDt.val());
+    formData.append("priceUpload", $priceUpload[0].files[0]);
     console.log(Object.fromEntries(formData));
 
     CommonUI.ajax(url, "POST", formData, function (req) {
         console.log(req);
-    })
+    });
     regPriceClose();
+
+    $setDt.val("");
+    $priceUpload.val("");
+    $("#fileName").val("");
 }
 
 /* 상품 그룹 가격 페이지 필터링 */
 function filterItems() {
     AUIGrid.clearFilterAll(gridId[0]);
 
-    const s_bgItemGroupcode = $("#s_bgItemGroupcode").val();
+    const s_bgName = $("#s_bgName").val();
     const s_biItemcode = $("#s_biItemcode").val();
     const s_biName = $("#s_biName").val();
     const s_highClassYn = $("#s_highClassYn").val();
-    const s_tempPriceApplyDate = $("#s_tempPriceApplyDate").val();
+    const s_setDt = $("#s_setDt").val();
 
-    if(s_bgItemGroupcode !== "") {
-        AUIGrid.setFilter(gridId[0], "bgItemGroupcode", function (dataField, value, item) {
-            return s_bgItemGroupcode === value;
+    if(s_bgName !== "") {
+        AUIGrid.setFilter(gridId[0], "bgName", function (dataField, value, item) {
+            return s_bgName === value;
         });
     }
     if(s_biItemcode !== "") {
         AUIGrid.setFilter(gridId[0], "biItemcode", function (dataField, value, item) {
-            return s_biItemcode === value;
+            return new RegExp(s_biItemcode).test(value);
         });
     }
     if(s_biName !== "") {
@@ -202,12 +273,12 @@ function filterItems() {
     }
     if(s_highClassYn !== "") {
         AUIGrid.setFilter(gridId[0], "highClassYn", function (dataField, value, item) {
-            return new RegExp(s_highClassYn).test(value);
+            return s_highClassYn === value;
         });
     }
-    if(s_tempPriceApplyDate !== "") {
-        AUIGrid.setFilter(gridId[0], "tempPriceApplyDate", function (dataField, value, item) {
-            return s_tempPriceApplyDate === value;
+    if(s_setDt !== "") {
+        AUIGrid.setFilter(gridId[0], "setDt", function (dataField, value, item) {
+            return s_setDt.replace(/[^0-9]/g, "")=== value;
         });
     }
 }
@@ -226,14 +297,14 @@ function removeRow() {
 }
 
 function saveRegPrice() {
-    // 추가된 행 아이템들(배열)
-    // const addedRowItems = AUIGrid.getAddedRowItems(gridTargetDiv[numOfGrid]);
+    // 추가된 행 아이템들(배열) 차후 데이터 처리 방식에 따라 바뀜
+    // const addedRowItems = AUIGrid.getAddedRowItems(gridTargetDiv[0]);
 
     // 수정된 행 아이템들(배열)
-    const updatedRowItems = AUIGrid.getEditedRowItems(gridTargetDiv[numOfGrid]);
+    const updatedRowItems = AUIGrid.getEditedRowItems(gridTargetDiv[0]);
 
     // 삭제된 행 아이템들(배열)
-    const deletedRowItems = AUIGrid.getRemovedItems(gridTargetDiv[numOfGrid]);
+    const deletedRowItems = AUIGrid.getRemovedItems(gridTargetDiv[0]);
 
     // 서버로 보낼 데이터 작성
     const data = {
@@ -241,6 +312,8 @@ function saveRegPrice() {
         "update" : updatedRowItems,
         "delete" : deletedRowItems,
     };
+
+    console.log(data);
 }
 
 /* 상품코드 텍스트필드 입력시 유효성에 맞추기 */

@@ -93,6 +93,13 @@
 				<option value="4">★★★★☆</option>
 				<option value="5">★★★★★</option>
 			</select>
+			<!--
+			탈퇴
+			<select id="bcQuitYn" name="bcQuitYn">
+				<option value="Y">Y</option>
+				<option value="N">N</option>
+			</select>
+			-->
 		</div>
 		<div>
 			문자수신동의
@@ -100,6 +107,12 @@
 			<label>동의</label>
 			<input type="radio" name="bcMessageAgree" value="N" checked>
 			<label>동의안함</label>
+			동의타입
+			<select id="bcAgreeType" name="bcAgreeType">
+				<option value="1">온라인</option>
+				<option value="2">서면</option>
+			</select>
+			<button type="button" onclick="requestSign()">서명요청</button>
 		</div>
 		<div>
 			특이사항
@@ -108,7 +121,7 @@
 		</div>
 		<div>
 			<button type="button" onclick="saveRegister()">저장</button>
-			<button type="button" onclick="">취소</button>
+			<button type="button" onclick="cancelRegister()">취소</button>
 		</div>
 	</form>
 	<div id="VKEY"></div>

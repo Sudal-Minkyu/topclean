@@ -10,4 +10,5 @@ import java.util.List;
  */
 public interface ItemGroupRepositoryCustom {
     List<ItemGroupDto> findByItemGroupList();
+    List<ItemGroupNameListDto> findByItemGroupName();
 }

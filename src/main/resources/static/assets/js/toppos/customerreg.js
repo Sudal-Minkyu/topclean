@@ -71,3 +71,13 @@ function onPhonenumChange (element) {
     let phoneNumber = element.value;
     element.value = CommonUI.onPhoneNumChange(phoneNumber);
 }
+
+/* 회원등록을 취소(페이지 이동) */
+function cancelRegister() {
+
+}
+
+/* 서명을 요청할 때 고객측의 모니터에 서명하도록 뜬다. */
+function requestSign() {
+
+}

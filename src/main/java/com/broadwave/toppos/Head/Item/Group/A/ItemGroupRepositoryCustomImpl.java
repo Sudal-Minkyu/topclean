@@ -35,5 +35,16 @@ public class ItemGroupRepositoryCustomImpl extends QuerydslRepositorySupport imp
         return query.fetch();
     }
 
+    @Override
+    public List<ItemGroupNameListDto> findByItemGroupName() {
+        QItemGroup itemGroup = QItemGroup.itemGroup;
+
+        JPQLQuery<ItemGroupNameListDto> query = from(itemGroup)
+                .select(Projections.constructor(ItemGroupNameListDto.class,
+                        itemGroup.bgName
+                ));
+        return query.fetch();
+    }
+
 
 }

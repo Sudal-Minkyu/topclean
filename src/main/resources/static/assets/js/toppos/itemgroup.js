@@ -357,8 +357,8 @@ function gridSave(numOfGrid) {
     /* 각 그리드 배열번호 항목마다의 유효성 검사 */
     switch (numOfGrid) {
         case 0 :
-            /* 입력되지 않은 코드가 있는지 검사*/
-            addedRowItems.forEach(function (item){
+            /* 입력되지 않은 코드나 명칭이 있는지 검사*/
+            addedRowItems.forEach(function (item) {
                 if(item.bgItemGroupcode === undefined || item.bgItemGroupcode === "") {
                     alertCaution("모든 코드를 입력해 주세요", 1);
                     isExecute = false;
@@ -367,9 +367,15 @@ function gridSave(numOfGrid) {
                     isExecute = false;
                 }
             });
+            updatedRowItems.forEach(function (item) {
+                if(item.bgName === undefined || item.bgName === "") {
+                    alertCaution("모든 명칭을 입력해 주세요", 1);
+                    isExecute = false;
+                }
+            });
             break;
         case 1 :
-            addedRowItems.forEach(function (item){
+            addedRowItems.forEach(function (item) {
                 if(item.bsItemGroupcodeS === undefined || item.bsItemGroupcodeS === "") {
                     alertCaution("모든 중분류 코드를 입력해 주세요", 1);
                     isExecute = false;
@@ -378,13 +384,25 @@ function gridSave(numOfGrid) {
                     isExecute = false;
                 }
             });
+            updatedRowItems.forEach(function (item) {
+                if(item.bsName === undefined || item.bsName === "") {
+                    alertCaution("모든 명칭을 입력해 주세요", 1);
+                    isExecute = false;
+                }
+            });
             break;
         case 2 :
-            addedRowItems.forEach(function (item){
+            addedRowItems.forEach(function (item) {
                 if(item.biItemSequence === undefined || item.biItemSequence === "") {
                     alertCaution("모든 상품순번을 입력해 주세요", 1);
                     isExecute = false;
                 }else if(item.biName === undefined || item.biName === "") {
+                    alertCaution("모든 상품명을 입력해 주세요", 1);
+                    isExecute = false;
+                }
+            });
+            updatedRowItems.forEach(function (item) {
+                if(item.biName === undefined || item.biName === "") {
                     alertCaution("모든 상품명을 입력해 주세요", 1);
                     isExecute = false;
                 }

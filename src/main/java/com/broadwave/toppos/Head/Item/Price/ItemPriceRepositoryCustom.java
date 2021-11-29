@@ -11,5 +11,6 @@ import java.util.List;
 public interface ItemPriceRepositoryCustom {
     List<ItemPriceListDto> findByItemPriceList();
 
-    void itemPriceSave(ItemPrice itemPrice);
+    ItemPriceDto findByItemPrice(String biItemcode, String highClassYn, String setDtReplace);
+
 }

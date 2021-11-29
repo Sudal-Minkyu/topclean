@@ -1,10 +1,15 @@
 package com.broadwave.toppos.Controller;
 
 import com.broadwave.toppos.Account.AccountRole;
+import com.broadwave.toppos.Head.HeadService;
+import com.broadwave.toppos.Head.Item.Group.A.ItemGroupNameListDto;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.util.List;
 
 /**
  * @author Minkyu
@@ -16,6 +21,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("/head")
 public class HeadController {
+
+    private final HeadService headService;
+
+    @Autowired
+    public HeadController(HeadService headService) {
+        this.headService = headService;
+    }
 
     // 본사일반&회계관리 메인페이지
     @RequestMapping("")
@@ -44,13 +56,15 @@ public class HeadController {
 
     // 상품가격관리 페이지
     @RequestMapping("itemprice")
-    public String itemprice(){
+    public String itemprice(Model model){
+        List<ItemGroupNameListDto> itemGroupNameListDtos = headService.findByItemGroupName();
+        model.addAttribute("groupNames", itemGroupNameListDtos);
         return "/head/itemprice";
     }
 
     // 특정품목가격관리 페이지
     @RequestMapping("franchiseprice")
-    public String specialprice(){
+    public String franchiseprice(){
         return "/head/franchiseprice";
     }
 
