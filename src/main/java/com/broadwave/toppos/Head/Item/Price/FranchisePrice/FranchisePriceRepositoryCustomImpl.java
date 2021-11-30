@@ -47,7 +47,7 @@ public class FranchisePriceRepositoryCustomImpl extends QuerydslRepositorySuppor
                         franchisePrice.bfRemark
                 ));
 
-        query.where(itemGroup.bgItemGroupcode.eq(frCode));
+        query.where(franchisePrice.frCode.eq(frCode));
 
         return query.fetch();
     }
