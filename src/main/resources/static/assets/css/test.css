@@ -324,10 +324,15 @@ textarea {
 	margin-top: 2.5rem;
 }
 .login__input {
+	position: relative;
 	width: 29.375rem;
+}
+.login__input input[type="text"],
+.login__input input[type="password"] {
+	width: 100%;
 	height: 4.375rem;
 	border: 0.063 solid #dadfe2;
-	padding: 0 4.75rem 0 1.875rem;
+	padding: 0 5rem 0 4rem;
 	font-size:1.25rem;
 	-webkit-border-radius: 0.625rem;
 	-moz-border-radius: 0.625rem;
@@ -335,13 +340,31 @@ textarea {
 	-webkit-background-size: 1.5rem 1.5rem;
 	background-size: 1.5rem 1.5rem;
 	background-repeat: no-repeat;
-	background-position: 26.5rem center;
+	background-position: 1.25rem center;
 }
-.login__input.login__input--id {
+.login__input input[type="text"] {
 	background-image: url(/assets/images/icon__id.svg);
 }
-.login__input.login__input--pw {
+.login__input input[type="password"] {
 	background-image: url(/assets/images/icon__pw.svg);
+}
+.login__input button {
+	position: absolute;
+	top: 50%;
+	right: 0.625rem;
+	width: 4.375rem;
+	height: 4.375rem;
+	text-indent: -99999rem;
+	background: url(/assets/images/icon__keyboard.svg) no-repeat;
+	-webkit-background-size: 1.875rem 1.875rem;
+	background-size: 1.875rem 1.875rem;
+	background-position: center center;
+	border: 0 none;
+	-webkit-transform: translateY(-50%);
+	-moz-transform: translateY(-50%);
+	-ms-transform: translateY(-50%);
+	-o-transform: translateY(-50%);
+	transform: translateY(-50%);
 }
 .login__input + .login__input {
 	margin-top: 0.625rem; 
