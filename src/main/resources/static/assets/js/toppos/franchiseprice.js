@@ -13,7 +13,7 @@ $(function() {
         AUIGrid.clearGridData(gridId[1]);
         selectedFrCode = e.item.frCode;
         console.log({frCode : selectedFrCode});
-        setDataIntoGrid(1, gridCreateUrl[1], JSON.stringify({frCode : selectedFrCode}), false);
+        setDataIntoGrid(1, gridCreateUrl[1], {frCode : selectedFrCode});
     });
 
     AUIGrid.bind(gridId[1], "cellDoubleClick", function (e) {
@@ -52,7 +52,7 @@ gridTargetDiv = [
 
 /* 그리드를 받아올 때 쓰이는 api 배열 */
 gridCreateUrl = [
-    "/api/head/franchiseList", "/api/head/franchisePrice", "/api/head/itemGroupCList"
+    "/api/head/franchiseList", "/api/head/franchisePriceList", "/api/head/itemGroupCList"
 ]
 
 /* 그리드를 저장할 때 쓰이는 api 배열 */
@@ -182,19 +182,11 @@ function createGrids() {
 }
 
 /* ajax 통신을 통해 그리드 데이터를 받아와 뿌린다. */
-function setDataIntoGrid(numOfGrid, url, code = false, isGetMethod = true) {
-    if(isGetMethod) {
-        CommonUI.ajax(url, "GET", code, function (req) {
-            gridData[numOfGrid] = req.sendData.gridListData;
-            AUIGrid.setGridData(gridId[numOfGrid], gridData[numOfGrid]);
-        });
-    }else{
-        CommonUI.ajaxjson(url, code, function (req){
-            console.log(code);
-            gridData[numOfGrid] = req.sendData.gridListData;
-            AUIGrid.setGridData(gridId[numOfGrid], gridData[numOfGrid]);
-        })
-    }
+function setDataIntoGrid(numOfGrid, url, code = false) {
+    CommonUI.ajax(url, "GET", code, function (req) {
+        gridData[numOfGrid] = req.sendData.gridListData;
+        AUIGrid.setGridData(gridId[numOfGrid], gridData[numOfGrid]);
+    });
 }
 
 
