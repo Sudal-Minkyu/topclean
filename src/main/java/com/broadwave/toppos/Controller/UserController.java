@@ -27,4 +27,11 @@ public class UserController {
         return "user/customer/customerreg";
     }
 
+    // 가맹점주 접수등록 페이지
+    @RequestMapping("receiptreg")
+    public String receiptreg(){
+        return "user/receipt/receiptreg";
+    }
+
+
 }

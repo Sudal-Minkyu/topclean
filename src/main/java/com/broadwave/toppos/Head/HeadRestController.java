@@ -1086,8 +1086,8 @@ public class HeadRestController {
         ArrayList<FranchisePriceDto> updateList = franchisePriceSet.getUpdate(); // 수정 리스트 얻기
 //        ArrayList<ItemDto> deleteList = franchisePriceSet.getDelete(); // 제거 리스트 얻기
 
-        log.info("추가 리스트 : "+addList);
-        log.info("수정 리스트 : "+updateList);
+//        log.info("추가 리스트 : "+addList);
+//        log.info("수정 리스트 : "+updateList);
 //        log.info("삭제 리스트 : "+deleteList);
 
         List<FranchisePrice> franchisePriceList = new ArrayList<>();
@@ -1105,7 +1105,7 @@ public class HeadRestController {
                         Optional<FranchisePrice> optionalFranchisePrice = headService.findByFranchisePrice(franchisePriceDto.getBiItemcode(), franchisePriceDto.getFrCode(), franchisePriceDto.getHighClassYn());
                         if (optionalFranchisePrice.isPresent()) {
                             log.info("이미 존재하는 특정가격 적용품목");
-                            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP017.getCode(),ResponseErrorCode.TP017.getDesc(), null, null));
+                            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP017.getCode(),ResponseErrorCode.TP017.getDesc(), "문자", "상품코드 : "+franchisePriceDto.getBiItemcode()+", 명품여부 : "+franchisePriceDto.getHighClassYn()));
                         }else{
                             log.info("특정가격 적용품목 신규생성");
                             FranchisePrice franchisePrice = new FranchisePrice();
@@ -1125,7 +1125,7 @@ public class HeadRestController {
             }
         }
 
-        log.info("저장 franchisePriceList : " +franchisePriceList);
+//        log.info("저장 franchisePriceList : " +franchisePriceList);
         if(franchisePriceList.size() != 0){
             headService.franchisePriceSave(franchisePriceList);
             franchisePriceList.clear();
@@ -1160,7 +1160,7 @@ public class HeadRestController {
             }
         }
 
-        log.info("수정 franchisePriceList : " +franchisePriceList);
+//        log.info("수정 franchisePriceList : " +franchisePriceList);
         if(franchisePriceList.size() != 0){
             headService.franchisePriceSave(franchisePriceList);
             franchisePriceList.clear();
@@ -1193,10 +1193,10 @@ public class HeadRestController {
         List<HashMap<String,Object>> franchisePriceListData = new ArrayList<>();
         HashMap<String,Object> franchisePriceInfo;
 
-        log.info("frCode : "+frCode);
+//        log.info("frCode : "+frCode);
 
         List<FranchisePriceListDto> franchisePriceListDtos = headService.findByFranchisePriceList(frCode);
-        log.info("franchisePriceListDtos : "+franchisePriceListDtos);
+//        log.info("franchisePriceListDtos : "+franchisePriceListDtos);
         for (FranchisePriceListDto franchisePriceListDto : franchisePriceListDtos) {
 
             franchisePriceInfo = new HashMap<>();
@@ -1212,7 +1212,7 @@ public class HeadRestController {
             franchisePriceListData.add(franchisePriceInfo);
         }
 
-        log.info("가맹점 특정가격 적용품목 리스트 : "+franchisePriceListData);
+//        log.info("가맹점 특정가격 적용품목 리스트 : "+franchisePriceListData);
         data.put("gridListData",franchisePriceListData);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
