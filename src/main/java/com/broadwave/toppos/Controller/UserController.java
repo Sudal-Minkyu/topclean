@@ -15,6 +15,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/user")
 public class UserController {
 
+    // 가맹점주전용 사인창
+    @RequestMapping("sign")
+    public String sign(){
+        return "user/sign";
+    }
+
     // 가맹점주 메인페이지
     @RequestMapping("")
     public String user_index(){

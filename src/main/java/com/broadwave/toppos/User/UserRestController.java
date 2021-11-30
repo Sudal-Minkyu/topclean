@@ -80,6 +80,7 @@ public class UserRestController {
             log.info("신규입니다.");
             // 신규일때
             customer.setFrCode(frCode);
+            customer.setBcQuitYn("N");
             customer.setInsert_id(login_id);
             customer.setInsertDateTime(LocalDateTime.now());
             customer.setBcMessageAgreeDt(LocalDateTime.now());

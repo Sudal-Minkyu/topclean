@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate ="~{layout/defaulttest}">
+
+<!-- 사용자 CSS 추가 -->
+<th:block layout:fragment="css">
+
+</th:block>
+
+<!-- 사용자 스크립트 추가 -->
+<th:block layout:fragment="script">
+    <script type="text/javascript">
+
+        $(function() {
+
+        });
+
+    </script>
+</th:block>
+
+<div layout:fragment="content" class="content content--padding">
+    <h1>광고화면 입니다.</h1>
+</div>
+</html>

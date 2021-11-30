@@ -1,10 +1,10 @@
 package com.broadwave.toppos.User.Customer;
 
 import lombok.*;
+import org.hibernate.type.BlobType;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 /**
  * @author Minkyu
@@ -60,8 +60,20 @@ public class Customer {
     @Column(name="bc_message_agree_dt")
     private LocalDateTime bcMessageAgreeDt; // 동의 또는 거부 시간
 
+    @Column(name="bc_agree_type")
+    private String bcAgreeType; // 동의타입 (온라인 : 1, 서면 : 2)
+
+    @Column(name="bc_sign_image")
+    private BlobType bcSignImage; // 동의 사인이미지 Blob객체사용
+
     @Column(name="bc_remark")
     private String bcRemark; // 특이사항
+
+    @Column(name="bc_quit_yn")
+    private String bcQuitYn; // 탈퇴여부 (기본값:N)
+
+    @Column(name="bc_quit_date")
+    private LocalDateTime bcQuitDate; // 탈퇴일시
 
     @Column(name="insert_id")
     private String insert_id;

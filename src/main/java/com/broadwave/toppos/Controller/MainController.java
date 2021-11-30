@@ -78,9 +78,16 @@ public class MainController {
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
+    // 로그인페이지
     @RequestMapping("/login")
     public String login(){
         return "login";
+    }
+
+    // 광고화면(보조화면)
+    @RequestMapping("/assistant")
+    public String assistant(){
+        return "assistant";
     }
 
 }
