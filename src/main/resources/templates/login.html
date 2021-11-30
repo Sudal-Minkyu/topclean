@@ -38,7 +38,13 @@
 		 		contentType: 'application/json',
 		 		cache: false,
 		 		error: function (req) {
-		 			ajaxErrorMsg(req);
+		 			if(req.status === 401){
+						$('.l-popup').removeClass('open');
+						alertCaution("비밀번호가 틀렸습니다.", 1);
+						$("#password").val("");
+					}else{
+						ajaxErrorMsg(req);
+					}
 		 		},
 		 		success: function (res) {
 		 			// console.log("로그인 되었습니다.");

@@ -12,7 +12,7 @@ $(function() {
     AUIGrid.bind(gridId[0], "cellClick", function (e) {
         AUIGrid.clearGridData(gridId[1]);
         selectedFrCode = e.item.frCode;
-        console.log({frCode : selectedFrCode});
+        // console.log({frCode : selectedFrCode});
         setDataIntoGrid(1, gridCreateUrl[1], {frCode : selectedFrCode});
     });
 
@@ -57,7 +57,7 @@ gridCreateUrl = [
 
 /* 그리드를 저장할 때 쓰이는 api 배열 */
 gridSaveUrl = [
-    "/api/a", "/api/b", "/api/c"
+    "/api/head/franchisePrice"
 ]
 
 /* 0번 그리드의 레이아웃 */
@@ -287,7 +287,12 @@ function savePriceList() {
         "update" : updatedRowItems,
         //"delete" : deletedRowItems
     };
-    console.log(data);
+    // console.log(data);
+
+    const jsonString = JSON.stringify(data);
+    CommonUI.ajaxjson(gridSaveUrl[0], jsonString, function () {
+        // 저장이나 수정 완료되면 리스트 호출하기  to.성낙원
+    });
 }
 
 /* API 통신에 필요없는 요소들을 제거 */

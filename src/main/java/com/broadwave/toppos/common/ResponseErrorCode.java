@@ -23,6 +23,7 @@ public enum ResponseErrorCode {
     TP014("TP014", "이미 등록되어있는 번호입니다."),
     TP015("TP015", "중복되는 적용일자가 존재합니다."),
     TP016("TP016", "금액에 숫자만 입력해주세요."),
+    TP017("TP017", "이미 등록되어있는 상품코드입니다."),
     ;
 
     private String code;

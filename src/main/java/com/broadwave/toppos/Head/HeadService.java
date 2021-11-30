@@ -211,4 +211,7 @@ public class HeadService {
         return franchisePriceRepositoryCustom.findByFranchisePriceList(frCode);
     }
 
+    public Optional<FranchisePrice> findByFranchisePrice(String biItemcode, String frCode, String highClassYn) {
+        return franchisePriceRepository.findByFranchisePrice(biItemcode, frCode, highClassYn);
+    }
 }

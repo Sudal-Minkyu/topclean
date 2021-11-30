@@ -33,7 +33,7 @@ public class FranchisePriceRepositoryCustomImpl extends QuerydslRepositorySuppor
         QItemGroup itemGroup = QItemGroup.itemGroup;
         QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
 
-        JPQLQuery<FranchisePriceListDto> query = from(item)
+        JPQLQuery<FranchisePriceListDto> query = from(franchisePrice)
                 .join(item).on(franchisePrice.biItemcode.eq(item.biItemcode))
                 .join(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
                 .join(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS))

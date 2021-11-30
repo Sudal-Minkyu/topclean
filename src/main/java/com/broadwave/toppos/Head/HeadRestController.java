@@ -1099,59 +1099,72 @@ public class HeadRestController {
             }else{
                 for (FranchisePriceDto franchisePriceDto : addList) {
                     Optional<Item> optionalItem = headService.findByBiItemcode(franchisePriceDto.getBiItemcode());
-                    if (optionalItem.isPresent()) {
+                    if (!optionalItem.isPresent()) {
                         return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(),"상품"+ResponseErrorCode.TP009.getDesc(), "문자", "상품코드 : "+franchisePriceDto.getBiItemcode()));
                     }else{
-                        log.info("특정가격 적용품목 신규생성");
-                        FranchisePrice franchisePrice = new FranchisePrice();
-                        franchisePrice.setBiItemcode(franchisePriceDto.getBiItemcode());
-                        franchisePrice.setFrCode(franchisePriceDto.getFrCode());
-                        String a= optionalFranchise.get().getModify_id();
+                        Optional<FranchisePrice> optionalFranchisePrice = headService.findByFranchisePrice(franchisePriceDto.getBiItemcode(), franchisePriceDto.getFrCode(), franchisePriceDto.getHighClassYn());
+                        if (optionalFranchisePrice.isPresent()) {
+                            log.info("이미 존재하는 특정가격 적용품목");
+                            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP017.getCode(),ResponseErrorCode.TP017.getDesc(), null, null));
+                        }else{
+                            log.info("특정가격 적용품목 신규생성");
+                            FranchisePrice franchisePrice = new FranchisePrice();
+                            franchisePrice.setBiItemcode(franchisePriceDto.getBiItemcode());
+                            franchisePrice.setFrCode(franchisePriceDto.getFrCode());
 
-                        franchisePrice.setHighClassYn(franchisePriceDto.getHighClassYn());
-                        franchisePrice.setBfPrice(franchisePriceDto.getBfPrice());
-                        franchisePrice.setBfRemark(franchisePriceDto.getBfRemark());
-                        franchisePrice.setInsert_id(login_id);
-                        franchisePrice.setInsertDateTime(LocalDateTime.now());
+                            franchisePrice.setHighClassYn(franchisePriceDto.getHighClassYn());
+                            franchisePrice.setBfPrice(franchisePriceDto.getBfPrice());
+                            franchisePrice.setBfRemark(franchisePriceDto.getBfRemark());
+                            franchisePrice.setInsert_id(login_id);
+                            franchisePrice.setInsertDateTime(LocalDateTime.now());
 
-                        franchisePriceList.add(franchisePrice);
+                            franchisePriceList.add(franchisePrice);
+                        }
                     }
                 }
             }
         }
 
-        log.info("franchisePriceList : " +franchisePriceList);
+        log.info("저장 franchisePriceList : " +franchisePriceList);
         if(franchisePriceList.size() != 0){
-//            headService.franchisePriceSave(franchisePriceList);
+            headService.franchisePriceSave(franchisePriceList);
             franchisePriceList.clear();
         }
-        log.info("franchisePriceList : " +franchisePriceList);
         
-//        // 상품소재 수정 시작.
-//        if(updateList.size()!=0){
-//            for (ItemDto itemDto : updateList) {
-//                Optional<Item> itemOptional = headService.findByBiItemcode(itemDto.getBiItemcode());
-//                if (!itemOptional.isPresent()) {
-//                    log.info("존재하지 않은 상품소재 코드 : " +itemDto.getBiItemcode());
-//                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "수정 할 상품소재 " + ResponseErrorCode.TP009.getDesc(), "문자", "상품코드 : " + itemDto.getBiItemcode()));
-//                } else {
-//                    log.info("수정 할 상품소재 코드 : " + itemOptional.get().getBiItemcode());
-//                    Item item = new Item();
-//                    item.setBsItemGroupcodeS(itemOptional.get().getBsItemGroupcodeS());
-//                    item.setBgItemGroupcode(itemOptional.get().getBgItemGroupcode());
-//                    item.setBiItemcode(itemOptional.get().getBiItemcode());
-//                    item.setBiItemSequence(itemOptional.get().getBiItemSequence());
-//                    item.setBiName(itemDto.getBiName());
-//                    item.setBiRemark(itemDto.getBiRemark());
-//                    item.setInsert_id(itemOptional.get().getInsert_id());
-//                    item.setInsertDateTime(itemOptional.get().getInsertDateTime());
-//                    item.setModify_id(login_id);
-//                    item.setModifyDateTime(LocalDateTime.now());
-////                    log.info("item : " + item);
-//                    headService.itemSave(item);
-//                }
-//            }
-//        }
+        // 상품소재 수정 시작.
+        if(updateList.size()!=0){
+            for (FranchisePriceDto franchisePriceDto : updateList) {
+                Optional<FranchisePrice> optionalFranchisePrice = headService.findByFranchisePrice(franchisePriceDto.getBiItemcode(), franchisePriceDto.getFrCode(), franchisePriceDto.getHighClassYn());
+                if (!optionalFranchisePrice.isPresent()) {
+                    log.info("존재하지 않은 상품소재 코드 : " +franchisePriceDto.getBiItemcode());
+                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "수정 할 품목" + ResponseErrorCode.TP005.getDesc(), "문자", "상품코드 : " + franchisePriceDto.getBiItemcode()));
+                } else {
+                    log.info("수정 할 품목 상품코드 : " + optionalFranchisePrice.get().getBiItemcode());
+                    FranchisePrice franchisePrice = new FranchisePrice();
+
+                    franchisePrice.setBiItemcode(optionalFranchisePrice.get().getBiItemcode());
+                    franchisePrice.setFrCode(optionalFranchisePrice.get().getFrCode());
+                    franchisePrice.setHighClassYn(optionalFranchisePrice.get().getHighClassYn());
+
+                    franchisePrice.setBfPrice(franchisePriceDto.getBfPrice());
+                    franchisePrice.setBfRemark(franchisePriceDto.getBfRemark());
+
+                    franchisePrice.setInsert_id(optionalFranchisePrice.get().getInsert_id());
+                    franchisePrice.setInsertDateTime(optionalFranchisePrice.get().getInsertDateTime());
+                    franchisePrice.setModify_id(login_id);
+                    franchisePrice.setModifyDateTime(LocalDateTime.now());
+
+//                    log.info("franchisePrice : " + franchisePrice);
+                    franchisePriceList.add(franchisePrice);
+                }
+            }
+        }
+
+        log.info("수정 franchisePriceList : " +franchisePriceList);
+        if(franchisePriceList.size() != 0){
+            headService.franchisePriceSave(franchisePriceList);
+            franchisePriceList.clear();
+        }
 
 //        // 상품소재 삭제로직 실행 : 데이터베이스에 코드사용중인 코드가 존재하면 리턴처리한다. , 데이터베이스에 코드가 존재하지 않으면 리턴처리한다.
 //        if(deleteList.size()!=0){
@@ -1180,8 +1193,10 @@ public class HeadRestController {
         List<HashMap<String,Object>> franchisePriceListData = new ArrayList<>();
         HashMap<String,Object> franchisePriceInfo;
 
+        log.info("frCode : "+frCode);
+
         List<FranchisePriceListDto> franchisePriceListDtos = headService.findByFranchisePriceList(frCode);
-//        log.info("franchisePriceListDtos : "+franchisePriceListDtos);
+        log.info("franchisePriceListDtos : "+franchisePriceListDtos);
         for (FranchisePriceListDto franchisePriceListDto : franchisePriceListDtos) {
 
             franchisePriceInfo = new HashMap<>();
