@@ -1,4 +1,4 @@
-package com.broadwave.toppos.Head.Item.Price.FranchPrice;
+package com.broadwave.toppos.Head.Item.Price.FranchisePrice;
 
 import lombok.*;
 
@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 /**
  * @author Minkyu
- * Date : 2021-11-29
+ * Date : 2021-11-30
  * Time :
  * Remark : Toppos 가맹점 특정상품관리  테이블
  */
@@ -17,9 +17,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-@IdClass(FranchPricePK.class)
+@IdClass(FranchisePricePK.class)
 @Table(name="bs_item_franchise_price")
-public class FranchPrice {
+public class FranchisePrice {
 
     @Id
     @Column(name="bi_itemcode")

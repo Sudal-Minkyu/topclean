@@ -11,11 +11,13 @@ import com.broadwave.toppos.Head.Item.Group.C.Item;
 import com.broadwave.toppos.Head.Item.Group.C.ItemListDto;
 import com.broadwave.toppos.Head.Item.Group.C.ItemRepository;
 import com.broadwave.toppos.Head.Item.Group.C.ItemRepositoryCustom;
+import com.broadwave.toppos.Head.Item.Price.FranchisePrice.FranchisePrice;
+import com.broadwave.toppos.Head.Item.Price.FranchisePrice.FranchisePriceListDto;
+import com.broadwave.toppos.Head.Item.Price.FranchisePrice.FranchisePriceRepository;
+import com.broadwave.toppos.Head.Item.Price.FranchisePrice.FranchisePriceRepositoryCustom;
 import com.broadwave.toppos.Head.Item.Price.*;
-import com.broadwave.toppos.common.ResponseErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +34,7 @@ public class HeadService {
     private final ItemGroupSRepository ItemGroupSRepository;
     private final ItemRepository ItemRepository;
     private final ItemPriceRepository itemPriceRepository;
+    private final FranchisePriceRepository franchisePriceRepository;
 
     private final FranchiseRepositoryCustom franchiseRepositoryCustom;
     private final BranchRepositoryCustomImpl branohRepositoryCustom;
@@ -39,11 +42,13 @@ public class HeadService {
     private final ItemGroupSRepositoryCustom itemGroupSRepositoryCustom;
     private final ItemRepositoryCustom itemRepositoryCustom;
     private final ItemPriceRepositoryCustom itemPriceRepositoryCustom;
+    private final FranchisePriceRepositoryCustom franchisePriceRepositoryCustom;
 
     @Autowired
     public HeadService(BranchRepository branohRepository, FranchiseRepository franchiseRepository, FranchiseRepositoryCustom franchiseRepositoryCustom, BranchRepositoryCustomImpl branohRepositoryCustom,
                        ItemGroupRepository ItemGroupRepository, ItemGroupRepositoryCustom itemGroupRepositoryCustom, ItemGroupSRepository ItemGroupSRepository, ItemGroupSRepositoryCustom itemGroupSRepositoryCustom,
-                       ItemRepository ItemRepository, ItemRepositoryCustom itemRepositoryCustom, ItemPriceRepository itemPriceRepository, ItemPriceRepositoryCustom itemPriceRepositoryCustom){
+                       ItemRepository ItemRepository, ItemRepositoryCustom itemRepositoryCustom, ItemPriceRepository itemPriceRepository, ItemPriceRepositoryCustom itemPriceRepositoryCustom,
+                       FranchisePriceRepository franchisePriceRepository, FranchisePriceRepositoryCustom franchisePriceRepositoryCustom){
         this.branohRepository = branohRepository;
         this.franchiseRepository = franchiseRepository;
         this.franchiseRepositoryCustom = franchiseRepositoryCustom;
@@ -56,6 +61,8 @@ public class HeadService {
         this.itemRepositoryCustom = itemRepositoryCustom;
         this.itemPriceRepository = itemPriceRepository;
         this.itemPriceRepositoryCustom = itemPriceRepositoryCustom;
+        this.franchisePriceRepository = franchisePriceRepository;
+        this.franchisePriceRepositoryCustom = franchisePriceRepositoryCustom;
     }
 
     // // // // // // // // // // // // // // 가맹점, 지사 등록 매칭 페이지 // // // // // // // // // // // // //
@@ -191,6 +198,17 @@ public class HeadService {
     // 상품 가격 리스트 호출
     public List<ItemPriceListDto> findByItemPriceList() {
         return itemPriceRepositoryCustom.findByItemPriceList();
+    }
+
+
+    // 가맹점 특정품목가격 저장
+    public void franchisePriceSave(List<FranchisePrice> franchisePriceList) {
+        franchisePriceRepository.saveAll(franchisePriceList);
+    }
+
+    // 가맹점 특정품목가격 리스트
+    public List<FranchisePriceListDto> findByFranchisePriceList(String frCode) {
+        return franchisePriceRepositoryCustom.findByFranchisePriceList(frCode);
     }
 
 }

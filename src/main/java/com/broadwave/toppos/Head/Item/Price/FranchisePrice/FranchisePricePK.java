@@ -1,4 +1,4 @@
-package com.broadwave.toppos.Head.Item.Price.FranchPrice;
+package com.broadwave.toppos.Head.Item.Price.FranchisePrice;
 
 import lombok.Data;
 
@@ -11,7 +11,7 @@ import java.io.Serializable;
  * Remark : Toppos 가맹점 특정상품관리 다중아이디
  */
 @Data
-class FranchPricePK implements Serializable {
+class FranchisePricePK implements Serializable {
 
     private String biItemcode;
     private String frCode;
