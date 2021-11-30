@@ -43,9 +43,11 @@
                     ]
                 };
 
+
+
             // CAT.CatPrint(paymentData,"")
             // $('#payStatus').hide();
-            // return null;
+            //return null;
 
             CAT.CatCredit(paymentData, function (res) {
 
@@ -66,7 +68,7 @@
                             "approvalTime": resjson.APPROVALTIME,
                             "approvalNo": resjson.APPROVALNO
                         };
-                    CAT.CatPrint(paymentData, creditData)
+                    CAT.CatPrint(paymentData, creditData,"N")
                 }
 
             });
@@ -90,9 +92,23 @@
 
             CAT.CatCreditCancel(paymentData, function (res) {
 
-
                 $('#resultmsg').text(res);
                 $('#payStatus').hide();
+
+                let resjson = JSON.parse(res);
+
+                //결제 성공일경우 Print
+                if (resjson.STATUS ==="SUCCESS") {
+                    let creditData =
+                        {
+                            "cardNo": resjson.CARDNO,
+                            "cardName": resjson.ISSUERNAME,
+                            "approvalTime": resjson.APPROVALTIME,
+                            "approvalNo": resjson.APPROVALNO
+                        };
+                    CAT.CatPrint(paymentData, creditData,"Y")
+                }
+
 
             });
         }

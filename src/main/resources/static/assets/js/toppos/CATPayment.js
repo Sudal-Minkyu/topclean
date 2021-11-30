@@ -23,17 +23,17 @@ class CATPayment {
 
 
 
-    CatPrint(params,creditData) {
+    CatPrint(params,creditData,cancelYN) {
 
         let message="";
-        message = CatCreate_Print(params,creditData)
+        message = CatCreate_Print(params,creditData,cancelYN)
 
         CatPrintCommunication(message);
 
     }
 }
 // 프린트 내용 생성
-function CatCreate_Print(params,creditResult){
+function CatCreate_Print(params,creditResult,cancelYN){
     let message = "";
 
 
@@ -117,7 +117,11 @@ function CatCreate_Print(params,creditResult){
     message += "==========================================";
     message += String.fromCharCode(10);
     params.items.forEach((item,idx)=>{
-        message += item.tagno + " "+ item.itemname.fillSpaceUnicode(25)+ " " + numberWithCommasCat(item.price).padStart(7);
+        if (cancelYN==="Y"){
+            message += item.tagno + " " + item.itemname.fillSpaceUnicode(25) + " " + numberWithCommasCat(-1 * item.price).padStart(7);
+        }else {
+            message += item.tagno + " " + item.itemname.fillSpaceUnicode(25) + " " + numberWithCommasCat(item.price).padStart(7);
+        }
         message += String.fromCharCode(10);
         message += "------------------------------------------";
         message += String.fromCharCode(10);
@@ -131,8 +135,11 @@ function CatCreate_Print(params,creditResult){
     message += String.fromCharCode(27);
     message += String.fromCharCode(33);
     message += String.fromCharCode(16);
-
-    message += "수   량 : "+ (""+params.items.length).padStart(3) + "         접수금액 :" + (" "+numberWithCommasCat(params.totalAmount)).padStart(9);
+    if (cancelYN==="Y"){
+        message += "수   량 : " + ("" + params.items.length).padStart(3) + "         취소금액 :" + (" " + numberWithCommasCat(-1*params.totalAmount)).padStart(9);
+    }else {
+        message += "수   량 : " + ("" + params.items.length).padStart(3) + "         접수금액 :" + (" " + numberWithCommasCat(params.totalAmount)).padStart(9);
+    }
     message += String.fromCharCode(10);
 
     //**************************************************
@@ -148,7 +155,11 @@ function CatCreate_Print(params,creditResult){
         message += String.fromCharCode(10);
         message += "승인일시                  " + approvalTime.padStart(16);
         message += String.fromCharCode(10);
-        message += ("할부 : "+ month).fillSpaceUnicode(14) +"    승인금액".fillSpaceUnicode(19) + (numberWithCommasCat(params.totalAmount)).padStart(9);
+        if (cancelYN==="Y") {
+            message += ("할부 : " + month).fillSpaceUnicode(14) + "    취소금액".fillSpaceUnicode(19) + (numberWithCommasCat(-1*params.totalAmount)).padStart(9);
+        }else {
+            message += ("할부 : " + month).fillSpaceUnicode(14) + "    승인금액".fillSpaceUnicode(19) + (numberWithCommasCat(params.totalAmount)).padStart(9);
+        }
         message += String.fromCharCode(10);
         message += cardName.fillSpaceUnicode(24) +" " + cardNo.padStart(17);
         message += String.fromCharCode(10);
