@@ -5,3 +5,11 @@
 .aui-grid-default-column {
     vertical-align: middle;
 }
+
+.aui-grid-editable-column {
+    background-color: green;
+}
+
+.aui-grid-locked-column {
+    background-color: red;
+}

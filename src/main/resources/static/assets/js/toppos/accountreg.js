@@ -212,12 +212,12 @@ function brSearch(){
     AUIGrid.clearFilterAll(gridId[1]);
     if(s_brName !== "") {
         AUIGrid.setFilter(gridId[1], "brName", function (dataField, value, item) {
-            return new RegExp(s_brName).test(value);
+            return new RegExp(s_brName.toUpperCase()).test(value.toUpperCase());
         });
     }
     if(s_brCode !== "") {
         AUIGrid.setFilter(gridId[1], "brCode", function (dataField, value, item) {
-            return new RegExp(s_brCode).test(value);
+            return new RegExp(s_brCode.toUpperCase()).test(value.toUpperCase());
         });
     }
     if(s_brContractState !== "") {
@@ -235,12 +235,12 @@ function frSearch(){
     AUIGrid.clearFilterAll(gridId[2]);
     if(s_frName !== "") {
         AUIGrid.setFilter(gridId[2], "frName", function (dataField, value, item) {
-            return new RegExp(s_frName).test(value);
+            return new RegExp(s_frName.toUpperCase()).test(value.toUpperCase());
         });
     }
     if(s_frCode !== "") {
         AUIGrid.setFilter(gridId[2], "frCode", function (dataField, value, item) {
-            return new RegExp(s_frCode).test(value);
+            return new RegExp(s_frCode.toUpperCase()).test(value.toUpperCase());
         });
     }
     if(s_frContractState !== "") {
@@ -447,18 +447,18 @@ function filterAccountList(type) {
         case 1 :
             AUIGrid.clearFilterAll(gridId[0]);
             const s_userid = $("#s_userid").val();
-            const s_username = $("#s_username").val();
+            const s_username = $("#s_username");
             const s_role = $("#s_role").val();
             const s_frCode = $("#s_frCode").val();
             const s_brCode = $("#s_brCode").val();
             if(s_userid !== "") {
                 AUIGrid.setFilter(gridId[0], "userid", function (dataField, value, item) {
-                    return new RegExp(s_userid).test(value);
+                    return new RegExp(s_userid.toUpperCase()).test(value.toUpperCase());
                 });
             }
             if(s_username !== "") {
                 AUIGrid.setFilter(gridId[0], "username", function (dataField, value, item) {
-                    return new RegExp(s_username).test(value);
+                    return new RegExp(s_username.toUpperCase()).test(value.toUpperCase());
                 });
             }
             if(s_role !== "") {
@@ -468,12 +468,12 @@ function filterAccountList(type) {
             }
             if(s_frCode !== "") {
                 AUIGrid.setFilter(gridId[0], "frCode", function (dataField, value, item) {
-                    return new RegExp("^" + s_frCode).test(value);
+                    return new RegExp("^" + s_frCode.toUpperCase()).test(value.toUpperCase());
                 });
             }
             if(s_brCode !== "") {
                 AUIGrid.setFilter(gridId[0], "brCode", function (dataField, value, item) {
-                    return new RegExp("^" + s_brCode).test(value);
+                    return new RegExp("^" + s_brCode.toUpperCase()).test(value.toUpperCase());
                 });
             }
             break;

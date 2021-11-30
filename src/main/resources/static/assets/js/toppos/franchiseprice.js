@@ -16,7 +16,7 @@ $(function() {
 
     AUIGrid.bind(gridId[1], "cellDoubleClick", function (e) {
         if(e.columnIndex < 4) {
-            setDataIntoGrid(2, gridCreateUrl[2], {bgItemGroupcode : "D03", bsItemGroupcodeS : "P"});
+            setDataIntoGrid(2, gridCreateUrl[2]);
             itemListPop(e.rowIdValue);
         }
     });
@@ -205,23 +205,23 @@ function filterFranchise(type) {
         case 1 :
             AUIGrid.clearFilterAll(gridId[0]);
 
-            const s_frCode = $("#s_frCode").val().toUpperCase();
+            const s_frCode = $("#s_frCode").val();
             const s_frRefCode = $("#s_frRefCode").val();
             const s_frName = $("#s_frName").val();
 
             if(s_frCode !== "") {
                 AUIGrid.setFilter(gridId[0], "frCode", function (dataField, value, item) {
-                    return new RegExp("^" + s_frCode).test(value);
+                    return new RegExp("^" + s_frCode.toUpperCase()).test(value.toUpperCase());
                 });
             }
             if(s_frRefCode !== "") {
                 AUIGrid.setFilter(gridId[0], "frRefCode", function (dataField, value, item) {
-                    return new RegExp("^" + s_frRefCode).test(value);
+                    return new RegExp("^" + s_frRefCode.toUpperCase()).test(value.toUpperCase());
                 });
             }
             if(s_frName !== "") {
                 AUIGrid.setFilter(gridId[0], "frName", function (dataField, value, item) {
-                    return new RegExp(s_frName).test(value);
+                    return new RegExp(s_frName.toUpperCase()).test(value.toUpperCase());
                 });
             }
             break;
@@ -240,12 +240,12 @@ function filterItemList(type) {
             const s_biName = $("#s_biName").val();
             if(s_biItemcode !== "") {
                 AUIGrid.setFilter(gridId[2], "biItemcode", function (dataField, value, item) {
-                    return new RegExp("^" + s_biItemcode).test(value);
+                    return new RegExp("^" + s_biItemcode.toUpperCase()).test(value.toUpperCase());
                 });
             }
             if(s_biName !== "") {
                 AUIGrid.setFilter(gridId[2], "biName", function (dataField, value, item) {
-                    return s_biName === value;
+                    return new RegExp(s_biName.toUpperCase()).test(value.toUpperCase());
                 });
             }
             break;
@@ -268,7 +268,7 @@ function deletePriceRow() {
     }
 }
 
-function saveProductList() {
+function savePriceList() {
     // 추가된 행 아이템들(배열)
     const addedRowItems = AUIGrid.getAddedRowItems(gridTargetDiv[1]);
 
@@ -285,5 +285,6 @@ function saveProductList() {
         "delete" : deletedRowItems
     };
 
+    console.log(data);
 
 }

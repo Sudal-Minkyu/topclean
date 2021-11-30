@@ -474,7 +474,7 @@ function filterFranchiseList(type) {
             const s_frNameFilter = $("#frNameFilter").val();
             if(s_frNameFilter !== "") {
                 AUIGrid.setFilter(gridId[1], "frName", function (dataField, value, item) {
-                    return new RegExp(s_frNameFilter).test(value);
+                    return new RegExp(s_frNameFilter.toUpperCase()).test(value.toUpperCase());
                 });
             }
             break;
@@ -492,7 +492,7 @@ function filterFranchiseList(type) {
             }
             if(s_frName !== "") {
                 AUIGrid.setFilter(gridId[3], "frName", function (dataField, value, item) {
-                    return new RegExp(s_frName).test(value);
+                    return new RegExp(s_frName.toUpperCase()).test(value.toUpperCase());
                 });
             }
             break;
@@ -513,7 +513,7 @@ function filterBranchList(type) {
             const s_brContractState = $("#pop_s_brContractState").val();
             if(s_brName !== "") {
                 AUIGrid.setFilter(gridId[4], "brName", function (dataField, value, item) {
-                    return new RegExp(s_brName).test(value);
+                    return new RegExp(s_brName.toUpperCase()).test(value.toUpperCase());
                 });
             }
             if(s_brCode !== "") {
