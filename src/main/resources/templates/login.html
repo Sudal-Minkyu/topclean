@@ -71,6 +71,25 @@
 			 	}
 			 });
 		 }
+		 
+		 // 가상키보드
+		 let vkey;
+		 $(function () {
+		     vkey = new VKeyboard();
+		 });
+		 
+		 let targetFieldID = ["userid", "password"];
+		 
+		 /* 각 가상 키보드의 제목 */
+		 let targetFieldSubject = [
+		     "ID를 입력해주세요",
+		     "비밀번호를 입력해주세요"
+		 ];
+		 
+		 function openVKeyboard(keyboardNum) {
+			 vkey.showKeyboard(targetFieldID[keyboardNum], targetFieldSubject[keyboardNum]);
+		 }
+
 
 	</script>
 </th:block>
@@ -82,8 +101,14 @@
 			<img src="/assets/images/logo__megashop.svg" alt="탑 크리닝업 메가샵" />
 		</h1>
 		<div class="login__form-box">
-			<input type="text" class="login__input login__input--id"  id="userid" name="userid" placeholder="아이디" required >
-			<input type="password" class="login__input login__input--pw" id="password" name="password" placeholder="비밀번호" required>
+			<div class="login__input">
+				<input type="text" id="userid" name="userid" placeholder="아이디" required >
+				<button type="button" onclick="openVKeyboard(0)">키보드</button>
+			</div>
+			<div class="login__input">
+				<input type="password" id="password" name="password" placeholder="비밀번호" required>
+				<button type="button" onclick="openVKeyboard(1)">키보드</button>
+			</div>
 			<div class="login__check">
 				<input type="checkbox" id="logincheck" class="login__check-input" />
 				<label for="logincheck" class="login__check-label">아이디 저장</label>
@@ -91,6 +116,8 @@
 			<div><input class="login__btn" type="button" value="로그인" onclick="loginActive()" /></div>
 		</div>
 	</div>
+	
+	<div id="VKEY"></div>
 </div>
 
 </html>
