@@ -12,7 +12,8 @@ $(function() {
     AUIGrid.bind(gridId[0], "cellClick", function (e) {
         AUIGrid.clearGridData(gridId[1]);
         selectedFrCode = e.item.frCode;
-        setDataIntoGrid(1, gridCreateUrl[1]);
+        console.log({frCode : selectedFrCode});
+        setDataIntoGrid(1, gridCreateUrl[1], {frCode : selectedFrCode});
     });
 
     AUIGrid.bind(gridId[1], "cellDoubleClick", function (e) {
@@ -256,11 +257,11 @@ function filterItemList(type) {
     }
 }
 
-
 function addPriceRow() {
-    AUIGrid.addRow(gridId[1], {frCode : selectedFrCode}, "last");
+    AUIGrid.addRow(gridId[1], {frCode : selectedFrCode, highClassYn : "N"}, "last");
 }
 
+/* 1번 그리드의 선택된 체크박스 항목들이나, 없을 경우 선택된 행 하나를 삭제 */
 function deletePriceRow() {
     if(AUIGrid.getCheckedRowItems(gridId[1]).length){
         AUIGrid.removeCheckedRows(gridId[1]);
@@ -269,15 +270,16 @@ function deletePriceRow() {
     }
 }
 
+/* 1번 그리드의 저장작업 */
 function savePriceList() {
     // 추가된 행 아이템들(배열)
-    const addedRowItems = AUIGrid.getAddedRowItems(gridTargetDiv[1]);
+    const addedRowItems = dataRefinary(AUIGrid.getAddedRowItems(gridTargetDiv[1]));
 
     // 수정된 행 아이템들(배열)
-    const updatedRowItems = AUIGrid.getEditedRowItems(gridTargetDiv[1]);
+    const updatedRowItems = dataRefinary(AUIGrid.getEditedRowItems(gridTargetDiv[1]));
 
     // 삭제된 행 아이템들(배열)
-    const deletedRowItems = AUIGrid.getRemovedItems(gridTargetDiv[1]);
+    const deletedRowItems = dataRefinary(AUIGrid.getRemovedItems(gridTargetDiv[1]));
 
     // 서버로 보낼 데이터 작성
     const data = {
@@ -286,4 +288,20 @@ function savePriceList() {
         "delete" : deletedRowItems
     };
     console.log(data);
+}
+
+/* API 통신에 필요없는 요소들을 제거 */
+function dataRefinary(itemArray) {
+    itemArray.forEach(element => {
+        delete element["bgItemGroupcode"];
+        delete element["bgName"];
+        delete element["biItemSequence"];
+        delete element["biName"];
+        delete element["biRemark"];
+        delete element["biUseYn"];
+        delete element["bsItemGroupcodeS"];
+        delete element["bsName"];
+        delete element["_$uid"];
+    });
+    return itemArray;
 }
