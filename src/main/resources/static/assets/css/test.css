@@ -730,18 +730,40 @@ textarea {
 .customer__form-item {
 	display: flex;
 	align-items: center;
-	width: 50%;
+	width: calc(50% - 2.188rem);
 	padding: 1.25rem 0;
+}
+.customer__form-item:nth-child(2n) {
+	margin-left: 4.375rem;
 }
 .customer__form-item.customer__form-item--100 {
 	width: 100%;
 	align-items: flex-start;
 }
+.customer__form-item.customer__form-item--100 + .customer__form-item {
+	margin-left: 0;
+}
 .customer__form-title {
 	width: 7.5rem;
+	font-size: 1.125rem;
+	font-weight: normal;
 }
-."customer__form-input {
+.customer__form-title span {
+	color: #f42d16;
+	font-size: 0.75rem;
+	font-weight: 700;
+	vertical-align: text-top;
+}
+.customer__form-input {
 	flex: 1;
+}
+.customer__btns {
+	display: flex;
+	justify-content: center;
+	margin-top: 1.25rem;
+}
+.customer__btns button + button {
+	margin-left: 1.25rem;
 }
 
 
