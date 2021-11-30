@@ -469,7 +469,7 @@ function codeValidatorTwo(oldValue, newValue, item, dataField, fromClipboard) {
 function defaultColumn(rowIndex, columnIndex, value, headerText, item, dataField) {
     let returnStyle = "aui-grid-editable-column";
     if(value !== "" && !AUIGrid.isAddedById(gridId[1], item._$uid)) {
-        returnStyle = "aui-grid-locked-column";
+        returnStyle = "";
     }
     return returnStyle;
 }

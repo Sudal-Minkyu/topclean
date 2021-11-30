@@ -12,6 +12,7 @@ $(function() {
     AUIGrid.bind(gridId[0], "cellClick", function (e) {
         AUIGrid.clearGridData(gridId[1]);
         selectedFrCode = e.item.frCode;
+        setDataIntoGrid(1, gridCreateUrl[1]);
     });
 
     AUIGrid.bind(gridId[1], "cellDoubleClick", function (e) {
@@ -50,7 +51,7 @@ gridTargetDiv = [
 
 /* 그리드를 받아올 때 쓰이는 api 배열 */
 gridCreateUrl = [
-    "/api/head/franchiseList", "/api/b", "/api/head/itemGroupCList"
+    "/api/head/franchiseList", "/api/head/franchisePrice", "/api/head/itemGroupCList"
 ]
 
 /* 그리드를 저장할 때 쓰이는 api 배열 */
@@ -284,7 +285,5 @@ function savePriceList() {
         "update" : updatedRowItems,
         "delete" : deletedRowItems
     };
-
     console.log(data);
-
 }
