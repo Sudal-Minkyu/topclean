@@ -164,7 +164,7 @@ function showDay(rowIndex, columnIndex, value, headerText, item) {
 }
 
 /* 컬럼의 스타일을 값의 상태에 따라 변경하기 위한 함수. 컬럼 속성(gridProp)내의 요소와 연동된다. */
-function selectedStyle(value, footerValues) {
+function selectedStyle(rowIndex, columnIndex, value, headerText, item, dataField) {
     const setStyle = isSelected ? "cellSelected" : "cellNoSelected";
     return setStyle;
 }

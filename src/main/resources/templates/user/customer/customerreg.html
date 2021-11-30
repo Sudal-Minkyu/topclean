@@ -2,11 +2,11 @@
 <html lang="ko"
 	  xmlns:th="http://www.thymeleaf.org"
 	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	  layout:decorate ="~{layout/default}">
+	  layout:decorate ="~{layout/defaulttest}">
 
 <!-- 사용자 CSS 추가 -->
 <th:block layout:fragment="css">
-	<link rel="stylesheet" href="/assets/css/nak_css_dir/VKeyboard.css" />
+	
 </th:block>
 
 <!-- 사용자 스크립트 추가 -->
@@ -21,109 +21,145 @@
 	</script>
 </th:block>
 
-<div layout:fragment="content" class="content padding-zero content--main">
-	<form id="userregForm" enctype="multipart/form-data">
-		<div>
-			고객명
-			<input type="text" id="bcName" name="bcName">
-			<button type="button" onclick="openVKeyboard(0)">⌨</button>
+<div layout:fragment="content" class="content content--padding">
+	<div class="customer">
+		<div class="customer__header">
+			<h3>고객등록</h3>
 		</div>
-		<div>
-			※휴대폰
-			<input type="text" id="bcHp" name="bcHp" placeholder="숫자만 입력해 주세요" onkeyup="onPhonenumChange(this)">
-			<button type="button" onclick="openVKeyboard(1)">⌨</button>
+		<div class="customer__content">
+			<form id="userregForm" enctype="multipart/form-data">
+				<ul class="customer__form-list">
+					<li class="customer__form-item">
+						<h4 class="customer__form-title">고객명</h4>
+						<div class="customer__form-input">
+							<div class="c-text">
+								<input type="text" id="bcName" name="bcName" />
+								<button type="button" onclick="openVKeyboard(0)">⌨</button>
+							</div>
+						</div>
+					</li>
+					<li class="customer__form-item">
+						<h4 class="customer__form-title">휴대폰<span>※</span></h4>
+						<div class="customer__form-input">
+							<div class="c-text">
+								<input type="text" id="bcHp" name="bcHp" placeholder="숫자만 입력해 주세요" onkeyup="onPhonenumChange(this)">
+								<button type="button" onclick="openVKeyboard(1)">⌨</button>
+							</div>
+						</div>
+					</li>
+					<li class="customer__form-item">
+						<h4 class="customer__form-title">성별</h4>
+						<div class="customer__form-input">
+							<input type="radio" name="bcSex" value="1" checked>
+							<label>여자</label>
+							<input type="radio" name="bcSex" value="0">
+							<label>남자</label>
+						</div>
+					</li>
+					<li class="customer__form-item">
+						<h4 class="customer__form-title">주소</h4>
+						<div class="customer__form-input">
+							<div class="c-text">
+								<input type="text" id="bcAddress" name="bcAddress">
+								<button type="button" onclick="openVKeyboard(2)">⌨</button>
+							</div>
+						</div>
+					</li>
+					<li class="customer__form-item">
+						<h4 class="customer__form-title">생년월일/나이</h4>
+						<div class="customer__form-input">
+							<select id="bcBirthYYYY" onchange="onYearChange(this.value)">
+								<option value="">선택</option>
+								<option th:each="i : ${#numbers.sequence(2010, 1950, -1)}"
+										th:value="${i}"
+										th:text="${i}">
+								</option>
+							</select>
+							<select id="bcBirthMM">
+								<option value="">선택</option>
+								<option th:each="i : ${#numbers.sequence(1, 12, 1)}"
+										th:value="${#numbers.formatInteger(i, 2)}"
+										th:text="${i}">
+								</option>
+							</select>
+							<select id="bcBirthDD">
+								<option value="">선택</option>
+								<option th:each="i : ${#numbers.sequence(1, 31, 1)}"
+										th:value="${#numbers.formatInteger(i, 2)}"
+										th:text="${i}">
+								</option>
+							</select>
+							<select id="bcAge" name="bcAge">
+								<option value="">선택</option>
+								<option th:each="i : ${#numbers.sequence(10, 90, 10)}"
+										th:value="${i}"
+										th:text="${i}+' 대'">
+								</option>
+							</select>
+						</div>
+					</li>
+					<li class="customer__form-item">
+						<h4 class="customer__form-title">고객구분</h4>
+						<div class="customer__form-input">
+							<select id="bcGrade" name="bcGrade">
+								<option value="01">일반</option>
+								<option value="02">VIP</option>
+								<option value="03">VVIP</option>
+							</select>
+						</div>
+					</li>
+					<li class="customer__form-item">
+						<h4 class="customer__form-title">성향</h4>
+						<div class="customer__form-input">
+							<select id="bcValuation" name="bcValuation">
+								<option value="1">★☆☆☆☆</option>
+								<option value="2">★★☆☆☆</option>
+								<option value="3" selected>★★★☆☆</option>
+								<option value="4">★★★★☆</option>
+								<option value="5">★★★★★</option>
+							</select>
+						</div>
+					</li>
+					<li class="customer__form-item">
+						<h4 class="customer__form-title">탈퇴</h4>
+						<div class="customer__form-input"></div>
+					</li>
+					<li class="customer__form-item">
+						<h4 class="customer__form-title">문자수신동의</h4>
+						<div class="customer__form-input">
+							<input type="radio" name="bcMessageAgree" value="Y">
+							<label>동의</label>
+							<input type="radio" name="bcMessageAgree" value="N" checked>
+							<label>동의안함</label>
+						</div>
+					</li>
+					<li class="customer__form-item">
+						<h4 class="customer__form-title">동의타입</h4>
+						<div class="customer__form-input">
+							<select id="bcAgreeType" name="bcAgreeType">
+								<option value="1">온라인</option>
+								<option value="2">서면</option>
+							</select>
+							<button type="button" onclick="requestSign()">서명요청</button>
+						</div>
+					</li>
+					<li class="customer__form-item customer__form-item--100">
+						<h4 class="customer__form-title">특이사항</h4>
+						<div class="customer__form-input">
+							<textarea id="bcRemark" name="bcRemark"></textarea>
+							<button type="button" onclick="openVKeyboard(3)">⌨</button>
+						</div>
+					</li>
+				</ul>
+				
+				<div>
+					<button type="button" onclick="saveRegister()">저장</button>
+					<button type="button" onclick="cancelRegister()">취소</button>
+				</div>
+			</form>
 		</div>
-		<div>
-			성별
-			<input type="radio" name="bcSex" value="1" checked>
-			<label>여자</label>
-			<input type="radio" name="bcSex" value="0">
-			<label>남자</label>
-		</div>
-		<div>
-			주소
-			<input type="text" id="bcAddress" name="bcAddress">
-			<button type="button" onclick="openVKeyboard(2)">⌨</button>
-		</div>
-		<div>
-			생년월일/나이
-			<select id="bcBirthYYYY" onchange="onYearChange(this.value)">
-				<option value="">선택</option>
-				<option th:each="i : ${#numbers.sequence(2010, 1950, -1)}"
-						th:value="${i}"
-						th:text="${i}">
-				</option>
-			</select>
-			<select id="bcBirthMM">
-				<option value="">선택</option>
-				<option th:each="i : ${#numbers.sequence(1, 12, 1)}"
-						th:value="${#numbers.formatInteger(i, 2)}"
-						th:text="${i}">
-				</option>
-			</select>
-			<select id="bcBirthDD">
-				<option value="">선택</option>
-				<option th:each="i : ${#numbers.sequence(1, 31, 1)}"
-						th:value="${#numbers.formatInteger(i, 2)}"
-						th:text="${i}">
-				</option>
-			</select>
-			<select id="bcAge" name="bcAge">
-				<option value="">선택</option>
-				<option th:each="i : ${#numbers.sequence(10, 90, 10)}"
-						th:value="${i}"
-						th:text="${i}+' 대'">
-				</option>
-			</select>
-		</div>
-		<div>
-			고객구분
-			<select id="bcGrade" name="bcGrade">
-				<option value="01">일반</option>
-				<option value="02">VIP</option>
-				<option value="03">VVIP</option>
-			</select>
-		</div>
-		<div>
-			성향
-			<select id="bcValuation" name="bcValuation">
-				<option value="1">★☆☆☆☆</option>
-				<option value="2">★★☆☆☆</option>
-				<option value="3" selected>★★★☆☆</option>
-				<option value="4">★★★★☆</option>
-				<option value="5">★★★★★</option>
-			</select>
-			<!--
-			탈퇴
-			<select id="bcQuitYn" name="bcQuitYn">
-				<option value="Y">Y</option>
-				<option value="N">N</option>
-			</select>
-			-->
-		</div>
-		<div>
-			문자수신동의
-			<input type="radio" name="bcMessageAgree" value="Y">
-			<label>동의</label>
-			<input type="radio" name="bcMessageAgree" value="N" checked>
-			<label>동의안함</label>
-			동의타입
-			<select id="bcAgreeType" name="bcAgreeType">
-				<option value="1">온라인</option>
-				<option value="2">서면</option>
-			</select>
-			<button type="button" onclick="requestSign()">서명요청</button>
-		</div>
-		<div>
-			특이사항
-			<textarea id="bcRemark" name="bcRemark"></textarea>
-			<button type="button" onclick="openVKeyboard(3)">⌨</button>
-		</div>
-		<div>
-			<button type="button" onclick="saveRegister()">저장</button>
-			<button type="button" onclick="cancelRegister()">취소</button>
-		</div>
-	</form>
+	</div>
+	
 	<div id="VKEY"></div>
 </div>
 </html>

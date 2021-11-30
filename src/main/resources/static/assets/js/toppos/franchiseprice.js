@@ -4,14 +4,20 @@ $(function() {
     createGrids();
 
     /* 그리드에 데이터를 집어넣음 반복문은 그리드숫자만큼(혹은 목표그리드 범위만큼) 돌 수 있도록 한다. */
-    for(let i=0; i<0; i++) {
+    for(let i=0; i<1; i++) {
         setDataIntoGrid(i, gridCreateUrl[i]);
     }
 
     /* 1번그리드 내의 셀 더블 클릭시 이벤트 */
+    AUIGrid.bind(gridId[0], "cellClick", function (e) {
+        AUIGrid.clearGridData(gridId[1]);
+        selectedFrCode = e.item.frCode;
+        setDataIntoGrid(1, gridCreateUrl[1]);
+    });
+
     AUIGrid.bind(gridId[1], "cellDoubleClick", function (e) {
         if(e.columnIndex < 4) {
-            setDataIntoGrid(2, gridCreateUrl[2], {bgItemGroupcode : "D03", bsItemGroupcodeS : "P"});
+            setDataIntoGrid(2, gridCreateUrl[2]);
             itemListPop(e.rowIdValue);
         }
     });
@@ -26,6 +32,8 @@ $(function() {
 
 /* 차후 팝업에서 목표가 선택되었을 때 목표가 반영될 1번그리드의 행 고유번호를 저장해둔다. */
 let idIndex = "";
+/* 선택한 가맹점의 코드가 저장된다. */
+let selectedFrCode = "";
 
 /* 그리드 생성과 운영에 관한 중요 변수들. grid라는 이름으로 시작하도록 통일했다. */
 let gridId = [];
@@ -43,7 +51,7 @@ gridTargetDiv = [
 
 /* 그리드를 받아올 때 쓰이는 api 배열 */
 gridCreateUrl = [
-    "/api/a", "/api/b", "/api/head/itemGroupCList"
+    "/api/head/franchiseList", "/api/head/franchisePrice", "/api/head/itemGroupCList"
 ]
 
 /* 그리드를 저장할 때 쓰이는 api 배열 */
@@ -204,17 +212,17 @@ function filterFranchise(type) {
 
             if(s_frCode !== "") {
                 AUIGrid.setFilter(gridId[0], "frCode", function (dataField, value, item) {
-                    return new RegExp(s_frCode).test(value);
+                    return new RegExp("^" + s_frCode.toUpperCase()).test(value.toUpperCase());
                 });
             }
             if(s_frRefCode !== "") {
                 AUIGrid.setFilter(gridId[0], "frRefCode", function (dataField, value, item) {
-                    return new RegExp(s_frRefCode).test(value);
+                    return new RegExp("^" + s_frRefCode.toUpperCase()).test(value.toUpperCase());
                 });
             }
             if(s_frName !== "") {
                 AUIGrid.setFilter(gridId[0], "frName", function (dataField, value, item) {
-                    return new RegExp(s_frName).test(value);
+                    return new RegExp(s_frName.toUpperCase()).test(value.toUpperCase());
                 });
             }
             break;
@@ -233,12 +241,12 @@ function filterItemList(type) {
             const s_biName = $("#s_biName").val();
             if(s_biItemcode !== "") {
                 AUIGrid.setFilter(gridId[2], "biItemcode", function (dataField, value, item) {
-                    return s_biItemcode === value;
+                    return new RegExp("^" + s_biItemcode.toUpperCase()).test(value.toUpperCase());
                 });
             }
             if(s_biName !== "") {
                 AUIGrid.setFilter(gridId[2], "biName", function (dataField, value, item) {
-                    return s_biName === value;
+                    return new RegExp(s_biName.toUpperCase()).test(value.toUpperCase());
                 });
             }
             break;
@@ -250,7 +258,7 @@ function filterItemList(type) {
 
 
 function addPriceRow() {
-    AUIGrid.addRow(gridId[1], {biItemcode : ""}, "last");
+    AUIGrid.addRow(gridId[1], {frCode : selectedFrCode}, "last");
 }
 
 function deletePriceRow() {
@@ -261,7 +269,7 @@ function deletePriceRow() {
     }
 }
 
-function saveProductList() {
+function savePriceList() {
     // 추가된 행 아이템들(배열)
     const addedRowItems = AUIGrid.getAddedRowItems(gridTargetDiv[1]);
 
@@ -277,6 +285,5 @@ function saveProductList() {
         "update" : updatedRowItems,
         "delete" : deletedRowItems
     };
-
-
+    console.log(data);
 }

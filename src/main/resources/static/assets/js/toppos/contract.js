@@ -340,6 +340,7 @@ function franchiseSave() {
 
     CommonUI.ajax(url, "POST", formData, function (req){
         const sentData = Object.fromEntries(formData);
+        console.log(sentData);
         const isUpdated = AUIGrid.rowIdToIndex(gridId[1], sentData.frCode) > -1;
 
         if(isUpdated) {
@@ -419,6 +420,9 @@ function setFieldData(numOfGrid, item) {
             $("#frContractState").val(item.frContractState);
             $("#frPriceGrade").val(item.frPriceGrade);
             $("#frRemark").val(item.frRemark);
+            $("#frRefCode").val(item.frRefCode);
+            $("#frTagNo").val(item.frTagNo);
+            $("#frEstimateDuration").val(item.frEstimateDuration);
             CommonUI.restrictDate(dateAToBTargetIds[1][0], dateAToBTargetIds[1][1], false);
             CommonUI.restrictDate(dateAToBTargetIds[1][0], dateAToBTargetIds[1][1], true);
             break;
@@ -470,7 +474,7 @@ function filterFranchiseList(type) {
             const s_frNameFilter = $("#frNameFilter").val();
             if(s_frNameFilter !== "") {
                 AUIGrid.setFilter(gridId[1], "frName", function (dataField, value, item) {
-                    return new RegExp(s_frNameFilter).test(value);
+                    return new RegExp(s_frNameFilter.toUpperCase()).test(value.toUpperCase());
                 });
             }
             break;
@@ -488,7 +492,7 @@ function filterFranchiseList(type) {
             }
             if(s_frName !== "") {
                 AUIGrid.setFilter(gridId[3], "frName", function (dataField, value, item) {
-                    return new RegExp(s_frName).test(value);
+                    return new RegExp(s_frName.toUpperCase()).test(value.toUpperCase());
                 });
             }
             break;
@@ -509,7 +513,7 @@ function filterBranchList(type) {
             const s_brContractState = $("#pop_s_brContractState").val();
             if(s_brName !== "") {
                 AUIGrid.setFilter(gridId[4], "brName", function (dataField, value, item) {
-                    return new RegExp(s_brName).test(value);
+                    return new RegExp(s_brName.toUpperCase()).test(value.toUpperCase());
                 });
             }
             if(s_brCode !== "") {

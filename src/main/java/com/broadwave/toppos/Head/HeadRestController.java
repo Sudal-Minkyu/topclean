@@ -17,6 +17,10 @@ import com.broadwave.toppos.Head.Item.Group.C.Item;
 import com.broadwave.toppos.Head.Item.Group.C.ItemDto;
 import com.broadwave.toppos.Head.Item.Group.C.ItemListDto;
 import com.broadwave.toppos.Head.Item.Group.C.ItemSet;
+import com.broadwave.toppos.Head.Item.Price.FranchisePrice.FranchisePrice;
+import com.broadwave.toppos.Head.Item.Price.FranchisePrice.FranchisePriceDto;
+import com.broadwave.toppos.Head.Item.Price.FranchisePrice.FranchisePriceListDto;
+import com.broadwave.toppos.Head.Item.Price.FranchisePrice.FranchisePriceSet;
 import com.broadwave.toppos.Head.Item.Price.ItemPrice;
 import com.broadwave.toppos.Head.Item.Price.ItemPriceDto;
 import com.broadwave.toppos.Head.Item.Price.ItemPriceListDto;
@@ -24,6 +28,7 @@ import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.common.AjaxResponse;
 import com.broadwave.toppos.common.CommonUtils;
 import com.broadwave.toppos.common.ResponseErrorCode;
+import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -36,7 +41,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.transaction.Transactional;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -155,7 +159,6 @@ public class HeadRestController {
         Optional<Franchise> optionalFranohise  =  headService.findByFrCode(franchiseMapperDto.getFrCode());
         if( optionalFranohise.isPresent()){
 //            log.info("널이 아닙니다 : 업데이트");
-
             franchise.setId(optionalFranohise.get().getId());
 
             franchise.setBrId(optionalFranohise.get().getBrId());
@@ -176,8 +179,8 @@ public class HeadRestController {
             franchise.setInsertDateTime(LocalDateTime.now());
         }
 
-        Franchise franchiseSave =  headService.franchiseSave(franchise);
-        log.info("가맹점 저장 성공 : id '" + franchiseSave.getFrCode() + "'");
+//        Franchise franchiseSave =  headService.franchiseSave(franchise);
+//        log.info("가맹점 저장 성공 : id '" + franchiseSave.getFrCode() + "'");
         return ResponseEntity.ok(res.success());
     }
 
@@ -1069,9 +1072,136 @@ public class HeadRestController {
     }
 
 
+    // 가맹점 특정상품가격 호출 API
+    @PostMapping("franchisePrice")
+    public ResponseEntity<Map<String,Object>> franchisePrice(@RequestBody FranchisePriceSet franchisePriceSet, HttpServletRequest request){
+        log.info("franchisePrice 호출");
 
+        AjaxResponse res = new AjaxResponse();
 
+        String login_id = CommonUtils.getCurrentuser(request);
+        log.info("현재 접속한 아이디 : "+login_id);
 
+        ArrayList<FranchisePriceDto> addList = franchisePriceSet.getAdd(); // 추가 리스트 얻기
+        ArrayList<FranchisePriceDto> updateList = franchisePriceSet.getUpdate(); // 수정 리스트 얻기
+//        ArrayList<ItemDto> deleteList = franchisePriceSet.getDelete(); // 제거 리스트 얻기
+
+        log.info("추가 리스트 : "+addList);
+        log.info("수정 리스트 : "+updateList);
+//        log.info("삭제 리스트 : "+deleteList);
+
+        List<FranchisePrice> franchisePriceList = new ArrayList<>();
+        // 특정가격 적용품목 저장 시작.
+        if(addList.size()!=0){
+            Optional<Franchise> optionalFranchise = headService.findByFrCode(addList.get(0).getFrCode());
+            if(!optionalFranchise.isPresent()){
+                return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(),"가맹점 "+ResponseErrorCode.TP009.getDesc(), "문자", "가맹점코드 : "+addList.get(0).getFrCode()));
+            }else{
+                for (FranchisePriceDto franchisePriceDto : addList) {
+                    Optional<Item> optionalItem = headService.findByBiItemcode(franchisePriceDto.getBiItemcode());
+                    if (optionalItem.isPresent()) {
+                        return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(),"상품"+ResponseErrorCode.TP009.getDesc(), "문자", "상품코드 : "+franchisePriceDto.getBiItemcode()));
+                    }else{
+                        log.info("특정가격 적용품목 신규생성");
+                        FranchisePrice franchisePrice = new FranchisePrice();
+                        franchisePrice.setBiItemcode(franchisePriceDto.getBiItemcode());
+                        franchisePrice.setFrCode(franchisePriceDto.getFrCode());
+                        String a= optionalFranchise.get().getModify_id();
+
+                        franchisePrice.setHighClassYn(franchisePriceDto.getHighClassYn());
+                        franchisePrice.setBfPrice(franchisePriceDto.getBfPrice());
+                        franchisePrice.setBfRemark(franchisePriceDto.getBfRemark());
+                        franchisePrice.setInsert_id(login_id);
+                        franchisePrice.setInsertDateTime(LocalDateTime.now());
+
+                        franchisePriceList.add(franchisePrice);
+                    }
+                }
+            }
+        }
+
+        log.info("franchisePriceList : " +franchisePriceList);
+        if(franchisePriceList.size() != 0){
+//            headService.franchisePriceSave(franchisePriceList);
+            franchisePriceList.clear();
+        }
+        log.info("franchisePriceList : " +franchisePriceList);
+        
+//        // 상품소재 수정 시작.
+//        if(updateList.size()!=0){
+//            for (ItemDto itemDto : updateList) {
+//                Optional<Item> itemOptional = headService.findByBiItemcode(itemDto.getBiItemcode());
+//                if (!itemOptional.isPresent()) {
+//                    log.info("존재하지 않은 상품소재 코드 : " +itemDto.getBiItemcode());
+//                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "수정 할 상품소재 " + ResponseErrorCode.TP009.getDesc(), "문자", "상품코드 : " + itemDto.getBiItemcode()));
+//                } else {
+//                    log.info("수정 할 상품소재 코드 : " + itemOptional.get().getBiItemcode());
+//                    Item item = new Item();
+//                    item.setBsItemGroupcodeS(itemOptional.get().getBsItemGroupcodeS());
+//                    item.setBgItemGroupcode(itemOptional.get().getBgItemGroupcode());
+//                    item.setBiItemcode(itemOptional.get().getBiItemcode());
+//                    item.setBiItemSequence(itemOptional.get().getBiItemSequence());
+//                    item.setBiName(itemDto.getBiName());
+//                    item.setBiRemark(itemDto.getBiRemark());
+//                    item.setInsert_id(itemOptional.get().getInsert_id());
+//                    item.setInsertDateTime(itemOptional.get().getInsertDateTime());
+//                    item.setModify_id(login_id);
+//                    item.setModifyDateTime(LocalDateTime.now());
+////                    log.info("item : " + item);
+//                    headService.itemSave(item);
+//                }
+//            }
+//        }
+
+//        // 상품소재 삭제로직 실행 : 데이터베이스에 코드사용중인 코드가 존재하면 리턴처리한다. , 데이터베이스에 코드가 존재하지 않으면 리턴처리한다.
+//        if(deleteList.size()!=0){
+//            for (ItemDto itemDto : deleteList) {
+//                Optional<Item> itemOptional = headService.findByBiItemcode(itemDto.getBgItemGroupcode());
+//                if(itemOptional.isPresent()) {
+//                    log.info("삭제할 상품소재 코드 : "+itemOptional.get().getBiItemcode());
+//                    headService.findByItemDelete(itemOptional.get());
+//                }else{
+//                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "삭제 할 "+ResponseErrorCode.TP009.getDesc(), "문자", "상품코드 : "+itemDto.getBiItemcode()));
+//                }
+//            }
+//        }
+
+        return ResponseEntity.ok(res.success());
+    }
+
+    // 가맹점 특정상품가격 리스트 호출 API
+    @GetMapping("franchisePriceList")
+    public ResponseEntity<Map<String,Object>> franchisePriceList(@RequestParam("frCode") String frCode){
+        log.info("franchisePriceList 호출");
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        List<HashMap<String,Object>> franchisePriceListData = new ArrayList<>();
+        HashMap<String,Object> franchisePriceInfo;
+
+        List<FranchisePriceListDto> franchisePriceListDtos = headService.findByFranchisePriceList(frCode);
+//        log.info("franchisePriceListDtos : "+franchisePriceListDtos);
+        for (FranchisePriceListDto franchisePriceListDto : franchisePriceListDtos) {
+
+            franchisePriceInfo = new HashMap<>();
+
+            franchisePriceInfo.put("biItemcode", franchisePriceListDto.getBiItemcode());
+            franchisePriceInfo.put("bgName", franchisePriceListDto.getBgName());
+            franchisePriceInfo.put("bsName", franchisePriceListDto.getBsName());
+            franchisePriceInfo.put("biName", franchisePriceListDto.getBiName());
+            franchisePriceInfo.put("highClassYn", franchisePriceListDto.getHighClassYn());
+            franchisePriceInfo.put("bfPrice", franchisePriceListDto.getBfPrice());
+            franchisePriceInfo.put("bfRemark", franchisePriceListDto.getBfRemark());
+
+            franchisePriceListData.add(franchisePriceInfo);
+        }
+
+        log.info("가맹점 특정가격 적용품목 리스트 : "+franchisePriceListData);
+        data.put("gridListData",franchisePriceListData);
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
 
 
 

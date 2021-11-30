@@ -2,7 +2,8 @@ $(function() {
     /* 배열내의 각 설정만 넣어 빈 그리드 생성 */
     createGrids();
 
-    /* 그리드에 데이터를 집어넣음 반복문은 그리드숫자만큼(혹은 목표그리드 범위만큼) 돌 수 있도록 한다. */
+    /* 그리드에 데이터를 집어넣음 반복문은 그리드숫자만큼(혹은 목표그리드 범위만큼) 돌 수 있도록 한다.
+    *  첫 호출시 종료일자가 마지막 날인 것을 호출 */
     for(let i=0; i<1; i++) {
         setDataIntoGrid(i, gridCreateUrl[i]);
     }
@@ -11,12 +12,14 @@ $(function() {
     AUIGrid.bind(gridId[0], "cellClick", function (e) {
 
     });
+
     CommonUI.setDatePicker(datePickerTargetIds);
+
 });
 
 /* datepicker를 적용시킬 대상들의 dom id들 */
 const datePickerTargetIds = [
-    "s_setDt", "setDt"
+    "setDt"
 ];
 
 /* 그리드 생성과 운영에 관한 중요 변수들. grid라는 이름으로 시작하도록 통일했다. */
@@ -194,6 +197,27 @@ function setDataIntoGrid(numOfGrid, url) {
     CommonUI.ajax(url, "GET", false, function (req) {
         gridData[numOfGrid] = req.sendData.gridListData;
         AUIGrid.setGridData(gridId[numOfGrid], gridData[numOfGrid]);
+
+        /* 가격적용일을 그리드의 데이터로부터 가져와서 드롭다운박스의 검색조건에 넣는다.*/
+        if(numOfGrid == 0) {
+            let setDtList = [];
+            const $s_setDt = $("#s_setDt");
+            gridData[0].forEach(element => {
+                const aSetDt = element.setDt;
+                if(!setDtList.includes(aSetDt))
+                    setDtList.push(aSetDt);
+                }
+            )
+            setDtList = setDtList.sort().reverse();
+            $s_setDt.empty();
+            setDtList.forEach(element => {
+                const innerHtml = element.substr(0, 4) + "-" + element.substr(4, 2) + "-" + element.substr(6, 2);
+                $s_setDt.append(`<option value="${element}">${innerHtml}</option>`)
+            });
+        }
+        AUIGrid.setFilter(gridId[0], "closeDt", function (dataField, value, item) {
+            return "99991231" === value;
+        });
     });
 }
 
@@ -234,10 +258,11 @@ function applyPrice() {
     const formData = new FormData();
     formData.append("setDt", $setDt.val());
     formData.append("priceUpload", $priceUpload[0].files[0]);
-    console.log(Object.fromEntries(formData));
 
     CommonUI.ajax(url, "POST", formData, function (req) {
-        console.log(req);
+        AUIGrid.clearGridData(gridId[0]);
+        setDataIntoGrid(0, gridCreateUrl[0]);
+        alertSuccess("가격 업로드 성공");
     });
     regPriceClose();
 
@@ -263,12 +288,12 @@ function filterItems() {
     }
     if(s_biItemcode !== "") {
         AUIGrid.setFilter(gridId[0], "biItemcode", function (dataField, value, item) {
-            return new RegExp(s_biItemcode).test(value);
+            return new RegExp("^" + s_biItemcode.toUpperCase()).test(value.toUpperCase());
         });
     }
     if(s_biName !== "") {
         AUIGrid.setFilter(gridId[0], "biName", function (dataField, value, item) {
-            return new RegExp(s_biName).test(value);
+            return new RegExp(s_biName.toUpperCase()).test(value.toUpperCase());
         });
     }
     if(s_highClassYn !== "") {
@@ -278,13 +303,16 @@ function filterItems() {
     }
     if(s_setDt !== "") {
         AUIGrid.setFilter(gridId[0], "setDt", function (dataField, value, item) {
-            return s_setDt.replace(/[^0-9]/g, "")=== value;
+            return s_setDt.replace(/[^0-9]/g, "") === value;
         });
     }
 }
 
 function filterReset() {
     AUIGrid.clearFilterAll(gridId[0]);
+    AUIGrid.setFilter(gridId[0], "closeDt", function (dataField, value, item) {
+        return "99991231" === value;
+    });
 }
 
 /* 체크된 행이 존재할 경우 체크된 행을 삭제하고, 아닐 경우 선택된 행 하나만 삭제 */
