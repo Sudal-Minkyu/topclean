@@ -22,16 +22,16 @@
 </th:block>
 
 <div layout:fragment="content" class="content padding-zero content--main">
-	<input type="text" id="targetField">
-	<input type="button" value="⌨" onclick="vkey.showKeyboard('targetField', '키보드 제목', ['상용구', '테스트', '스페 이스', '&ㅁㅁ&'])">
+	<input type="text" id="targetField" />
+	<input type="button" value="⌨" onclick="vkey.showKeyboard('targetField', '키보드 제목', ['상용구', '테스트', '스페 이스', '&ㅁㅁ&'])" />
 
 
 	<!-- 여기부터 마지막 까지가 가상 키보드 id VKEY_VKEYMAIN 이 숨겨지고 띄워져요. -->
 	<div id="VKEY_VKEYMAIN">
-		<div id="VKEY_field_subject">가상키보드 제목위치
-		</div>
+		
+		<div id="VKEY_field_subject">가상키보드 제목위치</div>
 		<!-- 가상키보드 입력창 value가 아닌 html에 글자가 위치-->
-		<div id="VKEY_field_editable" contenteditable="true" spellcheck="false" style="font-size: 56px"></div>
+		<div id="VKEY_field_editable" contenteditable="true" spellcheck="false"></div>
 		<div>
 			<input type="button" id="VKEY_btn_caretleft" value="←">
 			<input type="button" id="VKEY_btn_caretright" value="→">
@@ -40,25 +40,25 @@
 		</div>
 		<div>
 			<div>
-				<input type="button" class="VKEY_btn_change_keyboard" value="한">
-				<input type="button" class="VKEY_btn_change_keyboard" value="A">
-				<input type="button" class="VKEY_btn_change_keyboard" value="a">
-				<input type="button" class="VKEY_btn_change_keyboard" value="특">
-				<input type="button" class="VKEY_btn_change_keyboard" value="특2">
+				<input type="button" class="VKEY_btn_change_keyboard" value="한" />
+				<input type="button" class="VKEY_btn_change_keyboard" value="A" />
+				<input type="button" class="VKEY_btn_change_keyboard" value="a" />
+				<input type="button" class="VKEY_btn_change_keyboard" value="특" />
+				<input type="button" class="VKEY_btn_change_keyboard" value="특2" />
 			</div>
 			<div>
-				<input type="button" class="VKEY_btn_change_boilerpad" value="1">
-				<input type="button" class="VKEY_btn_change_boilerpad" value="2">
-				<input type="button" class="VKEY_btn_change_boilerpad" value="3">
-				<input type="button" class="VKEY_btn_change_boilerpad" value="4">
+				<input type="button" class="VKEY_btn_change_boilerpad" value="1" />
+				<input type="button" class="VKEY_btn_change_boilerpad" value="2" />
+				<input type="button" class="VKEY_btn_change_boilerpad" value="3" />
+				<input type="button" class="VKEY_btn_change_boilerpad" value="4" />
 				<div>
 					<!-- 각 상용구 숨김 & 보임 -->
 					<div class="VKEY_pad_boiler">
 						<div>
-							<input type="button" class="VKEY_btn_boiler">
-							<input type="button" class="VKEY_btn_boiler">
-							<input type="button" class="VKEY_btn_boiler">
-							<input type="button" class="VKEY_btn_boiler">
+							<input type="button" class="VKEY_btn_boiler" />
+							<input type="button" class="VKEY_btn_boiler" />
+							<input type="button" class="VKEY_btn_boiler" />
+							<input type="button" class="VKEY_btn_boiler" />
 						</div>
 						<div>
 							<input type="button" class="VKEY_btn_boiler">
@@ -68,19 +68,14 @@
 						</div>
 					</div>
 					<div class="VKEY_pad_boiler">
-						<div>
 							<input type="button" class="VKEY_btn_boiler">
 							<input type="button" class="VKEY_btn_boiler">
 							<input type="button" class="VKEY_btn_boiler">
 							<input type="button" class="VKEY_btn_boiler">
-
-						</div>
-						<div>
 							<input type="button" class="VKEY_btn_boiler">
 							<input type="button" class="VKEY_btn_boiler">
 							<input type="button" class="VKEY_btn_boiler">
 							<input type="button" class="VKEY_btn_boiler">
-						</div>
 					</div>
 					<div class="VKEY_pad_boiler">
 						<div>
@@ -306,5 +301,5 @@
 		</div>
 	</div>
 
-
+</div>
 </html>

@@ -789,6 +789,16 @@ textarea {
 	margin-left: 1.25rem;
 }
 
+/* popup */
+.pop {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	background-color: rgba(86, 86, 86, 0.8);
+}
+
 
 
 
