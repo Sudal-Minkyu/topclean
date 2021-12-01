@@ -36,7 +36,8 @@ public class ItemGroupSRepositoryCustomImpl extends QuerydslRepositorySupport im
                         itemGroup.bgItemGroupcode,
                         itemGroup.bgName,
                         itemGroupS.bsName,
-                        itemGroupS.bsRemark
+                        itemGroupS.bsRemark,
+                        itemGroupS.bsUseYn
                 ));
 
         query.where(itemGroupS.bgItemGroupcode.eq(bgItemGroupcode));

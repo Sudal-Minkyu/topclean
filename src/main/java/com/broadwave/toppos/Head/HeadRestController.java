@@ -772,9 +772,9 @@ public class HeadRestController {
                     return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "저장 할 상품소재의 중분류 " + ResponseErrorCode.TP009.getDesc(), null, null));
                 }else{
                     for (ItemDto itemDto : addList) {
-                        Optional<Item> optionalItem = headService.findByBiItemcode(addList.get(0).getBiItemcode());
+                        Optional<Item> optionalItem = headService.findByBiItemcode(itemDto.getBiItemcode());
                         if (optionalItem.isPresent()) {
-                            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP003.getCode(), ResponseErrorCode.TP003.getDesc(), "문자", "상품코드 : "+addList.get(0).getBiItemcode()));
+                            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP003.getCode(), ResponseErrorCode.TP003.getDesc(), "문자", "상품코드 : "+itemDto.getBiItemcode()));
                         }else{
                             log.info("같은 코드 존재하지 않음 신규생성");
 //                            log.info("itemDto.getBgItemGroupcode : "+itemDto.getBgItemGroupcode());
