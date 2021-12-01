@@ -136,11 +136,3 @@
     position: absolute;
     visibility: hidden;
 }
-
-#VKEY_field_editable {
-    overflow-x: hidden;
-    white-space: nowrap;
-}
-#VKEY_pad_engup, #VKEY_pad_englow, #VKEY_pad_special, #VKEY_pad_special2, .VKEY_pad_boiler {
-    visibility: hidden;
-}
