@@ -17,14 +17,10 @@ import com.broadwave.toppos.Head.Item.Group.C.Item;
 import com.broadwave.toppos.Head.Item.Group.C.ItemDto;
 import com.broadwave.toppos.Head.Item.Group.C.ItemListDto;
 import com.broadwave.toppos.Head.Item.Group.C.ItemSet;
-import com.broadwave.toppos.Head.Item.Price.FranchisePrice.FranchisePrice;
-import com.broadwave.toppos.Head.Item.Price.FranchisePrice.FranchisePriceDto;
-import com.broadwave.toppos.Head.Item.Price.FranchisePrice.FranchisePriceListDto;
-import com.broadwave.toppos.Head.Item.Price.FranchisePrice.FranchisePriceSet;
+import com.broadwave.toppos.Head.Item.Price.FranchisePrice.*;
 import com.broadwave.toppos.Head.Item.Price.ItemPrice;
 import com.broadwave.toppos.Head.Item.Price.ItemPriceDto;
 import com.broadwave.toppos.Head.Item.Price.ItemPriceListDto;
-import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.common.AjaxResponse;
 import com.broadwave.toppos.common.CommonUtils;
 import com.broadwave.toppos.common.ResponseErrorCode;
@@ -58,13 +54,11 @@ public class HeadRestController {
     private final AccountService accountService;
     private final HeadService headService;
     private final ModelMapper modelMapper;
-    private final TokenProvider tokenProvider;
 
     @Autowired
-    public HeadRestController(AccountService accountService, TokenProvider tokenProvider, ModelMapper modelMapper, HeadService headService) {
+    public HeadRestController(AccountService accountService, ModelMapper modelMapper, HeadService headService) {
         this.accountService = accountService;
         this.modelMapper = modelMapper;
-        this.tokenProvider = tokenProvider;
         this.headService = headService;
     }
 
@@ -544,6 +538,7 @@ public class HeadRestController {
                 itemGroup.setBgItemGroupcode(optionalItemGroup.get().getBgItemGroupcode());
                 itemGroup.setBgName(itemGroupDto.getBgName());
                 itemGroup.setBgRemark(itemGroupDto.getBgRemark());
+                itemGroup.setBgUseYn(itemGroupDto.getBgUseYn());
                 itemGroup.setInsert_id(optionalItemGroup.get().getInsert_id());
                 itemGroup.setInsertDateTime(optionalItemGroup.get().getInsertDateTime());
                 itemGroup.setModify_id(login_id);
@@ -670,6 +665,7 @@ public class HeadRestController {
                         itemGroupS.setBsItemGroupcodeS(itemGroupSInfo.getBsItemGroupcodeS());
                         itemGroupS.setBgItemGroupcode(optionalItemGroup.get());
                         itemGroupS.setBsName(itemGroupSDto.getBsName());
+                        itemGroupS.setBsUseYn(itemGroupSDto.getBsUseYn());
                         itemGroupS.setBsRemark(itemGroupSDto.getBsRemark());
                         itemGroupS.setInsert_id(itemGroupSInfo.getInsert_id());
                         itemGroupS.setInsertDateTime(itemGroupSInfo.getInsertDateTime());
@@ -798,45 +794,46 @@ public class HeadRestController {
                 }
             }
         }
-//
-//        // 상품소재 수정 시작.
-//        if(updateList.size()!=0){
-//            for (ItemDto itemDto : updateList) {
-//                Optional<Item> itemOptional = headService.findByBiItemcode(itemDto.getBiItemcode());
-//                if (!itemOptional.isPresent()) {
-//                    log.info("존재하지 않은 상품소재 코드 : " +itemDto.getBiItemcode());
-//                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "수정 할 상품소재 " + ResponseErrorCode.TP009.getDesc(), "문자", "상품코드 : " + itemDto.getBiItemcode()));
-//                } else {
-//                    log.info("수정 할 상품소재 코드 : " + itemOptional.get().getBiItemcode());
-//                    Item item = new Item();
-//                    item.setBsItemGroupcodeS(itemOptional.get().getBsItemGroupcodeS());
-//                    item.setBgItemGroupcode(itemOptional.get().getBgItemGroupcode());
-//                    item.setBiItemcode(itemOptional.get().getBiItemcode());
-//                    item.setBiItemSequence(itemOptional.get().getBiItemSequence());
-//                    item.setBiName(itemDto.getBiName());
-//                    item.setBiRemark(itemDto.getBiRemark());
-//                    item.setInsert_id(itemOptional.get().getInsert_id());
-//                    item.setInsertDateTime(itemOptional.get().getInsertDateTime());
-//                    item.setModify_id(login_id);
-//                    item.setModifyDateTime(LocalDateTime.now());
-////                    log.info("item : " + item);
-//                    headService.itemSave(item);
-//                }
-//            }
-//        }
-//
-//        // 상품소재 삭제로직 실행 : 데이터베이스에 코드사용중인 코드가 존재하면 리턴처리한다. , 데이터베이스에 코드가 존재하지 않으면 리턴처리한다.
-//        if(deleteList.size()!=0){
-//            for (ItemDto itemDto : deleteList) {
-//                Optional<Item> itemOptional = headService.findByBiItemcode(itemDto.getBgItemGroupcode());
-//                if(itemOptional.isPresent()) {
-//                    log.info("삭제할 상품소재 코드 : "+itemOptional.get().getBiItemcode());
-//                    headService.findByItemDelete(itemOptional.get());
-//                }else{
-//                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "삭제 할 "+ResponseErrorCode.TP009.getDesc(), "문자", "상품코드 : "+itemDto.getBiItemcode()));
-//                }
-//            }
-//        }
+
+        // 상품소재 수정 시작.
+        if(updateList.size()!=0){
+            for (ItemDto itemDto : updateList) {
+                Optional<Item> itemOptional = headService.findByBiItemcode(itemDto.getBiItemcode());
+                if (!itemOptional.isPresent()) {
+                    log.info("존재하지 않은 상품소재 코드 : " +itemDto.getBiItemcode());
+                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "수정 할 상품소재 " + ResponseErrorCode.TP009.getDesc(), "문자", "상품코드 : " + itemDto.getBiItemcode()));
+                } else {
+                    log.info("수정 할 상품소재 코드 : " + itemOptional.get().getBiItemcode());
+                    Item item = new Item();
+                    item.setBsItemGroupcodeS(itemOptional.get().getBsItemGroupcodeS());
+                    item.setBgItemGroupcode(itemOptional.get().getBgItemGroupcode());
+                    item.setBiItemcode(itemOptional.get().getBiItemcode());
+                    item.setBiItemSequence(itemOptional.get().getBiItemSequence());
+                    item.setBiName(itemDto.getBiName());
+                    item.setBiUseYn(itemDto.getBiUseYn());
+                    item.setBiRemark(itemDto.getBiRemark());
+                    item.setInsert_id(itemOptional.get().getInsert_id());
+                    item.setInsertDateTime(itemOptional.get().getInsertDateTime());
+                    item.setModify_id(login_id);
+                    item.setModifyDateTime(LocalDateTime.now());
+//                    log.info("item : " + item);
+                    headService.itemSave(item);
+                }
+            }
+        }
+
+        // 상품소재 삭제로직 실행 : 데이터베이스에 코드사용중인 코드가 존재하면 리턴처리한다. , 데이터베이스에 코드가 존재하지 않으면 리턴처리한다.
+        if(deleteList.size()!=0){
+            for (ItemDto itemDto : deleteList) {
+                Optional<Item> itemOptional = headService.findByBiItemcode(itemDto.getBgItemGroupcode());
+                if(itemOptional.isPresent()) {
+                    log.info("삭제할 상품소재 코드 : "+itemOptional.get().getBiItemcode());
+                    headService.findByItemDelete(itemOptional.get());
+                }else{
+                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "삭제 할 "+ResponseErrorCode.TP009.getDesc(), "문자", "상품코드 : "+itemDto.getBiItemcode()));
+                }
+            }
+        }
 
         return ResponseEntity.ok(res.success());
     }
@@ -935,6 +932,7 @@ public class HeadRestController {
         ArrayList<ItemPrice> itemPriceUpdateArrayList = new ArrayList<>();
 
         ArrayList<Object> excelList = new ArrayList<>();
+        List<String> errorList = new ArrayList<>();
         for(int i=1; i<worksheet.getPhysicalNumberOfRows(); i++){
             ItemPrice itemPrice = new ItemPrice();
             for (int j = 0; j < 13; j++) {
@@ -954,12 +952,13 @@ public class HeadRestController {
 
             Optional<Item> optionalItem = headService.findByBiItemcode(excelList.get(0).toString());
             if(!optionalItem.isPresent()){
-                return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), i+"번쨰 상품"+ResponseErrorCode.TP009.getDesc(), "문자", "상품코드 : "+excelList.get(0).toString()));
+                errorList.add(i+"번째 행의 코드가 존재하지 않습니다.");
+//                return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), i+"번쨰 상품"+ResponseErrorCode.TP009.getDesc(), "문자", "상품코드 : "+excelList.get(0).toString()));
             }else{
-
                 ItemPriceDto priceDto = headService.findByItemPrice(excelList.get(0).toString(), excelList.get(6).toString(), setDtReplace);
                 if(priceDto != null){
-                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP015.getCode(), i+"번째 행 "+ResponseErrorCode.TP015.getDesc(), "문자", "상품코드 : "+excelList.get(0).toString()));
+                    errorList.add(i+"번째 행의 중복되는 적용일자가 존재합니다.");
+//                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP015.getCode(), i+"번째 행 "+ResponseErrorCode.TP015.getDesc(), "문자", "상품코드 : "+excelList.get(0).toString()));
                 }else{
                     ItemPriceDto itemPriceDto = headService.findByItemPrice(excelList.get(0).toString(), excelList.get(6).toString(), null);
                     if(itemPriceDto != null){
@@ -1000,26 +999,25 @@ public class HeadRestController {
 
                     itemPriceSaveArrayList.add(itemPrice);
 
-//                    if(itemPriceArrayList.size() == 1000) {
-//                        log.info("itemPriceArrayList 사이즈가 1000개가 됬습니다. 먼저 저장합니다.");
-//                        headService.itemPriceSave(itemPriceArrayList);
-//                        itemPriceArrayList.clear();
-//                    }
-
                     excelList.clear();
                 }
             }
         }
 
-        headService.itemPriceSave(itemPriceUpdateArrayList);
-        headService.itemPriceSave(itemPriceSaveArrayList);
+        HashMap<String, Object> data = new HashMap<>();
+        if(errorList.size() == 0){
+            headService.itemPriceSaveAll(itemPriceSaveArrayList, itemPriceUpdateArrayList);
+            data.put("errorListData",null);
+        }else{
+            data.put("errorListData",errorList);
+        }
+        return ResponseEntity.ok(res.dataSendSuccess(data));
 
-        return ResponseEntity.ok(res.success());
     }
 
      // 엑셀 : cell의 데이터를 String 또는 Int형으로 변경
     public static String getStringValue(Cell cell) {
-        String rtnValue = "";
+        String rtnValue;
         try {
             rtnValue = cell.getStringCellValue();
         } catch(IllegalStateException e) {
@@ -1040,7 +1038,7 @@ public class HeadRestController {
         HashMap<String,Object> itemPriceInfo;
 
         List<ItemPriceListDto> itemPriceListDtos = headService.findByItemPriceList();
-//        log.info("itemPriceListDtos : "+itemPriceListDtos);
+//        log.info("itemPriceListDtos : "+itemPriceListDtos.size());
         for (ItemPriceListDto itemPriceListDto : itemPriceListDtos) {
 
             itemPriceInfo = new HashMap<>();
@@ -1067,10 +1065,90 @@ public class HeadRestController {
             itemPriceListData.add(itemPriceInfo);
         }
 
-        log.info("상품 가격 리스트 : "+itemPriceListData);
+//        log.info("상품 가격 리스트 : "+itemPriceListData);
+//        log.info("상품 가격 리스트 사이즈 : "+itemPriceListData.size());
         data.put("gridListData",itemPriceListData);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
+    // 상품그룹 가격페이지 업데이트 및 수정 호출 API
+    @PostMapping("itemPriceUpdate")
+    public ResponseEntity<Map<String,Object>> itemPriceUpdate(@RequestBody ItemPriceSet itemPriceSet, HttpServletRequest request){
+        log.info("itemPriceUpdate 호출");
+
+        AjaxResponse res = new AjaxResponse();
+
+        String login_id = CommonUtils.getCurrentuser(request);
+        log.info("현재 접속한 아이디 : "+login_id);
+
+        ArrayList<ItemPriceDto> updateList = itemPriceSet.getUpdate(); // 수정 리스트 얻기
+        ArrayList<ItemPriceDto> deleteList = itemPriceSet.getDelete(); // 제거 리스트 얻기
+
+//        log.info("수정 리스트 : "+updateList);
+//        log.info("삭제 리스트 : "+deleteList);
+
+        List<ItemPrice> itemPriceList = new ArrayList<>();
+
+        // 상품가격 수정 시작
+        if(updateList.size()!=0){
+            for (ItemPriceDto itemPriceDto : updateList) {
+                Optional<ItemPrice> optionalItemPrice = headService.findByItemPriceOptional(itemPriceDto.getBiItemcode(), itemPriceDto.getHighClassYn(), itemPriceDto.getSetDt(), itemPriceDto.getCloseDt());
+                if (!optionalItemPrice.isPresent()) {
+                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP005.getCode(), "수정 할 품목" + ResponseErrorCode.TP005.getDesc(), "문자", "상품코드 : " + itemPriceDto.getBiItemcode()));
+                } else {
+//                    log.info("수정 할 품목 상품코드 : " + optionalItemPrice.get().getBiItemcode());
+                    ItemPrice itemPrice = new ItemPrice();
+
+                    itemPrice.setBiItemcode(optionalItemPrice.get().getBiItemcode());
+                    itemPrice.setSetDt(optionalItemPrice.get().getSetDt());
+                    itemPrice.setHighClassYn(optionalItemPrice.get().getHighClassYn());
+                    itemPrice.setCloseDt(optionalItemPrice.get().getCloseDt());
+
+                    itemPrice.setBpBasePrice(itemPriceDto.getBpBasePrice());
+                    itemPrice.setBpAddPrice(itemPriceDto.getBpAddPrice());
+                    itemPrice.setBpPriceA(itemPriceDto.getBpPriceA());
+                    itemPrice.setBpPriceB(itemPriceDto.getBpPriceB());
+                    itemPrice.setBpPriceC(itemPriceDto.getBpPriceC());
+                    itemPrice.setBpPriceD(itemPriceDto.getBpPriceD());
+                    itemPrice.setBpPriceE(itemPriceDto.getBpPriceE());
+                    itemPrice.setBiRemark(itemPriceDto.getBiRemark());
+
+                    itemPrice.setInsert_id(optionalItemPrice.get().getInsert_id());
+                    itemPrice.setInsertDateTime(optionalItemPrice.get().getInsertDateTime());
+                    itemPrice.setModify_id(login_id);
+                    itemPrice.setModifyDateTime(LocalDateTime.now());
+
+//                    log.info("itemPrice : " + itemPrice);
+                    itemPriceList.add(itemPrice);
+                }
+            }
+        }
+//        log.info("수정 itemPriceList : " +itemPriceList);
+        if(itemPriceList.size() != 0){
+            headService.itemPriceSave(itemPriceList);
+            itemPriceList.clear();
+        }
+
+        // 상품가격 삭제로직 실행
+        if(deleteList.size()!=0){
+            for (ItemPriceDto itemPriceDto : deleteList) {
+                Optional<ItemPrice> optionalItemPrice = headService.findByItemPriceOptional(itemPriceDto.getBiItemcode(), itemPriceDto.getHighClassYn(), itemPriceDto.getSetDt(), itemPriceDto.getCloseDt());
+                if(optionalItemPrice.isPresent()) {
+                    log.info("삭제할 상품소재 코드 : "+optionalItemPrice.get().getBiItemcode());
+                    itemPriceList.add(optionalItemPrice.get());
+                }else{
+                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP005.getCode(), "삭제 할 "+ResponseErrorCode.TP005.getDesc(), "문자", "상품코드 : "+itemPriceDto.getBiItemcode()));
+                }
+            }
+        }
+//        log.info("삭제 itemPriceList : " +itemPriceList);
+        if(itemPriceList.size() != 0){
+            headService.findByItemPriceDelete(itemPriceList);
+            itemPriceList.clear();
+        }
+
+        return ResponseEntity.ok(res.success());
     }
 
 
@@ -1139,7 +1217,7 @@ public class HeadRestController {
                 Optional<FranchisePrice> optionalFranchisePrice = headService.findByFranchisePrice(franchisePriceDto.getBiItemcode(), franchisePriceDto.getFrCode(), franchisePriceDto.getHighClassYn());
                 if (!optionalFranchisePrice.isPresent()) {
                     log.info("존재하지 않은 상품소재 코드 : " +franchisePriceDto.getBiItemcode());
-                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "수정 할 품목" + ResponseErrorCode.TP005.getDesc(), "문자", "상품코드 : " + franchisePriceDto.getBiItemcode()));
+                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP005.getCode(), "수정 할 품목" + ResponseErrorCode.TP005.getDesc(), "문자", "상품코드 : " + franchisePriceDto.getBiItemcode()));
                 } else {
                     log.info("수정 할 품목 상품코드 : " + optionalFranchisePrice.get().getBiItemcode());
                     FranchisePrice franchisePrice = new FranchisePrice();

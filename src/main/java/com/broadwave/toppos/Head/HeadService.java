@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -185,14 +186,20 @@ public class HeadService {
         return itemPriceRepositoryCustom.findByItemPrice(biItemcode, highClassYn, setDtReplace);
     }
 
-    // 상품 가격 저장
-    @Transactional(rollbackFor = Exception.class)
-    public void itemPriceSave(List<ItemPrice> itemPrice) throws Exception {
+    // 상품 가격 멀티 저장
+    @Transactional(rollbackFor = SQLException.class)
+    public void itemPriceSaveAll(List<ItemPrice> itemSavePrice, List<ItemPrice> itemUpdatePrice) throws Exception {
         try{
-            itemPriceRepository.saveAll(itemPrice);
+            itemPriceRepository.saveAll(itemUpdatePrice);
+            itemPriceRepository.saveAll(itemSavePrice);
         }catch (Exception e){
             log.info("e : "+e);
         }
+    }
+
+    // 상품 가격 저장
+    public void itemPriceSave(List<ItemPrice> itemPrice){
+            itemPriceRepository.saveAll(itemPrice);
     }
 
     // 상품 가격 리스트 호출
@@ -200,7 +207,17 @@ public class HeadService {
         return itemPriceRepositoryCustom.findByItemPriceList();
     }
 
+    // 상품 가격 업데이트 때 사용
+    public Optional<ItemPrice> findByItemPriceOptional(String biItemcode, String highClassYn, String setDt, String closeDt) {
+        return itemPriceRepository.findByItemPriceOptional(biItemcode, highClassYn, setDt, closeDt);
+    }
 
+    // 상품 가격 삭제
+    public void findByItemPriceDelete(List<ItemPrice> itemPrice) {
+        itemPriceRepository.deleteAll(itemPrice);
+    }
+
+    // // // // // // // // // // // // // // 가맹점 특정품목가격 페이지 // // // // // // // // // // // // //
     // 가맹점 특정품목가격 저장
     public void franchisePriceSave(List<FranchisePrice> franchisePriceList) {
         franchisePriceRepository.saveAll(franchisePriceList);
@@ -211,7 +228,10 @@ public class HeadService {
         return franchisePriceRepositoryCustom.findByFranchisePriceList(frCode);
     }
 
+    // 가맹점 특정품목가격 중복검사
     public Optional<FranchisePrice> findByFranchisePrice(String biItemcode, String frCode, String highClassYn) {
         return franchisePriceRepository.findByFranchisePrice(biItemcode, frCode, highClassYn);
     }
+
+
 }

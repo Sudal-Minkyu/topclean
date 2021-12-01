@@ -62,23 +62,23 @@ $(function() {
 //Ajax 호출시 에러가났을경우의 메세지 함수
 function ajaxErrorMsg(req) {
     if(req.status ===403){
-        console.log("접근권한이 없습니다.");
+        console.log("403 접근권한이 없습니다.");
         location.href="/error/403"
     }else if(req.status ===404){
-        console.log("존재하지 않은 페이지");
+        console.log("404 존재하지 않은 페이지");
         location.href="/error/404"
     }else if(req.status ===400){
         $('.l-popup').removeClass('open');
-        console.log("데이터에러");
+        console.log("400 데이터에러");
         alertCaution("400 에러 데이터가 존재하지않습니다.", 1);
     }else if(req.status ===500){
         $('.l-popup').removeClass('open');
-        console.log("데이터에러");
-        alertCaution("500 에러 사용할수없는데이터.", 1);
+        console.log("500 데이터에러");
+        alertCaution("다시 시도해주세요. 사용할 수 없는 데이터입니다.", 1);
     }else if(req.status ===405){
         $('.l-popup').removeClass('open');
-        console.log("데이터에러");
-        alertCaution("405 에러 사용할수없는데이터.", 1);
+        console.log("405 데이터에러");
+        alertCaution("405 에러 사용할 수 없는 데이터", 1);
     }else{
         $('.l-popup').removeClass('open');
         console.log("토큰이 만료됨. 재로그인시도 바람.");

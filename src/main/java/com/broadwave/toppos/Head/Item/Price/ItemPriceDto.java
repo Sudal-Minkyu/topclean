@@ -22,6 +22,7 @@ public class ItemPriceDto {
 
     private String biItemcode; // 상품코드
     private String setDt; // 가격시작일(적용일자)
+    private String closeDt; // 가격종료일(적용일자)
 
     private Integer bpBasePrice; // 기본가격
     private String highClassYn; // 명품여부
@@ -37,6 +38,10 @@ public class ItemPriceDto {
 
     private String insert_id;
     private LocalDateTime insertDateTime;
+
+    public String getCloseDt() {
+        return closeDt;
+    }
 
     public String getInsert_id() {
         return insert_id;

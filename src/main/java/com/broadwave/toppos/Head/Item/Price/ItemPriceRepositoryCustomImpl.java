@@ -33,15 +33,19 @@ public class ItemPriceRepositoryCustomImpl extends QuerydslRepositorySupport imp
         QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
 
         JPQLQuery<ItemPriceListDto> query = from(itemPrice)
+
                 .join(item).on(itemPrice.biItemcode.eq(item.biItemcode))
                 .join(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
-                .join(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS))
+                .join(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
+
                 .select(Projections.constructor(ItemPriceListDto.class,
 
                         itemPrice.biItemcode,
+
                         itemGroup.bgName,
                         itemGroupS.bsName,
                         item.biName,
+
                         itemPrice.setDt,
                         itemPrice.closeDt,
 
@@ -58,7 +62,7 @@ public class ItemPriceRepositoryCustomImpl extends QuerydslRepositorySupport imp
                         itemPrice.biRemark
                 ));
 
-        query.orderBy(itemPrice.closeDt.desc());
+        query.orderBy(itemPrice.biItemcode.asc());
 
         return query.fetch();
     }

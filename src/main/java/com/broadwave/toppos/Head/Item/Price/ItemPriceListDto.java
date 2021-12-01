@@ -18,9 +18,11 @@ import lombok.Setter;
 public class ItemPriceListDto {
 
     private String biItemcode; // 상품코드
+
     private String bgName; // 대분류명칭
     private String bsName; // 중분류명칠
     private String biName; // 상품명
+
     private String setDt; // 가격시작일(적용일자)
     private String closeDt; // 가격 종료일
 

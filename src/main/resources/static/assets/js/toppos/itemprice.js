@@ -43,7 +43,7 @@ gridCreateUrl = [
 
 /* 그리드를 저장할 때 쓰이는 api 배열 */
 gridSaveUrl = [
-    "/api/a"
+    "/api/head/itemPriceUpdate"
 ]
 
 /* 0번 그리드의 레이아웃 */
@@ -167,7 +167,6 @@ gridColumnLayout[0] = [
     }, {
         dataField: "bpRemark",
         headerText: "특이사항",
-        editable: false,
     },
 ];
 
@@ -260,9 +259,13 @@ function applyPrice() {
     formData.append("priceUpload", $priceUpload[0].files[0]);
 
     CommonUI.ajax(url, "POST", formData, function (req) {
-        AUIGrid.clearGridData(gridId[0]);
-        setDataIntoGrid(0, gridCreateUrl[0]);
-        alertSuccess("가격 업로드 성공");
+        if(req.sendData.errorListData !== null){
+            console.log("req : "+req.sendData.errorListData);
+        }else{
+            AUIGrid.clearGridData(gridId[0]);
+            setDataIntoGrid(0, gridCreateUrl[0]);
+            alertSuccess("가격 업로드 성공");
+        }
     });
     regPriceClose();
 
@@ -341,7 +344,15 @@ function saveRegPrice() {
         "delete" : deletedRowItems,
     };
 
+    const jsonString = JSON.stringify(data);
     console.log(data);
+
+    CommonUI.ajaxjson(gridSaveUrl[0], jsonString, function () {
+        AUIGrid.clearGridData(gridId[0]);
+        setDataIntoGrid(0, gridCreateUrl[0]);
+        alertSuccess("상품가격 업데이트를 완료되었습니다.");
+    });
+
 }
 
 /* 상품코드 텍스트필드 입력시 유효성에 맞추기 */
