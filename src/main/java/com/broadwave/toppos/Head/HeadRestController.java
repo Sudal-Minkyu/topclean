@@ -28,7 +28,6 @@ import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.common.AjaxResponse;
 import com.broadwave.toppos.common.CommonUtils;
 import com.broadwave.toppos.common.ResponseErrorCode;
-import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -759,7 +758,7 @@ public class HeadRestController {
         ArrayList<ItemDto> updateList = itemSet.getUpdate(); // 수정 리스트 얻기
         ArrayList<ItemDto> deleteList = itemSet.getDelete(); // 제거 리스트 얻기
 
-//        log.info("추가 리스트 : "+addList);
+//        log.info("추가 리스트 : "+addList.get(0).getBgItemGroupcode());
 //        log.info("수정 리스트 : "+updateList);
 //        log.info("삭제 리스트 : "+deleteList);
 
@@ -788,55 +787,56 @@ public class HeadRestController {
                             item.setBsItemGroupcodeS(itemDto.getBsItemGroupcodeS());
                             item.setBiItemSequence(itemDto.getBiItemSequence());
                             item.setBiName(itemDto.getBiName());
+                            item.setBiUseYn(itemDto.getBiUseYn());
                             item.setBiRemark(itemDto.getBiRemark());
                             item.setInsert_id(login_id);
                             item.setInsertDateTime(LocalDateTime.now());
-                            log.info("item : " +item);
+//                            log.info("item : " +item);
                             headService.itemSave(item);
                         }
                     }
                 }
             }
         }
-
-        // 상품소재 수정 시작.
-        if(updateList.size()!=0){
-            for (ItemDto itemDto : updateList) {
-                Optional<Item> itemOptional = headService.findByBiItemcode(itemDto.getBiItemcode());
-                if (!itemOptional.isPresent()) {
-                    log.info("존재하지 않은 상품소재 코드 : " +itemDto.getBiItemcode());
-                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "수정 할 상품소재 " + ResponseErrorCode.TP009.getDesc(), "문자", "상품코드 : " + itemDto.getBiItemcode()));
-                } else {
-                    log.info("수정 할 상품소재 코드 : " + itemOptional.get().getBiItemcode());
-                    Item item = new Item();
-                    item.setBsItemGroupcodeS(itemOptional.get().getBsItemGroupcodeS());
-                    item.setBgItemGroupcode(itemOptional.get().getBgItemGroupcode());
-                    item.setBiItemcode(itemOptional.get().getBiItemcode());
-                    item.setBiItemSequence(itemOptional.get().getBiItemSequence());
-                    item.setBiName(itemDto.getBiName());
-                    item.setBiRemark(itemDto.getBiRemark());
-                    item.setInsert_id(itemOptional.get().getInsert_id());
-                    item.setInsertDateTime(itemOptional.get().getInsertDateTime());
-                    item.setModify_id(login_id);
-                    item.setModifyDateTime(LocalDateTime.now());
-//                    log.info("item : " + item);
-                    headService.itemSave(item);
-                }
-            }
-        }
-
-        // 상품소재 삭제로직 실행 : 데이터베이스에 코드사용중인 코드가 존재하면 리턴처리한다. , 데이터베이스에 코드가 존재하지 않으면 리턴처리한다.
-        if(deleteList.size()!=0){
-            for (ItemDto itemDto : deleteList) {
-                Optional<Item> itemOptional = headService.findByBiItemcode(itemDto.getBgItemGroupcode());
-                if(itemOptional.isPresent()) {
-                    log.info("삭제할 상품소재 코드 : "+itemOptional.get().getBiItemcode());
-                    headService.findByItemDelete(itemOptional.get());
-                }else{
-                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "삭제 할 "+ResponseErrorCode.TP009.getDesc(), "문자", "상품코드 : "+itemDto.getBiItemcode()));
-                }
-            }
-        }
+//
+//        // 상품소재 수정 시작.
+//        if(updateList.size()!=0){
+//            for (ItemDto itemDto : updateList) {
+//                Optional<Item> itemOptional = headService.findByBiItemcode(itemDto.getBiItemcode());
+//                if (!itemOptional.isPresent()) {
+//                    log.info("존재하지 않은 상품소재 코드 : " +itemDto.getBiItemcode());
+//                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "수정 할 상품소재 " + ResponseErrorCode.TP009.getDesc(), "문자", "상품코드 : " + itemDto.getBiItemcode()));
+//                } else {
+//                    log.info("수정 할 상품소재 코드 : " + itemOptional.get().getBiItemcode());
+//                    Item item = new Item();
+//                    item.setBsItemGroupcodeS(itemOptional.get().getBsItemGroupcodeS());
+//                    item.setBgItemGroupcode(itemOptional.get().getBgItemGroupcode());
+//                    item.setBiItemcode(itemOptional.get().getBiItemcode());
+//                    item.setBiItemSequence(itemOptional.get().getBiItemSequence());
+//                    item.setBiName(itemDto.getBiName());
+//                    item.setBiRemark(itemDto.getBiRemark());
+//                    item.setInsert_id(itemOptional.get().getInsert_id());
+//                    item.setInsertDateTime(itemOptional.get().getInsertDateTime());
+//                    item.setModify_id(login_id);
+//                    item.setModifyDateTime(LocalDateTime.now());
+////                    log.info("item : " + item);
+//                    headService.itemSave(item);
+//                }
+//            }
+//        }
+//
+//        // 상품소재 삭제로직 실행 : 데이터베이스에 코드사용중인 코드가 존재하면 리턴처리한다. , 데이터베이스에 코드가 존재하지 않으면 리턴처리한다.
+//        if(deleteList.size()!=0){
+//            for (ItemDto itemDto : deleteList) {
+//                Optional<Item> itemOptional = headService.findByBiItemcode(itemDto.getBgItemGroupcode());
+//                if(itemOptional.isPresent()) {
+//                    log.info("삭제할 상품소재 코드 : "+itemOptional.get().getBiItemcode());
+//                    headService.findByItemDelete(itemOptional.get());
+//                }else{
+//                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "삭제 할 "+ResponseErrorCode.TP009.getDesc(), "문자", "상품코드 : "+itemDto.getBiItemcode()));
+//                }
+//            }
+//        }
 
         return ResponseEntity.ok(res.success());
     }

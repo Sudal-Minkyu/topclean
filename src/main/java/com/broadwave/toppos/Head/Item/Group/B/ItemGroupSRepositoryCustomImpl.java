@@ -74,6 +74,7 @@ public class ItemGroupSRepositoryCustomImpl extends QuerydslRepositorySupport im
                         itemGroupS.bsItemGroupcodeS,
                         itemGroup,
                         itemGroupS.bsName,
+                        itemGroupS.bsUseYn,
                         itemGroupS.bsRemark,
                         itemGroupS.insert_id,
                         itemGroupS.insertDateTime,
