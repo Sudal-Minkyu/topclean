@@ -17,6 +17,18 @@
 		$(function() {
 
 		});
+		function requestSign(){
+
+
+
+			cAPI.approvalCall('http://localhost:8020' + '/user/sign');
+
+			$("#resultmsg").text(": 승인중 메세지- 고객이 서명중입니다. ------전체화면으로 가리기 ")
+		}
+
+		function resultFunction(msg){
+			$("#resultmsg").text(msg);
+		}
 
 	</script>
 </th:block>
@@ -201,6 +213,7 @@
 				</div>
 			</form>
 		</div>
+		<div id="resultmsg" style="width:500px;height:100px ;background-color: #AAAAF0; word-break: break-all;">결과메세지</div>
 	</div>
 	
 	<div id="VKEY"></div>
