@@ -300,17 +300,16 @@ function setDataIntoGrid(numOfGrid, url, code = false) {
 
 /* 지정된 그리드에 새 빈 데이터 추가 */
 function addRow(numOfGrid) {
-    let item = {};
     switch (numOfGrid) {
         case 0 :
-            AUIGrid.addRow(gridId[numOfGrid], item, "last");
+            AUIGrid.addRow(gridId[numOfGrid], {bgUseYn : "Y"}, "last");
             break;
         case 1 :
             item = AUIGrid.getSelectedRows(gridId[0]);
             if(item.length && !AUIGrid.isAddedById(gridId[0], item[0]._$uid)) {
                 delete item[0]['_$uid'];
                 console.log(item);
-                AUIGrid.addRow(gridId[numOfGrid], item, "last");
+                AUIGrid.addRow(gridId[numOfGrid], {bsUseYn : "Y"}, "last");
             }else{
                 alertCaution("저장되어 있는 대분류 항목을 선택해 주세요", 1);
             }
@@ -319,7 +318,7 @@ function addRow(numOfGrid) {
             item = AUIGrid.getSelectedRows(gridId[1]);
             if(item.length && !AUIGrid.isAddedById(gridId[1], item[0]._$uid)) {
                 delete item[0]['_$uid'];
-                AUIGrid.addRow(gridId[numOfGrid], item, "last");
+                AUIGrid.addRow(gridId[numOfGrid], {biUseYn : "Y"}, "last");
             }else{
                 alertCaution("저장되어 있는 중분류 항목을 선택해 주세요", 1);
             }
