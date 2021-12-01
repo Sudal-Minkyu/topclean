@@ -596,6 +596,7 @@ public class HeadRestController {
             itemGroupInfo.put("bgItemGroupcode", itemGroupDto.getBgItemGroupcode());
             itemGroupInfo.put("bgName", itemGroupDto.getBgName());
             itemGroupInfo.put("bgRemark", itemGroupDto.getBgRemark());
+            itemGroupInfo.put("bgUseYn", itemGroupDto.getBgUseYn());
 
             itemGroupListData.add(itemGroupInfo);
         }
@@ -733,6 +734,7 @@ public class HeadRestController {
                 itemGroupSInfo.put("bgName", itemGroupSListDto.getBgName());
                 itemGroupSInfo.put("bsName", itemGroupSListDto.getBsName());
                 itemGroupSInfo.put("bsRemark", itemGroupSListDto.getBsRemark());
+                itemGroupSInfo.put("bsUseYn", itemGroupSListDto.getBsUseYn());
 
                 itemGroupSListData.add(itemGroupSInfo);
             }
