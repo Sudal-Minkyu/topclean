@@ -2,11 +2,11 @@
 <html lang="ko"
 	  xmlns:th="http://www.thymeleaf.org"
 	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	  layout:decorate ="~{layout/default}">
+	  layout:decorate ="~{layout/defaulttest}">
 
 <!-- 사용자 CSS 추가 -->
 <th:block layout:fragment="css">
-	<link rel="stylesheet" href="/assets/css/nak_css_dir/VKeyboard.css" />
+
 </th:block>
 
 <!-- 사용자 스크립트 추가 -->
@@ -23,34 +23,258 @@
 
 <div layout:fragment="content" class="content padding-zero content--main">
 	<input type="text" id="targetField" />
-	<input type="button" value="⌨" onclick="vkey.showKeyboard('targetField', '키보드 제목', ['상용구', '테스트', '스페 이스', '&ㅁㅁ&'])" />
+	<input type="button" value="⌨" onclick="vkey.showKeyboard('targetField', '키보드 제목', ['상용구', '테스트', '스페 이스', '&ㅁㅁ&', '가나다라마바사아'])" />
 
 
 	<!-- 여기부터 마지막 까지가 가상 키보드 id VKEY_VKEYMAIN 이 숨겨지고 띄워져요. -->
 	<div id="VKEY_VKEYMAIN">
-		
-		<div id="VKEY_field_subject">가상키보드 제목위치</div>
-		<!-- 가상키보드 입력창 value가 아닌 html에 글자가 위치-->
-		<div id="VKEY_field_editable" contenteditable="true" spellcheck="false"></div>
-		<div>
-			<input type="button" id="VKEY_btn_caretleft" value="←">
-			<input type="button" id="VKEY_btn_caretright" value="→">
-			<input type="button" id="VKEY_btn_delete" value="삭제">
-			<input type="button" id="VKEY_btn_clear" value="전체삭제">
+		<div class="vkey__header">
+			<h3 id="VKEY_field_subject">가상키보드 제목위치</h3>
+			<!-- 가상키보드 입력창 value가 아닌 html에 글자가 위치-->
+			<div id="VKEY_field_editable" contenteditable="true" spellcheck="false"></div>
+			<input type="button" id="VKEY_btn_delete" value="삭제" />
+			<input type="button" id="VKEY_btn_clear" value="전체삭제" />
 		</div>
-		<div>
-			<div>
-				<input type="button" class="VKEY_btn_change_keyboard" value="한" />
-				<input type="button" class="VKEY_btn_change_keyboard" value="A" />
-				<input type="button" class="VKEY_btn_change_keyboard" value="a" />
-				<input type="button" class="VKEY_btn_change_keyboard" value="특" />
-				<input type="button" class="VKEY_btn_change_keyboard" value="특2" />
+		
+		<div class="vkey__content">
+			<!-- 키보드영역 -->
+			<div class="vkey__key-area">
+				<!-- 한영특전환 -->
+				<ul class="vkey__tabs">
+					<li>
+						<input type="radio" name="change" id="change__kor" class="VKEY_btn_change_keyboard" value="한" checked />
+						<label for="change__kor">한</label>
+					</li>
+					<li>
+						<input type="radio" name="change" id="change__engup" class="VKEY_btn_change_keyboard" value="A" />
+						<label for="change__engup">A</label>
+					</li>
+					<li>
+						<input type="radio" name="change" id="change__eng" class="VKEY_btn_change_keyboard" value="a" />
+						<label for="change__eng">a</label>
+					</li>
+					<li>
+						<input type="radio" name="change" id="change__special" class="VKEY_btn_change_keyboard" value="특" />
+						<label for="change__special">특</label>
+					</li>
+					<li>
+						<input type="radio" name="change" id="change__special2" class="VKEY_btn_change_keyboard" value="특2" />
+						<label for="change__special2">특2</label>
+					</li>
+				</ul>
+				
+				<!-- 키보드 영역 -->
+				<div class="vkey__num">
+					<input type="button" class="VKEY_btn_normal" value="1" />
+					<input type="button" class="VKEY_btn_normal" value="2" />
+					<input type="button" class="VKEY_btn_normal" value="3" />
+					<input type="button" class="VKEY_btn_normal" value="4" />
+					<input type="button" class="VKEY_btn_normal" value="5" />
+					<input type="button" class="VKEY_btn_normal" value="6" />
+					<input type="button" class="VKEY_btn_normal" value="7" />
+					<input type="button" class="VKEY_btn_normal" value="8" />
+					<input type="button" class="VKEY_btn_normal" value="9" />
+					<input type="button" class="VKEY_btn_normal" value="0" />
+				</div>
+					
+				<div id="kor" class="VKEY_bundle_keyboard">
+					<div class="vkey__pad">
+						<div class="vkey__consonants">
+							<input type="button" class="VKEY_btn_normal" value="ㄲ" />
+							<input type="button" class="VKEY_btn_normal" value="ㄸ" />
+							<input type="button" class="VKEY_btn_normal" value="ㅃ" />
+							<input type="button" class="VKEY_btn_normal" value="ㅆ" />
+							<input type="button" class="VKEY_btn_normal" value="ㅉ" />
+							<input type="button" class="VKEY_btn_normal" value="ㄱ" />
+							<input type="button" class="VKEY_btn_normal" value="ㄴ" />
+							<input type="button" class="VKEY_btn_normal" value="ㄷ" />
+							<input type="button" class="VKEY_btn_normal" value="ㄹ" />
+							<input type="button" class="VKEY_btn_normal" value="ㅁ" />
+							<input type="button" class="VKEY_btn_normal" value="ㅂ" />
+							<input type="button" class="VKEY_btn_normal" value="ㅅ" />
+							<input type="button" class="VKEY_btn_normal" value="ㅇ" />
+							<input type="button" class="VKEY_btn_normal" value="ㅈ" />
+							<input type="button" class="VKEY_btn_normal" value="ㅊ" />
+							<input type="button" class="VKEY_btn_normal" value="ㅋ" />
+							<input type="button" class="VKEY_btn_normal" value="ㅌ" />
+							<input type="button" class="VKEY_btn_normal" value="ㅍ" />
+							<input type="button" class="VKEY_btn_normal" value="ㅎ" />
+						</div>
+
+						<div class="vkey__vowels">
+							<input type="button" class="VKEY_btn_normal" value="ㅏ" />
+							<input type="button" class="VKEY_btn_normal" value="ㅑ" />
+							<input type="button" class="VKEY_btn_normal" value="ㅓ" />
+							<input type="button" class="VKEY_btn_normal" value="ㅕ" />
+							<input type="button" class="VKEY_btn_normal" value="ㅗ" />
+							<input type="button" class="VKEY_btn_normal" value="ㅛ" />
+							<input type="button" class="VKEY_btn_normal" value="ㅜ" />
+							<input type="button" class="VKEY_btn_normal" value="ㅠ" />
+							<input type="button" class="VKEY_btn_normal" value="ㅡ" />
+							<input type="button" class="VKEY_btn_normal" value="ㅣ" />
+							<input type="button" class="VKEY_btn_normal" value="ㅐ" />
+							<input type="button" class="VKEY_btn_normal" value="ㅔ" />
+							<input type="button" class="VKEY_btn_normal" value="ㅒ" />
+							<input type="button" class="VKEY_btn_normal" value="ㅖ" />
+							<input type="button" class="VKEY_btn_normal" value="." />
+							<input type="button" class="VKEY_btn_normal" value="-" />
+						</div>
+					</div>
+				</div>
+
+				<div id="VKEY_pad_engup" class="VKEY_bundle_keyboard">
+					<div class="vkey__pad">
+						<input type="button" class="VKEY_btn_normal" value="A" />
+						<input type="button" class="VKEY_btn_normal" value="B" />
+						<input type="button" class="VKEY_btn_normal" value="C" />
+						<input type="button" class="VKEY_btn_normal" value="D" />
+						<input type="button" class="VKEY_btn_normal" value="E" />
+						<input type="button" class="VKEY_btn_normal" value="F" />
+						<input type="button" class="VKEY_btn_normal" value="G" />
+						<input type="button" class="VKEY_btn_normal" value="H" />
+						<input type="button" class="VKEY_btn_normal" value="I" />
+						<input type="button" class="VKEY_btn_normal" value="J" />
+						<input type="button" class="VKEY_btn_normal" value="K" />
+						<input type="button" class="VKEY_btn_normal" value="L" />
+						<input type="button" class="VKEY_btn_normal" value="M" />
+						<input type="button" class="VKEY_btn_normal" value="N" />
+						<input type="button" class="VKEY_btn_normal" value="O" />
+						<input type="button" class="VKEY_btn_normal" value="P" />
+						<input type="button" class="VKEY_btn_normal" value="Q" />
+						<input type="button" class="VKEY_btn_normal" value="R" />
+						<input type="button" class="VKEY_btn_normal" value="S" />
+						<input type="button" class="VKEY_btn_normal" value="T" />
+						<input type="button" class="VKEY_btn_normal" value="U" />
+						<input type="button" class="VKEY_btn_normal" value="V" />
+						<input type="button" class="VKEY_btn_normal" value="W" />
+						<input type="button" class="VKEY_btn_normal" value="X" />
+						<input type="button" class="VKEY_btn_normal" value="Y" />
+						<input type="button" class="VKEY_btn_normal" value="Z" />
+						<input type="button" class="VKEY_btn_normal" value="." />
+						<input type="button" class="VKEY_btn_normal" value="-" />
+					</div>
+				</div>
+
+				<div id="VKEY_pad_englow" class="VKEY_bundle_keyboard">
+					<div class="vkey__pad">
+						<input type="button" class="VKEY_btn_normal" value="a" />
+						<input type="button" class="VKEY_btn_normal" value="b" />
+						<input type="button" class="VKEY_btn_normal" value="c" />
+						<input type="button" class="VKEY_btn_normal" value="d" />
+						<input type="button" class="VKEY_btn_normal" value="e" />
+						<input type="button" class="VKEY_btn_normal" value="f" />
+						<input type="button" class="VKEY_btn_normal" value="g" />
+						<input type="button" class="VKEY_btn_normal" value="h" />
+						<input type="button" class="VKEY_btn_normal" value="i" />
+						<input type="button" class="VKEY_btn_normal" value="j" />
+						<input type="button" class="VKEY_btn_normal" value="k" />
+						<input type="button" class="VKEY_btn_normal" value="l" />
+						<input type="button" class="VKEY_btn_normal" value="m" />
+						<input type="button" class="VKEY_btn_normal" value="n" />
+						<input type="button" class="VKEY_btn_normal" value="o" />
+						<input type="button" class="VKEY_btn_normal" value="p" />
+						<input type="button" class="VKEY_btn_normal" value="q" />
+						<input type="button" class="VKEY_btn_normal" value="r" />
+						<input type="button" class="VKEY_btn_normal" value="s" />
+						<input type="button" class="VKEY_btn_normal" value="t" />
+						<input type="button" class="VKEY_btn_normal" value="u" />
+						<input type="button" class="VKEY_btn_normal" value="v" />
+						<input type="button" class="VKEY_btn_normal" value="w" />
+						<input type="button" class="VKEY_btn_normal" value="x" />
+						<input type="button" class="VKEY_btn_normal" value="y" />
+						<input type="button" class="VKEY_btn_normal" value="z" />
+						<input type="button" class="VKEY_btn_normal" value="." />
+						<input type="button" class="VKEY_btn_normal" value="-" />
+					</div>
+				</div>
+
+				<div id="VKEY_pad_special" class="VKEY_bundle_keyboard">
+					<div class="vkey__pad">
+						<input type="button" class="VKEY_btn_normal" value="!" />
+						<input type="button" class="VKEY_btn_normal" value="@" />
+						<input type="button" class="VKEY_btn_normal" value="#" />
+						<input type="button" class="VKEY_btn_normal" value="$" />
+						<input type="button" class="VKEY_btn_normal" value="%" />
+						<input type="button" class="VKEY_btn_normal" value="^" />
+						<input type="button" class="VKEY_btn_normal" value="&" />
+						<input type="button" class="VKEY_btn_normal" value="*" />
+						<input type="button" class="VKEY_btn_normal" value="," />
+						<input type="button" class="VKEY_btn_normal" value="㉿" />
+						<input type="button" class="VKEY_btn_normal" value="▤" />
+						<input type="button" class="VKEY_btn_normal" value="▥" />
+						<input type="button" class="VKEY_btn_normal" value="▨" />
+						<input type="button" class="VKEY_btn_normal" value="▧" />
+						<input type="button" class="VKEY_btn_normal" value="▣" />
+						<input type="button" class="VKEY_btn_normal" value="(" />
+						<input type="button" class="VKEY_btn_normal" value=")" />
+						<input type="button" class="VKEY_btn_normal" value="[" />
+						<input type="button" class="VKEY_btn_normal" value="]" />
+						<input type="button" class="VKEY_btn_normal" value="{" />
+						<input type="button" class="VKEY_btn_normal" value="}" />
+						<input type="button" class="VKEY_btn_normal" value="<" />
+						<input type="button" class="VKEY_btn_normal" value=">" />
+						<input type="button" class="VKEY_btn_normal" value="~" />
+						<input type="button" class="VKEY_btn_normal" value="※" />
+						<input type="button" class="VKEY_btn_normal" value="/" />
+					</div>
+				</div>
+
+				<div id="VKEY_pad_special2" class="VKEY_bundle_keyboard">
+					<div class="vkey__pad">
+						<input type="button" class="VKEY_btn_normal" value="☎" />
+						<input type="button" class="VKEY_btn_normal" value="㈜" />
+						<input type="button" class="VKEY_btn_normal" value="◈" />
+						<input type="button" class="VKEY_btn_normal" value="★" />
+						<input type="button" class="VKEY_btn_normal" value="◐" />
+						<input type="button" class="VKEY_btn_normal" value="◑" />
+						<input type="button" class="VKEY_btn_normal" value="○" />
+						<input type="button" class="VKEY_btn_normal" value="㎜" />
+						<input type="button" class="VKEY_btn_normal" value="♬" />
+						<input type="button" class="VKEY_btn_normal" value="㎝" />
+						<input type="button" class="VKEY_btn_normal" value="㎎" />
+						<input type="button" class="VKEY_btn_normal" value="㎏" />
+						<input type="button" class="VKEY_btn_normal" value="∞" />
+						<input type="button" class="VKEY_btn_normal" value="℃" />
+						<input type="button" class="VKEY_btn_normal" value="Å" />
+						<input type="button" class="VKEY_btn_normal" value="￠" />
+						<input type="button" class="VKEY_btn_normal" value="￡" />
+						<input type="button" class="VKEY_btn_normal" value="￥" />
+						<input type="button" class="VKEY_btn_normal" value="♂" />
+						<input type="button" class="VKEY_btn_normal" value="♀" />
+						<input type="button" class="VKEY_btn_normal" value="∮" />
+						<input type="button" class="VKEY_btn_normal" value="℉" />
+						<input type="button" class="VKEY_btn_normal" value="♠" />
+						<input type="button" class="VKEY_btn_normal" value="♥" />
+						<input type="button" class="VKEY_btn_normal" value="♣" />
+						<input type="button" class="VKEY_btn_normal" value="-" />
+						<input type="button" class="VKEY_btn_normal" value="." />
+					</div>
+				</div>
+
+
 			</div>
-			<div>
-				<input type="button" class="VKEY_btn_change_boilerpad" value="1" />
-				<input type="button" class="VKEY_btn_change_boilerpad" value="2" />
-				<input type="button" class="VKEY_btn_change_boilerpad" value="3" />
-				<input type="button" class="VKEY_btn_change_boilerpad" value="4" />
+			
+			<!-- 상용구영역 -->
+			<div class="vkey__boiler">
+				<ul class="vkey__tabs vkey__tabs--flex1">
+					<li>
+						<input type="radio" id="page1" name="changePage" class="VKEY_btn_change_boilerpad" checked value="1" />
+						<label for="page1">1</label>
+					</li>
+					<li>
+						<input type="radio" id="page2" name="changePage" class="VKEY_btn_change_boilerpad" value="2" />
+						<label for="page2">2</label>
+					</li>
+					<li>
+						<input type="radio" id="page3" name="changePage" class="VKEY_btn_change_boilerpad" value="3" />
+						<label for="page3">3</label>
+					</li>
+					<li>
+						<input type="radio" id="page4" name="changePage" class="VKEY_btn_change_boilerpad" value="4" />
+						<label for="page4">4</label>
+					</li>
+				</ul>
+				
 				<div>
 					<!-- 각 상용구 숨김 & 보임 -->
 					<div class="VKEY_pad_boiler">
@@ -59,244 +283,62 @@
 							<input type="button" class="VKEY_btn_boiler" />
 							<input type="button" class="VKEY_btn_boiler" />
 							<input type="button" class="VKEY_btn_boiler" />
-						</div>
-						<div>
-							<input type="button" class="VKEY_btn_boiler">
-							<input type="button" class="VKEY_btn_boiler">
-							<input type="button" class="VKEY_btn_boiler">
-							<input type="button" class="VKEY_btn_boiler">
-						</div>
-					</div>
-					<div class="VKEY_pad_boiler">
-							<input type="button" class="VKEY_btn_boiler">
-							<input type="button" class="VKEY_btn_boiler">
-							<input type="button" class="VKEY_btn_boiler">
-							<input type="button" class="VKEY_btn_boiler">
-							<input type="button" class="VKEY_btn_boiler">
-							<input type="button" class="VKEY_btn_boiler">
-							<input type="button" class="VKEY_btn_boiler">
-							<input type="button" class="VKEY_btn_boiler">
-					</div>
-					<div class="VKEY_pad_boiler">
-						<div>
-							<input type="button" class="VKEY_btn_boiler">
-							<input type="button" class="VKEY_btn_boiler">
-							<input type="button" class="VKEY_btn_boiler">
-							<input type="button" class="VKEY_btn_boiler">
-
-						</div>
-						<div>
-							<input type="button" class="VKEY_btn_boiler">
-							<input type="button" class="VKEY_btn_boiler">
-							<input type="button" class="VKEY_btn_boiler">
-							<input type="button" class="VKEY_btn_boiler">
+							<input type="button" class="VKEY_btn_boiler" />
+							<input type="button" class="VKEY_btn_boiler" />
+							<input type="button" class="VKEY_btn_boiler" />
+							<input type="button" class="VKEY_btn_boiler" />
 						</div>
 					</div>
 					<div class="VKEY_pad_boiler">
 						<div>
-							<input type="button" class="VKEY_btn_boiler">
-							<input type="button" class="VKEY_btn_boiler">
-							<input type="button" class="VKEY_btn_boiler">
-							<input type="button" class="VKEY_btn_boiler">
-
+							<input type="button" class="VKEY_btn_boiler" />
+							<input type="button" class="VKEY_btn_boiler" />
+							<input type="button" class="VKEY_btn_boiler" />
+							<input type="button" class="VKEY_btn_boiler" />
+							<input type="button" class="VKEY_btn_boiler" />
+							<input type="button" class="VKEY_btn_boiler" />
+							<input type="button" class="VKEY_btn_boiler" />
+							<input type="button" class="VKEY_btn_boiler" />
 						</div>
+					</div>
+					<div class="VKEY_pad_boiler">
 						<div>
-							<input type="button" class="VKEY_btn_boiler">
-							<input type="button" class="VKEY_btn_boiler">
-							<input type="button" class="VKEY_btn_boiler">
-							<input type="button" class="VKEY_btn_boiler">
+							<input type="button" class="VKEY_btn_boiler" />
+							<input type="button" class="VKEY_btn_boiler" />
+							<input type="button" class="VKEY_btn_boiler" />
+							<input type="button" class="VKEY_btn_boiler" />
+							<input type="button" class="VKEY_btn_boiler" />
+							<input type="button" class="VKEY_btn_boiler" />
+							<input type="button" class="VKEY_btn_boiler" />
+							<input type="button" class="VKEY_btn_boiler" />
+						</div>
+					</div>
+					<div class="VKEY_pad_boiler">
+						<div>
+							<input type="button" class="VKEY_btn_boiler" />
+							<input type="button" class="VKEY_btn_boiler" />
+							<input type="button" class="VKEY_btn_boiler" />
+							<input type="button" class="VKEY_btn_boiler" />
+							<input type="button" class="VKEY_btn_boiler" />
+							<input type="button" class="VKEY_btn_boiler" />
+							<input type="button" class="VKEY_btn_boiler" />
+							<input type="button" class="VKEY_btn_boiler" />
 						</div>
 					</div>
 				</div>
 			</div>
-			<div>
-				<div>
-					<div id="kor" class="VKEY_bundle_keyboard">
-						<div>
-							<input type="button" class="VKEY_btn_normal" value="ㄲ">
-							<input type="button" class="VKEY_btn_normal" value="ㄸ">
-							<input type="button" class="VKEY_btn_normal" value="ㅃ">
-							<input type="button" class="VKEY_btn_normal" value="ㅆ">
-							<input type="button" class="VKEY_btn_normal" value="ㅉ">
-							<input type="button" class="VKEY_btn_normal" value="ㄱ">
-							<input type="button" class="VKEY_btn_normal" value="ㄴ">
-							<input type="button" class="VKEY_btn_normal" value="ㄷ">
-							<input type="button" class="VKEY_btn_normal" value="ㄹ">
-							<input type="button" class="VKEY_btn_normal" value="ㅁ">
-							<input type="button" class="VKEY_btn_normal" value="ㅂ">
-							<input type="button" class="VKEY_btn_normal" value="ㅅ">
-							<input type="button" class="VKEY_btn_normal" value="ㅇ">
-							<input type="button" class="VKEY_btn_normal" value="ㅈ">
-							<input type="button" class="VKEY_btn_normal" value="ㅊ">
-							<input type="button" class="VKEY_btn_normal" value="ㅋ">
-							<input type="button" class="VKEY_btn_normal" value="ㅌ">
-							<input type="button" class="VKEY_btn_normal" value="ㅍ">
-							<input type="button" class="VKEY_btn_normal" value="ㅎ">
-						</div>
-
-						<div>
-							<input type="button" class="VKEY_btn_normal" value="ㅏ">
-							<input type="button" class="VKEY_btn_normal" value="ㅑ">
-							<input type="button" class="VKEY_btn_normal" value="ㅓ">
-							<input type="button" class="VKEY_btn_normal" value="ㅕ">
-							<input type="button" class="VKEY_btn_normal" value="ㅗ">
-							<input type="button" class="VKEY_btn_normal" value="ㅛ">
-							<input type="button" class="VKEY_btn_normal" value="ㅜ">
-							<input type="button" class="VKEY_btn_normal" value="ㅠ">
-							<input type="button" class="VKEY_btn_normal" value="ㅡ">
-							<input type="button" class="VKEY_btn_normal" value="ㅣ">
-							<input type="button" class="VKEY_btn_normal" value="ㅐ">
-							<input type="button" class="VKEY_btn_normal" value="ㅔ">
-							<input type="button" class="VKEY_btn_normal" value="ㅒ">
-							<input type="button" class="VKEY_btn_normal" value="ㅖ">
-							<input type="button" class="VKEY_btn_normal" value=".">
-							<input type="button" class="VKEY_btn_normal" value="-">
-						</div>
-					</div>
-
-					<div class="VKEY_bundle_keyboard">
-						<div>
-							<input type="button" class="VKEY_btn_normal" value="A">
-							<input type="button" class="VKEY_btn_normal" value="B">
-							<input type="button" class="VKEY_btn_normal" value="C">
-							<input type="button" class="VKEY_btn_normal" value="D">
-							<input type="button" class="VKEY_btn_normal" value="E">
-							<input type="button" class="VKEY_btn_normal" value="F">
-							<input type="button" class="VKEY_btn_normal" value="G">
-							<input type="button" class="VKEY_btn_normal" value="H">
-							<input type="button" class="VKEY_btn_normal" value="I">
-							<input type="button" class="VKEY_btn_normal" value="J">
-							<input type="button" class="VKEY_btn_normal" value="K">
-							<input type="button" class="VKEY_btn_normal" value="L">
-							<input type="button" class="VKEY_btn_normal" value="M">
-							<input type="button" class="VKEY_btn_normal" value="N">
-							<input type="button" class="VKEY_btn_normal" value="O">
-							<input type="button" class="VKEY_btn_normal" value="P">
-							<input type="button" class="VKEY_btn_normal" value="Q">
-							<input type="button" class="VKEY_btn_normal" value="R">
-							<input type="button" class="VKEY_btn_normal" value="S">
-							<input type="button" class="VKEY_btn_normal" value="T">
-							<input type="button" class="VKEY_btn_normal" value="U">
-							<input type="button" class="VKEY_btn_normal" value="V">
-							<input type="button" class="VKEY_btn_normal" value="W">
-							<input type="button" class="VKEY_btn_normal" value="X">
-							<input type="button" class="VKEY_btn_normal" value="Y">
-							<input type="button" class="VKEY_btn_normal" value="Z">
-							<input type="button" class="VKEY_btn_normal" value=".">
-							<input type="button" class="VKEY_btn_normal" value="-">
-						</div>
-					</div>
-
-					<div class="VKEY_bundle_keyboard">
-						<div>
-							<input type="button" class="VKEY_btn_normal" value="a">
-							<input type="button" class="VKEY_btn_normal" value="b">
-							<input type="button" class="VKEY_btn_normal" value="c">
-							<input type="button" class="VKEY_btn_normal" value="d">
-							<input type="button" class="VKEY_btn_normal" value="e">
-							<input type="button" class="VKEY_btn_normal" value="f">
-							<input type="button" class="VKEY_btn_normal" value="g">
-							<input type="button" class="VKEY_btn_normal" value="h">
-							<input type="button" class="VKEY_btn_normal" value="i">
-							<input type="button" class="VKEY_btn_normal" value="j">
-							<input type="button" class="VKEY_btn_normal" value="k">
-							<input type="button" class="VKEY_btn_normal" value="l">
-							<input type="button" class="VKEY_btn_normal" value="m">
-							<input type="button" class="VKEY_btn_normal" value="n">
-							<input type="button" class="VKEY_btn_normal" value="o">
-							<input type="button" class="VKEY_btn_normal" value="p">
-							<input type="button" class="VKEY_btn_normal" value="q">
-							<input type="button" class="VKEY_btn_normal" value="r">
-							<input type="button" class="VKEY_btn_normal" value="s">
-							<input type="button" class="VKEY_btn_normal" value="t">
-							<input type="button" class="VKEY_btn_normal" value="u">
-							<input type="button" class="VKEY_btn_normal" value="v">
-							<input type="button" class="VKEY_btn_normal" value="w">
-							<input type="button" class="VKEY_btn_normal" value="x">
-							<input type="button" class="VKEY_btn_normal" value="y">
-							<input type="button" class="VKEY_btn_normal" value="z">
-							<input type="button" class="VKEY_btn_normal" value=".">
-							<input type="button" class="VKEY_btn_normal" value="-">
-						</div>
-					</div>
-
-					<div class="VKEY_bundle_keyboard">
-						<input type="button" class="VKEY_btn_normal" value="!">
-						<input type="button" class="VKEY_btn_normal" value="@">
-						<input type="button" class="VKEY_btn_normal" value="#">
-						<input type="button" class="VKEY_btn_normal" value="$">
-						<input type="button" class="VKEY_btn_normal" value="%">
-						<input type="button" class="VKEY_btn_normal" value="^">
-						<input type="button" class="VKEY_btn_normal" value="&">
-						<input type="button" class="VKEY_btn_normal" value="*">
-						<input type="button" class="VKEY_btn_normal" value=",">
-						<input type="button" class="VKEY_btn_normal" value="㉿">
-						<input type="button" class="VKEY_btn_normal" value="▤">
-						<input type="button" class="VKEY_btn_normal" value="▥">
-						<input type="button" class="VKEY_btn_normal" value="▨">
-						<input type="button" class="VKEY_btn_normal" value="▧">
-						<input type="button" class="VKEY_btn_normal" value="▣">
-						<input type="button" class="VKEY_btn_normal" value="(">
-						<input type="button" class="VKEY_btn_normal" value=")">
-						<input type="button" class="VKEY_btn_normal" value="[">
-						<input type="button" class="VKEY_btn_normal" value="]">
-						<input type="button" class="VKEY_btn_normal" value="{">
-						<input type="button" class="VKEY_btn_normal" value="}">
-						<input type="button" class="VKEY_btn_normal" value="<">
-						<input type="button" class="VKEY_btn_normal" value=">">
-						<input type="button" class="VKEY_btn_normal" value="~">
-						<input type="button" class="VKEY_btn_normal" value="※">
-						<input type="button" class="VKEY_btn_normal" value="/">
-					</div>
-
-					<div class="VKEY_bundle_keyboard">
-						<input type="button" class="VKEY_btn_normal" value="☎">
-						<input type="button" class="VKEY_btn_normal" value="㈜">
-						<input type="button" class="VKEY_btn_normal" value="◈">
-						<input type="button" class="VKEY_btn_normal" value="★">
-						<input type="button" class="VKEY_btn_normal" value="◐">
-						<input type="button" class="VKEY_btn_normal" value="◑">
-						<input type="button" class="VKEY_btn_normal" value="○">
-						<input type="button" class="VKEY_btn_normal" value="㎜">
-						<input type="button" class="VKEY_btn_normal" value="♬">
-						<input type="button" class="VKEY_btn_normal" value="㎝">
-						<input type="button" class="VKEY_btn_normal" value="㎎">
-						<input type="button" class="VKEY_btn_normal" value="㎏">
-						<input type="button" class="VKEY_btn_normal" value="∞">
-						<input type="button" class="VKEY_btn_normal" value="℃">
-						<input type="button" class="VKEY_btn_normal" value="Å">
-						<input type="button" class="VKEY_btn_normal" value="￠">
-						<input type="button" class="VKEY_btn_normal" value="￡">
-						<input type="button" class="VKEY_btn_normal" value="￥">
-						<input type="button" class="VKEY_btn_normal" value="♂">
-						<input type="button" class="VKEY_btn_normal" value="♀">
-						<input type="button" class="VKEY_btn_normal" value="∮">
-						<input type="button" class="VKEY_btn_normal" value="℉">
-						<input type="button" class="VKEY_btn_normal" value="♠">
-						<input type="button" class="VKEY_btn_normal" value="♥">
-						<input type="button" class="VKEY_btn_normal" value="♣">
-						<input type="button" class="VKEY_btn_normal" value="-">
-						<input type="button" class="VKEY_btn_normal" value=".">
-					</div>
+			
+			
+			<div class="vkey__console">
+				<div class="vkey__movekey">
+					<input type="button" id="VKEY_btn_caretleft" value="왼쪽이동" />
+					<input type="button" id="VKEY_btn_caretright" value="오른쪾이동" />
+					<input type="button" id="VKEY_btn_spacer" value="띄우기">
 				</div>
-
-				<div>
-					<input type="button" class="VKEY_btn_normal" value="1">
-					<input type="button" class="VKEY_btn_normal" value="2">
-					<input type="button" class="VKEY_btn_normal" value="3">
-					<input type="button" class="VKEY_btn_normal" value="4">
-					<input type="button" class="VKEY_btn_normal" value="5">
-					<input type="button" class="VKEY_btn_normal" value="6">
-					<input type="button" class="VKEY_btn_normal" value="7">
-					<input type="button" class="VKEY_btn_normal" value="8">
-					<input type="button" class="VKEY_btn_normal" value="9">
-					<input type="button" class="VKEY_btn_normal" value="0">
+				<div class="vkey__btns">
+					<input type="button" id="VKEY_btn_cancel" value="취소">
+					<input type="button" id="VKEY_btn_complete" value="완료">
 				</div>
-			</div>
-			<div>
-				<input type="button" id="VKEY_btn_spacer" value="띄우기">
-				<input type="button" id="VKEY_btn_cancel" value="취소">
-				<input type="button" id="VKEY_btn_complete" value="완료">
 			</div>
 		</div>
 	</div>
