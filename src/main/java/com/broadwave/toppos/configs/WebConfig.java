@@ -35,12 +35,12 @@ public class WebConfig implements WebMvcConfigurer {
         return new ModelMapper();
     }
 
-    @Bean(name = "uploadPath")
-    public String uploadPath() {
-        return uploadFileDir;
-    }
-
-    @Value("${toppos.fileupload.url}")
-    String uploadFileDir;
+//    @Bean(name = "uploadPath")
+//    public String uploadPath() {
+//        return uploadFileDir;
+//    }
+//
+//    @Value("${toppos.fileupload.url}")
+//    String uploadFileDir;
 
 }

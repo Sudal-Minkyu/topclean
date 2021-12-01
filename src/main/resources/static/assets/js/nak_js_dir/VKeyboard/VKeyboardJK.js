@@ -221,9 +221,9 @@ class VKeyboardJK {
 
         this.editableField.innerHTML = targetValue;
         document.getElementById("VKEY_field_subject").innerHTML = subject;
-        document.getElementById("VKEY_VKEYMAIN").style.visibility = "visible";
-        this.keyboardBundle[0].style.visibility = "visible";
-        this.boilerList[0].style.visibility = "visible";
+        document.getElementById("VKEY_VKEYMAIN").style.display = "block";
+        this.keyboardBundle[0].style.display = "block";
+        this.boilerList[0].style.display = "block";
         this.focusWithCaret();
         this.editableField.scrollLeft = 99999;
 
@@ -753,36 +753,36 @@ class VKeyboardJK {
 
     changeKeyboard(typeNo){
         for (let i=0; i<5; i++) {
-            this.keyboardBundle[i].style.visibility = "hidden";
+            this.keyboardBundle[i].style.display = "none";
         }
-        this.keyboardBundle[typeNo].style.visibility = "visible";
+        this.keyboardBundle[typeNo].style.display = "block";
     }
 
     changeBoilerplate(typeNo) {
         for (let i=0; i<4; i++) {
-            this.boilerList[i].style.visibility = "hidden";
+            this.boilerList[i].style.display = "none";
         }
-        this.boilerList[typeNo].style.visibility = "visible";
+        this.boilerList[typeNo].style.display = "block";
     }
 
     cancelEdit() {
-        document.getElementById("VKEY_VKEYMAIN").style.visibility = "hidden";
+        document.getElementById("VKEY_VKEYMAIN").style.display = "none";
         for (let i=0; i<4; i++) {
-            this.boilerList[i].style.visibility = "hidden";
-            this.keyboardBundle[i].style.visibility = "hidden";
+            this.boilerList[i].style.display = "none";
+            this.keyboardBundle[i].style.display = "none";
         }
-        this.keyboardBundle[4].style.visibility = "hidden";
+        this.keyboardBundle[4].style.display = "none";
         this.clearInputField();
     }
 
     completeEdit() {
         this.targetField.value = this.exceptionSymbolEncryption(this.editableField.innerHTML, false)[0];
-        document.getElementById("VKEY_VKEYMAIN").style.visibility = "hidden";
+        document.getElementById("VKEY_VKEYMAIN").style.display = "none";
         for (let i=0; i<4; i++) {
-            this.boilerList[i].style.visibility = "hidden";
-            this.keyboardBundle[i].style.visibility = "hidden";
+            this.boilerList[i].style.display = "none";
+            this.keyboardBundle[i].style.display = "none";
         }
-        this.keyboardBundle[4].style.visibility = "hidden";
+        this.keyboardBundle[4].style.display = "none";
         this.clearInputField();
         this.callback();
     }
