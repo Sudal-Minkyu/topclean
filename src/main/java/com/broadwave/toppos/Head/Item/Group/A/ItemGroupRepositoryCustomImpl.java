@@ -30,7 +30,8 @@ public class ItemGroupRepositoryCustomImpl extends QuerydslRepositorySupport imp
                 .select(Projections.constructor(ItemGroupDto.class,
                         itemGroup.bgItemGroupcode,
                         itemGroup.bgName,
-                        itemGroup.bgRemark
+                        itemGroup.bgRemark,
+                        itemGroup.bgUseYn
                 ));
         return query.fetch();
     }

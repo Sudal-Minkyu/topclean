@@ -21,6 +21,11 @@ public class ItemGroupSDto {
     private String bgItemGroupcode; // 대분류코드
     private String bsName; // 중분류명칭
     private String bsRemark; // 특이사항
+    private String bsUseYn; // 사용여부
+
+    public String getBsUseYn() {
+        return bsUseYn;
+    }
 
     public String getBsItemGroupcodeS() {
         return bsItemGroupcodeS;

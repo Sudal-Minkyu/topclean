@@ -26,6 +26,12 @@ public class ItemGroupDto {
 
     private String bgRemark; // 특이사항
 
+    private String bgUseYn; // 사용여부
+
+    public String getBgUseYn() {
+        return bgUseYn;
+    }
+
     public String getBgItemGroupcode() {
         return bgItemGroupcode;
     }
