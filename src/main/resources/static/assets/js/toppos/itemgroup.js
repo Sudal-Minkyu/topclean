@@ -309,7 +309,7 @@ function addRow(numOfGrid) {
             item = AUIGrid.getSelectedRows(gridId[0]);
             if(item.length && !AUIGrid.isAddedById(gridId[0], item[0]._$uid)) {
                 delete item[0]['_$uid'];
-                item['bsUseYn'] = "Y";
+                item[0]['bsUseYn'] = "Y";
                 console.log(item);
                 AUIGrid.addRow(gridId[numOfGrid], item, "last");
             }else{
@@ -320,7 +320,7 @@ function addRow(numOfGrid) {
             item = AUIGrid.getSelectedRows(gridId[1]);
             if(item.length && !AUIGrid.isAddedById(gridId[1], item[0]._$uid)) {
                 delete item[0]['_$uid'];
-                item['biUseYn'] = "Y";
+                item[0]['biUseYn'] = "Y";
                 AUIGrid.addRow(gridId[numOfGrid], item, "last");
             }else{
                 alertCaution("저장되어 있는 중분류 항목을 선택해 주세요", 1);
