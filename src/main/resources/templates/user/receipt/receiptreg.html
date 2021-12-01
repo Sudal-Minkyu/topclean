@@ -11,6 +11,7 @@
 
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
+    <script src="/assets/js/toppos/user/receipt/receiptreg.js"></script>
     <script type="text/javascript">
 
         $(function() {
@@ -19,8 +20,223 @@
 
     </script>
 </th:block>
-
 <div layout:fragment="content" class="content content--padding">
+
+    <!-- 접수등록 기본화면-->
+    <div>
+
+        <!-- 상단 통합검색 및 상태 -->
+        <div>
+            <div>
+                <select id="searchType">
+                    <option value="0">통합검색</option>
+                    <option value="1">고객명</option>
+                    <option value="2">전화번호</option>
+                    <option value="3">주소</option>
+                </select>
+                <input id="searchCustomerField" type="text" />
+                <button type="button" onclick="">VKEY</button>
+                <button type="button" onclick="onSearchCustomer()">검색</button>
+            </div>
+            <div>
+                <img />
+                <span id="bcGrade">VIP</span>
+                <span id="bcName">홍길동님</span>
+                <span id="bcValuation">☆☆★★★</span>
+                <span id="bcAddress">푸르지오 215동</span>
+                <span id="bcHp">010-1234-5678</span>
+            </div>
+            <div>
+                <span>☆수량</span>
+                <span id="totFdQty">999</span>
+                <span>정상금액</span>
+                <span id="totFdNormalAmount">999,999</span>
+                <span>원</span>
+                <span>할인금액</span>
+                <span id="totFdDiscountAmount">999,999</span>
+                <span>원</span>
+                <span>합계금액</span>
+                <span id="totFdRequestAmount">999,999</span>
+                <span>원</span>
+            </div>
+            <div>
+                <span>미수금</span>
+                <span>특이사항</span>
+                <span id="미수금총액">25,000</span>
+                <span>원</span>
+                <span id="bcRemark">XXXXXXXX</span>
+                <span>적립금</span>
+                <span>최근방문일</span>
+                <span id="fsAmt">25000</span>
+                <span>원</span>
+                <span id="최근방문일">2021-11-10</span>
+            </div>
+        </div>
+
+
+        <!-- 중앙그리드 영역-->
+        <div>
+            <div>
+                <button type="button" onclick="onRequestNextFdTag()">다음택번호</button>
+                <input id="fdTag" type="text" />
+                <button type="button" onclick="">VKEY</button>
+                <button type="button" onclick="onSaveFdTag()">택번호 저장</button>
+            </div>
+            <div id="grid_requestList"></div>
+        </div>
+
+        <!-- 하단 세탁물 종류 -->
+        <div>
+            <div>
+                <button type="button" class="bgItemGroupcode" value=""><img />상의</button>
+                <button type="button" class="bgItemGroupcode" value=""><img />하의</button>
+                <button type="button" class="bgItemGroupcode" value=""><img />운동화</button>
+                <button type="button" class="bgItemGroupcode" value=""><img />점퍼</button>
+                <button type="button" class="bgItemGroupcode" value=""><img />셔츠</button>
+                <button type="button" class="bgItemGroupcode" value=""><img />원피스</button>
+                <button type="button" class="bgItemGroupcode" value=""><img />블라우스</button>
+                <button type="button" class="bgItemGroupcode" value=""><img />조끼</button>
+                <button type="button" class="bgItemGroupcode" value=""><img />코트</button>
+                <button type="button" class="bgItemGroupcode" value=""><img />스웨터</button>
+                <button type="button" class="bgItemGroupcode" value=""><img />교복</button>
+                <button type="button" class="bgItemGroupcode" value=""><img />한복</button>
+                <button type="button" class="bgItemGroupcode" value=""><img />침구·커튼</button>
+                <button type="button" class="bgItemGroupcode" value=""><img />모자·가방·인형</button>
+                <button type="button" class="bgItemGroupcode" value=""><img />가죽·특수세탁</button>
+                <button type="button" class="bgItemGroupcode" value=""><img />유모차·골프가방</button>
+                <button type="button" class="bgItemGroupcode" value=""><img />털·부속품</button>
+                <button type="button" class="bgItemGroupcode" value=""><img />직접세탁</button>
+            </div>
+            <div>
+                <img />
+                <span>상품</span>
+                <input type="checkbox" value="즐겨찾기" />
+            </div>
+        </div>
+
+        <!-- 하단 메뉴 버튼 -->
+        <div>
+            <button type="button" onclick="onSaveTemp()">임시저장</button>
+            <button type="button" onclick="onReadTemp()">임시저장내역</button>
+            <button type="button" onclick="onPay()">결제하기</button>
+            <button type="button" onclick="onRepeatRequest()">반복접수</button>
+        </div>
+
+    </div>
+
+
+    <hr>
+    <!-- 팝업 영역 -->
+
+
+    <!-- 고객 선택팝업 -->
+    <div>
+        고객선택
+        <div id="grid_customerList"></div>
+        <button type="button" onclick="onSelectCustomer()">선택</button>
+        <button type="button" onclick="onCancelSelectCustomer()">닫기</button>
+    </div>
+
+
+    <!-- 접수 팝업 .지겸님 작업중 -->
+
+
+    <hr>
+    <!-- 수선 팝업 -->
+    <div>
+        <div>
+            수선리스트
+            <input type="radio" value="기장" />
+            <input type="radio" value="허리" />
+            <input type="radio" value="소매" />
+            <input type="radio" value="기타" />
+        </div>
+        <div>
+            <input type="text" />
+            <button type="button" onclick="">VKEY</button>
+            <input type="number" />
+        </div>
+        <div>
+            키패드들
+        </div>
+        <button type="button">추가</button>
+    </div>
+
+    <hr>
+    <!-- 추가 사항 팝업-->
+    <div>
+        <div>
+            추가
+            <input type="radio" value="오점" />
+            <input type="radio" value="황변제거" />
+            <input type="radio" value="표백" />
+            <input type="radio" value="기타" />
+        </div>
+        <div>
+            <input type="text" />
+            <button type="button" onclick="">VKEY</button>
+            <input type="number" />
+            <input type="checkbox" value="" text="특수"/>
+            <div>
+                키패드들
+            </div>
+            <button type="button">추가</button>
+        </div>
+    </div>
+
+    <hr>
+    <!-- 카메라 팝업 -->
+    <div>
+        <div>
+            카메라
+            촬영된 사진
+            사진클릭시 크게보기기능
+        </div>
+        <video playsinline autoplay></video>
+        <div>
+            <span>특이사항</span>
+            <input type="text">
+            <button type="button" onclick="">VKEY</button>
+        </div>
+        <div>
+            <span>상용구</span>
+            <input type="radio" value="구멍">
+            <input type="radio" value="찢어짐">
+            <input type="radio" value="얼룩">
+            <button type="" onclick="">촬영</button>
+            <button type="" onclick="">닫기</button>
+        </div>
+        <div>
+            <img />
+            <span>구멍</span>
+            <button type="" onclick="">삭제</button>
+            <img />
+            <span>얼룩</span>
+            <button type="" onclick="">삭제</button>
+        </div>
+    </div>
+
+    <hr>
+    <!-- 임시저장 조회창 -->
+    <div>
+        임시저장 조회창
+        <div id="grid_tempSaveList"></div>
+        <button type="" onclick="">선택</button>
+        <button type="" onclick="">닫기</button>
+    </div>
+
+
+    <hr>
+    <!-- 결제창 -->
+    <div>
+        결제창
+        <button type="" onclick="">현금영수증</button>
+        <button type="" onclick="">현금 + 카드</button>
+        <button type="" onclick="">현금결제</button>
+        <button type="" onclick="">카드결제</button>
+        <button type="" onclick="">닫기</button>
+        <button type="" onclick="">결제하기</button>
+    </div>
 
 </div>
 </html>
