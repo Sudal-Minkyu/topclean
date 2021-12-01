@@ -18,10 +18,11 @@
 
 		});
 		function requestSign(){
+			const protocol = location.protocol;
+			const hostName = location.hostname;
+			const port = location.port
 
-
-
-			cAPI.approvalCall('http://localhost:8020' + '/user/sign');
+			cAPI.approvalCall(protocol +'//'+hostName+ ':' + port + '/user/sign');
 
 			$("#resultmsg").text(": 승인중 메세지- 고객이 서명중입니다. ------전체화면으로 가리기 ")
 		}
