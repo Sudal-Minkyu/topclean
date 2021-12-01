@@ -22,6 +22,11 @@ public class ItemGroupSListDto {
     private String bgName; // 대분류명칭
     private String bsName; // 중분류명칭
     private String bsRemark; // 특이사항
+    private String bsUseYn; // 사용여부
+
+    public String getBsUseYn() {
+        return bsUseYn;
+    }
 
     public String getBgName() {
         return bgName;

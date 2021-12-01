@@ -33,6 +33,9 @@ public class ItemGroup {
     @Column(name="bg_remark")
     private String bgRemark; // 특이사항
 
+    @Column(name="bg_use_yn")
+    private String bgUseYn; // 사용여부
+
     @Column(name="insert_id")
     private String insert_id;
 
