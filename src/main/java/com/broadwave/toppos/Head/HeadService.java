@@ -188,7 +188,7 @@ public class HeadService {
 
     // 상품 가격 멀티 저장
     @Transactional(rollbackFor = SQLException.class)
-    public void itemPriceSaveAll(List<ItemPrice> itemSavePrice, List<ItemPrice> itemUpdatePrice) throws Exception {
+    public void itemPriceSaveAll(List<ItemPrice> itemSavePrice, List<ItemPrice> itemUpdatePrice) {
         try{
             itemPriceRepository.saveAll(itemUpdatePrice);
             itemPriceRepository.saveAll(itemSavePrice);
@@ -233,5 +233,9 @@ public class HeadService {
         return franchisePriceRepository.findByFranchisePrice(biItemcode, frCode, highClassYn);
     }
 
+    // 가맹점 특정품목가격 삭제
+    public void findByFranchisePriceDelete(List<FranchisePrice> franchisePriceList) {
+        franchisePriceRepository.deleteAll(franchisePriceList);
+    }
 
 }

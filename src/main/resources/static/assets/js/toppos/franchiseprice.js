@@ -300,18 +300,17 @@ function savePriceList() {
     const data = {
         "add" : addedRowItems,
         "update" : updatedRowItems,
-        //"delete" : deletedRowItems
+        "delete" : deletedRowItems
     };
 
     const jsonString = JSON.stringify(data);
-    console.log(data);
-    /*
+    // console.log(data);
     CommonUI.ajaxjson(gridSaveUrl[0], jsonString, function () {
         AUIGrid.clearGridData(gridId[1]);
         setDataIntoGrid(1, gridCreateUrl[1], {frCode : selectedFrCode});
         alertSuccess("특정가격 적용품목 등록이 완료되었습니다.");
     });
-    */
+
 }
 
 /* API 통신에 필요없는 요소들을 제거 */

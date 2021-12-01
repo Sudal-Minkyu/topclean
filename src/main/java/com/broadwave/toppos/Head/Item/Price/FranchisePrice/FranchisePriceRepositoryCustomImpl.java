@@ -2,7 +2,6 @@ package com.broadwave.toppos.Head.Item.Price.FranchisePrice;
 
 import com.broadwave.toppos.Head.Item.Group.A.QItemGroup;
 import com.broadwave.toppos.Head.Item.Group.B.QItemGroupS;
-import com.broadwave.toppos.Head.Item.Group.C.ItemListDto;
 import com.broadwave.toppos.Head.Item.Group.C.QItem;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
@@ -36,7 +35,7 @@ public class FranchisePriceRepositoryCustomImpl extends QuerydslRepositorySuppor
         JPQLQuery<FranchisePriceListDto> query = from(franchisePrice)
                 .join(item).on(franchisePrice.biItemcode.eq(item.biItemcode))
                 .join(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
-                .join(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS))
+                .join(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
                 .select(Projections.constructor(FranchisePriceListDto.class,
                         franchisePrice.biItemcode,
                         itemGroup.bgName,

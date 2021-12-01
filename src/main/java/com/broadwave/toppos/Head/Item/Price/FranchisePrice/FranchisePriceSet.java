@@ -19,8 +19,8 @@ public class FranchisePriceSet {
     // 추가 행 리스트
     private ArrayList<FranchisePriceDto> add;
 
-//    // 삭제 행 리스트
-//    private ArrayList<ItemDto> delete;
+    // 삭제 행 리스트
+    private ArrayList<FranchisePriceDto> delete;
 
     public ArrayList<FranchisePriceDto> getUpdate() {
         return update;
@@ -30,7 +30,7 @@ public class FranchisePriceSet {
         return add;
     }
 
-//    public ArrayList<ItemDto> getDelete() {
-//        return delete;
-//    }
+    public ArrayList<FranchisePriceDto> getDelete() {
+        return delete;
+    }
 }

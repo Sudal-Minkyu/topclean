@@ -1,9 +1,9 @@
 package com.broadwave.toppos.Head.Item.Price.FranchisePrice;
 
-import lombok.*;
-
-import javax.persistence.*;
-import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * @author Minkyu

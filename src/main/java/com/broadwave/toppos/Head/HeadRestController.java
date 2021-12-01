@@ -1151,7 +1151,6 @@ public class HeadRestController {
         return ResponseEntity.ok(res.success());
     }
 
-
     // 가맹점 특정상품가격 호출 API
     @PostMapping("franchisePrice")
     public ResponseEntity<Map<String,Object>> franchisePrice(@RequestBody FranchisePriceSet franchisePriceSet, HttpServletRequest request){
@@ -1164,7 +1163,7 @@ public class HeadRestController {
 
         ArrayList<FranchisePriceDto> addList = franchisePriceSet.getAdd(); // 추가 리스트 얻기
         ArrayList<FranchisePriceDto> updateList = franchisePriceSet.getUpdate(); // 수정 리스트 얻기
-//        ArrayList<ItemDto> deleteList = franchisePriceSet.getDelete(); // 제거 리스트 얻기
+        ArrayList<FranchisePriceDto> deleteList = franchisePriceSet.getDelete(); // 제거 리스트 얻기
 
 //        log.info("추가 리스트 : "+addList);
 //        log.info("수정 리스트 : "+updateList);
@@ -1246,18 +1245,23 @@ public class HeadRestController {
             franchisePriceList.clear();
         }
 
-//        // 상품소재 삭제로직 실행 : 데이터베이스에 코드사용중인 코드가 존재하면 리턴처리한다. , 데이터베이스에 코드가 존재하지 않으면 리턴처리한다.
-//        if(deleteList.size()!=0){
-//            for (ItemDto itemDto : deleteList) {
-//                Optional<Item> itemOptional = headService.findByBiItemcode(itemDto.getBgItemGroupcode());
-//                if(itemOptional.isPresent()) {
-//                    log.info("삭제할 상품소재 코드 : "+itemOptional.get().getBiItemcode());
-//                    headService.findByItemDelete(itemOptional.get());
-//                }else{
-//                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "삭제 할 "+ResponseErrorCode.TP009.getDesc(), "문자", "상품코드 : "+itemDto.getBiItemcode()));
-//                }
-//            }
-//        }
+        // 상품소재 삭제로직 실행
+        if(deleteList.size()!=0){
+            for (FranchisePriceDto franchisePriceDto : deleteList) {
+                Optional<FranchisePrice> optionalFranchisePrice = headService.findByFranchisePrice(franchisePriceDto.getBiItemcode(), franchisePriceDto.getFrCode(), franchisePriceDto.getHighClassYn());
+                if(optionalFranchisePrice.isPresent()) {
+//                    log.info("삭제할 상품소재 코드 : "+optionalFranchisePrice.get().getBiItemcode());
+                    franchisePriceList.add(optionalFranchisePrice.get());
+                }else{
+                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP005.getCode(), "삭제 할 "+ResponseErrorCode.TP005.getDesc(), "문자", "가맹점코드 : "+franchisePriceDto.getFrCode()+", "+"상품코드 : "+franchisePriceDto.getBiItemcode()));
+                }
+            }
+        }
+
+        if(franchisePriceList.size() != 0){
+            headService.findByFranchisePriceDelete(franchisePriceList);
+            franchisePriceList.clear();
+        }
 
         return ResponseEntity.ok(res.success());
     }
