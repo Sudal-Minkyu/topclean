@@ -33,4 +33,9 @@ public class TestController {
         return "test/paymenttest";
     }
 
+    // 지겸 테스트페이지
+    @RequestMapping("jktest")
+    public String jktest(){
+        return "test/jktest";
+    }
 }
