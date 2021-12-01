@@ -235,6 +235,19 @@ class VKeyboard {
 
     }
 
+    showKeyPad(elementId, subject = "기본제목", callback = function (){}) {
+        this.callback = callback;
+        this.targetField = document.getElementById(elementId);
+        let targetValue = this.targetField.value;
+
+        this.keypadBtn = document.getElementsByClassName("VKEY_btn_normal");
+        for (let i = 0; i < this.keypadBtn.length; i++){
+            this.keypadBtn[i].addEventListener("click", () => {
+                this.pushKeypadBtn(this.keypadBtn[i].value);
+            });
+        }
+    }
+
 
     /* 디스플레이에 담을 값을 인수와 함께 넘긴다. */
     pushNormalBtn(INPUT_CHAR){
@@ -1079,6 +1092,25 @@ class VKeyboard {
                     <input type="button" id="VKEY_btn_cancel" value="취소">
                     <input type="button" id="VKEY_btn_complete" value="완료">
                 </div>
+            </div>
+        </div>
+        <div id="VKEY_KEYPAD">
+            <div>
+                <input type="number" id="VKEY_keypad_field" readonly>
+            </div>
+            <div>
+                <button type="button" class="VKEY_keypad_btn" value="1">1</button>
+                <button type="button" class="VKEY_keypad_btn" value="2">2</button>
+                <button type="button" class="VKEY_keypad_btn" value="3">3</button>
+                <button type="button" class="VKEY_keypad_btn" value="4">4</button>
+                <button type="button" class="VKEY_keypad_btn" value="5">5</button>
+                <button type="button" class="VKEY_keypad_btn" value="6">6</button>
+                <button type="button" class="VKEY_keypad_btn" value="7">7</button>
+                <button type="button" class="VKEY_keypad_btn" value="8">8</button>
+                <button type="button" class="VKEY_keypad_btn" value="9">9</button>
+                <button type="button" class="VKEY_keypad_btn" value="00">00</button>
+                <button type="button" class="VKEY_keypad_btn" value="0">0</button>
+                <button type="button" class="VKEY_keypad_btn" value="←">←</button>
             </div>
         </div>
         `;

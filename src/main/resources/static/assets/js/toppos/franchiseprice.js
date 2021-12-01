@@ -12,12 +12,11 @@ $(function() {
     AUIGrid.bind(gridId[0], "cellClick", function (e) {
         AUIGrid.clearGridData(gridId[1]);
         selectedFrCode = e.item.frCode;
-        // console.log({frCode : selectedFrCode});
         setDataIntoGrid(1, gridCreateUrl[1], {frCode : selectedFrCode});
     });
 
     AUIGrid.bind(gridId[1], "cellDoubleClick", function (e) {
-        if(e.columnIndex < 4) {
+        if(e.columnIndex < 4 && AUIGrid.isAddedById(gridId[1], e.rowIdValue) ) {
             setDataIntoGrid(2, gridCreateUrl[2]);
             itemListPop(e.rowIdValue);
         }
@@ -28,6 +27,15 @@ $(function() {
         e.item["_$uid"] = idIndex;
         AUIGrid.updateRowsById(gridId[1], e.item);
         itemListClose();
+    });
+
+    AUIGrid.bind(gridId[1], "cellEditBegin", function (e) {
+        if(e.dataField === "bsIte" && e.value !== "" && !AUIGrid.isAddedById(gridId[1], e.item._$uid)) {
+            setTimeout(function (){
+                AUIGrid.showToastMessage(gridId[1], e.rowIndex, e.columnIndex, "입력된 중분류 코드는 수정할 수 없습니다.");
+            }, 0);
+            return false;
+        }
     });
 });
 
@@ -111,7 +119,7 @@ gridColumnLayout[1] = [
         editable: false,
     }, {
         dataField: "highClassYn",
-        headerText: "명품",
+        headerText: "명품여부",
         renderer: {
             type: "DropDownListRenderer",
             list: ["Y", "N"]
@@ -258,7 +266,7 @@ function filterItemList(type) {
 }
 
 function addPriceRow() {
-    AUIGrid.addRow(gridId[1], {frCode : selectedFrCode, highClassYn : "N"}, "last");
+    AUIGrid.addRow(gridId[1], {highClassYn : "N"}, "last");
 }
 
 /* 1번 그리드의 선택된 체크박스 항목들이나, 없을 경우 선택된 행 하나를 삭제 */
@@ -275,6 +283,13 @@ function savePriceList() {
     // 추가된 행 아이템들(배열)
     const addedRowItems = dataRefinary(AUIGrid.getAddedRowItems(gridTargetDiv[1]));
 
+    addedRowItems.forEach(element => {
+        if(element["biItemcode"] === undefined) {
+            alertCaution("상품을 선택해 주세요.", 1);
+            return false;
+        }
+    });
+
     // 수정된 행 아이템들(배열)
     const updatedRowItems = dataRefinary(AUIGrid.getEditedRowItems(gridTargetDiv[1]));
 
@@ -287,17 +302,22 @@ function savePriceList() {
         "update" : updatedRowItems,
         //"delete" : deletedRowItems
     };
-    // console.log(data);
 
     const jsonString = JSON.stringify(data);
+    console.log(data);
+    /*
     CommonUI.ajaxjson(gridSaveUrl[0], jsonString, function () {
-        // 저장이나 수정 완료되면 리스트 호출하기  to.성낙원
+        AUIGrid.clearGridData(gridId[1]);
+        setDataIntoGrid(1, gridCreateUrl[1], {frCode : selectedFrCode});
+        alertSuccess("특정가격 적용품목 등록이 완료되었습니다.");
     });
+    */
 }
 
 /* API 통신에 필요없는 요소들을 제거 */
 function dataRefinary(itemArray) {
     itemArray.forEach(element => {
+        element["frCode"] = selectedFrCode;
         delete element["bgItemGroupcode"];
         delete element["bgName"];
         delete element["biItemSequence"];
