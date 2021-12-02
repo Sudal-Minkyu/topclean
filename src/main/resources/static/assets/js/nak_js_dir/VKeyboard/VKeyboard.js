@@ -3,6 +3,17 @@
 * */
 class VKeyboard {
 
+    /* 가상키보드를 띄울 때 showKeyboard 인자로 받을 수 있는 옵션들의 기본값 */
+    defaultProp = {
+        subject : "내용 입력", // 가상키보드의에 상단에 표시될 제목
+        boilerplate : [], // 상용구 배열 현재 32개까지 표시되도록 되어있음.
+        callback : function () {}, // 가상키보드 동작을 성공적으로 마쳤을 때 실행될 기능
+        hideKr : false, // 한글 키보드 숨길지 여부
+        hideEngUp : false, // 영어 대문자 키보드 숨길지 여부
+        hideEngLow : false, // 영어 소문자 키보드 숨길지 여부
+        hideSpecial : false, // 특수문자 키보드 숨길지 여부
+    }
+
     /* 입력의 편집 대상이 되는 필드 */
     targetField;
 
@@ -141,25 +152,25 @@ class VKeyboard {
         /* 스크롤링 처리 과정에 사용하기 위해, 가상키보드 입력창의 너비를 구한다. */
         this.editableFieldWidth = this.editableField.clientWidth;
 
-        for (let i = 0; i < this.normalBtn.length; i++){
+        for(let i = 0; i < this.normalBtn.length; i++){
             this.normalBtn[i].addEventListener("click", () => {
                 this.pushNormalBtn(this.normalBtn[i].value);
             });
         }
 
-        for (let i = 0; i < this.boilerBtn.length; i++){
+        for(let i = 0; i < this.boilerBtn.length; i++){
             this.boilerBtn[i].addEventListener("click", () => {
                 this.pushBoilerBtn(this.boilerBtn[i].value);
             });
         }
 
-        for (let i = 0; i < this.changeKeyboardBtn.length; i++){
+        for(let i = 0; i < this.changeKeyboardBtn.length; i++){
             this.changeKeyboardBtn[i].addEventListener("click", () => {
                 this.changeKeyboard([i]);
             });
         }
 
-        for (let i = 0; i < this.changeBoilerpadBtn.length; i++){
+        for(let i = 0; i < this.changeBoilerpadBtn.length; i++){
             this.changeBoilerpadBtn[i].addEventListener("click", () => {
                 this.changeBoilerplate([i]);
             });
@@ -171,29 +182,55 @@ class VKeyboard {
 
         document.getElementById("VKEY_btn_cancel").addEventListener("click", () => {
             this.cancelEdit();
-        })
+        });
 
         document.getElementById("VKEY_btn_complete").addEventListener("click", () => {
             this.completeEdit();
-        })
+        });
 
 
         document.getElementById("VKEY_btn_caretleft").addEventListener("click", () => {
             this.moveCaretPosition("left");
-        })
+        });
 
         document.getElementById("VKEY_btn_caretright").addEventListener("click", () => {
             this.moveCaretPosition("right");
-        })
+        });
 
         document.getElementById("VKEY_btn_delete").addEventListener("click", () => {
             this.removeCharFromTargetField();
-        })
+        });
 
         document.getElementById("VKEY_btn_clear").addEventListener("click", () => {
             this.clearInputField();
-        })
+        });
 
+
+        /* 키패드 영역 준비*/
+
+        /* 키패드 작동시 완료될 때 까지 사용자가 사용할 입력창 */
+        this.keypadField = document.getElementById("VKEY_keypad_field");
+
+        /* 키패드의 숫자 버튼들이 담긴다 */
+        this.keypadBtn = document.getElementsByClassName("VKEY_keypad_btn");
+
+        for(let i = 0; i < this.keypadBtn.length; i++) {
+            this.keypadBtn[i].addEventListener("click", () => {
+                this.pushKeypadBtn(this.keypadBtn[i].value);
+            });
+        }
+
+        document.getElementById("VKEY_keypad_btn_backspace").addEventListener("click", () => {
+            this.pushKeypadBtn("", true);
+        });
+
+        document.getElementById("VKEY_keypad_btn_complete").addEventListener("click", () => {
+            this.pushKeypadCompelete();
+        });
+
+        document.getElementById("VKEY_keypad_btn_cancel").addEventListener("click", () => {
+            this.pushKeypadClose();
+        });
 
     }
 
@@ -201,12 +238,20 @@ class VKeyboard {
     * elementId 에 지정된 객체에 맞추어 가상 키보드를 띄운다.
     * subject : 가상키보드에 띄울 제목, boilerplate : 상용구 배열, callback :  키보드 편집 완료후 실행될 function
     *  */
-    showKeyboard(elementId, subject = "기본 제목", boilerplate = [], callback = function(){}) {
-        this.callback = callback;
-        const LOOP_BOILER  = boilerplate.length > 31 ? 32 : boilerplate.length;
+    showKeyboard(elementId, properties = {}) {
 
-        for (let i = 0; i < LOOP_BOILER; i++){
-            this.boilerBtn[i].value = boilerplate[i];
+        /* 넘어오지 않은 옵션 항목은 기본 옵션 항목들의 값으로 채워진다. */
+        Object.keys(this.defaultProp).forEach(keyName => {
+            properties[keyName] = properties[keyName] || this.defaultProp[keyName];
+        });
+
+        console.log(properties);
+
+        this.callback = properties.callback;
+        const LOOP_BOILER  = properties.boilerplate.length > 31 ? 32 : properties.boilerplate.length;
+
+        for(let i = 0; i < LOOP_BOILER; i++){
+            this.boilerBtn[i].value = properties.boilerplate[i] || "";
         }
 
         this.targetField = document.getElementById(elementId);
@@ -226,31 +271,44 @@ class VKeyboard {
         }
 
         this.editableField.innerHTML = targetValue;
-        document.getElementById("VKEY_field_subject").innerHTML = subject;
-        document.getElementById("VKEY_VKEYMAIN").style.visibility = "visible";
-        this.keyboardBundle[0].style.visibility = "visible";
-        this.boilerList[0].style.visibility = "visible";
+        document.getElementById("VKEY_field_subject").innerHTML = properties.subject;
+
+        if(properties.hideKr) {
+            this.changeKeyboardBtn[0].style.display = "none";
+
+        }
+        if(properties.hideEngUp) {
+            this.changeKeyboardBtn[1].style.display = "none";
+
+        }
+        if(properties.hideEngLow) {
+            this.changeKeyboardBtn[2].style.display = "none";
+
+        }
+        if(properties.hideSpecial) {
+            this.changeKeyboardBtn[3].style.display = "none";
+            this.changeKeyboardBtn[4].style.display = "none";
+        }
+
+        for(let i = 0; i < this.changeKeyboardBtn.length; i++) {
+            if(this.changeKeyboardBtn[i].style.display !== "none") {
+                this.keyboardBundle[i].style.display = "block";
+                break;
+            }
+        }
+
+        document.getElementById("VKEY_VKEYMAIN").style.display = "block";
+
+        this.boilerList[0].style.display = "block";
         this.focusWithCaret();
         this.editableField.scrollLeft = 99999;
 
     }
 
-    showKeyPad(elementId, subject = "기본제목", callback = function (){}) {
-        this.callback = callback;
-        this.targetField = document.getElementById(elementId);
-        let targetValue = this.targetField.value;
-
-        this.keypadBtn = document.getElementsByClassName("VKEY_btn_normal");
-        for (let i = 0; i < this.keypadBtn.length; i++){
-            this.keypadBtn[i].addEventListener("click", () => {
-                this.pushKeypadBtn(this.keypadBtn[i].value);
-            });
-        }
-    }
 
 
     /* 디스플레이에 담을 값을 인수와 함께 넘긴다. */
-    pushNormalBtn(INPUT_CHAR){
+    pushNormalBtn(INPUT_CHAR) {
 
         /* 입력값이 한글의 자음이나 모음인 경우 한글 처리 과정에 들어가고, 아닐 경우 그대로 입력된다. */
         if(INPUT_CHAR.charCodeAt(0) > 12592 && INPUT_CHAR.charCodeAt(0) < 12644){
@@ -261,9 +319,7 @@ class VKeyboard {
         }else{
             this.addCharToTargetField(INPUT_CHAR);
         }
-
     }
-
 
     pushBoilerBtn(INPUT_SENTENCE) {
         const INPUT_LENGTH = INPUT_SENTENCE.length;
@@ -758,39 +814,39 @@ class VKeyboard {
 
 
     changeKeyboard(typeNo){
-        for (let i=0; i<5; i++) {
-            this.keyboardBundle[i].style.visibility = "hidden";
+        for(let i=0; i<5; i++) {
+            this.keyboardBundle[i].style.display = "none";
         }
-        this.keyboardBundle[typeNo].style.visibility = "visible";
+        this.keyboardBundle[typeNo].style.display = "block";
     }
 
     changeBoilerplate(typeNo) {
-        for (let i=0; i<4; i++) {
-            this.boilerList[i].style.visibility = "hidden";
+        for(let i=0; i<4; i++) {
+            this.boilerList[i].style.display = "none";
         }
-        this.boilerList[typeNo].style.visibility = "visible";
+        this.boilerList[typeNo].style.display = "block";
     }
 
     cancelEdit() {
-        document.getElementById("VKEY_VKEYMAIN").style.visibility = "hidden";
-        for (let i=0; i<4; i++) {
-            this.boilerList[i].style.visibility = "hidden";
-            this.keyboardBundle[i].style.visibility = "hidden";
+        document.getElementById("VKEY_VKEYMAIN").style.display = "none";
+        for(let i=0; i<4; i++) {
+            this.boilerList[i].style.display = "none";
+            this.keyboardBundle[i].style.display = "none";
         }
-        this.keyboardBundle[4].style.visibility = "hidden";
+        this.keyboardBundle[4].style.display = "none";
         this.clearInputField();
     }
 
     completeEdit() {
         this.targetField.value = this.exceptionSymbolEncryption(this.editableField.innerHTML, false)[0];
-        document.getElementById("VKEY_VKEYMAIN").style.visibility = "hidden";
-        for (let i=0; i<4; i++) {
-            this.boilerList[i].style.visibility = "hidden";
-            this.keyboardBundle[i].style.visibility = "hidden";
+        document.getElementById("VKEY_VKEYMAIN").style.display = "none";
+        for(let i=0; i<4; i++) {
+            this.boilerList[i].style.display = "none";
+            this.keyboardBundle[i].style.display = "none";
         }
-        this.keyboardBundle[4].style.visibility = "hidden";
+        this.keyboardBundle[4].style.display = "none";
         this.clearInputField();
-        this.callback();
+        this.callback(this.targetField.value);
     }
 
     /* 입력필드 전체를 encryptOrDecrypt 예외문자 html에 맞게 변환 true, 다시 일반적인 텍스트의 문자로 변환 false */
@@ -813,6 +869,40 @@ class VKeyboard {
     scrollCenter () {
         this.editableField.scrollLeft = this.measurePixel(this.editableField.innerHTML.substr(0, this.lastActualCaretPos[0]), this.editableFieldWidth);
     }
+
+
+
+    /*   ====================== 키패드 펑션들 =====================
+    * 목표 필드 입력에 있어 키패드를 사용한다.
+    * elementId : 목표필드의 id, callback : 키패드 입력 완료 후 실행할 펑션
+    * */
+    showKeypad(elementId, callback = function (){}) {
+        this.keypadCallback = callback;
+        this.targetNumberField = document.getElementById(elementId);
+        let targetValue = this.targetNumberField.value;
+        this.keypadField.value = parseInt(targetValue.replace(/[^0-9]/g, "")).toLocaleString("ko-JR");
+        document.getElementById("VKEY_KEYPAD").style.display = "block";
+    }
+
+    /* 키패드에서 받은 값을 바로 키패드용 필드에 입력한다. */
+    pushKeypadBtn(INPUT_NUM, isBackspace = false) {
+        let resultValue = parseInt((this.keypadField.value + "" + INPUT_NUM).replace(/[^0-9]/g, ""));
+        resultValue = isBackspace ? Math.floor(resultValue / 10) : resultValue;
+        resultValue = resultValue.toLocaleString();
+        this.keypadField.value = resultValue;
+    }
+
+    pushKeypadCompelete() {
+        this.targetNumberField.value =this.keypadField.value.replace(/[^0-9]/g, "");
+        this.pushKeypadClose();
+        this.keypadCallback(this.targetNumberField.value);
+    }
+
+    pushKeypadClose() {
+        document.getElementById("VKEY_KEYPAD").style.display = "none";
+        this.keypadField.value = "";
+    }
+
 
     htmlSet(){
         const html = `
@@ -1095,9 +1185,9 @@ class VKeyboard {
             </div>
         </div>
         
-        <div id="VKEY_KEYPAD">
+        <div id="VKEY_KEYPAD" style="display:none">
             <div>
-                <input type="number" id="VKEY_keypad_field" readonly>
+                <input type="text" id="VKEY_keypad_field" readonly>
             </div>
             <div>
                 <button type="button" class="VKEY_keypad_btn" value="1">1</button>

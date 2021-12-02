@@ -8,12 +8,17 @@ $(function() {
         setDataIntoGrid(i, gridCreateUrl[i]);
     }
 
+    /* 가상키보드의 사용 선언 */
+    vkey = new VKeyboard();
+
     /* 0번그리드 내의 셀 클릭시 이벤트 */
     AUIGrid.bind(gridId[0], "cellClick", function (e) {
         console.log(e.item); // 이밴트 콜백으로 불러와진 객체의, 클릭한 대상 row 키(파라메터)와 값들을 보여준다.
     });
 });
 
+/* 가상키보드 사용을 위해 생성될 가상키보드 클래스가 담길곳 */
+let vkey;
 
 /* 그리드 생성과 운영에 관한 중요 변수들. grid라는 이름으로 시작하도록 통일했다. */
 let gridId = [];
