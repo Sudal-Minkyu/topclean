@@ -4,6 +4,7 @@ import lombok.*;
 import org.hibernate.type.BlobType;
 
 import javax.persistence.*;
+import java.sql.Blob;
 import java.time.LocalDateTime;
 
 /**
@@ -63,8 +64,8 @@ public class Customer {
     @Column(name="bc_agree_type")
     private String bcAgreeType; // 동의타입 (온라인 : 1, 서면 : 2)
 
-    @Column(name="bc_sign_image")
-    private BlobType bcSignImage; // 동의 사인이미지 Blob객체사용
+    @Column(length = 100000, name="bc_sign_image")
+    private String bcSignImage; // 동의 사인이미지 Blob객체사용
 
     @Column(name="bc_remark")
     private String bcRemark; // 특이사항

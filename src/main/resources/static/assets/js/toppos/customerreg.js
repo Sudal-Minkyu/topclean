@@ -44,15 +44,51 @@ function saveRegister() {
     if(!CommonUI.regularValidator(birthday, "dateExist") && birthday !== "") {
         alertCaution("존재할 수 없는 생년월일 입니다.", 1);
         return false;
-    };
+    }
 
     formData.set("bcHp", formData.get("bcHp").replace(/[^0-9]/g, ""));
     formData.append("bcBirthday", birthday);
+
+    if($("#bcAgreeType").val()==="1"){
+        console.log("온라인 입니다.");
+        const $resultmsg = $("#resultmsg");
+        if($resultmsg.text()==="결과메세지"){
+            alertCaution("사인을 해주세요",1)
+        }else{
+            formData.append("bcSignImage", $("#bcSignImage".val()));
+        }
+    }else{
+        console.log("서면 입니다.");
+    }
+
     const url = "/api/user/customerSave";
     CommonUI.ajax(url, "POST", formData, function (){
        alertSuccess("고객 데이터 저장 성공");
     });
 
+}
+
+// base64를 Blob로 변환하는 함수
+function b64toBlob(b64Data, contentType, sliceSize) {
+    if( b64Data === "" || b64Data === undefined ) return null;
+    contentType = contentType || '';
+    sliceSize = sliceSize || 512;
+
+    var byteCharacters = atob(b64Data);
+
+    var byteArrays = [];
+
+    for (var offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+        var slice = byteCharacters.slice(offset, offset + sliceSize);
+        var byteNumbers = new Array(slice.length);
+        for (var i = 0; i < slice.length; i++) {
+            byteNumbers[i] = slice.charCodeAt(i);
+        }
+        var byteArray = new Uint8Array(byteNumbers);
+        byteArrays.push(byteArray);
+    }
+
+    return new Blob(byteArrays, {type: contentType});
 }
 
 /* 생년을 바꿀 때 나이대 자동계산 */
