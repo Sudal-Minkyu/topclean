@@ -166,9 +166,13 @@ gridProp[2] = {
 
 
 /* 인수로 온 배열의 설정에 따라 빈 그리드를 생성 */
-function createGrids() {
-    for (const i in gridColumnLayout) {
-        gridId[i] = AUIGrid.create(gridTargetDiv[i], gridColumnLayout[i], gridProp[i]);
+function createGrids(type = false) {
+    if(type) {
+        for (const i in gridColumnLayout) {
+            gridId[i] = AUIGrid.create(gridTargetDiv[i], gridColumnLayout[i], gridProp[i]);
+        }
+    }else{
+        gridId[0] = AUIGrid.create(gridTargetDiv[0], gridColumnLayout[0], gridProp[0]);
     }
 }
 
