@@ -4,7 +4,7 @@ $(function() {
     createGrids();
 
     /* 그리드에 데이터를 집어넣음 반복문은 그리드숫자만큼(혹은 목표그리드 범위만큼) 돌 수 있도록 한다. */
-    for(let i=0; i<0; i++) {
+    for(let i=0; i<1; i++) {
         setDataIntoGrid(i, gridCreateUrl[i]);
     }
 
@@ -174,8 +174,31 @@ function createGrids() {
 
 /* ajax 통신을 통해 그리드 데이터를 받아와 뿌린다. */
 function setDataIntoGrid(numOfGrid, url) {
+
+    if(numOfGrid === 0) {
+        let item = [];
+        for (let i = 1; i <= 20; i++) {
+            item.push({
+                fdTag : "ABC-00"+i,
+                biName : "상품상품"+i,
+                sumProcess : "제다추수",
+                fdNormalAmt : i * 1000,
+                fdRepairAmt : (21-i) * 500,
+                fdAdd1Amt : i * 500,
+                fdDiscountAmt : i * 200,
+                fdQty : 21-i,
+                fdColor : "색상",
+                fdRemark : "특이사항특이사항",
+                frEstimateDt : "18450815",
+            });
+        }
+        AUIGrid.setGridData(gridId[0], item);
+    }
+
+    /*
     CommonUI.ajax(url, "GET", false, function (req) {
         gridData[numOfGrid] = req.sendData.gridListData;
         AUIGrid.setGridData(gridId[numOfGrid], gridData[numOfGrid]);
     });
+    */
 }
