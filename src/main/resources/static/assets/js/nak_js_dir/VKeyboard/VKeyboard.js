@@ -1094,6 +1094,7 @@ class VKeyboard {
                 </div>
             </div>
         </div>
+        
         <div id="VKEY_KEYPAD">
             <div>
                 <input type="number" id="VKEY_keypad_field" readonly>
@@ -1110,7 +1111,11 @@ class VKeyboard {
                 <button type="button" class="VKEY_keypad_btn" value="9">9</button>
                 <button type="button" class="VKEY_keypad_btn" value="00">00</button>
                 <button type="button" class="VKEY_keypad_btn" value="0">0</button>
-                <button type="button" class="VKEY_keypad_btn" value="←">←</button>
+                <button type="button" id="VKEY_keypad_btn_backspace">←</button>
+            </div>
+            <div>
+                <button type="button" id="VKEY_keypad_btn_complete">적용</button>
+                <button type="button" id="VKEY_keypad_btn_cancel">취소</button>
             </div>
         </div>
         `;

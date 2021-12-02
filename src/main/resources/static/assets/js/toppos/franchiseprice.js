@@ -8,7 +8,7 @@ $(function() {
         setDataIntoGrid(i, gridCreateUrl[i]);
     }
 
-    /* 1번그리드 내의 셀 더블 클릭시 이벤트 */
+    /* 1번그리드 내의 셀 클릭시 이벤트 */
     AUIGrid.bind(gridId[0], "cellClick", function (e) {
         AUIGrid.clearGridData(gridId[1]);
         selectedFrCode = e.item.frCode;
@@ -122,7 +122,10 @@ gridColumnLayout[1] = [
         headerText: "명품여부",
         renderer: {
             type: "DropDownListRenderer",
-            list: ["Y", "N"]
+            list: ["Y", "N"],
+            disabledFunction: function(rowIndex, columnIndex, value, item, dataField) {
+                return !AUIGrid.isAddedById(gridId[1], item._$uid);
+            }
         },
     }, {
         dataField: "bfPrice",
@@ -282,10 +285,15 @@ function deletePriceRow() {
 function savePriceList() {
     // 추가된 행 아이템들(배열)
     const addedRowItems = dataRefinary(AUIGrid.getAddedRowItems(gridTargetDiv[1]));
-
+    let proceed = true;
     addedRowItems.forEach(element => {
         if(element["biItemcode"] === undefined) {
             alertCaution("상품을 선택해 주세요.", 1);
+            proceed = false;
+            return false;
+        }else if(element["bfPrice"] === undefined) {
+            alertCaution("적용금액을 입력해 주세요.", 1);
+            proceed = false;
             return false;
         }
     });
@@ -303,17 +311,18 @@ function savePriceList() {
         "delete" : deletedRowItems
     };
 
-    const jsonString = JSON.stringify(data);
-    // console.log(data);
-    CommonUI.ajaxjson(gridSaveUrl[0], jsonString, function () {
-        AUIGrid.clearGridData(gridId[1]);
-        setDataIntoGrid(1, gridCreateUrl[1], {frCode : selectedFrCode});
-        alertSuccess("특정가격 적용품목 등록이 완료되었습니다.");
-    });
+    if(proceed) {
+        const jsonString = JSON.stringify(data);
+        CommonUI.ajaxjson(gridSaveUrl[0], jsonString, function () {
+            AUIGrid.clearGridData(gridId[1]);
+            setDataIntoGrid(1, gridCreateUrl[1], {frCode: selectedFrCode});
+            alertSuccess("등록이 완료되었습니다");
+        });
+    }
 
 }
 
-/* API 통신에 필요없는 요소들을 제거 */
+/* API 통신에 필요한 요소는 추가하고, 필요없는 요소들은 제거 */
 function dataRefinary(itemArray) {
     itemArray.forEach(element => {
         element["frCode"] = selectedFrCode;
