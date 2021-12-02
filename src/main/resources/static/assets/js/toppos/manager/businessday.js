@@ -198,7 +198,7 @@ function gridSave() {
 
     const url = "/api/manager/calendarSave";
     CommonUI.ajaxjson(url, sJson,function (){
-
+        alertSuccess("영업일 저장 완료");
     });
 
 
