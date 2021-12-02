@@ -32,37 +32,6 @@
 <th:block layout:fragment="script">
 	<script src="/assets/js/toppos/user/customer/customerreg.js"></script>
 	<script type="text/javascript">
-
-		$(function() {
-
-		});
-
-		function requestSign(){
-			const protocol = location.protocol;
-			const hostName = location.hostname;
-			const port = location.port
-
-			cAPI.approvalCall(protocol +'//'+hostName+ ':' + port + '/user/sign');
-
-			// $("#resultmsg").text(": 승인중 메세지- 고객이 서명중입니다. ------전체화면으로 가리기 ")
-
-			const maskHeight = $(document).height();
-			const maskWidth = $(window).width();
-
-			//마스크의 높이와 너비를 화면 것으로 만들어 전체 화면을 채운다.
-			$('#windowMask').css({'width':maskWidth,'height':maskHeight}).show();
-			$('#mask').show();
-		}
-
-		function resultFunction(msg){
-			$("#windowMask").hide();
-			$("#mask").hide();
-			// $("#resultmsg").text(msg);
-			$("#bcSignImage").val(msg);
-			document.getElementById('signImage').src = msg;
-			document.getElementById('signImage').style.border = "2px solid black"
-		}
-
 	</script>
 </th:block>
 
@@ -221,12 +190,12 @@
 						<h4 class="customer__form-title">동의타입</h4>
 						<div class="customer__form-input">
 							<div class="c-select">
-								<select id="bcAgreeType" name="bcAgreeType">
+								<select id="bcAgreeType" name="bcAgreeType" onchange="onAgreeTypeChange(this.value)">
 									<option value="1">온라인</option>
 									<option value="2">서면</option>
 								</select>
 							</div>							
-							<button class="c-button c-button--small c-button--darksolid" type="button" onclick="requestSign()">서명요청</button>
+							<button id="requestSign" class="c-button c-button--small c-button--darksolid" type="button" onclick="requestSign()">서명요청</button>
 							<input type="hidden" id="bcSignImage" />
 							<img id="signImage" />
 						</div>
