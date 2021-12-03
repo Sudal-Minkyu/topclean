@@ -1,11 +1,10 @@
 package com.broadwave.toppos.User;
 
-import com.broadwave.toppos.User.Customer.Customer;
-import com.broadwave.toppos.User.Customer.CustomerRepository;
-import com.broadwave.toppos.User.Customer.CustomerRepositoryCustom;
+import com.broadwave.toppos.User.Customer.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -29,6 +28,16 @@ public class UserService {
     // 핸드폰 번호로 고객 조회
     public Optional<Customer> findByBcHp(String bcHp) {
         return customerRepository.findByBcHp(bcHp);
+    }
+
+    // 로그인한 가맹점의 대한 고객정보 조회
+    public CustomerInfoDto findByCustomerInfo(String frCode, String searchType, String searchString) {
+        return customerRepositoryCustom.findByCustomerInfo(frCode, searchType, searchString);
+    }
+
+    // 로그인한 가맹점의 고객리스트 호출
+    public List<CustomerListDto> findByCustomerList(String frCode, String searchType, String searchString) {
+        return customerRepositoryCustom.findByCustomerList(frCode, searchType, searchString);
     }
 
 }

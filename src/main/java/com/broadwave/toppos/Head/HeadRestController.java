@@ -151,7 +151,7 @@ public class HeadRestController {
 
         Optional<Franchise> optionalFranohise  =  headService.findByFrCode(franchiseMapperDto.getFrCode());
         if( optionalFranohise.isPresent()){
-//            log.info("널이 아닙니다 : 업데이트");
+            log.info("널이 아닙니다 : 업데이트");
             franchise.setId(optionalFranohise.get().getId());
 
             franchise.setBrId(optionalFranohise.get().getBrId());
@@ -163,7 +163,7 @@ public class HeadRestController {
             franchise.setInsert_id(optionalFranohise.get().getInsert_id());
             franchise.setInsertDateTime(optionalFranohise.get().getInsertDateTime());
         }else{
-//            log.info("널입니다. : 신규생성");
+            log.info("널입니다. : 신규생성");
 
             franchise.setBrId(null);
             franchise.setBrCode(null);
@@ -172,8 +172,8 @@ public class HeadRestController {
             franchise.setInsertDateTime(LocalDateTime.now());
         }
 
-//        Franchise franchiseSave =  headService.franchiseSave(franchise);
-//        log.info("가맹점 저장 성공 : id '" + franchiseSave.getFrCode() + "'");
+        Franchise franchiseSave =  headService.franchiseSave(franchise);
+        log.info("가맹점 저장 성공 : id '" + franchiseSave.getFrCode() + "'");
         return ResponseEntity.ok(res.success());
     }
 
