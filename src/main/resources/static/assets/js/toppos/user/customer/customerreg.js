@@ -108,6 +108,15 @@ function onPhonenumChange (element) {
     element.value = CommonUI.onPhoneNumChange(phoneNumber);
 }
 
+function onAgreeTypeChange(type) {
+    const $requestSign = $("#requestSign");
+    if(type === "1") {
+        $requestSign.attr("disabled", false);
+    }else{
+        $requestSign.attr("disabled", true);
+    }
+}
+
 /* 회원등록을 취소(페이지 이동) */
 function cancelRegister() {
 
@@ -115,5 +124,27 @@ function cancelRegister() {
 
 /* 서명을 요청할 때 고객측의 모니터에 서명하도록 뜬다. */
 function requestSign() {
+    const protocol = location.protocol;
+    const hostName = location.hostname;
+    const port = location.port
 
+    cAPI.approvalCall(protocol +'//'+hostName+ ':' + port + '/user/sign');
+
+    // $("#resultmsg").text(": 승인중 메세지- 고객이 서명중입니다. ------전체화면으로 가리기 ")
+
+    const maskHeight = $(document).height();
+    const maskWidth = $(window).width();
+
+    //마스크의 높이와 너비를 화면 것으로 만들어 전체 화면을 채운다.
+    $('#windowMask').css({'width':maskWidth,'height':maskHeight}).show();
+    $('#mask').show();
+}
+
+function resultFunction(msg){
+    $("#windowMask").hide();
+    $("#mask").hide();
+    // $("#resultmsg").text(msg);
+    $("#bcSignImage").val(msg);
+    document.getElementById('signImage').src = msg;
+    document.getElementById('signImage').style.border = "2px solid black"
 }

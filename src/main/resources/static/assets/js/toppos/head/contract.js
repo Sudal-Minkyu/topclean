@@ -216,7 +216,7 @@ $(function () {
             const resultData = req.sendData.gridListData;
             AUIGrid.clearGridData(gridId[3]);
             AUIGrid.setGridData(gridId[3], resultData);
-        })
+        });
     });
 
     /* 3번그리드 내의 아이템 클릭시 필드에 적용 */

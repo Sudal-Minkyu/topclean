@@ -429,12 +429,17 @@ function gridSave(numOfGrid) {
                         AUIGrid.clearGridData(gridId[2]);
                         setDataIntoGrid(2, gridCreateUrl[2], currentMedium);
                     }
+                    alertSuccess("대분류 저장 완료");
                     break;
                 case 1 :
                     if(currentMedium !== undefined) {
                         AUIGrid.clearGridData(gridId[2]);
                         setDataIntoGrid(2, gridCreateUrl[2], currentMedium);
                     }
+                    alertSuccess("중분류 저장 완료");
+                    break;
+                case 2 :
+                    alertSuccess("최종상품 저장 완료");
                     break;
             }
         });
