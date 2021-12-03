@@ -41,7 +41,8 @@ public class CustomerRepositoryCustomImpl extends QuerydslRepositorySupport impl
                         customer.bcSignImage,
                         customer.bcRemark,
                         customer.bcQuitYn,
-                        customer.bcQuitDate
+                        customer.bcQuitDate,
+                        customer.insertDateTime
                 ));
 
         query.orderBy(customer.id.desc());
