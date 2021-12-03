@@ -11,17 +11,221 @@
 
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
-
+	<script src="/assets/js/toppos/user/receipt/receiptreg.js"></script>
 	<script type="text/javascript">
+		function toggleBottom() {
+		   var element = document.getElementsByClassName("regist__bottom");
+		   element[0].classList.toggle("active");
+		   
+		   var grid = document.getElementById("grid_requestList");
+		   grid.classList.toggle("active");
+		   
+		   AUIGrid.resize(gridId[0]);
+		}
 
+	
+		
 		$(function() {
-
+			
 		});
 
 	</script>
 </th:block>
 
 <div layout:fragment="content" class="content">
+	<div class="regist">
+		<!-- 상단 통합검색 및 상태 -->
+		<div class="regist__header">
+			<!-- 검색 -->
+			<div class="search">
+				<div class="c-select">
+					<select id="searchType">
+	                    <option value="0">통합검색</option>
+	                    <option value="1">고객명</option>
+	                    <option value="2">전화번호</option>
+	                    <option value="3">주소</option>
+	                </select>
+				</div>
+				
+				<div class="c-search">
+					<div class="c-search__input">
+						<input id="searchCustomerField" type="text" placeholder="검색어를 입력하세요" />
+                		<button class="c-search__key" type="button" onclick="">키보드</button>
+					</div>
+					<button class="c-search__bth" type="button" onclick="onSearchCustomer()">검색</button>
+				</div>
+			</div>
+			
+			<!-- 고객정보 -->
+			<div class="client">
+				<div class="client__rating">
+					<!-- 고객뱃지  -->
+					<!-- 맞는 등급 뱃지 .active 주기 -->
+					<span class="client__badge">N</span>
+					<span class="client__badge">V</span>
+					<span class="client__badge client__badge--vvip active">V</span>
+					<!-- #bcGrade 등급 넣어주기 -->
+					<span id="bcGrade">VIP</span>
+				</div>
+				<div class="client__name"><span id="bcName">홍길동님</span></div>
+				<div class="client__propensity"><span id="bcValuation" class="propensity__star propensity__star--2"></span></div>
+				<div class="client__address"><span id="bcAddress">푸르지오 215동</span></div>
+				<div class="client__phone"><span id="bcHp">010-1234-5678</span></div>
+			</div>
+			
+			<!-- 금액 및 수량 -->
+			<div class="regist__info">
+				<ul class="regist__amount">
+					<li>
+						<h4>수량</h4>
+						<p><span id="totFdQty">999</span></p>
+					</li>
+					<li>
+						<h4>정상금액</h4>
+						<p><span id="totFdNormalAmount">999,999</span><span class="won">원</span></p>
+						
+	                	
+					</li>
+					<li>
+						<h4>할인금액</h4>
+						<p><span id="totFdDiscountAmount">999,999</span><span class="won">원</span></p>
+					</li>
+				</ul>
+				<div class="regist__sum">
+					<h4>합계금액</h4>
+					<p><span id="totFdRequestAmount">9,999,999</span><span class="won">원</span></p>
+				</div>
+			</div>
+			
+			<!-- 고객정보2 -->
+			<ul class="client-info">
+				<li>
+					<h4>미수금</h4>
+					<p><span class="client-info__num" id="미수금총액">25,000</span><span class="won">원</span></p>
+				</li>
+				<li>
+					<h4>적립금</h4>
+					<p><span class="client-info__num" id="fsAmt">25000</span><span class="won">원</span></p>
+				</li>
+				<li>
+					<h4>특이사항</h4>
+					<p><span id="bcRemark">XXXXXXXX</span></p>
+				</li>
+				<li>
+					<h4>최근방문일</h4>
+					<p><span class="client-info__num" id="최근방문일">2021-11-10</span></p>
+				</li>
+			</ul>
+		</div>
+		
+		<div class="regist__content">
+			<div class="regist__tag">
+				<div class="regist__tag-title"><h3>다음택번호</h3></div>
+				<div class="regist__tag-input">
+					<div class="c-text">
+						<input id="fdTag" type="text" />
+	                	<button type="button" onclick="">키보드</button>
+					</div>
+				</div>
+				<div class="regist__tag-button">
+					<button class="c-button c-button--solid c-button--small" type="button" onclick="onSaveFdTag()">택번호 저장</button>
+				</div>
+			</div>
+			
+			<div class="regist__grid" id="gridarea">
+				<!-- 중앙그리드 영역-->
+				<div id="grid_requestList"></div>
+			</div>
+			
+			<div class="regist__bottom" id="registBottom">
+				<div class="regist__bottom-console">
+					<button class="regist__bottom-btn" onclick="toggleBottom()">카테고리 접기/펴기</button>
+					<div class="regist__bottom-toggle">
+						<p>상품</p>
+						<div class="c-toggle c-toggle--vertical">
+							<input type="checkbox" id="toggle" checked />
+							<label for="toggle"></label>
+						</div>
+						<p>즐겨<br />찾기</p>
+					</div>
+				</div>
+				<!-- 대분류 -->
+				<div class="regist__category">
+					<ul>
+						<li>
+							<button type="button" class="regist__category-btn bgItemGroupcode" value=""><img src="/assets/images/category/icon__top.svg" alt="상의" /><span>상의</span></button>
+						</li>
+						<li>
+							<button type="button" class="regist__category-btn bgItemGroupcode" value=""><img src="/assets/images/category/icon__bottom.svg" alt="하의" /><span>하의</span></button>
+						</li>
+						<li>
+							<button type="button" class="regist__category-btn bgItemGroupcode" value=""><img src="/assets/images/category/icon__shose.svg" alt="운동화" /><span>운동화</span></button>
+						</li>
+						<li>
+							<button type="button" class="regist__category-btn bgItemGroupcode" value=""><img src="/assets/images/category/icon__jumper.svg" alt="점퍼" /><span>점퍼</span></button>
+						</li>
+						<li>
+							<button type="button" class="regist__category-btn bgItemGroupcode" value=""><img src="/assets/images/category/icon__shirt.svg" alt="셔츠" /><span>셔츠</span></button>
+						</li>
+						<li>
+							<button type="button" class="regist__category-btn bgItemGroupcode" value=""><img src="/assets/images/category/icon__dress.svg" alt="원피스" /><span>원피스</span></button>
+						</li>
+						<li>
+							<button type="button" class="regist__category-btn bgItemGroupcode" value=""><img src="/assets/images/category/icon__blouse.svg" alt="블라우스" /><span>블라우스</span></button>
+						</li>
+						<li>
+							<button type="button" class="regist__category-btn bgItemGroupcode" value=""><img src="/assets/images/category/icon__vest.svg" alt="조끼" /><span>조끼</span></button>
+						</li>
+						<li>
+							<button type="button" class="regist__category-btn bgItemGroupcode" value=""><img src="/assets/images/category/icon__coat.svg" alt="코트" /><span>코트</span></button>
+						</li>
+						<li>
+							<button type="button" class="regist__category-btn bgItemGroupcode" value=""><img src="/assets/images/category/icon__sweater.svg" alt="스웨터" /><span>스웨터</span></button>
+						</li>
+						<li>
+							<button type="button" class="regist__category-btn bgItemGroupcode" value=""><img src="/assets/images/category/icon__uniform.svg" alt="교복" /><span>교복</span></button>
+						</li>
+						<li>
+							<button type="button" class="regist__category-btn bgItemGroupcode" value=""><img src="/assets/images/category/icon__hanbok.svg" alt="한복" /><span>한복</span></button>
+						</li>
+						<li>
+							<button type="button" class="regist__category-btn bgItemGroupcode" value=""><img src="/assets/images/category/icon__bed.svg" alt="침구·커튼" /><span>침구·커튼</span></button>
+						</li>
+						<li>
+							<button type="button" class="regist__category-btn bgItemGroupcode" value=""><img src="/assets/images/category/icon__hat.svg" alt="모자·가방·인형" /><span>모자·가방·인형</span></button>
+						</li>
+						<li>
+							<button type="button" class="regist__category-btn bgItemGroupcode" value=""><img src="/assets/images/category/icon__iron.svg" alt="가죽·특수세탁" /><span>가죽·특수세탁</span></button>
+						</li>
+						<li>
+							<button type="button" class="regist__category-btn bgItemGroupcode" value=""><img src="/assets/images/category/icon__stroller.svg" alt="유모차·골프가방" /><span>유모차·골프가방</span></button>
+						</li>
+						<li>
+							<button type="button" class="regist__category-btn bgItemGroupcode" value=""><img src="/assets/images/category/icon__etc.svg" alt="털·부속품" /><span>털·부속품</span></button>
+						</li>
+						<li>
+							<button type="button" class="regist__category-btn bgItemGroupcode" value=""><img src="/assets/images/category/icon__handwash.svg" alt="직접세탁" /><span>직접세탁</span></button>
+						</li>
+					</ul>
+				</div>
+				
+				<div class="regist__console">
+					<ul>
+						<li><button class="c-button c-button--darksolid c-button--small" type="button" onclick="onSaveTemp()">임시저장</button></li>
+						<li><button class="c-button c-button--small" type="button" onclick="onReadTemp()">임시저장내역</button></li>
+					</ul>
+					<ul>
+						<li><button class="c-button c-button--solid" type="button" onclick="onPay()">결제하기</button></li>
+						<li><button class="c-button" type="button" onclick="onRepeatRequest()">반복접수</button></li>
+					</ul>
+				</div>
+			</div>	
+		</div>
+	</div>
+	
+	
+	
+	
 
 	<div class="pop">
 		<div class="pop__box">
