@@ -26,11 +26,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
 
-//    @Bean
-//    public PasswordEncoder passwordEncoder() {
-//        return new BCryptPasswordEncoder();
-//    }
-
     @Override
     public void configure(WebSecurity web) {
         web.ignoring()
@@ -43,7 +38,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .httpBasic().disable() // rest api 만을 고려하여 기본 설정은 해제하겠습니다.
                 .csrf().disable() // csrf 보안 토큰 disable처리.
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // 토큰 기반 인증이므로 세션 역시 사용하지 않습니다.
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // 토큰 기반 인증이므로 세션은 사용하지 않음
                 .and()
 
                 // exception handling 할 때 만든 클래스를 추가

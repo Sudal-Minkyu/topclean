@@ -2,6 +2,8 @@ package com.broadwave.toppos.Jwt.token;
 
 import com.broadwave.toppos.Account.Account;
 import com.broadwave.toppos.Account.AccountService;
+import com.broadwave.toppos.Head.Franohise.FranchisInfoDto;
+import com.broadwave.toppos.Head.HeadService;
 import com.broadwave.toppos.Jwt.dto.TokenDto;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
@@ -28,18 +30,22 @@ import java.util.stream.Collectors;
 @Component
 public class TokenProvider {
 
-    @Autowired
-    AccountService accountService;
+    private final AccountService accountService;
+    private final HeadService headService;
+
     private static final String AUTHORITIES_KEY = "auth";
     private static final String BEARER_TYPE = "bearer";
-    private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24;            // 1일
-    private static final long REFRESH_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24 * 7;  // 7일
+    private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 12; // 12시간으로 변경 12/03  //  1000 * 60 * 60 * 24;  24시간
+    private static final long REFRESH_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24 * 7; // 7일
 
     private final Key key;
 
-    public TokenProvider(@Value("${spring.jwt.secret}") String secretKey) {
+    @Autowired
+    public TokenProvider(@Value("${spring.jwt.secret}") String secretKey, AccountService accountService, HeadService headService) {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
+        this.accountService = accountService;
+        this.headService = headService;
     }
 
     public TokenDto generateTokenDto(Authentication authentication) {
@@ -48,20 +54,22 @@ public class TokenProvider {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
-//        log.info("사용자 아이디 : "+authentication.getName());
-//        log.info("권한 : "+authorities);
-
         Optional<Account> optionalAccount = accountService.findByUserid(authentication.getName());
 
         long now = (new Date()).getTime();
 
+        FranchisInfoDto franchisInfoDto = new FranchisInfoDto();
         // Access Token 생성
         Date accessTokenExpiresIn = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
         String accessToken = null;
-        if(optionalAccount.isPresent()){
+        if(optionalAccount.isPresent()) {
+            if(!optionalAccount.get().getFrCode().equals("not")){
+                franchisInfoDto = headService.findByFranchiseInfo(optionalAccount.get().getFrCode());
+            }
             accessToken = Jwts.builder()
-                    .claim("frCode",optionalAccount.get().getFrCode())
-                    .claim("brCode",optionalAccount.get().getBrCode())
+                    .claim("frCode", optionalAccount.get().getFrCode())
+                    .claim("brCode", optionalAccount.get().getBrCode())
+                    .claim("frbrCode", franchisInfoDto.getBrCode())
                     .setSubject(authentication.getName())       // payload "sub": "name"
                     .claim(AUTHORITIES_KEY, authorities)        // payload "auth": "ROLE_USER"
                     .setExpiration(accessTokenExpiresIn)        // payload "exp": 1516239022 (예시)
