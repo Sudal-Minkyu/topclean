@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate ="~{layout/default}">
+
+<!-- 사용자 CSS 추가 -->
+<th:block layout:fragment="css">
+
+</th:block>
+
+<!-- 사용자 스크립트 추가 -->
+<th:block layout:fragment="script">
+    <script src="/assets/js/toppos/user/customer/customerlist.js"></script>
+    <script type="text/javascript">
+
+        $(function() {
+
+        });
+
+    </script>
+</th:block>
+
+<div layout:fragment="content" class="content padding-zero content--main">
+    <div class="customer">
+        <div class="customer__header">
+            <h3>고객관리</h3>
+        </div>
+    </div>
+</div>
+</html>

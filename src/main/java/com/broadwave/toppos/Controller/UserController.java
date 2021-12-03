@@ -29,8 +29,14 @@ public class UserController {
 
     // 가맹점주 고객등록 페이지
     @RequestMapping("customerreg")
-    public String userreg(){
+    public String customer_reg(){
         return "user/customer/customerreg";
+    }
+
+    // 가맹점주 고객리스트 페이지
+    @RequestMapping("customerlist")
+    public String customer_list(){
+        return "user/customer/customerlist";
     }
 
     // 가맹점주 접수등록 페이지

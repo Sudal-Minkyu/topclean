@@ -245,8 +245,6 @@ class VKeyboard {
             properties[keyName] = properties[keyName] || this.defaultProp[keyName];
         });
 
-        console.log(properties);
-
         this.callback = properties.callback;
         const LOOP_BOILER  = properties.boilerplate.length > 31 ? 32 : properties.boilerplate.length;
 
