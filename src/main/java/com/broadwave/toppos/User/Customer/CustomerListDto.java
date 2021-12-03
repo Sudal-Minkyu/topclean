@@ -32,6 +32,7 @@ public class CustomerListDto {
     private String bcRemark; // 특이사항
     private String bcQuitYn; // 탈퇴여부 (기본값:N)
     private LocalDateTime bcQuitDate; // 탈퇴일시
+    private LocalDateTime insertDateTime; // 가입일시
 
     public String getBcName() {
         return bcName;
@@ -88,6 +89,14 @@ public class CustomerListDto {
     public String getBcQuitDate() {
         if(bcQuitDate!=null){
             return bcQuitDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        }else{
+            return null;
+        }
+    }
+
+    public String getInsertDateTime() {
+        if(insertDateTime!=null){
+            return insertDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         }else{
             return null;
         }

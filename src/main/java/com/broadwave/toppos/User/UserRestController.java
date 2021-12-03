@@ -155,6 +155,7 @@ public class UserRestController {
             customerInfo.put("bcRemark", customerListDto.getBcRemark());
             customerInfo.put("bcQuitYn", customerListDto.getBcQuitYn());
             customerInfo.put("bcQuitDate", customerListDto.getBcQuitDate());
+            customerInfo.put("insertDateTime", customerListDto.getInsertDateTime());
 
 //            if(branch.getBrContractState().equals("01")){
 //                branchsetInfo.put("brContractStateValue","진행중");
