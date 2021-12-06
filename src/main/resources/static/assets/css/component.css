@@ -21,6 +21,11 @@ input[type="number"]::-webkit-inner-spin-button {
 	-moz-border-radius: 0.313rem;
 	border-radius: 0.313rem;
 }
+.c-text input[type="text"]:read-only,
+.c-text input[type="text"]:disabled {
+	background-color: #f2f2f6;
+	color: #555;
+}
 .c-text button {
 	position: absolute;
 	top: 50%;
@@ -38,6 +43,10 @@ input[type="number"]::-webkit-inner-spin-button {
 	-ms-transform: translateY(-50%);
 	-o-transform: translateY(-50%);
 	transform: translateY(-50%);
+}
+.c-text input[type="text"]:read-only + button,
+.c-text input[type="text"]:disabled + button {
+	filter: invert(76%) sepia(0%) saturate(11%) hue-rotate(357deg) brightness(90%) contrast(87%);
 }
 
 /* select */
@@ -343,332 +352,43 @@ input[type="number"]::-webkit-inner-spin-button {
 
 
 
-
-/*****************************************************/
-
-
-
-
-/* calendar */
-.c-calendar-layout {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.c-calendar-layout .c-calendar {
-    flex: 1;
-}
-.c-calendar {
-}
-.c-calendar__input {
-    float: left;
-    display: block;
-    width: calc(100% - 30px);
-    height: 30px;
-    padding: 0 10px;
-    border: 1px solid #d3d3d3;
-    border-top-left-radius: 5px;
-    border-bottom-left-radius: 5px;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-    background-color: #fff;
-    color: #222;
-    font-size: 14px;
-    transition: border-color .2s;
-    outline: none;
-}
-.c-text__input:active {
-    border-color: #50b6d4;
-}
-.c-calendar + span {
-    display: block;
-    padding: 0 10px;
-}
-.c-calendar__input + .ui-datepicker-trigger {
-    float: left;
-    display: block;
-    width: 30px;
-    height: 30px;
-    background-color: #50b6d4;
-    font-size: 14px;
-    border: 1px solid #50b6d4;
-    border-top-right-radius: 5px;
-    border-bottom-right-radius: 5px;
-    text-align: center;
-    cursor: pointer;
-}
-.c-calendar__input + .ui-datepicker-trigger img {
-    width: 100%;
-}
-
-/* functions */
-.c-function {
-    margin-top: 10px;
-}
-.c-function:before {
-    content: " ";
-    display: table;
-}
-.c-function:after {
-    content: " ";
-    display: table;
-    clear: both;
-}
-.c-function__group {
-    float: left;
-}
-.c-function__group:before {
-    content: " ";
-    display: table;
-}
-.c-function__group:after {
-    content: " ";
-    display: table;
-    clear: both;
-}
-.c-function__group.c-function__group--right {
-    float: right;
-}
-.c-function__item {
-    float: left;
-    display: inline-block;
-}
-.c-function__item + .c-function__item {
-    margin-left: 10px;
-}
-
-
-
-
-/* checkbox */
-.c-checkbox {
-    -webkit-box-sizing: border-box;
-          box-sizing: border-box;
-    color: #222;
-    line-height: 18px;
-}
-.c-checkbox__input {
-  overflow: hidden;
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  margin: -1px;
-  padding: 0;
-  clip: rect(0, 0, 0, 0);
-}
-
-.c-checkbox__input[disabled] ~ label {
-    cursor: default;
-}
-
-.c-checkbox__input[disabled] ~ label:before {
-  background-color: #ebebeb;
-}
-
-.c-checkbox__input[disabled] ~ label:after {
-  border: 2px solid #ddd;
-  background: #ebebeb url(/assets/images/icon__check.svg) no-repeat center center;
-  background-position: 50% 50%;
-  -webkit-background-size: 14px 14px;
-  background-size: 14px 14px;
-  color: #666;
-}
-
-.c-checkbox__input:checked ~ label:before {
-  display: none;
-}
-
-.c-checkbox__input:checked ~ label:after {
-  display: block;
-}
-
-.c-checkbox__label {
-  display: inline-block;
-  position: relative;
-  padding-left: 25px;
-  color: #222;
-  font-size: 14px;
-  cursor: pointer;
-}
-
-.c-checkbox__label:before {
-  content: " ";
-  display: block;
-  position: absolute;
-  top: 50%;
-  left: 0;
-  width: 18px;
-  height: 18px;
-  background-color: #fff;
-  border: 2px solid #ddd;
-  border-radius: 2px;
-  -webkit-box-sizing: border-box;
-          box-sizing: border-box;
-  -webkit-transform: translateY(-50%);
-      -ms-transform: translateY(-50%);
-          transform: translateY(-50%);
-}
-
-.c-checkbox__label:after {
-  content: " ";
-  display: none;
-  position: absolute;
-  top: 50%;
-  left: 0;
-  width: 18px;
-  height: 18px;
-  border-radius: 2px;
-  background: #181a1f url(/assets/images/icon__check--w.png) no-repeat center center;
-  background-position: 50% 50%;
-  -webkit-background-size: 14px 14px;
-  background-size: 14px 14px;
-  color: #fff;
-  -webkit-box-sizing: border-box;
-          box-sizing: border-box;
-  -webkit-transform: translateY(-50%);
-      -ms-transform: translateY(-50%);
-          transform: translateY(-50%);
-}
-
-
-/* button file */
-.c-file {
-    overflow: hidden;
-  /* display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex; */
-  width: 100%;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-  border: 1px solid #ddd;
-  border-radius: 3px;
-  -webkit-box-sizing: border-box;
-          box-sizing: border-box;
-}
-
-.c-file__input {
-  /* -webkit-box-flex: 1;
-      -ms-flex: 1;
-          flex: 1; */
-    float: left;
-    width: calc(100% - 84px);
-    height: 28px;
-    padding: 0 10px;
-    border: 0;
-    background-color: #fff;
-    -webkit-box-sizing: border-box;
-            box-sizing: border-box;
-    outline: none;
-}
-
-.c-file__button {
-    float: left;
-    width: 84px;
-    height: 28px;
-    padding: 0 14px;
-    border: 0;
-    background-color: #eee;
-    color: #222;
-    font-size: 14px;
-    line-height: 28px;
-    cursor: pointer;
-    -webkit-box-sizing: border-box;
-            box-sizing: border-box;
-    -webkit-transition: background-color .2s;
-    transition: background-color .2s;
-}
-.c-file__button input[type="file"] {
-  display: none;
-}
-.c-file__button:hover,
-.c-file__button:focus {
-  background-color: #d6d6d6;
-}
-
-
-/* input date */
+/* datepicker */
 .c-date {
-	position: relative;
+	width: 8.125rem;
+	height: 2.5rem;
+	padding-right: 0.625rem;
+	padding-left: 2rem;
+	background-image: url(/assets/images/icon__calendar--b.svg);
+	background-repeat: no-repeat;
+	-webkit-background-size: 1.125rem 1.125rem;
+	background-size: 1.125rem 1.125rem;
+	background-position: 0.625rem center;
+	border: 0.063rem solid #bdbdbd;
+	-webkit-border-radius: 0.313rem;
+	-moz-border-radius: 0.313rem;
+	border-radius: 0.313rem;
+	color: #444;
 }
-.c-date__label {
-	display: block;
-	margin-bottom: 3px;
-	color: #787a7d;
-	font-size: 12px;
-}
-.c-date__input {
-	width: 100%;
-	height: 28px;
-	padding: 5px 10px;
-	border: 1px solid #dfdfdf;
-	-webkit-border-radius: 5px;
-	-moz-border-radius: 5px;
-	border-radius: 5px;
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
-	box-sizing: border-box;
-}
-.c-date__input[readonly] {
-	background-color: #efefef;
-}
-input[type="date"] {
-  background:#fff url(/assets/images/icon__calendar--gray.png)  97% 50% no-repeat ;
-  -webkit-background-size: 16px;
-  background-size: 16px;
-}
-input[type="date"]::-webkit-inner-spin-button {
-  display: none;
-}
-input[type="date"]::-webkit-calendar-picker-indicator {
-  opacity: 0;
-}
-.c-date-group:before {
-	content: " ";
-	display: table;
-}
-.c-date-group:after {
-	content: " ";
-	display: table;
-	clear: both;
-}
-.c-date-group .c-date {
-	float: left;
-	width: 130px;
-}
-.c-date-group .c-date + .c-date {
-	margin-left: 20px;
-}
-.c-date-group .c-date + .c-date:before {
-	content: "-";
-	position: absolute;
-	bottom: 0;
-	left: -13px;
-	font-size: 16px;
-	line-height: 27px;
-}
-.c-date-group.c-date-group--flex {
-	display: flex;
-}
-.c-date-group.c-date-group--flex .c-date {
-	flex: 1;
-	float: none;
-	width: auto;
+.c-date:read-only,
+.c-date:disabled {
+	background-color: #f2f2f6;
+	background-image: url(/assets/images/icon__calendar--g.svg);
 }
 
 /* datepicker */
 .ui-datepicker,
 .month-picker {
     overflow: hidden;
-    width: 280px;
+    width: 21.25rem;
+    padding: 1.25rem;
     background-color: #fff;
-    border: 1px solid #dfdfdf;
-    -webkit-border-radius: 4px;
-    -moz-border-radius: 4px;
-    border-radius: 4px;
-    -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
-    -moz-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+    border: 0.125rem solid #0082f0;
+    -webkit-border-radius: 0.313rem;
+    -moz-border-radius: 0.313rem;
+    border-radius: 0.313rem;
+    -webkit-box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.3);
+    -moz-box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.3);
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.3);
 }
 .month-picker table{
     border-collapse: separate;
@@ -814,4 +534,107 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     border: 2px solid transparent;
     color: #eee;
 }
+
+
+/*****************************************************/
+
+
+
+
+
+/* functions */
+.c-function {
+    margin-top: 10px;
+}
+.c-function:before {
+    content: " ";
+    display: table;
+}
+.c-function:after {
+    content: " ";
+    display: table;
+    clear: both;
+}
+.c-function__group {
+    float: left;
+}
+.c-function__group:before {
+    content: " ";
+    display: table;
+}
+.c-function__group:after {
+    content: " ";
+    display: table;
+    clear: both;
+}
+.c-function__group.c-function__group--right {
+    float: right;
+}
+.c-function__item {
+    float: left;
+    display: inline-block;
+}
+.c-function__item + .c-function__item {
+    margin-left: 10px;
+}
+
+
+
+
+
+/* button file */
+.c-file {
+    overflow: hidden;
+  /* display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex; */
+  width: 100%;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+.c-file__input {
+  /* -webkit-box-flex: 1;
+      -ms-flex: 1;
+          flex: 1; */
+    float: left;
+    width: calc(100% - 84px);
+    height: 28px;
+    padding: 0 10px;
+    border: 0;
+    background-color: #fff;
+    -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+    outline: none;
+}
+
+.c-file__button {
+    float: left;
+    width: 84px;
+    height: 28px;
+    padding: 0 14px;
+    border: 0;
+    background-color: #eee;
+    color: #222;
+    font-size: 14px;
+    line-height: 28px;
+    cursor: pointer;
+    -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+    -webkit-transition: background-color .2s;
+    transition: background-color .2s;
+}
+.c-file__button input[type="file"] {
+  display: none;
+}
+.c-file__button:hover,
+.c-file__button:focus {
+  background-color: #d6d6d6;
+}
+
 

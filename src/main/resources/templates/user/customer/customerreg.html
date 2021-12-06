@@ -49,7 +49,7 @@
 						<div class="customer__form-input">
 							<div class="c-text">
 								<input type="text" id="bcName" name="bcName" />
-								<button type="button" onclick="openVKeyboard(0)">⌨</button>
+								<button type="button" onclick="openVKeyboard(0)">키보드</button>
 							</div>
 						</div>
 					</li>
@@ -58,7 +58,7 @@
 						<div class="customer__form-input">
 							<div class="c-text">
 								<input type="text" id="bcHp" name="bcHp" placeholder="숫자만 입력해 주세요" onkeyup="onPhonenumChange(this)">
-								<button type="button" onclick="openVKeyboard(1)">⌨</button>
+								<button type="button" onclick="openVKeyboard(1)">키보드</button>
 							</div>
 						</div>
 					</li>
@@ -80,7 +80,7 @@
 						<div class="customer__form-input">
 							<div class="c-text">
 								<input type="text" id="bcAddress" name="bcAddress">
-								<button type="button" onclick="openVKeyboard(2)"></button>
+								<button type="button" onclick="openVKeyboard(2)">키보드</button>
 							</div>
 						</div>
 					</li>
@@ -131,7 +131,10 @@
 					<li class="customer__form-item">
 						<h4 class="customer__form-title">고객구분</h4>
 						<div class="customer__form-input">
-							<input type="text" id="bcGrade" name="bcGrade" value="일반" readonly />
+							<div class="c-text">
+								<input type="text" id="bcGrade" name="bcGrade" value="일반" readonly />
+							</div>
+							
 <!--							<div class="c-select">-->
 <!--								<select id="bcGrade" name="bcGrade">-->
 <!--									<option value="01">일반</option>-->
@@ -205,7 +208,7 @@
 						<div class="customer__form-input">
 							<div class="c-textarea">
 								<textarea id="bcRemark" name="bcRemark"></textarea>
-								<button type="button" onclick="openVKeyboard(3)">⌨</button>
+								<button type="button" onclick="openVKeyboard(3)">키보드</button>
 							</div>
 						</div>
 					</li>
