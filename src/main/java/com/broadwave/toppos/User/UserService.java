@@ -1,5 +1,6 @@
 package com.broadwave.toppos.User;
 
+import com.broadwave.toppos.Account.AccountRepositoryCustom;
 import com.broadwave.toppos.User.Customer.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,10 +14,13 @@ public class UserService {
     private final CustomerRepository customerRepository;
     private final CustomerRepositoryCustom customerRepositoryCustom;
 
+    private final AccountRepositoryCustom accountRepositoryCustom;
+
     @Autowired
-    public UserService(CustomerRepository customerRepository, CustomerRepositoryCustom customerRepositoryCustom){
+    public UserService(CustomerRepository customerRepository, CustomerRepositoryCustom customerRepositoryCustom, AccountRepositoryCustom accountRepositoryCustom){
         this.customerRepository = customerRepository;
         this.customerRepositoryCustom = customerRepositoryCustom;
+        this.accountRepositoryCustom = accountRepositoryCustom;
     }
 
     // 고객등록
@@ -38,6 +42,10 @@ public class UserService {
     // 로그인한 가맹점의 고객리스트 호출
     public List<CustomerListDto> findByCustomerList(String frCode, String searchType, String searchString) {
         return customerRepositoryCustom.findByCustomerList(frCode, searchType, searchString);
+    }
+
+    public UserIndexDto findByUserInfo(String userid, String frCode) {
+        return accountRepositoryCustom.findByUserInfo(userid, frCode);
     }
 
 }

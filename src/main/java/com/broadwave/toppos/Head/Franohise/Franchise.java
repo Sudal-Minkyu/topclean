@@ -65,7 +65,7 @@ public class Franchise {
     private Branch brId; // 배정된 지사 ID
 
     @Column(name="br_code")
-    private String BrCode; // 배정된 지사코드
+    private String brCode; // 배정된 지사코드
 
     @Column(name="br_assign_state")
     private String brAssignState; // 지사 배정상태 미배정: 01, 배정완료: 02

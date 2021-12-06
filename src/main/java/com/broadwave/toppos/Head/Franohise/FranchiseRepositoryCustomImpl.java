@@ -49,7 +49,7 @@ public class FranchiseRepositoryCustomImpl extends QuerydslRepositorySupport imp
         query.orderBy(franchise.id.desc());
 
         if (!brCode.equals("")){
-            query.where(franchise.BrCode.eq(brCode));
+            query.where(franchise.brCode.eq(brCode));
         }
 
         if (!brAssignState.equals("")){
@@ -88,7 +88,7 @@ public class FranchiseRepositoryCustomImpl extends QuerydslRepositorySupport imp
                         franchise.frContractState,
                         franchise.frContractState,
                         franchise.brAssignState,
-                        franchise.BrCode,
+                        franchise.brCode,
                         branch.brName,
                         branch.brCarculateRateHq,
                         branch.brCarculateRateBr,

@@ -196,9 +196,30 @@ public class UserRestController {
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
+    // 현재 로그인한 가맹점 정보 가져오기
+    @GetMapping("franchiseInfo")
+    public ResponseEntity<Map<String,Object>> franchiseInfo(HttpServletRequest request){
+        log.info("franchiseInfo 호출");
 
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
+        String frbrCode = (String) claims.get("frbrCode"); // 소속된 지사 코드
+        String login_id = claims.getSubject(); // 현재 아이디
+        log.info("현재 접속한 아이디 : "+login_id);
+        log.info("현재 접속한 가맹점 코드 : "+frCode);
+        log.info("소속된 지사 코드 : "+frbrCode);
 
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
 
+        UserIndexDto userIndexDto = userService.findByUserInfo(login_id, frCode);
+//        log.info("userIndexDto : "+userIndexDto);
+
+        data.put("userIndexDto",userIndexDto);
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
 
 
 

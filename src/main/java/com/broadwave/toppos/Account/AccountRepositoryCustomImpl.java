@@ -1,5 +1,8 @@
 package com.broadwave.toppos.Account;
 
+import com.broadwave.toppos.Head.Branoh.QBranch;
+import com.broadwave.toppos.Head.Franohise.QFranchise;
+import com.broadwave.toppos.User.UserIndexDto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
@@ -62,5 +65,26 @@ public class AccountRepositoryCustomImpl extends QuerydslRepositorySupport imple
 
     }
 
+    @Override
+    public UserIndexDto findByUserInfo(String userid, String frCode) {
+
+        QAccount account = QAccount.account;
+        QFranchise franchise = QFranchise.franchise;
+        QBranch branch = QBranch.branch;
+
+        JPQLQuery<UserIndexDto> query = from(account)
+                .join(franchise).on(franchise.frCode.eq(frCode))
+                .leftJoin(franchise.brId,branch)
+                .select(Projections.constructor(UserIndexDto.class,
+                        account.username,
+                        account.usertel,
+                        branch.brName,
+                        franchise.frName
+                ));
+
+        query.where(account.userid.eq(userid));
+
+        return query.fetchOne();
+    }
 
 }
