@@ -5,33 +5,36 @@ $(function () {
 });
 
 /* 가상키보드 입력 대상이 되는 텍스트 필드나 텍스트 에어리어 */
-let targetFieldID = ["bcName", "bcHp", "bcAddress", "bcRemark"];
+let vkeyTargetId = ["bcName", "bcHp", "bcAddress", "bcRemark"];
 
-/* 각 가상 키보드의 제목 */
-let targetFieldSubject = [
-    "고객명",
-    "휴대폰(숫자만 입력해 주세요)",
-    "주소",
-    "특이사항"
-];
+let vkeyProp = [];
 
-/* 각 가상 키보드의 상용구 배열 */
-let boilerArray = [];
-boilerArray[0] = ["A", "호호", "% 테스트"];
-boilerArray[1] = ["B", "호호", "% 테스트"];
-boilerArray[2] = ["C", "호호", "% 테스트"];
-boilerArray[3] = ["D", "호호", "% 테스트"];
+vkeyProp[0] = {
+    title : "고객명",
+}
+
+vkeyProp[1] = { // 키패드로 변경 필요
+    title : "휴대폰(숫자만 입력해 주세요)",
+}
+
+vkeyProp[2] = {
+    title : "주소",
+}
+
+vkeyProp[3] = {
+    title : "특이사항",
+}
 
 /* 호출하여 목표 가상 키보드 띄우기, 0번부터 배열 순서대로 */
-function openVKeyboard(keyboardNum) {
-    if(keyboardNum === 1) {
+function openVKeyboard(num) {
+    if(num === 1) {
         /* 휴대폰 번호 수정 후 콜백을 이용하여 번호 유효성 검사를 한다 */
-        vkey.showKeyboard(targetFieldID[keyboardNum], targetFieldSubject[keyboardNum], boilerArray[keyboardNum],
+        vkey.showKeyboard(vkeyTargetId[num], vkeyProp[num],
             function (){
                 onPhonenumChange(document.getElementById("bcHp"));
             });
     }else{
-        vkey.showKeyboard(targetFieldID[keyboardNum], targetFieldSubject[keyboardNum], boilerArray[keyboardNum]);
+        vkey.showKeyboard(vkeyTargetId[num], vkeyProp[num]);
     }
 
 }

@@ -80,15 +80,20 @@
 		 });
 		 
 		 let targetFieldID = ["userid", "password"];
+
+		 let vkeyProp = [];
+
+		 vkeyProp[0] = {
+			 title : "ID를 입력해주세요",
+		 }
+
+		 vkeyProp[1] = {
+			title : "비밀번호를 입력해주세요",
+			defaultKeyboard : 2,
+		 }
 		 
-		 /* 각 가상 키보드의 제목 */
-		 let targetFieldSubject = [
-		     "ID를 입력해주세요",
-		     "비밀번호를 입력해주세요"
-		 ];
-		 
-		 function openVKeyboard(keyboardNum) {
-			 vkey.showKeyboard(targetFieldID[keyboardNum], targetFieldSubject[keyboardNum]);
+		 function openVKeyboard(num) {
+			 vkey.showKeyboard(targetFieldID[num], vkeyProp[num]);
 		 }
 
 

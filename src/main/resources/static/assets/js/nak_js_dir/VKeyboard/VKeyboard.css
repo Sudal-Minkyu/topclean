@@ -27,7 +27,7 @@
 	flex-wrap: wrap;
 	margin-bottom: 1.25rem;
 }
-#VKEY_field_subject {
+#VKEY_field_title {
 	width: 100%;
 	margin-bottom: 1.5rem;
 	color: #555;
@@ -296,10 +296,7 @@
 
 
 
-#VKEY_pad_engup, 
-#VKEY_pad_englow, 
-#VKEY_pad_special, 
-#VKEY_pad_special2, 
+.VKEY_bundle_keyboard,
 .VKEY_pad_boiler {
 	display: none;
 }
