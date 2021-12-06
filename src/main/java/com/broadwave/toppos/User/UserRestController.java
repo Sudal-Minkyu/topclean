@@ -125,6 +125,7 @@ public class UserRestController {
             customerListInfo.put("bcHp", customerInfoDto.getBcHp());
             customerListInfo.put("bcGrade", customerInfoDto.getBcGrade());
             customerListInfo.put("bcValuation", customerInfoDto.getBcValuation());
+            customerListInfo.put("bcRemark", customerInfoDto.getBcRemark());
             customerListInfo.put("bcLastRequsetDt", customerInfoDto.getBcLastRequsetDt());
 
             customerListData.add(customerListInfo);

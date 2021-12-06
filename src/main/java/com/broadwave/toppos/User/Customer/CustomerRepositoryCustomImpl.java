@@ -74,6 +74,7 @@ public class CustomerRepositoryCustomImpl extends QuerydslRepositorySupport impl
                         customer.bcAddress,
                         customer.bcGrade,
                         customer.bcValuation,
+                        customer.bcRemark,
                         customer.bcLastRequsetDt
                 ));
 
