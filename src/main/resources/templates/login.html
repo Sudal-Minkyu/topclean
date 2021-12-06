@@ -55,6 +55,7 @@
 		 	});
 		 }
 
+		 // 현재 소속의 대한 메인페이지 이동 함수
 		 function mainPage(){
 			 $(document).ajaxSend(function(e, xhr) { xhr.setRequestHeader("Authorization",localStorage.getItem('Authorization')); });
 			 $.ajax({

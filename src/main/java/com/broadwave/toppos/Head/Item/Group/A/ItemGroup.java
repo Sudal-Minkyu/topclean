@@ -30,6 +30,9 @@ public class ItemGroup {
     @Column(name="bg_name")
     private String bgName; // 대문류명칭
 
+    @Column(name="bg_icon_filename")
+    private String bgIconFilename; // 아이콘이미지파일명
+
     @Column(name="bg_remark")
     private String bgRemark; // 특이사항
 

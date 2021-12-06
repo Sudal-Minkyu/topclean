@@ -69,9 +69,13 @@ public class MainController {
                 log.info("가맹점주 로그인");
                 data.put("link","/user");
                 break;
-            default:
+            case "[ROLE_ADMIN]":
                 log.info("관리자 로그인");
                 data.put("link","/admin");
+                break;
+            default:
+                log.info("로그인이 되지 않음");
+                data.put("link","/login");
                 break;
         }
 

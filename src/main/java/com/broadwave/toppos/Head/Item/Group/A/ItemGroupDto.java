@@ -21,9 +21,15 @@ public class ItemGroupDto {
 
     private String bgName; // 대문류명칭
 
+    private String bgIconFilename; // 아이콘이미지파일명
+
     private String bgRemark; // 특이사항
 
     private String bgUseYn; // 사용여부
+
+    public String getBgIconFilename() {
+        return bgIconFilename;
+    }
 
     public String getBgUseYn() {
         return bgUseYn;

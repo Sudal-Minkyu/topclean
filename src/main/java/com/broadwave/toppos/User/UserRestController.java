@@ -133,29 +133,29 @@ public class UserRestController {
         HashMap<String, Object> data = new HashMap<>();
 
         List<HashMap<String,Object>> customerListData = new ArrayList<>();
-        HashMap<String,Object> customerInfo;
+        HashMap<String,Object> customerListInfo;
 
         List<CustomerListDto> customerListDtos = userService.findByCustomerList(frCode, searchType, searchString);
 //        log.info("customerListDtos : "+customerListDtos);
         for (CustomerListDto customerListDto: customerListDtos) {
 
-            customerInfo = new HashMap<>();
+            customerListInfo = new HashMap<>();
 
-            customerInfo.put("bcName", customerListDto.getBcName());
-            customerInfo.put("bcHp", customerListDto.getBcHp());
-            customerInfo.put("bcSex", customerListDto.getBcSex());
-            customerInfo.put("bcAddress", customerListDto.getBcAddress());
-            customerInfo.put("bcBirthday", customerListDto.getBcBirthday());
-            customerInfo.put("bcAge", customerListDto.getBcAge());
-            customerInfo.put("bcGrade", customerListDto.getBcGrade());
-            customerInfo.put("bcValuation", customerListDto.getBcValuation());
-            customerInfo.put("bcMessageAgree", customerListDto.getBcMessageAgree());
-            customerInfo.put("bcAgreeType", customerListDto.getBcAgreeType());
-            customerInfo.put("bcSignImage", customerListDto.getBcSignImage());
-            customerInfo.put("bcRemark", customerListDto.getBcRemark());
-            customerInfo.put("bcQuitYn", customerListDto.getBcQuitYn());
-            customerInfo.put("bcQuitDate", customerListDto.getBcQuitDate());
-            customerInfo.put("insertDateTime", customerListDto.getInsertDateTime());
+            customerListInfo.put("bcName", customerListDto.getBcName());
+            customerListInfo.put("bcHp", customerListDto.getBcHp());
+            customerListInfo.put("bcSex", customerListDto.getBcSex());
+            customerListInfo.put("bcAddress", customerListDto.getBcAddress());
+            customerListInfo.put("bcBirthday", customerListDto.getBcBirthday());
+            customerListInfo.put("bcAge", customerListDto.getBcAge());
+            customerListInfo.put("bcGrade", customerListDto.getBcGrade());
+            customerListInfo.put("bcValuation", customerListDto.getBcValuation());
+            customerListInfo.put("bcMessageAgree", customerListDto.getBcMessageAgree());
+            customerListInfo.put("bcAgreeType", customerListDto.getBcAgreeType());
+            customerListInfo.put("bcSignImage", customerListDto.getBcSignImage());
+            customerListInfo.put("bcRemark", customerListDto.getBcRemark());
+            customerListInfo.put("bcQuitYn", customerListDto.getBcQuitYn());
+            customerListInfo.put("bcQuitDate", customerListDto.getBcQuitDate());
+            customerListInfo.put("insertDateTime", customerListDto.getInsertDateTime());
 
 //            if(branch.getBrContractState().equals("01")){
 //                branchsetInfo.put("brContractStateValue","진행중");
@@ -163,7 +163,7 @@ public class UserRestController {
 //                branchsetInfo.put("brContractStateValue","계약완료");
 //            }
 
-            customerListData.add(customerInfo);
+            customerListData.add(customerListInfo);
 
         }
 
@@ -172,8 +172,6 @@ public class UserRestController {
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
-
-
 
 
 
