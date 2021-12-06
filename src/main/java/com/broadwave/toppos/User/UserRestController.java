@@ -99,6 +99,8 @@ public class UserRestController {
                                                            @RequestParam(value="searchType", defaultValue="") String searchType,
                                                            @RequestParam(value="searchString", defaultValue="") String searchString){
         log.info("customerInfo 호출");
+        log.info("searchType :"+searchType);
+        log.info("searchString :"+searchString);
 
         // 클레임데이터 가져오기
         Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
@@ -108,8 +110,28 @@ public class UserRestController {
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
 
-        CustomerInfoDto customerInfoDto = userService.findByCustomerInfo(frCode, searchType, searchString);
-        data.put("customerInfoDto",customerInfoDto);
+        List<HashMap<String,Object>> customerListData = new ArrayList<>();
+        HashMap<String,Object> customerListInfo;
+
+        List<CustomerInfoDto> customerInfoListDto = userService.findByCustomerInfo(frCode, searchType, searchString);
+        log.info("customerInfoListDto : "+customerInfoListDto);
+
+        for (CustomerInfoDto customerInfoDto: customerInfoListDto) {
+
+            customerListInfo = new HashMap<>();
+
+            customerListInfo.put("id", customerInfoDto.getId());
+            customerListInfo.put("bcName", customerInfoDto.getBcName());
+            customerListInfo.put("bcHp", customerInfoDto.getBcHp());
+            customerListInfo.put("bcGrade", customerInfoDto.getBcGrade());
+            customerListInfo.put("bcValuation", customerInfoDto.getBcValuation());
+            customerListInfo.put("bcLastRequsetDt", customerInfoDto.getBcLastRequsetDt());
+
+            customerListData.add(customerListInfo);
+        }
+
+        log.info("가맹점코드 : "+frCode+"의 고객 리스트 : "+customerListData);
+        data.put("gridListData",customerListData);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }

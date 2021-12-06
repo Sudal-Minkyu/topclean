@@ -48,19 +48,21 @@ public class CustomerRepositoryCustomImpl extends QuerydslRepositorySupport impl
         query.orderBy(customer.id.desc());
         query.where(customer.frCode.eq(frCode));
 
-        if(searchType.equals("0")){
-            query.where(customer.bcName.containsIgnoreCase(searchString).or(customer.bcHp.containsIgnoreCase(searchString)));
-        }else if(searchType.equals("1")){
-            query.where(customer.bcName.containsIgnoreCase(searchString));
-        }else {
-            query.where(customer.bcHp.containsIgnoreCase(searchString));
+        if(!searchString.equals("")){
+            if(searchType.equals("0")){
+                query.where(customer.bcName.containsIgnoreCase(searchString).or(customer.bcHp.containsIgnoreCase(searchString)));
+            }else if(searchType.equals("1")){
+                query.where(customer.bcName.containsIgnoreCase(searchString));
+            }else {
+                query.where(customer.bcHp.containsIgnoreCase(searchString));
+            }
         }
 
         return query.fetch();
     }
 
     @Override
-    public CustomerInfoDto findByCustomerInfo(String frCode, String searchType, String searchString) {
+    public List<CustomerInfoDto> findByCustomerInfo(String frCode, String searchType, String searchString) {
 
         QCustomer customer = QCustomer.customer;
 
@@ -77,22 +79,24 @@ public class CustomerRepositoryCustomImpl extends QuerydslRepositorySupport impl
 
         query.where(customer.frCode.eq(frCode));
 
-        switch (searchType) {
-            case "0":
-                query.where(customer.bcName.containsIgnoreCase(searchString).or(customer.bcHp.containsIgnoreCase(searchString).or(customer.bcAddress.containsIgnoreCase(searchString))));
-                break;
-            case "1":
-                query.where(customer.bcName.containsIgnoreCase(searchString));
-                break;
-            case "2":
-                query.where(customer.bcHp.containsIgnoreCase(searchString));
-                break;
-            default:
-                query.where(customer.bcAddress.containsIgnoreCase(searchString));
-                break;
+        if(searchString != null){
+            switch (searchType) {
+                case "0":
+                    query.where(customer.bcName.containsIgnoreCase(searchString).or(customer.bcHp.containsIgnoreCase(searchString).or(customer.bcAddress.containsIgnoreCase(searchString))));
+                    break;
+                case "1":
+                    query.where(customer.bcName.containsIgnoreCase(searchString));
+                    break;
+                case "2":
+                    query.where(customer.bcHp.containsIgnoreCase(searchString));
+                    break;
+                default:
+                    query.where(customer.bcAddress.containsIgnoreCase(searchString));
+                    break;
+            }
         }
 
-        return query.fetchOne();
+        return query.fetch();
     }
 
 }

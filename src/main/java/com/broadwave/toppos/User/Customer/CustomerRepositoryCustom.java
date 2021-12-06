@@ -10,7 +10,7 @@ import java.util.List;
  */
 public interface CustomerRepositoryCustom {
 
-    CustomerInfoDto findByCustomerInfo(String frCode, String searchType, String searchString);
+    List<CustomerInfoDto> findByCustomerInfo(String frCode, String searchType, String searchString);
 
     List<CustomerListDto> findByCustomerList(String frCode, String searchType, String searchString);
 }
