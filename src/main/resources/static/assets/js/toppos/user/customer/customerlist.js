@@ -231,6 +231,8 @@ function saveRegister() {
     const url = "/api/user/customerSave";
     CommonUI.ajax(url, "POST", formData, function (){
         alertSuccess("고객 데이터 저장 성공");
+        onSearchCustomer();
+        // 완료 후 팝업닫기 추가하기 to.성낙원
     });
 }
 

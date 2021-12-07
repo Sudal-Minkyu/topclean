@@ -63,35 +63,52 @@ public class UserRestController {
             return ResponseEntity.ok(res.fail(ResponseErrorCode.TP007.getCode(), ResponseErrorCode.TP007.getDesc(),ResponseErrorCode.TP008.getCode(), ResponseErrorCode.TP008.getDesc()));
         }
 
-       log.info("customerMapperDto : "+customerMapperDto.getBcId());
-        Optional<Customer> optionalCustomer= null;
-        if(optionalCustomer.isPresent()){
+        if(customerMapperDto.getBcId() != null){
             log.info("고객 정보를 수정합니다.");
-//            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP014.getCode(), ResponseErrorCode.TP014.getDesc(), null, null));
-            // 수정일때
-//            account.setId(optionalAccount.get().getId());
-//            account.setUserid(optionalAccount.get().getUserid());
-//            account.setPassword(optionalAccount.get().getPassword());
-//            account.setInsert_id(optionalAccount.get().getInsert_id());
-//            account.setInsertDateTime(optionalAccount.get().getInsertDateTime());
-//            account.setModify_id(login_id);
-//            account.setModifyDateTime(LocalDateTime.now());
-//
-//            Account accountSave =  accountService.updateAccount(account);
-//            log.info("고객 업데이트 저장 성공 : id '" + accountSave.getUserid() + "'");
+            log.info("customerMapperDto.getBcId() : "+customerMapperDto.getBcId());
+            Optional<Customer> optionalCustomerById= userService.findByBcId(customer.getBcId());
+            if(!optionalCustomerById.isPresent()) {
+                return ResponseEntity.ok(res.fail(ResponseErrorCode.TP005.getCode(), "수정 할 "+ResponseErrorCode.TP005.getDesc(), null, null));
+            }else{
+                Optional<Customer> optionalCustomerByHp= userService.findByBcHp(customer.getBcHp());
+                if(optionalCustomerByHp.isPresent()){
+                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP014.getCode(), ResponseErrorCode.TP014.getDesc(), null, null));
+                }else{
+                    // 수정일때
+                    customer.setFrCode(optionalCustomerById.get().getFrCode());
+                    customer.setBcMessageAgreeDt(LocalDateTime.now());
+                    if(customer.getBcQuitYn().equals("Y")){
+                        customer.setBcQuitDate(LocalDateTime.now());
+                    }
+                    customer.setBcLastRequsetDt(optionalCustomerById.get().getBcLastRequsetDt());
+                    customer.setInsert_id(optionalCustomerById.get().getInsert_id());
+                    customer.setInsertDateTime(optionalCustomerById.get().getInsertDateTime());
+                    customer.setModify_id(login_id);
+                    customer.setModifyDateTime(LocalDateTime.now());
+
+                    Customer customerSave =  userService.customerSave(customer);
+                    log.info("고객 수정 성공 : 핸드폰 번호 '" + customerSave.getBcHp() +"'");
+                }
+            }
         }else{
             log.info("신규 고객 입니다.");
-//            // 신규일때
-//            customer.setFrCode(frCode);
-//            customer.setBcQuitYn("N");
-//            customer.setInsert_id(login_id);
-//            customer.setInsertDateTime(LocalDateTime.now());
-//            customer.setBcMessageAgreeDt(LocalDateTime.now());
-//            log.info("고객저장정보 : "+customer);
-//            Customer customerSave =  userService.customerSave(customer);
-//            log.info("고객 신규 저장 성공 : 핸드폰 번호 '" + customerSave.getBcHp() +"'");
+            Optional<Customer> optionalCustomerByHp= userService.findByBcHp(customer.getBcHp());
+            if(optionalCustomerByHp.isPresent()){
+                return ResponseEntity.ok(res.fail(ResponseErrorCode.TP014.getCode(), ResponseErrorCode.TP014.getDesc(), null, null));
+            }else{
+                // 신규일때
+                customer.setFrCode(frCode);
+                customer.setBcQuitYn("N");
+                customer.setInsert_id(login_id);
+                customer.setInsertDateTime(LocalDateTime.now());
+                customer.setBcMessageAgreeDt(LocalDateTime.now());
+
+                Customer customerSave =  userService.customerSave(customer);
+                log.info("고객 신규 저장 성공 : 핸드폰 번호 '" + customerSave.getBcHp() +"'");
+            }
         }
 
+//        log.info("customer : "+customer);
         return ResponseEntity.ok(res.success());
     }
 

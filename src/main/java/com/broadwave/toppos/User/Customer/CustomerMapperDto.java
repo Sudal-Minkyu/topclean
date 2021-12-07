@@ -32,7 +32,12 @@ public class CustomerMapperDto {
     private String bcMessageAgree; // 문자수신동의(Y:동의, N: 미동의)
     private String bcAgreeType; // 동의타입 (온라인 : 1, 서면 : 2)
     private String bcSignImage; // 동의 사인이미지 Blob객체사용 없으면 Null 값으로 받기
+    private String bcQuitYn; // 탈퇴여부
     private String bcRemark; // 특이사항
+
+    public String getBcQuitYn() {
+        return bcQuitYn;
+    }
 
     public Long getBcId() {
         return bcId;
