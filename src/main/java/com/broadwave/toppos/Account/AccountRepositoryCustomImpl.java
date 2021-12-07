@@ -65,6 +65,7 @@ public class AccountRepositoryCustomImpl extends QuerydslRepositorySupport imple
 
     }
 
+    //  가맹점의 정보 가져오는 쿼리
     @Override
     public UserIndexDto findByUserInfo(String userid, String frCode) {
 

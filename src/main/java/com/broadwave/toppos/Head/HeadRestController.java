@@ -507,14 +507,14 @@ public class HeadRestController {
         ArrayList<ItemGroupDto> updateList = itemGroupSet.getUpdate(); // 수정 리스트 얻기
         ArrayList<ItemGroupDto> deleteList = itemGroupSet.getDelete(); // 제거 리스트 얻기
 
-//        log.info("추가 리스트 : "+addList);
-//        log.info("수정 리스트 : "+updateList);
-//        log.info("삭제 리스트 : "+deleteList);
+        log.info("추가 리스트 : "+addList);
+        log.info("수정 리스트 : "+updateList);
+        log.info("삭제 리스트 : "+deleteList);
 
         // 저장로직 실행 : 데이터베이스에 같은 코드가 존재하면 리턴처리한다.
         for (ItemGroupDto itemGroupDto : addList) {
             Optional<ItemGroup> optionalItemGroup = headService.findByBgItemGroupcode(itemGroupDto.getBgItemGroupcode());
-            if (!optionalItemGroup.isPresent()) {
+            if (optionalItemGroup.isPresent()) {
                 return ResponseEntity.ok(res.fail(ResponseErrorCode.TP003.getCode(), ResponseErrorCode.TP003.getDesc(), "문자", "존재하는 코드 : " + itemGroupDto.getBgItemGroupcode()));
             }
         }
@@ -552,16 +552,17 @@ public class HeadRestController {
 
         // 삭제로직 실행 : 데이터베이스에 코드사용중인 코드가 존재하면 리턴처리한다. , 데이터베이스에 코드가 존재하지 않으면 리턴처리한다.
         for (ItemGroupDto itemGroupDto : deleteList) {
-            ItemGroupS itemGroupS = headService.findByItemGroupcodeS(deleteList.get(0).getBgItemGroupcode(), null);
-            if(itemGroupS != null){
-                return ResponseEntity.ok(res.fail(ResponseErrorCode.TP011.getCode(), ResponseErrorCode.TP011.getDesc(), "문자", "중분류코드 : "+itemGroupS.getBsItemGroupcodeS()));
+            Optional<ItemGroup> optionalItemGroup = headService.findByBgItemGroupcode(itemGroupDto.getBgItemGroupcode());
+            if (!optionalItemGroup.isPresent()) {
+                return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "삭제 할 " + ResponseErrorCode.TP009.getDesc(), "문자", "다시 시도해주세요. 코드 : " + itemGroupDto.getBgItemGroupcode()));
             }else {
-                log.info("삭제할 대분류의 코드 : " + itemGroupDto.getBgItemGroupcode());
-                Optional<ItemGroup> optionalItemGroup = headService.findByBgItemGroupcode(itemGroupDto.getBgItemGroupcode());
-                if (optionalItemGroup.isPresent()) {
+                log.info("삭제할 대분류의 코드 : " + optionalItemGroup.get().getBgItemGroupcode());
+                List<ItemGroupSListDto> itemGroupSListDtos = headService.findByItemGroupSList(optionalItemGroup.get());
+//                log.info("itemGroupSListDtos : " + itemGroupSListDtos);
+                if (itemGroupSListDtos.size() == 0) {
                     headService.findByItemGroupDelete(optionalItemGroup.get());
                 } else {
-                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "삭제 할 " + ResponseErrorCode.TP009.getDesc(), "문자", "다시 시도해주세요. 코드 : " + itemGroupDto.getBgItemGroupcode()));
+                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP011.getCode(), ResponseErrorCode.TP011.getDesc(), null, null));
                 }
             }
         }
@@ -590,6 +591,7 @@ public class HeadRestController {
             itemGroupInfo.put("bgItemGroupcode", itemGroupDto.getBgItemGroupcode());
             itemGroupInfo.put("bgName", itemGroupDto.getBgName());
             itemGroupInfo.put("bgRemark", itemGroupDto.getBgRemark());
+            itemGroupInfo.put("bgIconFilename", itemGroupDto.getBgIconFilename());
             itemGroupInfo.put("bgUseYn", itemGroupDto.getBgUseYn());
 
             itemGroupListData.add(itemGroupInfo);
@@ -825,7 +827,7 @@ public class HeadRestController {
         // 상품소재 삭제로직 실행 : 데이터베이스에 코드사용중인 코드가 존재하면 리턴처리한다. , 데이터베이스에 코드가 존재하지 않으면 리턴처리한다.
         if(deleteList.size()!=0){
             for (ItemDto itemDto : deleteList) {
-                Optional<Item> itemOptional = headService.findByBiItemcode(itemDto.getBgItemGroupcode());
+                Optional<Item> itemOptional = headService.findByBiItemcode(itemDto.getBiItemcode());
                 if(itemOptional.isPresent()) {
                     log.info("삭제할 상품소재 코드 : "+itemOptional.get().getBiItemcode());
                     headService.findByItemDelete(itemOptional.get());

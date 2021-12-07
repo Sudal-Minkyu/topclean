@@ -65,7 +65,7 @@ public class UserRestController {
         Optional<Customer> optionalCustomer = userService.findByBcHp(customer.getBcHp());
         if(optionalCustomer.isPresent()){
             log.info("고객 정보를 수정합니다.");
-            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP014.getCode(), ResponseErrorCode.TP014.getDesc(), null, null));
+//            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP014.getCode(), ResponseErrorCode.TP014.getDesc(), null, null));
             // 수정일때
 //            account.setId(optionalAccount.get().getId());
 //            account.setUserid(optionalAccount.get().getUserid());
@@ -120,12 +120,13 @@ public class UserRestController {
 
             customerListInfo = new HashMap<>();
 
-            customerListInfo.put("id", customerInfoDto.getId());
+            customerListInfo.put("bcId", customerInfoDto.getId());
             customerListInfo.put("bcName", customerInfoDto.getBcName());
             customerListInfo.put("bcHp", customerInfoDto.getBcHp());
             customerListInfo.put("bcGrade", customerInfoDto.getBcGrade());
             customerListInfo.put("bcValuation", customerInfoDto.getBcValuation());
             customerListInfo.put("bcRemark", customerInfoDto.getBcRemark());
+            customerListInfo.put("bcAddress", customerInfoDto.getBcAddress());
             customerListInfo.put("bcLastRequsetDt", customerInfoDto.getBcLastRequsetDt());
 
             customerListData.add(customerListInfo);

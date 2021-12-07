@@ -20,6 +20,7 @@ import java.io.File;
 @AllArgsConstructor
 public class CustomerMapperDto {
 
+    private Long bcId; // 고유ID값
     private String bcHp; // 휴대폰번호( "-" 빼고저장)
     private String bcName; // 고객명
     private String bcSex; // 성별( 0:남자, 1:여자)
@@ -32,6 +33,10 @@ public class CustomerMapperDto {
     private String bcAgreeType; // 동의타입 (온라인 : 1, 서면 : 2)
     private String bcSignImage; // 동의 사인이미지 Blob객체사용 없으면 Null 값으로 받기
     private String bcRemark; // 특이사항
+
+    public Long getBcId() {
+        return bcId;
+    }
 
     public String getBcAgreeType() {
         return bcAgreeType;

@@ -18,6 +18,7 @@ import java.time.format.DateTimeFormatter;
 @AllArgsConstructor
 public class CustomerListDto {
 
+    private Long bcId; // 고유ID값
     private String bcName; // 고객명
     private String bcHp; // 휴대폰번호( "-" 빼고저장)
     private String bcSex; // 성별( 0:남자, 1:여자)
@@ -33,6 +34,10 @@ public class CustomerListDto {
     private String bcQuitYn; // 탈퇴여부 (기본값:N)
     private LocalDateTime bcQuitDate; // 탈퇴일시
     private LocalDateTime insertDateTime; // 가입일시
+
+    public Long getBcId() {
+        return bcId;
+    }
 
     public String getBcName() {
         return bcName;

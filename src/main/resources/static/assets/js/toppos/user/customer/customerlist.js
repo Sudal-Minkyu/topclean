@@ -1,5 +1,9 @@
 
 $(function() {
+
+    // 김민규 12.07 추가 페이지 들어가면 현재 로그인한 가맹점의 고객리스트를 자동 조회한다.
+    onSearchCustomer();
+
     /* 배열내의 각 설정만 넣어 빈 그리드 생성 */
     createGrids();
 
@@ -158,6 +162,7 @@ function setDataIntoGrid(numOfGrid, url) {
     });
 }
 
+// 고객리스트 조회
 function onSearchCustomer() {
     const params = {searchType : $("#searchCustomerType").val(),
         searchString : $("#searchCustomerField").val()};
