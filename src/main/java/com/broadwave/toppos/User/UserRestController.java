@@ -50,6 +50,7 @@ public class UserRestController {
         AjaxResponse res = new AjaxResponse();
 
         Customer customer = modelMapper.map(customerMapperDto, Customer.class);
+        log.info("customer : "+customer);
 
         // 클레임데이터 가져오기
         Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
@@ -62,7 +63,8 @@ public class UserRestController {
             return ResponseEntity.ok(res.fail(ResponseErrorCode.TP007.getCode(), ResponseErrorCode.TP007.getDesc(),ResponseErrorCode.TP008.getCode(), ResponseErrorCode.TP008.getDesc()));
         }
 
-        Optional<Customer> optionalCustomer = userService.findById(customer.getBcId());
+       log.info("customerMapperDto : "+customerMapperDto.getBcId());
+        Optional<Customer> optionalCustomer= null;
         if(optionalCustomer.isPresent()){
             log.info("고객 정보를 수정합니다.");
 //            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP014.getCode(), ResponseErrorCode.TP014.getDesc(), null, null));
@@ -165,6 +167,7 @@ public class UserRestController {
 
             customerListInfo = new HashMap<>();
 
+            customerListInfo.put("bcId", customerListDto.getBcId());
             customerListInfo.put("bcName", customerListDto.getBcName());
             customerListInfo.put("bcHp", customerListDto.getBcHp());
             customerListInfo.put("bcSex", customerListDto.getBcSex());

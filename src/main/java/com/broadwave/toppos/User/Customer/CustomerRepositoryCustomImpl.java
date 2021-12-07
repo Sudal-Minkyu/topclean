@@ -28,6 +28,7 @@ public class CustomerRepositoryCustomImpl extends QuerydslRepositorySupport impl
 
         JPQLQuery<CustomerListDto> query = from(customer)
                 .select(Projections.constructor(CustomerListDto.class,
+                        customer.bcId,
                         customer.bcName,
                         customer.bcHp,
                         customer.bcSex,

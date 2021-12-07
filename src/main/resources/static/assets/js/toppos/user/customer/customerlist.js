@@ -184,6 +184,7 @@ function onYearChange(selectedYear) {
 
 function onModifyCustomer(event) {
     item = event.item;
+    $("#bcId").val(item.bcId);
     $("#bcName").val(item.bcName);
     $("#bcHp").val(CommonUI.onPhoneNumChange(item.bcHp));
     $("input:radio[name='bcSex']:radio[value='" + item.bcSex + "']")
@@ -202,6 +203,7 @@ function onModifyCustomer(event) {
     $("#bcAgreeType").val(item.bcAgreeType);
     $("#bcRemark").val(item.bcRemark);
     $("#signImage").attr("src", item.bcSignImage);
+    console.log(item);
 }
 
 /* 전화번호 입력을 위한 유효성 검사 */
