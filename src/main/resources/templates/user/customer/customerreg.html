@@ -57,7 +57,7 @@
 						<h4 class="customer__form-title">휴대폰<span>※</span></h4>
 						<div class="customer__form-input">
 							<div class="c-text">
-								<input type="text" id="bcHp" name="bcHp" placeholder="숫자만 입력해 주세요" onkeyup="onPhonenumChange(this)">
+								<input type="text" id="bcHp" name="bcHp" placeholder="숫자만 입력해 주세요" onkeyup="onHpChange()">
 								<button type="button" onclick="openVKeyboard(1)">키보드</button>
 							</div>
 						</div>
@@ -66,11 +66,11 @@
 						<h4 class="customer__form-title">성별</h4>
 						<div class="customer__form-input">
 							<div class="c-radio">
-								<input id="female" type="radio" name="bcSex" value="1" checked>
+								<input id="female" type="radio" name="bcSex" value="0" checked>
 								<label for="female">여자</label>
 							</div>
 							<div class="c-radio">
-								<input id="male" type="radio" name="bcSex" value="0">
+								<input id="male" type="radio" name="bcSex" value="1">
 								<label for="male">남자</label>
 							</div>
 						</div>
@@ -132,7 +132,7 @@
 						<h4 class="customer__form-title">고객구분</h4>
 						<div class="customer__form-input">
 							<div class="c-text">
-								<input type="text" id="bcGrade" name="bcGrade" value="일반" readonly />
+								<input type="text" value="일반" readonly />
 							</div>
 							
 <!--							<div class="c-select">-->
@@ -225,7 +225,7 @@
 
 <!--		<div id="resultmsg" style="width:500px;height:100px ;background-color: #AAAAF0; word-break: break-all;">결과메세지</div>-->
 	</div>
-	
+
 	<div id="VKEY"></div>
 </div>
 </html>

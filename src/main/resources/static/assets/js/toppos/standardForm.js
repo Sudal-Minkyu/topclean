@@ -55,12 +55,9 @@ gridColumnLayout[0] = [
 * */
 gridProp[0] = {
     editable : false,
-    selectionMode : "multipleCells",
+    selectionMode : "singleRow",
     noDataMessage : "출력할 데이터가 없습니다.",
-    rowNumHeaderText : "순번",
-    rowIdField : "userid",
     enableColumnResize : false,
-    rowIdTrustMode : true,
     showStateColumn : true,
     enableFilter : true
 };
@@ -77,14 +74,11 @@ gridColumnLayout[1] = [
 
 gridProp[1] = {
     editable : false,
-    selectionMode : "multipleCells",
+    selectionMode : "singleRow",
     noDataMessage : "출력할 데이터가 없습니다.",
-    rowNumHeaderText : "순번",
-    rowIdField : "userid",
     enableColumnResize : false,
-    rowIdTrustMode : true,
     showStateColumn : true,
-    enableFilter : true,
+    enableFilter : true
 };
 
 

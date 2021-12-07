@@ -15,6 +15,7 @@ vkeyProp[0] = {
 
 vkeyProp[1] = { // 키패드로 변경 필요
     title : "휴대폰(숫자만 입력해 주세요)",
+    callback : onHpChange,
 }
 
 vkeyProp[2] = {
@@ -27,16 +28,7 @@ vkeyProp[3] = {
 
 /* 호출하여 목표 가상 키보드 띄우기, 0번부터 배열 순서대로 */
 function openVKeyboard(num) {
-    if(num === 1) {
-        /* 휴대폰 번호 수정 후 콜백을 이용하여 번호 유효성 검사를 한다 */
-        vkey.showKeyboard(vkeyTargetId[num], vkeyProp[num],
-            function (){
-                onPhonenumChange(document.getElementById("bcHp"));
-            });
-    }else{
-        vkey.showKeyboard(vkeyTargetId[num], vkeyProp[num]);
-    }
-
+    vkey.showKeyboard(vkeyTargetId[num], vkeyProp[num]);
 }
 
 /* 입력된 폼 정보 저장 */
@@ -51,6 +43,7 @@ function saveRegister() {
 
     formData.set("bcHp", formData.get("bcHp").replace(/[^0-9]/g, ""));
     formData.append("bcBirthday", birthday);
+    formData.append("bcGrade", "01");
 
     if($("#bcAgreeType").val()==="1"){
         console.log("온라인 입니다.");
@@ -58,7 +51,7 @@ function saveRegister() {
         if($resultmsg.text()==="결과메세지"){
             alertCaution("사인을 해주세요",1)
         }else{
-            formData.append("bcSignImage", $("#bcSignImage".val()));
+            formData.append("bcSignImage", $("#bcSignImage").val());
         }
     }else{
         console.log("서면 입니다.");
@@ -106,7 +99,8 @@ function onYearChange(selectedYear) {
 }
 
 /* 전화번호 입력을 위한 유효성 검사 */
-function onPhonenumChange (element) {
+function onHpChange () {
+    const element = document.getElementById("bcHp");
     let phoneNumber = element.value;
     element.value = CommonUI.onPhoneNumChange(phoneNumber);
 }
@@ -120,7 +114,7 @@ function onAgreeTypeChange(type) {
     }
 }
 
-/* 회원등록을 취소(페이지 이동) */
+/* 회원등록을 취소 */
 function cancelRegister() {
 
 }
@@ -129,7 +123,7 @@ function cancelRegister() {
 function requestSign() {
     const protocol = location.protocol;
     const hostName = location.hostname;
-    const port = location.port
+    const port = location.port;
 
     cAPI.approvalCall(protocol +'//'+hostName+ ':' + port + '/user/sign');
 
