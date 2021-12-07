@@ -8,6 +8,5 @@ import java.util.Optional;
 
 @Repository
 public interface CustomerRepository extends JpaRepository<Customer,Long> {
-    @Query("select a from Customer a where a.bcHp = :bcHp")
-    Optional<Customer> findByBcHp(String bcHp);
+
 }

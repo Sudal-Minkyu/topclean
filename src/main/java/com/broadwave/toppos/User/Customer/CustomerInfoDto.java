@@ -17,7 +17,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class CustomerInfoDto {
 
-    private Long id; // 고객고유 ID값
+    private Long bcId; // 고객고유 ID값
     private String bcName; // 고객명
     private String bcHp; // 휴대폰번호( "-" 빼고저장)
     private String bcAddress; // 주소
@@ -34,8 +34,8 @@ public class CustomerInfoDto {
         return bcLastRequsetDt;
     }
 
-    public Long getId() {
-        return id;
+    public Long getBcId() {
+        return bcId;
     }
 
     public String getBcName() {

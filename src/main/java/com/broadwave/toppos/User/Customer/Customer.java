@@ -26,7 +26,7 @@ public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="bc_id")
-    private Long id;
+    private Long bcId;
 
     @Column(name="fr_code")
     private String frCode; // 가맹점코드 3자리

@@ -45,7 +45,7 @@ public class CustomerRepositoryCustomImpl extends QuerydslRepositorySupport impl
                         customer.insertDateTime
                 ));
 
-        query.orderBy(customer.id.desc());
+        query.orderBy(customer.bcId.desc());
         query.where(customer.frCode.eq(frCode));
 
         if(!searchString.equals("")){
@@ -68,7 +68,7 @@ public class CustomerRepositoryCustomImpl extends QuerydslRepositorySupport impl
 
         JPQLQuery<CustomerInfoDto> query = from(customer)
                 .select(Projections.constructor(CustomerInfoDto.class,
-                        customer.id,
+                        customer.bcId,
                         customer.bcName,
                         customer.bcHp,
                         customer.bcAddress,

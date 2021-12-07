@@ -62,7 +62,7 @@ public class UserRestController {
             return ResponseEntity.ok(res.fail(ResponseErrorCode.TP007.getCode(), ResponseErrorCode.TP007.getDesc(),ResponseErrorCode.TP008.getCode(), ResponseErrorCode.TP008.getDesc()));
         }
 
-        Optional<Customer> optionalCustomer = userService.findByBcHp(customer.getBcHp());
+        Optional<Customer> optionalCustomer = userService.findById(customer.getBcId());
         if(optionalCustomer.isPresent()){
             log.info("고객 정보를 수정합니다.");
 //            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP014.getCode(), ResponseErrorCode.TP014.getDesc(), null, null));
@@ -79,15 +79,15 @@ public class UserRestController {
 //            log.info("고객 업데이트 저장 성공 : id '" + accountSave.getUserid() + "'");
         }else{
             log.info("신규 고객 입니다.");
-            // 신규일때
-            customer.setFrCode(frCode);
-            customer.setBcQuitYn("N");
-            customer.setInsert_id(login_id);
-            customer.setInsertDateTime(LocalDateTime.now());
-            customer.setBcMessageAgreeDt(LocalDateTime.now());
-            log.info("고객저장정보 : "+customer);
-            Customer customerSave =  userService.customerSave(customer);
-            log.info("고객 신규 저장 성공 : 핸드폰 번호 '" + customerSave.getBcHp() +"'");
+//            // 신규일때
+//            customer.setFrCode(frCode);
+//            customer.setBcQuitYn("N");
+//            customer.setInsert_id(login_id);
+//            customer.setInsertDateTime(LocalDateTime.now());
+//            customer.setBcMessageAgreeDt(LocalDateTime.now());
+//            log.info("고객저장정보 : "+customer);
+//            Customer customerSave =  userService.customerSave(customer);
+//            log.info("고객 신규 저장 성공 : 핸드폰 번호 '" + customerSave.getBcHp() +"'");
         }
 
         return ResponseEntity.ok(res.success());
@@ -120,7 +120,7 @@ public class UserRestController {
 
             customerListInfo = new HashMap<>();
 
-            customerListInfo.put("bcId", customerInfoDto.getId());
+            customerListInfo.put("bcId", customerInfoDto.getBcId());
             customerListInfo.put("bcName", customerInfoDto.getBcName());
             customerListInfo.put("bcHp", customerInfoDto.getBcHp());
             customerListInfo.put("bcGrade", customerInfoDto.getBcGrade());

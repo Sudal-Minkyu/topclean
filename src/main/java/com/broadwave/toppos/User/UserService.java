@@ -30,8 +30,8 @@ public class UserService {
     }
 
     // 핸드폰 번호로 고객 조회
-    public Optional<Customer> findByBcHp(String bcHp) {
-        return customerRepository.findByBcHp(bcHp);
+    public Optional<Customer> findById(Long bcId) {
+        return customerRepository.findById(bcId);
     }
 
     // 로그인한 가맹점의 대한 고객정보 조회
