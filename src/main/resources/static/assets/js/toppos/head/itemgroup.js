@@ -151,6 +151,9 @@ gridColumnLayout[0] = [
         dataField: "bgName",
         headerText: "명칭",
     }, {
+        dataField: "",
+        headerText: "아이콘이미지",
+    }, {
         dataField: "bgRemark",
         headerText: "대분류 특이사항",
     }, {
