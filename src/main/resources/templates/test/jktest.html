@@ -26,7 +26,19 @@
 	
 		
 		$(function() {
+			//카테고리 선택 시 팝업 열기
+			$('.regist__category-btn').on('click', function(e) {
+				$('#productPop').addClass('active');
+				
+				e.preventDefault()
+			});
 			
+			// 팝업 닫기
+			$('.pop__close').on('click', function(e) {
+				$(this).parents('.pop').removeClass('active');
+				
+				e.preventDefault()
+			})
 		});
 
 	</script>
@@ -224,23 +236,588 @@
 	</div>
 	
 	
-	
-	
-
-	<div class="pop">
+	<!-- 기본 팝업 -->
+	<div class="pop active">
 		<div class="pop__box">
-			<div class="product-pop">
-				<div class="product-pop__article">
-					<div class="product-pop__article-header">
-						<h3>사이즈&amp;소재</h3>
+			<div class="pop__article">
+				<h3 class="pop__article-header">고객정보 수정</h3>
+				<div class="pop__aricle-content">
+					<!-- 이 안에 넣어주기 -->
+					<div class="customer__content">
+						<form id="userregForm" enctype="multipart/form-data">
+							<ul class="customer__form-list">
+								<li class="customer__form-item">
+									<h4 class="customer__form-title">고객명</h4>
+									<div class="customer__form-input">
+										<div class="c-text">
+											<input type="text" id="bcName" name="bcName" />
+											<button type="button" onclick="openVKeyboard(0)">키보드</button>
+										</div>
+									</div>
+								</li>
+								<li class="customer__form-item">
+									<h4 class="customer__form-title">휴대폰<span>※</span></h4>
+									<div class="customer__form-input">
+										<div class="c-text">
+											<input type="text" id="bcHp" name="bcHp" placeholder="숫자만 입력해 주세요" onkeyup="onPhonenumChange(this)">
+											<button type="button" onclick="openVKeyboard(1)">키보드</button>
+										</div>
+									</div>
+								</li>
+								<li class="customer__form-item">
+									<h4 class="customer__form-title">성별</h4>
+									<div class="customer__form-input">
+										<div class="c-radio">
+											<input id="female" type="radio" name="bcSex" value="1" checked>
+											<label for="female">여자</label>
+										</div>
+										<div class="c-radio">
+											<input id="male" type="radio" name="bcSex" value="0">
+											<label for="male">남자</label>
+										</div>
+									</div>
+								</li>
+								<li class="customer__form-item">
+									<h4 class="customer__form-title">주소</h4>
+									<div class="customer__form-input">
+										<div class="c-text">
+											<input type="text" id="bcAddress" name="bcAddress">
+											<button type="button" onclick="openVKeyboard(2)">키보드</button>
+										</div>
+									</div>
+								</li>
+								<li class="customer__form-item">
+									<h4 class="customer__form-title">생년월일/나이</h4>
+									<div class="customer__form-input">
+										<div class="c-select">
+											<select id="bcBirthYYYY" onchange="onYearChange(this.value)">
+												<option value="">년도</option>
+												<option th:each="i : ${#numbers.sequence(2010, 1950, -1)}"
+														th:value="${i}"
+														th:text="${i}">
+												</option>
+											</select>
+										</div>
+										
+										<div class="c-select">
+											<select id="bcBirthMM">
+												<option value="">월</option>
+												<option th:each="i : ${#numbers.sequence(1, 12, 1)}"
+														th:value="${#numbers.formatInteger(i, 2)}"
+														th:text="${i}">
+												</option>
+											</select>
+										</div>
+										
+										<div class="c-select">
+											<select id="bcBirthDD">
+												<option value="">일</option>
+												<option th:each="i : ${#numbers.sequence(1, 31, 1)}"
+														th:value="${#numbers.formatInteger(i, 2)}"
+														th:text="${i}">
+												</option>
+											</select>
+										</div>
+										
+										<div class="c-select">
+											<select id="bcAge" name="bcAge">
+												<option value="">연령대</option>
+												<option th:each="i : ${#numbers.sequence(10, 90, 10)}"
+														th:value="${i}"
+														th:text="${i}+' 대'">
+												</option>
+											</select>
+										</div>
+									</div>
+								</li>
+								<li class="customer__form-item">
+									<h4 class="customer__form-title">고객구분</h4>
+									<div class="customer__form-input">
+										<div class="c-text">
+											<input type="text" id="bcGrade" name="bcGrade" value="일반" readonly />
+										</div>
+										
+			<!--							<div class="c-select">-->
+			<!--								<select id="bcGrade" name="bcGrade">-->
+			<!--									<option value="01">일반</option>-->
+			<!--									<option value="02">VIP</option>-->
+			<!--									<option value="03">VVIP</option>-->
+			<!--								</select>-->
+			<!--							</div>-->
+									</div>
+								</li>
+								<li class="customer__form-item">
+									<h4 class="customer__form-title">성향</h4>
+									<div class="customer__form-input">
+										<div class="c-select c-select--blue">
+											<select id="bcValuation" name="bcValuation">
+												<option value="1">☆☆☆☆★</option>
+												<option value="2">☆☆☆★★</option>
+												<option value="3" selected>☆☆★★★</option>
+												<option value="4">☆★★★★</option>
+												<option value="5">★★★★★</option>
+											</select>
+										</div>
+									</div>
+								</li>
+								<li class="customer__form-item">
+									<!-- 팝업 사용 시 주석 풀어주세요 -->
+									<!-- 
+									<h4 class="customer__form-title">탈퇴</h4>
+									<div class="customer__form-input">
+										<div class="c-radio">
+											<input id="yes" type="radio" name="bcMessageAgree2" value="Y">
+											<label for="yes">Y</label>
+										</div>
+										
+										<div class="c-radio">
+											<input id="no" type="radio" name="bcMessageAgree2" value="N" checked>
+											<label for="no">N</label>
+										</div>
+									</div>
+									 -->
+								</li>
+								<li class="customer__form-item">
+									<h4 class="customer__form-title">문자수신동의</h4>
+									<div class="customer__form-input">
+										<div class="c-radio">
+											<input id="yes2" type="radio" name="bcMessageAgree" value="Y">
+											<label for="yes2">동의</label>
+										</div>
+										
+										<div class="c-radio">
+											<input id="no2" type="radio" name="bcMessageAgree" value="N" checked>
+											<label for="no2">동의안함</label>
+										</div>
+									</div>
+								</li>
+								<li class="customer__form-item">
+									<h4 class="customer__form-title">동의타입</h4>
+									<div class="customer__form-input">
+										<div class="c-select">
+											<select id="bcAgreeType" name="bcAgreeType" onchange="onAgreeTypeChange(this.value)">
+												<option value="1">온라인</option>
+												<option value="2">서면</option>
+											</select>
+										</div>							
+										<button id="requestSign" class="c-button c-button--small c-button--darksolid" type="button" onclick="requestSign()">서명요청</button>
+										<input type="hidden" id="bcSignImage" />
+										<img id="signImage" />
+									</div>
+								</li>
+								<li class="customer__form-item customer__form-item--100">
+									<h4 class="customer__form-title">특이사항</h4>
+									<div class="customer__form-input">
+										<div class="c-textarea">
+											<textarea id="bcRemark" name="bcRemark"></textarea>
+											<button type="button" onclick="openVKeyboard(3)">키보드</button>
+										</div>
+									</div>
+								</li>
+							</ul>
+			
+							<div class="customer__btns">
+								<button class="c-button" type="button" onclick="saveRegister()">저장</button>
+								<button class="c-button c-button--solid" type="button" onclick="cancelRegister()">취소</button>
+							</div>
+						</form>
 					</div>
 				</div>
-				<div class="product-pop__article">
-					<div class="product-pop__article-header">
-						<h3>색상/무늬</h3>
+			</div>
+			
+			<ul class="pop__console">
+					<li><button class="c-button pop__close">닫기</button></li>
+					<li><button class="c-button c-button--dark pop__close">선택</button></li>
+				</ul>
+		</div>
+	</div>
+	
+	
+	
+	<!-- 접수등록 팝업 -->
+	<div class="pop" id="productPop">
+		<div class="product-pop">
+			<div class="product-pop__article">
+				<div class="product-pop__article-header">
+					<h3>사이즈&amp;소재</h3>
+				</div>
+				<div class="product-pop__article-content">
+					<div class="product-pop__choice product-pop__choice--size">
+						<h4>사이즈</h4>
+						<ul>
+							<li>
+								<div class="choice">
+									<input type="radio" name="size" id="size1" checked />
+									<label for="size1">일반</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice">
+									<input type="radio" name="size" id="size2" />
+									<label for="size2">롱</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice">
+									<input type="radio" name="size" id="size3" />
+									<label for="size3">숏</label>
+								</div>
+							</li>
+						</ul>
+					</div>
+					<div class="product-pop__choice product-pop__choice--material">
+						<h4>사이즈</h4>
+						<ul>
+							<li>
+								<div class="choice choice--material">
+									<input type="radio" name="material" id="material1" checked />
+									<label for="material1">
+										<span class="choice__name">면</span>
+										<span class="choice__cost">999,999</span><span>원</span>
+									</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice choice--material">
+									<input type="radio" name="material" id="material2" />
+									<label for="material2">
+										<span class="choice__name">폴리에스테르 폴리에스테르 폴리에스테르 폴리에스테르 폴리에스테르 폴리에스테르</span>
+										<span class="choice__cost">999,999</span><span>원</span>
+									</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice choice--material">
+									<input type="radio" name="material" id="material3" />
+									<label for="material3">
+										<span class="choice__name">캐시미어</span>
+										<span class="choice__cost">999,999</span><span>원</span>
+									</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice choice--material">
+									<input type="radio" name="material" id="material4" />
+									<label for="material4">
+										<span class="choice__name">면</span>
+										<span class="choice__cost">999,999</span><span>원</span>
+									</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice choice--material">
+									<input type="radio" name="material" id="material5" />
+									<label for="material5">
+										<span class="choice__name">폴리에스테르 폴리에스테르 폴리에스테르 폴리에스테르 폴리에스테르 폴리에스테르</span>
+										<span class="choice__cost">999,999</span><span>원</span>
+									</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice choice--material">
+									<input type="radio" name="material" id="material6" />
+									<label for="material6">
+										<span class="choice__name">캐시미어</span>
+										<span class="choice__cost">999,999</span><span>원</span>
+									</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice choice--material">
+									<input type="radio" name="material" id="material7" />
+									<label for="material7">
+										<span class="choice__name">면</span>
+										<span class="choice__cost">999,999</span><span>원</span>
+									</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice choice--material">
+									<input type="radio" name="material" id="material8" />
+									<label for="material8">
+										<span class="choice__name">폴리에스테르 폴리에스테르 폴리에스테르 폴리에스테르 폴리에스테르 폴리에스테르</span>
+										<span class="choice__cost">999,999</span><span>원</span>
+									</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice choice--material">
+									<input type="radio" name="material" id="material9" />
+									<label for="material9">
+										<span class="choice__name">캐시미어</span>
+										<span class="choice__cost">999,999</span><span>원</span>
+									</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice choice--material">
+									<input type="radio" name="material" id="material10" />
+									<label for="material10">
+										<span class="choice__name">폴리에스테르</span>
+										<span class="choice__cost">999,999</span><span>원</span>
+									</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice choice--material">
+									<input type="radio" name="material" id="material11" />
+									<label for="material11">
+										<span class="choice__name">캐시미어</span>
+										<span class="choice__cost">999,999</span><span>원</span>
+									</label>
+								</div>
+							</li>
+							
+							<li>
+								<div class="choice choice--material">
+									<input type="radio" name="material" id="material12" />
+									<label for="material12">
+										<span class="choice__name">캐시미어</span>
+										<span class="choice__cost">999,999</span><span>원</span>
+									</label>
+								</div>
+							</li>
+						</ul>
 					</div>
 				</div>
-				<div class="product-pop__article"></div>
+			</div>
+			
+			
+			<div class="product-pop__article">
+				<div class="product-pop__article-header">
+					<h3>색상/무늬</h3>
+				</div>
+				<div class="product-pop__article-content">
+					<div class="choice-color">
+						<h4>색상</h4>
+						<ul>
+							<li>
+								<input type="radio" name="color" class="choice-color__input" id="color1" checked />
+								<label for="color1" class="choice-color__label none">없음</label>
+							</li>
+							<li>
+								<input type="radio" name="color" class="choice-color__input" id="color2" />
+								<label for="color2" class="choice-color__label white">흰색</label>
+							</li>
+							<li>
+								<input type="radio" name="color" class="choice-color__input" id="color3" />
+								<label for="color3" class="choice-color__label black">검은색</label>
+							</li>
+							<li>
+								<input type="radio" name="color" class="choice-color__input" id="color4" />
+								<label for="color4" class="choice-color__label gray">회색</label>
+							</li>
+							<li>
+								<input type="radio" name="color" class="choice-color__input" id="color5" />
+								<label for="color5" class="choice-color__label red">빨강</label>
+							</li>
+							<li>
+								<input type="radio" name="color" class="choice-color__input" id="color6" />
+								<label for="color6" class="choice-color__label orange">주황</label>
+							</li>
+							<li>
+								<input type="radio" name="color" class="choice-color__input" id="color7" />
+								<label for="color7" class="choice-color__label yellow">노랑</label>
+							</li>
+							<li>
+								<input type="radio" name="color" class="choice-color__input" id="color8" />
+								<label for="color8" class="choice-color__label green">초록</label>
+							</li>
+							<li>
+								<input type="radio" name="color" class="choice-color__input" id="color9" />
+								<label for="color9" class="choice-color__label blue">파랑</label>
+							</li>
+							<li>
+								<input type="radio" name="color" class="choice-color__input" id="color10" />
+								<label for="color10" class="choice-color__label dark-blue">남색</label>
+							</li>
+							<li>
+								<input type="radio" name="color" class="choice-color__input" id="color11" />
+								<label for="color11" class="choice-color__label purple">보라</label>
+							</li>
+							<li>
+								<input type="radio" name="color" class="choice-color__input" id="color12" />
+								<label for="color12" class="choice-color__label pink">핑크</label>
+							</li>
+						</ul>
+					</div>
+					
+					<div class="product-pop__choice product-pop__choice--vertical">
+						<h4>무늬</h4>
+						<ul>
+							<li>
+								<div class="choice choice--full">
+									<input type="radio" name="pattern" id="pattern1" checked />
+									<label for="pattern1">없음</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice choice--full">
+									<input type="radio" name="pattern" id="pattern2" />
+									<label for="pattern2">체크</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice choice--full">
+									<input type="radio" name="pattern" id="pattern3" />
+									<label for="pattern3">혼합</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice choice--full">
+									<input type="radio" name="pattern" id="pattern4" />
+									<label for="pattern4">줄</label>
+								</div>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			
+			
+			<div class="product-pop__article">
+				<div class="product-pop__article-content">
+					<div class="c-text">
+						<input type="text" placeholder="브랜드, 특이사항 입력" />
+						<button>키보드</button>
+					</div>
+					
+					<div class="product-pop__choice">
+						<h4>가격등급</h4>
+						<ul>
+							<li>
+								<div class="choice">
+									<input type="radio" name="price" id="price1" checked />
+									<label for="price1">일반</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice">
+									<input type="radio" name="price" id="price2" />
+									<label for="price2">고급</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice">
+									<input type="radio" name="price" id="price3" />
+									<label for="price3">명품</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice">
+									<input type="radio" name="price" id="price4" />
+									<label for="price4">아동</label>
+								</div>
+							</li>
+						</ul>
+					</div>
+					
+					<div class="product-pop__choice">
+						<h4>할인등급</h4>
+						<ul>
+							<li>
+								<div class="choice">
+									<input type="radio" name="class" id="class1" checked />
+									<label for="class1">없음</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice">
+									<input type="radio" name="class" id="class2" />
+									<label for="class2">VIP</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice">
+									<input type="radio" name="class" id="class3" />
+									<label for="class3">VVIP</label>
+								</div>
+							</li>
+						</ul>
+					</div>
+					
+					<div class="product-pop__choice">
+						<h4>긴급</h4>
+						<ul>
+							<li>
+								<div class="choice">
+									<input type="radio" name="urgent" id="urgent1" checked />
+									<label for="urgent1">없음</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice">
+									<input type="radio" name="urgent" id="urgent2" />
+									<label for="urgent2">급세탁</label>
+								</div>
+							</li>
+						</ul>
+					</div>
+					
+					<div class="product-pop__choice">
+						<h4>처리내역</h4>
+						<ul>
+							<li>
+								<div class="choice">
+									<input type="checkbox" name="etc" id="etc1" checked />
+									<label for="etc1">없음</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice">
+									<input type="checkbox" name="etc" id="etc2" />
+									<label for="etc2">다림질</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice">
+									<input type="checkbox" name="etc" id="etc3" />
+									<label for="etc3">재세탁</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice">
+									<input type="checkbox" name="etc" id="etc4" />
+									<label for="etc4">수선</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice">
+									<input type="checkbox" name="etc" id="etc5" />
+									<label for="etc5">추가요금</label>
+								</div>
+							</li>
+						</ul>
+					</div>
+				
+					<ul class="product-pop__price-list">
+						<li class="product-pop__price">
+							<h4>기본가격</h4>
+							<span>99,999</span>
+							<span class="won">원</span>
+						</li>
+						<li class="product-pop__price">
+							<h4>수선/추가요금</h4>
+							<span>99,999</span>
+							<span class="won">원</span>
+						</li>
+						<li class="product-pop__price">
+							<h4>할인요금</h4>
+							<span>99,999</span>
+							<span class="won">원</span>
+						</li>
+						<li class="product-pop__price-sum">
+							<h4>최종가격</h4>
+							<span>99,999</span>
+							<span class="won">원</span>
+						</li>
+					</ul>
+				</div>
+				
+				<ul class="pop__console pop__console--center">
+					<li><button class="c-button pop__close">닫기</button></li>
+					<li><button class="c-button c-button--dark pop__close">선택완료</button></li>
+				</ul>
 			</div>
 		</div>
 	</div>
