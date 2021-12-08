@@ -15,6 +15,5 @@ class ItemPricePK implements Serializable {
 
     private String biItemcode;
     private String setDt;
-    private String highClassYn;
 
 }

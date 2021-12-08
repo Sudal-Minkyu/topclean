@@ -89,10 +89,6 @@ gridColumnLayout[0] = [
             allowNegative: false,
         },
     }, {
-        dataField: "highClassYn",
-        headerText: "명품여부",
-        editable: false,
-    }, {
         dataField: "bpAddPrice",
         headerText: "추가금액",
         dataType: "numeric",
@@ -261,6 +257,8 @@ function applyPrice() {
     CommonUI.ajax(url, "POST", formData, function (req) {
         if(req.sendData.errorListData !== null){
             console.log("req : "+req.sendData.errorListData);
+            // 에러 내용이 많을경우 대비 얼터화면 확장할 것. to.성낙원
+            alertCaution(req.sendData.errorListData,1);
         }else{
             AUIGrid.clearGridData(gridId[0]);
             setDataIntoGrid(0, gridCreateUrl[0]);

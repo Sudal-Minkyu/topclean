@@ -19,7 +19,6 @@ public class FranchisePriceDto {
 
     private String frCode; // 가맹점 코드(3자리)
     private String biItemcode; // 상품코드
-    private String highClassYn; // 명품여부
     private Integer bfPrice; // 가맹점 적용가격
     private String bfRemark; // 특이사항
 
@@ -29,10 +28,6 @@ public class FranchisePriceDto {
 
     public String getBiItemcode() {
         return biItemcode;
-    }
-
-    public String getHighClassYn() {
-        return highClassYn;
     }
 
     public Integer getBfPrice() {

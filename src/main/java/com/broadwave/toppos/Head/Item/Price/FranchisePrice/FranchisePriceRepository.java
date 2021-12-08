@@ -8,6 +8,6 @@ import java.util.Optional;
 
 @Repository
 public interface FranchisePriceRepository extends JpaRepository<FranchisePrice,Long> {
-    @Query("select a from FranchisePrice a where a.biItemcode = :biItemcode and  a.frCode = :frCode and  a.highClassYn = :highClassYn")
-    Optional<FranchisePrice> findByFranchisePrice(String biItemcode, String frCode, String highClassYn);
+    @Query("select a from FranchisePrice a where a.biItemcode = :biItemcode and  a.frCode = :frCode")
+    Optional<FranchisePrice> findByFranchisePrice(String biItemcode, String frCode);
 }

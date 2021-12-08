@@ -538,6 +538,7 @@ public class HeadRestController {
                 itemGroup.setBgItemGroupcode(optionalItemGroup.get().getBgItemGroupcode());
                 itemGroup.setBgName(itemGroupDto.getBgName());
                 itemGroup.setBgRemark(itemGroupDto.getBgRemark());
+                itemGroup.setBgIconFilename(itemGroupDto.getBgIconFilename());
                 itemGroup.setBgUseYn(itemGroupDto.getBgUseYn());
                 itemGroup.setInsert_id(optionalItemGroup.get().getInsert_id());
                 itemGroup.setInsertDateTime(optionalItemGroup.get().getInsertDateTime());
@@ -630,9 +631,9 @@ public class HeadRestController {
         ArrayList<ItemGroupSDto> updateList = itemGroupSSet.getUpdate(); // 수정 리스트 얻기
         ArrayList<ItemGroupSDto> deleteList = itemGroupSSet.getDelete(); // 제거 리스트 얻기
 
-//        log.info("추가 리스트 : "+addList);
-//        log.info("수정 리스트 : "+updateList);
-//        log.info("삭제 리스트 : "+deleteList);
+        log.info("추가 리스트 : "+addList);
+        log.info("수정 리스트 : "+updateList);
+        log.info("삭제 리스트 : "+deleteList);
 
         // 중분류 저장 시작.
         if(addList.size()!=0){
@@ -659,10 +660,10 @@ public class HeadRestController {
             if (!optionalItemGroup.isPresent()) {
                 return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "수정 할 대분류 " + ResponseErrorCode.TP009.getDesc(), null, null));
             }else{
-                ItemGroupSInfo itemGroupSInfo = headService.findByBsItemGroupcodeS(updateList.get(0).getBgItemGroupcode(), updateList.get(0).getBsItemGroupcodeS());
-                if(itemGroupSInfo != null) {
-                    log.info("수정 할 중분류 코드 : "+itemGroupSInfo.getBsItemGroupcodeS());
-                    for (ItemGroupSDto itemGroupSDto : updateList) {
+                for (ItemGroupSDto itemGroupSDto : updateList) {
+                    ItemGroupSInfo itemGroupSInfo = headService.findByBsItemGroupcodeS(itemGroupSDto.getBgItemGroupcode(), itemGroupSDto.getBsItemGroupcodeS());
+                    if(itemGroupSInfo != null) {
+                        log.info("수정 할 중분류 코드 : "+itemGroupSInfo.getBsItemGroupcodeS());
                         ItemGroupS itemGroupS = new ItemGroupS();
                         itemGroupS.setBsItemGroupcodeS(itemGroupSInfo.getBsItemGroupcodeS());
                         itemGroupS.setBgItemGroupcode(optionalItemGroup.get());
@@ -675,9 +676,9 @@ public class HeadRestController {
                         itemGroupS.setModifyDateTime(LocalDateTime.now());
                         log.info("itemGroupS : " +itemGroupS);
                         headService.itemGroupSSave(itemGroupS);
+                    }else {
+                        return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "수정 할 중분류 " + ResponseErrorCode.TP009.getDesc(), "문자", "다시 시도해주세요. 대분류, 중분류 코드 : " + itemGroupSDto.getBgItemGroupcode() + ", " + itemGroupSDto.getBsItemGroupcodeS()));
                     }
-                }else{
-                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "수정 할 중분류 "+ResponseErrorCode.TP009.getDesc(), "문자", "다시 시도해주세요. 대분류, 중분류 코드 : " + updateList.get(0).getBgItemGroupcode()+", "+updateList.get(0).getBsItemGroupcodeS()));
                 }
             }
         }
@@ -937,7 +938,7 @@ public class HeadRestController {
         List<String> errorList = new ArrayList<>();
         for(int i=1; i<worksheet.getPhysicalNumberOfRows(); i++){
             ItemPrice itemPrice = new ItemPrice();
-            for (int j = 0; j < 13; j++) {
+            for (int j = 0; j < 12; j++) {
                 Row row = worksheet.getRow(i);
                 Cell cellData = row.getCell(j);
                 CellType ct = cellData.getCellType();
@@ -957,12 +958,13 @@ public class HeadRestController {
                 errorList.add(i+"번째 행의 코드가 존재하지 않습니다.");
 //                return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), i+"번쨰 상품"+ResponseErrorCode.TP009.getDesc(), "문자", "상품코드 : "+excelList.get(0).toString()));
             }else{
-                ItemPriceDto priceDto = headService.findByItemPrice(excelList.get(0).toString(), excelList.get(6).toString(), setDtReplace);
+                ItemPriceDto priceDto = headService.findByItemPrice(excelList.get(0).toString(), setDtReplace);
                 if(priceDto != null){
                     errorList.add(i+"번째 행의 중복되는 적용일자가 존재합니다.");
 //                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP015.getCode(), i+"번째 행 "+ResponseErrorCode.TP015.getDesc(), "문자", "상품코드 : "+excelList.get(0).toString()));
                 }else{
-                    ItemPriceDto itemPriceDto = headService.findByItemPrice(excelList.get(0).toString(), excelList.get(6).toString(), null);
+                    log.info(i+"번째 excelList 시작");
+                    ItemPriceDto itemPriceDto = headService.findByItemPrice(excelList.get(0).toString(), null);
                     if(itemPriceDto != null){
                         itemPrice = modelMapper.map(itemPriceDto, ItemPrice.class);
                         itemPrice.setModify_id(login_id);
@@ -977,27 +979,27 @@ public class HeadRestController {
                     itemPrice.setBiItemcode(excelList.get(0).toString());
                     itemPrice.setSetDt(setDtReplace);
                     itemPrice.setCloseDt("99991231");
-                    itemPrice.setHighClassYn(excelList.get(6).toString());
 
                     try {
                         itemPrice.setBpBasePrice(Integer.parseInt((String) excelList.get(3)));
                         itemPrice.setBpAddPrice(Integer.parseInt((String) excelList.get(5)));
-                        itemPrice.setBpPriceA(Integer.parseInt((String) excelList.get(7)));
-                        itemPrice.setBpPriceB(Integer.parseInt((String) excelList.get(8)));
-                        itemPrice.setBpPriceC(Integer.parseInt((String) excelList.get(9)));
-                        itemPrice.setBpPriceD(Integer.parseInt((String) excelList.get(10)));
-                        itemPrice.setBpPriceE(Integer.parseInt((String) excelList.get(11)));
+                        itemPrice.setBpPriceA(Integer.parseInt((String) excelList.get(6)));
+                        itemPrice.setBpPriceB(Integer.parseInt((String) excelList.get(7)));
+                        itemPrice.setBpPriceC(Integer.parseInt((String) excelList.get(8)));
+                        itemPrice.setBpPriceD(Integer.parseInt((String) excelList.get(9)));
+                        itemPrice.setBpPriceE(Integer.parseInt((String) excelList.get(10)));
                     } catch (NumberFormatException e){
                         log.info("문자가 들어가있음 : "+e);
-                        return ResponseEntity.ok(res.fail(ResponseErrorCode.TP016.getCode(), i+"번째 행 "+ResponseErrorCode.TP016.getDesc(), "문자", "상품코드 : "+excelList.get(0).toString()));
+                        errorList.add(i+"번째 행 금액에 문자가 들어갔습니다. 숫자만 입력해주세요.");
+//                        return ResponseEntity.ok(res.fail(ResponseErrorCode.TP016.getCode(), i+"번째 행 "+ResponseErrorCode.TP016.getDesc(), "문자", "상품코드 : "+excelList.get(0).toString()));
                     }
 
-                    itemPrice.setBiRemark(excelList.get(12).toString());
+                    itemPrice.setBiRemark(excelList.get(11).toString());
 
                     itemPrice.setInsert_id(login_id);
                     itemPrice.setInsertDateTime(LocalDateTime.now());
                     itemPrice.setModify_id("null");
-//                  log.info(i+"번째 itemPrice : "+itemPrice);
+                    log.info(i+"번째 itemPrice : "+itemPrice);
 
                     itemPriceSaveArrayList.add(itemPrice);
 
@@ -1053,7 +1055,6 @@ public class HeadRestController {
             itemPriceInfo.put("closeDt", itemPriceListDto.getCloseDt());
 
             itemPriceInfo.put("bpBasePrice", itemPriceListDto.getBpBasePrice());
-            itemPriceInfo.put("highClassYn", itemPriceListDto.getHighClassYn());
             itemPriceInfo.put("bpAddPrice", itemPriceListDto.getBpAddPrice());
 
             itemPriceInfo.put("bpPriceA", itemPriceListDto.getBpPriceA());
@@ -1095,7 +1096,7 @@ public class HeadRestController {
         // 상품가격 수정 시작
         if(updateList.size()!=0){
             for (ItemPriceDto itemPriceDto : updateList) {
-                Optional<ItemPrice> optionalItemPrice = headService.findByItemPriceOptional(itemPriceDto.getBiItemcode(), itemPriceDto.getHighClassYn(), itemPriceDto.getSetDt(), itemPriceDto.getCloseDt());
+                Optional<ItemPrice> optionalItemPrice = headService.findByItemPriceOptional(itemPriceDto.getBiItemcode(), itemPriceDto.getSetDt(), itemPriceDto.getCloseDt());
                 if (!optionalItemPrice.isPresent()) {
                     return ResponseEntity.ok(res.fail(ResponseErrorCode.TP005.getCode(), "수정 할 품목" + ResponseErrorCode.TP005.getDesc(), "문자", "상품코드 : " + itemPriceDto.getBiItemcode()));
                 } else {
@@ -1104,7 +1105,6 @@ public class HeadRestController {
 
                     itemPrice.setBiItemcode(optionalItemPrice.get().getBiItemcode());
                     itemPrice.setSetDt(optionalItemPrice.get().getSetDt());
-                    itemPrice.setHighClassYn(optionalItemPrice.get().getHighClassYn());
                     itemPrice.setCloseDt(optionalItemPrice.get().getCloseDt());
 
                     itemPrice.setBpBasePrice(itemPriceDto.getBpBasePrice());
@@ -1135,7 +1135,7 @@ public class HeadRestController {
         // 상품가격 삭제로직 실행
         if(deleteList.size()!=0){
             for (ItemPriceDto itemPriceDto : deleteList) {
-                Optional<ItemPrice> optionalItemPrice = headService.findByItemPriceOptional(itemPriceDto.getBiItemcode(), itemPriceDto.getHighClassYn(), itemPriceDto.getSetDt(), itemPriceDto.getCloseDt());
+                Optional<ItemPrice> optionalItemPrice = headService.findByItemPriceOptional(itemPriceDto.getBiItemcode(), itemPriceDto.getSetDt(), itemPriceDto.getCloseDt());
                 if(optionalItemPrice.isPresent()) {
                     log.info("삭제할 상품소재 코드 : "+optionalItemPrice.get().getBiItemcode());
                     itemPriceList.add(optionalItemPrice.get());
@@ -1183,17 +1183,16 @@ public class HeadRestController {
                     if (!optionalItem.isPresent()) {
                         return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(),"상품"+ResponseErrorCode.TP009.getDesc(), "문자", "상품코드 : "+franchisePriceDto.getBiItemcode()));
                     }else{
-                        Optional<FranchisePrice> optionalFranchisePrice = headService.findByFranchisePrice(franchisePriceDto.getBiItemcode(), franchisePriceDto.getFrCode(), franchisePriceDto.getHighClassYn());
+                        Optional<FranchisePrice> optionalFranchisePrice = headService.findByFranchisePrice(franchisePriceDto.getBiItemcode(), franchisePriceDto.getFrCode());
                         if (optionalFranchisePrice.isPresent()) {
                             log.info("이미 존재하는 특정가격 적용품목");
-                            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP017.getCode(),ResponseErrorCode.TP017.getDesc(), "문자", "상품코드 : "+franchisePriceDto.getBiItemcode()+", 명품여부 : "+franchisePriceDto.getHighClassYn()));
+                            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP017.getCode(),ResponseErrorCode.TP017.getDesc(), "문자", "상품코드 : "+franchisePriceDto.getBiItemcode()));
                         }else{
                             log.info("특정가격 적용품목 신규생성");
                             FranchisePrice franchisePrice = new FranchisePrice();
                             franchisePrice.setBiItemcode(franchisePriceDto.getBiItemcode());
                             franchisePrice.setFrCode(franchisePriceDto.getFrCode());
 
-                            franchisePrice.setHighClassYn(franchisePriceDto.getHighClassYn());
                             franchisePrice.setBfPrice(franchisePriceDto.getBfPrice());
                             franchisePrice.setBfRemark(franchisePriceDto.getBfRemark());
                             franchisePrice.setInsert_id(login_id);
@@ -1215,7 +1214,7 @@ public class HeadRestController {
         // 상품소재 수정 시작.
         if(updateList.size()!=0){
             for (FranchisePriceDto franchisePriceDto : updateList) {
-                Optional<FranchisePrice> optionalFranchisePrice = headService.findByFranchisePrice(franchisePriceDto.getBiItemcode(), franchisePriceDto.getFrCode(), franchisePriceDto.getHighClassYn());
+                Optional<FranchisePrice> optionalFranchisePrice = headService.findByFranchisePrice(franchisePriceDto.getBiItemcode(), franchisePriceDto.getFrCode());
                 if (!optionalFranchisePrice.isPresent()) {
                     log.info("존재하지 않은 상품소재 코드 : " +franchisePriceDto.getBiItemcode());
                     return ResponseEntity.ok(res.fail(ResponseErrorCode.TP005.getCode(), "수정 할 품목" + ResponseErrorCode.TP005.getDesc(), "문자", "상품코드 : " + franchisePriceDto.getBiItemcode()));
@@ -1225,7 +1224,6 @@ public class HeadRestController {
 
                     franchisePrice.setBiItemcode(optionalFranchisePrice.get().getBiItemcode());
                     franchisePrice.setFrCode(optionalFranchisePrice.get().getFrCode());
-                    franchisePrice.setHighClassYn(optionalFranchisePrice.get().getHighClassYn());
 
                     franchisePrice.setBfPrice(franchisePriceDto.getBfPrice());
                     franchisePrice.setBfRemark(franchisePriceDto.getBfRemark());
@@ -1250,7 +1248,7 @@ public class HeadRestController {
         // 상품소재 삭제로직 실행
         if(deleteList.size()!=0){
             for (FranchisePriceDto franchisePriceDto : deleteList) {
-                Optional<FranchisePrice> optionalFranchisePrice = headService.findByFranchisePrice(franchisePriceDto.getBiItemcode(), franchisePriceDto.getFrCode(), franchisePriceDto.getHighClassYn());
+                Optional<FranchisePrice> optionalFranchisePrice = headService.findByFranchisePrice(franchisePriceDto.getBiItemcode(), franchisePriceDto.getFrCode());
                 if(optionalFranchisePrice.isPresent()) {
 //                    log.info("삭제할 상품소재 코드 : "+optionalFranchisePrice.get().getBiItemcode());
                     franchisePriceList.add(optionalFranchisePrice.get());
@@ -1291,7 +1289,6 @@ public class HeadRestController {
             franchisePriceInfo.put("bgName", franchisePriceListDto.getBgName());
             franchisePriceInfo.put("bsName", franchisePriceListDto.getBsName());
             franchisePriceInfo.put("biName", franchisePriceListDto.getBiName());
-            franchisePriceInfo.put("highClassYn", franchisePriceListDto.getHighClassYn());
             franchisePriceInfo.put("bfPrice", franchisePriceListDto.getBfPrice());
             franchisePriceInfo.put("bfRemark", franchisePriceListDto.getBfRemark());
 

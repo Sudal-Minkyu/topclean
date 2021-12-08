@@ -29,10 +29,6 @@ public class ItemPrice {
     @Column(name="set_dt")
     private String setDt; // 가격 시작일
 
-    @Id
-    @Column(name="high_class_yn")
-    private String highClassYn; // 명품여부
-
     @Column(name="close_dt")
     private String closeDt; // 가격 종료일
 

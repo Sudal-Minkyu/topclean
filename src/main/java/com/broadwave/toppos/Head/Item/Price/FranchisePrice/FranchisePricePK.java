@@ -15,6 +15,5 @@ class FranchisePricePK implements Serializable {
 
     private String biItemcode;
     private String frCode;
-    private String highClassYn;
 
 }

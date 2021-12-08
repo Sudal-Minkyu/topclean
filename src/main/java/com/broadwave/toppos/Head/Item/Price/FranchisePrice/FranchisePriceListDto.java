@@ -21,7 +21,6 @@ public class FranchisePriceListDto {
     private String bgName; // 대분류명칭
     private String bsName; // 중분류명칭
     private String biName; // 상품명
-    private String highClassYn; // 가맹점 적용가격
     private Integer bfPrice; // 특이사항
     private String bfRemark; // 특이사항
 
@@ -39,10 +38,6 @@ public class FranchisePriceListDto {
 
     public String getBiName() {
         return biName;
-    }
-
-    public String getHighClassYn() {
-        return highClassYn;
     }
 
     public Integer getBfPrice() {

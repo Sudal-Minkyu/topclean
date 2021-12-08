@@ -50,7 +50,6 @@ public class ItemPriceRepositoryCustomImpl extends QuerydslRepositorySupport imp
                         itemPrice.closeDt,
 
                         itemPrice.bpBasePrice,
-                        itemPrice.highClassYn,
                         itemPrice.bpAddPrice,
 
                         itemPrice.bpPriceA,
@@ -68,7 +67,7 @@ public class ItemPriceRepositoryCustomImpl extends QuerydslRepositorySupport imp
     }
 
     @Override
-    public ItemPriceDto findByItemPrice(String biItemcode, String highClassYn, String setDtReplace) {
+    public ItemPriceDto findByItemPrice(String biItemcode, String setDtReplace) {
 
         QItemPrice itemPrice = QItemPrice.itemPrice;
 
@@ -76,8 +75,8 @@ public class ItemPriceRepositoryCustomImpl extends QuerydslRepositorySupport imp
                 .select(Projections.constructor(ItemPriceDto.class,
                         itemPrice.biItemcode,
                         itemPrice.setDt,
+                        itemPrice.closeDt,
                         itemPrice.bpBasePrice,
-                        itemPrice.highClassYn,
                         itemPrice.bpAddPrice,
                         itemPrice.bpPriceA,
                         itemPrice.bpPriceB,
@@ -90,7 +89,6 @@ public class ItemPriceRepositoryCustomImpl extends QuerydslRepositorySupport imp
                 ));
 
         query.where(itemPrice.biItemcode.eq(biItemcode));
-        query.where(itemPrice.highClassYn.eq(highClassYn));
 
         if(setDtReplace != null){
             query.where(itemPrice.setDt.eq(setDtReplace));

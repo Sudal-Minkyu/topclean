@@ -41,7 +41,6 @@ public class FranchisePriceRepositoryCustomImpl extends QuerydslRepositorySuppor
                         itemGroup.bgName,
                         itemGroupS.bsName,
                         item.biName,
-                        franchisePrice.highClassYn,
                         franchisePrice.bfPrice,
                         franchisePrice.bfRemark
                 ));

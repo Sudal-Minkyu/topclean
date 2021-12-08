@@ -29,10 +29,6 @@ public class FranchisePrice {
     @Column(name="fr_code")
     private String frCode; // 가맹점코드 3자리
 
-    @Id
-    @Column(name="high_class_yn")
-    private String highClassYn; // 명품여부
-
     @Column(name="bf_price")
     private Integer bfPrice; // 가맹점 적용가격
 

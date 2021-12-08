@@ -182,8 +182,8 @@ public class HeadService {
 
     // // // // // // // // // // // // // // 상품 가격관리 페이지 // // // // // // // // // // // // //
     // 상품 가격 검색
-    public ItemPriceDto findByItemPrice(String biItemcode, String highClassYn, String setDtReplace) {
-        return itemPriceRepositoryCustom.findByItemPrice(biItemcode, highClassYn, setDtReplace);
+    public ItemPriceDto findByItemPrice(String biItemcode, String setDtReplace) {
+        return itemPriceRepositoryCustom.findByItemPrice(biItemcode, setDtReplace);
     }
 
     // 상품 가격 멀티 저장
@@ -208,8 +208,8 @@ public class HeadService {
     }
 
     // 상품 가격 업데이트 때 사용
-    public Optional<ItemPrice> findByItemPriceOptional(String biItemcode, String highClassYn, String setDt, String closeDt) {
-        return itemPriceRepository.findByItemPriceOptional(biItemcode, highClassYn, setDt, closeDt);
+    public Optional<ItemPrice> findByItemPriceOptional(String biItemcode, String setDt, String closeDt) {
+        return itemPriceRepository.findByItemPriceOptional(biItemcode, setDt, closeDt);
     }
 
     // 상품 가격 삭제
@@ -229,8 +229,8 @@ public class HeadService {
     }
 
     // 가맹점 특정품목가격 중복검사
-    public Optional<FranchisePrice> findByFranchisePrice(String biItemcode, String frCode, String highClassYn) {
-        return franchisePriceRepository.findByFranchisePrice(biItemcode, frCode, highClassYn);
+    public Optional<FranchisePrice> findByFranchisePrice(String biItemcode, String frCode) {
+        return franchisePriceRepository.findByFranchisePrice(biItemcode, frCode);
     }
 
     // 가맹점 특정품목가격 삭제

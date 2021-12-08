@@ -24,7 +24,6 @@ public class ItemPriceDto {
     private String closeDt; // 가격종료일(적용일자)
 
     private Integer bpBasePrice; // 기본가격
-    private String highClassYn; // 명품여부
     private Integer bpAddPrice; // 추가금액
 
     private Integer bpPriceA; // 최종가격A
@@ -60,10 +59,6 @@ public class ItemPriceDto {
 
     public Integer getBpBasePrice() {
         return bpBasePrice;
-    }
-
-    public String getHighClassYn() {
-        return highClassYn;
     }
 
     public Integer getBpAddPrice() {
