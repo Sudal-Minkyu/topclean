@@ -279,7 +279,6 @@ function filterItems() {
     const s_bgName = $("#s_bgName").val();
     const s_biItemcode = $("#s_biItemcode").val();
     const s_biName = $("#s_biName").val();
-    const s_highClassYn = $("#s_highClassYn").val();
     const s_setDt = $("#s_setDt").val();
 
     if(s_bgName !== "") {
@@ -295,11 +294,6 @@ function filterItems() {
     if(s_biName !== "") {
         AUIGrid.setFilter(gridId[0], "biName", function (dataField, value, item) {
             return new RegExp(s_biName.toUpperCase()).test(value.toUpperCase());
-        });
-    }
-    if(s_highClassYn !== "") {
-        AUIGrid.setFilter(gridId[0], "highClassYn", function (dataField, value, item) {
-            return s_highClassYn === value;
         });
     }
     if(s_setDt !== "") {

@@ -15,6 +15,9 @@ vkeyProp[0] = {
 
 vkeyProp[1] = { // 키패드로 변경 필요
     title : "휴대폰(숫자만 입력해 주세요)",
+    postprocess : function(text) {
+        return text.replace(/[^0-9]/g, "");
+    },
     callback : onHpChange,
 }
 

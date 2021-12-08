@@ -118,16 +118,6 @@ gridColumnLayout[1] = [
         headerText: "상품명",
         editable: false,
     }, {
-        dataField: "highClassYn",
-        headerText: "명품여부",
-        renderer: {
-            type: "DropDownListRenderer",
-            list: ["Y", "N"],
-            disabledFunction: function(rowIndex, columnIndex, value, item, dataField) {
-                return !AUIGrid.isAddedById(gridId[1], item._$uid);
-            }
-        },
-    }, {
         dataField: "bfPrice",
         headerText: "적용금액",
         dataType: "numeric",
@@ -269,7 +259,7 @@ function filterItemList(type) {
 }
 
 function addPriceRow() {
-    AUIGrid.addRow(gridId[1], {highClassYn : "N"}, "last");
+    AUIGrid.addRow(gridId[1], {}, "last");
 }
 
 /* 1번 그리드의 선택된 체크박스 항목들이나, 없을 경우 선택된 행 하나를 삭제 */

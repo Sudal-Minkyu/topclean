@@ -8,8 +8,16 @@ class VKeyboard {
         title: "내용 입력", // 가상키보드의에 상단에 표시될 제목
         boilerplate: [], // 상용구 배열 현재 32개까지 표시되도록 되어있음.
         defaultKeyboard: 0, // 키보드가 표시될 때 기본 선택될 키보드 0 = 한글 부터 Aa특특2 순서대로
-        callback: function () {
-        }, // 가상키보드 동작을 성공적으로 마쳤을 때 실행될 기능
+        calladvance: function() {
+        }, // 가상키보드를 띄우기 전에 실행될 기능
+        postprocess: function(text) {
+            return text;
+        }, // 가상키보드에 텍스트를 옮기기 전에 처리가 필요한 경우
+        endprocess: function(text) {
+            return text;
+        }, // 가상키보드 동작을 마칠 때 결과값이 인자로 오고 리턴값이 필드에 입력된다.
+        callback: function() {
+        }, // 가상키보드 동작이 다 끝나고 나서 실행될 기능
     }
 
     /* 입력의 편집 대상이 되는 필드 */
@@ -243,16 +251,20 @@ class VKeyboard {
             properties[keyName] = properties[keyName] || this.defaultProp[keyName];
         });
 
+        this.postprocess = properties.postprocess;
+        this.calladvance = properties.calladvance;
+        this.endprocess = properties.endprocess;
         this.callback = properties.callback;
+
         const LOOP_BOILER = properties.boilerplate.length > 31 ? 32 : properties.boilerplate.length;
 
         for (let i = 0; i < LOOP_BOILER; i++) {
             this.boilerBtn[i].value = properties.boilerplate[i] || "";
         }
 
+        this.calladvance();
         this.targetField = document.getElementById(elementId);
-        let targetValue = this.targetField.value;
-
+        let targetValue = this.postprocess(this.targetField.value);
         if (targetValue === "") {
             this.lastCaretPos = [0, 0];
             this.lastActualCaretPos = [0, 0];
@@ -260,7 +272,7 @@ class VKeyboard {
             this.lastCaretPos[0] = targetValue.length;
             this.lastCaretPos[1] = this.lastCaretPos[0];
 
-            targetValue = this.exceptionSymbolEncryption(this.targetField.value, true)[0];
+            targetValue = this.exceptionSymbolEncryption(targetValue, true)[0];
 
             this.lastActualCaretPos[0] = targetValue.length;
             this.lastActualCaretPos[1] = this.lastActualCaretPos[0];
@@ -812,7 +824,9 @@ class VKeyboard {
     }
 
     completeEdit() {
-        this.targetField.value = this.exceptionSymbolEncryption(this.editableField.innerHTML, false)[0];
+        this.targetField.value = this.endprocess(this.exceptionSymbolEncryption(
+            this.editableField.innerHTML, false)[0]);
+        this.callback();
         document.getElementById("VKEY_VKEYMAIN").style.display = "none";
         for (let i = 0; i < 4; i++) {
             this.boilerList[i].style.display = "none";
@@ -820,7 +834,6 @@ class VKeyboard {
         }
         this.keyboardBundle[4].style.display = "none";
         this.clearInputField();
-        this.callback(this.targetField.value);
     }
 
     /* 입력필드 전체를 encryptOrDecrypt 예외문자 html에 맞게 변환 true, 다시 일반적인 텍스트의 문자로 변환 false */
