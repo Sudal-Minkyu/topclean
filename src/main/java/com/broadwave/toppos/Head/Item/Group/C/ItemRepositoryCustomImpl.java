@@ -26,10 +26,10 @@ public class ItemRepositoryCustomImpl extends QuerydslRepositorySupport implemen
 
     @Override
     public List<ItemListDto> findByItemList(String bgItemGroupcode, String bsItemGroupcodeS) {
+
         QItem item = QItem.item;
         QItemGroup itemGroup = QItemGroup.itemGroup;
         QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
-
 
         JPQLQuery<ItemListDto> query = from(item)
                 .join(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
@@ -44,7 +44,8 @@ public class ItemRepositoryCustomImpl extends QuerydslRepositorySupport implemen
                         item.biName,
                         item.biUseYn,
                         item.biRemark
-                ));
+                ))
+                .distinct(); // 중복제거
 
         if(!bgItemGroupcode.equals("")){
             query.where(itemGroup.bgItemGroupcode.eq(bgItemGroupcode));
@@ -52,7 +53,6 @@ public class ItemRepositoryCustomImpl extends QuerydslRepositorySupport implemen
         if(!bsItemGroupcodeS.equals("")){
             query.where(itemGroupS.bsItemGroupcodeS.eq(bsItemGroupcodeS).and(itemGroupS.bgItemGroupcode.bgItemGroupcode.eq(bgItemGroupcode)));
         }
-
 
         return query.fetch();
     }

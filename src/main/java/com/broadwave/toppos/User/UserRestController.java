@@ -1,11 +1,14 @@
 package com.broadwave.toppos.User;
 
 import com.broadwave.toppos.Head.HeadService;
+import com.broadwave.toppos.Head.Item.Group.A.ItemGroupDto;
+import com.broadwave.toppos.Head.Item.Group.A.UserItemGroupSortDto;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.User.Customer.Customer;
 import com.broadwave.toppos.User.Customer.CustomerInfoDto;
 import com.broadwave.toppos.User.Customer.CustomerListDto;
 import com.broadwave.toppos.User.Customer.CustomerMapperDto;
+import com.broadwave.toppos.User.GroupSort.GroupSortDto;
 import com.broadwave.toppos.common.AjaxResponse;
 import com.broadwave.toppos.common.ResponseErrorCode;
 import io.jsonwebtoken.Claims;
@@ -242,8 +245,36 @@ public class UserRestController {
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
+    // 접수페이지 진입시 기본적으롤 받는 데이터 API (대분류 목록리스트)
+    @GetMapping("itemGroupAndPriceList")
+    public ResponseEntity<Map<String,Object>> itemgroupList(HttpServletRequest request){
+        log.info("itemgroupList 호출");
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
+//        String frbrCode = (String) claims.get("frbrCode"); // 소속된 지사 코드
+        String login_id = claims.getSubject(); // 현재 아이디
+        log.info("현재 접속한 아이디 : "+login_id);
+        log.info("현재 접속한 가맹점 코드 : "+frCode);
+//        log.info("소속된 지사 코드 : "+frbrCode);
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        // 현재 가맹점의 대분류 리스트 가져오기 + 가맹점이 등록한 대분류 순서 테이블 leftjoin
+        List<UserItemGroupSortDto> userItemGroupSortData = headService.findByUserItemGroupSortDtoList(frCode);
+        log.info("userItemGroupSortData : "+userItemGroupSortData);
+        log.info("userItemGroupSortData 사이즈 : "+userItemGroupSortData.size());
+        data.put("userItemGroupSortData",userItemGroupSortData);
 
 
+
+
+
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
 
 
 

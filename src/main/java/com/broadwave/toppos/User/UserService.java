@@ -2,6 +2,8 @@ package com.broadwave.toppos.User;
 
 import com.broadwave.toppos.Account.AccountRepositoryCustom;
 import com.broadwave.toppos.User.Customer.*;
+import com.broadwave.toppos.User.GroupSort.GroupSortDto;
+import com.broadwave.toppos.User.GroupSort.GroupSortRepositoryCustom;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,12 +17,14 @@ public class UserService {
     private final CustomerRepositoryCustom customerRepositoryCustom;
 
     private final AccountRepositoryCustom accountRepositoryCustom;
-
+    private final GroupSortRepositoryCustom groupSortRepositoryCustom;
     @Autowired
-    public UserService(CustomerRepository customerRepository, CustomerRepositoryCustom customerRepositoryCustom, AccountRepositoryCustom accountRepositoryCustom){
+    public UserService(CustomerRepository customerRepository, CustomerRepositoryCustom customerRepositoryCustom,
+                       AccountRepositoryCustom accountRepositoryCustom, GroupSortRepositoryCustom groupSortRepositoryCustom){
         this.customerRepository = customerRepository;
         this.customerRepositoryCustom = customerRepositoryCustom;
         this.accountRepositoryCustom = accountRepositoryCustom;
+        this.groupSortRepositoryCustom = groupSortRepositoryCustom;
     }
 
     // 고객등록
@@ -54,4 +58,7 @@ public class UserService {
         return accountRepositoryCustom.findByUserInfo(userid, frCode);
     }
 
+    public List<GroupSortDto> findByGroupSortList(String frCode) {
+        return groupSortRepositoryCustom.findByGroupSortList(frCode);
+    }
 }

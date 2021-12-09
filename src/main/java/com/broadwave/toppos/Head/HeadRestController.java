@@ -507,9 +507,9 @@ public class HeadRestController {
         ArrayList<ItemGroupDto> updateList = itemGroupSet.getUpdate(); // 수정 리스트 얻기
         ArrayList<ItemGroupDto> deleteList = itemGroupSet.getDelete(); // 제거 리스트 얻기
 
-        log.info("추가 리스트 : "+addList);
-        log.info("수정 리스트 : "+updateList);
-        log.info("삭제 리스트 : "+deleteList);
+//        log.info("추가 리스트 : "+addList);
+//        log.info("수정 리스트 : "+updateList);
+//        log.info("삭제 리스트 : "+deleteList);
 
         // 저장로직 실행 : 데이터베이스에 같은 코드가 존재하면 리턴처리한다.
         for (ItemGroupDto itemGroupDto : addList) {
@@ -631,9 +631,9 @@ public class HeadRestController {
         ArrayList<ItemGroupSDto> updateList = itemGroupSSet.getUpdate(); // 수정 리스트 얻기
         ArrayList<ItemGroupSDto> deleteList = itemGroupSSet.getDelete(); // 제거 리스트 얻기
 
-        log.info("추가 리스트 : "+addList);
-        log.info("수정 리스트 : "+updateList);
-        log.info("삭제 리스트 : "+deleteList);
+//        log.info("추가 리스트 : "+addList);
+//        log.info("수정 리스트 : "+updateList);
+//        log.info("삭제 리스트 : "+deleteList);
 
         // 중분류 저장 시작.
         if(addList.size()!=0){
@@ -828,12 +828,17 @@ public class HeadRestController {
         // 상품소재 삭제로직 실행 : 데이터베이스에 코드사용중인 코드가 존재하면 리턴처리한다. , 데이터베이스에 코드가 존재하지 않으면 리턴처리한다.
         if(deleteList.size()!=0){
             for (ItemDto itemDto : deleteList) {
-                Optional<Item> itemOptional = headService.findByBiItemcode(itemDto.getBiItemcode());
-                if(itemOptional.isPresent()) {
-                    log.info("삭제할 상품소재 코드 : "+itemOptional.get().getBiItemcode());
-                    headService.findByItemDelete(itemOptional.get());
+                Optional<ItemPrice> itemPrice = headService.findByItemPriceByBiItemcode(itemDto.getBiItemcode());
+                if(itemPrice.isPresent()){
+                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP011.getCode(), ResponseErrorCode.TP011.getDesc(), "문자", "상품코드 : "+itemPrice.get().getBiItemcode()));
                 }else{
-                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "삭제 할 "+ResponseErrorCode.TP009.getDesc(), "문자", "상품코드 : "+itemDto.getBiItemcode()));
+                    Optional<Item> itemOptional = headService.findByBiItemcode(itemDto.getBiItemcode());
+                    if(itemOptional.isPresent()) {
+                        log.info("삭제할 상품소재 코드 : "+itemOptional.get().getBiItemcode());
+                        headService.findByItemDelete(itemOptional.get());
+                    }else{
+                        return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "삭제 할 "+ResponseErrorCode.TP009.getDesc(), "문자", "상품코드 : "+itemDto.getBiItemcode()));
+                    }
                 }
             }
         }
@@ -846,6 +851,9 @@ public class HeadRestController {
     public ResponseEntity<Map<String,Object>> itemGroupCList(@RequestParam(value="bgItemGroupcode", defaultValue="") String bgItemGroupcode,
                                                                                                @RequestParam(value="bsItemGroupcodeS", defaultValue="") String bsItemGroupcodeS){
         log.info("itemGroupCList 호출");
+
+//        log.info("bgItemGroupcode : "+bgItemGroupcode);
+//        log.info("bsItemGroupcodeS : "+bsItemGroupcodeS);
 
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
@@ -873,6 +881,7 @@ public class HeadRestController {
         }
 
         log.info("상품그룹 상품소재 리스트 : "+itemListData);
+        log.info("상품그룹 상품소재 리스트 사이즈 : "+itemListData.size());
         data.put("gridListData",itemListData);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));

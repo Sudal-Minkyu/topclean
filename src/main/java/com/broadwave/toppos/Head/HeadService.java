@@ -66,7 +66,8 @@ public class HeadService {
         this.franchisePriceRepositoryCustom = franchisePriceRepositoryCustom;
     }
 
-    // // // // // // // // // // // // // // 가맹점, 지사 등록 매칭 페이지 // // // // // // // // // // // // //
+
+    // @@@@@@@@@@@@@@@@@@@@@@ 가맹점, 지사 등록 매칭 페이지 @@@@@@@@@@@@@@@@@@@@
     // 가맹점 저장
     public Franchise franchiseSave(Franchise franchise){
         franchiseRepository.save(franchise);
@@ -105,7 +106,7 @@ public class HeadService {
     }
 
 
-    // // // // // // // // // // // // // // 상품 그룹관리 페이지 // // // // // // // // // // // // //
+    // @@@@@@@@@@@@@@@@@@@@    상품 그룹관리 페이지  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     // 상품그룹 대분류  저장
     public void itemGroupSave(ItemGroup itemGroup){
         ItemGroupRepository.save(itemGroup);
@@ -114,6 +115,11 @@ public class HeadService {
     // 상품그룹 대분류 객체 가져오기
     public Optional<ItemGroup> findByBgItemGroupcode(String bgItemGroupcode) {
         return ItemGroupRepository.findByBgItemGroupcode(bgItemGroupcode);
+    }
+
+    // 가맹점 전용 순번적용
+    public List<UserItemGroupSortDto> findByUserItemGroupSortDtoList(String frCode) {
+        return itemGroupRepositoryCustom.findByUserItemGroupSortDtoList(frCode);
     }
 
     // 상품그룹 대분류 리스트 호출
@@ -180,7 +186,13 @@ public class HeadService {
         ItemRepository.delete(itemOptional);
     }
 
-    // // // // // // // // // // // // // // 상품 가격관리 페이지 // // // // // // // // // // // // //
+
+    // @@@@@@@@@@@@@@@@@@@@ 상품 가격관리 페이지  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    // 상품코드를 통해 가격 검색
+    public Optional<ItemPrice> findByItemPriceByBiItemcode(String biItemcode) {
+        return itemPriceRepository.findByItemPriceByBiItemcode(biItemcode);
+    }
+
     // 상품 가격 검색
     public ItemPriceDto findByItemPrice(String biItemcode, String setDtReplace) {
         return itemPriceRepositoryCustom.findByItemPrice(biItemcode, setDtReplace);
@@ -217,7 +229,8 @@ public class HeadService {
         itemPriceRepository.deleteAll(itemPrice);
     }
 
-    // // // // // // // // // // // // // // 가맹점 특정품목가격 페이지 // // // // // // // // // // // // //
+
+    // @@@@@@@@@@@@@@@@   가맹점 특정품목가격 페이지   @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     // 가맹점 특정품목가격 저장
     public void franchisePriceSave(List<FranchisePrice> franchisePriceList) {
         franchisePriceRepository.saveAll(franchisePriceList);
@@ -237,5 +250,7 @@ public class HeadService {
     public void findByFranchisePriceDelete(List<FranchisePrice> franchisePriceList) {
         franchisePriceRepository.deleteAll(franchisePriceList);
     }
+
+
 
 }
