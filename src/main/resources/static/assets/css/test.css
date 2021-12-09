@@ -1095,11 +1095,11 @@ textarea {
 	border-top-left-radius: 1.25rem;
 	border-top-right-radius: 1.25rem;
 }
-.regist__category ul {
+.regist__category > ul {
 	display: flex;
 	flex-wrap: wrap;
 }
-.regist__category ul li {
+.regist__category > ul > li {
 	padding: 0.313rem 0.625rem;
 }
 .regist__category-btn {
@@ -1156,10 +1156,10 @@ textarea {
 	border-top-left-radius: 1.25rem;
 	border-top-right-radius: 1.25rem;
 }
-.regist__console ul {
+.regist__console > ul {
 	display: flex;
 }
-.regist__console ul li + li {
+.regist__console > ul > li + li {
 	margin-left: 1.25rem;
 }
 /* bottom 접혔을 때 */
@@ -1183,6 +1183,7 @@ textarea {
 	width: 100vw;
 	height: 100vh;
 	background-color: rgba(86, 86, 86, 0.8);
+	z-index: 10;
 }
 .pop.active {
 	display: block;
@@ -1298,10 +1299,15 @@ textarea {
 	margin-top: 1.563rem;
 }
 .product-pop__choice h4 {
-	margin-bottom: 0.313rem;
+	margin-bottom: 0.625rem;
 	color: #959595;
 	font-weight: 700;
 	line-height: 1rem;
+}
+.product-pop__choice > .c-elevator {
+	position: absolute;
+	top: -1.25rem;
+	right: 0;
 }
 .product-pop__choice.product-pop__choice--size {
 	margin-top: 0;
@@ -1312,23 +1318,23 @@ textarea {
 .product-pop__choice.product-pop__choice--material {
 	margin-top: 2.5rem
 }
-.product-pop__choice.product-pop__choice--vertical ul li {
+.product-pop__choice.product-pop__choice--vertical > ul > li {
 	width: 100%;
 	margin: 0;
 }
-.product-pop__choice ul {
+.product-pop__choice > ul {
 	display: flex;
 	flex-wrap: wrap;
 }
-.product-pop__choice ul li {
+.product-pop__choice > ul > li {
 	padding: 0.313rem 0;
 	margin-right: 0.563rem;
 }
-.product-pop__choice.product-pop__choice--material ul {
+.product-pop__choice.product-pop__choice--material > ul {
 	overflow-y: auto;
 	max-height: 34.375rem;
 }
-.product-pop__choice.product-pop__choice--material ul li {
+.product-pop__choice.product-pop__choice--material > ul > li {
 	width: 100%;
 	margin-right: 0;
 }
@@ -1411,15 +1417,15 @@ textarea {
 	font-weight: 700;
 	line-height: 1rem;
 }
-.choice-color ul {
+.choice-color > ul {
 	display: flex;
 	flex-wrap: wrap;
 }
-.choice-color ul li {
+.choice-color > ul > li {
 	width: 3.125rem;
 	margin: 0.625rem 0;
 }
-.choice-color ul li:nth-child(2n) {
+.choice-color > ul > li:nth-child(2n) {
 	margin-left: auto;
 }
 .choice-color__input {
@@ -1577,8 +1583,88 @@ textarea {
 	padding-top: 0;
 }
 
-
-
+/* choice-drop */
+.choice-drop {
+	position: relative;
+	width: 6.25rem;
+	height: 2.5rem;
+}
+.choice-drop__btn {
+	position: relative;
+	width: 6.25rem;
+	height: 2.5rem;
+	background-color: #e7f4ff;
+	border: 0 none;
+	color: #0082f0;
+	font-weight: 700;
+	text-align: center;
+	-webkit-border-radius: 0.313rem;
+	-moz-border-radius: 0.313rem;
+	border-radius: 0.313rem;
+}
+.choice-drop__btn--active {
+	background-color: #0082f0;
+	color: #fff
+}
+.choice-drop__content {
+	display: none;
+	overflow-y: hidden;
+	position: absolute;
+	top: 2.5rem;
+	left: 0;
+	width: 11rem;
+	padding: 0.625rem;
+	-webkit-border-radius: 0.313rem;
+	-moz-border-radius: 0.313rem;
+	border-radius: 0.313rem;
+	-webkit-transition: all .4s;
+	-moz-transition: all .4s;
+	-ms-transition: all .4s;
+	-o-transition: all .4s;
+	transition: all .4s;
+	z-index: 1;
+}
+.choice-drop__content.choice-drop__content--right {
+	left: auto;
+	right: 0;
+}
+.choice-drop__content--active {
+	display: block;
+	background-color: #fff;
+	border: 0.125rem solid #0082f0;
+}
+.choice-drop__item + .choice-drop__item {
+	margin-top: 0.313rem;
+}
+.choice-drop__item input {
+	overflow: hidden;
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    clip: rect(0, 0, 0, 0);
+}
+.choice-drop__item label {
+	display: block;
+	width: 100%;
+	height: 2.5rem;
+	padding: 0 0.625rem;
+	background-color: #e7f4ff;
+	border: 0.063rem solid #0082f0;
+	color: #0082f0;
+	font-weight: 700;
+	text-align: center;
+	line-height: 2.5rem;
+	-webkit-border-radius: 0.313rem;
+	-moz-border-radius: 0.313rem;
+	border-radius: 0.313rem;
+	cursor: pointer;
+}
+.choice-drop__item input:checked + label {
+	background-color: #0082f0;
+	color: #fff;
+}
 
 
 
