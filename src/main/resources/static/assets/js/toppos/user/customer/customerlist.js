@@ -17,6 +17,12 @@ $(function() {
         console.log(e.item); // 이밴트 콜백으로 불러와진 객체의, 클릭한 대상 row 키(파라메터)와 값들을 보여준다.
     });
 
+    $('.pop__close').on('click', function(e) {
+        $(this).parents('.pop').removeClass('active');
+
+        e.preventDefault()
+    })
+
     vkey = new VKeyboard();
 });
 /* 가상키보드 사용 */
@@ -206,6 +212,8 @@ function onModifyCustomer(event) {
     $("#bcAgreeType").val(item.bcAgreeType);
     $("#bcRemark").val(item.bcRemark);
     $("#signImage").attr("src", item.bcSignImage);
+
+    $('#showCustomerDetailPop').addClass('active');
     console.log(item);
 }
 

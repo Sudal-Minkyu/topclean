@@ -266,13 +266,11 @@ function codeOverlap(num){
     let params;
 
     if(num===1){
-        console.log("지사 코드 중복확인");
         url = "/api/head/branchOverlap";
         params = {
             brCode: $("#brCode").val()
         };
     }else{
-        console.log("가맹점 코드 중복확인");
         url = "/api/head/franchiseOverlap";
         params = {
             frCode: $("#frCode").val()
@@ -340,7 +338,6 @@ function franchiseSave() {
 
     CommonUI.ajax(url, "POST", formData, function (req){
         const sentData = Object.fromEntries(formData);
-        console.log(sentData);
         const isUpdated = AUIGrid.rowIdToIndex(gridId[1], sentData.frCode) > -1;
 
         if(isUpdated) {
@@ -428,7 +425,6 @@ function setFieldData(numOfGrid, item) {
             break;
 
         case 3 :
-            console.log(item);
             $("#bot_frCode").val(item.frCode);
             $("#bot_frName").val(item.frName);
             $("#bot_frContractDt").val(item.frContractDt);
@@ -483,6 +479,9 @@ function filterFranchiseList(type) {
             break;
         case 3 :
             AUIGrid.clearFilterAll(gridId[3]);
+            AUIGrid.clearGridData(gridId[3]);
+            setListData(gridCreateUrl[3], 3);
+
             const s_brAssignState = $("#s_brAssignState").val();
             const s_frName = $("#s_frName").val();
             if(s_brAssignState !== "") {
@@ -498,6 +497,8 @@ function filterFranchiseList(type) {
             break;
         case 4 :
             AUIGrid.clearFilterAll(gridId[3]);
+            AUIGrid.clearGridData(gridId[3]);
+            setListData(gridCreateUrl[3], 3);
             break;
     }
 
