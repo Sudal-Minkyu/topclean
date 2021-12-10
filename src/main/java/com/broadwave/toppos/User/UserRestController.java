@@ -298,15 +298,15 @@ public class UserRestController {
 
         // 수선 항목 리스트 데이터 가져오기
         List<AddprocessDto> repairListData = headService.findByAddProcess(frCode, "1");
-        log.info("userItemGroupSListData : "+userItemGroupSListData);
-        log.info("userItemGroupSListData 사이즈 : "+userItemGroupSListData.size());
+        log.info("repairListData : "+repairListData);
+        log.info("repairListData 사이즈 : "+repairListData.size());
         data.put("repairListData",repairListData);
 
 
         // 추가요금 항목 리스트 데이터 가져오기
         List<AddprocessDto> addAmountData = headService.findByAddProcess(frCode, "2");
-        log.info("userItemGroupSListData : "+userItemGroupSListData);
-        log.info("userItemGroupSListData 사이즈 : "+userItemGroupSListData.size());
+        log.info("addAmountData : "+addAmountData);
+        log.info("addAmountData 사이즈 : "+addAmountData.size());
         data.put("addAmountData",addAmountData);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
