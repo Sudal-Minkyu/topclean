@@ -1144,8 +1144,6 @@ public class HeadRestController {
         // 상품가격 삭제로직 실행
         if(deleteList.size()!=0){
             for (ItemPriceDto itemPriceDto : deleteList) {
-
-
                 Optional<ItemPrice> optionalItemPrice = headService.findByItemPriceOptional(itemPriceDto.getBiItemcode(), itemPriceDto.getSetDt(), itemPriceDto.getCloseDt());
                 if(optionalItemPrice.isPresent()) {
                     log.info("삭제할 상품소재 코드 : "+optionalItemPrice.get().getBiItemcode());
@@ -1222,7 +1220,7 @@ public class HeadRestController {
             franchisePriceList.clear();
         }
         
-        // 상품소재 수정 시작.
+        // 특정가격 적용품목 수정 시작.
         if(updateList.size()!=0){
             for (FranchisePriceDto franchisePriceDto : updateList) {
                 Optional<FranchisePrice> optionalFranchisePrice = headService.findByFranchisePrice(franchisePriceDto.getBiItemcode(), franchisePriceDto.getFrCode());
@@ -1256,7 +1254,7 @@ public class HeadRestController {
             franchisePriceList.clear();
         }
 
-        // 상품소재 삭제로직 실행
+        // 특정가격 적용품목 삭제로직 실행
         if(deleteList.size()!=0){
             for (FranchisePriceDto franchisePriceDto : deleteList) {
                 Optional<FranchisePrice> optionalFranchisePrice = headService.findByFranchisePrice(franchisePriceDto.getBiItemcode(), franchisePriceDto.getFrCode());

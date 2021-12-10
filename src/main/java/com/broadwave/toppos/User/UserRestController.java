@@ -1,6 +1,7 @@
 package com.broadwave.toppos.User;
 
 import com.broadwave.toppos.Head.AddCost.AddCostDto;
+import com.broadwave.toppos.Head.Addprocess.AddprocessDto;
 import com.broadwave.toppos.Head.HeadService;
 import com.broadwave.toppos.Head.Item.Group.A.UserItemGroupSortDto;
 import com.broadwave.toppos.Head.Item.Group.B.UserItemGroupSListDto;
@@ -268,7 +269,6 @@ public class UserRestController {
         List<UserItemGroupSortDto> userItemGroupSortData = headService.findByUserItemGroupSortDtoList(frCode);
         log.info("userItemGroupSortData : "+userItemGroupSortData);
         log.info("userItemGroupSortData 사이즈 : "+userItemGroupSortData.size());
-
         data.put("userItemGroupSortData",userItemGroupSortData);
 
 
@@ -283,13 +283,11 @@ public class UserRestController {
         data.put("userItemPriceSortData",userItemPriceSortData);
 
 
-
         // 중분류 리스트 가져오기
         List<UserItemGroupSListDto> userItemGroupSListData = headService.findByUserItemGroupSList();
         log.info("userItemGroupSListData : "+userItemGroupSListData);
         log.info("userItemGroupSListData 사이즈 : "+userItemGroupSListData.size());
         data.put("userItemGroupSListData",userItemGroupSListData);
-
 
 
         // 가격셋팅 테이블 리스트 ex) 고급할인율, 명품할인율 등..
@@ -298,7 +296,18 @@ public class UserRestController {
         data.put("addCostData",addCostDto);
 
 
+        // 수선 항목 리스트 데이터 가져오기
+        List<AddprocessDto> repairListData = headService.findByAddProcess(frCode, "1");
+        log.info("userItemGroupSListData : "+userItemGroupSListData);
+        log.info("userItemGroupSListData 사이즈 : "+userItemGroupSListData.size());
+        data.put("repairListData",repairListData);
 
+
+        // 추가요금 항목 리스트 데이터 가져오기
+        List<AddprocessDto> addAmountData = headService.findByAddProcess(frCode, "2");
+        log.info("userItemGroupSListData : "+userItemGroupSListData);
+        log.info("userItemGroupSListData 사이즈 : "+userItemGroupSListData.size());
+        data.put("addAmountData",addAmountData);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }

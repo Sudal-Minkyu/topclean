@@ -2,6 +2,8 @@ package com.broadwave.toppos.Head;
 
 import com.broadwave.toppos.Head.AddCost.AddCostDto;
 import com.broadwave.toppos.Head.AddCost.AddCostRepositoryCustom;
+import com.broadwave.toppos.Head.Addprocess.AddProcessRepositoryCustom;
+import com.broadwave.toppos.Head.Addprocess.AddprocessDto;
 import com.broadwave.toppos.Head.Branoh.Branch;
 import com.broadwave.toppos.Head.Branoh.BranchListDto;
 import com.broadwave.toppos.Head.Branoh.BranchRepository;
@@ -46,13 +48,15 @@ public class HeadService {
     private final ItemRepositoryCustom itemRepositoryCustom;
     private final ItemPriceRepositoryCustom itemPriceRepositoryCustom;
     private final FranchisePriceRepositoryCustom franchisePriceRepositoryCustom;
-    private final AddCostRepositoryCustom costRepositoryCustom;
+    private final AddCostRepositoryCustom addCostRepositoryCustom;
+    private final AddProcessRepositoryCustom addProcessRepositoryCustom;
 
     @Autowired
     public HeadService(BranchRepository branohRepository, FranchiseRepository franchiseRepository, FranchiseRepositoryCustom franchiseRepositoryCustom, BranchRepositoryCustomImpl branohRepositoryCustom,
                        ItemGroupRepository ItemGroupRepository, ItemGroupRepositoryCustom itemGroupRepositoryCustom, ItemGroupSRepository ItemGroupSRepository, ItemGroupSRepositoryCustom itemGroupSRepositoryCustom,
                        ItemRepository ItemRepository, ItemRepositoryCustom itemRepositoryCustom, ItemPriceRepository itemPriceRepository, ItemPriceRepositoryCustom itemPriceRepositoryCustom,
-                       FranchisePriceRepository franchisePriceRepository, FranchisePriceRepositoryCustom franchisePriceRepositoryCustom, AddCostRepositoryCustom costRepositoryCustom){
+                       FranchisePriceRepository franchisePriceRepository, FranchisePriceRepositoryCustom franchisePriceRepositoryCustom,
+                       AddCostRepositoryCustom addCostRepositoryCustom, AddProcessRepositoryCustom addProcessRepositoryCustom){
         this.branohRepository = branohRepository;
         this.franchiseRepository = franchiseRepository;
         this.franchiseRepositoryCustom = franchiseRepositoryCustom;
@@ -67,7 +71,8 @@ public class HeadService {
         this.itemPriceRepositoryCustom = itemPriceRepositoryCustom;
         this.franchisePriceRepository = franchisePriceRepository;
         this.franchisePriceRepositoryCustom = franchisePriceRepositoryCustom;
-        this.costRepositoryCustom = costRepositoryCustom;
+        this.addCostRepositoryCustom = addCostRepositoryCustom;
+        this.addProcessRepositoryCustom = addProcessRepositoryCustom;
     }
 
 
@@ -267,7 +272,11 @@ public class HeadService {
 
     // 가맹점 가격셋팅 테이블 호출
     public AddCostDto findByAddCost() {
-        return costRepositoryCustom.findByAddCost();
+        return addCostRepositoryCustom.findByAddCost();
     }
 
+    // 수선, 추가요금, 상용구 항목 리스트 데이터 호출
+    public List<AddprocessDto> findByAddProcess(String frCode, String baType) {
+        return addProcessRepositoryCustom.findByAddProcess(frCode, baType);
+    }
 }
