@@ -13,6 +13,7 @@
 <th:block layout:fragment="script">
 	<script src="/assets/js/toppos/user/receipt/receiptreg.js"></script>
 	<script type="text/javascript">
+		// 하단 팝업 토글
 		function toggleBottom() {
 		   var element = document.getElementsByClassName("regist__bottom");
 		   element[0].classList.toggle("active");
@@ -38,6 +39,21 @@
 				$(this).parents('.pop').removeClass('active');
 				
 				e.preventDefault()
+			})
+			
+
+			$('.choice-drop__btn').on('click', function(e) {
+				$(this).next('.choice-drop__content').toggleClass('choice-drop__content--active');
+			})
+			
+			$('.choice-drop__item').on('click', function(e) {
+				$(this).parents('.choice-drop__content').removeClass('choice-drop__content--active');
+				$(this).parents('.choice-drop').children('.choice-drop__btn').addClass('choice-drop__btn--active');
+			})
+			
+			$('.choice-drop__item').on('click', function(e) {
+				$(this).parents('.choice-drop__content').removeClass('choice-drop__content--active');
+				$(this).parents('.choice-drop').children('.choice-drop__btn').removeClass('choice-drop__btn--active');
 			})
 		});
 
@@ -237,198 +253,20 @@
 	
 	
 	<!-- 기본 팝업 -->
-	<div class="pop active">
+	<div class="pop">
 		<div class="pop__box">
 			<div class="pop__article">
-				<h3 class="pop__article-header">고객정보 수정</h3>
+				<h3 class="pop__article-header">고객선택</h3>
 				<div class="pop__aricle-content">
 					<!-- 이 안에 넣어주기 -->
-					<div class="customer__content">
-						<form id="userregForm" enctype="multipart/form-data">
-							<ul class="customer__form-list">
-								<li class="customer__form-item">
-									<h4 class="customer__form-title">고객명</h4>
-									<div class="customer__form-input">
-										<div class="c-text">
-											<input type="text" id="bcName" name="bcName" />
-											<button type="button" onclick="openVKeyboard(0)">키보드</button>
-										</div>
-									</div>
-								</li>
-								<li class="customer__form-item">
-									<h4 class="customer__form-title">휴대폰<span>※</span></h4>
-									<div class="customer__form-input">
-										<div class="c-text">
-											<input type="text" id="bcHp" name="bcHp" placeholder="숫자만 입력해 주세요" onkeyup="onPhonenumChange(this)">
-											<button type="button" onclick="openVKeyboard(1)">키보드</button>
-										</div>
-									</div>
-								</li>
-								<li class="customer__form-item">
-									<h4 class="customer__form-title">성별</h4>
-									<div class="customer__form-input">
-										<div class="c-radio">
-											<input id="female" type="radio" name="bcSex" value="1" checked>
-											<label for="female">여자</label>
-										</div>
-										<div class="c-radio">
-											<input id="male" type="radio" name="bcSex" value="0">
-											<label for="male">남자</label>
-										</div>
-									</div>
-								</li>
-								<li class="customer__form-item">
-									<h4 class="customer__form-title">주소</h4>
-									<div class="customer__form-input">
-										<div class="c-text">
-											<input type="text" id="bcAddress" name="bcAddress">
-											<button type="button" onclick="openVKeyboard(2)">키보드</button>
-										</div>
-									</div>
-								</li>
-								<li class="customer__form-item">
-									<h4 class="customer__form-title">생년월일/나이</h4>
-									<div class="customer__form-input">
-										<div class="c-select">
-											<select id="bcBirthYYYY" onchange="onYearChange(this.value)">
-												<option value="">년도</option>
-												<option th:each="i : ${#numbers.sequence(2010, 1950, -1)}"
-														th:value="${i}"
-														th:text="${i}">
-												</option>
-											</select>
-										</div>
-										
-										<div class="c-select">
-											<select id="bcBirthMM">
-												<option value="">월</option>
-												<option th:each="i : ${#numbers.sequence(1, 12, 1)}"
-														th:value="${#numbers.formatInteger(i, 2)}"
-														th:text="${i}">
-												</option>
-											</select>
-										</div>
-										
-										<div class="c-select">
-											<select id="bcBirthDD">
-												<option value="">일</option>
-												<option th:each="i : ${#numbers.sequence(1, 31, 1)}"
-														th:value="${#numbers.formatInteger(i, 2)}"
-														th:text="${i}">
-												</option>
-											</select>
-										</div>
-										
-										<div class="c-select">
-											<select id="bcAge" name="bcAge">
-												<option value="">연령대</option>
-												<option th:each="i : ${#numbers.sequence(10, 90, 10)}"
-														th:value="${i}"
-														th:text="${i}+' 대'">
-												</option>
-											</select>
-										</div>
-									</div>
-								</li>
-								<li class="customer__form-item">
-									<h4 class="customer__form-title">고객구분</h4>
-									<div class="customer__form-input">
-										<div class="c-text">
-											<input type="text" id="bcGrade" name="bcGrade" value="일반" readonly />
-										</div>
-										
-			<!--							<div class="c-select">-->
-			<!--								<select id="bcGrade" name="bcGrade">-->
-			<!--									<option value="01">일반</option>-->
-			<!--									<option value="02">VIP</option>-->
-			<!--									<option value="03">VVIP</option>-->
-			<!--								</select>-->
-			<!--							</div>-->
-									</div>
-								</li>
-								<li class="customer__form-item">
-									<h4 class="customer__form-title">성향</h4>
-									<div class="customer__form-input">
-										<div class="c-select c-select--blue">
-											<select id="bcValuation" name="bcValuation">
-												<option value="1">☆☆☆☆★</option>
-												<option value="2">☆☆☆★★</option>
-												<option value="3" selected>☆☆★★★</option>
-												<option value="4">☆★★★★</option>
-												<option value="5">★★★★★</option>
-											</select>
-										</div>
-									</div>
-								</li>
-								<li class="customer__form-item">
-									<!-- 팝업 사용 시 주석 풀어주세요 -->
-									<!-- 
-									<h4 class="customer__form-title">탈퇴</h4>
-									<div class="customer__form-input">
-										<div class="c-radio">
-											<input id="yes" type="radio" name="bcMessageAgree2" value="Y">
-											<label for="yes">Y</label>
-										</div>
-										
-										<div class="c-radio">
-											<input id="no" type="radio" name="bcMessageAgree2" value="N" checked>
-											<label for="no">N</label>
-										</div>
-									</div>
-									 -->
-								</li>
-								<li class="customer__form-item">
-									<h4 class="customer__form-title">문자수신동의</h4>
-									<div class="customer__form-input">
-										<div class="c-radio">
-											<input id="yes2" type="radio" name="bcMessageAgree" value="Y">
-											<label for="yes2">동의</label>
-										</div>
-										
-										<div class="c-radio">
-											<input id="no2" type="radio" name="bcMessageAgree" value="N" checked>
-											<label for="no2">동의안함</label>
-										</div>
-									</div>
-								</li>
-								<li class="customer__form-item">
-									<h4 class="customer__form-title">동의타입</h4>
-									<div class="customer__form-input">
-										<div class="c-select">
-											<select id="bcAgreeType" name="bcAgreeType" onchange="onAgreeTypeChange(this.value)">
-												<option value="1">온라인</option>
-												<option value="2">서면</option>
-											</select>
-										</div>							
-										<button id="requestSign" class="c-button c-button--small c-button--darksolid" type="button" onclick="requestSign()">서명요청</button>
-										<input type="hidden" id="bcSignImage" />
-										<img id="signImage" />
-									</div>
-								</li>
-								<li class="customer__form-item customer__form-item--100">
-									<h4 class="customer__form-title">특이사항</h4>
-									<div class="customer__form-input">
-										<div class="c-textarea">
-											<textarea id="bcRemark" name="bcRemark"></textarea>
-											<button type="button" onclick="openVKeyboard(3)">키보드</button>
-										</div>
-									</div>
-								</li>
-							</ul>
-			
-							<div class="customer__btns">
-								<button class="c-button" type="button" onclick="saveRegister()">저장</button>
-								<button class="c-button c-button--solid" type="button" onclick="cancelRegister()">취소</button>
-							</div>
-						</form>
-					</div>
+		        	<div id="grid_customerList"></div>
 				</div>
 			</div>
 			
 			<ul class="pop__console">
-					<li><button class="c-button pop__close">닫기</button></li>
-					<li><button class="c-button c-button--dark pop__close">선택</button></li>
-				</ul>
+				<li><button class="c-button pop__close" onclick="onCloseSelectCustomer()">닫기</button></li>
+				<li><button class="c-button c-button--dark pop__close" onclick="onSelectCustomer()">선택</button></li>
+			</ul>
 		</div>
 	</div>
 	
@@ -467,6 +305,12 @@
 					</div>
 					<div class="product-pop__choice product-pop__choice--material">
 						<h4>사이즈</h4>
+						<!-- 위아래 스크롤 버튼 -->
+						<div class="c-elevator">
+							<button class="c-elevator__btn up">위</button>
+							<button class="c-elevator__btn down">아래</button>
+						</div>
+						<!-- /위아래 스크롤 버튼 -->
 						<ul>
 							<li>
 								<div class="choice choice--material">
@@ -787,6 +631,58 @@
 									<label for="etc5">추가요금</label>
 								</div>
 							</li>
+							<li>
+								<div class="choice">
+									<input type="checkbox" name="etc" id="etc6" />
+									<label for="etc6">표백</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice-drop">
+									<button class="choice-drop__btn">오염</button>
+									<ul class="choice-drop__content">
+										<li class="choice-drop__item">
+											<input type="radio" id="pollut0" name="pollut" />
+											<label for="pollut0">미선택</label>
+										</li>
+										<li class="choice-drop__item">
+											<input type="radio" id="pollut1" name="pollut" />
+											<label for="pollut1">1cm 미만</label>
+										</li>
+										<li class="choice-drop__item">
+											<input type="radio" id="pollut2" name="pollut" />
+											<label for="pollut2">1cm ~ 3cm 미만</label>
+										</li>
+										<li class="choice-drop__item">
+											<input type="radio" id="pollut3" name="pollut" />
+											<label for="pollut3">3cm ~ 7cm 미만</label>
+										</li>
+										<li class="choice-drop__item">
+											<input type="radio" id="pollut4" name="pollut" />
+											<label for="pollut4">7cm ~ 10cm 미만</label>
+										</li>
+										<li class="choice-drop__item">
+											<input type="radio" id="pollut5" name="pollut" />
+											<label for="pollut5">10cm 이상</label>
+										</li>
+									</ul>
+								</div>
+							</li>
+							<li>
+								<div class="choice-drop">
+									<button class="choice-drop__btn">발수가공</button>
+									<ul class="choice-drop__content choice-drop__content--right">
+										<li class="choice-drop__item">
+											<input type="radio" id="water1" name="water" />
+											<label for="water1">발수가공</label>
+										</li>
+										<li class="choice-drop__item">
+											<input type="radio" id="water2" name="water" />
+											<label for="water2">풀먹임</label>
+										</li>
+									</ul>
+								</div>
+							</li>
 						</ul>
 					</div>
 				
@@ -819,6 +715,15 @@
 					<li><button class="c-button c-button--dark pop__close">선택완료</button></li>
 				</ul>
 			</div>
+		</div>
+	</div>
+	
+	
+	
+	<!-- 수선 및 추가요금 팝업 -->
+	<div class="pop">
+		<div class="pop__box">
+			<div class="add-cost"></div>
 		</div>
 	</div>
 	

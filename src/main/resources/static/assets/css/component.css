@@ -363,6 +363,47 @@ input[type="number"]::-webkit-inner-spin-button {
 	left: -0.188rem;
 }
 
+/* elevator */
+.c-elevator {
+	overflow: hidden;
+	display: inline-flex;
+	flex-wrap: wrap;
+	padding: 0.063rem;
+	background-color: #d4d9e1;
+	-webkit-border-radius: 0.313rem;
+	-moz-border-radius: 0.313rem;
+	border-radius: 0.313rem;
+}
+.c-elevator__btn {
+	width: 2.5rem;
+	height: 2.5rem;
+	border: 0 none;
+	background-color: #fff;
+	background-repeat: no-repeat;
+	-webkit-background-size: 1.625rem;
+	background-size: 1.625rem;
+	background-position: center center;
+	text-indent: -9999rem;
+	-webkit-transition: all .2s;
+	-moz-transition: all .2s;
+	-ms-transition: all .2s;
+	-o-transition: all .2s;
+	transition: all .2s;
+}
+.c-elevator__btn.up {
+	border-left-top-radius: 0.313rem;
+	border-left-bottom-radius: 0.313rem;
+	background-image: url(/assets/images/icon__up--one.svg);
+}
+.c-elevator__btn.down {
+	margin-left: 0.063rem;
+	border-right-top-radius: 0.313rem;
+	border-right-bottom-radius: 0.313rem;
+	background-image: url(/assets/images/icon__down--one.svg);
+}
+.c-elevator__btn:active {
+	background-color: #d4d9e1;
+}
 
 
 /* datepicker */
