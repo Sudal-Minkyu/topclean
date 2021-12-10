@@ -2,11 +2,14 @@ package com.broadwave.toppos.User;
 
 import com.broadwave.toppos.Head.AddCost.AddCostDto;
 import com.broadwave.toppos.Head.Addprocess.AddprocessDto;
+import com.broadwave.toppos.Head.Franohise.FranchisInfoDto;
 import com.broadwave.toppos.Head.HeadService;
 import com.broadwave.toppos.Head.Item.Group.A.UserItemGroupSortDto;
 import com.broadwave.toppos.Head.Item.Group.B.UserItemGroupSListDto;
 import com.broadwave.toppos.Head.Item.Price.UserItemPriceSortDto;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
+import com.broadwave.toppos.Manager.Calendar.BranchCalendar;
+import com.broadwave.toppos.Manager.ManagerService;
 import com.broadwave.toppos.User.Customer.Customer;
 import com.broadwave.toppos.User.Customer.CustomerInfoDto;
 import com.broadwave.toppos.User.Customer.CustomerListDto;
@@ -21,6 +24,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -40,13 +44,15 @@ public class UserRestController {
     private final ModelMapper modelMapper;
     private final TokenProvider tokenProvider;
     private final HeadService headService;
+    private final ManagerService managerService;
 
     @Autowired
-    public UserRestController(UserService userService, TokenProvider tokenProvider, ModelMapper modelMapper, HeadService headService) {
+    public UserRestController(UserService userService, TokenProvider tokenProvider, ModelMapper modelMapper, HeadService headService, ManagerService managerService) {
         this.userService = userService;
         this.modelMapper = modelMapper;
         this.tokenProvider = tokenProvider;
         this.headService = headService;
+        this.managerService = managerService;
     }
 
     // 고객 등록 API
@@ -265,6 +271,9 @@ public class UserRestController {
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
 
+        FranchisInfoDto franchisInfoDto = headService.findByFranchiseInfo(frCode);
+        Long frEstimateDuration = Long.parseLong(String.valueOf(franchisInfoDto.getFrEstimateDuration()+1));
+
         // 현재 가맹점의 대분류 리스트 가져오기 + 가맹점이 등록한 대분류 순서 테이블 leftjoin
         List<UserItemGroupSortDto> userItemGroupSortData = headService.findByUserItemGroupSortDtoList(frCode);
         log.info("userItemGroupSortData : "+userItemGroupSortData);
@@ -308,6 +317,28 @@ public class UserRestController {
         log.info("addAmountData : "+addAmountData);
         log.info("addAmountData 사이즈 : "+addAmountData.size());
         data.put("addAmountData",addAmountData);
+
+
+        Optional<BranchCalendar> optionalBranchCalendar = managerService.branchCalendarInfo(franchisInfoDto.getBrCode(), nowDate);
+        if(optionalBranchCalendar.isPresent()){
+            // 태그번호, 출고예정일 데이터
+            List<EtcDataDto> etcData = userService.findByEtc(frEstimateDuration, frCode, nowDate);
+            log.info("etcData : "+etcData.get(franchisInfoDto.getFrEstimateDuration()));
+            data.put("etcData",etcData.get(franchisInfoDto.getFrEstimateDuration()));
+        }else{
+            Calendar cal= Calendar.getInstance();
+            cal.add(Calendar.DATE, 3); // 3일 후
+            Date currentTime=cal.getTime();
+            SimpleDateFormat formatter=new SimpleDateFormat("yyyyMMdd");
+            String resultDate =formatter.format(currentTime);
+
+            log.info("지사 휴무일 데이터가 존재하지 않음 -> 3일 후 출고예정일 날짜 : "+resultDate);
+            EtcDataDto etcData = new EtcDataDto();
+            etcData.setFdTag(franchisInfoDto.getFrLastTagno());
+            etcData.setFrEstimateDate(resultDate);
+            log.info("etcData : "+etcData);
+            data.put("etcData",etcData);
+        }
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }

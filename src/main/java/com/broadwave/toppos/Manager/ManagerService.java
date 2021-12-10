@@ -22,18 +22,23 @@ public class ManagerService {
         this.branchCalendarRepositoryCustom = branchCalendarRepositoryCustom;
     }
 
-    // 업무휴무일지정 저장
+    // 업무휴무일지정 Save 저장
     public void branchCalendarSave(BranchCalendar branchCalendar){
         branchCalendarRepository.save(branchCalendar);
     }
 
-    // 업무휴무일 데이터가져오기
+    // 업무휴무일 리스트 데이터가져오기
     public List<BranchCalendarListDto> branchCalendarDtoList(String brCode, String targetYear){
         return branchCalendarRepositoryCustom.branchCalendarDtoList(brCode, targetYear);
     }
 
-
+    // 업무휴무일 검색
     public Optional<BranchCalendar> branchCalendarInfo(String brCode, String bcDate) {
         return branchCalendarRepository.branchCalendarInfo(brCode, bcDate);
+    }
+
+    // 업무휴무일지정 SaveAll 저장
+    public void branchCalendarSaveAll(List<BranchCalendar> branchCalendarList) {
+        branchCalendarRepository.saveAll(branchCalendarList);
     }
 }

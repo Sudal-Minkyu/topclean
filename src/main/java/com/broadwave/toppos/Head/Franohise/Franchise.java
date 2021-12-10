@@ -70,6 +70,9 @@ public class Franchise {
     @Column(name="br_assign_state")
     private String brAssignState; // 지사 배정상태 미배정: 01, 배정완료: 02
 
+    @Column(name="fr_last_tagno")
+    private String frLastTagno; // 가맹점 태그번호
+
     @Column(name="insert_id")
     private String insert_id;
 

@@ -29,22 +29,22 @@ public class FranchiseRepositoryCustomImpl extends QuerydslRepositorySupport imp
         QBranch branch = QBranch.branch;
 
         JPQLQuery<FranchiseListDto> query = from(franchise)
-                .leftJoin(franchise.brId,branch)
-                .select(Projections.constructor(FranchiseListDto.class,
-                        franchise.frCode,
-                        franchise.frName,
-                        franchise.frRefCode,
-                        franchise.frContractDt,
-                        franchise.frContractFromDt,
-                        franchise.frContractToDt,
-                        franchise.frContractState,
-                        franchise.brAssignState,
-                        franchise.frPriceGrade,
-                        franchise.frTagNo,
-                        franchise.frEstimateDuration,
-                        franchise.frRemark,
-                        branch.brName
-                ));
+            .leftJoin(franchise.brId,branch)
+            .select(Projections.constructor(FranchiseListDto.class,
+                    franchise.frCode,
+                    franchise.frName,
+                    franchise.frRefCode,
+                    franchise.frContractDt,
+                    franchise.frContractFromDt,
+                    franchise.frContractToDt,
+                    franchise.frContractState,
+                    franchise.brAssignState,
+                    franchise.frPriceGrade,
+                    franchise.frTagNo,
+                    franchise.frEstimateDuration,
+                    franchise.frRemark,
+                    branch.brName
+            ));
 
         query.orderBy(franchise.id.desc());
 
@@ -78,22 +78,25 @@ public class FranchiseRepositoryCustomImpl extends QuerydslRepositorySupport imp
         QBranch branch = QBranch.branch;
 
         JPQLQuery<FranchisInfoDto> query = from(franchise)
-                .leftJoin(franchise.brId,branch)
-                .select(Projections.constructor(FranchisInfoDto.class,
-                        franchise.frCode,
-                        franchise.frName,
-                        franchise.frContractDt,
-                        franchise.frContractFromDt,
-                        franchise.frContractToDt,
-                        franchise.frContractState,
-                        franchise.frContractState,
-                        franchise.brAssignState,
-                        franchise.brCode,
-                        branch.brName,
-                        branch.brCarculateRateHq,
-                        branch.brCarculateRateBr,
-                        branch.brCarculateRateFr
-                ));
+            .leftJoin(franchise.brId,branch)
+            .select(Projections.constructor(FranchisInfoDto.class,
+                    franchise.frCode,
+                    franchise.frName,
+                    franchise.frContractDt,
+                    franchise.frContractFromDt,
+                    franchise.frContractToDt,
+                    franchise.frContractState,
+                    franchise.frContractState,
+                    franchise.brAssignState,
+                    franchise.brCode,
+                    branch.brName,
+                    branch.brCarculateRateHq,
+                    branch.brCarculateRateBr,
+                    branch.brCarculateRateFr,
+
+                    franchise.frEstimateDuration,
+                    franchise.frLastTagno
+            ));
 
         query.where(franchise.frCode.eq(frCode));
 

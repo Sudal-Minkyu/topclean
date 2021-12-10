@@ -1,6 +1,7 @@
 package com.broadwave.toppos.User;
 
 import com.broadwave.toppos.Account.AccountRepositoryCustom;
+import com.broadwave.toppos.Manager.Calendar.BranchCalendarRepositoryCustom;
 import com.broadwave.toppos.User.Customer.*;
 import com.broadwave.toppos.User.GroupSort.GroupSortDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,13 +17,15 @@ public class UserService {
     private final CustomerRepositoryCustom customerRepositoryCustom;
 
     private final AccountRepositoryCustom accountRepositoryCustom;
+    private final BranchCalendarRepositoryCustom branchCalendarRepositoryCustom;
 
     @Autowired
     public UserService(CustomerRepository customerRepository, CustomerRepositoryCustom customerRepositoryCustom,
-                       AccountRepositoryCustom accountRepositoryCustom){
+                       AccountRepositoryCustom accountRepositoryCustom, BranchCalendarRepositoryCustom branchCalendarRepositoryCustom){
         this.customerRepository = customerRepository;
         this.customerRepositoryCustom = customerRepositoryCustom;
         this.accountRepositoryCustom = accountRepositoryCustom;
+        this.branchCalendarRepositoryCustom = branchCalendarRepositoryCustom;
     }
 
     // 고객등록
@@ -55,6 +58,11 @@ public class UserService {
     // 가맹점 메인페이지 전용 개인정보 호출
     public UserIndexDto findByUserInfo(String userid, String frCode) {
         return accountRepositoryCustom.findByUserInfo(userid, frCode);
+    }
+
+    // 태그번호, 출고예정일 데이터
+    public List<EtcDataDto> findByEtc(Long frEstimateDuration, String frCode, String nowDate) {
+        return branchCalendarRepositoryCustom.findByEtc(frEstimateDuration, frCode, nowDate);
     }
 
 }

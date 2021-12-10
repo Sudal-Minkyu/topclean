@@ -4,6 +4,7 @@ import com.broadwave.toppos.Head.Franohise.QFranchise;
 import com.broadwave.toppos.Head.Item.Group.A.QItemGroup;
 import com.broadwave.toppos.Head.Item.Group.B.QItemGroupS;
 import com.broadwave.toppos.Head.Item.Group.C.QItem;
+import com.broadwave.toppos.Head.Item.Price.FranchisePrice.QFranchisePrice;
 import com.broadwave.toppos.User.ItemSort.QItemSort;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.CaseBuilder;
@@ -111,17 +112,20 @@ public class ItemPriceRepositoryCustomImpl extends QuerydslRepositorySupport imp
         QItemGroup itemGroup = QItemGroup.itemGroup; // 대분류테이블
         QItemGroupS itemGroupS = QItemGroupS.itemGroupS; // 중분류테이블
 
-        QFranchise franchise = QFranchise.franchise; // 가맹점 테이블 : Grade를 가져오려고.
+        QFranchise franchise = QFranchise.franchise; // 가맹점 테이블 : Grade를 가져오기 위함
         QItemSort itemSort = QItemSort.itemSort; // 가맹점의 상품정렬 테이블
 
+        QFranchisePrice franchisePrice = QFranchisePrice.franchisePrice; // 가맹점 특정항목 가격 테이블
 
         JPQLQuery<UserItemPriceSortDto> query = from(itemPrice)
                 .innerJoin(item).on(itemPrice.biItemcode.eq(item.biItemcode))
                 .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
                 .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
 
-                .leftJoin(franchise).on(franchise.frCode.eq(frCode))
-                .leftJoin(itemSort).on(itemSort.frCode.eq(frCode).and(itemSort.biItemcode.eq(item.biItemcode)))
+                .innerJoin(franchise).on(franchise.frCode.eq(frCode))
+                .innerJoin(itemSort).on(itemSort.frCode.eq(frCode).and(itemSort.biItemcode.eq(item.biItemcode)))
+
+                .leftJoin(franchisePrice).on(franchisePrice.biItemcode.eq(itemPrice.biItemcode).and(franchisePrice.frCode.eq(frCode)))
 
                 .where(item.biUseYn.eq("Y"))
                 .where(itemPrice.setDt.loe(nowDate).and(itemPrice.closeDt.goe(nowDate)))
@@ -139,13 +143,17 @@ public class ItemPriceRepositoryCustomImpl extends QuerydslRepositorySupport imp
                         item.biName,
 
                         new CaseBuilder()
+                            .when(franchisePrice.bfPrice.isNotNull()).then(franchisePrice.bfPrice)
+                            .otherwise(
+                                new CaseBuilder()
                                 .when(franchise.frPriceGrade.eq("A")).then(itemPrice.bpPriceA)
                                 .when(franchise.frPriceGrade.eq("B")).then(itemPrice.bpPriceB)
                                 .when(franchise.frPriceGrade.eq("C")).then(itemPrice.bpPriceC)
                                 .when(franchise.frPriceGrade.eq("D")).then(itemPrice.bpPriceD)
                                 .when(franchise.frPriceGrade.eq("E")).then(itemPrice.bpPriceE)
-                                .otherwise(0)
+                                .otherwise(0))
                 ));
+
         return query.fetch();
     }
 

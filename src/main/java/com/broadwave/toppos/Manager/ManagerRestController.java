@@ -1,7 +1,6 @@
 package com.broadwave.toppos.Manager;
 
-import com.broadwave.toppos.Account.*;
-import com.broadwave.toppos.Head.Item.Group.A.ItemGroupDto;
+import com.broadwave.toppos.Account.AccountService;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.Manager.Calendar.BranchCalendar;
 import com.broadwave.toppos.Manager.Calendar.BranchCalendarDto;
@@ -67,6 +66,7 @@ public class ManagerRestController {
         String bcDate = getYear +"01"+ "01";
         String type;
 //        log.info("bcDate : "+bcDate);
+        List<BranchCalendar> branchCalendarList = new ArrayList<>();
         Optional<BranchCalendar> optionalBranchCalendar = managerService.branchCalendarInfo(brCode, bcDate);
         if(optionalBranchCalendar.isPresent()){
             type = "Y"; // 수정
@@ -79,11 +79,11 @@ public class ManagerRestController {
         String dateDay;
         int count = 1;
         for(int month=1; month<13; month++){
-            BranchCalendar branchCalendar = new BranchCalendar();
             Calendar cal = new GregorianCalendar(getYear, month-1, day);
             int daysOfMonth = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
 //            log.info(getYear + "년 " + (month) + "월의 일수: " + daysOfMonth);
             for(int i=1; i<daysOfMonth+1; i++){
+                BranchCalendar branchCalendar = new BranchCalendar();
                 if(month<10){
                     dateMonth = "0"+month;
                 }else{
@@ -128,10 +128,11 @@ public class ManagerRestController {
                 }
 //                log.info("branchCalendar : "+branchCalendar);
 
-                managerService.branchCalendarSave(branchCalendar);
-
+                branchCalendarList.add(branchCalendar);
             }
         }
+
+        managerService.branchCalendarSaveAll(branchCalendarList);
 
         return ResponseEntity.ok(res.success());
     }

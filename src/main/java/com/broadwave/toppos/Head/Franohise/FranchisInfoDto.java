@@ -31,6 +31,17 @@ public class FranchisInfoDto {
     private Double brCarculateRateBr; // 정산비율 지사
     private Double brCarculateRateFr; // 정산비율 가맹점
 
+    private Integer frEstimateDuration; // 출고예정일
+    private String frLastTagno; // 가맹점 태그번호
+
+    public Integer getFrEstimateDuration() {
+        return frEstimateDuration;
+    }
+
+    public String getFrLastTagno() {
+        return frLastTagno;
+    }
+
     public String getBrContractFromDt() {
         return brContractFromDt;
     }

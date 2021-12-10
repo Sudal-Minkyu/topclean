@@ -26,10 +26,7 @@ public class UserItemPriceSortDto {
     private String biName; // 상품명
 
     private Integer price; // 최종가격A
-//    private Integer bpPriceB; // 최종가격B
-//    private Integer bpPriceC; // 최종가격C
-//    private Integer bpPriceD; // 최종가격D
-//    private Integer bpPriceE; // 최종가격E
+
 
     public String getBiItemcode() {
         return biItemcode;
