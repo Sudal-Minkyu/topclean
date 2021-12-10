@@ -13,4 +13,5 @@ public interface ItemPriceRepositoryCustom {
 
     ItemPriceDto findByItemPrice(String biItemcode, String setDtReplace);
 
+    List<UserItemPriceSortDto> findByUserItemPriceSortList(String frCode, String nowDate);
 }

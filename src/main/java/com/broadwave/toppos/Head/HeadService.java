@@ -1,5 +1,7 @@
 package com.broadwave.toppos.Head;
 
+import com.broadwave.toppos.Head.AddCost.AddCostDto;
+import com.broadwave.toppos.Head.AddCost.AddCostRepositoryCustom;
 import com.broadwave.toppos.Head.Branoh.Branch;
 import com.broadwave.toppos.Head.Branoh.BranchListDto;
 import com.broadwave.toppos.Head.Branoh.BranchRepository;
@@ -44,12 +46,13 @@ public class HeadService {
     private final ItemRepositoryCustom itemRepositoryCustom;
     private final ItemPriceRepositoryCustom itemPriceRepositoryCustom;
     private final FranchisePriceRepositoryCustom franchisePriceRepositoryCustom;
+    private final AddCostRepositoryCustom costRepositoryCustom;
 
     @Autowired
     public HeadService(BranchRepository branohRepository, FranchiseRepository franchiseRepository, FranchiseRepositoryCustom franchiseRepositoryCustom, BranchRepositoryCustomImpl branohRepositoryCustom,
                        ItemGroupRepository ItemGroupRepository, ItemGroupRepositoryCustom itemGroupRepositoryCustom, ItemGroupSRepository ItemGroupSRepository, ItemGroupSRepositoryCustom itemGroupSRepositoryCustom,
                        ItemRepository ItemRepository, ItemRepositoryCustom itemRepositoryCustom, ItemPriceRepository itemPriceRepository, ItemPriceRepositoryCustom itemPriceRepositoryCustom,
-                       FranchisePriceRepository franchisePriceRepository, FranchisePriceRepositoryCustom franchisePriceRepositoryCustom){
+                       FranchisePriceRepository franchisePriceRepository, FranchisePriceRepositoryCustom franchisePriceRepositoryCustom, AddCostRepositoryCustom costRepositoryCustom){
         this.branohRepository = branohRepository;
         this.franchiseRepository = franchiseRepository;
         this.franchiseRepositoryCustom = franchiseRepositoryCustom;
@@ -64,6 +67,7 @@ public class HeadService {
         this.itemPriceRepositoryCustom = itemPriceRepositoryCustom;
         this.franchisePriceRepository = franchisePriceRepository;
         this.franchisePriceRepositoryCustom = franchisePriceRepositoryCustom;
+        this.costRepositoryCustom = costRepositoryCustom;
     }
 
 
@@ -115,11 +119,6 @@ public class HeadService {
     // 상품그룹 대분류 객체 가져오기
     public Optional<ItemGroup> findByBgItemGroupcode(String bgItemGroupcode) {
         return ItemGroupRepository.findByBgItemGroupcode(bgItemGroupcode);
-    }
-
-    // 가맹점 전용 순번적용
-    public List<UserItemGroupSortDto> findByUserItemGroupSortDtoList(String frCode) {
-        return itemGroupRepositoryCustom.findByUserItemGroupSortDtoList(frCode);
     }
 
     // 상품그룹 대분류 리스트 호출
@@ -229,7 +228,6 @@ public class HeadService {
         itemPriceRepository.deleteAll(itemPrice);
     }
 
-
     // @@@@@@@@@@@@@@@@   가맹점 특정품목가격 페이지   @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     // 가맹점 특정품목가격 저장
     public void franchisePriceSave(List<FranchisePrice> franchisePriceList) {
@@ -251,6 +249,25 @@ public class HeadService {
         franchisePriceRepository.deleteAll(franchisePriceList);
     }
 
+    // @@@@@@@@@@@@@@@@@@@@  가맹점 접수 페이지  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    // 가맹점 대분류 전용 순번적용
+    public List<UserItemGroupSortDto> findByUserItemGroupSortDtoList(String frCode) {
+        return itemGroupRepositoryCustom.findByUserItemGroupSortDtoList(frCode);
+    }
 
+    // 가맹점 가격 전용 순번적용
+    public List<UserItemPriceSortDto> findByUserItemPriceSortList(String frCode, String nowDate) {
+        return itemPriceRepositoryCustom.findByUserItemPriceSortList(frCode, nowDate);
+    }
+
+    // 가맹점 접수페이지 중분류 리스트 Dto
+    public List<UserItemGroupSListDto> findByUserItemGroupSList(){
+        return itemGroupSRepositoryCustom.findByUserItemGroupSList();
+    }
+
+    // 가맹점 가격셋팅 테이블 호출
+    public AddCostDto findByAddCost() {
+        return costRepositoryCustom.findByAddCost();
+    }
 
 }

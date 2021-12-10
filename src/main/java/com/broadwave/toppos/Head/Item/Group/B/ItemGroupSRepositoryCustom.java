@@ -16,4 +16,7 @@ public interface ItemGroupSRepositoryCustom {
     ItemGroupSInfo findByBsItemGroupcodeS(String bgItemGroupcode, String bsItemGroupcodeS);
 
     ItemGroupS findByItemGroupcodeS(String bgItemGroupcode, String bsItemGroupcodeS);
+
+    List<UserItemGroupSListDto> findByUserItemGroupSList();
+
 }

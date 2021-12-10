@@ -1,14 +1,15 @@
 package com.broadwave.toppos.User;
 
+import com.broadwave.toppos.Head.AddCost.AddCostDto;
 import com.broadwave.toppos.Head.HeadService;
-import com.broadwave.toppos.Head.Item.Group.A.ItemGroupDto;
 import com.broadwave.toppos.Head.Item.Group.A.UserItemGroupSortDto;
+import com.broadwave.toppos.Head.Item.Group.B.UserItemGroupSListDto;
+import com.broadwave.toppos.Head.Item.Price.UserItemPriceSortDto;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.User.Customer.Customer;
 import com.broadwave.toppos.User.Customer.CustomerInfoDto;
 import com.broadwave.toppos.User.Customer.CustomerListDto;
 import com.broadwave.toppos.User.Customer.CustomerMapperDto;
-import com.broadwave.toppos.User.GroupSort.GroupSortDto;
 import com.broadwave.toppos.common.AjaxResponse;
 import com.broadwave.toppos.common.ResponseErrorCode;
 import io.jsonwebtoken.Claims;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**
@@ -266,7 +268,35 @@ public class UserRestController {
         List<UserItemGroupSortDto> userItemGroupSortData = headService.findByUserItemGroupSortDtoList(frCode);
         log.info("userItemGroupSortData : "+userItemGroupSortData);
         log.info("userItemGroupSortData 사이즈 : "+userItemGroupSortData.size());
+
         data.put("userItemGroupSortData",userItemGroupSortData);
+
+
+
+        LocalDateTime  localDateTime = LocalDateTime.now();
+        String nowDate = localDateTime.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        log.info("현재 날짜 yyyymmdd : "+nowDate);
+        // 현재 가맹점의 가격 리스트 가져오기 + 가맹점이 등록한 상품 순서 테이블 leftjoin
+        List<UserItemPriceSortDto> userItemPriceSortData = headService.findByUserItemPriceSortList(frCode, nowDate);
+        log.info("userItemPriceSortData : "+userItemPriceSortData);
+        log.info("userItemPriceSortData 사이즈 : "+userItemPriceSortData.size());
+        data.put("userItemPriceSortData",userItemPriceSortData);
+
+
+
+        // 중분류 리스트 가져오기
+        List<UserItemGroupSListDto> userItemGroupSListData = headService.findByUserItemGroupSList();
+        log.info("userItemGroupSListData : "+userItemGroupSListData);
+        log.info("userItemGroupSListData 사이즈 : "+userItemGroupSListData.size());
+        data.put("userItemGroupSListData",userItemGroupSListData);
+
+
+
+        // 가격셋팅 테이블 리스트 ex) 고급할인율, 명품할인율 등..
+        AddCostDto addCostDto = headService.findByAddCost();
+        log.info("addCostDto : "+addCostDto);
+        data.put("addCostData",addCostDto);
+
 
 
 

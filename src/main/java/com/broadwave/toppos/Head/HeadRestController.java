@@ -1144,6 +1144,8 @@ public class HeadRestController {
         // 상품가격 삭제로직 실행
         if(deleteList.size()!=0){
             for (ItemPriceDto itemPriceDto : deleteList) {
+
+
                 Optional<ItemPrice> optionalItemPrice = headService.findByItemPriceOptional(itemPriceDto.getBiItemcode(), itemPriceDto.getSetDt(), itemPriceDto.getCloseDt());
                 if(optionalItemPrice.isPresent()) {
                     log.info("삭제할 상품소재 코드 : "+optionalItemPrice.get().getBiItemcode());
