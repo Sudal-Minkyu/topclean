@@ -272,7 +272,7 @@ public class UserRestController {
         data.put("userItemGroupSortData",userItemGroupSortData);
 
 
-
+        // 현재 날짜 받아오기
         LocalDateTime  localDateTime = LocalDateTime.now();
         String nowDate = localDateTime.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         log.info("현재 날짜 yyyymmdd : "+nowDate);
@@ -296,9 +296,6 @@ public class UserRestController {
         AddCostDto addCostDto = headService.findByAddCost();
         log.info("addCostDto : "+addCostDto);
         data.put("addCostData",addCostDto);
-
-
-
 
 
 
