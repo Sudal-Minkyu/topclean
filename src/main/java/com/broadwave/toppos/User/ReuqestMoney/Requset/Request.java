@@ -30,7 +30,7 @@ public class Request {
     @Column(unique = true,name="fr_no")
     private String frNo; // 접수코드
 
-    @ManyToOne(targetEntity = Customer.class,fetch = FetchType.LAZY)
+    @ManyToOne(targetEntity = Customer.class,fetch = FetchType.EAGER)
     @JoinColumn(name="bc_id")
     private Customer bcId; // 고객 ID값
 

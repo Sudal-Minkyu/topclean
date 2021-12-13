@@ -27,7 +27,7 @@ public class RequestDetail {
     @Column(name="fd_id")
     private Long id; // 접수세부테이블 고유값 ID
 
-    @ManyToOne(targetEntity = Request.class,fetch = FetchType.LAZY)
+    @ManyToOne(targetEntity = Request.class,fetch = FetchType.EAGER)
     @JoinColumn(name="fr_id")
     private Request frId; // 접수마스터 고유값 ID
 

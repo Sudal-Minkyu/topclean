@@ -460,6 +460,8 @@ public class UserRestController {
             // 접수 세부 테이블 업데이트
             if(updateList.size()!=0){
                 for (RequestDetailDto requestDetailDto : updateList) {
+                    log.info("수정로직 FrNo : "+etcData.getFrNo());
+                    log.info("수정로직 FdTag : "+requestDetailDto.getFdTag());
                     Optional<RequestDetail> optionalRequestDetail = userService.findByRequestDetail(etcData.getFrNo(), requestDetailDto.getFdTag());
                     if(!optionalRequestDetail.isPresent()){
                         return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "수정 할 "+ResponseErrorCode.TP009.getDesc(), "문자", "택번호 : "+requestDetailDto.getFdTag()));
@@ -497,8 +499,8 @@ public class UserRestController {
 
                         optionalRequestDetail.get().setModity_id(login_id);
                         optionalRequestDetail.get().setModity_date(LocalDateTime.now());
-                        RequestDetail requestDetail = optionalRequestDetail.get();
-                        requestDetailList.add(requestDetail);
+//                        RequestDetail requestDetail = optionalRequestDetail.get();
+                        requestDetailList.add(optionalRequestDetail.get());
                     }
                 }
             }
