@@ -67,7 +67,16 @@ $(function() {
                 onPopReceiptReg(this);
             });
         });
+
         setNextTag(initialData.etcData.fdTag);
+    });
+
+    $("#fdRepair").on("click", function () {
+        $("#fdRepairPop").addClass("active");
+    });
+
+    $("#fdAdd1").on("click", function () {
+        $("#fdAddPop").addClass("active");
     });
 
     $('.choice-drop__btn').on('click', function(e) {
@@ -722,17 +731,27 @@ function onSaveTemp() {
     const addedRowItems = AUIGrid.getAddedRowItems(gridId[0]);
 
     // 수정된 행 아이템들(배열)
-    // const updatedRowItems = AUIGrid.getEditedRowItems(gridId[0]);
+    const updatedRowItems = AUIGrid.getEditedRowItems(gridId[0]);
 
     // 삭제된 행 아이템들(배열)
-    // const deletedRowItems = AUIGrid.getRemovedItems(gridId[0]);
+    const deletedRowItems = AUIGrid.getRemovedItems(gridId[0]);
 
     // 서버로 보낼 데이터 작성
+
+    const etc = {
+        bcHp: selectedCustomer.bcHp,
+        frNormalAmount: $("#totFdNormalAmount").html().replace(/[^0-9]/g, ""),
+        frDiscountAmount: $("#totFdDiscountAmount").html().replace(/[^0-9]/g, ""),
+        frTotalAmount: $("#totFdRequestAmount").html().replace(/[^0-9]/g, ""),
+    }
+
     const data = {
         "add" : addedRowItems,
-        // "update" : updatedRowItems,
-        // "delete" : deletedRowItems
+        "update" : updatedRowItems,
+        "delete" : deletedRowItems,
+        "etc" : etc
     };
+
 
     console.log(data);
 

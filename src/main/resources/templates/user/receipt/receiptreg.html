@@ -515,51 +515,142 @@
     </div>
 
 
-    <!-- 접수 팝업 .지겸님 작업중 -->
-
-
     <hr>
     <!-- 수선 팝업 -->
-    <div>
-        <div>
-            수선리스트
-            <input type="radio" value="기장" />
-            <input type="radio" value="허리" />
-            <input type="radio" value="소매" />
-            <input type="radio" value="기타" />
+    <div class="pop" id="fdRepairPop">
+        <div class="pop__box">
+            <div class="add-cost">
+                <div class="add-cost__example">
+                    <div class="add-cost__example-header">
+                        <h3 class="add-cost__example-heading"><span>수선 리스트</span></h3>
+                    </div>
+                    <div class="add-cost__example-content">
+                        <ul class="add-cost__example-list">
+                            <li class="add-cost__example-item">
+                                <button class="add-cost__example-btn">기장</button>
+                            </li>
+                            <li class="add-cost__example-item">
+                                <button class="add-cost__example-btn">허리</button>
+                            </li>
+                            <li class="add-cost__example-item">
+                                <button class="add-cost__example-btn">소매</button>
+                            </li>
+                            <li class="add-cost__example-item">
+                                <button class="add-cost__example-btn">기타</button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="add-cost__input-area">
+                    <div class="add-cost__input">
+                        <!-- 상용구 들어갈 인풋 -->
+                        <div class="c-text">
+                            <input type="text" placeholder="수선 리스트 입력" />
+                            <button>키보드</button>
+                        </div>
+                    </div>
+
+                    <div class="add-cost__keypad">
+                        <!-- 숫자패드 -->
+                        <div>
+                            <div class="vkey-num__input">
+                                <input type="text" class="keypad_field" readonly>
+                            </div>
+                            <div class="vkey-num__pad">
+                                <button type="button" class="keypad_btn" value="1">1</button>
+                                <button type="button" class="keypad_btn" value="2">2</button>
+                                <button type="button" class="keypad_btn" value="3">3</button>
+                                <button type="button" class="keypad_btn" value="4">4</button>
+                                <button type="button" class="keypad_btn" value="5">5</button>
+                                <button type="button" class="keypad_btn" value="6">6</button>
+                                <button type="button" class="keypad_btn" value="7">7</button>
+                                <button type="button" class="keypad_btn" value="8">8</button>
+                                <button type="button" class="keypad_btn" value="9">9</button>
+                                <button type="button" class="keypad_btn" value="00">00</button>
+                                <button type="button" class="keypad_btn" value="0">0</button>
+                                <button type="button" class="keypad_btn_backspace">←</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <ul class="pop__console pop__console--center">
+                        <li><button class="c-button pop__close" id="fdRepairCancel">닫기</button></li>
+                        <li><button class="c-button c-button--dark pop__close" id="fdRepairComplete">추가</button></li>
+                    </ul>
+                </div>
+            </div>
         </div>
-        <div>
-            <input type="text" />
-            <button type="button" onclick="onShowVKeyboard(9)">VKEY</button>
-            <input type="number" />
-        </div>
-        <div>
-            키패드들
-        </div>
-        <button type="button">추가</button>
     </div>
 
-    <hr>
-    <!-- 추가 사항 팝업-->
-    <div>
-        <div>
-            추가
-            <input type="radio" value="오점" />
-            <input type="radio" value="황변제거" />
-            <input type="radio" value="표백" />
-            <input type="radio" value="기타" />
-        </div>
-        <div>
-            <input type="text" />
-            <button type="button" onclick="onShowVKeyboard(9)">VKEY</button>
-            <input type="number" />
-            <input type="checkbox" value="" text="특수"/>
-            <div>
-                키패드들
+
+    <!-- 추가요금 팝업 -->
+    <div class="pop" id="fdAddPop">
+        <div class="pop__box">
+            <div class="add-cost">
+                <div class="add-cost__example">
+                    <div class="add-cost__example-header">
+                        <h3 class="add-cost__example-heading"><span>추가요금 리스트</span></h3>
+                    </div>
+                    <div class="add-cost__example-content">
+                        <ul class="add-cost__example-list">
+                            <li class="add-cost__example-item">
+                                <button class="add-cost__example-btn">오점</button>
+                            </li>
+                            <li class="add-cost__example-item">
+                                <button class="add-cost__example-btn">황변제거</button>
+                            </li>
+                            <li class="add-cost__example-item">
+                                <button class="add-cost__example-btn">표백</button>
+                            </li>
+                            <li class="add-cost__example-item">
+                                <button class="add-cost__example-btn">기타</button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="add-cost__input-area">
+                    <div class="add-cost__input">
+                        <!-- 상용구 들어갈 인풋 -->
+                        <div class="c-text">
+                            <input type="text" placeholder="수선 리스트 입력" />
+                            <button>키보드</button>
+                        </div>
+                    </div>
+
+                    <div class="add-cost__keypad">
+                        <!-- 숫자패드 -->
+                        <div>
+                            <div class="vkey-num__input">
+                                <input type="text" class="keypad_field" readonly>
+                            </div>
+                            <div class="vkey-num__pad">
+                                <button type="button" class="keypad_btn" value="1">1</button>
+                                <button type="button" class="keypad_btn" value="2">2</button>
+                                <button type="button" class="keypad_btn" value="3">3</button>
+                                <button type="button" class="keypad_btn" value="4">4</button>
+                                <button type="button" class="keypad_btn" value="5">5</button>
+                                <button type="button" class="keypad_btn" value="6">6</button>
+                                <button type="button" class="keypad_btn" value="7">7</button>
+                                <button type="button" class="keypad_btn" value="8">8</button>
+                                <button type="button" class="keypad_btn" value="9">9</button>
+                                <button type="button" class="keypad_btn" value="00">00</button>
+                                <button type="button" class="keypad_btn" value="0">0</button>
+                                <button type="button" class="keypad_btn_backspace">←</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <ul class="pop__console pop__console--center">
+                        <li><button class="c-button pop__close">닫기</button></li>
+                        <li><button class="c-button c-button--dark pop__close">추가</button></li>
+                    </ul>
+                </div>
             </div>
-            <button type="button">추가</button>
         </div>
     </div>
+
 
     <hr>
     <!-- 카메라 팝업 -->
