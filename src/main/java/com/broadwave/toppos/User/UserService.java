@@ -3,16 +3,23 @@ package com.broadwave.toppos.User;
 import com.broadwave.toppos.Account.AccountRepositoryCustom;
 import com.broadwave.toppos.Manager.Calendar.BranchCalendarRepositoryCustom;
 import com.broadwave.toppos.User.Customer.*;
-import com.broadwave.toppos.User.GroupSort.GroupSortDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.Request;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetail;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepository;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 public class UserService {
 
+    private final RequestRepository requestRepository;
+    private final RequestDetailRepository requestDetailRepository;
     private final CustomerRepository customerRepository;
     private final CustomerRepositoryCustom customerRepositoryCustom;
 
@@ -20,8 +27,11 @@ public class UserService {
     private final BranchCalendarRepositoryCustom branchCalendarRepositoryCustom;
 
     @Autowired
-    public UserService(CustomerRepository customerRepository, CustomerRepositoryCustom customerRepositoryCustom,
+    public UserService(RequestRepository requestRepository, RequestDetailRepository requestDetailRepository,
+                       CustomerRepository customerRepository, CustomerRepositoryCustom customerRepositoryCustom,
                        AccountRepositoryCustom accountRepositoryCustom, BranchCalendarRepositoryCustom branchCalendarRepositoryCustom){
+        this.requestRepository = requestRepository;
+        this.requestDetailRepository = requestDetailRepository;
         this.customerRepository = customerRepository;
         this.customerRepositoryCustom = customerRepositoryCustom;
         this.accountRepositoryCustom = accountRepositoryCustom;
@@ -63,6 +73,12 @@ public class UserService {
     // 태그번호, 출고예정일 데이터
     public List<EtcDataDto> findByEtc(Long frEstimateDuration, String frCode, String nowDate) {
         return branchCalendarRepositoryCustom.findByEtc(frEstimateDuration, frCode, nowDate);
+    }
+
+    // 문의 접수 API : 임시저장 또는 결제할시 저장한다. 마스터테이블, 세부테이블 저장
+    public void requestAndDetailSave(Request request, List<RequestDetail> requestDetailList){
+        requestRepository.save(request);
+        requestDetailRepository.saveAll(requestDetailList);
     }
 
 }

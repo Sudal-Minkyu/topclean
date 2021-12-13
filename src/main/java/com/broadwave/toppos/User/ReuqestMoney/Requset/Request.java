@@ -56,13 +56,16 @@ public class Request {
     private Integer frTotalAmount; // 합계금액
 
     @Column(name="fr_pay_amount")
-    private Integer modifyDateTime; // 결제금액
+    private Integer frPayAmount; // 결제금액
 
     @Column(name="fr_uncollect_yn")
     private String frUncollectYn; // 미수여부( 합계금액 > 결제금액 이면 Y, else N)
 
     @Column(name="fr_confirm_yn")
     private String frConfirmYn; // 임시저장여부플래그 Y만 정식데이터
+
+    @Column(name="fr_ref_box_code")
+    private String frRefBoxCode; // 무인보관함 연계시 무인보관함 접수번호
 
     @Column(name="fr_insert_id")
     private String fr_insert_id;

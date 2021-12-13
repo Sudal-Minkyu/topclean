@@ -4,6 +4,7 @@ import com.broadwave.toppos.Head.AddCost.AddCostDto;
 import com.broadwave.toppos.Head.Addprocess.AddprocessDto;
 import com.broadwave.toppos.Head.Franohise.FranchisInfoDto;
 import com.broadwave.toppos.Head.HeadService;
+import com.broadwave.toppos.Head.Item.Group.A.ItemGroup;
 import com.broadwave.toppos.Head.Item.Group.A.UserItemGroupSortDto;
 import com.broadwave.toppos.Head.Item.Group.B.UserItemGroupSListDto;
 import com.broadwave.toppos.Head.Item.Price.UserItemPriceSortDto;
@@ -14,8 +15,14 @@ import com.broadwave.toppos.User.Customer.Customer;
 import com.broadwave.toppos.User.Customer.CustomerInfoDto;
 import com.broadwave.toppos.User.Customer.CustomerListDto;
 import com.broadwave.toppos.User.Customer.CustomerMapperDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.Request;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetail;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailSet;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestMapperDto;
 import com.broadwave.toppos.common.AjaxResponse;
 import com.broadwave.toppos.common.ResponseErrorCode;
+import com.broadwave.toppos.keygenerate.KeyGenerateService;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -40,6 +47,7 @@ import java.util.*;
 @RequestMapping("/api/user") //  ( 권한 : 가맹점 )
 public class UserRestController {
 
+    private final KeyGenerateService keyGenerateService;
     private final UserService userService;
     private final ModelMapper modelMapper;
     private final TokenProvider tokenProvider;
@@ -47,12 +55,13 @@ public class UserRestController {
     private final ManagerService managerService;
 
     @Autowired
-    public UserRestController(UserService userService, TokenProvider tokenProvider, ModelMapper modelMapper, HeadService headService, ManagerService managerService) {
+    public UserRestController(KeyGenerateService keyGenerateService, UserService userService, TokenProvider tokenProvider, ModelMapper modelMapper, HeadService headService, ManagerService managerService) {
         this.userService = userService;
         this.modelMapper = modelMapper;
         this.tokenProvider = tokenProvider;
         this.headService = headService;
         this.managerService = managerService;
+        this.keyGenerateService = keyGenerateService;
     }
 
     // 고객 등록 API
@@ -344,9 +353,82 @@ public class UserRestController {
     }
 
 
+    // 접수페이지 가맹점 세탁접수 API
+    @PostMapping("requestSave")
+    public ResponseEntity<Map<String,Object>> requestSave(@RequestBody RequestDetailSet requestDetailSet, HttpServletRequest request){
+        log.info("requestSave 호출");
 
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
 
+        // 현재 날짜 받아오기
+        LocalDateTime  localDateTime = LocalDateTime.now();
+        String nowDate = localDateTime.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        log.info("현재 날짜 yyyymmdd : "+nowDate);
 
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String login_id = claims.getSubject(); // 현재 아이디
+        String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
+        String frbrCode = (String) claims.get("frbrCode"); // 소속된 지사 코드
+
+        log.info("현재 접속한 아이디 : "+login_id);
+        log.info("현재 접속한 가맹점 코드 : "+frCode);
+        log.info("소속된 지사 코드 : "+frbrCode);
+
+        RequestMapperDto etcData = requestDetailSet.getEtc(); // etc 데이터 얻기
+
+        List<RequestDetail> requestDetailList = new ArrayList<>();
+        ArrayList<RequestDetailDto> addList = requestDetailSet.getAdd(); // 추가 리스트 얻기
+        ArrayList<RequestDetailDto> updateList = requestDetailSet.getUpdate(); // 수정 리스트 얻기
+        ArrayList<RequestDetailDto> deleteList = requestDetailSet.getDelete(); // 제거 리스트 얻기
+
+        log.info("ECT 리스트 : "+etcData);
+        log.info("추가 리스트 : "+addList.get(0));
+        log.info("수정 리스트 : "+updateList);
+        log.info("삭제 리스트 : "+deleteList);
+
+        Request requestSave = modelMapper.map(etcData, Request.class);
+
+        String frNo;
+        if (etcData.getFrNo() == null || etcData.getFrNo().isEmpty()){
+            frNo = keyGenerateService.keyGenerate("fs_request", frCode+nowDate, login_id);
+            log.info("frNo : "+frNo);
+            requestSave.setFrNo(frNo);
+        }
+
+        // 현재 고객을 받아오기
+        Optional<Customer> optionalCustomer = userService.findByBcHp(etcData.getBcHp());
+        if(!optionalCustomer.isPresent()){
+            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP018.getCode(), ResponseErrorCode.TP018.getDesc(), "문자", "고객번호 : "+etcData.getBcHp()));
+        }else{
+            requestSave.setBcId(optionalCustomer.get());
+            requestSave.setBcCode(frbrCode);
+            requestSave.setFrCode(frCode);
+            requestSave.setFrYyyymmdd(nowDate);
+
+//            requestSave.setFrQty(addList.size()+updateList.size());
+            requestSave.setFrRefBoxCode(null); // 무인보관함 연계시 무인보관함 접수번호 : 일단 무조건 NULL
+            requestSave.setFr_insert_id(login_id);
+            requestSave.setFr_insert_date(LocalDateTime.now());
+        }
+
+        if(etcData.getCheckNum().equals("1")){
+            requestSave.setFrUncollectYn("Y");
+            requestSave.setFrConfirmYn("Y");
+        }else{
+            requestSave.setFrUncollectYn("N");
+            requestSave.setFrConfirmYn("N");
+        }
+
+//        log.info("requestSave : "+requestSave);
+//        userService.requestAndDetailSave(requestSave,null);
+
+        data.put("requestSave",requestSave);
+//        data.put("etcData",etcData);
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
 
 
 
