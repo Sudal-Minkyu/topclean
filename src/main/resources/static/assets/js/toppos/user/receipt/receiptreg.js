@@ -24,12 +24,13 @@ $(function() {
     $("#inReceiptPop input[type='radio']").on("change", function(){
         calculateItemPrice();
     });
-    const $processCheckbox = $("#processCheck input[type='checkbox']");
-    $processCheckbox.on("change", function(e) {
-        if($("#processCheck input[type='checkbox']:checked").length === 0) {
-            $processCheckbox.first().prop("checked", true);
-        }else if($processCheckbox.first().is(":checked")) {
-            $processCheckbox.first().prop("checked", false);
+    const $processInput = $("#processCheck input[type='checkbox'], #processCheck input[type='radio']");
+    $processInput.on("change", function(e) {
+        const $isEtcProcessChecked = $(".choice-drop__btn.etcProcess.choice-drop__btn--active").length;
+        if(!$("#processCheck input[type='checkbox']:checked").length && !$isEtcProcessChecked) {
+            $processInput.first().prop("checked", true);
+        }else if($processInput.first().is(":checked") || $isEtcProcessChecked) {
+            $processInput.first().prop("checked", false);
         }
         const targetId = e.target.id;
         additionalProcess(targetId);
@@ -70,7 +71,7 @@ $(function() {
 
     $('.choice-drop__btn').on('click', function(e) {
         $(this).next('.choice-drop__content').toggleClass('choice-drop__content--active');
-    })
+    });
 
     $('.choice-drop__item').on('change', function(e) {
         $(this).parents('.choice-drop__content').removeClass('choice-drop__content--active');
@@ -79,7 +80,7 @@ $(function() {
         }else{
             $(this).parents('.choice-drop').children('.choice-drop__btn').addClass('choice-drop__btn--active');
         }
-    })
+    });
 });
 
 /* 상품 주문을 받을 때 적용되는 가격 정보 데이터를 API로 불러와 미리 저장 */
@@ -739,7 +740,6 @@ function onModifyOrder(event) {
     });
 
     setBiItemList(currentRequest.biItemcode.substr(3, 1));
-
 
     /* currentRequest의 각 벨류값에 따라 화면의 라디오 세팅을 구성한다. */
 
