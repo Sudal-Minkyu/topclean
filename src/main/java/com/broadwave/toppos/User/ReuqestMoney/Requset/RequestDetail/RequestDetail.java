@@ -1,6 +1,6 @@
 package com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail;
 
-import com.broadwave.toppos.Head.Franohise.Franchise;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.Request;
 import lombok.*;
 
 import javax.persistence.*;
@@ -27,15 +27,15 @@ public class RequestDetail {
     @Column(name="fd_id")
     private Long id; // 접수세부테이블 고유값 ID
 
-    @ManyToOne(targetEntity = Franchise.class,fetch = FetchType.LAZY)
+    @ManyToOne(targetEntity = Request.class,fetch = FetchType.LAZY)
     @JoinColumn(name="fr_id")
-    private Franchise frId; // 가맹점 고유값 ID
+    private Request frId; // 접수마스터 고유값 ID
 
     @Column(name="fr_no")
-    private String fr_no; // 접수코드
+    private String frNo; // 접수코드
 
     @Column(name="fd_tag")
-    private String frNo; // 택번호
+    private String fdTag; // 택번호
 
     @Column(name="bi_itemcode")
     private String biItemcode; // 상품코드

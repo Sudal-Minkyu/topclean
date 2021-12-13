@@ -2,6 +2,7 @@ package com.broadwave.toppos.Head.Franohise;
 
 import com.broadwave.toppos.Head.Branoh.Branch;
 import lombok.*;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -19,6 +20,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
+@Transactional
 @Table(name="bs_franchise")
 public class Franchise {
 

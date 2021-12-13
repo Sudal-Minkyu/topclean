@@ -3,10 +3,14 @@ package com.broadwave.toppos.User;
 import com.broadwave.toppos.Head.AddCost.AddCostDto;
 import com.broadwave.toppos.Head.Addprocess.AddprocessDto;
 import com.broadwave.toppos.Head.Franohise.FranchisInfoDto;
+import com.broadwave.toppos.Head.Franohise.Franchise;
 import com.broadwave.toppos.Head.HeadService;
 import com.broadwave.toppos.Head.Item.Group.A.ItemGroup;
 import com.broadwave.toppos.Head.Item.Group.A.UserItemGroupSortDto;
 import com.broadwave.toppos.Head.Item.Group.B.UserItemGroupSListDto;
+import com.broadwave.toppos.Head.Item.Group.C.Item;
+import com.broadwave.toppos.Head.Item.Price.FranchisePrice.FranchisePrice;
+import com.broadwave.toppos.Head.Item.Price.FranchisePrice.FranchisePriceDto;
 import com.broadwave.toppos.Head.Item.Price.UserItemPriceSortDto;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.Manager.Calendar.BranchCalendar;
@@ -378,24 +382,28 @@ public class UserRestController {
 
         RequestMapperDto etcData = requestDetailSet.getEtc(); // etc 데이터 얻기
 
-        List<RequestDetail> requestDetailList = new ArrayList<>();
         ArrayList<RequestDetailDto> addList = requestDetailSet.getAdd(); // 추가 리스트 얻기
         ArrayList<RequestDetailDto> updateList = requestDetailSet.getUpdate(); // 수정 리스트 얻기
         ArrayList<RequestDetailDto> deleteList = requestDetailSet.getDelete(); // 제거 리스트 얻기
 
         log.info("ECT 리스트 : "+etcData);
-        log.info("추가 리스트 : "+addList.get(0));
+        log.info("추가 리스트 : "+addList);
         log.info("수정 리스트 : "+updateList);
         log.info("삭제 리스트 : "+deleteList);
+        log.info("추가 사이즈 : "+addList.size());
+        log.info("수정 사이즈 : "+updateList.size());
+        log.info("삭제 사이즈 : "+deleteList.size());
 
         Request requestSave = modelMapper.map(etcData, Request.class);
 
         String frNo;
         if (etcData.getFrNo() == null || etcData.getFrNo().isEmpty()){
             frNo = keyGenerateService.keyGenerate("fs_request", frCode+nowDate, login_id);
-            log.info("frNo : "+frNo);
             requestSave.setFrNo(frNo);
+        }else{
+            frNo = etcData.getFrNo();
         }
+        log.info("frNo : "+frNo);
 
         // 현재 고객을 받아오기
         Optional<Customer> optionalCustomer = userService.findByBcHp(etcData.getBcHp());
@@ -407,7 +415,7 @@ public class UserRestController {
             requestSave.setFrCode(frCode);
             requestSave.setFrYyyymmdd(nowDate);
 
-//            requestSave.setFrQty(addList.size()+updateList.size());
+            requestSave.setFrQty(addList.size()+updateList.size());
             requestSave.setFrRefBoxCode(null); // 무인보관함 연계시 무인보관함 접수번호 : 일단 무조건 NULL
             requestSave.setFr_insert_id(login_id);
             requestSave.setFr_insert_date(LocalDateTime.now());
@@ -421,10 +429,42 @@ public class UserRestController {
             requestSave.setFrConfirmYn("N");
         }
 
-//        log.info("requestSave : "+requestSave);
-//        userService.requestAndDetailSave(requestSave,null);
+        String lastTagNo = null; // 마지막 태그번호
+        List<RequestDetail> requestDetailList = new ArrayList<>(); // 세부테이블 객체 리스트
+        // 세부테이블 저장
+        if(addList.size()!=0){
+            for (RequestDetailDto requestDetailDto : addList) {
+                log.info("RequestDetailDto : "+requestDetailDto);
+                RequestDetail requestDetail = modelMapper.map(requestDetailDto, RequestDetail.class);
 
-        data.put("requestSave",requestSave);
+                requestDetail.setFrNo(frNo);
+                requestDetail.setBiItemcode(requestDetailDto.getBiItemcode());
+                requestDetail.setFdState("S1");
+                requestDetail.setFdStateDt(LocalDateTime.now());
+                requestDetail.setFdCancel("N");
+                requestDetail.setFdTotAmt(requestDetailDto.getFdRequestAmt());
+                requestDetail.setFdEstimateDt(requestDetailDto.getFrEstimateDate());
+                requestDetail.setInsert_id(login_id);
+                requestDetail.setInsert_date(LocalDateTime.now());
+                lastTagNo = requestDetailDto.getFdTag();
+                requestDetailList.add(requestDetail);
+            }
+        }
+
+        log.info("requestDetailList : "+requestDetailList);
+
+        userService.requestAndDetailSave(requestSave,requestDetailList);
+
+        Optional<Franchise> optionalFranchise = headService.findByFrCode(frCode); // 가맹점
+        log.info("마지막 택번호 : "+lastTagNo);
+        // 모두 저장되면 최종 택번호 업데이트
+        if(optionalFranchise.isPresent()){
+            optionalFranchise.get().setFrLastTagno(lastTagNo);
+            headService.franchiseSave(optionalFranchise.get());
+            log.info(optionalFranchise.get().getFrName()+" 가맹점 택번호 업데이트 완료 : "+lastTagNo);
+        }
+
+//        data.put("requestSave",requestSave);
 //        data.put("etcData",etcData);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
