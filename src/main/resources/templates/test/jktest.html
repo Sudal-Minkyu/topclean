@@ -55,6 +55,20 @@
 				$(this).parents('.choice-drop__content').removeClass('choice-drop__content--active');
 				$(this).parents('.choice-drop').children('.choice-drop__btn').removeClass('choice-drop__btn--active');
 			})
+			
+			
+			// 결제팝업 탭
+			const $payTabsBtn = $('.pop__pay-tabs-item');
+			const $payTabsContent = $('.pop__tabs-content');
+			
+			$payTabsBtn.on('click', function() {
+				const idx = $(this).index();
+				
+				$payTabsBtn.removeClass('active');
+				$payTabsBtn.eq(idx).addClass('active');
+				$payTabsContent.removeClass('active');
+				$payTabsContent.eq(idx).addClass('active');
+			})
 		});
 
 	</script>
@@ -721,7 +735,7 @@
 	
 	
 	<!-- 수선 및 추가요금 팝업 -->
-	<div class="pop active">
+	<div class="pop">
 		<div class="pop__box">
 			<div class="add-cost">
 				<div class="add-cost__example">
@@ -788,6 +802,109 @@
 					
 				</div>
 			</div>
+		</div>
+	</div>
+	
+	
+	
+	
+	<!-- 결제팝업 -->
+	<div class="pop active">
+		<div class="pop__box">
+			<div class="pop__article">
+				<div class="pop__pay">
+					<div class="pop__pay-article hold">
+						<h3 class="pop__article-header">결제창</h3>
+						<div class="pop__pay-list">
+							<dl>
+								<dt>미수금</dt>
+								<dd class="color--red"><span>9,000</span>원</dd>
+								<dt>적립금</dt>
+								<dd class="color--blue"><span>19,000</span>원</dd>
+							</dl>
+						</div>
+						<button class="c-button c-button--small c-button--darksolid">미수전액완납</button>
+					</div>
+					
+					<div class="pop__pay-article estimate">
+						<h3 class="pop__article-header">접수금액</h3>
+						<div class="pop__pay-list">
+							<dl>
+								<dt>접수금액</dt>
+								<dd><span>9,000</span>원</dd>
+								<dt>추가/할인금액</dt>
+								<dd><span>19,000</span>원</dd>
+								<dt>결제예정금액<span class="color--blue">(A)</span></dt>
+								<dd class="color--red"><span>28,000</span>원</dd>
+								<dt>적립금사용<span class="color--blue">(B)</span></dt>
+								<dd class="color--blue"><button class="c-keybtn">키보드</button><span>19,000</span>원</dd>
+								<dt>미수금결제<span>(C)</span></dt>
+								<dd class="color--red"><span>9,000</span>원</dd>
+								<dt class="final">최종결제금액<span class="bold">(A + B + C)</span></dt>
+								<dd class="final"><span>18,000</span>원</dd>
+							</dl>
+						</div>
+					</div>
+					
+					<div class="pop__pay-tabs">
+						<button class="pop__pay-tabs-item active" data-id="tabCash">현금결제</button>
+						<button class="pop__pay-tabs-item" data-id="tabCard">카드결제</button>
+					</div>
+				</div>
+			</div>
+			
+			<div class="pop__article">
+				<div class="pop__pay">
+					<div class="pop__pay-article half">
+						<h3 class="pop__article-header">결제내역</h3>
+						<div class="pop__pay-details">
+							<!-- 그리드 들어갈 영역 -->
+						</div>
+					</div>
+					<div class="pop__pay-article half">
+						<div class="pop__tabs-content pop__cash active" id="tabCash">
+							<div class="pop__pay-cash">
+								<input type="checkbox" id="cash" />
+								<label for="cash">현금영수증발행</label>
+							</div>
+							<div class="pop__pay-list pop__pay-list--cash">
+								<dl>
+									<dt>받은돈</dt>
+									<dd class="color--blue"><button class="c-keybtn">키보드</button><span>30,000</span>원</dd>
+									<dt>거스름돈</dt>
+									<dd class="color--blue"><span>10,000</span>원</dd>
+									<dt class="final">미수발생금액</dt>
+									<dd class="final"><span>18,000</span>원</dd>
+								</dl>
+							</div>
+						</div>
+						
+						<div class="pop__tabs-content pop__card" id="tabCard">
+							<div class="pop__card-period">
+								<div class="c-select">
+									<select>
+					                    <option>일시불</option>
+					                </select>
+								</div>
+							</div>
+							<div class="pop__pay-list">
+								<dl>
+									<dt>결제금액</dt>
+									<dd class="color--blue"><button class="c-keybtn">키보드</button><span>30,000</span>원</dd>
+									<dt class="final">미수발생금액</dt>
+									<dd class="final"><span>18,000</span>원</dd>
+								</dl>
+							</div>
+						</div>
+						
+					</div>
+				</div>
+			</div>
+			
+			<ul class="pop__console">
+				<li><button class="c-button pop__close">닫기</button></li>
+				<li><button class="c-button c-button--dark pop__close">결제하기</button></li>
+			</ul>
 		</div>
 	</div>
 	
