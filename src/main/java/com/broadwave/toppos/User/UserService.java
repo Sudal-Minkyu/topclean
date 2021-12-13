@@ -6,7 +6,10 @@ import com.broadwave.toppos.User.Customer.*;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Request;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetail;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepository;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepositoryCustom;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestRepository;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestRepositoryCustom;
 import com.broadwave.toppos.keygenerate.KeyGenerateService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +27,10 @@ public class UserService {
     private final KeyGenerateService keyGenerateService;
     private final RequestRepository requestRepository;
     private final RequestDetailRepository requestDetailRepository;
+
+    private final RequestRepositoryCustom requestRepositoryCustom;
+    private final RequestDetailRepositoryCustom requestDetailRepositoryCustom;
+
     private final CustomerRepository customerRepository;
     private final CustomerRepositoryCustom customerRepositoryCustom;
 
@@ -34,7 +41,7 @@ public class UserService {
     public UserService(RequestRepository requestRepository, RequestDetailRepository requestDetailRepository,
                        CustomerRepository customerRepository, CustomerRepositoryCustom customerRepositoryCustom,
                        AccountRepositoryCustom accountRepositoryCustom, BranchCalendarRepositoryCustom branchCalendarRepositoryCustom,
-                       KeyGenerateService keyGenerateService){
+                       KeyGenerateService keyGenerateService,  RequestRepositoryCustom requestRepositoryCustom, RequestDetailRepositoryCustom requestDetailRepositoryCustom){
         this.requestRepository = requestRepository;
         this.requestDetailRepository = requestDetailRepository;
         this.customerRepository = customerRepository;
@@ -42,6 +49,8 @@ public class UserService {
         this.accountRepositoryCustom = accountRepositoryCustom;
         this.branchCalendarRepositoryCustom = branchCalendarRepositoryCustom;
         this.keyGenerateService = keyGenerateService;
+        this.requestRepositoryCustom = requestRepositoryCustom;
+        this.requestDetailRepositoryCustom = requestDetailRepositoryCustom;
     }
 
     // 고객등록
@@ -119,6 +128,11 @@ public class UserService {
             log.info("에러발생 트랜젝션실행 : "+e);
             return null;
         }
+    }
+
+    // 접수 마스터테이블 임시저장 리스트 호출
+    public List<RequestListDto> findByRequestTempList(String frCode){
+        return requestRepositoryCustom.findByRequestTempList(frCode);
     }
 
 }

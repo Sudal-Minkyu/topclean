@@ -19,10 +19,10 @@ import com.broadwave.toppos.User.ReuqestMoney.Requset.Request;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetail;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailSet;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestMapperDto;
 import com.broadwave.toppos.common.AjaxResponse;
 import com.broadwave.toppos.common.ResponseErrorCode;
-import com.broadwave.toppos.keygenerate.KeyGenerateService;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -47,7 +47,6 @@ import java.util.*;
 @RequestMapping("/api/user") //  ( 권한 : 가맹점 )
 public class UserRestController {
 
-    private final KeyGenerateService keyGenerateService;
     private final UserService userService;
     private final ModelMapper modelMapper;
     private final TokenProvider tokenProvider;
@@ -55,13 +54,12 @@ public class UserRestController {
     private final ManagerService managerService;
 
     @Autowired
-    public UserRestController(KeyGenerateService keyGenerateService, UserService userService, TokenProvider tokenProvider, ModelMapper modelMapper, HeadService headService, ManagerService managerService) {
+    public UserRestController(UserService userService, TokenProvider tokenProvider, ModelMapper modelMapper, HeadService headService, ManagerService managerService) {
         this.userService = userService;
         this.modelMapper = modelMapper;
         this.tokenProvider = tokenProvider;
         this.headService = headService;
         this.managerService = managerService;
-        this.keyGenerateService = keyGenerateService;
     }
 
     // 고객 등록 API
@@ -430,9 +428,10 @@ public class UserRestController {
                 log.info("접수마스터 테이블 저장 or 수정 : "+requestSave);
             }
 
+            log.info("etcData.getCheckNum() : "+etcData.getCheckNum());
             if(etcData.getCheckNum().equals("1")){
                 requestSave.setFrUncollectYn("Y");
-                requestSave.setFrConfirmYn("Y");
+                requestSave.setFrConfirmYn("N");
             }else{
                 requestSave.setFrUncollectYn("N");
                 requestSave.setFrConfirmYn("N");
@@ -526,7 +525,44 @@ public class UserRestController {
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
+    // 접수페이지 임시저장 내역 리스트 호출 APi
+    @GetMapping("tempRequestList")
+    public ResponseEntity<Map<String,Object>> tempRequestList(HttpServletRequest request){
+        log.info("tempRequestList 호출");
 
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
+//        String frbrCode = (String) claims.get("frbrCode"); // 소속된 지사 코드
+        String login_id = claims.getSubject(); // 현재 아이디
+        log.info("현재 접속한 아이디 : "+login_id);
+        log.info("현재 접속한 가맹점 코드 : "+frCode);
+//        log.info("소속된 지사 코드 : "+frbrCode);
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        List<HashMap<String,Object>> requestListData = new ArrayList<>();
+        HashMap<String,Object> requestListInfo;
+
+        List<RequestListDto> requestListDtos = userService.findByRequestTempList(frCode);
+//        log.info("customerListDtos : "+customerListDtos);
+        for (RequestListDto requestListDto: requestListDtos) {
+
+            requestListInfo = new HashMap<>();
+
+            requestListInfo.put("frNo", requestListDto.getFrNo());
+            requestListInfo.put("frInsertDate", requestListDto.getFr_insert_date());
+            requestListInfo.put("bcName", requestListDto.getBcName());
+            requestListInfo.put("bcHp", requestListDto.getBcHp());
+
+            requestListData.add(requestListInfo);
+        }
+
+        data.put("gridListData",requestListData);
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
 
 
 
