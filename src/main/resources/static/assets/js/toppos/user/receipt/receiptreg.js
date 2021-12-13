@@ -81,6 +81,30 @@ $(function() {
         enableKeypad();
     });
 
+    $("#fdRepairCancel").on("click", function () {
+        currentRequest.fdRepairAmt = 0;
+        currentRequest.fdRepairRemark = "";
+        disableKeypad();
+    });
+
+    $("#fdRepairComplete").on("click", function () {
+        currentRequest.fdRepairAmt = parseInt($("#fdRepairPop .keypad_field").val().replace(/[^0-9]/g, ""));
+        currentRequest.fdRepairRemark = $("#fdRepairPop .keypad_remark").val();
+        disableKeypad();
+    });
+
+    $("#fdAddCancel").on("click", function () {
+        currentRequest.fdAdd1Amt = 0;
+        currentRequest.fdAdd1Remark = "";
+        disableKeypad();
+    });
+
+    $("#fdAddComplete").on("click", function () {
+        currentRequest.fdAdd1Amt = parseInt($("#fdAddPop .keypad_field").val().replace(/[^0-9]/g, ""));
+        currentRequest.fdAdd1Remark = $("#fdAddPop .keypad_remark").val();
+        disableKeypad();
+    });
+
     $('.choice-drop__btn').on('click', function(e) {
         $(this).next('.choice-drop__content').toggleClass('choice-drop__content--active');
     });
@@ -93,6 +117,7 @@ $(function() {
             $(this).parents('.choice-drop').children('.choice-drop__btn').addClass('choice-drop__btn--active');
         }
     });
+
 });
 
 /* 상품 주문을 받을 때 적용되는 가격 정보 데이터를 API로 불러와 미리 저장 */
@@ -656,10 +681,8 @@ function onAddOrder() {
     /* 상세한 사항이 정해지면 수정할 것 */
     currentRequest.urgent = $("input[name='urgent']:checked").val();
 
-    console.log(currentRequest);
     if(currentRequest._$uid) {
         AUIGrid.updateRowsById(gridId[0], currentRequest);
-        AUIGrid.refresh(gridId[0]);
     }else{
         AUIGrid.addRow(gridId[0], currentRequest, "last");
     }
@@ -705,7 +728,47 @@ function onModifyOrder(event) {
 
     setBiItemList(currentRequest.biItemcode.substr(3, 1));
 
+    selectedLaundry.bgCode = currentRequest.biItemcode.substr(0, 3);
+    selectedLaundry.bsCode = currentRequest.biItemcode.substr(3, 1);
+    $("input[name='bsItemGroupcodeS']:input[value='" + selectedLaundry.bsCode + "']").prop("checked", true);
+    $("#" + currentRequest.biItemcode).prop("checked", true);
+    $(".choice-color__input[value='" + currentRequest.fdColor + "']").prop("checked", true);
+    $("input[name='fdPattern']:input[value='" + currentRequest.fdPattern +"']").prop("checked", true);
+    $("input[name='fdPriceGrade']:input[value='" + currentRequest.fdPriceGrade +"']").prop("checked", true);
+    $("input[name='fdDiscountGrade']:input[value='" + currentRequest.fdDiscountGrade +"']").prop("checked", true);
+    $("input[name='urgent']:input[value='" + currentRequest.urgent +"']").prop("checked", true);
+
+    if(currentRequest.fdPressed) {
+        $("#fdPress").prop("checked", true);
+    }
+    if(currentRequest.fdRetryYn === "Y") {
+        $("#fdRetry").prop("checked", true);
+    }
+    if(currentRequest.fdRepairRemark.length || currentRequest.fdRepairAmt) {
+        $("#fdRepair").prop("checked", true);
+    }
+    if(currentRequest.fdAdd1Remark.length || currentRequest.fdAdd1Amt) {
+        $("#fdAdd1").prop("checked", true);
+    }
+    if(currentRequest.fdWhitening) {
+        $("#fdWhitening").prop("checked", true);
+    }
+    $("input[name='cleanDirt']:input[value='" + currentRequest.fdPollutionLevel +"']").prop("checked", true);
+    if(currentRequest.fdWaterRepellent) {
+        $("#fdWaterRepellent").prop("checked", true);
+    }
+    if(currentRequest.fdStarch) {
+        $("#fdStarch").prop("checked", true);
+    }
+    if(currentRequest.fdRemark.length) {
+        $("#fdRemark").val(currentRequest.fdRemark);
+    }
+
+
+
     /* currentRequest의 각 벨류값에 따라 화면의 라디오 세팅을 구성한다. */
+
+
 
     $('#productPop').addClass('active');
 }
@@ -756,17 +819,58 @@ function onSaveTemp(num) {
         "etc" : etc
     };
 
-    CommonUI.ajaxjson(gridSaveUrl[0], JSON.stringify(data), function (req) {
-        
+    console.log(data);
+
+    CommonUI.ajaxjson(gridSaveUrl[0], JSON.stringify(data), function (req) {용
+        alertSuccess("임시저장이 되었습니다");
+        initialData.etcData.frNo = req.sendData.frNo;
+        AUIGrid.removeSoftRows(gridId[0]);
+        AUIGrid.resetUpdatedItems(gridId[0]);
     })
 }
 
-function enableKeypad() {
-    $(".keypad_btn").on("click", function () {
 
+function enableKeypad() {
+    const $keypadBtn = $(".add-cost .keypad_btn");
+    const $keypadBackspace = $(".add-cost .keypad_btn_backspace");
+    const $keypadBoilerplate = $(".add-cost .add-cost__example-btn");
+
+    $keypadBtn.on("click", function (e) {
+        const $keypad_field = $(this).parents(".add-cost__keypad").find(".keypad_field");
+        $keypad_field.val(parseInt($keypad_field.val().replace(/[^0-9]/g, "") + this.value).toLocaleString());
+    });
+
+    $keypadBackspace.on("click", function (e) {
+        const $keypad_field = $(this).parents(".add-cost__keypad").find(".keypad_field");
+        $keypad_field.val(parseInt($keypad_field.val().replace(/[^0-9]/g, "")
+                .substr(0, $keypad_field.val().replace(/[^0-9]/g, "").length-1)).toLocaleString());
+    });
+
+    $keypadBoilerplate.on("click", function (e) {
+        const $keypad_field = $(this).parents(".add-cost").find(".keypad_remark");
+        $keypad_field.val($keypad_field.val() + this.innerHTML);
     });
 }
 
 function disableKeypad() {
+    const $keypadBtn = $(".add-cost .keypad_btn");
+    const $keypadBackspace = $(".add-cost .keypad_btn_backspace");
+    const $keypadBoilerplate = $(".add-cost .add-cost__example-btn");
 
+    for(let i = 0; i < $keypadBtn.length; i++) {
+        removeEventsFromElement($keypadBtn[i]);
+    }
+
+    for(let i = 0; i < $keypadBackspace.length; i++) {
+        removeEventsFromElement($keypadBackspace[i]);
+    }
+
+    for(let i = 0; i < $keypadBoilerplate.length; i++) {
+        removeEventsFromElement($keypadBoilerplate[i]);
+    }
+}
+
+function removeEventsFromElement(element) {
+    const elementClone = element.cloneNode(true);
+    element.parentNode.replaceChild(elementClone, element);
 }
