@@ -67,6 +67,7 @@ $(function() {
                 onPopReceiptReg(this);
             });
         });
+        setNextTag(initialData.etcData.fdTag);
     });
 
     $('.choice-drop__btn').on('click', function(e) {
@@ -129,59 +130,13 @@ const fsRequestDtl = {
     fdRequestAmt: 0,
     fdRetryYn: "N",
     fdRemark: "",
-    fdEstimateDt: "",
+    frEstimateDate: "",
 }
 
 // fsRequestDtl 객체를 깊은 복사하기위함.
 let currentRequest = JSON.parse(JSON.stringify(fsRequestDtl));
 
 let initialData = [];
-
-/* 실제 가격 데이터가 올 때 까지만 */
-const dummyPrice = {
-    userItemPriceSortData: [
-        {biItemcode: "D01N001", bgName: "상의", bsName: "일반", biName: "면", price: "1500", bfSort: "2"},
-        {biItemcode: "D01S001", bgName: "상의", bsName: "숏", biName: "청", price: "2000", bfSort: "1"},
-        {biItemcode: "D01L001", bgName: "상의", bsName: "롱", biName: "실크", price: "3000", bfSort: "3"},
-        {biItemcode: "D01L002", bgName: "상의", bsName: "롱", biName: "폴리에스테르", price: "6000", bfSort: "8"},
-        {biItemcode: "D01L003", bgName: "상의", bsName: "롱", biName: "고어텍스", price: "4000", bfSort: "6"},
-        {biItemcode: "D02N001", bgName: "하의", bsName: "보통", biName: "사포", price: "2500", bfSort: "4"},
-        {biItemcode: "D02L001", bgName: "하의", bsName: "라지", biName: "삼베", price: "4000", bfSort: "11"},
-    ],
-    userItemGroupSListData: [
-        {bgItemGroupcode: "D01", bsItemGroupcodeS: "N", bsName: "일반"},
-        {bgItemGroupcode: "D01", bsItemGroupcodeS: "S", bsName: "숏"},
-        {bgItemGroupcode: "D01", bsItemGroupcodeS: "L", bsName: "롱"},
-        {bgItemGroupcode: "D02", bsItemGroupcodeS: "N", bsName: "보통"},
-        {bgItemGroupcode: "D02", bsItemGroupcodeS: "L", bsName: "라지"},
-    ],
-    addCostData: {
-        bcVipDcRt: "30",
-        bcVvipDcRt: "50",
-        bcHighRt: "150",
-        bcPremiumRt: "250",
-        bcChildRt: "80",
-        bcPressed: "2000",
-        bcWhitening: "1000",
-        bcPollution1: "2000",
-        bcPollution2: "3500",
-        bcPollution3: "6000",
-        bcPollution4: "7500",
-        bcPollution5: "10000",
-        bcStarch: "3000",
-        bcWaterRepellent: "7000",
-    },
-    repairListData: [
-        {baName: "기장", baRemark: "기장비고"},
-        {baName: "허리", baRemark: "허리허리"},
-        {baName: "소매", baRemark: "소매매소"},
-    ],
-    addAmountData: [
-        {baName: "오점", baRemark: "오점점오"},
-        {baName: "황변제거", baRemark: "황변비고"},
-        {baName: "표백", baRemark: "표백비고"},
-    ],
-}
 
 /* 가상키보드 사용을 위해 */
 let vkey;
@@ -240,6 +195,9 @@ gridColumnLayout[0] = [
     {
         dataField: "fdTag",
         headerText: "택번호",
+        labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
+            return value.substr(0, 3) + "-" + value.substr(-4);
+        }
     }, {
         dataField: "sumName",
         headerText: "상품명",
@@ -293,7 +251,7 @@ gridColumnLayout[0] = [
         dataField: "fdRemark",
         headerText: "특이사항",
     }, {
-        dataField: "frEstimateDt",
+        dataField: "frEstimateDate",
         headerText: "출고예정일",
         dataType: "date",
         formatString: "yyyy-mm-dd",
@@ -388,6 +346,7 @@ function createGrids(type = false) {
 /* ajax 통신을 통해 그리드 데이터를 받아와 뿌린다. */
 function setDataIntoGrid(numOfGrid, url) {
 
+    /*
     if(numOfGrid === 0) {
         let item = [];
         for (let i = 1; i <= 20; i++) {
@@ -407,7 +366,7 @@ function setDataIntoGrid(numOfGrid, url) {
         }
         AUIGrid.setGridData(gridId[0], item);
     }
-
+    */
     /*
     CommonUI.ajax(url, "GET", false, function (req) {
         gridData[numOfGrid] = req.sendData.gridListData;
@@ -662,18 +621,19 @@ function toggleBottom() {
 }
 
 function onAddOrder() {
-    const bgName = {
-        N: "", L: "롱", S: "숏"
-    }
     /*
     const colorName = {
         C00: "없음", C01: "흰색", C02: "검정", C03: "회색", C04: "빨강", C05: "주황",
         C06: "노랑", C07: "초록", C08: "파랑", C09: "남색", C10: "보라", C11: "핑크"
     }
     */
-    currentRequest.sumName = bgName[selectedLaundry.bsCode] + " 소재명 " +
-        $("#bgItemList button[value=" + selectedLaundry.bgCode + "] span").html();
+    currentRequest.sumName = $("input[name='bsItemGroupcodeS']:checked").siblings().first().html() + " "
+        + $("input[name='material']:checked").siblings().first().children().first().html() + " "
+        + $("#bgItemList button[value=" + selectedLaundry.bgCode + "] span").html();
 
+
+    currentRequest.fdTag = $("#fdTag").val().replace(/[^0-9A-Za-z]/g, "");
+    setNextTag(currentRequest.fdTag);
 
     currentRequest.fdColor = $("input[name='fdColor']:checked").val();
     //item.fdColorName = colorName["C" + item.fdColor];
@@ -681,6 +641,7 @@ function onAddOrder() {
     currentRequest.fdPriceGrade = $("input[name='fdPriceGrade']:checked").val();
     currentRequest.fdDiscountGrade = $("input[name='fdDiscountGrade']:checked").val();
     currentRequest.fdRemark = $("#fdRemark").val();
+    currentRequest.frEstimateDate = initialData.etcData.frEstimateDate.replace(/[^0-9]/g, "");
 
     /* 상세한 사항이 정해지면 수정할 것 */
     currentRequest.urgent = $("input[name='urgent']:checked").val();
@@ -692,11 +653,9 @@ function onAddOrder() {
 
     console.log(currentRequest);
     if(currentRequest._$uid) {
-        console.log("update");
         AUIGrid.updateRowsById(gridId[0], currentRequest);
         AUIGrid.refresh(gridId[0]);
     }else{
-        console.log("add");
         AUIGrid.addRow(gridId[0], currentRequest, "last");
     }
 
@@ -746,6 +705,11 @@ function onModifyOrder(event) {
     $('#productPop').addClass('active');
 }
 
+function setNextTag(tag) {
+    $("#fdTag").val(tag.substr(0,3) + "-"
+        + (parseInt(tag.substr(-4)) + 1).toString().padStart(4, '0'));
+}
+
 function additionalProcess(id) {
     switch (id) {
         case "" :
@@ -753,3 +717,28 @@ function additionalProcess(id) {
     }
 }
 
+function onSaveTemp() {
+    // 추가된 행 아이템들(배열)
+    const addedRowItems = AUIGrid.getAddedRowItems(gridId[0]);
+
+    // 수정된 행 아이템들(배열)
+    // const updatedRowItems = AUIGrid.getEditedRowItems(gridId[0]);
+
+    // 삭제된 행 아이템들(배열)
+    // const deletedRowItems = AUIGrid.getRemovedItems(gridId[0]);
+
+    // 서버로 보낼 데이터 작성
+    const data = {
+        "add" : addedRowItems,
+        // "update" : updatedRowItems,
+        // "delete" : deletedRowItems
+    };
+
+    console.log(data);
+
+    /*
+    CommonUI.ajaxjson(gridSaveUrl[0], data, function (req) {
+
+    })
+    */
+}
