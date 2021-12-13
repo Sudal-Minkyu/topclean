@@ -6,7 +6,46 @@
 
 <!-- 사용자 CSS 추가 -->
 <th:block layout:fragment="css">
-
+	<style>
+		.ad {
+			display: block;
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100vw;
+			height: 100vh;
+		}
+		.ad__video {
+			width: 100%;
+		}
+		.ad__video video {
+			height: 100vh;
+		}
+		.ad__text {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			color: #fff;
+			font-size: 2rem;
+			text-align: center;
+			-webkit-transform: translate(-50%, -50%);
+			-moz-transform: translate(-50%, -50%);
+			-ms-transform: translate(-50%, -50%);
+			-o-transform: translate(-50%, -50%);
+			transform: translate(-50%, -50%);
+		}
+		.ad__text h1 {
+			width: 10rem;
+			margin: 0 auto;
+		}
+		.ad__text h1 img {
+			width: 100%;
+		}
+		.ad__text h2 {
+			font-size: 3rem;
+		}
+	</style>
+	
 </th:block>
 
 <!-- 사용자 스크립트 추가 -->
@@ -21,6 +60,19 @@
 </th:block>
 
 <div layout:fragment="content" class="content content--padding">
-    <h1>TOP POS 는 최고의 세탁 편의점입니다.</h1>
+	<div class="ad">
+		<div class="ad__video">
+			<video autoplay loop muted>
+				<source src="/assets/images/dummy/video.mp4"></source>
+				<source src="/assets/images/dummy/video.ogg"></source>
+			</video>
+		</div>
+		<div class="ad__text">
+			<h1><img src="/assets/images/logo__megashop--w.svg" alt="탑 크리닝업 메가샵" /></h1>
+			<h2>세탁의 모든 것!</h2>
+			<p>언제, 어디서나, 깨끗하게</p>
+		</div>
+	</div>
+    
 </div>
 </html>

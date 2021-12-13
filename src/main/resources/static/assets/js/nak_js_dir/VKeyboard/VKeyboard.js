@@ -158,6 +158,60 @@ class VKeyboard {
         /* 스크롤링 처리 과정에 사용하기 위해, 가상키보드 입력창의 너비를 구한다. */
         this.editableFieldWidth = this.editableField.clientWidth;
 
+        for (let i = 0; i < this.normalBtn.length; i++) {
+            this.normalBtn[i].addEventListener("click", () => {
+                this.pushNormalBtn(this.normalBtn[i].value);
+            });
+        }
+
+        for (let i = 0; i < this.boilerBtn.length; i++) {
+            this.boilerBtn[i].addEventListener("click", () => {
+                this.pushBoilerBtn(this.boilerBtn[i].value);
+            });
+        }
+
+        for (let i = 0; i < this.changeKeyboardBtn.length; i++) {
+            this.changeKeyboardBtn[i].addEventListener("click", () => {
+                this.changeKeyboard([i]);
+            });
+        }
+
+        for (let i = 0; i < this.changeBoilerpadBtn.length; i++) {
+            this.changeBoilerpadBtn[i].addEventListener("click", () => {
+                this.changeBoilerplate([i]);
+            });
+        }
+
+        document.getElementById("VKEY_btn_spacer").addEventListener("click", () => {
+            this.pushNormalBtn(" ");
+        });
+
+        document.getElementById("VKEY_btn_cancel").addEventListener("click", () => {
+            this.cancelEdit();
+        });
+
+        document.getElementById("VKEY_btn_complete").addEventListener("click", () => {
+            this.completeEdit();
+        });
+
+
+        document.getElementById("VKEY_btn_caretleft").addEventListener("click", () => {
+            this.moveCaretPosition("left");
+        });
+
+        document.getElementById("VKEY_btn_caretright").addEventListener("click", () => {
+            this.moveCaretPosition("right");
+        });
+
+        document.getElementById("VKEY_btn_delete").addEventListener("click", () => {
+            this.removeCharFromTargetField();
+        });
+
+        document.getElementById("VKEY_btn_clear").addEventListener("click", () => {
+            this.clearInputField();
+        });
+
+
         /* 키패드 영역 준비*/
 
         /* 키패드 작동시 완료될 때 까지 사용자가 사용할 입력창 */
@@ -165,6 +219,24 @@ class VKeyboard {
 
         /* 키패드의 숫자 버튼들이 담긴다 */
         this.keypadBtn = document.getElementsByClassName("VKEY_keypad_btn");
+
+        for (let i = 0; i < this.keypadBtn.length; i++) {
+            this.keypadBtn[i].addEventListener("click", () => {
+                this.pushKeypadBtn(this.keypadBtn[i].value);
+            });
+        }
+
+        document.getElementById("VKEY_keypad_btn_backspace").addEventListener("click", () => {
+            this.pushKeypadBtn("", true);
+        });
+
+        document.getElementById("VKEY_keypad_btn_complete").addEventListener("click", () => {
+            this.pushKeypadCompelete();
+        });
+
+        document.getElementById("VKEY_keypad_btn_cancel").addEventListener("click", () => {
+            this.pushKeypadClose();
+        });
 
     }
 
@@ -214,10 +286,10 @@ class VKeyboard {
 
         document.getElementById("VKEY_VKEYMAIN").style.display = "block";
 
-        this.turnOnEvents();
         this.boilerList[0].style.display = "block";
         this.focusWithCaret();
         this.editableField.scrollLeft = 99999;
+
     }
 
 
@@ -743,7 +815,6 @@ class VKeyboard {
 
     cancelEdit() {
         document.getElementById("VKEY_VKEYMAIN").style.display = "none";
-        this.turnOffEvents();
         for (let i = 0; i < 4; i++) {
             this.boilerList[i].style.display = "none";
             this.keyboardBundle[i].style.display = "none";
@@ -757,7 +828,6 @@ class VKeyboard {
             this.editableField.innerHTML, false)[0]);
         this.callback();
         document.getElementById("VKEY_VKEYMAIN").style.display = "none";
-        this.turnOffEvents();
         for (let i = 0; i < 4; i++) {
             this.boilerList[i].style.display = "none";
             this.keyboardBundle[i].style.display = "none";
@@ -818,127 +888,6 @@ class VKeyboard {
     pushKeypadClose() {
         document.getElementById("VKEY_KEYPAD").style.display = "none";
         this.keypadField.value = "";
-    }
-
-    turnOnEvents() {
-        for (let i = 0; i < this.normalBtn.length; i++) {
-            this.normalBtn[i].addEventListener("click", () => {
-                this.pushNormalBtn(this.normalBtn[i].value);
-            });
-        }
-
-        for (let i = 0; i < this.boilerBtn.length; i++) {
-            this.boilerBtn[i].addEventListener("click", () => {
-                this.pushBoilerBtn(this.boilerBtn[i].value);
-            });
-        }
-
-        for (let i = 0; i < this.changeKeyboardBtn.length; i++) {
-            this.changeKeyboardBtn[i].addEventListener("click", () => {
-                this.changeKeyboard([i]);
-            });
-        }
-
-        for (let i = 0; i < this.changeBoilerpadBtn.length; i++) {
-            this.changeBoilerpadBtn[i].addEventListener("click", () => {
-                this.changeBoilerplate([i]);
-            });
-        }
-
-        document.getElementById("VKEY_btn_spacer").addEventListener("click", () => {
-            this.pushNormalBtn(" ");
-        });
-
-        document.getElementById("VKEY_btn_cancel").addEventListener("click", () => {
-            this.cancelEdit();
-        });
-
-        document.getElementById("VKEY_btn_complete").addEventListener("click", () => {
-            this.completeEdit();
-        });
-
-
-        document.getElementById("VKEY_btn_caretleft").addEventListener("click", () => {
-            this.moveCaretPosition("left");
-        });
-
-        document.getElementById("VKEY_btn_caretright").addEventListener("click", () => {
-            this.moveCaretPosition("right");
-        });
-
-        document.getElementById("VKEY_btn_delete").addEventListener("click", () => {
-            this.removeCharFromTargetField();
-        });
-
-        document.getElementById("VKEY_btn_clear").addEventListener("click", () => {
-            this.clearInputField();
-        });
-
-        for (let i = 0; i < this.keypadBtn.length; i++) {
-            this.keypadBtn[i].addEventListener("click", () => {
-                this.pushKeypadBtn(this.keypadBtn[i].value);
-            });
-        }
-
-        document.getElementById("VKEY_keypad_btn_backspace").addEventListener("click", () => {
-            this.pushKeypadBtn("", true);
-        });
-
-        document.getElementById("VKEY_keypad_btn_complete").addEventListener("click", () => {
-            this.pushKeypadCompelete();
-        });
-
-        document.getElementById("VKEY_keypad_btn_cancel").addEventListener("click", () => {
-            this.pushKeypadClose();
-        });
-    }
-
-    turnOffEvents() {
-        for (let i = 0; i < this.normalBtn.length; i++) {
-            this.removeEventsFromElement(this.normalBtn[i]);
-        }
-
-        for (let i = 0; i < this.boilerBtn.length; i++) {
-            this.removeEventsFromElement(this.boilerBtn[i]);
-        }
-
-        for (let i = 0; i < this.changeKeyboardBtn.length; i++) {
-            this.removeEventsFromElement(this.changeKeyboardBtn[i]);
-        }
-
-        for (let i = 0; i < this.changeBoilerpadBtn.length; i++) {
-            this.removeEventsFromElement(this.changeBoilerpadBtn[i])
-        }
-
-        this.removeEventsFromElement(document.getElementById("VKEY_btn_spacer"));
-
-        this.removeEventsFromElement(document.getElementById("VKEY_btn_cancel"));
-
-        this.removeEventsFromElement(document.getElementById("VKEY_btn_complete"));
-
-
-        this.removeEventsFromElement(document.getElementById("VKEY_btn_caretleft"));
-
-        this.removeEventsFromElement(document.getElementById("VKEY_btn_caretright"));
-
-        this.removeEventsFromElement(document.getElementById("VKEY_btn_delete"));
-
-        this.removeEventsFromElement(document.getElementById("VKEY_btn_clear"));
-
-        for (let i = 0; i < this.keypadBtn.length; i++) {
-            this.removeEventsFromElement(this.keypadBtn[i]);
-        }
-
-        this.removeEventsFromElement(document.getElementById("VKEY_keypad_btn_backspace"));
-
-        this.removeEventsFromElement(document.getElementById("VKEY_keypad_btn_complete"));
-
-        this.removeEventsFromElement(document.getElementById("VKEY_keypad_btn_cancel"));
-    }
-
-    removeEventsFromElement(element) {
-        const elementClone = element.cloneNode(true);
-        element.parentNode.replaceChild(elementClone, element);
     }
 
 
@@ -1261,11 +1210,11 @@ class VKeyboard {
             </div>
         
         
-            <div id="VKEY_KEYPAD" style="display:none">
-                <div>
+            <div id="VKEY_KEYPAD">
+                <div class="vkey-num__input">
                     <input type="text" id="VKEY_keypad_field" readonly>
                 </div>
-                <div>
+                <div class="vkey-num__pad">
                     <button type="button" class="VKEY_keypad_btn" value="1">1</button>
                     <button type="button" class="VKEY_keypad_btn" value="2">2</button>
                     <button type="button" class="VKEY_keypad_btn" value="3">3</button>
@@ -1279,7 +1228,7 @@ class VKeyboard {
                     <button type="button" class="VKEY_keypad_btn" value="0">0</button>
                     <button type="button" id="VKEY_keypad_btn_backspace">←</button>
                 </div>
-                <div>
+                <div class="vkey-num__console">
                     <button type="button" id="VKEY_keypad_btn_complete">적용</button>
                     <button type="button" id="VKEY_keypad_btn_cancel">취소</button>
                 </div>
@@ -1287,4 +1236,5 @@ class VKeyboard {
         `;
         return html;
     }
+
 }

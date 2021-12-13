@@ -752,6 +752,7 @@ textarea {
 	width: 100%;
 }
 .customer__form-item {
+	position: relative;
 	display: flex;
 	align-items: center;
 	width: calc(50% - 2.188rem);
@@ -766,6 +767,13 @@ textarea {
 }
 .customer__form-item.customer__form-item--100 + .customer__form-item {
 	margin-left: 0;
+}
+.customer__form-item #signImage {
+	position: absolute;
+	bottom: 1.25rem;
+	right: 0;
+	height: 7.5rem;
+	background-color: #fff;
 }
 .customer__form-title {
 	width: 7.5rem;

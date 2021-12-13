@@ -6,7 +6,70 @@
 
 <!-- 사용자 CSS 추가 -->
 <th:block layout:fragment="css">
-
+	<style>
+		.sign {
+			overflow: hidden;
+			width: 62.5rem;
+			background-color: #fff;
+			border: 0.125rem solid #959595;
+			-webkit-border-radius: 1.25rem;
+			-moz-border-radius: 1.25rem;
+			border-radius: 1.25rem;
+		}
+		.sign__header {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			width: 60rem;
+			height: 3.75rem;
+			margin: 0 1.25rem 1.25rem 1.25rem;
+			border-bottom: 1px solid #c8c8c8;
+		}
+		.sign__heading {
+			color: #444;
+			font-size: 2rem;
+		}
+		.sign__canvas {
+			margin: 0 auto;
+		}
+		.sign__canvas canvas {
+			position: relative;
+		}
+		.sign__console {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			width: 100%;
+			height: 5.313rem;
+			padding: 0 1.25rem;
+			margin-top: 1.25rem;
+			background-color: #dbdbdb;
+		}
+		.sign__text {
+			color: #333;
+			line-height: 1.4;
+		}
+		.sign__text h3 {
+			font-size: 1.25rem;
+			font-weight: 700;
+		}
+		.sign__text ul li {
+			font-size: 1rem;
+		}
+		.sign__btn {
+			width: 8rem;
+			height: 3.75rem;
+			background-color: #0082f0;
+			border: 0 none;
+			color: #fff;
+			font-size: 1.25rem;
+			font-weight: 700;
+			-webkit-border-radius: 0.625rem;
+			-moz-border-radius: 0.625rem;
+			border-radius: 0.625rem;
+		}
+		
+	</style>
 </th:block>
 
 <!-- 사용자 스크립트 추가 -->
@@ -20,145 +83,159 @@
     </script>
 </th:block>
 
-<div layout:fragment="content" class="content content--padding">
-    <h1>광고와 세탁물에 대한 메세지전송에 동의합니다.</h1>
+<div layout:fragment="content" class="content">
+	<div class="sign">
+		<div class="sign__header">
+			<h1 class="sign__logo"><img src="/assets/images/logo.svg" alt="탑 크리닝업 메가샵" /></h1>
+			<h2 class="sign__heading">회원동의</h2>
+		</div>
+		<div class="sign__canvas" style="width:920px; height:575px;">
+			<!-- 서명 공간 -->
+			<canvas id="canvas" style="border:1px solid #444"></canvas>
+		</div>
+		<div class="sign__console">
+			<div class="sign__text">
+				<h3>광고와 세탁물에 대한 메세지전송에 동의합니다.</h3>
+				<ul>
+					<li>1. SMS 수신 동의시 세탁물 도착안내, 행사정보 등 다양한 혜택을 드립니다.</li>
+					<li>2. 고객님의 개인정보는 당사 서비스 제공목적으로만 사용합니다.</li>
+				</ul>
+			</div>
+			<!-- 저장 버튼 -->
+		    <!-- <button id="save">save</button> -->
+		    <button class="sign__btn" id="save">동의완료</button>
+		</div>
+	</div>
 
-    <!-- 서명 공간 -->
-    <div style="width:200px; height:200px;">
-        <canvas id="canvas" style="border:1px solid black"></canvas>
-    </div>
-    <div>
-        <!-- 저장 버튼 -->
-        <!-- <button id="save">save</button> -->
-        <button class="btn btn-primary" id="save">동의완료</button>
-        <div id="resultimage">이미지내용</div>
 
-        <div>
-            <script>
-                (function (obj) {
-                    obj.init();
-                    $(obj.onLoad);
-                })((function () {
-                    var canvas = $("#canvas");
-                    var div = canvas.parent("div");
-                    // 캔버스의 오브젝트를 가져옵니다.
-                    var ctx = canvas[0].getContext("2d");
-                    var drawble = false;
+    
+    <!-- <div id="resultimage">이미지내용</div> -->
 
-                    // 이제 html 버그인지는 모르겠는데 canvas의 style의 height와 width를 수정하게 되면 그림이 이상하게 그려집니다.
-                    function canvasResize() {
-                        canvas[0].height = div.height();
-                        canvas[0].width = div.width();
-                    }
-                    // pc에서 서명을 할 경우 사용되는 이벤트입니다.
-                    function draw(e) {
-                        function getPosition() {
-                            return {
-                                X: e.pageX - canvas[0].offsetLeft,
-                                Y: e.pageY - canvas[0].offsetTop
-                            }
-                        }
-                        switch (e.type) {
-                            case "mousedown": {
-                                drawble = true;
-                                ctx.beginPath();
-                                ctx.moveTo(getPosition().X, getPosition().Y);
-                            }
-                                break;
-                            case "mousemove": {
-                                if (drawble) {
-                                    ctx.lineTo(getPosition().X, getPosition().Y);
-                                    ctx.stroke();
-                                }
-                            }
-                                break;
-                            case "mouseup":
-                            case "mouseout": {
-                                drawble = false;
-                                ctx.closePath();
-                            }
-                                break;
-                        }
-                    }
-                    function clearCanvas()
-                    {
-                        // canvas
-                        var cnvs = document.getElementById('canvas');
-                        // context
-                        var ctx = canvas.getContext('2d');
+    <script>
+        (function (obj) {
+            obj.init();
+            $(obj.onLoad);
+        })((function () {
+            var canvas = $("#canvas");
+            var div = canvas.parent("div");
+            // 캔버스의 오브젝트를 가져옵니다.
+            var ctx = canvas[0].getContext("2d");
+            var drawble = false;
 
-                        // 픽셀 정리
-                        ctx.clearRect(0, 0, cnvs.width, cnvs.height);
-                        // 컨텍스트 리셋
-                        ctx.beginPath();
-                    }
-
-                    // 스마트 폰에서 서명을 할 경우 사용되는 이벤트입니다.
-                    function touchdraw(e) {
-                        function getPosition() {
-                            return {
-                                X: e.changedTouches[0].pageX - canvas[0].offsetLeft,
-                                Y: e.changedTouches[0].pageY - canvas[0].offsetTop
-                            }
-                        }
-                        switch (e.type) {
-                            case "touchstart": {
-                                drawble = true;
-                                ctx.beginPath();
-                                ctx.moveTo(getPosition().X, getPosition().Y);
-                            }
-                                break;
-                            case "touchmove": {
-                                if (drawble) {
-                                    // 스크롤 이동등 이벤트 중지..
-                                    e.preventDefault();
-                                    ctx.lineTo(getPosition().X, getPosition().Y);
-                                    ctx.stroke();
-                                }
-                            }
-                                break;
-                            case "touchend":
-                            case "touchcancel": {
-                                drawble = false;
-                                ctx.closePath();
-                            }
-                                break;
-                        }
-                    }
-                    // 참고로 mousedown은 touchstart와 mousemove는 touchmove, mouseup은 touchend와 같습니다.
-                    // mouseout와 touchcancel은 서로 다른 동작인데, mouseout은 canvas 화면을 벗어났을 때이고 touchcancel는 모바일에서 터치가 취소, 즉 에러가 났을 때 입니다.
+            // 이제 html 버그인지는 모르겠는데 canvas의 style의 height와 width를 수정하게 되면 그림이 이상하게 그려집니다.
+            function canvasResize() {
+                canvas[0].height = div.height();
+                canvas[0].width = div.width();
+            }
+            // pc에서 서명을 할 경우 사용되는 이벤트입니다.
+            function draw(e) {
+                function getPosition() {
                     return {
-                        init: function () {
-                            // 캔버스 사이즈 조절
-                            $(window).on("resize", canvasResize);
-
-                            canvas.on("mousedown", draw);
-                            canvas.on("mousemove", draw);
-                            canvas.on("mouseup", draw);
-                            canvas.on("mouseout", draw);
-                            // 스마트 폰의 터치 이벤트
-                            canvas.on("touchstart", touchdraw);
-                            canvas.on("touchend", touchdraw);
-                            canvas.on("touchcancel", touchdraw);
-                            canvas.on("touchmove", touchdraw);
-                            // save 버튼을 누르면 imageupload.php로 base64코드를 보내서 이미지로 변환합니다.
-                            $("#save").on("click", function () {
-
-                                let imageCode = canvas[0].toDataURL("image/png")
-                                $("#resultimage").text(imageCode);
-                                secondcAPI.approvalCheck(imageCode);
-                                location.href = "/assistant"
-
-                            });
-                        },
-                        onLoad: function () {
-                            // 캔버스 사이즈 조절
-                            canvasResize();
+                        X: e.pageX - canvas[0].offsetLeft,
+                        Y: e.pageY - canvas[0].offsetTop
+                    }
+                }
+                switch (e.type) {
+                    case "mousedown": {
+                        drawble = true;
+                        ctx.beginPath();
+                        ctx.moveTo(getPosition().X, getPosition().Y);
+                    }
+                        break;
+                    case "mousemove": {
+                        if (drawble) {
+                            ctx.lineTo(getPosition().X, getPosition().Y);
+                            ctx.stroke();
                         }
                     }
-                })());
+                        break;
+                    case "mouseup":
+                    case "mouseout": {
+                        drawble = false;
+                        ctx.closePath();
+                    }
+                        break;
+                }
+            }
+            function clearCanvas()
+            {
+                // canvas
+                var cnvs = document.getElementById('canvas');
+                // context
+                var ctx = canvas.getContext('2d');
+
+                // 픽셀 정리
+                ctx.clearRect(0, 0, cnvs.width, cnvs.height);
+                // 컨텍스트 리셋
+                ctx.beginPath();
+            }
+
+            // 스마트 폰에서 서명을 할 경우 사용되는 이벤트입니다.
+            function touchdraw(e) {
+                function getPosition() {
+                    return {
+                        X: e.changedTouches[0].pageX - canvas[0].offsetLeft,
+                        Y: e.changedTouches[0].pageY - canvas[0].offsetTop
+                    }
+                }
+                switch (e.type) {
+                    case "touchstart": {
+                        drawble = true;
+                        ctx.beginPath();
+                        ctx.moveTo(getPosition().X, getPosition().Y);
+                    }
+                        break;
+                    case "touchmove": {
+                        if (drawble) {
+                            // 스크롤 이동등 이벤트 중지..
+                            e.preventDefault();
+                            ctx.lineTo(getPosition().X, getPosition().Y);
+                            ctx.stroke();
+                        }
+                    }
+                        break;
+                    case "touchend":
+                    case "touchcancel": {
+                        drawble = false;
+                        ctx.closePath();
+                    }
+                        break;
+                }
+            }
+            // 참고로 mousedown은 touchstart와 mousemove는 touchmove, mouseup은 touchend와 같습니다.
+            // mouseout와 touchcancel은 서로 다른 동작인데, mouseout은 canvas 화면을 벗어났을 때이고 touchcancel는 모바일에서 터치가 취소, 즉 에러가 났을 때 입니다.
+            return {
+                init: function () {
+                    // 캔버스 사이즈 조절
+                    $(window).on("resize", canvasResize);
+
+                    canvas.on("mousedown", draw);
+                    canvas.on("mousemove", draw);
+                    canvas.on("mouseup", draw);
+                    canvas.on("mouseout", draw);
+                    // 스마트 폰의 터치 이벤트
+                    canvas.on("touchstart", touchdraw);
+                    canvas.on("touchend", touchdraw);
+                    canvas.on("touchcancel", touchdraw);
+                    canvas.on("touchmove", touchdraw);
+                    // save 버튼을 누르면 imageupload.php로 base64코드를 보내서 이미지로 변환합니다.
+                    $("#save").on("click", function () {
+
+                        let imageCode = canvas[0].toDataURL("image/png")
+                       // $("#resultimage").text(imageCode);
+                        secondcAPI.approvalCheck(imageCode);
+                        location.href = "/assistant"
+
+                    });
+                },
+                onLoad: function () {
+                    // 캔버스 사이즈 조절
+                    canvasResize();
+                }
+            }
+        })());
 
 
-            </script>
+    </script>
 </div>
 </html>
