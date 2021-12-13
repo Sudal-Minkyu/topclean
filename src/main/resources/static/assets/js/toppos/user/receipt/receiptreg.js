@@ -749,9 +749,7 @@ function onSaveTemp() {
         "etc" : etc
     };
 
-    console.log(data);
-
-    CommonUI.ajaxjson(gridSaveUrl[0], data, function (req) {
+    CommonUI.ajaxjson(gridSaveUrl[0], JSON.stringify(data), function (req) {
 
     })
 }
