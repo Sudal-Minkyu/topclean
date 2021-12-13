@@ -23,6 +23,7 @@ public class RequestDetailDto {
     private String fdColor; // 색상코드 (00:미선택 01 흰색 02:검정 03: 회색, 04 빨강 05:주황, 06: 노랑, 07 초록 08 파랑 09:남색 10 보라 11 핑크)
     private String fdPattert; // 패턴 (00: 미선택 , 01:체크, 02:혼합, 03: 줄)
     private String fdPriceGrade; // 가격등급  1:일반, 2:고급: 3명품 4:아동
+
     private Integer fdOriginAmt; // 최초 정상금액(일반상태일경우) ??
     private Integer fdNormalAmt; // 접수금액
     private String fdRepairRemark; // 수선내용
@@ -45,7 +46,7 @@ public class RequestDetailDto {
 
     private Integer fdRequestAmt; // 접수금액( (정상 + 수선 + 추가1 -할인) * 수량 )
 
-    private String fdRetryYn; // 재세탁 여부 (Y  / N) Y 이면 아래 합계금액이 0이다
+    private String fdRetryYn; // 재세탁 여부 (Y  / N) Y 이면 합계금액이 0이다
 
     private String fdRemark; // 특이사항
     private String frEstimateDate; // 출고예정일
