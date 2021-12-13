@@ -682,8 +682,35 @@ function onAddOrder() {
     currentRequest.urgent = $("input[name='urgent']:checked").val();
 
     if(currentRequest._$uid) {
-
-        AUIGrid.updateRow(gridId[0], currentRequest);
+        let copyObj = {
+            _$uid: currentRequest._$uid,
+            fdTag: currentRequest.fdTag,
+            biItemcode: currentRequest.biItemcode,
+            fdColor: currentRequest.fdColor,
+            fdPattern: currentRequest.Pattern,
+            fdPriceGrade: currentRequest.fdPriceGrade,
+            fdOriginAmt: currentRequest.fdOriginAmt,
+            fdNormalAmt: currentRequest.fdNormalAmt,
+            fdRepairRemark: currentRequest.fdRepairRemark,
+            fdRepairAmt: currentRequest.fdRepairAmt,
+            fdAdd1Remark: currentRequest.fdAdd1Remark,
+            fdAdd1SpecialYn: currentRequest.fdAdd1SpecialYn,
+            fdAdd1Amt: currentRequest.fdAdd1Amt,
+            fdPressed: currentRequest.fdPressed,
+            fdWhitening: currentRequest.fdWhitening,
+            fdPollution: currentRequest.fdPollution,
+            fdPollutionLevel: currentRequest.fdPollutionLevel,
+            fdStarch: currentRequest.fdStarch,
+            fdWaterRepellent: currentRequest.fdWaterRepellent,
+            fdDiscountGrade: currentRequest.fdDiscountGrade,
+            fdDiscountAmt: currentRequest.fdDiscountAmt,
+            fdQty: currentRequest.fdQty,
+            fdRequestAmt: currentRequest.fdRequestAmt,
+            fdRetryYn: currentRequest.fdRetryYn,
+            fdRemark: currentRequest.fdRemark,
+            frEstimateDate: currentRequest.frEstimateDate,
+        }
+        AUIGrid.updateRowsById(gridId[0], copyObj);
     }else{
         AUIGrid.addRow(gridId[0], currentRequest, "last");
     }
