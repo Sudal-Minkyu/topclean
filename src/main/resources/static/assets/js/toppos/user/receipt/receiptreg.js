@@ -722,7 +722,7 @@ function additionalProcess(id) {
     }
 }
 
-function onSaveTemp() {
+function onSaveTemp(num) {
     // 추가된 행 아이템들(배열)
     const addedRowItems = AUIGrid.getAddedRowItems(gridId[0]);
 
@@ -732,9 +732,16 @@ function onSaveTemp() {
     // 삭제된 행 아이템들(배열)
     const deletedRowItems = AUIGrid.getRemovedItems(gridId[0]);
 
+    let checkNum;
     // 서버로 보낼 데이터 작성
+    if(num === 1){
+        checkNum = "1";
+    }else{
+        checkNum = "2";
+    }
 
     const etc = {
+        checkNum: checkNum,
         bcHp: selectedCustomer.bcHp,
         frNo: initialData.etcData.frNo,
         frNormalAmount: $("#totFdNormalAmount").html().replace(/[^0-9]/g, ""),
