@@ -81,7 +81,15 @@ public class UserService {
         return branchCalendarRepositoryCustom.findByEtc(frEstimateDuration, frCode, nowDate);
     }
 
+    // 접수코드를 통한 접수마스터 테이블 조회
+    public Optional<Request> findByRequest(String frNo){
+        return requestRepository.findByRequest(frNo);
+    }
 
+    // 접수코드와 태그번호를 통한 접수세부 테이블 조회
+    public Optional<RequestDetail> findByRequestDetail(String frNo, String fdTag){
+        return requestDetailRepository.findByRequestDetail(frNo, fdTag);
+    }
 
     // 문의 접수 API : 임시저장 또는 결제할시 저장한다. 마스터테이블, 세부테이블 저장
     @Transactional(rollbackFor = SQLException.class)
@@ -98,8 +106,10 @@ public class UserService {
             Request requestSave = requestRepository.save(request);
 
             for(int i=0; i<requestDetailList.size(); i++){
-                requestDetailList.get(i).setFrNo(frNo);
-                requestDetailList.get(i).setFrId(requestSave);
+                if(requestDetailList.get(i).getFrNo()==null){
+                    requestDetailList.get(i).setFrNo(frNo);
+                    requestDetailList.get(i).setFrId(requestSave);
+                }
             }
 
             requestDetailRepository.saveAll(requestDetailList);

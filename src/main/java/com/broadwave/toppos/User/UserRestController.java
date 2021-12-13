@@ -390,66 +390,138 @@ public class UserRestController {
         log.info("수정 사이즈 : "+updateList.size());
         log.info("삭제 사이즈 : "+deleteList.size());
 
-        Request requestSave = modelMapper.map(etcData, Request.class);
-
         // 현재 고객을 받아오기
         Optional<Customer> optionalCustomer = userService.findByBcHp(etcData.getBcHp());
         if(!optionalCustomer.isPresent()){
             return ResponseEntity.ok(res.fail(ResponseErrorCode.TP018.getCode(), ResponseErrorCode.TP018.getDesc(), "문자", "고객번호 : "+etcData.getBcHp()));
         }else{
-            requestSave.setBcId(optionalCustomer.get());
-            requestSave.setBcCode(frbrCode);
-            requestSave.setFrCode(frCode);
-            requestSave.setFrYyyymmdd(nowDate);
 
-            requestSave.setFrQty(addList.size()+updateList.size());
-            requestSave.setFrRefBoxCode(null); // 무인보관함 연계시 무인보관함 접수번호 : 일단 무조건 NULL
-            requestSave.setFr_insert_id(login_id);
-            requestSave.setFr_insert_date(LocalDateTime.now());
-        }
+            Request requestSave;
+            if(etcData.getFrNo() != null){
+                log.info("접수마스터 테이블 수정합니다. 접수코드 : "+etcData.getFrNo());
+                Optional<Request> optionalRequest = userService.findByRequest(etcData.getFrNo());
+                if(!optionalRequest.isPresent()){
+                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "접수 할 "+ResponseErrorCode.TP009.getDesc(), "문자", "접수코드 : "+etcData.getFrNo()));
+                }else{
+                    optionalRequest.get().setFrTotalAmount(etcData.getFrTotalAmount());
+                    optionalRequest.get().setFrDiscountAmount(etcData.getFrDiscountAmount());
+                    optionalRequest.get().setFrNormalAmount(etcData.getFrNormalAmount());
+                    optionalRequest.get().setFrQty(addList.size()+updateList.size());
+                    optionalRequest.get().setFrYyyymmdd(nowDate);
+                    optionalRequest.get().setModity_id(login_id);
+                    optionalRequest.get().setModity_date(LocalDateTime.now());
+                    requestSave = optionalRequest.get();
+                }
+            }else{
+                log.info("접수마스터 테이블 신규 저장합니다.");
 
-        if(etcData.getCheckNum().equals("1")){
-            requestSave.setFrUncollectYn("Y");
-            requestSave.setFrConfirmYn("Y");
-        }else{
-            requestSave.setFrUncollectYn("N");
-            requestSave.setFrConfirmYn("N");
-        }
+                requestSave = modelMapper.map(etcData, Request.class);
 
-        String lastTagNo = null; // 마지막 태그번호
-        List<RequestDetail> requestDetailList = new ArrayList<>(); // 세부테이블 객체 리스트
-        // 세부테이블 저장
-        if(addList.size()!=0){
-            for (RequestDetailDto requestDetailDto : addList) {
-                log.info("RequestDetailDto : "+requestDetailDto);
-                RequestDetail requestDetail = modelMapper.map(requestDetailDto, RequestDetail.class);
+                requestSave.setBcId(optionalCustomer.get());
+                requestSave.setBcCode(frbrCode);
+                requestSave.setFrCode(frCode);
+                requestSave.setFrYyyymmdd(nowDate);
 
-                requestDetail.setBiItemcode(requestDetailDto.getBiItemcode());
-                requestDetail.setFdState("S1");
-                requestDetail.setFdStateDt(LocalDateTime.now());
-                requestDetail.setFdCancel("N");
-                requestDetail.setFdTotAmt(requestDetailDto.getFdRequestAmt());
-                requestDetail.setFdEstimateDt(requestDetailDto.getFrEstimateDate());
-                requestDetail.setInsert_id(login_id);
-                requestDetail.setInsert_date(LocalDateTime.now());
-                lastTagNo = requestDetailDto.getFdTag();
-                requestDetailList.add(requestDetail);
+                requestSave.setFrQty(addList.size()+updateList.size());
+                requestSave.setFrRefBoxCode(null); // 무인보관함 연계시 무인보관함 접수번호 : 일단 무조건 NULL
+                requestSave.setFr_insert_id(login_id);
+                requestSave.setFr_insert_date(LocalDateTime.now());
+
+                log.info("접수마스터 테이블 저장 or 수정 : "+requestSave);
             }
+
+            if(etcData.getCheckNum().equals("1")){
+                requestSave.setFrUncollectYn("Y");
+                requestSave.setFrConfirmYn("Y");
+            }else{
+                requestSave.setFrUncollectYn("N");
+                requestSave.setFrConfirmYn("N");
+            }
+
+            String lastTagNo = null; // 마지막 태그번호
+            List<RequestDetail> requestDetailList = new ArrayList<>(); // 세부테이블 객체 리스트
+            // 접수 세부 테이블 저장
+            if(addList.size()!=0){
+                for (RequestDetailDto requestDetailDto : addList) {
+                    log.info("RequestDetailDto : "+requestDetailDto);
+                    RequestDetail requestDetail = modelMapper.map(requestDetailDto, RequestDetail.class);
+
+                    requestDetail.setBiItemcode(requestDetailDto.getBiItemcode());
+                    requestDetail.setFdState("S1");
+                    requestDetail.setFdStateDt(LocalDateTime.now());
+                    requestDetail.setFdCancel("N");
+                    requestDetail.setFdTotAmt(requestDetailDto.getFdRequestAmt());
+                    requestDetail.setFdEstimateDt(requestDetailDto.getFrEstimateDate());
+                    requestDetail.setInsert_id(login_id);
+                    requestDetail.setInsert_date(LocalDateTime.now());
+                    lastTagNo = requestDetailDto.getFdTag();
+                    requestDetailList.add(requestDetail);
+                }
+            }
+            // 접수 세부 테이블 업데이트
+            if(updateList.size()!=0){
+                for (RequestDetailDto requestDetailDto : updateList) {
+                    Optional<RequestDetail> optionalRequestDetail = userService.findByRequestDetail(etcData.getFrNo(), requestDetailDto.getFdTag());
+                    if(!optionalRequestDetail.isPresent()){
+                        return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "수정 할 "+ResponseErrorCode.TP009.getDesc(), "문자", "택번호 : "+requestDetailDto.getFdTag()));
+                    }else{
+                        optionalRequestDetail.get().setBiItemcode(requestDetailDto.getBiItemcode());
+                        optionalRequestDetail.get().setFdColor(requestDetailDto.getFdColor());
+                        optionalRequestDetail.get().setFdPattert(requestDetailDto.getFdPattert());
+                        optionalRequestDetail.get().setFdPriceGrade(requestDetailDto.getFdPriceGrade());
+
+                        optionalRequestDetail.get().setFdOriginAmt(requestDetailDto.getFdOriginAmt());
+                        optionalRequestDetail.get().setFdNormalAmt(requestDetailDto.getFdNormalAmt());
+                        optionalRequestDetail.get().setFdRepairRemark(requestDetailDto.getFdRepairRemark());
+                        optionalRequestDetail.get().setFdRepairAmt(requestDetailDto.getFdRepairAmt());
+
+                        optionalRequestDetail.get().setFdAdd1Remark(requestDetailDto.getFdAdd1Remark());
+                        optionalRequestDetail.get().setFdAdd1SpecialYn(requestDetailDto.getFdAdd1SpecialYn());
+                        optionalRequestDetail.get().setFdAdd1Amt(requestDetailDto.getFdAdd1Amt());
+
+                        optionalRequestDetail.get().setFdPressed(requestDetailDto.getFdPressed());
+                        optionalRequestDetail.get().setFdWhitening(requestDetailDto.getFdWhitening());
+                        optionalRequestDetail.get().setFdPollution(requestDetailDto.getFdPollution());
+                        optionalRequestDetail.get().setFdPollutionLevel(requestDetailDto.getFdPollutionLevel());
+                        optionalRequestDetail.get().setFdStarch(requestDetailDto.getFdStarch());
+                        optionalRequestDetail.get().setFdWaterRepellent(requestDetailDto.getFdWaterRepellent());
+
+                        optionalRequestDetail.get().setFdDiscountGrade(requestDetailDto.getFdDiscountGrade());
+                        optionalRequestDetail.get().setFdDiscountAmt(requestDetailDto.getFdDiscountAmt());
+                        optionalRequestDetail.get().setFdQty(requestDetailDto.getFdQty());
+
+                        optionalRequestDetail.get().setFdRequestAmt(requestDetailDto.getFdRequestAmt());
+                        optionalRequestDetail.get().setFdRetryYn(requestDetailDto.getFdRetryYn());
+
+                        optionalRequestDetail.get().setFdRemark(requestDetailDto.getFdRemark());
+                        optionalRequestDetail.get().setFdEstimateDt(requestDetailDto.getFrEstimateDate());
+
+                        optionalRequestDetail.get().setModity_id(login_id);
+                        optionalRequestDetail.get().setModity_date(LocalDateTime.now());
+                        RequestDetail requestDetail = optionalRequestDetail.get();
+                        requestDetailList.add(requestDetail);
+                    }
+                }
+            }
+            log.info("requestDetailList : "+requestDetailList);
+
+            Request requestSaveO = userService.requestAndDetailSave(requestSave,requestDetailList);
+            data.put("frNo",requestSaveO.getFrNo());
+
+            // 모두 저장되면 최종 택번호 업데이트
+            Optional<Franchise> optionalFranchise = headService.findByFrCode(frCode); // 가맹점
+            log.info("마지막 택번호 : "+lastTagNo);
+            if(optionalFranchise.isPresent()){
+                if(addList.size()==0){
+                    lastTagNo = optionalFranchise.get().getFrLastTagno();
+                }
+                optionalFranchise.get().setFrLastTagno(lastTagNo);
+
+                headService.franchiseSave(optionalFranchise.get());
+                log.info(optionalFranchise.get().getFrName()+" 가맹점 택번호 업데이트 완료 : "+lastTagNo);
+            }
+
         }
-
-        log.info("requestDetailList : "+requestDetailList);
-        Request requestSaveO = userService.requestAndDetailSave(requestSave,requestDetailList);
-
-        Optional<Franchise> optionalFranchise = headService.findByFrCode(frCode); // 가맹점
-        log.info("마지막 택번호 : "+lastTagNo);
-        // 모두 저장되면 최종 택번호 업데이트
-        if(optionalFranchise.isPresent()){
-            optionalFranchise.get().setFrLastTagno(lastTagNo);
-            headService.franchiseSave(optionalFranchise.get());
-            log.info(optionalFranchise.get().getFrName()+" 가맹점 택번호 업데이트 완료 : "+lastTagNo);
-        }
-
-        data.put("frNo",requestSaveO.getFrNo());
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
