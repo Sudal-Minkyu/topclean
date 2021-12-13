@@ -4,9 +4,11 @@ $(function() {
     createGrids(true);
 
     /* 그리드에 데이터를 집어넣음 반복문은 그리드숫자만큼(혹은 목표그리드 범위만큼) 돌 수 있도록 한다. */
-    for(let i=0; i<1; i++) {
-        setDataIntoGrid(i, gridCreateUrl[i]);
+    for(let i=0; i<0; i++) {
+        //setDataIntoGrid(i, gridCreateUrl[i]);
     }
+
+    setDataIntoGrid(2, gridCreateUrl[2]);
 
     /* 가상키보드의 사용 선언 */
     vkey = new VKeyboard();
@@ -84,24 +86,28 @@ $(function() {
     $("#fdRepairCancel").on("click", function () {
         currentRequest.fdRepairAmt = 0;
         currentRequest.fdRepairRemark = "";
+        calculateItemPrice();
         disableKeypad();
     });
 
     $("#fdRepairComplete").on("click", function () {
         currentRequest.fdRepairAmt = parseInt($("#fdRepairPop .keypad_field").val().replace(/[^0-9]/g, ""));
         currentRequest.fdRepairRemark = $("#fdRepairPop .keypad_remark").val();
+        calculateItemPrice();
         disableKeypad();
     });
 
     $("#fdAddCancel").on("click", function () {
         currentRequest.fdAdd1Amt = 0;
         currentRequest.fdAdd1Remark = "";
+        calculateItemPrice();
         disableKeypad();
     });
 
     $("#fdAddComplete").on("click", function () {
         currentRequest.fdAdd1Amt = parseInt($("#fdAddPop .keypad_field").val().replace(/[^0-9]/g, ""));
         currentRequest.fdAdd1Remark = $("#fdAddPop .keypad_remark").val();
+        calculateItemPrice();
         disableKeypad();
     });
 
@@ -217,7 +223,7 @@ gridTargetDiv = [
 
 /* 그리드를 받아올 때 쓰이는 api 배열 */
 gridCreateUrl = [
-    "/api/a", "/api/b"
+    "/api/a", "/api/b", "/api/user/tempRequestList"
 ]
 
 /* 그리드를 저장할 때 쓰이는 api 배열 */
@@ -270,7 +276,8 @@ gridColumnLayout[0] = [
         dataType: "numeric",
         autoThousandSeparator: "true",
         labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
-            return (item.fdNormalAmt + item.fdRepairAmt + item.fdAdd1Amt - item.fdDiscountAmt) * item.fdQty | 0;
+            return (item.fdNormalAmt + item.fdPressed + item.fdWhitening + item.fdWaterRepellent
+                + item.fdStarch + item.fdPollution + item.fdRepairAmt + item.fdAdd1Amt - item.fdDiscountAmt) * item.fdQty | 0;
         }
     }, {
         dataField: "fdColor",
@@ -339,7 +346,7 @@ gridProp[1] = {
 
 gridColumnLayout[2] = [
     {
-        dataField: "frInsertDt",
+        dataField: "frInsertDate",
         headerText: "접수시간",
     }, {
         dataField: "bcName",
@@ -380,7 +387,6 @@ function createGrids(type = false) {
 
 /* ajax 통신을 통해 그리드 데이터를 받아와 뿌린다. */
 function setDataIntoGrid(numOfGrid, url) {
-
     /*
     if(numOfGrid === 0) {
         let item = [];
@@ -402,12 +408,10 @@ function setDataIntoGrid(numOfGrid, url) {
         AUIGrid.setGridData(gridId[0], item);
     }
     */
-    /*
     CommonUI.ajax(url, "GET", false, function (req) {
         gridData[numOfGrid] = req.sendData.gridListData;
         AUIGrid.setGridData(gridId[numOfGrid], gridData[numOfGrid]);
     });
-    */
 }
 
 function onSearchCustomer() {
@@ -539,17 +543,17 @@ function calculateItemPrice() {
     currentRequest.fdPollutionLevel = $("input[name='cleanDirt']:checked").first().val() | 0;
     currentRequest.fdPollution = parseInt(initialData.addCostData["bcPollution"+currentRequest.fdPollutionLevel]) | 0;
 
-    currentRequest.fdAdd1Amt = currentRequest.fdPressed + currentRequest.fdWhitening + currentRequest.fdWaterRepellent
-            + currentRequest.fdStarch + currentRequest.fdPollution;
+    currentRequest.totCost = currentRequest.fdPressed + currentRequest.fdWhitening + currentRequest.fdWaterRepellent
+            + currentRequest.fdStarch + currentRequest.fdPollution + currentRequest.fdRepairAmt + currentRequest.fdAdd1Amt;
 
     currentRequest.fdNormalAmt = currentRequest.fdOriginAmt * gradePrice[currentRequest.fdPriceGrade] / 100;
-    currentRequest.fdRequestAmt = (currentRequest.fdNormalAmt + currentRequest.fdAdd1Amt + currentRequest.fdRepairAmt) * (100 - gradeDiscount[currentRequest.fdDiscountGrade]) / 100;
-    currentRequest.fdDiscountAmt = currentRequest.fdNormalAmt + currentRequest.fdAdd1Amt + currentRequest.fdRepairAmt - currentRequest.fdRequestAmt;
+    currentRequest.fdRequestAmt = (currentRequest.fdNormalAmt + currentRequest.totCost) * (100 - gradeDiscount[currentRequest.fdDiscountGrade]) / 100;
+    currentRequest.fdDiscountAmt = currentRequest.fdNormalAmt + currentRequest.totCost - currentRequest.fdRequestAmt;
 
     if($("#fdRetry").is(":checked")) {
         currentRequest.fdRetryYn = "Y";
         currentRequest.fdNormalAmt = 0;
-        currentRequest.fdAdd1Amt = 0;
+        currentRequest.totCost = 0;
         currentRequest.fdDiscountAmt = 0;
         currentRequest.fdRequestAmt = 0;
     }else{
@@ -557,9 +561,29 @@ function calculateItemPrice() {
     }
 
     $("#fdNormalAmt").html(currentRequest.fdNormalAmt.toLocaleString());
-    $("#fdAdd1Amt").html(currentRequest.fdAdd1Amt.toLocaleString());
+    $("#totCost").html(currentRequest.totCost.toLocaleString());
     $("#fdDiscountAmt").html(currentRequest.fdDiscountAmt.toLocaleString());
     $("#sumAmt").html(currentRequest.fdRequestAmt.toLocaleString());
+}
+
+function calculateMainPrice() {
+    const items = AUIGrid.getGridData(gridId[0]);
+    let fdQty = 0;
+    let fdNormalAmt = 0;
+    let fdDiscountAmt = 0;
+    let fdRequestAmt = 0;
+
+    items.forEach(el => {
+        fdQty += el.fdQty;
+        fdNormalAmt += el.fdNormalAmt;
+        fdDiscountAmt += el.fdDiscountAmt;
+        fdRequestAmt += el.fdRequestAmt;
+    })
+    $("#totFdQty").html(fdQty.toLocaleString());
+    $("#totFdNormalAmount").html(fdNormalAmt.toLocaleString());
+    $("#totFdDiscountAmount").html(fdDiscountAmt.toLocaleString());
+    $("#totFdRequestAmount").html(fdRequestAmt.toLocaleString());
+
 }
 
 
@@ -715,6 +739,7 @@ function onAddOrder() {
         AUIGrid.addRow(gridId[0], currentRequest, "last");
     }
 
+    calculateMainPrice();
     onCloseAddOrder();
 }
 
