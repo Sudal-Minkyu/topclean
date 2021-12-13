@@ -124,6 +124,7 @@ function cancelRegister() {
 
 /* 서명을 요청할 때 고객측의 모니터에 서명하도록 뜬다. */
 function requestSign() {
+
     const protocol = location.protocol;
     const hostName = location.hostname;
     const port = location.port;
@@ -138,6 +139,7 @@ function requestSign() {
     //마스크의 높이와 너비를 화면 것으로 만들어 전체 화면을 채운다.
     $('#windowMask').css({'width':maskWidth,'height':maskHeight}).show();
     $('#mask').show();
+
 }
 
 function resultFunction(msg){
