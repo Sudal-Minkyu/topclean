@@ -73,10 +73,12 @@ $(function() {
 
     $("#fdRepair").on("click", function () {
         $("#fdRepairPop").addClass("active");
+        enableKeypad();
     });
 
     $("#fdAdd1").on("click", function () {
         $("#fdAddPop").addClass("active");
+        enableKeypad();
     });
 
     $('.choice-drop__btn').on('click', function(e) {
@@ -112,7 +114,6 @@ let selectedLaundry = {
 }
 
 const fsRequestDtl = {
-    frNo: "",
     fdTag: "",
     biItemcode: "",
     fdColor: "00",
@@ -196,7 +197,7 @@ gridCreateUrl = [
 
 /* 그리드를 저장할 때 쓰이는 api 배열 */
 gridSaveUrl = [
-    "/api/a", "/api/b"
+    "/api/user/requestSave", "/api/b"
 ]
 
 /* 0번 그리드의 레이아웃 */
@@ -654,11 +655,6 @@ function onAddOrder() {
 
     /* 상세한 사항이 정해지면 수정할 것 */
     currentRequest.urgent = $("input[name='urgent']:checked").val();
-    currentRequest.etcNone = $("input[name='etcNone']").is(":checked") ? "Y" : "N";
-    currentRequest.etc1 = $("input[name='etc1']").is(":checked") ? "Y" : "N";
-    currentRequest.etc2 = $("input[name='etc2']").is(":checked") ? "Y" : "N";
-    currentRequest.etc3 = $("input[name='etc3']").is(":checked") ? "Y" : "N";
-    currentRequest.etc4 = $("input[name='etc4']").is(":checked") ? "Y" : "N";
 
     console.log(currentRequest);
     if(currentRequest._$uid) {
@@ -740,6 +736,7 @@ function onSaveTemp() {
 
     const etc = {
         bcHp: selectedCustomer.bcHp,
+        frNo: initialData.etcData.frNo,
         frNormalAmount: $("#totFdNormalAmount").html().replace(/[^0-9]/g, ""),
         frDiscountAmount: $("#totFdDiscountAmount").html().replace(/[^0-9]/g, ""),
         frTotalAmount: $("#totFdRequestAmount").html().replace(/[^0-9]/g, ""),
@@ -752,12 +749,19 @@ function onSaveTemp() {
         "etc" : etc
     };
 
-
     console.log(data);
 
-    /*
     CommonUI.ajaxjson(gridSaveUrl[0], data, function (req) {
 
     })
-    */
+}
+
+function enableKeypad() {
+    $(".keypad_btn").on("click", function () {
+
+    });
+}
+
+function disableKeypad() {
+
 }
