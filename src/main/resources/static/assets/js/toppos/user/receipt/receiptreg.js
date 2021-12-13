@@ -682,7 +682,8 @@ function onAddOrder() {
     currentRequest.urgent = $("input[name='urgent']:checked").val();
 
     if(currentRequest._$uid) {
-        AUIGrid.updateRowsById(gridId[0], currentRequest);
+
+        AUIGrid.updateRow(gridId[0], currentRequest);
     }else{
         AUIGrid.addRow(gridId[0], currentRequest, "last");
     }
@@ -821,7 +822,7 @@ function onSaveTemp(num) {
 
     console.log(data);
 
-    CommonUI.ajaxjson(gridSaveUrl[0], JSON.stringify(data), function (req) {용
+    CommonUI.ajaxjson(gridSaveUrl[0], JSON.stringify(data), function (req) {
         alertSuccess("임시저장이 되었습니다");
         initialData.etcData.frNo = req.sendData.frNo;
         AUIGrid.removeSoftRows(gridId[0]);
