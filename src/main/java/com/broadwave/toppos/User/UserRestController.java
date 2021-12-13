@@ -5,12 +5,8 @@ import com.broadwave.toppos.Head.Addprocess.AddprocessDto;
 import com.broadwave.toppos.Head.Franohise.FranchisInfoDto;
 import com.broadwave.toppos.Head.Franohise.Franchise;
 import com.broadwave.toppos.Head.HeadService;
-import com.broadwave.toppos.Head.Item.Group.A.ItemGroup;
 import com.broadwave.toppos.Head.Item.Group.A.UserItemGroupSortDto;
 import com.broadwave.toppos.Head.Item.Group.B.UserItemGroupSListDto;
-import com.broadwave.toppos.Head.Item.Group.C.Item;
-import com.broadwave.toppos.Head.Item.Price.FranchisePrice.FranchisePrice;
-import com.broadwave.toppos.Head.Item.Price.FranchisePrice.FranchisePriceDto;
 import com.broadwave.toppos.Head.Item.Price.UserItemPriceSortDto;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.Manager.Calendar.BranchCalendar;
@@ -386,7 +382,7 @@ public class UserRestController {
         ArrayList<RequestDetailDto> updateList = requestDetailSet.getUpdate(); // 수정 리스트 얻기
         ArrayList<RequestDetailDto> deleteList = requestDetailSet.getDelete(); // 제거 리스트 얻기
 
-        log.info("ECT 리스트 : "+etcData);
+        log.info("ECT 데이터 : "+etcData);
         log.info("추가 리스트 : "+addList);
         log.info("수정 리스트 : "+updateList);
         log.info("삭제 리스트 : "+deleteList);
@@ -395,15 +391,6 @@ public class UserRestController {
         log.info("삭제 사이즈 : "+deleteList.size());
 
         Request requestSave = modelMapper.map(etcData, Request.class);
-
-        String frNo;
-        if (etcData.getFrNo() == null || etcData.getFrNo().isEmpty()){
-            frNo = keyGenerateService.keyGenerate("fs_request", frCode+nowDate, login_id);
-            requestSave.setFrNo(frNo);
-        }else{
-            frNo = etcData.getFrNo();
-        }
-        log.info("frNo : "+frNo);
 
         // 현재 고객을 받아오기
         Optional<Customer> optionalCustomer = userService.findByBcHp(etcData.getBcHp());
@@ -437,7 +424,6 @@ public class UserRestController {
                 log.info("RequestDetailDto : "+requestDetailDto);
                 RequestDetail requestDetail = modelMapper.map(requestDetailDto, RequestDetail.class);
 
-                requestDetail.setFrNo(frNo);
                 requestDetail.setBiItemcode(requestDetailDto.getBiItemcode());
                 requestDetail.setFdState("S1");
                 requestDetail.setFdStateDt(LocalDateTime.now());
@@ -452,8 +438,7 @@ public class UserRestController {
         }
 
         log.info("requestDetailList : "+requestDetailList);
-
-        userService.requestAndDetailSave(requestSave,requestDetailList);
+        Request requestSaveO = userService.requestAndDetailSave(requestSave,requestDetailList);
 
         Optional<Franchise> optionalFranchise = headService.findByFrCode(frCode); // 가맹점
         log.info("마지막 택번호 : "+lastTagNo);
@@ -464,8 +449,7 @@ public class UserRestController {
             log.info(optionalFranchise.get().getFrName()+" 가맹점 택번호 업데이트 완료 : "+lastTagNo);
         }
 
-//        data.put("requestSave",requestSave);
-//        data.put("etcData",etcData);
+        data.put("frNo",requestSaveO.getFrNo());
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }

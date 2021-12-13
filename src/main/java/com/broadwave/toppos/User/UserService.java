@@ -1,13 +1,13 @@
 package com.broadwave.toppos.User;
 
 import com.broadwave.toppos.Account.AccountRepositoryCustom;
-import com.broadwave.toppos.Head.Item.Price.ItemPrice;
 import com.broadwave.toppos.Manager.Calendar.BranchCalendarRepositoryCustom;
 import com.broadwave.toppos.User.Customer.*;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Request;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetail;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestRepository;
+import com.broadwave.toppos.keygenerate.KeyGenerateService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +21,7 @@ import java.util.Optional;
 @Service
 public class UserService {
 
+    private final KeyGenerateService keyGenerateService;
     private final RequestRepository requestRepository;
     private final RequestDetailRepository requestDetailRepository;
     private final CustomerRepository customerRepository;
@@ -32,13 +33,15 @@ public class UserService {
     @Autowired
     public UserService(RequestRepository requestRepository, RequestDetailRepository requestDetailRepository,
                        CustomerRepository customerRepository, CustomerRepositoryCustom customerRepositoryCustom,
-                       AccountRepositoryCustom accountRepositoryCustom, BranchCalendarRepositoryCustom branchCalendarRepositoryCustom){
+                       AccountRepositoryCustom accountRepositoryCustom, BranchCalendarRepositoryCustom branchCalendarRepositoryCustom,
+                       KeyGenerateService keyGenerateService){
         this.requestRepository = requestRepository;
         this.requestDetailRepository = requestDetailRepository;
         this.customerRepository = customerRepository;
         this.customerRepositoryCustom = customerRepositoryCustom;
         this.accountRepositoryCustom = accountRepositoryCustom;
         this.branchCalendarRepositoryCustom = branchCalendarRepositoryCustom;
+        this.keyGenerateService = keyGenerateService;
     }
 
     // 고객등록
@@ -82,15 +85,29 @@ public class UserService {
 
     // 문의 접수 API : 임시저장 또는 결제할시 저장한다. 마스터테이블, 세부테이블 저장
     @Transactional(rollbackFor = SQLException.class)
-    public void requestAndDetailSave(Request request, List<RequestDetail> requestDetailList){
+    public Request requestAndDetailSave(Request request, List<RequestDetail> requestDetailList){
         try{
+            String frNo;
+            if (request.getFrNo() == null || request.getFrNo().isEmpty()){
+                frNo = keyGenerateService.keyGenerate("fs_request", request.getFrCode()+request.getFrYyyymmdd(), request.getFr_insert_id());
+                request.setFrNo(frNo);
+            }else{
+                frNo = request.getFrNo();
+            }
+            log.info("frNo : "+frNo);
             Request requestSave = requestRepository.save(request);
+
             for(int i=0; i<requestDetailList.size(); i++){
+                requestDetailList.get(i).setFrNo(frNo);
                 requestDetailList.get(i).setFrId(requestSave);
             }
+
             requestDetailRepository.saveAll(requestDetailList);
+
+            return requestSave;
         }catch (Exception e){
             log.info("에러발생 트랜젝션실행 : "+e);
+            return null;
         }
     }
 
