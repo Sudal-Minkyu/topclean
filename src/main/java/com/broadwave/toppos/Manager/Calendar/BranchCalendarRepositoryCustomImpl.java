@@ -57,8 +57,6 @@ public class BranchCalendarRepositoryCustomImpl extends QuerydslRepositorySuppor
                 franchise.frLastTagno,
                 branchCalendar.bcDate
             ));
-
-
         return query.fetch();
     }
 

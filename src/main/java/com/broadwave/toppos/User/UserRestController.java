@@ -506,7 +506,11 @@ public class UserRestController {
             }
             log.info("requestDetailList : "+requestDetailList);
 
-            Request requestSaveO = userService.requestAndDetailSave(requestSave,requestDetailList);
+            // 현재 접수한 고객의 대한 마지막방문일자 업데이트
+            optionalCustomer.get().setBcLastRequsetDt(nowDate);
+            Customer customer = optionalCustomer.get();
+
+            Request requestSaveO = userService.requestAndDetailSave(requestSave, requestDetailList, customer);
             data.put("frNo",requestSaveO.getFrNo());
 
             // 모두 저장되면 최종 택번호 업데이트
@@ -535,11 +539,7 @@ public class UserRestController {
         // 클레임데이터 가져오기
         Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
         String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
-//        String frbrCode = (String) claims.get("frbrCode"); // 소속된 지사 코드
-        String login_id = claims.getSubject(); // 현재 아이디
-        log.info("현재 접속한 아이디 : "+login_id);
         log.info("현재 접속한 가맹점 코드 : "+frCode);
-//        log.info("소속된 지사 코드 : "+frbrCode);
 
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
@@ -548,7 +548,6 @@ public class UserRestController {
         HashMap<String,Object> requestListInfo;
 
         List<RequestListDto> requestListDtos = userService.findByRequestTempList(frCode);
-//        log.info("customerListDtos : "+customerListDtos);
         for (RequestListDto requestListDto: requestListDtos) {
 
             requestListInfo = new HashMap<>();
@@ -568,17 +567,8 @@ public class UserRestController {
 
     // 접수페이지 임시저장 세부내역 리스트 호출 APi
     @GetMapping("tempRequestDetailList")
-    public ResponseEntity<Map<String,Object>> tempRequestDetailList(@RequestParam(value="frNo", defaultValue="") String frNo, HttpServletRequest request){
+    public ResponseEntity<Map<String,Object>> tempRequestDetailList(@RequestParam(value="frNo", defaultValue="") String frNo){
         log.info("tempRequestDetailList 호출");
-
-        // 클레임데이터 가져오기
-        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
-        String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
-//        String frbrCode = (String) claims.get("frbrCode"); // 소속된 지사 코드
-        String login_id = claims.getSubject(); // 현재 아이디
-        log.info("현재 접속한 아이디 : "+login_id);
-        log.info("현재 접속한 가맹점 코드 : "+frCode);
-//        log.info("소속된 지사 코드 : "+frbrCode);
 
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();

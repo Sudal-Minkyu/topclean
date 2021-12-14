@@ -103,7 +103,7 @@ public class UserService {
 
     // 문의 접수 API : 임시저장 또는 결제할시 저장한다. 마스터테이블, 세부테이블 저장
     @Transactional(rollbackFor = SQLException.class)
-    public Request requestAndDetailSave(Request request, List<RequestDetail> requestDetailList){
+    public Request requestAndDetailSave(Request request, List<RequestDetail> requestDetailList, Customer customer){
         try{
             String frNo;
             if (request.getFrNo() == null || request.getFrNo().isEmpty()){
@@ -121,7 +121,7 @@ public class UserService {
                     requestDetailList.get(i).setFrId(requestSave);
                 }
             }
-
+            customerRepository.save(customer);
             requestDetailRepository.saveAll(requestDetailList);
 
             return requestSave;

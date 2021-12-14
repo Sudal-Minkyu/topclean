@@ -30,8 +30,8 @@ public class CustomerInfoDto {
         return bcRemark;
     }
 
-    public String getBcLastRequsetDt() {
-        return bcLastRequsetDt;
+    public String getBcValuation() {
+        return bcValuation;
     }
 
     public Long getBcId() {
@@ -54,7 +54,11 @@ public class CustomerInfoDto {
         return bcGrade;
     }
 
-    public String getBcValuation() {
-        return bcValuation;
+    public StringBuffer getBcLastRequsetDt() {
+        StringBuffer getBcLastRequsetDt = new StringBuffer(bcLastRequsetDt);
+        getBcLastRequsetDt.insert(4,'-');
+        getBcLastRequsetDt.insert(7,'-');
+        return getBcLastRequsetDt;
     }
+
 }
