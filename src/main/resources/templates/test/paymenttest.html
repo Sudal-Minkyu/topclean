@@ -34,44 +34,49 @@
                 {
                     "type":"card",
                     "franchiseNo":"123",
+                    "franchiseName":"소만마을점",
+                    "businessNO": "125-55-45671",
+                    "repreName" : "김점주",
+                    "franchiseTel" : "031-4564-7894",
+                    "customerName" : "최고객",
+                    "customerTel" : "010-****-7777",
+                    "requestDt" : "2021-11-15 13:15",
                     "totalAmount":10500,
+                    "addAmount":1500,
+                    "dcAmount":500,
+                    "estimateDt" : "2021-11-18",
                     "month":0,
                     "items":[
-                        {"tagno":"123-1234","itemname":"상의/롱/면","price":2500},
-                        {"tagno":"123-1235","itemname":"상의/일반/청바지 ","price":3500},
-                        {"tagno":"124-1236","itemname":"코트/롱/오리털 ","price":4500}
+                        {"tagno":"1231234","color":"없음","itemname":"면 상의","specialyn":"Y","price":2500},
+                        {"tagno":"1231235","color":"남색","itemname":"청바지 하의","specialyn":"","price":3500},
+                        {"tagno":"1241236","color":"검정","itemname":"롱 오리털 코트","specialyn":"","price":4500}
                     ]
                 };
 
 
+            if (paymentData.type ==="card") {
+                CAT.CatCredit(paymentData, function (res) {
+                    $('#resultmsg').text(res);
+                    $('#payStatus').hide();
+                    let resjson = JSON.parse(res);
+                    //결제 성공일경우 Print
+                    if (resjson.STATUS === "SUCCESS") {
+                        let creditData =
+                            {
+                                "cardNo": resjson.CARDNO,
+                                "cardName": resjson.ISSUERNAME,
+                                "approvalTime": resjson.APPROVALTIME,
+                                "approvalNo": resjson.APPROVALNO
+                            };
+                        CAT.CatPrint(paymentData, creditData, "N")
+                    }
 
-            // CAT.CatPrint(paymentData,"")
-            // $('#payStatus').hide();
-            //return null;
-
-            CAT.CatCredit(paymentData, function (res) {
-
-
-
-
-                $('#resultmsg').text(res);
+                });
+            }
+            if (paymentData.type ==="cash") {
+                CAT.CatPrint(paymentData, "", "N");
                 $('#payStatus').hide();
-
-                let resjson = JSON.parse(res);
-
-                //결제 성공일경우 Print
-                if (resjson.STATUS ==="SUCCESS") {
-                    let creditData =
-                        {
-                            "cardNo": resjson.CARDNO,
-                            "cardName": resjson.ISSUERNAME,
-                            "approvalTime": resjson.APPROVALTIME,
-                            "approvalNo": resjson.APPROVALNO
-                        };
-                    CAT.CatPrint(paymentData, creditData,"N")
-                }
-
-            });
+            }
         }
 
         function paymentCardCancel() {
@@ -83,15 +88,16 @@
             let paymentData =
                 {
                     "franchiseNo":"123",
-                    "approvalTime":"2112021000435",
-                    "approvalNo":"70391692",
+                    "franchiseName":"소만마을점",
+                    "approvalTime":"2112132021592",
+                    "approvalNo":"22381094",
                     "totalAmount":"000010500",
                     "vatAmount":"000000954",
                     "month":0,
                     "items":[
-                        {"tagno":"123-1234","itemname":"상의/롱/면","price":2500},
-                        {"tagno":"123-1235","itemname":"상의/일반/청바지 ","price":3500},
-                        {"tagno":"124-1236","itemname":"코트/롱/오리털 ","price":4500}
+                        {"tagno":"1231234","color":"없음","itemname":"면 상의","specialyn":"Y","price":2500},
+                        {"tagno":"1231235","color":"남색","itemname":"청바지 하의","specialyn":"","price":3500},
+                        {"tagno":"1241236","color":"검정","itemname":"롱 오리털 코트","specialyn":"","price":4500}
                     ]
                 };
 
