@@ -247,7 +247,7 @@ gridColumnLayout[0] = [
         headerText: "처리내용",
     }, {
         dataField: "fdNormalAmt",
-        headerText: "정상금액",
+        headerText: "기본금액",
         dataType: "numeric",
         autoThousandSeparator: "true",
     }, {
@@ -342,6 +342,8 @@ gridProp[1] = {
     rowNumHeaderText : "순번",
     enableColumnResize : false,
     enableFilter : true,
+    width : 830,
+    height : 480,
 };
 
 gridColumnLayout[2] = [
@@ -427,7 +429,9 @@ function onSearchCustomer() {
            onPutCustomer(selectedCustomer);
        }else if(items.length > 1) {
            AUIGrid.setGridData(gridId[1], items);
-           // 고객선택창 열기
+           $("#customerListPop").addClass("active");
+       }else{
+           alertConfirm("일치하는 회원 정보가 없습니다. <br>회원가입을 하시겠습니까?");
        }
     });
 }
@@ -436,7 +440,7 @@ function onSelectCustomer() {
     selectedCustomer = AUIGrid.getSelectedRows(gridId[1]);
     if(selectedCustomer.length) {
         onPutCustomer(selectedCustomer[0]);
-        // 고객선택창 닫기 추가
+        $("#customerListPop").removeClass("active");
     }else{
         alertCaution("고객을 선택해 주세요", 1);
     }
@@ -466,13 +470,17 @@ function onPutCustomer(selectedCustomer) {
     $("#bcAddress").html(selectedCustomer.bcAddress);
     $("#bcHp").html(CommonUI.onPhoneNumChange(selectedCustomer.bcHp));
     $("#bcRemark").html(selectedCustomer.bcRemark);
-    // 최근방문일
-
+    $("#bcLastRequsetDt").html(selectedCustomer.bcLastRequsetDt);
     AUIGrid.clearGridData(gridId[0]);
 }
 
 /* 하단의 세탁물 종류 버튼 클릭시 해당 세탁물 대분류 코드를 가져와 팝업을 띄운다. */
 function onPopReceiptReg(btnElement) {
+    if(selectedCustomer === undefined) {
+        alertCaution("먼저 고객을 선택해 주세요", 1);
+        return false;
+    }
+
     selectedLaundry.bgCode = btnElement.value;
     let bsType = ["N", "L", "S"];
     initialData.userItemGroupSListData.forEach(el => {

@@ -75,7 +75,7 @@
                         <p><span id="totFdQty">0</span></p>
                     </li>
                     <li>
-                        <h4>정상금액</h4>
+                        <h4>기본금액</h4>
                         <p><span id="totFdNormalAmount">0</span><span class="won">원</span></p>
 
 
@@ -107,7 +107,7 @@
                 </li>
                 <li>
                     <h4>최근방문일</h4>
-                    <p><span class="client-info__num" id="최근방문일"></span></p>
+                    <p><span class="client-info__num" id="bcLastRequestDt"></span></p>
                 </li>
             </ul>
         </div>
@@ -506,14 +506,22 @@
     </div>
 
 
-    <!-- 고객 선택팝업 -->
-    <div>
-        고객선택
-        <div id="grid_customerList"></div>
-        <button type="button" onclick="onSelectCustomer()">선택</button>
-        <button type="button" onclick="onCloseSelectCustomer()">닫기</button>
-    </div>
+    <!-- 고객선택 팝업 -->
+    <div class="pop" id="customerListPop">
+        <div class="pop__box">
+            <div class="pop__article">
+                <h3 class="pop__article-header">고객선택</h3>
+                <div class="pop__aricle-content">
+                    <div id="grid_customerList"></div>
+                </div>
+            </div>
 
+            <ul class="pop__console">
+                <li><button class="c-button pop__close">닫기</button></li>
+                <li><button class="c-button c-button--dark" onclick="onSelectCustomer()">선택</button></li>
+            </ul>
+        </div>
+    </div>
 
     <hr>
     <!-- 수선 팝업 -->
