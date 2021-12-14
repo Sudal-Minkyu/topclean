@@ -119,7 +119,7 @@ gridProp[1] = {
     enableColumnResize : false,
     enableFilter : true,
     width : 660,
-    height : 480,
+    height : 400,
 };
 
 gridColumnLayout[2] = [
@@ -152,7 +152,7 @@ gridProp[2] = {
     enableColumnResize : false,
     enableFilter : true,
     width : 660,
-    height : 480,
+    height : 400,
 };
 
 function createAccountGrid(gridColumnLayout, gridProp) {
@@ -258,26 +258,26 @@ function frSearch(){
 function brListPop(){
     // console.log("지사선택 팝업열기");
     AUIGrid.clearFilterAll(gridId[1]);
-    $('#branch_popup').addClass('open');
+    $('#branch_popup').addClass('active');
 }
 
 // 가맹점선택 함수
 function frListPop(){
     // console.log("가맹점선택 팝업열기");
     AUIGrid.clearFilterAll(gridId[2]);
-    $('#franchise_popup').addClass('open');
+    $('#franchise_popup').addClass('active');
 }
 
 // 지사 점 팝업닫기
 function branchClose(){
     // console.log("지사선택 팝업닫기");
-    $('#branch_popup').removeClass('open');
+    $('#branch_popup').removeClass('active');
 }
 
 // 가맹점 선택 팝업닫기
 function franchiseClose(){
     // console.log("가맹점선택 팝업닫기");
-    $('#franchise_popup').removeClass('open');
+    $('#franchise_popup').removeClass('active');
 }
 
 
