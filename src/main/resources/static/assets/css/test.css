@@ -1018,6 +1018,9 @@ textarea {
 	background-size: 100%;
 	background-position: center center;
 }
+.propensity__star.propensity__star--0 {
+	background-image: url(/assets/images/icon__star--0.svg);
+}
 .propensity__star.propensity__star--1 {
 	background-image: url(/assets/images/icon__star--1.svg);
 }
