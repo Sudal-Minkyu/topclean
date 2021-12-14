@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 /**
  * @author Minkyu
- * Date : 2021-11-24
+ * Date : 2021-12-13
  * Time :
  * Remark : Toppos 가맹점 접수세부 Dto
  */

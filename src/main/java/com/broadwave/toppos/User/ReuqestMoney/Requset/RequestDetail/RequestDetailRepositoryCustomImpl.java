@@ -1,6 +1,5 @@
 package com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail;
 
-import com.broadwave.toppos.User.ReuqestMoney.Requset.QRequest;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +24,6 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
 
     public List<RequestDetailDto> findByRequestTempDetailList(String frNo){
         QRequestDetail requestDetail = QRequestDetail.requestDetail;
-        QRequest request = QRequest.request;
         JPQLQuery<RequestDetailDto> query = from(requestDetail)
                 .select(Projections.constructor(RequestDetailDto.class,
                         requestDetail.biItemcode,
