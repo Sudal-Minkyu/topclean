@@ -29,12 +29,10 @@ $(function() {
     //     startYesorNo(false)
     // });
     //
-    // $(document).on("click","#checkDelSuccessBtn",function(){
-    //     startDel($("#delId").val(),true)
-    // });
-    // $(document).on("click","#checkDelCancelBtn",function(){
-    //     startDel($("#delId").val(),false)
-    // });
+
+    $(document).on("click","#checkDelCancelBtn",function(){
+        $('#popupId').remove();
+    });
 
     // $('#success').on('click', function() {
     //     //console.log("성공버튼 실행");
@@ -151,7 +149,7 @@ function alertCaution(text,type) { //경고창
 }
 
 // 삭제 알림창.
-function alertCheck(text,id) { //정말삭제할껀지확인하는창
+function alertCheck(text) { //정말삭제할껀지확인하는창
     let html = '';
 
     html +='<div id="popupId" class="popup popup--dim">';
@@ -161,7 +159,6 @@ function alertCheck(text,id) { //정말삭제할껀지확인하는창
     html +='<div class="popup__text">'+text+'</div>';
     html +='</div>';
     html +='<div class="popup__buttons">';
-    html +='<input type="hidden" id="delId" value="'+id+'" />';
     html +='<button id="checkDelSuccessBtn" class="popup__btn popup__btn--success">확인</button>';
     html +='<button id="checkDelCancelBtn" class="popup__btn popup__btn--cancel">취소</button>';
     html +='</div>';
