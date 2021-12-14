@@ -21,6 +21,7 @@
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
+	z-index: 999;
 }
 .vkey__header {
 	display: flex;
@@ -302,6 +303,7 @@
 
 /* 숫자패드 */
 #VKEY_KEYPAD {
+	display: none;
 	width: 26.875rem;
 	padding: 2.5rem;
 	background-color: #ebebeb;
