@@ -2,6 +2,7 @@ package com.broadwave.toppos.Controller;
 
 import com.broadwave.toppos.Account.AccountService;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
+import com.broadwave.toppos.User.UserService.UserService;
 import com.broadwave.toppos.common.AjaxResponse;
 import com.broadwave.toppos.common.CommonUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +32,9 @@ public class MainController {
     @Autowired
     AccountService accountService;
 
+    @Autowired
+    UserService userService;
+
     // 메인 페이지 이동
     @GetMapping("/")
     public Object index(HttpServletRequest request){
@@ -47,12 +51,6 @@ public class MainController {
 
         Authentication authentication = tokenProvider.getAuthentication(request.getHeader("Authorization"));
         String role = authentication.getAuthorities().toString();
-        // 클레임데이터 가져오기
-//        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
-//        String a = (String) claims.get("brCode");
-//        String b = (String) claims.get("frCode");
-//        log.info("a : "+a);
-//        log.info("b : "+b);
         log.info("권한 : "+role);
         switch (role) {
             case "[ROLE_MANAGER]":
@@ -67,6 +65,7 @@ public class MainController {
                 break;
             case "[ROLE_USER]":
                 log.info("가맹점주 로그인");
+                userService.userLoginLog(request);
                 data.put("link","/user");
                 break;
             case "[ROLE_ADMIN]":
