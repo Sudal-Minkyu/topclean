@@ -21,7 +21,7 @@ import java.time.format.DateTimeFormatter;
 public class RequestListDto {
 
     private String frNo; // 접수코드
-    private LocalDateTime fr_insert_date; // 접수시간
+    private LocalDateTime frInsertDate; // 접수시간
     private String bcName; // 고객명
     private String bcHp; // 고객번호
 
@@ -29,8 +29,8 @@ public class RequestListDto {
         return frNo;
     }
 
-    public String getFr_insert_date() {
-        return fr_insert_date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+    public String getFrInsertDate() {
+        return frInsertDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
     }
 
     public String getBcName() {

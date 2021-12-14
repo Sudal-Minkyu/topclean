@@ -1,10 +1,9 @@
 package com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail;
 
-import com.broadwave.toppos.Head.Franohise.Franchise;
-import lombok.*;
-
-import javax.persistence.*;
-import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * @author Minkyu
@@ -21,7 +20,7 @@ public class RequestDetailDto {
     private String biItemcode; // 상품코드
     private String fdTag; // 택번호
     private String fdColor; // 색상코드 (00:미선택 01 흰색 02:검정 03: 회색, 04 빨강 05:주황, 06: 노랑, 07 초록 08 파랑 09:남색 10 보라 11 핑크)
-    private String fdPattert; // 패턴 (00: 미선택 , 01:체크, 02:혼합, 03: 줄)
+    private String fdPattern; // 패턴 (00: 미선택 , 01:체크, 02:혼합, 03: 줄)
     private String fdPriceGrade; // 가격등급  1:일반, 2:고급: 3명품 4:아동
 
     private Integer fdOriginAmt; // 최초 정상금액(일반상태일경우) ??
@@ -63,8 +62,8 @@ public class RequestDetailDto {
         return fdColor;
     }
 
-    public String getFdPattert() {
-        return fdPattert;
+    public String getFdPattern() {
+        return fdPattern;
     }
 
     public String getFdPriceGrade() {

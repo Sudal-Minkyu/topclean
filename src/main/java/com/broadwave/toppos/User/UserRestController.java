@@ -468,7 +468,7 @@ public class UserRestController {
                     }else{
                         optionalRequestDetail.get().setBiItemcode(requestDetailDto.getBiItemcode());
                         optionalRequestDetail.get().setFdColor(requestDetailDto.getFdColor());
-                        optionalRequestDetail.get().setFdPattert(requestDetailDto.getFdPattert());
+                        optionalRequestDetail.get().setFdPattern(requestDetailDto.getFdPattern());
                         optionalRequestDetail.get().setFdPriceGrade(requestDetailDto.getFdPriceGrade());
 
                         optionalRequestDetail.get().setFdOriginAmt(requestDetailDto.getFdOriginAmt());
@@ -554,7 +554,7 @@ public class UserRestController {
             requestListInfo = new HashMap<>();
 
             requestListInfo.put("frNo", requestListDto.getFrNo());
-            requestListInfo.put("frInsertDate", requestListDto.getFr_insert_date());
+            requestListInfo.put("frInsertDate", requestListDto.getFrInsertDate());
             requestListInfo.put("bcName", requestListDto.getBcName());
             requestListInfo.put("bcHp", requestListDto.getBcHp());
 
@@ -566,7 +566,28 @@ public class UserRestController {
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
+    // 접수페이지 임시저장 세부내역 리스트 호출 APi
+    @GetMapping("tempRequestDetailList")
+    public ResponseEntity<Map<String,Object>> tempRequestDetailList(@RequestParam(value="frNo", defaultValue="") String frNo, HttpServletRequest request){
+        log.info("tempRequestDetailList 호출");
 
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
+//        String frbrCode = (String) claims.get("frbrCode"); // 소속된 지사 코드
+        String login_id = claims.getSubject(); // 현재 아이디
+        log.info("현재 접속한 아이디 : "+login_id);
+        log.info("현재 접속한 가맹점 코드 : "+frCode);
+//        log.info("소속된 지사 코드 : "+frbrCode);
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        List<RequestDetailDto> requestDetailList = userService.findByRequestTempDetailList(frNo);
+        data.put("requestDetailList",requestDetailList);
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
 
 
 

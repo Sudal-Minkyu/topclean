@@ -5,6 +5,7 @@ import com.broadwave.toppos.Manager.Calendar.BranchCalendarRepositoryCustom;
 import com.broadwave.toppos.User.Customer.*;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Request;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetail;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepositoryCustom;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestListDto;
@@ -135,4 +136,7 @@ public class UserService {
         return requestRepositoryCustom.findByRequestTempList(frCode);
     }
 
+    public List<RequestDetailDto> findByRequestTempDetailList(String frNo) {
+        return requestDetailRepositoryCustom.findByRequestTempDetailList(frNo);
+    }
 }

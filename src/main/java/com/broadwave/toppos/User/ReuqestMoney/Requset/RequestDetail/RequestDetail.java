@@ -61,12 +61,11 @@ public class RequestDetail {
     @Column(name="fd_color")
     private String fdColor; // 색상코드 (00:미선택 01 흰색 02:검정 03: 회색, 04 빨강 05:주황, 06: 노랑, 07 초록 08 파랑 09:남색 10 보라 11 핑크)
 
-    @Column(name="fd_pattert")
-    private String fdPattert; // 패턴 (00: 미선택 , 01:체크, 02:혼합, 03: 줄)
+    @Column(name="fd_pattern")
+    private String fdPattern; // 패턴 (00: 미선택 , 01:체크, 02:혼합, 03: 줄)
 
     @Column(name="fd_price_grade")
     private String fdPriceGrade; // 가격등급  1:일반, 2:고급: 3명품 4:아동
-
 
     @Column(name="fd_origin_amt")
     private Integer fdOriginAmt; // 최초 정상금액(일반상태일경우)
@@ -94,7 +93,6 @@ public class RequestDetail {
 
     @Column(name="fd_add2_amt")
     private Integer fdAdd2Amt; // 추가비용2(검품후 추가비용 발생)
-
 
     @Column(name="fd_pressed")
     private Integer fdPressed; // 다림질 요금
