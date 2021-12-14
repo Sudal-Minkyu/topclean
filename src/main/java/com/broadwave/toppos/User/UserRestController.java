@@ -573,8 +573,35 @@ public class UserRestController {
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
 
-        List<RequestDetailDto> requestDetailList = userService.findByRequestTempDetailList(frNo);
-        data.put("requestDetailList",requestDetailList);
+        // 접수했던 고객의 정보 호출
+        Optional<Request> optionalRequest = userService.findByRequest(frNo);
+        if(!optionalRequest.isPresent()){
+            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "접수"+ResponseErrorCode.TP009.getDesc(), "문자", "접수 : "+frNo));
+        }else{
+
+            // 다시 고객정보 호출해준다.
+            CustomerInfoDto customerInfoDto = new CustomerInfoDto();
+            customerInfoDto.setBcId(optionalRequest.get().getId());
+            customerInfoDto.setBcHp(optionalRequest.get().getBcId().getBcHp());
+            customerInfoDto.setBcName(optionalRequest.get().getBcId().getBcName());
+            customerInfoDto.setBcAddress(optionalRequest.get().getBcId().getBcAddress());
+            customerInfoDto.setBcGrade(optionalRequest.get().getBcId().getBcGrade());
+            customerInfoDto.setBcValuation(optionalRequest.get().getBcId().getBcValuation());
+            customerInfoDto.setBcRemark(optionalRequest.get().getBcId().getBcRemark());
+            if(optionalRequest.get().getBcId().getBcLastRequsetDt() != null){
+                String bcLastRequsetDt = optionalRequest.get().getBcId().getBcLastRequsetDt();
+                StringBuilder getBcLastRequsetDt = new StringBuilder(bcLastRequsetDt);
+                getBcLastRequsetDt.insert(4,'-');
+                getBcLastRequsetDt.insert(7,'-');
+                customerInfoDto.setBcLastRequsetDt(getBcLastRequsetDt.toString());
+            }
+            data.put("gridListData",customerInfoDto);
+
+            // 임시저장의 접수 세무테이블 리스트 호출
+            List<RequestDetailDto> requestDetailList = userService.findByRequestTempDetailList(frNo);
+            data.put("requestDetailList",requestDetailList);
+            data.put("gridListData",customerInfoDto);
+        }
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }

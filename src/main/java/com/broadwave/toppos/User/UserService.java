@@ -70,7 +70,6 @@ public class UserService {
         return customerRepository.findByBcId(bcId);
     }
 
-
     // 로그인한 가맹점의 대한 고객정보 조회
     public List<CustomerInfoDto> findByCustomerInfo(String frCode, String searchType, String searchString) {
         return customerRepositoryCustom.findByCustomerInfo(frCode, searchType, searchString);

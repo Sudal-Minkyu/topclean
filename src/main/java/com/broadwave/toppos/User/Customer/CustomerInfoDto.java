@@ -26,14 +26,6 @@ public class CustomerInfoDto {
     private String bcRemark; // 특이사항
     private String bcLastRequsetDt; // 마지막방문일자
 
-    public String getBcRemark() {
-        return bcRemark;
-    }
-
-    public String getBcValuation() {
-        return bcValuation;
-    }
-
     public Long getBcId() {
         return bcId;
     }
@@ -54,11 +46,16 @@ public class CustomerInfoDto {
         return bcGrade;
     }
 
-    public StringBuffer getBcLastRequsetDt() {
-        StringBuffer getBcLastRequsetDt = new StringBuffer(bcLastRequsetDt);
-        getBcLastRequsetDt.insert(4,'-');
-        getBcLastRequsetDt.insert(7,'-');
-        return getBcLastRequsetDt;
+    public String getBcValuation() {
+        return bcValuation;
+    }
+
+    public String getBcRemark() {
+        return bcRemark;
+    }
+
+    public String getBcLastRequsetDt() {
+        return bcLastRequsetDt;
     }
 
 }
