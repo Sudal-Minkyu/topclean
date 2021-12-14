@@ -109,6 +109,25 @@
 
                 let resjson = JSON.parse(res);
 
+                /* res JSSON Key List
+                        resultData = '{ ';
+                        resultData += '"STATUS":"SUCCESS",';
+                        resultData += '"APPROVALTIME":"' +FindJSONtoString("APPROVALTIME", data) + '",';
+                        resultData += '"APPROVALNO":"' +FindJSONtoString("APPROVALNO", data) + '",';
+                        resultData += '"CARDNO":"' +FindJSONtoString("CARDNO", data) + '",';
+                        resultData += '"ISSUERCODE":"' +FindJSONtoString("ISSUERCODE", data) + '",';
+                        resultData += '"ISSUERNAME":"' +FindJSONtoString("ISSUERNAME", data) + '",';
+                        resultData += '"MERCHANTNUMBER":"' +FindJSONtoString("MERCHANTNUMBER", data) + '",';
+                        resultData += '"MESSAGE1":"' +FindJSONtoString("MESSAGE1", data) + '",';
+                        resultData += '"MESSAGE2":"' +FindJSONtoString("MESSAGE2", data) + '",';
+                        resultData += '"NOTICE1":"' +FindJSONtoString("NOTICE1", data) + '",';
+                        resultData += '"TOTAMOUNT":"' +FindJSONtoString("TOTAMOUNT", data) + '",';
+                        resultData += '"VATAMOUNT":"' +FindJSONtoString("VATAMOUNT", data) + '",';
+                        resultData += '"TELEGRAMFLAG":"' +FindJSONtoString("TELEGRAMFLAG", data) + '"';
+                        resultData += '}';
+                 */
+
+
                 //결제 성공일경우 Print
                 if (resjson.STATUS ==="SUCCESS") {
                     let creditData =
