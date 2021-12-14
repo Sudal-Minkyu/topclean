@@ -123,7 +123,7 @@ public class ItemPriceRepositoryCustomImpl extends QuerydslRepositorySupport imp
                 .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
 
                 .innerJoin(franchise).on(franchise.frCode.eq(frCode))
-                .innerJoin(itemSort).on(itemSort.frCode.eq(frCode).and(itemSort.biItemcode.eq(item.biItemcode)))
+                .leftJoin(itemSort).on(itemSort.frCode.eq(frCode).and(itemSort.biItemcode.eq(item.biItemcode)))
 
                 .leftJoin(franchisePrice).on(franchisePrice.biItemcode.eq(itemPrice.biItemcode).and(franchisePrice.frCode.eq(frCode)))
 
