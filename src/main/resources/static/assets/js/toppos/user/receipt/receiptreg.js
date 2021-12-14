@@ -124,6 +124,17 @@ $(function() {
         }
     });
 
+    $("#searchCustomerField").on("keyup", function(e) {
+
+        /*
+        if(e.keyCode===13) {
+            console.log("b");
+            e.stopPropagation();
+            e.preventDefault();
+            //onSearchCustomer();
+        };
+        */
+    });
 });
 
 /* 상품 주문을 받을 때 적용되는 가격 정보 데이터를 API로 불러와 미리 저장 */
@@ -420,18 +431,21 @@ function onSearchCustomer() {
     const params = {searchType : $("#searchCustomerType").val(),
             searchString : $("#searchCustomerField").val()};
     CommonUI.ajax("/api/user/customerInfo", "GET", params, function (req) {
-       const items = req.sendData.gridListData;
-
+        const items = req.sendData.gridListData;
         $("#searchCustomerType").val(0);
         $("#searchCustomerField").val("");
        if(items.length === 1) {
            selectedCustomer = items[0];
            onPutCustomer(selectedCustomer);
+
        }else if(items.length > 1) {
            AUIGrid.setGridData(gridId[1], items);
            $("#customerListPop").addClass("active");
        }else{
            alertConfirm("일치하는 회원 정보가 없습니다. <br>회원가입을 하시겠습니까?");
+           $("#checkConfirmBtn").on("click", function () {
+                location.href="/user/customerreg"
+           });
        }
     });
 }
@@ -470,16 +484,13 @@ function onPutCustomer(selectedCustomer) {
     $("#bcAddress").html(selectedCustomer.bcAddress);
     $("#bcHp").html(CommonUI.onPhoneNumChange(selectedCustomer.bcHp));
     $("#bcRemark").html(selectedCustomer.bcRemark);
-    $("#bcLastRequsetDt").html(selectedCustomer.bcLastRequsetDt);
+    $("#bcLastRequestDt").html(selectedCustomer.bcLastRequestDt);
     AUIGrid.clearGridData(gridId[0]);
 }
 
 /* 하단의 세탁물 종류 버튼 클릭시 해당 세탁물 대분류 코드를 가져와 팝업을 띄운다. */
 function onPopReceiptReg(btnElement) {
-    if(selectedCustomer === undefined) {
-        alertCaution("먼저 고객을 선택해 주세요", 1);
-        return false;
-    }
+
 
     selectedLaundry.bgCode = btnElement.value;
     let bsType = ["N", "L", "S"];
@@ -496,8 +507,10 @@ function onPopReceiptReg(btnElement) {
     bsType.forEach(type => {
         $("#size" + type).css("display", "none");
     });
-    setBiItemList("N");
 
+    // 처음 표시 중분류 기본상태 N, 만일 중분류에 N이 없는 예외상황시 수정해줘야함.
+    setBiItemList("N");
+    $("input[name='bsItemGroupcodeS']").first().prop("checked", true);
     $('#productPop').addClass('active');
 }
 
@@ -687,6 +700,16 @@ function toggleBottom() {
 }
 
 function onAddOrder() {
+
+    if(!currentRequest.biItemcode.length) {
+        alertCaution("소재를 선택해 주세요", 1);
+        return false;
+    }
+    if(selectedCustomer === undefined) {
+        alertCaution("먼저 고객을 선택해 주세요", 1);
+        return false;
+    }
+
     /*
     const colorName = {
         C00: "없음", C01: "흰색", C02: "검정", C03: "회색", C04: "빨강", C05: "주황",
@@ -932,3 +955,4 @@ function removeEventsFromElement(element) {
     const elementClone = element.cloneNode(true);
     element.parentNode.replaceChild(elementClone, element);
 }
+

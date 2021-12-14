@@ -258,6 +258,7 @@ function requestSign() {
     const hostName = location.hostname;
     const port = location.port;
 
+    // TOPPOS 프로그램 내 함수 사용. 일반 브라우저에서는 오류
     cAPI.approvalCall(protocol +'//'+hostName+ ':' + port + '/user/sign');
 
     // $("#resultmsg").text(": 승인중 메세지- 고객이 서명중입니다. ------전체화면으로 가리기 ")

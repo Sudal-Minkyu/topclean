@@ -42,8 +42,7 @@
 
                 <div class="c-search">
                     <div class="c-search__input">
-                        <input id="searchCustomerField" type="text" placeholder="검색어를 입력하세요"
-                               onkeyup="if(event.keyCode===13) {onSearchCustomer()}" />
+                        <input id="searchCustomerField" type="text" placeholder="검색어를 입력하세요" />
                         <button class="c-search__key" type="button" onclick="onShowVKeyboard(0)">키보드</button>
                     </div>
                     <button class="c-search__bth" type="button" onclick="onSearchCustomer()">검색</button>
@@ -57,9 +56,9 @@
                     <!-- 맞는 등급 뱃지 .active 주기 -->
                     <span class="client__badge">N</span>
                     <span class="client__badge">V</span>
-                    <span class="client__badge client__badge--vvip active">V</span>
+                    <span class="client__badge client__badge--vvip">V</span>
                     <!-- #bcGrade 등급 넣어주기 -->
-                    <span id="bcGrade">VIP</span>
+                    <span id="bcGrade"></span>
                 </div>
                 <div class="client__name"><span id="bcName"></span></div>
                 <div class="client__propensity"><span id="bcValuation" class="propensity__star propensity__star--2"></span></div>
