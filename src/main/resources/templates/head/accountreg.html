@@ -16,44 +16,129 @@
 
 <div layout:fragment="content" class="content content--padding">
 	<h2 class="content__heading">사용자 등록</h2>
-	<section class="section">
-		<div class="section__head">
-			<h3 class="section__heading">사용자 정보 입력</h3>
-		</div>
-		<div class="section__content">
-			<article class="article">
-				<div class="article__content">
-					<form id="accountFormData" autocomplete="off" enctype="multipart/form-data">
-						<div class="form">
-							<ul class="form__list">
-								<li class="form__item">
-									<div class="form__title">아이디</div>
-									<div class="form__input">
-										<div class="c-text-button">
-											<input type="text" name="userid" id="userid" onkeyup="onChangeUserId()"/>
-											<input type="hidden" id="useridChecked" value="0" />
-											<button type="button" class="c-button" id="useridCheckedBtn" onclick="useridOverlap()">중복확인</button>
+	<div class="content__column content__column--3-7">
+		<section class="section">
+			<div class="section__head">
+				<h3 class="section__heading">사용자 정보 입력</h3>
+			</div>
+			<div class="section__content">
+				<article class="article">
+					<div class="article__content">
+						<form id="accountFormData" autocomplete="off" enctype="multipart/form-data">
+							<div class="form">
+								<ul class="form__list">
+									<li class="form__item">
+										<div class="form__title">아이디</div>
+										<div class="form__input">
+											<div class="c-text-button">
+												<input type="text" name="userid" id="userid" onkeyup="onChangeUserId()"/>
+												<input type="hidden" id="useridChecked" value="0" />
+												<button type="button" class="c-button" id="useridCheckedBtn" onclick="useridOverlap()">중복확인</button>
+											</div>
 										</div>
+									</li>
+									<li class="form__item">
+										<div class="form__title">이름</div>
+										<div class="form__input">
+											<input type="text" name="username" id="username" />
+										</div>
+									</li>
+									<li class="form__item">
+										<div class="form__title">암호</div>
+										<div class="form__input">
+											<input type="password" id="password" name="password" />
+										</div>
+									</li>
+									<li class="form__item">
+										<div class="form__title">권한</div>
+										<div class="form__input">
+											<div class="c-select">
+												<select id="role" name="role">
+													<option value="">선택</option>
+													<option th:each ="role : ${roles}"
+															th:value="${role.getCode()}"
+															th:text="${role.getDesc()}">
+													</option>
+												</select>
+											</div>
+										</div>
+									</li>
+									<li class="form__item">
+										<div class="form__title">전화번호</div>
+										<div class="form__input">
+											<input type="text" id="usertel" name="usertel" onkeyup="onPhonenumChange(this)"/>
+										</div>
+									</li>
+									<li class="form__item">
+										<div class="form__title">이메일</div>
+										<div class="form__input">
+											<input type="text" id="useremail" name="useremail" />
+										</div>
+									</li>
+									<li class="form__item">
+										<div class="form__title">가맹점코드 3자리</div>
+										<div class="form__input">
+											<div class="c-text-button">
+												<input type="text" id="frCode" maxlength="3" name="frCode" readonly/>
+												<button id="frCodeBtn" type="button" class="c-button" onclick="frListPop()">가맹점선택</button>
+											</div>
+										</div>
+									</li>
+									<li class="form__item">
+										<div class="form__title">지사코드 2자리</div>
+										<div class="form__input">
+											<div class="c-text-button">
+												<input type="text" id="brCode" maxlength="2" name="brCode" readonly/>
+												<button id="brCodeBtn" type="button" class="c-button" onclick="brListPop()">지사선택</button>
+											</div>
+										</div>
+									</li>
+									<li class="form__item form__item--100">
+										<div class="form__title">특이사항</div>
+										<div class="form__input">
+											<textarea  id="userremark" name="userremark"></textarea>
+										</div>
+									</li>
+								</ul>
+							</div>
+						</form>
+					</div>
+					<ul class="article__console article__console--right">
+						<li><button type="button" class="c-button c-button--solid" onclick="createNewPost(0)">신규</button></li>
+						<li><button class="c-button c-button--solid" onclick="accountSave()">저장</button></li>
+						<li><button class="c-button">삭제</button></li>
+					</ul>
+				</article>
+			</div>
+		</section>
+		
+		<section class="section">
+			<div class="section__head">
+				<h3 class="section__heading">사용자 조회</h3>
+			</div>
+			<div class="section__content">
+				<article class="article">
+					<div class="article__content">
+						<div class="search-form">
+							<ul class="search-form__list">
+								<li class="search-form__item">
+									<div class="search-form__title">아이디</div>
+									<div class="search-form__input">
+										<input type="text" name="s_userid" id="s_userid" onchange="changedUserId()"/>
 									</div>
 								</li>
-								<li class="form__item">
-									<div class="form__title">이름</div>
-									<div class="form__input">
-										<input type="text" name="username" id="username" />
+								<li class="search-form__item">
+									<div class="search-form__title">이름</div>
+									<div class="search-form__input">
+										<input type="text" name="s_username" id="s_username" />
 									</div>
 								</li>
-								<li class="form__item">
-									<div class="form__title">암호</div>
-									<div class="form__input">
-										<input type="password" id="password" name="password" />
-									</div>
-								</li>
-								<li class="form__item">
-									<div class="form__title">권한</div>
-									<div class="form__input">
+								<li class="search-form__item">
+									<div class="search-form__title">권한</div>
+									<div class="search-form__input">
 										<div class="c-select">
-											<select id="role" name="role">
-												<option value="">선택</option>
+											<select id="s_role" name="s_role">
+												<option value="">모두</option>
 												<option th:each ="role : ${roles}"
 														th:value="${role.getCode()}"
 														th:text="${role.getDesc()}">
@@ -62,118 +147,51 @@
 										</div>
 									</div>
 								</li>
-								<li class="form__item">
-									<div class="form__title">전화번호</div>
-									<div class="form__input">
-										<input type="text" id="usertel" name="usertel" onkeyup="onPhonenumChange(this)"/>
+								<li class="search-form__item">
+									<div class="search-form__title">가맹점코드</div>
+									<div class="search-form__input">
+										<input type="text" name="s_frCode" id="s_frCode" maxlength="3" />
 									</div>
 								</li>
-								<li class="form__item">
-									<div class="form__title">이메일</div>
-									<div class="form__input">
-										<input type="text" id="useremail" name="useremail" />
+								<li class="search-form__item">
+									<div class="search-form__title">지사코드</div>
+									<div class="search-form__input">
+										<input type="text" name="s_brCode" id="s_brCode" maxlength="2" />
 									</div>
 								</li>
-								<li class="form__item">
-									<div class="form__title">가맹점코드 3자리</div>
-									<div class="form__input">
-										<div class="c-text-button">
-											<input type="text" id="frCode" maxlength="3" name="frCode" readonly/>
-											<button id="frCodeBtn" type="button" class="c-button" onclick="frListPop()">가맹점선택</button>
-										</div>
+								<li class="search-form__item search-form__item--button">
+									<div class="search-form__input">
+										<button type="button" class="c-button c-button--solid" onclick="filterAccountList(1)">검색</button>
 									</div>
 								</li>
-								<li class="form__item">
-									<div class="form__title">지사코드 2자리</div>
-									<div class="form__input">
-										<div class="c-text-button">
-											<input type="text" id="brCode" maxlength="2" name="brCode" readonly/>
-											<button id="brCodeBtn" type="button" class="c-button" onclick="brListPop()">지사선택</button>
-										</div>
-									</div>
-								</li>
-								<li class="form__item form__item--100">
-									<div class="form__title">특이사항</div>
-									<div class="form__input">
-										<textarea  id="userremark" name="userremark"></textarea>
+								<li class="search-form__item search-form__item--button">
+									<div class="search-form__input">
+										<button type="button" class="c-button" onclick="filterAccountList(2)">초기화</button>
 									</div>
 								</li>
 							</ul>
 						</div>
-					</form>
-				</div>
-				<ul class="article__console">
-					<li><button type="button" class="c-button c-button--solid" onclick="createNewPost(0)">신규</button></li>
-					<li><button class="c-button c-button--solid" onclick="accountSave()">저장</button></li>
-					<li><button class="c-button">삭제</button></li>
-				</ul>
-			</article>
-		</div>
-	</section>
-	
-	<section class="section">
-		<div class="section__head">
-			<h3 class="section__heading">사용자 조회</h3>
-		</div>
-		<div class="section__content">
-			<article class="article">
-				<div class="article__content">
-					<div class="search-form">
-						<ul class="search-form__list">
-							<li class="search-form__item">
-								<div class="search-form__title">아이디</div>
-								<div class="search-form__input">
-									<input type="text" name="s_userid" id="s_userid" onchange="changedUserId()"/>
-								</div>
-							</li>
-							<li class="search-form__item">
-								<div class="search-form__title">이름</div>
-								<div class="search-form__input">
-									<input type="text" name="s_username" id="s_username" />
-								</div>
-							</li>
-							<li class="search-form__item">
-								<div class="search-form__title">권한</div>
-								<div class="search-form__input">
-									<div class="c-select">
-										<select id="s_role" name="s_role">
-											<option value="">모두</option>
-											<option th:each ="role : ${roles}"
-													th:value="${role.getCode()}"
-													th:text="${role.getDesc()}">
-											</option>
-										</select>
-									</div>
-								</div>
-							</li>
-							<li class="search-form__item">
-								<div class="search-form__title">가맹점코드</div>
-								<div class="search-form__input">
-									<input type="text" name="s_frCode" id="s_frCode" maxlength="3" />
-								</div>
-							</li>
-							<li class="search-form__item">
-								<div class="search-form__title">지사코드</div>
-								<div class="search-form__input">
-									<input type="text" name="s_brCode" id="s_brCode" maxlength="2" />
-								</div>
-							</li>
-						</ul>
 					</div>
-				</div>
-				<ul class="article__console article__console--right">
-					<li><button type="button" class="c-button c-button--solid" onclick="filterAccountList(1)">검색</button></li>
-					<li><button type="button" class="c-button" onclick="filterAccountList(2)">초기화</button></li>
-				</ul>
-			</article>
-			
-			<article class="article">
-				<div class="article__content">
-					<div id="grid_accountList"></div>
-				</div>
-			</article>
-		</div>
-	</section>
+					<!-- 
+					<ul class="article__console article__console--right">
+						<li></li>
+						<li></li>
+					</ul>
+					 -->
+				</article>
+				
+				<article class="article">
+					<div class="article__content">
+						<div id="grid_accountList"></div>
+					</div>
+				</article>
+			</div>
+		</section>
+	</div>
+	
+	
+	
+	
 
 
 	<!-- 지사 팝업 -->
