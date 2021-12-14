@@ -1,10 +1,8 @@
 package com.broadwave.toppos.User.Customer;
 
 import lombok.*;
-import org.hibernate.type.BlobType;
 
 import javax.persistence.*;
-import java.sql.Blob;
 import java.time.LocalDateTime;
 
 /**
@@ -76,8 +74,8 @@ public class Customer {
     @Column(name="bc_quit_date")
     private LocalDateTime bcQuitDate; // 탈퇴일시
 
-    @Column(name="bc_last_requset_dt")
-    private String bcLastRequsetDt; // 마지막방문일자
+    @Column(name="bc_last_request_dt")
+    private String bcLastRequestDt; // 마지막방문일자
 
     @Column(name="insert_id")
     private String insert_id;

@@ -99,7 +99,7 @@ public class UserRestController {
                     if(customer.getBcQuitYn().equals("Y")){
                         customer.setBcQuitDate(LocalDateTime.now());
                     }
-                    customer.setBcLastRequsetDt(optionalCustomerById.get().getBcLastRequsetDt());
+                    customer.setBcLastRequestDt(optionalCustomerById.get().getBcLastRequestDt());
                     customer.setInsert_id(optionalCustomerById.get().getInsert_id());
                     customer.setInsertDateTime(optionalCustomerById.get().getInsertDateTime());
                     customer.setModify_id(login_id);
@@ -165,7 +165,7 @@ public class UserRestController {
             customerListInfo.put("bcValuation", customerInfoDto.getBcValuation());
             customerListInfo.put("bcRemark", customerInfoDto.getBcRemark());
             customerListInfo.put("bcAddress", customerInfoDto.getBcAddress());
-            customerListInfo.put("bcLastRequsetDt", customerInfoDto.getBcLastRequsetDt());
+            customerListInfo.put("bcLastRequestDt", customerInfoDto.getBcLastRequestDt());
 
             customerListData.add(customerListInfo);
         }
@@ -507,7 +507,7 @@ public class UserRestController {
             log.info("requestDetailList : "+requestDetailList);
 
             // 현재 접수한 고객의 대한 마지막방문일자 업데이트
-            optionalCustomer.get().setBcLastRequsetDt(nowDate);
+            optionalCustomer.get().setBcLastRequestDt(nowDate);
             Customer customer = optionalCustomer.get();
 
             Request requestSaveO = userService.requestAndDetailSave(requestSave, requestDetailList, customer);
@@ -588,12 +588,12 @@ public class UserRestController {
             customerInfoDto.setBcGrade(optionalRequest.get().getBcId().getBcGrade());
             customerInfoDto.setBcValuation(optionalRequest.get().getBcId().getBcValuation());
             customerInfoDto.setBcRemark(optionalRequest.get().getBcId().getBcRemark());
-            if(optionalRequest.get().getBcId().getBcLastRequsetDt() != null){
-                String bcLastRequsetDt = optionalRequest.get().getBcId().getBcLastRequsetDt();
+            if(optionalRequest.get().getBcId().getBcLastRequestDt() != null){
+                String bcLastRequsetDt = optionalRequest.get().getBcId().getBcLastRequestDt();
                 StringBuilder getBcLastRequsetDt = new StringBuilder(bcLastRequsetDt);
                 getBcLastRequsetDt.insert(4,'-');
                 getBcLastRequsetDt.insert(7,'-');
-                customerInfoDto.setBcLastRequsetDt(getBcLastRequsetDt.toString());
+                customerInfoDto.setBcLastRequestDt(getBcLastRequsetDt.toString());
             }
             data.put("gridListData",customerInfoDto);
 

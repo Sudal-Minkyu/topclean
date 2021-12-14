@@ -76,7 +76,7 @@ public class CustomerRepositoryCustomImpl extends QuerydslRepositorySupport impl
                         customer.bcGrade,
                         customer.bcValuation,
                         customer.bcRemark,
-                        customer.bcLastRequsetDt
+                        customer.bcLastRequestDt
                 ));
 
         query.where(customer.frCode.eq(frCode));
