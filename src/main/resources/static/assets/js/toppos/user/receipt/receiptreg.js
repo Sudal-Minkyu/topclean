@@ -277,7 +277,7 @@ gridColumnLayout[0] = [
         autoThousandSeparator: "true",
         labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
             return (item.fdNormalAmt + item.fdPressed + item.fdWhitening + item.fdWaterRepellent
-                + item.fdStarch + item.fdPollution + item.fdRepairAmt + item.fdAdd1Amt - item.fdDiscountAmt) * item.fdQty | 0;
+                + item.fdStarch + item.fdPollution + item.fdRepairAmt + item.fdAdd1Amt - item.fdDiscountAmt) * item.fdQty;
         }
     }, {
         dataField: "fdColor",
@@ -469,7 +469,6 @@ function onPutCustomer(selectedCustomer) {
     // 최근방문일
 
     AUIGrid.clearGridData(gridId[0]);
-    alertSuccess("성함 : " + selectedCustomer.bcName + " 님");
 }
 
 /* 하단의 세탁물 종류 버튼 클릭시 해당 세탁물 대분류 코드를 가져와 팝업을 띄운다. */
@@ -690,10 +689,6 @@ function onAddOrder() {
         + $("input[name='material']:checked").siblings().first().children().first().html() + " "
         + $("#bgItemList button[value=" + selectedLaundry.bgCode + "] span").html();
 
-
-    currentRequest.fdTag = $("#fdTag").val().replace(/[^0-9A-Za-z]/g, "");
-    setNextTag(currentRequest.fdTag);
-
     currentRequest.fdColor = $("input[name='fdColor']:checked").val();
     //item.fdColorName = colorName["C" + item.fdColor];
     currentRequest.fdPattern = $("input[name='fdPattern']:checked").val();
@@ -736,7 +731,9 @@ function onAddOrder() {
         }
         AUIGrid.updateRowsById(gridId[0], copyObj);
     }else{
+        currentRequest.fdTag = $("#fdTag").val().replace(/[^0-9A-Za-z]/g, "");
         AUIGrid.addRow(gridId[0], currentRequest, "last");
+        setNextTag(currentRequest.fdTag);
     }
 
     calculateMainPrice();
