@@ -29,7 +29,7 @@ public class RequestDetailDto {
     private Integer fdRepairAmt; // 수선금액
 
     private String fdAdd1Remark; // 추가내용1(접수시점)
-    private String fdAdd1SpecialYn; // 특수여부(접수시점)
+    private String fdSpecialYn; // 특수여부(접수시점)
     private Integer fdAdd1Amt; // 추가비용1(접수시점)
 
     private Integer fdPressed; // 다림질 요금
@@ -90,8 +90,8 @@ public class RequestDetailDto {
         return fdAdd1Remark;
     }
 
-    public String getFdAdd1SpecialYn() {
-        return fdAdd1SpecialYn;
+    public String getFdSpecialYn() {
+        return fdSpecialYn;
     }
 
     public Integer getFdAdd1Amt() {

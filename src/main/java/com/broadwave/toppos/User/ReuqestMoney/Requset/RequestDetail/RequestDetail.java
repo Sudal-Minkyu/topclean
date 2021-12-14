@@ -82,8 +82,8 @@ public class RequestDetail {
     @Column(name="fd_add1_remark")
     private String fdAdd1Remark; // 추가내용1(접수시점)
 
-    @Column(name="fd_add1_special_yn")
-    private String fdAdd1SpecialYn; // 특수여부(접수시점)
+    @Column(name="fd_special_yn")
+    private String fdSpecialYn; // 특수여부(접수시점)
 
     @Column(name="fd_add1_amt")
     private Integer fdAdd1Amt; // 추가비용1(접수시점)

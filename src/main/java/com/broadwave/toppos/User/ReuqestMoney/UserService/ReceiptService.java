@@ -220,7 +220,7 @@ public class ReceiptService {
                         optionalRequestDetail.get().setFdRepairAmt(requestDetailDto.getFdRepairAmt());
 
                         optionalRequestDetail.get().setFdAdd1Remark(requestDetailDto.getFdAdd1Remark());
-                        optionalRequestDetail.get().setFdAdd1SpecialYn(requestDetailDto.getFdAdd1SpecialYn());
+                        optionalRequestDetail.get().setFdSpecialYn(requestDetailDto.getFdSpecialYn());
                         optionalRequestDetail.get().setFdAdd1Amt(requestDetailDto.getFdAdd1Amt());
 
                         optionalRequestDetail.get().setFdPressed(requestDetailDto.getFdPressed());
