@@ -54,15 +54,7 @@ public class CustomerInfoDto {
         return bcRemark;
     }
 
-    public StringBuffer getBcLastRequestDt() {
-        if(bcLastRequestDt != null){
-            StringBuffer getBcLastRequestDt = new StringBuffer(bcLastRequestDt);
-            getBcLastRequestDt.insert(4,'-');
-            getBcLastRequestDt.insert(7,'-');
-            return getBcLastRequestDt;
-        }else{
-            return null;
-        }
+    public String getBcLastRequestDt() {
+        return bcLastRequestDt;
     }
-
 }

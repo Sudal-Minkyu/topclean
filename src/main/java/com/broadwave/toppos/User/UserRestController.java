@@ -416,13 +416,14 @@ public class UserRestController {
             customerInfoDto.setBcGrade(optionalRequest.get().getBcId().getBcGrade());
             customerInfoDto.setBcValuation(optionalRequest.get().getBcId().getBcValuation());
             customerInfoDto.setBcRemark(optionalRequest.get().getBcId().getBcRemark());
-            if(optionalRequest.get().getBcId().getBcLastRequestDt() != null){
-                String bcLastRequsetDt = optionalRequest.get().getBcId().getBcLastRequestDt();
-                StringBuilder getBcLastRequsetDt = new StringBuilder(bcLastRequsetDt);
-                getBcLastRequsetDt.insert(4,'-');
-                getBcLastRequsetDt.insert(7,'-');
-                customerInfoDto.setBcLastRequestDt(getBcLastRequsetDt.toString());
-            }
+            customerInfoDto.setBcLastRequestDt(optionalRequest.get().getBcId().getBcLastRequestDt());
+//            if(optionalRequest.get().getBcId().getBcLastRequestDt() != null){
+//                String bcLastRequsetDt = optionalRequest.get().getBcId().getBcLastRequestDt();
+//                StringBuilder getBcLastRequsetDt = new StringBuilder(bcLastRequsetDt);
+//                getBcLastRequsetDt.insert(4,'-');
+//                getBcLastRequsetDt.insert(7,'-');
+//                customerInfoDto.setBcLastRequestDt(getBcLastRequsetDt.toString());
+//            }
             data.put("gridListData",customerInfoDto);
 
             // 임시저장의 접수 세무테이블 리스트 호출
