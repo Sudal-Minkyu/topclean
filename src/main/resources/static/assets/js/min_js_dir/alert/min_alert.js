@@ -18,6 +18,10 @@ $(function() {
         $('#popupId').remove();
     });
 
+    $(document).on("click", "#checkNegativeBtn", function(){
+        $('#popupId').remove();
+    });
+
     // $(document).on("click","#continueSuccessBtn",function(){
     //     continueSaveCheck()
     // });
@@ -208,6 +212,25 @@ function alertContinueSuccess(text) { //성공창(삭제성공시),저장성공�
 
     $('#alertpop').html(html);
     $('#continueSuccessBtn').trigger("focus");
+}
+
+function alertConfirm(text) { // 예, 아니오 확인창
+    let html = '';
+
+    html +='<div id="popupId" class="popup popup--dim">';
+    html +='<div class="popup__box">';
+    html +='<div class="popup__content">';
+    html +='<div class="popup__stat check"></div>';
+    html +='<div class="popup__text">'+text+'</div>';
+    html +='</div>';
+    html +='<div class="popup__buttons">';
+    html +='<button id="checkConfirmBtn" class="popup__btn popup__btn--success">예</button>';
+    html +='<button id="checkNegativeBtn" class="popup__btn popup__btn--cancel">아니오</button>';
+    html +='</div>';
+    html +='</div>';
+    html +='</div>';
+
+    $('#alertpop').html(html);
 }
 
 function readyPage() {

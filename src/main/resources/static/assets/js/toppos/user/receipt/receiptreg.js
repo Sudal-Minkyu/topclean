@@ -511,6 +511,11 @@ function onPopReceiptReg(btnElement) {
     // 처음 표시 중분류 기본상태 N, 만일 중분류에 N이 없는 예외상황시 수정해줘야함.
     setBiItemList("N");
     $("input[name='bsItemGroupcodeS']").first().prop("checked", true);
+    if(selectedCustomer) {
+        $("#class02, #class03").parents("li").css("display", "none");
+        $("#class" + selectedCustomer.bcGrade).parents("li").css("display", "block");
+    }
+
     $('#productPop').addClass('active');
 }
 
@@ -784,6 +789,10 @@ function onCloseAddOrder() {
     $(".choice input[type='checkbox']").prop("checked", false);
     $("input[name='etcNone']").first().prop("checked", true);
     $("#fdRemark").val("");
+    $("#fdNormalAmt").html(0);
+    $("#totCost").html(0);
+    $("#fdDiscountAmt").html(0);
+    $("#sumAmt").html(0);
 
     $("#addProductPopChild").parents('.pop').removeClass('active');
 }
