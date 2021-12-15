@@ -137,6 +137,8 @@ $(function() {
     });
 });
 
+let checkNum = "1";
+
 /* 상품 주문을 받을 때 적용되는 가격 정보 데이터를 API로 불러와 미리 저장 */
 let priceData;
 
@@ -166,7 +168,7 @@ const fsRequestDtl = {
     fdRepairRemark: "",
     fdRepairAmt: 0,
     fdAdd1Remark: "",
-    fdAdd1SpecialYn: "",
+    fdSpecialYn: "N",
     fdAdd1Amt: 0,
     fdAdd2Remark: "",
     fdAdd2Amt: 0,
@@ -234,7 +236,7 @@ gridTargetDiv = [
 
 /* 그리드를 받아올 때 쓰이는 api 배열 */
 gridCreateUrl = [
-    "/api/a", "/api/b", "/api/user/tempRequestList"
+    "/api/user/tempRequestDetailList", "/api/b", "/api/user/tempRequestList"
 ]
 
 /* 그리드를 저장할 때 쓰이는 api 배열 */
@@ -261,21 +263,35 @@ gridColumnLayout[0] = [
         headerText: "기본금액",
         dataType: "numeric",
         autoThousandSeparator: "true",
+        labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+            return item.fdRetryYn==="Y" ? 0 : value;
+        },
     }, {
         dataField: "fdRepairAmt",
         headerText: "수선금액",
         dataType: "numeric",
         autoThousandSeparator: "true",
+        labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+            return item.fdRetryYn === "Y" ? 0 : value;
+        },
     }, {
-        dataField: "fdAdd1Amt",
+        dataField: "",
         headerText: "추가금액",
         dataType: "numeric",
         autoThousandSeparator: "true",
+        labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+            const addAmount = item.fdPressed + item.fdWhitening + item.fdWaterRepellent + item.fdStarch
+                + item.fdPollution + item.fdAdd1Amt;
+            return item.fdRetryYn === "Y" ? 0 : addAmount;
+        },
     }, {
         dataField: "fdDiscountAmt",
         headerText: "할인금액",
         dataType: "numeric",
         autoThousandSeparator: "true",
+        labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+            return item.fdRetryYn === "Y" ? 0 : value;
+        },
     }, {
         dataField: "fdQty",
         headerText: "수량",
@@ -428,25 +444,31 @@ function setDataIntoGrid(numOfGrid, url) {
 }
 
 function onSearchCustomer() {
+    const $searchCustomerField = $("#searchCustomerField");
+    if($searchCustomerField.val() === ""){
+        alertCaution("검색어를 입력해주세요.",1)
+        return false;
+    }
     const params = {searchType : $("#searchCustomerType").val(),
-            searchString : $("#searchCustomerField").val()};
+        searchString : $searchCustomerField.val()};
+
     CommonUI.ajax("/api/user/customerInfo", "GET", params, function (req) {
         const items = req.sendData.gridListData;
         $("#searchCustomerType").val(0);
         $("#searchCustomerField").val("");
-       if(items.length === 1) {
-           selectedCustomer = items[0];
-           onPutCustomer(selectedCustomer);
-
-       }else if(items.length > 1) {
-           AUIGrid.setGridData(gridId[1], items);
-           $("#customerListPop").addClass("active");
-       }else{
-           alertConfirm("일치하는 회원 정보가 없습니다. <br>회원가입을 하시겠습니까?");
-           $("#checkConfirmBtn").on("click", function () {
+        if(items.length === 1) {
+            selectedCustomer = items[0];
+            onPutCustomer(selectedCustomer);
+            checkNum = "1";
+        }else if(items.length > 1) {
+            AUIGrid.setGridData(gridId[1], items);
+            $("#customerListPop").addClass("active");
+        }else{
+            alertCheck("일치하는 고객 정보가 없습니다.<br>신규고객으로 등록 하시겠습니까?");
+            $("#checkDelSuccessBtn").on("click", function () {
                 location.href="/user/customerreg"
-           });
-       }
+            });
+        }
     });
 }
 
@@ -454,10 +476,31 @@ function onSelectCustomer() {
     selectedCustomer = AUIGrid.getSelectedRows(gridId[1]);
     if(selectedCustomer.length) {
         onPutCustomer(selectedCustomer[0]);
+        checkNum = "1";
         $("#customerListPop").removeClass("active");
     }else{
         alertCaution("고객을 선택해 주세요", 1);
     }
+}
+
+function onReadTempSave() {
+    $("#tempSaveListPop").addClass("active");
+    AUIGrid.resize(gridId[2]);
+}
+
+function onSelectTempSave() {
+    const frNo = AUIGrid.getSelectedRows(gridId[2])[0].frNo;
+    CommonUI.ajax(gridCreateUrl[0], "GET", {frNo: frNo}, function (req) {
+        console.log(req);
+        initialData.etcData.frNo = frNo;
+        selectedCustomer = req.sendData.gridListData;
+        onPutCustomer(selectedCustomer);
+        AUIGrid.clearGridData(gridId[0]);
+        AUIGrid.setGridData(gridId[0], req.sendData.requestDetailList);
+        $("#tempSaveListPop").removeClass("active");
+        calculateMainPrice();
+        checkNum = "2";
+    });
 }
 
 function onPutCustomer(selectedCustomer) {
@@ -490,8 +533,6 @@ function onPutCustomer(selectedCustomer) {
 
 /* 하단의 세탁물 종류 버튼 클릭시 해당 세탁물 대분류 코드를 가져와 팝업을 띄운다. */
 function onPopReceiptReg(btnElement) {
-
-
     selectedLaundry.bgCode = btnElement.value;
     let bsType = ["N", "L", "S"];
     initialData.userItemGroupSListData.forEach(el => {
@@ -516,6 +557,7 @@ function onPopReceiptReg(btnElement) {
         $("#class" + selectedCustomer.bcGrade).parents("li").css("display", "block");
     }
 
+    calculateItemPrice();
     $('#productPop').addClass('active');
 }
 
@@ -568,17 +610,20 @@ function calculateItemPrice() {
     currentRequest.fdPollutionLevel = $("input[name='cleanDirt']:checked").first().val() | 0;
     currentRequest.fdPollution = parseInt(initialData.addCostData["bcPollution"+currentRequest.fdPollutionLevel]) | 0;
 
-    currentRequest.totCost = currentRequest.fdPressed + currentRequest.fdWhitening + currentRequest.fdWaterRepellent
-            + currentRequest.fdStarch + currentRequest.fdPollution + currentRequest.fdRepairAmt + currentRequest.fdAdd1Amt;
+    currentRequest.fdRepairAmt = ceil100(currentRequest.fdRepairAmt);
+    currentRequest.fdAdd1Amt = ceil100(currentRequest.fdAdd1Amt);
 
-    currentRequest.fdNormalAmt = currentRequest.fdOriginAmt * gradePrice[currentRequest.fdPriceGrade] / 100;
-    currentRequest.fdRequestAmt = (currentRequest.fdNormalAmt + currentRequest.totCost) * (100 - gradeDiscount[currentRequest.fdDiscountGrade]) / 100;
-    currentRequest.fdDiscountAmt = currentRequest.fdNormalAmt + currentRequest.totCost - currentRequest.fdRequestAmt;
+    currentRequest.totAddCost = currentRequest.fdPressed + currentRequest.fdWhitening + currentRequest.fdWaterRepellent
+            + currentRequest.fdStarch + currentRequest.fdPollution + currentRequest.fdAdd1Amt + currentRequest.fdRepairAmt;
+
+    currentRequest.fdNormalAmt = ceil100(currentRequest.fdOriginAmt * gradePrice[currentRequest.fdPriceGrade] / 100);
+    currentRequest.fdRequestAmt = ceil100((currentRequest.fdNormalAmt + currentRequest.totAddCost) * (100 - gradeDiscount[currentRequest.fdDiscountGrade]) / 100);
+    currentRequest.fdDiscountAmt = currentRequest.fdNormalAmt + currentRequest.totAddCost - currentRequest.fdRequestAmt;
 
     if($("#fdRetry").is(":checked")) {
         currentRequest.fdRetryYn = "Y";
         currentRequest.fdNormalAmt = 0;
-        currentRequest.totCost = 0;
+        currentRequest.totAddCost = 0;
         currentRequest.fdDiscountAmt = 0;
         currentRequest.fdRequestAmt = 0;
     }else{
@@ -586,9 +631,19 @@ function calculateItemPrice() {
     }
 
     $("#fdNormalAmt").html(currentRequest.fdNormalAmt.toLocaleString());
-    $("#totCost").html(currentRequest.totCost.toLocaleString());
+    $("#totAddCost").html(currentRequest.totAddCost.toLocaleString());
     $("#fdDiscountAmt").html(currentRequest.fdDiscountAmt.toLocaleString());
     $("#sumAmt").html(currentRequest.fdRequestAmt.toLocaleString());
+}
+
+function ceil100(num) {
+    num = num.toString();
+    let ceilAmount = 0;
+    if(num.length >= 2 && num.substr(num.length - 2, 2) !== "00") {
+        num = num.substr(0, num.length - 2) + "00";
+        ceilAmount = 100;
+    }
+    return parseInt(num) + ceilAmount;
 }
 
 function calculateMainPrice() {
@@ -599,16 +654,17 @@ function calculateMainPrice() {
     let fdRequestAmt = 0;
 
     items.forEach(el => {
-        fdQty += el.fdQty;
-        fdNormalAmt += el.fdNormalAmt;
-        fdDiscountAmt += el.fdDiscountAmt;
-        fdRequestAmt += el.fdRequestAmt;
+        if(el.fdRetryYn === "N") {
+            fdQty += el.fdQty;
+            fdNormalAmt += el.fdNormalAmt;
+            fdDiscountAmt += el.fdDiscountAmt;
+            fdRequestAmt += el.fdRequestAmt;
+        }
     })
     $("#totFdQty").html(fdQty.toLocaleString());
     $("#totFdNormalAmount").html(fdNormalAmt.toLocaleString());
     $("#totFdDiscountAmount").html(fdDiscountAmt.toLocaleString());
     $("#totFdRequestAmount").html(fdRequestAmt.toLocaleString());
-
 }
 
 
@@ -749,7 +805,7 @@ function onAddOrder() {
             fdRepairRemark: currentRequest.fdRepairRemark,
             fdRepairAmt: currentRequest.fdRepairAmt,
             fdAdd1Remark: currentRequest.fdAdd1Remark,
-            fdAdd1SpecialYn: currentRequest.fdAdd1SpecialYn,
+            fdSpecialYn: currentRequest.fdSpecialYn,
             fdAdd1Amt: currentRequest.fdAdd1Amt,
             fdPressed: currentRequest.fdPressed,
             fdWhitening: currentRequest.fdWhitening,
@@ -789,10 +845,6 @@ function onCloseAddOrder() {
     $(".choice input[type='checkbox']").prop("checked", false);
     $("input[name='etcNone']").first().prop("checked", true);
     $("#fdRemark").val("");
-    $("#fdNormalAmt").html(0);
-    $("#totCost").html(0);
-    $("#fdDiscountAmt").html(0);
-    $("#sumAmt").html(0);
 
     $("#addProductPopChild").parents('.pop').removeClass('active');
 }
@@ -858,7 +910,7 @@ function onModifyOrder(event) {
 
     /* currentRequest의 각 벨류값에 따라 화면의 라디오 세팅을 구성한다. */
 
-
+    calculateItemPrice();
 
     $('#productPop').addClass('active');
 }
@@ -875,7 +927,7 @@ function additionalProcess(id) {
     }
 }
 
-function onSaveTemp(num) {
+function onSaveTemp() {
     // 추가된 행 아이템들(배열)
     const addedRowItems = AUIGrid.getAddedRowItems(gridId[0]);
 
@@ -884,14 +936,6 @@ function onSaveTemp(num) {
 
     // 삭제된 행 아이템들(배열)
     const deletedRowItems = AUIGrid.getRemovedItems(gridId[0]);
-
-    let checkNum;
-    // 서버로 보낼 데이터 작성
-    if(num === 1){
-        checkNum = "1";
-    }else{
-        checkNum = "2";
-    }
 
     const etc = {
         checkNum: checkNum,

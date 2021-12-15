@@ -151,7 +151,7 @@
                 <div class="regist__console">
                     <ul>
                         <li><button class="c-button c-button--darksolid c-button--small" type="button" onclick="onSaveTemp(1)">임시저장</button></li>
-                        <li><button class="c-button c-button--small" type="button" onclick="onReadTemp()">임시저장내역</button></li>
+                        <li><button class="c-button c-button--small" type="button" onclick="onReadTempSave()">임시저장내역</button></li>
                     </ul>
                     <ul>
                         <li><button class="c-button c-button--solid" type="button" onclick="onPay()">결제하기</button></li>
@@ -480,7 +480,7 @@
                         </li>
                         <li class="product-pop__price">
                             <h4>수선/추가요금</h4>
-                            <span id="totCost">0</span>
+                            <span id="totAddCost">0</span>
                             <span class="won">원</span>
                         </li>
                         <li class="product-pop__price">
@@ -700,13 +700,21 @@
 
     <hr>
     <!-- 임시저장 조회창 -->
-    <div>
-        임시저장 조회창
-        <div id="grid_tempSaveList"></div>
-        <button type="" onclick="">선택</button>
-        <button type="" onclick="">닫기</button>
-    </div>
+    <div class="pop" id="tempSaveListPop">
+        <div class="pop__box">
+            <div class="pop__article">
+                <h3 class="pop__article-header">고객선택</h3>
+                <div class="pop__aricle-content">
+                    <div id="grid_tempSaveList"></div>
+                </div>
+            </div>
 
+            <ul class="pop__console">
+                <li><button class="c-button pop__close">닫기</button></li>
+                <li><button class="c-button c-button--dark" onclick="onSelectTempSave()">선택</button></li>
+            </ul>
+        </div>
+    </div>
 
     <hr>
     <!-- 결제창 -->
