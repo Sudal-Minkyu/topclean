@@ -165,8 +165,11 @@ public class HeadRestController {
             franchise.setInsertDateTime(optionalFranohise.get().getInsertDateTime());
         }else{
             log.info("널입니다. : 신규생성");
-
-            franchise.setFrLastTagno(franchiseMapperDto.getFrTagNo()+"0000");
+            if(franchiseMapperDto.getFrTagNo() == null || franchiseMapperDto.getFrTagNo().equals("")){
+                franchise.setFrLastTagno(franchiseMapperDto.getFrCode()+"0000");
+            }else{
+                franchise.setFrLastTagno(franchiseMapperDto.getFrTagNo()+"0000");
+            }
             franchise.setBrId(null);
             franchise.setBrCode(null);
             franchise.setBrAssignState("01");
