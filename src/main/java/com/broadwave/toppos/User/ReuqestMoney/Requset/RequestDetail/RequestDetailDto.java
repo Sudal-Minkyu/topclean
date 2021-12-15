@@ -50,6 +50,22 @@ public class RequestDetailDto {
     private String fdRemark; // 특이사항
     private String frEstimateDate; // 출고예정일
 
+    private String bgName; // 대분류명
+    private String bsName; // 중분류명
+    private String biName; // 상품명
+
+    public String getBgName() {
+        return bgName;
+    }
+
+    public String getBsName() {
+        return bsName;
+    }
+
+    public String getBiName() {
+        return biName;
+    }
+
     public String getFdTag() {
         return fdTag;
     }

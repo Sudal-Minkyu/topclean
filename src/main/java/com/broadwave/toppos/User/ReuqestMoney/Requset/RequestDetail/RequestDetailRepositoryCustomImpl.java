@@ -1,5 +1,8 @@
 package com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail;
 
+import com.broadwave.toppos.Head.Item.Group.A.QItemGroup;
+import com.broadwave.toppos.Head.Item.Group.B.QItemGroupS;
+import com.broadwave.toppos.Head.Item.Group.C.QItem;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +27,15 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
 
     public List<RequestDetailDto> findByRequestTempDetailList(String frNo){
         QRequestDetail requestDetail = QRequestDetail.requestDetail;
+
+        QItemGroup itemGroup = QItemGroup.itemGroup;
+        QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
+        QItem item = QItem.item;
+
         JPQLQuery<RequestDetailDto> query = from(requestDetail)
+                .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
+                .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
+                .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
                 .select(Projections.constructor(RequestDetailDto.class,
                         requestDetail.biItemcode,
                         requestDetail.fdTag,
@@ -57,7 +68,11 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdRetryYn,
 
                         requestDetail.fdRemark,
-                        requestDetail.fdEstimateDt
+                        requestDetail.fdEstimateDt,
+
+                        itemGroup.bgName,
+                        itemGroupS.bsName,
+                        item.biName
 
                     ));
 
