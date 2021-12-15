@@ -340,7 +340,7 @@ gridProp[0] = {
     noDataMessage : "주문받은 품목을 선택하여 주세요",
     rowNumHeaderText : "순번",
     enableColumnResize : false,
-    showStateColumn : true,
+    showStateColumn : false,
     enableFilter : true,
     showRowCheckColumn : true,
 };
@@ -979,11 +979,6 @@ function onSaveTemp() {
     // 삭제된 행 아이템들(배열)
     const deletedRowItems = AUIGrid.getRemovedItems(gridId[0]);
 
-    console.log(selectedCustomer);
-    console.log(selectedCustomer.bcId);
-    console.log(typeof(selectedCustomer.bcId));
-    console.log("d=========debug");
-
     const etc = {
         checkNum: checkNum,
         bcId: selectedCustomer.bcId,
@@ -992,15 +987,13 @@ function onSaveTemp() {
         frDiscountAmount: $("#totFdDiscountAmount").html().replace(/[^0-9]/g, ""),
         frTotalAmount: $("#totFdRequestAmount").html().replace(/[^0-9]/g, ""),
     }
-    console.log(etc);
+
     const data = {
         "add" : addedRowItems,
         "update" : updatedRowItems,
         "delete" : deletedRowItems,
         "etc" : etc
     };
-
-    console.log(data);
 
     CommonUI.ajaxjson(gridSaveUrl[0], JSON.stringify(data), function (req) {
         alertSuccess("임시저장이 되었습니다");
@@ -1064,8 +1057,11 @@ function removeEventsFromElement(element) {
 
 function onRepeatRequest() {
     let items = AUIGrid.getSelectedItems(gridId[0]);
+    console.log(items);
     if(items.length) {
-
+        delete items[0].item["_$uid"];
+        items[0].item["fdTag"] = $("#fdTag").val().replace(/[^0-9a-zA-Z]/g, "");
+        AUIGrid.addRow(gridId[0], items[0].item, "last");
+        setNextTag(items[0].item.fdTag);
     }
-    console.log(item);
 }
