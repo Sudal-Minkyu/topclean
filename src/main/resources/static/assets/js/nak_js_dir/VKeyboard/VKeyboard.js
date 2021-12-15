@@ -867,7 +867,12 @@ class VKeyboard {
         this.keypadCallback = callback;
         this.targetNumberField = document.getElementById(elementId);
         let targetValue = this.targetNumberField.value;
-        this.keypadField.value = parseInt(targetValue.replace(/[^0-9]/g, "")).toLocaleString("ko-JR");
+        if(targetValue.toString().length) {
+            this.keypadField.value = parseInt(targetValue.replace(/[^0-9]/g, "")).toLocaleString("ko-JR");
+        }else{
+            this.keypadField.value = "0";
+        }
+
         document.getElementById("VKEY_KEYPAD").style.display = "block";
     }
 

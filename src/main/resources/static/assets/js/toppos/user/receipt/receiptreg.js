@@ -352,6 +352,9 @@ gridColumnLayout[1] = [
     }, {
         dataField: "bcHp",
         headerText: "전화번호",
+        labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+            return CommonUI.onPhoneNumChange(value);
+        }
     }, {
         dataField: "bcAddress",
         headerText: "주소",
@@ -379,9 +382,17 @@ gridColumnLayout[2] = [
     }, {
         dataField: "bcHp",
         headerText: "전화번호",
+        labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+            return CommonUI.onPhoneNumChange(value);
+        }
     }, {
         dataField: "",
         headerText: "삭제",
+        renderer : {
+            type: "ButtonRenderer",
+            labelText: "삭제",
+            onClick: onRemoveTempSave,
+        }
     },
 ];
 
@@ -523,12 +534,17 @@ function onPutCustomer(selectedCustomer) {
     $("#bcAddress").html(selectedCustomer.bcAddress);
     $("#bcHp").html(CommonUI.onPhoneNumChange(selectedCustomer.bcHp));
     $("#bcRemark").html(selectedCustomer.bcRemark);
-    $("#bcLastRequestDt").html(
-        selectedCustomer.bcLastRequestDt.substr(0, 4) + "-"
-        + selectedCustomer.bcLastRequestDt.substr(4, 2) + "-"
-        + selectedCustomer.bcLastRequestDt.substr(6, 2)
-    );
+    if(selectedCustomer.bcLastRequestDt) {
+        $("#bcLastRequestDt").html(
+            selectedCustomer.bcLastRequestDt.substr(0, 4) + "-"
+            + selectedCustomer.bcLastRequestDt.substr(4, 2) + "-"
+            + selectedCustomer.bcLastRequestDt.substr(6, 2)
+        );
+    }else{
+        $("#bcLastRequestDt").html("없음");
+    }
     AUIGrid.clearGridData(gridId[0]);
+    calculateMainPrice();
 }
 
 /* 하단의 세탁물 종류 버튼 클릭시 해당 세탁물 대분류 코드를 가져와 팝업을 띄운다. */
@@ -913,13 +929,19 @@ function onModifyOrder(event) {
         $("#fdRemark").val(currentRequest.fdRemark);
     }
 
-
-
     /* currentRequest의 각 벨류값에 따라 화면의 라디오 세팅을 구성한다. */
 
     calculateItemPrice();
 
     $('#productPop').addClass('active');
+}
+
+function onRemoveOrder() {
+    if(AUIGrid.getCheckedRowItems(gridId[0]).length){
+        AUIGrid.removeCheckedRows(gridId[0]);
+    }else{
+        AUIGrid.removeRow(gridId[0], "selectedIndex");
+    }
 }
 
 function setNextTag(tag) {
@@ -979,7 +1001,6 @@ function onSaveTemp() {
         setDataIntoGrid(2, gridCreateUrl[2]);
     })
 }
-
 
 function enableKeypad() {
     const $keypadBtn = $(".add-cost .keypad_btn");
