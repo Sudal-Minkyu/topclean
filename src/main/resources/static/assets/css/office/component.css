@@ -11,6 +11,7 @@ input[type="text"],
 input[type="password"],
 input[type="number"] {
 	width: 100%;
+	max-width: 8.125rem;
 	height: 1.875rem;
 	padding: 0 0.625rem;
 	background-color: #fff;
@@ -30,6 +31,21 @@ input[type="number"]:disabled {
 }
 .c-text-button {
 	display: flex;
+}
+.c-text-button__dual-input {
+	display: flex;
+}
+.c-text-button__dual-input input {
+	border-radius: 0;
+}
+.c-text-button__dual-input input:first-child {
+	width: 3.125rem;
+	border-top-left-radius: 0.313rem;
+	border-bottom-left-radius: 0.313rem;
+}
+.c-text-button__dual-input input:last-child {
+	border-top-right-radius: 0.313rem;
+	border-bottom-right-radius: 0.313rem;
 }
 .c-text-button button {
 	margin-left: 0.625rem;
@@ -98,6 +114,7 @@ select + .c-button {
     display: inline-block;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
+	width: 8.125rem;
 }
 .c-select + .c-select {
 	margin-left: 0.375rem;
@@ -151,12 +168,225 @@ textarea::placeholder {
 }
 
 
+/* tabs */
+.c-tabs {
+	position: relative;
+	width: 100%;
+}
+.c-tabs__head {
+	display: flex;
+	flex-wrap: wrap;
+	height: 3.75rem;
+	background-color: #004a98;
+}
+.c-tabs__btn {
+	display: inline-block;
+	position: relative;
+	height: 3.75rem;
+	padding: 0 1.875rem;
+	background-color: transparent;
+	border: 0 none;
+	border-top-left-radius: 0.625rem;
+	border-top-right-radius: 0.625rem;
+	color: #fff;
+	font-size: 1rem;
+	font-weight: 700;
+	-webkit-transition: all .2s;
+	-moz-transition: all .2s;
+	-ms-transition: all .2s;
+	-o-transition: all .2s;
+	transition: all .2s;
+}
+.c-tabs__btn.active {
+	background-color: #fff;
+	border: 0.063rem solid #c4c4c4;
+	border-bottom: 0 none;
+	color: #0082f0;
+}
+.c-tabs__btn:before {
+	content: " ";
+	display: block;
+	position: absolute;
+	bottom: 0.625rem;
+	left: 1.873rem;
+	width: 0;
+	height: 0.125rem;
+	background-color: #0082f0;
+	-webkit-transition: width .2s;
+	-moz-transition: width .2s;
+	-ms-transition: width .2s;
+	-o-transition: width .2s;
+	transition: width .2s;
+}
+.c-tabs__btn.active:before {
+	width: calc(100% - 3.75rem);
+}
+.c-tabs__btn:after {
+	content: " ";
+	display: block;
+	position: absolute;
+	top: 50%;
+	right: -0.063rem;
+	width: 0.063rem;
+	height: 1.25rem;
+	background-color: #c4c4c4;
+	-webkit-transform: translateY(-50%);
+	-moz-transform: translateY(-50%);
+	-ms-transform: translateY(-50%);
+	-o-transform: translateY(-50%);
+	transform: translateY(-50%);
+}
+.c-tabs__btn:last-child:after {
+	display: none;
+}
+.c-tabs__body {
+	position:relative;
+	width: 100%;
+	padding: 1.25rem;
+	background-color: #fff;
+	border: 0.063rem solid #c4c4c4;
+	border-top: 0 none;
+}
+.c-tabs__content {
+	display: none;
+}
+.c-tabs__content.active {
+	display: block;
+}
 
 
+/* date */
+.c-date,
+input[type="text"].c-date {
+	display: inline-block;
+	width: 8.125rem;
+	height: 1.875rem;
+	padding-right: 0.625rem;
+	padding-left: 2rem;
+	background-color: #fff;
+	background-image: url(/assets/images/icon__calendar--b.svg);
+	background-repeat: no-repeat;
+	-webkit-background-size: 1.125rem 1.125rem;
+	background-size: 1.125rem 1.125rem;
+	background-position: 0.625rem center;
+	border: 0.063rem solid #bdbdbd;
+	-webkit-border-radius: 0.313rem;
+	-moz-border-radius: 0.313rem;
+	border-radius: 0.313rem;
+	color: #444;
+}
+.c-date:read-only,
+.c-date:disabled {
+	background-color: #f2f2f6;
+	background-image: url(/assets/images/icon__calendar--g.svg);
+}
 
-
-
-
+/* datepicker */
+.ui-datepicker {
+    overflow: hidden;
+    width: 21.25rem;
+    padding: 0 1.25rem;
+    background-color: #fff;
+    -webkit-border-radius: 0.313rem;
+    -moz-border-radius: 0.313rem;
+    border-radius: 0.313rem;
+    -webkit-box-shadow: 0 0.063rem 0.5rem rgba(0, 0, 0, 0.3);
+    -moz-box-shadow: 0 0.063rem 0.5rem rgba(0, 0, 0, 0.3);
+    box-shadow: 0 0.063rem 0.5rem rgba(0, 0, 0, 0.3);
+}
+.ui-datepicker-header {
+	position: relative;
+    height: 4.625rem;
+    border-bottom: 2px solid #bdbdbd;
+    margin-bottom: 0.625rem;
+    line-height: 4.625rem;
+    color: #333;
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-align: center;
+}
+.ui-datepicker-prev,
+.ui-datepicker-next {
+    overflow: hidden;
+    display: block;
+	position: absolute;
+	top: 1.375rem;
+    width: 1.875rem;
+    height: 1.875rem;
+    border: 2px solid #555;
+    -webkit-background-size: 1.25rem 1.25rem;
+    background-size: 1.25rem 1.25rem;
+    background-repeat: no-repeat;
+    background-position: center center;
+    -webkit-border-radius: 1.25rem;
+    -moz-border-radius: 1.25rem;
+    border-radius: 1.25rem;
+    text-indent: -9999px;
+    cursor: pointer;
+}
+.ui-datepicker-prev span,
+.ui-datepicker-next span {
+	display: none;
+	text-indent: -9999px;
+}
+.ui-datepicker-prev {
+	left: 1.125rem;
+	background-image: url(/assets/images/icon__left.svg);
+}
+.ui-datepicker-next {
+	right: 1.125rem;
+	background-image: url(/assets/images/icon__right.svg);
+}
+.ui-datepicker-title {
+    text-align: center;
+}
+.ui-datepicker-calendar {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+.ui-datepicker-calendar thead tr th span {
+    display: block;
+    width: 40px;
+    margin-bottom: 5px;
+    color: #333;
+    font-size: 1rem;
+}
+.ui-state-default {
+    display: block;
+    width: 2.5rem;
+    height: 2.5rem;
+    color: #000;
+    font-size: 1rem;
+    line-height: 2.5rem;
+    -webkit-border-radius: 100%;
+    -moz-border-radius: 100%;
+    border-radius: 100%;
+}
+.ui-button {
+    display: block;
+    color: #666;
+    font-size: 12px;
+    line-height: 40px;
+    cursor: pointer;
+}
+.ui-state-default:hover,
+.ui-button:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+.ui-state-highlight {
+    color: #007e37;
+    font-weight: 700;
+}
+.ui-state-active {
+    color: #fff;
+    font-weight: 700;
+    background-color: #0082f0
+}
+.ui-datepicker-unselectable .ui-state-default {
+    border: 2px solid transparent;
+    color: #eee;
+}
 
 
 

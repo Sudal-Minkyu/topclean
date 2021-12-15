@@ -259,6 +259,8 @@ function brListPop(){
     // console.log("지사선택 팝업열기");
     AUIGrid.clearFilterAll(gridId[1]);
     $('#branch_popup').addClass('active');
+    
+    AUIGrid.resize(gridId[1]);
 }
 
 // 가맹점선택 함수
@@ -266,6 +268,8 @@ function frListPop(){
     // console.log("가맹점선택 팝업열기");
     AUIGrid.clearFilterAll(gridId[2]);
     $('#franchise_popup').addClass('active');
+    
+    AUIGrid.resize(gridId[2]);
 }
 
 // 지사 점 팝업닫기

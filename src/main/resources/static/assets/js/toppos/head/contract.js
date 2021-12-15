@@ -538,6 +538,8 @@ function filterBranchList(type) {
 function brListPop(){
     filterBranchList(2);
     $('#branch_popup').addClass('open');
+    
+    AUIGrid.resize(gridId[4]);
 }
 
 // 지사 점 팝업닫기

@@ -1088,6 +1088,7 @@ textarea {
 	-ms-transition: bottom .4s;
 	-o-transition: bottom .4s;
 	transition: bottom .4s;
+	z-index: 1;
 }
 .regist__bottom-console {
 	position: relative;

@@ -483,11 +483,16 @@ textarea {
 
 .search-form {
 	position: relative;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+}
+.search-form.search-form--right {
+	justify-content: flex-end;
 }
 .search-form__list {
 	display: flex;
 	flex-wrap: wrap;
-	align-items: flex-end;
 }
 .search-form__item {
 	flex: 1;
@@ -499,15 +504,84 @@ textarea {
 	font-size: 0.875rem;
 	line-height: 1;
 }
-.search-form__input .c-select {
-	width: 100%;
-}
-.search-form__item.search-form__item--button {
-	flex: 0 1 auto;
+.seach-form__console {
 	display: flex;
-	width: 6.25rem;
+	flex-wrap: wrap;
+	align-items: flex-end
+}
+.search-form__btn + .search-form__btn {
+	margin-left: 0.625rem;
 }
 
+/* contract 계약 */
+.contract {
+	display: flex;
+	flex-wrap: wrap;
+	width: 100%;
+}
+.contract__list-area {
+	width: calc(50% - 0.625rem);
+	height: 46.25rem;
+}
+.contract__list-area.contract__list-area {
+	display: flex;
+	flex-wrap: wrap;
+	flex-direction: column;
+}
+.contract__list-area.contract__list-area--flex .contract__list {
+	flex: 1;
+	display: flex;
+	flex-wrap: wrap;
+	flex-direction: column;
+}
+.contract__list + .contract__list {
+	margin-top: 1.25rem;
+}
+.contract__search {
+	margin-bottom: 1.25rem;
+}
+.contract__regist {
+	display: flex;
+	flex-wrap: wrap;
+	flex-direction: column;
+	width: calc(50% - 0.625rem);
+	height: 46.25rem;
+	margin-left: 1.25rem;
+}
+.contract__head {
+	background-color: #c4c4c4;
+	padding: 0.125rem 0;
+}
+.contract__head h3 {
+	color: #fff;
+	text-align: center;
+}
+.contract__body {
+	padding: 0.625rem;
+	border: 0.063rem solid #c4c4c4;
+}
+.contract__regist .contract__body,
+.contract__list-area.contract__list-area--flex .contract__list .contract__body {
+	flex: 1;
+}
+
+.percent {
+	display: flex;
+	flex-wrap: wrap;
+}
+.percent > li {
+	
+}
+.percent > li + li {
+	margin-left: 1.254rem;
+}
+.percent__title {
+	font-size: 0.875rem;
+	margin-bottom: 0.313rem;
+}
+.percent__input > input[type="number"] {
+	width: 6.25rem;
+}
 
 
 
@@ -525,7 +599,8 @@ textarea {
 	height: 100vh;
 	background-color: rgba(86, 86, 86, 0.8);
 }
-.l-popup.active {
+.l-popup.active,
+.l-popup.open {
 	display: block;
 }
 .l-popup__container {
