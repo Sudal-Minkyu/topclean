@@ -302,7 +302,8 @@
 
 
 /* 숫자패드 */
-#VKEY_KEYPAD {
+#VKEY_KEYPAD,
+.vkey-num {
 	display: none;
 	width: 26.875rem;
 	padding: 2.5rem;
@@ -317,6 +318,9 @@
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
+}
+.vkey-num.active {
+	display: block;
 }
 .vkey-num__input {
 	width: 21.875rem;
@@ -339,7 +343,8 @@
 	display: flex;
 	flex-wrap: wrap;
 }
-.VKEY_keypad_btn {
+.VKEY_keypad_btn,
+.keypad_btn {
 	margin: 0.313rem 0;
 	width: 5rem;
 	height: 5rem;
@@ -360,10 +365,12 @@
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 }
-.VKEY_keypad_btn:nth-child(4n) {
+.VKEY_keypad_btn:nth-child(4n),
+.keypad_btn:nth-child(4n) {
 	margin-right: 0;
 }
-#VKEY_keypad_btn_backspace {
+#VKEY_keypad_btn_backspace,
+.keypad_btn_backspace {
 	margin: 0.313rem 0;
 	width: 5rem;
 	height: 5rem;

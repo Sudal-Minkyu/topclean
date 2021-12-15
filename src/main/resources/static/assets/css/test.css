@@ -1038,7 +1038,8 @@ textarea {
 	padding: 1.5rem 2.5rem;
 }
 .regist__tag {
-	display: inline-flex;
+	display: flex;
+	width: 100%;
 	margin-bottom: 1.25rem;
 }
 .regist__tag-title {
@@ -1059,6 +1060,9 @@ textarea {
 }
 .regist__tag-button {
 	margin-left: 1.25rem;
+}
+.regist__line-delete {
+	margin-left: auto;
 }
 #grid_requestList {
 	height: 18.75rem;
@@ -1766,7 +1770,7 @@ textarea {
 .add-cost__input {
 	padding-top: 1.25rem;
 }
-.add-cost__keypad #VKEY_KEYPAD {
+.add-cost__keypad .vkey-num.active {
 	width: 25rem;
 	padding: 2.5rem 1.563rem;
 	background-color: transparent;
