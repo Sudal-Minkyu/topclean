@@ -124,16 +124,11 @@ $(function() {
         }
     });
 
-    $("#searchCustomerField").on("keyup", function(e) {
-
-        /*
-        if(e.keyCode===13) {
-            console.log("b");
-            e.stopPropagation();
-            e.preventDefault();
-            //onSearchCustomer();
-        };
-        */
+    // 검색 엔터 이벤트
+    $("#searchCustomerField").on("keypress", function(e) {
+        if(e.originalEvent.code === "Enter") {
+            onSearchCustomer();
+        }
     });
 });
 
@@ -264,7 +259,7 @@ gridColumnLayout[0] = [
         dataType: "numeric",
         autoThousandSeparator: "true",
         labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
-            return item.fdRetryYn==="Y" ? 0 : value;
+            return item.fdRetryYn==="Y" ? 0 : value.toLocaleString();
         },
     }, {
         dataField: "fdRepairAmt",
@@ -272,7 +267,7 @@ gridColumnLayout[0] = [
         dataType: "numeric",
         autoThousandSeparator: "true",
         labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
-            return item.fdRetryYn === "Y" ? 0 : value;
+            return item.fdRetryYn === "Y" ? 0 : value.toLocaleString();
         },
     }, {
         dataField: "",
@@ -282,7 +277,7 @@ gridColumnLayout[0] = [
         labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
             const addAmount = item.fdPressed + item.fdWhitening + item.fdWaterRepellent + item.fdStarch
                 + item.fdPollution + item.fdAdd1Amt;
-            return item.fdRetryYn === "Y" ? 0 : addAmount;
+            return item.fdRetryYn === "Y" ? 0 : addAmount.toLocaleString();
         },
     }, {
         dataField: "fdDiscountAmt",
@@ -290,7 +285,7 @@ gridColumnLayout[0] = [
         dataType: "numeric",
         autoThousandSeparator: "true",
         labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
-            return item.fdRetryYn === "Y" ? 0 : value;
+            return item.fdRetryYn === "Y" ? 0 : value.toLocaleString();
         },
     }, {
         dataField: "fdQty",
@@ -303,8 +298,9 @@ gridColumnLayout[0] = [
         dataType: "numeric",
         autoThousandSeparator: "true",
         labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
-            return (item.fdNormalAmt + item.fdPressed + item.fdWhitening + item.fdWaterRepellent
-                + item.fdStarch + item.fdPollution + item.fdRepairAmt + item.fdAdd1Amt - item.fdDiscountAmt) * item.fdQty;
+            return ((item.fdNormalAmt + item.fdPressed + item.fdWhitening + item.fdWaterRepellent
+                + item.fdStarch + item.fdPollution + item.fdRepairAmt
+                + item.fdAdd1Amt - item.fdDiscountAmt) * item.fdQty).toLocaleString();
         }
     }, {
         dataField: "fdColor",
@@ -523,11 +519,15 @@ function onPutCustomer(selectedCustomer) {
     $("#bcGrade").html(bcGradeName);
     $("#bcName").html(selectedCustomer.bcName + "님");
     $("#bcValuation").attr("class",
-        "propensity__star propensity__star--" + selectedCustomer.bcValuation);
+        "propensity__star propensity__star--" + selectedCustomer.bcValuation).css('display','block');
     $("#bcAddress").html(selectedCustomer.bcAddress);
     $("#bcHp").html(CommonUI.onPhoneNumChange(selectedCustomer.bcHp));
     $("#bcRemark").html(selectedCustomer.bcRemark);
-    $("#bcLastRequestDt").html(selectedCustomer.bcLastRequestDt);
+    $("#bcLastRequestDt").html(
+        selectedCustomer.bcLastRequestDt.substr(0, 4) + "-"
+        + selectedCustomer.bcLastRequestDt.substr(4, 2) + "-"
+        + selectedCustomer.bcLastRequestDt.substr(6, 2)
+    );
     AUIGrid.clearGridData(gridId[0]);
 }
 
@@ -843,6 +843,13 @@ function onCloseAddOrder() {
     $("input[name='material']").first().prop("checked", true);
     $("input[name='urgent']").first().prop("checked", true);
     $(".choice input[type='checkbox']").prop("checked", false);
+    $("input[name='cleanDirt']").first().prop("checked", true);
+    $("input[name='waterProcess']").first().prop("checked", true);
+    $(".choice-drop__btn.etcProcess").removeClass('choice-drop__btn--active');
+
+    $(".keypad_remark").val("");
+    $(".keypad_field").val(0);
+
     $("input[name='etcNone']").first().prop("checked", true);
     $("#fdRemark").val("");
 
@@ -927,7 +934,15 @@ function additionalProcess(id) {
     }
 }
 
+function askSave() {
+    alertCheck("임시저장 하시겠습니까?");
+    $("#checkDelSuccessBtn").on("click", function () {
+        onSaveTemp();
+    });
+}
+
 function onSaveTemp() {
+
     // 추가된 행 아이템들(배열)
     const addedRowItems = AUIGrid.getAddedRowItems(gridId[0]);
 
@@ -960,6 +975,8 @@ function onSaveTemp() {
         initialData.etcData.frNo = req.sendData.frNo;
         AUIGrid.removeSoftRows(gridId[0]);
         AUIGrid.resetUpdatedItems(gridId[0]);
+        AUIGrid.clearGridData(gridId[2]);
+        setDataIntoGrid(2, gridCreateUrl[2]);
     })
 }
 
@@ -976,8 +993,13 @@ function enableKeypad() {
 
     $keypadBackspace.on("click", function (e) {
         const $keypad_field = $(this).parents(".add-cost__keypad").find(".keypad_field");
-        $keypad_field.val(parseInt($keypad_field.val().replace(/[^0-9]/g, "")
-                .substr(0, $keypad_field.val().replace(/[^0-9]/g, "").length-1)).toLocaleString());
+        const currentValue = $keypad_field.val().replace(/[^0-9]/g, "");
+        if(currentValue.length > 1) {
+            $keypad_field.val(parseInt(currentValue.substr(0,
+                currentValue.replace(/[^0-9]/g, "").length - 1)).toLocaleString())
+        }else{
+            $keypad_field.val("0");
+        }
     });
 
     $keypadBoilerplate.on("click", function (e) {

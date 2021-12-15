@@ -61,7 +61,7 @@
                     <span id="bcGrade"></span>
                 </div>
                 <div class="client__name"><span id="bcName"></span></div>
-                <div class="client__propensity"><span id="bcValuation" class="propensity__star propensity__star--0"></span></div>
+                <div class="client__propensity"><span style="display: none;" id="bcValuation" class="propensity__star propensity__star--0"></span></div>
                 <div class="client__address"><span id="bcAddress"></span></div>
                 <div class="client__phone"><span id="bcHp"></span></div>
             </div>
@@ -69,7 +69,7 @@
             <!-- 금액 및 수량 -->
             <div class="regist__info">
                 <ul class="regist__amount">
-                    <li>
+              <li>
                         <h4>수량</h4>
                         <p><span id="totFdQty">0</span></p>
                     </li>
@@ -150,7 +150,7 @@
 
                 <div class="regist__console">
                     <ul>
-                        <li><button class="c-button c-button--darksolid c-button--small" type="button" onclick="onSaveTemp(1)">임시저장</button></li>
+                        <li><button class="c-button c-button--darksolid c-button--small" type="button" onclick="askSave()">임시저장</button></li>
                         <li><button class="c-button c-button--small" type="button" onclick="onReadTempSave()">임시저장내역</button></li>
                     </ul>
                     <ul>
@@ -163,7 +163,7 @@
     </div>
 
 
-    <hr>
+
     <!-- 팝업 영역 -->
 
     <!-- 접수등록 팝업 -->
@@ -522,7 +522,7 @@
         </div>
     </div>
 
-    <hr>
+
     <!-- 수선 팝업 -->
     <div class="pop" id="fdRepairPop">
         <div class="pop__box">
@@ -561,7 +561,7 @@
                     <div class="add-cost__keypad">
                         <!-- 숫자패드 -->
                         <div class="vkey-num active">
-                            <div class="vkey-num__input">
+                            <div class="vkey-num__input" value="0">
                                 <input type="text" class="keypad_field" />
                             </div>
                             <div class="vkey-num__pad">
@@ -630,7 +630,7 @@
                         <!-- 숫자패드 -->
                         <div>
                             <div class="vkey-num__input">
-                                <input type="text" class="keypad_field" />
+                                <input type="text" class="keypad_field" value="0"/>
                             </div>
                             <div class="vkey-num__pad">
                                 <button type="button" class="keypad_btn" value="1">1</button>
@@ -659,9 +659,9 @@
     </div>
 
 
-    <hr>
+
     <!-- 카메라 팝업 -->
-    <div>
+    <div class="pop">
         <div>
             카메라
             촬영된 사진
@@ -698,7 +698,7 @@
         </div>
     </div>
 
-    <hr>
+
     <!-- 임시저장 조회창 -->
     <div class="pop" id="tempSaveListPop">
         <div class="pop__box">
@@ -716,9 +716,9 @@
         </div>
     </div>
 
-    <hr>
+
     <!-- 결제창 -->
-    <div>
+    <div class="pop">
         결제창
         <button type="" onclick="">현금영수증</button>
         <button type="" onclick="">현금 + 카드</button>
