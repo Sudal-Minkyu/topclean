@@ -130,7 +130,7 @@ public class ItemPriceRepositoryCustomImpl extends QuerydslRepositorySupport imp
                 .where(item.biUseYn.eq("Y"))
                 .where(itemPrice.setDt.loe(nowDate).and(itemPrice.closeDt.goe(nowDate)))
 
-                .orderBy(itemSort.bfSort.coalesce(999).asc()).orderBy(itemGroup.bgItemGroupcode.asc())
+                .orderBy(itemSort.bfSort.coalesce(999).asc()).orderBy(item.biItemcode.asc())
 
                 .select(Projections.constructor(UserItemPriceSortDto.class,
 

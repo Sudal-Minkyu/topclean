@@ -21,7 +21,6 @@ $(function() {
 
     // ID 저장하기를 체크한 상태에서 ID를 입력하는 경우, 이럴 때도 쿠키 저장.
     $userid.keyup(function(){ // ID 입력 칸에 ID를 입력할 때,
-        console.log("쿠키저장 로그인")
         if($idSaveCheck.is(":checked")){ // ID 저장하기를 체크한 상태라면,
             setCookie("key", $userid.val(), 7); // 7일 동안 쿠키 보관
         }
@@ -30,7 +29,6 @@ $(function() {
 });
 
 function setCookie(cookieName, value, exdays){
-    console.log("쿠키저장시작");
     const exdate = new Date();
     exdate.setDate(exdate.getDate() + exdays);
     const cookieValue = escape(value) + ((exdays==null) ? "" : "; expires=" + exdate.toGMTString());
