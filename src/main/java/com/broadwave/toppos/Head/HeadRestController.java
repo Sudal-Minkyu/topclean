@@ -166,6 +166,7 @@ public class HeadRestController {
         }else{
             log.info("널입니다. : 신규생성");
             if(franchiseMapperDto.getFrTagNo() == null || franchiseMapperDto.getFrTagNo().equals("")){
+                franchise.setFrTagNo(franchiseMapperDto.getFrCode());
                 franchise.setFrLastTagno(franchiseMapperDto.getFrCode()+"0000");
             }else{
                 franchise.setFrLastTagno(franchiseMapperDto.getFrTagNo()+"0000");
