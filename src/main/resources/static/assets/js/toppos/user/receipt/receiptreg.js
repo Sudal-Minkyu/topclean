@@ -396,6 +396,11 @@ gridColumnLayout[2] = [
     },
 ];
 
+// 임시저장 삭제로직
+function onRemoveTempSave(){
+
+}
+
 gridProp[2] = {
     editable : false,
     selectionMode : "singleRow",
