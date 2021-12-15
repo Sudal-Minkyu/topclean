@@ -8,6 +8,6 @@ import java.util.Optional;
 
 @Repository
 public interface RequestRepository extends JpaRepository<Request,Long> {
-    @Query("select a from Request a where a.frNo = :frNo")
-    Optional<Request> findByRequest(String frNo);
+    @Query("select a from Request a where a.frNo = :frNo and a.frConfirmYn = :frConfirmYn and a.frCode = :frCode")
+    Optional<Request> findByRequest(String frNo, String frConfirmYn, String frCode);
 }

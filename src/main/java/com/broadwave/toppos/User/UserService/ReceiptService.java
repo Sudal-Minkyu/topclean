@@ -77,8 +77,8 @@ public class ReceiptService {
     }
 
     // 접수코드를 통한 접수마스터 테이블 조회
-    public Optional<Request> findByRequest(String frNo){
-        return requestRepository.findByRequest(frNo);
+    public Optional<Request> findByRequest(String frNo, String frConfirmYn, String frCode){
+        return requestRepository.findByRequest(frNo, frConfirmYn, frCode);
     }
 
     // 접수코드와 태그번호를 통한 접수세부 테이블 조회
@@ -90,6 +90,11 @@ public class ReceiptService {
     // 접수 마스터테이블 임시저장 리스트 호출
     public List<RequestListDto> findByRequestTempList(String frCode){
         return requestRepositoryCustom.findByRequestTempList(frCode);
+    }
+
+    // 삭제를 위한 세부테이블 임시저장 리스트 호출
+    public List<RequestDetail> findByRequestTempDetail(String frNo) {
+        return requestDetailRepository.findByRequestTempDetail(frNo);
     }
 
     // 접수 세부테이블 임시저장 리스트 호출
@@ -140,7 +145,7 @@ public class ReceiptService {
             Request requestSave;
             if(etcData.getFrNo() != null){
                 log.info("접수마스터 테이블 수정합니다. 접수코드 : "+etcData.getFrNo());
-                Optional<Request> optionalRequest = findByRequest(etcData.getFrNo());
+                Optional<Request> optionalRequest = findByRequest(etcData.getFrNo(), "N", frCode);
                 if(!optionalRequest.isPresent()){
                     return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "접수 할 "+ResponseErrorCode.TP009.getDesc(), "문자", "접수코드 : "+etcData.getFrNo()));
                 }else{
@@ -305,5 +310,38 @@ public class ReceiptService {
             return null;
         }
     }
+
+    // 임시저장 글 삭제로직
+    public ResponseEntity<Map<String, Object>> requestDelete(HttpServletRequest request, String frNo) {
+        AjaxResponse res = new AjaxResponse();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
+//        log.info("frNo2 : "+frNo);
+        Optional<Request> optionalRequest = findByRequest(frNo, "N", frCode);
+//        log.info("optionalRequest : "+optionalRequest);
+        if(!optionalRequest.isPresent()){
+            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "삭제 할 "+ResponseErrorCode.TP009.getDesc(), "문자", "접수코드 : "+frNo));
+        }else{
+            List<RequestDetail> requestDetailList = findByRequestTempDetail(optionalRequest.get().getFrNo());
+//            log.info("requestDetailList : "+requestDetailList);
+//            log.info("requestDetailList.size() : "+requestDetailList.size());
+            requestDeleteStart(optionalRequest.get(), requestDetailList);
+        }
+        return ResponseEntity.ok(res.success());
+    }
+
+    // 삭제 실행
+    @Transactional(rollbackFor = SQLException.class)
+    public void requestDeleteStart(Request optionalRequest, List<RequestDetail> requestDetailList) {
+        try{
+            requestDetailRepository.deleteAll(requestDetailList);
+            requestRepository.delete(optionalRequest);
+        }catch (Exception e){
+            log.info("에러발생 트랜젝션실행1 : "+e);
+        }
+    }
+
 
 }

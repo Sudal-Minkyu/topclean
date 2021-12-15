@@ -1,9 +1,12 @@
 $(function() {
 
-    // $(document).on("click","#checksuccessBtn",function(){
-    //     //console.log("확인버튼누름")
-    //     alertSuccess('성공!');
-    // })
+    // 삭제여부
+    $(document).on("click","#checkYesBtn",function(){
+        checkYesOrNo(true)
+    });
+    $(document).on("click","#checkNoBtn",function(){
+        checkYesOrNo(false)
+    });
 
     $(document).on("click","#cautionBtn1",function(){
         $('#popupId').remove();
@@ -22,42 +25,9 @@ $(function() {
         $('#popupId').remove();
     });
 
-    // $(document).on("click","#continueSuccessBtn",function(){
-    //     continueSaveCheck()
-    // });
-    //
-    // $(document).on("click","#checkYesBtn",function(){
-    //     startYesorNo(true)
-    // });
-    // $(document).on("click","#checkNoBtn",function(){
-    //     startYesorNo(false)
-    // });
-    //
-
     $(document).on("click","#checkDelCancelBtn",function(){
         $('#popupId').remove();
     });
-
-    // $('#success').on('click', function() {
-    //     //console.log("성공버튼 실행");
-    //     alertSuccess('성공!');
-    // })
-    //
-    // $('#fail').on('click', function() {
-    //     //console.log("실패버튼 실행");
-    //     alertCancel('실패!');
-    // })
-    //
-    // $('#caution').on('click', function() {
-    //     //console.log("경고버튼 실행");
-    //     alertCaution("경고!");
-    // })
-    //
-    // $('#confirm').on('click', function() {
-    //     //console.log("확인버튼 실행")
-    //     alertCheck('확인!');
-    //
-    // })
 
 });
 
@@ -172,7 +142,7 @@ function alertCheck(text) { //정말삭제할껀지확인하는창
     $('#alertpop').html(html);
 }
 
-function alertMiddleSaveCheck(text) { // 정말작성할껀지 확인하는창
+function alertDeleteCheck(text) { // 정말작성할껀지 확인하는창
     let html = '';
 
     html +='<div id="popupId" class="popup popup--dim">';

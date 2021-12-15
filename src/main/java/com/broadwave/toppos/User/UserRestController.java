@@ -395,21 +395,25 @@ public class UserRestController {
 
     // 접수페이지 임시저장 세부내역 리스트 호출 APi
     @GetMapping("tempRequestDetailList")
-    public ResponseEntity<Map<String,Object>> tempRequestDetailList(@RequestParam(value="frNo", defaultValue="") String frNo){
+    public ResponseEntity<Map<String,Object>> tempRequestDetailList(HttpServletRequest request, @RequestParam(value="frNo", defaultValue="") String frNo){
         log.info("tempRequestDetailList 호출");
 
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
 
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
+
         // 접수했던 고객의 정보 호출
-        Optional<Request> optionalRequest = receiptService.findByRequest(frNo);
+        Optional<Request> optionalRequest = receiptService.findByRequest(frNo, "N", frCode);
         if(!optionalRequest.isPresent()){
             return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "접수"+ResponseErrorCode.TP009.getDesc(), "문자", "접수 : "+frNo));
         }else{
 
             // 다시 고객정보 호출해준다.
             CustomerInfoDto customerInfoDto = new CustomerInfoDto();
-            customerInfoDto.setBcId(optionalRequest.get().getId());
+            customerInfoDto.setBcId(optionalRequest.get().getBcId().getBcId());
             customerInfoDto.setBcHp(optionalRequest.get().getBcId().getBcHp());
             customerInfoDto.setBcName(optionalRequest.get().getBcId().getBcName());
             customerInfoDto.setBcAddress(optionalRequest.get().getBcId().getBcAddress());
@@ -429,14 +433,10 @@ public class UserRestController {
 
     // 접수페이지 임시저장의 마스터 테이블+세부 테이블 삭제
     @PostMapping("tempRequestDetailDelete")
-    public ResponseEntity<Map<String,Object>> tempRequestDetailDelete(@RequestParam(value="frNo", defaultValue="") String frNo){
+    public ResponseEntity<Map<String,Object>> tempRequestDetailDelete(HttpServletRequest request, @RequestParam(value="frNo", defaultValue="") String frNo){
         log.info("tempRequestDetailDelete 호출");
-
-        AjaxResponse res = new AjaxResponse();
-        HashMap<String, Object> data = new HashMap<>();
-
-
-        return ResponseEntity.ok(res.dataSendSuccess(data));
+        // 임시저장 글 삭제 서비스 실행
+        return receiptService.requestDelete(request, frNo);
     }
 
 

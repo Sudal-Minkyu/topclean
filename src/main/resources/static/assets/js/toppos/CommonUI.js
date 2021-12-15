@@ -179,6 +179,33 @@ class CommonUIClass {
     }
 
     /* json 보내는 통신의 자주 쓰는 패턴을 간단하게 쓰기 위함 --임시 */
+    ajaxjsonPost(url, data, func) {
+        $(document).ajaxSend(function (e, xhr) {
+            xhr.setRequestHeader("Authorization", localStorage.getItem('Authorization'));
+        });
+        $.ajax({
+            url: url,
+            data : data,
+            type : 'post',
+            cache:false,
+            error: function (req) {
+                ajaxErrorMsg(req);
+            },
+            success: function (req) {
+                if (req.status === 200) {
+                    return func(req);
+                } else {
+                    if (req.err_msg2 === null) {
+                        alertCaution(req.err_msg, 1);
+                    } else {
+                        alertCaution(req.err_msg + "<br>" + req.err_msg2, 1);
+                    }
+                }
+            }
+        });
+    }
+
+    /* json 보내는 통신의 자주 쓰는 패턴을 간단하게 쓰기 위함 --임시 */
     ajaxjson(url, data, func) {
         $(document).ajaxSend(function (e, xhr) {
             xhr.setRequestHeader("Authorization", localStorage.getItem('Authorization'));
