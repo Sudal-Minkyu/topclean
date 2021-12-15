@@ -19,7 +19,13 @@ $(function() {
     });
 
     AUIGrid.bind(gridId[0], "cellClick", function (e) {
-        console.log(e.item);
+        if(e.dataField === "fdQty") {
+            tempItem = e.item;
+            $("#hiddenKeypad").val(e.item.fdQty);
+            vkey.showKeypad("hiddenKeypad", changeQty);
+        }else{
+            console.log(e);
+        }
     });
 
     // 세탁 가격 선택 항목의 변경시 필요작업과 이벤트 반영
@@ -86,13 +92,21 @@ $(function() {
     $("#fdRepairCancel").on("click", function () {
         currentRequest.fdRepairAmt = 0;
         currentRequest.fdRepairRemark = "";
+        $("#fdRepair").prop("checked", false);
+        $("#fdRepairAmt").val(0);
+        $("#fdRepairRemark").val("");
         calculateItemPrice();
         disableKeypad();
     });
 
     $("#fdRepairComplete").on("click", function () {
-        currentRequest.fdRepairAmt = parseInt($("#fdRepairPop .keypad_field").val().replace(/[^0-9]/g, ""));
-        currentRequest.fdRepairRemark = $("#fdRepairPop .keypad_remark").val();
+        currentRequest.fdRepairAmt = parseInt($("#fdRepairAmt").val().replace(/[^0-9]/g, ""));
+        currentRequest.fdRepairRemark = $("#fdRepairRemark").val();
+        if(currentRequest.fdRepairAmt || currentRequest.fdRepairRemark.length) {
+            $("#fdRepair").prop("checked", true);
+        }else{
+            $("#fdRepair").prop("checked", false);
+        }
         calculateItemPrice();
         disableKeypad();
     });
@@ -100,18 +114,28 @@ $(function() {
     $("#fdAddCancel").on("click", function () {
         currentRequest.fdAdd1Amt = 0;
         currentRequest.fdAdd1Remark = "";
+        $("#fdAdd1").prop("checked", false);
+        $("#fdAdd1Amt").val(0);
+        $("#fdAdd1Remark").val("");
         calculateItemPrice();
         disableKeypad();
     });
 
     $("#fdAddComplete").on("click", function () {
-        currentRequest.fdAdd1Amt = parseInt($("#fdAddPop .keypad_field").val().replace(/[^0-9]/g, ""));
-        currentRequest.fdAdd1Remark = $("#fdAddPop .keypad_remark").val();
+        currentRequest.fdAdd1Amt = parseInt($("#fdAdd1Amt").val().replace(/[^0-9]/g, ""));
+        currentRequest.fdAdd1Remark = $("#fdAdd1Remark").val();
+        currentRequest.fdSpecialYn = $("#fdSpecialYn").is(":checked") ? "Y" : "N";
+        if(currentRequest.fdAdd1Amt || currentRequest.fdAdd1Remark.length) {
+            $("#fdAdd1").prop("checked", true);
+        }else{
+            $("#fdAdd1").prop("checked", false);
+        }
         calculateItemPrice();
         disableKeypad();
     });
 
     $('.choice-drop__btn').on('click', function(e) {
+        $(".choice-drop__content--active").removeClass("choice-drop__content--active");
         $(this).next('.choice-drop__content').toggleClass('choice-drop__content--active');
     });
 
@@ -141,6 +165,8 @@ const fdColorCode = {
     C00: "#D4D9E1", C01: "#D4D9E1", C02: "#3F3C32", C03: "#D7D7D7", C04: "#F54E50", C05: "#FB874B",
     C06: "#F1CE32", C07: "#349A50", C08: "#55CAB7", C09: "#398BE0", C10: "#DE9ACE", C11: "#FF9FB0",
 }
+
+let tempItem;
 
 /* 선택된 고객이나 세탁물(대분류)의 이용을 위함  */
 let selectedCustomer;
@@ -231,7 +257,7 @@ gridTargetDiv = [
 
 /* 그리드를 받아올 때 쓰이는 api 배열 */
 gridCreateUrl = [
-    "/api/user/tempRequestDetailList", "/api/b", "/api/user/tempRequestList"
+    "/api/user/tempRequestDetailList", "/api/user/tempRequestDetailDelete", "/api/user/tempRequestList"
 ]
 
 /* 그리드를 저장할 때 쓰이는 api 배열 */
@@ -298,9 +324,7 @@ gridColumnLayout[0] = [
         dataType: "numeric",
         autoThousandSeparator: "true",
         labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
-            return ((item.fdNormalAmt + item.fdPressed + item.fdWhitening + item.fdWaterRepellent
-                + item.fdStarch + item.fdPollution + item.fdRepairAmt
-                + item.fdAdd1Amt - item.fdDiscountAmt) * item.fdQty).toLocaleString();
+            return value.toLocaleString();
         }
     }, {
         dataField: "fdColor",
@@ -396,9 +420,25 @@ gridColumnLayout[2] = [
     },
 ];
 
-// 임시저장 삭제로직
+// 1. 임시저장 삭제여부 묻기
 function onRemoveTempSave(){
-
+    alertDeleteCheck("해당 임시저장을 삭제하시겠습니까?");
+}
+// 2. 삭제로식 실행
+function checkYesOrNo(booleanValue) {
+    $('#popupId').remove();
+    if (booleanValue === false) {
+        return false;
+    } else {
+        const frNo = AUIGrid.getSelectedRows(gridId[2])[0].frNo;
+        const params = {
+            frNo: frNo
+        };
+        CommonUI.ajaxjsonPost(gridCreateUrl[1], params, function () {
+            // 성공하면 임시저장 마스터테이블 조회
+            setDataIntoGrid(2, gridCreateUrl[2]);
+        });
+    }
 }
 
 gridProp[2] = {
@@ -548,6 +588,9 @@ function onPutCustomer(selectedCustomer) {
     }else{
         $("#bcLastRequestDt").html("없음");
     }
+
+    $("#class02, #class03").parents("li").css("display", "none");
+    $("#class" + selectedCustomer.bcGrade).parents("li").css("display", "block");
     AUIGrid.clearGridData(gridId[0]);
     calculateMainPrice();
 }
@@ -573,10 +616,6 @@ function onPopReceiptReg(btnElement) {
     // 처음 표시 중분류 기본상태 N, 만일 중분류에 N이 없는 예외상황시 수정해줘야함.
     setBiItemList("N");
     $("input[name='bsItemGroupcodeS']").first().prop("checked", true);
-    if(selectedCustomer) {
-        $("#class02, #class03").parents("li").css("display", "none");
-        $("#class" + selectedCustomer.bcGrade).parents("li").css("display", "block");
-    }
 
     calculateItemPrice();
     $('#productPop').addClass('active');
@@ -638,8 +677,10 @@ function calculateItemPrice() {
             + currentRequest.fdStarch + currentRequest.fdPollution + currentRequest.fdAdd1Amt + currentRequest.fdRepairAmt;
 
     currentRequest.fdNormalAmt = ceil100(currentRequest.fdOriginAmt * gradePrice[currentRequest.fdPriceGrade] / 100);
-    currentRequest.fdRequestAmt = ceil100((currentRequest.fdNormalAmt + currentRequest.totAddCost) * (100 - gradeDiscount[currentRequest.fdDiscountGrade]) / 100);
-    currentRequest.fdDiscountAmt = currentRequest.fdNormalAmt + currentRequest.totAddCost - currentRequest.fdRequestAmt;
+    const sumAmt = ceil100((currentRequest.fdNormalAmt + currentRequest.totAddCost)
+        * (100 - gradeDiscount[currentRequest.fdDiscountGrade]) / 100)
+    currentRequest.fdRequestAmt = sumAmt * currentRequest.fdQty;
+    currentRequest.fdDiscountAmt = currentRequest.fdNormalAmt + currentRequest.totAddCost - sumAmt;
 
     if($("#fdRetry").is(":checked")) {
         currentRequest.fdRetryYn = "Y";
@@ -654,7 +695,7 @@ function calculateItemPrice() {
     $("#fdNormalAmt").html(currentRequest.fdNormalAmt.toLocaleString());
     $("#totAddCost").html(currentRequest.totAddCost.toLocaleString());
     $("#fdDiscountAmt").html(currentRequest.fdDiscountAmt.toLocaleString());
-    $("#sumAmt").html(currentRequest.fdRequestAmt.toLocaleString());
+    $("#sumAmt").html(sumAmt.toLocaleString());
 }
 
 function ceil100(num) {
@@ -671,20 +712,22 @@ function calculateMainPrice() {
     const items = AUIGrid.getGridData(gridId[0]);
     let fdQty = 0;
     let fdNormalAmt = 0;
-    let fdDiscountAmt = 0;
+    let changeAmt = 0;
     let fdRequestAmt = 0;
 
     items.forEach(el => {
         if(el.fdRetryYn === "N") {
             fdQty += el.fdQty;
-            fdNormalAmt += el.fdNormalAmt;
-            fdDiscountAmt += el.fdDiscountAmt;
+            fdNormalAmt += el.fdNormalAmt * el.fdQty;
+            changeAmt += (el.fdPressed + el.fdWhitening + el.fdWaterRepellent + el.fdStarch
+                + el.fdPollution + el.fdAdd1Amt + el.fdRepairAmt -el.fdDiscountAmt) * el.fdQty;
             fdRequestAmt += el.fdRequestAmt;
         }
-    })
+    });
+
     $("#totFdQty").html(fdQty.toLocaleString());
     $("#totFdNormalAmount").html(fdNormalAmt.toLocaleString());
-    $("#totFdDiscountAmount").html(fdDiscountAmt.toLocaleString());
+    $("#totChangeAmount").html(changeAmt.toLocaleString());
     $("#totFdRequestAmount").html(fdRequestAmt.toLocaleString());
 }
 
@@ -914,25 +957,59 @@ function onModifyOrder(event) {
     if(currentRequest.fdRetryYn === "Y") {
         $("#fdRetry").prop("checked", true);
     }
+
     if(currentRequest.fdRepairRemark.length || currentRequest.fdRepairAmt) {
         $("#fdRepair").prop("checked", true);
+        $("#fdRepairAmt").val(currentRequest.fdRepairAmt);
+        $("#fdRepairRemark").val(currentRequest.fdRepairRemark);
     }
+
     if(currentRequest.fdAdd1Remark.length || currentRequest.fdAdd1Amt) {
         $("#fdAdd1").prop("checked", true);
+        $("#fdAdd1Amt").val(currentRequest.fdAdd1Amt);
+        $("#fdAdd1Remark").val(currentRequest.fdAdd1Remark);
     }
+
+    if(currentRequest.fdSpecialYn === "Y") {
+        $("#fdSpecialYn").prop("checked", true);
+    }else{
+        $("#fdSpecialYn").prop("checked", false);
+    }
+
     if(currentRequest.fdWhitening) {
         $("#fdWhitening").prop("checked", true);
     }
+
     $("input[name='cleanDirt']:input[value='" + currentRequest.fdPollutionLevel +"']").prop("checked", true);
+    if($("#dirt0").is(":checked")) {
+        $("#pollutionBtn").removeClass("choice-drop__btn--active");
+    }else{
+        $("#pollutionBtn").addClass("choice-drop__btn--active");
+    }
+
     if(currentRequest.fdWaterRepellent) {
         $("#fdWaterRepellent").prop("checked", true);
     }
     if(currentRequest.fdStarch) {
         $("#fdStarch").prop("checked", true);
     }
+    if($("#waterNone").is(":checked")) {
+        $("#waterBtn").removeClass("choice-drop__btn--active");
+    }else{
+        $("#waterBtn").addClass("choice-drop__btn--active");
+    }
+
+
+
     if(currentRequest.fdRemark.length) {
         $("#fdRemark").val(currentRequest.fdRemark);
     }
+
+    if($("#processCheck input:checked").length > 3 || $("#processCheck .choice-drop__btn--active").length) {
+        $("#etcNone").prop("checked", false);
+    }
+
+
 
     /* currentRequest의 각 벨류값에 따라 화면의 라디오 세팅을 구성한다. */
 
@@ -1064,4 +1141,13 @@ function onRepeatRequest() {
         AUIGrid.addRow(gridId[0], items[0].item, "last");
         setNextTag(items[0].item.fdTag);
     }
+}
+
+function changeQty() {
+    tempItem.fdQty = parseInt($("#hiddenKeypad").val());
+    tempItem.fdRequestAmt = (tempItem.fdNormalAmt + tempItem.fdPressed + tempItem.fdWhitening
+        + tempItem.fdWaterRepellent + tempItem.fdStarch + tempItem.fdPollution + tempItem.fdRepairAmt
+        + tempItem.fdAdd1Amt - tempItem.fdDiscountAmt) * tempItem.fdQty;
+    AUIGrid.updateRowsById(gridId[0], tempItem);
+    calculateMainPrice();
 }

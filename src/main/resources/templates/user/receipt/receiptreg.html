@@ -80,8 +80,8 @@
 
                     </li>
                     <li>
-                        <h4>할인금액</h4>
-                        <p><span id="totFdDiscountAmount">0</span><span class="won">원</span></p>
+                        <h4>변동금액</h4>
+                        <p><span id="totChangeAmount">0</span><span class="won">원</span></p>
                     </li>
                 </ul>
                 <div class="regist__sum">
@@ -424,7 +424,7 @@
                             </li>
                             <li>
                                 <div class="choice-drop">
-                                    <button class="choice-drop__btn etcProcess">오염</button>
+                                    <button class="choice-drop__btn etcProcess" id="pollutionBtn">오염</button>
                                     <ul class="choice-drop__content">
                                         <li class="choice-drop__item closDrop">
                                             <input type="radio" id="dirt0" name="cleanDirt" value="0" checked />
@@ -455,7 +455,7 @@
                             </li>
                             <li>
                                 <div class="choice-drop">
-                                    <button class="choice-drop__btn etcProcess">발수가공</button>
+                                    <button class="choice-drop__btn etcProcess" id="waterBtn">발수가공</button>
                                     <ul class="choice-drop__content choice-drop__content--right">
                                         <li class="choice-drop__item closDrop">
                                             <input type="radio" id="waterNone" name="waterProcess" checked />
@@ -556,7 +556,7 @@
                     <div class="add-cost__input">
                         <!-- 상용구 들어갈 인풋 -->
                         <div class="c-text">
-                            <input type="text" class="keypad_remark" placeholder="수선 리스트 입력" />
+                            <input type="text" id="fdRepairRemark" class="keypad_remark" placeholder="수선 리스트 입력" />
                             <button>키보드</button>
                         </div>
                     </div>
@@ -564,8 +564,8 @@
                     <div class="add-cost__keypad">
                         <!-- 숫자패드 -->
                         <div class="vkey-num active">
-                            <div class="vkey-num__input" value="0">
-                                <input type="text" class="keypad_field" />
+                            <div class="vkey-num__input">
+                                <input type="text" id="fdRepairAmt" value="0" class="keypad_field" />
                             </div>
                             <div class="vkey-num__pad">
                                 <button type="button" class="keypad_btn" value="1">1</button>
@@ -624,8 +624,12 @@
                     <div class="add-cost__input">
                         <!-- 상용구 들어갈 인풋 -->
                         <div class="c-text">
-                            <input type="text" class="keypad_remark" placeholder="수선 리스트 입력" />
+                            <input type="text" id="fdAdd1Remark" class="keypad_remark" placeholder="수선 리스트 입력" />
                             <button>키보드</button>
+                        </div>
+                        <div>
+                            <input type="checkbox" id="fdSpecialYn">
+                            <label for="fdSpecialYn">특수</label>
                         </div>
                     </div>
 
@@ -633,7 +637,7 @@
                         <!-- 숫자패드 -->
                         <div>
                             <div class="vkey-num__input">
-                                <input type="text" class="keypad_field" value="0"/>
+                                <input type="text" id="fdAdd1Amt" class="keypad_field" value="0" />
                             </div>
                             <div class="vkey-num__pad">
                                 <button type="button" class="keypad_btn" value="1">1</button>
@@ -730,6 +734,8 @@
         <button type="" onclick="">닫기</button>
         <button type="" onclick="">결제하기</button>
     </div>
+
+    <input type="hidden" id="hiddenKeypad" />
 
 </div>
 </html>
