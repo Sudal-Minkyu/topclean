@@ -485,9 +485,9 @@ function onSearchCustomer() {
 }
 
 function onSelectCustomer() {
-    selectedCustomer = AUIGrid.getSelectedRows(gridId[1]);
-    if(selectedCustomer.length) {
-        onPutCustomer(selectedCustomer[0]);
+    selectedCustomer = AUIGrid.getSelectedRows(gridId[1])[0];
+    if(selectedCustomer) {
+        onPutCustomer(selectedCustomer);
         checkNum = "1";
         $("#customerListPop").removeClass("active");
     }else{
@@ -539,7 +539,6 @@ function onPutCustomer(selectedCustomer) {
         "propensity__star propensity__star--" + selectedCustomer.bcValuation).css('display','block');
     $("#bcAddress").html(selectedCustomer.bcAddress);
     $("#bcRemark").html(selectedCustomer.bcRemark);
-    console.log(selectedCustomer.bcLastRequestDt)
     if(selectedCustomer.bcLastRequestDt) {
         $("#bcLastRequestDt").html(
             selectedCustomer.bcLastRequestDt.substr(0, 4) + "-"
@@ -1063,3 +1062,10 @@ function removeEventsFromElement(element) {
     element.parentNode.replaceChild(elementClone, element);
 }
 
+function onRepeatRequest() {
+    let items = AUIGrid.getSelectedItems(gridId[0]);
+    if(items.length) {
+
+    }
+    console.log(item);
+}
