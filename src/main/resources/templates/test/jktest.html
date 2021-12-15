@@ -172,6 +172,10 @@
 				<div class="regist__tag-button">
 					<button class="c-button c-button--solid c-button--small" type="button" onclick="onSaveFdTag()">택번호 저장</button>
 				</div>
+				<!-- 삭제버튼 추가 -->
+				<div class="regist__line-delete">
+					<button class="c-button c-button--red c-button--small">상품삭제</button>
+				</div>
 			</div>
 			
 			<div class="regist__grid" id="gridarea">
@@ -774,25 +778,25 @@
 					
 					<div class="add-cost__keypad">
 						<!-- 숫자패드 -->
-						<div id="VKEY_KEYPAD">
-			                <div class="vkey-num__input">
-			                    <input type="text" id="VKEY_keypad_field" readonly>
-			                </div>
-			                <div class="vkey-num__pad">
-			                    <button type="button" class="VKEY_keypad_btn" value="1">1</button>
-			                    <button type="button" class="VKEY_keypad_btn" value="2">2</button>
-			                    <button type="button" class="VKEY_keypad_btn" value="3">3</button>
-			                    <button type="button" class="VKEY_keypad_btn" value="4">4</button>
-			                    <button type="button" class="VKEY_keypad_btn" value="5">5</button>
-			                    <button type="button" class="VKEY_keypad_btn" value="6">6</button>
-			                    <button type="button" class="VKEY_keypad_btn" value="7">7</button>
-			                    <button type="button" class="VKEY_keypad_btn" value="8">8</button>
-			                    <button type="button" class="VKEY_keypad_btn" value="9">9</button>
-			                    <button type="button" class="VKEY_keypad_btn" value="00">00</button>
-			                    <button type="button" class="VKEY_keypad_btn" value="0">0</button>
-			                    <button type="button" id="VKEY_keypad_btn_backspace">←</button>
-			                </div>
-			            </div>
+                        <div class="vkey-num active">
+                            <div class="vkey-num__input">
+                                <input type="text" class="keypad_field" />
+                            </div>
+                            <div class="vkey-num__pad">
+                                <button type="button" class="keypad_btn" value="1">1</button>
+                                <button type="button" class="keypad_btn" value="2">2</button>
+                                <button type="button" class="keypad_btn" value="3">3</button>
+                                <button type="button" class="keypad_btn" value="4">4</button>
+                                <button type="button" class="keypad_btn" value="5">5</button>
+                                <button type="button" class="keypad_btn" value="6">6</button>
+                                <button type="button" class="keypad_btn" value="7">7</button>
+                                <button type="button" class="keypad_btn" value="8">8</button>
+                                <button type="button" class="keypad_btn" value="9">9</button>
+                                <button type="button" class="keypad_btn" value="00">00</button>
+                                <button type="button" class="keypad_btn" value="0">0</button>
+                                <button type="button" class="keypad_btn_backspace">←</button>
+                            </div>
+                        </div>
 					</div>
 					
 					<ul class="pop__console pop__console--center">

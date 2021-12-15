@@ -2,7 +2,7 @@
 <html lang="ko"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout/default}" xmlns="http://www.w3.org/1999/html">
+      layout:decorate="~{layout/defaulthead}" xmlns="http://www.w3.org/1999/html">
 
 <!-- 사용자 CSS 추가 -->
 <th:block layout:fragment="css">
@@ -15,8 +15,19 @@
     <script src="/assets/js/toppos/head/contract.js"></script>
 </th:block>
 
-<div layout:fragment="content" class="content padding-zero content--main">
-    <h1>계약관리 페이지</h1>
+<div layout:fragment="content" class="content content--padding">
+	<h2 class="content__heading">계약관리</h2>
+	
+	<div class="tabs">
+		<div class="tabs__head">
+			<button class="tabs__btn">지사 계약 관리</button>
+			<button class="tabs__btn">가맹점 계약 관리</button>
+			<button class="tabs__btn">가맹점 지사 배정 관리</button>
+		</div>
+		
+		<div class="tabs__contents">
+		</div>
+	</div>
 
     <!-- 지사계약관리-->
     <!--좌측-->
