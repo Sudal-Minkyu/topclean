@@ -86,6 +86,10 @@ public class ReceiptService {
         return requestDetailRepository.findByRequestDetail(frNo, fdTag);
     }
 
+    // 접수 세부테이블 삭제
+    public void findByRequestDetailDelete(RequestDetail requestDetail) {
+        requestDetailRepository.delete(requestDetail);
+    }
 
     // 접수 마스터테이블 임시저장 리스트 호출
     public List<RequestListDto> findByRequestTempList(String frCode){
@@ -253,6 +257,19 @@ public class ReceiptService {
                 }
             }
             log.info("requestDetailList : "+requestDetailList);
+            // 접수 세부 테이블 삭제
+            if(deleteList.size()!=0){
+                for (RequestDetailDto requestDetailDto : updateList) {
+                    log.info("삭제로직 FrNo : "+etcData.getFrNo());
+                    log.info("삭제로직 FdTag : "+requestDetailDto.getFdTag());
+                    Optional<RequestDetail> optionalRequestDetail = findByRequestDetail(etcData.getFrNo(), requestDetailDto.getFdTag());
+                    if(!optionalRequestDetail.isPresent()){
+                        return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "삭제 할 "+ResponseErrorCode.TP009.getDesc(), "문자", "택번호 : "+requestDetailDto.getFdTag()));
+                    }else{
+                        findByRequestDetailDelete(optionalRequestDetail.get());
+                    }
+                }
+            }
 
             // 현재 접수한 고객의 대한 마지막방문일자 업데이트
             optionalCustomer.get().setBcLastRequestDt(nowDate);
@@ -329,6 +346,7 @@ public class ReceiptService {
 //            log.info("requestDetailList.size() : "+requestDetailList.size());
             requestDeleteStart(optionalRequest.get(), requestDetailList);
         }
+
         return ResponseEntity.ok(res.success());
     }
 
