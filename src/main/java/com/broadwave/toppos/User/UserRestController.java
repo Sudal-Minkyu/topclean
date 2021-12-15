@@ -427,7 +427,17 @@ public class UserRestController {
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
+    // 접수페이지 임시저장의 마스터 테이블+세부 테이블 삭제
+    @PostMapping("tempRequestDetailDelete")
+    public ResponseEntity<Map<String,Object>> tempRequestDetailDelete(@RequestParam(value="frNo", defaultValue="") String frNo){
+        log.info("tempRequestDetailDelete 호출");
 
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
 
 
 

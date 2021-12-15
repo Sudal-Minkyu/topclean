@@ -132,9 +132,9 @@ public class ReceiptService {
         log.info("삭제 사이즈 : "+deleteList.size());
 
         // 현재 고객을 받아오기
-        Optional<Customer> optionalCustomer = userService.findByBcHp(etcData.getBcHp());
+        Optional<Customer> optionalCustomer = userService.findByBcId(etcData.getBcId());
         if(!optionalCustomer.isPresent()){
-            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP018.getCode(), ResponseErrorCode.TP018.getDesc(), "문자", "고객번호 : "+etcData.getBcHp()));
+            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP018.getCode(), ResponseErrorCode.TP018.getDesc(),null, null));
         }else{
 
             Request requestSave;

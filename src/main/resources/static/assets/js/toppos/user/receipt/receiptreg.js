@@ -527,13 +527,14 @@ function onPutCustomer(selectedCustomer) {
             bcGradeName = "VVIP";
             break;
     }
+    console.log(selectedCustomer);
     $("#bcGrade").html(bcGradeName);
     $("#bcName").html(selectedCustomer.bcName + "님");
     $("#bcValuation").attr("class",
         "propensity__star propensity__star--" + selectedCustomer.bcValuation).css('display','block');
     $("#bcAddress").html(selectedCustomer.bcAddress);
-    $("#bcHp").html(CommonUI.onPhoneNumChange(selectedCustomer.bcHp));
     $("#bcRemark").html(selectedCustomer.bcRemark);
+    console.log(selectedCustomer.bcLastRequestDt)
     if(selectedCustomer.bcLastRequestDt) {
         $("#bcLastRequestDt").html(
             selectedCustomer.bcLastRequestDt.substr(0, 4) + "-"
@@ -974,15 +975,20 @@ function onSaveTemp() {
     // 삭제된 행 아이템들(배열)
     const deletedRowItems = AUIGrid.getRemovedItems(gridId[0]);
 
+    console.log(selectedCustomer);
+    console.log(selectedCustomer.bcId);
+    console.log(typeof(selectedCustomer.bcId));
+    console.log("d=========debug");
+
     const etc = {
         checkNum: checkNum,
-        bcHp: selectedCustomer.bcHp,
+        bcId: selectedCustomer.bcId,
         frNo: initialData.etcData.frNo,
         frNormalAmount: $("#totFdNormalAmount").html().replace(/[^0-9]/g, ""),
         frDiscountAmount: $("#totFdDiscountAmount").html().replace(/[^0-9]/g, ""),
         frTotalAmount: $("#totFdRequestAmount").html().replace(/[^0-9]/g, ""),
     }
-
+    console.log(etc);
     const data = {
         "add" : addedRowItems,
         "update" : updatedRowItems,

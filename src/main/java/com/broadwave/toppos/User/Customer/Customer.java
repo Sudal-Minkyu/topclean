@@ -29,7 +29,7 @@ public class Customer {
     @Column(name="fr_code")
     private String frCode; // 가맹점코드 3자리
 
-    @Column(unique = true, name="bc_hp")
+    @Column(name="bc_hp")
     private String bcHp; // 휴대폰번호( "-" 빼고저장)
 
     @Column(name="bc_name")

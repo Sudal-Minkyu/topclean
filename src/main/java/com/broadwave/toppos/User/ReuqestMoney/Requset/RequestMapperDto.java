@@ -20,7 +20,7 @@ public class RequestMapperDto {
     private String checkNum; // 임시저장인지 : 1 , 걸제후 저장인지 확인하는 번호 : 2(문자열 형태)
 
     private String frNo; // 접수코드
-    private String bcHp; // 고객번호
+    private Long bcId; // 고객번호
     private Integer frNormalAmount; // 총 접수금액
     private Integer frDiscountAmount; // 총 할인금액
     private Integer frTotalAmount; // 총 합계금액
@@ -33,8 +33,8 @@ public class RequestMapperDto {
         return checkNum;
     }
 
-    public String getBcHp() {
-        return bcHp;
+    public Long getBcId() {
+        return bcId;
     }
 
     public Integer getFrNormalAmount() {
