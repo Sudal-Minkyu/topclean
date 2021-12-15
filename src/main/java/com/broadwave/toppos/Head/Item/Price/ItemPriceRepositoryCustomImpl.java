@@ -71,7 +71,7 @@ public class ItemPriceRepositoryCustomImpl extends QuerydslRepositorySupport imp
     }
 
     @Override
-    public ItemPriceDto findByItemPrice(String biItemcode, String setDtReplace) {
+    public ItemPriceDto findByItemPrice(String biItemcode, String closeDt) {
 
         QItemPrice itemPrice = QItemPrice.itemPrice;
 
@@ -92,13 +92,7 @@ public class ItemPriceRepositoryCustomImpl extends QuerydslRepositorySupport imp
                         itemPrice.insertDateTime
                 ));
 
-        query.where(itemPrice.biItemcode.eq(biItemcode));
-
-        if(setDtReplace != null){
-            query.where(itemPrice.setDt.eq(setDtReplace));
-        }else{
-            query.where(itemPrice.modify_id.eq("null"));
-        }
+        query.where(itemPrice.biItemcode.eq(biItemcode).and(itemPrice.closeDt.eq(closeDt)));
 
         return query.fetchOne();
     }

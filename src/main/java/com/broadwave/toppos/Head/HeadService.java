@@ -198,8 +198,8 @@ public class HeadService {
     }
 
     // 상품 가격 검색
-    public ItemPriceDto findByItemPrice(String biItemcode, String setDtReplace) {
-        return itemPriceRepositoryCustom.findByItemPrice(biItemcode, setDtReplace);
+    public ItemPriceDto findByItemPrice(String biItemcode, String closeDt) {
+        return itemPriceRepositoryCustom.findByItemPrice(biItemcode, closeDt);
     }
 
     // 상품 가격 멀티 저장

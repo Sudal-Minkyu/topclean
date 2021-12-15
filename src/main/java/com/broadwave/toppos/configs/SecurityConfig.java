@@ -36,8 +36,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         // CSRF 설정 Disable
         http
-                .httpBasic().disable() // rest api 만을 고려하여 기본 설정은 해제하겠습니다.
-                .csrf().disable() // csrf 보안 토큰 disable처리.
+                .httpBasic().disable() // rest api 만을 고려하여 기본 설정은 해제
+                .csrf().disable() // csrf 보안 토큰 disable처리
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // 토큰 기반 인증이므로 세션은 사용하지 않음
                 .and()
 
@@ -57,7 +57,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/head/**").hasAnyAuthority("ROLE_HEAD","ROLE_ADMIN") // "ROLE_CALCULATE" 회계관리는 일단 제외 -> 후추 회계관리가 사용되는 API에 직접연결하기
                 .anyRequest().authenticated()   // 나머지 API 는 전부 인증 필요
 
-                // 로그아웃기능 만들어야함
+                // 로그아웃기능 만들어야함(완료)
 //                .and()
 //                .formLogin().loginPage("/login").failureUrl("/login?error").permitAll()
 //                .defaultSuccessUrl("/admin/index")

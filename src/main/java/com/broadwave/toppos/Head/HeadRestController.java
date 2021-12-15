@@ -923,7 +923,7 @@ public class HeadRestController {
         log.info("종료임 : "+closeDate);
 
         String setDtReplace = setDt.replaceAll("-","");
-        String claseDtReplace = closeDate.replaceAll("-","");
+        String closeDtReplace = closeDate.replaceAll("-","");
         log.info("setDtReplace : "+setDtReplace);
 
         Sheet worksheet = workbook.getSheetAt(0); // 첫번째 시트
@@ -975,18 +975,17 @@ public class HeadRestController {
 //                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP015.getCode(), i+"번째 행 "+ResponseErrorCode.TP015.getDesc(), "문자", "상품코드 : "+excelList.get(0).toString()));
                 }else{
                     log.info(i+"번째 excelList 시작");
-                    ItemPriceDto itemPriceDto = headService.findByItemPrice(excelList.get(0).toString(), null);
+                    ItemPriceDto itemPriceDto = headService.findByItemPrice(excelList.get(0).toString(), "99991231");
+                    log.info(i+"번째 itemPriceDto : "+itemPriceDto);
                     if(itemPriceDto != null){
                         itemPrice = modelMapper.map(itemPriceDto, ItemPrice.class);
                         itemPrice.setModify_id(login_id);
                         itemPrice.setModifyDateTime(LocalDateTime.now());
-                        itemPrice.setCloseDt(claseDtReplace);
+                        itemPrice.setCloseDt(closeDtReplace);
 
                         itemPriceUpdateArrayList.add(itemPrice);
-
                         itemPrice = new ItemPrice();
                     }
-
                     itemPrice.setBiItemcode(excelList.get(0).toString());
                     itemPrice.setSetDt(setDtReplace);
                     itemPrice.setCloseDt("99991231");
@@ -1009,15 +1008,16 @@ public class HeadRestController {
 
                     itemPrice.setInsert_id(login_id);
                     itemPrice.setInsertDateTime(LocalDateTime.now());
-                    itemPrice.setModify_id("null");
                     log.info(i+"번째 itemPrice : "+itemPrice);
 
                     itemPriceSaveArrayList.add(itemPrice);
-
-                    excelList.clear();
                 }
+                excelList.clear();
             }
         }
+
+//        log.info("수정 데이터리스트 itemPriceUpdateArrayList : "+itemPriceUpdateArrayList);
+//        log.info("신규 데이터리스트 itemPriceSaveArrayList : "+itemPriceSaveArrayList);
 
         HashMap<String, Object> data = new HashMap<>();
         if(errorList.size() == 0){
