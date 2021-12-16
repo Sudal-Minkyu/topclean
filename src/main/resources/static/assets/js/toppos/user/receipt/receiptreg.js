@@ -425,13 +425,22 @@ gridProp[2] = {
     enableFilter : true,
 };
 
+const fpTypeName = {
+    "01" : "현금",
+    "02" : "카드",
+    "03" : "적립금",
+}
+
 gridColumnLayout[3] = [
     {
-        dataField: "",
-        headerText: "",
-        colSpan: 2,
+        dataField: "fpType",
+        labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+            return fpTypeName[value];
+        },
     }, {
-        dataField: "",
+        dataField: "fpAmt",
+        dataType: "numeric",
+        autoThousandSeparator: "true",
     },
 ];
 
@@ -440,9 +449,8 @@ gridProp[3] = {
     selectionMode : "singleRow",
     noDataMessage : "출력할 데이터가 없습니다.",
     enableColumnResize : false,
-    showStateColumn : true,
-    enableFilter : true,
     height : 140,
+    showHeader : false,
 };
 
 
@@ -1041,6 +1049,7 @@ function onRemoveOrder() {
     }else{
         AUIGrid.removeRow(gridId[0], "selectedIndex");
     }
+    calculateMainPrice();
 }
 
 function setNextTag(tag) {
@@ -1073,13 +1082,16 @@ function onSaveTemp() {
     // 삭제된 행 아이템들(배열)
     const deletedRowItems = AUIGrid.getRemovedItems(gridId[0]);
 
-    const etc = {
+    let etc = {
         checkNum: checkNum,
         bcId: selectedCustomer.bcId,
+    }
+
+    if(checkNum === "1"){
         frNo: initialData.etcData.frNo,
-        frNormalAmount: $("#totFdNormalAmount").html().replace(/[^0-9]/g, ""),
-        frDiscountAmount: $("#totChangeAmount").html().replace(/[^0-9]/g, ""),
-        frTotalAmount: $("#totFdRequestAmount").html().replace(/[^0-9]/g, ""),
+        etc.frNormalAmount = $("#totFdNormalAmount").html().replace(/[^0-9]/g, "");
+        etc.frDiscountAmount = $("#totChangeAmount").html().replace(/[^0-9]/g, "");
+        etc.frTotalAmount = $("#totFdRequestAmount").html().replace(/[^0-9]/g, "");
     }
 
     const data = {
@@ -1088,14 +1100,17 @@ function onSaveTemp() {
         "delete" : deletedRowItems,
         "etc" : etc
     };
+    console.log(data);
 
     CommonUI.ajaxjson(gridSaveUrl[0], JSON.stringify(data), function (req) {
-        alertSuccess("임시저장이 되었습니다");
-        initialData.etcData.frNo = req.sendData.frNo;
         AUIGrid.removeSoftRows(gridId[0]);
         AUIGrid.resetUpdatedItems(gridId[0]);
         AUIGrid.clearGridData(gridId[2]);
-        setDataIntoGrid(2, gridCreateUrl[2]);
+        if(checkNum === "1") {
+            alertSuccess("임시저장이 되었습니다");
+            initialData.etcData.frNo = req.sendData.frNo;
+            setDataIntoGrid(2, gridCreateUrl[2]);
+        }
     })
 }
 
@@ -1167,4 +1182,13 @@ function changeQty() {
         + tempItem.fdAdd1Amt - tempItem.fdDiscountAmt) * tempItem.fdQty;
     AUIGrid.updateRowsById(gridId[0], tempItem);
     calculateMainPrice();
+}
+
+/* 접수완료시 호출 API */
+function onPay() {
+    checkNum = "2";
+    onSaveTemp();
+    $("#paymentPop").addClass("active");
+
+
 }

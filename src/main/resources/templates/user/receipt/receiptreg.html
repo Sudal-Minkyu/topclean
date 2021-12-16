@@ -157,7 +157,7 @@
                         <li><button class="c-button c-button--small" type="button" onclick="onReadTempSave()">임시저장내역</button></li>
                     </ul>
                     <ul>
-                        <li><button class="c-button c-button--solid" type="button" onclick="onPay()">결제하기</button></li>
+                        <li><button class="c-button c-button--solid" type="button" onclick="onPay()">접수완료</button></li>
                         <li><button class="c-button" type="button" onclick="onRepeatRequest()">반복접수</button></li>
                     </ul>
                 </div>
@@ -724,7 +724,7 @@
     </div>
 
     <!-- 결제팝업 -->
-    <div class="pop">
+    <div class="pop" id="paymentPop">
         <div class="pop__box">
             <div class="pop__article">
                 <div class="pop__pay">
