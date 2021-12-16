@@ -84,11 +84,6 @@ public class ReceiptService {
         return requestRepository.findByRequest(frNo, frConfirmYn, frCode);
     }
 
-    // 결제할때 호출하는 마스터테이블
-    public  Optional<Request> findByRequestByFrNoFrCode(String frNo,  String frCode){
-        return requestRepository.findByRequestByFrNoFrCode(frNo, frCode);
-    }
-
     // 접수코드와 태그번호를 통한 접수세부 테이블 조회
     public Optional<RequestDetail> findByRequestDetail(String frNo, String fdTag){
         return requestDetailRepository.findByRequestDetail(frNo, fdTag);
@@ -397,31 +392,54 @@ public class ReceiptService {
         }else{
             log.info("결제 정보있음 고객명 : "+optionalCustomer.get().getBcName());
             log.info("접수코드 데이터 : "+etcData.getFrNo());
-            Optional<Request> optionalRequest = findByRequestByFrNoFrCode(etcData.getFrNo(), frCode);
-
+            Optional<Request> optionalRequest = findByRequest(etcData.getFrNo(), "N" ,frCode);
             if(!optionalRequest.isPresent()){
                 return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "결제 할 접수"+ResponseErrorCode.TP009.getDesc(), "문자", "접수코드 : "+etcData.getFrNo()));
             }else{
 
+                Integer frPayAmount;
+                List<Payment> paymentList = new ArrayList<>();
 
+                // 결제 데이터가 존재할시 저장 시작
+                if(paymentDtos.size() != 0){
+                    frPayAmount = paymentDtos.get(0).getFpAmt();
+                    log.info("결제 금액 : "+frPayAmount);
+                    for(PaymentDto paymentDto : paymentDtos){
+                        Payment payment = modelMapper.map(paymentDto,Payment.class);
+                        payment.setBcId(optionalCustomer.get());
+                        payment.setFrId(optionalRequest.get());
+                        payment.setInsert_id(login_id);
+                        payment.setInsert_date(LocalDateTime.now());
+                        paymentList.add(payment);
+                    }
 
+                    // 마스터테이블에 결제금액 업데이트
+                    optionalRequest.get().setFrPayAmount(frPayAmount);
+                    optionalRequest.get().setModity_id(login_id);
+                    optionalRequest.get().setModity_date(LocalDateTime.now());
 
+//                    // 미수여부 기능작업중...
+//                    optionalRequest.get().setFrUncollectYn("Y");
 
-                data.put("optionalRequest",optionalRequest.get());
-                // 접수 마스터테이블 업데이트
-//                optionalRequest.get().
-
+                    requestAndPaymentSave(optionalRequest.get(), paymentList);
+                    data.put("paymentList",paymentList);
+                }
 
             }
         }
 
-
-
-
-
-        data.put("paymentDtos",paymentDtos);
-
         return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
+    // 결제 Save : 마스터테이블업데이트 및 결제정보 저장
+    @Transactional(rollbackFor = SQLException.class)
+    public void requestAndPaymentSave(Request request, List<Payment> paymentList){
+        try{
+            requestRepository.save(request);
+            paymentRepository.saveAll(paymentList);
+        }catch (Exception e){
+            log.info("에러발생 트랜젝션실행 : "+e);
+        }
     }
 
 

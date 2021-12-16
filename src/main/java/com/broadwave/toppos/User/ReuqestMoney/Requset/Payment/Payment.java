@@ -29,7 +29,7 @@ public class Payment {
 
     @ManyToOne(targetEntity = Request.class,fetch = FetchType.LAZY)
     @JoinColumn(name="fr_id")
-    private Request fpId; // 접수 마스터테이블 ID값
+    private Request frId; // 접수 마스터테이블 ID값
 
     @ManyToOne(targetEntity = Customer.class,fetch = FetchType.LAZY)
     @JoinColumn(name="bc_id")
