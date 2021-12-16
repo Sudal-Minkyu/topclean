@@ -17,9 +17,10 @@ import lombok.Setter;
 @AllArgsConstructor
 public class PaymentDto {
     private String fpType; // 결제타입 (01:현금, 02:카드,03:적립금)
-    private Integer fsClose; // 카드할부 ( 0: 일시불, 2: 2개월 ~ 12 : 12개월) - 기본값 0
+    private Integer fpMonth; // 카드할부 ( 0: 일시불, 2: 2개월 ~ 12 : 12개월) - 기본값 0
     private Integer fpAmt; // 결제금액( 미수에서 카드결제시 카드결제금액보다작을수있다.)
     private Integer fpRealAmt; // 실제결제금액(총결제금액 -> 여러건을 미수관리에서 합쳐서 결제할경우 총결제금액)
+    private Integer fpCollectAmt; // 미수 완납금액
     private String fpCancelYn; // 결제취소 여부 : 기본값 N
     private String fpSavedMoneyYn; // 결제취소후 적립금전환 여부 : 기본값 N
     private String fpCatApprovalno; // 카드승인번호 ex 73536757
@@ -35,12 +36,16 @@ public class PaymentDto {
     private String fpCatVatamount; // 부가세금액 : ex> 000001090
     private String fpCatTelegramflagt; // 전문구분 : ex a1
 
+    public Integer getFpCollectAmt() {
+        return fpCollectAmt;
+    }
+
     public String getFpType() {
         return fpType;
     }
 
-    public Integer getFsClose() {
-        return fsClose;
+    public Integer getFpMonth() {
+        return fpMonth;
     }
 
     public Integer getFpAmt() {

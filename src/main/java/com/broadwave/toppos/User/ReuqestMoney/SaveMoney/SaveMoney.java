@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-@Table(name="fr_saved_money")
+@Table(name="fs_saved_money")
 public class SaveMoney {
 
     @Id

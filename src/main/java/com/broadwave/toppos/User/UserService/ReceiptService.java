@@ -84,6 +84,11 @@ public class ReceiptService {
         return requestRepository.findByRequest(frNo, frConfirmYn, frCode);
     }
 
+    // 결제할때 호출하는 마스터테이블
+    public  Optional<Request> findByRequestByFrNoFrCode(String frNo,  String frCode){
+        return requestRepository.findByRequestByFrNoFrCode(frNo, frCode);
+    }
+
     // 접수코드와 태그번호를 통한 접수세부 테이블 조회
     public Optional<RequestDetail> findByRequestDetail(String frNo, String fdTag){
         return requestDetailRepository.findByRequestDetail(frNo, fdTag);
@@ -149,7 +154,7 @@ public class ReceiptService {
             Request requestSave;
             if(etcData.getFrNo() != null){
                 log.info("접수마스터 테이블 수정합니다. 접수코드 : "+etcData.getFrNo());
-                Optional<Request> optionalRequest = findByRequest(etcData.getFrNo(), "N", frCode);
+                Optional<Request> optionalRequest = findByRequest(etcData.getFrNo(), "Y", frCode);
                 if(!optionalRequest.isPresent()){
                     return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "접수 할 "+ResponseErrorCode.TP009.getDesc(), "문자", "접수코드 : "+etcData.getFrNo()));
                 }else{
@@ -391,14 +396,30 @@ public class ReceiptService {
             return ResponseEntity.ok(res.fail(ResponseErrorCode.TP018.getCode(), ResponseErrorCode.TP018.getDesc(),null, null));
         }else{
             log.info("결제 정보있음 고객명 : "+optionalCustomer.get().getBcName());
+            log.info("접수코드 데이터 : "+etcData.getFrNo());
+            Optional<Request> optionalRequest = findByRequestByFrNoFrCode(etcData.getFrNo(), frCode);
 
+            if(!optionalRequest.isPresent()){
+                return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "결제 할 접수"+ResponseErrorCode.TP009.getDesc(), "문자", "접수코드 : "+etcData.getFrNo()));
+            }else{
+
+
+
+
+
+                data.put("optionalRequest",optionalRequest.get());
+                // 접수 마스터테이블 업데이트
+//                optionalRequest.get().
+
+
+            }
         }
 
 
 
 
 
-
+        data.put("paymentDtos",paymentDtos);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }

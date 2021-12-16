@@ -39,13 +39,16 @@ public class Payment {
     private String fpType; // 결제타입 (01:현금, 02:카드,03:적립금)
 
     @Column(name="fp_month")
-    private Integer fsClose; // 카드할부 ( 0: 일시불, 2: 2개월 ~ 12 : 12개월) - 기본값 0
+    private Integer fpMonth; // 카드할부 ( 0: 일시불, 2: 2개월 ~ 12 : 12개월) - 기본값 0
 
     @Column(name="fp_amt")
     private Integer fpAmt; // 결제금액( 미수에서 카드결제시 카드결제금액보다작을수있다.)
 
     @Column(name="fp_real_amt")
     private Integer fpRealAmt; // 실제결제금액(총결제금액 -> 여러건을 미수관리에서 합쳐서 결제할경우 총결제금액)
+
+    @Column(name="fp_collect_amt")
+    private Integer fpCollectAmt; // 미수 완납금액
 
     @Column(name="fp_cancel_yn")
     private String fpCancelYn; // 결제취소 여부 : 기본값 N

@@ -17,8 +17,13 @@ import lombok.Setter;
 @AllArgsConstructor
 public class PaymentMapperDto {
     private Long bcId; // 고객 고유ID값
+    private String frNo; // 접수코드
 
     public Long getBcId() {
         return bcId;
+    }
+
+    public String getFrNo() {
+        return frNo;
     }
 }
