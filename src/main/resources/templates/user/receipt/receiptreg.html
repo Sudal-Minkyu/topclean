@@ -80,7 +80,7 @@
 
                     </li>
                     <li>
-                        <h4>변동금액</h4>
+                        <h4>추가/할인금액</h4>
                         <p><span id="totChangeAmount">0</span><span class="won">원</span></p>
                     </li>
                 </ul>
@@ -157,7 +157,7 @@
                         <li><button class="c-button c-button--small" type="button" onclick="onReadTempSave()">임시저장내역</button></li>
                     </ul>
                     <ul>
-                        <li><button class="c-button c-button--solid" type="button" onclick="onPay()">접수완료</button></li>
+                        <li><button class="c-button c-button--solid" type="button" onclick="onApply()">접수완료</button></li>
                         <li><button class="c-button" type="button" onclick="onRepeatRequest()">반복접수</button></li>
                     </ul>
                 </div>
@@ -378,6 +378,12 @@
                                 <div class="choice">
                                     <input type="radio" name="urgent" id="urgent2" value="급세탁" />
                                     <label for="urgent2">급세탁</label>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="choice">
+                                    <input type="checkbox" name="fdPress" id="fdSpecialYn" />
+                                    <label for="fdSpecialYn">특수</label>
                                 </div>
                             </li>
                         </ul>
@@ -624,18 +630,14 @@
                     <div class="add-cost__input">
                         <!-- 상용구 들어갈 인풋 -->
                         <div class="c-text">
-                            <input type="text" id="fdAdd1Remark" class="keypad_remark" placeholder="수선 리스트 입력" />
+                            <input type="text" id="fdAdd1Remark" class="keypad_remark" placeholder="추가요금 리스트 입력" />
                             <button>키보드</button>
-                        </div>
-                        <div>
-                            <input type="checkbox" id="fdSpecialYn">
-                            <label for="fdSpecialYn">특수</label>
                         </div>
                     </div>
 
                     <div class="add-cost__keypad">
                         <!-- 숫자패드 -->
-                        <div>
+                        <div class="vkey-num active">
                             <div class="vkey-num__input">
                                 <input type="text" id="fdAdd1Amt" class="keypad_field" value="0" />
                             </div>
@@ -733,9 +735,9 @@
                         <div class="pop__pay-list">
                             <dl>
                                 <dt>미수금</dt>
-                                <dd class="color--red"><span>9,000</span>원</dd>
+                                <dd class="color--red"><span id="uncollectAmt">0</span>원</dd>
                                 <dt>적립금</dt>
-                                <dd class="color--blue"><span>19,000</span>원</dd>
+                                <dd class="color--blue"><span id="saveAmt">0</span>원</dd>
                             </dl>
                         </div>
                         <button class="c-button c-button--small c-button--darksolid">미수전액완납</button>
@@ -746,17 +748,17 @@
                         <div class="pop__pay-list">
                             <dl>
                                 <dt>접수금액</dt>
-                                <dd><span>9,000</span>원</dd>
+                                <dd><span id="payNormalAmt">0</span>원</dd>
                                 <dt>추가/할인금액</dt>
-                                <dd><span>19,000</span>원</dd>
+                                <dd><span id="payChangeAmt">0</span>원</dd>
                                 <dt>결제예정금액<span class="color--blue">(A)</span></dt>
-                                <dd class="color--red"><span>28,000</span>원</dd>
+                                <dd class="color--red"><span id="payRequestAmt">0</span>원</dd>
                                 <dt>적립금사용<span class="color--blue">(B)</span></dt>
-                                <dd class="color--blue"><button class="c-keybtn">키보드</button><span>19,000</span>원</dd>
-                                <dt>미수금결제<span>(C)</span></dt>
-                                <dd class="color--red"><span>9,000</span>원</dd>
+                                <dd class="color--blue"><button class="c-keybtn" onclick="onKeypad(0)">키보드</button><span id="applySavedAmt">0</span>원</dd>
+                                <dt>미수금결제<span class="color--blue">(C)</span></dt>
+                                <dd class="color--red"><button class="c-cancelbtn">취소</button><span id="applyUncollectAmt">0</span>원</dd>
                                 <dt class="final">최종결제금액<span class="bold">(A + B + C)</span></dt>
-                                <dd class="final"><span>18,000</span>원</dd>
+                                <dd class="final"><span id="totalAmt">0</span>원</dd>
                             </dl>
                         </div>
                     </div>
@@ -785,11 +787,12 @@
                             <div class="pop__pay-list pop__pay-list--cash">
                                 <dl>
                                     <dt>받은돈</dt>
-                                    <dd class="color--blue"><button class="c-keybtn">키보드</button><span>30,000</span>원</dd>
+                                    <dd class="color--blue"><button class="c-keybtn" onclick="onKeypad(1)">키보드</button>
+                                        <span id="receiveCash">0</span>원</dd>
                                     <dt>거스름돈</dt>
-                                    <dd class="color--blue"><span>10,000</span>원</dd>
+                                    <dd class="color--blue"><span id="changeCash">0</span>원</dd>
                                     <dt class="final">미수발생금액</dt>
-                                    <dd class="final"><span>18,000</span>원</dd>
+                                    <dd class="final"><span id="uncollectAmtCash">0</span>원</dd>
                                 </dl>
                             </div>
                         </div>
@@ -805,9 +808,10 @@
                             <div class="pop__pay-list">
                                 <dl>
                                     <dt>결제금액</dt>
-                                    <dd class="color--blue"><button class="c-keybtn">키보드</button><span>30,000</span>원</dd>
+                                    <dd class="color--blue"><button class="c-keybtn" onclick="onKeypad(2)">키보드</button>
+                                        <span id="receiveCard">0</span>원</dd>
                                     <dt class="final">미수발생금액</dt>
-                                    <dd class="final"><span>18,000</span>원</dd>
+                                    <dd class="final"><span id="uncollectAmtCard">0</span>원</dd>
                                 </dl>
                             </div>
                         </div>
@@ -818,10 +822,19 @@
 
             <ul class="pop__console">
                 <li><button class="c-button pop__close">닫기</button></li>
-                <li><button class="c-button c-button--dark pop__close">결제하기</button></li>
+                <li><button class="c-button c-button--dark pop__close" onclick="onPayment()">결제하기</button></li>
             </ul>
         </div>
     </div>
 
+    <div id ="payStatus" style="position: absolute; left: 25px; top: 100px; height: 300px;width: 300px;	background-color: #99ccff; display: none;" >
+        결제중 창이 닫힐때까지 카드를 빼지마세요
+    </div>
+
+    <div id ="resultmsg" style="height: 300px;width: 300px;	background-color: #ffa980;">
+        결과 메세지
+    </div>
+
+    <input type="hidden" id="hiddenKeypad" />
 </div>
 </html>

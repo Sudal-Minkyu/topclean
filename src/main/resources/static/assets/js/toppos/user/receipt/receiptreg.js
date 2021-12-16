@@ -119,7 +119,6 @@ $(function() {
     $("#fdAddComplete").on("click", function () {
         currentRequest.fdAdd1Amt = parseInt($("#fdAdd1Amt").val().replace(/[^0-9]/g, ""));
         currentRequest.fdAdd1Remark = $("#fdAdd1Remark").val();
-        currentRequest.fdSpecialYn = $("#fdSpecialYn").is(":checked") ? "Y" : "N";
         if(currentRequest.fdAdd1Amt || currentRequest.fdAdd1Remark.length) {
             $("#fdAdd1").prop("checked", true);
         }else{
@@ -148,6 +147,18 @@ $(function() {
         if(e.originalEvent.code === "Enter") {
             onSearchCustomer();
         }
+    });
+
+    // 결제팝업 탭
+    const $payTabsBtn = $('.pop__pay-tabs-item');
+    const $payTabsContent = $('.pop__tabs-content');
+
+    $payTabsBtn.on('click', function() {
+        const idx = $(this).index();
+        $payTabsBtn.removeClass('active');
+        $payTabsBtn.eq(idx).addClass('active');
+        $payTabsContent.removeClass('active');
+        $payTabsContent.eq(idx).addClass('active');
     });
 });
 
@@ -569,7 +580,6 @@ function onReadTempSave() {
 function onSelectTempSave() {
     const frNo = AUIGrid.getSelectedRows(gridId[2])[0].frNo;
     CommonUI.ajax(gridCreateUrl[0], "GET", {frNo: frNo}, function (req) {
-        console.log(req);
         initialData.etcData.frNo = frNo;
         selectedCustomer = req.sendData.gridListData;
         onPutCustomer(selectedCustomer);
@@ -598,7 +608,6 @@ function onPutCustomer(selectedCustomer) {
             bcGradeName = "VVIP";
             break;
     }
-    console.log(selectedCustomer);
     $("#bcGrade").html(bcGradeName);
     $("#bcName").html(selectedCustomer.bcName + "님");
     $("#bcValuation").attr("class",
@@ -878,6 +887,7 @@ function onAddOrder() {
     currentRequest.fdDiscountGrade = $("input[name='fdDiscountGrade']:checked").val();
     currentRequest.fdRemark = $("#fdRemark").val();
     currentRequest.frEstimateDate = initialData.etcData.frEstimateDate.replace(/[^0-9]/g, "");
+    currentRequest.fdSpecialYn = $("#fdSpecialYn").is(":checked") ? "Y" : "N";
 
     /* 상세한 사항이 정해지면 수정할 것 */
     currentRequest.urgent = $("input[name='urgent']:checked").val();
@@ -1098,7 +1108,6 @@ function onSaveTemp() {
         "delete" : deletedRowItems,
         "etc" : etc
     };
-    console.log(data);
 
     CommonUI.ajaxjson(gridSaveUrl[0], JSON.stringify(data), function (req) {
         AUIGrid.removeSoftRows(gridId[0]);
@@ -1164,7 +1173,6 @@ function removeEventsFromElement(element) {
 
 function onRepeatRequest() {
     let items = AUIGrid.getSelectedItems(gridId[0]);
-    console.log(items);
     if(items.length) {
         delete items[0].item["_$uid"];
         items[0].item["fdTag"] = $("#fdTag").val().replace(/[^0-9a-zA-Z]/g, "");
@@ -1183,10 +1191,232 @@ function changeQty() {
 }
 
 /* 접수완료시 호출 API */
-function onPay() {
+function onApply() {
     checkNum = "2";
     onSaveTemp();
+
+    // 여는 순간에 미수금과 적립금을 가져올 것 지금은 임의의 값
+    $("#uncollectAmt").html("2,000");
+    $("#saveAmt").html("5,000");
+    // ======================
+
+    const totRequestAmt = $("#totFdRequestAmount").html().replace(/[^0-9]/g, "");
+    $("#payNormalAmt").html($("#totFdNormalAmount").html().replace(/[^0-9]/g, "")
+     .toLocaleString());
+    $("#payChangeAmt").html($("#totChangeAmount").html().replace(/[^0-9]/g, "")
+     .toLocaleString());
+    $("#applySavedAmt").html("0");
+    $("#applyUncollectAmt").html("0");
+    $("#payRequestAmt").html(totRequestAmt.toLocaleString());
+    $("#totalAmt").html(totRequestAmt.toLocaleString());
+
+    calculateOne();
+    calculateTwo();
+    calculateThree();
+
     $("#paymentPop").addClass("active");
+}
+
+function calculateOne() {
+    const totRequestAmt = parseInt($("#totFdRequestAmount").html().replace(/[^0-9]/g, ""));
+    const applySavedAmt = parseInt($("#applySavedAmt").html().replace(/[^0-9]/g, ""));
+    const applyUncollectAmt = parseInt($("#applyUncollectAmt").html().replace(/[^0-9]/g, ""));
+    const totalAmt = totRequestAmt - applySavedAmt + applyUncollectAmt;
+    $("#totalAmt").html(totalAmt.toLocaleString());
+}
+
+function calculateTwo() {
+    const totalAmt = parseInt($("#totalAmt").html().replace(/[^0-9]/g, ""));
+    const receiveCash = parseInt($("#receiveCash").html().replace(/[^0-9]/g, ""));
+    const changeCash = receiveCash - totalAmt;
+    const uncollectAmtCash = totalAmt - receiveCash;
+
+    if(changeCash > 0) {
+        $("#changeCash").html(changeCash.toLocaleString());
+        $("#uncollectAmtCash").html("0");
+    }else{
+        $("#changeCash").html("0");
+        $("#uncollectAmtCash").html(uncollectAmtCash.toLocaleString());
+    }
+}
+
+function calculateThree() {
+    const totalAmt = parseInt($("#totalAmt").html().replace(/[^0-9]/g, ""));
+    const receiveCard = parseInt($("#receiveCard").html().replace(/[^0-9]/g, ""));
+    const uncollectAmtCard = totalAmt - receiveCard;
+    if(uncollectAmtCard > 0) {
+        $("#uncollectAmtCard").html(uncollectAmtCard.toLocaleString());
+    }else{
+        $("#uncollectAmtCard").html("0");
+    }
+}
+
+/* 결재할 때 */
+function onPayment() {
+
+    const url = "/api/user/requestPayment";
+    let data = {
+        payment : [],
+        etc : {
+            bcId: selectedCustomer.bcId,
+            frNo: initialData.etcData.frNo,
+        }
+    }
+    const applyUncollectAmt = parseInt($("#applyUncollectAmt").html().replace(/[^0-9]/g, ""));
+
+    const paymentTab = $(".pop__pay-tabs-item.active").attr("data-id");
+    if(paymentTab === "tabCash") {
+        const receiveCash = parseInt($("#receiveCash").html().replace(/[^0-9]/g, ""));
+        const paymentCash = {
+            fpType: "01",
+            fpRealAmt: receiveCash,
+            fpAmt: receiveCash - applyUncollectAmt,
+            fpCollectAmt: applyUncollectAmt,
+        }
+        data.payment.push(paymentCash);
+    }else if(paymentTab === "tabCard") {
+        const receiveCard = parseInt($("#receiveCard").html().replace(/[^0-9]/g, ""));
+        const paymentCard = {
+            fpType: "02",
+            fpMonth: 0,
+            fpRealAmt: receiveCard,
+            fpAmt: receiveCard - applyUncollectAmt,
+            fpCollectAmt: applyUncollectAmt,
+            fpCatApprovalno: "01",
+            fpCatApprovaltime: 0,
+            fpCatCardno: 10000,
+            fpCatIssuercode: "01",
+            fpCatIssuername: "IBK 비씨카드",
+            fpCatMuechantnumber: "72729972",
+            fpCatMessage1: "IBK 비씨카드",
+            fpCatMessage2: "IBK 비씨카드",
+            fpCatNotice1: "EDC매출표",
+            fpCatTotamount: "000010000",
+            fpCatVatamount: "000001090",
+            fpCatTelegramflagt: "a1"
+        }
+        data.payment.push(paymentCard);
+    }
+    const applySavedAmt = parseInt($("#applySavedAmt").html().replace(/[^0-9]/g, ""));
+    if(applySavedAmt) {
+        const paymentSaved = {
+            fpType: "03",
+            fpRealAmt: applySavedAmt,
+            fpAmt: applySavedAmt,
+            fpCollectAmt: 0,
+        }
+        data.payment.push(paymentSaved);
+    }
+
+    /*
+    CommonUI.ajaxjson(url, data, function (){
+
+    });
+    */
+}
 
 
+/* 키패드 작동용 */
+let keypadNum;
+function onKeypad(num) {
+    const targetId = ["applySavedAmt", "receiveCash", "receiveCard"];
+    keypadNum = num;
+    $("#hiddenKeypad").val($("#" + targetId[keypadNum]).html());
+    vkey.showKeypad("hiddenKeypad", onKeypadConfirm);
+}
+
+function onKeypadConfirm() {
+    const targetId = ["applySavedAmt", "receiveCash", "receiveCard"];
+    $("#" + targetId[keypadNum]).html($("#hiddenKeypad").val());
+
+    switch (keypadNum) {
+        case 0 :
+            calculateOne();
+            calculateTwo();
+            calculateThree();
+            break;
+        case 1 :
+            calculateTwo();
+            break;
+        case 2 :
+            calculateThree();
+            break;
+    }
+}
+
+/* 임시 카드 결제용 함수 */
+function paymentCard() {
+
+    $('#payStatus').show();
+
+    // type: card or cash
+    // franchiseNo : 가맹점코드 3자리 문자열
+    // totalAmount : 총 결제금액
+    // month : 할부 (0-일시불, 2-2개월)
+
+    let paymentData =
+        {
+            "type":"card",
+            "franchiseNo":"123",
+            "franchiseName":"소만마을점",
+            "businessNO": "125-55-45671",
+            "repreName" : "김점주",
+            "franchiseTel" : "031-4564-7894",
+            "customerName" : "최고객",
+            "customerTel" : "010-****-7777",
+            "requestDt" : "2021-11-15 13:15",
+            "totalAmount":10500,
+            "addAmount":1500,
+            "dcAmount":500,
+            "estimateDt" : "2021-11-18",
+            "month":0,
+            "items":[
+                {"tagno":"1231234","color":"없음","itemname":"면 상의","specialyn":"Y","price":2500},
+                {"tagno":"1231235","color":"남색","itemname":"청바지 하의","specialyn":"","price":3500},
+                {"tagno":"1241236","color":"검정","itemname":"롱 오리털 코트","specialyn":"","price":4500}
+            ]
+        };
+
+
+    if (paymentData.type ==="card") {
+        CAT.CatCredit(paymentData, function (res) {
+            $('#resultmsg').text(res);
+            $('#payStatus').hide();
+            let resjson = JSON.parse(res);
+            //결제 성공일경우 Print
+            if (resjson.STATUS === "SUCCESS") {
+                /* res JSSON Key List
+                    resultData = '{ ';
+                    resultData += '"STATUS":"SUCCESS",';
+                    resultData += '"APPROVALTIME":"' +FindJSONtoString("APPROVALTIME", data) + '",';
+                    resultData += '"APPROVALNO":"' +FindJSONtoString("APPROVALNO", data) + '",';
+                    resultData += '"CARDNO":"' +FindJSONtoString("CARDNO", data) + '",';
+                    resultData += '"ISSUERCODE":"' +FindJSONtoString("ISSUERCODE", data) + '",';
+                    resultData += '"ISSUERNAME":"' +FindJSONtoString("ISSUERNAME", data) + '",';
+                    resultData += '"MERCHANTNUMBER":"' +FindJSONtoString("MERCHANTNUMBER", data) + '",';
+                    resultData += '"MESSAGE1":"' +FindJSONtoString("MESSAGE1", data) + '",';
+                    resultData += '"MESSAGE2":"' +FindJSONtoString("MESSAGE2", data) + '",';
+                    resultData += '"NOTICE1":"' +FindJSONtoString("NOTICE1", data) + '",';
+                    resultData += '"TOTAMOUNT":"' +FindJSONtoString("TOTAMOUNT", data) + '",';
+                    resultData += '"VATAMOUNT":"' +FindJSONtoString("VATAMOUNT", data) + '",';
+                    resultData += '"TELEGRAMFLAG":"' +FindJSONtoString("TELEGRAMFLAG", data) + '"';
+                    resultData += '}';
+             */
+
+                let creditData =
+                    {
+                        "cardNo": resjson.CARDNO,
+                        "cardName": resjson.ISSUERNAME,
+                        "approvalTime": resjson.APPROVALTIME,
+                        "approvalNo": resjson.APPROVALNO
+                    };
+                CAT.CatPrint(paymentData, creditData, "N");
+            }
+
+        });
+    }
+    if (paymentData.type ==="cash") {
+        CAT.CatPrint(paymentData, "", "N");
+        $('#payStatus').hide();
+    }
 }
