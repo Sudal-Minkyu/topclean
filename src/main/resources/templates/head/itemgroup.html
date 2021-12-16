@@ -2,7 +2,7 @@
 <html lang="ko"
 	  xmlns:th="http://www.thymeleaf.org"
 	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	  layout:decorate="~{layout/default}" xmlns="http://www.w3.org/1999/html">
+	  layout:decorate="~{layout/defaulthead}" xmlns="http://www.w3.org/1999/html">
 
 <!-- 사용자 CSS 추가 -->
 <th:block layout:fragment="css">
@@ -14,43 +14,68 @@
 	<script src="/assets/js/toppos/head/itemgroup.js"></script>
 </th:block>
 
-<div layout:fragment="content" class="content padding-zero content--main">
-	<h1>상품그룹관리 페이지</h1>
-
-	<div>
-		대분류
-		<div>
-			<button type="button" onclick="addRow(0)">추가</button>
-			<button type="button" onclick="removeRow(0)">삭제</button>
+<div layout:fragment="content" class="content content--padding">
+	<h2 class="content__heading">상품그룹관리지</h2>
+	
+	<div class="float">
+		<div class="float__content">
+			<div class="type">
+				<div class="type__head">
+					<h3 class="type__heading">대분류</h3>
+				</div>
+				<div class="type__content">
+					<ul class="article__console article__console--right article__console--non-border">
+						<li><button type="button" class="c-button c-button--solid" onclick="addRow(0)">추가</button></li>
+						<li><button type="button" class="c-button c-button--darksolid" onclick="removeRow(0)">삭제</button></li>
+					</ul>
+					<div class="type__grid">
+						<div id="grid_bigclass" style="height: 160px;"></div>
+					</div>
+					<ul class="article__console">
+						<li><button type="button" class="c-button c-button--solid" onclick="gridSave(0)">대분류 저장</button></li>
+					</ul>
+				</div>
+			</div>
 		</div>
-		<div id="grid_bigclass"></div>
-		<div>
-			<button type="button" onclick="gridSave(0)">대분류 저장</button>
+		
+		<div class="float__content">
+			<div class="type">
+				<div class="type__head">
+					<h3 class="type__heading">중분류</h3>
+				</div>
+				<div class="type__content">
+					<ul class="article__console article__console--right article__console--non-border">
+						<li><button type="button" class="c-button c-button--solid" onclick="addRow(1)">추가</button></li>
+						<li><button type="button" class="c-button c-button--darksolid" onclick="removeRow(1)">삭제</button></li>
+					</ul>
+					<div class="type__grid">
+						<div id="grid_mediumclass" style="height: 160px;"></div>
+					</div>
+					<ul class="article__console">
+						<li><button type="button" class="c-button c-button--solid" onclick="gridSave(1)">중분류 저장</button></li>
+					</ul>
+				</div>
+			</div>
 		</div>
 	</div>
-	<hr>
-	<div>
-		중분류
-		<div>
-			<button type="button" onclick="addRow(1)">추가</button>
-			<button type="button" onclick="removeRow(1)">삭제</button>
+	
+	<div class="type type--padding">
+		<div class="type__head">
+			<h3 class="type__heading">최종상품</h3>
 		</div>
-		<div id="grid_mediumclass"></div>
-		<div>
-			<button type="button" onclick="gridSave(1)">중분류 저장</button>
-		</div>
-	</div>
-	<hr>
-	<div>
-		최종상품
-		<div>
-			<button type="button" onclick="addRow(2)">추가</button>
-			<button type="button" onclick="removeRow(2)">삭제</button>
-		</div>
-		<div id="grid_finalproduct"></div>
-		<div>
-			<button type="button" onclick="gridSave(2)">상품코드 저장</button>
+		<div class="type__content">
+			<ul class="article__console article__console--right article__console--non-border">
+				<li><button type="button" class="c-button c-button--solid" onclick="addRow(2)">추가</button></li>
+				<li><button type="button" class="c-button c-button--darksolid" onclick="removeRow(2)">삭제</button></li>
+			</ul>
+			<div class="type__grid">
+				<div id="grid_finalproduct" style="height: 160px;"></div>
+			</div>
+			<ul class="article__console">
+				<li><button type="button" class="c-button c-button--solid" onclick="gridSave(2)">중분류 저장</button></li>
+			</ul>
 		</div>
 	</div>
+	
 </div>
 </html>

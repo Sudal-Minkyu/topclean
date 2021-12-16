@@ -2,7 +2,7 @@
 <html lang="ko"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout/default}" xmlns="http://www.w3.org/1999/html">
+      layout:decorate="~{layout/defaulthead}" xmlns="http://www.w3.org/1999/html">
 
 <!-- 사용자 CSS 추가 -->
 <th:block layout:fragment="css">
@@ -14,8 +14,8 @@
     <script src="/assets/js/toppos/head/franchiseprice.js"></script>
 </th:block>
 
-<div layout:fragment="content" class="content padding-zero content--main">
-    <h1>특정품목가격 페이지</h1>
+<div layout:fragment="content" class="content content--padding">
+	<h2 class="content__heading">특정품목가격 페이지</h2>
 
     <div>
         가맹점 코드

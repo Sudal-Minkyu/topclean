@@ -2,7 +2,7 @@
 <html lang="ko"
 	  xmlns:th="http://www.thymeleaf.org"
 	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	  layout:decorate="~{layout/default}" xmlns="http://www.w3.org/1999/html">
+	  layout:decorate="~{layout/defaulthead}" xmlns="http://www.w3.org/1999/html">
 
 <!-- 사용자 CSS 추가 -->
 <th:block layout:fragment="css">
@@ -19,33 +19,74 @@
 	<script src="/assets/js/toppos/head/itemprice.js"></script>
 </th:block>
 
-<div layout:fragment="content" class="content padding-zero content--main">
-	<h1>상품그룹가격 페이지</h1>
-	<div>
-		대분류
-		<select id="s_bgName">
-			<option value="">전체</option>
-			<option th:each ="groupName : ${groupNames}"
-					th:value="${groupName.bgName}"
-					th:text="${groupName.bgName}">
-			</option>
-		</select>
-		상품코드
-		<input type="text" id="s_biItemcode" onkeyup="itemCodeValidator()">
-		상품명
-		<input type="text" id="s_biName">
-		가격적용일
-		<select id="s_setDt" name="s_setDt">
-		</select>
-		<button type="button" onclick="filterItems()">검색</button>
-		<button type="button" onclick="filterReset()">초기화</button>
-		<button type="button" onclick="removeRow()">선택삭제</button>
+<div layout:fragment="content" class="content content--padding">
+	<h2 class="content__heading">상품그룹가격</h2>
+	<div class="type">
+		<div class="type__content">
+			<div class="search-form search-form--right">
+				<ul class="search-form__list">
+					<li class="search-form__item">
+						<div class="search-form__title">대분류</div>
+						<div class="search-form__input">
+							<div class="c-select">
+								<select id="s_bgName">
+									<option value="">전체</option>
+									<option th:each ="groupName : ${groupNames}"
+											th:value="${groupName.bgName}"
+											th:text="${groupName.bgName}">
+									</option>
+								</select>
+							</div>
+						</div>
+					</li>
+					<li class="search-form__item">
+						<div class="search-form__title">상품코드</div>
+						<div class="search-form__input">
+							<input type="text" id="s_biItemcode" onkeyup="itemCodeValidator()">
+						</div>
+					</li>
+					<li class="search-form__item">
+						<div class="search-form__title">상품명</div>
+						<div class="search-form__input">
+							<input type="text" id="s_biName">
+						</div>
+					</li>
+					<li class="search-form__item">
+						<div class="search-form__title">가격적용일</div>
+						<div class="search-form__input">
+							<div class="c-select">
+								<select id="s_setDt" name="s_setDt">
+								</select>
+							</div>
+						</div>
+					</li>
+				</ul>
+				<ul class="seach-form__console">
+					<li class="search-form__btn">
+						<button type="button" class="c-button c-button--solid" onclick="filterItems()">검색</button>
+					</li>
+					<li class="search-form__btn">
+						<button type="button" class="c-button" onclick="filterReset()">초기화</button>
+					</li>
+					<li class="search-form__btn">
+						<button type="button" class="c-button c-button--darksolid" onclick="removeRow()">선택삭제</button>
+					</li>
+				</ul>
+			</div>
+			
+			<div class="type__grid">
+				<div id="grid_main" style="height: 560px;"></div>
+			</div>
+			
+			<ul class="article__console">
+				<li><button type="button" class="c-button c-button--solid" onclick="saveRegPrice()">저장</button></li>
+				<li><button type="button" class="c-button c-button--darksolid" onclick="regPricePop()">일괄업로드</button></li>
+			</ul>
+		</div>
 	</div>
-	<div id="grid_main"></div>
-	<div>
-		<button type="button" onclick="saveRegPrice()">저장</button>
-		<button type="button" onclick="regPricePop()">일괄업로드</button>
-	</div>
+	
+	
+
 
 	<!-- 가격 일괄 등록 팝업 -->
 	<div class="l-popup" id="regPrice_popup">
@@ -55,45 +96,42 @@
 			</div>
 			<div class="l-popup__content">
 				<div class="l-popup__section">
-					<table class="c-table c-table--non-border">
-						<colgroup>
-							<col style="width: 80px;"/>
-							<col/>
-							<col style="width: 80px;"/>
-							<col/>
-							<col style="width: 80px;"/>
-							<col/>
-							<col style="width: 60px;"/>
-						</colgroup>
-						<tbody>
-							<div>
-								업로드데이터 가격적용일
-								<input type="text" id="setDt" name="setDt" readonly>
-							</div>
-							<div>
-								업로드파일 선택
-								<input type="text" id="fileName" readonly>
-								<button type="button" onclick="$('#priceUpload').trigger('click')">파일선택</button>
-								<input type="file" id="priceUpload" name="priceUpload" accept="application/vnd.ms-excel,
-										application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-									   	onchange="fileSelected()" hidden>
-							</div>
-							<div>
-								<button type="button" onclick="applyPrice()">가격적용하기</button>
-								<button type="button" onclick="regPriceClose()">취소</button>
-							</div>
-						<div>
-							*업로드를 통한 가격 등록은 전체가격정보를 한번에 올릴 경우에만 사용하시기 바랍니다. <br>
-							기존가격은 종료일자 까지 유효하며 신규 가격은 각격적용일 부터 유효합니다.
-						</div>
-						<div>
-							<a href="/assets/files/TopPOS_PriceUpload.xlsx">TopPOS_PriceUpload.xlsx 양식 다운로드</a>
-						</div>
-						</tbody>
-					</table>
+					<div class="form">
+						<ul class="form__list form__list--wide">
+							<li class="form__item">
+								<div class="form__title">업로드데이터 가격적용일</div>
+								<div class="form__input">
+									<input type="text" class="c-date" id="setDt" name="setDt" readonly>
+								</div>
+							</li>
+							<li class="form__item">
+								<div class="form__title">업로드파일 선택</div>
+								<div class="form__input">
+									<div class="c-file">
+										<input type="text" class="c-file__input" id="fileName" readonly>
+										<label class="c-file__btn">파일 업로드
+											<input type="file" id="priceUpload" name="priceUpload" accept="application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" onchange="fileSelected()" />
+										</label>
+									</div>
+								</div>
+							</li>
+						</ul>
+					</div>
+					
+					<div class="l-pop__comment">
+						<p>*업로드를 통한 가격 등록은 전체가격정보를 한번에 올릴 경우에만 사용하시기 바랍니다.</p>
+						<p>기존가격은 종료일자 까지 유효하며 신규 가격은 각격적용일 부터 유효합니다.</p>
+						<a href="/assets/files/TopPOS_PriceUpload.xlsx" class="c-button">TopPOS_PriceUpload.xlsx 양식 다운로드</a>
+					</div>
+								
+					<!-- <button type="button" onclick="$('#priceUpload').trigger('click')">파일선택</button> -->
+
 				</div>
 			</div>
-			<a href="#" onclick="regPriceClose()" class="l-popup__close">팝업닫기</a>
+			<div class="l-popup__console">
+				<button type="button" class="c-button c-button--dark" onclick="applyPrice()">가격적용하기</button>
+				<button type="button" class="c-button" onclick="regPriceClose()">취소</button>
+			</div>
 		</div>
 	</div>
 </div>

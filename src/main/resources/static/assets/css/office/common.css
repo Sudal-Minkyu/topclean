@@ -443,6 +443,11 @@ textarea {
 .article__console.article__console--right {
 	justify-content: flex-end;
 }
+.article__console.article__console--non-border {
+	border: 0 none;
+	margin: 0;
+	padding: 0;
+}
 .article__console > li + li {
 	margin-left: 0.625rem;
 }
@@ -468,12 +473,15 @@ textarea {
 	width: 50%;
 	padding: 0.313rem 0;
 }
-.form__item.form__item--100 {
+.form__item.form__item--100,
+.form__list.form__list--wide .form__item {
 	width: 100%;
 }
 .form__title {
 	width: 8.125rem;
-	font-s
+}
+.form__list.form__list--wide .form__title {
+	width: 12.5rem;
 }
 .form__input {
 	flex: 1;
@@ -584,6 +592,67 @@ textarea {
 }
 
 
+/* float layout */
+.float {
+	display: blcok;
+	position: relative;
+	width: 100%;
+	padding: 1.25rem;
+	background-color: #fff;
+}
+.float:before {
+	content: " ";
+	display: table;
+}
+.float:after {
+	content: " ";
+	display: table;
+	clear: both;
+}
+.float__content {
+	float: left;
+	width: calc(50% - 0.625rem);
+}
+.float__content:nth-child(2n) {
+	margin-left: 1.25rem;
+}
+
+/* type */
+.type {
+	position: relative;
+	width: 100%;
+	background-color: #fff;
+}
+.type + .type {
+	margin-top: 1.25rem;
+}
+.type.type--padding {
+	padding: 1.25rem;
+}
+.type__head {
+	background-color: #c4c4c4;
+	padding: 0.125rem 0;
+}
+.type__heading {
+	color: #fff;
+	text-align: center;
+}
+.type__content {
+	position: relative;
+	width: 100%;
+	padding: 1.25rem;
+	background-color: #fff;
+	border: 0.063rem solid #c4c4c4;
+}
+.article__console + .type__grid,
+.search-form + .type__grid {
+	margin-top: 1.25rem;
+}
+.type__grid + .article__console {
+	margin-top: 1.25rem;
+}
+
+
 
 
 
@@ -641,11 +710,22 @@ textarea {
 .l-popup__section + .l-popup__section {
 	margin-top: 0.625rem;
 }
+.l-pop__comment {
+	position: relative;
+	margin-top: 1.25rem;
+	color: #aaa;
+	font-size: 14px;
+}
+.l-pop__comment .c-button {
+	position: absolute;
+	right: 0;
+	bottom: 0;
+}
 .l-popup__console {
 	display: flex;
 	justify-content: flex-end;
 	width: calc(100% - 2.5rem);
-	padding: 1.25rem;
+	padding: 1.25rem 0;
 	margin: 0 auto;
 	border-top: 0.063rem solid #dbdbdb;
 }
