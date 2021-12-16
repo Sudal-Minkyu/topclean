@@ -39,12 +39,12 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
                 ));
 
         query.orderBy(request.fr_insert_date.desc());
-        query.where(request.frConfirmYn.eq("Y").and(request.frCode.eq(frCode)));
+        query.where(request.frConfirmYn.eq("N").and(request.frCode.eq(frCode)));
         return query.fetch();
     }
 
     @Override
-    public List<RequestCollectDto> findByRequestCollectList(Customer customer, String frCode, LocalDateTime localDateTime){
+    public List<RequestCollectDto> findByRequestCollectList(Customer customer, String nowDate){
         QRequest request = QRequest.request;
 
         JPQLQuery<RequestCollectDto> query = from(request)
@@ -55,12 +55,10 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
                         request.frPayAmount
                 ));
 
-        query.where(request.frConfirmYn.eq("Y")
-                .and(request.frCode.eq(frCode))
-                .and(request.frUncollectYn.eq("N"))
+        query.where(request.frUncollectYn.eq("N")
+                .and(request.frConfirmYn.eq("Y"))
                 .and(request.bcId.eq(customer))
-                .and(request.fr_insert_date.goe(localDateTime))
-
+                .and(request.frYyyymmdd.lt(nowDate))
         );
 
         return query.fetch();

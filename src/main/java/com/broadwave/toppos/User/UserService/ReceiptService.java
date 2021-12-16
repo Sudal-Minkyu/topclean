@@ -10,6 +10,8 @@ import com.broadwave.toppos.User.EtcDataDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.*;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.*;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.*;
+import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoneyDto;
+import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoneyRepositoryCustom;
 import com.broadwave.toppos.common.AjaxResponse;
 import com.broadwave.toppos.common.ResponseErrorCode;
 import com.broadwave.toppos.keygenerate.KeyGenerateService;
@@ -49,6 +51,7 @@ public class ReceiptService {
     private final RequestRepositoryCustom requestRepositoryCustom;
     private final RequestDetailRepositoryCustom requestDetailRepositoryCustom;
     private final PaymentRepositoryCustom paymentRepositoryCustom;
+    private final SaveMoneyRepositoryCustom saveMoneyRepositoryCustom;
 
     private final HeadService headService;
     private final CustomerRepository customerRepository;
@@ -57,7 +60,7 @@ public class ReceiptService {
     @Autowired
     public ReceiptService(UserService userService, KeyGenerateService keyGenerateService, TokenProvider tokenProvider, ModelMapper modelMapper,
                           RequestRepository requestRepository, RequestDetailRepository requestDetailRepository, PaymentRepository paymentRepository,
-                          RequestRepositoryCustom requestRepositoryCustom, RequestDetailRepositoryCustom requestDetailRepositoryCustom, PaymentRepositoryCustom paymentRepositoryCustom,
+                          RequestRepositoryCustom requestRepositoryCustom, RequestDetailRepositoryCustom requestDetailRepositoryCustom, PaymentRepositoryCustom paymentRepositoryCustom, SaveMoneyRepositoryCustom saveMoneyRepositoryCustom,
                           HeadService headService, CustomerRepository customerRepository,BranchCalendarRepositoryCustom branchCalendarRepositoryCustom){
         this.userService = userService;
         this.headService = headService;
@@ -71,6 +74,7 @@ public class ReceiptService {
         this.branchCalendarRepositoryCustom = branchCalendarRepositoryCustom;
         this.keyGenerateService = keyGenerateService;
         this.requestRepositoryCustom = requestRepositoryCustom;
+        this.saveMoneyRepositoryCustom = saveMoneyRepositoryCustom;
         this.requestDetailRepositoryCustom = requestDetailRepositoryCustom;
     }
 
@@ -110,8 +114,13 @@ public class ReceiptService {
     }
 
     // 결제 마스터테이블 미수금액 리스트 호출
-    private List<RequestCollectDto> findByRequestCollectList(Customer customer, String frCode, LocalDateTime localDateTime) {
-        return requestRepositoryCustom.findByRequestCollectList(customer, frCode, localDateTime);
+    private List<RequestCollectDto> findByRequestCollectList(Customer customer, String nowDate) {
+        return requestRepositoryCustom.findByRequestCollectList(customer, nowDate);
+    }
+
+    // 현재 고객의 적립금 리스트 호출
+    private List<SaveMoneyDto> findByRequestCollectList(Customer customer) {
+        return saveMoneyRepositoryCustom.findByRequestCollectList(customer);
     }
 
     // 접수페이지 가맹점 임시저장 및 결제하기 세탁접수 API
@@ -152,9 +161,15 @@ public class ReceiptService {
         }else{
 
             Request requestSave;
+            log.info("etcData.getFrNo() : "+etcData.getFrNo());
             if(etcData.getFrNo() != null){
                 log.info("접수마스터 테이블 수정합니다. 접수코드 : "+etcData.getFrNo());
-                Optional<Request> optionalRequest = findByRequest(etcData.getFrNo(), "Y", frCode);
+                Optional<Request> optionalRequest;
+                if(etcData.getCheckNum().equals("1")){
+                    optionalRequest = findByRequest(etcData.getFrNo(), "N", frCode);
+                }else{
+                    optionalRequest = findByRequest(etcData.getFrNo(), "Y", frCode);
+                }
                 if(!optionalRequest.isPresent()){
                     return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "접수 할 "+ResponseErrorCode.TP009.getDesc(), "문자", "접수코드 : "+etcData.getFrNo()));
                 }else{
@@ -176,7 +191,7 @@ public class ReceiptService {
                 requestSave.setBcCode(frbrCode);
                 requestSave.setFrCode(frCode);
                 requestSave.setFrYyyymmdd(nowDate);
-
+                requestSave.setFrPayAmount(0);
                 requestSave.setFrQty(addList.size()+updateList.size());
                 requestSave.setFrRefBoxCode(null); // 무인보관함 연계시 무인보관함 접수번호 : 일단 무조건 NULL
                 requestSave.setFr_insert_id(login_id);
@@ -189,17 +204,45 @@ public class ReceiptService {
             log.info("etcData.getCheckNum() : "+etcData.getCheckNum());
             // 임시저장인지, 결제하기저장인지 여부 : 임시저장이면 Y, 아니면 N로 저장
             if(etcData.getCheckNum().equals("1")){
-                requestSave.setFrConfirmYn("Y");
-            }else{
                 requestSave.setFrConfirmYn("N");
+            }else{
+                requestSave.setFrConfirmYn("Y");
 
                 // 결제일 경우, 현재 고객의 적립금과 미수금액을 보내준다.
-                // 미수금액 리스트를 호출한다. 조건 : 미수여부는 Y, 임시저장확정여부는 N, 고객아이디 eq, 가맹점코드 = frCode eq, fp_id = null, payamount notnull, 현재날짜의 전날들만 인것들만 조회하기
-                List<RequestCollectDto>  requestCollectDtoList = findByRequestCollectList(optionalCustomer.get(), frCode, localDateTime);
-                log.info("requestCollectDtoList : "+requestCollectDtoList);
+                // 미수금액 리스트를 호출한다. 조건 : 미수여부는 Y, 임시저장확정여부는 N, 고객아이디 eq, 가맹점코드 = frCode eq, 현재날짜의 전날들만 인것들만 조회하기
+                List<RequestCollectDto>  requestCollectDtoList = findByRequestCollectList(optionalCustomer.get(), nowDate);
+                int totalAmount = 0;
+                int payAmount = 0;
+                if(requestCollectDtoList.size() != 0){
+                    for(RequestCollectDto requestCollectDto : requestCollectDtoList){
+                        totalAmount = totalAmount + requestCollectDto.getFrTotalAmount();
+                        payAmount = payAmount + requestCollectDto.getFrPayAmount();
+                    }
+                    data.put("uncollectMoney",totalAmount-payAmount);
+                }else{
+                    data.put("uncollectMoney",0);
+                }
+//                log.info("합계금액 : "+totalAmount);
+//                log.info("결제금액 : "+payAmount);
+                log.info("미수금액 : "+ (totalAmount - payAmount));
 
-                data.put("collectMoney","적립금액");
-                data.put("uncollectMoney","미수금액");
+                // 적립금 리스트를 호출한다. 조건 : 고객 ID, 적립유형 1 or 2, 마감여부 : N,
+                List<SaveMoneyDto>  saveMoneyDtoList = findByRequestCollectList(optionalCustomer.get());
+                int plusSaveMoney = 0;
+                int minusSaveMoney = 0;
+                if(saveMoneyDtoList.size() != 0) {
+                    for (SaveMoneyDto saveMoneyDto : saveMoneyDtoList) {
+                        if(saveMoneyDto.getFsType().equals("1")){
+                            plusSaveMoney = plusSaveMoney + saveMoneyDto.getFsAmt();
+                        }else{
+                            minusSaveMoney = minusSaveMoney + saveMoneyDto.getFsAmt();
+                        }
+                    }
+                    data.put("collectMoney",plusSaveMoney-minusSaveMoney);
+                }else{
+                    data.put("collectMoney",0);
+                }
+                log.info("적립금액 : "+ (plusSaveMoney - minusSaveMoney));
             }
 
             String lastTagNo = null; // 마지막 태그번호
@@ -349,7 +392,7 @@ public class ReceiptService {
         Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
         String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
 //        log.info("frNo2 : "+frNo);
-        Optional<Request> optionalRequest = findByRequest(frNo, "Y", frCode);
+        Optional<Request> optionalRequest = findByRequest(frNo, "N", frCode);
 //        log.info("optionalRequest : "+optionalRequest);
         if(!optionalRequest.isPresent()){
             return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "삭제 할 "+ResponseErrorCode.TP009.getDesc(), "문자", "접수코드 : "+frNo));
@@ -405,7 +448,7 @@ public class ReceiptService {
         }else{
             log.info("결제 정보있음 고객명 : "+optionalCustomer.get().getBcName());
             log.info("접수코드 데이터 : "+etcData.getFrNo());
-            Optional<Request> optionalRequest = findByRequest(etcData.getFrNo(), "N" ,frCode);
+            Optional<Request> optionalRequest = findByRequest(etcData.getFrNo(), "Y" ,frCode);
             if(!optionalRequest.isPresent()){
                 return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "결제 할 접수"+ResponseErrorCode.TP009.getDesc(), "문자", "접수코드 : "+etcData.getFrNo()));
             }else{

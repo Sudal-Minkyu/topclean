@@ -408,7 +408,7 @@ public class UserRestController {
         String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
 
         // 접수했던 고객의 정보 호출
-        Optional<Request> optionalRequest = receiptService.findByRequest(frNo, "Y", frCode);
+        Optional<Request> optionalRequest = receiptService.findByRequest(frNo, "N", frCode);
         if(!optionalRequest.isPresent()){
             return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "접수"+ResponseErrorCode.TP009.getDesc(), "문자", "접수 : "+frNo));
         }else{
