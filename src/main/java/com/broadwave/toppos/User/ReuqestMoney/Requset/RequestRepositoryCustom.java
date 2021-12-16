@@ -1,5 +1,8 @@
 package com.broadwave.toppos.User.ReuqestMoney.Requset;
 
+import com.broadwave.toppos.User.Customer.Customer;
+
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -10,4 +13,6 @@ import java.util.List;
  */
 public interface RequestRepositoryCustom {
     List<RequestListDto> findByRequestTempList(String frCode);
+
+    List<RequestCollectDto> findByRequestCollectList(Customer customer, String frCode, LocalDateTime localDateTime);
 }

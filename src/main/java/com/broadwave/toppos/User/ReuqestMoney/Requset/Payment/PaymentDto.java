@@ -21,8 +21,8 @@ public class PaymentDto {
     private Integer fpAmt; // 결제금액( 미수에서 카드결제시 카드결제금액보다작을수있다.)
     private Integer fpRealAmt; // 실제결제금액(총결제금액 -> 여러건을 미수관리에서 합쳐서 결제할경우 총결제금액)
     private Integer fpCollectAmt; // 미수 완납금액
-    private String fpCancelYn; // 결제취소 여부 : 기본값 N
-    private String fpSavedMoneyYn; // 결제취소후 적립금전환 여부 : 기본값 N
+//    private String fpCancelYn; // 결제취소 여부 : 기본값 N
+//    private String fpSavedMoneyYn; // 결제취소후 적립금전환 여부 : 기본값 N
     private String fpCatApprovalno; // 카드승인번호 ex 73536757
     private String fpCatApprovaltime; // 카드승인시간 ex 2111241411144
     private String fpCatCardno; // 카드번호 ex 942003******8000
@@ -56,13 +56,13 @@ public class PaymentDto {
         return fpRealAmt;
     }
 
-    public String getFpCancelYn() {
-        return fpCancelYn;
-    }
-
-    public String getFpSavedMoneyYn() {
-        return fpSavedMoneyYn;
-    }
+//    public String getFpCancelYn() {
+//        return fpCancelYn;
+//    }
+//
+//    public String getFpSavedMoneyYn() {
+//        return fpSavedMoneyYn;
+//    }
 
     public String getFpCatApprovalno() {
         return fpCatApprovalno;

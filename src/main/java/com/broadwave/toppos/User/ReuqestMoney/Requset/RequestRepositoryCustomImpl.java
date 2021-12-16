@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -39,6 +40,29 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
 
         query.orderBy(request.fr_insert_date.desc());
         query.where(request.frConfirmYn.eq("Y").and(request.frCode.eq(frCode)));
+        return query.fetch();
+    }
+
+    @Override
+    public List<RequestCollectDto> findByRequestCollectList(Customer customer, String frCode, LocalDateTime localDateTime){
+        QRequest request = QRequest.request;
+
+        JPQLQuery<RequestCollectDto> query = from(request)
+                .select(Projections.constructor(RequestCollectDto.class,
+                        request.frNo,
+                        request.frUncollectYn,
+                        request.frTotalAmount,
+                        request.frPayAmount
+                ));
+
+        query.where(request.frConfirmYn.eq("Y")
+                .and(request.frCode.eq(frCode))
+                .and(request.frUncollectYn.eq("N"))
+                .and(request.bcId.eq(customer))
+                .and(request.fr_insert_date.goe(localDateTime))
+
+        );
+
         return query.fetch();
     }
 

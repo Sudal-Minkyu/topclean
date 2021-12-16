@@ -1,6 +1,7 @@
 package com.broadwave.toppos.User.ReuqestMoney.Requset;
 
 import com.broadwave.toppos.User.Customer.Customer;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.Payment;
 import lombok.*;
 
 import javax.persistence.*;
@@ -57,6 +58,10 @@ public class Request {
 
     @Column(name="fr_pay_amount")
     private Integer frPayAmount; // 결제금액
+
+    @ManyToOne(targetEntity = Payment.class,fetch = FetchType.EAGER)
+    @JoinColumn(name="fp_id")
+    private Payment fpId; // 접수결제테이블 ID -> 미수완납시 처리에만 업데이트됨.
 
     @Column(name="fr_uncollect_yn")
     private String frUncollectYn; // 미수여부( 합계금액 > 결제금액 이면 Y, else N)

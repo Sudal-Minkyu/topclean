@@ -109,6 +109,11 @@ public class ReceiptService {
         return requestDetailRepositoryCustom.findByRequestTempDetailList(frNo);
     }
 
+    // 결제 마스터테이블 미수금액 리스트 호출
+    private List<RequestCollectDto> findByRequestCollectList(Customer customer, String frCode, LocalDateTime localDateTime) {
+        return requestRepositoryCustom.findByRequestCollectList(customer, frCode, localDateTime);
+    }
+
     // 접수페이지 가맹점 임시저장 및 결제하기 세탁접수 API
     public ResponseEntity<Map<String,Object>> requestSave(RequestDetailSet requestDetailSet, HttpServletRequest request) {
         AjaxResponse res = new AjaxResponse();
@@ -187,6 +192,14 @@ public class ReceiptService {
                 requestSave.setFrConfirmYn("Y");
             }else{
                 requestSave.setFrConfirmYn("N");
+
+                // 결제일 경우, 현재 고객의 적립금과 미수금액을 보내준다.
+                // 미수금액 리스트를 호출한다. 조건 : 미수여부는 Y, 임시저장확정여부는 N, 고객아이디 eq, 가맹점코드 = frCode eq, fp_id = null, payamount notnull, 현재날짜의 전날들만 인것들만 조회하기
+                List<RequestCollectDto>  requestCollectDtoList = findByRequestCollectList(optionalCustomer.get(), frCode, localDateTime);
+                log.info("requestCollectDtoList : "+requestCollectDtoList);
+
+                data.put("collectMoney","적립금액");
+                data.put("uncollectMoney","미수금액");
             }
 
             String lastTagNo = null; // 마지막 태그번호
@@ -336,7 +349,7 @@ public class ReceiptService {
         Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
         String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
 //        log.info("frNo2 : "+frNo);
-        Optional<Request> optionalRequest = findByRequest(frNo, "N", frCode);
+        Optional<Request> optionalRequest = findByRequest(frNo, "Y", frCode);
 //        log.info("optionalRequest : "+optionalRequest);
         if(!optionalRequest.isPresent()){
             return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "삭제 할 "+ResponseErrorCode.TP009.getDesc(), "문자", "접수코드 : "+frNo));
@@ -422,6 +435,7 @@ public class ReceiptService {
 //                    optionalRequest.get().setFrUncollectYn("Y");
 
                     requestAndPaymentSave(optionalRequest.get(), paymentList);
+
                     data.put("paymentList",paymentList);
                 }
 
@@ -435,8 +449,11 @@ public class ReceiptService {
     @Transactional(rollbackFor = SQLException.class)
     public void requestAndPaymentSave(Request request, List<Payment> paymentList){
         try{
-            requestRepository.save(request);
-            paymentRepository.saveAll(paymentList);
+            log.info("저장성공");
+            log.info("request : "+request);
+            log.info("paymentList : "+paymentList);
+//            requestRepository.save(request);
+//            paymentRepository.saveAll(paymentList);
         }catch (Exception e){
             log.info("에러발생 트랜젝션실행 : "+e);
         }
