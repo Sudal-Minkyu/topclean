@@ -8,9 +8,7 @@ import com.broadwave.toppos.User.Customer.Customer;
 import com.broadwave.toppos.User.Customer.CustomerRepository;
 import com.broadwave.toppos.User.EtcDataDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.*;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentMapperDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentRepository;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentRepositoryCustom;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.*;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.*;
 import com.broadwave.toppos.common.AjaxResponse;
 import com.broadwave.toppos.common.ResponseErrorCode;
@@ -111,7 +109,7 @@ public class ReceiptService {
         return requestDetailRepositoryCustom.findByRequestTempDetailList(frNo);
     }
 
-    // 접수페이지 가맹점 세탁접수 API
+    // 접수페이지 가맹점 임시저장 및 결제하기 세탁접수 API
     public ResponseEntity<Map<String,Object>> requestSave(RequestDetailSet requestDetailSet, HttpServletRequest request) {
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
@@ -137,13 +135,10 @@ public class ReceiptService {
         ArrayList<RequestDetailDto> updateList = requestDetailSet.getUpdate(); // 수정 리스트 얻기
         ArrayList<RequestDetailDto> deleteList = requestDetailSet.getDelete(); // 제거 리스트 얻기
 
-        PaymentMapperDto payment = requestDetailSet.getPayment(); // 결제 데이터 얻기
-
         log.info("ECT 데이터 : "+etcData);
         log.info("추가 리스트 : "+addList);
         log.info("수정 리스트 : "+updateList);
         log.info("삭제 리스트 : "+deleteList);
-        log.info("결제 데이터 : "+payment);
 
         // 현재 고객을 받아오기
         Optional<Customer> optionalCustomer = userService.findByBcId(etcData.getBcId());
@@ -181,20 +176,17 @@ public class ReceiptService {
                 requestSave.setFrRefBoxCode(null); // 무인보관함 연계시 무인보관함 접수번호 : 일단 무조건 NULL
                 requestSave.setFr_insert_id(login_id);
                 requestSave.setFr_insert_date(LocalDateTime.now());
+                requestSave.setFrUncollectYn("N");
 
                 log.info("접수마스터 테이블 저장 or 수정 : "+requestSave);
             }
 
             log.info("etcData.getCheckNum() : "+etcData.getCheckNum());
+            // 임시저장인지, 결제하기저장인지 여부 : 임시저장이면 Y, 아니면 N로 저장
             if(etcData.getCheckNum().equals("1")){
-                requestSave.setFrUncollectYn("Y");
-                requestSave.setFrConfirmYn("N");
+                requestSave.setFrConfirmYn("Y");
             }else{
-                requestSave.setFrUncollectYn("N");
                 requestSave.setFrConfirmYn("N");
-
-                // 임시저장이 아닌 결제 할 경우 로직
-                // payment;
             }
 
             String lastTagNo = null; // 마지막 태그번호
@@ -370,4 +362,70 @@ public class ReceiptService {
     }
 
 
+
+
+    //  접수페이지 가맹점 세탁접수 결제 API
+    public ResponseEntity<Map<String, Object>> requestPayment(PaymentSet paymentSet, HttpServletRequest request) {
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        PaymentMapperDto etcData = paymentSet.getEtc(); // etc 데이터 얻기
+        ArrayList<PaymentDto> paymentDtos = paymentSet.getPayment(); // 결제 정보 데이터 리스트 얻기
+
+        log.info("ECT 데이터 : "+etcData);
+        log.info("paymentDtos 리스트 : "+paymentDtos);
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String login_id = claims.getSubject(); // 현재 아이디
+        String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
+        String frbrCode = (String) claims.get("frbrCode"); // 소속된 지사 코드
+
+        log.info("현재 접속한 아이디 : "+login_id);
+        log.info("현재 접속한 가맹점 코드 : "+frCode);
+        log.info("소속된 지사 코드 : "+frbrCode);
+
+        // 현재 고객을 받아오기 -> 고객정보가 존재해야 결제를 진행할 수 있다.
+        Optional<Customer> optionalCustomer = userService.findByBcId(etcData.getBcId());
+        if(!optionalCustomer.isPresent()){
+            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP018.getCode(), ResponseErrorCode.TP018.getDesc(),null, null));
+        }else{
+            log.info("결제 정보있음 고객명 : "+optionalCustomer.get().getBcName());
+
+        }
+
+
+
+
+
+
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
+
+
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

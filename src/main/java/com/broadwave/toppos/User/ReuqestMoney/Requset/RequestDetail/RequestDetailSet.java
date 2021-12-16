@@ -10,13 +10,10 @@ import java.util.ArrayList;
  * @author Minkyu
  * Date : 2021-12-13
  * Time :
- * Remark : Toppos 가맹점 접수세부 Dto
+ * Remark : Toppos 가맹점 접수세부 Set
  */
 @Setter
 public class RequestDetailSet {
-    // 결제 데이터
-    private PaymentMapperDto payment;
-
     // etc 데이터
     private RequestMapperDto etc;
 
@@ -28,10 +25,6 @@ public class RequestDetailSet {
 
     // 삭제 행 리스트
     private ArrayList<RequestDetailDto> delete;
-
-    public PaymentMapperDto getPayment() {
-        return payment;
-    }
 
     public RequestMapperDto getEtc() {
         return etc;

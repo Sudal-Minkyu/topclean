@@ -14,6 +14,8 @@ import com.broadwave.toppos.User.Customer.Customer;
 import com.broadwave.toppos.User.Customer.CustomerInfoDto;
 import com.broadwave.toppos.User.Customer.CustomerListDto;
 import com.broadwave.toppos.User.Customer.CustomerMapperDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentMapperDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentSet;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Request;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailSet;
@@ -439,8 +441,11 @@ public class UserRestController {
         return receiptService.requestDelete(request, frNo);
     }
 
-
-
-
+    // 접수페이지 가맹점 세탁접수 결제 API
+    @PostMapping("requestPayment")
+    public ResponseEntity<Map<String,Object>> requestPayment(@RequestBody PaymentSet paymentSet, HttpServletRequest request){
+        log.info("requestPayment 호출");
+        return receiptService.requestPayment(paymentSet, request);
+    }
 
 }
