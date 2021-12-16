@@ -428,8 +428,8 @@ gridProp[2] = {
 gridColumnLayout[3] = [
     {
         dataField: "",
-        headerText: "가나다",
-        colspan: 2,
+        headerText: "",
+        colSpan: 2,
     }, {
         dataField: "",
     },
@@ -568,7 +568,7 @@ function onSelectTempSave() {
         AUIGrid.setGridData(gridId[0], req.sendData.requestDetailList);
         $("#tempSaveListPop").removeClass("active");
         calculateMainPrice();
-        checkNum = "2";
+        checkNum = "1";
     });
 }
 
