@@ -451,6 +451,7 @@ gridProp[3] = {
     enableColumnResize : false,
     height : 140,
     showHeader : false,
+    showRowNumColumn : false,
 };
 
 
@@ -1085,13 +1086,10 @@ function onSaveTemp() {
     let etc = {
         checkNum: checkNum,
         bcId: selectedCustomer.bcId,
-    }
-
-    if(checkNum === "1"){
         frNo: initialData.etcData.frNo,
-        etc.frNormalAmount = $("#totFdNormalAmount").html().replace(/[^0-9]/g, "");
-        etc.frDiscountAmount = $("#totChangeAmount").html().replace(/[^0-9]/g, "");
-        etc.frTotalAmount = $("#totFdRequestAmount").html().replace(/[^0-9]/g, "");
+        frNormalAmount: $("#totFdNormalAmount").html().replace(/[^0-9]/g, ""),
+        frDiscountAmount: $("#totChangeAmount").html().replace(/[^0-9]/g, ""),
+        frTotalAmount: $("#totFdRequestAmount").html().replace(/[^0-9]/g, ""),
     }
 
     const data = {
