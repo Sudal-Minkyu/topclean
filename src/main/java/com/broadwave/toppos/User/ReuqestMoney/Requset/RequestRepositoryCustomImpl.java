@@ -38,7 +38,7 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
                 ));
 
         query.orderBy(request.fr_insert_date.desc());
-        query.where(request.frConfirmYn.eq("N").and(request.frCode.eq(frCode)));
+        query.where(request.frConfirmYn.eq("Y").and(request.frCode.eq(frCode)));
         return query.fetch();
     }
 
