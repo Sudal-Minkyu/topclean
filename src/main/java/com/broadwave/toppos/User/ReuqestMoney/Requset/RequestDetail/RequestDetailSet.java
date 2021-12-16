@@ -1,5 +1,6 @@
 package com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail;
 
+import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentMapperDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestMapperDto;
 import lombok.Setter;
 
@@ -13,6 +14,8 @@ import java.util.ArrayList;
  */
 @Setter
 public class RequestDetailSet {
+    // 결제 데이터
+    private PaymentMapperDto payment;
 
     // etc 데이터
     private RequestMapperDto etc;
@@ -25,6 +28,10 @@ public class RequestDetailSet {
 
     // 삭제 행 리스트
     private ArrayList<RequestDetailDto> delete;
+
+    public PaymentMapperDto getPayment() {
+        return payment;
+    }
 
     public RequestMapperDto getEtc() {
         return etc;

@@ -1,6 +1,7 @@
 package com.broadwave.toppos.User.ReuqestMoney.SaveMoney;
 
 import com.broadwave.toppos.User.Customer.Customer;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.Payment;
 import lombok.*;
 
 import javax.persistence.*;
@@ -29,6 +30,10 @@ public class SaveMoney {
     @ManyToOne(targetEntity = Customer.class,fetch = FetchType.LAZY)
     @JoinColumn(name="bc_id")
     private Customer bcId; // 고객 ID값
+
+    @ManyToOne(targetEntity = Payment.class,fetch = FetchType.LAZY)
+    @JoinColumn(name="fp_id")
+    private Payment fpId; // 고객 ID값
 
     @Column(name="fs_type")
     private String fsType; // 적립유형

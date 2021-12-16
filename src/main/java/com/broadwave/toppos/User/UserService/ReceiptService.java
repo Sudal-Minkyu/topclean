@@ -8,6 +8,9 @@ import com.broadwave.toppos.User.Customer.Customer;
 import com.broadwave.toppos.User.Customer.CustomerRepository;
 import com.broadwave.toppos.User.EtcDataDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.*;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentMapperDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentRepository;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentRepositoryCustom;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.*;
 import com.broadwave.toppos.common.AjaxResponse;
 import com.broadwave.toppos.common.ResponseErrorCode;
@@ -39,30 +42,32 @@ public class ReceiptService {
     private final UserService userService;
     private final TokenProvider tokenProvider;
     private final KeyGenerateService keyGenerateService;
-    private final HeadService headService;
     private final ModelMapper modelMapper;
 
     private final RequestRepository requestRepository;
     private final RequestDetailRepository requestDetailRepository;
+    private final PaymentRepository paymentRepository;
 
     private final RequestRepositoryCustom requestRepositoryCustom;
     private final RequestDetailRepositoryCustom requestDetailRepositoryCustom;
+    private final PaymentRepositoryCustom paymentRepositoryCustom;
 
+    private final HeadService headService;
     private final CustomerRepository customerRepository;
-
     private final BranchCalendarRepositoryCustom branchCalendarRepositoryCustom;
 
     @Autowired
-    public ReceiptService(UserService userService, RequestRepository requestRepository, RequestDetailRepository requestDetailRepository, TokenProvider tokenProvider, HeadService headService,
-                          ModelMapper modelMapper,
-                          CustomerRepository customerRepository, BranchCalendarRepositoryCustom branchCalendarRepositoryCustom,
-                          KeyGenerateService keyGenerateService, RequestRepositoryCustom requestRepositoryCustom, RequestDetailRepositoryCustom requestDetailRepositoryCustom){
+    public ReceiptService(UserService userService, KeyGenerateService keyGenerateService, TokenProvider tokenProvider, ModelMapper modelMapper,
+                          RequestRepository requestRepository, RequestDetailRepository requestDetailRepository, PaymentRepository paymentRepository,
+                          RequestRepositoryCustom requestRepositoryCustom, RequestDetailRepositoryCustom requestDetailRepositoryCustom, PaymentRepositoryCustom paymentRepositoryCustom,
+                          HeadService headService, CustomerRepository customerRepository,BranchCalendarRepositoryCustom branchCalendarRepositoryCustom){
         this.userService = userService;
         this.headService = headService;
         this.requestRepository = requestRepository;
         this.tokenProvider = tokenProvider;
         this.modelMapper = modelMapper;
-
+        this.paymentRepository = paymentRepository;
+        this.paymentRepositoryCustom = paymentRepositoryCustom;
         this.requestDetailRepository = requestDetailRepository;
         this.customerRepository = customerRepository;
         this.branchCalendarRepositoryCustom = branchCalendarRepositoryCustom;
@@ -132,13 +137,13 @@ public class ReceiptService {
         ArrayList<RequestDetailDto> updateList = requestDetailSet.getUpdate(); // 수정 리스트 얻기
         ArrayList<RequestDetailDto> deleteList = requestDetailSet.getDelete(); // 제거 리스트 얻기
 
+        PaymentMapperDto payment = requestDetailSet.getPayment(); // 결제 데이터 얻기
+
         log.info("ECT 데이터 : "+etcData);
         log.info("추가 리스트 : "+addList);
         log.info("수정 리스트 : "+updateList);
         log.info("삭제 리스트 : "+deleteList);
-        log.info("추가 사이즈 : "+addList.size());
-        log.info("수정 사이즈 : "+updateList.size());
-        log.info("삭제 사이즈 : "+deleteList.size());
+        log.info("결제 데이터 : "+payment);
 
         // 현재 고객을 받아오기
         Optional<Customer> optionalCustomer = userService.findByBcId(etcData.getBcId());
@@ -187,6 +192,9 @@ public class ReceiptService {
             }else{
                 requestSave.setFrUncollectYn("N");
                 requestSave.setFrConfirmYn("N");
+
+                // 임시저장이 아닌 결제 할 경우 로직
+                // payment;
             }
 
             String lastTagNo = null; // 마지막 태그번호
@@ -259,7 +267,7 @@ public class ReceiptService {
             log.info("requestDetailList : "+requestDetailList);
             // 접수 세부 테이블 삭제
             if(deleteList.size()!=0){
-                for (RequestDetailDto requestDetailDto : updateList) {
+                for (RequestDetailDto requestDetailDto : deleteList) {
                     log.info("삭제로직 FrNo : "+etcData.getFrNo());
                     log.info("삭제로직 FdTag : "+requestDetailDto.getFdTag());
                     Optional<RequestDetail> optionalRequestDetail = findByRequestDetail(etcData.getFrNo(), requestDetailDto.getFdTag());
@@ -280,11 +288,11 @@ public class ReceiptService {
 
             // 모두 저장되면 최종 택번호 업데이트
             Optional<Franchise> optionalFranchise = headService.findByFrCode(frCode); // 가맹점
-            log.info("마지막 택번호 : "+lastTagNo);
             if(optionalFranchise.isPresent()){
                 if(addList.size()==0){
                     lastTagNo = optionalFranchise.get().getFrLastTagno();
                 }
+                log.info("마지막 택번호 : "+lastTagNo);
                 optionalFranchise.get().setFrLastTagno(lastTagNo);
 
                 headService.franchiseSave(optionalFranchise.get());
