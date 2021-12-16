@@ -34,6 +34,30 @@ function openVKeyboard(num) {
     vkey.showKeyboard(vkeyTargetId[num], vkeyProp[num]);
 }
 
+// 접수화면으로 이동
+function receiptMove(){
+    location.href="/user/receiptreg"
+}
+
+// 입력항목 클리어
+function init(){
+    $("#bcName").val("");
+    $("#bcHp").val("");
+    $("#female").prop("checked",true);
+    $("#bcAddress").val("");
+    $("#bcBirthYYYY").val("");
+    $("#bcBirthMM").val("");
+    $("#bcBirthDD").val("");
+    $("#bcAge").val("");
+    $("#bcValuation").val("3");
+    $("#yes2").prop("checked",true);
+    $("#bcAgreeType").val("1");
+    $("#bcRemark").val("");
+    $("#bcSignImage").val("");
+    $("#windowMask").hide();
+    $("#mask").hide();
+}
+
 /* 입력된 폼 정보 저장 */
 function saveRegister() {
     const formData = new FormData(document.getElementById('userregForm'));
@@ -62,6 +86,7 @@ function saveRegister() {
 
     const url = "/api/user/customerSave";
     CommonUI.ajax(url, "POST", formData, function (){
+        init();
        alertSuccess("고객 데이터 저장 성공");
     });
 
@@ -115,11 +140,6 @@ function onAgreeTypeChange(type) {
     }else{
         $requestSign.attr("disabled", true);
     }
-}
-
-/* 회원등록을 취소 */
-function cancelRegister() {
-
 }
 
 /* 서명을 요청할 때 고객측의 모니터에 서명하도록 뜬다. */
