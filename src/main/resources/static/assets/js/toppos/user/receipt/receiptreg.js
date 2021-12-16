@@ -3,11 +3,6 @@ $(function() {
     /* 배열내의 각 설정만 넣어 빈 그리드 생성 */
     createGrids(true);
 
-    /* 그리드에 데이터를 집어넣음 반복문은 그리드숫자만큼(혹은 목표그리드 범위만큼) 돌 수 있도록 한다. */
-    for(let i=0; i<0; i++) {
-        //setDataIntoGrid(i, gridCreateUrl[i]);
-    }
-
     setDataIntoGrid(2, gridCreateUrl[2]);
 
     /* 가상키보드의 사용 선언 */
@@ -252,12 +247,12 @@ let gridSaveUrl = [];
 
 /* 그리드를 뿌릴 대상 div의 id들 */
 gridTargetDiv = [
-    "grid_requestList", "grid_customerList", "grid_tempSaveList"
+    "grid_requestList", "grid_customerList", "grid_tempSaveList", "grid_payment"
 ];
 
-/* 그리드를 받아올 때 쓰이는 api 배열 */
+/* 그리드를 받아올 때 쓰이는 api, 이번엔 예외적으로 배열 2번째 값은 첫번째 그리드에서 쓰인다.*/
 gridCreateUrl = [
-    "/api/user/tempRequestDetailList", "/api/user/tempRequestDetailDelete", "/api/user/tempRequestList"
+    "/api/user/tempRequestDetailList", "/api/user/tempRequestDetailDelete", "/api/user/tempRequestList", "/api/user/"
 ]
 
 /* 그리드를 저장할 때 쓰이는 api 배열 */
@@ -420,10 +415,42 @@ gridColumnLayout[2] = [
     },
 ];
 
+gridProp[2] = {
+    editable : false,
+    selectionMode : "singleRow",
+    noDataMessage : "출력할 데이터가 없습니다.",
+    rowNumHeaderText : "순번",
+    enableColumnResize : false,
+    showStateColumn : true,
+    enableFilter : true,
+};
+
+gridColumnLayout[3] = [
+    {
+        dataField: "",
+        headerText: "가나다",
+        colspan: 2,
+    }, {
+        dataField: "",
+    },
+];
+
+gridProp[3] = {
+    editable : false,
+    selectionMode : "singleRow",
+    noDataMessage : "출력할 데이터가 없습니다.",
+    enableColumnResize : false,
+    showStateColumn : true,
+    enableFilter : true,
+    height : 140,
+};
+
+
 // 1. 임시저장 삭제여부 묻기
 function onRemoveTempSave(){
     alertDeleteCheck("해당 임시저장을 삭제하시겠습니까?");
 }
+
 // 2. 삭제로식 실행
 function checkYesOrNo(booleanValue) {
     $('#popupId').remove();
@@ -440,16 +467,6 @@ function checkYesOrNo(booleanValue) {
         });
     }
 }
-
-gridProp[2] = {
-    editable : false,
-    selectionMode : "singleRow",
-    noDataMessage : "출력할 데이터가 없습니다.",
-    rowNumHeaderText : "순번",
-    enableColumnResize : false,
-    showStateColumn : true,
-    enableFilter : true,
-};
 
 function onShowVKeyboard(num) {
     vkey.showKeyboard(vkeyTargetId[num], vkeyProp[num]);
@@ -1061,7 +1078,7 @@ function onSaveTemp() {
         bcId: selectedCustomer.bcId,
         frNo: initialData.etcData.frNo,
         frNormalAmount: $("#totFdNormalAmount").html().replace(/[^0-9]/g, ""),
-        frDiscountAmount: $("#totFdDiscountAmount").html().replace(/[^0-9]/g, ""),
+        frDiscountAmount: $("#totChangeAmount").html().replace(/[^0-9]/g, ""),
         frTotalAmount: $("#totFdRequestAmount").html().replace(/[^0-9]/g, ""),
     }
 
