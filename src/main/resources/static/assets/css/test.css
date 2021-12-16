@@ -1858,7 +1858,9 @@ textarea {
 	font-weight: 700;
 }
 .pop__pay-list > dl > dt .c-keybtn,
-.pop__pay-list > dl > dd .c-keybtn {
+.pop__pay-list > dl > dd .c-keybtn,
+.pop__pay-list > dl > dt .c-cancelbtn,
+.pop__pay-list > dl > dd .c-cancelbtn {
 	position: absolute;
 	top: 50%;
 	left: 1.25rem;
