@@ -10,4 +10,5 @@ import java.util.List;
  */
 public interface RequestDetailRepositoryCustom {
     List<RequestDetailDto> findByRequestTempDetailList(String frNo);
+    List<RequestDetailAmtDto> findByRequestDetailAmtList(String frNo);
 }

@@ -21,9 +21,14 @@ import java.time.format.DateTimeFormatter;
 public class RequestCollectDto {
 
     private String frNo; // 접수코드
+    private String frYyyymmdd; // 접수일자
     private String frUncollectYn; // 미수여부
     private Integer frTotalAmount; // 합계금액
     private Integer frPayAmount; // 결제금액
+
+    public String getFrYyyymmdd() {
+        return frYyyymmdd;
+    }
 
     public String getFrNo() {
         return frNo;

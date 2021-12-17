@@ -113,14 +113,19 @@ public class ReceiptService {
         return requestDetailRepositoryCustom.findByRequestTempDetailList(frNo);
     }
 
+    // 접수 세부테이블 가격관련 리스트 호출
+    public List<RequestDetailAmtDto> findByRequestDetailAmtList(String frNo) {
+        return requestDetailRepositoryCustom.findByRequestDetailAmtList(frNo);
+    }
+
     // 결제 마스터테이블 미수금액 리스트 호출
-    private List<RequestCollectDto> findByRequestCollectList(Customer customer, String nowDate) {
-        return requestRepositoryCustom.findByRequestCollectList(customer, nowDate);
+    private List<RequestCollectDto> findByRequestCollectList(Customer customer) {
+        return requestRepositoryCustom.findByRequestCollectList(customer);
     }
 
     // 현재 고객의 적립금 리스트 호출
-    private List<SaveMoneyDto> findByRequestCollectList(Customer customer) {
-        return saveMoneyRepositoryCustom.findByRequestCollectList(customer);
+    private List<SaveMoneyDto> findBySaveMoneyList(Customer customer) {
+        return saveMoneyRepositoryCustom.findBySaveMoneyList(customer);
     }
 
     // 접수페이지 가맹점 임시저장 및 결제하기 세탁접수 API
@@ -204,24 +209,33 @@ public class ReceiptService {
 
                 // 결제일 경우, 현재 고객의 적립금과 미수금액을 보내준다.
                 // 미수금액 리스트를 호출한다. 조건 : 미수여부는 Y, 임시저장확정여부는 N, 고객아이디 eq, 가맹점코드 = frCode eq, 현재날짜의 전날들만 인것들만 조회하기
-                List<RequestCollectDto>  requestCollectDtoList = findByRequestCollectList(optionalCustomer.get(), nowDate);
-                int totalAmount = 0;
-                int payAmount = 0;
+                List<RequestCollectDto>  requestCollectDtoList = findByRequestCollectList(optionalCustomer.get()); // nowDate 현재날짜
+                int todayTotalAmount = 0;
+                int todayPayAmount = 0;
+                int beforeTotalAmount = 0;
+                int beforePayAmount = 0;
                 if(requestCollectDtoList.size() != 0){
                     for(RequestCollectDto requestCollectDto : requestCollectDtoList){
-                        totalAmount = totalAmount + requestCollectDto.getFrTotalAmount();
-                        payAmount = payAmount + requestCollectDto.getFrPayAmount();
+                        if(!requestCollectDto.getFrYyyymmdd().equals(nowDate)){
+                            beforeTotalAmount = beforeTotalAmount + requestCollectDto.getFrTotalAmount();
+                            beforePayAmount = beforePayAmount + requestCollectDto.getFrPayAmount();
+                        }else{
+                            todayTotalAmount = todayTotalAmount + requestCollectDto.getFrTotalAmount();
+                            todayPayAmount = todayPayAmount + requestCollectDto.getFrPayAmount();
+                        }
                     }
-                    data.put("uncollectMoney",totalAmount-payAmount);
+                    data.put("beforeUncollectMoney",beforeTotalAmount-beforePayAmount);
+                    data.put("todayUncollectMoney",todayTotalAmount - todayPayAmount);
                 }else{
                     data.put("uncollectMoney",0);
+                    data.put("todayUncollectMoney",0);
                 }
 //                log.info("합계금액 : "+totalAmount);
 //                log.info("결제금액 : "+payAmount);
-                log.info("전일미수금액 : "+ (totalAmount - payAmount));
-
+                log.info("전일미수금액 : "+ (beforeTotalAmount - beforePayAmount));
+                log.info("당일미수금액 : "+ (todayTotalAmount - todayPayAmount));
                 // 적립금 리스트를 호출한다. 조건 : 고객 ID, 적립유형 1 or 2, 마감여부 : N,
-                List<SaveMoneyDto>  saveMoneyDtoList = findByRequestCollectList(optionalCustomer.get());
+                List<SaveMoneyDto>  saveMoneyDtoList = findBySaveMoneyList(optionalCustomer.get());
                 int plusSaveMoney = 0;
                 int minusSaveMoney = 0;
                 if(saveMoneyDtoList.size() != 0) {
@@ -449,15 +463,28 @@ public class ReceiptService {
 
                 List<Payment> paymentList = new ArrayList<>();
                 Integer frPayAmount = 0;
+                int colletcAmt = 0;
                 // 결제 데이터가 존재할시 저장 시작
                 if(paymentDtos.size() != 0){
+                    List<PaymentEtcDto> paymentEtcDtos = new ArrayList<>();  // 결제완료시 보낼 Etc 데이터 리스트
                     for(PaymentDto paymentDto : paymentDtos){
+                        PaymentEtcDto paymentEtcDto = new PaymentEtcDto();
                         frPayAmount = frPayAmount + paymentDto.getFpAmt();
                         Payment payment = modelMapper.map(paymentDto,Payment.class);
                         payment.setBcId(optionalCustomer.get());
                         payment.setFrId(optionalRequest.get());
                         payment.setInsert_id(login_id);
                         payment.setInsert_date(LocalDateTime.now());
+
+                        colletcAmt = colletcAmt+payment.getFpCollectAmt(); // 미수상환금액 계산
+
+                        // 결제완료시 보낼 Etc 데이터 리스트
+                        paymentEtcDto.setFpType(payment.getFpType());
+                        paymentEtcDto.setFpAmt(payment.getFpAmt());
+                        paymentEtcDto.setFpCatIssuername(payment.getFpCatIssuername());
+                        paymentEtcDtos.add(paymentEtcDto);
+
+                        // 저장할 결제데이터 리스트
                         paymentList.add(payment);
                     }
 
@@ -473,10 +500,27 @@ public class ReceiptService {
                     }
 
                     String result = requestAndPaymentSave(optionalRequest.get(), paymentList);
-                    if(result.equals("success")){
+                    log.info("다시 업데이트할 접수코드 : "+result);
+                    if(!result.equals("fail")){
                         // 결제가 성공적으로 저장이 됬을때 타는 로직
                         // -> 세부테이블의 total 금액을 마스터테이블의 합계금액에 업데이트 쳐준다.
+                        List<RequestDetailAmtDto> requestDetailAmtDtos = findByRequestDetailAmtList(result); // 세부테이블의 합계금액 리스트 호출
+                        int totalAmt = optionalRequest.get().getFrTotalAmount();
+                        if(requestDetailAmtDtos.size() != 0){
+                            totalAmt = 0;
+                            for(RequestDetailAmtDto requestDetailAmtDto : requestDetailAmtDtos){
+                                totalAmt = totalAmt+requestDetailAmtDto.getFdTotAmt();
+                            }
+                        }
+                        optionalRequest.get().setFrTotalAmount(totalAmt);
+                        // 마스터테이블을 다시 업데이트 쳐준다.
+                        requestRepository.save(optionalRequest.get());
 
+                        // 결제완료 후 미수상환금액 보낸다.
+                        data.put("colletcAmt",colletcAmt);
+
+                        // 옆에 결제내역에서 보여줄 데이터 전송
+                        data.put("paymentEtcDtos",paymentEtcDtos);
 
                     }else{
                         return ResponseEntity.ok(res.fail(ResponseErrorCode.TP019.getCode(), ResponseErrorCode.TP019.getDesc(), "문자", "다시 시도해주세요."));
@@ -494,12 +538,10 @@ public class ReceiptService {
     @Transactional(rollbackFor = SQLException.class)
     public String requestAndPaymentSave(Request request, List<Payment> paymentList){
         try{
-            log.info("저장성공");
-            log.info("request : "+request);
-            log.info("paymentList : "+paymentList);
-            requestRepository.save(request);
+            log.info("결제성공");
+            Request saveRequest = requestRepository.save(request);
             paymentRepository.saveAll(paymentList);
-            return "success";
+            return saveRequest.getFrCode();
         }catch (Exception e){
             log.info("에러발생 트랜젝션실행 : "+e);
             return "fail";

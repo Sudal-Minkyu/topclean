@@ -81,8 +81,18 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         return query.fetch();
     }
 
+    public List<RequestDetailAmtDto> findByRequestDetailAmtList(String frNo){
+        QRequestDetail requestDetail = QRequestDetail.requestDetail;
 
+        JPQLQuery<RequestDetailAmtDto> query = from(requestDetail)
+                .select(Projections.constructor(RequestDetailAmtDto.class,
+                        requestDetail.fdTotAmt
+                ));
 
+        query.where(requestDetail.frNo.eq(frNo));
+
+        return query.fetch();
+    }
 
 
 

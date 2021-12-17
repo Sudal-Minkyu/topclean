@@ -24,7 +24,7 @@ public class SaveMoneyRepositoryCustomImpl extends QuerydslRepositorySupport imp
     }
 
     @Override
-    public List<SaveMoneyDto> findByRequestCollectList(Customer customer) {
+    public List<SaveMoneyDto> findBySaveMoneyList(Customer customer) {
         QSaveMoney saveMoney = QSaveMoney.saveMoney;
 
         JPQLQuery<SaveMoneyDto> query = from(saveMoney)
