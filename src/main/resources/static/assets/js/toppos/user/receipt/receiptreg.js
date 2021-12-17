@@ -282,6 +282,24 @@ gridColumnLayout[0] = [
     }, {
         dataField: "sumName",
         headerText: "상품명",
+        labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+            if(!item.sumName) {
+                const nameArray = initialData.userItemPriceSortData;
+                const isNotSizeNormal = !(item.biItemcode.substr(3, 1) === "N");
+                let sumName = "";
+                for(let i = 0; i < nameArray.length; i++) {
+                    if(nameArray[i].biItemcode === item.biItemcode) {
+                        if(isNotSizeNormal) {
+                            sumName += nameArray[i].bsName + " ";
+                        }
+                        sumName += nameArray[i].biName + " " + nameArray[i].bgName;
+                        break;
+                    }
+                }
+                item.sumName = sumName;
+            }
+            return item.sumName;
+        }
     }, {
         dataField: "sumProcess",
         headerText: "처리내용",
@@ -876,9 +894,6 @@ function onAddOrder() {
         C06: "노랑", C07: "초록", C08: "파랑", C09: "남색", C10: "보라", C11: "핑크"
     }
     */
-    currentRequest.sumName = $("input[name='bsItemGroupcodeS']:checked").siblings().first().html() + " "
-        + $("input[name='material']:checked").siblings().first().children().first().html() + " "
-        + $("#bgItemList button[value=" + selectedLaundry.bgCode + "] span").html();
 
     currentRequest.fdColor = $("input[name='fdColor']:checked").val();
     //item.fdColorName = colorName["C" + item.fdColor];
@@ -1193,7 +1208,7 @@ function changeQty() {
 /* 접수완료시 호출 API */
 function onApply() {
     checkNum = "2";
-    onSaveTemp();
+    //onSaveTemp(); 임시로 막아둠
 
     // 여는 순간에 미수금과 적립금을 가져올 것 지금은 임의의 값
     $("#uncollectAmt").html("2,000");
@@ -1265,6 +1280,7 @@ function onPayment() {
     const applyUncollectAmt = parseInt($("#applyUncollectAmt").html().replace(/[^0-9]/g, ""));
 
     const paymentTab = $(".pop__pay-tabs-item.active").attr("data-id");
+
     if(paymentTab === "tabCash") {
         const receiveCash = parseInt($("#receiveCash").html().replace(/[^0-9]/g, ""));
         const paymentCash = {
@@ -1276,6 +1292,29 @@ function onPayment() {
         data.payment.push(paymentCash);
     }else if(paymentTab === "tabCard") {
         const receiveCard = parseInt($("#receiveCard").html().replace(/[^0-9]/g, ""));
+        let paymentData =
+            {
+                "type":"card",
+                "franchiseNo":"123",
+                "franchiseName":"소만마을점",
+                "businessNO": "125-55-45671",
+                "repreName" : "김점주",
+                "franchiseTel" : "031-4564-7894",
+                "customerName" : "최고객",
+                "customerTel" : "010-****-7777",
+                "requestDt" : "2021-11-15 13:15",
+                "totalAmount":10500,
+                "addAmount":1500,
+                "dcAmount":500,
+                "estimateDt" : "2021-11-18",
+                "month":0,
+                "items":[
+                    {"tagno":"1231234","color":"없음","itemname":"면 상의","specialyn":"Y","price":2500},
+                    {"tagno":"1231235","color":"남색","itemname":"청바지 하의","specialyn":"","price":3500},
+                    {"tagno":"1241236","color":"검정","itemname":"롱 오리털 코트","specialyn":"","price":4500}
+                ]
+            };
+        paymentCard(paymentData);
         const paymentCard = {
             fpType: "02",
             fpMonth: 0,
@@ -1345,7 +1384,7 @@ function onKeypadConfirm() {
 }
 
 /* 임시 카드 결제용 함수 */
-function paymentCard() {
+function paymentCard(paymentData) {
 
     $('#payStatus').show();
 
@@ -1354,28 +1393,7 @@ function paymentCard() {
     // totalAmount : 총 결제금액
     // month : 할부 (0-일시불, 2-2개월)
 
-    let paymentData =
-        {
-            "type":"card",
-            "franchiseNo":"123",
-            "franchiseName":"소만마을점",
-            "businessNO": "125-55-45671",
-            "repreName" : "김점주",
-            "franchiseTel" : "031-4564-7894",
-            "customerName" : "최고객",
-            "customerTel" : "010-****-7777",
-            "requestDt" : "2021-11-15 13:15",
-            "totalAmount":10500,
-            "addAmount":1500,
-            "dcAmount":500,
-            "estimateDt" : "2021-11-18",
-            "month":0,
-            "items":[
-                {"tagno":"1231234","color":"없음","itemname":"면 상의","specialyn":"Y","price":2500},
-                {"tagno":"1231235","color":"남색","itemname":"청바지 하의","specialyn":"","price":3500},
-                {"tagno":"1241236","color":"검정","itemname":"롱 오리털 코트","specialyn":"","price":4500}
-            ]
-        };
+
 
 
     if (paymentData.type ==="card") {
