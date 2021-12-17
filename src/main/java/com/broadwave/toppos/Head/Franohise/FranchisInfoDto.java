@@ -34,6 +34,22 @@ public class FranchisInfoDto {
     private Integer frEstimateDuration; // 출고예정일
     private String frLastTagno; // 가맹점 태그번호
 
+    private String frBusinessNo; // 사업자번호(10자리)
+    private String frRpreName; // 가맹점주이름
+    private String frTelNo; // 가맹점 전화번호
+
+    public String getFrBusinessNo() {
+        return frBusinessNo;
+    }
+
+    public String getFrRpreName() {
+        return frRpreName;
+    }
+
+    public String getFrTelNo() {
+        return frTelNo;
+    }
+
     public Integer getFrEstimateDuration() {
         return frEstimateDuration;
     }

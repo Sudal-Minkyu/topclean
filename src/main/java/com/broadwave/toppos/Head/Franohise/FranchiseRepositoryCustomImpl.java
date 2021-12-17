@@ -95,7 +95,11 @@ public class FranchiseRepositoryCustomImpl extends QuerydslRepositorySupport imp
                     branch.brCarculateRateFr,
 
                     franchise.frEstimateDuration,
-                    franchise.frLastTagno
+                    franchise.frLastTagno,
+
+                    franchise.frBusinessNo,
+                    franchise.frRpreName,
+                    franchise.frTelNo
             ));
 
         query.where(franchise.frCode.eq(frCode));
