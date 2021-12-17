@@ -171,7 +171,7 @@ public class ReceiptService {
                     optionalRequest.get().setFrTotalAmount(etcData.getFrTotalAmount());
                     optionalRequest.get().setFrDiscountAmount(etcData.getFrDiscountAmount());
                     optionalRequest.get().setFrNormalAmount(etcData.getFrNormalAmount());
-                    optionalRequest.get().setFrQty(addList.size()+updateList.size());
+                    optionalRequest.get().setFrQty(etcData.getFrQty());
                     optionalRequest.get().setFrYyyymmdd(nowDate);
                     optionalRequest.get().setModity_id(login_id);
                     optionalRequest.get().setModity_date(LocalDateTime.now());
@@ -187,11 +187,10 @@ public class ReceiptService {
                 requestSave.setFrCode(frCode);
                 requestSave.setFrYyyymmdd(nowDate);
                 requestSave.setFrPayAmount(0);
-                requestSave.setFrQty(addList.size()+updateList.size());
                 requestSave.setFrRefBoxCode(null); // 무인보관함 연계시 무인보관함 접수번호 : 일단 무조건 NULL
                 requestSave.setFr_insert_id(login_id);
                 requestSave.setFr_insert_date(LocalDateTime.now());
-                requestSave.setFrUncollectYn("N");
+                requestSave.setFrUncollectYn("Y");
 
                 log.info("접수마스터 테이블 저장 or 수정 : "+requestSave);
             }
@@ -448,14 +447,13 @@ public class ReceiptService {
                 return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "결제 할 접수"+ResponseErrorCode.TP009.getDesc(), "문자", "접수코드 : "+etcData.getFrNo()));
             }else{
 
-                Integer frPayAmount;
                 List<Payment> paymentList = new ArrayList<>();
-
+                Integer frPayAmount = 0;
                 // 결제 데이터가 존재할시 저장 시작
                 if(paymentDtos.size() != 0){
-                    frPayAmount = paymentDtos.get(0).getFpAmt();
-                    log.info("결제 금액 : "+frPayAmount);
                     for(PaymentDto paymentDto : paymentDtos){
+                        frPayAmount = frPayAmount + paymentDto.getFpAmt();
+                        log.info("결제 금액 : "+frPayAmount);
                         Payment payment = modelMapper.map(paymentDto,Payment.class);
                         payment.setBcId(optionalCustomer.get());
                         payment.setFrId(optionalRequest.get());
@@ -469,8 +467,12 @@ public class ReceiptService {
                     optionalRequest.get().setModity_id(login_id);
                     optionalRequest.get().setModity_date(LocalDateTime.now());
 
-//                    // 미수여부 기능작업중...
-//                    optionalRequest.get().setFrUncollectYn("Y");
+                    // 미수여부 기능작업중...
+                    if(optionalRequest.get().getFrTotalAmount() <= frPayAmount){
+                        optionalRequest.get().setFrUncollectYn("N");
+                    }else{
+                        optionalRequest.get().setFrUncollectYn("Y");
+                    }
 
                     requestAndPaymentSave(optionalRequest.get(), paymentList);
 
@@ -490,8 +492,8 @@ public class ReceiptService {
             log.info("저장성공");
             log.info("request : "+request);
             log.info("paymentList : "+paymentList);
-//            requestRepository.save(request);
-//            paymentRepository.saveAll(paymentList);
+            requestRepository.save(request);
+            paymentRepository.saveAll(paymentList);
         }catch (Exception e){
             log.info("에러발생 트랜젝션실행 : "+e);
         }

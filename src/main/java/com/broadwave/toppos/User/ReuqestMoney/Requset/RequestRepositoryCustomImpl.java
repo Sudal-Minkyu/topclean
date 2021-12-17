@@ -55,7 +55,7 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
                         request.frPayAmount
                 ));
 
-        query.where(request.frUncollectYn.eq("N")
+        query.where(request.frUncollectYn.eq("Y")
                 .and(request.frConfirmYn.eq("Y"))
                 .and(request.bcId.eq(customer))
                 .and(request.frYyyymmdd.lt(nowDate))

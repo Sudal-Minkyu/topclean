@@ -24,6 +24,11 @@ public class RequestMapperDto {
     private Integer frNormalAmount; // 총 접수금액
     private Integer frDiscountAmount; // 총 할인금액
     private Integer frTotalAmount; // 총 합계금액
+    private Integer frQty; // 접수건수
+
+    public Integer getFrQty() {
+        return frQty;
+    }
 
     public String getFrNo() {
         return frNo;
