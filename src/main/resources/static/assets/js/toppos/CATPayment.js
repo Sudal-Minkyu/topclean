@@ -459,7 +459,7 @@ function CatCreate_Print(params,creditResult,cancelYN){
     message += String.fromCharCode(27);
     message += String.fromCharCode(33);
     message += String.fromCharCode(32);
-    message += (numberWithCommasCat(10500)).padStart(15);
+    message += (numberWithCommasCat(params.totalAmount)).padStart(15);
     message += String.fromCharCode(27);
     message += String.fromCharCode(33);
     message += String.fromCharCode(0);
@@ -468,9 +468,9 @@ function CatCreate_Print(params,creditResult,cancelYN){
     message += String.fromCharCode(10);
     message += "<미수금정보>";
     message += String.fromCharCode(10);
-    message += "기존미수금:" + ("" + numberWithCommasCat(5000)).padStart(8) + "    당일미수금:" + (" " + numberWithCommasCat(0)).padStart(8);
+    message += "전일미수금:" + ("" + numberWithCommasCat(params.preUncollectAmount)).padStart(8) + "    당일미수금:" + (" " + numberWithCommasCat(params.curUncollectAmount)).padStart(8);
     message += String.fromCharCode(10);
-    message += "미수금상환:" + ("" + numberWithCommasCat(0)).padStart(8) + "      총미수금:" + (" " + numberWithCommasCat(5000)).padStart(8);
+    message += "미수금상환:" + ("" + numberWithCommasCat(params.uncollectPayAmount)).padStart(8) + "      총미수금:" + (" " + numberWithCommasCat(params.totalUncollectAmount)).padStart(8);
     message += String.fromCharCode(10);
     if (type ==='card') {
         message += "==========================================";
@@ -480,9 +480,9 @@ function CatCreate_Print(params,creditResult,cancelYN){
         message += "승인일시                  " + approvalTime.padStart(16);
         message += String.fromCharCode(10);
         if (cancelYN==="Y") {
-            message += ("할부 : " + month).fillSpaceUnicode(14) + "    취소금액".fillSpaceUnicode(19) + (numberWithCommasCat(-1*params.totalAmount)).padStart(9);
+            message += ("할부 : " + month).fillSpaceUnicode(14) + "    취소금액".fillSpaceUnicode(19) + (numberWithCommasCat(-1*params.paymentAmount)).padStart(9);
         }else {
-            message += ("할부 : " + month).fillSpaceUnicode(14) + "    결제금액".fillSpaceUnicode(19) + (numberWithCommasCat(params.totalAmount)).padStart(9);
+            message += ("할부 : " + month).fillSpaceUnicode(14) + "    결제금액".fillSpaceUnicode(19) + (numberWithCommasCat(params.paymentAmount)).padStart(9);
         }
         message += String.fromCharCode(10);
         message += cardName.fillSpaceUnicode(24) +" " + cardNo.padStart(17);
@@ -498,9 +498,9 @@ function CatCreate_Print(params,creditResult,cancelYN){
         message += "결제구분                              현금";
         message += String.fromCharCode(10);
         if (cancelYN==="Y") {
-            message += "취소금액".fillSpaceUnicode(33) + (numberWithCommasCat(-1*params.totalAmount)).padStart(9);
+            message += "취소금액".fillSpaceUnicode(33) + (numberWithCommasCat(-1*params.paymentAmount)).padStart(9);
         }else {
-            message += "결제금액".fillSpaceUnicode(33) + (numberWithCommasCat(params.totalAmount)).padStart(9);
+            message += "결제금액".fillSpaceUnicode(33) + (numberWithCommasCat(params.paymentAmount)).padStart(9);
         }
         message += String.fromCharCode(10);
         message += "==========================================";
@@ -627,7 +627,7 @@ function CatCreate_Print(params,creditResult,cancelYN){
     message += String.fromCharCode(27);
     message += String.fromCharCode(33);
     message += String.fromCharCode(32);
-    message += (numberWithCommasCat(10500)).padStart(15);
+    message += (numberWithCommasCat(params.totalAmount)).padStart(15);
     message += String.fromCharCode(27);
     message += String.fromCharCode(33);
     message += String.fromCharCode(0);
@@ -636,9 +636,9 @@ function CatCreate_Print(params,creditResult,cancelYN){
     message += String.fromCharCode(10);
     message += "<미수금정보>";
     message += String.fromCharCode(10);
-    message += "기존미수금:" + ("" + numberWithCommasCat(5000)).padStart(8) + "    당일미수금:" + (" " + numberWithCommasCat(0)).padStart(8);
+    message += "전일미수금:" + ("" + numberWithCommasCat(params.preUncollectAmount)).padStart(8) + "    당일미수금:" + (" " + numberWithCommasCat(params.curUncollectAmount)).padStart(8);
     message += String.fromCharCode(10);
-    message += "미수금상환:" + ("" + numberWithCommasCat(0)).padStart(8) + "      총미수금:" + (" " + numberWithCommasCat(5000)).padStart(8);
+    message += "미수금상환:" + ("" + numberWithCommasCat(params.uncollectPayAmount)).padStart(8) + "      총미수금:" + (" " + numberWithCommasCat(params.totalUncollectAmount)).padStart(8);
     message += String.fromCharCode(10);
     if (type ==='card') {
         message += "==========================================";
@@ -648,9 +648,9 @@ function CatCreate_Print(params,creditResult,cancelYN){
         message += "승인일시                  " + approvalTime.padStart(16);
         message += String.fromCharCode(10);
         if (cancelYN==="Y") {
-            message += ("할부 : " + month).fillSpaceUnicode(14) + "    취소금액".fillSpaceUnicode(19) + (numberWithCommasCat(-1*params.totalAmount)).padStart(9);
+            message += ("할부 : " + month).fillSpaceUnicode(14) + "    취소금액".fillSpaceUnicode(19) + (numberWithCommasCat(-1*params.paymentAmount)).padStart(9);
         }else {
-            message += ("할부 : " + month).fillSpaceUnicode(14) + "    결제금액".fillSpaceUnicode(19) + (numberWithCommasCat(params.totalAmount)).padStart(9);
+            message += ("할부 : " + month).fillSpaceUnicode(14) + "    결제금액".fillSpaceUnicode(19) + (numberWithCommasCat(params.paymentAmount)).padStart(9);
         }
         message += String.fromCharCode(10);
         message += cardName.fillSpaceUnicode(24) +" " + cardNo.padStart(17);
@@ -666,9 +666,9 @@ function CatCreate_Print(params,creditResult,cancelYN){
         message += "결제구분                              현금";
         message += String.fromCharCode(10);
         if (cancelYN==="Y") {
-            message += "취소금액".fillSpaceUnicode(33) + (numberWithCommasCat(-1*params.totalAmount)).padStart(9);
+            message += "취소금액".fillSpaceUnicode(33) + (numberWithCommasCat(-1*params.paymentAmount)).padStart(9);
         }else {
-            message += "결제금액".fillSpaceUnicode(33) + (numberWithCommasCat(params.totalAmount)).padStart(9);
+            message += "결제금액".fillSpaceUnicode(33) + (numberWithCommasCat(params.paymentAmount)).padStart(9);
         }
         message += String.fromCharCode(10);
         message += "==========================================";
