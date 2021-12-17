@@ -14,14 +14,12 @@ import com.broadwave.toppos.User.Customer.Customer;
 import com.broadwave.toppos.User.Customer.CustomerInfoDto;
 import com.broadwave.toppos.User.Customer.CustomerListDto;
 import com.broadwave.toppos.User.Customer.CustomerMapperDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentMapperDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentSet;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Request;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestCollectDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailSet;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestListDto;
-import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoneyDto;
 import com.broadwave.toppos.User.UserService.ReceiptService;
 import com.broadwave.toppos.User.UserService.UserService;
 import com.broadwave.toppos.common.AjaxResponse;
@@ -187,22 +185,9 @@ public class UserRestController {
 //                log.info("결제금액 : "+payAmount);
                 log.info("전일미수금액 : "+ (beforeTotalAmount - beforePayAmount));
                 // 적립금 리스트를 호출한다. 조건 : 고객 ID, 적립유형 1 or 2, 마감여부 : N,
-                List<SaveMoneyDto>  saveMoneyDtoList = receiptService.findBySaveMoneyList(optionalCustomer.get());
-                int plusSaveMoney = 0;
-                int minusSaveMoney = 0;
-                if(saveMoneyDtoList.size() != 0) {
-                    for (SaveMoneyDto saveMoneyDto : saveMoneyDtoList) {
-                        if(saveMoneyDto.getFsType().equals("1")){
-                            plusSaveMoney = plusSaveMoney + saveMoneyDto.getFsAmt();
-                        }else{
-                            minusSaveMoney = minusSaveMoney + saveMoneyDto.getFsAmt();
-                        }
-                    }
-                    data.put("collectMoney",plusSaveMoney-minusSaveMoney);
-                }else{
-                    data.put("collectMoney",0);
-                }
-                log.info("적립금액 : "+ (plusSaveMoney - minusSaveMoney));
+                Integer saveMoney = receiptService.findBySaveMoneyList(optionalCustomer.get());
+                data.put("saveMoney",saveMoney);
+                log.info("적립금액 : "+ (saveMoney));
             }
         }
 

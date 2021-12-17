@@ -10,7 +10,9 @@ import com.broadwave.toppos.User.EtcDataDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.*;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.*;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.*;
+import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoney;
 import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoneyDto;
+import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoneyRepository;
 import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoneyRepositoryCustom;
 import com.broadwave.toppos.common.AjaxResponse;
 import com.broadwave.toppos.common.ResponseErrorCode;
@@ -47,6 +49,7 @@ public class ReceiptService {
     private final RequestRepository requestRepository;
     private final RequestDetailRepository requestDetailRepository;
     private final PaymentRepository paymentRepository;
+    private final SaveMoneyRepository saveMoneyRepository;
 
     private final RequestRepositoryCustom requestRepositoryCustom;
     private final RequestDetailRepositoryCustom requestDetailRepositoryCustom;
@@ -59,7 +62,7 @@ public class ReceiptService {
 
     @Autowired
     public ReceiptService(UserService userService, KeyGenerateService keyGenerateService, TokenProvider tokenProvider, ModelMapper modelMapper,
-                          RequestRepository requestRepository, RequestDetailRepository requestDetailRepository, PaymentRepository paymentRepository,
+                          RequestRepository requestRepository, RequestDetailRepository requestDetailRepository, PaymentRepository paymentRepository, SaveMoneyRepository saveMoneyRepository,
                           RequestRepositoryCustom requestRepositoryCustom, RequestDetailRepositoryCustom requestDetailRepositoryCustom, PaymentRepositoryCustom paymentRepositoryCustom, SaveMoneyRepositoryCustom saveMoneyRepositoryCustom,
                           HeadService headService, CustomerRepository customerRepository,BranchCalendarRepositoryCustom branchCalendarRepositoryCustom){
         this.userService = userService;
@@ -71,6 +74,7 @@ public class ReceiptService {
         this.paymentRepositoryCustom = paymentRepositoryCustom;
         this.requestDetailRepository = requestDetailRepository;
         this.customerRepository = customerRepository;
+        this.saveMoneyRepository = saveMoneyRepository;
         this.branchCalendarRepositoryCustom = branchCalendarRepositoryCustom;
         this.keyGenerateService = keyGenerateService;
         this.requestRepositoryCustom = requestRepositoryCustom;
@@ -124,8 +128,22 @@ public class ReceiptService {
     }
 
     // 현재 고객의 적립금 리스트 호출
-    public List<SaveMoneyDto> findBySaveMoneyList(Customer customer) {
-        return saveMoneyRepositoryCustom.findBySaveMoneyList(customer);
+    public Integer findBySaveMoneyList(Customer customer) {
+        List<SaveMoneyDto> saveMoneyDtoList = saveMoneyRepositoryCustom.findBySaveMoneyList(customer);
+        int plusSaveMoney = 0;
+        int minusSaveMoney = 0;
+        if(saveMoneyDtoList.size() != 0) {
+            for (SaveMoneyDto saveMoneyDto : saveMoneyDtoList) {
+                if(saveMoneyDto.getFsType().equals("1")){
+                    plusSaveMoney = plusSaveMoney + saveMoneyDto.getFsAmt();
+                }else {
+                    minusSaveMoney = minusSaveMoney + saveMoneyDto.getFsAmt();
+                }
+            }
+            return plusSaveMoney-minusSaveMoney;
+        }else{
+            return 0;
+        }
     }
 
     // 접수페이지 가맹점 임시저장 및 결제하기 세탁접수 API
@@ -234,23 +252,11 @@ public class ReceiptService {
 //                log.info("결제금액 : "+payAmount);
                 log.info("전일미수금액 : "+ (beforeTotalAmount - beforePayAmount));
                 log.info("당일미수금액 : "+ (todayTotalAmount - todayPayAmount));
+
                 // 적립금 리스트를 호출한다. 조건 : 고객 ID, 적립유형 1 or 2, 마감여부 : N,
-                List<SaveMoneyDto>  saveMoneyDtoList = findBySaveMoneyList(optionalCustomer.get());
-                int plusSaveMoney = 0;
-                int minusSaveMoney = 0;
-                if(saveMoneyDtoList.size() != 0) {
-                    for (SaveMoneyDto saveMoneyDto : saveMoneyDtoList) {
-                        if(saveMoneyDto.getFsType().equals("1")){
-                            plusSaveMoney = plusSaveMoney + saveMoneyDto.getFsAmt();
-                        }else{
-                            minusSaveMoney = minusSaveMoney + saveMoneyDto.getFsAmt();
-                        }
-                    }
-                    data.put("collectMoney",plusSaveMoney-minusSaveMoney);
-                }else{
-                    data.put("collectMoney",0);
-                }
-                log.info("적립금액 : "+ (plusSaveMoney - minusSaveMoney));
+                Integer saveMoney = findBySaveMoneyList(optionalCustomer.get());
+                data.put("saveMoney",saveMoney);
+                log.info("적립금액 : "+ (saveMoney));
             }
 
             String lastTagNo = null; // 마지막 태그번호
@@ -464,28 +470,42 @@ public class ReceiptService {
                 List<Payment> paymentList = new ArrayList<>();
                 Integer frPayAmount = 0;
                 int collectAmt = 0;
+//                int saveMoney = 0;
+                SaveMoney saveMoney = null;
                 // 결제 데이터가 존재할시 저장 시작
                 if(paymentDtos.size() != 0){
                     List<PaymentEtcDto> paymentEtcDtos = new ArrayList<>();  // 결제완료시 보낼 Etc 데이터 리스트
                     for(PaymentDto paymentDto : paymentDtos){
-                        PaymentEtcDto paymentEtcDto = new PaymentEtcDto();
-                        frPayAmount = frPayAmount + paymentDto.getFpAmt();
-                        Payment payment = modelMapper.map(paymentDto,Payment.class);
-                        payment.setBcId(optionalCustomer.get());
-                        payment.setFrId(optionalRequest.get());
-                        payment.setInsert_id(login_id);
-                        payment.setInsert_date(LocalDateTime.now());
+                        if(paymentDto.getFpAmt()>0){
+                            PaymentEtcDto paymentEtcDto = new PaymentEtcDto();
+                            frPayAmount = frPayAmount + paymentDto.getFpAmt();
+                            Payment payment = modelMapper.map(paymentDto,Payment.class);
+                            payment.setBcId(optionalCustomer.get());
+                            payment.setFrId(optionalRequest.get());
+                            payment.setInsert_id(login_id);
+                            payment.setInsert_date(LocalDateTime.now());
 
-                        collectAmt = collectAmt+payment.getFpCollectAmt(); // 미수상환금액 계산
+                            collectAmt = collectAmt+payment.getFpCollectAmt(); // 미수상환금액 계산
 
-                        // 결제완료시 보낼 Etc 데이터 리스트
-                        paymentEtcDto.setFpType(payment.getFpType());
-                        paymentEtcDto.setFpAmt(payment.getFpAmt());
-                        paymentEtcDto.setFpCatIssuername(payment.getFpCatIssuername());
-                        paymentEtcDtos.add(paymentEtcDto);
+                            // 결제완료시 보낼 Etc 데이터 리스트
+                            paymentEtcDto.setFpType(payment.getFpType());
+                            paymentEtcDto.setFpAmt(payment.getFpAmt());
+                            paymentEtcDto.setFpCatIssuername(payment.getFpCatIssuername());
+                            paymentEtcDtos.add(paymentEtcDto);
 
-                        // 저장할 결제데이터 리스트
-                        paymentList.add(payment);
+                            if(payment.getFpType().equals("03")){
+                                saveMoney = new SaveMoney();
+                                saveMoney.setBcId(optionalCustomer.get());
+                                saveMoney.setFsType("2");
+                                saveMoney.setFsClose("N");
+                                saveMoney.setFsAmt(payment.getFpAmt());
+                                saveMoney.setInsert_id(login_id);
+                                saveMoney.setInsert_date(LocalDateTime.now());
+                            }
+
+                            // 저장할 결제데이터 리스트
+                            paymentList.add(payment);
+                        }
                     }
 
                     log.info("결제 금액 : "+frPayAmount);
@@ -499,8 +519,8 @@ public class ReceiptService {
                         optionalRequest.get().setFrUncollectYn("N");
                     }
 
-                    String result = requestAndPaymentSave(optionalRequest.get(), paymentList);
-                    log.info("다시 업데이트할 접수코드 : "+result);
+                    String result = requestAndPaymentSave(optionalRequest.get(), paymentList, saveMoney);
+                    log.info("다시 업데이트 할 접수코드 : "+result);
                     if(!result.equals("fail")){
                         // 결제가 성공적으로 저장이 됬을때 타는 로직
                         // -> 세부테이블의 total 금액을 마스터테이블의 합계금액에 업데이트 쳐준다.
@@ -522,7 +542,9 @@ public class ReceiptService {
                         // 현재 날짜 받아오기
                         LocalDateTime localDateTime = LocalDateTime.now();
                         String nowDate = localDateTime.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-                        log.info("현재 날짜 yyyymmdd : "+nowDate);
+//                        log.info("현재 날짜 yyyymmdd : "+nowDate);
+
+                        // 전일미수금을 보낸다. 전일미수금에서 미수상환금액을 뺀 금액
                         List<RequestCollectDto>  requestCollectDtoList = findByRequestCollectList(optionalCustomer.get(), nowDate); // nowDate 현재날짜
                         int beforeTotalAmount = 0;
                         int beforePayAmount = 0;
@@ -535,6 +557,11 @@ public class ReceiptService {
                         }else{
                             data.put("beforeUncollectMoney",0);
                         }
+
+                        // 적립금을 보낸다. 만약 적립금을 사용하면 사용금액의 따른 적립금을 뺀 가격을 보낸다.
+                        Integer resultSaveMoney = findBySaveMoneyList(optionalCustomer.get());
+                        data.put("saveMoney",resultSaveMoney);
+                        log.info("적립금액 : "+ resultSaveMoney);
 
                         // 옆에 결제내역에서 보여줄 데이터 전송
                         data.put("paymentEtcDtos",paymentEtcDtos);
@@ -553,12 +580,15 @@ public class ReceiptService {
 
     // 결제 Save : 마스터테이블업데이트 및 결제정보 저장
     @Transactional(rollbackFor = SQLException.class)
-    public String requestAndPaymentSave(Request request, List<Payment> paymentList){
+    public String requestAndPaymentSave(Request request, List<Payment> paymentList, SaveMoney saveMoney){
         try{
             log.info("결제성공");
             Request saveRequest = requestRepository.save(request);
             paymentRepository.saveAll(paymentList);
-            return saveRequest.getFrCode();
+            if(saveMoney!=null){
+                saveMoneyRepository.save(saveMoney);
+            }
+            return saveRequest.getFrNo();
         }catch (Exception e){
             log.info("에러발생 트랜젝션실행 : "+e);
             return "fail";

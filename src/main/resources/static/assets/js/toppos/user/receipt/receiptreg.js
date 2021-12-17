@@ -1138,7 +1138,7 @@ function onSaveTemp() {
             console.log(req);
             $("#beforeUncollectMoney").html(req.sendData.beforeUncollectMoney.toLocaleString());
             initialData.etcData.frNo = req.sendData.frNo;
-            $("#collectMoney").html(req.sendData.collectMoney.toLocaleString());
+            $("#collectMoney").html(req.sendData.saveMoney.toLocaleString());
 
         }
     })
