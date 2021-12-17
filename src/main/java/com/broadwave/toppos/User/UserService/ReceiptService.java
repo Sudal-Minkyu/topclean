@@ -243,9 +243,9 @@ public class ReceiptService {
                         }
                     }
                     data.put("beforeUncollectMoney",beforeTotalAmount-beforePayAmount);
-                    data.put("todayUncollectMoney",todayTotalAmount - todayPayAmount);
+                    data.put("todayUncollectMoney",todayTotalAmount-todayPayAmount);
                 }else{
-                    data.put("uncollectMoney",0);
+                    data.put("beforeUncollectMoney",0);
                     data.put("todayUncollectMoney",0);
                 }
 //                log.info("합계금액 : "+totalAmount);

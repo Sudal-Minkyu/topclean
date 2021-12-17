@@ -1138,7 +1138,7 @@ function onSaveTemp() {
             console.log(req);
             $("#beforeUncollectMoney").html(req.sendData.beforeUncollectMoney.toLocaleString());
             initialData.etcData.frNo = req.sendData.frNo;
-            $("#collectMoney").html(req.sendData.saveMoney.toLocaleString());
+            $("#saveMoney").html(req.sendData.saveMoney.toLocaleString());
 
         }
     })
@@ -1461,19 +1461,18 @@ function onPaymentStageTwo() {
         AUIGrid.addRow(gridId[3], req.sendData.paymentEtcDtos, "last");
         $("#beforeUncollectMoney").html(req.sendData.beforeUncollectMoney.toLocaleString());
         $("#applySavedAmt").html("0");
-        //$("#collectMoney").html(req.sendData.collectMoney);
+        $("#applyUncollectAmt").html("0");
+        //$("#saveMoney").html(req.sendData.saveMoney);
         calculateOne();
     });
 }
 
 function onPayUncollectMoney() {
     $("#applyUncollectAmt").html($("#beforeUncollectMoney").html());
-    $("#beforeUncollectMoney").html(0);
     calculateOne();
 }
 
 function cancelPayUncollectMoney() {
-    $("#beforeUncollectMoney").html($("#applyUncollectAmt").html());
     $("#applyUncollectAmt").html(0);
     calculateOne();
 }
