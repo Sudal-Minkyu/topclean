@@ -1208,7 +1208,7 @@ function changeQty() {
 /* 접수완료시 호출 API */
 function onApply() {
     checkNum = "2";
-    //onSaveTemp(); 임시로 막아둠
+    onSaveTemp();
 
     // 여는 순간에 미수금과 적립금을 가져올 것 지금은 임의의 값
     $("#uncollectAmt").html("2,000");
