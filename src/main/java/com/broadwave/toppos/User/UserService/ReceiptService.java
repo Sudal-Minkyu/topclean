@@ -92,6 +92,11 @@ public class ReceiptService {
         return requestRepository.findByRequest(frNo, frConfirmYn, frCode);
     }
 
+    // 접수코드를 통한 접수마스터 테이블 조회
+    public List<RequestInfoDto> findByRequestList(String frCode, String nowDate){
+        return requestRepositoryCustom.findByRequestList(frCode, nowDate);
+    }
+
     // 접수코드와 태그번호를 통한 접수세부 테이블 조회
     public Optional<RequestDetail> findByRequestDetail(String frNo, String fdTag){
         return requestDetailRepository.findByRequestDetail(frNo, fdTag);
@@ -470,7 +475,8 @@ public class ReceiptService {
                 List<Payment> paymentList = new ArrayList<>();
                 Integer frPayAmount = 0;
                 int collectAmt = 0;
-//                int saveMoney = 0;
+
+                String collectYn = "N";
                 SaveMoney saveMoney = null;
                 // 결제 데이터가 존재할시 저장 시작
                 if(paymentDtos.size() != 0){
@@ -486,6 +492,12 @@ public class ReceiptService {
                             payment.setInsert_date(LocalDateTime.now());
 
                             collectAmt = collectAmt+payment.getFpCollectAmt(); // 미수상환금액 계산
+
+                            log.info("payment.getFpCollectAmt() : "+payment.getFpCollectAmt());
+                            // 미수금완납시 처리
+                            if(payment.getFpCollectAmt()>0){
+                                collectYn = "Y";
+                            }
 
                             // 결제완료시 보낼 Etc 데이터 리스트
                             paymentEtcDto.setFpType(payment.getFpType());
@@ -508,6 +520,7 @@ public class ReceiptService {
                         }
                     }
 
+                    log.info("미수금완납 결제여부 : "+collectYn);
                     log.info("결제 금액 : "+frPayAmount);
                     // 마스터테이블에 결제금액 업데이트
                     optionalRequest.get().setFrPayAmount(frPayAmount);
@@ -519,12 +532,18 @@ public class ReceiptService {
                         optionalRequest.get().setFrUncollectYn("N");
                     }
 
-                    String result = requestAndPaymentSave(optionalRequest.get(), paymentList, saveMoney);
-                    log.info("다시 업데이트 할 접수코드 : "+result);
-                    if(!result.equals("fail")){
+                    Payment result = requestAndPaymentSave(optionalRequest.get(), paymentList, saveMoney);
+                    if(result != null){
+                        log.info("다시 업데이트 할 접수코드 : "+result.getFrId().getFrNo());
+
+                        // 현재 날짜 받아오기
+                        LocalDateTime localDateTime = LocalDateTime.now();
+                        String nowDate = localDateTime.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+//                        log.info("현재 날짜 yyyymmdd : "+nowDate);
+
                         // 결제가 성공적으로 저장이 됬을때 타는 로직
                         // -> 세부테이블의 total 금액을 마스터테이블의 합계금액에 업데이트 쳐준다.
-                        List<RequestDetailAmtDto> requestDetailAmtDtos = findByRequestDetailAmtList(result); // 세부테이블의 합계금액 리스트 호출
+                        List<RequestDetailAmtDto> requestDetailAmtDtos = findByRequestDetailAmtList(result.getFrId().getFrNo()); // 세부테이블의 합계금액 리스트 호출
                         int totalAmt = optionalRequest.get().getFrTotalAmount();
                         if(requestDetailAmtDtos.size() != 0){
                             totalAmt = 0;
@@ -536,13 +555,23 @@ public class ReceiptService {
                         // 마스터테이블을 다시 업데이트 쳐준다.
                         requestRepository.save(optionalRequest.get());
 
+                        // 미수완납시 마스터테이블 업데이트
+                        List<Request> updateRequestList = new ArrayList<>();
+                        if(collectYn.equals("Y")){
+                            Request request1;
+                            List<RequestInfoDto> updateRequestLists = findByRequestList(frCode, nowDate);
+                            log.info("updateRequestLists : "+updateRequestLists.size());
+                            for(RequestInfoDto updateRequest : updateRequestLists){
+                                request1 = modelMapper.map(updateRequest, Request.class);
+                                request1.setFpId(result);
+                                request1.setFrUncollectYn("N");
+                                updateRequestList.add(request1);
+                            }
+                            requestRepository.saveAll(updateRequestList); // 미수금완납시 마스터테이블 처리
+                        }
+
                         // 결제완료 후 미수상환금액 보낸다.
                         data.put("collectAmt",collectAmt);
-
-                        // 현재 날짜 받아오기
-                        LocalDateTime localDateTime = LocalDateTime.now();
-                        String nowDate = localDateTime.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-//                        log.info("현재 날짜 yyyymmdd : "+nowDate);
 
                         // 전일미수금을 보낸다. 전일미수금에서 미수상환금액을 뺀 금액
                         List<RequestCollectDto>  requestCollectDtoList = findByRequestCollectList(optionalCustomer.get(), nowDate); // nowDate 현재날짜
@@ -580,18 +609,18 @@ public class ReceiptService {
 
     // 결제 Save : 마스터테이블업데이트 및 결제정보 저장
     @Transactional(rollbackFor = SQLException.class)
-    public String requestAndPaymentSave(Request request, List<Payment> paymentList, SaveMoney saveMoney){
+    public Payment requestAndPaymentSave(Request request, List<Payment> paymentList, SaveMoney saveMoney){
         try{
             log.info("결제성공");
-            Request saveRequest = requestRepository.save(request);
+            requestRepository.save(request);
             paymentRepository.saveAll(paymentList);
             if(saveMoney!=null){
                 saveMoneyRepository.save(saveMoney);
             }
-            return saveRequest.getFrNo();
+            return paymentList.get(0);
         }catch (Exception e){
             log.info("에러발생 트랜젝션실행 : "+e);
-            return "fail";
+            return null;
         }
     }
 
