@@ -1112,9 +1112,10 @@ function onSaveTemp() {
         checkNum: checkNum,
         bcId: selectedCustomer.bcId,
         frNo: initialData.etcData.frNo,
-        frNormalAmount: $("#totFdNormalAmount").html().replace(/[^0-9]/g, ""),
-        frDiscountAmount: $("#totChangeAmount").html().replace(/[^0-9]/g, ""),
-        frTotalAmount: $("#totFdRequestAmount").html().replace(/[^0-9]/g, ""),
+        frNormalAmount: parseInt($("#totFdNormalAmount").html().replace(/[^0-9]/g, "")),
+        frDiscountAmount: parseInt($("#totChangeAmount").html().replace(/[^0-9]/g, "")),
+        frTotalAmount: parseInt($("#totFdRequestAmount").html().replace(/[^0-9]/g, "")),
+        frQty: parseInt($("#totFdQty").html().replace(/[^0-9]/g, "")),
     }
 
     const data = {
@@ -1266,61 +1267,8 @@ function calculateThree() {
     }
 }
 
-/* 임시 카드 결제용 함수 */
-function paymentCard(paymentData) {
-
-    $('#payStatus').show();
-
-    // type: card or cash
-    // franchiseNo : 가맹점코드 3자리 문자열
-    // totalAmount : 총 결제금액
-    // month : 할부 (0-일시불, 2-2개월)
-
-    if (paymentData.type ==="card") {
-        CAT.CatCredit(paymentData, function (res) {
-            $('#resultmsg').text(res);
-            $('#payStatus').hide();
-            let resjson = JSON.parse(res);
-            //결제 성공일경우 Print
-            if (resjson.STATUS === "SUCCESS") {
-                /* res JSSON Key List
-                    resultData = '{ ';
-                    resultData += '"STATUS":"SUCCESS",';
-                    resultData += '"APPROVALTIME":"' +FindJSONtoString("APPROVALTIME", data) + '",';
-                    resultData += '"APPROVALNO":"' +FindJSONtoString("APPROVALNO", data) + '",';
-                    resultData += '"CARDNO":"' +FindJSONtoString("CARDNO", data) + '",';
-                    resultData += '"ISSUERCODE":"' +FindJSONtoString("ISSUERCODE", data) + '",';
-                    resultData += '"ISSUERNAME":"' +FindJSONtoString("ISSUERNAME", data) + '",';
-                    resultData += '"MERCHANTNUMBER":"' +FindJSONtoString("MERCHANTNUMBER", data) + '",';
-                    resultData += '"MESSAGE1":"' +FindJSONtoString("MESSAGE1", data) + '",';
-                    resultData += '"MESSAGE2":"' +FindJSONtoString("MESSAGE2", data) + '",';
-                    resultData += '"NOTICE1":"' +FindJSONtoString("NOTICE1", data) + '",';
-                    resultData += '"TOTAMOUNT":"' +FindJSONtoString("TOTAMOUNT", data) + '",';
-                    resultData += '"VATAMOUNT":"' +FindJSONtoString("VATAMOUNT", data) + '",';
-                    resultData += '"TELEGRAMFLAG":"' +FindJSONtoString("TELEGRAMFLAG", data) + '"';
-                    resultData += '}';
-             */
-
-                let creditData =
-                    {
-                        "cardNo": resjson.CARDNO,
-                        "cardName": resjson.ISSUERNAME,
-                        "approvalTime": resjson.APPROVALTIME,
-                        "approvalNo": resjson.APPROVALNO
-                    };
-                CAT.CatPrint(paymentData, creditData, "N");
-            }
-
-        });
-    }
-    if (paymentData.type ==="cash") {
-        CAT.CatPrint(paymentData, "", "N");
-        $('#payStatus').hide();
-    }
-}
-
 /* 결재할 때 */
-function onPayment() {
+function onPaymentStageTwo() {
 
     const url = "/api/user/requestPayment";
     let data = {
@@ -1345,30 +1293,7 @@ function onPayment() {
     }else if(paymentTab === "tabCard") {
 
         const receiveCard = parseInt($("#receiveCard").html().replace(/[^0-9]/g, ""));
-        let paymentData =
-            {
-                "type":"card",
-                "franchiseNo":"123",
-                "franchiseName":"소만마을점",
-                "businessNO": "125-55-45671",
-                "repreName" : "김점주",
-                "franchiseTel" : "031-4564-7894",
-                "customerName" : "최고객",
-                "customerTel" : "010-****-7777",
-                "requestDt" : "2021-11-15 13:15",
-                "totalAmount":10500,
-                "addAmount":1500,
-                "dcAmount":500,
-                "estimateDt" : "2021-11-18",
-                "month":0,
-                "items":[
-                    {"tagno":"1231234","color":"없음","itemname":"면 상의","specialyn":"Y","price":2500},
-                    {"tagno":"1231235","color":"남색","itemname":"청바지 하의","specialyn":"","price":3500},
-                    {"tagno":"1241236","color":"검정","itemname":"롱 오리털 코트","specialyn":"","price":4500}
-                ]
-            };
-        alert("======debug1");
-        paymentCard(paymentData);
+
         const paymentCard = {
             fpType: "02",
             fpMonth: 0,
@@ -1439,3 +1364,59 @@ function onKeypadConfirm() {
     }
 }
 
+/* 임시 카드 결제용 함수 */
+function onPaymentStageOne() {
+
+    $('#payStatus').show();
+    let paymentData =
+        {
+            "type":"card",
+            "franchiseNo":"123",
+            "franchiseName":"소만마을점",
+            "businessNO": "125-55-45671",
+            "repreName" : "김점주",
+            "franchiseTel" : "031-4564-7894",
+            "customerName" : "최고객",
+            "customerTel" : "010-****-7777",
+            "requestDt" : "2021-11-15 13:15",
+            "totalAmount":10500,
+            "addAmount":1500,
+            "dcAmount":500,
+            "estimateDt" : "2021-11-18",
+            "month":0,
+            "items":[
+                {"tagno":"1231234","color":"없음","itemname":"면 상의","specialyn":"Y","price":2500},
+                {"tagno":"1231235","color":"남색","itemname":"청바지 하의","specialyn":"","price":3500},
+                {"tagno":"1241236","color":"검정","itemname":"롱 오리털 코트","specialyn":"","price":4500}
+            ]
+        };
+    // type: card or cash
+    // franchiseNo : 가맹점코드 3자리 문자열
+    // totalAmount : 총 결제금액
+    // month : 할부 (0-일시불, 2-2개월)
+
+    if (paymentData.type ==="card") {
+        CAT.CatCredit(paymentData, function (res) {
+            $('#resultmsg').text(res);
+            $('#payStatus').hide();
+            let resjson = JSON.parse(res);
+            //결제 성공일경우 Print
+            if (resjson.STATUS === "SUCCESS") {
+                let creditData =
+                    {
+                        "cardNo": resjson.CARDNO,
+                        "cardName": resjson.ISSUERNAME,
+                        "approvalTime": resjson.APPROVALTIME,
+                        "approvalNo": resjson.APPROVALNO
+                    };
+                CAT.CatPrint(paymentData, creditData, "N");
+
+            }
+
+        });
+    }
+    if (paymentData.type ==="cash") {
+        CAT.CatPrint(paymentData, "", "N");
+        $('#payStatus').hide();
+    }
+}
