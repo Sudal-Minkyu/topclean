@@ -69,15 +69,13 @@
             <!-- 금액 및 수량 -->
             <div class="regist__info">
                 <ul class="regist__amount">
-              <li>
+                    <li>
                         <h4>수량</h4>
                         <p><span id="totFdQty">0</span></p>
                     </li>
                     <li>
                         <h4>기본금액</h4>
                         <p><span id="totFdNormalAmount">0</span><span class="won">원</span></p>
-
-
                     </li>
                     <li>
                         <h4>추가/할인금액</h4>
@@ -93,7 +91,7 @@
             <!-- 고객정보2 -->
             <ul class="client-info">
                 <li>
-                    <h4>미수금</h4>
+                    <h4>전일미수금</h4>
                     <p><span class="client-info__num" id="미수금총액">0</span><span class="won">원</span></p>
                 </li>
                 <li>
@@ -755,7 +753,7 @@
                                 <dd class="color--red"><span id="payRequestAmt">0</span>원</dd>
                                 <dt>적립금사용<span class="color--blue">(B)</span></dt>
                                 <dd class="color--blue"><button class="c-keybtn" onclick="onKeypad(0)">키보드</button><span id="applySavedAmt">0</span>원</dd>
-                                <dt>미수금결제<span class="color--blue">(C)</span></dt>
+                                <dt>전일미수금결제<span class="color--blue">(C)</span></dt>
                                 <dd class="color--red"><button class="c-cancelbtn">취소</button><span id="applyUncollectAmt">0</span>원</dd>
                                 <dt class="final">최종결제금액<span class="bold">(A + B + C)</span></dt>
                                 <dd class="final"><span id="totalAmt">0</span>원</dd>
