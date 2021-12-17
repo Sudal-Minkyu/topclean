@@ -1135,9 +1135,10 @@ function onSaveTemp() {
             setDataIntoGrid(2, gridCreateUrl[2]);
         }
         if(checkNum === "2") {
-            $("#uncollectAmt").html(req.sendData.uncollectMoney.toLocaleString());
+            console.log(req);
+            $("#beforeUncollectMoney").html(req.sendData.beforeUncollectMoney.toLocaleString());
             initialData.etcData.frNo = req.sendData.frNo;
-            $("#saveAmt").html(req.sendData.collectMoney.toLocaleString());
+            $("#collectMoney").html(req.sendData.collectMoney.toLocaleString());
 
         }
     })
@@ -1300,30 +1301,56 @@ function onKeypadConfirm() {
 
 /* 임시 카드 결제용 함수 */
 function onPaymentStageOne() {
+    const applyUncollectAmt = parseInt($("#applyUncollectAmt").html().replace(/[^0-9]/g, ""));
 
-    $('#payStatus').show();
+    let items = [];
+    const orderData = AUIGrid.getGridData(gridId[0]);
+    orderData.forEach(el => {
+        items.push({
+            tagno: el.fdTag,
+            color: el.fdColor,
+            itemname: el.sumName,
+            specialyn: el.fdSpecialYn,
+            price: el.fdRequestAmt,
+        });
+    });
+
     let paymentData =
         {
-            "type":"card",
-            "franchiseNo":"123",
-            "franchiseName":"소만마을점",
-            "businessNO": "125-55-45671",
-            "repreName" : "김점주",
-            "franchiseTel" : "031-4564-7894",
-            "customerName" : "최고객",
-            "customerTel" : "010-****-7777",
-            "requestDt" : "2021-11-15 13:15",
-            "totalAmount":10500,
-            "addAmount":1500,
-            "dcAmount":500,
-            "estimateDt" : "2021-11-18",
+            "franchiseNo": initialData.etcData.frCode,
+            "franchiseName": initialData.etcData.frName,
+            "businessNO": initialData.etcData.frBusinessNo,
+            "repreName" : initialData.etcData.frRpreName,
+            "franchiseTel" : initialData.etcData.frTelNo,
+            "customerName" : selectedCustomer.bcName,
+            "customerTel" : CommonUI.onPhoneNumChange(selectedCustomer.bcHp),
+            "requestDt" : new Date().format("yyyy-MM-dd HH:mm"),
+            "totalAmount": parseInt($("#payRequestAmt").html().replace(/[^0-9]/g, "")),
+            "addAmount":0,
+            "dcAmount":0,
+            "estimateDt" : initialData.etcData.frEstimateDate,
+            "preUncollectAmount":50,
+            "curUncollectAmount":40,
+            "uncollectPayAmount":30,
+            "totalUncollectAmount":20,
             "month":0,
-            "items":[
-                {"tagno":"1231234","color":"없음","itemname":"면 상의","specialyn":"Y","price":2500},
-                {"tagno":"1231235","color":"남색","itemname":"청바지 하의","specialyn":"","price":3500},
-                {"tagno":"1241236","color":"검정","itemname":"롱 오리털 코트","specialyn":"","price":4500}
-            ]
+            "items": items,
         };
+
+
+    const paymentTab = $(".pop__pay-tabs-item.active").attr("data-id");
+    if(paymentTab === "tabCash") {
+        const receiveCash = parseInt($("#receiveCash").html().replace(/[^0-9]/g, ""));
+        paymentData.type = "cash";
+        paymentData.paymentAmount = receiveCash;
+    }else if(paymentTab === "tabCard") {
+        const receiveCard = parseInt($("#receiveCard").html().replace(/[^0-9]/g, ""));
+        paymentData.type = "card";
+        paymentData.paymentAmount = receiveCard;
+    }
+
+    $('#payStatus').show();
+
     // type: card or cash
     // franchiseNo : 가맹점코드 3자리 문자열
     // totalAmount : 총 결제금액
@@ -1344,14 +1371,14 @@ function onPaymentStageOne() {
                         "approvalNo": resjson.APPROVALNO
                     };
                 CAT.CatPrint(paymentData, creditData, "N");
-                onPaymentStageTwo();
+                //onPaymentStageTwo();
             }
-
         });
     }
     if (paymentData.type ==="cash") {
         CAT.CatPrint(paymentData, "", "N");
         $('#payStatus').hide();
+        //onPaymentStageTwo();
     }
 }
 
@@ -1417,8 +1444,8 @@ function onPaymentStageTwo() {
     console.log("결제데이터 : ");
     console.log(data);
 
-    CommonUI.ajaxjson(url, JSON.stringify(data), function (){
-
+    CommonUI.ajaxjson(url, JSON.stringify(data), function (req){
+        console.log(req);
     });
 
 }
