@@ -769,8 +769,8 @@ function calculateMainPrice() {
     let fdRequestAmt = 0;
 
     items.forEach(el => {
+        fdQty++;
         if(el.fdRetryYn === "N") {
-            fdQty += el.fdQty;
             fdNormalAmt += el.fdNormalAmt * el.fdQty;
             changeAmt += (el.fdPressed + el.fdWhitening + el.fdWaterRepellent + el.fdStarch
                 + el.fdPollution + el.fdAdd1Amt + el.fdRepairAmt -el.fdDiscountAmt) * el.fdQty;
@@ -1266,123 +1266,6 @@ function calculateThree() {
     }
 }
 
-/* 결재할 때 */
-function onPayment() {
-
-    const url = "/api/user/requestPayment";
-    let data = {
-        payment : [],
-        etc : {
-            bcId: selectedCustomer.bcId,
-            frNo: initialData.etcData.frNo,
-        }
-    }
-    const applyUncollectAmt = parseInt($("#applyUncollectAmt").html().replace(/[^0-9]/g, ""));
-
-    const paymentTab = $(".pop__pay-tabs-item.active").attr("data-id");
-
-    if(paymentTab === "tabCash") {
-        const receiveCash = parseInt($("#receiveCash").html().replace(/[^0-9]/g, ""));
-        const paymentCash = {
-            fpType: "01",
-            fpRealAmt: receiveCash,
-            fpAmt: receiveCash - applyUncollectAmt,
-            fpCollectAmt: applyUncollectAmt,
-        }
-        data.payment.push(paymentCash);
-    }else if(paymentTab === "tabCard") {
-        const receiveCard = parseInt($("#receiveCard").html().replace(/[^0-9]/g, ""));
-        let paymentData =
-            {
-                "type":"card",
-                "franchiseNo":"123",
-                "franchiseName":"소만마을점",
-                "businessNO": "125-55-45671",
-                "repreName" : "김점주",
-                "franchiseTel" : "031-4564-7894",
-                "customerName" : "최고객",
-                "customerTel" : "010-****-7777",
-                "requestDt" : "2021-11-15 13:15",
-                "totalAmount":10500,
-                "addAmount":1500,
-                "dcAmount":500,
-                "estimateDt" : "2021-11-18",
-                "month":0,
-                "items":[
-                    {"tagno":"1231234","color":"없음","itemname":"면 상의","specialyn":"Y","price":2500},
-                    {"tagno":"1231235","color":"남색","itemname":"청바지 하의","specialyn":"","price":3500},
-                    {"tagno":"1241236","color":"검정","itemname":"롱 오리털 코트","specialyn":"","price":4500}
-                ]
-            };
-        paymentCard(paymentData);
-        const paymentCard = {
-            fpType: "02",
-            fpMonth: 0,
-            fpRealAmt: receiveCard,
-            fpAmt: receiveCard - applyUncollectAmt,
-            fpCollectAmt: applyUncollectAmt,
-            fpCatApprovalno: "01",
-            fpCatApprovaltime: 0,
-            fpCatCardno: 10000,
-            fpCatIssuercode: "01",
-            fpCatIssuername: "IBK 비씨카드",
-            fpCatMuechantnumber: "72729972",
-            fpCatMessage1: "IBK 비씨카드",
-            fpCatMessage2: "IBK 비씨카드",
-            fpCatNotice1: "EDC매출표",
-            fpCatTotamount: "000010000",
-            fpCatVatamount: "000001090",
-            fpCatTelegramflagt: "a1"
-        }
-        data.payment.push(paymentCard);
-    }
-    const applySavedAmt = parseInt($("#applySavedAmt").html().replace(/[^0-9]/g, ""));
-    if(applySavedAmt) {
-        const paymentSaved = {
-            fpType: "03",
-            fpRealAmt: applySavedAmt,
-            fpAmt: applySavedAmt,
-            fpCollectAmt: 0,
-        }
-        data.payment.push(paymentSaved);
-    }
-
-    /*
-    CommonUI.ajaxjson(url, data, function (){
-
-    });
-    */
-}
-
-
-/* 키패드 작동용 */
-let keypadNum;
-function onKeypad(num) {
-    const targetId = ["applySavedAmt", "receiveCash", "receiveCard"];
-    keypadNum = num;
-    $("#hiddenKeypad").val($("#" + targetId[keypadNum]).html());
-    vkey.showKeypad("hiddenKeypad", onKeypadConfirm);
-}
-
-function onKeypadConfirm() {
-    const targetId = ["applySavedAmt", "receiveCash", "receiveCard"];
-    $("#" + targetId[keypadNum]).html($("#hiddenKeypad").val());
-
-    switch (keypadNum) {
-        case 0 :
-            calculateOne();
-            calculateTwo();
-            calculateThree();
-            break;
-        case 1 :
-            calculateTwo();
-            break;
-        case 2 :
-            calculateThree();
-            break;
-    }
-}
-
 /* 임시 카드 결제용 함수 */
 function paymentCard(paymentData) {
 
@@ -1392,9 +1275,6 @@ function paymentCard(paymentData) {
     // franchiseNo : 가맹점코드 3자리 문자열
     // totalAmount : 총 결제금액
     // month : 할부 (0-일시불, 2-2개월)
-
-
-
 
     if (paymentData.type ==="card") {
         CAT.CatCredit(paymentData, function (res) {
@@ -1438,3 +1318,124 @@ function paymentCard(paymentData) {
         $('#payStatus').hide();
     }
 }
+
+/* 결재할 때 */
+function onPayment() {
+
+    const url = "/api/user/requestPayment";
+    let data = {
+        payment : [],
+        etc : {
+            bcId: selectedCustomer.bcId,
+            frNo: initialData.etcData.frNo,
+        }
+    }
+    const applyUncollectAmt = parseInt($("#applyUncollectAmt").html().replace(/[^0-9]/g, ""));
+
+    const paymentTab = $(".pop__pay-tabs-item.active").attr("data-id");
+    if(paymentTab === "tabCash") {
+        const receiveCash = parseInt($("#receiveCash").html().replace(/[^0-9]/g, ""));
+        const paymentCash = {
+            fpType: "01",
+            fpRealAmt: receiveCash,
+            fpAmt: Number(receiveCash - applyUncollectAmt),
+            fpCollectAmt: applyUncollectAmt,
+        }
+        data.payment.push(paymentCash);
+    }else if(paymentTab === "tabCard") {
+
+        const receiveCard = parseInt($("#receiveCard").html().replace(/[^0-9]/g, ""));
+        let paymentData =
+            {
+                "type":"card",
+                "franchiseNo":"123",
+                "franchiseName":"소만마을점",
+                "businessNO": "125-55-45671",
+                "repreName" : "김점주",
+                "franchiseTel" : "031-4564-7894",
+                "customerName" : "최고객",
+                "customerTel" : "010-****-7777",
+                "requestDt" : "2021-11-15 13:15",
+                "totalAmount":10500,
+                "addAmount":1500,
+                "dcAmount":500,
+                "estimateDt" : "2021-11-18",
+                "month":0,
+                "items":[
+                    {"tagno":"1231234","color":"없음","itemname":"면 상의","specialyn":"Y","price":2500},
+                    {"tagno":"1231235","color":"남색","itemname":"청바지 하의","specialyn":"","price":3500},
+                    {"tagno":"1241236","color":"검정","itemname":"롱 오리털 코트","specialyn":"","price":4500}
+                ]
+            };
+        alert("======debug1");
+        paymentCard(paymentData);
+        const paymentCard = {
+            fpType: "02",
+            fpMonth: 0,
+            fpRealAmt: receiveCard,
+            fpAmt: receiveCard - applyUncollectAmt,
+            fpCollectAmt: applyUncollectAmt,
+            fpCatApprovalno: "01",
+            fpCatApprovaltime: 0,
+            fpCatCardno: 10000,
+            fpCatIssuercode: "01",
+            fpCatIssuername: "IBK 비씨카드",
+            fpCatMuechantnumber: "72729972",
+            fpCatMessage1: "IBK 비씨카드",
+            fpCatMessage2: "IBK 비씨카드",
+            fpCatNotice1: "EDC매출표",
+            fpCatTotamount: "000010000",
+            fpCatVatamount: "000001090",
+            fpCatTelegramflagt: "a1"
+        }
+        data.payment.push(paymentCard);
+    }
+    const applySavedAmt = parseInt($("#applySavedAmt").html().replace(/[^0-9]/g, ""));
+    if(applySavedAmt) {
+        const paymentSaved = {
+            fpType: "03",
+            fpRealAmt: applySavedAmt,
+            fpAmt: applySavedAmt,
+            fpCollectAmt: 0,
+        }
+        data.payment.push(paymentSaved);
+    }
+
+    console.log("결제데이터 : ");
+    console.log(data);
+
+    CommonUI.ajaxjson(url, JSON.stringify(data), function (){
+
+    });
+
+}
+
+
+/* 키패드 작동용 */
+let keypadNum;
+function onKeypad(num) {
+    const targetId = ["applySavedAmt", "receiveCash", "receiveCard"];
+    keypadNum = num;
+    $("#hiddenKeypad").val($("#" + targetId[keypadNum]).html());
+    vkey.showKeypad("hiddenKeypad", onKeypadConfirm);
+}
+
+function onKeypadConfirm() {
+    const targetId = ["applySavedAmt", "receiveCash", "receiveCard"];
+    $("#" + targetId[keypadNum]).html($("#hiddenKeypad").val());
+
+    switch (keypadNum) {
+        case 0 :
+            calculateOne();
+            calculateTwo();
+            calculateThree();
+            break;
+        case 1 :
+            calculateTwo();
+            break;
+        case 2 :
+            calculateThree();
+            break;
+    }
+}
+
