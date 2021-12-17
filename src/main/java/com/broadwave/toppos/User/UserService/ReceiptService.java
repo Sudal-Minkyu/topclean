@@ -519,6 +519,23 @@ public class ReceiptService {
                         // 결제완료 후 미수상환금액 보낸다.
                         data.put("collectAmt",collectAmt);
 
+                        // 현재 날짜 받아오기
+                        LocalDateTime localDateTime = LocalDateTime.now();
+                        String nowDate = localDateTime.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+                        log.info("현재 날짜 yyyymmdd : "+nowDate);
+                        List<RequestCollectDto>  requestCollectDtoList = findByRequestCollectList(optionalCustomer.get(), nowDate); // nowDate 현재날짜
+                        int beforeTotalAmount = 0;
+                        int beforePayAmount = 0;
+                        if(requestCollectDtoList.size() != 0){
+                            for(RequestCollectDto requestCollectDto : requestCollectDtoList){
+                                beforeTotalAmount = beforeTotalAmount + requestCollectDto.getFrTotalAmount();
+                                beforePayAmount = beforePayAmount + requestCollectDto.getFrPayAmount();
+                            }
+                            data.put("beforeUncollectMoney",beforeTotalAmount-beforePayAmount-collectAmt);
+                        }else{
+                            data.put("beforeUncollectMoney",0);
+                        }
+
                         // 옆에 결제내역에서 보여줄 데이터 전송
                         data.put("paymentEtcDtos",paymentEtcDtos);
 
