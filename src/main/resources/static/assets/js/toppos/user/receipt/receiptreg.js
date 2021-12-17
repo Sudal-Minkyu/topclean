@@ -1201,6 +1201,7 @@ function onRepeatRequest() {
         items[0].item["fdTag"] = $("#fdTag").val().replace(/[^0-9a-zA-Z]/g, "");
         AUIGrid.addRow(gridId[0], items[0].item, "last");
         setNextTag(items[0].item.fdTag);
+        calculateMainPrice();
     }
 }
 
@@ -1241,7 +1242,16 @@ function calculateOne() {
     const totRequestAmt = parseInt($("#totFdRequestAmount").html().replace(/[^0-9]/g, ""));
     const applySavedAmt = parseInt($("#applySavedAmt").html().replace(/[^0-9]/g, ""));
     const applyUncollectAmt = parseInt($("#applyUncollectAmt").html().replace(/[^0-9]/g, ""));
-    const totalAmt = totRequestAmt - applySavedAmt + applyUncollectAmt;
+    const paidData =  AUIGrid.getGridData(gridId[3]);
+    let paidAmt = 0;
+    paidData.forEach(el => {
+       paidAmt += el.fpAmt;
+    });
+
+    /* 최종결제금액 = A - B + C - D */
+    const totalAmt = totRequestAmt - applySavedAmt + applyUncollectAmt - paidAmt;
+
+
     $("#totalAmt").html(totalAmt.toLocaleString());
 }
 
@@ -1447,7 +1457,23 @@ function onPaymentStageTwo() {
     console.log(data);
 
     CommonUI.ajaxjson(url, JSON.stringify(data), function (req){
+        console.log(req.sendData);
         AUIGrid.addRow(gridId[3], req.sendData.paymentEtcDtos, "last");
+        $("#beforeUncollectMoney").html(req.sendData.beforeUncollectMoney.toLocaleString());
+        $("#applySavedAmt").html("0");
+        //$("#collectMoney").html(req.sendData.collectMoney);
+        calculateOne();
     });
+}
 
+function onPayUncollectMoney() {
+    $("#applyUncollectAmt").html($("#beforeUncollectMoney").html());
+    $("#beforeUncollectMoney").html(0);
+    calculateOne();
+}
+
+function cancelPayUncollectMoney() {
+    $("#beforeUncollectMoney").html($("#applyUncollectAmt").html());
+    $("#applyUncollectAmt").html(0);
+    calculateOne();
 }
