@@ -21,14 +21,10 @@
     </script>
 </th:block>
 
-<div layout:fragment="content">
-    <div>
-        <div class="customer__header">
-            <h3>고객관리</h3>
-        </div>
-
-        <div>
-            <div class="c-select">
+<div layout:fragment="content" class="content content--column">
+	<div class="content__header">
+		<div class="search">
+			<div class="c-select">
                 <select id="searchCustomerType">
                     <option value="0">통합검색</option>
                     <option value="1">고객명</option>
@@ -36,19 +32,20 @@
                     <!--<option value="3">주소</option>-->
                 </select>
             </div>
-            <div class="c-search__input">
-                <input id="searchCustomerField" type="text" placeholder="검색어를 입력하세요" />
-                <button class="c-search__key" type="button" onclick="onShowVKeyboard(0)">키보드</button>
+            
+            <div class="c-search">
+	            <div class="c-search__input">
+	                <input id="searchCustomerField" type="text" placeholder="검색어를 입력하세요" />
+	                <button class="c-search__key" type="button" onclick="onShowVKeyboard(0)">키보드</button>
+	            </div>
+	            <button class="c-search__bth" onclick="onSearchCustomer()">조회</button>
             </div>
-            <div>
-                <button onclick="onSearchCustomer()">조회</button>
-            </div>
-        </div>
-        <div id="grid_customerList"></div>
-
+		</div>
+	</div>
+	
+    <div class="content__body">
+        <div id="grid_customerList" style="height: 776px;"></div>
     </div>
-
-    <hr>
 
     <!-- 고객정보 수정 팝업 -->
     <div class="pop" id="showCustomerDetailPop">
@@ -102,7 +99,7 @@
                                     </div>
                                 </li>
                                 <li class="customer__form-item">
-                                    <h4 class="customer__form-title">생년월일/나이</h4>
+                                    <h4 class="customer__form-title">생년월일</h4>
                                     <div class="customer__form-input">
                                         <div class="c-select">
                                             <select id="bcBirthYYYY" onchange="onYearChange(this.value)">
@@ -190,7 +187,7 @@
                                     </div>
                                 </li>
                                 <li class="customer__form-item">
-                                    <h4 class="customer__form-title">문자수신동의</h4>
+                                    <h4 class="customer__form-title">문자수신</h4>
                                     <div class="customer__form-input">
                                         <div class="c-radio">
                                             <input id="yes2" type="radio" name="bcMessageAgree" value="Y">
