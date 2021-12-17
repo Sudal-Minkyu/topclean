@@ -196,6 +196,7 @@ function itemListPop(rowIdValue) {
     idIndex = rowIdValue;
     filterItemList(2);
     $('#itemList_popup').addClass('open');
+    AUIGrid.resize(gridId[2]);
 }
 
 function itemListClose() {

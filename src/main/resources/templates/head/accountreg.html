@@ -16,7 +16,7 @@
 
 <div layout:fragment="content" class="content content--padding">
 	<h2 class="content__heading">사용자 등록</h2>
-	<div class="content__column content__column--3-7">
+	<div class="content__column">
 		<section class="section">
 			<div class="section__head">
 				<h3 class="section__heading">사용자 정보 입력</h3>
@@ -27,7 +27,7 @@
 						<form id="accountFormData" autocomplete="off" enctype="multipart/form-data">
 							<div class="form">
 								<ul class="form__list">
-									<li class="form__item">
+									<li class="form__item form__item--100">
 										<div class="form__title">아이디</div>
 										<div class="form__input">
 											<div class="c-text-button">
@@ -37,19 +37,19 @@
 											</div>
 										</div>
 									</li>
-									<li class="form__item">
+									<li class="form__item form__item--100">
 										<div class="form__title">이름</div>
 										<div class="form__input">
 											<input type="text" name="username" id="username" />
 										</div>
 									</li>
-									<li class="form__item">
+									<li class="form__item form__item--100">
 										<div class="form__title">암호</div>
 										<div class="form__input">
 											<input type="password" id="password" name="password" />
 										</div>
 									</li>
-									<li class="form__item">
+									<li class="form__item form__item--100">
 										<div class="form__title">권한</div>
 										<div class="form__input">
 											<div class="c-select">
@@ -63,7 +63,7 @@
 											</div>
 										</div>
 									</li>
-									<li class="form__item">
+									<li class="form__item form__item--100">
 										<div class="form__title">전화번호</div>
 										<div class="form__input">
 											<input type="text" id="usertel" name="usertel" onkeyup="onPhonenumChange(this)"/>
@@ -75,7 +75,7 @@
 											<input type="text" id="useremail" name="useremail" />
 										</div>
 									</li>
-									<li class="form__item">
+									<li class="form__item form__item--100">
 										<div class="form__title">가맹점코드 3자리</div>
 										<div class="form__input">
 											<div class="c-text-button">
@@ -84,7 +84,7 @@
 											</div>
 										</div>
 									</li>
-									<li class="form__item">
+									<li class="form__item form__item--100">
 										<div class="form__title">지사코드 2자리</div>
 										<div class="form__input">
 											<div class="c-text-button">
@@ -180,7 +180,7 @@
 				
 				<article class="article">
 					<div class="article__content">
-						<div id="grid_accountList"></div>
+						<div id="grid_accountList" style="height: 370px;"></div>
 					</div>
 				</article>
 			</div>

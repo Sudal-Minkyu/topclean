@@ -309,11 +309,11 @@ textarea {
 	margin-top: 0;
 	margin-left: 1.25rem;
 }
-.content__column.content__column--3-7 .section:nth-child(2n - 1) {
-	width: 50rem;
+.content__column .section:nth-child(2n - 1) {
+	width: 31.25rem;
 }
-.content__column.content__column--3-7 .section:nth-child(2n) {
-	width: calc(100% - 51.25rem);
+.content__column .section:nth-child(2n) {
+	width: calc(100% - 32.5rem);
 }
 
 /* main */ 
@@ -399,6 +399,24 @@ textarea {
 	-moz-border-radius: 100%;
 	border-radius: 100%;
 }
+.main__link {
+	display: block;
+	width: 20rem;
+	height: 3rem;
+	margin: 0 auto;
+	background-color: #d9e5ff;
+	color: #fff;
+	font-size: 32px;
+	font-weight: 700;
+	line--height: 3rem;
+	text-align: center;
+	-webkit-border-radius: 0.313rem;
+	-moz-border-radius: 0.313rem;
+	border-radius: 0.313rem;
+}
+.main__link:hover {
+	background-color: #0082f0;
+}
 
 
 /* section */
@@ -407,12 +425,12 @@ textarea {
 	width: 100%;
 	padding: 1.25rem;
 	background-color: #fff;
-	-webkit-border-radius: 0.625rem;
+	/*-webkit-border-radius: 0.625rem;
 	-moz-border-radius: 0.625rem;
 	border-radius: 0.625rem;
 	-webkit-box-shadow: 0 .25rem 0.625rem rgba(0, 0, 0, .4);
 	-moz-box-shadow: 0 .25rem 0.625rem rgba(0, 0, 0, .4);
-	box-shadow: 0 .25rem 0.625rem rgba(0, 0, 0, .4);
+	box-shadow: 0 .25rem 0.625rem rgba(0, 0, 0, .4);*/
 }
 .section + .section {
 	margin-top: 2.5rem;
@@ -497,6 +515,9 @@ textarea {
 }
 .search-form.search-form--right {
 	justify-content: flex-end;
+}
+.search-form.search-form--left {
+	justify-content: flex-start;
 }
 .search-form__list {
 	display: flex;
@@ -654,7 +675,18 @@ textarea {
 
 
 
-
+/* 지사 */
+.businessday {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+}
+.businessday__month {
+	padding: 0.625rem;
+}
+.calendar_label {
+	margin-bottom: 0.313rem;
+}
 
 
 
