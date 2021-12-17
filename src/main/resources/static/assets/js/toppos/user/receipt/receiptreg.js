@@ -1134,6 +1134,12 @@ function onSaveTemp() {
             initialData.etcData.frNo = req.sendData.frNo;
             setDataIntoGrid(2, gridCreateUrl[2]);
         }
+        if(checkNum === "2") {
+            $("#uncollectAmt").html(req.sendData.uncollectMoney.toLocaleString());
+            initialData.etcData.frNo = req.sendData.frNo;
+            $("#saveAmt").html(req.sendData.collectMoney.toLocaleString());
+
+        }
     })
 }
 
@@ -1211,9 +1217,6 @@ function onApply() {
     checkNum = "2";
     onSaveTemp();
 
-    // 여는 순간에 미수금과 적립금을 가져올 것 지금은 임의의 값
-    $("#uncollectAmt").html("2,000");
-    $("#saveAmt").html("5,000");
     // ======================
 
     const totRequestAmt = $("#totFdRequestAmount").html().replace(/[^0-9]/g, "");
@@ -1266,75 +1269,6 @@ function calculateThree() {
         $("#uncollectAmtCard").html("0");
     }
 }
-
-/* 결재할 때 */
-function onPaymentStageTwo() {
-
-    const url = "/api/user/requestPayment";
-    let data = {
-        payment : [],
-        etc : {
-            bcId: selectedCustomer.bcId,
-            frNo: initialData.etcData.frNo,
-        }
-    }
-    const applyUncollectAmt = parseInt($("#applyUncollectAmt").html().replace(/[^0-9]/g, ""));
-
-    const paymentTab = $(".pop__pay-tabs-item.active").attr("data-id");
-    if(paymentTab === "tabCash") {
-        const receiveCash = parseInt($("#receiveCash").html().replace(/[^0-9]/g, ""));
-        const paymentCash = {
-            fpType: "01",
-            fpRealAmt: receiveCash,
-            fpAmt: Number(receiveCash - applyUncollectAmt),
-            fpCollectAmt: applyUncollectAmt,
-        }
-        data.payment.push(paymentCash);
-    }else if(paymentTab === "tabCard") {
-
-        const receiveCard = parseInt($("#receiveCard").html().replace(/[^0-9]/g, ""));
-
-        const paymentCard = {
-            fpType: "02",
-            fpMonth: 0,
-            fpRealAmt: receiveCard,
-            fpAmt: receiveCard - applyUncollectAmt,
-            fpCollectAmt: applyUncollectAmt,
-            fpCatApprovalno: "01",
-            fpCatApprovaltime: 0,
-            fpCatCardno: 10000,
-            fpCatIssuercode: "01",
-            fpCatIssuername: "IBK 비씨카드",
-            fpCatMuechantnumber: "72729972",
-            fpCatMessage1: "IBK 비씨카드",
-            fpCatMessage2: "IBK 비씨카드",
-            fpCatNotice1: "EDC매출표",
-            fpCatTotamount: "000010000",
-            fpCatVatamount: "000001090",
-            fpCatTelegramflagt: "a1"
-        }
-        data.payment.push(paymentCard);
-    }
-    const applySavedAmt = parseInt($("#applySavedAmt").html().replace(/[^0-9]/g, ""));
-    if(applySavedAmt) {
-        const paymentSaved = {
-            fpType: "03",
-            fpRealAmt: applySavedAmt,
-            fpAmt: applySavedAmt,
-            fpCollectAmt: 0,
-        }
-        data.payment.push(paymentSaved);
-    }
-
-    console.log("결제데이터 : ");
-    console.log(data);
-
-    CommonUI.ajaxjson(url, JSON.stringify(data), function (){
-
-    });
-
-}
-
 
 /* 키패드 작동용 */
 let keypadNum;
@@ -1410,7 +1344,7 @@ function onPaymentStageOne() {
                         "approvalNo": resjson.APPROVALNO
                     };
                 CAT.CatPrint(paymentData, creditData, "N");
-
+                onPaymentStageTwo();
             }
 
         });
@@ -1419,4 +1353,72 @@ function onPaymentStageOne() {
         CAT.CatPrint(paymentData, "", "N");
         $('#payStatus').hide();
     }
+}
+
+/* 결재할 때 */
+function onPaymentStageTwo() {
+
+    const url = "/api/user/requestPayment";
+    let data = {
+        payment : [],
+        etc : {
+            bcId: selectedCustomer.bcId,
+            frNo: initialData.etcData.frNo,
+        }
+    }
+    const applyUncollectAmt = parseInt($("#applyUncollectAmt").html().replace(/[^0-9]/g, ""));
+
+    const paymentTab = $(".pop__pay-tabs-item.active").attr("data-id");
+    if(paymentTab === "tabCash") {
+        const receiveCash = parseInt($("#receiveCash").html().replace(/[^0-9]/g, ""));
+        const paymentCash = {
+            fpType: "01",
+            fpRealAmt: receiveCash,
+            fpAmt: Number(receiveCash - applyUncollectAmt),
+            fpCollectAmt: applyUncollectAmt,
+        }
+        data.payment.push(paymentCash);
+    }else if(paymentTab === "tabCard") {
+
+        const receiveCard = parseInt($("#receiveCard").html().replace(/[^0-9]/g, ""));
+
+        const paymentCard = {
+            fpType: "02",
+            fpMonth: 0,
+            fpRealAmt: receiveCard,
+            fpAmt: receiveCard - applyUncollectAmt,
+            fpCollectAmt: applyUncollectAmt,
+            fpCatApprovalno: "01",
+            fpCatApprovaltime: 0,
+            fpCatCardno: 10000,
+            fpCatIssuercode: "01",
+            fpCatIssuername: "IBK 비씨카드",
+            fpCatMuechantnumber: "72729972",
+            fpCatMessage1: "IBK 비씨카드",
+            fpCatMessage2: "IBK 비씨카드",
+            fpCatNotice1: "EDC매출표",
+            fpCatTotamount: "000010000",
+            fpCatVatamount: "000001090",
+            fpCatTelegramflagt: "a1"
+        }
+        data.payment.push(paymentCard);
+    }
+    const applySavedAmt = parseInt($("#applySavedAmt").html().replace(/[^0-9]/g, ""));
+    if(applySavedAmt) {
+        const paymentSaved = {
+            fpType: "03",
+            fpRealAmt: applySavedAmt,
+            fpAmt: applySavedAmt,
+            fpCollectAmt: 0,
+        }
+        data.payment.push(paymentSaved);
+    }
+
+    console.log("결제데이터 : ");
+    console.log(data);
+
+    CommonUI.ajaxjson(url, JSON.stringify(data), function (){
+
+    });
+
 }
