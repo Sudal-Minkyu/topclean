@@ -2,7 +2,7 @@
 <html lang="ko"
 	  xmlns:th="http://www.thymeleaf.org"
 	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	  layout:decorate ="~{layout/default}">
+	  layout:decorate ="~{layout/defaultmanager}">
 
 <!-- 사용자 CSS 추가 -->
 <th:block layout:fragment="css">
@@ -22,9 +22,10 @@
 </th:block>
 
 <div layout:fragment="content" class="content padding-zero content--main">
-	<h1>지사 메인페이지입니다.</h1>
-	<a type="button" href="/manager/businessday">영업일관리</a>
-	<br>
-	<input type="button" value="로그아웃" onclick="logout()" />
+	<div class="main">
+		<h1>지사 메인페이지입니다.</h1>
+		<a href="/manager/businessday" class="main__link">영업일관리</a>
+	</div>
+	
 </div>
 </html>
