@@ -1794,7 +1794,7 @@ textarea {
 	width: 20rem;
 }
 .pop__pay-article.estimate {
-	width: 28.75rem;
+	width: 30rem;
 }
 .pop__pay-article.half {
 	width: 25.5rem;
@@ -1835,17 +1835,11 @@ textarea {
 	font-weight: 700;
 	text-align: right;
 }
-.pop__pay-list > dl > dt.color--blue,
-.pop__pay-list > dl > dd.color--blue,
-.pop__pay-list > dl > dt .color--blue,
-.pop__pay-list > dl > dd .color--blue {
+.color--blue {
 	color: #0082f0;
 	font-weight: 700;
 }
-.pop__pay-list > dl > dt.color--red,
-.pop__pay-list > dl > dd.color--red,
-.pop__pay-list > dl > dt .color--red,
-.pop__pay-list > dl > dd .color--red {
+.color--red {
 	color: #dd5257;
 	font-weight: 700;
 }
