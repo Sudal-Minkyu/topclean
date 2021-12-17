@@ -164,12 +164,7 @@ public class ReceiptService {
             log.info("etcData.getFrNo() : "+etcData.getFrNo());
             if(etcData.getFrNo() != null){
                 log.info("접수마스터 테이블 수정합니다. 접수코드 : "+etcData.getFrNo());
-                Optional<Request> optionalRequest;
-                if(etcData.getCheckNum().equals("1")){
-                    optionalRequest = findByRequest(etcData.getFrNo(), "N", frCode);
-                }else{
-                    optionalRequest = findByRequest(etcData.getFrNo(), "Y", frCode);
-                }
+                Optional<Request> optionalRequest = findByRequest(etcData.getFrNo(), "N", frCode);
                 if(!optionalRequest.isPresent()){
                     return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "접수 할 "+ResponseErrorCode.TP009.getDesc(), "문자", "접수코드 : "+etcData.getFrNo()));
                 }else{
@@ -224,7 +219,7 @@ public class ReceiptService {
                 }
 //                log.info("합계금액 : "+totalAmount);
 //                log.info("결제금액 : "+payAmount);
-                log.info("미수금액 : "+ (totalAmount - payAmount));
+                log.info("전일미수금액 : "+ (totalAmount - payAmount));
 
                 // 적립금 리스트를 호출한다. 조건 : 고객 ID, 적립유형 1 or 2, 마감여부 : N,
                 List<SaveMoneyDto>  saveMoneyDtoList = findByRequestCollectList(optionalCustomer.get());
