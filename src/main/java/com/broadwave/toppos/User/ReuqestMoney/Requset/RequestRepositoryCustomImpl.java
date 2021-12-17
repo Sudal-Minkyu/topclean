@@ -44,7 +44,7 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
     }
 
     @Override
-    public List<RequestCollectDto> findByRequestCollectList(Customer customer){
+    public List<RequestCollectDto> findByRequestCollectList(Customer customer, String nowDate){
         QRequest request = QRequest.request;
 
         JPQLQuery<RequestCollectDto> query = from(request)
@@ -58,9 +58,11 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
 
         query.where(request.frUncollectYn.eq("Y")
                 .and(request.frConfirmYn.eq("Y"))
-                .and(request.bcId.eq(customer))
-//                .and(request.frYyyymmdd.lt(nowDate)) //전일미수금만 출력 -> 2021/12/17일 변경 해당조건의 대한 모든 날짜의 데이터를 받아온다.
-        );
+                .and(request.bcId.eq(customer)));
+
+        if(nowDate != null) {
+            query.where(request.frYyyymmdd.lt(nowDate)); //전일미수금만 출력 -> 2021/12/17일 변경 해당조건의 대한 모든 날짜의 데이터를 받아온다.
+        }
 
         return query.fetch();
     }

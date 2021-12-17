@@ -14,5 +14,5 @@ import java.util.List;
 public interface RequestRepositoryCustom {
     List<RequestListDto> findByRequestTempList(String frCode);
 
-    List<RequestCollectDto> findByRequestCollectList(Customer customer);
+    List<RequestCollectDto> findByRequestCollectList(Customer customer, String nowDate);
 }

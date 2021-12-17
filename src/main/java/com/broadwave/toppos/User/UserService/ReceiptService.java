@@ -119,12 +119,12 @@ public class ReceiptService {
     }
 
     // 결제 마스터테이블 미수금액 리스트 호출
-    private List<RequestCollectDto> findByRequestCollectList(Customer customer) {
-        return requestRepositoryCustom.findByRequestCollectList(customer);
+    public List<RequestCollectDto> findByRequestCollectList(Customer customer, String nowDate) {
+        return requestRepositoryCustom.findByRequestCollectList(customer, nowDate);
     }
 
     // 현재 고객의 적립금 리스트 호출
-    private List<SaveMoneyDto> findBySaveMoneyList(Customer customer) {
+    public List<SaveMoneyDto> findBySaveMoneyList(Customer customer) {
         return saveMoneyRepositoryCustom.findBySaveMoneyList(customer);
     }
 
@@ -209,7 +209,7 @@ public class ReceiptService {
 
                 // 결제일 경우, 현재 고객의 적립금과 미수금액을 보내준다.
                 // 미수금액 리스트를 호출한다. 조건 : 미수여부는 Y, 임시저장확정여부는 N, 고객아이디 eq, 가맹점코드 = frCode eq, 현재날짜의 전날들만 인것들만 조회하기
-                List<RequestCollectDto>  requestCollectDtoList = findByRequestCollectList(optionalCustomer.get()); // nowDate 현재날짜
+                List<RequestCollectDto>  requestCollectDtoList = findByRequestCollectList(optionalCustomer.get(), null); // nowDate 현재날짜
                 int todayTotalAmount = 0;
                 int todayPayAmount = 0;
                 int beforeTotalAmount = 0;
@@ -463,7 +463,7 @@ public class ReceiptService {
 
                 List<Payment> paymentList = new ArrayList<>();
                 Integer frPayAmount = 0;
-                int colletcAmt = 0;
+                int collectAmt = 0;
                 // 결제 데이터가 존재할시 저장 시작
                 if(paymentDtos.size() != 0){
                     List<PaymentEtcDto> paymentEtcDtos = new ArrayList<>();  // 결제완료시 보낼 Etc 데이터 리스트
@@ -476,7 +476,7 @@ public class ReceiptService {
                         payment.setInsert_id(login_id);
                         payment.setInsert_date(LocalDateTime.now());
 
-                        colletcAmt = colletcAmt+payment.getFpCollectAmt(); // 미수상환금액 계산
+                        collectAmt = collectAmt+payment.getFpCollectAmt(); // 미수상환금액 계산
 
                         // 결제완료시 보낼 Etc 데이터 리스트
                         paymentEtcDto.setFpType(payment.getFpType());
@@ -517,7 +517,7 @@ public class ReceiptService {
                         requestRepository.save(optionalRequest.get());
 
                         // 결제완료 후 미수상환금액 보낸다.
-                        data.put("colletcAmt",colletcAmt);
+                        data.put("collectAmt",collectAmt);
 
                         // 옆에 결제내역에서 보여줄 데이터 전송
                         data.put("paymentEtcDtos",paymentEtcDtos);
