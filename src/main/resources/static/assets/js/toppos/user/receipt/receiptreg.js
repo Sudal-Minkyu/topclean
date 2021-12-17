@@ -464,7 +464,7 @@ gridColumnLayout[3] = [
     {
         dataField: "fpType",
         labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
-            return fpTypeName[value];
+            return item.fpCatIssuername ? item.fpCatIssuername : fpTypeName[value];
         },
     }, {
         dataField: "fpAmt",
@@ -1397,7 +1397,9 @@ function onPaymentStageTwo() {
 
     const paymentTab = $(".pop__pay-tabs-item.active").attr("data-id");
     if(paymentTab === "tabCash") {
-        const receiveCash = parseInt($("#receiveCash").html().replace(/[^0-9]/g, ""));
+        const receiveCash =
+            parseInt($("#receiveCash").html().replace(/[^0-9]/g, ""))
+            - parseInt($("#changeCash").html().replace(/[^0-9]/g, ""));
         const paymentCash = {
             fpType: "01",
             fpRealAmt: receiveCash,
@@ -1445,7 +1447,7 @@ function onPaymentStageTwo() {
     console.log(data);
 
     CommonUI.ajaxjson(url, JSON.stringify(data), function (req){
-        console.log(req);
+        AUIGrid.addRow(gridId[3], req.sendData.paymentEtcDtos, "last");
     });
 
 }
