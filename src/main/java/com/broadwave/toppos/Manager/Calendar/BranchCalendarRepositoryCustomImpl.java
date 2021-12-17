@@ -54,8 +54,13 @@ public class BranchCalendarRepositoryCustomImpl extends QuerydslRepositorySuppor
             .where(branchCalendar.bcDate.gt(nowDate).and(branchCalendar.bcDayoffYn.eq("N")))
             .orderBy(branchCalendar.bcDate.asc()).limit(frEstimateDuration)
             .select(Projections.constructor(EtcDataDto.class,
-                franchise.frLastTagno,
-                branchCalendar.bcDate
+                    franchise.frCode,
+                    franchise.frName,
+                    franchise.frLastTagno,
+                    branchCalendar.bcDate,
+                    franchise.frBusinessNo,
+                    franchise.frRpreName,
+                    franchise.frTelNo
             ));
         return query.fetch();
     }

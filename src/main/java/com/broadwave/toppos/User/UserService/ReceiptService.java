@@ -453,7 +453,6 @@ public class ReceiptService {
                 if(paymentDtos.size() != 0){
                     for(PaymentDto paymentDto : paymentDtos){
                         frPayAmount = frPayAmount + paymentDto.getFpAmt();
-                        log.info("결제 금액 : "+frPayAmount);
                         Payment payment = modelMapper.map(paymentDto,Payment.class);
                         payment.setBcId(optionalCustomer.get());
                         payment.setFrId(optionalRequest.get());
@@ -462,6 +461,7 @@ public class ReceiptService {
                         paymentList.add(payment);
                     }
 
+                    log.info("결제 금액 : "+frPayAmount);
                     // 마스터테이블에 결제금액 업데이트
                     optionalRequest.get().setFrPayAmount(frPayAmount);
                     optionalRequest.get().setModity_id(login_id);
@@ -470,13 +470,18 @@ public class ReceiptService {
                     // 미수여부 기능작업중...
                     if(optionalRequest.get().getFrTotalAmount() <= frPayAmount){
                         optionalRequest.get().setFrUncollectYn("N");
-                    }else{
-                        optionalRequest.get().setFrUncollectYn("Y");
                     }
 
-                    requestAndPaymentSave(optionalRequest.get(), paymentList);
+                    String result = requestAndPaymentSave(optionalRequest.get(), paymentList);
+                    if(result.equals("success")){
+                        // 결제가 성공적으로 저장이 됬을때 타는 로직
+                        // -> 세부테이블의 total 금액을 마스터테이블의 합계금액에 업데이트 쳐준다.
 
-                    data.put("paymentList",paymentList);
+
+                    }else{
+                        return ResponseEntity.ok(res.fail(ResponseErrorCode.TP019.getCode(), ResponseErrorCode.TP019.getDesc(), "문자", "다시 시도해주세요."));
+                    }
+
                 }
 
             }
@@ -487,15 +492,17 @@ public class ReceiptService {
 
     // 결제 Save : 마스터테이블업데이트 및 결제정보 저장
     @Transactional(rollbackFor = SQLException.class)
-    public void requestAndPaymentSave(Request request, List<Payment> paymentList){
+    public String requestAndPaymentSave(Request request, List<Payment> paymentList){
         try{
             log.info("저장성공");
             log.info("request : "+request);
             log.info("paymentList : "+paymentList);
             requestRepository.save(request);
             paymentRepository.saveAll(paymentList);
+            return "success";
         }catch (Exception e){
             log.info("에러발생 트랜젝션실행 : "+e);
+            return "fail";
         }
     }
 

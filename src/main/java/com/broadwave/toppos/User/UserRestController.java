@@ -290,7 +290,6 @@ public class UserRestController {
         log.info("userItemGroupSortData 사이즈 : "+userItemGroupSortData.size());
         data.put("userItemGroupSortData",userItemGroupSortData);
 
-
         // 현재 날짜 받아오기
         LocalDateTime  localDateTime = LocalDateTime.now();
         String nowDate = localDateTime.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
@@ -344,8 +343,14 @@ public class UserRestController {
 
             log.info("지사 휴무일 데이터가 존재하지 않음 -> 3일 후 출고예정일 날짜 : "+resultDate);
             EtcDataDto etcData = new EtcDataDto();
+            etcData.setFrCode(franchisInfoDto.getFrCode());
+            etcData.setFrName(franchisInfoDto.getFrName());
             etcData.setFdTag(franchisInfoDto.getFrLastTagno());
             etcData.setFrEstimateDate(resultDate);
+            etcData.setFrBusinessNo(franchisInfoDto.getFrBusinessNo());
+            etcData.setFrRpreName(franchisInfoDto.getFrBusinessNo());
+            etcData.setFrTelNo(franchisInfoDto.getFrBusinessNo());
+            etcData.setFdTag(franchisInfoDto.getFrLastTagno());
             log.info("etcData : "+etcData);
             data.put("etcData",etcData);
         }

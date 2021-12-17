@@ -59,6 +59,15 @@ public class Franchise {
     @Column(name="fr_estimate_duration")
     private Integer frEstimateDuration; // 출고예정일
 
+    @Column(name="fr_business_no")
+    private String frBusinessNo; // 사업자번호(10자리)
+
+    @Column(name="fr_rpre_name")
+    private String frRpreName; // 가맹점주이름
+
+    @Column(name="fr_tel_no")
+    private String frTelNo; // 가맹점 전화번호
+
     @Column(name="fr_remark")
     private String frRemark; // 특이사항
 

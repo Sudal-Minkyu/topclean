@@ -25,6 +25,7 @@ public enum ResponseErrorCode {
     TP016("TP016", "금액에 숫자만 입력해주세요."),
     TP017("TP017", "이미 등록되어있는 상품코드입니다."),
     TP018("TP018", "등록되어있지 않은 고객입니다."),
+    TP019("TP019", "결제를 실패했습니다."),
     ;
 
     private String code;
