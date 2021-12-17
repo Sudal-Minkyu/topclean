@@ -95,6 +95,8 @@
                 CAT.CatPrint(paymentData, "", "N");
                 $('#payStatus').hide();
             }
+
+
         }
 
         function paymentCardCancel() {
@@ -150,6 +152,11 @@
 
             CAT.CatPrintTest();
         }
+
+        function appExit() {
+            alert("종료하시겠습니까? 확인후 ");
+            cAPI.pExit();
+        }
     </script>
 </th:block>
 
@@ -162,6 +169,7 @@
         <input type="button" value="카드결제취소테스트" onclick="paymentCardCancel();"/>
 
         <input type="button" value="인쇄테스트2" onclick="paymentPrint();"/>
+        <input type="button" value="윈도우프로그램종료" onclick="appExit();"/>
     </div>
     <div>
         <input type="button" value="로그아웃" onclick="logout()"/>
