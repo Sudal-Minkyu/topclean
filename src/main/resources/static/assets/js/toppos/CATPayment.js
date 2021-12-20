@@ -430,9 +430,9 @@ function CatCreate_Print(params,creditResult,cancelYN){
     if (cancelYN==="Y"){
         message += "수   량 : " + ("" + params.items.length).padStart(3) + "         취소금액 :" + (" " + numberWithCommasCat(-1*params.totalAmount)).padStart(9);
     }else {
-        message += "소계  수량    :" + ("" + params.items.length).padStart(8) + "  접수금액:" + (" " + numberWithCommasCat(params.totalAmount)).padStart(8);
+        message += "소계  수량    :" + ("" + params.items.length).padStart(8) + "  합계금액:" + (" " + numberWithCommasCat(params.totalAmount)).padStart(8);
         message += String.fromCharCode(10);
-        message += "      추가금액:" + ("" + numberWithCommasCat(params.addAmount)).padStart(8) + "  할인금액:" + (" " + numberWithCommasCat(params.dcAmount)).padStart(8);
+        message += "      기본금액:" + ("" + numberWithCommasCat(params.addAmount)).padStart(8) + "  추가금액:" + (" " + numberWithCommasCat(params.dcAmount)).padStart(8);
         message += String.fromCharCode(10);
         message += "      인도예정일:";
         message += String.fromCharCode(27);
@@ -598,9 +598,9 @@ function CatCreate_Print(params,creditResult,cancelYN){
     if (cancelYN==="Y"){
         message += "수   량 : " + ("" + params.items.length).padStart(3) + "         취소금액 :" + (" " + numberWithCommasCat(-1*params.totalAmount)).padStart(9);
     }else {
-        message += "소계  수량    :" + ("" + params.items.length).padStart(8) + "  접수금액:" + (" " + numberWithCommasCat(params.totalAmount)).padStart(8);
+        message += "소계  수량    :" + ("" + params.items.length).padStart(8) + "  합계금액:" + (" " + numberWithCommasCat(params.totalAmount)).padStart(8);
         message += String.fromCharCode(10);
-        message += "      추가금액:" + ("" + numberWithCommasCat(params.addAmount)).padStart(8) + "  할인금액:" + (" " + numberWithCommasCat(params.dcAmount)).padStart(8);
+        message += "      기본금액:" + ("" + numberWithCommasCat(params.addAmount)).padStart(8) + "  추가금액:" + (" " + numberWithCommasCat(params.dcAmount)).padStart(8);
         message += String.fromCharCode(10);
         message += "      인도예정일:";
         message += String.fromCharCode(27);
@@ -705,8 +705,8 @@ function CatCreate_Print(params,creditResult,cancelYN){
 //카드결제전문생성
 function CatCredit_vPOSV1(params) {
     //전문생성
-    let totalAmount = ("" + params.totalAmount).fillZero(9);
-    let vatAmount = ("" + Math.floor(params.totalAmount / 11)).fillZero(9); //부가세 계산 내림으로 처리
+    let totalAmount = ("" + params.paymentAmount).fillZero(9);
+    let vatAmount = ("" + Math.floor(params.paymentAmount / 11)).fillZero(9); //부가세 계산 내림으로 처리
     let month = ("" + params.month).fillZero(2);
     let franchiseNo = ("" + params.franchiseNo).fillZero(4);
 
