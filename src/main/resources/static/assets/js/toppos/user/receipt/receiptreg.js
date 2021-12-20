@@ -304,6 +304,17 @@ gridColumnLayout[0] = [
     }, {
         dataField: "sumProcess",
         headerText: "처리내용",
+        labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+            let statusText = "";
+            statusText += item.fdRetryYn === "Y" ? "재" : "";
+            statusText += item.fdPressed ? "다" : "";
+            statusText += item.fdAdd1Amt || item.fdAdd1Remark.length ? "추" : "";
+            statusText += item.fdRepairAmt || item.fdRepairRemark.length ? "수" : "";
+            statusText += item.fdWhitening ? "표" : "";
+            statusText += item.fdPollutionLevel ? "오" : "";
+            statusText += item.fdWaterRepellent || item.fdStarch ? "발" : "";
+            return statusText;
+        }
     }, {
         dataField: "fdNormalAmt",
         headerText: "기본금액",
