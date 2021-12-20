@@ -567,6 +567,7 @@ function onSearchCustomer() {
         if(items.length === 1) {
             selectedCustomer = items[0];
             onPutCustomer(selectedCustomer);
+            delete initialData.etcData["frNo"];
             checkNum = "1";
         }else if(items.length > 1) {
             AUIGrid.setGridData(gridId[1], items);
@@ -584,6 +585,7 @@ function onSelectCustomer() {
     selectedCustomer = AUIGrid.getSelectedRows(gridId[1])[0];
     if(selectedCustomer) {
         onPutCustomer(selectedCustomer);
+        delete initialData.etcData["frNo"];
         checkNum = "1";
         $("#customerListPop").removeClass("active");
     }else{
@@ -1543,6 +1545,7 @@ function closePaymentPop() {
     AUIGrid.clearGridData(gridId[0]);
     calculateMainPrice();
     $("#paymentPop").removeClass("active");
+    delete initialData.etcData["frNo"];
 }
 
 function payAmtLimitation () {
