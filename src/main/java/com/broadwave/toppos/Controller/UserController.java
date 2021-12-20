@@ -44,6 +44,23 @@ public class UserController {
     public String receiptreg(){
         return "user/receipt/receiptreg";
     }
-
+    
+    // 나의 정보 관리
+    @RequestMapping("mypage")
+    public String mypage(){
+        return "user/mypage";
+    }
+    
+    // 외부연계
+    @RequestMapping("externallink")
+    public String externallink(){
+        return "user/externallink";
+    }
+    
+    // 상품 순서 관리 - 상품 분류
+    @RequestMapping("classification")
+    public String classification(){
+        return "user/classification";
+    }
 
 }
