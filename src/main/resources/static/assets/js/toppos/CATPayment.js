@@ -432,7 +432,7 @@ function CatCreate_Print(params,creditResult,cancelYN){
     }else {
         message += "소계  수량    :" + ("" + params.items.length).padStart(8) + "  합계금액:" + (" " + numberWithCommasCat(params.totalAmount)).padStart(8);
         message += String.fromCharCode(10);
-        message += "      기본금액:" + ("" + numberWithCommasCat(params.addAmount)).padStart(8) + "  추가금액:" + (" " + numberWithCommasCat(params.dcAmount)).padStart(8);
+        message += "      기본금액:" + ("" + numberWithCommasCat(params.normalAmount)).padStart(8) + "  추가금액:" + (" " + numberWithCommasCat(params.changeAmount)).padStart(8);
         message += String.fromCharCode(10);
         message += "      인도예정일:";
         message += String.fromCharCode(27);
@@ -600,7 +600,7 @@ function CatCreate_Print(params,creditResult,cancelYN){
     }else {
         message += "소계  수량    :" + ("" + params.items.length).padStart(8) + "  합계금액:" + (" " + numberWithCommasCat(params.totalAmount)).padStart(8);
         message += String.fromCharCode(10);
-        message += "      기본금액:" + ("" + numberWithCommasCat(params.addAmount)).padStart(8) + "  추가금액:" + (" " + numberWithCommasCat(params.dcAmount)).padStart(8);
+        message += "      기본금액:" + ("" + numberWithCommasCat(params.normalAmount)).padStart(8) + "  추가금액:" + (" " + numberWithCommasCat(params.changeAmount)).padStart(8);
         message += String.fromCharCode(10);
         message += "      인도예정일:";
         message += String.fromCharCode(27);

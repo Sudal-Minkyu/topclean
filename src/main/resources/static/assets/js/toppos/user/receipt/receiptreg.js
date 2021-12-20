@@ -159,6 +159,7 @@ $(function() {
         $payTabsBtn.eq(idx).addClass('active');
         $payTabsContent.removeClass('active');
         $payTabsContent.eq(idx).addClass('active');
+        setReceiveAmtToTotalAmt();
     });
 });
 
@@ -1124,7 +1125,7 @@ function onSaveTemp() {
         frNo: initialData.etcData.frNo,
         frNormalAmount: parseInt($("#totFdNormalAmount").html().replace(/[^0-9]/g, "")),
         frDiscountAmount: parseInt($("#totChangeAmount").html().replace(/[^0-9]/g, "")),
-        frTotalAmount: parseInt($("#totFdRequestAmount").html().replace(/[^0-9]/g, "")),
+        frTotalAmount: $("#totFdRequestAmount").html().toInt(),
         frQty: parseInt($("#totFdQty").html().replace(/[^0-9]/g, "")),
     }
 
@@ -1146,6 +1147,10 @@ function onSaveTemp() {
         }
         if(checkNum === "2") {
             console.log(req);
+            initialData.etcData.beforeUncollectMoney = req.sendData.beforeUncollectMoney;
+            initialData.etcData.saveMoney = req.sendData.saveMoney;
+            initialData.etcData.todayUncollectMoney = req.sendData.todayUncollectMoney;
+
             $("#beforeUncollectMoney").html(req.sendData.beforeUncollectMoney.toLocaleString());
             $("#saveMoney").html(req.sendData.saveMoney.toLocaleString());
             initialData.etcData.frNo = req.sendData.frNo;
@@ -1230,16 +1235,14 @@ function onApply() {
 
     // ======================
 
-    const totRequestAmt = $("#totFdRequestAmount").html().replace(/[^0-9]/g, "");
-    $("#payNormalAmt").html($("#totFdNormalAmount").html().replace(/[^0-9]/g, "")
-     .toLocaleString());
-    $("#payChangeAmt").html($("#totChangeAmount").html().replace(/[^0-9]/g, "")
-     .toLocaleString());
+    const totRequestAmt = $("#totFdRequestAmount").html().toInt();
+    $("#payNormalAmt").html($("#totFdNormalAmount").html().toInt().toLocaleString());
+    $("#payChangeAmt").html($("#totChangeAmount").html().toInt().toLocaleString());
     $("#applySaveMoney").html("0");
     $("#applyUncollectAmt").html("0");
     $("#payRequestAmt").html(totRequestAmt.toLocaleString());
     $("#totalAmt").html(totRequestAmt.toLocaleString());
-
+    setReceiveAmtToTotalAmt();
     calculateOne();
     calculateTwo();
     calculateThree();
@@ -1248,9 +1251,9 @@ function onApply() {
 }
 
 function calculateOne() {
-    const totRequestAmt = parseInt($("#totFdRequestAmount").html().replace(/[^0-9]/g, ""));
-    const applySaveMoney = parseInt($("#applySaveMoney").html().replace(/[^0-9]/g, ""));
-    const applyUncollectAmt = parseInt($("#applyUncollectAmt").html().replace(/[^0-9]/g, ""));
+    const totRequestAmt = $("#totFdRequestAmount").html().toInt();
+    const applySaveMoney = $("#applySaveMoney").html().toInt();
+    const applyUncollectAmt = $("#applyUncollectAmt").html().toInt();
     const paidData =  AUIGrid.getGridData(gridId[3]);
     let paidAmt = 0;
     paidData.forEach(el => {
@@ -1337,45 +1340,49 @@ function onPaymentStageOne() {
 
     let paymentData =
         {
-            "franchiseNo": initialData.etcData.frCode,
-            "franchiseName": initialData.etcData.frName,
-            "businessNO": initialData.etcData.frBusinessNo,
-            "repreName" : initialData.etcData.frRpreName,
-            "franchiseTel" : initialData.etcData.frTelNo,
-            "customerName" : selectedCustomer.bcName,
-            "customerTel" : CommonUI.onPhoneNumChange(selectedCustomer.bcHp),
-            "requestDt" : new Date().format("yyyy-MM-dd HH:mm"),
-            "totalAmount": parseInt($("#payRequestAmt").html().replace(/[^0-9]/g, "")),
-            "addAmount":0,
-            "dcAmount":0,
-            "estimateDt" : initialData.etcData.frEstimateDate,
-            "preUncollectAmount":50,
-            "curUncollectAmount":40,
-            "uncollectPayAmount":30,
-            "totalUncollectAmount":20,
-            "month":0,
-            "items": items,
+            franchiseNo: initialData.etcData.frCode,
+            franchiseName: initialData.etcData.frName,
+            businessNO: initialData.etcData.frBusinessNo,
+            repreName: initialData.etcData.frRpreName,
+            franchiseTel: initialData.etcData.frTelNo,
+            customerName: selectedCustomer.bcName,
+            customerTel: CommonUI.onPhoneNumChange(selectedCustomer.bcHp),
+            requestDt: new Date().format("yyyy-MM-dd HH:mm"),
+            totalAmount: $("#payRequestAmt").html().toInt(),
+            normalAmount: $("#payNormalAmt").html().toInt(),
+            changeAmount: $("#payChangeAmt").html().toInt(),
+            estimateDt: initialData.etcData.frEstimateDate,
+            preUncollectAmount: initialData.etcData.beforeUncollectMoney - applyUncollectAmt,
+            curUncollectAmount: initialData.etcData.todayUncollectMoney,
+            uncollectPayAmount: applyUncollectAmt,
+            totalUncollectAmount: initialData.etcData.beforeUncollectMoney - applyUncollectAmt + initialData.etcData.todayUncollectMoney,
+            month: $("#installmentMonth").val().toInt(),
+            items: items,
         };
 
 
     const paymentTab = $(".pop__pay-tabs-item.active").attr("data-id");
     if(paymentTab === "tabCash") {
         const receiveCash = $("#receiveCash").html().toInt();
-        if(applyUncollectAmt && $("#totalAmt").html().toInt() - receiveCash > 0) {
-            alertCaution("미수전액완납시, 한번에 전액을 상환하셔야 합니다.", 1)
+        if(receiveCash) {
+            if (applyUncollectAmt && $("#totalAmt").html().toInt() - receiveCash > 0) {
+                alertCaution("미수전액완납시, 한번에 전액을 상환하셔야 합니다.", 1)
+            }
+            paymentData.type = "cash";
+            paymentData.paymentAmount = receiveCash;
         }
-        paymentData.type = "cash";
-        paymentData.paymentAmount = receiveCash;
     }else if(paymentTab === "tabCard") {
-        const receiveCard = parseInt($("#receiveCard").html().replace(/[^0-9]/g, ""));
-        if(applyUncollectAmt && $("#totalAmt").html().toInt() - receiveCard > 0) {
-            alertCaution("미수전액완납시, 한번에 전액을 상환하셔야 합니다.", 1)
+        const receiveCard = $("#receiveCard").html().toInt();
+        if(receiveCard) {
+            if (applyUncollectAmt && $("#totalAmt").html().toInt() - receiveCard > 0) {
+                alertCaution("미수전액완납시, 한번에 전액을 상환하셔야 합니다.", 1)
+            }
+            paymentData.type = "card";
+            paymentData.paymentAmount = receiveCard;
         }
-        paymentData.type = "card";
-        paymentData.paymentAmount = receiveCard;
     }
 
-    $('#payStatus').show();
+
 
     // type: card or cash
     // franchiseNo : 가맹점코드 3자리 문자열
@@ -1383,6 +1390,7 @@ function onPaymentStageOne() {
     // month : 할부 (0-일시불, 2-2개월)
 
     if (paymentData.type ==="card") {
+        $('#payStatus').show();
         CAT.CatCredit(paymentData, function (res) {
             $('#resultmsg').text(res);
             $('#payStatus').hide();
@@ -1391,25 +1399,27 @@ function onPaymentStageOne() {
             if (resjson.STATUS === "SUCCESS") {
                 let creditData =
                     {
-                        "cardNo": resjson.CARDNO,
-                        "cardName": resjson.ISSUERNAME,
-                        "approvalTime": resjson.APPROVALTIME,
-                        "approvalNo": resjson.APPROVALNO
+                        cardNo: resjson.CARDNO,
+                        cardName: resjson.ISSUERNAME,
+                        approvalTime: resjson.APPROVALTIME,
+                        approvalNo: resjson.APPROVALNO
                     };
                 CAT.CatPrint(paymentData, creditData, "N");
-                //onPaymentStageTwo();
+                onPaymentStageTwo(paymentData, resjson);
             }
         });
-    }
-    if (paymentData.type ==="cash") {
+    }else if (paymentData.type ==="cash") {
+        $('#payStatus').show();
         CAT.CatPrint(paymentData, "", "N");
         $('#payStatus').hide();
-        //onPaymentStageTwo();
+        onPaymentStageTwo(paymentData);
+    }else{
+        onPaymentStageTwo();
     }
 }
 
 /* 결재할 때 */
-function onPaymentStageTwo() {
+function onPaymentStageTwo(paymentData = {}, creditData = {}) {
 
     const url = "/api/user/requestPayment";
     let data = {
@@ -1443,18 +1453,18 @@ function onPaymentStageTwo() {
             fpRealAmt: receiveCard,
             fpAmt: receiveCard - applyUncollectAmt,
             fpCollectAmt: applyUncollectAmt,
-            fpCatApprovalno: "01",
-            fpCatApprovaltime: 0,
-            fpCatCardno: 10000,
-            fpCatIssuercode: "01",
-            fpCatIssuername: "IBK 비씨카드",
-            fpCatMuechantnumber: "72729972",
-            fpCatMessage1: "IBK 비씨카드",
-            fpCatMessage2: "IBK 비씨카드",
-            fpCatNotice1: "EDC매출표",
-            fpCatTotamount: "000010000",
-            fpCatVatamount: "000001090",
-            fpCatTelegramflagt: "a1"
+            fpCatApprovalno: creditData.APPROVALNO,
+            fpCatApprovaltime: creditData.APPROVALTIME,
+            fpCatCardno: creditData.CARDNO,
+            fpCatIssuercode: creditData.ISSUERCODE,
+            fpCatIssuername: creditData.ISSUERNAME,
+            fpCatMuechantnumber: creditData.MERCHANTNUMBER,
+            fpCatMessage1: creditData.MESSAGE1,
+            fpCatMessage2: creditData.MESSAGE2,
+            fpCatNotice1: creditData.NOTICE1,
+            fpCatTotamount: creditData.TOTAMOUNT,
+            fpCatVatamount: creditData.VATAMOUNT,
+            fpCatTelegramflagt: creditData.TELEGRAMFLAG
         }
         data.payment.push(paymentCard);
     }
@@ -1503,12 +1513,14 @@ function cancelPayUncollectMoney() {
 
 function onClosePayment() {
     const uncollectAmtCash = $("#uncollectAmtCash").html();
-    if( uncollectAmtCash !== "0") {
+    if(uncollectAmtCash !== "0" && $("#receiveCash") === "0" && $("#receiveCard") === "0") {
         alertCheck("미수금이 " + uncollectAmtCash + "원 발생합니다. <br> 이대로 닫으시겠습니까?");
         $("#checkDelSuccessBtn").on("click", function () {
-           closePaymentPop();
-           $('#popupId').remove();
+            $('#popupId').remove();
+            closePaymentPop();
         });
+    }else{
+        closePaymentPop();
     }
 }
 
@@ -1580,4 +1592,10 @@ function payAmtLimitation () {
 
 String.prototype.toInt = function () {
     return parseInt(this.replace(/[^0-9]/g, ""));
+}
+
+function setReceiveAmtToTotalAmt() {
+    const totalAmt = $("#totalAmt").html();
+    $("#receiveCash").html(totalAmt);
+    $("#receiveCard").html(totalAmt);
 }
