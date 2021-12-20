@@ -1235,7 +1235,7 @@ function onApply() {
      .toLocaleString());
     $("#payChangeAmt").html($("#totChangeAmount").html().replace(/[^0-9]/g, "")
      .toLocaleString());
-    $("#applySavedAmt").html("0");
+    $("#applySaveMoney").html("0");
     $("#applyUncollectAmt").html("0");
     $("#payRequestAmt").html(totRequestAmt.toLocaleString());
     $("#totalAmt").html(totRequestAmt.toLocaleString());
@@ -1249,7 +1249,7 @@ function onApply() {
 
 function calculateOne() {
     const totRequestAmt = parseInt($("#totFdRequestAmount").html().replace(/[^0-9]/g, ""));
-    const applySavedAmt = parseInt($("#applySavedAmt").html().replace(/[^0-9]/g, ""));
+    const applySaveMoney = parseInt($("#applySaveMoney").html().replace(/[^0-9]/g, ""));
     const applyUncollectAmt = parseInt($("#applyUncollectAmt").html().replace(/[^0-9]/g, ""));
     const paidData =  AUIGrid.getGridData(gridId[3]);
     let paidAmt = 0;
@@ -1258,7 +1258,7 @@ function calculateOne() {
     });
 
     /* 최종결제금액 = A - B + C - D */
-    const totalAmt = totRequestAmt - applySavedAmt + applyUncollectAmt - paidAmt;
+    const totalAmt = totRequestAmt - applySaveMoney + applyUncollectAmt - paidAmt;
 
     $("#totalAmt").html(totalAmt.toLocaleString());
 }
@@ -1292,14 +1292,14 @@ function calculateThree() {
 /* 키패드 작동용 */
 let keypadNum;
 function onKeypad(num) {
-    const targetId = ["applySavedAmt", "receiveCash", "receiveCard"];
+    const targetId = ["applySaveMoney", "receiveCash", "receiveCard"];
     keypadNum = num;
     $("#hiddenKeypad").val($("#" + targetId[keypadNum]).html());
     vkey.showKeypad("hiddenKeypad", onKeypadConfirm);
 }
 
 function onKeypadConfirm() {
-    const targetId = ["applySavedAmt", "receiveCash", "receiveCard"];
+    const targetId = ["applySaveMoney", "receiveCash", "receiveCard"];
     $("#" + targetId[keypadNum]).html($("#hiddenKeypad").val());
 
     switch (keypadNum) {
@@ -1315,11 +1315,13 @@ function onKeypadConfirm() {
             calculateThree();
             break;
     }
+
+    payAmtLimitation();
 }
 
 /* 임시 카드 결제용 함수 */
 function onPaymentStageOne() {
-    const applyUncollectAmt = parseInt($("#applyUncollectAmt").html().replace(/[^0-9]/g, ""));
+    const applyUncollectAmt = $("#applyUncollectAmt").html().toInt();
 
     let items = [];
     const orderData = AUIGrid.getGridData(gridId[0]);
@@ -1358,11 +1360,17 @@ function onPaymentStageOne() {
 
     const paymentTab = $(".pop__pay-tabs-item.active").attr("data-id");
     if(paymentTab === "tabCash") {
-        const receiveCash = parseInt($("#receiveCash").html().replace(/[^0-9]/g, ""));
+        const receiveCash = $("#receiveCash").html().toInt();
+        if(applyUncollectAmt && $("#totalAmt").html().toInt() - receiveCash > 0) {
+            alertCaution("미수전액완납시, 한번에 전액을 상환하셔야 합니다.", 1)
+        }
         paymentData.type = "cash";
         paymentData.paymentAmount = receiveCash;
     }else if(paymentTab === "tabCard") {
         const receiveCard = parseInt($("#receiveCard").html().replace(/[^0-9]/g, ""));
+        if(applyUncollectAmt && $("#totalAmt").html().toInt() - receiveCard > 0) {
+            alertCaution("미수전액완납시, 한번에 전액을 상환하셔야 합니다.", 1)
+        }
         paymentData.type = "card";
         paymentData.paymentAmount = receiveCard;
     }
@@ -1450,12 +1458,12 @@ function onPaymentStageTwo() {
         }
         data.payment.push(paymentCard);
     }
-    const applySavedAmt = parseInt($("#applySavedAmt").html().replace(/[^0-9]/g, ""));
-    if(applySavedAmt) {
+    const applySaveMoney = parseInt($("#applySaveMoney").html().replace(/[^0-9]/g, ""));
+    if(applySaveMoney) {
         const paymentSaved = {
             fpType: "03",
-            fpRealAmt: applySavedAmt,
-            fpAmt: applySavedAmt,
+            fpRealAmt: applySaveMoney,
+            fpAmt: applySaveMoney,
             fpCollectAmt: 0,
         }
         data.payment.push(paymentSaved);
@@ -1470,7 +1478,7 @@ function onPaymentStageTwo() {
         AUIGrid.addRow(gridId[3], req.sendData.paymentEtcDtos, "last");
         $("#beforeUncollectMoney").html(req.sendData.beforeUncollectMoney.toLocaleString());
         $("#saveMoney").html(req.sendData.saveMoney.toLocaleString());
-        $("#applySavedAmt").html("0");
+        $("#applySaveMoney").html("0");
         $("#applyUncollectAmt").html("0");
         $("#receiveCash").html("0");
         $("#changeCash").html("0");
@@ -1484,20 +1492,91 @@ function onPaymentStageTwo() {
 
 function onPayUncollectMoney() {
     $("#applyUncollectAmt").html($("#beforeUncollectMoney").html());
-    calculateOne();
-    calculateTwo();
-    calculateThree();
+    alertCaution("미수전액완납시, 적립금은 사용하지 못하며<br>한 가지 결제수단 으로 전액 결제하셔야 합니다.", 1);
+    payAmtLimitation();
 }
 
 function cancelPayUncollectMoney() {
     $("#applyUncollectAmt").html(0);
+    payAmtLimitation();
+}
+
+function onClosePayment() {
+    const uncollectAmtCash = $("#uncollectAmtCash").html();
+    if( uncollectAmtCash !== "0") {
+        alertCheck("미수금이 " + uncollectAmtCash + "원 발생합니다. <br> 이대로 닫으시겠습니까?");
+        $("#checkDelSuccessBtn").on("click", function () {
+           closePaymentPop();
+        });
+    }
+}
+
+function closePaymentPop() {
+    AUIGrid.clearGridData(gridId[0]);
+    calculateMainPrice();
+    $("#paymentPop").removeClass("active");
+}
+
+function payAmtLimitation () {
+    const currentSaveMoney = $("#saveMoney").html().toInt();
+    const $receiveCash = $("#receiveCash");
+    let receivedCashAmt = $receiveCash.html().toInt();
+    const $receiveCard = $("#receiveCard");
+    let receivedCardAmt = $receiveCard.html().toInt();
+    const payRequestAmtA = $("#payRequestAmt").html().toInt();
+    const $applySaveMoney = $("#applySaveMoney");
+    let applySaveMoneyB = $applySaveMoney.html().toInt();
+    const applyUncollectAmtC = $("#applyUncollectAmt").html().toInt();
+    const paidData =  AUIGrid.getGridData(gridId[3]);
+    let paidAmtD = 0;
+    paidData.forEach(el => {
+        paidAmtD += el.fpAmt;
+    });
+
+    if(applyUncollectAmtC) {
+        const totAmt = payRequestAmtA + applyUncollectAmtC - paidAmtD;
+        applySaveMoneyB = 0;
+        receivedCardAmt = totAmt;
+        if(receivedCashAmt < totAmt) {
+            receivedCashAmt = totAmt;
+        }
+    }
+
+    /* 사용한 적립금이 가지고 있는 적립금보다 큰 경우 */
+    if(applySaveMoneyB - currentSaveMoney > 0) {
+        applySaveMoneyB = currentSaveMoney;
+    }
+
+    // 최종결제금액보다 받은 카드금액까지의 합계가 큰 경우
+    if(payRequestAmtA - applySaveMoneyB + applyUncollectAmtC - paidAmtD - receivedCardAmt < 0) {
+        receivedCardAmt = payRequestAmtA - applySaveMoneyB + applyUncollectAmtC - paidAmtD;
+        receivedCardAmt = receivedCardAmt < 0 ? 0 : receivedCardAmt;
+    }
+
+    // 최종 결제금액보다 사용한 적립금이 많은 경우
+    if(payRequestAmtA - applySaveMoneyB + applyUncollectAmtC - paidAmtD < 0) {
+        applySaveMoneyB = payRequestAmtA + applyUncollectAmtC - paidAmtD;
+        applySaveMoneyB = applySaveMoneyB < 0 ? 0 : applySaveMoneyB;
+        receivedCashAmt = 0;
+        receivedCardAmt = 0;
+    }
+
+    // 최종 결제금액과 사용한 적립금이 같을 경우
+    if(payRequestAmtA - applySaveMoneyB + applyUncollectAmtC - paidAmtD === 0) {
+        applySaveMoneyB = payRequestAmtA + applyUncollectAmtC - paidAmtD;
+        receivedCashAmt = 0;
+        receivedCardAmt = 0;
+    }
+
+    $applySaveMoney.html(applySaveMoneyB.toLocaleString());
+    $receiveCash.html(receivedCashAmt.toLocaleString());
+    $receiveCard.html(receivedCardAmt.toLocaleString());
+
     calculateOne();
     calculateTwo();
     calculateThree();
 }
 
-function onClosePayment() {
-    AUIGrid.clearGridData(gridId[0]);
-    calculateMainPrice();
-    $("#paymentPop").removeClass("active");
+String.prototype.toInt = function () {
+    return parseInt(this.replace(/[^0-9]/g, ""));
 }
