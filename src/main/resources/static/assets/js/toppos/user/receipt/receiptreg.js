@@ -742,6 +742,7 @@ function calculateItemPrice() {
         currentRequest.totAddCost = 0;
         currentRequest.fdDiscountAmt = 0;
         currentRequest.fdRequestAmt = 0;
+        sumAmt = 0;
     }else{
         currentRequest.fdRetryYn = "N";
     }
@@ -1118,6 +1119,14 @@ function onSaveTemp() {
 
     // 삭제된 행 아이템들(배열)
     const deletedRowItems = AUIGrid.getRemovedItems(gridId[0]);
+
+    if(selectedCustomer === undefined) {
+        alertCaution("먼저 고객을 선택해 주세요", 1);
+        return false;
+    }else if(addedRowItems.length === 0 && updatedRowItems.length === 0 && deletedRowItems.length === 0) {
+        alertCaution("추가/변경/삭제 사항이 없습니다", 1);
+        return false;
+    }
 
     let etc = {
         checkNum: checkNum,
