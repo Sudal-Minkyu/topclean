@@ -777,6 +777,16 @@ function calculateMainPrice() {
             fdRequestAmt += el.fdRequestAmt;
         }
     });
+    const softDeleteItems = AUIGrid.getRemovedItems(gridId[0]);
+    softDeleteItems.forEach(el => {
+        fdQty--;
+        if(el.fdRetryYn === "N") {
+            fdNormalAmt -= el.fdNormalAmt * el.fdQty;
+            changeAmt -= (el.fdPressed + el.fdWhitening + el.fdWaterRepellent + el.fdStarch
+                + el.fdPollution + el.fdAdd1Amt + el.fdRepairAmt -el.fdDiscountAmt) * el.fdQty;
+            fdRequestAmt -= el.fdRequestAmt;
+        }
+    });
 
     $("#totFdQty").html(fdQty.toLocaleString());
     $("#totFdNormalAmount").html(fdNormalAmt.toLocaleString());
@@ -1137,9 +1147,8 @@ function onSaveTemp() {
         if(checkNum === "2") {
             console.log(req);
             $("#beforeUncollectMoney").html(req.sendData.beforeUncollectMoney.toLocaleString());
-            initialData.etcData.frNo = req.sendData.frNo;
             $("#saveMoney").html(req.sendData.saveMoney.toLocaleString());
-
+            initialData.etcData.frNo = req.sendData.frNo;
         }
     })
 }
@@ -1250,7 +1259,6 @@ function calculateOne() {
 
     /* 최종결제금액 = A - B + C - D */
     const totalAmt = totRequestAmt - applySavedAmt + applyUncollectAmt - paidAmt;
-
 
     $("#totalAmt").html(totalAmt.toLocaleString());
 }
@@ -1457,22 +1465,39 @@ function onPaymentStageTwo() {
     console.log(data);
 
     CommonUI.ajaxjson(url, JSON.stringify(data), function (req){
-        console.log(req.sendData);
+        console.log("결제후 :");
+        console.log(req);
         AUIGrid.addRow(gridId[3], req.sendData.paymentEtcDtos, "last");
         $("#beforeUncollectMoney").html(req.sendData.beforeUncollectMoney.toLocaleString());
+        $("#saveMoney").html(req.sendData.saveMoney.toLocaleString());
         $("#applySavedAmt").html("0");
         $("#applyUncollectAmt").html("0");
+        $("#receiveCash").html("0");
+        $("#changeCash").html("0");
+        $("#receiveCard").html("0");
         //$("#saveMoney").html(req.sendData.saveMoney);
         calculateOne();
+        calculateTwo();
+        calculateThree();
     });
 }
 
 function onPayUncollectMoney() {
     $("#applyUncollectAmt").html($("#beforeUncollectMoney").html());
     calculateOne();
+    calculateTwo();
+    calculateThree();
 }
 
 function cancelPayUncollectMoney() {
     $("#applyUncollectAmt").html(0);
     calculateOne();
+    calculateTwo();
+    calculateThree();
+}
+
+function onClosePayment() {
+    AUIGrid.clearGridData(gridId[0]);
+    calculateMainPrice();
+    $("#paymentPop").removeClass("active");
 }
