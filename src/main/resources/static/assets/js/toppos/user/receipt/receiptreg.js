@@ -554,7 +554,7 @@ function setDataIntoGrid(numOfGrid, url) {
 function onSearchCustomer() {
     const $searchCustomerField = $("#searchCustomerField");
     if($searchCustomerField.val() === ""){
-        alertCaution("검색어를 입력해주세요.",1)
+        alertCaution("검색어를 입력해주세요.",1);
         return false;
     }
     const params = {searchType : $("#searchCustomerType").val(),
@@ -731,7 +731,7 @@ function calculateItemPrice() {
             + currentRequest.fdStarch + currentRequest.fdPollution + currentRequest.fdAdd1Amt + currentRequest.fdRepairAmt;
 
     currentRequest.fdNormalAmt = ceil100(currentRequest.fdOriginAmt * gradePrice[currentRequest.fdPriceGrade] / 100);
-    const sumAmt = ceil100((currentRequest.fdNormalAmt + currentRequest.totAddCost)
+    let sumAmt = ceil100((currentRequest.fdNormalAmt + currentRequest.totAddCost)
         * (100 - gradeDiscount[currentRequest.fdDiscountGrade]) / 100)
     currentRequest.fdRequestAmt = sumAmt * currentRequest.fdQty;
     currentRequest.fdDiscountAmt = currentRequest.fdNormalAmt + currentRequest.totAddCost - sumAmt;
@@ -1123,7 +1123,7 @@ function onSaveTemp() {
     if(selectedCustomer === undefined) {
         alertCaution("먼저 고객을 선택해 주세요", 1);
         return false;
-    }else if(addedRowItems.length === 0 && updatedRowItems.length === 0 && deletedRowItems.length === 0) {
+    }else if(addedRowItems.length === 0 && updatedRowItems.length === 0 && deletedRowItems.length === 0 && checkNum === "1") {
         alertCaution("추가/변경/삭제 사항이 없습니다", 1);
         return false;
     }
@@ -1144,6 +1144,8 @@ function onSaveTemp() {
         "delete" : deletedRowItems,
         "etc" : etc
     };
+
+
 
     CommonUI.ajaxjson(gridSaveUrl[0], JSON.stringify(data), function (req) {
         AUIGrid.removeSoftRows(gridId[0]);
@@ -1239,6 +1241,10 @@ function changeQty() {
 
 /* 접수완료시 호출 API */
 function onApply() {
+    if($("#totFdQty").html() === "0") {
+        alertCaution("접수완료할 품목이 없습니다.", 1);
+        return false;
+    }
     checkNum = "2";
     onSaveTemp();
 
@@ -1375,7 +1381,7 @@ function onPaymentStageOne() {
         const receiveCash = $("#receiveCash").html().toInt();
         if(receiveCash) {
             if (applyUncollectAmt && $("#totalAmt").html().toInt() - receiveCash > 0) {
-                alertCaution("미수전액완납시, 한번에 전액을 상환하셔야 합니다.", 1)
+                alertCaution("미수전액완납시, <br>한번에 전액을 상환하셔야 합니다.", 1);
             }
             paymentData.type = "cash";
             paymentData.paymentAmount = receiveCash;
@@ -1384,7 +1390,7 @@ function onPaymentStageOne() {
         const receiveCard = $("#receiveCard").html().toInt();
         if(receiveCard) {
             if (applyUncollectAmt && $("#totalAmt").html().toInt() - receiveCard > 0) {
-                alertCaution("미수전액완납시, 한번에 전액을 상환하셔야 합니다.", 1)
+                alertCaution("미수전액완납시, <br>한번에 전액을 상환하셔야 합니다.", 1);
             }
             paymentData.type = "card";
             paymentData.paymentAmount = receiveCard;
@@ -1511,7 +1517,7 @@ function onPaymentStageTwo(paymentData = {}, creditData = {}) {
 
 function onPayUncollectMoney() {
     $("#applyUncollectAmt").html($("#beforeUncollectMoney").html());
-    alertCaution("미수전액완납시, 적립금은 사용하지 못하며<br>한 가지 결제수단 으로 전액 결제하셔야 합니다.", 1);
+    alertCaution("미수전액완납시, 적립금은 사용하지<br> 못하며 한 가지 결제수단 으로 <br>전액 결제하셔야 합니다.", 1);
     payAmtLimitation();
 }
 
