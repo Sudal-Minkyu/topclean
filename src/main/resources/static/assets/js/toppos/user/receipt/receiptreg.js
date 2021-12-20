@@ -1507,6 +1507,7 @@ function onClosePayment() {
         alertCheck("미수금이 " + uncollectAmtCash + "원 발생합니다. <br> 이대로 닫으시겠습니까?");
         $("#checkDelSuccessBtn").on("click", function () {
            closePaymentPop();
+           $('#popupId').remove();
         });
     }
 }
