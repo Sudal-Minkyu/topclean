@@ -1529,9 +1529,10 @@ function cancelPayUncollectMoney() {
 }
 
 function onClosePayment() {
-    const uncollectAmtCash = $("#uncollectAmtCash").html();
-    if(uncollectAmtCash !== "0" && $("#receiveCash") === "0" && $("#receiveCard") === "0") {
-        alertCheck("미수금이 " + uncollectAmtCash + "원 발생합니다. <br> 이대로 닫으시겠습니까?");
+    const uncollectAmtCash = $("#totalAmt").html().toInt() + $("#applySaveMoney").html().toInt()
+        - $("#applyUncollectAmt").html().toInt();
+    if(uncollectAmtCash) {
+        alertCheck("미수금이 " + uncollectAmtCash.toLocaleString() + "원 발생합니다<br> 이대로 닫으시겠습니까?");
         $("#checkDelSuccessBtn").on("click", function () {
             $('#popupId').remove();
             closePaymentPop();
