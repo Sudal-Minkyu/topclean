@@ -171,6 +171,9 @@ public class HeadRestController {
             }else{
                 franchise.setFrLastTagno(franchiseMapperDto.getFrTagNo()+"0000");
             }
+            if(franchiseMapperDto.getFrEstimateDuration() == null ){
+                franchise.setFrEstimateDuration(2);
+            }
             franchise.setBrId(null);
             franchise.setBrCode(null);
             franchise.setBrAssignState("01");
