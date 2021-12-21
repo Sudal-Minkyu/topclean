@@ -15,5 +15,5 @@ public interface RequestRepositoryCustom {
 
     List<RequestCollectDto> findByRequestCollectList(Customer customer, String nowDate);
 
-    List<RequestInfoDto> findByRequestList(String frCode, String nowDate);
+    List<RequestInfoDto> findByRequestList(String frCode, String nowDate, Customer customer);
 }

@@ -157,45 +157,15 @@ public class UserRestController {
         List<CustomerInfoDto> customerInfoListDto = userService.findByCustomerInfo(frCode, searchType, searchString);
         log.info("customerInfoListDto : "+customerInfoListDto);
 
-        if(customerInfoListDto.size()==1) {
-            // 현재 날짜 받아오기
-            LocalDateTime localDateTime = LocalDateTime.now();
-            String nowDate = localDateTime.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-            log.info("현재 날짜 yyyymmdd : "+nowDate);
-
-            Optional<Customer> optionalCustomer = userService.findByBcId(customerInfoListDto.get(0).getBcId());
-            if (!optionalCustomer.isPresent()) {
-                return ResponseEntity.ok(res.fail(ResponseErrorCode.TP018.getCode(), ResponseErrorCode.TP018.getDesc(), null, null));
-            } else {
-                // 결제일 경우, 현재 고객의 적립금과 미수금액을 보내준다.
-                // 미수금액 리스트를 호출한다. 조건 : 미수여부는 Y, 임시저장확정여부는 N, 고객아이디 eq, 가맹점코드 = frCode eq, 현재날짜의 전날들만 인것들만 조회하기
-                List<RequestCollectDto>  requestCollectDtoList = receiptService.findByRequestCollectList(optionalCustomer.get(), nowDate);
-                int beforeTotalAmount = 0;
-                int beforePayAmount = 0;
-                if(requestCollectDtoList.size() != 0){
-                    for(RequestCollectDto requestCollectDto : requestCollectDtoList){
-                        beforeTotalAmount = beforeTotalAmount + requestCollectDto.getFrTotalAmount();
-                        beforePayAmount = beforePayAmount + requestCollectDto.getFrPayAmount();
-                    }
-                    data.put("beforeUncollectMoney",beforeTotalAmount-beforePayAmount);
-                }else{
-                    data.put("beforeUncollectMoney",0);
-                }
-//                log.info("합계금액 : "+totalAmount);
-//                log.info("결제금액 : "+payAmount);
-                log.info("전일미수금액 : "+ (beforeTotalAmount - beforePayAmount));
-                // 적립금 리스트를 호출한다. 조건 : 고객 ID, 적립유형 1 or 2, 마감여부 : N,
-                Integer saveMoney = receiptService.findBySaveMoneyList(optionalCustomer.get());
-                data.put("saveMoney",saveMoney);
-                log.info("적립금액 : "+ (saveMoney));
-            }
-        }
-
+        // 현재 날짜 받아오기
+        LocalDateTime localDateTime = LocalDateTime.now();
+        String nowDate = localDateTime.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        log.info("현재 날짜 yyyymmdd : "+nowDate);
 
         for (CustomerInfoDto customerInfoDto: customerInfoListDto) {
-
             customerListInfo = new HashMap<>();
 
+            // 개인정보
             customerListInfo.put("bcId", customerInfoDto.getBcId());
             customerListInfo.put("bcName", customerInfoDto.getBcName());
             customerListInfo.put("bcHp", customerInfoDto.getBcHp());
@@ -204,6 +174,32 @@ public class UserRestController {
             customerListInfo.put("bcRemark", customerInfoDto.getBcRemark());
             customerListInfo.put("bcAddress", customerInfoDto.getBcAddress());
             customerListInfo.put("bcLastRequestDt", customerInfoDto.getBcLastRequestDt());
+
+            // 적립금 미수금 정보
+            Optional<Customer> optionalCustomer = userService.findByBcId(customerInfoDto.getBcId());
+            if (!optionalCustomer.isPresent()) {
+                return ResponseEntity.ok(res.fail(ResponseErrorCode.TP018.getCode(), ResponseErrorCode.TP018.getDesc(), null, null));
+            } else {
+                // 결제일 경우, 현재 고객의 적립금과 미수금액을 보내준다.
+                // 미수금액 리스트를 호출한다. 조건 : 미수여부는 Y, 임시저장확정여부는 N, 고객아이디 eq, 가맹점코드 = frCode eq, 현재날짜의 전날들만 인것들만 조회하기
+                List<RequestCollectDto>  requestCollectDtoList = receiptService.findByRequestCollectList(optionalCustomer.get(), nowDate);
+                int beforeTotalAmount = 0;
+                int beforePayAmount = 0;
+                int beforeUncollectMoney = 0;
+                if(requestCollectDtoList.size() != 0){
+                    for(RequestCollectDto requestCollectDto : requestCollectDtoList){
+                        beforeTotalAmount = beforeTotalAmount + requestCollectDto.getFrTotalAmount();
+                        beforePayAmount = beforePayAmount + requestCollectDto.getFrPayAmount();
+                    }
+                    beforeUncollectMoney = beforeTotalAmount-beforePayAmount;
+                }
+                customerListInfo.put("beforeUncollectMoney",beforeUncollectMoney);
+                // 적립금 리스트를 호출한다. 조건 : 고객 ID, 적립유형 1 or 2, 마감여부 : N,
+                Integer saveMoney = receiptService.findBySaveMoneyList(optionalCustomer.get());
+                customerListInfo.put("saveMoney",saveMoney);
+                log.info(customerInfoDto.getBcName()+"의 전일미수금액 : "+ beforeUncollectMoney);
+                log.info(customerInfoDto.getBcName()+"의 적립금액 : "+ saveMoney);
+            }
 
             customerListData.add(customerListInfo);
         }
