@@ -335,9 +335,12 @@ function franchiseSave() {
 
     const formData = new FormData(document.getElementById('frFormData'));
     let url = "/api/head/franchiseSave";
+    formData.set("frBusinessNo", formData.get("frBusinessNo").replace(/[^0-9]/g, ""));
+    formData.set("frTelNo", formData.get("frTelNo").replace(/[^0-9]/g, ""));
 
     CommonUI.ajax(url, "POST", formData, function (req){
         const sentData = Object.fromEntries(formData);
+        console.log(sentData);
         const isUpdated = AUIGrid.rowIdToIndex(gridId[1], sentData.frCode) > -1;
 
         if(isUpdated) {
@@ -416,10 +419,13 @@ function setFieldData(numOfGrid, item) {
             $("#frContractToDt").val(item.frContractToDt);
             $("#frContractState").val(item.frContractState);
             $("#frPriceGrade").val(item.frPriceGrade);
-            $("#frRemark").val(item.frRemark);
             $("#frRefCode").val(item.frRefCode);
+            $("#frBusinessNo").val(item.frBusinessNo);
+            $("#frRpreName").val(item.frRpreName);
+            $("#frTelNo").val(item.frTelNo);
             $("#frTagNo").val(item.frTagNo);
             $("#frEstimateDuration").val(item.frEstimateDuration);
+            $("#frRemark").val(item.frRemark);
             CommonUI.restrictDate(dateAToBTargetIds[1][0], dateAToBTargetIds[1][1], false);
             CommonUI.restrictDate(dateAToBTargetIds[1][0], dateAToBTargetIds[1][1], true);
             break;
@@ -497,7 +503,7 @@ function filterFranchiseList(type) {
             break;
         case 4 :
             AUIGrid.clearFilterAll(gridId[3]);
-            AUIGrid.clearGridData(gridId[3]);
+            AUIGrid.clearGridData(gridId[3]);호
             setListData(gridCreateUrl[3], 3);
             break;
     }
@@ -561,4 +567,13 @@ function validateNumber(element, type) {
                 element.value = element.value.replace(/[^0-9]/g, "");
             break;
     }
+}
+
+function onKeyupFrTelNo(el) {
+    el.value = CommonUI.onPhoneNumChange(el.value);
+    console.log("act");
+}
+
+function onKeyupFrBusinessNo(el) {
+    el.value = el.value.replace(/(\d{3})(\d{2})(\d{5})/, '$1-$2-$3');
 }
