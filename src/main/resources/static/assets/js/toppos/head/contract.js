@@ -130,7 +130,7 @@ gridColumnLayout[3] = [
 gridProp[3] = {
     editable : false,
     selectionMode : "singleRow",
-    noDataMessage : "대상 가맹점 데이터가 없습니다.",
+    showAutoNoDataMessage : false,
     rowNumHeaderText : "순번",
     rowIdField : "frCode",
     rowIdTrustMode : true,
@@ -486,20 +486,7 @@ function filterFranchiseList(type) {
         case 3 :
             AUIGrid.clearFilterAll(gridId[3]);
             AUIGrid.clearGridData(gridId[3]);
-            setListData(gridCreateUrl[3], 3);
-
-            const s_brAssignState = $("#s_brAssignState").val();
-            const s_frName = $("#s_frName").val();
-            if(s_brAssignState !== "") {
-                AUIGrid.setFilter(gridId[3], "brAssignStateValue", function (dataField, value, item) {
-                    return s_brAssignState === item.brAssignState;
-                });
-            }
-            if(s_frName !== "") {
-                AUIGrid.setFilter(gridId[3], "frName", function (dataField, value, item) {
-                    return new RegExp(s_frName.toUpperCase()).test(value.toUpperCase());
-                });
-            }
+            setListData(gridCreateUrl[3], 3, filterCase3);
             break;
         case 4 :
             AUIGrid.clearFilterAll(gridId[3]);
@@ -508,6 +495,20 @@ function filterFranchiseList(type) {
             break;
     }
 
+    function filterCase3() {
+        const s_brAssignState = $("#s_brAssignState").val();
+        const s_frName = $("#s_frName").val();
+        if(s_brAssignState !== "") {
+            AUIGrid.setFilter(gridId[3], "brAssignStateValue", function (dataField, value, item) {
+                return s_brAssignState === item.brAssignState;
+            });
+        }
+        if(s_frName !== "") {
+            AUIGrid.setFilter(gridId[3], "frName", function (dataField, value, item) {
+                return new RegExp(s_frName.toUpperCase()).test(value.toUpperCase());
+            });
+        }
+    }
 }
 
 /* 지사 리스트 조회 필터링 type = 1 지사 리스트 조회 필터링, type = 2 필터링 초기화 */
