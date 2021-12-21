@@ -16,7 +16,6 @@ import com.broadwave.toppos.User.Customer.CustomerListDto;
 import com.broadwave.toppos.User.Customer.CustomerMapperDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentSet;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Request;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestCollectDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailSet;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestListDto;
@@ -155,6 +154,7 @@ public class UserRestController {
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
 
+        List<Long> customerIdList = new ArrayList<>();
         List<HashMap<String,Object>> customerListData = new ArrayList<>();
         HashMap<String,Object> customerListInfo;
 
@@ -163,7 +163,7 @@ public class UserRestController {
 
         for (CustomerInfoDto customerInfoDto: customerInfoListDto) {
             customerListInfo = new HashMap<>();
-
+            customerIdList.add(customerInfoDto.getBcId());
             // 개인정보
             customerListInfo.put("bcId", customerInfoDto.getBcId());
             customerListInfo.put("bcName", customerInfoDto.getBcName());
@@ -173,34 +173,46 @@ public class UserRestController {
             customerListInfo.put("bcRemark", customerInfoDto.getBcRemark());
             customerListInfo.put("bcAddress", customerInfoDto.getBcAddress());
             customerListInfo.put("bcLastRequestDt", customerInfoDto.getBcLastRequestDt());
+            customerListData.add(customerListInfo);
+        }
 
-            // 적립금 미수금 정보
-            Optional<Customer> optionalCustomer = userService.findByBcId(customerInfoDto.getBcId());
-            if (!optionalCustomer.isPresent()) {
-                return ResponseEntity.ok(res.fail(ResponseErrorCode.TP018.getCode(), ResponseErrorCode.TP018.getDesc(), null, null));
-            } else {
-                // 결제일 경우, 현재 고객의 적립금과 미수금액을 보내준다.
-                // 미수금액 리스트를 호출한다. 조건 : 미수여부는 Y, 임시저장확정여부는 N, 고객아이디 eq, 가맹점코드 = frCode eq, 현재날짜의 전날들만 인것들만 조회하기
-                List<RequestCollectDto>  requestCollectDtoList = receiptService.findByRequestCollectList(optionalCustomer.get(), nowDate);
-                int beforeTotalAmount = 0;
-                int beforePayAmount = 0;
-                int beforeUncollectMoney = 0;
-                if(requestCollectDtoList.size() != 0){
-                    for(RequestCollectDto requestCollectDto : requestCollectDtoList){
-                        beforeTotalAmount = beforeTotalAmount + requestCollectDto.getFrTotalAmount();
-                        beforePayAmount = beforePayAmount + requestCollectDto.getFrPayAmount();
+        if(customerListData.size() != 0) {
+            log.info("미수금 리스트를 받아옵니다.");
+            List<RequestUnCollectDto> requestUnCollectDtoList = receiptService.findByUnCollectList(customerIdList, nowDate);
+            for (HashMap<String, Object> listDatum : customerListData) {
+                for (int j = 0; j < requestUnCollectDtoList.size(); j++) {
+                    if (listDatum.get("bcId").equals(requestUnCollectDtoList.get(j).getBcId())) {
+                        listDatum.put("beforeUncollectMoney", requestUnCollectDtoList.get(j).getUnCollect());
+                        requestUnCollectDtoList.remove(j);
+                        break;
                     }
-                    beforeUncollectMoney = beforeTotalAmount-beforePayAmount;
                 }
-                customerListInfo.put("beforeUncollectMoney",beforeUncollectMoney);
-                // 적립금 리스트를 호출한다. 조건 : 고객 ID, 적립유형 1 or 2, 마감여부 : N,
-                Integer saveMoney = receiptService.findBySaveMoney(optionalCustomer.get());
-                customerListInfo.put("saveMoney",saveMoney);
-                log.info(customerInfoDto.getBcName()+"의 전일미수금액 : "+ beforeUncollectMoney);
-                log.info(customerInfoDto.getBcName()+"의 적립금액 : "+ saveMoney);
             }
 
-            customerListData.add(customerListInfo);
+            log.info("적립금 리스트를 받아옵니다.");
+            List<SaveMoneyListDto> saveMoneyListDtoListType1 = receiptService.findBySaveMoneyList(customerIdList, "1");
+            List<SaveMoneyListDto> saveMoneyListDtoListType2 = receiptService.findBySaveMoneyList(customerIdList, "2");
+            int plusSaveMoney;
+            int minusSaveMoney;
+            int saveMoney;
+            for (HashMap<String, Object> customerListDatum : customerListData) {
+                plusSaveMoney = 0;
+                minusSaveMoney = 0;
+                for (SaveMoneyListDto saveMoneyListDto : saveMoneyListDtoListType1) {
+                    if (customerListDatum.get("bcId").equals(saveMoneyListDto.getBcId())) {
+                        plusSaveMoney = plusSaveMoney + saveMoneyListDto.getFsAmt();
+                        for (int x = 0; x < saveMoneyListDtoListType2.size(); x++) {
+                            if (saveMoneyListDto.getBcId().equals(saveMoneyListDtoListType2.get(x).getBcId())) {
+                                minusSaveMoney = minusSaveMoney + saveMoneyListDtoListType2.get(x).getFsAmt();
+                                saveMoneyListDtoListType2.remove(x);
+                                break;
+                            }
+                        }
+                    }
+                }
+                saveMoney = plusSaveMoney - minusSaveMoney;
+                customerListDatum.put("saveMoney", saveMoney);
+            }
         }
 
         log.info("가맹점코드 : "+frCode+"의 고객 리스트 : "+customerListData);
@@ -299,7 +311,6 @@ public class UserRestController {
                 saveMoney = plusSaveMoney - minusSaveMoney;
                 customerListDatum.put("saveMoney", saveMoney);
             }
-
         }
 
         data.put("gridListData",customerListData);
