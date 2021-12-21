@@ -511,7 +511,7 @@ gridColumnLayout[3] = [
 gridProp[3] = {
     editable : false,
     selectionMode : "singleRow",
-    noDataMessage : "출력할 데이터가 없습니다.",
+    showAutoNoDataMessage : false,
     enableColumnResize : false,
     height : 140,
     showHeader : false,
@@ -1212,9 +1212,13 @@ function onSaveAjax() {
             initialData.etcData.beforeUncollectMoney = req.sendData.beforeUncollectMoney;
             initialData.etcData.saveMoney = req.sendData.saveMoney;
             initialData.etcData.todayUncollectMoney = req.sendData.todayUncollectMoney;
+            selectedCustomer.beforeUncollectMoney = req.sendData.beforeUncollectMoney;
+            selectedCustomer.saveMoney = req.sendData.saveMoney;
 
-            $("#beforeUncollectMoney").html(req.sendData.beforeUncollectMoney.toLocaleString());
-            $("#saveMoney").html(req.sendData.saveMoney.toLocaleString());
+            $("#beforeUncollectMoney").html(selectedCustomer.beforeUncollectMoney.toLocaleString());
+            $("#saveMoney").html(selectedCustomer.saveMoney.toLocaleString());
+            $("#beforeUncollectMoneyMain").html(selectedCustomer.beforeUncollectMoney.toLocaleString());
+            $("#saveMoneyMain").html(selectedCustomer.saveMoney.toLocaleString());
             initialData.etcData.frNo = req.sendData.frNo;
         }
     })
@@ -1552,8 +1556,15 @@ function onPaymentStageTwo(paymentData = {}, creditData = {}) {
         console.log("결제후 :");
         console.log(req);
         AUIGrid.addRow(gridId[3], req.sendData.paymentEtcDtos, "last");
-        $("#beforeUncollectMoney").html(req.sendData.beforeUncollectMoney.toLocaleString());
-        $("#saveMoney").html(req.sendData.saveMoney.toLocaleString());
+        initialData.etcData.beforeUncollectMoney = req.sendData.beforeUncollectMoney;
+        initialData.etcData.saveMoney = req.sendData.saveMoney;
+        initialData.etcData.todayUncollectMoney = req.sendData.todayUncollectMoney;
+        selectedCustomer.beforeUncollectMoney = req.sendData.beforeUncollectMoney;
+        selectedCustomer.saveMoney = req.sendData.saveMoney;
+        $("#beforeUncollectMoney").html(selectedCustomer.beforeUncollectMoney.toLocaleString());
+        $("#saveMoney").html(selectedCustomer.saveMoney.toLocaleString());
+        $("#beforeUncollectMoneyMain").html(selectedCustomer.beforeUncollectMoney.toLocaleString());
+        $("#saveMoneyMain").html(selectedCustomer.saveMoney.toLocaleString());
         $("#applySaveMoney").html("0");
         $("#applyUncollectAmt").html("0");
         $("#receiveCash").html("0");
@@ -1593,6 +1604,7 @@ function onClosePayment() {
 
 function closePaymentPop() {
     AUIGrid.clearGridData(gridId[0]);
+    AUIGrid.clearGridData(gridId[3]);
     calculateMainPrice();
     $("#paymentPop").removeClass("active");
     delete initialData.etcData["frNo"];
