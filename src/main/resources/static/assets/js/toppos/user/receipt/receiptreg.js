@@ -670,8 +670,8 @@ function onPutCustomer(selectedCustomer) {
     $("#bcValuation").attr("class",
         "propensity__star propensity__star--" + selectedCustomer.bcValuation).css('display','block');
     $("#bcAddress").html(selectedCustomer.bcAddress);
-    $("#beforeUncollectMoneyMain").html(selectedCustomer.beforeUncollectMoney).toLocaleString();
-    $("#saveMoneyMain").html(selectedCustomer.saveMoney).toLocaleString();
+    $("#beforeUncollectMoneyMain").html(selectedCustomer.beforeUncollectMoney.toLocaleString());
+    $("#saveMoneyMain").html(selectedCustomer.saveMoney.toLocaleString());
     $("#bcRemark").html(selectedCustomer.bcRemark);
     if(selectedCustomer.bcLastRequestDt) {
         $("#bcLastRequestDt").html(
