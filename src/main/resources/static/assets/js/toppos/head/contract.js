@@ -332,6 +332,10 @@ function franchiseSave() {
         alertCaution("가맹점코드 중복확인을 해주세요.",1);
         return false;
     }
+    if(!$("#frEstimateDuration").val()) {
+        alertCaution("출고예정일계산을 입력해 주세요",1);
+        return false;
+    }
 
     const formData = new FormData(document.getElementById('frFormData'));
     let url = "/api/head/franchiseSave";
@@ -352,6 +356,7 @@ function franchiseSave() {
         AUIGrid.clearGridData(gridId[3]);
         setListData(gridCreateUrl[3], 3);
         alertSuccess("가맹점 저장완료");
+        filterFranchiseList(2);
     });
 }
 
