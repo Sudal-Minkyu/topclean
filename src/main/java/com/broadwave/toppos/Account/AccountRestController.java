@@ -1,18 +1,10 @@
 package com.broadwave.toppos.Account;
 
-import com.broadwave.toppos.Jwt.token.TokenProvider;
-import com.broadwave.toppos.common.AjaxResponse;
-import com.broadwave.toppos.common.CommonUtils;
-import com.broadwave.toppos.common.ResponseErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * @author Minkyu
@@ -27,13 +19,11 @@ public class AccountRestController {
 
     private final AccountService accountService;
     private final ModelMapper modelMapper;
-    TokenProvider tokenProvider;
 
     @Autowired
-    public AccountRestController(TokenProvider tokenProvider, ModelMapper modelMapper, AccountService accountService) {
+    public AccountRestController(ModelMapper modelMapper, AccountService accountService) {
         this.modelMapper = modelMapper;
         this.accountService = accountService;
-        this.tokenProvider = tokenProvider;
     }
 
 

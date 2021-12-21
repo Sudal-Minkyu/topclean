@@ -24,6 +24,7 @@ import com.broadwave.toppos.Head.Item.Price.FranchisePrice.FranchisePriceReposit
 import com.broadwave.toppos.Head.Item.Price.*;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.common.AjaxResponse;
+import com.broadwave.toppos.common.CommonUtils;
 import com.broadwave.toppos.common.ResponseErrorCode;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
@@ -45,7 +46,7 @@ import java.util.Optional;
 public class HeadService {
 
     private final ModelMapper modelMapper;
-    private final TokenProvider tokenProvider;
+//    private final TokenProvider tokenProvider;
 
     private final FranchiseRepository franchiseRepository;
     private final BranchRepository branohRepository;
@@ -67,7 +68,7 @@ public class HeadService {
     private final AddProcessRepositoryCustom addProcessRepositoryCustom;
 
     @Autowired
-    public HeadService(ModelMapper modelMapper, AddCostRepository addCostRepository, TokenProvider tokenProvider,
+    public HeadService(ModelMapper modelMapper, AddCostRepository addCostRepository,
                        BranchRepository branohRepository, FranchiseRepository franchiseRepository, FranchiseRepositoryCustom franchiseRepositoryCustom, BranchRepositoryCustomImpl branohRepositoryCustom,
                        ItemGroupRepository ItemGroupRepository, ItemGroupRepositoryCustom itemGroupRepositoryCustom, ItemGroupSRepository ItemGroupSRepository, ItemGroupSRepositoryCustom itemGroupSRepositoryCustom,
                        ItemRepository ItemRepository, ItemRepositoryCustom itemRepositoryCustom, ItemPriceRepository itemPriceRepository, ItemPriceRepositoryCustom itemPriceRepositoryCustom,
@@ -75,7 +76,6 @@ public class HeadService {
                        AddCostRepositoryCustom addCostRepositoryCustom, AddProcessRepositoryCustom addProcessRepositoryCustom){
         this.modelMapper = modelMapper;
         this.addCostRepository = addCostRepository;
-        this.tokenProvider = tokenProvider;
         this.branohRepository = branohRepository;
         this.franchiseRepository = franchiseRepository;
         this.franchiseRepositoryCustom = franchiseRepositoryCustom;
@@ -303,8 +303,7 @@ public class HeadService {
     public ResponseEntity<Map<String, Object>> findByAddCostUpdate(AddCostDto addCostDto, HttpServletRequest request) {
 
         AjaxResponse res = new AjaxResponse();
-        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
-        String login_id = claims.getSubject(); // 현재 아이디
+        String login_id = CommonUtils.getCurrentuser(request);
 
         Optional<AddCost> optionalAddCost = findByAddCost("000");
         if(!optionalAddCost.isPresent()){
