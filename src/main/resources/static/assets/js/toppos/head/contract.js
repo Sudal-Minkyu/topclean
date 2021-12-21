@@ -490,7 +490,7 @@ function filterFranchiseList(type) {
             break;
         case 4 :
             AUIGrid.clearFilterAll(gridId[3]);
-            AUIGrid.clearGridData(gridId[3]);호
+            AUIGrid.clearGridData(gridId[3]);정
             setListData(gridCreateUrl[3], 3);
             break;
     }
