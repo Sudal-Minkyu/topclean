@@ -334,7 +334,7 @@ textarea {
 	position: absolute;
 	top: 50%;
 	left: 50%;
-	width: 640px;
+	width: 720px;
 	-webkit-transform: translate(-50%, -50%);
 	-moz-transform: translate(-50%, -50%);
 	-ms-transform: translate(-50%, -50%);
@@ -353,9 +353,9 @@ textarea {
 .main ul li {
 	overflow: hidden;
 	float: left;
-	width: 320px;
-	height: 320px;
-	padding: 10px;
+	width: 240px;
+	height: 140px;
+	padding: 1px;
 }
 .main ul li a {
 	display: flex;
@@ -373,31 +373,17 @@ textarea {
 	background-color: #0082f0;
 }
 .main ul li:first-child {
-	border-top-left-radius: 180px;
+	border-top-left-radius: 70px;
 }
-.main ul li:nth-child(2) {
-	border-top-right-radius: 180px;
-}
+
 .main ul li:nth-child(3) {
-	border-bottom-left-radius: 180px;
+	border-top-right-radius: 70px;
 }
 .main ul li:nth-child(4) {
-	border-bottom-right-radius: 180px;
+	border-bottom-left-radius: 70px;
 }
-.main ul li:last-child {
-	position: absolute;
-	top: 160px;
-	left: 160px;
-	padding: 0;
-	border: 20px solid #f5f5f5;
-	-webkit-border-radius: 160px;
-	-moz-border-radius: 160px;
-	border-radius: 160px;
-}
-.main ul li:last-child a {
-	-webkit-border-radius: 100%;
-	-moz-border-radius: 100%;
-	border-radius: 100%;
+.main ul li:nth-child(6) {
+	border-bottom-right-radius: 70px;
 }
 .main__link {
 	display: block;
@@ -472,6 +458,14 @@ textarea {
 
 .form {
 	position: relative;
+}
+.form + .form {
+	margin-top: 1.25rem;
+	padding-top: 1.25rem;
+	border-top: 0.063rem dotted #c8c8c8;
+}
+.form__heading {
+	font-size: 1.25rem;
 }
 .form__list:before,
 .form__item:before {
@@ -615,7 +609,7 @@ textarea {
 
 /* float layout */
 .float {
-	display: blcok;
+	display: block;
 	position: relative;
 	width: 100%;
 	padding: 1.25rem;
@@ -629,6 +623,9 @@ textarea {
 	content: " ";
 	display: table;
 	clear: both;
+}
+.float.float--auto {
+	width: auto;
 }
 .float__content {
 	float: left;
