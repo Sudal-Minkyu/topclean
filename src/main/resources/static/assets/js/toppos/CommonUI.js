@@ -14,6 +14,9 @@ class CommonUIClass {
     abc = 777;
 
     constructor() {
+        String.prototype.toInt = function () {
+            return parseInt(this.replace(/[^0-9]/g, ""));
+        }
     }
 
     /*

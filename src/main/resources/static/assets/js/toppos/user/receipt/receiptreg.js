@@ -1670,10 +1670,6 @@ function payAmtLimitation () {
     calculateThree();
 }
 
-String.prototype.toInt = function () {
-    return parseInt(this.replace(/[^0-9]/g, ""));
-}
-
 function setReceiveAmtToTotalAmt() {
     const totalAmt = $("#totalAmt").html();
     $("#receiveCash").html(totalAmt);
