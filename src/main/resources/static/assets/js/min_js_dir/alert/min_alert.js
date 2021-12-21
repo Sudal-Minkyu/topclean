@@ -61,16 +61,16 @@ function ajaxErrorMsg(req) {
 function alertSuccess(text) { //성공창(삭제성공시),저장성공시
     let html = '';
     html +='<div id="popupId" class="popup popup--dim">';
-        html +='<div class="popup__box">';
-            html +='<div class="popup__content">';
-                html +='<div class="popup__stat success"></div>';
-                html +='<div class="popup__text">'+text+'</div>';
-            html +='</div>';
-            html +='<div class="popup__buttons">';
-                html +='<button id="successBtn" class="popup__btn popup__btn--success">확인</button>';
-            html +='</div>';
-        html +='</div>';
-    html +='</div>';
+    	html +='<div class="popup__box">';
+    		html +='<div class="popup__content">';
+    			html +='<div class="popup__stat success"></div>';
+    				html +='<div class="popup__text">'+text+'</div>';
+				html +='</div>';
+			html +='<div class="popup__buttons">';
+				html +='<button id="successBtn" class="popup__btn popup__btn--solid">확인</button>';
+			html +='</div>';
+		html +='</div>';
+	html +='</div>';
 
     $('#alertpop').html(html);
     $('#successBtn').trigger("focus"); // 엔터치면 바로 확인버튼이 눌릴 수 있게
@@ -88,7 +88,7 @@ function alertCancel(text) { //에러창(로그인만료),오류
                 html +='<div class="popup__text">'+text+'</div>';
            html +='</div>';
             html +='<div class="popup__buttons">';
-               html +='<button id="successBtn" class="popup__btn popup__btn--success">확인</button>';
+               html +='<button id="successBtn" class="popup__btn popup__btn--solid">확인</button>';
             html +='</div>';
         html +='</div>';
     html +='</div>';
@@ -110,9 +110,9 @@ function alertCaution(text,type) { //경고창
             html +='</div>';
             html +='<div class="popup__buttons">';
             if(type===1){
-                html +='<button id="cautionBtn1" class="popup__btn popup__btn--success">확인</button>';
+                html +='<button id="cautionBtn1" class="popup__btn popup__btn--solid">확인</button>';
             }else{
-                html +='<button id="cautionBtn2" class="popup__btn popup__btn--success">확인</button>';
+                html +='<button id="cautionBtn2" class="popup__btn popup__btn--solid">확인</button>';
             }
             html +='</div>';
         html +='</div>';
@@ -133,8 +133,8 @@ function alertCheck(text) { //정말삭제할껀지확인하는창
     html +='<div class="popup__text">'+text+'</div>';
     html +='</div>';
     html +='<div class="popup__buttons">';
-    html +='<button id="checkDelSuccessBtn" class="popup__btn popup__btn--success">확인</button>';
-    html +='<button id="checkDelCancelBtn" class="popup__btn popup__btn--cancel">취소</button>';
+    html +='<button id="checkDelSuccessBtn" class="popup__btn popup__btn--solid">확인</button>';
+    html +='<button id="checkDelCancelBtn" class="popup__btn">취소</button>';
     html +='</div>';
     html +='</div>';
     html +='</div>';
@@ -152,8 +152,8 @@ function alertDeleteCheck(text) { // 정말작성할껀지 확인하는창
     html +='<div class="popup__text">'+text+'</div>';
     html +='</div>';
     html +='<div class="popup__buttons">';
-    html +='<button id="checkYesBtn" class="popup__btn popup__btn--success">예</button>';
-    html +='<button id="checkNoBtn" class="popup__btn popup__btn--cancel">아니오</button>';
+    html +='<button id="checkYesBtn" class="popup__btn popup__btn--solid">예</button>';
+    html +='<button id="checkNoBtn" class="popup__btn">아니오</button>';
     html +='</div>';
     html +='</div>';
     html +='</div>';
@@ -172,7 +172,7 @@ function alertContinueSuccess(text) { //성공창(삭제성공시),저장성공�
     html +='<div class="popup__text">'+text+'</div>';
     html +='</div>';
     html +='<div class="popup__buttons">';
-    html +='<button id="continueSuccessBtn" class="popup__btn popup__btn--success">확인</button>';
+    html +='<button id="continueSuccessBtn" class="popup__btn popup__btn--solid">확인</button>';
     html +='</div>';
     html +='</div>';
     html +='</div>';
