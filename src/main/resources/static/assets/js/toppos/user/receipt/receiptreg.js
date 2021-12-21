@@ -280,7 +280,8 @@ gridColumnLayout[0] = [
         width: 80,
         labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
             return value.substr(0, 3) + "-" + value.substr(-4);
-        }
+        },
+        style: "aui-grid-tagno-column",
     }, {
         dataField: "sumName",
         headerText: "상품명",

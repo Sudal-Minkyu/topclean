@@ -1,6 +1,7 @@
 package com.broadwave.toppos.Head;
 
 import com.broadwave.toppos.Account.*;
+import com.broadwave.toppos.Head.AddCost.AddCostDto;
 import com.broadwave.toppos.Head.Branoh.Branch;
 import com.broadwave.toppos.Head.Branoh.BranchListDto;
 import com.broadwave.toppos.Head.Branoh.BranchMapperDto;
@@ -157,7 +158,16 @@ public class HeadRestController {
             franchise.setBrId(optionalFranohise.get().getBrId());
             franchise.setBrCode(optionalFranohise.get().getBrCode());
             franchise.setBrAssignState(optionalFranohise.get().getBrAssignState());
-            franchise.setFrLastTagno(franchiseMapperDto.getFrTagNo()+optionalFranohise.get().getFrLastTagno().substring(3,7));
+            if(franchiseMapperDto.getFrTagNo() == null || franchiseMapperDto.getFrTagNo().equals("")) {
+                franchise.setFrTagNo(franchiseMapperDto.getFrCode());
+                franchise.setFrLastTagno(franchiseMapperDto.getFrCode()+"0000");
+            }else{
+                if(optionalFranohise.get().getFrLastTagno() != null){
+                    franchise.setFrLastTagno(franchiseMapperDto.getFrTagNo() + optionalFranohise.get().getFrLastTagno().substring(3, 7));
+                }else{
+                    franchise.setFrLastTagno(franchiseMapperDto.getFrTagNo() + "0000");
+                }
+            }
 
             franchise.setModify_id(login_id);
             franchise.setModifyDateTime(LocalDateTime.now());
@@ -170,6 +180,9 @@ public class HeadRestController {
                 franchise.setFrLastTagno(franchiseMapperDto.getFrCode()+"0000");
             }else{
                 franchise.setFrLastTagno(franchiseMapperDto.getFrTagNo()+"0000");
+            }
+            if(franchiseMapperDto.getFrEstimateDuration() == null ){
+                franchise.setFrEstimateDuration(2);
             }
             franchise.setBrId(null);
             franchise.setBrCode(null);
@@ -340,6 +353,26 @@ public class HeadRestController {
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
+
+    // 사용자 삭제 API
+    @PostMapping("accountDelete")
+    public ResponseEntity<Map<String,Object>> accountDelete(@RequestParam(value="userid", defaultValue="") String userid) {
+        log.info("accountDelete 호출");
+        log.info("삭제 할 USER ID : " + userid);
+
+        AjaxResponse res = new AjaxResponse();
+
+        Optional<Account> optionalAccount = accountService.findByUserid(userid);
+        if (!optionalAccount.isPresent()) {
+            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP005.getCode(), "삭제 할 "+ResponseErrorCode.TP005.getDesc(), "문자", "유저 아이디 : "+userid));
+        } else {
+            log.info("삭제완료(실제 DB삭제는 막아놈)");
+//            accountService.findByAccountDelete(optionalAccount.get());
+        }
+
+        return ResponseEntity.ok(res.success());
+    }
+
 
     // 해당 지사에 배정된 가맹점 리스트 호출
     @GetMapping("branchAssignList")
@@ -1316,12 +1349,17 @@ public class HeadRestController {
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
+    // 가격셋팅 할인율 정보호출 API
+    @GetMapping("addCostInfo")
+    public ResponseEntity<Map<String,Object>> addCostInfo() {
+        return headService.addCostInfo();
+    }
 
-
-
-
-
-
+    // 가격셋팅 할인율 설정 API
+    @PostMapping("addCostUpdate")
+    public ResponseEntity<Map<String,Object>> addCostUpdate(@ModelAttribute AddCostDto addCostDto, HttpServletRequest request) {
+        return headService.findByAddCostUpdate(addCostDto, request);
+    }
 
 
 

@@ -130,7 +130,7 @@ gridColumnLayout[3] = [
 gridProp[3] = {
     editable : false,
     selectionMode : "singleRow",
-    noDataMessage : "대상 가맹점 데이터가 없습니다.",
+    showAutoNoDataMessage : false,
     rowNumHeaderText : "순번",
     rowIdField : "frCode",
     rowIdTrustMode : true,
@@ -335,9 +335,12 @@ function franchiseSave() {
 
     const formData = new FormData(document.getElementById('frFormData'));
     let url = "/api/head/franchiseSave";
+    formData.set("frBusinessNo", formData.get("frBusinessNo").replace(/[^0-9]/g, ""));
+    formData.set("frTelNo", formData.get("frTelNo").replace(/[^0-9]/g, ""));
 
     CommonUI.ajax(url, "POST", formData, function (req){
         const sentData = Object.fromEntries(formData);
+        console.log(sentData);
         const isUpdated = AUIGrid.rowIdToIndex(gridId[1], sentData.frCode) > -1;
 
         if(isUpdated) {
@@ -416,10 +419,13 @@ function setFieldData(numOfGrid, item) {
             $("#frContractToDt").val(item.frContractToDt);
             $("#frContractState").val(item.frContractState);
             $("#frPriceGrade").val(item.frPriceGrade);
-            $("#frRemark").val(item.frRemark);
             $("#frRefCode").val(item.frRefCode);
+            $("#frBusinessNo").val(item.frBusinessNo);
+            $("#frRpreName").val(item.frRpreName);
+            $("#frTelNo").val(item.frTelNo);
             $("#frTagNo").val(item.frTagNo);
             $("#frEstimateDuration").val(item.frEstimateDuration);
+            $("#frRemark").val(item.frRemark);
             CommonUI.restrictDate(dateAToBTargetIds[1][0], dateAToBTargetIds[1][1], false);
             CommonUI.restrictDate(dateAToBTargetIds[1][0], dateAToBTargetIds[1][1], true);
             break;
@@ -480,20 +486,7 @@ function filterFranchiseList(type) {
         case 3 :
             AUIGrid.clearFilterAll(gridId[3]);
             AUIGrid.clearGridData(gridId[3]);
-            setListData(gridCreateUrl[3], 3);
-
-            const s_brAssignState = $("#s_brAssignState").val();
-            const s_frName = $("#s_frName").val();
-            if(s_brAssignState !== "") {
-                AUIGrid.setFilter(gridId[3], "brAssignStateValue", function (dataField, value, item) {
-                    return s_brAssignState === item.brAssignState;
-                });
-            }
-            if(s_frName !== "") {
-                AUIGrid.setFilter(gridId[3], "frName", function (dataField, value, item) {
-                    return new RegExp(s_frName.toUpperCase()).test(value.toUpperCase());
-                });
-            }
+            setListData(gridCreateUrl[3], 3, filterCase3);
             break;
         case 4 :
             AUIGrid.clearFilterAll(gridId[3]);
@@ -502,6 +495,20 @@ function filterFranchiseList(type) {
             break;
     }
 
+    function filterCase3() {
+        const s_brAssignState = $("#s_brAssignState").val();
+        const s_frName = $("#s_frName").val();
+        if(s_brAssignState !== "") {
+            AUIGrid.setFilter(gridId[3], "brAssignStateValue", function (dataField, value, item) {
+                return s_brAssignState === item.brAssignState;
+            });
+        }
+        if(s_frName !== "") {
+            AUIGrid.setFilter(gridId[3], "frName", function (dataField, value, item) {
+                return new RegExp(s_frName.toUpperCase()).test(value.toUpperCase());
+            });
+        }
+    }
 }
 
 /* 지사 리스트 조회 필터링 type = 1 지사 리스트 조회 필터링, type = 2 필터링 초기화 */
@@ -561,4 +568,13 @@ function validateNumber(element, type) {
                 element.value = element.value.replace(/[^0-9]/g, "");
             break;
     }
+}
+
+function onKeyupFrTelNo(el) {
+    el.value = CommonUI.onPhoneNumChange(el.value);
+    console.log("act");
+}
+
+function onKeyupFrBusinessNo(el) {
+    el.value = el.value.replace(/(\d{3})(\d{2})(\d{5})/, '$1-$2-$3');
 }

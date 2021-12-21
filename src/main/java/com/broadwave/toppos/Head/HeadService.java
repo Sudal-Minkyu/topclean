@@ -1,6 +1,9 @@
 package com.broadwave.toppos.Head;
 
+import com.broadwave.toppos.Account.Account;
+import com.broadwave.toppos.Head.AddCost.AddCost;
 import com.broadwave.toppos.Head.AddCost.AddCostDto;
+import com.broadwave.toppos.Head.AddCost.AddCostRepository;
 import com.broadwave.toppos.Head.AddCost.AddCostRepositoryCustom;
 import com.broadwave.toppos.Head.Addprocess.AddProcessRepositoryCustom;
 import com.broadwave.toppos.Head.Addprocess.AddprocessDto;
@@ -20,18 +23,30 @@ import com.broadwave.toppos.Head.Item.Price.FranchisePrice.FranchisePriceListDto
 import com.broadwave.toppos.Head.Item.Price.FranchisePrice.FranchisePriceRepository;
 import com.broadwave.toppos.Head.Item.Price.FranchisePrice.FranchisePriceRepositoryCustom;
 import com.broadwave.toppos.Head.Item.Price.*;
+import com.broadwave.toppos.common.AjaxResponse;
+import com.broadwave.toppos.common.CommonUtils;
+import com.broadwave.toppos.common.ResponseErrorCode;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
 @Service
 public class HeadService {
+
+    private final ModelMapper modelMapper;
+//    private final TokenProvider tokenProvider;
 
     private final FranchiseRepository franchiseRepository;
     private final BranchRepository branohRepository;
@@ -40,6 +55,7 @@ public class HeadService {
     private final ItemRepository ItemRepository;
     private final ItemPriceRepository itemPriceRepository;
     private final FranchisePriceRepository franchisePriceRepository;
+    private final AddCostRepository addCostRepository;
 
     private final FranchiseRepositoryCustom franchiseRepositoryCustom;
     private final BranchRepositoryCustomImpl branohRepositoryCustom;
@@ -52,11 +68,14 @@ public class HeadService {
     private final AddProcessRepositoryCustom addProcessRepositoryCustom;
 
     @Autowired
-    public HeadService(BranchRepository branohRepository, FranchiseRepository franchiseRepository, FranchiseRepositoryCustom franchiseRepositoryCustom, BranchRepositoryCustomImpl branohRepositoryCustom,
+    public HeadService(ModelMapper modelMapper, AddCostRepository addCostRepository,
+                       BranchRepository branohRepository, FranchiseRepository franchiseRepository, FranchiseRepositoryCustom franchiseRepositoryCustom, BranchRepositoryCustomImpl branohRepositoryCustom,
                        ItemGroupRepository ItemGroupRepository, ItemGroupRepositoryCustom itemGroupRepositoryCustom, ItemGroupSRepository ItemGroupSRepository, ItemGroupSRepositoryCustom itemGroupSRepositoryCustom,
                        ItemRepository ItemRepository, ItemRepositoryCustom itemRepositoryCustom, ItemPriceRepository itemPriceRepository, ItemPriceRepositoryCustom itemPriceRepositoryCustom,
                        FranchisePriceRepository franchisePriceRepository, FranchisePriceRepositoryCustom franchisePriceRepositoryCustom,
                        AddCostRepositoryCustom addCostRepositoryCustom, AddProcessRepositoryCustom addProcessRepositoryCustom){
+        this.modelMapper = modelMapper;
+        this.addCostRepository = addCostRepository;
         this.branohRepository = branohRepository;
         this.franchiseRepository = franchiseRepository;
         this.franchiseRepositoryCustom = franchiseRepositoryCustom;
@@ -279,4 +298,42 @@ public class HeadService {
     public List<AddprocessDto> findByAddProcess(String frCode, String baType) {
         return addProcessRepositoryCustom.findByAddProcess(frCode, baType);
     }
+
+    // 가격셋팅 할인율 설정 API
+    public ResponseEntity<Map<String, Object>> findByAddCostUpdate(AddCostDto addCostDto, HttpServletRequest request) {
+
+        AjaxResponse res = new AjaxResponse();
+        String login_id = CommonUtils.getCurrentuser(request);
+
+        Optional<AddCost> optionalAddCost = findByAddCost("000");
+        if(!optionalAddCost.isPresent()){
+            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP005.getCode(), "수정 할 "+ResponseErrorCode.TP005.getDesc(), null,null));
+        }else{
+            AddCost addCost = modelMapper.map(addCostDto,AddCost.class);
+            addCost.setBcId(optionalAddCost.get().getBcId());
+            addCost.setInsert_id(optionalAddCost.get().getInsert_id());
+            addCost.setInsertDateTime(optionalAddCost.get().getInsertDateTime());
+            addCost.setModify_id(login_id);
+            addCost.setModifyDateTime(LocalDateTime.now());
+            addCostRepository.save(addCost);
+        }
+
+        return ResponseEntity.ok(res.success());
+    }
+
+    // 가격 셋팅테이블 아이디 : "000" 조회
+    public Optional<AddCost> findByAddCost(String bcId){
+        return addCostRepository.findByAddCost(bcId);
+    }
+
+    // 가격셋팅 테이블 정보조회 API
+    public ResponseEntity<Map<String, Object>> addCostInfo() {
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        AddCostDto addCostDto = findByAddCost();
+        data.put("addCostDto",addCostDto);
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
 }

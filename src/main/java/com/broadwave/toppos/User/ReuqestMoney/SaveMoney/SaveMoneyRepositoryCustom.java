@@ -11,5 +11,7 @@ import java.util.List;
  * Remark :
  */
 public interface SaveMoneyRepositoryCustom {
-    List<SaveMoneyDto> findBySaveMoneyList(Customer customer);
+    List<SaveMoneyDto> findBySaveMoney(Customer customer);
+
+    List<SaveMoneyListDto> findBySaveMoneyList(List<Long> customerIdList, String fsType);
 }

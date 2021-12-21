@@ -10,10 +10,7 @@ import com.broadwave.toppos.User.EtcDataDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.*;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.*;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.*;
-import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoney;
-import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoneyDto;
-import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoneyRepository;
-import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoneyRepositoryCustom;
+import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.*;
 import com.broadwave.toppos.common.AjaxResponse;
 import com.broadwave.toppos.common.ResponseErrorCode;
 import com.broadwave.toppos.keygenerate.KeyGenerateService;
@@ -40,6 +37,10 @@ import java.util.*;
 @Slf4j
 @Service
 public class ReceiptService {
+
+    // 현재 날짜 받아오기
+    LocalDateTime localDateTime = LocalDateTime.now();
+    private final  String nowDate = localDateTime.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 
     private final UserService userService;
     private final TokenProvider tokenProvider;
@@ -133,8 +134,8 @@ public class ReceiptService {
     }
 
     // 현재 고객의 적립금 리스트 호출
-    public Integer findBySaveMoneyList(Customer customer) {
-        List<SaveMoneyDto> saveMoneyDtoList = saveMoneyRepositoryCustom.findBySaveMoneyList(customer);
+    public Integer findBySaveMoney(Customer customer) {
+        List<SaveMoneyDto> saveMoneyDtoList = saveMoneyRepositoryCustom.findBySaveMoney(customer);
         int plusSaveMoney = 0;
         int minusSaveMoney = 0;
         if(saveMoneyDtoList.size() != 0) {
@@ -155,11 +156,6 @@ public class ReceiptService {
     public ResponseEntity<Map<String,Object>> requestSave(RequestDetailSet requestDetailSet, HttpServletRequest request) {
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
-
-        // 현재 날짜 받아오기
-        LocalDateTime localDateTime = LocalDateTime.now();
-        String nowDate = localDateTime.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-        log.info("현재 날짜 yyyymmdd : "+nowDate);
 
         // 클레임데이터 가져오기
         Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
@@ -259,7 +255,7 @@ public class ReceiptService {
                 log.info("당일미수금액 : "+ (todayTotalAmount - todayPayAmount));
 
                 // 적립금 리스트를 호출한다. 조건 : 고객 ID, 적립유형 1 or 2, 마감여부 : N,
-                Integer saveMoney = findBySaveMoneyList(optionalCustomer.get());
+                Integer saveMoney = findBySaveMoney(optionalCustomer.get());
                 data.put("saveMoney",saveMoney);
                 log.info("적립금액 : "+ (saveMoney));
             }
@@ -536,10 +532,7 @@ public class ReceiptService {
                     if(result != null){
                         log.info("다시 업데이트 할 접수코드 : "+result.getFrId().getFrNo());
 
-                        // 현재 날짜 받아오기
-                        LocalDateTime localDateTime = LocalDateTime.now();
-                        String nowDate = localDateTime.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-//                        log.info("현재 날짜 yyyymmdd : "+nowDate);
+                        log.info("현재 날짜 yyyymmdd : "+nowDate);
 
                         // 결제가 성공적으로 저장이 됬을때 타는 로직
                         // -> 세부테이블의 total 금액을 마스터테이블의 합계금액에 업데이트 쳐준다.
@@ -594,7 +587,7 @@ public class ReceiptService {
                         log.info("결제후 전일미수금액 : "+beforeUncollectMoney);
 
                         // 적립금을 보낸다. 만약 적립금을 사용하면 사용금액의 따른 적립금을 뺀 가격을 보낸다.
-                        Integer resultSaveMoney = findBySaveMoneyList(optionalCustomer.get());
+                        Integer resultSaveMoney = findBySaveMoney(optionalCustomer.get());
                         data.put("saveMoney",resultSaveMoney);
                         log.info("결제후 적립금액 : "+ resultSaveMoney);
 
@@ -631,8 +624,13 @@ public class ReceiptService {
     }
 
 
+    public List<RequestUnCollectDto> findByUnCollectList(List<Long> customerIdList, String nowDate) {
+        return requestRepositoryCustom.findByUnCollectList(customerIdList, nowDate);
+    }
 
-
+    public List<SaveMoneyListDto> findBySaveMoneyList(List<Long> customerIdList, String fsType) {
+        return saveMoneyRepositoryCustom.findBySaveMoneyList(customerIdList, fsType);
+    }
 }
 
 

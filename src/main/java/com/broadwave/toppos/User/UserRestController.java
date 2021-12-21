@@ -20,6 +20,8 @@ import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestCollectDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailSet;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestListDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestUnCollectDto;
+import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoneyListDto;
 import com.broadwave.toppos.User.UserService.ReceiptService;
 import com.broadwave.toppos.User.UserService.UserService;
 import com.broadwave.toppos.common.AjaxResponse;
@@ -47,6 +49,10 @@ import java.util.*;
 @RestController
 @RequestMapping("/api/user") //  ( 권한 : 가맹점 )
 public class UserRestController {
+
+    // 현재 날짜 받아오기
+    LocalDateTime localDateTime = LocalDateTime.now();
+    private final  String nowDate = localDateTime.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 
     private final UserService userService; // 가맹점 통합 서비스
     private final ReceiptService receiptService; // 가맹점 접수페이지 전용 서비스
@@ -155,11 +161,6 @@ public class UserRestController {
         List<CustomerInfoDto> customerInfoListDto = userService.findByCustomerInfo(frCode, searchType, searchString);
         log.info("customerInfoListDto : "+customerInfoListDto);
 
-        // 현재 날짜 받아오기
-        LocalDateTime localDateTime = LocalDateTime.now();
-        String nowDate = localDateTime.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-        log.info("현재 날짜 yyyymmdd : "+nowDate);
-
         for (CustomerInfoDto customerInfoDto: customerInfoListDto) {
             customerListInfo = new HashMap<>();
 
@@ -193,7 +194,7 @@ public class UserRestController {
                 }
                 customerListInfo.put("beforeUncollectMoney",beforeUncollectMoney);
                 // 적립금 리스트를 호출한다. 조건 : 고객 ID, 적립유형 1 or 2, 마감여부 : N,
-                Integer saveMoney = receiptService.findBySaveMoneyList(optionalCustomer.get());
+                Integer saveMoney = receiptService.findBySaveMoney(optionalCustomer.get());
                 customerListInfo.put("saveMoney",saveMoney);
                 log.info(customerInfoDto.getBcName()+"의 전일미수금액 : "+ beforeUncollectMoney);
                 log.info(customerInfoDto.getBcName()+"의 적립금액 : "+ saveMoney);
@@ -226,6 +227,7 @@ public class UserRestController {
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
 
+        List<Long> customerIdList = new ArrayList<>();
         List<HashMap<String,Object>> customerListData = new ArrayList<>();
         HashMap<String,Object> customerListInfo;
 
@@ -234,6 +236,8 @@ public class UserRestController {
         for (CustomerListDto customerListDto: customerListDtos) {
 
             customerListInfo = new HashMap<>();
+
+            customerIdList.add(customerListDto.getBcId());
 
             customerListInfo.put("bcId", customerListDto.getBcId());
             customerListInfo.put("bcName", customerListDto.getBcName());
@@ -250,19 +254,54 @@ public class UserRestController {
             customerListInfo.put("bcRemark", customerListDto.getBcRemark());
             customerListInfo.put("bcQuitYn", customerListDto.getBcQuitYn());
             customerListInfo.put("bcQuitDate", customerListDto.getBcQuitDate());
+            customerListInfo.put("beforeUncollectMoney", 0);
+            customerListInfo.put("saveMoney", 0);
             customerListInfo.put("insertDateTime", customerListDto.getInsertDateTime());
 
-//            if(branch.getBrContractState().equals("01")){
-//                branchsetInfo.put("brContractStateValue","진행중");
-//            }else{
-//                branchsetInfo.put("brContractStateValue","계약완료");
-//            }
-
             customerListData.add(customerListInfo);
+        }
+        log.info("가맹점코드 : "+frCode+"의 고객 리스트 : "+customerListData);
+
+        if(customerListDtos.size() != 0) {
+            log.info("미수금 리스트를 받아옵니다.");
+            List<RequestUnCollectDto> requestUnCollectDtoList = receiptService.findByUnCollectList(customerIdList, nowDate);
+            for (HashMap<String, Object> listDatum : customerListData) {
+                for (int j = 0; j < requestUnCollectDtoList.size(); j++) {
+                    if (listDatum.get("bcId").equals(requestUnCollectDtoList.get(j).getBcId())) {
+                        listDatum.put("beforeUncollectMoney", requestUnCollectDtoList.get(j).getUnCollect());
+                        requestUnCollectDtoList.remove(j);
+                        break;
+                    }
+                }
+            }
+
+            log.info("적립금 리스트를 받아옵니다.");
+            List<SaveMoneyListDto> saveMoneyListDtoListType1 = receiptService.findBySaveMoneyList(customerIdList, "1");
+            List<SaveMoneyListDto> saveMoneyListDtoListType2 = receiptService.findBySaveMoneyList(customerIdList, "2");
+            int plusSaveMoney;
+            int minusSaveMoney;
+            int saveMoney;
+            for (HashMap<String, Object> customerListDatum : customerListData) {
+                plusSaveMoney = 0;
+                minusSaveMoney = 0;
+                for (SaveMoneyListDto saveMoneyListDto : saveMoneyListDtoListType1) {
+                    if (customerListDatum.get("bcId").equals(saveMoneyListDto.getBcId())) {
+                        plusSaveMoney = plusSaveMoney + saveMoneyListDto.getFsAmt();
+                        for (int x = 0; x < saveMoneyListDtoListType2.size(); x++) {
+                            if (saveMoneyListDto.getBcId().equals(saveMoneyListDtoListType2.get(x).getBcId())) {
+                                minusSaveMoney = minusSaveMoney + saveMoneyListDtoListType2.get(x).getFsAmt();
+                                saveMoneyListDtoListType2.remove(x);
+                                break;
+                            }
+                        }
+                    }
+                }
+                saveMoney = plusSaveMoney - minusSaveMoney;
+                customerListDatum.put("saveMoney", saveMoney);
+            }
 
         }
 
-        log.info("가맹점코드 : "+frCode+"의 고객 리스트 : "+customerListData);
         data.put("gridListData",customerListData);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
@@ -319,10 +358,6 @@ public class UserRestController {
         log.info("userItemGroupSortData 사이즈 : "+userItemGroupSortData.size());
         data.put("userItemGroupSortData",userItemGroupSortData);
 
-        // 현재 날짜 받아오기
-        LocalDateTime  localDateTime = LocalDateTime.now();
-        String nowDate = localDateTime.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-        log.info("현재 날짜 yyyymmdd : "+nowDate);
         // 현재 가맹점의 가격 리스트 가져오기 + 가맹점이 등록한 상품 순서 테이블 leftjoin
         List<UserItemPriceSortDto> userItemPriceSortData = headService.findByUserItemPriceSortList(frCode, nowDate);
         log.info("userItemPriceSortData : "+userItemPriceSortData);

@@ -281,12 +281,13 @@ input[type="number"]::-webkit-inner-spin-button {
 .c-radio label {
     display: inline-block;
     position: relative;
-    padding-left: 1.875rem;
+    padding-left: 1.5rem;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
     cursor: pointer;
     color: #222;
     font-size: 1rem;
+    line-height: 1.25rem;
 }
 .c-radio label:before {
     content: " ";
@@ -579,6 +580,8 @@ input[type="number"]::-webkit-inner-spin-button {
 	margin-left: 1.25rem;
 }
 
+
+
 /* datepicker */
 .c-date {
 	width: 8.125rem;
@@ -601,6 +604,46 @@ input[type="number"]::-webkit-inner-spin-button {
 .c-date:disabled {
 	background-color: #f2f2f6;
 	background-image: url(/assets/images/icon__calendar--g.svg);
+}
+.c-period {
+	width: 14.375rem;
+	height: 2.5rem;
+	padding-left: 1.875rem;
+	background-color: #fff;
+	background-image: url(/assets/images/icon__calendar--b.svg);
+	background-repeat: no-repeat;
+	-webkit-background-size: 1.125rem 1.125rem;
+	background-size: 1.125rem 1.125rem;
+	background-position: 0.625rem center;
+	border: 0.063rem solid #aaa;
+	-webkit-border-radius: 0.313rem;
+	-moz-border-radius: 0.313rem;
+	border-radius: 0.313rem;
+}
+.c-period:before {
+	content: " ";
+	display: table;
+}
+.c-period:after {
+	content: " ";
+	display: table;
+	clear: both;
+}
+.c-period input[type="text"] {
+	float: left;
+	display: block;
+	position: relative;
+	width: 5.75rem;
+	height: 2.375rem;
+	padding: 0;
+	border: 0 none;
+}
+.c-period__code {
+	float: left;
+	display: block;
+	width: 0.875rem;
+	height: 2.375rem;
+	line-height: 2.375rem;
 }
 
 /* datepicker */

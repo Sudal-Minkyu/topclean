@@ -2,33 +2,60 @@
     vertical-align: middle;
 }
 
-.aui-grid-default-column {
+.aui-grid-default-column, .aui-grid-row-num-column, .aui-grid-row-check-column {
     vertical-align: middle;
+    background-color: #ffffff;
+}
+
+.aui-grid-row-check-column {
+    border-right: none;
+    border-right-width: 0;
+    border-right-color: #ffffff;
 }
 
 /* 그리드에서 편집가능한 셀의 기본 색상 */
 .aui-grid-editable-column {
-    background-color: lightgreen;
+    background-color: #ffffff;
 }
 
 /* 그리드에서 편집가능한 셀의 선택된 상태(해당 줄의 해당 편집가능한 셀이 선택된 상태)의 색상 */
 .aui-grid-editable-column.aui-grid-selection-row-bg {
-    background-color: green !important;
+    background-color: #D9E5FF !important;
 }
 
 /* 그리드에서 편집가능한 셀과 같은 줄은 선택되었으나 본 셀이 선택되지는 않는 상태의 색상 */
 .aui-grid-editable-column.aui-grid-selection-row-others-bg {
-    background-color: darkgreen !important;
+    background-color: #D9E5FF !important;
+}
+
+/* 그리드에서 편집가능한 셀의 선택된 상태(해당 줄의 해당 편집가능한 셀이 선택된 상태)의 색상 */
+.aui-grid-default-column.aui-grid-selection-row-bg {
+    background-color: #D9E5FF!important;
+}
+
+/* 그리드에서 편집가능한 셀과 같은 줄은 선택되었으나 본 셀이 선택되지는 않는 상태의 색상 */
+.aui-grid-default-column.aui-grid-selection-row-others-bg {
+    background-color: #D9E5FF!important;
+}
+
+.aui-grid-selection-header-column {
+    background: #bbbbbb!important;
+}
+
+.aui-grid-selection-row-num-column {
+    background: #bbbbbb!important;
 }
 
 /* 택번호 칼럼에 적용될 기본 스타일 정의 */
 .aui-grid-tagno-column {
-
+    background: #F1F8FE;
+    color: #2F73EA;
+    font-weight: bold;
 }
 
 /* 택번호 칼럼에 사용. 해당 줄이 선택되었을 때 택번호 컬럼의 스타일 정의 */
 .aui-grid-tagno-column.aui-grid-selection-row-bg, .aui-grid-tagno-column.aui-grid-selection-row-others-bg {
-    border: 2px solid #1e3868 !important;
+    /*border: 2px solid #1e3868 !important;*/
 }
 
 .aui-grid .aui-grid-table, .aui-grid .aui-grid-table tr, .aui-grid .aui-grid-table td {
@@ -41,4 +68,16 @@
 
 .receiptreg-product-name .aui-grid-renderer-base {
     margin-left: 15px;
+}
+
+.aui-grid-default-header {
+    background: #f8f8f8;
+    color: #000000;
+}
+
+.aui-grid-header-panel .aui-grid-table tr td {
+    border-top: 1px solid #c8c8c8;
+    border-right: none;
+    border-bottom: 1px solid #c8c8c8;
+    border-left: none;
 }
