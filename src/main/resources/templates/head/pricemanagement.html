@@ -16,7 +16,7 @@
 
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
-	<script src="/assets/js/toppos/head/itemprice.js"></script>
+	<script src="/assets/js/toppos/head/pricemanagement.js"></script>
 </th:block>
 
 <div layout:fragment="content" class="content content--padding">
@@ -26,155 +26,151 @@
 			<h3 class="type__heading">가격기본정보</h3>
 		</div>
 		<div class="type__content">
-			<div class="form">
-				<ul class="form__list">
-					<li class="form__item form__item--100">
-						<div class="form__title">가격비율</div>
-						<div class="form__input">
-							<ul class="percent">
-								<li>
-									<div class="percent__title">고급 : </div>
-									<div class="percent__input">
-										<input type="number" />
-										<span>%</span>
-									</div>
-									
-								</li>
-								<li>
-									<div class="percent__title">명품 : </div>
-									<div class="percent__input">
-										<input type="number" />
-										<span>%</span>
-									</div>
-									
-								</li>
-								<li>
-									<div class="percent__title">아동 : </div>
-									<div class="percent__input">
-										<input type="number" />
-										<span>%</span>
-									</div>
-								</li>
-							</ul>
-						</div>
-					</li>
-					<li class="form__item">
-						<div class="form__title">VIP 고객 할인율</div>
-						<div class="form__input">
-							<div class="percent__input">
-								<input type="number" />
-								<span>%</span>
+			<form  id="priceManagementForm" enctype="multipart/form-data">
+				<div class="form">
+					<ul class="form__list">
+						<li class="form__item form__item--100">
+							<div class="form__title">가격비율</div>
+							<div class="form__input">
+								<ul class="percent">
+									<li>
+										<div class="percent__title">고급 : </div>
+										<div class="percent__input">
+											<input type="number" id="bcHighRt" name="bcHighRt" />
+											<span>%</span>
+										</div>
+
+									</li>
+									<li>
+										<div class="percent__title">명품 : </div>
+										<div class="percent__input">
+											<input type="number" id="bcPremiumRt" name="bcPremiumRt" />
+											<span>%</span>
+										</div>
+
+									</li>
+									<li>
+										<div class="percent__title">아동 : </div>
+										<div class="percent__input">
+											<input type="number" id="bcChildRt" name="bcChildRt" />
+											<span>%</span>
+										</div>
+									</li>
+								</ul>
 							</div>
-						</div>
-					</li>
-					<li class="form__item">
-						<div class="form__title">VVIP 고객 할인율</div>
-						<div class="form__input">
-							<div class="percent__input">
-								<input type="number" />
-								<span>%</span>
+						</li>
+						<li class="form__item">
+							<div class="form__title">VIP 고객 할인율</div>
+							<div class="form__input">
+								<div class="percent__input">
+									<input type="number" id="bcVipDcRt" name="bcVipDcRt" />
+									<span>%</span>
+								</div>
 							</div>
-						</div>
-					</li>
-					<li class="form__item">
-						<div class="form__title">다림질 추가요금</div>
-						<div class="form__input">
-							<div class="percent__input">
-								<input type="number" />
-								<span>%</span>
+						</li>
+						<li class="form__item">
+							<div class="form__title">VVIP 고객 할인율</div>
+							<div class="form__input">
+								<div class="percent__input">
+									<input type="number" id="bcVvipDcRt" name="bcVvipDcRt" />
+									<span>%</span>
+								</div>
 							</div>
-						</div>
-					</li>
-					<li class="form__item">
-						<div class="form__title">표백 추가요금</div>
-						<div class="form__input">
-							<div class="percent__input">
-								<input type="number" />
-								<span>원</span>
+						</li>
+						<li class="form__item">
+							<div class="form__title">다림질 추가요금</div>
+							<div class="form__input">
+								<div class="percent__input">
+									<input type="number" id="bcPressed" name="bcPressed" />
+									<span>원</span>
+								</div>
 							</div>
-						</div>
-					</li>
-					<li class="form__item">
-						<div class="form__title">발수가공 추가요금</div>
-						<div class="form__input">
-							<div class="percent__input">
-								<input type="number" />
-								<span>원</span>
+						</li>
+						<li class="form__item">
+							<div class="form__title">표백 추가요금</div>
+							<div class="form__input">
+								<div class="percent__input">
+									<input type="number" id="bcWhitening" name="bcWhitening" />
+									<span>원</span>
+								</div>
 							</div>
-						</div>
-					</li>
-					<li class="form__item">
-						<div class="form__title">풀먹임 추가요금</div>
-						<div class="form__input">
-							<div class="percent__input">
-								<input type="number" />
-								<span>원</span>
+						</li>
+						<li class="form__item">
+							<div class="form__title">발수가공 추가요금</div>
+							<div class="form__input">
+								<div class="percent__input">
+									<input type="number" id="bcWaterRepellent" name="bcWaterRepellent" />
+									<span>원</span>
+								</div>
 							</div>
-						</div>
-					</li>					
+						</li>
+						<li class="form__item">
+							<div class="form__title">풀먹임 추가요금</div>
+							<div class="form__input">
+								<div class="percent__input">
+									<input type="number" id="bcStarch" name="bcStarch" />
+									<span>원</span>
+								</div>
+							</div>
+						</li>
+					</ul>
+				</div>
+
+				<div class="form">
+					<h4 class="form__heading">오염</h4>
+					<ul class="form__list">
+						<li class="form__item">
+							<div class="form__title">1cm 이하</div>
+							<div class="form__input">
+								<div class="percent__input">
+									<input type="number" id="bcPollution1" name="bcPollution1" />
+									<span>원</span>
+								</div>
+							</div>
+						</li>
+						<li class="form__item">
+							<div class="form__title">1cm ~ 3cm 이하</div>
+							<div class="form__input">
+								<div class="percent__input">
+									<input type="number" id="bcPollution2" name="bcPollution2" />
+									<span>원</span>
+								</div>
+							</div>
+						</li>
+						<li class="form__item">
+							<div class="form__title">3cm ~ 7cm 이하</div>
+							<div class="form__input">
+								<div class="percent__input">
+									<input type="number" id="bcPollution3" name="bcPollution3" />
+									<span>원</span>
+								</div>
+							</div>
+						</li>
+						<li class="form__item">
+							<div class="form__title">7cm ~ 10cm 이하</div>
+							<div class="form__input">
+								<div class="percent__input">
+									<input type="number" id="bcPollution4" name="bcPollution4" />
+									<span>원</span>
+								</div>
+							</div>
+						</li>
+						<li class="form__item">
+							<div class="form__title">10cm 초과</div>
+							<div class="form__input">
+								<div class="percent__input">
+									<input type="number" id="bcPollution5" name="bcPollution5" />
+									<span>원</span>
+								</div>
+							</div>
+						</li>
+					</ul>
+				</div>
+				<ul class="article__console">
+					<li><button type="button" class="c-button c-button--solid" onclick="onSave()">저장</button></li>
 				</ul>
-			</div>
-			
-			<div class="form">
-				<h4 class="form__heading">오염</h4>
-				<ul class="form__list">
-					<li class="form__item">
-						<div class="form__title">1cm 이하</div>
-						<div class="form__input">
-							<div class="percent__input">
-								<input type="number" />
-								<span>원</span>
-							</div>
-						</div>
-					</li>
-					<li class="form__item">
-						<div class="form__title">1cm ~ 3cm 이하</div>
-						<div class="form__input">
-							<div class="percent__input">
-								<input type="number" />
-								<span>원</span>
-							</div>
-						</div>
-					</li>
-					<li class="form__item">
-						<div class="form__title">3cm ~ 7cm 이하</div>
-						<div class="form__input">
-							<div class="percent__input">
-								<input type="number" />
-								<span>원</span>
-							</div>
-						</div>
-					</li>
-					<li class="form__item">
-						<div class="form__title">7cm ~ 10cm 이하</div>
-						<div class="form__input">
-							<div class="percent__input">
-								<input type="number" />
-								<span>원</span>
-							</div>
-						</div>
-					</li>
-					<li class="form__item">
-						<div class="form__title">10cm 초과</div>
-						<div class="form__input">
-							<div class="percent__input">
-								<input type="number" />
-								<span>원</span>
-							</div>
-						</div>
-					</li>				
-				</ul>
-			</div>
-			<ul class="article__console">
-				<li><button type="button" class="c-button c-button--solid">저장</button></li>
-			</ul>
+			</form>
 		</div>
 	</div>
-	
-	
-	
-
-
-	
 </div>
 </html>
