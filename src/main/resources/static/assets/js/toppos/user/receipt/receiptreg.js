@@ -670,6 +670,8 @@ function onPutCustomer(selectedCustomer) {
     $("#bcValuation").attr("class",
         "propensity__star propensity__star--" + selectedCustomer.bcValuation).css('display','block');
     $("#bcAddress").html(selectedCustomer.bcAddress);
+    $("#beforeUncollectMoneyMain").html(selectedCustomer.beforeUncollectMoney).toLocaleString();
+    $("#saveMoneyMain").html(selectedCustomer.saveMoney).toLocaleString();
     $("#bcRemark").html(selectedCustomer.bcRemark);
     if(selectedCustomer.bcLastRequestDt) {
         $("#bcLastRequestDt").html(
@@ -985,7 +987,9 @@ function onAddOrder() {
             fdRetryYn: currentRequest.fdRetryYn,
             fdRemark: currentRequest.fdRemark,
             frEstimateDate: currentRequest.frEstimateDate,
+            sumName: "",
         }
+
         AUIGrid.updateRowsById(gridId[0], copyObj);
     }else{
         currentRequest.fdTag = $("#fdTag").val().replace(/[^0-9A-Za-z]/g, "");
