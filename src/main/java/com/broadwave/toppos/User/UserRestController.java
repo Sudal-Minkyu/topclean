@@ -173,6 +173,8 @@ public class UserRestController {
             customerListInfo.put("bcRemark", customerInfoDto.getBcRemark());
             customerListInfo.put("bcAddress", customerInfoDto.getBcAddress());
             customerListInfo.put("bcLastRequestDt", customerInfoDto.getBcLastRequestDt());
+            customerListInfo.put("beforeUncollectMoney", 0);
+            customerListInfo.put("saveMoney", 0);
             customerListData.add(customerListInfo);
         }
 
@@ -220,7 +222,6 @@ public class UserRestController {
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
-
 
     // 고객 리스트 API(현재 로그인한 가맹점의 대한 고객리스트만 호출한다.)
     @GetMapping("customerList")
