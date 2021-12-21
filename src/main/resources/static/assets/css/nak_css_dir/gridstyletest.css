@@ -34,3 +34,11 @@
 .aui-grid .aui-grid-table, .aui-grid .aui-grid-table tr, .aui-grid .aui-grid-table td {
     font-size: 15px;
 }
+
+.receiptreg-product-name {
+    text-align: left;
+}
+
+.receiptreg-product-name .aui-grid-renderer-base {
+    margin-left: 15px;
+}

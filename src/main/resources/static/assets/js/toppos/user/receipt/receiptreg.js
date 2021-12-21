@@ -284,6 +284,7 @@ gridColumnLayout[0] = [
     }, {
         dataField: "sumName",
         headerText: "상품명",
+        width: 200,
         labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
             if(!item.sumName) {
                 const nameArray = initialData.userItemPriceSortData;
@@ -301,7 +302,8 @@ gridColumnLayout[0] = [
                 item.sumName = sumName;
             }
             return item.sumName;
-        }
+        },
+        style: "receiptreg-product-name"
     }, {
         dataField: "sumProcess",
         headerText: "처리내용",
@@ -363,6 +365,7 @@ gridColumnLayout[0] = [
     }, {
         dataField: "fdRequestAmt",
         headerText: "접수금액",
+        width: 90,
         dataType: "numeric",
         autoThousandSeparator: "true",
         labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
@@ -391,6 +394,7 @@ gridColumnLayout[0] = [
     }, {
         dataField: "",
         headerText: "수정",
+        width: 50,
         renderer : {
             type: "TemplateRenderer",
         },
