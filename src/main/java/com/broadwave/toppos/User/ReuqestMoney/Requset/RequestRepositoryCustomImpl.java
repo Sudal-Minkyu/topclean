@@ -2,7 +2,6 @@ package com.broadwave.toppos.User.ReuqestMoney.Requset;
 
 import com.broadwave.toppos.User.Customer.Customer;
 import com.broadwave.toppos.User.Customer.QCustomer;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.QPayment;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
 import lombok.extern.slf4j.Slf4j;
@@ -69,17 +68,16 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
     }
 
     @Override
-    public List<RequestInfoDto> findByRequestList(String frCode, String nowDate){
+    public List<RequestInfoDto> findByRequestList(String frCode, String nowDate, Customer customer){
         QRequest request = QRequest.request;
-        QPayment payment = QPayment.payment;
-        QCustomer customer = QCustomer.customer;
+        QCustomer qcustomer = QCustomer.customer;
 
         JPQLQuery<RequestInfoDto> query = from(request)
-                .innerJoin(customer).on(request.bcId.eq(customer))
+                .innerJoin(qcustomer).on(request.bcId.eq(qcustomer))
                 .select(Projections.constructor(RequestInfoDto.class,
                         request.id,
                         request.frNo,
-                        customer,
+                        qcustomer,
                         request.frCode,
                         request.bcCode,
                         request.frYyyymmdd,
@@ -97,8 +95,13 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
                         request.modity_date
                 ));
 
-        query.where(request.frUncollectYn.eq("Y"));
-        query.where(request.frConfirmYn.eq("Y"));
+        query.where(request.frUncollectYn.eq("Y")
+                        .and(request.frConfirmYn.eq("Y")
+                        .and(request.frYyyymmdd.lt(nowDate)
+                        .and(request.frCode.eq(frCode)
+                        .and(request.bcId.eq(customer)
+                        )))));
+
 
         return query.fetch();
     }

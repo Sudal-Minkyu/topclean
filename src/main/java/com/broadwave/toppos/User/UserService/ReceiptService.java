@@ -93,8 +93,8 @@ public class ReceiptService {
     }
 
     // 접수코드를 통한 접수마스터 테이블 조회
-    public List<RequestInfoDto> findByRequestList(String frCode, String nowDate){
-        return requestRepositoryCustom.findByRequestList(frCode, nowDate);
+    public List<RequestInfoDto> findByRequestList(String frCode, String nowDate, Customer customer){
+        return requestRepositoryCustom.findByRequestList(frCode, nowDate, customer);
     }
 
     // 접수코드와 태그번호를 통한 접수세부 테이블 조회
@@ -527,7 +527,7 @@ public class ReceiptService {
                     optionalRequest.get().setModity_id(login_id);
                     optionalRequest.get().setModity_date(LocalDateTime.now());
 
-                    // 미수여부 기능작업중...
+                    // 미수여부 기능작업 조건 : 합계금액보다 결제금액이 같거나 크면 N
                     if(optionalRequest.get().getFrTotalAmount() <= frPayAmount){
                         optionalRequest.get().setFrUncollectYn("N");
                     }
@@ -558,14 +558,16 @@ public class ReceiptService {
                         // 미수완납시 마스터테이블 업데이트
                         List<Request> updateRequestList = new ArrayList<>();
                         if(collectYn.equals("Y")){
-                            Request request1;
-                            List<RequestInfoDto> updateRequestLists = findByRequestList(frCode, nowDate);
+                            Request requestUpdate;
+                            List<RequestInfoDto> updateRequestLists = findByRequestList(frCode, nowDate, optionalCustomer.get());
                             log.info("updateRequestLists : "+updateRequestLists.size());
                             for(RequestInfoDto updateRequest : updateRequestLists){
-                                request1 = modelMapper.map(updateRequest, Request.class);
-                                request1.setFpId(result);
-                                request1.setFrUncollectYn("N");
-                                updateRequestList.add(request1);
+                                requestUpdate = modelMapper.map(updateRequest, Request.class);
+                                requestUpdate.setFpId(result);
+                                requestUpdate.setFrUncollectYn("N");
+                                requestUpdate.setModity_id(login_id);
+                                requestUpdate.setModity_date(LocalDateTime.now());
+                                updateRequestList.add(requestUpdate);
                             }
                             requestRepository.saveAll(updateRequestList); // 미수금완납시 마스터테이블 처리
                         }
