@@ -356,18 +356,16 @@ function accountSave(){
     });
 }
 
-/* 사용자 삭제 */
 function accountRemove() {
     alertCheck("삭제된 사용자는 복구가 불가능 합니다.<br>정말 삭제하시겠습니까?");
     $("#checkDelSuccessBtn").on("click", function () {
         let targetUser = {};
         if(AUIGrid.getSelectedItems(gridId[0])) {
             targetUser = {
-                userid: AUIGrid.getSelectedItems(gridId[0])[0].item.userid
+                userid : AUIGrid.getSelectedItems(gridId[0])[0].item.userid
             }
         }
-        console.log(targetUser);
-        CommonUI.ajaxjson("/api/head/accountDelete", JSON.stringify(targetUser), function() {
+        CommonUI.ajaxjsonPost("/api/head/accountDelete", targetUser, function() {
 
         });
         $('#popupId').remove();
