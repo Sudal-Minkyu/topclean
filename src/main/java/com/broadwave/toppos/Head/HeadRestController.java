@@ -1,6 +1,7 @@
 package com.broadwave.toppos.Head;
 
 import com.broadwave.toppos.Account.*;
+import com.broadwave.toppos.Head.AddCost.AddCostDto;
 import com.broadwave.toppos.Head.Branoh.Branch;
 import com.broadwave.toppos.Head.Branoh.BranchListDto;
 import com.broadwave.toppos.Head.Branoh.BranchMapperDto;
@@ -21,6 +22,7 @@ import com.broadwave.toppos.Head.Item.Price.FranchisePrice.*;
 import com.broadwave.toppos.Head.Item.Price.ItemPrice;
 import com.broadwave.toppos.Head.Item.Price.ItemPriceDto;
 import com.broadwave.toppos.Head.Item.Price.ItemPriceListDto;
+import com.broadwave.toppos.User.Customer.CustomerMapperDto;
 import com.broadwave.toppos.common.AjaxResponse;
 import com.broadwave.toppos.common.CommonUtils;
 import com.broadwave.toppos.common.ResponseErrorCode;
@@ -157,7 +159,16 @@ public class HeadRestController {
             franchise.setBrId(optionalFranohise.get().getBrId());
             franchise.setBrCode(optionalFranohise.get().getBrCode());
             franchise.setBrAssignState(optionalFranohise.get().getBrAssignState());
-            franchise.setFrLastTagno(franchiseMapperDto.getFrTagNo()+optionalFranohise.get().getFrLastTagno().substring(3,7));
+            if(franchiseMapperDto.getFrTagNo() == null || franchiseMapperDto.getFrTagNo().equals("")) {
+                franchise.setFrTagNo(franchiseMapperDto.getFrCode());
+                franchise.setFrLastTagno(franchiseMapperDto.getFrCode()+"0000");
+            }else{
+                if(optionalFranohise.get().getFrLastTagno() != null){
+                    franchise.setFrLastTagno(franchiseMapperDto.getFrTagNo() + optionalFranohise.get().getFrLastTagno().substring(3, 7));
+                }else{
+                    franchise.setFrLastTagno(franchiseMapperDto.getFrTagNo() + "0000");
+                }
+            }
 
             franchise.setModify_id(login_id);
             franchise.setModifyDateTime(LocalDateTime.now());
@@ -1319,12 +1330,11 @@ public class HeadRestController {
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
-
-
-
-
-
-
+    // 가격셋팅 할인율 설정 API
+    @PostMapping("addCostUpdate")
+    public ResponseEntity<Map<String,Object>> addCostUpdate(@ModelAttribute AddCostDto addCostDto, HttpServletRequest request) {
+        return headService.findByAddCostUpdate(addCostDto, request);
+    }
 
 
 
