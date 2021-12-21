@@ -62,5 +62,11 @@ public class UserController {
     public String classification(){
         return "user/classification";
     }
+    
+    // 검품이력 조회 및 메세지
+    @RequestMapping("inspect")
+    public String inspect(){
+        return "user/inspect";
+    }
 
 }

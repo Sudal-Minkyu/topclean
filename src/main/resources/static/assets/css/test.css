@@ -916,6 +916,7 @@ textarea {
 	position: absolute;
 	bottom: 1.25rem;
 	right: 0;
+	width: 7.5rem;
 	height: 7.5rem;
 	background-color: #fff;
 }
@@ -1096,6 +1097,28 @@ textarea {
 .regist__sum p .won {
 	color: #fff
 }
+
+.condition {
+	overflow: hidden;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	width: 41.875rem;
+	padding: 0.875rem 1.25rem;
+	margin-top: 0.938rem;
+	background-color: #fff;
+	-webkit-border-radius: 0.313rem;;
+	-moz-border-radius: 0.313rem;;
+	border-radius: 0.313rem;;
+}
+.condition__radio {
+	width: 100%;
+	margin-bottom: 0.625rem;
+}
+.condition__radio .c-radio + .c-radio {
+	margin-left: 0.5rem;
+}
+
 .client-info {
 	overflow: hidden;
 	display: flex;
