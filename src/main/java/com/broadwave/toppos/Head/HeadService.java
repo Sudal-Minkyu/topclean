@@ -22,11 +22,9 @@ import com.broadwave.toppos.Head.Item.Price.FranchisePrice.FranchisePriceListDto
 import com.broadwave.toppos.Head.Item.Price.FranchisePrice.FranchisePriceRepository;
 import com.broadwave.toppos.Head.Item.Price.FranchisePrice.FranchisePriceRepositoryCustom;
 import com.broadwave.toppos.Head.Item.Price.*;
-import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.common.AjaxResponse;
 import com.broadwave.toppos.common.CommonUtils;
 import com.broadwave.toppos.common.ResponseErrorCode;
-import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +35,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.servlet.http.HttpServletRequest;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -324,6 +323,16 @@ public class HeadService {
     // 가격 셋팅테이블 아이디 : "000" 조회
     public Optional<AddCost> findByAddCost(String bcId){
         return addCostRepository.findByAddCost(bcId);
+    }
+
+    // 가격셋팅 테이블 정보조회 API
+    public ResponseEntity<Map<String, Object>> addCostInfo() {
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        AddCostDto addCostDto = findByAddCost();
+        data.put("addCostDto",addCostDto);
+        return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
 }

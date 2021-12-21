@@ -22,7 +22,6 @@ import com.broadwave.toppos.Head.Item.Price.FranchisePrice.*;
 import com.broadwave.toppos.Head.Item.Price.ItemPrice;
 import com.broadwave.toppos.Head.Item.Price.ItemPriceDto;
 import com.broadwave.toppos.Head.Item.Price.ItemPriceListDto;
-import com.broadwave.toppos.User.Customer.CustomerMapperDto;
 import com.broadwave.toppos.common.AjaxResponse;
 import com.broadwave.toppos.common.CommonUtils;
 import com.broadwave.toppos.common.ResponseErrorCode;
@@ -1328,6 +1327,12 @@ public class HeadRestController {
         data.put("gridListData",franchisePriceListData);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
+    // 가격셋팅 할인율 정보호출 API
+    @GetMapping("addCostInfo")
+    public ResponseEntity<Map<String,Object>> addCostInfo() {
+        return headService.addCostInfo();
     }
 
     // 가격셋팅 할인율 설정 API
