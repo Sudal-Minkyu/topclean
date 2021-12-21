@@ -277,6 +277,7 @@ gridColumnLayout[0] = [
     {
         dataField: "fdTag",
         headerText: "택번호",
+        width: 80,
         labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
             return value.substr(0, 3) + "-" + value.substr(-4);
         }
@@ -318,6 +319,7 @@ gridColumnLayout[0] = [
     }, {
         dataField: "fdNormalAmt",
         headerText: "기본금액",
+        width: 70,
         dataType: "numeric",
         autoThousandSeparator: "true",
         labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
@@ -326,6 +328,7 @@ gridColumnLayout[0] = [
     }, {
         dataField: "fdRepairAmt",
         headerText: "수선금액",
+        width: 70,
         dataType: "numeric",
         autoThousandSeparator: "true",
         labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
@@ -334,6 +337,7 @@ gridColumnLayout[0] = [
     }, {
         dataField: "",
         headerText: "추가금액",
+        width: 70,
         dataType: "numeric",
         autoThousandSeparator: "true",
         labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
@@ -344,6 +348,7 @@ gridColumnLayout[0] = [
     }, {
         dataField: "fdDiscountAmt",
         headerText: "할인금액",
+        width: 70,
         dataType: "numeric",
         autoThousandSeparator: "true",
         labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
@@ -352,6 +357,7 @@ gridColumnLayout[0] = [
     }, {
         dataField: "fdQty",
         headerText: "수량",
+        width: 50,
         dataType: "numeric",
         autoThousandSeparator: "true",
     }, {
@@ -365,6 +371,7 @@ gridColumnLayout[0] = [
     }, {
         dataField: "fdColor",
         headerText: "색",
+        width: 30,
         style: "colorColumn",
         renderer : {
             type : "TemplateRenderer",
@@ -378,16 +385,22 @@ gridColumnLayout[0] = [
     }, {
         dataField: "frEstimateDate",
         headerText: "출고예정일",
+        width: 90,
         dataType: "date",
         formatString: "yyyy-mm-dd",
     }, {
         dataField: "",
         headerText: "수정",
         renderer : {
-            type: "ButtonRenderer",
-            labelText: "수정",
-            onClick: onModifyOrder,
-        }
+            type: "TemplateRenderer",
+        },
+        labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
+            const template = `
+                <button class="c-button c-button--solid  c-button--supersmall" onclick="onModifyOrder(${rowIndex})">수정</button>
+            `;
+            return template;
+        },
+        style: "btn-modify",
     }
 ];
 
@@ -403,6 +416,8 @@ gridProp[0] = {
     showStateColumn : false,
     enableFilter : true,
     showRowCheckColumn : true,
+    rowHeight : 48,
+    headerHeight : 48,
 };
 
 gridColumnLayout[1] = [
@@ -430,6 +445,8 @@ gridProp[1] = {
     enableFilter : true,
     width : 830,
     height : 480,
+    rowHeight : 48,
+    headerHeight : 48,
 };
 
 gridColumnLayout[2] = [
@@ -464,6 +481,8 @@ gridProp[2] = {
     enableColumnResize : false,
     showStateColumn : true,
     enableFilter : true,
+    rowHeight : 48,
+    headerHeight : 48,
 };
 
 const fpTypeName = {
@@ -493,6 +512,8 @@ gridProp[3] = {
     height : 140,
     showHeader : false,
     showRowNumColumn : false,
+    rowHeight : 48,
+    headerHeight : 48,
 };
 
 
@@ -996,8 +1017,9 @@ function onCloseAddOrder() {
     $("#addProductPopChild").parents('.pop').removeClass('active');
 }
 
-function onModifyOrder(event) {
-    currentRequest = event.item;
+function onModifyOrder(rowIndex) {
+
+    currentRequest = AUIGrid.getItemByRowIndex(gridId[0], rowIndex);
     selectedLaundry.bgCode = currentRequest.biItemcode.substr(0, 3);
 
     let bsType = ["N", "L", "S"];

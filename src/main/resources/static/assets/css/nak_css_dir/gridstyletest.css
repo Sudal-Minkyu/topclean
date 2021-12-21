@@ -30,3 +30,7 @@
 .aui-grid-tagno-column.aui-grid-selection-row-bg, .aui-grid-tagno-column.aui-grid-selection-row-others-bg {
     border: 2px solid #1e3868 !important;
 }
+
+.aui-grid .aui-grid-table, .aui-grid .aui-grid-table tr, .aui-grid .aui-grid-table td {
+    font-size: 15px;
+}
