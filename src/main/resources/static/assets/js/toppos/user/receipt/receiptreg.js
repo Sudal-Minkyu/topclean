@@ -1137,14 +1137,11 @@ function additionalProcess(id) {
     }
 }
 
-function askSave() {
-    alertCheck("임시저장 하시겠습니까?");
-    $("#checkDelSuccessBtn").on("click", function () {
-        onSaveTemp();
-    });
-}
+/* 임시저장을 두단계로 분리하기 위해 데이터를 임시로 전역변수화 */
+let saveData = {};
 
-function onSaveTemp() {
+/* 전역변수 cehckNum이 1일 경우에는 임시저장, 2일 경우에는 접수완료처리 */
+function onSave() {
 
     // 추가된 행 아이템들(배열)
     const addedRowItems = AUIGrid.getAddedRowItems(gridId[0]);
@@ -1177,12 +1174,23 @@ function onSaveTemp() {
         "add" : addedRowItems,
         "update" : updatedRowItems,
         "delete" : deletedRowItems,
-        "etc" : etc
+        "etc" : etc,
     };
+    saveData = data;
 
 
+    if(checkNum === "1") {
+        alertCheck("임시저장 하시겠습니까?");
+        $("#checkDelSuccessBtn").on("click", function () {
+            onSaveAjax();
+        });
+    }else {
+        onSaveAjax();
+    }
+}
 
-    CommonUI.ajaxjson(gridSaveUrl[0], JSON.stringify(data), function (req) {
+function onSaveAjax() {
+    CommonUI.ajaxjson(gridSaveUrl[0], JSON.stringify(saveData), function (req) {
         AUIGrid.removeSoftRows(gridId[0]);
         AUIGrid.resetUpdatedItems(gridId[0]);
         AUIGrid.clearGridData(gridId[2]);
@@ -1281,7 +1289,7 @@ function onApply() {
         return false;
     }
     checkNum = "2";
-    onSaveTemp();
+    onSave();
 
     // ======================
 
