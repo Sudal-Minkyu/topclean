@@ -317,7 +317,6 @@ function onChangeUserId() {
 // 사용자 등록 - 완
 function accountSave(){
 
-
     if($useridChecked.val() === "0"){
         alertCaution("유저아이디 중복확인을 해주세요.",1);
         return false;
@@ -356,6 +355,21 @@ function accountSave(){
         alertSuccess("사용자 저장완료");
     });
 }
+
+/* 사용자 삭제 */
+function accountRemove() {
+    alertCheck("삭제된 사용자는 복구가 불가능 합니다.<br>정말 삭제하시겠습니까?");
+    $("#checkDelSuccessBtn").on("click", function () {
+        console.log("act");
+        /*
+        CommonUI.ajaxjson("/api/head/", {}, function() {
+
+        });
+        */
+        $('#popupId').remove();
+    });
+}
+
 
 // 사용자 조회 함수호출
 function accountList(){
