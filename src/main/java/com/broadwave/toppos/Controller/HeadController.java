@@ -68,4 +68,9 @@ public class HeadController {
         return "head/franchiseprice";
     }
 
+    // 가격기초정보 세팅
+    @RequestMapping("pricemanagement")
+    public String pricemanagement(){
+        return "head/pricemanagement";
+    }
 }

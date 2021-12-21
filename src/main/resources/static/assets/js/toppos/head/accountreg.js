@@ -323,11 +323,13 @@ function accountSave(){
         return false;
     }
 
+    /* //이메일 유효성 검사. 제거요청이 있어 주석화
     if(!CommonUI.regularValidator($("#useremail").val(), "email")) {
         alertCaution("이메일을 잘 입력 해주세요.",1);
         $("#useremail").trigger("focus");
         return false;
     }
+    */
 
     const userRole = $("#role").val();
     if(userRole === "") {

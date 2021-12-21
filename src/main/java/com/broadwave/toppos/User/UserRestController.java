@@ -92,25 +92,23 @@ public class UserRestController {
             if(!optionalCustomerById.isPresent()) {
                 return ResponseEntity.ok(res.fail(ResponseErrorCode.TP005.getCode(), "수정 할 "+ResponseErrorCode.TP005.getDesc(), null, null));
             }else{
-                Optional<Customer> optionalCustomerByHp= userService.findByBcHp(customer.getBcHp());
-                if(optionalCustomerByHp.isPresent()){
-                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP014.getCode(), ResponseErrorCode.TP014.getDesc(), null, null));
-                }else{
-                    // 수정일때
-                    customer.setFrCode(optionalCustomerById.get().getFrCode());
-                    customer.setBcMessageAgreeDt(LocalDateTime.now());
-                    if(customer.getBcQuitYn().equals("Y")){
-                        customer.setBcQuitDate(LocalDateTime.now());
-                    }
-                    customer.setBcLastRequestDt(optionalCustomerById.get().getBcLastRequestDt());
-                    customer.setInsert_id(optionalCustomerById.get().getInsert_id());
-                    customer.setInsertDateTime(optionalCustomerById.get().getInsertDateTime());
-                    customer.setModify_id(login_id);
-                    customer.setModifyDateTime(LocalDateTime.now());
+                customer.setBcId(optionalCustomerById.get().getBcId());
 
-                    Customer customerSave =  userService.customerSave(customer);
-                    log.info("고객 수정 성공 : 핸드폰 번호 '" + customerSave.getBcHp() +"'");
+                // 수정일때
+                customer.setFrCode(optionalCustomerById.get().getFrCode());
+                customer.setBcMessageAgreeDt(LocalDateTime.now());
+                if(customer.getBcQuitYn().equals("Y")){
+                    customer.setBcQuitDate(LocalDateTime.now());
                 }
+                customer.setBcSignImage(optionalCustomerById.get().getBcSignImage());
+                customer.setBcLastRequestDt(optionalCustomerById.get().getBcLastRequestDt());
+                customer.setInsert_id(optionalCustomerById.get().getInsert_id());
+                customer.setInsertDateTime(optionalCustomerById.get().getInsertDateTime());
+                customer.setModify_id(login_id);
+                customer.setModifyDateTime(LocalDateTime.now());
+
+                Customer customerSave =  userService.customerSave(customer);
+                log.info("고객 수정 성공 : 고객명 '" + customerSave.getBcName() +"'");
             }
         }else{
             log.info("신규 고객 입니다.");

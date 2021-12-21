@@ -574,25 +574,29 @@ public class ReceiptService {
 
                         // 결제완료 후 미수상환금액 보낸다.
                         data.put("collectAmt",collectAmt);
+                        log.info("결제후 미수상환금액 : "+ collectAmt);
 
                         // 전일미수금을 보낸다. 전일미수금에서 미수상환금액을 뺀 금액
                         List<RequestCollectDto>  requestCollectDtoList = findByRequestCollectList(optionalCustomer.get(), nowDate); // nowDate 현재날짜
                         int beforeTotalAmount = 0;
                         int beforePayAmount = 0;
+                        int beforeUncollectMoney = 0;
                         if(requestCollectDtoList.size() != 0){
                             for(RequestCollectDto requestCollectDto : requestCollectDtoList){
                                 beforeTotalAmount = beforeTotalAmount + requestCollectDto.getFrTotalAmount();
                                 beforePayAmount = beforePayAmount + requestCollectDto.getFrPayAmount();
                             }
-                            data.put("beforeUncollectMoney",beforeTotalAmount-beforePayAmount-collectAmt);
+                            beforeUncollectMoney = beforeTotalAmount-beforePayAmount-collectAmt;
+                            data.put("beforeUncollectMoney",beforeUncollectMoney);
                         }else{
                             data.put("beforeUncollectMoney",0);
                         }
+                        log.info("결제후 전일미수금액 : "+beforeUncollectMoney);
 
                         // 적립금을 보낸다. 만약 적립금을 사용하면 사용금액의 따른 적립금을 뺀 가격을 보낸다.
                         Integer resultSaveMoney = findBySaveMoneyList(optionalCustomer.get());
                         data.put("saveMoney",resultSaveMoney);
-                        log.info("적립금액 : "+ resultSaveMoney);
+                        log.info("결제후 적립금액 : "+ resultSaveMoney);
 
                         // 옆에 결제내역에서 보여줄 데이터 전송
                         data.put("paymentEtcDtos",paymentEtcDtos);
