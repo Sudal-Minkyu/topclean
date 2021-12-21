@@ -96,33 +96,39 @@ gridColumnLayout[0] = [
     {
         dataField: "bcName",
         headerText: "고객명",
+        width: 90,
     }, {
         dataField: "bcHp",
         headerText: "휴대폰",
+        width: 120,
         labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
             return CommonUI.onPhoneNumChange(value);
         }
     }, {
         dataField: "bcAddress",
         headerText: "주소",
+        width: 190,
     }, {
         dataField: "bcGrade",
         headerText: "등급",
+        width: 60,
         labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
             return bcGradeName[value];
         },
     }, {
         dataField: "",
-        headerText: "미수금",
+        headerText: "전일미수금",
     }, {
         dataField: "",
         headerText: "적립금",
     }, {
         dataField: "bcMessageAgree",
         headerText: "SMS수신",
+        width: 70,
     }, {
         dataField: "bcAge",
         headerText: "연령/생일",
+        width: 140,
         labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
             return value + "대/" + item.bcBirthday.substr(0, 4) + "-" +
                 item.bcBirthday.substr(4, 2) + "-" + item.bcBirthday.substr(6, 2);
@@ -130,12 +136,15 @@ gridColumnLayout[0] = [
     }, {
         dataField: "insertDateTime",
         headerText: "가입일자",
+        width: 100,
     }, {
         dataField: "bcQuitDate",
         headerText: "탈퇴일",
+        width: 100,
     }, {
         dataField: "",
         headerText: "수정",
+        width: 120,
         renderer : {
             type: "ButtonRenderer",
             labelText: "수정",
@@ -153,6 +162,8 @@ gridProp[0] = {
     noDataMessage : "출력할 데이터가 없습니다.",
     enableColumnResize : false,
     enableFilter : true,
+    rowHeight : 48,
+    headerHeight : 48,
 };
 
 
