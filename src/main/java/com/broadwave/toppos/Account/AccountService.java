@@ -29,6 +29,10 @@ public class AccountService {
         return account;
     }
 
+    public void findByAccountDelete(Account account) {
+        accountRepository.delete(account);
+    }
+
     public Account updateAccount(Account account){
         return this.accountRepository.save(account);
     }
