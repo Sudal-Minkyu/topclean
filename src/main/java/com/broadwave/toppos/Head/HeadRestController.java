@@ -371,7 +371,7 @@ public class HeadRestController {
             return ResponseEntity.ok(res.fail(ResponseErrorCode.TP005.getCode(), "삭제 할 "+ResponseErrorCode.TP005.getDesc(), "문자", "유저 아이디 : "+userid));
         } else {
             log.info("삭제완료(실제 DB삭제는 막아놈)");
-//            accountService.findByAccountDelete(optionalAccount.get());
+            accountService.findByAccountDelete(optionalAccount.get());
         }
 
         return ResponseEntity.ok(res.success());
