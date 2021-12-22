@@ -601,6 +601,7 @@ function onSearchCustomer() {
         const items = req.sendData.gridListData;
         $("#searchCustomerType").val(0);
         $("#searchCustomerField").val("");
+        console.log(items);
         if(items.length === 1) {
             selectedCustomer = items[0];
             onPutCustomer(selectedCustomer);
@@ -639,7 +640,7 @@ function onSelectTempSave() {
     const frNo = AUIGrid.getSelectedRows(gridId[2])[0].frNo;
     CommonUI.ajax(gridCreateUrl[0], "GET", {frNo: frNo}, function (req) {
         initialData.etcData.frNo = frNo;
-        selectedCustomer = req.sendData.gridListData;
+        selectedCustomer = req.sendData.gridListData[0];
         onPutCustomer(selectedCustomer);
         AUIGrid.clearGridData(gridId[0]);
         AUIGrid.setGridData(gridId[0], req.sendData.requestDetailList);
