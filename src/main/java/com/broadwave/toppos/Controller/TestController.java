@@ -38,4 +38,10 @@ public class TestController {
     public String jktest(){
         return "test/jktest";
     }
+    
+    // 지겸 테스트페이지2
+    @RequestMapping("jktest2")
+    public String jktest2(){
+        return "test/jktest2";
+    }
 }

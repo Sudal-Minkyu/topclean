@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ko"
+	  xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate ="~{layout/defaulttest}">
+
+<!-- 사용자 CSS 추가 -->
+<th:block layout:fragment="css">
+	<style>
+		
+	</style>
+</th:block>
+
+<!-- 사용자 스크립트 추가 -->
+<th:block layout:fragment="script">
+	<script type="text/javascript">
+		$(document).ready(function() {
+			// 탭
+			const $tabsBtn = $('.c-tabs__btn');
+			const $tabsContent = $('.c-tabs__content');
+			
+			$tabsBtn.on('click', function() {
+				const idx = $(this).index();
+				
+				$tabsBtn.removeClass('active');
+				$tabsBtn.eq(idx).addClass('active');
+				$tabsContent.removeClass('active');
+				$tabsContent.eq(idx).addClass('active');
+			})
+		})
+	</script>
+</th:block>
+
+<div layout:fragment="content" class="content content--padding">
+	<div class="c-tabs">
+		<div class="c-tabs__head">
+			<button class="c-tabs__btn active">대분류</button>
+			<button class="c-tabs__btn">상품코드</button>
+		</div>
+		<div class="c-tabs__body">
+			<div class="c-tabs__content active">
+				<!-- 대분류 -->
+				<div class="c-tabs__content-header">
+					<h3 class="c-tabs__content-heading">대분류 위치 조정</h3>
+				</div>
+				
+				<div class="c-tabs__content-body">
+					<div class="c-tabs__inner">
+						<div class="c-tabs__elevator">
+							<div class="c-elevator">
+								<button class="c-elevator__btn up">위</button>
+								<button class="c-elevator__btn down">아래</button>
+							</div>
+						</div>
+						<!-- grid -->
+						<div style="width: 100%; height: 530px; border: 1px solid #dbdbdb">높이값 빼고 스타일 삭제</div>
+					</div>
+				</div>
+				
+				<div class="c-tabs__content-footer">
+					<div class="c-tabs__console">
+						<button class="c-button c-button--solid">저장</button>
+					</div>
+				</div>
+			</div>
+			
+			<div class="c-tabs__content">
+				<!-- 상품코드 -->
+				<div class="c-tabs__content-body c-tabs__content-body--flex">
+					<div class="c-tabs__inner">
+						<div class="c-tabs__content-header">
+							<h3 class="c-tabs__content-heading">분류 항목</h3>
+						</div>
+						<div class="c-tabs__content-body">
+							<div class="c-tabs__search">
+								<div class="c-tabs__search-item">
+									<div class="c-tabs__search-title">분류코드</div>
+									<div class="c-tabs__search-input">
+										<div class="c-text">
+											<input type="text" />
+											<button>키보드</button>
+										</div>
+									</div>
+								</div>
+								<div class="c-tabs__search-item">
+									<div class="c-tabs__search-title">분류명칭</div>
+									<div class="c-tabs__search-input">
+										<div class="c-text">
+											<input type="text" />
+											<button>키보드</button>
+										</div>
+									</div>
+								</div>
+								<div class="c-tabs__search-btn">
+									<button class="c-button c-button--small c-button--darksolid">조회</button>
+								</div>
+							</div>
+							
+							<!-- grid -->
+							<div style="width: 100%; height: 490px; border: 1px solid #dbdbdb">높이값 빼고 스타일 삭제</div>
+						</div>
+					</div>
+					<div class="c-tabs__inner">
+						<div class="c-tabs__content-header">
+							<h3 class="c-tabs__content-heading">상품코드 위치 조정</h3>
+						</div>
+						<div class="c-tabs__content-body">
+							<div class="c-tabs__elevator">
+								<div class="c-elevator">
+									<button class="c-elevator__btn up">위</button>
+									<button class="c-elevator__btn down">아래</button>
+								</div>
+							</div>
+							<!-- grid -->
+							<div style="width: 100%; height: 530px; border: 1px solid #dbdbdb">높이값 빼고 스타일 삭제</div>
+						</div>
+					</div>
+				</div>
+				<div class="c-tabs__content-footer">
+					<div class="c-tabs__console">
+						<button class="c-button c-button--solid">저장</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</div>
+</html>
