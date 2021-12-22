@@ -335,6 +335,8 @@ function branchDelete() {
                 brCode: selectedItems[0].item.brCode
             }
             CommonUI.ajaxjsonPost(url, data, function () {
+                AUIGrid.clearGridData(gridId[0]);
+                setListData(gridCreateUrl[0], 0);
                 createNewPost(0);
             });
         }
@@ -390,6 +392,8 @@ function franchiseDelete() {
                 frCode: selectedItems[0].item.frCode
             }
             CommonUI.ajaxjsonPost(url, data, function () {
+                AUIGrid.clearGridData(gridId[1]);
+                setListData(gridCreateUrl[1], 1);
                 createNewPost(1);
             });
         }
