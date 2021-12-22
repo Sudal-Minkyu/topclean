@@ -577,34 +577,6 @@ public class ReceiptService {
                         log.info("전일미수금액 : "+ beforeUncollectMoney);
                         log.info("당일미수금액 : "+ todayUncollectMoney);
 
-//
-//                        int beforeTotalAmount = 0;
-//                        int beforePayAmount = 0;
-//                        int beforeUncollectMoney = 0;
-//                        int todayTotalAmount = 0;
-//                        int todayPayAmount = 0;
-//                        int todayUncollectMoney = 0;
-//                        if(requestCollectDtoList.size() != 0){
-//                            for(RequestCollectDto requestCollectDto : requestCollectDtoList){
-//                                if(!requestCollectDto.getFrYyyymmdd().equals(nowDate)){
-//                                    beforeTotalAmount = beforeTotalAmount + requestCollectDto.getFrTotalAmount();
-//                                    beforePayAmount = beforePayAmount + requestCollectDto.getFrPayAmount();
-//                                }else{
-//                                    todayTotalAmount = todayTotalAmount + requestCollectDto.getFrTotalAmount();
-//                                    todayPayAmount = todayPayAmount + requestCollectDto.getFrPayAmount();
-//                                }
-//                            }
-//                            beforeUncollectMoney = beforeTotalAmount-beforePayAmount-collectAmt;
-//                            todayUncollectMoney = todayTotalAmount-todayPayAmount;
-//                            data.put("beforeUncollectMoney",beforeUncollectMoney);
-//                            data.put("todayUncollectMoney",todayUncollectMoney);
-//                        }else{
-//                            data.put("beforeUncollectMoney",0);
-//                            data.put("todayUncollectMoney",0);
-//                        }
-//                        log.info("결제후 전일미수금액 : "+beforeUncollectMoney);
-//                        log.info("결제후 당일미수금액 : "+todayUncollectMoney);
-
                         // 적립금을 보낸다. 만약 적립금을 사용하면 사용금액의 따른 적립금을 뺀 가격을 보낸다.
                         Integer resultSaveMoney = findBySaveMoney(optionalCustomer.get());
                         data.put("saveMoney",resultSaveMoney);
@@ -695,7 +667,6 @@ public class ReceiptService {
     }
 
     // 접속완료 또는 결제완료 후 전일미수금과, 당일 미수금 호출
-    // 고객정보 조회용 적립금, 미수금 호출 함수
     public List<Integer> findByBeforeAndTodayUnCollect(List<RequestCollectDto> requestCollectDtoList, String nowDate){
         List<Integer> uncollectMoneyList = new ArrayList<>();
         int todayTotalAmount = 0;
