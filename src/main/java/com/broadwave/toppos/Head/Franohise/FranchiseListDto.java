@@ -31,6 +31,22 @@ public class FranchiseListDto {
     private String frRemark; // 특이사항
     private String brName; // 배정지사명
 
+    private String frBusinessNo; // 사업자번호(10자리)
+    private String frRpreName; // 가맹점주이름
+    private String frTelNo; // 가맹점 전화번호
+
+    public String getFrBusinessNo() {
+        return frBusinessNo;
+    }
+
+    public String getFrRpreName() {
+        return frRpreName;
+    }
+
+    public String getFrTelNo() {
+        return frTelNo;
+    }
+
     public Integer getFrEstimateDuration() {
         return frEstimateDuration;
     }
