@@ -196,6 +196,64 @@ public class HeadRestController {
         return ResponseEntity.ok(res.success());
     }
 
+    // 사용자 리스트 API
+    @GetMapping("accountList")
+    public ResponseEntity<Map<String,Object>> accountList(@RequestParam(value="s_userid", defaultValue="") String s_userid,
+                                                          @RequestParam(value="s_username", defaultValue="") String s_username,
+                                                          @RequestParam(value="s_role", defaultValue="") String s_role,
+                                                          @RequestParam(value="s_frCode", defaultValue="") String s_frCode,
+                                                          @RequestParam(value="s_brCode", defaultValue="") String s_brCode){
+        log.info("accountList 호출");
+        log.info("s_userid : "+s_userid);
+
+        AccountRole role = null;
+
+        if (!s_role.equals("")){
+            role = AccountRole.valueOf(s_role);
+        }
+
+        AjaxResponse res = new AjaxResponse();
+
+        HashMap<String, Object> data = new HashMap<>();
+
+        List<HashMap<String,Object>> accountListData = new ArrayList<>();
+        HashMap<String,Object> accounttInfo;
+
+        List<AccountListDto> accountListDtos = accountService.findByAccountList(s_userid, s_username, role, s_frCode, s_brCode);
+        log.info("accountListDtos : "+accountListDtos);
+
+        for (AccountListDto account : accountListDtos) {
+
+            accounttInfo = new HashMap<>();
+
+            accounttInfo.put("userid", account.getUserid());
+            accounttInfo.put("roleCode", account.getRole().getCode());
+            accounttInfo.put("role", account.getRole().getDesc());
+            accounttInfo.put("username", account.getUsername());
+            accounttInfo.put("usertel", account.getUsertel());
+            accounttInfo.put("useremail", account.getUseremail());
+            if(account.getBrCode().equals("no")){
+                accounttInfo.put("brCode","해당안됨");
+            }else{
+                accounttInfo.put("brCode",account.getBrCode());
+            }
+            if(account.getFrCode().equals("not")){
+                accounttInfo.put("frCode","해당안됨");
+            }else{
+                accounttInfo.put("frCode",account.getFrCode());
+            }
+            accounttInfo.put("userremark", account.getUserremark());
+            accountListData.add(accounttInfo);
+
+        }
+
+        log.info("사용자리스트 : "+accountListData);
+        data.put("gridListData",accountListData);
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
+
     // 지사 리스트 API
     @GetMapping("branchList")
     public ResponseEntity<Map<String,Object>> branchList(@RequestParam(value="brName", defaultValue="") String brName,
@@ -301,63 +359,6 @@ public class HeadRestController {
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
-    // 사용자 리스트 API
-    @GetMapping("accountList")
-    public ResponseEntity<Map<String,Object>> accountList(@RequestParam(value="s_userid", defaultValue="") String s_userid,
-                                                                                        @RequestParam(value="s_username", defaultValue="") String s_username,
-                                                                                        @RequestParam(value="s_role", defaultValue="") String s_role,
-                                                                                        @RequestParam(value="s_frCode", defaultValue="") String s_frCode,
-                                                                                        @RequestParam(value="s_brCode", defaultValue="") String s_brCode){
-        log.info("accountList 호출");
-        log.info("s_userid : "+s_userid);
-
-        AccountRole role = null;
-
-        if (!s_role.equals("")){
-            role = AccountRole.valueOf(s_role);
-        }
-
-        AjaxResponse res = new AjaxResponse();
-
-        HashMap<String, Object> data = new HashMap<>();
-
-        List<HashMap<String,Object>> accountListData = new ArrayList<>();
-        HashMap<String,Object> accounttInfo;
-
-        List<AccountListDto> accountListDtos = accountService.findByAccountList(s_userid, s_username, role, s_frCode, s_brCode);
-        log.info("accountListDtos : "+accountListDtos);
-
-        for (AccountListDto account : accountListDtos) {
-
-            accounttInfo = new HashMap<>();
-
-            accounttInfo.put("userid", account.getUserid());
-            accounttInfo.put("roleCode", account.getRole().getCode());
-            accounttInfo.put("role", account.getRole().getDesc());
-            accounttInfo.put("username", account.getUsername());
-            accounttInfo.put("usertel", account.getUsertel());
-            accounttInfo.put("useremail", account.getUseremail());
-            if(account.getBrCode().equals("no")){
-                accounttInfo.put("brCode","해당안됨");
-            }else{
-                accounttInfo.put("brCode",account.getBrCode());
-            }
-            if(account.getFrCode().equals("not")){
-                accounttInfo.put("frCode","해당안됨");
-            }else{
-                accounttInfo.put("frCode",account.getFrCode());
-            }
-            accounttInfo.put("userremark", account.getUserremark());
-            accountListData.add(accounttInfo);
-
-        }
-
-        log.info("사용자리스트 : "+accountListData);
-        data.put("gridListData",accountListData);
-
-        return ResponseEntity.ok(res.dataSendSuccess(data));
-    }
-
     // 사용자 삭제 API
     @PostMapping("accountDelete")
     public ResponseEntity<Map<String,Object>> accountDelete(@RequestParam(value="userid", defaultValue="") String userid) {
@@ -370,13 +371,50 @@ public class HeadRestController {
         if (!optionalAccount.isPresent()) {
             return ResponseEntity.ok(res.fail(ResponseErrorCode.TP005.getCode(), "삭제 할 "+ResponseErrorCode.TP005.getDesc(), "문자", "유저 아이디 : "+userid));
         } else {
-            log.info("삭제완료(실제 DB삭제는 막아놈)");
+            log.info(userid+" 사용자 삭제완료");
             accountService.findByAccountDelete(optionalAccount.get());
         }
 
         return ResponseEntity.ok(res.success());
     }
 
+    // 지사 삭제 API
+    @PostMapping("branchDelete")
+    public ResponseEntity<Map<String,Object>> branchDelete(@RequestParam(value="brCode", defaultValue="") String brCode) {
+        log.info("branchDelete 호출");
+        log.info("삭제 할 지사코드 : " + brCode);
+
+        AjaxResponse res = new AjaxResponse();
+
+        Optional<Branch> optionalBranch = headService.findByBrCode(brCode);
+        if (!optionalBranch.isPresent()) {
+            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP005.getCode(), "삭제 할 "+ResponseErrorCode.TP005.getDesc(), "문자", "지사코드(2자리) : "+brCode));
+        } else {
+            log.info(brCode+" 지사삭제 완료(실제 DB삭제는 막아놈)");
+//            accountService.findByAccountDelete(optionalAccount.get());
+        }
+
+        return ResponseEntity.ok(res.success());
+    }
+
+    // 가맹점 삭제 API
+    @PostMapping("franchiseDelete")
+    public ResponseEntity<Map<String,Object>> franchiseDelete(@RequestParam(value="frCode", defaultValue="") String frCode) {
+        log.info("franchiseDelete 호출");
+        log.info("삭제 할 가맹점코드 : " + frCode);
+
+        AjaxResponse res = new AjaxResponse();
+
+        Optional<Franchise> optionalFranchise = headService.findByFrCode(frCode);
+        if (!optionalFranchise.isPresent()) {
+            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP005.getCode(), "삭제 할 "+ResponseErrorCode.TP005.getDesc(), "문자", "가맹점코드(3자리)  : "+frCode));
+        } else {
+            log.info(frCode+" 가맹점삭제 완료(실제 DB삭제는 막아놈)");
+//            accountService.findByAccountDelete(optionalAccount.get());
+        }
+
+        return ResponseEntity.ok(res.success());
+    }
 
     // 해당 지사에 배정된 가맹점 리스트 호출
     @GetMapping("branchAssignList")
