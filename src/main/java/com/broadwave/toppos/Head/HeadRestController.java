@@ -5,10 +5,7 @@ import com.broadwave.toppos.Head.AddCost.AddCostDto;
 import com.broadwave.toppos.Head.Branoh.Branch;
 import com.broadwave.toppos.Head.Branoh.BranchListDto;
 import com.broadwave.toppos.Head.Branoh.BranchMapperDto;
-import com.broadwave.toppos.Head.Franohise.FranchisInfoDto;
-import com.broadwave.toppos.Head.Franohise.Franchise;
-import com.broadwave.toppos.Head.Franohise.FranchiseListDto;
-import com.broadwave.toppos.Head.Franohise.FranchiseMapperDto;
+import com.broadwave.toppos.Head.Franohise.*;
 import com.broadwave.toppos.Head.Item.Group.A.ItemGroup;
 import com.broadwave.toppos.Head.Item.Group.A.ItemGroupDto;
 import com.broadwave.toppos.Head.Item.Group.A.ItemGroupNameListDto;
@@ -22,6 +19,8 @@ import com.broadwave.toppos.Head.Item.Price.FranchisePrice.*;
 import com.broadwave.toppos.Head.Item.Price.ItemPrice;
 import com.broadwave.toppos.Head.Item.Price.ItemPriceDto;
 import com.broadwave.toppos.Head.Item.Price.ItemPriceListDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestSearchDto;
+import com.broadwave.toppos.User.UserService.ReceiptService;
 import com.broadwave.toppos.common.AjaxResponse;
 import com.broadwave.toppos.common.CommonUtils;
 import com.broadwave.toppos.common.ResponseErrorCode;
@@ -55,12 +54,14 @@ public class HeadRestController {
     private final AccountService accountService;
     private final HeadService headService;
     private final ModelMapper modelMapper;
+    private final ReceiptService receiptService;
 
     @Autowired
-    public HeadRestController(AccountService accountService, ModelMapper modelMapper, HeadService headService) {
+    public HeadRestController(AccountService accountService, ModelMapper modelMapper, HeadService headService, ReceiptService receiptService) {
         this.accountService = accountService;
         this.modelMapper = modelMapper;
         this.headService = headService;
+        this.receiptService = receiptService;
     }
 
     // 사용자 등록 API
@@ -382,7 +383,7 @@ public class HeadRestController {
     @PostMapping("branchDelete")
     public ResponseEntity<Map<String,Object>> branchDelete(@RequestParam(value="brCode", defaultValue="") String brCode) {
         log.info("branchDelete 호출");
-        log.info("삭제 할 지사코드 : " + brCode);
+        log.info("요청된 지사코드 : " + brCode);
 
         AjaxResponse res = new AjaxResponse();
 
@@ -390,8 +391,14 @@ public class HeadRestController {
         if (!optionalBranch.isPresent()) {
             return ResponseEntity.ok(res.fail(ResponseErrorCode.TP005.getCode(), "삭제 할 "+ResponseErrorCode.TP005.getDesc(), "문자", "지사코드(2자리) : "+brCode));
         } else {
-            log.info(brCode+" 지사삭제 완료(실제 DB삭제는 막아놈)");
-//            accountService.findByAccountDelete(optionalAccount.get());
+            log.info("지사코드 : "+optionalBranch.get().getBrCode());
+            List<FranchiseSearchDto> franchise = headService.findByFranchiseBrcode(optionalBranch.get().getBrCode());
+            if(franchise.size() == 0){
+                log.info(optionalBranch.get().getBrCode()+" 지사삭제 진행");
+                headService.findByBranchDelete(optionalBranch.get());
+            }else{
+                return ResponseEntity.ok(res.fail("문자", "해당 지사에 배정된 가맹점이 존재합니다.", "문자", "지사코드(2자리) : "+optionalBranch.get().getBrCode()));
+            }
         }
 
         return ResponseEntity.ok(res.success());
@@ -401,7 +408,7 @@ public class HeadRestController {
     @PostMapping("franchiseDelete")
     public ResponseEntity<Map<String,Object>> franchiseDelete(@RequestParam(value="frCode", defaultValue="") String frCode) {
         log.info("franchiseDelete 호출");
-        log.info("삭제 할 가맹점코드 : " + frCode);
+        log.info("요청된 가맹점코드 : " + frCode);
 
         AjaxResponse res = new AjaxResponse();
 
@@ -409,8 +416,14 @@ public class HeadRestController {
         if (!optionalFranchise.isPresent()) {
             return ResponseEntity.ok(res.fail(ResponseErrorCode.TP005.getCode(), "삭제 할 "+ResponseErrorCode.TP005.getDesc(), "문자", "가맹점코드(3자리)  : "+frCode));
         } else {
-            log.info(frCode+" 가맹점삭제 완료(실제 DB삭제는 막아놈)");
-//            accountService.findByAccountDelete(optionalAccount.get());
+            log.info("가맹점코드 : "+optionalFranchise.get().getFrCode());
+            List<RequestSearchDto> request = receiptService.findByRequestFrCode(optionalFranchise.get().getFrCode());
+            if(request.size() == 0){
+                log.info(optionalFranchise.get().getFrCode()+" 가맹점삭제 진행");
+                headService.findByFranchiseDelete(optionalFranchise.get());
+            }else{
+                return ResponseEntity.ok(res.fail(ResponseErrorCode.TP011.getCode(), "해당 가맹점의 "+ResponseErrorCode.TP011.getDesc(), "문자", "가맹점코드(3자리)  : "+frCode));
+            }
         }
 
         return ResponseEntity.ok(res.success());

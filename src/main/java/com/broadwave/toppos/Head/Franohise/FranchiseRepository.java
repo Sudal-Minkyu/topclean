@@ -10,4 +10,8 @@ import java.util.Optional;
 public interface FranchiseRepository extends JpaRepository<Franchise,Long> {
     @Query("select a from Franchise a where a.frCode = :frCode")
     Optional<Franchise> findByFrCode(String frCode);
+
+//    @Query(nativeQuery = true, value = "select * from bs_franchise a where a.br_code = :brCode ORDER BY a.fr_id LIMIT 1")
+//    Franchise findByFranchiseBrcode(String brCode);
+
 }

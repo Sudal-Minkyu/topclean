@@ -1,6 +1,5 @@
 package com.broadwave.toppos.Head;
 
-import com.broadwave.toppos.Account.Account;
 import com.broadwave.toppos.Head.AddCost.AddCost;
 import com.broadwave.toppos.Head.AddCost.AddCostDto;
 import com.broadwave.toppos.Head.AddCost.AddCostRepository;
@@ -49,7 +48,7 @@ public class HeadService {
 //    private final TokenProvider tokenProvider;
 
     private final FranchiseRepository franchiseRepository;
-    private final BranchRepository branohRepository;
+    private final BranchRepository branchRepository;
     private final ItemGroupRepository ItemGroupRepository;
     private final ItemGroupSRepository ItemGroupSRepository;
     private final ItemRepository ItemRepository;
@@ -69,14 +68,14 @@ public class HeadService {
 
     @Autowired
     public HeadService(ModelMapper modelMapper, AddCostRepository addCostRepository,
-                       BranchRepository branohRepository, FranchiseRepository franchiseRepository, FranchiseRepositoryCustom franchiseRepositoryCustom, BranchRepositoryCustomImpl branohRepositoryCustom,
+                       BranchRepository branchRepository, FranchiseRepository franchiseRepository, FranchiseRepositoryCustom franchiseRepositoryCustom, BranchRepositoryCustomImpl branohRepositoryCustom,
                        ItemGroupRepository ItemGroupRepository, ItemGroupRepositoryCustom itemGroupRepositoryCustom, ItemGroupSRepository ItemGroupSRepository, ItemGroupSRepositoryCustom itemGroupSRepositoryCustom,
                        ItemRepository ItemRepository, ItemRepositoryCustom itemRepositoryCustom, ItemPriceRepository itemPriceRepository, ItemPriceRepositoryCustom itemPriceRepositoryCustom,
                        FranchisePriceRepository franchisePriceRepository, FranchisePriceRepositoryCustom franchisePriceRepositoryCustom,
                        AddCostRepositoryCustom addCostRepositoryCustom, AddProcessRepositoryCustom addProcessRepositoryCustom){
         this.modelMapper = modelMapper;
         this.addCostRepository = addCostRepository;
-        this.branohRepository = branohRepository;
+        this.branchRepository = branchRepository;
         this.franchiseRepository = franchiseRepository;
         this.franchiseRepositoryCustom = franchiseRepositoryCustom;
         this.branohRepositoryCustom = branohRepositoryCustom;
@@ -104,7 +103,7 @@ public class HeadService {
 
     // 지사 저장
     public Branch branchSave(Branch branoh){
-        branohRepository.save(branoh);
+        branchRepository.save(branoh);
         return branoh;
     }
 
@@ -125,7 +124,7 @@ public class HeadService {
 
     // 지점코드 중복확인 API
     public Optional<Branch> findByBrCode(String brCode){
-        return branohRepository.findByBrCode(brCode);
+        return branchRepository.findByBrCode(brCode);
     }
 
     // 가맹점 정보 호출하기
@@ -336,4 +335,28 @@ public class HeadService {
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
+    // 지사코드로 조회하여 해당 지사에 배치된 가맹점이 존재하는지 확인하는 함수
+    public List<FranchiseSearchDto> findByFranchiseBrcode(String brCode) {
+        return franchiseRepositoryCustom.findByFranchiseBrcode(brCode);
+    }
+
+    // 지사삭제
+    public void findByBranchDelete(Branch branch) {
+        branchRepository.delete(branch);
+    }
+
+    // 가맹점삭제
+    public void findByFranchiseDelete(Franchise franchise) {
+        franchiseRepository.delete(franchise);
+    }
+
+//    // 지사코드로 조회하여 해당 지사에 배치된 가맹점이 존재하는지 확인하는 함수
+//    public List<FranchiseSearchDto> findByFranchiseBrcode(String brCode) {
+//        return franchiseRepositoryCustom.findByFranchiseBrcode(brCode);
+//    }
+//
+//    // 지사코드로 조회하여 해당 지사에 배치된 가맹점이 존재하는지 확인하는 함수
+//    public List<FranchiseSearchDto> findByFranchiseBrcode(String brCode) {
+//        return franchiseRepositoryCustom.findByFranchiseBrcode(brCode);
+//    }
 }
