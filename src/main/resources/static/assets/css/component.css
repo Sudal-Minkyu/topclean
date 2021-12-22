@@ -150,6 +150,7 @@ input[type="number"]::-webkit-inner-spin-button {
 	min-width: 6.25rem;
 	height: 2.5rem;
 	padding: 0 0.625rem;
+	border-width: 0.063rem;
 	-webkit-border-radius: 0.313rem;
 	-moz-border-radius: 0.313rem;
 	border-radius: 0.313rem;
