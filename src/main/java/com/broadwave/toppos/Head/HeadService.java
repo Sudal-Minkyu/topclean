@@ -350,13 +350,4 @@ public class HeadService {
         franchiseRepository.delete(franchise);
     }
 
-//    // 지사코드로 조회하여 해당 지사에 배치된 가맹점이 존재하는지 확인하는 함수
-//    public List<FranchiseSearchDto> findByFranchiseBrcode(String brCode) {
-//        return franchiseRepositoryCustom.findByFranchiseBrcode(brCode);
-//    }
-//
-//    // 지사코드로 조회하여 해당 지사에 배치된 가맹점이 존재하는지 확인하는 함수
-//    public List<FranchiseSearchDto> findByFranchiseBrcode(String brCode) {
-//        return franchiseRepositoryCustom.findByFranchiseBrcode(brCode);
-//    }
 }
