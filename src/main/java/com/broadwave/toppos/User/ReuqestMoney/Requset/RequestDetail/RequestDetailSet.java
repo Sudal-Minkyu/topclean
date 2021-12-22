@@ -1,6 +1,5 @@
 package com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail;
 
-import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentMapperDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestMapperDto;
 import lombok.Setter;
 

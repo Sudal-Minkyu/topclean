@@ -1,10 +1,11 @@
 package com.broadwave.toppos.User.ReuqestMoney.Requset;
 
 import com.broadwave.toppos.User.Customer.Customer;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.Payment;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import javax.persistence.*;
 import java.time.LocalDateTime;
 
 /**

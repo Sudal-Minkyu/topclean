@@ -18,4 +18,6 @@ public interface RequestRepositoryCustom {
     List<RequestInfoDto> findByRequestList(String frCode, String nowDate, Customer customer);
 
     List<RequestUnCollectDto> findByUnCollectList(List<Long> customerIdList, String nowDate);
+
+    List<RequestSearchDto> findByRequestFrCode(String frCode);
 }

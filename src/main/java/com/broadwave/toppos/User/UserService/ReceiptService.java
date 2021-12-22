@@ -696,11 +696,10 @@ public class ReceiptService {
         return uncollectMoneyList;
     }
 
-
-
-
-
-
+    // 가맹점코드로 조회하여 해당 가맹점이 한번이라도 접수나 임시저장을 했는지 조회하는 함수
+    public List<RequestSearchDto> findByRequestFrCode(String frCode) {
+        return requestRepositoryCustom.findByRequestFrCode(frCode);
+    }
 
 
 

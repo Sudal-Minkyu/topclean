@@ -134,4 +134,19 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
         return query.fetch();
     }
 
+    @Override
+    public List<RequestSearchDto> findByRequestFrCode(String frCode){
+        QRequest request = QRequest.request;
+
+        JPQLQuery<RequestSearchDto> query = from(request)
+                .select(Projections.constructor(RequestSearchDto.class,
+                        request.frNo
+                ));
+
+        query.where(request.frCode.eq(frCode));
+        query.limit(1);
+
+        return query.fetch();
+    }
+
 }

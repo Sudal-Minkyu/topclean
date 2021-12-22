@@ -1,6 +1,7 @@
 package com.broadwave.toppos.Head.Franohise;
 
 import com.broadwave.toppos.Head.Branoh.QBranch;
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
 import lombok.extern.slf4j.Slf4j;
@@ -109,6 +110,22 @@ public class FranchiseRepositoryCustomImpl extends QuerydslRepositorySupport imp
         query.where(franchise.frCode.eq(frCode));
 
         return query.fetchOne();
+    }
+
+    @Override
+    public List<FranchiseSearchDto> findByFranchiseBrcode(String brCode) {
+
+        QFranchise franchise = QFranchise.franchise;
+
+        JPQLQuery<FranchiseSearchDto> query = from(franchise)
+                .select(Projections.constructor(FranchiseSearchDto.class,
+                        franchise.frName
+                ));
+
+        query.where(franchise.brCode.eq(brCode));
+        query.limit(1);
+
+        return query.fetch();
     }
 
 }
