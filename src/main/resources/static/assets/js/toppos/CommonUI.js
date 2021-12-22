@@ -15,7 +15,7 @@ class CommonUIClass {
 
     constructor() {
         String.prototype.toInt = function () {
-            return parseInt(this.replace(/[^0-9]/g, ""));
+            return this.toString() ? parseInt(this.replace(/[^0-9-]/g, "")) : 0;
         }
     }
 

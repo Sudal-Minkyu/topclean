@@ -1482,6 +1482,7 @@ function onPaymentStageOne() {
         });
     }else if (paymentData.type ==="cash") {
         $('#payStatus').show();
+        console.log(paymentData);
         CAT.CatPrint(paymentData, "", "N");
         $('#payStatus').hide();
         onPaymentStageTwo(paymentData);
