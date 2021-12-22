@@ -7,8 +7,8 @@ import com.broadwave.toppos.Manager.Calendar.BranchCalendarRepositoryCustom;
 import com.broadwave.toppos.User.Customer.Customer;
 import com.broadwave.toppos.User.Customer.CustomerRepository;
 import com.broadwave.toppos.User.EtcDataDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.*;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.*;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.*;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.*;
 import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.*;
 import com.broadwave.toppos.common.AjaxResponse;
@@ -54,7 +54,6 @@ public class ReceiptService {
 
     private final RequestRepositoryCustom requestRepositoryCustom;
     private final RequestDetailRepositoryCustom requestDetailRepositoryCustom;
-    private final PaymentRepositoryCustom paymentRepositoryCustom;
     private final SaveMoneyRepositoryCustom saveMoneyRepositoryCustom;
 
     private final HeadService headService;
@@ -64,7 +63,7 @@ public class ReceiptService {
     @Autowired
     public ReceiptService(UserService userService, KeyGenerateService keyGenerateService, TokenProvider tokenProvider, ModelMapper modelMapper,
                           RequestRepository requestRepository, RequestDetailRepository requestDetailRepository, PaymentRepository paymentRepository, SaveMoneyRepository saveMoneyRepository,
-                          RequestRepositoryCustom requestRepositoryCustom, RequestDetailRepositoryCustom requestDetailRepositoryCustom, PaymentRepositoryCustom paymentRepositoryCustom, SaveMoneyRepositoryCustom saveMoneyRepositoryCustom,
+                          RequestRepositoryCustom requestRepositoryCustom, RequestDetailRepositoryCustom requestDetailRepositoryCustom, SaveMoneyRepositoryCustom saveMoneyRepositoryCustom,
                           HeadService headService, CustomerRepository customerRepository,BranchCalendarRepositoryCustom branchCalendarRepositoryCustom){
         this.userService = userService;
         this.headService = headService;
@@ -72,7 +71,6 @@ public class ReceiptService {
         this.tokenProvider = tokenProvider;
         this.modelMapper = modelMapper;
         this.paymentRepository = paymentRepository;
-        this.paymentRepositoryCustom = paymentRepositoryCustom;
         this.requestDetailRepository = requestDetailRepository;
         this.customerRepository = customerRepository;
         this.saveMoneyRepository = saveMoneyRepository;
@@ -229,30 +227,22 @@ public class ReceiptService {
                 // 결제일 경우, 현재 고객의 적립금과 미수금액을 보내준다.
                 // 미수금액 리스트를 호출한다. 조건 : 미수여부는 Y, 임시저장확정여부는 N, 고객아이디 eq, 가맹점코드 = frCode eq, 현재날짜의 전날들만 인것들만 조회하기
                 List<RequestCollectDto>  requestCollectDtoList = findByRequestCollectList(optionalCustomer.get(), null); // nowDate 현재날짜
-                int todayTotalAmount = 0;
-                int todayPayAmount = 0;
-                int beforeTotalAmount = 0;
-                int beforePayAmount = 0;
+                List<Integer> uncollectMoneyList = findByBeforeAndTodayUnCollect(requestCollectDtoList, nowDate);
+                int beforeUncollectMoney = 0;
+                int todayUncollectMoney = 0;
                 if(requestCollectDtoList.size() != 0){
-                    for(RequestCollectDto requestCollectDto : requestCollectDtoList){
-                        if(!requestCollectDto.getFrYyyymmdd().equals(nowDate)){
-                            beforeTotalAmount = beforeTotalAmount + requestCollectDto.getFrTotalAmount();
-                            beforePayAmount = beforePayAmount + requestCollectDto.getFrPayAmount();
-                        }else{
-                            todayTotalAmount = todayTotalAmount + requestCollectDto.getFrTotalAmount();
-                            todayPayAmount = todayPayAmount + requestCollectDto.getFrPayAmount();
-                        }
-                    }
-                    data.put("beforeUncollectMoney",beforeTotalAmount-beforePayAmount);
-                    data.put("todayUncollectMoney",todayTotalAmount-todayPayAmount);
+                    beforeUncollectMoney = uncollectMoneyList.get(0);
+                    todayUncollectMoney = uncollectMoneyList.get(1);
+                    data.put("beforeUncollectMoney",beforeUncollectMoney);
+                    data.put("todayUncollectMoney",todayUncollectMoney);
                 }else{
                     data.put("beforeUncollectMoney",0);
                     data.put("todayUncollectMoney",0);
                 }
 //                log.info("합계금액 : "+totalAmount);
 //                log.info("결제금액 : "+payAmount);
-                log.info("전일미수금액 : "+ (beforeTotalAmount - beforePayAmount));
-                log.info("당일미수금액 : "+ (todayTotalAmount - todayPayAmount));
+                log.info("전일 미수금액 : "+ beforeUncollectMoney);
+                log.info("당일 미수금액 : "+ todayUncollectMoney);
 
                 // 적립금 리스트를 호출한다. 조건 : 고객 ID, 적립유형 1 or 2, 마감여부 : N,
                 Integer saveMoney = findBySaveMoney(optionalCustomer.get());
@@ -570,21 +560,50 @@ public class ReceiptService {
                         log.info("결제후 미수상환금액 : "+ collectAmt);
 
                         // 전일미수금을 보낸다. 전일미수금에서 미수상환금액을 뺀 금액
-                        List<RequestCollectDto>  requestCollectDtoList = findByRequestCollectList(optionalCustomer.get(), nowDate); // nowDate 현재날짜
-                        int beforeTotalAmount = 0;
-                        int beforePayAmount = 0;
+                        List<RequestCollectDto>  requestCollectDtoList = findByRequestCollectList(optionalCustomer.get(), null); // nowDate 현재날짜
+                        List<Integer> uncollectMoneyList = findByBeforeAndTodayUnCollect(requestCollectDtoList, nowDate);
+                        log.info("uncollectMoneyList : "+ uncollectMoneyList);
                         int beforeUncollectMoney = 0;
+                        int todayUncollectMoney = 0;
                         if(requestCollectDtoList.size() != 0){
-                            for(RequestCollectDto requestCollectDto : requestCollectDtoList){
-                                beforeTotalAmount = beforeTotalAmount + requestCollectDto.getFrTotalAmount();
-                                beforePayAmount = beforePayAmount + requestCollectDto.getFrPayAmount();
-                            }
-                            beforeUncollectMoney = beforeTotalAmount-beforePayAmount-collectAmt;
+                            beforeUncollectMoney = uncollectMoneyList.get(0);
+                            todayUncollectMoney = uncollectMoneyList.get(1);
                             data.put("beforeUncollectMoney",beforeUncollectMoney);
+                            data.put("todayUncollectMoney",todayUncollectMoney);
                         }else{
                             data.put("beforeUncollectMoney",0);
+                            data.put("todayUncollectMoney",0);
                         }
-                        log.info("결제후 전일미수금액 : "+beforeUncollectMoney);
+                        log.info("전일미수금액 : "+ beforeUncollectMoney);
+                        log.info("당일미수금액 : "+ todayUncollectMoney);
+
+//
+//                        int beforeTotalAmount = 0;
+//                        int beforePayAmount = 0;
+//                        int beforeUncollectMoney = 0;
+//                        int todayTotalAmount = 0;
+//                        int todayPayAmount = 0;
+//                        int todayUncollectMoney = 0;
+//                        if(requestCollectDtoList.size() != 0){
+//                            for(RequestCollectDto requestCollectDto : requestCollectDtoList){
+//                                if(!requestCollectDto.getFrYyyymmdd().equals(nowDate)){
+//                                    beforeTotalAmount = beforeTotalAmount + requestCollectDto.getFrTotalAmount();
+//                                    beforePayAmount = beforePayAmount + requestCollectDto.getFrPayAmount();
+//                                }else{
+//                                    todayTotalAmount = todayTotalAmount + requestCollectDto.getFrTotalAmount();
+//                                    todayPayAmount = todayPayAmount + requestCollectDto.getFrPayAmount();
+//                                }
+//                            }
+//                            beforeUncollectMoney = beforeTotalAmount-beforePayAmount-collectAmt;
+//                            todayUncollectMoney = todayTotalAmount-todayPayAmount;
+//                            data.put("beforeUncollectMoney",beforeUncollectMoney);
+//                            data.put("todayUncollectMoney",todayUncollectMoney);
+//                        }else{
+//                            data.put("beforeUncollectMoney",0);
+//                            data.put("todayUncollectMoney",0);
+//                        }
+//                        log.info("결제후 전일미수금액 : "+beforeUncollectMoney);
+//                        log.info("결제후 당일미수금액 : "+todayUncollectMoney);
 
                         // 적립금을 보낸다. 만약 적립금을 사용하면 사용금액의 따른 적립금을 뺀 가격을 보낸다.
                         Integer resultSaveMoney = findBySaveMoney(optionalCustomer.get());
@@ -675,7 +694,36 @@ public class ReceiptService {
         return customerListData;
     }
 
-
+    // 접속완료 또는 결제완료 후 전일미수금과, 당일 미수금 호출
+    // 고객정보 조회용 적립금, 미수금 호출 함수
+    public List<Integer> findByBeforeAndTodayUnCollect(List<RequestCollectDto> requestCollectDtoList, String nowDate){
+        List<Integer> uncollectMoneyList = new ArrayList<>();
+        int todayTotalAmount = 0;
+        int todayPayAmount = 0;
+        int beforeTotalAmount = 0;
+        int beforePayAmount = 0;
+        int beforeUncollectMoney = 0;
+        int todayUncollectMoney = 0;
+        if(requestCollectDtoList.size() != 0) {
+            for (RequestCollectDto requestCollectDto : requestCollectDtoList) {
+                if (!requestCollectDto.getFrYyyymmdd().equals(nowDate)) {
+                    beforeTotalAmount = beforeTotalAmount + requestCollectDto.getFrTotalAmount();
+                    beforePayAmount = beforePayAmount + requestCollectDto.getFrPayAmount();
+                } else {
+                    todayTotalAmount = todayTotalAmount + requestCollectDto.getFrTotalAmount();
+                    todayPayAmount = todayPayAmount + requestCollectDto.getFrPayAmount();
+                }
+            }
+            beforeUncollectMoney = beforeTotalAmount - beforePayAmount;
+            todayUncollectMoney = todayTotalAmount - todayPayAmount;
+            uncollectMoneyList.add(beforeUncollectMoney);
+            uncollectMoneyList.add(todayUncollectMoney);
+        }else{
+            uncollectMoneyList.add(beforeUncollectMoney);
+            uncollectMoneyList.add(todayUncollectMoney);
+        }
+        return uncollectMoneyList;
+    }
 
 
 
