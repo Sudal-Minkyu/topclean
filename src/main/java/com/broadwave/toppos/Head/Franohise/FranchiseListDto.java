@@ -75,9 +75,8 @@ public class FranchiseListDto {
     }
 
     public StringBuffer getFrContractDt() {
-        StringBuffer getFrContractDt;
-        if(frContractDt != null){
-            getFrContractDt = new StringBuffer(frContractDt);
+        if(!frContractDt.equals("")){
+            StringBuffer getFrContractDt = new StringBuffer(frContractDt);
             getFrContractDt.insert(4,'-');
             getFrContractDt.insert(7,'-');
             return getFrContractDt;
@@ -99,9 +98,8 @@ public class FranchiseListDto {
     }
 
     public StringBuffer getFrContractFromDt() {
-        StringBuffer getFrContractFromDt;
-        if(brContractFromDt != null){
-            getFrContractFromDt = new StringBuffer(brContractFromDt);
+        if(!brContractFromDt.equals("")){
+            StringBuffer getFrContractFromDt = new StringBuffer(brContractFromDt);
             getFrContractFromDt.insert(4,'-');
             getFrContractFromDt.insert(7,'-');
             return getFrContractFromDt;
@@ -111,9 +109,8 @@ public class FranchiseListDto {
     }
 
     public StringBuffer getFrContractToDt() {
-        StringBuffer getFrContractToDtDate;
-        if(frContractToDt != null){
-            getFrContractToDtDate = new StringBuffer(frContractToDt);
+        if(!frContractToDt.equals("")){
+            StringBuffer getFrContractToDtDate = new StringBuffer(frContractToDt);
             getFrContractToDtDate.insert(4,'-');
             getFrContractToDtDate.insert(7,'-');
             return getFrContractToDtDate;

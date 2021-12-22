@@ -270,7 +270,7 @@ public class HeadRestController {
         HashMap<String,Object> branchsetInfo;
 
         List<BranchListDto> branchListDtos = headService.findByBranchList(brName, brCode, brContractState);
-//        log.info("branohListDtos : "+branohListDtos);
+        log.info("branchListDtos : "+branchListDtos);
 
         for (BranchListDto branch: branchListDtos) {
 

@@ -37,9 +37,8 @@ public class BranchListDto {
     }
 
     public StringBuffer getBrContractDt() {
-        StringBuffer getBrContractDt;
-        if(brContractDt != null){
-            getBrContractDt = new StringBuffer(brContractDt);
+        if(!brContractDt.equals("")){
+            StringBuffer getBrContractDt = new StringBuffer(brContractDt);
             getBrContractDt.insert(4,'-');
             getBrContractDt.insert(7,'-');
             return getBrContractDt;
@@ -49,9 +48,8 @@ public class BranchListDto {
     }
 
     public StringBuffer getBrContractFromDt() {
-        StringBuffer getBrContractFromDt;
-        if(brContractFromDt != null){
-            getBrContractFromDt = new StringBuffer(brContractFromDt);
+        if(!brContractFromDt.equals("")){
+            StringBuffer getBrContractFromDt = new StringBuffer(brContractFromDt);
             getBrContractFromDt.insert(4,'-');
             getBrContractFromDt.insert(7,'-');
             return getBrContractFromDt;
@@ -61,9 +59,8 @@ public class BranchListDto {
     }
 
     public StringBuffer getBrContractToDt() {
-        StringBuffer getBrContractToDt;
-        if(brContractToDt != null){
-            getBrContractToDt = new StringBuffer(brContractToDt);
+        if(!brContractToDt.equals("")){
+            StringBuffer getBrContractToDt = new StringBuffer(brContractToDt);
             getBrContractToDt.insert(4,'-');
             getBrContractToDt.insert(7,'-');
             return getBrContractToDt;
