@@ -53,7 +53,7 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
                         request.frNo,
                         request.frYyyymmdd,
                         request.frUncollectYn,
-                        request.frTotalAmount.sum(),
+                        request.frTotalAmount,
                         request.frPayAmount
                 ));
 

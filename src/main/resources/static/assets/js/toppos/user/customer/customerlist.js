@@ -222,10 +222,15 @@ function onModifyCustomer(event) {
         .prop('checked', true);
     $("#bcAgreeType").val(item.bcAgreeType);
     $("#bcRemark").val(item.bcRemark);
-    $("#signImage").attr("src", item.bcSignImage);
+    const $signImage = $("#signImage");
+    if(item.bcSignImage !== null) {
+        $signImage.attr("src", item.bcSignImage);
+        $signImage.show();
+    }else{
+        $signImage.hide();
+    }
 
     $('#showCustomerDetailPop').addClass('active');
-    console.log(item);
 }
 
 /* 전화번호 입력을 위한 유효성 검사 */

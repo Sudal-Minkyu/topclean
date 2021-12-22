@@ -19,8 +19,6 @@ import com.broadwave.toppos.User.ReuqestMoney.Requset.Request;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailSet;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestListDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestUnCollectDto;
-import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoneyListDto;
 import com.broadwave.toppos.User.UserService.ReceiptService;
 import com.broadwave.toppos.User.UserService.UserService;
 import com.broadwave.toppos.common.AjaxResponse;
@@ -179,46 +177,12 @@ public class UserRestController {
         }
 
         if(customerListData.size() != 0) {
-            log.info("미수금 리스트를 받아옵니다.");
-            List<RequestUnCollectDto> requestUnCollectDtoList = receiptService.findByUnCollectList(customerIdList, nowDate);
-            for (HashMap<String, Object> listDatum : customerListData) {
-                for (int j = 0; j < requestUnCollectDtoList.size(); j++) {
-                    if (listDatum.get("bcId").equals(requestUnCollectDtoList.get(j).getBcId())) {
-                        listDatum.put("beforeUncollectMoney", requestUnCollectDtoList.get(j).getUnCollect());
-                        requestUnCollectDtoList.remove(j);
-                        break;
-                    }
-                }
-            }
-
-            log.info("적립금 리스트를 받아옵니다.");
-            List<SaveMoneyListDto> saveMoneyListDtoListType1 = receiptService.findBySaveMoneyList(customerIdList, "1");
-            List<SaveMoneyListDto> saveMoneyListDtoListType2 = receiptService.findBySaveMoneyList(customerIdList, "2");
-            int plusSaveMoney;
-            int minusSaveMoney;
-            int saveMoney;
-            for (HashMap<String, Object> customerListDatum : customerListData) {
-                plusSaveMoney = 0;
-                minusSaveMoney = 0;
-                for (SaveMoneyListDto saveMoneyListDto : saveMoneyListDtoListType1) {
-                    if (customerListDatum.get("bcId").equals(saveMoneyListDto.getBcId())) {
-                        plusSaveMoney = plusSaveMoney + saveMoneyListDto.getFsAmt();
-                        for (int x = 0; x < saveMoneyListDtoListType2.size(); x++) {
-                            if (saveMoneyListDto.getBcId().equals(saveMoneyListDtoListType2.get(x).getBcId())) {
-                                minusSaveMoney = minusSaveMoney + saveMoneyListDtoListType2.get(x).getFsAmt();
-                                saveMoneyListDtoListType2.remove(x);
-                                break;
-                            }
-                        }
-                    }
-                }
-                saveMoney = plusSaveMoney - minusSaveMoney;
-                customerListDatum.put("saveMoney", saveMoney);
-            }
+            List<HashMap<String,Object>> customerListDataGet = receiptService.findByUnCollectAndSaveMoney(customerListData, customerIdList);
+            data.put("gridListData",customerListDataGet);
+        }else{
+            data.put("gridListData",customerListData);
         }
 
-        log.info("가맹점코드 : "+frCode+"의 고객 리스트 : "+customerListData);
-        data.put("gridListData",customerListData);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
@@ -273,48 +237,13 @@ public class UserRestController {
 
             customerListData.add(customerListInfo);
         }
-        log.info("가맹점코드 : "+frCode+"의 고객 리스트 : "+customerListData);
 
-        if(customerListDtos.size() != 0) {
-            log.info("미수금 리스트를 받아옵니다.");
-            List<RequestUnCollectDto> requestUnCollectDtoList = receiptService.findByUnCollectList(customerIdList, nowDate);
-            for (HashMap<String, Object> listDatum : customerListData) {
-                for (int j = 0; j < requestUnCollectDtoList.size(); j++) {
-                    if (listDatum.get("bcId").equals(requestUnCollectDtoList.get(j).getBcId())) {
-                        listDatum.put("beforeUncollectMoney", requestUnCollectDtoList.get(j).getUnCollect());
-                        requestUnCollectDtoList.remove(j);
-                        break;
-                    }
-                }
-            }
-
-            log.info("적립금 리스트를 받아옵니다.");
-            List<SaveMoneyListDto> saveMoneyListDtoListType1 = receiptService.findBySaveMoneyList(customerIdList, "1");
-            List<SaveMoneyListDto> saveMoneyListDtoListType2 = receiptService.findBySaveMoneyList(customerIdList, "2");
-            int plusSaveMoney;
-            int minusSaveMoney;
-            int saveMoney;
-            for (HashMap<String, Object> customerListDatum : customerListData) {
-                plusSaveMoney = 0;
-                minusSaveMoney = 0;
-                for (SaveMoneyListDto saveMoneyListDto : saveMoneyListDtoListType1) {
-                    if (customerListDatum.get("bcId").equals(saveMoneyListDto.getBcId())) {
-                        plusSaveMoney = plusSaveMoney + saveMoneyListDto.getFsAmt();
-                        for (int x = 0; x < saveMoneyListDtoListType2.size(); x++) {
-                            if (saveMoneyListDto.getBcId().equals(saveMoneyListDtoListType2.get(x).getBcId())) {
-                                minusSaveMoney = minusSaveMoney + saveMoneyListDtoListType2.get(x).getFsAmt();
-                                saveMoneyListDtoListType2.remove(x);
-                                break;
-                            }
-                        }
-                    }
-                }
-                saveMoney = plusSaveMoney - minusSaveMoney;
-                customerListDatum.put("saveMoney", saveMoney);
-            }
+        if(customerListData.size() != 0) {
+            List<HashMap<String,Object>> customerListDataGet = receiptService.findByUnCollectAndSaveMoney(customerListData, customerIdList);
+            data.put("gridListData",customerListDataGet);
+        }else{
+            data.put("gridListData",customerListData);
         }
-
-        data.put("gridListData",customerListData);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
@@ -488,22 +417,31 @@ public class UserRestController {
         Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
         String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
 
+        List<Long> customerIdList = new ArrayList<>();
+        List<HashMap<String,Object>> customerListData = new ArrayList<>();
+        HashMap<String,Object> customerListInfo;
+
         // 접수했던 고객의 정보 호출
         Optional<Request> optionalRequest = receiptService.findByRequest(frNo, "N", frCode);
         if(!optionalRequest.isPresent()){
             return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "접수"+ResponseErrorCode.TP009.getDesc(), "문자", "접수 : "+frNo));
         }else{
             // 다시 고객정보 호출해준다.
-            CustomerInfoDto customerInfoDto = new CustomerInfoDto();
-            customerInfoDto.setBcId(optionalRequest.get().getBcId().getBcId());
-            customerInfoDto.setBcHp(optionalRequest.get().getBcId().getBcHp());
-            customerInfoDto.setBcName(optionalRequest.get().getBcId().getBcName());
-            customerInfoDto.setBcAddress(optionalRequest.get().getBcId().getBcAddress());
-            customerInfoDto.setBcGrade(optionalRequest.get().getBcId().getBcGrade());
-            customerInfoDto.setBcValuation(optionalRequest.get().getBcId().getBcValuation());
-            customerInfoDto.setBcRemark(optionalRequest.get().getBcId().getBcRemark());
-            customerInfoDto.setBcLastRequestDt(optionalRequest.get().getBcId().getBcLastRequestDt());
-            data.put("gridListData",customerInfoDto);
+            customerListInfo = new HashMap<>();
+            customerIdList.add(optionalRequest.get().getBcId().getBcId());
+            customerListInfo.put("bcId", optionalRequest.get().getBcId().getBcId());
+            customerListInfo.put("bcName", optionalRequest.get().getBcId().getBcName());
+            customerListInfo.put("bcHp", optionalRequest.get().getBcId().getBcId());
+            customerListInfo.put("bcAddress", optionalRequest.get().getBcId().getBcAddress());
+            customerListInfo.put("bcGrade", optionalRequest.get().getBcId().getBcGrade());
+            customerListInfo.put("bcRemark", optionalRequest.get().getBcId().getBcRemark());
+            customerListInfo.put("bcLastRequestDt", optionalRequest.get().getBcId().getBcLastRequestDt());
+            customerListInfo.put("beforeUncollectMoney", 0);
+            customerListInfo.put("saveMoney", 0);
+            customerListData.add(customerListInfo);
+
+            List<HashMap<String,Object>> customerListDataGet = receiptService.findByUnCollectAndSaveMoney(customerListData, customerIdList);
+            data.put("gridListData",customerListDataGet);
 
             // 임시저장의 접수 세무테이블 리스트 호출
             List<RequestDetailDto> requestDetailList = receiptService.findByRequestTempDetailList(frNo);

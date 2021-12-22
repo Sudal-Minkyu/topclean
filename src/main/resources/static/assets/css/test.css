@@ -864,6 +864,44 @@ textarea {
 	color: #2f73ea;
 }
 
+/* error */
+.error-wrap {
+	flex: 1;
+	position: relative;
+	background-color: #f5f5f5;
+}
+.error {
+	position: absolute;
+	top: 6.25rem;
+	left: 50%;
+	width: 21.25rem;
+	margin-left: -10.625rem;
+	padding: 8.75rem 0 7.5rem 0;
+	background-image: url(/assets/images/icon__mark.svg);
+	background-repeat: no-repeat;
+	-webkit-background-size: 6.25rem 6.25rem;
+	background-size: 6.25rem 6.25rem;
+	background-position: top center;
+}
+.error__heading {
+	color: #000;
+	font-size: 2.875rem;
+	font-weight: 700;
+	text-align: center;
+}
+.error__message {
+	margin-top: 1.875rem;
+	color: #000;
+	font-size: 1.25rem;
+	text-align: center;
+}
+.error .c-button {
+	position: absolute;
+	bottom: 0;
+	left: 50%;
+	margin-left: -5rem;
+}
+
 /* customer 고객등록 */
 .customer {
 	width: 100%;

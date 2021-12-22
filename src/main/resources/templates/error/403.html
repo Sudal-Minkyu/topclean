@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
 	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	  layout:decorate ="~{layout/default}">
+	  layout:decorate ="~{layout/defaulttest}">
 
 <div layout:fragment="content"  class="error-wrap">
 
 	<div class="error" style="position: absolute;top: 80px;">
 		<h2 class="error__heading"><span>403</span>Forbidden</h2>
 		<p class="error__message"><span>권한이없습니다.</span></p>
-		<button onclick=mainPage() class="error__home-btn">Home</button>
+		<button onclick=mainPage() class="c-button c-button--solid c-button--large">메인으로</button>
 	</div>
 
 </div>

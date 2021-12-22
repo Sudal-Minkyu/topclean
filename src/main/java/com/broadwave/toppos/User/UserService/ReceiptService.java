@@ -631,6 +631,71 @@ public class ReceiptService {
     public List<SaveMoneyListDto> findBySaveMoneyList(List<Long> customerIdList, String fsType) {
         return saveMoneyRepositoryCustom.findBySaveMoneyList(customerIdList, fsType);
     }
+
+    // 고객정보 조회용 적립금, 미수금 호출 함수
+    public List<HashMap<String,Object>> findByUnCollectAndSaveMoney(List<HashMap<String, Object>> customerListData, List<Long> customerIdList){
+
+        log.info("미수금 리스트를 받아옵니다.");
+        List<RequestUnCollectDto> requestUnCollectDtoList = findByUnCollectList(customerIdList, nowDate);
+        for (HashMap<String, Object> listDatum : customerListData) {
+            for (int j = 0; j < requestUnCollectDtoList.size(); j++) {
+                if (listDatum.get("bcId").equals(requestUnCollectDtoList.get(j).getBcId())) {
+                    listDatum.put("beforeUncollectMoney", requestUnCollectDtoList.get(j).getUnCollect());
+                    requestUnCollectDtoList.remove(j);
+                    break;
+                }
+            }
+        }
+
+        log.info("적립금 리스트를 받아옵니다.");
+        List<SaveMoneyListDto> saveMoneyListDtoListType1 = findBySaveMoneyList(customerIdList, "1");
+        List<SaveMoneyListDto> saveMoneyListDtoListType2 = findBySaveMoneyList(customerIdList, "2");
+        int plusSaveMoney;
+        int minusSaveMoney;
+        int saveMoney;
+        for (HashMap<String, Object> customerListDatum : customerListData) {
+            plusSaveMoney = 0;
+            minusSaveMoney = 0;
+            for (SaveMoneyListDto saveMoneyListDto : saveMoneyListDtoListType1) {
+                if (customerListDatum.get("bcId").equals(saveMoneyListDto.getBcId())) {
+                    plusSaveMoney = plusSaveMoney + saveMoneyListDto.getFsAmt();
+                    for (int x = 0; x < saveMoneyListDtoListType2.size(); x++) {
+                        if (saveMoneyListDto.getBcId().equals(saveMoneyListDtoListType2.get(x).getBcId())) {
+                            minusSaveMoney = minusSaveMoney + saveMoneyListDtoListType2.get(x).getFsAmt();
+                            saveMoneyListDtoListType2.remove(x);
+                            break;
+                        }
+                    }
+                }
+            }
+            saveMoney = plusSaveMoney - minusSaveMoney;
+            customerListDatum.put("saveMoney", saveMoney);
+        }
+
+        return customerListData;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
 
 
