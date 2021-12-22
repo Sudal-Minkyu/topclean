@@ -287,6 +287,10 @@ public class HeadRestController {
             franohisetInfo.put("frEstimateDuration", franohise.getFrEstimateDuration());
             franohisetInfo.put("frRemark", franohise.getFrRemark());
             franohisetInfo.put("brName", franohise.getBrName());
+            franohisetInfo.put("frBusinessNo", franohise.getFrBusinessNo());
+            franohisetInfo.put("frRpreName", franohise.getFrRpreName());
+            franohisetInfo.put("frTelNo", franohise.getFrTelNo());
+
             franohiseListData.add(franohisetInfo);
 
         }

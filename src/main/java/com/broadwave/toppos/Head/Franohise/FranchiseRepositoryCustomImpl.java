@@ -43,7 +43,11 @@ public class FranchiseRepositoryCustomImpl extends QuerydslRepositorySupport imp
                     franchise.frTagNo,
                     franchise.frEstimateDuration,
                     franchise.frRemark,
-                    branch.brName
+                    branch.brName,
+
+                    franchise.frBusinessNo,
+                    franchise.frRpreName,
+                    franchise.frTelNo
             ));
 
         query.orderBy(franchise.id.desc());

@@ -431,9 +431,10 @@ public class UserRestController {
             customerIdList.add(optionalRequest.get().getBcId().getBcId());
             customerListInfo.put("bcId", optionalRequest.get().getBcId().getBcId());
             customerListInfo.put("bcName", optionalRequest.get().getBcId().getBcName());
-            customerListInfo.put("bcHp", optionalRequest.get().getBcId().getBcId());
+            customerListInfo.put("bcHp", optionalRequest.get().getBcId().getBcHp());
             customerListInfo.put("bcAddress", optionalRequest.get().getBcId().getBcAddress());
             customerListInfo.put("bcGrade", optionalRequest.get().getBcId().getBcGrade());
+            customerListInfo.put("bcValuation", optionalRequest.get().getBcId().getBcValuation());
             customerListInfo.put("bcRemark", optionalRequest.get().getBcId().getBcRemark());
             customerListInfo.put("bcLastRequestDt", optionalRequest.get().getBcId().getBcLastRequestDt());
             customerListInfo.put("beforeUncollectMoney", 0);
