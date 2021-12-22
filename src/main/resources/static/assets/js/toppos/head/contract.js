@@ -320,7 +320,25 @@ function branchSave(){
         AUIGrid.resetUpdatedItems(gridId[0]);
         AUIGrid.clearGridData(gridId[2]);
         setListData(gridCreateUrl[2], 2);
+        createNewPost(0);
         alertSuccess("지사 저장완료");
+    });
+}
+
+function branchDelete() {
+    alertCheck("정말 삭제하시겠습니까?");
+    $("#checkDelSuccessBtn").on("click", function () {
+        const selectedItems = AUIGrid.getSelectedItems(gridId[0]);
+        if(selectedItems.length) {
+            const url = "/api/head/branchDelete";
+            const data = {
+                brCode: selectedItems[0].item.brCode
+            }
+            CommonUI.ajaxjsonPost(url, data, function () {
+                createNewPost(0);
+            });
+        }
+        $('#popupId').remove();
     });
 }
 
@@ -356,7 +374,26 @@ function franchiseSave() {
         AUIGrid.clearGridData(gridId[3]);
         setListData(gridCreateUrl[3], 3);
         alertSuccess("가맹점 저장완료");
-        filterFranchiseList(2);
+        AUIGrid.clearGridData(gridId[1]);
+        setListData(gridCreateUrl[1], 1);
+        createNewPost(1);
+    });
+}
+
+function franchiseDelete() {
+    alertCheck("정말 삭제하시겠습니까?");
+    $("#checkDelSuccessBtn").on("click", function () {
+        const selectedItems = AUIGrid.getSelectedItems(gridId[1]);
+        if(selectedItems.length) {
+            const url = "/api/head/franchiseDelete";
+            const data = {
+                frCode: selectedItems[0].item.frCode
+            }
+            CommonUI.ajaxjsonPost(url, data, function () {
+                createNewPost(1);
+            });
+        }
+        $('#popupId').remove();
     });
 }
 

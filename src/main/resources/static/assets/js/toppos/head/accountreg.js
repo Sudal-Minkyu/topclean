@@ -13,12 +13,12 @@ $(function() {
 
     AUIGrid.bind(gridId[1], "cellDoubleClick", function (e) {
         $("#brCode").val(e.item.brCode);
-        $('#branch_popup').removeClass('open');
+        branchClose();
     });
 
     AUIGrid.bind(gridId[2], "cellDoubleClick", function (e) {
         $("#frCode").val(e.item.frCode);
-        $('#franchise_popup').removeClass('open');
+        franchiseClose();
     });
 
     /* 권한을 바꿀 때 가맹점 코드나, 지사 코드를 선택 가능, 불가능으로 바꾸어 준다. */
@@ -329,6 +329,16 @@ function accountSave(){
         return false;
     }
     */
+    if($("#username").val() === "") {
+        alertCaution("이름을 입력 해주세요.",1);
+        return false;
+    }
+
+    if($("#usertel").val() === "") {
+        alertCaution("전화번호를 입력 해주세요.",1);
+        return false;
+    }
+
 
     const userRole = $("#role").val();
     if(userRole === "") {
@@ -352,6 +362,7 @@ function accountSave(){
     CommonUI.ajax(url, "POST", formData, function (req){
         /* 저장작업을 하면 사용자 리스트를 리로드 한다. */
         accountList();
+        createNewPost(0);
         alertSuccess("사용자 저장완료");
     });
 }
@@ -366,7 +377,7 @@ function accountRemove() {
             }
         }
         CommonUI.ajaxjsonPost("/api/head/accountDelete", targetUser, function() {
-
+            createNewPost(0);
         });
         $('#popupId').remove();
     });
@@ -469,7 +480,7 @@ function filterAccountList(type) {
         case 1 :
             AUIGrid.clearFilterAll(gridId[0]);
             const s_userid = $("#s_userid").val();
-            const s_username = $("#s_username");
+            const s_username = $("#s_username").val();
             const s_role = $("#s_role").val();
             const s_frCode = $("#s_frCode").val();
             const s_brCode = $("#s_brCode").val();
