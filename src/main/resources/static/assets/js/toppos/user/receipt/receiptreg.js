@@ -219,7 +219,7 @@ const fsRequestDtl = {
     fdRetryYn: "N",
     fdRemark: "",
     frEstimateDate: "",
-    images: [],
+    photoList: [],
 }
 
 // fsRequestDtl 객체를 깊은 복사하기위함.
@@ -316,8 +316,8 @@ gridColumnLayout[0] = [
         renderer : {
             type: "IconRenderer",
             iconPosition: "aisle",
-            iconWidth : 24,
-            iconHeight : 20,
+            iconWidth : 28,
+            iconHeight : 24,
             iconTableRef: {
                 "default" : "/assets/images/icon__camera.svg",
             },
@@ -948,7 +948,7 @@ function onTakePicture() {
             </div>
         `;
         $("#photoList").append(aPictureSet);
-        currentRequest.images.push({
+        currentRequest.photoList.push({
             ffPath: req.sendData.ffPath,
             ffFilename: req.sendData.ffFilename,
             ffRemark: ffRemark,
@@ -1065,7 +1065,7 @@ function onAddOrder() {
             fdRemark: currentRequest.fdRemark,
             frEstimateDate: currentRequest.frEstimateDate,
             sumName: "",
-            images: currentRequest.images,
+            photoList: currentRequest.photoList,
         }
 
         AUIGrid.updateRowsById(gridId[0], copyObj);
