@@ -28,9 +28,6 @@ public class AWSS3Service {
     @Value("${toppos.aws.s3.bucket}")
     private String AWSBUCKET;
 
-    @Value("${toppos.aws.s3.bucket.url}")
-    private String AWSBUCKETURL;
-
     private final AmazonS3 s3Client;
 
     @Autowired
@@ -68,7 +65,7 @@ public class AWSS3Service {
             // Copy file to the target location (Replacing existing file with the same name)
             s3Client.putObject(new PutObjectRequest(awsFilePath, "s_"+storedFileName, destImgInputStream, s_omd));
 
-            return AWSBUCKETURL+uploadPath+"/s_"+storedFileName;
+            return storedFileName;
 
         }else{
             return null;

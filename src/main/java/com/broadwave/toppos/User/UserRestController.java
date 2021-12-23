@@ -28,6 +28,7 @@ import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -50,6 +51,9 @@ import java.util.*;
 @RestController
 @RequestMapping("/api/user") //  ( 권한 : 가맹점 )
 public class UserRestController {
+
+    @Value("${toppos.aws.s3.bucket.url}")
+    private String AWSBUCKETURL;
 
     // 현재 날짜 받아오기
     LocalDateTime localDateTime = LocalDateTime.now();
@@ -500,9 +504,9 @@ public class UserRestController {
 //            log.info("filePath : "+filePath);
             String storedFileName = genId + ".png";
 //            log.info("storedFileName : "+storedFileName);
-            String aws_firle_url = awss3Service.uploadObject(mFile, storedFileName, filePath);
-//            log.info("aws_firle_url : "+aws_firle_url);
-            data.put("fileUrl",aws_firle_url);
+            String ffFilename = awss3Service.uploadObject(mFile, storedFileName, filePath);
+            data.put("ffPath",AWSBUCKETURL+filePath+"/");
+            data.put("ffFilename",ffFilename);
         }else{
             log.info("사진파일을 못불러왔습니다.");
         }
