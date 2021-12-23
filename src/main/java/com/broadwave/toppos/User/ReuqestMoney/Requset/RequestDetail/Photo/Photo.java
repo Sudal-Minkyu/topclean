@@ -39,8 +39,14 @@ public class Photo {
     @JoinColumn(name="fi_id")
     private Inspeot fiId; // 검품세부테이블 ID
 
-    @Column(length = 100000, name="ff_image")
-    private String ffImage; // 사진이미지
+    @Column(name="ff_path")
+    private String ffPath; // S3파일경로
+
+    @Column(name="ff_filename")
+    private String ffFilename; // S3파일명
+
+    @Column(name="ff_remark")
+    private String ffRemark; // 특이사항
 
     @Column(name="insert_id")
     private String insert_id;
