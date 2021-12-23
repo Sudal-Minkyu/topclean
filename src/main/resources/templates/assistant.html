@@ -6,6 +6,7 @@
 
 <!-- 사용자 CSS 추가 -->
 <th:block layout:fragment="css">
+	<link rel="stylesheet" href="/assets/js/bxslider/jquery.bxslider.min.css" />
 	<style>
 		.ad {
 			display: block;
@@ -20,6 +21,40 @@
 		}
 		.ad__video video {
 			height: 100vh;
+		}
+		
+		.ad__slider {
+			width: 100vw;
+			height: 100vh;
+			padding: 0;
+		}
+		.bx-wrapper {
+			border: 0 none;
+		}
+		.add__slider-item {
+			width: 100%;
+			height: 100%;
+			background-repeat: no-repeat;
+			-webkit-background-size: cover;
+			background-size: cover;
+			background-position: center center;
+		}
+		.add__slider-item.slide1 {
+			background-image: url(/assets/images/dummy/slice1.png);
+		}
+		.add__slider-item.slide2 {
+			background-image: url(/assets/images/dummy/slice2.png);
+		}
+		.add__slider-item.slide3 {
+			background-image: url(/assets/images/dummy/slice3.png);
+		}
+		.ad__dim {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background-color: rgba(0, 0, 0, .4);
 		}
 		.ad__text {
 			position: absolute;
@@ -44,16 +79,36 @@
 		.ad__text h2 {
 			font-size: 3rem;
 		}
+		
+		.ad__youtube {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 1024px;
+			height: 768px;
+		}
+		.ad__youtube iframe {
+			width: 100%;
+			height: 100%;
+		}
 	</style>
 	
 </th:block>
 
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
+	<script src="/assets/js/bxslider/jquery.bxslider.min.js"></script>
     <script type="text/javascript">
 
         $(function() {
-
+        	$('.ad__slider').bxSlider({
+        		infiniteLoop: true,
+        		touchEnabled: false,
+        		pager: false,
+        		controls: false,
+        		auto: true,
+        		pause: 4000
+        	});
         });
 
     </script>
@@ -61,17 +116,50 @@
 
 <div layout:fragment="content" class="content content--padding">
 	<div class="ad">
+		<!-- 
 		<div class="ad__video">
 			<video autoplay loop muted>
 				<source src="/assets/images/dummy/video.mp4"></source>
 				<source src="/assets/images/dummy/video.ogg"></source>
 			</video>
 		</div>
+		 -->
+		 <div class="ad__slider">
+		 	<div class="add__slider-item slide1">
+		 		<div class="ad__dim">
+			 		<div class="ad__text">
+						<h1><img src="/assets/images/logo__megashop--w.svg" alt="탑 크리닝업 메가샵" /></h1>
+						<h2>소프트워시 웨트 크리닝</h2>
+						<p>의류의 형태와 원색을 보존하여<br />관리가 어려운 명품 의류도<br />최상의 상태로 유지시켜줍니다.</p>
+					</div>
+		 		</div>
+		 	</div>
+		 	<div class="add__slider-item slide3">
+		 		<div class="ad__dim">
+			 		<div class="ad__text">
+						<h1><img src="/assets/images/logo__megashop--w.svg" alt="탑 크리닝업 메가샵" /></h1>
+						<h2>무인세탁함</h2>
+						<p>365일 24시간<br />우리동네 무인세탁함</p>
+					</div>
+		 		</div>
+		 	</div>
+		 	<div class="add__slider-item slide2"></div>
+		 </div>
+		 
+		 <!-- 
+		 <div class="ad__youtube">
+		 	<iframe src="https://www.youtube.com/embed/ofM1iv6uc5w?rel0&amp;autoplay=1&mute=1&amp&controls=0;loop=1;playlist=ofM1iv6uc5w" frameborder="0" ></iframe>
+		 </div>
+		 
+		  -->
+		 
+		 <!-- 
 		<div class="ad__text">
 			<h1><img src="/assets/images/logo__megashop--w.svg" alt="탑 크리닝업 메가샵" /></h1>
 			<h2>세탁의 모든 것!</h2>
 			<p>언제, 어디서나, 깨끗하게</p>
 		</div>
+		 -->
 	</div>
     
 </div>
