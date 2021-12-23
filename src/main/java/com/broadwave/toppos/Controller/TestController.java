@@ -44,4 +44,11 @@ public class TestController {
     public String jktest2(){
         return "test/jktest2";
     }
+
+    // 민규 테스트페이지
+    @RequestMapping("phototest")
+    public String phototest(){
+        return "test/phototest";
+    }
+
 }

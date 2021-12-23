@@ -897,6 +897,7 @@ async function onChangeCamera(deviceId) {
 
 
 function onTakePicture() {
+    console.log("시작")
     const video = document.getElementById("cameraScreen");
     const canvas = document.getElementById('cameraCanvas');
     canvas.width = video.videoWidth;
@@ -912,8 +913,8 @@ function onTakePicture() {
     formData.append("source", blob);
     console.log(Object.fromEntries(formData));
 
-    CommonUI.ajax("/api/", "POST", formData, function (req) {
-
+    CommonUI.ajax("/api/test/photoTest", "POST", formData, function (req) {
+        console.log("성공")
     });
 }
 

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/defaulthead}" xmlns="http://www.w3.org/1999/html">
+
+<!-- 사용자 CSS 추가 -->
+<th:block layout:fragment="css">
+
+</th:block>
+
+<!-- 사용자 스크립트 추가 -->
+<th:block layout:fragment="script">
+    <script>
+        function photoTest(){
+            console.log("사진전송 테스트 시작");
+
+            const fileForm = new FormData(document.getElementById('fileForm'));
+
+            const blob = b64toBlob(b64Data, contentType);
+
+            $(document).ajaxSend(function (e, xhr) {
+                xhr.setRequestHeader("Authorization", localStorage.getItem('Authorization'));
+            });
+
+            $.ajax({
+                url: "/api/test/photoTest",
+                type : 'post',
+                data : fileForm,
+                processData : false,
+                contentType : false,
+                enctype: 'multipart/form-data',
+                cache:false,
+                error: function (req) {
+                    ajaxErrorMsg(req);
+                },
+                success: function (req) {
+                    console.log("사진전송 테스트 성공");
+                }
+            })
+
+
+        }
+    </script>
+</th:block>
+
+<div layout:fragment="content" class="content content--padding">
+    <h2 class="content__heading">사진 테스트</h2>
+    <form id="fileForm" enctype="multipart/form-data">
+        <input type="file" name="file" />
+        <input type="button" onclick="photoTest()" value="전송" />
+    </form>
+</div>
+</html>

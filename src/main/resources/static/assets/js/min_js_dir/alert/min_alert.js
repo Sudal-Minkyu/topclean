@@ -46,7 +46,7 @@ function ajaxErrorMsg(req) {
     }else if(req.status ===500){
         $('.l-popup').removeClass('open');
         console.log("500 데이터에러");
-        alertCaution("다시 시도해주세요. 사용할 수 없는 데이터입니다.", 1);
+        alertCaution("사용할 수 없는 데이터입니다.<br>다시 시도해주세요.", 1);
     }else if(req.status ===405){
         $('.l-popup').removeClass('open');
         console.log("405 데이터에러");
@@ -99,13 +99,12 @@ function alertCancel(text) { //에러창(로그인만료),오류
 }
 
 function alertCaution(text,type) { //경고창
-    let cau = "!";
     let html = '';
 
     html +='<div id="popupId" class="popup popup--dim">';
         html +='<div class="popup__box">';
             html +='<div class="popup__content">';
-                html +='<div class="popup__stat caution">'+cau+'</div>';
+                html +='<div class="popup__stat caution"></div>';
                 html +='<div class="popup__text">'+text+'</div>';
             html +='</div>';
             html +='<div class="popup__buttons">';

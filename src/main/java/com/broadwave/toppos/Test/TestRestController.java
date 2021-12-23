@@ -7,13 +7,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Minkyu
@@ -63,7 +64,25 @@ public class TestRestController {
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
+    // 사진테스트 api
+    @PostMapping("photoTest")
+    public ResponseEntity<Map<String,Object>> photoTest(MultipartHttpServletRequest multi){
 
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        log.info("테스트 준비완료");
+
+        //파일저장
+        Iterator<String> files = multi.getFileNames();
+        log.info("files : "+files);
+        String uploadFile = files.next();
+        log.info("uploadFile : "+uploadFile);
+        MultipartFile mFile = multi.getFile(uploadFile);
+        log.info("mFile : "+mFile);
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
 
 
 
