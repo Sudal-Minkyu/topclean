@@ -265,12 +265,12 @@ gridTargetDiv = [
 /* 그리드를 받아올 때 쓰이는 api, 이번엔 예외적으로 배열 2번째 값은 첫번째 그리드에서 쓰인다.*/
 gridCreateUrl = [
     "/api/user/tempRequestDetailList", "/api/user/tempRequestDetailDelete", "/api/user/tempRequestList", "/api/user/"
-]
+];
 
 /* 그리드를 저장할 때 쓰이는 api 배열 */
 gridSaveUrl = [
     "/api/user/requestSave", "/api/b"
-]
+];
 
 /* 0번 그리드의 레이아웃 */
 gridColumnLayout[0] = [
@@ -304,7 +304,17 @@ gridColumnLayout[0] = [
             }
             return item.sumName;
         },
-        style: "receiptreg-product-name"
+        style: "receiptreg-product-name",
+        renderer : {
+            type: "IconRenderer",
+            iconPosition: "aisle",
+            iconTableRef: {
+                "default" : "/assets/images/icon__calendar--b.svg",
+            },
+            onClick: function(event) {
+                onPopTakePicture(event);
+            },
+        }
     }, {
         dataField: "sumProcess",
         headerText: "처리내용",
@@ -840,7 +850,7 @@ function calculateMainPrice() {
 
 
 /* 웹 카메라와 촬영 작업중 */
-async function onPopTakePicture() {
+async function onPopTakePicture(event) {
 
     // const cameraList = document.getElementById("cameraList"); 복수 카메라를 사용할 경우 해제하여 작업
     const stream = await navigator.mediaDevices.getUserMedia({audio: false,
@@ -870,6 +880,7 @@ async function onPopTakePicture() {
     */
     const screen = document.getElementById("cameraScreen");
     screen.srcObject = stream;
+    $("#cameraPop").addClass("active");
 }
 
 /* 복수 카메라를 사용할 경우 해제하여 작업
@@ -892,18 +903,30 @@ function onTakePicture() {
     canvas.height = video.videoHeight;
     const context = canvas.getContext('2d');
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
-    const takenPic = canvas.toDataURL('image/jpeg', 1.0);
-    const file = dataURLtoFile(takenPic,'camera.jpg');
+    const takenPic = canvas.toDataURL('image/jpeg', 0.7);
+    //const file = dataURLtoFile(takenPic,'camera.jpg');
 
-    const data = {
-        file : file,
-    }
-    console.log(data);
-    /*
-    CommonUI.ajaxjson("/api/user/", data, function(){
+    const blob = b64toBlob(takenPic);
+
+    const formData = new FormData();
+    formData.append("source", blob);
+    console.log(Object.fromEntries(formData));
+
+    CommonUI.ajax("/api/", "POST", formData, function (req) {
 
     });
-    */
+}
+
+function b64toBlob(dataURI) {
+
+    const byteString = atob(dataURI.split(',')[1]);
+    const ab = new ArrayBuffer(byteString.length);
+    const ia = new Uint8Array(ab);
+
+    for (let i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+    }
+    return new Blob([ab], { type: 'image/jpeg' });
 }
 
 function dataURLtoFile(dataurl, filename) {

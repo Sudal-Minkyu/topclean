@@ -666,9 +666,86 @@
         </div>
     </div>
 
-
-
     <!-- 카메라 팝업 -->
+    <div class="pop" id="cameraPop">
+        <div class="pop__box">
+            <div class="photo">
+                <div class="photo__article">
+                    <div class="photo__haed">
+                        <h4>카메라</h4>
+                    </div>
+                    <div class="photo__content">
+                        <div class="photo__take">
+                            <!-- 캠 영상 들어갈 곳 -->
+                            <video id="cameraScreen" playsinline autoplay></video>
+                        </div>
+                        <div class="photo__add">
+                            <div class="photo__add-item">
+                                <div class="photo__add-title">특이사항</div>
+                                <div class="photo__add-console">
+                                    <div class="c-text">
+                                        <input type="text" />
+                                        <button>키보드</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="photo__add-item">
+                                <div class="photo__add-title">상용구</div>
+                                <div class="photo__add-console">
+                                    <div class="photo__btns">
+                                        <button class="c-button c-button--small">구멍</button>
+                                        <button class="c-button c-button--small">찢어짐</button>
+                                        <button class="c-button c-button--small">얼룩</button>
+                                        <button class="c-button c-button--small c-button--solid" onclick="onTakePicture()">촬영</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="photo__article">
+                    <div class="photo__haed">
+                        <h4>촬영된 사진</h4>
+                    </div>
+                    <div class="photo__list">
+                        <div class="photo__picture">
+                            <div class="photo__picture-head">
+                                <h5 class="photo__picture-title">구멍</h5>
+                                <button class="photo__picture-delete">삭제</button>
+                            </div>
+                            <div class="photo__picture-item">
+                                <a href="/assets/images/dummy/cam.png" class="photo__img" data-lightbox="images" data-title="구멍">
+                                    <canvas id="cameraCanvas"></canvas>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="photo__picture">
+                            <div class="photo__picture-head">
+                                <h5 class="photo__picture-title">얼룩</h5>
+                                <button class="photo__picture-delete">삭제</button>
+                            </div>
+                            <div class="photo__picture-item">
+                                <a href="/assets/images/dummy/cam.png" class="photo__img" data-lightbox="images" data-title="얼룩">
+                                    <img src="/assets/images/dummy/cam.png" alt="" />
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <ul class="pop__console pop__console--center">
+                        <li><button class="c-button pop__close">닫기</button></li>
+                    </ul>
+                </div>
+            </div>
+
+
+
+        </div>
+    </div>
+
+<!--
+
+    &lt;!&ndash; 카메라 팝업 &ndash;&gt;
     <div class="pop">
         <div>
             카메라
@@ -676,10 +753,10 @@
             사진클릭시 크게보기기능
         </div>
 
-        <!-- 카메라 컨트롤 -->
+        &lt;!&ndash; 카메라 컨트롤 &ndash;&gt;
 
-        <!-- 복수 카메라중 선택하여 촬영할 경우 해제하여 작업 -->
-        <!--<select id="cameraList" onchange="onChangeCamera(this.value)"></select>-->
+        &lt;!&ndash; 복수 카메라중 선택하여 촬영할 경우 해제하여 작업 &ndash;&gt;
+        &lt;!&ndash;<select id="cameraList" onchange="onChangeCamera(this.value)"></select>&ndash;&gt;
         <video id="cameraScreen" playsinline autoplay></video>
         <canvas id="cameraCanvas"></canvas>
 
@@ -705,6 +782,7 @@
             <button type="" onclick="">삭제</button>
         </div>
     </div>
+-->
 
 
     <!-- 임시저장 조회창 -->
