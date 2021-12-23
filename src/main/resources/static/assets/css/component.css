@@ -603,6 +603,18 @@ input[type="number"]::-webkit-inner-spin-button {
 .c-tabs__content-body.c-tabs__content-body--flex .c-tabs__inner + .c-tabs__inner {
 	margin-left: 2.5rem;
 }
+.c-tabs__body-console {
+	display: flex;
+	flex-wrap: wrap;
+	width: 100%;
+	margin-bottom: 1.25rem;
+}
+.c-tabs__body-console.c-tabs__body-console--right {
+	justify-content: flex-end;
+}
+.c-tabs__body-console .c-button + .c-button {
+	margin-left: 1.25rem;
+}
 .c-tabs__elevator {
 	display: flex;
 	justify-content: flex-end;
