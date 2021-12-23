@@ -912,7 +912,7 @@ function onTakePicture() {
     canvas.height = video.videoHeight;
     const context = canvas.getContext('2d');
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
-    const takenPic = canvas.toDataURL('image/jpeg', 0.7);
+    const takenPic = canvas.toDataURL('image/jpeg', 1.0);
 
     const blob = b64toBlob(takenPic);
 
@@ -972,7 +972,7 @@ function dataURLtoFile(dataurl, filename) {
         n = bstr.length,
         u8arr = new Uint8Array(n);
 
-    while(n--){
+    while(n--) {
         u8arr[n] = bstr.charCodeAt(n);
     }
 

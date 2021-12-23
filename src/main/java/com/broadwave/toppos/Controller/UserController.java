@@ -69,4 +69,10 @@ public class UserController {
         return "user/inspect";
     }
 
+    // 상품 순서 관리 - 상품 분류
+    @RequestMapping("itemsort")
+    public String itemsort(){
+        return "user/receipt/itemsort";
+    }
+
 }
