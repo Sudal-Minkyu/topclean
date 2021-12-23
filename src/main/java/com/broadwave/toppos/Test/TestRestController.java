@@ -1,5 +1,6 @@
 package com.broadwave.toppos.Test;
 
+import com.broadwave.toppos.Aws.AWSS3Service;
 import com.broadwave.toppos.Test.Girdtest.GridTestDto;
 import com.broadwave.toppos.Test.Girdtest.GridTestRepositoryCustom;
 import com.broadwave.toppos.common.AjaxResponse;
@@ -12,8 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
-import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -27,11 +29,13 @@ import java.util.*;
 @RequestMapping("/api/test")
 public class TestRestController {
 
+    private final AWSS3Service awss3Service;
     private final GridTestRepositoryCustom gridTestRepositoryCustom;
 
     @Autowired
-    public TestRestController(GridTestRepositoryCustom gridTestRepositoryCustom) {
+    public TestRestController(GridTestRepositoryCustom gridTestRepositoryCustom, AWSS3Service awss3Service) {
         this.gridTestRepositoryCustom = gridTestRepositoryCustom;
+        this.awss3Service = awss3Service;
     }
 
     // 그리드 리스트 호출 테스트
@@ -66,7 +70,7 @@ public class TestRestController {
 
     // 사진테스트 api
     @PostMapping("photoTest")
-    public ResponseEntity<Map<String,Object>> photoTest(MultipartHttpServletRequest multi){
+    public ResponseEntity<Map<String,Object>> photoTest(MultipartHttpServletRequest multi) throws IOException {
 
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
@@ -75,16 +79,41 @@ public class TestRestController {
 
         //파일저장
         Iterator<String> files = multi.getFileNames();
-        log.info("files : "+files);
         String uploadFile = files.next();
-        log.info("uploadFile : "+uploadFile);
         MultipartFile mFile = multi.getFile(uploadFile);
         log.info("mFile : "+mFile);
+
+        assert mFile != null;
+        if(!mFile.isEmpty()) {
+            // 파일 중복명 처리
+            String genId = UUID.randomUUID().toString().replace("-", "");;
+            log.info("genId : "+genId);
+
+            // S3에 저장 할 파일주소
+            SimpleDateFormat date = new SimpleDateFormat("yyyyMMdd");
+            String filePath = "/toppos-franchise/" + date.format(new Date());
+            log.info("filePath : "+filePath);
+            String storedFileName = genId + ".png";
+            log.info("storedFileName : "+storedFileName);
+            String aws_firle_url = awss3Service.uploadObject(mFile, storedFileName, filePath);
+            log.info("aws_firle_url : "+aws_firle_url);
+            data.put("fileUrl",aws_firle_url);
+        }else{
+            log.info("사진파일을 못불러왔습니다.");
+        }
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
-
+//    private String getExtension(String fileName) {
+//        int dotPosition = fileName.lastIndexOf('.');
+//
+//        if (-1 != dotPosition && fileName.length() - 1 > dotPosition) {
+//            return fileName.substring(dotPosition + 1);
+//        } else {
+//            return "";
+//        }
+//    }
 
 
 

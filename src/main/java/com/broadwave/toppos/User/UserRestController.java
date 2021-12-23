@@ -1,5 +1,6 @@
 package com.broadwave.toppos.User;
 
+import com.broadwave.toppos.Aws.AWSS3Service;
 import com.broadwave.toppos.Head.AddCost.AddCostDto;
 import com.broadwave.toppos.Head.Addprocess.AddprocessDto;
 import com.broadwave.toppos.Head.Franohise.FranchisInfoDto;
@@ -29,8 +30,11 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -51,6 +55,7 @@ public class UserRestController {
     LocalDateTime localDateTime = LocalDateTime.now();
     private final  String nowDate = localDateTime.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 
+    private final AWSS3Service awss3Service; // AWS S3 서비스
     private final UserService userService; // 가맹점 통합 서비스
     private final ReceiptService receiptService; // 가맹점 접수페이지 전용 서비스
     private final ModelMapper modelMapper;
@@ -59,7 +64,8 @@ public class UserRestController {
     private final ManagerService managerService;
 
     @Autowired
-    public UserRestController(UserService userService, ReceiptService receiptService, TokenProvider tokenProvider, ModelMapper modelMapper, HeadService headService, ManagerService managerService) {
+    public UserRestController(AWSS3Service awss3Service, UserService userService, ReceiptService receiptService, TokenProvider tokenProvider, ModelMapper modelMapper, HeadService headService, ManagerService managerService) {
+        this.awss3Service = awss3Service;
         this.userService = userService;
         this.receiptService = receiptService;
         this.modelMapper = modelMapper;
@@ -466,5 +472,43 @@ public class UserRestController {
         log.info("requestPayment 호출");
         return receiptService.requestPayment(paymentSet, request);
     }
+
+
+
+    // 사진촬영 API
+    @PostMapping("takePicture")
+    public ResponseEntity<Map<String,Object>> takePicture(MultipartHttpServletRequest multi) throws IOException {
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        //파일저장
+        Iterator<String> files = multi.getFileNames();
+        String uploadFile = files.next();
+        MultipartFile mFile = multi.getFile(uploadFile);
+//        log.info("mFile : "+mFile);
+
+        assert mFile != null;
+        if(!mFile.isEmpty()) {
+            // 파일 중복명 처리
+            String genId = UUID.randomUUID().toString().replace("-", "");;
+//            log.info("genId : "+genId);
+
+            // S3에 저장 할 파일주소
+            SimpleDateFormat date = new SimpleDateFormat("yyyyMMdd");
+            String filePath = "/toppos-franchise/" + date.format(new Date());
+//            log.info("filePath : "+filePath);
+            String storedFileName = genId + ".png";
+//            log.info("storedFileName : "+storedFileName);
+            String aws_firle_url = awss3Service.uploadObject(mFile, storedFileName, filePath);
+//            log.info("aws_firle_url : "+aws_firle_url);
+            data.put("fileUrl",aws_firle_url);
+        }else{
+            log.info("사진파일을 못불러왔습니다.");
+        }
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
 
 }
