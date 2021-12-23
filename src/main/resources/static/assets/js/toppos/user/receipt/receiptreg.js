@@ -161,6 +161,12 @@ $(function() {
         $payTabsContent.eq(idx).addClass('active');
         setReceiveAmtToTotalAmt();
     });
+
+    // lightbox option
+    lightbox.option({
+        'maxWidth': 1100,
+        'positionFromTop': 190
+    });
 });
 
 let checkNum = "1";
@@ -213,6 +219,7 @@ const fsRequestDtl = {
     fdRetryYn: "N",
     fdRemark: "",
     frEstimateDate: "",
+    images: [],
 }
 
 // fsRequestDtl 객체를 깊은 복사하기위함.
@@ -309,8 +316,10 @@ gridColumnLayout[0] = [
         renderer : {
             type: "IconRenderer",
             iconPosition: "aisle",
+            iconWidth : 24,
+            iconHeight : 20,
             iconTableRef: {
-                "default" : "/assets/images/icon__calendar--b.svg",
+                "default" : "/assets/images/icon__camera.svg",
             },
             onClick: function(event) {
                 onPopTakePicture(event);
@@ -855,7 +864,7 @@ let cameraStream;
 
 /* 웹 카메라와 촬영 작업중 */
 async function onPopTakePicture(event) {
-
+    currentRequest = event.item;
     // const cameraList = document.getElementById("cameraList"); 복수 카메라를 사용할 경우 해제하여 작업
     cameraStream = await navigator.mediaDevices.getUserMedia({audio: false,
         video: {
@@ -921,27 +930,35 @@ function onTakePicture() {
     formData.append("ffRemark", $("#ffRemark").val());
     console.log(Object.fromEntries(formData));
 
-    /*
-    CommonUI.ajax("/api/test/photoTest", "POST", formData, function (req) {
-        console.log(req);
-        /!*
+    CommonUI.ajax("/api/user/takePicture", "POST", formData, function (req) {
+        const ffRemark = $("#ffRemark").val();
+        const fullImage = req.sendData.ffPath + req.sendData.ffFilename;
+        const thumbnailImage = req.sendData.ffPath + "s_" + req.sendData.ffFilename;
         const aPictureSet = `
             <div class="photo__picture">
                 <div class="photo__picture-head">
-                    <h5 class="photo__picture-title">${req.ffRemark}</h5>
-                    <button class="photo__picture-delete">삭제</button>
+                    <h5 class="photo__picture-title">${ffRemark}</h5>
+                    <button class="photo__picture-delete" data-image="${fullImage}" onclick="onRemovePicture(this.getAttribute('data-image'))">삭제</button>
                 </div>
                 <div class="photo__picture-item">
-                    <a href="${req.thumbNailURL}" class="photo__img" data-lightbox="images" data-title="${req.ffRemark}">
-                        <img src="${req.imageURL}" alt="" />
+                    <a href="${fullImage}" class="photo__img" data-lightbox="images" data-title="${ffRemark}">
+                        <img src="${thumbnailImage}" alt="" />
                     </a>
                 </div>
             </div>
         `;
         $("#photoList").append(aPictureSet);
-        *!/
+        currentRequest.images.push({
+            ffPath: req.sendData.ffPath,
+            ffFilename: req.sendData.ffFilename,
+            ffRemark: ffRemark,
+        });
+        AUIGrid.updateRowsById(gridId[0], currentRequest);
     });
-    */
+}
+
+function onRemovePicture(imageLocation) {
+    console.log(imageLocation);
 }
 
 function onCloseTakePicture() {
@@ -1048,6 +1065,7 @@ function onAddOrder() {
             fdRemark: currentRequest.fdRemark,
             frEstimateDate: currentRequest.frEstimateDate,
             sumName: "",
+            images: currentRequest.images,
         }
 
         AUIGrid.updateRowsById(gridId[0], copyObj);

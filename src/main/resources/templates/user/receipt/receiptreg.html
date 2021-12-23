@@ -17,12 +17,16 @@
             text-align: center;
         }
     </style>
+    <!-- lightbox 추가 -->
+    <link rel="stylesheet" href="/assets/js/lightbox2/css/lightbox.min.css" />
 </th:block>
 
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
     <script src="/assets/js/toppos/user/receipt/receiptreg.js"></script>
     <script src="/assets/js/toppos/CATPayment.js"></script>
+    <!-- lightbox 추가 -->
+    <script src="/assets/js/lightbox2/js/lightbox.js"></script>
 </th:block>
 <div layout:fragment="content">
 
@@ -710,28 +714,7 @@
                         <h4>촬영된 사진</h4>
                     </div>
                     <div id="photoList" class="photo__list">
-                        <div class="photo__picture">
-                            <div class="photo__picture-head">
-                                <h5 class="photo__picture-title">구멍</h5>
-                                <button class="photo__picture-delete">삭제</button>
-                            </div>
-                            <div class="photo__picture-item">
-                                <a href="/assets/images/dummy/cam.png" class="photo__img" data-lightbox="images" data-title="구멍">
-                                    <img src="/assets/images/dummy/cam.png" alt="" />
-                                </a>
-                            </div>
-                        </div>
-                        <div class="photo__picture">
-                            <div class="photo__picture-head">
-                                <h5 class="photo__picture-title">얼룩</h5>
-                                <button class="photo__picture-delete">삭제</button>
-                            </div>
-                            <div class="photo__picture-item">
-                                <a href="/assets/images/dummy/cam.png" class="photo__img" data-lightbox="images" data-title="얼룩">
-                                    <img src="/assets/images/dummy/cam.png" alt="" />
-                                </a>
-                            </div>
-                        </div>
+                        
                     </div>
                     <ul class="pop__console pop__console--center">
                         <li><button class="c-button" onclick="onCloseTakePicture()">닫기</button></li>
