@@ -562,7 +562,7 @@
                         <!-- 상용구 들어갈 인풋 -->
                         <div class="c-text">
                             <input type="text" id="fdRepairRemark" class="keypad_remark" placeholder="수선 리스트 입력" />
-                            <button>키보드</button>
+                            <button onclick="onShowVKeyboard(3)">키보드</button>
                         </div>
                     </div>
 
@@ -630,7 +630,7 @@
                         <!-- 상용구 들어갈 인풋 -->
                         <div class="c-text">
                             <input type="text" id="fdAdd1Remark" class="keypad_remark" placeholder="추가요금 리스트 입력" />
-                            <button>키보드</button>
+                            <button onclick="onShowVKeyboard(4)">키보드</button>
                         </div>
                     </div>
 
@@ -678,14 +678,15 @@
                         <div class="photo__take">
                             <!-- 캠 영상 들어갈 곳 -->
                             <video id="cameraScreen" playsinline autoplay></video>
+                            <canvas id="cameraCanvas" style="display: none"></canvas>
                         </div>
                         <div class="photo__add">
                             <div class="photo__add-item">
                                 <div class="photo__add-title">특이사항</div>
                                 <div class="photo__add-console">
                                     <div class="c-text">
-                                        <input type="text" />
-                                        <button>키보드</button>
+                                        <input type="text" id="ffRemark" />
+                                        <button onclick="onShowVKeyboard(5)">키보드</button>
                                     </div>
                                 </div>
                             </div>
@@ -693,9 +694,9 @@
                                 <div class="photo__add-title">상용구</div>
                                 <div class="photo__add-console">
                                     <div class="photo__btns">
-                                        <button class="c-button c-button--small">구멍</button>
-                                        <button class="c-button c-button--small">찢어짐</button>
-                                        <button class="c-button c-button--small">얼룩</button>
+                                        <button class="c-button c-button--small camBoiler">구멍</button>
+                                        <button class="c-button c-button--small camBoiler">찢어짐</button>
+                                        <button class="c-button c-button--small camBoiler">얼룩</button>
                                         <button class="c-button c-button--small c-button--solid" onclick="onTakePicture()">촬영</button>
                                     </div>
                                 </div>
@@ -708,7 +709,7 @@
                     <div class="photo__haed">
                         <h4>촬영된 사진</h4>
                     </div>
-                    <div class="photo__list">
+                    <div id="photoList" class="photo__list">
                         <div class="photo__picture">
                             <div class="photo__picture-head">
                                 <h5 class="photo__picture-title">구멍</h5>
@@ -716,7 +717,7 @@
                             </div>
                             <div class="photo__picture-item">
                                 <a href="/assets/images/dummy/cam.png" class="photo__img" data-lightbox="images" data-title="구멍">
-                                    <canvas id="cameraCanvas"></canvas>
+                                    <img src="/assets/images/dummy/cam.png" alt="" />
                                 </a>
                             </div>
                         </div>
@@ -733,7 +734,7 @@
                         </div>
                     </div>
                     <ul class="pop__console pop__console--center">
-                        <li><button class="c-button pop__close">닫기</button></li>
+                        <li><button class="c-button" onclick="onCloseTakePicture()">닫기</button></li>
                     </ul>
                 </div>
             </div>

@@ -223,7 +223,8 @@ let initialData = [];
 /* 가상키보드 사용을 위해 */
 let vkey;
 let vkeyProp = [];
-let vkeyTargetId = ["searchCustomerField", "fdTag", "fdRemark", "BBB", "CCC"];
+let vkeyTargetId = ["searchCustomerField", "fdTag", "fdRemark", "fdRepairRemark", "fdAdd1Remark",
+                    "ffRemark"];
 
 vkeyProp[0] = {
     title : "고객 검색",
@@ -849,11 +850,14 @@ function calculateMainPrice() {
 }
 
 
+/* 웹 카메라 촬영 스트림이 담긴다. */
+let cameraStream;
+
 /* 웹 카메라와 촬영 작업중 */
 async function onPopTakePicture(event) {
 
     // const cameraList = document.getElementById("cameraList"); 복수 카메라를 사용할 경우 해제하여 작업
-    const stream = await navigator.mediaDevices.getUserMedia({audio: false,
+    cameraStream = await navigator.mediaDevices.getUserMedia({audio: false,
         video: {
             width: {ideal: 4096},
             height: {ideal: 2160}
@@ -878,26 +882,30 @@ async function onPopTakePicture(event) {
         cameraList.appendChild(option);
     });
     */
+    $(".camBoiler").on("click", function () {
+        const $ffRemark = $("#ffRemark");
+        $ffRemark.val($ffRemark.val() + " " + this.innerHTML);
+    });
+
     const screen = document.getElementById("cameraScreen");
-    screen.srcObject = stream;
+    screen.srcObject = cameraStream;
     $("#cameraPop").addClass("active");
 }
 
 /* 복수 카메라를 사용할 경우 해제하여 작업
 async function onChangeCamera(deviceId) {
-    const stream = await navigator.mediaDevices.getUserMedia({audio: false, video: {
+    const cameraStream = await navigator.mediaDevices.getUserMedia({audio: false, video: {
             deviceId : deviceId ? {exact : deviceId} : undefined,
             width: { ideal: 4096 },
             height: { ideal: 2160 }
         }});
     const screen = document.getElementById("cameraScreen");
-    screen.srcObject = stream;
+    screen.srcObject = cameraStream;
 }
 */
 
 
 function onTakePicture() {
-    console.log("시작")
     const video = document.getElementById("cameraScreen");
     const canvas = document.getElementById('cameraCanvas');
     canvas.width = video.videoWidth;
@@ -905,17 +913,43 @@ function onTakePicture() {
     const context = canvas.getContext('2d');
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
     const takenPic = canvas.toDataURL('image/jpeg', 0.7);
-    //const file = dataURLtoFile(takenPic,'camera.jpg');
 
     const blob = b64toBlob(takenPic);
 
     const formData = new FormData();
     formData.append("source", blob);
+    formData.append("ffRemark", $("#ffRemark").val());
     console.log(Object.fromEntries(formData));
 
+    /*
     CommonUI.ajax("/api/test/photoTest", "POST", formData, function (req) {
-        console.log("성공")
+        console.log(req);
+        /!*
+        const aPictureSet = `
+            <div class="photo__picture">
+                <div class="photo__picture-head">
+                    <h5 class="photo__picture-title">${req.ffRemark}</h5>
+                    <button class="photo__picture-delete">삭제</button>
+                </div>
+                <div class="photo__picture-item">
+                    <a href="${req.thumbNailURL}" class="photo__img" data-lightbox="images" data-title="${req.ffRemark}">
+                        <img src="${req.imageURL}" alt="" />
+                    </a>
+                </div>
+            </div>
+        `;
+        $("#photoList").append(aPictureSet);
+        *!/
     });
+    */
+}
+
+function onCloseTakePicture() {
+    cameraStream.getTracks().forEach(function(track) {
+        track.stop();
+    });
+    cameraStream = 0;
+    $("#cameraPop").removeClass("active");
 }
 
 function b64toBlob(dataURI) {
@@ -932,7 +966,7 @@ function b64toBlob(dataURI) {
 
 function dataURLtoFile(dataurl, filename) {
 
-    var arr = dataurl.split(','),
+    let arr = dataurl.split(','),
         mime = arr[0].match(/:(.*?);/)[1],
         bstr = atob(arr[1]),
         n = bstr.length,
@@ -946,10 +980,10 @@ function dataURLtoFile(dataurl, filename) {
 }
 
 function toggleBottom() {
-    var element = document.getElementsByClassName("regist__bottom");
+    let element = document.getElementsByClassName("regist__bottom");
     element[0].classList.toggle("active");
 
-    var grid = document.getElementById("grid_requestList");
+    let grid = document.getElementById("grid_requestList");
     grid.classList.toggle("active");
 
     AUIGrid.resize(gridId[0]);
