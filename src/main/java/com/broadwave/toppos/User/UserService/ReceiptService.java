@@ -433,18 +433,31 @@ public class ReceiptService {
             return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "삭제 할 "+ResponseErrorCode.TP009.getDesc(), "문자", "접수코드 : "+frNo));
         }else{
             List<RequestDetail> requestDetailList = findByRequestTempDetail(optionalRequest.get().getFrNo());
+            List<List<Photo>> photoDeleteList = new ArrayList<>();
+            for(RequestDetail requestDetail : requestDetailList){
+                List<Photo> photoList = findByPhoto(requestDetail.getId());
+                photoDeleteList.add(photoList);
+            }
 //            log.info("requestDetailList : "+requestDetailList);
 //            log.info("requestDetailList.size() : "+requestDetailList.size());
-            requestDeleteStart(optionalRequest.get(), requestDetailList);
+//            log.info("photoDeleteList : "+photoDeleteList);
+            requestDeleteStart(optionalRequest.get(), requestDetailList, photoDeleteList);
         }
 
         return ResponseEntity.ok(res.success());
     }
 
+    private List<Photo> findByPhoto(Long id) {
+        return photoRepositoryCustom.findByPhoto(id);
+    }
+
     // 삭제 실행
     @Transactional(rollbackFor = SQLException.class)
-    public void requestDeleteStart(Request optionalRequest, List<RequestDetail> requestDetailList) {
+    public void requestDeleteStart(Request optionalRequest, List<RequestDetail> requestDetailList, List<List<Photo>> photoDeleteList) {
         try{
+            for(List<Photo> photos : photoDeleteList){
+                photoRepository.deleteAll(photos);
+            }
             requestDetailRepository.deleteAll(requestDetailList);
             requestRepository.delete(optionalRequest);
         }catch (Exception e){

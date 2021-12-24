@@ -462,7 +462,6 @@ public class UserRestController {
             List<RequestDetailDto> requestDetailList = receiptService.findByRequestTempDetailList(frNo);
             for(RequestDetailDto requestDetailDto : requestDetailList){
                 requestDetailInfo = new HashMap<>();
-                requestDetailInfo.put("id", requestDetailDto.getId());
 
                 requestDetailInfo.put("biItemcode", requestDetailDto.getBiItemcode());
                 requestDetailInfo.put("fdTag", requestDetailDto.getFdTag());

@@ -40,4 +40,23 @@ public class PhotoRepositoryCustomImpl extends QuerydslRepositorySupport impleme
         return query.fetch();
     }
 
+    public List<Photo> findByPhoto(Long id){
+
+        QPhoto photo = QPhoto.photo;
+
+        JPQLQuery<Photo> query = from(photo)
+                .where(photo.fdId.id.eq(id))
+                .select(Projections.constructor(Photo.class,
+                        photo.Id,
+                        photo.ffType,
+                        photo.fdId,
+                        photo.ffPath,
+                        photo.ffFilename,
+                        photo.ffRemark,
+                        photo.insert_id,
+                        photo.insertDateTime
+                ));
+        return query.fetch();
+    }
+
 }
