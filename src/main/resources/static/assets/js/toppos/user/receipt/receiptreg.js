@@ -945,7 +945,7 @@ function onTakePicture() {
                 data-ffFilename="${req.sendData.ffFilename}" data-ffRemark="${$ffRemark.val()}">
                 <div class="photo__picture-head">
                     <h5 class="photo__picture-title">${$ffRemark.val()}</h5>
-                    <button class="photo__picture-delete" data-image="${fullImage}" onclick="onRemovePicture(this.getAttribute('data-image'))">삭제</button>
+                    <button class="photo__picture-delete" data-image="${fullImage}" onclick="onRemovePicture($(this))">삭제</button>
                 </div>
                 <div class="photo__picture-item">
                     <a href="${fullImage}" class="photo__img" data-lightbox="images" data-title="${$ffRemark.val()}">
@@ -959,8 +959,19 @@ function onTakePicture() {
     });
 }
 
-function onRemovePicture(imageLocation) {
-    console.log(imageLocation);
+function onRemovePicture(btnElement) {
+    const target = btnElement.parents(".photo__picture")
+    console.log(target);
+    const url = "/api/user/";
+    const data = {
+        ffPath: target.attr("data-ffPath"),
+        ffFilename: target.attr("data-ffFilename"),
+    }
+
+    console.log(data);
+    // CommonUI.ajaxjsonPost(url, data, function(req) {
+    //     console.log(req);
+    // });
 }
 
 function onCloseTakePicture() {
@@ -1741,7 +1752,7 @@ function closePaymentPop() {
     delete initialData.etcData["frNo"];
 }
 
-function payAmtLimitation () {
+function payAmtLimitation() {
     const currentSaveMoney = $("#saveMoney").html().toInt();
     const $receiveCash = $("#receiveCash");
     let receivedCashAmt = $receiveCash.html().toInt();
