@@ -915,6 +915,12 @@ async function onChangeCamera(deviceId) {
 
 
 function onTakePicture() {
+    const $ffRemark = $("#ffRemark");
+    if(!$ffRemark.val().length) {
+        alertCaution("특이사항을 입력해 주세요", 1);
+        return false;
+    }
+
     const video = document.getElementById("cameraScreen");
     const canvas = document.getElementById('cameraCanvas');
     canvas.width = video.videoWidth;
@@ -927,33 +933,28 @@ function onTakePicture() {
 
     const formData = new FormData();
     formData.append("source", blob);
-    formData.append("ffRemark", $("#ffRemark").val());
+    formData.append("ffRemark", $ffRemark.val());
     console.log(Object.fromEntries(formData));
 
     CommonUI.ajax("/api/user/takePicture", "POST", formData, function (req) {
-        const ffRemark = $("#ffRemark").val();
         const fullImage = req.sendData.ffPath + req.sendData.ffFilename;
         const thumbnailImage = req.sendData.ffPath + "s_" + req.sendData.ffFilename;
         const aPictureSet = `
-            <div class="photo__picture">
+            <div class="photo__picture" data-ffPath="${req.sendData.ffPath}"
+                data-ffFilename="${req.sendData.ffFilename}" data-ffRemark="${$ffRemark.val()}">
                 <div class="photo__picture-head">
-                    <h5 class="photo__picture-title">${ffRemark}</h5>
+                    <h5 class="photo__picture-title">${$ffRemark.val()}</h5>
                     <button class="photo__picture-delete" data-image="${fullImage}" onclick="onRemovePicture(this.getAttribute('data-image'))">삭제</button>
                 </div>
                 <div class="photo__picture-item">
-                    <a href="${fullImage}" class="photo__img" data-lightbox="images" data-title="${ffRemark}">
+                    <a href="${fullImage}" class="photo__img" data-lightbox="images" data-title="${$ffRemark.val()}">
                         <img src="${thumbnailImage}" alt="" />
                     </a>
                 </div>
             </div>
         `;
         $("#photoList").append(aPictureSet);
-        currentRequest.photoList.push({
-            ffPath: req.sendData.ffPath,
-            ffFilename: req.sendData.ffFilename,
-            ffRemark: ffRemark,
-        });
-        AUIGrid.updateRowsById(gridId[0], currentRequest);
+        $ffRemark.val("");
     });
 }
 
@@ -965,6 +966,56 @@ function onCloseTakePicture() {
     cameraStream.getTracks().forEach(function(track) {
         track.stop();
     });
+
+    const $photoList = $(".photo__picture");
+    let photos = [];
+    for(let i = 0; i < $photoList.length; i++) {
+        photos.push({
+            ffPath: $photoList.eq(i).attr("data-ffPath"),
+            ffFilename: $photoList.eq(i).attr("data-ffFilename"),
+            ffRemark: $photoList.eq(i).attr("data-ffRemark"),
+        });
+    }
+    const copyObj = {
+        _$uid: currentRequest._$uid,
+        fdTag: currentRequest.fdTag,
+        biItemcode: currentRequest.biItemcode,
+        fdColor: currentRequest.fdColor,
+        fdPattern: currentRequest.Pattern,
+        fdPriceGrade: currentRequest.fdPriceGrade,
+        fdOriginAmt: currentRequest.fdOriginAmt,
+        fdNormalAmt: currentRequest.fdNormalAmt,
+        fdRepairRemark: currentRequest.fdRepairRemark,
+        fdRepairAmt: currentRequest.fdRepairAmt,
+        fdAdd1Remark: currentRequest.fdAdd1Remark,
+        fdSpecialYn: currentRequest.fdSpecialYn,
+        fdAdd1Amt: currentRequest.fdAdd1Amt,
+        fdPressed: currentRequest.fdPressed,
+        fdWhitening: currentRequest.fdWhitening,
+        fdPollution: currentRequest.fdPollution,
+        fdPollutionLevel: currentRequest.fdPollutionLevel,
+        fdStarch: currentRequest.fdStarch,
+        fdWaterRepellent: currentRequest.fdWaterRepellent,
+        fdDiscountGrade: currentRequest.fdDiscountGrade,
+        fdDiscountAmt: currentRequest.fdDiscountAmt,
+        fdQty: currentRequest.fdQty,
+        fdRequestAmt: currentRequest.fdRequestAmt,
+        fdRetryYn: currentRequest.fdRetryYn,
+        fdRemark: currentRequest.fdRemark,
+        frEstimateDate: currentRequest.frEstimateDate,
+        sumName: "",
+        photoList: photos,
+    }
+    AUIGrid.updateRowsById(gridId[0], copyObj);
+
+    $camBoiler = $(".camBoiler");
+    if($camBoiler.length) {
+        for(let i = 0; i < $camBoiler.length; i++) {
+            removeEventsFromElement($camBoiler[i]);
+        }
+    }
+
+    $("#ffRemark").val("");
     cameraStream = 0;
     $("#cameraPop").removeClass("active");
 }
@@ -1037,7 +1088,7 @@ function onAddOrder() {
     currentRequest.urgent = $("input[name='urgent']:checked").val();
 
     if(currentRequest._$uid) {
-        let copyObj = {
+        const copyObj = {
             _$uid: currentRequest._$uid,
             fdTag: currentRequest.fdTag,
             biItemcode: currentRequest.biItemcode,
