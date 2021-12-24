@@ -35,9 +35,9 @@ public class Photo {
     @JoinColumn(name="fd_id")
     private RequestDetail fdId; // 접수 세부테이블 ID
 
-    @ManyToOne(targetEntity = Inspeot.class,fetch = FetchType.LAZY)
-    @JoinColumn(name="fi_id")
-    private Inspeot fiId; // 검품세부테이블 ID
+//    @ManyToOne(targetEntity = Inspeot.class,fetch = FetchType.LAZY)
+//    @JoinColumn(name="fi_id")
+//    private Inspeot fiId; // 검품세부테이블 ID
 
     @Column(name="ff_path")
     private String ffPath; // S3파일경로
