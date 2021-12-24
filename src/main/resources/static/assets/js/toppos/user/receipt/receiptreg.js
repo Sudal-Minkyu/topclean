@@ -927,7 +927,8 @@ function onTakePicture() {
     canvas.height = video.videoHeight;
     const context = canvas.getContext('2d');
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
-    const takenPic = canvas.toDataURL('image/jpeg', 1.0);
+
+    const takenPic = canvas.toDataURL();
 
     const blob = b64toBlob(takenPic);
 
