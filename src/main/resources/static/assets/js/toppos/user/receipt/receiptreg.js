@@ -318,9 +318,16 @@ gridColumnLayout[0] = [
             iconPosition: "aisle",
             iconWidth : 28,
             iconHeight : 24,
-            iconTableRef: {
-                "default" : "/assets/images/icon__camera.svg",
-            },
+            iconFunction: function(rowIndex, columnIndex, value, item) {
+                let icon = "";
+                if(item.photoList.length) {
+                    icon = "/assets/images/icon__calendar--b.svg";
+                }else{
+                    icon = "/assets/images/icon__camera.svg";
+                }
+                return icon;
+            }
+            ,
             onClick: function(event) {
                 onPopTakePicture(event);
             },
@@ -866,11 +873,12 @@ let cameraStream;
 async function onPopTakePicture(event) {
     currentRequest = event.item;
     // const cameraList = document.getElementById("cameraList"); 복수 카메라를 사용할 경우 해제하여 작업
-    cameraStream = await navigator.mediaDevices.getUserMedia({audio: false,
+    cameraStream = await navigator.mediaDevices.getUserMedia({
+        audio: false,
         video: {
             width: {ideal: 4096},
             height: {ideal: 2160}
-        }
+        },
     });
     /* 복수 카메라를 사용할 경우 해제하여 작업
     let videoInput = [];
@@ -898,6 +906,11 @@ async function onPopTakePicture(event) {
 
     const screen = document.getElementById("cameraScreen");
     screen.srcObject = cameraStream;
+    currentRequest.photoList.forEach(picJson => {
+        picJson.fullImage = picJson.ffPath + picJson.ffFilename;
+        picJson.thumbnailImage = picJson.ffPath + "s_" + picJson.ffFilename;
+        putTakenPictureOnTheRightSide(picJson);
+    });
     $("#cameraPop").addClass("active");
 }
 
@@ -937,38 +950,28 @@ function onTakePicture() {
     formData.append("ffRemark", $ffRemark.val());
     console.log(Object.fromEntries(formData));
 
+    $ffRemark.val("");
     CommonUI.ajax("/api/user/takePicture", "POST", formData, function (req) {
-        const fullImage = req.sendData.ffPath + req.sendData.ffFilename;
-        const thumbnailImage = req.sendData.ffPath + "s_" + req.sendData.ffFilename;
-        const aPictureSet = `
-            <div class="photo__picture" data-ffPath="${req.sendData.ffPath}"
-                data-ffFilename="${req.sendData.ffFilename}" data-ffRemark="${$ffRemark.val()}">
-                <div class="photo__picture-head">
-                    <h5 class="photo__picture-title">${$ffRemark.val()}</h5>
-                    <button class="photo__picture-delete" data-image="${fullImage}" onclick="onRemovePicture($(this))">삭제</button>
-                </div>
-                <div class="photo__picture-item">
-                    <a href="${fullImage}" class="photo__img" data-lightbox="images" data-title="${$ffRemark.val()}">
-                        <img src="${thumbnailImage}" alt="" />
-                    </a>
-                </div>
-            </div>
-        `;
-        $("#photoList").append(aPictureSet);
-        $ffRemark.val("");
+        let picJson = {
+            ffPath: req.sendData.ffPath,
+            ffFilename: req.sendData.ffFilename,
+            ffRemark: $ffRemark.val(),
+        }
+        picJson.fullImage = req.sendData.ffPath + req.sendData.ffFilename;
+        picJson.thumbnailImage = req.sendData.ffPath + "s_" + req.sendData.ffFilename;
+        putTakenPictureOnTheRightSide(picJson);
     });
 }
 
 function onRemovePicture(btnElement) {
-    const target = btnElement.parents(".photo__picture")
-    console.log(target);
-    const url = "/api/user/";
-    const data = {
-        ffPath: target.attr("data-ffPath"),
-        ffFilename: target.attr("data-ffFilename"),
-    }
-
-    console.log(data);
+    btnElement.parents(".photo__picture").remove();
+    // const target = btnElement.parents(".photo__picture");
+    // console.log(target);
+    // const url = "/api/user/";
+    // const data = {
+    //     ffPath: target.attr("data-ffPath"),
+    //     ffFilename: target.attr("data-ffFilename"),
+    // }
     // CommonUI.ajaxjsonPost(url, data, function(req) {
     //     console.log(req);
     // });
@@ -1030,6 +1033,26 @@ function onCloseTakePicture() {
     $("#ffRemark").val("");
     cameraStream = 0;
     $("#cameraPop").removeClass("active");
+    $photoList.remove();
+    currentRequest = JSON.parse(JSON.stringify(fsRequestDtl));
+}
+
+function putTakenPictureOnTheRightSide(picJson) {
+    const aPictureSet = `
+            <div class="photo__picture" data-ffPath="${picJson.ffPath}"
+                data-ffFilename="${picJson.ffFilename}" data-ffRemark="${picJson.ffRemark}">
+                <div class="photo__picture-head">
+                    <h5 class="photo__picture-title">${picJson.ffRemark}</h5>
+                    <button class="photo__picture-delete" data-image="${picJson.fullImage}" onclick="onRemovePicture($(this))">삭제</button>
+                </div>
+                <div class="photo__picture-item">
+                    <a href="${picJson.fullImage}" class="photo__img" data-lightbox="images" data-title="${picJson.ffRemark}">
+                        <img src="${picJson.thumbnailImage}" alt="" />
+                    </a>
+                </div>
+            </div>
+        `;
+    $("#photoList").append(aPictureSet);
 }
 
 function b64toBlob(dataURI) {
@@ -1130,7 +1153,6 @@ function onAddOrder() {
             sumName: "",
             photoList: currentRequest.photoList,
         }
-
         AUIGrid.updateRowsById(gridId[0], copyObj);
     }else{
         currentRequest.fdTag = $("#fdTag").val().replace(/[^0-9A-Za-z]/g, "");
