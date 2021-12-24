@@ -17,6 +17,7 @@ import com.broadwave.toppos.User.Customer.CustomerListDto;
 import com.broadwave.toppos.User.Customer.CustomerMapperDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentSet;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Request;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.PhotoDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailSet;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestListDto;
@@ -431,6 +432,9 @@ public class UserRestController {
         List<HashMap<String,Object>> customerListData = new ArrayList<>();
         HashMap<String,Object> customerListInfo;
 
+        List<HashMap<String,Object>> requestDetailListData = new ArrayList<>();
+        HashMap<String,Object> requestDetailInfo;
+
         // 접수했던 고객의 정보 호출
         Optional<Request> optionalRequest = receiptService.findByRequest(frNo, "N", frCode);
         if(!optionalRequest.isPresent()){
@@ -456,7 +460,54 @@ public class UserRestController {
 
             // 임시저장의 접수 세무테이블 리스트 호출
             List<RequestDetailDto> requestDetailList = receiptService.findByRequestTempDetailList(frNo);
-            data.put("requestDetailList",requestDetailList);
+            for(RequestDetailDto requestDetailDto : requestDetailList){
+                requestDetailInfo = new HashMap<>();
+                requestDetailInfo.put("id", requestDetailDto.getId());
+
+                requestDetailInfo.put("biItemcode", requestDetailDto.getBiItemcode());
+                requestDetailInfo.put("fdTag", requestDetailDto.getFdTag());
+                requestDetailInfo.put("fdColor", requestDetailDto.getFdColor());
+                requestDetailInfo.put("fdPattern", requestDetailDto.getFdPattern());
+                requestDetailInfo.put("fdPriceGrade", requestDetailDto.getFdPriceGrade());
+
+                requestDetailInfo.put("fdOriginAmt", requestDetailDto.getFdOriginAmt());
+                requestDetailInfo.put("fdNormalAmt", requestDetailDto.getFdNormalAmt());
+                requestDetailInfo.put("fdRepairRemark", requestDetailDto.getFdRepairRemark());
+                requestDetailInfo.put("fdRepairAmt", requestDetailDto.getFdRepairAmt());
+
+                requestDetailInfo.put("fdAdd1Remark", requestDetailDto.getFdAdd1Remark());
+                requestDetailInfo.put("fdSpecialYn", requestDetailDto.getFdSpecialYn());
+                requestDetailInfo.put("fdAdd1Amt", requestDetailDto.getFdAdd1Amt());
+
+                requestDetailInfo.put("fdPressed", requestDetailDto.getFdPressed());
+                requestDetailInfo.put("fdWhitening", requestDetailDto.getFdWhitening());
+                requestDetailInfo.put("fdPollution", requestDetailDto.getFdPollution());
+                requestDetailInfo.put("fdPollutionLevel", requestDetailDto.getFdPollutionLevel());
+                requestDetailInfo.put("fdStarch", requestDetailDto.getFdStarch());
+                requestDetailInfo.put("fdWaterRepellent", requestDetailDto.getFdWaterRepellent());
+
+                requestDetailInfo.put("fdDiscountGrade", requestDetailDto.getFdDiscountGrade());
+                requestDetailInfo.put("fdDiscountAmt", requestDetailDto.getFdDiscountAmt());
+                requestDetailInfo.put("fdQty", requestDetailDto.getFdQty());
+
+                requestDetailInfo.put("fdRequestAmt", requestDetailDto.getFdRequestAmt());
+
+                requestDetailInfo.put("fdRetryYn", requestDetailDto.getFdRetryYn());
+
+                requestDetailInfo.put("fdRemark", requestDetailDto.getFdRemark());
+                requestDetailInfo.put("frEstimateDate", requestDetailDto.getFrEstimateDate());
+
+                requestDetailInfo.put("bgName", requestDetailDto.getBgName());
+                requestDetailInfo.put("bsName", requestDetailDto.getBsName());
+                requestDetailInfo.put("biName", requestDetailDto.getBiName());
+
+                List<PhotoDto> photoDtoList = receiptService.findByPhotoDto(requestDetailDto.getId());
+                requestDetailInfo.put("photoList", photoDtoList);
+
+                requestDetailListData.add(requestDetailInfo);
+            }
+            data.put("requestDetailList",requestDetailListData);
+
         }
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
@@ -495,7 +546,7 @@ public class UserRestController {
         assert mFile != null;
         if(!mFile.isEmpty()) {
             // 파일 중복명 처리
-            String genId = UUID.randomUUID().toString().replace("-", "");;
+            String genId = UUID.randomUUID().toString().replace("-", "");
 //            log.info("genId : "+genId);
 
             // S3에 저장 할 파일주소

@@ -18,8 +18,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RequestDetailDto {
-    private Long id; // 고유ID값
+public class RequestDetailMapperDto {
 
     private String biItemcode; // 상품코드
     private String fdTag; // 택번호
@@ -58,8 +57,10 @@ public class RequestDetailDto {
     private String bsName; // 중분류명
     private String biName; // 상품명
 
-    public Long getId() {
-        return id;
+    private List<PhotoDto> photoList; // 해당 상품의 대한 이미지 파일 리스트
+
+    public List<PhotoDto> getPhotoList() {
+        return photoList;
     }
 
     public String getBgName() {

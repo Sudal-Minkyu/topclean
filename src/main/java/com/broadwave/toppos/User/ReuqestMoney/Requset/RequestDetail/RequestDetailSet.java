@@ -17,27 +17,27 @@ public class RequestDetailSet {
     private RequestMapperDto etc;
 
     // 수정 행 리스트
-    private ArrayList<RequestDetailDto> update;
+    private ArrayList<RequestDetailMapperDto> update;
 
     // 추가 행 리스트
-    private ArrayList<RequestDetailDto> add;
+    private ArrayList<RequestDetailMapperDto> add;
 
     // 삭제 행 리스트
-    private ArrayList<RequestDetailDto> delete;
+    private ArrayList<RequestDetailMapperDto> delete;
 
     public RequestMapperDto getEtc() {
         return etc;
     }
 
-    public ArrayList<RequestDetailDto> getUpdate() {
+    public ArrayList<RequestDetailMapperDto> getUpdate() {
         return update;
     }
 
-    public ArrayList<RequestDetailDto> getAdd() {
+    public ArrayList<RequestDetailMapperDto> getAdd() {
         return add;
     }
 
-    public ArrayList<RequestDetailDto> getDelete() {
+    public ArrayList<RequestDetailMapperDto> getDelete() {
         return delete;
     }
 

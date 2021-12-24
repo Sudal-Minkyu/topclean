@@ -3,12 +3,14 @@ package com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail;
 import com.broadwave.toppos.Head.Item.Group.A.QItemGroup;
 import com.broadwave.toppos.Head.Item.Group.B.QItemGroupS;
 import com.broadwave.toppos.Head.Item.Group.C.QItem;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.PhotoDto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -37,6 +39,8 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                 .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
                 .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
                 .select(Projections.constructor(RequestDetailDto.class,
+                        requestDetail.id,
+
                         requestDetail.biItemcode,
                         requestDetail.fdTag,
                         requestDetail.fdColor,
@@ -73,7 +77,6 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         itemGroup.bgName,
                         itemGroupS.bsName,
                         item.biName
-
                     ));
 
         query.where(requestDetail.frNo.eq(frNo));

@@ -10,6 +10,10 @@ import com.broadwave.toppos.User.EtcDataDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.*;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.*;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.*;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.Photo;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.PhotoDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.PhotoRepository;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.PhotoRepositoryCustom;
 import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.*;
 import com.broadwave.toppos.common.AjaxResponse;
 import com.broadwave.toppos.common.ResponseErrorCode;
@@ -51,10 +55,12 @@ public class ReceiptService {
     private final RequestDetailRepository requestDetailRepository;
     private final PaymentRepository paymentRepository;
     private final SaveMoneyRepository saveMoneyRepository;
+    private final PhotoRepository photoRepository;
 
     private final RequestRepositoryCustom requestRepositoryCustom;
     private final RequestDetailRepositoryCustom requestDetailRepositoryCustom;
     private final SaveMoneyRepositoryCustom saveMoneyRepositoryCustom;
+    private final PhotoRepositoryCustom photoRepositoryCustom;
 
     private final HeadService headService;
     private final CustomerRepository customerRepository;
@@ -62,8 +68,8 @@ public class ReceiptService {
 
     @Autowired
     public ReceiptService(UserService userService, KeyGenerateService keyGenerateService, TokenProvider tokenProvider, ModelMapper modelMapper,
-                          RequestRepository requestRepository, RequestDetailRepository requestDetailRepository, PaymentRepository paymentRepository, SaveMoneyRepository saveMoneyRepository,
-                          RequestRepositoryCustom requestRepositoryCustom, RequestDetailRepositoryCustom requestDetailRepositoryCustom, SaveMoneyRepositoryCustom saveMoneyRepositoryCustom,
+                          RequestRepository requestRepository, RequestDetailRepository requestDetailRepository, PaymentRepository paymentRepository, SaveMoneyRepository saveMoneyRepository, PhotoRepository photoRepository,
+                          RequestRepositoryCustom requestRepositoryCustom, RequestDetailRepositoryCustom requestDetailRepositoryCustom, SaveMoneyRepositoryCustom saveMoneyRepositoryCustom, PhotoRepositoryCustom photoRepositoryCustom,
                           HeadService headService, CustomerRepository customerRepository,BranchCalendarRepositoryCustom branchCalendarRepositoryCustom){
         this.userService = userService;
         this.headService = headService;
@@ -71,10 +77,12 @@ public class ReceiptService {
         this.tokenProvider = tokenProvider;
         this.modelMapper = modelMapper;
         this.paymentRepository = paymentRepository;
+        this.photoRepository = photoRepository;
         this.requestDetailRepository = requestDetailRepository;
         this.customerRepository = customerRepository;
         this.saveMoneyRepository = saveMoneyRepository;
         this.branchCalendarRepositoryCustom = branchCalendarRepositoryCustom;
+        this.photoRepositoryCustom = photoRepositoryCustom;
         this.keyGenerateService = keyGenerateService;
         this.requestRepositoryCustom = requestRepositoryCustom;
         this.saveMoneyRepositoryCustom = saveMoneyRepositoryCustom;
@@ -167,9 +175,9 @@ public class ReceiptService {
 
         RequestMapperDto etcData = requestDetailSet.getEtc(); // etc 데이터 얻기
 
-        ArrayList<RequestDetailDto> addList = requestDetailSet.getAdd(); // 추가 리스트 얻기
-        ArrayList<RequestDetailDto> updateList = requestDetailSet.getUpdate(); // 수정 리스트 얻기
-        ArrayList<RequestDetailDto> deleteList = requestDetailSet.getDelete(); // 제거 리스트 얻기
+        ArrayList<RequestDetailMapperDto> addList = requestDetailSet.getAdd(); // 추가 리스트 얻기
+        ArrayList<RequestDetailMapperDto> updateList = requestDetailSet.getUpdate(); // 수정 리스트 얻기
+        ArrayList<RequestDetailMapperDto> deleteList = requestDetailSet.getDelete(); // 제거 리스트 얻기
 
         log.info("ECT 데이터 : "+etcData);
         log.info("추가 리스트 : "+addList);
@@ -250,82 +258,99 @@ public class ReceiptService {
                 log.info("적립금액 : "+ (saveMoney));
             }
 
+            List<List<Photo>> photoLists = new ArrayList<>();
+            List<Photo> photos;
             String lastTagNo = null; // 마지막 태그번호
             List<RequestDetail> requestDetailList = new ArrayList<>(); // 세부테이블 객체 리스트
             // 접수 세부 테이블 저장
             if(addList.size()!=0){
-                for (RequestDetailDto requestDetailDto : addList) {
-                    log.info("RequestDetailDto : "+requestDetailDto);
-                    RequestDetail requestDetail = modelMapper.map(requestDetailDto, RequestDetail.class);
+                for (RequestDetailMapperDto requestDetailMapperDto : addList) {
+                    photos = new ArrayList<>();
+                    log.info("requestDetailMapperDto : "+requestDetailMapperDto);
+                    RequestDetail requestDetail = modelMapper.map(requestDetailMapperDto, RequestDetail.class);
 
-                    requestDetail.setBiItemcode(requestDetailDto.getBiItemcode());
+                    requestDetail.setBiItemcode(requestDetailMapperDto.getBiItemcode());
                     requestDetail.setFdState("S1");
                     requestDetail.setFdStateDt(LocalDateTime.now());
                     requestDetail.setFdCancel("N");
-                    requestDetail.setFdTotAmt(requestDetailDto.getFdRequestAmt());
-                    requestDetail.setFdEstimateDt(requestDetailDto.getFrEstimateDate());
+                    requestDetail.setFdTotAmt(requestDetailMapperDto.getFdRequestAmt());
+                    requestDetail.setFdEstimateDt(requestDetailMapperDto.getFrEstimateDate());
                     requestDetail.setInsert_id(login_id);
                     requestDetail.setInsert_date(LocalDateTime.now());
-                    lastTagNo = requestDetailDto.getFdTag();
+                    lastTagNo = requestDetailMapperDto.getFdTag();
                     requestDetailList.add(requestDetail);
+
+                    for(PhotoDto photoDto : requestDetailMapperDto.getPhotoList()){
+                        Photo photo = new Photo();
+                        photo.setFfType("01");
+                        photo.setFfPath(photoDto.getFfPath());
+                        photo.setFfFilename(photoDto.getFfFilename());
+                        photo.setFfRemark(photoDto.getFfRemark());
+                        photo.setInsert_id(login_id);
+                        photo.setInsertDateTime(LocalDateTime.now());
+                        photos.add(photo);
+                    }
+                    photoLists.add(photos);
                 }
             }
+            log.info("photoLists : "+photoLists);
+
             // 접수 세부 테이블 업데이트
             if(updateList.size()!=0){
-                for (RequestDetailDto requestDetailDto : updateList) {
+                for (RequestDetailMapperDto requestDetailMapperDto : updateList) {
                     log.info("수정로직 FrNo : "+etcData.getFrNo());
-                    log.info("수정로직 FdTag : "+requestDetailDto.getFdTag());
-                    Optional<RequestDetail> optionalRequestDetail = findByRequestDetail(etcData.getFrNo(), requestDetailDto.getFdTag());
+                    log.info("수정로직 FdTag : "+requestDetailMapperDto.getFdTag());
+                    Optional<RequestDetail> optionalRequestDetail = findByRequestDetail(etcData.getFrNo(), requestDetailMapperDto.getFdTag());
                     if(!optionalRequestDetail.isPresent()){
-                        return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "수정 할 "+ResponseErrorCode.TP009.getDesc(), "문자", "택번호 : "+requestDetailDto.getFdTag()));
+                        return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "수정 할 "+ResponseErrorCode.TP009.getDesc(), "문자", "택번호 : "+requestDetailMapperDto.getFdTag()));
                     }else{
-                        optionalRequestDetail.get().setBiItemcode(requestDetailDto.getBiItemcode());
-                        optionalRequestDetail.get().setFdColor(requestDetailDto.getFdColor());
-                        optionalRequestDetail.get().setFdPattern(requestDetailDto.getFdPattern());
-                        optionalRequestDetail.get().setFdPriceGrade(requestDetailDto.getFdPriceGrade());
+                        optionalRequestDetail.get().setBiItemcode(requestDetailMapperDto.getBiItemcode());
+                        optionalRequestDetail.get().setFdColor(requestDetailMapperDto.getFdColor());
+                        optionalRequestDetail.get().setFdPattern(requestDetailMapperDto.getFdPattern());
+                        optionalRequestDetail.get().setFdPriceGrade(requestDetailMapperDto.getFdPriceGrade());
 
-                        optionalRequestDetail.get().setFdOriginAmt(requestDetailDto.getFdOriginAmt());
-                        optionalRequestDetail.get().setFdNormalAmt(requestDetailDto.getFdNormalAmt());
-                        optionalRequestDetail.get().setFdRepairRemark(requestDetailDto.getFdRepairRemark());
-                        optionalRequestDetail.get().setFdRepairAmt(requestDetailDto.getFdRepairAmt());
+                        optionalRequestDetail.get().setFdOriginAmt(requestDetailMapperDto.getFdOriginAmt());
+                        optionalRequestDetail.get().setFdNormalAmt(requestDetailMapperDto.getFdNormalAmt());
+                        optionalRequestDetail.get().setFdRepairRemark(requestDetailMapperDto.getFdRepairRemark());
+                        optionalRequestDetail.get().setFdRepairAmt(requestDetailMapperDto.getFdRepairAmt());
 
-                        optionalRequestDetail.get().setFdAdd1Remark(requestDetailDto.getFdAdd1Remark());
-                        optionalRequestDetail.get().setFdSpecialYn(requestDetailDto.getFdSpecialYn());
-                        optionalRequestDetail.get().setFdAdd1Amt(requestDetailDto.getFdAdd1Amt());
+                        optionalRequestDetail.get().setFdAdd1Remark(requestDetailMapperDto.getFdAdd1Remark());
+                        optionalRequestDetail.get().setFdSpecialYn(requestDetailMapperDto.getFdSpecialYn());
+                        optionalRequestDetail.get().setFdAdd1Amt(requestDetailMapperDto.getFdAdd1Amt());
 
-                        optionalRequestDetail.get().setFdPressed(requestDetailDto.getFdPressed());
-                        optionalRequestDetail.get().setFdWhitening(requestDetailDto.getFdWhitening());
-                        optionalRequestDetail.get().setFdPollution(requestDetailDto.getFdPollution());
-                        optionalRequestDetail.get().setFdPollutionLevel(requestDetailDto.getFdPollutionLevel());
-                        optionalRequestDetail.get().setFdStarch(requestDetailDto.getFdStarch());
-                        optionalRequestDetail.get().setFdWaterRepellent(requestDetailDto.getFdWaterRepellent());
+                        optionalRequestDetail.get().setFdPressed(requestDetailMapperDto.getFdPressed());
+                        optionalRequestDetail.get().setFdWhitening(requestDetailMapperDto.getFdWhitening());
+                        optionalRequestDetail.get().setFdPollution(requestDetailMapperDto.getFdPollution());
+                        optionalRequestDetail.get().setFdPollutionLevel(requestDetailMapperDto.getFdPollutionLevel());
+                        optionalRequestDetail.get().setFdStarch(requestDetailMapperDto.getFdStarch());
+                        optionalRequestDetail.get().setFdWaterRepellent(requestDetailMapperDto.getFdWaterRepellent());
 
-                        optionalRequestDetail.get().setFdDiscountGrade(requestDetailDto.getFdDiscountGrade());
-                        optionalRequestDetail.get().setFdDiscountAmt(requestDetailDto.getFdDiscountAmt());
-                        optionalRequestDetail.get().setFdQty(requestDetailDto.getFdQty());
+                        optionalRequestDetail.get().setFdDiscountGrade(requestDetailMapperDto.getFdDiscountGrade());
+                        optionalRequestDetail.get().setFdDiscountAmt(requestDetailMapperDto.getFdDiscountAmt());
+                        optionalRequestDetail.get().setFdQty(requestDetailMapperDto.getFdQty());
 
-                        optionalRequestDetail.get().setFdRequestAmt(requestDetailDto.getFdRequestAmt());
-                        optionalRequestDetail.get().setFdRetryYn(requestDetailDto.getFdRetryYn());
+                        optionalRequestDetail.get().setFdRequestAmt(requestDetailMapperDto.getFdRequestAmt());
+                        optionalRequestDetail.get().setFdRetryYn(requestDetailMapperDto.getFdRetryYn());
 
-                        optionalRequestDetail.get().setFdRemark(requestDetailDto.getFdRemark());
-                        optionalRequestDetail.get().setFdEstimateDt(requestDetailDto.getFrEstimateDate());
+                        optionalRequestDetail.get().setFdRemark(requestDetailMapperDto.getFdRemark());
+                        optionalRequestDetail.get().setFdEstimateDt(requestDetailMapperDto.getFrEstimateDate());
 
                         optionalRequestDetail.get().setModity_id(login_id);
                         optionalRequestDetail.get().setModity_date(LocalDateTime.now());
-//                        RequestDetail requestDetail = optionalRequestDetail.get();
-                        requestDetailList.add(optionalRequestDetail.get());
+                        RequestDetail requestDetail = optionalRequestDetail.get();
+                        requestDetailList.add(requestDetail);
                     }
                 }
             }
             log.info("requestDetailList : "+requestDetailList);
             // 접수 세부 테이블 삭제
             if(deleteList.size()!=0){
-                for (RequestDetailDto requestDetailDto : deleteList) {
+                for (RequestDetailMapperDto requestDetailMapperDto : deleteList) {
                     log.info("삭제로직 FrNo : "+etcData.getFrNo());
-                    log.info("삭제로직 FdTag : "+requestDetailDto.getFdTag());
-                    Optional<RequestDetail> optionalRequestDetail = findByRequestDetail(etcData.getFrNo(), requestDetailDto.getFdTag());
+                    log.info("삭제로직 FdTag : "+requestDetailMapperDto.getFdTag());
+                    Optional<RequestDetail> optionalRequestDetail = findByRequestDetail(etcData.getFrNo(), requestDetailMapperDto.getFdTag());
                     if(!optionalRequestDetail.isPresent()){
-                        return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "삭제 할 "+ResponseErrorCode.TP009.getDesc(), "문자", "택번호 : "+requestDetailDto.getFdTag()));
+                        return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "삭제 할 "+ResponseErrorCode.TP009.getDesc(), "문자", "택번호 : "+requestDetailMapperDto.getFdTag()));
                     }else{
                         findByRequestDetailDelete(optionalRequestDetail.get());
                     }
@@ -336,8 +361,7 @@ public class ReceiptService {
             optionalCustomer.get().setBcLastRequestDt(nowDate);
             Customer customer = optionalCustomer.get();
 
-            Request requestSaveO = requestAndDetailSave(requestSave, requestDetailList, customer);
-
+            Request requestSaveO = requestAndDetailSave(requestSave, requestDetailList, customer, photoLists);
 
             // 모두 저장되면 최종 택번호 업데이트
             Optional<Franchise> optionalFranchise = headService.findByFrCode(frCode); // 가맹점
@@ -361,7 +385,7 @@ public class ReceiptService {
 
     // 문의 접수 API : 임시저장 또는 결제할시 저장한다. 마스터테이블, 세부테이블 저장
     @Transactional(rollbackFor = SQLException.class)
-    public Request requestAndDetailSave(Request request, List<RequestDetail> requestDetailList, Customer customer){
+    public Request requestAndDetailSave(Request request, List<RequestDetail> requestDetailList, Customer customer, List<List<Photo>> photoLists){
         try{
             String frNo;
             if (request.getFrNo() == null || request.getFrNo().isEmpty()){
@@ -380,7 +404,13 @@ public class ReceiptService {
                 }
             }
             customerRepository.save(customer);
-            requestDetailRepository.saveAll(requestDetailList);
+            List<RequestDetail> requestDetailSaveList = requestDetailRepository.saveAll(requestDetailList);
+            for(int i=0; i<photoLists.size(); i++){
+                for(int j=0; j<photoLists.get(i).size(); j++){
+                    photoLists.get(i).get(j).setFdId(requestDetailSaveList.get(i));
+                }
+                photoRepository.saveAll(photoLists.get(i));
+            }
 
             return requestSave;
         }catch (Exception e){
@@ -701,18 +731,10 @@ public class ReceiptService {
         return requestRepositoryCustom.findByRequestFrCode(frCode);
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
+    // 상품세부의 파일리스트 호출
+    public List<PhotoDto> findByPhotoDto(Long id) {
+        return photoRepositoryCustom.findByPhotoDto(id);
+    }
 
 }
 
