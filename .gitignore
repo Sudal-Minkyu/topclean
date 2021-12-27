@@ -28,3 +28,6 @@ HELP.md
 
 ### VS Code ###
 .vscode/
+
+### npm module ###
+/src/main/resources/static/assets/js/topposTest/node_modules/
