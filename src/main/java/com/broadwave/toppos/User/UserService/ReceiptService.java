@@ -109,9 +109,10 @@ public class ReceiptService {
         return requestDetailRepository.findByRequestDetail(frNo, fdTag);
     }
 
-    // 접수 세부테이블 삭제
-    public void findByRequestDetailDelete(RequestDetail requestDetail) {
+    // 접수 세부테이블 삭제, 해당세부의 대한 Photo 삭제
+    public void findByRequestDetailDelete(RequestDetail requestDetail, List<Photo> photoList) {
         requestDetailRepository.delete(requestDetail);
+        photoRepository.deleteAll(photoList);
     }
 
     // 접수 마스터테이블 임시저장 리스트 호출
@@ -298,12 +299,17 @@ public class ReceiptService {
             // 접수 세부 테이블 업데이트
             if(updateList.size()!=0){
                 for (RequestDetailMapperDto requestDetailMapperDto : updateList) {
+                    photos = new ArrayList<>();
+
                     log.info("수정로직 FrNo : "+etcData.getFrNo());
                     log.info("수정로직 FdTag : "+requestDetailMapperDto.getFdTag());
                     Optional<RequestDetail> optionalRequestDetail = findByRequestDetail(etcData.getFrNo(), requestDetailMapperDto.getFdTag());
                     if(!optionalRequestDetail.isPresent()){
                         return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "수정 할 "+ResponseErrorCode.TP009.getDesc(), "문자", "택번호 : "+requestDetailMapperDto.getFdTag()));
                     }else{
+                        List<Photo> photoList = findByPhotoList(optionalRequestDetail.get().getId());
+                        photoRepository.deleteAll(photoList); // 기존 세부상품의 사진 삭제
+                        
                         optionalRequestDetail.get().setBiItemcode(requestDetailMapperDto.getBiItemcode());
                         optionalRequestDetail.get().setFdColor(requestDetailMapperDto.getFdColor());
                         optionalRequestDetail.get().setFdPattern(requestDetailMapperDto.getFdPattern());
@@ -339,10 +345,23 @@ public class ReceiptService {
                         optionalRequestDetail.get().setModity_date(LocalDateTime.now());
                         RequestDetail requestDetail = optionalRequestDetail.get();
                         requestDetailList.add(requestDetail);
+
+                        for(PhotoDto photoDto : requestDetailMapperDto.getPhotoList()){
+                            Photo photo = new Photo();
+                            photo.setFfType("01");
+                            photo.setFfPath(photoDto.getFfPath());
+                            photo.setFfFilename(photoDto.getFfFilename());
+                            photo.setFfRemark(photoDto.getFfRemark());
+                            photo.setInsert_id(login_id);
+                            photo.setInsertDateTime(LocalDateTime.now());
+                            photos.add(photo);
+                        }
+                        photoLists.add(photos);
                     }
                 }
             }
             log.info("requestDetailList : "+requestDetailList);
+
             // 접수 세부 테이블 삭제
             if(deleteList.size()!=0){
                 for (RequestDetailMapperDto requestDetailMapperDto : deleteList) {
@@ -352,7 +371,8 @@ public class ReceiptService {
                     if(!optionalRequestDetail.isPresent()){
                         return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "삭제 할 "+ResponseErrorCode.TP009.getDesc(), "문자", "택번호 : "+requestDetailMapperDto.getFdTag()));
                     }else{
-                        findByRequestDetailDelete(optionalRequestDetail.get());
+                        List<Photo> photoList = findByPhotoList(optionalRequestDetail.get().getId());
+                        findByRequestDetailDelete(optionalRequestDetail.get(), photoList);
                     }
                 }
             }
@@ -435,7 +455,7 @@ public class ReceiptService {
             List<RequestDetail> requestDetailList = findByRequestTempDetail(optionalRequest.get().getFrNo());
             List<List<Photo>> photoDeleteList = new ArrayList<>();
             for(RequestDetail requestDetail : requestDetailList){
-                List<Photo> photoList = findByPhoto(requestDetail.getId());
+                List<Photo> photoList = findByPhotoList(requestDetail.getId());
                 photoDeleteList.add(photoList);
             }
 //            log.info("requestDetailList : "+requestDetailList);
@@ -447,8 +467,9 @@ public class ReceiptService {
         return ResponseEntity.ok(res.success());
     }
 
-    private List<Photo> findByPhoto(Long id) {
-        return photoRepositoryCustom.findByPhoto(id);
+    // Photo 엔티티 리스트불러오는 함수
+    private List<Photo> findByPhotoList(Long id) {
+        return photoRepositoryCustom.findByPhotoList(id);
     }
 
     // 삭제 실행
@@ -746,7 +767,7 @@ public class ReceiptService {
 
     // 상품세부의 파일리스트 호출
     public List<PhotoDto> findByPhotoDto(Long id) {
-        return photoRepositoryCustom.findByPhotoDto(id);
+        return photoRepositoryCustom.findByPhotoDtoList(id);
     }
 
 }

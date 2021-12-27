@@ -9,7 +9,7 @@ import java.util.List;
  * Remark :
  */
 public interface PhotoRepositoryCustom {
-    List<PhotoDto> findByPhotoDto(Long id);
+    List<PhotoDto> findByPhotoDtoList(Long id);
 
-    List<Photo> findByPhoto(Long id);
+    List<Photo> findByPhotoList(Long id);
 }

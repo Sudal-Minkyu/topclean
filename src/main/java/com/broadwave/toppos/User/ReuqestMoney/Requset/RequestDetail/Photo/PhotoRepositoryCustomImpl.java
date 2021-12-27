@@ -26,7 +26,7 @@ public class PhotoRepositoryCustomImpl extends QuerydslRepositorySupport impleme
         super(PhotoRepository.class);
     }
 
-    public List<PhotoDto> findByPhotoDto(Long id){
+    public List<PhotoDto> findByPhotoDtoList(Long id){
 
         QPhoto photo = QPhoto.photo;
 
@@ -40,7 +40,7 @@ public class PhotoRepositoryCustomImpl extends QuerydslRepositorySupport impleme
         return query.fetch();
     }
 
-    public List<Photo> findByPhoto(Long id){
+    public List<Photo> findByPhotoList(Long id){
 
         QPhoto photo = QPhoto.photo;
 
