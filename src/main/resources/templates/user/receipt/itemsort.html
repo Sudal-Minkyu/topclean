@@ -15,20 +15,6 @@
 <th:block layout:fragment="script">
     <script src="/assets/js/toppos/user/receipt/itemsort.js"></script>
     <script type="text/javascript">
-        $(document).ready(function() {
-            // 탭
-            const $tabsBtn = $('.c-tabs__btn');
-            const $tabsContent = $('.c-tabs__content');
-
-            $tabsBtn.on('click', function() {
-                const idx = $(this).index();
-
-                $tabsBtn.removeClass('active');
-                $tabsBtn.eq(idx).addClass('active');
-                $tabsContent.removeClass('active');
-                $tabsContent.eq(idx).addClass('active');
-            })
-        })
     </script>
 </th:block>
 
@@ -54,7 +40,7 @@
                             </div>
                         </div>
                         <!-- grid -->
-                        <div style="width: 100%; height: 530px; border: 1px solid #dbdbdb">높이값 빼고 스타일 삭제</div>
+                        <div id="grid_bgOrder" style="height: 530px;"></div>
                     </div>
                 </div>
 
@@ -98,7 +84,7 @@
                             </div>
 
                             <!-- grid -->
-                            <div style="width: 100%; height: 490px; border: 1px solid #dbdbdb">높이값 빼고 스타일 삭제</div>
+                            <div style="height: 490px;" id="grid_bsList"></div>
                         </div>
                     </div>
                     <div class="c-tabs__inner">
@@ -113,7 +99,7 @@
                                 </div>
                             </div>
                             <!-- grid -->
-                            <div style="width: 100%; height: 530px; border: 1px solid #dbdbdb">높이값 빼고 스타일 삭제</div>
+                            <div style="height: 530px;" id="grid_biOrder"></div>
                         </div>
                     </div>
                 </div>

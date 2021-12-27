@@ -316,12 +316,12 @@ gridColumnLayout[0] = [
         renderer : {
             type: "IconRenderer",
             iconPosition: "aisle",
-            iconWidth : 28,
+            iconWidth : 24,
             iconHeight : 24,
             iconFunction: function(rowIndex, columnIndex, value, item) {
                 let icon = "";
                 if(item.photoList.length) {
-                    icon = "/assets/images/icon__calendar--b.svg";
+                    icon = "/assets/images/icon__picture.svg";
                 }else{
                     icon = "/assets/images/icon__camera.svg";
                 }

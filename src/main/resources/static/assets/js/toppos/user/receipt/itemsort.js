@@ -1,4 +1,4 @@
-$(function() { // 도입부에 실행될 기능들
+$(function() { // 페이지가 로드되고 나서 실행
     onPageLoad();
 });
 
@@ -36,7 +36,7 @@ const ajax = {
 const grid = {
     s: { // 그리드 세팅
         targetDiv: [
-
+            "grid_bgOrder", "grid_bsList", "grid_biOrder"
         ],
         columnLayout: [],
         prop: [],
@@ -44,16 +44,16 @@ const grid = {
         data: [],
         url: {
             create: [
-                "/api/"
+                "/api/head/", "/api/head/", "/api/head/"
             ],
             read: [
-                "/api/"
+                "/api/head/", "/api/head/", "/api/head/"
             ],
             update: [
-                "/api/"
+                "/api/head/", "/api/head/", "/api/head/"
             ],
             delete: [
-                "/api/"
+                "/api/head/", "/api/head/", "/api/head/"
             ]
         }
     },
@@ -64,11 +64,11 @@ const grid = {
             /* 0번 그리드의 레이아웃 */
             grid.s.columnLayout[0] = [
                 {
-                    dataField: "",
-                    headerText: "",
+                    dataField: "bgItemGroupcode",
+                    headerText: "분류코드",
                 }, {
-                    dataField: "",
-                    headerText: "",
+                    dataField: "bgName",
+                    headerText: "분류명칭",
                 },
             ];
 
@@ -80,17 +80,20 @@ const grid = {
                 selectionMode : "singleRow",
                 noDataMessage : "출력할 데이터가 없습니다.",
                 enableColumnResize : false,
-                showStateColumn : true,
-                enableFilter : true
+                showStateColumn : false,
+                enableFilter : true,
+                showRowNumColumn : false,
+                rowHeight : 48,
+                headerHeight : 48,
             };
 
             grid.s.columnLayout[1] = [
                 {
                     dataField: "",
-                    headerText: "",
+                    headerText: "분류코드",
                 }, {
                     dataField: "",
-                    headerText: "",
+                    headerText: "분류명칭",
                 },
             ];
 
@@ -99,13 +102,38 @@ const grid = {
                 selectionMode : "singleRow",
                 noDataMessage : "출력할 데이터가 없습니다.",
                 enableColumnResize : false,
-                showStateColumn : true,
-                enableFilter : true
+                showStateColumn : false,
+                enableFilter : true,
+                showRowNumColumn : false,
+                rowHeight : 48,
+                headerHeight : 48,
+            };
+
+            grid.s.columnLayout[2] = [
+                {
+                    dataField: "",
+                    headerText: "분류코드",
+                }, {
+                    dataField: "",
+                    headerText: "분류명칭",
+                },
+            ];
+
+            grid.s.prop[2] = {
+                editable : false,
+                selectionMode : "singleRow",
+                noDataMessage : "출력할 데이터가 없습니다.",
+                enableColumnResize : false,
+                showStateColumn : false,
+                enableFilter : true,
+                showRowNumColumn : false,
+                rowHeight : 48,
+                headerHeight : 48,
             };
 
         },
 
-        create() { // 그리드 동작 처음 빈 그리드를 생성
+        create() { // 그리드 동작 처음 빈 그리드를 생성 후 창에 맞게 리사이징
             for (const i in grid.s.columnLayout) {
                 grid.s.id[i] = AUIGrid.create(grid.s.targetDiv[i], grid.s.columnLayout[i], grid.s.prop[i]);
             }
@@ -114,6 +142,15 @@ const grid = {
         setInitialData(numOfGrid) { // 해당 배열 번호 그리드의 url.read 를 참조하여 데이터를 그리드에 뿌린다.
             ajax.setDataIntoGrid(numOfGrid, grid.s.read[numOfGrid]);
         },
+
+        resizeOnTab(type) {
+            if(type === 0) {
+                AUIGrid.resize(grid.s.id[0]);
+            }else if(type === 1) {
+                AUIGrid.resize(grid.s.id[1]);
+                AUIGrid.resize(grid.s.id[2]);
+            }
+        }
     },
 
     e: {
@@ -126,6 +163,7 @@ const grid = {
     }
 };
 
+/* 페이지가 로드되고 나서 실행 될 코드들을 담는다. */
 function onPageLoad() {
     const $tabsBtn = $('.c-tabs__btn');
     const $tabsContent = $('.c-tabs__content');
@@ -137,9 +175,19 @@ function onPageLoad() {
         $tabsBtn.eq(idx).addClass('active');
         $tabsContent.removeClass('active');
         $tabsContent.eq(idx).addClass('active');
-    });
+
+        grid.f.resizeOnTab(idx);
+    })
 
     grid.f.initialization();
+    grid.f.create();
+
+
+    /* grid.s 에 적절한 값을 세팅하였다면, 해당 함수 호출시 해당 배열번호의 그리드에 의도한 데이터들이 주입되어진다. */
+    // grid.f.setInitialData(0);
+
+    /* 생성된 그리드에 기본적으로 필요한 이벤트들을 적용한다. */
+    // grid.e.basicEvent();
 }
 
 
@@ -149,8 +197,12 @@ function testForJest() {
 }
 
 
-/* jest 테스트를 위해 nodejs 의 요소에 테스트가 필요한 기능을 탑재하여 내보내기 한다. 보통의 실행 환경에서는 무시된다. */
+/* jest 테스트를 위해 nodejs 의 요소에 테스트가 필요한 기능을 탑재하여 내보내기 한다. 브라우저 실행 환경에서는 무시 처리 된다. */
 try {
+    if(module) {
+        AUIGrid = jest.fn();
+        AUIGrid.create = jest.fn();
+    }
     module.exports = {testForJest};
 }catch (e) {
     if(!(e instanceof ReferenceError)) {
