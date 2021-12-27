@@ -70,6 +70,9 @@ gridColumnLayout[0] = [
     }, {
         dataField: "usertel",
         headerText: "전화번호",
+        labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+            return CommonUI.onPhoneNumChange(value);
+        },
     }, {
         dataField: "useremail",
         headerText: "이메일",
@@ -378,6 +381,8 @@ function accountRemove() {
         }
         CommonUI.ajaxjsonPost("/api/head/accountDelete", targetUser, function() {
             createNewPost(0);
+            AUIGrid.clearGridData(gridId[0]);
+            accountList();
         });
         $('#popupId').remove();
     });
@@ -410,7 +415,7 @@ function setFieldData(numOfGrid, item) {
             $("#username").val(item.username);
             $("#password").val(item.password);
             $("#role").val(item.roleCode);
-            $("#usertel").val(item.usertel);
+            $("#usertel").val(CommonUI.onPhoneNumChange(item.usertel));
             $("#useremail").val(item.useremail);
             $("#frCode").val(frCode);
             $("#brCode").val(brCode);
