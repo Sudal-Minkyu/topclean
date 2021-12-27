@@ -950,13 +950,13 @@ function onTakePicture() {
     formData.append("ffRemark", $ffRemark.val());
     console.log(Object.fromEntries(formData));
 
-    $ffRemark.val("");
     CommonUI.ajax("/api/user/takePicture", "POST", formData, function (req) {
         let picJson = {
             ffPath: req.sendData.ffPath,
             ffFilename: req.sendData.ffFilename,
             ffRemark: $ffRemark.val(),
         }
+        $ffRemark.val("");
         picJson.fullImage = req.sendData.ffPath + req.sendData.ffFilename;
         picJson.thumbnailImage = req.sendData.ffPath + "s_" + req.sendData.ffFilename;
         putTakenPictureOnTheRightSide(picJson);
