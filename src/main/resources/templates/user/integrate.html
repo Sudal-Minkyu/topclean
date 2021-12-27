@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ko"
+	  xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate ="~{layout/defaulttest}">
+
+<!-- 사용자 CSS 추가 -->
+<th:block layout:fragment="css">
+
+</th:block>
+
+<!-- 사용자 스크립트 추가 -->
+<th:block layout:fragment="script">
+	<script src="/assets/js/toppos/user/receipt/receiptreg.js"></script>
+	<script type="text/javascript">
+		$(function() {
+			//카테고리 선택 시 팝업 열기
+			$('.openpop').on('click', function(e) {
+				$('.pop').addClass('active');
+				
+				e.preventDefault()
+			});
+			
+			// 팝업 닫기
+			$('.pop__close').on('click', function(e) {
+				$(this).parents('.pop').removeClass('active');
+				
+				e.preventDefault()
+			})
+			
+		});
+
+	</script>
+</th:block>
+
+<div layout:fragment="content" class="content content--column">
+	<div class="content__header">
+		<!-- 검색 -->
+		<div class="search">
+			<div class="c-select">
+				<select id="searchType">
+                    <option value="0">통합검색</option>
+                    <option value="1">고객명</option>
+                    <option value="2">전화번호</option>
+                    <option value="3">주소</option>
+                </select>
+			</div>
+			
+			<div class="c-search">
+				<div class="c-search__input">
+					<input id="searchCustomerField" type="text" placeholder="검색어를 입력하세요" />
+               		<button class="c-search__key" type="button" onclick="">키보드</button>
+				</div>
+				<button class="c-search__bth" type="button" onclick="onSearchCustomer()">검색</button>
+			</div>
+		</div>
+		
+		<!-- 고객정보 -->
+		<div class="client">
+			<div class="client__rating">
+				<!-- 고객뱃지  -->
+				<!-- 맞는 등급 뱃지 .active 주기 -->
+				<span class="client__badge">N</span>
+				<span class="client__badge">V</span>
+				<span class="client__badge client__badge--vvip active">V</span>
+				<!-- #bcGrade 등급 넣어주기 -->
+				<span id="bcGrade">VIP</span>
+			</div>
+			<div class="client__name"><span id="bcName">홍길동님</span></div>
+			<div class="client__propensity"><span id="bcValuation" class="propensity__star propensity__star--2"></span></div>
+			<div class="client__address"><span id="bcAddress">푸르지오 215동</span></div>
+			<div class="client__phone"><span id="bcHp">010-1234-5678</span></div>
+		</div>
+		
+		<!-- 검색조건 -->
+		<div class="condition">
+			<div class="condition__radio">
+				<div class="c-radio">
+					<input type="radio" name="condition" id="condition1" checked />
+					<label for="condition1">전체</label>
+				</div>
+				<div class="c-radio">
+					<input type="radio" name="condition" id="condition2" />
+					<label for="condition2">고객접수</label>
+				</div>
+				<div class="c-radio">
+					<input type="radio" name="condition" id="condition3" />
+					<label for="condition3">자사입고</label>
+				</div>
+				<div class="c-radio">
+					<input type="radio" name="condition" id="condition4" />
+					<label for="condition4">가맹점입고</label>
+				</div>
+				<div class="c-radio">
+					<input type="radio" name="condition" id="condition5" />
+					<label for="condition5">입고완료</label>
+				</div>
+				<div class="c-radio">
+					<input type="radio" name="condition" id="condition6" />
+					<label for="condition6">확인품</label>
+				</div>
+				<div class="c-radio">
+					<input type="radio" name="condition" id="condition7" />
+					<label for="condition7">가맹검품</label>
+				</div>
+			</div>
+			
+			<div class="condition__date">
+				<div class="c-period">
+					<!-- 시작일 -->
+					<input type="text" value="2021-12-21" />
+					<span class="c-period__code">-</span>
+					<!-- 종료일 -->
+					<input type="text" value="2021-12-23" />
+				</div>
+			</div>
+			
+			<div class="condition__console">
+				<button class="c-button c-button--solid c-button--small">조회</button>
+				<button class="c-button c-button--small c-button--darksolid">수정모드</button>
+				<button class="c-button c-button--small c-button--red">수정모드종료</button>
+			</div>
+		</div>
+		
+		<!-- 고객정보2 -->
+		<ul class="client-info">
+			<li>
+				<h4>미수금</h4>
+				<p><span class="client-info__num" id="미수금총액">25,000</span><span class="won">원</span></p>
+			</li>
+			<li>
+				<h4>적립금</h4>
+				<p><span class="client-info__num" id="fsAmt">25000</span><span class="won">원</span></p>
+			</li>
+			<li>
+				<h4>특이사항</h4>
+				<p><span id="bcRemark">XXXXXXXX</span></p>
+			</li>
+			<li>
+				<h4>최근방문일</h4>
+				<p><span class="client-info__num" id="최근방문일">2021-11-10</span></p>
+			</li>
+		</ul>
+	</div>
+	
+	<div class="content__body">
+		<!-- grid -->
+		<div style="width: 100%; height: 654px; border: 1px solid #dbdbdb">높이값 빼고 스타일 삭제
+			<button class="c-state">등록</button>
+			<button class="c-state c-state--modify">수정</button>
+			<button class="c-state c-state--cancel">취소</button>
+		</div>
+	</div>
+
+	
+	
+	<!-- 기본 팝업 -->
+	<div class="pop">
+		<div class="pop__box">
+			<div class="pop__article">
+				<h3 class="pop__article-header">결제내역</h3>
+				<div class="pop__aricle-content">
+					<!-- 이 안에 넣어주기 -->
+		        	<div style="width: 100%; height: 400px; border: 1px solid #dbdbdb">높이값 빼고 스타일 삭제</div>
+		        	<span class="pop__comment">*취소 또는 취소 후 적립금 전환 하고자 하는 결제 내역을 선택하세요.</span>
+				</div>
+			</div>
+			
+			<ul class="pop__console">
+				<li><button class="c-button c-button--dark">적립금전환</button></li>
+				<li><button class="c-button c-button--red">결제취소</button></li>
+				<li><button class="c-button pop__close">닫기</button></li>
+			</ul>
+		</div>
+	</div>
+
+</div>
+</html>

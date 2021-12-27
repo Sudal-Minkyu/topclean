@@ -483,6 +483,42 @@ input[type="number"]::-webkit-inner-spin-button {
 	background-color: #d4d9e1;
 }
 
+/* state */
+.c-state {
+	display: inline-block;
+	padding: 0 0.75rem;
+	height: 1.5rem;
+	background-color: #e5eeff;
+	border: 0 none;
+	color: #0082f0;
+	font-size: 0.875ren;
+	font-weight: 700;
+	line-height: 1.5rem;
+	-webkit-border-radius: 1.25rem;
+	-moz-border-radius: 1.25rem;
+	border-radius: 1.25rem;
+}
+.c-state:active {
+	background-color: #0082f0;
+	color: #fff;
+}
+.c-state.c-state--modify {
+	background-color: #e5f7e8;
+	color: #00b835;
+}
+.c-state.c-state--modify:active {
+	background-color: #00b835;
+	color: #fff;
+}
+.c-state.c-state--cancel {
+	background-color: #fce9eb;
+	color: #ff7163;
+}
+.c-state.c-state--cancel:active {
+	background-color: #ff7163;
+	color: #fff;
+}
+
 /* tabs */
 .c-tabs {
 	position: relative;

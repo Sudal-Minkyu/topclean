@@ -1144,6 +1144,7 @@ textarea {
 	width: 41.875rem;
 	padding: 0.875rem 1.25rem;
 	margin-top: 0.938rem;
+	margin-bottom: auto;
 	background-color: #fff;
 	-webkit-border-radius: 0.313rem;;
 	-moz-border-radius: 0.313rem;;
@@ -1154,6 +1155,9 @@ textarea {
 	margin-bottom: 0.625rem;
 }
 .condition__radio .c-radio + .c-radio {
+	margin-left: 0.5rem;
+}
+.condition__console .c-button + .c-button {
 	margin-left: 0.5rem;
 }
 
@@ -1493,7 +1497,12 @@ textarea {
 	color: #000;
 	font-size: 1.25rem;
 	line-height: 1.688rem;
-} 
+}
+.pop__comment {
+	display: block;
+	margin: 0.313rem 0;
+	text-align: right;
+}
 .pop__console {
 	display: flex;
 	flex-wrap: wrap;
