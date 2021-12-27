@@ -63,6 +63,12 @@ public class UserController {
         return "user/classification";
     }
     
+    // 통합조회
+    @RequestMapping("integrate")
+    public String integrate(){
+        return "user/integrate";
+    }
+    
     // 검품이력 조회 및 메세지
     @RequestMapping("inspect")
     public String inspect(){
