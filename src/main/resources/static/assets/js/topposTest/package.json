@@ -1,0 +1,17 @@
+{
+    "dependencies": {
+        "jest": "^27.4.5",
+        "jsdom": "^19.0.0"
+    },
+    "scripts": {
+        "test": "jest"
+    },
+    "jest": {
+        "setupFiles": [
+            "<rootDir>/jest-preset.js"
+        ],
+        "testMatch": [
+            "<rootDir>/**/*.test.(js|jsx|ts|tsx)"
+        ]
+    }
+}
