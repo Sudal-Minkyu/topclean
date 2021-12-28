@@ -315,9 +315,9 @@ gridColumnLayout[0] = [
         style: "receiptreg-product-name",
         renderer : {
             type: "IconRenderer",
-            iconPosition: "aisle",
-            iconWidth : 24,
-            iconHeight : 24,
+            iconPosition: "left",
+            iconWidth : 23,
+            iconHeight : 23,
             iconFunction: function(rowIndex, columnIndex, value, item) {
                 let icon = "";
                 if(item.photoList.length) {

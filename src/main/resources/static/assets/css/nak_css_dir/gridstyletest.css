@@ -85,3 +85,7 @@
 .aui-grid-default-header:hover {
     background: #778da7;
 }
+
+.receiptreg-product-name .aui-img{
+    margin-right: 3px!important;
+}

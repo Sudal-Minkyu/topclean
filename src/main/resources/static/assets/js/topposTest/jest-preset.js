@@ -18,3 +18,9 @@ global.document = window.document;
 
 global.jQuery = $;
 global.$ = $;
+
+
+
+/* MockList */
+AUIGrid = jest.fn();
+AUIGrid.create = jest.fn();
