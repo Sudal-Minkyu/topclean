@@ -25,6 +25,7 @@ import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetai
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailSet;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestListDto;
 import com.broadwave.toppos.User.UserService.ReceiptService;
+import com.broadwave.toppos.User.UserService.SortService;
 import com.broadwave.toppos.User.UserService.UserService;
 import com.broadwave.toppos.common.AjaxResponse;
 import com.broadwave.toppos.common.ResponseErrorCode;
@@ -66,16 +67,19 @@ public class UserRestController {
     private final AWSS3Service awss3Service; // AWS S3 서비스
     private final UserService userService; // 가맹점 통합 서비스
     private final ReceiptService receiptService; // 가맹점 접수페이지 전용 서비스
+    private final SortService sortService; // 가맹점 상품정렬 서비스
     private final ModelMapper modelMapper;
     private final TokenProvider tokenProvider;
     private final HeadService headService;
     private final ManagerService managerService;
 
     @Autowired
-    public UserRestController(AWSS3Service awss3Service, UserService userService, ReceiptService receiptService, TokenProvider tokenProvider, ModelMapper modelMapper, HeadService headService, ManagerService managerService) {
+    public UserRestController(AWSS3Service awss3Service, UserService userService, ReceiptService receiptService, SortService sortService,
+                              TokenProvider tokenProvider, ModelMapper modelMapper, HeadService headService, ManagerService managerService) {
         this.awss3Service = awss3Service;
         this.userService = userService;
         this.receiptService = receiptService;
+        this.sortService = sortService;
         this.modelMapper = modelMapper;
         this.tokenProvider = tokenProvider;
         this.headService = headService;
@@ -573,74 +577,13 @@ public class UserRestController {
     @GetMapping("franchiseItemGroupList")
     public ResponseEntity<Map<String,Object>> franchiseItemGroupList(HttpServletRequest request){
         log.info("franchiseItemGroupList 호출");
-
-        // 클레임데이터 가져오기
-        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
-        String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
-        String login_id = claims.getSubject(); // 현재 아이디
-        log.info("현재 접속한 아이디 : "+login_id);
-        log.info("현재 접속한 가맹점 코드 : "+frCode);
-
-        AjaxResponse res = new AjaxResponse();
-        HashMap<String, Object> data = new HashMap<>();
-
-        // 현재 가맹점의 대분류 리스트 가져오기 + 가맹점이 등록한 대분류 순서 테이블 leftjoin
-        List<UserItemGroupSortDto> userItemGroupSortData = headService.findByUserItemGroupSortDtoList(frCode);
-        log.info("userItemGroupSortData : "+userItemGroupSortData);
-        log.info("userItemGroupSortData 사이즈 : "+userItemGroupSortData.size());
-        data.put("userItemGroupSortData",userItemGroupSortData);
-
-        return ResponseEntity.ok(res.dataSendSuccess(data));
+        return sortService.findByGroupSort(request);
     }
 
     // 현재 가맹점의 대분류 순서 업데이트
     @PostMapping("franchiseItemGroupUpdate")
     public ResponseEntity<Map<String,Object>> franchiseItemGroupUpdate(@RequestBody GroupSortSet groupSortSet, HttpServletRequest request){
-        log.info("franchiseItemGroupUpdate 호출");
-
-        // 클레임데이터 가져오기
-        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
-        String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
-        String login_id = claims.getSubject(); // 현재 아이디
-        log.info("현재 접속한 아이디 : "+login_id);
-        log.info("현재 접속한 가맹점 코드 : "+frCode);
-
-//        log.info("groupSortSet.getList() : "+groupSortSet.getList());
-
-        AjaxResponse res = new AjaxResponse();
-        HashMap<String, Object> data = new HashMap<>();
-
-        List<String> bgItemGroupcodeList = new ArrayList<>();
-        List<GroupSortUpdateDto> groupSortUpdateDtos = userService.findByGroupSortList(frCode);
-        for(GroupSortUpdateDto groupSortUpdateDto : groupSortUpdateDtos){
-            bgItemGroupcodeList.add(groupSortUpdateDto.getBgItemGroupcode());
-        }
-        List<GroupSort> groupSortList = new ArrayList<>();
-//        log.info("bgItemGroupcodeList : "+bgItemGroupcodeList);
-        GroupSort groupSort;
-        for(int i=0; i<groupSortSet.getList().size(); i++){
-            groupSort = new GroupSort();
-            groupSort.setFrCode(frCode);
-            groupSort.setBgItemGroupcode(groupSortSet.getList().get(i).getBgItemGroupcode());
-            groupSort.setBgSort(groupSortSet.getList().get(i).getBgSort());
-
-            if(bgItemGroupcodeList.contains(groupSortSet.getList().get(i).getBgItemGroupcode())){
-                groupSort.setInsert_id(groupSortUpdateDtos.get(0).getInsert_id());
-                groupSort.setInsertDateTime(groupSortUpdateDtos.get(0).getInsertDateTime());
-                groupSort.setModify_id(login_id);
-                groupSort.setModifyDateTime(LocalDateTime.now());
-            }else{
-                groupSort.setInsert_id(login_id);
-                groupSort.setInsertDateTime(LocalDateTime.now());
-            }
-
-            groupSortList.add(groupSort);
-        }
-
-//        log.info("groupSortList : "+groupSortList);
-        userService.groupSortUpdate(groupSortList);
-
-        return ResponseEntity.ok(res.dataSendSuccess(data));
+        return sortService.findByGroupSortUpdate(groupSortSet, request);
     }
 
 

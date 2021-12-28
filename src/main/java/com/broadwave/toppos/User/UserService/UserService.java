@@ -108,14 +108,4 @@ public class UserService {
         }
     }
 
-    // 현재 가맹점의 대분류상품 정렬 리스트
-    public List<GroupSortUpdateDto> findByGroupSortList(String frCode) {
-        return groupSortRepositoryCustom.findByGroupSortList(frCode);
-    }
-
-    // 현재 가맹점의 대분류상품 정렬 업데이트
-    public void groupSortUpdate(List<GroupSort> groupSortList) {
-        groupSortRepository.saveAll(groupSortList);
-    }
-
 }
