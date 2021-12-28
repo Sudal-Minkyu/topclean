@@ -823,11 +823,9 @@ function Communication(reqmsg, func){
             },
             error: function (request, status, error) {
                 //alert("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
-                let errMessage = "erroecode:" + request.status + "\n" + "error:" + error;
+                let errMessage = "erroecode:" + request.status + ", " + "error:" + error;
                 return func('{"STATUS":"FAILURE", "ERRORMESSAGE":"'+ errorDefaultMessage +'", "ERRORDATA":"'+ errMessage+'"}');
             }
-
-
         });
     } catch (e) {
         return func('{"STATUS":"FAILURE", "ERRORMESSAGE":"'+ errorDefaultMessage+'"}');

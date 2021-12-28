@@ -1629,7 +1629,7 @@ function onPaymentStageOne() {
                 CAT.CatCredit(paymentData, function (res) {
                     $('#payStatus').hide();
                     let resjson = JSON.parse(res);
-                    //결제 성공일경우 Print
+                    // 결제 성공일경우 Print
                     if (resjson.STATUS === "SUCCESS") {
                         let creditData =
                             {
@@ -1640,6 +1640,10 @@ function onPaymentStageOne() {
                             };
                         CAT.CatPrint(paymentData, creditData, "N");
                         onPaymentStageTwo(paymentData, resjson);
+                    }
+                    // 결제 실패의 경우
+                    if (resjson.STATUS === "FAILURE") {
+                        console.log(resjson);
                     }
                 });
             }catch (e) {
