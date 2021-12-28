@@ -2,12 +2,23 @@ $(function() { // 페이지가 로드되고 나서 실행
     onPageLoad();
 });
 
-/* 서버 API와 주고 받게 될 데이터 정의 */
+/* 서버 API와 주고 받게 될 데이터 정의
+* "s" 문자형, "n" 숫자형, "r" 필수값
+* 조합하여 "sr", "nr" 같은 형식도 가능
+* */
 const dto = {
     send: {
-
+        franchiseItemGroupUpdate : {
+            bgItemGroupcode: "s",
+            bgSort: "n"
+        },
     },
     receive: {
+        franchiseItemGroupList: {
+            bgSort: "n",
+            bgItemGroupcode: "s",
+            bgName: "s"
+        },
 
     }
 };
@@ -21,6 +32,7 @@ const data = {
 const ajax = {
     setDataIntoGrid: function(numOfGrid, url) { // 해당 numOfGrid 배열번호의 그리드에 url 로부터 받은 데이터값을 통신하여 주입한다.
         CommonUI.ajax(url, "GET", false, function (req) {
+            console.log(req);
             grid.s.data[numOfGrid] = req.sendData.gridListData;
             AUIGrid.setGridData(grid.s.id[numOfGrid], grid.s.data[numOfGrid]);
         });
@@ -47,7 +59,7 @@ const grid = {
                 "/api/head/", "/api/head/", "/api/head/"
             ],
             read: [
-                "/api/head/", "/api/head/", "/api/head/"
+                "/api/user/franchiseItemGroupList", "/api/head/", "/api/head/"
             ],
             update: [
                 "/api/head/", "/api/head/", "/api/head/"
@@ -140,7 +152,7 @@ const grid = {
         },
 
         setInitialData(numOfGrid) { // 해당 배열 번호 그리드의 url.read 를 참조하여 데이터를 그리드에 뿌린다.
-            ajax.setDataIntoGrid(numOfGrid, grid.s.read[numOfGrid]);
+            ajax.setDataIntoGrid(numOfGrid, grid.s.url.read[numOfGrid]);
         },
 
         resizeOnTab(type) {
@@ -184,7 +196,7 @@ function onPageLoad() {
 
 
     /* grid.s 에 적절한 값을 세팅하였다면, 해당 함수 호출시 해당 배열번호의 그리드에 의도한 데이터들이 주입되어진다. */
-    // grid.f.setInitialData(0);
+    grid.f.setInitialData(0);
 
     /* 생성된 그리드에 기본적으로 필요한 이벤트들을 적용한다. */
     // grid.e.basicEvent();
@@ -199,6 +211,7 @@ function testForJest() {
 
 /* jest 테스트를 위해 nodejs 의 요소에 테스트가 필요한 기능을 탑재하여 내보내기 한다. 브라우저 실행 환경에서는 무시 처리 된다. */
 try {
+    ajax.setDataIntoGrid = jest.fn();
     module.exports = {testForJest};
 }catch (e) {
     if(!(e instanceof ReferenceError)) {

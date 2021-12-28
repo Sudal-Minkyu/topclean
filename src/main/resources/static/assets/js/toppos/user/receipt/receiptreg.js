@@ -1644,6 +1644,8 @@ function onPaymentStageOne() {
                     // 결제 실패의 경우
                     if (resjson.STATUS === "FAILURE") {
                         console.log(resjson);
+                        $('#payStatus').hide();
+                        alertCaution("단말기 처리 중 에러가 발생하였습니다<br>잠시후 다시 시도해주세요", 1);
                     }
                 });
             }catch (e) {
@@ -1671,7 +1673,6 @@ function onPaymentStageOne() {
 
 /* 결재할 때 */
 function onPaymentStageTwo(paymentData = {}, creditData = {}) {
-
     try {
         const url = "/api/user/requestPayment";
         let data = {
@@ -1730,37 +1731,37 @@ function onPaymentStageTwo(paymentData = {}, creditData = {}) {
             }
             data.payment.push(paymentSaved);
         }
+
+        console.log("결제데이터 : ");
+        console.log(data);
+
+        CommonUI.ajaxjson(url, JSON.stringify(data), function (req){
+            console.log("결제후 :");
+            console.log(req);
+            AUIGrid.addRow(gridId[3], req.sendData.paymentEtcDtos, "last");
+            initialData.etcData.beforeUncollectMoney = req.sendData.beforeUncollectMoney;
+            initialData.etcData.saveMoney = req.sendData.saveMoney;
+            initialData.etcData.todayUncollectMoney = req.sendData.todayUncollectMoney;
+            selectedCustomer.beforeUncollectMoney = req.sendData.beforeUncollectMoney;
+            selectedCustomer.saveMoney = req.sendData.saveMoney;
+            $("#beforeUncollectMoney").html(selectedCustomer.beforeUncollectMoney.toLocaleString());
+            $("#saveMoney").html(selectedCustomer.saveMoney.toLocaleString());
+            $("#beforeUncollectMoneyMain").html(selectedCustomer.beforeUncollectMoney.toLocaleString());
+            $("#saveMoneyMain").html(selectedCustomer.saveMoney.toLocaleString());
+            $("#applySaveMoney").html("0");
+            $("#applyUncollectAmt").html("0");
+            $("#receiveCash").html("0");
+            $("#changeCash").html("0");
+            $("#receiveCard").html("0");
+            //$("#saveMoney").html(req.sendData.saveMoney);
+            calculateOne();
+            calculateTwo();
+            calculateThree();
+        });
     }catch (e) {
         console.log(e);
         return false;
     }
-
-    console.log("결제데이터 : ");
-    console.log(data);
-
-    CommonUI.ajaxjson(url, JSON.stringify(data), function (req){
-        console.log("결제후 :");
-        console.log(req);
-        AUIGrid.addRow(gridId[3], req.sendData.paymentEtcDtos, "last");
-        initialData.etcData.beforeUncollectMoney = req.sendData.beforeUncollectMoney;
-        initialData.etcData.saveMoney = req.sendData.saveMoney;
-        initialData.etcData.todayUncollectMoney = req.sendData.todayUncollectMoney;
-        selectedCustomer.beforeUncollectMoney = req.sendData.beforeUncollectMoney;
-        selectedCustomer.saveMoney = req.sendData.saveMoney;
-        $("#beforeUncollectMoney").html(selectedCustomer.beforeUncollectMoney.toLocaleString());
-        $("#saveMoney").html(selectedCustomer.saveMoney.toLocaleString());
-        $("#beforeUncollectMoneyMain").html(selectedCustomer.beforeUncollectMoney.toLocaleString());
-        $("#saveMoneyMain").html(selectedCustomer.saveMoney.toLocaleString());
-        $("#applySaveMoney").html("0");
-        $("#applyUncollectAmt").html("0");
-        $("#receiveCash").html("0");
-        $("#changeCash").html("0");
-        $("#receiveCard").html("0");
-        //$("#saveMoney").html(req.sendData.saveMoney);
-        calculateOne();
-        calculateTwo();
-        calculateThree();
-    });
 }
 
 function onPayUncollectMoney() {

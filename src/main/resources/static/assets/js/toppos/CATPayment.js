@@ -764,7 +764,7 @@ function CatCreditCancel_vPOSV1(params) {
 
 //Ajax 호출
 function Communication(reqmsg, func){
-    let errorDefaultMessage ="단말기 처리 중 에러가 발생하였습니다. 다시 시도해주세요"
+    let errorDefaultMessage ="단말기 처리 중 에러가 발생하였습니다<br>잠시후 다시 시도해주세요";
     try {
 
         $.ajax

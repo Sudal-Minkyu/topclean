@@ -19,8 +19,9 @@ global.document = window.document;
 global.jQuery = $;
 global.$ = $;
 
+const CommonUIClass = require('../toppos/CommonUI.js');
+global.CommonUI = new CommonUIClass();
 
-
-/* MockList */
+/* Global MockList */
 AUIGrid = jest.fn();
 AUIGrid.create = jest.fn();

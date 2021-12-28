@@ -238,6 +238,16 @@ class CommonUIClass {
         });
     }
 
+    /* 새로운 dto 생성용 */
+    newDto(dto) {
+        const keys = Object.keys(dto);
+        let babyDto = {};
+        for(let key in keys) {
+            babyDto[keys[key]] = null;
+        }
+        return babyDto;
+    }
+
     /* 드래그 이벤트, 터치시 좌표얻는 알고리즘 포함. 아직 사용 가능성이 적으므로 이벤트로 사용을 위해서는 터치시 마우스다운과 다르게 AUIGrid의 셀을
     *  선택하지 않는 문제의 해결이 필요하다. 또한 이벤트 사용을 위해서는 AUI에는 셀 클릭 이벤트를 걸고, activeDragDropEvent 불린값을 조건으로
     *  주어 이벤트를 구동해야 한다. */
@@ -274,4 +284,13 @@ class CommonUIClass {
     }
 }
 
-const CommonUI = new CommonUIClass();
+let CommonUI = new CommonUIClass();
+
+/* jest 테스트를 위해 nodejs 의 요소에 테스트가 필요한 기능을 탑재하여 내보내기 한다. 브라우저 실행 환경에서는 무시 처리 된다. */
+try {
+    module.exports = CommonUIClass;
+}catch (e) {
+    if(!(e instanceof ReferenceError)) {
+        console.log(e);
+    }
+}
