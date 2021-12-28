@@ -2,10 +2,10 @@ package com.broadwave.toppos.User.UserService;
 
 import com.broadwave.toppos.Head.HeadService;
 import com.broadwave.toppos.Head.Item.Group.A.UserItemGroupSortDto;
-import com.broadwave.toppos.Head.Item.Group.B.ItemGroupSListDto;
 import com.broadwave.toppos.Head.Item.Group.B.ItemGroupSUserListDto;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.User.GroupSort.*;
+import com.broadwave.toppos.User.ItemSort.*;
 import com.broadwave.toppos.common.AjaxResponse;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
@@ -37,13 +37,19 @@ public class SortService {
     private final GroupSortRepository groupSortRepository;
     private final GroupSortRepositoryCustom groupSortRepositoryCustom;
 
+    private final ItemSortRepository itemSortRepository;
+    private final ItemSortRepositoryCustom itemSortRepositoryCustom;
+
     @Autowired
     public SortService(TokenProvider tokenProvider, HeadService headService,
-                       GroupSortRepository groupSortRepository, GroupSortRepositoryCustom groupSortRepositoryCustom){
+                       GroupSortRepository groupSortRepository, GroupSortRepositoryCustom groupSortRepositoryCustom,
+                       ItemSortRepository itemSortRepository, ItemSortRepositoryCustom itemSortRepositoryCustom){
         this.tokenProvider = tokenProvider;
         this.headService = headService;
         this.groupSortRepository = groupSortRepository;
         this.groupSortRepositoryCustom = groupSortRepositoryCustom;
+        this.itemSortRepository = itemSortRepository;
+        this.itemSortRepositoryCustom = itemSortRepositoryCustom;
     }
 
     // 현재 가맹점의 대분류상품 정렬 리스트
@@ -79,7 +85,8 @@ public class SortService {
         AjaxResponse res = new AjaxResponse();
 
         List<String> bgItemGroupcodeList = new ArrayList<>();
-        List<GroupSortUpdateDto> groupSortUpdateDtos = findByGroupSortList(frCode);
+        // 현재 가맹점의 대분류상품 GroupSortUpdateDto 호출
+        List<GroupSortUpdateDto> groupSortUpdateDtos = groupSortRepositoryCustom.findByGroupSortList(frCode);
         for(GroupSortUpdateDto groupSortUpdateDto : groupSortUpdateDtos){
             bgItemGroupcodeList.add(groupSortUpdateDto.getBgItemGroupcode());
         }
@@ -112,25 +119,86 @@ public class SortService {
         return ResponseEntity.ok(res.success());
     }
 
-    // 현재 가맹점의 대분류상품 GroupSortUpdateDto 호출
-    public List<GroupSortUpdateDto> findByGroupSortList(String frCode) {
-        return groupSortRepositoryCustom.findByGroupSortList(frCode);
-    }
+    // 현재 가맹점의 중분류 리스트 가져오기
+    public ResponseEntity<Map<String, Object>> franchiseItemSortList(String filterCode, String filterName) {
+        log.info("franchiseItemSortList 호출");
 
-    // 현재 가맹점의 상품순서 리스트 가져오기
-    public ResponseEntity<Map<String, Object>> franchiseItemSortList(String filterCode, String filterName, HttpServletRequest request) {
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
-
         List<ItemGroupSUserListDto> itemGroupSListData = headService.findByItemGroupSUserList(filterCode, filterName);
         data.put("gridListData",itemGroupSListData);
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
+    // 현재 가맹점의 상품순서 리스트 가져오기
+    public ResponseEntity<Map<String, Object>> franchiseItemList(String biItemMgroup, HttpServletRequest request, String nowDate) {
+        log.info("franchiseItemList 호출");
 
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
 
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
 
+//        log.info("frCode : "+frCode);
+//        log.info("biItemMgroup : "+biItemMgroup);
+//        log.info("nowDate : "+nowDate);
+        List<ItemSortListDto> itemSortListDtos = itemSortRepositoryCustom.itemSortList(frCode, biItemMgroup, nowDate);
+        data.put("gridListData",itemSortListDtos);
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
 
+    // 현재 가맹점의 상품순서 업데이트
+    @Transactional
+    public ResponseEntity<Map<String, Object>> findByItemSortUpdate(ItemSortSet itemSortSet, HttpServletRequest request) {
+        log.info("findByItemSortUpdate 호출");
+
+        AjaxResponse res = new AjaxResponse();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
+        String login_id = claims.getSubject(); // 현재 아이디
+        log.info("현재 접속한 아이디 : "+login_id);
+        log.info("현재 접속한 가맹점 코드 : "+frCode);
+
+        List<String> biItemcodeList = new ArrayList<>();
+        // 현재 가맹점의 대분류상품 GroupSortUpdateDto 호출
+        String biItemMgroup = itemSortSet.getList().get(0).getBiItemcode().substring(0,4);
+        List<ItemSortUpdateDto> itemSortUpdateDtos = itemSortRepositoryCustom.findByItemSortList(biItemMgroup,frCode);
+        for(ItemSortUpdateDto itemSortUpdateDto : itemSortUpdateDtos){
+            biItemcodeList.add(itemSortUpdateDto.getBiItemcode());
+        }
+
+//        log.info("biItemcodeList : "+biItemcodeList);
+        List<ItemSort> itemSortList = new ArrayList<>();
+        ItemSort itemSort;
+        for(int i=0; i<itemSortSet.getList().size(); i++){
+            itemSort = new ItemSort();
+            itemSort.setFrCode(frCode);
+            itemSort.setBiItemcode(itemSortSet.getList().get(i).getBiItemcode());
+            itemSort.setBfSort(itemSortSet.getList().get(i).getBfSort());
+            itemSort.setBiItemMgroup(itemSortSet.getList().get(i).getBiItemcode().substring(0,4));
+
+            if(biItemcodeList.contains(itemSortSet.getList().get(i).getBiItemcode())){
+                itemSort.setInsert_id(itemSortUpdateDtos.get(0).getInsert_id());
+                itemSort.setInsertDateTime(itemSortUpdateDtos.get(0).getInsertDateTime());
+                itemSort.setModify_id(login_id);
+                itemSort.setModifyDateTime(LocalDateTime.now());
+            }else{
+                itemSort.setInsert_id(login_id);
+                itemSort.setInsertDateTime(LocalDateTime.now());
+            }
+
+            itemSortList.add(itemSort);
+        }
+
+//        log.info("itemSortList : "+itemSortList);
+        itemSortRepository.saveAll(itemSortList);
+
+        return ResponseEntity.ok(res.success());
+    }
 
 
 }
