@@ -15,6 +15,9 @@ import com.broadwave.toppos.User.Customer.Customer;
 import com.broadwave.toppos.User.Customer.CustomerInfoDto;
 import com.broadwave.toppos.User.Customer.CustomerListDto;
 import com.broadwave.toppos.User.Customer.CustomerMapperDto;
+import com.broadwave.toppos.User.GroupSort.GroupSort;
+import com.broadwave.toppos.User.GroupSort.GroupSortMapperDto;
+import com.broadwave.toppos.User.GroupSort.GroupSortSet;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentSet;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Request;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.PhotoDto;
@@ -563,6 +566,70 @@ public class UserRestController {
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
+
+
+    //@@@@@@@@@@@@@@@@@@@@@ 가맹점 대분류, 상품 정렬관련 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    // 현재 가맹점의 대분류 리스트 가져오기
+    @GetMapping("franchiseItemGroupList")
+    public ResponseEntity<Map<String,Object>> franchiseItemGroupList(HttpServletRequest request){
+        log.info("franchiseItemGroupList 호출");
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
+        String login_id = claims.getSubject(); // 현재 아이디
+        log.info("현재 접속한 아이디 : "+login_id);
+        log.info("현재 접속한 가맹점 코드 : "+frCode);
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        // 현재 가맹점의 대분류 리스트 가져오기 + 가맹점이 등록한 대분류 순서 테이블 leftjoin
+        List<UserItemGroupSortDto> userItemGroupSortData = headService.findByUserItemGroupSortDtoList(frCode);
+        log.info("userItemGroupSortData : "+userItemGroupSortData);
+        log.info("userItemGroupSortData 사이즈 : "+userItemGroupSortData.size());
+        data.put("userItemGroupSortData",userItemGroupSortData);
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
+    // 현재 가맹점의 대분류 순서 업데이트
+    @PostMapping("franchiseItemGroupUpdate")
+    public ResponseEntity<Map<String,Object>> franchiseItemGroupUpdate(@RequestBody GroupSortSet groupSortSet, HttpServletRequest request){
+        log.info("franchiseItemGroupUpdate 호출");
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
+        String login_id = claims.getSubject(); // 현재 아이디
+        log.info("현재 접속한 아이디 : "+login_id);
+        log.info("현재 접속한 가맹점 코드 : "+frCode);
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        List<GroupSort> groupSortList = new ArrayList<>();
+        for(int i=0; i<groupSortSet.getList().size(); i++){
+            GroupSort groupSort = new GroupSort();
+            groupSort.setFrCode(frCode);
+            groupSort.setBgItemGroupcode(groupSortSet.getList().get(i).getBgItemGroupcode());
+            groupSort.setBgSort(groupSortSet.getList().get(i).getBgSort());
+
+
+        }
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
+
+
+
+
+
+
+
+
+
 
 
 }
