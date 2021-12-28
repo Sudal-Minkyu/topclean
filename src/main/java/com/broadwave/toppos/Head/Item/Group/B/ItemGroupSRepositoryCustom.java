@@ -19,4 +19,5 @@ public interface ItemGroupSRepositoryCustom {
 
     List<UserItemGroupSListDto> findByUserItemGroupSList();
 
+    List<ItemGroupSUserListDto> findByItemGroupSUserList(String filterCode, String filterName);
 }

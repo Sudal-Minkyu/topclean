@@ -2,6 +2,8 @@ package com.broadwave.toppos.User.UserService;
 
 import com.broadwave.toppos.Head.HeadService;
 import com.broadwave.toppos.Head.Item.Group.A.UserItemGroupSortDto;
+import com.broadwave.toppos.Head.Item.Group.B.ItemGroupSListDto;
+import com.broadwave.toppos.Head.Item.Group.B.ItemGroupSUserListDto;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.User.GroupSort.*;
 import com.broadwave.toppos.common.AjaxResponse;
@@ -55,11 +57,12 @@ public class SortService {
 
         // 현재 가맹점의 대분류 리스트 가져오기 + 가맹점이 등록한 대분류 순서 테이블 leftjoin
         List<UserItemGroupSortDto> userItemGroupSortData = headService.findByUserItemGroupSortDtoList(frCode);
-        data.put("userItemGroupSortData",userItemGroupSortData);
+        data.put("gridListData",userItemGroupSortData);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
+    // 현재 가맹점의 대분류 순서 업데이트
     @Transactional
     public ResponseEntity<Map<String, Object>> findByGroupSortUpdate(GroupSortSet groupSortSet, HttpServletRequest request) {
         log.info("franchiseItemGroupUpdate 호출");
@@ -80,6 +83,7 @@ public class SortService {
         for(GroupSortUpdateDto groupSortUpdateDto : groupSortUpdateDtos){
             bgItemGroupcodeList.add(groupSortUpdateDto.getBgItemGroupcode());
         }
+
         List<GroupSort> groupSortList = new ArrayList<>();
 //        log.info("bgItemGroupcodeList : "+bgItemGroupcodeList);
         GroupSort groupSort;
@@ -108,9 +112,25 @@ public class SortService {
         return ResponseEntity.ok(res.success());
     }
 
-    // 현재 가맹점의 대분류상품 정렬 리스트
+    // 현재 가맹점의 대분류상품 GroupSortUpdateDto 호출
     public List<GroupSortUpdateDto> findByGroupSortList(String frCode) {
         return groupSortRepositoryCustom.findByGroupSortList(frCode);
     }
+
+    // 현재 가맹점의 상품순서 리스트 가져오기
+    public ResponseEntity<Map<String, Object>> franchiseItemSortList(String filterCode, String filterName, HttpServletRequest request) {
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        List<ItemGroupSUserListDto> itemGroupSListData = headService.findByItemGroupSUserList(filterCode, filterName);
+        data.put("gridListData",itemGroupSListData);
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
+
+
+
+
+
 
 }

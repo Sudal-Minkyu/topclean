@@ -46,6 +46,31 @@ public class ItemGroupSRepositoryCustomImpl extends QuerydslRepositorySupport im
     }
 
     @Override
+    public List<ItemGroupSUserListDto> findByItemGroupSUserList(String filterCode, String filterName) {
+        QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
+        QItemGroup itemGroup = QItemGroup.itemGroup;
+
+        JPQLQuery<ItemGroupSUserListDto> query = from(itemGroupS)
+                .innerJoin(itemGroupS.bgItemGroupcode,itemGroup)
+                .select(Projections.constructor(ItemGroupSUserListDto.class,
+                        itemGroupS.bsItemGroupcodeS,
+                        itemGroup.bgItemGroupcode,
+                        itemGroup.bgName,
+                        itemGroupS.bsName
+                ));
+
+        if(!filterCode.equals("")){
+            query.where(itemGroup.bgItemGroupcode.concat(itemGroupS.bsItemGroupcodeS).likeIgnoreCase(filterCode.concat("%")));
+        }
+
+        if(!filterName.equals("")){
+            query.where(itemGroup.bgName.concat(itemGroupS.bsName).likeIgnoreCase(filterName.concat("%")));
+        }
+
+        return query.fetch();
+    }
+
+    @Override
     public List<UserItemGroupSListDto> findByUserItemGroupSList() {
         QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
         QItemGroup itemGroup = QItemGroup.itemGroup;

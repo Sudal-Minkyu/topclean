@@ -586,6 +586,13 @@ public class UserRestController {
         return sortService.findByGroupSortUpdate(groupSortSet, request);
     }
 
+    // 현재 가맹점의 상품순서 리스트 가져오기
+    @PostMapping("franchiseItemSortList")
+    public ResponseEntity<Map<String,Object>> franchiseItemSortList(@RequestParam(value="filterCode", defaultValue="") String filterCode,
+                                                                                                               @RequestParam(value="filterName", defaultValue="") String filterName,
+                                                                                                               HttpServletRequest request){
+        return sortService.franchiseItemSortList(filterCode, filterName, request);
+    }
 
 
 

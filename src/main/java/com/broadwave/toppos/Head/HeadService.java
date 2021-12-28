@@ -179,6 +179,11 @@ public class HeadService {
         return itemGroupSRepositoryCustom.findByItemGroupSList(bgItemGroupcode);
     }
 
+    // 상품그룹 상품순서 리스트 가져오기 - 가맹점 검색
+    public List<ItemGroupSUserListDto> findByItemGroupSUserList(String filterCode, String filterName) {
+        return itemGroupSRepositoryCustom.findByItemGroupSUserList(filterCode, filterName);
+    }
+
     // 상품그룹 중분류 삭제
     public void findByItemGroupSDelete(ItemGroupS itemGroupS) {
         ItemGroupSRepository.delete(itemGroupS);
