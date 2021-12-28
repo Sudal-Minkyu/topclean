@@ -16,8 +16,8 @@ import com.broadwave.toppos.User.Customer.CustomerInfoDto;
 import com.broadwave.toppos.User.Customer.CustomerListDto;
 import com.broadwave.toppos.User.Customer.CustomerMapperDto;
 import com.broadwave.toppos.User.GroupSort.GroupSort;
-import com.broadwave.toppos.User.GroupSort.GroupSortMapperDto;
 import com.broadwave.toppos.User.GroupSort.GroupSortSet;
+import com.broadwave.toppos.User.GroupSort.GroupSortUpdateDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentSet;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Request;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.PhotoDto;
@@ -605,18 +605,40 @@ public class UserRestController {
         log.info("현재 접속한 아이디 : "+login_id);
         log.info("현재 접속한 가맹점 코드 : "+frCode);
 
+//        log.info("groupSortSet.getList() : "+groupSortSet.getList());
+
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
 
+        List<String> bgItemGroupcodeList = new ArrayList<>();
+        List<GroupSortUpdateDto> groupSortUpdateDtos = userService.findByGroupSortList(frCode);
+        for(GroupSortUpdateDto groupSortUpdateDto : groupSortUpdateDtos){
+            bgItemGroupcodeList.add(groupSortUpdateDto.getBgItemGroupcode());
+        }
         List<GroupSort> groupSortList = new ArrayList<>();
+//        log.info("bgItemGroupcodeList : "+bgItemGroupcodeList);
+        GroupSort groupSort;
         for(int i=0; i<groupSortSet.getList().size(); i++){
-            GroupSort groupSort = new GroupSort();
+            groupSort = new GroupSort();
             groupSort.setFrCode(frCode);
             groupSort.setBgItemGroupcode(groupSortSet.getList().get(i).getBgItemGroupcode());
             groupSort.setBgSort(groupSortSet.getList().get(i).getBgSort());
 
+            if(bgItemGroupcodeList.contains(groupSortSet.getList().get(i).getBgItemGroupcode())){
+                groupSort.setInsert_id(groupSortUpdateDtos.get(0).getInsert_id());
+                groupSort.setInsertDateTime(groupSortUpdateDtos.get(0).getInsertDateTime());
+                groupSort.setModify_id(login_id);
+                groupSort.setModifyDateTime(LocalDateTime.now());
+            }else{
+                groupSort.setInsert_id(login_id);
+                groupSort.setInsertDateTime(LocalDateTime.now());
+            }
 
+            groupSortList.add(groupSort);
         }
+
+//        log.info("groupSortList : "+groupSortList);
+        userService.groupSortUpdate(groupSortList);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }

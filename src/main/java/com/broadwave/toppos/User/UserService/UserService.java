@@ -3,6 +3,10 @@ package com.broadwave.toppos.User.UserService;
 import com.broadwave.toppos.Account.AccountRepositoryCustom;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.User.Customer.*;
+import com.broadwave.toppos.User.GroupSort.GroupSort;
+import com.broadwave.toppos.User.GroupSort.GroupSortRepository;
+import com.broadwave.toppos.User.GroupSort.GroupSortRepositoryCustom;
+import com.broadwave.toppos.User.GroupSort.GroupSortUpdateDto;
 import com.broadwave.toppos.User.UserIndexDto;
 import com.broadwave.toppos.User.UserLoginLog.UserLoginLog;
 import com.broadwave.toppos.User.UserLoginLog.UserLoginLogRepository;
@@ -30,19 +34,24 @@ public class UserService {
 
     private final CustomerRepository customerRepository;
     private final UserLoginLogRepository userLoginLogRepository;
+    private final GroupSortRepository groupSortRepository;
 
     private final CustomerRepositoryCustom customerRepositoryCustom;
     private final AccountRepositoryCustom accountRepositoryCustom;
+    private final GroupSortRepositoryCustom groupSortRepositoryCustom;
 
     @Autowired
     public UserService(TokenProvider tokenProvider,
                        CustomerRepository customerRepository, UserLoginLogRepository userLoginLogRepository,
-                       CustomerRepositoryCustom customerRepositoryCustom, AccountRepositoryCustom accountRepositoryCustom){
+                       CustomerRepositoryCustom customerRepositoryCustom, AccountRepositoryCustom accountRepositoryCustom,
+                       GroupSortRepository groupSortRepository, GroupSortRepositoryCustom groupSortRepositoryCustom){
         this.tokenProvider = tokenProvider;
         this.customerRepository = customerRepository;
         this.userLoginLogRepository = userLoginLogRepository;
         this.customerRepositoryCustom = customerRepositoryCustom;
         this.accountRepositoryCustom = accountRepositoryCustom;
+        this.groupSortRepository = groupSortRepository;
+        this.groupSortRepositoryCustom = groupSortRepositoryCustom;
     }
 
     // 고객등록
@@ -97,6 +106,16 @@ public class UserService {
             userLoginLog.setInsertDateTime(localDateTime);
             userLoginLogRepository.save(userLoginLog);
         }
+    }
+
+    // 현재 가맹점의 대분류상품 정렬 리스트
+    public List<GroupSortUpdateDto> findByGroupSortList(String frCode) {
+        return groupSortRepositoryCustom.findByGroupSortList(frCode);
+    }
+
+    // 현재 가맹점의 대분류상품 정렬 업데이트
+    public void groupSortUpdate(List<GroupSort> groupSortList) {
+        groupSortRepository.saveAll(groupSortList);
     }
 
 }

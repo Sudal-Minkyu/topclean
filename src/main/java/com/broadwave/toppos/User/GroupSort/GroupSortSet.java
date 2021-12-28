@@ -13,7 +13,7 @@ import java.util.ArrayList;
 @Setter
 public class GroupSortSet {
 
-    //  행 리스트
+    // 상품그룹정렬 업데이트 list
     private ArrayList<GroupSortMapperDto> list;
 
     public ArrayList<GroupSortMapperDto> getList() {

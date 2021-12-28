@@ -3,14 +3,12 @@ package com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail;
 import com.broadwave.toppos.Head.Item.Group.A.QItemGroup;
 import com.broadwave.toppos.Head.Item.Group.B.QItemGroupS;
 import com.broadwave.toppos.Head.Item.Group.C.QItem;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.PhotoDto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
