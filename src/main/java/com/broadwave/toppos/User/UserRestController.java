@@ -15,9 +15,8 @@ import com.broadwave.toppos.User.Customer.Customer;
 import com.broadwave.toppos.User.Customer.CustomerInfoDto;
 import com.broadwave.toppos.User.Customer.CustomerListDto;
 import com.broadwave.toppos.User.Customer.CustomerMapperDto;
-import com.broadwave.toppos.User.GroupSort.GroupSort;
 import com.broadwave.toppos.User.GroupSort.GroupSortSet;
-import com.broadwave.toppos.User.GroupSort.GroupSortUpdateDto;
+import com.broadwave.toppos.User.ItemSort.ItemSortSet;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentSet;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Request;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.PhotoDto;
@@ -586,16 +585,26 @@ public class UserRestController {
         return sortService.findByGroupSortUpdate(groupSortSet, request);
     }
 
-    // 현재 가맹점의 상품순서 리스트 가져오기
+    // 현재 가맹점의 중분류 리스트 가져오기
     @PostMapping("franchiseItemSortList")
     public ResponseEntity<Map<String,Object>> franchiseItemSortList(@RequestParam(value="filterCode", defaultValue="") String filterCode,
-                                                                                                               @RequestParam(value="filterName", defaultValue="") String filterName,
-                                                                                                               HttpServletRequest request){
-        return sortService.franchiseItemSortList(filterCode, filterName, request);
+                                                                                                               @RequestParam(value="filterName", defaultValue="") String filterName){
+        return sortService.franchiseItemSortList(filterCode, filterName);
     }
 
+    // 현재 가맹점의 상품순서 리스트 가져오기
+    @PostMapping("franchiseItemList")
+    public ResponseEntity<Map<String,Object>> franchiseItemList(@RequestParam(value="bgItemGroupcode", defaultValue="") String bgItemGroupcode,
+                                                                    @RequestParam(value="bgItemGroupcodeS", defaultValue="") String bgItemGroupcodeS, HttpServletRequest request){
+        String biItemMgroup = bgItemGroupcode+bgItemGroupcodeS;
+        return sortService.franchiseItemList(biItemMgroup, request, nowDate);
+    }
 
-
+    // 현재 가맹점의 상품순서 업데이트
+    @PostMapping("franchiseItemSortUpdate")
+    public ResponseEntity<Map<String,Object>> franchiseItemSortUpdate(@RequestBody ItemSortSet itemSortSet, HttpServletRequest request){
+        return sortService.findByItemSortUpdate(itemSortSet, request);
+    }
 
 
 
