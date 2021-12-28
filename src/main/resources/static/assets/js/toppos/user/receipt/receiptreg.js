@@ -1557,160 +1557,178 @@ function onKeypadConfirm() {
 
 /* 임시 카드 결제용 함수 */
 function onPaymentStageOne() {
-    const applyUncollectAmt = $("#applyUncollectAmt").html().toInt();
+    try {
+        const applyUncollectAmt = $("#applyUncollectAmt").html().toInt();
 
-    let items = [];
-    const orderData = AUIGrid.getGridData(gridId[0]);
-    orderData.forEach(el => {
-        items.push({
-            tagno: el.fdTag,
-            color: el.fdColor,
-            itemname: el.sumName,
-            specialyn: el.fdSpecialYn,
-            price: el.fdRequestAmt,
+        let items = [];
+        const orderData = AUIGrid.getGridData(gridId[0]);
+        orderData.forEach(el => {
+            items.push({
+                tagno: el.fdTag,
+                color: el.fdColor,
+                itemname: el.sumName,
+                specialyn: el.fdSpecialYn,
+                price: el.fdRequestAmt,
+            });
         });
-    });
 
-    let paymentData =
-        {
-            franchiseNo: initialData.etcData.frCode,
-            franchiseName: initialData.etcData.frName,
-            businessNO: initialData.etcData.frBusinessNo,
-            repreName: initialData.etcData.frRpreName,
-            franchiseTel: initialData.etcData.frTelNo,
-            customerName: selectedCustomer.bcName,
-            customerTel: CommonUI.onPhoneNumChange(selectedCustomer.bcHp),
-            requestDt: new Date().format("yyyy-MM-dd HH:mm"),
-            totalAmount: $("#payRequestAmt").html().toInt(),
-            normalAmount: $("#payNormalAmt").html().toInt(),
-            changeAmount: $("#payChangeAmt").html().toInt(),
-            estimateDt: initialData.etcData.frEstimateDate,
-            preUncollectAmount: initialData.etcData.beforeUncollectMoney - applyUncollectAmt,
-            curUncollectAmount: initialData.etcData.todayUncollectMoney,
-            uncollectPayAmount: applyUncollectAmt,
-            totalUncollectAmount: initialData.etcData.beforeUncollectMoney - applyUncollectAmt + initialData.etcData.todayUncollectMoney,
-            month: $("#installmentMonth").val().toInt(),
-            items: items,
-        };
+        let paymentData =
+            {
+                franchiseNo: initialData.etcData.frCode,
+                franchiseName: initialData.etcData.frName,
+                businessNO: initialData.etcData.frBusinessNo,
+                repreName: initialData.etcData.frRpreName,
+                franchiseTel: initialData.etcData.frTelNo,
+                customerName: selectedCustomer.bcName,
+                customerTel: CommonUI.onPhoneNumChange(selectedCustomer.bcHp),
+                requestDt: new Date().format("yyyy-MM-dd HH:mm"),
+                totalAmount: $("#payRequestAmt").html().toInt(),
+                normalAmount: $("#payNormalAmt").html().toInt(),
+                changeAmount: $("#payChangeAmt").html().toInt(),
+                estimateDt: initialData.etcData.frEstimateDate,
+                preUncollectAmount: initialData.etcData.beforeUncollectMoney - applyUncollectAmt,
+                curUncollectAmount: initialData.etcData.todayUncollectMoney,
+                uncollectPayAmount: applyUncollectAmt,
+                totalUncollectAmount: initialData.etcData.beforeUncollectMoney - applyUncollectAmt + initialData.etcData.todayUncollectMoney,
+                month: $("#installmentMonth").val().toInt(),
+                items: items,
+            };
 
 
-    const paymentTab = $(".pop__pay-tabs-item.active").attr("data-id");
-    if(paymentTab === "tabCash") {
-        const receiveCash = $("#receiveCash").html().toInt();
-        if(receiveCash) {
-            if (applyUncollectAmt && $("#totalAmt").html().toInt() - receiveCash > 0) {
-                alertCaution("미수전액완납시, <br>한번에 전액을 상환하셔야 합니다.", 1);
+        const paymentTab = $(".pop__pay-tabs-item.active").attr("data-id");
+        if (paymentTab === "tabCash") {
+            const receiveCash = $("#receiveCash").html().toInt();
+            if (receiveCash) {
+                if (applyUncollectAmt && $("#totalAmt").html().toInt() - receiveCash > 0) {
+                    alertCaution("미수전액완납시, <br>한번에 전액을 상환하셔야 합니다.", 1);
+                }
+                paymentData.type = "cash";
+                paymentData.paymentAmount = receiveCash;
             }
-            paymentData.type = "cash";
-            paymentData.paymentAmount = receiveCash;
-        }
-    }else if(paymentTab === "tabCard") {
-        const receiveCard = $("#receiveCard").html().toInt();
-        if(receiveCard) {
-            if (applyUncollectAmt && $("#totalAmt").html().toInt() - receiveCard > 0) {
-                alertCaution("미수전액완납시, <br>한번에 전액을 상환하셔야 합니다.", 1);
+        } else if (paymentTab === "tabCard") {
+            const receiveCard = $("#receiveCard").html().toInt();
+            if (receiveCard) {
+                if (applyUncollectAmt && $("#totalAmt").html().toInt() - receiveCard > 0) {
+                    alertCaution("미수전액완납시, <br>한번에 전액을 상환하셔야 합니다.", 1);
+                }
+                paymentData.type = "card";
+                paymentData.paymentAmount = receiveCard;
             }
-            paymentData.type = "card";
-            paymentData.paymentAmount = receiveCard;
         }
-    }
 
 
 
-    // type: card or cash
-    // franchiseNo : 가맹점코드 3자리 문자열
-    // totalAmount : 총 결제금액
-    // month : 할부 (0-일시불, 2-2개월)
+        // type: card or cash
+        // franchiseNo : 가맹점코드 3자리 문자열
+        // totalAmount : 총 결제금액
+        // month : 할부 (0-일시불, 2-2개월)
 
-    if (paymentData.type ==="card") {
-        $('#payStatus').show();
-        CAT.CatCredit(paymentData, function (res) {
-            $('#resultmsg').text(res);
+        if (paymentData.type ==="card") {
+            $('#payStatus').show();
+            try {
+                CAT.CatCredit(paymentData, function (res) {
+                    $('#payStatus').hide();
+                    let resjson = JSON.parse(res);
+                    //결제 성공일경우 Print
+                    if (resjson.STATUS === "SUCCESS") {
+                        let creditData =
+                            {
+                                cardNo: resjson.CARDNO,
+                                cardName: resjson.ISSUERNAME,
+                                approvalTime: resjson.APPROVALTIME,
+                                approvalNo: resjson.APPROVALNO
+                            };
+                        CAT.CatPrint(paymentData, creditData, "N");
+                        onPaymentStageTwo(paymentData, resjson);
+                    }
+                });
+            }catch (e) {
+                console.log(e);
+            }
+        }else if (paymentData.type ==="cash") {
+            $('#payStatus').show();
+            console.log(paymentData);
+            try {
+                CAT.CatPrint(paymentData, "", "N");
+            }catch (e) {
+                console.log(e);
+            }
             $('#payStatus').hide();
-            let resjson = JSON.parse(res);
-            //결제 성공일경우 Print
-            if (resjson.STATUS === "SUCCESS") {
-                let creditData =
-                    {
-                        cardNo: resjson.CARDNO,
-                        cardName: resjson.ISSUERNAME,
-                        approvalTime: resjson.APPROVALTIME,
-                        approvalNo: resjson.APPROVALNO
-                    };
-                CAT.CatPrint(paymentData, creditData, "N");
-                onPaymentStageTwo(paymentData, resjson);
-            }
-        });
-    }else if (paymentData.type ==="cash") {
-        $('#payStatus').show();
-        console.log(paymentData);
-        CAT.CatPrint(paymentData, "", "N");
-        $('#payStatus').hide();
-        onPaymentStageTwo(paymentData);
-    }else{
-        onPaymentStageTwo();
+            onPaymentStageTwo(paymentData);
+        }else{
+            onPaymentStageTwo();
+        }
+
+    }catch (e) {
+        console.log(e);
+        return false;
     }
 }
 
 /* 결재할 때 */
 function onPaymentStageTwo(paymentData = {}, creditData = {}) {
 
-    const url = "/api/user/requestPayment";
-    let data = {
-        payment : [],
-        etc : {
-            bcId: selectedCustomer.bcId,
-            frNo: initialData.etcData.frNo,
+    try {
+        const url = "/api/user/requestPayment";
+        let data = {
+            payment: [],
+            etc: {
+                bcId: selectedCustomer.bcId,
+                frNo: initialData.etcData.frNo,
+            }
         }
-    }
-    const applyUncollectAmt = parseInt($("#applyUncollectAmt").html().replace(/[^0-9]/g, ""));
+        const applyUncollectAmt = parseInt($("#applyUncollectAmt").html().replace(/[^0-9]/g, ""));
 
-    const paymentTab = $(".pop__pay-tabs-item.active").attr("data-id");
-    if(paymentTab === "tabCash") {
-        const receiveCash =
-            parseInt($("#receiveCash").html().replace(/[^0-9]/g, ""))
-            - parseInt($("#changeCash").html().replace(/[^0-9]/g, ""));
-        const paymentCash = {
-            fpType: "01",
-            fpRealAmt: receiveCash,
-            fpAmt: Number(receiveCash - applyUncollectAmt),
-            fpCollectAmt: applyUncollectAmt,
-        }
-        data.payment.push(paymentCash);
-    }else if(paymentTab === "tabCard") {
+        const paymentTab = $(".pop__pay-tabs-item.active").attr("data-id");
+        if (paymentTab === "tabCash") {
+            const receiveCash =
+                parseInt($("#receiveCash").html().replace(/[^0-9]/g, ""))
+                - parseInt($("#changeCash").html().replace(/[^0-9]/g, ""));
+            const paymentCash = {
+                fpType: "01",
+                fpRealAmt: receiveCash,
+                fpAmt: Number(receiveCash - applyUncollectAmt),
+                fpCollectAmt: applyUncollectAmt,
+            }
+            data.payment.push(paymentCash);
+        } else if (paymentTab === "tabCard") {
 
-        const receiveCard = parseInt($("#receiveCard").html().replace(/[^0-9]/g, ""));
+            const receiveCard = parseInt($("#receiveCard").html().replace(/[^0-9]/g, ""));
 
-        const paymentCard = {
-            fpType: "02",
-            fpMonth: 0,
-            fpRealAmt: receiveCard,
-            fpAmt: receiveCard - applyUncollectAmt,
-            fpCollectAmt: applyUncollectAmt,
-            fpCatApprovalno: creditData.APPROVALNO,
-            fpCatApprovaltime: creditData.APPROVALTIME,
-            fpCatCardno: creditData.CARDNO,
-            fpCatIssuercode: creditData.ISSUERCODE,
-            fpCatIssuername: creditData.ISSUERNAME,
-            fpCatMuechantnumber: creditData.MERCHANTNUMBER,
-            fpCatMessage1: creditData.MESSAGE1,
-            fpCatMessage2: creditData.MESSAGE2,
-            fpCatNotice1: creditData.NOTICE1,
-            fpCatTotamount: creditData.TOTAMOUNT,
-            fpCatVatamount: creditData.VATAMOUNT,
-            fpCatTelegramflagt: creditData.TELEGRAMFLAG
+            const paymentCard = {
+                fpType: "02",
+                fpMonth: 0,
+                fpRealAmt: receiveCard,
+                fpAmt: receiveCard - applyUncollectAmt,
+                fpCollectAmt: applyUncollectAmt,
+                fpCatApprovalno: creditData.APPROVALNO,
+                fpCatApprovaltime: creditData.APPROVALTIME,
+                fpCatCardno: creditData.CARDNO,
+                fpCatIssuercode: creditData.ISSUERCODE,
+                fpCatIssuername: creditData.ISSUERNAME,
+                fpCatMuechantnumber: creditData.MERCHANTNUMBER,
+                fpCatMessage1: creditData.MESSAGE1,
+                fpCatMessage2: creditData.MESSAGE2,
+                fpCatNotice1: creditData.NOTICE1,
+                fpCatTotamount: creditData.TOTAMOUNT,
+                fpCatVatamount: creditData.VATAMOUNT,
+                fpCatTelegramflagt: creditData.TELEGRAMFLAG
+            }
+            data.payment.push(paymentCard);
         }
-        data.payment.push(paymentCard);
-    }
-    const applySaveMoney = parseInt($("#applySaveMoney").html().replace(/[^0-9]/g, ""));
-    if(applySaveMoney) {
-        const paymentSaved = {
-            fpType: "03",
-            fpRealAmt: applySaveMoney,
-            fpAmt: applySaveMoney,
-            fpCollectAmt: 0,
+        const applySaveMoney = parseInt($("#applySaveMoney").html().replace(/[^0-9]/g, ""));
+        if (applySaveMoney) {
+            const paymentSaved = {
+                fpType: "03",
+                fpRealAmt: applySaveMoney,
+                fpAmt: applySaveMoney,
+                fpCollectAmt: 0,
+            }
+            data.payment.push(paymentSaved);
         }
-        data.payment.push(paymentSaved);
+    }catch (e) {
+        console.log(e);
+        return false;
     }
 
     console.log("결제데이터 : ");

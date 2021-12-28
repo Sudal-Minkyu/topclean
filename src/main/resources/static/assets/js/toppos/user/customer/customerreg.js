@@ -63,8 +63,16 @@ function saveRegister() {
     const formData = new FormData(document.getElementById('userregForm'));
     const birthday = $("#bcBirthYYYY").val()+$("#bcBirthMM").val()+$("#bcBirthDD").val();
 
+    if(!$("#bcName").val()) {
+        alertCaution("고객명을 입력해 주세요", 1);
+        return false;
+    }
+    if($("#bcHp").val().length < 4) {
+        alertCaution("휴대폰 번호를 입력해 주세요", 1);
+        return false;
+    }
     if(!CommonUI.regularValidator(birthday, "dateExist") && birthday !== "") {
-        alertCaution("존재할 수 없는 생년월일 입니다.", 1);
+        alertCaution("존재할 수 없는 생년월일 입니다", 1);
         return false;
     }
 
@@ -168,5 +176,5 @@ function resultFunction(msg){
     // $("#resultmsg").text(msg);
     $("#bcSignImage").val(msg);
     document.getElementById('signImage').src = msg;
-    document.getElementById('signImage').style.border = "2px solid black"
+    document.getElementById('signImage').style.border = "2px solid black";
 }
