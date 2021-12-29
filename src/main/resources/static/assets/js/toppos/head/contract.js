@@ -510,6 +510,7 @@ function createNewPost(numOfGrid) {
             $("#frCode").trigger("focus");
             break;
     }
+    AUIGrid.clearSelection(gridId[numOfGrid]);
 }
 /* 가맹점 리스트 조회 필터링
 * type = 1 상부 가맹점 리스트 조회 필터링, type = 2 상부 필터링 초기화

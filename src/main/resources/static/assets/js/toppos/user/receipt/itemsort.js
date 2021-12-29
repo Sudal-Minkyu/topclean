@@ -4,7 +4,7 @@ $(function() { // 페이지가 로드되고 나서 실행
 });
 
 /* 서버 API와 주고 받게 될 데이터 정의
-* "s" 문자형, "n" 숫자형, "r" 필수값, "g" 쓰레기 데이터
+* "s" 문자형, "n" 숫자형, "r" 필수값, "d" 불필요한 데이터 삭제(receive에 있을 경우 앞으로도 불필요할 경우에는 API에서 삭제요청할것)
 * 조합하여 "sr", "nr" 같은 형식도 가능
 * 추가로 필요한 검사항목이 생긴다면 문의 바랍니다.
 * */
@@ -53,13 +53,16 @@ const ajax = {
     setDataIntoGrid(numOfGrid, url) { // 해당 numOfGrid 배열번호의 그리드에 url 로부터 받은 데이터값을 통신하여 주입한다.
         CommonUI.ajax(url, "GET", false, function(req) {
             console.log(req);
+            if(dv.chk(req.sendData.gridListData, dto.receive.franchiseItemGroupList, "테스트 검사", true)){
+                console.log("실패처리");
+            }
             grid.s.data[numOfGrid] = req.sendData.gridListData;
             AUIGrid.setGridData(grid.s.id[numOfGrid], grid.s.data[numOfGrid]);
         });
     },
     saveSortData(numOfGrid, dataList) {
         CommonUI.ajaxjson(grid.s.url.update[numOfGrid], JSON.stringify(dataList), function(req) {
-            alertSuccess("대분류 위치조정을 완료했습니다.")
+            alertSuccess("위치 조정을 완료했습니다.")
         });
     },
     filterBsList(condition) {
