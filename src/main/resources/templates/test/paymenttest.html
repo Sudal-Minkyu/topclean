@@ -155,7 +155,62 @@
 
         function paymentPrint() {
 
-            CAT.CatPrintTest();
+            let paymentData =
+                {
+                    "franchiseNo":"123",
+                    "franchiseName":"소만마을점",
+                    "businessNO": "125-55-45671",
+                    "repreName" : "김점주",
+                    "franchiseTel" : "031-4564-7894",
+                    "customerName" : "최고객",
+                    "customerTel" : "010-****-7777",
+                    "requestDt" : "2021-11-15 13:15",
+                    "normalAmount":10500,
+                    "changeAmount":0,
+                    "totalAmount":10500,
+                    "paymentAmount":0,
+                    "addAmount":1500,
+                    "dcAmount":500,
+                    "estimateDt" : "2021-11-18",
+                    "preUncollectAmount":5000,
+                    "curUncollectAmount":0,
+                    "uncollectPayAmount":0,
+                    "totalUncollectAmount":0,
+                    "month":0,
+                    "items":[
+                        {"tagno":"1231234","color":"없음","itemname":"면 상의","specialyn":"Y","price":2500},
+                        {"tagno":"1231235","color":"남색","itemname":"청바지 하의","specialyn":"","price":3500},
+                        {"tagno":"1241236","color":"검정","itemname":"롱 오리털 코트","specialyn":"","price":4500}
+                    ]
+                };
+                let creditData =[
+                    {
+                        "type" : "card",
+                        "cardNo": "954575******7894",
+                        "cardName": "IBK 카드",
+                        "approvalTime": "2112132021592",
+                        "approvalNo": "22381094",
+                        "payAmount":25000
+                    },
+                    {
+                        "type" : "save",
+                        "cardNo": "",
+                        "cardName": "",
+                        "approvalTime": "",
+                        "approvalNo": "",
+                        "payAmount": 5000
+                    },
+                    {
+                        "type" : "cash",
+                        "cardNo": "",
+                        "cardName": "",
+                        "approvalTime": "",
+                        "approvalNo": "",
+                        "payAmount": 7500
+                    },
+                ];
+
+            CAT.CatPrint_Multi(paymentData, creditData,"N");
         }
 
         function appExit() {
