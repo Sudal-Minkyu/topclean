@@ -1,6 +1,8 @@
 package com.broadwave.toppos.User.UserService;
 
+import com.broadwave.toppos.Account.Account;
 import com.broadwave.toppos.Account.AccountPasswordDto;
+import com.broadwave.toppos.Account.AccountService;
 import com.broadwave.toppos.Head.Franohise.FranchisUserDto;
 import com.broadwave.toppos.Head.Franohise.Franchise;
 import com.broadwave.toppos.Head.HeadService;
@@ -13,9 +15,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,14 +36,19 @@ import java.util.Optional;
 public class InfoService {
 
     private final ModelMapper modelMapper;
+    private final AccountService accountService;
     private final HeadService headService;
     private final TokenProvider tokenProvider;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public InfoService(ModelMapper modelMapper, TokenProvider tokenProvider, HeadService headService){
+    public InfoService(ModelMapper modelMapper, TokenProvider tokenProvider, AccountService accountService, HeadService headService,
+                       PasswordEncoder passwordEncoder){
         this.modelMapper = modelMapper;
         this.tokenProvider = tokenProvider;
+        this.accountService = accountService;
         this.headService = headService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     // 현재 가맹점의 정보 호출하기
@@ -110,12 +119,54 @@ public class InfoService {
     }
 
     // 가맹점 비밀번호 수정 API
+    @Transactional
     public ResponseEntity<Map<String, Object>> franchisePassword(AccountPasswordDto accountPasswordDto, HttpServletRequest request) {
         log.info("franchisePassword 호출");
 
         AjaxResponse res = new AjaxResponse();
-        log.info("accountPasswordDto : "+accountPasswordDto);
+
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String login_id = claims.getSubject(); // 현재 아이디
+        log.info("현재 접속한 아이디 : "+login_id);
+
+        Optional<Account> optionalAccount = accountService.findByUserid(login_id);
+
+        //수정일때
+        if(!optionalAccount.isPresent()){
+            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP005.getCode(), "나의 "+ResponseErrorCode.TP005.getDesc(), "문자", "고객센터에 문의해주세요."));
+        }else{
+            //현재암호비교
+            if (!passwordEncoder.matches(accountPasswordDto.getOldpassword(),optionalAccount.get().getPassword())){
+                return ResponseEntity.ok(res.fail(ResponseErrorCode.TP020.getCode(), ResponseErrorCode.TP020.getDesc(), null, null));
+            }
+            if( !accountPasswordDto.getNewpassword().equals(accountPasswordDto.getPasswordconfirm()) ){
+                return ResponseEntity.ok(res.fail(ResponseErrorCode.TP021.getCode(), ResponseErrorCode.TP021.getDesc(), null, null));
+            }
+            Account account;
+            account = modelMapper.map(optionalAccount.get(),Account.class);
+            account.setPassword(accountPasswordDto.getPasswordconfirm());
+            account.setModify_id(login_id);
+            account.setModifyDateTime(LocalDateTime.now());
+
+            Account accountSave =  accountService.save(account);
+
+            log.info("사용자정보(패스워드)수정 성공 아이디 : " + accountSave.getUserid() +"'" );
+        }
 
         return ResponseEntity.ok(res.success());
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
