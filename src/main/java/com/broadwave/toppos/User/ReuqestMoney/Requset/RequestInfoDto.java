@@ -33,15 +33,15 @@ public class RequestInfoDto {
     private Integer frPayAmount; // 결제금액
     private String frUncollectYn; // 미수여부( 합계금액 > 결제금액 이면 Y, else N)
     private String frConfirmYn; // 임시저장여부플래그 Y만 정식데이터
-    private String frRefBoxType; // 접수타입(01:일반, 02:무인보관함, 03:배송APP)
+    private String frRefType; // 접수타입(01:일반, 02:무인보관함, 03:배송APP)
     private String frRefBoxCode; // 무인보관함 연계시 무인보관함 접수번호
     private String fr_insert_id;
     private LocalDateTime fr_insert_date;
     private String modity_id;
     private LocalDateTime modity_date;
 
-    public String getFrRefBoxType() {
-        return frRefBoxType;
+    public String getFrRefType() {
+        return frRefType;
     }
 
     public Long getId() {

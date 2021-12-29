@@ -117,7 +117,7 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
                         request.frPayAmount,
                         request.frUncollectYn,
                         request.frConfirmYn,
-                        request.frRefBoxType,
+                        request.frRefType,
                         request.frRefBoxCode,
                         request.fr_insert_id,
                         request.fr_insert_date,
