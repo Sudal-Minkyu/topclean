@@ -149,7 +149,7 @@ public class FranchiseRepositoryCustomImpl extends QuerydslRepositorySupport imp
                         branch.brCarculateRateFr,
 
                         franchise.frEstimateDuration,
-                        franchise.frLastTagno,
+                        franchise.frTagNo,
 
                         franchise.frBusinessNo,
                         franchise.frRpreName,

@@ -96,9 +96,107 @@ public class HeadService {
 
     // @@@@@@@@@@@@@@@@@@@@@@ 가맹점, 지사 등록 매칭 페이지 @@@@@@@@@@@@@@@@@@@@
     // 가맹점 저장
-    public Franchise franchiseSave(Franchise franchise){
+    public Franchise franchise(Franchise franchise){
         franchiseRepository.save(franchise);
         return franchise;
+    }
+
+    // 가맹점 신규저장 및 업데이트
+    public ResponseEntity<Map<String,Object>> franchiseSave(FranchiseMapperDto franchiseMapperDto, HttpServletRequest request){
+        log.info("franchiseSave 호출");
+
+        AjaxResponse res = new AjaxResponse();
+
+        Franchise franchise = modelMapper.map(franchiseMapperDto, Franchise.class);
+
+        String login_id = CommonUtils.getCurrentuser(request);
+//        log.info("현재 사용자 아이디 : "+login_id);
+
+        Optional<Franchise> optionalFranohise = findByFrCode(franchiseMapperDto.getFrCode());
+        if( optionalFranohise.isPresent()){
+            log.info("널이 아닙니다 : 업데이트");
+            franchise.setId(optionalFranohise.get().getId());
+
+            franchise.setBrId(optionalFranohise.get().getBrId());
+            franchise.setBrCode(optionalFranohise.get().getBrCode());
+            franchise.setBrAssignState(optionalFranohise.get().getBrAssignState());
+            if(franchiseMapperDto.getFrTagNo() == null || franchiseMapperDto.getFrTagNo().equals("")) {
+                franchise.setFrTagNo(franchiseMapperDto.getFrCode());
+                franchise.setFrLastTagno(franchiseMapperDto.getFrCode()+"0000");
+            }else{
+                if(optionalFranohise.get().getFrLastTagno() != null){
+                    franchise.setFrLastTagno(franchiseMapperDto.getFrTagNo() + optionalFranohise.get().getFrLastTagno().substring(3, 7));
+                }else{
+                    franchise.setFrLastTagno(franchiseMapperDto.getFrTagNo() + "0000");
+                }
+            }
+
+            franchise.setModify_id(login_id);
+            franchise.setModifyDateTime(LocalDateTime.now());
+            franchise.setInsert_id(optionalFranohise.get().getInsert_id());
+            franchise.setInsertDateTime(optionalFranohise.get().getInsertDateTime());
+        }else{
+            log.info("널입니다. : 신규생성");
+            if(franchiseMapperDto.getFrTagNo() == null || franchiseMapperDto.getFrTagNo().equals("")){
+                franchise.setFrTagNo(franchiseMapperDto.getFrCode());
+                franchise.setFrLastTagno(franchiseMapperDto.getFrCode()+"0000");
+            }else{
+                franchise.setFrLastTagno(franchiseMapperDto.getFrTagNo()+"0000");
+            }
+            if(franchiseMapperDto.getFrEstimateDuration() == null ){
+                franchise.setFrEstimateDuration(2);
+            }
+            franchise.setBrId(null);
+            franchise.setBrCode(null);
+            franchise.setBrAssignState("01");
+            franchise.setInsert_id(login_id);
+            franchise.setInsertDateTime(LocalDateTime.now());
+        }
+
+        Franchise franchiseSave =  franchiseRepository.save(franchise);
+        log.info("가맹점 저장 성공 : id '" + franchiseSave.getFrCode() + "'");
+        return ResponseEntity.ok(res.success());
+    }
+
+    // 가맹점의 대한 지사배치 등록 API
+    public ResponseEntity<Map<String,Object>> franchiseAssignment(String frCode, String brCode, String bot_brAssignState, HttpServletRequest request){
+        log.info("franchiseAssignment 호출");
+
+        AjaxResponse res = new AjaxResponse();
+        String login_id = CommonUtils.getCurrentuser(request);
+
+        Optional<Franchise> optionalFranohise = findByFrCode(frCode);
+        Optional<Branch> optionalBranch = findByBrCode(brCode);
+        if(optionalFranohise.isPresent() && optionalBranch.isPresent()){
+            Franchise franchise = new Franchise();
+
+            franchise.setId(optionalFranohise.get().getId());
+            franchise.setFrCode(optionalFranohise.get().getFrCode());
+            franchise.setFrName(optionalFranohise.get().getFrName());
+            franchise.setFrContractDt(optionalFranohise.get().getFrContractDt());
+            franchise.setFrContractFromDt(optionalFranohise.get().getFrContractFromDt());
+            franchise.setFrContractToDt(optionalFranohise.get().getFrContractToDt());
+            franchise.setFrContractState(optionalFranohise.get().getFrContractState());
+            franchise.setFrPriceGrade(optionalFranohise.get().getFrPriceGrade());
+            franchise.setFrRemark(optionalFranohise.get().getFrRemark());
+
+            franchise.setBrId(optionalBranch.get());
+            franchise.setBrCode(optionalBranch.get().getBrCode());
+            franchise.setBrAssignState(bot_brAssignState);
+
+            franchise.setInsert_id(optionalFranohise.get().getInsert_id());
+            franchise.setInsertDateTime(optionalFranohise.get().getInsertDateTime());
+
+            franchise.setModify_id(login_id);
+            franchise.setModifyDateTime(LocalDateTime.now());
+
+            franchiseRepository.save(franchise);
+        }else{
+            log.info("정보가 존재하지 않습니다.");
+            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP005.getCode(), ResponseErrorCode.TP005.getDesc(),ResponseErrorCode.TP006.getCode(), ResponseErrorCode.TP006.getDesc()));
+        }
+
+        return ResponseEntity.ok(res.success());
     }
 
     // 지사 저장

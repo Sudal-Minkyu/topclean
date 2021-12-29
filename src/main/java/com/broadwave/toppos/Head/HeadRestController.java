@@ -141,60 +141,7 @@ public class HeadRestController {
     // 가맹점 등록 API
     @PostMapping("franchiseSave")
     public ResponseEntity<Map<String,Object>> franchiseSave(@ModelAttribute FranchiseMapperDto franchiseMapperDto, HttpServletRequest request){
-
-        log.info("가맹점등록");
-
-        AjaxResponse res = new AjaxResponse();
-
-        Franchise franchise = modelMapper.map(franchiseMapperDto, Franchise.class);
-
-        String login_id = CommonUtils.getCurrentuser(request);
-//        log.info("현재 사용자 아이디 : "+login_id);
-
-        Optional<Franchise> optionalFranohise  =  headService.findByFrCode(franchiseMapperDto.getFrCode());
-        if( optionalFranohise.isPresent()){
-            log.info("널이 아닙니다 : 업데이트");
-            franchise.setId(optionalFranohise.get().getId());
-
-            franchise.setBrId(optionalFranohise.get().getBrId());
-            franchise.setBrCode(optionalFranohise.get().getBrCode());
-            franchise.setBrAssignState(optionalFranohise.get().getBrAssignState());
-            if(franchiseMapperDto.getFrTagNo() == null || franchiseMapperDto.getFrTagNo().equals("")) {
-                franchise.setFrTagNo(franchiseMapperDto.getFrCode());
-                franchise.setFrLastTagno(franchiseMapperDto.getFrCode()+"0000");
-            }else{
-                if(optionalFranohise.get().getFrLastTagno() != null){
-                    franchise.setFrLastTagno(franchiseMapperDto.getFrTagNo() + optionalFranohise.get().getFrLastTagno().substring(3, 7));
-                }else{
-                    franchise.setFrLastTagno(franchiseMapperDto.getFrTagNo() + "0000");
-                }
-            }
-
-            franchise.setModify_id(login_id);
-            franchise.setModifyDateTime(LocalDateTime.now());
-            franchise.setInsert_id(optionalFranohise.get().getInsert_id());
-            franchise.setInsertDateTime(optionalFranohise.get().getInsertDateTime());
-        }else{
-            log.info("널입니다. : 신규생성");
-            if(franchiseMapperDto.getFrTagNo() == null || franchiseMapperDto.getFrTagNo().equals("")){
-                franchise.setFrTagNo(franchiseMapperDto.getFrCode());
-                franchise.setFrLastTagno(franchiseMapperDto.getFrCode()+"0000");
-            }else{
-                franchise.setFrLastTagno(franchiseMapperDto.getFrTagNo()+"0000");
-            }
-            if(franchiseMapperDto.getFrEstimateDuration() == null ){
-                franchise.setFrEstimateDuration(2);
-            }
-            franchise.setBrId(null);
-            franchise.setBrCode(null);
-            franchise.setBrAssignState("01");
-            franchise.setInsert_id(login_id);
-            franchise.setInsertDateTime(LocalDateTime.now());
-        }
-
-        Franchise franchiseSave =  headService.franchiseSave(franchise);
-        log.info("가맹점 저장 성공 : id '" + franchiseSave.getFrCode() + "'");
-        return ResponseEntity.ok(res.success());
+        return headService.franchiseSave(franchiseMapperDto, request);
     }
 
     // 사용자 리스트 API
@@ -498,43 +445,7 @@ public class HeadRestController {
                                                                     @RequestParam(value="brCode", defaultValue="") String brCode,
                                                                     @RequestParam(value="bot_brAssignState", defaultValue="") String bot_brAssignState,
                                                                     HttpServletRequest request){
-        log.info("franchiseAssignment 호출");
-
-        AjaxResponse res = new AjaxResponse();
-        String login_id = CommonUtils.getCurrentuser(request);
-
-        Optional<Franchise> optionalFranohise  =  headService.findByFrCode(frCode);
-        Optional<Branch> optionalBranch =  headService.findByBrCode(brCode);
-        if(optionalFranohise.isPresent() && optionalBranch.isPresent()){
-            Franchise franchise = new Franchise();
-
-            franchise.setId(optionalFranohise.get().getId());
-            franchise.setFrCode(optionalFranohise.get().getFrCode());
-            franchise.setFrName(optionalFranohise.get().getFrName());
-            franchise.setFrContractDt(optionalFranohise.get().getFrContractDt());
-            franchise.setFrContractFromDt(optionalFranohise.get().getFrContractFromDt());
-            franchise.setFrContractToDt(optionalFranohise.get().getFrContractToDt());
-            franchise.setFrContractState(optionalFranohise.get().getFrContractState());
-            franchise.setFrPriceGrade(optionalFranohise.get().getFrPriceGrade());
-            franchise.setFrRemark(optionalFranohise.get().getFrRemark());
-
-            franchise.setBrId(optionalBranch.get());
-            franchise.setBrCode(optionalBranch.get().getBrCode());
-            franchise.setBrAssignState(bot_brAssignState);
-
-            franchise.setInsert_id(optionalFranohise.get().getInsert_id());
-            franchise.setInsertDateTime(optionalFranohise.get().getInsertDateTime());
-
-            franchise.setModify_id(login_id);
-            franchise.setModifyDateTime(LocalDateTime.now());
-
-            headService.franchiseSave(franchise);
-        }else{
-            log.info("정보가 존재하지 않습니다.");
-            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP005.getCode(), ResponseErrorCode.TP005.getDesc(),ResponseErrorCode.TP006.getCode(), ResponseErrorCode.TP006.getDesc()));
-        }
-
-        return ResponseEntity.ok(res.success());
+        return headService.franchiseAssignment(frCode, brCode, bot_brAssignState, request);
     }
 
     // 유저아이디 중복확인 API

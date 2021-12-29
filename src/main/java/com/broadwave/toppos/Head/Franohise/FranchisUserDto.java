@@ -30,7 +30,7 @@ public class FranchisUserDto {
     private Double brCarculateRateFr; // 정산비율 가맹점
 
     private Integer frEstimateDuration; // 출고예정일
-    private String frLastTagno; // 가맹점 태그번호
+    private String frTagNo; // 가맹점 택번호(3자리)
 
     private String frBusinessNo; // 사업자번호(10자리)
     private String frRpreName; // 가맹점주이름
@@ -52,8 +52,8 @@ public class FranchisUserDto {
         return frEstimateDuration;
     }
 
-    public String getFrLastTagno() {
-        return frLastTagno;
+    public String getFrTagNo() {
+        return frTagNo;
     }
 
     public String getBrContractFromDt() {

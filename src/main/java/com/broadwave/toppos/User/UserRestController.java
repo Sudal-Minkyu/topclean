@@ -4,6 +4,9 @@ import com.broadwave.toppos.Aws.AWSS3Service;
 import com.broadwave.toppos.Head.AddCost.AddCostDto;
 import com.broadwave.toppos.Head.Addprocess.AddprocessDto;
 import com.broadwave.toppos.Head.Franohise.FranchisInfoDto;
+import com.broadwave.toppos.Head.Franohise.FranchisUserDto;
+import com.broadwave.toppos.Head.Franohise.Franchise;
+import com.broadwave.toppos.Head.Franohise.FranchiseMapperDto;
 import com.broadwave.toppos.Head.HeadService;
 import com.broadwave.toppos.Head.Item.Group.A.UserItemGroupSortDto;
 import com.broadwave.toppos.Head.Item.Group.B.UserItemGroupSListDto;
@@ -28,6 +31,7 @@ import com.broadwave.toppos.User.UserService.ReceiptService;
 import com.broadwave.toppos.User.UserService.SortService;
 import com.broadwave.toppos.User.UserService.UserService;
 import com.broadwave.toppos.common.AjaxResponse;
+import com.broadwave.toppos.common.CommonUtils;
 import com.broadwave.toppos.common.ResponseErrorCode;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
@@ -616,6 +620,53 @@ public class UserRestController {
         return infoService.myInfo(request);
     }
 
+    // 가맹점 등록 API
+    @PostMapping("franchiseMyInfoSave")
+    public ResponseEntity<Map<String,Object>> franchiseMyInfoSave(@ModelAttribute FranchisUserDto franchisUserDto, HttpServletRequest request){
+        log.info("franchiseMyInfoSave 호출");
 
+        AjaxResponse res = new AjaxResponse();
+
+        Franchise franchise = modelMapper.map(franchisUserDto, Franchise.class);
+
+        String login_id = CommonUtils.getCurrentuser(request);
+//        log.info("현재 사용자 아이디 : "+login_id);
+
+        Optional<Franchise> optionalFranohise = headService.findByFrCode(franchisUserDto.getFrCode());
+        if(optionalFranohise.isPresent()){
+            franchise.setId(optionalFranohise.get().getId());
+
+            franchise.setFrRefCode(optionalFranohise.get().getFrRefCode());
+            franchise.setFrContractState(optionalFranohise.get().getFrContractState());
+            franchise.setFrPriceGrade(optionalFranohise.get().getFrPriceGrade());
+            franchise.setFrRemark(optionalFranohise.get().getFrRemark());
+
+            franchise.setBrId(optionalFranohise.get().getBrId());
+            franchise.setBrCode(optionalFranohise.get().getBrCode());
+            franchise.setBrAssignState(optionalFranohise.get().getBrAssignState());
+
+            if(franchisUserDto.getFrTagNo() == null || franchisUserDto.getFrTagNo().equals("")) {
+                franchise.setFrTagNo(franchisUserDto.getFrCode());
+                franchise.setFrLastTagno(franchisUserDto.getFrCode()+"0000");
+            }else{
+                if(optionalFranohise.get().getFrLastTagno() != null){
+                    franchise.setFrLastTagno(franchisUserDto.getFrTagNo() + optionalFranohise.get().getFrLastTagno().substring(3, 7));
+                }else{
+                    franchise.setFrLastTagno(franchisUserDto.getFrTagNo() + "0000");
+                }
+            }
+
+            franchise.setModify_id(login_id);
+            franchise.setModifyDateTime(LocalDateTime.now());
+            franchise.setInsert_id(optionalFranohise.get().getInsert_id());
+            franchise.setInsertDateTime(optionalFranohise.get().getInsertDateTime());
+        }else{
+            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP005.getCode(), "나의 "+ResponseErrorCode.TP005.getDesc(), "문자", "고객센터에 문의해주세요."));
+        }
+
+        Franchise franchiseSave =  headService.franchise(franchise);
+        log.info("가맹점 마이페이지 수정 성공 Frcode : '" + franchiseSave.getFrCode() + "'");
+        return ResponseEntity.ok(res.success());
+    }
 
 }

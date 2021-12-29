@@ -392,7 +392,7 @@ public class ReceiptService {
                 log.info("마지막 택번호 : "+lastTagNo);
                 optionalFranchise.get().setFrLastTagno(lastTagNo);
 
-                headService.franchiseSave(optionalFranchise.get());
+                headService.franchise(optionalFranchise.get());
                 log.info(optionalFranchise.get().getFrName()+" 가맹점 택번호 업데이트 완료 : "+lastTagNo);
             }
 
