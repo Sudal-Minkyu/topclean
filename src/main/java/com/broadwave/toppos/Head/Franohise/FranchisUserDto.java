@@ -7,26 +7,24 @@ import lombok.Setter;
 
 /**
  * @author Minkyu
- * Date : 2021-11-15
+ * Date : 2021-12-29
  * Time :
- * Remark : Toppos 가맹점 InfoDto
+ * Remark : Toppos 가맹점전용 나의정보용 Dto
  */
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class FranchisInfoDto {
+public class FranchisUserDto {
 
     private String frCode; // 가맹점코드 3자리
     private String frName; // 가맹점명
     private String frContractDt; // 계약일자
     private String brContractFromDt; // 계약기간 from
     private String frContractToDt; // 계약기간 to
-    private String frContractState; // 진행중 : 01, 계약완료 : 02
-    private String frContractStateValue; // 지사 배정상태 미배정: 01, 배정완료: 02
-    private String brAssignState; // 지사 배정상태 미배정: 01, 배정완료: 02
-    private String brCode; // 배정코드
+
     private String brName; // 배정지사명
+
     private Double brCarculateRateHq; // 정산비율 본사
     private Double brCarculateRateBr; // 정산비율 지사
     private Double brCarculateRateFr; // 정산비율 가맹점
@@ -62,26 +60,9 @@ public class FranchisInfoDto {
         return brContractFromDt;
     }
 
-    public String getFrContractStateValue() {
-        if(frContractStateValue.equals("01")){
-            return "미배정";
-        }else{
-            return "배정완료";
-        }
-    }
-
-    public String getBrAssignState() {
-        return brAssignState;
-    }
-
     public String getFrCode() {
         return frCode;
     }
-
-    public String getFrContractState() {
-        return frContractState;
-    }
-
 
     public String getFrName() {
         return frName;
@@ -108,9 +89,6 @@ public class FranchisInfoDto {
         return getFrContractToDtDate;
     }
 
-    public String getBrCode() {
-        return brCode;
-    }
 
     public String getBrName() {
         return brName;

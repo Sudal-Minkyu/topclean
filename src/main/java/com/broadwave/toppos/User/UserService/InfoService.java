@@ -1,6 +1,7 @@
 package com.broadwave.toppos.User.UserService;
 
 import com.broadwave.toppos.Head.Franohise.FranchisInfoDto;
+import com.broadwave.toppos.Head.Franohise.FranchisUserDto;
 import com.broadwave.toppos.Head.HeadService;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.common.AjaxResponse;
@@ -47,8 +48,21 @@ public class InfoService {
         log.info("현재 접속한 아이디 : "+login_id);
         log.info("현재 접속한 가맹점 코드 : "+frCode);
 
-        FranchisInfoDto franchisInfoDto = headService.findByFranchiseInfo(frCode);
-        data.put("franchiseInfoData",franchisInfoDto);
+        FranchisUserDto franchisInfoDto = headService.findByFranchiseUserInfo(frCode);
+        data.put("franchisInfoDto",franchisInfoDto);
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

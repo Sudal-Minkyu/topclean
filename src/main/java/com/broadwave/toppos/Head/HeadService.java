@@ -132,6 +132,10 @@ public class HeadService {
         return franchiseRepositoryCustom.findByFranchiseInfo(frCode);
     }
 
+    // 가맹점 전용 나의정보 호출하기
+    public FranchisUserDto findByFranchiseUserInfo(String frCode) {
+        return franchiseRepositoryCustom.findByFranchiseUserInfo(frCode);
+    }
 
     // @@@@@@@@@@@@@@@@@@@@    상품 그룹관리 페이지  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     // 상품그룹 대분류  저장
