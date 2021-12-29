@@ -1,5 +1,6 @@
 $(function() { // 페이지가 로드되고 나서 실행
     onPageLoad();
+    $("#filterBs").click();
 });
 
 /* 서버 API와 주고 받게 될 데이터 정의
@@ -58,7 +59,7 @@ const ajax = {
     },
     saveSortData(numOfGrid, dataList) {
         CommonUI.ajaxjson(grid.s.url.update[numOfGrid], JSON.stringify(dataList), function(req) {
-
+            alertSuccess("대분류 위치조정을 완료했습니다.")
         });
     },
     filterBsList(condition) {
@@ -167,10 +168,16 @@ const grid = {
             grid.s.columnLayout[2] = [
                 {
                     dataField: "",
-                    headerText: "분류코드",
+                    headerText: "상품코드",
+                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
+                        return item.biItemcode;
+                    }
                 }, {
                     dataField: "",
-                    headerText: "분류명칭",
+                    headerText: "상품명",
+                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
+                        return item.biName;
+                    }
                 },
             ];
 
@@ -269,6 +276,7 @@ const event = {
 
             $("#biSortSave").on("click", function() {
                 saveSort(2);
+                alertSuccess("상품 위치조정을 완료했습니다.");
             });
         },
         filterBs() {
@@ -336,9 +344,14 @@ function saveSort(numOfGrid) {
             refinedData.push(newDto);
         }
     }
+
+    const param = {
+        "list": refinedData
+    };
+
     console.log("=== 저장 데이터 ===")
-    console.log(refinedData);
-    ajax.saveSortData(numOfGrid, refinedData);
+    console.log(param);
+    ajax.saveSortData(numOfGrid, param);
 }
 
 function testForJest() {
