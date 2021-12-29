@@ -9,18 +9,36 @@ $(function() { // 페이지가 로드되고 나서 실행
 * */
 const dto = {
     send: {
-        franchiseItemGroupUpdate : {
+        franchiseItemGroupUpdate: {
             bgItemGroupcode: "sr",
-            bgSort: "nr"
+            bgSort: "nr",
         },
+        franchiseItemSortList: {
+            filterCode: "s",
+            filterName: "s",
+        },
+        franchiseItemList: {
+            bgItemGroupcode: "sr",
+            bsItemGroupcodeS: "sr",
+        }
     },
     receive: {
         franchiseItemGroupList: {
             bgSort: "nr",
             bgItemGroupcode: "sr",
-            bgName: "s"
+            bgName: "s",
         },
-
+        franchiseItemSortList: {
+            bgItemGroupcode: "sr",
+            bgName: "s",
+            bsItemGroupcodeS: "sr",
+            bsName: "s",
+        },
+        franchiseItemList: {
+            biItemcode: "sr",
+            biName: "s",
+            bfSort: "nr",
+        }
     }
 };
 
@@ -32,12 +50,30 @@ const data = {
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 */
 const ajax = {
     setDataIntoGrid(numOfGrid, url) { // 해당 numOfGrid 배열번호의 그리드에 url 로부터 받은 데이터값을 통신하여 주입한다.
-        CommonUI.ajax(url, "GET", false, function (req) {
+        CommonUI.ajax(url, "GET", false, function(req) {
             console.log(req);
             grid.s.data[numOfGrid] = req.sendData.gridListData;
             AUIGrid.setGridData(grid.s.id[numOfGrid], grid.s.data[numOfGrid]);
         });
     },
+    saveSortData(numOfGrid, dataList) {
+        CommonUI.ajaxjson(grid.s.url.update[numOfGrid], JSON.stringify(dataList), function(req) {
+
+        });
+    },
+    filterBsList(condition) {
+        CommonUI.ajaxjsonPost(grid.s.url.read[1], condition, function(req) {
+            grid.s.data[1] = req.sendData.gridListData;
+            AUIGrid.setGridData(grid.s.id[1], grid.s.data[1]);
+        });
+    },
+    filterBiList(condition) {
+        CommonUI.ajaxjsonPost(grid.s.url.read[2], condition, function(req) {
+            grid.s.data[2] = req.sendData.gridListData;
+            AUIGrid.setGridData(grid.s.id[2], grid.s.data[2]);
+        });
+    },
+
 };
 
 /* .s : AUI 그리드 관련 설정들
@@ -57,16 +93,16 @@ const grid = {
         data: [],
         url: {
             create: [
-                "/api/head/", "/api/head/", "/api/head/"
+                "/api/user/", "/api/user/", "/api/user/"
             ],
             read: [
-                "/api/user/franchiseItemGroupList", "/api/head/", "/api/head/"
+                "/api/user/franchiseItemGroupList", "/api/user/franchiseItemSortList", "/api/user/franchiseItemList"
             ],
             update: [
-                "/api/head/", "/api/head/", "/api/head/"
+                "/api/user/franchiseItemGroupUpdate", "/api/user/", "/api/user/franchiseItemSortUpdate"
             ],
             delete: [
-                "/api/head/", "/api/head/", "/api/head/"
+                "/api/user/", "/api/user/", "/api/user/"
             ]
         }
     },
@@ -104,9 +140,15 @@ const grid = {
                 {
                     dataField: "",
                     headerText: "분류코드",
+                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
+                        return item.bgItemGroupcode + item.bsItemGroupcodeS;
+                    }
                 }, {
                     dataField: "",
                     headerText: "분류명칭",
+                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
+                        return item.bgName + " " + item.bsName;
+                    }
                 },
             ];
 
@@ -163,6 +205,10 @@ const grid = {
                 AUIGrid.resize(grid.s.id[1]);
                 AUIGrid.resize(grid.s.id[2]);
             }
+        },
+
+        getGridData(numOfGrid) {
+            return AUIGrid.getGridData(grid.s.id[numOfGrid]);
         }
     },
 
@@ -171,6 +217,14 @@ const grid = {
             /* 0번그리드 내의 셀 클릭시 이벤트 */
             AUIGrid.bind(grid.s.id[0], "cellClick", function (e) {
                 console.log(e.item); // 이밴트 콜백으로 불러와진 객체의, 클릭한 대상 row 키(파라메터)와 값들을 보여준다.
+            });
+
+            AUIGrid.bind(grid.s.id[1], "cellClick", function (e) {
+                const condition = CommonUI.newDto(dto.send.franchiseItemList);
+                condition.bgItemGroupcode = e.item.bgItemGroupcode;
+                condition.bsItemGroupcodeS = e.item.bsItemGroupcodeS;
+                console.log(condition); // 이밴트 콜백으로 불러와진 객체의, 클릭한 대상 row 키(파라메터)와 값들을 보여준다.
+                ajax.filterBiList(condition);
             });
         }
     }
@@ -210,11 +264,22 @@ const event = {
         },
         save() {
             $("#bgSortSave").on("click", function() {
-
+                saveSort(0);
             });
 
             $("#biSortSave").on("click", function() {
-
+                saveSort(2);
+            });
+        },
+        filterBs() {
+            $("#filterBs").on("click", function() {
+                const data = {
+                    filterCode: $("#filterCode").val(),
+                    filterName: $("#filterName").val(),
+                }
+                console.log(data);
+                ajax.filterBsList(data);
+                AUIGrid.clearGridData(grid.s.id[2]);
             });
         }
     },
@@ -226,16 +291,19 @@ const event = {
 /* 페이지가 로드되고 나서 실행 될 코드들을 담는다. */
 function onPageLoad() {
 
-    event.s.switchTab();
-    event.s.pushUpDown();
+
     grid.f.initialization();
     grid.f.create();
 
     /* grid.s 에 적절한 값을 세팅하였다면, 해당 함수 호출시 해당 배열번호의 그리드에 의도한 데이터들이 주입되어진다. */
     grid.f.setInitialData(0);
 
-    /* 생성된 그리드에 기본적으로 필요한 이벤트들을 적용한다. */
     grid.e.basicEvent();
+
+    event.s.switchTab();
+    event.s.pushUpDown();
+    event.s.save();
+    event.s.filterBs();
 
 }
 
@@ -251,13 +319,31 @@ function pushDown(numOfGrid) {
 }
 
 function saveSort(numOfGrid) {
+    const gridData = grid.f.getGridData(numOfGrid);
+    let refinedData = [];
+    let newDto;
 
+    for(let i = 0; i < gridData.length; i++) {
+        if(numOfGrid === 0) {
+            newDto = CommonUI.newDto(dto.send.franchiseItemGroupUpdate);
+            newDto.bgItemGroupcode = gridData[i].bgItemGroupcode;
+            newDto.bgSort = i;
+            refinedData.push(newDto);
+        }else if(numOfGrid === 2) {
+            newDto = CommonUI.newDto(dto.send.franchiseItemGroupUpdate);
+            newDto.biItemcode = gridData[i].biItemcode;
+            newDto.bfSort = i;
+            refinedData.push(newDto);
+        }
+    }
+    console.log("=== 저장 데이터 ===")
+    console.log(refinedData);
+    ajax.saveSortData(numOfGrid, refinedData);
 }
 
 function testForJest() {
     return "hi";
 }
-
 
 /* jest 테스트를 위해 nodejs 의 요소에 테스트가 필요한 기능을 탑재하여 내보내기 한다. 브라우저 실행 환경에서는 무시 처리 된다. */
 try {
