@@ -353,3 +353,16 @@ function itemCodeValidator() {
     let targetString = $sBiIteamcode.val();
     $sBiIteamcode.val(targetString.replace(/[^a-zA-Z0-9]/g, ""));
 }
+
+// 엑셀 내보내기(Export)
+function exportToXlsx() {
+    //FileSaver.js 로 로컬 다운로드가능 여부 확인
+    if(!AUIGrid.isAvailableLocalDownload(gridId[0])) {
+        alertCaution("파일 다운로드가 불가능한 브라우저 입니다.", 1);
+        return;
+    }
+    AUIGrid.exportToXlsx(gridId[0], {
+        fileName : "상품그룹가격_"+$("#s_setDt").val(),
+        progressBar : true,
+    });
+}
