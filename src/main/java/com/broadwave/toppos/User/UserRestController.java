@@ -23,6 +23,7 @@ import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.PhotoD
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailSet;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestListDto;
+import com.broadwave.toppos.User.UserService.InfoService;
 import com.broadwave.toppos.User.UserService.ReceiptService;
 import com.broadwave.toppos.User.UserService.SortService;
 import com.broadwave.toppos.User.UserService.UserService;
@@ -67,13 +68,14 @@ public class UserRestController {
     private final UserService userService; // 가맹점 통합 서비스
     private final ReceiptService receiptService; // 가맹점 접수페이지 전용 서비스
     private final SortService sortService; // 가맹점 상품정렬 서비스
+    private final InfoService infoService; // 나의정보관리 서비스
     private final ModelMapper modelMapper;
     private final TokenProvider tokenProvider;
     private final HeadService headService;
     private final ManagerService managerService;
 
     @Autowired
-    public UserRestController(AWSS3Service awss3Service, UserService userService, ReceiptService receiptService, SortService sortService,
+    public UserRestController(AWSS3Service awss3Service, UserService userService, ReceiptService receiptService, SortService sortService, InfoService infoService,
                               TokenProvider tokenProvider, ModelMapper modelMapper, HeadService headService, ManagerService managerService) {
         this.awss3Service = awss3Service;
         this.userService = userService;
@@ -81,6 +83,7 @@ public class UserRestController {
         this.sortService = sortService;
         this.modelMapper = modelMapper;
         this.tokenProvider = tokenProvider;
+        this.infoService = infoService;
         this.headService = headService;
         this.managerService = managerService;
     }
@@ -606,7 +609,12 @@ public class UserRestController {
         return sortService.findByItemSortUpdate(itemSortSet, request);
     }
 
-
+//@@@@@@@@@@@@@@@@@@@@@ 나의 정보관리 페이지 관련 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    // 현재 가맹점의 정보 호출하기
+    @GetMapping("myInfo")
+    public ResponseEntity<Map<String,Object>> myInfo(HttpServletRequest request){
+        return infoService.myInfo(request);
+    }
 
 
 
