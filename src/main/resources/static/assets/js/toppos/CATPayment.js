@@ -31,6 +31,14 @@ class CATPayment {
         CatPrintCommunication(message);
 
     }
+    CatPrint_Multi(params,creditData,cancelYN) {
+
+        let message="";
+        message = CatCreate_MultiPrint(params,creditData,cancelYN)
+
+        CatPrintCommunication(message);
+
+    }
     CatPrintTest() {
 
         let message="";
@@ -674,6 +682,487 @@ function CatCreate_Print(params,creditResult,cancelYN){
         message += "==========================================";
         message += String.fromCharCode(10);
     }
+
+    //**************************************************
+    // 용지 절단 - GS V NUL
+    //**************************************************
+
+    message += String.fromCharCode(10);
+    message += String.fromCharCode(10);
+    message += String.fromCharCode(10);
+    message += String.fromCharCode(10);
+    message += String.fromCharCode(10);
+
+    message += String.fromCharCode(27);
+    message += String.fromCharCode(105);
+
+
+    var len = 0;
+    for (var i = 0; i < message.length; i++) {
+        len += (message.charCodeAt(i) > 128) ? 2 : 1;
+    }
+
+    var messageLen = ("" + len).fillZero(4);   // 길이
+
+    message = "CATPRINT" + messageLen + message;	// 길이 추가
+
+    len += 12;	// CATPRINT 8Byte + Length 4Byte 추가
+
+    return "CC" + message;
+}
+//카드결제전문생성
+function CatCredit_vPOSV1(params) {
+    //전문생성
+    let totalAmount = ("" + params.paymentAmount).fillZero(9);
+    let vatAmount = ("" + Math.floor(params.paymentAmount / 11)).fillZero(9); //부가세 계산 내림으로 처리
+    let month = ("" + params.month).fillZero(2);
+    let franchiseNo = ("" + params.franchiseNo).fillZero(4);
+
+
+    let request_msg = "";
+    // 전문길이 마지막에 입력
+    request_msg += "a1";                                       // 전문구분코드
+    request_msg += month;                                       // 할부개월 2
+    request_msg += " ";                                     	 // 현금영수증 소비자 구분
+    request_msg += " ";                                        // 현금영수증 취소 사유
+    request_msg += totalAmount;              // "000001004";    // 총금액
+    request_msg += vatAmount;              //"000000091";     // 세금
+    request_msg += "000000000";                             	 // 면세금액
+    request_msg += "000000000";                                // 봉사료
+    request_msg += "      ";                		 							 // 원거래 일시
+    request_msg += "         ";                     				 // 원거래 승인번호
+    request_msg += franchiseNo;             //"0001";               // 거래일련번호
+    request_msg += String.fromCharCode(3);                    // ETX
+
+    var telegramLen = ("" + request_msg.length).fillZero(4);   // 길이
+
+    request_msg = String.fromCharCode(2) + telegramLen + request_msg;	// STX 추가 + 전문 길이 + 전송 전문
+
+    return "CC" + request_msg;
+}
+
+
+
+// 프린트 내용 생성(복합결제 대응)
+function CatCreate_MultiPrint(params,creditResults,cancelYN){
+    let message = "";
+
+
+
+    let month = "일시불";
+    if ((params.month) > 1 ){
+        month = params.month + "개월"
+    }
+    let cardNo = "";
+    let cardName = "";
+    let approvalNo = "";
+    let tmpStr = "";
+    let approvalTime = "";
+
+
+    //message += String.fromCharCode(10);
+    //message += String.fromCharCode(10);
+    //message += String.fromCharCode(10);
+
+    //**************************************************
+    // 초기화: ESC @
+    //**************************************************
+    message += String.fromCharCode(27);
+    message += String.fromCharCode(64);
+    //**************************************************
+    // 정렬: ESC a (0: 왼쪽, 1: 가운데, 2: 오른쪽 )
+    //**************************************************
+    message += String.fromCharCode(27);
+    message += String.fromCharCode(97);
+    message += String.fromCharCode(1);		// LOGO 출력을 위해 가운데 정렬
+    message += "%Logo%";
+
+    //**************************************************
+    // 정렬: ESC a (0: 왼쪽, 1: 가운데, 2: 오른쪽 )
+    //**************************************************
+    message += String.fromCharCode(27);
+    message += String.fromCharCode(97);
+    message += String.fromCharCode(1);      // LOGO 출력 이후에 정렬 초기화 됨
+    //**************************************************
+    // Double-width: ESC !
+    //**************************************************
+    message += String.fromCharCode(27);
+    message += String.fromCharCode(33);
+    message += String.fromCharCode(48);
+    //message += String.fromCharCode(48);	// 가로 세로 확대 4배 32 두배
+    //**************************************************
+    // 문자열 출력
+    //**************************************************
+    message += "[고객용 영수증]";
+    message += String.fromCharCode(10);
+    message += String.fromCharCode(10);
+    //**************************************************
+    // 정렬: ESC a (0: 왼쪽, 1: 가운데, 2: 오른쪽 )
+    //**************************************************
+    message += String.fromCharCode(27);
+    message += String.fromCharCode(97);
+    message += String.fromCharCode(0);
+    //**************************************************
+    // Double-width : 해제 ESC !
+    //**************************************************
+    message += String.fromCharCode(27);
+    message += String.fromCharCode(33);
+    message += String.fromCharCode(0);
+    //**************************************************
+    // 문자열 출력
+    //**************************************************
+
+    message += "==========================================";
+    message += String.fromCharCode(10);
+    message += "영수증 - 접수증(고객용)";
+    message += String.fromCharCode(10);
+    message += "대리점명   " + params.franchiseName;
+    message += String.fromCharCode(10);
+    message += "영업시간   평일:09:30~20:00 까지";
+    message += String.fromCharCode(10);
+    message += "           공휴일(토요일):10:30~18:00 까지";
+    message += String.fromCharCode(10);
+    message += "사업자번호 " + params.businessNO;
+    message += String.fromCharCode(10);
+    message += "대표자     " + params.repreName+ "  | 전화    " + params.franchiseTel;
+    message += String.fromCharCode(10);
+    message += "고객성명   " + params.customerName + " 님";
+    message += String.fromCharCode(10);
+    message += "고객전화   ";
+    message += String.fromCharCode(27);
+    message += String.fromCharCode(33);
+    message += String.fromCharCode(8);
+    message += params.customerTel;
+    message += String.fromCharCode(10);
+    message += String.fromCharCode(27);
+    message += String.fromCharCode(33);
+    message += String.fromCharCode(0);
+    message += "==========================================";
+    message += String.fromCharCode(10);
+    message += "택번호  상품                  색상   금액 ";
+    message += String.fromCharCode(10);
+    message += "==========================================";
+    message += String.fromCharCode(10);
+    let specialCnt = 0;
+    params.items.forEach((item,idx)=>{
+        message += String.fromCharCode(27);
+        message += String.fromCharCode(33);
+        message += String.fromCharCode(8);
+        message += item.tagno.substr(3,1);
+        message += "-" + item.tagno.substr(4,3);
+        message += String.fromCharCode(27);
+        message += String.fromCharCode(33);
+        message += String.fromCharCode(0);
+        if (item.specialyn =="Y") specialCnt += 1;
+        if (cancelYN==="Y"){
+            message += " " + item.itemname.fillSpaceUnicode(23) + " " + item.color.fillSpaceUnicode(4)+ " " + numberWithCommasCat(-1 * item.price).padStart(7);
+        }else {
+            message += " " + item.itemname.fillSpaceUnicode(23) + " " + item.color.fillSpaceUnicode(4) + " " + numberWithCommasCat(item.price).padStart(7);
+        }
+        message += String.fromCharCode(10);
+
+    });
+    message += "------------------------------------------";
+    message += String.fromCharCode(10);
+
+
+
+    if (cancelYN==="Y"){
+        message += "수   량 : " + ("" + params.items.length).padStart(3) + "         취소금액 :" + (" " + numberWithCommasCat(-1*params.totalAmount)).padStart(9);
+    }else {
+        message += "소계  수량    :" + ("" + params.items.length).padStart(8) + "  합계금액:" + (" " + numberWithCommasCat(params.totalAmount)).padStart(8);
+        message += String.fromCharCode(10);
+        message += "      기본금액:" + ("" + numberWithCommasCat(params.normalAmount)).padStart(8) + "  추가금액:" + (" " + numberWithCommasCat(params.changeAmount)).padStart(8);
+        message += String.fromCharCode(10);
+        message += "      인도예정일:";
+        message += String.fromCharCode(27);
+        message += String.fromCharCode(33);
+        message += String.fromCharCode(8);
+        message += params.estimateDt;
+        message += String.fromCharCode(27);
+        message += String.fromCharCode(33);
+        message += String.fromCharCode(0);
+        message += String.fromCharCode(10);
+        message += "      (인도예정일이 공휴일일때는 익일인도)";
+    }
+    message += String.fromCharCode(10);
+
+    message += "==========================================";
+    message += String.fromCharCode(10);
+    message += "<결제정보>";
+    message += String.fromCharCode(10);
+    message += "접수일자 "+ params.requestDt;
+    message += String.fromCharCode(10);
+    message += "총접수수량 (일반 :" + (params.items.length - specialCnt) + " / 특수:" + specialCnt + " )         " + params.items.length + "건";
+    message += String.fromCharCode(10);
+    message += "총접수금액  "
+    message += String.fromCharCode(27);
+    message += String.fromCharCode(33);
+    message += String.fromCharCode(32);
+    message += (numberWithCommasCat(params.totalAmount)).padStart(15);
+    message += String.fromCharCode(27);
+    message += String.fromCharCode(33);
+    message += String.fromCharCode(0);
+    message += String.fromCharCode(10);
+    message += "------------------------------------------";
+    message += String.fromCharCode(10);
+    message += "<미수금정보>";
+    message += String.fromCharCode(10);
+    message += "전일미수금:" + ("" + numberWithCommasCat(params.preUncollectAmount)).padStart(8) + "    당일미수금:" + (" " + numberWithCommasCat(params.curUncollectAmount)).padStart(8);
+    message += String.fromCharCode(10);
+    message += "미수금상환:" + ("" + numberWithCommasCat(params.uncollectPayAmount)).padStart(8) + "      총미수금:" + (" " + numberWithCommasCat(params.totalUncollectAmount)).padStart(8);
+    message += String.fromCharCode(10);
+    creditResults.forEach((creditResult,idx)=>{
+        if (creditResult.type ==='card') {
+            cardNo = "" + creditResult.cardNo; // 카드번호
+            cardName = "" + creditResult.cardName; // 카드번호
+            approvalNo = ("" + creditResult.approvalNo).trim(); // 승인번호
+            tmpStr = "20" + creditResult.approvalTime;
+            approvalTime = tmpStr.substr(0, 4) + "-" + tmpStr.substr(4, 2) + "-" + tmpStr.substr(6, 2) + " " + tmpStr.substr(8, 2) + ":" + tmpStr.substr(10, 2); // 승인일시
+
+
+            message += "==========================================";
+            message += String.fromCharCode(10);
+            message += "결제구분                              카드";
+            message += String.fromCharCode(10);
+            message += "승인일시                  " + approvalTime.padStart(16);
+            message += String.fromCharCode(10);
+            if (cancelYN==="Y") {
+                message += ("할부 : " + month).fillSpaceUnicode(14) + "    취소금액".fillSpaceUnicode(19) + (numberWithCommasCat(-1*creditResult.payAmount)).padStart(9);
+            }else {
+                message += ("할부 : " + month).fillSpaceUnicode(14) + "    결제금액".fillSpaceUnicode(19) + (numberWithCommasCat(creditResult.payAmount)).padStart(9);
+            }
+            message += String.fromCharCode(10);
+            message += cardName.fillSpaceUnicode(24) +" " + cardNo.padStart(17);
+            message += String.fromCharCode(10);
+            message += "승인번호                       " + approvalNo.padStart(11);
+            message += String.fromCharCode(10);
+
+        }
+        if (creditResult.type ==='cash') {
+            message += "==========================================";
+            message += String.fromCharCode(10);
+            message += "결제구분                              현금";
+            message += String.fromCharCode(10);
+            if (cancelYN==="Y") {
+                message += "취소금액".fillSpaceUnicode(33) + (numberWithCommasCat(-1*creditResult.payAmount)).padStart(9);
+            }else {
+                message += "결제금액".fillSpaceUnicode(33) + (numberWithCommasCat(creditResult.payAmount)).padStart(9);
+            }
+            message += String.fromCharCode(10);
+
+        }
+        if (creditResult.type ==='save') {
+            message += "==========================================";
+            message += String.fromCharCode(10);
+            message += "결제구분                            적립금";
+            message += String.fromCharCode(10);
+            if (cancelYN==="Y") {
+                message += "취소금액".fillSpaceUnicode(33) + (numberWithCommasCat(-1*creditResult.payAmount)).padStart(9);
+            }else {
+                message += "사용금액".fillSpaceUnicode(33) + (numberWithCommasCat(creditResult.payAmount)).padStart(9);
+            }
+            message += String.fromCharCode(10);
+
+        }
+
+    });
+    message += "==========================================";
+    message += String.fromCharCode(10);
+
+
+    //**************************************************
+    // 용지 절단 - GS V NUL
+    //**************************************************
+
+    message += String.fromCharCode(10);
+    message += String.fromCharCode(10);
+    message += String.fromCharCode(10);
+    message += String.fromCharCode(10);
+    message += String.fromCharCode(10);
+
+    message += String.fromCharCode(27);
+    message += String.fromCharCode(105);
+
+
+    //==========매장용
+    //**************************************************
+    // Double-width: ESC !
+    //**************************************************
+    message += String.fromCharCode(27);
+    message += String.fromCharCode(33);
+    message += String.fromCharCode(48);
+    //message += String.fromCharCode(48);	// 가로 세로 확대 4배 32 두배
+    //**************************************************
+    // 문자열 출력
+    //**************************************************
+    message += "[매장용 영수증]";
+    message += String.fromCharCode(10);
+    message += String.fromCharCode(10);
+    //**************************************************
+    // 정렬: ESC a (0: 왼쪽, 1: 가운데, 2: 오른쪽 )
+    //**************************************************
+    message += String.fromCharCode(27);
+    message += String.fromCharCode(97);
+    message += String.fromCharCode(0);
+    //**************************************************
+    // Double-width : 해제 ESC !
+    //**************************************************
+    message += String.fromCharCode(27);
+    message += String.fromCharCode(33);
+    message += String.fromCharCode(0);
+    //**************************************************
+    // 문자열 출력
+    //**************************************************
+
+    message += "==========================================";
+    message += String.fromCharCode(10);
+    message += "영수증 - 접수증(매장용)";
+    message += String.fromCharCode(10);
+    message += "고객성명   " + params.customerName + " 님";
+    message += String.fromCharCode(10);
+    message += "고객전화   ";
+    message += String.fromCharCode(27);
+    message += String.fromCharCode(33);
+    message += String.fromCharCode(8);
+    message += params.customerTel;
+    message += String.fromCharCode(10);
+    message += String.fromCharCode(27);
+    message += String.fromCharCode(33);
+    message += String.fromCharCode(0);
+    message += "==========================================";
+    message += String.fromCharCode(10);
+    message += "택번호  상품                  색상   금액 ";
+    message += String.fromCharCode(10);
+    message += "==========================================";
+    message += String.fromCharCode(10);
+
+    params.items.forEach((item,idx)=>{
+        message += String.fromCharCode(27);
+        message += String.fromCharCode(33);
+        message += String.fromCharCode(8);
+        message += item.tagno.substr(3,1);
+        message += "-" + item.tagno.substr(4,3);
+        message += String.fromCharCode(27);
+        message += String.fromCharCode(33);
+        message += String.fromCharCode(0);
+        if (cancelYN==="Y"){
+            message += " " + item.itemname.fillSpaceUnicode(23) + " " + item.color.fillSpaceUnicode(4)+ " " + numberWithCommasCat(-1 * item.price).padStart(7);
+        }else {
+            message += " " + item.itemname.fillSpaceUnicode(23) + " " + item.color.fillSpaceUnicode(4) + " " + numberWithCommasCat(item.price).padStart(7);
+        }
+        message += String.fromCharCode(10);
+
+    });
+    message += "------------------------------------------";
+    message += String.fromCharCode(10);
+
+
+
+    if (cancelYN==="Y"){
+        message += "수   량 : " + ("" + params.items.length).padStart(3) + "         취소금액 :" + (" " + numberWithCommasCat(-1*params.totalAmount)).padStart(9);
+    }else {
+        message += "소계  수량    :" + ("" + params.items.length).padStart(8) + "  합계금액:" + (" " + numberWithCommasCat(params.totalAmount)).padStart(8);
+        message += String.fromCharCode(10);
+        message += "      기본금액:" + ("" + numberWithCommasCat(params.normalAmount)).padStart(8) + "  추가금액:" + (" " + numberWithCommasCat(params.changeAmount)).padStart(8);
+        message += String.fromCharCode(10);
+        message += "      인도예정일:";
+        message += String.fromCharCode(27);
+        message += String.fromCharCode(33);
+        message += String.fromCharCode(8);
+        message += params.estimateDt;
+        message += String.fromCharCode(27);
+        message += String.fromCharCode(33);
+        message += String.fromCharCode(0);
+        message += String.fromCharCode(10);
+        message += "      (인도예정일이 공휴일일때는 익일인도)";
+    }
+    message += String.fromCharCode(10);
+
+    message += "==========================================";
+    message += String.fromCharCode(10);
+    message += "<결제정보>";
+    message += String.fromCharCode(10);
+    message += "접수일자 "+ params.requestDt;
+    message += String.fromCharCode(10);
+    message += "총접수수량 (일반 :" + (params.items.length - specialCnt) + " / 특수:" + specialCnt + " )         " + params.items.length + "건";
+    message += String.fromCharCode(10);
+    message += "총접수금액  "
+    message += String.fromCharCode(27);
+    message += String.fromCharCode(33);
+    message += String.fromCharCode(32);
+    message += (numberWithCommasCat(params.totalAmount)).padStart(15);
+    message += String.fromCharCode(27);
+    message += String.fromCharCode(33);
+    message += String.fromCharCode(0);
+    message += String.fromCharCode(10);
+    message += "------------------------------------------";
+    message += String.fromCharCode(10);
+    message += "<미수금정보>";
+    message += String.fromCharCode(10);
+    message += "전일미수금:" + ("" + numberWithCommasCat(params.preUncollectAmount)).padStart(8) + "    당일미수금:" + (" " + numberWithCommasCat(params.curUncollectAmount)).padStart(8);
+    message += String.fromCharCode(10);
+    message += "미수금상환:" + ("" + numberWithCommasCat(params.uncollectPayAmount)).padStart(8) + "      총미수금:" + (" " + numberWithCommasCat(params.totalUncollectAmount)).padStart(8);
+    message += String.fromCharCode(10);
+
+    creditResults.forEach((creditResult,idx)=>{
+        if (creditResult.type ==='card') {
+            cardNo = "" + creditResult.cardNo; // 카드번호
+            cardName = "" + creditResult.cardName; // 카드번호
+            approvalNo = ("" + creditResult.approvalNo).trim(); // 승인번호
+            tmpStr = "20" + creditResult.approvalTime;
+            approvalTime = tmpStr.substr(0, 4) + "-" + tmpStr.substr(4, 2) + "-" + tmpStr.substr(6, 2) + " " + tmpStr.substr(8, 2) + ":" + tmpStr.substr(10, 2); // 승인일시
+
+
+            message += "==========================================";
+            message += String.fromCharCode(10);
+            message += "결제구분                              카드";
+            message += String.fromCharCode(10);
+            message += "승인일시                  " + approvalTime.padStart(16);
+            message += String.fromCharCode(10);
+            if (cancelYN==="Y") {
+                message += ("할부 : " + month).fillSpaceUnicode(14) + "    취소금액".fillSpaceUnicode(19) + (numberWithCommasCat(-1*creditResult.payAmount)).padStart(9);
+            }else {
+                message += ("할부 : " + month).fillSpaceUnicode(14) + "    결제금액".fillSpaceUnicode(19) + (numberWithCommasCat(creditResult.payAmount)).padStart(9);
+            }
+            message += String.fromCharCode(10);
+            message += cardName.fillSpaceUnicode(24) +" " + cardNo.padStart(17);
+            message += String.fromCharCode(10);
+            message += "승인번호                       " + approvalNo.padStart(11);
+            message += String.fromCharCode(10);
+
+        }
+        if (creditResult.type ==='cash') {
+            message += "==========================================";
+            message += String.fromCharCode(10);
+            message += "결제구분                              현금";
+            message += String.fromCharCode(10);
+            if (cancelYN==="Y") {
+                message += "취소금액".fillSpaceUnicode(33) + (numberWithCommasCat(-1*creditResult.payAmount)).padStart(9);
+            }else {
+                message += "결제금액".fillSpaceUnicode(33) + (numberWithCommasCat(creditResult.payAmount)).padStart(9);
+            }
+            message += String.fromCharCode(10);
+
+        }
+        if (creditResult.type ==='save') {
+            message += "==========================================";
+            message += String.fromCharCode(10);
+            message += "결제구분                            적립금";
+            message += String.fromCharCode(10);
+            if (cancelYN==="Y") {
+                message += "취소금액".fillSpaceUnicode(33) + (numberWithCommasCat(-1*creditResult.payAmount)).padStart(9);
+            }else {
+                message += "사용금액".fillSpaceUnicode(33) + (numberWithCommasCat(creditResult.payAmount)).padStart(9);
+            }
+            message += String.fromCharCode(10);
+
+        }
+
+    });
+    message += "==========================================";
+    message += String.fromCharCode(10);
+
 
     //**************************************************
     // 용지 절단 - GS V NUL
