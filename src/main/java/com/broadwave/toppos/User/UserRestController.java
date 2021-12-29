@@ -1,5 +1,6 @@
 package com.broadwave.toppos.User;
 
+import com.broadwave.toppos.Account.AccountPasswordDto;
 import com.broadwave.toppos.Aws.AWSS3Service;
 import com.broadwave.toppos.Head.AddCost.AddCostDto;
 import com.broadwave.toppos.Head.Addprocess.AddprocessDto;
@@ -602,8 +603,8 @@ public class UserRestController {
     // 현재 가맹점의 상품순서 리스트 가져오기
     @PostMapping("franchiseItemList")
     public ResponseEntity<Map<String,Object>> franchiseItemList(@RequestParam(value="bgItemGroupcode", defaultValue="") String bgItemGroupcode,
-                                                                    @RequestParam(value="bgItemGroupcodeS", defaultValue="") String bgItemGroupcodeS, HttpServletRequest request){
-        String biItemMgroup = bgItemGroupcode+bgItemGroupcodeS;
+                                                                    @RequestParam(value="bsItemGroupcodeS", defaultValue="") String bsItemGroupcodeS, HttpServletRequest request){
+        String biItemMgroup = bgItemGroupcode+bsItemGroupcodeS;
         return sortService.franchiseItemList(biItemMgroup, request, nowDate);
     }
 
@@ -620,53 +621,20 @@ public class UserRestController {
         return infoService.myInfo(request);
     }
 
-    // 가맹점 등록 API
+    // 가맹점 나의정보 수정 API
     @PostMapping("franchiseMyInfoSave")
     public ResponseEntity<Map<String,Object>> franchiseMyInfoSave(@ModelAttribute FranchisUserDto franchisUserDto, HttpServletRequest request){
-        log.info("franchiseMyInfoSave 호출");
-
-        AjaxResponse res = new AjaxResponse();
-
-        Franchise franchise = modelMapper.map(franchisUserDto, Franchise.class);
-
-        String login_id = CommonUtils.getCurrentuser(request);
-//        log.info("현재 사용자 아이디 : "+login_id);
-
-        Optional<Franchise> optionalFranohise = headService.findByFrCode(franchisUserDto.getFrCode());
-        if(optionalFranohise.isPresent()){
-            franchise.setId(optionalFranohise.get().getId());
-
-            franchise.setFrRefCode(optionalFranohise.get().getFrRefCode());
-            franchise.setFrContractState(optionalFranohise.get().getFrContractState());
-            franchise.setFrPriceGrade(optionalFranohise.get().getFrPriceGrade());
-            franchise.setFrRemark(optionalFranohise.get().getFrRemark());
-
-            franchise.setBrId(optionalFranohise.get().getBrId());
-            franchise.setBrCode(optionalFranohise.get().getBrCode());
-            franchise.setBrAssignState(optionalFranohise.get().getBrAssignState());
-
-            if(franchisUserDto.getFrTagNo() == null || franchisUserDto.getFrTagNo().equals("")) {
-                franchise.setFrTagNo(franchisUserDto.getFrCode());
-                franchise.setFrLastTagno(franchisUserDto.getFrCode()+"0000");
-            }else{
-                if(optionalFranohise.get().getFrLastTagno() != null){
-                    franchise.setFrLastTagno(franchisUserDto.getFrTagNo() + optionalFranohise.get().getFrLastTagno().substring(3, 7));
-                }else{
-                    franchise.setFrLastTagno(franchisUserDto.getFrTagNo() + "0000");
-                }
-            }
-
-            franchise.setModify_id(login_id);
-            franchise.setModifyDateTime(LocalDateTime.now());
-            franchise.setInsert_id(optionalFranohise.get().getInsert_id());
-            franchise.setInsertDateTime(optionalFranohise.get().getInsertDateTime());
-        }else{
-            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP005.getCode(), "나의 "+ResponseErrorCode.TP005.getDesc(), "문자", "고객센터에 문의해주세요."));
-        }
-
-        Franchise franchiseSave =  headService.franchise(franchise);
-        log.info("가맹점 마이페이지 수정 성공 Frcode : '" + franchiseSave.getFrCode() + "'");
-        return ResponseEntity.ok(res.success());
+        return infoService.franchiseMyInfoSave(franchisUserDto, request);
     }
+
+    // 가맹점 비밀번호 수정 API
+    @PostMapping("franchisePassword")
+    public ResponseEntity<Map<String,Object>> franchisePassword(@ModelAttribute AccountPasswordDto accountPasswordDto, HttpServletRequest request){
+        return infoService.franchisePassword(accountPasswordDto, request);
+    }
+
+
+
+
 
 }

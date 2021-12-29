@@ -13,6 +13,8 @@
 
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
+	<!-- 사용자 스크립트 추가 -->
+	<script src="/assets/js/toppos/user/mypage/mypage.js"></script>
 	<script type="text/javascript">
 		$(document).ready(function() {
 			// 탭
@@ -36,7 +38,7 @@
 		<div class="c-tabs__head">
 			<button class="c-tabs__btn active">가맹점 정보</button>
 			<button class="c-tabs__btn">비밀번호 변경</button>
-			<button class="c-tabs__btn">상용구 수정</button>점
+			<button class="c-tabs__btn">상용구 수정</button>
 			<button class="c-tabs__btn">수선항목 수정</button>
 			<button class="c-tabs__btn">추가항목 수정</button>
 		</div>
@@ -187,10 +189,10 @@
 				<div class="c-tabs__content-body">
 					<div class="form">
 						<div class="form__item">
-							<div class="form__title">신규비밀번호</div>
+							<div class="form__title">현재 비밀번호</div>
 							<div class="form__input">
 								<div class="c-text">
-									<input type="password" />
+									<input type="password" id="oldpassword" name="oldpassword" />
 									<button>키보드</button>
 								</div>
 							</div>
@@ -198,10 +200,21 @@
 						<div class="form__item">
 						</div>
 						<div class="form__item">
-							<div class="form__title">신규번호확인</div>
+							<div class="form__title">신규 비밀번호</div>
 							<div class="form__input">
 								<div class="c-text">
-									<input type="password" />
+									<input type="password" id="newpassword" name="newpassword" />
+									<button>키보드</button>
+								</div>
+							</div>
+						</div>
+						<div class="form__item">
+						</div>
+						<div class="form__item">
+							<div class="form__title">신규 번호확인</div>
+							<div class="form__input">
+								<div class="c-text">
+									<input type="password" id="passwordconfirm" name="passwordconfirm" />
 									<button>키보드</button>
 								</div>
 							</div>
@@ -209,14 +222,12 @@
 						<div class="form__item">
 						</div>
 					</div>
-					
 					<div class="c-tabs__content-footer">
 						<div class="c-tabs__console">
-							<button class="c-button c-button--solid">저장</button>
+							<button onclick="passwordUpdate()" class="c-button c-button--solid">저장</button>
 						</div>
 					</div>
 				</div>
-				
 			</div>
 			
 			<div class="c-tabs__content">
