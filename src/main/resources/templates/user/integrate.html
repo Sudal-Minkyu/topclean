@@ -154,7 +154,7 @@
 
 	
 	
-	<!-- 기본 팝업 -->
+	<!-- 결제내역 팝업 -->
 	<div class="pop">
 		<div class="pop__box">
 			<div class="pop__article">
@@ -167,12 +167,125 @@
 			</div>
 			
 			<ul class="pop__console">
+				<li><button class="c-button pop__close">닫기</button></li>
 				<li><button class="c-button c-button--dark">적립금전환</button></li>
 				<li><button class="c-button c-button--red">결제취소</button></li>
-				<li><button class="c-button pop__close">닫기</button></li>
 			</ul>
 		</div>
 	</div>
+	
+	<!-- 검품등록 팝업 -->
+	<div class="pop">
+		<div class="pop__box">
+			<div class="pop__article pop__article--flex">
+				<div class="pop__aricle-content photo">
+					<h3 class="pop__article-header">검품등록</h3>
+					<div class="pop__article-photo" style="background-color: #ddd">
+						<!-- 캠 영상 들어갈 곳 -->
+						<video src=""></video>
+					</div>
+				</div>
+				
+				<div class="pop__aricle-content flex1">
+					<div class="pop__article-haedconsole">
+						<button class="c-button c-button--darksolid c-button--small">삭제</button>
+					</div>
+					<div style="width: 100%; height: 208px; border: 1px solid #dbdbdb">높이값 빼고 스타일 삭제</div>
+				</div>
+			</div>
+			
+			<div class="pop__article">
+				<div class="pop__article-head">
+					<h3 class="pop__article-header">검품내용</h3>
+					<div class="pop__article-haedconsole">
+						<div class="c-checkbox">
+							<input type="checkbox" id="check01" />
+							<label for="check01">사진포함</label>
+						</div>
+					</div>
+				</div>
+				
+				<div class="pop__aricle-content">
+					<div class="c-textarea">
+						<textarea ></textarea>
+						<button></button>
+					</div>
+				</div>
+			</div>
+			
+			<ul class="pop__console">
+				<li class="pop__console-left">
+					<div class="pop__console-cost">
+						<div class="pop__console-title">현재 접수금액</div>
+						<div class="pop__console-input">
+							<div class="c-text"><input type="text" readonly="readonly" /></div>
+						</div>
+					</div>
+					<div class="pop__console-cost">
+						<div class="pop__console-title">추가 비용발생</div>
+						<div class="pop__console-input">
+							<div class="c-text">
+								<input type="text" />
+								<button>키보드</button>
+							</div>
+						</div>
+					</div>
+				</li>
+				<li><button class="c-button pop__close">닫기</button></li> 
+				<li><button class="c-button c-button--dark">검품내역등록</button></li>
+			</ul>
+		</div>
+	</div>
+	
+	<!-- 검품확인 팝업 -->
+	<div class="pop">
+		<div class="pop__box">
+			<div class="pop__article">
+				<h3 class="pop__article-header">검품확인</h3>
+				
+				<div class="pop__aricle-content">
+					<div style="width: 100%; height: 240px; border: 1px solid #dbdbdb">높이값 빼고 스타일 삭제</div>
+				</div>
+			</div>
+			
+			<div class="pop__article">
+				<div class="pop__aricle-content">
+					<div class="pop__message">
+						<div class="pop__message-text">
+							<div class="pop__message-textbox">
+								<textarea readonly="readonly"></textarea>
+							</div>
+						</div>
+						<div class="pop__message-img">
+							<img src="/assets/images/dummy/cam.png" alt="" />
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<ul class="pop__console">
+				<li class="pop__console-left">
+					<div class="pop__console-cost">
+						<div class="pop__console-title">현재 접수금액</div>
+						<div class="pop__console-input">
+							<div class="c-text"><input type="text" readonly="readonly" /></div>
+						</div>
+					</div>
+					<div class="pop__console-cost">
+						<div class="pop__console-title">추가 비용발생</div>
+						<div class="pop__console-input">
+							<div class="c-text"><input type="text" readonly="readonly" /></div>
+						</div>
+					</div>
+				</li>
+				<li><button class="c-button pop__close">닫기</button></li> 
+				<li><button class="c-button c-button--dark">진행거부</button></li>
+				<li><button class="c-button c-button--solid">고객수락</button></li>
+			</ul>
+		</div>
+	</div>
+	
+	
 
 </div>
 </html>
