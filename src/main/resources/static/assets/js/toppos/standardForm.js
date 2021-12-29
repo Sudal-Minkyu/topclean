@@ -118,6 +118,15 @@ function onPageLoad() {
     // grid.e.basicEvent();
 }
 
+/* 이벤트를 s : 설정하거나 r : 해지하는 함수들을 담는다. 그리드 관련 이벤트는 grid.e에 위치 */
+const event = {
+    s: { // 이벤트 설정
+
+    },
+    r: { // 이벤트 해제
+
+    }
+}
 
 /* jest 기본 동작을 테스트 하기 위한 함수, 기본 테스트를 통과하면 아래의 module.exports 부분을 수정하고 이 함수는 지울 것 */
 function testForJest() {

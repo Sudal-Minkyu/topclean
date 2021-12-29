@@ -118,9 +118,14 @@ gridColumnLayout[0] = [
     }, {
         dataField: "beforeUncollectMoney",
         headerText: "전일미수금",
+        dataType: "numeric",
+        autoThousandSeparator: "true",
+
     }, {
         dataField: "saveMoney",
         headerText: "적립금",
+        dataType: "numeric",
+        autoThousandSeparator: "true",
     }, {
         dataField: "bcMessageAgree",
         headerText: "SMS수신",

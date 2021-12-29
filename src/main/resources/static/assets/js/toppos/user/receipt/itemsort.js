@@ -3,20 +3,21 @@ $(function() { // 페이지가 로드되고 나서 실행
 });
 
 /* 서버 API와 주고 받게 될 데이터 정의
-* "s" 문자형, "n" 숫자형, "r" 필수값
+* "s" 문자형, "n" 숫자형, "r" 필수값, "g" 쓰레기 데이터
 * 조합하여 "sr", "nr" 같은 형식도 가능
+* 추가로 필요한 검사항목이 생긴다면 문의 바랍니다.
 * */
 const dto = {
     send: {
         franchiseItemGroupUpdate : {
-            bgItemGroupcode: "s",
-            bgSort: "n"
+            bgItemGroupcode: "sr",
+            bgSort: "nr"
         },
     },
     receive: {
         franchiseItemGroupList: {
-            bgSort: "n",
-            bgItemGroupcode: "s",
+            bgSort: "nr",
+            bgItemGroupcode: "sr",
             bgName: "s"
         },
 
@@ -30,7 +31,7 @@ const data = {
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 */
 const ajax = {
-    setDataIntoGrid: function(numOfGrid, url) { // 해당 numOfGrid 배열번호의 그리드에 url 로부터 받은 데이터값을 통신하여 주입한다.
+    setDataIntoGrid(numOfGrid, url) { // 해당 numOfGrid 배열번호의 그리드에 url 로부터 받은 데이터값을 통신하여 주입한다.
         CommonUI.ajax(url, "GET", false, function (req) {
             console.log(req);
             grid.s.data[numOfGrid] = req.sendData.gridListData;
@@ -168,41 +169,90 @@ const grid = {
     e: {
         basicEvent() {
             /* 0번그리드 내의 셀 클릭시 이벤트 */
-            AUIGrid.bind(gridId[0], "cellClick", function (e) {
+            AUIGrid.bind(grid.s.id[0], "cellClick", function (e) {
                 console.log(e.item); // 이밴트 콜백으로 불러와진 객체의, 클릭한 대상 row 키(파라메터)와 값들을 보여준다.
             });
         }
     }
 };
 
+/* 이벤트를 s : 설정하거나 r : 해지하는 함수들을 담는다. 그리드 관련 이벤트는 grid.e에 위치 */
+const event = {
+    s: { // 이벤트 설정
+        switchTab() {
+            const $tabsBtn = $('.c-tabs__btn');
+            const $tabsContent = $('.c-tabs__content');
+
+            $tabsBtn.on('click', function() {
+                const idx = $(this).index();
+
+                $tabsBtn.removeClass('active');
+                $tabsBtn.eq(idx).addClass('active');
+                $tabsContent.removeClass('active');
+                $tabsContent.eq(idx).addClass('active');
+
+                grid.f.resizeOnTab(idx);
+            });
+        },
+        pushUpDown() {
+            $("#bgUp").on("click", function() {
+                pushUp(0)
+            });
+            $("#bgDown").on("click", function() {
+                pushDown(0)
+            });
+            $("#biUp").on("click", function() {
+                pushUp(2)
+            });
+            $("#biDown").on("click", function() {
+                pushDown(2)
+            });
+        },
+        save() {
+            $("#bgSortSave").on("click", function() {
+
+            });
+
+            $("#biSortSave").on("click", function() {
+
+            });
+        }
+    },
+    r: { // 이벤트 해제
+
+    }
+}
+
 /* 페이지가 로드되고 나서 실행 될 코드들을 담는다. */
 function onPageLoad() {
-    const $tabsBtn = $('.c-tabs__btn');
-    const $tabsContent = $('.c-tabs__content');
 
-    $tabsBtn.on('click', function() {
-        const idx = $(this).index();
-
-        $tabsBtn.removeClass('active');
-        $tabsBtn.eq(idx).addClass('active');
-        $tabsContent.removeClass('active');
-        $tabsContent.eq(idx).addClass('active');
-
-        grid.f.resizeOnTab(idx);
-    })
-
+    event.s.switchTab();
+    event.s.pushUpDown();
     grid.f.initialization();
     grid.f.create();
-
 
     /* grid.s 에 적절한 값을 세팅하였다면, 해당 함수 호출시 해당 배열번호의 그리드에 의도한 데이터들이 주입되어진다. */
     grid.f.setInitialData(0);
 
     /* 생성된 그리드에 기본적으로 필요한 이벤트들을 적용한다. */
-    // grid.e.basicEvent();
+    grid.e.basicEvent();
+
 }
 
+function pushUp(numOfGrid) {
+    const selectedRowId = AUIGrid.getSelectedIndex(grid.s.id[numOfGrid]);
+    AUIGrid.moveRowsToUp(grid.s.id[numOfGrid], selectedRowId);
+}
 
+function pushDown(numOfGrid) {
+    const selectedRowId = AUIGrid.getSelectedIndex(grid.s.id[numOfGrid]);
+    AUIGrid.moveRowsToDown(grid.s.id[numOfGrid], selectedRowId);
+
+}
+
+function saveSort(numOfGrid) {
+
+}
 
 function testForJest() {
     return "hi";
