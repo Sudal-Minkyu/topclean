@@ -52,6 +52,18 @@ public class RequestDetail {
     @Column(name="fd_pre_state_dt")
     private LocalDateTime fdPreStateDt; // 이전상태변경시간
 
+    @Column(name="fd_s2_dt")
+    private String fdS2Dt; // 지사입고일
+
+    @Column(name="fd_s3_dt")
+    private String fdS3Dt; // 지사출고일
+
+    @Column(name="fd_s4_dt")
+    private String fdS4Dt; // 가맹점입고일
+
+    @Column(name="fd_s5_dt")
+    private String fdS5Dt; // 고객인도일
+
     @Column(name="fd_cancel")
     private String fdCancel; // 접수취소 Y 기본값 N
 

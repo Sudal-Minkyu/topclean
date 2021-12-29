@@ -218,6 +218,7 @@ public class ReceiptService {
                 requestSave.setFrCode(frCode);
                 requestSave.setFrYyyymmdd(nowDate);
                 requestSave.setFrPayAmount(0);
+                requestSave.setFrRefBoxType("01"); // 접수타입(01:일반, 02:무인보관함, 03:배송APP)
                 requestSave.setFrRefBoxCode(null); // 무인보관함 연계시 무인보관함 접수번호 : 일단 무조건 NULL
                 requestSave.setFr_insert_id(login_id);
                 requestSave.setFr_insert_date(LocalDateTime.now());

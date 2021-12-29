@@ -69,6 +69,9 @@ public class Request {
     @Column(name="fr_confirm_yn")
     private String frConfirmYn; // 임시저장여부플래그 Y만 정식데이터
 
+    @Column(name="fr_ref_box_type")
+    private String frRefBoxType; // 접수타입(01:일반, 02:무인보관함, 03:배송APP)
+
     @Column(name="fr_ref_box_code")
     private String frRefBoxCode; // 무인보관함 연계시 무인보관함 접수번호
 
