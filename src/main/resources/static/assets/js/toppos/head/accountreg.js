@@ -200,59 +200,11 @@ function frPopList(numOfGrid){
 }
 
 function popupListAjax(url,numOfGrid,params){
-
     CommonUI.ajax(url, "GET", params, function(req){
         gridData[numOfGrid] = req.sendData.gridListData;
         AUIGrid.setGridData(gridId[numOfGrid], gridData[numOfGrid]);
     });
 }
-
-function brSearch(){
-    const s_brName = $("#pop_s_brName").val();
-    const s_brCode = $("#pop_s_brCode").val();
-    const s_brContractState = $("#pop_s_brContractState").val();
-
-    AUIGrid.clearFilterAll(gridId[1]);
-    if(s_brName !== "") {
-        AUIGrid.setFilter(gridId[1], "brName", function (dataField, value, item) {
-            return new RegExp(s_brName.toUpperCase()).test(value.toUpperCase());
-        });
-    }
-    if(s_brCode !== "") {
-        AUIGrid.setFilter(gridId[1], "brCode", function (dataField, value, item) {
-            return new RegExp(s_brCode.toUpperCase()).test(value.toUpperCase());
-        });
-    }
-    if(s_brContractState !== "") {
-        AUIGrid.setFilter(gridId[1], "brContractStateValue", function (dataField, value, item) {
-            return s_brContractState === item.brContractState;
-        });
-    }
-}
-
-function frSearch(){
-    const s_frName = $("#pop_s_frName").val();
-    const s_frCode = $("#pop_s_frCode").val();
-    const s_frContractState = $("#pop_s_frContractState").val();
-
-    AUIGrid.clearFilterAll(gridId[2]);
-    if(s_frName !== "") {
-        AUIGrid.setFilter(gridId[2], "frName", function (dataField, value, item) {
-            return new RegExp(s_frName.toUpperCase()).test(value.toUpperCase());
-        });
-    }
-    if(s_frCode !== "") {
-        AUIGrid.setFilter(gridId[2], "frCode", function (dataField, value, item) {
-            return new RegExp(s_frCode.toUpperCase()).test(value.toUpperCase());
-        });
-    }
-    if(s_frContractState !== "") {
-        AUIGrid.setFilter(gridId[2], "frContractStateValue", function (dataField, value, item) {
-            return s_frContractState === item.frContractState;
-        });
-    }
-}
-
 
 // +++++++++++++++++++++++++++++++++++++//
 // 그리드 관련 끝
@@ -483,40 +435,16 @@ function filterAccountList(type) {
 
     switch (type) {
         case 1 :
-            AUIGrid.clearFilterAll(gridId[0]);
-            const s_userid = $("#s_userid").val();
-            const s_username = $("#s_username").val();
-            const s_role = $("#s_role").val();
-            const s_frCode = $("#s_frCode").val();
-            const s_brCode = $("#s_brCode").val();
-            if(s_userid !== "") {
-                AUIGrid.setFilter(gridId[0], "userid", function (dataField, value, item) {
-                    return new RegExp(s_userid.toUpperCase()).test(value.toUpperCase());
-                });
-            }
-            if(s_username !== "") {
-                AUIGrid.setFilter(gridId[0], "username", function (dataField, value, item) {
-                    return new RegExp(s_username.toUpperCase()).test(value.toUpperCase());
-                });
-            }
-            if(s_role !== "") {
-                AUIGrid.setFilter(gridId[0], "role", function (dataField, value, item) {
-                    return item.roleCode === s_role;
-                });
-            }
-            if(s_frCode !== "") {
-                AUIGrid.setFilter(gridId[0], "frCode", function (dataField, value, item) {
-                    return new RegExp("^" + s_frCode.toUpperCase()).test(value.toUpperCase());
-                });
-            }
-            if(s_brCode !== "") {
-                AUIGrid.setFilter(gridId[0], "brCode", function (dataField, value, item) {
-                    return new RegExp("^" + s_brCode.toUpperCase()).test(value.toUpperCase());
-                });
-            }
+            AUIGrid.clearGridData(gridId[0]);
+            accountList();
             break;
         case 2 :
-            AUIGrid.clearFilterAll(gridId[0]);
+            $("#s_userid").val("");
+            $("#s_username").val("");
+            $("#s_role").val("");
+            $("#s_frCode").val("");
+            $("#s_brCode").val("");
+            accountList();
             break;
     }
 
