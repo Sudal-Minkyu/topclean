@@ -28,6 +28,7 @@ const dto = {
             bgSort: "nr",
             bgItemGroupcode: "sr",
             bgName: "s",
+            bgIconFilename: "s",
         },
         franchiseItemSortList: {
             bgItemGroupcode: "sr",
@@ -52,12 +53,11 @@ const data = {
 const ajax = {
     setDataIntoGrid(numOfGrid, url) { // 해당 numOfGrid 배열번호의 그리드에 url 로부터 받은 데이터값을 통신하여 주입한다.
         CommonUI.ajax(url, "GET", false, function(req) {
-            console.log(req);
-            if(dv.chk(req.sendData.gridListData, dto.receive.franchiseItemGroupList, "테스트 검사", true)){
-                console.log("실패처리");
+            const result = dv.chk(req.sendData.gridListData, dto.receive.franchiseItemGroupList, "테스트 검사", false);
+            if(result) {
+                grid.s.data[numOfGrid] = req.sendData.gridListData;
+                AUIGrid.setGridData(grid.s.id[numOfGrid], grid.s.data[numOfGrid]);
             }
-            grid.s.data[numOfGrid] = req.sendData.gridListData;
-            AUIGrid.setGridData(grid.s.id[numOfGrid], grid.s.data[numOfGrid]);
         });
     },
     saveSortData(numOfGrid, dataList) {
