@@ -1,6 +1,5 @@
 $(function() { // 페이지가 로드되고 나서 실행
     onPageLoad();
-    $("#filterBs").click();
 });
 
 /* 서버 API와 주고 받게 될 데이터 정의
@@ -21,6 +20,10 @@ const dto = {
         franchiseItemList: {
             bgItemGroupcode: "sr",
             bsItemGroupcodeS: "sr",
+        },
+        franchiseItemSortUpdate: {
+            biItemcode: "sr",
+            bfSort: "nr",
         }
     },
     receive: {
@@ -28,7 +31,7 @@ const dto = {
             bgSort: "nr",
             bgItemGroupcode: "sr",
             bgName: "s",
-            bgIconFilename: "s",
+            bgIconFilename: "d",
         },
         franchiseItemSortList: {
             bgItemGroupcode: "sr",
@@ -53,25 +56,38 @@ const data = {
 const ajax = {
     setDataIntoGrid(numOfGrid, url) { // 해당 numOfGrid 배열번호의 그리드에 url 로부터 받은 데이터값을 통신하여 주입한다.
         CommonUI.ajax(url, "GET", false, function(req) {
-            const result = dv.chk(req.sendData.gridListData, dto.receive.franchiseItemGroupList, "테스트 검사", false);
-            if(result) {
-                grid.s.data[numOfGrid] = req.sendData.gridListData;
-                AUIGrid.setGridData(grid.s.id[numOfGrid], grid.s.data[numOfGrid]);
+            if(numOfGrid === 0) {
+                dv.chk(req.sendData.gridListData, dto.receive.franchiseItemGroupList,
+                    "대분류 위치 조정 데이터 받아오기");
             }
+            grid.s.data[numOfGrid] = req.sendData.gridListData;
+            AUIGrid.setGridData(grid.s.id[numOfGrid], grid.s.data[numOfGrid]);
         });
     },
     saveSortData(numOfGrid, dataList) {
+        if(numOfGrid === 0) {
+            if(dv.chk(dataList.list, dto.send.franchiseItemGroupUpdate, "대분류 위치 저장", true)) {
+                return;
+            }
+        }else if(numOfGrid === 2) {
+            if(dv.chk(dataList.list, dto.send.franchiseItemSortUpdate, "상품 위치 저장", true)) {
+                return;
+            }
+        }
         CommonUI.ajaxjson(grid.s.url.update[numOfGrid], JSON.stringify(dataList), function(req) {
-            alertSuccess("위치 조정을 완료했습니다.")
+            alertSuccess("위치 조정을 완료했습니다.");
         });
     },
     filterBsList(condition) {
+        dv.chk(condition, dto.send.franchiseItemSortList, "분류 항목 검색 조건");
         CommonUI.ajaxjsonPost(grid.s.url.read[1], condition, function(req) {
             grid.s.data[1] = req.sendData.gridListData;
+            dv.chk(grid.s.data[1], dto.receive.franchiseItemSortList, "분류 항목 검색 결과");
             AUIGrid.setGridData(grid.s.id[1], grid.s.data[1]);
         });
     },
     filterBiList(condition) {
+        dv.chk(condition, dto.send.franchiseItemList, "상품 위치 조정 데이터 받아오기");
         CommonUI.ajaxjsonPost(grid.s.url.read[2], condition, function(req) {
             grid.s.data[2] = req.sendData.gridListData;
             AUIGrid.setGridData(grid.s.id[2], grid.s.data[2]);
@@ -224,16 +240,10 @@ const grid = {
 
     e: {
         basicEvent() {
-            /* 0번그리드 내의 셀 클릭시 이벤트 */
-            AUIGrid.bind(grid.s.id[0], "cellClick", function (e) {
-                console.log(e.item); // 이밴트 콜백으로 불러와진 객체의, 클릭한 대상 row 키(파라메터)와 값들을 보여준다.
-            });
-
             AUIGrid.bind(grid.s.id[1], "cellClick", function (e) {
                 const condition = CommonUI.newDto(dto.send.franchiseItemList);
                 condition.bgItemGroupcode = e.item.bgItemGroupcode;
                 condition.bsItemGroupcodeS = e.item.bsItemGroupcodeS;
-                console.log(condition); // 이밴트 콜백으로 불러와진 객체의, 클릭한 대상 row 키(파라메터)와 값들을 보여준다.
                 ajax.filterBiList(condition);
             });
         }
@@ -288,7 +298,6 @@ const event = {
                     filterCode: $("#filterCode").val(),
                     filterName: $("#filterName").val(),
                 }
-                console.log(data);
                 ajax.filterBsList(data);
                 AUIGrid.clearGridData(grid.s.id[2]);
             });
@@ -301,8 +310,6 @@ const event = {
 
 /* 페이지가 로드되고 나서 실행 될 코드들을 담는다. */
 function onPageLoad() {
-
-
     grid.f.initialization();
     grid.f.create();
 
@@ -316,6 +323,7 @@ function onPageLoad() {
     event.s.save();
     event.s.filterBs();
 
+    $("#filterBs").trigger("click");
 }
 
 function pushUp(numOfGrid) {
@@ -341,7 +349,7 @@ function saveSort(numOfGrid) {
             newDto.bgSort = i;
             refinedData.push(newDto);
         }else if(numOfGrid === 2) {
-            newDto = CommonUI.newDto(dto.send.franchiseItemGroupUpdate);
+            newDto = CommonUI.newDto(dto.send.franchiseItemSortUpdate);
             newDto.biItemcode = gridData[i].biItemcode;
             newDto.bfSort = i;
             refinedData.push(newDto);
@@ -352,8 +360,6 @@ function saveSort(numOfGrid) {
         "list": refinedData
     };
 
-    console.log("=== 저장 데이터 ===")
-    console.log(param);
     ajax.saveSortData(numOfGrid, param);
 }
 

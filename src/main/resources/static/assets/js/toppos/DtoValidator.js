@@ -1,5 +1,7 @@
 class DtoValidator {
     forceTotalInspection = true;
+    devMode = true;
+
     title;
     ruleObj;
     obj;
@@ -16,7 +18,7 @@ class DtoValidator {
         this.obj = obj;
         this.title = title;
         this.ruleObj = ruleObj;
-        if(this.isRuleTypeWrong()) return false;
+        if(this.isRuleTypeWrong()) return true;
         this.ruleKeys = Object.keys(this.ruleObj);
 
         if(Array.isArray(this.obj)) {
@@ -26,7 +28,7 @@ class DtoValidator {
             for(this.loopNo = 0; this.loopNo < loopTimes; this.loopNo++) {
                 if(this.isObjNotRight(this.obj[this.loopNo])) {
                     console.log("문제가 발생한 검사대상 배열번호 = " + this.loopNo);
-                    return false;
+                    return true;
                 }
             }
             if(loopTimes === 1) {
@@ -35,10 +37,10 @@ class DtoValidator {
         }else{
             this.isArray = false;
             if(this.isObjNotRight(this.obj)) {
-                return false;
+                return true;
             }
         }
-        return this.obj;
+        return false;
     }
 
     isObjNotRight(anObj) {
@@ -46,14 +48,14 @@ class DtoValidator {
             console.log("=== 검사 객체 ===");
             console.log(anObj);
             console.log("=== " + this.title + " ===");
-            alert(this.title +" 의 대상 형태가 json 이 아닙니다. 콘솔참조");
+            if(this.devMode) alert(this.title +" 의 대상 형태가 json 이 아닙니다. 콘솔참조");
             return true;
         }
         this.objKeys = Object.keys(anObj);
 
         if(this.compareKeys()){
             console.log("=== " + this.title + " ===");
-            alert(this.title + " 의 검사대상과 규칙간의 키가 일치하지 않습니다. 콘솔참조");
+            if(this.devMode) alert(this.title + " 의 검사대상과 규칙간의 키가 일치하지 않습니다. 콘솔참조");
             return true;
         }
 
@@ -77,7 +79,7 @@ class DtoValidator {
                             console.log("=== 해당 검사값은 문자이어야 한다 ===");
                             console.log(this.ruleKeys[i]);
                             console.log(chkValue);
-                            alert(this.title + " 의 검사값이 규칙(문자)에 부합하지 않습니다. 콘솔참조 ");
+                            if(this.devMode) alert(this.title + " 의 검사값이 규칙(문자)에 부합하지 않습니다. 콘솔참조 ");
                             return true;
                         }
                         break;
@@ -86,7 +88,7 @@ class DtoValidator {
                             console.log("=== 해당 검사값은 숫자이어야 한다 ===");
                             console.log(this.ruleKeys[i]);
                             console.log(chkValue);
-                            alert(this.title + " 의 검사값이 규칙(숫자)에 부합하지 않습니다. 콘솔참조 ");
+                            if(this.devMode) alert(this.title + " 의 검사값이 규칙(숫자)에 부합하지 않습니다. 콘솔참조 ");
                             return true;
                         }
                         break;
@@ -94,7 +96,7 @@ class DtoValidator {
                         if(!chkValue && chkValue !== 0) {
                             console.log("=== 해당 검사값은 필수 항목이다 ===");
                             console.log(this.ruleKeys[i]);
-                            alert(this.title + " 의 검사값이 규칙(필수)에 부합하지 않습니다. 콘솔참조 ");
+                            if(this.devMode) alert(this.title + " 의 검사값이 규칙(필수)에 부합하지 않습니다. 콘솔참조 ");
                             return true;
                         }
                         break;
@@ -117,7 +119,7 @@ class DtoValidator {
             console.log("=== 규칙 객체 ===");
             console.log(this.ruleObj);
             console.log("=== " + this.title + " ===");
-            alert(this.title + " 의 검사 규칙을 정하는 dto 인자가 json 형태가 아닙니다. 콘솔참조");
+            if(this.devMode) alert(this.title + " 의 검사 규칙을 정하는 dto 인자가 json 형태가 아닙니다. 콘솔참조");
             return true;
         }
         return false;
