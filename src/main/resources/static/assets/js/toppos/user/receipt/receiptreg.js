@@ -316,8 +316,8 @@ gridColumnLayout[0] = [
         renderer : {
             type: "IconRenderer",
             iconPosition: "left",
-            iconWidth : 23,
-            iconHeight : 23,
+            iconWidth : 30,
+            iconHeight : 30,
             iconFunction: function(rowIndex, columnIndex, value, item) {
                 let icon = "";
                 if(item.photoList.length) {

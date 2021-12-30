@@ -68,6 +68,7 @@
 
 .receiptreg-product-name .aui-grid-renderer-base {
     margin-left: 15px;
+    height: 30px;
 }
 
 .aui-grid-default-header {
