@@ -152,7 +152,6 @@ public class HeadRestController {
                                                           @RequestParam(value="s_frCode", defaultValue="") String s_frCode,
                                                           @RequestParam(value="s_brCode", defaultValue="") String s_brCode){
         log.info("accountList 호출");
-        log.info("s_userid : "+s_userid);
 
         AccountRole role = null;
 

@@ -46,11 +46,11 @@ public class AccountRepositoryCustomImpl extends QuerydslRepositorySupport imple
         }
 
         if (!s_userid.equals("")){
-            query.where(account.userid.likeIgnoreCase(s_userid.concat("%")));
+            query.where(account.userid.contains(s_userid));
         }
 
-        if (!s_userid.equals("")){
-            query.where(account.userid.likeIgnoreCase(s_userid.concat("%")));
+        if (!s_username.equals("")){
+            query.where(account.username.contains(s_username));
         }
 
         if (!s_frCode.equals("")){
