@@ -16,11 +16,6 @@ const dto = {
     }
 };
 
-/* dto가 아닌 일반적인 데이터들 정의 */
-const data = {
-
-}
-
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 */
 const ajax = {
     setDataIntoGrid: function(numOfGrid, url) { // 해당 numOfGrid 배열번호의 그리드에 url 로부터 받은 데이터값을 통신하여 주입한다.
@@ -110,6 +105,11 @@ const grid = {
         }
     }
 };
+
+/* dto가 아닌 일반적인 데이터들 정의 */
+const data = {
+
+}
 
 /* 페이지가 로드되고 나서 실행 될 코드들을 담는다. */
 function onPageLoad() {

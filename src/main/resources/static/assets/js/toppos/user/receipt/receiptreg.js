@@ -169,6 +169,10 @@ $(function() {
     });
 });
 
+/* 목록의 카메라 버튼을 누를 때 마다 카메라의 존재를 감지해 그 유무를 저장해둠 */
+let isCameraExist = false;
+
+/* 1일 때는 임시저장, 2일 때는 접수완료 flag */
 let checkNum = "1";
 
 /* 상품 주문을 받을 때 적용되는 가격 정보 데이터를 API로 불러와 미리 저장 */
@@ -872,40 +876,35 @@ let cameraStream;
 /* 웹 카메라와 촬영 작업중 */
 async function onPopTakePicture(event) {
     currentRequest = event.item;
-    // const cameraList = document.getElementById("cameraList"); 복수 카메라를 사용할 경우 해제하여 작업
-    cameraStream = await navigator.mediaDevices.getUserMedia({
-        audio: false,
-        video: {
-            width: {ideal: 4096},
-            height: {ideal: 2160}
-        },
-    });
-    /* 복수 카메라를 사용할 경우 해제하여 작업
-    let videoInput = [];
-    await navigator.mediaDevices.enumerateDevices().then(devices => {
-        for(let i = 0; i < devices.length; i++) {
-            if(devices[i].kind === "videoinput") {
-                videoInput.push({
-                    label : devices[i].label,
-                    deviceId : devices[i].deviceId
-                });
-            }
-        }
-    });
-    videoInput.forEach(e => {
-        const option = document.createElement('option');
-        option.value = e.deviceId;
-        option.text = e.label;
-        cameraList.appendChild(option);
-    });
-    */
-    $(".camBoiler").on("click", function () {
-        const $ffRemark = $("#ffRemark");
-        $ffRemark.val($ffRemark.val() + " " + this.innerHTML);
-    });
 
-    const screen = document.getElementById("cameraScreen");
-    screen.srcObject = cameraStream;
+    try {
+        isCameraExist = true;
+        // const cameraList = document.getElementById("cameraList"); 복수 카메라를 사용할 경우 해제하여 작업
+        cameraStream = await navigator.mediaDevices.getUserMedia({
+            audio: false,
+            video: {
+                width: {ideal: 4096},
+                height: {ideal: 2160}
+            },
+        });
+
+        $(".camBoiler").on("click", function () {
+            const $ffRemark = $("#ffRemark");
+            $ffRemark.val($ffRemark.val() + " " + this.innerHTML);
+        });
+
+        const screen = document.getElementById("cameraScreen");
+        screen.srcObject = cameraStream;
+    }catch (e) {
+        if(e instanceof DOMException) {
+            alertCaution("연결된 카메라가 존재하지 않습니다", 1);
+        }else{
+            console.log(e);
+        }
+        isCameraExist = false;
+    }
+
+
     currentRequest.photoList.forEach(picJson => {
         picJson.fullImage = picJson.ffPath + picJson.ffFilename;
         picJson.thumbnailImage = picJson.ffPath + "s_" + picJson.ffFilename;
@@ -914,73 +913,62 @@ async function onPopTakePicture(event) {
     $("#cameraPop").addClass("active");
 }
 
-/* 복수 카메라를 사용할 경우 해제하여 작업
-async function onChangeCamera(deviceId) {
-    const cameraStream = await navigator.mediaDevices.getUserMedia({audio: false, video: {
-            deviceId : deviceId ? {exact : deviceId} : undefined,
-            width: { ideal: 4096 },
-            height: { ideal: 2160 }
-        }});
-    const screen = document.getElementById("cameraScreen");
-    screen.srcObject = cameraStream;
-}
-*/
-
-
 function onTakePicture() {
-    const $ffRemark = $("#ffRemark");
-    if(!$ffRemark.val().length) {
-        alertCaution("특이사항을 입력해 주세요", 1);
-        return false;
-    }
+    if(isCameraExist && cameraStream.active) {
+        try {
+            const $ffRemark = $("#ffRemark");
+            if (!$ffRemark.val().length) {
+                alertCaution("특이사항을 입력해 주세요", 1);
+                return false;
+            }
 
-    const video = document.getElementById("cameraScreen");
-    const canvas = document.getElementById('cameraCanvas');
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    const context = canvas.getContext('2d');
-    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const video = document.getElementById("cameraScreen");
+            const canvas = document.getElementById('cameraCanvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-    const takenPic = canvas.toDataURL();
+            const takenPic = canvas.toDataURL();
 
-    const blob = b64toBlob(takenPic);
+            const blob = b64toBlob(takenPic);
 
-    const formData = new FormData();
-    formData.append("source", blob);
-    formData.append("ffRemark", $ffRemark.val());
-    console.log(Object.fromEntries(formData));
+            const formData = new FormData();
+            formData.append("source", blob);
+            formData.append("ffRemark", $ffRemark.val());
+            console.log(Object.fromEntries(formData));
 
-    CommonUI.ajax("/api/user/takePicture", "POST", formData, function (req) {
-        let picJson = {
-            ffPath: req.sendData.ffPath,
-            ffFilename: req.sendData.ffFilename,
-            ffRemark: $ffRemark.val(),
+            CommonUI.ajax("/api/user/takePicture", "POST", formData, function (req) {
+                let picJson = {
+                    ffPath: req.sendData.ffPath,
+                    ffFilename: req.sendData.ffFilename,
+                    ffRemark: $ffRemark.val(),
+                }
+                $ffRemark.val("");
+                picJson.fullImage = req.sendData.ffPath + req.sendData.ffFilename;
+                picJson.thumbnailImage = req.sendData.ffPath + "s_" + req.sendData.ffFilename;
+                putTakenPictureOnTheRightSide(picJson);
+            });
+        } catch (e) {
+            console.log(e);
         }
-        $ffRemark.val("");
-        picJson.fullImage = req.sendData.ffPath + req.sendData.ffFilename;
-        picJson.thumbnailImage = req.sendData.ffPath + "s_" + req.sendData.ffFilename;
-        putTakenPictureOnTheRightSide(picJson);
-    });
+    }
 }
 
 function onRemovePicture(btnElement) {
     btnElement.parents(".photo__picture").remove();
-    // const target = btnElement.parents(".photo__picture");
-    // console.log(target);
-    // const url = "/api/user/";
-    // const data = {
-    //     ffPath: target.attr("data-ffPath"),
-    //     ffFilename: target.attr("data-ffFilename"),
-    // }
-    // CommonUI.ajaxjsonPost(url, data, function(req) {
-    //     console.log(req);
-    // });
 }
 
 function onCloseTakePicture() {
-    cameraStream.getTracks().forEach(function(track) {
-        track.stop();
-    });
+    if(isCameraExist) {
+        try {
+            cameraStream.getTracks().forEach(function (track) {
+                track.stop();
+            });
+        }catch (e) {
+            console.log(e);
+        }
+    }
 
     const $photoList = $(".photo__picture");
     let photos = [];
