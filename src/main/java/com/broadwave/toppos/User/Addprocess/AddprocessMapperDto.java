@@ -1,4 +1,4 @@
-package com.broadwave.toppos.Head.Addprocess;
+package com.broadwave.toppos.User.Addprocess;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,8 +15,9 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AddprocessDto {
+public class AddprocessMapperDto {
 
+    private String baType; // 타입
     private String baName; // 명칭
     private String baRemark; // 비고
 
@@ -26,5 +27,9 @@ public class AddprocessDto {
 
     public String getBaRemark() {
         return baRemark;
+    }
+
+    public String getBaType() {
+        return baType;
     }
 }

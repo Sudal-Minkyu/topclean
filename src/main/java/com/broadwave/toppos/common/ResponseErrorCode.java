@@ -28,6 +28,7 @@ public enum ResponseErrorCode {
     TP019("TP019", "결제를 실패했습니다."),
     TP020("TP020", "현재 비밀번호가 일치하지 않습니다."),
     TP021("TP021", "신규 입력한 비밀번호가 일치하지 않습니다."),
+    TP022("TP022", "데이터가 존재하지 않습니다.."),
     ;
 
     private String code;
