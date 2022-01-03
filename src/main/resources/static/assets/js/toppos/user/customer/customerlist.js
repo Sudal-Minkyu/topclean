@@ -226,11 +226,14 @@ function onModifyCustomer(event) {
             .prop('checked', true);
     $("input:radio[name='bcMessageAgree']:radio[value='" + item.bcMessageAgree + "']")
         .prop('checked', true);
-    $("#bcAgreeType").val(item.bcAgreeType);
+    /*$("#bcAgreeType").val(item.bcAgreeType);*/
+    $("#bcAgreeTypeName").val(
+        item.bcAgreeType === "1" ? "온라인" : "서면"
+    );
     $("#bcRemark").val(item.bcRemark);
     const $signImage = $("#signImage");
     $signImage.attr("src", item.bcSignImage);
-    if(item.bcSignImage !== "" && item.bcAgreeType === "1") {
+    if(item.bcSignImage !== null && item.bcSignImage !== "" /*&& item.bcAgreeType === "1"*/) {
         $signImage.show();
     }else{
         $signImage.hide();
@@ -264,7 +267,7 @@ function saveRegister() {
         return false;
     }
 
-    if($("#bcAgreeType").val()==="1"){
+    if($("#bcAgreeType").val() === "1"){
         console.log("온라인 입니다.");
         if($("#bcSignImage").val().length){
             formData.append("bcSignImage", $("#bcSignImage").val());
