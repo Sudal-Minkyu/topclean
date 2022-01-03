@@ -1,4 +1,4 @@
-package com.broadwave.toppos.Head.Addprocess;
+package com.broadwave.toppos.User.Addprocess;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
@@ -16,14 +16,14 @@ import java.util.List;
  */
 @Slf4j
 @Repository
-public class AddProcessRepositoryCustomImpl extends QuerydslRepositorySupport implements AddProcessRepositoryCustom {
+public class AddprocessRepositoryCustomImpl extends QuerydslRepositorySupport implements AddprocessRepositoryCustom {
 
-    public AddProcessRepositoryCustomImpl() {
+    public AddprocessRepositoryCustomImpl() {
         super(Addprocess.class);
     }
 
     @Override
-    public List<AddprocessDto> findByAddProcess(String frCode, String baType) {
+    public List<AddprocessDto> findByAddProcessList(String frCode, String baType) {
          QAddprocess addprocess = QAddprocess.addprocess;
 
         JPQLQuery<AddprocessDto> query = from(addprocess)

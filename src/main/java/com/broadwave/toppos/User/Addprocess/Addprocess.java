@@ -1,4 +1,4 @@
-package com.broadwave.toppos.Head.Addprocess;
+package com.broadwave.toppos.User.Addprocess;
 
 import com.broadwave.toppos.Head.Franohise.Franchise;
 import lombok.*;

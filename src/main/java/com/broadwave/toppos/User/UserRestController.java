@@ -3,7 +3,7 @@ package com.broadwave.toppos.User;
 import com.broadwave.toppos.Account.AccountPasswordDto;
 import com.broadwave.toppos.Aws.AWSS3Service;
 import com.broadwave.toppos.Head.AddCost.AddCostDto;
-import com.broadwave.toppos.Head.Addprocess.AddprocessDto;
+import com.broadwave.toppos.User.Addprocess.AddprocessDto;
 import com.broadwave.toppos.Head.Franohise.FranchisInfoDto;
 import com.broadwave.toppos.Head.Franohise.FranchisUserDto;
 import com.broadwave.toppos.Head.HeadService;
@@ -13,6 +13,7 @@ import com.broadwave.toppos.Head.Item.Price.UserItemPriceSortDto;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.Manager.Calendar.BranchCalendar;
 import com.broadwave.toppos.Manager.ManagerService;
+import com.broadwave.toppos.User.Addprocess.AddprocessSet;
 import com.broadwave.toppos.User.Customer.Customer;
 import com.broadwave.toppos.User.Customer.CustomerInfoDto;
 import com.broadwave.toppos.User.Customer.CustomerListDto;
@@ -342,14 +343,14 @@ public class UserRestController {
 
 
         // 수선 항목 리스트 데이터 가져오기
-        List<AddprocessDto> repairListData = headService.findByAddProcess(frCode, "1");
+        List<AddprocessDto> repairListData = userService.findByAddProcessList(frCode, "1");
         log.info("repairListData : "+repairListData);
         log.info("repairListData 사이즈 : "+repairListData.size());
         data.put("repairListData",repairListData);
 
 
         // 추가요금 항목 리스트 데이터 가져오기
-        List<AddprocessDto> addAmountData = headService.findByAddProcess(frCode, "2");
+        List<AddprocessDto> addAmountData = userService.findByAddProcessList(frCode, "2");
         log.info("addAmountData : "+addAmountData);
         log.info("addAmountData 사이즈 : "+addAmountData.size());
         data.put("addAmountData",addAmountData);
@@ -630,7 +631,36 @@ public class UserRestController {
         return infoService.franchisePassword(accountPasswordDto, request);
     }
 
+    // 현재 가맹점의 각각 상용구,수선항목, 추가항목의 대한 리스트 호출
+    @GetMapping("franchiseAddProcessList")
+    public ResponseEntity<Map<String,Object>> franchiseAddProcessList(@RequestParam(value="baType", defaultValue="") String baType, HttpServletRequest request){
 
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
+        log.info("현재 접속한 가맹점 코드 : "+frCode);
+
+        List<AddprocessDto> addprocessDtoList = userService.findByAddProcessList(frCode, baType);
+
+        if(baType.equals("1")){
+            data.put("repairListData",addprocessDtoList);
+        }else if(baType.equals("2")){
+            data.put("addAmountData",addprocessDtoList);
+        }else{
+            data.put("keyWordData",addprocessDtoList);
+        }
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
+    // 수선항목,추가항목,상용구 - 저장&삭제
+    @PostMapping("franchiseAddProcess")
+    public ResponseEntity<Map<String,Object>> franchiseAddProcess(@RequestBody AddprocessSet addprocessSet, HttpServletRequest request){
+        return infoService.franchiseAddProcess(addprocessSet, request);
+    }
 
 
 
