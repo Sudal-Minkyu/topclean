@@ -6,7 +6,38 @@
 
 <!-- 사용자 CSS 추가 -->
 <th:block layout:fragment="css">
-
+    <style>
+        #windowMask {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 10;
+            background-color: rgba(0, 0, 0, .4);
+            display: none;
+        }
+        #mask{
+            position: absolute;
+            display: none;
+            left: 50%;
+            top: 50%;
+            max-width: 1000px;
+            padding: 20px;
+            background-color: #ffffff;
+            z-index: 100;
+            font-size: 40px;
+            line-height: 1.4;
+            -webkit-border-radius: 0.625rem;
+            -moz-border-radius: 0.625rem;
+            border-radius: 0.625rem;
+            -webkit-transform: translate(-50%, -50%);
+            -moz-transform: translate(-50%, -50%);
+            -ms-transform: translate(-50%, -50%);
+            -o-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+        }
+    </style>
 </th:block>
 
 <!-- 사용자 스크립트 추가 -->
@@ -209,7 +240,7 @@
                                                 <option value="2">서면</option>
                                             </select>
                                         </div>
-                                        <button id="requestSign" class="c-button c-button--small c-button--darksolid" type="button"
+                                        <button id="reqSign" class="c-button c-button--small c-button--darksolid" type="button"
                                                 onclick="requestSign()">서명요청</button>
                                         <input type="hidden" id="bcSignImage" />
                                         <img id="signImage" />
@@ -235,6 +266,9 @@
                 <li><button class="c-button c-button--dark pop__close" onclick="saveRegister()">저장</button></li>
             </ul>
         </div>
+        <div id="windowMask"></div>
+        <div id="mask">고객이 서명중입니다.<br />잠시만 기다려주세요...</div>
+        <div id="resultmsg" style="display: none">결과메세지</div>
     </div>
 </div>
 </html>
