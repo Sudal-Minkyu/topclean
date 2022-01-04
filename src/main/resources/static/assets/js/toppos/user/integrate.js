@@ -18,6 +18,93 @@ const dto = {
         }
     },
     receive: {
+        통합조회고객및택번호검색: { // 접수페이지의 고객정보 검색 결과의 정보와 동일
+            고객정보: {
+                bcId: "n",
+                bcName: "s",
+                bcGrade: "s",
+                bcValuation: "s",
+                bcAddress: "s",
+                bcHp: "s",
+                beforeUncollectMoney: "n",
+                saveMoney: "n",
+                bcRemark: "s",
+                bcLastRequestDt: "s",
+            },
+            세부접수정보: { // 접수세부테이블의 모든 정보 + 해당 접수세부테이블 고객 이름 + 접수세부 검품정보 테이블
+                bcName: "s", // 위 고객정보의 검색 결과와 별도로 택번호 검색시, 혹은 필터링만 걸어서 검색할 경우에도 필요
+
+                접수세부검품정보: {
+
+                    검품사진목록: {
+                        ffPath: "s",
+                        ffFilename: "s",
+                        ffRemark: "s",
+                    },
+                    fiId: "n",
+                    fdId: "n",
+                    frCode: "d",
+                    brCode: "d",
+                    fiType: "s",
+                    fiComment: "s",
+                    fiAddAmt: "n",
+                    fiPhotoYn: "s",
+                    fiSendMsgYn: "s",
+                    fiCustomerConfirm: "s",
+                    fiProgressStateDt: "s",
+                    fiMessage: "s",
+                    fiMessageSendDt: "s",
+                    modifyId: "d",
+                    modifyDt: "d",
+                    insertId: "d",
+                    insertDt: "d",
+                },
+
+                insertDt: "s", // 접수일자인데 이게 맞는지 잘 모르겠음
+                fdId: "n",
+                frId: "n",
+                fdTag: "s",
+                biItemcode: "s",
+                fdState: "s",
+                fdStateDt: "d",
+                fdPreState: "d",
+                fdS2Dt: "s",
+                fdS3Dt: "s",
+                fdS4Dt: "s",
+                fdS5Dt: "s",
+                fdPreStateDt: "d",
+                fdCancel: "s",
+                fdCancelDt: "s",
+                fdColor: "s",
+                fdPattern: "s",
+                fdPriceGrade: "s",
+                fdOriginAmt: "n",
+                fdNormalAmt: "n",
+                fdAdd2Amt: "n",
+                fdAdd2Remark: "s",
+                fdPollution: "n",
+                fdDiscountGrade: "s",
+                fdDiscountAmt: "n",
+                fdQty: "n",
+                fdRequestAmt: "n",
+                fdSpecialYn: "s",
+                fdTotAmt: "n",
+                fdRemark: "s",
+                fdEstimateDt: "s",
+                modifyId: "d",
+                modifyDt: "d",
+                fdRetryYn: "s",
+                fdPressed: "n",
+                fdAdd1Amt: "n",
+                fdAdd1Remark: "s",
+                fdRepairAmt: "n",
+                fdRepairRemark: "s",
+                fdWhitening: "n",
+                fdPollutionLevel: "n",
+                fdWaterRepellent: "n",
+                fdStarch: "n",
+            },
+        },
         itemGroupAndPriceList: { // 접수페이지 시작때 호출되는 API와 같은 API
             addAmountData: {
                 baName: "s",
@@ -72,25 +159,6 @@ const dto = {
                 price: "n",
             }
         },
-        통합조회고객및택번호검색: { // 접수페이지의 고객정보 검색 결과의 정보와 동일
-            고객정보: {
-                bcId: "n",
-                bcName: "s",
-                bcGrade: "s",
-                bcValuation: "s",
-                bcAddress: "s",
-                bcHp: "s",
-                beforeUncollectMoney: "n",
-                saveMoney: "n",
-                bcRemark: "s",
-                bcLastRequestDt: "s",
-            },
-            상품: {
-                bcName: "s", // 위 고객정보의 검색 결과와 별도로 택번호 검색시, 혹은 필터링만 걸어서 검색할 경우에도 필요
-                fdTag: "s",
-            },
-        },
-
     }
 };
 
