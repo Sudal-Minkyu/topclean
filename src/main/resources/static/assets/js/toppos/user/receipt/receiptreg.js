@@ -432,7 +432,8 @@ gridColumnLayout[0] = [
         },
         labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
             const template = `
-                <button class="c-button c-button--solid  c-button--supersmall" onclick="onModifyOrder(${rowIndex})">수정</button>
+                <button class="c-button c-button--solid  c-button--supersmall" 
+                    onclick="onModifyOrder(${rowIndex})">수정</button>
             `;
             return template;
         },
@@ -703,6 +704,7 @@ function onPutCustomer(selectedCustomer) {
     $("#bcValuation").attr("class",
         "propensity__star propensity__star--" + selectedCustomer.bcValuation).css('display','block');
     $("#bcAddress").html(selectedCustomer.bcAddress);
+    $("#bcHp").html(CommonUI.onPhoneNumChange(selectedCustomer.bcHp));
     $("#beforeUncollectMoneyMain").html(selectedCustomer.beforeUncollectMoney.toLocaleString());
     $("#saveMoneyMain").html(selectedCustomer.saveMoney.toLocaleString());
     $("#bcRemark").html(selectedCustomer.bcRemark);

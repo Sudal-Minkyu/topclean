@@ -11,7 +11,7 @@
 
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
-	<script src="/assets/js/toppos/user/receipt/receiptreg.js"></script>
+	<script src="/assets/js/toppos/user/integrate.js"></script>
 	<script type="text/javascript">
 		$(function() {
 			//카테고리 선택 시 팝업 열기
@@ -26,7 +26,7 @@
 				$(this).parents('.pop').removeClass('active');
 				
 				e.preventDefault()
-			})
+			});
 			
 		});
 
@@ -42,14 +42,15 @@
                     <option value="0">통합검색</option>
                     <option value="1">고객명</option>
                     <option value="2">전화번호</option>
-                    <option value="3">주소</option>
+					<option value="3">주소</option>
+					<option value="4">택번호</option>
                 </select>
 			</div>
 			
 			<div class="c-search">
 				<div class="c-search__input">
-					<input id="searchCustomerField" type="text" placeholder="검색어를 입력하세요" />
-               		<button class="c-search__key" type="button" onclick="">키보드</button>
+					<input id="searchString" type="text" placeholder="검색어를 입력하세요" />
+               		<button class="c-search__key" type="button" id="vkeyboard0">키보드</button>
 				</div>
 				<button class="c-search__bth" type="button" onclick="onSearchCustomer()">검색</button>
 			</div>
@@ -80,42 +81,42 @@
 		<div class="condition">
 			<div class="condition__radio">
 				<div class="c-radio">
-					<input type="radio" name="condition" id="condition1" checked />
-					<label for="condition1">전체</label>
+					<input type="radio" name="filterCondition" id="filterCondition0" checked />
+					<label ior="filterCondition0">전체</label>
 				</div>
 				<div class="c-radio">
-					<input type="radio" name="condition" id="condition2" />
-					<label for="condition2">고객접수</label>
+					<input type="radio" name="filterCondition" id="filterCondition1" />
+					<label ior="filterCondition1">고객접수</label>
 				</div>
 				<div class="c-radio">
-					<input type="radio" name="condition" id="condition3" />
-					<label for="condition3">자사입고</label>
+					<input type="radio" name="filterCondition" id="filterCondition2" />
+					<label ior="filterCondition2">자사입고</label>
 				</div>
 				<div class="c-radio">
-					<input type="radio" name="condition" id="condition4" />
-					<label for="condition4">가맹점입고</label>
+					<input type="radio" name="filterCondition" id="filterCondition3" />
+					<label ior="filterCondition3">가맹점입고</label>
 				</div>
 				<div class="c-radio">
-					<input type="radio" name="condition" id="condition5" />
-					<label for="condition5">입고완료</label>
+					<input type="radio" name="filterCondition" id="filterCondition4" />
+					<label ior="filterCondition4">입고완료</label>
 				</div>
 				<div class="c-radio">
-					<input type="radio" name="condition" id="condition6" />
-					<label for="condition6">확인품</label>
+					<input type="radio" name="filterCondition" id="filterCondition5" />
+					<label ior="filterCondition5">확인품</label>
 				</div>
 				<div class="c-radio">
-					<input type="radio" name="condition" id="condition7" />
-					<label for="condition7">가맹검품</label>
+					<input type="radio" name="filterCondition" id="filterCondition6" />
+					<label ior="filterCondition6">가맹검품</label>
 				</div>
 			</div>
 			
 			<div class="condition__date">
 				<div class="c-period">
 					<!-- 시작일 -->
-					<input type="text" value="2021-12-21" />
+					<input type="text" id="startDt" />
 					<span class="c-period__code">-</span>
 					<!-- 종료일 -->
-					<input type="text" value="2021-12-23" />
+					<input type="text" id="endDt" />
 				</div>
 			</div>
 			
@@ -149,11 +150,7 @@
 	
 	<div class="content__body">
 		<!-- grid -->
-		<div style="width: 100%; height: 654px; border: 1px solid #dbdbdb">높이값 빼고 스타일 삭제
-			<button class="c-state">등록</button>
-			<button class="c-state c-state--modify">수정</button>
-			<button class="c-state c-state--cancel">취소</button>
-		</div>
+		<div id="grid_main" style="height: 654px;"></div>
 	</div>
 
 	
@@ -229,8 +226,8 @@
 						<div class="pop__console-title">추가 비용발생</div>
 						<div class="pop__console-input">
 							<div class="c-text">
-								<input type="text" />
-								<button>키보드</button>
+								<input id="ac" type="text" />
+								<button id="vkeypad1">키보드</button>
 							</div>
 						</div>
 					</div>
@@ -248,7 +245,11 @@
 				<h3 class="pop__article-header">검품확인</h3>
 				
 				<div class="pop__aricle-content">
-					<div style="width: 100%; height: 240px; border: 1px solid #dbdbdb">높이값 빼고 스타일 삭제</div>
+					<div style="width: 100%; height: 240px; border: 1px solid #dbdbdb">높이값 빼고 스타일 삭제
+						<button class="c-state">등록</button>
+						<button class="c-state c-state--modify">수정</button>
+						<button class="c-state c-state--cancel">취소</button>
+					</div>
 				</div>
 			</div>
 			

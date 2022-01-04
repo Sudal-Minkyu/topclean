@@ -79,6 +79,7 @@ const grid = {
                 selectionMode : "singleRow",
                 noDataMessage : "출력할 데이터가 없습니다.",
                 enableColumnResize : false,
+                showRowNumColumn : false,
                 showStateColumn : true,
                 enableFilter : true
             };
