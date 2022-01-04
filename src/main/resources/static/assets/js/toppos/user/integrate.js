@@ -15,8 +15,9 @@ const dto = {
         },
 
         접수리스트검색: {
+            bcId: "n", // 선택된 고객. 없을 경우 null
             searchTag: "sr", // 택번호 검색문자
-            filterCondition: "sr", // 0 전체, 1 고객접수, 2 자사입고, 3 가맹점입고, 4 입고완료, 5 확인품, 6 가맹검품
+            filterCondition: "sr", // "" 전체, "S1" 고객접수, "S2" 자사입고, "S3" 가맹점입고, "S4" 입고완료, "B" 확인품, "F" 가맹검품
             filterFromDt: "sr", // 시작 조회기간
             filterToDt: "sr", // 종료 조회기간
         }
