@@ -2,6 +2,7 @@
 let vkey;
 $(function () {
     vkey = new VKeyboard();
+    $("#signImage").hide();
 });
 
 /* 가상키보드 입력 대상이 되는 텍스트 필드나 텍스트 에어리어 */
@@ -41,6 +42,7 @@ function receiptMove(){
 
 // 입력항목 클리어
 function init(){
+    const $signImage = $("#signImage");
     $("#bcName").val("");
     $("#bcHp").val("");
     $("#female").prop("checked",true);
@@ -54,6 +56,8 @@ function init(){
     $("#bcAgreeType").val("1");
     $("#bcRemark").val("");
     $("#bcSignImage").val("");
+    $signImage.hide();
+    $signImage.attr("src", "");
     $("#windowMask").hide();
     $("#mask").hide();
 }
@@ -82,11 +86,11 @@ function saveRegister() {
 
     if($("#bcAgreeType").val()==="1"){
         console.log("온라인 입니다.");
-        const $resultmsg = $("#resultmsg");
-        if($resultmsg.text()==="결과메세지"){
-            alertCaution("사인을 해주세요",1)
-        }else{
+        if($("#SignImage").val().length){
             formData.append("bcSignImage", $("#bcSignImage").val());
+        }else{
+            alertCaution("사인을 해주세요",1);
+            return false;
         }
     }else{
         console.log("서면 입니다.");
@@ -142,24 +146,30 @@ function onHpChange () {
 }
 
 function onAgreeTypeChange(type) {
-    const $requestSign = $("#requestSign");
+    const $reqSign = $("#reqSign");
+    const $signImage = $("#signImage");
     if(type === "1") {
-        $requestSign.attr("disabled", false);
+        $reqSign.attr("disabled", false);
+        if($signImage.attr("src")) $signImage.show();
     }else{
-        $requestSign.attr("disabled", true);
+        $reqSign.attr("disabled", true);
+        $signImage.hide();
     }
 }
 
 /* 서명을 요청할 때 고객측의 모니터에 서명하도록 뜬다. */
 function requestSign() {
+    try {
+        const protocol = location.protocol;
+        const hostName = location.hostname;
+        const port = location.port;
 
-    const protocol = location.protocol;
-    const hostName = location.hostname;
-    const port = location.port;
-
-    cAPI.approvalCall(protocol +'//'+hostName+ ':' + port + '/user/sign');
-
-    // $("#resultmsg").text(": 승인중 메세지- 고객이 서명중입니다. ------전체화면으로 가리기 ")
+        cAPI.approvalCall(protocol + '//' + hostName + ':' + port + '/user/sign');
+    }catch (e) {
+        console.log(e);
+        return;
+    }
+    // $("#resultmsg").text(": 승인중 메세지- 고객이 서명중입니다. ------전체화면으로 가리기 ");
 
     const maskHeight = $(document).height();
     const maskWidth = $(window).width();
@@ -173,8 +183,9 @@ function requestSign() {
 function resultFunction(msg){
     $("#windowMask").hide();
     $("#mask").hide();
-    // $("#resultmsg").text(msg);
+    $("#resultmsg").text(msg);
     $("#bcSignImage").val(msg);
     document.getElementById('signImage').src = msg;
     document.getElementById('signImage').style.border = "2px solid black";
+    $("#signImage").show();
 }

@@ -1004,10 +1004,14 @@ textarea {
 .search {
 	display: inline-flex;
 	flex-wrap: wrap;
+	width: 41.875rem;
 	height: 2.5rem;
 }
 .search .c-search {
 	margin-left: 0.75rem;	
+}
+.search__reset {
+	margin-left: 1.25rem;
 }
 .client {
 	display: inline-flex;

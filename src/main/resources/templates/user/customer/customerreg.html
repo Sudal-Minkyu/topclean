@@ -42,7 +42,7 @@
 
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
-	<script src="/assets/js/toppos/user/customer/customerreg.js"></script>
+	<script src="/assets/js/toppos/user/customer/customerreg.js" type="text/javascript"></script>
 	<script type="text/javascript">
 	</script>
 </th:block>
@@ -210,7 +210,8 @@
 									<option value="2">서면</option>
 								</select>
 							</div>
-							<button class="c-button c-button--small c-button--darksolid" type="button" onclick="requestSign()">서명요청</button>
+							<button class="c-button c-button--small c-button--darksolid" id="reqSign"
+									type="button" onclick="requestSign()">서명요청</button>
 							<input type="hidden" id="bcSignImage" />
 							<img id="signImage" />
 						</div>
@@ -234,8 +235,7 @@
 		</div>
 		<div id="windowMask"></div>
 		<div id="mask">고객이 서명중입니다.<br />잠시만 기다려주세요...</div>
-
-<!--		<div id="resultmsg" style="width:500px;height:100px ;background-color: #AAAAF0; word-break: break-all;">결과메세지</div>-->
+		<div id="resultmsg" style="display: none">결과메세지</div>
 	</div>
 
 	<div id="VKEY"></div>

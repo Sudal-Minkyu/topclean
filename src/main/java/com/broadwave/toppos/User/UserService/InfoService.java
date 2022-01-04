@@ -58,7 +58,7 @@ public class InfoService {
     // 현재 가맹점의 정보 호출하기
     public ResponseEntity<Map<String, Object>> myInfo(HttpServletRequest request) {
         log.info("myInfo 호출");
-
+        
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
 
