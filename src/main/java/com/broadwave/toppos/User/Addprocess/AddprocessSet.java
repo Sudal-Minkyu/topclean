@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 /**
  * @author Minkyu
- * Date : 2021-01-03
+ * Date : 2022-01-03
  * Time :
  * Remark : 상용구 추가&수정&삭제 AddprocessSet
  */
@@ -17,7 +17,14 @@ public class AddprocessSet {
     private ArrayList<AddprocessMapperDto> add;
 
     // 삭제 행 리스트
+    private ArrayList<AddprocessMapperDto> update;
+
+    // 삭제 행 리스트
     private ArrayList<AddprocessMapperDto> delete;
+
+    public ArrayList<AddprocessMapperDto> getUpdate() {
+        return update;
+    }
 
     public ArrayList<AddprocessMapperDto> getAdd() {
         return add;

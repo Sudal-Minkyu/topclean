@@ -5,8 +5,6 @@ import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Column;
-
 /**
  * @author Minkyu
  * Date : 2021-12-10
@@ -52,9 +50,13 @@ public class EtcDataDto {
     }
 
     public StringBuffer getFrEstimateDate() {
-        StringBuffer getFrEstimateDate = new StringBuffer(frEstimateDate);
-        getFrEstimateDate.insert(4,'-');
-        getFrEstimateDate.insert(7,'-');
-        return getFrEstimateDate;
+        if(!frEstimateDate.equals("")){
+            StringBuffer frEstimateDt = new StringBuffer(frEstimateDate);
+            frEstimateDt.insert(4,'-');
+            frEstimateDt.insert(7,'-');
+            return frEstimateDt;
+        }else{
+            return null;
+        }
     }
 }

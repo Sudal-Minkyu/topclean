@@ -17,9 +17,14 @@ import lombok.Setter;
 @AllArgsConstructor
 public class AddprocessMapperDto {
 
+    private Long baId; // 고유값 ID
     private String baType; // 타입
     private String baName; // 명칭
     private String baRemark; // 비고
+
+    public Long getBaId() {
+        return baId;
+    }
 
     public String getBaName() {
         return baName;

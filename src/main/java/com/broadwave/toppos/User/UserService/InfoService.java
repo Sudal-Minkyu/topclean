@@ -179,7 +179,7 @@ public class InfoService {
         return ResponseEntity.ok(res.success());
     }
 
-    // 수선항목,추가항목,상용구 - 저장&삭제
+    // 수선항목,추가항목,상용구 - 저장&수정&삭제
     public ResponseEntity<Map<String, Object>> franchiseAddProcess(AddprocessSet addprocessSet, HttpServletRequest request) {
 
         log.info("itemGroupA 호출");
@@ -200,6 +200,7 @@ public class InfoService {
         }else{
 
             ArrayList<AddprocessMapperDto> addList = addprocessSet.getAdd(); // 추가 리스트 얻기
+            ArrayList<AddprocessMapperDto> updateList = addprocessSet.getUpdate(); // 수정 리스트 얻기
             ArrayList<AddprocessMapperDto> deleteList = addprocessSet.getDelete(); // 제거 리스트 얻기
 
             // 저장 시작.
@@ -216,6 +217,29 @@ public class InfoService {
                 addprocessRepository.saveAll(addprocessList);
                 addprocessList.clear();
             }
+
+            // 수정 시작
+            for (AddprocessMapperDto addprocessMapperDto : updateList) {
+                Optional<Addprocess> optionalAddprocess = userService.findByBaId(addprocessMapperDto.getBaId());
+                if (!optionalAddprocess.isPresent()) {
+                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP022.getCode(), "수정할 항목의 " + ResponseErrorCode.TP022.getDesc(), "문자", "수정할 항목 : "+addprocessMapperDto.getBaName()));
+                }else{
+                    Addprocess addprocess = modelMapper.map(addprocessMapperDto, Addprocess.class);
+                    addprocess.setFrId(optionalFranchise.get());
+                    addprocess.setFrCode(optionalFranchise.get().getFrCode());
+                    addprocess.setInsert_id(optionalAddprocess.get().getInsert_id());
+                    addprocess.setInsertDateTime(optionalAddprocess.get().getInsertDateTime());
+                    addprocess.setModify_id(login_id);
+                    addprocess.setModifyDateTime(LocalDateTime.now());
+                    addprocessList.add(addprocess);
+                }
+            }
+
+            if(addprocessList.size() != 0){
+                addprocessRepository.saveAll(addprocessList);
+                addprocessList.clear();
+            }
+
 
             // 삭제로직 실행 : 데이터베이스에 해당 데이터가 존재하지 않으면 리턴처리한다.
             for (AddprocessMapperDto addprocessMapperDto : deleteList) {
@@ -235,6 +259,7 @@ public class InfoService {
 
         return ResponseEntity.ok(res.success());
     }
+
 
 
 

@@ -28,6 +28,7 @@ public class AddprocessRepositoryCustomImpl extends QuerydslRepositorySupport im
 
         JPQLQuery<AddprocessDto> query = from(addprocess)
                 .select(Projections.constructor(AddprocessDto.class,
+                        addprocess.baId,
                         addprocess.baName,
                         addprocess.baRemark
                 ));

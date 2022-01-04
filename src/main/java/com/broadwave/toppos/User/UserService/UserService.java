@@ -124,6 +124,12 @@ public class UserService {
         return addProcessRepositoryCustom.findByAddProcessList(frCode, baType);
     }
 
+    // 수선, 추가요금, 상용구 고유ID값을 통해 Optional 호출
+    public Optional<Addprocess> findByBaId(Long baId) {
+        return addprocessRepository.findById(baId);
+    }
+
+    // 수선, 추가요금, 상용구 타입과 항목을 통해 Optional 호출
     public Optional<Addprocess> findByAddProcess(String baType, String baName) {
         return addprocessRepository.findByAddProcess(baType, baName);
     }

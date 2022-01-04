@@ -298,8 +298,8 @@ public class UserRestController {
 
     // 접수페이지 진입시 기본적으롤 받는 데이터 API (대분류 목록리스트)
     @GetMapping("itemGroupAndPriceList")
-    public ResponseEntity<Map<String,Object>> itemgroupList(HttpServletRequest request){
-        log.info("itemgroupList 호출");
+    public ResponseEntity<Map<String,Object>> itemGroupAndPriceList(HttpServletRequest request){
+        log.info("itemGroupAndPriceList 호출");
 
         // 클레임데이터 가져오기
         Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
@@ -656,7 +656,7 @@ public class UserRestController {
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
-    // 수선항목,추가항목,상용구 - 저장&삭제
+    // 수선항목,추가항목,상용구 - 저장&수정&삭제
     @PostMapping("franchiseAddProcess")
     public ResponseEntity<Map<String,Object>> franchiseAddProcess(@RequestBody AddprocessSet addprocessSet, HttpServletRequest request){
         return infoService.franchiseAddProcess(addprocessSet, request);
