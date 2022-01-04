@@ -31,34 +31,8 @@ const dto = {
                 bcRemark: "s",
                 bcLastRequestDt: "s",
             },
-            세부접수정보: { // 접수세부테이블의 모든 정보 + 해당 접수세부테이블 고객 이름 + 접수세부 검품정보 테이블
+            세부접수정보: { // 접수세부테이블의 모든 정보 + 해당 접수세부테이블 고객 이름
                 bcName: "s", // 위 고객정보의 검색 결과와 별도로 택번호 검색시, 혹은 필터링만 걸어서 검색할 경우에도 필요
-
-                접수세부검품정보: {
-
-                    검품사진목록: {
-                        ffPath: "s",
-                        ffFilename: "s",
-                        ffRemark: "s",
-                    },
-                    fiId: "n",
-                    fdId: "n",
-                    frCode: "d",
-                    brCode: "d",
-                    fiType: "s",
-                    fiComment: "s",
-                    fiAddAmt: "n",
-                    fiPhotoYn: "s",
-                    fiSendMsgYn: "s",
-                    fiCustomerConfirm: "s",
-                    fiProgressStateDt: "s",
-                    fiMessage: "s",
-                    fiMessageSendDt: "s",
-                    modifyId: "d",
-                    modifyDt: "d",
-                    insertId: "d",
-                    insertDt: "d",
-                },
 
                 insertDt: "s", // 접수일자인데 이게 맞는지 잘 모르겠음
                 fdId: "n",
@@ -103,6 +77,30 @@ const dto = {
                 fdPollutionLevel: "n",
                 fdWaterRepellent: "n",
                 fdStarch: "n",
+            },
+            검품정보: {
+                검품사진목록: {
+                    ffPath: "s",
+                    ffFilename: "s",
+                    ffRemark: "s",
+                },
+                fiId: "n",
+                fdId: "n",
+                frCode: "d",
+                brCode: "d",
+                fiType: "s",
+                fiComment: "s",
+                fiAddAmt: "n",
+                fiPhotoYn: "s",
+                fiSendMsgYn: "s",
+                fiCustomerConfirm: "s",
+                fiProgressStateDt: "s",
+                fiMessage: "s",
+                fiMessageSendDt: "s",
+                modifyId: "d",
+                modifyDt: "d",
+                insertId: "d",
+                insertDt: "d",
             },
         },
         itemGroupAndPriceList: { // 접수페이지 시작때 호출되는 API와 같은 API
