@@ -107,9 +107,25 @@ input[type="number"]:disabled {
 	background-color: #b82c31;
 	color: #fff;
 }
+.c-button.c-button--green {
+	border: 0 none;
+	background-color: #21A365;
+	color: #fff
+}
+.c-button.c-button--icon {
+	padding-left: 2.25rem;
+	-webkit-background-size: 1.25rem 1.25rem;
+	background-size: 1.25rem 1.25rem;
+	background-position: 0.625rem center;
+	background-repeat: no-repeat;
+}
+.c-button.c-button--icon-excel {
+	background-image: url(/assets/images/icon__excel.svg);
+}
 select + .c-button {
 	margin-left: 0.375rem;
 }
+
 
 /* button file */
 .c-file {
