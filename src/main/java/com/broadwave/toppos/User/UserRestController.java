@@ -26,10 +26,7 @@ import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.PhotoD
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailSet;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestListDto;
-import com.broadwave.toppos.User.UserService.InfoService;
-import com.broadwave.toppos.User.UserService.ReceiptService;
-import com.broadwave.toppos.User.UserService.SortService;
-import com.broadwave.toppos.User.UserService.UserService;
+import com.broadwave.toppos.User.UserService.*;
 import com.broadwave.toppos.common.AjaxResponse;
 import com.broadwave.toppos.common.ResponseErrorCode;
 import io.jsonwebtoken.Claims;
@@ -72,13 +69,15 @@ public class UserRestController {
     private final ReceiptService receiptService; // 가맹점 접수페이지 전용 서비스
     private final SortService sortService; // 가맹점 상품정렬 서비스
     private final InfoService infoService; // 나의정보관리 서비스
+    private final InspectService inspectService; // 통합조회 서비스
+
     private final ModelMapper modelMapper;
     private final TokenProvider tokenProvider;
     private final HeadService headService;
     private final ManagerService managerService;
 
     @Autowired
-    public UserRestController(AWSS3Service awss3Service, UserService userService, ReceiptService receiptService, SortService sortService, InfoService infoService,
+    public UserRestController(AWSS3Service awss3Service, UserService userService, ReceiptService receiptService, SortService sortService, InfoService infoService, InspectService inspectService,
                               TokenProvider tokenProvider, ModelMapper modelMapper, HeadService headService, ManagerService managerService) {
         this.awss3Service = awss3Service;
         this.userService = userService;
@@ -87,6 +86,7 @@ public class UserRestController {
         this.modelMapper = modelMapper;
         this.tokenProvider = tokenProvider;
         this.infoService = infoService;
+        this.inspectService = inspectService;
         this.headService = headService;
         this.managerService = managerService;
     }
@@ -539,8 +539,6 @@ public class UserRestController {
         return receiptService.requestPayment(paymentSet, request);
     }
 
-
-
     // 사진촬영 API
     @PostMapping("takePicture")
     public ResponseEntity<Map<String,Object>> takePicture(MultipartHttpServletRequest multi) throws IOException {
@@ -661,6 +659,36 @@ public class UserRestController {
     public ResponseEntity<Map<String,Object>> franchiseAddProcess(@RequestBody AddprocessSet addprocessSet, HttpServletRequest request){
         return infoService.franchiseAddProcess(addprocessSet, request);
     }
+
+
+//@@@@@@@@@@@@@@@@@@@@@ 가맹점 통합조회 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+//  통합조회용 - 접수세부 테이블
+    @PostMapping("franchiseRequestDetailSearch")
+    public ResponseEntity<Map<String,Object>> franchiseRequestDetailSearch(@RequestParam(value="bcId", defaultValue="") Long bcId,
+                                                                                                                   @RequestParam(value="searchTag", defaultValue="") String searchTag,
+                                                                                                                   @RequestParam(value="filterCondition", defaultValue="") String filterCondition,
+                                                                                                                   @RequestParam(value="filterFromDt", defaultValue="") String filterFromDt,
+                                                                                                                   @RequestParam(value="filterToDt", defaultValue="") String filterToDt,
+                                                                                                                   HttpServletRequest request){
+        log.info("고객ID bcId : "+bcId);
+        log.info("택번호 searchTag : "+searchTag);
+        log.info("조회타입 filterCondition : "+filterCondition);
+        log.info("시작 접수일자 filterFromDt : "+filterFromDt);
+        log.info("종료 접수일자 filterToDt : "+filterToDt);
+
+        return inspectService.franchiseRequestDetailSearch(bcId, searchTag, filterCondition, filterFromDt, filterToDt, request);
+    }
+
+
+
+
+
+
+
+
+
+
+
 
 
 
