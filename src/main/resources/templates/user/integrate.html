@@ -52,14 +52,14 @@
 					<input id="searchString" type="text" placeholder="검색어를 입력하세요" />
                		<button class="c-search__key" type="button" id="vkeyboard0">키보드</button>
 				</div>
-				<button class="c-search__bth" type="button" onclick="onSearchCustomer()">검색</button>
+				<button id="searchCustomer" class="c-search__bth" type="button">검색</button>
 			</div>
 			
 			<div class="search__reset">
-				<button class="c-button c-button--darksolid c-button--small">고객 초기화</button>
+				<button id="resetCustomer" class="c-button c-button--darksolid c-button--small" type="button">고객 초기화</button>
 			</div>
 		</div>
-		
+
 		<!-- 고객정보 -->
 		<div class="client">
 			<div class="client__rating">
@@ -67,14 +67,14 @@
 				<!-- 맞는 등급 뱃지 .active 주기 -->
 				<span class="client__badge">N</span>
 				<span class="client__badge">V</span>
-				<span class="client__badge client__badge--vvip active">V</span>
+				<span class="client__badge client__badge--vvip">V</span>
 				<!-- #bcGrade 등급 넣어주기 -->
-				<span id="bcGrade">VIP</span>
+				<span id="bcGrade"></span>
 			</div>
-			<div class="client__name"><span id="bcName">홍길동님</span></div>
-			<div class="client__propensity"><span id="bcValuation" class="propensity__star propensity__star--2"></span></div>
-			<div class="client__address"><span id="bcAddress">푸르지오 215동</span></div>
-			<div class="client__phone"><span id="bcHp">010-1234-5678</span></div>
+			<div class="client__name"><span id="bcName"></span></div>
+			<div class="client__propensity"><span style="display: none;" id="bcValuation" class="propensity__star propensity__star--0"></span></div>
+			<div class="client__address"><span id="bcAddress"></span></div>
+			<div class="client__phone"><span id="bcHp"></span></div>
 		</div>
 		
 		<!-- 검색조건 -->
@@ -82,68 +82,68 @@
 			<div class="condition__radio">
 				<div class="c-radio">
 					<input type="radio" name="filterCondition" id="filterCondition0" checked />
-					<label ior="filterCondition0">전체</label>
+					<label for="filterCondition0">전체</label>
 				</div>
 				<div class="c-radio">
-					<input type="radio" name="filterCondition" id="filterCondition1" />
-					<label ior="filterCondition1">고객접수</label>
+					<input type="radio" name="filterCondition" id="filterCondition1" value="S1" />
+					<label for="filterCondition1">고객접수</label>
 				</div>
 				<div class="c-radio">
-					<input type="radio" name="filterCondition" id="filterCondition2" />
-					<label ior="filterCondition2">자사입고</label>
+					<input type="radio" name="filterCondition" id="filterCondition2" value="S2" />
+					<label for="filterCondition2">자사입고</label>
 				</div>
 				<div class="c-radio">
-					<input type="radio" name="filterCondition" id="filterCondition3" />
-					<label ior="filterCondition3">가맹점입고</label>
+					<input type="radio" name="filterCondition" id="filterCondition3" value="S3" />
+					<label for="filterCondition3">가맹점입고</label>
 				</div>
 				<div class="c-radio">
-					<input type="radio" name="filterCondition" id="filterCondition4" />
-					<label ior="filterCondition4">입고완료</label>
+					<input type="radio" name="filterCondition" id="filterCondition4" value="S4" />
+					<label for="filterCondition4">입고완료</label>
 				</div>
 				<div class="c-radio">
-					<input type="radio" name="filterCondition" id="filterCondition5" />
-					<label ior="filterCondition5">확인품</label>
+					<input type="radio" name="filterCondition" id="filterCondition5" value="B" />
+					<label for="filterCondition5">확인품</label>
 				</div>
 				<div class="c-radio">
-					<input type="radio" name="filterCondition" id="filterCondition6" />
-					<label ior="filterCondition6">가맹검품</label>
+					<input type="radio" name="filterCondition" id="filterCondition6" value="F" />
+					<label for="filterCondition6">가맹검품</label>
 				</div>
 			</div>
 			
 			<div class="condition__date">
 				<div class="c-period">
 					<!-- 시작일 -->
-					<input type="text" id="startDt" />
+					<input type="text" id="filterFromDt" />
 					<span class="c-period__code">-</span>
 					<!-- 종료일 -->
-					<input type="text" id="endDt" />
+					<input type="text" id="filterToDt" />
 				</div>
 			</div>
 			
 			<div class="condition__console">
-				<button class="c-button c-button--solid c-button--small">조회</button>
-				<button class="c-button c-button--small c-button--darksolid">수정모드</button>
-				<button class="c-button c-button--small c-button--red">수정모드종료</button>
+				<button id="filter" class="c-button c-button--solid c-button--small">조회</button>
+				<button id="modifyOn" class="c-button c-button--small c-button--darksolid">수정모드</button>
+				<button id="modifyOff" class="c-button c-button--small c-button--red" style="display: none">수정모드종료</button>
 			</div>
 		</div>
-		
+
 		<!-- 고객정보2 -->
 		<ul class="client-info">
 			<li>
-				<h4>미수금</h4>
-				<p><span class="client-info__num" id="미수금총액">25,000</span><span class="won">원</span></p>
+				<h4>전일미수금</h4>
+				<p><span class="client-info__num" id="beforeUncollectMoneyMain">0</span><span class="won">원</span></p>
 			</li>
 			<li>
 				<h4>적립금</h4>
-				<p><span class="client-info__num" id="fsAmt">25000</span><span class="won">원</span></p>
+				<p><span class="client-info__num" id="saveMoneyMain">0</span><span class="won">원</span></p>
 			</li>
 			<li>
 				<h4>특이사항</h4>
-				<p><span id="bcRemark">XXXXXXXX</span></p>
+				<p><span id="bcRemark"></span></p>
 			</li>
 			<li>
 				<h4>최근방문일</h4>
-				<p><span class="client-info__num" id="최근방문일">2021-11-10</span></p>
+				<p><span class="client-info__num" id="bcLastRequestDt"></span></p>
 			</li>
 		</ul>
 	</div>
@@ -153,7 +153,22 @@
 		<div id="grid_main" style="height: 654px;"></div>
 	</div>
 
-	
+	<!-- 고객선택 팝업 -->
+	<div class="pop" id="customerListPop">
+		<div class="pop__box">
+			<div class="pop__article">
+				<h3 class="pop__article-header">고객선택</h3>
+				<div class="pop__aricle-content">
+					<div id="grid_customerList"></div>
+				</div>
+			</div>
+
+			<ul class="pop__console">
+				<li><button class="c-button pop__close">닫기</button></li>
+				<li><button id="selectCustomer" class="c-button c-button--dark">선택</button></li>
+			</ul>
+		</div>
+	</div>
 	
 	<!-- 결제내역 팝업 -->
 	<div class="pop">
