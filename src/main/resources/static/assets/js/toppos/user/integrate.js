@@ -217,6 +217,7 @@ const ajax = {
     },
     franchiseRequestDetailSearch(condition) {
         dv.chk(condition, dto.send.franchiseRequestDetailSearch, "메인그리드 검색 조건 보내기");
+        console.log(condition);
         CommonUI.ajaxjsonPost(grid.s.url.read[0], condition, function(res) {
             console.log(res);
         });
@@ -672,7 +673,7 @@ function filterMain() {
         condition.searchTag = $("#searchString").val();
     }
     console.log(condition);
-    //ajax.franchiseRequestDetailSearch(condition);
+    ajax.franchiseRequestDetailSearch(condition);
 }
 
 function putCustomer() {
