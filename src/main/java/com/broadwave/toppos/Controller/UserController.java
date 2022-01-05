@@ -80,5 +80,11 @@ public class UserController {
     public String itemsort(){
         return "user/receipt/itemsort";
     }
+    
+    // 수기마감(일마감)
+    @RequestMapping("closed")
+    public String closed(){
+        return "user/closed";
+    }
 
 }

@@ -1480,6 +1480,9 @@ textarea {
 	-o-transform: translate(-50%, -50%);
 	transform: translate(-50%, -50%);
 }
+.pop__box.pop__box--small {
+	width: 28.75rem;
+}
 .pop__box.pop__box--flex {
 	display: flex;
 	flex-wrap: wrap;
@@ -1593,6 +1596,9 @@ textarea {
 	align-items: center;
 	padding: 1.25rem 2.5rem;
 	background-color: #ebebeb;
+}
+.pop__box.pop__box--small .pop__console {
+	padding: 1.25rem 2.375rem;
 }
 .pop__console.pop__console--center {
 	justify-content: center;
@@ -2178,10 +2184,20 @@ textarea {
 	font-weight: 700;
 	text-align: right;
 }
+.pop__pay-list.pop__pay-list--point > dl > dt {
+	width: 40%;
+}
+.pop__pay-list.pop__pay-list--point > dl > dd {
+	width: 60%;
+}
+.pop__pay-list > dl > dt.color--blue,
+.pop__pay-list > dl > dd.color--blue,
 .color--blue {
 	color: #0082f0;
 	font-weight: 700;
 }
+.pop__pay-list > dl > dt.color--red,
+.pop__pay-list > dl > dd.color--red,
 .color--red {
 	color: #dd5257;
 	font-weight: 700;
