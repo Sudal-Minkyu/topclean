@@ -55,8 +55,20 @@ public class RequestDetail {
     @Column(name="fd_s2_dt")
     private String fdS2Dt; // 지사입고일
 
+    @Column(name="fd_s2_time")
+    private LocalDateTime fdS2Time; // '지사입고일시간'
+
+    @Column(name="fd_s2_type")
+    private String fdS2Type; // 지사입고방법(01:수기마감, 02:QR자동마감)
+
     @Column(name="fd_s3_dt")
     private String fdS3Dt; // 지사출고일
+
+    @Column(name="fd_s3_time")
+    private LocalDateTime fdS3Time; // '''지사출고일시간'''
+
+    @Column(name="fd_s3_id")
+    private String fdS3Id; // 지사출고 담장자ID
 
     @Column(name="fd_s4_dt")
     private String fdS4Dt; // 가맹점입고일
