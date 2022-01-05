@@ -122,6 +122,7 @@ const dto = {
 
         itemGroupAndPriceList: { // 접수페이지 시작때 호출되는 API와 같은 API, 이건 dto검증기를 다차원 검증 가능하도록 개량후 검증.
             addAmountData: {
+                baId: "n",
                 baName: "s",
                 baRemark: "",
             },
@@ -151,6 +152,7 @@ const dto = {
                 frTelNo: "s",
             },
             repairListData: {
+                baId: "s",
                 baName: "s",
                 baRemark: "",
             },
@@ -174,7 +176,6 @@ const dto = {
                 price: "n",
             }
         },
-
     }
 };
 
@@ -183,6 +184,7 @@ const ajax = {
     getInitialData() {
         CommonUI.ajax("/api/user/itemGroupAndPriceList", "GET", false, function (req){
             data.initialData = req.sendData;
+            dv.chk(data.initialData, dto.receive.itemGroupAndPriceList, "초기검사");
             console.log(data.initialData);
         });
     },
@@ -667,8 +669,8 @@ function filterMain() {
     const condition = CommonUI.newDto(dto.send.franchiseRequestDetailSearch);
     condition.bcId = data.selectedCustomer.bcId;
     condition.filterCondition = $("input[name='filterCondition']:checked").val();
-    condition.filterFromDt = $("#filterFromDt").val().replace(/[^0-9]/g, "");
-    condition.filterToDt = $("#filterToDt").val().replace(/[^0-9]/g, "");
+    condition.filterToDt = $("#filterFromDt").val().replace(/[^0-9]/g, "");
+    condition.filterFromDt = $("#filterToDt").val().replace(/[^0-9]/g, "");
     if($("#searchType").val() === "4") {
         condition.searchTag = $("#searchString").val();
     }
