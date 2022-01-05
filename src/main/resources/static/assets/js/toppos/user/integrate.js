@@ -17,7 +17,7 @@ const dto = {
         franchiseRequestDetailSearch: {
             bcId: "n", // 선택된 고객. 없을 경우 null
             searchTag: "s", // 택번호 검색문자
-            filterCondition: "sr", // "" 전체, "S1" 고객접수, "S2" 자사입고, "S3" 가맹점입고, "S4" 입고완료, "B" 확인품, "F" 가맹검품
+            filterCondition: "s", // "" 전체, "S1" 고객접수, "S2" 자사입고, "S3" 가맹점입고, "S4" 입고완료, "B" 확인품, "F" 가맹검품
             filterFromDt: "sr", // 시작 조회기간
             filterToDt: "sr", // 종료 조회기간
         },
@@ -510,7 +510,7 @@ const data = {
 
     },
     selectedCustomer: {
-
+        bcId: null,
     },
     fdColorCode: { // 컬러코드에 따른 실제 색상
         C00: "#D4D9E1", C01: "#D4D9E1", C02: "#3F3C32", C03: "#D7D7D7", C04: "#F54E50", C05: "#FB874B",
@@ -671,7 +671,8 @@ function filterMain() {
     if($("#searchType").val() === "4") {
         condition.searchTag = $("#searchString").val();
     }
-    ajax.franchiseRequestDetailSearch(condition);
+    console.log(condition);
+    //ajax.franchiseRequestDetailSearch(condition);
 }
 
 function putCustomer() {
