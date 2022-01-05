@@ -238,7 +238,7 @@ let vkeyTargetId = ["searchCustomerField", "fdTag", "fdRemark", "fdRepairRemark"
                     "ffRemark"];
 
 vkeyProp[0] = {
-    title : "고객 검색",
+    title : "동작시 제목설정",
     callback : onSearchCustomer,
 }
 
@@ -577,6 +577,9 @@ function checkYesOrNo(booleanValue) {
 }
 
 function onShowVKeyboard(num) {
+    if(num === 0) {
+        vkeyProp[0].title = $("#searchCustomerType option:selected").html() + " (검색)";
+    }
     vkey.showKeyboard(vkeyTargetId[num], vkeyProp[num]);
 }
 

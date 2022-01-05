@@ -11,4 +11,5 @@ import java.util.List;
 public interface RequestDetailRepositoryCustom {
     List<RequestDetailDto> findByRequestTempDetailList(String frNo);
     List<RequestDetailAmtDto> findByRequestDetailAmtList(String frNo);
+    List<RequestDetailSearchDto> requestDetailSearch(String frCode, Long bcId, String searchTag, String filterCondition, String filterFromDt, String filterToDt);
 }
