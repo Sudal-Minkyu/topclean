@@ -5,10 +5,59 @@ $(function() { // 페이지가 로드되고 나서 실행
 /* 서버 API와 주고 받게 될 데이터 정의 */
 const dto = {
     send: {
-
+		franchiseMyInfoSave: {
+			frCode: "sr",
+			frName: "sr",
+			frContractDt: "sr",
+			frContractFromDt: "sr",
+			frContractToDt: "sr",
+			brName: "sr",
+			brCarculateRateHq: "nr",
+			brCarculateRateBr: "nr",
+			brCarculateRateFr: "nr",
+			frBusinessNo: "s",
+			frRpreName: "s",
+			frTelNo: "s",
+			frTagNo: "sr",
+			frEstimateDuration: "nr",
+		},
+		
     },
     receive: {
-
+		myInfo: {
+			frCode: "sr",
+			frName: "sr",
+			frContractDt: "sr",
+			frContractFromDt: "sr",
+			frContractToDt: "sr",
+			brName: "sr",
+			brCarculateRateHq: "nr",
+			brCarculateRateBr: "nr",
+			brCarculateRateFr: "nr",
+			frBusinessNo: "s",
+			frRpreName: "s",
+			frTelNo: "s",
+			frTagNo: "sr",
+			frEstimateDuration: "nr",
+			brContractFromDt: "d",
+		},
+		franchiseAddProcessList: {
+			repairListData: {
+				baId: "nr",
+				baName: "sr",
+				baRemark: "s",
+			},
+			addAmountData: {
+				baId: "nr",
+				baName: "sr",
+				baRemark: "s",
+			},
+			keyWordData: {
+				baId: "nr",
+				baName: "sr",
+				baRemark: "s",
+			}
+		},
     }
 };
 
@@ -25,10 +74,48 @@ const ajax = {
             AUIGrid.setGridData(grid.s.id[numOfGrid], grid.s.data[numOfGrid]);
         });
     },
+    // 가맹점 정보 받기
     getFrInfo() {
-		const url = '/api/user/myInfo';
-		CommonUI.ajax(url, "GET", "", function(res) {
-			console.log(res);
+		const url = "/api/user/myInfo";
+		CommonUI.ajax(url, "GET", false, function(res) {
+			
+			const data = res.sendData.franchisInfoDto;
+			dv.chk(data, dto.receive.myInfo, "가맹점 정보 받아오기");
+			putFrInfoDataInField(data);
+		});
+	},
+	// 가맹점 정보 저장
+	saveMyInfo(formData) {
+		dv.chk(Object.fromEntries(formData), dto.send.franchiseMyInfoSave, "가맹점 정보 보내기");
+		const url = "/api/user/franchiseMyInfoSave";
+		CommonUI.ajax(url, "POST", formData, function(res) {
+			
+		});
+	},
+	
+	// 상용구 항목 받기
+	getFrFavorite(num) {
+		const url = "/api/user/franchiseAddProcessList";
+		CommonUI.ajax(url, "GET", {baType: num}, (res) => {
+			let data;
+			switch(num) {
+				case "1" :
+					data = res.sendData.repairListData;
+					dv.chk(data, dto.receive.franchiseAddProcessList.repairListData, "수선항목 받아오기");
+				break;
+				
+				case "2" :
+					data = res.sendData.addAmountData;
+					dv.chk(data, dto.receive.franchiseAddProcessList.addAmountData, "추가항목 받아오기");
+				break;
+				
+				case "3" :
+					data = res.sendData.keyWordData;
+					dv.chk(data, dto.receive.franchiseAddProcessList.keyWordData, "상용구 받아오기");
+				break;
+			}
+			// dv.chk(data, dto.receive.franchiseAddProcessList, "상용구, 수선항목, 추가항목 받아오기");
+			grid.f.setFavoriteData(num - 1, res.sendData);
 		});
 	}
 };
@@ -101,6 +188,13 @@ const grid = {
         setInitialData(numOfGrid) { // 해당 배열 번호 그리드의 url.read 를 참조하여 데이터를 그리드에 뿌린다.
             ajax.setDataIntoGrid(numOfGrid, grid.s.read[numOfGrid]);
         },
+        
+        setFavoriteData(num, data) {
+	
+			window.aaa = data;
+			console.log(num);
+			console.log(data);
+		}
     },
 
     e: {
@@ -113,15 +207,58 @@ const grid = {
     }
 };
 
+const event = {
+    s: { // 이벤트 설정
+		saveFrInfo() {
+			$('#saveFrInfo').on('click', function() {
+				saveMyInfo();
+			});
+		}
+    },
+    r: { // 이벤트 해제
+
+    }
+}
+
 /* 페이지가 로드되고 나서 실행 될 코드들을 담는다. */
 function onPageLoad() {
     grid.f.initialization();
+    
+    ajax.getFrInfo();
+    
+    event.s.saveFrInfo();
 
     /* grid.s 에 적절한 값을 세팅하였다면, 해당 함수 호출시 해당 배열번호의 그리드에 의도한 데이터들이 주입되어진다. */
     // grid.f.setInitialData(0);
 
     /* 생성된 그리드에 기본적으로 필요한 이벤트들을 적용한다. */
     // grid.e.basicEvent();
+}
+
+function putFrInfoDataInField(myInfoData) {
+	$("input[name='frCode']").val(myInfoData.frCode);
+	$("input[name='frName']").val(myInfoData.frName);
+	$("input[name='frContractDt']").val(myInfoData.frContractDt);
+	$("input[name='frContractFromDt']").val(myInfoData.frContractFromDt);
+	$("input[name='frContractToDt']").val(myInfoData.frContractToDt);
+	$("input[name='brName']").val(myInfoData.brName);
+	$("input[name='brCarculateRateHq']").val(myInfoData.brCarculateRateHq);
+	$("input[name='brCarculateRateBr']").val(myInfoData.brCarculateRateBr);
+	$("input[name='brCarculateRateFr']").val(myInfoData.brCarculateRateFr);
+	$("input[name='frBusinessNo']").val(myInfoData.frBusinessNo);
+	$("input[name='frRpreName']").val(myInfoData.frRpreName);
+	$("input[name='frTelNo']").val(myInfoData.frTelNo);
+	$("input[name='frTagNo']").val(myInfoData.frTagNo);
+	$("input[name='frEstimateDuration']").val(myInfoData.frEstimateDuration);
+}
+
+function saveMyInfo() {
+	
+	const formData = new FormData(document.getElementById('frInfo'));
+	
+	console.log(Object.fromEntries(formData));
+	
+	ajax.saveMyInfo(formData);
 }
 
 
