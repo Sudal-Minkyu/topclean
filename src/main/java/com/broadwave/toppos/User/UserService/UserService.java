@@ -4,27 +4,20 @@ import com.broadwave.toppos.Account.AccountRepositoryCustom;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.User.Addprocess.Addprocess;
 import com.broadwave.toppos.User.Addprocess.AddprocessDto;
-import com.broadwave.toppos.User.Addprocess.AddprocessRepository;
 import com.broadwave.toppos.User.Addprocess.AddprocessRepositoryCustom;
 import com.broadwave.toppos.User.Customer.*;
-import com.broadwave.toppos.User.GroupSort.GroupSort;
-import com.broadwave.toppos.User.GroupSort.GroupSortRepository;
-import com.broadwave.toppos.User.GroupSort.GroupSortRepositoryCustom;
-import com.broadwave.toppos.User.GroupSort.GroupSortUpdateDto;
 import com.broadwave.toppos.User.UserIndexDto;
 import com.broadwave.toppos.User.UserLoginLog.UserLoginLog;
 import com.broadwave.toppos.User.UserLoginLog.UserLoginLogRepository;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -40,28 +33,21 @@ public class UserService {
 
     private final CustomerRepository customerRepository;
     private final UserLoginLogRepository userLoginLogRepository;
-    private final GroupSortRepository groupSortRepository;
-    private final AddprocessRepository addprocessRepository;
 
     private final CustomerRepositoryCustom customerRepositoryCustom;
     private final AccountRepositoryCustom accountRepositoryCustom;
-    private final GroupSortRepositoryCustom groupSortRepositoryCustom;
     private final AddprocessRepositoryCustom addProcessRepositoryCustom;
 
     @Autowired
     public UserService(TokenProvider tokenProvider,
                        CustomerRepository customerRepository, UserLoginLogRepository userLoginLogRepository,
                        CustomerRepositoryCustom customerRepositoryCustom, AccountRepositoryCustom accountRepositoryCustom,
-                       GroupSortRepository groupSortRepository, GroupSortRepositoryCustom groupSortRepositoryCustom,
-                       AddprocessRepository addprocessRepository, AddprocessRepositoryCustom addProcessRepositoryCustom){
+                       AddprocessRepositoryCustom addProcessRepositoryCustom){
         this.tokenProvider = tokenProvider;
         this.customerRepository = customerRepository;
         this.userLoginLogRepository = userLoginLogRepository;
         this.customerRepositoryCustom = customerRepositoryCustom;
         this.accountRepositoryCustom = accountRepositoryCustom;
-        this.groupSortRepository = groupSortRepository;
-        this.groupSortRepositoryCustom = groupSortRepositoryCustom;
-        this.addprocessRepository = addprocessRepository;
         this.addProcessRepositoryCustom = addProcessRepositoryCustom;
     }
 
@@ -129,14 +115,14 @@ public class UserService {
         return addProcessRepositoryCustom.findByAddProcessList(frCode, baType);
     }
 
-    // 수선, 추가요금, 상용구 고유ID값을 통해 Optional 호출
-    public Optional<Addprocess> findByBaId(Long baId) {
-        return addprocessRepository.findById(baId);
-    }
-
-    // 수선, 추가요금, 상용구 타입과 항목을 통해 Optional 호출
-    public Optional<Addprocess> findByAddProcess(String baType, String baName) {
-        return addprocessRepository.findByAddProcess(baType, baName);
-    }
+//    // 수선, 추가요금, 상용구 고유ID값을 통해 Optional 호출
+//    public Optional<Addprocess> findByBaId(Long baId) {
+//        return addprocessRepository.findById(baId);
+//    }
+//
+//    // 수선, 추가요금, 상용구 타입과 항목을 통해 Optional 호출
+//    public Optional<Addprocess> findByAddProcess(String baType, String baName) {
+//        return addprocessRepository.findByAddProcess(baType, baName);
+//    }
 
 }

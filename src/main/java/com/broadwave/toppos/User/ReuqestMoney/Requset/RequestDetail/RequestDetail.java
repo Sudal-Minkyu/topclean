@@ -83,13 +83,13 @@ public class RequestDetail {
     private String fdS5Dt; // 가맹점입고일
 
     @Column(name="fd_s5_time")
-    private String fdS5Time; // 가맹점입고시간
+    private LocalDateTime fdS5Time; // 가맹점입고시간
 
     @Column(name="fd_s6_dt")
     private String fdS6Dt; // 고객인도일
 
     @Column(name="fd_s6_time")
-    private String fdS6Time; // 고객인도시간
+    private LocalDateTime fdS6Time; // 고객인도시간
 
     @Column(name="fd_cancel")
     private String fdCancel; // 접수취소 Y 기본값 N
