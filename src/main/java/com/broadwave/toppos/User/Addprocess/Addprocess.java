@@ -22,6 +22,7 @@ import java.time.LocalDateTime;
 public class Addprocess {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="ba_id")
     private Long baId; // 고유값 ID
 

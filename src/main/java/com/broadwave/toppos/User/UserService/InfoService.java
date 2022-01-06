@@ -9,7 +9,6 @@ import com.broadwave.toppos.Head.HeadService;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.User.Addprocess.*;
 import com.broadwave.toppos.common.AjaxResponse;
-import com.broadwave.toppos.common.CommonUtils;
 import com.broadwave.toppos.common.ResponseErrorCode;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
@@ -192,7 +191,6 @@ public class InfoService {
 
             // 저장하기전에 삭제처리하기
             List<Addprocess> deleteAddprocessList = userService.findByAddProcessList(frCode, baType);
-//            log.info("deleteAddprocessList : "+deleteAddprocessList);
             if(deleteAddprocessList.size() != 0){
                 addprocessRepository.deleteAll(deleteAddprocessList);
             }
@@ -209,7 +207,7 @@ public class InfoService {
             }
 
             if(saveAddProcessList.size() != 0){
-                addprocessRepository.save(saveAddProcessList.get(0));
+                addprocessRepository.saveAll(saveAddProcessList);
             }
 
         }
