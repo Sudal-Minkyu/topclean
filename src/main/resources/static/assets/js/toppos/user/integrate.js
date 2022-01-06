@@ -347,81 +347,99 @@ const grid = {
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
                 }, {
-                    dataField: "btn1",
+                    dataField: "blueBtn1",
                     headerText: "가맹검품",
                     width: 70,
                     renderer : {
                         type: "TemplateRenderer",
                     },
                     labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
-                        const template = `
+                        let template = "";
+                        template = `
                             <button class="c-state">등록</button>
                         `;
+                        item.blueBtn1 = true;
+                        item.blueBtn1 = false;
                         return template;
                     },
                 }, {
-                    dataField: "btn2",
+                    dataField: "blueBtn2",
                     headerText: "검품확인",
                     width: 70,
                     renderer : {
                         type: "TemplateRenderer",
                     },
                     labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
-                        const template = `
+                        let template = "";
+                        template = `
                             <button class="c-state">확인</button>
                         `;
+                        item.blueBtn2 = true;
+                        item.blueBtn2 = false;
                         return template;
                     },
                 }, {
-                    dataField: "btn3",
+                    dataField: "greenBtn1",
                     headerText: "상품수정",
                     width: 70,
                     renderer : {
                         type: "TemplateRenderer",
                     },
                     labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
-                        const template = `
+                        let template = "";
+                        template = `
                             <button class="c-state c-state--modify">수정</button>
                         `;
+                        item.greenBtn1 = true;
+                        item.greenBtn1 = false;
                         return template;
                     },
                 }, {
-                    dataField: "btn4",
+                    dataField: "redBtn1",
                     headerText: "접수취소",
                     width: 70,
                     renderer : {
                         type: "TemplateRenderer",
                     },
                     labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
-                        const template = `
+                        let template = "";
+                        template = `
                             <button class="c-state c-state--cancel">취소</button>
                         `;
+                        item.redBtn1 = true;
+                        item.redBtn1 = false;
                         return template;
                     },
                 }, {
-                    dataField: "btn5",
+                    dataField: "redBtn2",
                     headerText: "결제취소",
                     width: 70,
                     renderer : {
                         type: "TemplateRenderer",
                     },
                     labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
-                        const template = `
+                        let template = "";
+                        template = `
                             <button class="c-state c-state--cancel">취소</button>
                         `;
+                        item.redBtn2 = true;
+                        item.redBtn2 = false;
                         return template;
                     },
                 }, {
-                    dataField: "btn6",
+                    dataField: "redBtn3",
                     headerText: "인도취소",
                     width: 70,
                     renderer : {
                         type: "TemplateRenderer",
                     },
                     labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
-                        const template = `
+                        let template = "";
+                        template = `
                             <button class="c-state c-state--cancel">취소</button>
                         `;
+                        item.redBtn3 = true;
+                        item.redBtn3 = false;
                         return template;
                     },
                 },
@@ -488,7 +506,7 @@ const grid = {
 
         switchModifyMode(isModifyMode) {
             const modColumn = {
-                modify: ["btn1", "btn2", "btn3", "btn4", "btn5", "btn6"],
+                modify: ["blueBtn1", "blueBtn2", "greenBtn1", "redBtn1", "redBtn2", "redBtn3"],
                 normal: ["type", "fdS5Dt", "fdRemark", "fdS2Dt", "fdS3Dt", "fdS4Dt"],
             }
 
@@ -513,8 +531,24 @@ const grid = {
     e: {
         basicEvent() {
             /* 0번그리드 내의 셀 클릭시 이벤트 */
-            AUIGrid.bind(gridId[0], "cellClick", function (e) {
-                console.log(e.item); // 이밴트 콜백으로 불러와진 객체의, 클릭한 대상 row 키(파라메터)와 값들을 보여준다.
+            AUIGrid.bind(grid.s.id[0], "cellClick", function (e) {
+                console.log(e); // 이밴트 콜백으로 불러와진 객체의, 클릭한 대상 row 키(파라메터)와 값들을 보여준다.
+                switch (e.dataField) {
+                    case "blueBtn1":
+                        break;
+                    case "blueBtn2":
+                        break;
+                    case "greenBtn1":
+                        // 수정모드 진입
+                        modifyOrder(e.rowIndex);
+                        break;
+                    case "redBtn1":
+                        break;
+                    case "redBtn2":
+                        break;
+                    case "redBtn3":
+                        break;
+                }
             });
         }
     }
@@ -528,10 +562,16 @@ const data = {
     selectedCustomer: {
         bcId: null,
     },
+    currentRequest: {
+
+    },
+    selectedLaundry: {
+
+    },
     fdColorCode: { // 컬러코드에 따른 실제 색상
         C00: "#D4D9E1", C01: "#D4D9E1", C02: "#3F3C32", C03: "#D7D7D7", C04: "#F54E50", C05: "#FB874B",
         C06: "#F1CE32", C07: "#349A50", C08: "#55CAB7", C09: "#398BE0", C10: "#DE9ACE", C11: "#FF9FB0",
-    }
+    },
 }
 
 /* 이벤트를 s : 설정하거나 r : 해지하는 함수들을 담는다. 그리드 관련 이벤트는 grid.e에 위치 */
@@ -597,6 +637,7 @@ function onPageLoad() {
     grid.f.initialization();
     grid.f.create();
     grid.f.switchModifyMode(false);
+    grid.e.basicEvent();
 
     event.s.main();
     event.s.vkeys();
@@ -606,6 +647,239 @@ function onPageLoad() {
 
     /* 생성된 그리드에 기본적으로 필요한 이벤트들을 적용한다. */
     // grid.e.basicEvent();
+}
+
+function modifyOrder(rowIndex) {
+
+    data.currentRequest = AUIGrid.getItemByRowIndex(grid.s.id[0], rowIndex);
+    data.selectedLaundry.bgCode = data.currentRequest.biItemcode.substr(0, 3);
+
+    let bsType = ["N", "L", "S"];
+    data.initialData.userItemGroupSListData.forEach(el => {
+        for(let i = 0; i < bsType.length; i++) {
+            if(el.bgItemGroupcode === data.selectedLaundry.bgCode && el.bsItemGroupcodeS === bsType[i]) {
+                $("#size" + bsType[i]).css("display", "block");
+                $("#size" + bsType[i] +" label").html(el.bsName);
+                delete bsType[i];
+                break;
+            }
+        }
+    });
+    bsType.forEach(type => {
+        $("#size" + type).css("display", "none");
+    });
+
+    setBiItemList(data.currentRequest.biItemcode.substr(3, 1));
+
+    data.selectedLaundry.bgCode = data.currentRequest.biItemcode.substr(0, 3);
+    data.selectedLaundry.bsCode = data.currentRequest.biItemcode.substr(3, 1);
+    $("input[name='bsItemGroupcodeS']:input[value='" + data.selectedLaundry.bsCode + "']").prop("checked", true);
+    $("#" + data.currentRequest.biItemcode).prop("checked", true);
+    $(".choice-color__input[value='" + data.currentRequest.fdColor + "']").prop("checked", true);
+    $("input[name='fdPattern']:input[value='" + data.currentRequest.fdPattern +"']").prop("checked", true);
+    $("input[name='fdPriceGrade']:input[value='" + data.currentRequest.fdPriceGrade +"']").prop("checked", true);
+    $("input[name='fdDiscountGrade']:input[value='" + data.currentRequest.fdDiscountGrade +"']").prop("checked", true);
+    $("input[name='urgent']:input[value='" + data.currentRequest.urgent +"']").prop("checked", true);
+
+    if(data.currentRequest.fdPressed) {
+        $("#fdPress").prop("checked", true);
+    }
+    if(data.currentRequest.fdRetryYn === "Y") {
+        $("#fdRetry").prop("checked", true);
+    }
+
+    if(data.currentRequest.fdRepairRemark.length || data.currentRequest.fdRepairAmt) {
+        $("#fdRepair").prop("checked", true);
+        $("#fdRepairAmt").val(data.currentRequest.fdRepairAmt);
+        $("#fdRepairRemark").val(data.currentRequest.fdRepairRemark);
+    }
+
+    if(data.currentRequest.fdAdd1Remark.length || data.currentRequest.fdAdd1Amt) {
+        $("#fdAdd1").prop("checked", true);
+        $("#fdAdd1Amt").val(data.currentRequest.fdAdd1Amt);
+        $("#fdAdd1Remark").val(data.currentRequest.fdAdd1Remark);
+    }
+
+    if(data.currentRequest.fdSpecialYn === "Y") {
+        $("#fdSpecialYn").prop("checked", true);
+    }else{
+        $("#fdSpecialYn").prop("checked", false);
+    }
+
+    if(data.currentRequest.fdWhitening) {
+        $("#fdWhitening").prop("checked", true);
+    }
+
+    $("input[name='cleanDirt']:input[value='" + data.currentRequest.fdPollutionLevel +"']").prop("checked", true);
+    if($("#dirt0").is(":checked")) {
+        $("#pollutionBtn").removeClass("choice-drop__btn--active");
+    }else{
+        $("#pollutionBtn").addClass("choice-drop__btn--active");
+    }
+
+    if(data.currentRequest.fdWaterRepellent) {
+        $("#fdWaterRepellent").prop("checked", true);
+    }
+    if(data.currentRequest.fdStarch) {
+        $("#fdStarch").prop("checked", true);
+    }
+    if($("#waterNone").is(":checked")) {
+        $("#waterBtn").removeClass("choice-drop__btn--active");
+    }else{
+        $("#waterBtn").addClass("choice-drop__btn--active");
+    }
+
+
+
+    if(data.currentRequest.fdRemark.length) {
+        $("#fdRemark").val(data.currentRequest.fdRemark);
+    }
+
+    if($("#processCheck input:checked").length > 3 || $("#processCheck .choice-drop__btn--active").length) {
+        $("#etcNone").prop("checked", false);
+    }
+
+    /* data.currentRequest의 각 벨류값에 따라 화면의 라디오 세팅을 구성한다. */
+
+    calculateItemPrice();
+
+    $('#productPop').addClass('active');
+}
+
+function calculateItemPrice() {
+    const ap = data.initialData.addCostData;
+    const gradePrice = [100, 100, ap.bcHighRt, ap.bcPremiumRt, ap.bcChildRt];
+    const gradeDiscount = [0, 0, ap.bcVipDcRt, ap.bcVvipDcRt];
+    data.currentRequest.fdPriceGrade = $("input[name='fdPriceGrade']:checked").val();
+    data.currentRequest.fdDiscountGrade = $("input[name='fdDiscountGrade']:checked").val();
+
+    data.currentRequest.fdPressed = $("#fdPress").is(":checked") ?
+        parseInt(data.initialData.addCostData.bcPressed) : 0;
+    data.currentRequest.fdWhitening = $("#fdWhitening").is(":checked") ?
+        parseInt(data.initialData.addCostData.bcWhitening) : 0;
+    data.currentRequest.fdWaterRepellent = $("#fdWaterRepellent").is(":checked") ?
+        parseInt(data.initialData.addCostData.bcWaterRepellent) : 0;
+    data.currentRequest.fdStarch = $("#fdStarch").is(":checked") ?
+        parseInt(data.initialData.addCostData.bcStarch) : 0;
+    data.currentRequest.fdPollutionLevel = $("input[name='cleanDirt']:checked").first().val() | 0;
+    data.currentRequest.fdPollution = parseInt(data.initialData.addCostData["bcPollution"+data.currentRequest.fdPollutionLevel]) | 0;
+
+    data.currentRequest.fdRepairAmt = ceil100(data.currentRequest.fdRepairAmt);
+    data.currentRequest.fdAdd1Amt = ceil100(data.currentRequest.fdAdd1Amt);
+
+    data.currentRequest.totAddCost = data.currentRequest.fdPressed + data.currentRequest.fdWhitening + data.currentRequest.fdWaterRepellent
+        + data.currentRequest.fdStarch + data.currentRequest.fdPollution + data.currentRequest.fdAdd1Amt + data.currentRequest.fdRepairAmt;
+
+    data.currentRequest.fdNormalAmt = ceil100(data.currentRequest.fdOriginAmt * gradePrice[data.currentRequest.fdPriceGrade] / 100);
+    let sumAmt = ceil100((data.currentRequest.fdNormalAmt + data.currentRequest.totAddCost)
+        * (100 - gradeDiscount[data.currentRequest.fdDiscountGrade]) / 100)
+    data.currentRequest.fdRequestAmt = sumAmt * data.currentRequest.fdQty;
+    data.currentRequest.fdDiscountAmt = data.currentRequest.fdNormalAmt + data.currentRequest.totAddCost - sumAmt;
+
+    if($("#fdRetry").is(":checked")) {
+        data.currentRequest.fdRetryYn = "Y";
+        data.currentRequest.fdNormalAmt = 0;
+        data.currentRequest.totAddCost = 0;
+        data.currentRequest.fdDiscountAmt = 0;
+        data.currentRequest.fdRequestAmt = 0;
+        sumAmt = 0;
+    }else{
+        data.currentRequest.fdRetryYn = "N";
+    }
+
+    $("#fdNormalAmt").html(data.currentRequest.fdNormalAmt.toLocaleString());
+    $("#totAddCost").html(data.currentRequest.totAddCost.toLocaleString());
+    $("#fdDiscountAmt").html(data.currentRequest.fdDiscountAmt.toLocaleString());
+    $("#sumAmt").html(sumAmt.toLocaleString());
+}
+
+function ceil100(num) {
+    num = num.toString();
+    let ceilAmount = 0;
+    if(num.length >= 2 && num.substr(num.length - 2, 2) !== "00") {
+        num = num.substr(0, num.length - 2) + "00";
+        ceilAmount = 100;
+    }
+    return parseInt(num) + ceilAmount;
+}
+
+function setBiItemList(bsCode) {
+    data.selectedLaundry.bsCode = bsCode;
+
+    const $biItemList = $("#biItemList");
+    $biItemList.html("");
+
+    data.initialData.userItemPriceSortData.forEach(el => {
+        if(el.biItemcode.substr(0,4) === data.selectedLaundry.bgCode + bsCode) {
+            $biItemList.append(`
+                            <li>
+                                <div class="choice choice--material">
+                                    <input type="radio" name="material" id="${el.biItemcode}" 
+                                            value="${el.price}" onclick="onSelectBiItem('${el.biItemcode}', ${el.price})" />
+                                    <label for="${el.biItemcode}">
+                                        <span class="choice__name">${el.biName}</span>
+                                        <span class="choice__cost">${parseInt(el.price).toLocaleString()}</span><span>원</span>
+                                    </label>
+                                </div>
+                            </li>
+            `);
+        }
+    });
+}
+
+function onCloseAddOrder() {
+
+    data.currentRequest = {};
+    $("input[name='bsItemGroupcodeS']").first().prop("checked", true);
+    $("input[name='fdColor']").first().prop("checked", true);
+    $("input[name='fdPattern']").first().prop("checked", true);
+    $("input[name='fdPriceGrade']").first().prop("checked", true);
+    $("input[name='fdDiscountGrade']").first().prop("checked", true);
+
+    $("input[name='material']").first().prop("checked", true);
+    $("input[name='urgent']").first().prop("checked", true);
+    $(".choice input[type='checkbox']").prop("checked", false);
+    $("input[name='cleanDirt']").first().prop("checked", true);
+    $("input[name='waterProcess']").first().prop("checked", true);
+    $(".choice-drop__btn.etcProcess").removeClass('choice-drop__btn--active');
+
+    $(".keypad_remark").val("");
+    $(".keypad_field").val(0);
+
+    $("input[name='etcNone']").first().prop("checked", true);
+    $("#fdRemark").val("");
+
+    $("#addProductPopChild").parents('.pop').removeClass('active');
+}
+
+function onAddOrder() {
+
+    if(!data.currentRequest.biItemcode.length) {
+        alertCaution("소재를 선택해 주세요", 1);
+        return false;
+    }
+
+    /*
+    const colorName = {
+        C00: "없음", C01: "흰색", C02: "검정", C03: "회색", C04: "빨강", C05: "주황",
+        C06: "노랑", C07: "초록", C08: "파랑", C09: "남색", C10: "보라", C11: "핑크"
+    }
+    */
+
+    data.currentRequest.fdColor = $("input[name='fdColor']:checked").val();
+    //item.fdColorName = colorName["C" + item.fdColor];
+    data.currentRequest.fdPattern = $("input[name='fdPattern']:checked").val();
+    data.currentRequest.fdPriceGrade = $("input[name='fdPriceGrade']:checked").val();
+    data.currentRequest.fdDiscountGrade = $("input[name='fdDiscountGrade']:checked").val();
+    data.currentRequest.fdRemark = $("#fdRemark").val();
+    data.currentRequest.frEstimateDate = initialData.etcData.frEstimateDate.replace(/[^0-9]/g, "");
+    data.currentRequest.fdSpecialYn = $("#fdSpecialYn").is(":checked") ? "Y" : "N";
+
+    /* 상세한 사항이 정해지면 수정할 것 */
+    data.currentRequest.urgent = $("input[name='urgent']:checked").val();
+
+    AUIGrid.updateRowsById(gridId[0], data.currentRequest);
+    onCloseAddOrder();
 }
 
 function enableDatepicker() {
@@ -745,18 +1019,4 @@ function putCustomer() {
     // $("#class02, #class03").parents("li").css("display", "none");
     // $("#class" + data.selectedCustomer.bcGrade).parents("li").css("display", "block");
     grid.f.clearGrid(0);
-}
-
-/* jest 기본 동작을 테스트 하기 위한 함수, 기본 테스트를 통과하면 아래의 module.exports 부분을 수정하고 이 함수는 지울 것 */
-function testForJest() {
-    return "hi";
-}
-
-/* jest 테스트를 위해 nodejs 의 요소에 테스트가 필요한 기능을 탑재하여 내보내기 한다. 보통의 실행 환경에서는 무시된다. */
-try {
-    module.exports = {testForJest};
-}catch (e) {
-    if(!(e instanceof ReferenceError)) {
-        console.log(e);
-    }
 }

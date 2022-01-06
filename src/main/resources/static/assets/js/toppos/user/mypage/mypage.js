@@ -111,6 +111,7 @@ const ajax = {
 					num = "0";
 				break;
 			}
+			console.log(data);
 			grid.f.setFavoriteData(num, data);
 		});
 	}
@@ -150,8 +151,30 @@ const grid = {
     f: { // 그리드 펑션
         initialization() { // 가시성을 위해 grid.s 의 일부 요소를 여기서 선언한다.
 
-            /* 0번 그리드의 레이아웃 */
+            /* 0번 그리드, 상용구의 레이아웃 */
             grid.s.columnLayout[0] = [
+                {
+                    dataField: "baName",
+                    headerText: "항목",
+                }, {
+                    dataField: "baRemark",
+                    headerText: "비고",
+                },
+            ];
+            
+            // 1번 그리드, 수선항목의 레이아웃
+            grid.s.columnLayout[1] = [
+                {
+                    dataField: "baName",
+                    headerText: "항목",
+                }, {
+                    dataField: "baRemark",
+                    headerText: "비고",
+                },
+            ];
+            
+            // 2번 그리드, 추가항목의 레이아웃
+            grid.s.columnLayout[2] = [
                 {
                     dataField: "baName",
                     headerText: "항목",
@@ -165,6 +188,26 @@ const grid = {
             * https://www.auisoft.net/documentation/auigrid/DataGrid/Properties.html
             * */
             grid.s.prop[0] = {
+                editable : false,
+                selectionMode : "singleRow",
+                noDataMessage : "출력할 데이터가 없습니다.",
+                enableColumnResize : false,
+                showStateColumn : true,
+                enableFilter : true,
+                showRowCheckColumn: true,
+            };
+            
+            grid.s.prop[1] = {
+                editable : false,
+                selectionMode : "singleRow",
+                noDataMessage : "출력할 데이터가 없습니다.",
+                enableColumnResize : false,
+                showStateColumn : true,
+                enableFilter : true,
+                showRowCheckColumn: true,
+            };
+            
+            grid.s.prop[2] = {
                 editable : false,
                 selectionMode : "singleRow",
                 noDataMessage : "출력할 데이터가 없습니다.",
