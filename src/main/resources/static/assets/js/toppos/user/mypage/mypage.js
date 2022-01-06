@@ -6,22 +6,12 @@ $(function() { // 페이지가 로드되고 나서 실행
 const dto = {
     send: {
 		franchiseMyInfoSave: {
-			frCode: "sr",
-			frName: "sr",
-			frContractDt: "sr",
-			frContractFromDt: "sr",
-			frContractToDt: "sr",
-			brName: "sr",
-			brCarculateRateHq: "nr",
-			brCarculateRateBr: "nr",
-			brCarculateRateFr: "nr",
 			frBusinessNo: "s",
 			frRpreName: "s",
 			frTelNo: "s",
 			frTagNo: "sr",
 			frEstimateDuration: "nr",
 		},
-		
     },
     receive: {
 		myInfo: {
@@ -39,7 +29,6 @@ const dto = {
 			frTelNo: "s",
 			frTagNo: "sr",
 			frEstimateDuration: "nr",
-			brContractFromDt: "d",
 		},
 		franchiseAddProcessList: {
 			repairListData: {
@@ -86,7 +75,12 @@ const ajax = {
 	},
 	// 가맹점 정보 저장
 	saveMyInfo(formData) {
-		dv.chk(Object.fromEntries(formData), dto.send.franchiseMyInfoSave, "가맹점 정보 보내기");
+		const jsonData = Object.fromEntries(formData);
+		jsonData.brCarculateRateHq = Number(jsonData.brCarculateRateHq);
+		jsonData.brCarculateRateBr = Number(jsonData.brCarculateRateBr);
+		jsonData.brCarculateRateFr = Number(jsonData.brCarculateRateFr);
+		jsonData.frEstimateDuration = Number(jsonData.frEstimateDuration);
+		dv.chk(jsonData, dto.send.franchiseMyInfoSave, "가맹점 정보 보내기");
 		const url = "/api/user/franchiseMyInfoSave";
 		CommonUI.ajax(url, "POST", formData, function(res) {
 			
@@ -102,20 +96,22 @@ const ajax = {
 				case "1" :
 					data = res.sendData.repairListData;
 					dv.chk(data, dto.receive.franchiseAddProcessList.repairListData, "수선항목 받아오기");
+					num = "1";
 				break;
 				
 				case "2" :
 					data = res.sendData.addAmountData;
 					dv.chk(data, dto.receive.franchiseAddProcessList.addAmountData, "추가항목 받아오기");
+					num = "2";
 				break;
 				
 				case "3" :
 					data = res.sendData.keyWordData;
 					dv.chk(data, dto.receive.franchiseAddProcessList.keyWordData, "상용구 받아오기");
+					num = "0";
 				break;
 			}
-			// dv.chk(data, dto.receive.franchiseAddProcessList, "상용구, 수선항목, 추가항목 받아오기");
-			grid.f.setFavoriteData(num - 1, res.sendData);
+			grid.f.setFavoriteData(num, data);
 		});
 	}
 };
@@ -129,7 +125,7 @@ const ajax = {
 const grid = {
     s: { // 그리드 세팅
         targetDiv: [
-            "targetHtmlId"
+            "grid_keyWord", "grid_repair", "grid_addAmount"
         ],
         columnLayout: [],
         prop: [],
@@ -157,11 +153,11 @@ const grid = {
             /* 0번 그리드의 레이아웃 */
             grid.s.columnLayout[0] = [
                 {
-                    dataField: "",
-                    headerText: "",
+                    dataField: "baName",
+                    headerText: "항목",
                 }, {
-                    dataField: "",
-                    headerText: "",
+                    dataField: "baRemark",
+                    headerText: "비고",
                 },
             ];
 
@@ -174,7 +170,8 @@ const grid = {
                 noDataMessage : "출력할 데이터가 없습니다.",
                 enableColumnResize : false,
                 showStateColumn : true,
-                enableFilter : true
+                enableFilter : true,
+                showRowCheckColumn: true,
             };
 
         },
@@ -190,10 +187,11 @@ const grid = {
         },
         
         setFavoriteData(num, data) {
-	
-			window.aaa = data;
-			console.log(num);
-			console.log(data);
+			AUIGrid.setGridData(grid.s.id[num], data);
+		},
+		
+		resize(num) {
+			AUIGrid.resize(grid.s.id[num]);
 		}
     },
 
@@ -207,12 +205,33 @@ const grid = {
     }
 };
 
+
 const event = {
     s: { // 이벤트 설정
 		saveFrInfo() {
 			$('#saveFrInfo').on('click', function() {
 				saveMyInfo();
 			});
+		},
+		
+		basic() {
+			// 탭
+			const $tabsBtn = $('.c-tabs__btn');
+			const $tabsContent = $('.c-tabs__content');
+			
+			$tabsBtn.on('click', function() {
+				const idx = $(this).index();
+				const num = idx -2;
+				
+				$tabsBtn.removeClass('active');
+				$tabsBtn.eq(idx).addClass('active');
+				$tabsContent.removeClass('active');
+				$tabsContent.eq(idx).addClass('active');
+				
+				if (num >= 0) {
+					grid.f.resize(num);
+				};
+			})
 		}
     },
     r: { // 이벤트 해제
@@ -223,10 +242,12 @@ const event = {
 /* 페이지가 로드되고 나서 실행 될 코드들을 담는다. */
 function onPageLoad() {
     grid.f.initialization();
+    grid.f.create();
     
     ajax.getFrInfo();
     
     event.s.saveFrInfo();
+    event.s.basic();
 
     /* grid.s 에 적절한 값을 세팅하였다면, 해당 함수 호출시 해당 배열번호의 그리드에 의도한 데이터들이 주입되어진다. */
     // grid.f.setInitialData(0);

@@ -505,18 +505,31 @@ input[type="number"]::-webkit-inner-spin-button {
 
 /* elevator */
 .c-elevator {
-	overflow: hidden;
 	display: inline-flex;
 	flex-wrap: wrap;
-	padding: 0.063rem;
+	padding: 0.125rem;
 	background-color: #d4d9e1;
 	-webkit-border-radius: 0.313rem;
 	-moz-border-radius: 0.313rem;
 	border-radius: 0.313rem;
 }
+.c-elevator.c-elevator--left-border {
+	position: relative;
+	margin-left: 2.563rem;
+}
+.c-elevator.c-elevator--left-border:before {
+	content: " ";
+	display: block;
+	position: absolute;
+	top: 0.313rem;
+	left: -1.313rem;
+	width: 0.063rem;
+	height: 1.875rem;
+	background-color: #bdbdbd;
+}
 .c-elevator__btn {
-	width: 2.5rem;
-	height: 2.5rem;
+	width: 2.375rem;
+	height: 2.25rem;
 	border: 0 none;
 	background-color: #fff;
 	background-repeat: no-repeat;

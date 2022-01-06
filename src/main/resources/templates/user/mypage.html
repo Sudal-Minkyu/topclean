@@ -17,18 +17,7 @@
 	<script src="/assets/js/toppos/user/mypage/mypage.js"></script>
 	<script type="text/javascript">
 		$(document).ready(function() {
-			// 탭
-			const $tabsBtn = $('.c-tabs__btn');
-			const $tabsContent = $('.c-tabs__content');
 			
-			$tabsBtn.on('click', function() {
-				const idx = $(this).index();
-				
-				$tabsBtn.removeClass('active');
-				$tabsBtn.eq(idx).addClass('active');
-				$tabsContent.removeClass('active');
-				$tabsContent.eq(idx).addClass('active');
-			})
 		})
 	</script>
 </th:block>
@@ -48,7 +37,7 @@
 					<h3 class="c-tabs__content-heading">가맹점 정보</h3>
 				</div>
 				<div class="c-tabs__content-body">
-					<form id="frInfo" class="form">
+					<div id="frInfo" class="form">
 						<div class="form__item">
 							<div class="form__title">가맹점코드</div>
 							<div class="form__input">
@@ -124,55 +113,57 @@
 								</div>
 							</div>
 						</div>
-						<div class="form__item">
-							<div class="form__title">사업자번호</div>
-							<div class="form__input">
-								<div class="c-text">
-									<input type="text" name="frBusinessNo" />
-									<button>키보드</button>
-								</div>
-							</div>
-						</div>
-						<div class="form__item">
-							<div class="form__title">대표자</div>
-							<div class="form__input">
-								<div class="c-text">
-									<input type="text" name="frRpreName" />
-									<button>키보드</button>
-								</div>
-							</div>
-						</div>
-						<div class="form__item">
-							<div class="form__title">매장전화</div>
-							<div class="form__input">
-								<div class="c-text">
-									<input type="text" name="frTelNo" />
-									<button>키보드</button>
-								</div>
-							</div>
-						</div>
-						<div class="form__item">
-							<div class="form">
-								<div class="form__item">
-									<div class="form__title">가맹점 택코드(3자리)</div>
-									<div class="form__input">
-										<div class="c-text">
-											<input type="text" name="frTagNo" />
-										</div>
-									</div>
-								</div>
-								<div class="form__item">
-									<div class="form__title">출고예정일계산</div>
-									<div class="form__input">
-										<div class="c-text">
-											<input type="text" name="frEstimateDuration" />
-											<span>일 후 출고</span>
-										</div>
+						<form id="frInfo">
+							<div class="form__item">
+								<div class="form__title">사업자번호</div>
+								<div class="form__input">
+									<div class="c-text">
+										<input type="text" name="frBusinessNo" />
+										<button>키보드</button>
 									</div>
 								</div>
 							</div>
-						</div>
-					</form>
+							<div class="form__item">
+								<div class="form__title">대표자</div>
+								<div class="form__input">
+									<div class="c-text">
+										<input type="text" name="frRpreName" />
+										<button>키보드</button>
+									</div>
+								</div>
+							</div>
+							<div class="form__item">
+								<div class="form__title">매장전화</div>
+								<div class="form__input">
+									<div class="c-text">
+										<input type="text" name="frTelNo" />
+										<button>키보드</button>
+									</div>
+								</div>
+							</div>
+							<div class="form__item">
+								<div class="form">
+									<div class="form__item">
+										<div class="form__title">가맹점 택코드(3자리)</div>
+										<div class="form__input">
+											<div class="c-text">
+												<input type="text" name="frTagNo" />
+											</div>
+										</div>
+									</div>
+									<div class="form__item">
+										<div class="form__title">출고예정일계산</div>
+										<div class="form__input">
+											<div class="c-text">
+												<input type="text" name="frEstimateDuration" />
+												<span>일 후 출고</span>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</form>
+					</div>
 					<div class="c-tabs__content-footer">
 						<div class="c-tabs__console">
 							<button class="c-button c-button--solid" id="saveFrInfo">저장</button>
@@ -238,9 +229,13 @@
 					<div class="c-tabs__body-console c-tabs__body-console--right">
 						<button class="c-button c-button--small c-button--solid">라인추가</button>
 						<button class="c-button c-button--small c-button--red">라인삭제</button>
+						<div class="c-elevator c-elevator--left-border">
+							<button class="c-elevator__btn up">위</button>
+							<button class="c-elevator__btn down">아래</button>
+						</div>
 					</div>
 					<!-- grid -->
-					<div style="width: 100%; height: 530px; border: 1px solid #ddd;"></div>
+					<div id="grid_keyWord" style="height: 530px;"></div>
 				</div>
 				<div class="c-tabs__content-footer">
 					<div class="c-tabs__console">
@@ -257,9 +252,13 @@
 					<div class="c-tabs__body-console c-tabs__body-console--right">
 						<button class="c-button c-button--small c-button--solid">라인추가</button>
 						<button class="c-button c-button--small c-button--red">라인삭제</button>
+						<div class="c-elevator c-elevator--left-border">
+							<button class="c-elevator__btn up">위</button>
+							<button class="c-elevator__btn down">아래</button>
+						</div>
 					</div>
 					<!-- grid -->
-					<div style="width: 100%; height: 530px; border: 1px solid #ddd;"></div>
+					<div id="grid_repair" style="height: 530px;"></div>
 				</div>
 				<div class="c-tabs__content-footer">
 					<div class="c-tabs__console">
@@ -276,9 +275,13 @@
 					<div class="c-tabs__body-console c-tabs__body-console--right">
 						<button class="c-button c-button--small c-button--solid">라인추가</button>
 						<button class="c-button c-button--small c-button--red">라인삭제</button>
+						<div class="c-elevator c-elevator--left-border">
+							<button class="c-elevator__btn up">위</button>
+							<button class="c-elevator__btn down">아래</button>
+						</div>
 					</div>
 					<!-- grid -->
-					<div style="width: 100%; height: 530px; border: 1px solid #ddd;"></div>
+					<div id="grid_addAmount" style="height: 530px;"></div>
 				</div>
 				<div class="c-tabs__content-footer">
 					<div class="c-tabs__console">
