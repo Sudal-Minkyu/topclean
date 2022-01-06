@@ -48,13 +48,12 @@ const dto = {
             frId: "n",
             fdTag: "s",
             biItemcode: "s",
-            fdState: "s",
             fdS2Dt: "s",
             fdS3Dt: "s",
             fdS4Dt: "s",
             fdS5Dt: "s",
             fdCancel: "s",
-            fdCancelDt: "s",
+            fdCacelDt: "s",
             fdColor: "s",
             fdPattern: "s",
             fdPriceGrade: "s",
@@ -152,7 +151,7 @@ const dto = {
                 frTelNo: "s",
             },
             repairListData: {
-                baId: "s",
+                baId: "n",
                 baName: "s",
                 baRemark: "",
             },
@@ -221,7 +220,9 @@ const ajax = {
         dv.chk(condition, dto.send.franchiseRequestDetailSearch, "메인그리드 검색 조건 보내기");
         console.log(condition);
         CommonUI.ajaxjsonPost(grid.s.url.read[0], condition, function(res) {
-            console.log(res);
+            const gridData = res.sendData.gridListData;
+            dv.chk(gridData, dto.receive.franchiseRequestDetailSearch, "메인그리드 조회된 리스트");
+            grid.f.setData(0, gridData);
         });
     },
 };
@@ -265,83 +266,90 @@ const grid = {
                 {
                     dataField: "type",
                     headerText: "구분",
+                    width: 40,
                 }, {
                     dataField: "bcName",
                     headerText: "고객명",
+                    width: 70,
                 }, {
                     dataField: "frYyyymmdd",
                     headerText: "접수일자",
+                    width: 90,
+                    dataType: "date",
+                    formatString: "yyyy-mm-dd",
                 }, {
                     dataField: "fdS5Dt",
                     headerText: "인도일자",
+                    width: 90,
+                    dataType: "date",
+                    formatString: "yyyy-mm-dd",
                 }, {
                     dataField: "fdTag",
                     headerText: "택번호",
+                    width: 80,
+                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
+                        return value.substr(0, 3) + "-" + value.substr(-4);
+                    },
                 }, {
                     dataField: "sumName",
                     headerText: "상품명",
-                    style: "colorColumn",
+                    style: "color_and_name",
                     renderer : {
                         type : "TemplateRenderer",
                     },
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
                         const colorSquare =
-                            `<div class="colorSquare" style="background-color: ${data.fdColorCode['C'+item.fdColor]}"></div>`;
-                        if(!item.sumName) {
-                            const nameArray = data.initialData.userItemPriceSortData;
-                            const isNotSizeNormal = !(item.biItemcode.substr(3, 1) === "N");
-                            let sumName = "";
-                            for(let i = 0; i < nameArray.length; i++) {
-                                if(nameArray[i].biItemcode === item.biItemcode) {
-                                    if(isNotSizeNormal) {
-                                        sumName += nameArray[i].bsName + " ";
-                                    }
-                                    sumName += nameArray[i].biName + " " + nameArray[i].bgName;
-                                    break;
-                                }
-                            }
-                            item.sumName = sumName;
-                        }
-                        return colorSquare +" "+ item.sumName;
+                            `<span class="colorSquare" style="background-color: ${data.fdColorCode['C'+item.fdColor]}"></span>`;
+                        CommonUI.toppos.makeProductName(item, data.initialData.userItemPriceSortData);
+                        return colorSquare + ` <span>` + item.sumName + `</span>`;
                     }
                 }, {
                     dataField: "",
                     headerText: "처리내역",
+                    width: 80,
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
-                        let statusText = "";
-                        statusText += item.fdRetryYn === "Y" ? "재" : "";
-                        statusText += item.fdPressed ? "다" : "";
-                        statusText += item.fdAdd1Amt || item.fdAdd1Remark.length ? "추" : "";
-                        statusText += item.fdRepairAmt || item.fdRepairRemark.length ? "수" : "";
-                        statusText += item.fdWhitening ? "표" : "";
-                        statusText += item.fdPollutionLevel ? "오" : "";
-                        statusText += item.fdWaterRepellent || item.fdStarch ? "발" : "";
-                        return statusText;
+                        return CommonUI.toppos.processName(item);
                     }
                 }, {
                     dataField: "fdRequestAmt",
                     headerText: "접수금액",
+                    width: 90,
+                    dataType: "numeric",
+                    autoThousandSeparator: "true",
                 }, {
                     dataField: "fdState",
                     headerText: "현재상태",
+                    width: 85,
                 }, {
                     dataField: "urgent", // 급세탁이면 Y
-                    headerText: "급세탁",
+                    headerText: "급",
+                    width: 35,
                 }, {
                     dataField: "fdRemark",
                     headerText: "특이사항",
+                    width: 100,
                 }, {
                     dataField: "fdS2Dt",
                     headerText: "지사입고",
+                    width: 90,
+                    dataType: "date",
+                    formatString: "yyyy-mm-dd",
                 }, {
                     dataField: "fdS3Dt",
                     headerText: "지사출고",
+                    width: 90,
+                    dataType: "date",
+                    formatString: "yyyy-mm-dd",
                 }, {
                     dataField: "fdS4Dt",
                     headerText: "완성일자",
+                    width: 90,
+                    dataType: "date",
+                    formatString: "yyyy-mm-dd",
                 }, {
                     dataField: "btn1",
                     headerText: "가맹검품",
+                    width: 70,
                     renderer : {
                         type: "TemplateRenderer",
                     },
@@ -354,6 +362,7 @@ const grid = {
                 }, {
                     dataField: "btn2",
                     headerText: "검품확인",
+                    width: 70,
                     renderer : {
                         type: "TemplateRenderer",
                     },
@@ -366,6 +375,7 @@ const grid = {
                 }, {
                     dataField: "btn3",
                     headerText: "상품수정",
+                    width: 70,
                     renderer : {
                         type: "TemplateRenderer",
                     },
@@ -378,6 +388,7 @@ const grid = {
                 }, {
                     dataField: "btn4",
                     headerText: "접수취소",
+                    width: 70,
                     renderer : {
                         type: "TemplateRenderer",
                     },
@@ -390,6 +401,7 @@ const grid = {
                 }, {
                     dataField: "btn5",
                     headerText: "결제취소",
+                    width: 70,
                     renderer : {
                         type: "TemplateRenderer",
                     },
@@ -402,6 +414,7 @@ const grid = {
                 }, {
                     dataField: "btn6",
                     headerText: "인도취소",
+                    width: 70,
                     renderer : {
                         type: "TemplateRenderer",
                     },
@@ -421,7 +434,7 @@ const grid = {
                 editable : false,
                 selectionMode : "singleRow",
                 noDataMessage : "출력할 데이터가 없습니다.",
-                enableColumnResize : false,
+                enableColumnResize : true,
                 showRowNumColumn : false,
                 showStateColumn : false,
                 enableFilter : true,

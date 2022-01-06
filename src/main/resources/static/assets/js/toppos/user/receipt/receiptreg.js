@@ -299,21 +299,7 @@ gridColumnLayout[0] = [
         headerText: "상품명",
         width: 200,
         labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
-            if(!item.sumName) {
-                const nameArray = initialData.userItemPriceSortData;
-                const isNotSizeNormal = !(item.biItemcode.substr(3, 1) === "N");
-                let sumName = "";
-                for(let i = 0; i < nameArray.length; i++) {
-                    if(nameArray[i].biItemcode === item.biItemcode) {
-                        if(isNotSizeNormal) {
-                            sumName += nameArray[i].bsName + " ";
-                        }
-                        sumName += nameArray[i].biName + " " + nameArray[i].bgName;
-                        break;
-                    }
-                }
-                item.sumName = sumName;
-            }
+            CommonUI.toppos.makeProductName(item, initialData.userItemPriceSortData);
             return item.sumName;
         },
         style: "receiptreg-product-name",
@@ -338,17 +324,9 @@ gridColumnLayout[0] = [
         }
     }, {
         dataField: "sumProcess",
-        headerText: "처리내용",
+        headerText: "처리내역",
         labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
-            let statusText = "";
-            statusText += item.fdRetryYn === "Y" ? "재" : "";
-            statusText += item.fdPressed ? "다" : "";
-            statusText += item.fdAdd1Amt || item.fdAdd1Remark.length ? "추" : "";
-            statusText += item.fdRepairAmt || item.fdRepairRemark.length ? "수" : "";
-            statusText += item.fdWhitening ? "표" : "";
-            statusText += item.fdPollutionLevel ? "오" : "";
-            statusText += item.fdWaterRepellent || item.fdStarch ? "발" : "";
-            return statusText;
+            return CommonUI.toppos.processName(item);
         }
     }, {
         dataField: "fdNormalAmt",

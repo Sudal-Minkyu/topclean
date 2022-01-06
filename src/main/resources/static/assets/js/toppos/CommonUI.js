@@ -19,6 +19,36 @@ class CommonUIClass {
         }
     }
 
+    toppos = {
+        makeProductName(item, nameArray) {
+            if(!item.sumName) {
+                const isNotSizeNormal = !(item.biItemcode.substr(3, 1) === "N");
+                let sumName = "";
+                for(let i = 0; i < nameArray.length; i++) {
+                    if(nameArray[i].biItemcode === item.biItemcode) {
+                        if(isNotSizeNormal) {
+                            sumName += nameArray[i].bsName + " ";
+                        }
+                        sumName += nameArray[i].biName + " " + nameArray[i].bgName;
+                        break;
+                    }
+                }
+                item.sumName = sumName;
+            }
+        },
+        processName(item) {
+            let statusText = "";
+            statusText += item.fdRetryYn === "Y" ? "재" : "";
+            statusText += item.fdPressed ? "다" : "";
+            statusText += item.fdAdd1Amt || item.fdAdd1Remark.length ? "추" : "";
+            statusText += item.fdRepairAmt || item.fdRepairRemark.length ? "수" : "";
+            statusText += item.fdWhitening ? "표" : "";
+            statusText += item.fdPollutionLevel ? "오" : "";
+            statusText += item.fdWaterRepellent || item.fdStarch ? "발" : "";
+            return statusText;
+        }
+    }
+
     /*
     * 배열에 담긴 DOM ID들에 JqueryUI의 datepicker 를 적용한다.
     * 기본 데이터 포맷 = yy-mm-dd
