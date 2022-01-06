@@ -25,6 +25,7 @@ import com.broadwave.toppos.User.ReuqestMoney.Requset.Request;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.PhotoDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailSet;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailUpdateDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestListDto;
 import com.broadwave.toppos.User.UserService.*;
 import com.broadwave.toppos.common.AjaxResponse;
@@ -663,7 +664,7 @@ public class UserRestController {
 
 
 //@@@@@@@@@@@@@@@@@@@@@ 가맹점 통합조회 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-//  통합조회용 - 접수세부 테이블
+    //  통합조회용 - 접수세부 테이블
     @PostMapping("franchiseRequestDetailSearch")
     public ResponseEntity<Map<String,Object>> franchiseRequestDetailSearch(@RequestParam(value="bcId", defaultValue="") Long bcId,
                                                                                                                    @RequestParam(value="searchTag", defaultValue="") String searchTag,
@@ -686,7 +687,11 @@ public class UserRestController {
         return inspectService.franchiseRequestDetailSearch(bcId, searchTag, filterCondition, filterFromDt, filterToDt, request);
     }
 
-
+    //  통합조회용 - 접수 세부테이블 수정
+    @PostMapping("franchiseRequestDetailUpdate")
+    public ResponseEntity<Map<String,Object>> franchiseRequestDetailUpdate(@ModelAttribute RequestDetailUpdateDto requestDetailUpdateDto, HttpServletRequest request){
+        return inspectService.franchiseRequestDetailUpdate(requestDetailUpdateDto, request);
+    }
 
 
 

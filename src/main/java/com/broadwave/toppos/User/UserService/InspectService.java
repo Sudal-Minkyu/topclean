@@ -10,6 +10,7 @@ import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.User.Addprocess.*;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepositoryCustom;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailSearchDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailUpdateDto;
 import com.broadwave.toppos.common.AjaxResponse;
 import com.broadwave.toppos.common.CommonUtils;
 import com.broadwave.toppos.common.ResponseErrorCode;
@@ -72,26 +73,38 @@ public class InspectService {
         String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
         log.info("현재 접속한 가맹점 코드 : "+frCode);
 
+        //  통합조회용 - 접수세부 리스트
         List<RequestDetailSearchDto> requestDetailSearchDtoList = requestDetailSearch(frCode, bcId, searchTag, filterCondition, filterFromDt, filterToDt);
 
         data.put("gridListData",requestDetailSearchDtoList);
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
+    //  통합조회용 - 접수세부 리스트
     private List<RequestDetailSearchDto> requestDetailSearch(String frCode, Long bcId, String searchTag, String filterCondition, String filterFromDt, String filterToDt) {
         return requestDetailRepositoryCustom.requestDetailSearch(frCode, bcId, searchTag, filterCondition, filterFromDt, filterToDt);
     }
 
+    //  통합조회용 - 접수 세부테이블 수정
+    public ResponseEntity<Map<String, Object>> franchiseRequestDetailUpdate(RequestDetailUpdateDto requestDetailUpdateDto, HttpServletRequest request) {
+        log.info("requestDetailUpdateDto : "+requestDetailUpdateDto);
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
+        String login_id = claims.getSubject(); // 현재 아이디
+        log.info("현재 접속한 아이디 : "+login_id);
+        log.info("현재 접속한 가맹점 코드 : "+frCode);
 
 
+        
 
 
-
-
-
-
-
-
+        return ResponseEntity.ok(res.success());
+    }
 
 
 }
