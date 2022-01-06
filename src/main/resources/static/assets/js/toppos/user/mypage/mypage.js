@@ -32,17 +32,17 @@ const dto = {
 		},
 		franchiseAddProcessList: {
 			repairListData: {
-				baId: "nr",
+				baSort: "nr",
 				baName: "sr",
 				baRemark: "s",
 			},
 			addAmountData: {
-				baId: "nr",
+				baSort: "nr",
 				baName: "sr",
 				baRemark: "s",
 			},
 			keyWordData: {
-				baId: "nr",
+				baSort: "nr",
 				baName: "sr",
 				baRemark: "s",
 			}
@@ -88,6 +88,7 @@ const ajax = {
 	getFrFavorite(num) {
 		const url = "/api/user/franchiseAddProcessList";
 		CommonUI.ajax(url, "GET", {baType: num}, (res) => {
+			console.log(res);
 			let data;
 			switch(num) {
 				case "1" :
@@ -185,7 +186,7 @@ const grid = {
             * https://www.auisoft.net/documentation/auigrid/DataGrid/Properties.html
             * */
             grid.s.prop[0] = {
-                editable : false,
+                editable : true,
                 selectionMode : "singleRow",
                 noDataMessage : "출력할 데이터가 없습니다.",
                 enableColumnResize : false,
@@ -195,7 +196,7 @@ const grid = {
             };
             
             grid.s.prop[1] = {
-                editable : false,
+                editable : true,
                 selectionMode : "singleRow",
                 noDataMessage : "출력할 데이터가 없습니다.",
                 enableColumnResize : false,
@@ -205,7 +206,7 @@ const grid = {
             };
             
             grid.s.prop[2] = {
-                editable : false,
+                editable : true,
                 selectionMode : "singleRow",
                 noDataMessage : "출력할 데이터가 없습니다.",
                 enableColumnResize : false,
@@ -232,6 +233,19 @@ const grid = {
 		
 		resize(num) {
 			AUIGrid.resize(grid.s.id[num]);
+		},
+		
+		createRow(num) {
+			AUIGrid.addRow(grid.s.id[num], {}, "last");
+		},
+		
+		removeRow(num) {
+			const items = AUIGrid.getCheckedRowItems(grid.s.id[num]);
+			if(items.length) {
+				AUIGrid.removeCheckedRows(grid.s.id[num]);
+			} else {
+				AUIGrid.removeRow(grid.s.id[num], "selectedIndex");
+			}
 		}
     },
 
@@ -262,16 +276,28 @@ const event = {
 			$tabsBtn.on('click', function() {
 				const idx = $(this).index();
 				const num = idx -2;
+				const dataNum = $(this).attr("data-index");
 				
 				$tabsBtn.removeClass('active');
 				$tabsBtn.eq(idx).addClass('active');
 				$tabsContent.removeClass('active');
 				$tabsContent.eq(idx).addClass('active');
 				
-				if (num >= 0) {
+				if (dataNum) {
 					grid.f.resize(num);
+					ajax.getFrFavorite(dataNum);
 				};
-			})
+			});
+			
+			// 라인 추가
+			$('#createRow2').on('click', function() {
+				grid.f.createRow("2");
+			});
+			
+			// 라인 삭제
+			$('#removeRow2').on('click', function() {
+				grid.f.removeRow("2");
+			});
 		}
     },
     r: { // 이벤트 해제
