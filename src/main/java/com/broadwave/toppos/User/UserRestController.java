@@ -620,6 +620,7 @@ public class UserRestController {
     // 가맹점 나의정보 수정 API
     @PostMapping("franchiseMyInfoSave")
     public ResponseEntity<Map<String,Object>> franchiseMyInfoSave(@ModelAttribute FranchisUserDto franchisUserDto, HttpServletRequest request){
+        log.info("franchisUserDto : "+franchisUserDto);
         return infoService.franchiseMyInfoSave(franchisUserDto, request);
     }
 
@@ -675,6 +676,12 @@ public class UserRestController {
         log.info("조회타입 filterCondition : "+filterCondition);
         log.info("시작 접수일자 filterFromDt : "+filterFromDt);
         log.info("종료 접수일자 filterToDt : "+filterToDt);
+        if(filterFromDt.equals("")){
+            filterFromDt = "00000101";
+        }
+        if(filterToDt.equals("")){
+            filterToDt = "99991230";
+        }
 
         return inspectService.franchiseRequestDetailSearch(bcId, searchTag, filterCondition, filterFromDt, filterToDt, request);
     }
