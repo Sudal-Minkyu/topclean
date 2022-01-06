@@ -34,9 +34,10 @@ public class RequestDetailSearchDto {
 //    private LocalDateTime fdStateDt; // 현재상태변경시간 = d
 
     private String fdS2Dt; // 지사입고일
-    private String fdS3Dt; // 지사출고일
-    private String fdS4Dt; // 가맹점입고일
-    private String fdS5Dt; // 고객인도일
+    private String fdS3Dt; // 지사반송일
+    private String fdS4Dt; // 지사출고일
+    private String fdS5Dt; // 가맹점입고일
+    private String fdS6Dt; // 고객인도일
 
 //    private LocalDateTime fdPreStateDt; // 이전상태변경시간 = d
 
@@ -121,6 +122,14 @@ public class RequestDetailSearchDto {
         }else{
             return null;
         }
+    }
+
+    public String getFdState() {
+        return fdState;
+    }
+
+    public String getFdS6Dt() {
+        return fdS6Dt;
     }
 
     public String getFdColor() {

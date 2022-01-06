@@ -130,6 +130,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdS3Dt,
                         requestDetail.fdS4Dt,
                         requestDetail.fdS5Dt,
+                        requestDetail.fdS6Dt,
 
                         requestDetail.fdCancel,
                         requestDetail.fdCacelDt,

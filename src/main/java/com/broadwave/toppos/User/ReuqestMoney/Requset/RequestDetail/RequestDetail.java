@@ -62,19 +62,34 @@ public class RequestDetail {
     private String fdS2Type; // 지사입고방법(01:수기마감, 02:QR자동마감)
 
     @Column(name="fd_s3_dt")
-    private String fdS3Dt; // 지사출고일
+    private String fdS3Dt; // 지사반송일
 
     @Column(name="fd_s3_time")
-    private LocalDateTime fdS3Time; // '''지사출고일시간'''
+    private LocalDateTime fdS3Time; // 지사반송시간
 
     @Column(name="fd_s3_id")
-    private String fdS3Id; // 지사출고 담장자ID
+    private String fdS3Id; // 지사반송 담장자ID
 
     @Column(name="fd_s4_dt")
-    private String fdS4Dt; // 가맹점입고일
+    private String fdS4Dt; // 지사출고일
+
+    @Column(name="fd_s4_time")
+    private LocalDateTime fdS4Time; // 지사출고시간
+
+    @Column(name="fd_s4_id")
+    private String fdS4Id; // 지사출고 담장자ID
 
     @Column(name="fd_s5_dt")
-    private String fdS5Dt; // 고객인도일
+    private String fdS5Dt; // 가맹점입고일
+
+    @Column(name="fd_s5_time")
+    private String fdS5Time; // 가맹점입고시간
+
+    @Column(name="fd_s6_dt")
+    private String fdS6Dt; // 고객인도일
+
+    @Column(name="fd_s6_time")
+    private String fdS6Time; // 고객인도시간
 
     @Column(name="fd_cancel")
     private String fdCancel; // 접수취소 Y 기본값 N
