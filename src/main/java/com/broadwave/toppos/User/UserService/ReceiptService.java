@@ -338,6 +338,7 @@ public class ReceiptService {
 
                         optionalRequestDetail.get().setFdRequestAmt(requestDetailMapperDto.getFdRequestAmt());
                         optionalRequestDetail.get().setFdRetryYn(requestDetailMapperDto.getFdRetryYn());
+                        optionalRequestDetail.get().setFdUrgentYn(requestDetailMapperDto.getFdUrgentYn());
 
                         optionalRequestDetail.get().setFdRemark(requestDetailMapperDto.getFdRemark());
                         optionalRequestDetail.get().setFdEstimateDt(requestDetailMapperDto.getFrEstimateDate());

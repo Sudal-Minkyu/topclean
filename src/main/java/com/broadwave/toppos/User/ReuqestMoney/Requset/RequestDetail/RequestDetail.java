@@ -166,6 +166,9 @@ public class RequestDetail {
     @Column(name="fd_retry_yn")
     private String fdRetryYn; // 재세탁 여부 (Y  / N) Y 이면 아래 합계금액이 0이다
 
+    @Column(name="fd_urgent_yn")
+    private String fdUrgentYn; // 급세탁 여부 (Y  / N) 기본값 : N
+
     @Column(name="fd_tot_amt")
     private Integer fdTotAmt; // 합계금액( (정상 + 수선 + 추가1 + 추가2 -할인) * 수량 )
 

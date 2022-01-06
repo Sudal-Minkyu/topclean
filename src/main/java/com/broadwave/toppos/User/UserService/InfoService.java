@@ -180,7 +180,6 @@ public class InfoService {
         Optional<Franchise> optionalFranchise = headService.findByFrCode(frCode);
 
         List<Addprocess> saveAddProcessList = new ArrayList<>();
-        Addprocess addprocess;
         if(!optionalFranchise.isPresent()){
             return ResponseEntity.ok(res.fail(ResponseErrorCode.TP005.getCode(), "가맹점 "+ResponseErrorCode.TP005.getDesc(), null, null));
         }else{
@@ -197,7 +196,7 @@ public class InfoService {
 
             // 저장하기
             for(AddprocessMapperDto addprocessMapperDto : addProcessList){
-                addprocess = modelMapper.map(addprocessMapperDto,Addprocess.class);
+                Addprocess addprocess = modelMapper.map(addprocessMapperDto,Addprocess.class);
                 addprocess.setBaType(baType);
                 addprocess.setFrId(optionalFranchise.get());
                 addprocess.setFrCode(optionalFranchise.get().getFrCode());
@@ -205,7 +204,11 @@ public class InfoService {
                 addprocess.setInsertDateTime(LocalDateTime.now());
                 saveAddProcessList.add(addprocess);
             }
-            addprocessRepository.saveAll(saveAddProcessList);
+
+            if(saveAddProcessList.size() != 0){
+                addprocessRepository.save(saveAddProcessList.get(0));
+            }
+
         }
 
         return ResponseEntity.ok(res.success());

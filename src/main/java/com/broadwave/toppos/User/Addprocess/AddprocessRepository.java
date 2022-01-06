@@ -15,7 +15,7 @@ import java.util.Optional;
 @Repository
 public interface AddprocessRepository extends JpaRepository<Addprocess,Long> {
 
-    @Query("select a from Addprocess a where a.baType = :baType and a.baName = :baName")
-    Optional<Addprocess> findByAddProcess(String baType, String baName);
+//    @Query("select a from Addprocess a where a.baType = :baType and a.baName = :baName")
+//    Optional<Addprocess> findByAddProcess(String baType, String baName);
 
 }

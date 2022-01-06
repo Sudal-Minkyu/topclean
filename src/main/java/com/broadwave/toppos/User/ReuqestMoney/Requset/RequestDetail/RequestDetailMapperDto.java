@@ -49,6 +49,7 @@ public class RequestDetailMapperDto {
     private Integer fdRequestAmt; // 접수금액( (정상 + 수선 + 추가1 -할인) * 수량 )
 
     private String fdRetryYn; // 재세탁 여부 (Y  / N) Y 이면 합계금액이 0이다
+    private String fdUrgentYn; // 급세탁 여부 (Y  / N) 기본값 : N
 
     private String fdRemark; // 특이사항
     private String frEstimateDate; // 출고예정일
@@ -56,6 +57,10 @@ public class RequestDetailMapperDto {
     private String bgName; // 대분류명
     private String bsName; // 중분류명
     private String biName; // 상품명
+
+    public String getFdUrgentYn() {
+        return fdUrgentYn;
+    }
 
     private List<PhotoDto> photoList; // 해당 상품의 대한 이미지 파일 리스트
 

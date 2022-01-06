@@ -66,6 +66,8 @@ public class RequestDetailSearchDto {
     private String fdEstimateDt; // 출고예정일
 
     private String fdRetryYn; // 재세탁 여부 (Y  / N) Y 이면 합계금액이 0이다
+    private String fdUrgentYn; // 급세탁 여부 (Y  / N) 기본값 : N
+
     private Integer fdPressed; // 다림질 요금
     private Integer fdAdd1Amt; // 추가비용1(접수시점)
     private String fdAdd1Remark; // 추가내용1(접수시점)
@@ -75,6 +77,10 @@ public class RequestDetailSearchDto {
     private Integer fdPollutionLevel; // 오염 선택레벨(0~5)
     private Integer fdWaterRepellent; // 발수가공요금
     private Integer fdStarch; // 풀먹임 요금
+
+    public String getFdUrgentYn() {
+        return fdUrgentYn;
+    }
 
     public String getBcName() {
         return bcName;

@@ -70,6 +70,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdRequestAmt,
 
                         requestDetail.fdRetryYn,
+                        requestDetail.fdUrgentYn,
 
                         requestDetail.fdRemark,
                         requestDetail.fdEstimateDt,
@@ -157,6 +158,8 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdEstimateDt,
 
                         requestDetail.fdRetryYn,
+                        requestDetail.fdUrgentYn,
+
                         requestDetail.fdPressed,
                         requestDetail.fdAdd1Amt,
                         requestDetail.fdAdd1Remark,
