@@ -313,14 +313,3 @@ class CommonUIClass {
         });
     }
 }
-
-let CommonUI = new CommonUIClass();
-
-/* jest 테스트를 위해 nodejs 의 요소에 테스트가 필요한 기능을 탑재하여 내보내기 한다. 브라우저 실행 환경에서는 무시 처리 된다. */
-try {
-    module.exports = CommonUIClass;
-}catch (e) {
-    if(!(e instanceof ReferenceError)) {
-        console.log(e);
-    }
-}
