@@ -20,7 +20,7 @@ public class FranchisUserDto {
     private String frCode; // 가맹점코드 3자리
     private String frName; // 가맹점명
     private String frContractDt; // 계약일자
-    private String brContractFromDt; // 계약기간 from
+    private String frContractFromDt; // 계약기간 from
     private String frContractToDt; // 계약기간 to
 
     private String brName; // 배정지사명
@@ -56,10 +56,6 @@ public class FranchisUserDto {
         return frTagNo;
     }
 
-    public String getBrContractFromDt() {
-        return brContractFromDt;
-    }
-
     public String getFrCode() {
         return frCode;
     }
@@ -69,24 +65,36 @@ public class FranchisUserDto {
     }
 
     public StringBuffer getFrContractDt() {
-        StringBuffer getFrContractDt = new StringBuffer(frContractDt);
-        getFrContractDt.insert(4,'-');
-        getFrContractDt.insert(7,'-');
-        return getFrContractDt;
+        if(!frContractDt.equals("")){
+            StringBuffer getFrContractDt = new StringBuffer(frContractDt);
+            getFrContractDt.insert(4,'-');
+            getFrContractDt.insert(7,'-');
+            return getFrContractDt;
+        }else{
+            return null;
+        }
     }
 
     public StringBuffer getFrContractFromDt() {
-        StringBuffer getFrContractFromDt = new StringBuffer(brContractFromDt);
-        getFrContractFromDt.insert(4,'-');
-        getFrContractFromDt.insert(7,'-');
-        return getFrContractFromDt;
+        if(!frContractFromDt.equals("")){
+            StringBuffer getFrContractFromDt = new StringBuffer(frContractFromDt);
+            getFrContractFromDt.insert(4,'-');
+            getFrContractFromDt.insert(7,'-');
+            return getFrContractFromDt;
+        }else{
+            return null;
+        }
     }
 
     public StringBuffer getFrContractToDt() {
-        StringBuffer getFrContractToDtDate = new StringBuffer(frContractToDt);
-        getFrContractToDtDate.insert(4,'-');
-        getFrContractToDtDate.insert(7,'-');
-        return getFrContractToDtDate;
+        if(!frContractToDt.equals("")){
+            StringBuffer getFrContractToDt = new StringBuffer(frContractToDt);
+            getFrContractToDt.insert(4,'-');
+            getFrContractToDt.insert(7,'-');
+            return getFrContractToDt;
+        }else{
+            return null;
+        }
     }
 
 

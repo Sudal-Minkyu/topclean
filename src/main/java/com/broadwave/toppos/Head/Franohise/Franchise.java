@@ -71,7 +71,7 @@ public class Franchise {
     @Column(name="fr_remark")
     private String frRemark; // 특이사항
 
-    @ManyToOne(targetEntity = Branch.class,fetch = FetchType.LAZY)
+    @ManyToOne(targetEntity = Branch.class,fetch = FetchType.EAGER)
     @JoinColumn(name="br_id")
     private Branch brId; // 배정된 지사 ID
 

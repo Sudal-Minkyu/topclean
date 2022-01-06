@@ -35,6 +35,9 @@ public class Addprocess {
     @Column(name="ba_type")
     private String baType; // 1: 수선항목, 2:추가요금항목, 3:상용구항목
 
+    @Column(name="ba_sort")
+    private Integer baSort; // 정렬순서
+
     @Column(name="ba_name")
     private String baName; // 명칭
 

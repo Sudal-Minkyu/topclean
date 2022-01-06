@@ -99,39 +99,24 @@ public class InfoService {
 
         AjaxResponse res = new AjaxResponse();
 
-        Franchise franchise = modelMapper.map(franchisUserDto, Franchise.class);
-
         String login_id = CommonUtils.getCurrentuser(request);
 //        log.info("현재 사용자 아이디 : "+login_id);
 
+        Franchise franchise;
         Optional<Franchise> optionalFranohise = headService.findByFrCode(franchisUserDto.getFrCode());
         if(optionalFranohise.isPresent()){
-            franchise.setId(optionalFranohise.get().getId());
+            franchise = modelMapper.map(optionalFranohise.get(), Franchise.class);
 
-            franchise.setFrRefCode(optionalFranohise.get().getFrRefCode());
-            franchise.setFrContractState(optionalFranohise.get().getFrContractState());
-            franchise.setFrPriceGrade(optionalFranohise.get().getFrPriceGrade());
-            franchise.setFrRemark(optionalFranohise.get().getFrRemark());
-
-            franchise.setBrId(optionalFranohise.get().getBrId());
-            franchise.setBrCode(optionalFranohise.get().getBrCode());
-            franchise.setBrAssignState(optionalFranohise.get().getBrAssignState());
-
-            if(franchisUserDto.getFrTagNo() == null || franchisUserDto.getFrTagNo().equals("")) {
-                franchise.setFrTagNo(franchisUserDto.getFrCode());
-                franchise.setFrLastTagno(franchisUserDto.getFrCode()+"0000");
-            }else{
-                if(optionalFranohise.get().getFrLastTagno() != null){
-                    franchise.setFrLastTagno(franchisUserDto.getFrTagNo() + optionalFranohise.get().getFrLastTagno().substring(3, 7));
-                }else{
-                    franchise.setFrLastTagno(franchisUserDto.getFrTagNo() + "0000");
-                }
-            }
+            franchise.setFrBusinessNo(franchisUserDto.getFrBusinessNo());
+            franchise.setFrRpreName(franchisUserDto.getFrRpreName());
+            franchise.setFrTelNo(franchisUserDto.getFrTelNo());
+            franchise.setFrTagNo(franchisUserDto.getFrTagNo());
+            franchise.setFrLastTagno(franchisUserDto.getFrTagNo() + optionalFranohise.get().getFrLastTagno().substring(3, 7));
+            franchise.setFrEstimateDuration(franchisUserDto.getFrEstimateDuration());
 
             franchise.setModify_id(login_id);
             franchise.setModifyDateTime(LocalDateTime.now());
-            franchise.setInsert_id(optionalFranohise.get().getInsert_id());
-            franchise.setInsertDateTime(optionalFranohise.get().getInsertDateTime());
+
         }else{
             return ResponseEntity.ok(res.fail(ResponseErrorCode.TP005.getCode(), "나의 "+ResponseErrorCode.TP005.getDesc(), "문자", "고객센터에 문의해주세요."));
         }
