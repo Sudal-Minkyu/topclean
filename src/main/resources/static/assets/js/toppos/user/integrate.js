@@ -9,6 +9,61 @@ $(function() { // 페이지가 로드되고 나서 실행
 * */
 const dto = {
     send: {
+        saveModifiedOrder: {
+            bcName: "",
+            frYyyymmdd: "",
+            fdId: "",
+            frId: "",
+            fdTag: "",
+            biItemcode: "",
+            fdState: "",
+            fdS2Dt: "",
+            fdS3Dt: "",
+            fdS4Dt: "",
+            fdS5Dt: "",
+            fdS6Dt: "",
+            fdCancel: "",
+            fdCacelDt: "",
+            fdColor: "",
+            fdPattern: "",
+            fdPriceGrade: "",
+            fdOriginAmt: "",
+            fdNormalAmt: "",
+            fdAdd2Amt: "",
+            fdAdd2Remark: "",
+            fdPollution: "",
+            fdDiscountGrade: "",
+            fdDiscountAmt: "",
+            fdQty: "",
+            fdRequestAmt: "",
+            fdSpecialYn: "",
+            fdTotAmt: "",
+            fdRemark: "",
+            fdEstimateDt: "",
+            fdRetryYn: "",
+            fdPressed: "",
+            fdAdd1Amt: "",
+            fdAdd1Remark: "",
+            fdRepairAmt: "",
+            fdRepairRemark: "",
+            fdWhitening: "",
+            fdPollutionLevel: "",
+            fdWaterRepellent: "",
+            fdStarch: "",
+            _$uid: "",
+            sumName: "",
+            blueBtn1: "",
+            blueBtn2: "",
+            greenBtn1: "",
+            redBtn1: "",
+            redBtn2: "",
+            redBtn3: "",
+            totAddCost: "",
+            frEstimateDate: "",
+            urgent: "",
+
+
+        },
         고객검색: {
             searchType: "sr", // 0 통합검색, 1 고객명, 2 전화번호, 3 주소
             searchString: "sr", // 검색문자
@@ -47,11 +102,13 @@ const dto = {
             fdId: "n",
             frId: "n",
             fdTag: "s",
+            fdState: "s",
             biItemcode: "s",
             fdS2Dt: "s",
             fdS3Dt: "s",
             fdS4Dt: "s",
             fdS5Dt: "s",
+            fdS6Dt: "s",
             fdCancel: "s",
             fdCacelDt: "s",
             fdColor: "s",
@@ -226,6 +283,7 @@ const ajax = {
         });
     },
     saveModifiedOrder(data) {
+        dv.chk(data, dto.send.saveModifiedOrder, "상품 수정내용 저장");
         console.log(data);
         // const url = "/api/user/";
         // CommonUI.ajaxjsonPost(url, data, function(res) {
