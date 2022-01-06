@@ -99,13 +99,16 @@ public class InfoService {
 
         AjaxResponse res = new AjaxResponse();
 
-        String login_id = CommonUtils.getCurrentuser(request);
-//        log.info("현재 사용자 아이디 : "+login_id);
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
+        String login_id = claims.getSubject(); // 현재 아이디
+        log.info("현재 접속한 아이디 : "+login_id);
+        log.info("현재 접속한 가맹점 코드 : "+frCode);
 
-        Franchise franchise;
-        Optional<Franchise> optionalFranohise = headService.findByFrCode(franchisUserDto.getFrCode());
+        Optional<Franchise> optionalFranohise = headService.findByFrCode(frCode);
         if(optionalFranohise.isPresent()){
-            franchise = modelMapper.map(optionalFranohise.get(), Franchise.class);
+            Franchise franchise = modelMapper.map(optionalFranohise.get(), Franchise.class);
 
             franchise.setFrBusinessNo(franchisUserDto.getFrBusinessNo());
             franchise.setFrRpreName(franchisUserDto.getFrRpreName());
@@ -117,12 +120,12 @@ public class InfoService {
             franchise.setModify_id(login_id);
             franchise.setModifyDateTime(LocalDateTime.now());
 
+            Franchise franchiseSave =  headService.franchise(franchise);
+            log.info("가맹점 마이페이지 수정 성공 Frcode : '" + franchiseSave.getFrCode() + "'");
         }else{
             return ResponseEntity.ok(res.fail(ResponseErrorCode.TP005.getCode(), "나의 "+ResponseErrorCode.TP005.getDesc(), "문자", "고객센터에 문의해주세요."));
         }
 
-        Franchise franchiseSave =  headService.franchise(franchise);
-        log.info("가맹점 마이페이지 수정 성공 Frcode : '" + franchiseSave.getFrCode() + "'");
         return ResponseEntity.ok(res.success());
     }
 
