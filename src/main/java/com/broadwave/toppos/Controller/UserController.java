@@ -86,5 +86,23 @@ public class UserController {
     public String closed(){
         return "user/closed";
     }
+    
+    // 입출고
+    // 가맹점 입고
+    @RequestMapping("franchisein")
+    public String franchisein(){
+        return "user/inandout/franchisein";
+    }
+    
+    // 가맹점 강제 입고
+    @RequestMapping("force")
+    public String force(){
+        return "user/inandout/force";
+    }
 
+    // 지사 반송건 전송
+    @RequestMapping("returnit")
+    public String returnit(){
+        return "user/inandout/returnit";
+    }
 }
