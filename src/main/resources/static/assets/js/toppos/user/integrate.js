@@ -121,7 +121,7 @@ const dto = {
 
         itemGroupAndPriceList: { // 접수페이지 시작때 호출되는 API와 같은 API, 이건 dto검증기를 다차원 검증 가능하도록 개량후 검증.
             addAmountData: {
-                baId: "n",
+                baSort: "n",
                 baName: "s",
                 baRemark: "",
             },
@@ -225,6 +225,13 @@ const ajax = {
             grid.f.setData(0, gridData);
         });
     },
+    saveModifiedOrder(data) {
+        console.log(data);
+        // const url = "/api/user/";
+        // CommonUI.ajaxjsonPost(url, data, function(res) {
+        //
+        // });
+    }
 };
 
 /* .s : AUI 그리드 관련 설정들
@@ -535,18 +542,26 @@ const grid = {
                 console.log(e); // 이밴트 콜백으로 불러와진 객체의, 클릭한 대상 row 키(파라메터)와 값들을 보여준다.
                 switch (e.dataField) {
                     case "blueBtn1":
+                        // 가맹점 검품등록창 진입
+                        putInspect();
                         break;
                     case "blueBtn2":
+                        confirmInspect();
+                        // 검품확인창 진입
                         break;
                     case "greenBtn1":
                         // 수정모드 진입
                         modifyOrder(e.rowIndex);
                         break;
                     case "redBtn1":
+                        // 확인후 ajax 호출하며 그리드에서 삭제
                         break;
                     case "redBtn2":
+                        cancelPayment();
+                        // 결제취소창 진입
                         break;
                     case "redBtn3":
+                        // 확인후 가맹점 입고로 상태변경하여 ajax 호출
                         break;
                 }
             });
@@ -556,18 +571,12 @@ const grid = {
 
 /* dto가 아닌 일반적인 데이터들 정의 */
 const data = {
-    initialData: {
-
-    },
+    initialData: {},
     selectedCustomer: {
         bcId: null,
     },
-    currentRequest: {
-
-    },
-    selectedLaundry: {
-
-    },
+    currentRequest: {},
+    selectedLaundry: {},
     fdColorCode: { // 컬러코드에 따른 실제 색상
         C00: "#D4D9E1", C01: "#D4D9E1", C02: "#3F3C32", C03: "#D7D7D7", C04: "#F54E50", C05: "#FB874B",
         C06: "#F1CE32", C07: "#349A50", C08: "#55CAB7", C09: "#398BE0", C10: "#DE9ACE", C11: "#FF9FB0",
@@ -828,7 +837,6 @@ function setBiItemList(bsCode) {
 }
 
 function onCloseAddOrder() {
-
     data.currentRequest = {};
     $("input[name='bsItemGroupcodeS']").first().prop("checked", true);
     $("input[name='fdColor']").first().prop("checked", true);
@@ -853,7 +861,6 @@ function onCloseAddOrder() {
 }
 
 function onAddOrder() {
-
     if(!data.currentRequest.biItemcode.length) {
         alertCaution("소재를 선택해 주세요", 1);
         return false;
@@ -872,18 +879,18 @@ function onAddOrder() {
     data.currentRequest.fdPriceGrade = $("input[name='fdPriceGrade']:checked").val();
     data.currentRequest.fdDiscountGrade = $("input[name='fdDiscountGrade']:checked").val();
     data.currentRequest.fdRemark = $("#fdRemark").val();
-    data.currentRequest.frEstimateDate = initialData.etcData.frEstimateDate.replace(/[^0-9]/g, "");
+    data.currentRequest.frEstimateDate = data.initialData.etcData.frEstimateDate.replace(/[^0-9]/g, "");
     data.currentRequest.fdSpecialYn = $("#fdSpecialYn").is(":checked") ? "Y" : "N";
 
     /* 상세한 사항이 정해지면 수정할 것 */
     data.currentRequest.urgent = $("input[name='urgent']:checked").val();
 
-    AUIGrid.updateRowsById(gridId[0], data.currentRequest);
+    AUIGrid.updateRowsById(grid.s.id[0], data.currentRequest);
+    ajax.saveModifiedOrder(data.currentRequest);
     onCloseAddOrder();
 }
 
 function enableDatepicker() {
-
     const today = new Date().format("yyyy-MM-dd");
 
     /* datepicker를 적용시킬 대상들의 dom id들 */
@@ -907,7 +914,6 @@ function enableDatepicker() {
 }
 
 function onShowVKeyboard(num) {
-
     /* 가상키보드 사용을 위해 */
     let vkeyProp = [];
     const vkeyTargetId = ["searchString"];
@@ -1019,4 +1025,16 @@ function putCustomer() {
     // $("#class02, #class03").parents("li").css("display", "none");
     // $("#class" + data.selectedCustomer.bcGrade).parents("li").css("display", "block");
     grid.f.clearGrid(0);
+}
+
+function putInspect() {
+
+}
+
+function confirmInspect() {
+
+}
+
+function cancelPayment() {
+
 }
