@@ -313,3 +313,5 @@ class CommonUIClass {
         });
     }
 }
+
+let CommonUI = new CommonUIClass();
