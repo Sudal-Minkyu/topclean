@@ -76,9 +76,6 @@ const ajax = {
 	// 가맹점 정보 저장
 	saveMyInfo(formData) {
 		const jsonData = Object.fromEntries(formData);
-		jsonData.brCarculateRateHq = Number(jsonData.brCarculateRateHq);
-		jsonData.brCarculateRateBr = Number(jsonData.brCarculateRateBr);
-		jsonData.brCarculateRateFr = Number(jsonData.brCarculateRateFr);
 		jsonData.frEstimateDuration = Number(jsonData.frEstimateDuration);
 		dv.chk(jsonData, dto.send.franchiseMyInfoSave, "가맹점 정보 보내기");
 		const url = "/api/user/franchiseMyInfoSave";
