@@ -343,14 +343,14 @@ public class UserRestController {
 
 
         // 수선 항목 리스트 데이터 가져오기
-        List<AddprocessDto> repairListData = userService.findByAddProcessList(frCode, "1");
+        List<AddprocessDto> repairListData = userService.findByAddProcessDtoList(frCode, "1");
         log.info("repairListData : "+repairListData);
         log.info("repairListData 사이즈 : "+repairListData.size());
         data.put("repairListData",repairListData);
 
 
         // 추가요금 항목 리스트 데이터 가져오기
-        List<AddprocessDto> addAmountData = userService.findByAddProcessList(frCode, "2");
+        List<AddprocessDto> addAmountData = userService.findByAddProcessDtoList(frCode, "2");
         log.info("addAmountData : "+addAmountData);
         log.info("addAmountData 사이즈 : "+addAmountData.size());
         data.put("addAmountData",addAmountData);
@@ -642,7 +642,7 @@ public class UserRestController {
         String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
         log.info("현재 접속한 가맹점 코드 : "+frCode);
 
-        List<AddprocessDto> addprocessDtoList = userService.findByAddProcessList(frCode, baType);
+        List<AddprocessDto> addprocessDtoList = userService.findByAddProcessDtoList(frCode, baType);
 
         if(baType.equals("1")){
             data.put("repairListData",addprocessDtoList);

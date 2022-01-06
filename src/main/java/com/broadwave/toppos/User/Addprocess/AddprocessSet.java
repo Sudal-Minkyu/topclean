@@ -8,29 +8,19 @@ import java.util.ArrayList;
  * @author Minkyu
  * Date : 2022-01-03
  * Time :
- * Remark : 상용구 추가&수정&삭제 AddprocessSet
+ * Remark : 상용구&수선항목&추가항목 AddprocessSet
  */
 @Setter
 public class AddprocessSet {
 
-    // 추가 행 리스트
-    private ArrayList<AddprocessMapperDto> add;
+    private String baType; // 1: 수선항목, 2:추가요금항목, 3:상용구항목
+    private ArrayList<AddprocessMapperDto> list;   // 행 리스트
 
-    // 삭제 행 리스트
-    private ArrayList<AddprocessMapperDto> update;
-
-    // 삭제 행 리스트
-    private ArrayList<AddprocessMapperDto> delete;
-
-    public ArrayList<AddprocessMapperDto> getUpdate() {
-        return update;
+    public String getBaType() {
+        return baType;
     }
 
-    public ArrayList<AddprocessMapperDto> getAdd() {
-        return add;
-    }
-
-    public ArrayList<AddprocessMapperDto> getDelete() {
-        return delete;
+    public ArrayList<AddprocessMapperDto> getList() {
+        return list;
     }
 }

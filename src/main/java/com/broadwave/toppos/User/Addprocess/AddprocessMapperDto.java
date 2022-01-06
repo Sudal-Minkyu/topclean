@@ -17,13 +17,12 @@ import lombok.Setter;
 @AllArgsConstructor
 public class AddprocessMapperDto {
 
-    private Long baId; // 고유값 ID
-    private String baType; // 타입
+    private Integer baSort; // 정렬순서
     private String baName; // 명칭
     private String baRemark; // 비고
 
-    public Long getBaId() {
-        return baId;
+    public Integer getBaSort() {
+        return baSort;
     }
 
     public String getBaName() {
@@ -32,9 +31,5 @@ public class AddprocessMapperDto {
 
     public String getBaRemark() {
         return baRemark;
-    }
-
-    public String getBaType() {
-        return baType;
     }
 }

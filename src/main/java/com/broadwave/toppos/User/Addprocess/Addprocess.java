@@ -50,10 +50,4 @@ public class Addprocess {
     @Column(name="insert_date")
     private LocalDateTime insertDateTime;
 
-    @Column(name="modify_id")
-    private String modify_id;
-
-    @Column(name="modify_date")
-    private LocalDateTime modifyDateTime;
-
 }

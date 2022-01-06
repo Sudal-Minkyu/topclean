@@ -9,5 +9,7 @@ import java.util.List;
  * Remark :
  */
 public interface AddprocessRepositoryCustom {
-    List<AddprocessDto> findByAddProcessList(String frCode, String baType);
+    List<AddprocessDto> findByAddProcessDtoList(String frCode, String baType);
+
+    List<Addprocess> findByAddProcessList(String frCode, String baType);
 }

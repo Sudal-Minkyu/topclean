@@ -120,7 +120,12 @@ public class UserService {
     }
 
     // 수선, 추가요금, 상용구 항목 리스트 데이터 호출
-    public List<AddprocessDto> findByAddProcessList(String frCode, String baType) {
+    public List<AddprocessDto> findByAddProcessDtoList(String frCode, String baType) {
+        return addProcessRepositoryCustom.findByAddProcessDtoList(frCode, baType);
+    }
+
+    // 수선, 추가요금, 상용구 항목 리스트 데이터 호출
+    public List<Addprocess> findByAddProcessList(String frCode, String baType) {
         return addProcessRepositoryCustom.findByAddProcessList(frCode, baType);
     }
 

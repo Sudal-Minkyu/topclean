@@ -73,19 +73,19 @@ public class InfoService {
         data.put("franchisInfoDto",franchisInfoDto);
 
         // 수선 항목 리스트 데이터 가져오기
-        List<AddprocessDto> repairListData = userService.findByAddProcessList(frCode, "1");
+        List<AddprocessDto> repairListData = userService.findByAddProcessDtoList(frCode, "1");
         log.info("repairListData : "+repairListData);
         log.info("repairListData 사이즈 : "+repairListData.size());
         data.put("repairListData",repairListData);
 
         // 추가요금 항목 리스트 데이터 가져오기
-        List<AddprocessDto> addAmountData = userService.findByAddProcessList(frCode, "2");
+        List<AddprocessDto> addAmountData = userService.findByAddProcessDtoList(frCode, "2");
         log.info("addAmountData : "+addAmountData);
         log.info("addAmountData 사이즈 : "+addAmountData.size());
         data.put("addAmountData",addAmountData);
 
         // 추가요금 항목 리스트 데이터 가져오기
-        List<AddprocessDto> keyWordData = userService.findByAddProcessList(frCode, "3");
+        List<AddprocessDto> keyWordData = userService.findByAddProcessDtoList(frCode, "3");
         log.info("keyWordData : "+keyWordData);
         log.info("keyWordData 사이즈 : "+keyWordData.size());
         data.put("keyWordData",keyWordData);
@@ -167,7 +167,7 @@ public class InfoService {
     // 수선항목,추가항목,상용구 - 저장&수정&삭제
     public ResponseEntity<Map<String, Object>> franchiseAddProcess(AddprocessSet addprocessSet, HttpServletRequest request) {
 
-        log.info("itemGroupA 호출");
+        log.info("franchiseAddProcess 호출");
         AjaxResponse res = new AjaxResponse();
 
         // 클레임데이터 가져오기
@@ -179,67 +179,33 @@ public class InfoService {
 
         Optional<Franchise> optionalFranchise = headService.findByFrCode(frCode);
 
-        List<Addprocess> addprocessList = new ArrayList<>();
+        List<Addprocess> saveAddProcessList = new ArrayList<>();
+        Addprocess addprocess;
         if(!optionalFranchise.isPresent()){
             return ResponseEntity.ok(res.fail(ResponseErrorCode.TP005.getCode(), "가맹점 "+ResponseErrorCode.TP005.getDesc(), null, null));
         }else{
 
-            ArrayList<AddprocessMapperDto> addList = addprocessSet.getAdd(); // 추가 리스트 얻기
-            ArrayList<AddprocessMapperDto> updateList = addprocessSet.getUpdate(); // 수정 리스트 얻기
-            ArrayList<AddprocessMapperDto> deleteList = addprocessSet.getDelete(); // 제거 리스트 얻기
+            String baType = addprocessSet.getBaType(); // 타입
+            ArrayList<AddprocessMapperDto> addProcessList = addprocessSet.getList(); // 추가 리스트 얻기
 
-            // 저장 시작.
-            for (AddprocessMapperDto addprocessMapperDto : addList) {
-                Addprocess addprocess = modelMapper.map(addprocessMapperDto, Addprocess.class);
+            // 저장하기전에 삭제처리하기
+            List<Addprocess> deleteAddprocessList = userService.findByAddProcessList(frCode, baType);
+//            log.info("deleteAddprocessList : "+deleteAddprocessList);
+            if(deleteAddprocessList.size() != 0){
+                addprocessRepository.deleteAll(deleteAddprocessList);
+            }
+
+            // 저장하기
+            for(AddprocessMapperDto addprocessMapperDto : addProcessList){
+                addprocess = modelMapper.map(addprocessMapperDto,Addprocess.class);
+                addprocess.setBaType(baType);
                 addprocess.setFrId(optionalFranchise.get());
                 addprocess.setFrCode(optionalFranchise.get().getFrCode());
                 addprocess.setInsert_id(login_id);
                 addprocess.setInsertDateTime(LocalDateTime.now());
-                addprocessList.add(addprocess);
+                saveAddProcessList.add(addprocess);
             }
-
-            if(addprocessList.size() != 0){
-                addprocessRepository.saveAll(addprocessList);
-                addprocessList.clear();
-            }
-
-            // 수정 시작
-            for (AddprocessMapperDto addprocessMapperDto : updateList) {
-                Optional<Addprocess> optionalAddprocess = userService.findByBaId(addprocessMapperDto.getBaId());
-                if (!optionalAddprocess.isPresent()) {
-                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP022.getCode(), "수정할 항목의 " + ResponseErrorCode.TP022.getDesc(), "문자", "수정할 항목 : "+addprocessMapperDto.getBaName()));
-                }else{
-                    Addprocess addprocess = modelMapper.map(addprocessMapperDto, Addprocess.class);
-                    addprocess.setFrId(optionalFranchise.get());
-                    addprocess.setFrCode(optionalFranchise.get().getFrCode());
-                    addprocess.setInsert_id(optionalAddprocess.get().getInsert_id());
-                    addprocess.setInsertDateTime(optionalAddprocess.get().getInsertDateTime());
-                    addprocess.setModify_id(login_id);
-                    addprocess.setModifyDateTime(LocalDateTime.now());
-                    addprocessList.add(addprocess);
-                }
-            }
-
-            if(addprocessList.size() != 0){
-                addprocessRepository.saveAll(addprocessList);
-                addprocessList.clear();
-            }
-
-
-            // 삭제로직 실행 : 데이터베이스에 해당 데이터가 존재하지 않으면 리턴처리한다.
-            for (AddprocessMapperDto addprocessMapperDto : deleteList) {
-                Optional<Addprocess> optionalAddprocess = userService.findByAddProcess(addprocessMapperDto.getBaType(),addprocessMapperDto.getBaName());
-                if (!optionalAddprocess.isPresent()) {
-                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP022.getCode(), "삭제 할 " + ResponseErrorCode.TP022.getDesc(), "문자", "다시 시도해주세요. 삭제할 명칭 : " + addprocessMapperDto.getBaName()));
-                }else {
-                    addprocessList.add(optionalAddprocess.get());
-                }
-            }
-
-            if(addprocessList.size() != 0){
-                addprocessRepository.deleteAll(addprocessList);
-                addprocessList.clear();
-            }
+            addprocessRepository.saveAll(saveAddProcessList);
         }
 
         return ResponseEntity.ok(res.success());
