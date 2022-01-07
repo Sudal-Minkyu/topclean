@@ -505,6 +505,7 @@ public class UserRestController {
                 requestDetailInfo.put("fdRequestAmt", requestDetailDto.getFdRequestAmt());
 
                 requestDetailInfo.put("fdRetryYn", requestDetailDto.getFdRetryYn());
+                requestDetailInfo.put("fdUrgentYn", requestDetailDto.getFdUrgentYn());
 
                 requestDetailInfo.put("fdRemark", requestDetailDto.getFdRemark());
                 requestDetailInfo.put("frEstimateDate", requestDetailDto.getFrEstimateDate());
