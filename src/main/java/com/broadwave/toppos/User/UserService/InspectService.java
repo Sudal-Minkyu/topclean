@@ -1,19 +1,13 @@
 package com.broadwave.toppos.User.UserService;
 
-import com.broadwave.toppos.Account.Account;
-import com.broadwave.toppos.Account.AccountPasswordDto;
 import com.broadwave.toppos.Account.AccountService;
-import com.broadwave.toppos.Head.Franohise.FranchisUserDto;
-import com.broadwave.toppos.Head.Franohise.Franchise;
 import com.broadwave.toppos.Head.HeadService;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
-import com.broadwave.toppos.User.Addprocess.*;
+import com.broadwave.toppos.User.Addprocess.AddprocessRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepositoryCustom;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailSearchDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailUpdateDto;
 import com.broadwave.toppos.common.AjaxResponse;
-import com.broadwave.toppos.common.CommonUtils;
-import com.broadwave.toppos.common.ResponseErrorCode;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -24,9 +18,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.transaction.Transactional;
-import java.time.LocalDateTime;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Minkyu
@@ -62,7 +56,6 @@ public class InspectService {
     }
 
     //  통합조회용 - 접수세부 테이블
-    @PostMapping("franchiseRequestDetailSearch")
     public ResponseEntity<Map<String, Object>> franchiseRequestDetailSearch(Long bcId, String searchTag, String filterCondition, String filterFromDt, String filterToDt, HttpServletRequest request) {
 
         AjaxResponse res = new AjaxResponse();
@@ -73,14 +66,12 @@ public class InspectService {
         String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
         log.info("현재 접속한 가맹점 코드 : "+frCode);
 
-        //  통합조회용 - 접수세부 리스트
-        List<RequestDetailSearchDto> requestDetailSearchDtoList = requestDetailSearch(frCode, bcId, searchTag, filterCondition, filterFromDt, filterToDt);
+        List<RequestDetailSearchDto> requestDetailSearchDtoList = requestDetailSearch(frCode, bcId, searchTag, filterCondition, filterFromDt, filterToDt); //  통합조회용 - 접수세부 호출
 
         data.put("gridListData",requestDetailSearchDtoList);
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
-
-    //  통합조회용 - 접수세부 리스트
+    //  통합조회용 - 접수세부 호출용 함수
     private List<RequestDetailSearchDto> requestDetailSearch(String frCode, Long bcId, String searchTag, String filterCondition, String filterFromDt, String filterToDt) {
         return requestDetailRepositoryCustom.requestDetailSearch(frCode, bcId, searchTag, filterCondition, filterFromDt, filterToDt);
     }
@@ -99,12 +90,42 @@ public class InspectService {
         log.info("현재 접속한 아이디 : "+login_id);
         log.info("현재 접속한 가맹점 코드 : "+frCode);
 
-
         
 
 
+
+
+
+
+
         return ResponseEntity.ok(res.success());
+
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 }

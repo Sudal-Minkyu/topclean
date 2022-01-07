@@ -689,7 +689,7 @@ public class UserRestController {
 
     //  통합조회용 - 접수 세부테이블 수정
     @PostMapping("franchiseRequestDetailUpdate")
-    public ResponseEntity<Map<String,Object>> franchiseRequestDetailUpdate(@ModelAttribute RequestDetailUpdateDto requestDetailUpdateDto, HttpServletRequest request){
+    public ResponseEntity<Map<String,Object>> franchiseRequestDetailUpdate(@RequestBody RequestDetailUpdateDto requestDetailUpdateDto, HttpServletRequest request){
         return inspectService.franchiseRequestDetailUpdate(requestDetailUpdateDto, request);
     }
 

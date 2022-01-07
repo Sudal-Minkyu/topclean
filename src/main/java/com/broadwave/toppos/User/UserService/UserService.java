@@ -115,6 +115,17 @@ public class UserService {
         return addProcessRepositoryCustom.findByAddProcessList(frCode, baType);
     }
 
+    // 세부테이블 업데이트 후 마스터테이블 업데이트하는 공용함수 - 미수금 비교하여 처리 => frTotalAmount 와 frPayAmount 비교하여 frTotalAmount가 더 클 경우 frUncollectYn은 "Y"로 업데이트 쳐준다.
+    public void requestDetailUpdateFromMasterUpdate(Long frId) {
+        //디테일의 fdTotAmt를 합산한 결과가 frTotalAmount가 되고 frTotalAmount와 가져온 frPayAmount의 데이터를 비교하여 업데이트를 한다.
+        
+
+
+    }
+
+
+
+
 //    // 수선, 추가요금, 상용구 고유ID값을 통해 Optional 호출
 //    public Optional<Addprocess> findByBaId(Long baId) {
 //        return addprocessRepository.findById(baId);
