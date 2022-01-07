@@ -25,7 +25,8 @@ public class RequestDetailSearchDto {
 
     // 세부 테이블에서 가져 올 데이터
     private Long fdId; // 접수세부테이블 고유값 ID
-    private Long frId; // 접수마스터 고유값 ID
+    private Long frId; // 접수마스터테이블 고유값 ID
+    private String frNo; // 접수코드
 
     private String fdTag; // 택번호
     private String biItemcode; // 상품코드
@@ -78,6 +79,10 @@ public class RequestDetailSearchDto {
     private Integer fdWaterRepellent; // 발수가공요금
     private Integer fdStarch; // 풀먹임 요금
 
+    public Long getFrId() {
+        return frId;
+    }
+
     public String getFdUrgentYn() {
         return fdUrgentYn;
     }
@@ -94,8 +99,8 @@ public class RequestDetailSearchDto {
         return fdId;
     }
 
-    public Long getFrId() {
-        return frId;
+    public String getFrNo() {
+        return frNo;
     }
 
     public String getFdTag() {
