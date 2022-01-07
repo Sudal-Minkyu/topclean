@@ -9,19 +9,28 @@ $(function() { // 페이지가 로드되고 나서 실행
 * */
 const dto = {
     send: {
-        결제내역받아오기: {
+        결제내역받아오기: { // 결제 조회창 열릴 때
             frId: "nr",
         },
-        취소와적립금요청: {
+
+        취소와적립금요청: { // 결제취소시
             fpId: "nr",
             type: "nr", // 1 = 취소, 2 = 적립금전환
+        },
+
+        접수취소요청: {
+            fdId: "nr",
+        },
+
+        인도취소요청: {
+            fdId: "nr",
         },
 
         franchiseRequestDetailUpdate: {
             bcName: "d",
             frYyyymmdd: "d",
             fdId: "",
-            frNo: "",
+            frId: "",
             fdTag: "d",
             biItemcode: "d",
             fdState: "d",
@@ -104,7 +113,7 @@ const dto = {
             bcName: "s", // 고객의 이름
             frYyyymmdd: "s", // 접수일자
             fdId: "n",
-            frNo: "n",
+            frId: "n",
             fdTag: "s",
             fdState: "s",
             biItemcode: "s",
@@ -293,7 +302,16 @@ const ajax = {
 
         onCloseAddOrder();
         });
-    }
+    },
+
+    cancelOrder(fdId) {
+        console.log(fdId);
+    },
+
+    cancelDeliverState(fdId) {
+        console.log(fdId);
+    },
+
 };
 
 /* .s : AUI 그리드 관련 설정들
@@ -617,6 +635,11 @@ const grid = {
                         break;
                     case "redBtn1":
                         // 확인후 ajax 호출하며 그리드에서 삭제
+                        alertCheck("선택한 품목을 접수취소하시겠습니까?<br>접수취소 후에는 신규접수를 통해<br>재등록 가능합니다.");
+                        $("#checkDelSuccessBtn").on("click", function() {
+                            ajax.cancelOrder(e.item.fdId);
+                            $("#popupId").remove();
+                        });
                         break;
                     case "redBtn2":
                         cancelPayment();
@@ -624,6 +647,11 @@ const grid = {
                         break;
                     case "redBtn3":
                         // 확인후 가맹점 입고로 상태변경하여 ajax 호출
+                        alertCheck("선택한 품목을 인도취소하시겠습니까?");
+                        $("#checkDelSuccessBtn").on("click", function() {
+                            ajax.cancelDeliverState(e.item.fdId);
+                            $("#popupId").remove();
+                        });
                         break;
                 }
             });
@@ -643,6 +671,7 @@ const data = {
         C00: "#D4D9E1", C01: "#D4D9E1", C02: "#3F3C32", C03: "#D7D7D7", C04: "#F54E50", C05: "#FB874B",
         C06: "#F1CE32", C07: "#349A50", C08: "#55CAB7", C09: "#398BE0", C10: "#DE9ACE", C11: "#FF9FB0",
     },
+    startPrice: 0,
 }
 
 /* 이벤트를 s : 설정하거나 r : 해지하는 함수들을 담는다. 그리드 관련 이벤트는 grid.e에 위치 */
@@ -820,9 +849,9 @@ function onPageLoad() {
 }
 
 function modifyOrder(rowIndex) {
-
     data.currentRequest = AUIGrid.getItemByRowIndex(grid.s.id[0], rowIndex);
     data.currentRequest.sumName = undefined;
+    data.startPrice = data.currentRequest.fdTotAmt;
     data.selectedLaundry.bgCode = data.currentRequest.biItemcode.substr(0, 3);
 
     let bsType = ["N", "L", "S"];
@@ -1036,6 +1065,11 @@ function onCloseAddOrder() {
 function onAddOrder() {
     if(!data.currentRequest.biItemcode.length) {
         alertCaution("소재를 선택해 주세요", 1);
+        return false;
+    }
+
+    if(data.startPrice > data.currentRequest.fdTotAmt) {
+        alertCaution("수정시작 시점보다 금액이 낮습니다.<br>접수취소 후 재접수를 해주세요.", 1);
         return false;
     }
 

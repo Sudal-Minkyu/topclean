@@ -802,7 +802,7 @@ function calculateItemPrice() {
 
     currentRequest.fdNormalAmt = ceil100(currentRequest.fdOriginAmt * gradePrice[currentRequest.fdPriceGrade] / 100);
     let sumAmt = ceil100((currentRequest.fdNormalAmt + currentRequest.totAddCost)
-        * (100 - gradeDiscount[currentRequest.fdDiscountGrade]) / 100)
+        * (100 - gradeDiscount[currentRequest.fdDiscountGrade]) / 100);
     currentRequest.fdRequestAmt = sumAmt * currentRequest.fdQty;
     currentRequest.fdTotAmt = currentRequest.fdRequestAmt;
     currentRequest.fdDiscountAmt = currentRequest.fdNormalAmt + currentRequest.totAddCost - sumAmt;
@@ -1400,7 +1400,7 @@ function enableKeypad() {
         const currentValue = $keypad_field.val().replace(/[^0-9]/g, "");
         if(currentValue.length > 1) {
             $keypad_field.val(parseInt(currentValue.substr(0,
-                currentValue.replace(/[^0-9]/g, "").length - 1)).toLocaleString())
+                currentValue.replace(/[^0-9]/g, "").length - 1)).toLocaleString());
         }else{
             $keypad_field.val("0");
         }

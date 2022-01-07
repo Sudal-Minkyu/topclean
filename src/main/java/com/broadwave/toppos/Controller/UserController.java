@@ -66,7 +66,7 @@ public class UserController {
     // 통합조회
     @RequestMapping("integrate")
     public String integrate(){
-        return "user/integrate";
+        return "user/receipt/integrate";
     }
     
     // 검품이력 조회 및 메세지
