@@ -518,22 +518,22 @@
 
 					<div class="product-pop__choice">
 						<h4>긴급</h4>
-						<ul>
+						<ul id="urgentCheck">
 							<li>
 								<div class="choice">
-									<input type="radio" name="urgent" id="urgent1" value="일반" checked />
-									<label for="urgent1">없음</label>
+									<input type="checkbox" name="urgentNone" id="urgentNone" checked />
+									<label for="urgentNone">없음</label>
 								</div>
 							</li>
 							<li>
 								<div class="choice">
-									<input type="radio" name="urgent" id="urgent2" value="급세탁" />
-									<label for="urgent2">급세탁</label>
+									<input type="checkbox" name="fdUrgent" id="fdUrgentYn" />
+									<label for="fdUrgentYn">급세탁</label>
 								</div>
 							</li>
 							<li>
 								<div class="choice">
-									<input type="checkbox" name="fdPress" id="fdSpecialYn" />
+									<input type="checkbox" name="fdSpecial" id="fdSpecialYn" />
 									<label for="fdSpecialYn">특수</label>
 								</div>
 							</li>
@@ -657,8 +657,8 @@
 				</div>
 
 				<ul class="pop__console pop__console--center">
-					<li><button class="c-button" onclick="onCloseAddOrder()">닫기</button></li>
-					<li><button class="c-button c-button--dark" onclick="onAddOrder()">선택완료</button></li>
+					<li><button class="c-button" onclick="onCloseAddOrder()">취소</button></li>
+					<li><button class="c-button c-button--dark" onclick="onAddOrder()">수정완료</button></li>
 				</ul>
 			</div>
 		</div>

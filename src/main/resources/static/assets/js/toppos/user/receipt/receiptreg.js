@@ -27,6 +27,8 @@ $(function() {
     $("#inReceiptPop input[type='radio']").on("change", function(){
         calculateItemPrice();
     });
+
+    // 접수 세부 우측 하단 각종 처리 버튼의 온오프에 따른 없음버튼 온오프
     const $processInput = $("#processCheck input[type='checkbox'], #processCheck input[type='radio']");
     $processInput.on("change", function(e) {
         const $isEtcProcessChecked = $(".choice-drop__btn.etcProcess.choice-drop__btn--active").length;
@@ -39,6 +41,16 @@ $(function() {
         additionalProcess(targetId);
 
         calculateItemPrice();
+    });
+
+    // 긴급항목 버튼의 온오프에 따른 없음버튼 온오프
+    const $urgentInput = $("#urgentCheck input[type='checkbox']");
+    $urgentInput.on("change", function(e) {
+        if(!$("#urgentCheck input[type='checkbox']:checked").length) {
+            $urgentInput.first().prop("checked", true);
+        }else{
+            $urgentInput.first().prop("checked", false);
+        }
     });
 
     /* 가격 정보를 받아서 저장해둠 */
@@ -207,6 +219,7 @@ const fsRequestDtl = {
     fdRepairAmt: 0,
     fdAdd1Remark: "",
     fdSpecialYn: "N",
+    fdUrgentYn: "N",
     fdAdd1Amt: 0,
     fdAdd2Remark: "",
     fdAdd2Amt: 0,
@@ -975,6 +988,7 @@ function onCloseTakePicture() {
         fdRepairAmt: currentRequest.fdRepairAmt,
         fdAdd1Remark: currentRequest.fdAdd1Remark,
         fdSpecialYn: currentRequest.fdSpecialYn,
+        fdUrgentYn: currentRequest.fdUrgentYn,
         fdAdd1Amt: currentRequest.fdAdd1Amt,
         fdPressed: currentRequest.fdPressed,
         fdWhitening: currentRequest.fdWhitening,
@@ -1089,9 +1103,7 @@ function onAddOrder() {
     currentRequest.fdRemark = $("#fdRemark").val();
     currentRequest.frEstimateDate = initialData.etcData.frEstimateDate.replace(/[^0-9]/g, "");
     currentRequest.fdSpecialYn = $("#fdSpecialYn").is(":checked") ? "Y" : "N";
-
-    /* 상세한 사항이 정해지면 수정할 것 */
-    currentRequest.urgent = $("input[name='urgent']:checked").val();
+    currentRequest.fdUrgentYn = $("#fdUrgentYn").is(":checked") ? "Y" : "N";
 
     if(currentRequest._$uid) {
         const copyObj = {
@@ -1107,6 +1119,7 @@ function onAddOrder() {
             fdRepairAmt: currentRequest.fdRepairAmt,
             fdAdd1Remark: currentRequest.fdAdd1Remark,
             fdSpecialYn: currentRequest.fdSpecialYn,
+            fdUrgentYn: currentRequest.fdUrgentYn,
             fdAdd1Amt: currentRequest.fdAdd1Amt,
             fdPressed: currentRequest.fdPressed,
             fdWhitening: currentRequest.fdWhitening,
@@ -1144,7 +1157,6 @@ function onCloseAddOrder() {
     $("input[name='fdDiscountGrade']").first().prop("checked", true);
 
     $("input[name='material']").first().prop("checked", true);
-    $("input[name='urgent']").first().prop("checked", true);
     $(".choice input[type='checkbox']").prop("checked", false);
     $("input[name='cleanDirt']").first().prop("checked", true);
     $("input[name='waterProcess']").first().prop("checked", true);
@@ -1154,6 +1166,7 @@ function onCloseAddOrder() {
     $(".keypad_field").val(0);
 
     $("input[name='etcNone']").first().prop("checked", true);
+    $("input[name='urgentNone']").first().prop("checked", true);
     $("#fdRemark").val("");
 
     $("#addProductPopChild").parents('.pop').removeClass('active');
@@ -1189,7 +1202,6 @@ function onModifyOrder(rowIndex) {
     $("input[name='fdPattern']:input[value='" + currentRequest.fdPattern +"']").prop("checked", true);
     $("input[name='fdPriceGrade']:input[value='" + currentRequest.fdPriceGrade +"']").prop("checked", true);
     $("input[name='fdDiscountGrade']:input[value='" + currentRequest.fdDiscountGrade +"']").prop("checked", true);
-    $("input[name='urgent']:input[value='" + currentRequest.urgent +"']").prop("checked", true);
 
     if(currentRequest.fdPressed) {
         $("#fdPress").prop("checked", true);
@@ -1214,6 +1226,12 @@ function onModifyOrder(rowIndex) {
         $("#fdSpecialYn").prop("checked", true);
     }else{
         $("#fdSpecialYn").prop("checked", false);
+    }
+
+    if(currentRequest.fdUrgentYn === "Y") {
+        $("#fdUrgentYn").prop("checked", true);
+    }else{
+        $("#fdUrgentYn").prop("checked", false);
     }
 
     if(currentRequest.fdWhitening) {
@@ -1247,6 +1265,10 @@ function onModifyOrder(rowIndex) {
 
     if($("#processCheck input:checked").length > 3 || $("#processCheck .choice-drop__btn--active").length) {
         $("#etcNone").prop("checked", false);
+    }
+
+    if($("#urgentCheck input:checked").length > 1) {
+        $("#urgentNone").prop("checked", false);
     }
 
 
