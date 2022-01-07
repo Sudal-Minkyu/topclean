@@ -9,11 +9,19 @@ $(function() { // 페이지가 로드되고 나서 실행
 * */
 const dto = {
     send: {
-        saveModifiedOrder: {
+        결제내역받아오기: {
+            frId: "nr",
+        },
+        취소와적립금요청: {
+            fpId: "nr",
+            type: "nr", // 1 = 취소, 2 = 적립금전환
+        },
+
+        franchiseRequestDetailUpdate: {
             bcName: "d",
             frYyyymmdd: "d",
             fdId: "",
-            frId: "",
+            frNo: "",
             fdTag: "d",
             biItemcode: "d",
             fdState: "d",
@@ -29,8 +37,6 @@ const dto = {
             fdPriceGrade: "",
             fdOriginAmt: "",
             fdNormalAmt: "",
-            fdAdd2Amt: "",
-            fdAdd2Remark: "",
             fdPollution: "",
             fdDiscountGrade: "",
             fdDiscountAmt: "",
@@ -45,6 +51,8 @@ const dto = {
             fdPressed: "",
             fdAdd1Amt: "",
             fdAdd1Remark: "",
+            fdAdd2Amt: "",
+            fdAdd2Remark: "",
             fdRepairAmt: "",
             fdRepairRemark: "",
             fdWhitening: "",
@@ -62,10 +70,6 @@ const dto = {
             totAddCost: "d",
             frEstimateDate: "d",
         },
-        고객검색: {
-            searchType: "sr", // 0 통합검색, 1 고객명, 2 전화번호, 3 주소
-            searchString: "sr", // 검색문자
-        },
 
         franchiseRequestDetailSearch: {
             bcId: "n", // 선택된 고객. 없을 경우 null
@@ -76,29 +80,31 @@ const dto = {
         },
 
         customerInfo: {
-            searchType: "sr",
-            searchString: "sr",
-        }
+            searchType: "sr", // 0 통합검색, 1 고객명, 2 전화번호, 3 주소
+            searchString: "sr", // 검색문자
+        },
     },
     receive: {
-        고객검색: { // 접수 페이지의 고객 정보 가져오는 부분과 동일
-            bcId: "n",
-            bcName: "s",
-            bcGrade: "s",
-            bcValuation: "s",
-            bcAddress: "s",
-            bcHp: "s",
-            beforeUncollectMoney: "n",
-            saveMoney: "n",
-            bcRemark: "s",
-            bcLastRequestDt: "s",
+        결제내역받아오기: { // 현 가맹점의 코드와 이름, 그리고 접수결제 테이블의 결제요소들
+            frCode: "",
+            frName: "",
+
+            fpId: "nr",
+            fpType: "sr",
+            fpAmt: "nr",
+            fpCatIssuername: "s",
+            fpCatApprovalno: "s",
+            fpCatApprovatime: "s",
+            fpCatTotamount: "s",
+            fpCatVatamount: "s",
+            fpMonth: "",
         },
 
         franchiseRequestDetailSearch: { // 접수 세부 테이블의 거의 모든 요소와, 고객이름
             bcName: "s", // 고객의 이름
             frYyyymmdd: "s", // 접수일자
             fdId: "n",
-            frId: "n",
+            frNo: "n",
             fdTag: "s",
             fdState: "s",
             biItemcode: "s",
@@ -114,8 +120,6 @@ const dto = {
             fdPriceGrade: "s",
             fdOriginAmt: "n",
             fdNormalAmt: "n",
-            fdAdd2Amt: "n",
-            fdAdd2Remark: "s",
             fdPollution: "n",
             fdDiscountGrade: "s",
             fdDiscountAmt: "n",
@@ -130,6 +134,8 @@ const dto = {
             fdPressed: "n",
             fdAdd1Amt: "n",
             fdAdd1Remark: "s",
+            fdAdd2Amt: "n",
+            fdAdd2Remark: "s",
             fdRepairAmt: "n",
             fdRepairRemark: "s",
             fdWhitening: "n",
@@ -162,7 +168,7 @@ const dto = {
             insertDt: "d",
         },
 
-        customerInfo: {
+        customerInfo: { // 접수 페이지의 고객 정보 가져오는 부분과 동일
             bcAddress: "s",
             bcGrade: "s",
             bcHp: "s",
@@ -207,7 +213,7 @@ const dto = {
                 frTelNo: "s",
             },
             repairListData: {
-                baId: "n",
+                baSort: "n",
                 baName: "s",
                 baRemark: "",
             },
@@ -282,13 +288,11 @@ const ajax = {
         });
     },
     saveModifiedOrder(data) {
-        dv.chk(data, dto.send.saveModifiedOrder, "상품 수정내용 저장");
-        console.log(data);
-        // const url = "/api/user/";
-        // CommonUI.ajaxjsonPost(url, data, function(res) {
-        //
-        // onCloseAddOrder();
-        // });
+        dv.chk(data, dto.send.franchiseRequestDetailUpdate, "상품 수정내용 저장");
+        CommonUI.ajaxjsonPost(grid.s.url.update[0], data, function(res) {
+
+        onCloseAddOrder();
+        });
     }
 };
 
@@ -301,7 +305,7 @@ const ajax = {
 const grid = {
     s: { // 그리드 세팅
         targetDiv: [
-            "grid_main", "grid_customerList"
+            "grid_main", "grid_customerList", "grid_paymentList"
         ],
         columnLayout: [],
         prop: [],
@@ -309,16 +313,16 @@ const grid = {
         data: [],
         url: {
             create: [
-                "/api/", "/api/"
+                "/api/", "/api/", "/api/"
             ],
             read: [
-                "/api/user/franchiseRequestDetailSearch", "/api/user/customerInfo"
+                "/api/user/franchiseRequestDetailSearch", "/api/user/customerInfo", "/api/user/"
             ],
             update: [
-                "/api/", "/api/"
+                "/api/user/franchiseRequestDetailUpdate", "/api/", "/api/"
             ],
             delete: [
-                "/api/", "/api/"
+                "/api/", "/api/", "/api/"
             ]
         }
     },
@@ -376,8 +380,8 @@ const grid = {
                         return CommonUI.toppos.processName(item);
                     }
                 }, {
-                    dataField: "fdRequestAmt",
-                    headerText: "접수금액",
+                    dataField: "fdTotAmt",
+                    headerText: "합계금액",
                     width: 90,
                     dataType: "numeric",
                     autoThousandSeparator: "true",
@@ -942,11 +946,12 @@ function calculateItemPrice() {
     data.currentRequest.fdAdd1Amt = ceil100(data.currentRequest.fdAdd1Amt);
 
     data.currentRequest.totAddCost = data.currentRequest.fdPressed + data.currentRequest.fdWhitening + data.currentRequest.fdWaterRepellent
-        + data.currentRequest.fdStarch + data.currentRequest.fdPollution + data.currentRequest.fdAdd1Amt + data.currentRequest.fdRepairAmt;
+        + data.currentRequest.fdStarch + data.currentRequest.fdPollution + data.currentRequest.fdAdd1Amt
+        + data.currentRequest.fdAdd2Amt + data.currentRequest.fdRepairAmt;
 
     data.currentRequest.fdNormalAmt = ceil100(data.currentRequest.fdOriginAmt * gradePrice[data.currentRequest.fdPriceGrade] / 100);
     let sumAmt = ceil100((data.currentRequest.fdNormalAmt + data.currentRequest.totAddCost)
-        * (100 - gradeDiscount[data.currentRequest.fdDiscountGrade]) / 100)
+        * (100 - gradeDiscount[data.currentRequest.fdDiscountGrade]) / 100);
     data.currentRequest.fdRequestAmt = sumAmt * data.currentRequest.fdQty;
     data.currentRequest.fdTotAmt = data.currentRequest.fdRequestAmt;
 
@@ -1214,7 +1219,7 @@ function enableKeypad() {
         const currentValue = $keypad_field.val().replace(/[^0-9]/g, "");
         if(currentValue.length > 1) {
             $keypad_field.val(parseInt(currentValue.substr(0,
-                currentValue.replace(/[^0-9]/g, "").length - 1)).toLocaleString())
+                currentValue.replace(/[^0-9]/g, "").length - 1)).toLocaleString());
         }else{
             $keypad_field.val("0");
         }
@@ -1258,5 +1263,5 @@ function confirmInspect() {
 }
 
 function cancelPayment() {
-
+    $("#paymentListPop").addClass("active");
 }
