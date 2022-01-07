@@ -439,6 +439,7 @@ textarea {
 }
 .content__bottom {
 	display: flex;
+	flex-wrap: wrap;
 	justify-content: space-between;
 	position: fixed;
 	bottom: 0;
@@ -455,6 +456,19 @@ textarea {
 }
 .content__bottom-total {
 	display: flex;
+}
+
+.content__bottom-total.content__bottom-total--border {
+	padding: 0.625rem 1.25rem;
+	background-color: #f1f8fe;
+	border: 0.063rem solid #d9e5ff;
+	-webkit-border-radius: 0.313rem;
+	-moz-border-radius: 0.313rem;
+	border-radius: 0.313rem;
+}
+.content__bottom-total.content__bottom-total--border + .content__bottom-btns {
+	margin-top: 0.625rem;
+	margin-left: auto;
 }
 .content__bottom-total-item {
 	display: flex;
@@ -484,11 +498,15 @@ textarea {
 	font-size: 1.125rem;
 	font-weight: 500;
 }
+.content__bottom-total.content__bottom-total--border .content__bottom-total-title {
+	color: #333;
+	font-weight: 700;
+}
 .content__bottom-total-input {
 	width: 3.125rem;
 	height: 2.5rem;
-	margin-left: 1.25rem;
-	padding: 0 3rem 0 0.625rem;
+	margin-left: 1rem;
+	padding: 0 0.625rem 0 0.625rem;
 	border: 0.063rem solid #bdbdbd;
 	background-color: #fff;
 	-webkit-border-radius: 0.313rem;

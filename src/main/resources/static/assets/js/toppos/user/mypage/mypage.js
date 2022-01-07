@@ -84,7 +84,7 @@ const ajax = {
 		});
 	},
 	
-	// 상용구 항목 받기
+	// 상용구, 수선항목, 추가항목 받기
 	getFrFavorite(num) {
 		const url = "/api/user/franchiseAddProcessList";
 		CommonUI.ajax(url, "GET", {baType: num}, (res) => {
@@ -235,8 +235,9 @@ const grid = {
 			AUIGrid.resize(grid.s.id[num]);
 		},
 		
-		createRow(num) {
-			AUIGrid.addRow(grid.s.id[num], {}, "last");
+		createRow(num, item) {
+			// let item = {"항목": "", "비고": ""};
+			AUIGrid.addRow(grid.s.id[num], item, "last");
 		},
 		
 		removeRow(num) {
@@ -246,6 +247,14 @@ const grid = {
 			} else {
 				AUIGrid.removeRow(grid.s.id[num], "selectedIndex");
 			}
+		},
+		
+		upRows(num) {
+			AUIGrid.moveRowsToUp(grid.s.id[num]);
+		},
+		
+		downRows(num) {
+			AUIGrid.moveRowsToDown(grid.s.id[num]);
 		}
     },
 
@@ -289,15 +298,41 @@ const event = {
 				};
 			});
 			
+					
+			// 팝업 닫기
+			$('.pop__close').on('click', function() {
+				$(this).parents('.pop').removeClass('active');
+			})
+			
 			// 라인 추가
+			// 팝업 열기
 			$('#createRow2').on('click', function() {
-				grid.f.createRow("2");
+				$('.pop').addClass('active');
+				// grid.f.createRow("2");
 			});
+			// input 값 보내기
+			$('#sendItemValue').on('click', function() {
+				const baName = $('#baName').val();
+				const baRemark = $('#baRemark').val();
+				const item = {"항목": baName, "비고": baRemark};
+				console.log(item);
+				grid.f.createRow("2", item);
+			})
 			
 			// 라인 삭제
 			$('#removeRow2').on('click', function() {
 				grid.f.removeRow("2");
 			});
+			
+			// 선택행 올림
+			$('#upRows2').on('click', function() {
+				grid.f.upRows("2");
+			})
+			
+			// 선택행 내림
+			$('#downRows2').on('click', function() {
+				grid.f.upRows("2");
+			})
 		}
     },
     r: { // 이벤트 해제

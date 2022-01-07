@@ -230,8 +230,8 @@
 						<button class="c-button c-button--small c-button--solid" id="createRow0">라인추가</button>
 						<button class="c-button c-button--small c-button--red" id="removeRow0">라인삭제</button>
 						<div class="c-elevator c-elevator--left-border">
-							<button class="c-elevator__btn up">위</button>
-							<button class="c-elevator__btn down">아래</button>
+							<button class="c-elevator__btn up" id="upRows0">위</button>
+							<button class="c-elevator__btn down" id="downRows0">아래</button>
 						</div>
 					</div>
 					<!-- grid -->
@@ -253,8 +253,8 @@
 						<button class="c-button c-button--small c-button--solid" id="createRow1">라인추가</button>
 						<button class="c-button c-button--small c-button--red" id="removeRow1">라인삭제</button>
 						<div class="c-elevator c-elevator--left-border">
-							<button class="c-elevator__btn up">위</button>
-							<button class="c-elevator__btn down">아래</button>
+							<button class="c-elevator__btn up" id="upRows1">위</button>
+							<button class="c-elevator__btn down" id="downRows1">아래</button>
 						</div>
 					</div>
 					<!-- grid -->
@@ -276,8 +276,8 @@
 						<button class="c-button c-button--small c-button--solid" id="createRow2">라인추가</button>
 						<button class="c-button c-button--small c-button--red" id="removeRow2">라인삭제</button>
 						<div class="c-elevator c-elevator--left-border">
-							<button class="c-elevator__btn up">위</button>
-							<button class="c-elevator__btn down">아래</button>
+							<button class="c-elevator__btn up" id="upRows2">위</button>
+							<button class="c-elevator__btn down" id="downRows2">아래</button>
 						</div>
 					</div>
 					<!-- grid -->
@@ -289,6 +289,41 @@
 					</div>
 				</div>
 			</div>
+		</div>
+	</div>
+	
+	<!-- 라인 추가 팝업 -->
+	<div class="pop">
+		<div class="pop__box">
+			<div class="pop__article">
+				<h3 class="pop__article-header">항목 추가 입력</h3>
+				<div class="pop__article-content">
+					<ul class="customer__form-list">
+						<li class="customer__form-item">
+							<h4 class="customer__form-title">항목</h4>
+							<div class="customer__form-input">
+								<div class="c-text">
+									<input type="text" id="baName" />
+									<button>키보드</button>
+								</div>
+							</div>
+						</li>
+						<li class="customer__form-item customer__form-item--100">
+							<h4 class="customer__form-title">비고</h4>
+							<div class="customer__form-input">
+								<div class="c-textarea" id="baRemark">
+									<textarea></textarea>
+									<button>키보드</button>
+								</div>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<ul class="pop__console">
+				<li><button class="c-button pop__close">닫기</button></li>
+				<li><button class="c-button c-button--dark pop__close" id="sendItemValue">입력</button></li>
+			</ul>
 		</div>
 	</div>
 
