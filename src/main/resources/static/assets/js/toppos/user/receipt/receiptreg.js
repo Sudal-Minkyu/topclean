@@ -233,6 +233,7 @@ const fsRequestDtl = {
     fdDiscountAmt: 0,
     fdQty: 1,
     fdRequestAmt: 0,
+    fdTotAmt: 0,
     fdRetryYn: "N",
     fdRemark: "",
     frEstimateDate: "",
@@ -803,6 +804,7 @@ function calculateItemPrice() {
     let sumAmt = ceil100((currentRequest.fdNormalAmt + currentRequest.totAddCost)
         * (100 - gradeDiscount[currentRequest.fdDiscountGrade]) / 100)
     currentRequest.fdRequestAmt = sumAmt * currentRequest.fdQty;
+    currentRequest.fdTotAmt = currentRequest.fdRequestAmt;
     currentRequest.fdDiscountAmt = currentRequest.fdNormalAmt + currentRequest.totAddCost - sumAmt;
 
     if($("#fdRetry").is(":checked")) {
@@ -811,6 +813,7 @@ function calculateItemPrice() {
         currentRequest.totAddCost = 0;
         currentRequest.fdDiscountAmt = 0;
         currentRequest.fdRequestAmt = 0;
+        currentRequest.fdTotAmt = 0;
         sumAmt = 0;
     }else{
         currentRequest.fdRetryYn = "N";
@@ -1000,6 +1003,7 @@ function onCloseTakePicture() {
         fdDiscountAmt: currentRequest.fdDiscountAmt,
         fdQty: currentRequest.fdQty,
         fdRequestAmt: currentRequest.fdRequestAmt,
+        fdTotAmt: currentRequest.fdTotAmt,
         fdRetryYn: currentRequest.fdRetryYn,
         fdRemark: currentRequest.fdRemark,
         frEstimateDate: currentRequest.frEstimateDate,
@@ -1131,6 +1135,7 @@ function onAddOrder() {
             fdDiscountAmt: currentRequest.fdDiscountAmt,
             fdQty: currentRequest.fdQty,
             fdRequestAmt: currentRequest.fdRequestAmt,
+            fdTotAmt: currentRequest.fdTotAmt,
             fdRetryYn: currentRequest.fdRetryYn,
             fdRemark: currentRequest.fdRemark,
             frEstimateDate: currentRequest.frEstimateDate,
@@ -1446,6 +1451,7 @@ function changeQty() {
     tempItem.fdRequestAmt = (tempItem.fdNormalAmt + tempItem.fdPressed + tempItem.fdWhitening
         + tempItem.fdWaterRepellent + tempItem.fdStarch + tempItem.fdPollution + tempItem.fdRepairAmt
         + tempItem.fdAdd1Amt - tempItem.fdDiscountAmt) * tempItem.fdQty;
+    tempItem.fdTotAmt = tempItem.fdRequestAmt;
     AUIGrid.updateRowsById(gridId[0], tempItem);
     calculateMainPrice();
 }

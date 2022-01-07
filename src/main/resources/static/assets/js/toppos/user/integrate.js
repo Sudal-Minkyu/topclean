@@ -948,6 +948,8 @@ function calculateItemPrice() {
     let sumAmt = ceil100((data.currentRequest.fdNormalAmt + data.currentRequest.totAddCost)
         * (100 - gradeDiscount[data.currentRequest.fdDiscountGrade]) / 100)
     data.currentRequest.fdRequestAmt = sumAmt * data.currentRequest.fdQty;
+    data.currentRequest.fdTotAmt = data.currentRequest.fdRequestAmt;
+
     data.currentRequest.fdDiscountAmt = data.currentRequest.fdNormalAmt + data.currentRequest.totAddCost - sumAmt;
 
     if($("#fdRetry").is(":checked")) {
@@ -956,6 +958,7 @@ function calculateItemPrice() {
         data.currentRequest.totAddCost = 0;
         data.currentRequest.fdDiscountAmt = 0;
         data.currentRequest.fdRequestAmt = 0;
+        data.currentRequest.fdTotAmt = 0;
         sumAmt = 0;
     }else{
         data.currentRequest.fdRetryYn = "N";
