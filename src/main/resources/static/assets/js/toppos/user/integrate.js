@@ -10,8 +10,8 @@ $(function() { // 페이지가 로드되고 나서 실행
 const dto = {
     send: {
         saveModifiedOrder: {
-            bcName: "",
-            frYyyymmdd: "",
+            bcName: "d",
+            frYyyymmdd: "d",
             fdId: "",
             frId: "",
             fdTag: "d",
@@ -22,8 +22,8 @@ const dto = {
             fdS4Dt: "d",
             fdS5Dt: "d",
             fdS6Dt: "d",
-            fdCancel: "",
-            fdCacelDt: "",
+            fdCancel: "d",
+            fdCacelDt: "d",
             fdColor: "",
             fdPattern: "",
             fdPriceGrade: "",
@@ -39,8 +39,9 @@ const dto = {
             fdSpecialYn: "",
             fdTotAmt: "",
             fdRemark: "",
-            fdEstimateDt: "",
+            fdEstimateDt: "d",
             fdRetryYn: "",
+            fdUrgentYn: "",
             fdPressed: "",
             fdAdd1Amt: "",
             fdAdd1Remark: "",
@@ -58,11 +59,8 @@ const dto = {
             redBtn1: "d",
             redBtn2: "d",
             redBtn3: "d",
-            totAddCost: "",
-            frEstimateDate: "",
-            urgent: "",
-
-
+            totAddCost: "d",
+            frEstimateDate: "d",
         },
         고객검색: {
             searchType: "sr", // 0 통합검색, 1 고객명, 2 전화번호, 3 주소
@@ -124,6 +122,7 @@ const dto = {
             fdQty: "n",
             fdRequestAmt: "n",
             fdSpecialYn: "s",
+            fdUrgentYn: "s",
             fdTotAmt: "n",
             fdRemark: "s",
             fdEstimateDt: "s",
@@ -387,12 +386,9 @@ const grid = {
                     headerText: "현재상태",
                     width: 85,
                 }, {
-                    dataField: "urgent", // 급세탁이면 Y
+                    dataField: "fdUrgentYn", // 급세탁이면 Y
                     headerText: "급",
                     width: 35,
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
-                        return value === "급세탁" ? "Y" : "";
-                    }
                 }, {
                     dataField: "fdRemark",
                     headerText: "특이사항",
@@ -700,6 +696,7 @@ const event = {
                 enableKeypad();
             });
 
+            // 접수 세부 우측 하단 각종 처리 버튼의 온오프에 따른 없음버튼 온오프
             const $processInput = $("#processCheck input[type='checkbox'], #processCheck input[type='radio']");
             $processInput.on("change", function(e) {
                 const $isEtcProcessChecked = $(".choice-drop__btn.etcProcess.choice-drop__btn--active").length;
@@ -709,7 +706,19 @@ const event = {
                     $processInput.first().prop("checked", false);
                 }
                 const targetId = e.target.id;
+                additionalProcess(targetId);
+
                 calculateItemPrice();
+            });
+
+            // 긴급항목 버튼의 온오프에 따른 없음버튼 온오프
+            const $urgentInput = $("#urgentCheck input[type='checkbox']");
+            $urgentInput.on("change", function(e) {
+                if(!$("#urgentCheck input[type='checkbox']:checked").length) {
+                    $urgentInput.first().prop("checked", true);
+                }else{
+                    $urgentInput.first().prop("checked", false);
+                }
             });
 
             $("#fdAdd1").on("click", function () {
@@ -837,7 +846,6 @@ function modifyOrder(rowIndex) {
     $("input[name='fdPattern']:input[value='" + data.currentRequest.fdPattern +"']").prop("checked", true);
     $("input[name='fdPriceGrade']:input[value='" + data.currentRequest.fdPriceGrade +"']").prop("checked", true);
     $("input[name='fdDiscountGrade']:input[value='" + data.currentRequest.fdDiscountGrade +"']").prop("checked", true);
-    $("input[name='urgent']:input[value='" + data.currentRequest.urgent +"']").prop("checked", true);
 
     if(data.currentRequest.fdPressed) {
         $("#fdPress").prop("checked", true);
@@ -862,6 +870,12 @@ function modifyOrder(rowIndex) {
         $("#fdSpecialYn").prop("checked", true);
     }else{
         $("#fdSpecialYn").prop("checked", false);
+    }
+
+    if(data.currentRequest.fdUrgentYn === "Y") {
+        $("#fdUrgentYn").prop("checked", true);
+    }else{
+        $("#fdUrgentYn").prop("checked", false);
     }
 
     if(data.currentRequest.fdWhitening) {
@@ -897,7 +911,9 @@ function modifyOrder(rowIndex) {
         $("#etcNone").prop("checked", false);
     }
 
-    /* data.currentRequest의 각 벨류값에 따라 화면의 라디오 세팅을 구성한다. */
+    if($("#urgentCheck input:checked").length > 1) {
+        $("#urgentNone").prop("checked", false);
+    }
 
     calculateItemPrice();
 
@@ -994,7 +1010,6 @@ function onCloseAddOrder() {
     $("input[name='fdDiscountGrade']").first().prop("checked", true);
 
     $("input[name='material']").first().prop("checked", true);
-    $("input[name='urgent']").first().prop("checked", true);
     $(".choice input[type='checkbox']").prop("checked", false);
     $("input[name='cleanDirt']").first().prop("checked", true);
     $("input[name='waterProcess']").first().prop("checked", true);
@@ -1004,6 +1019,7 @@ function onCloseAddOrder() {
     $(".keypad_field").val(0);
 
     $("input[name='etcNone']").first().prop("checked", true);
+    $("input[name='urgentNone']").first().prop("checked", true);
     $("#fdRemark").val("");
 
     $("#addProductPopChild").parents('.pop').removeClass('active');
@@ -1030,9 +1046,8 @@ function onAddOrder() {
     data.currentRequest.fdRemark = $("#fdRemark").val();
     data.currentRequest.frEstimateDate = data.initialData.etcData.frEstimateDate.replace(/[^0-9]/g, "");
     data.currentRequest.fdSpecialYn = $("#fdSpecialYn").is(":checked") ? "Y" : "N";
+    data.currentRequest.fdUrgentYn = $("#fdUrgentYn").is(":checked") ? "Y" : "N";
 
-    /* 상세한 사항이 정해지면 수정할 것 */
-    data.currentRequest.urgent = $("input[name='urgent']:checked").val();
 
     AUIGrid.updateRowsById(grid.s.id[0], data.currentRequest);
     ajax.saveModifiedOrder(data.currentRequest);
