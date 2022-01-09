@@ -144,10 +144,10 @@ public class InspectService {
                 return ResponseEntity.ok(res.fail(ResponseErrorCode.TP023.getCode(), ResponseErrorCode.TP023.getDesc(), "문자","수정 금액(전/후) : "+nowFdTotAmt+" / "+updateFdTotAmt));
             }else if(nowFdTotAmt.equals(updateFdTotAmt)){
                 // 업데이트만 실행
-//                requestDetailRepository.save(requestDetailSave);
+                requestDetailRepository.save(requestDetailSave);
             }else{
                 // 업데이트 실행 후 마스터테이블 수정 함수호출
-//                requestDetailRepository.save(requestDetailSave);
+                requestDetailRepository.save(requestDetailSave);
 
                 // 만약 금액이 변동되었을 시 수정후, 마스터테이블도 업데이트하기 (가격이 높아졌을때만 시행, 작아지면 리턴처리)
                 userService.requestDetailUpdateFromMasterUpdate(requestDetailUpdateDto.getFrNo(), frCode);

@@ -673,11 +673,11 @@ public class UserRestController {
                                                                                                                    @RequestParam(value="filterFromDt", defaultValue="") String filterFromDt,
                                                                                                                    @RequestParam(value="filterToDt", defaultValue="") String filterToDt,
                                                                                                                    HttpServletRequest request){
-        log.info("고객ID bcId : "+bcId);
-        log.info("택번호 searchTag : "+searchTag);
-        log.info("조회타입 filterCondition : "+filterCondition);
-        log.info("시작 접수일자 filterFromDt : "+filterFromDt);
-        log.info("종료 접수일자 filterToDt : "+filterToDt);
+//        log.info("고객ID bcId : "+bcId);
+//        log.info("택번호 searchTag : "+searchTag);
+//        log.info("조회타입 filterCondition : "+filterCondition);
+//        log.info("시작 접수일자 filterFromDt : "+filterFromDt);
+//        log.info("종료 접수일자 filterToDt : "+filterToDt);
         if(filterFromDt.equals("")){
             filterFromDt = "00000101";
         }

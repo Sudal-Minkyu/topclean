@@ -132,8 +132,6 @@ public class UserService {
     public void requestDetailUpdateFromMasterUpdate(String frNo, String frCode) {
         log.info("requestDetailUpdateFromMasterUpdate 호출");
 
-        AjaxResponse res = new AjaxResponse();
-
         log.info("frNo : "+frNo);
         //디테일의 fdTotAmt를 합산한 결과가 frTotalAmount가 되고 frTotalAmount와 가져온 frPayAmount의 데이터를 비교하여 업데이트를 한다.
         List<RequestDetailAmtDto> requestDetailAmtDtos =  requestDetailRepositoryCustom.findByRequestDetailAmtList(frNo); // 세부테이블의 합계금액 리스트 호출
@@ -147,7 +145,7 @@ public class UserService {
         if(optionalRequest.isPresent()){
             optionalRequest.get().setFrTotalAmount(totalAmt);
             optionalRequest.get().setFrUncollectYn("Y");
-//            requestRepository.save(optionalRequest.get());
+            requestRepository.save(optionalRequest.get());
         }
 
     }
