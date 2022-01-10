@@ -31,6 +31,7 @@ const dto = {
             frYyyymmdd: "d",
             fdId: "",
             frId: "",
+            frNo: "s",
             fdTag: "d",
             biItemcode: "d",
             fdState: "d",
@@ -114,6 +115,7 @@ const dto = {
             frYyyymmdd: "s", // 접수일자
             fdId: "n",
             frId: "n",
+            frNo: "s",
             fdTag: "s",
             fdState: "s",
             biItemcode: "s",
@@ -299,8 +301,7 @@ const ajax = {
     saveModifiedOrder(data) {
         dv.chk(data, dto.send.franchiseRequestDetailUpdate, "상품 수정내용 저장");
         CommonUI.ajaxjsonPost(grid.s.url.update[0], data, function(res) {
-
-        onCloseAddOrder();
+            onCloseAddOrder();
         });
     },
 
@@ -739,7 +740,7 @@ const event = {
                     $processInput.first().prop("checked", false);
                 }
                 const targetId = e.target.id;
-                additionalProcess(targetId);
+                this.additionalProcess(targetId);
 
                 calculateItemPrice();
             });
