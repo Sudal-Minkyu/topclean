@@ -300,7 +300,7 @@ const ajax = {
     },
     saveModifiedOrder(data) {
         dv.chk(data, dto.send.franchiseRequestDetailUpdate, "상품 수정내용 저장");
-        CommonUI.ajaxjsonPost(grid.s.url.update[0], data, function(res) {
+        CommonUI.ajaxjson(grid.s.url.update[0], JSON.stringify(data), function(res) {
             onCloseAddOrder();
         });
     },
