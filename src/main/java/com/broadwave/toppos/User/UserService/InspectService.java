@@ -1,18 +1,15 @@
 package com.broadwave.toppos.User.UserService;
 
-import com.broadwave.toppos.Account.AccountService;
-import com.broadwave.toppos.Head.HeadService;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
-import com.broadwave.toppos.User.Addprocess.AddprocessRepository;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentCencelDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentRepositoryCustom;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.*;
 import com.broadwave.toppos.common.AjaxResponse;
 import com.broadwave.toppos.common.ResponseErrorCode;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -33,34 +30,31 @@ import java.util.Optional;
 @Service
 public class InspectService {
 
-    private final ModelMapper modelMapper;
-    private final AccountService accountService;
-    private final HeadService headService;
     private final UserService userService;
     private final TokenProvider tokenProvider;
-    private final PasswordEncoder passwordEncoder;
 
-    private final AddprocessRepository addprocessRepository;
+    private final PaymentRepositoryCustom paymentRepositoryCustom;
     private final RequestDetailRepository requestDetailRepository;
     private final RequestDetailRepositoryCustom requestDetailRepositoryCustom;
 
     @Autowired
-    public InspectService(ModelMapper modelMapper, TokenProvider tokenProvider, AccountService accountService, HeadService headService, UserService userService,
-                          RequestDetailRepositoryCustom requestDetailRepositoryCustom, PasswordEncoder passwordEncoder, AddprocessRepository addprocessRepository,
-                          RequestDetailRepository requestDetailRepository){
-        this.modelMapper = modelMapper;
+    public InspectService(TokenProvider tokenProvider,UserService userService, PaymentRepositoryCustom paymentRepositoryCustom,
+                          RequestDetailRepositoryCustom requestDetailRepositoryCustom, RequestDetailRepository requestDetailRepository){
         this.tokenProvider = tokenProvider;
-        this.accountService = accountService;
-        this.headService = headService;
         this.userService = userService;
-        this.passwordEncoder = passwordEncoder;
-        this.addprocessRepository = addprocessRepository;
         this.requestDetailRepository = requestDetailRepository;
         this.requestDetailRepositoryCustom = requestDetailRepositoryCustom;
+        this.paymentRepositoryCustom = paymentRepositoryCustom;
     }
 
     //  통합조회용 - 접수세부 테이블
     public ResponseEntity<Map<String, Object>> franchiseRequestDetailSearch(Long bcId, String searchTag, String filterCondition, String filterFromDt, String filterToDt, HttpServletRequest request) {
+        log.info("franchiseRequestDetailSearch 호출");
+//        log.info("고객ID bcId : "+bcId);
+//        log.info("택번호 searchTag : "+searchTag);
+//        log.info("조회타입 filterCondition : "+filterCondition);
+//        log.info("시작 접수일자 filterFromDt : "+filterFromDt);
+//        log.info("종료 접수일자 filterToDt : "+filterToDt);
 
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
@@ -159,6 +153,35 @@ public class InspectService {
 
     }
 
+    //  통합조회용 - 결제취소 전 결제내역리스트 요청
+    public ResponseEntity<Map<String, Object>> franchiseDetailCencelDataList(Long frId, HttpServletRequest request) {
+        log.info("franchiseDetailCencelDataList 호출");
+
+//        log.info("접수마스터 ID frId : "+frId);
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
+        log.info("현재 접속한 가맹점 코드 : "+frCode);
+
+        List<PaymentCencelDto> paymentCencelDtoList = paymentRepositoryCustom.findByRequestDetailCencelDataList(frCode, frId);
+//        log.info("paymentCencelDtoList : "+paymentCencelDtoList);
+        data.put("gridListData",paymentCencelDtoList);
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
+    //  통합조회용 - 결제취소 요청
+    public ResponseEntity<Map<String, Object>> franchiseRequestDetailCencel(Long fpId, String type, HttpServletRequest request) {
+        log.info("franchiseRequestDetailCencel 호출");
+
+        log.info("결제 ID fpId : "+fpId);
+        log.info("적립급/취소 타입 : "+type);
+
+        AjaxResponse res = new AjaxResponse();
 
 
 
@@ -167,15 +190,8 @@ public class InspectService {
 
 
 
-
-
-
-
-
-
-
-
-
+        return ResponseEntity.ok(res.success());
+    }
 
 
 

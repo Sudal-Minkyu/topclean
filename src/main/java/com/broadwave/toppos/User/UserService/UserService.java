@@ -13,19 +13,15 @@ import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestRepository;
 import com.broadwave.toppos.User.UserIndexDto;
 import com.broadwave.toppos.User.UserLoginLog.UserLoginLog;
 import com.broadwave.toppos.User.UserLoginLog.UserLoginLogRepository;
-import com.broadwave.toppos.common.AjaxResponse;
-import com.broadwave.toppos.common.ResponseErrorCode;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -147,20 +143,11 @@ public class UserService {
             optionalRequest.get().setFrUncollectYn("Y");
             requestRepository.save(optionalRequest.get());
         }
-
     }
 
 
 
 
-//    // 수선, 추가요금, 상용구 고유ID값을 통해 Optional 호출
-//    public Optional<Addprocess> findByBaId(Long baId) {
-//        return addprocessRepository.findById(baId);
-//    }
-//
-//    // 수선, 추가요금, 상용구 타입과 항목을 통해 Optional 호출
-//    public Optional<Addprocess> findByAddProcess(String baType, String baName) {
-//        return addprocessRepository.findByAddProcess(baType, baName);
-//    }
+
 
 }

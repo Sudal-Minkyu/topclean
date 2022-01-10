@@ -673,11 +673,6 @@ public class UserRestController {
                                                                                                                    @RequestParam(value="filterFromDt", defaultValue="") String filterFromDt,
                                                                                                                    @RequestParam(value="filterToDt", defaultValue="") String filterToDt,
                                                                                                                    HttpServletRequest request){
-//        log.info("고객ID bcId : "+bcId);
-//        log.info("택번호 searchTag : "+searchTag);
-//        log.info("조회타입 filterCondition : "+filterCondition);
-//        log.info("시작 접수일자 filterFromDt : "+filterFromDt);
-//        log.info("종료 접수일자 filterToDt : "+filterToDt);
         if(filterFromDt.equals("")){
             filterFromDt = "00000101";
         }
@@ -694,7 +689,18 @@ public class UserRestController {
         return inspectService.franchiseRequestDetailUpdate(requestDetailUpdateDto, request);
     }
 
+    //  통합조회용 - 결제취소 전 결제내역리스트 요청
+    @GetMapping("franchiseDetailCencelDataList")
+    public ResponseEntity<Map<String,Object>> franchiseDetailCencelDataList(@RequestParam(value="frId", defaultValue="") Long frId, HttpServletRequest request){
+        return inspectService.franchiseDetailCencelDataList(frId, request);
+    }
 
+    //  통합조회용 - 결제취소/적립금전환 요청
+    @PostMapping("franchiseRequestDetailCencel")
+    public ResponseEntity<Map<String,Object>> franchiseRequestDetailCencel(@RequestParam(value="fpId", defaultValue="") Long fpId,
+                                                                                                                @RequestParam(value="type", defaultValue="") String type, HttpServletRequest request){
+        return inspectService.franchiseRequestDetailCencel(fpId, type, request);
+    }
 
 
 

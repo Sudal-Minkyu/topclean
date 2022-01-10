@@ -1,5 +1,7 @@
 package com.broadwave.toppos.User.ReuqestMoney.Requset.Payment;
 
+import java.util.List;
+
 /**
  * @author Minkyu
  * Date : 2021-12-16
@@ -7,5 +9,5 @@ package com.broadwave.toppos.User.ReuqestMoney.Requset.Payment;
  * Remark :
  */
 public interface PaymentRepositoryCustom {
-
+    List<PaymentCencelDto> findByRequestDetailCencelDataList(String frCode, Long frId);
 }
