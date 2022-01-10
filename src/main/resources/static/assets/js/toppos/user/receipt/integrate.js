@@ -9,13 +9,13 @@ $(function() { // 페이지가 로드되고 나서 실행
 * */
 const dto = {
     send: {
-        결제내역받아오기: { // 결제 조회창 열릴 때
+        franchiseDetailCencelDataList: { // 결제 조회창 열릴 때
             frId: "nr",
         },
 
-        취소와적립금요청: { // 결제취소시
+        franchiseRequestDetailCencel: { // 결제취소시
             fpId: "nr",
-            type: "nr", // 1 = 취소, 2 = 적립금전환
+            type: "sr", // 1 = 취소, 2 = 적립금전환
         },
 
         접수취소요청: {
@@ -61,8 +61,8 @@ const dto = {
             fdPressed: "",
             fdAdd1Amt: "",
             fdAdd1Remark: "",
-            fdAdd2Amt: "",
-            fdAdd2Remark: "",
+            fdAdd2Amt: "d",
+            fdAdd2Remark: "d",
             fdRepairAmt: "",
             fdRepairRemark: "",
             fdWhitening: "",
@@ -95,7 +95,7 @@ const dto = {
         },
     },
     receive: {
-        결제내역받아오기: { // 현 가맹점의 코드와 이름, 그리고 접수결제 테이블의 결제요소들
+        franchiseDetailCencelDataList: { // 현 가맹점의 코드와 이름, 그리고 접수결제 테이블의 결제요소들
             frCode: "",
             frName: "",
 
@@ -104,7 +104,7 @@ const dto = {
             fpAmt: "nr",
             fpCatIssuername: "s",
             fpCatApprovalno: "s",
-            fpCatApprovatime: "s",
+            fpCatApprovaltime: "s",
             fpCatTotamount: "s",
             fpCatVatamount: "s",
             fpMonth: "",
@@ -300,12 +300,29 @@ const ajax = {
     },
     saveModifiedOrder(data) {
         dv.chk(data, dto.send.franchiseRequestDetailUpdate, "상품 수정내용 저장");
-        CommonUI.ajaxjson(grid.s.url.update[0], JSON.stringify(data), function(res) {
+        CommonUI.ajax(grid.s.url.update[0], "PARAM", data, function(res) {
             onCloseAddOrder();
         });
     },
 
+    getPaymentList(frId) {
+        const condition = {frId: frId};
+        dv.chk(condition, dto.send.franchiseDetailCencelDataList, "결제 리스트 받아오기");
+        const url = "/api/user/franchiseDetailCencelDataList";
+        CommonUI.ajax(url, "PARAM", condition, function(res) {
+            console.log(res);
+        });
+    },
+
     cancelOrder(fdId) {
+        const condition = {frId: frId};
+        dv.chk(condition, dto.send, "결제 리스트 받아오기");
+        const url = "/api/user/franchiseDetailCencelDataList";
+        CommonUI.ajax(url, "PARAM", condition, function(res) {
+            console.log(res);
+        });
+
+
         console.log(fdId);
     },
 
@@ -613,7 +630,7 @@ const grid = {
 
         clearGrid(numOfGrid) {
             AUIGrid.clearGridData(grid.s.id[numOfGrid]);
-        }
+        },
     },
 
     e: {
@@ -643,7 +660,7 @@ const grid = {
                         });
                         break;
                     case "redBtn2":
-                        cancelPayment();
+                        cancelPayment(e.item.frId);
                         // 결제취소창 진입
                         break;
                     case "redBtn3":
@@ -1297,6 +1314,7 @@ function confirmInspect() {
 
 }
 
-function cancelPayment() {
+function cancelPayment(frId) {
+    ajax.getPaymentList(frId);
     $("#paymentListPop").addClass("active");
 }

@@ -159,7 +159,6 @@ class CommonUIClass {
                     });
                     break;
 
-
                 case "POST" :
                 case "PUT" :
                 case "DELETE" :
@@ -181,6 +180,59 @@ class CommonUIClass {
                             if (req.status === 200) {
                                 return func(req);
                             }else {
+                                if (req.err_msg2 === null) {
+                                    alertCaution(req.err_msg, 1);
+                                } else {
+                                    alertCaution(req.err_msg + "<br>" + req.err_msg2, 1);
+                                }
+                            }
+                        }
+                    });
+                    break;
+
+                case "MAPPER" :
+                    $(document).ajaxSend(function (e, xhr) {
+                        xhr.setRequestHeader("Authorization", localStorage.getItem('Authorization'));
+                    });
+                    $.ajax({
+                        url: url,
+                        type: "POST",
+                        cache: false,
+                        data: JSON.stringify(data),
+                        contentType: "application/json; charset=utf-8",
+                        error: function (req) {
+                            ajaxErrorMsg(req);
+                        },
+                        success: function (req) {
+                            if (req.status === 200) {
+                                return func(req);
+                            } else {
+                                if (req.err_msg2 === null) {
+                                    alertCaution(req.err_msg, 1);
+                                } else {
+                                    alertCaution(req.err_msg + "<br>" + req.err_msg2, 1);
+                                }
+                            }
+                        }
+                    });
+                    break;
+
+                case "PARAM" :
+                    $(document).ajaxSend(function (e, xhr) {
+                        xhr.setRequestHeader("Authorization", localStorage.getItem('Authorization'));
+                    });
+                    $.ajax({
+                        url: url,
+                        data : data,
+                        type : 'post',
+                        cache:false,
+                        error: function (req) {
+                            ajaxErrorMsg(req);
+                        },
+                        success: function (req) {
+                            if (req.status === 200) {
+                                return func(req);
+                            } else {
                                 if (req.err_msg2 === null) {
                                     alertCaution(req.err_msg, 1);
                                 } else {
