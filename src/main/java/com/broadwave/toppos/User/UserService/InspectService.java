@@ -199,6 +199,7 @@ public class InspectService {
 
         if(type.equals("1")){
             log.info("결제 취소합니다.");
+            return ResponseEntity.ok(res.fail("문자 ", "결제취소는 작업중입니다.", null, null));
         }else{
             log.info("적립금으로 전환합니다.");
             Optional<Payment> optionalPayment = paymentRepository.findById(fpId);
