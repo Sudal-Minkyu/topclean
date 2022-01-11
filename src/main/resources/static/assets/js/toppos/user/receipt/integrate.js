@@ -25,7 +25,8 @@ const dto = {
         },
 
         검품확인수락거부: {
-
+            fiId: "s",
+            fdId: "s",
         },
 
         franchiseDetailCencelDataList: { // 결제 조회창 열릴 때
@@ -137,7 +138,6 @@ const dto = {
 
             ffPath: "s",
             ffFilename: "s",
-
         },
 
         franchiseDetailCencelDataList: { // 현 가맹점의 코드와 이름, 그리고 접수결제 테이블의 결제요소들
