@@ -5,6 +5,9 @@ import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 /**
  * @author Minkyu
  * Date : 2022-01-10
@@ -30,6 +33,12 @@ public class PaymentCencelDto {
     private String fpCatTotamount; // 결제금액 : ex> 000012000
     private String fpCatVatamount; // 부가세금액 : ex> 000001090
     private Integer fpMonth; // 카드할부 ( 0: 일시불, 2: 2개월 ~ 12 : 12개월) - 기본값 0
+
+    private LocalDateTime insertDt; // 승인 일자
+
+    public String getInsertDt() {
+        return insertDt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+    }
 
     public String getFrCode() {
         return frCode;
