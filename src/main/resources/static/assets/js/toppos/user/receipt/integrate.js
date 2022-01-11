@@ -198,6 +198,7 @@ const dto = {
             fdPollutionLevel: "n",
             fdWaterRepellent: "n",
             fdStarch: "n",
+            fpCancelYn: "sr",
         },
 
         customerInfo: { // 접수 페이지의 고객 정보 가져오는 부분과 동일
@@ -999,11 +1000,11 @@ const event = {
             });
 
             $("#transferPoint").on("click", function () {
-                cancelPayment("1");
+                cancelPayment("2");
             });
 
             $("#refundPayment").on("click", function () {
-                cancelPayment("2");
+                cancelPayment("1");
             });
         },
     },
