@@ -9,13 +9,8 @@ $(function() { // 페이지가 로드되고 나서 실행
 * */
 const dto = {
     send: {
-        검품내역가져오기: {
-            fiId: "nr",
+        검품내역가져오기: { // fdId가 일치하는 검품 데이터에서, 검품타입이 F인 것
             fdId: "nr",
-            fiAddAmt: "nr",
-            fiComment: "s",
-            ffPath: "s",
-            ffFilename: "s",
         },
 
         검품내역등록: {
@@ -111,6 +106,17 @@ const dto = {
         },
     },
     receive: {
+        검품내역가져오기: {
+            fiId: "nr",
+            fdId: "nr",
+            fiAddAmt: "nr",
+            fiComment: "s",
+            ffPath: "s",
+            ffFilename: "s",
+            fiSendMsgYn: "s",
+            fiCustomerConfirm: "s",
+        },
+
         franchiseDetailCencelDataList: { // 현 가맹점의 코드와 이름, 그리고 접수결제 테이블의 결제요소들
             frCode: "",
             frName: "",
