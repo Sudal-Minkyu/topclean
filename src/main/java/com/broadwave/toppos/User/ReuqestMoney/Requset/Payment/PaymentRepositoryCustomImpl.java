@@ -42,7 +42,9 @@ public class PaymentRepositoryCustomImpl extends QuerydslRepositorySupport imple
                         payment.fpCatApprovaltime,
                         payment.fpCatTotamount,
                         payment.fpCatVatamount,
-                        payment.fpMonth
+                        payment.fpMonth,
+
+                        payment.insert_date
                 ));
 
         query.orderBy(payment.id.desc());
