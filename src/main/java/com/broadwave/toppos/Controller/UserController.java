@@ -39,6 +39,12 @@ public class UserController {
         return "user/customer/customerlist";
     }
 
+    // 미납 조회
+    @RequestMapping("unpaid")
+    public String unpaid(){
+        return "user/customer/unpaid";
+    }
+
     // 가맹점주 접수등록 페이지
     @RequestMapping("receiptreg")
     public String receiptreg(){

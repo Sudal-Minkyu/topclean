@@ -12,6 +12,26 @@ const dto = {
 			frTagNo: "sr",
 			frEstimateDuration: "nr",
 		},
+		franchiseAddProcess: {
+			repairListData: {
+				baSort: "nr",
+				baName: "sr",
+				baRemark: "s",
+				_$uid: "d",
+			},
+			addAmountData: {
+				baSort: "nr",
+				baName: "sr",
+				baRemark: "s",
+				_$uid: "d",
+			},
+			keyWordData: {
+				baSort: "nr",
+				baName: "sr",
+				baRemark: "s",
+				_$uid: "d",
+			}
+		}
     },
     receive: {
 		myInfo: {
@@ -86,9 +106,7 @@ const ajax = {
 	
 	// 상용구, 수선항목, 추가항목 받기
 	getFrFavorite(num) {
-		const url = "/api/user/franchiseAddProcessList";
-		CommonUI.ajax(url, "GET", {baType: num}, (res) => {
-			console.log(res);
+		CommonUI.ajax(grid.s.url.create[num], "GET", {baType: num}, (res) => {
 			let data;
 			switch(num) {
 				case "1" :
@@ -109,8 +127,37 @@ const ajax = {
 					num = "0";
 				break;
 			}
-			console.log(data);
 			grid.f.setFavoriteData(num, data);
+		});
+	},
+	
+	// 상용구, 수선항목, 추가항목 저장
+	saveFrFavorite(num, frFavoriteData) {
+		let baTypeNum;
+		
+		switch(num) {
+			case "0" :
+				dv.chk(frFavoriteData, dto.send.franchiseAddProcess.keyWordData, "상용구 저장");
+				baTypeNum = "3";
+			break;
+			
+			case "1" :
+				dv.chk(frFavoriteData, dto.send.franchiseAddProcess.repairListData, "수선항목 저장");
+				baTypeNum = "1";
+			break;
+			
+			case "2" :
+				dv.chk(frFavoriteData, dto.send.franchiseAddProcess.addAmountData, "추가항목 저장");
+				baTypeNum = "2";
+			break;
+		};
+		const data = {
+			list : frFavoriteData
+		};
+		data.baType = baTypeNum;
+		
+		CommonUI.ajaxjson(grid.s.url.update[num], JSON.stringify(data), function(res) {
+			
 		});
 	}
 };
@@ -132,13 +179,17 @@ const grid = {
         data: [],
         url: {
             create: [
-                "/api/"
+                "/api/user/franchiseAddProcessList",
+                "/api/user/franchiseAddProcessList",
+                "/api/user/franchiseAddProcessList"
             ],
             read: [
                 "/api/"
             ],
             update: [
-                "/api/"
+                "/api/user/franchiseAddProcess",
+                "/api/user/franchiseAddProcess",
+                "/api/user/franchiseAddProcess"
             ],
             delete: [
                 "/api/"
@@ -255,6 +306,18 @@ const grid = {
 		
 		downRows(num) {
 			AUIGrid.moveRowsToDown(grid.s.id[num]);
+		},
+		
+		saveGridData(num) {
+			AUIGrid.removeSoftRows(grid.s.id[num]);
+			const updateGridData = AUIGrid.getGridData(grid.s.id[num]);
+			for(let i = 0; updateGridData.length > i; i++) {
+				updateGridData[i].baSort = i;
+			};
+			ajax.saveFrFavorite(num, updateGridData);
+			/*updateGridData.forEach(function(obj) {
+				console.log(obj);
+			});*/
 		}
     },
 
@@ -314,7 +377,7 @@ const event = {
 			$('#sendItemValue').on('click', function() {
 				const baName = $('#baName').val();
 				const baRemark = $('#baRemark').val();
-				const item = {"항목": baName, "비고": baRemark};
+				const item = {"baName": baName, "baRemark": baRemark};
 				console.log(item);
 				grid.f.createRow("2", item);
 			})
@@ -331,8 +394,13 @@ const event = {
 			
 			// 선택행 내림
 			$('#downRows2').on('click', function() {
-				grid.f.upRows("2");
+				grid.f.downRows("2");
 			})
+		},
+		
+		// 상용구, 수선항목, 추가항목 저장 버튼 클릭
+		saveFrFavorite() {
+			
 		}
     },
     r: { // 이벤트 해제
