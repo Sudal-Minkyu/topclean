@@ -1539,6 +1539,75 @@ textarea {
 	padding: 0 0.313rem;
 }
 
+/* 미수조회 */
+.unpaid {
+	display: flex;
+	flex-wrap: wrap;
+}
+.unpaid__costomer {
+	width: 30rem;
+	height: 48.5rem;
+	border: 1px solid #ddd;
+}
+.unpaid__list {
+	flex: 1;
+	margin-left: 1.25rem;
+}
+.unpaid__detail {
+	margin-top: 1.25rem;
+}
+.unpaid__detail h4 {
+	margin-bottom: 0.625rem;
+	color: #333;
+	font-size: 1.5rem;
+	font-weight: 700;
+}
+.unpaid__sum {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
+	height: 3.125rem;
+	padding: 0 1.25rem;
+	background-color: #004a98;
+}
+.unpaid__sum.unpaid__sum--right {
+	justify-content: flex-end;
+}
+.unpaid__sum-item {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	position: relative;
+	color: #fff;
+	font-size: 1.125rem;
+	font-weight: 700;
+}
+.unpaid__sum-item + .unpaid__sum-item {
+	margin-left: 2.563rem;
+}
+.unpaid__sum-item + .unpaid__sum-item:before {
+	content: " ";
+	position: absolute;
+	top: 50%;
+	left: -1.313rem;
+	width: 0.063rem;
+	height: 1.5rem;
+	background-color: #003670;
+	transform: translateY(-50%);
+}
+.unpaid__sum.unpaid__sum--right .unpaid__sum-money {
+	width: 7.5rem;
+}
+.unpaid__sum-title {
+	width: 6.25rem;
+}
+.unpaid__sum-money {
+	flex: 1;
+	text-align: right;
+}
+
 
 
 /* popup */
