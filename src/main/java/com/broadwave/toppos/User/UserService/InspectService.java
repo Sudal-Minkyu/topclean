@@ -1,9 +1,13 @@
 package com.broadwave.toppos.User.UserService;
 
 import com.broadwave.toppos.Jwt.token.TokenProvider;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.Payment;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentCencelDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentRepositoryCustom;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.*;
+import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoney;
+import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoneyRepository;
 import com.broadwave.toppos.common.AjaxResponse;
 import com.broadwave.toppos.common.ResponseErrorCode;
 import io.jsonwebtoken.Claims;
@@ -33,18 +37,22 @@ public class InspectService {
     private final UserService userService;
     private final TokenProvider tokenProvider;
 
+    private final PaymentRepository paymentRepository;
     private final PaymentRepositoryCustom paymentRepositoryCustom;
     private final RequestDetailRepository requestDetailRepository;
     private final RequestDetailRepositoryCustom requestDetailRepositoryCustom;
+    private final SaveMoneyRepository saveMoneyRepository;
 
     @Autowired
-    public InspectService(TokenProvider tokenProvider,UserService userService, PaymentRepositoryCustom paymentRepositoryCustom,
-                          RequestDetailRepositoryCustom requestDetailRepositoryCustom, RequestDetailRepository requestDetailRepository){
+    public InspectService(TokenProvider tokenProvider,UserService userService, PaymentRepository paymentRepository, PaymentRepositoryCustom paymentRepositoryCustom,
+                          RequestDetailRepositoryCustom requestDetailRepositoryCustom, RequestDetailRepository requestDetailRepository, SaveMoneyRepository saveMoneyRepository){
         this.tokenProvider = tokenProvider;
         this.userService = userService;
         this.requestDetailRepository = requestDetailRepository;
+        this.paymentRepository = paymentRepository;
         this.requestDetailRepositoryCustom = requestDetailRepositoryCustom;
         this.paymentRepositoryCustom = paymentRepositoryCustom;
+        this.saveMoneyRepository = saveMoneyRepository;
     }
 
     //  통합조회용 - 접수세부 테이블
@@ -80,7 +88,6 @@ public class InspectService {
         log.info("franchiseRequestDetailUpdate 호출");
 
         AjaxResponse res = new AjaxResponse();
-        HashMap<String, Object> data = new HashMap<>();
 
         // 클레임데이터 가져오기
         Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
@@ -183,12 +190,36 @@ public class InspectService {
 
         AjaxResponse res = new AjaxResponse();
 
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
+        String login_id = claims.getSubject(); // 현재 아이디
+        log.info("현재 접속한 아이디 : "+login_id);
+        log.info("현재 접속한 가맹점 코드 : "+frCode);
 
+        if(type.equals("1")){
+            log.info("결제 취소합니다.");
+        }else{
+            log.info("적립금으로 전환합니다.");
+            Optional<Payment> optionalPayment = paymentRepository.findById(fpId);
+            if(!optionalPayment.isPresent()){
+                return ResponseEntity.ok(res.fail(ResponseErrorCode.TP022.getCode(), "적립금 전환 "+ResponseErrorCode.TP022.getDesc(), null, null));
+            }else{
+                optionalPayment.get().setFpCancelYn("Y");
+                optionalPayment.get().setFpSavedMoneyYn("Y");
+                paymentRepository.save(optionalPayment.get());
 
-
-
-
-
+                SaveMoney saveMoney = new SaveMoney();
+                saveMoney.setBcId(optionalPayment.get().getBcId());
+                saveMoney.setFpId(optionalPayment.get());
+                saveMoney.setFsType("1");
+                saveMoney.setFsClose("N");
+                saveMoney.setFsAmt(optionalPayment.get().getFpAmt());
+                saveMoney.setInsert_id(login_id);
+                saveMoney.setInsert_date(LocalDateTime.now());
+                saveMoneyRepository.save(saveMoney);
+            }
+        }
 
         return ResponseEntity.ok(res.success());
     }

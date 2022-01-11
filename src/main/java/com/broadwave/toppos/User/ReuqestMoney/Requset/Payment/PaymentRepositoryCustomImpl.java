@@ -1,7 +1,6 @@
 package com.broadwave.toppos.User.ReuqestMoney.Requset.Payment;
 
 import com.broadwave.toppos.Head.Franohise.QFranchise;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestSearchDto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
@@ -29,7 +28,7 @@ public class PaymentRepositoryCustomImpl extends QuerydslRepositorySupport imple
 
         JPQLQuery<PaymentCencelDto> query = from(payment)
                 .innerJoin(franchise).on(franchise.frCode.eq(frCode))
-                .where(payment.frId.id.eq(frId).and(payment.fpCancelYn.eq("N")))
+                .where(payment.frId.id.eq(frId).and(payment.fpCancelYn.eq("N").and(payment.fpSavedMoneyYn.eq("N"))))
                 .select(Projections.constructor(PaymentCencelDto.class,
                         franchise.frCode,
                         franchise.frName,
