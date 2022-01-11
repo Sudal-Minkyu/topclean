@@ -192,7 +192,7 @@
 				<h3 class="pop__article-header">결제내역</h3>
 				<div class="pop__aricle-content">
 					<!-- 이 안에 넣어주기 -->
-		        	<div id="grid_paymentList" style="height: 400px;">높이값 빼고 스타일 삭제</div>
+		        	<div id="grid_paymentList" style="height: 400px;"></div>
 		        	<span class="pop__comment">*취소 또는 취소 후 적립금 전환 하고자 하는 결제 내역을 선택하세요.</span>
 				</div>
 			</div>
@@ -213,7 +213,8 @@
 					<h3 class="pop__article-header">검품등록</h3>
 					<div class="pop__article-photo" style="background-color: #ddd">
 						<!-- 캠 영상 들어갈 곳 -->
-						<video src=""></video>
+						<video id="cameraScreen" playsinline autoplay></video>
+						<canvas id="cameraCanvas" style="display: none"></canvas>
 					</div>
 				</div>
 				
@@ -221,7 +222,7 @@
 					<div class="pop__article-haedconsole">
 						<button class="c-button c-button--darksolid c-button--small">삭제</button>
 					</div>
-					<div id="grid_putInspect" style="height: 208px;">높이값 빼고 스타일 삭제</div>
+					<div id="grid_putInspect" style="height: 208px;"></div>
 				</div>
 			</div>
 			
@@ -230,15 +231,15 @@
 					<h3 class="pop__article-header">검품내용</h3>
 					<div class="pop__article-haedconsole">
 						<div class="c-checkbox">
-							<input type="checkbox" id="check01" />
-							<label for="check01">사진포함</label>
+							<input type="checkbox" id="isIncludeImg" />
+							<label for="isIncludeImg">사진포함</label>
 						</div>
 					</div>
 				</div>
 				
 				<div class="pop__aricle-content">
 					<div class="c-textarea">
-						<textarea ></textarea>
+						<textarea id="fiComment"></textarea>
 						<button></button>
 					</div>
 				</div>
@@ -256,14 +257,14 @@
 						<div class="pop__console-title">추가 비용발생</div>
 						<div class="pop__console-input">
 							<div class="c-text">
-								<input id="ac" type="text" />
+								<input id="fiAddAmt" type="text" />
 								<button id="vkeypad1">키보드</button>
 							</div>
 						</div>
 					</div>
 				</li>
-				<li><button class="c-button pop__close">닫기</button></li> 
-				<li><button class="c-button c-button--dark">검품내역등록</button></li>
+				<li><button class="c-button" id="closePutInspectPop">닫기</button></li> 
+				<li><button class="c-button c-button--dark" id="commitInspect">검품내역등록</button></li>
 			</ul>
 		</div>
 	</div>
@@ -275,11 +276,7 @@
 				<h3 class="pop__article-header">검품확인</h3>
 				
 				<div class="pop__aricle-content">
-					<div id="grid_confirmInspect" style="height: 240px;">높이값 빼고 스타일 삭제
-						<button class="c-state">등록</button>
-						<button class="c-state c-state--modify">수정</button>
-						<button class="c-state c-state--cancel">취소</button>
-					</div>
+					<div id="grid_confirmInspect" style="height: 240px;"></div>
 				</div>
 			</div>
 			

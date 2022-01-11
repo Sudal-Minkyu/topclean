@@ -9,6 +9,22 @@ $(function() { // 페이지가 로드되고 나서 실행
 * */
 const dto = {
     send: {
+        검품내역가져오기: {
+            fiId: "nr",
+            fdId: "nr",
+            fiAddAmt: "nr",
+            fiComment: "s",
+            ffPath: "s",
+            ffFilename: "s",
+        },
+
+        검품내역등록: {
+            fdId: "nr",
+            fiAddAmt: "nr",
+            fiComment: "s",
+            source: "", // 검품사진파일
+        },
+
         franchiseDetailCencelDataList: { // 결제 조회창 열릴 때
             frId: "nr",
         },
@@ -330,6 +346,16 @@ const ajax = {
         console.log(fdId);
     },
 
+    putNewInspect(formData) {
+        const testObj = Object.fromEntries(formData);
+        testObj.fdId = Number(testObj.fdId);
+        testObj.fiAddAmt = Number(testObj.fiAddAmt);
+        dv.chk(testObj, dto.send.검품내역등록);
+        console.log(Object.fromEntries(formData));
+        // CommonUI.ajax(url, "PARAM", formData, function(res) {
+        // });
+    }
+
 };
 
 /* .s : AUI 그리드 관련 설정들
@@ -352,7 +378,11 @@ const grid = {
                 "/api/", "/api/", "/api/", "/api/", "/api/"
             ],
             read: [
-                "/api/user/franchiseRequestDetailSearch", "/api/user/customerInfo", "/api/user/", "/api/user/", "/api/user/"
+                "/api/user/franchiseRequestDetailSearch",
+                "/api/user/customerInfo",
+                "/api/user/",
+                "/api/user/",
+                "/api/user/"
             ],
             update: [
                 "/api/user/franchiseRequestDetailUpdate", "/api/", "/api/", "/api/", "/api/"
@@ -453,7 +483,7 @@ const grid = {
                     formatString: "yyyy-mm-dd",
                 }, {
                     dataField: "blueBtn1",
-                    headerText: "가맹검품",
+                    headerText: "검품등록",
                     width: 70,
                     renderer : {
                         type: "TemplateRenderer",
@@ -724,6 +754,10 @@ const grid = {
         clearGrid(numOfGrid) {
             AUIGrid.clearGridData(grid.s.id[numOfGrid]);
         },
+
+        resizeGrid(numOfGrid) {
+            AUIGrid.resize(grid.s.id[numOfGrid]);
+        },
     },
 
     e: {
@@ -734,8 +768,7 @@ const grid = {
                 switch (e.dataField) {
                     case "blueBtn1":
                         // 가맹점 검품등록창 진입
-
-                        putInspect();
+                        openPutInspectPop(e);
                         break;
                     case "blueBtn2":
                         confirmInspect();
@@ -784,6 +817,8 @@ const data = {
         C06: "#F1CE32", C07: "#349A50", C08: "#55CAB7", C09: "#398BE0", C10: "#DE9ACE", C11: "#FF9FB0",
     },
     startPrice: 0,
+    cameraStream: null,
+    isCameraExist: false,
 }
 
 /* 이벤트를 s : 설정하거나 r : 해지하는 함수들을 담는다. 그리드 관련 이벤트는 grid.e에 위치 */
@@ -928,7 +963,24 @@ const event = {
                     $(this).parents('.choice-drop').children('.choice-drop__btn').addClass('choice-drop__btn--active');
                 }
             });
-        }
+        },
+        subMenu() {
+            $("#commitInspect").on("click", function() {
+                putInspect();
+            });
+            $("#closePutInspectPop").on("click", function () {
+                $("#putInspectPop").removeClass("active");
+                if(data.isCameraExist) {
+                    try {
+                        data.cameraStream.getTracks().forEach(function (track) {
+                            track.stop();
+                        });
+                    }catch (e) {
+                        console.log(e);
+                    }
+                }
+            });
+        },
     },
     r: { // 이벤트 해제
 
@@ -952,6 +1004,7 @@ function onPageLoad() {
     event.s.main();
     event.s.vkeys();
     event.s.modify();
+    event.s.subMenu();
 
     /* grid.s 에 적절한 값을 세팅하였다면, 해당 함수 호출시 해당 배열번호의 그리드에 의도한 데이터들이 주입되어진다. */
     // grid.f.setInitialData(0);
@@ -1400,15 +1453,88 @@ function removeEventsFromElement(element) {
     element.parentNode.replaceChild(elementClone, element);
 }
 
-function putInspect() {
-    $("#putInspectPop").addClass("active");
-}
-
 function confirmInspect() {
     $("#confirmInspectPop").addClass("active");
+    grid.f.resizeGrid(4);
 }
 
 function cancelPayment(frId) {
     ajax.getPaymentList(frId);
     $("#paymentListPop").addClass("active");
+}
+
+/* 웹 카메라와 촬영 작업중 */
+async function openPutInspectPop(e) {
+    data.currentRequest = e.item;
+
+    try {
+        data.isCameraExist = true;
+        // const cameraList = document.getElementById("cameraList"); 복수 카메라를 사용할 경우 해제하여 작업
+        data.cameraStream = await navigator.mediaDevices.getUserMedia({
+            audio: false,
+            video: {
+                width: {ideal: 4096},
+                height: {ideal: 2160}
+            },
+        });
+
+        const screen = document.getElementById("cameraScreen");
+        screen.srcObject = data.cameraStream;
+    }catch (e) {
+        if(e instanceof DOMException) {
+            alertCaution("연결된 카메라가 존재하지 않습니다", 1);
+        }else{
+            console.log(e);
+        }
+        data.isCameraExist = false;
+    }
+
+    $("#putInspectPop").addClass("active");
+    grid.f.resizeGrid(3);
+}
+
+function putInspect() {
+    if(data.isCameraExist && data.cameraStream.active) {
+        try {
+            const $fiComment = $("#fiComment");
+            if (!$fiComment.val().length) {
+                alertCaution("검품내용을 입력해 주세요", 1);
+                return false;
+            }
+
+            const video = document.getElementById("cameraScreen");
+            const canvas = document.getElementById('cameraCanvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            const takenPic = canvas.toDataURL();
+
+            const blob = b64toBlob(takenPic);
+
+            const formData = new FormData();
+            formData.append("fdId", data.currentRequest.fdId);
+            formData.append("source", blob);
+            formData.append("fiComment", $fiComment.val());
+            formData.append("fiAddAmt", $("#fiAddAmt").val().replace(/[^0-9]/g, ""));
+
+            ajax.putNewInspect(formData);
+
+        } catch (e) {
+            console.log(e);
+        }
+    }
+}
+
+function b64toBlob(dataURI) {
+
+    const byteString = atob(dataURI.split(',')[1]);
+    const ab = new ArrayBuffer(byteString.length);
+    const ia = new Uint8Array(ab);
+
+    for (let i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+    }
+    return new Blob([ab], { type: 'image/jpeg' });
 }
