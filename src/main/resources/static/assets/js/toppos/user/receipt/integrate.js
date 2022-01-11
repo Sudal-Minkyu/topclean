@@ -111,8 +111,7 @@ const dto = {
             fdId: "nr",
             fiAddAmt: "nr",
             fiComment: "s",
-            ffPath: "s",
-            ffFilename: "s",
+            fiPhotoYn: "s",
             fiSendMsgYn: "s",
             fiCustomerConfirm: "s",
         },
@@ -175,30 +174,6 @@ const dto = {
             fdPollutionLevel: "n",
             fdWaterRepellent: "n",
             fdStarch: "n",
-        },
-
-        검품정보: { // 검품 내역과 검품사진을 불러온다. 아직 작업 x
-            ffPath: "s",
-            ffFilename: "s",
-            ffRemark: "s",
-
-            fiId: "n",
-            fdId: "n",
-            frCode: "d",
-            brCode: "d",
-            fiType: "s",
-            fiComment: "s",
-            fiAddAmt: "n",
-            fiPhotoYn: "s",
-            fiSendMsgYn: "s",
-            fiCustomerConfirm: "s",
-            fiProgressStateDt: "s",
-            fiMessage: "s",
-            fiMessageSendDt: "s",
-            modifyId: "d",
-            modifyDt: "d",
-            insertId: "d",
-            insertDt: "d",
         },
 
         customerInfo: { // 접수 페이지의 고객 정보 가져오는 부분과 동일
@@ -331,16 +306,16 @@ const ajax = {
         const condition = {frId: frId};
         dv.chk(condition, dto.send.franchiseDetailCencelDataList, "결제 리스트 받아오기");
         const url = "/api/user/franchiseDetailCencelDataList";
-        CommonUI.ajax(url, "PARAM", condition, function(res) {
+        CommonUI.ajax(url, "GET", condition, function(res) {
             console.log(res);
         });
     },
 
     cancelOrder(fdId) {
-        const condition = {frId: frId};
-        dv.chk(condition, dto.send, "결제 리스트 받아오기");
+        const condition = {fdId: fdId};
+        dv.chk(condition, dto.send, "한 항목 결제 취소하기");
         const url = "/api/user/franchiseDetailCencelDataList";
-        CommonUI.ajax(url, "PARAM", condition, function(res) {
+        CommonUI.ajax(url, "GET", condition, function(res) {
             console.log(res);
         });
 
