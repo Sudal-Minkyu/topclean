@@ -19,6 +19,14 @@ const dto = {
             fiComment: "s",
             source: "", // 검품사진파일
         },
+        
+        검품확인리스트가져오기: { // fdId가 일치하는 모든 검품 리스트
+            fdId: "nr",
+        },
+
+        검품확인수락거부: {
+
+        },
 
         franchiseDetailCencelDataList: { // 결제 조회창 열릴 때
             frId: "nr",
@@ -116,10 +124,25 @@ const dto = {
             fiCustomerConfirm: "s",
         },
 
+        검품확인리스트가져오기: {
+            fiId: "nr",
+            fdId: "nr",
+            fiType: "s",
+            fiComment: "s",
+            fiAddAmt: "n",
+            fiPhotoYn: "s",
+            fiSendMsgYn: "s",
+            fiCustomerConfirm: "s",
+            insertDt: "s",
+
+            ffPath: "s",
+            ffFilename: "s",
+
+        },
+
         franchiseDetailCencelDataList: { // 현 가맹점의 코드와 이름, 그리고 접수결제 테이블의 결제요소들
             frCode: "",
             frName: "",
-
             fpId: "nr",
             fpType: "sr",
             fpAmt: "nr",
@@ -129,6 +152,7 @@ const dto = {
             fpCatTotamount: "s",
             fpCatVatamount: "s",
             fpMonth: "",
+            insertDt: "", // 1월 11일 추가
         },
 
         franchiseRequestDetailSearch: { // 접수 세부 테이블의 거의 모든 요소와, 고객이름
@@ -307,20 +331,27 @@ const ajax = {
         dv.chk(condition, dto.send.franchiseDetailCencelDataList, "결제 리스트 받아오기");
         const url = "/api/user/franchiseDetailCencelDataList";
         CommonUI.ajax(url, "GET", condition, function(res) {
-            console.log(res);
+            grid.f.setData(2, res.sendData.gridListData);
         });
     },
 
     cancelOrder(fdId) {
         const condition = {fdId: fdId};
-        dv.chk(condition, dto.send, "한 항목 결제 취소하기");
+        dv.chk(condition, dto.send, "한 항목 접수 취소");
         const url = "/api/user/franchiseDetailCencelDataList";
         CommonUI.ajax(url, "GET", condition, function(res) {
             console.log(res);
         });
 
-
         console.log(fdId);
+    },
+
+    cancelPayment(target) {
+        dv.chk(target, dto.send.franchiseRequestDetailCencel, "한 항목 결제 취소");
+        const url = "/api/user/franchiseRequestDetailCencel";
+        CommonUI.ajax(url, "PARAM", target, function(res) {
+
+        });
     },
 
     cancelDeliverState(fdId) {
@@ -612,11 +643,11 @@ const grid = {
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
                 }, {
-                    dataField: "",
+                    dataField: "fpAmt",
                     headerText: "승인금액",
                 }, {
-                    dataField: "",
-                    headerText: "카드종류",
+                    dataField: "fpType",
+                    headerText: "결제방식",
                 },
             ];
 
@@ -732,11 +763,15 @@ const grid = {
             data.selectedCustomer = AUIGrid.getSelectedRows(grid.s.id[1])[0];
         },
 
+        getSelectedItem(gridNum) {
+            return AUIGrid.getSelectedRows(grid.s.id[gridNum])[0];
+        },
+
         clearGrid(numOfGrid) {
             AUIGrid.clearGridData(grid.s.id[numOfGrid]);
         },
 
-        resizeGrid(numOfGrid) {
+        resize(numOfGrid) {
             AUIGrid.resize(grid.s.id[numOfGrid]);
         },
     },
@@ -768,7 +803,7 @@ const grid = {
                         });
                         break;
                     case "redBtn2":
-                        cancelPayment(e.item.frId);
+                        cancelPaymentPop(e.item.frId);
                         // 결제취소창 진입
                         break;
                     case "redBtn3":
@@ -949,6 +984,7 @@ const event = {
             $("#commitInspect").on("click", function() {
                 putInspect();
             });
+
             $("#closePutInspectPop").on("click", function () {
                 $("#putInspectPop").removeClass("active");
                 if(data.isCameraExist) {
@@ -960,6 +996,14 @@ const event = {
                         console.log(e);
                     }
                 }
+            });
+
+            $("#transferPoint").on("click", function () {
+                cancelPayment("1");
+            });
+
+            $("#refundPayment").on("click", function () {
+                cancelPayment("2");
             });
         },
     },
@@ -1436,12 +1480,24 @@ function removeEventsFromElement(element) {
 
 function confirmInspect() {
     $("#confirmInspectPop").addClass("active");
-    grid.f.resizeGrid(4);
+    grid.f.resize(4);
 }
 
-function cancelPayment(frId) {
+function cancelPaymentPop(frId) {
     ajax.getPaymentList(frId);
     $("#paymentListPop").addClass("active");
+    grid.f.resize(2);
+}
+
+function cancelPayment(cancelType) {
+    const item = grid.f.getSelectedItem(2);
+    if(item) {
+        const target = {
+            fpId: item.fpId,
+            type: cancelType
+        }
+        ajax.cancelPayment(target);
+    }
 }
 
 /* 웹 카메라와 촬영 작업중 */
@@ -1471,7 +1527,7 @@ async function openPutInspectPop(e) {
     }
 
     $("#putInspectPop").addClass("active");
-    grid.f.resizeGrid(3);
+    grid.f.resize(3);
 }
 
 function putInspect() {
