@@ -341,7 +341,7 @@ const ajax = {
 const grid = {
     s: { // 그리드 세팅
         targetDiv: [
-            "grid_main", "grid_customerList", "grid_paymentList"
+            "grid_main", "grid_customerList", "grid_paymentList", "grid_putInspect", "grid_confirmInspect"
         ],
         columnLayout: [],
         prop: [],
@@ -349,16 +349,16 @@ const grid = {
         data: [],
         url: {
             create: [
-                "/api/", "/api/", "/api/"
+                "/api/", "/api/", "/api/", "/api/", "/api/"
             ],
             read: [
-                "/api/user/franchiseRequestDetailSearch", "/api/user/customerInfo", "/api/user/"
+                "/api/user/franchiseRequestDetailSearch", "/api/user/customerInfo", "/api/user/", "/api/user/", "/api/user/"
             ],
             update: [
-                "/api/user/franchiseRequestDetailUpdate", "/api/", "/api/"
+                "/api/user/franchiseRequestDetailUpdate", "/api/", "/api/", "/api/", "/api/"
             ],
             delete: [
-                "/api/", "/api/", "/api/"
+                "/api/", "/api/", "/api/", "/api/", "/api/"
             ]
         }
     },
@@ -593,6 +593,99 @@ const grid = {
                 rowHeight : 48,
                 headerHeight : 48,
             };
+
+            grid.s.columnLayout[2] = [
+                {
+                    dataField: "",
+                    headerText: "승인일자",
+                    dataType: "date",
+                    formatString: "yyyy-mm-dd",
+                }, {
+                    dataField: "",
+                    headerText: "승인금액",
+                }, {
+                    dataField: "",
+                    headerText: "카드종류",
+                },
+            ];
+
+            grid.s.prop[2] = {
+                editable : false,
+                selectionMode : "singleRow",
+                noDataMessage : "출력할 데이터가 없습니다.",
+                enableColumnResize : false,
+                showRowNumColumn : false,
+                showStateColumn : true,
+                enableFilter : true,
+                rowHeight : 48,
+                headerHeight : 48,
+            };
+
+            grid.s.columnLayout[3] = [
+                {
+                    dataField: "",
+                    headerText: "등록일시",
+                    dataType: "date",
+                    formatString: "yyyy-mm-dd",
+                }, {
+                    dataField: "",
+                    headerText: "검품내용",
+                }, {
+                    dataField: "",
+                    headerText: "메세지",
+                }, {
+                    dataField: "",
+                    headerText: "이미지",
+                },
+            ];
+
+            grid.s.prop[3] = {
+                editable : false,
+                selectionMode : "singleRow",
+                noDataMessage : "출력할 데이터가 없습니다.",
+                enableColumnResize : false,
+                showRowNumColumn : false,
+                showStateColumn : true,
+                enableFilter : true,
+                rowHeight : 48,
+                headerHeight : 48,
+            };
+
+            grid.s.columnLayout[4] = [
+                {
+                    dataField: "",
+                    headerText: "등록일시",
+                    dataType: "date",
+                    formatString: "yyyy-mm-dd",
+                }, {
+                    dataField: "",
+                    headerText: "유형",
+                }, {
+                    dataField: "",
+                    headerText: "검품내용",
+                }, {
+                    dataField: "",
+                    headerText: "메시지",
+                }, {
+                    dataField: "",
+                    headerText: "이미지",
+                }, {
+                    dataField: "",
+                    headerText: "고객수락",
+                },
+            ];
+
+            grid.s.prop[4] = {
+                editable : false,
+                selectionMode : "singleRow",
+                noDataMessage : "출력할 데이터가 없습니다.",
+                enableColumnResize : false,
+                showRowNumColumn : false,
+                showStateColumn : true,
+                enableFilter : true,
+                rowHeight : 48,
+                headerHeight : 48,
+            };
         },
 
         create() { // 그리드 동작 처음 빈 그리드를 생성
@@ -641,6 +734,7 @@ const grid = {
                 switch (e.dataField) {
                     case "blueBtn1":
                         // 가맹점 검품등록창 진입
+
                         putInspect();
                         break;
                     case "blueBtn2":
@@ -1307,11 +1401,11 @@ function removeEventsFromElement(element) {
 }
 
 function putInspect() {
-
+    $("#putInspectPop").addClass("active");
 }
 
 function confirmInspect() {
-
+    $("#confirmInspectPop").addClass("active");
 }
 
 function cancelPayment(frId) {

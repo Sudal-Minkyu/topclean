@@ -81,7 +81,9 @@ const grid = {
                 enableColumnResize : false,
                 showRowNumColumn : false,
                 showStateColumn : true,
-                enableFilter : true
+                enableFilter : true,
+                rowHeight : 48,
+                headerHeight : 48,
             };
 
         },
