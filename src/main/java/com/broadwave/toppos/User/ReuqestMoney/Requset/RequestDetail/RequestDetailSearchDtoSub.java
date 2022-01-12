@@ -1,6 +1,9 @@
 package com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -15,7 +18,7 @@ import java.time.format.DateTimeFormatter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RequestDetailSearchDto {
+public class RequestDetailSearchDtoSub {
     // 마스터 테이블에서 가져 올 데이터
     private String bcName; // 고객이름
     private String frYyyymmdd; // 접수일자
@@ -75,5 +78,7 @@ public class RequestDetailSearchDto {
     private Integer fdPollutionLevel; // 오염 선택레벨(0~5)
     private Integer fdWaterRepellent; // 발수가공요금
     private Integer fdStarch; // 풀먹임 요금
+
+    private String fpCancelYn; // 결제취소 여부
 
 }

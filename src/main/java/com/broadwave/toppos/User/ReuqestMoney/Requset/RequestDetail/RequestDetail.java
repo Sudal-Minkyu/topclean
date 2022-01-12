@@ -91,6 +91,21 @@ public class RequestDetail {
     @Column(name="fd_s6_time")
     private LocalDateTime fdS6Time; // 고객인도시간
 
+    @Column(name="fd_s7_dt")
+    private String fdS7Dt; // 지사강제출고일
+
+    @Column(name="fd_s7_id")
+    private String fdS5Id; // 지사강제출고 담장자ID
+
+    @Column(name="fd_s7_time")
+    private LocalDateTime fdS7Time; // 지사강제출고시간
+
+    @Column(name="fd_s8_dt")
+    private String fdS8Dt; // 가맹점강제입고일
+
+    @Column(name="fd_s8_time")
+    private LocalDateTime fdS8Time; // 가맹점강제입고시간
+
     @Column(name="fd_cancel")
     private String fdCancel; // 접수취소 Y 기본값 N
 

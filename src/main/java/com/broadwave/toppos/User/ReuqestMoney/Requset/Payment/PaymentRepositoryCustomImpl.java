@@ -52,5 +52,24 @@ public class PaymentRepositoryCustomImpl extends QuerydslRepositorySupport imple
         return query.fetch();
     }
 
+    @Override
+    public List<PaymentCencelYnDto> findByPaymentCancelYn(List<Long> frIdList){
+        QPayment payment = QPayment.payment;
+
+        JPQLQuery<PaymentCencelYnDto> query = from(payment)
+                .where(payment.frId.id.in(frIdList)
+                        .and(payment.fpCancelYn.eq("N")))
+                .groupBy(payment.frId)
+
+                .select(Projections.constructor(PaymentCencelYnDto.class,
+                        payment.frId.id,
+                        payment.fpCancelYn
+                ));
+
+        query.orderBy(payment.id.desc());
+
+        return query.fetch();
+    }
+
 
 }

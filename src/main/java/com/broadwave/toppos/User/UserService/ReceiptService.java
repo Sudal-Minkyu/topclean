@@ -576,7 +576,9 @@ public class ReceiptService {
 
                     log.info("미수금완납 결제여부 : "+collectYn);
                     log.info("결제 금액 : "+frPayAmount);
+
                     // 마스터테이블에 결제금액 업데이트
+                    frPayAmount = optionalRequest.get().getFrPayAmount()+frPayAmount; // 현재 결제된 금액과 마스터테이블에 기록된 결제금액을 더한다.
                     optionalRequest.get().setFrPayAmount(frPayAmount);
                     optionalRequest.get().setModity_id(login_id);
                     optionalRequest.get().setModity_date(LocalDateTime.now());

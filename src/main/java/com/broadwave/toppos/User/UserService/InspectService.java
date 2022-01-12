@@ -1,28 +1,28 @@
 package com.broadwave.toppos.User.UserService;
 
 import com.broadwave.toppos.Jwt.token.TokenProvider;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.Payment;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentCencelDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentRepository;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentRepositoryCustom;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.*;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.Request;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.*;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotMapperDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestRepository;
 import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoney;
 import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoneyRepository;
 import com.broadwave.toppos.common.AjaxResponse;
 import com.broadwave.toppos.common.ResponseErrorCode;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
+import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * @author Minkyu
@@ -34,20 +34,25 @@ import java.util.Optional;
 @Service
 public class InspectService {
 
+    private final ModelMapper modelMapper;
     private final UserService userService;
     private final TokenProvider tokenProvider;
 
     private final PaymentRepository paymentRepository;
     private final PaymentRepositoryCustom paymentRepositoryCustom;
+    private final RequestRepository requestRepository;
     private final RequestDetailRepository requestDetailRepository;
     private final RequestDetailRepositoryCustom requestDetailRepositoryCustom;
     private final SaveMoneyRepository saveMoneyRepository;
 
     @Autowired
-    public InspectService(TokenProvider tokenProvider,UserService userService, PaymentRepository paymentRepository, PaymentRepositoryCustom paymentRepositoryCustom,
-                          RequestDetailRepositoryCustom requestDetailRepositoryCustom, RequestDetailRepository requestDetailRepository, SaveMoneyRepository saveMoneyRepository){
+    public InspectService(ModelMapper modelMapper, TokenProvider tokenProvider, UserService userService, PaymentRepository paymentRepository, PaymentRepositoryCustom paymentRepositoryCustom,
+                          RequestRepository requestRepository, RequestDetailRepositoryCustom requestDetailRepositoryCustom,
+                          RequestDetailRepository requestDetailRepository, SaveMoneyRepository saveMoneyRepository){
+        this.modelMapper = modelMapper;
         this.tokenProvider = tokenProvider;
         this.userService = userService;
+        this.requestRepository = requestRepository;
         this.requestDetailRepository = requestDetailRepository;
         this.paymentRepository = paymentRepository;
         this.requestDetailRepositoryCustom = requestDetailRepositoryCustom;
@@ -74,7 +79,29 @@ public class InspectService {
 
         List<RequestDetailSearchDto> requestDetailSearchDtoList = requestDetailSearch(frCode, bcId, searchTag, filterCondition, filterFromDt, filterToDt); //  통합조회용 - 접수세부 호출
 
-        data.put("gridListData",requestDetailSearchDtoList);
+        List<Long> frIdList = new ArrayList<>();
+        for(int i=0; i<requestDetailSearchDtoList.size(); i++){
+            frIdList.add(requestDetailSearchDtoList.get(i).getFrId());
+        }
+
+        List<PaymentCencelYnDto> cencelList = paymentRepositoryCustom.findByPaymentCancelYn(frIdList);
+
+        int cancel_num = 0;
+        Long frId_num;
+        List<RequestDetailSearchDtoSub> requestDetailSearchDtoSubList = new ArrayList<>();
+        for(RequestDetailSearchDto requestDetailSearchDto : requestDetailSearchDtoList){
+            RequestDetailSearchDtoSub requestDetailSearchDtoSub = modelMapper.map(requestDetailSearchDto,RequestDetailSearchDtoSub.class);
+
+//            if(frId_num.equals(frId)){
+//                requestDetailSearchDtoSub.setFpCancelYn("N");
+//            }else{
+                requestDetailSearchDtoSub.setFpCancelYn("Y");
+//            }
+            requestDetailSearchDtoSubList.add(requestDetailSearchDtoSub);
+        }
+
+        data.put("gridListData",requestDetailSearchDtoSubList);
+        data.put("cencelList",cencelList);
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
     //  통합조회용 - 접수세부 호출용 함수
@@ -139,7 +166,7 @@ public class InspectService {
             optionalRequestDetail.get().setModity_id(login_id);
             optionalRequestDetail.get().setModity_date(LocalDateTime.now());
             RequestDetail requestDetailSave = optionalRequestDetail.get();
-            log.info("requestDetailSave : "+requestDetailSave);
+//            log.info("requestDetailSave : "+requestDetailSave);
 
             if(nowFdTotAmt>updateFdTotAmt){
                 return ResponseEntity.ok(res.fail(ResponseErrorCode.TP023.getCode(), ResponseErrorCode.TP023.getDesc(), "문자","수정 금액(전/후) : "+nowFdTotAmt+" / "+updateFdTotAmt));
@@ -164,7 +191,7 @@ public class InspectService {
     public ResponseEntity<Map<String, Object>> franchiseDetailCencelDataList(Long frId, HttpServletRequest request) {
         log.info("franchiseDetailCencelDataList 호출");
 
-//        log.info("접수마스터 ID frId : "+frId);
+        log.info("접수마스터 ID frId : "+frId);
 
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
@@ -197,15 +224,28 @@ public class InspectService {
         log.info("현재 접속한 아이디 : "+login_id);
         log.info("현재 접속한 가맹점 코드 : "+frCode);
 
-        if(type.equals("1")){
-            log.info("결제 취소합니다.");
-            return ResponseEntity.ok(res.fail("문자 ", "결제취소는 작업중입니다.", null, null));
+        Optional<Payment> optionalPayment = paymentRepository.findById(fpId);
+        if(!optionalPayment.isPresent()) {
+            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP022.getCode(), "적립금 전환 " + ResponseErrorCode.TP022.getDesc(), null, null));
         }else{
-            log.info("적립금으로 전환합니다.");
-            Optional<Payment> optionalPayment = paymentRepository.findById(fpId);
-            if(!optionalPayment.isPresent()){
-                return ResponseEntity.ok(res.fail(ResponseErrorCode.TP022.getCode(), "적립금 전환 "+ResponseErrorCode.TP022.getDesc(), null, null));
+            if(type.equals("1")){
+                Optional<Request> optionalRequest = requestRepository.findById(optionalPayment.get().getFrId().getId());
+                if(!optionalRequest.isPresent()){
+                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP022.getCode(), "결제 취소 할 " + ResponseErrorCode.TP022.getDesc(), null, null));
+                }else{
+                    log.info("결제 취소합니다.");
+                    optionalPayment.get().setFpCancelYn("Y");
+                    paymentRepository.save(optionalPayment.get());
+
+                    // 마스터테이블의 계산가격을 업데이트한다.
+                    optionalRequest.get().setFrPayAmount(optionalRequest.get().getFrPayAmount()-optionalPayment.get().getFpAmt());
+                    optionalRequest.get().setFrUncollectYn("Y");
+                    optionalRequest.get().setModity_id(login_id);
+                    optionalRequest.get().setModity_date(LocalDateTime.now());
+                    requestRepository.save(optionalRequest.get());
+                }
             }else{
+                log.info("적립금으로 전환합니다.");
                 optionalPayment.get().setFpCancelYn("Y");
                 optionalPayment.get().setFpSavedMoneyYn("Y");
                 paymentRepository.save(optionalPayment.get());
@@ -225,11 +265,53 @@ public class InspectService {
         return ResponseEntity.ok(res.success());
     }
 
+    // 가맹검품 등록 API
+    public ResponseEntity<Map<String, Object>> franchiseInspectionSave(InspeotMapperDto inspeotMapperDto, MultipartHttpServletRequest source, HttpServletRequest request) throws IOException {
+        log.info("franchiseRequestDetailCencel 호출");
 
+        log.info("inspeotMapperDto : "+inspeotMapperDto);
+        log.info("source : "+source);
 
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
 
+        data.put("inspeotMapperDto",inspeotMapperDto);
+        data.put("source",source);
 
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
+        String login_id = claims.getSubject(); // 현재 아이디
+        log.info("현재 접속한 아이디 : "+login_id);
+        log.info("현재 접속한 가맹점 코드 : "+frCode);
 
+//        //파일저장
+//        Iterator<String> files = multi.getFileNames();
+//        String uploadFile = files.next();
+//        MultipartFile mFile = multi.getFile(uploadFile);
+////        log.info("mFile : "+mFile);
+//
+//        assert mFile != null;
+//        if(!mFile.isEmpty()) {
+//            // 파일 중복명 처리
+//            String genId = UUID.randomUUID().toString().replace("-", "");
+////            log.info("genId : "+genId);
+//
+//            // S3에 저장 할 파일주소
+//            SimpleDateFormat date = new SimpleDateFormat("yyyyMMdd");
+//            String filePath = "/toppos-franchise/" + date.format(new Date());
+////            log.info("filePath : "+filePath);
+//            String storedFileName = genId + ".png";
+////            log.info("storedFileName : "+storedFileName);
+//            String ffFilename = awss3Service.uploadObject(mFile, storedFileName, filePath);
+//            data.put("ffPath",AWSBUCKETURL+filePath+"/");
+//            data.put("ffFilename",ffFilename);
+//        }else{
+//            log.info("사진파일을 못불러왔습니다.");
+//        }
 
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+
+    }
 
 }

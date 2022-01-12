@@ -107,14 +107,11 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
 
         JPQLQuery<RequestDetailSearchDto> query = from(requestDetail)
                 .innerJoin(request).on(requestDetail.frId.eq(request))
-                .where(requestDetail.frId.frCode.eq(frCode))
-                .where(request.frYyyymmdd.loe(filterFromDt).and(request.frYyyymmdd.goe(filterToDt)))
-
                 .leftJoin(inspeot).on(inspeot.fdId.eq(requestDetail))
 
-//                .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
-//                .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
-//                .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
+                .where(requestDetail.frId.frCode.eq(frCode).and(requestDetail.fdCancel.eq("N")))
+                .where(request.frYyyymmdd.loe(filterFromDt).and(request.frYyyymmdd.goe(filterToDt)).and(request.frConfirmYn.eq("Y")))
+
                 .select(Projections.constructor(RequestDetailSearchDto.class,
 
                         request.bcId.bcName,
@@ -173,7 +170,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
 
                 ));
 
-        query.orderBy(requestDetail.id.desc());
+        query.orderBy(requestDetail.id.desc()).groupBy(requestDetail);
 
         if(bcId != null){
             query.where(request.bcId.bcId.eq(bcId));

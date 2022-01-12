@@ -22,6 +22,7 @@ import com.broadwave.toppos.User.GroupSort.GroupSortSet;
 import com.broadwave.toppos.User.ItemSort.ItemSortSet;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentSet;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Request;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotMapperDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.PhotoDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailSet;
@@ -702,7 +703,11 @@ public class UserRestController {
         return inspectService.franchiseRequestDetailCencel(fpId, type, request);
     }
 
-
+    // 가맹검품 등록 API
+    @PostMapping("franchiseInspectionSave")
+    public ResponseEntity<Map<String,Object>> franchiseInspectionSave(@ModelAttribute InspeotMapperDto inspeotMapperDto, MultipartHttpServletRequest source, HttpServletRequest request) throws IOException {
+        return inspectService.franchiseInspectionSave(inspeotMapperDto, source, request);
+    }
 
 
 
