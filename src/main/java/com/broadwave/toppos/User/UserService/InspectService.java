@@ -98,19 +98,16 @@ public class InspectService {
             frIdList.add(requestDetailSearchDtoList.get(i).getFrId());
         }
 
-        List<PaymentCencelYnDto> cencelList = paymentRepositoryCustom.findByPaymentCancelYn(frIdList);
+        List<PaymentCencelYnDto> paymentCencelYnDtoList = paymentRepositoryCustom.findByPaymentCancelYn(frIdList);
+        List<Long> cencelList = new ArrayList<>();
+        for(int i=0; i<paymentCencelYnDtoList.size(); i++){
+            cencelList.add(paymentCencelYnDtoList.get(i).getFrId());
+        }
 
-        int cancel_num = 0;
-        Long frId_num;
         List<RequestDetailSearchDtoSub> requestDetailSearchDtoSubList = new ArrayList<>();
         for(RequestDetailSearchDto requestDetailSearchDto : requestDetailSearchDtoList){
             RequestDetailSearchDtoSub requestDetailSearchDtoSub = modelMapper.map(requestDetailSearchDto,RequestDetailSearchDtoSub.class);
-
-//            if(frId_num.equals(frId)){
-//                requestDetailSearchDtoSub.setFpCancelYn("N");
-//            }else{
-                requestDetailSearchDtoSub.setFpCancelYn("Y");
-//            }
+            requestDetailSearchDtoSub.setFpCancelYn("Y");
             requestDetailSearchDtoSubList.add(requestDetailSearchDtoSub);
         }
 
@@ -365,5 +362,41 @@ public class InspectService {
         return ResponseEntity.ok(res.success());
 
     }
+
+    //  통합조회용 - 검품 리스트 요청
+    public ResponseEntity<Map<String, Object>> franchiseInspectionList(Long fdId, String type, HttpServletRequest request) {
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String login_id = claims.getSubject(); // 현재 아이디
+        String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
+        log.info("현재 접속한 가맹점 코드 : "+frCode);
+        log.info("현재 접속한 아이디 : "+login_id);
+
+        
+//    fiId: "nr",
+//    fdId: "nr",
+//    fiType: "s",
+//    fiComment: "s",
+//    fiAddAmt: "n",
+//    fiPhotoYn: "s",
+//    fiSendMsgYn: "s",
+//    fiCustomerConfirm: "s",
+//    insertDt: "s",
+//    ffPath: "s",
+//    ffFilename: "s",
+
+
+
+
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
+
+
 
 }

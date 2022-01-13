@@ -17,19 +17,19 @@ import lombok.Setter;
 @AllArgsConstructor
 public class PaymentCencelYnDto {
 
+//    private Long countCancelYn; // 결제취소 여부 갯수
     private Long frId; // 마스터테이블 고유ID값
-    private String fpCancelYn; // 결제취소 여부
-//    private String countFpCancelYn; // 결제취소 여부 갯수
+//    private String fpCancelYn; // 결제취소 여부
 
     public Long getFrId() {
         return frId;
     }
 
-    public String getFpCancelYn() {
-        return fpCancelYn;
-    }
+//    public String getFpCancelYn() {
+//        return fpCancelYn;
+//    }
 
-//    public String getCountFpCancelYn() {
-//        return countFpCancelYn;
+//    public Long getCountCancelYn() {
+//        return countCancelYn;
 //    }
 }

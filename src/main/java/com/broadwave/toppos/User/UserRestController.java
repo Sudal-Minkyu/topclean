@@ -703,14 +703,18 @@ public class UserRestController {
         return inspectService.franchiseRequestDetailCencel(fpId, type, request);
     }
 
-    // 가맹검품 등록 API
+    // 검품 등록 API -> 추후에 유저서비스로 옮기기 지사도 사용할꺼라서,
     @PostMapping("franchiseInspectionSave")
     public ResponseEntity<Map<String,Object>> franchiseInspectionSave(@ModelAttribute InspeotMapperDto inspeotMapperDto, MultipartHttpServletRequest multi) throws IOException {
         return inspectService.franchiseInspectionSave(inspeotMapperDto, multi, AWSBUCKETURL);
     }
 
-
-
+    //  통합조회용 - 검품 리스트 요청 -> 추후에 유저서비스로 옮기기 지사도 사용할꺼라서,
+    @PostMapping("franchiseInspectionList")
+    public ResponseEntity<Map<String,Object>> franchiseInspectionList(@RequestParam(value="fdId", defaultValue="") Long fdId,
+                                                                           @RequestParam(value="type", defaultValue="") String type, HttpServletRequest request){
+        return inspectService.franchiseInspectionList(fdId, type, request);
+    }
 
 
 
