@@ -11,6 +11,7 @@ const dto = {
     send: {
         검품내역가져오기: { // fdId가 일치하는 검품 데이터에서, 검품타입이 F인 것
             fdId: "nr",
+            type: "s",
         },
 
         franchiseInspectionSave: {
@@ -23,6 +24,7 @@ const dto = {
         
         검품확인리스트가져오기: { // fdId가 일치하는 모든 검품 리스트
             fdId: "nr",
+            type: "s",
         },
 
         검품확인수락거부: {
@@ -117,16 +119,6 @@ const dto = {
         },
     },
     receive: {
-        검품내역가져오기: {
-            fiId: "nr",
-            fdId: "nr",
-            fiAddAmt: "nr",
-            fiComment: "s",
-            fiPhotoYn: "s",
-            fiSendMsgYn: "s",
-            fiCustomerConfirm: "s",
-        },
-
         검품확인리스트가져오기: {
             fiId: "nr",
             fdId: "nr",
@@ -280,7 +272,7 @@ const ajax = {
     getInitialData() {
         CommonUI.ajax("/api/user/itemGroupAndPriceList", "GET", false, function (req){
             data.initialData = req.sendData;
-            dv.chk(data.initialData, dto.receive.itemGroupAndPriceList, "초기검사");
+            dv.chk(data.initialData, dto.receive.itemGroupAndPriceList, "initialData 받아오기");
             console.log(data.initialData);
         });
     },
@@ -297,7 +289,6 @@ const ajax = {
             dv.chk(items, dto.receive.customerInfo);
             $("#searchCustomerType").val(0);
             $("#searchString").val("");
-            console.log(items);
             if(items.length === 1) {
                 data.selectedCustomer = items[0];
                 putCustomer(data.selectedCustomer);
@@ -315,11 +306,18 @@ const ajax = {
     },
 
     franchiseRequestDetailSearch(condition) {
-        dv.chk(condition, dto.send.franchiseRequestDetailSearch, "메인그리드 검색 조건 보내기");
+        dv.chk(condition, dto.send.franchiseRequestDetailSearch, "메인그리드 필터링 조건 보내기");
         console.log(condition);
-        CommonUI.ajaxjsonPost(grid.s.url.read[0], condition, function(res) {
+        CommonUI.ajax(grid.s.url.read[0], "GET", condition, function(res) {
+            console.log(res);
             const gridData = res.sendData.gridListData;
-            dv.chk(gridData, dto.receive.franchiseRequestDetailSearch, "메인그리드 조회된 리스트");
+            const cancelList = res.sendData.cencelList;
+            gridData.forEach(item => {
+                if(cancelList.includes(item.frId)) {
+                    item.fpCancelYn = "N"
+                }
+            });
+            dv.chk(gridData, dto.receive.franchiseRequestDetailSearch, "메인그리드 조회 결과 리스트");
             grid.f.setData(0, gridData);
         });
     },
@@ -328,6 +326,7 @@ const ajax = {
         dv.chk(data, dto.send.franchiseRequestDetailUpdate, "상품 수정내용 저장");
         CommonUI.ajax(grid.s.url.update[0], "MAPPER", data, function(res) {
             onCloseAddOrder();
+            alertSuccess("상품 수정 내용이 반영되었습니다.");
         });
     },
 
@@ -342,25 +341,32 @@ const ajax = {
 
     cancelOrder(fdId) {
         const condition = {fdId: fdId};
-        dv.chk(condition, dto.send, "한 항목 접수 취소");
+        dv.chk(condition, dto.send, "접수 취소");
         const url = "/api/user/franchiseDetailCencelDataList";
         CommonUI.ajax(url, "GET", condition, function(res) {
-            console.log(res);
+            alertSuccess("접수 취소를 완료하였습니다.");
         });
-
-        console.log(fdId);
     },
 
     cancelPayment(target) {
         dv.chk(target, dto.send.franchiseRequestDetailCencel, "한 항목 결제 취소");
         const url = "/api/user/franchiseRequestDetailCencel";
         CommonUI.ajax(url, "PARAM", target, function(res) {
-
+            if(target.type === "1") {
+                alertSuccess("결제 취소를 완료하였습니다.");
+            }else if(target.type === "2") {
+                alertSuccess("적립금 전환을 완료하였습니다.");
+            }
         });
     },
 
     cancelDeliverState(fdId) {
-        console.log(fdId);
+        const condition = {fdId: fdId};
+        dv.chk(condition, dto.send, "인도 취소");
+        const url = "/api/user/";
+        // CommonUI.ajax(url, "GET", condition, function(res) {
+        //     alertSuccess("접수 취소를 완료하였습니다.");
+        // });
     },
 
     putNewInspect(formData) {
@@ -370,11 +376,10 @@ const ajax = {
         dv.chk(testObj, dto.send.franchiseInspectionSave);
         console.log(Object.fromEntries(formData));
 
-        CommonUI.ajax("/api/user/franchiseInspectionSave", "POST", formData, function (req) {
-
+        CommonUI.ajax("/api/user/franchiseInspectionSave", "POST", formData, function (res) {
+            // 재조회 API 완료시 재조회
         });
     }
-
 };
 
 /* .s : AUI 그리드 관련 설정들
@@ -560,11 +565,14 @@ const grid = {
                     },
                     labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
                         let template = "";
-                        template = `
-                            <button class="c-state c-state--cancel">취소</button>
-                        `;
-                        item.redBtn1 = true;
-                        item.redBtn1 = false;
+                        if(item.fpCancelYn === "Y") {
+                            template = `
+                                <button class="c-state c-state--cancel">취소</button>
+                            `;
+                            item.redBtn1 = true;
+                        }else{
+                            item.redBtn1 = false;
+                        }
                         return template;
                     },
                 }, {
@@ -576,11 +584,17 @@ const grid = {
                     },
                     labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
                         let template = "";
-                        template = `
-                            <button class="c-state c-state--cancel">취소</button>
-                        `;
-                        item.redBtn2 = true;
-                        item.redBtn2 = false;
+                        if(item.fpCancelYn === "N") {
+                            template = `
+                                <button class="c-state c-state--cancel">취소</button>
+                            `;
+                            item.redBtn2 = true;
+                        }else{
+                            item.redBtn2 = false;
+                        }
+                        
+                        
+                        
                         return template;
                     },
                 }, {
@@ -794,7 +808,9 @@ const grid = {
                 switch (e.dataField) {
                     case "blueBtn1":
                         // 가맹점 검품등록창 진입
-                        openPutInspectPop(e);
+                        if(e.item.fdState === "S1" || e.item.fdState === "F" ) {
+                            openPutInspectPop(e);
+                        }
                         break;
                     case "blueBtn2":
                         confirmInspect();
@@ -802,27 +818,35 @@ const grid = {
                         break;
                     case "greenBtn1":
                         // 수정모드 진입
-                        modifyOrder(e.rowIndex);
+                        if(e.item.fdState === "S1" || e.item.fdState === "F" ) {
+                            modifyOrder(e.rowIndex);
+                        }
                         break;
                     case "redBtn1":
                         // 확인후 ajax 호출하며 그리드에서 삭제
-                        alertCheck("선택한 품목을 접수취소하시겠습니까?<br>접수취소 후에는 신규접수를 통해<br>재등록 가능합니다.");
-                        $("#checkDelSuccessBtn").on("click", function() {
-                            ajax.cancelOrder(e.item.fdId);
-                            $("#popupId").remove();
-                        });
+                        if(e.item.fpCancelYn === "Y") {
+                            alertCheck("선택한 품목을 접수취소하시겠습니까?<br>접수취소 후에는 신규접수를 통해<br>재등록 가능합니다.");
+                            $("#checkDelSuccessBtn").on("click", function() {
+                                ajax.cancelOrder(e.item.fdId);
+                                $("#popupId").remove();
+                            });
+                        }
                         break;
                     case "redBtn2":
-                        cancelPaymentPop(e.item.frId);
+                        if(e.item.fpCancelYn === "N") {
+                            cancelPaymentPop(e.item.frId);
+                        }
                         // 결제취소창 진입
                         break;
                     case "redBtn3":
                         // 확인후 가맹점 입고로 상태변경하여 ajax 호출
-                        alertCheck("선택한 품목을 인도취소하시겠습니까?");
-                        $("#checkDelSuccessBtn").on("click", function() {
-                            ajax.cancelDeliverState(e.item.fdId);
-                            $("#popupId").remove();
-                        });
+                        if(e.item.fdState === "S6") {
+                            alertCheck("선택한 품목을 인도취소하시겠습니까?");
+                            $("#checkDelSuccessBtn").on("click", function() {
+                                ajax.cancelDeliverState(e.item.fdId);
+                                $("#popupId").remove();
+                            });
+                        }
                         break;
                 }
             });
@@ -883,7 +907,6 @@ const event = {
                 data.keypadNum = 0;
                 vkey.showKeypad("fiAddAmt", onKeypadConfirm);
             });
-
         },
         main() {
             $("#searchCustomer").on("click", function() {
@@ -1044,6 +1067,11 @@ const event = {
             $("#refundPayment").on("click", function () {
                 cancelPayment("1");
             });
+
+            $("#fiAddAmt").on("keyup", function () {
+                $(this).val($(this).val().toInt().toLocaleString());
+            });
+            
         },
     },
     r: { // 이벤트 해제
