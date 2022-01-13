@@ -17,6 +17,7 @@ const dto = {
             fdId: "nr",
             fiAddAmt: "nr",
             fiComment: "s",
+            fiType: "sr",
             source: "", // 검품사진파일
         },
         
@@ -1614,6 +1615,7 @@ function putInspect() {
             }
 
             formData.append("fiComment", $fiComment.val());
+            formData.append("fiType", "F");
             formData.append("fiAddAmt", $("#fiAddAmt").val().toInt());
 
             ajax.putNewInspect(formData);

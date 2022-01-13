@@ -58,14 +58,14 @@ public class RequestDetailMapperDto {
     private String bsName; // 중분류명
     private String biName; // 상품명
 
-    public String getFdUrgentYn() {
-        return fdUrgentYn;
-    }
-
     private List<PhotoDto> photoList; // 해당 상품의 대한 이미지 파일 리스트
 
     public List<PhotoDto> getPhotoList() {
         return photoList;
+    }
+
+    public String getFdUrgentYn() {
+        return fdUrgentYn;
     }
 
     public String getBgName() {

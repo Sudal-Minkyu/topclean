@@ -98,6 +98,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         return query.fetch();
     }
 
+    // 통합조회 querydsl
     public List<RequestDetailSearchDto> requestDetailSearch(String frCode, Long bcId, String searchTag, String filterCondition, String filterFromDt, String filterToDt){
 
         QRequestDetail requestDetail = QRequestDetail.requestDetail;

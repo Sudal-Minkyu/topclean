@@ -1,10 +1,15 @@
 package com.broadwave.toppos.User.UserService;
 
+import com.broadwave.toppos.Aws.AWSS3Service;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.*;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Request;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.*;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.Inspeot;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotMapperDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotRepository;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.Photo;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.PhotoRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestRepository;
 import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoney;
 import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoneyRepository;
@@ -16,11 +21,13 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -38,20 +45,27 @@ public class InspectService {
     private final UserService userService;
     private final TokenProvider tokenProvider;
 
+    private final AWSS3Service awss3Service;
     private final PaymentRepository paymentRepository;
     private final PaymentRepositoryCustom paymentRepositoryCustom;
+    private final PhotoRepository photoRepository;
+    private final InspeotRepository inspeotRepository;
     private final RequestRepository requestRepository;
     private final RequestDetailRepository requestDetailRepository;
     private final RequestDetailRepositoryCustom requestDetailRepositoryCustom;
     private final SaveMoneyRepository saveMoneyRepository;
 
     @Autowired
-    public InspectService(ModelMapper modelMapper, TokenProvider tokenProvider, UserService userService, PaymentRepository paymentRepository, PaymentRepositoryCustom paymentRepositoryCustom,
+    public InspectService(ModelMapper modelMapper, TokenProvider tokenProvider, UserService userService, AWSS3Service awss3Service, PhotoRepository photoRepository,
+                          PaymentRepository paymentRepository, PaymentRepositoryCustom paymentRepositoryCustom, InspeotRepository inspeotRepository,
                           RequestRepository requestRepository, RequestDetailRepositoryCustom requestDetailRepositoryCustom,
                           RequestDetailRepository requestDetailRepository, SaveMoneyRepository saveMoneyRepository){
         this.modelMapper = modelMapper;
+        this.inspeotRepository = inspeotRepository;
+        this.awss3Service = awss3Service;
         this.tokenProvider = tokenProvider;
         this.userService = userService;
+        this.photoRepository = photoRepository;
         this.requestRepository = requestRepository;
         this.requestDetailRepository = requestDetailRepository;
         this.paymentRepository = paymentRepository;
@@ -265,52 +279,90 @@ public class InspectService {
         return ResponseEntity.ok(res.success());
     }
 
-    // 가맹검품 등록 API
-    public ResponseEntity<Map<String, Object>> franchiseInspectionSave(InspeotMapperDto inspeotMapperDto, MultipartHttpServletRequest source, HttpServletRequest request) throws IOException {
-        log.info("franchiseRequestDetailCencel 호출");
-
-        log.info("inspeotMapperDto : "+inspeotMapperDto);
-        log.info("source : "+source);
+    // 검품등록 API(가맹점, 지사)
+    public ResponseEntity<Map<String, Object>> franchiseInspectionSave(InspeotMapperDto inspeotMapperDto, MultipartHttpServletRequest multi, String AWSBUCKETURL) throws NoSuchElementException {
+        log.info("franchiseInspectionSave 호출");
 
         AjaxResponse res = new AjaxResponse();
-        HashMap<String, Object> data = new HashMap<>();
-
-        data.put("inspeotMapperDto",inspeotMapperDto);
-        data.put("source",source);
 
         // 클레임데이터 가져오기
-        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
-        String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
+        Claims claims = tokenProvider.parseClaims(multi.getHeader("Authorization"));
         String login_id = claims.getSubject(); // 현재 아이디
         log.info("현재 접속한 아이디 : "+login_id);
-        log.info("현재 접속한 가맹점 코드 : "+frCode);
 
-//        //파일저장
-//        Iterator<String> files = multi.getFileNames();
-//        String uploadFile = files.next();
-//        MultipartFile mFile = multi.getFile(uploadFile);
-////        log.info("mFile : "+mFile);
-//
-//        assert mFile != null;
-//        if(!mFile.isEmpty()) {
-//            // 파일 중복명 처리
-//            String genId = UUID.randomUUID().toString().replace("-", "");
-////            log.info("genId : "+genId);
-//
-//            // S3에 저장 할 파일주소
-//            SimpleDateFormat date = new SimpleDateFormat("yyyyMMdd");
-//            String filePath = "/toppos-franchise/" + date.format(new Date());
-////            log.info("filePath : "+filePath);
-//            String storedFileName = genId + ".png";
-////            log.info("storedFileName : "+storedFileName);
-//            String ffFilename = awss3Service.uploadObject(mFile, storedFileName, filePath);
-//            data.put("ffPath",AWSBUCKETURL+filePath+"/");
-//            data.put("ffFilename",ffFilename);
-//        }else{
-//            log.info("사진파일을 못불러왔습니다.");
-//        }
+        Optional<RequestDetail> optionalRequestDetail = requestDetailRepository.findById(inspeotMapperDto.getFdId());
+        if(!optionalRequestDetail.isPresent()){
+            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP024.getCode(), ResponseErrorCode.TP024.getDesc(), "문자", "재조회 후 다시 시도해주세요."));
+        }else{
 
-        return ResponseEntity.ok(res.dataSendSuccess(data));
+            Inspeot inspeot = new Inspeot();
+            inspeot.setFdId(optionalRequestDetail.get());
+            inspeot.setFrCode(optionalRequestDetail.get().getFrId().getFrCode());
+            inspeot.setBrCode(optionalRequestDetail.get().getFrId().getBcCode());
+            inspeot.setFiType(inspeotMapperDto.getFiType());
+            inspeot.setFiComment(inspeotMapperDto.getFiComment());
+            inspeot.setFiAddAmt(inspeotMapperDto.getFiAddAmt());
+            inspeot.setFiPhotoYn("N");
+            // 밑에 주석 값은 널로 등록한다.
+//            inspeot.setFiSendMsgYn(); -> null;
+//            inspeot.setFiCustomerConfirm(); -> null;
+//            inspeot.setFiProgressStateDt(); -> null;
+//            inspeot.setFiMessage(); -> null;
+//            inspeot.setFiMessageSendDt(); -> null;
+            inspeot.setInsert_id(login_id);
+            inspeot.setInsertDateTime(LocalDateTime.now());
+
+            //파일저장
+            try{
+                if(multi.getFiles("source").get(0).getSize() != 0){
+                    log.info("사진 포함 등록");
+
+                    inspeot.setFiPhotoYn("Y");
+                    Inspeot saveInspeot = inspeotRepository.save(inspeot);
+
+                    Iterator<String> files = multi.getFileNames();
+                    String uploadFile = files.next();
+                    MultipartFile mFile = multi.getFile(uploadFile);
+
+                    assert mFile != null;
+                    if(!mFile.isEmpty()) {
+                        Photo photo = new Photo();
+
+                        // 파일 중복명 처리
+                        String genId = UUID.randomUUID().toString().replace("-", "");
+
+                        // S3에 저장 할 파일주소
+                        SimpleDateFormat date = new SimpleDateFormat("yyyyMMdd");
+                        String filePath;
+                        if(inspeotMapperDto.getFiType().equals(("F"))){
+                            photo.setFfType("02");
+                            filePath = "/toppos-franchise-inspection/" + date.format(new Date());
+                        }else{
+                            photo.setFfType("03");
+                            filePath = "/toppos-manager-inspection/" + date.format(new Date());
+                        }
+
+                        String storedFileName = genId + ".png";
+                        String ffFilename = awss3Service.uploadObject(mFile, storedFileName, filePath);
+
+                        photo.setFiId(saveInspeot);
+                        photo.setFfPath(AWSBUCKETURL+filePath+"/");
+                        photo.setFfFilename(ffFilename);
+                        photo.setInsert_id(login_id);
+                        photo.setInsertDateTime(LocalDateTime.now());
+                        photoRepository.save(photo);
+                    }else{
+                        log.info("사진파일을 못불러왔습니다.");
+                    }
+
+                }
+            }catch (Exception e){
+                inspeotRepository.save(inspeot);
+                log.info(e+" -> 사진 미포함 등록");
+            }
+        }
+
+        return ResponseEntity.ok(res.success());
 
     }
 

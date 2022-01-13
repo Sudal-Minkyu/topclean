@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import java.time.LocalDateTime;
@@ -22,7 +23,7 @@ public class InspeotMapperDto {
 
     private Long fdId; // 마스터테이블  ID
     private Integer fiAddAmt; // 세탁 추가발생 비용
-//    private String fiType; // 검품 타입 , F : 가맹검품, B:지사검품(확인품)
+    private String fiType; // 검품 타입 , F : 가맹검품, B:지사검품(확인품)
     private String fiComment; // 검품 특이사항
 
     public Long getFdId() {
@@ -33,9 +34,9 @@ public class InspeotMapperDto {
         return fiAddAmt;
     }
 
-//    public String getFiType() {
-//        return fiType;
-//    }
+    public String getFiType() {
+        return fiType;
+    }
 
     public String getFiComment() {
         return fiComment;

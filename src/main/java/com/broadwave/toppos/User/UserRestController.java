@@ -705,8 +705,8 @@ public class UserRestController {
 
     // 가맹검품 등록 API
     @PostMapping("franchiseInspectionSave")
-    public ResponseEntity<Map<String,Object>> franchiseInspectionSave(@ModelAttribute InspeotMapperDto inspeotMapperDto, MultipartHttpServletRequest source, HttpServletRequest request) throws IOException {
-        return inspectService.franchiseInspectionSave(inspeotMapperDto, source, request);
+    public ResponseEntity<Map<String,Object>> franchiseInspectionSave(@ModelAttribute InspeotMapperDto inspeotMapperDto, MultipartHttpServletRequest multi) throws IOException {
+        return inspectService.franchiseInspectionSave(inspeotMapperDto, multi, AWSBUCKETURL);
     }
 
 
