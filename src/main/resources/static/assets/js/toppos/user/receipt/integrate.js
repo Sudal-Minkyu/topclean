@@ -9,10 +9,6 @@ $(function() { // 페이지가 로드되고 나서 실행
 * */
 const dto = {
     send: {
-        검품내역가져오기: { // fdId가 일치하는 검품 데이터에서, 검품타입이 F인 것
-            fdId: "nr",
-            type: "s",
-        },
 
         franchiseInspectionSave: {
             fdId: "nr",
@@ -22,7 +18,7 @@ const dto = {
             source: "", // 검품사진파일
         },
         
-        검품확인리스트가져오기: { // fdId가 일치하는 모든 검품 리스트
+        franchiseInspectionList: { // fdId가 일치하는 모든 검품 리스트 type 1: 검품등록시, 2: 검품확인시 
             fdId: "nr",
             type: "s",
         },
@@ -119,7 +115,7 @@ const dto = {
         },
     },
     receive: {
-        검품확인리스트가져오기: {
+        franchiseInspectionList: {
             fiId: "nr",
             fdId: "nr",
             fiType: "s",
@@ -379,6 +375,22 @@ const ajax = {
         CommonUI.ajax("/api/user/franchiseInspectionSave", "POST", formData, function (res) {
             // 재조회 API 완료시 재조회
         });
+    },
+
+    getInspectionList(condition) {
+        dv.chk(condition, dto.send.getInspectionList, "등록된 검품조회 조건");
+        let gridNum = 7;
+        if(condition.type === "1") {
+            gridNum = 3;
+        }else if(condition.type ==="2") {
+            gridNum = 4;
+        }
+
+        CommonUI.ajax(grid.s.url.read[gridNum], "PARAM", condition, function(res) {
+
+            console.log(res);
+            // grid.f.setData(gridNum, res.sendData.gridListData);
+        });
     }
 };
 
@@ -405,14 +417,14 @@ const grid = {
                 "/api/user/franchiseRequestDetailSearch",
                 "/api/user/customerInfo",
                 "/api/user/",
-                "/api/user/",
-                "/api/user/"
+                "/api/user/franchiseInspectionList",
+                "/api/user/franchiseInspectionList"
             ],
             update: [
                 "/api/user/franchiseRequestDetailUpdate", "/api/", "/api/", "/api/", "/api/"
             ],
             delete: [
-                "/api/", "/api/", "/api/", "/api/", "/api/"
+                "/api/franchiseReceiptCancel", "/api/", "/api/", "/api/", "/api/"
             ]
         }
     },
@@ -517,11 +529,14 @@ const grid = {
                     },
                     labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
                         let template = "";
-                        template = `
-                            <button class="c-state">등록</button>
-                        `;
-                        item.blueBtn1 = true;
-                        item.blueBtn1 = false;
+                        if(["S1", "F"].includes(item.fdState)) {
+                            template = `
+                                <button class="c-state">등록</button>
+                            `;
+                            item.blueBtn1 = true;
+                        }else{
+                            item.blueBtn1 = false;
+                        }
                         return template;
                     },
                 }, {
@@ -533,11 +548,14 @@ const grid = {
                     },
                     labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
                         let template = "";
-                        template = `
-                            <button class="c-state">확인</button>
-                        `;
-                        item.blueBtn2 = true;
-                        item.blueBtn2 = false;
+                        if(["F", "B"].includes(item.fdState)) {
+                            template = `
+                                <button class="c-state">확인</button>
+                            `;
+                            item.blueBtn2 = true;
+                        }else{
+                            item.blueBtn2 = false;
+                        }
                         return template;
                     },
                 }, {
@@ -549,11 +567,14 @@ const grid = {
                     },
                     labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
                         let template = "";
-                        template = `
-                            <button class="c-state c-state--modify">수정</button>
-                        `;
-                        item.greenBtn1 = true;
-                        item.greenBtn1 = false;
+                        if(["S1", "F"].includes(item.fdState)) {
+                            template = `
+                                <button class="c-state c-state--modify">수정</button>
+                            `;
+                            item.greenBtn1 = true;
+                        }else{
+                            item.greenBtn1 = false;
+                        }
                         return template;
                     },
                 }, {
@@ -565,14 +586,14 @@ const grid = {
                     },
                     labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
                         let template = "";
-                        if(item.fpCancelYn === "Y") {
+                        if(item.fpCancelYn === "Y" && ["S1", "F", "B"].includes(item.fdState)) {
                             template = `
                                 <button class="c-state c-state--cancel">취소</button>
                             `;
                             item.redBtn1 = true;
                         }else{
                             item.redBtn1 = false;
-                        }
+                        } 
                         return template;
                     },
                 }, {
@@ -592,9 +613,6 @@ const grid = {
                         }else{
                             item.redBtn2 = false;
                         }
-                        
-                        
-                        
                         return template;
                     },
                 }, {
@@ -606,11 +624,14 @@ const grid = {
                     },
                     labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
                         let template = "";
-                        template = `
-                            <button class="c-state c-state--cancel">취소</button>
-                        `;
-                        item.redBtn3 = true;
-                        item.redBtn3 = false;
+                        if(item.fdState === "S6") {
+                            template = `
+                                <button class="c-state c-state--cancel">취소</button>
+                            `;
+                            item.redBtn3 = true;
+                        }else{
+                            item.redBtn3 = false;
+                        }
                         return template;
                     },
                 },
@@ -808,23 +829,25 @@ const grid = {
                 switch (e.dataField) {
                     case "blueBtn1":
                         // 가맹점 검품등록창 진입
-                        if(e.item.fdState === "S1" || e.item.fdState === "F" ) {
+                        if(e.item.blueBtn1) {
                             openPutInspectPop(e);
                         }
                         break;
                     case "blueBtn2":
-                        confirmInspect();
+                        if(e.item.blueBtn2) {
+                            confirmInspect();
+                        }
                         // 검품확인창 진입
                         break;
                     case "greenBtn1":
                         // 수정모드 진입
-                        if(e.item.fdState === "S1" || e.item.fdState === "F" ) {
+                        if(e.item.greenBtn1) {
                             modifyOrder(e.rowIndex);
                         }
                         break;
                     case "redBtn1":
                         // 확인후 ajax 호출하며 그리드에서 삭제
-                        if(e.item.fpCancelYn === "Y") {
+                        if(e.item.redBtn1) {
                             alertCheck("선택한 품목을 접수취소하시겠습니까?<br>접수취소 후에는 신규접수를 통해<br>재등록 가능합니다.");
                             $("#checkDelSuccessBtn").on("click", function() {
                                 ajax.cancelOrder(e.item.fdId);
@@ -833,14 +856,14 @@ const grid = {
                         }
                         break;
                     case "redBtn2":
-                        if(e.item.fpCancelYn === "N") {
+                        if(e.item.redBtn2) {
                             cancelPaymentPop(e.item.frId);
                         }
                         // 결제취소창 진입
                         break;
                     case "redBtn3":
                         // 확인후 가맹점 입고로 상태변경하여 ajax 호출
-                        if(e.item.fdState === "S6") {
+                        if(e.item.redBtn3) {
                             alertCheck("선택한 품목을 인도취소하시겠습니까?");
                             $("#checkDelSuccessBtn").on("click", function() {
                                 ajax.cancelDeliverState(e.item.fdId);
@@ -1611,6 +1634,11 @@ async function openPutInspectPop(e) {
 
     $("#putInspectPop").addClass("active");
     grid.f.resize(3);
+    const searchCondition = {
+        fdId: e.item.fdId,
+        type: "1"
+    }
+    ajax.getInspectionList(searchCondition);
 }
 
 function putInspect() {
