@@ -710,7 +710,7 @@ public class UserRestController {
     }
 
     //  통합조회용 - 검품 리스트 요청 -> 추후에 유저서비스로 옮기기 지사도 사용할꺼라서,
-    @PostMapping("franchiseInspectionList")
+    @GetMapping("franchiseInspectionList")
     public ResponseEntity<Map<String,Object>> franchiseInspectionList(@RequestParam(value="fdId", defaultValue="") Long fdId,
                                                                            @RequestParam(value="type", defaultValue="") String type, HttpServletRequest request){
         return inspectService.franchiseInspectionList(fdId, type, request);

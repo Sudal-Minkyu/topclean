@@ -5,9 +5,7 @@ import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.*;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Request;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.*;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.Inspeot;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotMapperDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotRepository;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.*;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.Photo;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.PhotoRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestRepository;
@@ -50,6 +48,7 @@ public class InspectService {
     private final PaymentRepositoryCustom paymentRepositoryCustom;
     private final PhotoRepository photoRepository;
     private final InspeotRepository inspeotRepository;
+    private final InspeotRepositoryCustom inspeotRepositoryCustom;
     private final RequestRepository requestRepository;
     private final RequestDetailRepository requestDetailRepository;
     private final RequestDetailRepositoryCustom requestDetailRepositoryCustom;
@@ -58,7 +57,7 @@ public class InspectService {
     @Autowired
     public InspectService(ModelMapper modelMapper, TokenProvider tokenProvider, UserService userService, AWSS3Service awss3Service, PhotoRepository photoRepository,
                           PaymentRepository paymentRepository, PaymentRepositoryCustom paymentRepositoryCustom, InspeotRepository inspeotRepository,
-                          RequestRepository requestRepository, RequestDetailRepositoryCustom requestDetailRepositoryCustom,
+                          RequestRepository requestRepository, RequestDetailRepositoryCustom requestDetailRepositoryCustom, InspeotRepositoryCustom inspeotRepositoryCustom,
                           RequestDetailRepository requestDetailRepository, SaveMoneyRepository saveMoneyRepository){
         this.modelMapper = modelMapper;
         this.inspeotRepository = inspeotRepository;
@@ -68,6 +67,7 @@ public class InspectService {
         this.photoRepository = photoRepository;
         this.requestRepository = requestRepository;
         this.requestDetailRepository = requestDetailRepository;
+        this.inspeotRepositoryCustom = inspeotRepositoryCustom;
         this.paymentRepository = paymentRepository;
         this.requestDetailRepositoryCustom = requestDetailRepositoryCustom;
         this.paymentRepositoryCustom = paymentRepositoryCustom;
@@ -300,8 +300,8 @@ public class InspectService {
             inspeot.setFiComment(inspeotMapperDto.getFiComment());
             inspeot.setFiAddAmt(inspeotMapperDto.getFiAddAmt());
             inspeot.setFiPhotoYn("N");
+            inspeot.setFiSendMsgYn("N");
             // 밑에 주석 값은 널로 등록한다.
-//            inspeot.setFiSendMsgYn(); -> null;
 //            inspeot.setFiCustomerConfirm(); -> null;
 //            inspeot.setFiProgressStateDt(); -> null;
 //            inspeot.setFiMessage(); -> null;
@@ -369,29 +369,15 @@ public class InspectService {
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
 
-        // 클레임데이터 가져오기
-        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
-        String login_id = claims.getSubject(); // 현재 아이디
-        String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
-        log.info("현재 접속한 가맹점 코드 : "+frCode);
-        log.info("현재 접속한 아이디 : "+login_id);
+//        // 클레임데이터 가져오기
+//        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+//        String login_id = claims.getSubject(); // 현재 아이디
+//        String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
+//        log.info("현재 접속한 가맹점 코드 : "+frCode);
+//        log.info("현재 접속한 아이디 : "+login_id);
 
-        
-//    fiId: "nr",
-//    fdId: "nr",
-//    fiType: "s",
-//    fiComment: "s",
-//    fiAddAmt: "n",
-//    fiPhotoYn: "s",
-//    fiSendMsgYn: "s",
-//    fiCustomerConfirm: "s",
-//    insertDt: "s",
-//    ffPath: "s",
-//    ffFilename: "s",
-
-
-
-
+        List<InspeotListDto> inspeotList = inspeotRepositoryCustom.findByInspeotList(fdId, type);
+        data.put("gridListData",inspeotList);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }

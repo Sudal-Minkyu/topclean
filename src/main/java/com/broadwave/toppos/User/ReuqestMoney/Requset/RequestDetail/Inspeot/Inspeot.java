@@ -25,7 +25,7 @@ public class Inspeot {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="fi_id")
-    private Long Id;
+    private Long id;
 
     @ManyToOne(targetEntity = RequestDetail.class,fetch = FetchType.LAZY)
     @JoinColumn(name="fd_id")
