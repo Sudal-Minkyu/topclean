@@ -240,7 +240,7 @@
 				<div class="pop__aricle-content">
 					<div class="c-textarea">
 						<textarea id="fiComment"></textarea>
-						<button></button>
+						<button id="vkeyboard4"></button>
 					</div>
 				</div>
 			</div>
@@ -258,7 +258,7 @@
 						<div class="pop__console-input">
 							<div class="c-text">
 								<input id="fiAddAmt" type="text" />
-								<button id="vkeypad1">키보드</button>
+								<button id="vkeypad0">키보드</button>
 							</div>
 						</div>
 					</div>
@@ -456,7 +456,7 @@
 				<div id="inReceiptPop" class="product-pop__article-content">
 					<div class="c-text">
 						<input id="fdRemark" type="text" placeholder="브랜드, 특이사항 입력" />
-						<button onclick="onShowVKeyboard(2)">키보드</button>
+						<button id="vkeyboard1">키보드</button>
 					</div>
 
 					<div class="product-pop__choice">
@@ -692,7 +692,7 @@
 						<!-- 상용구 들어갈 인풋 -->
 						<div class="c-text">
 							<input type="text" id="fdRepairRemark" class="keypad_remark" placeholder="수선 리스트 입력" />
-							<button onclick="onShowVKeyboard(3)">키보드</button>
+							<button id="vkeyboard2">키보드</button>
 						</div>
 					</div>
 
@@ -760,7 +760,7 @@
 						<!-- 상용구 들어갈 인풋 -->
 						<div class="c-text">
 							<input type="text" id="fdAdd1Remark" class="keypad_remark" placeholder="추가요금 리스트 입력" />
-							<button onclick="onShowVKeyboard(4)">키보드</button>
+							<button id="vkeyboard3">키보드</button>
 						</div>
 					</div>
 
@@ -796,5 +796,6 @@
 		</div>
 	</div>
 
+	<input type="hidden" id="hiddenKeypad" />
 </div>
 </html>

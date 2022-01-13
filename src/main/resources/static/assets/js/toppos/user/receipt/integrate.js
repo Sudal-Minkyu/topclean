@@ -13,7 +13,7 @@ const dto = {
             fdId: "nr",
         },
 
-        검품내역등록: {
+        franchiseInspectionSave: {
             fdId: "nr",
             fiAddAmt: "nr",
             fiComment: "s",
@@ -99,6 +99,7 @@ const dto = {
             redBtn3: "d",
             totAddCost: "d",
             frEstimateDate: "d",
+            fpCancelYn: "s",
         },
 
         franchiseRequestDetailSearch: {
@@ -363,10 +364,12 @@ const ajax = {
         const testObj = Object.fromEntries(formData);
         testObj.fdId = Number(testObj.fdId);
         testObj.fiAddAmt = Number(testObj.fiAddAmt);
-        dv.chk(testObj, dto.send.검품내역등록);
+        dv.chk(testObj, dto.send.franchiseInspectionSave);
         console.log(Object.fromEntries(formData));
-        // CommonUI.ajax(url, "PARAM", formData, function(res) {
-        // });
+
+        CommonUI.ajax("/api/user/franchiseInspectionSave", "POST", formData, function (req) {
+
+        });
     }
 
 };
@@ -457,7 +460,7 @@ const grid = {
                     width: 80,
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
                         return CommonUI.toppos.processName(item);
-                    }
+                    },
                 }, {
                     dataField: "fdTotAmt",
                     headerText: "합계금액",
@@ -468,6 +471,9 @@ const grid = {
                     dataField: "fdState",
                     headerText: "현재상태",
                     width: 85,
+                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                        return data.fdStateName[value];
+                    },
                 }, {
                     dataField: "fdUrgentYn", // 급세탁이면 Y
                     headerText: "급",
@@ -836,6 +842,19 @@ const data = {
     startPrice: 0,
     cameraStream: null,
     isCameraExist: false,
+    fdStateName: {
+        S1: "접수",
+        S2: "지사입고",
+        S3: "지사반송",
+        S4: "지사출고",
+        S5: "가맹점입고",
+        S6: "고객인도",
+        S7: "강제출고",
+        S8: "강제입고",
+        F: "가맹검품",
+        B: "지사검품",
+    },
+    keypadNum: 0,
 }
 
 /* 이벤트를 s : 설정하거나 r : 해지하는 함수들을 담는다. 그리드 관련 이벤트는 grid.e에 위치 */
@@ -845,6 +864,23 @@ const event = {
             $("#vkeyboard0").on("click", function() {
                 onShowVKeyboard(0);
             });
+            $("#vkeyboard1").on("click", function() {
+                onShowVKeyboard(1);
+            });
+            $("#vkeyboard2").on("click", function() {
+                onShowVKeyboard(2);
+            });
+            $("#vkeyboard3").on("click", function() {
+                onShowVKeyboard(3);
+            });
+            $("#vkeyboard4").on("click", function() {
+                onShowVKeyboard(4);
+            });
+            $("#vkeypad0").on("click", function () {
+                data.keypadNum = 0;
+                vkey.showKeypad("fiAddAmt", onKeypadConfirm);
+            });
+
         },
         main() {
             $("#searchCustomer").on("click", function() {
@@ -903,7 +939,6 @@ const event = {
                     $processInput.first().prop("checked", false);
                 }
                 const targetId = e.target.id;
-                this.additionalProcess(targetId);
 
                 calculateItemPrice();
             });
@@ -1312,12 +1347,28 @@ function enableDatepicker() {
 function onShowVKeyboard(num) {
     /* 가상키보드 사용을 위해 */
     let vkeyProp = [];
-    const vkeyTargetId = ["searchString"];
+    const vkeyTargetId = ["searchString", "fdRemark", "fdRepairRemark", "fdAdd1Remark", ""];
 
     vkeyProp[0] = {
         title: $("#searchType option:selected").html() + " (검색)",
         callback: mainSearch,
-    }
+    };
+
+    vkeyProp[1] = {
+        title: "브랜드, 특이사항 입력",
+    };
+
+    vkeyProp[2] = {
+        title: "수선 리스트 입력",
+    };
+
+    vkeyProp[3] = {
+        title: "추가요금 리스트 입력",
+    };
+
+    vkeyProp[4] = {
+        title: "검품내용 입력",
+    };
 
     vkey.showKeyboard(vkeyTargetId[num], vkeyProp[num]);
 }
@@ -1553,9 +1604,15 @@ function putInspect() {
 
             const formData = new FormData();
             formData.append("fdId", data.currentRequest.fdId);
-            formData.append("source", blob);
+
+            if($("#isIncludeImg").is(":checked")) {
+                formData.append("source", blob);
+            }else{
+                formData.append("source", null);
+            }
+
             formData.append("fiComment", $fiComment.val());
-            formData.append("fiAddAmt", $("#fiAddAmt").val().replace(/[^0-9]/g, ""));
+            formData.append("fiAddAmt", $("#fiAddAmt").val().toInt());
 
             ajax.putNewInspect(formData);
 
@@ -1575,4 +1632,9 @@ function b64toBlob(dataURI) {
         ia[i] = byteString.charCodeAt(i);
     }
     return new Blob([ab], { type: 'image/jpeg' });
+}
+
+function onKeypadConfirm() {
+    const targetId = ["fiAddAmt"];
+    $("#" + targetId[data.keypadNum]).val(Number($("#" + targetId[data.keypadNum]).val()).toLocaleString());
 }
