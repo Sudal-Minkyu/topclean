@@ -289,7 +289,7 @@ public class InspectService {
 
         Optional<RequestDetail> optionalRequestDetail = requestDetailRepository.findById(inspeotMapperDto.getFdId());
         if(!optionalRequestDetail.isPresent()){
-            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP024.getCode(), ResponseErrorCode.TP024.getDesc(), "문자", "재조회 후 다시 시도해주세요."));
+            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP024.getCode(),"검풍등록 할 "+ResponseErrorCode.TP024.getDesc(), "문자", "재조회 후 다시 시도해주세요."));
         }else{
 
             Inspeot inspeot = new Inspeot();
@@ -365,16 +365,10 @@ public class InspectService {
 
     //  통합조회용 - 검품 리스트 요청
     public ResponseEntity<Map<String, Object>> franchiseInspectionList(Long fdId, String type, HttpServletRequest request) {
+        log.info("franchiseInspectionList 호출");
 
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
-
-//        // 클레임데이터 가져오기
-//        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
-//        String login_id = claims.getSubject(); // 현재 아이디
-//        String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
-//        log.info("현재 접속한 가맹점 코드 : "+frCode);
-//        log.info("현재 접속한 아이디 : "+login_id);
 
         List<InspeotListDto> inspeotList = inspeotRepositoryCustom.findByInspeotList(fdId, type);
         data.put("gridListData",inspeotList);
@@ -382,7 +376,63 @@ public class InspectService {
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
+    //  통합조회용 - 접수 취소
+    public ResponseEntity<Map<String, Object>> franchiseReceiptCancel(Long fdId, HttpServletRequest request) {
+        log.info("franchiseReceiptCancel 호출");
 
+        AjaxResponse res = new AjaxResponse();
 
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String login_id = claims.getSubject(); // 현재 아이디
+        log.info("현재 접속한 아이디 : "+login_id);
+
+        Optional<RequestDetail> optionalRequestDetail = requestDetailRepository.findById(fdId);
+        if(!optionalRequestDetail.isPresent()){
+            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP024.getCode(),"접수취소 할 "+ResponseErrorCode.TP024.getDesc(), "문자", "재조회 후 다시 시도해주세요."));
+        }else{
+            optionalRequestDetail.get().setFdCancel("Y");
+            optionalRequestDetail.get().setFdCacelDt(LocalDateTime.now());
+            optionalRequestDetail.get().setModity_id(login_id);
+            optionalRequestDetail.get().setModity_date(LocalDateTime.now());
+            requestDetailRepository.save(optionalRequestDetail.get());
+        }
+
+        return ResponseEntity.ok(res.success());
+    }
+
+    //  통합조회용 - 인도 취소
+    public ResponseEntity<Map<String, Object>> franchiseLeadCancel(Long fdId, HttpServletRequest request) {
+        log.info("franchiseLeadCancel 호출");
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String login_id = claims.getSubject(); // 현재 아이디
+        log.info("현재 접속한 아이디 : "+login_id);
+
+        String fdState;
+        String fdPreState;
+        Optional<RequestDetail> optionalRequestDetail = requestDetailRepository.findById(fdId);
+        if(!optionalRequestDetail.isPresent()){
+            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP024.getCode(),"인도취소 할 "+ResponseErrorCode.TP024.getDesc(), "문자", "재조회 후 다시 시도해주세요."));
+        }else{
+            fdState =  optionalRequestDetail.get().getFdState(); // 바뀌기 전 현재상태
+            fdPreState =  optionalRequestDetail.get().getFdPreState(); // 바뀌기 전 이전상태
+            optionalRequestDetail.get().setFdState(fdPreState);
+            optionalRequestDetail.get().setFdStateDt(LocalDateTime.now());
+            optionalRequestDetail.get().setFdPreState(fdState);
+            optionalRequestDetail.get().setFdPreStateDt(LocalDateTime.now());
+            optionalRequestDetail.get().setModity_id(login_id);
+            optionalRequestDetail.get().setModity_date(LocalDateTime.now());
+            requestDetailRepository.save(optionalRequestDetail.get());
+        }
+
+        data.put("fdState",fdPreState);
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
 
 }

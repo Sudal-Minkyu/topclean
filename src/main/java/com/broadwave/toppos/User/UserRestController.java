@@ -716,7 +716,17 @@ public class UserRestController {
         return inspectService.franchiseInspectionList(fdId, type, request);
     }
 
+    //  통합조회용 - 접수 취소
+    @PostMapping("franchiseReceiptCancel")
+    public ResponseEntity<Map<String,Object>> franchiseReceiptCancel(@RequestParam(value="fdId", defaultValue="") Long fdId, HttpServletRequest request){
+        return inspectService.franchiseReceiptCancel(fdId, request);
+    }
 
+    //  통합조회용 - 인도 취소
+    @PostMapping("franchiseLeadCancel")
+    public ResponseEntity<Map<String,Object>> franchiseLeadCancel(@RequestParam(value="fdId", defaultValue="") Long fdId, HttpServletRequest request){
+        return inspectService.franchiseLeadCancel(fdId, request);
+    }
 
 
 
