@@ -312,6 +312,7 @@ const ajax = {
             }
         });
     },
+
     franchiseRequestDetailSearch(condition) {
         dv.chk(condition, dto.send.franchiseRequestDetailSearch, "메인그리드 검색 조건 보내기");
         console.log(condition);
@@ -321,9 +322,10 @@ const ajax = {
             grid.f.setData(0, gridData);
         });
     },
+
     saveModifiedOrder(data) {
         dv.chk(data, dto.send.franchiseRequestDetailUpdate, "상품 수정내용 저장");
-        CommonUI.ajax(grid.s.url.update[0], "PARAM", data, function(res) {
+        CommonUI.ajax(grid.s.url.update[0], "MAPPER", data, function(res) {
             onCloseAddOrder();
         });
     },
