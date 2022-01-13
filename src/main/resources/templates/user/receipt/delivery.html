@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ko"
+	  xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate ="~{layout/defaulttest}">
+
+<!-- 사용자 CSS 추가 -->
+<th:block layout:fragment="css">
+	<style>
+		.colorSquare {
+			height: 20px;
+			width: 20px;
+			border-radius: 5px;
+			display: inline-block;
+		}
+	</style>
+</th:block>
+
+<!-- 사용자 스크립트 추가 -->
+<th:block layout:fragment="script">
+	<script type="text/javascript">
+		$(function() {
+			
+			// 팝업 닫기
+			$('.pop__close').on('click', function(e) {
+				$(this).parents('.pop').removeClass('active');
+				
+				e.preventDefault()
+			});
+			
+		});
+
+	</script>
+</th:block>
+
+<div layout:fragment="content" class="content content--column">
+	<div class="content__header">
+		<!-- 검색 -->
+		<div class="search">
+			<div class="c-select">
+				<select id="searchType">
+                    <option value="0">통합검색</option>
+                    <option value="1">고객명</option>
+                    <option value="2">전화번호</option>
+					<option value="3">주소</option>
+					<option value="4">택번호</option>
+                </select>
+			</div>
+			
+			<div class="c-search">
+				<div class="c-search__input">
+					<input id="searchString" type="text" placeholder="검색어를 입력하세요" />
+               		<button class="c-search__key" type="button" id="vkeyboard0">키보드</button>
+				</div>
+				<button id="searchCustomer" class="c-search__bth" type="button">검색</button>
+			</div>
+			
+			<div class="search__reset">
+				<button id="resetCustomer" class="c-button c-button--darksolid c-button--small" type="button">고객 초기화</button>
+			</div>
+		</div>
+
+		<!-- 고객정보 -->
+		<div class="client">
+			<div class="client__rating">
+				<!-- 고객뱃지  -->
+				<!-- 맞는 등급 뱃지 .active 주기 -->
+				<span class="client__badge">N</span>
+				<span class="client__badge">V</span>
+				<span class="client__badge client__badge--vvip">V</span>
+				<!-- #bcGrade 등급 넣어주기 -->
+				<span id="bcGrade"></span>
+			</div>
+			<div class="client__name"><span id="bcName"></span></div>
+			<div class="client__propensity"><span style="display: none;" id="bcValuation" class="propensity__star propensity__star--0"></span></div>
+			<div class="client__address"><span id="bcAddress"></span></div>
+			<div class="client__phone"><span id="bcHp"></span></div>
+		</div>
+		
+		<!-- 세탁물 -->
+		<div class="delivery">
+			
+		</div>
+
+		<!-- 고객정보2 -->
+		<ul class="client-info">
+			<li>
+				<h4>전일미수금</h4>
+				<p><span class="client-info__num" id="beforeUncollectMoneyMain">0</span><span class="won">원</span></p>
+			</li>
+			<li>
+				<h4>적립금</h4>
+				<p><span class="client-info__num" id="saveMoneyMain">0</span><span class="won">원</span></p>
+			</li>
+			<li>
+				<h4>특이사항</h4>
+				<p><span id="bcRemark"></span></p>
+			</li>
+			<li>
+				<h4>최근방문일</h4>
+				<p><span class="client-info__num" id="bcLastRequestDt"></span></p>
+			</li>
+		</ul>
+	</div>
+	
+	<div class="content__body">
+		<!-- grid -->
+		<div id="grid_main" style="height: 654px; border: 1px solid #ddd;"></div>
+	</div>
+
+
+</div>
+</html>

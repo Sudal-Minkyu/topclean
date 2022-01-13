@@ -50,6 +50,12 @@ public class UserController {
     public String receiptreg(){
         return "user/receipt/receiptreg";
     }
+
+    // 고객 인도
+    @RequestMapping("delivery")
+    public String delivery(){
+        return "user/receipt/delivery";
+    }
     
     // 나의 정보 관리
     @RequestMapping("mypage")

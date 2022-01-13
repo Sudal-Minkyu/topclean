@@ -100,7 +100,7 @@ const ajax = {
 		dv.chk(jsonData, dto.send.franchiseMyInfoSave, "가맹점 정보 보내기");
 		const url = "/api/user/franchiseMyInfoSave";
 		CommonUI.ajax(url, "POST", formData, function(res) {
-			
+			alertSuccess("가맹점 정보 변경 완료");
 		});
 	},
 	
@@ -371,7 +371,9 @@ const event = {
 			// 팝업 열기
 			$('#createRow2').on('click', function() {
 				$('.pop').addClass('active');
-				// grid.f.createRow("2");
+				// input값 초기화
+				$('#baName').val('');
+				$('#baRemark').val('');
 			});
 			// input 값 보내기
 			$('#sendItemValue').on('click', function() {

@@ -1360,7 +1360,7 @@ textarea {
 }
 #grid_requestList {
 	height: 18.75rem;
-	trnasition: height .4s;
+	transition: height .4s;
 }
 #grid_requestList.active {
 	height: 33.125rem;
@@ -2234,7 +2234,7 @@ textarea {
 .add-cost__example-heading {
 	color: #333;
 	font-size: 1.25rem;
-	font-weigth: 700;
+	font-weight: 700;
 	line-height: 3.75rem;
 	text-align: center;
 }
@@ -2616,6 +2616,35 @@ textarea {
 	font-size: 1.25rem !important;
 }
 
+/* 미수결제 팝업 */
+.unpaid-pop {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	margin-top: 1.25rem;
+	padding-top: 1.25rem;
+	border-top: 0.063rem solid #e1e2e2;
+}
+.unpaid-pop__sum {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	width: 20rem;
+	height: 3.125rem;
+	padding: 0 1.25rem;
+	background-color: #004a98;
+	color: #fff;
+	font-size: 1.125rem;
+	font-weight: 700;
+}
+.unpaid-pop__payment {
+	display: flex;
+	align-items: center;
+	margin-left: auto;
+}
+.unpaid-pop__payment-select {
+	margin-left: 1.25rem;
+}
 
 
 
