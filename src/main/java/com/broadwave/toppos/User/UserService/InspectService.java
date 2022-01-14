@@ -363,6 +363,23 @@ public class InspectService {
 
     }
 
+    //  통합조회용 - 등록 검품 삭제
+    public ResponseEntity<Map<String, Object>> franchiseInspectionDelete(InspeotSet inspeotSet) {
+        log.info("franchiseInspectionDelete 호출");
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        ArrayList<InspeotDto> list = inspeotSet.getList();
+        log.info("list : "+list);
+
+
+        data.put("list",list);
+
+//        return ResponseEntity.ok(res.success());
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
     //  통합조회용 - 검품 리스트 요청
     public ResponseEntity<Map<String, Object>> franchiseInspectionList(Long fdId, String type, HttpServletRequest request) {
         log.info("franchiseInspectionList 호출");

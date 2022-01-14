@@ -23,6 +23,7 @@ import com.broadwave.toppos.User.ItemSort.ItemSortSet;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentSet;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Request;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotMapperDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotSet;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.PhotoDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailSet;
@@ -667,7 +668,7 @@ public class UserRestController {
 
 //@@@@@@@@@@@@@@@@@@@@@ 가맹점 통합조회 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     //  통합조회용 - 접수세부 테이블
-    @PostMapping("franchiseRequestDetailSearch")
+    @GetMapping("franchiseRequestDetailSearch")
     public ResponseEntity<Map<String,Object>> franchiseRequestDetailSearch(@RequestParam(value="bcId", defaultValue="") Long bcId,
                                                                                                                    @RequestParam(value="searchTag", defaultValue="") String searchTag,
                                                                                                                    @RequestParam(value="filterCondition", defaultValue="") String filterCondition,
@@ -708,6 +709,13 @@ public class UserRestController {
     public ResponseEntity<Map<String,Object>> franchiseInspectionSave(@ModelAttribute InspeotMapperDto inspeotMapperDto, MultipartHttpServletRequest multi) throws IOException {
         return inspectService.franchiseInspectionSave(inspeotMapperDto, multi, AWSBUCKETURL);
     }
+
+    //  통합조회용 - 등록 검품 삭제
+    @PostMapping("franchiseInspectionDelete")
+    public ResponseEntity<Map<String,Object>> franchiseInspectionDelete(@RequestBody InspeotSet inspeotSet){
+        return inspectService.franchiseInspectionDelete(inspeotSet);
+    }
+
 
     //  통합조회용 - 검품 리스트 요청 -> 추후에 유저서비스로 옮기기 지사도 사용할꺼라서,
     @GetMapping("franchiseInspectionList")
