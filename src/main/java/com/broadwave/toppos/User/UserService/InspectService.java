@@ -374,6 +374,13 @@ public class InspectService {
         log.info("list : "+list);
 
 
+
+
+
+
+
+
+
         data.put("list",list);
 
 //        return ResponseEntity.ok(res.success());

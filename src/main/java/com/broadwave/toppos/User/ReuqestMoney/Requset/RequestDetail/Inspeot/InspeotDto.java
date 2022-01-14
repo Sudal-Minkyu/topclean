@@ -17,11 +17,11 @@ import lombok.Setter;
 @AllArgsConstructor
 public class InspeotDto {
 
-    private Long ffId;
+    private Long fiId;
     private String fiPhotoYn; // 검품 사진등록여부 (Y : 사진있음 , fs_photo_file 테이블에존재, N : 없음)
 
-    public Long getFfId() {
-        return ffId;
+    public Long getFiId() {
+        return fiId;
     }
 
     public String getFiPhotoYn() {
