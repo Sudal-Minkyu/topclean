@@ -1,9 +1,5 @@
 package com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo;
 
-import com.broadwave.toppos.Head.Item.Group.A.QItemGroup;
-import com.broadwave.toppos.Head.Item.Group.B.QItemGroupS;
-import com.broadwave.toppos.Head.Item.Group.C.QItem;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.*;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
 import lombok.extern.slf4j.Slf4j;

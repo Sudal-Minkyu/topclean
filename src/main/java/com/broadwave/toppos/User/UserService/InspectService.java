@@ -8,6 +8,7 @@ import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.*;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.*;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.Photo;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.PhotoRepository;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.PhotoRepositoryCustom;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestRepository;
 import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoney;
 import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoneyRepository;
@@ -24,7 +25,6 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -368,23 +368,23 @@ public class InspectService {
         log.info("franchiseInspectionDelete 호출");
 
         AjaxResponse res = new AjaxResponse();
-        HashMap<String, Object> data = new HashMap<>();
 
         ArrayList<InspeotDto> list = inspeotSet.getList();
-        log.info("list : "+list);
+//        log.info("list : "+list);
 
+        List<Long> inspeotDeleteList = new ArrayList<>();
+        List<Long> photoDeleteList = new ArrayList<>();
+        for(InspeotDto inspeotDto : list){
+            inspeotDeleteList.add(inspeotDto.getFiId());
+            if(inspeotDto.getFiPhotoYn().equals("Y")){
+                photoDeleteList.add(inspeotDto.getFiId());
+            }
+        }
 
+        inspeotRepository.findByInspectDelete(inspeotDeleteList);
+        photoRepository.findByInspectPhotoDelete(photoDeleteList);
 
-
-
-
-
-
-
-        data.put("list",list);
-
-//        return ResponseEntity.ok(res.success());
-        return ResponseEntity.ok(res.dataSendSuccess(data));
+        return ResponseEntity.ok(res.success());
     }
 
     //  통합조회용 - 검품 리스트 요청

@@ -26,7 +26,7 @@ public class Photo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="ff_id")
-    private Long Id;
+    private Long id;
 
     @Column(name="ff_type")
     private String ffType; // 01:접수, 02:가맹점검품, 03:지사검품
