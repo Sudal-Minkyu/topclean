@@ -706,16 +706,27 @@ const grid = {
 
             grid.s.columnLayout[2] = [
                 {
-                    dataField: "",
+                    dataField: "insertDt",
                     headerText: "승인일자",
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
                 }, {
                     dataField: "fpAmt",
                     headerText: "승인금액",
+                    dataType: "numeric",
+                    autoThousandSeparator: "true",
                 }, {
                     dataField: "fpType",
                     headerText: "결제방식",
+                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                        let resultText = "";
+                        if(item.fpCatIssuername) {
+                            resultText = item.fpCatIssuername;
+                        }else{
+                            resultText = data.fpTypeName[value];
+                        }
+                        return resultText;
+                    }
                 },
             ];
 
@@ -950,6 +961,12 @@ const data = {
     startPrice: 0,
     cameraStream: null,
     isCameraExist: false,
+    fpTypeName: {
+        "01": "현금",
+        "02": "카드",
+        "03": "적립금",
+        "04": "미수결제",
+    },
     fdStateName: {
         S1: "접수",
         S2: "지사입고",
