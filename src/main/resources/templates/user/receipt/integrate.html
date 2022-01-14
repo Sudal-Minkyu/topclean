@@ -13,12 +13,26 @@
 			border-radius: 5px;
 			display: inline-block;
 		}
+
+		.yesBlue {
+			color: #0082F0;
+			font-weight: bold;
+		}
+
+		.noRed {
+			color: #DD5257;
+			font-weight: bold;
+		}
 	</style>
+	<!-- lightbox 추가 -->
+    <link rel="stylesheet" href="/assets/js/lightbox2/css/lightbox.min.css" />
 </th:block>
 
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
 	<script src="/assets/js/toppos/user/receipt/integrate.js"></script>
+    <!-- lightbox 추가 -->
+    <script src="/assets/js/lightbox2/js/lightbox.js"></script>
 	<script type="text/javascript">
 		$(function() {
 			//카테고리 선택 시 팝업 열기
@@ -220,7 +234,7 @@
 				
 				<div class="pop__aricle-content flex1">
 					<div class="pop__article-haedconsole">
-						<button class="c-button c-button--darksolid c-button--small">삭제</button>
+						<button class="c-button c-button--darksolid c-button--small" id="deleteInspection">삭제</button>
 					</div>
 					<div id="grid_putInspect" style="height: 208px;"></div>
 				</div>
@@ -285,11 +299,14 @@
 					<div class="pop__message">
 						<div class="pop__message-text">
 							<div class="pop__message-textbox">
-								<textarea readonly="readonly"></textarea>
+								<textarea readonly="readonly" id="fiCommentInConfirm"></textarea>
 							</div>
 						</div>
 						<div class="pop__message-img">
-							<img src="/assets/images/dummy/cam.png" alt="" />
+							<a href="" id="imgFull" class="photo__img" data-lightbox="images" data-title="임의테스트"
+								style="display: none;">
+								<img id="imgThumb" src="" alt="" />
+							</a>
 						</div>
 					</div>
 				</div>
@@ -306,13 +323,13 @@
 					<div class="pop__console-cost">
 						<div class="pop__console-title">추가 비용발생</div>
 						<div class="pop__console-input">
-							<div class="c-text"><input type="text" readonly="readonly" /></div>
+							<div class="c-text"><input type="text" id="fiAddAmtInConfirm" readonly="readonly" /></div>
 						</div>
 					</div>
 				</li>
 				<li><button class="c-button pop__close">닫기</button></li> 
-				<li><button class="c-button c-button--dark">진행거부</button></li>
-				<li><button class="c-button c-button--solid">고객수락</button></li>
+				<li><button class="c-button c-button--dark" id="customerDenied">진행거부</button></li>
+				<li><button class="c-button c-button--solid" id="customerConfirmed">고객수락</button></li>
 			</ul>
 		</div>
 	</div>

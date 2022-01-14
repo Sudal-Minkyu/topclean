@@ -23,6 +23,11 @@ const dto = {
             type: "s",
         },
 
+        franchiseInspectionDelete: {
+            fiId: "nr",
+            fiPhotoYn: "sr",
+        },
+
         검품확인수락거부: {
             fiId: "s",
             fdId: "s",
@@ -336,11 +341,11 @@ const ajax = {
     },
 
     cancelOrder(fdId) {
-        const condition = {fdId: fdId};
+        const condition = {fdId: fdId, type: "1"};
         dv.chk(condition, dto.send, "접수 취소");
-        const url = "/api/user/franchiseDetailCencelDataList";
-        CommonUI.ajax(url, "GET", condition, function(res) {
+        CommonUI.ajax(grid.s.url.delete[0], "PARAM", condition, function(res) {
             alertSuccess("접수 취소를 완료하였습니다.");
+            // 상태변경 or 새로고침 처리
         });
     },
 
@@ -356,13 +361,14 @@ const ajax = {
         });
     },
 
-    cancelDeliverState(fdId) {
-        const condition = {fdId: fdId};
+    cancelDeliverState(fdId) { // 현재 접수취소와 같은 url을 사용중
+        const condition = {fdId: fdId, type: "2"};
         dv.chk(condition, dto.send, "인도 취소");
-        const url = "/api/user/";
-        // CommonUI.ajax(url, "GET", condition, function(res) {
-        //     alertSuccess("접수 취소를 완료하였습니다.");
-        // });
+        const url = "/api/user/franchiseReceiptCancel";
+        CommonUI.ajax(url, "PARAM", condition, function(res) {
+            alertSuccess("인도 취소를 완료하였습니다.");
+            // 상태변경 or 새로고침 처리
+        });
     },
 
     putNewInspect(formData) {
@@ -373,12 +379,16 @@ const ajax = {
         console.log(Object.fromEntries(formData));
 
         CommonUI.ajax("/api/user/franchiseInspectionSave", "POST", formData, function (res) {
-            // 재조회 API 완료시 재조회
+            const searchCondition = {
+                fdId: testObj.fdId,
+                type: "1"
+            };
+            ajax.getInspectionList(searchCondition);
         });
     },
 
     getInspectionList(condition) {
-        dv.chk(condition, dto.send.getInspectionList, "등록된 검품조회 조건");
+        dv.chk(condition, dto.send.franchiseInspectionList, "등록된 검품조회 조건");
         let gridNum = 7;
         if(condition.type === "1") {
             gridNum = 3;
@@ -386,10 +396,23 @@ const ajax = {
             gridNum = 4;
         }
 
-        CommonUI.ajax(grid.s.url.read[gridNum], "PARAM", condition, function(res) {
+        CommonUI.ajax(grid.s.url.read[gridNum], "GET", condition, function(res) {
+            grid.f.clearData(gridNum);
+            grid.f.setData(gridNum, res.sendData.gridListData);
+        });
+    },
 
+    deleteInspection(targets, fdId) {
+        dv.chk(targets, dto.send.franchiseInspectionDelete, "검품 삭제 목록");
+        const data = {list: targets};
+        const url = "/api/user/franchiseInspectionDelete";
+        CommonUI.ajax(url, "MAPPER", data, function (res) {
+            const searchCondition = {
+                fdId: fdId,
+                type: "1"
+            };
+            ajax.getInspectionList(searchCondition);
             console.log(res);
-            // grid.f.setData(gridNum, res.sendData.gridListData);
         });
     }
 };
@@ -548,7 +571,7 @@ const grid = {
                     },
                     labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
                         let template = "";
-                        if(["F", "B"].includes(item.fdState)) {
+                        if(["S1", "F", "B"].includes(item.fdState)) {
                             template = `
                                 <button class="c-state">확인</button>
                             `;
@@ -710,19 +733,21 @@ const grid = {
 
             grid.s.columnLayout[3] = [
                 {
-                    dataField: "",
+                    dataField: "insertDt",
                     headerText: "등록일시",
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
                 }, {
-                    dataField: "",
+                    dataField: "fiComment",
                     headerText: "검품내용",
                 }, {
-                    dataField: "",
+                    dataField: "fiSendMsgYn",
                     headerText: "메세지",
+                    styleFunction: ynStyle,
                 }, {
-                    dataField: "",
+                    dataField: "fiPhotoYn",
                     headerText: "이미지",
+                    styleFunction: ynStyle,
                 },
             ];
 
@@ -734,30 +759,36 @@ const grid = {
                 showRowNumColumn : false,
                 showStateColumn : true,
                 enableFilter : true,
+                showRowCheckColumn : true,
                 rowHeight : 48,
                 headerHeight : 48,
             };
 
             grid.s.columnLayout[4] = [
                 {
-                    dataField: "",
+                    dataField: "insertDt",
                     headerText: "등록일시",
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
                 }, {
-                    dataField: "",
+                    dataField: "fiType",
                     headerText: "유형",
+                    labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
+                        return data.fiTypeName[value];
+                    },
                 }, {
-                    dataField: "",
+                    dataField: "fiComment",
                     headerText: "검품내용",
                 }, {
-                    dataField: "",
+                    dataField: "fiSendMsgYn",
                     headerText: "메시지",
+                    styleFunction: ynStyle,
                 }, {
-                    dataField: "",
+                    dataField: "fiPhotoYn",
                     headerText: "이미지",
+                    styleFunction: ynStyle,
                 }, {
-                    dataField: "",
+                    dataField: "fiCustomerConfirm",
                     headerText: "고객수락",
                 },
             ];
@@ -783,6 +814,10 @@ const grid = {
 
         setData(numOfGrid, data) {
             AUIGrid.setGridData(grid.s.id[numOfGrid], data);
+        },
+
+        clearData(numOfGrid) {
+            AUIGrid.clearGridData(numOfGrid);
         },
 
         setInitialData(numOfGrid) { // 해당 배열 번호 그리드의 url.read 를 참조하여 데이터를 그리드에 뿌린다.
@@ -819,6 +854,17 @@ const grid = {
         resize(numOfGrid) {
             AUIGrid.resize(grid.s.id[numOfGrid]);
         },
+
+        getRemovedCheckRows(numOfGrid) { // 작업필요
+            if(AUIGrid.getCheckedRowItems(grid.s.id[numOfGrid]).length){
+                AUIGrid.removeCheckedRows(grid.s.id[numOfGrid]);
+            }else{
+                AUIGrid.removeRow(grid.s.id[numOfGrid], "selectedIndex");
+            }
+            return AUIGrid.getRemovedItems(grid.s.id[numOfGrid]);
+        },
+
+
     },
 
     e: {
@@ -835,7 +881,7 @@ const grid = {
                         break;
                     case "blueBtn2":
                         if(e.item.blueBtn2) {
-                            confirmInspect();
+                            confirmInspect(e);
                         }
                         // 검품확인창 진입
                         break;
@@ -873,6 +919,18 @@ const grid = {
                         break;
                 }
             });
+
+            AUIGrid.bind(grid.s.id[4], "cellClick", function (e) {
+                $("#fiAddAmtInConfirm").val(e.item.fiAddAmt.toLocaleString());
+                $("#fiCommentInConfirm").val(e.item.fiComment);
+                if(e.item.fiPhotoYn === "Y") {
+                    $("#imgThumb").attr("src", e.item.ffPath + "s_" + e.item.ffFilename);
+                    $("#imgFull").attr("href", e.item.ffPath + e.item.ffFilename);
+                    $("#imgFull").show();
+                }else{
+                    $("#imgFull").hide();
+                }
+            });
         }
     }
 };
@@ -903,6 +961,10 @@ const data = {
         S8: "강제입고",
         F: "가맹검품",
         B: "지사검품",
+    },
+    fiTypeName: {
+        F: "가맹검품",
+        B: "확인품",
     },
     keypadNum: 0,
 }
@@ -1095,6 +1157,30 @@ const event = {
                 $(this).val($(this).val().toInt().toLocaleString());
             });
             
+            $("#deleteInspection").on("click", function () { // 3번테이블(검품등록) 의 삭제될 대상들을 가져와서 삭제 요청
+                const targetRowsItem = grid.f.getRemovedCheckRows(3);
+                let refinedTargetList = [];
+                targetRowsItem.forEach(item => {
+                    if(item.fiSendMsgYn === "Y" || item.fiCustomerConfirm !== "1") {
+                        alertCaution("고객에게 정보가 전해진 검품내역은<br>삭제할 수 없습니다.", 1);
+                    }
+                    refinedTargetList.push({
+                        fiId: item.fiId,
+                        fiPhotoYn: item.fiPhotoYn,
+                    });
+                });
+                if(targetRowsItem.length) {
+                    ajax.deleteInspection(refinedTargetList, targetRowsItem[0].fdId);
+                }
+            });
+
+            $("#customerConfirmed").on("click", function () {
+                customerJudgement(true);
+            });
+
+            $("#customerDenied").on("click", function () {
+                customerJudgement(false);
+            });
         },
     },
     r: { // 이벤트 해제
@@ -1126,6 +1212,12 @@ function onPageLoad() {
 
     /* 생성된 그리드에 기본적으로 필요한 이벤트들을 적용한다. */
     // grid.e.basicEvent();
+
+    // lightbox option
+    lightbox.option({
+        'maxWidth': 1100,
+        'positionFromTop': 190
+    });
 }
 
 function modifyOrder(rowIndex) {
@@ -1233,6 +1325,7 @@ function modifyOrder(rowIndex) {
     $('#productPop').addClass('active');
 }
 
+/* 수정창에서 항목의 가격을 계산한다. */
 function calculateItemPrice() {
     const ap = data.initialData.addCostData;
     const gradePrice = [100, 100, ap.bcHighRt, ap.bcPremiumRt, ap.bcChildRt];
@@ -1262,7 +1355,7 @@ function calculateItemPrice() {
     let sumAmt = ceil100((data.currentRequest.fdNormalAmt + data.currentRequest.totAddCost)
         * (100 - gradeDiscount[data.currentRequest.fdDiscountGrade]) / 100);
     data.currentRequest.fdRequestAmt = sumAmt * data.currentRequest.fdQty;
-    data.currentRequest.fdTotAmt = data.currentRequest.fdRequestAmt;
+    data.currentRequest.fdTotAmt = data.currentRequest.fdRequestAmt;  // 지사검품 완료 후 수정이 필요
 
     data.currentRequest.fdDiscountAmt = data.currentRequest.fdNormalAmt + data.currentRequest.totAddCost - sumAmt;
 
@@ -1284,6 +1377,7 @@ function calculateItemPrice() {
     $("#sumAmt").html(sumAmt.toLocaleString());
 }
 
+/* 100원 단위 이하 100원 단위 올림처리 */
 function ceil100(num) {
     num = num.toString();
     let ceilAmount = 0;
@@ -1401,7 +1495,7 @@ function enableDatepicker() {
 function onShowVKeyboard(num) {
     /* 가상키보드 사용을 위해 */
     let vkeyProp = [];
-    const vkeyTargetId = ["searchString", "fdRemark", "fdRepairRemark", "fdAdd1Remark", ""];
+    const vkeyTargetId = ["searchString", "fdRemark", "fdRepairRemark", "fdAdd1Remark", "fiComment"];
 
     vkeyProp[0] = {
         title: $("#searchType option:selected").html() + " (검색)",
@@ -1584,9 +1678,20 @@ function removeEventsFromElement(element) {
     element.parentNode.replaceChild(elementClone, element);
 }
 
-function confirmInspect() {
+function confirmInspect(e) {
+    data.currentRequest = e.item;
+
+    $("#fiCommentInConfirm").val("");
+    $("#fiAddAmtInConfirm").val("");
+    $("#imgFull").hide();
+
     $("#confirmInspectPop").addClass("active");
     grid.f.resize(4);
+    const searchCondition = {
+        fdId: e.item.fdId,
+        type: "2"
+    }
+    ajax.getInspectionList(searchCondition);
 }
 
 function cancelPaymentPop(frId) {
@@ -1624,14 +1729,21 @@ async function openPutInspectPop(e) {
         const screen = document.getElementById("cameraScreen");
         screen.srcObject = data.cameraStream;
     }catch (e) {
-        if(e instanceof DOMException) {
-            alertCaution("연결된 카메라가 존재하지 않습니다", 1);
-        }else{
+        if(!(e instanceof DOMException)) {
             console.log(e);
         }
         data.isCameraExist = false;
     }
 
+    $("#fiComment").val("");
+    $("#fiAddAmt").val("");
+    if(data.isCameraExist) {
+        $("#isIncludeImg").prop("checked", true);
+        $("#isIncludeImg").prop("disabled", false);
+    }else{
+        $("#isIncludeImg").prop("checked", false);
+        $("#isIncludeImg").prop("disabled", true);
+    }
     $("#putInspectPop").addClass("active");
     grid.f.resize(3);
     const searchCondition = {
@@ -1639,6 +1751,25 @@ async function openPutInspectPop(e) {
         type: "1"
     }
     ajax.getInspectionList(searchCondition);
+}
+
+function customerJudgement(isConfirm) {
+    const selectedItem = grid.f.getSelectedItem(4);
+    const target = {
+        fiId: selectedItem.fiId,
+        fdId: selectedItem.fdId,
+    };
+    console.log(target);
+
+    if(isConfirm) {
+
+    }else{
+
+    }
+}
+
+function ynStyle(rowIndex, columnIndex, value, headerText, item, dataField) {
+    return value === "Y" ? "yesBlue" : "noRed"
 }
 
 function putInspect() {
@@ -1650,21 +1781,20 @@ function putInspect() {
                 return false;
             }
 
-            const video = document.getElementById("cameraScreen");
-            const canvas = document.getElementById('cameraCanvas');
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            const context = canvas.getContext('2d');
-            context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-            const takenPic = canvas.toDataURL();
-
-            const blob = b64toBlob(takenPic);
-
             const formData = new FormData();
             formData.append("fdId", data.currentRequest.fdId);
 
             if($("#isIncludeImg").is(":checked")) {
+                const video = document.getElementById("cameraScreen");
+                const canvas = document.getElementById('cameraCanvas');
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                const context = canvas.getContext('2d');
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    
+                const takenPic = canvas.toDataURL();
+    
+                const blob = b64toBlob(takenPic);
                 formData.append("source", blob);
             }else{
                 formData.append("source", null);
