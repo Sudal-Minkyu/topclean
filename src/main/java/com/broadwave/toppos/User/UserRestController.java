@@ -716,12 +716,11 @@ public class UserRestController {
         return inspectService.franchiseInspectionDelete(inspeotSet);
     }
 
-
     //  통합조회용 - 검품 리스트 요청 -> 추후에 유저서비스로 옮기기 지사도 사용할꺼라서,
     @GetMapping("franchiseInspectionList")
     public ResponseEntity<Map<String,Object>> franchiseInspectionList(@RequestParam(value="fdId", defaultValue="") Long fdId,
-                                                                           @RequestParam(value="type", defaultValue="") String type, HttpServletRequest request){
-        return inspectService.franchiseInspectionList(fdId, type, request);
+                                                                           @RequestParam(value="type", defaultValue="") String type){
+        return inspectService.franchiseInspectionList(fdId, type);
     }
 
     //  통합조회용 - 접수 취소
@@ -735,7 +734,5 @@ public class UserRestController {
     public ResponseEntity<Map<String,Object>> franchiseLeadCancel(@RequestParam(value="fdId", defaultValue="") Long fdId, HttpServletRequest request){
         return inspectService.franchiseLeadCancel(fdId, request);
     }
-
-
 
 }

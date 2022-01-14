@@ -4,11 +4,10 @@ import com.broadwave.toppos.Aws.AWSS3Service;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.*;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Request;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.*;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.*;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.Photo;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.PhotoRepository;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.PhotoRepositoryCustom;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.*;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestRepository;
 import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoney;
 import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoneyRepository;
@@ -115,6 +114,7 @@ public class InspectService {
         data.put("cencelList",cencelList);
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
+
     //  통합조회용 - 접수세부 호출용 함수
     private List<RequestDetailSearchDto> requestDetailSearch(String frCode, Long bcId, String searchTag, String filterCondition, String filterFromDt, String filterToDt) {
         return requestDetailRepositoryCustom.requestDetailSearch(frCode, bcId, searchTag, filterCondition, filterFromDt, filterToDt);
@@ -388,7 +388,7 @@ public class InspectService {
     }
 
     //  통합조회용 - 검품 리스트 요청
-    public ResponseEntity<Map<String, Object>> franchiseInspectionList(Long fdId, String type, HttpServletRequest request) {
+    public ResponseEntity<Map<String, Object>> franchiseInspectionList(Long fdId, String type) {
         log.info("franchiseInspectionList 호출");
 
         AjaxResponse res = new AjaxResponse();
