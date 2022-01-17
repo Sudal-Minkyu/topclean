@@ -43,7 +43,7 @@ public class PhotoRepositoryCustomImpl extends QuerydslRepositorySupport impleme
         JPQLQuery<Photo> query = from(photo)
                 .where(photo.fdId.id.eq(id))
                 .select(Projections.constructor(Photo.class,
-                        photo.Id,
+                        photo.id,
                         photo.ffType,
                         photo.fdId,
                         photo.ffPath,
