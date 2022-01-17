@@ -1261,6 +1261,27 @@ textarea {
 	margin-left: 0.5rem;
 }
 
+.delivery {
+	overflow: hidden;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	width: 41.875rem;
+	padding: 0.875rem 1.25rem;
+	margin-top: 0.938rem;
+	margin-bottom: auto;
+	background-color: #fff;
+	-webkit-border-radius: 0.313rem;;
+	-moz-border-radius: 0.313rem;;
+	border-radius: 0.313rem;;
+}
+.delivery__count {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	width: 100%;
+}
+
 .client-info {
 	overflow: hidden;
 	display: flex;

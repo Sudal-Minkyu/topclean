@@ -27,8 +27,8 @@
 		<div class="c-tabs__head">
 			<button class="c-tabs__btn active">가맹점 정보</button>
 			<button class="c-tabs__btn">비밀번호 변경</button>
-			<button class="c-tabs__btn" data-index="1">상용구 수정</button>
-			<button class="c-tabs__btn" data-index="3">수선항목 수정</button>
+			<button class="c-tabs__btn" data-index="0">상용구 수정</button>
+			<button class="c-tabs__btn" data-index="1">수선항목 수정</button>
 			<button class="c-tabs__btn" data-index="2">추가항목 수정</button>
 		</div>
 		<div class="c-tabs__body">
@@ -227,7 +227,7 @@
 				</div>
 				<div class="c-tabs__content-body">
 					<div class="c-tabs__body-console c-tabs__body-console--right">
-						<button class="c-button c-button--small c-button--solid" id="createRow0">라인추가</button>
+						<button class="c-button c-button--small c-button--solid openItemPop" data-index="0" id="createRow0">라인추가</button>
 						<button class="c-button c-button--small c-button--red" id="removeRow0">라인삭제</button>
 						<div class="c-elevator c-elevator--left-border">
 							<button class="c-elevator__btn up" id="upRows0">위</button>
@@ -239,7 +239,7 @@
 				</div>
 				<div class="c-tabs__content-footer">
 					<div class="c-tabs__console">
-						<button class="c-button c-button--solid">저장</button>
+						<button class="c-button c-button--solid gridSave" data-gridnum="0">저장</button>
 					</div>
 				</div>
 			</div>
@@ -250,7 +250,7 @@
 				</div>
 				<div class="c-tabs__content-body">
 					<div class="c-tabs__body-console c-tabs__body-console--right">
-						<button class="c-button c-button--small c-button--solid" id="createRow1">라인추가</button>
+						<button class="c-button c-button--small c-button--solid openItemPop" data-index="1" id="createRow1">라인추가</button>
 						<button class="c-button c-button--small c-button--red" id="removeRow1">라인삭제</button>
 						<div class="c-elevator c-elevator--left-border">
 							<button class="c-elevator__btn up" id="upRows1">위</button>
@@ -262,7 +262,7 @@
 				</div>
 				<div class="c-tabs__content-footer">
 					<div class="c-tabs__console">
-						<button class="c-button c-button--solid">저장</button>
+						<button class="c-button c-button--solid gridSave" data-gridnum="1">저장</button>
 					</div>
 				</div>
 			</div>
@@ -273,7 +273,7 @@
 				</div>
 				<div class="c-tabs__content-body">
 					<div class="c-tabs__body-console c-tabs__body-console--right">
-						<button class="c-button c-button--small c-button--solid" id="createRow2">라인추가</button>
+						<button class="c-button c-button--small c-button--solid openItemPop" data-index="2" id="createRow2">라인추가</button>
 						<button class="c-button c-button--small c-button--red" id="removeRow2">라인삭제</button>
 						<div class="c-elevator c-elevator--left-border">
 							<button class="c-elevator__btn up" id="upRows2">위</button>
@@ -285,7 +285,7 @@
 				</div>
 				<div class="c-tabs__content-footer">
 					<div class="c-tabs__console">
-						<button class="c-button c-button--solid">저장</button>
+						<button class="c-button c-button--solid gridSave" data-gridnum="2">저장</button>
 					</div>
 				</div>
 			</div>
@@ -322,7 +322,7 @@
 			</div>
 			<ul class="pop__console">
 				<li><button class="c-button pop__close">닫기</button></li>
-				<li><button class="c-button c-button--dark pop__close" id="sendItemValue">입력</button></li>
+				<li><button class="c-button c-button--dark pop__close" data-ismodify="" id="sendItemValue">입력</button></li>
 			</ul>
 		</div>
 	</div>

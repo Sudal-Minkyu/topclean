@@ -72,7 +72,10 @@ const dto = {
 
 /* dto가 아닌 일반적인 데이터들 정의 */
 const data = {
-
+	// 항목 추가 팝업 구분
+	itemEditPopNum: 0,
+	rowIndex: 0,
+	
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 */
@@ -107,24 +110,22 @@ const ajax = {
 	// 상용구, 수선항목, 추가항목 받기
 	getFrFavorite(num) {
 		CommonUI.ajax(grid.s.url.create[num], "GET", {baType: num}, (res) => {
+			console.log(res);
 			let data;
 			switch(num) {
 				case "1" :
 					data = res.sendData.repairListData;
 					dv.chk(data, dto.receive.franchiseAddProcessList.repairListData, "수선항목 받아오기");
-					num = "1";
 				break;
 				
 				case "2" :
 					data = res.sendData.addAmountData;
 					dv.chk(data, dto.receive.franchiseAddProcessList.addAmountData, "추가항목 받아오기");
-					num = "2";
 				break;
 				
-				case "3" :
+				case "0" :
 					data = res.sendData.keyWordData;
 					dv.chk(data, dto.receive.franchiseAddProcessList.keyWordData, "상용구 받아오기");
-					num = "0";
 				break;
 			}
 			grid.f.setFavoriteData(num, data);
@@ -133,33 +134,30 @@ const ajax = {
 	
 	// 상용구, 수선항목, 추가항목 저장
 	saveFrFavorite(num, frFavoriteData) {
-		let baTypeNum;
-		
 		switch(num) {
 			case "0" :
 				dv.chk(frFavoriteData, dto.send.franchiseAddProcess.keyWordData, "상용구 저장");
-				baTypeNum = "3";
 			break;
 			
 			case "1" :
 				dv.chk(frFavoriteData, dto.send.franchiseAddProcess.repairListData, "수선항목 저장");
-				baTypeNum = "1";
 			break;
 			
 			case "2" :
 				dv.chk(frFavoriteData, dto.send.franchiseAddProcess.addAmountData, "추가항목 저장");
-				baTypeNum = "2";
 			break;
 		};
 		const data = {
 			list : frFavoriteData
 		};
-		data.baType = baTypeNum;
+		data.baType = num;
 		
 		CommonUI.ajaxjson(grid.s.url.update[num], JSON.stringify(data), function(res) {
-			
+			alertSuccess('저장되었습니다.');
+			grid.f.clearData(num);
+			ajax.getFrFavorite(num);
 		});
-	}
+	},
 };
 
 /* .s : AUI 그리드 관련 설정들
@@ -208,7 +206,20 @@ const grid = {
                 }, {
                     dataField: "baRemark",
                     headerText: "비고",
-                },
+                }, {
+					dataField: "",
+					headerText: "수정",
+					renderer : {
+						type: "TemplateRenderer",
+					},
+					labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
+						const template = `
+							<button class="c-button c-button--solid  c-button--supersmall" 
+								onclick="onModifyOrder(0, ${rowIndex})">수정</button>
+						`;
+						return template;
+					},
+				}
             ];
             
             // 1번 그리드, 수선항목의 레이아웃
@@ -219,7 +230,20 @@ const grid = {
                 }, {
                     dataField: "baRemark",
                     headerText: "비고",
-                },
+                }, {
+					dataField: "",
+					headerText: "수정",
+					renderer : {
+						type: "TemplateRenderer",
+					},
+					labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
+						const template = `
+							<button class="c-button c-button--solid  c-button--supersmall" 
+								onclick="onModifyOrder(1, ${rowIndex})">수정</button>
+						`;
+						return template;
+					},
+				}
             ];
             
             // 2번 그리드, 추가항목의 레이아웃
@@ -230,7 +254,20 @@ const grid = {
                 }, {
                     dataField: "baRemark",
                     headerText: "비고",
-                },
+                }, {
+					dataField: "",
+					headerText: "수정",
+					renderer : {
+						type: "TemplateRenderer",
+					},
+					labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
+						const template = `
+							<button class="c-button c-button--solid  c-button--supersmall" 
+								onclick="onModifyOrder(2, ${rowIndex})">수정</button>
+						`;
+						return template;
+					},
+				}
             ];
 
             /* 0번 그리드의 프로퍼티(옵션) 아래의 링크를 참조
@@ -244,6 +281,8 @@ const grid = {
                 showStateColumn : true,
                 enableFilter : true,
                 showRowCheckColumn: true,
+                rowHeight : 48,
+                headerHeight : 48,
             };
             
             grid.s.prop[1] = {
@@ -254,6 +293,8 @@ const grid = {
                 showStateColumn : true,
                 enableFilter : true,
                 showRowCheckColumn: true,
+                rowHeight : 48,
+                headerHeight : 48,
             };
             
             grid.s.prop[2] = {
@@ -264,6 +305,8 @@ const grid = {
                 showStateColumn : true,
                 enableFilter : true,
                 showRowCheckColumn: true,
+                rowHeight : 48,
+                headerHeight : 48,
             };
 
         },
@@ -290,6 +333,10 @@ const grid = {
 			// let item = {"항목": "", "비고": ""};
 			AUIGrid.addRow(grid.s.id[num], item, "last");
 		},
+
+		modifyRow(num, item, rowIndex) {
+			AUIGrid.updateRow(grid.s.id[num], item, rowIndex);
+		},
 		
 		removeRow(num) {
 			const items = AUIGrid.getCheckedRowItems(grid.s.id[num]);
@@ -315,9 +362,14 @@ const grid = {
 				updateGridData[i].baSort = i;
 			};
 			ajax.saveFrFavorite(num, updateGridData);
-			/*updateGridData.forEach(function(obj) {
-				console.log(obj);
-			});*/
+		},
+
+		clearData(num) {
+			AUIGrid.clearGridData(grid.s.id[num]);
+		},
+
+		getRowData(num, rowIndex) {
+			return AUIGrid.getItemByRowIndex(grid.s.id[num], rowIndex);
 		}
     },
 
@@ -369,20 +421,33 @@ const event = {
 			
 			// 라인 추가
 			// 팝업 열기
-			$('#createRow2').on('click', function() {
+			$('.openItemPop').on('click', function(e) {
+				data.itemEditPopNum = $(this).attr('data-index');
 				$('.pop').addClass('active');
 				// input값 초기화
 				$('#baName').val('');
 				$('#baRemark').val('');
+				$('#sendItemValue').attr('data-ismodify', '0');
+				console.log(data.itemEditPopNum);
 			});
 			// input 값 보내기
 			$('#sendItemValue').on('click', function() {
 				const baName = $('#baName').val();
 				const baRemark = $('#baRemark').val();
 				const item = {"baName": baName, "baRemark": baRemark};
-				console.log(item);
-				grid.f.createRow("2", item);
+				
+				if ($(this).attr('data-ismodify') == "0") {
+					grid.f.createRow(data.itemEditPopNum, item);
+				} else {
+					grid.f.modifyRow(data.itemEditPopNum, item, data.rowIndex);
+				}
 			})
+
+			// 상용구, 수정항목, 추가항목 그리드 저장
+			$('.gridSave').on('click', function () {
+				const gridnum = $(this).attr('data-gridnum');
+				grid.f.saveGridData(gridnum);
+			});
 			
 			// 라인 삭제
 			$('#removeRow2').on('click', function() {
@@ -466,6 +531,18 @@ try {
     if(!(e instanceof ReferenceError)) {
         console.log(e);
     }
+}
+
+function onModifyOrder(gridNum, rowIndex) {
+	data.itemEditPopNum = gridNum;
+	data.rowIndex = rowIndex;
+
+	const rowData = grid.f.getRowData(gridNum, rowIndex);
+	$('.pop').addClass('active');
+	// input값 초기화
+	$('#baName').val(rowData.baName);
+	$('#baRemark').val(rowData.baRemark);
+	$('#sendItemValue').attr('data-ismodify', '1');
 }
 
 
