@@ -30,7 +30,8 @@ public class RequestDetailSearchDtoSub {
 
     private String fdTag; // 택번호
     private String biItemcode; // 상품코드
-    private String fdState; // 현재상태 ( S1 : 접수, S2: 지사입고,S3 지사출고, S4:가맹점입고, S5: 고객인도)
+    private String fdState; // 현재상태 ( S1 : 접수, S2: 지사입고, S3 지사반송, S4 지사출고 ,S5:가맹점입고, S6: 고객인도, S7 강제출고,S8 강제입고)
+    private String fdPreState; // 이전상태 ( S1 : 접수, S2: 지사입고, S3 지사반송, S4 지사출고 ,S5:가맹점입고, S6: 고객인도, S7 강제출고,S8 강제입고)
 
 //    private LocalDateTime fdStateDt; // 현재상태변경시간 = d
 

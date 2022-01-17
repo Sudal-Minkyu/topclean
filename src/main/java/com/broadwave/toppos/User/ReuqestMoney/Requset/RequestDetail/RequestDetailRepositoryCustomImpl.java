@@ -125,6 +125,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdTag,
                         requestDetail.biItemcode,
                         requestDetail.fdState,
+                        requestDetail.fdPreState,
 
                         requestDetail.fdS2Dt,
                         requestDetail.fdS3Dt,

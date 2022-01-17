@@ -462,19 +462,23 @@ public class InspectService {
             return ResponseEntity.ok(res.fail(ResponseErrorCode.TP024.getCode(),"인도취소 할 "+ResponseErrorCode.TP024.getDesc(), "문자", "재조회 후 다시 시도해주세요."));
         }else{
             fdState =  optionalRequestDetail.get().getFdState(); // 바뀌기 전 현재상태
-            fdPreState =  optionalRequestDetail.get().getFdPreState(); // 바뀌기 전 이전상태
-            optionalRequestDetail.get().setFdState(fdPreState);
-            optionalRequestDetail.get().setFdStateDt(LocalDateTime.now());
-            optionalRequestDetail.get().setFdPreState(fdState);
-            optionalRequestDetail.get().setFdPreStateDt(LocalDateTime.now());
-            optionalRequestDetail.get().setModify_id(login_id);
-            optionalRequestDetail.get().setModify_date(LocalDateTime.now());
-            requestDetailRepository.save(optionalRequestDetail.get());
+            if(fdState.equals("S6")){
+                fdPreState =  optionalRequestDetail.get().getFdPreState(); // 바뀌기 전 이전상태
+                optionalRequestDetail.get().setFdState(fdPreState);
+                optionalRequestDetail.get().setFdStateDt(LocalDateTime.now());
+                optionalRequestDetail.get().setFdPreState(fdState);
+                optionalRequestDetail.get().setFdPreStateDt(LocalDateTime.now());
+                optionalRequestDetail.get().setModify_id(login_id);
+                optionalRequestDetail.get().setModify_date(LocalDateTime.now());
+                requestDetailRepository.save(optionalRequestDetail.get());
+            }else{
+                return ResponseEntity.ok(res.fail(ResponseErrorCode.TP024.getCode(),"이미 인도취소한 상품입니다.", "문자", "재조회 후 다시 시도해주세요."));
+            }
         }
 
-        data.put("fdState",fdPreState);
+        data.put("fdPreState",fdPreState);
 
-        return ResponseEntity.ok(res.dataSendSuccess(data));
+        return ResponseEntity.ok(res.success());
     }
 
     //  통합조회용 - 검품 고객 수락/거부
@@ -495,12 +499,13 @@ public class InspectService {
         if(!optionalInspeot.isPresent()){
             return ResponseEntity.ok(res.fail(ResponseErrorCode.TP022.getCode(),"검품 수락및거부 할"+ResponseErrorCode.TP022.getDesc(), "문자", "재조회 후 다시 시도해주세요."));
         }else{
+            optionalInspeot.get().setFiProgressStateDt(LocalDateTime.now());
+            optionalInspeot.get().setModify_id(login_id);
+            optionalInspeot.get().setModify_date(LocalDateTime.now());
+
             if(type.equals("2")){
                 log.info("검품 수락 ID : "+fiId);
                 optionalInspeot.get().setFiCustomerConfirm("2");
-                optionalInspeot.get().setFiProgressStateDt(LocalDateTime.now());
-                optionalInspeot.get().setModify_id(login_id);
-                optionalInspeot.get().setModify_date(LocalDateTime.now());
 
                 Optional<RequestDetail> optionalRequestDetail = requestDetailRepository.findById(optionalInspeot.get().getFdId().getId());
                 if(!optionalRequestDetail.isPresent()){
@@ -533,7 +538,6 @@ public class InspectService {
             }else{
                 log.info("검품 거부 ID : "+fiId);
                 optionalInspeot.get().setFiCustomerConfirm("3");
-                optionalInspeot.get().setFiProgressStateDt(LocalDateTime.now());
                 inspeotRepository.save(optionalInspeot.get());
             }
         }
