@@ -315,11 +315,21 @@ const ajax = {
             console.log(res);
             const gridData = res.sendData.gridListData;
             const cancelList = res.sendData.cencelList;
+            const inspectListF = res.sendData.inspeotListF;
+            const inspectListB = res.sendData.inspeotListB;
             gridData.forEach(item => {
                 if(cancelList.includes(item.frId)) {
                     item.fpCancelYn = "N"
                 }
+                if(inspectListF.includes(item.fdId) && item.fdState === "S1") {
+                    item.fdState = "F";
+                }
+                if(inspectListB.includes(item.fdId) && item.fdState === "S2") {
+                    item.fdState = "B";
+                }
             });
+
+
             dv.chk(gridData, dto.receive.franchiseRequestDetailSearch, "메인그리드 조회 결과 리스트");
             grid.f.setData(0, gridData);
         });
@@ -372,10 +382,11 @@ const ajax = {
         dv.chk(condition, dto.send.franchiseLeadCancel, "인도 취소");
         const url = "/api/user/franchiseLeadCancel";
         CommonUI.ajax(url, "PARAM", condition, function(res) {
-            // data.currentRequest.fdPreState
-            // data.currentRequest.fdState
+            const tempVar = data.currentRequest.fdPreState;
+            data.currentRequest.fdPreState = data.currentRequest.fdState;
+            data.currentRequest.fdState = tempVar;
+            AUIGrid.updateRowsById(grid.s.id[0], data.currentRequest);
             alertSuccess("인도 취소를 완료하였습니다.");
-            // 상태변경 or 새로고침 처리
         });
     },
 
@@ -391,6 +402,7 @@ const ajax = {
                 fdId: testObj.fdId,
                 type: "1"
             };
+            data.currentRequest.fdState = "F";
             ajax.getInspectionList(searchCondition);
         });
     },
@@ -428,7 +440,13 @@ const ajax = {
         dv.chk(target, dto.send.franchiseInspectionYn);
         const url = "/api/user/franchiseInspectionYn";
         CommonUI.ajax(url, "PARAM", target, function(res) {
-            console.log(res);
+            const searchCondition = {
+                fdId: data.currentRequest.fdId,
+                type: "2",
+            }
+            ajax.getInspectionList(searchCondition);
+            const cautionText = ["고객 수락이 승인 완료되었습니다.", " 고객 수락이 거부되었습니다."];
+            alertCaution(cautionText[target.type - 2], 1);
         });
     },
 };
@@ -587,7 +605,7 @@ const grid = {
                     },
                     labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
                         let template = "";
-                        if(["S1", "F", "B"].includes(item.fdState)) {
+                        if(["F", "B"].includes(item.fdState)) {
                             template = `
                                 <button class="c-state">확인</button>
                             `;
@@ -817,6 +835,9 @@ const grid = {
                 }, {
                     dataField: "fiCustomerConfirm",
                     headerText: "고객수락",
+                    labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
+                        return data.fiCustomerConfirmName[value];
+                    },
                 },
             ];
 
@@ -922,7 +943,8 @@ const grid = {
                     case "redBtn1":
                         // 확인후 ajax 호출하며 그리드에서 삭제
                         if(e.item.redBtn1) {
-                            alertCheck("선택한 품목을 접수취소하시겠습니까?<br>접수취소 후에는 신규접수를 통해<br>재등록 가능합니다.");
+                            alertCheck("선택한 품목을 접수취소하시겠습니까?" 
+                                + "<br>접수취소 후에는 신규접수를 통해<br>재등록 가능합니다.");
                             $("#checkDelSuccessBtn").on("click", function() {
                                 ajax.cancelOrder(e.item.fdId);
                                 $("#popupId").remove();
@@ -999,6 +1021,11 @@ const data = {
     fiTypeName: {
         F: "가맹검품",
         B: "확인품",
+    },
+    fiCustomerConfirmName: {
+        "1": "미확인",
+        "2": "고객수락",
+        "3": "고객거부",
     },
     keypadNum: 0,
 }
@@ -1167,6 +1194,7 @@ const event = {
             });
 
             $("#closePutInspectPop").on("click", function () {
+                AUIGrid.updateRowsById(grid.s.id[0], data.currentRequest);
                 $("#putInspectPop").removeClass("active");
                 if(data.isCameraExist) {
                     try {
@@ -1209,11 +1237,21 @@ const event = {
             });
 
             $("#customerConfirmed").on("click", function () {
-                customerJudgement("2");
+                if(grid.f.getSelectedItem(4)) {
+                    alertCheck("고객께서 진행 수락 하셨습니까?");
+                    $("#checkDelSuccessBtn").on("click", function () {
+                        customerJudgement("2");
+                    });
+                }
             });
 
             $("#customerDenied").on("click", function () {
-                customerJudgement("3");
+                if(grid.f.getSelectedItem(4)) {
+                    alertCheck("고객께서 진행 거부 하셨습니까?");
+                    $("#checkDelSuccessBtn").on("click", function () {
+                        customerJudgement("3");
+                    });
+                }
             });
 
             $("#closePaymentPop").on("click", function () {
@@ -1229,6 +1267,25 @@ const event = {
                     //AUIGrid.refresh(grid.s.id[0]);
                 }
                 $("#paymentListPop").removeClass("active");
+            });
+
+            $("#closeConfirmInspectPop").on("click", function () {
+                const items = AUIGrid.getGridData(grid.s.id[4]);
+                let isInspectionDone = true;
+                let lastFdState = "S1"; 
+                items.forEach(item => {
+                    if(item.fiType === "B") {
+                        lastFdState = "S2";
+                    }
+                    if(item.fiCustomerConfirm === "1") {
+                        isInspectionDone = false;
+                    }
+                });
+                if(isInspectionDone) {
+                    data.currentRequest.fdState = lastFdState;
+                    AUIGrid.updateRowsById(grid.s.id[0], data.currentRequest);
+                }
+                $("#confirmInspectPop").removeClass("active");
             });
         },
     },
@@ -1836,12 +1893,6 @@ function customerJudgement(typeAnswer) {
         type: typeAnswer,
     };
     ajax.franchiseInspectionYn(target);
-
-    if(typeAnswer) {
-
-    }else{
-
-    }
 }
 
 function ynStyle(rowIndex, columnIndex, value, headerText, item, dataField) {
@@ -1888,8 +1939,7 @@ function putInspect() {
     }
 }
 
-function b64toBlob(dataURI) {
-
+function b64toBlob(dataURI) { // 파일을 ajax 통신에 쓰기 위해 변환
     const byteString = atob(dataURI.split(',')[1]);
     const ab = new ArrayBuffer(byteString.length);
     const ia = new Uint8Array(ab);
