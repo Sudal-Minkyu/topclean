@@ -472,7 +472,7 @@ public class InspectService {
                 optionalRequestDetail.get().setModify_date(LocalDateTime.now());
                 requestDetailRepository.save(optionalRequestDetail.get());
             }else{
-                return ResponseEntity.ok(res.fail(ResponseErrorCode.TP024.getCode(),"이미 인도취소한 상품입니다.", "문자", "재조회 후 다시 시도해주세요."));
+                return ResponseEntity.ok(res.fail(ResponseErrorCode.TP024.getCode(),"해당상품은 인도취소한 상품입니다.", "문자", "재조회 후 다시 시도해주세요."));
             }
         }
 

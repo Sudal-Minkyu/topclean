@@ -60,11 +60,12 @@ public class InspeotRepositoryCustomImpl extends QuerydslRepositorySupport imple
         JPQLQuery<InspeotYnDto> query = from(inspeot)
                 .where(inspeot.fdId.id.in(fdIdList)
                         .and(inspeot.fiCustomerConfirm.eq("1")
-                        .and(inspeot.fiType.eq("F"))))
-                .groupBy(inspeot.id)
+                                .and(inspeot.fiType.eq("F"))))
+                .groupBy(inspeot.fdId.id)
 
                 .select(Projections.constructor(InspeotYnDto.class,
-                        inspeot.fdId.id
+                        inspeot.fdId.id,
+                        inspeot.fiType
                 ));
 
         query.orderBy(inspeot.id.desc());
@@ -80,10 +81,11 @@ public class InspeotRepositoryCustomImpl extends QuerydslRepositorySupport imple
                 .where(inspeot.fdId.id.in(fdIdList)
                         .and(inspeot.fiCustomerConfirm.eq("1")
                                 .and(inspeot.fiType.eq("B"))))
-                .groupBy(inspeot.id)
+                .groupBy(inspeot.fdId.id)
 
                 .select(Projections.constructor(InspeotYnDto.class,
-                        inspeot.fdId.id
+                        inspeot.fdId.id,
+                        inspeot.fiType
                 ));
 
         query.orderBy(inspeot.id.desc());
