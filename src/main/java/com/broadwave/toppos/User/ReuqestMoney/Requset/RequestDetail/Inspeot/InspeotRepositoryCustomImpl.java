@@ -64,8 +64,7 @@ public class InspeotRepositoryCustomImpl extends QuerydslRepositorySupport imple
                 .groupBy(inspeot.fdId.id)
 
                 .select(Projections.constructor(InspeotYnDto.class,
-                        inspeot.fdId.id,
-                        inspeot.fiType
+                        inspeot.fdId.id
                 ));
 
         query.orderBy(inspeot.id.desc());
@@ -84,8 +83,7 @@ public class InspeotRepositoryCustomImpl extends QuerydslRepositorySupport imple
                 .groupBy(inspeot.fdId.id)
 
                 .select(Projections.constructor(InspeotYnDto.class,
-                        inspeot.fdId.id,
-                        inspeot.fiType
+                        inspeot.fdId.id
                 ));
 
         query.orderBy(inspeot.id.desc());
