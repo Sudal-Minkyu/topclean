@@ -31,6 +31,7 @@
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
 	<script src="/assets/js/toppos/user/receipt/integrate.js"></script>
+	<script src="/assets/js/toppos/CATPayment.js"></script>
     <!-- lightbox 추가 -->
     <script src="/assets/js/lightbox2/js/lightbox.js"></script>
 	<script type="text/javascript">
@@ -212,7 +213,7 @@
 			</div>
 			
 			<ul class="pop__console">
-				<li><button class="c-button pop__close">닫기</button></li>
+				<li><button class="c-button" id="closePaymentPop">닫기</button></li>
 				<li><button class="c-button c-button--dark" id="transferPoint">적립금전환</button></li>
 				<li><button class="c-button c-button--red" id="refundPayment">결제취소</button></li>
 			</ul>
@@ -264,7 +265,7 @@
 					<div class="pop__console-cost">
 						<div class="pop__console-title">현재 접수금액</div>
 						<div class="pop__console-input">
-							<div class="c-text"><input type="text" readonly="readonly" /></div>
+							<div class="c-text"><input type="text" readonly="readonly" id="fdRequestAmtInPut" /></div>
 						</div>
 					</div>
 					<div class="pop__console-cost">
@@ -317,7 +318,7 @@
 					<div class="pop__console-cost">
 						<div class="pop__console-title">현재 접수금액</div>
 						<div class="pop__console-input">
-							<div class="c-text"><input type="text" readonly="readonly" /></div>
+							<div class="c-text"><input type="text" readonly="readonly" id="fdRequestAmtInConfirm" /></div>
 						</div>
 					</div>
 					<div class="pop__console-cost">
