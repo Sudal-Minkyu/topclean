@@ -42,11 +42,11 @@ const dto = {
             type: "sr", // 1 = 취소, 2 = 적립금전환
         },
 
-        접수취소요청: {
+        franchiseReceiptCancel: {
             fdId: "nr",
         },
 
-        인도취소요청: {
+        franchiseLeadCancel: {
             fdId: "nr",
         },
 
@@ -340,15 +340,6 @@ const ajax = {
         });
     },
 
-    cancelOrder(fdId) {
-        const condition = {fdId: fdId, type: "1"};
-        dv.chk(condition, dto.send, "접수 취소");
-        CommonUI.ajax(grid.s.url.delete[0], "PARAM", condition, function(res) {
-            alertSuccess("접수 취소를 완료하였습니다.");
-            // 상태변경 or 새로고침 처리
-        });
-    },
-
     cancelPayment(target) {
         dv.chk(target, dto.send.franchiseRequestDetailCencel, "한 항목 결제 취소");
         const url = "/api/user/franchiseRequestDetailCencel";
@@ -361,10 +352,19 @@ const ajax = {
         });
     },
 
+    cancelOrder(fdId) {
+        const condition = {fdId: fdId};
+        dv.chk(condition, dto.send.franchiseReceiptCancel, "접수 취소");
+        CommonUI.ajax(grid.s.url.delete[0], "PARAM", condition, function(res) {
+            alertSuccess("접수 취소를 완료하였습니다.");
+            // 상태변경 or 새로고침 처리
+        });
+    },
+
     cancelDeliverState(fdId) { // 현재 접수취소와 같은 url을 사용중
-        const condition = {fdId: fdId, type: "2"};
-        dv.chk(condition, dto.send, "인도 취소");
-        const url = "/api/user/franchiseReceiptCancel";
+        const condition = {fdId: fdId};
+        dv.chk(condition, dto.send.franchiseLeadCancel, "인도 취소");
+        const url = "/api/user/franchiseLeadCancel";
         CommonUI.ajax(url, "PARAM", condition, function(res) {
             alertSuccess("인도 취소를 완료하였습니다.");
             // 상태변경 or 새로고침 처리
