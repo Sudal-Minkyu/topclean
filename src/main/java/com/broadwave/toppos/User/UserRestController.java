@@ -735,4 +735,14 @@ public class UserRestController {
         return inspectService.franchiseLeadCancel(fdId, request);
     }
 
+    //  통합조회용 - 검품 고객 수락/거부
+    @PostMapping("franchiseInspectionYn")
+    public ResponseEntity<Map<String,Object>> franchiseInspectionYn(@RequestParam(value="fiId", defaultValue="") Long fiId,
+                                                                    @RequestParam(value="type", defaultValue="") String type,
+                                                                    @RequestParam(value="fiAddAmt", defaultValue="") Integer fiAddAmt,
+                                                                    HttpServletRequest request){
+        return inspectService.franchiseInspectionYn(fiId, type, fiAddAmt, request);
+    }
+
+
 }

@@ -74,6 +74,6 @@ public class Inspeot {
     private String modify_id;
 
     @Column(name="modify_date")
-    private LocalDateTime modifyDateTime;
+    private LocalDateTime modify_date;
 
 }

@@ -62,9 +62,7 @@ public class PaymentRepositoryCustomImpl extends QuerydslRepositorySupport imple
                 .groupBy(payment.frId)
 
                 .select(Projections.constructor(PaymentCencelYnDto.class,
-//                        payment.count(),
                         payment.frId.id
-//                        payment.fpCancelYn
                 ));
 
         query.orderBy(payment.id.desc());

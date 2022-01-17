@@ -204,8 +204,8 @@ public class ReceiptService {
                     optionalRequest.get().setFrNormalAmount(etcData.getFrNormalAmount());
                     optionalRequest.get().setFrQty(etcData.getFrQty());
                     optionalRequest.get().setFrYyyymmdd(nowDate);
-                    optionalRequest.get().setModity_id(login_id);
-                    optionalRequest.get().setModity_date(LocalDateTime.now());
+                    optionalRequest.get().setModify_id(login_id);
+                    optionalRequest.get().setModify_date(LocalDateTime.now());
                     requestSave = optionalRequest.get();
                 }
             }else{
@@ -343,8 +343,8 @@ public class ReceiptService {
                         optionalRequestDetail.get().setFdRemark(requestDetailMapperDto.getFdRemark());
                         optionalRequestDetail.get().setFdEstimateDt(requestDetailMapperDto.getFrEstimateDate());
 
-                        optionalRequestDetail.get().setModity_id(login_id);
-                        optionalRequestDetail.get().setModity_date(LocalDateTime.now());
+                        optionalRequestDetail.get().setModify_id(login_id);
+                        optionalRequestDetail.get().setModify_date(LocalDateTime.now());
                         RequestDetail requestDetail = optionalRequestDetail.get();
                         requestDetailList.add(requestDetail);
 
@@ -580,8 +580,8 @@ public class ReceiptService {
                     // 마스터테이블에 결제금액 업데이트
                     frPayAmount = optionalRequest.get().getFrPayAmount()+frPayAmount; // 현재 결제된 금액과 마스터테이블에 기록된 결제금액을 더한다.
                     optionalRequest.get().setFrPayAmount(frPayAmount);
-                    optionalRequest.get().setModity_id(login_id);
-                    optionalRequest.get().setModity_date(LocalDateTime.now());
+                    optionalRequest.get().setModify_id(login_id);
+                    optionalRequest.get().setModify_date(LocalDateTime.now());
 
                     // 미수여부 기능작업 조건 : 합계금액보다 결제금액이 같거나 크면 N
                     if(optionalRequest.get().getFrTotalAmount() <= frPayAmount){
@@ -618,8 +618,8 @@ public class ReceiptService {
                                 requestUpdate = modelMapper.map(updateRequest, Request.class);
                                 requestUpdate.setFpId(result);
                                 requestUpdate.setFrUncollectYn("N");
-                                requestUpdate.setModity_id(login_id);
-                                requestUpdate.setModity_date(LocalDateTime.now());
+                                requestUpdate.setModify_id(login_id);
+                                requestUpdate.setModify_date(LocalDateTime.now());
                                 updateRequestList.add(requestUpdate);
                             }
                             requestRepository.saveAll(updateRequestList); // 미수금완납시 마스터테이블 처리

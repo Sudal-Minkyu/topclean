@@ -93,15 +93,28 @@ public class InspectService {
         List<RequestDetailSearchDto> requestDetailSearchDtoList = requestDetailSearch(frCode, bcId, searchTag, filterCondition, filterFromDt, filterToDt); //  통합조회용 - 접수세부 호출
 
         List<Long> frIdList = new ArrayList<>();
+        List<Long> fdIdList = new ArrayList<>();
         for(int i=0; i<requestDetailSearchDtoList.size(); i++){
             frIdList.add(requestDetailSearchDtoList.get(i).getFrId());
+            fdIdList.add(requestDetailSearchDtoList.get(i).getFdId());
         }
 
+        // 결제 취소여부 리스트 호출
         List<PaymentCencelYnDto> paymentCencelYnDtoList = paymentRepositoryCustom.findByPaymentCancelYn(frIdList);
         List<Long> cencelList = new ArrayList<>();
         for(int i=0; i<paymentCencelYnDtoList.size(); i++){
             cencelList.add(paymentCencelYnDtoList.get(i).getFrId());
         }
+
+        log.info("fdIdList : "+fdIdList);
+        // 검품 등록여부 리스트 호출
+        List<InspeotYnDto> inspeotYnDtoList = inspeotRepositoryCustom.findByInspeotYn(fdIdList);
+        log.info("inspeotYnDtoList : "+inspeotYnDtoList);
+        List<Long> inspeotList = new ArrayList<>();
+        for(int i=0; i<inspeotYnDtoList.size(); i++){
+            inspeotList.add(inspeotYnDtoList.get(i).getFdId());
+        }
+        log.info("inspeotList : "+inspeotList);
 
         List<RequestDetailSearchDtoSub> requestDetailSearchDtoSubList = new ArrayList<>();
         for(RequestDetailSearchDto requestDetailSearchDto : requestDetailSearchDtoList){
@@ -112,6 +125,7 @@ public class InspectService {
 
         data.put("gridListData",requestDetailSearchDtoSubList);
         data.put("cencelList",cencelList);
+        data.put("inspeotList",inspeotList);
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
@@ -174,8 +188,8 @@ public class InspectService {
             optionalRequestDetail.get().setFdUrgentYn(requestDetailUpdateDto.getFdUrgentYn());
             optionalRequestDetail.get().setFdRemark(requestDetailUpdateDto.getFdRemark());
 
-            optionalRequestDetail.get().setModity_id(login_id);
-            optionalRequestDetail.get().setModity_date(LocalDateTime.now());
+            optionalRequestDetail.get().setModify_id(login_id);
+            optionalRequestDetail.get().setModify_date(LocalDateTime.now());
             RequestDetail requestDetailSave = optionalRequestDetail.get();
 //            log.info("requestDetailSave : "+requestDetailSave);
 
@@ -251,8 +265,8 @@ public class InspectService {
                     // 마스터테이블의 계산가격을 업데이트한다.
                     optionalRequest.get().setFrPayAmount(optionalRequest.get().getFrPayAmount()-optionalPayment.get().getFpAmt());
                     optionalRequest.get().setFrUncollectYn("Y");
-                    optionalRequest.get().setModity_id(login_id);
-                    optionalRequest.get().setModity_date(LocalDateTime.now());
+                    optionalRequest.get().setModify_id(login_id);
+                    optionalRequest.get().setModify_date(LocalDateTime.now());
                     requestRepository.save(optionalRequest.get());
                 }
             }else{
@@ -301,8 +315,8 @@ public class InspectService {
             inspeot.setFiAddAmt(inspeotMapperDto.getFiAddAmt());
             inspeot.setFiPhotoYn("N");
             inspeot.setFiSendMsgYn("N");
+            inspeot.setFiCustomerConfirm("1");
             // 밑에 주석 값은 널로 등록한다.
-//            inspeot.setFiCustomerConfirm(); -> null;
 //            inspeot.setFiProgressStateDt(); -> null;
 //            inspeot.setFiMessage(); -> null;
 //            inspeot.setFiMessageSendDt(); -> null;
@@ -417,8 +431,8 @@ public class InspectService {
         }else{
             optionalRequestDetail.get().setFdCancel("Y");
             optionalRequestDetail.get().setFdCacelDt(LocalDateTime.now());
-            optionalRequestDetail.get().setModity_id(login_id);
-            optionalRequestDetail.get().setModity_date(LocalDateTime.now());
+            optionalRequestDetail.get().setModify_id(login_id);
+            optionalRequestDetail.get().setModify_date(LocalDateTime.now());
             requestDetailRepository.save(optionalRequestDetail.get());
         }
 
@@ -449,8 +463,8 @@ public class InspectService {
             optionalRequestDetail.get().setFdStateDt(LocalDateTime.now());
             optionalRequestDetail.get().setFdPreState(fdState);
             optionalRequestDetail.get().setFdPreStateDt(LocalDateTime.now());
-            optionalRequestDetail.get().setModity_id(login_id);
-            optionalRequestDetail.get().setModity_date(LocalDateTime.now());
+            optionalRequestDetail.get().setModify_id(login_id);
+            optionalRequestDetail.get().setModify_date(LocalDateTime.now());
             requestDetailRepository.save(optionalRequestDetail.get());
         }
 
@@ -458,5 +472,70 @@ public class InspectService {
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
+
+    //  통합조회용 - 검품 고객 수락/거부
+    @Transactional
+    public ResponseEntity<Map<String, Object>> franchiseInspectionYn(Long fiId, String type, Integer fiAddAmt, HttpServletRequest request) {
+        log.info("franchiseInspectionYn 호출");
+
+        AjaxResponse res = new AjaxResponse();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String login_id = claims.getSubject(); // 현재 아이디
+        String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
+        log.info("현재 접속한 아이디 : "+login_id);
+        log.info("현재 접속한 가맹점 코드 : "+frCode);
+
+        Optional<Inspeot> optionalInspeot = inspeotRepository.findById(fiId);
+        if(!optionalInspeot.isPresent()){
+            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP022.getCode(),"검품 수락및거부 할"+ResponseErrorCode.TP022.getDesc(), "문자", "재조회 후 다시 시도해주세요."));
+        }else{
+            if(type.equals("2")){
+                log.info("검품 수락 ID : "+fiId);
+                optionalInspeot.get().setFiCustomerConfirm("2");
+                optionalInspeot.get().setFiProgressStateDt(LocalDateTime.now());
+                optionalInspeot.get().setModify_id(login_id);
+                optionalInspeot.get().setModify_date(LocalDateTime.now());
+
+                Optional<RequestDetail> optionalRequestDetail = requestDetailRepository.findById(optionalInspeot.get().getFdId().getId());
+                if(!optionalRequestDetail.isPresent()){
+                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP022.getCode(),"업데이트 할 "+ResponseErrorCode.TP022.getDesc(), "문자", "재조회 후 다시 시도해주세요."));
+                }else{
+                    optionalRequestDetail.get().setFdAdd2Amt(optionalRequestDetail.get().getFdAdd2Amt()+fiAddAmt);
+                    optionalRequestDetail.get().setFdTotAmt(optionalRequestDetail.get().getFdTotAmt()+fiAddAmt);
+                    optionalRequestDetail.get().setModify_id(login_id);
+                    optionalRequestDetail.get().setModify_date(LocalDateTime.now());
+
+                    Optional<Request> optionalRequest = requestRepository.request(optionalRequestDetail.get().getFrNo(), frCode);
+                    if(!optionalRequest.isPresent()){
+                        return ResponseEntity.ok(res.fail(ResponseErrorCode.TP022.getCode(),"업데이트 할 "+ResponseErrorCode.TP022.getDesc(), "문자", "재조회 후 다시 시도해주세요."));
+                    }else {
+                        Integer frTotalAmount = optionalRequest.get().getFrTotalAmount()+fiAddAmt;
+                        optionalRequest.get().setFrTotalAmount(frTotalAmount);
+                        if(frTotalAmount <= optionalRequest.get().getFrPayAmount()){
+                            optionalRequest.get().setFrUncollectYn("N");
+                        }else{
+                            optionalRequest.get().setFrUncollectYn("Y");
+                        }
+                        optionalRequest.get().setModify_id(login_id);
+                        optionalRequest.get().setModify_date(LocalDateTime.now());
+
+                        inspeotRepository.save(optionalInspeot.get());
+                        requestDetailRepository.save(optionalRequestDetail.get());
+                        requestRepository.save(optionalRequest.get());
+                    }
+                }
+            }else{
+                log.info("검품 거부 ID : "+fiId);
+                optionalInspeot.get().setFiCustomerConfirm("3");
+                optionalInspeot.get().setFiProgressStateDt(LocalDateTime.now());
+                inspeotRepository.save(optionalInspeot.get());
+            }
+        }
+
+        return ResponseEntity.ok(res.success());
+    }
+
 
 }

@@ -82,9 +82,9 @@ public class Request {
     private LocalDateTime fr_insert_date;
 
     @Column(name="modify_id")
-    private String modity_id;
+    private String modify_id;
 
     @Column(name="modify_date")
-    private LocalDateTime modity_date;
+    private LocalDateTime modify_date;
 
 }

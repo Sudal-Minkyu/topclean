@@ -1,7 +1,5 @@
 package com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot;
 
-import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentCencelYnDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.QPayment;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.QPhoto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
@@ -9,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -50,6 +47,24 @@ public class InspeotRepositoryCustomImpl extends QuerydslRepositorySupport imple
         if(type.equals("1")){
             query.where(inspeot.fiType.eq("F"));
         }
+
+        query.orderBy(inspeot.id.desc());
+
+        return query.fetch();
+    }
+
+    @Override
+    public List<InspeotYnDto> findByInspeotYn(List<Long> fdIdList){
+        QInspeot inspeot = QInspeot.inspeot;
+
+        JPQLQuery<InspeotYnDto> query = from(inspeot)
+                .where(inspeot.fdId.id.in(fdIdList)
+                        .and(inspeot.fiCustomerConfirm.eq("1")))
+                .groupBy(inspeot.id)
+
+                .select(Projections.constructor(InspeotYnDto.class,
+                        inspeot.fdId.id
+                ));
 
         query.orderBy(inspeot.id.desc());
 

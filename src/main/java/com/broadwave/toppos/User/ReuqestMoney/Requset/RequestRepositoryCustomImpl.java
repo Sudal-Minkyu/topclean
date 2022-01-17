@@ -121,8 +121,8 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
                         request.frRefBoxCode,
                         request.fr_insert_id,
                         request.fr_insert_date,
-                        request.modity_id,
-                        request.modity_date
+                        request.modify_id,
+                        request.modify_date
                 ));
 
         query.where(request.frUncollectYn.eq("Y")
