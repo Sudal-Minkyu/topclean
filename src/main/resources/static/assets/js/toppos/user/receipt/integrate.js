@@ -447,7 +447,7 @@ const grid = {
                 "/api/user/franchiseRequestDetailUpdate", "/api/", "/api/", "/api/", "/api/"
             ],
             delete: [
-                "/api/franchiseReceiptCancel", "/api/", "/api/", "/api/", "/api/"
+                "/api/user/franchiseReceiptCancel", "/api/", "/api/", "/api/", "/api/"
             ]
         }
     },
