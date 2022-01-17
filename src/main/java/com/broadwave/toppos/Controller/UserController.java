@@ -93,6 +93,12 @@ public class UserController {
         return "user/receipt/itemsort";
     }
     
+    // 일일 영업일고
+    @RequestMapping("businessday")
+    public String businessday(){
+        return "user/businessday";
+    }
+
     // 수기마감(일마감)
     @RequestMapping("closed")
     public String closed(){

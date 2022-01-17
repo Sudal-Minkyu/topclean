@@ -1068,6 +1068,9 @@ textarea {
 .pop__aricle-content .customer__form-title {
 	width: 5rem;
 }
+.pop__aricle-content .customer__form-list.customer__form-list--release .customer__form-title {
+	width: 10rem;
+}
 .customer__form-input {
 	flex: 1;
 }
@@ -1267,8 +1270,8 @@ textarea {
 	flex-wrap: wrap;
 	justify-content: space-between;
 	width: 41.875rem;
-	padding: 0.875rem 1.25rem;
-	margin-top: 0.938rem;
+	padding: 0.5rem 1.25rem;
+	margin-top: 0.625rem;
 	margin-bottom: auto;
 	background-color: #fff;
 	-webkit-border-radius: 0.313rem;;
@@ -1280,6 +1283,53 @@ textarea {
 	flex-wrap: wrap;
 	align-items: center;
 	width: 100%;
+	margin-bottom: 0.625rem;
+}
+.delivery__count-item {
+	display: flex;
+	align-items: center;
+	position: relative;
+}
+.delivery__count-item:before {
+	content: " ";
+	display: block;
+	position: absolute;
+	top: 50%;
+	left: 0;
+	width: 0.063rem;
+	height: 1.25rem;
+	margin-top: -0.625rem;
+	background-color: #bdbdbd;
+}
+.delivery__count-item:first-child:before {
+	display: none;
+}
+.delivery__count-title {
+	padding: 0 0.625rem;
+}
+.delivery__count-input {
+	padding-right: 0.625rem;
+}
+.delivery__count-input input {
+	width: 3.125rem;
+	height: 2.5rem;
+	border: 0.063rem solid #bdbdbd;
+	border-radius: 0.313rem;
+}
+.delivery__count-input:nth-child(2n) input {
+	width: 5rem;
+}
+.delivery__count-input input:read-only {
+	background-color: #f2f2f6;
+}
+.delivery__comment {
+	padding-top: 1rem;
+	padding-left: 1.75rem;
+	background: url(/assets/images/icon__alert.svg) no-repeat;
+	background-size: 1.125rem 1.125rem;
+	background-position: left 1.25rem;
+	color: #aaa;
+	font-size: 1rem;
 }
 
 .client-info {
