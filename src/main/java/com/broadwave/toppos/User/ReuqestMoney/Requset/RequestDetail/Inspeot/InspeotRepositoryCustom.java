@@ -11,5 +11,6 @@ import java.util.List;
 public interface InspeotRepositoryCustom {
     List<InspeotListDto> findByInspeotList(Long fdId, String type);
 
-    List<InspeotYnDto> findByInspeotYn(List<Long> fdIdList);
+    List<InspeotYnDto> findByInspeotYnF(List<Long> fdIdList);
+    List<InspeotYnDto> findByInspeotYnB(List<Long> fdIdList);
 }

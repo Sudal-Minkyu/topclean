@@ -54,12 +54,32 @@ public class InspeotRepositoryCustomImpl extends QuerydslRepositorySupport imple
     }
 
     @Override
-    public List<InspeotYnDto> findByInspeotYn(List<Long> fdIdList){
+    public List<InspeotYnDto> findByInspeotYnF(List<Long> fdIdList){
         QInspeot inspeot = QInspeot.inspeot;
 
         JPQLQuery<InspeotYnDto> query = from(inspeot)
                 .where(inspeot.fdId.id.in(fdIdList)
-                        .and(inspeot.fiCustomerConfirm.eq("1")))
+                        .and(inspeot.fiCustomerConfirm.eq("1")
+                        .and(inspeot.fiType.eq("F"))))
+                .groupBy(inspeot.id)
+
+                .select(Projections.constructor(InspeotYnDto.class,
+                        inspeot.fdId.id
+                ));
+
+        query.orderBy(inspeot.id.desc());
+
+        return query.fetch();
+    }
+
+    @Override
+    public List<InspeotYnDto> findByInspeotYnB(List<Long> fdIdList){
+        QInspeot inspeot = QInspeot.inspeot;
+
+        JPQLQuery<InspeotYnDto> query = from(inspeot)
+                .where(inspeot.fdId.id.in(fdIdList)
+                        .and(inspeot.fiCustomerConfirm.eq("1")
+                                .and(inspeot.fiType.eq("B"))))
                 .groupBy(inspeot.id)
 
                 .select(Projections.constructor(InspeotYnDto.class,

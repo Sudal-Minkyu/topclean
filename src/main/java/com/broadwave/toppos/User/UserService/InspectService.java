@@ -106,16 +106,19 @@ public class InspectService {
             cencelList.add(paymentCencelYnDtoList.get(i).getFrId());
         }
 
-        log.info("fdIdList : "+fdIdList);
         // 검품 등록여부 리스트 호출
-        List<InspeotYnDto> inspeotYnDtoList = inspeotRepositoryCustom.findByInspeotYn(fdIdList);
-        log.info("inspeotYnDtoList : "+inspeotYnDtoList);
-        List<Long> inspeotList = new ArrayList<>();
-        for(int i=0; i<inspeotYnDtoList.size(); i++){
-            inspeotList.add(inspeotYnDtoList.get(i).getFdId());
+        List<InspeotYnDto> inspeotYnDtoFList = inspeotRepositoryCustom.findByInspeotYnF(fdIdList); // 가맹검품 여부
+        List<InspeotYnDto> inspeotYnDtoBList = inspeotRepositoryCustom.findByInspeotYnB(fdIdList); // 지사검품(확인품) 여부
+        List<Long> inspeotListF = new ArrayList<>();
+        List<Long> inspeotListB = new ArrayList<>();
+        for(int i=0; i<inspeotYnDtoFList.size(); i++){
+            inspeotListF.add(inspeotYnDtoFList.get(i).getFdId());
         }
-        log.info("inspeotList : "+inspeotList);
+        for(int i=0; i<inspeotYnDtoBList.size(); i++){
+            inspeotListB.add(inspeotYnDtoBList.get(i).getFdId());
+        }
 
+        // 조회 리스트
         List<RequestDetailSearchDtoSub> requestDetailSearchDtoSubList = new ArrayList<>();
         for(RequestDetailSearchDto requestDetailSearchDto : requestDetailSearchDtoList){
             RequestDetailSearchDtoSub requestDetailSearchDtoSub = modelMapper.map(requestDetailSearchDto,RequestDetailSearchDtoSub.class);
@@ -125,7 +128,8 @@ public class InspectService {
 
         data.put("gridListData",requestDetailSearchDtoSubList);
         data.put("cencelList",cencelList);
-        data.put("inspeotList",inspeotList);
+        data.put("inspeotListF",inspeotListF);
+        data.put("inspeotListB",inspeotListB);
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
