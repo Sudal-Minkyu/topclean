@@ -390,24 +390,26 @@ public class InspectService {
 
         ArrayList<InspeotDto> list = inspeotSet.getList();
 
-        List<Long> inspeotDeleteList = new ArrayList<>();
-        List<Long> photoDeleteList = new ArrayList<>();
-        for(InspeotDto inspeotDto : list){
-            inspeotDeleteList.add(inspeotDto.getFiId());
-        }
+        if(list.size() != 0){
+            List<Long> inspeotDeleteList = new ArrayList<>();
+            List<Long> photoDeleteList = new ArrayList<>();
+            for(InspeotDto inspeotDto : list){
+                inspeotDeleteList.add(inspeotDto.getFiId());
+            }
 
-        List<InspeotDto> inspeotDtos = inspeotRepositoryCustom.findByInspeotDtoList(inspeotDeleteList);
-        for(InspeotDto inspeotDto : inspeotDtos){
+            List<InspeotDto> inspeotDtos = inspeotRepositoryCustom.findByInspeotDtoList(inspeotDeleteList);
+            for(InspeotDto inspeotDto : inspeotDtos){
                 if(inspeotDto.getFiPhotoYn().equals("Y")){
                     photoDeleteList.add(inspeotDto.getFiId());
                 }
-        }
+            }
 
-        try {
-            inspeotRepository.findByInspectDelete(inspeotDeleteList);
-            photoRepository.findByInspectPhotoDelete(photoDeleteList);
-        }catch (Exception e){
-            log.info("예외 발생 : "+e);
+            try {
+                inspeotRepository.findByInspectDelete(inspeotDeleteList);
+                photoRepository.findByInspectPhotoDelete(photoDeleteList);
+            }catch (Exception e){
+                log.info("예외 발생 : "+e);
+            }
         }
 
         return ResponseEntity.ok(res.success());
