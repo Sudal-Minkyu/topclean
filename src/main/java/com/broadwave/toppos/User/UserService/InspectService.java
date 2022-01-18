@@ -393,10 +393,12 @@ public class InspectService {
         List<Long> inspeotDeleteList = new ArrayList<>();
         List<Long> photoDeleteList = new ArrayList<>();
         for(InspeotDto inspeotDto : list){
-            inspeotDeleteList.add(inspeotDto.getFiId());
-            if(inspeotDto.getFiPhotoYn().equals("Y")){
-                photoDeleteList.add(inspeotDto.getFiId());
-            }
+//            if(item.fiSendMsgYn === "Y" || item.fiCustomerConfirm !== "1") {
+                inspeotDeleteList.add(inspeotDto.getFiId());
+                if(inspeotDto.getFiPhotoYn().equals("Y")){
+                    photoDeleteList.add(inspeotDto.getFiId());
+                }
+//            }
         }
 
         inspeotRepository.findByInspectDelete(inspeotDeleteList);
