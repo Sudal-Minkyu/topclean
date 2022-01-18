@@ -326,7 +326,7 @@ public class UserRestController {
             Integer saveMoney = receiptService.findBySaveMoney(optionalCustomer.get());
 //            log.info("현재 고객님의 적립금 : "+saveMoney);
 //            log.info("조정할 고객님의 적립금 : "+controlMoney);
-            data.put("saveMoney",saveMoney-controlMoney);
+            data.put("saveMoney",saveMoney+controlMoney);
 
             SaveMoney saveMoneySave = new SaveMoney();
             saveMoneySave.setBcId(optionalCustomer.get());
@@ -807,7 +807,8 @@ public class UserRestController {
         log.info("현재 접속한 가맹점 코드 : "+frCode);
 //        log.info("소속된 지사 코드 : "+frbrCode);
 
-        List<RequestDetailCloseListDto> requestDetailCloseListDtos = receiptService.findByRequestDetailCloseList();
+        List<RequestDetailCloseListDto> requestDetailCloseListDtos = receiptService.findByRequestDetailCloseList(frCode);
+
         List<HashMap<String,Object>> requestDetailCloseList = new ArrayList<>();
         HashMap<String,Object> requestDetailCloseInfo;
 
@@ -830,6 +831,7 @@ public class UserRestController {
 //        data.put("gridListData",requestDetailCloseList);
         }
 
+        data.put("requestDetailCloseListDtos",requestDetailCloseListDtos);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }

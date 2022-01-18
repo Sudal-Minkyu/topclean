@@ -110,9 +110,8 @@ public class ReceiptService {
     }
 
     // 접수 세부테이블 삭제, 해당세부의 대한 Photo 삭제
-    public void findByRequestDetailDelete(RequestDetail requestDetail, List<Photo> photoList) {
+    public void findByRequestDetailDelete(RequestDetail requestDetail) {
         requestDetailRepository.delete(requestDetail);
-        photoRepository.deleteAll(photoList);
     }
 
     // 접수 마스터테이블 임시저장 리스트 호출
@@ -290,9 +289,8 @@ public class ReceiptService {
                     if(!optionalRequestDetail.isPresent()){
                         return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "수정 할 "+ResponseErrorCode.TP009.getDesc(), "문자", "택번호 : "+requestDetailMapperDto.getFdTag()));
                     }else{
-                        List<Photo> photoList = findByPhotoList(optionalRequestDetail.get().getId());
-                        photoRepository.deleteAll(photoList); // 기존 세부상품의 사진 삭제
-                        
+                        photoRepository.findByRequestDetailPhotoDelete(optionalRequestDetail.get().getId()); // 기존 세부상품의 사진 삭제
+
                         optionalRequestDetail.get().setBiItemcode(requestDetailMapperDto.getBiItemcode());
                         optionalRequestDetail.get().setFdColor(requestDetailMapperDto.getFdColor());
                         optionalRequestDetail.get().setFdPattern(requestDetailMapperDto.getFdPattern());
@@ -355,8 +353,8 @@ public class ReceiptService {
                     if(!optionalRequestDetail.isPresent()){
                         return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "삭제 할 "+ResponseErrorCode.TP009.getDesc(), "문자", "택번호 : "+requestDetailMapperDto.getFdTag()));
                     }else{
-                        List<Photo> photoList = findByPhotoList(optionalRequestDetail.get().getId());
-                        findByRequestDetailDelete(optionalRequestDetail.get(), photoList);
+                        findByRequestDetailDelete(optionalRequestDetail.get());
+                        photoRepository.findByRequestDetailPhotoDelete(optionalRequestDetail.get().getId()); // 기존 세부상품의 사진 삭제
                     }
                 }
             }
@@ -437,32 +435,24 @@ public class ReceiptService {
             return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "삭제 할 "+ResponseErrorCode.TP009.getDesc(), "문자", "접수코드 : "+frNo));
         }else{
             List<RequestDetail> requestDetailList = findByRequestTempDetail(optionalRequest.get().getFrNo());
-            List<List<Photo>> photoDeleteList = new ArrayList<>();
+            List<Long> frIdList = new ArrayList<>();
             for(RequestDetail requestDetail : requestDetailList){
-                List<Photo> photoList = findByPhotoList(requestDetail.getId());
-                photoDeleteList.add(photoList);
+                frIdList.add(requestDetail.getId());
             }
 //            log.info("requestDetailList : "+requestDetailList);
 //            log.info("requestDetailList.size() : "+requestDetailList.size());
 //            log.info("photoDeleteList : "+photoDeleteList);
-            requestDeleteStart(optionalRequest.get(), requestDetailList, photoDeleteList);
+            requestDeleteStart(optionalRequest.get(), requestDetailList, frIdList);
         }
 
         return ResponseEntity.ok(res.success());
     }
 
-    // Photo 엔티티 리스트불러오는 함수
-    private List<Photo> findByPhotoList(Long id) {
-        return photoRepositoryCustom.findByPhotoList(id);
-    }
-
     // 삭제 실행
     @Transactional(rollbackFor = SQLException.class)
-    public void requestDeleteStart(Request optionalRequest, List<RequestDetail> requestDetailList, List<List<Photo>> photoDeleteList) {
+    public void requestDeleteStart(Request optionalRequest, List<RequestDetail> requestDetailList, List<Long> frIdList) {
         try{
-            for(List<Photo> photos : photoDeleteList){
-                photoRepository.deleteAll(photos);
-            }
+            photoRepository.findByRequestDetailPhotoListDelete(frIdList);
             requestDetailRepository.deleteAll(requestDetailList);
             requestRepository.delete(optionalRequest);
         }catch (Exception e){
@@ -779,8 +769,8 @@ public class ReceiptService {
     }
 
     // 수기마감 페이지에 보여줄 리스트 호출
-    public List<RequestDetailCloseListDto> findByRequestDetailCloseList() {
-        return requestDetailRepositoryCustom.findByRequestDetailCloseList();
+    public List<RequestDetailCloseListDto> findByRequestDetailCloseList(String frCode) {
+        return requestDetailRepositoryCustom.findByRequestDetailCloseList(frCode);
     }
 
 }

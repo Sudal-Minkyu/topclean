@@ -10,6 +10,4 @@ import java.util.List;
  */
 public interface PhotoRepositoryCustom {
     List<PhotoDto> findByPhotoDtoList(Long id);
-
-    List<Photo> findByPhotoList(Long id);
 }
