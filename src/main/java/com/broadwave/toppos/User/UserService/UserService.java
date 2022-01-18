@@ -10,6 +10,8 @@ import com.broadwave.toppos.User.ReuqestMoney.Requset.Request;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailAmtDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepositoryCustom;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestRepository;
+import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoney;
+import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoneyRepository;
 import com.broadwave.toppos.User.UserIndexDto;
 import com.broadwave.toppos.User.UserLoginLog.UserLoginLog;
 import com.broadwave.toppos.User.UserLoginLog.UserLoginLogRepository;
@@ -37,6 +39,7 @@ public class UserService {
 
     private final RequestDetailRepositoryCustom requestDetailRepositoryCustom;
 
+    private final SaveMoneyRepository saveMoneyRepository;
     private final RequestRepository requestRepository;
     private final CustomerRepository customerRepository;
     private final UserLoginLogRepository userLoginLogRepository;
@@ -46,12 +49,13 @@ public class UserService {
     private final AddprocessRepositoryCustom addProcessRepositoryCustom;
 
     @Autowired
-    public UserService(TokenProvider tokenProvider, RequestRepository requestRepository, RequestDetailRepositoryCustom requestDetailRepositoryCustom,
+    public UserService(TokenProvider tokenProvider, SaveMoneyRepository saveMoneyRepository, RequestRepository requestRepository, RequestDetailRepositoryCustom requestDetailRepositoryCustom,
                        CustomerRepository customerRepository, UserLoginLogRepository userLoginLogRepository,
                        CustomerRepositoryCustom customerRepositoryCustom, AccountRepositoryCustom accountRepositoryCustom,
                        AddprocessRepositoryCustom addProcessRepositoryCustom){
         this.tokenProvider = tokenProvider;
         this.requestRepository = requestRepository;
+        this.saveMoneyRepository = saveMoneyRepository;
         this.requestDetailRepositoryCustom = requestDetailRepositoryCustom;
         this.customerRepository = customerRepository;
         this.userLoginLogRepository = userLoginLogRepository;
@@ -145,7 +149,15 @@ public class UserService {
         }
     }
 
+    // 수선, 추가요금, 상용구 항목 리스트 데이터 호출
+    public List<Addprocess> save(String frCode, String baType) {
+        return addProcessRepositoryCustom.findByAddProcessList(frCode, baType);
+    }
 
+    // 적립금 저장
+    public void saveMoneySave(SaveMoney saveMoney) {
+        saveMoneyRepository.save(saveMoney);
+    }
 
 
 

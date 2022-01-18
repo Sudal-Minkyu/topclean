@@ -140,25 +140,6 @@ public class ReceiptService {
         return requestRepositoryCustom.findByRequestCollectList(customer, nowDate);
     }
 
-    // 현재 고객의 적립금 리스트 호출
-    public Integer findBySaveMoney(Customer customer) {
-        List<SaveMoneyDto> saveMoneyDtoList = saveMoneyRepositoryCustom.findBySaveMoney(customer);
-        int plusSaveMoney = 0;
-        int minusSaveMoney = 0;
-        if(saveMoneyDtoList.size() != 0) {
-            for (SaveMoneyDto saveMoneyDto : saveMoneyDtoList) {
-                if(saveMoneyDto.getFsType().equals("1")){
-                    plusSaveMoney = plusSaveMoney + saveMoneyDto.getFsAmt();
-                }else {
-                    minusSaveMoney = minusSaveMoney + saveMoneyDto.getFsAmt();
-                }
-            }
-            return plusSaveMoney-minusSaveMoney;
-        }else{
-            return 0;
-        }
-    }
-
     // 접수페이지 가맹점 임시저장 및 결제하기 세탁접수 API
     public ResponseEntity<Map<String,Object>> requestSave(RequestDetailSet requestDetailSet, HttpServletRequest request) {
         AjaxResponse res = new AjaxResponse();
@@ -693,7 +674,27 @@ public class ReceiptService {
         return saveMoneyRepositoryCustom.findBySaveMoneyList(customerIdList, fsType);
     }
 
-    // 고객정보 조회용 적립금, 미수금 호출 함수
+//@@@@@@@@@@@@@@@@@@@@@ 적립금 미수금 관련 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    // 한명의 고객의 적립금 호출
+    public Integer findBySaveMoney(Customer customer) {
+        List<SaveMoneyDto> saveMoneyDtoList = saveMoneyRepositoryCustom.findBySaveMoney(customer);
+        int plusSaveMoney = 0;
+        int minusSaveMoney = 0;
+        if(saveMoneyDtoList.size() != 0) {
+            for (SaveMoneyDto saveMoneyDto : saveMoneyDtoList) {
+                if(saveMoneyDto.getFsType().equals("1")){
+                    plusSaveMoney = plusSaveMoney + saveMoneyDto.getFsAmt();
+                }else {
+                    minusSaveMoney = minusSaveMoney + saveMoneyDto.getFsAmt();
+                }
+            }
+            return plusSaveMoney-minusSaveMoney;
+        }else{
+            return 0;
+        }
+    }
+
+    // 여러사람의 고객정보 조회용 적립금, 미수금 호출 함수
     public List<HashMap<String,Object>> findByUnCollectAndSaveMoney(List<HashMap<String, Object>> customerListData, List<Long> customerIdList){
 
         log.info("미수금 리스트를 받아옵니다.");

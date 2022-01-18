@@ -29,6 +29,7 @@ import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetai
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailSet;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailUpdateDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestListDto;
+import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoney;
 import com.broadwave.toppos.User.UserService.*;
 import com.broadwave.toppos.common.AjaxResponse;
 import com.broadwave.toppos.common.ResponseErrorCode;
@@ -94,6 +95,35 @@ public class UserRestController {
         this.managerService = managerService;
     }
 
+//@@@@@@@@@@@@@@@@@@@@@ 가맹점 메인화면 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    // 현재 로그인한 가맹점 정보 가져오기
+    @GetMapping("franchiseInfo")
+    public ResponseEntity<Map<String,Object>> franchiseInfo(HttpServletRequest request){
+        log.info("franchiseInfo 호출");
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
+        String frbrCode = (String) claims.get("frbrCode"); // 소속된 지사 코드
+        String login_id = claims.getSubject(); // 현재 아이디
+        log.info("현재 접속한 아이디 : "+login_id);
+        log.info("현재 접속한 가맹점 코드 : "+frCode);
+        log.info("소속된 지사 코드 : "+frbrCode);
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        UserIndexDto userIndexDto = userService.findByUserInfo(login_id, frCode);
+        //        log.info("userIndexDto : "+userIndexDto);
+
+        data.put("userIndexDto",userIndexDto);
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
+
+
+//@@@@@@@@@@@@@@@@@@@@@ 가맹점 고객조회 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     // 고객 등록 API
     @PostMapping("customerSave")
     public ResponseEntity<Map<String,Object>> customerSave(@ModelAttribute CustomerMapperDto customerMapperDto, HttpServletRequest request){
@@ -274,31 +304,45 @@ public class UserRestController {
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
-    // 현재 로그인한 가맹점 정보 가져오기
-    @GetMapping("franchiseInfo")
-    public ResponseEntity<Map<String,Object>> franchiseInfo(HttpServletRequest request){
-        log.info("franchiseInfo 호출");
+    // 고객 적립금조정 API(현재 로그인한 가맹점의 대한 고객리스트만 호출한다.)
+    @PostMapping("customerSaveMoneyControl")
+    public ResponseEntity<Map<String,Object>> customerSaveMoneyControl(@RequestParam(value="bcId", defaultValue="") Long bcId,
+                                                                       @RequestParam(value="controlMoney", defaultValue="") Integer controlMoney, HttpServletRequest request){
+        log.info("customerSaveMoneyControl 호출");
 
         // 클레임데이터 가져오기
         Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
-        String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
-        String frbrCode = (String) claims.get("frbrCode"); // 소속된 지사 코드
         String login_id = claims.getSubject(); // 현재 아이디
         log.info("현재 접속한 아이디 : "+login_id);
-        log.info("현재 접속한 가맹점 코드 : "+frCode);
-        log.info("소속된 지사 코드 : "+frbrCode);
 
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
 
-        UserIndexDto userIndexDto = userService.findByUserInfo(login_id, frCode);
-//        log.info("userIndexDto : "+userIndexDto);
+        Optional<Customer> optionalCustomer = userService.findByBcId(bcId);
+        if(!optionalCustomer.isPresent()){
+            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP022.getCode(), "고객 "+ResponseErrorCode.TP022.getDesc(), "문자", "재조회후 입력해주시길 바랍니다."));
+        }else{
+            Integer saveMoney = receiptService.findBySaveMoney(optionalCustomer.get());
+//            log.info("현재 고객님의 적립금 : "+saveMoney);
+//            log.info("조정할 고객님의 적립금 : "+controlMoney);
+            data.put("saveMoney",saveMoney-controlMoney);
 
-        data.put("userIndexDto",userIndexDto);
+            SaveMoney saveMoneySave = new SaveMoney();
+            saveMoneySave.setBcId(optionalCustomer.get());
+            saveMoneySave.setFsType("1");
+            saveMoneySave.setFsClose("N");
+            saveMoneySave.setFsAmt(controlMoney);
+            saveMoneySave.setInsert_id(login_id);
+            saveMoneySave.setInsert_date(LocalDateTime.now());
+            userService.saveMoneySave(saveMoneySave);
+        }
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
+
+
+    //@@@@@@@@@@@@@@@@@@@@@ 가맹점 세탁접수 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     // 접수페이지 진입시 기본적으롤 받는 데이터 API (대분류 목록리스트)
     @GetMapping("itemGroupAndPriceList")
     public ResponseEntity<Map<String,Object>> itemGroupAndPriceList(HttpServletRequest request){
@@ -388,7 +432,6 @@ public class UserRestController {
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
-
 
     // 접수페이지 가맹점 세탁접수 API
     @PostMapping("requestSave")
@@ -579,6 +622,7 @@ public class UserRestController {
     }
 
 
+
     //@@@@@@@@@@@@@@@@@@@@@ 가맹점 대분류, 상품 정렬관련 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     // 현재 가맹점의 대분류 리스트 가져오기
     @GetMapping("franchiseItemGroupList")
@@ -615,6 +659,7 @@ public class UserRestController {
     }
 
 //@@@@@@@@@@@@@@@@@@@@@ 나의 정보관리 페이지 관련 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
     // 현재 가맹점의 정보 호출하기
     @GetMapping("myInfo")
     public ResponseEntity<Map<String,Object>> myInfo(HttpServletRequest request){
