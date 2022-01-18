@@ -118,8 +118,8 @@
 								<div class="form__title">사업자번호</div>
 								<div class="form__input">
 									<div class="c-text">
-										<input type="text" name="frBusinessNo" />
-										<button>키보드</button>
+										<input type="text" name="frBusinessNo" id="frBusinessNo" />
+										<button class="keypadBtn" data-keyIndex="0">키보드</button>
 									</div>
 								</div>
 							</div>
@@ -127,8 +127,8 @@
 								<div class="form__title">대표자</div>
 								<div class="form__input">
 									<div class="c-text">
-										<input type="text" name="frRpreName" />
-										<button>키보드</button>
+										<input type="text" name="frRpreName" id="frRpreName" />
+										<button class="keyboardBtn" data-keyIndex="0">키보드</button>
 									</div>
 								</div>
 							</div>
@@ -136,8 +136,8 @@
 								<div class="form__title">매장전화</div>
 								<div class="form__input">
 									<div class="c-text">
-										<input type="text" name="frTelNo" />
-										<button>키보드</button>
+										<input type="text" name="frTelNo" id="frTelNo" />
+										<button class="keypadBtn" data-keyIndex="1">키보드</button>
 									</div>
 								</div>
 							</div>
@@ -147,7 +147,7 @@
 										<div class="form__title">가맹점 택코드(3자리)</div>
 										<div class="form__input">
 											<div class="c-text">
-												<input type="text" name="frTagNo" />
+												<input type="text" name="frTagNo" id="frTagNo" class="keyboardBtn" data-keyIndex="1" />
 											</div>
 										</div>
 									</div>
@@ -155,7 +155,7 @@
 										<div class="form__title">출고예정일계산</div>
 										<div class="form__input">
 											<div class="c-text">
-												<input type="text" name="frEstimateDuration" />
+												<input type="text" name="frEstimateDuration" id="frEstimateDuration" class="keypadBtn" data-keyIndex="2" />
 												<span>일 후 출고</span>
 											</div>
 										</div>
@@ -184,7 +184,7 @@
 							<div class="form__input">
 								<div class="c-text">
 									<input type="password" id="oldpassword" name="oldpassword" />
-									<button>키보드</button>
+									<button class="keyboardBtn" data-keyIndex="2">키보드</button>
 								</div>
 							</div>
 						</div>
@@ -195,7 +195,7 @@
 							<div class="form__input">
 								<div class="c-text">
 									<input type="password" id="newpassword" name="newpassword" />
-									<button>키보드</button>
+									<button class="keyboardBtn" data-keyIndex="3">키보드</button>
 								</div>
 							</div>
 						</div>
@@ -206,7 +206,7 @@
 							<div class="form__input">
 								<div class="c-text">
 									<input type="password" id="passwordconfirm" name="passwordconfirm" />
-									<button>키보드</button>
+									<button class="keyboardBtn" data-keyIndex="4">키보드</button>
 								</div>
 							</div>
 						</div>
@@ -228,10 +228,10 @@
 				<div class="c-tabs__content-body">
 					<div class="c-tabs__body-console c-tabs__body-console--right">
 						<button class="c-button c-button--small c-button--solid openItemPop" data-index="0" id="createRow0">라인추가</button>
-						<button class="c-button c-button--small c-button--red" id="removeRow0">라인삭제</button>
+						<button class="c-button c-button--small c-button--red removeRow" data-index="0" id="removeRow0">라인삭제</button>
 						<div class="c-elevator c-elevator--left-border">
-							<button class="c-elevator__btn up" id="upRows0">위</button>
-							<button class="c-elevator__btn down" id="downRows0">아래</button>
+							<button class="c-elevator__btn up upRows" data-index="0" id="upRows0">위</button>
+							<button class="c-elevator__btn down downRows" data-index="0" id="downRows0">아래</button>
 						</div>
 					</div>
 					<!-- grid -->
@@ -251,10 +251,10 @@
 				<div class="c-tabs__content-body">
 					<div class="c-tabs__body-console c-tabs__body-console--right">
 						<button class="c-button c-button--small c-button--solid openItemPop" data-index="1" id="createRow1">라인추가</button>
-						<button class="c-button c-button--small c-button--red" id="removeRow1">라인삭제</button>
+						<button class="c-button c-button--small c-button--red removeRow" data-index="1" id="removeRow1">라인삭제</button>
 						<div class="c-elevator c-elevator--left-border">
-							<button class="c-elevator__btn up" id="upRows1">위</button>
-							<button class="c-elevator__btn down" id="downRows1">아래</button>
+							<button class="c-elevator__btn up upRows" data-index="1" id="upRows1">위</button>
+							<button class="c-elevator__btn down downRows" data-index="1" id="downRows1">아래</button>
 						</div>
 					</div>
 					<!-- grid -->
@@ -274,10 +274,10 @@
 				<div class="c-tabs__content-body">
 					<div class="c-tabs__body-console c-tabs__body-console--right">
 						<button class="c-button c-button--small c-button--solid openItemPop" data-index="2" id="createRow2">라인추가</button>
-						<button class="c-button c-button--small c-button--red" id="removeRow2">라인삭제</button>
+						<button class="c-button c-button--small c-button--red removeRow" data-index="2" id="removeRow2">라인삭제</button>
 						<div class="c-elevator c-elevator--left-border">
-							<button class="c-elevator__btn up" id="upRows2">위</button>
-							<button class="c-elevator__btn down" id="downRows2">아래</button>
+							<button class="c-elevator__btn up upRows" data-index="2" id="upRows2">위</button>
+							<button class="c-elevator__btn down downRows" data-index="2" id="downRows2">아래</button>
 						</div>
 					</div>
 					<!-- grid -->
@@ -304,7 +304,7 @@
 							<div class="customer__form-input">
 								<div class="c-text">
 									<input type="text" id="baName" />
-									<button>키보드</button>
+									<button class="keyboardBtn" data-keyIndex="5">키보드</button>
 								</div>
 							</div>
 						</li>
@@ -313,7 +313,7 @@
 							<div class="customer__form-input">
 								<div class="c-textarea">
 									<textarea id="baRemark"></textarea>
-									<button>키보드</button>
+									<button class="keyboardBtn" data-keyIndex="6">키보드</button>
 								</div>
 							</div>
 						</li>

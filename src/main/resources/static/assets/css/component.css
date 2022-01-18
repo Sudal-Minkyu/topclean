@@ -141,6 +141,9 @@ input[type="number"]::-webkit-inner-spin-button {
 	background-color: #0082f0;
 	color: #fff;
 }
+.c-button.c-button--solid:active {
+	background-color: #004a98;
+}
 .c-button.c-button--large {
 	min-width: 10rem;
 	height: 3.75rem;

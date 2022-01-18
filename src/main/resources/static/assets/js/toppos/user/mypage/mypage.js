@@ -75,7 +75,6 @@ const data = {
 	// 항목 추가 팝업 구분
 	itemEditPopNum: 0,
 	rowIndex: 0,
-	
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 */
@@ -450,19 +449,25 @@ const event = {
 			});
 			
 			// 라인 삭제
-			$('#removeRow2').on('click', function() {
-				grid.f.removeRow("2");
+			$('.removeRow').on('click', function() {
+				const gridnum = $(this).attr('data-index');
+				grid.f.removeRow(gridnum);
 			});
 			
 			// 선택행 올림
-			$('#upRows2').on('click', function() {
-				grid.f.upRows("2");
+			$('.upRows').on('click', function() {
+				const gridnum = $(this).attr('data-index');
+				grid.f.upRows(gridnum);
 			})
 			
 			// 선택행 내림
-			$('#downRows2').on('click', function() {
-				grid.f.downRows("2");
+			$('.downRows').on('click', function() {
+				const gridnum = $(this).attr('data-index');
+				grid.f.downRows(gridnum);
 			})
+
+			// 키보드 
+			
 		},
 		
 		// 상용구, 수선항목, 추가항목 저장 버튼 클릭
@@ -475,10 +480,91 @@ const event = {
     }
 }
 
+const vKeyboard = {
+	targetId: [
+		"frRpreName",
+		"frTagNo",
+		"oldpassword",
+		"newpassword",
+		"passwordconfirm",
+		"baName",
+		"baRemark",
+	],
+	targetProp: [
+
+	],
+	f: {
+		initialization() {
+			vKeyboard.targetProp[0] = {
+				title: "대표자명",
+			};
+			vKeyboard.targetProp[1] = {
+				title: "가맹점 택코드"
+			};
+			vKeyboard.targetProp[2] = {
+				title: "현재 비밀번호"
+			};
+			vKeyboard.targetProp[3] = {
+				title: "신규 비밀번호"
+			};
+			vKeyboard.targetProp[4] = {
+				title: "신규 비밀번호 확인"
+			};
+			vKeyboard.targetProp[5] = {
+				title: "항목"
+			};
+			vKeyboard.targetProp[6] = {
+				title: "비고"
+			};
+			window.vkey = new VKeyboard();
+		},
+	},
+	e: {
+		btnEvent() {
+			$('.keyboardBtn').on('click', function () {
+				const vKeyNum = $(this).attr('data-keyIndex')
+				vkey.showKeyboard(vKeyboard.targetId[vKeyNum], 
+					vKeyboard.targetProp[vKeyNum]);
+			});
+		}
+	}
+}
+
+const vKeypad = {
+	targetId: [
+		"frBusinessNo",
+		"frTelNo",
+		"frEstimateDuration",
+	],
+	targetProp: [
+
+	],
+	f: {
+		initialization() {
+			vKeypad.targetProp[0] = {
+
+			};
+			vKeypad.targetProp[1] = {
+				
+			};
+			vKeypad.targetProp[2] = {
+				
+			};
+		}
+	},
+	e: {
+		
+	}
+}
+
 /* 페이지가 로드되고 나서 실행 될 코드들을 담는다. */
 function onPageLoad() {
     grid.f.initialization();
     grid.f.create();
+
+	vKeyboard.f.initialization();
+	vKeyboard.e.btnEvent();
+	vKeypad.f.initialization();
     
     ajax.getFrInfo();
     

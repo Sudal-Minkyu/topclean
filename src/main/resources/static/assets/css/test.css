@@ -1257,8 +1257,12 @@ textarea {
 	width: 100%;
 	margin-bottom: 0.625rem;
 }
-.condition__radio .c-radio + .c-radio {
-	margin-left: 0.5rem;
+.condition__radio .c-radio {
+	margin-right: 0.25rem;
+	margin-left: 0;
+}
+.condition__radio .c-radio:last-child {
+	margin-right: 0;
 }
 .condition__console .c-button + .c-button {
 	margin-left: 0.5rem;
