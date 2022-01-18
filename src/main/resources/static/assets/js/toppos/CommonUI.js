@@ -38,6 +38,7 @@ class CommonUIClass {
         },
         processName(item) {
             let statusText = "";
+            statusText += item.fdPriceGrade === "3" ? "명" : "";
             statusText += item.fdRetryYn === "Y" ? "재" : "";
             statusText += item.fdPressed ? "다" : "";
             statusText += item.fdAdd1Amt || item.fdAdd1Remark.length ? "추" : "";

@@ -17,7 +17,7 @@ $(function() {
         if(e.dataField === "fdQty") {
             tempItem = e.item;
             $("#hiddenKeypad").val(e.item.fdQty);
-            vkey.showKeypad("hiddenKeypad", changeQty);
+            vkey.showKeypad("hiddenKeypad", {callback:changeQty});
         }else{
             console.log(e);
         }
@@ -1359,6 +1359,7 @@ function onSave() {
 }
 
 function onSaveAjax() {
+    console.log(saveData);
     CommonUI.ajaxjson(gridSaveUrl[0], JSON.stringify(saveData), function (req) {
         AUIGrid.removeSoftRows(gridId[0]);
         AUIGrid.resetUpdatedItems(gridId[0]);
@@ -1530,7 +1531,7 @@ function onKeypad(num) {
     const targetId = ["applySaveMoney", "receiveCash", "receiveCard"];
     keypadNum = num;
     $("#hiddenKeypad").val($("#" + targetId[keypadNum]).html());
-    vkey.showKeypad("hiddenKeypad", onKeypadConfirm);
+    vkey.showKeypad("hiddenKeypad", {callback: onKeypadConfirm});
 }
 
 function onKeypadConfirm() {
