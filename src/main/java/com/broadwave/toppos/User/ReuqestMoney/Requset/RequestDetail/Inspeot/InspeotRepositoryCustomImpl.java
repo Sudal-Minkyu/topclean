@@ -24,6 +24,21 @@ public class InspeotRepositoryCustomImpl extends QuerydslRepositorySupport imple
     }
 
     @Override
+    public List<InspeotDto> findByInspeotDtoList(List<Long> fiId){
+        QInspeot inspeot = QInspeot.inspeot;
+        JPQLQuery<InspeotDto> query = from(inspeot)
+                .where(inspeot.id.in(fiId).and(inspeot.fiSendMsgYn.eq("N").and(inspeot.fiCustomerConfirm.eq("1"))))
+                .select(Projections.constructor(InspeotDto.class,
+                        inspeot.id,
+                        inspeot.fiPhotoYn,
+                        inspeot.fiSendMsgYn,
+                        inspeot.fiCustomerConfirm
+                ));
+
+        return query.fetch();
+    }
+
+    @Override
     public List<InspeotListDto> findByInspeotList(Long fdId, String type){
         QInspeot inspeot = QInspeot.inspeot;
         QPhoto photo = QPhoto.photo;

@@ -382,27 +382,33 @@ public class InspectService {
     }
 
     //  통합조회용 - 등록 검품 삭제
+    @Transactional
     public ResponseEntity<Map<String, Object>> franchiseInspectionDelete(InspeotSet inspeotSet) {
         log.info("franchiseInspectionDelete 호출");
 
         AjaxResponse res = new AjaxResponse();
 
         ArrayList<InspeotDto> list = inspeotSet.getList();
-//        log.info("list : "+list);
 
         List<Long> inspeotDeleteList = new ArrayList<>();
         List<Long> photoDeleteList = new ArrayList<>();
         for(InspeotDto inspeotDto : list){
-//            if(item.fiSendMsgYn === "Y" || item.fiCustomerConfirm !== "1") {
-                inspeotDeleteList.add(inspeotDto.getFiId());
+            inspeotDeleteList.add(inspeotDto.getFiId());
+        }
+
+        List<InspeotDto> inspeotDtos = inspeotRepositoryCustom.findByInspeotDtoList(inspeotDeleteList);
+        for(InspeotDto inspeotDto : inspeotDtos){
                 if(inspeotDto.getFiPhotoYn().equals("Y")){
                     photoDeleteList.add(inspeotDto.getFiId());
                 }
-//            }
         }
 
-        inspeotRepository.findByInspectDelete(inspeotDeleteList);
-        photoRepository.findByInspectPhotoDelete(photoDeleteList);
+        try {
+            inspeotRepository.findByInspectDelete(inspeotDeleteList);
+            photoRepository.findByInspectPhotoDelete(photoDeleteList);
+        }catch (Exception e){
+            log.info("예외 발생 : "+e);
+        }
 
         return ResponseEntity.ok(res.success());
     }

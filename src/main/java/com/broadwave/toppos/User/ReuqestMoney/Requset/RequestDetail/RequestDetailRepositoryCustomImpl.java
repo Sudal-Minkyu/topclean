@@ -202,12 +202,12 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
 
         QRequestDetail requestDetail = QRequestDetail.requestDetail;
         QRequest request = QRequest.request;
-//
-//        QInspeot inspeot = QInspeot.inspeot;
+
+        QInspeot inspeot = QInspeot.inspeot;
 
         JPQLQuery<RequestDetailCloseListDto> query = from(requestDetail)
                 .innerJoin(request).on(requestDetail.frId.eq(request))
-//                .leftJoin(inspeot).on(inspeot.fdId.eq(requestDetail))
+                .leftJoin(inspeot).on(inspeot.fdId.eq(requestDetail))
 
                 .where(requestDetail.frId.frCode.eq(frCode).and(requestDetail.fdCancel.eq("N")).and(requestDetail.fdState.eq("S1")))
 
