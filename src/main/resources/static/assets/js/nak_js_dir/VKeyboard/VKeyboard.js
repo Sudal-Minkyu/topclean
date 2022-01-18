@@ -878,18 +878,26 @@ class VKeyboard {
         this.keypadCallback = properties.callback;
         this.targetNumberField = document.getElementById(elementId);
         let targetValue = this.targetNumberField.value;
-        if(targetValue.toString().length) {
-            this.keypadField.value = parseInt(targetValue.replace(/[^0-9]/g, "")).toLocaleString("ko-JR");
-        }else{
-            this.keypadField.value = "0";
-        }
 
         if(properties.type === "default") {
             document.getElementById("VKEY_plusminus").style.display = "none";
             document.getElementById("VKEY_keypad_sign").checked = false;
         }else if(properties.type === "plusminus") {
             document.getElementById("VKEY_plusminus").style.display = "block";
+            if(targetValue < 0) {
+                document.getElementById("VKEY_keypad_sign").checked = true;
+            } else {
+                document.getElementById("VKEY_keypad_sign").checked = false;
+            }
         }
+
+        if(targetValue.toString().length) {
+            this.keypadField.value = parseInt(targetValue.replace(/[^0-9]/g, "")).toLocaleString("ko-JR");
+        }else{
+            this.keypadField.value = "0";
+        }
+
+        
 
         document.getElementById("VKEY_KEYPAD").style.display = "block";
     }

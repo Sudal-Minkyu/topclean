@@ -1,4 +1,3 @@
-
 $(function() {
 
     // 김민규 12.07 추가 페이지 들어가면 현재 로그인한 가맹점의 고객리스트를 자동 조회한다.
@@ -28,7 +27,7 @@ $(function() {
 /* 가상키보드 사용 */
 let vkey;
 
-let item;
+let tempSaveMoneyItem;
 
 /* 고객 등급에 대한 이름을 정의 */
 const bcGradeName = {
@@ -62,10 +61,37 @@ vkeyProp[3] = {
     title : "특이사항",
 }
 
+/* 가상키보드 입력 대상이 되는 텍스트 필드나 텍스트 에어리어 */
+let vkeypadTargetId = ["addSaveMoney"];
+
+let vkeypadProp = [];
+
+vkeypadProp[0] = {
+    type: "plusminus",
+    callback: insertIntoHtmlTag,
+}
+
 /* 호출하여 목표 가상 키보드 띄우기, 0번부터 배열 순서대로 */
 function openVKeyboard(num) {
     vkey.showKeyboard(vkeyTargetId[num], vkeyProp[num]);
 }
+
+function openVKeypad(num) {
+    $("#tempKeypadField").val($("#" + vkeypadTargetId[num]).html());
+    vkey.showKeypad("tempKeypadField", vkeypadProp[num]);
+}
+
+function insertIntoHtmlTag() {
+    $("#" + vkeypadTargetId[0]).html(Number($("#tempKeypadField").val()).toLocaleString());
+    calculateResultSaveMoney();
+}
+
+function calculateResultSaveMoney() {
+    const current = $("#currentSaveMoney").html().toInt();
+    const add = $("#addSaveMoney").html().toInt();
+    $("#resultSaveMoney").html((current + add).toLocaleString());
+}
+
 
 /* 그리드 생성과 운영에 관한 중요 변수들. grid라는 이름으로 시작하도록 통일했다. */
 let gridId = [];
@@ -88,7 +114,7 @@ gridCreateUrl = [
 
 /* 그리드를 저장할 때 쓰이는 api 배열 */
 gridSaveUrl = [
-    "/api/a"
+    "/api/user/"
 ]
 
 /* 0번 그리드의 레이아웃 */
@@ -96,7 +122,7 @@ gridColumnLayout[0] = [
     {
         dataField: "bcName",
         headerText: "고객명",
-        width: 90,
+        width: 80,
     }, {
         dataField: "bcHp",
         headerText: "휴대폰",
@@ -127,9 +153,23 @@ gridColumnLayout[0] = [
         dataType: "numeric",
         autoThousandSeparator: "true",
     }, {
+        dataField: "",
+        headerText: "적립금 조정",
+        width: 80,
+        renderer : {
+            type: "TemplateRenderer",
+        },
+        labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
+            const template = `
+                <button class="c-button c-button--supersmall" 
+                    onclick="onModifySaveMoney(${rowIndex})">조정</button>
+            `;
+            return template;
+        },
+    }, {
         dataField: "bcMessageAgree",
-        headerText: "SMS수신",
-        width: 70,
+        headerText: "SMS",
+        width: 50,
     }, {
         dataField: "bcAge",
         headerText: "연령/생일",
@@ -149,12 +189,17 @@ gridColumnLayout[0] = [
     }, {
         dataField: "",
         headerText: "수정",
-        width: 120,
+        width: 60,
         renderer : {
-            type: "ButtonRenderer",
-            labelText: "수정",
-            onClick: onModifyCustomer,
-        }
+            type: "TemplateRenderer",
+        },
+        labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
+            const template = `
+                <button class="c-button c-button--solid  c-button--supersmall" 
+                    onclick="onModifyCustomer(${rowIndex})">수정</button>
+            `;
+            return template;
+        },
     },
 ];
 
@@ -207,8 +252,8 @@ function onYearChange(selectedYear) {
     $("#bcAge").val(resultAger).prop("selected", true);
 }
 
-function onModifyCustomer(event) {
-    item = event.item;
+function onModifyCustomer(rowIndex) {
+    const item = AUIGrid.getItemByRowIndex(gridId[0], rowIndex);
     $("#bcId").val(item.bcId);
     $("#bcName").val(item.bcName);
     $("#bcHp").val(CommonUI.onPhoneNumChange(item.bcHp));
@@ -241,6 +286,37 @@ function onModifyCustomer(event) {
 
     $('#showCustomerDetailPop').addClass('active');
 }
+
+function onModifySaveMoney(rowIndex) {
+    tempSaveMoneyItem = AUIGrid.getItemByRowIndex(gridId[0], rowIndex);
+    const currentSaveMoney = tempSaveMoneyItem.saveMoney.toLocaleString();
+    $("#addSaveMoney").html("0");
+    $("#currentSaveMoney").html(currentSaveMoney);
+    $("#resultSaveMoney").html(currentSaveMoney);
+    $("#modifySaveMoneyPop").addClass("active");
+}
+
+function onUpdateSaveMoney() {
+    const data = {
+        bcId: tempSaveMoneyItem.bcId,
+        controlMoney: $("#addSaveMoney").html().toInt(),
+    }
+    alertCheck("적립금을 " + data.controlMoney.toLocaleString() + "원 추가/삭감 합니다.<br>진행 하시겠습니까?");
+    $("#checkDelSuccessBtn").on("click", function() {
+        ajaxUpdateSaveMoney(data);
+    });
+    
+}
+
+function ajaxUpdateSaveMoney(data) {
+    CommonUI.ajax("/api/user/customerSaveMoneyControl", "PARAM", data, function(res) {
+        tempSaveMoneyItem.saveMoney = res.sendData.saveMoney;
+        AUIGrid.updateRowsById(gridId[0], tempSaveMoneyItem);
+        alertSuccess("적립금 조정이 완료되었습니다.");
+        $("#modifySaveMoneyPop").removeClass("active");
+    });
+}
+
 
 /* 전화번호 입력을 위한 유효성 검사 */
 function onHpChange () {
@@ -281,11 +357,11 @@ function saveRegister() {
 
     formData.set("bcHp", formData.get("bcHp").replace(/[^0-9]/g, ""));
     formData.append("bcBirthday", birthday);
-    formData.append("bcGrade", item.bcGrade);
+    formData.append("bcGrade", $("#bcValuation option:checked").val());
     formData.append("bcSignImage", $("#signImage").attr("src"));
-지
+
     const url = "/api/user/customerSave";
-    CommonUI.ajax(url, "POST", formData, function (){
+    CommonUI.ajax(url, "POST", formData, function () {
         alertSuccess("고객 데이터 저장 성공");
         onSearchCustomer();
         // 완료 후 팝업닫기 추가하기 to.성낙원

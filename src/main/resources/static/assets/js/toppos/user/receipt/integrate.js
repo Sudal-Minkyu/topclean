@@ -1215,6 +1215,7 @@ const event = {
                 targetRowsItem.forEach(item => {
                     if(item.fiSendMsgYn === "Y" || item.fiCustomerConfirm !== "1") {
                         alertCaution("고객에게 정보가 전해진 검품내역은<br>삭제할 수 없습니다.", 1);
+                        return false;
                     }
                     refinedTargetList.push({
                         fiId: item.fiId,
