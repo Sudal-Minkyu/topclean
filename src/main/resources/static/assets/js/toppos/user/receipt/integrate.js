@@ -59,6 +59,7 @@ const dto = {
             frNo: "s",
             fdTag: "d",
             biItemcode: "d",
+            fdPreState: "d",
             fdState: "d",
             fdS2Dt: "d",
             fdS3Dt: "d",
@@ -121,6 +122,7 @@ const dto = {
         },
     },
     receive: {
+
         franchiseInspectionList: {
             fiId: "nr",
             fdId: "nr",
@@ -279,17 +281,12 @@ const ajax = {
             console.log(data.initialData);
         });
     },
-    setDataIntoGrid(numOfGrid, url) { // 해당 numOfGrid 배열번호의 그리드에 url 로부터 받은 데이터값을 통신하여 주입한다.
-        CommonUI.ajax(url, "GET", false, function (req) {
-            grid.s.data[numOfGrid] = req.sendData.gridListData;
-            grid.f.setData(numOfGrid, grid.s.data[numOfGrid]);
-        });
-    },
+
     searchCustomer(params) {
         dv.chk(params, dto.send.customerInfo, "고객검색조건 보내기");
         CommonUI.ajax(grid.s.url.read[1], "GET", params, function (res) {
             const items = res.sendData.gridListData;
-            dv.chk(items, dto.receive.customerInfo);
+            dv.chk(items, dto.receive.customerInfo, "고객 리스트 받아오기");
             $("#searchCustomerType").val(0);
             $("#searchString").val("");
             if(items.length === 1) {
@@ -310,9 +307,7 @@ const ajax = {
 
     franchiseRequestDetailSearch(condition) {
         dv.chk(condition, dto.send.franchiseRequestDetailSearch, "메인그리드 필터링 조건 보내기");
-        console.log(condition);
         CommonUI.ajax(grid.s.url.read[0], "GET", condition, function(res) {
-            console.log(res);
             const gridData = res.sendData.gridListData;
             const cancelList = res.sendData.cencelList;
             const inspectListF = res.sendData.inspeotListF;
@@ -348,7 +343,9 @@ const ajax = {
         dv.chk(condition, dto.send.franchiseDetailCencelDataList, "결제 리스트 받아오기");
         const url = "/api/user/franchiseDetailCencelDataList";
         CommonUI.ajax(url, "GET", condition, function(res) {
-            grid.f.setData(2, res.sendData.gridListData);
+            const data = res.sendData.gridListData;
+            dv.chk(data, dto.receive.franchiseDetailCencelDataList);
+            grid.f.setData(2, data);
         });
     },
 
@@ -358,10 +355,8 @@ const ajax = {
         CommonUI.ajax(url, "PARAM", target, function(res) {
             if(target.type === "1") {
                 alertSuccess("결제 취소를 완료하였습니다.");
-
             }else if(target.type === "2") {
                 alertSuccess("적립금 전환을 완료하였습니다.");
-
             }
             ajax.getPaymentList(data.currentRequest.frId);
         });
@@ -394,8 +389,7 @@ const ajax = {
         const testObj = Object.fromEntries(formData);
         testObj.fdId = Number(testObj.fdId);
         testObj.fiAddAmt = Number(testObj.fiAddAmt);
-        dv.chk(testObj, dto.send.franchiseInspectionSave);
-        console.log(Object.fromEntries(formData));
+        dv.chk(testObj, dto.send.franchiseInspectionSave, "검품 등록");
 
         CommonUI.ajax("/api/user/franchiseInspectionSave", "POST", formData, function (res) {
             const searchCondition = {
@@ -417,8 +411,10 @@ const ajax = {
         }
 
         CommonUI.ajax(grid.s.url.read[gridNum], "GET", condition, function(res) {
+            const data = res.sendData.gridListData;
+            dv.chk(data, dto.receive.franchiseInspectionList, "등록된 검품의 조회");
             grid.f.clearData(gridNum);
-            grid.f.setData(gridNum, res.sendData.gridListData);
+            grid.f.setData(gridNum, data);
         });
     },
 
@@ -432,12 +428,11 @@ const ajax = {
                 type: "1"
             };
             ajax.getInspectionList(searchCondition);
-            console.log(res);
         });
     },
 
     franchiseInspectionYn(target) {
-        dv.chk(target, dto.send.franchiseInspectionYn);
+        dv.chk(target, dto.send.franchiseInspectionYn, "고객 수락 거부 응답 보내기");
         const url = "/api/user/franchiseInspectionYn";
         CommonUI.ajax(url, "PARAM", target, function(res) {
             const searchCondition = {
@@ -868,10 +863,6 @@ const grid = {
             AUIGrid.clearGridData(numOfGrid);
         },
 
-        setInitialData(numOfGrid) { // 해당 배열 번호 그리드의 url.read 를 참조하여 데이터를 그리드에 뿌린다.
-            ajax.setDataIntoGrid(numOfGrid, grid.s.read[numOfGrid]);
-        },
-
         switchModifyMode(isModifyMode) {
             const modColumn = {
                 modify: ["blueBtn1", "blueBtn2", "greenBtn1", "redBtn1", "redBtn2", "redBtn3"],
@@ -920,7 +911,6 @@ const grid = {
             /* 0번그리드 내의 셀 클릭시 이벤트 */
             AUIGrid.bind(grid.s.id[0], "cellClick", function (e) {
                 data.currentRequest = e.item;
-                console.log(e); // 이밴트 콜백으로 불러와진 객체의, 클릭한 대상 row 키(파라메터)와 값들을 보여준다.
                 switch (e.dataField) {
                     case "blueBtn1":
                         // 가맹점 검품등록창 진입
@@ -1051,7 +1041,7 @@ const event = {
             });
             $("#vkeypad0").on("click", function () {
                 data.keypadNum = 0;
-                vkey.showKeypad("fiAddAmt", onKeypadConfirm);
+                vkey.showKeypad("fiAddAmt", {callback: onKeypadConfirm});
             });
         },
         main() {
@@ -1314,7 +1304,6 @@ function onPageLoad() {
     event.s.subMenu();
 
     /* grid.s 에 적절한 값을 세팅하였다면, 해당 함수 호출시 해당 배열번호의 그리드에 의도한 데이터들이 주입되어진다. */
-    // grid.f.setInitialData(0);
 
     /* 생성된 그리드에 기본적으로 필요한 이벤트들을 적용한다. */
     // grid.e.basicEvent();
@@ -1667,7 +1656,6 @@ function filterMain() {
     if($("#searchType").val() === "4") {
         condition.searchTag = $("#searchString").val();
     }
-    console.log(condition);
     ajax.franchiseRequestDetailSearch(condition);
 }
 
@@ -1823,7 +1811,6 @@ function cancelPayment(cancelType) {
                 
                 CAT.CatCreditCancel(params, function(res) {
                     const jsonRes = JSON.parse(res);
-                    console.log(jsonRes);
                     if(jsonRes.STATUS === "SUCCESS") {
                         ajax.cancelPayment(target);
                     }else if(jsonRes.STATUS === "FAILURE") {
