@@ -37,7 +37,7 @@ const bcGradeName = {
 }
 
 /* 가상키보드 입력 대상이 되는 텍스트 필드나 텍스트 에어리어 */
-let vkeyTargetId = ["bcName", "bcHp", "bcAddress", "bcRemark"];
+let vkeyTargetId = ["bcName", "bcHp", "bcAddress", "bcRemark", "searchCustomerField"];
 
 let vkeyProp = [];
 
@@ -59,6 +59,11 @@ vkeyProp[2] = {
 
 vkeyProp[3] = {
     title : "특이사항",
+}
+
+vkeyProp[4] = {
+    title : "검색어 입력",
+    
 }
 
 /* 가상키보드 입력 대상이 되는 텍스트 필드나 텍스트 에어리어 */

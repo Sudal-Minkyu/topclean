@@ -1212,16 +1212,23 @@ const event = {
             $("#deleteInspection").on("click", function () { // 3번테이블(검품등록) 의 삭제될 대상들을 가져와서 삭제 요청
                 const targetRowsItem = grid.f.getRemovedCheckRows(3);
                 let refinedTargetList = [];
+                let isAlreadyDone = false;
                 targetRowsItem.forEach(item => {
                     if(item.fiSendMsgYn === "Y" || item.fiCustomerConfirm !== "1") {
-                        alertCaution("고객에게 정보가 전해진 검품내역은<br>삭제할 수 없습니다.", 1);
-                        return false;
+                        isAlreadyDone = item.fiComment;
+
                     }
                     refinedTargetList.push({
                         fiId: item.fiId,
                         fiPhotoYn: item.fiPhotoYn,
                     });
                 });
+                if(isAlreadyDone) {
+                    alertCaution("고객에게 정보가 전해진 검품내역은<br>삭제할 수 없습니다.<br>( 검품내용 : " 
+                    + isAlreadyDone + " )", 1);
+                    return false;
+                }
+
                 if(targetRowsItem.length) {
                     ajax.deleteInspection(refinedTargetList, targetRowsItem[0].fdId);
                 }
