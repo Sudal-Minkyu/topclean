@@ -20,6 +20,13 @@ class VKeyboard {
         }, // 가상키보드 동작이 다 끝나고 나서 실행될 기능
     }
 
+    defaultKeypadProp = {
+        type: "default", // 가상키패드의 형태, "default" 기본, "plusminus" +-버튼으로 양수나 음수구분
+        callback: function() {
+
+        },
+    }
+
     /* 입력의 편집 대상이 되는 필드 */
     targetField;
 
@@ -862,15 +869,26 @@ class VKeyboard {
     * 목표 필드 입력에 있어 키패드를 사용한다.
     * elementId : 목표필드의 id, callback : 키패드 입력 완료 후 실행할 펑션
     * */
-    showKeypad(elementId, callback = function () {
-    }) {
-        this.keypadCallback = callback;
+    showKeypad(elementId, properties = {}) {
+
+        Object.keys(this.defaultKeypadProp).forEach(keyName => {
+            properties[keyName] = properties[keyName] || this.defaultKeypadProp[keyName];
+        });
+
+        this.keypadCallback = properties.callback;
         this.targetNumberField = document.getElementById(elementId);
         let targetValue = this.targetNumberField.value;
         if(targetValue.toString().length) {
             this.keypadField.value = parseInt(targetValue.replace(/[^0-9]/g, "")).toLocaleString("ko-JR");
         }else{
             this.keypadField.value = "0";
+        }
+
+        if(properties.type === "default") {
+            document.getElementById("VKEY_plusminus").style.display = "none";
+            document.getElementById("VKEY_keypad_sign").checked = false;
+        }else if(properties.type === "plusminus") {
+            document.getElementById("VKEY_plusminus").style.display = "block";
         }
 
         document.getElementById("VKEY_KEYPAD").style.display = "block";
@@ -885,7 +903,11 @@ class VKeyboard {
     }
 
     pushKeypadCompelete() {
-        this.targetNumberField.value = this.keypadField.value.replace(/[^0-9]/g, "");
+        let value = Number(this.keypadField.value.replace(/[^0-9]/g, ""));
+        if($("#VKEY_keypad_sign").is(":checked")) {
+            value = value * -1;
+        }
+        this.targetNumberField.value = value;
         this.pushKeypadClose();
         this.keypadCallback(this.targetNumberField.value);
     }
@@ -1218,6 +1240,10 @@ class VKeyboard {
             <div id="VKEY_KEYPAD">
                 <div class="vkey-num__input">
                     <input type="text" id="VKEY_keypad_field" readonly>
+                </div>
+                <div id="VKEY_plusminus">
+                    <input type="checkbox" id="VKEY_keypad_sign">
+                    <label for="VKEY_keypad_sign">+</label>
                 </div>
                 <div class="vkey-num__pad">
                     <button type="button" class="VKEY_keypad_btn" value="1">1</button>

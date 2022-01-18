@@ -278,7 +278,7 @@
     
     
     <!-- 적립금 조정 팝업 -->
-    <div class="pop">
+    <div class="pop" id="modifySaveMoneyPop">
     	<div class="pop__box pop__box--small">
     		<div class="pop__article">
     			<h3 class="pop__article-header">적립금 조정</h3>
@@ -286,22 +286,24 @@
                 	<div class="pop__pay-list pop__pay-list--point">
                 		<dl>
                 			<dt>현재 적립금</dt>
-                			<dd class="color--blue"><span>15,000</span>원</dd>
+                			<dd class="color--blue"><span id="currentSaveMoney">0</span>원</dd>
                 			<dt>조정금액</dt>
                 			<dd>
-                				<button class="c-keybtn">키보드</button><span>-5000</span>원
+                				<button class="c-keybtn" onclick="openVKeypad(0)">키보드</button><span id="addSaveMoney">0</span>원
                 			</dd>
                 			<dt class="final">최종 적립금</dt>
-                			<dd class="final">10,000원</dd>
+                			<dd class="final"><span id="resultSaveMoney">0</span>원</dd>
                 		</dl>
                 	</div>
                 </div>
     		</div>
     		<ul class="pop__console">
-    			<li><button class="c-button">닫기</button></li>
-    			<li><button class="c-button c-button--dark">저장</button></li>
+    			<li><button class="c-button pop__close">닫기</button></li>
+    			<li><button class="c-button c-button--dark" onclick="onUpdateSaveMoney()">저장</button></li>
     		</ul>
     	</div>
     </div>
+    <input type="hidden" id="tempKeypadField" /> 
+
 </div>
 </html>
