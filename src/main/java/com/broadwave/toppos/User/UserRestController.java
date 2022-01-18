@@ -25,6 +25,7 @@ import com.broadwave.toppos.User.ReuqestMoney.Requset.Request;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotMapperDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotSet;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.PhotoDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailCloseListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailSet;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailUpdateDto;
@@ -342,7 +343,7 @@ public class UserRestController {
 
 
 
-    //@@@@@@@@@@@@@@@@@@@@@ 가맹점 세탁접수 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+//@@@@@@@@@@@@@@@@@@@@@ 가맹점 세탁접수 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     // 접수페이지 진입시 기본적으롤 받는 데이터 API (대분류 목록리스트)
     @GetMapping("itemGroupAndPriceList")
     public ResponseEntity<Map<String,Object>> itemGroupAndPriceList(HttpServletRequest request){
@@ -788,6 +789,65 @@ public class UserRestController {
                                                                     HttpServletRequest request){
         return inspectService.franchiseInspectionYn(fiId, type, fiAddAmt, request);
     }
+
+//@@@@@@@@@@@@@@@@@@@@@ 가맹점 수기마감 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    //  수기마감 - 세부테이블 접수상태 리스트 + 검품이 존재할시 상태가 고객수락일 경우에만 호출
+    @GetMapping("franchiseReceiptCloseList")
+    public ResponseEntity<Map<String,Object>> franchiseReceiptCloseList(HttpServletRequest request){
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
+//        String frbrCode = (String) claims.get("frbrCode"); // 소속된 지사 코드
+        String login_id = claims.getSubject(); // 현재 아이디
+        log.info("현재 접속한 아이디 : "+login_id);
+        log.info("현재 접속한 가맹점 코드 : "+frCode);
+//        log.info("소속된 지사 코드 : "+frbrCode);
+
+        List<RequestDetailCloseListDto> requestDetailCloseListDtos = receiptService.findByRequestDetailCloseList();
+        List<HashMap<String,Object>> requestDetailCloseList = new ArrayList<>();
+        HashMap<String,Object> requestDetailCloseInfo;
+
+        for(RequestDetailCloseListDto requestDetailCloseListDto : requestDetailCloseListDtos){
+
+//        customerListInfo = new HashMap<>();
+//        customerIdList.add(optionalRequest.get().getBcId().getBcId());
+//        customerListInfo.put("bcId", optionalRequest.get().getBcId().getBcId());
+//        customerListInfo.put("bcName", optionalRequest.get().getBcId().getBcName());
+//        customerListInfo.put("bcHp", optionalRequest.get().getBcId().getBcHp());
+//        customerListInfo.put("bcAddress", optionalRequest.get().getBcId().getBcAddress());
+//        customerListInfo.put("bcGrade", optionalRequest.get().getBcId().getBcGrade());
+//        customerListInfo.put("bcValuation", optionalRequest.get().getBcId().getBcValuation());
+//        customerListInfo.put("bcRemark", optionalRequest.get().getBcId().getBcRemark());
+//        customerListInfo.put("bcLastRequestDt", optionalRequest.get().getBcId().getBcLastRequestDt());
+//        customerListInfo.put("beforeUncollectMoney", 0);
+//        customerListInfo.put("saveMoney", 0);
+//        requestDetailListData.add(requestDetailInfo);
+//
+//        data.put("gridListData",requestDetailCloseList);
+        }
+
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 }

@@ -256,6 +256,7 @@ public class ReceiptService {
                     requestDetail.setFdState("S1");
                     requestDetail.setFdStateDt(LocalDateTime.now());
                     requestDetail.setFdCancel("N");
+                    requestDetail.setFdAdd2Amt(0);
                     requestDetail.setFdTotAmt(requestDetailMapperDto.getFdRequestAmt());
                     requestDetail.setFdEstimateDt(requestDetailMapperDto.getFrEstimateDate());
                     requestDetail.setInsert_id(login_id);
@@ -775,6 +776,11 @@ public class ReceiptService {
     // 상품세부의 파일리스트 호출
     public List<PhotoDto> findByPhotoDto(Long id) {
         return photoRepositoryCustom.findByPhotoDtoList(id);
+    }
+
+    // 수기마감 페이지에 보여줄 리스트 호출
+    public List<RequestDetailCloseListDto> findByRequestDetailCloseList() {
+        return requestDetailRepositoryCustom.findByRequestDetailCloseList();
     }
 
 }
