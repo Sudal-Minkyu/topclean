@@ -19,7 +19,7 @@ const urls = {
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
-    setDataIntoGrid: function(numOfGrid, url) { // 해당 numOfGrid 배열번호의 그리드에 url 로부터 받은 데이터값을 통신하여 주입한다.
+    setDataIntoGrid(numOfGrid, url) { // 해당 numOfGrid 배열번호의 그리드에 url 로부터 받은 데이터값을 통신하여 주입한다.
         CommonUI.ajax(url, "GET", false, function (req) {
             const data = req.sendData.gridListData;
             grids.f.setData(numOfGrid, data);
@@ -81,7 +81,7 @@ const grids = {
             }
         },
 
-        getData(numOfGrid, data) { // 해당 배열 번호 그리드의 url.read 를 참조하여 데이터를 그리드에 뿌린다.
+        getData(numOfGrid) { // 해당 배열 번호 그리드의 url.read 를 참조하여 데이터를 그리드에 뿌린다.
             AUIGrid.getGridData(grids.s.id[numOfGrid]);
         },
 
@@ -93,7 +93,7 @@ const grids = {
     e: {
         basicEvent() {
             /* 0번그리드 내의 셀 클릭시 이벤트 */
-            AUIGrid.bind(gridId[0], "cellClick", function (e) {
+            AUIGrid.bind(grids.s.id[0], "cellClick", function (e) {
                 console.log(e.item); // 이밴트 콜백으로 불러와진 객체의, 클릭한 대상 row 키(파라메터)와 값들을 보여준다.
             });
         }
