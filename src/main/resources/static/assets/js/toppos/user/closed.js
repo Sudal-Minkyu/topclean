@@ -8,7 +8,7 @@ const dtos = {
 
     },
     receive: {
-        기본그리드: {
+        franchiseReceiptCloseList: {
             fdId: "nr",
             frYyyymmdd: "sr",
             bcName: "sr",
@@ -39,15 +39,16 @@ const dtos = {
 
 /* 통신에 사용되는 url들 기입 */
 const urls = {
-    
+    getClosedList: '/api/user/franchiseReceiptCloseList',
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
-    setDataIntoGrid(numOfGrid, url) { // 해당 numOfGrid 배열번호의 그리드에 url 로부터 받은 데이터값을 통신하여 주입한다.
-        CommonUI.ajax(url, "GET", false, function (req) {
-            const data = req.sendData.gridListData;
-            grids.f.setData(numOfGrid, data);
+    getClosedList() { // 해당 numOfGrid 배열번호의 그리드에 url 로부터 받은 데이터값을 통신하여 주입한다.
+        CommonUI.ajax(urls.getClosedList, "GET", false, function (res) {
+            const data = res.sendData;
+            dv.chk(data.gridListData, dtos.receive.franchiseReceiptCloseList, '마감 리스트 항목 받아오기');
+            grids.f.setData(0, data.gridListData);
         });
     },
 };
@@ -61,7 +62,7 @@ const comms = {
 const grids = {
     s: { // 그리드 세팅
         targetDiv: [
-            "targetHtmlId"
+            "closedList"
         ],
         columnLayout: [],
         prop: [],
@@ -75,11 +76,38 @@ const grids = {
             /* 0번 그리드의 레이아웃 */
             grids.s.columnLayout[0] = [
                 {
-                    dataField: "",
-                    headerText: "",
+                    dataField: "frYyyymmdd",
+                    headerText: "접수일자",
+                    dataType: "yyyy-mm-dd",
+                }, {
+                    dataField: "bcName",
+                    headerText: "고객명",
+                }, {
+                    dataField: "fdTag",
+                    headerText: "택번호",
+                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
+                        return value.substr(0, 3) + "-" + value.substr(-4);
+                    },
                 }, {
                     dataField: "",
-                    headerText: "",
+                    headerText: "상품명",
+                }, {
+                    dataField: "",
+                    headerText: "처리내역",
+                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                        return CommonUI.toppos.processName(item);
+                    },
+                }, {
+                    dataField: "fdTotAmt",
+                    headerText: "접수금액",
+                    dataType: "numeric",
+                    autoThousandSeparator: "true",
+                }, {
+                    dataField: "fdUrgentYn",
+                    headerText: "급세탁",
+                }, {
+                    dataField: "fdRemark",
+                    headerText: "특이사항",
                 },
             ];
 
@@ -91,6 +119,8 @@ const grids = {
                 selectionMode : "singleRow",
                 noDataMessage : "출력할 데이터가 없습니다.",
                 enableColumnResize : false,
+                showRowAllCheckBox: true,
+                showRowCheckColumn: true,
                 showRowNumColumn : false,
                 showStateColumn : true,
                 enableFilter : true,
@@ -107,7 +137,7 @@ const grids = {
         },
 
         getData(numOfGrid) { // 해당 배열 번호 그리드의 url.read 를 참조하여 데이터를 그리드에 뿌린다.
-            AUIGrid.getGridData(grids.s.id[numOfGrid]);
+            return AUIGrid.getGridData(grids.s.id[numOfGrid]);
         },
 
         setData(numOfGrid, data) { // 해당 배열 번호 그리드의 url.read 를 참조하여 데이터를 그리드에 뿌린다.
@@ -147,7 +177,9 @@ $(function() { // 페이지가 로드되고 나서 실행
 /* 페이지가 로드되고 나서 실행 될 코드들을 담는다. */
 function onPageLoad() {
     grids.f.initialization();
+    grids.f.create();
 
+    comms.getClosedList();
     /* 생성된 그리드에 기본적으로 필요한 이벤트들을 적용한다. */
     // grids.e.basicEvent();
 }
