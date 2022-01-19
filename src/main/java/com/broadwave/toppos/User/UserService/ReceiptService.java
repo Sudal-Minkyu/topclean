@@ -768,11 +768,6 @@ public class ReceiptService {
         return photoRepositoryCustom.findByPhotoDtoList(id);
     }
 
-    // 수기마감 페이지에 보여줄 리스트 호출
-    public List<RequestDetailCloseListDto> findByRequestDetailCloseList(String frCode) {
-        return requestDetailRepositoryCustom.findByRequestDetailCloseList(frCode);
-    }
-
 }
 
 

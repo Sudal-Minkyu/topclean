@@ -68,6 +68,26 @@ public class InspeotRepositoryCustomImpl extends QuerydslRepositorySupport imple
         return query.fetch();
     }
 
+    // 수기마감 - 검품 미확인("1")이거나, 고객거부상태("3")를 포함한 리스트 호출
+    @Override
+    public List<InspeotYnDto> findByInspeotClosingList(List<Long> fdIdList){
+        QInspeot inspeot = QInspeot.inspeot;
+
+        JPQLQuery<InspeotYnDto> query = from(inspeot)
+                .where(inspeot.fdId.id.in(fdIdList).and(inspeot.fiCustomerConfirm.eq("1")).and(inspeot.fiCustomerConfirm.eq("3")))
+                .groupBy(inspeot.fdId.id)
+
+                .select(Projections.constructor(InspeotYnDto.class,
+                        inspeot.fdId.id
+                ));
+
+        query.orderBy(inspeot.id.desc());
+
+        return query.fetch();
+    }
+
+
+    // 검품 타입이 F(가맹검품)이고 미확인인 상태의 리스트 호출
     @Override
     public List<InspeotYnDto> findByInspeotYnF(List<Long> fdIdList){
         QInspeot inspeot = QInspeot.inspeot;
@@ -87,6 +107,7 @@ public class InspeotRepositoryCustomImpl extends QuerydslRepositorySupport imple
         return query.fetch();
     }
 
+    // 검품 타입이 B(지사검품)이고 미확인인 상태의 리스트 호출
     @Override
     public List<InspeotYnDto> findByInspeotYnB(List<Long> fdIdList){
         QInspeot inspeot = QInspeot.inspeot;

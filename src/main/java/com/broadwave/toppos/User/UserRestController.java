@@ -72,6 +72,7 @@ public class UserRestController {
     private final AWSS3Service awss3Service; // AWS S3 서비스
     private final UserService userService; // 가맹점 통합 서비스
     private final ReceiptService receiptService; // 가맹점 접수페이지 전용 서비스
+    private final ReceiptStateService receiptStateService; // 가맹점 접수건 현재상태 변화 서비스
     private final SortService sortService; // 가맹점 상품정렬 서비스
     private final InfoService infoService; // 나의정보관리 서비스
     private final InspectService inspectService; // 통합조회 서비스
@@ -83,7 +84,7 @@ public class UserRestController {
 
     @Autowired
     public UserRestController(AWSS3Service awss3Service, UserService userService, ReceiptService receiptService, SortService sortService, InfoService infoService, InspectService inspectService,
-                              TokenProvider tokenProvider, ModelMapper modelMapper, HeadService headService, ManagerService managerService) {
+                              TokenProvider tokenProvider, ModelMapper modelMapper, HeadService headService, ManagerService managerService, ReceiptStateService receiptStateService) {
         this.awss3Service = awss3Service;
         this.userService = userService;
         this.receiptService = receiptService;
@@ -92,6 +93,7 @@ public class UserRestController {
         this.tokenProvider = tokenProvider;
         this.infoService = infoService;
         this.inspectService = inspectService;
+        this.receiptStateService = receiptStateService;
         this.headService = headService;
         this.managerService = managerService;
     }
@@ -791,49 +793,18 @@ public class UserRestController {
     }
 
 //@@@@@@@@@@@@@@@@@@@@@ 가맹점 수기마감 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    //  접수테이블의 상태 변화 API - 수기마감페이지, 가맹점입고 페이지, 지사반송건전송 페이지, 세탁인도 페이지 공용함수
+    @PostMapping("franchiseStateChange")
+    public ResponseEntity<Map<String,Object>> franchiseStateChange(@RequestParam(value="fdIdList", defaultValue="") List<Long> fdIdList,
+                                                                   @RequestParam(value="stateType", defaultValue="") String stateType, HttpServletRequest request){
+        log.info("fdIdList : "+fdIdList);
+        return receiptStateService.franchiseStateChange(fdIdList, stateType, request);
+    }
+
     //  수기마감 - 세부테이블 접수상태 리스트 + 검품이 존재할시 상태가 고객수락일 경우에만 호출
     @GetMapping("franchiseReceiptCloseList")
     public ResponseEntity<Map<String,Object>> franchiseReceiptCloseList(HttpServletRequest request){
-
-        AjaxResponse res = new AjaxResponse();
-        HashMap<String, Object> data = new HashMap<>();
-
-        // 클레임데이터 가져오기
-        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
-        String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
-//        String frbrCode = (String) claims.get("frbrCode"); // 소속된 지사 코드
-        String login_id = claims.getSubject(); // 현재 아이디
-        log.info("현재 접속한 아이디 : "+login_id);
-        log.info("현재 접속한 가맹점 코드 : "+frCode);
-//        log.info("소속된 지사 코드 : "+frbrCode);
-
-        List<RequestDetailCloseListDto> requestDetailCloseListDtos = receiptService.findByRequestDetailCloseList(frCode);
-
-        List<HashMap<String,Object>> requestDetailCloseList = new ArrayList<>();
-        HashMap<String,Object> requestDetailCloseInfo;
-
-        for(RequestDetailCloseListDto requestDetailCloseListDto : requestDetailCloseListDtos){
-
-//        customerListInfo = new HashMap<>();
-//        customerIdList.add(optionalRequest.get().getBcId().getBcId());
-//        customerListInfo.put("bcId", optionalRequest.get().getBcId().getBcId());
-//        customerListInfo.put("bcName", optionalRequest.get().getBcId().getBcName());
-//        customerListInfo.put("bcHp", optionalRequest.get().getBcId().getBcHp());
-//        customerListInfo.put("bcAddress", optionalRequest.get().getBcId().getBcAddress());
-//        customerListInfo.put("bcGrade", optionalRequest.get().getBcId().getBcGrade());
-//        customerListInfo.put("bcValuation", optionalRequest.get().getBcId().getBcValuation());
-//        customerListInfo.put("bcRemark", optionalRequest.get().getBcId().getBcRemark());
-//        customerListInfo.put("bcLastRequestDt", optionalRequest.get().getBcId().getBcLastRequestDt());
-//        customerListInfo.put("beforeUncollectMoney", 0);
-//        customerListInfo.put("saveMoney", 0);
-//        requestDetailListData.add(requestDetailInfo);
-//
-//        data.put("gridListData",requestDetailCloseList);
-        }
-
-        data.put("requestDetailCloseListDtos",requestDetailCloseListDtos);
-
-        return ResponseEntity.ok(res.dataSendSuccess(data));
+        return receiptStateService.franchiseReceiptCloseList(request);
     }
 
 
