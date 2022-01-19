@@ -229,7 +229,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdAdd1Amt,
                         requestDetail.fdAdd1Remark,
                         requestDetail.fdWhitening,
-                        requestDetail.fdPollutionLevel,
+                        requestDetail.fdPollution,
                         requestDetail.fdWaterRepellent,
                         requestDetail.fdStarch,
                         requestDetail.fdUrgentYn,

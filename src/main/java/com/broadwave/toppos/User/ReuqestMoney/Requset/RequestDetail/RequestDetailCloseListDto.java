@@ -29,7 +29,7 @@ public class RequestDetailCloseListDto {
     private Integer fdAdd1Amt; // 추가비용1(접수시점)
     private String fdAdd1Remark; // 추가내용1(접수시점)
     private Integer fdWhitening; // 표백 요금
-    private Integer fdPollutionLevel; // 오염 선택레벨(0~5)
+    private Integer fdPollution; // 오염 추가요금
     private Integer fdStarch; // 풀먹임 요금
     private Integer fdWaterRepellent; // 발수가공요금
     private String fdUrgentYn; // 급세탁 여부 (Y  / N) 기본값 : N
