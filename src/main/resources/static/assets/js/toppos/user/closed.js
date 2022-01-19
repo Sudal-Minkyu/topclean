@@ -10,7 +10,6 @@ const dtos = {
     receive: {
         기본그리드: {
             fdId: "nr",
-
             frYyyymmdd: "sr",
             고객명: "sr",
             fdTag: "sr",
@@ -30,7 +29,7 @@ const dtos = {
             fdPollutionLevel: "",
             fdWaterRepellent: "",
             fdStarch: "",
-
+            fdUrgentYn: "s",
             fdRequestAmt: "n",
             fdRemark: "s",
         }
