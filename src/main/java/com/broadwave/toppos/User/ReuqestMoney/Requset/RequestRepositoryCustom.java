@@ -21,4 +21,7 @@ public interface RequestRepositoryCustom {
     List<RequestUnCollectDto> findByBeforeUnCollectList(List<Long> customerIdList, String nowDate);
 
     List<RequestSearchDto> findByRequestFrCode(String frCode);
+
+    List<RequestCustomerUnCollectDto> findByRequestCustomerUnCollectList(Long bcId, String frCode);
+
 }

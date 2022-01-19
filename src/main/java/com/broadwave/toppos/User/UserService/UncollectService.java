@@ -6,12 +6,14 @@ import com.broadwave.toppos.User.Customer.CustomerRepositoryCustom;
 import com.broadwave.toppos.User.Customer.CustomerUncollectListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentRepositoryCustom;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestCustomerUnCollectDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotRepositoryCustom;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.PhotoRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepositoryCustom;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestRepository;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestRepositoryCustom;
 import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoneyRepository;
 import com.broadwave.toppos.common.AjaxResponse;
 import io.jsonwebtoken.Claims;
@@ -49,6 +51,7 @@ public class UncollectService {
     private final InspeotRepository inspeotRepository;
     private final InspeotRepositoryCustom inspeotRepositoryCustom;
     private final RequestRepository requestRepository;
+    private final RequestRepositoryCustom requestRepositoryCustom;
     private final RequestDetailRepository requestDetailRepository;
     private final RequestDetailRepositoryCustom requestDetailRepositoryCustom;
     private final SaveMoneyRepository saveMoneyRepository;
@@ -57,11 +60,13 @@ public class UncollectService {
 
     @Autowired
     public UncollectService(ModelMapper modelMapper, TokenProvider tokenProvider, UserService userService, AWSS3Service awss3Service, PhotoRepository photoRepository, ReceiptService receiptService,
+                            RequestRepositoryCustom requestRepositoryCustom,
                             PaymentRepository paymentRepository, PaymentRepositoryCustom paymentRepositoryCustom, InspeotRepository inspeotRepository,
                             RequestRepository requestRepository, RequestDetailRepositoryCustom requestDetailRepositoryCustom, InspeotRepositoryCustom inspeotRepositoryCustom,
                             RequestDetailRepository requestDetailRepository, SaveMoneyRepository saveMoneyRepository, CustomerRepositoryCustom customerRepositoryCustom){
         this.modelMapper = modelMapper;
         this.inspeotRepository = inspeotRepository;
+        this.requestRepositoryCustom = requestRepositoryCustom;
         this.awss3Service = awss3Service;
         this.receiptService = receiptService;
         this.tokenProvider = tokenProvider;
@@ -134,12 +139,24 @@ public class UncollectService {
         log.info("현재 접속한 아이디 : "+login_id);
         log.info("현재 접속한 가맹점 코드 : "+frCode);
 
+        List<RequestCustomerUnCollectDto> requestCustomerUnCollectDtos = requestRepositoryCustom.findByRequestCustomerUnCollectList(bcId, frCode);
+        List<HashMap<String,Object>> uncollectListData = new ArrayList<>();
+        HashMap<String,Object> uncollectListInfo;
+        for (RequestCustomerUnCollectDto requestCustomerUnCollectDto: requestCustomerUnCollectDtos) {
+            uncollectListInfo = new HashMap<>();
+            uncollectListInfo.put("frId", requestCustomerUnCollectDto.getFrId());
+            uncollectListInfo.put("frYyyymmdd", requestCustomerUnCollectDto.getFrYyyymmdd());
+            uncollectListInfo.put("requestDetailCount", requestCustomerUnCollectDto.getRequestDetailCount());
+            uncollectListInfo.put("bgName", requestCustomerUnCollectDto.getBgName());
+            uncollectListInfo.put("bsName", requestCustomerUnCollectDto.getBsName());
+            uncollectListInfo.put("biName", requestCustomerUnCollectDto.getBiName());
+            uncollectListInfo.put("frTotalAmount", requestCustomerUnCollectDto.getFrTotalAmount());
+            uncollectListInfo.put("frPayAmount", requestCustomerUnCollectDto.getFrPayAmount());
+            uncollectListInfo.put("uncollectMoney", requestCustomerUnCollectDto.getFrTotalAmount()-requestCustomerUnCollectDto.getFrPayAmount());
+            uncollectListData.add(uncollectListInfo);
+        }
 
-
-
-
-
-
+        data.put("gridListData",uncollectListData);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
