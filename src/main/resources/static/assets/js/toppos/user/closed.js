@@ -15,7 +15,10 @@ const dtos = {
             고객명: "sr",
             fdTag: "sr",
 
-            biItemcode: "s",
+            bgName: "s",
+            bsName: "s",
+            biName: "s",
+            
             fdPriceGrade: "s",
             fdRetryYn: "s",
             fdPressed: "n",
