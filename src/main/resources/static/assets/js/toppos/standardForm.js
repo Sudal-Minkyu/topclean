@@ -19,12 +19,7 @@ const urls = {
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
-    setDataIntoGrid(numOfGrid, url) { // 해당 numOfGrid 배열번호의 그리드에 url 로부터 받은 데이터값을 통신하여 주입한다.
-        CommonUI.ajax(url, "GET", false, function (req) {
-            const data = req.sendData.gridListData;
-            grids.f.setData(numOfGrid, data);
-        });
-    },
+    
 };
 
 /* .s : AUI 그리드 관련 설정들
@@ -82,7 +77,7 @@ const grids = {
         },
 
         getData(numOfGrid) { // 해당 배열 번호 그리드의 url.read 를 참조하여 데이터를 그리드에 뿌린다.
-            AUIGrid.getGridData(grids.s.id[numOfGrid]);
+            return AUIGrid.getGridData(grids.s.id[numOfGrid]);
         },
 
         setData(numOfGrid, data) { // 해당 배열 번호 그리드의 url.read 를 참조하여 데이터를 그리드에 뿌린다.

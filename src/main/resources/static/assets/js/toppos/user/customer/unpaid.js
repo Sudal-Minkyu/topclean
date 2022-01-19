@@ -5,7 +5,7 @@
 * */
 const dtos = {
     send: {
-        좌측그리드: { // searchText가 올 경우에는 검색하여 표기, 아니면 해당 지점의 미수금이 있는 고객 전체
+        franchiseUncollectCustomerList: { // searchText가 올 경우에는 검색하여 표기, 아니면 해당 지점의 미수금이 있는 고객 전체
             searchText: "",
             searchType: "", // 0: 통합, 1: 고객명, 2: 전화번호, 3: 주소
         },
@@ -23,7 +23,7 @@ const dtos = {
         },
     },
     receive: {
-        좌측그리드: {
+        franchiseUncollectCustomerList: {
             bcId: "nr",
             bcName: "s",
             bcHp: "",
@@ -31,13 +31,16 @@ const dtos = {
             saveMoney: "", // 적립금
             uncollectMoney: "", // 전체미수금
         },
-        상단그리드: { // 백단에서 고심해서 처리해야할 내역들이 많아보임
+        상단그리드: {
             frId: "nr",
-            frYyyymmdd: "",
-            상품내역: "",
-            frNormalAmount: "", // 해당 frId 세부 접수 항목의 totAmt 총합인데 이게 맞는지 잘 모르겠음
-            받은금액: "",
-            uncollectMoney: "",
+            frYyyymmdd: "sr",
+            requestDetailCount: "n", // 외 건수 requestDetailCount가 2일경우 -> 외 1건, 1일경우 그냥 상품이름만 표기하면될듯. 0일경우는 없음.
+            bgName: "s",
+            bsName: "s",
+            biName: "s",
+            frTotalAmount: "nr", // 접수금액
+            frPayAmount: "nr", // 입금액
+            uncollectMoney: "nr", // 미수금액
         },
         하단그리드: {
             frYyyymmdd: "s",
@@ -63,7 +66,7 @@ const dtos = {
 
             fdTotAmt: "n",
             fdState: "s",
-            출고일: "", // 지사출고, 강제출고 등 여러개여서.....
+            fdS6Dt: "", // 인도일로 수정
         },
         결제팝업: {
             bcId: "nr",
@@ -77,17 +80,20 @@ const dtos = {
 
 /* 통신에 사용되는 url들 기입 */
 const urls = {
-    abcd: "/api/user/",
+    filterCustomerList: "/api/user/franchiseUncollectCustomerList",
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
-    setDataIntoGrid(numOfGrid, url) { // 해당 numOfGrid 배열번호의 그리드에 url 로부터 받은 데이터값을 통신하여 주입한다.
-        CommonUI.ajax(url, "GET", false, function (req) {
-            const data = req.sendData.gridListData;
-            grids.f.setData(numOfGrid, data);
+    filterCustomerList(searchCondition = {searchText: "", searchType: ""}) {
+        dv.chk(searchCondition, dtos.send.franchiseUncollectCustomerList, "메인그리드 고객 필터 조건 보내기", true);
+        CommonUI.ajax(urls.filterCustomerList, "GET", searchCondition, function(res) {
+            const data = res.sendData.gridListData;
+            dv.chk(data, dtos.receive.franchiseUncollectCustomerList, "메인그리드 고객 리스트 받아오기", true);
+            grids.f.setData(0, data);
+            calculateGridCustomer();
         });
-    },
+    }
 };
 
 /* .s : AUI 그리드 관련 설정들
@@ -99,7 +105,7 @@ const comms = {
 const grids = {
     s: { // 그리드 세팅
         targetDiv: [
-            "targetHtmlId"
+            "grid_customer", "grid_request", "grid_detail", "grid_payment"
         ],
         columnLayout: [],
         prop: [],
@@ -113,11 +119,27 @@ const grids = {
             /* 0번 그리드의 레이아웃 */
             grids.s.columnLayout[0] = [
                 {
-                    dataField: "",
-                    headerText: "",
+                    dataField: "bcName",
+                    headerText: "고객명",
                 }, {
-                    dataField: "",
-                    headerText: "",
+                    dataField: "bcHp",
+                    headerText: "전화번호",
+                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                        return CommonUI.onPhoneNumChange(value);
+                    },
+                }, {
+                    dataField: "bcAddress",
+                    headerText: "주소",
+                }, {
+                    dataField: "saveMoney",
+                    headerText: "적립금",
+                    dataType: "numeric",
+                    autoThousandSeparator: "true",
+                }, {
+                    dataField: "uncollectMoney",
+                    headerText: "미수금",
+                    dataType: "numeric",
+                    autoThousandSeparator: "true",
                 },
             ];
 
@@ -125,6 +147,155 @@ const grids = {
             * https://www.auisoft.net/documentation/auigrid/DataGrid/Properties.html
             * */
             grids.s.prop[0] = {
+                editable : false,
+                selectionMode : "singleRow",
+                noDataMessage : "출력할 데이터가 없습니다.",
+                enableColumnResize : false,
+                showRowNumColumn : false,
+                showStateColumn : true,
+                enableFilter : true,
+                rowHeight : 48,
+                headerHeight : 48,
+            };
+
+            grids.s.columnLayout[1] = [
+                {
+                    dataField: "frYyyymmdd",
+                    headerText: "접수일",
+                    dataType: "date",
+                    formatString: "yyyy-mm-dd",
+                }, {
+                    dataField: "requestDetailCount",
+                    headerText: "상품내역",
+                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                        let rearText = "";
+                        if(value > 1) {
+                            rearText = " 외 " + (value - 1) + "건";
+                        }
+                        return CommonUI.toppos.makeSimpleProductName(item) + rearText;
+                    },
+                }, {
+                    dataField: "frTotalAmount",
+                    headerText: "접수금액",
+                    dataType: "numeric",
+                    autoThousandSeparator: "true",
+                }, {
+                    dataField: "frPayAmount",
+                    headerText: "입금액",
+                    dataType: "numeric",
+                    autoThousandSeparator: "true",
+                }, {
+                    dataField: "uncollectMoney",
+                    headerText: "미수금액",
+                    dataType: "numeric",
+                    autoThousandSeparator: "true",
+                },
+            ];
+
+            grids.s.prop[1] = {
+                editable : false,
+                selectionMode : "singleRow",
+                noDataMessage : "출력할 데이터가 없습니다.",
+                enableColumnResize : false,
+                showRowNumColumn : false,
+                showStateColumn : true,
+                enableFilter : true,
+                rowHeight : 48,
+                headerHeight : 48,
+            };
+
+            grids.s.columnLayout[2] = [
+                {
+                    dataField: "frYyyymmdd",
+                    headerText: "접수일",
+                    dataType: "date",
+                    formatString: "yyyy-mm-dd",
+                }, {
+                    dataField: "fdTag",
+                    headerText: "택번호",
+                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
+                        return value.substr(0, 3) + "-" + value.substr(-4);
+                    },
+                }, {
+                    dataField: "",
+                    headerText: "상품명",
+                    style: "color_and_name",
+                    renderer : {
+                        type : "TemplateRenderer",
+                    },
+                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                        const colorSquare =
+                            `<span class="colorSquare" style="background-color: ${wares.fdColorCode['C'+item.fdColor]}"></span>`;
+                        const sumName = CommonUI.toppos.makeSimpleProductName(item);
+                        return colorSquare + ` <span>` + sumName + `</span>`;
+                    },
+                }, {
+                    dataField: "",
+                    headerText: "처리내역",
+                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                        return CommonUI.toppos.processName(item);
+                    }
+                }, {
+                    dataField: "fdTotAmt",
+                    headerText: "접수금액",
+                    dataType: "numeric",
+                    autoThousandSeparator: "true",
+                }, {
+                    dataField: "fdState",
+                    headerText: "현재상태",
+                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                        return wares.fdStateName[value];
+                    },
+                }, {
+                    dataField: "fdS6Dt",
+                    headerText: "인도일",
+                    dataType: "date",
+                    formatString: "yyyy-mm-dd",
+                },
+            ];
+
+            grids.s.prop[2] = {
+                editable : false,
+                selectionMode : "singleRow",
+                noDataMessage : "출력할 데이터가 없습니다.",
+                enableColumnResize : false,
+                showRowNumColumn : false,
+                showStateColumn : true,
+                enableFilter : true,
+                rowHeight : 48,
+                headerHeight : 48,
+            };
+
+            grids.s.columnLayout[3] = [
+                {
+                    dataField: "frYyyymmdd",
+                    headerText: "접수일",
+                    dataType: "date",
+                    formatString: "yyyy-mm-dd",
+                }, {
+                    dataField: "requestDetailCount",
+                    headerText: "상품내역",
+                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                        let rearText = "";
+                        if(value > 1) {
+                            rearText = " 외 " + (value - 1) + "건";
+                        }
+                        return CommonUI.toppos.makeSimpleProductName(item) + rearText;
+                    },
+                }, {
+                    dataField: "",
+                    headerText: "접수금액",
+                    dataType: "numeric",
+                    autoThousandSeparator: "true",
+                }, {
+                    dataField: "",
+                    headerText: "미수금액",
+                    dataType: "numeric",
+                    autoThousandSeparator: "true",
+                },
+            ];
+
+            grids.s.prop[3] = {
                 editable : false,
                 selectionMode : "singleRow",
                 noDataMessage : "출력할 데이터가 없습니다.",
@@ -145,12 +316,16 @@ const grids = {
         },
 
         getData(numOfGrid) { // 해당 배열 번호 그리드의 url.read 를 참조하여 데이터를 그리드에 뿌린다.
-            AUIGrid.getGridData(grids.s.id[numOfGrid]);
+            return AUIGrid.getGridData(grids.s.id[numOfGrid]);
         },
 
         setData(numOfGrid, data) { // 해당 배열 번호 그리드의 url.read 를 참조하여 데이터를 그리드에 뿌린다.
             AUIGrid.setGridData(grids.s.id[numOfGrid], data);
         },
+
+        getCheckedItems(numOfGrid) {
+            return AUIGrid.getCheckedRowItems(grids.s.id[numOfGrid]);
+        }
     },
 
     e: {
@@ -166,7 +341,15 @@ const grids = {
 /* 이벤트를 s : 설정하거나 r : 해지하는 함수들을 담는다. 그리드 관련 이벤트는 grids.e에 위치 (trigger) */
 const trigs = {
     s: { // 이벤트 설정
-
+        basicTrigger() {
+            $("#customerSearchBtn").on("click", function () {
+                searchCondition = {
+                    searchType: $("#searchType").val(),
+                    searchText: $("#searchText").val()
+                }
+                comms.filterCustomerList(searchCondition);
+            });
+        }
     },
     r: { // 이벤트 해제
 
@@ -175,7 +358,22 @@ const trigs = {
 
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
 const wares = {
-
+    fdColorCode: { // 컬러코드에 따른 실제 색상
+        C00: "#D4D9E1", C01: "#D4D9E1", C02: "#3F3C32", C03: "#D7D7D7", C04: "#F54E50", C05: "#FB874B",
+        C06: "#F1CE32", C07: "#349A50", C08: "#55CAB7", C09: "#398BE0", C10: "#DE9ACE", C11: "#FF9FB0",
+    },
+    fdStateName: {
+        S1: "접수",
+        S2: "지사입고",
+        S3: "지사반송",
+        S4: "지사출고",
+        S5: "가맹점입고",
+        S6: "고객인도",
+        S7: "강제출고",
+        S8: "강제입고",
+        F: "가맹검품",
+        B: "확인품",
+    },
 }
 
 $(function() { // 페이지가 로드되고 나서 실행
@@ -185,7 +383,36 @@ $(function() { // 페이지가 로드되고 나서 실행
 /* 페이지가 로드되고 나서 실행 될 코드들을 담는다. */
 function onPageLoad() {
     grids.f.initialization();
+    grids.f.create();
 
+    trigs.s.basicTrigger();
+
+    comms.filterCustomerList();
     /* 생성된 그리드에 기본적으로 필요한 이벤트들을 적용한다. */
     // grids.e.basicEvent();
+}
+
+function calculateGridCustomer() {
+    const items = grids.f.getData(0);
+    let totalSaveMoney = 0;
+    let totalUncollectMoney = 0;
+    items.forEach(item => {
+        totalSaveMoney += item.saveMoney;
+        totalUncollectMoney += item.uncollectMoney;
+    });
+    $("#totalSaveMoney").html(totalSaveMoney.toLocaleString());
+    $("#totalUncollectMoney").html(totalUncollectMoney.toLocaleString());
+}
+
+function calculateGridRequest() {
+    const items = grids.f.getCheckedItems(1);
+    const totalSelectedUncollectMoney = 0;
+    items.forEach(item => {
+        totalSelectedUncollectMoney += item.uncollectMoney;
+    });
+    $("#totalSelectedUncollectMoney").html(totalSelectedUncollectMoney.toLocaleString());
+}
+
+function calculateGridPayment() {
+
 }
