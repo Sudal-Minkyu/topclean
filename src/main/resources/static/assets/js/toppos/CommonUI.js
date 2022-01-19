@@ -41,7 +41,7 @@ class CommonUIClass {
         },
         makeSimpleProductName(item) {
             const finalBsName = item.bsName === "일반" ? "" : item.bsName;
-            return item.bsName + " " + item.biName + " " + item.bgName;
+            return finalBsName + " " + item.biName + " " + item.bgName;
         },
         processName(item) {
             try {

@@ -47,8 +47,11 @@ const comms = {
     getClosedList() { // 해당 numOfGrid 배열번호의 그리드에 url 로부터 받은 데이터값을 통신하여 주입한다.
         CommonUI.ajax(urls.getClosedList, "GET", false, function (res) {
             const data = res.sendData;
+            const dataLength = data.gridListData.length;
             dv.chk(data.gridListData, dtos.receive.franchiseReceiptCloseList, '마감 리스트 항목 받아오기');
             grids.f.setData(0, data.gridListData);
+            
+            $('#totalNum').text(dataLength);
         });
     },
 };
@@ -91,6 +94,16 @@ const grids = {
                 }, {
                     dataField: "",
                     headerText: "상품명",
+                    style: "color_and_name",
+                    renderer : {
+                        type : "TemplateRenderer",
+                    },
+                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                        const colorSquare =
+                            `<span class="colorSquare" style="background-color: ${wares.fdColorCode['C'+item.fdColor]}; vertical-align: middle;"></span>`;
+                        const sumName = CommonUI.toppos.makeSimpleProductName(item);
+                        return colorSquare + ` <span style="vertical-align: middle;">` + sumName + `</span>`;
+                    },
                 }, {
                     dataField: "",
                     headerText: "처리내역",
@@ -126,6 +139,7 @@ const grids = {
                 enableFilter : true,
                 rowHeight : 48,
                 headerHeight : 48,
+                rowCheckColumnWidth: 40,
             };
 
         },
@@ -143,6 +157,11 @@ const grids = {
         setData(numOfGrid, data) { // 해당 배열 번호 그리드의 url.read 를 참조하여 데이터를 그리드에 뿌린다.
             AUIGrid.setGridData(grids.s.id[numOfGrid], data);
         },
+
+        // 그리드 체크된 로우
+        getCheckedItems(numOfGrid) {
+            return AUIGrid.getCheckedRowItems(grids.s.id[numOfGrid]);
+        }
     },
 
     e: {
@@ -167,7 +186,10 @@ const trigs = {
 
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
 const wares = {
-
+    fdColorCode: { // 컬러코드에 따른 실제 색상
+        C00: "#D4D9E1", C01: "#D4D9E1", C02: "#3F3C32", C03: "#D7D7D7", C04: "#F54E50", C05: "#FB874B",
+        C06: "#F1CE32", C07: "#349A50", C08: "#55CAB7", C09: "#398BE0", C10: "#DE9ACE", C11: "#FF9FB0",
+    },
 }
 
 $(function() { // 페이지가 로드되고 나서 실행
