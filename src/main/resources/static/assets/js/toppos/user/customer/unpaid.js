@@ -5,19 +5,49 @@
 * */
 const dtos = {
     send: {
+        좌측그리드: { // searchText가 올 경우에는 검색하여 표기, 아니면 해당 지점의 미수금이 있는 고객 전체
+            searchText: "",
+            searchType: "", // 0: 통합, 1: 고객명, 2: 전화번호, 3: 주소
+        },
+        상단그리드: {
+            bcId: "",
+        },
+        하단그리드: {
+            frId: "",
+        },
+        결제팝업: {
+            bcIdArray: "" // bcId들이 담긴 배열형태
+        },
+        결제시도: { // 이 부분은 결제가 성공한 뒤에(카드의 경우) 요청이 들어갈 것인데, 필요한 데이터가 제 판단으로는 명확치 않음.
 
+        },
     },
     receive: {
-        기본그리드: {
-            fdId: "nr",
-            frYyyymmdd: "sr",
-            bcName: "sr",
-            fdTag: "sr",
-
+        좌측그리드: {
+            bcId: "nr",
+            bcName: "s",
+            bcHp: "",
+            bcAddress: "",
+            saveMoney: "", // 적립금
+            uncollectMoney: "", // 전체미수금
+        },
+        상단그리드: { // 백단에서 고심해서 처리해야할 내역들이 많아보임
+            frId: "nr",
+            frYyyymmdd: "",
+            상품내역: "",
+            frNormalAmount: "", // 해당 frId 세부 접수 항목의 totAmt 총합인데 이게 맞는지 잘 모르겠음
+            받은금액: "",
+            uncollectMoney: "",
+        },
+        하단그리드: {
+            frYyyymmdd: "s",
+            fdTag: "s",
+            
+            fdColor: "",
             bgName: "s",
             bsName: "s",
             biName: "s",
-            
+
             fdPriceGrade: "s",
             fdRetryYn: "s",
             fdPressed: "n",
@@ -30,16 +60,24 @@ const dtos = {
             fdWaterRepellent: "",
             fdStarch: "",
             fdUrgentYn: "s",
+
             fdTotAmt: "n",
-            fdRemark: "s",
-            fdColor: "s",
+            fdState: "s",
+            출고일: "", // 지사출고, 강제출고 등 여러개여서.....
+        },
+        결제팝업: {
+            bcId: "nr",
+            frYyyymmdd: "s",
+            상품내역: "",
+            frNormalAmount: "", // 해당 frId 세부 접수 항목의 totAmt 총합인데 이게 맞는지 잘 모르겠음
+            uncollectMoney: "",
         }
     }
 };
 
 /* 통신에 사용되는 url들 기입 */
 const urls = {
-    
+    abcd: "/api/user/",
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */

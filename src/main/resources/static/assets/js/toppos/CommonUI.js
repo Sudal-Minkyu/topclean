@@ -17,6 +17,9 @@ class CommonUIClass {
         String.prototype.toInt = function () {
             return this.toString() ? parseInt(this.replace(/[^0-9-]/g, "")) : 0;
         }
+        String.prototype.zeroToNine = function () {
+            return this.toString() ? this.replace(/[^0-9-]/g, "") : "";
+        }
     }
 
     toppos = {
@@ -37,16 +40,21 @@ class CommonUIClass {
             }
         },
         processName(item) {
-            let statusText = "";
-            statusText += item.fdPriceGrade === "3" ? "명" : "";
-            statusText += item.fdRetryYn === "Y" ? "재" : "";
-            statusText += item.fdPressed ? "다" : "";
-            statusText += item.fdAdd1Amt || item.fdAdd1Remark.length ? "추" : "";
-            statusText += item.fdRepairAmt || item.fdRepairRemark.length ? "수" : "";
-            statusText += item.fdWhitening ? "표" : "";
-            statusText += item.fdPollutionLevel ? "오" : "";
-            statusText += item.fdWaterRepellent || item.fdStarch ? "발" : "";
-            return statusText;
+            try {
+                let statusText = "";
+                statusText += item.fdUrgentYn === "Y" ? "급" : ""; 
+                statusText += item.fdPriceGrade === "3" ? "명" : "";
+                statusText += item.fdRetryYn === "Y" ? "재" : "";
+                statusText += item.fdPressed ? "다" : "";
+                statusText += item.fdAdd1Amt || item.fdAdd1Remark.length ? "추" : "";
+                statusText += item.fdRepairAmt || item.fdRepairRemark.length ? "수" : "";
+                statusText += item.fdWhitening ? "표" : "";
+                statusText += item.fdPollutionLevel ? "오" : "";
+                statusText += item.fdWaterRepellent || item.fdStarch ? "발" : "";
+                return statusText;
+            } catch (e) {
+                console.log(e);
+            }
         }
     }
 
