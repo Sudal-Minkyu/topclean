@@ -522,7 +522,7 @@ const vKeyboard = {
 	e: {
 		btnEvent() {
 			$('.keyboardBtn').on('click', function () {
-				const vKeyNum = $(this).attr('data-keyIndex')
+				const vKeyNum = $(this).attr('data-keyIndex');
 				vkey.showKeyboard(vKeyboard.targetId[vKeyNum], 
 					vKeyboard.targetProp[vKeyNum]);
 			});
@@ -542,10 +542,16 @@ const vKeypad = {
 	f: {
 		initialization() {
 			vKeypad.targetProp[0] = {
-
+				callback: function() {
+					const busiNo = $("#frBusinessNo").val();
+					$("#frBusinessNo").val(busiNo.replace(/^(\d{3,3})+[-]+(\d{2,2})+[-]+(\d{5,5})/, ""));
+				}
 			};
 			vKeypad.targetProp[1] = {
-				
+				callback: function() {
+					const telNum = $('#frTelNo').val();
+					$('#frTelNo').val(CommonUI.onPhoneNumChange(telNum));
+				}
 			};
 			vKeypad.targetProp[2] = {
 				
@@ -553,7 +559,12 @@ const vKeypad = {
 		}
 	},
 	e: {
-		
+		btnEvent() {
+			$('.keypadBtn').on('click', function () {
+				const vKeyNum = $(this).attr('data-keyIndex');
+				vkey.showKeypad(vKeypad.targetId[vKeyNum], vKeypad.targetProp[vKeyNum]);
+			});
+		}
 	}
 }
 
@@ -565,6 +576,7 @@ function onPageLoad() {
 	vKeyboard.f.initialization();
 	vKeyboard.e.btnEvent();
 	vKeypad.f.initialization();
+	vKeypad.e.btnEvent();
     
     ajax.getFrInfo();
     

@@ -1247,12 +1247,13 @@ class VKeyboard {
         
             <div id="VKEY_KEYPAD">
                 <div class="vkey-num__input">
-                    <input type="text" id="VKEY_keypad_field" readonly>
+                    <div id="VKEY_plusminus">
+                        <input type="checkbox" id="VKEY_keypad_sign" />
+                        <label for="VKEY_keypad_sign"></label>
+                    </div>
+                    <input type="text" id="VKEY_keypad_field" readonly />
                 </div>
-                <div id="VKEY_plusminus">
-                    <input type="checkbox" id="VKEY_keypad_sign">
-                    <label for="VKEY_keypad_sign">+</label>
-                </div>
+                
                 <div class="vkey-num__pad">
                     <button type="button" class="VKEY_keypad_btn" value="1">1</button>
                     <button type="button" class="VKEY_keypad_btn" value="2">2</button>
