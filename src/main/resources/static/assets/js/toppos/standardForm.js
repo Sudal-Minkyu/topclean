@@ -1,13 +1,9 @@
-$(function() { // 페이지가 로드되고 나서 실행
-    onPageLoad();
-});
-
 /* 서버 API와 주고 받게 될 데이터 정의
 * "s" 문자형, "n" 숫자형, "r" 필수값, "d" 불필요한 데이터 삭제(receive에 있을 경우 앞으로도 불필요할 경우에는 API에서 삭제요청할것)
 * 조합하여 "sr", "nr" 같은 형식도 가능
 * 추가로 필요한 검사항목이 생긴다면 문의 바랍니다.
 * */
-const dto = {
+const dtos = {
     send: {
 
     },
@@ -16,12 +12,17 @@ const dto = {
     }
 };
 
-/* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 */
-const ajax = {
+/* 통신에 사용되는 url들 기입 */
+const urls = {
+    
+}
+
+/* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
+const comms = {
     setDataIntoGrid: function(numOfGrid, url) { // 해당 numOfGrid 배열번호의 그리드에 url 로부터 받은 데이터값을 통신하여 주입한다.
         CommonUI.ajax(url, "GET", false, function (req) {
-            grid.s.data[numOfGrid] = req.sendData.gridListData;
-            AUIGrid.setGridData(grid.s.id[numOfGrid], grid.s.data[numOfGrid]);
+            const data = req.sendData.gridListData;
+            grids.f.setData(numOfGrid, data);
         });
     },
 };
@@ -32,7 +33,7 @@ const ajax = {
 *  .f : 그리드 관련 함수들 배치
 *  .e : 그리드 객체에 걸리는 이벤트들 배치
 * */
-const grid = {
+const grids = {
     s: { // 그리드 세팅
         targetDiv: [
             "targetHtmlId"
@@ -41,27 +42,13 @@ const grid = {
         prop: [],
         id: [],
         data: [],
-        url: {
-            create: [
-                "/api/"
-            ],
-            read: [
-                "/api/"
-            ],
-            update: [
-                "/api/"
-            ],
-            delete: [
-                "/api/"
-            ]
-        }
     },
 
     f: { // 그리드 펑션
-        initialization() { // 가시성을 위해 grid.s 의 일부 요소를 여기서 선언한다.
+        initialization() { // 가시성을 위해 grids.s 의 일부 요소를 여기서 선언한다.
 
             /* 0번 그리드의 레이아웃 */
-            grid.s.columnLayout[0] = [
+            grids.s.columnLayout[0] = [
                 {
                     dataField: "",
                     headerText: "",
@@ -74,7 +61,7 @@ const grid = {
             /* 0번 그리드의 프로퍼티(옵션) 아래의 링크를 참조
             * https://www.auisoft.net/documentation/auigrid/DataGrid/Properties.html
             * */
-            grid.s.prop[0] = {
+            grids.s.prop[0] = {
                 editable : false,
                 selectionMode : "singleRow",
                 noDataMessage : "출력할 데이터가 없습니다.",
@@ -89,13 +76,17 @@ const grid = {
         },
 
         create() { // 그리드 동작 처음 빈 그리드를 생성
-            for (const i in grid.s.columnLayout) {
-                grid.s.id[i] = AUIGrid.create(grid.s.targetDiv[i], grid.s.columnLayout[i], grid.s.prop[i]);
+            for (const i in grids.s.columnLayout) {
+                grids.s.id[i] = AUIGrid.create(grids.s.targetDiv[i], grids.s.columnLayout[i], grids.s.prop[i]);
             }
         },
 
-        setInitialData(numOfGrid) { // 해당 배열 번호 그리드의 url.read 를 참조하여 데이터를 그리드에 뿌린다.
-            ajax.setDataIntoGrid(numOfGrid, grid.s.read[numOfGrid]);
+        getData(numOfGrid, data) { // 해당 배열 번호 그리드의 url.read 를 참조하여 데이터를 그리드에 뿌린다.
+            AUIGrid.getGridData(grids.s.id[numOfGrid]);
+        },
+
+        setData(numOfGrid, data) { // 해당 배열 번호 그리드의 url.read 를 참조하여 데이터를 그리드에 뿌린다.
+            AUIGrid.setGridData(grids.s.id[numOfGrid], data);
         },
     },
 
@@ -109,28 +100,29 @@ const grid = {
     }
 };
 
-/* dto가 아닌 일반적인 데이터들 정의 */
-const data = {
-
-}
-
-/* 페이지가 로드되고 나서 실행 될 코드들을 담는다. */
-function onPageLoad() {
-    grid.f.initialization();
-
-    /* grid.s 에 적절한 값을 세팅하였다면, 해당 함수 호출시 해당 배열번호의 그리드에 의도한 데이터들이 주입되어진다. */
-    // grid.f.setInitialData(0);
-
-    /* 생성된 그리드에 기본적으로 필요한 이벤트들을 적용한다. */
-    // grid.e.basicEvent();
-}
-
-/* 이벤트를 s : 설정하거나 r : 해지하는 함수들을 담는다. 그리드 관련 이벤트는 grid.e에 위치 */
-const event = {
+/* 이벤트를 s : 설정하거나 r : 해지하는 함수들을 담는다. 그리드 관련 이벤트는 grids.e에 위치 (trigger) */
+const trigs = {
     s: { // 이벤트 설정
 
     },
     r: { // 이벤트 해제
 
     }
+}
+
+/* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
+const wares = {
+
+}
+
+$(function() { // 페이지가 로드되고 나서 실행
+    onPageLoad();
+});
+
+/* 페이지가 로드되고 나서 실행 될 코드들을 담는다. */
+function onPageLoad() {
+    grids.f.initialization();
+
+    /* 생성된 그리드에 기본적으로 필요한 이벤트들을 적용한다. */
+    // grids.e.basicEvent();
 }
