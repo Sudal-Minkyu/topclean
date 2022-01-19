@@ -814,11 +814,11 @@ public class UserRestController {
 
 //@@@@@@@@@@@@@@@@@@@@@ 가맹점 미수관리 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     // 미수관리페이지 - 고객검색 리스트 호출
-    @GetMapping("uncollectCustomerList")
-    public ResponseEntity<Map<String,Object>>  uncollectCustomerList(HttpServletRequest request,
+    @GetMapping("franchiseUncollectCustomerList")
+    public ResponseEntity<Map<String,Object>>  franchiseUncollectCustomerList(HttpServletRequest request,
                                                            @RequestParam(value="searchType", defaultValue="") String searchType,
                                                            @RequestParam(value="searchString", defaultValue="") String searchString){
-        return uncollectService.uncollectCustomerList(searchType, searchString, request);
+        return uncollectService.franchiseUncollectCustomerList(searchType, searchString, request);
     }
 
 

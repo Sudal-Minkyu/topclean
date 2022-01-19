@@ -1,6 +1,9 @@
 package com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @author Minkyu
@@ -28,6 +31,8 @@ public class RequestDetailCloseListDto {
     private Integer fdPressed; // 다림질 요금
     private Integer fdAdd1Amt; // 추가비용1(접수시점)
     private String fdAdd1Remark; // 추가내용1(접수시점)
+    private Integer fdRepairAmt; // 수선금액
+    private String fdRepairRemark; // 수선내용
     private Integer fdWhitening; // 표백 요금
     private Integer fdPollution; // 오염 추가요금
     private Integer fdStarch; // 풀먹임 요금
