@@ -7,19 +7,19 @@
 <!-- 사용자 CSS 추가 -->
 <th:block layout:fragment="css">
     <style>
-        
+		.colorSquare {
+			height: 20px;
+			width: 20px;
+			border-radius: 5px;
+			display: inline-block;
+		}
     </style>
 </th:block>
 
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
-    <script type="text/javascript">
-
-        $(function() {
-
-        });
-
-    </script>
+	<script src="/assets/js/toppos/user/customer/unpaid.js"></script>
+	<script src="/assets/js/toppos/CATPayment.js"></script>
 </th:block>
 
 <div layout:fragment="content" class="content content--column">
@@ -38,14 +38,13 @@
 			<div class="c-search">
 				<div class="c-search__input">
 					<input id="searchCustomerField" type="text" placeholder="검색어를 입력하세요" />
-               		<button class="c-search__key" type="button" onclick="">키보드</button>
+               		<button class="c-search__key" type="button">키보드</button>
 				</div>
-				<button class="c-search__bth" type="button" onclick="onSearchCustomer()">검색</button>
+				<button class="c-search__bth" type="button" id="customerSearchBtn">검색</button>
 			</div>
 		</div>
 
 		<div class="content__header-btns">
-			<button class="c-button c-button--small">조회</button>
 			<button class="c-button c-button--small c-button--darksolid">미수금결제</button>
 		</div>
 	</div>
@@ -54,33 +53,33 @@
     	<div class="unpaid">
             <div class="unpaid__costomer">
                 <!-- grid -->
-                <div style="width: 100%; height: 726px; background-color: #ddd;"></div>
+                <div id="grid_customer" style="height: 726px;"></div>
                 <div class="unpaid__sum">
                     <div class="unpaid__sum-item">
                         <div class="unpaid__sum-title">적립금총액</div>
-                        <div class="unpaid__sum-money"><span>4,000</span>원</div>
+                        <div class="unpaid__sum-money"><span id="totalSaveMoney">0</span>원</div>
                     </div>
                     <div class="unpaid__sum-item">
                         <div class="unpaid__sum-title">미수금총액</div>
-                        <div class="unpaid__sum-money"><span>58,000</span>원</div >
+                        <div class="unpaid__sum-money"><span id="totalUncollectMoney">0</span>원</div >
                     </div>
                 </div>
             </div>
             <div class="unpaid__list">
                 <div class="unpaid__breakdown">
                     <!-- grid -->
-                    <div style="width: 100%; height: 310px; background-color: #ddd;"></div>
+                    <div id="grid_request" style="height: 310px;"></div>
                     <div class="unpaid__sum unpaid__sum--right">
                         <div class="unpaid__sum-item">
                             <div class="unpaid__sum-title">선택미수총액</div>
-                            <div class="unpaid__sum-money"><span>5,000</span>원</div >
+                            <div class="unpaid__sum-money"><span id="totalSelectedUncollectMoney">0</span>원</div >
                         </div>
                     </div>
                 </div>
                 <div class="unpaid__detail">
                     <h4>접수 세부내역</h4>
                     <!-- grid -->
-                    <div style="width: 100%; height: 352px; background-color: #ddd;"></div>
+                    <div id="grid_detail" style="height: 352px;"></div>
                 </div>
             </div>
         </div>
@@ -92,7 +91,7 @@
 				<h3 class="pop__article-header">결제창</h3>
 				<div class="pop__aricle-content">
 					<!-- grid -->
-                    <div style="width: 100%; height: 240px; background-color: #ddd;"></div>
+                    <div id="grid_payment" style="height: 240px;"></div>
 
                     <div class="unpaid-pop">
                         <div class="unpaid-pop__sum">

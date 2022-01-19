@@ -1006,7 +1006,7 @@ const data = {
         S7: "강제출고",
         S8: "강제입고",
         F: "가맹검품",
-        B: "지사검품",
+        B: "확인품",
     },
     fiTypeName: {
         F: "가맹검품",
@@ -1457,7 +1457,7 @@ function calculateItemPrice() {
     let sumAmt = ceil100((data.currentRequest.fdNormalAmt + data.currentRequest.totAddCost)
         * (100 - gradeDiscount[data.currentRequest.fdDiscountGrade]) / 100);
     data.currentRequest.fdRequestAmt = sumAmt * data.currentRequest.fdQty;
-    data.currentRequest.fdTotAmt = data.currentRequest.fdRequestAmt;  // 지사검품 완료 후 수정이 필요
+    data.currentRequest.fdTotAmt = data.currentRequest.fdRequestAmt;  // 확인품 등록작업 완료 후 수정이 필요
 
     data.currentRequest.fdDiscountAmt = data.currentRequest.fdNormalAmt + data.currentRequest.totAddCost - sumAmt;
 
