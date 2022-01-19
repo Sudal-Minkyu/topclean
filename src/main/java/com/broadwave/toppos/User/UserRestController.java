@@ -238,7 +238,7 @@ public class UserRestController {
         }
 
         if(customerListData.size() != 0) {
-            List<HashMap<String,Object>> customerListDataGet = receiptService.findByUnCollectAndSaveMoney(customerListData, customerIdList);
+            List<HashMap<String,Object>> customerListDataGet = receiptService.findByUnCollectAndSaveMoney(customerListData, customerIdList, "2");
             data.put("gridListData",customerListDataGet);
         }else{
             data.put("gridListData",customerListData);
@@ -300,7 +300,7 @@ public class UserRestController {
         }
 
         if(customerListData.size() != 0) {
-            List<HashMap<String,Object>> customerListDataGet = receiptService.findByUnCollectAndSaveMoney(customerListData, customerIdList);
+            List<HashMap<String,Object>> customerListDataGet = receiptService.findByUnCollectAndSaveMoney(customerListData, customerIdList,"2");
             data.put("gridListData",customerListDataGet);
         }else{
             data.put("gridListData",customerListData);
@@ -518,7 +518,7 @@ public class UserRestController {
             customerListInfo.put("saveMoney", 0);
             customerListData.add(customerListInfo);
 
-            List<HashMap<String,Object>> customerListDataGet = receiptService.findByUnCollectAndSaveMoney(customerListData, customerIdList);
+            List<HashMap<String,Object>> customerListDataGet = receiptService.findByUnCollectAndSaveMoney(customerListData, customerIdList,"2");
             data.put("gridListData",customerListDataGet);
 
             // 임시저장의 접수 세무테이블 리스트 호출
@@ -821,6 +821,12 @@ public class UserRestController {
         return uncollectService.franchiseUncollectCustomerList(searchType, searchString, request);
     }
 
+    // 미수관리페이지 - 해당고객의 세탁접수 미수금 리스트 호출
+    @GetMapping("franchiseUncollectRequestList")
+    public ResponseEntity<Map<String,Object>>  franchiseUncollectRequestList(HttpServletRequest request,
+                                                                              @RequestParam(value="bcId", defaultValue="") Long bcId){
+        return uncollectService.franchiseUncollectRequestList(bcId, request);
+    }
 
 
 

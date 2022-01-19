@@ -12,7 +12,7 @@ import java.time.format.DateTimeFormatter;
  * @author Minkyu
  * Date : 2021-12-13
  * Time :
- * Remark : Toppos 가맹점 접수마스트 ListDto
+ * Remark : Toppos 가맹점 접수마스터 ListDto
  */
 @Setter
 @Builder

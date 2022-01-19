@@ -68,9 +68,36 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
         return query.fetch();
     }
 
-    // 고객리스트의 전일미수금 리스트 호출
+    // 고객리스트의 오늘까지 포함미수금 리스트 호출
     @Override
     public List<RequestUnCollectDto> findByUnCollectList(List<Long> customerIdList, String nowDate){
+        QRequest request = QRequest.request;
+
+        JPQLQuery<RequestUnCollectDto> query = from(request)
+                .groupBy(request.bcId)
+                .orderBy(request.bcId.bcId.desc())
+                .select(Projections.constructor(RequestUnCollectDto.class,
+                        request.bcId.bcId,
+                        new CaseBuilder()
+                                .when(request.frTotalAmount.isNotNull()).then(request.frTotalAmount.sum())
+                                .otherwise(0),
+                        new CaseBuilder()
+                                .when(request.frPayAmount.isNotNull()).then(request.frPayAmount.sum())
+                                .otherwise(0)
+                ));
+
+        query.where(request.frUncollectYn.eq("Y")
+                .and(request.frConfirmYn.eq("Y")
+                .and(request.frYyyymmdd.loe(nowDate)
+                .and(request.bcId.bcId.in(customerIdList))
+        )));
+
+        return query.fetch();
+    }
+
+    // 고객리스트의 전일미수금 리스트 호출
+    @Override
+    public List<RequestUnCollectDto> findByBeforeUnCollectList(List<Long> customerIdList, String nowDate){
         QRequest request = QRequest.request;
 
         JPQLQuery<RequestUnCollectDto> query = from(request)

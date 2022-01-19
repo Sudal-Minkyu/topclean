@@ -655,12 +655,6 @@ public class ReceiptService {
             return null;
         }
     }
-
-
-    public List<RequestUnCollectDto> findByUnCollectList(List<Long> customerIdList, String nowDate) {
-        return requestRepositoryCustom.findByUnCollectList(customerIdList, nowDate);
-    }
-
     public List<SaveMoneyListDto> findBySaveMoneyList(List<Long> customerIdList, String fsType) {
         return saveMoneyRepositoryCustom.findBySaveMoneyList(customerIdList, fsType);
     }
@@ -686,16 +680,30 @@ public class ReceiptService {
     }
 
     // 여러사람의 고객정보 조회용 적립금, 미수금 호출 함수
-    public List<HashMap<String,Object>> findByUnCollectAndSaveMoney(List<HashMap<String, Object>> customerListData, List<Long> customerIdList){
+    public List<HashMap<String,Object>> findByUnCollectAndSaveMoney(List<HashMap<String, Object>> customerListData, List<Long> customerIdList, String type){
 
-        log.info("미수금 리스트를 받아옵니다.");
-        List<RequestUnCollectDto> requestUnCollectDtoList = findByUnCollectList(customerIdList, nowDate);
-        for (HashMap<String, Object> listDatum : customerListData) {
-            for (int j = 0; j < requestUnCollectDtoList.size(); j++) {
-                if (listDatum.get("bcId").equals(requestUnCollectDtoList.get(j).getBcId())) {
-                    listDatum.put("beforeUncollectMoney", requestUnCollectDtoList.get(j).getUnCollect());
-                    requestUnCollectDtoList.remove(j);
-                    break;
+        if(type.equals("1")){
+            log.info("전일~금일 미수금 리스트를 받아옵니다.");
+            List<RequestUnCollectDto> requestUnCollectDtoList = requestRepositoryCustom.findByUnCollectList(customerIdList, nowDate);
+            for (HashMap<String, Object> listDatum : customerListData) {
+                for (int j = 0; j < requestUnCollectDtoList.size(); j++) {
+                    if (listDatum.get("bcId").equals(requestUnCollectDtoList.get(j).getBcId())) {
+                        listDatum.put("uncollectMoney", requestUnCollectDtoList.get(j).getUnCollect());
+                        requestUnCollectDtoList.remove(j);
+                        break;
+                    }
+                }
+            }
+        }else{
+            log.info("전일미수금 리스트를 받아옵니다.");
+            List<RequestUnCollectDto> requestUnCollectDtoList = requestRepositoryCustom.findByBeforeUnCollectList(customerIdList, nowDate);
+            for (HashMap<String, Object> listDatum : customerListData) {
+                for (int j = 0; j < requestUnCollectDtoList.size(); j++) {
+                    if (listDatum.get("bcId").equals(requestUnCollectDtoList.get(j).getBcId())) {
+                        listDatum.put("beforeUncollectMoney", requestUnCollectDtoList.get(j).getUnCollect());
+                        requestUnCollectDtoList.remove(j);
+                        break;
+                    }
                 }
             }
         }
