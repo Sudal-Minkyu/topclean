@@ -11,7 +11,7 @@ const dtos = {
         기본그리드: {
             fdId: "nr",
             frYyyymmdd: "sr",
-            고객명: "sr",
+            bcName: "sr",
             fdTag: "sr",
 
             bgName: "s",
