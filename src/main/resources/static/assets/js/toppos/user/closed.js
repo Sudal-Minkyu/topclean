@@ -30,8 +30,9 @@ const dtos = {
             fdWaterRepellent: "",
             fdStarch: "",
             fdUrgentYn: "s",
-            fdRequestAmt: "n",
+            fdTotAmt: "n",
             fdRemark: "s",
+            fdColor: "s",
         }
     }
 };
