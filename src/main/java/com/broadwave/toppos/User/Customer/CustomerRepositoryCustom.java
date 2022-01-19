@@ -14,4 +14,6 @@ public interface CustomerRepositoryCustom {
 
     List<CustomerInfoDto> findByCustomerInfo(String frCode, String searchType, String searchString);
 
+    List<CustomerUncollectListDto> findByCustomerUncollectList(String frCode, String searchType, String searchString);
+
 }

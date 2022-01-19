@@ -76,6 +76,10 @@ public class ReceiptStateService {
     //  접수테이블의 상태 변화 API - 수기마감페이지, 가맹점입고 페이지, 지사반송건전송 페이지, 세탁인도 페이지 공용함수
     public ResponseEntity<Map<String, Object>> franchiseStateChange(List<Long> fdIdList, String stateType, HttpServletRequest request) {
         log.info("franchiseStateChange 호출");
+
+        log.info("fdIdList : "+fdIdList);
+        log.info("stateType : "+stateType);
+
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
 
@@ -85,6 +89,7 @@ public class ReceiptStateService {
         // "S3"이면 지사반송페이지 버튼 "S3" -> "S2"
         // "S7"이면 가맹점강제입고 페이지 버튼 "S7" -> "S8"
         if(stateType.equals("S1")){ // 수기마감
+            log.info("수기마감 처리");
 
         }
 

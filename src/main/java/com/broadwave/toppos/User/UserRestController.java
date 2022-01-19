@@ -3,7 +3,6 @@ package com.broadwave.toppos.User;
 import com.broadwave.toppos.Account.AccountPasswordDto;
 import com.broadwave.toppos.Aws.AWSS3Service;
 import com.broadwave.toppos.Head.AddCost.AddCostDto;
-import com.broadwave.toppos.User.Addprocess.AddprocessDto;
 import com.broadwave.toppos.Head.Franohise.FranchisInfoDto;
 import com.broadwave.toppos.Head.Franohise.FranchisUserDto;
 import com.broadwave.toppos.Head.HeadService;
@@ -13,6 +12,7 @@ import com.broadwave.toppos.Head.Item.Price.UserItemPriceSortDto;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.Manager.Calendar.BranchCalendar;
 import com.broadwave.toppos.Manager.ManagerService;
+import com.broadwave.toppos.User.Addprocess.AddprocessDto;
 import com.broadwave.toppos.User.Addprocess.AddprocessSet;
 import com.broadwave.toppos.User.Customer.Customer;
 import com.broadwave.toppos.User.Customer.CustomerInfoDto;
@@ -25,7 +25,6 @@ import com.broadwave.toppos.User.ReuqestMoney.Requset.Request;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotMapperDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotSet;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.PhotoDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailCloseListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailSet;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailUpdateDto;
@@ -76,6 +75,7 @@ public class UserRestController {
     private final SortService sortService; // 가맹점 상품정렬 서비스
     private final InfoService infoService; // 나의정보관리 서비스
     private final InspectService inspectService; // 통합조회 서비스
+    private final UncollectService uncollectService; // 미수관리 서비스
 
     private final ModelMapper modelMapper;
     private final TokenProvider tokenProvider;
@@ -84,7 +84,8 @@ public class UserRestController {
 
     @Autowired
     public UserRestController(AWSS3Service awss3Service, UserService userService, ReceiptService receiptService, SortService sortService, InfoService infoService, InspectService inspectService,
-                              TokenProvider tokenProvider, ModelMapper modelMapper, HeadService headService, ManagerService managerService, ReceiptStateService receiptStateService) {
+                              TokenProvider tokenProvider, ModelMapper modelMapper, HeadService headService, ManagerService managerService, ReceiptStateService receiptStateService,
+                              UncollectService uncollectService) {
         this.awss3Service = awss3Service;
         this.userService = userService;
         this.receiptService = receiptService;
@@ -95,10 +96,11 @@ public class UserRestController {
         this.inspectService = inspectService;
         this.receiptStateService = receiptStateService;
         this.headService = headService;
+        this.uncollectService = uncollectService;
         this.managerService = managerService;
     }
 
-//@@@@@@@@@@@@@@@@@@@@@ 가맹점 메인화면 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+//@@@@@@@@@@@@@@@@@@@@@ 가맹점 메인화면 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     // 현재 로그인한 가맹점 정보 가져오기
     @GetMapping("franchiseInfo")
     public ResponseEntity<Map<String,Object>> franchiseInfo(HttpServletRequest request){
@@ -126,7 +128,7 @@ public class UserRestController {
 
 
 
-//@@@@@@@@@@@@@@@@@@@@@ 가맹점 고객조회 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+//@@@@@@@@@@@@@@@@@@@@@ 가맹점 고객조회 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     // 고객 등록 API
     @PostMapping("customerSave")
     public ResponseEntity<Map<String,Object>> customerSave(@ModelAttribute CustomerMapperDto customerMapperDto, HttpServletRequest request){
@@ -345,7 +347,7 @@ public class UserRestController {
 
 
 
-//@@@@@@@@@@@@@@@@@@@@@ 가맹점 세탁접수 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+//@@@@@@@@@@@@@@@@@@@@@ 가맹점 세탁접수 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     // 접수페이지 진입시 기본적으롤 받는 데이터 API (대분류 목록리스트)
     @GetMapping("itemGroupAndPriceList")
     public ResponseEntity<Map<String,Object>> itemGroupAndPriceList(HttpServletRequest request){
@@ -626,7 +628,7 @@ public class UserRestController {
 
 
 
-    //@@@@@@@@@@@@@@@@@@@@@ 가맹점 대분류, 상품 정렬관련 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    //@@@@@@@@@@@@@@@@@@@@@ 가맹점 대분류, 상품 정렬관련 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     // 현재 가맹점의 대분류 리스트 가져오기
     @GetMapping("franchiseItemGroupList")
     public ResponseEntity<Map<String,Object>> franchiseItemGroupList(HttpServletRequest request){
@@ -661,7 +663,7 @@ public class UserRestController {
         return sortService.findByItemSortUpdate(itemSortSet, request);
     }
 
-//@@@@@@@@@@@@@@@@@@@@@ 나의 정보관리 페이지 관련 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+//@@@@@@@@@@@@@@@@@@@@@ 나의 정보관리 페이지 관련 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
     // 현재 가맹점의 정보 호출하기
     @GetMapping("myInfo")
@@ -792,12 +794,13 @@ public class UserRestController {
         return inspectService.franchiseInspectionYn(fiId, type, fiAddAmt, request);
     }
 
-//@@@@@@@@@@@@@@@@@@@@@ 가맹점 수기마감 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+
+//@@@@@@@@@@@@@@@@@@@@@ 가맹점 수기마감, 가맹점입고, 지사반송, 가맹점강제입고 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     //  접수테이블의 상태 변화 API - 수기마감페이지, 가맹점입고 페이지, 지사반송건전송 페이지, 세탁인도 페이지 공용함수
     @PostMapping("franchiseStateChange")
     public ResponseEntity<Map<String,Object>> franchiseStateChange(@RequestParam(value="fdIdList", defaultValue="") List<Long> fdIdList,
                                                                    @RequestParam(value="stateType", defaultValue="") String stateType, HttpServletRequest request){
-        log.info("fdIdList : "+fdIdList);
         return receiptStateService.franchiseStateChange(fdIdList, stateType, request);
     }
 
@@ -809,6 +812,14 @@ public class UserRestController {
 
 
 
+//@@@@@@@@@@@@@@@@@@@@@ 가맹점 미수관리 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    // 미수관리페이지 - 고객검색 리스트 호출
+    @GetMapping("uncollectCustomerList")
+    public ResponseEntity<Map<String,Object>>  uncollectCustomerList(HttpServletRequest request,
+                                                           @RequestParam(value="searchType", defaultValue="") String searchType,
+                                                           @RequestParam(value="searchString", defaultValue="") String searchString){
+        return uncollectService.uncollectCustomerList(searchType, searchString, request);
+    }
 
 
 

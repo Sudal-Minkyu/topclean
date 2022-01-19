@@ -101,4 +101,39 @@ public class CustomerRepositoryCustomImpl extends QuerydslRepositorySupport impl
         return query.fetch();
     }
 
+    @Override
+    public List<CustomerUncollectListDto> findByCustomerUncollectList(String frCode, String searchType, String searchString) {
+        QCustomer customer = QCustomer.customer;
+
+        JPQLQuery<CustomerUncollectListDto> query = from(customer)
+                .select(Projections.constructor(CustomerUncollectListDto.class,
+                        customer.bcId,
+                        customer.bcName,
+                        customer.bcHp,
+                        customer.bcAddress
+                ));
+
+        query.orderBy(customer.bcId.desc());
+        query.where(customer.frCode.eq(frCode));
+
+        if(searchString != null){
+            switch (searchType) {
+                case "0":
+                    query.where(customer.bcName.containsIgnoreCase(searchString).or(customer.bcHp.containsIgnoreCase(searchString).or(customer.bcAddress.containsIgnoreCase(searchString))));
+                    break;
+                case "1":
+                    query.where(customer.bcName.containsIgnoreCase(searchString));
+                    break;
+                case "2":
+                    query.where(customer.bcHp.containsIgnoreCase(searchString));
+                    break;
+                default:
+                    query.where(customer.bcAddress.containsIgnoreCase(searchString));
+                    break;
+            }
+        }
+
+        return query.fetch();
+    }
+
 }
