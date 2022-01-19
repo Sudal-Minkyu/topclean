@@ -225,9 +225,9 @@ const grids = {
                     },
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
                         const colorSquare =
-                            `<span class="colorSquare" style="background-color: ${wares.fdColorCode['C'+item.fdColor]}"></span>`;
+                            `<span class="colorSquare" style="background-color: ${wares.fdColorCode['C'+item.fdColor]}; vertical-align: middle;"></span>`;
                         const sumName = CommonUI.toppos.makeSimpleProductName(item);
-                        return colorSquare + ` <span>` + sumName + `</span>`;
+                        return colorSquare + ` <span style="vertical-align: middle;">` + sumName + `</span>`;
                     },
                 }, {
                     dataField: "",
