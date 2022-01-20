@@ -8,7 +8,7 @@ const dtos = {
 
     },
     receive: {
-        franchiseReceiptCloseList: {
+        지사반송건: {
             fdId: "nr",
             frYyyymmdd: "sr",
             bcName: "sr",

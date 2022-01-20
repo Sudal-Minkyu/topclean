@@ -8,16 +8,18 @@ const dtos = {
 
     },
     receive: {
-        franchiseReceiptCloseList: {
+        프랜차이즈강제입고: {
             fdId: "nr",
-            frYyyymmdd: "sr",
+            fdS4Dt: "sr", 
             bcName: "sr",
-            fdTag: "sr",
+            fdTag: "sn",
 
+            fdColor: "s",
             bgName: "s",
             bsName: "s",
             biName: "s",
-            
+            확인품여부: "s",
+
             fdPriceGrade: "s",
             fdRetryYn: "s",
             fdPressed: "n",
@@ -32,28 +34,21 @@ const dtos = {
             fdUrgentYn: "s",
             fdTotAmt: "n",
             fdRemark: "s",
-            fdColor: "s",
+
+            frYyyymmdd: "sr",
+            fdS2Dt: "sr",
         }
     }
 };
 
 /* 통신에 사용되는 url들 기입 */
 const urls = {
-    getClosedList: '/api/user/franchiseReceiptCloseList',
+    
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
-    getClosedList() { // 해당 numOfGrid 배열번호의 그리드에 url 로부터 받은 데이터값을 통신하여 주입한다.
-        CommonUI.ajax(urls.getClosedList, "GET", false, function (res) {
-            const data = res.sendData;
-            const dataLength = data.gridListData.length;
-            dv.chk(data.gridListData, dtos.receive.franchiseReceiptCloseList, '마감 리스트 항목 받아오기');
-            grids.f.setData(0, data.gridListData);
-            
-            $('#totalNum').text(dataLength);
-        });
-    },
+    
 };
 
 /* .s : AUI 그리드 관련 설정들
@@ -65,7 +60,7 @@ const comms = {
 const grids = {
     s: { // 그리드 세팅
         targetDiv: [
-            "closedList"
+            "targetHtmlId"
         ],
         columnLayout: [],
         prop: [],
@@ -79,48 +74,11 @@ const grids = {
             /* 0번 그리드의 레이아웃 */
             grids.s.columnLayout[0] = [
                 {
-                    dataField: "frYyyymmdd",
-                    headerText: "접수일자",
-                    dataType: "yyyy-mm-dd",
-                }, {
-                    dataField: "bcName",
-                    headerText: "고객명",
-                }, {
-                    dataField: "fdTag",
-                    headerText: "택번호",
-                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
-                        return value.substr(0, 3) + "-" + value.substr(-4);
-                    },
+                    dataField: "",
+                    headerText: "",
                 }, {
                     dataField: "",
-                    headerText: "상품명",
-                    style: "color_and_name",
-                    renderer : {
-                        type : "TemplateRenderer",
-                    },
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
-                        const colorSquare =
-                            `<span class="colorSquare" style="background-color: ${wares.fdColorCode['C'+item.fdColor]}; vertical-align: middle;"></span>`;
-                        const sumName = CommonUI.toppos.makeSimpleProductName(item);
-                        return colorSquare + ` <span style="vertical-align: middle;">` + sumName + `</span>`;
-                    },
-                }, {
-                    dataField: "",
-                    headerText: "처리내역",
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
-                        return CommonUI.toppos.processName(item);
-                    },
-                }, {
-                    dataField: "fdTotAmt",
-                    headerText: "접수금액",
-                    dataType: "numeric",
-                    autoThousandSeparator: "true",
-                }, {
-                    dataField: "fdUrgentYn",
-                    headerText: "급세탁",
-                }, {
-                    dataField: "fdRemark",
-                    headerText: "특이사항",
+                    headerText: "",
                 },
             ];
 
@@ -132,14 +90,11 @@ const grids = {
                 selectionMode : "singleRow",
                 noDataMessage : "출력할 데이터가 없습니다.",
                 enableColumnResize : false,
-                showRowAllCheckBox: true,
-                showRowCheckColumn: true,
                 showRowNumColumn : false,
                 showStateColumn : true,
                 enableFilter : true,
                 rowHeight : 48,
                 headerHeight : 48,
-                rowCheckColumnWidth: 40,
             };
 
         },
@@ -157,15 +112,10 @@ const grids = {
         setData(numOfGrid, data) { // 해당 배열 번호 그리드의 url.read 를 참조하여 데이터를 그리드에 뿌린다.
             AUIGrid.setGridData(grids.s.id[numOfGrid], data);
         },
-
-        // 그리드 체크된 로우
-        getCheckedItems(numOfGrid) {
-            return AUIGrid.getCheckedRowItems(grids.s.id[numOfGrid]);
-        }
     },
 
-    t: {
-        basicTrigger() {
+    e: {
+        basicEvent() {
             /* 0번그리드 내의 셀 클릭시 이벤트 */
             AUIGrid.bind(grids.s.id[0], "cellClick", function (e) {
                 console.log(e.item); // 이밴트 콜백으로 불러와진 객체의, 클릭한 대상 row 키(파라메터)와 값들을 보여준다.
@@ -177,21 +127,7 @@ const grids = {
 /* 이벤트를 s : 설정하거나 r : 해지하는 함수들을 담는다. 그리드 관련 이벤트는 grids.e에 위치 (trigger) */
 const trigs = {
     s: { // 이벤트 설정
-        basicTrigger() {
-            $('.aui-checkbox').on('click', function () {
-                const checkedItems = grids.f.getCheckedItems(0);
-                const checkedLength = checkedItems.length;
-                let totalAmount = 0;
-                
-                checkedItems.forEach(checkedItem => {
-                    totalAmount += checkedItem.item.fdTotAmt;
-                });
 
-                $('#checkedItems').val(checkedLength);
-                $('#totalAmount').val(totalAmount.toLocaleString())
-                console.log();
-            });
-        }
     },
     r: { // 이벤트 해제
 
@@ -200,10 +136,7 @@ const trigs = {
 
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
 const wares = {
-    fdColorCode: { // 컬러코드에 따른 실제 색상
-        C00: "#D4D9E1", C01: "#D4D9E1", C02: "#3F3C32", C03: "#D7D7D7", C04: "#F54E50", C05: "#FB874B",
-        C06: "#F1CE32", C07: "#349A50", C08: "#55CAB7", C09: "#398BE0", C10: "#DE9ACE", C11: "#FF9FB0",
-    },
+
 }
 
 $(function() { // 페이지가 로드되고 나서 실행
@@ -213,11 +146,7 @@ $(function() { // 페이지가 로드되고 나서 실행
 /* 페이지가 로드되고 나서 실행 될 코드들을 담는다. */
 function onPageLoad() {
     grids.f.initialization();
-    grids.f.create();
 
-    trigs.s.basicTrigger();
-
-    comms.getClosedList();
     /* 생성된 그리드에 기본적으로 필요한 이벤트들을 적용한다. */
     // grids.e.basicEvent();
 }
