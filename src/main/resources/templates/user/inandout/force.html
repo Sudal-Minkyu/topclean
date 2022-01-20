@@ -26,41 +26,41 @@
 <div layout:fragment="content" class="content content--column">
 	<div class="content__header">
 		<div class="content__header-text">
-			<h3>가맹점 강제 입고 대기 리스트 (<span>6</span>) 건</h3>
+			<h3>가맹점 강제 입고 대기 리스트 (<span id="totalNum">0</span>) 건</h3>
 		</div>
 	</div>
 	
     <div class="content__body">
     	<!-- grid -->
-    	<div style="height: 676px; border: 1px solid #ddd;"></div>
+    	<div id="forceList" style="height: 616px;"></div>
     
         <div class="content__bottom">
         	<div class="content__bottom-total">
         		<div class="content__bottom-total-item">
-        			<h4 class="content__bottom-total-title">총건수</h4>
-        			<input type="text" class="content__bottom-total-input" readonly />
+        			<h4 class="content__bottom-total-title">총강제입고건수</h4>
+        			<input type="text" class="content__bottom-total-input" id="totalItems" value="0" readonly />
         		</div>
         		<div class="content__bottom-total-item">
         			<h4 class="content__bottom-total-title">접수총액</h4>
-        			<input type="text" class="content__bottom-total-input content__bottom-total-input--amount" readonly />
+        			<input type="text" class="content__bottom-total-input content__bottom-total-input--amount" id="totalAmount" value="0" readonly />
         		</div>
         		<div class="content__bottom-total-item">
         			<h4 class="content__bottom-total-title">급세탁건수</h4>
-        			<input type="text" class="content__bottom-total-input" readonly />
+        			<input type="text" class="content__bottom-total-input" id="fastItems" value="0" readonly />
         		</div>
         		<div class="content__bottom-total-item">
         			<h4 class="content__bottom-total-title">재세탁건수</h4>
-        			<input type="text" class="content__bottom-total-input" readonly />
+        			<input type="text" class="content__bottom-total-input" id="retryItems" value="0" readonly />
         		</div>
         	</div>
         	<div class="content__bottom-total content__bottom-total--border">
         		<div class="content__bottom-total-item">
-        			<h4 class="content__bottom-total-title">입고건수</h4>
-        			<input type="text" class="content__bottom-total-input" readonly />
+        			<h4 class="content__bottom-total-title">선택 건수</h4>
+        			<input type="text" class="content__bottom-total-input" id="selectItems" value="0" readonly />
         		</div>
         		<div class="content__bottom-total-item">
-        			<h4 class="content__bottom-total-title">입고건 총접수금액</h4>
-        			<input type="text" class="content__bottom-total-input" readonly />
+        			<h4 class="content__bottom-total-title">선택 접수금액</h4>
+        			<input type="text" class="content__bottom-total-input" id="selectAmount" value="0" readonly />
         		</div>
         	</div>
         	<div class="content__bottom-btns">

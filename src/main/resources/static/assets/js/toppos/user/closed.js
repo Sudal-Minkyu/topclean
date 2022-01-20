@@ -48,6 +48,15 @@ const comms = {
         CommonUI.ajax(urls.getClosedList, "GET", false, function (res) {
             const data = res.sendData;
             const dataLength = data.gridListData.length;
+
+            for (let i = 0; i < data.gridListData.length; i++) {
+                if (data.removeFrId.includes(data.gridListData[i].fdId)) {
+                    console.log(data.gridListData[i].fdId);
+                    data.gridListData.splice(i, 1);
+                    i--;
+                }
+            }
+
             dv.chk(data.gridListData, dtos.receive.franchiseReceiptCloseList, '마감 리스트 항목 받아오기');
             grids.f.setData(0, data.gridListData);
             
@@ -82,18 +91,22 @@ const grids = {
                     dataField: "frYyyymmdd",
                     headerText: "접수일자",
                     dataType: "yyyy-mm-dd",
+                    width: 100,
                 }, {
                     dataField: "bcName",
                     headerText: "고객명",
+                    width: 80,
                 }, {
                     dataField: "fdTag",
                     headerText: "택번호",
+                    width: 90,
                     labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
                         return value.substr(0, 3) + "-" + value.substr(-4);
                     },
                 }, {
                     dataField: "",
                     headerText: "상품명",
+                    width: 140,
                     style: "color_and_name",
                     renderer : {
                         type : "TemplateRenderer",
@@ -107,17 +120,20 @@ const grids = {
                 }, {
                     dataField: "",
                     headerText: "처리내역",
+                    width: 100,
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
                         return CommonUI.toppos.processName(item);
                     },
                 }, {
                     dataField: "fdTotAmt",
                     headerText: "접수금액",
+                    width: 120,
                     dataType: "numeric",
                     autoThousandSeparator: "true",
                 }, {
                     dataField: "fdUrgentYn",
                     headerText: "급세탁",
+                    width: 60,
                 }, {
                     dataField: "fdRemark",
                     headerText: "특이사항",
@@ -182,14 +198,26 @@ const trigs = {
                 const checkedItems = grids.f.getCheckedItems(0);
                 const checkedLength = checkedItems.length;
                 let totalAmount = 0;
+                let fastItemCount = 0;
+                let retryItemCount = 0;
                 
                 checkedItems.forEach(checkedItem => {
+                    // 접수총액
                     totalAmount += checkedItem.item.fdTotAmt;
+                    // 급세탁건수
+                    if (checkedItem.item.fdUrgentYn == "Y") {
+                        fastItemCount = fastItemCount + 1;
+                    }
+                    // 재세탁건수
+                    if (checkedItem.item.fdRetryYn == "Y") {
+                        retryItemCount = retryItemCount + 1;
+                    }
                 });
 
                 $('#checkedItems').val(checkedLength);
-                $('#totalAmount').val(totalAmount.toLocaleString())
-                console.log();
+                $('#totalAmount').val(totalAmount.toLocaleString());
+                $('#fastItems').val(fastItemCount);
+                $('#retryItems').val(retryItemCount);
             });
         }
     },

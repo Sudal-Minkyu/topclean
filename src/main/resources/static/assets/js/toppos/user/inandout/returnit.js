@@ -39,21 +39,21 @@ const dtos = {
 
 /* 통신에 사용되는 url들 기입 */
 const urls = {
-    getClosedList: '/api/user/franchiseReceiptCloseList',
+    
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
-    getClosedList() { // 해당 numOfGrid 배열번호의 그리드에 url 로부터 받은 데이터값을 통신하여 주입한다.
-        CommonUI.ajax(urls.getClosedList, "GET", false, function (res) {
-            const data = res.sendData;
-            const dataLength = data.gridListData.length;
-            dv.chk(data.gridListData, dtos.receive.franchiseReceiptCloseList, '마감 리스트 항목 받아오기');
-            grids.f.setData(0, data.gridListData);
+    // getClosedList() { // 해당 numOfGrid 배열번호의 그리드에 url 로부터 받은 데이터값을 통신하여 주입한다.
+    //     CommonUI.ajax(urls.getClosedList, "GET", false, function (res) {
+    //         const data = res.sendData;
+    //         const dataLength = data.gridListData.length;
+    //         dv.chk(data.gridListData, dtos.receive.franchiseReceiptCloseList, '마감 리스트 항목 받아오기');
+    //         grids.f.setData(0, data.gridListData);
             
-            $('#totalNum').text(dataLength);
-        });
-    },
+    //         $('#totalNum').text(dataLength);
+    //     });
+    // },
 };
 
 /* .s : AUI 그리드 관련 설정들
@@ -65,7 +65,7 @@ const comms = {
 const grids = {
     s: { // 그리드 세팅
         targetDiv: [
-            "closedList"
+            "returnList"
         ],
         columnLayout: [],
         prop: [],
@@ -178,19 +178,19 @@ const grids = {
 const trigs = {
     s: { // 이벤트 설정
         basicTrigger() {
-            $('.aui-checkbox').on('click', function () {
-                const checkedItems = grids.f.getCheckedItems(0);
-                const checkedLength = checkedItems.length;
-                let totalAmount = 0;
+            // $('.aui-checkbox').on('click', function () {
+            //     const checkedItems = grids.f.getCheckedItems(0);
+            //     const checkedLength = checkedItems.length;
+            //     let totalAmount = 0;
                 
-                checkedItems.forEach(checkedItem => {
-                    totalAmount += checkedItem.item.fdTotAmt;
-                });
+            //     checkedItems.forEach(checkedItem => {
+            //         totalAmount += checkedItem.item.fdTotAmt;
+            //     });
 
-                $('#checkedItems').val(checkedLength);
-                $('#totalAmount').val(totalAmount.toLocaleString())
-                console.log();
-            });
+            //     $('#checkedItems').val(checkedLength);
+            //     $('#totalAmount').val(totalAmount.toLocaleString())
+            //     console.log();
+            // });
         }
     },
     r: { // 이벤트 해제
@@ -216,8 +216,6 @@ function onPageLoad() {
     grids.f.create();
 
     trigs.s.basicTrigger();
-
-    comms.getClosedList();
     /* 생성된 그리드에 기본적으로 필요한 이벤트들을 적용한다. */
     // grids.e.basicEvent();
 }

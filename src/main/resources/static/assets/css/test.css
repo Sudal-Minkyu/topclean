@@ -474,14 +474,14 @@ textarea {
 	display: flex;
 	align-items: center;
 	position: relative;
-	margin-right: 2.563rem;
+	margin-right: 1.938rem;
 }
 .content__bottom-total-item:after {
 	content: " ";
 	display: block;
 	position: absolute;
 	top: 50%;
-	right: -1.25rem;
+	right: -1rem;
 	width: 0.063rem;
 	height: 1.25rem;
 	margin-top: -0.625rem;
@@ -503,22 +503,23 @@ textarea {
 	font-weight: 700;
 }
 .content__bottom-total-input {
-	width: 3.125rem;
+	width: 2.5rem;
 	height: 2.5rem;
-	margin-left: 1rem;
+	margin-left: 0.375rem;
 	padding: 0 0.625rem 0 0.625rem;
 	border: 0.063rem solid #bdbdbd;
 	background-color: #fff;
 	-webkit-border-radius: 0.313rem;
 	-moz-border-radius: 0.313rem;
 	border-radius: 0.313rem;
+	text-align: right;
 }
 .content__bottom-total-input:read-only {
 	background-color: #f2f2f6;
 	color: #555;
 }
 .content__bottom-total-input.content__bottom-total-input--amount {
-	width: 5rem;
+	width: 6.25rem;
 }
 
 /* login */

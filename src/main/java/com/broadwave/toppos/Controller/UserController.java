@@ -123,4 +123,17 @@ public class UserController {
     public String returnit(){
         return "user/inandout/returnit";
     }
+
+    // 게시판
+    // 게시판 리스트
+    @RequestMapping("boardlist")
+    public String boardlist(){
+        return "user/board/list";
+    }
+
+    // 게시판 보기
+    @RequestMapping("boardview")
+    public String boardview(){
+        return "user/board/view";
+    }
 }

@@ -82,7 +82,7 @@ const comms = {
 	setDataIntoGrid(numOfGrid, url) { // 해당 numOfGrid 배열번호의 그리드에 url 로부터 받은 데이터값을 통신하여 주입한다.
 		CommonUI.ajax(url, "GET", false, function (req) {
 			grids.s.data[numOfGrid] = req.sendData.gridListData;
-			AUIGrid.setGridData(grid.s.id[numOfGrid], grids.s.data[numOfGrid]);
+			AUIGrid.setGridData(grids.s.id[numOfGrid], grids.s.data[numOfGrid]);
 		});
 	},
 	// 가맹점 정보 받기
@@ -108,7 +108,7 @@ const comms = {
 
 	// 상용구, 수선항목, 추가항목 받기
 	getFrFavorite(num) {
-		CommonUI.ajax(grid.s.url.create[num], "GET", { baType: num }, (res) => {
+		CommonUI.ajax(grids.s.url.create[num], "GET", { baType: num }, (res) => {
 			console.log(res);
 			let data;
 			switch (num) {
@@ -127,7 +127,7 @@ const comms = {
 					dv.chk(data, dtos.receive.franchiseAddProcessList.keyWordData, "상용구 받아오기");
 					break;
 			}
-			grid.f.setFavoriteData(num, data);
+			grids.f.setFavoriteData(num, data);
 		});
 	},
 
@@ -151,9 +151,9 @@ const comms = {
 		};
 		wares.baType = num;
 
-		CommonUI.ajaxjson(grid.s.url.update[num], JSON.stringify(data), function (res) {
+		CommonUI.ajaxjson(grids.s.url.update[num], JSON.stringify(data), function (res) {
 			alertSuccess('저장되었습니다.');
-			grid.f.clearData(num);
+			grids.f.clearData(num);
 			comms.getFrFavorite(num);
 		});
 	},
