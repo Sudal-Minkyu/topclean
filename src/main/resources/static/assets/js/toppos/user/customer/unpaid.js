@@ -15,8 +15,8 @@ const dtos = {
         franchiseUncollectRequestDetailList: {
             frId: "",
         },
-        결제팝업: {
-            bcIdArray: "" // bcId들이 담긴 배열형태
+        franchiseUncollectPayRequestList: {
+            frIdList: "" // frId들이 담긴 배열형태
         },
         결제시도: { // 이 부분은 결제가 성공한 뒤에(카드의 경우) 요청이 들어갈 것인데, 필요한 데이터가 제 판단으로는 명확치 않음.
 
@@ -68,21 +68,26 @@ const dtos = {
             fdState: "s",
             fdS6Dt: "", // 인도일로 수정
         },
-        결제팝업: {
-            bcId: "nr",
-            frYyyymmdd: "s",
-            상품내역: "",
-            frNormalAmount: "", // 해당 frId 세부 접수 항목의 totAmt 총합인데 이게 맞는지 잘 모르겠음
-            uncollectMoney: "",
+        franchiseUncollectPayRequestList: {
+            frId: "nr",
+            frYyyymmdd: "sr",
+            requestDetailCount: "n", // 외 건수 requestDetailCount가 2일경우 -> 외 1건, 1일경우 그냥 상품이름만 표기하면될듯. 0일경우는 없음.
+            bgName: "s",
+            bsName: "s",
+            biName: "s",
+            frTotalAmount: "nr", // 접수금액
+            uncollectMoney: "nr", // 미수금액
         }
     }
 };
 
 /* 통신에 사용되는 url들 기입 */
 const urls = {
-    filterCustomerList: "/api/user/franchiseUncollectCustomerList",
-    customersUncollectedList: "/api/user/franchiseUncollectRequestList",
-    uncollectedListDetail: "/api/user/franchiseUncollectRequestDetailList",
+    filterCustomerList: "/api/user/franchiseUncollectCustomerList", // 미수고객리스트
+    customersUncollectedList: "/api/user/franchiseUncollectRequestList", // 선택 고객 미수 마스터
+    uncollectedListDetail: "/api/user/franchiseUncollectRequestDetailList", // 선택 고객 미수 세부
+    setupPaymentPop: "/api/user/franchiseUncollectPayRequestList",
+
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
@@ -112,7 +117,16 @@ const comms = {
             dv.chk(data, dtos.receive.franchiseUncollectRequestDetailList, "선택된 접수 아이디의 상세 리스트 받아오기", true);
             grids.f.setData(2, data);
         });
-    }
+    },
+    setupPaymentPop(selectedFrId) {
+        dv.chk(selectedFrId, dtos.send.franchiseUncollectPayRequestList, "선택한 미수금 마스터 항목 보내기");
+        CommonUI.ajax(urls.setupPaymentPop, "GET", selectedFrId, function(res) {
+            const data = res.sendData.gridListData;
+            console.log(data);
+        });
+        $("#paymentPop").addClass("active");
+        grids.f.resize(3);
+    },
 };
 
 /* .s : AUI 그리드 관련 설정들
@@ -248,7 +262,7 @@ const grids = {
                     },
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
                         const colorSquare =
-                            `<span class="colorSquare" style="background-color: ${wares.fdColorCode['C'+item.fdColor]}; vertical-align: middle;"></span>`;
+                            `<span class="colorSquare" style="background-color: ${CommonData.name.fdColorCode[item.fdColor]}; vertical-align: middle;"></span>`;
                         const sumName = CommonUI.toppos.makeSimpleProductName(item);
                         return colorSquare + ` <span style="vertical-align: middle;">` + sumName + `</span>`;
                     },
@@ -267,7 +281,7 @@ const grids = {
                     dataField: "fdState",
                     headerText: "현재상태",
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
-                        return wares.fdStateName[value];
+                        return CommonData.name.fdState[value];
                     },
                 }, {
                     dataField: "fdS6Dt",
@@ -351,6 +365,10 @@ const grids = {
             AUIGrid.clearGridData(grids.s.id[numOfGrid]);
         },
 
+        resize(num) {
+			AUIGrid.resize(grids.s.id[num]);
+		},
+
         getCheckedItems(numOfGrid) {
             return AUIGrid.getCheckedRowItems(grids.s.id[numOfGrid]);
         }
@@ -389,6 +407,35 @@ const trigs = {
                 }
                 comms.filterCustomerList(searchCondition);
             });
+
+            $("#openPaymentPop").on("click", function () {
+                let checkedFrId = [];
+                const items = grids.f.getCheckedItems(1);
+                if(items.length) {
+                    items.forEach(obj => {
+                        checkedFrId.push(obj.item.frId);
+                    });
+                    const selectedFrId = {
+                        frIdList: checkedFrId
+                    }
+                    comms.setupPaymentPop(selectedFrId);
+                }else{
+                    alertCaution("결제할 미수금 내역을 선택해 주세요.", 1);
+                }
+            });
+
+            $("#confirmPayment").on("click", function () {
+                // 차후 할부셀렉트박스에 대한 기능도 추가
+                const payType = $("input[name=payType]:checked").val();
+                console.log(payType);
+
+            });
+
+            $("#cancelPayment").on("click", function () {
+                $("#paymentPop").removeClass("active");
+            });
+
+
         }
     },
     r: { // 이벤트 해제
@@ -398,22 +445,6 @@ const trigs = {
 
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
 const wares = {
-    fdColorCode: { // 컬러코드에 따른 실제 색상
-        C00: "#D4D9E1", C01: "#D4D9E1", C02: "#3F3C32", C03: "#D7D7D7", C04: "#F54E50", C05: "#FB874B",
-        C06: "#F1CE32", C07: "#349A50", C08: "#55CAB7", C09: "#398BE0", C10: "#DE9ACE", C11: "#FF9FB0",
-    },
-    fdStateName: {
-        S1: "접수",
-        S2: "지사입고",
-        S3: "지사반송",
-        S4: "지사출고",
-        S5: "가맹점입고",
-        S6: "고객인도",
-        S7: "강제출고",
-        S8: "강제입고",
-        F: "가맹검품",
-        B: "확인품",
-    },
 }
 
 $(function() { // 페이지가 로드되고 나서 실행
@@ -453,5 +484,10 @@ function calculateGridRequest() {
 }
 
 function calculateGridPayment() {
-
+    const items = grids.f.getData(3);
+    let totalUncollectAmount = 0;
+    items.forEach(item => {
+        // totalUncollectAmount += item.
+    });
+    $("#totalUncollectAmount").html(totalUncollectAmount.toLocaleString());
 }

@@ -45,7 +45,7 @@
 		</div>
 
 		<div class="content__header-btns">
-			<button class="c-button c-button--small c-button--darksolid">미수금결제</button>
+			<button class="c-button c-button--small c-button--darksolid" id="openPaymentPop">미수금결제</button>
 		</div>
 	</div>
 	
@@ -96,26 +96,26 @@
                     <div class="unpaid-pop">
                         <div class="unpaid-pop__sum">
                             <div class="unpaid-pop__sum-title">미수총결제금액</div>
-                            <div class="unpaid-pop__sum-money"><span>99,999</span>원</div>
+                            <div class="unpaid-pop__sum-money"><span id="totalUncollectAmount">0</span>원</div>
                         </div>
                         <div class="unpaid-pop__payment">
                             <div class="unpaid-pop__period">
                                 <div class="c-select">
-                                    <select>
+                                    <select id="payMonth">
                                         <option>일시불</option>
                                     </select>
                                 </div>
                             </div>
                             <div class="unpaid-pop__payment-select">
                                 <div class="choice">
-									<input type="radio" name="class" id="class1" checked="">
-									<label for="class1">현금결제</label>
+									<input type="radio" name="payType" id="payType1" value="01" checked="">
+									<label for="payType1">현금결제</label>
 								</div>
                             </div>
                             <div class="unpaid-pop__payment-select">
                                 <div class="choice">
-									<input type="radio" name="class" id="class2">
-									<label for="class2">카드결제</label>
+									<input type="radio" name="payType" id="payType2" value="02">
+									<label for="payType2">카드결제</label>
 								</div>
                             </div>
                         </div>
@@ -127,8 +127,8 @@
                 <li class="pop__console-left">
 					<p class="color--red">*미수결제는 금액을 조정하여 결제할 수 없습니다.<br />선택한 미수건의 금액이 처리됩니다.</p>
 				</li>
-				<li><button class="c-button pop__close">닫기</button></li>
-				<li><button class="c-button c-button--dark pop__close">결제하기</button></li>
+				<li><button class="c-button" id="cancelPayment">닫기</button></li>
+				<li><button class="c-button c-button--dark" id="confirmPayment">결제하기</button></li>
 			</ul>
 		</div>
     </div>
