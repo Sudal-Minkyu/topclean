@@ -150,10 +150,11 @@ const dto = {
             fpCatTotamount: "s",
             fpCatVatamount: "s",
             fpMonth: "",
-            insertDt: "", // 1월 11일 추가
+            insertDt: "",
         },
 
         franchiseRequestDetailSearch: { // 접수 세부 테이블의 거의 모든 요소와, 고객이름
+            frRefType: "sr", // 1월 19일 추가
             bcName: "s", // 고객의 이름
             frYyyymmdd: "s", // 접수일자
             fdId: "n",
@@ -487,9 +488,12 @@ const grid = {
             /* 0번 그리드의 레이아웃 */
             grid.s.columnLayout[0] = [
                 {
-                    dataField: "type",
+                    dataField: "frRefType",
                     headerText: "구분",
                     width: 40,
+                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
+                        return data.frRefTypeName[value];
+                    },
                 }, {
                     dataField: "bcName",
                     headerText: "고객명",
@@ -903,6 +907,9 @@ const grid = {
             return AUIGrid.getRemovedItems(grid.s.id[numOfGrid]);
         },
 
+        resetChangedStatus(numOfGrid) {
+            AUIGrid.resetUpdatedItems(grid.s.id[numOfGrid]);
+        },
 
     },
 
@@ -1016,6 +1023,11 @@ const data = {
         "1": "미확인",
         "2": "고객수락",
         "3": "고객거부",
+    },
+    frRefTypeName: {
+        "01": "-",
+        "02": "무",
+        "03": "배",
     },
     keypadNum: 0,
 }
@@ -1226,6 +1238,7 @@ const event = {
                 if(isAlreadyDone) {
                     alertCaution("고객에게 정보가 전해진 검품내역은<br>삭제할 수 없습니다.<br>( 검품내용 : " 
                     + isAlreadyDone + " )", 1);
+                    grid.f.resetChangedStatus(3);
                     return false;
                 }
 
@@ -1240,6 +1253,8 @@ const event = {
                     $("#checkDelSuccessBtn").on("click", function () {
                         customerJudgement("2");
                     });
+                }else{
+                    alertCaution("검품확인내역을 선택하세요.", 1);
                 }
             });
 
@@ -1249,6 +1264,8 @@ const event = {
                     $("#checkDelSuccessBtn").on("click", function () {
                         customerJudgement("3");
                     });
+                }else{
+                    alertCaution("검품확인내역을 선택하세요.", 1);
                 }
             });
 
@@ -1834,6 +1851,8 @@ function cancelPayment(cancelType) {
         }else{
             ajax.cancelPayment(target);
         }
+    }else{
+        alertCaution("결제내역을 선택해주세요.", 1);
     }
 }
 
@@ -1895,14 +1914,13 @@ function ynStyle(rowIndex, columnIndex, value, headerText, item, dataField) {
 }
 
 function putInspect() {
+    const $fiComment = $("#fiComment");
+    if (!$fiComment.val().length) {
+        alertCaution("검품내용을 입력해 주세요", 1);
+        return false;
+    }
     if(data.isCameraExist && data.cameraStream.active) {
         try {
-            const $fiComment = $("#fiComment");
-            if (!$fiComment.val().length) {
-                alertCaution("검품내용을 입력해 주세요", 1);
-                return false;
-            }
-
             const formData = new FormData();
             formData.append("fdId", data.currentRequest.fdId);
 
@@ -1931,6 +1949,14 @@ function putInspect() {
         } catch (e) {
             console.log(e);
         }
+    }else{
+        const formData = new FormData();
+        formData.append("fdId", data.currentRequest.fdId);
+        formData.append("fiComment", $fiComment.val());
+        formData.append("fiType", "F");
+        formData.append("fiAddAmt", $("#fiAddAmt").val().toInt());
+        formData.append("source", null);
+        ajax.putNewInspect(formData);
     }
 }
 
