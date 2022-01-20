@@ -443,11 +443,28 @@ public class InspectService {
         if(!optionalRequestDetail.isPresent()){
             return ResponseEntity.ok(res.fail(ResponseErrorCode.TP024.getCode(),"접수취소 할 "+ResponseErrorCode.TP024.getDesc(), "문자", "재조회 후 다시 시도해주세요."));
         }else{
-            optionalRequestDetail.get().setFdCancel("Y");
-            optionalRequestDetail.get().setFdCacelDt(LocalDateTime.now());
-            optionalRequestDetail.get().setModify_id(login_id);
-            optionalRequestDetail.get().setModify_date(LocalDateTime.now());
-            requestDetailRepository.save(optionalRequestDetail.get());
+            Optional<Request> optionalRequest = requestRepository.findById(optionalRequestDetail.get().getFrId().getId());
+            if(!optionalRequest.isPresent()){
+                return ResponseEntity.ok(res.fail(ResponseErrorCode.TP022.getCode(),"접수취소 할 "+ResponseErrorCode.TP022.getDesc(), "문자", "재조회 후 다시 시도해주세요."));
+            }else{
+                Integer fdTotAmt =  optionalRequestDetail.get().getFdTotAmt();
+                Integer frTotalAmount =  optionalRequest.get().getFrTotalAmount()-fdTotAmt;
+                Integer frPayAmount =  optionalRequest.get().getFrPayAmount();
+                if(frTotalAmount.equals(frPayAmount)){
+                    optionalRequest.get().setFrUncollectYn("N");
+                }
+                optionalRequest.get().setFrQty(optionalRequest.get().getFrQty()-1);
+                optionalRequest.get().setFrTotalAmount(frTotalAmount);
+                optionalRequest.get().setModify_id(login_id);
+                optionalRequest.get().setModify_date(LocalDateTime.now());
+
+                optionalRequestDetail.get().setFdCancel("Y");
+                optionalRequestDetail.get().setFdCacelDt(LocalDateTime.now());
+                optionalRequestDetail.get().setModify_id(login_id);
+                optionalRequestDetail.get().setModify_date(LocalDateTime.now());
+                requestDetailRepository.save(optionalRequestDetail.get());
+                requestRepository.save(optionalRequest.get());
+            }
         }
 
         return ResponseEntity.ok(res.success());

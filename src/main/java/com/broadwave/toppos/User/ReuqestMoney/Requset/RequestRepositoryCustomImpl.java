@@ -207,7 +207,6 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
                         item.biName,
                         request.frTotalAmount,
                         request.frPayAmount
-//                        request.frTotalAmount.sum(request.frPayAmount),
                 ));
 
         query.where(request.frUncollectYn.eq("Y")
