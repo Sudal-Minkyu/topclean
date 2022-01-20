@@ -14,4 +14,15 @@ public interface RequestDetailRepository extends JpaRepository<RequestDetail,Lon
 
     @Query("select a from RequestDetail a where a.frNo = :frNo")
     List<RequestDetail> findByRequestTempDetail(String frNo);
+
+    // 수기마감 할 접수테이블 리스트 호출
+    @Query("select a from RequestDetail a where a.frId.id in :frIdList and a.fdState = 'S1' order by a.id desc")
+    List<RequestDetail> findByRequestDetailS1List(List<Long> frIdList);
+
+
+
+
+
+
+
 }

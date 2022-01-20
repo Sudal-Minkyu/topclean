@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**
@@ -83,6 +84,15 @@ public class ReceiptStateService {
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
 
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
+//        String frbrCode = (String) claims.get("frbrCode"); // 소속된 지사 코드
+        String login_id = claims.getSubject(); // 현재 아이디
+        log.info("현재 접속한 아이디 : "+login_id);
+        log.info("현재 접속한 가맹점 코드 : "+frCode);
+//        log.info("소속된 지사 코드 : "+frbrCode);
+
         // stateType 상태값
         // "S1"이면 수기마감페이지 버튼 "S1" -> "S2"
         // "S4"이면 가맹점입고 페이지 버튼 "S4" -> "S5"
@@ -90,12 +100,33 @@ public class ReceiptStateService {
         // "S7"이면 가맹점강제입고 페이지 버튼 "S7" -> "S8"
         if(stateType.equals("S1")){ // 수기마감
             log.info("수기마감 처리");
+            List<RequestDetail> requestDetailList = requestDetailRepository.findByRequestDetailS1List(fdIdList);
+//            log.info("requestDetailList : "+requestDetailList);
+            for(int i=0; i<requestDetailList.size(); i++){
+//                log.info("가져온 frID 값 : "+requestDetailList.get(i).getFrId());
+                requestDetailList.get(i).setFdPreState(stateType); // 이전상태 값
+                requestDetailList.get(i).setFdPreStateDt(LocalDateTime.now());
+                requestDetailList.get(i).setFdState("S2");
+                requestDetailList.get(i).setFdStateDt(LocalDateTime.now());
 
+                requestDetailList.get(i).setFdS2Dt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
+                requestDetailList.get(i).setFdS2Time(LocalDateTime.now());
+                requestDetailList.get(i).setFdS2Type("01");
+
+                requestDetailList.get(i).setModify_id(login_id);
+                requestDetailList.get(i).setModify_date(LocalDateTime.now());
+            }
+            requestDetailRepository.saveAll(requestDetailList);
+        }else if(stateType.equals("S4")){
+            log.info("가맹점입고 처리");
+        }else if(stateType.equals("S3")){
+            log.info("지사반송 처리");
+        }else if(stateType.equals("S7")){
+            log.info("가맹점강제입고 처리");
+        }else{
+            return ResponseEntity.ok(res.fail("문자", "해당 기능은 존재하지 않습니다.", "문자", "관리자에게 문의해주세요."));
         }
-
-
-
-
+        
         return ResponseEntity.ok(res.success());
     }
 
