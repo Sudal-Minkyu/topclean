@@ -492,7 +492,7 @@ const grid = {
                     headerText: "구분",
                     width: 40,
                     labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
-                        return data.frRefTypeName[value];
+                        return CommonData.name.frRefType[value];
                     },
                 }, {
                     dataField: "bcName",
@@ -526,7 +526,7 @@ const grid = {
                     },
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
                         const colorSquare =
-                            `<span class="colorSquare" style="background-color: ${data.fdColorCode['C'+item.fdColor]}"></span>`;
+                            `<span class="colorSquare" style="background-color: ${CommonData.name.fdColorCode[item.fdColor]}"></span>`;
                         CommonUI.toppos.makeProductName(item, data.initialData.userItemPriceSortData);
                         return colorSquare + ` <span>` + item.sumName + `</span>`;
                     }
@@ -539,7 +539,7 @@ const grid = {
                     },
                 }, {
                     dataField: "fdTotAmt",
-                    headerText: "합계금액",
+                    headerText: "접수금액",
                     width: 90,
                     dataType: "numeric",
                     autoThousandSeparator: "true",
@@ -548,7 +548,7 @@ const grid = {
                     headerText: "현재상태",
                     width: 85,
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
-                        return data.fdStateName[value];
+                        return CommonData.name.fdState[value];
                     },
                 }, {
                     dataField: "fdUrgentYn", // 급세탁이면 Y
@@ -990,10 +990,6 @@ const data = {
     },
     currentRequest: {},
     selectedLaundry: {},
-    fdColorCode: { // 컬러코드에 따른 실제 색상
-        C00: "#D4D9E1", C01: "#D4D9E1", C02: "#3F3C32", C03: "#D7D7D7", C04: "#F54E50", C05: "#FB874B",
-        C06: "#F1CE32", C07: "#349A50", C08: "#55CAB7", C09: "#398BE0", C10: "#DE9ACE", C11: "#FF9FB0",
-    },
     startPrice: 0,
     cameraStream: null,
     isCameraExist: false,
@@ -1003,18 +999,6 @@ const data = {
         "03": "적립금",
         "04": "미수결제",
     },
-    fdStateName: {
-        S1: "접수",
-        S2: "지사입고",
-        S3: "지사반송",
-        S4: "지사출고",
-        S5: "가맹점입고",
-        S6: "고객인도",
-        S7: "강제출고",
-        S8: "강제입고",
-        F: "가맹검품",
-        B: "확인품",
-    },
     fiTypeName: {
         F: "가맹검품",
         B: "확인품",
@@ -1023,11 +1007,6 @@ const data = {
         "1": "미확인",
         "2": "고객수락",
         "3": "고객거부",
-    },
-    frRefTypeName: {
-        "01": "-",
-        "02": "무",
-        "03": "배",
     },
     keypadNum: 0,
 }
