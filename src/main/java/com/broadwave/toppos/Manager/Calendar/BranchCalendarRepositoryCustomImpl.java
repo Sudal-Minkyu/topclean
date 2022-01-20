@@ -1,7 +1,7 @@
 package com.broadwave.toppos.Manager.Calendar;
 
 import com.broadwave.toppos.Head.Franohise.QFranchise;
-import com.broadwave.toppos.User.EtcDataDto;
+import com.broadwave.toppos.User.UserDtos.EtcDataDto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
 import lombok.extern.slf4j.Slf4j;

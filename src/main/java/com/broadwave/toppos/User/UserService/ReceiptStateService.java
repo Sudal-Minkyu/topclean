@@ -3,28 +3,24 @@ package com.broadwave.toppos.User.UserService;
 import com.broadwave.toppos.Aws.AWSS3Service;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.*;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.Request;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.*;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.Photo;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotYnDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.PhotoRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.*;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.RequestDetailCloseListDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.RequestDetailFranchiseInListDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.RequestDetailReturnListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestRepository;
-import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoney;
 import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoneyRepository;
 import com.broadwave.toppos.common.AjaxResponse;
-import com.broadwave.toppos.common.ResponseErrorCode;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.transaction.Transactional;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -124,7 +120,7 @@ public class ReceiptStateService {
         }else if(stateType.equals("S7")){
             log.info("가맹점강제입고 처리");
         }else{
-            return ResponseEntity.ok(res.fail("문자", "해당 기능은 존재하지 않습니다.", "문자", "관리자에게 문의해주세요."));
+            return ResponseEntity.ok(res.fail("문자", stateType+" 타입은 존재하지 않습니다.", "문자", "관리자에게 문의해주세요."));
         }
         
         return ResponseEntity.ok(res.success());
@@ -133,17 +129,14 @@ public class ReceiptStateService {
     //  수기마감 - 세부테이블 접수상태 리스트 + 검품이 존재할시 상태가 고객수락일 경우에만 호출
     public ResponseEntity<Map<String,Object>> franchiseReceiptCloseList(HttpServletRequest request){
         log.info("franchiseReceiptCloseList 호출");
+
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
 
         // 클레임데이터 가져오기
         Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
         String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
-//        String frbrCode = (String) claims.get("frbrCode"); // 소속된 지사 코드
-//        String login_id = claims.getSubject(); // 현재 아이디
-//        log.info("현재 접속한 아이디 : "+login_id);
         log.info("현재 접속한 가맹점 코드 : "+frCode);
-//        log.info("소속된 지사 코드 : "+frbrCode);
 
         // 수기마감 페이지에 보여줄 리스트 호출
         List<RequestDetailCloseListDto> requestDetailCloseListDtos = requestDetailRepositoryCustom.findByRequestDetailCloseList(frCode);
@@ -158,6 +151,48 @@ public class ReceiptStateService {
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
+
+    //  가맹점입고 - 세부테이블 지사출고상태 리스트
+    public ResponseEntity<Map<String, Object>> franchiseReceiptFranchiseInList(HttpServletRequest request) {
+        log.info("franchiseReceiptFranchiseInList 호출");
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
+        log.info("현재 접속한 가맹점 코드 : "+frCode);
+
+        // 가맹점입고 페이지에 보여줄 리스트 호출
+        List<RequestDetailFranchiseInListDto> requestDetailFranchiseInListDtos = requestDetailRepositoryCustom.findByRequestDetailFranchiseInList(frCode);
+        data.put("gridListData",requestDetailFranchiseInListDtos);
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
+    //  지사반송 - 세부테이블 지사반송상태 리스트
+    public ResponseEntity<Map<String, Object>> franchiseReceiptReturnList(HttpServletRequest request) {
+        log.info("franchiseReceiptReturnList 호출");
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
+        log.info("현재 접속한 가맹점 코드 : "+frCode);
+
+        // 지사반송 페이지에 보여줄 리스트 호출
+        List<RequestDetailReturnListDto> requestDetailFranchiseInListDtos = requestDetailRepositoryCustom.findByRequestDetailReturnList(frCode);
+        data.put("gridListData",requestDetailFranchiseInListDtos);
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
+
+
+
 
 //    //  통합조회용 - 접수세부 테이블
 //    public ResponseEntity<Map<String, Object>> franchiseRequestDetailSearch(Long bcId, String searchTag, String filterCondition, String filterFromDt, String filterToDt, HttpServletRequest request) {

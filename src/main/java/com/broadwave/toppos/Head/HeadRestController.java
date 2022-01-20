@@ -19,7 +19,7 @@ import com.broadwave.toppos.Head.Item.Price.FranchisePrice.*;
 import com.broadwave.toppos.Head.Item.Price.ItemPrice;
 import com.broadwave.toppos.Head.Item.Price.ItemPriceDto;
 import com.broadwave.toppos.Head.Item.Price.ItemPriceListDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestSearchDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.RequestSearchDto;
 import com.broadwave.toppos.User.UserService.ReceiptService;
 import com.broadwave.toppos.common.AjaxResponse;
 import com.broadwave.toppos.common.CommonUtils;

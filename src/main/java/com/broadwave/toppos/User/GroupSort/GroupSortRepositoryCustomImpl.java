@@ -1,5 +1,6 @@
 package com.broadwave.toppos.User.GroupSort;
 
+import com.broadwave.toppos.User.GroupSort.GroupSortDtos.GroupSortUpdateDto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;

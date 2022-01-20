@@ -12,24 +12,26 @@ import com.broadwave.toppos.Head.Item.Price.UserItemPriceSortDto;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.Manager.Calendar.BranchCalendar;
 import com.broadwave.toppos.Manager.ManagerService;
-import com.broadwave.toppos.User.Addprocess.AddprocessDto;
+import com.broadwave.toppos.User.Addprocess.AddprocessDtos.AddprocessDto;
 import com.broadwave.toppos.User.Addprocess.AddprocessSet;
 import com.broadwave.toppos.User.Customer.Customer;
-import com.broadwave.toppos.User.Customer.CustomerInfoDto;
-import com.broadwave.toppos.User.Customer.CustomerListDto;
-import com.broadwave.toppos.User.Customer.CustomerMapperDto;
+import com.broadwave.toppos.User.Customer.CustomerDtos.CustomerInfoDto;
+import com.broadwave.toppos.User.Customer.CustomerDtos.CustomerListDto;
+import com.broadwave.toppos.User.Customer.CustomerDtos.CustomerMapperDto;
 import com.broadwave.toppos.User.GroupSort.GroupSortSet;
 import com.broadwave.toppos.User.ItemSort.ItemSortSet;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentSet;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Request;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotMapperDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotMapperDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotSet;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.PhotoDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.RequestDetailDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailSet;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailUpdateDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestListDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.RequestDetailUpdateDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.RequestListDto;
 import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoney;
+import com.broadwave.toppos.User.UserDtos.EtcDataDto;
+import com.broadwave.toppos.User.UserDtos.UserIndexDto;
 import com.broadwave.toppos.User.UserService.*;
 import com.broadwave.toppos.common.AjaxResponse;
 import com.broadwave.toppos.common.ResponseErrorCode;
@@ -810,7 +812,17 @@ public class UserRestController {
         return receiptStateService.franchiseReceiptCloseList(request);
     }
 
+    //  가맹점입고 - 세부테이블 지사출고상태 리스트
+    @GetMapping("franchiseReceiptFranchiseInList")
+    public ResponseEntity<Map<String,Object>> franchiseReceiptFranchiseInList(HttpServletRequest request){
+        return receiptStateService.franchiseReceiptFranchiseInList(request);
+    }
 
+    //  지사반송 - 세부테이블 지사반송상태 리스트
+    @GetMapping("franchiseReceiptReturnList")
+    public ResponseEntity<Map<String,Object>> franchiseReceiptReturnList(HttpServletRequest request){
+        return receiptStateService.franchiseReceiptReturnList(request);
+    }
 
 //@@@@@@@@@@@@@@@@@@@@@ 가맹점 미수관리 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     // 미수관리페이지 - 고객검색 리스트 호출

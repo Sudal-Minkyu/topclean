@@ -1,5 +1,7 @@
 package com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail;
 
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.*;
+
 import java.util.List;
 
 /**
@@ -14,6 +16,8 @@ public interface RequestDetailRepositoryCustom {
     List<RequestDetailSearchDto> requestDetailSearch(String frCode, Long bcId, String searchTag, String filterCondition, String filterFromDt, String filterToDt);
 
     List<RequestDetailCloseListDto> findByRequestDetailCloseList(String frCode);
+    List<RequestDetailFranchiseInListDto> findByRequestDetailFranchiseInList(String frCode);
+    List<RequestDetailReturnListDto> findByRequestDetailReturnList(String frCode);
 
     List<RequestDetailUncollectDto> findByRequestDetailUncollectList(String frCode, Long frId);
 }

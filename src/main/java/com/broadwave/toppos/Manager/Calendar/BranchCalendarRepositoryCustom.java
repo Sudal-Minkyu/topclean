@@ -1,6 +1,6 @@
 package com.broadwave.toppos.Manager.Calendar;
 
-import com.broadwave.toppos.User.EtcDataDto;
+import com.broadwave.toppos.User.UserDtos.EtcDataDto;
 
 import java.util.List;
 

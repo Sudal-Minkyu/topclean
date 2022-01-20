@@ -1,5 +1,9 @@
 package com.broadwave.toppos.User.Customer;
 
+import com.broadwave.toppos.User.Customer.CustomerDtos.CustomerInfoDto;
+import com.broadwave.toppos.User.Customer.CustomerDtos.CustomerListDto;
+import com.broadwave.toppos.User.Customer.CustomerDtos.CustomerUncollectListDto;
+
 import java.util.List;
 
 /**

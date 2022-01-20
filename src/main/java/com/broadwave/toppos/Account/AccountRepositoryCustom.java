@@ -1,6 +1,6 @@
 package com.broadwave.toppos.Account;
 
-import com.broadwave.toppos.User.UserIndexDto;
+import com.broadwave.toppos.User.UserDtos.UserIndexDto;
 
 import java.util.List;
 
