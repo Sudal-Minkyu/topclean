@@ -14,4 +14,6 @@ public interface RequestDetailRepositoryCustom {
     List<RequestDetailSearchDto> requestDetailSearch(String frCode, Long bcId, String searchTag, String filterCondition, String filterFromDt, String filterToDt);
 
     List<RequestDetailCloseListDto> findByRequestDetailCloseList(String frCode);
+
+    List<RequestDetailUncollectDto> findByRequestDetailUncollectList(String frCode, Long frId);
 }

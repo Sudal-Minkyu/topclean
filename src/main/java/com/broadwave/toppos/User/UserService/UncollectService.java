@@ -12,6 +12,7 @@ import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.Insp
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.PhotoRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepositoryCustom;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailUncollectDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestRepositoryCustom;
 import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoneyRepository;
@@ -160,6 +161,31 @@ public class UncollectService {
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
+
+    // 미수관리페이지 - 해당고객의 접수세부테이블 미수금 리스트 호출
+    public ResponseEntity<Map<String, Object>> franchiseUncollectRequestDetailList(Long frId, HttpServletRequest request) {
+        log.info("franchiseUncollectRequestDetailList 호출");
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
+//        String login_id = claims.getSubject(); // 현재 아이디
+//        log.info("현재 접속한 아이디 : "+login_id);
+        log.info("현재 접속한 가맹점 코드 : "+frCode);
+
+        List<RequestDetailUncollectDto> requestDetailUncollectDtos = requestDetailRepositoryCustom.findByRequestDetailUncollectList(frCode, frId);
+        data.put("gridListData",requestDetailUncollectDtos);
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
+
+
+
+
 
 
 
