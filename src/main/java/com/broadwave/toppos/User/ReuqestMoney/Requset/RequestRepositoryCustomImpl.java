@@ -218,4 +218,41 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
         return query.fetch();
     }
 
+    // 미수관리 페이지의 미수금 결제할 접수테이블 선택후 리스트 Dto
+    @Override
+    public List<RequestCustomerUnCollectDto> findByRequestUnCollectPayList(List<Long> frIdList, String frCode){
+        QRequest request = QRequest.request;
+
+        QRequestDetail requestDetail = QRequestDetail.requestDetail;
+        QItem item = QItem.item;
+        QItemGroup itemGroup = QItemGroup.itemGroup;
+        QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
+
+        JPQLQuery<RequestCustomerUnCollectDto> query = from(request)
+                .innerJoin(requestDetail).on(requestDetail.frId.eq(request))
+                .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
+                .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
+                .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
+
+                .groupBy(request.id).orderBy(request.id.desc())
+                .select(Projections.constructor(RequestCustomerUnCollectDto.class,
+                        request.id,
+                        request.frYyyymmdd,
+                        request.id.count(),
+                        itemGroup.bgName,
+                        itemGroupS.bsName,
+                        item.biName,
+                        request.frTotalAmount,
+                        request.frPayAmount
+                ));
+
+        query.where(request.frUncollectYn.eq("Y")
+                .and(request.frConfirmYn.eq("Y")
+                        .and(request.id.in(frIdList)
+                                .and(request.frCode.eq(frCode))
+                        )));
+
+        return query.fetch();
+    }
+
 }

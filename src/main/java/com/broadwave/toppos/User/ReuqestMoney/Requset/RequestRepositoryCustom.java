@@ -23,5 +23,6 @@ public interface RequestRepositoryCustom {
     List<RequestSearchDto> findByRequestFrCode(String frCode);
 
     List<RequestCustomerUnCollectDto> findByRequestCustomerUnCollectList(Long bcId, String frCode);
+    List<RequestCustomerUnCollectDto> findByRequestUnCollectPayList(List<Long> frIdList, String frCode);
 
 }

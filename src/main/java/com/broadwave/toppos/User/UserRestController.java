@@ -835,7 +835,11 @@ public class UserRestController {
         return uncollectService.franchiseUncollectRequestDetailList(frId, request);
     }
 
-
+    // 미수관리페이지 - 선택한 미수금 결제할 접수리스트 호출
+    @GetMapping("franchiseUncollectPayRequestList")
+    public ResponseEntity<Map<String,Object>> franchiseUncollectPayRequestList(@RequestParam(value="frIdList", defaultValue="") List<Long> frIdList, HttpServletRequest request){
+        return uncollectService.franchiseUncollectPayRequestList(frIdList, request);
+    }
 
 
 

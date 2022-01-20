@@ -87,8 +87,8 @@ public class UncollectService {
     public ResponseEntity<Map<String, Object>> franchiseUncollectCustomerList(String searchType, String searchString, HttpServletRequest request) {
         log.info("uncollectCustomerList 호출");
 
-        log.info("searchType : "+searchType);
-        log.info("searchString : "+searchString);
+//        log.info("searchType : "+searchType);
+//        log.info("searchString : "+searchString);
 
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
@@ -184,14 +184,43 @@ public class UncollectService {
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
+    // 미수관리페이지 - 선택한 미수금 결제할 접수리스트 호출
+    public ResponseEntity<Map<String, Object>> franchiseUncollectPayRequestList(List<Long> frIdList, HttpServletRequest request) {
+        log.info("franchiseUncollectPayRequestList 호출");
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
 
+        log.info("frIdList : "+frIdList);
 
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
+//        String frbrCode = (String) claims.get("frbrCode"); // 소속된 지사 코드
+//        String login_id = claims.getSubject(); // 현재 아이디
+//        log.info("현재 접속한 아이디 : "+login_id);
+        log.info("현재 접속한 가맹점 코드 : "+frCode);
+//        log.info("소속된 지사 코드 : "+frbrCode);
 
+        List<RequestCustomerUnCollectDto> requestCustomerUnCollectDtos = requestRepositoryCustom.findByRequestUnCollectPayList(frIdList, frCode);
+        List<HashMap<String,Object>> uncollectListData = new ArrayList<>();
+        HashMap<String,Object> uncollectListInfo;
+        for (RequestCustomerUnCollectDto requestCustomerUnCollectDto: requestCustomerUnCollectDtos) {
+            uncollectListInfo = new HashMap<>();
+            uncollectListInfo.put("frId", requestCustomerUnCollectDto.getFrId());
+            uncollectListInfo.put("frYyyymmdd", requestCustomerUnCollectDto.getFrYyyymmdd());
+            uncollectListInfo.put("requestDetailCount", requestCustomerUnCollectDto.getRequestDetailCount());
+            uncollectListInfo.put("bgName", requestCustomerUnCollectDto.getBgName());
+            uncollectListInfo.put("bsName", requestCustomerUnCollectDto.getBsName());
+            uncollectListInfo.put("biName", requestCustomerUnCollectDto.getBiName());
+            uncollectListInfo.put("frTotalAmount", requestCustomerUnCollectDto.getFrTotalAmount());
+            uncollectListInfo.put("uncollectMoney", requestCustomerUnCollectDto.getFrTotalAmount()-requestCustomerUnCollectDto.getFrPayAmount());
+            uncollectListData.add(uncollectListInfo);
+        }
 
+        data.put("gridListData",uncollectListData);
 
-
-
-
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
 
 
 
