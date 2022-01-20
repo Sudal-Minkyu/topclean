@@ -18,6 +18,7 @@
 
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
+	<script src="/assets/js/toppos/user/receipt/delivery.js"></script>
 	<script type="text/javascript">
 		$(function() {
 			
@@ -126,7 +127,7 @@
 	
 	<div class="content__body">
 		<!-- grid -->
-		<div id="grid_main" style="height: 654px; border: 1px solid #ddd;"></div>
+		<div id="grid_laundryList" style="height: 654px;"></div>
 	</div>
 
 	<!-- 무인 보관함 출고 처리 팝업 -->
@@ -193,7 +194,7 @@
 			<div class="pop__article">
 				<div class="pop__aricle-content">
 					<!-- grid -->
-		        	<div style="width: 100%; height: 200px; border: 1px solid #ddd;"></div>
+		        	<div id="grid_selectedLaundry" style="height: 200px;"></div>
 				</div>
 			</div>
 			

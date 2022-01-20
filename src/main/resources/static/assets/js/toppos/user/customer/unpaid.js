@@ -9,10 +9,10 @@ const dtos = {
             searchText: "",
             searchType: "", // 0: 통합, 1: 고객명, 2: 전화번호, 3: 주소
         },
-        상단그리드: {
+        franchiseUncollectRequestList: {
             bcId: "",
         },
-        하단그리드: {
+        franchiseUncollectRequestDetailList: {
             frId: "",
         },
         결제팝업: {
@@ -31,7 +31,7 @@ const dtos = {
             saveMoney: "", // 적립금
             uncollectMoney: "", // 전체미수금
         },
-        상단그리드: {
+        franchiseUncollectRequestList: {
             frId: "nr",
             frYyyymmdd: "sr",
             requestDetailCount: "n", // 외 건수 requestDetailCount가 2일경우 -> 외 1건, 1일경우 그냥 상품이름만 표기하면될듯. 0일경우는 없음.
@@ -42,7 +42,7 @@ const dtos = {
             frPayAmount: "nr", // 입금액
             uncollectMoney: "nr", // 미수금액
         },
-        하단그리드: {
+        franchiseUncollectRequestDetailList: {
             frYyyymmdd: "s",
             fdTag: "s",
             
@@ -81,6 +81,8 @@ const dtos = {
 /* 통신에 사용되는 url들 기입 */
 const urls = {
     filterCustomerList: "/api/user/franchiseUncollectCustomerList",
+    customersUncollectedList: "/api/user/franchiseUncollectRequestList",
+    uncollectedListDetail: "/api/user/franchiseUncollectRequestDetailList",
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
@@ -92,6 +94,23 @@ const comms = {
             dv.chk(data, dtos.receive.franchiseUncollectCustomerList, "메인그리드 고객 리스트 받아오기", true);
             grids.f.setData(0, data);
             calculateGridCustomer();
+        });
+    },
+    customersUncollectedList(selectedBcId) {
+        dv.chk(selectedBcId, dtos.send.franchiseUncollectRequestList, "미수금 리스트 받기위한 고객 아이디 보내기");
+        CommonUI.ajax(urls.customersUncollectedList, "GET", selectedBcId, function(res) {
+            const data = res.sendData.gridListData;
+            dv.chk(data, dtos.receive.franchiseUncollectRequestList, "선택된 고객의 미수금 리스트 받아오기", true);
+            grids.f.setData(1, data);
+            grids.f.clearData(2);
+        });
+    },
+    uncollectedListDetail(selectedFrId) {
+        dv.chk(selectedFrId, dtos.send.franchiseUncollectRequestDetailList, "선택된 미수금 접수 아이디 보내기");
+        CommonUI.ajax(urls.uncollectedListDetail, "GET", selectedFrId, function(res) {
+            const data = res.sendData.gridListData;
+            dv.chk(data, dtos.receive.franchiseUncollectRequestDetailList, "선택된 접수 아이디의 상세 리스트 받아오기", true);
+            grids.f.setData(2, data);
         });
     }
 };
@@ -149,6 +168,7 @@ const grids = {
             grids.s.prop[0] = {
                 editable : false,
                 selectionMode : "singleRow",
+                showAutoNoDataMessage: false,
                 noDataMessage : "출력할 데이터가 없습니다.",
                 enableColumnResize : false,
                 showRowNumColumn : false,
@@ -195,8 +215,11 @@ const grids = {
             grids.s.prop[1] = {
                 editable : false,
                 selectionMode : "singleRow",
+                showAutoNoDataMessage: false,
                 noDataMessage : "출력할 데이터가 없습니다.",
                 enableColumnResize : false,
+                showRowAllCheckBox: true,
+                showRowCheckColumn: true,
                 showRowNumColumn : false,
                 showStateColumn : true,
                 enableFilter : true,
@@ -257,6 +280,7 @@ const grids = {
             grids.s.prop[2] = {
                 editable : false,
                 selectionMode : "singleRow",
+                showAutoNoDataMessage: false,
                 noDataMessage : "출력할 데이터가 없습니다.",
                 enableColumnResize : false,
                 showRowNumColumn : false,
@@ -323,16 +347,32 @@ const grids = {
             AUIGrid.setGridData(grids.s.id[numOfGrid], data);
         },
 
+        clearData(numOfGrid) {
+            AUIGrid.clearGridData(grids.s.id[numOfGrid]);
+        },
+
         getCheckedItems(numOfGrid) {
             return AUIGrid.getCheckedRowItems(grids.s.id[numOfGrid]);
         }
     },
 
-    e: {
-        basicEvent() {
+    t: {
+        basic() {
             /* 0번그리드 내의 셀 클릭시 이벤트 */
             AUIGrid.bind(grids.s.id[0], "cellClick", function (e) {
-                console.log(e.item); // 이밴트 콜백으로 불러와진 객체의, 클릭한 대상 row 키(파라메터)와 값들을 보여준다.
+                const selectedBcId = {
+                    bcId: e.item.bcId
+                }
+                comms.customersUncollectedList(selectedBcId);
+            });
+            AUIGrid.bind(grids.s.id[1], "cellClick", function (e) {
+                const selectedFrId = {
+                    frId: e.item.frId
+                }
+                comms.uncollectedListDetail(selectedFrId);
+            });
+            AUIGrid.bind(grids.s.id[1], "rowCheckClick", function (e) {
+                calculateGridRequest();
             });
         }
     }
@@ -341,7 +381,7 @@ const grids = {
 /* 이벤트를 s : 설정하거나 r : 해지하는 함수들을 담는다. 그리드 관련 이벤트는 grids.e에 위치 (trigger) */
 const trigs = {
     s: { // 이벤트 설정
-        basicTrigger() {
+        basic() {
             $("#customerSearchBtn").on("click", function () {
                 searchCondition = {
                     searchType: $("#searchType").val(),
@@ -384,12 +424,11 @@ $(function() { // 페이지가 로드되고 나서 실행
 function onPageLoad() {
     grids.f.initialization();
     grids.f.create();
+    grids.t.basic();
 
-    trigs.s.basicTrigger();
+    trigs.s.basic();
 
     comms.filterCustomerList();
-    /* 생성된 그리드에 기본적으로 필요한 이벤트들을 적용한다. */
-    // grids.e.basicEvent();
 }
 
 function calculateGridCustomer() {
@@ -406,9 +445,9 @@ function calculateGridCustomer() {
 
 function calculateGridRequest() {
     const items = grids.f.getCheckedItems(1);
-    const totalSelectedUncollectMoney = 0;
-    items.forEach(item => {
-        totalSelectedUncollectMoney += item.uncollectMoney;
+    let totalSelectedUncollectMoney = 0;
+    items.forEach(obj => {
+        totalSelectedUncollectMoney += obj.item.uncollectMoney;
     });
     $("#totalSelectedUncollectMoney").html(totalSelectedUncollectMoney.toLocaleString());
 }

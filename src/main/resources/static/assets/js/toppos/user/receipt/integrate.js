@@ -1561,7 +1561,7 @@ function onAddOrder() {
         return false;
     }
 
-    if(data.startPrice > data.currentRequest.fdTotAmt) {
+    if(data.currentRequest.redBtn2 && data.startPrice > data.currentRequest.fdTotAmt) {
         alertCaution("수정시작 시점보다 금액이 낮습니다.<br>접수취소 후 재접수를 해주세요.", 1);
         return false;
     }

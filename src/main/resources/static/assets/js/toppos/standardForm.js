@@ -60,6 +60,7 @@ const grids = {
                 editable : false,
                 selectionMode : "singleRow",
                 noDataMessage : "출력할 데이터가 없습니다.",
+                showAutoNoDataMessage: false,
                 enableColumnResize : false,
                 showRowNumColumn : false,
                 showStateColumn : true,
@@ -85,8 +86,8 @@ const grids = {
         },
     },
 
-    e: {
-        basicEvent() {
+    t: {
+        basicTrigger() {
             /* 0번그리드 내의 셀 클릭시 이벤트 */
             AUIGrid.bind(grids.s.id[0], "cellClick", function (e) {
                 console.log(e.item); // 이밴트 콜백으로 불러와진 객체의, 클릭한 대상 row 키(파라메터)와 값들을 보여준다.
@@ -119,5 +120,5 @@ function onPageLoad() {
     grids.f.initialization();
 
     /* 생성된 그리드에 기본적으로 필요한 이벤트들을 적용한다. */
-    // grids.e.basicEvent();
+    // grids.t.basicTrigger();
 }
