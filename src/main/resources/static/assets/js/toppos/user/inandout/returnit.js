@@ -54,20 +54,28 @@ const comms = {
             const data = res.sendData;
             const dataLength = data.gridListData.length;
 
-            // for (let i = 0; i < data.gridListData.length; i++) {
-            //     if (data.removeFrId.includes(data.gridListData[i].fdId)) {
-            //         console.log(data.gridListData[i].fdId);
-            //         data.gridListData.splice(i, 1);
-            //         i--;
-            //     }
-            // }
-
-            dv.chk(data.gridListData, dtos.receive.getReturnList, '마감 리스트 항목 받아오기');
+            dv.chk(data.gridListData, dtos.receive.getReturnList, '반송 리스트 항목 받아오기');
             grids.f.setData(0, data.gridListData);
             
             $('#totalNum').text(dataLength);
         });
     },
+
+    // 지사 전송
+    changeClosedList(saveData) {
+        dv.chk(saveData, dtos.send.franchiseStateChange, '반송 리스트 항목 보내기');
+    
+        CommonUI.ajax(urls.changeClosedList, "PARAM", saveData, function(res) {
+            alertSuccess("지사전송 완료");
+            grids.f.clearData();
+            comms.getReturnList();
+
+            $('#checkedItems').val(0);
+            $('#totalAmount').val(0);
+            $('#fastItems').val(0);
+            $('#retryItems').val(0);
+        })
+    }
 };
 
 /* .s : AUI 그리드 관련 설정들
@@ -181,6 +189,21 @@ const grids = {
         clearData(numOfGrid) {
 			AUIGrid.clearGridData(grids.s.id[numOfGrid]);
 		},
+
+        // 그리드 데이터 저장
+        saveGridData(numOfGrid) {
+            const checkedItems = this.getCheckedItems(numOfGrid);
+            let changData = {stateType: "S3"};
+            let fdIdList = [];
+            
+            checkedItems.forEach(data => {
+                fdIdList.push(data.item.fdId);
+            });
+
+            changData.fdIdList = fdIdList;
+            console.log(changData);
+            comms.changeClosedList(changData);
+        },
     },
 
     t: {
@@ -222,6 +245,10 @@ const trigs = {
                 $('#fastItems').val(fastItemCount);
                 $('#retryItems').val(retryItemCount);
             });
+
+            $('#returnit').on('click', function() {
+                grids.f.saveGridData(0);
+            })
         }
     },
     r: { // 이벤트 해제

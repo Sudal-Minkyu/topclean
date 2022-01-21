@@ -75,7 +75,7 @@ const comms = {
                 }
             }
 
-            dv.chk(data.gridListData, dtos.receive.franchiseReceiptFranchiseInList, '마감 리스트 항목 받아오기');
+            dv.chk(data.gridListData, dtos.receive.franchiseReceiptFranchiseInList, '입고 리스트 항목 받아오기');
             grids.f.setData(0, data.gridListData);
             
             $('#totalNum').text(dataLength);
@@ -211,7 +211,12 @@ const grids = {
         // 그리드 체크된 로우
         getCheckedItems(numOfGrid) {
             return AUIGrid.getCheckedRowItems(grids.s.id[numOfGrid]);
-        }
+        },
+
+        // 그리드 데이터 클리어
+        clearData(numOfGrid) {
+			AUIGrid.clearGridData(grids.s.id[numOfGrid]);
+		},
     },
 
     t: {
