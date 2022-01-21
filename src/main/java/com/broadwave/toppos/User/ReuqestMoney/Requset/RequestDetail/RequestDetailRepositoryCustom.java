@@ -19,6 +19,7 @@ public interface RequestDetailRepositoryCustom {
     List<RequestDetailFranchiseInListDto> findByRequestDetailFranchiseInList(String frCode); // 가맹점입고
     List<RequestDetailReturnListDto> findByRequestDetailReturnList(String frCode); // 지사반송
     List<RequestDetailForceListDto> findByRequestDetailForceList(String frCode); // 가맹점강제입고
+    List<RequestDetailDeliveryDto> findByRequestDetailDeliveryList(String frCode, Long bcId); // 세탁인도
 
     List<RequestDetailUncollectDto> findByRequestDetailUncollectList(String frCode, Long frId);
 

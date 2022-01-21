@@ -452,4 +452,86 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         return query.fetch();
     }
 
+    // 세탁인도 querydsl
+    public List<RequestDetailDeliveryDto> findByRequestDetailDeliveryList(String frCode, Long bcId){
+
+        QRequestDetail requestDetail = QRequestDetail.requestDetail;
+        QRequest request = QRequest.request;
+
+        QInspeot inspeot = QInspeot.inspeot;
+
+        JPQLQuery<RequestDetailDeliveryDto> query = from(requestDetail)
+                .innerJoin(request).on(requestDetail.frId.eq(request))
+                .leftJoin(inspeot).on(inspeot.fdId.eq(requestDetail))
+                .where(requestDetail.frId.frCode.eq(frCode).and(requestDetail.fdCancel.eq("N")))
+                .select(Projections.constructor(RequestDetailDeliveryDto.class,
+
+                        request.bcId.bcName,
+                        request.frYyyymmdd,
+
+                        requestDetail.id,
+                        request.id,
+                        request.frNo,
+
+                        requestDetail.fdTag,
+                        requestDetail.biItemcode,
+                        requestDetail.fdState,
+                        requestDetail.fdPreState,
+
+                        requestDetail.fdS2Dt,
+                        requestDetail.fdS3Dt,
+                        requestDetail.fdS4Dt,
+                        requestDetail.fdS5Dt,
+                        requestDetail.fdS6Dt,
+
+                        requestDetail.fdCancel,
+                        requestDetail.fdCacelDt,
+
+                        requestDetail.fdColor,
+                        requestDetail.fdPattern,
+                        requestDetail.fdPriceGrade,
+
+                        requestDetail.fdOriginAmt,
+                        requestDetail.fdNormalAmt,
+
+                        requestDetail.fdAdd2Amt,
+                        requestDetail.fdAdd2Remark,
+
+                        requestDetail.fdPollution,
+                        requestDetail.fdDiscountGrade,
+                        requestDetail.fdDiscountAmt,
+                        requestDetail.fdQty,
+
+                        requestDetail.fdRequestAmt,
+                        requestDetail.fdSpecialYn,
+                        requestDetail.fdTotAmt,
+                        requestDetail.fdRemark,
+                        requestDetail.fdEstimateDt,
+
+                        requestDetail.fdRetryYn,
+                        requestDetail.fdUrgentYn,
+
+                        requestDetail.fdPressed,
+                        requestDetail.fdAdd1Amt,
+                        requestDetail.fdAdd1Remark,
+                        requestDetail.fdRepairAmt,
+                        requestDetail.fdRepairRemark,
+                        requestDetail.fdWhitening,
+                        requestDetail.fdPollutionLevel,
+                        requestDetail.fdWaterRepellent,
+                        requestDetail.fdStarch,
+
+                        request.frRefType
+
+                ));
+
+        query.orderBy(requestDetail.id.asc()).groupBy(requestDetail);
+
+        if(bcId != null){
+            query.where(request.bcId.bcId.eq(bcId));
+        }
+
+        return query.fetch();
+    }
+
 }
