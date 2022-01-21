@@ -458,71 +458,52 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         QRequestDetail requestDetail = QRequestDetail.requestDetail;
         QRequest request = QRequest.request;
 
-        QInspeot inspeot = QInspeot.inspeot;
+        QItemGroup itemGroup = QItemGroup.itemGroup;
+        QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
+        QItem item = QItem.item;
 
         JPQLQuery<RequestDetailDeliveryDto> query = from(requestDetail)
                 .innerJoin(request).on(requestDetail.frId.eq(request))
-                .leftJoin(inspeot).on(inspeot.fdId.eq(requestDetail))
+                .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
+                .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
+                .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
                 .where(requestDetail.frId.frCode.eq(frCode).and(requestDetail.fdCancel.eq("N")))
                 .select(Projections.constructor(RequestDetailDeliveryDto.class,
-
+                        request.frRefType,
                         request.bcId.bcName,
-                        request.frYyyymmdd,
 
                         requestDetail.id,
-                        request.id,
-                        request.frNo,
 
+                        request.frYyyymmdd,
                         requestDetail.fdTag,
-                        requestDetail.biItemcode,
+
+                        requestDetail.fdColor,
+                        itemGroup.bgName,
+                        itemGroupS.bsName,
+                        item.biName,
+
                         requestDetail.fdState,
-                        requestDetail.fdPreState,
 
                         requestDetail.fdS2Dt,
-                        requestDetail.fdS3Dt,
                         requestDetail.fdS4Dt,
                         requestDetail.fdS5Dt,
                         requestDetail.fdS6Dt,
 
-                        requestDetail.fdCancel,
-                        requestDetail.fdCacelDt,
-
-                        requestDetail.fdColor,
-                        requestDetail.fdPattern,
                         requestDetail.fdPriceGrade,
-
-                        requestDetail.fdOriginAmt,
-                        requestDetail.fdNormalAmt,
-
-                        requestDetail.fdAdd2Amt,
-                        requestDetail.fdAdd2Remark,
-
-                        requestDetail.fdPollution,
-                        requestDetail.fdDiscountGrade,
-                        requestDetail.fdDiscountAmt,
-                        requestDetail.fdQty,
-
-                        requestDetail.fdRequestAmt,
-                        requestDetail.fdSpecialYn,
-                        requestDetail.fdTotAmt,
-                        requestDetail.fdRemark,
-                        requestDetail.fdEstimateDt,
-
                         requestDetail.fdRetryYn,
-                        requestDetail.fdUrgentYn,
-
                         requestDetail.fdPressed,
                         requestDetail.fdAdd1Amt,
                         requestDetail.fdAdd1Remark,
                         requestDetail.fdRepairAmt,
                         requestDetail.fdRepairRemark,
                         requestDetail.fdWhitening,
-                        requestDetail.fdPollutionLevel,
-                        requestDetail.fdWaterRepellent,
+                        requestDetail.fdPollution,
                         requestDetail.fdStarch,
+                        requestDetail.fdWaterRepellent,
+                        requestDetail.fdUrgentYn,
 
-                        request.frRefType
-
+                        requestDetail.fdTotAmt,
+                        requestDetail.fdRemark
                 ));
 
         query.orderBy(requestDetail.id.asc()).groupBy(requestDetail);

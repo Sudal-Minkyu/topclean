@@ -31,8 +31,8 @@ const dtos = {
             beforeUncollectMoney: "nr",
             saveMoney: "nr",
         },
-        
-        디테일리스트: {
+
+        franchiseReceiptDeliveryList: {
             frRefType: "sr", // 1월 19일 추가
             bcName: "s", // 고객의 이름
             frYyyymmdd: "s", // 접수일자
@@ -43,6 +43,9 @@ const dtos = {
             fdPreState: "s", // 1월 17일 추가
             fdState: "s",
             biItemcode: "s",
+            bgName: "s",
+            bsName: "s",
+            biName: "s",
             fdS2Dt: "s",
             fdS3Dt: "s",
             fdS4Dt: "s",
@@ -77,7 +80,6 @@ const dtos = {
             fdPollutionLevel: "n",
             fdWaterRepellent: "n",
             fdStarch: "n",
-            fpCancelYn: "sr",
         }
     }
 };
