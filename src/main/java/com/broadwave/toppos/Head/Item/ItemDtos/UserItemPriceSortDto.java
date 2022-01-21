@@ -1,4 +1,4 @@
-package com.broadwave.toppos.Head.Item.Price;
+package com.broadwave.toppos.Head.Item.ItemDtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

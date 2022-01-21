@@ -1,6 +1,6 @@
 package com.broadwave.toppos.Head.Item.Price.FranchisePrice;
 
-import com.broadwave.toppos.Head.Item.Price.ItemPriceDto;
+import com.broadwave.toppos.Head.Item.ItemDtos.ItemPriceDto;
 import lombok.Setter;
 
 import java.util.ArrayList;

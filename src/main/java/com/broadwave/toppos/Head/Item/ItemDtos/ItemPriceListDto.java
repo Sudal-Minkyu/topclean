@@ -1,27 +1,30 @@
-package com.broadwave.toppos.Head.Item.Price;
+package com.broadwave.toppos.Head.Item.ItemDtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
-
 /**
  * @author Minkyu
- * Date : 2021-11-26
+ * Date : 2021-11-25
  * Time :
- * Remark : Toppos 상품그룹 가격관리  테이블 Dto
+ * Remark : Toppos 상품그룹 가격관리  테이블 ListDto
  */
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ItemPriceDto {
+public class ItemPriceListDto {
 
     private String biItemcode; // 상품코드
+
+    private String bgName; // 대분류명칭
+    private String bsName; // 중분류명칠
+    private String biName; // 상품명
+
     private String setDt; // 가격시작일(적용일자)
-    private String closeDt; // 가격종료일(적용일자)
+    private String closeDt; // 가격 종료일
 
     private Integer bpBasePrice; // 기본가격
     private Integer bpAddPrice; // 추가금액
@@ -34,27 +37,28 @@ public class ItemPriceDto {
 
     private String biRemark; // 특이사항
 
-    private String insert_id;
-    private LocalDateTime insertDateTime;
-
-    public String getCloseDt() {
-        return closeDt;
-    }
-
-    public String getInsert_id() {
-        return insert_id;
-    }
-
-    public LocalDateTime getInsertDateTime() {
-        return insertDateTime;
-    }
-
     public String getBiItemcode() {
         return biItemcode;
     }
 
+    public String getBgName() {
+        return bgName;
+    }
+
+    public String getBsName() {
+        return bsName;
+    }
+
+    public String getBiName() {
+        return biName;
+    }
+
     public String getSetDt() {
         return setDt;
+    }
+
+    public String getCloseDt() {
+        return closeDt;
     }
 
     public Integer getBpBasePrice() {

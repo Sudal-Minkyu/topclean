@@ -424,8 +424,12 @@ public class InspectService {
             }
 
             try {
-                inspeotRepository.findByInspectDelete(inspeotDeleteList);
-                photoRepository.findByInspectPhotoDelete(photoDeleteList);
+                if(inspeotDeleteList.size() != 0){
+                    inspeotRepository.findByInspectDelete(inspeotDeleteList);
+                }
+                if(photoDeleteList.size() != 0){
+                    photoRepository.findByInspectPhotoDelete(photoDeleteList);
+                }
             }catch (Exception e){
                 log.info("예외 발생 : "+e);
             }
