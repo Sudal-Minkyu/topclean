@@ -21,23 +21,21 @@ const dtos = {
         },
         결제성공후: {
             frIdList: "", // 배열로 가는 frId 번호들
-            payInfo: {
-                totGetAmt: "", // 위 frId의 결제된 총 미수금액
-                fpType: "",
-                fpMonth: "",
-                fpCatApprovalno: "",
-                fpCatApprovaltime: "",
-                fpCatCardno: "",
-                fpCatIssuercode: "",
-                fpCatIssuername: "",
-                fpCatMuechantnumber: "",
-                fpCatMessage1: "",
-                fpCatMessage2: "",
-                fpCatNotice1: "",
-                fpCatTotamount: "",
-                fpCatVatamount: "",
-                fpCatTelegramflagt: "",
-            }
+            totGetAmt: "", // 위 frId의 결제된 총 미수금액
+            fpType: "",
+            fpMonth: "",
+            fpCatApprovalno: "",
+            fpCatApprovaltime: "",
+            fpCatCardno: "",
+            fpCatIssuercode: "",
+            fpCatIssuername: "",
+            fpCatMuechantnumber: "",
+            fpCatMessage1: "",
+            fpCatMessage2: "",
+            fpCatNotice1: "",
+            fpCatTotamount: "",
+            fpCatVatamount: "",
+            fpCatTelegramflagt: "",
         },
     },
     receive: {
@@ -167,7 +165,7 @@ const comms = {
     },
     sendPaidInfo(paidInfo) {
         console.log(paidInfo);
-        // CommonUI.ajax(urls.sendPaidInfo, "PARAMS", paidInfo, function(res) {
+        // CommonUI.ajax(urls.sendPaidInfo, "MAPPER", paidInfo, function(res) {
         //     console.log(res)
         // });
     }
@@ -617,7 +615,8 @@ function uncollectPaymentStageTwo(paymentData, creditData = {}) {
         frIdList.push(item.frId);
     });
 
-    const payInfo = {
+    const paidInfo = {
+        frIdList: frIdList,
         totGetAmt: paymentData.totalAmount,
         fpType: paymentData.fpType,
         fpMonth: paymentData.month,
@@ -634,13 +633,6 @@ function uncollectPaymentStageTwo(paymentData, creditData = {}) {
         fpCatVatamount: creditData.VATAMOUNT,
         fpCatTelegramflagt: creditData.TELEGRAMFLAG
     }
-
-    const resultData = {
-        frIdList: frIdList,
-        payInfo: payInfo,
-    }
-
-    comms.sendPaidInfo(resultData);
-
+    comms.sendPaidInfo(paidInfo);
 
 }
