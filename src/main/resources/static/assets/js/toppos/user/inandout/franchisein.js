@@ -5,7 +5,10 @@
 * */
 const dtos = {
     send: {
-
+        franchiseStateChange: {
+            fdIdList: "",
+            stateType: "sr",
+        }
     },
     receive: {
         franchiseReceiptFranchiseInList: {
@@ -44,30 +47,46 @@ const dtos = {
 /* 통신에 사용되는 url들 기입 */
 const urls = {
     getFranchiseInList: "/api/user/franchiseReceiptFranchiseInList",
+    changeClosedList: '/api/user/franchiseStateChange',
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
+    // 입고 리스트 받기
     getGridList() {
         CommonUI.ajax(urls.getFranchiseInList, "GET", false, function (res) {
             const data = res.sendData;
             const dataLength = data.gridListData.length;
+            let fastItemCount = 0;
+            let retryItemCount = 0;
+            let totalAmount = 0;
             console.log(data);
 
-            // for (let i = 0; i < data.gridListData.length; i++) {
-            //     if (data.removeFrId.includes(data.gridListData[i].fdId)) {
-            //         console.log(data.gridListData[i].fdId);
-            //         data.gridListData.splice(i, 1);
-            //         i--;
-            //     }
-            // }
+            for (let i = 0; i < data.gridListData.length; i++) {
+                // 접수총액
+                totalAmount += data.gridListData[i].fdTotAmt;
+                // 급세탁건수
+                if (data.gridListData[i].fdUrgentYn == "Y") {
+                    fastItemCount = fastItemCount + 1;
+                }
+                // 재세탁건수
+                if (data.gridListData[i].fdRetryYn == "Y") {
+                    retryItemCount = retryItemCount + 1;
+                }
+            }
 
             dv.chk(data.gridListData, dtos.receive.franchiseReceiptFranchiseInList, '마감 리스트 항목 받아오기');
             grids.f.setData(0, data.gridListData);
             
             $('#totalNum').text(dataLength);
+            $('#totalItems').val(dataLength);
+            $('#totalAmount').val(totalAmount.toLocaleString());
+            $('#fastItems').val(fastItemCount);
+            $('#retryItems').val(retryItemCount);
         });
-    }
+    },
+
+    // 입고리스트 저장
 };
 
 /* .s : AUI 그리드 관련 설정들
@@ -209,31 +228,19 @@ const grids = {
 const trigs = {
     s: { // 이벤트 설정
         basicTrigger() {
-            // $('.aui-checkbox').on('click', function () {
-            //     const checkedItems = grids.f.getCheckedItems(0);
-            //     const checkedLength = checkedItems.length;
-            //     let totalAmount = 0;
-            //     let fastItemCount = 0;
-            //     let retryItemCount = 0;
+            $('.aui-checkbox').on('click', function () {
+                const checkedItems = grids.f.getCheckedItems(0);
+                const checkedLength = checkedItems.length;
+                let totalAmount = 0;
                 
-            //     checkedItems.forEach(checkedItem => {
-            //         // 접수총액
-            //         totalAmount += checkedItem.item.fdTotAmt;
-            //         // 급세탁건수
-            //         if (checkedItem.item.fdUrgentYn == "Y") {
-            //             fastItemCount = fastItemCount + 1;
-            //         }
-            //         // 재세탁건수
-            //         if (checkedItem.item.fdRetryYn == "Y") {
-            //             retryItemCount = retryItemCount + 1;
-            //         }
-            //     });
+                checkedItems.forEach(checkedItem => {
+                    // 접수총액
+                    totalAmount += checkedItem.item.fdTotAmt;
+                });
 
-            //     $('#checkedItems').val(checkedLength);
-            //     $('#totalAmount').val(totalAmount.toLocaleString());
-            //     $('#fastItems').val(fastItemCount);
-            //     $('#retryItems').val(retryItemCount);
-            // });
+                $('#selectItems').val(checkedLength);
+                $('#selectAmount').val(totalAmount.toLocaleString());
+            });
         }
     },
     r: { // 이벤트 해제

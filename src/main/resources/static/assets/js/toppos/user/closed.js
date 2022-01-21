@@ -5,7 +5,10 @@
 * */
 const dtos = {
     send: {
-
+        franchiseStateChange: {
+            fdIdList: "",
+            stateType: "sr",
+        }
     },
     receive: {
         franchiseReceiptCloseList: {
@@ -40,10 +43,12 @@ const dtos = {
 /* 통신에 사용되는 url들 기입 */
 const urls = {
     getClosedList: '/api/user/franchiseReceiptCloseList',
+    changeClosedList: '/api/user/franchiseStateChange',
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
+    // 수기마감 리스트 받기
     getClosedList() { // 해당 numOfGrid 배열번호의 그리드에 url 로부터 받은 데이터값을 통신하여 주입한다.
         CommonUI.ajax(urls.getClosedList, "GET", false, function (res) {
             const data = res.sendData;
@@ -63,6 +68,17 @@ const comms = {
             $('#totalNum').text(dataLength);
         });
     },
+
+    // 수기마감 저장
+    changeClosedList(saveData) {
+        dv.chk(saveData, dtos.send.franchiseStateChange, '마감 리스트 항목 보내기');
+    
+        CommonUI.ajax(urls.changeClosedList, "PARAM", saveData, function(res) {
+            alertSuccess("수기마감 완료");
+            grids.f.clearData();
+            comms.getClosedList();
+        })
+    }
 };
 
 /* .s : AUI 그리드 관련 설정들
@@ -177,7 +193,27 @@ const grids = {
         // 그리드 체크된 로우
         getCheckedItems(numOfGrid) {
             return AUIGrid.getCheckedRowItems(grids.s.id[numOfGrid]);
-        }
+        },
+
+        // 그리드 데이터 저장
+        saveGridData(numOfGrid) {
+            const checkedItems = this.getCheckedItems(numOfGrid);
+            let changData = {stateType: "S1"};
+            let fdIdList = [];
+            
+            checkedItems.forEach(data => {
+                fdIdList.push(data.item.fdId);
+            });
+
+            changData.fdIdList = fdIdList;
+            console.log(changData);
+            comms.changeClosedList(changData);
+        },
+
+        // 그리드 데이터 클리어
+        clearData(numOfGrid) {
+			AUIGrid.clearGridData(grids.s.id[numOfGrid]);
+		},
     },
 
     t: {
@@ -219,6 +255,10 @@ const trigs = {
                 $('#fastItems').val(fastItemCount);
                 $('#retryItems').val(retryItemCount);
             });
+
+            $('#saveClosed').on('click', function() {
+                grids.f.saveGridData(0);
+            })
         }
     },
     r: { // 이벤트 해제
