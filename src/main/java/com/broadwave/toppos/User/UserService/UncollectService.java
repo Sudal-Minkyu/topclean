@@ -8,6 +8,7 @@ import com.broadwave.toppos.User.Customer.Customer;
 import com.broadwave.toppos.User.Customer.CustomerRepository;
 import com.broadwave.toppos.User.Customer.CustomerRepositoryCustom;
 import com.broadwave.toppos.User.Customer.CustomerDtos.CustomerUncollectListDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentDtos.PaymentUncollectMapperDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentRepositoryCustom;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.RequestCustomerUnCollectDto;
@@ -196,7 +197,8 @@ public class UncollectService {
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
 
-        log.info("frIdList : "+frIdList);
+        log.info("미수금결제할 고객ID : "+bcId);
+        log.info("결제 리스트 : "+frIdList);
 
         // 클레임데이터 가져오기
         Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
@@ -247,7 +249,23 @@ public class UncollectService {
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
+    // 미수관리페이지 - 선택한 미수금 접수테이블 결제
+    public ResponseEntity<Map<String, Object>> franchiseUncollectPay(PaymentUncollectMapperDto paymentUncollectMapperDto, HttpServletRequest request) {
+        log.info("franchiseUncollectPay 호출");
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
 
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
+//        String frbrCode = (String) claims.get("frbrCode"); // 소속된 지사 코드
+//        String login_id = claims.getSubject(); // 현재 아이디
+//        log.info("현재 접속한 아이디 : "+login_id);
+        log.info("현재 접속한 가맹점 코드 : "+frCode);
+//        log.info("소속된 지사 코드 : "+frbrCode);
 
+        data.put("paymentUncollectMapperDto",paymentUncollectMapperDto);
 
+        return ResponseEntity.ok(res.success());
+    }
 }

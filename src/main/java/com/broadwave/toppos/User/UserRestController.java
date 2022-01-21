@@ -20,6 +20,7 @@ import com.broadwave.toppos.User.Customer.CustomerDtos.CustomerListDto;
 import com.broadwave.toppos.User.Customer.CustomerDtos.CustomerMapperDto;
 import com.broadwave.toppos.User.GroupSort.GroupSortSet;
 import com.broadwave.toppos.User.ItemSort.ItemSortSet;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentDtos.PaymentUncollectMapperDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentSet;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Request;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotMapperDto;
@@ -866,10 +867,11 @@ public class UserRestController {
         return uncollectService.franchiseUncollectPayRequestList(frIdList, bcId, request);
     }
 
-
-
-
-
+    // 미수관리페이지 - 선택한 미수금 접수테이블 결제
+    @PostMapping("franchiseUncollectPay")
+    public ResponseEntity<Map<String,Object>> franchiseUncollectPay(@ModelAttribute PaymentUncollectMapperDto paymentUncollectMapperDto, HttpServletRequest request) {
+        return uncollectService.franchiseUncollectPay(paymentUncollectMapperDto, request);
+    }
 
 
 

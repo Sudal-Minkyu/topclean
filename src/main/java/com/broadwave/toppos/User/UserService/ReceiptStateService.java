@@ -209,9 +209,12 @@ public class ReceiptStateService {
 //        log.info("fdIdList : "+fdIdList);
         List<InspeotYnDto> inspeotYnDtos = inspeotRepositoryCustom.findByInspeotStateList(fdIdList,"2");
 //        log.info("inspeotYnDtos : "+inspeotYnDtos);
-
+        fdIdList.clear();
+        for(InspeotYnDto inspeotYnDto : inspeotYnDtos){
+            fdIdList.add(inspeotYnDto.getFdId());
+        }
         data.put("gridListData",requestDetailForceListDtos);
-        data.put("checkFdId",inspeotYnDtos);
+        data.put("checkFdId",fdIdList);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
