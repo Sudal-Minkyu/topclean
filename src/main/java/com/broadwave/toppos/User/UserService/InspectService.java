@@ -148,7 +148,6 @@ public class InspectService {
     }
 
     //  통합조회용 - 접수 세부테이블 수정
-    @Transactional
     public ResponseEntity<Map<String, Object>> franchiseRequestDetailUpdate(RequestDetailUpdateDto requestDetailUpdateDto, HttpServletRequest request) {
         log.info("franchiseRequestDetailUpdate 호출");
 
@@ -165,6 +164,8 @@ public class InspectService {
         if(!optionalRequestDetail.isPresent()){
             return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "수정 할 "+ ResponseErrorCode.TP022.getDesc(), null,null));
         }else{
+            log.info("수정할 세부테이블 아이디 : "+optionalRequestDetail.get().getId());
+
             Integer nowFdTotAmt = optionalRequestDetail.get().getFdTotAmt();
             Integer updateFdTotAmt = requestDetailUpdateDto.getFdTotAmt();
 
@@ -207,7 +208,16 @@ public class InspectService {
 //            log.info("requestDetailSave : "+requestDetailSave);
 
             if(nowFdTotAmt>updateFdTotAmt){
-                return ResponseEntity.ok(res.fail(ResponseErrorCode.TP023.getCode(), ResponseErrorCode.TP023.getDesc(), "문자","수정 금액(전/후) : "+nowFdTotAmt+" / "+updateFdTotAmt));
+                List<PaymentCencelDto> paymentCencelDtoList = paymentRepositoryCustom.findByRequestDetailCencelDataList(frCode, optionalRequestDetail.get().getFrId().getId());
+                if(paymentCencelDtoList.size() != 0){
+                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP023.getCode(), ResponseErrorCode.TP023.getDesc(), "문자","결제 취소를 해주시길 바랍니다."));
+                }else{
+                    // 결제내용이없을때 저장 즉, 접수취소 할 수 있는 상태이면 가격이 내려가도 저장할 수 있다.
+                    // 업데이트 실행 후 마스터테이블 수정 함수호출
+                    requestDetailRepository.save(requestDetailSave);
+                    // 만약 금액이 변동되었을 시 수정후, 마스터테이블도 업데이트하기 (결제취소됬을땐 예외)
+                    userService.requestDetailUpdateFromMasterUpdate(requestDetailUpdateDto.getFrNo(), frCode);
+                }
             }else if(nowFdTotAmt.equals(updateFdTotAmt)){
                 // 업데이트만 실행
                 requestDetailRepository.save(requestDetailSave);

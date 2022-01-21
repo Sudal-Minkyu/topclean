@@ -138,13 +138,16 @@ public class UserService {
         //디테일의 fdTotAmt를 합산한 결과가 frTotalAmount가 되고 frTotalAmount와 가져온 frPayAmount의 데이터를 비교하여 업데이트를 한다.
         List<RequestDetailAmtDto> requestDetailAmtDtos =  requestDetailRepositoryCustom.findByRequestDetailAmtList(frNo); // 세부테이블의 합계금액 리스트 호출
         int totalAmt = 0;
+        int normalAmt = 0;
         for(RequestDetailAmtDto requestDetailAmtDto : requestDetailAmtDtos){
+            normalAmt = normalAmt+requestDetailAmtDto.getFdNormalAmt();
             totalAmt = totalAmt+requestDetailAmtDto.getFdTotAmt();
         }
 
         // 마스터테이블 업데이트
         Optional<Request> optionalRequest = requestRepository.request(frNo,frCode);
         if(optionalRequest.isPresent()){
+            optionalRequest.get().setFrNormalAmount(normalAmt);
             optionalRequest.get().setFrTotalAmount(totalAmt);
             optionalRequest.get().setFrUncollectYn("Y");
             requestRepository.save(optionalRequest.get());

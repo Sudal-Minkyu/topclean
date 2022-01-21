@@ -1,9 +1,6 @@
 package com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 /**
  * @author Minkyu
@@ -11,7 +8,7 @@ import lombok.Setter;
  * Time :
  * Remark : Toppos 가맹점 접수세부 통합조회용 Dto
  */
-@Setter
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -51,115 +48,5 @@ public class RequestDetailUpdateDto {
     private Integer fdWaterRepellent; // 발수가공요금
     private Integer fdStarch; // 풀먹임 요금
 
-    public Long getFdId() {
-        return fdId;
-    }
-
-    public String getFrNo() {
-        return frNo;
-    }
-
-    public String getFdColor() {
-        return fdColor;
-    }
-
-    public String getFdPattern() {
-        return fdPattern;
-    }
-
-    public String getFdPriceGrade() {
-        return fdPriceGrade;
-    }
-
-    public Integer getFdOriginAmt() {
-        return fdOriginAmt;
-    }
-
-    public Integer getFdNormalAmt() {
-        return fdNormalAmt;
-    }
-
-    public Integer getFdAdd2Amt() {
-        return fdAdd2Amt;
-    }
-
-    public String getFdAdd2Remark() {
-        return fdAdd2Remark;
-    }
-
-    public Integer getFdPollution() {
-        return fdPollution;
-    }
-
-    public String getFdDiscountGrade() {
-        return fdDiscountGrade;
-    }
-
-    public Integer getFdDiscountAmt() {
-        return fdDiscountAmt;
-    }
-
-    public Integer getFdQty() {
-        return fdQty;
-    }
-
-    public Integer getFdRequestAmt() {
-        return fdRequestAmt;
-    }
-
-    public String getFdSpecialYn() {
-        return fdSpecialYn;
-    }
-
-    public Integer getFdTotAmt() {
-        return fdTotAmt;
-    }
-
-    public String getFdRemark() {
-        return fdRemark;
-    }
-
-    public String getFdRetryYn() {
-        return fdRetryYn;
-    }
-
-    public String getFdUrgentYn() {
-        return fdUrgentYn;
-    }
-
-    public Integer getFdPressed() {
-        return fdPressed;
-    }
-
-    public Integer getFdAdd1Amt() {
-        return fdAdd1Amt;
-    }
-
-    public String getFdAdd1Remark() {
-        return fdAdd1Remark;
-    }
-
-    public Integer getFdRepairAmt() {
-        return fdRepairAmt;
-    }
-
-    public String getFdRepairRemark() {
-        return fdRepairRemark;
-    }
-
-    public Integer getFdWhitening() {
-        return fdWhitening;
-    }
-
-    public Integer getFdPollutionLevel() {
-        return fdPollutionLevel;
-    }
-
-    public Integer getFdWaterRepellent() {
-        return fdWaterRepellent;
-    }
-
-    public Integer getFdStarch() {
-        return fdStarch;
-    }
+    private String frRefType; // 접수타입(01:일반, 02:무인보관함, 03:배송APP)
 }
