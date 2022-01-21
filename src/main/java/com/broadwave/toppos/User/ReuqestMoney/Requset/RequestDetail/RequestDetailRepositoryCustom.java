@@ -15,9 +15,11 @@ public interface RequestDetailRepositoryCustom {
     List<RequestDetailAmtDto> findByRequestDetailAmtList(String frNo);
     List<RequestDetailSearchDto> requestDetailSearch(String frCode, Long bcId, String searchTag, String filterCondition, String filterFromDt, String filterToDt);
 
-    List<RequestDetailCloseListDto> findByRequestDetailCloseList(String frCode);
-    List<RequestDetailFranchiseInListDto> findByRequestDetailFranchiseInList(String frCode);
-    List<RequestDetailReturnListDto> findByRequestDetailReturnList(String frCode);
+    List<RequestDetailCloseListDto> findByRequestDetailCloseList(String frCode); // 수기마감
+    List<RequestDetailFranchiseInListDto> findByRequestDetailFranchiseInList(String frCode); // 가맹점입고
+    List<RequestDetailReturnListDto> findByRequestDetailReturnList(String frCode); // 지사반송
+    List<RequestDetailForceListDto> findByRequestDetailForceList(String frCode); // 가맹점강제입고
 
     List<RequestDetailUncollectDto> findByRequestDetailUncollectList(String frCode, Long frId);
+
 }

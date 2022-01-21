@@ -400,4 +400,56 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         return query.fetch();
     }
 
+    // 가맹접강제입고 querydsl
+    public List<RequestDetailForceListDto> findByRequestDetailForceList(String frCode){
+
+        QRequestDetail requestDetail = QRequestDetail.requestDetail;
+        QRequest request = QRequest.request;
+
+        QItemGroup itemGroup = QItemGroup.itemGroup;
+        QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
+        QItem item = QItem.item;
+
+        JPQLQuery<RequestDetailForceListDto> query = from(requestDetail)
+                .innerJoin(request).on(requestDetail.frId.eq(request))
+                .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
+                .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
+                .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
+                .where(requestDetail.frId.frCode.eq(frCode).and(requestDetail.fdCancel.eq("N")).and(requestDetail.fdState.eq("S7")))
+                .select(Projections.constructor(RequestDetailForceListDto.class,
+                        requestDetail.id,
+                        requestDetail.fdS4Dt,
+                        request.bcId.bcName,
+                        requestDetail.fdTag,
+
+                        requestDetail.fdColor,
+                        itemGroup.bgName,
+                        itemGroupS.bsName,
+                        item.biName,
+
+                        requestDetail.fdPriceGrade,
+                        requestDetail.fdRetryYn,
+                        requestDetail.fdPressed,
+                        requestDetail.fdAdd1Amt,
+                        requestDetail.fdAdd1Remark,
+                        requestDetail.fdRepairAmt,
+                        requestDetail.fdRepairRemark,
+                        requestDetail.fdWhitening,
+                        requestDetail.fdPollution,
+                        requestDetail.fdWaterRepellent,
+                        requestDetail.fdStarch,
+                        requestDetail.fdUrgentYn,
+
+                        requestDetail.fdTotAmt,
+                        requestDetail.fdRemark,
+
+                        request.frYyyymmdd,
+                        requestDetail.fdS2Dt
+                ));
+
+        query.orderBy(requestDetail.id.asc());
+
+        return query.fetch();
+    }
+
 }

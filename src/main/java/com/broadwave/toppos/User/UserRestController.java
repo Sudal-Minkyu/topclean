@@ -824,6 +824,12 @@ public class UserRestController {
         return receiptStateService.franchiseReceiptReturnList(request);
     }
 
+    //  가맹점강제입고 - 세부테이블 강제출고상태 리스트
+    @GetMapping("franchiseReceiptForceList")
+    public ResponseEntity<Map<String,Object>> franchiseReceiptForceList(HttpServletRequest request){
+        return receiptStateService.franchiseReceiptForceList(request);
+    }
+
 //@@@@@@@@@@@@@@@@@@@@@ 가맹점 미수관리 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     // 미수관리페이지 - 고객검색 리스트 호출
     @GetMapping("franchiseUncollectCustomerList")

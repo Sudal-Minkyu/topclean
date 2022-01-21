@@ -184,7 +184,7 @@ public class UncollectService {
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
-    // 미수관리페이지 - 선택한 미수금 결제할 접수리스트 호출
+    // 미수관리페이지 - 선택한 미수금 결제할 접수 리스트 호출
     public ResponseEntity<Map<String, Object>> franchiseUncollectPayRequestList(List<Long> frIdList, HttpServletRequest request) {
         log.info("franchiseUncollectPayRequestList 호출");
         AjaxResponse res = new AjaxResponse();
