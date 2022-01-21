@@ -103,7 +103,7 @@
                             <div class="unpaid-pop__period">
                                 <div class="c-select">
                                     <select id="payMonth">
-                                        <option>일시불</option>
+                                        <option value="0">일시불</option>
                                     </select>
                                 </div>
                             </div>
@@ -132,6 +132,10 @@
 				<li><button class="c-button c-button--dark" id="confirmPayment">결제하기</button></li>
 			</ul>
 		</div>
+    </div>
+
+    <div id ="payStatus" style="position: absolute; left: 0; top: 0; height: 1024px; width: 1280px;
+        z-index: 100; background-color: transparent; display: none;" >
     </div>
 </div>
 </html>
