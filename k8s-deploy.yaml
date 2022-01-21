@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: toppos-deployment
+  labels:
+    app: toppos
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: toppos
+  template:
+    metadata:
+      labels:
+        app: toppos
+    spec:
+      containers:
+        - name: toppos
+          image: CONTAINER_IMAGE_TAG
+          ports:
+            - containerPort: 8020
+              name: toppos-port
+              protocol: TCP
+          resources:
+            requests:
+              memory: "4"
+              cpu: "2"
+          env:
+            - name: TOPPOS_S3_ACCESS_ID
+              value: xxxxx
+            - name: TOPPOS_S3_ACCESS_KEY
+              value: xxxxx
+            - name: TOPPOS_AWS_REGION
+              value: ap-northeast-2
+            - name: TOPPOS_AWS_S3_BUCKET
+              value: xxxxx
+            - name: TOPPOS_AWS_S3_BUCKET_URL
+              value: https://xxxxx
+            - name: TOPPOS_FILEUPLOAD_URL
+              value: /tmp
+            - name: TOPPOS_DATASOURCE_HOST
+              value: xxxxx
+            - name: TOPPOS_API_PROTOCOL
+              value: http
+            - name: TOPPOS_DATASOURCE_PORT
+              value: "3399"
+            - name: TOPPOS_DATASOURCE_DBNAME
+              value: xxxxx
+            - name: TOPPOS_DATASOURCE_USERNAME
+              value: xxxxx
+            - name: TOPPOS_DATASOURCE_PASSWORD
+              value: xxxxx
