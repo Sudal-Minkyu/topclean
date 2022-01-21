@@ -527,6 +527,8 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
 
         query.orderBy(requestDetail.id.asc()).groupBy(requestDetail);
 
+        query.where(requestDetail.fdState.eq("S5").or(requestDetail.fdState.eq("S8")));
+
         if(bcId != null){
             query.where(request.bcId.bcId.eq(bcId));
         }
