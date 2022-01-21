@@ -1,4 +1,5 @@
 /logs/
+/src/main/resources/static/assets/js/AUIGrid/AUIGridLicense.js
 HELP.md
 /target/
 !.mvn/wrapper/maven-wrapper.jar
