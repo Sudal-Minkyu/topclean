@@ -21,7 +21,7 @@ const dtos = {
         },
         결제성공후: {
             frIdList: "", // 배열로 가는 frId 번호들
-            totGetAmt: "", // 위 frId의 결제된 총 미수금액
+            fpRealAmt: "", // 위 frId의 결제된 총 미수금액
             fpType: "",
             fpMonth: "",
             fpCatApprovalno: "",
@@ -114,7 +114,7 @@ const urls = {
     customersUncollectedList: "/api/user/franchiseUncollectRequestList", // 선택 고객 미수 마스터
     uncollectedListDetail: "/api/user/franchiseUncollectRequestDetailList", // 선택 고객 미수 세부
     setupPaymentPop: "/api/user/franchiseUncollectPayRequestList",
-    sendPaidInfo: "",
+    sendPaidInfo: "/api/user/franchiseUncollectPay",
 
 }
 
@@ -165,9 +165,9 @@ const comms = {
     },
     sendPaidInfo(paidInfo) {
         console.log(paidInfo);
-        // CommonUI.ajax(urls.sendPaidInfo, "MAPPER", paidInfo, function(res) {
-        //     console.log(res)
-        // });
+        CommonUI.ajax(urls.sendPaidInfo, "MAPPER", paidInfo, function(res) {
+            console.log(res)
+        });
     }
 };
 
@@ -617,7 +617,7 @@ function uncollectPaymentStageTwo(paymentData, creditData = {}) {
 
     const paidInfo = {
         frIdList: frIdList,
-        totGetAmt: paymentData.totalAmount,
+        fpRealAmt: paymentData.totalAmount,
         fpType: paymentData.fpType,
         fpMonth: paymentData.month,
         fpCatApprovalno: creditData.APPROVALNO,
