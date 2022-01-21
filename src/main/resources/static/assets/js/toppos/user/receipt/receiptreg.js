@@ -190,11 +190,6 @@ let checkNum = "1";
 /* 상품 주문을 받을 때 적용되는 가격 정보 데이터를 API로 불러와 미리 저장 */
 let priceData;
 
-const fdColorCode = {
-    C00: "#D4D9E1", C01: "#D4D9E1", C02: "#3F3C32", C03: "#D7D7D7", C04: "#F54E50", C05: "#FB874B",
-    C06: "#F1CE32", C07: "#349A50", C08: "#55CAB7", C09: "#398BE0", C10: "#DE9ACE", C11: "#FF9FB0",
-}
-
 let tempItem;
 
 /* 선택된 고객이나 세탁물(대분류)의 이용을 위함  */
@@ -404,7 +399,7 @@ gridColumnLayout[0] = [
             type : "TemplateRenderer",
         },
         labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
-            return `<div class="colorSquare" style="background-color: ${fdColorCode['C'+value]}"></div>`;
+            return `<div class="colorSquare" style="background-color: ${CommonData.name.fdColorCode[item.fdColor]}"></div>`;
         }
     }, {
         dataField: "fdRemark",

@@ -104,6 +104,7 @@ const dto = {
             redBtn2: "d",
             redBtn3: "d",
             totAddCost: "d",
+            frRefType: "sr",
             frEstimateDate: "d",
             fpCancelYn: "s",
         },
@@ -307,6 +308,7 @@ const ajax = {
     },
 
     franchiseRequestDetailSearch(condition) {
+        data.currentCondition = condition;
         dv.chk(condition, dto.send.franchiseRequestDetailSearch, "메인그리드 필터링 조건 보내기");
         CommonUI.ajax(grid.s.url.read[0], "GET", condition, function(res) {
             const gridData = res.sendData.gridListData;
@@ -913,16 +915,7 @@ const grid = {
         },
 
         updateCurrentModifyRequest() {
-            data.currentRequest.fdColor = $("input[name='fdColor']:checked").val();
-            data.currentRequest.fdPattern = $("input[name='fdPattern']:checked").val();
-            data.currentRequest.fdPriceGrade = $("input[name='fdPriceGrade']:checked").val();
-            data.currentRequest.fdDiscountGrade = $("input[name='fdDiscountGrade']:checked").val();
-            data.currentRequest.fdRemark = $("#fdRemark").val();
-            data.currentRequest.frEstimateDate = data.initialData.etcData.frEstimateDate.replace(/[^0-9]/g, "");
-            data.currentRequest.fdSpecialYn = $("#fdSpecialYn").is(":checked") ? "Y" : "N";
-            data.currentRequest.fdUrgentYn = $("#fdUrgentYn").is(":checked") ? "Y" : "N";
-
-            AUIGrid.updateRowsById(grid.s.id[0], data.currentRequest);
+            ajax.franchiseRequestDetailSearch(data.currentCondition);
         },
 
     },
@@ -999,6 +992,7 @@ const grid = {
 /* dto가 아닌 일반적인 데이터들 정의 */
 const data = {
     initialData: {},
+    currentCondition: {},
     selectedCustomer: {
         bcId: null,
     },
@@ -1560,6 +1554,15 @@ function onAddOrder() {
         return false;
     }
 
+    data.currentRequest.fdColor = $("input[name='fdColor']:checked").val();
+    data.currentRequest.fdPattern = $("input[name='fdPattern']:checked").val();
+    data.currentRequest.fdPriceGrade = $("input[name='fdPriceGrade']:checked").val();
+    data.currentRequest.fdDiscountGrade = $("input[name='fdDiscountGrade']:checked").val();
+    data.currentRequest.fdRemark = $("#fdRemark").val();
+    data.currentRequest.frEstimateDate = data.initialData.etcData.frEstimateDate.replace(/[^0-9]/g, "");
+    data.currentRequest.fdSpecialYn = $("#fdSpecialYn").is(":checked") ? "Y" : "N";
+    data.currentRequest.fdUrgentYn = $("#fdUrgentYn").is(":checked") ? "Y" : "N";
+    
     ajax.saveModifiedOrder(data.currentRequest);
 }
 
