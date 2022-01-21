@@ -17,7 +17,7 @@ public interface InspeotRepositoryCustom {
     List<InspeotListDto> findByInspeotList(Long fdId, String type);
     List<InspeotDto> findByInspeotDtoList(List<Long> fiId);
 
-    List<InspeotYnDto> findByInspeotClosingList(List<Long> fdIdList);
+    List<InspeotYnDto> findByInspeotStateList(List<Long> fdIdList, String type);
     List<InspeotYnDto> findByInspeotYnF(List<Long> fdIdList);
     List<InspeotYnDto> findByInspeotYnB(List<Long> fdIdList);
 

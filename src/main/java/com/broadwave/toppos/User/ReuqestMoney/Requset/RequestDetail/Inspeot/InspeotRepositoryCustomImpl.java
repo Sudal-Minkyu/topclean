@@ -73,16 +73,23 @@ public class InspeotRepositoryCustomImpl extends QuerydslRepositorySupport imple
 
     // 수기마감 - 검품 미확인("1")이거나, 고객거부상태("3")를 포함한 리스트 호출
     @Override
-    public List<InspeotYnDto> findByInspeotClosingList(List<Long> fdIdList){
+    public List<InspeotYnDto> findByInspeotStateList(List<Long> fdIdList, String type){
         QInspeot inspeot = QInspeot.inspeot;
 
         JPQLQuery<InspeotYnDto> query = from(inspeot)
-                .where(inspeot.fdId.id.in(fdIdList).and(inspeot.fiCustomerConfirm.eq("1")).and(inspeot.fiCustomerConfirm.eq("3")))
                 .groupBy(inspeot.fdId.id)
-
                 .select(Projections.constructor(InspeotYnDto.class,
                         inspeot.fdId.id
                 ));
+//.and(inspeot.fiCustomerConfirm.eq("1")).and(inspeot.fiCustomerConfirm.eq("3")).and(inspeot.fiType.eq("B")
+        if(type.equals("1")){
+            query.where(inspeot.fdId.id.in(fdIdList).and(inspeot.fiCustomerConfirm.eq("1")).and(inspeot.fiCustomerConfirm.eq("3")));
+        }else{
+            query.where(inspeot.fdId.id.in(fdIdList));
+            query.where(inspeot.fiType.eq("B"));
+            query.where(inspeot.fiCustomerConfirm.eq("3").or(inspeot.fiCustomerConfirm.eq("1")));
+        }
+
 
         query.orderBy(inspeot.id.desc());
 

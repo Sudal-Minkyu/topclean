@@ -44,7 +44,6 @@
                     <option value="1">고객명</option>
                     <option value="2">전화번호</option>
 					<option value="3">주소</option>
-					<option value="4">택번호</option>
                 </select>
 			</div>
 			
@@ -130,8 +129,27 @@
 		<div id="grid_laundryList" style="height: 654px;"></div>
 	</div>
 
+
+	<!-- 고객선택 팝업 -->
+    <div class="pop" id="customerListPop">
+        <div class="pop__box">
+            <div class="pop__article">
+                <h3 class="pop__article-header">고객선택</h3>
+                <div class="pop__aricle-content">
+                    <div id="grid_customerList"></div>
+                </div>
+            </div>
+
+            <ul class="pop__console">
+                <li><button class="c-button pop__close">닫기</button></li>
+                <li><button class="c-button c-button--dark" id="selectCustomer">선택</button></li>
+            </ul>
+        </div>
+    </div>
+
+
 	<!-- 무인 보관함 출고 처리 팝업 -->
-	<div class="pop">
+	<div class="pop" id="sendAutoBoxPop">
 		<div class="pop__box">
 			<div class="pop__article">
 				<h3 class="pop__article-header">무인 보관함 출고 처리</h3>
@@ -199,8 +217,8 @@
 			</div>
 			
 			<ul class="pop__console">
-				<li><button class="c-button pop__close" onclick="onCloseSelectCustomer()">닫기</button></li>
-				<li><button class="c-button c-button--dark pop__close" onclick="onSelectCustomer()">선택</button></li>
+				<li><button class="c-button pop__close">닫기</button></li>
+				<li><button class="c-button c-button--dark pop__close">선택</button></li>
 			</ul>
 		</div>
 	</div>

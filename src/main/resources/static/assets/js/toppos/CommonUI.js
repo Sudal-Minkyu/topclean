@@ -154,6 +154,7 @@ class CommonUIClass {
                         url: url,
                         type: 'GET',
                         cache: false,
+                        traditional: true,
                         data: data,
                         error: function (req) {
                             ajaxErrorMsg(req);

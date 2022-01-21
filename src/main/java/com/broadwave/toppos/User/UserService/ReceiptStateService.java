@@ -8,6 +8,7 @@ import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.Insp
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.PhotoRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.*;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.RequestDetailCloseListDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.RequestDetailForceListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.RequestDetailFranchiseInListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.RequestDetailReturnListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestRepository;
@@ -144,7 +145,7 @@ public class ReceiptStateService {
         for(RequestDetailCloseListDto requestDetailCloseListDto : requestDetailCloseListDtos){
             fdIdList.add(requestDetailCloseListDto.getFdId());
         }
-        List<InspeotYnDto> inspeotYnDtos = inspeotRepositoryCustom.findByInspeotClosingList(fdIdList);
+        List<InspeotYnDto> inspeotYnDtos = inspeotRepositoryCustom.findByInspeotStateList(fdIdList,"1");
 
         data.put("gridListData",requestDetailCloseListDtos);
         data.put("removeFrId",inspeotYnDtos);
@@ -190,8 +191,33 @@ public class ReceiptStateService {
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
+    //  가맹점강제입고 - 세부테이블 강제출고상태 리스트
+    public ResponseEntity<Map<String, Object>> franchiseReceiptForceList(HttpServletRequest request) {
+        log.info("franchiseReceiptForceList 호출");
 
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
 
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
+        log.info("현재 접속한 가맹점 코드 : "+frCode);
+
+        // 가맹점강제입고 페이지에 보여줄 리스트 호출
+        List<RequestDetailForceListDto> requestDetailForceListDtos = requestDetailRepositoryCustom.findByRequestDetailForceList(frCode);
+        List<Long> fdIdList = new ArrayList<>();
+        for(RequestDetailForceListDto requestDetailForceListDto : requestDetailForceListDtos){
+            fdIdList.add(requestDetailForceListDto.getFdId());
+        }
+//        log.info("fdIdList : "+fdIdList);
+        List<InspeotYnDto> inspeotYnDtos = inspeotRepositoryCustom.findByInspeotStateList(fdIdList,"2");
+//        log.info("inspeotYnDtos : "+inspeotYnDtos);
+
+        data.put("gridListData",requestDetailForceListDtos);
+        data.put("checkFdId",inspeotYnDtos);
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
 
 
 //    //  통합조회용 - 접수세부 테이블
