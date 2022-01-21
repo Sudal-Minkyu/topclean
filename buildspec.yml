@@ -13,9 +13,11 @@ phases:
       java: corretto8
   build:
     commands:
+      - echo Started to replace setting-files..
+      - cp /src/main/resources/static/assets/js/AUIGrid/AUIGridLicense-release.js /src/main/resources/static/assets/js/AUIGrid/AUIGridLicense.js
+      - cp /src/main/resources/application-release.properties /src/main/resources/application.properties
       - echo Started build phase..
       - mvn clean package
-      - cp xxx xxx
       - echo Building the Docker image...
       - docker build -t toppos .
       - docker tag toppos:latest 681810644781.dkr.ecr.ap-northeast-2.amazonaws.com/toppos:$CODEBUILD_RESOLVED_SOURCE_VERSION
@@ -30,28 +32,28 @@ phases:
       - echo Push the latest image to cluster
       - REPOSITORY_URI=681810644781.dkr.ecr.ap-northeast-2.amazonaws.com/toppos
       - sed -i 's@CONTAINER_IMAGE_TAG@'"$REPOSITORY_URI:$CODEBUILD_RESOLVED_SOURCE_VERSION"'@' k8s-deploy.yaml
-      - DB_URL=${NEWDEAL_DATASOURCE_HOST}
-      - sed -i 's@NEWDEAL_DATASOURCE_HOST_TAG@'"$DB_URL"'@' k8s-deploy.yaml
-      - DB_PORT=${NEWDEAL_DATASOURCE_PORT}
-      - sed -i 's@NEWDEAL_DATASOURCE_PORT_TAG@'"$DB_PORT"'@' k8s-deploy.yaml
-      - DB_NAME=${NEWDEAL_DATASOURCE_DBNAME}
-      - sed -i 's@NEWDEAL_DATASOURCE_DBNAME_TAG@'"$DB_NAME"'@' k8s-deploy.yaml
-      - DB_USER=${NEWDEAL_DATASOURCE_USERNAME}
-      - sed -i 's@NEWDEAL_DATASOURCE_USERNAME_TAG@'"$DB_USER"'@' k8s-deploy.yaml
-      - DB_PWD=${NEWDEAL_DATASOURCE_PASSWORD}
-      - sed -i 's@NEWDEAL_DATASOURCE_PASSWORD_TAG@'"$DB_PWD"'@' k8s-deploy.yaml
-      - URL_FRONT=${NEWDEAL_API_FRONT_URL}
-      - sed -i 's@NEWDEAL_API_FRONT_URL_TAG@'"$URL_FRONT"'@' k8s-deploy.yaml
-      - URL_SECURITY=${NEWDEAL_API_SECURITY_URL}
-      - sed -i 's@NEWDEAL_API_SECURITY_URL_TAG@'"$URL_SECURITY"'@' k8s-deploy.yaml
-      - URL_BACKEND=${NEWDEAL_API_BACKEND_URL}
-      - sed -i 's@NEWDEAL_API_BACKEND_URL_TAG@'"$URL_BACKEND"'@' k8s-deploy.yaml
-      - URL_BACKEND_PROTOCOL=${NEWDEAL_API_BACKEND_PROTOCOL}
-      - sed -i 's@NEWDEAL_API_BACKEND_PROTOCOL_TAG@'"$URL_BACKEND_PROTOCOL"'@' k8s-deploy.yaml
-      - URL_FRONT_PROTOCOL=${NEWDEAL_API_FRONT_PROTOCOL}
-      - sed -i 's@NEWDEAL_API_FRONT_PROTOCOL_TAG@'"$URL_FRONT_PROTOCOL"'@' k8s-deploy.yaml
-      - URL_SECURITY_PROTOCOL=${NEWDEAL_API_SECURITY_PROTOCOL}
-      - sed -i 's@NEWDEAL_API_SECURITY_PROTOCOL_TAG@'"$URL_SECURITY_PROTOCOL"'@' k8s-deploy.yaml
-      - FILEUPLOAD_URL=${NEWDEAL_FILEUPLOAD_URL}
-      - sed -i 's@NEWDEAL_FILEUPLOAD_URL_TAG@'"$FILEUPLOAD_URL"'@' k8s-deploy.yaml
+      - S3_ACCESS_ID=${TOPPOS_S3_ACCESS_ID}
+      - sed -i 's@TOPPOS_S3_ACCESS_ID_TAG@'"$S3_ACCESS_ID"'@' k8s-deploy.yaml
+      - S3_ACCESS_KEY=${TOPPOS_S3_ACCESS_KEY}
+      - sed -i 's@TOPPOS_S3_ACCESS_KEY_TAG@'"$S3_ACCESS_KEY"'@' k8s-deploy.yaml
+      - AWS_REGION=${TOPPOS_AWS_REGION}
+      - sed -i 's@TOPPOS_AWS_REGION_TAG@'"$AWS_REGION"'@' k8s-deploy.yaml
+      - AWS_S3_BUCKET=${TOPPOS_AWS_S3_BUCKET}
+      - sed -i 's@TOPPOS_AWS_S3_BUCKET_TAG@'"$AWS_S3_BUCKET"'@' k8s-deploy.yaml
+      - AWS_S3_BUCKET_URL=${TOPPOS_AWS_S3_BUCKET_URL}
+      - sed -i 's@TOPPOS_AWS_S3_BUCKET_URL_TAG@'"$AWS_S3_BUCKET_URL"'@' k8s-deploy.yaml
+      - FILEUPLOAD_URL=${TOPPOS_FILEUPLOAD_URL}
+      - sed -i 's@TOPPOS_FILEUPLOAD_URL_TAG@'"$FILEUPLOAD_URL"'@' k8s-deploy.yaml
+      - DATASOURCE_HOST=${TOPPOS_DATASOURCE_HOST}
+      - sed -i 's@TOPPOS_DATASOURCE_HOST_TAG@'"$DATASOURCE_HOST"'@' k8s-deploy.yaml
+      - API_PROTOCOL=${TOPPOS_API_PROTOCOL}
+      - sed -i 's@TOPPOS_API_PROTOCOL_TAG@'"$API_PROTOCOL"'@' k8s-deploy.yaml
+      - DATASOURCE_PORT=${TOPPOS_DATASOURCE_PORT}
+      - sed -i 's@TOPPOS_DATASOURCE_PORT_TAG@'"$DATASOURCE_PORT"'@' k8s-deploy.yaml
+      - DATASOURCE_DBNAME=${TOPPOS_DATASOURCE_DBNAME}
+      - sed -i 's@TOPPOS_DATASOURCE_DBNAME_TAG@'"$DATASOURCE_DBNAME"'@' k8s-deploy.yaml
+      - DATASOURCE_USERNAME=${TOPPOS_DATASOURCE_USERNAME}
+      - sed -i 's@TOPPOS_DATASOURCE_USERNAME_TAG@'"$DATASOURCE_USERNAME"'@' k8s-deploy.yaml
+      - DATASOURCE_PASSWORD=${TOPPOS_DATASOURCE_PASSWORD}
+      - sed -i 's@TOPPOS_DATASOURCE_PASSWORD_TAG@'"$DATASOURCE_PASSWORD"'@' k8s-deploy.yaml
       - kubectl apply -f k8s-deploy.yaml
