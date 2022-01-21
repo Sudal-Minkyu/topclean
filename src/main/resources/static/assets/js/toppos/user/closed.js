@@ -77,6 +77,11 @@ const comms = {
             alertSuccess("수기마감 완료");
             grids.f.clearData();
             comms.getClosedList();
+
+            $('#checkedItems').val(0);
+            $('#totalAmount').val(0);
+            $('#fastItems').val(0);
+            $('#retryItems').val(0);
         })
     }
 };

@@ -11,7 +11,7 @@ const dtos = {
         }
     },
     receive: {
-        프랜차이즈강제입고: {
+        franchiseStateChange: {
             fdId: "nr",
             fdS4Dt: "sr", 
             bcName: "sr",
@@ -52,7 +52,39 @@ const urls = {
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
+    getForceList() {
+        CommonUI.ajax(urls.getForceList, "GET", false, function (res) {
+            const data = res.sendData;
+            const dataLength = data.gridListData.length;
+            let fastItemCount = 0;
+            let retryItemCount = 0;
+            let totalAmount = 0;
+            console.log(data);
     
+            for (let i = 0; i < data.gridListData.length; i++) {
+                // 접수총액
+                totalAmount += data.gridListData[i].fdTotAmt;
+                // 급세탁건수
+                if (data.gridListData[i].fdUrgentYn == "Y") {
+                    fastItemCount = fastItemCount + 1;
+                }
+                // 재세탁건수
+                if (data.gridListData[i].fdRetryYn == "Y") {
+                    retryItemCount = retryItemCount + 1;
+                }
+            }
+            console.log(data.gridListData);
+    
+            dv.chk(data.gridListData, dtos.receive.franchiseStateChange, '강제입고 항목 받아오기');
+            grids.f.setData(0, data.gridListData);
+            
+            $('#totalNum').text(dataLength);
+            $('#totalItems').val(dataLength);
+            $('#totalAmount').val(totalAmount.toLocaleString());
+            $('#fastItems').val(fastItemCount);
+            $('#retryItems').val(retryItemCount);
+        });
+    }
 };
 
 /* .s : AUI 그리드 관련 설정들
@@ -80,16 +112,20 @@ const grids = {
                 {
                     dataField: "fdS4Dt",
                     headerText: "자사출고일",
+                    width: 100,
                 }, {
                     dataField: "bcName",
                     headerText: "고객명",
+                    width: 80,
                 },
                 {
                     dataField: "fdTag",
                     headerText: "택번호",
+                    width: 90,
                 }, {
                     dataField: "",
                     headerText: "상품명",
+                    width: 140,
                     style: "color_and_name",
                     renderer : {
                         type : "TemplateRenderer",
@@ -104,9 +140,11 @@ const grids = {
                 {
                     dataField: "",
                     headerText: "반품유형",
+                    width: 100,
                 }, {
                     dataField: "",
                     headerText: "처리내역",
+                    width: 100,
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
                         return CommonUI.toppos.processName(item);
                     },
@@ -114,9 +152,11 @@ const grids = {
                 {
                     dataField: "fdTotAmt",
                     headerText: "접수금액",
+                    width: 120,
                 }, {
                     dataField: "fdUrgentYn",
                     headerText: "급세탁",
+                    width: 60,
                 },
                 {
                     dataField: "fdRemark",
@@ -124,9 +164,11 @@ const grids = {
                 }, {
                     dataField: "frYyyymmdd",
                     headerText: "고객접수일",
+                    width: 100,
                 }, {
                     dataField: "fdS2Dt",
                     headerText: "자사입고일",
+                    width: 100,
                 },
             ];
 
@@ -167,7 +209,12 @@ const grids = {
         // 그리드 체크된 로우
         getCheckedItems(numOfGrid) {
             return AUIGrid.getCheckedRowItems(grids.s.id[numOfGrid]);
-        }
+        },
+
+        // 그리드 데이터 클리어
+        clearData(numOfGrid) {
+			AUIGrid.clearGridData(grids.s.id[numOfGrid]);
+		},
     },
 
     t: {
@@ -184,31 +231,19 @@ const grids = {
 const trigs = {
     s: { // 이벤트 설정
         basicTrigger() {
-            // $('.aui-checkbox').on('click', function () {
-            //     const checkedItems = grids.f.getCheckedItems(0);
-            //     const checkedLength = checkedItems.length;
-            //     let totalAmount = 0;
-            //     let fastItemCount = 0;
-            //     let retryItemCount = 0;
+            $('.aui-checkbox').on('click', function () {
+                const checkedItems = grids.f.getCheckedItems(0);
+                const checkedLength = checkedItems.length;
+                let totalAmount = 0;
                 
-            //     checkedItems.forEach(checkedItem => {
-            //         // 접수총액
-            //         totalAmount += checkedItem.item.fdTotAmt;
-            //         // 급세탁건수
-            //         if (checkedItem.item.fdUrgentYn == "Y") {
-            //             fastItemCount = fastItemCount + 1;
-            //         }
-            //         // 재세탁건수
-            //         if (checkedItem.item.fdRetryYn == "Y") {
-            //             retryItemCount = retryItemCount + 1;
-            //         }
-            //     });
+                checkedItems.forEach(checkedItem => {
+                    // 접수총액
+                    totalAmount += checkedItem.item.fdTotAmt;
+                });
 
-            //     $('#checkedItems').val(checkedLength);
-            //     $('#totalAmount').val(totalAmount.toLocaleString());
-            //     $('#fastItems').val(fastItemCount);
-            //     $('#retryItems').val(retryItemCount);
-            // });
+                $('#selectItems').val(checkedLength);
+                $('#selectAmount').val(totalAmount.toLocaleString());
+            });
         }
     },
     r: { // 이벤트 해제
@@ -234,6 +269,7 @@ function onPageLoad() {
     grids.f.create();
 
     trigs.s.basicTrigger();
+    comms.getForceList();
 
     /* 생성된 그리드에 기본적으로 필요한 이벤트들을 적용한다. */
     // grids.e.basicEvent();
