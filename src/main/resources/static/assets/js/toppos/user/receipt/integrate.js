@@ -1237,6 +1237,7 @@ const event = {
 
                 if(targetRowsItem.length) {
                     ajax.deleteInspection(refinedTargetList, targetRowsItem[0].fdId);
+                    grid.f.resetChangedStatus(3);
                 }
             });
 
