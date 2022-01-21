@@ -33,7 +33,10 @@ const dtos = {
         },
         
         디테일리스트: {
-            frRefType: "sr", // 1월 19일 추가
+            bgName: "s",
+            bsName: "s",
+            biName: "s",
+            frRefType: "sr",
             bcName: "s", // 고객의 이름
             frYyyymmdd: "s", // 접수일자
             fdId: "n",
@@ -42,7 +45,6 @@ const dtos = {
             fdTag: "s",
             fdPreState: "s", // 1월 17일 추가
             fdState: "s",
-            biItemcode: "s",
             fdS2Dt: "s",
             fdS3Dt: "s",
             fdS4Dt: "s",
@@ -77,7 +79,6 @@ const dtos = {
             fdPollutionLevel: "n",
             fdWaterRepellent: "n",
             fdStarch: "n",
-            fpCancelYn: "sr",
         }
     }
 };
