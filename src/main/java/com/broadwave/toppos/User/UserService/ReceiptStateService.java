@@ -7,10 +7,7 @@ import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.*;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotYnDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.PhotoRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.*;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.RequestDetailCloseListDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.RequestDetailForceListDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.RequestDetailFranchiseInListDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.RequestDetailReturnListDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.*;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestRepository;
 import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoneyRepository;
 import com.broadwave.toppos.common.AjaxResponse;
@@ -215,6 +212,24 @@ public class ReceiptStateService {
 
         data.put("gridListData",requestDetailForceListDtos);
         data.put("checkFdId",inspeotYnDtos);
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
+    public ResponseEntity<Map<String, Object>> franchiseReceiptDeliveryList(Long bcId, HttpServletRequest request) {
+        log.info("franchiseReceiptDeliveryList 호출");
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
+        log.info("현재 접속한 가맹점 코드 : "+frCode);
+
+        // 세탁인도 페이지에 보여줄 리스트 호출
+        List<RequestDetailDeliveryDto> requestDetailDeliveryDtos = requestDetailRepositoryCustom.findByRequestDetailDeliveryList(frCode, bcId);
+        data.put("gridListData",requestDetailDeliveryDtos);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }

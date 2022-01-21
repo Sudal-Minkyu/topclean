@@ -14,7 +14,7 @@ const dtos = {
         },
 
         /* integrate 의 franchiseRequestDetailSearch와 유사한 dto 구성, 하지만 다른 조건 API */
-        디테일리스트: {
+        franchiseReceiptDeliveryList: {
             bcId: "n"
         },
     },
@@ -31,53 +31,37 @@ const dtos = {
             beforeUncollectMoney: "nr",
             saveMoney: "nr",
         },
-        
-        디테일리스트: {
+
+        franchiseReceiptDeliveryList: {
             frRefType: "sr", // 1월 19일 추가
             bcName: "s", // 고객의 이름
             frYyyymmdd: "s", // 접수일자
             fdId: "n",
-            frId: "n",
-            frNo: "s",
             fdTag: "s",
-            fdPreState: "s", // 1월 17일 추가
-            fdState: "s",
-            biItemcode: "s",
+            bgName: "s",
+            bsName: "s",
+            biName: "s",
             fdS2Dt: "s",
-            fdS3Dt: "s",
             fdS4Dt: "s",
             fdS5Dt: "s",
             fdS6Dt: "s",
-            fdCancel: "s",
-            fdCacelDt: "s",
+            fdState: "s",
             fdColor: "s",
-            fdPattern: "s",
+
             fdPriceGrade: "s",
-            fdOriginAmt: "n",
-            fdNormalAmt: "n",
             fdPollution: "n",
-            fdDiscountGrade: "s",
-            fdDiscountAmt: "n",
-            fdQty: "n",
-            fdRequestAmt: "n",
-            fdSpecialYn: "s",
             fdUrgentYn: "s",
-            fdTotAmt: "n",
-            fdRemark: "s",
-            fdEstimateDt: "s",
             fdRetryYn: "s",
             fdPressed: "n",
             fdAdd1Amt: "n",
             fdAdd1Remark: "s",
-            fdAdd2Amt: "n",
-            fdAdd2Remark: "s",
             fdRepairAmt: "n",
             fdRepairRemark: "s",
             fdWhitening: "n",
-            fdPollutionLevel: "n",
             fdWaterRepellent: "n",
             fdStarch: "n",
-            fpCancelYn: "sr",
+            fdTotAmt: "n",
+            fdRemark: "s"
         }
     }
 };

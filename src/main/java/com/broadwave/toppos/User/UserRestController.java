@@ -798,7 +798,7 @@ public class UserRestController {
 
 
 
-//@@@@@@@@@@@@@@@@@@@@@ 가맹점 수기마감, 가맹점입고, 지사반송, 가맹점강제입고 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+//@@@@@@@@@@@@@@@@@@@@@ 가맹점 수기마감, 가맹점입고, 지사반송, 가맹점강제입고, 세탁인도 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     //  접수테이블의 상태 변화 API - 수기마감페이지, 가맹점입고 페이지, 지사반송건전송 페이지, 세탁인도 페이지 공용함수
     @PostMapping("franchiseStateChange")
     public ResponseEntity<Map<String,Object>> franchiseStateChange(@RequestParam(value="fdIdList", defaultValue="") List<Long> fdIdList,
@@ -828,6 +828,12 @@ public class UserRestController {
     @GetMapping("franchiseReceiptForceList")
     public ResponseEntity<Map<String,Object>> franchiseReceiptForceList(HttpServletRequest request){
         return receiptStateService.franchiseReceiptForceList(request);
+    }
+
+    //  세탁인도 - 세부테이블 지사입고, 강제입고 상태 리스트
+    @GetMapping("franchiseReceiptDeliveryList")
+    public ResponseEntity<Map<String,Object>> franchiseReceiptDeliveryList(@RequestParam(value="bcId", defaultValue="") Long bcId, HttpServletRequest request){
+        return receiptStateService.franchiseReceiptDeliveryList(bcId, request);
     }
 
 //@@@@@@@@@@@@@@@@@@@@@ 가맹점 미수관리 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
