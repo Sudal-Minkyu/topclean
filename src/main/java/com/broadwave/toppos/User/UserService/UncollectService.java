@@ -1,7 +1,11 @@
 package com.broadwave.toppos.User.UserService;
 
 import com.broadwave.toppos.Aws.AWSS3Service;
+import com.broadwave.toppos.Head.Franohise.Franchise;
+import com.broadwave.toppos.Head.Franohise.FranchiseRepository;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
+import com.broadwave.toppos.User.Customer.Customer;
+import com.broadwave.toppos.User.Customer.CustomerRepository;
 import com.broadwave.toppos.User.Customer.CustomerRepositoryCustom;
 import com.broadwave.toppos.User.Customer.CustomerDtos.CustomerUncollectListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentRepository;
@@ -17,6 +21,7 @@ import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestRepositoryCustom;
 import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoneyRepository;
 import com.broadwave.toppos.common.AjaxResponse;
+import com.broadwave.toppos.common.ResponseErrorCode;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -25,10 +30,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Minkyu
@@ -48,6 +50,7 @@ public class UncollectService {
     private final ReceiptService receiptService;
     private final PaymentRepository paymentRepository;
     private final PaymentRepositoryCustom paymentRepositoryCustom;
+    private final FranchiseRepository franchiseRepository;
     private final PhotoRepository photoRepository;
     private final InspeotRepository inspeotRepository;
     private final InspeotRepositoryCustom inspeotRepositoryCustom;
@@ -57,18 +60,21 @@ public class UncollectService {
     private final RequestDetailRepositoryCustom requestDetailRepositoryCustom;
     private final SaveMoneyRepository saveMoneyRepository;
 
+    private final CustomerRepository customerRepository;
     private final CustomerRepositoryCustom customerRepositoryCustom;
 
     @Autowired
     public UncollectService(ModelMapper modelMapper, TokenProvider tokenProvider, UserService userService, AWSS3Service awss3Service, PhotoRepository photoRepository, ReceiptService receiptService,
-                            RequestRepositoryCustom requestRepositoryCustom,
+                            RequestRepositoryCustom requestRepositoryCustom, FranchiseRepository franchiseRepository, CustomerRepository customerRepository,
                             PaymentRepository paymentRepository, PaymentRepositoryCustom paymentRepositoryCustom, InspeotRepository inspeotRepository,
                             RequestRepository requestRepository, RequestDetailRepositoryCustom requestDetailRepositoryCustom, InspeotRepositoryCustom inspeotRepositoryCustom,
                             RequestDetailRepository requestDetailRepository, SaveMoneyRepository saveMoneyRepository, CustomerRepositoryCustom customerRepositoryCustom){
         this.modelMapper = modelMapper;
         this.inspeotRepository = inspeotRepository;
         this.requestRepositoryCustom = requestRepositoryCustom;
+        this.customerRepository = customerRepository;
         this.awss3Service = awss3Service;
+        this.franchiseRepository = franchiseRepository;
         this.receiptService = receiptService;
         this.tokenProvider = tokenProvider;
         this.userService = userService;
@@ -185,7 +191,7 @@ public class UncollectService {
     }
 
     // 미수관리페이지 - 선택한 미수금 결제할 접수 리스트 호출
-    public ResponseEntity<Map<String, Object>> franchiseUncollectPayRequestList(List<Long> frIdList, HttpServletRequest request) {
+    public ResponseEntity<Map<String, Object>> franchiseUncollectPayRequestList(List<Long> frIdList, Long bcId, HttpServletRequest request) {
         log.info("franchiseUncollectPayRequestList 호출");
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
@@ -201,23 +207,42 @@ public class UncollectService {
         log.info("현재 접속한 가맹점 코드 : "+frCode);
 //        log.info("소속된 지사 코드 : "+frbrCode);
 
-        List<RequestCustomerUnCollectDto> requestCustomerUnCollectDtos = requestRepositoryCustom.findByRequestUnCollectPayList(frIdList, frCode);
-        List<HashMap<String,Object>> uncollectListData = new ArrayList<>();
-        HashMap<String,Object> uncollectListInfo;
-        for (RequestCustomerUnCollectDto requestCustomerUnCollectDto: requestCustomerUnCollectDtos) {
-            uncollectListInfo = new HashMap<>();
-            uncollectListInfo.put("frId", requestCustomerUnCollectDto.getFrId());
-            uncollectListInfo.put("frYyyymmdd", requestCustomerUnCollectDto.getFrYyyymmdd());
-            uncollectListInfo.put("requestDetailCount", requestCustomerUnCollectDto.getRequestDetailCount());
-            uncollectListInfo.put("bgName", requestCustomerUnCollectDto.getBgName());
-            uncollectListInfo.put("bsName", requestCustomerUnCollectDto.getBsName());
-            uncollectListInfo.put("biName", requestCustomerUnCollectDto.getBiName());
-            uncollectListInfo.put("frTotalAmount", requestCustomerUnCollectDto.getFrTotalAmount());
-            uncollectListInfo.put("uncollectMoney", requestCustomerUnCollectDto.getFrTotalAmount()-requestCustomerUnCollectDto.getFrPayAmount());
-            uncollectListData.add(uncollectListInfo);
-        }
+        Optional<Customer> optionalCustomer = customerRepository.findByBcId(bcId);
+        Optional<Franchise> optionalFranchise = franchiseRepository.findByFrCode(frCode);
+        if(!optionalCustomer.isPresent() || !optionalFranchise.isPresent()){
+            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP022.getCode(), ResponseErrorCode.TP022.getDesc(),null, null ));
+        }else{
+            List<HashMap<String,Object>> payInfoData = new ArrayList<>();
+            HashMap<String,Object> payInfo = new HashMap<>();
+            payInfo.put("frCode", optionalFranchise.get().getFrCode());
+            payInfo.put("frName", optionalFranchise.get().getFrName());
+            payInfo.put("frBusinessNo", optionalFranchise.get().getFrBusinessNo());
+            payInfo.put("frRpreName", optionalFranchise.get().getFrRpreName());
+            payInfo.put("frTelNo", optionalFranchise.get().getFrTelNo());
+            payInfo.put("bcName", optionalCustomer.get().getBcName());
+            payInfo.put("bcHp", optionalCustomer.get().getBcHp());
+            payInfoData.add(payInfo);
 
-        data.put("gridListData",uncollectListData);
+            List<RequestCustomerUnCollectDto> requestCustomerUnCollectDtos = requestRepositoryCustom.findByRequestUnCollectPayList(frIdList, frCode);
+            List<HashMap<String,Object>> uncollectListData = new ArrayList<>();
+            HashMap<String,Object> uncollectListInfo;
+            for (RequestCustomerUnCollectDto requestCustomerUnCollectDto: requestCustomerUnCollectDtos) {
+                uncollectListInfo = new HashMap<>();
+                uncollectListInfo.put("frId", requestCustomerUnCollectDto.getFrId());
+                uncollectListInfo.put("frYyyymmdd", requestCustomerUnCollectDto.getFrYyyymmdd());
+                uncollectListInfo.put("requestDetailCount", requestCustomerUnCollectDto.getRequestDetailCount());
+                uncollectListInfo.put("bgName", requestCustomerUnCollectDto.getBgName());
+                uncollectListInfo.put("bsName", requestCustomerUnCollectDto.getBsName());
+                uncollectListInfo.put("biName", requestCustomerUnCollectDto.getBiName());
+                uncollectListInfo.put("frTotalAmount", requestCustomerUnCollectDto.getFrTotalAmount());
+                uncollectListInfo.put("uncollectMoney", requestCustomerUnCollectDto.getFrTotalAmount()-requestCustomerUnCollectDto.getFrPayAmount());
+                uncollectListData.add(uncollectListInfo);
+            }
+
+            data.put("gridListData",uncollectListData);
+            data.put("payInfoData",payInfoData);
+
+        }
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
