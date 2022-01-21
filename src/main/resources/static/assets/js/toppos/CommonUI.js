@@ -240,6 +240,7 @@ class CommonUIClass {
                         data : data,
                         type : 'post',
                         cache:false,
+                        traditional: true,
                         error: function (req) {
                             ajaxErrorMsg(req);
                         },
