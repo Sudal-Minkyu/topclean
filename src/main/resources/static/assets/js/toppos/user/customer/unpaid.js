@@ -98,6 +98,9 @@ const comms = {
             const data = res.sendData.gridListData;
             dv.chk(data, dtos.receive.franchiseUncollectCustomerList, "메인그리드 고객 리스트 받아오기", true);
             grids.f.setData(0, data);
+            grids.f.clearData(1);
+            grids.f.clearData(2);
+            $("#totalSelectedUncollectMoney").html("0");
             calculateGridCustomer();
         });
     },
@@ -108,6 +111,7 @@ const comms = {
             dv.chk(data, dtos.receive.franchiseUncollectRequestList, "선택된 고객의 미수금 리스트 받아오기", true);
             grids.f.setData(1, data);
             grids.f.clearData(2);
+            $("#totalSelectedUncollectMoney").html("0");
         });
     },
     uncollectedListDetail(selectedFrId) {

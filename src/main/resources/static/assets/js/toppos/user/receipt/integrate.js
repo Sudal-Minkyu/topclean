@@ -104,6 +104,7 @@ const dto = {
             redBtn2: "d",
             redBtn3: "d",
             totAddCost: "d",
+            frRefType: "sr",
             frEstimateDate: "d",
             fpCancelYn: "s",
         },
@@ -307,6 +308,7 @@ const ajax = {
     },
 
     franchiseRequestDetailSearch(condition) {
+        data.currentCondition = condition;
         dv.chk(condition, dto.send.franchiseRequestDetailSearch, "메인그리드 필터링 조건 보내기");
         CommonUI.ajax(grid.s.url.read[0], "GET", condition, function(res) {
             const gridData = res.sendData.gridListData;
@@ -335,6 +337,7 @@ const ajax = {
         dv.chk(data, dto.send.franchiseRequestDetailUpdate, "상품 수정내용 저장");
         CommonUI.ajax(grid.s.url.update[0], "MAPPER", data, function(res) {
             onCloseAddOrder();
+            grid.f.updateCurrentModifyRequest();
             alertSuccess("상품 수정 내용이 반영되었습니다.");
         });
     },
@@ -911,6 +914,10 @@ const grid = {
             AUIGrid.resetUpdatedItems(grid.s.id[numOfGrid]);
         },
 
+        updateCurrentModifyRequest() {
+            ajax.franchiseRequestDetailSearch(data.currentCondition);
+        },
+
     },
 
     e: {
@@ -985,6 +992,7 @@ const grid = {
 /* dto가 아닌 일반적인 데이터들 정의 */
 const data = {
     initialData: {},
+    currentCondition: {},
     selectedCustomer: {
         bcId: null,
     },
@@ -1223,6 +1231,7 @@ const event = {
 
                 if(targetRowsItem.length) {
                     ajax.deleteInspection(refinedTargetList, targetRowsItem[0].fdId);
+                    grid.f.resetChangedStatus(3);
                 }
             });
 
@@ -1545,15 +1554,7 @@ function onAddOrder() {
         return false;
     }
 
-    /*
-    const colorName = {
-        C00: "없음", C01: "흰색", C02: "검정", C03: "회색", C04: "빨강", C05: "주황",
-        C06: "노랑", C07: "초록", C08: "파랑", C09: "남색", C10: "보라", C11: "핑크"
-    }
-    */
-
     data.currentRequest.fdColor = $("input[name='fdColor']:checked").val();
-    //item.fdColorName = colorName["C" + item.fdColor];
     data.currentRequest.fdPattern = $("input[name='fdPattern']:checked").val();
     data.currentRequest.fdPriceGrade = $("input[name='fdPriceGrade']:checked").val();
     data.currentRequest.fdDiscountGrade = $("input[name='fdDiscountGrade']:checked").val();
@@ -1561,9 +1562,7 @@ function onAddOrder() {
     data.currentRequest.frEstimateDate = data.initialData.etcData.frEstimateDate.replace(/[^0-9]/g, "");
     data.currentRequest.fdSpecialYn = $("#fdSpecialYn").is(":checked") ? "Y" : "N";
     data.currentRequest.fdUrgentYn = $("#fdUrgentYn").is(":checked") ? "Y" : "N";
-
-
-    AUIGrid.updateRowsById(grid.s.id[0], data.currentRequest);
+    
     ajax.saveModifiedOrder(data.currentRequest);
 }
 

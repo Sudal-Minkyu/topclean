@@ -82,4 +82,6 @@ public class RequestDetailSearchDtoSub {
 
     private String fpCancelYn; // 결제취소 여부
 
+    private String frRefType; // 접수타입(01:일반, 02:무인보관함, 03:배송APP)
+
 }

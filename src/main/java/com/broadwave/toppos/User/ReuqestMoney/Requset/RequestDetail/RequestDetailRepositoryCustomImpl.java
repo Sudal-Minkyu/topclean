@@ -91,6 +91,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
 
         JPQLQuery<RequestDetailAmtDto> query = from(requestDetail)
                 .select(Projections.constructor(RequestDetailAmtDto.class,
+                        requestDetail.fdNormalAmt,
                         requestDetail.fdTotAmt
                 ));
 
@@ -169,7 +170,9 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdWhitening,
                         requestDetail.fdPollutionLevel,
                         requestDetail.fdWaterRepellent,
-                        requestDetail.fdStarch
+                        requestDetail.fdStarch,
+
+                        request.frRefType
 
                 ));
 

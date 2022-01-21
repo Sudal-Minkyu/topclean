@@ -77,4 +77,6 @@ public class RequestDetailSearchDto {
     private Integer fdWaterRepellent; // 발수가공요금
     private Integer fdStarch; // 풀먹임 요금
 
+    private String frRefType; // 접수타입(01:일반, 02:무인보관함, 03:배송APP)
+
 }
