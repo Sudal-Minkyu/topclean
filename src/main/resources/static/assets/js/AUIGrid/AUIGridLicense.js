@@ -1,8 +1,8 @@
-/*!
- * AUIGrid 3.0.10 License
- * License Type :  Enterprise Dev License
- * Authorized Domain(or IP) : toppos.broadwave.co.kr,192.168.0.24,192.168.0.102,192.168.0.132,192.168.0.143,192.168.0.151
- * Expiration Date :  2022/04/30
+/**
+ * AUIGrid 3.0.11 License
+ * License Type : Enterprise License
+ * Product ID : AUIGrid-EN-19832-669111-211025
+ * Authorized Domain(or IP) : pos.topcleaners.kr
  */
 /* eslint-disable */
-AUIGridLicense = "eyJjdCI6ImZDOXg3MWEvNWVSblM4eEVDV3d4dWpUYUczTjhkVU5FY0lvZUNYOTU1d0hhbHNhWmxWMWR3bjFpUTgyTmlEeC9PV3JGK3d4dVhIdWN1OTRKbXZrWDArL2ZkSkNYNlBFcmUxSmpqM0V6cVE3VWhQMkFnV3VySUhKdzN0ZWZvMnBQWU15Qjl5K0VBcVJMc2t3RnU5TG1Cc0xSeHJ3c1NBcjFsZlJRVlAyNDcyT0hVOW9RV0UwZmdxNTQ2Z2xvOHVHVDU2VWdFVGxka2JTejBMZ25EUnBzQzZ2MVM3ekdTckdTeGo2UGJrNFRmalk9IiwiaXYiOiJiMzkxZmFmMWY2NGQ1MWY0MWZlMzFiNTFhZTM0ZGNhMiIsInMiOiI5Yjk4YzMyYTg1YTAxZjA5In0=";
+AUIGridLicense = "eyJjdCI6Iko0ZXBROGJkRlRoQ0swamdZTkRkS0lJVlNKSW9mcnhZUXNsNWkzeUlKSXZ1andlQUk2Y0xneEczTnE0VlA3eXdqOFNQMmxoaHlRVUJhWS9jRVdlSjQ0RWdwcTlMQ0x5VzRmYW01M2NtWjYvNjl2cVZyWEN2OTlWejNRYi9GMHZHIiwiaXYiOiI2YjlhNmQ1MmVjYjJkMGY1OGI5MzdjYzMyOTg1MzQzZiIsInMiOiJiNzFkNjc2ODBjZmVmZWI1In0=";
