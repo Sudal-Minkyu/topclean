@@ -69,14 +69,26 @@ const dtos = {
             fdS6Dt: "", // 인도일로 수정
         },
         franchiseUncollectPayRequestList: {
-            frId: "nr",
-            frYyyymmdd: "sr",
-            requestDetailCount: "n", // 외 건수 requestDetailCount가 2일경우 -> 외 1건, 1일경우 그냥 상품이름만 표기하면될듯. 0일경우는 없음.
-            bgName: "s",
-            bsName: "s",
-            biName: "s",
-            frTotalAmount: "nr", // 접수금액
-            uncollectMoney: "nr", // 미수금액
+            gridListData: {
+                frId: "nr",
+                frYyyymmdd: "sr",
+                requestDetailCount: "n", // 외 건수 requestDetailCount가 2일경우 -> 외 1건, 1일경우 그냥 상품이름만 표기하면될듯. 0일경우는 없음.
+                bgName: "s",
+                bsName: "s",
+                biName: "s",
+                frTotalAmount: "nr", // 접수금액
+                uncollectMoney: "nr", // 미수금액
+            },
+            결제필요정보: {
+                frCode: "",
+                frName: "",
+                frBusinessNo: "",
+                frRpreName: "",
+                franchiseTel: "",
+                frTelNo: "",
+                bcName: "",
+                bcHp: "",
+            }
         }
     }
 };
@@ -123,6 +135,7 @@ const comms = {
         });
     },
     setupPaymentPop(selectedFrId) {
+        console.log(selectedFrId);
         dv.chk(selectedFrId, dtos.send.franchiseUncollectPayRequestList, "선택한 미수금 마스터 항목 보내기");
         CommonUI.ajax(urls.setupPaymentPop, "GET", selectedFrId, function(res) {
             const data = res.sendData.gridListData;
