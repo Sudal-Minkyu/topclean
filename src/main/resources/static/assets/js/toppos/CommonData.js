@@ -31,7 +31,11 @@ class CommonDataClass {
             "06": "#F1CE32", "07": "#349A50", "08": "#55CAB7", "09": "#398BE0", "10": "#DE9ACE", "11": "#FF9FB0",
         };
 
-
+        this.name.bcGradeName = {
+            "01": "일반",
+            "02": "VIP",
+            "03": "VVIP",
+        };
 
     }
 }

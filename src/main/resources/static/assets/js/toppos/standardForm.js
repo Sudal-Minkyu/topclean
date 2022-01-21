@@ -84,6 +84,18 @@ const grids = {
         setData(numOfGrid, data) { // 해당 배열 번호 그리드의 url.read 를 참조하여 데이터를 그리드에 뿌린다.
             AUIGrid.setGridData(grids.s.id[numOfGrid], data);
         },
+
+        clearData(numOfGrid) { // 해당 배열 번호 그리드의 데이터 비우기
+            AUIGrid.clearGridData(grids.s.id[numOfGrid]);
+        },
+
+        resize(num) { // 해당 배열 번호 그리드의 크기를 현제 그리드를 감싼 엘리먼트에 맞춰 조절
+			AUIGrid.resize(grids.s.id[num]);
+		},
+
+        getCheckedItems(numOfGrid) { // 해당 배열 번호 그리드의 엑스트라 체크박스 선택된 (아이템 + 행번호) 객체 반환
+            return AUIGrid.getCheckedRowItems(grids.s.id[numOfGrid]);
+        }
     },
 
     t: {

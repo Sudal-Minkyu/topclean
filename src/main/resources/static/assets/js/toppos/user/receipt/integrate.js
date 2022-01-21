@@ -335,6 +335,7 @@ const ajax = {
         dv.chk(data, dto.send.franchiseRequestDetailUpdate, "상품 수정내용 저장");
         CommonUI.ajax(grid.s.url.update[0], "MAPPER", data, function(res) {
             onCloseAddOrder();
+            grid.f.updateCurrentModifyRequest();
             alertSuccess("상품 수정 내용이 반영되었습니다.");
         });
     },
@@ -909,6 +910,19 @@ const grid = {
 
         resetChangedStatus(numOfGrid) {
             AUIGrid.resetUpdatedItems(grid.s.id[numOfGrid]);
+        },
+
+        updateCurrentModifyRequest() {
+            data.currentRequest.fdColor = $("input[name='fdColor']:checked").val();
+            data.currentRequest.fdPattern = $("input[name='fdPattern']:checked").val();
+            data.currentRequest.fdPriceGrade = $("input[name='fdPriceGrade']:checked").val();
+            data.currentRequest.fdDiscountGrade = $("input[name='fdDiscountGrade']:checked").val();
+            data.currentRequest.fdRemark = $("#fdRemark").val();
+            data.currentRequest.frEstimateDate = data.initialData.etcData.frEstimateDate.replace(/[^0-9]/g, "");
+            data.currentRequest.fdSpecialYn = $("#fdSpecialYn").is(":checked") ? "Y" : "N";
+            data.currentRequest.fdUrgentYn = $("#fdUrgentYn").is(":checked") ? "Y" : "N";
+
+            AUIGrid.updateRowsById(grid.s.id[0], data.currentRequest);
         },
 
     },
@@ -1545,25 +1559,6 @@ function onAddOrder() {
         return false;
     }
 
-    /*
-    const colorName = {
-        C00: "없음", C01: "흰색", C02: "검정", C03: "회색", C04: "빨강", C05: "주황",
-        C06: "노랑", C07: "초록", C08: "파랑", C09: "남색", C10: "보라", C11: "핑크"
-    }
-    */
-
-    data.currentRequest.fdColor = $("input[name='fdColor']:checked").val();
-    //item.fdColorName = colorName["C" + item.fdColor];
-    data.currentRequest.fdPattern = $("input[name='fdPattern']:checked").val();
-    data.currentRequest.fdPriceGrade = $("input[name='fdPriceGrade']:checked").val();
-    data.currentRequest.fdDiscountGrade = $("input[name='fdDiscountGrade']:checked").val();
-    data.currentRequest.fdRemark = $("#fdRemark").val();
-    data.currentRequest.frEstimateDate = data.initialData.etcData.frEstimateDate.replace(/[^0-9]/g, "");
-    data.currentRequest.fdSpecialYn = $("#fdSpecialYn").is(":checked") ? "Y" : "N";
-    data.currentRequest.fdUrgentYn = $("#fdUrgentYn").is(":checked") ? "Y" : "N";
-
-
-    AUIGrid.updateRowsById(grid.s.id[0], data.currentRequest);
     ajax.saveModifiedOrder(data.currentRequest);
 }
 
