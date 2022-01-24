@@ -17,6 +17,11 @@ const dtos = {
         franchiseReceiptDeliveryList: {
             bcId: "n"
         },
+
+        franchiseStateChange: {
+            fdIdList: "",
+            stateType: "sr",
+        },
     },
     receive: {
         customerInfo: { // integrate 의 customerInfo와 같은 구성
@@ -33,6 +38,7 @@ const dtos = {
         },
 
         franchiseReceiptDeliveryList: {
+            fdEstimateDt: "s",
             frRefType: "sr", // 1월 19일 추가
             bcName: "s", // 고객의 이름
             frYyyymmdd: "s", // 접수일자
@@ -44,7 +50,7 @@ const dtos = {
             fdS2Dt: "s",
             fdS4Dt: "s",
             fdS5Dt: "s",
-            fdS6Dt: "s",
+            fdS6Dt: "d",
             fdState: "s",
             fdColor: "s",
 
@@ -70,6 +76,7 @@ const dtos = {
 const urls = {
     searchCustomer: "/api/user/customerInfo", // 고객 검색
     getCustomersRequest: "/api/user/franchiseReceiptDeliveryList", // 고객에게 인도할 수 있는 세탁리스트 가져오기
+    deliverLaundry: "/api/user/franchiseStateChange", // 인도된 고객의 세탁물 리스트 보내기
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
@@ -82,8 +89,8 @@ const comms = {
             $("#searchCustomerField").val("");
             console.log(items);
             if(items.length === 1) {
-                selectedCustomer = items[0];
-                putCustomer(selectedCustomer);
+                wares.selectedCustomer = items[0];
+                putCustomer();
             }else if(items.length > 1) {
                 grids.f.setData(1, items);
                 $("#customerListPop").addClass("active");
@@ -95,14 +102,29 @@ const comms = {
             }
         });
     },
+
     getCustomersRequest(customerId) {
         dv.chk(customerId, dtos.send.franchiseReceiptDeliveryList, "선택된 고객 아이디 보내기");
         CommonUI.ajax(urls.getCustomersRequest, "GET", customerId, function (res) {
             const data = res.sendData.gridListData;
             dv.chk(data, dtos.receive.franchiseReceiptDeliveryList, "고객의 인도대상 세탁물 리스트 받아오기");
             grids.f.setData(0, data);
+            calculateTotStatus();
+            calculateCheckedStatus();
         });
-    }
+    },
+
+    deliverLaundry(selectedLaundry) {
+        dv.chk(selectedLaundry, dtos.send.franchiseStateChange, "인도된 고객의 세탁물 리스트 보내기");
+        CommonUI.ajax(urls.deliverLaundry, "PARAM", selectedLaundry, function(res) {
+            alertSuccess("세탁물 인도 완료");
+            const customerId = {
+                bcId: wares.selectedCustomer.bcId
+            };
+            comms.getCustomersRequest(customerId);
+        });
+    },
+
 };
 
 /* .s : AUI 그리드 관련 설정들
@@ -143,8 +165,8 @@ const grids = {
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
                 }, {
-                    dataField: "fdS6Dt",
-                    headerText: "인도일자",
+                    dataField: "fdEstimateDt",
+                    headerText: "출고예정",
                     width: 90,
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
@@ -164,9 +186,9 @@ const grids = {
                     },
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
                         const colorSquare =
-                            `<span class="colorSquare" style="background-color: ${CommonData.name.fdColorCode[item.fdColor]}"></span>`;
-                        CommonUI.toppos.makeProductName(item, data.initialData.userItemPriceSortData);
-                        return colorSquare + ` <span>` + item.sumName + `</span>`;
+                        `<span class="colorSquare" style="background-color: ${CommonData.name.fdColorCode[item.fdColor]}; vertical-align: middle;"></span>`;
+                            const sumName = CommonUI.toppos.makeSimpleProductName(item);
+                            return colorSquare + ` <span style="vertical-align: middle;">` + sumName + `</span>`;
                     }
                 }, {
                     dataField: "",
@@ -225,6 +247,8 @@ const grids = {
                 enableColumnResize : false,
                 showRowNumColumn : false,
                 showStateColumn : false,
+                showRowAllCheckBox: true,
+                showRowCheckColumn: true,
                 enableFilter : true,
                 rowHeight : 48,
                 headerHeight : 48,
@@ -309,6 +333,10 @@ const grids = {
 			AUIGrid.resize(grids.s.id[num]);
 		},
 
+        getCheckedItems(numOfGrid) {
+            return AUIGrid.getCheckedRowItems(grids.s.id[numOfGrid]);
+        },
+
         getSelectedCustomer() {
             return AUIGrid.getSelectedRows(grids.s.id[1])[0];
         },
@@ -316,10 +344,14 @@ const grids = {
 
     t: {
         basicTrigger() {
-            /* 0번그리드 내의 셀 클릭시 이벤트 */
-            AUIGrid.bind(grids.s.id[0], "cellClick", function (e) {
-                console.log(e.item); // 이밴트 콜백으로 불러와진 객체의, 클릭한 대상 row 키(파라메터)와 값들을 보여준다.
+            AUIGrid.bind(grids.s.id[0], "rowCheckClick", function (e) {
+                calculateCheckedStatus();
             });
+
+            AUIGrid.bind(grids.s.id[0], "rowAllCheckClick", function (checked) {
+                calculateCheckedStatus();
+            });
+
         }
     }
 };
@@ -339,11 +371,49 @@ const trigs = {
                 comms.searchCustomer(searchCondition);
             });
 
-            $("#selectCustomer").on("click", function() {
+            $("#selectCustomer").on("click", function () {
                 const selectedItem = grids.f.getSelectedCustomer();
                 selectCustomerFromList(selectedItem);
             });
 
+            $("#resetCustomer").on("click", function () {
+                wares.selectedCustomer = {
+                    bcId: null,
+                    beforeUncollectMoney: 0,
+                    saveMoney: 0,
+                    bcAddress: "",
+                    bcRemark: "",
+                };
+                putCustomer();
+            });
+
+            $("#deliverLaundry").on("click", function () {
+                alertCheck("선택된 세탁물들을 인도 하시겠습니까?");
+                $("#checkDelSuccessBtn").on("click", function () {
+                    const items = grids.f.getCheckedItems(0);
+                    let laundry = [];
+                    let type1 = false;
+                    let type2 = false;
+                    let type3 = false;
+                    items.forEach(obj => {
+                        laundry.push(obj.item.fdId);
+                        if(obj.item.frRefType === "01") type1 = true;
+                        if(obj.item.frRefType === "02") type2 = true;
+                        if(obj.item.frRefType === "03") type3 = true;
+                    });
+
+                    if(type1 && !type2 && !type3) {
+                        const selectedLaundry = {
+                            fdIdList: laundry,
+                            stateType: "S5",
+                        }
+                        comms.deliverLaundry(selectedLaundry);
+                        $('#popupId').remove();
+                    }else{
+                        alertCaution("현재 구분:일반 외의 항목은 세탁물 인도가 불가능합니다.", 1);
+                    }
+                });
+            });
         },
     },
     r: { // 이벤트 해제
@@ -364,48 +434,92 @@ $(function() { // 페이지가 로드되고 나서 실행
 function onPageLoad() {
     grids.f.initialization();
     grids.f.create();
+    grids.t.basicTrigger();
 
     trigs.s.basic();
 }
 
-function putCustomer(selectedCustomer) {
+function putCustomer() {
 
+    let bcGradeName = "";
     $(".client__badge").removeClass("active");
-    $(".client__badge:nth-child(" + selectedCustomer.bcGrade.substr(1, 1) + ")").addClass("active");
-    $("#bcGrade").html(CommonData.name.bcGradeName[selectedCustomer.bcGrade]);
-    $("#bcName").html(selectedCustomer.bcName + "님");
-    $("#bcValuation").attr("class",
-        "propensity__star propensity__star--" + selectedCustomer.bcValuation).css('display','block');
-    $("#bcAddress").html(selectedCustomer.bcAddress);
-    $("#bcHp").html(CommonUI.onPhoneNumChange(selectedCustomer.bcHp));
-    $("#beforeUncollectMoneyMain").html(selectedCustomer.beforeUncollectMoney.toLocaleString());
-    $("#saveMoneyMain").html(selectedCustomer.saveMoney.toLocaleString());
-    $("#bcRemark").html(selectedCustomer.bcRemark);
-    if(selectedCustomer.bcLastRequestDt) {
-        $("#bcLastRequestDt").html(
-            selectedCustomer.bcLastRequestDt.substr(0, 4) + "-"
-            + selectedCustomer.bcLastRequestDt.substr(4, 2) + "-"
-            + selectedCustomer.bcLastRequestDt.substr(6, 2)
-        );
+    if(wares.selectedCustomer.bcGrade) {
+        $(".client__badge:nth-child(" + wares.selectedCustomer.bcGrade.substr(1, 1) + ")").addClass("active");
+        bcGradeName = CommonData.name.bcGradeName[wares.selectedCustomer.bcGrade];
+    }
+    $("#bcGrade").html(bcGradeName);
+
+    if(wares.selectedCustomer.bcName) {
+        $("#bcName").html(wares.selectedCustomer.bcName + "님");
     }else{
-        $("#bcLastRequestDt").html("없음");
+        $("#bcName").html("");
     }
 
-    wares.selectedCustomer = selectedCustomer;
+    if(wares.selectedCustomer.bcValuation) {
+        $("#bcValuation").attr("class",
+            "propensity__star propensity__star--" + wares.selectedCustomer.bcValuation)
+            .css('display','block');
+    }else{
+        $("#bcValuation").css('display','none');
+    }
+    
+    $("#bcAddress").html(wares.selectedCustomer.bcAddress);
+    $("#bcHp").html(CommonUI.onPhoneNumChange(wares.selectedCustomer.bcHp));
+    $("#beforeUncollectMoneyMain").html(wares.selectedCustomer.beforeUncollectMoney.toLocaleString());
+    $("#saveMoneyMain").html(wares.selectedCustomer.saveMoney.toLocaleString());
+    $("#bcRemark").html(wares.selectedCustomer.bcRemark);
+    if(wares.selectedCustomer.bcLastRequestDt) {
+        $("#bcLastRequestDt").html(
+            wares.selectedCustomer.bcLastRequestDt.substr(0, 4) + "-"
+            + wares.selectedCustomer.bcLastRequestDt.substr(4, 2) + "-"
+            + wares.selectedCustomer.bcLastRequestDt.substr(6, 2)
+        );
+    }else if(wares.selectedCustomer.bcId){
+        $("#bcLastRequestDt").html("없음");
+    }else{
+        $("#bcLastRequestDt").html("");
+    }
+
     grids.f.clearData(0);
 
-    const customerId = {
-        bcId: selectedCustomer.bcId
-    };
-
-    comms.getCustomersRequest(customerId);
+    if(wares.selectedCustomer.bcId !== null) {
+        const customerId = {
+            bcId: wares.selectedCustomer.bcId
+        };
+        comms.getCustomersRequest(customerId);
+    }
 }
 
 function selectCustomerFromList(selectedItem) {
     if(selectedItem) {
-        putCustomer(selectedItem);
+        wares.selectedCustomer = selectedItem;
+        putCustomer();
         $("#customerListPop").removeClass("active");
     }else{
         alertCaution("고객을 선택해 주세요", 1);
     }
+}
+
+function calculateTotStatus() {
+    const items = grids.f.getData(0);
+    let count = 0;
+    let totAmt = 0;
+    items.forEach(item => {
+        count++;
+        totAmt += item.fdTotAmt;
+    });
+    $("#totCount").val(count.toLocaleString());
+    $("#totAmount").val(totAmt.toLocaleString());
+}
+
+function calculateCheckedStatus() {
+    const items = grids.f.getCheckedItems(0);
+    let chkCount = 0;
+    let chkAmt = 0;
+    items.forEach(obj => {
+        chkCount++;
+        chkAmt += obj.item.fdTotAmt;
+    });
+    $("#chkCount").val(chkCount.toLocaleString());
+    $("#chkAmount").val(chkAmt.toLocaleString());
 }

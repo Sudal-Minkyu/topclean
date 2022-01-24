@@ -62,6 +62,8 @@ const grids = {
                 noDataMessage : "출력할 데이터가 없습니다.",
                 showAutoNoDataMessage: false,
                 enableColumnResize : false,
+                showRowAllCheckBox: true,
+                showRowCheckColumn: true,
                 showRowNumColumn : false,
                 showStateColumn : true,
                 enableFilter : true,

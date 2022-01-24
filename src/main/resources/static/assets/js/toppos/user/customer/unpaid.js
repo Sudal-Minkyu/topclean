@@ -166,7 +166,9 @@ const comms = {
     sendPaidInfo(paidInfo) {
         console.log(paidInfo);
         CommonUI.ajax(urls.sendPaidInfo, "PARAM", paidInfo, function(res) {
-            console.log(res)
+            alertSuccess("미수 결제 완료 되었습니다.");
+            $("#paymentPop").removeClass("active");
+            comms.customersUncollectedList({bcId: wares.customerBcId});
         });
     },
 };
@@ -425,13 +427,19 @@ const grids = {
                 }
                 comms.customersUncollectedList(selectedBcId);
             });
+
             AUIGrid.bind(grids.s.id[1], "cellClick", function (e) {
                 const selectedFrId = {
                     frId: e.item.frId
                 }
                 comms.uncollectedListDetail(selectedFrId);
             });
+
             AUIGrid.bind(grids.s.id[1], "rowCheckClick", function (e) {
+                calculateGridRequest();
+            });
+
+            AUIGrid.bind(grids.s.id[1], "rowAllCheckClick", function (check) {
                 calculateGridRequest();
             });
         }

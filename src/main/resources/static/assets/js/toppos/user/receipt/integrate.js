@@ -1642,7 +1642,7 @@ function searchCustomer() {
 
 function selectCustomerFromList() {
     if(data.selectedCustomer) {
-        putCustomer(data.selectedCustomer);
+        putCustomer();
         delete data.initialData.etcData["frNo"];
         $("#customerListPop").removeClass("active");
     }else{
@@ -1665,19 +1665,9 @@ function filterMain() {
 function putCustomer() {
     let bcGradeName = "";
     $(".client__badge").removeClass("active");
-    switch (data.selectedCustomer.bcGrade) {
-        case "01" :
-            $(".client__badge:nth-child(1)").addClass("active");
-            bcGradeName = "일반";
-            break;
-        case "02" :
-            $(".client__badge:nth-child(2)").addClass("active");
-            bcGradeName = "VIP";
-            break;
-        case "03" :
-            $(".client__badge:nth-child(3)").addClass("active");
-            bcGradeName = "VVIP";
-            break;
+    if(data.selectedCustomer.bcGrade) {
+        $(".client__badge:nth-child(" + data.selectedCustomer.bcGrade.substr(1, 1) + ")").addClass("active");
+        bcGradeName = CommonData.name.bcGradeName[data.selectedCustomer.bcGrade];
     }
     $("#bcGrade").html(bcGradeName);
 
