@@ -243,19 +243,19 @@ const grids = {
 		},
 
         // 그리드 데이터 저장
-        saveGridData(numOfGrid) {
-            const checkedItems = this.getCheckedItems(numOfGrid);
-            let changData = {stateType: "S7"};
-            let fdIdList = [];
+        // saveGridData(numOfGrid) {
+        //     const checkedItems = this.getCheckedItems(numOfGrid);
+        //     let changData = {stateType: "S7"};
+        //     let fdIdList = [];
             
-            checkedItems.forEach(data => {
-                fdIdList.push(data.item.fdId);
-            });
+        //     checkedItems.forEach(data => {
+        //         fdIdList.push(data.item.fdId);
+        //     });
 
-            changData.fdIdList = fdIdList;
-            console.log(changData);
-            comms.changeClosedList(changData);
-        },
+        //     changData.fdIdList = fdIdList;
+        //     console.log(changData);
+        //     comms.changeClosedList(changData);
+        // },
     },
 
     t: {
@@ -287,7 +287,13 @@ const trigs = {
             });
 
             $('#forceIn').on('click', function() {
-                grids.f.saveGridData(0);
+                const checkedItems = grids.f.getCheckedItems(0);
+                const saveDataset = makeSaveDataset(checkedItems);
+                if (checkedItems.length) {
+                    comms.changeClosedList(saveDataset);
+                } else {
+                    alertCaution("강제입고 할 리스트를 선택해주세요", 1);
+                }
             })
         }
     },
@@ -318,4 +324,17 @@ function onPageLoad() {
 
     /* 생성된 그리드에 기본적으로 필요한 이벤트들을 적용한다. */
     // grids.e.basicEvent();
+}
+
+function makeSaveDataset(checkedItems) { // 저장 데이터셋 만들기
+    let fdIdList = [];
+    checkedItems.forEach(data => {
+        fdIdList.push(data.item.fdId);
+    });
+    const changeData = {
+        stateType: "S7",
+        fdIdList: fdIdList,
+    };
+    changeData.fdIdList = fdIdList;
+    return changeData;
 }
