@@ -8,9 +8,13 @@ import com.broadwave.toppos.User.Customer.Customer;
 import com.broadwave.toppos.User.Customer.CustomerRepository;
 import com.broadwave.toppos.User.Customer.CustomerRepositoryCustom;
 import com.broadwave.toppos.User.Customer.CustomerDtos.CustomerUncollectListDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.Payment;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentDtos.PaymentUncollectMapperDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentDtos.PaymentUncollectSet;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentRepositoryCustom;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.Request;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetail;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.RequestCustomerUnCollectDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotRepositoryCustom;
@@ -31,6 +35,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
 import java.util.*;
 
 /**
@@ -91,11 +96,11 @@ public class UncollectService {
     }
 
     // 미수관리페이지 - 고객검색 리스트 호출
-    public ResponseEntity<Map<String, Object>> franchiseUncollectCustomerList(String searchType, String searchString, HttpServletRequest request) {
+    public ResponseEntity<Map<String, Object>> franchiseUncollectCustomerList(String searchType, String searchText, HttpServletRequest request) {
         log.info("uncollectCustomerList 호출");
 
-//        log.info("searchType : "+searchType);
-//        log.info("searchString : "+searchString);
+        log.info("searchType : "+searchType);
+        log.info("searchText : "+searchText);
 
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
@@ -110,7 +115,7 @@ public class UncollectService {
         List<Long> customerIdList = new ArrayList<>();
         List<HashMap<String,Object>> customerListData = new ArrayList<>();
         HashMap<String,Object> customerListInfo;
-        List<CustomerUncollectListDto> customerListDtos = customerRepositoryCustom.findByCustomerUncollectList(frCode, searchType, searchString);
+        List<CustomerUncollectListDto> customerListDtos = customerRepositoryCustom.findByCustomerUncollectList(frCode, searchType, searchText);
 //        log.info("customerListDtos : "+customerListDtos);
         for (CustomerUncollectListDto customerUncollectListDto: customerListDtos) {
             customerListInfo = new HashMap<>();
@@ -250,8 +255,9 @@ public class UncollectService {
     }
 
     // 미수관리페이지 - 선택한 미수금 접수테이블 결제
-    public ResponseEntity<Map<String, Object>> franchiseUncollectPay(PaymentUncollectMapperDto paymentUncollectMapperDto, HttpServletRequest request) {
+    public ResponseEntity<Map<String, Object>> franchiseUncollectPay(PaymentUncollectSet paymentUncollectMapperDto, HttpServletRequest request) {
         log.info("franchiseUncollectPay 호출");
+        HashMap<String, Object> data = new HashMap<>();
 
         AjaxResponse res = new AjaxResponse();
 
@@ -259,21 +265,57 @@ public class UncollectService {
         Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
         String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
 //        String frbrCode = (String) claims.get("frbrCode"); // 소속된 지사 코드
-//        String login_id = claims.getSubject(); // 현재 아이디
-//        log.info("현재 접속한 아이디 : "+login_id);
+        String login_id = claims.getSubject(); // 현재 아이디
+        log.info("현재 접속한 아이디 : "+login_id);
         log.info("현재 접속한 가맹점 코드 : "+frCode);
 //        log.info("소속된 지사 코드 : "+frbrCode);
 
-        log.info("paymentUncollectMapperDto "+paymentUncollectMapperDto);
-        
+        int realAmt = paymentUncollectMapperDto.getData().getFpRealAmt();
+//        log.info("현재 미수금 : "+realAmt);
+
+        List<Payment> paymentList = new ArrayList<>();
+        List<Request> requestList = requestRepository.findByRequestList(paymentUncollectMapperDto.getFrIdList());
+        for(Request requestData : requestList){
+            Payment payment = modelMapper.map(paymentUncollectMapperDto.getData(),Payment.class);
+            // 결제 기본데이터
+            payment.setFpInType("02"); // 미수결제이기때문에 인타입 "02"
+            payment.setFpCollectAmt(0);
+            payment.setFpCancelYn("N");
+            payment.setFpSavedMoneyYn("N");
+            payment.setInsert_id(login_id);
+            payment.setInsert_date(LocalDateTime.now());
+
+            payment.setFrId(requestData);
+            payment.setBcId(requestData.getBcId());
+            int uncollectMoney = requestData.getFrTotalAmount()-requestData.getFrPayAmount();
+//                log.info("결제금액 FpAmt : "+uncollectMoney);
+            payment.setFpAmt(uncollectMoney); // 미수금 확인후 계산
+
+            // 마스터테이블 업데이트
+            requestData.setFrPayAmount(uncollectMoney+requestData.getFrPayAmount());
+            requestData.setFrUncollectYn("N");
+            requestData.setModify_id(login_id);
+            requestData.setModify_date(LocalDateTime.now());
+
+            realAmt = realAmt - uncollectMoney;
+
+            paymentList.add(payment);
+        }
+        if(realAmt == 0){
+//            log.info("저장시작");
+            requestRepository.saveAll(requestList);
+            paymentRepository.saveAll(paymentList);
+        }else{
+            return ResponseEntity.ok(res.fail("문자", realAmt+"원이 서버상의 미수금액과 일치하지 않습니다.", "문자", "관리자에게 문의해주시길 바랍니다."));
+        }
 
 
 
 
 
 
+//        data.put("requestList",requestList);
 
-
-        return ResponseEntity.ok(res.success());
+        return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 }

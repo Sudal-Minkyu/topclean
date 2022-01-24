@@ -15,7 +15,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PaymentUncollectMapperDto {
-    private List<Long> frIdList; // frIdList
     private Integer fpRealAmt; // 위 frIdList의 결제된 총 미수금액
 
     private String fpType; // 결제타입 (01:현금, 02:카드,03:적립금)

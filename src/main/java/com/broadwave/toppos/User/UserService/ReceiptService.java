@@ -521,6 +521,7 @@ public class ReceiptService {
                             Payment payment = modelMapper.map(paymentDto,Payment.class);
                             payment.setBcId(optionalCustomer.get());
                             payment.setFrId(optionalRequest.get());
+                            payment.setFpInType("01");
                             payment.setFpCancelYn("N");
                             payment.setFpSavedMoneyYn("N");
                             payment.setInsert_id(login_id);
