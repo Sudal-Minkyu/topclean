@@ -14,8 +14,8 @@ phases:
   build:
     commands:
       - echo Started to replace setting-files..
-      - cp /src/main/resources/static/assets/js/AUIGrid/AUIGridLicense-release.js /src/main/resources/static/assets/js/AUIGrid/AUIGridLicense.js
-      - cp /src/main/resources/application-release.properties /src/main/resources/application.properties
+      - cp ./src/main/resources/static/assets/js/AUIGrid/AUIGridLicense-release.js ./src/main/resources/static/assets/js/AUIGrid/AUIGridLicense.js
+      - cp ./src/main/resources/application-release.properties ./src/main/resources/application.properties
       - echo Started build phase..
       - mvn clean package
       - echo Building the Docker image...
