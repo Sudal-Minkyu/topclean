@@ -136,10 +136,14 @@ const grids = {
                     dataField: "fdTag",
                     headerText: "택번호",
                     width: 90,
-                }, {
+                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
+                        return value.substr(0, 3) + "-" + value.substr(-4);
+                    },
+                }, 
+                {
                     dataField: "",
                     headerText: "상품명",
-                    width: 140,
+                    width: 150,
                     style: "color_and_name",
                     renderer : {
                         type : "TemplateRenderer",
@@ -168,7 +172,8 @@ const grids = {
                     dataField: "fdTotAmt",
                     headerText: "접수금액",
                     width: 120,
-                }, {
+                }, 
+                {
                     dataField: "fdUrgentYn",
                     headerText: "급세탁",
                     width: 60,
@@ -176,11 +181,13 @@ const grids = {
                 {
                     dataField: "fdRemark",
                     headerText: "특이사항",
-                }, {
+                }, 
+                {
                     dataField: "frYyyymmdd",
                     headerText: "고객접수일",
                     width: 100,
-                }, {
+                }, 
+                {
                     dataField: "fdS2Dt",
                     headerText: "자사입고일",
                     width: 100,

@@ -104,12 +104,15 @@ const grids = {
                     dataField: "frYyyymmdd",
                     headerText: "접수일자",
                     dataType: "yyyy-mm-dd",
+                    width: 100,
                 }, {
                     dataField: "bcName",
                     headerText: "고객명",
+                    width: 80,
                 }, {
                     dataField: "fdTag",
                     headerText: "택번호",
+                    width: 90,
                     labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
                         return value.substr(0, 3) + "-" + value.substr(-4);
                     },
@@ -117,6 +120,7 @@ const grids = {
                     dataField: "",
                     headerText: "상품명",
                     style: "color_and_name",
+                    width: 150,
                     renderer : {
                         type : "TemplateRenderer",
                     },
@@ -129,17 +133,20 @@ const grids = {
                 }, {
                     dataField: "",
                     headerText: "처리내역",
+                    width: 100,
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
                         return CommonUI.toppos.processName(item);
                     },
                 }, {
                     dataField: "fdTotAmt",
                     headerText: "접수금액",
+                    width: 120,
                     dataType: "numeric",
                     autoThousandSeparator: "true",
                 }, {
                     dataField: "fdUrgentYn",
                     headerText: "급세탁",
+                    width: 60,
                 }, {
                     dataField: "fdRemark",
                     headerText: "특이사항",

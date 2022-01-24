@@ -1684,6 +1684,28 @@ textarea {
 	text-align: right;
 }
 
+/* 게시판 */
+.board {
+	flex: 1;
+	width: 100%;
+	padding: 2.5rem;
+	background-color: #fff;
+}
+.board__header {
+	margin-bottom: 1.25rem;
+}
+.board__title {
+	margin-bottom: 1.25rem;
+	color: #000;
+	font-size: 1.5rem;
+	font-weight: 700;
+}
+.board__header-console {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	width: 100%;
+}
 
 
 /* popup */
@@ -2723,8 +2745,13 @@ textarea {
 }
 
 
-
-
+/* grid 컬러박스 */
+.colorSquare {
+	height: 20px;
+	width: 20px;
+	border-radius: 5px;
+	display: inline-block;
+}
 
 
 
