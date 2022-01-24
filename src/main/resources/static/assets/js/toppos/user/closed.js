@@ -53,6 +53,7 @@ const comms = {
         CommonUI.ajax(urls.getClosedList, "GET", false, function (res) {
             const data = res.sendData;
             const dataLength = data.gridListData.length;
+            console.log(data);
 
             for (let i = 0; i < data.gridListData.length; i++) {
                 if (data.removeFrId.includes(data.gridListData[i].fdId)) {
@@ -82,7 +83,7 @@ const comms = {
             $('#totalAmount').val(0);
             $('#fastItems').val(0);
             $('#retryItems').val(0);
-        })
+        });
     }
 };
 
