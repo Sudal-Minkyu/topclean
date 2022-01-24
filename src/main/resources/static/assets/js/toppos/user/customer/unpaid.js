@@ -19,23 +19,25 @@ const dtos = {
             bcId: "",
             frIdList: "" // frId들이 담긴 배열형태
         },
-        결제성공후: {
+        franchiseUncollectPay: {
             frIdList: "", // 배열로 가는 frId 번호들
-            fpRealAmt: "", // 위 frId의 결제된 총 미수금액
-            fpType: "",
-            fpMonth: "",
-            fpCatApprovalno: "",
-            fpCatApprovaltime: "",
-            fpCatCardno: "",
-            fpCatIssuercode: "",
-            fpCatIssuername: "",
-            fpCatMuechantnumber: "",
-            fpCatMessage1: "",
-            fpCatMessage2: "",
-            fpCatNotice1: "",
-            fpCatTotamount: "",
-            fpCatVatamount: "",
-            fpCatTelegramflagt: "",
+            data: {
+                fpRealAmt: "", // 위 frId의 결제된 총 미수금액
+                fpType: "",
+                fpMonth: "",
+                fpCatApprovalno: "",
+                fpCatApprovaltime: "",
+                fpCatCardno: "",
+                fpCatIssuercode: "",
+                fpCatIssuername: "",
+                fpCatMuechantnumber: "",
+                fpCatMessage1: "",
+                fpCatMessage2: "",
+                fpCatNotice1: "",
+                fpCatTotamount: "",
+                fpCatVatamount: "",
+                fpCatTelegramflagt: "",
+            }
         },
     },
     receive: {
@@ -121,6 +123,7 @@ const urls = {
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
     filterCustomerList(searchCondition = {searchText: "", searchType: ""}) {
+        wares.searchCondition = searchCondition;
         dv.chk(searchCondition, dtos.send.franchiseUncollectCustomerList, "메인그리드 고객 필터 조건 보내기", true);
         console.log(searchCondition);
         CommonUI.ajax(urls.filterCustomerList, "GET", searchCondition, function(res) {
@@ -166,10 +169,11 @@ const comms = {
         grids.f.resize(3);
     },
     sendPaidInfo(paidInfo) {
-        console.log(paidInfo);
+        dv.chk(paidInfo, dtos.send.franchiseUncollectPay, "미수 결제 성공 후 정보 보내기");
         CommonUI.ajax(urls.sendPaidInfo, "MAPPER", paidInfo, function(res) {
             alertSuccess("미수 결제 완료 되었습니다.");
             $("#paymentPop").removeClass("active");
+            comms.filterCustomerList(wares.searchCondition);
             comms.customersUncollectedList({bcId: wares.customerBcId});
         });
     },
@@ -498,6 +502,7 @@ const trigs = {
 const wares = {
     customerBcId: 0,
     frPaymentInfo: {},
+    searchCondition: {},
 }
 
 $(function() { // 페이지가 로드되고 나서 실행
@@ -626,8 +631,8 @@ function uncollectPaymentStageTwo(paymentData, creditData = {}) {
     });
 
     const paidInfo = {
-        "frIdList": frIdList,
-        "data" : {
+        frIdList: frIdList,
+        data : {
             fpRealAmt: paymentData.totalAmount,
             fpType: paymentData.fpType,
             fpMonth: paymentData.month,
@@ -646,5 +651,4 @@ function uncollectPaymentStageTwo(paymentData, creditData = {}) {
         }
     }
     comms.sendPaidInfo(paidInfo);
-
 }
