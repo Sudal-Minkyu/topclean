@@ -21,6 +21,7 @@ import com.broadwave.toppos.User.Customer.CustomerDtos.CustomerMapperDto;
 import com.broadwave.toppos.User.GroupSort.GroupSortSet;
 import com.broadwave.toppos.User.ItemSort.ItemSortSet;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentDtos.PaymentUncollectMapperDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentDtos.PaymentUncollectSet;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentSet;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Request;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotMapperDto;
@@ -842,8 +843,8 @@ public class UserRestController {
     @GetMapping("franchiseUncollectCustomerList")
     public ResponseEntity<Map<String,Object>>  franchiseUncollectCustomerList(HttpServletRequest request,
                                                            @RequestParam(value="searchType", defaultValue="") String searchType,
-                                                           @RequestParam(value="searchString", defaultValue="") String searchString){
-        return uncollectService.franchiseUncollectCustomerList(searchType, searchString, request);
+                                                           @RequestParam(value="searchText", defaultValue="") String searchText){
+        return uncollectService.franchiseUncollectCustomerList(searchType, searchText, request);
     }
 
     // 미수관리페이지 - 해당고객의 세탁접수 미수금 리스트 호출
@@ -869,8 +870,8 @@ public class UserRestController {
 
     // 미수관리페이지 - 선택한 미수금 접수테이블 결제
     @PostMapping("franchiseUncollectPay")
-    public ResponseEntity<Map<String,Object>> franchiseUncollectPay(@ModelAttribute PaymentUncollectMapperDto paymentUncollectMapperDto, HttpServletRequest request) {
-        return uncollectService.franchiseUncollectPay(paymentUncollectMapperDto, request);
+    public ResponseEntity<Map<String,Object>> franchiseUncollectPay(@RequestBody PaymentUncollectSet paymentUncollectSet, HttpServletRequest request) {
+        return uncollectService.franchiseUncollectPay(paymentUncollectSet, request);
     }
 
 

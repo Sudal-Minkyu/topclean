@@ -35,6 +35,9 @@ public class Payment {
     @JoinColumn(name="bc_id")
     private Customer bcId; // 고객 ID값
 
+    @Column(name="fp_in_type")
+    private String fpInType; // 입력타입(01:일반결제, 02:미수결제)
+
     @Column(name="fp_type")
     private String fpType; // 결제타입 (01:현금, 02:카드,03:적립금)
 

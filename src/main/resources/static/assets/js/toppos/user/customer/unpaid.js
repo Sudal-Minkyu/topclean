@@ -167,7 +167,7 @@ const comms = {
     },
     sendPaidInfo(paidInfo) {
         console.log(paidInfo);
-        CommonUI.ajax(urls.sendPaidInfo, "PARAM", paidInfo, function(res) {
+        CommonUI.ajax(urls.sendPaidInfo, "MAPPER", paidInfo, function(res) {
             alertSuccess("미수 결제 완료 되었습니다.");
             $("#paymentPop").removeClass("active");
             comms.customersUncollectedList({bcId: wares.customerBcId});
@@ -453,7 +453,7 @@ const trigs = {
     s: { // 이벤트 설정
         basic() {
             $("#customerSearchBtn").on("click", function () {
-                searchCondition = {
+                const searchCondition = {
                     searchType: $("#searchType").val(),
                     searchText: $("#searchCustomerField").val()
                 }
@@ -626,22 +626,24 @@ function uncollectPaymentStageTwo(paymentData, creditData = {}) {
     });
 
     const paidInfo = {
-        frIdList: frIdList,
-        fpRealAmt: paymentData.totalAmount,
-        fpType: paymentData.fpType,
-        fpMonth: paymentData.month,
-        fpCatApprovalno: creditData.APPROVALNO,
-        fpCatApprovaltime: creditData.APPROVALTIME,
-        fpCatCardno: creditData.CARDNO,
-        fpCatIssuercode: creditData.ISSUERCODE,
-        fpCatIssuername: creditData.ISSUERNAME,
-        fpCatMuechantnumber: creditData.MERCHANTNUMBER,
-        fpCatMessage1: creditData.MESSAGE1,
-        fpCatMessage2: creditData.MESSAGE2,
-        fpCatNotice1: creditData.NOTICE1,
-        fpCatTotamount: creditData.TOTAMOUNT,
-        fpCatVatamount: creditData.VATAMOUNT,
-        fpCatTelegramflagt: creditData.TELEGRAMFLAG
+        "frIdList": frIdList,
+        "data" : {
+            fpRealAmt: paymentData.totalAmount,
+            fpType: paymentData.fpType,
+            fpMonth: paymentData.month,
+            fpCatApprovalno: creditData.APPROVALNO,
+            fpCatApprovaltime: creditData.APPROVALTIME,
+            fpCatCardno: creditData.CARDNO,
+            fpCatIssuercode: creditData.ISSUERCODE,
+            fpCatIssuername: creditData.ISSUERNAME,
+            fpCatMuechantnumber: creditData.MERCHANTNUMBER,
+            fpCatMessage1: creditData.MESSAGE1,
+            fpCatMessage2: creditData.MESSAGE2,
+            fpCatNotice1: creditData.NOTICE1,
+            fpCatTotamount: creditData.TOTAMOUNT,
+            fpCatVatamount: creditData.VATAMOUNT,
+            fpCatTelegramflagt: creditData.TELEGRAMFLAG
+        }
     }
     comms.sendPaidInfo(paidInfo);
 

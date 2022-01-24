@@ -31,6 +31,7 @@ public enum ResponseErrorCode {
     TP022("TP022", "데이터가 존재하지 않습니다."),
     TP023("TP023", "수정전 금액보다 낮아질 수 없습니다."),
     TP024("TP024", "접수정보가 존재하지 않습니다."),
+    TP025("TP025", "이미 미수완납된 결제입니다."),
     ;
 
     private String code;
