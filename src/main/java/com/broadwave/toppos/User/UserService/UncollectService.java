@@ -1,30 +1,21 @@
 package com.broadwave.toppos.User.UserService;
 
-import com.broadwave.toppos.Aws.AWSS3Service;
 import com.broadwave.toppos.Head.Franohise.Franchise;
 import com.broadwave.toppos.Head.Franohise.FranchiseRepository;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.User.Customer.Customer;
+import com.broadwave.toppos.User.Customer.CustomerDtos.CustomerUncollectListDto;
 import com.broadwave.toppos.User.Customer.CustomerRepository;
 import com.broadwave.toppos.User.Customer.CustomerRepositoryCustom;
-import com.broadwave.toppos.User.Customer.CustomerDtos.CustomerUncollectListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.Payment;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentDtos.PaymentUncollectMapperDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentDtos.PaymentUncollectSet;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentRepository;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentRepositoryCustom;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Request;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetail;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.RequestCustomerUnCollectDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotRepository;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotRepositoryCustom;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.PhotoRepository;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepository;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepositoryCustom;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.RequestDetailUncollectDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepositoryCustom;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.RequestCustomerUnCollectDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestRepositoryCustom;
-import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoneyRepository;
 import com.broadwave.toppos.common.AjaxResponse;
 import com.broadwave.toppos.common.ResponseErrorCode;
 import io.jsonwebtoken.Claims;
@@ -49,50 +40,33 @@ import java.util.*;
 public class UncollectService {
 
     private final ModelMapper modelMapper;
-    private final UserService userService;
     private final TokenProvider tokenProvider;
 
-    private final AWSS3Service awss3Service;
     private final ReceiptService receiptService;
     private final PaymentRepository paymentRepository;
-    private final PaymentRepositoryCustom paymentRepositoryCustom;
     private final FranchiseRepository franchiseRepository;
-    private final PhotoRepository photoRepository;
-    private final InspeotRepository inspeotRepository;
-    private final InspeotRepositoryCustom inspeotRepositoryCustom;
     private final RequestRepository requestRepository;
     private final RequestRepositoryCustom requestRepositoryCustom;
-    private final RequestDetailRepository requestDetailRepository;
     private final RequestDetailRepositoryCustom requestDetailRepositoryCustom;
-    private final SaveMoneyRepository saveMoneyRepository;
 
     private final CustomerRepository customerRepository;
     private final CustomerRepositoryCustom customerRepositoryCustom;
 
     @Autowired
-    public UncollectService(ModelMapper modelMapper, TokenProvider tokenProvider, UserService userService, AWSS3Service awss3Service, PhotoRepository photoRepository, ReceiptService receiptService,
+    public UncollectService(ModelMapper modelMapper, TokenProvider tokenProvider, ReceiptService receiptService,
                             RequestRepositoryCustom requestRepositoryCustom, FranchiseRepository franchiseRepository, CustomerRepository customerRepository,
-                            PaymentRepository paymentRepository, PaymentRepositoryCustom paymentRepositoryCustom, InspeotRepository inspeotRepository,
-                            RequestRepository requestRepository, RequestDetailRepositoryCustom requestDetailRepositoryCustom, InspeotRepositoryCustom inspeotRepositoryCustom,
-                            RequestDetailRepository requestDetailRepository, SaveMoneyRepository saveMoneyRepository, CustomerRepositoryCustom customerRepositoryCustom){
+                            PaymentRepository paymentRepository, RequestRepository requestRepository, RequestDetailRepositoryCustom requestDetailRepositoryCustom,
+                            CustomerRepositoryCustom customerRepositoryCustom){
         this.modelMapper = modelMapper;
-        this.inspeotRepository = inspeotRepository;
         this.requestRepositoryCustom = requestRepositoryCustom;
         this.customerRepository = customerRepository;
-        this.awss3Service = awss3Service;
         this.franchiseRepository = franchiseRepository;
         this.receiptService = receiptService;
         this.tokenProvider = tokenProvider;
-        this.userService = userService;
-        this.photoRepository = photoRepository;
         this.requestRepository = requestRepository;
-        this.requestDetailRepository = requestDetailRepository;
-        this.inspeotRepositoryCustom = inspeotRepositoryCustom;
         this.paymentRepository = paymentRepository;
         this.customerRepositoryCustom = customerRepositoryCustom;
         this.requestDetailRepositoryCustom = requestDetailRepositoryCustom;
-        this.paymentRepositoryCustom = paymentRepositoryCustom;
-        this.saveMoneyRepository = saveMoneyRepository;
     }
 
     // 미수관리페이지 - 고객검색 리스트 호출
@@ -257,7 +231,6 @@ public class UncollectService {
     // 미수관리페이지 - 선택한 미수금 접수테이블 결제
     public ResponseEntity<Map<String, Object>> franchiseUncollectPay(PaymentUncollectSet paymentUncollectMapperDto, HttpServletRequest request) {
         log.info("franchiseUncollectPay 호출");
-        HashMap<String, Object> data = new HashMap<>();
 
         AjaxResponse res = new AjaxResponse();
 
@@ -309,13 +282,10 @@ public class UncollectService {
             return ResponseEntity.ok(res.fail("문자", realAmt+"원이 서버상의 미수금액과 일치하지 않습니다.", "문자", "관리자에게 문의해주시길 바랍니다."));
         }
 
-
-
-
-
-
-//        data.put("requestList",requestList);
-
-        return ResponseEntity.ok(res.dataSendSuccess(data));
+        return ResponseEntity.ok(res.success());
     }
+
+
+
+
 }
