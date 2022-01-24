@@ -487,7 +487,6 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdS2Dt,
                         requestDetail.fdS4Dt,
                         requestDetail.fdS5Dt,
-                        requestDetail.fdS6Dt,
 
                         requestDetail.fdPriceGrade,
                         requestDetail.fdRetryYn,
@@ -503,7 +502,8 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdUrgentYn,
 
                         requestDetail.fdTotAmt,
-                        requestDetail.fdRemark
+                        requestDetail.fdRemark,
+                        requestDetail.fdEstimateDt
                 ));
 
         query.orderBy(requestDetail.id.asc()).groupBy(requestDetail);
