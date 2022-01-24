@@ -14,8 +14,8 @@ phases:
   build:
     commands:
       - echo Started to replace setting-files..
-      - cp /src/main/resources/static/assets/js/AUIGrid/AUIGridLicense-release.js /src/main/resources/static/assets/js/AUIGrid/AUIGridLicense.js
-      - cp /src/main/resources/application-release.properties /src/main/resources/application.properties
+      - cp ./src/main/resources/static/assets/js/AUIGrid/AUIGridLicense-release.js ./src/main/resources/static/assets/js/AUIGrid/AUIGridLicense.js
+      #- cp ./src/main/resources/application-release.properties ./src/main/resources/application.properties
       - echo Started build phase..
       - mvn clean package
       - echo Building the Docker image...
@@ -55,5 +55,5 @@ phases:
       - DATASOURCE_USERNAME=${TOPPOS_DATASOURCE_USERNAME}
       - sed -i 's@TOPPOS_DATASOURCE_USERNAME_TAG@'"$DATASOURCE_USERNAME"'@' k8s-deploy.yaml
       - DATASOURCE_PASSWORD=${TOPPOS_DATASOURCE_PASSWORD}
-      - sed -i 's@TOPPOS_DATASOURCE_PASSWORD_TAG@'"$DATASOURCE_PASSWORD"'@' k8s-deploy.yaml
+      - sed -i 's#TOPPOS_DATASOURCE_PASSWORD_TAG#'"$DATASOURCE_PASSWORD"'#' k8s-deploy.yaml
       - kubectl apply -f k8s-deploy.yaml

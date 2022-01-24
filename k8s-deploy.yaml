@@ -43,7 +43,7 @@ spec:
             - name: TOPPOS_API_PROTOCOL
               value: TOPPOS_API_PROTOCOL_TAG
             - name: TOPPOS_DATASOURCE_PORT
-              value: TOPPOS_DATASOURCE_PORT_TAG
+              value: "TOPPOS_DATASOURCE_PORT_TAG"
             - name: TOPPOS_DATASOURCE_DBNAME
               value: TOPPOS_DATASOURCE_DBNAME_TAG
             - name: TOPPOS_DATASOURCE_USERNAME
