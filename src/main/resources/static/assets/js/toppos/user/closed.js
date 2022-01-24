@@ -201,21 +201,6 @@ const grids = {
             return AUIGrid.getCheckedRowItems(grids.s.id[numOfGrid]);
         },
 
-        // 그리드 데이터 저장
-        saveGridData(numOfGrid) {
-            const checkedItems = this.getCheckedItems(numOfGrid);
-            let changData = {stateType: "S1"};
-            let fdIdList = [];
-            
-            checkedItems.forEach(data => {
-                fdIdList.push(data.item.fdId);
-            });
-
-            changData.fdIdList = fdIdList;
-            console.log(changData);
-            comms.changeClosedList(changData);
-        },
-
         // 그리드 데이터 클리어
         clearData(numOfGrid) {
 			AUIGrid.clearGridData(grids.s.id[numOfGrid]);
@@ -263,7 +248,13 @@ const trigs = {
             });
 
             $('#saveClosed').on('click', function() {
-                grids.f.saveGridData(0);
+                const checkedItems = grids.f.getCheckedItems(0);
+                const saveDataset = makeSaveDataset(checkedItems);
+                if (checkedItems.length) {
+                    comms.changeClosedList(saveDataset);
+                } else {
+                    alertCaution("마감 리스트를 선택해주세요", 1);
+                }
             })
         }
     },
@@ -290,4 +281,17 @@ function onPageLoad() {
     comms.getClosedList();
     /* 생성된 그리드에 기본적으로 필요한 이벤트들을 적용한다. */
     // grids.e.basicEvent();
+}
+
+function makeSaveDataset(checkedItems) { // 저장 데이터셋 만들기
+    let fdIdList = [];
+    checkedItems.forEach(data => {
+        fdIdList.push(data.item.fdId);
+    });
+    const changeData = {
+        stateType: "S1",
+        fdIdList: fdIdList,
+    };
+    changeData.fdIdList = fdIdList;
+    return changeData;
 }
