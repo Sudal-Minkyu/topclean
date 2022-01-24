@@ -122,7 +122,9 @@ const urls = {
 const comms = {
     filterCustomerList(searchCondition = {searchText: "", searchType: ""}) {
         dv.chk(searchCondition, dtos.send.franchiseUncollectCustomerList, "메인그리드 고객 필터 조건 보내기", true);
+        console.log(searchCondition);
         CommonUI.ajax(urls.filterCustomerList, "GET", searchCondition, function(res) {
+            console.log(res.sendData);
             const data = res.sendData.gridListData;
             dv.chk(data, dtos.receive.franchiseUncollectCustomerList, "메인그리드 고객 리스트 받아오기", true);
             grids.f.setData(0, data);
@@ -453,7 +455,7 @@ const trigs = {
             $("#customerSearchBtn").on("click", function () {
                 searchCondition = {
                     searchType: $("#searchType").val(),
-                    searchText: $("#searchText").val()
+                    searchText: $("#searchCustomerField").val()
                 }
                 comms.filterCustomerList(searchCondition);
             });

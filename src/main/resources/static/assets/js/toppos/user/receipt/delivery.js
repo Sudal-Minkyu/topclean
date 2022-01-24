@@ -440,7 +440,6 @@ function onPageLoad() {
 }
 
 function putCustomer() {
-
     let bcGradeName = "";
     $(".client__badge").removeClass("active");
     if(wares.selectedCustomer.bcGrade) {

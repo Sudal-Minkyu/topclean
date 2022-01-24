@@ -402,6 +402,8 @@ const ajax = {
             };
             data.currentRequest.fdState = "F";
             ajax.getInspectionList(searchCondition);
+            $("#fiComment").val("");
+            $("#fiAddAmt").val("");
         });
     },
 
@@ -1197,11 +1199,17 @@ const event = {
             });
 
             $("#transferPoint").on("click", function () {
-                cancelPayment("2");
+                alertCheck("해당 내역을 적립금으로 전환하시겠습니까?");
+                $("#checkDelSuccessBtn").on("click", function () {
+                    cancelPayment("2");
+                });
             });
 
             $("#refundPayment").on("click", function () {
-                cancelPayment("1");
+                alertCheck("해당 내역을 환불 하시겠습니까?");
+                $("#checkDelSuccessBtn").on("click", function () {
+                    cancelPayment("1");
+                });
             });
 
             $("#fiAddAmt").on("keyup", function () {
