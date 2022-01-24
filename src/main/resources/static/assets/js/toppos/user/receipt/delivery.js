@@ -69,7 +69,7 @@ const dtos = {
 /* 통신에 사용되는 url들 기입 */
 const urls = {
     searchCustomer: "/api/user/customerInfo", // 고객 검색
-    세탁리스트가져오기: "", // 고객에게 인도할 수 있는 세탁리스트 가져오기
+    getCustomersRequest: "/api/user/franchiseReceiptDeliveryList", // 고객에게 인도할 수 있는 세탁리스트 가져오기
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
@@ -96,10 +96,12 @@ const comms = {
         });
     },
     getCustomersRequest(customerId) {
-        dv.chk(customerId, dtos.send.디테일리스트, "선택된 고객 아이디 보내기");
-        // CommonUI.ajax(urls.세탁리스트가져오기, "", customerId, function (res) {
-        //     console.log(res);
-        // });
+        dv.chk(customerId, dtos.send.franchiseReceiptDeliveryList, "선택된 고객 아이디 보내기");
+        CommonUI.ajax(urls.getCustomersRequest, "GET", customerId, function (res) {
+            const data = res.sendData.gridListData;
+            dv.chk(data, dtos.receive.franchiseReceiptDeliveryList, "고객의 인도대상 세탁물 리스트 받아오기");
+            grids.f.setData(0, data);
+        });
     }
 };
 

@@ -15,13 +15,12 @@ const dtos = {
             fdId: "nr",
             fdS4Dt: "sr", 
             bcName: "sr",
-            fdTag: "sn",
+            fdTag: "sr",
 
             fdColor: "s",
             bgName: "s",
             bsName: "s",
             biName: "s",
-            checkFdId: "s",
 
             fdPriceGrade: "s",
             fdRetryYn: "s",
@@ -60,6 +59,10 @@ const comms = {
             let retryItemCount = 0;
             let totalAmount = 0;
             console.log(data);
+            
+            console.log(data.gridListData);
+
+            dv.chk(data.gridListData, dtos.receive.franchiseStateChange, '강제입고 항목 받아오기');
     
             for (let i = 0; i < data.gridListData.length; i++) {
                 // 접수총액
@@ -72,10 +75,14 @@ const comms = {
                 if (data.gridListData[i].fdRetryYn == "Y") {
                     retryItemCount = retryItemCount + 1;
                 }
+
+                if (data.checkFdId.includes(data.gridListData[i].fdId)) {
+                    data.gridListData[i].typeName = "확인품";
+                } else {
+                    data.gridListData[i].typeName = "일반";
+                }
             }
-            console.log(data.gridListData);
-    
-            dv.chk(data.gridListData, dtos.receive.franchiseStateChange, '강제입고 항목 받아오기');
+
             grids.f.setData(0, data.gridListData);
             
             $('#totalNum').text(dataLength);
@@ -83,6 +90,20 @@ const comms = {
             $('#totalAmount').val(totalAmount.toLocaleString());
             $('#fastItems').val(fastItemCount);
             $('#retryItems').val(retryItemCount);
+        });
+    },
+
+    // 강제입고 항목 보내기
+    changeClosedList(saveData) {
+        dv.chk(saveData, dtos.send.franchiseStateChange, '강제입고 항목 보내기');
+    
+        CommonUI.ajax(urls.changeClosedList, "PARAM", saveData, function(res) {
+            alertSuccess("강제입고 완료");
+            grids.f.clearData();
+            comms.getForceList();
+
+            $('#selectItems').val(0);
+            $('#selectAmount').val(0);
         });
     }
 };
@@ -138,10 +159,11 @@ const grids = {
                     },
                 },
                 {
-                    dataField: "",
+                    dataField: "typeName",
                     headerText: "반품유형",
                     width: 100,
-                }, {
+                }, 
+                {
                     dataField: "",
                     headerText: "처리내역",
                     width: 100,
@@ -215,6 +237,21 @@ const grids = {
         clearData(numOfGrid) {
 			AUIGrid.clearGridData(grids.s.id[numOfGrid]);
 		},
+
+        // 그리드 데이터 저장
+        saveGridData(numOfGrid) {
+            const checkedItems = this.getCheckedItems(numOfGrid);
+            let changData = {stateType: "S7"};
+            let fdIdList = [];
+            
+            checkedItems.forEach(data => {
+                fdIdList.push(data.item.fdId);
+            });
+
+            changData.fdIdList = fdIdList;
+            console.log(changData);
+            comms.changeClosedList(changData);
+        },
     },
 
     t: {
@@ -244,6 +281,10 @@ const trigs = {
                 $('#selectItems').val(checkedLength);
                 $('#selectAmount').val(totalAmount.toLocaleString());
             });
+
+            $('#forceIn').on('click', function() {
+                grids.f.saveGridData(0);
+            })
         }
     },
     r: { // 이벤트 해제

@@ -22,6 +22,12 @@ class VKeyboard {
 
     defaultKeypadProp = {
         type: "default", // 가상키패드의 형태, "default" 기본, "plusminus" +-버튼으로 양수나 음수구분
+        
+        /* 작업중 영역 */        
+        midprocess: "default", // 키 입력마다 페이지를 가공하는 형태, "default" 일반숫자, "none" 없음, "tel" 전화번호, "business" 사업자번호
+        minlength: 0, // 키패드 필드의 최저 자릿수 제한 요구치
+        maxlength: 9999, // 키패드 필드의 최대 자릿수 제한
+
         callback: function() {
 
         },
@@ -136,6 +142,8 @@ class VKeyboard {
 
 
     constructor() {
+
+        console.log(this.defaultKeypadProp);
 
         /* div 하나를 생성하여 키보드 html을 뿌린다. */
         const virtualKeyboardBody = document.createElement('div');
@@ -875,14 +883,15 @@ class VKeyboard {
             properties[keyName] = properties[keyName] || this.defaultKeypadProp[keyName];
         });
 
-        this.keypadCallback = properties.callback;
+        this.keypadProp = properties;
+
         this.targetNumberField = document.getElementById(elementId);
         let targetValue = this.targetNumberField.value;
 
-        if(properties.type === "default") {
+        if(this.keypadProp.type === "default") {
             document.getElementById("VKEY_plusminus").style.display = "none";
             document.getElementById("VKEY_keypad_sign").checked = false;
-        }else if(properties.type === "plusminus") {
+        }else if(this.keypadProp.type === "plusminus") {
             document.getElementById("VKEY_plusminus").style.display = "block";
             if(targetValue < 0) {
                 document.getElementById("VKEY_keypad_sign").checked = true;
@@ -891,8 +900,22 @@ class VKeyboard {
             }
         }
 
+        let initialValue = targetValue.replace(/[^0-9]/g, "");
+        switch(this.keypadProp.midprocess) {
+            case "default":
+                initialValue = Number(initialValue).toLocaleString();
+                break;
+            case "none":
+                break;
+            case "tel":
+                initialValue = CommonUI.onPhoneNumChange(initialValue);
+                break;
+            case "business":
+                break;
+        }
+
         if(targetValue.toString().length) {
-            this.keypadField.value = parseInt(targetValue.replace(/[^0-9]/g, "")).toLocaleString("ko-JR");
+            this.keypadField.value = initialValue;
         }else{
             this.keypadField.value = "0";
         }
@@ -904,25 +927,41 @@ class VKeyboard {
 
     /* 키패드에서 받은 값을 바로 키패드용 필드에 입력한다. */
     pushKeypadBtn(INPUT_NUM, isBackspace = false) {
-        let resultValue = parseInt((this.keypadField.value + "" + INPUT_NUM).replace(/[^0-9]/g, ""));
-        resultValue = isBackspace ? Math.floor(resultValue / 10) : resultValue;
-        resultValue = resultValue.toLocaleString();
+        let resultValue = (this.keypadField.value + "" + INPUT_NUM).replace(/[^0-9]/g, "");
+        resultValue = isBackspace ? resultValue.substring(0, resultValue.length - 1) : resultValue;
+        resultValue = this.keypadMidprocess(resultValue);
         this.keypadField.value = resultValue;
     }
 
     pushKeypadCompelete() {
-        let value = Number(this.keypadField.value.replace(/[^0-9]/g, ""));
+        let value = this.keypadField.value.replace(/[^0-9]/g, "");
         if($("#VKEY_keypad_sign").is(":checked")) {
             value = value * -1;
         }
         this.targetNumberField.value = value;
         this.pushKeypadClose();
-        this.keypadCallback(this.targetNumberField.value);
+        this.keypadProp.callback(this.targetNumberField.value);
     }
 
     pushKeypadClose() {
         document.getElementById("VKEY_KEYPAD").style.display = "none";
         this.keypadField.value = "";
+    }
+
+    keypadMidprocess(value) {
+        switch(this.keypadProp.midprocess) {
+            case "default":
+                value = Number(value).toLocaleString();
+                break;
+            case "none":
+                break;
+            case "tel":
+                value = CommonUI.onPhoneNumChange(value);
+                break;
+            case "business":
+                break;
+        }
+        return value;
     }
 
 

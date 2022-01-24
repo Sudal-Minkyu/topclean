@@ -445,7 +445,7 @@ const ajax = {
             }
             ajax.getInspectionList(searchCondition);
             const cautionText = ["고객 수락이 승인 완료되었습니다.", " 고객 수락이 거부되었습니다."];
-            alertCaution(cautionText[target.type - 2], 1);
+            alertSuccess(cautionText[target.type - 2]);
         });
     },
 };

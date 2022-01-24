@@ -87,6 +87,18 @@ const comms = {
     },
 
     // 입고리스트 저장
+    changeClosedList(saveData) {
+        dv.chk(saveData, dtos.send.franchiseStateChange, '입고 항목 보내기');
+    
+        CommonUI.ajax(urls.changeClosedList, "PARAM", saveData, function(res) {
+            alertSuccess("입고 완료");
+            grids.f.clearData();
+            comms.getGridList();
+
+            $('#selectItems').val(0);
+            $('#selectAmount').val(0);
+        });
+    }
 };
 
 /* .s : AUI 그리드 관련 설정들
@@ -143,7 +155,8 @@ const grids = {
                     dataField: "",
                     headerText: "입고유형",
                     width: 100,
-                }, {
+                }, 
+                {
                     dataField: "",
                     headerText: "처리내역",
                     width: 100,
@@ -217,6 +230,21 @@ const grids = {
         clearData(numOfGrid) {
 			AUIGrid.clearGridData(grids.s.id[numOfGrid]);
 		},
+
+        // 그리드 데이터 저장
+        saveGridData(numOfGrid) {
+            const checkedItems = this.getCheckedItems(numOfGrid);
+            let changData = {stateType: "S4"};
+            let fdIdList = [];
+            
+            checkedItems.forEach(data => {
+                fdIdList.push(data.item.fdId);
+            });
+
+            changData.fdIdList = fdIdList;
+            console.log(changData);
+            comms.changeClosedList(changData);
+        },
     },
 
     t: {
@@ -246,6 +274,10 @@ const trigs = {
                 $('#selectItems').val(checkedLength);
                 $('#selectAmount').val(totalAmount.toLocaleString());
             });
+
+            $('#franchiseIn').on('click', function() {
+                grids.f.saveGridData(0);
+            })
         }
     },
     r: { // 이벤트 해제

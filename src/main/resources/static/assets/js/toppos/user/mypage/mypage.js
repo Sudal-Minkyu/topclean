@@ -97,9 +97,12 @@ const comms = {
 	},
 	// 가맹점 정보 저장
 	saveMyInfo(formData) {
+		formData.set("frTelNo", formData.get("frTelNo").replace(/[^0-9]/g, ""));
+		formData.set("frBusinessNo", formData.get("frBusinessNo").replace(/[^0-9]/g, ""));
 		const jsonData = Object.fromEntries(formData);
 		jsonData.frEstimateDuration = Number(jsonData.frEstimateDuration);
 		dv.chk(jsonData, dtos.send.franchiseMyInfoSave, "가맹점 정보 보내기");
+		console.log(jsonData);
 		const url = "/api/user/franchiseMyInfoSave";
 		CommonUI.ajax(url, "POST", formData, function (res) {
 			alertSuccess("가맹점 정보 변경 완료");
@@ -466,7 +469,15 @@ const trigs = {
 				grids.f.downRows(gridnum);
 			})
 
-			// 키보드 
+			$('#frBusinessNo').on('keyup', function () {
+				const busiNo = $("#frBusinessNo").val();
+				$("#frBusinessNo").val(busiNo.replace(/(\d{3})(\d{2})(\d{5})/, '$1-$2-$3'));
+			});
+
+			$('#frTelNo').on('keyup', function () {
+				const telNum = $('#frTelNo').val();
+				$('#frTelNo').val(CommonUI.onPhoneNumChange(telNum));
+			});
 
 		},
 
@@ -544,17 +555,19 @@ const vKeypad = {
 			vKeypad.targetProp[0] = {
 				callback: function () {
 					const busiNo = $("#frBusinessNo").val();
-					$("#frBusinessNo").val(busiNo.replace(/^(\d{3,3})+[-]+(\d{2,2})+[-]+(\d{5,5})/, ""));
-				}
+					console.log(busiNo);
+					$("#frBusinessNo").val(busiNo.replace(/(\d{3})(\d{2})(\d{5})/, '$1-$2-$3'));
+				},
+				midprocess: "business",
 			};
 			vKeypad.targetProp[1] = {
 				callback: function () {
 					const telNum = $('#frTelNo').val();
 					$('#frTelNo').val(CommonUI.onPhoneNumChange(telNum));
-				}
+				},
+				midprocess: "tel",
 			};
 			vKeypad.targetProp[2] = {
-
 			};
 		}
 	},
@@ -609,8 +622,6 @@ function putFrInfoDataInField(myInfoData) {
 
 function saveMyInfo() {
 	const formData = new FormData(document.getElementById('frInfo'));
-
-	console.log(Object.fromEntries(formData));
 
 	comms.saveMyInfo(formData);
 }

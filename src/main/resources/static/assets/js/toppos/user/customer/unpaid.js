@@ -168,7 +168,7 @@ const comms = {
         CommonUI.ajax(urls.sendPaidInfo, "PARAM", paidInfo, function(res) {
             console.log(res)
         });
-    }
+    },
 };
 
 /* .s : AUI 그리드 관련 설정들
