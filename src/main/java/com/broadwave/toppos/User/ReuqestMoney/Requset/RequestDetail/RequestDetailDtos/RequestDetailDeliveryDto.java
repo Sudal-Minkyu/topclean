@@ -34,7 +34,6 @@ public class RequestDetailDeliveryDto {
     private String fdS2Dt; // 지사입고일
     private String fdS4Dt; // 지사출고일
     private String fdS5Dt; // 가맹점입고일
-    private String fdS6Dt; // 고객인도일
 
     private String fdPriceGrade; // 가격등급  1:일반, 2:고급: 3명품 4:아동
     private String fdRetryYn; // 재세탁 여부 (Y  / N) Y 이면 합계금액이 0이다
@@ -51,6 +50,19 @@ public class RequestDetailDeliveryDto {
 
     private Integer fdTotAmt; // 합계금액( (정상 + 수선 + 추가1 + 추가2 -할인) * 수량 )
     private String fdRemark; // 특이사항
+
+    private String fdEstimateDt; // 출고예정일
+
+    public StringBuffer getFdEstimateDt() {
+        if(fdEstimateDt != null){
+            StringBuffer getFdEstimateDt = new StringBuffer(fdEstimateDt);
+            getFdEstimateDt.insert(4,'-');
+            getFdEstimateDt.insert(7,'-');
+            return getFdEstimateDt;
+        }else{
+            return null;
+        }
+    }
 
     public StringBuffer getFrYyyymmdd() {
         if(frYyyymmdd != null){
@@ -91,17 +103,6 @@ public class RequestDetailDeliveryDto {
             getFdS5Dt.insert(4,'-');
             getFdS5Dt.insert(7,'-');
             return getFdS5Dt;
-        }else{
-            return null;
-        }
-    }
-
-    public StringBuffer getFdS6Dt() {
-        if(fdS6Dt != null){
-            StringBuffer getFdS6Dt = new StringBuffer(fdS6Dt);
-            getFdS6Dt.insert(4,'-');
-            getFdS6Dt.insert(7,'-');
-            return getFdS6Dt;
         }else{
             return null;
         }
