@@ -165,7 +165,7 @@ const comms = {
     },
     sendPaidInfo(paidInfo) {
         console.log(paidInfo);
-        CommonUI.ajax(urls.sendPaidInfo, "MAPPER", paidInfo, function(res) {
+        CommonUI.ajax(urls.sendPaidInfo, "PARAM", paidInfo, function(res) {
             console.log(res)
         });
     }

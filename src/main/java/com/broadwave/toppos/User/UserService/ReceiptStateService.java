@@ -8,6 +8,8 @@ import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.Insp
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.PhotoRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.*;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.*;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.force.InhouceForce;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.force.InhouseRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestRepository;
 import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoneyRepository;
 import com.broadwave.toppos.common.AjaxResponse;
@@ -42,6 +44,7 @@ public class ReceiptStateService {
     private final PaymentRepositoryCustom paymentRepositoryCustom;
     private final PhotoRepository photoRepository;
     private final InspeotRepository inspeotRepository;
+    private final InhouseRepository inhouseRepository;
     private final InspeotRepositoryCustom inspeotRepositoryCustom;
     private final RequestRepository requestRepository;
     private final RequestDetailRepository requestDetailRepository;
@@ -50,13 +53,14 @@ public class ReceiptStateService {
 
     @Autowired
     public ReceiptStateService(ModelMapper modelMapper, TokenProvider tokenProvider, UserService userService, AWSS3Service awss3Service, PhotoRepository photoRepository,
-                               PaymentRepository paymentRepository, PaymentRepositoryCustom paymentRepositoryCustom, InspeotRepository inspeotRepository,
+                               PaymentRepository paymentRepository, PaymentRepositoryCustom paymentRepositoryCustom, InspeotRepository inspeotRepository, InhouseRepository inhouseRepository,
                                RequestRepository requestRepository, RequestDetailRepositoryCustom requestDetailRepositoryCustom, InspeotRepositoryCustom inspeotRepositoryCustom,
                                RequestDetailRepository requestDetailRepository, SaveMoneyRepository saveMoneyRepository){
         this.modelMapper = modelMapper;
         this.inspeotRepository = inspeotRepository;
         this.awss3Service = awss3Service;
         this.tokenProvider = tokenProvider;
+        this.inhouseRepository = inhouseRepository;
         this.userService = userService;
         this.photoRepository = photoRepository;
         this.requestRepository = requestRepository;
@@ -81,11 +85,11 @@ public class ReceiptStateService {
         // 클레임데이터 가져오기
         Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
         String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
-//        String frbrCode = (String) claims.get("frbrCode"); // 소속된 지사 코드
+        String frbrCode = (String) claims.get("frbrCode"); // 소속된 지사 코드
         String login_id = claims.getSubject(); // 현재 아이디
         log.info("현재 접속한 아이디 : "+login_id);
         log.info("현재 접속한 가맹점 코드 : "+frCode);
-//        log.info("소속된 지사 코드 : "+frbrCode);
+        log.info("소속된 지사 코드 : "+frbrCode);
 
         // stateType 상태값
         // "S1"이면 수기마감페이지 버튼 "S1" -> "S2"
@@ -113,10 +117,89 @@ public class ReceiptStateService {
             requestDetailRepository.saveAll(requestDetailList);
         }else if(stateType.equals("S4")){
             log.info("가맹점입고 처리");
+            List<RequestDetail> requestDetailList = requestDetailRepository.findByRequestDetailS4List(fdIdList);
+//            log.info("requestDetailList : "+requestDetailList);
+            for(int i=0; i<requestDetailList.size(); i++){
+//                log.info("가져온 frID 값 : "+requestDetailList.get(i).getFrId());
+                requestDetailList.get(i).setFdPreState(stateType); // 이전상태 값
+                requestDetailList.get(i).setFdPreStateDt(LocalDateTime.now());
+                requestDetailList.get(i).setFdState("S5");
+                requestDetailList.get(i).setFdStateDt(LocalDateTime.now());
+
+                requestDetailList.get(i).setFdS5Dt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
+                requestDetailList.get(i).setFdS5Time(LocalDateTime.now());
+                requestDetailList.get(i).setModify_id(login_id);
+                requestDetailList.get(i).setModify_date(LocalDateTime.now());
+            }
+            requestDetailRepository.saveAll(requestDetailList);
         }else if(stateType.equals("S3")){
             log.info("지사반송 처리");
+            List<RequestDetail> requestDetailList = requestDetailRepository.findByRequestDetailS3List(fdIdList);
+//            log.info("requestDetailList : "+requestDetailList);
+            for(int i=0; i<requestDetailList.size(); i++){
+//                log.info("가져온 frID 값 : "+requestDetailList.get(i).getFrId());
+                requestDetailList.get(i).setFdPreState(stateType); // 이전상태 값
+                requestDetailList.get(i).setFdPreStateDt(LocalDateTime.now());
+                requestDetailList.get(i).setFdState("S2");
+                requestDetailList.get(i).setFdStateDt(LocalDateTime.now());
+
+                requestDetailList.get(i).setFdS2Dt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
+                requestDetailList.get(i).setFdS2Time(LocalDateTime.now());
+                requestDetailList.get(i).setFdS2Type("03");
+
+                requestDetailList.get(i).setModify_id(login_id);
+                requestDetailList.get(i).setModify_date(LocalDateTime.now());
+            }
+            requestDetailRepository.saveAll(requestDetailList);
         }else if(stateType.equals("S7")){
             log.info("가맹점강제입고 처리");
+            InhouceForce inhouceForce;
+            List<InhouceForce> inhouceForceList = new ArrayList<>();
+            List<RequestDetail> requestDetailList = requestDetailRepository.findByRequestDetailS7List(fdIdList);
+//            log.info("requestDetailList : "+requestDetailList);
+            for(int i=0; i<requestDetailList.size(); i++){
+//                log.info("가져온 frID 값 : "+requestDetailList.get(i).getFrId());
+                requestDetailList.get(i).setFdPreState(stateType); // 이전상태 값
+                requestDetailList.get(i).setFdPreStateDt(LocalDateTime.now());
+                requestDetailList.get(i).setFdState("S8");
+                requestDetailList.get(i).setFdStateDt(LocalDateTime.now());
+
+                requestDetailList.get(i).setFdS8Dt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
+                requestDetailList.get(i).setFdS8Time(LocalDateTime.now());
+
+                requestDetailList.get(i).setModify_id(login_id);
+                requestDetailList.get(i).setModify_date(LocalDateTime.now());
+
+                // 가맹 입고처리 insert
+                inhouceForce = new InhouceForce();
+                inhouceForce.setFdId(requestDetailList.get(i).getId());
+                inhouceForce.setFrCode(frCode);
+                inhouceForce.setBrCode(frbrCode);
+                inhouceForce.setFiDt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
+                inhouceForce.setFiTime(LocalDateTime.now());
+                inhouceForce.setInsert_id(login_id);
+                inhouceForceList.add(inhouceForce);
+            }
+            requestDetailRepository.saveAll(requestDetailList);
+            inhouseRepository.saveAll(inhouceForceList);
+        }else if(stateType.equals("S5") || stateType.equals("S8")){
+            log.info("세탁인도 처리");
+            List<RequestDetail> requestDetailList = requestDetailRepository.findByRequestDetailS5List(fdIdList);
+//            log.info("requestDetailList : "+requestDetailList);
+            for(int i=0; i<requestDetailList.size(); i++){
+//                log.info("가져온 frID 값 : "+requestDetailList.get(i).getFrId());
+                requestDetailList.get(i).setFdPreState(stateType); // 이전상태 값
+                requestDetailList.get(i).setFdPreStateDt(LocalDateTime.now());
+                requestDetailList.get(i).setFdState("S6");
+                requestDetailList.get(i).setFdStateDt(LocalDateTime.now());
+
+                requestDetailList.get(i).setFdS6Dt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
+                requestDetailList.get(i).setFdS6Time(LocalDateTime.now());
+
+                requestDetailList.get(i).setModify_id(login_id);
+                requestDetailList.get(i).setModify_date(LocalDateTime.now());
+            }
+            requestDetailRepository.saveAll(requestDetailList);
         }else{
             return ResponseEntity.ok(res.fail("문자", stateType+" 타입은 존재하지 않습니다.", "문자", "관리자에게 문의해주세요."));
         }
@@ -219,6 +302,7 @@ public class ReceiptStateService {
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
+    //  세탁인도 - 세부테이블 지사입고, 강제입고 상태 리스트
     public ResponseEntity<Map<String, Object>> franchiseReceiptDeliveryList(Long bcId, HttpServletRequest request) {
         log.info("franchiseReceiptDeliveryList 호출");
 

@@ -252,8 +252,8 @@ public class UncollectService {
     // 미수관리페이지 - 선택한 미수금 접수테이블 결제
     public ResponseEntity<Map<String, Object>> franchiseUncollectPay(PaymentUncollectMapperDto paymentUncollectMapperDto, HttpServletRequest request) {
         log.info("franchiseUncollectPay 호출");
+
         AjaxResponse res = new AjaxResponse();
-        HashMap<String, Object> data = new HashMap<>();
 
         // 클레임데이터 가져오기
         Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
@@ -264,7 +264,15 @@ public class UncollectService {
         log.info("현재 접속한 가맹점 코드 : "+frCode);
 //        log.info("소속된 지사 코드 : "+frbrCode);
 
-        data.put("paymentUncollectMapperDto",paymentUncollectMapperDto);
+        log.info("paymentUncollectMapperDto "+paymentUncollectMapperDto);
+        
+
+
+
+
+
+
+
 
         return ResponseEntity.ok(res.success());
     }

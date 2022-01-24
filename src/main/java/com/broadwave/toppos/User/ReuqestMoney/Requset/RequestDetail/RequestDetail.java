@@ -95,7 +95,7 @@ public class RequestDetail {
     private String fdS7Dt; // 지사강제출고일
 
     @Column(name="fd_s7_id")
-    private String fdS5Id; // 지사강제출고 담장자ID
+    private String fdS7Id; // 지사강제출고 담장자ID
 
     @Column(name="fd_s7_time")
     private LocalDateTime fdS7Time; // 지사강제출고시간
