@@ -13,6 +13,7 @@
 
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
+    <script src="/assets/js/toppos/user/board/list.js"></script>
     <script type="text/javascript">
 
         $(function() {
@@ -22,10 +23,36 @@
     </script>
 </th:block>
 
-<div layout:fragment="content" class="content">
-	.board>.board__header>h3.board__title
-    <!-- grid -->
-    <div id="noticeList" style="height: 676px; border: 1px solid #ddd"></div>
-
+<div layout:fragment="content" class="content content--column">
+    <div class="board">
+        <div class="board__header">
+            <h3 class="board__title">공지사항</h3>
+            <div class="board__header-console">
+                <div class="c-select">
+                    <select>
+                        <option>통합검색</option>
+                        <option>제목</option>
+                        <option>작성자</option>
+                        <option>작성일</option>
+                    </select>
+                </div>
+                <div class="c-search">
+                    <div class="c-search__input">
+                        <input type="text" placeholder="검색어를 입력하세요">
+                        <button class="c-search__key" type="button">키보드</button>
+                    </div>
+                    <button class="c-search__bth" type="button">검색</button>
+                </div>
+            </div>
+        </div>
+        <div class="board__body">
+            <!-- grid -->
+            <div id="noticeList" style="height: 676px;"></div>
+            
+            <!-- 그리드 페이징 네비게이터 -->
+		<div id="grid_paging" class="aui-grid-paging-panel my-grid-paging-panel"></div>
+        </div>
+    </div>
+    
 </div>
 </html>

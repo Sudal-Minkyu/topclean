@@ -122,7 +122,9 @@ const urls = {
 const comms = {
     filterCustomerList(searchCondition = {searchText: "", searchType: ""}) {
         dv.chk(searchCondition, dtos.send.franchiseUncollectCustomerList, "메인그리드 고객 필터 조건 보내기", true);
+        console.log(searchCondition);
         CommonUI.ajax(urls.filterCustomerList, "GET", searchCondition, function(res) {
+            console.log(res.sendData);
             const data = res.sendData.gridListData;
             dv.chk(data, dtos.receive.franchiseUncollectCustomerList, "메인그리드 고객 리스트 받아오기", true);
             grids.f.setData(0, data);
@@ -166,7 +168,9 @@ const comms = {
     sendPaidInfo(paidInfo) {
         console.log(paidInfo);
         CommonUI.ajax(urls.sendPaidInfo, "PARAM", paidInfo, function(res) {
-            console.log(res)
+            alertSuccess("미수 결제 완료 되었습니다.");
+            $("#paymentPop").removeClass("active");
+            comms.customersUncollectedList({bcId: wares.customerBcId});
         });
     },
 };
@@ -425,13 +429,19 @@ const grids = {
                 }
                 comms.customersUncollectedList(selectedBcId);
             });
+
             AUIGrid.bind(grids.s.id[1], "cellClick", function (e) {
                 const selectedFrId = {
                     frId: e.item.frId
                 }
                 comms.uncollectedListDetail(selectedFrId);
             });
+
             AUIGrid.bind(grids.s.id[1], "rowCheckClick", function (e) {
+                calculateGridRequest();
+            });
+
+            AUIGrid.bind(grids.s.id[1], "rowAllCheckClick", function (check) {
                 calculateGridRequest();
             });
         }
@@ -445,7 +455,7 @@ const trigs = {
             $("#customerSearchBtn").on("click", function () {
                 searchCondition = {
                     searchType: $("#searchType").val(),
-                    searchText: $("#searchText").val()
+                    searchText: $("#searchCustomerField").val()
                 }
                 comms.filterCustomerList(searchCondition);
             });

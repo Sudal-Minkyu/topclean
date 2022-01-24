@@ -31,7 +31,7 @@ const comms = {
 const grids = {
     s: { // 그리드 세팅
         targetDiv: [
-            "targetHtmlId"
+            "noticeList"
         ],
         columnLayout: [],
         prop: [],
@@ -46,10 +46,16 @@ const grids = {
             grids.s.columnLayout[0] = [
                 {
                     dataField: "",
-                    headerText: "",
+                    headerText: "카테고리",
                 }, {
                     dataField: "",
-                    headerText: "",
+                    headerText: "제목",
+                }, {
+                    dataField: "",
+                    headerText: "작성자",
+                }, {
+                    dataField: "",
+                    headerText: "작성일",
                 },
             ];
 
@@ -62,8 +68,6 @@ const grids = {
                 noDataMessage : "출력할 데이터가 없습니다.",
                 showAutoNoDataMessage: false,
                 enableColumnResize : false,
-                showRowAllCheckBox: true,
-                showRowCheckColumn: true,
                 showRowNumColumn : false,
                 showStateColumn : true,
                 enableFilter : true,
@@ -97,7 +101,9 @@ const grids = {
 
         getCheckedItems(numOfGrid) { // 해당 배열 번호 그리드의 엑스트라 체크박스 선택된 (아이템 + 행번호) 객체 반환
             return AUIGrid.getCheckedRowItems(grids.s.id[numOfGrid]);
-        }
+        },
+
+        
     },
 
     t: {
@@ -132,6 +138,8 @@ $(function() { // 페이지가 로드되고 나서 실행
 /* 페이지가 로드되고 나서 실행 될 코드들을 담는다. */
 function onPageLoad() {
     grids.f.initialization();
+    grids.f.create();
+    
 
     /* 생성된 그리드에 기본적으로 필요한 이벤트들을 적용한다. */
     // grids.t.basicTrigger();

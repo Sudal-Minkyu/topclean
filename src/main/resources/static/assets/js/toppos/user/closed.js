@@ -128,7 +128,7 @@ const grids = {
                 }, {
                     dataField: "",
                     headerText: "상품명",
-                    width: 140,
+                    width: 150,
                     style: "color_and_name",
                     renderer : {
                         type : "TemplateRenderer",

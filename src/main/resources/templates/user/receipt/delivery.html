@@ -81,25 +81,25 @@
 		<div class="delivery">
 			<div class="delivery__count">
 				<div class="delivery__count-item">
-					<div class="delivery__count-title">총건수</div>
-					<div class="delivery__count-input"><input type="text" readonly="readonly"></div>
+					<div class="delivery__count-title">전체</div>
+					<div class="delivery__count-input"><input type="text" id="totCount" readonly="readonly"></div>
 				</div>
 				<div class="delivery__count-item">
 					<div class="delivery__count-title">총액</div>
-					<div class="delivery__count-input"><input type="text" readonly="readonly"></div>
+					<div class="delivery__count-input"><input type="text" id="totAmount" readonly="readonly"></div>
 				</div>
 				<div class="delivery__count-item">
-					<div class="delivery__count-title">세탁건수</div>
-					<div class="delivery__count-input"><input type="text" readonly="readonly"></div>
+					<div class="delivery__count-title">선택건수</div>
+					<div class="delivery__count-input"><input type="text" id="chkCount" readonly="readonly"></div>
 				</div>
 				<div class="delivery__count-item">
-					<div class="delivery__count-title">총액</div>
-					<div class="delivery__count-input"><input type="text" readonly="readonly"></div>
+					<div class="delivery__count-title">선택금액</div>
+					<div class="delivery__count-input"><input type="text" id="chkAmount" readonly="readonly"></div>
 				</div>
 			</div>
 			<div class="delivery__comment">구분 : 무 - 무인택배함, 배 - 배송 App</div>
 			<div class="delivery__console">
-				<button class="c-button c-button--small c-button--solid">세탁물 인도</button>
+				<button class="c-button c-button--small c-button--solid" id="deliverLaundry">세탁물 인도</button>
 			</div>
 		</div>
 

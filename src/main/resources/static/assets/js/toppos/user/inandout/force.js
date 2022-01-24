@@ -143,10 +143,14 @@ const grids = {
                     dataField: "fdTag",
                     headerText: "택번호",
                     width: 90,
-                }, {
+                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
+                        return value.substr(0, 3) + "-" + value.substr(-4);
+                    },
+                }, 
+                {
                     dataField: "",
                     headerText: "상품명",
-                    width: 140,
+                    width: 150,
                     style: "color_and_name",
                     renderer : {
                         type : "TemplateRenderer",
