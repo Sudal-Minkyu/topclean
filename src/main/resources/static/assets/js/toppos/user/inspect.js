@@ -356,7 +356,7 @@ const grids = {
             AUIGrid.bind(grids.s.id[0], "cellClick", function (e) {
                 console.log(e.item); // 이밴트 콜백으로 불러와진 객체의, 클릭한 대상 row 키(파라메터)와 값들을 보여준다.
             });
-        }
+        },
     }
 };
 
@@ -365,34 +365,7 @@ const trigs = {
     s: { // 이벤트 설정
         basic() {
             $("#searchCustomer").on("click", function () {
-                const searchType = $("#searchType").val();
-                const searchString = $("#searchString").val();
-                console.log(searchType);
-
-                if(searchType === "4") {
-                    wares.selectedCustomer = {
-                        bcId: null,
-                        beforeUncollectMoney: 0,
-                        saveMoney: 0,
-                        bcAddress: "",
-                        bcRemark: "",
-                    };
-                    putCustomer();
-                    const filterCondition = {
-                        bcId: null,
-                        searchTag: searchString,
-                        filterFromDt: $("#filterFromDt").val().replace(/[^0-9]/g, ""),
-                        filterToDt: $("#filterToDt").val().replace(/[^0-9]/g, ""),
-                    }
-                    wares.searchTag = searchString;
-                    comms.getDetailList(filterCondition);
-                } else {
-                    const searchCondition = {
-                        searchType: searchType,
-                        searchString: searchString
-                    }
-                    comms.searchCustomer(searchCondition);
-                }
+                mainSearch();
             });
 
             $("#selectCustomer").on("click", function () {
@@ -421,6 +394,15 @@ const trigs = {
                 comms.getDetailList(filterCondition);
             });
         },
+
+        vkeys() {
+            $("#vkeyboard0").on("click", function() {
+                onShowVKeyboard(0);
+            });
+            $("#vkeyboard1").on("click", function() {
+                onShowVKeyboard(1);
+            });
+        },
     },
     r: { // 이벤트 해제
 
@@ -442,11 +424,13 @@ function onPageLoad() {
     grids.f.initialization();
     grids.f.create();
 
-    trigs.s.basic();
-    enableDatepicker();
+    /* 가상키보드의 사용 선언 */
+    window.vkey = new VKeyboard();
 
-    /* 생성된 그리드에 기본적으로 필요한 이벤트들을 적용한다. */
-    // grids.t.basicTrigger();
+    trigs.s.basic();
+    trigs.s.vkeys();
+    
+    enableDatepicker();
 }
 
 function ynStyle(rowIndex, columnIndex, value, headerText, item, dataField) {
@@ -543,4 +527,56 @@ function resetAll() {
     grids.f.clearData(0);
     $("#searchType").val("0");
     $("#searchString").val("");
+}
+
+function onShowVKeyboard(num) {
+    /* 가상키보드 사용을 위해 */
+    let vkeyProp = [];
+    const vkeyTargetId = ["searchString", "messageField"];
+
+    vkeyProp[0] = {
+        title: $("#searchType option:selected").html() + " (검색)",
+        callback: mainSearch,
+    };
+
+    vkeyProp[1] = {
+        title: "카카오 전달 메시지 입력",
+    };
+
+    vkey.showKeyboard(vkeyTargetId[num], vkeyProp[num]);
+}
+
+function mainSearch() {
+    const searchType = $("#searchType").val();
+    const searchString = $("#searchString").val();
+    console.log(searchType);
+
+    if(searchString.length) {
+        if(searchType === "4") {
+            wares.selectedCustomer = {
+                bcId: null,
+                beforeUncollectMoney: 0,
+                saveMoney: 0,
+                bcAddress: "",
+                bcRemark: "",
+            };
+            putCustomer();
+            const filterCondition = {
+                bcId: null,
+                searchTag: searchString,
+                filterFromDt: $("#filterFromDt").val().replace(/[^0-9]/g, ""),
+                filterToDt: $("#filterToDt").val().replace(/[^0-9]/g, ""),
+            }
+            wares.searchTag = searchString;
+            comms.getDetailList(filterCondition);
+        } else {
+            const searchCondition = {
+                searchType: searchType,
+                searchString: searchString
+            }
+            comms.searchCustomer(searchCondition);
+        }
+    }else{
+        alertCaution("검색어를 입력해 주세요", 1);
+    }
 }
