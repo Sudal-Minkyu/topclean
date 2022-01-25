@@ -6,31 +6,14 @@
 
 <!-- 사용자 CSS 추가 -->
 <th:block layout:fragment="css">
-
+	<style>
+		
+	</style>
 </th:block>
 
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
-	<script src="/assets/js/toppos/user/receipt/receiptreg.js"></script>
-	<script type="text/javascript">
-		$(function() {
-			//카테고리 선택 시 팝업 열기
-			$('.openpop').on('click', function(e) {
-				$('.pop').addClass('active');
-				
-				e.preventDefault()
-			});
-			
-			// 팝업 닫기
-			$('.pop__close').on('click', function(e) {
-				$(this).parents('.pop').removeClass('active');
-				
-				e.preventDefault()
-			})
-			
-		});
-
-	</script>
+	<script src="/assets/js/toppos/user/inspect.js"></script>
 </th:block>
 
 <div layout:fragment="content" class="content">
@@ -43,15 +26,19 @@
                     <option value="1">고객명</option>
                     <option value="2">전화번호</option>
                     <option value="3">주소</option>
+					<option value="4">택번호</option>
                 </select>
 			</div>
 			
 			<div class="c-search">
 				<div class="c-search__input">
-					<input id="searchCustomerField" type="text" placeholder="검색어를 입력하세요" />
+					<input id="searchString" type="text" placeholder="검색어를 입력하세요" />
                		<button class="c-search__key" type="button" onclick="">키보드</button>
 				</div>
-				<button class="c-search__bth" type="button" onclick="onSearchCustomer()">검색</button>
+				<button type="button" class="c-search__bth" id="searchCustomer">검색</button>
+			</div>
+			<div class="search__reset">
+				<button id="resetCustomer" class="c-button c-button--darksolid c-button--small" type="button">고객 초기화</button>
 			</div>
 		</div>
 		
@@ -62,14 +49,14 @@
 				<!-- 맞는 등급 뱃지 .active 주기 -->
 				<span class="client__badge">N</span>
 				<span class="client__badge">V</span>
-				<span class="client__badge client__badge--vvip active">V</span>
+				<span class="client__badge client__badge--vvip">V</span>
 				<!-- #bcGrade 등급 넣어주기 -->
-				<span id="bcGrade">VIP</span>
+				<span id="bcGrade"></span>
 			</div>
-			<div class="client__name"><span id="bcName">홍길동님</span></div>
-			<div class="client__propensity"><span id="bcValuation" class="propensity__star propensity__star--2"></span></div>
-			<div class="client__address"><span id="bcAddress">푸르지오 215동</span></div>
-			<div class="client__phone"><span id="bcHp">010-1234-5678</span></div>
+			<div class="client__name"><span id="bcName"></span></div>
+			<div class="client__propensity"><span style="display: none;" id="bcValuation" class="propensity__star propensity__star--0"></span></div>
+			<div class="client__address"><span id="bcAddress"></span></div>
+			<div class="client__phone"><span id="bcHp"></span></div>
 		</div>
 		
 		<!-- 검색조건 -->
@@ -77,53 +64,68 @@
 			<div class="condition__date">
 				<div class="c-period">
 					<!-- 시작일 -->
-					<input type="text" value="2021-12-21" />
+					<input type="text" id="filterFromDt" />
 					<span class="c-period__code">-</span>
 					<!-- 종료일 -->
-					<input type="text" value="2021-12-23" />
+					<input type="text" id="filterToDt" />
 				</div>
 			</div>
 			
 			<div class="condition__console">
-				<button class="c-button c-button--solid c-button--small">조회</button>
+				<button class="c-button c-button--solid c-button--small" id="filterDetail">조회</button>
 			</div>
 		</div>
 		
 		<!-- 고객정보2 -->
 		<ul class="client-info">
 			<li>
-				<h4>미수금</h4>
-				<p><span class="client-info__num" id="미수금총액">25,000</span><span class="won">원</span></p>
+				<h4>전일미수금</h4>
+				<p><span class="client-info__num" id="beforeUncollectMoneyMain">0</span><span class="won">원</span></p>
 			</li>
 			<li>
 				<h4>적립금</h4>
-				<p><span class="client-info__num" id="fsAmt">25000</span><span class="won">원</span></p>
+				<p><span class="client-info__num" id="saveMoneyMain">0</span><span class="won">원</span></p>
 			</li>
 			<li>
 				<h4>특이사항</h4>
-				<p><span id="bcRemark">XXXXXXXX</span></p>
+				<p><span id="bcRemark"></span></p>
 			</li>
 			<li>
 				<h4>최근방문일</h4>
-				<p><span class="client-info__num" id="최근방문일">2021-11-10</span></p>
+				<p><span class="client-info__num" id="bcLastRequestDt"></span></p>
 			</li>
 		</ul>
 	</div>
 	
 	<div class="content__body">
 		<!-- grid -->
-		<div style="width: 100%; height: 654px; border: 1px solid #dbdbdb">높이값 빼고 스타일 삭제</div>
+		<div id="grid_main" style="height: 654px;"></div>
 	</div>
 
-	
+	<!-- 고객선택 팝업 -->
+    <div class="pop" id="customerListPop">
+        <div class="pop__box">
+            <div class="pop__article">
+                <h3 class="pop__article-header">고객선택</h3>
+                <div class="pop__aricle-content">
+                    <div id="grid_customerList"></div>
+                </div>
+            </div>
+
+            <ul class="pop__console">
+                <li><button class="c-button pop__close">닫기</button></li>
+                <li><button class="c-button c-button--dark" id="selectCustomer">선택</button></li>
+            </ul>
+        </div>
+    </div>
 	
 	<!-- 메시지 팝업 -->
-	<div class="pop">
+	<div class="pop" id="messagePop">
 		<div class="pop__box">
 			<div class="pop__article">
 				<div class="pop__aricle-content">
 				<!-- 그리드 -->
-					<div style="width: 100%; height: 240px; border: 1px solid #dbdbdb">높이값 빼고 스타일 삭제</div>
+					<div id="grid_msgPop" style="height: 240px;"></div>
 				</div>
 			</div>
 			
