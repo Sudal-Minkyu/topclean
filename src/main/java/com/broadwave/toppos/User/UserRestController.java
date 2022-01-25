@@ -79,6 +79,7 @@ public class UserRestController {
     private final InfoService infoService; // 나의정보관리 서비스
     private final InspectService inspectService; // 통합조회 서비스
     private final UncollectService uncollectService; // 미수관리 서비스
+    private final BusinessdayService businessdayService; // 일일영업일보 서비스
 
     private final ModelMapper modelMapper;
     private final TokenProvider tokenProvider;
@@ -88,7 +89,7 @@ public class UserRestController {
     @Autowired
     public UserRestController(AWSS3Service awss3Service, UserService userService, ReceiptService receiptService, SortService sortService, InfoService infoService, InspectService inspectService,
                               TokenProvider tokenProvider, ModelMapper modelMapper, HeadService headService, ManagerService managerService, ReceiptStateService receiptStateService,
-                              UncollectService uncollectService) {
+                              UncollectService uncollectService, BusinessdayService businessdayService) {
         this.awss3Service = awss3Service;
         this.userService = userService;
         this.receiptService = receiptService;
@@ -101,6 +102,7 @@ public class UserRestController {
         this.headService = headService;
         this.uncollectService = uncollectService;
         this.managerService = managerService;
+        this.businessdayService = businessdayService;
     }
 
 //@@@@@@@@@@@@@@@@@@@@@ 가맹점 메인화면 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -872,6 +874,28 @@ public class UserRestController {
     public ResponseEntity<Map<String,Object>> franchiseUncollectPay(@RequestBody PaymentUncollectSet paymentUncollectSet, HttpServletRequest request) {
         return uncollectService.franchiseUncollectPay(paymentUncollectSet, request);
     }
+
+
+
+//@@@@@@@@@@@@@@@@@@@@@ 일일 영업일보 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    //  일일영업일보 - 리스트호출 테이블
+    @GetMapping("businessdayList")
+    public ResponseEntity<Map<String,Object>> businessdayList(
+                                                                            @RequestParam(value="filterFromDt", defaultValue="") String filterFromDt,
+                                                                            @RequestParam(value="filterToDt", defaultValue="") String filterToDt,
+                                                                            HttpServletRequest request){
+        if(filterFromDt.equals("")){
+            filterFromDt = "00000101";
+        }
+        if(filterToDt.equals("")){
+            filterToDt = "99991230";
+        }
+
+        return businessdayService.businessdayList(filterFromDt, filterToDt, request);
+    }
+
+
+
 
 
 
