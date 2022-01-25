@@ -24,7 +24,7 @@ spec:
           resources:
             requests:
               memory: "4"
-              cpu: "2"
+              cpu: "1"
           env:
             - name: TOPPOS_S3_ACCESS_ID
               value: TOPPOS_S3_ACCESS_ID_TAG
