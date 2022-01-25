@@ -33,7 +33,7 @@
 			<div class="c-search">
 				<div class="c-search__input">
 					<input id="searchString" type="text" placeholder="검색어를 입력하세요" />
-               		<button class="c-search__key" type="button" onclick="">키보드</button>
+               		<button class="c-search__key" type="button" id="vkeyboard0">키보드</button>
 				</div>
 				<button type="button" class="c-search__bth" id="searchCustomer">검색</button>
 			</div>
@@ -137,18 +137,18 @@
 								<h3 class="pop__article-header">고객 메시지 편집</h3>
 								<div class="pop__article-haedconsole">
 									<div class="c-checkbox">
-										<input type="checkbox" id="check01" />
-										<label for="check01">하단에 사진 링크 포함</label>
+										<input type="checkbox" id="isIncludeImg" />
+										<label for="isIncludeImg">하단에 사진 링크 포함</label>
 									</div>
 								</div>
 							</div>
 							<div class="c-textarea">
-								<textarea></textarea>
-								<button>키보드</button>
+								<textarea id="messageField"></textarea>
+								<button id="vkeyboard1">키보드</button>
 							</div>
 						</div>
 						<div class="pop__message-img">
-							<img src="/assets/images/dummy/cam.png" alt="" />
+							<img id="imgInspect" src="/assets/images/dummy/cam.png" alt="" />
 						</div>
 					</div>
 				</div>
@@ -156,7 +156,7 @@
 			
 			<ul class="pop__console">
 				<li><button class="c-button pop__close">닫기</button></li> 
-				<li><button class="c-button c-button--dark">카카오톡 메시지 보내기</button></li>
+				<li><button class="c-button c-button--dark" id="sendKakaoMsg">카카오톡 메시지 보내기</button></li>
 			</ul>
 		</div>
 	</div>
