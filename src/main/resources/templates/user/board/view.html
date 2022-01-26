@@ -23,16 +23,74 @@
 </th:block>
 
 <div layout:fragment="content" class="content content--column">
-	<div class="board">
-        
+	<div class="board-view">
+        <div class="board-view__header">
+            <div class="board-view__category">
+                <span>[대리점]</span>
+            </div>
+            <h3 class="board-view__heading">네이버 및 네이버 관련 제반 서비스(모바일 웹/앱 포함)의 회원관리, 서비스 개발·제공 및 향상, 안전한 인터넷 이용환경 구축 등 아래의 목적으로만 개인정보를 이용합니다.</h3>
+            <ul class="board-view__info">
+                <li><span>홍길동</span></li>
+                <li><span>2022-01-25</span> <span>09:49</span></li>
+            </ul>
+        </div>
+        <div class="board-view__content">
+            <!-- editor로 작성된 부분 -->
+            <h1>1</h1>
+            <h2>2</h2>
+            <h3>3</h3>
+            <br>
+            <p>4</p>
+            <p>5</p>
+            <br>
+            <p>6</p>
+            <br>
+            <p>7</p>
+            <h1>1</h1>
+            <h2>2</h2>
+            <h3>3</h3>
+            <br>
+            <p>4</p>
+            <p>5</p>
+            <br>
+            <p>6</p>
+            <br>
+            <p>7</p>
+            <h1>1</h1>
+            <h2>2</h2>
+            <h3>3</h3>
+            <br>
+            <p>4</p>
+            <p>5</p>
+            <br>
+            <p>6</p>
+            <br>
+            <p>7</p>
+        </div>
+        <div class="board-view__footer">
+            <ul class="board-view__links">
+                <li>
+                    <a href="#" class="board__link board__link--prev">
+                        <span class="board__turn">이전글</span>
+                        <span class="board__link-category">[대리점]</span>
+                        <span class="board__link-title">홈페이지 개인정보 취급방침 변경안내</span>
+                        <span class="board__link-date">2022-01-25</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="board__link board__link--next">
+                        <span class="board__turn">다음글</span>
+                        <span class="board__link-category">[대리점]</span>
+                        <span class="board__link-title">홈페이지 개인정보 취급방침 변경안내</span>
+                        <span class="board__link-date">2022-01-25</span>
+                    </a>
+                </li>
+            </ul>
+            <div class="board-view__console">
+                <button class="c-button c-button--small">이전으로</button>
+                <button class="c-button c-button--small c-button--solid">댓글작성</button>
+            </div>
+        </div>
     </div>
-    <div class="content__body">
-    	<!-- grid -->
-    	<div id="noticeList" style="height: 676px; border: 1px solid #ddd"></div>
-
-    </div>
-
-    
-    
 </div>
 </html>

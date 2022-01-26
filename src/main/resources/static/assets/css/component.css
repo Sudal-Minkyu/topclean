@@ -135,6 +135,11 @@ input[type="number"]::-webkit-inner-spin-button {
 	color: #0082f0;
 	font-weight: 700;
 	cursor: pointer;
+	transition: all 0.2s;
+}
+.c-button:active {
+	background-color: #e5eeff;
+
 }
 .c-button.c-button--solid {
 	border: 0 none;
@@ -142,7 +147,7 @@ input[type="number"]::-webkit-inner-spin-button {
 	color: #fff;
 }
 .c-button.c-button--solid:active {
-	background-color: #004a98;
+	background-color: #1b6dc3;
 }
 .c-button.c-button--large {
 	min-width: 10rem;
@@ -171,15 +176,38 @@ input[type="number"]::-webkit-inner-spin-button {
 	background-color: #004a98;
 	color: #fff;
 }
+.c-button.c-button--darksolid:active {
+	background-color: #003b7a;
+}
 .c-button.c-button--dark {
 	border: 0 none;
 	background-color: #28323c;
 	color: #fff;
 }
+.c-button.c-button--dark:active {
+	background-color: #000;
+}
+.c-button.c-button--darkline {
+	border: 0.063rem solid #bdbdbd;
+	color: #333;
+}
+.c-button.c-button--darkline:active {
+	background-color: #ddd;
+}
+.c-button.c-button--gray {
+	border: 0.063rem solid #bdbdbd;
+	background-color: #f5f5f5;
+}
+.c-button.c-button--gray:active {
+	background-color: #ddd;
+}
 .c-button.c-button--red {
 	border: 0 none;
 	background-color: #b82c31;
 	color: #fff;
+}
+.c-button.c-button--red:active {
+	background-color: #b82c31;
 }
 .c-select + .c-button {
 	margin-left: 0.375rem;
@@ -240,6 +268,7 @@ input[type="number"]::-webkit-inner-spin-button {
     height: 6.25rem;
     margin: 0;
     padding: 0.625rem;
+	background-color: #fff;
     border: 0.063rem solid #bdbdbd;
     -webkit-border-radius: 0.313rem;
     -moz-border-radius: 0.313rem;

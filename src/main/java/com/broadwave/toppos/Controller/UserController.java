@@ -136,4 +136,10 @@ public class UserController {
     public String boardview(){
         return "user/board/view";
     }
+
+    // 댓글
+    @RequestMapping("reply")
+    public String reply(){
+        return "user/board/reply";
+    }
 }
