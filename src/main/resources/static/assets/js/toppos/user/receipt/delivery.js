@@ -242,8 +242,8 @@ const grids = {
             grids.s.prop[0] = {
                 editable : false,
                 selectionMode : "singleRow",
-                noDataMessage : "출력할 데이터가 없습니다.",
-                showAutoNoDataMessage: false,
+                noDataMessage : "인도할 세탁물이 존재하지 않습니다.",
+                showAutoNoDataMessage: true,
                 enableColumnResize : false,
                 showRowNumColumn : false,
                 showStateColumn : false,
@@ -362,13 +362,7 @@ const trigs = {
         basic() {
 
             $("#searchCustomer").on("click", function () {
-                const searchType = $("#searchType").val();
-                const searchString = $("#searchString").val();
-                const searchCondition = {
-                    searchType: searchType,
-                    searchString: searchString
-                }
-                comms.searchCustomer(searchCondition);
+                mainSearch();
             });
 
             $("#selectCustomer").on("click", function () {
@@ -388,31 +382,40 @@ const trigs = {
             });
 
             $("#deliverLaundry").on("click", function () {
-                alertCheck("선택된 세탁물들을 인도 하시겠습니까?");
-                $("#checkDelSuccessBtn").on("click", function () {
-                    const items = grids.f.getCheckedItems(0);
-                    let laundry = [];
-                    let type1 = false;
-                    let type2 = false;
-                    let type3 = false;
-                    items.forEach(obj => {
-                        laundry.push(obj.item.fdId);
-                        if(obj.item.frRefType === "01") type1 = true;
-                        if(obj.item.frRefType === "02") type2 = true;
-                        if(obj.item.frRefType === "03") type3 = true;
-                    });
+                const items = grids.f.getCheckedItems(0);
+                if(items.length) {
+                    alertCheck("선택된 세탁물들을 인도 하시겠습니까?");
+                    $("#checkDelSuccessBtn").on("click", function () {
+                        let laundry = [];
+                        let type1 = false;
+                        let type2 = false;
+                        let type3 = false;
+                        items.forEach(obj => {
+                            laundry.push(obj.item.fdId);
+                            if(obj.item.frRefType === "01") type1 = true;
+                            if(obj.item.frRefType === "02") type2 = true;
+                            if(obj.item.frRefType === "03") type3 = true;
+                        });
 
-                    if(type1 && !type2 && !type3) {
-                        const selectedLaundry = {
-                            fdIdList: laundry,
-                            stateType: "S5",
+                        if(type1 && !type2 && !type3) {
+                            const selectedLaundry = {
+                                fdIdList: laundry,
+                                stateType: "S5",
+                            }
+                            comms.deliverLaundry(selectedLaundry);
+                            $('#popupId').remove();
+                        }else{
+                            alertCaution("현재 구분:일반 외의 항목은 세탁물 인도가 불가능합니다.", 1);
                         }
-                        comms.deliverLaundry(selectedLaundry);
-                        $('#popupId').remove();
-                    }else{
-                        alertCaution("현재 구분:일반 외의 항목은 세탁물 인도가 불가능합니다.", 1);
-                    }
-                });
+                    });
+                } else {
+                    alertCaution("인도할 세탁물을 선택해 주세요.", 1);
+                }
+            });
+        },
+        vkeys() {
+            $("#vkeyboard0").on("click", function() {
+                onShowVKeyboard(0);
             });
         },
     },
@@ -436,7 +439,11 @@ function onPageLoad() {
     grids.f.create();
     grids.t.basicTrigger();
 
+    /* 가상키보드의 사용 선언 */
+    window.vkey = new VKeyboard();
+
     trigs.s.basic();
+    trigs.s.vkeys();
 }
 
 function putCustomer() {
@@ -521,4 +528,31 @@ function calculateCheckedStatus() {
     });
     $("#chkCount").val(chkCount.toLocaleString());
     $("#chkAmount").val(chkAmt.toLocaleString());
+}
+
+function onShowVKeyboard(num) {
+    /* 가상키보드 사용을 위해 */
+    let vkeyProp = [];
+    const vkeyTargetId = ["searchString"];
+
+    vkeyProp[0] = {
+        title: $("#searchType option:selected").html() + " (검색)",
+        callback: mainSearch,
+    };
+
+    vkey.showKeyboard(vkeyTargetId[num], vkeyProp[num]);
+}
+
+function mainSearch() {
+    const searchCondition = {
+        searchType: $("#searchType").val(),
+        searchString: $("#searchString").val(),
+    }
+    if(searchCondition.searchString === "") {
+        alertCaution("검색조건을 입력해 주세요.", 1);
+    } else {
+        $("#searchType").val(0);
+        $("#searchString").val("");
+        comms.searchCustomer(searchCondition);
+    }
 }

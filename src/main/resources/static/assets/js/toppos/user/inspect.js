@@ -5,7 +5,7 @@
 * */
 const dtos = {
     send: {
-        검품이있는디테일리스트: { // 통합조회 페이지와 비슷하지만, fdState에 대한 조건이 빠진 형태
+        inspectList: { // 통합조회 페이지와 비슷하지만, fdState에 대한 조건이 빠진 형태
             bcId: "n", // 선택된 고객. 없을 경우 null
             searchTag: "s", // 택번호 검색문자
             filterFromDt: "sr", // 시작 조회기간
@@ -19,7 +19,7 @@ const dtos = {
         },
     },
     receive: {
-        검품이있는디테일리스트: { // 인계페이지와 거의 비슷하지만, estimateDt가 빠지고, fdS6Dt가 들어간 형태
+        inspectList: { // 인계페이지와 거의 비슷하지만, estimateDt가 빠지고, fdS6Dt가 들어간 형태
             frRefType: "sr",
             bcName: "s",
             frYyyymmdd: "s",
@@ -69,14 +69,17 @@ const dtos = {
 /* 통신에 사용되는 url들 기입 */
 const urls = {
     searchCustomer: "/api/user/customerInfo", // 고객 검색
-    getDetailList: "", // 검품이 있는 리스트 필터링하여 가져오기
+    getDetailList: "/api/user/inspectList", // 검품이 있는 리스트 필터링하여 가져오기
 
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
     getDetailList(filterCondition) {
-        console.log(filterCondition);
+        dv.chk(filterCondition, dtos.send.inspectList, "검품리스트 필터링조건 보내기");
+        CommonUI.ajax(urls.getDetailList, "PARAM", filterCondition, function (res) {
+            console.log(res);
+        });
     },
 
     searchCustomer(searchCondition) {

@@ -275,6 +275,7 @@ function onModifyCustomer(rowIndex) {
     $("#bcBirthDD").val(item.bcBirthday.substr(6, 2));
     $("#bcAge").val(item.bcAge);
     $("#bcGrade").val(bcGradeName[item.bcGrade]);
+    $("#bcGradeNo").val(item.bcGrade);
     $("#bcValuation").val(item.bcValuation);
     $("#bcSignImage").val(item.bcSignImage);
     $("input:radio[name='bcQuitYn']:radio[value='" + item.bcQuitYn + "']")
@@ -367,7 +368,7 @@ function saveRegister() {
 
     formData.set("bcHp", formData.get("bcHp").replace(/[^0-9]/g, ""));
     formData.append("bcBirthday", birthday);
-    formData.append("bcGrade", $("#bcValuation option:checked").val());
+    formData.append("bcGrade", $("#bcGradeNo").val());
     formData.append("bcSignImage", $("#signImage").attr("src"));
 
     const url = "/api/user/customerSave";

@@ -84,7 +84,7 @@ const dtos = {
 
             fdTotAmt: "n",
             fdState: "s",
-            fdS6Dt: "", // 인도일로 수정
+            fdS6Dt: "s", // 인도일로 수정
         },
         franchiseUncollectPayRequestList: {
             gridListData: {
@@ -457,11 +457,7 @@ const trigs = {
     s: { // 이벤트 설정
         basic() {
             $("#customerSearchBtn").on("click", function () {
-                const searchCondition = {
-                    searchType: $("#searchType").val(),
-                    searchText: $("#searchCustomerField").val()
-                }
-                comms.filterCustomerList(searchCondition);
+                mainSearch();
             });
 
             $("#openPaymentPop").on("click", function () {
@@ -489,9 +485,13 @@ const trigs = {
             $("#cancelPayment").on("click", function () {
                 $("#paymentPop").removeClass("active");
             });
+        },
 
-
-        }
+        vkeys() {
+            $("#vkeyboard0").on("click", function() {
+                onShowVKeyboard(0);
+            });
+        },
     },
     r: { // 이벤트 해제
 
@@ -515,9 +515,11 @@ function onPageLoad() {
     grids.f.create();
     grids.t.basic();
 
-    trigs.s.basic();
+    /* 가상키보드의 사용 선언 */
+    window.vkey = new VKeyboard();
 
-    comms.filterCustomerList();
+    trigs.s.basic();
+    trigs.s.vkeys();
 }
 
 function calculateGridCustomer() {
@@ -651,4 +653,31 @@ function uncollectPaymentStageTwo(paymentData, creditData = {}) {
         }
     }
     comms.sendPaidInfo(paidInfo);
+}
+
+function onShowVKeyboard(num) {
+    /* 가상키보드 사용을 위해 */
+    let vkeyProp = [];
+    const vkeyTargetId = ["searchCustomerField"];
+
+    vkeyProp[0] = {
+        title: $("#searchType option:selected").html() + " (검색)",
+        callback: mainSearch,
+    };
+
+    vkey.showKeyboard(vkeyTargetId[num], vkeyProp[num]);
+}
+
+function mainSearch() {
+    const searchCondition = {
+        searchType: $("#searchType").val(),
+        searchText: $("#searchCustomerField").val(),
+    }
+    if(searchCondition.searchText === "") {
+        alertCaution("검색조건을 입력해 주세요.", 1);
+    } else {
+        $("#searchType").val(0);
+        $("#searchCustomerField").val("");
+        comms.filterCustomerList(searchCondition);
+    }
 }
