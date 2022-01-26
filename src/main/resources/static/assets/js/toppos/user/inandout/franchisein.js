@@ -13,7 +13,7 @@ const dtos = {
     receive: {
         franchiseReceiptFranchiseInList: {
             fdId: "nr",
-            fdS4Dt: "sr",
+            fdS4Dt: "s",
             bcName: "sr",
             fdTag: "sr",
 
@@ -39,7 +39,7 @@ const dtos = {
             fdRemark: "s",
 
             frYyyymmdd: "sr",
-            fdS2Dt: "sr",
+            fdS2Dt: "s",
         }
     }
 };
@@ -127,6 +127,8 @@ const grids = {
                     dataField: "fdS4Dt",
                     headerText: "자사출고일",
                     width: 100,
+                    dataType: "date",
+                    formatString: "yyyy-mm-dd",
                 }, {
                     dataField: "bcName",
                     headerText: "고객명",
@@ -185,6 +187,8 @@ const grids = {
                     dataField: "fdTotAmt",
                     headerText: "접수금액",
                     width: 120,
+                    dataType: "numeric",
+                    autoThousandSeparator: "true",
                 }, 
                 {
                     dataField: "fdUrgentYn",
@@ -199,11 +203,15 @@ const grids = {
                     dataField: "frYyyymmdd",
                     headerText: "고객접수일",
                     width: 100,
+                    dataType: "date",
+                    formatString: "yyyy-mm-dd",
                 }, 
                 {
                     dataField: "fdS2Dt",
-                    headerText: "자사입고일",
+                    headerText: "지사입고일",
                     width: 100,
+                    dataType: "date",
+                    formatString: "yyyy-mm-dd",
                 },
             ];
 
@@ -288,7 +296,12 @@ const trigs = {
                 } else {
                     alertCaution("입고 할 리스트를 선택해주세요", 1);
                 }
-            })
+            });
+
+            $("#refresh").on("click", function () {
+                grids.f.clearData(0);
+                comms.getGridList();
+            });
         }
     },
     r: { // 이벤트 해제

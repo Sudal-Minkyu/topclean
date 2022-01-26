@@ -112,8 +112,9 @@ const grids = {
                 {
                     dataField: "frYyyymmdd",
                     headerText: "접수일자",
-                    dataType: "yyyy-mm-dd",
                     width: 100,
+                    dataType: "date",
+                    formatString: "yyyy-mm-dd",
                 }, {
                     dataField: "bcName",
                     headerText: "고객명",
@@ -255,7 +256,12 @@ const trigs = {
                 } else {
                     alertCaution("마감 리스트를 선택해주세요", 1);
                 }
-            })
+            });
+
+            $("#refresh").on("click", function () {
+                grids.f.clearData(0);
+                comms.getClosedList();
+            });
         }
     },
     r: { // 이벤트 해제
