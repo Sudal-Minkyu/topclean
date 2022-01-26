@@ -142,7 +142,7 @@ function onYearChange(selectedYear) {
 function onHpChange () {
     const element = document.getElementById("bcHp");
     let phoneNumber = element.value;
-    element.value = CommonUI.onPhoneNumChange(phoneNumber);
+    element.value = CommonUI.formatTel(phoneNumber);
 }
 
 function onAgreeTypeChange(type) {

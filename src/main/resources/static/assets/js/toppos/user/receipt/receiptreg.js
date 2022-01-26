@@ -452,7 +452,7 @@ gridColumnLayout[1] = [
         dataField: "bcHp",
         headerText: "전화번호",
         labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
-            return CommonUI.onPhoneNumChange(value);
+            return CommonUI.formatTel(value);
         }
     }, {
         dataField: "bcAddress",
@@ -484,7 +484,7 @@ gridColumnLayout[2] = [
         dataField: "bcHp",
         headerText: "전화번호",
         labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
-            return CommonUI.onPhoneNumChange(value);
+            return CommonUI.formatTel(value);
         }
     }, {
         dataField: "",
@@ -694,7 +694,7 @@ function onPutCustomer(selectedCustomer) {
     $("#bcValuation").attr("class",
         "propensity__star propensity__star--" + selectedCustomer.bcValuation).css('display','block');
     $("#bcAddress").html(selectedCustomer.bcAddress);
-    $("#bcHp").html(CommonUI.onPhoneNumChange(selectedCustomer.bcHp));
+    $("#bcHp").html(CommonUI.formatTel(selectedCustomer.bcHp));
     $("#beforeUncollectMoneyMain").html(selectedCustomer.beforeUncollectMoney.toLocaleString());
     $("#saveMoneyMain").html(selectedCustomer.saveMoney.toLocaleString());
     $("#bcRemark").html(selectedCustomer.bcRemark);
@@ -1575,7 +1575,7 @@ function onPaymentStageOne() {
                 repreName: initialData.etcData.frRpreName,
                 franchiseTel: initialData.etcData.frTelNo,
                 customerName: selectedCustomer.bcName,
-                customerTel: CommonUI.onPhoneNumChange(selectedCustomer.bcHp),
+                customerTel: CommonUI.formatTel(selectedCustomer.bcHp),
                 requestDt: new Date().format("yyyy-MM-dd HH:mm"),
                 totalAmount: $("#payRequestAmt").html().toInt(),
                 normalAmount: $("#payNormalAmt").html().toInt(),

@@ -721,7 +721,7 @@ const grid = {
                     dataField: "bcHp",
                     headerText: "전화번호",
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
-                        return CommonUI.onPhoneNumChange(value);
+                        return CommonUI.formatTel(value);
                     }
                 }, {
                     dataField: "bcAddress",
@@ -1695,7 +1695,7 @@ function putCustomer() {
     }
 
     $("#bcAddress").html(data.selectedCustomer.bcAddress);
-    $("#bcHp").html(CommonUI.onPhoneNumChange(data.selectedCustomer.bcHp));
+    $("#bcHp").html(CommonUI.formatTel(data.selectedCustomer.bcHp));
     $("#beforeUncollectMoneyMain").html(data.selectedCustomer.beforeUncollectMoney.toLocaleString());
     $("#saveMoneyMain").html(data.selectedCustomer.saveMoney.toLocaleString());
     $("#bcRemark").html(data.selectedCustomer.bcRemark);

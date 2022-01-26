@@ -908,7 +908,7 @@ class VKeyboard {
             case "none":
                 break;
             case "tel":
-                initialValue = CommonUI.onPhoneNumChange(initialValue);
+                initialValue = CommonUI.formatTel(initialValue);
                 break;
             case "business":
                 break;
@@ -956,7 +956,7 @@ class VKeyboard {
             case "none":
                 break;
             case "tel":
-                value = CommonUI.onPhoneNumChange(value);
+                value = CommonUI.formatTel(value);
                 break;
             case "business":
                 break;

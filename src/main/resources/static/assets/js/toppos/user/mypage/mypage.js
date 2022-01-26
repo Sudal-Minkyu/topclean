@@ -476,7 +476,7 @@ const trigs = {
 
 			$('#frTelNo').on('keyup', function () {
 				const telNum = $('#frTelNo').val();
-				$('#frTelNo').val(CommonUI.onPhoneNumChange(telNum));
+				$('#frTelNo').val(CommonUI.formatTel(telNum));
 			});
 
 		},
@@ -563,7 +563,7 @@ const vKeypad = {
 			vKeypad.targetProp[1] = {
 				callback: function () {
 					const telNum = $('#frTelNo').val();
-					$('#frTelNo').val(CommonUI.onPhoneNumChange(telNum));
+					$('#frTelNo').val(CommonUI.formatTel(telNum));
 				},
 				midprocess: "tel",
 			};

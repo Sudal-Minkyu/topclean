@@ -71,7 +71,7 @@ gridColumnLayout[0] = [
         dataField: "usertel",
         headerText: "전화번호",
         labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
-            return CommonUI.onPhoneNumChange(value);
+            return CommonUI.formatTel(value);
         },
     }, {
         dataField: "useremail",
@@ -367,7 +367,7 @@ function setFieldData(numOfGrid, item) {
             $("#username").val(item.username);
             $("#password").val(item.password);
             $("#role").val(item.roleCode);
-            $("#usertel").val(CommonUI.onPhoneNumChange(item.usertel));
+            $("#usertel").val(CommonUI.formatTel(item.usertel));
             $("#useremail").val(item.useremail);
             $("#frCode").val(frCode);
             $("#brCode").val(brCode);
@@ -451,8 +451,8 @@ function filterAccountList(type) {
 }
 
 /* 전화번호 입력을 위한 유효성 검사 */
-function onPhonenumChange(element) {
+function formatTel(element) {
     let phoneNumber = element.value;
-    element.value = CommonUI.onPhoneNumChange(phoneNumber);
+    element.value = CommonUI.formatTel(phoneNumber);
 }
 

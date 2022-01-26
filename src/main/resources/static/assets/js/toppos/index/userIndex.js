@@ -10,7 +10,7 @@ function franchiseInfo(){
         }
         $("#frName").text(userIndexDto.frName+" 점");
         $("#userName").text(userIndexDto.username);
-        $("#userTel").text(CommonUI.onPhoneNumChange(userIndexDto.usertel));
+        $("#userTel").text(CommonUI.formatTel(userIndexDto.usertel));
     });
 }
 

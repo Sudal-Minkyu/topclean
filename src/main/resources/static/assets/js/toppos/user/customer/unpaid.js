@@ -209,7 +209,7 @@ const grids = {
                     dataField: "bcHp",
                     headerText: "전화번호",
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
-                        return CommonUI.onPhoneNumChange(value);
+                        return CommonUI.formatTel(value);
                     },
                 }, {
                     dataField: "bcAddress",
@@ -574,7 +574,7 @@ function uncollectPaymentStageOne() {
                 repreName: wares.frPaymentInfo.frRpreName,
                 franchiseTel: wares.frPaymentInfo.frTelNo,
                 customerName: wares.frPaymentInfo.bcName,
-                customerTel: CommonUI.onPhoneNumChange(wares.frPaymentInfo.bcHp),
+                customerTel: CommonUI.formatTel(wares.frPaymentInfo.bcHp),
                 requestDt: new Date().format("yyyy-MM-dd HH:mm"),
                 totalAmount: $("#totalUncollectAmount").html().toInt(),
                 paymentAmount: $("#totalUncollectAmount").html().toInt(),

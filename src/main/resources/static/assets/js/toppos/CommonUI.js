@@ -122,7 +122,7 @@ class CommonUIClass {
         }
     }
 
-    onPhoneNumChange(phoneNumber) {
+    formatTel(phoneNumber) {
         let formatNum = "";
         if(phoneNumber) {
             phoneNumber = phoneNumber.replace(/[^0-9]/g, "");

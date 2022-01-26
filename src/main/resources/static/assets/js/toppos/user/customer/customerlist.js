@@ -138,7 +138,7 @@ gridColumnLayout[0] = [
         headerText: "휴대폰",
         width: 120,
         labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
-            return CommonUI.onPhoneNumChange(value);
+            return CommonUI.formatTel(value);
         }
     }, {
         dataField: "bcAddress",
@@ -266,7 +266,7 @@ function onModifyCustomer(rowIndex) {
     const item = AUIGrid.getItemByRowIndex(gridId[0], rowIndex);
     $("#bcId").val(item.bcId);
     $("#bcName").val(item.bcName);
-    $("#bcHp").val(CommonUI.onPhoneNumChange(item.bcHp));
+    $("#bcHp").val(CommonUI.formatTel(item.bcHp));
     $("input:radio[name='bcSex']:radio[value='" + item.bcSex + "']")
         .prop('checked', true);
     $("#bcAddress").val(item.bcAddress);
@@ -333,7 +333,7 @@ function ajaxUpdateSaveMoney(data) {
 function onHpChange () {
     const element = document.getElementById("bcHp");
     let phoneNumber = element.value;
-    element.value = CommonUI.onPhoneNumChange(phoneNumber);
+    element.value = CommonUI.formatTel(phoneNumber);
 }
 
 /* 입력된 폼 정보 저장 */
@@ -452,6 +452,6 @@ function resultFunction(msg){
     $("#signImage").show();
 }
 
-function onPhonenumChange(num) {
-    $("#bcHp").val(CommonUI.onPhoneNumChange(num.value));
+function formatTel(num) {
+    $("#bcHp").val(CommonUI.formatTel(num.value));
 }

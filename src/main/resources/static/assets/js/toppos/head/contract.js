@@ -618,7 +618,7 @@ function validateNumber(element, type) {
 }
 
 function onKeyupFrTelNo(el) {
-    el.value = CommonUI.onPhoneNumChange(el.value);
+    el.value = CommonUI.formatTel(el.value);
     console.log("act");
 }
 
