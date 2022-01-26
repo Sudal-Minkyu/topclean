@@ -801,6 +801,29 @@ public class UserRestController {
 
 
 
+//@@@@@@@@@@@@@@@@@@@@@ 일일 영업일보 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    //  검품이력 조회 및 메세지 - 리스트호출 테이블
+    @GetMapping("inspectList")
+    public ResponseEntity<Map<String,Object>> inspectList(
+            @RequestParam(value="bcId", defaultValue="") Long bcId,
+            @RequestParam(value="searchTag", defaultValue="") String searchTag,
+            @RequestParam(value="filterFromDt", defaultValue="") String filterFromDt,
+            @RequestParam(value="filterToDt", defaultValue="") String filterToDt,
+            HttpServletRequest request){
+        if(filterFromDt.equals("")){
+            filterFromDt = "00000101";
+        }
+        if(filterToDt.equals("")){
+            filterToDt = "99991230";
+        }
+
+        return inspectService.inspectList(bcId, searchTag, filterFromDt, filterToDt, request);
+    }
+
+
+
+
+
 //@@@@@@@@@@@@@@@@@@@@@ 가맹점 수기마감, 가맹점입고, 지사반송, 가맹점강제입고, 세탁인도 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     //  접수테이블의 상태 변화 API - 수기마감페이지, 가맹점입고 페이지, 지사반송건전송 페이지, 세탁인도 페이지 공용함수
     @PostMapping("franchiseStateChange")
@@ -876,11 +899,12 @@ public class UserRestController {
     }
 
 
-
 //@@@@@@@@@@@@@@@@@@@@@ 일일 영업일보 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     //  일일영업일보 - 리스트호출 테이블
     @GetMapping("businessdayList")
     public ResponseEntity<Map<String,Object>> businessdayList(
+                                                                            @RequestParam(value="bcId", defaultValue="") Long bcId,
+                                                                            @RequestParam(value="searchTag", defaultValue="") String searchTag,
                                                                             @RequestParam(value="filterFromDt", defaultValue="") String filterFromDt,
                                                                             @RequestParam(value="filterToDt", defaultValue="") String filterToDt,
                                                                             HttpServletRequest request){

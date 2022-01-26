@@ -522,4 +522,72 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         return query.fetch();
     }
 
+    // 검품이력 조회 및 메세지 querydsl
+    public List<RequestDetailInspectDto> findByRequestDetailInspectList(String frCode, Long bcId, String searchTag, String filterFromDt, String filterToDt){
+
+        QRequestDetail requestDetail = QRequestDetail.requestDetail;
+        QRequest request = QRequest.request;
+
+        QItemGroup itemGroup = QItemGroup.itemGroup;
+        QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
+        QItem item = QItem.item;
+
+        JPQLQuery<RequestDetailInspectDto> query = from(requestDetail)
+                .innerJoin(request).on(requestDetail.frId.eq(request))
+                .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
+                .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
+                .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
+                .where(request.frYyyymmdd.loe(filterToDt).and(request.frYyyymmdd.goe(filterFromDt)).and(request.frConfirmYn.eq("Y")))
+                .where(requestDetail.frId.frCode.eq(frCode).and(requestDetail.fdCancel.eq("N")))
+                .select(Projections.constructor(RequestDetailInspectDto.class,
+                        request.frRefType,
+                        request.bcId.bcName,
+
+                        requestDetail.id,
+
+                        request.frYyyymmdd,
+                        requestDetail.fdTag,
+
+                        requestDetail.fdColor,
+                        itemGroup.bgName,
+                        itemGroupS.bsName,
+                        item.biName,
+
+                        requestDetail.fdState,
+
+                        requestDetail.fdS2Dt,
+                        requestDetail.fdS4Dt,
+                        requestDetail.fdS5Dt,
+                        requestDetail.fdS6Dt,
+
+                        requestDetail.fdPriceGrade,
+                        requestDetail.fdRetryYn,
+                        requestDetail.fdPressed,
+                        requestDetail.fdAdd1Amt,
+                        requestDetail.fdAdd1Remark,
+                        requestDetail.fdRepairAmt,
+                        requestDetail.fdRepairRemark,
+                        requestDetail.fdWhitening,
+                        requestDetail.fdPollution,
+                        requestDetail.fdStarch,
+                        requestDetail.fdWaterRepellent,
+                        requestDetail.fdUrgentYn,
+
+                        requestDetail.fdTotAmt,
+                        requestDetail.fdRemark
+                ));
+
+        query.orderBy(requestDetail.id.asc()).groupBy(requestDetail);
+
+        if(!searchTag.equals("")){
+            query.where(requestDetail.fdTag.likeIgnoreCase(searchTag));
+        }
+
+        if(bcId != null){
+            query.where(request.bcId.bcId.eq(bcId));
+        }
+
+        return query.fetch();
+    }
+
 }

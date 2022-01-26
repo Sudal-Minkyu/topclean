@@ -14,6 +14,7 @@ import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.Insp
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.Photo;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.PhotoRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.*;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.RequestDetailInspectDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.RequestDetailSearchDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.RequestDetailSearchDtoSub;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.RequestDetailUpdateDto;
@@ -594,6 +595,28 @@ public class InspectService {
 
         return ResponseEntity.ok(res.success());
     }
+
+    //  검품이력 조회 및 메세지 - 리스트호출 테이블
+    public ResponseEntity<Map<String, Object>> inspectList(Long bcId, String searchTag, String filterFromDt, String filterToDt, HttpServletRequest request) {
+        log.info("inspectList 호출");
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
+//        String frbrCode = (String) claims.get("frbrCode"); // 소속된 지사 코드
+//        String login_id = claims.getSubject(); // 현재 아이디
+//        log.info("현재 접속한 아이디 : "+login_id);
+        log.info("현재 접속한 가맹점 코드 : "+frCode);
+//        log.info("소속된 지사 코드 : "+frbrCode);
+
+        List<RequestDetailInspectDto> requestDetailInspectDtos = requestDetailRepositoryCustom.findByRequestDetailInspectList(frCode, bcId, searchTag, filterFromDt, filterToDt);
+        data.put("gridListData",requestDetailInspectDtos);
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
+
 
 
 }

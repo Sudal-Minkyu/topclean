@@ -22,5 +22,6 @@ public interface RequestDetailRepositoryCustom {
     List<RequestDetailDeliveryDto> findByRequestDetailDeliveryList(String frCode, Long bcId); // 세탁인도
 
     List<RequestDetailUncollectDto> findByRequestDetailUncollectList(String frCode, Long frId);
+    List<RequestDetailInspectDto> findByRequestDetailInspectList(String frCode, Long bcId, String searchTag, String filterFromDt, String filterToDt); // 검품이력 및 메세지
 
 }
