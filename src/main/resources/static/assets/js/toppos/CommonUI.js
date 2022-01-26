@@ -15,7 +15,7 @@ class CommonUIClass {
 
     constructor() {
         String.prototype.toInt = function () {
-            return this.toString() ? parseInt(this.replace(/[^0-9-]/g, "")) : 0;
+            return this.toString() ? parseInt(this.replace(/[^0-9]/g, "")) : 0;
         }
         String.prototype.zeroToNine = function () {
             return this.toString() ? this.replace(/[^0-9-]/g, "") : "";
@@ -122,22 +122,45 @@ class CommonUIClass {
         }
     }
 
-    formatTel(phoneNumber) {
+    formatTel(telNumber) {
         let formatNum = "";
-        if(phoneNumber) {
-            phoneNumber = phoneNumber.replace(/[^0-9]/g, "");
-            if (phoneNumber.length == 11) {
-                formatNum = phoneNumber.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
-            } else if (phoneNumber.length == 8) {
-                formatNum = phoneNumber.replace(/(\d{4})(\d{4})/, '$1-$2');
-            } else {
-                if (phoneNumber.indexOf('02') == 0) {
-                    formatNum = phoneNumber.replace(/(\d{2})(\d{4})(\d{4})/, '$1-$2-$3');
-                } else {
-                    formatNum = phoneNumber.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
-                }
-            }
+        telNumber = telNumber.replace(/[^0-9]/g, "");
+        const telLength = telNumber.length;
+        
+        let foreNumType;
+        const testForeCode = telNumber.substring(0, 3);
+        if(testForeCode.substring(0, 2) === "02") {
+            foreNumType = 2;
+        } else if(Number(testForeCode) > 129 && Number(testForeCode) < 200) {
+            foreNumType = 4;
+        } else if(testForeCode === "014") {
+            foreNumType = 5;
+        } else {
+            foreNumType = 3;
         }
+
+        let midNum;
+        let backNum;
+
+        const foreNum = telNumber.substring(0, foreNumType);
+        if(telLength < 8 + foreNumType && foreNumType !== 4) {
+            midNum = telNumber.substring(foreNumType, foreNumType + 3);
+            backNum = telNumber.substring(foreNumType + 3, telLength);
+        } else {
+            midNum = telNumber.substring(foreNumType, foreNumType + 4);
+            backNum = telNumber.substring(foreNumType + 4, telLength);
+        }
+
+        if(backNum) {
+            formatNum = foreNum + "-" + midNum + "-" + backNum;
+        } else if (midNum) {
+            formatNum = foreNum + "-" + midNum;
+        } else if (foreNum) {
+            formatNum = foreNum;
+        } else {
+            formatNum = telNumber;
+        }
+
         return formatNum;
     }
 
