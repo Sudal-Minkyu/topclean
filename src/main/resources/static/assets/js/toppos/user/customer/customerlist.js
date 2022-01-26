@@ -1,7 +1,7 @@
 $(function() {
 
     // 김민규 12.07 추가 페이지 들어가면 현재 로그인한 가맹점의 고객리스트를 자동 조회한다.
-    onSearchCustomer();
+    // onSearchCustomer();
 
     /* 배열내의 각 설정만 넣어 빈 그리드 생성 */
     createGrids();
@@ -93,7 +93,12 @@ function insertIntoHtmlTag() {
 
 function calculateResultSaveMoney() {
     const current = $("#currentSaveMoney").html().toInt();
-    const add = $("#addSaveMoney").html().toInt();
+    let add = $("#addSaveMoney").html().toInt();
+    if((current + add) < 0) {
+        alertCaution("최종 적립금이 0원 보다 작아질 수는 없습니다.<br>조정금액을 수정합니다.", 1);
+        $("#addSaveMoney").html(current.toLocaleString());
+        add = -current;
+    }
     $("#resultSaveMoney").html((current + add).toLocaleString());
 }
 
@@ -444,4 +449,8 @@ function resultFunction(msg){
     document.getElementById('signImage').src = msg;
     document.getElementById('signImage').style.border = "2px solid black";
     $("#signImage").show();
+}
+
+function onPhonenumChange(num) {
+    $("#bcHp").val(CommonUI.onPhoneNumChange(num.value));
 }

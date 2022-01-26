@@ -1558,7 +1558,8 @@ function onAddOrder() {
     }
 
     if(data.currentRequest.redBtn2 && data.startPrice > data.currentRequest.fdTotAmt) {
-        alertCaution("수정시작 시점보다 금액이 낮습니다.<br>접수취소 후 재접수를 해주세요.", 1);
+        alertCaution("이미 결제가 완료된 접수내역은<br>더 낮은금액으로 수정이 불가합니다." 
+            + "<br>결제취소 후 수정해주세요.", 1);
         return false;
     }
 
