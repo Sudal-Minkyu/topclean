@@ -883,7 +883,13 @@
             </div>
 
             <ul class="pop__console">
+                <li class="pop__console-left">
+                    <div class="c-checkbox">
+                        <input type="checkbox" id="printReceipt" />
+                        <label for="printReceipt">결제후 자동인쇄</label></div>
+                </li>
                 <li><button class="c-button" onclick="onClosePayment()">닫기</button></li>
+                <li><button class="c-button c-button--darksolid">영수증 출력</button></li>
                 <li><button class="c-button c-button--dark" onclick="onPaymentStageOne()">결제하기</button></li>
             </ul>
         </div>
