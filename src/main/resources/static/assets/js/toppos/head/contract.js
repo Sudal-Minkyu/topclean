@@ -466,7 +466,7 @@ function setFieldData(numOfGrid, item) {
             $("#frContractState").val(item.frContractState);
             $("#frPriceGrade").val(item.frPriceGrade);
             $("#frRefCode").val(item.frRefCode);
-            $("#frBusinessNo").val(item.frBusinessNo);
+            $("#frBusinessNo").val(CommonUI.formatBusinessNo(item.frBusinessNo));
             $("#frRpreName").val(item.frRpreName);
             $("#frTelNo").val(item.frTelNo);
             $("#frTagNo").val(item.frTagNo);
@@ -623,5 +623,5 @@ function onKeyupFrTelNo(el) {
 }
 
 function onKeyupFrBusinessNo(el) {
-    el.value = el.value.replace(/(\d{3})(\d{2})(\d{5})/, '$1-$2-$3');
+    el.value = CommonUI.formatBusinessNo(el.value);
 }

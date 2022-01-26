@@ -37,7 +37,7 @@ const bcGradeName = {
 }
 
 /* 가상키보드 입력 대상이 되는 텍스트 필드나 텍스트 에어리어 */
-let vkeyTargetId = ["bcName", "bcHp", "bcAddress", "bcRemark", "searchCustomerField"];
+let vkeyTargetId = ["bcName", "bcAddress", "bcRemark", "searchCustomerField"];
 
 let vkeyProp = [];
 
@@ -45,29 +45,21 @@ vkeyProp[0] = {
     title : "고객명",
 }
 
-vkeyProp[1] = { // 키패드로 변경 필요
-    title : "휴대폰(숫자만 입력해 주세요)",
-    postprocess : function(text) {
-        return text.replace(/[^0-9]/g, "");
-    },
-    callback : onHpChange,
-}
-
-vkeyProp[2] = {
+vkeyProp[1] = {
     title : "주소",
 }
 
-vkeyProp[3] = {
+vkeyProp[2] = {
     title : "특이사항",
 }
 
-vkeyProp[4] = {
+vkeyProp[3] = {
     title : "검색어 입력",
     
 }
 
 /* 가상키보드 입력 대상이 되는 텍스트 필드나 텍스트 에어리어 */
-let vkeypadTargetId = ["addSaveMoney"];
+let vkeypadTargetId = ["addSaveMoney", "bcHp"];
 
 let vkeypadProp = [];
 
@@ -76,14 +68,24 @@ vkeypadProp[0] = {
     callback: insertIntoHtmlTag,
 }
 
+vkeypadProp[1] = { // 키패드로 변경 필요
+    title : "휴대폰(숫자만 입력해 주세요)",
+    midprocess: "tel",
+    callback : onHpChange,
+}
+
 /* 호출하여 목표 가상 키보드 띄우기, 0번부터 배열 순서대로 */
 function openVKeyboard(num) {
     vkey.showKeyboard(vkeyTargetId[num], vkeyProp[num]);
 }
 
 function openVKeypad(num) {
-    $("#tempKeypadField").val($("#" + vkeypadTargetId[num]).html());
-    vkey.showKeypad("tempKeypadField", vkeypadProp[num]);
+    if (num === 0) {
+        $("#tempKeypadField").val($("#" + vkeypadTargetId[num]).html());
+        vkey.showKeypad("tempKeypadField", vkeypadProp[num]);
+    } else {
+        vkey.showKeypad(vkeypadTargetId[num], vkeypadProp[num]);
+    }
 }
 
 function insertIntoHtmlTag() {
@@ -332,8 +334,7 @@ function ajaxUpdateSaveMoney(data) {
 /* 전화번호 입력을 위한 유효성 검사 */
 function onHpChange () {
     const element = document.getElementById("bcHp");
-    let phoneNumber = element.value;
-    element.value = CommonUI.formatTel(phoneNumber);
+    element.value = CommonUI.formatTel(element.value);
 }
 
 /* 입력된 폼 정보 저장 */

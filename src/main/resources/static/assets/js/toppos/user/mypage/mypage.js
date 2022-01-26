@@ -152,7 +152,7 @@ const comms = {
 		const data = {
 			list: frFavoriteData
 		};
-		wares.baType = num;
+		data.baType = num;
 
 		CommonUI.ajaxjson(grids.s.url.update[num], JSON.stringify(data), function (res) {
 			alertSuccess('저장되었습니다.');
