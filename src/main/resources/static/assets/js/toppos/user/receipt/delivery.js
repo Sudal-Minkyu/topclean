@@ -50,7 +50,6 @@ const dtos = {
             fdS2Dt: "s",
             fdS4Dt: "s",
             fdS5Dt: "s",
-            fdS6Dt: "d",
             fdState: "s",
             fdColor: "s",
 
@@ -412,6 +411,13 @@ const trigs = {
                     alertCaution("인도할 세탁물을 선택해 주세요.", 1);
                 }
             });
+
+            // 팝업 닫기
+			$('.pop__close').on('click', function(e) {
+				$(this).parents('.pop').removeClass('active');
+				
+				e.preventDefault()
+			});
         },
         vkeys() {
             $("#vkeyboard0").on("click", function() {

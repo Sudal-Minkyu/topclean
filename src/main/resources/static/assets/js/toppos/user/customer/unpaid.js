@@ -175,6 +175,7 @@ const comms = {
             $("#paymentPop").removeClass("active");
             comms.filterCustomerList(wares.searchCondition);
             comms.customersUncollectedList({bcId: wares.customerBcId});
+            $("#payMonth").val("0");
         });
     },
 };
@@ -484,6 +485,16 @@ const trigs = {
 
             $("#cancelPayment").on("click", function () {
                 $("#paymentPop").removeClass("active");
+            });
+
+            $("input[name='payType']").on("click", function () {
+                const payType = $("input[name=payType]:checked").val();
+                if(payType === "02") {
+                    $("#payMonth").show();
+                } else {
+                    $("#payMonth").hide();
+                    $("#payMonth").val("0");
+                }
             });
         },
 

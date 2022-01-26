@@ -19,19 +19,6 @@
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
 	<script src="/assets/js/toppos/user/receipt/delivery.js"></script>
-	<script type="text/javascript">
-		$(function() {
-			
-			// 팝업 닫기
-			$('.pop__close').on('click', function(e) {
-				$(this).parents('.pop').removeClass('active');
-				
-				e.preventDefault()
-			});
-			
-		});
-
-	</script>
 </th:block>
 
 <div layout:fragment="content" class="content content--column">
