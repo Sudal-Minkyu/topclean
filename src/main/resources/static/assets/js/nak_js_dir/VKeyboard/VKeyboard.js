@@ -873,6 +873,67 @@ class VKeyboard {
     }
 
 
+    formatTel(telNumber) {
+        let formatNum = "";
+        telNumber = telNumber.replace(/[^0-9]/g, "");
+        const telLength = telNumber.length;
+        
+        let foreNumType;
+        const testForeCode = telNumber.substring(0, 3);
+        if(testForeCode.substring(0, 2) === "02") {
+            foreNumType = 2;
+        } else if(Number(testForeCode) > 129 && Number(testForeCode) < 200) {
+            foreNumType = 4;
+        } else if(testForeCode === "014") {
+            foreNumType = 5;
+        } else {
+            foreNumType = 3;
+        }
+
+        let midNum;
+        let backNum;
+
+        const foreNum = telNumber.substring(0, foreNumType);
+        if(telLength < 8 + foreNumType && foreNumType !== 4) {
+            midNum = telNumber.substring(foreNumType, foreNumType + 3);
+            backNum = telNumber.substring(foreNumType + 3, telLength);
+        } else {
+            midNum = telNumber.substring(foreNumType, foreNumType + 4);
+            backNum = telNumber.substring(foreNumType + 4, telLength);
+        }
+
+        if(backNum) {
+            formatNum = foreNum + "-" + midNum + "-" + backNum;
+        } else if (midNum) {
+            formatNum = foreNum + "-" + midNum;
+        } else if (foreNum) {
+            formatNum = foreNum;
+        } else {
+            formatNum = telNumber;
+        }
+
+        return formatNum;
+    }
+
+    formatBusinessNo(businessNum) {
+        let formatNum = "";
+        businessNum = businessNum.replace(/[^0-9]/g, "");
+
+        const foreNum = businessNum.substring(0, 3);
+        const midNum = businessNum.substring(3, 2);
+        const backNum = businessNum.substring(5, 10);
+
+        if (backNum) {
+            formatNum = foreNum + "-" + midNum + "-" + backNum;
+        } else if (midNum) {
+            formatNum = foreNum + "-" + midNum;
+        } else if (foreNum) {
+            formatNum = foreNum;
+        }
+
+        return formatNum;
+    }
+
     /*   ====================== 키패드 펑션들 =====================
     * 목표 필드 입력에 있어 키패드를 사용한다.
     * elementId : 목표필드의 id, callback : 키패드 입력 완료 후 실행할 펑션
@@ -908,9 +969,10 @@ class VKeyboard {
             case "none":
                 break;
             case "tel":
-                initialValue = CommonUI.formatTel(initialValue);
+                initialValue = this.formatTel(initialValue);
                 break;
             case "business":
+                initialValue = this.businessNum(initialValue);
                 break;
         }
 

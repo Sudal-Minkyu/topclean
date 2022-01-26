@@ -471,7 +471,7 @@ const trigs = {
 
 			$('#frBusinessNo').on('keyup', function () {
 				const busiNo = $("#frBusinessNo").val();
-				$("#frBusinessNo").val(busiNo.replace(/(\d{3})(\d{2})(\d{5})/, '$1-$2-$3'));
+				$("#frBusinessNo").val(CommonUI.formatBusinessNo(busiNo));
 			});
 
 			$('#frTelNo').on('keyup', function () {
@@ -555,8 +555,7 @@ const vKeypad = {
 			vKeypad.targetProp[0] = {
 				callback: function () {
 					const busiNo = $("#frBusinessNo").val();
-					console.log(busiNo);
-					$("#frBusinessNo").val(busiNo.replace(/(\d{3})(\d{2})(\d{5})/, '$1-$2-$3'));
+					$("#frBusinessNo").val(CommonUI.formatBusinessNo(busiNo));
 				},
 				midprocess: "business",
 			};
@@ -613,9 +612,9 @@ function putFrInfoDataInField(myInfoData) {
 	$("input[name='brCarculateRateHq']").val(myInfoData.brCarculateRateHq);
 	$("input[name='brCarculateRateBr']").val(myInfoData.brCarculateRateBr);
 	$("input[name='brCarculateRateFr']").val(myInfoData.brCarculateRateFr);
-	$("input[name='frBusinessNo']").val(myInfoData.frBusinessNo);
+	$("input[name='frBusinessNo']").val(CommonUI.formatBusinessNo(myInfoData.frBusinessNo));
 	$("input[name='frRpreName']").val(myInfoData.frRpreName);
-	$("input[name='frTelNo']").val(myInfoData.frTelNo);
+	$("input[name='frTelNo']").val(CommonUI.formatTel(myInfoData.frTelNo));
 	$("input[name='frTagNo']").val(myInfoData.frTagNo);
 	$("input[name='frEstimateDuration']").val(myInfoData.frEstimateDuration);
 }

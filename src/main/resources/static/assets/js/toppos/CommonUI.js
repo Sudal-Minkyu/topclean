@@ -18,7 +18,7 @@ class CommonUIClass {
             return this.toString() ? parseInt(this.replace(/[^0-9]/g, "")) : 0;
         }
         String.prototype.zeroToNine = function () {
-            return this.toString() ? this.replace(/[^0-9-]/g, "") : "";
+            return this.toString() ? this.replace(/[^0-9]/g, "") : "";
         }
     }
 
@@ -159,6 +159,25 @@ class CommonUIClass {
             formatNum = foreNum;
         } else {
             formatNum = telNumber;
+        }
+
+        return formatNum;
+    }
+
+    formatBusinessNo(businessNum) {
+        let formatNum = "";
+        businessNum = businessNum.replace(/[^0-9]/g, "");
+
+        const foreNum = businessNum.substring(0, 3);
+        const midNum = businessNum.substring(3, 5);
+        const backNum = businessNum.substring(5, 10);
+
+        if (backNum) {
+            formatNum = foreNum + "-" + midNum + "-" + backNum;
+        } else if (midNum) {
+            formatNum = foreNum + "-" + midNum;
+        } else if (foreNum) {
+            formatNum = foreNum;
         }
 
         return formatNum;
