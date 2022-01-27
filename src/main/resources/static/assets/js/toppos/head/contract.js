@@ -360,8 +360,8 @@ function franchiseSave() {
 
     const formData = new FormData(document.getElementById('frFormData'));
     let url = "/api/head/franchiseSave";
-    formData.set("frBusinessNo", formData.get("frBusinessNo").replace(/[^0-9]/g, ""));
-    formData.set("frTelNo", formData.get("frTelNo").replace(/[^0-9]/g, ""));
+    formData.set("frBusinessNo", formData.get("frBusinessNo").numString());
+    formData.set("frTelNo", formData.get("frTelNo").numString());
 
     CommonUI.ajax(url, "POST", formData, function (req){
         const sentData = Object.fromEntries(formData);
@@ -614,7 +614,7 @@ function validateNumber(element, type) {
             }
             break;
         case 2 :
-                element.value = element.value.replace(/[^0-9]/g, "");
+                element.value = element.value.numString();
             break;
     }
 }

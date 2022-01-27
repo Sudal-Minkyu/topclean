@@ -84,7 +84,7 @@ function saveRegister() {
         return false;
     }
 
-    formData.set("bcHp", formData.get("bcHp").replace(/[^0-9]/g, ""));
+    formData.set("bcHp", formData.get("bcHp").numString());
     formData.append("bcBirthday", birthday);
     formData.append("bcGrade", "01");
 

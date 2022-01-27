@@ -298,7 +298,7 @@ function filterItems() {
     }
     if(s_setDt !== "") {
         AUIGrid.setFilter(gridId[0], "setDt", function (dataField, value, item) {
-            return s_setDt.replace(/[^0-9]/g, "") === value;
+            return s_setDt.numString() === value;
         });
     }
 }

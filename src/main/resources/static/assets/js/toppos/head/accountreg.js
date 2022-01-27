@@ -310,7 +310,7 @@ function accountSave(){
     }
 
     const formData = new FormData(document.getElementById('accountFormData'));
-    formData.set("usertel", formData.get("usertel").replace(/[^0-9]/g, ""));
+    formData.set("usertel", formData.get("usertel").numString());
 
     let url = "/api/head/accountSave";
 

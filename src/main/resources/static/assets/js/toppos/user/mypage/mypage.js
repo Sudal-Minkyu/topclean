@@ -97,10 +97,10 @@ const comms = {
 	},
 	// 가맹점 정보 저장
 	saveMyInfo(formData) {
-		formData.set("frTelNo", formData.get("frTelNo").replace(/[^0-9]/g, ""));
-		formData.set("frBusinessNo", formData.get("frBusinessNo").replace(/[^0-9]/g, ""));
+		formData.set("frTelNo", formData.get("frTelNo").numString());
+		formData.set("frBusinessNo", formData.get("frBusinessNo").numString());
 		const jsonData = Object.fromEntries(formData);
-		jsonData.frEstimateDuration = Number(jsonData.frEstimateDuration);
+		jsonData.frEstimateDuration = parseInt(jsonData.frEstimateDuration);
 		dv.chk(jsonData, dtos.send.franchiseMyInfoSave, "가맹점 정보 보내기");
 		console.log(jsonData);
 		const url = "/api/user/franchiseMyInfoSave";

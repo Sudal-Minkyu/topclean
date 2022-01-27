@@ -156,7 +156,7 @@ $(function() {
     });
 
     $("#fdRepairComplete").on("click", function () {
-        currentRequest.fdRepairAmt = parseInt($("#fdRepairAmt").val().replace(/[^0-9]/g, ""));
+        currentRequest.fdRepairAmt = $("#fdRepairAmt").val().toInt();
         currentRequest.fdRepairRemark = $("#fdRepairRemark").val();
         if(currentRequest.fdRepairAmt || currentRequest.fdRepairRemark.length) {
             $("#fdRepair").prop("checked", true);
@@ -178,7 +178,7 @@ $(function() {
     });
 
     $("#fdAddComplete").on("click", function () {
-        currentRequest.fdAdd1Amt = parseInt($("#fdAdd1Amt").val().replace(/[^0-9]/g, ""));
+        currentRequest.fdAdd1Amt = $("#fdAdd1Amt").val().toInt();
         currentRequest.fdAdd1Remark = $("#fdAdd1Remark").val();
         if(currentRequest.fdAdd1Amt || currentRequest.fdAdd1Remark.length) {
             $("#fdAdd1").prop("checked", true);
@@ -1149,7 +1149,7 @@ function onAddOrder() {
     currentRequest.fdPriceGrade = $("input[name='fdPriceGrade']:checked").val();
     currentRequest.fdDiscountGrade = $("input[name='fdDiscountGrade']:checked").val();
     currentRequest.fdRemark = $("#fdRemark").val();
-    currentRequest.frEstimateDate = initialData.etcData.frEstimateDate.replace(/[^0-9]/g, "");
+    currentRequest.frEstimateDate = initialData.etcData.frEstimateDate.numString();
     currentRequest.fdSpecialYn = $("#fdSpecialYn").is(":checked") ? "Y" : "N";
     currentRequest.fdUrgentYn = $("#fdUrgentYn").is(":checked") ? "Y" : "N";
 
@@ -1377,10 +1377,10 @@ function onSave() {
         checkNum: checkNum,
         bcId: selectedCustomer.bcId,
         frNo: initialData.etcData.frNo,
-        frNormalAmount: parseInt($("#totFdNormalAmount").html().replace(/[^0-9]/g, "")),
-        frDiscountAmount: parseInt($("#totChangeAmount").html().replace(/[^0-9]/g, "")),
+        frNormalAmount: $("#totFdNormalAmount").html().toInt(),
+        frDiscountAmount: $("#totChangeAmount").html().toInt(),
         frTotalAmount: $("#totFdRequestAmount").html().toInt(),
-        frQty: parseInt($("#totFdQty").html().replace(/[^0-9]/g, "")),
+        frQty: $("#totFdQty").html().toInt(),
     }
 
     const data = {
@@ -1436,15 +1436,15 @@ function enableKeypad() {
 
     $keypadBtn.on("click", function (e) {
         const $keypad_field = $(this).parents(".add-cost__keypad").find(".keypad_field");
-        $keypad_field.val(parseInt($keypad_field.val().replace(/[^0-9]/g, "") + this.value).toLocaleString());
+        $keypad_field.val(parseInt($keypad_field.val().numString() + this.value).toLocaleString());
     });
 
     $keypadBackspace.on("click", function (e) {
         const $keypad_field = $(this).parents(".add-cost__keypad").find(".keypad_field");
-        const currentValue = $keypad_field.val().replace(/[^0-9]/g, "");
+        const currentValue = $keypad_field.val().numString();
         if(currentValue.length > 1) {
             $keypad_field.val(parseInt(currentValue.substr(0,
-                currentValue.replace(/[^0-9]/g, "").length - 1)).toLocaleString());
+                currentValue.numString().length - 1)).toLocaleString());
         }else{
             $keypad_field.val("0");
         }
@@ -1491,7 +1491,7 @@ function onRepeatRequest() {
 }
 
 function changeQty() {
-    tempItem.fdQty = parseInt($("#hiddenKeypad").val());
+    tempItem.fdQty = $("#hiddenKeypad").val().toInt();
     tempItem.fdRequestAmt = (tempItem.fdNormalAmt + tempItem.fdPressed + tempItem.fdWhitening
         + tempItem.fdWaterRepellent + tempItem.fdStarch + tempItem.fdPollution + tempItem.fdRepairAmt
         + tempItem.fdAdd1Amt - tempItem.fdDiscountAmt) * tempItem.fdQty;
@@ -1543,8 +1543,8 @@ function calculateOne() {
 }
 
 function calculateTwo() {
-    const totalAmt = parseInt($("#totalAmt").html().replace(/[^0-9]/g, ""));
-    const receiveCash = parseInt($("#receiveCash").html().replace(/[^0-9]/g, ""));
+    const totalAmt = $("#totalAmt").html().toInt();
+    const receiveCash = $("#receiveCash").html().toInt();
     const changeCash = receiveCash - totalAmt;
     const uncollectAmtCash = totalAmt - receiveCash;
 
@@ -1558,8 +1558,8 @@ function calculateTwo() {
 }
 
 function calculateThree() {
-    const totalAmt = parseInt($("#totalAmt").html().replace(/[^0-9]/g, ""));
-    const receiveCard = parseInt($("#receiveCard").html().replace(/[^0-9]/g, ""));
+    const totalAmt = $("#totalAmt").html().toInt();
+    const receiveCard = $("#receiveCard").html().toInt();
     const uncollectAmtCard = totalAmt - receiveCard;
     if(uncollectAmtCard > 0) {
         $("#uncollectAmtCard").html(uncollectAmtCard.toLocaleString());
@@ -1725,23 +1725,22 @@ function onPaymentStageTwo(paymentData = {}, creditData = {}) {
                 frNo: initialData.etcData.frNo,
             }
         }
-        const applyUncollectAmt = parseInt($("#applyUncollectAmt").html().replace(/[^0-9]/g, ""));
+        const applyUncollectAmt = $("#applyUncollectAmt").html().toInt();
 
         const paymentTab = $(".pop__pay-tabs-item.active").attr("data-id");
         if (paymentTab === "tabCash") {
             const receiveCash =
-                parseInt($("#receiveCash").html().replace(/[^0-9]/g, ""))
-                - parseInt($("#changeCash").html().replace(/[^0-9]/g, ""));
+                $("#receiveCash").html().toInt() - $("#changeCash").html().toInt();
             const paymentCash = {
                 fpType: "01",
                 fpRealAmt: receiveCash,
-                fpAmt: Number(receiveCash - applyUncollectAmt),
+                fpAmt: parseInt(receiveCash - applyUncollectAmt),
                 fpCollectAmt: applyUncollectAmt,
             }
             data.payment.push(paymentCash);
         } else if (paymentTab === "tabCard") {
 
-            const receiveCard = parseInt($("#receiveCard").html().replace(/[^0-9]/g, ""));
+            const receiveCard = $("#receiveCard").html().toInt();
 
             const paymentCard = {
                 fpType: "02",
@@ -1764,7 +1763,7 @@ function onPaymentStageTwo(paymentData = {}, creditData = {}) {
             }
             data.payment.push(paymentCard);
         }
-        const applySaveMoney = parseInt($("#applySaveMoney").html().replace(/[^0-9]/g, ""));
+        const applySaveMoney = $("#applySaveMoney").html().toInt();
         if (applySaveMoney) {
             const paymentSaved = {
                 fpType: "03",

@@ -882,7 +882,7 @@ class VKeyboard {
         const testForeCode = telNumber.substring(0, 3);
         if(testForeCode.substring(0, 2) === "02") {
             foreNumType = 2;
-        } else if(Number(testForeCode) > 129 && Number(testForeCode) < 200) {
+        } else if(parseInt(testForeCode) > 129 && parseInt(testForeCode) < 200) {
             foreNumType = 4;
         } else if(testForeCode === "014") {
             foreNumType = 5;
@@ -964,7 +964,7 @@ class VKeyboard {
         let initialValue = targetValue.replace(/[^0-9]/g, "");
         switch(this.keypadProp.midprocess) {
             case "default":
-                initialValue = Number(initialValue).toLocaleString();
+                initialValue = parseInt(initialValue).toLocaleString();
                 break;
             case "none":
                 break;
@@ -1013,7 +1013,7 @@ class VKeyboard {
     keypadMidprocess(value) {
         switch(this.keypadProp.midprocess) {
             case "default":
-                value = Number(value).toLocaleString();
+                value = parseInt(value).toLocaleString();
                 break;
             case "none":
                 break;

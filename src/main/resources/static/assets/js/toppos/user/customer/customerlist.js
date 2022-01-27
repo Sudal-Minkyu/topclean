@@ -89,7 +89,7 @@ function openVKeypad(num) {
 }
 
 function insertIntoHtmlTag() {
-    $("#" + vkeypadTargetId[0]).html(Number($("#tempKeypadField").val()).toLocaleString());
+    $("#" + vkeypadTargetId[0]).html(parseInt($("#tempKeypadField").val()).toLocaleString());
     calculateResultSaveMoney();
 }
 
@@ -367,7 +367,7 @@ function saveRegister() {
         console.log("서면 입니다.");
     }
 
-    formData.set("bcHp", formData.get("bcHp").replace(/[^0-9]/g, ""));
+    formData.set("bcHp", formData.get("bcHp").numString());
     formData.append("bcBirthday", birthday);
     formData.append("bcGrade", $("#bcGradeNo").val());
     formData.append("bcSignImage", $("#signImage").attr("src"));

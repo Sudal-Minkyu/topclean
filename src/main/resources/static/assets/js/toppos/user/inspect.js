@@ -414,8 +414,8 @@ const trigs = {
                 const filterCondition = {
                     bcId: wares.selectedCustomer.bcId,
                     searchTag: wares.searchTag,
-                    filterFromDt: $("#filterFromDt").val().replace(/[^0-9]/g, ""),
-                    filterToDt: $("#filterToDt").val().replace(/[^0-9]/g, ""),
+                    filterFromDt: $("#filterFromDt").val().numString(),
+                    filterToDt: $("#filterToDt").val().numString(),
                 }
                 comms.getDetailList(filterCondition);
             });
@@ -592,8 +592,8 @@ function mainSearch() {
             const filterCondition = {
                 bcId: null,
                 searchTag: searchString,
-                filterFromDt: $("#filterFromDt").val().replace(/[^0-9]/g, ""),
-                filterToDt: $("#filterToDt").val().replace(/[^0-9]/g, ""),
+                filterFromDt: $("#filterFromDt").val().numString(),
+                filterToDt: $("#filterToDt").val().numString(),
             }
             wares.searchTag = searchString;
             comms.getDetailList(filterCondition);

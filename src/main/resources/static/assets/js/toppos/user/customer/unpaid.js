@@ -209,7 +209,7 @@ const grids = {
                 }, {
                     dataField: "bcHp",
                     headerText: "전화번호",
-                    width: 130,
+                    width: 120,
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
                         return CommonUI.formatTel(value);
                     },
@@ -219,13 +219,13 @@ const grids = {
                 }, {
                     dataField: "saveMoney",
                     headerText: "적립금",
-                    width: 70,
+                    width: 90,
                     dataType: "numeric",
                     autoThousandSeparator: "true",
                 }, {
                     dataField: "uncollectMoney",
                     headerText: "미수금",
-                    width: 70,
+                    width: 90,
                     dataType: "numeric",
                     autoThousandSeparator: "true",
                 },
@@ -241,7 +241,7 @@ const grids = {
                 noDataMessage : "출력할 데이터가 없습니다.",
                 enableColumnResize : true,
                 showRowNumColumn : false,
-                showStateColumn : true,
+                showStateColumn : false,
                 enableFilter : true,
                 rowHeight : 48,
                 headerHeight : 48,
@@ -251,6 +251,7 @@ const grids = {
                 {
                     dataField: "frYyyymmdd",
                     headerText: "접수일",
+                    width: 90,
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
                 }, {
@@ -266,16 +267,19 @@ const grids = {
                 }, {
                     dataField: "frTotalAmount",
                     headerText: "접수금액",
+                    width: 90,
                     dataType: "numeric",
                     autoThousandSeparator: "true",
                 }, {
                     dataField: "frPayAmount",
                     headerText: "입금액",
+                    width: 90,
                     dataType: "numeric",
                     autoThousandSeparator: "true",
                 }, {
                     dataField: "uncollectMoney",
                     headerText: "미수금액",
+                    width: 90,
                     dataType: "numeric",
                     autoThousandSeparator: "true",
                 },
@@ -300,11 +304,13 @@ const grids = {
                 {
                     dataField: "frYyyymmdd",
                     headerText: "접수일",
+                    width: 90,
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
                 }, {
                     dataField: "fdTag",
                     headerText: "택번호",
+                    width: 80,
                     labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
                         return value.substr(0, 3) + "-" + value.substr(-4);
                     },
@@ -324,23 +330,27 @@ const grids = {
                 }, {
                     dataField: "",
                     headerText: "처리내역",
+                    width: 90,
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
                         return CommonUI.toppos.processName(item);
                     }
                 }, {
                     dataField: "fdTotAmt",
                     headerText: "접수금액",
+                    width: 90,
                     dataType: "numeric",
                     autoThousandSeparator: "true",
                 }, {
                     dataField: "fdState",
-                    headerText: "현재상태",
+                    headerText: "상태",
+                    width: 60,
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
                         return CommonData.name.fdState[value];
                     },
                 }, {
                     dataField: "fdS6Dt",
                     headerText: "인도일",
+                    width: 90,
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
                 },
@@ -353,7 +363,7 @@ const grids = {
                 noDataMessage : "출력할 데이터가 없습니다.",
                 enableColumnResize : true,
                 showRowNumColumn : false,
-                showStateColumn : true,
+                showStateColumn : false,
                 enableFilter : true,
                 rowHeight : 48,
                 headerHeight : 48,

@@ -17,7 +17,7 @@ class CommonUIClass {
         String.prototype.toInt = function () {
             return this.toString() ? parseInt(this.replace(/[^0-9]/g, "")) : 0;
         }
-        String.prototype.zeroToNine = function () {
+        String.prototype.numString = function () {
             return this.toString() ? this.replace(/[^0-9]/g, "") : "";
         }
     }
@@ -123,14 +123,14 @@ class CommonUIClass {
 
     formatTel(telNumber) {
         let formatNum = "";
-        telNumber = telNumber.zeroToNine();
+        telNumber = telNumber.numString();
         const telLength = telNumber.length;
         
         let foreNumType;
         const testForeCode = telNumber.substring(0, 3);
         if(testForeCode.substring(0, 2) === "02") {
             foreNumType = 2;
-        } else if(Number(testForeCode) > 129 && Number(testForeCode) < 200) {
+        } else if(parseInt(testForeCode) > 129 && parseInt(testForeCode) < 200) {
             foreNumType = 4;
         } else if(testForeCode === "014") {
             foreNumType = 5;
@@ -165,7 +165,7 @@ class CommonUIClass {
 
     formatBusinessNo(businessNum) {
         let formatNum = "";
-        businessNum = businessNum.zeroToNine();
+        businessNum = businessNum.numString();
 
         const foreNum = businessNum.substring(0, 3);
         const midNum = businessNum.substring(3, 5);
