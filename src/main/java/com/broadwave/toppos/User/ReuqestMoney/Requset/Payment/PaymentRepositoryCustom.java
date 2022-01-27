@@ -1,8 +1,10 @@
 package com.broadwave.toppos.User.ReuqestMoney.Requset.Payment;
 
+import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentDtos.PaymentBusinessdayListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentDtos.PaymentCencelDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentDtos.PaymentCencelYnDto;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -15,4 +17,6 @@ public interface PaymentRepositoryCustom {
     List<PaymentCencelDto> findByRequestDetailCencelDataList(String frCode, Long frId);
 
     List<PaymentCencelYnDto> findByPaymentCancelYn(List<Long> frIdList);
+
+    List<PaymentBusinessdayListDto> findByPaymentBusinessdayListDto(String frCode, String filterFromDt, String filterToDt); // 영업일보 통계 카드결제금액, 현금결제금액, 취소결제금액, 미수결제금액 sum querydsl
 }

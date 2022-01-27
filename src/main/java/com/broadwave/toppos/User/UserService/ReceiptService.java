@@ -521,6 +521,7 @@ public class ReceiptService {
                             Payment payment = modelMapper.map(paymentDto,Payment.class);
                             payment.setBcId(optionalCustomer.get());
                             payment.setFrId(optionalRequest.get());
+                            payment.setFpYyyymmdd(nowDate);
                             payment.setFpInType("01");
                             payment.setFpCancelYn("N");
                             payment.setFpSavedMoneyYn("N");
@@ -544,6 +545,7 @@ public class ReceiptService {
                             if(payment.getFpType().equals("03")){
                                 saveMoney = new SaveMoney();
                                 saveMoney.setBcId(optionalCustomer.get());
+                                saveMoney.setFsYyyymmdd(nowDate);
                                 saveMoney.setFsType("2");
                                 saveMoney.setFsClose("N");
                                 saveMoney.setFsAmt(payment.getFpAmt());

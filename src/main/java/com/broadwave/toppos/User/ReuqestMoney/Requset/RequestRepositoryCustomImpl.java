@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -252,6 +253,50 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
                         .and(request.id.in(frIdList)
                                 .and(request.frCode.eq(frCode))
                         )));
+
+        return query.fetch();
+    }
+
+    // 영업일보 통계 리스트 querydsl - 1
+    @Override
+    public List<RequestBusinessdayListDto> findByBusinessDayList(String frCode, String filterFromDt, String filterToDt){
+        QRequest request = QRequest.request;
+
+        JPQLQuery<RequestBusinessdayListDto> query = from(request)
+                .where(request.frYyyymmdd.loe(filterToDt).and(request.frYyyymmdd.goe(filterFromDt)))
+                .select(Projections.constructor(RequestBusinessdayListDto.class,
+                        request.frYyyymmdd,
+                        request.frQty.sum(),
+                        request.frTotalAmount.sum()
+
+                ));
+
+        query.groupBy(request.frYyyymmdd).orderBy(request.frYyyymmdd.asc());
+
+        // 기본조건문
+        query.where(request.frCode.eq(frCode).and(request.frConfirmYn.eq("Y")));
+
+        return query.fetch();
+    }
+
+    // 영업일보 통계 리스트 querydsl - 2
+    @Override
+    public List<RequestBusinessdayCustomerListDto> findByBusinessDayCustomerList(String frCode, String filterFromDt, String filterToDt){
+        QRequest request = QRequest.request;
+
+        QCustomer customer = QCustomer.customer;
+        JPQLQuery<RequestBusinessdayCustomerListDto> query = from(request)
+                .innerJoin(customer).on(request.bcId.eq(customer))
+                .where(request.frYyyymmdd.goe(filterFromDt).and(request.frYyyymmdd.loe(filterToDt)))
+                .select(Projections.constructor(RequestBusinessdayCustomerListDto.class,
+                        request.frYyyymmdd,
+                        customer.countDistinct()
+                ));
+
+        query.groupBy(request.frYyyymmdd).orderBy(request.frYyyymmdd.asc());
+
+        // 기본조건문
+        query.where(request.frCode.eq(frCode).and(request.frConfirmYn.eq("Y")));
 
         return query.fetch();
     }

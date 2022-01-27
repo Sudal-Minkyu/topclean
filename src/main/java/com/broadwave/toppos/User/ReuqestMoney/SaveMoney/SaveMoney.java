@@ -35,6 +35,9 @@ public class SaveMoney {
     @JoinColumn(name="fp_id")
     private Payment fpId; // 고객 ID값
 
+    @Column(name="fs_yyyymmdd")
+    private String fsYyyymmdd; // 시행일자
+
     @Column(name="fs_type")
     private String fsType; // 적립유형
 

@@ -24,4 +24,7 @@ public interface RequestDetailRepositoryCustom {
     List<RequestDetailUncollectDto> findByRequestDetailUncollectList(String frCode, Long frId);
     List<RequestDetailInspectDto> findByRequestDetailInspectList(String frCode, Long bcId, String searchTag, String filterFromDt, String filterToDt); // 검품이력 및 메세지
 
+    List<RequestDetailBusinessdayListDto> findByRequestDetailBusinessdayList(String frCode, String filterFromDt, String filterToDt); // 재세탁, 부착물 카운트
+    List<RequestDetailBusinessdayDeliveryDto> findByRequestDetailBusinessdayDeliveryList(String frCode, String filterFromDt, String filterToDt); // 영업일보 통계 총 출고 sum querydsl
+
 }

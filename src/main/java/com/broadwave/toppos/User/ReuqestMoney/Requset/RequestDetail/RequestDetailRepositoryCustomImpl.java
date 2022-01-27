@@ -3,10 +3,12 @@ package com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail;
 import com.broadwave.toppos.Head.Item.Group.A.QItemGroup;
 import com.broadwave.toppos.Head.Item.Group.B.QItemGroupS;
 import com.broadwave.toppos.Head.Item.Group.C.QItem;
+import com.broadwave.toppos.User.Customer.QCustomer;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.QRequest;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.QInspeot;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.*;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.JPQLQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
@@ -590,4 +592,55 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         return query.fetch();
     }
 
+    // 영업일보 통계 재세탁, 부착물 sum querydsl - 5
+    @Override
+    public List<RequestDetailBusinessdayListDto> findByRequestDetailBusinessdayList(String frCode, String filterFromDt, String filterToDt){
+        QRequestDetail requestDetail = QRequestDetail.requestDetail;
+
+        QRequest request = QRequest.request;
+        JPQLQuery<RequestDetailBusinessdayListDto> query = from(requestDetail)
+                .innerJoin(request).on(request.eq(requestDetail.frId))
+                .where(request.frYyyymmdd.goe(filterFromDt).and(request.frYyyymmdd.loe(filterToDt)))
+                .select(Projections.constructor(RequestDetailBusinessdayListDto.class,
+                        request.frYyyymmdd,
+                        new CaseBuilder()
+                                .when(requestDetail.fdRetryYn.eq("Y")).then(1)
+                                .otherwise(0).sum(),
+                        new CaseBuilder()
+                                .when(requestDetail.biItemcode.substring(0,3).eq("D17")).then(1)
+                                .otherwise(0).sum()
+                ));
+
+        query.groupBy(request.frYyyymmdd).orderBy(request.frYyyymmdd.asc());
+
+        // 기본조건문
+        query.where(request.frCode.eq(frCode).and(request.frConfirmYn.eq("Y")));
+
+        return query.fetch();
+    }
+
+    // 영업일보 통계 총 출고 sum querydsl - 6
+    @Override
+    public List<RequestDetailBusinessdayDeliveryDto> findByRequestDetailBusinessdayDeliveryList(String frCode, String filterFromDt, String filterToDt){
+        QRequestDetail requestDetail = QRequestDetail.requestDetail;
+
+        QRequest request = QRequest.request;
+
+        JPQLQuery<RequestDetailBusinessdayDeliveryDto> query = from(requestDetail)
+                .innerJoin(request).on(request.eq(requestDetail.frId))
+                .where(requestDetail.fdS6Dt.goe(filterFromDt).and(requestDetail.fdS6Dt.loe(filterToDt)).and(requestDetail.fdS6Dt.isNotNull()))
+                .select(Projections.constructor(RequestDetailBusinessdayDeliveryDto.class,
+                        requestDetail.fdS6Dt,
+                        request.bcId.countDistinct()
+                ));
+
+        query.groupBy(requestDetail.fdS6Dt).orderBy(requestDetail.fdS6Dt.asc());
+
+        // 기본조건문
+        query.where(request.frCode.eq(frCode).and(request.frConfirmYn.eq("Y")));
+
+        return query.fetch();
+    }
+
 }
+

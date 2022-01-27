@@ -1,9 +1,15 @@
 package com.broadwave.toppos.User.ReuqestMoney.SaveMoney;
 
 import com.broadwave.toppos.User.Customer.Customer;
+import com.broadwave.toppos.User.Customer.QCustomer;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentDtos.PaymentBusinessdayListDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.QPayment;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.QRequest;
+import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoneyDtos.SaveMoneyBusinessdayListDto;
 import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoneyDtos.SaveMoneyDto;
 import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoneyDtos.SaveMoneyListDto;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.JPQLQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
@@ -60,6 +66,29 @@ public class SaveMoneyRepositoryCustomImpl extends QuerydslRepositorySupport imp
                 .and(saveMoney.fsClose.eq("N"))
                 .and(saveMoney.bcId.bcId.in(customerIdList))
         );
+
+        return query.fetch();
+    }
+
+    // 영업일보 통계 적립금사용금액 sum querydsl - 4
+    @Override
+    public List<SaveMoneyBusinessdayListDto> findBySaveMoneyBusinessdayListDto(String frCode, String filterFromDt, String filterToDt){
+        QSaveMoney saveMoney = QSaveMoney.saveMoney;
+
+        QCustomer customer = QCustomer.customer;
+
+        JPQLQuery<SaveMoneyBusinessdayListDto> query = from(saveMoney)
+                .innerJoin(customer).on(saveMoney.bcId.eq(customer))
+                .where(customer.frCode.eq(frCode))
+                .where(saveMoney.fsYyyymmdd.goe(filterFromDt).and(saveMoney.fsYyyymmdd.loe(filterToDt)))
+                .select(Projections.constructor(SaveMoneyBusinessdayListDto.class,
+                        saveMoney.fsYyyymmdd,
+                        new CaseBuilder()
+                                .when(saveMoney.fsType.eq("2")).then(saveMoney.fsAmt)
+                                .otherwise(0).sum()
+                ));
+
+        query.groupBy(saveMoney.fsYyyymmdd).orderBy(saveMoney.fsYyyymmdd.asc());
 
         return query.fetch();
     }

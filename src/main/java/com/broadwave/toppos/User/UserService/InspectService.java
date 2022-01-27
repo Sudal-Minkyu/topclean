@@ -36,6 +36,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**
@@ -294,20 +295,33 @@ public class InspectService {
                     requestRepository.save(optionalRequest.get());
                 }
             }else{
-                log.info("적립금으로 전환합니다.");
-                optionalPayment.get().setFpCancelYn("Y");
-                optionalPayment.get().setFpSavedMoneyYn("Y");
-                paymentRepository.save(optionalPayment.get());
+                Optional<Request> optionalRequest = requestRepository.findById(optionalPayment.get().getFrId().getId());
+                if(!optionalRequest.isPresent()){
+                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP022.getCode(), "적립금 전환 할 " + ResponseErrorCode.TP022.getDesc(), null, null));
+                }else{
+                    log.info("적립금으로 전환합니다.");
+                    optionalPayment.get().setFpCancelYn("Y");
+                    optionalPayment.get().setFpSavedMoneyYn("Y");
+                    paymentRepository.save(optionalPayment.get());
 
-                SaveMoney saveMoney = new SaveMoney();
-                saveMoney.setBcId(optionalPayment.get().getBcId());
-                saveMoney.setFpId(optionalPayment.get());
-                saveMoney.setFsType("1");
-                saveMoney.setFsClose("N");
-                saveMoney.setFsAmt(optionalPayment.get().getFpAmt());
-                saveMoney.setInsert_id(login_id);
-                saveMoney.setInsert_date(LocalDateTime.now());
-                saveMoneyRepository.save(saveMoney);
+                    // 마스터테이블의 계산가격을 업데이트한다.
+                    optionalRequest.get().setFrPayAmount(optionalRequest.get().getFrPayAmount()-optionalPayment.get().getFpAmt());
+                    optionalRequest.get().setFrUncollectYn("Y");
+                    optionalRequest.get().setModify_id(login_id);
+                    optionalRequest.get().setModify_date(LocalDateTime.now());
+                    requestRepository.save(optionalRequest.get());
+
+                    SaveMoney saveMoney = new SaveMoney();
+                    saveMoney.setBcId(optionalPayment.get().getBcId());
+                    saveMoney.setFpId(optionalPayment.get());
+                    saveMoney.setFsYyyymmdd(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
+                    saveMoney.setFsType("1");
+                    saveMoney.setFsClose("N");
+                    saveMoney.setFsAmt(optionalPayment.get().getFpAmt());
+                    saveMoney.setInsert_id(login_id);
+                    saveMoney.setInsert_date(LocalDateTime.now());
+                    saveMoneyRepository.save(saveMoney);
+                }
             }
         }
 

@@ -189,27 +189,31 @@ public class InfoService {
         }else{
 
             String baType = addprocessSet.getBaType(); // 타입
-            ArrayList<AddprocessMapperDto> addProcessList = addprocessSet.getList(); // 추가 리스트 얻기
+            if(baType == null){
+                return ResponseEntity.ok(res.fail(ResponseErrorCode.TP022.getCode(), "저장 유형 타입"+ResponseErrorCode.TP022.getDesc(), "문자", "baType : "+baType));
+            }else{
+                ArrayList<AddprocessMapperDto> addProcessList = addprocessSet.getList(); // 추가 리스트 얻기
 
-            // 저장하기전에 삭제처리하기
-            List<Addprocess> deleteAddprocessList = userService.findByAddProcessList(frCode, baType);
-            if(deleteAddprocessList.size() != 0){
-                addprocessRepository.deleteAll(deleteAddprocessList);
-            }
+                // 저장하기전에 삭제처리하기
+                List<Addprocess> deleteAddprocessList = userService.findByAddProcessList(frCode, baType);
+                if(deleteAddprocessList.size() != 0){
+                    addprocessRepository.deleteAll(deleteAddprocessList);
+                }
 
-            // 저장하기
-            for(AddprocessMapperDto addprocessMapperDto : addProcessList){
-                Addprocess addprocess = modelMapper.map(addprocessMapperDto,Addprocess.class);
-                addprocess.setBaType(baType);
-                addprocess.setFrId(optionalFranchise.get());
-                addprocess.setFrCode(optionalFranchise.get().getFrCode());
-                addprocess.setInsert_id(login_id);
-                addprocess.setInsertDateTime(LocalDateTime.now());
-                saveAddProcessList.add(addprocess);
-            }
+                // 저장하기
+                for(AddprocessMapperDto addprocessMapperDto : addProcessList){
+                    Addprocess addprocess = modelMapper.map(addprocessMapperDto,Addprocess.class);
+                    addprocess.setBaType(baType);
+                    addprocess.setFrId(optionalFranchise.get());
+                    addprocess.setFrCode(optionalFranchise.get().getFrCode());
+                    addprocess.setInsert_id(login_id);
+                    addprocess.setInsertDateTime(LocalDateTime.now());
+                    saveAddProcessList.add(addprocess);
+                }
 
-            if(saveAddProcessList.size() != 0){
-                addprocessRepository.saveAll(saveAddProcessList);
+                if(saveAddProcessList.size() != 0){
+                    addprocessRepository.saveAll(saveAddProcessList);
+                }
             }
 
         }
