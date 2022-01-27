@@ -205,9 +205,11 @@ const grids = {
                 {
                     dataField: "bcName",
                     headerText: "고객명",
+                    width: 70,
                 }, {
                     dataField: "bcHp",
                     headerText: "전화번호",
+                    width: 130,
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
                         return CommonUI.formatTel(value);
                     },
@@ -217,11 +219,13 @@ const grids = {
                 }, {
                     dataField: "saveMoney",
                     headerText: "적립금",
+                    width: 70,
                     dataType: "numeric",
                     autoThousandSeparator: "true",
                 }, {
                     dataField: "uncollectMoney",
                     headerText: "미수금",
+                    width: 70,
                     dataType: "numeric",
                     autoThousandSeparator: "true",
                 },

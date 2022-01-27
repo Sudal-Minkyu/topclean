@@ -123,7 +123,7 @@ class CommonUIClass {
 
     formatTel(telNumber) {
         let formatNum = "";
-        telNumber = telNumber.replace(/[^0-9]/g, "");
+        telNumber = telNumber.zeroToNine();
         const telLength = telNumber.length;
         
         let foreNumType;
@@ -165,7 +165,7 @@ class CommonUIClass {
 
     formatBusinessNo(businessNum) {
         let formatNum = "";
-        businessNum = businessNum.replace(/[^0-9]/g, "");
+        businessNum = businessNum.zeroToNine();
 
         const foreNum = businessNum.substring(0, 3);
         const midNum = businessNum.substring(3, 5);
