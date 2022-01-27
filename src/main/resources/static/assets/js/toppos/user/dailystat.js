@@ -38,10 +38,11 @@ const urls = {
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
     getMainData(filterCondition) {
+        console.log(filterCondition);
         dv.chk(filterCondition, dtos.send.businessdayList, "메인그리드 필터링에 필요한 데이터 보내기");
         CommonUI.ajax(urls.getMainData, "GET", filterCondition, function (res) {
-            console.log(res.sendData);
-            const data = res.sendData.gridListData;
+            console.log(res);
+            //const data = res.sendData.gridListData;
             // 데이터 오면 아래 주석 풀어서 실험
             // grids.f.setData(0, data);
         });
@@ -266,8 +267,8 @@ function enableDatepicker() {
 
 function getRefinedData() {
     const filterCondition = {
-        filterFromDt: $("#filterFromDt").val(),
-        filterToDt: $("#filterToDt").val(),
+        filterFromDt: $("#filterFromDt").val().numString(),
+        filterToDt: $("#filterToDt").val().numString(),
     }
     comms.getMainData(filterCondition);
 } 
