@@ -25,7 +25,7 @@ const urls = {
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
     getMainData(filterCondition) {
-        dv.chk(filterCondition, dtos.businessdayList, "메인그리드 필터링에 필요한 데이터 보내기");
+        dv.chk(filterCondition, dtos.send.businessdayList, "메인그리드 필터링에 필요한 데이터 보내기");
         CommonUI.ajax(urls.getMainData, "GET", filterCondition, function (res) {
             console.log(res);
         });
@@ -212,12 +212,13 @@ $(function() { // 페이지가 로드되고 나서 실행
 
 /* 페이지가 로드되고 나서 실행 될 코드들을 담는다. */
 function onPageLoad() {
-    enableDatepicker();
 
     grids.f.initialization();
     grids.f.create();
 
     trigs.s.basic();
+
+    enableDatepicker();
 }
 
 function enableDatepicker() {

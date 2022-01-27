@@ -1,4 +1,53 @@
 
+const dtos = {
+    send: {
+        영수증발행: { // 사용메뉴에 따라 frId나 frNo 둘중 하나가 식별자로 보내질 수 있음.
+            frId: "n",
+            frNo: "s",
+        }
+    },
+    receive: {
+        영수증발행: {
+            paymentData: {
+                franchiseNo: "s", // frCode
+                franchiseName: "s", // frName
+                businessNO: "s", // frBusinessNo
+                repreName: "s", // frRpreName
+                franchiseTel: "s", // frTel
+                customerName: "s", // bcName
+                customerTel: "s", // bcHp
+                requestDt: "s", // frYyyymmdd
+                normalAmount: "n", // frNormalAmount
+                changeAmount: "n", // frDiscountAmount
+                totalAmount: "n", // frTotalAmount
+                paymentAmount: "n", // frPayAmount
+                estimateDt: "s", // fdEstimateDt
+                preUncollectAmount: "n", // 고객 전일미수금
+                curUncollectAmount: "n", // 고객 당일미수금
+                uncollectPayAmount: "n", // 미수금 상환액
+                totalUncollectAmount: "n", // 총미수금
+                items: { // 디테일 품목들의 배열
+                    tagno: "s",
+                    color: "s", // 남색
+                    itemname: "s", // 롱 오리털 코트
+                    specialyn: "s", // Y
+                    price: "n", 
+                }
+            },
+            creditData: { // 결제한 내역들의 배열, 적립금이나 현금은 금액과 타입만 오면 됨
+                type: "sr", // fpType 기준 01: cash, 02: card, 03: save 
+                cardNo: "s", // fpCatCardNo
+                cardName: "s", // fpCatIssuername
+                approvalTime: "s", // fpCatApprovaltime
+                approvalNo: "s", // fpCatApprovalno
+                month: "n", // fpMonth
+                payAmount: "nr", // 결제금액
+            }
+        }
+    },
+}
+
+
 $(function() {
     /* 배열내의 각 설정만 넣어 빈 그리드 생성 */
     createGrids(true);
