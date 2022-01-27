@@ -972,7 +972,7 @@ class VKeyboard {
                 initialValue = this.formatTel(initialValue);
                 break;
             case "business":
-                initialValue = this.businessNum(initialValue);
+                initialValue = this.formatBusinessNo(initialValue);
                 break;
         }
 
@@ -1018,7 +1018,7 @@ class VKeyboard {
             case "none":
                 break;
             case "tel":
-                value = CommonUI.formatTel(value);
+                value = this.formatTel(value);
                 break;
             case "business":
                 break;
