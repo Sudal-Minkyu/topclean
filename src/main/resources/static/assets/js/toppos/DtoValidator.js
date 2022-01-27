@@ -16,11 +16,10 @@ class DtoValidator {
         this.totalInspection = totalInspection;
         if(this.isRuleTypeWrong(ruleObj)) return true;
 
-        // 임시로 원자단위로 돌아가도록 시험
         this.chkAnObj(obj, ruleObj, "(검사객체)");
 
         // const end = new Date();
-        // console.log("동작시간 : " + (end - start));
+        // console.log("동작시간 : " + (end - start) + " ms");
         return false;
     }
 
@@ -98,6 +97,14 @@ class DtoValidator {
                                 console.log(chkValue);
                                 if (this.devMode) alert(this.title + " 의 검사값이 규칙(숫자)에 부합하지 않습니다. 콘솔참조 ");
                                 return true;
+                            }
+                            break;
+                        case "a":
+                            if(!Array.isArray(chkValue)) {
+                                console.log("=== 해당 검사객체는 배열형이어야 한다 ===");
+                                console.log(objName + "." + partRuleKeys[i]);
+                                console.log(chkValue);
+                                if (this.devMode) alert(this.title + " 의 검사객체가 규칙(배열)에 부합하지 않습니다. 콘솔참조 ");
                             }
                             break;
                         case "r":
