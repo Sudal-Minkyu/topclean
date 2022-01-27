@@ -9,7 +9,9 @@
 
 
 키보드 사용
-3. 2번의 예시 기준으로 vkey.showKeyboard("html 대상 텍스트필드나 텍스트에어리어의 id", 옵션객체); 를 통해서 키보드를 띄울 수 있다.
+3. 2번의 예시 기준으로
+vkey.showKeyboard("html 대상 텍스트필드나 텍스트에어리어의 id", 옵션객체);
+를 통해서 키보드를 띄울 수 있다.
 여기서 옵션 객체는 이런 식으로 구성된다.
 
 옵션객체 = {
@@ -36,6 +38,23 @@ defaultProp = {
 
 
 키패드 사용
-3. 2번의 예시 기준으로 vkey.showKeypad("html 대상 텍스트필드나 텍스트에어리어의 id", callback); 으로 구성된다.
-callback 인자 위치에는 사용할 기능명을 넣어 작동시켜도 되고, function(result){}으로 기능을 작성해도 된다.
-콜백 함수의 인자로 키패드의 최종 입력 결과값이 전달되므로, 필요시 인자로 받아서 사용하면 된다.
+3. 2번의 예시 기준으로
+vkey.showKeypad("html 대상 텍스트필드나 텍스트에어리어의 id", 옵션객체);
+로 구성된다.
+옵션 객체는 아래와 같이 구성된다.
+
+옵션객체 = {
+    type: // 가상키패드의 형태, "default" 기본, "plusminus" +-버튼으로 양수나 음수구분
+    midprocess: // 키 입력마다 페이지를 가공하는 형태, "default" 일반숫자, "none" 없음, "tel" 전화번호, "business" 사업자번호
+    maxlength: // 키패드 필드의 최대 자릿수 제한 (숫자, 뒤의 입력을 자르기로 제한됨)
+    callback: function() { // 가상키패드 동작이 다 끝나고 나서 실행될 기능
+    }, 
+}
+
+defaultKeypadProp = {
+    type: "default",
+    midprocess: "default",
+    maxlength: 9999,
+    callback: function() {
+    },
+}

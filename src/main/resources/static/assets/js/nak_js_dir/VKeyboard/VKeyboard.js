@@ -22,15 +22,10 @@ class VKeyboard {
 
     defaultKeypadProp = {
         type: "default", // 가상키패드의 형태, "default" 기본, "plusminus" +-버튼으로 양수나 음수구분
-        
-        /* 작업중 영역 */        
         midprocess: "default", // 키 입력마다 페이지를 가공하는 형태, "default" 일반숫자, "none" 없음, "tel" 전화번호, "business" 사업자번호
-        minlength: 0, // 키패드 필드의 최저 자릿수 제한 요구치
-        maxlength: 9999, // 키패드 필드의 최대 자릿수 제한
-
+        maxlength: 9999, // 키패드 필드의 최대 자릿수 제한 (자르기)
         callback: function() {
-
-        },
+        }, // 가상키패드 동작이 다 끝나고 나서 실행될 기능
     }
 
     /* 입력의 편집 대상이 되는 필드 */
@@ -920,7 +915,7 @@ class VKeyboard {
         businessNum = businessNum.replace(/[^0-9]/g, "");
 
         const foreNum = businessNum.substring(0, 3);
-        const midNum = businessNum.substring(3, 2);
+        const midNum = businessNum.substring(3, 5);
         const backNum = businessNum.substring(5, 10);
 
         if (backNum) {
@@ -930,7 +925,7 @@ class VKeyboard {
         } else if (foreNum) {
             formatNum = foreNum;
         }
-
+        console.log(formatNum);
         return formatNum;
     }
 
@@ -989,7 +984,7 @@ class VKeyboard {
 
     /* 키패드에서 받은 값을 바로 키패드용 필드에 입력한다. */
     pushKeypadBtn(INPUT_NUM, isBackspace = false) {
-        let resultValue = (this.keypadField.value + "" + INPUT_NUM).replace(/[^0-9]/g, "");
+        let resultValue = (this.keypadField.value + "" + INPUT_NUM).replace(/[^0-9]/g, "").substring(0, this.keypadProp.maxlength);
         resultValue = isBackspace ? resultValue.substring(0, resultValue.length - 1) : resultValue;
         resultValue = this.keypadMidprocess(resultValue);
         this.keypadField.value = resultValue;
@@ -997,12 +992,13 @@ class VKeyboard {
 
     pushKeypadCompelete() {
         let value = this.keypadField.value.replace(/[^0-9]/g, "");
+
         if($("#VKEY_keypad_sign").is(":checked")) {
             value = value * -1;
         }
         this.targetNumberField.value = value;
         this.pushKeypadClose();
-        this.keypadProp.callback(this.targetNumberField.value);
+        this.keypadProp.callback();
     }
 
     pushKeypadClose() {
@@ -1021,6 +1017,7 @@ class VKeyboard {
                 value = this.formatTel(value);
                 break;
             case "business":
+                value = this.formatBusinessNo(value);
                 break;
         }
         return value;
@@ -1377,5 +1374,4 @@ class VKeyboard {
         `;
         return html;
     }
-
 }

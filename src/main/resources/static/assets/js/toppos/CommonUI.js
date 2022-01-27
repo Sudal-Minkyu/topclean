@@ -3,26 +3,24 @@
 * CommonUI.기능 으로 호출하여 사용
 *
 * 제작 : 성낙원
-* 수정 : 2021-11-18
+* 수정 : 2022-01-27
 * */
 class CommonUIClass {
 
-    mouseDownTarget;
-    mouseDownPos = [0, 0];
-    mouseUpPos = [0, 0];
-    activeDragDropEvent = false;
-    abc = 777;
-
     constructor() {
+        /* 숫자만 남긴 후 인트형으로 전환 */
         String.prototype.toInt = function () {
             return this.toString() ? parseInt(this.replace(/[^0-9]/g, "")) : 0;
         }
+
+        /* 0~9까지만 남긴 문자를 반환, 앞자리가 0으로 시작할 수 있음. */
         String.prototype.numString = function () {
             return this.toString() ? this.replace(/[^0-9]/g, "") : "";
         }
     }
 
     toppos = {
+        /* 아이템 코드와 이름 데이터 조합에 쓰이는 배열을 사용하여 최종 이름을 산출 */
         makeProductName(item, nameArray) {
             if(!item.sumName) {
                 const isNotSizeNormal = !(item.biItemcode.substr(3, 1) === "N");
@@ -39,10 +37,14 @@ class CommonUIClass {
                 item.sumName = sumName;
             }
         },
+
+        /* 대중소분류 이름을 가져다가 최종 이름을 조합하는 방식 */
         makeSimpleProductName(item) {
             const finalBsName = item.bsName === "일반" ? "" : item.bsName;
             return finalBsName + " " + item.biName + " " + item.bgName;
         },
+
+        /* 처리내역의 표시를 결정하는 공통함수 */
         processName(item) {
             try {
                 let statusText = "";
@@ -110,10 +112,10 @@ class CommonUIClass {
         const dateExist = /^(?:(?:(?:(?:(?:[13579][26]|[2468][048])00)|(?:[0-9]{2}(?:(?:[13579][26])|(?:[2468][048]|0[48]))))(?:(?:(?:09|04|06|11)(?:0[1-9]|1[0-9]|2[0-9]|30))|(?:(?:01|03|05|07|08|10|12)(?:0[1-9]|1[0-9]|2[0-9]|3[01]))|(?:02(?:0[1-9]|1[0-9]|2[0-9]))))|(?:[0-9]{4}(?:(?:(?:09|04|06|11)(?:0[1-9]|1[0-9]|2[0-9]|30))|(?:(?:01|03|05|07|08|10|12)(?:0[1-9]|1[0-9]|2[0-9]|3[01]))|(?:02(?:[01][0-9]|2[0-8])))))$/
 
         switch (testMethod) {
-            case "email" :
+            case "email" : // 이메일 형식이 맞는지 검사.
                 return email.test(testValue);
                 break;
-            case "dateExist" :
+            case "dateExist" : // 존재하는 날짜인지 검사.
                 return dateExist.test(testValue);
                 break;
             default :
@@ -121,6 +123,7 @@ class CommonUIClass {
         }
     }
 
+    /* 국내 전화 번호 양식화, 적절한 위치에 - 추가, 최종 형태 잡을 때도, 입력할 때 마다 쓸 수도 있음 */
     formatTel(telNumber) {
         let formatNum = "";
         telNumber = telNumber.numString();
@@ -163,6 +166,7 @@ class CommonUIClass {
         return formatNum;
     }
 
+    /* 사업자 번호 양식화, 숫자 10자리, 적절한 위치에 - 추가, 최종 형태 잡을 때도, 입력할 때 마다 쓸 수도 있음 */
     formatBusinessNo(businessNum) {
         let formatNum = "";
         businessNum = businessNum.numString();
@@ -182,7 +186,9 @@ class CommonUIClass {
         return formatNum;
     }
 
-    /* ajax 통신의 자주 쓰는 패턴을 간단하게 쓰기 위함 */
+    /* ajax 통신의 자주 쓰는 패턴을 간단하게 쓰기 위함
+    * (apiUrl, 통신방식(혹은 컨트롤러에서 받는 방식), 보낼데이터, 성공시 콜백, 실패시 콜백)
+    * */
     ajax(url, method, data, successFn = function () {}, errorFn = function () {}) {
 
         if(data) {
@@ -325,7 +331,7 @@ class CommonUIClass {
         }
     }
 
-    /* 새로운 dto 생성용 */
+    /* 규칙 dtos와 같은 구조로 새로운 dto 생성하기 위함 (규칙 dto의 키값을 품은 빈 깡통 만들기) */
     newDto(dto) {
         const keys = Object.keys(dto);
         let babyDto = {};

@@ -5,6 +5,7 @@ class CommonDataClass {
         this.nameList();
     }
 
+    /* 코드를 통해서 출력할 값을 구하는 작업들에 쓰임 */
     nameList() {
 
         this.name.frRefType = {

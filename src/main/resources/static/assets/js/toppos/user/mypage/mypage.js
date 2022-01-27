@@ -558,6 +558,7 @@ const vKeypad = {
 					$("#frBusinessNo").val(CommonUI.formatBusinessNo(busiNo));
 				},
 				midprocess: "business",
+				maxlength: 10,
 			};
 			vKeypad.targetProp[1] = {
 				callback: function () {
