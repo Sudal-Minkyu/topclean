@@ -1244,8 +1244,10 @@ textarea {
 	overflow: hidden;
 	display: flex;
 	flex-wrap: wrap;
+	flex-direction: column;
 	justify-content: space-between;
 	width: 41.875rem;
+	height: 7.5rem;
 	padding: 0.875rem 1.25rem;
 	margin-top: 0.938rem;
 	margin-bottom: auto;
@@ -1255,15 +1257,24 @@ textarea {
 	border-radius: 0.313rem;;
 }
 .condition__radio {
-	width: 100%;
-	margin-bottom: 0.625rem;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	width: 25rem;
 }
 .condition__radio .c-radio {
-	margin-right: 0.25rem;
+	width: 33.3333%;
+	margin: 0.313rem 0;
+}
+.condition__radio .c-radio + .c-radio {
+	/* margin-right: 0.25rem; */
 	margin-left: 0;
 }
-.condition__radio .c-radio:last-child {
+/* .condition__radio .c-radio:last-child {
 	margin-right: 0;
+} */
+.condition__console {
+	margin-top: 0.625rem;
 }
 .condition__console .c-button + .c-button {
 	margin-left: 0.5rem;
