@@ -6,7 +6,7 @@ $(function () {
 });
 
 /* 가상키보드 입력 대상이 되는 텍스트 필드나 텍스트 에어리어 */
-let vkeyTargetId = ["bcName", "bcHp", "bcAddress", "bcRemark"];
+let vkeyTargetId = ["bcName", "bcAddress", "bcRemark"];
 
 let vkeyProp = [];
 
@@ -14,25 +14,29 @@ vkeyProp[0] = {
     title : "고객명",
 }
 
-vkeyProp[1] = { // 키패드로 변경 필요
-    title : "휴대폰(숫자만 입력해 주세요)",
-    postprocess : function(text) {
-        return text.replace(/[^0-9]/g, "");
-    },
-    callback : onHpChange,
-}
-
-vkeyProp[2] = {
+vkeyProp[1] = {
     title : "주소",
 }
 
-vkeyProp[3] = {
+vkeyProp[2] = {
     title : "특이사항",
 }
+
+
+
 
 /* 호출하여 목표 가상 키보드 띄우기, 0번부터 배열 순서대로 */
 function openVKeyboard(num) {
     vkey.showKeyboard(vkeyTargetId[num], vkeyProp[num]);
+}
+
+function openHpVKeypad() {
+    const keypadProp = { // 키패드로 변경 필요
+        title : "휴대폰(숫자만 입력해 주세요)",
+        midprocess: "tel",
+        callback : onHpChange,
+    }
+    vkey.showKeypad("bcHp", keypadProp);
 }
 
 // 접수화면으로 이동
@@ -80,7 +84,7 @@ function saveRegister() {
         return false;
     }
 
-    formData.set("bcHp", formData.get("bcHp").replace(/[^0-9]/g, ""));
+    formData.set("bcHp", formData.get("bcHp").numString());
     formData.append("bcBirthday", birthday);
     formData.append("bcGrade", "01");
 
@@ -142,7 +146,7 @@ function onYearChange(selectedYear) {
 function onHpChange () {
     const element = document.getElementById("bcHp");
     let phoneNumber = element.value;
-    element.value = CommonUI.onPhoneNumChange(phoneNumber);
+    element.value = CommonUI.formatTel(phoneNumber);
 }
 
 function onAgreeTypeChange(type) {

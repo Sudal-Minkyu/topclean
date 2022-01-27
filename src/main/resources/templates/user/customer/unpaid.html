@@ -13,6 +13,10 @@
 			border-radius: 5px;
 			display: inline-block;
 		}
+
+        #payMonth {
+            display: none;
+        }
     </style>
 </th:block>
 
@@ -38,7 +42,7 @@
 			<div class="c-search">
 				<div class="c-search__input">
 					<input id="searchCustomerField" type="text" placeholder="검색어를 입력하세요" />
-               		<button class="c-search__key" type="button">키보드</button>
+               		<button class="c-search__key" type="button" id="vkeyboard0">키보드</button>
 				</div>
 				<button class="c-search__bth" type="button" id="customerSearchBtn">검색</button>
 			</div>
@@ -104,18 +108,29 @@
                                 <div class="c-select">
                                     <select id="payMonth">
                                         <option value="0">일시불</option>
+                                        <option value="2">2 개월</option>
+                                        <option value="3">3 개월</option>
+                                        <option value="4">4 개월</option>
+                                        <option value="5">5 개월</option>
+                                        <option value="6">6 개월</option>
+                                        <option value="7">7 개월</option>
+                                        <option value="8">8 개월</option>
+                                        <option value="9">9 개월</option>
+                                        <option value="10">10 개월</option>
+                                        <option value="11">11 개월</option>
+                                        <option value="12">12 개월</option>
                                     </select>
                                 </div>
                             </div>
                             <div class="unpaid-pop__payment-select">
                                 <div class="choice">
-									<input type="radio" name="payType" id="payType1" value="01" checked="">
+									<input type="radio" name="payType" id="payType1" value="01" checked="" />
 									<label for="payType1">현금결제</label>
 								</div>
                             </div>
                             <div class="unpaid-pop__payment-select">
                                 <div class="choice">
-									<input type="radio" name="payType" id="payType2" value="02">
+									<input type="radio" name="payType" id="payType2" value="02" />
 									<label for="payType2">카드결제</label>
 								</div>
                             </div>

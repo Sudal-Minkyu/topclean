@@ -84,7 +84,7 @@ const dtos = {
 
             fdTotAmt: "n",
             fdState: "s",
-            fdS6Dt: "", // 인도일로 수정
+            fdS6Dt: "s", // 인도일로 수정
         },
         franchiseUncollectPayRequestList: {
             gridListData: {
@@ -175,6 +175,7 @@ const comms = {
             $("#paymentPop").removeClass("active");
             comms.filterCustomerList(wares.searchCondition);
             comms.customersUncollectedList({bcId: wares.customerBcId});
+            $("#payMonth").val("0");
         });
     },
 };
@@ -204,11 +205,13 @@ const grids = {
                 {
                     dataField: "bcName",
                     headerText: "고객명",
+                    width: 70,
                 }, {
                     dataField: "bcHp",
                     headerText: "전화번호",
+                    width: 120,
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
-                        return CommonUI.onPhoneNumChange(value);
+                        return CommonUI.formatTel(value);
                     },
                 }, {
                     dataField: "bcAddress",
@@ -216,11 +219,13 @@ const grids = {
                 }, {
                     dataField: "saveMoney",
                     headerText: "적립금",
+                    width: 90,
                     dataType: "numeric",
                     autoThousandSeparator: "true",
                 }, {
                     dataField: "uncollectMoney",
                     headerText: "미수금",
+                    width: 90,
                     dataType: "numeric",
                     autoThousandSeparator: "true",
                 },
@@ -234,9 +239,9 @@ const grids = {
                 selectionMode : "singleRow",
                 showAutoNoDataMessage: false,
                 noDataMessage : "출력할 데이터가 없습니다.",
-                enableColumnResize : false,
+                enableColumnResize : true,
                 showRowNumColumn : false,
-                showStateColumn : true,
+                showStateColumn : false,
                 enableFilter : true,
                 rowHeight : 48,
                 headerHeight : 48,
@@ -246,6 +251,7 @@ const grids = {
                 {
                     dataField: "frYyyymmdd",
                     headerText: "접수일",
+                    width: 90,
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
                 }, {
@@ -261,16 +267,19 @@ const grids = {
                 }, {
                     dataField: "frTotalAmount",
                     headerText: "접수금액",
+                    width: 90,
                     dataType: "numeric",
                     autoThousandSeparator: "true",
                 }, {
                     dataField: "frPayAmount",
                     headerText: "입금액",
+                    width: 90,
                     dataType: "numeric",
                     autoThousandSeparator: "true",
                 }, {
                     dataField: "uncollectMoney",
                     headerText: "미수금액",
+                    width: 90,
                     dataType: "numeric",
                     autoThousandSeparator: "true",
                 },
@@ -281,7 +290,7 @@ const grids = {
                 selectionMode : "singleRow",
                 showAutoNoDataMessage: false,
                 noDataMessage : "출력할 데이터가 없습니다.",
-                enableColumnResize : false,
+                enableColumnResize : true,
                 showRowAllCheckBox: true,
                 showRowCheckColumn: true,
                 showRowNumColumn : false,
@@ -295,11 +304,13 @@ const grids = {
                 {
                     dataField: "frYyyymmdd",
                     headerText: "접수일",
+                    width: 90,
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
                 }, {
                     dataField: "fdTag",
                     headerText: "택번호",
+                    width: 80,
                     labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
                         return value.substr(0, 3) + "-" + value.substr(-4);
                     },
@@ -319,23 +330,27 @@ const grids = {
                 }, {
                     dataField: "",
                     headerText: "처리내역",
+                    width: 90,
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
                         return CommonUI.toppos.processName(item);
                     }
                 }, {
                     dataField: "fdTotAmt",
                     headerText: "접수금액",
+                    width: 90,
                     dataType: "numeric",
                     autoThousandSeparator: "true",
                 }, {
                     dataField: "fdState",
-                    headerText: "현재상태",
+                    headerText: "상태",
+                    width: 60,
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
                         return CommonData.name.fdState[value];
                     },
                 }, {
                     dataField: "fdS6Dt",
                     headerText: "인도일",
+                    width: 90,
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
                 },
@@ -346,9 +361,9 @@ const grids = {
                 selectionMode : "singleRow",
                 showAutoNoDataMessage: false,
                 noDataMessage : "출력할 데이터가 없습니다.",
-                enableColumnResize : false,
+                enableColumnResize : true,
                 showRowNumColumn : false,
-                showStateColumn : true,
+                showStateColumn : false,
                 enableFilter : true,
                 rowHeight : 48,
                 headerHeight : 48,
@@ -457,11 +472,7 @@ const trigs = {
     s: { // 이벤트 설정
         basic() {
             $("#customerSearchBtn").on("click", function () {
-                const searchCondition = {
-                    searchType: $("#searchType").val(),
-                    searchText: $("#searchCustomerField").val()
-                }
-                comms.filterCustomerList(searchCondition);
+                mainSearch();
             });
 
             $("#openPaymentPop").on("click", function () {
@@ -490,8 +501,22 @@ const trigs = {
                 $("#paymentPop").removeClass("active");
             });
 
+            $("input[name='payType']").on("click", function () {
+                const payType = $("input[name=payType]:checked").val();
+                if(payType === "02") {
+                    $("#payMonth").show();
+                } else {
+                    $("#payMonth").hide();
+                    $("#payMonth").val("0");
+                }
+            });
+        },
 
-        }
+        vkeys() {
+            $("#vkeyboard0").on("click", function() {
+                onShowVKeyboard(0);
+            });
+        },
     },
     r: { // 이벤트 해제
 
@@ -515,9 +540,11 @@ function onPageLoad() {
     grids.f.create();
     grids.t.basic();
 
-    trigs.s.basic();
+    /* 가상키보드의 사용 선언 */
+    window.vkey = new VKeyboard();
 
-    comms.filterCustomerList();
+    trigs.s.basic();
+    trigs.s.vkeys();
 }
 
 function calculateGridCustomer() {
@@ -561,7 +588,7 @@ function uncollectPaymentStageOne() {
                 repreName: wares.frPaymentInfo.frRpreName,
                 franchiseTel: wares.frPaymentInfo.frTelNo,
                 customerName: wares.frPaymentInfo.bcName,
-                customerTel: CommonUI.onPhoneNumChange(wares.frPaymentInfo.bcHp),
+                customerTel: CommonUI.formatTel(wares.frPaymentInfo.bcHp),
                 requestDt: new Date().format("yyyy-MM-dd HH:mm"),
                 totalAmount: $("#totalUncollectAmount").html().toInt(),
                 paymentAmount: $("#totalUncollectAmount").html().toInt(),
@@ -600,7 +627,7 @@ function uncollectPaymentStageOne() {
                     if (resjson.STATUS === "FAILURE") {
                         console.log(resjson);
                         $('#payStatus').hide();
-                        alertCaution("단말기 처리 중 에러가 발생하였습니다<br>잠시후 다시 시도해주세요", 1);
+                        alertCancel("단말기 처리 중 에러가 발생하였습니다<br>잠시후 다시 시도해주세요");
                     }
                 });
             }catch (e) {
@@ -651,4 +678,31 @@ function uncollectPaymentStageTwo(paymentData, creditData = {}) {
         }
     }
     comms.sendPaidInfo(paidInfo);
+}
+
+function onShowVKeyboard(num) {
+    /* 가상키보드 사용을 위해 */
+    let vkeyProp = [];
+    const vkeyTargetId = ["searchCustomerField"];
+
+    vkeyProp[0] = {
+        title: $("#searchType option:selected").html() + " (검색)",
+        callback: mainSearch,
+    };
+
+    vkey.showKeyboard(vkeyTargetId[num], vkeyProp[num]);
+}
+
+function mainSearch() {
+    const searchCondition = {
+        searchType: $("#searchType").val(),
+        searchText: $("#searchCustomerField").val(),
+    }
+    if(searchCondition.searchText === "") {
+        alertCaution("검색조건을 입력해 주세요.", 1);
+    } else {
+        $("#searchType").val(0);
+        $("#searchCustomerField").val("");
+        comms.filterCustomerList(searchCondition);
+    }
 }

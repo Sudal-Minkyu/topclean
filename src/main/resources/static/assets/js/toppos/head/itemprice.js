@@ -258,7 +258,7 @@ function applyPrice() {
         if(req.sendData.errorListData !== null){
             console.log("req : "+req.sendData.errorListData);
             // 에러 내용이 많을경우 대비 얼터화면 확장할 것. to.성낙원
-            alertCaution(req.sendData.errorListData,1);
+            alertCancel(req.sendData.errorListData);
         }else{
             AUIGrid.clearGridData(gridId[0]);
             setDataIntoGrid(0, gridCreateUrl[0]);
@@ -298,7 +298,7 @@ function filterItems() {
     }
     if(s_setDt !== "") {
         AUIGrid.setFilter(gridId[0], "setDt", function (dataField, value, item) {
-            return s_setDt.replace(/[^0-9]/g, "") === value;
+            return s_setDt.numString() === value;
         });
     }
 }
@@ -336,10 +336,8 @@ function saveRegPrice() {
         "delete" : deletedRowItems,
     };
 
-    const jsonString = JSON.stringify(data);
-    console.log(data);
 
-    CommonUI.ajaxjson(gridSaveUrl[0], jsonString, function () {
+    CommonUI.ajax(gridSaveUrl[0], "MAPPER", data, function () {
         AUIGrid.clearGridData(gridId[0]);
         setDataIntoGrid(0, gridCreateUrl[0]);
         alertSuccess("상품가격 업데이트를 완료되었습니다.");

@@ -74,13 +74,13 @@ const ajax = {
                 return;
             }
         }
-        CommonUI.ajaxjson(grid.s.url.update[numOfGrid], JSON.stringify(dataList), function(req) {
+        CommonUI.ajax(grid.s.url.update[numOfGrid], "MAPPER", dataList, function(req) {
             alertSuccess("위치 조정을 완료했습니다.");
         });
     },
     filterBsList(condition) {
         dv.chk(condition, dto.send.franchiseItemSortList, "분류 항목 검색 조건");
-        CommonUI.ajaxjsonPost(grid.s.url.read[1], condition, function(req) {
+        CommonUI.ajax(grid.s.url.read[1], "PARAM", condition, function(req) {
             grid.s.data[1] = req.sendData.gridListData;
             dv.chk(grid.s.data[1], dto.receive.franchiseItemSortList, "분류 항목 검색 결과");
             AUIGrid.setGridData(grid.s.id[1], grid.s.data[1]);
@@ -88,7 +88,7 @@ const ajax = {
     },
     filterBiList(condition) {
         dv.chk(condition, dto.send.franchiseItemList, "상품 위치 조정 데이터 받아오기");
-        CommonUI.ajaxjsonPost(grid.s.url.read[2], condition, function(req) {
+        CommonUI.ajax(grid.s.url.read[2], "PARAM", condition, function(req) {
             grid.s.data[2] = req.sendData.gridListData;
             AUIGrid.setGridData(grid.s.id[2], grid.s.data[2]);
         });

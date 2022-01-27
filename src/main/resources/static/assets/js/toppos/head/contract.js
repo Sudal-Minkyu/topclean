@@ -334,10 +334,11 @@ function branchDelete() {
             const data = {
                 brCode: selectedItems[0].item.brCode
             }
-            CommonUI.ajaxjsonPost(url, data, function () {
+            CommonUI.ajax(url, "PARAM", data, function () {
                 AUIGrid.clearGridData(gridId[0]);
                 setListData(gridCreateUrl[0], 0);
                 createNewPost(0);
+                alertSuccess("지사 삭제가 완료되었습니다.");
             });
         }
         $('#popupId').remove();
@@ -359,8 +360,8 @@ function franchiseSave() {
 
     const formData = new FormData(document.getElementById('frFormData'));
     let url = "/api/head/franchiseSave";
-    formData.set("frBusinessNo", formData.get("frBusinessNo").replace(/[^0-9]/g, ""));
-    formData.set("frTelNo", formData.get("frTelNo").replace(/[^0-9]/g, ""));
+    formData.set("frBusinessNo", formData.get("frBusinessNo").numString());
+    formData.set("frTelNo", formData.get("frTelNo").numString());
 
     CommonUI.ajax(url, "POST", formData, function (req){
         const sentData = Object.fromEntries(formData);
@@ -391,10 +392,11 @@ function franchiseDelete() {
             const data = {
                 frCode: selectedItems[0].item.frCode
             }
-            CommonUI.ajaxjsonPost(url, data, function () {
+            CommonUI.ajax(url, "PARAM", data, function () {
                 AUIGrid.clearGridData(gridId[1]);
                 setListData(gridCreateUrl[1], 1);
                 createNewPost(1);
+                alertSuccess("가맹점 삭제가 완료되었습니다.");
             });
         }
         $('#popupId').remove();
@@ -466,7 +468,7 @@ function setFieldData(numOfGrid, item) {
             $("#frContractState").val(item.frContractState);
             $("#frPriceGrade").val(item.frPriceGrade);
             $("#frRefCode").val(item.frRefCode);
-            $("#frBusinessNo").val(item.frBusinessNo);
+            $("#frBusinessNo").val(CommonUI.formatBusinessNo(item.frBusinessNo));
             $("#frRpreName").val(item.frRpreName);
             $("#frTelNo").val(item.frTelNo);
             $("#frTagNo").val(item.frTagNo);
@@ -612,16 +614,16 @@ function validateNumber(element, type) {
             }
             break;
         case 2 :
-                element.value = element.value.replace(/[^0-9]/g, "");
+                element.value = element.value.numString();
             break;
     }
 }
 
 function onKeyupFrTelNo(el) {
-    el.value = CommonUI.onPhoneNumChange(el.value);
+    el.value = CommonUI.formatTel(el.value);
     console.log("act");
 }
 
 function onKeyupFrBusinessNo(el) {
-    el.value = el.value.replace(/(\d{3})(\d{2})(\d{5})/, '$1-$2-$3');
+    el.value = CommonUI.formatBusinessNo(el.value);
 }

@@ -1,4 +1,53 @@
 
+const dtos = {
+    send: {
+        영수증발행: { // 사용메뉴에 따라 frId나 frNo 둘중 하나가 식별자로 보내질 수 있음.
+            frId: "n",
+            frNo: "s",
+        }
+    },
+    receive: {
+        영수증발행: {
+            paymentData: {
+                franchiseNo: "s", // frCode
+                franchiseName: "s", // frName
+                businessNO: "s", // frBusinessNo
+                repreName: "s", // frRpreName
+                franchiseTel: "s", // frTel
+                customerName: "s", // bcName
+                customerTel: "s", // bcHp
+                requestDt: "s", // frYyyymmdd
+                normalAmount: "n", // frNormalAmount
+                changeAmount: "n", // frDiscountAmount
+                totalAmount: "n", // frTotalAmount
+                paymentAmount: "n", // frPayAmount
+                estimateDt: "s", // fdEstimateDt
+                preUncollectAmount: "n", // 고객 전일미수금
+                curUncollectAmount: "n", // 고객 당일미수금
+                uncollectPayAmount: "n", // 미수금 상환액
+                totalUncollectAmount: "n", // 총미수금
+                items: { // 디테일 품목들의 배열
+                    tagno: "s",
+                    color: "s", // 남색
+                    itemname: "s", // 롱 오리털 코트
+                    specialyn: "s", // Y
+                    price: "n", 
+                }
+            },
+            creditData: { // 결제한 내역들의 배열, 적립금이나 현금은 금액과 타입만 오면 됨
+                type: "sr", // fpType 기준 01: cash, 02: card, 03: save 
+                cardNo: "s", // fpCatCardNo
+                cardName: "s", // fpCatIssuername
+                approvalTime: "s", // fpCatApprovaltime
+                approvalNo: "s", // fpCatApprovalno
+                month: "n", // fpMonth
+                payAmount: "nr", // 결제금액
+            }
+        }
+    },
+}
+
+
 $(function() {
     /* 배열내의 각 설정만 넣어 빈 그리드 생성 */
     createGrids(true);
@@ -107,7 +156,7 @@ $(function() {
     });
 
     $("#fdRepairComplete").on("click", function () {
-        currentRequest.fdRepairAmt = parseInt($("#fdRepairAmt").val().replace(/[^0-9]/g, ""));
+        currentRequest.fdRepairAmt = $("#fdRepairAmt").val().toInt();
         currentRequest.fdRepairRemark = $("#fdRepairRemark").val();
         if(currentRequest.fdRepairAmt || currentRequest.fdRepairRemark.length) {
             $("#fdRepair").prop("checked", true);
@@ -129,7 +178,7 @@ $(function() {
     });
 
     $("#fdAddComplete").on("click", function () {
-        currentRequest.fdAdd1Amt = parseInt($("#fdAdd1Amt").val().replace(/[^0-9]/g, ""));
+        currentRequest.fdAdd1Amt = $("#fdAdd1Amt").val().toInt();
         currentRequest.fdAdd1Remark = $("#fdAdd1Remark").val();
         if(currentRequest.fdAdd1Amt || currentRequest.fdAdd1Remark.length) {
             $("#fdAdd1").prop("checked", true);
@@ -452,7 +501,7 @@ gridColumnLayout[1] = [
         dataField: "bcHp",
         headerText: "전화번호",
         labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
-            return CommonUI.onPhoneNumChange(value);
+            return CommonUI.formatTel(value);
         }
     }, {
         dataField: "bcAddress",
@@ -484,7 +533,7 @@ gridColumnLayout[2] = [
         dataField: "bcHp",
         headerText: "전화번호",
         labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
-            return CommonUI.onPhoneNumChange(value);
+            return CommonUI.formatTel(value);
         }
     }, {
         dataField: "",
@@ -556,7 +605,7 @@ function checkYesOrNo(booleanValue) {
         const params = {
             frNo: frNo
         };
-        CommonUI.ajaxjsonPost(gridCreateUrl[1], params, function () {
+        CommonUI.ajax(gridCreateUrl[1], "PARAM", params, function () {
             // 성공하면 임시저장 마스터테이블 조회
             setDataIntoGrid(2, gridCreateUrl[2]);
         });
@@ -694,7 +743,7 @@ function onPutCustomer(selectedCustomer) {
     $("#bcValuation").attr("class",
         "propensity__star propensity__star--" + selectedCustomer.bcValuation).css('display','block');
     $("#bcAddress").html(selectedCustomer.bcAddress);
-    $("#bcHp").html(CommonUI.onPhoneNumChange(selectedCustomer.bcHp));
+    $("#bcHp").html(CommonUI.formatTel(selectedCustomer.bcHp));
     $("#beforeUncollectMoneyMain").html(selectedCustomer.beforeUncollectMoney.toLocaleString());
     $("#saveMoneyMain").html(selectedCustomer.saveMoney.toLocaleString());
     $("#bcRemark").html(selectedCustomer.bcRemark);
@@ -1100,7 +1149,7 @@ function onAddOrder() {
     currentRequest.fdPriceGrade = $("input[name='fdPriceGrade']:checked").val();
     currentRequest.fdDiscountGrade = $("input[name='fdDiscountGrade']:checked").val();
     currentRequest.fdRemark = $("#fdRemark").val();
-    currentRequest.frEstimateDate = initialData.etcData.frEstimateDate.replace(/[^0-9]/g, "");
+    currentRequest.frEstimateDate = initialData.etcData.frEstimateDate.numString();
     currentRequest.fdSpecialYn = $("#fdSpecialYn").is(":checked") ? "Y" : "N";
     currentRequest.fdUrgentYn = $("#fdUrgentYn").is(":checked") ? "Y" : "N";
 
@@ -1328,10 +1377,10 @@ function onSave() {
         checkNum: checkNum,
         bcId: selectedCustomer.bcId,
         frNo: initialData.etcData.frNo,
-        frNormalAmount: parseInt($("#totFdNormalAmount").html().replace(/[^0-9]/g, "")),
-        frDiscountAmount: parseInt($("#totChangeAmount").html().replace(/[^0-9]/g, "")),
+        frNormalAmount: $("#totFdNormalAmount").html().toInt(),
+        frDiscountAmount: $("#totChangeAmount").html().toInt(),
         frTotalAmount: $("#totFdRequestAmount").html().toInt(),
-        frQty: parseInt($("#totFdQty").html().replace(/[^0-9]/g, "")),
+        frQty: $("#totFdQty").html().toInt(),
     }
 
     const data = {
@@ -1354,8 +1403,7 @@ function onSave() {
 }
 
 function onSaveAjax() {
-    console.log(saveData);
-    CommonUI.ajaxjson(gridSaveUrl[0], JSON.stringify(saveData), function (req) {
+    CommonUI.ajax(gridSaveUrl[0], "MAPPER", saveData, function (req) {
         AUIGrid.removeSoftRows(gridId[0]);
         AUIGrid.resetUpdatedItems(gridId[0]);
         AUIGrid.clearGridData(gridId[2]);
@@ -1388,15 +1436,15 @@ function enableKeypad() {
 
     $keypadBtn.on("click", function (e) {
         const $keypad_field = $(this).parents(".add-cost__keypad").find(".keypad_field");
-        $keypad_field.val(parseInt($keypad_field.val().replace(/[^0-9]/g, "") + this.value).toLocaleString());
+        $keypad_field.val(parseInt($keypad_field.val().numString() + this.value).toLocaleString());
     });
 
     $keypadBackspace.on("click", function (e) {
         const $keypad_field = $(this).parents(".add-cost__keypad").find(".keypad_field");
-        const currentValue = $keypad_field.val().replace(/[^0-9]/g, "");
+        const currentValue = $keypad_field.val().numString();
         if(currentValue.length > 1) {
             $keypad_field.val(parseInt(currentValue.substr(0,
-                currentValue.replace(/[^0-9]/g, "").length - 1)).toLocaleString());
+                currentValue.numString().length - 1)).toLocaleString());
         }else{
             $keypad_field.val("0");
         }
@@ -1443,7 +1491,7 @@ function onRepeatRequest() {
 }
 
 function changeQty() {
-    tempItem.fdQty = parseInt($("#hiddenKeypad").val());
+    tempItem.fdQty = $("#hiddenKeypad").val().toInt();
     tempItem.fdRequestAmt = (tempItem.fdNormalAmt + tempItem.fdPressed + tempItem.fdWhitening
         + tempItem.fdWaterRepellent + tempItem.fdStarch + tempItem.fdPollution + tempItem.fdRepairAmt
         + tempItem.fdAdd1Amt - tempItem.fdDiscountAmt) * tempItem.fdQty;
@@ -1495,8 +1543,8 @@ function calculateOne() {
 }
 
 function calculateTwo() {
-    const totalAmt = parseInt($("#totalAmt").html().replace(/[^0-9]/g, ""));
-    const receiveCash = parseInt($("#receiveCash").html().replace(/[^0-9]/g, ""));
+    const totalAmt = $("#totalAmt").html().toInt();
+    const receiveCash = $("#receiveCash").html().toInt();
     const changeCash = receiveCash - totalAmt;
     const uncollectAmtCash = totalAmt - receiveCash;
 
@@ -1510,8 +1558,8 @@ function calculateTwo() {
 }
 
 function calculateThree() {
-    const totalAmt = parseInt($("#totalAmt").html().replace(/[^0-9]/g, ""));
-    const receiveCard = parseInt($("#receiveCard").html().replace(/[^0-9]/g, ""));
+    const totalAmt = $("#totalAmt").html().toInt();
+    const receiveCard = $("#receiveCard").html().toInt();
     const uncollectAmtCard = totalAmt - receiveCard;
     if(uncollectAmtCard > 0) {
         $("#uncollectAmtCard").html(uncollectAmtCard.toLocaleString());
@@ -1575,7 +1623,7 @@ function onPaymentStageOne() {
                 repreName: initialData.etcData.frRpreName,
                 franchiseTel: initialData.etcData.frTelNo,
                 customerName: selectedCustomer.bcName,
-                customerTel: CommonUI.onPhoneNumChange(selectedCustomer.bcHp),
+                customerTel: CommonUI.formatTel(selectedCustomer.bcHp),
                 requestDt: new Date().format("yyyy-MM-dd HH:mm"),
                 totalAmount: $("#payRequestAmt").html().toInt(),
                 normalAmount: $("#payNormalAmt").html().toInt(),
@@ -1640,7 +1688,7 @@ function onPaymentStageOne() {
                     if (resjson.STATUS === "FAILURE") {
                         console.log(resjson);
                         $('#payStatus').hide();
-                        alertCaution("단말기 처리 중 에러가 발생하였습니다<br>잠시후 다시 시도해주세요", 1);
+                        alertCancel("단말기 처리 중 에러가 발생하였습니다<br>잠시후 다시 시도해주세요");
                     }
                 });
             }catch (e) {
@@ -1677,23 +1725,22 @@ function onPaymentStageTwo(paymentData = {}, creditData = {}) {
                 frNo: initialData.etcData.frNo,
             }
         }
-        const applyUncollectAmt = parseInt($("#applyUncollectAmt").html().replace(/[^0-9]/g, ""));
+        const applyUncollectAmt = $("#applyUncollectAmt").html().toInt();
 
         const paymentTab = $(".pop__pay-tabs-item.active").attr("data-id");
         if (paymentTab === "tabCash") {
             const receiveCash =
-                parseInt($("#receiveCash").html().replace(/[^0-9]/g, ""))
-                - parseInt($("#changeCash").html().replace(/[^0-9]/g, ""));
+                $("#receiveCash").html().toInt() - $("#changeCash").html().toInt();
             const paymentCash = {
                 fpType: "01",
                 fpRealAmt: receiveCash,
-                fpAmt: Number(receiveCash - applyUncollectAmt),
+                fpAmt: parseInt(receiveCash - applyUncollectAmt),
                 fpCollectAmt: applyUncollectAmt,
             }
             data.payment.push(paymentCash);
         } else if (paymentTab === "tabCard") {
 
-            const receiveCard = parseInt($("#receiveCard").html().replace(/[^0-9]/g, ""));
+            const receiveCard = $("#receiveCard").html().toInt();
 
             const paymentCard = {
                 fpType: "02",
@@ -1716,7 +1763,7 @@ function onPaymentStageTwo(paymentData = {}, creditData = {}) {
             }
             data.payment.push(paymentCard);
         }
-        const applySaveMoney = parseInt($("#applySaveMoney").html().replace(/[^0-9]/g, ""));
+        const applySaveMoney = $("#applySaveMoney").html().toInt();
         if (applySaveMoney) {
             const paymentSaved = {
                 fpType: "03",
@@ -1730,7 +1777,7 @@ function onPaymentStageTwo(paymentData = {}, creditData = {}) {
         console.log("결제데이터 : ");
         console.log(data);
 
-        CommonUI.ajaxjson(url, JSON.stringify(data), function (req){
+        CommonUI.ajax(url, "MAPPER", data, function (req){
             console.log("결제후 :");
             console.log(req);
             AUIGrid.addRow(gridId[3], req.sendData.paymentEtcDtos, "last");

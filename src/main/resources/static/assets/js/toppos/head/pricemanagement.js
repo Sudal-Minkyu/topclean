@@ -11,9 +11,9 @@ $(function () {
         inputs.eq(i).on("keyup", function () {
             const v = this.value.replace(/[^0-9.]/g, "");
             if(v.substr(-1, 1) !== ".") {
-                this.value = Number(v.replace(/^(\d+.?\d{0,2})\d*$/,"$1")).toLocaleString();
+                this.value = parseInt(v.replace(/^(\d+.?\d{0,2})\d*$/,"$1")).toLocaleString();
             }else{
-                this.value = Number(v).toLocaleString() + ".";
+                this.value = parseInt(v).toLocaleString() + ".";
             }
         });
     }
@@ -27,7 +27,7 @@ $(function () {
 function onSave() {
     const inputs = $("#priceManagementForm input");
     for(let i = 5; i < inputs.length; i++) {
-        inputs[i].value = inputs[i].value.toInt();
+        inputs[i].value = inputs[i].value.numString();
     }
 
     const formData = new FormData(document.getElementById('priceManagementForm'));

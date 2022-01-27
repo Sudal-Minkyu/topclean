@@ -5,7 +5,11 @@
 * */
 const dtos = {
     send: {
-        검품이있는디테일리스트: { // 통합조회 페이지와 비슷하지만, fdState에 대한 조건이 빠진 형태
+        메시지팝업뜰때: {
+            fdId: "nr",
+        },
+
+        inspectList: { // 통합조회 페이지와 비슷하지만, fdState에 대한 조건이 빠진 형태
             bcId: "n", // 선택된 고객. 없을 경우 null
             searchTag: "s", // 택번호 검색문자
             filterFromDt: "sr", // 시작 조회기간
@@ -19,7 +23,20 @@ const dtos = {
         },
     },
     receive: {
-        검품이있는디테일리스트: { // 인계페이지와 거의 비슷하지만, estimateDt가 빠지고, fdS6Dt가 들어간 형태
+        메시지팝업뜰때: {
+            fiId: "nr",
+            insertDt: "s",
+            fiType: "s",
+            fiComment: "s",
+            fiSendMsgYn: "s",
+            fiPhotoYn: "s",
+            fiCustomerConfirm: "s",
+
+            ffPath: "s",
+            ffFilename: "s",
+        },
+
+        inspectList: { // 인계페이지와 거의 비슷하지만, estimateDt가 빠지고, fdS6Dt가 들어간 형태
             frRefType: "sr",
             bcName: "s",
             frYyyymmdd: "s",
@@ -69,14 +86,22 @@ const dtos = {
 /* 통신에 사용되는 url들 기입 */
 const urls = {
     searchCustomer: "/api/user/customerInfo", // 고객 검색
-    getDetailList: "", // 검품이 있는 리스트 필터링하여 가져오기
-
+    getDetailList: "/api/user/inspectList", // 검품이 있는 리스트 필터링하여 가져오기
+    setupMsgPop: "", // 메시지 팝업이 뜰 때 선택한 아이템에 대해서 검품내역 세팅하기
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
+    setupMsgPop(selectedFdId) {
+        console.log(selectedFdId);
+    },
+
     getDetailList(filterCondition) {
-        console.log(filterCondition);
+        dv.chk(filterCondition, dtos.send.inspectList, "검품리스트 필터링조건 보내기");
+        CommonUI.ajax(urls.getDetailList, "GET", filterCondition, function (res) {
+            const data = res.sendData.gridListData;
+            grids.f.setData(0, data);
+        });
     },
 
     searchCustomer(searchCondition) {
@@ -214,15 +239,15 @@ const grids = {
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
                 }, {
-                    dataField: "",
+                    dataField: "sendMsgBtn",
                     headerText: "메시지",
-                    width: 60,
+                    width: 70,
                     renderer : {
                         type: "TemplateRenderer",
                     },
                     labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
                         let template = `
-                                <button class="c-state c-state--modify">메시지</button>
+                                <button type="button" class="c-button c-button--supersmall">메시지</button>
                             `;
                         return template;
                     },
@@ -235,8 +260,6 @@ const grids = {
                 noDataMessage : "출력할 데이터가 없습니다.",
                 showAutoNoDataMessage: false,
                 enableColumnResize : false,
-                showRowAllCheckBox: true,
-                showRowCheckColumn: true,
                 showRowNumColumn : false,
                 showStateColumn : false,
                 enableFilter : true,
@@ -252,7 +275,7 @@ const grids = {
                     dataField: "bcHp",
                     headerText: "전화번호",
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
-                        return CommonUI.onPhoneNumChange(value);
+                        return CommonUI.formatTel(value);
                     }
                 }, {
                     dataField: "bcAddress",
@@ -354,7 +377,10 @@ const grids = {
         basicTrigger() {
             /* 0번그리드 내의 셀 클릭시 이벤트 */
             AUIGrid.bind(grids.s.id[0], "cellClick", function (e) {
-                console.log(e.item); // 이밴트 콜백으로 불러와진 객체의, 클릭한 대상 row 키(파라메터)와 값들을 보여준다.
+                if(e.dataField === "sendMsgBtn") {
+                    wares.selectedItem = e.item;
+                    setupMsgPop();
+                }
             });
         },
     }
@@ -388,8 +414,8 @@ const trigs = {
                 const filterCondition = {
                     bcId: wares.selectedCustomer.bcId,
                     searchTag: wares.searchTag,
-                    filterFromDt: $("#filterFromDt").val().replace(/[^0-9]/g, ""),
-                    filterToDt: $("#filterToDt").val().replace(/[^0-9]/g, ""),
+                    filterFromDt: $("#filterFromDt").val().numString(),
+                    filterToDt: $("#filterToDt").val().numString(),
                 }
                 comms.getDetailList(filterCondition);
             });
@@ -411,8 +437,9 @@ const trigs = {
 
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
 const wares = {
-    selectedCustomer : {bcId:null},
+    selectedCustomer: {bcId:null},
     searchTag: null,
+    selectedItem: {},
 }
 
 $(function() { // 페이지가 로드되고 나서 실행
@@ -423,6 +450,7 @@ $(function() { // 페이지가 로드되고 나서 실행
 function onPageLoad() {
     grids.f.initialization();
     grids.f.create();
+    grids.t.basicTrigger();
 
     /* 가상키보드의 사용 선언 */
     window.vkey = new VKeyboard();
@@ -472,7 +500,7 @@ function putCustomer() {
     }
     
     $("#bcAddress").html(wares.selectedCustomer.bcAddress);
-    $("#bcHp").html(CommonUI.onPhoneNumChange(wares.selectedCustomer.bcHp));
+    $("#bcHp").html(CommonUI.formatTel(wares.selectedCustomer.bcHp));
     $("#beforeUncollectMoneyMain").html(wares.selectedCustomer.beforeUncollectMoney.toLocaleString());
     $("#saveMoneyMain").html(wares.selectedCustomer.saveMoney.toLocaleString());
     $("#bcRemark").html(wares.selectedCustomer.bcRemark);
@@ -564,8 +592,8 @@ function mainSearch() {
             const filterCondition = {
                 bcId: null,
                 searchTag: searchString,
-                filterFromDt: $("#filterFromDt").val().replace(/[^0-9]/g, ""),
-                filterToDt: $("#filterToDt").val().replace(/[^0-9]/g, ""),
+                filterFromDt: $("#filterFromDt").val().numString(),
+                filterToDt: $("#filterToDt").val().numString(),
             }
             wares.searchTag = searchString;
             comms.getDetailList(filterCondition);
@@ -579,4 +607,21 @@ function mainSearch() {
     }else{
         alertCaution("검색어를 입력해 주세요", 1);
     }
+}
+
+function setupMsgPop() {
+    const selectedFdId = {
+        fdId: wares.selectedItem.fdId,
+    }
+    comms.setupMsgPop(selectedFdId);
+    resetMsgPop();
+    $("#messagePop").addClass("active");
+    grids.f.resize(2);
+}
+
+function resetMsgPop() {
+    $("#isIncludeImg").prop("checked", false);
+    $("#messageField").val("");
+    $("#imgInspect").attr("src", "");
+    $("#imgInspect").hide();
 }

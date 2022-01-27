@@ -3,26 +3,24 @@
 * CommonUI.기능 으로 호출하여 사용
 *
 * 제작 : 성낙원
-* 수정 : 2021-11-18
+* 수정 : 2022-01-27
 * */
 class CommonUIClass {
 
-    mouseDownTarget;
-    mouseDownPos = [0, 0];
-    mouseUpPos = [0, 0];
-    activeDragDropEvent = false;
-    abc = 777;
-
     constructor() {
+        /* 숫자만 남긴 후 인트형으로 전환 */
         String.prototype.toInt = function () {
-            return this.toString() ? parseInt(this.replace(/[^0-9-]/g, "")) : 0;
+            return this.toString() ? parseInt(this.replace(/[^0-9]/g, "")) : 0;
         }
-        String.prototype.zeroToNine = function () {
-            return this.toString() ? this.replace(/[^0-9-]/g, "") : "";
+
+        /* 0~9까지만 남긴 문자를 반환, 앞자리가 0으로 시작할 수 있음. */
+        String.prototype.numString = function () {
+            return this.toString() ? this.replace(/[^0-9]/g, "") : "";
         }
     }
 
     toppos = {
+        /* 아이템 코드와 이름 데이터 조합에 쓰이는 배열을 사용하여 최종 이름을 산출 */
         makeProductName(item, nameArray) {
             if(!item.sumName) {
                 const isNotSizeNormal = !(item.biItemcode.substr(3, 1) === "N");
@@ -39,10 +37,14 @@ class CommonUIClass {
                 item.sumName = sumName;
             }
         },
+
+        /* 대중소분류 이름을 가져다가 최종 이름을 조합하는 방식 */
         makeSimpleProductName(item) {
             const finalBsName = item.bsName === "일반" ? "" : item.bsName;
             return finalBsName + " " + item.biName + " " + item.bgName;
         },
+
+        /* 처리내역의 표시를 결정하는 공통함수 */
         processName(item) {
             try {
                 let statusText = "";
@@ -105,16 +107,15 @@ class CommonUIClass {
 
     /* 자주 쓸 정규표현형 유효성 검사를 편하게 쓰기 위함 */
     regularValidator(testValue, testMethod) {
-
         const email = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/;
         /* 8자리 숫자를 통해 검사 */
         const dateExist = /^(?:(?:(?:(?:(?:[13579][26]|[2468][048])00)|(?:[0-9]{2}(?:(?:[13579][26])|(?:[2468][048]|0[48]))))(?:(?:(?:09|04|06|11)(?:0[1-9]|1[0-9]|2[0-9]|30))|(?:(?:01|03|05|07|08|10|12)(?:0[1-9]|1[0-9]|2[0-9]|3[01]))|(?:02(?:0[1-9]|1[0-9]|2[0-9]))))|(?:[0-9]{4}(?:(?:(?:09|04|06|11)(?:0[1-9]|1[0-9]|2[0-9]|30))|(?:(?:01|03|05|07|08|10|12)(?:0[1-9]|1[0-9]|2[0-9]|3[01]))|(?:02(?:[01][0-9]|2[0-8])))))$/
 
         switch (testMethod) {
-            case "email" :
+            case "email" : // 이메일 형식이 맞는지 검사.
                 return email.test(testValue);
                 break;
-            case "dateExist" :
+            case "dateExist" : // 존재하는 날짜인지 검사.
                 return dateExist.test(testValue);
                 break;
             default :
@@ -122,27 +123,73 @@ class CommonUIClass {
         }
     }
 
-    onPhoneNumChange(phoneNumber) {
+    /* 국내 전화 번호 양식화, 적절한 위치에 - 추가, 최종 형태 잡을 때도, 입력할 때 마다 쓸 수도 있음 */
+    formatTel(telNumber) {
         let formatNum = "";
-        if(phoneNumber) {
-            phoneNumber = phoneNumber.replace(/[^0-9]/g, "");
-            if (phoneNumber.length == 11) {
-                formatNum = phoneNumber.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
-            } else if (phoneNumber.length == 8) {
-                formatNum = phoneNumber.replace(/(\d{4})(\d{4})/, '$1-$2');
-            } else {
-                if (phoneNumber.indexOf('02') == 0) {
-                    formatNum = phoneNumber.replace(/(\d{2})(\d{4})(\d{4})/, '$1-$2-$3');
-                } else {
-                    formatNum = phoneNumber.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
-                }
-            }
+        telNumber = telNumber.numString();
+        const telLength = telNumber.length;
+        
+        let foreNumType;
+        const testForeCode = telNumber.substring(0, 3);
+        if(testForeCode.substring(0, 2) === "02") {
+            foreNumType = 2;
+        } else if(parseInt(testForeCode) > 129 && parseInt(testForeCode) < 200) {
+            foreNumType = 4;
+        } else if(testForeCode === "014") {
+            foreNumType = 5;
+        } else {
+            foreNumType = 3;
         }
+
+        let midNum;
+        let backNum;
+
+        const foreNum = telNumber.substring(0, foreNumType);
+        if(telLength < 8 + foreNumType && foreNumType !== 4) {
+            midNum = telNumber.substring(foreNumType, foreNumType + 3);
+            backNum = telNumber.substring(foreNumType + 3, telLength);
+        } else {
+            midNum = telNumber.substring(foreNumType, foreNumType + 4);
+            backNum = telNumber.substring(foreNumType + 4, telLength);
+        }
+
+        if(backNum) {
+            formatNum = foreNum + "-" + midNum + "-" + backNum;
+        } else if (midNum) {
+            formatNum = foreNum + "-" + midNum;
+        } else if (foreNum) {
+            formatNum = foreNum;
+        } else {
+            formatNum = telNumber;
+        }
+
         return formatNum;
     }
 
-    /* ajax 통신의 자주 쓰는 패턴을 간단하게 쓰기 위함 */
-    ajax(url, method, data, func) {
+    /* 사업자 번호 양식화, 숫자 10자리, 적절한 위치에 - 추가, 최종 형태 잡을 때도, 입력할 때 마다 쓸 수도 있음 */
+    formatBusinessNo(businessNum) {
+        let formatNum = "";
+        businessNum = businessNum.numString();
+
+        const foreNum = businessNum.substring(0, 3);
+        const midNum = businessNum.substring(3, 5);
+        const backNum = businessNum.substring(5, 10);
+
+        if (backNum) {
+            formatNum = foreNum + "-" + midNum + "-" + backNum;
+        } else if (midNum) {
+            formatNum = foreNum + "-" + midNum;
+        } else if (foreNum) {
+            formatNum = foreNum;
+        }
+
+        return formatNum;
+    }
+
+    /* ajax 통신의 자주 쓰는 패턴을 간단하게 쓰기 위함
+    * (apiUrl, 통신방식(혹은 컨트롤러에서 받는 방식), 보낼데이터, 성공시 콜백, 실패시 콜백)
+    * */
+    ajax(url, method, data, successFn = function () {}, errorFn = function () {}) {
 
         if(data) {
             switch (method) {
@@ -161,13 +208,14 @@ class CommonUIClass {
                         },
                         success: function (req) {
                             if (req.status === 200) {
-                                return func(req);
+                                return successFn(req);
                             }else {
-                                if (req.err_msg2 === null) {
-                                    alertCaution(req.err_msg, 1);
+                                if (req.err_msg2 === null && req.err_msg) {
+                                    alertCancel(req.err_msg);
                                 } else {
-                                    alertCaution(req.err_msg + "<br>" + req.err_msg2, 1);
+                                    alertCancel(req.err_msg + "<br>" + req.err_msg2);
                                 }
+                                return errorFn(req);
                             }
                         }
                     });
@@ -192,13 +240,14 @@ class CommonUIClass {
                         },
                         success: function (req) {
                             if (req.status === 200) {
-                                return func(req);
+                                return successFn(req);
                             }else {
-                                if (req.err_msg2 === null) {
-                                    alertCaution(req.err_msg, 1);
+                                if (req.err_msg2 === null && req.err_msg) {
+                                    alertCancel(req.err_msg);
                                 } else {
-                                    alertCaution(req.err_msg + "<br>" + req.err_msg2, 1);
+                                    alertCancel(req.err_msg + "<br>" + req.err_msg2);
                                 }
+                                return errorFn(req);
                             }
                         }
                     });
@@ -219,13 +268,14 @@ class CommonUIClass {
                         },
                         success: function (req) {
                             if (req.status === 200) {
-                                return func(req);
+                                return successFn(req);
                             } else {
-                                if (req.err_msg2 === null) {
-                                    alertCaution(req.err_msg, 1);
+                                if (req.err_msg2 === null && req.err_msg) {
+                                    alertCancel(req.err_msg);
                                 } else {
-                                    alertCaution(req.err_msg + "<br>" + req.err_msg2, 1);
+                                    alertCancel(req.err_msg + "<br>" + req.err_msg2);
                                 }
+                                return errorFn(req);
                             }
                         }
                     });
@@ -246,13 +296,14 @@ class CommonUIClass {
                         },
                         success: function (req) {
                             if (req.status === 200) {
-                                return func(req);
+                                return successFn(req);
                             } else {
-                                if (req.err_msg2 === null) {
-                                    alertCaution(req.err_msg, 1);
+                                if (req.err_msg2 === null && req.err_msg) {
+                                    alertCancel(req.err_msg);
                                 } else {
-                                    alertCaution(req.err_msg + "<br>" + req.err_msg2, 1);
+                                    alertCancel(req.err_msg + "<br>" + req.err_msg2);
                                 }
+                                return errorFn(req);
                             }
                         }
                     });
@@ -272,7 +323,7 @@ class CommonUIClass {
                             ajaxErrorMsg(req);
                         },
                         success: function (req) {
-                            return func(req);
+                            return successFn(req);
                         }
                     });
                     break;
@@ -280,62 +331,7 @@ class CommonUIClass {
         }
     }
 
-    /* json 보내는 통신의 자주 쓰는 패턴을 간단하게 쓰기 위함 --임시 */
-    ajaxjsonPost(url, data, func) {
-        $(document).ajaxSend(function (e, xhr) {
-            xhr.setRequestHeader("Authorization", localStorage.getItem('Authorization'));
-        });
-        $.ajax({
-            url: url,
-            data : data,
-            type : 'post',
-            cache:false,
-            error: function (req) {
-                ajaxErrorMsg(req);
-            },
-            success: function (req) {
-                if (req.status === 200) {
-                    return func(req);
-                } else {
-                    if (req.err_msg2 === null) {
-                        alertCaution(req.err_msg, 1);
-                    } else {
-                        alertCaution(req.err_msg + "<br>" + req.err_msg2, 1);
-                    }
-                }
-            }
-        });
-    }
-
-    /* json 보내는 통신의 자주 쓰는 패턴을 간단하게 쓰기 위함 --임시 */
-    ajaxjson(url, data, func) {
-        $(document).ajaxSend(function (e, xhr) {
-            xhr.setRequestHeader("Authorization", localStorage.getItem('Authorization'));
-        });
-        $.ajax({
-            url: url,
-            type: "POST",
-            cache: false,
-            data: data,
-            contentType: "application/json; charset=utf-8",
-            error: function (req) {
-                ajaxErrorMsg(req);
-            },
-            success: function (req) {
-                if (req.status === 200) {
-                    return func(req);
-                } else {
-                    if (req.err_msg2 === null) {
-                        alertCaution(req.err_msg, 1);
-                    } else {
-                        alertCaution(req.err_msg + "<br>" + req.err_msg2, 1);
-                    }
-                }
-            }
-        });
-    }
-
-    /* 새로운 dto 생성용 */
+    /* 규칙 dtos와 같은 구조로 새로운 dto 생성하기 위함 (규칙 dto의 키값을 품은 빈 깡통 만들기) */
     newDto(dto) {
         const keys = Object.keys(dto);
         let babyDto = {};
@@ -343,41 +339,6 @@ class CommonUIClass {
             babyDto[keys[key]] = null;
         }
         return babyDto;
-    }
-
-    /* 드래그 이벤트, 터치시 좌표얻는 알고리즘 포함. 아직 사용 가능성이 적으므로 이벤트로 사용을 위해서는 터치시 마우스다운과 다르게 AUIGrid의 셀을
-    *  선택하지 않는 문제의 해결이 필요하다. 또한 이벤트 사용을 위해서는 AUI에는 셀 클릭 이벤트를 걸고, activeDragDropEvent 불린값을 조건으로
-    *  주어 이벤트를 구동해야 한다. */
-    gridDragDropDblclick() {
-        $(document).on("touchstart mousedown", function (e) {
-            CommonUI.mouseDownTarget = e.target;
-
-            if(e.type == 'touchstart'){
-                const touch = e.originalEvent.touches[0] || e.originalEvent.changedTouches[0];
-                CommonUI.mouseDownPos = [touch.pageX, touch.pageY];
-            } else if (e.type == 'mousedown') {
-                CommonUI.mouseDownPos = [e.originalEvent.clientX, e.originalEvent.clientY];
-            }
-        });
-        $(document).on("touchend mouseup", function (e) {
-            if(e.type == 'touchend'){
-                const touch = e.originalEvent.touches[0] || e.originalEvent.changedTouches[0];
-                CommonUI.mouseUpPos = [touch.pageX, touch.pageY];
-            } else if (e.type == 'mouseup') {
-                CommonUI.mouseUpPos = [e.originalEvent.clientX, e.originalEvent.clientY];
-            }
-            const moveDistance = Math.sqrt(Math.pow(Math.abs(CommonUI.mouseDownPos[0] - CommonUI.mouseUpPos[0]), 2) +
-                Math.pow(Math.abs(CommonUI.mouseDownPos[1] - CommonUI.mouseUpPos[1]), 2));
-            if(moveDistance > 100) {
-                const targetClassName = CommonUI.mouseDownTarget.className;
-                if(targetClassName.includes("aui-grid-renderer-base") ||
-                        targetClassName.includes("aui-grid-default-column")) {
-                    CommonUI.activeDragDropEvent = true;
-                    $(CommonUI.mouseDownTarget).trigger("click");
-                }
-            }
-            CommonUI.activeDragDropEvent = false;
-        });
     }
 }
 

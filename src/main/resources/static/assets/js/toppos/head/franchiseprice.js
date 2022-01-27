@@ -303,8 +303,7 @@ function savePriceList() {
     };
 
     if(proceed) {
-        const jsonString = JSON.stringify(data);
-        CommonUI.ajaxjson(gridSaveUrl[0], jsonString, function () {
+        CommonUI.ajax(gridSaveUrl[0], "MAPPER", data, function () {
             AUIGrid.clearGridData(gridId[1]);
             setDataIntoGrid(1, gridCreateUrl[1], {frCode: selectedFrCode});
             alertSuccess("등록이 완료되었습니다");

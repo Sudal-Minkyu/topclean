@@ -136,4 +136,29 @@ public class UserController {
     public String boardview(){
         return "user/board/view";
     }
+
+    // 댓글
+    @RequestMapping("reply")
+    public String reply(){
+        return "user/board/reply";
+    }
+
+    // 택분실
+    // 게시판 리스트
+    @RequestMapping("taglostlist")
+    public String taglostlist() {
+        return "user/board/taglostlist";
+    }
+
+    // 게시판 보기
+    @RequestMapping("taglostview")
+    public String taglostview() {
+        return "user/board/taglostview";
+    }
+
+    // 댓글
+    @RequestMapping("taglostreply")
+    public String taglostreply() {
+        return "user/board/taglostreply";
+    }
 }

@@ -71,7 +71,7 @@ gridColumnLayout[0] = [
         dataField: "usertel",
         headerText: "전화번호",
         labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
-            return CommonUI.onPhoneNumChange(value);
+            return CommonUI.formatTel(value);
         },
     }, {
         dataField: "useremail",
@@ -310,7 +310,7 @@ function accountSave(){
     }
 
     const formData = new FormData(document.getElementById('accountFormData'));
-    formData.set("usertel", formData.get("usertel").replace(/[^0-9]/g, ""));
+    formData.set("usertel", formData.get("usertel").numString());
 
     let url = "/api/head/accountSave";
 
@@ -331,7 +331,7 @@ function accountRemove() {
                 userid : AUIGrid.getSelectedItems(gridId[0])[0].item.userid
             }
         }
-        CommonUI.ajaxjsonPost("/api/head/accountDelete", targetUser, function() {
+        CommonUI.ajax("/api/head/accountDelete", "PARAM", targetUser, function() {
             createNewPost(0);
             AUIGrid.clearGridData(gridId[0]);
             accountList();
@@ -367,7 +367,7 @@ function setFieldData(numOfGrid, item) {
             $("#username").val(item.username);
             $("#password").val(item.password);
             $("#role").val(item.roleCode);
-            $("#usertel").val(CommonUI.onPhoneNumChange(item.usertel));
+            $("#usertel").val(CommonUI.formatTel(item.usertel));
             $("#useremail").val(item.useremail);
             $("#frCode").val(frCode);
             $("#brCode").val(brCode);
@@ -451,8 +451,8 @@ function filterAccountList(type) {
 }
 
 /* 전화번호 입력을 위한 유효성 검사 */
-function onPhonenumChange(element) {
+function formatTel(element) {
     let phoneNumber = element.value;
-    element.value = CommonUI.onPhoneNumChange(phoneNumber);
+    element.value = CommonUI.formatTel(phoneNumber);
 }
 

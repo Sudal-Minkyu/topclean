@@ -391,8 +391,8 @@ const ajax = {
 
     putNewInspect(formData) {
         const testObj = Object.fromEntries(formData);
-        testObj.fdId = Number(testObj.fdId);
-        testObj.fiAddAmt = Number(testObj.fiAddAmt);
+        testObj.fdId = parseInt(testObj.fdId);
+        testObj.fiAddAmt = parseInt(testObj.fiAddAmt);
         dv.chk(testObj, dto.send.franchiseInspectionSave, "검품 등록");
 
         CommonUI.ajax("/api/user/franchiseInspectionSave", "POST", formData, function (res) {
@@ -446,7 +446,7 @@ const ajax = {
                 type: "2",
             }
             ajax.getInspectionList(searchCondition);
-            const cautionText = ["고객 수락이 승인 완료되었습니다.", " 고객 수락이 거부되었습니다."];
+            const cautionText = ["고객 수락 승인 완료되었습니다.", " 고객 수락 거부 완료되었습니다."];
             alertSuccess(cautionText[target.type - 2]);
         });
     },
@@ -721,7 +721,7 @@ const grid = {
                     dataField: "bcHp",
                     headerText: "전화번호",
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
-                        return CommonUI.onPhoneNumChange(value);
+                        return CommonUI.formatTel(value);
                     }
                 }, {
                     dataField: "bcAddress",
@@ -1132,7 +1132,7 @@ const event = {
             });
 
             $("#fdRepairComplete").on("click", function () {
-                data.currentRequest.fdRepairAmt = parseInt($("#fdRepairAmt").val().replace(/[^0-9]/g, ""));
+                data.currentRequest.fdRepairAmt = $("#fdRepairAmt").val().toInt();
                 data.currentRequest.fdRepairRemark = $("#fdRepairRemark").val();
                 if(data.currentRequest.fdRepairAmt || data.currentRequest.fdRepairRemark.length) {
                     $("#fdRepair").prop("checked", true);
@@ -1154,7 +1154,7 @@ const event = {
             });
 
             $("#fdAddComplete").on("click", function () {
-                data.currentRequest.fdAdd1Amt = parseInt($("#fdAdd1Amt").val().replace(/[^0-9]/g, ""));
+                data.currentRequest.fdAdd1Amt = $("#fdAdd1Amt").val().toInt();
                 data.currentRequest.fdAdd1Remark = $("#fdAdd1Remark").val();
                 if(data.currentRequest.fdAdd1Amt || data.currentRequest.fdAdd1Remark.length) {
                     $("#fdAdd1").prop("checked", true);
@@ -1558,7 +1558,8 @@ function onAddOrder() {
     }
 
     if(data.currentRequest.redBtn2 && data.startPrice > data.currentRequest.fdTotAmt) {
-        alertCaution("수정시작 시점보다 금액이 낮습니다.<br>접수취소 후 재접수를 해주세요.", 1);
+        alertCaution("이미 결제가 완료된 접수내역은<br>더 낮은금액으로 수정이 불가합니다." 
+            + "<br>결제취소 후 수정해주세요.", 1);
         return false;
     }
 
@@ -1567,7 +1568,7 @@ function onAddOrder() {
     data.currentRequest.fdPriceGrade = $("input[name='fdPriceGrade']:checked").val();
     data.currentRequest.fdDiscountGrade = $("input[name='fdDiscountGrade']:checked").val();
     data.currentRequest.fdRemark = $("#fdRemark").val();
-    data.currentRequest.frEstimateDate = data.initialData.etcData.frEstimateDate.replace(/[^0-9]/g, "");
+    data.currentRequest.frEstimateDate = data.initialData.etcData.frEstimateDate.numString();
     data.currentRequest.fdSpecialYn = $("#fdSpecialYn").is(":checked") ? "Y" : "N";
     data.currentRequest.fdUrgentYn = $("#fdUrgentYn").is(":checked") ? "Y" : "N";
     
@@ -1662,8 +1663,8 @@ function filterMain() {
     const condition = CommonUI.newDto(dto.send.franchiseRequestDetailSearch);
     condition.bcId = data.selectedCustomer.bcId;
     condition.filterCondition = $("input[name='filterCondition']:checked").val();
-    condition.filterToDt = $("#filterFromDt").val().replace(/[^0-9]/g, "");
-    condition.filterFromDt = $("#filterToDt").val().replace(/[^0-9]/g, "");
+    condition.filterToDt = $("#filterFromDt").val().numString();
+    condition.filterFromDt = $("#filterToDt").val().numString();
     if($("#searchType").val() === "4") {
         condition.searchTag = $("#searchString").val();
     }
@@ -1694,7 +1695,7 @@ function putCustomer() {
     }
 
     $("#bcAddress").html(data.selectedCustomer.bcAddress);
-    $("#bcHp").html(CommonUI.onPhoneNumChange(data.selectedCustomer.bcHp));
+    $("#bcHp").html(CommonUI.formatTel(data.selectedCustomer.bcHp));
     $("#beforeUncollectMoneyMain").html(data.selectedCustomer.beforeUncollectMoney.toLocaleString());
     $("#saveMoneyMain").html(data.selectedCustomer.saveMoney.toLocaleString());
     $("#bcRemark").html(data.selectedCustomer.bcRemark);
@@ -1729,15 +1730,15 @@ function enableKeypad() {
 
     $keypadBtn.on("click", function (e) {
         const $keypad_field = $(this).parents(".add-cost__keypad").find(".keypad_field");
-        $keypad_field.val(parseInt($keypad_field.val().replace(/[^0-9]/g, "") + this.value).toLocaleString());
+        $keypad_field.val(parseInt($keypad_field.val().numString() + this.value).toLocaleString());
     });
 
     $keypadBackspace.on("click", function (e) {
         const $keypad_field = $(this).parents(".add-cost__keypad").find(".keypad_field");
-        const currentValue = $keypad_field.val().replace(/[^0-9]/g, "");
+        const currentValue = $keypad_field.val().numString();
         if(currentValue.length > 1) {
             $keypad_field.val(parseInt(currentValue.substr(0,
-                currentValue.replace(/[^0-9]/g, "").length - 1)).toLocaleString());
+                currentValue.numString().length - 1)).toLocaleString());
         }else{
             $keypad_field.val("0");
         }
@@ -1816,7 +1817,7 @@ function cancelPayment(cancelType) {
                         ajax.cancelPayment(target);
                     }else if(jsonRes.STATUS === "FAILURE") {
                         console.log(res);
-                        alertCaution("카드결제 취소중 에러가 발생하였습니다", 1);
+                        alertCancel("카드결제 취소중 에러 발생<br>단말기 처리");
                         return false;
                     }
                 });
@@ -1918,7 +1919,7 @@ function putInspect() {
 
             formData.append("fiComment", $fiComment.val());
             formData.append("fiType", "F");
-            formData.append("fiAddAmt", $("#fiAddAmt").val().toInt());
+            formData.append("fiAddAmt", $("#fiAddAmt").val().numString());
 
             ajax.putNewInspect(formData);
 
@@ -1930,7 +1931,7 @@ function putInspect() {
         formData.append("fdId", data.currentRequest.fdId);
         formData.append("fiComment", $fiComment.val());
         formData.append("fiType", "F");
-        formData.append("fiAddAmt", $("#fiAddAmt").val().toInt());
+        formData.append("fiAddAmt", $("#fiAddAmt").val().numString());
         formData.append("source", null);
         ajax.putNewInspect(formData);
     }
@@ -1949,5 +1950,5 @@ function b64toBlob(dataURI) { // 파일을 ajax 통신에 쓰기 위해 변환
 
 function onKeypadConfirm() {
     const targetId = ["fiAddAmt"];
-    $("#" + targetId[data.keypadNum]).val(Number($("#" + targetId[data.keypadNum]).val()).toLocaleString());
+    $("#" + targetId[data.keypadNum]).val(parseInt($("#" + targetId[data.keypadNum]).val()).toLocaleString());
 }

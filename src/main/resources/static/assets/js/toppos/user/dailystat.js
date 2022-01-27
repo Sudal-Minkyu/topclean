@@ -6,13 +6,26 @@
 const dtos = {
     send: {
         businessdayList: {
-            filterFromDt: "s",
-            filterToDt: "s",
+            filterFromDt: "sr",
+            filterToDt: "sr",
         }
     },
     receive: {
         businessdayList: {
-            보내주시는데이터보고판단: "",
+            yyyymmdd: "s",
+            frQtyAll: "",
+            fdRetryYnAll: "",
+            biItemGroupAll: "",
+            frTotalAmountAll: "",
+            fpAmtType02All: "",
+            fpAmtType01All: "",
+            fsAmtType02All: "",
+            fpAmtCancelAll: "",
+            fpAmtUncollectAll: "",
+            totalAverageAll: "",
+            totalReceipt: "",
+            totalDelivery: "",
+            averageReceiptMoney: "",
         }
     }
 };
@@ -25,9 +38,12 @@ const urls = {
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
     getMainData(filterCondition) {
-        dv.chk(filterCondition, dtos.businessdayList, "메인그리드 필터링에 필요한 데이터 보내기");
+        dv.chk(filterCondition, dtos.send.businessdayList, "메인그리드 필터링에 필요한 데이터 보내기");
         CommonUI.ajax(urls.getMainData, "GET", filterCondition, function (res) {
-            console.log(res);
+            console.log(res.sendData);
+            const data = res.sendData.gridListData;
+            // 데이터 오면 아래 주석 풀어서 실험
+            // grids.f.setData(0, data);
         });
     },
 };
@@ -55,77 +71,81 @@ const grids = {
             /* 0번 그리드의 레이아웃 */
             grids.s.columnLayout[0] = [
                 {
-                    dataField: "",
+                    dataField: "yyyymmdd",
                     headerText: "일자",
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
                 }, {
                     headerText: "접수건수",
                     children: [{
-                        dataField: "",
+                        dataField: "frQtyAll",
                         headerText: "총건수",
                         dataType: "numeric",
                         autoThousandSeparator: "true",
                     }, {
-                        dataField: "",
+                        dataField: "fdRetryYnAll",
                         headerText: "재세탁",
                         dataType: "numeric",
                         autoThousandSeparator: "true",
                     }, {
-                        dataField: "",
+                        dataField: "biItemGroupAll",
                         headerText: "부착물",
                         dataType: "numeric",
                         autoThousandSeparator: "true",
                     },]
                 }, {
-                    dataField: "",
+                    dataField: "frTotalAmountAll",
                     headerText: "접수금액",
+                    dataType: "numeric",
+                    autoThousandSeparator: "true",
                 }, {
                     headerText: "입금액",
                     children: [ {
-                        dataField: "",
+                        dataField: "fpAmtType02All",
                         headerText: "카드결제",
                         dataType: "numeric",
                         autoThousandSeparator: "true",
                     }, {
-                        dataField: "",
+                        dataField: "fpAmtType01All",
                         headerText: "현금결제",
                         dataType: "numeric",
                         autoThousandSeparator: "true",
                     }, {
-                        dataField: "",
+                        dataField: "fsAmtType02All",
                         headerText: "적립금사용",
                         dataType: "numeric",
                         autoThousandSeparator: "true",
                     }, {
-                        dataField: "",
+                        dataField: "fpAmtCancelAll",
                         headerText: "취소금액",
                         dataType: "numeric",
                         autoThousandSeparator: "true",
                     }, {
-                        dataField: "",
+                        dataField: "fpAmtUncollectAll",
                         headerText: "미수결제",
                         dataType: "numeric",
                         autoThousandSeparator: "true",
                     },]
                 }, {
-                    dataField: "",
+                    dataField: "totalAverageAll",
                     headerText: "1점<br>평균단가",
+                    dataType: "numeric",
+                    autoThousandSeparator: "true",
                 }, {
                     headerText: "방문고객",
                     children: [{
-                        dataField: "",
+                        dataField: "totalReceipt",
                         headerText: "접수",
                         dataType: "numeric",
                         autoThousandSeparator: "true",
                     }, {
-                        dataField: "",
+                        dataField: "totalDelivery",
                         headerText: "출고",
                         dataType: "numeric",
                         autoThousandSeparator: "true",
                     },]
                 }, {
-                    dataField: "",
+                    dataField: "averageReceiptMoney",
                     headerText: "고객평균<br>접수단가",
                     dataType: "numeric",
                     autoThousandSeparator: "true",
@@ -212,12 +232,13 @@ $(function() { // 페이지가 로드되고 나서 실행
 
 /* 페이지가 로드되고 나서 실행 될 코드들을 담는다. */
 function onPageLoad() {
-    enableDatepicker();
 
     grids.f.initialization();
     grids.f.create();
 
     trigs.s.basic();
+
+    enableDatepicker();
 }
 
 function enableDatepicker() {

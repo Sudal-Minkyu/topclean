@@ -164,8 +164,8 @@ function CatCreate_PrintTest(){
     //     message += String.fromCharCode(27);
     //     message += String.fromCharCode(33);
     //     message += String.fromCharCode(8);
-    //     message += item.tagno.substr(3,1);
-    //     message += "-" + item.tagno.substr(4,3);
+    //     message += item.tagno.substr(0,3);
+    //     message += "-" + item.tagno.substr(3,4);
     //     message += String.fromCharCode(27);
     //     message += String.fromCharCode(33);
     //     message += String.fromCharCode(0);
@@ -312,15 +312,15 @@ function CatCreate_Print(params,creditResult,cancelYN){
 
     let type = params.type
     let month = "일시불";
-    if ((params.month) > 1 ){
-        month = params.month + "개월"
-    }
     let cardNo = "";
     let cardName = "";
     let approvalNo = "";
     let tmpStr = "";
     let approvalTime = "";
     if (type === 'card') {
+        if ((creditResult.month) > 1 ){
+            month = params.month + "개월"
+        }
         cardNo = "" + creditResult.cardNo; // 카드번호
         cardName = "" + creditResult.cardName; // 카드번호
         approvalNo = ("" + creditResult.approvalNo).trim(); // 승인번호
@@ -407,7 +407,7 @@ function CatCreate_Print(params,creditResult,cancelYN){
     message += String.fromCharCode(0);
     message += "==========================================";
     message += String.fromCharCode(10);
-    message += "택번호  상품                  색상   금액 ";
+    message += " 택번호   상품                색상   금액 ";
     message += String.fromCharCode(10);
     message += "==========================================";
     message += String.fromCharCode(10);
@@ -416,8 +416,8 @@ function CatCreate_Print(params,creditResult,cancelYN){
         message += String.fromCharCode(27);
         message += String.fromCharCode(33);
         message += String.fromCharCode(8);
-        message += item.tagno.substr(3,1);
-        message += "-" + item.tagno.substr(4,3);
+        message += item.tagno.substr(0,3);
+        message += "-" + item.tagno.substr(3,4);
         message += String.fromCharCode(27);
         message += String.fromCharCode(33);
         message += String.fromCharCode(0);
@@ -576,7 +576,7 @@ function CatCreate_Print(params,creditResult,cancelYN){
     message += String.fromCharCode(0);
     message += "==========================================";
     message += String.fromCharCode(10);
-    message += "택번호  상품                  색상   금액 ";
+    message += " 택번호   상품                색상   금액 ";
     message += String.fromCharCode(10);
     message += "==========================================";
     message += String.fromCharCode(10);
@@ -585,8 +585,8 @@ function CatCreate_Print(params,creditResult,cancelYN){
         message += String.fromCharCode(27);
         message += String.fromCharCode(33);
         message += String.fromCharCode(8);
-        message += item.tagno.substr(3,1);
-        message += "-" + item.tagno.substr(4,3);
+        message += item.tagno.substr(0,3);
+        message += "-" + item.tagno.substr(3,4);
         message += String.fromCharCode(27);
         message += String.fromCharCode(33);
         message += String.fromCharCode(0);
@@ -749,10 +749,7 @@ function CatCreate_MultiPrint(params,creditResults,cancelYN){
 
 
 
-    let month = "일시불";
-    if ((params.month) > 1 ){
-        month = params.month + "개월"
-    }
+    
     let cardNo = "";
     let cardName = "";
     let approvalNo = "";
@@ -839,7 +836,7 @@ function CatCreate_MultiPrint(params,creditResults,cancelYN){
     message += String.fromCharCode(0);
     message += "==========================================";
     message += String.fromCharCode(10);
-    message += "택번호  상품                  색상   금액 ";
+    message += " 택번호   상품                색상   금액 ";
     message += String.fromCharCode(10);
     message += "==========================================";
     message += String.fromCharCode(10);
@@ -848,8 +845,8 @@ function CatCreate_MultiPrint(params,creditResults,cancelYN){
         message += String.fromCharCode(27);
         message += String.fromCharCode(33);
         message += String.fromCharCode(8);
-        message += item.tagno.substr(3,1);
-        message += "-" + item.tagno.substr(4,3);
+        message += item.tagno.substr(0,3);
+        message += "-" + item.tagno.substr(3,4);
         message += String.fromCharCode(27);
         message += String.fromCharCode(33);
         message += String.fromCharCode(0);
@@ -914,6 +911,10 @@ function CatCreate_MultiPrint(params,creditResults,cancelYN){
     message += String.fromCharCode(10);
     creditResults.forEach((creditResult,idx)=>{
         if (creditResult.type ==='card') {
+            let month = "일시불";
+            if ((creditResult.month) > 1 ){
+                month = creditResult.month + "개월"
+            }
             cardNo = "" + creditResult.cardNo; // 카드번호
             cardName = "" + creditResult.cardName; // 카드번호
             approvalNo = ("" + creditResult.approvalNo).trim(); // 승인번호
@@ -1032,7 +1033,7 @@ function CatCreate_MultiPrint(params,creditResults,cancelYN){
     message += String.fromCharCode(0);
     message += "==========================================";
     message += String.fromCharCode(10);
-    message += "택번호  상품                  색상   금액 ";
+    message += " 택번호   상품                색상   금액 ";
     message += String.fromCharCode(10);
     message += "==========================================";
     message += String.fromCharCode(10);
@@ -1041,8 +1042,8 @@ function CatCreate_MultiPrint(params,creditResults,cancelYN){
         message += String.fromCharCode(27);
         message += String.fromCharCode(33);
         message += String.fromCharCode(8);
-        message += item.tagno.substr(3,1);
-        message += "-" + item.tagno.substr(4,3);
+        message += item.tagno.substr(0,3);
+        message += "-" + item.tagno.substr(3,4);
         message += String.fromCharCode(27);
         message += String.fromCharCode(33);
         message += String.fromCharCode(0);
@@ -1107,6 +1108,10 @@ function CatCreate_MultiPrint(params,creditResults,cancelYN){
 
     creditResults.forEach((creditResult,idx)=>{
         if (creditResult.type ==='card') {
+            let month = "일시불";
+            if ((creditResult.month) > 1 ){
+                month = creditResult.month + "개월"
+            }
             cardNo = "" + creditResult.cardNo; // 카드번호
             cardName = "" + creditResult.cardName; // 카드번호
             approvalNo = ("" + creditResult.approvalNo).trim(); // 승인번호

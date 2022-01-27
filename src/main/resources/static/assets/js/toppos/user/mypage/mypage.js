@@ -97,10 +97,10 @@ const comms = {
 	},
 	// 가맹점 정보 저장
 	saveMyInfo(formData) {
-		formData.set("frTelNo", formData.get("frTelNo").replace(/[^0-9]/g, ""));
-		formData.set("frBusinessNo", formData.get("frBusinessNo").replace(/[^0-9]/g, ""));
+		formData.set("frTelNo", formData.get("frTelNo").numString());
+		formData.set("frBusinessNo", formData.get("frBusinessNo").numString());
 		const jsonData = Object.fromEntries(formData);
-		jsonData.frEstimateDuration = Number(jsonData.frEstimateDuration);
+		jsonData.frEstimateDuration = parseInt(jsonData.frEstimateDuration);
 		dv.chk(jsonData, dtos.send.franchiseMyInfoSave, "가맹점 정보 보내기");
 		console.log(jsonData);
 		const url = "/api/user/franchiseMyInfoSave";
@@ -152,9 +152,9 @@ const comms = {
 		const data = {
 			list: frFavoriteData
 		};
-		wares.baType = num;
+		data.baType = num;
 
-		CommonUI.ajaxjson(grids.s.url.update[num], JSON.stringify(data), function (res) {
+		CommonUI.ajax(grids.s.url.update[num], "MAPPER", data, function (res) {
 			alertSuccess('저장되었습니다.');
 			grids.f.clearData(num);
 			comms.getFrFavorite(num);
@@ -471,12 +471,12 @@ const trigs = {
 
 			$('#frBusinessNo').on('keyup', function () {
 				const busiNo = $("#frBusinessNo").val();
-				$("#frBusinessNo").val(busiNo.replace(/(\d{3})(\d{2})(\d{5})/, '$1-$2-$3'));
+				$("#frBusinessNo").val(CommonUI.formatBusinessNo(busiNo));
 			});
 
 			$('#frTelNo').on('keyup', function () {
 				const telNum = $('#frTelNo').val();
-				$('#frTelNo').val(CommonUI.onPhoneNumChange(telNum));
+				$('#frTelNo').val(CommonUI.formatTel(telNum));
 			});
 
 		},
@@ -555,15 +555,15 @@ const vKeypad = {
 			vKeypad.targetProp[0] = {
 				callback: function () {
 					const busiNo = $("#frBusinessNo").val();
-					console.log(busiNo);
-					$("#frBusinessNo").val(busiNo.replace(/(\d{3})(\d{2})(\d{5})/, '$1-$2-$3'));
+					$("#frBusinessNo").val(CommonUI.formatBusinessNo(busiNo));
 				},
 				midprocess: "business",
+				maxlength: 10,
 			};
 			vKeypad.targetProp[1] = {
 				callback: function () {
 					const telNum = $('#frTelNo').val();
-					$('#frTelNo').val(CommonUI.onPhoneNumChange(telNum));
+					$('#frTelNo').val(CommonUI.formatTel(telNum));
 				},
 				midprocess: "tel",
 			};
@@ -613,9 +613,9 @@ function putFrInfoDataInField(myInfoData) {
 	$("input[name='brCarculateRateHq']").val(myInfoData.brCarculateRateHq);
 	$("input[name='brCarculateRateBr']").val(myInfoData.brCarculateRateBr);
 	$("input[name='brCarculateRateFr']").val(myInfoData.brCarculateRateFr);
-	$("input[name='frBusinessNo']").val(myInfoData.frBusinessNo);
+	$("input[name='frBusinessNo']").val(CommonUI.formatBusinessNo(myInfoData.frBusinessNo));
 	$("input[name='frRpreName']").val(myInfoData.frRpreName);
-	$("input[name='frTelNo']").val(myInfoData.frTelNo);
+	$("input[name='frTelNo']").val(CommonUI.formatTel(myInfoData.frTelNo));
 	$("input[name='frTagNo']").val(myInfoData.frTagNo);
 	$("input[name='frEstimateDuration']").val(myInfoData.frEstimateDuration);
 }

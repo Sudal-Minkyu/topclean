@@ -194,10 +194,9 @@ function gridSave() {
         }
     }
 
-    const sJson = JSON.stringify(aJsonArray);
 
     const url = "/api/manager/calendarSave";
-    CommonUI.ajaxjson(url, sJson,function (){
+    CommonUI.ajax(url, "MAPPER", aJsonArray,function (){
         alertSuccess("영업일 저장 완료");
     });
 

@@ -864,6 +864,17 @@
                                 <div class="c-select">
                                     <select id="installmentMonth">
                                         <option value="0">일시불</option>
+                                        <option value="2">2 개월</option>
+                                        <option value="3">3 개월</option>
+                                        <option value="4">4 개월</option>
+                                        <option value="5">5 개월</option>
+                                        <option value="6">6 개월</option>
+                                        <option value="7">7 개월</option>
+                                        <option value="8">8 개월</option>
+                                        <option value="9">9 개월</option>
+                                        <option value="10">10 개월</option>
+                                        <option value="11">11 개월</option>
+                                        <option value="12">12 개월</option>
                                     </select>
                                 </div>
                             </div>
@@ -883,7 +894,13 @@
             </div>
 
             <ul class="pop__console">
+                <li class="pop__console-left">
+                    <div class="c-checkbox">
+                        <input type="checkbox" id="printReceipt" />
+                        <label for="printReceipt">결제후 자동인쇄</label></div>
+                </li>
                 <li><button class="c-button" onclick="onClosePayment()">닫기</button></li>
+                <li><button class="c-button c-button--darksolid">영수증 출력</button></li>
                 <li><button class="c-button c-button--dark" onclick="onPaymentStageOne()">결제하기</button></li>
             </ul>
         </div>

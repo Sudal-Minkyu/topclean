@@ -22,15 +22,10 @@ class VKeyboard {
 
     defaultKeypadProp = {
         type: "default", // 가상키패드의 형태, "default" 기본, "plusminus" +-버튼으로 양수나 음수구분
-        
-        /* 작업중 영역 */        
         midprocess: "default", // 키 입력마다 페이지를 가공하는 형태, "default" 일반숫자, "none" 없음, "tel" 전화번호, "business" 사업자번호
-        minlength: 0, // 키패드 필드의 최저 자릿수 제한 요구치
-        maxlength: 9999, // 키패드 필드의 최대 자릿수 제한
-
+        maxlength: 9999, // 키패드 필드의 최대 자릿수 제한 (자르기)
         callback: function() {
-
-        },
+        }, // 가상키패드 동작이 다 끝나고 나서 실행될 기능
     }
 
     /* 입력의 편집 대상이 되는 필드 */
@@ -873,6 +868,67 @@ class VKeyboard {
     }
 
 
+    formatTel(telNumber) {
+        let formatNum = "";
+        telNumber = telNumber.replace(/[^0-9]/g, "");
+        const telLength = telNumber.length;
+        
+        let foreNumType;
+        const testForeCode = telNumber.substring(0, 3);
+        if(testForeCode.substring(0, 2) === "02") {
+            foreNumType = 2;
+        } else if(parseInt(testForeCode) > 129 && parseInt(testForeCode) < 200) {
+            foreNumType = 4;
+        } else if(testForeCode === "014") {
+            foreNumType = 5;
+        } else {
+            foreNumType = 3;
+        }
+
+        let midNum;
+        let backNum;
+
+        const foreNum = telNumber.substring(0, foreNumType);
+        if(telLength < 8 + foreNumType && foreNumType !== 4) {
+            midNum = telNumber.substring(foreNumType, foreNumType + 3);
+            backNum = telNumber.substring(foreNumType + 3, telLength);
+        } else {
+            midNum = telNumber.substring(foreNumType, foreNumType + 4);
+            backNum = telNumber.substring(foreNumType + 4, telLength);
+        }
+
+        if(backNum) {
+            formatNum = foreNum + "-" + midNum + "-" + backNum;
+        } else if (midNum) {
+            formatNum = foreNum + "-" + midNum;
+        } else if (foreNum) {
+            formatNum = foreNum;
+        } else {
+            formatNum = telNumber;
+        }
+
+        return formatNum;
+    }
+
+    formatBusinessNo(businessNum) {
+        let formatNum = "";
+        businessNum = businessNum.replace(/[^0-9]/g, "");
+
+        const foreNum = businessNum.substring(0, 3);
+        const midNum = businessNum.substring(3, 5);
+        const backNum = businessNum.substring(5, 10);
+
+        if (backNum) {
+            formatNum = foreNum + "-" + midNum + "-" + backNum;
+        } else if (midNum) {
+            formatNum = foreNum + "-" + midNum;
+        } else if (foreNum) {
+            formatNum = foreNum;
+        }
+        console.log(formatNum);
+        return formatNum;
+    }
+
     /*   ====================== 키패드 펑션들 =====================
     * 목표 필드 입력에 있어 키패드를 사용한다.
     * elementId : 목표필드의 id, callback : 키패드 입력 완료 후 실행할 펑션
@@ -903,14 +959,15 @@ class VKeyboard {
         let initialValue = targetValue.replace(/[^0-9]/g, "");
         switch(this.keypadProp.midprocess) {
             case "default":
-                initialValue = Number(initialValue).toLocaleString();
+                initialValue = parseInt(initialValue).toLocaleString();
                 break;
             case "none":
                 break;
             case "tel":
-                initialValue = CommonUI.onPhoneNumChange(initialValue);
+                initialValue = this.formatTel(initialValue);
                 break;
             case "business":
+                initialValue = this.formatBusinessNo(initialValue);
                 break;
         }
 
@@ -927,7 +984,7 @@ class VKeyboard {
 
     /* 키패드에서 받은 값을 바로 키패드용 필드에 입력한다. */
     pushKeypadBtn(INPUT_NUM, isBackspace = false) {
-        let resultValue = (this.keypadField.value + "" + INPUT_NUM).replace(/[^0-9]/g, "");
+        let resultValue = (this.keypadField.value + "" + INPUT_NUM).replace(/[^0-9]/g, "").substring(0, this.keypadProp.maxlength);
         resultValue = isBackspace ? resultValue.substring(0, resultValue.length - 1) : resultValue;
         resultValue = this.keypadMidprocess(resultValue);
         this.keypadField.value = resultValue;
@@ -935,12 +992,13 @@ class VKeyboard {
 
     pushKeypadCompelete() {
         let value = this.keypadField.value.replace(/[^0-9]/g, "");
+
         if($("#VKEY_keypad_sign").is(":checked")) {
             value = value * -1;
         }
         this.targetNumberField.value = value;
         this.pushKeypadClose();
-        this.keypadProp.callback(this.targetNumberField.value);
+        this.keypadProp.callback();
     }
 
     pushKeypadClose() {
@@ -951,14 +1009,15 @@ class VKeyboard {
     keypadMidprocess(value) {
         switch(this.keypadProp.midprocess) {
             case "default":
-                value = Number(value).toLocaleString();
+                value = parseInt(value).toLocaleString();
                 break;
             case "none":
                 break;
             case "tel":
-                value = CommonUI.onPhoneNumChange(value);
+                value = this.formatTel(value);
                 break;
             case "business":
+                value = this.formatBusinessNo(value);
                 break;
         }
         return value;
@@ -1315,5 +1374,4 @@ class VKeyboard {
         `;
         return html;
     }
-
 }
