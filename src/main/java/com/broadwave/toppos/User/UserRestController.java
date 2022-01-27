@@ -903,8 +903,6 @@ public class UserRestController {
     //  일일영업일보 - 리스트호출 테이블
     @GetMapping("businessdayList")
     public ResponseEntity<Map<String,Object>> businessdayList(
-                                                                            @RequestParam(value="bcId", defaultValue="") Long bcId,
-                                                                            @RequestParam(value="searchTag", defaultValue="") String searchTag,
                                                                             @RequestParam(value="filterFromDt", defaultValue="") String filterFromDt,
                                                                             @RequestParam(value="filterToDt", defaultValue="") String filterToDt,
                                                                             HttpServletRequest request){
