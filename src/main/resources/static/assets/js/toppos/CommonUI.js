@@ -184,7 +184,7 @@ class CommonUIClass {
     }
 
     /* ajax 통신의 자주 쓰는 패턴을 간단하게 쓰기 위함 */
-    ajax(url, method, data, func) {
+    ajax(url, method, data, successFn = function () {}, errorFn = function () {}) {
 
         if(data) {
             switch (method) {
@@ -203,13 +203,14 @@ class CommonUIClass {
                         },
                         success: function (req) {
                             if (req.status === 200) {
-                                return func(req);
+                                return successFn(req);
                             }else {
-                                if (req.err_msg2 === null) {
+                                if (req.err_msg2 === null && req.err_msg) {
                                     alertCaution(req.err_msg, 1);
                                 } else {
                                     alertCaution(req.err_msg + "<br>" + req.err_msg2, 1);
                                 }
+                                return errorFn(req);
                             }
                         }
                     });
@@ -234,13 +235,14 @@ class CommonUIClass {
                         },
                         success: function (req) {
                             if (req.status === 200) {
-                                return func(req);
+                                return successFn(req);
                             }else {
-                                if (req.err_msg2 === null) {
+                                if (req.err_msg2 === null && req.err_msg) {
                                     alertCaution(req.err_msg, 1);
                                 } else {
                                     alertCaution(req.err_msg + "<br>" + req.err_msg2, 1);
                                 }
+                                return errorFn(req);
                             }
                         }
                     });
@@ -261,13 +263,14 @@ class CommonUIClass {
                         },
                         success: function (req) {
                             if (req.status === 200) {
-                                return func(req);
+                                return successFn(req);
                             } else {
-                                if (req.err_msg2 === null) {
+                                if (req.err_msg2 === null && req.err_msg) {
                                     alertCaution(req.err_msg, 1);
                                 } else {
                                     alertCaution(req.err_msg + "<br>" + req.err_msg2, 1);
                                 }
+                                return errorFn(req);
                             }
                         }
                     });
@@ -288,13 +291,14 @@ class CommonUIClass {
                         },
                         success: function (req) {
                             if (req.status === 200) {
-                                return func(req);
+                                return successFn(req);
                             } else {
-                                if (req.err_msg2 === null) {
+                                if (req.err_msg2 === null && req.err_msg) {
                                     alertCaution(req.err_msg, 1);
                                 } else {
                                     alertCaution(req.err_msg + "<br>" + req.err_msg2, 1);
                                 }
+                                return errorFn(req);
                             }
                         }
                     });
@@ -314,7 +318,7 @@ class CommonUIClass {
                             ajaxErrorMsg(req);
                         },
                         success: function (req) {
-                            return func(req);
+                            return successFn(req);
                         }
                     });
                     break;
