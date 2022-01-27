@@ -105,7 +105,6 @@ class CommonUIClass {
 
     /* 자주 쓸 정규표현형 유효성 검사를 편하게 쓰기 위함 */
     regularValidator(testValue, testMethod) {
-
         const email = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/;
         /* 8자리 숫자를 통해 검사 */
         const dateExist = /^(?:(?:(?:(?:(?:[13579][26]|[2468][048])00)|(?:[0-9]{2}(?:(?:[13579][26])|(?:[2468][048]|0[48]))))(?:(?:(?:09|04|06|11)(?:0[1-9]|1[0-9]|2[0-9]|30))|(?:(?:01|03|05|07|08|10|12)(?:0[1-9]|1[0-9]|2[0-9]|3[01]))|(?:02(?:0[1-9]|1[0-9]|2[0-9]))))|(?:[0-9]{4}(?:(?:(?:09|04|06|11)(?:0[1-9]|1[0-9]|2[0-9]|30))|(?:(?:01|03|05|07|08|10|12)(?:0[1-9]|1[0-9]|2[0-9]|3[01]))|(?:02(?:[01][0-9]|2[0-8])))))$/
@@ -206,9 +205,9 @@ class CommonUIClass {
                                 return successFn(req);
                             }else {
                                 if (req.err_msg2 === null && req.err_msg) {
-                                    alertCaution(req.err_msg, 1);
+                                    alertCancel(req.err_msg);
                                 } else {
-                                    alertCaution(req.err_msg + "<br>" + req.err_msg2, 1);
+                                    alertCancel(req.err_msg + "<br>" + req.err_msg2);
                                 }
                                 return errorFn(req);
                             }
@@ -238,9 +237,9 @@ class CommonUIClass {
                                 return successFn(req);
                             }else {
                                 if (req.err_msg2 === null && req.err_msg) {
-                                    alertCaution(req.err_msg, 1);
+                                    alertCancel(req.err_msg);
                                 } else {
-                                    alertCaution(req.err_msg + "<br>" + req.err_msg2, 1);
+                                    alertCancel(req.err_msg + "<br>" + req.err_msg2);
                                 }
                                 return errorFn(req);
                             }
@@ -266,9 +265,9 @@ class CommonUIClass {
                                 return successFn(req);
                             } else {
                                 if (req.err_msg2 === null && req.err_msg) {
-                                    alertCaution(req.err_msg, 1);
+                                    alertCancel(req.err_msg);
                                 } else {
-                                    alertCaution(req.err_msg + "<br>" + req.err_msg2, 1);
+                                    alertCancel(req.err_msg + "<br>" + req.err_msg2);
                                 }
                                 return errorFn(req);
                             }
@@ -294,9 +293,9 @@ class CommonUIClass {
                                 return successFn(req);
                             } else {
                                 if (req.err_msg2 === null && req.err_msg) {
-                                    alertCaution(req.err_msg, 1);
+                                    alertCancel(req.err_msg);
                                 } else {
-                                    alertCaution(req.err_msg + "<br>" + req.err_msg2, 1);
+                                    alertCancel(req.err_msg + "<br>" + req.err_msg2);
                                 }
                                 return errorFn(req);
                             }
@@ -326,61 +325,6 @@ class CommonUIClass {
         }
     }
 
-    /* json 보내는 통신의 자주 쓰는 패턴을 간단하게 쓰기 위함 --임시 */
-    ajaxjsonPost(url, data, func) {
-        $(document).ajaxSend(function (e, xhr) {
-            xhr.setRequestHeader("Authorization", localStorage.getItem('Authorization'));
-        });
-        $.ajax({
-            url: url,
-            data : data,
-            type : 'post',
-            cache:false,
-            error: function (req) {
-                ajaxErrorMsg(req);
-            },
-            success: function (req) {
-                if (req.status === 200) {
-                    return func(req);
-                } else {
-                    if (req.err_msg2 === null) {
-                        alertCaution(req.err_msg, 1);
-                    } else {
-                        alertCaution(req.err_msg + "<br>" + req.err_msg2, 1);
-                    }
-                }
-            }
-        });
-    }
-
-    /* json 보내는 통신의 자주 쓰는 패턴을 간단하게 쓰기 위함 --임시 */
-    ajaxjson(url, data, func) {
-        $(document).ajaxSend(function (e, xhr) {
-            xhr.setRequestHeader("Authorization", localStorage.getItem('Authorization'));
-        });
-        $.ajax({
-            url: url,
-            type: "POST",
-            cache: false,
-            data: data,
-            contentType: "application/json; charset=utf-8",
-            error: function (req) {
-                ajaxErrorMsg(req);
-            },
-            success: function (req) {
-                if (req.status === 200) {
-                    return func(req);
-                } else {
-                    if (req.err_msg2 === null) {
-                        alertCaution(req.err_msg, 1);
-                    } else {
-                        alertCaution(req.err_msg + "<br>" + req.err_msg2, 1);
-                    }
-                }
-            }
-        });
-    }
-
     /* 새로운 dto 생성용 */
     newDto(dto) {
         const keys = Object.keys(dto);
@@ -389,41 +333,6 @@ class CommonUIClass {
             babyDto[keys[key]] = null;
         }
         return babyDto;
-    }
-
-    /* 드래그 이벤트, 터치시 좌표얻는 알고리즘 포함. 아직 사용 가능성이 적으므로 이벤트로 사용을 위해서는 터치시 마우스다운과 다르게 AUIGrid의 셀을
-    *  선택하지 않는 문제의 해결이 필요하다. 또한 이벤트 사용을 위해서는 AUI에는 셀 클릭 이벤트를 걸고, activeDragDropEvent 불린값을 조건으로
-    *  주어 이벤트를 구동해야 한다. */
-    gridDragDropDblclick() {
-        $(document).on("touchstart mousedown", function (e) {
-            CommonUI.mouseDownTarget = e.target;
-
-            if(e.type == 'touchstart'){
-                const touch = e.originalEvent.touches[0] || e.originalEvent.changedTouches[0];
-                CommonUI.mouseDownPos = [touch.pageX, touch.pageY];
-            } else if (e.type == 'mousedown') {
-                CommonUI.mouseDownPos = [e.originalEvent.clientX, e.originalEvent.clientY];
-            }
-        });
-        $(document).on("touchend mouseup", function (e) {
-            if(e.type == 'touchend'){
-                const touch = e.originalEvent.touches[0] || e.originalEvent.changedTouches[0];
-                CommonUI.mouseUpPos = [touch.pageX, touch.pageY];
-            } else if (e.type == 'mouseup') {
-                CommonUI.mouseUpPos = [e.originalEvent.clientX, e.originalEvent.clientY];
-            }
-            const moveDistance = Math.sqrt(Math.pow(Math.abs(CommonUI.mouseDownPos[0] - CommonUI.mouseUpPos[0]), 2) +
-                Math.pow(Math.abs(CommonUI.mouseDownPos[1] - CommonUI.mouseUpPos[1]), 2));
-            if(moveDistance > 100) {
-                const targetClassName = CommonUI.mouseDownTarget.className;
-                if(targetClassName.includes("aui-grid-renderer-base") ||
-                        targetClassName.includes("aui-grid-default-column")) {
-                    CommonUI.activeDragDropEvent = true;
-                    $(CommonUI.mouseDownTarget).trigger("click");
-                }
-            }
-            CommonUI.activeDragDropEvent = false;
-        });
     }
 }
 

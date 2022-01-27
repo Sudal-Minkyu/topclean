@@ -331,7 +331,7 @@ function accountRemove() {
                 userid : AUIGrid.getSelectedItems(gridId[0])[0].item.userid
             }
         }
-        CommonUI.ajaxjsonPost("/api/head/accountDelete", targetUser, function() {
+        CommonUI.ajax("/api/head/accountDelete", "PARAM", targetUser, function() {
             createNewPost(0);
             AUIGrid.clearGridData(gridId[0]);
             accountList();

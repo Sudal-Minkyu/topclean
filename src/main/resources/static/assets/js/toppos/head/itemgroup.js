@@ -417,9 +417,7 @@ function gridSave(numOfGrid) {
     }
 
     if(isExecute) {
-        console.log(data);
-        const jsonString = JSON.stringify(data);
-        CommonUI.ajaxjson(gridSaveUrl[numOfGrid], jsonString, function () {
+        CommonUI.ajax(gridSaveUrl[numOfGrid], "MAPPER", data, function () {
             AUIGrid.removeSoftRows(gridId[numOfGrid]);
             AUIGrid.resetUpdatedItems(gridId[numOfGrid]);
             switch (numOfGrid) {

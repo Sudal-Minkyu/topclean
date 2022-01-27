@@ -613,7 +613,7 @@ function uncollectPaymentStageOne() {
                     if (resjson.STATUS === "FAILURE") {
                         console.log(resjson);
                         $('#payStatus').hide();
-                        alertCaution("단말기 처리 중 에러가 발생하였습니다<br>잠시후 다시 시도해주세요", 1);
+                        alertCancel("단말기 처리 중 에러가 발생하였습니다<br>잠시후 다시 시도해주세요");
                     }
                 });
             }catch (e) {

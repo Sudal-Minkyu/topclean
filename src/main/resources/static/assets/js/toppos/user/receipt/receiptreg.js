@@ -605,7 +605,7 @@ function checkYesOrNo(booleanValue) {
         const params = {
             frNo: frNo
         };
-        CommonUI.ajaxjsonPost(gridCreateUrl[1], params, function () {
+        CommonUI.ajax(gridCreateUrl[1], "PARAM", params, function () {
             // 성공하면 임시저장 마스터테이블 조회
             setDataIntoGrid(2, gridCreateUrl[2]);
         });
@@ -1403,8 +1403,7 @@ function onSave() {
 }
 
 function onSaveAjax() {
-    console.log(saveData);
-    CommonUI.ajaxjson(gridSaveUrl[0], JSON.stringify(saveData), function (req) {
+    CommonUI.ajax(gridSaveUrl[0], "MAPPER", saveData, function (req) {
         AUIGrid.removeSoftRows(gridId[0]);
         AUIGrid.resetUpdatedItems(gridId[0]);
         AUIGrid.clearGridData(gridId[2]);
@@ -1689,7 +1688,7 @@ function onPaymentStageOne() {
                     if (resjson.STATUS === "FAILURE") {
                         console.log(resjson);
                         $('#payStatus').hide();
-                        alertCaution("단말기 처리 중 에러가 발생하였습니다<br>잠시후 다시 시도해주세요", 1);
+                        alertCancel("단말기 처리 중 에러가 발생하였습니다<br>잠시후 다시 시도해주세요");
                     }
                 });
             }catch (e) {
@@ -1779,7 +1778,7 @@ function onPaymentStageTwo(paymentData = {}, creditData = {}) {
         console.log("결제데이터 : ");
         console.log(data);
 
-        CommonUI.ajaxjson(url, JSON.stringify(data), function (req){
+        CommonUI.ajax(url, "MAPPER", data, function (req){
             console.log("결제후 :");
             console.log(req);
             AUIGrid.addRow(gridId[3], req.sendData.paymentEtcDtos, "last");

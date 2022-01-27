@@ -88,7 +88,7 @@ function loginActive() {
         error: function (req) {
             if(req.status === 401){
                 $('.l-popup').removeClass('open');
-                alertCaution("비밀번호가 틀렸습니다.", 1);
+                alertCancel("비밀번호가 틀렸습니다.");
                 $("#password").val("");
             }else{
                 ajaxErrorMsg(req);

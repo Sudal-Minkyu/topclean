@@ -154,7 +154,7 @@ const comms = {
 		};
 		data.baType = num;
 
-		CommonUI.ajaxjson(grids.s.url.update[num], JSON.stringify(data), function (res) {
+		CommonUI.ajax(grids.s.url.update[num], "MAPPER", data, function (res) {
 			alertSuccess('저장되었습니다.');
 			grids.f.clearData(num);
 			comms.getFrFavorite(num);

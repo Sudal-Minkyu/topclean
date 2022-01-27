@@ -446,7 +446,7 @@ const ajax = {
                 type: "2",
             }
             ajax.getInspectionList(searchCondition);
-            const cautionText = ["고객 수락이 승인 완료되었습니다.", " 고객 수락이 거부되었습니다."];
+            const cautionText = ["고객 수락 승인 완료되었습니다.", " 고객 수락 거부 완료되었습니다."];
             alertSuccess(cautionText[target.type - 2]);
         });
     },
@@ -1817,7 +1817,7 @@ function cancelPayment(cancelType) {
                         ajax.cancelPayment(target);
                     }else if(jsonRes.STATUS === "FAILURE") {
                         console.log(res);
-                        alertCaution("카드결제 취소중 에러가 발생하였습니다", 1);
+                        alertCancel("카드결제 취소중 에러 발생<br>단말기 처리");
                         return false;
                     }
                 });

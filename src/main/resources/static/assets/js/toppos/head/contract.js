@@ -334,10 +334,11 @@ function branchDelete() {
             const data = {
                 brCode: selectedItems[0].item.brCode
             }
-            CommonUI.ajaxjsonPost(url, data, function () {
+            CommonUI.ajax(url, "PARAM", data, function () {
                 AUIGrid.clearGridData(gridId[0]);
                 setListData(gridCreateUrl[0], 0);
                 createNewPost(0);
+                alertSuccess("지사 삭제가 완료되었습니다.");
             });
         }
         $('#popupId').remove();
@@ -391,10 +392,11 @@ function franchiseDelete() {
             const data = {
                 frCode: selectedItems[0].item.frCode
             }
-            CommonUI.ajaxjsonPost(url, data, function () {
+            CommonUI.ajax(url, "PARAM", data, function () {
                 AUIGrid.clearGridData(gridId[1]);
                 setListData(gridCreateUrl[1], 1);
                 createNewPost(1);
+                alertSuccess("가맹점 삭제가 완료되었습니다.");
             });
         }
         $('#popupId').remove();
