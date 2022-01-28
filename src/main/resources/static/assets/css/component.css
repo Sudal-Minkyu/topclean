@@ -426,6 +426,9 @@ input[type="number"]::-webkit-inner-spin-button {
 	-webkit-background-size: 0.875rem 0.875rem;
 	background-size: 0.875rem 0.875rem;
 }
+.c-checkbox.c-checkbox--non-title label {
+	text-indent: -9999rem;
+}
 
 /* search */
 .c-search {

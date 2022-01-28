@@ -927,7 +927,7 @@
 	
 	
 	<!-- 카메라 팝업 -->
-	<div class="pop active">
+	<div class="pop">
 		<div class="pop__box">
 			<div class="photo">
 				<div class="photo__article">
@@ -997,9 +997,119 @@
 					</ul>
 				</div>
 			</div>
+		</div>
+	</div>
 
-			
-			
+
+	<!-- 오염 팝업 -->
+	<div class="pop active">
+		<div class="pop__box pop__box--flex">
+			<div class="pop__example">
+				<div class="pop__example-header">
+					<h3 class="pop__example-heading">오염크기</h3>
+				</div>
+				<div class="pop__example-content">
+					<ul class="pop__example-list">
+						<li class="pop__example-item">
+							<div class="choice">
+								<input type="radio" name="pollution" id="pollution01" checked="" />
+								<label for="pollution01">없음</label>
+							</div>
+						</li>
+						<li class="pop__example-item">
+							<div class="choice">
+								<input type="radio" name="pollution" id="pollution02" />
+								<label for="pollution02">1cm 미만</label>
+							</div>
+						</li>
+						<li class="pop__example-item">
+							<div class="choice">
+								<input type="radio" name="pollution" id="pollution03" />
+								<label for="pollution03">1cm ~ 3cm 미만</label>
+							</div>
+						</li>
+						<li class="pop__example-item">
+							<div class="choice">
+								<input type="radio" name="pollution" id="pollution04" />
+								<label for="pollution04">3cm ~ 7cm 미만</label>
+							</div>
+						</li>
+						<li class="pop__example-item">
+							<div class="choice">
+								<input type="radio" name="pollution" id="pollution05" />
+								<label for="pollution05">7cm ~ 10cm 미만</label>
+							</div>
+						</li>
+						<li class="pop__example-item">
+							<div class="choice">
+								<input type="radio" name="pollution" id="pollution06" />
+								<label for="pollution06">10cm 이상</label>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</div>
+
+			<div class="pop__example">
+				<div class="pop__example-header">
+					<h3 class="pop__example-heading">오염위치</h3>
+				</div>
+				<div class="pop__example-content">
+					<div class="pop__pollution-header">
+						<div class="choice">
+							<input type="radio" name="fb" id="fb01" checked="" />
+							<label for="fb01">앞</label>
+						</div>
+						<div class="choice">
+							<input type="radio" name="fb" id="fb01" />
+							<label for="fb01">뒤</label>
+						</div>
+					</div>
+					<div class="pop__pollution-content">
+						<div class="pop__position left-sleeve">
+							<div class="c-checkbox c-checkbox--non-title">
+								<input type="checkbox" id="leftSleeve">
+								<label for="leftSleeve">왼쪽 소매</label>
+							</div>
+						</div>
+						<div class="pop__position right-sleeve">
+							<div class="c-checkbox c-checkbox--non-title">
+								<input type="checkbox" id="rightSleeve">
+								<label for="rightSleeve">오른쪽 소매</label>
+							</div>
+						</div>
+						<div class="pop__position body">
+							<div class="c-checkbox c-checkbox--non-title">
+								<input type="checkbox" id="body">
+								<label for="body">몸통</label>
+							</div>
+						</div>
+						<div class="pop__position left-leg">
+							<div class="c-checkbox c-checkbox--non-title">
+								<input type="checkbox" id="leftLeg">
+								<label for="leftLeg">왼쪽 다리</label>
+							</div>
+						</div>
+						<div class="pop__position right-leg">
+							<div class="c-checkbox c-checkbox--non-title">
+								<input type="checkbox" id="rightLeg">
+								<label for="rightLeg">오른쪽 다리</label>
+							</div>
+						</div>
+						<div class="pop__position groin">
+							<div class="c-checkbox c-checkbox--non-title">
+								<input type="checkbox" id="groin">
+								<label for="groin">사타구니</label>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<ul class="pop__console pop__console--center pop__console--nonbg">
+				<li><button class="c-button">닫기</button></li>
+				<li><button class="c-button c-button--dark">선택완료</button></li>
+			</ul>
 		</div>
 	</div>
 	

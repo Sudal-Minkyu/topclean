@@ -1996,6 +1996,49 @@ textarea {
 	justify-content: flex-end;
 	margin-bottom: 0.313rem;
 }
+.pop__example {
+	flex: 1;
+	border: 0.063rem solid #bdbdbd;
+	background-color: #fff;
+	-webkit-border-radius: 0.313rem;
+	-moz-border-radius: 0.313rem;
+	border-radius: 0.313rem;
+}
+.pop__example + .pop__example {
+	margin-left: 1.25rem;
+}
+.pop__example-header {
+	background-color: #e8e8e8;
+}
+.pop__example-heading {
+	color: #333;
+	font-size: 1.25rem;
+	font-weight: 700;
+	line-height: 3.75rem;
+	text-align: center;
+}
+.pop__example-content {
+	overflow-y: auto;
+	height: 25rem;
+	padding: 1.25rem 1.625rem;
+}
+.pop__example-list {
+	display: flex;
+	flex-wrap: wrap;
+	align-content: flex-start;
+	width: 100%;
+}
+.pop__example-item {
+	width: 50%;
+	height: 3.75rem;
+	padding: 0.625rem;
+}
+.pop__example-item:nth-child(2n) {
+	margin-left: auto;
+}
+.pop__example-item .choice label {
+	width: 100%;
+}
 .pop__message {
 	position: relative;
 	display: flex;
@@ -2053,6 +2096,10 @@ textarea {
 }
 .pop__console.pop__console--center {
 	justify-content: center;
+	background-color: transparent;
+}
+.pop__console.pop__console--nonbg {
+	width: 100%;
 	background-color: transparent;
 }
 .pop__console li + li {
@@ -2510,6 +2557,7 @@ textarea {
 .add-cost__example {
 	width: 30rem;
 	border: 0.063rem solid #bdbdbd;
+	background-color: #fff;
 	-webkit-border-radius: 0.313rem;
 	-moz-border-radius: 0.313rem;
 	border-radius: 0.313rem;
@@ -2930,6 +2978,56 @@ textarea {
 }
 .unpaid-pop__payment-select {
 	margin-left: 1.25rem;
+}
+
+/* 오염 팝업 */
+.pop__pollution-header {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
+	margin-bottom: 1.25rem;
+}
+.pop__pollution-header .choice + .choice {
+	margin-left: 1.25rem;
+}
+.pop__pollution-content {
+	position: relative;
+	width: 21.25rem;
+	height: 18.125rem;
+	margin: 0 auto;
+	background: #f8f8f8 url(/assets/images/clothes__back.svg) no-repeat;
+	background-position: center center;
+	background-size: 9.75rem 15rem;
+	border-radius: 0.625rem;
+}
+.pop__position {
+	position: absolute;
+}
+.left-sleeve {
+	top: 90px;
+	left: 100px;
+}
+.right-sleeve {
+	top: 90px;
+	right: 100px;
+}
+.body {
+	top: 95px;
+	left: 158px;
+}
+.left-leg {
+	top: 226px;
+	left: 124px;
+}
+.right-leg {
+	top: 226px;
+	right: 124px;
+}
+.groin {
+	top: 160px;
+	left: 158px;
 }
 
 
