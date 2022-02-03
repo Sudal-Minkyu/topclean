@@ -38,13 +38,11 @@ const urls = {
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
     getMainData(filterCondition) {
-        console.log(filterCondition);
         dv.chk(filterCondition, dtos.send.businessdayList, "메인그리드 필터링에 필요한 데이터 보내기");
         CommonUI.ajax(urls.getMainData, "GET", filterCondition, function (res) {
             console.log(res);
-            //const data = res.sendData.gridListData;
-            // 데이터 오면 아래 주석 풀어서 실험
-            // grids.f.setData(0, data);
+            const data = mergeData(res.sendData);
+            grids.f.setData(0, data);
         });
     },
 };
@@ -271,4 +269,32 @@ function getRefinedData() {
         filterToDt: $("#filterToDt").val().numString(),
     }
     comms.getMainData(filterCondition);
-} 
+}
+
+function mergeData(sendData) {
+    const data = [];
+    addData(sendData["결제 관련"]);
+    addData(sendData["방문고객 접수관련"]);
+    addData(sendData["방문고객 출고관련"]);
+    addData(sendData["적립금 관련"]);
+    addData(sendData["접수 관련"]);
+    addData(sendData["접수세부 관련"]);
+    return data;
+    function addData(targetList) {
+        targetList.forEach(obj => {
+            const keys = Object.keys(obj);
+            let isNewYyyymmdd = true;
+            data.forEach(dataObj => {
+                if(obj.yyyymmdd === dataObj.yyyymmdd) {
+                    isNewYyyymmdd = false;
+                    for(let i = 0; i < keys.length; i++) {
+                        dataObj[keys[i]] = obj[keys[i]];
+                    }
+                }
+            });
+            if(isNewYyyymmdd) {
+                data.push(obj);
+            }
+        });
+    }
+}

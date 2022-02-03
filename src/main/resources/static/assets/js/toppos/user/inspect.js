@@ -419,6 +419,12 @@ const trigs = {
                 }
                 comms.getDetailList(filterCondition);
             });
+
+            $("#searchString").on("keypress", function(e) {
+                if(e.originalEvent.code === "Enter") {
+                    mainSearch();
+                }
+            });
         },
 
         vkeys() {
