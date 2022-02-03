@@ -418,6 +418,12 @@ const trigs = {
 				
 				e.preventDefault()
 			});
+
+            $("#searchString").on("keypress", function(e) {
+                if(e.originalEvent.code === "Enter") {
+                    mainSearch();
+                }
+            });
         },
         vkeys() {
             $("#vkeyboard0").on("click", function() {
