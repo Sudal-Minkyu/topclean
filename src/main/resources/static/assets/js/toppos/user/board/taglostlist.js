@@ -27,12 +27,17 @@ const dtos = {
 
 /* 통신에 사용되는 url들 기입 */
 const urls = {
-    
+    getList: "",
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
-    
+    getList() {
+        const condition = {page: wares.currentPage, rowCount: 10};
+        CommonUI.ajax(urls.getList, "GET", condition, function (res) {
+            console.log(res);
+        });
+    }
 };
 
 /* .s : AUI 그리드 관련 설정들
@@ -58,10 +63,10 @@ const grids = {
             /* 0번 그리드의 레이아웃 */
             grids.s.columnLayout[0] = [
                 {
-                    dataField: "htSubject",
+                    dataField: "subject",
                     headerText: "제목",
                 }, {
-                    dataField: "",
+                    dataField: "name",
                     headerText: "작성자",
                 }, {
                     dataField: "insertDt",
@@ -120,7 +125,7 @@ const grids = {
         basicTrigger() {
             /* 0번그리드 내의 셀 클릭시 이벤트 */
             AUIGrid.bind(grids.s.id[0], "cellClick", function (e) {
-                console.log(e.item); // 이밴트 콜백으로 불러와진 객체의, 클릭한 대상 row 키(파라메터)와 값들을 보여준다.
+                location.href = "./taglostview?id=" + e.item.id;
             });
         }
     }
@@ -139,7 +144,7 @@ const trigs = {
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
 const wares = {
     url: window.location.href,
-    params: "",
+    params: "", // url에 내포한 파라메터들을 담는다.
     totalRowCount: 0, // 전체 데이터 건수
     rowCount: 0, // 1페이지에서 보여줄 행 수
     pageButtonCount: 0, // 페이지 네비게이션에서 보여줄 페이지의 수
@@ -157,6 +162,7 @@ function onPageLoad() {
     grids.f.create();
     grids.t.basicTrigger();
     getPageNo();
+    comms.getList();
     createPagingNavigator(wares.currentPage);
 }
 
