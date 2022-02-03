@@ -1,4 +1,4 @@
-package com.broadwave.toppos.Manager.Calendar;
+package com.broadwave.toppos.Manager.Calendar.CalendarDtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

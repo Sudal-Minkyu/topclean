@@ -11,7 +11,10 @@ import com.broadwave.toppos.Head.Item.Group.B.UserItemGroupSListDto;
 import com.broadwave.toppos.Head.Item.ItemDtos.UserItemPriceSortDto;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.Manager.Calendar.BranchCalendar;
-import com.broadwave.toppos.Manager.ManagerService;
+import com.broadwave.toppos.Manager.ManagerService.CalendarService;
+import com.broadwave.toppos.Manager.ManagerService.TagNoticeService;
+import com.broadwave.toppos.Manager.TagNotice.TagNoticeListDto;
+import com.broadwave.toppos.Manager.TagNotice.TagNoticeRepositoryCustom;
 import com.broadwave.toppos.User.Addprocess.AddprocessDtos.AddprocessDto;
 import com.broadwave.toppos.User.Addprocess.AddprocessSet;
 import com.broadwave.toppos.User.Customer.Customer;
@@ -41,6 +44,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -80,16 +85,18 @@ public class UserRestController {
     private final InspectService inspectService; // 통합조회 서비스
     private final UncollectService uncollectService; // 미수관리 서비스
     private final BusinessdayService businessdayService; // 일일영업일보 서비스
-
+    private final TagNoticeService tagNoticeService; // 택분실게시판 서비스
+    private final TagNoticeRepositoryCustom tagNoticeRepositoryCustom;
     private final ModelMapper modelMapper;
     private final TokenProvider tokenProvider;
     private final HeadService headService;
-    private final ManagerService managerService;
+    private final CalendarService calendarService;
 
     @Autowired
     public UserRestController(AWSS3Service awss3Service, UserService userService, ReceiptService receiptService, SortService sortService, InfoService infoService, InspectService inspectService,
-                              TokenProvider tokenProvider, ModelMapper modelMapper, HeadService headService, ManagerService managerService, ReceiptStateService receiptStateService,
-                              UncollectService uncollectService, BusinessdayService businessdayService) {
+                              TokenProvider tokenProvider, ModelMapper modelMapper, HeadService headService, CalendarService calendarService, ReceiptStateService receiptStateService,
+                              UncollectService uncollectService, BusinessdayService businessdayService, TagNoticeService tagNoticeService,
+                              TagNoticeRepositoryCustom tagNoticeRepositoryCustom) {
         this.awss3Service = awss3Service;
         this.userService = userService;
         this.receiptService = receiptService;
@@ -101,8 +108,10 @@ public class UserRestController {
         this.receiptStateService = receiptStateService;
         this.headService = headService;
         this.uncollectService = uncollectService;
-        this.managerService = managerService;
+        this.calendarService = calendarService;
         this.businessdayService = businessdayService;
+        this.tagNoticeService = tagNoticeService;
+        this.tagNoticeRepositoryCustom = tagNoticeRepositoryCustom;
     }
 
 //@@@@@@@@@@@@@@@@@@@@@ 가맹점 메인화면 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -413,7 +422,7 @@ public class UserRestController {
         data.put("addAmountData",addAmountData);
 
 
-        Optional<BranchCalendar> optionalBranchCalendar = managerService.branchCalendarInfo(franchisInfoDto.getBrCode(), nowDate);
+        Optional<BranchCalendar> optionalBranchCalendar = calendarService.branchCalendarInfo(franchisInfoDto.getBrCode(), nowDate);
         if(optionalBranchCalendar.isPresent()){
             // 태그번호, 출고예정일 데이터
             List<EtcDataDto> etcData = receiptService.findByEtc(frEstimateDuration, frCode, nowDate);
@@ -822,8 +831,6 @@ public class UserRestController {
 
 
 
-
-
 //@@@@@@@@@@@@@@@@@@@@@ 가맹점 수기마감, 가맹점입고, 지사반송, 가맹점강제입고, 세탁인도 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     //  접수테이블의 상태 변화 API - 수기마감페이지, 가맹점입고 페이지, 지사반송건전송 페이지, 세탁인도 페이지 공용함수
     @PostMapping("franchiseStateChange")
@@ -862,6 +869,8 @@ public class UserRestController {
         return receiptStateService.franchiseReceiptDeliveryList(bcId, request);
     }
 
+
+
 //@@@@@@@@@@@@@@@@@@@@@ 가맹점 미수관리 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     // 미수관리페이지 - 고객검색 리스트 호출
     @GetMapping("franchiseUncollectCustomerList")
@@ -899,6 +908,7 @@ public class UserRestController {
     }
 
 
+
 //@@@@@@@@@@@@@@@@@@@@@ 일일 영업일보 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     //  일일영업일보 - 리스트호출 테이블
     @GetMapping("businessdayList")
@@ -917,9 +927,23 @@ public class UserRestController {
     }
 
 
+//@@@@@@@@@@@@@@@@@@@@@ 공지사항게시판, 택분실게시판 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+//  택분실게시판 - 리스트호출 테이블
+    @PostMapping("/lostNoticeList")
+    public ResponseEntity<Map<String,Object>> lostNoticeList(
+                                                            @RequestParam("searchType")String searchType,
+                                                            @RequestParam("searchString")String searchString,
+                                                            Pageable pageable) {
 
+        log.info("lostNoticeList 호출성공");
 
+        AjaxResponse res = new AjaxResponse();
+//        HashMap<String, Object> data = new HashMap<>();
+        Page<TagNoticeListDto> tagNoticeListDtoPage = tagNoticeRepositoryCustom.findByTagNoticeList(searchType, searchString, pageable);
 
-
+//        data.put("tagNoticeListDtoPage",tagNoticeListDtoPage);
+//        return ResponseEntity.ok(res.ResponseEntityPage(tagNoticeListDtoPage));
+        return null;
+    }
 
 }

@@ -102,15 +102,15 @@ public class BusinessdayService {
         // 방문고객 출고 통계
         List<RequestDetailBusinessdayDeliveryDto> requestDetailBusinessdayDeliveryDtos = requestDetailRepositoryCustom.findByRequestDetailBusinessdayDeliveryList(frCode, filterFromDt,  filterToDt);
 
-        data.put("접수 관련",requestBusinessdayListDtos);
-        data.put("접수세부 관련",requestDetailBusinessSumDtos);
-        data.put("결제 관련",paymentBusinessdayListDtos);
-        data.put("적립금 관련",saveMoneyBusinessdayListDtos);
-        data.put("방문고객 접수관련",requestBusinessdayCustomerListDtos);
-        data.put("방문고객 출고관련",requestDetailBusinessdayDeliveryDtos);
+        data.put("request",requestBusinessdayListDtos);
+        data.put("requestDetail",requestDetailBusinessSumDtos);
+        data.put("payment",paymentBusinessdayListDtos);
+        data.put("saveMoney",saveMoneyBusinessdayListDtos);
+        data.put("receipt",requestBusinessdayCustomerListDtos);
+        data.put("delivery",requestDetailBusinessdayDeliveryDtos);
 
-        List<HashMap<String,Object>> businessdayListData = new ArrayList<>();
-        HashMap<String,Object> businessdayListInfo;
+//        List<HashMap<String,Object>> businessdayListData = new ArrayList<>();
+//        HashMap<String,Object> businessdayListInfo;
 //        for (RequestBusinessdayListDto requestBusinessdayListDto: requestBusinessdayListDtos) {
 //            businessdayListInfo = new HashMap<>();
 //            businessdayListInfo.put("yyyymmdd", requestBusinessdayListDto.getYyyymmdd());
