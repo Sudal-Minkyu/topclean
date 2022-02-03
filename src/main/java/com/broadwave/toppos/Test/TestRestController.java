@@ -1,16 +1,18 @@
 package com.broadwave.toppos.Test;
 
 import com.broadwave.toppos.Aws.AWSS3Service;
+import com.broadwave.toppos.Manager.TagNotice.TagNoticeListDto;
 import com.broadwave.toppos.Test.Girdtest.GridTestDto;
 import com.broadwave.toppos.Test.Girdtest.GridTestRepositoryCustom;
 import com.broadwave.toppos.common.AjaxResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
@@ -115,7 +117,23 @@ public class TestRestController {
 //        }
 //    }
 
+    //  택분실게시판 - 리스트호출 테이블(테스트)
+    @PostMapping("/lostNoticeList")
+    public ResponseEntity<Map<String,Object>> lostNoticeList(
+            @RequestParam("searchType")String searchType,
+            @RequestParam("searchString")String searchString,
+            @PageableDefault(size = 10, direction = Sort.Direction.DESC, sort = "someField") Pageable pageable) {
 
+        log.info("lostNoticeList 테스트 호출성공");
+
+//        AjaxResponse res = new AjaxResponse();
+////        HashMap<String, Object> data = new HashMap<>();
+//        Page<TagNoticeListDto> tagNoticeListDtoPage = tagNoticeRepositoryCustom.findByTagNoticeList(searchType, searchString, pageable);
+
+//        data.put("tagNoticeListDtoPage",tagNoticeListDtoPage);
+//        return ResponseEntity.ok(res.ResponseEntityPage(tagNoticeListDtoPage));
+        return null;
+    }
 
 
 

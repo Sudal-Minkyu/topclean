@@ -1,5 +1,9 @@
 package com.broadwave.toppos.Manager.TagNotice;
 
+import com.broadwave.toppos.Account.QAccount;
+import com.broadwave.toppos.Head.Branoh.QBranch;
+import com.broadwave.toppos.Head.Franohise.QFranchise;
+import com.broadwave.toppos.User.UserDtos.UserIndexDto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +31,7 @@ public class TagNoticeRepositoryCustomImpl extends QuerydslRepositorySupport imp
     }
 
     @Override
-    public Page<TagNoticeListDto> findByTagNoticeList(String searchType, String searchString, Pageable pageable) {
+    public Page<TagNoticeListDto> findByTagNoticeList(String searchType, String searchString, String frbrCode, Pageable pageable) {
         QTagNotice tagNotice  = QTagNotice.tagNotice;
 
         JPQLQuery<TagNoticeListDto> query = from(tagNotice)
@@ -53,7 +57,23 @@ public class TagNoticeRepositoryCustomImpl extends QuerydslRepositorySupport imp
         return new PageImpl<>(performanceListDtos, pageable, query.fetchCount());
     }
 
+    @Override
+    public TagNoticeViewDto findByTagNoticeView(Long hcId, String frbrCode) {
 
+        QTagNotice tagNotice = QTagNotice.tagNotice;
+
+        JPQLQuery<TagNoticeViewDto> query = from(tagNotice)
+                .select(Projections.constructor(TagNoticeViewDto.class,
+                        tagNotice.htSubject,
+                        tagNotice.htContent,
+                        tagNotice.insert_id,
+                        tagNotice.insertDateTime
+                ));
+
+        query.where(tagNotice.htId.eq(hcId).and(tagNotice.brCode.eq(frbrCode)));
+
+        return query.fetchOne();
+    }
 
 
 }

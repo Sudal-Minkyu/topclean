@@ -38,9 +38,52 @@
                     console.log("사진전송 테스트 성공");
                 }
             })
-
-
         }
+
+        function pageTestList(page){
+            console.log("택분실 게시판 조회시작");
+
+            page = page - 1;
+            if (page < 0) page = 0
+
+            const perPage = 10;
+            const perArea = 5;
+            let totCnt = 0;
+
+            // const $tablePerformanceList = $('#tablePerformanceList');
+            // const $totalCnt = $('#totalCnt');
+
+            const params = {
+                searchType : "",
+                searchString : ""
+            };
+
+            // $tablePerformanceList.empty().append('<tr ><td colspan="11" align="center">조회 중</td></tr>');
+            // $totalCnt.text('0');
+
+            let url = '/api/test/lostNoticeList?size='+ perPage + '&page=' + page; // 호출할 백엔드 API
+            console.log("url : "+url);
+            console.log("page : "+page);
+            console.log("perPage : "+perPage);
+            // 테스트이기때문에 JWT검증이 필요없음.
+            // $(document).ajaxSend(function (e, xhr) {
+            //     xhr.setRequestHeader("Authorization", localStorage.getItem('Authorization'));
+            // });
+            $.ajax({
+                url : url,
+                type : 'POST',
+                data: params,
+                cache: false,
+                error: function (req) {
+                    ajaxErrorMsg(req);
+                },
+                success: function (res) {
+                    console.log("택분실 게시판 호출성공");
+                    console.log(res)
+                }
+            });
+        }
+
     </script>
 </th:block>
 
@@ -48,7 +91,8 @@
     <h2 class="content__heading">사진 테스트</h2>
     <form id="fileForm" enctype="multipart/form-data">
         <input type="file" name="file" />
-        <input type="button" onclick="photoTest()" value="전송" />
+        <input style="background-color: black;color: white" type="button" onclick="photoTest()" value="사진전송테스트" />
+        <input style="background-color: black;color: white" type="button" onclick="pageTestList(1)" value="페이징테스트" />
     </form>
 </div>
 </html>

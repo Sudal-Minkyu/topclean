@@ -10,5 +10,7 @@ import org.springframework.data.domain.Pageable;
  * Remark :
  */
 public interface TagNoticeRepositoryCustom {
-    Page<TagNoticeListDto> findByTagNoticeList(String searchType, String searchString, Pageable pageable);
+    Page<TagNoticeListDto> findByTagNoticeList(String searchType, String searchString, String frbrCode, Pageable pageable);
+
+    TagNoticeViewDto findByTagNoticeView(Long hcId, String frbrCode);
 }

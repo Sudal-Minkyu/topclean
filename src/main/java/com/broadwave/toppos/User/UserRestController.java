@@ -933,17 +933,29 @@ public class UserRestController {
     public ResponseEntity<Map<String,Object>> lostNoticeList(
                                                             @RequestParam("searchType")String searchType,
                                                             @RequestParam("searchString")String searchString,
-                                                            Pageable pageable) {
-
-        log.info("lostNoticeList 호출성공");
-
-        AjaxResponse res = new AjaxResponse();
-//        HashMap<String, Object> data = new HashMap<>();
-        Page<TagNoticeListDto> tagNoticeListDtoPage = tagNoticeRepositoryCustom.findByTagNoticeList(searchType, searchString, pageable);
-
-//        data.put("tagNoticeListDtoPage",tagNoticeListDtoPage);
-//        return ResponseEntity.ok(res.ResponseEntityPage(tagNoticeListDtoPage));
-        return null;
+                                                            Pageable pageable, HttpServletRequest request) {
+        return tagNoticeService.lostNoticeList(searchType, searchString, pageable, request, "2");
     }
+
+    //  택분실게시판 - 글보기
+    @GetMapping("/lostNoticeView")
+    public ResponseEntity<Map<String,Object>> lostNoticeView(@RequestParam("hcId") Long hcId, HttpServletRequest request) {
+        return tagNoticeService.findByTagNoticeView(hcId, request);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 }

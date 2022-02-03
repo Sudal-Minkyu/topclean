@@ -53,8 +53,9 @@ public class ManagerRestController {
 //@@@@@@@@@@@@@@@@@@@@@ 택분실게시판 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     //  택분실게시판 - 리스트호출 테이블
     @PostMapping("/lostNoticeList")
-    public ResponseEntity<Map<String,Object>> lostNoticeList(@RequestParam("searchType")String searchType, @RequestParam("searchString")String searchString, Pageable pageable) {
-        return tagNoticeService.lostNoticeList(searchType, searchString, pageable);
+    public ResponseEntity<Map<String,Object>> lostNoticeList(@RequestParam("searchType")String searchType, @RequestParam("searchString")String searchString,
+                                                             Pageable pageable, HttpServletRequest request) {
+        return tagNoticeService.lostNoticeList(searchType, searchString, pageable, request, "1");
     }
 
 

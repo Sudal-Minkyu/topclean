@@ -8,6 +8,7 @@ import com.broadwave.toppos.Manager.Calendar.CalendarDtos.BranchCalendarDto;
 import com.broadwave.toppos.Manager.Calendar.CalendarDtos.BranchCalendarListDto;
 import com.broadwave.toppos.Manager.TagNotice.TagNoticeListDto;
 import com.broadwave.toppos.Manager.TagNotice.TagNoticeRepositoryCustom;
+import com.broadwave.toppos.Manager.TagNotice.TagNoticeViewDto;
 import com.broadwave.toppos.common.AjaxResponse;
 import com.broadwave.toppos.common.ResponseErrorCode;
 import io.jsonwebtoken.Claims;
@@ -43,41 +44,60 @@ public class TagNoticeService {
     }
 
     //  택분실게시판 - 리스트호출 테이블
-    public ResponseEntity<Map<String, Object>> lostNoticeList(String searchType, String searchString, Pageable pageable) {
+    public ResponseEntity<Map<String, Object>> lostNoticeList(String searchType, String searchString, Pageable pageable, HttpServletRequest request, String type) {
         log.info("lostNoticeList 호출성공");
 
         AjaxResponse res = new AjaxResponse();
-        HashMap<String, Object> data = new HashMap<>();
 
-//        // 클레임데이터 가져오기
-//        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
-//        String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
-//        String frbrCode = (String) claims.get("frbrCode"); // 소속된 지사 코드
-//        String login_id = claims.getSubject(); // 현재 아이디
-//        log.info("현재 접속한 아이디 : "+login_id);
-//        log.info("현재 접속한 가맹점 코드 : "+frCode);
-//        log.info("소속된 지사 코드 : "+frbrCode);
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String frbrCode;
+        String login_id = claims.getSubject(); // 현재 아이디
+        log.info("현재 접속한 아이디 : "+login_id);
+        if(type.equals("1")){
+            frbrCode = (String) claims.get("brCode"); // 현재 지사 코드
+            log.info("현재 접속한 지사 코드 : "+frbrCode);
+        }else{
+            frbrCode = (String) claims.get("frbrCode"); // 소속된 지사 코드
+            log.info("현재 접속한 소속된 지사 코드 : "+frbrCode);
+        }
 
         // 검색조건
         log.info("searchType : "+searchType);
         log.info("searchString : "+searchString);
-        Page<TagNoticeListDto> tagNoticeListDtoPage = tagNoticeRepositoryCustom.findByTagNoticeList(searchType, searchString, pageable);
+        Page<TagNoticeListDto> tagNoticeListDtoPage = tagNoticeRepositoryCustom.findByTagNoticeList(searchType, searchString, frbrCode, pageable);
 
-        data.put("tagNoticeListDtoPage",tagNoticeListDtoPage);
         return ResponseEntity.ok(res.ResponseEntityPage(tagNoticeListDtoPage));
-
-//        return ResponseEntity.ok(res.ResponseEntityPage(tagNoticeListDtoPage));
     }
 
+    //  택분실게시판 - 글보기
+    public ResponseEntity<Map<String, Object>> findByTagNoticeView(Long hcId, HttpServletRequest request) {
+
+        log.info("findByTagNoticeView 호출성공");
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
+        String frbrCode = (String) claims.get("frbrCode"); // 소속된 지사 코드
+        String login_id = claims.getSubject(); // 현재 아이디
+        log.info("현재 접속한 아이디 : "+login_id);
+        log.info("현재 접속한 가맹점 코드 : "+frCode);
+        log.info("소속된 지사 코드 : "+frbrCode);
+
+        // 검색조건
+        log.info("hcId : "+hcId);
+        TagNoticeViewDto tagNoticeViewDto = tagNoticeRepositoryCustom.findByTagNoticeView(hcId, frbrCode);
+
+        data.put("tagNoticeViewDto",tagNoticeViewDto);
+        return ResponseEntity.ok(res.dataSendSuccess(data));
 
 
 
 
-
-
-
-
-
+    }
 
 
 

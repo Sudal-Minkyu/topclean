@@ -1,8 +1,10 @@
 package com.broadwave.toppos.Manager.TagNotice;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -12,17 +14,18 @@ import java.time.format.DateTimeFormatter;
  * Time :
  * Remark : Toppos 지사 택분실게시판 ListDto
  */
-@Data
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TagNoticeListDto {
+public class TagNoticeViewDto {
 
     private String htSubject; // 제목
+    private String htContent; // 내용
     private String insert_id;
     private LocalDateTime insertDateTime;
 
     public String getInsertDateTime() {
-        return insertDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        return insertDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm"));
     }
 }
