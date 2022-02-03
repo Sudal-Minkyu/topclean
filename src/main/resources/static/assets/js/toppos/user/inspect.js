@@ -5,8 +5,10 @@
 * */
 const dtos = {
     send: {
-        메시지팝업뜰때: {
-            fdId: "nr",
+        메시지보내기: {
+            fiId: "nr",
+            isIncludeImg: "s",
+            fmMessage: "s",
         },
 
         inspectList: { // 통합조회 페이지와 비슷하지만, fdState에 대한 조건이 빠진 형태
@@ -21,16 +23,23 @@ const dtos = {
             searchType: "sr", // 0 통합검색, 1 고객명, 2 전화번호, 3 주소
             searchString: "sr", // 검색문자
         },
+
+        franchiseInspectionList: { // fdId가 일치하는 모든 검품 리스트 type 1: 검품등록시, 2: 검품확인시 
+            fdId: "nr",
+            type: "s",
+        },
     },
     receive: {
-        메시지팝업뜰때: {
+        franchiseInspectionList: {
             fiId: "nr",
-            insertDt: "s",
+            fdId: "nr",
             fiType: "s",
             fiComment: "s",
-            fiSendMsgYn: "s",
+            fiAddAmt: "n",
             fiPhotoYn: "s",
+            fiSendMsgYn: "s",
             fiCustomerConfirm: "s",
+            insertDt: "s",
 
             ffPath: "s",
             ffFilename: "s",
@@ -87,14 +96,11 @@ const dtos = {
 const urls = {
     searchCustomer: "/api/user/customerInfo", // 고객 검색
     getDetailList: "/api/user/inspectList", // 검품이 있는 리스트 필터링하여 가져오기
-    setupMsgPop: "", // 메시지 팝업이 뜰 때 선택한 아이템에 대해서 검품내역 세팅하기
+    getInspectionList: "/api/user/franchiseInspectionList", // 메시지 팝업이 뜰 때 선택한 아이템에 대해서 검품내역 세팅하기
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
-    setupMsgPop(selectedFdId) {
-        console.log(selectedFdId);
-    },
 
     getDetailList(filterCondition) {
         dv.chk(filterCondition, dtos.send.inspectList, "검품리스트 필터링조건 보내기");
@@ -125,7 +131,22 @@ const comms = {
                 });
             }
         });
-    },    
+    },
+
+    getInspectionList(condition) {
+        dv.chk(condition, dtos.send.franchiseInspectionList, "등록된 검품조회 조건");
+
+        CommonUI.ajax(urls.getInspectionList, "GET", condition, function(res) {
+            const data = res.sendData.gridListData;
+            dv.chk(data, dtos.receive.franchiseInspectionList, "등록된 검품의 조회");
+            grids.f.clearData(2);
+            grids.f.setData(2, data);
+        });
+    },
+
+    sendKakaoMessage(data) {
+        console.log(data);
+    }
 };
 
 /* .s : AUI 그리드 관련 설정들
@@ -306,7 +327,7 @@ const grids = {
                     dataField: "fiType",
                     headerText: "유형",
                     labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
-                        return data.fiTypeName[value];
+                        return wares.fiTypeName[value];
                     },
                 }, {
                     dataField: "fiComment",
@@ -323,7 +344,7 @@ const grids = {
                     dataField: "fiCustomerConfirm",
                     headerText: "고객수락",
                     labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
-                        return data.fiCustomerConfirmName[value];
+                        return wares.fiCustomerConfirmName[value];
                     },
                 },
             ];
@@ -379,7 +400,21 @@ const grids = {
             AUIGrid.bind(grids.s.id[0], "cellClick", function (e) {
                 if(e.dataField === "sendMsgBtn") {
                     wares.selectedItem = e.item;
-                    setupMsgPop();
+                    setupMsgPop(e);
+                }
+            });
+
+            AUIGrid.bind(grids.s.id[2], "cellClick", function (e) {
+                $("#messageField").val("");
+                wares.selectedInspect = e.item;
+                if(e.item.fiPhotoYn === "Y") {
+                    $("#imgThumb").attr("src", e.item.ffPath + "s_" + e.item.ffFilename);
+                    $("#imgFull").attr("href", e.item.ffPath + e.item.ffFilename);
+                    $("#imgFull").show();
+                    $("#isIncludeImgLabel").show();
+                } else {
+                    $("#imgFull").hide();
+                    $("#isIncludeImgLabel").hide();
                 }
             });
         },
@@ -425,6 +460,20 @@ const trigs = {
                     mainSearch();
                 }
             });
+
+            $("#sendKakaoMsg").on("click", function() {
+                const data = {
+                    isIncludeImg: "N",
+                    fmMessage: $("#messageField").val(),
+                    fiId: wares.selectedInspect.fiId,
+                }
+                if(wares.selectedInspect.fiPhotoYn === "Y") {
+                    data.isIncludeImg = $("#isIncludeImg").is(":checked") ? "Y" : "N";
+                }
+                $("#messageField").val("");
+                comms.sendKakaoMessage(data);
+            });
+
         },
 
         vkeys() {
@@ -446,6 +495,17 @@ const wares = {
     selectedCustomer: {bcId:null},
     searchTag: null,
     selectedItem: {},
+    selectedInspect: {},
+
+    fiTypeName: {
+        F: "가맹검품",
+        B: "확인품",
+    },
+    fiCustomerConfirmName: {
+        "1": "미확인",
+        "2": "고객수락",
+        "3": "고객거부",
+    },
 }
 
 $(function() { // 페이지가 로드되고 나서 실행
@@ -465,6 +525,12 @@ function onPageLoad() {
     trigs.s.vkeys();
     
     enableDatepicker();
+
+    // lightbox option
+    lightbox.option({
+        'maxWidth': 1100,
+        'positionFromTop': 190
+    });
 }
 
 function ynStyle(rowIndex, columnIndex, value, headerText, item, dataField) {
@@ -610,24 +676,26 @@ function mainSearch() {
             }
             comms.searchCustomer(searchCondition);
         }
-    }else{
+    } else {
         alertCaution("검색어를 입력해 주세요", 1);
     }
 }
 
-function setupMsgPop() {
-    const selectedFdId = {
-        fdId: wares.selectedItem.fdId,
-    }
-    comms.setupMsgPop(selectedFdId);
+function setupMsgPop(e) {
     resetMsgPop();
     $("#messagePop").addClass("active");
     grids.f.resize(2);
+    const searchCondition = {
+        fdId: e.item.fdId,
+        type: "2"
+    }
+    comms.getInspectionList(searchCondition);
 }
 
 function resetMsgPop() {
-    $("#isIncludeImg").prop("checked", false);
+    $("#isIncludeImg").prop("checked", true);
     $("#messageField").val("");
-    $("#imgInspect").attr("src", "");
-    $("#imgInspect").hide();
+    $("#imgFull").attr("src", "");
+    $("#imgFull").hide();
 }
+
