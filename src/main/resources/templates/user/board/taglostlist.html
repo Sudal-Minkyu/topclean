@@ -15,7 +15,7 @@
 <th:block layout:fragment="script">
     <script src="/assets/js/toppos/user/board/taglostlist.js"></script>
     <script type="text/javascript">
-
+/* 
         $(function() {
 
         });
@@ -98,28 +98,29 @@
                 }
             });
         }
+         */
     </script>
 </th:block>
 
 <div layout:fragment="content" class="content content--column">
     <div class="board">
         <div class="board__header">
-            <h3 class="board__title">공지사항</h3>
+            <a href="./taglostlist"><h3 class="board__title">택 분실 게시판</h3></a>
             <div class="board__header-console">
                 <div class="c-select">
-                    <select>
-                        <option>통합검색</option>
-                        <option>제목</option>
-                        <option>작성자</option>
-                        <option>작성일</option>
+                    <select id="searchType">
+                        <option value="0">통합검색</option>
+                        <option value="1">제목</option>
+                        <option value="2">작성자</option>
+                        <option value="3">작성일</option>
                     </select>
                 </div>
                 <div class="c-search">
                     <div class="c-search__input">
-                        <input type="text" placeholder="검색어를 입력하세요">
-                        <button class="c-search__key" type="button">키보드</button>
+                        <input id="searchString" type="text" placeholder="검색어를 입력하세요">
+                        <button id="vkeyboard0" class="c-search__key" type="button">키보드</button>
                     </div>
-                    <button class="c-search__bth" onclick="testList(1)" type="button">검색</button>
+                    <button id="searchBtn" class="c-search__bth" type="button">검색</button>
                 </div>
             </div>
         </div>

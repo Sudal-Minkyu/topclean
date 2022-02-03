@@ -8,6 +8,8 @@ const dtos = {
         페이지에따른게시판데이터받아오기: {
             page: "nr",
             rowCount: "nr", // 한 페이지당 보여줄 행 수
+            searchType: "",
+            searchString: "s", // 빈 문자일 경우 일반적인 조회
         },
     },
     receive: {
@@ -33,7 +35,12 @@ const urls = {
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
     getList() {
-        const condition = {page: wares.currentPage, rowCount: 10};
+        const condition = {
+            page: wares.page,
+            rowCount: 10,
+            searchType: wares.searchType,
+            searchString: wares.searchString,
+        };
         CommonUI.ajax(urls.getList, "GET", condition, function (res) {
             console.log(res);
         });
@@ -134,7 +141,21 @@ const grids = {
 /* 이벤트를 s : 설정하거나 r : 해지하는 함수들을 담는다. 그리드 관련 이벤트는 grids.e에 위치 (trigger) */
 const trigs = {
     s: { // 이벤트 설정
+        basicTrigger() {
+            $("#searchBtn").on("click", function () {
+                mainSearch();
+            });
 
+            $("#vkeyboard0").on("click", function () {
+                onShowVKeyboard(0);
+            });
+
+            $("#searchString").on("keypress", function (e) {
+                if(e.originalEvent.code === "Enter") {
+                    mainSearch();
+                }
+            });
+        }
     },
     r: { // 이벤트 해제
 
@@ -148,8 +169,10 @@ const wares = {
     totalRowCount: 0, // 전체 데이터 건수
     rowCount: 0, // 1페이지에서 보여줄 행 수
     pageButtonCount: 0, // 페이지 네비게이션에서 보여줄 페이지의 수
-    currentPage: 0, // 현재 페이지
-    totalPage: 0 // 전체 페이지 계산
+    page: 0, // 현재 페이지
+    totalPage: 0, // 전체 페이지 계산
+    searchType: "",
+    searchString: "",
 }
 
 $(function() { // 페이지가 로드되고 나서 실행
@@ -161,17 +184,35 @@ function onPageLoad() {
     grids.f.initialization();
     grids.f.create();
     grids.t.basicTrigger();
-    getPageNo();
+    trigs.s.basicTrigger();
+
+    getParams();
     comms.getList();
-    createPagingNavigator(wares.currentPage);
+    createPagingNavigator(wares.page);
+
+    /* 가상키보드의 사용 선언 */
+    window.vkey = new VKeyboard();
 }
 
-function getPageNo() {
+function getParams() {
     wares.params = new URL(wares.url).searchParams;
+
     if(wares.params.has("page")) {
-        wares.currentPage = parseInt(wares.params.get("page"));
+        wares.page = wares.params.get("page");
     } else {
-        wares.currentPage = 1;
+        wares.page = "1";
+    }
+
+    if(wares.params.has("searchType")) {
+        wares.searchType = wares.params.get("searchType");
+    } else {
+        wares.searchType = "0";
+    }
+
+    if(wares.params.has("searchString")) {
+        wares.searchString = wares.params.get("searchString");
+    } else {
+        wares.searchString = "";
     }
 }
 
@@ -179,7 +220,7 @@ function getPageNo() {
 var totalRowCount = 500; // 전체 데이터 건수
 var rowCount = 20;	// 1페이지에서 보여줄 행 수
 var pageButtonCount = 10;		// 페이지 네비게이션에서 보여줄 페이지의 수
-var currentPage = 1;	// 현재 페이지
+var page = 1;	// 현재 페이지
 var totalPage = Math.ceil(totalRowCount / rowCount);	// 전체 페이지 계산
 
 // 페이징 네비게이터를 동적 생성합니다.
@@ -222,8 +263,25 @@ function createPagingNavigator(goPage) {
 }
 
 function moveToPage(goPage) {
-	var url = "./taglostlist?page=" + goPage;
+	var url = "./taglostlist?page=" + goPage + "&searchType=" + wares.searchType + "&searchString=" + wares.searchString;
     location.href = url;
 }
 
+function onShowVKeyboard(num) {
+    /* 가상키보드 사용을 위해 */
+    let vkeyProp = [];
+    const vkeyTargetId = ["searchString"];
 
+    vkeyProp[0] = {
+        title: $("#searchType option:selected").html() + " (검색)",
+        callback: mainSearch,
+    };
+
+    vkey.showKeyboard(vkeyTargetId[num], vkeyProp[num]);
+}
+
+function mainSearch() {
+    wares.searchType = $("#searchType option:selected").val();
+    wares.searchString = $("#searchString").val();
+    moveToPage(1);
+}
