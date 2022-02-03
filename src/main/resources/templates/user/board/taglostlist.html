@@ -20,6 +20,84 @@
 
         });
 
+        function testList(page){
+            console.log("택분실 게시판 조회시작");
+
+            page = page - 1;
+            if (page < 0) page = 0
+
+            const perPage = 10;
+            const perArea = 5;
+            let totCnt = 0;
+
+            // const $tablePerformanceList = $('#tablePerformanceList');
+            // const $totalCnt = $('#totalCnt');
+
+            const params = {
+                searchType : "",
+                searchString : ""
+            };
+
+            // $tablePerformanceList.empty().append('<tr ><td colspan="11" align="center">조회 중</td></tr>');
+            // $totalCnt.text('0');
+
+            let url = "/api/user/lostNoticeList"; // 호출할 백엔드 API
+            console.log("url : "+url);
+            console.log("page : "+page);
+            console.log("perPage : "+perPage);
+            $(document).ajaxSend(function (e, xhr) {
+                xhr.setRequestHeader("Authorization", localStorage.getItem('Authorization'));
+            });
+            $.ajax({
+                url:'/api/user/lostNoticeList?size='+ perPage + '&page=' + page,
+                // url: url + '?size=' + perPage + '&page=' + page,
+                type : 'POST',
+                data: params,
+                cache: false,
+                error: function (req) {
+                    ajaxErrorMsg(req);
+                },
+                success: function (res) {
+                    console.log("택분실 게시판 호출성공");
+                    console.log(res)
+                    // if (res.status === 200) {
+                    //     //화면 출력
+                    //     totCnt = res.total_rows;
+                    //     $("#performancePaging").jqueryPager({
+                    //         pageSize: perPage,
+                    //         pageBlock: perArea,
+                    //         currentPage: page + 1,
+                    //         pageTotal: totCnt,
+                    //         clickEvent: 'callList'
+                    //     });
+                    //
+                    //     if (totCnt === 0) {
+                    //         $tablePerformanceList.empty().append('<tr class="t-c"><td colspan="11" align="center">조회된 데이터가 없습니다.</td></tr>');
+                    //         return;
+                    //     }
+                    //
+                    //     $totalCnt.text(totCnt);
+                    //     let html = '';
+                    //     $.each(res.datalist, function (key, value) {
+                    //         html += '<tr>';
+                    //         html += '<td >'+ '<input type="checkbox" value='+echoNull2Blank(value.piAutoNum)+' />' +'</td>';
+                    //         html += '<td >' + echoNull2Blank(value.piFacilityType) + '</td>';
+                    //         html += '<td >' + echoNull2Blank(value.piFacilityName) + '</td>';
+                    //         html += '<td >' + echoNull2Blank(value.piCompletionYear) + '</td>';
+                    //         html += '<td >' + pushComma(echoNull2Blank(value.piErectionCost)) + '</td>';
+                    //         html += '<td >' + echoNull2Blank(value.piSafetyLevel) + '</td>';
+                    //         html += '<td >' + echoNull2Blank(value.piGoalLevel) + '</td>';
+                    //         html += '<td >' + echoNull2Blank(value.piBusinessType) + '</td>';
+                    //         html += '<td >' + pushComma(echoNull2Blank(value.piBusinessExpenses)) + '</td>';
+                    //         html += '<td ><button class="c-button" onclick="outputMove(\'' + echoNull2Blank(value.piAutoNum) + '\');">비교대안 보기</button></td>';
+                    //         html += '<td ><button class="c-button" onclick="del(\'' + echoNull2Blank(value.piAutoNum) + '\');">삭제</button></td>';
+                    //         html += '</tr>';
+                    //     });
+                    //     $tablePerformanceList.html(html);
+                    // }
+                }
+            });
+        }
     </script>
 </th:block>
 
@@ -41,7 +119,7 @@
                         <input type="text" placeholder="검색어를 입력하세요">
                         <button class="c-search__key" type="button">키보드</button>
                     </div>
-                    <button class="c-search__bth" type="button">검색</button>
+                    <button class="c-search__bth" onclick="testList(1)" type="button">검색</button>
                 </div>
             </div>
         </div>
