@@ -338,7 +338,7 @@ textarea {
 	background-color: #fafafa;
 	color: #000;
 	font-size: 1.25rem;
-	font-weigth: 700;
+	font-weight: 700;
 	line-height: 3.75rem;
 }
 .nav__link:before {
@@ -2634,9 +2634,6 @@ textarea {
 	position: relative;
 	display: flex;
 	flex-wrap: wrap;
-}
-.pop__pay-article {
-	
 }
 .pop__pay-article.hold {
 	width: 20rem;
