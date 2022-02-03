@@ -8,7 +8,7 @@ const dtos = {
         페이지에따른게시판데이터받아오기: {
             page: "nr",
             rowCount: "nr", // 한 페이지당 보여줄 행 수
-        }
+        },
     },
     receive: {
         페이지에따른게시판데이터받아오기: {
@@ -19,9 +19,9 @@ const dtos = {
                 insertDt: "s", // yyyymmdd만
             },
             페이징필요정보: {
-                totalRowCount: 0, // 전체 게시물 건수
+                totalRowCount: "nr", // 전체 게시물 건수
             },
-        }
+        },
     }
 };
 
