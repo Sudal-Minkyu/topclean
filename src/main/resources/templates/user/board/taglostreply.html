@@ -13,12 +13,8 @@
 
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
+    <script src="/assets/js/toppos/user/board/taglostreply.js"></script>
     <script type="text/javascript">
-
-        $(function() {
-
-        });
-
     </script>
 </th:block>
 
@@ -30,7 +26,7 @@
                 <button class="keyboardBtn">키보드</button>
             </div>
         </div>
-        <ul class="reply__list">
+        <ul id="replyList" class="reply__list">
             <li class="reply__item">
                 <div class="reply__info">
                     <span class="reply__name">내 이름</span>

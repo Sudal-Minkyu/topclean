@@ -173,7 +173,6 @@ const wares = {
     pageButtonCount: 0, // 페이지 네비게이션에서 보여줄 페이지의 수
     page: 0, // 현재 페이지
     totalPage: 0, // 전체 페이지
-    searchType: 0,
     searchString: "",
     filterFromDt: "",
     filterToDt: "",
@@ -288,7 +287,7 @@ function onShowVKeyboard(num) {
     const vkeyTargetId = ["searchString"];
 
     vkeyProp[0] = {
-        title: $("#searchType option:selected").html() + " (검색)",
+        title: "검색어 입력",
         callback: mainSearch,
     };
 

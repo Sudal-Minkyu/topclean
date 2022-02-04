@@ -5,10 +5,30 @@
 * */
 const dtos = {
     send: {
-
+        덧글리스트불러오기: {
+            id: "", // 글의 id
+        },
+        덧글달기: {
+            id: "", // 글의 id
+            type: "", // 덧글 타입
+            comment: "", // 덧글의 내용
+            preId: "", // 덧글의 덧글일 경우 원댓글의 아이디
+        },
+        덧글수정: {
+            id: "", // 덧글의 id (글의 id 아님),
+            comment: "", // 덧글의 내용
+        },
     },
     receive: {
-
+        덧글리스트불러오기: { // insertDt 가 빠른 순서대로 불러온다.
+            id: "", // 덧글의 id
+            name: "", // 덧글 작성자 이름
+            modifyDt: "", // 덧글의 수정시간(없을 경우 등록시간)
+            comment: "", // 덧글 내용
+            type: "", // 덧글 타입
+            preId: "", // 덧글의 덧글일 경우 원댓글의 아이디
+            isWriter: "", // 해당 덧글이 로그인한 사용자의 덧글인지에 대한 유무 정보
+        },
     }
 };
 
@@ -19,7 +39,10 @@ const urls = {
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
-    
+    getReplyList(condition) {
+        console.log(condition);
+        
+    },
 };
 
 /* 이벤트를 s : 설정하거나 r : 해지하는 함수들을 담는다. 그리드 관련 이벤트는 grids.e에 위치 (trigger) */
@@ -34,7 +57,9 @@ const trigs = {
 
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
 const wares = {
-
+    url: window.location.href,
+    id: 0, // 글의 아이디
+    params: "",
 }
 
 $(function() { // 페이지가 로드되고 나서 실행
@@ -43,23 +68,24 @@ $(function() { // 페이지가 로드되고 나서 실행
 
 /* 페이지가 로드되고 나서 실행 될 코드들을 담는다. */
 function onPageLoad() {
-
+    getParams();
+    comms.getReplyList({id: wares.id});
 }
 
-function createReplyHtml(id, name, date, comment, depth, isWriter) {
+function createReplyHtml(id, name, modifyDt, comment, type, isWriter, preId) {
     let btnReply = "";
     let btnModify = "";
     if(depth === "1") {
         btnReply = `<button type="button" class="c-button c-button--small c-button--darkline" onclick="reply(${id})">답글</button>`;
     }
-    if(isWriter) {
+    if(isWriter === "Y") {
         btnModify = `<button type="button" class="c-button c-button--small" onclick="modify(${id})">수정</button>`;
     }
 
-    const text = `
+    let htmlText = `
     <div class="reply__info">
         <span class="reply__name">${name}</span>
-        <div class="reply__date">${date}</div>
+        <div class="reply__date">${modifyDt}</div>
     </div>
     <div class="reply__comment">${comment}</div>
     <div class="reply__console">
@@ -67,10 +93,29 @@ function createReplyHtml(id, name, date, comment, depth, isWriter) {
         ${btnModify}
     </div>
     `;
+
+    if(type === "1") {
+        htmlText = `<li class="reply__item replyItem" data-id="${id}">` + htmlText + `</li>`;
+        $("#replyList").append(htmlText);
+    }else if(type === "2") {
+        const target = `.replyItem[data-id='${preId}']`;
+        console.log(target);
+        htmlText = `<div class="reply__item">` + htmlText + `</div>`;
+        $(target).append(htmlText);
+    }
+}
+
+function getParams() {
+    wares.params = new URL(wares.url).searchParams;
+    if(wares.params.has("id")) {
+        wares.id = wares.params.get("id");
+    } else {
+        wares.id = "1";
+    }
 }
 
 function reply(id) {
-
+    
 }
 
 function modify(id) {
