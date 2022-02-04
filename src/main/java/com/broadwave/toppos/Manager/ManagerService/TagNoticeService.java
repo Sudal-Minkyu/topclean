@@ -34,13 +34,11 @@ public class TagNoticeService {
 
     private final TokenProvider tokenProvider;
 
-    private final TagNoticeRepository tagNoticeRepository;
     private final TagNoticeRepositoryCustom tagNoticeRepositoryCustom;
 
     @Autowired
-    public TagNoticeService(TokenProvider tokenProvider, TagNoticeRepository tagNoticeRepository, TagNoticeRepositoryCustom tagNoticeRepositoryCustom){
+    public TagNoticeService(TokenProvider tokenProvider, TagNoticeRepositoryCustom tagNoticeRepositoryCustom){
         this.tokenProvider = tokenProvider;
-        this.tagNoticeRepository = tagNoticeRepository;
         this.tagNoticeRepositoryCustom = tagNoticeRepositoryCustom;
     }
 
@@ -64,9 +62,9 @@ public class TagNoticeService {
         }
 
         // 검색조건
-        log.info("searchString : "+searchString);
-        log.info("filterFromDt : "+filterFromDt);
-        log.info("filterToDt : "+filterToDt);
+//        log.info("searchString : "+searchString);
+//        log.info("filterFromDt : "+filterFromDt);
+//        log.info("filterToDt : "+filterToDt);
         Page<TagNoticeListDto> tagNoticeListDtoPage = tagNoticeRepositoryCustom.findByTagNoticeList(searchString, filterFromDt, filterToDt, frbrCode, pageable);
 
         return ResponseEntity.ok(res.ResponseEntityPage(tagNoticeListDtoPage,type));
@@ -90,8 +88,7 @@ public class TagNoticeService {
         log.info("소속된 지사 코드 : "+frbrCode);
 
         // 검색조건
-        log.info("htId : "+htId);
-
+//        log.info("htId : "+htId);
         TagNoticeViewDto tagNoticeViewDto = tagNoticeRepositoryCustom.findByTagNoticeView(htId, login_id, frbrCode);
         HashMap<String,Object> tagNoticeViewInfo = new HashMap<>();
 

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
@@ -57,14 +58,19 @@ public class ManagerRestController {
     public ResponseEntity<Map<String,Object>> lostNoticeList(@RequestParam("searchString")String searchString, @RequestParam("filterFromDt")String filterFromDt,
                                                              @RequestParam("filterToDt")String filterToDt,
                                                              Pageable pageable, HttpServletRequest request) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
         LocalDateTime fromDt = null;
         if(filterFromDt != null){
-
+            filterFromDt = filterFromDt+" 00:00:00.000";
+            fromDt = LocalDateTime.parse(filterFromDt, formatter);
+//            log.info("fromDt :"+fromDt);
         }
 
         LocalDateTime toDt = null;
         if(filterToDt != null){
-
+            filterToDt = filterToDt+" 23:59:59.999";
+            toDt = LocalDateTime.parse(filterToDt, formatter);
+//            log.info("toDt :"+toDt);
         }
 
         return tagNoticeService.lostNoticeList(searchString, fromDt, toDt, pageable, request, "1");
