@@ -13,165 +13,40 @@
 
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
-<!--    <script src="/assets/js/toppos/user/board/taglostlist.js"></script>-->
+    <script src="/assets/js/toppos/user/board/taglostlist.js"></script>
     <script type="text/javascript">
-
-        $(function() {
-            callList(1);
-        });
-
-        function callList(page){
-            console.log("택분실 게시판 조회시작");
-
-            page = page - 1;
-            if (page < 0) page = 0
-
-            const perPage = 10;
-            const perArea = 5;
-            let totCnt = 0;
-
-            const $schList = $('#schList');
-            const $totalCnt = $('#totalCnt');
-
-            const params = {
-                searchType : "",
-                searchString : ""
-            };
-
-            $schList.empty().append('<tr ><td colspan="4" align="center">조회 중</td></tr>');
-            $totalCnt.text('0');
-
-            let url = "/api/user/lostNoticeList"; // 호출할 백엔드 API
-            console.log("url : "+url);
-            console.log("page : "+page);
-            console.log("perPage : "+perPage);
-            $(document).ajaxSend(function (e, xhr) {
-                xhr.setRequestHeader("Authorization", localStorage.getItem('Authorization'));
-            });
-            $.ajax({
-                url: url+'?size='+ perPage + '&page=' + page,
-                // url: url + '?size=' + perPage + '&page=' + page,
-                type : 'POST',
-                data: params,
-                cache: false,
-                error: function (req) {
-                    ajaxErrorMsg(req);
-                },
-                success: function (res) {
-                    console.log("택분실 게시판 호출성공");
-                    console.log(res)
-                    if (res.status === 200) {
-                        //화면 출력
-                        totCnt = res.total_rows;
-                        $("#paging").jqueryPager({
-                            pageSize: perPage,
-                            pageBlock: perArea,
-                            currentPage: page + 1,
-                            pageTotal: totCnt,
-                            clickEvent: 'callList'
-                        });
-
-                        if (totCnt === 0) {
-                            $schList.empty().append('<tr class="t-c"><td colspan="4" align="center">조회된 데이터가 없습니다.</td></tr>');
-                            return;
-                        }
-
-                        $totalCnt.text(totCnt);
-                        let html = '';
-                        $.each(res.datalist, function (key, value) {
-                            html += '<tr>';
-                            html += '<td >' + value.htSubject + '</td>';
-                            html += '<td >' + value.insert_id + '</td>';
-                            html += '<td >' + value.insertDateTime + '</td>';
-                            html += '</tr>';
-                        });
-                        $schList.html(html);
-                    }
-                }
-            });
-        }
-
     </script>
 </th:block>
 
 <div layout:fragment="content" class="content content--column">
-    <div class="board">
-        <div class="board__header">
-            <h3 class="board__title">공지사항</h3>
-            <div class="board__header-console">
-                <div class="c-select">
-                    <select>
-                        <option>통합검색</option>
-                        <option>제목</option>
-                        <option>작성자</option>
-                        <option>작성일</option>
-                    </select>
-                </div>
-                <div class="c-search">
-                    <div class="c-search__input">
-                        <input type="text" placeholder="검색어를 입력하세요">
-                        <button class="c-search__key" type="button">키보드</button>
-                    </div>
-                    <button class="c-search__bth" type="button" onclick="callList(1)">검색</button>
-                </div>
-            </div>
-        </div>
-        <div class="notice-list">
-            <table class="c-retable">
-                <thead class="c-retable--tablet-hidden">
-                <tr>
-                    <th>제목</th>
-                    <th>작성자</th>
-                    <th>작성일</th>
-                </tr>
-                </thead>
-                <tbody id ="schList">
 
-                </tbody>
-            </table>
-            <div class="c-pager">
-                <div class="c-paging" id ="paging">
-                    <!-- 페이징 처리되는곳   -->
-                </div>
-                <div class="c-paging__total">
-                    <div class="c-paging__total-group">
-                        Total
+   <div class="board">
+       <div class="board__header">
+           <a href="./taglostlist"><h3 class="board__title">택 분실 게시판</h3></a>
+           <div class="board__header-console">
+                <div class="condition__date">
+                    <div class="c-period">
+                        <!-- 시작일 -->
+                        <input type="text" id="filterFromDt">
+                        <span class="c-period__code">-</span>
+                        <!-- 종료일 -->
+                        <input type="text" id="filterToDt">
                     </div>
-                    <div class="c-paging__total-group" id ="totalCnt">0</div>
                 </div>
-            </div>
-        </div>
-    </div>
-
-<!--    <div class="board">-->
-<!--        <div class="board__header">-->
-<!--            <a href="./taglostlist"><h3 class="board__title">택 분실 게시판</h3></a>-->
-<!--            <div class="board__header-console">-->
-<!--                <div class="c-select">-->
-<!--                    <select id="searchType">-->
-<!--                        <option value="0">통합검색</option>-->
-<!--                        <option value="1">제목</option>-->
-<!--                        <option value="2">작성자</option>-->
-<!--                        <option value="3">작성일</option>-->
-<!--                    </select>-->
-<!--                </div>-->
-<!--                <div class="c-search">-->
-<!--                    <div class="c-search__input">-->
-<!--                        <input id="searchString" type="text" placeholder="검색어를 입력하세요">-->
-<!--                        <button id="vkeyboard0" class="c-search__key" type="button">키보드</button>-->
-<!--                    </div>-->
-<!--                    <button id="searchBtn" class="c-search__bth" onclick="pageList(1)" type="button">검색</button>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--        <div class="board__body">-->
-<!--            &lt;!&ndash; grid &ndash;&gt;-->
-<!--            <div id="grid_list" style="height: 676px;"></div>-->
-<!--            -->
-<!--            &lt;!&ndash; 그리드 페이징 네비게이터 &ndash;&gt;-->
-<!--		    <div id="grid_paging" class="aui-grid-paging-panel my-grid-paging-panel"></div>-->
-<!--        </div>-->
-<!--    </div>-->
+               <div class="c-search">
+                   <div class="c-search__input">
+                       <input id="searchString" type="text" placeholder="검색어를 입력하세요">
+                       <button id="vkeyboard0" class="c-search__key" type="button">키보드</button>
+                   </div>
+                   <button id="searchBtn" class="c-search__bth" type="button">검색</button>
+               </div>
+           </div>
+       </div>
+       <div class="board__body">
+            <div id="grid_list" style="height: 676px;"></div>
+		    <div id="grid_paging" class="aui-grid-paging-panel my-grid-paging-panel"></div>
+       </div>
+   </div>
     
 </div>
 </html>

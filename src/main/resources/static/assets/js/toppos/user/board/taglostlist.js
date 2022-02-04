@@ -8,8 +8,9 @@ const dtos = {
         페이지에따른게시판데이터받아오기: {
             page: "nr",
             rowCount: "nr", // 한 페이지당 보여줄 행 수
-            searchType: "",
             searchString: "s", // 빈 문자일 경우 일반적인 조회
+            filterFromDt: "s", // 검색조건 from 오지 않을경우 시작기간은 전체기간
+            filterToDt: "s", // 검색조건 to 오지 않을 경우 끝기간은 전체기간
         },
     },
     receive: {
@@ -29,21 +30,28 @@ const dtos = {
 
 /* 통신에 사용되는 url들 기입 */
 const urls = {
-    getList: "",
+    getList: "/api/user/lostNoticeList",
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
     getList() {
         const condition = {
-            page: wares.page,
-            rowCount: 10,
-            searchType: wares.searchType,
+            page: wares.page - 1,
+            size: 10,
             searchString: wares.searchString,
+            filterFromDt: wares.filterFromDt,
+            filterToDt: wares.filterToDt,
         };
-        CommonUI.ajax(urls.getList, "GET", condition, function (res) {
+
+        console.log(condition);
+        CommonUI.ajax(urls.getList, "PARAM", condition, function (res) {
+            wares.totalPage = res.total_page;
+            createPagingNavigator(wares.page);
+            grids.f.setData(0, res.datalist);
             console.log(res);
         });
+
     }
 };
 
@@ -72,9 +80,6 @@ const grids = {
                 {
                     dataField: "subject",
                     headerText: "제목",
-                }, {
-                    dataField: "name",
-                    headerText: "작성자",
                 }, {
                     dataField: "insertDt",
                     headerText: "작성일",
@@ -166,13 +171,14 @@ const trigs = {
 const wares = {
     url: window.location.href,
     params: "", // url에 내포한 파라메터들을 담는다.
-    totalRowCount: 0, // 전체 데이터 건수
     rowCount: 0, // 1페이지에서 보여줄 행 수
     pageButtonCount: 0, // 페이지 네비게이션에서 보여줄 페이지의 수
     page: 0, // 현재 페이지
-    totalPage: 0, // 전체 페이지 계산
-    searchType: "",
+    totalPage: 0, // 전체 페이지
+    searchType: 0,
     searchString: "",
+    filterFromDt: "",
+    filterToDt: "",
 }
 
 $(function() { // 페이지가 로드되고 나서 실행
@@ -187,8 +193,10 @@ function onPageLoad() {
     trigs.s.basicTrigger();
 
     getParams();
+    setInputs();
     comms.getList();
     createPagingNavigator(wares.page);
+    enableDatepicker();
 
     /* 가상키보드의 사용 선언 */
     window.vkey = new VKeyboard();
@@ -203,10 +211,16 @@ function getParams() {
         wares.page = "1";
     }
 
-    if(wares.params.has("searchType")) {
-        wares.searchType = wares.params.get("searchType");
+    if(wares.params.has("filterFromDt")) {
+        wares.filterFromDt = wares.params.get("filterFromDt");
     } else {
-        wares.searchType = "0";
+        wares.filterFromDt = "";
+    }
+
+    if(wares.params.has("filterToDt")) {
+        wares.filterToDt = wares.params.get("filterToDt");
+    } else {
+        wares.filterToDt = "";
     }
 
     if(wares.params.has("searchString")) {
@@ -216,12 +230,15 @@ function getParams() {
     }
 }
 
+function setInputs() {
+    if(wares.filterFromDt) $("#filterFromDt").val(wares.filterFromDt);
+    if(wares.filterToDt) $("#filterToDt").val(wares.filterToDt);
+}
+
 /* 페이지내이션 적절한 값 완성후 wares의 데이터를 이용하도록 수정 */
-var totalRowCount = 500; // 전체 데이터 건수
 var rowCount = 20;	// 1페이지에서 보여줄 행 수
 var pageButtonCount = 10;		// 페이지 네비게이션에서 보여줄 페이지의 수
 var page = 1;	// 현재 페이지
-var totalPage = Math.ceil(totalRowCount / rowCount);	// 전체 페이지 계산
 
 // 페이징 네비게이터를 동적 생성합니다.
 function createPagingNavigator(goPage) {
@@ -230,7 +247,7 @@ function createPagingNavigator(goPage) {
 	var nextPage = ((parseInt((goPage - 1)/pageButtonCount)) * pageButtonCount) + pageButtonCount + 1;
 
 	prevPage = Math.max(0, prevPage);
-	nextPage = Math.min(nextPage, totalPage);
+	nextPage = Math.min(nextPage, wares.totalPage);
 	
 	// 처음
 	retStr += "<a href='javascript:moveToPage(1)'><span class='aui-grid-paging-number aui-grid-paging-first'>first</span></a>";
@@ -247,7 +264,7 @@ function createPagingNavigator(goPage) {
 			retStr += "</span></a>";
 		}
 		
-		if (i >= totalPage) {
+		if (i >= wares.totalPage) {
 			break;
 		}
 
@@ -257,13 +274,13 @@ function createPagingNavigator(goPage) {
 	retStr += "<a href='javascript:moveToPage(" + nextPage + ")'><span class='aui-grid-paging-number aui-grid-paging-next'>next</span></a>";
 
 	// 마지막
-	retStr += "<a href='javascript:moveToPage(" + totalPage + ")'><span class='aui-grid-paging-number aui-grid-paging-last'>last</span></a>";
+	retStr += "<a href='javascript:moveToPage(" + wares.totalPage + ")'><span class='aui-grid-paging-number aui-grid-paging-last'>last</span></a>";
 
 	document.getElementById("grid_paging").innerHTML = retStr;
 }
 
 function moveToPage(goPage) {
-	var url = "./taglostlist?page=" + goPage + "&searchType=" + wares.searchType + "&searchString=" + wares.searchString;
+	var url = "./taglostlist?page=" + goPage + "&searchString=" + wares.searchString + "&filterFromDt=" + wares.filterFromDt + "&filterToDt=" + wares.filterToDt;
     location.href = url;
 }
 
@@ -281,7 +298,22 @@ function onShowVKeyboard(num) {
 }
 
 function mainSearch() {
-    wares.searchType = $("#searchType option:selected").val();
     wares.searchString = $("#searchString").val();
+    wares.filterFromDt = $("#filterFromDt").val();
+    wares.filterToDt = $("#filterToDt").val();
     moveToPage(1);
+}
+
+function enableDatepicker() {
+    /* datepicker를 적용시킬 대상들의 dom id들 */
+    const datePickerTargetIds = [
+        "filterFromDt", "filterToDt"
+    ];
+
+    const dateAToBTargetIds = [
+        ["filterFromDt", "filterToDt"]
+    ];
+
+    CommonUI.setDatePicker(datePickerTargetIds);
+    CommonUI.restrictDateAToB(dateAToBTargetIds);
 }
