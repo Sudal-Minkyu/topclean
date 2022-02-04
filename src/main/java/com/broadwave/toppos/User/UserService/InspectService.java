@@ -11,6 +11,8 @@ import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.Insp
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotMapperDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotYnDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.MessageHistory.MessageHistory;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.MessageHistory.MessageHistoryRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.Photo;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.PhotoRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.*;
@@ -63,12 +65,13 @@ public class InspectService {
     private final RequestDetailRepository requestDetailRepository;
     private final RequestDetailRepositoryCustom requestDetailRepositoryCustom;
     private final SaveMoneyRepository saveMoneyRepository;
+    private final MessageHistoryRepository messageHistoryRepository;
 
     @Autowired
     public InspectService(ModelMapper modelMapper, TokenProvider tokenProvider, UserService userService, AWSS3Service awss3Service, PhotoRepository photoRepository,
                           PaymentRepository paymentRepository, PaymentRepositoryCustom paymentRepositoryCustom, InspeotRepository inspeotRepository,
                           RequestRepository requestRepository, RequestDetailRepositoryCustom requestDetailRepositoryCustom, InspeotRepositoryCustom inspeotRepositoryCustom,
-                          RequestDetailRepository requestDetailRepository, SaveMoneyRepository saveMoneyRepository){
+                          RequestDetailRepository requestDetailRepository, SaveMoneyRepository saveMoneyRepository, MessageHistoryRepository messageHistoryRepository){
         this.modelMapper = modelMapper;
         this.inspeotRepository = inspeotRepository;
         this.awss3Service = awss3Service;
@@ -82,6 +85,7 @@ public class InspectService {
         this.requestDetailRepositoryCustom = requestDetailRepositoryCustom;
         this.paymentRepositoryCustom = paymentRepositoryCustom;
         this.saveMoneyRepository = saveMoneyRepository;
+        this.messageHistoryRepository = messageHistoryRepository;
     }
 
     //  통합조회용 - 접수세부 테이블
@@ -630,6 +634,37 @@ public class InspectService {
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
+    //  통합조회용 - 카카오톡 메세지 보내기
+    public ResponseEntity<Map<String, Object>> franchiseInspectionMessageSend(Long fiId, String fmMessage, String isIncludeImg, HttpServletRequest request) {
+        log.info("franchiseInspectionMessageSend 호출");
+
+        AjaxResponse res = new AjaxResponse();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
+        String frbrCode = (String) claims.get("frbrCode"); // 소속된 지사 코드
+        String login_id = claims.getSubject(); // 현재 아이디
+        log.info("현재 접속한 아이디 : "+login_id);
+        log.info("현재 접속한 가맹점 코드 : "+frCode);
+        log.info("소속된 지사 코드 : "+frbrCode);
+
+        log.info("이미지 여부 : "+isIncludeImg);
+        MessageHistory messageHistory = new MessageHistory();
+        messageHistory.setFmType("01");
+        if(fiId != null){
+            Optional<Inspeot> optionalInspeot = inspeotRepository.findById(fiId);
+            optionalInspeot.ifPresent(messageHistory::setFiId);
+        }
+        messageHistory.setFrCode(frCode);
+        messageHistory.setBrCode(frbrCode);
+        messageHistory.setFmMessage(fmMessage);
+        messageHistory.setFmSuccessYn("N");
+        messageHistory.setInsert_id(login_id);
+        messageHistory.setInsertDateTime(LocalDateTime.now());
+        messageHistoryRepository.save(messageHistory);
+        return ResponseEntity.ok(res.success());
+    }
 
 
 

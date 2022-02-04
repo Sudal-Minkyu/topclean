@@ -802,6 +802,15 @@ public class UserRestController {
         return inspectService.franchiseInspectionYn(fiId, type, fiAddAmt, request);
     }
 
+    //  통합조회용 - 카카오 메세지 보내기
+    @PostMapping("franchiseInspectionMessageSend")
+    public ResponseEntity<Map<String,Object>> franchiseInspectionMessageSend(@RequestParam(value="fiId", defaultValue="") Long fiId,
+                                                                    @RequestParam(value="fmMessage", defaultValue="") String fmMessage,
+                                                                    @RequestParam(value="isIncludeImg", defaultValue="") String isIncludeImg,
+                                                                    HttpServletRequest request){
+        return inspectService.franchiseInspectionMessageSend(fiId, fmMessage, isIncludeImg, request);
+    }
+
 
 
 //@@@@@@@@@@@@@@@@@@@@@ 일일 영업일보 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
