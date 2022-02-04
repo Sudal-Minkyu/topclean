@@ -939,8 +939,8 @@ public class UserRestController {
 
     //  택분실게시판 - 글보기
     @GetMapping("/lostNoticeView")
-    public ResponseEntity<Map<String,Object>> lostNoticeView(@RequestParam("hcId") Long hcId, HttpServletRequest request) {
-        return tagNoticeService.findByTagNoticeView(hcId, request);
+    public ResponseEntity<Map<String,Object>> lostNoticeView(@RequestParam("htId") Long htId, HttpServletRequest request) {
+        return tagNoticeService.findByTagNoticeView(htId, request, "2");
     }
 
 

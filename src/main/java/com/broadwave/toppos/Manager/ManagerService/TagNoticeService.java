@@ -6,9 +6,8 @@ import com.broadwave.toppos.Manager.Calendar.BranchCalendarRepository;
 import com.broadwave.toppos.Manager.Calendar.BranchCalendarRepositoryCustom;
 import com.broadwave.toppos.Manager.Calendar.CalendarDtos.BranchCalendarDto;
 import com.broadwave.toppos.Manager.Calendar.CalendarDtos.BranchCalendarListDto;
-import com.broadwave.toppos.Manager.TagNotice.TagNoticeListDto;
-import com.broadwave.toppos.Manager.TagNotice.TagNoticeRepositoryCustom;
-import com.broadwave.toppos.Manager.TagNotice.TagNoticeViewDto;
+import com.broadwave.toppos.Manager.TagNotice.*;
+import com.broadwave.toppos.User.Customer.CustomerDtos.CustomerUncollectListDto;
 import com.broadwave.toppos.common.AjaxResponse;
 import com.broadwave.toppos.common.ResponseErrorCode;
 import io.jsonwebtoken.Claims;
@@ -35,11 +34,13 @@ public class TagNoticeService {
 
     private final TokenProvider tokenProvider;
 
+    private final TagNoticeRepository tagNoticeRepository;
     private final TagNoticeRepositoryCustom tagNoticeRepositoryCustom;
 
     @Autowired
-    public TagNoticeService(TokenProvider tokenProvider, TagNoticeRepositoryCustom tagNoticeRepositoryCustom){
+    public TagNoticeService(TokenProvider tokenProvider, TagNoticeRepository tagNoticeRepository, TagNoticeRepositoryCustom tagNoticeRepositoryCustom){
         this.tokenProvider = tokenProvider;
+        this.tagNoticeRepository = tagNoticeRepository;
         this.tagNoticeRepositoryCustom = tagNoticeRepositoryCustom;
     }
 
@@ -67,11 +68,11 @@ public class TagNoticeService {
         log.info("searchString : "+searchString);
         Page<TagNoticeListDto> tagNoticeListDtoPage = tagNoticeRepositoryCustom.findByTagNoticeList(searchType, searchString, frbrCode, pageable);
 
-        return ResponseEntity.ok(res.ResponseEntityPage(tagNoticeListDtoPage));
+        return ResponseEntity.ok(res.ResponseEntityPage(tagNoticeListDtoPage,type));
     }
 
     //  택분실게시판 - 글보기
-    public ResponseEntity<Map<String, Object>> findByTagNoticeView(Long hcId, HttpServletRequest request) {
+    public ResponseEntity<Map<String, Object>> findByTagNoticeView(Long htId, HttpServletRequest request, String type) {
 
         log.info("findByTagNoticeView 호출성공");
 
@@ -88,10 +89,43 @@ public class TagNoticeService {
         log.info("소속된 지사 코드 : "+frbrCode);
 
         // 검색조건
-        log.info("hcId : "+hcId);
-        TagNoticeViewDto tagNoticeViewDto = tagNoticeRepositoryCustom.findByTagNoticeView(hcId, frbrCode);
+        log.info("htId : "+htId);
 
-        data.put("tagNoticeViewDto",tagNoticeViewDto);
+        TagNoticeViewDto tagNoticeViewDto = tagNoticeRepositoryCustom.findByTagNoticeView(htId, login_id, frbrCode);
+        HashMap<String,Object> tagNoticeViewInfo = new HashMap<>();
+
+        if(tagNoticeViewDto != null){
+            tagNoticeViewInfo.put("htId", tagNoticeViewDto.getHtId());
+            tagNoticeViewInfo.put("isWritter", type); // 1이면 지사, 2이면 가맹점
+            tagNoticeViewInfo.put("subject", tagNoticeViewDto.getSubject());
+            tagNoticeViewInfo.put("content", tagNoticeViewDto.getContent());
+            tagNoticeViewInfo.put("name", tagNoticeViewDto.getName());
+            tagNoticeViewInfo.put("insertDateTime", tagNoticeViewDto.getInsertDateTime());
+
+            TagNoticeViewSubDto tagNoticeViewPreDto = tagNoticeRepositoryCustom.findByTagNoticePreView(tagNoticeViewDto.getHtId(), frbrCode);
+            if(tagNoticeViewPreDto != null){
+                tagNoticeViewInfo.put("prevId", tagNoticeViewPreDto.getSubId());
+                tagNoticeViewInfo.put("prevSubject", tagNoticeViewPreDto.getSubSubject());
+                tagNoticeViewInfo.put("prevInsertDateTime", tagNoticeViewPreDto.getSubInsertDateTime());
+            }else{
+                tagNoticeViewInfo.put("prevId", "");
+                tagNoticeViewInfo.put("prevSubject", "이전 글은 존재하지 않습니다.");
+                tagNoticeViewInfo.put("prevInsertDateTime", "");
+            }
+            TagNoticeViewSubDto tagNoticeViewNextDto = tagNoticeRepositoryCustom.findByTagNoticeNextView(tagNoticeViewDto.getHtId(), frbrCode);
+            if(tagNoticeViewNextDto != null){
+                tagNoticeViewInfo.put("nextId", tagNoticeViewNextDto.getSubId());
+                tagNoticeViewInfo.put("nextSubject", tagNoticeViewNextDto.getSubSubject());
+                tagNoticeViewInfo.put("nextvInsertDateTime", tagNoticeViewNextDto.getSubInsertDateTime());
+            }else{
+                tagNoticeViewInfo.put("nextId", "");
+                tagNoticeViewInfo.put("nextSubject", "다음 글은 존재하지 않습니다.");
+                tagNoticeViewInfo.put("nextvInsertDateTime", "");
+            }
+        }
+
+        data.put("tagNoticeViewDto",tagNoticeViewInfo);
+
         return ResponseEntity.ok(res.dataSendSuccess(data));
 
 
