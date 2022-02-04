@@ -3002,6 +3002,10 @@ textarea {
 .pop__position {
 	position: absolute;
 }
+.neck {
+	top: 30px;
+	left: 158px;
+}
 .left-sleeve {
 	top: 90px;
 	left: 100px;
