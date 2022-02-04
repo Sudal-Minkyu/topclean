@@ -34,7 +34,9 @@ const dtos = {
 
 /* 통신에 사용되는 url들 기입 */
 const urls = {
-    
+    getReplyList: "",
+    addNewReply: "",
+    modifyReply: "",
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
@@ -43,12 +45,28 @@ const comms = {
         console.log(condition);
         
     },
+
+    addNewReply(data) {
+        console.log(data);
+    },
+
+    modifyReply(data) {
+        console.log(data);
+    },
 };
 
 /* 이벤트를 s : 설정하거나 r : 해지하는 함수들을 담는다. 그리드 관련 이벤트는 grids.e에 위치 (trigger) */
 const trigs = {
     s: { // 이벤트 설정
+        basic() {
+            $("#vkeyboard0").on("click", function () {
+                onShowVKeyboard(0);
+            });
 
+            $("#commitReply").on("click", function () {
+                commitReply("1", "#replyField");
+            });
+        }
     },
     r: { // 이벤트 해제
 
@@ -70,6 +88,11 @@ $(function() { // 페이지가 로드되고 나서 실행
 function onPageLoad() {
     getParams();
     comms.getReplyList({id: wares.id});
+
+    trigs.s.basic();
+
+    /* 가상키보드의 사용 선언 */
+    window.vkey = new VKeyboard();
 }
 
 function createReplyHtml(id, name, modifyDt, comment, type, isWriter, preId) {
@@ -120,4 +143,27 @@ function reply(id) {
 
 function modify(id) {
     
+}
+
+function onShowVKeyboard(num) {
+    /* 가상키보드 사용을 위해 */
+    let vkeyProp = [];
+    const vkeyTargetId = ["replyField"];
+
+    vkeyProp[0] = {
+        title: "덧글 입력",
+    };
+
+    vkey.showKeyboard(vkeyTargetId[num], vkeyProp[num]);
+}
+
+function commitReply(type, fieldId, preId = "") {
+    const data = {
+        id: wares.id,
+        type: type,
+        comment: $(fieldId).val(),
+        preId: preId,
+    };
+
+    comms.addNewReply(data);
 }
