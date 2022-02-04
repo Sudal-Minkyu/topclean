@@ -6,29 +6,29 @@
 const dtos = {
     send: {
         덧글리스트불러오기: {
-            id: "", // 글의 id
+            htId: "", // 글의 id
         },
         덧글달기: {
-            id: "", // 글의 id
+            htId: "", // 글의 id
             type: "", // 덧글 타입
             comment: "", // 덧글의 내용
             preId: "", // 덧글의 덧글일 경우 원댓글의 아이디
         },
         덧글수정: {
-            id: "", // 덧글의 id (글의 id 아님),
+            hcId: "", // 덧글의 id (글의 id 아님),
             comment: "", // 덧글의 내용
         },
     },
     receive: {
         덧글리스트불러오기: { // insertDt 가 빠른 순서대로 불러온다.
             덧글배열 : {
-                id: "", // 덧글의 id
+                hcId: "", // 덧글의 id
                 name: "", // 덧글 작성자 이름
                 modifyDt: "", // 덧글의 수정시간(없을 경우 등록시간)
                 comment: "", // 덧글 내용
                 type: "", // 덧글 타입
                 preId: "", // 덧글의 덧글일 경우 원댓글의 아이디
-                insertId: "", // 작서한 사용자의 아이디 번호
+                insertId: "", // 작성한 사용자의 아이디 번호
             },
             loginId: "", // 로그인한 사용자의 아이디 번호
         },
@@ -78,7 +78,7 @@ const trigs = {
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
 const wares = {
     url: window.location.href,
-    id: "", // 글의 아이디
+    htId: "", // 글의 아이디
     params: "",
 }
 
@@ -132,18 +132,18 @@ function createReplyHtml(id, name, modifyDt, comment, type, isWriter, preId) {
 
 function getParams() {
     wares.params = new URL(wares.url).searchParams;
-    if(wares.params.has("id")) {
-        wares.id = wares.params.get("id");
+    if(wares.params.has("htId")) {
+        wares.htId = wares.params.get("htId");
     } else {
-        wares.id = "";
+        wares.htId = "";
     }
 }
 
-function reply(id) {
+function reply(htId) {
     
 }
 
-function modify(id) {
+function modify(htId) {
     
 }
 
@@ -161,7 +161,7 @@ function onShowVKeyboard(num) {
 
 function commitReply(type, fieldId, preId = "") {
     const data = {
-        id: wares.id,
+        htId: wares.htId,
         type: type,
         comment: $(fieldId).val(),
         preId: preId,

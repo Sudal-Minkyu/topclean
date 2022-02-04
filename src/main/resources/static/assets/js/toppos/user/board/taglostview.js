@@ -6,7 +6,7 @@
 const dtos = {
     send: {
         lostNoticeView: {
-            hcId: "n",
+            htId: "n",
         }
     },
     receive: {
@@ -24,8 +24,10 @@ const urls = {
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
     getData(condition) {
-        CommonUI.ajax(urls.getData, "PARAM", condition, function (res) {
-            console.log(res);
+        CommonUI.ajax(urls.getData, "GET", condition, function (res) {
+            const data = res.sendData.tagNoticeViewDto;
+            console.log(data);
+            setFields(data);
         });
     },
 };
@@ -43,8 +45,12 @@ const trigs = {
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
 const wares = {
     url: window.location.href,
-    id: "", // 글의 아이디
+    htId: "", // 글의 아이디
     params: "",
+    page: "",
+    searchString: "",
+    filterFromDt: "",
+    filterToDt: "",
 }
 
 $(function() { // 페이지가 로드되고 나서 실행
@@ -54,14 +60,46 @@ $(function() { // 페이지가 로드되고 나서 실행
 /* 페이지가 로드되고 나서 실행 될 코드들을 담는다. */
 function onPageLoad() {
     getParams();
-    comms.getData({hcId: wares.id});
+    comms.getData({htId: wares.htId});
 }
 
 function getParams() {
     wares.params = new URL(wares.url).searchParams;
-    if(wares.params.has("id")) {
-        wares.id = wares.params.get("id");
+    if(wares.params.has("htId")) {
+        wares.htId = wares.params.get("htId");
     } else {
-        wares.id = "";
+        wares.htId = "";
     }
+
+    wares.page = wares.params.get("prevPage");
+    wares.searchString = wares.params.get("prevSearchString");
+    wares.filterFromDt = wares.params.get("prevFilterFromDt");
+    wares.filterToDt = wares.params.get("prevFilterToDt");
+}
+
+function setFields(data) {
+    $("#subject").html(data.subject);
+    $("#name").html(data.name);
+    $("#insertDateTime").html(data.insertDateTime);
+    $("#content").html(data.content);
+    $("#prevSubject").html(data.prevSubject);
+    $("#prevInsertDateTime").html(data.prevInsertDateTime);
+    $("#nextSubject").html(data.nextSubject);
+    $("#nextInsertDateTime").html(data.nextvInsertDateTime);
+
+    if(data.prevId) {
+        $("#linkPrev").attr("href", "./taglostview?htId=" + data.prevId);
+    }
+
+    if(data.nextId) {
+        $("#linkNext").attr("href", "./taglostview?htId=" + data.nextId);
+    }
+
+    $("#linkReply").attr("href", "./taglostreply?htId=" + data.htId + "&prevPage=" + wares.page 
+    + "&prevSearchString=" + wares.searchString + "&prevFilterFromDt=" + wares.filterFromDt
+    + "&prevFilterToDt=" + wares.filterToDt);
+
+    // 페이지 정보 가져와서 해당 페이지로 바로 갈 수 있도록 조치
+    $("#linkPrevPage").attr("href", "./taglostlist?page=" + wares.page + "&searchString=" + wares.searchString
+        + "&filterFromDt=" + wares.filterFromDt + "&filterToDt" + wares.filterToDt);
 }

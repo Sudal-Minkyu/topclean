@@ -15,9 +15,10 @@ const dtos = {
     receive: {
         페이지에따른게시판데이터받아오기: {
             작성글의리스트: {
-                id: "nr", // 게시판 글 id
+                htId: "nr", // 게시판 글 id
                 subject: "s",
-                insertDt: "s", // yyyymmdd만
+                insertDateTime: "s", // yyyymmdd만
+                insert_id: "s",
             },
             페이징필요정보: {
                 totalRowCount: "nr", // 전체 게시물 건수
@@ -79,8 +80,9 @@ const grids = {
                     dataField: "subject",
                     headerText: "제목",
                 }, {
-                    dataField: "insertDt",
+                    dataField: "insertDateTime",
                     headerText: "작성일",
+                    width: 150,
                 },
             ];
 
@@ -135,7 +137,9 @@ const grids = {
         basicTrigger() {
             /* 0번그리드 내의 셀 클릭시 이벤트 */
             AUIGrid.bind(grids.s.id[0], "cellClick", function (e) {
-                location.href = "./taglostview?id=" + e.item.id;
+                location.href = "./taglostview?htId=" + e.item.htId + "&prevPage=" + wares.page 
+                    + "&prevSearchString=" + wares.searchString + "&prevFilterFromDt=" + wares.filterFromDt
+                    + "&prevFilterToDt=" + wares.filterToDt;
             });
         }
     }
@@ -188,12 +192,12 @@ function onPageLoad() {
     grids.f.create();
     grids.t.basicTrigger();
     trigs.s.basicTrigger();
+    enableDatepicker();
 
     getParams();
     setInputs();
     comms.getList();
     createPagingNavigator(wares.page);
-    enableDatepicker();
 
     /* 가상키보드의 사용 선언 */
     window.vkey = new VKeyboard();
@@ -211,13 +215,13 @@ function getParams() {
     if(wares.params.has("filterFromDt")) {
         wares.filterFromDt = wares.params.get("filterFromDt");
     } else {
-        wares.filterFromDt = "";
+        wares.filterFromDt = $("#filterFromDt").val();
     }
 
     if(wares.params.has("filterToDt")) {
         wares.filterToDt = wares.params.get("filterToDt");
     } else {
-        wares.filterToDt = "";
+        wares.filterToDt = $("#filterToDt").val();
     }
 
     if(wares.params.has("searchString")) {
@@ -302,10 +306,20 @@ function mainSearch() {
 }
 
 function enableDatepicker() {
+    
+    let fromday = new Date();
+    fromday.setDate(fromday.getDate() - 363);
+    fromday = fromday.format("yyyy-MM-dd");
+    const today = new Date().format("yyyy-MM-dd");
+
     /* datepicker를 적용시킬 대상들의 dom id들 */
     const datePickerTargetIds = [
         "filterFromDt", "filterToDt"
     ];
+
+
+    $("#" + datePickerTargetIds[0]).val(fromday);
+    $("#" + datePickerTargetIds[1]).val(today);
 
     const dateAToBTargetIds = [
         ["filterFromDt", "filterToDt"]
