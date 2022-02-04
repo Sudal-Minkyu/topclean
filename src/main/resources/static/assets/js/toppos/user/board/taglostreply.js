@@ -21,23 +21,20 @@ const dtos = {
     },
     receive: {
         덧글리스트불러오기: { // insertDt 가 빠른 순서대로 불러온다.
-            덧글배열 : {
-                hcId: "", // 덧글의 id
-                name: "", // 덧글 작성자 이름
-                modifyDt: "", // 덧글의 수정시간(없을 경우 등록시간)
-                comment: "", // 덧글 내용
-                type: "", // 덧글 타입
-                preId: "", // 덧글의 덧글일 경우 원댓글의 아이디
-                insertId: "", // 작성한 사용자의 아이디 번호
-            },
-            loginId: "", // 로그인한 사용자의 아이디 번호
+            hcId: "", // 덧글의 id
+            name: "", // 덧글 작성자 이름
+            modifyDt: "", // 덧글의 수정시간(없을 경우 등록시간)
+            comment: "", // 덧글 내용
+            type: "", // 덧글 타입
+            preId: "", // 덧글의 덧글일 경우 원댓글의 아이디
+            isWritter: "s", // 1이면 본인글, 2이면 본인글 아님
         },
     }
 };
 
 /* 통신에 사용되는 url들 기입 */
 const urls = {
-    getReplyList: "",
+    getReplyList: "/api/user/lostNoticeCommentList",
     addNewReply: "",
     modifyReply: "",
 }
@@ -45,7 +42,12 @@ const urls = {
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
     getReplyList(condition) {
-        console.log(condition);
+        CommonUI.ajax(urls.getReplyList, "GET", condition, function (res) {
+            const data = res.sendData.commentListDto;
+            data.forEach(obj => {
+                createReplyHtml(obj.hcId, obj.name, obj.modifyDt, obj.hcComment, obj.type, obj.isWritter, obj.preId);
+            });
+        });
     },
 
     addNewReply(data) {
@@ -89,7 +91,7 @@ $(function() { // 페이지가 로드되고 나서 실행
 /* 페이지가 로드되고 나서 실행 될 코드들을 담는다. */
 function onPageLoad() {
     getParams();
-    comms.getReplyList({id: wares.id});
+    comms.getReplyList({htId: wares.htId});
 
     trigs.s.basic();
 
@@ -97,14 +99,14 @@ function onPageLoad() {
     window.vkey = new VKeyboard();
 }
 
-function createReplyHtml(id, name, modifyDt, comment, type, isWriter, preId) {
+function createReplyHtml(hcId, name, modifyDt, comment, type, isWriter, preId) {
     let btnReply = "";
     let btnModify = "";
-    if(depth === "1") {
-        btnReply = `<button type="button" class="c-button c-button--small c-button--darkline" onclick="reply(${id})">답글</button>`;
+    if(type === "1") {
+        btnReply = `<button type="button" class="c-button c-button--small c-button--darkline" onclick="reply(${hcId})">답글</button>`;
     }
-    if(isWriter === "Y") {
-        btnModify = `<button type="button" class="c-button c-button--small" onclick="modify(${id})">수정</button>`;
+    if(isWriter === "1") {
+        btnModify = `<button type="button" class="c-button c-button--small" onclick="modify(${hcId})">수정</button>`;
     }
 
     let htmlText = `
@@ -120,11 +122,10 @@ function createReplyHtml(id, name, modifyDt, comment, type, isWriter, preId) {
     `;
 
     if(type === "1") {
-        htmlText = `<li class="reply__item replyItem" data-id="${id}">` + htmlText + `</li>`;
+        htmlText = `<li class="reply__item replyItem" data-id="${hcId}">` + htmlText + `</li>`;
         $("#replyList").append(htmlText);
     }else if(type === "2") {
         const target = `.replyItem[data-id='${preId}']`;
-        console.log(target);
         htmlText = `<div class="reply__item">` + htmlText + `</div>`;
         $(target).append(htmlText);
     }
@@ -139,11 +140,12 @@ function getParams() {
     }
 }
 
-function reply(htId) {
-    
+// 덧글내 답글 달기를 클릭했을 때
+function reply(hcId) {
+
 }
 
-function modify(htId) {
+function modify(hcId) {
     
 }
 
