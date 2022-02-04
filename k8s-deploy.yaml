@@ -23,8 +23,8 @@ spec:
               protocol: TCP
           resources:
             requests:
-              memory: "4"
-              cpu: "1"
+              memory: "2048Mi"
+              cpu: "500m"
           env:
             - name: TOPPOS_S3_ACCESS_ID
               value: TOPPOS_S3_ACCESS_ID_TAG
