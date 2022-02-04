@@ -959,11 +959,13 @@ public class UserRestController {
         return tagNoticeService.lostNoticeCommentList(htId, request);
     }
 
-//    //  택분실게시판 - 댓글 작성 and 수정
-//    @PostMapping("/lostNoticeCommentSave")
-//    public ResponseEntity<Map<String,Object>> lostNoticeCommentSave(@RequestParam("htId") Long htId, HttpServletRequest request) {
-//        return tagNoticeService.lostNoticeCommentSave(htId, request, "2");
-//    }
+    //  택분실게시판 - 댓글 작성 and 수정
+    @PostMapping("/lostNoticeCommentSave")
+    public ResponseEntity<Map<String,Object>> lostNoticeCommentSave(@RequestParam("hcId") Long hcId, @RequestParam("htId") Long htId, @RequestParam("type") String type,
+                                                                                                            @RequestParam("comment") String comment, @RequestParam("preId") Long preId,
+                                                                                                            HttpServletRequest request) {
+        return tagNoticeService.lostNoticeCommentSave(hcId, htId, type, comment, preId, request);
+    }
 
 
 

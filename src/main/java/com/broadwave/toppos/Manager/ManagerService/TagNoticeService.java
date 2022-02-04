@@ -1,7 +1,9 @@
 package com.broadwave.toppos.Manager.ManagerService;
 
 import com.broadwave.toppos.Jwt.token.TokenProvider;
+import com.broadwave.toppos.Manager.TagNotice.Comment.TagNoticeComment;
 import com.broadwave.toppos.Manager.TagNotice.Comment.TagNoticeCommentListDto;
+import com.broadwave.toppos.Manager.TagNotice.Comment.TagNoticeCommentRepository;
 import com.broadwave.toppos.Manager.TagNotice.Comment.TagNoticeCommentRepositoryCustom;
 import com.broadwave.toppos.Manager.TagNotice.TagNoticeListDto;
 import com.broadwave.toppos.Manager.TagNotice.TagNoticeRepositoryCustom;
@@ -18,10 +20,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Minkyu
@@ -36,13 +35,15 @@ public class TagNoticeService {
     private final TokenProvider tokenProvider;
 
     private final TagNoticeRepositoryCustom tagNoticeRepositoryCustom;
+    private final TagNoticeCommentRepository tagNoticeCommentRepository;
     private final TagNoticeCommentRepositoryCustom tagNoticeCommentRepositoryCustom;
 
     @Autowired
     public TagNoticeService(TokenProvider tokenProvider, TagNoticeRepositoryCustom tagNoticeRepositoryCustom,
-                            TagNoticeCommentRepositoryCustom tagNoticeCommentRepositoryCustom){
+                            TagNoticeCommentRepository tagNoticeCommentRepository, TagNoticeCommentRepositoryCustom tagNoticeCommentRepositoryCustom){
         this.tokenProvider = tokenProvider;
         this.tagNoticeRepositoryCustom = tagNoticeRepositoryCustom;
+        this.tagNoticeCommentRepository = tagNoticeCommentRepository;
         this.tagNoticeCommentRepositoryCustom = tagNoticeCommentRepositoryCustom;
     }
 
@@ -129,7 +130,6 @@ public class TagNoticeService {
         data.put("tagNoticeViewDto",tagNoticeViewInfo);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
-
     }
 
     //  택분실게시판 - 댓글 리스트 호출
@@ -150,5 +150,49 @@ public class TagNoticeService {
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
+
+    //  택분실게시판 - 댓글 작성 and 수정
+    public ResponseEntity<Map<String, Object>> lostNoticeCommentSave(Long hcId, Long htId, String type, String comment, Long preId, HttpServletRequest request) {
+        log.info("lostNoticeCommentSave 호출");
+
+        AjaxResponse res = new AjaxResponse();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String login_id = claims.getSubject(); // 현재 아이디
+        log.info("현재 접속한 아이디 : "+login_id);
+
+        if(hcId != null){
+            Optional<TagNoticeComment> optionalTagNoticeComment = tagNoticeCommentRepository.findById(hcId);
+            if(optionalTagNoticeComment.isPresent()){
+                log.info("수정 댓글입니다.");
+                optionalTagNoticeComment.get().setHcComment(comment);
+                optionalTagNoticeComment.get().setModify_id(login_id);
+                optionalTagNoticeComment.get().setModifyDateTime(LocalDateTime.now());
+                tagNoticeCommentRepository.save(optionalTagNoticeComment.get());
+            }
+        }else{
+            log.info("신규 댓글입니다.");
+            TagNoticeComment tagNoticeComment = new TagNoticeComment();
+            tagNoticeComment.setHtId(htId);
+            tagNoticeComment.setHcComment(comment);
+            tagNoticeComment.setHcType(type);
+            if(type.equals("2")){
+                tagNoticeComment.setHcPreId(preId);
+            }
+            tagNoticeComment.setInsert_id(login_id);
+            tagNoticeComment.setInsertDateTime(LocalDateTime.now());
+            tagNoticeCommentRepository.save(tagNoticeComment);
+        }
+
+        return ResponseEntity.ok(res.success());
+    }
+
+
+
+
+
+
+
 
 }
