@@ -13,8 +13,6 @@ import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.Manager.Calendar.BranchCalendar;
 import com.broadwave.toppos.Manager.ManagerService.CalendarService;
 import com.broadwave.toppos.Manager.ManagerService.TagNoticeService;
-import com.broadwave.toppos.Manager.TagNotice.TagNoticeListDto;
-import com.broadwave.toppos.Manager.TagNotice.TagNoticeRepositoryCustom;
 import com.broadwave.toppos.User.Addprocess.AddprocessDtos.AddprocessDto;
 import com.broadwave.toppos.User.Addprocess.AddprocessSet;
 import com.broadwave.toppos.User.Customer.Customer;
@@ -44,7 +42,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -86,7 +83,6 @@ public class UserRestController {
     private final UncollectService uncollectService; // 미수관리 서비스
     private final BusinessdayService businessdayService; // 일일영업일보 서비스
     private final TagNoticeService tagNoticeService; // 택분실게시판 서비스
-    private final TagNoticeRepositoryCustom tagNoticeRepositoryCustom;
     private final ModelMapper modelMapper;
     private final TokenProvider tokenProvider;
     private final HeadService headService;
@@ -95,8 +91,7 @@ public class UserRestController {
     @Autowired
     public UserRestController(AWSS3Service awss3Service, UserService userService, ReceiptService receiptService, SortService sortService, InfoService infoService, InspectService inspectService,
                               TokenProvider tokenProvider, ModelMapper modelMapper, HeadService headService, CalendarService calendarService, ReceiptStateService receiptStateService,
-                              UncollectService uncollectService, BusinessdayService businessdayService, TagNoticeService tagNoticeService,
-                              TagNoticeRepositoryCustom tagNoticeRepositoryCustom) {
+                              UncollectService uncollectService, BusinessdayService businessdayService, TagNoticeService tagNoticeService) {
         this.awss3Service = awss3Service;
         this.userService = userService;
         this.receiptService = receiptService;
@@ -111,7 +106,6 @@ public class UserRestController {
         this.calendarService = calendarService;
         this.businessdayService = businessdayService;
         this.tagNoticeService = tagNoticeService;
-        this.tagNoticeRepositoryCustom = tagNoticeRepositoryCustom;
     }
 
 //@@@@@@@@@@@@@@@@@@@@@ 가맹점 메인화면 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -937,14 +931,14 @@ public class UserRestController {
                                                             Pageable pageable, HttpServletRequest request) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
         LocalDateTime fromDt = null;
-        if(filterFromDt != null){
+        if(!filterFromDt.equals("")){
             filterFromDt = filterFromDt+" 00:00:00.000";
             fromDt = LocalDateTime.parse(filterFromDt, formatter);
 //            log.info("fromDt :"+fromDt);
         }
 
         LocalDateTime toDt = null;
-        if(filterToDt != null){
+        if(!filterToDt.equals("")){
             filterToDt = filterToDt+" 23:59:59.999";
             toDt = LocalDateTime.parse(filterToDt, formatter);
 //            log.info("toDt :"+toDt);
@@ -956,9 +950,20 @@ public class UserRestController {
     //  택분실게시판 - 글보기
     @GetMapping("/lostNoticeView")
     public ResponseEntity<Map<String,Object>> lostNoticeView(@RequestParam("htId") Long htId, HttpServletRequest request) {
-        return tagNoticeService.findByTagNoticeView(htId, request, "2");
+        return tagNoticeService.lostNoticeView(htId, request, "2");
     }
 
+    //  택분실게시판 - 댓글 리스트 호출
+    @GetMapping("/lostNoticeCommentList")
+    public ResponseEntity<Map<String,Object>> lostNoticeCommentList(@RequestParam("htId") Long htId, HttpServletRequest request) {
+        return tagNoticeService.lostNoticeCommentList(htId, request);
+    }
+
+//    //  택분실게시판 - 댓글 작성 and 수정
+//    @PostMapping("/lostNoticeCommentSave")
+//    public ResponseEntity<Map<String,Object>> lostNoticeCommentSave(@RequestParam("htId") Long htId, HttpServletRequest request) {
+//        return tagNoticeService.lostNoticeCommentSave(htId, request, "2");
+//    }
 
 
 
