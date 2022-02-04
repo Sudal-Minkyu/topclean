@@ -21,13 +21,16 @@ const dtos = {
     },
     receive: {
         덧글리스트불러오기: { // insertDt 가 빠른 순서대로 불러온다.
-            id: "", // 덧글의 id
-            name: "", // 덧글 작성자 이름
-            modifyDt: "", // 덧글의 수정시간(없을 경우 등록시간)
-            comment: "", // 덧글 내용
-            type: "", // 덧글 타입
-            preId: "", // 덧글의 덧글일 경우 원댓글의 아이디
-            isWriter: "", // 해당 덧글이 로그인한 사용자의 덧글인지에 대한 유무 정보
+            덧글배열 : {
+                id: "", // 덧글의 id
+                name: "", // 덧글 작성자 이름
+                modifyDt: "", // 덧글의 수정시간(없을 경우 등록시간)
+                comment: "", // 덧글 내용
+                type: "", // 덧글 타입
+                preId: "", // 덧글의 덧글일 경우 원댓글의 아이디
+                insertId: "", // 작서한 사용자의 아이디 번호
+            },
+            loginId: "", // 로그인한 사용자의 아이디 번호
         },
     }
 };
@@ -43,7 +46,6 @@ const urls = {
 const comms = {
     getReplyList(condition) {
         console.log(condition);
-        
     },
 
     addNewReply(data) {
@@ -76,7 +78,7 @@ const trigs = {
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
 const wares = {
     url: window.location.href,
-    id: 0, // 글의 아이디
+    id: "", // 글의 아이디
     params: "",
 }
 
@@ -133,7 +135,7 @@ function getParams() {
     if(wares.params.has("id")) {
         wares.id = wares.params.get("id");
     } else {
-        wares.id = "1";
+        wares.id = "";
     }
 }
 
@@ -153,7 +155,7 @@ function onShowVKeyboard(num) {
     vkeyProp[0] = {
         title: "덧글 입력",
     };
-
+    
     vkey.showKeyboard(vkeyTargetId[num], vkeyProp[num]);
 }
 

@@ -5,21 +5,29 @@
 * */
 const dtos = {
     send: {
-                
+        lostNoticeView: {
+            hcId: "n",
+        }
     },
     receive: {
+        lostNoticeView: {
 
+        }
     }
 };
 
 /* 통신에 사용되는 url들 기입 */
 const urls = {
-    
+    getData: "/api/user/lostNoticeView",
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
-    
+    getData(condition) {
+        CommonUI.ajax(urls.getData, "PARAM", condition, function (res) {
+            console.log(res);
+        });
+    },
 };
 
 /* 이벤트를 s : 설정하거나 r : 해지하는 함수들을 담는다. 그리드 관련 이벤트는 grids.e에 위치 (trigger) */
@@ -34,7 +42,9 @@ const trigs = {
 
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
 const wares = {
-
+    url: window.location.href,
+    id: "", // 글의 아이디
+    params: "",
 }
 
 $(function() { // 페이지가 로드되고 나서 실행
@@ -43,5 +53,15 @@ $(function() { // 페이지가 로드되고 나서 실행
 
 /* 페이지가 로드되고 나서 실행 될 코드들을 담는다. */
 function onPageLoad() {
-    
+    getParams();
+    comms.getData({hcId: wares.id});
+}
+
+function getParams() {
+    wares.params = new URL(wares.url).searchParams;
+    if(wares.params.has("id")) {
+        wares.id = wares.params.get("id");
+    } else {
+        wares.id = "";
+    }
 }
