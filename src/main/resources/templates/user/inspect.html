@@ -7,13 +7,25 @@
 <!-- 사용자 CSS 추가 -->
 <th:block layout:fragment="css">
 	<style>
-		
+		.yesBlue {
+			color: #0082F0;
+			font-weight: bold;
+		}
+
+		.noRed {
+			color: #DD5257;
+			font-weight: bold;
+		}
 	</style>
+	<!-- lightbox 추가 -->
+    <link rel="stylesheet" href="/assets/js/lightbox2/css/lightbox.min.css" />
 </th:block>
 
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
 	<script src="/assets/js/toppos/user/inspect.js"></script>
+    <!-- lightbox 추가 -->
+    <script src="/assets/js/lightbox2/js/lightbox.js"></script>
 </th:block>
 
 <div layout:fragment="content" class="content">
@@ -123,6 +135,7 @@
 	<div class="pop" id="messagePop">
 		<div class="pop__box">
 			<div class="pop__article">
+				<h3 class="pop__article-header">메시지 보내기</h3>
 				<div class="pop__aricle-content">
 				<!-- 그리드 -->
 					<div id="grid_msgPop" style="height: 240px;"></div>
@@ -138,7 +151,7 @@
 								<div class="pop__article-haedconsole">
 									<div class="c-checkbox">
 										<input type="checkbox" id="isIncludeImg" />
-										<label for="isIncludeImg">하단에 사진 링크 포함</label>
+										<label id="isIncludeImgLabel" for="isIncludeImg">하단에 사진 링크 포함</label>
 									</div>
 								</div>
 							</div>
@@ -148,7 +161,10 @@
 							</div>
 						</div>
 						<div class="pop__message-img">
-							<img id="imgInspect" src="/assets/images/dummy/cam.png" alt="" />
+							<a href="" id="imgFull" class="photo__img" data-lightbox="images" data-title="임의테스트"
+								style="display: none;">
+								<img id="imgThumb" src="" alt="" />
+							</a>
 						</div>
 					</div>
 				</div>
