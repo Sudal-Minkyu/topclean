@@ -931,10 +931,26 @@ public class UserRestController {
 //  택분실게시판 - 리스트호출 테이블
     @PostMapping("/lostNoticeList")
     public ResponseEntity<Map<String,Object>> lostNoticeList(
-                                                            @RequestParam("searchType")String searchType,
                                                             @RequestParam("searchString")String searchString,
+                                                            @RequestParam("filterFromDt")String filterFromDt,
+                                                            @RequestParam("filterToDt")String filterToDt,
                                                             Pageable pageable, HttpServletRequest request) {
-        return tagNoticeService.lostNoticeList(searchType, searchString, pageable, request, "2");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
+        LocalDateTime fromDt = null;
+        if(filterFromDt != null){
+            filterFromDt = filterFromDt+" 00:00:00.000";
+            fromDt = LocalDateTime.parse(filterFromDt, formatter);
+//            log.info("fromDt :"+fromDt);
+        }
+
+        LocalDateTime toDt = null;
+        if(filterToDt != null){
+            filterToDt = filterToDt+" 23:59:59.999";
+            toDt = LocalDateTime.parse(filterToDt, formatter);
+//            log.info("toDt :"+toDt);
+        }
+
+        return tagNoticeService.lostNoticeList(searchString, fromDt, toDt, pageable, request, "2");
     }
 
     //  택분실게시판 - 글보기

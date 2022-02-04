@@ -45,7 +45,7 @@ public class TagNoticeService {
     }
 
     //  택분실게시판 - 리스트호출 테이블
-    public ResponseEntity<Map<String, Object>> lostNoticeList(String searchType, String searchString, Pageable pageable, HttpServletRequest request, String type) {
+    public ResponseEntity<Map<String, Object>> lostNoticeList(String searchString, LocalDateTime filterFromDt, LocalDateTime filterToDt, Pageable pageable, HttpServletRequest request, String type) {
         log.info("lostNoticeList 호출성공");
 
         AjaxResponse res = new AjaxResponse();
@@ -64,9 +64,10 @@ public class TagNoticeService {
         }
 
         // 검색조건
-        log.info("searchType : "+searchType);
         log.info("searchString : "+searchString);
-        Page<TagNoticeListDto> tagNoticeListDtoPage = tagNoticeRepositoryCustom.findByTagNoticeList(searchType, searchString, frbrCode, pageable);
+        log.info("filterFromDt : "+filterFromDt);
+        log.info("filterToDt : "+filterToDt);
+        Page<TagNoticeListDto> tagNoticeListDtoPage = tagNoticeRepositoryCustom.findByTagNoticeList(searchString, filterFromDt, filterToDt, frbrCode, pageable);
 
         return ResponseEntity.ok(res.ResponseEntityPage(tagNoticeListDtoPage,type));
     }

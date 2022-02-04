@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -53,9 +54,20 @@ public class ManagerRestController {
 //@@@@@@@@@@@@@@@@@@@@@ 택분실게시판 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     //  택분실게시판 - 리스트호출 테이블
     @PostMapping("/lostNoticeList")
-    public ResponseEntity<Map<String,Object>> lostNoticeList(@RequestParam("searchType")String searchType, @RequestParam("searchString")String searchString,
+    public ResponseEntity<Map<String,Object>> lostNoticeList(@RequestParam("searchString")String searchString, @RequestParam("filterFromDt")String filterFromDt,
+                                                             @RequestParam("filterToDt")String filterToDt,
                                                              Pageable pageable, HttpServletRequest request) {
-        return tagNoticeService.lostNoticeList(searchType, searchString, pageable, request, "1");
+        LocalDateTime fromDt = null;
+        if(filterFromDt != null){
+
+        }
+
+        LocalDateTime toDt = null;
+        if(filterToDt != null){
+
+        }
+
+        return tagNoticeService.lostNoticeList(searchString, fromDt, toDt, pageable, request, "1");
     }
 
 

@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -31,7 +32,7 @@ public class TagNoticeRepositoryCustomImpl extends QuerydslRepositorySupport imp
 
     // 게시물 리스트 데이터호출
     @Override
-    public Page<TagNoticeListDto> findByTagNoticeList(String searchType, String searchString, String frbrCode, Pageable pageable) {
+    public Page<TagNoticeListDto> findByTagNoticeList(String searchString, LocalDateTime filterFromDt, LocalDateTime filterToDt, String frbrCode, Pageable pageable) {
         QTagNotice tagNotice  = QTagNotice.tagNotice;
 
         JPQLQuery<TagNoticeListDto> query = from(tagNotice)
@@ -45,22 +46,17 @@ public class TagNoticeRepositoryCustomImpl extends QuerydslRepositorySupport imp
         query.orderBy(tagNotice.htId.desc());
         tagNotice.brCode.eq(frbrCode);
 
-//        if(searchString != null){
-//            switch (searchType) {
-//                case "0":
-//                    query.where(tagNotice.htSubject.containsIgnoreCase(searchString).or(tagNotice.insert_id.containsIgnoreCase(searchString).or(tagNotice.bcAddress.containsIgnoreCase(searchString))));
-//                    break;
-//                case "1":
-//                    query.where(customer.bcName.containsIgnoreCase(searchString));
-//                    break;
-//                case "2":
-//                    query.where(customer.bcHp.containsIgnoreCase(searchString));
-//                    break;
-//                default:
-//                    query.where(customer.bcAddress.containsIgnoreCase(searchString));
-//                    break;
-//            }
-//        }
+        if(searchString != null){
+            query.where(tagNotice.htSubject.containsIgnoreCase(searchString));
+        }
+
+        if(filterFromDt != null){
+            query.where(tagNotice.insertDateTime.goe(filterFromDt));
+        }
+
+        if(filterToDt != null){
+            query.where(tagNotice.insertDateTime.loe(filterToDt));
+        }
 
         final List<TagNoticeListDto> performanceListDtos = Objects.requireNonNull(getQuerydsl()).applyPagination(pageable, query).fetch();
         return new PageImpl<>(performanceListDtos, pageable, query.fetchCount());
