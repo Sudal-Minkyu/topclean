@@ -5,7 +5,7 @@
 * */
 const dtos = {
     send: {
-        메시지보내기: {
+        franchiseInspectionMessageSend: {
             fiId: "nr",
             isIncludeImg: "s",
             fmMessage: "s",
@@ -97,6 +97,7 @@ const urls = {
     searchCustomer: "/api/user/customerInfo", // 고객 검색
     getDetailList: "/api/user/inspectList", // 검품이 있는 리스트 필터링하여 가져오기
     getInspectionList: "/api/user/franchiseInspectionList", // 메시지 팝업이 뜰 때 선택한 아이템에 대해서 검품내역 세팅하기
+    sendKakaoMessage: "/api/user/franchiseInspectionMessageSend",
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
@@ -146,6 +147,14 @@ const comms = {
 
     sendKakaoMessage(data) {
         console.log(data);
+        dv.chk(data, dtos.send.franchiseInspectionMessageSend, "검품 카카오 메시지 보내기");
+        CommonUI.ajax(urls.sendKakaoMessage, "PARAM", data, function (res) {
+            const searchCondition = {
+                fdId: wares.selectedInspect.fdId,
+                type: "2"
+            }
+            comms.getInspectionList(searchCondition);
+        });
     }
 };
 
@@ -392,6 +401,10 @@ const grids = {
         getSelectedCustomer() {
             return AUIGrid.getSelectedRows(grids.s.id[1])[0];
         },
+
+        getSelectedInspection() {
+            return AUIGrid.getSelectedRows(grids.s.id[2])[0];
+        }
     },
 
     t: {
@@ -461,17 +474,23 @@ const trigs = {
                 }
             });
 
-            $("#sendKakaoMsg").on("click", function() {
-                const data = {
-                    isIncludeImg: "N",
-                    fmMessage: $("#messageField").val(),
-                    fiId: wares.selectedInspect.fiId,
+            $("#sendKakaoMsg").on("click", function(e) {
+                const selectedInspect = grids.f.getSelectedInspection();
+                wares.selectedInspect = selectedInspect;
+                if(wares.selectedInspect) {
+                    const data = {
+                        isIncludeImg: "N",
+                        fmMessage: $("#messageField").val(),
+                        fiId: wares.selectedInspect.fiId,
+                    }
+                    if(wares.selectedInspect.fiPhotoYn === "Y") {
+                        data.isIncludeImg = $("#isIncludeImg").is(":checked") ? "Y" : "N";
+                    }
+                    $("#messageField").val("");
+                    comms.sendKakaoMessage(data);
+                } else {
+                    alertCaution("메시지를 보낼 검품내역을 선택해 주세요.", 1);
                 }
-                if(wares.selectedInspect.fiPhotoYn === "Y") {
-                    data.isIncludeImg = $("#isIncludeImg").is(":checked") ? "Y" : "N";
-                }
-                $("#messageField").val("");
-                comms.sendKakaoMessage(data);
             });
 
         },

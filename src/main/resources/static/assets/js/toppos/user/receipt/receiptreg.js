@@ -21,18 +21,18 @@ const dtos = {
                 changeAmount: "n", // frDiscountAmount
                 totalAmount: "n", // frTotalAmount
                 paymentAmount: "n", // frPayAmount
-                estimateDt: "s", // fdEstimateDt
                 preUncollectAmount: "n", // 고객 전일미수금
                 curUncollectAmount: "n", // 고객 당일미수금
                 uncollectPayAmount: "n", // 미수금 상환액
                 totalUncollectAmount: "n", // 총미수금
-                items: { // 디테일 품목들의 배열
-                    tagno: "s",
-                    color: "s", // 남색
-                    itemname: "s", // 롱 오리털 코트
-                    specialyn: "s", // Y
-                    price: "n", 
-                }
+            },
+            items: { // 디테일 품목들의 배열
+                tagno: "s",
+                color: "s", // 남색
+                itemname: "s", // 롱 오리털 코트
+                specialyn: "s", // Y
+                price: "n",
+				estimateDt: "s", // fdEstimateDt
             },
             creditData: { // 결제한 내역들의 배열, 적립금이나 현금은 금액과 타입만 오면 됨
                 type: "sr", // fpType 기준 01: cash, 02: card, 03: save 
