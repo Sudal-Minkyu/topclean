@@ -28,4 +28,6 @@ public interface RequestRepositoryCustom {
 
     List<RequestBusinessdayListDto> findByBusinessDayList(String frCode, String filterFromDt, String filterToDt);
     List<RequestBusinessdayCustomerListDto> findByBusinessDayCustomerList(String frCode, String filterFromDt, String filterToDt); // 영업일보 통계 리스트-4 querydsl
+
+    RequestPaymentPaperDto findByRequestPaymentPaper(String frNo, Long frId, String frCode);
 }

@@ -642,5 +642,33 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         return query.fetch();
     }
 
+    // 영수증출력
+    public List<RequestDetailPaymentPaper> findByRequestDetailPaymentPaper(String frNo){
+        QRequestDetail requestDetail = QRequestDetail.requestDetail;
+
+        QItemGroup itemGroup = QItemGroup.itemGroup;
+        QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
+        QItem item = QItem.item;
+
+        JPQLQuery<RequestDetailPaymentPaper> query = from(requestDetail)
+                .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
+                .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
+                .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
+                .select(Projections.constructor(RequestDetailPaymentPaper.class,
+                        requestDetail.fdTag,
+                        requestDetail.fdColor,
+                        itemGroup.bgName,
+                        itemGroupS.bsName,
+                        item.biName,
+                        requestDetail.fdSpecialYn,
+                        requestDetail.fdTotAmt,
+                        requestDetail.fdEstimateDt
+                ));
+
+        query.where(requestDetail.frNo.eq(frNo));
+
+        return query.fetch();
+    }
+
 }
 

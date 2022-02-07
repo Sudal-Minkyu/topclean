@@ -637,6 +637,12 @@ public class UserRestController {
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
+    // 접수페이지 영수증 출력 API
+    @GetMapping("requestPaymentPaper")
+    public ResponseEntity<Map<String,Object>> requestPaymentPaper(HttpServletRequest request, @RequestParam(value="frNo", defaultValue="") String frNo, @RequestParam(value="frId", defaultValue="") Long frId){
+        return receiptService.requestPaymentPaper(request, frNo, frId);
+    }
+
 
 
     //@@@@@@@@@@@@@@@@@@@@@ 가맹점 대분류, 상품 정렬관련 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

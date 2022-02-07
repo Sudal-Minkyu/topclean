@@ -6,6 +6,8 @@ import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.Manager.Calendar.BranchCalendarRepositoryCustom;
 import com.broadwave.toppos.User.Customer.Customer;
 import com.broadwave.toppos.User.Customer.CustomerRepository;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentDtos.PaymentPaperDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.RequestDetailPaymentPaper;
 import com.broadwave.toppos.User.UserDtos.EtcDataDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.*;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.*;
@@ -63,6 +65,7 @@ public class ReceiptService {
     private final RequestRepository requestRepository;
     private final RequestDetailRepository requestDetailRepository;
     private final PaymentRepository paymentRepository;
+    private final PaymentRepositoryCustom paymentRepositoryCustom;
     private final SaveMoneyRepository saveMoneyRepository;
     private final PhotoRepository photoRepository;
 
@@ -79,7 +82,7 @@ public class ReceiptService {
     public ReceiptService(UserService userService, KeyGenerateService keyGenerateService, TokenProvider tokenProvider, ModelMapper modelMapper,
                           RequestRepository requestRepository, RequestDetailRepository requestDetailRepository, PaymentRepository paymentRepository, SaveMoneyRepository saveMoneyRepository, PhotoRepository photoRepository,
                           RequestRepositoryCustom requestRepositoryCustom, RequestDetailRepositoryCustom requestDetailRepositoryCustom, SaveMoneyRepositoryCustom saveMoneyRepositoryCustom, PhotoRepositoryCustom photoRepositoryCustom,
-                          HeadService headService, CustomerRepository customerRepository,BranchCalendarRepositoryCustom branchCalendarRepositoryCustom){
+                          HeadService headService, CustomerRepository customerRepository, BranchCalendarRepositoryCustom branchCalendarRepositoryCustom, PaymentRepositoryCustom paymentRepositoryCustom){
         this.userService = userService;
         this.headService = headService;
         this.requestRepository = requestRepository;
@@ -91,6 +94,7 @@ public class ReceiptService {
         this.customerRepository = customerRepository;
         this.saveMoneyRepository = saveMoneyRepository;
         this.branchCalendarRepositoryCustom = branchCalendarRepositoryCustom;
+        this.paymentRepositoryCustom = paymentRepositoryCustom;
         this.photoRepositoryCustom = photoRepositoryCustom;
         this.keyGenerateService = keyGenerateService;
         this.requestRepositoryCustom = requestRepositoryCustom;
@@ -786,6 +790,119 @@ public class ReceiptService {
     // 상품세부의 파일리스트 호출
     public List<PhotoDto> findByPhotoDto(Long id) {
         return photoRepositoryCustom.findByPhotoDtoList(id);
+    }
+
+    // 접수페이지 영수증 출력 API
+    public ResponseEntity<Map<String, Object>> requestPaymentPaper(HttpServletRequest request, String frNo, Long frId) {
+        log.info("requestPaymentPaper 호출");
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
+        log.info("현재 접속한 가맹점 코드 : "+frCode);
+
+        RequestPaymentPaperDto requestPaymentPaperDto = requestRepositoryCustom.findByRequestPaymentPaper(frNo, frId, frCode);
+        HashMap<String,Object> paymentData;
+
+        List<HashMap<String,Object>> requestDetailPaymentListData = new ArrayList<>();
+        HashMap<String,Object> requestDetailPaymentInfo;
+
+        List<HashMap<String,Object>> paymentListData = new ArrayList<>();
+        HashMap<String,Object> paymentInfo;
+
+        if(requestPaymentPaperDto != null){
+
+            paymentData = new HashMap<>();
+            paymentData.put("franchiseNo", requestPaymentPaperDto.getFrCode());
+            paymentData.put("franchiseName", requestPaymentPaperDto.getFrName());
+            paymentData.put("businessNo", requestPaymentPaperDto.getFrBusinessNo());
+            paymentData.put("repreName", requestPaymentPaperDto.getFrRpreName());
+            paymentData.put("franchiseTel", requestPaymentPaperDto.getFrTelNo());
+            paymentData.put("customerName", requestPaymentPaperDto.getCustomer().getBcName());
+            paymentData.put("customerTel", requestPaymentPaperDto.getCustomer().getBcHp());
+            paymentData.put("requestDt", requestPaymentPaperDto.getFrYyyymmdd());
+            paymentData.put("normalAmount", requestPaymentPaperDto.getFrNormalAmount());
+            paymentData.put("changeAmount", requestPaymentPaperDto.getFrDiscountAmount());
+            paymentData.put("paymentAmount", requestPaymentPaperDto.getFrPayAmount());
+
+//                    preUncollectAmount: "n", // 고객 전일미수금
+//                    curUncollectAmount: "n", // 고객 당일미수금
+//                    uncollectPayAmount: "n", // 미수금 상환액
+//                    totalUncollectAmount: "n", // 총미수금
+            List<RequestCollectDto>  requestCollectDtoList = findByRequestCollectList(requestPaymentPaperDto.getCustomer(), null);
+            List<Integer> uncollectMoneyList = findByBeforeAndTodayUnCollect(requestCollectDtoList, nowDate);
+            int preUncollectAmount;
+            int curUncollectAmount;
+            if(requestCollectDtoList.size() != 0){
+                preUncollectAmount = uncollectMoneyList.get(0);
+                curUncollectAmount = uncollectMoneyList.get(1);
+                paymentData.put("preUncollectAmount",preUncollectAmount);
+                paymentData.put("curUncollectAmount",curUncollectAmount);
+            }else{
+                preUncollectAmount = 0;
+                curUncollectAmount = 0;
+                paymentData.put("preUncollectAmount",preUncollectAmount);
+                paymentData.put("curUncollectAmount",curUncollectAmount);
+            }
+            log.info("전일 미수금액 : "+ preUncollectAmount);
+            log.info("당일 미수금액 : "+ curUncollectAmount);
+
+
+//            paymentData.put("preUncollectAmount", customerUncollectListDto.getBcId());
+//            paymentData.put("curUncollectAmount", customerUncollectListDto.getBcName());
+//            paymentData.put("uncollectPayAmount", customerUncollectListDto.getBcHp());
+//            paymentData.put("totalUncollectAmount", customerUncollectListDto.getBcAddress());
+
+            List<RequestDetailPaymentPaper> requestDetailPaymentPapers = requestDetailRepositoryCustom.findByRequestDetailPaymentPaper(requestPaymentPaperDto.getFrNo());
+            for(RequestDetailPaymentPaper requestDetailPaymentPaper : requestDetailPaymentPapers){
+                requestDetailPaymentInfo = new HashMap<>();
+                requestDetailPaymentInfo.put("tagno", requestDetailPaymentPaper.getFdTag());
+                requestDetailPaymentInfo.put("color", requestDetailPaymentPaper.getFdColor());
+                requestDetailPaymentInfo.put("itemname", requestDetailPaymentPaper.getItemName());
+                requestDetailPaymentInfo.put("specialyn", requestDetailPaymentPaper.getFdSpecialYn());
+                requestDetailPaymentInfo.put("price", requestDetailPaymentPaper.getFdTotAmt());
+                requestDetailPaymentInfo.put("estimateDt", requestDetailPaymentPaper.getFdEstimateDt());
+                requestDetailPaymentListData.add(requestDetailPaymentInfo);
+            }
+
+            int fpCollectAmt = 0;
+            List<PaymentPaperDto> paymentPaperDtos = paymentRepositoryCustom.findByPaymentPaper(requestPaymentPaperDto.getFrNo());
+            for(PaymentPaperDto paymentPaperDto : paymentPaperDtos){
+                paymentInfo = new HashMap<>();
+                if(paymentPaperDto.getFpType().equals("02")){
+                    paymentInfo.put("type", paymentPaperDto.getFpType());
+                    paymentInfo.put("cardNo", paymentPaperDto.getFpCatCardno());
+                    paymentInfo.put("cardName", paymentPaperDto.getFpCatIssuername());
+                    paymentInfo.put("approvalTime", paymentPaperDto.getFpCatApprovaltime());
+                    paymentInfo.put("approvalNo", paymentPaperDto.getFpCatApprovalno());
+                    paymentInfo.put("month", paymentPaperDto.getFpMonth());
+                    paymentInfo.put("payAmount", paymentPaperDto.getFpAmt());
+                }else{
+                    paymentInfo.put("type", paymentPaperDto.getFpType());
+                    paymentInfo.put("payAmount", paymentPaperDto.getFpAmt());
+                }
+
+                fpCollectAmt = fpCollectAmt+ paymentPaperDto.getFpCollectAmt();
+
+                paymentListData.add(paymentInfo);
+            }
+
+
+            paymentData.put("uncollectPayAmount",fpCollectAmt);
+            paymentData.put("totalUncollectAmount",preUncollectAmount+curUncollectAmount-fpCollectAmt);
+
+            data.put("paymentData",paymentData);
+            data.put("items",requestDetailPaymentListData);
+            data.put("creditData",paymentListData);
+        }else{
+            return ResponseEntity.ok(res.fail("메세지", "존재하지 않은 접수이력입니다.", "문자", "관리자에게 문의해주세요."));
+        }
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+
     }
 
 }

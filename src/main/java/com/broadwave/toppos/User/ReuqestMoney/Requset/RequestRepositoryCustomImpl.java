@@ -1,5 +1,6 @@
 package com.broadwave.toppos.User.ReuqestMoney.Requset;
 
+import com.broadwave.toppos.Head.Franohise.QFranchise;
 import com.broadwave.toppos.Head.Item.Group.A.QItemGroup;
 import com.broadwave.toppos.Head.Item.Group.B.QItemGroupS;
 import com.broadwave.toppos.Head.Item.Group.C.QItem;
@@ -14,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -299,6 +299,43 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
         query.where(request.frCode.eq(frCode).and(request.frConfirmYn.eq("Y")));
 
         return query.fetch();
+    }
+
+    // 영수증 출력 가맹점정보 데이터 호출
+    @Override
+    public RequestPaymentPaperDto findByRequestPaymentPaper(String frNo, Long frId, String frCode) {
+
+        QRequest request = QRequest.request;
+        QCustomer customer = QCustomer.customer;
+        QFranchise franchise = QFranchise.franchise;
+
+        JPQLQuery<RequestPaymentPaperDto> query =
+                from(request)
+                        .innerJoin(customer).on(customer.eq(request.bcId))
+                        .innerJoin(franchise).on(franchise.frCode.eq(request.frCode))
+                        .select(Projections.constructor(RequestPaymentPaperDto.class,
+                                request.frNo,
+
+                                franchise.frCode,
+                                franchise.frName,
+                                franchise.frBusinessNo,
+                                franchise.frRpreName,
+                                franchise.frTelNo,
+
+                                customer,
+
+                                request.frYyyymmdd,
+                                request.frNormalAmount,
+                                request.frDiscountAmount,
+                                request.frTotalAmount,
+                                request.frPayAmount
+                        ));
+
+        query.where(request.frNo.eq(frNo).or(request.id.eq(frId)));
+
+        query.where(request.frCode.eq(frCode));
+
+        return query.fetchOne();
     }
 
 }

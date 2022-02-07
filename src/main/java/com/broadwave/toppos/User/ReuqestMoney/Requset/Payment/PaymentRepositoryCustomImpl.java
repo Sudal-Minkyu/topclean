@@ -4,6 +4,7 @@ import com.broadwave.toppos.Head.Franohise.QFranchise;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentDtos.PaymentBusinessdayListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentDtos.PaymentCencelDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentDtos.PaymentCencelYnDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentDtos.PaymentPaperDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.QRequest;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.CaseBuilder;
@@ -12,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -108,6 +108,29 @@ public class PaymentRepositoryCustomImpl extends QuerydslRepositorySupport imple
 
         // 기본조건문
         query.where(request.frCode.eq(frCode).and(request.frConfirmYn.eq("Y")));
+
+        return query.fetch();
+    }
+
+    @Override
+    public  List<PaymentPaperDto> findByPaymentPaper(String frNo) {
+        QPayment payment = QPayment.payment;
+
+        JPQLQuery<PaymentPaperDto> query = from(payment)
+                .where(payment.frId.frNo.eq(frNo).and(payment.fpCancelYn.eq("N")))
+
+                .select(Projections.constructor(PaymentPaperDto.class,
+                        payment.fpType,
+                        payment.fpCatCardno,
+                        payment.fpCatIssuername,
+                        payment.fpCatApprovaltime,
+                        payment.fpCatApprovalno,
+                        payment.fpMonth,
+                        payment.fpAmt,
+                        payment.fpCollectAmt
+                ));
+
+        query.orderBy(payment.id.desc());
 
         return query.fetch();
     }

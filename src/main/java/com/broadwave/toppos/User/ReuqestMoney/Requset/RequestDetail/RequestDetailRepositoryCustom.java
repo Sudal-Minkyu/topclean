@@ -27,4 +27,6 @@ public interface RequestDetailRepositoryCustom {
     List<RequestDetailBusinessdayListDto> findByRequestDetailBusinessdayList(String frCode, String filterFromDt, String filterToDt); // 재세탁, 부착물 카운트
     List<RequestDetailBusinessdayDeliveryDto> findByRequestDetailBusinessdayDeliveryList(String frCode, String filterFromDt, String filterToDt); // 영업일보 통계 총 출고 sum querydsl
 
+    List<RequestDetailPaymentPaper> findByRequestDetailPaymentPaper(String frNo); // 영수증출력
+
 }

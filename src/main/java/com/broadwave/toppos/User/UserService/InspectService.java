@@ -654,7 +654,15 @@ public class InspectService {
         messageHistory.setFmType("01");
         if(fiId != null){
             Optional<Inspeot> optionalInspeot = inspeotRepository.findById(fiId);
-            optionalInspeot.ifPresent(messageHistory::setFiId);
+            if(optionalInspeot.isPresent()){
+                optionalInspeot.get().setFiSendMsgYn("Y");
+                optionalInspeot.get().setFiMessage(fmMessage);
+                optionalInspeot.get().setFiMessageSendDt(LocalDateTime.now());
+                optionalInspeot.get().setModify_id(login_id);
+                optionalInspeot.get().setModify_date(LocalDateTime.now());
+                optionalInspeot.ifPresent(messageHistory::setFiId);
+                inspeotRepository.save(optionalInspeot.get());
+            }
         }
         messageHistory.setFrCode(frCode);
         messageHistory.setBrCode(frbrCode);
@@ -663,6 +671,9 @@ public class InspectService {
         messageHistory.setInsert_id(login_id);
         messageHistory.setInsertDateTime(LocalDateTime.now());
         messageHistoryRepository.save(messageHistory);
+
+
+
         return ResponseEntity.ok(res.success());
     }
 
