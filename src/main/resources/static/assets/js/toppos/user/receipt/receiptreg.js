@@ -1904,3 +1904,16 @@ function setReceiveAmtToTotalAmt() {
     $("#receiveCash").html(totalAmt);
     $("#receiveCard").html(totalAmt);
 }
+
+function onPrintReceipt() {
+    const condition = {
+        frNo: initialData.etcData.frNo,
+        frId: "",
+    }
+
+    console.log(condition);
+    const url = "/api/user/requestPaymentPaper";
+    CommonUI.ajax(url, "GET", condition, function (res) {
+        console.log(res);
+    });
+}

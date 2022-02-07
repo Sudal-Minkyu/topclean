@@ -1010,6 +1010,7 @@ class VKeyboard {
         switch(this.keypadProp.midprocess) {
             case "default":
                 value = parseInt(value).toLocaleString();
+                if(isNaN(value)) value = 0;
                 break;
             case "none":
                 break;
