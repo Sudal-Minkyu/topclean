@@ -161,4 +161,16 @@ public class UserController {
     public String taglostreply() {
         return "user/board/taglostreply";
     }
+
+    //공지사항
+    @RequestMapping("noticelist")
+    public String noticelist() {
+        return "user/board/noticelist";
+    }
+
+    @RequestMapping("noticeview")
+    public String noticeview() {
+        return "user/board/noticeview";
+    }
+
 }
