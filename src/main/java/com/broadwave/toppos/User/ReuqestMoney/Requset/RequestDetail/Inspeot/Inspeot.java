@@ -58,7 +58,7 @@ public class Inspeot {
     @Column(name="fi_progress_state_dt")
     private LocalDateTime fiProgressStateDt; // 고객진행여부 변경상태
 
-    @Column(name="fi_message")
+    @Column(length = 100000, name="fi_message")
     private String fiMessage; // 고객 전송메세지
 
     @Column(name="fi_message_send_dt")
