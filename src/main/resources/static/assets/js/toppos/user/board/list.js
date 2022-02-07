@@ -5,21 +5,53 @@
 * */
 const dtos = {
     send: {
-
+        페이지에따른게시판데이터받아오기: {
+            page: "nr",
+            searchString: "s", // 빈 문자일 경우 일반적인 조회
+            filterFromDt: "s", // 검색조건 from 오지 않을경우 시작기간은 전체기간
+            filterToDt: "s", // 검색조건 to 오지 않을 경우 끝기간은 전체기간
+        },
     },
     receive: {
-
+        페이지에따른게시판데이터받아오기: {
+            작성글의리스트: {
+                id: "nr", // 게시판 글 id
+                subject: "s",
+                insertDateTime: "s", // yyyymmdd만
+                insert_id: "s",
+            },
+            페이징필요정보: {
+                totalRowCount: "nr", // 전체 게시물 건수
+            },
+        },
     }
 };
 
 /* 통신에 사용되는 url들 기입 */
 const urls = {
-    
+    taglost: "/api/user/lostNoticeList",
+    notice: "/api/user/noticeList",
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
-    
+    getList() {
+        const condition = {
+            page: wares.page - 1,
+            size: 10,
+            searchString: wares.searchString,
+            filterFromDt: wares.filterFromDt,
+            filterToDt: wares.filterToDt,
+        };
+
+        console.log(condition);
+        CommonUI.ajax(urls[wares.boardType], "PARAM", condition, function (res) {
+            wares.totalPage = res.total_page;
+            createPagingNavigator(wares.page);
+            grids.f.setData(0, res.datalist);
+            console.log(res);
+        });
+    }
 };
 
 /* .s : AUI 그리드 관련 설정들
@@ -31,7 +63,7 @@ const comms = {
 const grids = {
     s: { // 그리드 세팅
         targetDiv: [
-            "noticeList"
+            "grid_list"
         ],
         columnLayout: [],
         prop: [],
@@ -45,17 +77,12 @@ const grids = {
             /* 0번 그리드의 레이아웃 */
             grids.s.columnLayout[0] = [
                 {
-                    dataField: "",
-                    headerText: "카테고리",
-                }, {
-                    dataField: "",
+                    dataField: "subject",
                     headerText: "제목",
                 }, {
-                    dataField: "",
-                    headerText: "작성자",
-                }, {
-                    dataField: "",
+                    dataField: "insertDateTime",
                     headerText: "작성일",
+                    width: 150,
                 },
             ];
 
@@ -64,13 +91,13 @@ const grids = {
             * */
             grids.s.prop[0] = {
                 editable : false,
-                selectionMode : "singleRow",
+                selectionMode : "none",
                 noDataMessage : "출력할 데이터가 없습니다.",
                 showAutoNoDataMessage: false,
                 enableColumnResize : false,
                 showRowNumColumn : false,
-                showStateColumn : true,
-                enableFilter : true,
+                showStateColumn : false,
+                enableFilter : false,
                 rowHeight : 48,
                 headerHeight : 48,
             };
@@ -110,7 +137,9 @@ const grids = {
         basicTrigger() {
             /* 0번그리드 내의 셀 클릭시 이벤트 */
             AUIGrid.bind(grids.s.id[0], "cellClick", function (e) {
-                console.log(e.item); // 이밴트 콜백으로 불러와진 객체의, 클릭한 대상 row 키(파라메터)와 값들을 보여준다.
+                location.href = `./${wares.boardType}view?id=` + e.item[wares[wares.boardType].idKeyName] + "&prevPage=" + wares.page 
+                    + "&prevSearchString=" + wares.searchString + "&prevFilterFromDt=" + wares.filterFromDt
+                    + "&prevFilterToDt=" + wares.filterToDt;
             });
         }
     }
@@ -119,7 +148,21 @@ const grids = {
 /* 이벤트를 s : 설정하거나 r : 해지하는 함수들을 담는다. 그리드 관련 이벤트는 grids.e에 위치 (trigger) */
 const trigs = {
     s: { // 이벤트 설정
+        basicTrigger() {
+            $("#searchBtn").on("click", function () {
+                mainSearch();
+            });
 
+            $("#vkeyboard0").on("click", function () {
+                onShowVKeyboard(0);
+            });
+
+            $("#searchString").on("keypress", function (e) {
+                if(e.originalEvent.code === "Enter") {
+                    mainSearch();
+                }
+            });
+        }
     },
     r: { // 이벤트 해제
 
@@ -128,6 +171,25 @@ const trigs = {
 
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
 const wares = {
+    url: window.location.href,
+    params: "", // url에 내포한 파라메터들을 담는다.
+    rowCount: 0, // 1페이지에서 보여줄 행 수
+    pageButtonCount: 0, // 페이지 네비게이션에서 보여줄 페이지의 수
+    page: 0, // 현재 페이지
+    totalPage: 0, // 전체 페이지
+    searchString: "",
+    filterFromDt: "",
+    filterToDt: "",
+
+    boardType: "",
+    taglost: {
+        title: "택 분실 게시판",
+        idKeyName: "htId",
+    },
+    notice: {
+        title: "공지사항",
+        idKeyName: "hnId",
+    },
 
 }
 
@@ -139,8 +201,147 @@ $(function() { // 페이지가 로드되고 나서 실행
 function onPageLoad() {
     grids.f.initialization();
     grids.f.create();
-    
+    grids.t.basicTrigger();
+    trigs.s.basicTrigger();
+    enableDatepicker();
 
-    /* 생성된 그리드에 기본적으로 필요한 이벤트들을 적용한다. */
-    // grids.t.basicTrigger();
+    getParams();
+    setInputs();
+    comms.getList();
+    createPagingNavigator(wares.page);
+
+    /* 가상키보드의 사용 선언 */
+    window.vkey = new VKeyboard();
+}
+
+function getParams() {
+    const url = new URL(wares.url);
+    const tokenedPath = url.pathname.split("/");
+    const lastUrl = tokenedPath[tokenedPath.length - 1];
+    wares.boardType = lastUrl.substring(0, lastUrl.length - 4);
+    wares.params = url.searchParams;
+
+    if(wares.params.has("page")) {
+        wares.page = wares.params.get("page");
+    } else {
+        wares.page = "1";
+    }
+
+    if(wares.params.has("filterFromDt")) {
+        wares.filterFromDt = wares.params.get("filterFromDt");
+    } else {
+        wares.filterFromDt = $("#filterFromDt").val();
+    }
+
+    if(wares.params.has("filterToDt")) {
+        wares.filterToDt = wares.params.get("filterToDt");
+    } else {
+        wares.filterToDt = $("#filterToDt").val();
+    }
+
+    if(wares.params.has("searchString")) {
+        wares.searchString = wares.params.get("searchString");
+    } else {
+        wares.searchString = "";
+    }
+}
+
+function setInputs() {
+    if(wares.filterFromDt) $("#filterFromDt").val(wares.filterFromDt);
+    if(wares.filterToDt) $("#filterToDt").val(wares.filterToDt);
+    $("#boardTitle").html(wares[wares.boardType].title);
+    $("#boardLink").attr("href", `./${wares.boardType}list`);
+}
+
+/* 페이지내이션 적절한 값 완성후 wares의 데이터를 이용하도록 수정 */
+var rowCount = 20;	// 1페이지에서 보여줄 행 수
+var pageButtonCount = 10;		// 페이지 네비게이션에서 보여줄 페이지의 수
+var page = 1;	// 현재 페이지
+
+// 페이징 네비게이터를 동적 생성합니다.
+function createPagingNavigator(goPage) {
+	var retStr = "";
+	var prevPage = parseInt((goPage - 1)/pageButtonCount) * pageButtonCount;
+	var nextPage = ((parseInt((goPage - 1)/pageButtonCount)) * pageButtonCount) + pageButtonCount + 1;
+
+	prevPage = Math.max(0, prevPage);
+	nextPage = Math.min(nextPage, wares.totalPage);
+	
+	// 처음
+	retStr += "<a href='javascript:moveToPage(1)'><span class='aui-grid-paging-number aui-grid-paging-first'>first</span></a>";
+
+	// 이전
+	retStr += "<a href='javascript:moveToPage(" + Math.max(1, prevPage) + ")'><span class='aui-grid-paging-number aui-grid-paging-prev'>prev</span></a>";
+
+	for (var i=(prevPage+1), len=(pageButtonCount+prevPage); i<=len; i++) {
+		if (goPage == i) {
+			retStr += "<span class='aui-grid-paging-number aui-grid-paging-number-selected'>" + i + "</span>";
+		} else {
+			retStr += "<a href='javascript:moveToPage(" + i + ")'><span class='aui-grid-paging-number'>";
+			retStr += i;
+			retStr += "</span></a>";
+		}
+		
+		if (i >= wares.totalPage) {
+			break;
+		}
+
+	}
+
+	// 다음
+	retStr += "<a href='javascript:moveToPage(" + nextPage + ")'><span class='aui-grid-paging-number aui-grid-paging-next'>next</span></a>";
+
+	// 마지막
+	retStr += "<a href='javascript:moveToPage(" + wares.totalPage + ")'><span class='aui-grid-paging-number aui-grid-paging-last'>last</span></a>";
+
+	document.getElementById("grid_paging").innerHTML = retStr;
+}
+
+function moveToPage(goPage) {
+	var url = `./${wares.boardType}list?page=` + goPage + "&searchString=" + wares.searchString + "&filterFromDt=" + wares.filterFromDt + "&filterToDt=" + wares.filterToDt;
+    location.href = url;
+}
+
+function onShowVKeyboard(num) {
+    /* 가상키보드 사용을 위해 */
+    let vkeyProp = [];
+    const vkeyTargetId = ["searchString"];
+
+    vkeyProp[0] = {
+        title: "검색어 입력",
+        callback: mainSearch,
+    };
+
+    vkey.showKeyboard(vkeyTargetId[num], vkeyProp[num]);
+}
+
+function mainSearch() {
+    wares.searchString = $("#searchString").val();
+    wares.filterFromDt = $("#filterFromDt").val();
+    wares.filterToDt = $("#filterToDt").val();
+    moveToPage(1);
+}
+
+function enableDatepicker() {
+    
+    let fromday = new Date();
+    fromday.setDate(fromday.getDate() - 363);
+    fromday = fromday.format("yyyy-MM-dd");
+    const today = new Date().format("yyyy-MM-dd");
+
+    /* datepicker를 적용시킬 대상들의 dom id들 */
+    const datePickerTargetIds = [
+        "filterFromDt", "filterToDt"
+    ];
+
+
+    $("#" + datePickerTargetIds[0]).val(fromday);
+    $("#" + datePickerTargetIds[1]).val(today);
+
+    const dateAToBTargetIds = [
+        ["filterFromDt", "filterToDt"]
+    ];
+
+    CommonUI.setDatePicker(datePickerTargetIds);
+    CommonUI.restrictDateAToB(dateAToBTargetIds);
 }

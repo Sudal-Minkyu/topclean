@@ -5,27 +5,36 @@
 * */
 const dtos = {
     send: {
-        lostNoticeView: {
+        taglost: {
+            htId: "n",
+        },
+        notice: {
             hnId: "n",
         }
     },
     receive: {
-        lostNoticeView: {
+        taglost: {
 
-        }
+        },
+        notice: {
+
+        },
     }
 };
 
 /* 통신에 사용되는 url들 기입 */
 const urls = {
-    getData: "/api/user/lostNoticeView",
+    taglost: "/api/user/lostNoticeView",
+    notice: "/api/user/noticeView",
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
     getData(condition) {
-        CommonUI.ajax(urls.getData, "GET", condition, function (res) {
-            const data = res.sendData.tagNoticeViewDto;
+        console.log(condition);
+        CommonUI.ajax(urls[wares.boardType], "GET", condition, function (res) {
+            console.log(res);
+            const data = res.sendData[wares[wares.boardType].dataKeyName];
             console.log(data);
             setFields(data);
         });
@@ -45,12 +54,23 @@ const trigs = {
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
 const wares = {
     url: window.location.href,
-    hnId: "", // 글의 아이디
+    id: "", // 글의 아이디
     params: "",
     page: "",
     searchString: "",
     filterFromDt: "",
     filterToDt: "",
+
+    boardType: "", // 아래 게시판 종류의 이름이 담길 곳
+    /* 게시판 종류에 따른 데이터들 */
+    taglost: {
+        idKeyName: "htId",
+        dataKeyName: "tagNoticeViewDto",
+    },
+    notice: {
+        idKeyName: "hnId",
+        dataKeyName: "noticeViewDto",
+    },
 }
 
 $(function() { // 페이지가 로드되고 나서 실행
@@ -60,15 +80,22 @@ $(function() { // 페이지가 로드되고 나서 실행
 /* 페이지가 로드되고 나서 실행 될 코드들을 담는다. */
 function onPageLoad() {
     getParams();
-    comms.getData({hnId: wares.hnId});
+    const condition = {};
+    condition[wares[wares.boardType].idKeyName] = wares.id;
+    comms.getData(condition);
 }
 
 function getParams() {
-    wares.params = new URL(wares.url).searchParams;
-    if(wares.params.has("hnId")) {
-        wares.hnId = wares.params.get("hnId");
+    const url = new URL(wares.url);
+    const tokenedPath = url.pathname.split("/");
+    const lastUrl = tokenedPath[tokenedPath.length - 1];
+    wares.boardType = lastUrl.substring(0, lastUrl.length - 4);
+    wares.params = url.searchParams;
+
+    if(wares.params.has("id")) {
+        wares.id = wares.params.get("id");
     } else {
-        wares.hnId = "";
+        wares.id = "";
     }
 
     wares.page = wares.params.get("prevPage");
@@ -88,18 +115,24 @@ function setFields(data) {
     $("#nextInsertDateTime").html(data.nextvInsertDateTime);
 
     if(data.prevId) {
-        $("#linkPrev").attr("href", "./noticeview?hnId=" + data.prevId);
+        $("#linkPrev").attr("href", `./${wares.boardType}view?id=` + data.prevId + "&prevPage=" + wares.page 
+        + "&prevSearchString=" + wares.searchString + "&prevFilterFromDt=" + wares.filterFromDt
+        + "&prevFilterToDt=" + wares.filterToDt);
     }
 
     if(data.nextId) {
-        $("#linkNext").attr("href", "./noticeview?hnId=" + data.nextId);
+        $("#linkNext").attr("href", `./${wares.boardType}view?id=` + data.nextId + "&prevPage=" + wares.page 
+        + "&prevSearchString=" + wares.searchString + "&prevFilterFromDt=" + wares.filterFromDt
+        + "&prevFilterToDt=" + wares.filterToDt);
     }
 
-    $("#linkReply").attr("href", "./noticereply?hnId=" + data.hnId + "&prevPage=" + wares.page 
+    if(wares.boardType !== "notice") $("#linkReply").show();
+
+    $("#linkReply").attr("href", `./${wares.boardType}reply?id=` + data[wares[wares.boardType].idKeyName] + "&prevPage=" + wares.page 
     + "&prevSearchString=" + wares.searchString + "&prevFilterFromDt=" + wares.filterFromDt
     + "&prevFilterToDt=" + wares.filterToDt);
 
     // 페이지 정보 가져와서 해당 페이지로 바로 갈 수 있도록 조치
-    $("#linkPrevPage").attr("href", "./noticelist?page=" + wares.page + "&searchString=" + wares.searchString
-        + "&filterFromDt=" + wares.filterFromDt + "&filterToDt" + wares.filterToDt);
+    $("#linkPrevPage").attr("href", `./${wares.boardType}list?page=` + wares.page + "&searchString=" + wares.searchString
+        + "&filterFromDt=" + wares.filterFromDt + "&filterToDt=" + wares.filterToDt);
 }

@@ -13,12 +13,8 @@
 
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
+    <script src="/assets/js/toppos/user/board/reply.js"></script>
     <script type="text/javascript">
-
-        $(function() {
-
-        });
-
     </script>
 </th:block>
 
@@ -26,109 +22,15 @@
 	<div class="reply">
         <div class="reply__write">
             <div class="c-textarea">
-                <textarea placeholder="댓글 작성"></textarea>
-                <button class="keyboardBtn">키보드</button>
+                <textarea id="replyField" placeholder="댓글 작성"></textarea>
+                <button id="vkeyboard0" class="keyboardBtn">키보드</button>
             </div>
+            <button id="commitReply" class="c-button c-button--small c-button--solid">덧글 달기</button>
         </div>
-        <ul class="reply__list">
-            <li class="reply__item">
-                <div class="reply__info">
-                    <span class="reply__name">내 이름</span>
-                    <div class="reply__date">2022-01-26</div>
-                </div>
-                <div class="reply__comment">포스팅 잘보고 가요~~^^ 오늘 눈와서 길 미끄러우니 조심하시고 ㅎㅎ 저녁맛있게 드세요!!</div>
-                <div class="reply__console">
-                    <button class="c-button c-button--small c-button--darkline">답글</button>
-                    <button class="c-button c-button--small">수정</button>
-                </div>
-                <!-- 답글의 답글 -->
-                <div class="reply__item">
-                    <div class="reply__info">
-                        <span class="reply__name">내 이름</span>
-                        <div class="reply__date">2022-01-26</div>
-                    </div>
-                    <div class="reply__comment">포스팅 잘보고 가요~~^^ 오늘 눈와서 길 미끄러우니 조심하시고 ㅎㅎ 저녁맛있게 드세요!!</div>
-                    <div class="reply__console">
-                        <button class="c-button c-button--small reply__console-right">수정</button>
-                    </div>
-                </div>
-            </li>
-
-            <li class="reply__item">
-                <div class="reply__info">
-                    <span class="reply__name">내 이름 수정모드</span>
-                    <div class="reply__date">2022-01-26</div>
-                </div>
-                <div class="reply__comment">
-                    <div class="c-textarea">
-                        <textarea>포스팅 잘보고 가요~~^^ 오늘 눈와서 길 미끄러우니 조심하시고 ㅎㅎ 저녁맛있게 드세요!!</textarea>
-                        <button class="keyboardBtn">키보드</button>
-                    </div>
-                </div>
-                <div class="reply__console">
-                    <button class="c-button c-button--small c-button--darkline">답글</button>
-                    <button class="c-button c-button--small">수정</button>
-                </div>
-            </li>
-
-            <li class="reply__item">
-                <div class="reply__info">
-                    <span class="reply__name">다른 이름</span>
-                    <div class="reply__date">2022-01-26</div>
-                </div>
-                <div class="reply__comment">포스팅 잘보고 가요~~^^ 오늘 눈와서 길 미끄러우니 조심하시고 ㅎㅎ 저녁맛있게 드세요!!</div>
-                <!-- 답글의 답글 -->
-                <div class="reply__item">
-                    <div class="reply__info">
-                        <span class="reply__name">다른 이름</span>
-                        <div class="reply__date">2022-01-26</div>
-                    </div>
-                    <div class="reply__comment">포스팅 잘보고 가요~~^^ 오늘 눈와서 길 미끄러우니 조심하시고 ㅎㅎ 저녁맛있게 드세요!!</div>
-                </div>
-                <!-- 답글의 답글 -->
-                <div class="reply__item">
-                    <div class="reply__info">
-                        <span class="reply__name">다른 이름</span>
-                        <div class="reply__date">2022-01-26</div>
-                    </div>
-                    <div class="reply__comment">포스팅 잘보고 가요~~^^ 오늘 눈와서 길 미끄러우니 조심하시고 ㅎㅎ 저녁맛있게 드세요!!</div>
-                </div>
-                <!-- 답글의 답글 -->
-                <div class="reply__item">
-                    <div class="reply__info">
-                        <span class="reply__name">다른 이름</span>
-                        <div class="reply__date">2022-01-26</div>
-                    </div>
-                    <div class="reply__comment">포스팅 잘보고 가요~~^^ 오늘 눈와서 길 미끄러우니 조심하시고 ㅎㅎ 저녁맛있게 드세요!!</div>
-                </div>
-            </li>
-
-            <li class="reply__item">
-                <div class="reply__info">
-                    <span class="reply__name">다른 이름</span>
-                    <div class="reply__date">2022-01-26</div>
-                </div>
-                <div class="reply__comment">포스팅 잘보고 가요~~^^ 오늘 눈와서 길 미끄러우니 조심하시고 ㅎㅎ 저녁맛있게 드세요!!</div>
-                <!-- 답글의 답글 -->
-                <div class="reply__item">
-                    <div class="reply__info">
-                        <span class="reply__name">내 이름</span>
-                        <div class="reply__date">2022-01-26</div>
-                    </div>
-                    <div class="reply__comment">
-                        <div class="c-textarea">
-                            <textarea>포스팅 잘보고 가요~~^^ 오늘 눈와서 길 미끄러우니 조심하시고 ㅎㅎ 저녁맛있게 드세요!!</textarea>
-                            <button class="keyboardBtn">키보드</button>
-                        </div>
-                    </div>
-                    <div class="reply__console">
-                        <button class="c-button c-button--small reply__console-right">수정 완료</button>
-                    </div>
-                </div>
-            </li>
+        <ul id="replyList" class="reply__list">
         </ul>
         <div class="reply__console">
-            <button class="c-button c-button--small">이전으로</button>
+            <a id="linkPrevPage" class="c-button c-button--small">이전으로</a>
         </div>
     </div>
 </div>

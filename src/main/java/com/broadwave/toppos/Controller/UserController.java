@@ -147,30 +147,30 @@ public class UserController {
     // 게시판 리스트
     @RequestMapping("taglostlist")
     public String taglostlist() {
-        return "user/board/taglostlist";
+        return "user/board/list";
     }
 
     // 게시판 보기
     @RequestMapping("taglostview")
     public String taglostview() {
-        return "user/board/taglostview";
+        return "user/board/view";
     }
 
     // 댓글
     @RequestMapping("taglostreply")
     public String taglostreply() {
-        return "user/board/taglostreply";
+        return "user/board/reply";
     }
 
     //공지사항
     @RequestMapping("noticelist")
     public String noticelist() {
-        return "user/board/noticelist";
+        return "user/board/list";
     }
 
     @RequestMapping("noticeview")
     public String noticeview() {
-        return "user/board/noticeview";
+        return "user/board/view";
     }
 
 }
