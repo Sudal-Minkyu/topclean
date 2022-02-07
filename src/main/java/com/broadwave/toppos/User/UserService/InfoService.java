@@ -5,7 +5,7 @@ import com.broadwave.toppos.Account.AccountPasswordDto;
 import com.broadwave.toppos.Account.AccountService;
 import com.broadwave.toppos.Head.Franohise.FranchisUserDto;
 import com.broadwave.toppos.Head.Franohise.Franchise;
-import com.broadwave.toppos.Head.HeadService;
+import com.broadwave.toppos.Head.HeadService.HeadService;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.User.Addprocess.*;
 import com.broadwave.toppos.User.Addprocess.AddprocessDtos.AddprocessDto;

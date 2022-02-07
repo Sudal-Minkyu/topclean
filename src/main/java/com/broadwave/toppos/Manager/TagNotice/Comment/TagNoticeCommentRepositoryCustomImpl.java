@@ -1,26 +1,18 @@
 package com.broadwave.toppos.Manager.TagNotice.Comment;
 
 import com.broadwave.toppos.Account.QAccount;
-import com.broadwave.toppos.Manager.TagNotice.*;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.QRequest;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.RequestUnCollectDto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.JPQLQuery;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * @author Minkyu
- * Date : 2021-11-18
+ * Date : 2022-02-04
  * Time :
  * Remark :
  */

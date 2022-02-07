@@ -3,7 +3,7 @@ package com.broadwave.toppos.Jwt.token;
 import com.broadwave.toppos.Account.Account;
 import com.broadwave.toppos.Account.AccountService;
 import com.broadwave.toppos.Head.Franohise.FranchisInfoDto;
-import com.broadwave.toppos.Head.HeadService;
+import com.broadwave.toppos.Head.HeadService.HeadService;
 import com.broadwave.toppos.Jwt.dto.TokenDto;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;

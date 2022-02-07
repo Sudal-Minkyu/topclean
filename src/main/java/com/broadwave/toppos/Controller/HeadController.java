@@ -1,7 +1,7 @@
 package com.broadwave.toppos.Controller;
 
 import com.broadwave.toppos.Account.AccountRole;
-import com.broadwave.toppos.Head.HeadService;
+import com.broadwave.toppos.Head.HeadService.HeadService;
 import com.broadwave.toppos.Head.Item.Group.A.ItemGroupNameListDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

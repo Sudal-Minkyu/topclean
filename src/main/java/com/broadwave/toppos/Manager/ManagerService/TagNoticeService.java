@@ -85,16 +85,14 @@ public class TagNoticeService {
 
         // 클레임데이터 가져오기
         Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
-        String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
+//        String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
         String frbrCode = (String) claims.get("frbrCode"); // 소속된 지사 코드
-        String login_id = claims.getSubject(); // 현재 아이디
-        log.info("현재 접속한 아이디 : "+login_id);
-        log.info("현재 접속한 가맹점 코드 : "+frCode);
+//        log.info("현재 접속한 가맹점 코드 : "+frCode);
         log.info("소속된 지사 코드 : "+frbrCode);
 
         // 검색조건
 //        log.info("htId : "+htId);
-        TagNoticeViewDto tagNoticeViewDto = tagNoticeRepositoryCustom.findByTagNoticeView(htId, login_id, frbrCode);
+        TagNoticeViewDto tagNoticeViewDto = tagNoticeRepositoryCustom.findByTagNoticeView(htId, frbrCode);
         HashMap<String,Object> tagNoticeViewInfo = new HashMap<>();
 
         if(tagNoticeViewDto != null){

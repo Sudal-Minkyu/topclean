@@ -18,7 +18,7 @@ import java.util.Objects;
 
 /**
  * @author Minkyu
- * Date : 2021-11-18
+ * Date : 2022-02-04
  * Time :
  * Remark :
  */
@@ -58,13 +58,13 @@ public class TagNoticeRepositoryCustomImpl extends QuerydslRepositorySupport imp
             query.where(tagNotice.insertDateTime.loe(filterToDt));
         }
 
-        final List<TagNoticeListDto> performanceListDtos = Objects.requireNonNull(getQuerydsl()).applyPagination(pageable, query).fetch();
-        return new PageImpl<>(performanceListDtos, pageable, query.fetchCount());
+        final List<TagNoticeListDto> tagNoticeListDtos = Objects.requireNonNull(getQuerydsl()).applyPagination(pageable, query).fetch();
+        return new PageImpl<>(tagNoticeListDtos, pageable, query.fetchCount());
     }
 
     // 게시물 글 데이터호출
     @Override
-    public TagNoticeViewDto findByTagNoticeView(Long htId,String login_id, String frbrCode) {
+    public TagNoticeViewDto findByTagNoticeView(Long htId, String frbrCode) {
 
         QTagNotice tagNotice = QTagNotice.tagNotice;
         QAccount account = QAccount.account;

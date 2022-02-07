@@ -1,4 +1,4 @@
-package com.broadwave.toppos.Head;
+package com.broadwave.toppos.Head.HeadService;
 
 import com.broadwave.toppos.Head.AddCost.AddCost;
 import com.broadwave.toppos.Head.AddCost.AddCostDto;

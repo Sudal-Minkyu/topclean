@@ -5,7 +5,8 @@ import com.broadwave.toppos.Aws.AWSS3Service;
 import com.broadwave.toppos.Head.AddCost.AddCostDto;
 import com.broadwave.toppos.Head.Franohise.FranchisInfoDto;
 import com.broadwave.toppos.Head.Franohise.FranchisUserDto;
-import com.broadwave.toppos.Head.HeadService;
+import com.broadwave.toppos.Head.HeadService.HeadService;
+import com.broadwave.toppos.Head.HeadService.NoticeService;
 import com.broadwave.toppos.Head.Item.Group.A.UserItemGroupSortDto;
 import com.broadwave.toppos.Head.Item.Group.B.UserItemGroupSListDto;
 import com.broadwave.toppos.Head.Item.ItemDtos.UserItemPriceSortDto;
@@ -82,7 +83,8 @@ public class UserRestController {
     private final InspectService inspectService; // 통합조회 서비스
     private final UncollectService uncollectService; // 미수관리 서비스
     private final BusinessdayService businessdayService; // 일일영업일보 서비스
-    private final TagNoticeService tagNoticeService; // 택분실게시판 서비스
+    private final TagNoticeService tagNoticeService; // 택분실 게시판 서비스
+    private final NoticeService noticeService; // 공지사항 게시판 서비스
     private final ModelMapper modelMapper;
     private final TokenProvider tokenProvider;
     private final HeadService headService;
@@ -91,7 +93,7 @@ public class UserRestController {
     @Autowired
     public UserRestController(AWSS3Service awss3Service, UserService userService, ReceiptService receiptService, SortService sortService, InfoService infoService, InspectService inspectService,
                               TokenProvider tokenProvider, ModelMapper modelMapper, HeadService headService, CalendarService calendarService, ReceiptStateService receiptStateService,
-                              UncollectService uncollectService, BusinessdayService businessdayService, TagNoticeService tagNoticeService) {
+                              UncollectService uncollectService, BusinessdayService businessdayService, TagNoticeService tagNoticeService, NoticeService noticeService) {
         this.awss3Service = awss3Service;
         this.userService = userService;
         this.receiptService = receiptService;
@@ -106,6 +108,7 @@ public class UserRestController {
         this.calendarService = calendarService;
         this.businessdayService = businessdayService;
         this.tagNoticeService = tagNoticeService;
+        this.noticeService = noticeService;
     }
 
 //@@@@@@@@@@@@@@@@@@@@@ 가맹점 메인화면 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -931,7 +934,7 @@ public class UserRestController {
 
 
 //@@@@@@@@@@@@@@@@@@@@@ 공지사항게시판, 택분실게시판 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-//  택분실게시판 - 리스트호출 테이블
+//  택분실게시판 - 리스트 호출
     @PostMapping("/lostNoticeList")
     public ResponseEntity<Map<String,Object>> lostNoticeList(
                                                             @RequestParam("searchString")String searchString,
@@ -977,7 +980,35 @@ public class UserRestController {
     }
 
 
+// @@@@@@@@@@@@@@@@@@@ 공지사항 게시판 API @@@@@@@@@@@@@@@@@@@@@@@@@@
+    // 공지사항 게시판 - 리스트 호출
+    @PostMapping("/noticeList")
+    public ResponseEntity<Map<String,Object>> noticeList(@RequestParam("searchString")String searchString, @RequestParam("filterFromDt")String filterFromDt,
+                                                         @RequestParam("filterToDt")String filterToDt,
+                                                         Pageable pageable, HttpServletRequest request) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
+        LocalDateTime fromDt = null;
+        if(filterFromDt != null){
+            filterFromDt = filterFromDt+" 00:00:00.000";
+            fromDt = LocalDateTime.parse(filterFromDt, formatter);
+            //            log.info("fromDt :"+fromDt);
+        }
 
+        LocalDateTime toDt = null;
+        if(filterToDt != null){
+            filterToDt = filterToDt+" 23:59:59.999";
+            toDt = LocalDateTime.parse(filterToDt, formatter);
+            //            log.info("toDt :"+toDt);
+        }
+
+        return noticeService.noticeList(searchString, fromDt, toDt, pageable, request, "2");
+    }
+
+    //  공지사항 게시판 - 글보기
+    @GetMapping("/noticeView")
+    public ResponseEntity<Map<String,Object>> noticeView(@RequestParam("hnId") Long hnId, HttpServletRequest request) {
+        return noticeService.noticeView(hnId, request, "2");
+    }
 
 
 

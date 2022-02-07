@@ -6,6 +6,8 @@ import com.broadwave.toppos.Head.Branoh.Branch;
 import com.broadwave.toppos.Head.Branoh.BranchListDto;
 import com.broadwave.toppos.Head.Branoh.BranchMapperDto;
 import com.broadwave.toppos.Head.Franohise.*;
+import com.broadwave.toppos.Head.HeadService.HeadService;
+import com.broadwave.toppos.Head.HeadService.NoticeService;
 import com.broadwave.toppos.Head.Item.Group.A.ItemGroup;
 import com.broadwave.toppos.Head.Item.Group.A.ItemGroupDto;
 import com.broadwave.toppos.Head.Item.Group.A.ItemGroupNameListDto;
@@ -31,6 +33,7 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -38,6 +41,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**
@@ -52,14 +56,16 @@ import java.util.*;
 public class HeadRestController {
 
     private final AccountService accountService;
-    private final HeadService headService;
+    private final HeadService headService; // 본사 공용서비스
+    private final NoticeService noticeService; // 공지사항 서비스
     private final ModelMapper modelMapper;
     private final ReceiptService receiptService;
 
     @Autowired
-    public HeadRestController(AccountService accountService, ModelMapper modelMapper, HeadService headService, ReceiptService receiptService) {
+    public HeadRestController(AccountService accountService, NoticeService noticeService, ModelMapper modelMapper, HeadService headService, ReceiptService receiptService) {
         this.accountService = accountService;
         this.modelMapper = modelMapper;
+        this.noticeService = noticeService;
         this.headService = headService;
         this.receiptService = receiptService;
     }
@@ -1328,6 +1334,35 @@ public class HeadRestController {
 
 
 
+// @@@@@@@@@@@@@@@@@@@ 공지사항 게시판 API @@@@@@@@@@@@@@@@@@@@@@@@@@
+    // 공지사항 게시판 - 리스트 호출
+    @PostMapping("/noticeList")
+    public ResponseEntity<Map<String,Object>> noticeList(@RequestParam("searchString")String searchString, @RequestParam("filterFromDt")String filterFromDt,
+                                                             @RequestParam("filterToDt")String filterToDt,
+                                                             Pageable pageable, HttpServletRequest request) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
+        LocalDateTime fromDt = null;
+        if(filterFromDt != null){
+            filterFromDt = filterFromDt+" 00:00:00.000";
+            fromDt = LocalDateTime.parse(filterFromDt, formatter);
+    //            log.info("fromDt :"+fromDt);
+        }
+
+        LocalDateTime toDt = null;
+        if(filterToDt != null){
+            filterToDt = filterToDt+" 23:59:59.999";
+            toDt = LocalDateTime.parse(filterToDt, formatter);
+    //            log.info("toDt :"+toDt);
+        }
+
+        return noticeService.noticeList(searchString, fromDt, toDt, pageable, request, "1");
+    }
+
+    //  공지사항 게시판 - 글보기
+    @GetMapping("/noticeView")
+    public ResponseEntity<Map<String,Object>> noticeView(@RequestParam("hnId") Long hnId, HttpServletRequest request) {
+        return noticeService.noticeView(hnId, request, "1");
+    }
 
 
 

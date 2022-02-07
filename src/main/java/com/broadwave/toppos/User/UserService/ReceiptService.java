@@ -1,7 +1,7 @@
 package com.broadwave.toppos.User.UserService;
 
 import com.broadwave.toppos.Head.Franohise.Franchise;
-import com.broadwave.toppos.Head.HeadService;
+import com.broadwave.toppos.Head.HeadService.HeadService;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.Manager.Calendar.BranchCalendarRepositoryCustom;
 import com.broadwave.toppos.User.Customer.Customer;
