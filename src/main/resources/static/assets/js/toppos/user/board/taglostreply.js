@@ -8,16 +8,13 @@ const dtos = {
         덧글리스트불러오기: {
             htId: "", // 글의 id
         },
-        덧글달기: {
+        덧글달기와수정: {
             htId: "", // 글의 id
+            hcId: "", // 덧글 수정일 경우 필요
             type: "", // 덧글 타입
             comment: "", // 덧글의 내용
             preId: "", // 덧글의 덧글일 경우 원댓글의 아이디
-        },
-        덧글수정: {
-            hcId: "", // 덧글의 id (글의 id 아님),
-            comment: "", // 덧글의 내용
-        },
+        }
     },
     receive: {
         덧글리스트불러오기: { // insertDt 가 빠른 순서대로 불러온다.
@@ -35,8 +32,7 @@ const dtos = {
 /* 통신에 사용되는 url들 기입 */
 const urls = {
     getReplyList: "/api/user/lostNoticeCommentList",
-    addNewReply: "",
-    modifyReply: "",
+    putReply: "/api/user/lostNoticeCommentSave",
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
@@ -50,8 +46,11 @@ const comms = {
         });
     },
 
-    addNewReply(data) {
-        console.log(data);
+    putReply(data) {
+        CommonUI.ajax(urls.putReply, "PARAM", data, function (res) {
+            $("#replyList").children().remove();
+            comms.getReplyList({htId: wares.htId});
+        });
     },
 
     modifyReply(data) {
@@ -82,6 +81,8 @@ const wares = {
     url: window.location.href,
     htId: "", // 글의 아이디
     params: "",
+    btnRow: {},
+    commentRow: {},
 }
 
 $(function() { // 페이지가 로드되고 나서 실행
@@ -103,10 +104,10 @@ function createReplyHtml(hcId, name, modifyDt, comment, type, isWriter, preId) {
     let btnReply = "";
     let btnModify = "";
     if(type === "1") {
-        btnReply = `<button type="button" class="c-button c-button--small c-button--darkline" onclick="reply(${hcId})">답글</button>`;
+        btnReply = `<button type="button" class="c-button c-button--small c-button--darkline" onclick="reply(${hcId}, this)">답글</button>`;
     }
     if(isWriter === "1") {
-        btnModify = `<button type="button" class="c-button c-button--small" onclick="modify(${hcId})">수정</button>`;
+        btnModify = `<button type="button" class="c-button c-button--small" onclick="modify(${hcId}, this)">수정</button>`;
     }
 
     let htmlText = `
@@ -141,12 +142,78 @@ function getParams() {
 }
 
 // 덧글내 답글 달기를 클릭했을 때
-function reply(hcId) {
+function reply(hcId, obj) {
+    $(obj).hide();
+    $(obj).siblings("button").hide();
+    const $targetReply = $(obj).parents(".replyItem");
+    const targetId = $targetReply.attr("data-id");
+
+    const newTextarea = `
+        <div class="reply__item newItem">
+            <div class="reply__comment">
+                <div class="c-textarea">
+                    <textarea id="newarea${hcId}"></textarea>
+                    <button onclick="openVKeyboard(${hcId}, 0)" class="keyboardBtn">키보드</button>
+                </div>
+            </div>
+            <div class="reply__console">
+                <button onclick="newCancel(${hcId}, this)" class="c-button c-button--small reply__console-right">취소</button>
+                <button onclick="commitReply('2', '#newarea${hcId}', ${hcId}, '')" class="c-button c-button--small reply__console-right">덧글 달기</button>
+            </div>
+        </div>
+    `
+
+    $targetReply.append(newTextarea);
+
 
 }
 
-function modify(hcId) {
+function modify(hcId, obj) {
+    const $btnRow = $(obj).parents(".reply__console");
+    const $commentRow = $btnRow.siblings(".reply__comment");
+    const text = $commentRow.html();
+
+    wares.btnRow[hcId.toString()] = $btnRow;
+    wares.commentRow[hcId.toString()] = $commentRow;
     
+    const modBtns = `
+        <div class="reply__console">
+            <button onclick="modifyCancel(${hcId}, this)" class="c-button c-button--small reply__console-right">수정 취소</button>
+            <button onclick="modifyComp(${hcId})" class="c-button c-button--small reply__console-right">수정 완료</button>
+        </div>
+    `;
+
+    const modTextarea = `
+        <div class="reply__comment">
+            <div class="c-textarea">
+                <textarea id="tarea${hcId}">${text}</textarea>
+                <button onclick="openVKeyboard(${hcId}, 1)" class="keyboardBtn">키보드</button>
+            </div>
+        </div>
+    `;
+
+    $btnRow.replaceWith(modBtns);
+    $commentRow.replaceWith(modTextarea);
+
+}
+
+function modifyComp(hcId) {
+    commitReply("", "#tarea" + hcId, "", hcId);
+}
+
+function modifyCancel(hcId, obj) {
+    console.log(this);
+    const $btnRow = $(obj).parents(".reply__console");
+    const $commentRow = $btnRow.siblings(".reply__comment");
+    const text = $commentRow.html();
+    $btnRow.replaceWith(wares.btnRow[hcId.toString()]);
+    $commentRow.replaceWith(wares.commentRow[hcId.toString()]);
+}
+
+function newCancel(hcId, obj) {
+    const $targetElement = $(obj).parents(`li[data-id='${hcId}']`);
+    $targetElement.children(".reply__console").children().show();
+    $targetElement.children("div .newItem").remove();
 }
 
 function onShowVKeyboard(num) {
@@ -161,13 +228,19 @@ function onShowVKeyboard(num) {
     vkey.showKeyboard(vkeyTargetId[num], vkeyProp[num]);
 }
 
-function commitReply(type, fieldId, preId = "") {
+function openVKeyboard(hcId, type) { // 0 더덧글 달기의 textarea id, 1 수정
+    const typeName = ["newarea", "tarea"];
+    vkey.showKeyboard(typeName[type] + hcId, {title: "덧글 입력"});
+}
+
+function commitReply(type = "", fieldId, preId = "", hcId = "") {
     const data = {
         htId: wares.htId,
+        hcId: hcId,
         type: type,
         comment: $(fieldId).val(),
         preId: preId,
     };
 
-    comms.addNewReply(data);
+    comms.putReply(data);
 }
