@@ -249,6 +249,7 @@ function getParams() {
 function setInputs() {
     if(wares.filterFromDt) $("#filterFromDt").val(wares.filterFromDt);
     if(wares.filterToDt) $("#filterToDt").val(wares.filterToDt);
+    if(wares.searchString) $("#searchString").val(wares.searchString);
     $("#boardTitle").html(wares[wares.boardType].title);
     $("#boardLink").attr("href", `./${wares.boardType}list`);
 }
@@ -324,7 +325,7 @@ function mainSearch() {
 function enableDatepicker() {
     
     let fromday = new Date();
-    fromday.setDate(fromday.getDate() - 363);
+    fromday.setDate(fromday.getDate() - 90);
     fromday = fromday.format("yyyy-MM-dd");
     const today = new Date().format("yyyy-MM-dd");
 

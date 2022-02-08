@@ -9,7 +9,6 @@ $(function() { // 페이지가 로드되고 나서 실행
 * */
 const dto = {
     send: {
-
         franchiseInspectionSave: {
             fdId: "nr",
             fiAddAmt: "nr",
@@ -420,7 +419,8 @@ const ajax = {
     putNewInspect(formData) {
         const testObj = Object.fromEntries(formData);
         testObj.fdId = parseInt(testObj.fdId);
-        testObj.fiAddAmt = parseInt(testObj.fiAddAmt);
+        testObj.fiAddAmt = parseInt(testObj.fiAddAmt) | 0;
+        
         dv.chk(testObj, dto.send.franchiseInspectionSave, "검품 등록");
 
         CommonUI.ajax("/api/user/franchiseInspectionSave", "POST", formData, function (res) {
@@ -431,7 +431,8 @@ const ajax = {
             data.currentRequest.fdState = "F";
             ajax.getInspectionList(searchCondition);
             $("#fiComment").val("");
-            $("#fiAddAmt").val("");
+            $("#fiAddAmt").val("0");
+            alertSuccess("검품내역이 저장되었습니다.");
         });
     },
 
@@ -1959,7 +1960,7 @@ async function openPutInspectPop(e) {
     }
 
     $("#fiComment").val("");
-    $("#fiAddAmt").val("");
+    $("#fiAddAmt").val("0");
     $("#fdRequestAmtInPut").val(data.currentRequest.fdRequestAmt.toLocaleString());
     if(data.isCameraExist) {
         $("#isIncludeImg").prop("checked", true);
