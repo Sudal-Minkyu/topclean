@@ -48,7 +48,7 @@ public class RequestDetailMapperDto {
     private String fdPollutionLocBcn; // 오염위치 뒤 - 목  체크면 Y 아니면 N
     private String fdPollutionLocBcs; // 오염위치 뒤 - 배  체크면 Y 아니면 N
     private String fdPollutionLocBcb; // 오염위치 뒤 - 하의  체크면 Y 아니면 N
-    private String fdPollutionLocBch; // 오염위치 뒤 - 오른손  체크면 Y 아니면 N
+    private String fdPollutionLocBrh; // 오염위치 뒤 - 오른손  체크면 Y 아니면 N
     private String fdPollutionLocBlh; // 오염위치 뒤 - 왼손  체크면 Y 아니면 N
     private String fdPollutionLocBrf; // 오염위치 뒤 - 오른발  체크면 Y 아니면 N
     private String fdPollutionLocBlf; // 오염위치 뒤 - 왼발  체크면 Y 아니면 N

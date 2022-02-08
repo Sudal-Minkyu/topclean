@@ -1,6 +1,7 @@
 package com.broadwave.toppos.Manager.TagNotice;
 
 import com.broadwave.toppos.Account.QAccount;
+import com.broadwave.toppos.Manager.TagNotice.Comment.QTagNoticeComment;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPAExpressions;
@@ -34,9 +35,12 @@ public class TagNoticeRepositoryCustomImpl extends QuerydslRepositorySupport imp
     @Override
     public Page<TagNoticeListDto> findByTagNoticeList(String searchString, LocalDateTime filterFromDt, LocalDateTime filterToDt, String frbrCode, Pageable pageable) {
         QTagNotice tagNotice  = QTagNotice.tagNotice;
+        QTagNoticeComment tagNoticeComment  = QTagNoticeComment.tagNoticeComment;
 
         JPQLQuery<TagNoticeListDto> query = from(tagNotice)
+                
                 .select(Projections.constructor(TagNoticeListDto.class,
+                        tagNoticeComment.hcId.sum(),
                         tagNotice.htId,
                         tagNotice.htSubject,
                         tagNotice.insert_id,

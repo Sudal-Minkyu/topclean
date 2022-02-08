@@ -2,6 +2,7 @@ package com.broadwave.toppos.Manager;
 
 import com.broadwave.toppos.Manager.Calendar.CalendarDtos.BranchCalendarDto;
 import com.broadwave.toppos.Manager.ManagerService.CalendarService;
+import com.broadwave.toppos.Manager.ManagerService.ReceiptReleaseService;
 import com.broadwave.toppos.Manager.ManagerService.TagNoticeService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,10 +30,14 @@ public class ManagerRestController {
     private final CalendarService calendarService; // 휴무일지정 서비스
     private final TagNoticeService tagNoticeService; // 택분실게시판 서비스
 
+    private final ReceiptReleaseService receiptReleaseService; // 지사 출고 전용 서비스
+
     @Autowired
-    public ManagerRestController(CalendarService calendarService, TagNoticeService tagNoticeService) {
+    public ManagerRestController(CalendarService calendarService, TagNoticeService tagNoticeService,
+                                 ReceiptReleaseService receiptReleaseService) {
         this.calendarService = calendarService;
         this.tagNoticeService = tagNoticeService;
+        this.receiptReleaseService = receiptReleaseService;
     }
 
 
@@ -96,8 +101,20 @@ public class ManagerRestController {
         return tagNoticeService.lostNoticeCommentSave(hcId, htId, type, comment, preId, request);
     }
 
+//@@@@@@@@@@@@@@@@@@@@@ 지사출고 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    //  접수테이블의 상태 변화 API - 지사출고 실행함수
+    @PostMapping("branchStateChange")
+    public ResponseEntity<Map<String,Object>> branchStateChange(@RequestParam(value="fdIdList", defaultValue="") List<Long> fdIdList,
+                                                                   HttpServletRequest request){
+//        return receiptStateService.franchiseStateChange(fdIdList, stateType, request);
+         return receiptReleaseService.branchStateChange(fdIdList, request);
+    }
 
-
+    //  지사출고 - 세부테이블 지사입고상태 리스트
+    @GetMapping("franchiseReceiptBranchInList")
+    public ResponseEntity<Map<String,Object>> franchiseReceiptBranchInList(HttpServletRequest request){
+        return receiptReleaseService.franchiseReceiptBranchInList(request);
+    }
 
 
 

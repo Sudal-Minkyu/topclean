@@ -53,6 +53,7 @@ public class TagNoticeService {
         log.info("lostNoticeList 호출성공");
 
         AjaxResponse res = new AjaxResponse();
+//        HashMap<String, Object> data = new HashMap<>();
 
         // 클레임데이터 가져오기
         Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
@@ -72,6 +73,22 @@ public class TagNoticeService {
 //        log.info("filterFromDt : "+filterFromDt);
 //        log.info("filterToDt : "+filterToDt);
         Page<TagNoticeListDto> tagNoticeListDtoPage = tagNoticeRepositoryCustom.findByTagNoticeList(searchString, filterFromDt, filterToDt, frbrCode, pageable);
+
+
+//        res.put("type",type);
+//        if(tagNoticeListDtoPage.getTotalElements()> 0 ){
+//            data.put("datalist",pages.getContent());
+//            res.put("total_page",pages.getTotalPages());
+//            res.put("current_page",pages.getNumber() + 1);
+//            res.put("total_rows",pages.getTotalElements());
+//            res.put("current_rows",pages.getNumberOfElements());
+//        }else{
+//            res.put("total_page",pages.getTotalPages());
+//            res.put("current_page",pages.getNumber() + 1);
+//            res.put("total_rows",pages.getTotalElements());
+//            res.put("current_rows",pages.getNumberOfElements());
+//        }
+
 
         return ResponseEntity.ok(res.ResponseEntityPage(tagNoticeListDtoPage,type));
     }

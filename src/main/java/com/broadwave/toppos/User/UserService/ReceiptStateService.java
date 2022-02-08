@@ -116,6 +116,25 @@ public class ReceiptStateService {
                 requestDetailRepository.saveAll(requestDetailList);
                 break;
             }
+            case "S2": {
+                log.info("지사출고 처리");
+                List<RequestDetail> requestDetailList = requestDetailRepository.findByRequestDetailS2List(fdIdList);
+//            log.info("requestDetailList : "+requestDetailList);
+                for (RequestDetail requestDetail : requestDetailList) {
+//                log.info("가져온 frID 값 : "+requestDetailList.get(i).getFrId());
+                    requestDetail.setFdPreState(stateType); // 이전상태 값
+                    requestDetail.setFdPreStateDt(LocalDateTime.now());
+                    requestDetail.setFdState("S4");
+                    requestDetail.setFdStateDt(LocalDateTime.now());
+
+                    requestDetail.setFdS2Dt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
+                    requestDetail.setFdS2Time(LocalDateTime.now());
+                    requestDetail.setModify_id(login_id);
+                    requestDetail.setModify_date(LocalDateTime.now());
+                }
+                requestDetailRepository.saveAll(requestDetailList);
+                break;
+            }
             case "S3": {
                 log.info("지사반송 처리");
                 List<RequestDetail> requestDetailList = requestDetailRepository.findByRequestDetailS3List(fdIdList);
@@ -224,7 +243,7 @@ public class ReceiptStateService {
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
-    //  가맹점입고 - 세부테이블 지사출고상태 리스트
+    //  가맹점입고 - 세부테이블 지사출고 상태 리스트
     public ResponseEntity<Map<String, Object>> franchiseReceiptFranchiseInList(HttpServletRequest request) {
         log.info("franchiseReceiptFranchiseInList 호출");
 
@@ -243,7 +262,7 @@ public class ReceiptStateService {
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
-    //  지사반송 - 세부테이블 지사반송상태 리스트
+    //  지사반송 - 세부테이블 지사반송 상태 리스트
     public ResponseEntity<Map<String, Object>> franchiseReceiptReturnList(HttpServletRequest request) {
         log.info("franchiseReceiptReturnList 호출");
 
@@ -262,7 +281,7 @@ public class ReceiptStateService {
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
-    //  가맹점강제입고 - 세부테이블 강제출고상태 리스트
+    //  가맹점강제입고 - 세부테이블 강제출고 상태 리스트
     public ResponseEntity<Map<String, Object>> franchiseReceiptForceList(HttpServletRequest request) {
         log.info("franchiseReceiptForceList 호출");
 

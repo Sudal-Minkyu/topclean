@@ -569,7 +569,7 @@ public class UserRestController {
                 requestDetailInfo.put("fdPollutionLocBcn", requestDetailDto.getFdPollutionLocBcn());
                 requestDetailInfo.put("fdPollutionLocBcs", requestDetailDto.getFdPollutionLocBcs());
                 requestDetailInfo.put("fdPollutionLocBcb", requestDetailDto.getFdPollutionLocBcb());
-                requestDetailInfo.put("fdPollutionLocBch", requestDetailDto.getFdPollutionLocBch());
+                requestDetailInfo.put("fdPollutionLocBrh", requestDetailDto.getFdPollutionLocBrh());
                 requestDetailInfo.put("fdPollutionLocBlh", requestDetailDto.getFdPollutionLocBlh());
                 requestDetailInfo.put("fdPollutionLocBrf", requestDetailDto.getFdPollutionLocBrf());
                 requestDetailInfo.put("fdPollutionLocBlf", requestDetailDto.getFdPollutionLocBlf());

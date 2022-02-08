@@ -209,7 +209,7 @@ public class InspectService {
             optionalRequestDetail.get().setFdPollutionLocBcn(requestDetailUpdateDto.getFdPollutionLocBcn());
             optionalRequestDetail.get().setFdPollutionLocBcs(requestDetailUpdateDto.getFdPollutionLocBcs());
             optionalRequestDetail.get().setFdPollutionLocBcb(requestDetailUpdateDto.getFdPollutionLocBcb());
-            optionalRequestDetail.get().setFdPollutionLocBch(requestDetailUpdateDto.getFdPollutionLocBch());
+            optionalRequestDetail.get().setFdPollutionLocBrh(requestDetailUpdateDto.getFdPollutionLocBrh());
             optionalRequestDetail.get().setFdPollutionLocBlh(requestDetailUpdateDto.getFdPollutionLocBlh());
             optionalRequestDetail.get().setFdPollutionLocBrf(requestDetailUpdateDto.getFdPollutionLocBrf());
             optionalRequestDetail.get().setFdPollutionLocBlf(requestDetailUpdateDto.getFdPollutionLocBlf());

@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -86,23 +87,26 @@ public class BusinessdayService {
         // 방문고객 출고 통계
         List<RequestDetailBusinessdayDeliveryDto> requestDetailBusinessdayDeliveryDtos = requestDetailRepositoryCustom.findByRequestDetailBusinessdayDeliveryList(frCode, filterFromDt,  filterToDt);
 
-        data.put("request",requestBusinessdayListDtos);
+        List<HashMap<String,Object>> businessdayListData = new ArrayList<>();
+        HashMap<String,Object> businessdayListInfo;
+        for (int i=0; i< requestBusinessdayListDtos.size(); i++) {
+            businessdayListInfo = new HashMap<>();
+            businessdayListInfo.put("yyyymmdd", requestBusinessdayListDtos.get(i).getYyyymmdd());
+            businessdayListInfo.put("frQtyAll", requestBusinessdayListDtos.get(i).getFrQtyAll());
+            businessdayListInfo.put("frTotalAmountAll", requestBusinessdayListDtos.get(i).getFrTotalAmountAll());
+            businessdayListInfo.put("totalAverageAll", requestBusinessdayListDtos.get(i).getFrTotalAmountAll()/requestBusinessdayListDtos.get(i).getFrQtyAll());
+            businessdayListInfo.put("totalReceipt", requestBusinessdayCustomerListDtos.get(i).getTotalReceipt());
+            businessdayListInfo.put("averageReceiptMoney", requestBusinessdayListDtos.get(i).getFrTotalAmountAll()/requestBusinessdayCustomerListDtos.get(i).getTotalReceipt());
+            businessdayListData.add(businessdayListInfo);
+        }
+        // averageReceiptMoney
+
+
+        data.put("request",businessdayListData);
         data.put("requestDetail",requestDetailBusinessSumDtos);
         data.put("payment",paymentBusinessdayListDtos);
         data.put("saveMoney",saveMoneyBusinessdayListDtos);
-        data.put("receipt",requestBusinessdayCustomerListDtos);
         data.put("delivery",requestDetailBusinessdayDeliveryDtos);
-
-//        List<HashMap<String,Object>> businessdayListData = new ArrayList<>();
-//        HashMap<String,Object> businessdayListInfo;
-//        for (RequestBusinessdayListDto requestBusinessdayListDto: requestBusinessdayListDtos) {
-//            businessdayListInfo = new HashMap<>();
-//            businessdayListInfo.put("yyyymmdd", requestBusinessdayListDto.getYyyymmdd());
-//            businessdayListInfo.put("frQtyAll", requestBusinessdayListDto.getFrQtyAll());
-//            businessdayListInfo.put("frTotalAmountAll", requestBusinessdayListDto.getFrTotalAmountAll());
-//            businessdayListInfo.put("totalAverageAll", requestBusinessdayListDto.getFrTotalAmountAll()/requestBusinessdayListDto.getFrQtyAll());
-//            businessdayListData.add(businessdayListInfo);
-//        }
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
 
