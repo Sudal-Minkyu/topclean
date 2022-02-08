@@ -126,7 +126,11 @@ class CommonUIClass {
     /* 국내 전화 번호 양식화, 적절한 위치에 - 추가, 최종 형태 잡을 때도, 입력할 때 마다 쓸 수도 있음 */
     formatTel(telNumber) {
         let formatNum = "";
-        telNumber = telNumber.numString();
+        if(telNumber) {
+            telNumber = telNumber.numString();
+        } else {
+            telNumber = "";
+        }
         const telLength = telNumber.length;
         
         let foreNumType;
