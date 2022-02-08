@@ -86,6 +86,11 @@ function onPageLoad() {
 }
 
 function getParams() {
+    let fromday = new Date();
+    fromday.setDate(fromday.getDate() - 363);
+    fromday = fromday.format("yyyy-MM-dd");
+    const today = new Date().format("yyyy-MM-dd");
+
     const url = new URL(wares.url);
     const tokenedPath = url.pathname.split("/");
     const lastUrl = tokenedPath[tokenedPath.length - 1];
@@ -98,10 +103,29 @@ function getParams() {
         wares.id = "";
     }
 
-    wares.page = wares.params.get("prevPage");
-    wares.searchString = wares.params.get("prevSearchString");
-    wares.filterFromDt = wares.params.get("prevFilterFromDt");
-    wares.filterToDt = wares.params.get("prevFilterToDt");
+    if(wares.params.has("prevPage")) {
+        wares.page = wares.params.get("prevPage");
+    } else {
+        wares.page = "1";
+    }
+
+    if(wares.params.has("prevSearchString")) {
+        wares.searchString = wares.params.get("prevSearchString");
+    } else {
+        wares.searchString = "";
+    }
+
+    if(wares.params.has("prevFilterFromDt")) {
+        wares.filterFromDt = wares.params.get("prevFilterFromDt");
+    } else {
+        wares.filterFromDt = fromday;
+    }
+
+    if(wares.params.has("prevFilterToDt")) {
+        wares.filterToDt = wares.params.get("prevFilterToDt");
+    } else {
+        wares.filterToDt = today;
+    }
 }
 
 function setFields(data) {

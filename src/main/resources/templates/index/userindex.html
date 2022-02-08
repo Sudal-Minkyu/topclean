@@ -12,17 +12,6 @@
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
 	<script src="/assets/js/toppos/index/userIndex.js"></script>
-	<script type="text/javascript">
-
-		let datePickerId = ["indexDate"];
-		$(function() {
-			franchiseInfo();
-
-			CommonUI.setDatePicker(datePickerId);
-			$("#indexDate").val(new Date().format("yyyy-MM-dd"));
-		});
-
-	</script>
 </th:block>
 
 <div layout:fragment="content" class="content">
@@ -174,29 +163,29 @@
 						<div class="main__board-header">
 							<h3><a href="#">택 분실 게시판</a></h3>
 						</div>
-						<ul class="main__board-contents">
+						<ul id="taglostList" class="main__board-contents">
 							<li>
 								<div class="main__board-title">
-									<span>청바지 택분실 내역 확인해주세요.</span>
+									<span></span>
 								</div>
 								<div class="main__board-date">
-									<span>2021-07-21</span>
+									<span></span>
 								</div>
 							</li>
 							<li>
 								<div class="main__board-title">
-									<span>K2 롱패딩 택 분실 내역입니다.</span>
+									<span></span>
 								</div>
 								<div class="main__board-date">
-									<span>2021-07-21</span>
+									<span></span>
 								</div>
 							</li>
 							<li>
 								<div class="main__board-title">
-									<span>-</span>
+									<span></span>
 								</div>
 								<div class="main__board-date">
-									<span>2021-07-21</span>
+									<span></span>
 								</div>
 							</li>
 						</ul>
@@ -208,38 +197,29 @@
 						<div class="main__board-header">
 							<h3><a href="#">공지사항</a></h3>
 						</div>
-						<ul class="main__board-contents">
+						<ul id="noticeList" class="main__board-contents">
 							<li>
-								<div class="main__board-stamp">
-									<span class="stamp blue">[대리점]</span>
-								</div>
 								<div class="main__board-title">
-									<span>TOP POS 시스템 개발중입니다.</span>
+									<span></span>
 								</div>
 								<div class="main__board-date">
-									<span>2021-07-21</span>
+									<span></span>
 								</div>
 							</li>
 							<li>
-								<div class="main__board-stamp">
-									<span class="stamp blue">[대리점]</span>
-								</div>
 								<div class="main__board-title">
-									<span>광고성 스팸 메세지 전송 주의 관련의 건</span>
+									<span></span>
 								</div>
 								<div class="main__board-date">
-									<span>2021-07-21</span>
+									<span></span>
 								</div>
 							</li>
 							<li>
-								<div class="main__board-stamp">
-									<span class="stamp blue">[대리점]</span>
-								</div>
 								<div class="main__board-title">
-									<span>-</span>
+									<span></span>
 								</div>
 								<div class="main__board-date">
-									<span>2021-07-21</span>
+									<span></span>
 								</div>
 							</li>
 						</ul>
@@ -251,9 +231,6 @@
 						</div>
 						<ul class="main__board-contents">
 							<li>
-								<div class="main__board-stamp">
-									<span class="stamp blue">[대리점]</span>
-								</div>
 								<div class="main__board-title">
 									<span>청바지 오염 요청의 건.</span>
 								</div>
@@ -262,9 +239,6 @@
 								</div>
 							</li>
 							<li>
-								<div class="main__board-stamp">
-									<span class="stamp blue">[대리점]</span>
-								</div>
 								<div class="main__board-title">
 									<span>오리털 코트 구멍 확인 바랍니다.</span>
 								</div>
