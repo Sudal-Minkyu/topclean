@@ -74,6 +74,7 @@ const grids = {
                     headerText: "일자",
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
+                    width: 90,
                 }, {
                     headerText: "접수건수",
                     children: [{
@@ -273,12 +274,12 @@ function getRefinedData() {
 
 function mergeData(sendData) {
     const data = [];
-    addData(sendData["결제 관련"]);
-    addData(sendData["방문고객 접수관련"]);
-    addData(sendData["방문고객 출고관련"]);
-    addData(sendData["적립금 관련"]);
-    addData(sendData["접수 관련"]);
-    addData(sendData["접수세부 관련"]);
+    addData(sendData.delivery);
+    addData(sendData.payment);
+    addData(sendData.receipt);
+    addData(sendData.request);
+    addData(sendData.requestDetail);
+    addData(sendData.saveMoney);
     return data;
     function addData(targetList) {
         targetList.forEach(obj => {
