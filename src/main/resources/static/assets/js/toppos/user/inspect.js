@@ -107,6 +107,7 @@ const comms = {
         dv.chk(filterCondition, dtos.send.inspectList, "검품리스트 필터링조건 보내기");
         CommonUI.ajax(urls.getDetailList, "GET", filterCondition, function (res) {
             const data = res.sendData.gridListData;
+            dv.chk(data, dtos.receive.inspectList, "검품리스트 받기");
             grids.f.setData(0, data);
         });
     },
@@ -117,7 +118,7 @@ const comms = {
             const items = req.sendData.gridListData;
             $("#searchCustomerType").val(0);
             $("#searchCustomerField").val("");
-            console.log(items);
+            dv.chk(items, dtos.receive.customerInfo, "검색된 고객에 해당하는 리스트 받기");
             if(items.length === 1) {
                 wares.selectedCustomer = items[0];
                 wares.searchTag = null;
@@ -136,7 +137,6 @@ const comms = {
 
     getInspectionList(condition) {
         dv.chk(condition, dtos.send.franchiseInspectionList, "등록된 검품조회 조건");
-
         CommonUI.ajax(urls.getInspectionList, "GET", condition, function(res) {
             const data = res.sendData.gridListData;
             dv.chk(data, dtos.receive.franchiseInspectionList, "등록된 검품의 조회");

@@ -280,6 +280,9 @@ function mergeData(sendData) {
     addData(sendData.request);
     addData(sendData.requestDetail);
     addData(sendData.saveMoney);
+
+
+
     return data;
     function addData(targetList) {
         targetList.forEach(obj => {
@@ -294,7 +297,14 @@ function mergeData(sendData) {
                 }
             });
             if(isNewYyyymmdd) {
-                data.push(obj);
+                const babyDto = CommonUI.newDto(dtos.receive.businessdayList);
+                Object.keys(babyDto).forEach(key => {
+                    babyDto[key] = 0;
+                });
+                for(let i = 0; i < keys.length; i++) {
+                    babyDto[keys[i]] = obj[keys[i]];
+                }
+                data.push(babyDto);
             }
         });
     }

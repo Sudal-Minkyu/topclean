@@ -86,7 +86,7 @@ const comms = {
             const items = req.sendData.gridListData;
             $("#searchCustomerType").val(0);
             $("#searchCustomerField").val("");
-            console.log(items);
+            dv.chk(items, dtos.receive.customerInfo, "검색된 고객 리스트 받기");
             if(items.length === 1) {
                 wares.selectedCustomer = items[0];
                 putCustomer();
