@@ -897,11 +897,13 @@ textarea {
 	margin-top: 0.625rem;
 }
 .main__board-contents li {
+	border-bottom: 0.063rem solid #eaeaea;
+}
+.main__board-contents li a {
 	display: flex;
 	align-items: center;
 	height: 3.125rem;
 	padding: 0.625rem;
-	border-bottom: 0.063rem solid #eaeaea;
 }
 .main__board-badge,
 .main__board-time {

@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <header th:fragment="headerFragment" class="header">
-	<div class="logo"><img src="/assets/images/logo.svg" alt="TopPos Cleaning Up Megashop" /></div>
+	<div class="header__inner">
+		<div class="logo"><img src="/assets/images/logo.svg" alt="TopPos Cleaning Up Megashop" /></div>
 	
-	<div class="info" id="logout_Form">
-		<button class="header__btn active" onclick="mainPage()">
-			<img src="/assets/images/icon__home--b.svg" alt="홈" /><span>홈</span>
-		</button>
-		<button class="header__btn">
-			<img src="/assets/images/icon__menu--g.svg" alt="메뉴" /><span>메뉴</span>
-		</button>
-		<button class="header__btn" onclick="logout()">
-			<img src="/assets/images/icon__logout--g.svg" alt="로그아웃" /><span>로그아웃</span>
-		</button>
+		<div class="info" id="logout_Form">
+			<div class="info__user">
+				<span class="info__icon">user image</span>
+				<span class="info__user-name">고양지사 - 홍길동</span>
+			</div>
+			<button class="header__btn" onclick="logout()">
+				<img src="/assets/images/icon__logout--g.svg" alt="로그아웃" /><span>로그아웃</span>
+			</button>
+		</div>
 	</div>
 </header>
 </html>
