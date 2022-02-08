@@ -3,27 +3,22 @@ package com.broadwave.toppos.User.UserService;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentDtos.PaymentBusinessdayListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentRepositoryCustom;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotRepositoryCustom;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.RequestDetailBusinessdayDeliveryDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.RequestDetailBusinessdayListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepositoryCustom;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.force.InhouseRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.RequestBusinessdayCustomerListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.RequestBusinessdayListDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestRepositoryCustom;
 import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoneyDtos.SaveMoneyBusinessdayListDto;
 import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoneyRepositoryCustom;
 import com.broadwave.toppos.common.AjaxResponse;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,28 +33,17 @@ import java.util.Map;
 @Service
 public class BusinessdayService {
 
-    private final ModelMapper modelMapper;
     private final TokenProvider tokenProvider;
 
-    private final InhouseRepository inhouseRepository;
-    private final InspeotRepositoryCustom inspeotRepositoryCustom;
-    private final RequestRepository requestRepository;
     private final RequestRepositoryCustom requestRepositoryCustom;
-
     private final RequestDetailRepositoryCustom requestDetailRepositoryCustom;
     private final PaymentRepositoryCustom paymentRepositoryCustom;
     private final SaveMoneyRepositoryCustom saveMoneyRepositoryCustom;
 
     @Autowired
-    public BusinessdayService(ModelMapper modelMapper, TokenProvider tokenProvider,
-                              InhouseRepository inhouseRepository, InspeotRepositoryCustom inspeotRepositoryCustom,
-                              RequestRepository requestRepository, RequestRepositoryCustom requestRepositoryCustom,
+    public BusinessdayService(TokenProvider tokenProvider, RequestRepositoryCustom requestRepositoryCustom,
                               RequestDetailRepositoryCustom requestDetailRepositoryCustom, PaymentRepositoryCustom paymentRepositoryCustom, SaveMoneyRepositoryCustom saveMoneyRepositoryCustom){
-        this.modelMapper = modelMapper;
         this.tokenProvider = tokenProvider;
-        this.inhouseRepository = inhouseRepository;
-        this.inspeotRepositoryCustom = inspeotRepositoryCustom;
-        this.requestRepository = requestRepository;
         this.requestRepositoryCustom = requestRepositoryCustom;
         this.requestDetailRepositoryCustom = requestDetailRepositoryCustom;
         this.paymentRepositoryCustom = paymentRepositoryCustom;

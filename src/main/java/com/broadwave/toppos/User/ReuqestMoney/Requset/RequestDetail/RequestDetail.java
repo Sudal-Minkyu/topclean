@@ -160,6 +160,48 @@ public class RequestDetail {
     @Column(name="fd_pollution_level")
     private Integer fdPollutionLevel; // 오염 선택레벨( 1~5)
 
+    @Column(name="fd_pollution_loc_fcn")
+    private String fdPollutionLocFcn; // 오염위치 앞 - 목  체크면 Y 아니면 N
+
+    @Column(name="fd_pollution_loc_fcs")
+    private String fdPollutionLocFcs; // 오염위치 앞 - 배  체크면 Y 아니면 N
+
+    @Column(name="fd_pollution_loc_fcb")
+    private String fdPollutionLocFcb; // 오염위치 앞 - 하의  체크면 Y 아니면 N
+
+    @Column(name="fd_pollution_loc_flh")
+    private String fdPollutionLocFlh; // 오염위치 앞 - 왼손  체크면 Y 아니면 N
+
+    @Column(name="fd_pollution_loc_frh")
+    private String fdPollutionLocFrh; // 오염위치 앞 - 오른손  체크면 Y 아니면 N
+
+    @Column(name="fd_pollution_loc_flf")
+    private String fdPollutionLocFlf; // 오염위치 앞 - 왼발  체크면 Y 아니면 N
+
+    @Column(name="fd_pollution_loc_frf")
+    private String fdPollutionLocFrf; // 오염위치 앞 - 오른발  체크면 Y 아니면 N
+
+    @Column(name="fd_pollution_loc_bcn")
+    private String fdPollutionLocBcn; // 오염위치 뒤 - 목  체크면 Y 아니면 N
+
+    @Column(name="fd_pollution_loc_bcs")
+    private String fdPollutionLocBcs; // 오염위치 뒤 - 배  체크면 Y 아니면 N
+
+    @Column(name="fd_pollution_loc_bcb")
+    private String fdPollutionLocBcb; // 오염위치 뒤 - 하의  체크면 Y 아니면 N
+
+    @Column(name="fd_pollution_loc_bch")
+    private String fdPollutionLocBch; // 오염위치 뒤 - 오른손  체크면 Y 아니면 N
+
+    @Column(name="fd_pollution_loc_blh")
+    private String fdPollutionLocBlh; // 오염위치 뒤 - 왼손  체크면 Y 아니면 N
+
+    @Column(name="fd_pollution_loc_brf")
+    private String fdPollutionLocBrf; // 오염위치 뒤 - 오른발  체크면 Y 아니면 N
+
+    @Column(name="fd_pollution_loc_blf")
+    private String fdPollutionLocBlf; // 오염위치 뒤 - 왼발  체크면 Y 아니면 N
+
     @Column(name="fd_starch")
     private Integer fdStarch; // 풀먹임 요금
 

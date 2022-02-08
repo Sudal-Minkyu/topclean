@@ -44,7 +44,7 @@ public class TagNoticeRepositoryCustomImpl extends QuerydslRepositorySupport imp
                 ));
 
         query.orderBy(tagNotice.htId.desc());
-        tagNotice.brCode.eq(frbrCode);
+        query.where(tagNotice.brCode.eq(frbrCode));
 
         if(searchString != null){
             query.where(tagNotice.htSubject.containsIgnoreCase(searchString));
@@ -74,6 +74,7 @@ public class TagNoticeRepositoryCustomImpl extends QuerydslRepositorySupport imp
                 .innerJoin(account).on(account.userid.eq(tagNotice.insert_id))
                 .select(Projections.constructor(TagNoticeViewDto.class,
                         tagNotice.htId,
+                        tagNotice.brCode,
                         tagNotice.htSubject,
                         tagNotice.htContent,
                         account.username,

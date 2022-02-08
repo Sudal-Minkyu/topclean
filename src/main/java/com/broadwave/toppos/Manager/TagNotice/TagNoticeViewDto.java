@@ -17,6 +17,7 @@ import java.time.format.DateTimeFormatter;
 @AllArgsConstructor
 public class TagNoticeViewDto {
     private Long htId;
+    private String brCode; // 지사코드 2자리
     private String subject; // 헌재 글 제목
     private String content; // 헌재 글 내용
     private String name; // 작성자

@@ -109,16 +109,16 @@ public class InspectService {
 
         List<Long> frIdList = new ArrayList<>();
         List<Long> fdIdList = new ArrayList<>();
-        for(int i=0; i<requestDetailSearchDtoList.size(); i++){
-            frIdList.add(requestDetailSearchDtoList.get(i).getFrId());
-            fdIdList.add(requestDetailSearchDtoList.get(i).getFdId());
+        for (RequestDetailSearchDto detailSearchDto : requestDetailSearchDtoList) {
+            frIdList.add(detailSearchDto.getFrId());
+            fdIdList.add(detailSearchDto.getFdId());
         }
 
         // 결제 취소여부 리스트 호출
         List<PaymentCencelYnDto> paymentCencelYnDtoList = paymentRepositoryCustom.findByPaymentCancelYn(frIdList);
         List<Long> cencelList = new ArrayList<>();
-        for(int i=0; i<paymentCencelYnDtoList.size(); i++){
-            cencelList.add(paymentCencelYnDtoList.get(i).getFrId());
+        for (PaymentCencelYnDto paymentCencelYnDto : paymentCencelYnDtoList) {
+            cencelList.add(paymentCencelYnDto.getFrId());
         }
 
         // 검품 등록여부 리스트 호출
@@ -126,11 +126,11 @@ public class InspectService {
         List<InspeotYnDto> inspeotYnDtoBList = inspeotRepositoryCustom.findByInspeotYnB(fdIdList); // 지사검품(확인품) 여부
         List<Long> inspeotListF = new ArrayList<>();
         List<Long> inspeotListB = new ArrayList<>();
-        for(int i=0; i<inspeotYnDtoFList.size(); i++){
-            inspeotListF.add(inspeotYnDtoFList.get(i).getFdId());
+        for (InspeotYnDto inspeotYnDto : inspeotYnDtoFList) {
+            inspeotListF.add(inspeotYnDto.getFdId());
         }
-        for(int i=0; i<inspeotYnDtoBList.size(); i++){
-            inspeotListB.add(inspeotYnDtoBList.get(i).getFdId());
+        for (InspeotYnDto inspeotYnDto : inspeotYnDtoBList) {
+            inspeotListB.add(inspeotYnDto.getFdId());
         }
 
         // 조회 리스트
@@ -197,6 +197,23 @@ public class InspectService {
             optionalRequestDetail.get().setFdPollution(requestDetailUpdateDto.getFdPollution());
 
             optionalRequestDetail.get().setFdPollutionLevel(requestDetailUpdateDto.getFdPollutionLevel());
+
+            optionalRequestDetail.get().setFdPollutionLocFcn(requestDetailUpdateDto.getFdPollutionLocFcn());
+            optionalRequestDetail.get().setFdPollutionLocFcs(requestDetailUpdateDto.getFdPollutionLocFcs());
+            optionalRequestDetail.get().setFdPollutionLocFcb(requestDetailUpdateDto.getFdPollutionLocFcb());
+            optionalRequestDetail.get().setFdPollutionLocFlh(requestDetailUpdateDto.getFdPollutionLocFlh());
+            optionalRequestDetail.get().setFdPollutionLocFrh(requestDetailUpdateDto.getFdPollutionLocFrh());
+            optionalRequestDetail.get().setFdPollutionLocFlf(requestDetailUpdateDto.getFdPollutionLocFlf());
+            optionalRequestDetail.get().setFdPollutionLocFrf(requestDetailUpdateDto.getFdPollutionLocFrf());
+
+            optionalRequestDetail.get().setFdPollutionLocBcn(requestDetailUpdateDto.getFdPollutionLocBcn());
+            optionalRequestDetail.get().setFdPollutionLocBcs(requestDetailUpdateDto.getFdPollutionLocBcs());
+            optionalRequestDetail.get().setFdPollutionLocBcb(requestDetailUpdateDto.getFdPollutionLocBcb());
+            optionalRequestDetail.get().setFdPollutionLocBch(requestDetailUpdateDto.getFdPollutionLocBch());
+            optionalRequestDetail.get().setFdPollutionLocBlh(requestDetailUpdateDto.getFdPollutionLocBlh());
+            optionalRequestDetail.get().setFdPollutionLocBrf(requestDetailUpdateDto.getFdPollutionLocBrf());
+            optionalRequestDetail.get().setFdPollutionLocBlf(requestDetailUpdateDto.getFdPollutionLocBlf());
+
             optionalRequestDetail.get().setFdStarch(requestDetailUpdateDto.getFdStarch());
             optionalRequestDetail.get().setFdWaterRepellent(requestDetailUpdateDto.getFdWaterRepellent());
             optionalRequestDetail.get().setFdDiscountGrade(requestDetailUpdateDto.getFdDiscountGrade());
@@ -282,8 +299,8 @@ public class InspectService {
         if(!optionalPayment.isPresent()) {
             return ResponseEntity.ok(res.fail(ResponseErrorCode.TP022.getCode(), "적립금 전환 " + ResponseErrorCode.TP022.getDesc(), null, null));
         }else{
+            Optional<Request> optionalRequest = requestRepository.findById(optionalPayment.get().getFrId().getId());
             if(type.equals("1")){
-                Optional<Request> optionalRequest = requestRepository.findById(optionalPayment.get().getFrId().getId());
                 if(!optionalRequest.isPresent()){
                     return ResponseEntity.ok(res.fail(ResponseErrorCode.TP022.getCode(), "결제 취소 할 " + ResponseErrorCode.TP022.getDesc(), null, null));
                 }else{
@@ -299,7 +316,6 @@ public class InspectService {
                     requestRepository.save(optionalRequest.get());
                 }
             }else{
-                Optional<Request> optionalRequest = requestRepository.findById(optionalPayment.get().getFrId().getId());
                 if(!optionalRequest.isPresent()){
                     return ResponseEntity.ok(res.fail(ResponseErrorCode.TP022.getCode(), "적립금 전환 할 " + ResponseErrorCode.TP022.getDesc(), null, null));
                 }else{
@@ -517,7 +533,6 @@ public class InspectService {
         log.info("franchiseLeadCancel 호출");
 
         AjaxResponse res = new AjaxResponse();
-        HashMap<String, Object> data = new HashMap<>();
 
         // 클레임데이터 가져오기
         Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
@@ -544,8 +559,6 @@ public class InspectService {
                 return ResponseEntity.ok(res.fail(ResponseErrorCode.TP024.getCode(),"해당상품은 인도취소한 상품입니다.", "문자", "재조회 후 다시 시도해주세요."));
             }
         }
-
-        data.put("fdPreState",fdPreState);
 
         return ResponseEntity.ok(res.success());
     }

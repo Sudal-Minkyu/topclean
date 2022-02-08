@@ -3,7 +3,6 @@ package com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail;
 import com.broadwave.toppos.Head.Item.Group.A.QItemGroup;
 import com.broadwave.toppos.Head.Item.Group.B.QItemGroupS;
 import com.broadwave.toppos.Head.Item.Group.C.QItem;
-import com.broadwave.toppos.User.Customer.QCustomer;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.QRequest;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.QInspeot;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.*;
@@ -37,6 +36,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
         QItem item = QItem.item;
 
+        // 접수 세부 리스트
         JPQLQuery<RequestDetailDto> query = from(requestDetail)
                 .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
                 .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
@@ -63,6 +63,22 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdWhitening,
                         requestDetail.fdPollution,
                         requestDetail.fdPollutionLevel,
+
+                        requestDetail.fdPollutionLocFcn,
+                        requestDetail.fdPollutionLocFcs,
+                        requestDetail.fdPollutionLocFcb,
+                        requestDetail.fdPollutionLocFlh,
+                        requestDetail.fdPollutionLocFrh,
+                        requestDetail.fdPollutionLocFlf,
+                        requestDetail.fdPollutionLocFrf,
+                        requestDetail.fdPollutionLocBcn,
+                        requestDetail.fdPollutionLocBcs,
+                        requestDetail.fdPollutionLocBcb,
+                        requestDetail.fdPollutionLocBch,
+                        requestDetail.fdPollutionLocBlh,
+                        requestDetail.fdPollutionLocBrf,
+                        requestDetail.fdPollutionLocBlf,
+
                         requestDetail.fdStarch,
                         requestDetail.fdWaterRepellent,
 
@@ -173,6 +189,21 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdPollutionLevel,
                         requestDetail.fdWaterRepellent,
                         requestDetail.fdStarch,
+
+                        requestDetail.fdPollutionLocFcn,
+                        requestDetail.fdPollutionLocFcs,
+                        requestDetail.fdPollutionLocFcb,
+                        requestDetail.fdPollutionLocFlh,
+                        requestDetail.fdPollutionLocFrh,
+                        requestDetail.fdPollutionLocFlf,
+                        requestDetail.fdPollutionLocFrf,
+                        requestDetail.fdPollutionLocBcn,
+                        requestDetail.fdPollutionLocBcs,
+                        requestDetail.fdPollutionLocBcb,
+                        requestDetail.fdPollutionLocBch,
+                        requestDetail.fdPollutionLocBlh,
+                        requestDetail.fdPollutionLocBrf,
+                        requestDetail.fdPollutionLocBlf,
 
                         request.frRefType
 

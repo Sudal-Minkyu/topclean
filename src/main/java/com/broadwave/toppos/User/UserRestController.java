@@ -501,6 +501,7 @@ public class UserRestController {
         // 클레임데이터 가져오기
         Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
         String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
+        log.info("현재 접속한 가맹점 코드 : "+frCode);
 
         List<Long> customerIdList = new ArrayList<>();
         List<HashMap<String,Object>> customerListData = new ArrayList<>();
@@ -556,6 +557,23 @@ public class UserRestController {
                 requestDetailInfo.put("fdWhitening", requestDetailDto.getFdWhitening());
                 requestDetailInfo.put("fdPollution", requestDetailDto.getFdPollution());
                 requestDetailInfo.put("fdPollutionLevel", requestDetailDto.getFdPollutionLevel());
+
+                requestDetailInfo.put("fdPollutionLocFcn", requestDetailDto.getFdPollutionLocFcn());
+                requestDetailInfo.put("fdPollutionLocFcs", requestDetailDto.getFdPollutionLocFcs());
+                requestDetailInfo.put("fdPollutionLocFcb", requestDetailDto.getFdPollutionLocFcb());
+                requestDetailInfo.put("fdPollutionLocFlh", requestDetailDto.getFdPollutionLocFlh());
+                requestDetailInfo.put("fdPollutionLocFrh", requestDetailDto.getFdPollutionLocFrh());
+                requestDetailInfo.put("fdPollutionLocFlf", requestDetailDto.getFdPollutionLocFlf());
+                requestDetailInfo.put("fdPollutionLocFrf", requestDetailDto.getFdPollutionLocFrf());
+
+                requestDetailInfo.put("fdPollutionLocBcn", requestDetailDto.getFdPollutionLocBcn());
+                requestDetailInfo.put("fdPollutionLocBcs", requestDetailDto.getFdPollutionLocBcs());
+                requestDetailInfo.put("fdPollutionLocBcb", requestDetailDto.getFdPollutionLocBcb());
+                requestDetailInfo.put("fdPollutionLocBch", requestDetailDto.getFdPollutionLocBch());
+                requestDetailInfo.put("fdPollutionLocBlh", requestDetailDto.getFdPollutionLocBlh());
+                requestDetailInfo.put("fdPollutionLocBrf", requestDetailDto.getFdPollutionLocBrf());
+                requestDetailInfo.put("fdPollutionLocBlf", requestDetailDto.getFdPollutionLocBlf());
+
                 requestDetailInfo.put("fdStarch", requestDetailDto.getFdStarch());
                 requestDetailInfo.put("fdWaterRepellent", requestDetailDto.getFdWaterRepellent());
 

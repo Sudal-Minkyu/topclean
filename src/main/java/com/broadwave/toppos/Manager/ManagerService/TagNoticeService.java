@@ -10,6 +10,7 @@ import com.broadwave.toppos.Manager.TagNotice.TagNoticeRepositoryCustom;
 import com.broadwave.toppos.Manager.TagNotice.TagNoticeViewDto;
 import com.broadwave.toppos.Manager.TagNotice.TagNoticeViewSubDto;
 import com.broadwave.toppos.common.AjaxResponse;
+import com.broadwave.toppos.common.ResponseErrorCode;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,9 +94,12 @@ public class TagNoticeService {
         // 검색조건
 //        log.info("htId : "+htId);
         TagNoticeViewDto tagNoticeViewDto = tagNoticeRepositoryCustom.findByTagNoticeView(htId, frbrCode);
-        HashMap<String,Object> tagNoticeViewInfo = new HashMap<>();
 
+        HashMap<String,Object> tagNoticeViewInfo = new HashMap<>();
         if(tagNoticeViewDto != null){
+            if(!tagNoticeViewDto.getBrCode().equals(frbrCode)){
+                return ResponseEntity.ok(res.fail(ResponseErrorCode.TP026.getCode(), "해당 글의 "+ ResponseErrorCode.TP026.getDesc(), null, null));
+            }
             tagNoticeViewInfo.put("htId", tagNoticeViewDto.getHtId());
             tagNoticeViewInfo.put("isWritter", type); // 1이면 지사, 2이면 가맹점
             tagNoticeViewInfo.put("subject", tagNoticeViewDto.getSubject());

@@ -890,7 +890,6 @@ public class ReceiptService {
                 paymentListData.add(paymentInfo);
             }
 
-
             paymentData.put("uncollectPayAmount",fpCollectAmt);
             paymentData.put("totalUncollectAmount",preUncollectAmount+curUncollectAmount-fpCollectAmt);
 

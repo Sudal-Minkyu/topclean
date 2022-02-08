@@ -1,9 +1,11 @@
 package com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 /**
  * @author Minkyu
@@ -76,6 +78,21 @@ public class RequestDetailSearchDto {
     private Integer fdPollutionLevel; // 오염 선택레벨(0~5)
     private Integer fdWaterRepellent; // 발수가공요금
     private Integer fdStarch; // 풀먹임 요금
+
+    private String fdPollutionLocFcn; // 오염위치 앞 - 목  체크면 Y 아니면 N
+    private String fdPollutionLocFcs; // 오염위치 앞 - 배  체크면 Y 아니면 N
+    private String fdPollutionLocFcb; // 오염위치 앞 - 하의  체크면 Y 아니면 N
+    private String fdPollutionLocFlh; // 오염위치 앞 - 왼손  체크면 Y 아니면 N
+    private String fdPollutionLocFrh; // 오염위치 앞 - 오른손  체크면 Y 아니면 N
+    private String fdPollutionLocFlf; // 오염위치 앞 - 왼발  체크면 Y 아니면 N
+    private String fdPollutionLocFrf; // 오염위치 앞 - 오른발  체크면 Y 아니면 N
+    private String fdPollutionLocBcn; // 오염위치 뒤 - 목  체크면 Y 아니면 N
+    private String fdPollutionLocBcs; // 오염위치 뒤 - 배  체크면 Y 아니면 N
+    private String fdPollutionLocBcb; // 오염위치 뒤 - 하의  체크면 Y 아니면 N
+    private String fdPollutionLocBch; // 오염위치 뒤 - 오른손  체크면 Y 아니면 N
+    private String fdPollutionLocBlh; // 오염위치 뒤 - 왼손  체크면 Y 아니면 N
+    private String fdPollutionLocBrf; // 오염위치 뒤 - 오른발  체크면 Y 아니면 N
+    private String fdPollutionLocBlf; // 오염위치 뒤 - 왼발  체크면 Y 아니면 N
 
     private String frRefType; // 접수타입(01:일반, 02:무인보관함, 03:배송APP)
 

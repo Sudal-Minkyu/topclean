@@ -45,6 +45,22 @@ public class RequestDetailUpdateDto {
     private String fdRepairRemark; // 수선내용
     private Integer fdWhitening; // 표백 요금
     private Integer fdPollutionLevel; // 오염 선택레벨(0~5)
+
+    private String fdPollutionLocFcn; // 오염위치 앞 - 목  체크면 Y 아니면 N
+    private String fdPollutionLocFcs; // 오염위치 앞 - 배  체크면 Y 아니면 N
+    private String fdPollutionLocFcb; // 오염위치 앞 - 하의  체크면 Y 아니면 N
+    private String fdPollutionLocFlh; // 오염위치 앞 - 왼손  체크면 Y 아니면 N
+    private String fdPollutionLocFrh; // 오염위치 앞 - 오른손  체크면 Y 아니면 N
+    private String fdPollutionLocFlf; // 오염위치 앞 - 왼발  체크면 Y 아니면 N
+    private String fdPollutionLocFrf; // 오염위치 앞 - 오른발  체크면 Y 아니면 N
+    private String fdPollutionLocBcn; // 오염위치 뒤 - 목  체크면 Y 아니면 N
+    private String fdPollutionLocBcs; // 오염위치 뒤 - 배  체크면 Y 아니면 N
+    private String fdPollutionLocBcb; // 오염위치 뒤 - 하의  체크면 Y 아니면 N
+    private String fdPollutionLocBch; // 오염위치 뒤 - 오른손  체크면 Y 아니면 N
+    private String fdPollutionLocBlh; // 오염위치 뒤 - 왼손  체크면 Y 아니면 N
+    private String fdPollutionLocBrf; // 오염위치 뒤 - 오른발  체크면 Y 아니면 N
+    private String fdPollutionLocBlf; // 오염위치 뒤 - 왼발  체크면 Y 아니면 N
+
     private Integer fdWaterRepellent; // 발수가공요금
     private Integer fdStarch; // 풀먹임 요금
 

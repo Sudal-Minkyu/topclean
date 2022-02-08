@@ -1,11 +1,9 @@
 package com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos;
 
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.PhotoDto;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
+import javax.persistence.Column;
 import java.util.List;
 
 /**
@@ -14,7 +12,7 @@ import java.util.List;
  * Time :
  * Remark : Toppos 가맹점 접수세부 Dto
  */
-@Setter
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -39,6 +37,22 @@ public class RequestDetailMapperDto {
     private Integer fdWhitening; // 표백 요금
     private Integer fdPollution; // 오염 추가요금
     private Integer fdPollutionLevel; // 오염 선택레벨(0~5)
+
+    private String fdPollutionLocFcn; // 오염위치 앞 - 목  체크면 Y 아니면 N
+    private String fdPollutionLocFcs; // 오염위치 앞 - 배  체크면 Y 아니면 N
+    private String fdPollutionLocFcb; // 오염위치 앞 - 하의  체크면 Y 아니면 N
+    private String fdPollutionLocFlh; // 오염위치 앞 - 왼손  체크면 Y 아니면 N
+    private String fdPollutionLocFrh; // 오염위치 앞 - 오른손  체크면 Y 아니면 N
+    private String fdPollutionLocFlf; // 오염위치 앞 - 왼발  체크면 Y 아니면 N
+    private String fdPollutionLocFrf; // 오염위치 앞 - 오른발  체크면 Y 아니면 N
+    private String fdPollutionLocBcn; // 오염위치 뒤 - 목  체크면 Y 아니면 N
+    private String fdPollutionLocBcs; // 오염위치 뒤 - 배  체크면 Y 아니면 N
+    private String fdPollutionLocBcb; // 오염위치 뒤 - 하의  체크면 Y 아니면 N
+    private String fdPollutionLocBch; // 오염위치 뒤 - 오른손  체크면 Y 아니면 N
+    private String fdPollutionLocBlh; // 오염위치 뒤 - 왼손  체크면 Y 아니면 N
+    private String fdPollutionLocBrf; // 오염위치 뒤 - 오른발  체크면 Y 아니면 N
+    private String fdPollutionLocBlf; // 오염위치 뒤 - 왼발  체크면 Y 아니면 N
+
     private Integer fdStarch; // 풀먹임 요금
     private Integer fdWaterRepellent; // 발수가공요금
 
@@ -60,123 +74,4 @@ public class RequestDetailMapperDto {
 
     private List<PhotoDto> photoList; // 해당 상품의 대한 이미지 파일 리스트
 
-    public List<PhotoDto> getPhotoList() {
-        return photoList;
-    }
-
-    public String getFdUrgentYn() {
-        return fdUrgentYn;
-    }
-
-    public String getBgName() {
-        return bgName;
-    }
-
-    public String getBsName() {
-        return bsName;
-    }
-
-    public String getBiName() {
-        return biName;
-    }
-
-    public String getFdTag() {
-        return fdTag;
-    }
-
-    public String getBiItemcode() {
-        return biItemcode;
-    }
-
-    public String getFdColor() {
-        return fdColor;
-    }
-
-    public String getFdPattern() {
-        return fdPattern;
-    }
-
-    public String getFdPriceGrade() {
-        return fdPriceGrade;
-    }
-
-    public Integer getFdOriginAmt() {
-        return fdOriginAmt;
-    }
-
-    public Integer getFdNormalAmt() {
-        return fdNormalAmt;
-    }
-
-    public String getFdRepairRemark() {
-        return fdRepairRemark;
-    }
-
-    public Integer getFdRepairAmt() {
-        return fdRepairAmt;
-    }
-
-    public String getFdAdd1Remark() {
-        return fdAdd1Remark;
-    }
-
-    public String getFdSpecialYn() {
-        return fdSpecialYn;
-    }
-
-    public Integer getFdAdd1Amt() {
-        return fdAdd1Amt;
-    }
-
-    public Integer getFdPressed() {
-        return fdPressed;
-    }
-
-    public Integer getFdWhitening() {
-        return fdWhitening;
-    }
-
-    public Integer getFdPollution() {
-        return fdPollution;
-    }
-
-    public Integer getFdPollutionLevel() {
-        return fdPollutionLevel;
-    }
-
-    public Integer getFdStarch() {
-        return fdStarch;
-    }
-
-    public Integer getFdWaterRepellent() {
-        return fdWaterRepellent;
-    }
-
-    public String getFdDiscountGrade() {
-        return fdDiscountGrade;
-    }
-
-    public Integer getFdDiscountAmt() {
-        return fdDiscountAmt;
-    }
-
-    public Integer getFdQty() {
-        return fdQty;
-    }
-
-    public Integer getFdRequestAmt() {
-        return fdRequestAmt;
-    }
-
-    public String getFdRetryYn() {
-        return fdRetryYn;
-    }
-
-    public String getFdRemark() {
-        return fdRemark;
-    }
-
-    public String getFrEstimateDate() {
-        return frEstimateDate;
-    }
 }
