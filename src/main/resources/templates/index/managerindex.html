@@ -15,17 +15,125 @@
 	<script type="text/javascript">
 
 		$(function() {
+			$('.gnb').on('mouseenter', function () {
+				$('.gnb__layer').stop().slideDown(200);
+				$('.gnb__depth2').stop().slideDown(200);
+			});
 
+			$('.header').on('mouseleave', function(){
+				$('.gnb__layer').stop().slideUp(200);
+				$('.gnb__depth2').stop().slideUp(200);
+			});
 		});
 
 	</script>
 </th:block>
 
-<div layout:fragment="content" class="content padding-zero content--main">
+<div layout:fragment="content" class="content content--main">
 	<div class="main">
-		<h1>지사 메인페이지입니다.</h1>
-		<a href="/manager/businessday" class="main__link">영업일관리</a>
+		<div class="main__board">
+			<div class="main__board-header">
+				<h3><a href="#">공지사항</a></h3>
+			</div>
+			<ul class="main__board-contents">
+				<li>
+					<a href="#">
+						<div class="main__board-title">
+							<span>TOP POS 시스템 개발중입니다.</span>
+						</div>
+						<div class="main__board-date">
+							<span>2021-07-21</span>
+						</div>
+					</a>
+				</li>
+				<li>
+					<a href="#">
+						<div class="main__board-title">
+							<span>광고성 스팸 메세지 전송 주의 관련의 건</span>
+						</div>
+						<div class="main__board-date">
+							<span>2021-07-21</span>
+						</div>
+					</a>
+				</li>
+				<li>
+					<a href="#">
+						<div class="main__board-title">
+							<span>-</span>
+						</div>
+						<div class="main__board-date">
+							<span>2021-07-21</span>
+						</div>
+					</a>
+				</li>
+			</ul>
+		</div>
+		
+		<div class="main__board">
+			<div class="main__board-header">
+				<h3><a href="#">확인폼</a></h3>
+			</div>
+			<ul class="main__board-contents">
+				<li>
+					<a href="#">
+						<div class="main__board-title">
+							<span>청바지 오염 요청의 건.</span>
+						</div>
+						<div class="main__board-date">
+							<span>2021-07-21</span>
+						</div>
+					</a>
+				</li>
+				<li>
+					<a href="#">
+						<div class="main__board-title">
+							<span>오리털 코트 구멍 확인 바랍니다.</span>
+						</div>
+						<div class="main__board-date">
+							<span>2021-07-21</span>
+						</div>
+					</a>
+				</li>
+				<li>
+					<a href="#">
+						<div class="main__board-title">
+							<span>-</span>
+						</div>
+						<div class="main__board-date">
+							<span>2021-07-21</span>
+						</div>
+					</a>
+				</li>
+			</ul>
+		</div>
+
+		<div class="main__board">
+			<div class="main__board-header">
+				<h3><a href="#">1주일간의 가맹점 접수금액</a></h3>
+			</div>
+			<div class="main__board-contents">
+				<div style="width: 100%; height: 280px">chart 영역</div>
+			</div>
+		</div>
+
+		<div class="main__board">
+			<div class="main__board-header">
+				<h3><a href="#">가맹점 오픈 현황</a></h3>
+			</div>
+			<div class="main__board-contents">
+				<div style="width: 100%; height: 280px">chart 영역</div>
+			</div>
+		</div>
+
+		<div class="main__board">
+			<div class="main__board-header">
+				<h3><a href="#">1주일간의 지사 출고 금액</a></h3>
+			</div>
+			<div class="main__board-contents">
+				<div style="width: 100%; height: 280px">chart 영역</div>
+			</div>
+		</div>
+		
 	</div>
-	
 </div>
 </html>
