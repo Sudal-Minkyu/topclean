@@ -86,8 +86,6 @@ $(function() {
         }else if($processInput.first().is(":checked") || $isEtcProcessChecked) {
             $processInput.first().prop("checked", false);
         }
-        const targetId = e.target.id;
-        additionalProcess(targetId);
 
         calculateItemPrice();
     });
@@ -143,6 +141,11 @@ $(function() {
     $("#fdAdd1").on("click", function () {
         $("#fdAddPop").addClass("active");
         enableKeypad();
+    });
+
+    $("#fdPollution").on("click", function () {
+        $("#foreLoc").trigger("click");
+        $("#fdPollutionPop").addClass("active");
     });
 
     $("#fdRepairCancel").on("click", function () {
@@ -201,6 +204,18 @@ $(function() {
         }else{
             $(this).parents('.choice-drop').children('.choice-drop__btn').addClass('choice-drop__btn--active');
         }
+    });
+
+    $("#foreLoc").on("click", function() {
+        $(".foreLoc").show();
+        $(".pop__pollution-content").removeClass("back");
+        $(".backLoc").hide();
+    });
+
+    $("#backLoc").on("click", function() {
+        $(".backLoc").show();
+        $(".pop__pollution-content").addClass("back");
+        $(".foreLoc").hide();
     });
 
     // 검색 엔터 이벤트
@@ -836,7 +851,7 @@ function calculateItemPrice() {
     currentRequest.fdStarch = $("#fdStarch").is(":checked") ?
         parseInt(initialData.addCostData.bcStarch) : 0;
     currentRequest.fdPollutionLevel = $("input[name='cleanDirt']:checked").first().val() | 0;
-    currentRequest.fdPollution = parseInt(initialData.addCostData["bcPollution"+currentRequest.fdPollutionLevel]) | 0;
+    currentRequest.fdPollution = parseInt(initialData.addCostData["bcPollution" + currentRequest.fdPollutionLevel]) | 0;
 
     currentRequest.fdRepairAmt = ceil100(currentRequest.fdRepairAmt);
     currentRequest.fdAdd1Amt = ceil100(currentRequest.fdAdd1Amt);
@@ -1041,6 +1056,20 @@ function onCloseTakePicture() {
         fdWhitening: currentRequest.fdWhitening,
         fdPollution: currentRequest.fdPollution,
         fdPollutionLevel: currentRequest.fdPollutionLevel,
+        fdPollutionLocFcn: currentRequest.fdPollutionLocFcn,
+        fdPollutionLocFcs: currentRequest.fdPollutionLocFcs,
+        fdPollutionLocFcb: currentRequest.fdPollutionLocFcb,
+        fdPollutionLocFlh: currentRequest.fdPollutionLocFlh,
+        fdPollutionLocFrh: currentRequest.fdPollutionLocFrh,
+        fdPollutionLocFlf: currentRequest.fdPollutionLocFlf,
+        fdPollutionLocFrf: currentRequest.fdPollutionLocFrf,
+        fdPollutionLocBcn: currentRequest.fdPollutionLocBcn,
+        fdPollutionLocBcs: currentRequest.fdPollutionLocBcs,
+        fdPollutionLocBcb: currentRequest.fdPollutionLocBcb,
+        fdPollutionLocBrh: currentRequest.fdPollutionLocBrh,
+        fdPollutionLocBlh: currentRequest.fdPollutionLocBlh,
+        fdPollutionLocBrf: currentRequest.fdPollutionLocBrf,
+        fdPollutionLocBlf: currentRequest.fdPollutionLocBlf,
         fdStarch: currentRequest.fdStarch,
         fdWaterRepellent: currentRequest.fdWaterRepellent,
         fdDiscountGrade: currentRequest.fdDiscountGrade,
@@ -1152,6 +1181,15 @@ function onAddOrder() {
     currentRequest.frEstimateDate = initialData.etcData.frEstimateDate.numString();
     currentRequest.fdSpecialYn = $("#fdSpecialYn").is(":checked") ? "Y" : "N";
     currentRequest.fdUrgentYn = $("#fdUrgentYn").is(":checked") ? "Y" : "N";
+    
+    const pollutionLoc = $("input[name='pollutionLoc']");
+    for(let i = 0; i < pollutionLoc.length; i++) {
+        if($(pollutionLoc[i]).is(":checked")) {
+            currentRequest[pollutionLoc[i].id] = "Y";
+        }else {
+            currentRequest[pollutionLoc[i].id] = "N";
+        }
+    }
 
     if(currentRequest._$uid) {
         const copyObj = {
@@ -1173,6 +1211,20 @@ function onAddOrder() {
             fdWhitening: currentRequest.fdWhitening,
             fdPollution: currentRequest.fdPollution,
             fdPollutionLevel: currentRequest.fdPollutionLevel,
+            fdPollutionLocFcn: currentRequest.fdPollutionLocFcn,
+            fdPollutionLocFcs: currentRequest.fdPollutionLocFcs,
+            fdPollutionLocFcb: currentRequest.fdPollutionLocFcb,
+            fdPollutionLocFlh: currentRequest.fdPollutionLocFlh,
+            fdPollutionLocFrh: currentRequest.fdPollutionLocFrh,
+            fdPollutionLocFlf: currentRequest.fdPollutionLocFlf,
+            fdPollutionLocFrf: currentRequest.fdPollutionLocFrf,
+            fdPollutionLocBcn: currentRequest.fdPollutionLocBcn,
+            fdPollutionLocBcs: currentRequest.fdPollutionLocBcs,
+            fdPollutionLocBcb: currentRequest.fdPollutionLocBcb,
+            fdPollutionLocBrh: currentRequest.fdPollutionLocBrh,
+            fdPollutionLocBlh: currentRequest.fdPollutionLocBlh,
+            fdPollutionLocBrf: currentRequest.fdPollutionLocBrf,
+            fdPollutionLocBlf: currentRequest.fdPollutionLocBlf,
             fdStarch: currentRequest.fdStarch,
             fdWaterRepellent: currentRequest.fdWaterRepellent,
             fdDiscountGrade: currentRequest.fdDiscountGrade,
@@ -1213,12 +1265,48 @@ function onCloseAddOrder() {
 
     $(".keypad_remark").val("");
     $(".keypad_field").val(0);
-
+    $("#foreLoc").prop("checked", true);
+    $("input[name='pollutionLoc']").prop("checked", false);
     $("input[name='etcNone']").first().prop("checked", true);
     $("input[name='urgentNone']").first().prop("checked", true);
     $("#fdRemark").val("");
 
     $("#addProductPopChild").parents('.pop').removeClass('active');
+}
+
+function confirmPollutionPop() {
+
+    const isLocChecked = $("input[name='pollutionLoc']:checked").length;
+    const isSizeChecked = !$("#pollution00").is(":checked");
+
+    if(isLocChecked && !isSizeChecked) {
+        alertCaution("오염위치가 선택되어 있습니다.<br>오염크기도 선택해 주세요.", 1);
+        return false;
+    }
+    if(!isLocChecked && isSizeChecked) {
+        alertCaution("오염크기가 선택되어 있습니다.<br>오염위치도 선택해 주세요.", 1);
+        return false;
+    }
+
+    if($("#pollution00").is(":checked") && $("#fdPollution").is(":checked")) {
+        $("#fdPollution").trigger("click");
+    }else if(!$("#pollution00").is(":checked") && !$("#fdPollution").is(":checked")){
+        $("#fdPollution").trigger("click");
+    }
+    $("#fdPollutionPop").removeClass("active");
+
+    calculateItemPrice();
+}
+
+function resetPollutionPop() {
+    $("#pollution00").prop("checked", true);
+    $("input[name='pollutionLoc']").prop("checked", false);
+    if($("#fdPollution").is(":checked")) {
+        $("#fdPollution").trigger("click");
+    }
+    $("#fdPollutionPop").removeClass("active");
+
+    calculateItemPrice();
 }
 
 function onModifyOrder(rowIndex) {
@@ -1288,11 +1376,24 @@ function onModifyOrder(rowIndex) {
     }
 
     $("input[name='cleanDirt']:input[value='" + currentRequest.fdPollutionLevel +"']").prop("checked", true);
-    if($("#dirt0").is(":checked")) {
-        $("#pollutionBtn").removeClass("choice-drop__btn--active");
+    if($("#pollution00").is(":checked")) {
+        $("#fdPollution").prop("checked", false);
     }else{
-        $("#pollutionBtn").addClass("choice-drop__btn--active");
+        $("#fdPollution").prop("checked", true);
     }
+
+    const pollutionLocKeys = [
+        "fdPollutionLocFcn", "fdPollutionLocFcs", "fdPollutionLocFcb",
+        "fdPollutionLocFlh", "fdPollutionLocFrh", "fdPollutionLocFlf", "fdPollutionLocFrf",
+        "fdPollutionLocBcn", "fdPollutionLocBcs", "fdPollutionLocBcb",
+        "fdPollutionLocBrh", "fdPollutionLocBlh", "fdPollutionLocBrf", "fdPollutionLocBlf",
+    ];
+
+    pollutionLocKeys.forEach(key => {
+        if(currentRequest[key] === "Y") {
+            $("#" + key).prop("checked", true);
+        }
+    });
 
     if(currentRequest.fdWaterRepellent) {
         $("#fdWaterRepellent").prop("checked", true);
@@ -1312,7 +1413,7 @@ function onModifyOrder(rowIndex) {
         $("#fdRemark").val(currentRequest.fdRemark);
     }
 
-    if($("#processCheck input:checked").length > 3 || $("#processCheck .choice-drop__btn--active").length) {
+    if($("#processCheck input:checked").length > 2 || $("#processCheck .choice-drop__btn--active").length) {
         $("#etcNone").prop("checked", false);
     }
 
@@ -1341,13 +1442,6 @@ function onRemoveOrder() {
 function setNextTag(tag) {
     $("#fdTag").val(tag.substr(0,3) + "-"
         + (parseInt(tag.substr(-4)) + 1).toString().padStart(4, '0'));
-}
-
-function additionalProcess(id) {
-    switch (id) {
-        case "" :
-            break;
-    }
 }
 
 /* 임시저장을 두단계로 분리하기 위해 데이터를 임시로 전역변수화 */

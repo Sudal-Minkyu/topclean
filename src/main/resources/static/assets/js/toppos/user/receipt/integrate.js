@@ -93,6 +93,20 @@ const dto = {
             fdRepairRemark: "",
             fdWhitening: "",
             fdPollutionLevel: "",
+            fdPollutionLocFcn: "s",
+            fdPollutionLocFcs: "s",
+            fdPollutionLocFcb: "s",
+            fdPollutionLocFlh: "s",
+            fdPollutionLocFrh: "s",
+            fdPollutionLocFlf: "s",
+            fdPollutionLocFrf: "s",
+            fdPollutionLocBcn: "s",
+            fdPollutionLocBcs: "s",
+            fdPollutionLocBcb: "s",
+            fdPollutionLocBrh: "s",
+            fdPollutionLocBlh: "s",
+            fdPollutionLocBrf: "s",
+            fdPollutionLocBlf: "s",
             fdWaterRepellent: "",
             fdStarch: "",
             _$uid: "d",
@@ -197,6 +211,20 @@ const dto = {
             fdRepairRemark: "s",
             fdWhitening: "n",
             fdPollutionLevel: "n",
+            fdPollutionLocFcn: "s",
+            fdPollutionLocFcs: "s",
+            fdPollutionLocFcb: "s",
+            fdPollutionLocFlh: "s",
+            fdPollutionLocFrh: "s",
+            fdPollutionLocFlf: "s",
+            fdPollutionLocFrf: "s",
+            fdPollutionLocBcn: "s",
+            fdPollutionLocBcs: "s",
+            fdPollutionLocBcb: "s",
+            fdPollutionLocBrh: "s",
+            fdPollutionLocBlh: "s",
+            fdPollutionLocBrf: "s",
+            fdPollutionLocBlf: "s",
             fdWaterRepellent: "n",
             fdStarch: "n",
             fpCancelYn: "sr",
@@ -1101,7 +1129,6 @@ const event = {
                 }else if($processInput.first().is(":checked") || $isEtcProcessChecked) {
                     $processInput.first().prop("checked", false);
                 }
-                const targetId = e.target.id;
 
                 calculateItemPrice();
             });
@@ -1119,6 +1146,11 @@ const event = {
             $("#fdAdd1").on("click", function () {
                 $("#fdAddPop").addClass("active");
                 enableKeypad();
+            });
+
+            $("#fdPollution").on("click", function () {
+                $("#foreLoc").trigger("click");
+                $("#fdPollutionPop").addClass("active");
             });
 
             $("#fdRepairCancel").on("click", function () {
@@ -1298,6 +1330,18 @@ const event = {
                 }
                 $("#confirmInspectPop").removeClass("active");
             });
+
+            $("#foreLoc").on("click", function() {
+                $(".foreLoc").show();
+                $(".pop__pollution-content").removeClass("back");
+                $(".backLoc").hide();
+            });
+        
+            $("#backLoc").on("click", function() {
+                $(".backLoc").show();
+                $(".pop__pollution-content").addClass("back");
+                $(".foreLoc").hide();
+            });
         },
     },
     r: { // 이벤트 해제
@@ -1403,11 +1447,24 @@ function modifyOrder(rowIndex) {
     }
 
     $("input[name='cleanDirt']:input[value='" + data.currentRequest.fdPollutionLevel +"']").prop("checked", true);
-    if($("#dirt0").is(":checked")) {
-        $("#pollutionBtn").removeClass("choice-drop__btn--active");
+    if($("#pollution00").is(":checked")) {
+        $("#fdPollution").prop("checked", false);
     }else{
-        $("#pollutionBtn").addClass("choice-drop__btn--active");
+        $("#fdPollution").prop("checked", true);
     }
+
+    const pollutionLocKeys = [
+        "fdPollutionLocFcn", "fdPollutionLocFcs", "fdPollutionLocFcb",
+        "fdPollutionLocFlh", "fdPollutionLocFrh", "fdPollutionLocFlf", "fdPollutionLocFrf",
+        "fdPollutionLocBcn", "fdPollutionLocBcs", "fdPollutionLocBcb",
+        "fdPollutionLocBrh", "fdPollutionLocBlh", "fdPollutionLocBrf", "fdPollutionLocBlf",
+    ];
+
+    pollutionLocKeys.forEach(key => {
+        if(currentRequest[key] === "Y") {
+            $("#" + key).prop("checked", true);
+        }
+    });
 
     if(data.currentRequest.fdWaterRepellent) {
         $("#fdWaterRepellent").prop("checked", true);
@@ -1427,7 +1484,7 @@ function modifyOrder(rowIndex) {
         $("#fdRemark").val(data.currentRequest.fdRemark);
     }
 
-    if($("#processCheck input:checked").length > 3 || $("#processCheck .choice-drop__btn--active").length) {
+    if($("#processCheck input:checked").length > 2 || $("#processCheck .choice-drop__btn--active").length) {
         $("#etcNone").prop("checked", false);
     }
 
@@ -1457,7 +1514,7 @@ function calculateItemPrice() {
     data.currentRequest.fdStarch = $("#fdStarch").is(":checked") ?
         parseInt(data.initialData.addCostData.bcStarch) : 0;
     data.currentRequest.fdPollutionLevel = $("input[name='cleanDirt']:checked").first().val() | 0;
-    data.currentRequest.fdPollution = parseInt(data.initialData.addCostData["bcPollution"+data.currentRequest.fdPollutionLevel]) | 0;
+    data.currentRequest.fdPollution = parseInt(data.initialData.addCostData["bcPollution" + data.currentRequest.fdPollutionLevel]) | 0;
 
     data.currentRequest.fdRepairAmt = ceil100(data.currentRequest.fdRepairAmt);
     data.currentRequest.fdAdd1Amt = ceil100(data.currentRequest.fdAdd1Amt);
@@ -1543,7 +1600,8 @@ function onCloseAddOrder() {
 
     $(".keypad_remark").val("");
     $(".keypad_field").val(0);
-
+    $("#foreLoc").prop("checked", true);
+    $("input[name='pollutionLoc']").prop("checked", false);
     $("input[name='etcNone']").first().prop("checked", true);
     $("input[name='urgentNone']").first().prop("checked", true);
     $("#fdRemark").val("");
@@ -1571,8 +1629,52 @@ function onAddOrder() {
     data.currentRequest.frEstimateDate = data.initialData.etcData.frEstimateDate.numString();
     data.currentRequest.fdSpecialYn = $("#fdSpecialYn").is(":checked") ? "Y" : "N";
     data.currentRequest.fdUrgentYn = $("#fdUrgentYn").is(":checked") ? "Y" : "N";
+
+    const pollutionLoc = $("input[name='pollutionLoc']");
+    for(let i = 0; i < pollutionLoc.length; i++) {
+        if($(pollutionLoc[i]).is(":checked")) {
+            data.currentRequest[pollutionLoc[i].id] = "Y";
+        }else {
+            data.currentRequest[pollutionLoc[i].id] = "N";
+        }
+    }
     
     ajax.saveModifiedOrder(data.currentRequest);
+}
+
+function confirmPollutionPop() {
+
+    const isLocChecked = $("input[name='pollutionLoc']:checked").length;
+    const isSizeChecked = !$("#pollution00").is(":checked");
+
+    if(isLocChecked && !isSizeChecked) {
+        alertCaution("오염위치가 선택되어 있습니다.<br>오염크기도 선택해 주세요.", 1);
+        return false;
+    }
+    if(!isLocChecked && isSizeChecked) {
+        alertCaution("오염크기가 선택되어 있습니다.<br>오염위치도 선택해 주세요.", 1);
+        return false;
+    }
+
+    if($("#pollution00").is(":checked") && $("#fdPollution").is(":checked")) {
+        $("#fdPollution").trigger("click");
+    }else if(!$("#pollution00").is(":checked") && !$("#fdPollution").is(":checked")){
+        $("#fdPollution").trigger("click");
+    }
+    $("#fdPollutionPop").removeClass("active");
+
+    calculateItemPrice();
+}
+
+function resetPollutionPop() {
+    $("#pollution00").prop("checked", true);
+    $("input[name='pollutionLoc']").prop("checked", false);
+    if($("#fdPollution").is(":checked")) {
+        $("#fdPollution").trigger("click");
+    }
+    $("#fdPollutionPop").removeClass("active");
+
+    calculateItemPrice();
 }
 
 function enableDatepicker() {

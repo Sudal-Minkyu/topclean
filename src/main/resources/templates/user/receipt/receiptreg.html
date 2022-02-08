@@ -432,34 +432,9 @@
                                 </div>
                             </li>
                             <li>
-                                <div class="choice-drop">
-                                    <button class="choice-drop__btn etcProcess" id="pollutionBtn">오염</button>
-                                    <ul class="choice-drop__content">
-                                        <li class="choice-drop__item closDrop">
-                                            <input type="radio" id="dirt0" name="cleanDirt" value="0" checked />
-                                            <label for="dirt0">미선택</label>
-                                        </li>
-                                        <li class="choice-drop__item">
-                                            <input type="radio" id="dirt1" name="cleanDirt" value="1" />
-                                            <label for="dirt1">1cm 미만</label>
-                                        </li>
-                                        <li class="choice-drop__item">
-                                            <input type="radio" id="dirt2" name="cleanDirt" value="2" />
-                                            <label for="dirt2">1cm ~ 3cm 미만</label>
-                                        </li>
-                                        <li class="choice-drop__item">
-                                            <input type="radio" id="dirt3" name="cleanDirt" value="3" />
-                                            <label for="dirt3">3cm ~ 7cm 미만</label>
-                                        </li>
-                                        <li class="choice-drop__item">
-                                            <input type="radio" id="dirt4" name="cleanDirt" value="4" />
-                                            <label for="dirt4">7cm ~ 10cm 미만</label>
-                                        </li>
-                                        <li class="choice-drop__item">
-                                            <input type="radio" id="dirt5" name="cleanDirt" value="5" />
-                                            <label for="dirt5">10cm 이상</label>
-                                        </li>
-                                    </ul>
+                                <div class="choice">
+                                    <input type="checkbox" id="fdPollution" />
+                                    <label for="fdPollution">오염</label>
                                 </div>
                             </li>
                             <li>
@@ -669,6 +644,166 @@
             </div>
         </div>
     </div>
+
+    <!-- 오염 팝업 -->
+	<div id="fdPollutionPop" class="pop">
+		<div class="pop__box pop__box--flex">
+			<div class="pop__example">
+				<div class="pop__example-header">
+					<h3 class="pop__example-heading">오염크기</h3>
+				</div>
+				<div class="pop__example-content">
+					<ul class="pop__example-list">
+						<li class="pop__example-item">
+							<div class="choice">
+								<input type="radio" name="cleanDirt" id="pollution00" value="0" checked="" />
+								<label for="pollution00">없음</label>
+							</div>
+						</li>
+						<li class="pop__example-item">
+							<div class="choice">
+								<input type="radio" name="cleanDirt" id="pollution01" value="1" />
+								<label for="pollution01">1cm 미만</label>
+							</div>
+						</li>
+						<li class="pop__example-item">
+							<div class="choice">
+								<input type="radio" name="cleanDirt" id="pollution02" value="2" />
+								<label for="pollution02">1cm ~ 3cm 미만</label>
+							</div>
+						</li>
+						<li class="pop__example-item">
+							<div class="choice">
+								<input type="radio" name="cleanDirt" id="pollution03" value="3" />
+								<label for="pollution03">3cm ~ 7cm 미만</label>
+							</div>
+						</li>
+						<li class="pop__example-item">
+							<div class="choice">
+								<input type="radio" name="cleanDirt" id="pollution04" value="4" />
+								<label for="pollution04">7cm ~ 10cm 미만</label>
+							</div>
+						</li>
+						<li class="pop__example-item">
+							<div class="choice">
+								<input type="radio" name="cleanDirt" id="pollution05" value="5" />
+								<label for="pollution05">10cm 이상</label>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</div>
+
+			<div class="pop__example">
+				<div class="pop__example-header">
+					<h3 class="pop__example-heading">오염위치</h3>
+				</div>
+				<div class="pop__example-content">
+					<div class="pop__pollution-header">
+						<div class="choice">
+							<input type="radio" name="fb" id="foreLoc" checked="" />
+							<label for="foreLoc">앞</label>
+						</div>
+						<div class="choice">
+							<input type="radio" name="fb" id="backLoc" />
+							<label for="backLoc">뒤</label>
+						</div>
+					</div>
+					<div class="pop__pollution-content">
+						<div class="pop__position neck foreLoc">
+							<div class="c-checkbox c-checkbox--non-title">
+								<input type="checkbox" name="pollutionLoc" id="fdPollutionLocFcn">
+								<label for="fdPollutionLocFcn">앞 - 목</label>
+							</div>
+						</div>
+						<div class="pop__position neck backLoc">
+							<div class="c-checkbox c-checkbox--non-title">
+								<input type="checkbox" name="pollutionLoc" id="fdPollutionLocBcn">
+								<label for="fdPollutionLocBcn">뒤 - 목</label>
+							</div>
+						</div>
+						<div class="pop__position left-sleeve foreLoc">
+							<div class="c-checkbox c-checkbox--non-title">
+								<input type="checkbox" name="pollutionLoc" id="fdPollutionLocFrh">
+								<label for="fdPollutionLocFrh">앞 - 오른손</label>
+							</div>
+						</div>
+						<div class="pop__position left-sleeve backLoc">
+							<div class="c-checkbox c-checkbox--non-title">
+								<input type="checkbox" name="pollutionLoc" id="fdPollutionLocBlh">
+								<label for="fdPollutionLocBlh">뒤 - 왼손</label>
+							</div>
+						</div>
+						<div class="pop__position right-sleeve foreLoc">
+							<div class="c-checkbox c-checkbox--non-title">
+								<input type="checkbox" name="pollutionLoc" id="fdPollutionLocFlh">
+								<label for="fdPollutionLocFlh">앞 - 왼손</label>
+							</div>
+						</div>
+						<div class="pop__position right-sleeve backLoc">
+							<div class="c-checkbox c-checkbox--non-title">
+								<input type="checkbox" name="pollutionLoc" id="fdPollutionLocBrh">
+								<label for="fdPollutionLocBrh">뒤 - 오른손</label>
+							</div>
+						</div>
+						<div class="pop__position body foreLoc">
+							<div class="c-checkbox c-checkbox--non-title">
+								<input type="checkbox" name="pollutionLoc" id="fdPollutionLocFcs">
+								<label for="fdPollutionLocFcs">앞 - 배</label>
+							</div>
+						</div>
+						<div class="pop__position body backLoc">
+							<div class="c-checkbox c-checkbox--non-title">
+								<input type="checkbox" name="pollutionLoc" id="fdPollutionLocBcs">
+								<label for="fdPollutionLocBcs">뒤 - 배</label>
+							</div>
+						</div>
+						<div class="pop__position left-leg foreLoc">
+							<div class="c-checkbox c-checkbox--non-title">
+								<input type="checkbox" name="pollutionLoc" id="fdPollutionLocFrf">
+								<label for="fdPollutionLocFrf">앞 - 오른발</label>
+							</div>
+						</div>
+						<div class="pop__position left-leg backLoc">
+							<div class="c-checkbox c-checkbox--non-title">
+								<input type="checkbox" name="pollutionLoc" id="fdPollutionLocBlf">
+								<label for="fdPollutionLocBlf">뒤 - 왼발</label>
+							</div>
+						</div>
+						<div class="pop__position right-leg foreLoc">
+							<div class="c-checkbox c-checkbox--non-title">
+								<input type="checkbox" name="pollutionLoc" id="fdPollutionLocFlf">
+								<label for="fdPollutionLocFlf">앞 - 왼발</label>
+							</div>
+						</div>
+						<div class="pop__position right-leg backLoc">
+							<div class="c-checkbox c-checkbox--non-title">
+								<input type="checkbox" name="pollutionLoc" id="fdPollutionLocBrf">
+								<label for="fdPollutionLocBrf">뒤 - 오른발</label>
+							</div>
+						</div>
+						<div class="pop__position groin foreLoc">
+							<div class="c-checkbox c-checkbox--non-title">
+								<input type="checkbox" name="pollutionLoc" id="fdPollutionLocFcb">
+								<label for="fdPollutionLocFcb">앞 - 하의</label>
+							</div>
+						</div>
+						<div class="pop__position groin backLoc">
+							<div class="c-checkbox c-checkbox--non-title">
+								<input type="checkbox" name="pollutionLoc" id="fdPollutionLocBcb">
+								<label for="fdPollutionLocBcb">뒤 - 하의</label>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<ul class="pop__console pop__console--center pop__console--nonbg">
+				<li><button class="c-button" onclick="resetPollutionPop()">초기화</button></li>
+				<li><button class="c-button c-button--dark" onclick="confirmPollutionPop()">선택완료</button></li>
+			</ul>
+		</div>
+	</div>
 
     <!-- 카메라 팝업 -->
     <div class="pop" id="cameraPop">
