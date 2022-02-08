@@ -17,6 +17,7 @@ const dtos = {
             작성글의리스트: {
                 id: "nr", // 게시판 글 id
                 subject: "s",
+                numOfComment: "n", // 덧글이 달린 숫자.
                 insertDateTime: "s", // yyyymmdd만
                 insert_id: "s",
             },

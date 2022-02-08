@@ -26,17 +26,24 @@ const dtos = {
 const urls = {
     taglost: "/api/user/lostNoticeView",
     notice: "/api/user/noticeView",
+    taglostReplyList: "/api/user/lostNoticeCommentList",
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
     getData(condition) {
-        console.log(condition);
         CommonUI.ajax(urls[wares.boardType], "GET", condition, function (res) {
-            console.log(res);
             const data = res.sendData[wares[wares.boardType].dataKeyName];
-            console.log(data);
             setFields(data);
+        });
+    },
+
+    getReplyList(condition) {
+        CommonUI.ajax(urls[wares.boardType + "ReplyList"], "GET", condition, function (res) {
+            const data = res.sendData.commentListDto;
+            data.forEach(obj => {
+                createReplyHtml(obj[wares[wares.boardType].commentKeyName], obj.name, obj.modifyDt, obj.hcComment, obj.type, obj.isWritter, obj.preId);
+            });
         });
     },
 };
@@ -66,6 +73,8 @@ const wares = {
     taglost: {
         idKeyName: "htId",
         dataKeyName: "tagNoticeViewDto",
+        masterKeyName: "htId",
+        commentKeyName: "hcId",
     },
     notice: {
         idKeyName: "hnId",
@@ -80,9 +89,12 @@ $(function() { // 페이지가 로드되고 나서 실행
 /* 페이지가 로드되고 나서 실행 될 코드들을 담는다. */
 function onPageLoad() {
     getParams();
-    const condition = {};
+    let condition = {};
     condition[wares[wares.boardType].idKeyName] = wares.id;
     comms.getData(condition);
+    condition = {};
+    condition[wares[wares.boardType].masterKeyName] = wares.id;
+    comms.getReplyList(condition);
 }
 
 function getParams() {
@@ -159,4 +171,24 @@ function setFields(data) {
     // 페이지 정보 가져와서 해당 페이지로 바로 갈 수 있도록 조치
     $("#linkPrevPage").attr("href", `./${wares.boardType}list?page=` + wares.page + "&searchString=" + wares.searchString
         + "&filterFromDt=" + wares.filterFromDt + "&filterToDt=" + wares.filterToDt);
+}
+
+function createReplyHtml(commentId, name, modifyDt, comment, type, isWriter, preId) {
+
+    let htmlText = `
+    <div class="reply__info">
+        <span class="reply__name">${name}</span>
+        <div class="reply__date">${modifyDt}</div>
+    </div>
+    <div class="reply__comment">${comment}</div>
+    `;
+
+    if(type === "1") {
+        htmlText = `<li class="reply__item replyItem" data-id="${commentId}">` + htmlText + `</li>`;
+        $("#replyList").append(htmlText);
+    }else if(type === "2") {
+        const target = `.replyItem[data-id='${preId}']`;
+        htmlText = `<div class="reply__item">` + htmlText + `</div>`;
+        $(target).append(htmlText);
+    }
 }
