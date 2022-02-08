@@ -38,7 +38,7 @@ const comms = {
     getList() {
         const condition = {
             page: wares.page - 1,
-            size: 10,
+            size: 13,
             searchString: wares.searchString,
             filterFromDt: wares.filterFromDt,
             filterToDt: wares.filterToDt,
@@ -174,8 +174,8 @@ const wares = {
     url: window.location.href,
     params: "", // url에 내포한 파라메터들을 담는다.
     rowCount: 0, // 1페이지에서 보여줄 행 수
-    pageButtonCount: 0, // 페이지 네비게이션에서 보여줄 페이지의 수
-    page: 0, // 현재 페이지
+    pageButtonCount: 10, // 페이지 네비게이션에서 보여줄 페이지의 수
+    page: 1, // 현재 페이지
     totalPage: 0, // 전체 페이지
     searchString: "",
     filterFromDt: "",
@@ -254,7 +254,6 @@ function setInputs() {
 }
 
 /* 페이지내이션 적절한 값 완성후 wares의 데이터를 이용하도록 수정 */
-var rowCount = 20;	// 1페이지에서 보여줄 행 수
 var pageButtonCount = 10;		// 페이지 네비게이션에서 보여줄 페이지의 수
 var page = 1;	// 현재 페이지
 
