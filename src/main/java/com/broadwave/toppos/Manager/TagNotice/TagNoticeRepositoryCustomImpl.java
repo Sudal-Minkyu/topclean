@@ -38,16 +38,16 @@ public class TagNoticeRepositoryCustomImpl extends QuerydslRepositorySupport imp
         QTagNoticeComment tagNoticeComment  = QTagNoticeComment.tagNoticeComment;
 
         JPQLQuery<TagNoticeListDto> query = from(tagNotice)
-                
+                .leftJoin(tagNoticeComment).on(tagNoticeComment.htId.eq(tagNotice.htId))
                 .select(Projections.constructor(TagNoticeListDto.class,
-                        tagNoticeComment.hcId.sum(),
+                        tagNoticeComment.count(),
                         tagNotice.htId,
                         tagNotice.htSubject,
                         tagNotice.insert_id,
                         tagNotice.insertDateTime
                 ));
 
-        query.orderBy(tagNotice.htId.desc());
+        query.orderBy(tagNotice.htId.desc()).groupBy(tagNotice.htId);
         query.where(tagNotice.brCode.eq(frbrCode));
 
         if(searchString != null){

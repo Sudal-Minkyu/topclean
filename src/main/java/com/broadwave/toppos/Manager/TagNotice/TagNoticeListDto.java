@@ -17,7 +17,7 @@ import java.time.format.DateTimeFormatter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TagNoticeListDto {
-    private Long hcIdNum;
+    private Long numOfComment;
     private Long htId;
     private String subject; // 제목
     private String insert_id;
