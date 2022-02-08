@@ -190,8 +190,8 @@ public class RequestDetail {
     @Column(name="fd_pollution_loc_bcb")
     private String fdPollutionLocBcb; // 오염위치 뒤 - 하의  체크면 Y 아니면 N
 
-    @Column(name="fd_pollution_loc_bch")
-    private String fdPollutionLocBch; // 오염위치 뒤 - 오른손  체크면 Y 아니면 N
+    @Column(name="fd_pollution_loc_brh")
+    private String fdPollutionLocBrh; // 오염위치 뒤 - 오른손  체크면 Y 아니면 N
 
     @Column(name="fd_pollution_loc_blh")
     private String fdPollutionLocBlh; // 오염위치 뒤 - 왼손  체크면 Y 아니면 N
