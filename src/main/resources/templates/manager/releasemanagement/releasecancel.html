@@ -11,22 +11,9 @@
 
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
+    <script src="/assets/js/toppos/manager/releasemanagement/common.js"></script>
+    <script src="/assets/js/toppos/manager/releasemanagement/releasecancel.js"></script>
 
-	<script type="text/javascript">
-
-		$(function() {
-			$('.gnb').on('mouseenter', function () {
-				$('.gnb__layer').stop().slideDown(200);
-				$('.gnb__depth2').stop().slideDown(200);
-			});
-
-			$('.header').on('mouseleave', function(){
-				$('.gnb__layer').stop().slideUp(200);
-				$('.gnb__depth2').stop().slideUp(200);
-			});
-		});
-
-	</script>
 </th:block>
 
 <div layout:fragment="content" class="content">
