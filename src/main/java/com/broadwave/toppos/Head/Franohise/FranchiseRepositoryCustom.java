@@ -16,4 +16,7 @@ public interface FranchiseRepositoryCustom {
     List<FranchiseSearchDto> findByFranchiseBrcode(String brCode);
 
     FranchisUserDto findByFranchiseUserInfo(String frCode);
+
+    List<FranchiseManagerListDto> findByManagerInFranchise(String brCode);
+
 }

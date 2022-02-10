@@ -1,5 +1,6 @@
 package com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail;
 
+import com.broadwave.toppos.Manager.Process.Issue.Issue;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Request;
 import lombok.*;
 
@@ -72,6 +73,10 @@ public class RequestDetail {
 
     @Column(name="fd_s4_dt")
     private String fdS4Dt; // 지사출고일
+
+    @ManyToOne(targetEntity = Issue.class,fetch = FetchType.EAGER)
+    @JoinColumn(name="mi_id")
+    private Issue miId; // 지사출고 처리 마스터테이블ID
 
     @Column(name="fd_s4_time")
     private LocalDateTime fdS4Time; // 지사출고시간

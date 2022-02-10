@@ -129,6 +129,21 @@ public class FranchiseRepositoryCustomImpl extends QuerydslRepositorySupport imp
     }
 
     @Override
+    public List<FranchiseManagerListDto> findByManagerInFranchise(String brCode) {
+
+        QFranchise franchise = QFranchise.franchise;
+
+        JPQLQuery<FranchiseManagerListDto> query = from(franchise)
+                .select(Projections.constructor(FranchiseManagerListDto.class,
+                        franchise.frName
+                ));
+
+        query.where(franchise.brCode.eq(brCode));
+
+        return query.fetch();
+    }
+
+    @Override
     public FranchisUserDto findByFranchiseUserInfo(String frCode) {
 
         QFranchise franchise = QFranchise.franchise;
