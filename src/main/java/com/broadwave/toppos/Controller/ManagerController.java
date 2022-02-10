@@ -44,6 +44,23 @@ public class ManagerController {
     public String returnit(){
         return "manager/return/returnit";
     }
+    // 확인품등록
+    @RequestMapping("checkregist")
+    public String checkregist(){
+        return "manager/return/checkregist";
+    }
+    // 확인품현황
+    @RequestMapping("checkstate")
+    public String checkstate(){
+        return "manager/return/checkstate";
+    }
+
+    // 입출고 현황
+    // TAG번호 조회
+    @RequestMapping("tag")
+    public String tag(){
+        return "manager/inandout/tag";
+    }
 
     // 영업일관리 페이지
     @RequestMapping("businessday")

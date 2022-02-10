@@ -33,7 +33,7 @@
     <section class="section">
         <article class="article">
             <div class="article__header">
-                <h3 class="article__heading">가맹점반송</h3>
+                <h3 class="article__heading">확인품등록</h3>
             </div>
             <div class="article__body">
                 <div class="inquiry">
@@ -96,5 +96,63 @@
             </div>
         </div>
     </section>
+
+    <!-- 확인품등록 팝업 -->
+	<div class="pop active">
+		<div class="pop__box">
+			<div class="pop__article pop__article--flex">
+				<div class="pop__article-content photo">
+					<h3 class="pop__article-header">확인품등록</h3>
+					<div class="pop__article-photo" style="background-color: #ddd">
+						<!-- 캠 영상 들어갈 곳 -->
+						<video id="cameraScreen" playsinline autoplay></video>
+						<canvas id="cameraCanvas" style="display: none"></canvas>
+					</div>
+				</div>
+				
+				<div class="pop__article-content flex1">
+					<div class="pop__article-haedconsole">
+						<button class="c-button c-button--darksolid c-button--small">삭제</button>
+					</div>
+					<div style="height: 208px;">그리드</div>
+				</div>
+			</div>
+			
+			<div class="pop__article">
+				<div class="pop__article-head">
+					<h3 class="pop__article-header">확인품내용</h3>
+					<div class="pop__article-haedconsole">
+						<div class="c-checkbox">
+							<input type="checkbox" id="isIncludeImg" />
+							<label for="isIncludeImg">사진포함</label>
+						</div>
+					</div>
+				</div>
+				
+				<div class="pop__article-content">
+					<textarea></textarea>
+				</div>
+			</div>
+			
+			<ul class="pop__console">
+				<li class="pop__console-left">
+					<div class="pop__console-cost">
+						<div class="pop__console-title">접수금액</div>
+						<div class="pop__console-input">
+							<input type="text" readonly="readonly" />
+						</div>
+					</div>
+					<div class="pop__console-cost">
+						<div class="pop__console-title">추가비용</div>
+						<div class="pop__console-input">
+							<input type="text" />
+						</div>
+					</div>
+				</li>
+				<li><button class="c-button">닫기</button></li> 
+				<li><button class="c-button c-button--dark">확인품등록</button></li>
+			</ul>
+		</div>
+	</div>
 </div>
 </html>
