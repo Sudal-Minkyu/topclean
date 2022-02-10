@@ -5,19 +5,23 @@
 * */
 const dtos = {
     send: {
-        조회클릭시: {
+        branchReceiptBranchInList: {
             frId: "n", // 0이 올 경우는 통합출고, 혹은 가맹점 전체선택인 경우
             filterFromDt: "s",
             filterToDt: "s",
-            isUrgent: "n" // 1이 올 경우 급세탁인 항목만, 아닌 경우 전체항목
+            isUrgent: "s" // Y이 올 경우 급세탁인 항목만, N인 경우 전체항목
         },
+        branchStateChange: {
+            nthRelease: "n", // 몇차 출고인지에 대한 신호
+            fdIdList: "a", // fdId의 목록이 담긴 배열
+        }
     },
     receive: {
-        페이지진입시: { // 가맹점 선택 셀렉트박스에 띄울 가맹점의 리스트
+        managerBelongList: { // 가맹점 선택 셀렉트박스에 띄울 가맹점의 리스트
             frId: "nr",
             frName: "s"
         },
-        조회클릭시: {
+        branchReceiptBranchInList: {
             fdId: "n", // 출고 처리를 위함
             frName: "s",
             fdS2Dt: "s",
@@ -45,18 +49,50 @@ const dtos = {
             fdEstimateDt: "s",
             fdTotAmt: "n",
             fdState: "s",
-        }
+        },
     }
 };
 
 /* 통신에 사용되는 url들 기입 */
 const urls = {
-    
+    getFrList: "/api/manager/branchBelongList",
+    getReceiptList: "/api/manager/branchReceiptBranchInList",
+    sendOutReceipt: "/api/manager/branchStateChange",
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
-    
+    getFrList() {
+        CommonUI.ajax(urls.getFrList, "GET", false, function (res) {
+            const data = res.sendData.franchiseList;
+            dv.chk(data, dtos.receive.managerBelongList, "가맹점 선택출고에 필요한 지점에 속한 가맹점 받아오기");
+            const $frList = $("#frList");
+            data.forEach(obj => {
+                const htmlText = `<option value="${obj.frId}">${obj.frName}</option>`
+                $frList.append(htmlText);
+            });
+        })
+    },
+    getReceiptList(searchCondition) {
+        dv.chk(searchCondition, dtos.send.branchReceiptBranchInList, "출고 품목 조회 조건 보내기");
+        CommonUI.ajax(urls.getReceiptList, "GET", searchCondition, function (res) {
+            wares.receiptList = res.sendData.gridListData;
+            $("#frName").html($("#frList option:selected").html());
+            $("#numOfList").val(wares.receiptList.length);
+            $("#listStatBar").show();
+        });
+    },
+    sendOutReceipt(sendList) {
+        console.log(sendList);
+        dv.chk(sendList, dtos.send.branchStateChange, "출고처리 항목 보내기");
+        // CommonUI.ajax(urls.sendOutReceipt, "PARAM", sendList, function (res) {
+        //     console.log(res);
+        //     alertSuccess("출고 처리가 완료 되었습니다.");
+        //     grids.f.clearData(0);
+        //     wares.receiptList = "";
+        //     $("#listStatBar").hide();
+        // });
+    },
 };
 
 /* .s : AUI 그리드 관련 설정들
@@ -68,7 +104,7 @@ const comms = {
 const grids = {
     s: { // 그리드 세팅
         targetDiv: [
-            "targetHtmlId"
+            "grid_main"
         ],
         columnLayout: [],
         prop: [],
@@ -82,11 +118,67 @@ const grids = {
             /* 0번 그리드의 레이아웃 */
             grids.s.columnLayout[0] = [
                 {
-                    dataField: "",
-                    headerText: "",
+                    dataField: "frName",
+                    headerText: "가맹점명",
                 }, {
                     dataField: "",
-                    headerText: "",
+                    headerText: "지점입고",
+                    width: 90,
+                    dataType: "date",
+                    formatString: "yyyy-mm-dd",
+                }, {
+                    dataField: "fdUrgentYn",
+                    headerText: "급",
+                    width: 35,
+                }, {
+                    dataField: "fdTag",
+                    headerText: "택번호",
+                    width: 80,
+                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
+                        return value.substr(0, 3) + "-" + value.substr(-4);
+                    },
+                }, {
+                    dataField: "",
+                    headerText: "상품명",
+                    style: "color_and_name",
+                    renderer : {
+                        type : "TemplateRenderer",
+                    },
+                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                        const colorSquare =
+                            `<span class="colorSquare" style="background-color: ${CommonData.name.fdColorCode[item.fdColor]}; vertical-align: middle;"></span>`;
+                        const sumName = CommonUI.toppos.makeSimpleProductName(item);
+                        return colorSquare + ` <span style="vertical-align: middle;">` + sumName + `</span>`;
+                    },
+                }, {
+                    dataField: "",
+                    headerText: "처리내역",
+                    width: 90,
+                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                        return CommonUI.toppos.processName(item);
+                    }
+                }, {
+                    dataField: "bcName",
+                    headerText: "고객",
+                }, {
+                    dataField: "fdEstimateDt",
+                    headerText: "출고예정일",
+                    width: 90,
+                    dataType: "date",
+                    formatString: "yyyy-mm-dd",
+                }, {
+                    dataField: "fdTotAmt",
+                    headerText: "접수금액",
+                    width: 90,
+                    dataType: "numeric",
+                    autoThousandSeparator: "true",
+                }, {
+                    dataField: "fdState",
+                    headerText: "현재상태",
+                    width: 85,
+                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                        return CommonData.name.fdState[value];
+                    },
                 },
             ];
 
@@ -102,12 +194,11 @@ const grids = {
                 showRowAllCheckBox: true,
                 showRowCheckColumn: true,
                 showRowNumColumn : false,
-                showStateColumn : true,
+                showStateColumn : false,
                 enableFilter : true,
                 rowHeight : 48,
                 headerHeight : 48,
             };
-
         },
 
         create() { // 그리드 동작 처음 빈 그리드를 생성
@@ -134,6 +225,10 @@ const grids = {
 
         getCheckedItems(numOfGrid) { // 해당 배열 번호 그리드의 엑스트라 체크박스 선택된 (아이템 + 행번호) 객체 반환
             return AUIGrid.getCheckedRowItems(grids.s.id[numOfGrid]);
+        },
+
+        addRow(numOfGrid, item) {
+            AUIGrid.addRow(grids.s.id[numOfGrid], item, "last");
         }
     },
 
@@ -153,9 +248,32 @@ const trigs = {
         basic() {
             $("#type01").on("click", function () {
                 $("#frSelectUI").hide();
+                $("#frList option").first().prop("selected", true);
             })
+
             $("#type02").on("click", function () {
                 $("#frSelectUI").show();
+            });
+
+            $("#getListBtn").on("click", function () {
+                getReceiptList();
+            });
+
+            $("#inputTagBtn").on("click", function () {
+                inputTag();
+            });
+
+            $("#sendOutBtn").on("click", function () {
+                sendOut();
+            });
+
+            $("#addAll").on("click", function () {
+                grids.f.clearData(0);
+                grids.f.setData(0, wares.receiptList);
+            });
+
+            $("#clearAll").on("click", function () {
+                grids.f.clearData(0);
             });
         },
     },
@@ -166,11 +284,12 @@ const trigs = {
 
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
 const wares = {
-
+    receiptList: "",
 }
 
 $(function() { // 페이지가 로드되고 나서 실행
     onPageLoad();
+    grids.f.create();
 });
 
 /* 페이지가 로드되고 나서 실행 될 코드들을 담는다. */
@@ -179,6 +298,7 @@ function onPageLoad() {
     trigs.s.basic();
 
     enableDatepicker();
+    comms.getFrList();
 }
 
 function enableDatepicker() {
@@ -193,7 +313,6 @@ function enableDatepicker() {
         "filterFromDt", "filterToDt"
     ];
 
-
     $("#" + datePickerTargetIds[0]).val(fromday);
     $("#" + datePickerTargetIds[1]).val(today);
 
@@ -203,4 +322,71 @@ function enableDatepicker() {
 
     CommonUI.setDatePicker(datePickerTargetIds);
     CommonUI.restrictDateAToB(dateAToBTargetIds);
+}
+
+function getReceiptList() {
+    const searchCondition = {
+        filterFromDt: $("#filterFromDt").val(),
+        filterToDt: $("#filterToDt").val(),
+        isUrgent: $("#isUrgent").is(":checked") ? "Y" : "N",
+        frId: 0,
+    }
+    if($("#type02").is(":checked")) {
+        searchCondition.frId = parseInt($("#frList").val());
+    }
+    comms.getReceiptList(searchCondition);
+}
+
+function inputTag() {
+    if(wares.receiptList === "") {
+        alertCaution("먼저 입고된 품목을 조회해 주세요.", 1);
+        return false;
+    }
+    const tagNo = $("#inputTagNo").val().replace(/-/g, "");
+
+    const gridItems = grids.f.getData(0);
+    for(let i = 0; i < gridItems.length; i++) {
+        if(gridItems[i].fdTag  === tagNo) {
+            alertCaution("이미 조회한 택번호 입니다.", 1);
+            return false;
+        }
+    }
+
+    let noExist = true;
+    wares.receiptList.forEach(obj => {
+        if(obj.fdTag === tagNo) {
+            grids.f.addRow(0, obj);
+            noExist = false;
+            $("#inputTagNo").val("");
+        }
+    });
+
+    if(noExist) {
+        alertCaution("택번호가 리스트에 존재하지 않습니다.", 1);
+    }
+}
+
+function sendOut() {
+    const checkedItems = grids.f.getCheckedItems(0);
+
+    if(checkedItems.length) {
+        let fdIdList = [];
+
+        checkedItems.forEach(obj => {
+            fdIdList.push(obj.item.fdId);
+        });
+
+        const sendList = {
+            nthRelease: $("#nthRelease").val().toInt(),
+            fdIdList: fdIdList
+        }
+
+        if(!sendList.nthRelease) {
+            alertCaution("올바른 출고 차수를 입력해 주세요.", 1);
+        }
+
+        comms.sendOutReceipt(sendList);
+    } else {
+        alertCaution("출고할 품목을 선택해 주세요.", 1);
+    }
 }
