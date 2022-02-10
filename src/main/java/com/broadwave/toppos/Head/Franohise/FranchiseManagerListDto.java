@@ -14,7 +14,7 @@ import lombok.*;
 @AllArgsConstructor
 public class FranchiseManagerListDto {
 
-//    private String frCode; // 가맹점코드 3자리
+    private Long frId; // 가맹점 고정값ID
     private String frName; // 가맹점명
 
 }
