@@ -1,5 +1,6 @@
 package com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail;
 
+import com.broadwave.toppos.Head.Franohise.QFranchise;
 import com.broadwave.toppos.Head.Item.Group.A.QItemGroup;
 import com.broadwave.toppos.Head.Item.Group.B.QItemGroupS;
 import com.broadwave.toppos.Head.Item.Group.C.QItem;
@@ -13,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -697,6 +699,80 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                 ));
 
         query.where(requestDetail.frNo.eq(frNo));
+
+        return query.fetch();
+    }
+
+    // 지사출고 querydsl
+    public List<RequestDetailReleaseListDto> findByRequestDetailReleaseList(String brCode, Long frId, LocalDateTime fromDt, java.time.LocalDateTime toDt, String isUrgent){
+//        Long frId, LocalDateTime fromDt, java.time.LocalDateTime toDt, String isUrgent
+//        brCode
+        QRequestDetail requestDetail = QRequestDetail.requestDetail;
+        QRequest request = QRequest.request;
+
+        QFranchise franchise = QFranchise.franchise;
+        QItemGroup itemGroup = QItemGroup.itemGroup;
+        QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
+        QItem item = QItem.item;
+
+        JPQLQuery<RequestDetailReleaseListDto> query = from(requestDetail)
+                .innerJoin(request).on(requestDetail.frId.eq(request))
+                .innerJoin(franchise).on(request.frCode.eq(franchise.frCode))
+                .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
+                .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
+                .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
+                .where(request.frConfirmYn.eq("Y"))
+                .where(requestDetail.frId.brCode.eq(brCode).and(requestDetail.fdCancel.eq("N")))
+                .select(Projections.constructor(RequestDetailReleaseListDto.class,
+
+                        requestDetail.id,
+                        franchise.frName,
+                        requestDetail.fdS2Dt,
+                        requestDetail.fdTag,
+                        requestDetail.fdColor,
+
+                        itemGroup.bgName,
+                        itemGroupS.bsName,
+                        item.biName,
+
+                        requestDetail.fdPriceGrade,
+                        requestDetail.fdRetryYn,
+                        requestDetail.fdPressed,
+                        requestDetail.fdAdd1Amt,
+                        requestDetail.fdAdd1Remark,
+                        requestDetail.fdRepairAmt,
+                        requestDetail.fdRepairRemark,
+                        requestDetail.fdWhitening,
+                        requestDetail.fdPollution,
+                        requestDetail.fdWaterRepellent,
+                        requestDetail.fdStarch,
+                        requestDetail.fdUrgentYn,
+
+                        request.bcId.bcName,
+                        requestDetail.fdEstimateDt,
+                        requestDetail.fdTotAmt,
+                        requestDetail.fdState
+                ));
+
+        query.orderBy(requestDetail.id.asc()).groupBy(requestDetail);
+
+        query.where(requestDetail.fdState.eq("S2"));
+
+        if(frId != 0){
+            query.where(franchise.id.eq(frId));
+        }
+
+        if(isUrgent.equals("Y")){
+            query.where(requestDetail.fdUrgentYn.eq(isUrgent));
+        }
+
+        if(fromDt != null){
+            query.where(requestDetail.insert_date.goe(fromDt));
+        }
+
+        if(toDt != null){
+            query.where(requestDetail.insert_date.loe(toDt));
+        }
 
         return query.fetch();
     }

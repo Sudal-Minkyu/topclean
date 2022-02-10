@@ -36,7 +36,7 @@ public class ManagerService {
     }
 
     //  현 지사의 소속된 가맹점명 리스트 호출(앞으로 공용으로 쓰일 것)
-    public ResponseEntity<Map<String, Object>> managerBelongList(HttpServletRequest request) {
+    public ResponseEntity<Map<String, Object>> branchBelongList(HttpServletRequest request) {
         log.info("managerBelongList 호출");
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();

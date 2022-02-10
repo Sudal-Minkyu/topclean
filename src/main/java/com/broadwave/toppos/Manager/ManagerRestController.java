@@ -106,9 +106,9 @@ public class ManagerRestController {
 
 //@@@@@@@@@@@@@@@@@@@@@ 지사출고 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     //  현 지사의 소속된 가맹점명 리스트 호출(앞으로 공용으로 쓰일 것)
-    @GetMapping("managerBelongList")
-    public ResponseEntity<Map<String,Object>> managerBelongList(HttpServletRequest request){
-        return managerService.managerBelongList(request);
+    @GetMapping("branchBelongList")
+    public ResponseEntity<Map<String,Object>> branchBelongList(HttpServletRequest request){
+        return managerService.branchBelongList(request);
     }
 
     //  접수테이블의 상태 변화 API - 지사출고 실행함수
@@ -119,9 +119,25 @@ public class ManagerRestController {
     }
 
     //  지사출고 - 세부테이블 지사입고상태 리스트
-    @GetMapping("franchiseReceiptBranchInList")
-    public ResponseEntity<Map<String,Object>> franchiseReceiptBranchInList(HttpServletRequest request){
-        return receiptReleaseService.franchiseReceiptBranchInList(request);
+    @GetMapping("branchReceiptBranchInList")
+    public ResponseEntity<Map<String,Object>> branchReceiptBranchInList(@RequestParam("frId")Long frId, @RequestParam("filterFromDt")String filterFromDt,
+                                                                           @RequestParam("filterToDt")String filterToDt, @RequestParam("isUrgent")String isUrgent, HttpServletRequest request){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
+        LocalDateTime fromDt = null;
+        if(filterFromDt != null){
+            filterFromDt = filterFromDt+" 00:00:00.000";
+            fromDt = LocalDateTime.parse(filterFromDt, formatter);
+//            log.info("fromDt :"+fromDt);
+        }
+
+        LocalDateTime toDt = null;
+        if(filterToDt != null){
+            filterToDt = filterToDt+" 23:59:59.999";
+            toDt = LocalDateTime.parse(filterToDt, formatter);
+//            log.info("toDt :"+toDt);
+        }
+
+        return receiptReleaseService.branchReceiptBranchInList(frId, fromDt, toDt, isUrgent, request);
     }
 
 

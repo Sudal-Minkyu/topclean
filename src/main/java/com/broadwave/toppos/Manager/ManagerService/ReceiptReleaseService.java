@@ -2,6 +2,7 @@ package com.broadwave.toppos.Manager.ManagerService;
 
 import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetail;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.RequestDetailReleaseListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepositoryCustom;
 import com.broadwave.toppos.common.AjaxResponse;
@@ -83,7 +84,7 @@ public class ReceiptReleaseService {
     }
 
     //  지사출고 - 세부테이블 지사입고 상태 리스트
-    public ResponseEntity<Map<String, Object>> franchiseReceiptBranchInList(HttpServletRequest request) {
+    public ResponseEntity<Map<String, Object>> branchReceiptBranchInList(Long frId, LocalDateTime fromDt, LocalDateTime toDt, String isUrgent, HttpServletRequest request) {
         log.info("franchiseReceiptBranchInList 호출");
 
         AjaxResponse res = new AjaxResponse();
@@ -94,17 +95,12 @@ public class ReceiptReleaseService {
         String brCode = (String) claims.get("brCode"); // 현재 지사의 코드(2자리) 가져오기
         log.info("현재 접속한 지사 코드 : "+brCode);
 
-//        // 지사출고 페이지에 보여줄 리스트 호출
-//        List<RequestDetailBranchInListDto> requestDetailBranchInListDtos = requestDetailRepositoryCustom.findByRequestDetailBranchInList(brCode);
-//        data.put("gridListData",requestDetailBranchInListDtos);
+        // 지사출고 페이지에 보여줄 리스트 호출
+        List<RequestDetailReleaseListDto> requestDetailReleaseListDtos = requestDetailRepositoryCustom.findByRequestDetailReleaseList(brCode, frId, fromDt, toDt, isUrgent);
+        data.put("gridListData",requestDetailReleaseListDtos);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
-
-
-
-
-
 
 
 }

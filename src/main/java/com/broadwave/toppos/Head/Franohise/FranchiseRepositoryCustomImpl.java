@@ -1,7 +1,6 @@
 package com.broadwave.toppos.Head.Franohise;
 
 import com.broadwave.toppos.Head.Branoh.QBranch;
-import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
 import lombok.extern.slf4j.Slf4j;

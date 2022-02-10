@@ -39,7 +39,7 @@ public class Request {
     private String frCode; // 가맹점코드
 
     @Column(name="br_code")
-    private String bcCode; // 지점코드
+    private String brCode; // 지점코드
 
     @Column(name="fr_yyyymmdd")
     private String frYyyymmdd; // 접수일자

@@ -207,7 +207,7 @@ public class ReceiptService {
                 requestSave = modelMapper.map(etcData, Request.class);
 
                 requestSave.setBcId(optionalCustomer.get());
-                requestSave.setBcCode(frbrCode);
+                requestSave.setBrCode(frbrCode);
                 requestSave.setFrCode(frCode);
                 requestSave.setFrYyyymmdd(nowDate);
                 requestSave.setFrPayAmount(0);

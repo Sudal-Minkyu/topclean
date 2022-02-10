@@ -367,7 +367,7 @@ public class InspectService {
             Inspeot inspeot = new Inspeot();
             inspeot.setFdId(optionalRequestDetail.get());
             inspeot.setFrCode(optionalRequestDetail.get().getFrId().getFrCode());
-            inspeot.setBrCode(optionalRequestDetail.get().getFrId().getBcCode());
+            inspeot.setBrCode(optionalRequestDetail.get().getFrId().getBrCode());
             inspeot.setFiType(inspeotMapperDto.getFiType());
             inspeot.setFiComment(inspeotMapperDto.getFiComment());
             inspeot.setFiAddAmt(inspeotMapperDto.getFiAddAmt());

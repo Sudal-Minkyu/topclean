@@ -2,6 +2,7 @@ package com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail;
 
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -28,5 +29,7 @@ public interface RequestDetailRepositoryCustom {
     List<RequestDetailBusinessdayDeliveryDto> findByRequestDetailBusinessdayDeliveryList(String frCode, String filterFromDt, String filterToDt); // 영업일보 통계 총 출고 sum querydsl
 
     List<RequestDetailPaymentPaper> findByRequestDetailPaymentPaper(String frNo); // 영수증출력
+
+    List<RequestDetailReleaseListDto> findByRequestDetailReleaseList(String brCode, Long frId, LocalDateTime fromDt, java.time.LocalDateTime toDt, String isUrgent); // 지사출고
 
 }
