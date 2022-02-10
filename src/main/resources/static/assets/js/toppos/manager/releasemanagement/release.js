@@ -5,10 +5,47 @@
 * */
 const dtos = {
     send: {
-
+        조회클릭시: {
+            frId: "n", // 0이 올 경우는 통합출고, 혹은 가맹점 전체선택인 경우
+            filterFromDt: "s",
+            filterToDt: "s",
+            isUrgent: "n" // 1이 올 경우 급세탁인 항목만, 아닌 경우 전체항목
+        },
     },
     receive: {
+        페이지진입시: { // 가맹점 선택 셀렉트박스에 띄울 가맹점의 리스트
+            frId: "nr",
+            frName: "s"
+        },
+        조회클릭시: {
+            fdId: "n", // 출고 처리를 위함
+            frName: "s",
+            fdS2Dt: "s",
+            fdTag: "s",
+            fdColor: "s",
 
+            bgName: "s",
+            bsName: "s",
+            biName: "s",
+
+            fdPriceGrade: "s",
+            fdRetryYn: "s",
+            fdPressed: "n",
+            fdAdd1Amt: "n",
+            fdAdd1Remark: "s",
+            fdRepairAmt: "n",
+            fdRepairRemark: "s",
+            fdWhitening: "n",
+            fdPollution: "n",
+            fdWaterRepellent: "n",
+            fdStarch: "n",
+            fdUrgentYn: "s",
+
+            bcName: "s",
+            fdEstimateDt: "s",
+            fdTotAmt: "n",
+            fdState: "s",
+        }
     }
 };
 
@@ -114,7 +151,12 @@ const grids = {
 const trigs = {
     s: { // 이벤트 설정
         basic() {
-
+            $("#type01").on("click", function () {
+                $("#frSelectUI").hide();
+            })
+            $("#type02").on("click", function () {
+                $("#frSelectUI").show();
+            });
         },
     },
     r: { // 이벤트 해제
@@ -134,5 +176,31 @@ $(function() { // 페이지가 로드되고 나서 실행
 /* 페이지가 로드되고 나서 실행 될 코드들을 담는다. */
 function onPageLoad() {
     grids.f.initialization();
+    trigs.s.basic();
 
+    enableDatepicker();
+}
+
+function enableDatepicker() {
+    
+    let fromday = new Date();
+    fromday.setDate(fromday.getDate() - 6);
+    fromday = fromday.format("yyyy-MM-dd");
+    const today = new Date().format("yyyy-MM-dd");
+
+    /* datepicker를 적용시킬 대상들의 dom id들 */
+    const datePickerTargetIds = [
+        "filterFromDt", "filterToDt"
+    ];
+
+
+    $("#" + datePickerTargetIds[0]).val(fromday);
+    $("#" + datePickerTargetIds[1]).val(today);
+
+    const dateAToBTargetIds = [
+        ["filterFromDt", "filterToDt"]
+    ];
+
+    CommonUI.setDatePicker(datePickerTargetIds);
+    CommonUI.restrictDateAToB(dateAToBTargetIds);
 }
