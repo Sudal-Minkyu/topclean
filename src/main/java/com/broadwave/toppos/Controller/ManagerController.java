@@ -40,9 +40,9 @@ public class ManagerController {
 
     // 반송/검품
     // 가맹점반송
-    @RequestMapping("retturnit")
-    public String retturnit(){
-        return "manager/return/retturnit";
+    @RequestMapping("returnit")
+    public String returnit(){
+        return "manager/return/returnit";
     }
 
     // 영업일관리 페이지

@@ -50,7 +50,6 @@ const comms = {
             wares.totalPage = res.total_page;
             createPagingNavigator(wares.page);
             grids.f.setData(0, res.datalist);
-            console.log(res);
         });
     }
 };
@@ -80,6 +79,17 @@ const grids = {
                 {
                     dataField: "subject",
                     headerText: "제목",
+                    renderer : {
+                        type : "TemplateRenderer",
+                    },
+                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                        let result = value;
+                        if(item.numOfComment) {
+                            result += ` <span class="numOfComment">(${item.numOfComment})</span>`
+                        }
+                        return result;
+                    }
+
                 }, {
                     dataField: "insertDateTime",
                     headerText: "작성일",

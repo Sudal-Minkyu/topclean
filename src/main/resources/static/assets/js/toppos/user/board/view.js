@@ -92,9 +92,11 @@ function onPageLoad() {
     let condition = {};
     condition[wares[wares.boardType].idKeyName] = wares.id;
     comms.getData(condition);
-    condition = {};
-    condition[wares[wares.boardType].masterKeyName] = wares.id;
-    comms.getReplyList(condition);
+    if(wares.boardType !== "notice") {
+        condition = {};
+        condition[wares[wares.boardType].masterKeyName] = wares.id;
+        comms.getReplyList(condition);
+    }
 }
 
 function getParams() {
@@ -162,7 +164,13 @@ function setFields(data) {
         + "&prevFilterToDt=" + wares.filterToDt);
     }
 
-    if(wares.boardType !== "notice") $("#linkReply").show();
+    /* 덧글 본문 처리방식 결정되면 수정할 것 */
+    if(wares.boardType !== "notice"){
+        $("#linkReply").show();
+        $("#replyList").show();
+        $("#replyList").css("height", "300px");
+        $("#content").css("height", "200px");
+    }
 
     $("#linkReply").attr("href", `./${wares.boardType}reply?id=` + data[wares[wares.boardType].idKeyName] + "&prevPage=" + wares.page 
     + "&prevSearchString=" + wares.searchString + "&prevFilterFromDt=" + wares.filterFromDt

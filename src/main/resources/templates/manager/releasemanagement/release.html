@@ -11,22 +11,8 @@
 
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
-
-	<script type="text/javascript">
-
-		$(function() {
-			$('.gnb').on('mouseenter', function () {
-				$('.gnb__layer').stop().slideDown(200);
-				$('.gnb__depth2').stop().slideDown(200);
-			});
-
-			$('.header').on('mouseleave', function(){
-				$('.gnb__layer').stop().slideUp(200);
-				$('.gnb__depth2').stop().slideUp(200);
-			});
-		});
-
-	</script>
+    <script src="/assets/js/toppos/manager/releasemanagement/common.js"></script>
+    <script src="/assets/js/toppos/manager/releasemanagement/release.js"></script>
 </th:block>
 
 <div layout:fragment="content" class="content">
@@ -43,21 +29,21 @@
                                 <div class="inquiry__title">출고작업유형</div>
                                 <div class="inquiry__input">
                                     <div class="c-radio">
-                                        <input type="radio" name="type" id="type01" />
-                                        <label for="type01">가맹점선택출고</label>
+                                        <input type="radio" name="type" id="type01" value="" checked=""/>
+                                        <label for="type01">통합출고</label>
                                     </div>
                                     <div class="c-radio">
-                                        <input type="radio" name="type" id="type02" />
-                                        <label for="type02">통합출고</label>
+                                        <input type="radio" name="type" id="type02" value="" />
+                                        <label for="type02">가맹점선택출고</label>
                                     </div>
                                 </div>
                             </li>
-                            <li>
-                                <div class="inquiry__title">가맹관리 코드</div>
+                            <li id="frSelectUI" style="display: none;">
+                                <div class="inquiry__title">가맹점</div>
                                 <div class="inquiry__input">
                                     <div class="c-select">
-                                        <select>
-                                            <option>전체</option>
+                                        <select id="frList">
+                                            <option value="">전체</option>
                                         </select>
                                     </div>
                                 </div>
@@ -102,8 +88,8 @@
                     </div>
                     <button class="c-button c-button--small">조회</button>
                 </div>
-                <div class="release-console__list">
-                    <div class="release-console__comment">[<span>서정마을점</span>] 상품이 <span>24</span>건 조회되었습니다.</div>
+                <div id="listStatBar" class="release-console__list" style="display: none;">
+                    <div class="release-console__comment">[<span id="frName">서정마을점</span>] 상품이 <span id="numOfList">24</span>건 조회되었습니다.</div>
                     <ul class="release-console__btn-list">
                         <li><button class="release-console__btn">전체리스트 보기</button></li>
                         <li><button class="release-console__btn">전체리스트 숨기기</button></li>
@@ -114,17 +100,15 @@
 
         <div class="article article--flex article--non-margin">
             <div class="article__body">
-                <ul class="article__console article__console--left article__console--non-border">
+                <!-- <ul class="article__console article__console--left article__console--non-border">
                     <li>
                         <button class="c-button c-button--solid">전체선택</button>
                     </li>
                     <li>
                         <button class="c-button c-button--darksolid">선택취소</button>
                     </li>
-                </ul>
-                <div style="width: 100%; height: 468px; margin-top: 24px; border: 1px solid #bdbdbd;">
-                    grid area
-                </div>
+                </ul> -->
+                <div id="grid_main" style="width: 100%; height: 530px; border: 1px solid #bdbdbd;"></div>
             </div>
 
             <div class="article__body" style="flex: 0 1 auto; width: 17.5rem;">
@@ -132,9 +116,7 @@
                     <h3 class="article__heading">출고 선택 품목 요약</h3>
                 </div>
                 <div class="article__body">
-                    <div style="width: 100%; height: 378px; border: 1px solid #bdbdbd;">
-                        grid area
-                    </div>
+                    <div id="grid_selected" style="width: 100%; height: 378px; border: 1px solid #bdbdbd;"></div>
                     <div class="process">
                         <div class="process__count">
                             <div class="process__count-input"><input type="text" value="1" /></div>
