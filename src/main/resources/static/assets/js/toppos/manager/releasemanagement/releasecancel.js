@@ -16,10 +16,11 @@ const dtos = {
         branchReceiptBranchInCancelList: {
             fdId: "n", // 출고 처리를 위함
             frName: "s",
-            fdS2Dt: "s",
-            fdS4Dt: "s",
+            fdS2Time: "s",
+            fdS4Time: "s",
             fdTag: "s",
             fdColor: "s",
+            fdRemark: "s",
 
             bgName: "s",
             bsName: "s",
