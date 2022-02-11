@@ -89,7 +89,7 @@ const comms = {
         dv.chk(sendList, dtos.send.branchStateChange, "출고처리 항목 보내기");
         CommonUI.ajax(urls.sendOutReceipt, "PARAM", sendList, function (res) {
             console.log(res);
-            alertSuccess("출고 처리가 완료 되었습니다.");
+            alertSuccess("출고처리가 완료 되었습니다.");
             grids.f.clearData(0);
             grids.f.clearData(1);
             wares.receiptList = "";

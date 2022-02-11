@@ -698,11 +698,7 @@ function mainSearch() {
         searchType: $("#searchType").val(),
         searchText: $("#searchCustomerField").val(),
     }
-    if(searchCondition.searchText === "") {
-        alertCaution("검색조건을 입력해 주세요.", 1);
-    } else {
-        $("#searchType").val(0);
-        $("#searchCustomerField").val("");
-        comms.filterCustomerList(searchCondition);
-    }
+    $("#searchType").val(0);
+    $("#searchCustomerField").val("");
+    comms.filterCustomerList(searchCondition);
 }
