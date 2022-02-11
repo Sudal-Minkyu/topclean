@@ -113,9 +113,9 @@ public class ManagerRestController {
 
     //  접수테이블의 상태 변화 API - 지사출고 실행함수
     @PostMapping("branchStateChange")
-    public ResponseEntity<Map<String,Object>> branchStateChange(@RequestParam(value="fdIdList", defaultValue="") List<Long> fdIdList,
+    public ResponseEntity<Map<String,Object>> branchStateChange(@RequestParam(value="fdIdList", defaultValue="") List<List<Long>> fdIdList, @RequestParam(value="miDegree", defaultValue="") Integer miDegree,
                                                                    HttpServletRequest request){
-         return receiptReleaseService.branchStateChange(fdIdList, request);
+         return receiptReleaseService.branchStateChange(fdIdList, miDegree, request);
     }
 
     //  지사출고 - 세부테이블 지사입고상태 리스트

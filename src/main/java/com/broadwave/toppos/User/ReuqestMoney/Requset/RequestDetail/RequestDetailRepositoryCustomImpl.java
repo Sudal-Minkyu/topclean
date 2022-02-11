@@ -727,6 +727,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
 
                         requestDetail.id,
                         franchise.frName,
+                        franchise.frCode,
                         requestDetail.fdS2Dt,
                         requestDetail.fdTag,
                         requestDetail.fdColor,

@@ -21,6 +21,7 @@ public class RequestDetailReleaseListDto {
 
     private Long fdId; // 고유ID값
     private String frName; // 가맹점명
+    private String frCode; // 가맹점코드
     private String fdS2Dt; // 지사입고일
     private String fdTag; // 택번호
     private String fdColor; // 색상코드 (00:미선택 01 흰색 02:검정 03: 회색, 04 빨강 05:주황, 06: 노랑, 07 초록 08 파랑 09:남색 10 보라 11 핑크)
