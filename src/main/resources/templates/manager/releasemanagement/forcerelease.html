@@ -6,20 +6,19 @@
 
 <!-- 사용자 CSS 추가 -->
 <th:block layout:fragment="css">
-
 </th:block>
 
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
     <script src="/assets/js/toppos/CommonPC.js"></script>
-    <script src="/assets/js/toppos/manager/releasemanagement/release.js"></script>
+    <script src="/assets/js/toppos/manager/releasemanagement/forcerelease.js"></script>
 </th:block>
 
 <div layout:fragment="content" class="content">
     <section class="section">
         <article class="article">
             <div class="article__header">
-                <h3 class="article__heading">가맹점 강제 출고</h3>
+                <h3 class="article__heading">가맹점강제출고</h3>
             </div>
             <div class="article__body">
                 <div class="inquiry">
@@ -29,17 +28,17 @@
                                 <div class="inquiry__title">가맹점</div>
                                 <div class="inquiry__input">
                                     <div class="c-select">
-                                        <select>
-                                            <option>서정마을점</option>
+                                        <select id="frList">
+                                            <option value="">가맹점 선택</option>
                                         </select>
                                     </div>
                                 </div>
                             </li>
                             <li>
-                                <div class="inquiry__title">택번호(앞 3자리)</div>
+                                <div id="frTagNo" class="inquiry__title">택번호(앞 3자리)</div>
                                 <div class="inquiry__input">
                                     <div class="inquiry__input-tag">
-                                        <input type="text" />
+                                        <input id="foreTag" type="text" readonly/>
                                     </div>
                                 </div>
                             </li>
@@ -47,7 +46,7 @@
                                 <div class="inquiry__title">택번호(뒤 4자리)</div>
                                 <div class="inquiry__input">
                                     <div class="inquiry__input-tag">
-                                        <input type="text" />
+                                        <input id="aftTagNo" type="text" maxlength="4" />
                                     </div>
                                 </div>
                             </li>
@@ -68,15 +67,21 @@
                         </ul>
                     </div>
                     <div class="inquiry__button">
-                        <button class="c-button c-button--small c-button--darksolid">조회</button>
+                        <button id="searchListBtn" class="c-button c-button--small c-button--darksolid">조회</button>
                     </div>
                 </div>
             </div>
         </article>
 
         <article class="article">
+            <ul class="article__console article__console--left article__console--non-border">
+                <li style="margin-left: auto;">
+                    <button id="executeBtn" class="c-button c-button--red">출고취소처리</button>
+                </li>
+            </ul>
+
             <div style="height: 600px; margin-top: 20px; border: 1px solid #ddd">
-                grid area
+                <div id="grid_main" style="height: 600px;"></div>
             </div>
         </article>
 
