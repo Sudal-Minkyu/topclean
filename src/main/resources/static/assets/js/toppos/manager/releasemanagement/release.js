@@ -85,15 +85,16 @@ const comms = {
     },
     sendOutReceipt(sendList) {
         console.log(sendList);
+        wares.sl = sendList;
         dv.chk(sendList, dtos.send.branchStateChange, "출고처리 항목 보내기");
-        // CommonUI.ajax(urls.sendOutReceipt, "PARAM", sendList, function (res) {
-        //     console.log(res);
-        //     alertSuccess("출고 처리가 완료 되었습니다.");
-        //     grids.f.clearData(0);
-        //     grids.f.clearData(1);
-        //     wares.receiptList = "";
-        //     $("#listStatBar").hide();
-        // });
+        CommonUI.ajax(urls.sendOutReceipt, "PARAM", sendList, function (res) {
+            console.log(res);
+            alertSuccess("출고 처리가 완료 되었습니다.");
+            grids.f.clearData(0);
+            grids.f.clearData(1);
+            wares.receiptList = "";
+            $("#listStatBar").hide();
+        });
     },
 };
 
@@ -135,7 +136,7 @@ const grids = {
                 }, {
                     dataField: "fdTag",
                     headerText: "택번호",
-                    width: 80,
+                    width: 70,
                     labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
                         return value.substr(0, 3) + "-" + value.substr(-4);
                     },
@@ -162,22 +163,23 @@ const grids = {
                 }, {
                     dataField: "bcName",
                     headerText: "고객",
+                    width: 70,
                 }, {
                     dataField: "fdEstimateDt",
                     headerText: "출고예정일",
-                    width: 90,
+                    width: 70,
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
                 }, {
                     dataField: "fdTotAmt",
                     headerText: "접수금액",
-                    width: 90,
+                    width: 70,
                     dataType: "numeric",
                     autoThousandSeparator: "true",
                 }, {
                     dataField: "fdState",
                     headerText: "현재상태",
-                    width: 85,
+                    width: 70,
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
                         return CommonData.name.fdState[value];
                     },
@@ -408,6 +410,8 @@ function sendOut() {
     if(checkedItems.length) {
         let fdIdList = [];
         let codeIndex = [];
+        fdIdList.push([0]);
+        codeIndex.push("dummy");
 
         checkedItems.forEach(obj => {
             const i = codeIndex.indexOf(obj.item.frCode);
