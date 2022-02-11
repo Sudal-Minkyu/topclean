@@ -1,6 +1,8 @@
 package com.broadwave.toppos.Manager.ManagerService;
 
 import com.broadwave.toppos.Jwt.token.TokenProvider;
+import com.broadwave.toppos.Manager.Process.Issue.Issue;
+import com.broadwave.toppos.Manager.Process.Issue.IssueRepository;
 import com.broadwave.toppos.User.Customer.Customer;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Request;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.Photo;
@@ -9,6 +11,7 @@ import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetai
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepositoryCustom;
 import com.broadwave.toppos.common.AjaxResponse;
+import com.broadwave.toppos.common.ResponseErrorCode;
 import com.broadwave.toppos.keygenerate.KeyGenerateService;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
@@ -45,13 +48,16 @@ public class ReceiptReleaseService {
     private final RequestDetailRepository requestDetailRepository;
     private final RequestDetailRepositoryCustom requestDetailRepositoryCustom;
 
+    private final IssueRepository issueRepository;
+
     @Autowired
-    public ReceiptReleaseService(TokenProvider tokenProvider, KeyGenerateService keyGenerateService,
+    public ReceiptReleaseService(TokenProvider tokenProvider, KeyGenerateService keyGenerateService, IssueRepository issueRepository,
                                  RequestDetailRepository requestDetailRepository, RequestDetailRepositoryCustom requestDetailRepositoryCustom){
         this.keyGenerateService = keyGenerateService;
         this.tokenProvider = tokenProvider;
         this.requestDetailRepository = requestDetailRepository;
         this.requestDetailRepositoryCustom = requestDetailRepositoryCustom;
+        this.issueRepository = issueRepository;
     }
 
     //  접수테이블의 상태 변화 API - 지사출고 실행함수
@@ -73,66 +79,47 @@ public class ReceiptReleaseService {
 //        String frCode = "";
 //        String miNo = keyGenerateService.keyGenerate("mr_issue", brCode+frCode+nowDate, login_id);
 
-//        // stateType 상태값
-//        // "S2"이면 지사출고 페이지 버튼 "S2" -> "S4"
-//        log.info("지사출고 처리");
-//        List<RequestDetail> requestDetailList = requestDetailRepository.findByRequestDetailS2List(fdIdList);
-//        log.info("requestDetailList : "+requestDetailList);
-//        for (RequestDetail requestDetail : requestDetailList) {
-//            log.info("가져온 frID 값 : "+requestDetail.getFrId());
-//            requestDetail.setFdPreState("S2"); // 이전상태 값
-//            requestDetail.setFdPreStateDt(LocalDateTime.now());
-//
-//            requestDetail.setFdState("S4");
-//            requestDetail.setFdStateDt(LocalDateTime.now());
-//
-//            requestDetail.setFdS4Dt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
-//            requestDetail.setFdS4Time(LocalDateTime.now());
-//            requestDetail.setFdS4Id(login_id);
-//
-//            requestDetail.setModify_id(login_id);
-//            requestDetail.setModify_date(LocalDateTime.now());
-//        }
-//        requestDetailRepository.saveAll(requestDetailList);
+        // stateType 상태값
+        // "S2"이면 지사출고 페이지 버튼 "S2" -> "S4"
+        log.info("지사출고 처리");
+        for (int i = 1; i < fdIdList.size(); i++) {
+            List<RequestDetail> requestDetailList = requestDetailRepository.findByRequestDetailS2List(fdIdList.get(i));
+//                log.info("requestDetailList : " + requestDetailList);
+
+            String frCode = requestDetailList.get(0).getFrId().getFrCode();
+            String miNo = keyGenerateService.keyGenerate("mr_issue", brCode+frCode+nowDate, login_id); // 지사출고 miNo 채번
+
+            Issue newIssue = new Issue();
+            newIssue.setBrCode(brCode);
+            newIssue.setFrCode(frCode);
+            newIssue.setMiNo(miNo);
+            newIssue.setMiDegree(miDegree);
+            newIssue.setMiDt(nowDate);
+            newIssue.setMiTime(LocalDateTime.now());
+            newIssue.setInsert_id(login_id);
+            Issue issue = issueRepository.save(newIssue);
+
+            for (RequestDetail requestDetail : requestDetailList) {
+//                    log.info("가져온 frID 값 : " + requestDetail.getFrId());
+                requestDetail.setFdPreState("S2"); // 이전상태 값
+                requestDetail.setFdPreStateDt(LocalDateTime.now());
+
+                requestDetail.setFdState("S4");
+                requestDetail.setFdStateDt(LocalDateTime.now());
+
+                requestDetail.setFdS4Dt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
+                requestDetail.setFdS4Time(LocalDateTime.now());
+                requestDetail.setFdS4Id(login_id);
+                requestDetail.setMiId(issue);
+
+                requestDetail.setModify_id(login_id);
+                requestDetail.setModify_date(LocalDateTime.now());
+            }
+            requestDetailRepository.saveAll(requestDetailList);
+        }
 
         return ResponseEntity.ok(res.success());
     }
-
-//    // 지사출고 API : 지사출고시 출고 마스터테이블 저장한다. 접수테이블 - 업데이트, 지사출고 처리테이블 - 저장
-//    @Transactional(rollbackFor = SQLException.class)
-//    public Request branchRelease(Request request, List<RequestDetail> requestDetailList, Customer customer, List<List<Photo>> photoLists){
-//        try{
-//            String frNo;
-//            if (request.getFrNo() == null || request.getFrNo().isEmpty()){
-//                frNo = keyGenerateService.keyGenerate("fs_request", request.getFrCode()+request.getFrYyyymmdd(), request.getFr_insert_id());
-//                request.setFrNo(frNo);
-//            }else{
-//                frNo = request.getFrNo();
-//            }
-//            log.info("frNo : "+frNo);
-//            Request requestSave = requestRepository.save(request);
-//
-//            for (RequestDetail requestDetail : requestDetailList) {
-//                if (requestDetail.getFrNo() == null) {
-//                    requestDetail.setFrNo(frNo);
-//                    requestDetail.setFrId(requestSave);
-//                }
-//            }
-//            customerRepository.save(customer);
-//            List<RequestDetail> requestDetailSaveList = requestDetailRepository.saveAll(requestDetailList);
-//            for(int i=0; i<photoLists.size(); i++){
-//                for(int j=0; j<photoLists.get(i).size(); j++){
-//                    photoLists.get(i).get(j).setFdId(requestDetailSaveList.get(i));
-//                }
-//                photoRepository.saveAll(photoLists.get(i));
-//            }
-//
-//            return requestSave;
-//        }catch (Exception e){
-//            log.info("에러발생 트랜젝션실행 : "+e);
-//            return null;
-//        }
-//    }
 
     //  지사출고 - 세부테이블 지사입고 상태 리스트
     public ResponseEntity<Map<String, Object>> branchReceiptBranchInList(Long frId, LocalDateTime fromDt, LocalDateTime toDt, String isUrgent, HttpServletRequest request) {

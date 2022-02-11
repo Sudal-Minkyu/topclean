@@ -33,6 +33,7 @@ public enum ResponseErrorCode {
     TP024("TP024", "접수정보가 존재하지 않습니다."),
     TP025("TP025", "이미 미수완납된 결제입니다."),
     TP026("TP026", "권한이 존재하지 않습니다."),
+    TP027("TP027", "새로고침이후 다시 시도해주세요."),
     ;
 
     private String code;
