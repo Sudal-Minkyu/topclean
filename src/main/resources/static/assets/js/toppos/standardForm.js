@@ -31,7 +31,7 @@ const comms = {
 const grids = {
     s: { // 그리드 세팅
         targetDiv: [
-            "targetHtmlId"
+            "grid_main"
         ],
         columnLayout: [],
         prop: [],
@@ -62,11 +62,11 @@ const grids = {
                 noDataMessage : "출력할 데이터가 없습니다.",
                 showAutoNoDataMessage: false,
                 enableColumnResize : false,
-                showRowAllCheckBox: true,
-                showRowCheckColumn: true,
+                showRowAllCheckBox: false,
+                showRowCheckColumn: false,
                 showRowNumColumn : false,
-                showStateColumn : true,
-                enableFilter : true,
+                showStateColumn : false,
+                enableFilter : false,
                 rowHeight : 48,
                 headerHeight : 48,
             };
@@ -101,7 +101,7 @@ const grids = {
     },
 
     t: {
-        basicTrigger() {
+        basic() {
             /* 0번그리드 내의 셀 클릭시 이벤트 */
             AUIGrid.bind(grids.s.id[0], "cellClick", function (e) {
                 console.log(e.item); // 이밴트 콜백으로 불러와진 객체의, 클릭한 대상 row 키(파라메터)와 값들을 보여준다.
@@ -113,7 +113,9 @@ const grids = {
 /* 이벤트를 s : 설정하거나 r : 해지하는 함수들을 담는다. 그리드 관련 이벤트는 grids.e에 위치 (trigger) */
 const trigs = {
     s: { // 이벤트 설정
+        basic() {
 
+        }
     },
     r: { // 이벤트 해제
 
@@ -133,4 +135,5 @@ $(function() { // 페이지가 로드되고 나서 실행
 function onPageLoad() {
     grids.f.initialization();
 
+    trigs.s.basic();
 }

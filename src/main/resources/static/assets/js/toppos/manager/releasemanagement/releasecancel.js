@@ -8,18 +8,67 @@ const dtos = {
 
     },
     receive: {
+        managerBelongList: { // 가맹점 선택 셀렉트박스에 띄울 가맹점의 리스트
+            frId: "nr",
+            frName: "s",
+            frTagNo: "s",
+        },
+        branchReceiptBranchInCancelList: {
+            fdId: "n", // 출고 처리를 위함
+            frName: "s",
+            fdS2Dt: "s",
+            fdS4Dt: "s",
+            fdTag: "s",
+            fdColor: "s",
 
+            bgName: "s",
+            bsName: "s",
+            biName: "s",
+
+            fdPriceGrade: "s",
+            fdRetryYn: "s",
+            fdPressed: "n",
+            fdAdd1Amt: "n",
+            fdAdd1Remark: "s",
+            fdRepairAmt: "n",
+            fdRepairRemark: "s",
+            fdWhitening: "n",
+            fdPollution: "n",
+            fdWaterRepellent: "n",
+            fdStarch: "n",
+            fdUrgentYn: "s",
+
+            bcName: "s",
+            fdTotAmt: "n",
+            fdState: "s",
+            fdPreState: "s",
+        },
     }
 };
 
 /* 통신에 사용되는 url들 기입 */
 const urls = {
-    
+    getFrList: "/api/manager/branchBelongList",
+    getMainGridList: "",
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
-    
+    getFrList() {
+        CommonUI.ajax(urls.getFrList, "GET", false, function (res) {
+            const data = res.sendData.franchiseList;
+            console.log(res);
+            dv.chk(data, dtos.receive.managerBelongList, "가맹점 선택출고에 필요한 지점에 속한 가맹점 받아오기");
+            const $frList = $("#frList");
+            data.forEach(obj => {
+                const htmlText = `<option value="${obj.frId}" data-tagno="${obj.frTagNo}">${obj.frName}</option>`
+                $frList.append(htmlText);
+            });
+        });
+    },
+    getMainGridList(searchCondition) {
+
+    },
 };
 
 /* .s : AUI 그리드 관련 설정들
@@ -31,7 +80,7 @@ const comms = {
 const grids = {
     s: { // 그리드 세팅
         targetDiv: [
-            "targetHtmlId"
+            "grid_main"
         ],
         columnLayout: [],
         prop: [],
@@ -65,8 +114,8 @@ const grids = {
                 showRowAllCheckBox: true,
                 showRowCheckColumn: true,
                 showRowNumColumn : false,
-                showStateColumn : true,
-                enableFilter : true,
+                showStateColumn : false,
+                enableFilter : false,
                 rowHeight : 48,
                 headerHeight : 48,
             };
@@ -101,7 +150,7 @@ const grids = {
     },
 
     t: {
-        basicTrigger() {
+        basic() {
             /* 0번그리드 내의 셀 클릭시 이벤트 */
             AUIGrid.bind(grids.s.id[0], "cellClick", function (e) {
                 console.log(e.item); // 이밴트 콜백으로 불러와진 객체의, 클릭한 대상 row 키(파라메터)와 값들을 보여준다.
@@ -113,7 +162,15 @@ const grids = {
 /* 이벤트를 s : 설정하거나 r : 해지하는 함수들을 담는다. 그리드 관련 이벤트는 grids.e에 위치 (trigger) */
 const trigs = {
     s: { // 이벤트 설정
+        basic() {
+            $("#frList").on("change", function () {
+                $("#foreTag").val($("#frList option:selected").attr("data-tagno"));
+            });
 
+            $("#searchListBtn").on("click", function () {
+                searchOrder();
+            });
+        },
     },
     r: { // 이벤트 해제
 
@@ -132,5 +189,34 @@ $(function() { // 페이지가 로드되고 나서 실행
 /* 페이지가 로드되고 나서 실행 될 코드들을 담는다. */
 function onPageLoad() {
     grids.f.initialization();
+    enableDatepicker();
+    comms.getFrList();
+    trigs.s.basic();
+}
+
+function enableDatepicker() {
+    
+    let fromday = new Date();
+    fromday.setDate(fromday.getDate() - 6);
+    fromday = fromday.format("yyyy-MM-dd");
+    const today = new Date().format("yyyy-MM-dd");
+
+    /* datepicker를 적용시킬 대상들의 dom id들 */
+    const datePickerTargetIds = [
+        "filterFromDt", "filterToDt"
+    ];
+
+    $("#" + datePickerTargetIds[0]).val(fromday);
+    $("#" + datePickerTargetIds[1]).val(today);
+
+    const dateAToBTargetIds = [
+        ["filterFromDt", "filterToDt"]
+    ];
+
+    CommonUI.setDatePicker(datePickerTargetIds);
+    CommonUI.restrictDateAToB(dateAToBTargetIds);
+}
+
+function searchOrder() {
 
 }
