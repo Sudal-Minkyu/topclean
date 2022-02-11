@@ -6,13 +6,20 @@
 
 <!-- 사용자 CSS 추가 -->
 <th:block layout:fragment="css">
+    <style>
+		.colorSquare {
+			height: 20px;
+			width: 20px;
+			border-radius: 5px;
+			display: inline-block;
+		}
+    </style>
 
 </th:block>
 
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
-
-	<script type="text/javascript">
+    <script type="text/javascript">
 
 		$(function() {
 			$('.gnb').on('mouseenter', function () {
@@ -33,7 +40,7 @@
     <section class="section">
         <article class="article">
             <div class="article__header">
-                <h3 class="article__heading">TAG 번호조회</h3>
+                <h3 class="article__heading">체류 세탁물현황</h3>
             </div>
             <div class="article__body">
                 <div class="inquiry">
@@ -44,24 +51,20 @@
                                 <div class="inquiry__input">
                                     <div class="c-select">
                                         <select>
-                                            <option>서정마을점</option>
+                                            <option>전체선택</option>
                                         </select>
                                     </div>
                                 </div>
                             </li>
                             <li>
-                                <div class="inquiry__title">택번호(앞 3자리)</div>
+                                <div class="inquiry__title">입고일자</div>
                                 <div class="inquiry__input">
-                                    <div class="inquiry__input-tag">
-                                        <input type="text" />
-                                    </div>
-                                </div>
-                            </li>
-                            <li>
-                                <div class="inquiry__title">택번호(뒤 4자리)</div>
-                                <div class="inquiry__input">
-                                    <div class="inquiry__input-tag">
-                                        <input type="text" />
+                                    <div class="c-period">
+                                        <!-- 시작일 -->
+                                        <input type="text">
+                                        <span class="c-period__code">-</span>
+                                        <!-- 종료일 -->
+                                        <input type="text">
                                     </div>
                                 </div>
                             </li>
@@ -74,10 +77,16 @@
             </div>
         </article>
 
-        <div class="article">
+        <div class="article article--flex article--non-margin">
+            <div class="article__body flex-auto" style="width: 23.75rem;">
+                <div style="width: 100%; height: 530px; border: 1px solid #bdbdbd;">
+                    그리드
+                </div>
+            </div>
+
             <div class="article__body">
                 <div style="width: 100%; height: 530px; border: 1px solid #bdbdbd;">
-                    grid area
+                    그리드
                 </div>
             </div>
         </div>

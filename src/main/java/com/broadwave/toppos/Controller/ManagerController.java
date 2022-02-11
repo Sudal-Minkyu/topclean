@@ -61,6 +61,31 @@ public class ManagerController {
     public String tag(){
         return "manager/inandout/tag";
     }
+    // 지사입고현황
+    @RequestMapping("instate")
+    public String instate(){
+        return "manager/inandout/instate";
+    }
+    // 지사출고현황
+    @RequestMapping("outstate")
+    public String outstate(){
+        return "manager/inandout/outstate";
+    }
+    // 지사강제출고현황
+    @RequestMapping("forceoutstate")
+    public String forceoutstate(){
+        return "manager/inandout/forceoutstate";
+    }
+    // 가맹반송현황
+    @RequestMapping("returnstate")
+    public String returnstate(){
+        return "manager/inandout/returnstate";
+    }
+    // 체류세탁물현황
+    @RequestMapping("staystate")
+    public String staystate(){
+        return "manager/inandout/staystate";
+    }
 
     // 영업일관리 페이지
     @RequestMapping("businessday")
