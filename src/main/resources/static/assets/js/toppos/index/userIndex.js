@@ -56,7 +56,8 @@ const comms = {
                 $(field[i]).children(".main__board-title").on("click", function() {
                     location.href = `./user/taglostview?id=${data[i].htId}`;
                 });
-                $(field[i]).children(".main__board-title").children("span").html(data[i].subject);
+                $(field[i]).children(".main__board-title").children("span:nth-child(1)").html(data[i].subject);
+                $(field[i]).children(".main__board-title").children("span:nth-child(2)").html("(" + data[i].numOfComment + ")");
                 $(field[i]).children(".main__board-date").children("span").html(data[i].insertDateTime);
             }
         });
