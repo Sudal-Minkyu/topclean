@@ -1,4 +1,4 @@
-package com.broadwave.toppos.Head.Notice;
+package com.broadwave.toppos.Head.Notice.NoticeDtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

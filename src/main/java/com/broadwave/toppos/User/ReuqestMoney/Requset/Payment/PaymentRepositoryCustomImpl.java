@@ -1,6 +1,6 @@
 package com.broadwave.toppos.User.ReuqestMoney.Requset.Payment;
 
-import com.broadwave.toppos.Head.Franohise.QFranchise;
+import com.broadwave.toppos.Head.Franchise.QFranchise;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentDtos.PaymentBusinessdayListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentDtos.PaymentCencelDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentDtos.PaymentCencelYnDto;

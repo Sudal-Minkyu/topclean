@@ -1,7 +1,7 @@
 package com.broadwave.toppos.Manager.ManagerService;
 
-import com.broadwave.toppos.Head.Franohise.FranchiseManagerListDto;
-import com.broadwave.toppos.Head.Franohise.FranchiseRepositoryCustom;
+import com.broadwave.toppos.Head.Franchise.FranchiseDtos.FranchiseManagerListDto;
+import com.broadwave.toppos.Head.Franchise.FranchiseRepositoryCustom;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.common.AjaxResponse;
 import io.jsonwebtoken.Claims;

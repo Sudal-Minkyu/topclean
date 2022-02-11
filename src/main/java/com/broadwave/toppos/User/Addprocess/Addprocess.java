@@ -1,6 +1,6 @@
 package com.broadwave.toppos.User.Addprocess;
 
-import com.broadwave.toppos.Head.Franohise.Franchise;
+import com.broadwave.toppos.Head.Franchise.Franchise;
 import lombok.*;
 
 import javax.persistence.*;

@@ -1,11 +1,9 @@
-package com.broadwave.toppos.Head.Franohise;
+package com.broadwave.toppos.Head.Franchise.FranchiseDtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import javax.persistence.Column;
 
 /**
  * @author Minkyu

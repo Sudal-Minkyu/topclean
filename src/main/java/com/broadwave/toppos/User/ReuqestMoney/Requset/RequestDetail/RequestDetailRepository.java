@@ -20,7 +20,7 @@ public interface RequestDetailRepository extends JpaRepository<RequestDetail,Lon
     @Query("select a from RequestDetail a where a.id in :fdIdList and a.fdState = 'S1' and a.fdCancel = 'N' order by a.id desc")
     List<RequestDetail> findByRequestDetailS1List(List<Long> fdIdList);
 
-    // 가맹점입고 할 접수테이블 리스트 호출
+    // 가맹점입고 할 접수테이블 리스트 호출 or 지사출고 취소 할 접수테이블 리스트 호출
     @Query("select a from RequestDetail a where a.id in :fdIdList and a.fdState = 'S4' and a.fdCancel = 'N' order by a.id desc")
     List<RequestDetail> findByRequestDetailS4List(List<Long> fdIdList);
 
@@ -34,7 +34,7 @@ public interface RequestDetailRepository extends JpaRepository<RequestDetail,Lon
 
     // 세탁인도 할 접수테이블 리스트 호출
     @Query("select a from RequestDetail a where a.id in :fdIdList and (a.fdState = 'S5' or a.fdState = 'S8') and a.fdCancel = 'N' order by a.id desc")
-    List<RequestDetail> findByRequestDetailS5List(List<Long> fdIdList);
+    List<RequestDetail> findByRequestDetailS5OrS8List(List<Long> fdIdList);
 
     // 지사출고 할 접수테이블 리스트 호출
     @Query("select a from RequestDetail a where a.id in :fdIdList and a.fdState = 'S2' and a.fdCancel = 'N' order by a.id desc")

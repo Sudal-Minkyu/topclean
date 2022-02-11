@@ -1,6 +1,6 @@
 package com.broadwave.toppos.User.Addprocess;
 
-import com.broadwave.toppos.Head.Franohise.QFranchise;
+import com.broadwave.toppos.Head.Franchise.QFranchise;
 import com.broadwave.toppos.User.Addprocess.AddprocessDtos.AddprocessDto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;

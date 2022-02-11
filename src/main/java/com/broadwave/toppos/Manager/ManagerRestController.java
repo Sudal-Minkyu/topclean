@@ -162,6 +162,21 @@ public class ManagerRestController {
         return receiptReleaseService.branchReceiptBranchInCancelList(frId, fromDt, toDt, tagNo, request);
     }
 
+    //  접수테이블의 상태 변화 API - 지사출고취소, 지사반송, 가맹점입고 실행 함수
+    @PostMapping("branchReleaseCancel")
+    public ResponseEntity<Map<String,Object>> branchReleaseCancel(@RequestParam(value="fdIdList", defaultValue="") List<Long> fdIdList,
+                                                                  @RequestParam("type")String type, HttpServletRequest request){
+        return receiptReleaseService.branchReleaseCancel(fdIdList, type, request);
+    }
+
+//    //  접수테이블의 상태 변화 API - 가맹점반송, 가맹점강제출고 실행 함수
+//    @PostMapping("branchProcess")
+//    public ResponseEntity<Map<String,Object>> branchProcess(@RequestParam(value="fdIdList", defaultValue="") Long fdId, HttpServletRequest request){
+//        return receiptReleaseService.branchProcess(fdId, request);
+//    }
+
+
+
 
 
 

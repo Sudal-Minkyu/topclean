@@ -192,7 +192,7 @@ public class ReceiptStateService {
             case "S5":
             case "S8": {
                 log.info("세탁인도 처리");
-                List<RequestDetail> requestDetailList = requestDetailRepository.findByRequestDetailS5List(fdIdList);
+                List<RequestDetail> requestDetailList = requestDetailRepository.findByRequestDetailS5OrS8List(fdIdList);
 //            log.info("requestDetailList : "+requestDetailList);
                 for (RequestDetail requestDetail : requestDetailList) {
 //                log.info("가져온 frID 값 : "+requestDetailList.get(i).getFrId());

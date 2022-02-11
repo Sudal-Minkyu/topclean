@@ -1,7 +1,7 @@
 package com.broadwave.toppos.Account;
 
 import com.broadwave.toppos.Head.Branoh.QBranch;
-import com.broadwave.toppos.Head.Franohise.QFranchise;
+import com.broadwave.toppos.Head.Franchise.QFranchise;
 import com.broadwave.toppos.User.UserDtos.UserIndexDto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;

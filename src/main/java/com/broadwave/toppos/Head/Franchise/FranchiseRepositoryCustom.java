@@ -1,4 +1,6 @@
-package com.broadwave.toppos.Head.Franohise;
+package com.broadwave.toppos.Head.Franchise;
+
+import com.broadwave.toppos.Head.Franchise.FranchiseDtos.*;
 
 import java.util.List;
 

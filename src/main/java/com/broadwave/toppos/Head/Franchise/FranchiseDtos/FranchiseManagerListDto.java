@@ -1,4 +1,4 @@
-package com.broadwave.toppos.Head.Franohise;
+package com.broadwave.toppos.Head.Franchise.FranchiseDtos;
 
 import lombok.*;
 

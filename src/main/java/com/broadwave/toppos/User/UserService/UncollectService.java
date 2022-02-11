@@ -1,7 +1,7 @@
 package com.broadwave.toppos.User.UserService;
 
-import com.broadwave.toppos.Head.Franohise.Franchise;
-import com.broadwave.toppos.Head.Franohise.FranchiseRepository;
+import com.broadwave.toppos.Head.Franchise.Franchise;
+import com.broadwave.toppos.Head.Franchise.FranchiseRepository;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.User.Customer.Customer;
 import com.broadwave.toppos.User.Customer.CustomerDtos.CustomerUncollectListDto;

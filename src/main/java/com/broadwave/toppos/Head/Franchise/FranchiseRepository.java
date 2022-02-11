@@ -1,4 +1,4 @@
-package com.broadwave.toppos.Head.Franohise;
+package com.broadwave.toppos.Head.Franchise;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

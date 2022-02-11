@@ -3,26 +3,20 @@ package com.broadwave.toppos.Manager.ManagerService;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.Manager.Process.Issue.Issue;
 import com.broadwave.toppos.Manager.Process.Issue.IssueRepository;
-import com.broadwave.toppos.User.Customer.Customer;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.Request;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.Photo;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetail;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.RequestDetailReleaseCancelListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.RequestDetailReleaseListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepositoryCustom;
 import com.broadwave.toppos.common.AjaxResponse;
-import com.broadwave.toppos.common.ResponseErrorCode;
 import com.broadwave.toppos.keygenerate.KeyGenerateService;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -138,7 +132,7 @@ public class ReceiptReleaseService {
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
-
+    //  지사출고 취소 - 세부테이블 지사출고 상태 리스트
     public ResponseEntity<Map<String, Object>> branchReceiptBranchInCancelList(Long frId, LocalDateTime fromDt, LocalDateTime toDt, String tagNo, HttpServletRequest request) {
         log.info("branchReceiptBranchInCancelList 호출");
 
@@ -161,17 +155,83 @@ public class ReceiptReleaseService {
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
+    //  접수테이블의 상태 변화 API - 지사출고취소, 지사반송, 가맹점입고 실행 함수
+    public ResponseEntity<Map<String, Object>> branchReleaseCancel(List<Long> fdIdList, String type, HttpServletRequest request) {
+        log.info("branchReceiptBranchInCancelList 호출");
+
+//        log.info("fdIdList : "+fdIdList);
+
+        AjaxResponse res = new AjaxResponse();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String brCode = (String) claims.get("brCode"); // 현재 지사의 코드(2자리) 가져오기
+        String login_id = claims.getSubject(); // 현재 아이디
+        log.info("현재 접속한 아이디 : "+login_id);
+        log.info("현재 접속한 지사 코드 : "+brCode);
+
+        switch (type) {
+            case "1": { // 지사출고취소
+                log.info("지사출고취소 처리");
+                List<RequestDetail> requestDetailList = requestDetailRepository.findByRequestDetailS4List(fdIdList);
+//             log.info("requestDetailList : "+requestDetailList);
+                for (RequestDetail requestDetail : requestDetailList) {
+                    requestDetail.setFdPreState(requestDetail.getFdState()); // 이전상태 값
+                    requestDetail.setFdPreStateDt(LocalDateTime.now());
+                    requestDetail.setFdState("S2");
+                    requestDetail.setFdStateDt(LocalDateTime.now());
+
+                    requestDetail.setModify_id(login_id);
+                    requestDetail.setModify_date(LocalDateTime.now());
+                }
+                requestDetailRepository.saveAll(requestDetailList);
+                break;
+            }
+            case "2": { // 지사반송
+                log.info("지사반송 처리");
+//                List<RequestDetail> requestDetailList = requestDetailRepository.findByRequestDetailS4List(fdIdList);
+////            log.info("requestDetailList : "+requestDetailList);
+//                for (RequestDetail requestDetail : requestDetailList) {
+////                log.info("가져온 frID 값 : "+requestDetailList.get(i).getFrId());
+//                    requestDetail.setFdPreState(stateType); // 이전상태 값
+//                    requestDetail.setFdPreStateDt(LocalDateTime.now());
+//                    requestDetail.setFdState("S5");
+//                    requestDetail.setFdStateDt(LocalDateTime.now());
+//
+//                    requestDetail.setFdS5Dt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
+//                    requestDetail.setFdS5Time(LocalDateTime.now());
+//                    requestDetail.setModify_id(login_id);
+//                    requestDetail.setModify_date(LocalDateTime.now());
+//                }
+//                requestDetailRepository.saveAll(requestDetailList);
+                break;
+            }
+            case "3": { // 가맹점강제출고
+                log.info("가맹점강제출고 처리");
+//                List<RequestDetail> requestDetailList = requestDetailRepository.findByRequestDetailS2List(fdIdList);
+////            log.info("requestDetailList : "+requestDetailList);
+//                for (RequestDetail requestDetail : requestDetailList) {
+////                log.info("가져온 frID 값 : "+requestDetailList.get(i).getFrId());
+//                    requestDetail.setFdPreState(stateType); // 이전상태 값
+//                    requestDetail.setFdPreStateDt(LocalDateTime.now());
+//                    requestDetail.setFdState("S4");
+//                    requestDetail.setFdStateDt(LocalDateTime.now());
+//
+//                    requestDetail.setFdS2Dt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
+//                    requestDetail.setFdS2Time(LocalDateTime.now());
+//                    requestDetail.setModify_id(login_id);
+//                    requestDetail.setModify_date(LocalDateTime.now());
+//                }
+//                requestDetailRepository.saveAll(requestDetailList);
+                break;
+            }
+            default:
+                return ResponseEntity.ok(res.fail("문자", "처리 타입이 존재하지 않습니다.", "문자", "관리자에게 문의해주세요."));
+        }
 
 
-
-
-
-
-
-
-
-
-
+        return ResponseEntity.ok(res.success());
+    }
 }
 
 
