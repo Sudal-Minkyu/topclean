@@ -76,9 +76,6 @@ public class ReceiptReleaseService {
         log.info("현재 접속한 아이디 : "+login_id);
         log.info("현재 접속한 지사 코드 : "+brCode);
 
-//        String frCode = "";
-//        String miNo = keyGenerateService.keyGenerate("mr_issue", brCode+frCode+nowDate, login_id);
-
         // stateType 상태값
         // "S2"이면 지사출고 페이지 버튼 "S2" -> "S4"
         log.info("지사출고 처리");
@@ -100,7 +97,7 @@ public class ReceiptReleaseService {
             Issue issue = issueRepository.save(newIssue);
 
             for (RequestDetail requestDetail : requestDetailList) {
-//                    log.info("가져온 frID 값 : " + requestDetail.getFrId());
+//                log.info("가져온 frID 값 : " + requestDetail.getFrId());
                 requestDetail.setFdPreState("S2"); // 이전상태 값
                 requestDetail.setFdPreStateDt(LocalDateTime.now());
 
@@ -141,4 +138,21 @@ public class ReceiptReleaseService {
     }
 
 
+    public ResponseEntity<Map<String, Object>> branchReceiptBranchInCancelList(Long frId, LocalDateTime fromDt, LocalDateTime toDt, String tagNo, HttpServletRequest request) {
+        log.info("branchReceiptBranchInCancelList 호출");
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String brCode = (String) claims.get("brCode"); // 현재 지사의 코드(2자리) 가져오기
+        log.info("현재 접속한 지사 코드 : "+brCode);
+
+//        // 지사출고 페이지에 보여줄 리스트 호출
+//        List<RequestDetailReleaseListDto> requestDetailReleaseListDtos = requestDetailRepositoryCustom.findByRequestDetailReleaseList(brCode, frId, fromDt, toDt, tagNo);
+//        data.put("gridListData",requestDetailReleaseListDtos);
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
 }

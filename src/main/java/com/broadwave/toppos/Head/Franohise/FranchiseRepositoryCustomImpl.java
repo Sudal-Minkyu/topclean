@@ -135,7 +135,8 @@ public class FranchiseRepositoryCustomImpl extends QuerydslRepositorySupport imp
         JPQLQuery<FranchiseManagerListDto> query = from(franchise)
                 .select(Projections.constructor(FranchiseManagerListDto.class,
                         franchise.id,
-                        franchise.frName
+                        franchise.frName,
+                        franchise.frTagNo
                 ));
 
         query.where(franchise.brCode.eq(brCode));

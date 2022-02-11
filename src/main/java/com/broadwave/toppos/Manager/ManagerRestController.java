@@ -104,7 +104,7 @@ public class ManagerRestController {
         return tagNoticeService.lostNoticeCommentSave(hcId, htId, type, comment, preId, request);
     }
 
-//@@@@@@@@@@@@@@@@@@@@@ 지사출고 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+//@@@@@@@@@@@@@@@@@@@@@ 지사출고, 지사출고 취소, 가맹점강제출고, 가맹점반송 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     //  현 지사의 소속된 가맹점명 리스트 호출(앞으로 공용으로 쓰일 것)
     @GetMapping("branchBelongList")
     public ResponseEntity<Map<String,Object>> branchBelongList(HttpServletRequest request){
@@ -140,7 +140,27 @@ public class ManagerRestController {
         return receiptReleaseService.branchReceiptBranchInList(frId, fromDt, toDt, isUrgent, request);
     }
 
+    //  지사출고 취소 - 세부테이블 지사출고 상태 리스트
+    @GetMapping("branchReceiptBranchInCancelList")
+    public ResponseEntity<Map<String,Object>> branchReceiptBranchInCancelList(@RequestParam("frId")Long frId, @RequestParam("filterFromDt")String filterFromDt,
+                                                                        @RequestParam("filterToDt")String filterToDt, @RequestParam("tagNo")String tagNo, HttpServletRequest request){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
+        LocalDateTime fromDt = null;
+        if(filterFromDt != null){
+            filterFromDt = filterFromDt+" 00:00:00.000";
+            fromDt = LocalDateTime.parse(filterFromDt, formatter);
+    //            log.info("fromDt :"+fromDt);
+        }
 
+        LocalDateTime toDt = null;
+        if(filterToDt != null){
+            filterToDt = filterToDt+" 23:59:59.999";
+            toDt = LocalDateTime.parse(filterToDt, formatter);
+    //            log.info("toDt :"+toDt);
+        }
+
+        return receiptReleaseService.branchReceiptBranchInCancelList(frId, fromDt, toDt, tagNo, request);
+    }
 
 
 
