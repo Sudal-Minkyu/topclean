@@ -19,7 +19,8 @@ const dtos = {
     receive: {
         managerBelongList: { // 가맹점 선택 셀렉트박스에 띄울 가맹점의 리스트
             frId: "nr",
-            frName: "s"
+            frName: "s",
+            frTagNo: "s",
         },
         branchReceiptBranchInList: {
             fdId: "n", // 출고 처리를 위함
