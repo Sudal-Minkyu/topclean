@@ -1,5 +1,8 @@
 package com.broadwave.toppos.Manager.TagNotice;
 
+import com.broadwave.toppos.Manager.TagNotice.TagNoticeDtos.TagNoticeListDto;
+import com.broadwave.toppos.Manager.TagNotice.TagNoticeDtos.TagNoticeViewDto;
+import com.broadwave.toppos.Manager.TagNotice.TagNoticeDtos.TagNoticeViewSubDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

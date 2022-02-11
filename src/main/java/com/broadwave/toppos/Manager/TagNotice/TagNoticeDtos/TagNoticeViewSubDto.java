@@ -1,4 +1,4 @@
-package com.broadwave.toppos.Manager.TagNotice;
+package com.broadwave.toppos.Manager.TagNotice.TagNoticeDtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

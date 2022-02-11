@@ -2,9 +2,10 @@ package com.broadwave.toppos.Manager.TagNotice;
 
 import com.broadwave.toppos.Account.QAccount;
 import com.broadwave.toppos.Manager.TagNotice.Comment.QTagNoticeComment;
-import com.querydsl.core.types.ExpressionUtils;
+import com.broadwave.toppos.Manager.TagNotice.TagNoticeDtos.TagNoticeListDto;
+import com.broadwave.toppos.Manager.TagNotice.TagNoticeDtos.TagNoticeViewDto;
+import com.broadwave.toppos.Manager.TagNotice.TagNoticeDtos.TagNoticeViewSubDto;
 import com.querydsl.core.types.Projections;
-import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.JPQLQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;

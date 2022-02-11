@@ -31,5 +31,6 @@ public interface RequestDetailRepositoryCustom {
     List<RequestDetailPaymentPaper> findByRequestDetailPaymentPaper(String frNo); // 영수증출력
 
     List<RequestDetailReleaseListDto> findByRequestDetailReleaseList(String brCode, Long frId, LocalDateTime fromDt, java.time.LocalDateTime toDt, String isUrgent); // 지사출고
+    List<RequestDetailReleaseCancelListDto> findByRequestDetailReleaseCancelList(String brCode, Long frId, LocalDateTime fromDt, LocalDateTime toDt, String tagNo); // 지사출고취소
 
 }

@@ -7,6 +7,7 @@ import com.broadwave.toppos.User.Customer.Customer;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Request;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.Photo;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetail;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.RequestDetailReleaseCancelListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.RequestDetailReleaseListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepositoryCustom;
@@ -141,6 +142,10 @@ public class ReceiptReleaseService {
     public ResponseEntity<Map<String, Object>> branchReceiptBranchInCancelList(Long frId, LocalDateTime fromDt, LocalDateTime toDt, String tagNo, HttpServletRequest request) {
         log.info("branchReceiptBranchInCancelList 호출");
 
+        log.info("frId : "+frId);
+        log.info("tagNo : "+tagNo);
+
+
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
 
@@ -149,10 +154,24 @@ public class ReceiptReleaseService {
         String brCode = (String) claims.get("brCode"); // 현재 지사의 코드(2자리) 가져오기
         log.info("현재 접속한 지사 코드 : "+brCode);
 
-//        // 지사출고 페이지에 보여줄 리스트 호출
-//        List<RequestDetailReleaseListDto> requestDetailReleaseListDtos = requestDetailRepositoryCustom.findByRequestDetailReleaseList(brCode, frId, fromDt, toDt, tagNo);
-//        data.put("gridListData",requestDetailReleaseListDtos);
+        // 지사출고취소 페이지에 보여줄 리스트 호출
+        List<RequestDetailReleaseCancelListDto> requestDetailReleaseCancelListDtos = requestDetailRepositoryCustom.findByRequestDetailReleaseCancelList(brCode, frId, fromDt, toDt, tagNo);
+        data.put("gridListData",requestDetailReleaseCancelListDtos);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
+
+
+
+
+
+
+
+
+
+
+
+
 }
+
+
