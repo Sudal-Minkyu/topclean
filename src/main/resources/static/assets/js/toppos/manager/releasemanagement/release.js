@@ -12,8 +12,8 @@ const dtos = {
             isUrgent: "s" // Y이 올 경우 급세탁인 항목만, N인 경우 전체항목
         },
         branchStateChange: {
-            nthRelease: "n", // 몇차 출고인지에 대한 신호
-            fdIdList: "a", // fdId의 목록이 담긴 배열
+            miDegree: "n", // 몇차 출고인지에 대한 신호
+            fdIdList: "a", // fdId의 목록이 담긴 배열(3차원 배열)
         }
     },
     receive: {
@@ -24,6 +24,7 @@ const dtos = {
         branchReceiptBranchInList: {
             fdId: "n", // 출고 처리를 위함
             frName: "s",
+            frCode: "n",
             fdS2Dt: "s",
             fdTag: "s",
             fdColor: "s",
@@ -78,7 +79,7 @@ const comms = {
         CommonUI.ajax(urls.getReceiptList, "GET", searchCondition, function (res) {
             wares.receiptList = res.sendData.gridListData;
             $("#frName").html($("#frList option:selected").html());
-            $("#numOfList").val(wares.receiptList.length);
+            $("#numOfList").html(wares.receiptList.length);
             $("#listStatBar").show();
         });
     },
@@ -89,6 +90,7 @@ const comms = {
         //     console.log(res);
         //     alertSuccess("출고 처리가 완료 되었습니다.");
         //     grids.f.clearData(0);
+        //     grids.f.clearData(1);
         //     wares.receiptList = "";
         //     $("#listStatBar").hide();
         // });
@@ -104,7 +106,7 @@ const comms = {
 const grids = {
     s: { // 그리드 세팅
         targetDiv: [
-            "grid_main"
+            "grid_main", "grid_selected"
         ],
         columnLayout: [],
         prop: [],
@@ -195,7 +197,32 @@ const grids = {
                 showRowCheckColumn: true,
                 showRowNumColumn : false,
                 showStateColumn : false,
-                enableFilter : true,
+                enableFilter : false,
+                rowHeight : 48,
+                headerHeight : 48,
+            };
+
+            grids.s.columnLayout[1] = [
+                {
+                    dataField: "frName",
+                    headerText: "가맹점",
+                }, {
+                    dataField: "qty",
+                    headerText: "수량",
+                },
+            ];
+    
+            grids.s.prop[1] = {
+                editable : false,
+                selectionMode : "singleRow",
+                noDataMessage : "출력할 데이터가 없습니다.",
+                showAutoNoDataMessage: false,
+                enableColumnResize : false,
+                showRowAllCheckBox: false,
+                showRowCheckColumn: false,
+                showRowNumColumn : false,
+                showStateColumn : false,
+                enableFilter : false,
                 rowHeight : 48,
                 headerHeight : 48,
             };
@@ -229,14 +256,17 @@ const grids = {
 
         addRow(numOfGrid, item) {
             AUIGrid.addRow(grids.s.id[numOfGrid], item, "last");
-        }
+        },
     },
 
     t: {
         basicTrigger() {
-            /* 0번그리드 내의 셀 클릭시 이벤트 */
-            AUIGrid.bind(grids.s.id[0], "cellClick", function (e) {
-                console.log(e.item); // 이밴트 콜백으로 불러와진 객체의, 클릭한 대상 row 키(파라메터)와 값들을 보여준다.
+            AUIGrid.bind(grids.s.id[0], "rowCheckClick", function (e) {
+                listCheckChanged();
+            });
+
+            AUIGrid.bind(grids.s.id[0], "rowAllCheckClick", function (check) {
+                listCheckChanged();
             });
         }
     }
@@ -275,6 +305,11 @@ const trigs = {
             $("#clearAll").on("click", function () {
                 grids.f.clearData(0);
             });
+
+            const $miDegree = $("#miDegree");
+            $miDegree.on("keyup", function () {
+                $miDegree.val($miDegree.val().substring(0, 2));
+            });
         },
     },
     r: { // 이벤트 해제
@@ -289,12 +324,13 @@ const wares = {
 
 $(function() { // 페이지가 로드되고 나서 실행
     onPageLoad();
-    grids.f.create();
 });
 
 /* 페이지가 로드되고 나서 실행 될 코드들을 담는다. */
 function onPageLoad() {
     grids.f.initialization();
+    grids.f.create();
+    grids.t.basicTrigger();
     trigs.s.basic();
 
     enableDatepicker();
@@ -371,17 +407,24 @@ function sendOut() {
 
     if(checkedItems.length) {
         let fdIdList = [];
+        let codeIndex = [];
 
         checkedItems.forEach(obj => {
-            fdIdList.push(obj.item.fdId);
+            const i = codeIndex.indexOf(obj.item.frCode);
+            if(i + 1) {
+                fdIdList[i].push(obj.item.fdId);
+            } else {
+                codeIndex.push(obj.item.frCode);
+                fdIdList.push([obj.item.fdId]);
+            }
         });
 
         const sendList = {
-            nthRelease: $("#nthRelease").val().toInt(),
+            miDegree: $("#miDegree").val().toInt(),
             fdIdList: fdIdList
         }
 
-        if(!sendList.nthRelease) {
+        if(!sendList.miDegree) {
             alertCaution("올바른 출고 차수를 입력해 주세요.", 1);
         }
 
@@ -389,4 +432,29 @@ function sendOut() {
     } else {
         alertCaution("출고할 품목을 선택해 주세요.", 1);
     }
+}
+
+function listCheckChanged() {
+    const items = grids.f.getCheckedItems(0);
+    const refinedData = [];
+
+    items.forEach(obj => {
+
+        let isNoMatchName = true;
+        for(let i = 0; i < refinedData.length; i++) {
+            if(refinedData[i].frCode === obj.item.frCode) {
+                refinedData[i].qty++;
+                isNoMatchName = false;
+            }
+        }
+
+        if(isNoMatchName) {
+            refinedData.push({
+                frCode: obj.item.frCode,
+                frName: obj.item.frName,
+                qty: 1,
+            });
+        }
+    });
+    grids.f.setData(1, refinedData);
 }
