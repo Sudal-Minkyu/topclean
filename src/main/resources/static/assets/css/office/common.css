@@ -517,6 +517,9 @@ textarea {
 .article.article--flex .article__body + .article__body {
 	margin-left: 1.25rem;
 }
+.article.article--flex .article__body.flex-auto {
+	flex: 0 1 auto;
+}
 .article__content {
 	position: relative;
 }
@@ -1137,6 +1140,11 @@ textarea {
 }
 
 
-
+.colorSquare {
+	height: 20px;
+	width: 20px;
+	border-radius: 5px;
+	display: inline-block;
+}
 
 
