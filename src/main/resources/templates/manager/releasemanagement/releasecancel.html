@@ -6,7 +6,6 @@
 
 <!-- 사용자 CSS 추가 -->
 <th:block layout:fragment="css">
-
 </th:block>
 
 <!-- 사용자 스크립트 추가 -->
@@ -19,7 +18,7 @@
     <section class="section">
         <article class="article">
             <div class="article__header">
-                <h3 class="article__heading">지사출고</h3>
+                <h3 class="article__heading">지사출고취소</h3>
             </div>
             <div class="article__body">
                 <div class="inquiry">
@@ -29,17 +28,17 @@
                                 <div class="inquiry__title">가맹점</div>
                                 <div class="inquiry__input">
                                     <div class="c-select">
-                                        <select>
-                                            <option>서정마을점</option>
+                                        <select id="frList">
+                                            <option value="">가맹점 선택</option>
                                         </select>
                                     </div>
                                 </div>
                             </li>
                             <li>
-                                <div class="inquiry__title">택번호(앞 3자리)</div>
+                                <div id="frTagNo" class="inquiry__title">택번호(앞 3자리)</div>
                                 <div class="inquiry__input">
                                     <div class="inquiry__input-tag">
-                                        <input type="text" />
+                                        <input id="foreTag" type="text" readonly/>
                                     </div>
                                 </div>
                             </li>
@@ -47,7 +46,7 @@
                                 <div class="inquiry__title">택번호(뒤 4자리)</div>
                                 <div class="inquiry__input">
                                     <div class="inquiry__input-tag">
-                                        <input type="text" />
+                                        <input id="aftTagNo" type="text" maxlength="4" />
                                     </div>
                                 </div>
                             </li>
@@ -68,7 +67,7 @@
                         </ul>
                     </div>
                     <div class="inquiry__button">
-                        <button class="c-button c-button--small c-button--darksolid">조회</button>
+                        <button id="searchListBtn" class="c-button c-button--small c-button--darksolid">조회</button>
                     </div>
                 </div>
             </div>
@@ -77,11 +76,7 @@
         <article class="article">
             <ul class="article__console article__console--left article__console--non-border">
                 <li style="margin-left: auto;">
-                    <button class="c-button c-button--solid">전체선택</button>
-                    <button class="c-button c-button--darksolid">선택취소</button>
-                </li>
-                <li style="margin-left: auto;">
-                    <button class="c-button c-button--red">출고취소처리</button>
+                    <button id="executeBtn" class="c-button c-button--red">출고취소처리</button>
                 </li>
             </ul>
 
