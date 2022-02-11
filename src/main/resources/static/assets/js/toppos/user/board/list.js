@@ -89,7 +89,6 @@ const grids = {
                         }
                         return result;
                     }
-
                 }, {
                     dataField: "insertDateTime",
                     headerText: "작성일",

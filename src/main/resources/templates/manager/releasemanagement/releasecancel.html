@@ -11,9 +11,8 @@
 
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
-    <script src="/assets/js/toppos/manager/releasemanagement/common.js"></script>
+    <script src="/assets/js/toppos/CommonPC.js"></script>
     <script src="/assets/js/toppos/manager/releasemanagement/releasecancel.js"></script>
-
 </th:block>
 
 <div layout:fragment="content" class="content">
@@ -78,12 +77,16 @@
         <article class="article">
             <ul class="article__console article__console--left article__console--non-border">
                 <li style="margin-left: auto;">
+                    <button class="c-button c-button--solid">전체선택</button>
+                    <button class="c-button c-button--darksolid">선택취소</button>
+                </li>
+                <li style="margin-left: auto;">
                     <button class="c-button c-button--red">출고취소처리</button>
                 </li>
             </ul>
 
             <div style="height: 600px; margin-top: 20px; border: 1px solid #ddd">
-                grid area
+                <div id="grid_main" style="height: 600px;"></div>
             </div>
         </article>
 
