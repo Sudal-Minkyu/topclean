@@ -6,27 +6,11 @@
 
 <!-- 사용자 CSS 추가 -->
 <th:block layout:fragment="css">
-
 </th:block>
 
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
-
-	<script type="text/javascript">
-
-		$(function() {
-			$('.gnb').on('mouseenter', function () {
-				$('.gnb__layer').stop().slideDown(200);
-				$('.gnb__depth2').stop().slideDown(200);
-			});
-
-			$('.header').on('mouseleave', function(){
-				$('.gnb__layer').stop().slideUp(200);
-				$('.gnb__depth2').stop().slideUp(200);
-			});
-		});
-
-	</script>
+	<script src="/assets/js/toppos/manager/return/checkregist.js"></script>
 </th:block>
 
 <div layout:fragment="content" class="content">
@@ -43,17 +27,17 @@
                                 <div class="inquiry__title">가맹점</div>
                                 <div class="inquiry__input">
                                     <div class="c-select">
-                                        <select>
-                                            <option>서정마을점</option>
+                                        <select id="frList">
+                                            <option value="" data-tagno="">가맹점 선택</option>
                                         </select>
                                     </div>
                                 </div>
                             </li>
                             <li>
-                                <div class="inquiry__title">택번호(앞 3자리)</div>
+                                <div id="frTagNo" class="inquiry__title">택번호(앞 3자리)</div>
                                 <div class="inquiry__input">
                                     <div class="inquiry__input-tag">
-                                        <input type="text" />
+                                        <input id="foreTag" type="text" style="color: black;" readonly/>
                                     </div>
                                 </div>
                             </li>
@@ -61,14 +45,14 @@
                                 <div class="inquiry__title">택번호(뒤 4자리)</div>
                                 <div class="inquiry__input">
                                     <div class="inquiry__input-tag">
-                                        <input type="text" />
+                                        <input id="aftTag" type="text" maxlength="4" />
                                     </div>
                                 </div>
                             </li>
                         </ul>
                         <ul>
                             <li>
-                                <div class="inquiry__title">입고일자</div>
+                                <div class="inquiry__title">출고일자</div>
                                 <div class="inquiry__input">
                                     <div class="c-period">
                                         <!-- 시작일 -->
@@ -82,7 +66,7 @@
                         </ul>
                     </div>
                     <div class="inquiry__button">
-                        <button class="c-button c-button--small c-button--darksolid">조회</button>
+                        <button id="searchListBtn" class="c-button c-button--small c-button--darksolid">조회</button>
                     </div>
                 </div>
             </div>
@@ -90,15 +74,15 @@
 
         <div class="article">
             <div class="article__body">
-                <div style="width: 100%; height: 530px; border: 1px solid #bdbdbd;">
-                    grid area
-                </div>
+                <div style="height: 600px; margin-top: 20px; border: 1px solid #ddd">
+					<div id="grid_main" style="height: 600px;"></div>
+				</div>
             </div>
         </div>
     </section>
 
     <!-- 확인품등록 팝업 -->
-	<div class="pop active">
+	<div id="checkPop" class="pop">
 		<div class="pop__box">
 			<div class="pop__article pop__article--flex">
 				<div class="pop__article-content photo">
