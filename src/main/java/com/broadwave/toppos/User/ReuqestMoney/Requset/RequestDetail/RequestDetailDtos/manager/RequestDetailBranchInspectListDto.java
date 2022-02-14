@@ -10,15 +10,15 @@ import java.time.format.DateTimeFormatter;
 
 /**
  * @author Minkyu
- * Date : 2022-02-11
+ * Date : 2022-02-14
  * Time :
- * Remark : Toppos 지사 가맹점강제출고 ListDto
+ * Remark : Toppos 지사 확인품등록 ListDto
  */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RequestDetailBranchForceListDto {
+public class RequestDetailBranchInspectListDto {
 
     private Long fdId; // 고유ID값
     private String frName; // 가맹점명

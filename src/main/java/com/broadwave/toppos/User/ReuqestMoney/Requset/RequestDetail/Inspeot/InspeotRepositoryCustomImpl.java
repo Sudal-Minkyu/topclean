@@ -64,6 +64,8 @@ public class InspeotRepositoryCustomImpl extends QuerydslRepositorySupport imple
 
         if(type.equals("1")){
             query.where(inspeot.fiType.eq("F"));
+        }else{
+            query.where(inspeot.fiType.eq("B"));
         }
 
         query.orderBy(inspeot.id.desc());

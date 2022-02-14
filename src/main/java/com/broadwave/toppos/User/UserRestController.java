@@ -789,10 +789,10 @@ public class UserRestController {
         return inspectService.franchiseRequestDetailCencel(fpId, type, request);
     }
 
-    // 검품 등록 API -> 추후에 유저서비스로 옮기기 지사도 사용할꺼라서,
+    // 검품 등록 API -> 지사도 사용
     @PostMapping("franchiseInspectionSave")
     public ResponseEntity<Map<String,Object>> franchiseInspectionSave(@ModelAttribute InspeotMapperDto inspeotMapperDto, MultipartHttpServletRequest multi) throws IOException {
-        return inspectService.franchiseInspectionSave(inspeotMapperDto, multi, AWSBUCKETURL);
+        return inspectService.InspectionSave(inspeotMapperDto, multi, AWSBUCKETURL);
     }
 
     //  통합조회용 - 등록 검품 삭제
@@ -801,7 +801,7 @@ public class UserRestController {
         return inspectService.franchiseInspectionDelete(inspeotSet);
     }
 
-    //  통합조회용 - 검품 리스트 요청 -> 추후에 유저서비스로 옮기기 지사도 사용할꺼라서,
+    //  통합조회용 - 검품 리스트 요청 -> 지사도 사용
     @GetMapping("franchiseInspectionList")
     public ResponseEntity<Map<String,Object>> franchiseInspectionList(@RequestParam(value="fdId", defaultValue="") Long fdId,
                                                                            @RequestParam(value="type", defaultValue="") String type){

@@ -16,6 +16,8 @@ import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.Mess
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.Photo;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.PhotoRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.*;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.manager.RequestDetailBranchForceListDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.manager.RequestDetailBranchInspectListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailInspectDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailSearchDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailSearchDtoSub;
@@ -349,7 +351,7 @@ public class InspectService {
     }
 
     // 검품등록 API(가맹점, 지사)
-    public ResponseEntity<Map<String, Object>> franchiseInspectionSave(InspeotMapperDto inspeotMapperDto, MultipartHttpServletRequest multi, String AWSBUCKETURL) throws NoSuchElementException {
+    public ResponseEntity<Map<String, Object>> InspectionSave(InspeotMapperDto inspeotMapperDto, MultipartHttpServletRequest multi, String AWSBUCKETURL) throws NoSuchElementException {
         log.info("franchiseInspectionSave 호출");
 
         AjaxResponse res = new AjaxResponse();
@@ -473,7 +475,7 @@ public class InspectService {
         return ResponseEntity.ok(res.success());
     }
 
-    //  통합조회용 - 검품 리스트 요청
+    //  통합조회 - 검품 리스트 요청
     public ResponseEntity<Map<String, Object>> franchiseInspectionList(Long fdId, String type) {
         log.info("franchiseInspectionList 호출");
 
@@ -690,6 +692,39 @@ public class InspectService {
         return ResponseEntity.ok(res.success());
     }
 
+    // 지사전용 - 확인품 등록할 리스트 호출API
+    public ResponseEntity<Map<String, Object>> branchInspection(Long franchiseId, LocalDateTime fromDt, LocalDateTime toDt, String tagNo, HttpServletRequest request) {
+        log.info("branchInspection 호출");
 
+        log.info("franchiseId : "+franchiseId);
+        log.info("tagNo : "+tagNo);
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String brCode = (String) claims.get("brCode"); // 현재 지사의 코드(2자리) 가져오기
+        log.info("현재 접속한 지사 코드 : "+brCode);
+
+        // 확인품 등록 할 리스트 호출
+        List<RequestDetailBranchInspectListDto> requestDetailBranchForceListDtos = requestDetailRepositoryCustom.findByRequestDetailBranchInspectList(brCode, franchiseId, fromDt, toDt, tagNo);
+        data.put("gridListData",requestDetailBranchForceListDtos);
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
+    //  지사검품등록용 - 검품 리스트 요청
+    public ResponseEntity<Map<String, Object>> branchInspectionList(Long fdId, String type) {
+        log.info("franchiseInspectionList 호출");
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        List<InspeotListDto> inspeotList = inspeotRepositoryCustom.findByInspeotList(fdId, type);
+        data.put("gridListData",inspeotList);
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
 
 }

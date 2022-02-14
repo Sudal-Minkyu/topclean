@@ -5,13 +5,18 @@ import com.broadwave.toppos.Manager.ManagerService.CalendarService;
 import com.broadwave.toppos.Manager.ManagerService.ManagerService;
 import com.broadwave.toppos.Manager.ManagerService.ReceiptReleaseService;
 import com.broadwave.toppos.Manager.ManagerService.TagNoticeService;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotMapperDto;
+import com.broadwave.toppos.User.UserService.InspectService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -28,18 +33,23 @@ import java.util.Map;
 @RequestMapping("/api/manager") //  ( 권한 : 지사일반, 지사장 )
 public class ManagerRestController {
 
+    @Value("${toppos.aws.s3.bucket.url}")
+    private String AWSBUCKETURL;
+
     private final ManagerService managerService; // 지사전용 서비스
     private final CalendarService calendarService; // 휴무일지정 서비스
     private final TagNoticeService tagNoticeService; // 택분실게시판 서비스
+    private final InspectService inspectService; // 검품등록게시판 서비스
 
     private final ReceiptReleaseService receiptReleaseService; // 지사 출고 전용 서비스
 
     @Autowired
     public ManagerRestController(ManagerService managerService, CalendarService calendarService, TagNoticeService tagNoticeService,
-                                 ReceiptReleaseService receiptReleaseService) {
+                                 ReceiptReleaseService receiptReleaseService, InspectService inspectService) {
         this.managerService = managerService;
         this.calendarService = calendarService;
         this.tagNoticeService = tagNoticeService;
+        this.inspectService = inspectService;
         this.receiptReleaseService = receiptReleaseService;
     }
 
@@ -213,9 +223,41 @@ public class ManagerRestController {
         return receiptReleaseService.branchRelease(fdIdList, type, request);
     }
 
+//@@@@@@@@@@@@@@@@@@@@@ 확인품등록 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    //  확인품 등록할 리스트 호출API
+    @GetMapping("branchInspection")
+    public ResponseEntity<Map<String,Object>> branchInspection(@RequestParam("franchiseId")Long franchiseId, @RequestParam("filterFromDt")String filterFromDt,
+                                                                            @RequestParam("filterToDt")String filterToDt, @RequestParam("tagNo")String tagNo, HttpServletRequest request){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
+        LocalDateTime fromDt = null;
+        if(filterFromDt != null){
+            filterFromDt = filterFromDt+" 00:00:00.000";
+            fromDt = LocalDateTime.parse(filterFromDt, formatter);
+            //            log.info("fromDt :"+fromDt);
+        }
 
+        LocalDateTime toDt = null;
+        if(filterToDt != null){
+            filterToDt = filterToDt+" 23:59:59.999";
+            toDt = LocalDateTime.parse(filterToDt, formatter);
+            //            log.info("toDt :"+toDt);
+        }
 
+        return inspectService.branchInspection(franchiseId, fromDt, toDt, tagNo, request);
+    }
 
+    // 확인품 검품 리스트 요청
+    @GetMapping("branchInspectionList")
+    public ResponseEntity<Map<String,Object>> branchInspectionList(@RequestParam(value="fdId", defaultValue="") Long fdId,
+                                                                      @RequestParam(value="type", defaultValue="") String type){
+        return inspectService.branchInspectionList(fdId, type);
+    }
+
+    //  확인품 등록 API
+    @PostMapping("branchInspectionSave")
+    public ResponseEntity<Map<String,Object>> branchInspectionSave(@ModelAttribute InspeotMapperDto inspeotMapperDto, MultipartHttpServletRequest multi) throws IOException {
+        return inspectService.InspectionSave(inspeotMapperDto, multi, AWSBUCKETURL);
+    }
 
 
 }
