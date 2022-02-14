@@ -9,16 +9,16 @@ const dtos = {
             tagNo: "s",
             filterFromDt: "s",
             filterToDt: "s",
-            frId: "n",
+            frId: "n", // 가맹점 Id
         },
-        branchReleaseCancel: {
+        branchRelease: {
             type: "s",
             fdIdList: "a",
         },
     },
     receive: {
         managerBelongList: { // 가맹점 선택 셀렉트박스에 띄울 가맹점의 리스트
-            frId: "nr",
+            frId: "nr", // 가맹점 Id
             frName: "s",
             frTagNo: "s",
         },
@@ -60,7 +60,7 @@ const dtos = {
 const urls = {
     getFrList: "/api/manager/branchBelongList",
     getMainGridList: "/api/manager/branchReceiptBranchInCancelList",
-    executeReceipt: "/api/manager/branchReleaseCancel",
+    executeReceipt: "/api/manager/branchRelease",
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
@@ -89,7 +89,7 @@ const comms = {
     },
 
     executeReceipt(sendList) {
-        dv.chk(sendList, dtos.send.branchReleaseCancel, "체크된 품목에 대해 최종 처리하기");
+        dv.chk(sendList, dtos.send.branchRelease, "체크된 품목에 대해 최종 처리하기");
         CommonUI.ajax(urls.executeReceipt, "PARAM", sendList, function (res) {
             console.log(res);
             alertSuccess("출고취소처리가 완료 되었습니다.");
