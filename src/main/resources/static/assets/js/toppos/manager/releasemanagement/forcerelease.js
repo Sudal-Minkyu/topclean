@@ -76,7 +76,7 @@ const comms = {
     },
 
     getMainGridList(searchCondition) {
-        dv.chk(searchCondition, dtos.send.branchReceiptBranchInCancelList, "메인 그리드 검색 조건 보내기");
+        dv.chk(searchCondition, dtos.send.branchReceiptForceReleaseList, "메인 그리드 검색 조건 보내기");
         CommonUI.ajax(urls.getMainGridList, "GET", searchCondition, function (res) {
             const data = res.sendData.gridListData;
             console.log(res);
@@ -264,7 +264,7 @@ const trigs = {
             });
 
             $("#executeBtn").on("click", function () {
-                executeCheckedReceipts();
+                askExcute();
             });
         },
     },
@@ -275,7 +275,7 @@ const trigs = {
 
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
 const wares = {
-
+    checkedItems: [],
 }
 
 $(function() { // 페이지가 로드되고 나서 실행
@@ -321,37 +321,43 @@ function searchOrder() {
     }
 
     const searchCondition = {
-        tagNo: $("#foreTag").val() + $("#aftTag").val().numString(),
+        tagNo: $("#aftTag").val().numString(),
         filterFromDt: $("#filterFromDt").val(),
         filterToDt: $("#filterToDt").val(),
         frId: parseInt(frId),
     };
 
-    if(searchCondition.tagNo.length !== 3 && searchCondition.tagNo.length !==7) {
+    if(searchCondition.tagNo.length !== 0 && searchCondition.tagNo.length !==4) {
         alertCaution("택번호는 완전히 입력하거나,<br>입력하지 말아주세요.(전체검색)", 1);
+        return false;
     }
 
     comms.getMainGridList(searchCondition);
 }
 
-function executeCheckedReceipts() {
-    
-    const checkedItems = grids.f.getCheckedItems(0);
-
-    if(checkedItems.length) {
-        let fdIdList = [];
-
-        checkedItems.forEach(obj => {
-            fdIdList.push(obj.item.fdId);
+function askExcute() {
+    wares.checkedItems = grids.f.getCheckedItems(0);
+    if(wares.checkedItems.length) {
+        alertCheck("선택된 상품을 처리 하시겠습니까?");
+        $("#checkDelSuccessBtn").on("click", function () {
+            executeCheckedReceipts();
         });
-
-        const sendList = {
-            type: "3",
-            fdIdList: fdIdList
-        }
-
-        comms.executeReceipt(sendList);
     } else {
         alertCaution("강제출고처리할 품목을 선택해 주세요.", 1);
     }
+}
+
+function executeCheckedReceipts() {
+    let fdIdList = [];
+
+    wares.checkedItems.forEach(obj => {
+        fdIdList.push(obj.item.fdId);
+    });
+
+    const sendList = {
+        type: "3",
+        fdIdList: fdIdList
+    }
+
+    comms.executeReceipt(sendList);
 }

@@ -11,19 +11,22 @@ const dtos = {
             filterToDt: "s",
             frId: "n", // 가맹점 Id
         },
-        branchRelease: {
+
+        franchiseInspectionList: { // fdId가 일치하는 모든 검품 리스트 type 1: 검품등록시, 2: 검품확인시 
+            fdId: "nr",
             type: "s",
-            fdIdList: "a",
         },
     },
+
     receive: {
         managerBelongList: { // 가맹점 선택 셀렉트박스에 띄울 가맹점의 리스트
             frId: "nr", // 가맹점 Id
             frName: "s",
             frTagNo: "s",
         },
+
         branchReceiptReturnList: {
-            fdId: "n",
+            fdId: "n", // 출고 처리를 위함
             frName: "s",
 			frYyyymmdd: "s",
             fdS2Time: "s",
@@ -57,7 +60,6 @@ const dtos = {
 const urls = {
     getFrList: "/api/manager/branchBelongList",
     getMainGridList: "/api/manager/branchReceiptReturnList",
-    executeReceipt: "/api/manager/branchRelease",
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
@@ -85,12 +87,27 @@ const comms = {
         });
     },
 
-    executeReceipt(sendList) {
-        dv.chk(sendList, dtos.send.branchRelease, "체크된 품목에 대해 최종 처리하기");
-        CommonUI.ajax(urls.executeReceipt, "PARAM", sendList, function (res) {
-            console.log(res);
-            alertSuccess("반송처리가 완료 되었습니다.");
+    getInspectionList(condition) {
+        dv.chk(condition, dtos.send.franchiseInspectionList, "등록된 검품조회 조건");
+
+        CommonUI.ajax(urls, "GET", condition, function(res) {
+            const data = res.sendData.gridListData;
+            dv.chk(data, dtos.receive.franchiseInspectionList, "등록된 검품의 조회");
             grids.f.clearData(0);
+            grids.f.setData(0, data);
+        });
+    },
+
+    deleteInspection(targets, fdId) {
+        dv.chk(targets, dto.send.franchiseInspectionDelete, "검품 삭제 목록");
+        const data = {list: targets};
+        const url = "/api/user/franchiseInspectionDelete";
+        CommonUI.ajax(url, "MAPPER", data, function(res) {
+            const searchCondition = {
+                fdId: fdId,
+                type: "1"
+            };
+            ajax.getInspectionList(searchCondition);
         });
     },
 };
@@ -183,7 +200,20 @@ const grids = {
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
                         return CommonData.name.fdState[value];
                     },
-                },
+                }, {
+                    dataField: "checkPopBtn",
+                    headerText: "확인품",
+                    width: 70,
+                    renderer : {
+                        type: "TemplateRenderer",
+                    },
+                    labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
+                        let template = `
+                                <button type="button" class="c-button c-button--supersmall">등록</button>
+                            `;
+                        return template;
+                    },
+                }
             ];
 
             /* 0번 그리드의 프로퍼티(옵션) 아래의 링크를 참조
@@ -237,7 +267,10 @@ const grids = {
         basic() {
             /* 0번그리드 내의 셀 클릭시 이벤트 */
             AUIGrid.bind(grids.s.id[0], "cellClick", function (e) {
-                console.log(e.item); // 이밴트 콜백으로 불러와진 객체의, 클릭한 대상 row 키(파라메터)와 값들을 보여준다.
+                if(e.dataField === "checkPopBtn") {
+                    wares.currentRequest = e.item;
+                    openCheckPop(e);
+                }
             });
         }
     }
@@ -262,10 +295,6 @@ const trigs = {
                     searchOrder();
                 }
             });
-
-            $("#executeBtn").on("click", function () {
-                executeCheckedReceipts();
-            });
         },
     },
     r: { // 이벤트 해제
@@ -275,7 +304,7 @@ const trigs = {
 
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
 const wares = {
-    checkedItems: [],
+    currentRequest: {},
 }
 
 $(function() { // 페이지가 로드되고 나서 실행
@@ -327,7 +356,7 @@ function searchOrder() {
         frId: parseInt(frId),
     };
 
-    if(searchCondition.tagNo.length !== 0 && searchCondition.tagNo.length !==4) {
+    if(searchCondition.tagNo.length !== 0 && searchCondition.tagNo.length !== 4) {
         alertCaution("택번호는 완전히 입력하거나,<br>입력하지 말아주세요.(전체검색)", 1);
         return false;
     }
@@ -335,29 +364,47 @@ function searchOrder() {
     comms.getMainGridList(searchCondition);
 }
 
-function askExcute() {
-    wares.checkedItems = grids.f.getCheckedItems(0);
-    if(wares.checkedItems.length) {
-        alertCheck("선택된 상품을 처리 하시겠습니까?");
-        $("#checkDelSuccessBtn").on("click", function () {
-            executeCheckedReceipts();
+async function openCheckPop(e) {
+    resetCheckPop();
+
+    try {
+        comms.isCameraExist = true;
+        comms.cameraStream = await navigator.mediaDevices.getUserMedia({
+            audio: false,
+            video: {
+                width: {ideal: 4096},
+                height: {ideal: 2160}
+            },
         });
-    } else {
-        alertCaution("반송처리할 품목을 선택해 주세요.", 1);
+
+        const screen = document.getElementById("cameraScreen");
+        screen.srcObject = comms.cameraStream;
+    }catch (e) {
+        if(!(e instanceof DOMException)) {
+            console.log(e);
+        }
+        comms.isCameraExist = false;
     }
+
+    
+    $("#fdRequestAmtInPut").val(comms.currentRequest.fdRequestAmt.toLocaleString());
+    if(comms.isCameraExist) {
+        $("#isIncludeImg").prop("checked", true);
+        $("#isIncludeImg").prop("disabled", false);
+    }else{
+        $("#isIncludeImg").prop("checked", false);
+        $("#isIncludeImg").prop("disabled", true);
+    }
+    grids.f.resize(1);
+    const searchCondition = {
+        fdId: e.item.fdId,
+        type: "3"
+    }
+    comms.getInspectionList(searchCondition);
+    $("#checkPop").addClass("active");
 }
 
-function executeCheckedReceipts() {
-    let fdIdList = [];
-
-    wares.checkedItems.forEach(obj => {
-        fdIdList.push(obj.item.fdId);
-    });
-
-    const sendList = {
-        type: "2",
-        fdIdList: fdIdList
-    }
-
-    comms.executeReceipt(sendList);
+function resetCheckPop() {
+    $("#fiComment").val("");
+    $("#fiAddAmt").val("0");
 }
