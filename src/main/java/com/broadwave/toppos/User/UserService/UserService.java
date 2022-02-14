@@ -9,7 +9,7 @@ import com.broadwave.toppos.User.Customer.*;
 import com.broadwave.toppos.User.Customer.CustomerDtos.CustomerInfoDto;
 import com.broadwave.toppos.User.Customer.CustomerDtos.CustomerListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Request;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.RequestDetailAmtDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailAmtDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepositoryCustom;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestRepository;
 import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoney;

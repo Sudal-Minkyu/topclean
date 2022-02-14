@@ -162,18 +162,56 @@ public class ManagerRestController {
         return receiptReleaseService.branchReceiptBranchInCancelList(frId, fromDt, toDt, tagNo, request);
     }
 
+    //  지사반송 - 세부테이블 반송 처리 할 리스트
+    @GetMapping("branchReceiptReturnList")
+    public ResponseEntity<Map<String,Object>> branchReceiptReturnList(@RequestParam("frId")Long frId, @RequestParam("filterFromDt")String filterFromDt,
+                                                                              @RequestParam("filterToDt")String filterToDt, @RequestParam("tagNo")String tagNo, HttpServletRequest request){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
+        LocalDateTime fromDt = null;
+        if(filterFromDt != null){
+            filterFromDt = filterFromDt+" 00:00:00.000";
+            fromDt = LocalDateTime.parse(filterFromDt, formatter);
+            //            log.info("fromDt :"+fromDt);
+        }
+
+        LocalDateTime toDt = null;
+        if(filterToDt != null){
+            filterToDt = filterToDt+" 23:59:59.999";
+            toDt = LocalDateTime.parse(filterToDt, formatter);
+            //            log.info("toDt :"+toDt);
+        }
+
+        return receiptReleaseService.branchReceiptReturnList(frId, fromDt, toDt, tagNo, request);
+    }
+
+    //  가맹점 강제츨고 - 세부테이블 강제출고 처리 할 리스트
+    @GetMapping("branchReceiptForceReleaseList")
+    public ResponseEntity<Map<String,Object>> branchReceiptForceReleaseList(@RequestParam("frId")Long frId, @RequestParam("filterFromDt")String filterFromDt,
+                                                                              @RequestParam("filterToDt")String filterToDt, @RequestParam("tagNo")String tagNo, HttpServletRequest request){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
+        LocalDateTime fromDt = null;
+        if(filterFromDt != null){
+            filterFromDt = filterFromDt+" 00:00:00.000";
+            fromDt = LocalDateTime.parse(filterFromDt, formatter);
+            //            log.info("fromDt :"+fromDt);
+        }
+
+        LocalDateTime toDt = null;
+        if(filterToDt != null){
+            filterToDt = filterToDt+" 23:59:59.999";
+            toDt = LocalDateTime.parse(filterToDt, formatter);
+            //            log.info("toDt :"+toDt);
+        }
+
+        return receiptReleaseService.branchReceiptForceReleaseList(frId, fromDt, toDt, tagNo, request);
+    }
+
     //  접수테이블의 상태 변화 API - 지사출고취소, 지사반송, 가맹점입고 실행 함수
     @PostMapping("branchReleaseCancel")
     public ResponseEntity<Map<String,Object>> branchReleaseCancel(@RequestParam(value="fdIdList", defaultValue="") List<Long> fdIdList,
                                                                   @RequestParam("type")String type, HttpServletRequest request){
         return receiptReleaseService.branchReleaseCancel(fdIdList, type, request);
     }
-
-//    //  접수테이블의 상태 변화 API - 가맹점반송, 가맹점강제출고 실행 함수
-//    @PostMapping("branchProcess")
-//    public ResponseEntity<Map<String,Object>> branchProcess(@RequestParam(value="fdIdList", defaultValue="") Long fdId, HttpServletRequest request){
-//        return receiptReleaseService.branchProcess(fdId, request);
-//    }
 
 
 

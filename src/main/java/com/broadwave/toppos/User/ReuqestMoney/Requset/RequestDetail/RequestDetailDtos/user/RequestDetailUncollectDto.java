@@ -1,4 +1,4 @@
-package com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos;
+package com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -6,27 +6,23 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 /**
  * @author Minkyu
- * Date : 2022-02-11
+ * Date : 2021-01-20
  * Time :
- * Remark : Toppos 지사출고취소 ListDto
+ * Remark : Toppos 가맹점 접수세부 미수관리 Dto
  */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RequestDetailReleaseCancelListDto {
+public class RequestDetailUncollectDto {
 
-    private Long fdId; // 고유ID값
-    private String frName; // 가맹점명
-    private LocalDateTime fdS2Time; // 지사입고일시
-    private LocalDateTime fdS4Time; // 지사출고일시
+    private String frYyyymmdd; // 접수일자
     private String fdTag; // 택번호
-    private String fdColor; // 색상코드 (00:미선택 01 흰색 02:검정 03: 회색, 04 빨강 05:주황, 06: 노랑, 07 초록 08 파랑 09:남색 10 보라 11 핑크)
 
+    private String fdColor; // 색상코드 (00:미선택 01 흰색 02:검정 03: 회색, 04 빨강 05:주황, 06: 노랑, 07 초록 08 파랑 09:남색 10 보라 11 핑크)
     private String bgName; // 대분류명
     private String bsName; // 중분류명
     private String biName; // 상품명
@@ -43,19 +39,31 @@ public class RequestDetailReleaseCancelListDto {
     private Integer fdWaterRepellent; // 발수가공요금
     private Integer fdStarch; // 풀먹임 요금
     private String fdUrgentYn; // 급세탁 여부 (Y  / N) 기본값 : N
-    private String fdRemark; // 특이사항
 
-    private String bcName; // 고객명
     private Integer fdTotAmt; // 합계금액( (정상 + 수선 + 추가1 + 추가2 -할인) * 수량 )
-    private String fdState; // 현재상태 ( S1 : 접수, S2: 지사입고,S3 지사출고, S4:가맹점입고, S5: 고객인도)
-    private String fdPreState; // 이전상태  ( S1 : 접수, S2: 지사입고,S3 지사출고, S4:가맹점입고, S5: 고객인도)
+    private String fdState; // 현재상태 ( S1 : 접수, S2: 지사입고, S3 지사반송, S4 지사출고 ,S5:가맹점입고, S6: 고객인도, S7 강제출고,S8 강제입고)
+    private String fdS6Dt; // 고객인도일
 
-    public String getFdS2Time() {
-        return fdS2Time.format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm"));
+    public StringBuffer getFrYyyymmdd() {
+        if(!frYyyymmdd.equals("")){
+            StringBuffer getFrYyyymmdd = new StringBuffer(frYyyymmdd);
+            getFrYyyymmdd.insert(4,'-');
+            getFrYyyymmdd.insert(7,'-');
+            return getFrYyyymmdd;
+        }else{
+            return null;
+        }
     }
 
-    public String getFdS4Time() {
-        return fdS4Time.format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm"));
+    public StringBuffer getFdS6Dt() {
+        if(fdS6Dt != null){
+            StringBuffer getFdS6Dt = new StringBuffer(fdS6Dt);
+            getFdS6Dt.insert(4,'-');
+            getFdS6Dt.insert(7,'-');
+            return getFdS6Dt;
+        }else{
+            return null;
+        }
     }
 
 }

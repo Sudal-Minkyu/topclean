@@ -99,7 +99,7 @@ public class InspeotRepositoryCustomImpl extends QuerydslRepositorySupport imple
 
     // 검품 타입이 F(가맹검품)이고 미확인인 상태의 리스트 호출
     @Override
-    public List<InspeotYnDto> findByInspeotYnF(List<Long> fdIdList){
+    public List<InspeotYnDto> findByInspeotYnFAndType1(List<Long> fdIdList){
         QInspeot inspeot = QInspeot.inspeot;
 
         JPQLQuery<InspeotYnDto> query = from(inspeot)
@@ -119,12 +119,32 @@ public class InspeotRepositoryCustomImpl extends QuerydslRepositorySupport imple
 
     // 검품 타입이 B(지사검품)이고 미확인인 상태의 리스트 호출
     @Override
-    public List<InspeotYnDto> findByInspeotYnB(List<Long> fdIdList){
+    public List<InspeotYnDto> findByInspeotYnBAndType1(List<Long> fdIdList){
         QInspeot inspeot = QInspeot.inspeot;
 
         JPQLQuery<InspeotYnDto> query = from(inspeot)
                 .where(inspeot.fdId.id.in(fdIdList)
                         .and(inspeot.fiCustomerConfirm.eq("1")
+                                .and(inspeot.fiType.eq("B"))))
+                .groupBy(inspeot.fdId.id)
+
+                .select(Projections.constructor(InspeotYnDto.class,
+                        inspeot.fdId.id
+                ));
+
+        query.orderBy(inspeot.id.desc());
+
+        return query.fetch();
+    }
+
+    // 검품 타입이 B(지사검품)이고 거부상태 인 상태의 리스트 호출
+    @Override
+    public List<InspeotYnDto> findByInspeotYnBAndType3(List<Long> fdIdList){
+        QInspeot inspeot = QInspeot.inspeot;
+
+        JPQLQuery<InspeotYnDto> query = from(inspeot)
+                .where(inspeot.fdId.id.in(fdIdList)
+                        .and(inspeot.fiCustomerConfirm.eq("3")
                                 .and(inspeot.fiType.eq("B"))))
                 .groupBy(inspeot.fdId.id)
 

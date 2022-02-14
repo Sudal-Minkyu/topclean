@@ -4,7 +4,7 @@ import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotYnDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotRepositoryCustom;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetail;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.*;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.*;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepositoryCustom;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.force.InhouceForce;
@@ -175,11 +175,14 @@ public class ReceiptStateService {
                     requestDetail.setModify_id(login_id);
                     requestDetail.setModify_date(LocalDateTime.now());
 
+                    inhouceForce = inhouseRepository.findByFdId(requestDetail.getId());
                     // 가맹 입고처리 insert
-                    inhouceForce = new InhouceForce();
-                    inhouceForce.setFdId(requestDetail.getId());
-                    inhouceForce.setFrCode(frCode);
-                    inhouceForce.setBrCode(frbrCode);
+                    if (inhouceForce == null) {
+                        inhouceForce = new InhouceForce();
+                        inhouceForce.setFdId(requestDetail.getId());
+                        inhouceForce.setFrCode(frCode);
+                        inhouceForce.setBrCode(frbrCode);
+                    }
                     inhouceForce.setFiDt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
                     inhouceForce.setFiTime(LocalDateTime.now());
                     inhouceForce.setInsert_id(login_id);

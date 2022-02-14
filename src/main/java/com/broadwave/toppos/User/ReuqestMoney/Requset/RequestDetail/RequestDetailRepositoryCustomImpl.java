@@ -6,7 +6,11 @@ import com.broadwave.toppos.Head.Item.Group.B.QItemGroupS;
 import com.broadwave.toppos.Head.Item.Group.C.QItem;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.QRequest;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.QInspeot;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.*;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.manager.RequestDetailBranchForceListDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.manager.RequestDetailBranchReturnListDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.manager.RequestDetailReleaseCancelListDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.manager.RequestDetailReleaseListDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.*;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.JPQLQuery;
@@ -837,7 +841,157 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
 
         query.where(requestDetail.fdState.eq("S4"));
 
-        query.where(request.id.eq(frId));
+        query.where(franchise.id.eq(frId));
+
+        if(!tagNo.equals("")){
+            query.where(requestDetail.fdTag.substring(3,7).likeIgnoreCase(tagNo));
+        }
+
+        if(fromDt != null){
+            query.where(requestDetail.insert_date.goe(fromDt));
+        }
+
+        if(toDt != null){
+            query.where(requestDetail.insert_date.loe(toDt));
+        }
+
+        return query.fetch();
+    }
+
+    // 지사반송 querydsl
+    public  List<RequestDetailBranchReturnListDto> findByRequestDetailBranchReturnList(String brCode, Long frId, LocalDateTime fromDt, LocalDateTime toDt, String tagNo){
+
+        QRequestDetail requestDetail = QRequestDetail.requestDetail;
+        QRequest request = QRequest.request;
+
+        QFranchise franchise = QFranchise.franchise;
+
+        QItemGroup itemGroup = QItemGroup.itemGroup;
+        QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
+        QItem item = QItem.item;
+
+        JPQLQuery<RequestDetailBranchReturnListDto> query = from(requestDetail)
+                .innerJoin(request).on(requestDetail.frId.eq(request))
+                .innerJoin(franchise).on(request.frCode.eq(franchise.frCode))
+                .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
+                .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
+                .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
+                .where(request.frConfirmYn.eq("Y"))
+                .where(requestDetail.frId.brCode.eq(brCode).and(requestDetail.fdCancel.eq("N")))
+                .select(Projections.constructor(RequestDetailBranchReturnListDto.class,
+
+                        requestDetail.id,
+
+                        franchise.frName,
+                        request.frYyyymmdd,
+                        requestDetail.fdS2Time,
+
+                        requestDetail.fdTag,
+                        requestDetail.fdColor,
+
+                        itemGroup.bgName,
+                        itemGroupS.bsName,
+                        item.biName,
+
+                        requestDetail.fdPriceGrade,
+                        requestDetail.fdRetryYn,
+                        requestDetail.fdPressed,
+                        requestDetail.fdAdd1Amt,
+                        requestDetail.fdAdd1Remark,
+                        requestDetail.fdRepairAmt,
+                        requestDetail.fdRepairRemark,
+                        requestDetail.fdWhitening,
+                        requestDetail.fdPollution,
+                        requestDetail.fdWaterRepellent,
+                        requestDetail.fdStarch,
+                        requestDetail.fdUrgentYn,
+
+                        request.bcId.bcName,
+                        requestDetail.fdTotAmt,
+                        requestDetail.fdState,
+                        requestDetail.fdPreState
+                ));
+
+        query.orderBy(requestDetail.id.asc()).groupBy(requestDetail);
+
+        query.where(requestDetail.fdState.eq("S2"));
+
+        query.where(franchise.id.eq(frId));
+
+        if(!tagNo.equals("")){
+            query.where(requestDetail.fdTag.substring(3,7).likeIgnoreCase(tagNo));
+        }
+
+        if(fromDt != null){
+            query.where(requestDetail.insert_date.goe(fromDt));
+        }
+
+        if(toDt != null){
+            query.where(requestDetail.insert_date.loe(toDt));
+        }
+
+        return query.fetch();
+    }
+
+    // 가맹점강제출고 querydsl
+    public  List<RequestDetailBranchForceListDto> findByRequestDetailBranchForceList(String brCode, Long frId, LocalDateTime fromDt, LocalDateTime toDt, String tagNo){
+
+        QRequestDetail requestDetail = QRequestDetail.requestDetail;
+        QRequest request = QRequest.request;
+
+        QFranchise franchise = QFranchise.franchise;
+
+        QItemGroup itemGroup = QItemGroup.itemGroup;
+        QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
+        QItem item = QItem.item;
+
+        JPQLQuery<RequestDetailBranchForceListDto> query = from(requestDetail)
+                .innerJoin(request).on(requestDetail.frId.eq(request))
+                .innerJoin(franchise).on(request.frCode.eq(franchise.frCode))
+                .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
+                .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
+                .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
+                .where(request.frConfirmYn.eq("Y"))
+                .where(requestDetail.frId.brCode.eq(brCode).and(requestDetail.fdCancel.eq("N")))
+                .select(Projections.constructor(RequestDetailBranchForceListDto.class,
+
+                        requestDetail.id,
+
+                        franchise.frName,
+                        request.frYyyymmdd,
+                        requestDetail.fdS2Time,
+
+                        requestDetail.fdTag,
+                        requestDetail.fdColor,
+
+                        itemGroup.bgName,
+                        itemGroupS.bsName,
+                        item.biName,
+
+                        requestDetail.fdPriceGrade,
+                        requestDetail.fdRetryYn,
+                        requestDetail.fdPressed,
+                        requestDetail.fdAdd1Amt,
+                        requestDetail.fdAdd1Remark,
+                        requestDetail.fdRepairAmt,
+                        requestDetail.fdRepairRemark,
+                        requestDetail.fdWhitening,
+                        requestDetail.fdPollution,
+                        requestDetail.fdWaterRepellent,
+                        requestDetail.fdStarch,
+                        requestDetail.fdUrgentYn,
+
+                        request.bcId.bcName,
+                        requestDetail.fdTotAmt,
+                        requestDetail.fdState,
+                        requestDetail.fdPreState
+                ));
+
+        query.orderBy(requestDetail.id.asc()).groupBy(requestDetail);
+
+        query.where(requestDetail.fdState.eq("S2"));
+
+        query.where(franchise.id.eq(frId));
 
         if(!tagNo.equals("")){
             query.where(requestDetail.fdTag.substring(3,7).likeIgnoreCase(tagNo));

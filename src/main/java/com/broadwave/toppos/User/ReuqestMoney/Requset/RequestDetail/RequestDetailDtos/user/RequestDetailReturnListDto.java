@@ -1,4 +1,4 @@
-package com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos;
+package com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,17 +7,16 @@ import lombok.NoArgsConstructor;
 
 /**
  * @author Minkyu
- * Date : 2022-01-18
+ * Date : 2022-01-20
  * Time :
- * Remark : Toppos 가맹점 수기마감 ListDto
+ * Remark : Toppos 가맹점 지사반송 ListDto
  */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RequestDetailCloseListDto {
+public class RequestDetailReturnListDto {
     private Long fdId; // 고유ID값
-
     private String frYyyymmdd; // 접수일자
     private String bcName; // 고객명
     private String fdTag; // 택번호
@@ -40,6 +39,7 @@ public class RequestDetailCloseListDto {
     private String fdUrgentYn; // 급세탁 여부 (Y  / N) 기본값 : N
     private Integer fdTotAmt; // 합계금액( (정상 + 수선 + 추가1 + 추가2 -할인) * 수량 )
     private String fdRemark; // 특이사항
+
     private String fdColor; // 색상코드 (00:미선택 01 흰색 02:검정 03: 회색, 04 빨강 05:주황, 06: 노랑, 07 초록 08 파랑 09:남색 10 보라 11 핑크)
 
     public StringBuffer getFrYyyymmdd() {

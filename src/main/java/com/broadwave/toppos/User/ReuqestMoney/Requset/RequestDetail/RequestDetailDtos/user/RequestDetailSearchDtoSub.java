@@ -1,4 +1,4 @@
-package com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos;
+package com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  * @author Minkyu
@@ -17,7 +18,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RequestDetailSearchDto {
+public class RequestDetailSearchDtoSub {
     // 마스터 테이블에서 가져 올 데이터
     private String bcName; // 고객이름
     private String frYyyymmdd; // 접수일자
@@ -77,7 +78,6 @@ public class RequestDetailSearchDto {
     private Integer fdWhitening; // 표백 요금
     private Integer fdPollutionLevel; // 오염 선택레벨(0~5)
     private Integer fdWaterRepellent; // 발수가공요금
-    private Integer fdStarch; // 풀먹임 요금
 
     private String fdPollutionLocFcn; // 오염위치 앞 - 목  체크면 Y 아니면 N
     private String fdPollutionLocFcs; // 오염위치 앞 - 배  체크면 Y 아니면 N
@@ -93,6 +93,10 @@ public class RequestDetailSearchDto {
     private String fdPollutionLocBlh; // 오염위치 뒤 - 왼손  체크면 Y 아니면 N
     private String fdPollutionLocBrf; // 오염위치 뒤 - 오른발  체크면 Y 아니면 N
     private String fdPollutionLocBlf; // 오염위치 뒤 - 왼발  체크면 Y 아니면 N
+
+    private Integer fdStarch; // 풀먹임 요금
+
+    private String fpCancelYn; // 결제취소 여부
 
     private String frRefType; // 접수타입(01:일반, 02:무인보관함, 03:배송APP)
 

@@ -1,4 +1,4 @@
-package com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos;
+package com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
