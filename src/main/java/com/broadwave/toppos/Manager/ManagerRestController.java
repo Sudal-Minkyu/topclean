@@ -207,10 +207,10 @@ public class ManagerRestController {
     }
 
     //  접수테이블의 상태 변화 API - 지사출고취소, 지사반송, 가맹점입고 실행 함수
-    @PostMapping("branchReleaseCancel")
+    @PostMapping("branchRelease")
     public ResponseEntity<Map<String,Object>> branchReleaseCancel(@RequestParam(value="fdIdList", defaultValue="") List<Long> fdIdList,
                                                                   @RequestParam("type")String type, HttpServletRequest request){
-        return receiptReleaseService.branchReleaseCancel(fdIdList, type, request);
+        return receiptReleaseService.branchRelease(fdIdList, type, request);
     }
 
 
