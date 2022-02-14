@@ -69,7 +69,7 @@ const comms = {
         CommonUI.ajax(urls.getFrList, "GET", false, function (res) {
             const data = res.sendData.franchiseList;
             console.log(res);
-            dv.chk(data, dtos.receive.managerBelongList, "가맹점 선택출고에 필요한 지점에 속한 가맹점 받아오기");
+            dv.chk(data, dtos.receive.managerBelongList, "지점에 속한 가맹점 받아오기");
             const $frList = $("#frList");
             data.forEach(obj => {
                 const htmlText = `<option value="${obj.frId}" data-tagno="${obj.frTagNo}">${obj.frName}</option>`
@@ -82,7 +82,7 @@ const comms = {
         dv.chk(searchCondition, dtos.send.branchReceiptBranchInCancelList, "메인 그리드 검색 조건 보내기");
         CommonUI.ajax(urls.getMainGridList, "GET", searchCondition, function (res) {
             const data = res.sendData.gridListData;
-            console.log(data);
+            console.log(res);
             grids.f.setData(0, data);
             $("#aftTag").val("");
         });

@@ -23,7 +23,7 @@ const dtos = {
             frTagNo: "s",
         },
         branchReceiptForceReleaseList: {
-            fdId: "n", // 출고 처리를 위함
+            fdId: "n",
             frName: "s",
 			frYyyymmdd: "s",
             fdS2Time: "s",
@@ -66,7 +66,7 @@ const comms = {
         CommonUI.ajax(urls.getFrList, "GET", false, function (res) {
             const data = res.sendData.franchiseList;
             console.log(res);
-            dv.chk(data, dtos.receive.managerBelongList, "가맹점 선택출고에 필요한 지점에 속한 가맹점 받아오기");
+            dv.chk(data, dtos.receive.managerBelongList, "지점에 속한 가맹점 받아오기");
             const $frList = $("#frList");
             data.forEach(obj => {
                 const htmlText = `<option value="${obj.frId}" data-tagno="${obj.frTagNo}">${obj.frName}</option>`
@@ -79,7 +79,7 @@ const comms = {
         dv.chk(searchCondition, dtos.send.branchReceiptBranchInCancelList, "메인 그리드 검색 조건 보내기");
         CommonUI.ajax(urls.getMainGridList, "GET", searchCondition, function (res) {
             const data = res.sendData.gridListData;
-            console.log(data);
+            console.log(res);
             grids.f.setData(0, data);
             $("#aftTag").val("");
         });
@@ -89,7 +89,7 @@ const comms = {
         dv.chk(sendList, dtos.send.branchRelease, "체크된 품목에 대해 최종 처리하기");
         CommonUI.ajax(urls.executeReceipt, "PARAM", sendList, function (res) {
             console.log(res);
-            alertSuccess("출고취소처리가 완료 되었습니다.");
+            alertSuccess("강제출고처리가 완료 되었습니다.");
             grids.f.clearData(0);
         });
     },
@@ -121,14 +121,18 @@ const grids = {
                     dataField: "frName",
                     headerText: "가맹점명",
                 }, {
-                    dataField: "fdS2Time",
-                    headerText: "지점입고",
+                    dataField: "bcName",
+                    headerText: "고객",
+                    width: 70,
+                }, {
+                    dataField: "frYyyymmdd",
+                    headerText: "상품접수",
                     width: 70,
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
                 }, {
-                    dataField: "fdS4Time",
-                    headerText: "지점출고",
+                    dataField: "fdS2Time",
+                    headerText: "지점입고",
                     width: 70,
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
@@ -160,18 +164,11 @@ const grids = {
                         return CommonUI.toppos.processName(item);
                     }
                 }, {
-                    dataField: "bcName",
-                    headerText: "고객",
-                    width: 70,
-                }, {
                     dataField: "fdTotAmt",
                     headerText: "접수금액",
                     width: 70,
                     dataType: "numeric",
                     autoThousandSeparator: "true",
-                }, {
-                    dataField: "fdRemark",
-                    headerText: "특이사항",
                 }, {
                     dataField: "fdState",
                     headerText: "현재상태",
@@ -349,12 +346,12 @@ function executeCheckedReceipts() {
         });
 
         const sendList = {
-            type: "1",
+            type: "3",
             fdIdList: fdIdList
         }
 
         comms.executeReceipt(sendList);
     } else {
-        alertCaution("출고취소처리할 품목을 선택해 주세요.", 1);
+        alertCaution("강제출고처리할 품목을 선택해 주세요.", 1);
     }
 }
