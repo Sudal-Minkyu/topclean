@@ -880,7 +880,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.id,
 
                         franchise.frName,
-                        request.frYyyymmdd,
+                        requestDetail.insert_date,
                         requestDetail.fdS2Time,
 
                         requestDetail.fdTag,
@@ -955,7 +955,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.id,
 
                         franchise.frName,
-                        request.frYyyymmdd,
+                        requestDetail.insert_date,
                         requestDetail.fdS2Time,
 
                         requestDetail.fdTag,
@@ -1030,7 +1030,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.id,
 
                         franchise.frName,
-                        request.frYyyymmdd,
+                        requestDetail.insert_date,
                         requestDetail.fdS2Time,
 
                         requestDetail.fdTag,
@@ -1079,6 +1079,85 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
 
         return query.fetch();
     }
+
+    // 확인품등록 querydsl
+    public  List<RequestDetailBranchInspectionCurrentListDto> findByRequestDetailBranchInspectionCurrentList(String brCode, Long frId, LocalDateTime fromDt, LocalDateTime toDt, String tagNo){
+
+        QRequestDetail requestDetail = QRequestDetail.requestDetail;
+        QRequest request = QRequest.request;
+
+        QFranchise franchise = QFranchise.franchise;
+
+        QItemGroup itemGroup = QItemGroup.itemGroup;
+        QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
+        QItem item = QItem.item;
+
+        QInspeot inspeot = QInspeot.inspeot;
+
+        JPQLQuery<RequestDetailBranchInspectionCurrentListDto> query = from(requestDetail)
+                .leftJoin(request).on(requestDetail.frId.eq(request))
+                .innerJoin(inspeot).on(inspeot.fdId.eq(requestDetail))
+                .innerJoin(franchise).on(request.frCode.eq(franchise.frCode))
+                .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
+                .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
+                .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
+                .where(request.frConfirmYn.eq("Y"))
+                .where(requestDetail.frId.brCode.eq(brCode).and(requestDetail.fdCancel.eq("N")))
+                .select(Projections.constructor(RequestDetailBranchInspectionCurrentListDto.class,
+
+                        requestDetail.id,
+                        franchise.frName,
+                        requestDetail.insert_date,
+                        requestDetail.fdS2Time,
+
+                        requestDetail.fdTag,
+                        requestDetail.fdColor,
+
+                        itemGroup.bgName,
+                        itemGroupS.bsName,
+                        item.biName,
+
+                        requestDetail.fdPriceGrade,
+                        requestDetail.fdRetryYn,
+                        requestDetail.fdPressed,
+                        requestDetail.fdAdd1Amt,
+                        requestDetail.fdAdd1Remark,
+                        requestDetail.fdRepairAmt,
+                        requestDetail.fdRepairRemark,
+                        requestDetail.fdWhitening,
+                        requestDetail.fdPollution,
+                        requestDetail.fdWaterRepellent,
+                        requestDetail.fdStarch,
+                        requestDetail.fdUrgentYn,
+
+                        request.bcId.bcName,
+                        requestDetail.fdTotAmt,
+                        requestDetail.fdState,
+                        inspeot.fiAddAmt.sum()
+                ));
+
+        query.orderBy(requestDetail.id.asc()).groupBy(requestDetail);
+
+        query.where(requestDetail.fdState.eq("S2"));
+
+        query.where(franchise.id.eq(frId));
+
+        if(!tagNo.equals("")){
+            query.where(requestDetail.fdTag.substring(3,7).likeIgnoreCase(tagNo));
+        }
+
+        if(fromDt != null){
+            query.where(requestDetail.insert_date.goe(fromDt));
+        }
+
+        if(toDt != null){
+            query.where(requestDetail.insert_date.loe(toDt));
+        }
+
+        return query.fetch();
+    }
+
+
 
 }
 

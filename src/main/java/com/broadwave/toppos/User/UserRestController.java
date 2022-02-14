@@ -798,10 +798,10 @@ public class UserRestController {
     //  통합조회용 - 등록 검품 삭제
     @PostMapping("franchiseInspectionDelete")
     public ResponseEntity<Map<String,Object>> franchiseInspectionDelete(@RequestBody InspeotSet inspeotSet){
-        return inspectService.franchiseInspectionDelete(inspeotSet);
+        return inspectService.InspectionDelete(inspeotSet);
     }
 
-    //  통합조회용 - 검품 리스트 요청 -> 지사도 사용
+    //  통합조회용 - 검품 리스트 요청
     @GetMapping("franchiseInspectionList")
     public ResponseEntity<Map<String,Object>> franchiseInspectionList(@RequestParam(value="fdId", defaultValue="") Long fdId,
                                                                            @RequestParam(value="type", defaultValue="") String type){
@@ -840,7 +840,7 @@ public class UserRestController {
 
 
 
-//@@@@@@@@@@@@@@@@@@@@@ 일일 영업일보 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+//@@@@@@@@@@@@@@@@@@@@@ 검품이력 조회 및 메세지 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     //  검품이력 조회 및 메세지 - 리스트호출 테이블
     @GetMapping("inspectList")
     public ResponseEntity<Map<String,Object>> inspectList(

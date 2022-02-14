@@ -2,26 +2,34 @@ package com.broadwave.toppos.User.UserService;
 
 import com.broadwave.toppos.Aws.AWSS3Service;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.*;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.Payment;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentDtos.PaymentCencelDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentDtos.PaymentCencelYnDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentRepository;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentRepositoryCustom;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Request;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.*;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.Inspeot;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotMapperDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotYnDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotRepository;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotRepositoryCustom;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotSet;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.MessageHistory.MessageHistory;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.MessageHistory.MessageHistoryRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.Photo;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.PhotoRepository;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.*;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.manager.RequestDetailBranchForceListDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetail;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.manager.RequestDetailBranchInspectListDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.manager.RequestDetailBranchInspectionCurrentListDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.manager.RequestDetailBranchReturnListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailInspectDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailSearchDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailSearchDtoSub;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailUpdateDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepository;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepositoryCustom;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestRepository;
 import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoney;
 import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoneyRepository;
@@ -439,7 +447,7 @@ public class InspectService {
 
     //  통합조회용 - 등록 검품 삭제
     @Transactional
-    public ResponseEntity<Map<String, Object>> franchiseInspectionDelete(InspeotSet inspeotSet) {
+    public ResponseEntity<Map<String, Object>> InspectionDelete(InspeotSet inspeotSet) {
         log.info("franchiseInspectionDelete 호출");
 
         AjaxResponse res = new AjaxResponse();
@@ -692,7 +700,9 @@ public class InspectService {
         return ResponseEntity.ok(res.success());
     }
 
-    // 지사전용 - 확인품 등록할 리스트 호출API
+
+
+    // 지사검품등록용 - 확인품 등록할 리스트 호출API
     public ResponseEntity<Map<String, Object>> branchInspection(Long franchiseId, LocalDateTime fromDt, LocalDateTime toDt, String tagNo, HttpServletRequest request) {
         log.info("branchInspection 호출");
 
@@ -726,5 +736,32 @@ public class InspectService {
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
+
+    //  확인품현황 리스트 호출 API
+    public ResponseEntity<Map<String, Object>> branchInspectionCurrentList(Long franchiseId, LocalDateTime fromDt, LocalDateTime toDt, String tagNo, HttpServletRequest request) {
+        log.info("branchInspectionCurrentList 호출");
+
+        log.info("franchiseId : "+franchiseId);
+        log.info("tagNo : "+tagNo);
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String brCode = (String) claims.get("brCode"); // 현재 지사의 코드(2자리) 가져오기
+        log.info("현재 접속한 지사 코드 : "+brCode);
+
+        // 반송 처리 할 리스트 호출
+        List<RequestDetailBranchInspectionCurrentListDto> requestDetailBranchInspectionCurrentListDtos = requestDetailRepositoryCustom.findByRequestDetailBranchInspectionCurrentList
+                (brCode, franchiseId, fromDt, toDt, tagNo);
+
+        data.put("gridListData",requestDetailBranchInspectionCurrentListDtos);
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
+
+
 
 }

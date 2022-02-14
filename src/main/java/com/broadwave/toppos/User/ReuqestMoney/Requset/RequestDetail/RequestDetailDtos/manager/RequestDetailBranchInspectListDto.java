@@ -22,7 +22,7 @@ public class RequestDetailBranchInspectListDto {
 
     private Long fdId; // 고유ID값
     private String frName; // 가맹점명
-    private String frYyyymmdd; // 접수일자
+    private LocalDateTime insertDt; // 접수일시
     private LocalDateTime fdS2Time; // 지사입고일시
 
     private String fdTag; // 택번호
@@ -49,6 +49,10 @@ public class RequestDetailBranchInspectListDto {
     private Integer fdTotAmt; // 합계금액( (정상 + 수선 + 추가1 + 추가2 -할인) * 수량 )
     private String fdState; // 현재상태 ( S1 : 접수, S2: 지사입고,S3 지사출고, S4:가맹점입고, S5: 고객인도)
     private String fdPreState; // 이전상태  ( S1 : 접수, S2: 지사입고,S3 지사출고, S4:가맹점입고, S5: 고객인도)
+
+    public String getInsertDt() {
+        return insertDt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm"));
+    }
 
     public String getFdS2Time() {
         return fdS2Time.format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm"));

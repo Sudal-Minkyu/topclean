@@ -5,22 +5,26 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 /**
  * @author Minkyu
- * Date : 2022-02-10
+ * Date : 2022-02-14
  * Time :
- * Remark : Toppos 지사출고 ListDto
+ * Remark : Toppos 지사 확인품현황 ListDto
  */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RequestDetailReleaseListDto {
+public class RequestDetailBranchInspectionCurrentListDto {
 
     private Long fdId; // 고유ID값
     private String frName; // 가맹점명
-    private String frCode; // 가맹점코드
-    private String fdS2Dt; // 지사입고일
+    private LocalDateTime insertDt; // 접수일시
+    private LocalDateTime fdS2Time; // 지사입고일시
+
     private String fdTag; // 택번호
     private String fdColor; // 색상코드 (00:미선택 01 흰색 02:검정 03: 회색, 04 빨강 05:주황, 06: 노랑, 07 초록 08 파랑 09:남색 10 보라 11 핑크)
 
@@ -42,30 +46,16 @@ public class RequestDetailReleaseListDto {
     private String fdUrgentYn; // 급세탁 여부 (Y  / N) 기본값 : N
 
     private String bcName; // 고객명
-    private String fdEstimateDt; // 출고예정일
     private Integer fdTotAmt; // 합계금액( (정상 + 수선 + 추가1 + 추가2 -할인) * 수량 )
     private String fdState; // 현재상태 ( S1 : 접수, S2: 지사입고,S3 지사출고, S4:가맹점입고, S5: 고객인도)
+    private Integer fiAddAmtSum; // 추가금액
 
-    public StringBuffer getFdS2Dt() {
-        if(fdS2Dt != null){
-            StringBuffer getFdS2Dt = new StringBuffer(fdS2Dt);
-            getFdS2Dt.insert(4,'-');
-            getFdS2Dt.insert(7,'-');
-            return getFdS2Dt;
-        }else{
-            return null;
-        }
+    public String getInsertDt() {
+        return insertDt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm"));
     }
 
-    public StringBuffer getFdEstimateDt() {
-        if(fdEstimateDt != null){
-            StringBuffer getFdEstimateDt = new StringBuffer(fdEstimateDt);
-            getFdEstimateDt.insert(4,'-');
-            getFdEstimateDt.insert(7,'-');
-            return getFdEstimateDt;
-        }else{
-            return null;
-        }
+    public String getFdS2Time() {
+        return fdS2Time.format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm"));
     }
 
 }

@@ -6,6 +6,7 @@ import com.broadwave.toppos.Manager.ManagerService.ManagerService;
 import com.broadwave.toppos.Manager.ManagerService.ReceiptReleaseService;
 import com.broadwave.toppos.Manager.ManagerService.TagNoticeService;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotMapperDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotSet;
 import com.broadwave.toppos.User.UserService.InspectService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -223,7 +224,7 @@ public class ManagerRestController {
         return receiptReleaseService.branchRelease(fdIdList, type, request);
     }
 
-//@@@@@@@@@@@@@@@@@@@@@ 확인품등록 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+//@@@@@@@@@@@@@@@@@@@@@ 확인품등록, 확인품현황 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     //  확인품 등록할 리스트 호출API
     @GetMapping("branchInspection")
     public ResponseEntity<Map<String,Object>> branchInspection(@RequestParam("franchiseId")Long franchiseId, @RequestParam("filterFromDt")String filterFromDt,
@@ -257,6 +258,34 @@ public class ManagerRestController {
     @PostMapping("branchInspectionSave")
     public ResponseEntity<Map<String,Object>> branchInspectionSave(@ModelAttribute InspeotMapperDto inspeotMapperDto, MultipartHttpServletRequest multi) throws IOException {
         return inspectService.InspectionSave(inspeotMapperDto, multi, AWSBUCKETURL);
+    }
+
+    //  등록 확인품 삭제
+    @PostMapping("branchInspectionDelete")
+    public ResponseEntity<Map<String,Object>> branchInspectionDelete(@RequestBody InspeotSet inspeotSet){
+        return inspectService.InspectionDelete(inspeotSet);
+    }
+
+    //  확인품현황 리스트 호출API
+    @GetMapping("branchInspectionCurrentList")
+    public ResponseEntity<Map<String,Object>> branchInspectionCurrentList(@RequestParam("franchiseId")Long franchiseId, @RequestParam("filterFromDt")String filterFromDt,
+                                                               @RequestParam("filterToDt")String filterToDt, @RequestParam("tagNo")String tagNo, HttpServletRequest request){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
+        LocalDateTime fromDt = null;
+        if(filterFromDt != null){
+            filterFromDt = filterFromDt+" 00:00:00.000";
+            fromDt = LocalDateTime.parse(filterFromDt, formatter);
+            //            log.info("fromDt :"+fromDt);
+        }
+
+        LocalDateTime toDt = null;
+        if(filterToDt != null){
+            filterToDt = filterToDt+" 23:59:59.999";
+            toDt = LocalDateTime.parse(filterToDt, formatter);
+            //            log.info("toDt :"+toDt);
+        }
+
+        return inspectService.branchInspectionCurrentList(franchiseId, fromDt, toDt, tagNo, request);
     }
 
 
