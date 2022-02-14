@@ -19,7 +19,8 @@ const dtos = {
     receive: {
         managerBelongList: { // 가맹점 선택 셀렉트박스에 띄울 가맹점의 리스트
             frId: "nr",
-            frName: "s"
+            frName: "s",
+            frTagNo: "s",
         },
         branchReceiptBranchInList: {
             fdId: "n", // 출고 처리를 위함
@@ -89,7 +90,7 @@ const comms = {
         dv.chk(sendList, dtos.send.branchStateChange, "출고처리 항목 보내기");
         CommonUI.ajax(urls.sendOutReceipt, "PARAM", sendList, function (res) {
             console.log(res);
-            alertSuccess("출고 처리가 완료 되었습니다.");
+            alertSuccess("출고처리가 완료 되었습니다.");
             grids.f.clearData(0);
             grids.f.clearData(1);
             wares.receiptList = "";

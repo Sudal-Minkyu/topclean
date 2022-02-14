@@ -39,6 +39,16 @@ class CATPayment {
         CatPrintCommunication(message);
 
     }
+
+    CatCashdrawer() {
+
+        let message="";
+        message = CatCreate_Cashdrawer()
+
+        CatPrintCommunication(message);
+
+    }
+
     CatPrintTest() {
 
         let message="";
@@ -744,6 +754,39 @@ function CatCredit_vPOSV1(params) {
 
 
 // 프린트 내용 생성(복합결제 대응)
+function CatCreate_Cashdrawer(){
+    let message = "";
+
+
+
+    //**************************************************
+    // 금전함열기
+    //**************************************************
+
+    message += String.fromCharCode(27);
+    message += String.fromCharCode(112);
+    message += String.fromCharCode(48);
+    message += String.fromCharCode(64);
+    message += String.fromCharCode(80);
+
+
+
+    var len = 0;
+    for (var i = 0; i < message.length; i++) {
+        len += (message.charCodeAt(i) > 128) ? 2 : 1;
+    }
+
+    var messageLen = ("" + len).fillZero(4);   // 길이
+
+    message = "CATPRINT" + messageLen + message;	// 길이 추가
+
+    len += 12;	// CATPRINT 8Byte + Length 4Byte 추가
+
+    return "CC" + message;
+}
+
+
+// 프린트 내용 생성(복합결제 대응)
 function CatCreate_MultiPrint(params,creditResults,cancelYN){
     let message = "";
 
@@ -1196,6 +1239,8 @@ function CatCreate_MultiPrint(params,creditResults,cancelYN){
 
     return "CC" + message;
 }
+
+
 //카드결제전문생성
 function CatCredit_vPOSV1(params) {
     //전문생성

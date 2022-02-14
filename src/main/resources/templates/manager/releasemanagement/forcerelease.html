@@ -10,7 +10,6 @@
 
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
-    <script src="/assets/js/toppos/CommonPC.js"></script>
     <script src="/assets/js/toppos/manager/releasemanagement/forcerelease.js"></script>
 </th:block>
 
@@ -38,7 +37,7 @@
                                 <div id="frTagNo" class="inquiry__title">택번호(앞 3자리)</div>
                                 <div class="inquiry__input">
                                     <div class="inquiry__input-tag">
-                                        <input id="foreTag" type="text" readonly/>
+                                        <input id="foreTag" type="text" style="color: black;" readonly/>
                                     </div>
                                 </div>
                             </li>
@@ -46,7 +45,7 @@
                                 <div class="inquiry__title">택번호(뒤 4자리)</div>
                                 <div class="inquiry__input">
                                     <div class="inquiry__input-tag">
-                                        <input id="aftTagNo" type="text" maxlength="4" />
+                                        <input id="aftTag" type="text" maxlength="4" />
                                     </div>
                                 </div>
                             </li>
