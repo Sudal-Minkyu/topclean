@@ -56,7 +56,7 @@ const dtos = {
             bcName: "s",
             fdTotAmt: "n",
             fdState: "s",
-            fdPreState: "s",
+            fiAddAmtSum: "n",
         },
 
         branchInspectionList: {
@@ -189,6 +189,12 @@ const grids = {
                     dataType: "numeric",
                     autoThousandSeparator: "true",
                 }, {
+                    dataField: "fiAddAmtSum",
+                    headerText: "추가금액",
+                    width: 70,
+                    dataType: "numeric",
+                    autoThousandSeparator: "true",
+                }, {
                     dataField: "fdState",
                     headerText: "현재상태",
                     width: 70,
@@ -196,15 +202,8 @@ const grids = {
                         return CommonData.name.fdState[value];
                     },
                 }, {
-                    dataField: "fdPreState",
-                    headerText: "이전상태",
-                    width: 70,
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
-                        return CommonData.name.fdState[value];
-                    },
-                }, {
                     dataField: "checkPopBtn",
-                    headerText: "확인품",
+                    headerText: "상세보기",
                     width: 80,
                     renderer : {
                         type: "TemplateRenderer",
