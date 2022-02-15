@@ -908,13 +908,16 @@ textarea {
 .businessday {
 	display: flex;
 	flex-wrap: wrap;
-	justify-content: center;
+	justify-content: space-between;
 }
 .businessday__month {
 	padding: 0.625rem;
 }
 .calendar_label {
 	margin-bottom: 0.313rem;
+	color: #333;
+	font-size: 0.875rem;
+	font-weight: 700;
 }
 
 

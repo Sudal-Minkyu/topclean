@@ -96,9 +96,9 @@
 				
 				<div class="pop__article-content flex1">
 					<div class="pop__article-haedconsole">
-						<button class="c-button c-button--darksolid c-button--small">삭제</button>
+						<button class="c-button c-button--darksolid c-button--small" id="deleteInspection">삭제</button>
 					</div>
-					<div style="height: 208px;">그리드</div>
+					<div id="grid_check" style="height: 208px;"></div>
 				</div>
 			</div>
 			
@@ -114,7 +114,9 @@
 				</div>
 				
 				<div class="pop__article-content">
-					<textarea></textarea>
+					<div class="c-textarea">
+						<textarea id="fiComment"></textarea>
+					</div>
 				</div>
 			</div>
 			
@@ -123,18 +125,20 @@
 					<div class="pop__console-cost">
 						<div class="pop__console-title">접수금액</div>
 						<div class="pop__console-input">
-							<input type="text" readonly="readonly" />
+							<div class="c-text"><input type="text" readonly="readonly" id="fdTotAmtInPut" /></div>
 						</div>
 					</div>
 					<div class="pop__console-cost">
 						<div class="pop__console-title">추가비용</div>
 						<div class="pop__console-input">
-							<input type="text" />
+							<div class="c-text">
+								<input id="fiAddAmt" type="text" />
+							</div>
 						</div>
 					</div>
 				</li>
-				<li><button class="c-button">닫기</button></li> 
-				<li><button class="c-button c-button--dark">확인품등록</button></li>
+				<li><button class="c-button" id="closeCheckPop">닫기</button></li> 
+				<li><button class="c-button c-button--dark" id="commitInspect">확인품등록</button></li>
 			</ul>
 		</div>
 	</div>

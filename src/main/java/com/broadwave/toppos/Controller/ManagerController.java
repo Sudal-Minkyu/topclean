@@ -87,6 +87,13 @@ public class ManagerController {
         return "manager/inandout/staystate";
     }
 
+    // 미납 관리
+    // 미출고현황
+    @RequestMapping("notrelease")
+    public String notrelease(){
+        return "manager/unpaid/notrelease";
+    }
+
     // 영업일관리 페이지
     @RequestMapping("businessday")
     public String businessday(){

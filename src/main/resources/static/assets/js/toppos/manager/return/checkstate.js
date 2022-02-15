@@ -33,7 +33,7 @@ const dtos = {
         branchInspection: {
             fdId: "n", // 출고 처리를 위함
             frName: "s",
-			frYyyymmdd: "s",
+			insertDt: "s",
             fdS2Time: "s",
           
             fdTag: "s",
@@ -137,7 +137,7 @@ const grids = {
                     headerText: "고객",
                     width: 70,
                 }, {
-                    dataField: "frYyyymmdd",
+                    dataField: "insertDt",
                     headerText: "상품접수",
                     width: 70,
                     dataType: "date",

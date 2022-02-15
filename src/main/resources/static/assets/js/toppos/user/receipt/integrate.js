@@ -1462,7 +1462,7 @@ function modifyOrder(rowIndex) {
     ];
 
     pollutionLocKeys.forEach(key => {
-        if(currentRequest[key] === "Y") {
+        if(data.currentRequest[key] === "Y") {
             $("#" + key).prop("checked", true);
         }
     });

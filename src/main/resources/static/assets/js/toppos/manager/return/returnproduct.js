@@ -25,7 +25,7 @@ const dtos = {
         branchReceiptReturnList: {
             fdId: "n",
             frName: "s",
-			frYyyymmdd: "s",
+			insertDt: "s",
             fdS2Time: "s",
           
             fdTag: "s",
@@ -125,7 +125,7 @@ const grids = {
                     headerText: "고객",
                     width: 70,
                 }, {
-                    dataField: "frYyyymmdd",
+                    dataField: "insertDt",
                     headerText: "상품접수",
                     width: 70,
                     dataType: "date",
