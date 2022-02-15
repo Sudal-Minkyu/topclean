@@ -72,7 +72,7 @@ public class ManagerService {
         log.info("현재 접속한 지사 코드 : "+brCode);
 
         List<RequestDetailTagSearchListDto> requestDetailTagSearchListDtos =  requestDetailRepositoryCustom.findByRequestDetailTagSearchList(brCode, franchiseId, tagNo);
-        data.put("franchiseList",requestDetailTagSearchListDtos);
+        data.put("gridListData",requestDetailTagSearchListDtos);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }

@@ -7,10 +7,11 @@ import org.springframework.context.annotation.Configuration;
  * @author Minkyu
  * Date : 2022-02-15
  * Time :
- * Remark : Toppos JPA 캐싱관련 Config
+ * Remark : Toppos JPA 캐시관련 Config
  */
-@EnableCaching
 @Configuration
-public class CachingConfig {
+@EnableCaching
+public class CacheConfig {
+
 
 }

@@ -1,10 +1,7 @@
 package com.broadwave.toppos.Manager;
 
 import com.broadwave.toppos.Manager.Calendar.CalendarDtos.BranchCalendarDto;
-import com.broadwave.toppos.Manager.ManagerService.CalendarService;
-import com.broadwave.toppos.Manager.ManagerService.ManagerService;
-import com.broadwave.toppos.Manager.ManagerService.ReceiptReleaseService;
-import com.broadwave.toppos.Manager.ManagerService.TagNoticeService;
+import com.broadwave.toppos.Manager.ManagerService.*;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotMapperDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotSet;
 import com.broadwave.toppos.User.UserService.InspectService;
@@ -41,16 +38,18 @@ public class ManagerRestController {
     private final CalendarService calendarService; // 휴무일지정 서비스
     private final TagNoticeService tagNoticeService; // 택분실게시판 서비스
     private final InspectService inspectService; // 검품등록게시판 서비스
+    private final CurrentService currentService; // 현황페이지 서비스
 
     private final ReceiptReleaseService receiptReleaseService; // 지사 출고 전용 서비스
 
     @Autowired
     public ManagerRestController(ManagerService managerService, CalendarService calendarService, TagNoticeService tagNoticeService,
-                                 ReceiptReleaseService receiptReleaseService, InspectService inspectService) {
+                                 ReceiptReleaseService receiptReleaseService, InspectService inspectService, CurrentService currentService) {
         this.managerService = managerService;
         this.calendarService = calendarService;
         this.tagNoticeService = tagNoticeService;
         this.inspectService = inspectService;
+        this.currentService = currentService;
         this.receiptReleaseService = receiptReleaseService;
     }
 
@@ -295,7 +294,13 @@ public class ManagerRestController {
         return managerService.branchTagSearchList(franchiseId, tagNo, request);
     }
 
-
+//@@@@@@@@@@@@@@@@@@@@@ 입출고현황 관련 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    //  지사 입고현황 - 리스트 호출API
+    @GetMapping("branchStoreCurrentList")
+    public ResponseEntity<Map<String,Object>> branchStoreCurrentList(@RequestParam("franchiseId")Long franchiseId, @RequestParam("filterFromDt")String filterFromDt,
+                                                                     @RequestParam("filterToDt")String filterToDt, HttpServletRequest request){
+        return currentService.branchStoreCurrentList(franchiseId, filterFromDt, filterToDt, request);
+    }
 
 
 
