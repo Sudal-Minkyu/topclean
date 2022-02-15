@@ -13,6 +13,7 @@ import java.util.List;
  * Remark :
  */
 public interface RequestDetailRepositoryCustom {
+    // 가맹점 페이지 쿼리 //
     List<RequestDetailDto> findByRequestTempDetailList(String frNo);
     List<RequestDetailAmtDto> findByRequestDetailAmtList(String frNo);
     List<RequestDetailSearchDto> requestDetailSearch(String frCode, Long bcId, String searchTag, String filterCondition, String filterFromDt, String filterToDt);
@@ -31,6 +32,7 @@ public interface RequestDetailRepositoryCustom {
 
     List<RequestDetailPaymentPaper> findByRequestDetailPaymentPaper(String frNo); // 영수증출력
 
+    // 지사 페이지 쿼리 //
     List<RequestDetailReleaseListDto> findByRequestDetailReleaseList(String brCode, Long frId, LocalDateTime fromDt, java.time.LocalDateTime toDt, String isUrgent); // 지사출고
 
     List<RequestDetailReleaseCancelListDto> findByRequestDetailReleaseCancelList(String brCode, Long frId, LocalDateTime fromDt, LocalDateTime toDt, String tagNo); // 지사출고취소
@@ -38,5 +40,6 @@ public interface RequestDetailRepositoryCustom {
     List<RequestDetailBranchForceListDto> findByRequestDetailBranchForceList(String brCode, Long frId, LocalDateTime fromDt, LocalDateTime toDt, String tagNo); // 지사 가맹점강제출고
     List<RequestDetailBranchInspectListDto> findByRequestDetailBranchInspectList(String brCode, Long franchiseId, LocalDateTime fromDt, LocalDateTime toDt, String tagNo); // 확인품등록
     List<RequestDetailBranchInspectionCurrentListDto> findByRequestDetailBranchInspectionCurrentList(String brCode, Long frId, LocalDateTime fromDt, LocalDateTime toDt, String tagNo); // 확인품현황
+    List<RequestDetailTagSearchListDto> findByRequestDetailTagSearchList(String brCode, Long frId, String tagNo); // 택번호조회
 
 }

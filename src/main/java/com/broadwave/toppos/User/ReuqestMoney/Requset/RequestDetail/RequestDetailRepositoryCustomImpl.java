@@ -1157,6 +1157,77 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         return query.fetch();
     }
 
+    // 택번호조회 querydsl
+    public List<RequestDetailTagSearchListDto> findByRequestDetailTagSearchList(String brCode, Long frId, String tagNo){
+
+        QRequestDetail requestDetail = QRequestDetail.requestDetail;
+        QRequest request = QRequest.request;
+
+        QFranchise franchise = QFranchise.franchise;
+
+        QItemGroup itemGroup = QItemGroup.itemGroup;
+        QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
+        QItem item = QItem.item;
+
+        JPQLQuery<RequestDetailTagSearchListDto> query = from(requestDetail)
+                .leftJoin(request).on(requestDetail.frId.eq(request))
+                .innerJoin(franchise).on(request.frCode.eq(franchise.frCode))
+                .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
+                .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
+                .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
+                .where(request.frConfirmYn.eq("Y"))
+                .where(requestDetail.frId.brCode.eq(brCode).and(requestDetail.fdCancel.eq("N")))
+                .select(Projections.constructor(RequestDetailTagSearchListDto.class,
+
+                        franchise.frName,
+                        request.frRefType,
+
+                        request.frYyyymmdd,
+
+                        requestDetail.fdS2Dt,
+                        requestDetail.fdS4Dt,
+
+                        requestDetail.fdTag,
+                        requestDetail.fdColor,
+
+                        itemGroup.bgName,
+                        itemGroupS.bsName,
+                        item.biName,
+
+                        requestDetail.fdPriceGrade,
+                        requestDetail.fdRetryYn,
+                        requestDetail.fdPressed,
+                        requestDetail.fdAdd1Amt,
+                        requestDetail.fdAdd1Remark,
+                        requestDetail.fdRepairAmt,
+                        requestDetail.fdRepairRemark,
+                        requestDetail.fdWhitening,
+                        requestDetail.fdPollution,
+                        requestDetail.fdWaterRepellent,
+                        requestDetail.fdStarch,
+                        requestDetail.fdUrgentYn,
+
+                        request.bcId.bcName,
+                        requestDetail.fdTotAmt,
+                        requestDetail.fdState,
+
+                        requestDetail.fdRemark,
+                        requestDetail.fdS3Dt,
+                        requestDetail.fdS7Dt,
+                        requestDetail.fdS8Dt
+
+                ));
+
+        query.orderBy(requestDetail.id.asc()).groupBy(requestDetail);
+
+        query.where(franchise.id.eq(frId));
+
+        if(!tagNo.equals("")){
+            query.where(requestDetail.fdTag.substring(3,7).likeIgnoreCase(tagNo));
+        }
+
+        return query.fetch();
+    }
 
 
 }

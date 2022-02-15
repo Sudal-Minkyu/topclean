@@ -288,5 +288,12 @@ public class ManagerRestController {
         return inspectService.branchInspectionCurrentList(franchiseId, fromDt, toDt, tagNo, request);
     }
 
+//@@@@@@@@@@@@@@@@@@@@@ TAG번호조회 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    //  TAG번호조회 리스트 호출API
+    @GetMapping("branchTagSearchList")
+    public ResponseEntity<Map<String,Object>> branchTagSearchList(@RequestParam("franchiseId")Long franchiseId,  @RequestParam("tagNo")String tagNo, HttpServletRequest request){
+        return managerService.branchTagSearchList(franchiseId, tagNo, request);
+    }
+
 
 }
