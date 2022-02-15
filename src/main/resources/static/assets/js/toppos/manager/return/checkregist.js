@@ -16,6 +16,19 @@ const dtos = {
             fdId: "nr",
             type: "s",
         },
+
+        branchInspectionSave: {
+            fdId: "nr",
+            fiAddAmt: "nr",
+            fiComment: "s",
+            fiType: "sr",
+            source: "", // 검품사진파일
+        },
+
+        branchInspectionDelete: {
+            fiId: "nr",
+            fiPhotoYn: "sr",
+        },
     },
 
     receive: {
@@ -237,7 +250,7 @@ const grids = {
                 }, {
                     dataField: "checkPopBtn",
                     headerText: "확인품",
-                    width: 70,
+                    width: 80,
                     renderer : {
                         type: "TemplateRenderer",
                     },
@@ -259,8 +272,8 @@ const grids = {
                 noDataMessage : "출력할 데이터가 없습니다.",
                 showAutoNoDataMessage: false,
                 enableColumnResize : false,
-                showRowAllCheckBox: true,
-                showRowCheckColumn: true,
+                showRowAllCheckBox: false,
+                showRowCheckColumn: false,
                 showRowNumColumn : false,
                 showStateColumn : false,
                 enableFilter : false,
@@ -335,6 +348,19 @@ const grids = {
         updateRowsById(numOfGrid, data) {
             AUIGrid.updateRowsById(numOfGrid, data);
         },
+
+        getRemovedCheckRows(numOfGrid) {
+            if(AUIGrid.getCheckedRowItems(grids.s.id[numOfGrid]).length){
+                AUIGrid.removeCheckedRows(grids.s.id[numOfGrid]);
+            }else{
+                AUIGrid.removeRow(grids.s.id[numOfGrid], "selectedIndex");
+            }
+            return AUIGrid.getRemovedItems(grids.s.id[numOfGrid]);
+        },
+
+        resetChangedStatus(numOfGrid) {
+            AUIGrid.resetUpdatedItems(grids.s.id[numOfGrid]);
+        },
     },
 
     t: {
@@ -376,7 +402,7 @@ const trigs = {
 
             $("#closeCheckPop").on("click", function () {
                 grids.f.updateRowsById(0, wares.currentRequest);
-                $("#putCheckPop").removeClass("active");
+                $("#checkPop").removeClass("active");
                 if(wares.isCameraExist) {
                     try {
                         wares.cameraStream.getTracks().forEach(function (track) {
@@ -385,6 +411,37 @@ const trigs = {
                     }catch (e) {
                         console.log(e);
                     }
+                }
+            });
+
+            $("#fiAddAmt").on("keyup", function () {
+                $(this).val($(this).val().toInt().toLocaleString());
+            });
+
+            $("#deleteInspection").on("click", function () { // 3번테이블(검품등록) 의 삭제될 대상들을 가져와서 삭제 요청
+                const targetRowsItem = grids.f.getRemovedCheckRows(1);
+                let refinedTargetList = [];
+                let isAlreadyDone = false;
+                targetRowsItem.forEach(item => {
+                    if(item.fiSendMsgYn === "Y" || item.fiCustomerConfirm !== "1") {
+                        isAlreadyDone = item.fiComment;
+
+                    }
+                    refinedTargetList.push({
+                        fiId: item.fiId,
+                        fiPhotoYn: item.fiPhotoYn,
+                    });
+                });
+                if(isAlreadyDone) {
+                    alertCaution("고객에게 정보가 전해진 검품내역은<br>삭제할 수 없습니다.<br>( 검품내용 : " 
+                    + isAlreadyDone + " )", 1);
+                    grids.f.resetChangedStatus(1);
+                    return false;
+                }
+
+                if(targetRowsItem.length) {
+                    comms.deleteInspection(refinedTargetList, targetRowsItem[0].fdId);
+                    grids.f.resetChangedStatus(1);
                 }
             });
         },
@@ -553,3 +610,13 @@ function putInspect() {
     }
 }
 
+function b64toBlob(dataURI) { // 파일을 ajax 통신에 쓰기 위해 변환
+    const byteString = atob(dataURI.split(',')[1]);
+    const ab = new ArrayBuffer(byteString.length);
+    const ia = new Uint8Array(ab);
+
+    for (let i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+    }
+    return new Blob([ab], { type: 'image/jpeg' });
+}

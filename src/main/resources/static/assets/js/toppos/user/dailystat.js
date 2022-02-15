@@ -274,14 +274,11 @@ function getRefinedData() {
 
 function mergeData(sendData) {
     const data = [];
-    addData(sendData.delivery);
-    addData(sendData.payment);
-    addData(sendData.receipt);
-    addData(sendData.request);
-    addData(sendData.requestDetail);
-    addData(sendData.saveMoney);
 
-
+    const receivedKeys = Object.keys(sendData);
+    receivedKeys.forEach(key => {
+        addData(sendData[key]);
+    });
 
     return data;
     function addData(targetList) {

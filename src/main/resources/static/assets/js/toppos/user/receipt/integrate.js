@@ -932,7 +932,7 @@ const grid = {
             AUIGrid.resize(grid.s.id[numOfGrid]);
         },
 
-        getRemovedCheckRows(numOfGrid) { // 작업필요
+        getRemovedCheckRows(numOfGrid) {
             if(AUIGrid.getCheckedRowItems(grid.s.id[numOfGrid]).length){
                 AUIGrid.removeCheckedRows(grid.s.id[numOfGrid]);
             }else{
