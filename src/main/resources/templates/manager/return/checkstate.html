@@ -6,11 +6,26 @@
 
 <!-- 사용자 CSS 추가 -->
 <th:block layout:fragment="css">
+    <style>
+        .yesBlue {
+			color: #0082F0;
+			font-weight: bold;
+		}
+
+		.noRed {
+			color: #DD5257;
+			font-weight: bold;
+		}
+    </style>
+	<!-- lightbox 추가 -->
+    <link rel="stylesheet" href="/assets/js/lightbox2/css/lightbox.min.css" />
 </th:block>
 
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
 	<script src="/assets/js/toppos/manager/return/checkstate.js"></script>
+    <!-- lightbox 추가 -->
+    <script src="/assets/js/lightbox2/js/lightbox.js"></script>
 </th:block>
 
 <div layout:fragment="content" class="content">
@@ -87,7 +102,7 @@
 			<div class="pop__article">
 				<h3 class="pop__article-header">상세보기</h3>
 				<div class="pop__aricle-content">
-					<div style="height: 240px;">그리드</div>
+					<div id="grid_check" style="height: 240px;"></div>
 				</div>
 			</div>
 			
@@ -96,11 +111,11 @@
 					<div class="pop__message">
 						<div class="pop__message-text">
 							<div class="pop__message-textbox">
-								<textarea readonly="readonly"></textarea>
+								<textarea readonly="readonly" id="fiCommentInConfirm"></textarea>
 							</div>
 						</div>
 						<div class="pop__message-img">
-							<a href="" id="imgFull" class="photo__img" data-lightbox="images" data-title="임의테스트"
+							<a href="" id="imgFull" class="photo__img" data-lightbox="images" data-title="이미지 확대"
 								style="display: none;">
 								<img id="imgThumb" src="" alt="" />
 							</a>
@@ -110,7 +125,7 @@
 			</div>
 			
 			<ul class="pop__console">
-				<li><button class="c-button">닫기</button></li>
+				<li><button type="button" id="closeCheckPop" class="c-button">닫기</button></li>
 			</ul>
 		</div>
 	</div>

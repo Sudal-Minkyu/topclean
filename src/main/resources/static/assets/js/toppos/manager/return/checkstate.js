@@ -5,11 +5,11 @@
 * */
 const dtos = {
     send: {
-        branchInspection: {
+        branchInspectionCurrentList: {
             tagNo: "s",
             filterFromDt: "s",
             filterToDt: "s",
-            frId: "n", // 가맹점 Id
+            franchiseId: "n", // 가맹점 Id
         },
 
         branchInspectionList: { // fdId가 일치하는 모든 검품 리스트 type 1: 검품등록시, 2: 검품확인시 
@@ -30,7 +30,7 @@ const dtos = {
             frTagNo: "s",
         },
 
-        branchInspection: {
+        branchInspectionCurrentList: {
             fdId: "n", // 출고 처리를 위함
             frName: "s",
 			insertDt: "s",
@@ -58,16 +58,29 @@ const dtos = {
             fdState: "s",
             fdPreState: "s",
         },
+
+        branchInspectionList: {
+            fiId: "nr",
+            fdId: "nr",
+            fiType: "s",
+            fiComment: "s",
+            fiAddAmt: "n",
+            fiPhotoYn: "s",
+            fiSendMsgYn: "s",
+            fiCustomerConfirm: "s",
+            insertDt: "s",
+
+            ffPath: "s",
+            ffFilename: "s",
+        },
     }
 };
 
 /* 통신에 사용되는 url들 기입 */
 const urls = {
     getFrList: "/api/manager/branchBelongList",
-    getMainGridList: "/api/manager/branchInspection",
+    getMainGridList: "/api/manager/branchInspectionCurrentList",
     getInspectionList: "/api/manager/branchInspectionList",
-    saveInspection: "/api/manager/branchInspectionSave",
-    deleteInspection: "/api/manager/branchInspectionDelete",
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
@@ -75,7 +88,6 @@ const comms = {
     getFrList() {
         CommonUI.ajax(urls.getFrList, "GET", false, function (res) {
             const data = res.sendData.franchiseList;
-            console.log(res);
             dv.chk(data, dtos.receive.managerBelongList, "지점에 속한 가맹점 받아오기");
             const $frList = $("#frList");
             data.forEach(obj => {
@@ -86,10 +98,10 @@ const comms = {
     },
 
     getMainGridList(searchCondition) {
-        dv.chk(searchCondition, dtos.send.branchInspection, "메인 그리드 검색 조건 보내기");
+        dv.chk(searchCondition, dtos.send.branchInspectionCurrentList, "메인 그리드 검색 조건 보내기");
         CommonUI.ajax(urls.getMainGridList, "GET", searchCondition, function (res) {
             const data = res.sendData.gridListData;
-            console.log(data);
+            dv.chk(data, dtos.receive.branchInspectionCurrentList, "메인 그리드 받아온 리스트");
             grids.f.setData(0, data);
             $("#aftTag").val("");
         });
@@ -97,12 +109,11 @@ const comms = {
 
     getInspectionList(condition) {
         dv.chk(condition, dtos.send.branchInspectionList, "등록된 검품조회 조건");
-
-        CommonUI.ajax(urls, "GET", condition, function(res) {
+        CommonUI.ajax(urls.getInspectionList, "GET", condition, function(res) {
             const data = res.sendData.gridListData;
             dv.chk(data, dtos.receive.branchInspectionList, "등록된 검품의 조회");
-            grids.f.clearData(0);
-            grids.f.setData(0, data);
+            grids.f.clearData(1);
+            grids.f.setData(1, data);
         });
     },
 };
@@ -116,7 +127,7 @@ const comms = {
 const grids = {
     s: { // 그리드 세팅
         targetDiv: [
-            "grid_main"
+            "grid_main", "grid_check"
         ],
         columnLayout: [],
         prop: [],
@@ -131,23 +142,19 @@ const grids = {
             grids.s.columnLayout[0] = [
                 {
                     dataField: "frName",
-                    headerText: "가맹점명",
+                    headerText: "가맹점",
                 }, {
                     dataField: "bcName",
                     headerText: "고객",
                     width: 70,
                 }, {
                     dataField: "insertDt",
-                    headerText: "상품접수",
-                    width: 70,
+                    headerText: "접수일시",
                     dataType: "date",
-                    formatString: "yyyy-mm-dd",
                 }, {
                     dataField: "fdS2Time",
-                    headerText: "지점입고",
-                    width: 70,
+                    headerText: "지점입고일시",
                     dataType: "date",
-                    formatString: "yyyy-mm-dd",
                 }, {
                     dataField: "fdTag",
                     headerText: "택번호",
@@ -197,8 +204,8 @@ const grids = {
                     },
                 }, {
                     dataField: "checkPopBtn",
-                    headerText: "상세",
-                    width: 70,
+                    headerText: "확인품",
+                    width: 80,
                     renderer : {
                         type: "TemplateRenderer",
                     },
@@ -220,8 +227,55 @@ const grids = {
                 noDataMessage : "출력할 데이터가 없습니다.",
                 showAutoNoDataMessage: false,
                 enableColumnResize : false,
-                showRowAllCheckBox: true,
-                showRowCheckColumn: true,
+                showRowAllCheckBox: false,
+                showRowCheckColumn: false,
+                showRowNumColumn : false,
+                showStateColumn : false,
+                enableFilter : false,
+                rowHeight : 48,
+                headerHeight : 48,
+            };
+
+            grids.s.columnLayout[1] = [
+                {
+                    dataField: "insertDt",
+                    headerText: "등록일시",
+                    dataType: "date",
+                    formatString: "yyyy-mm-dd",
+                }, {
+                    dataField: "fiType",
+                    headerText: "유형",
+                    labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
+                        return wares.fiTypeName[value];
+                    },
+                }, {
+                    dataField: "fiComment",
+                    headerText: "검품내용",
+                }, {
+                    dataField: "fiSendMsgYn",
+                    headerText: "메세지",
+                    styleFunction: ynStyle,
+                }, {
+                    dataField: "fiPhotoYn",
+                    headerText: "이미지",
+                    styleFunction: ynStyle,
+                }, {
+                    dataField: "fiCustomerConfirm",
+                    headerText: "고객수락",
+                    labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
+                        return wares.fiCustomerConfirmName[value];
+                    },
+                },
+            ];
+
+            grids.s.prop[1] = {
+                editable : false,
+                selectionMode : "singleRow",
+                noDataMessage : "출력할 데이터가 없습니다.",
+                showAutoNoDataMessage: false,
+                enableColumnResize : false,
+                showRowAllCheckBox: false,
+                showRowCheckColumn: false,
                 showRowNumColumn : false,
                 showStateColumn : false,
                 enableFilter : false,
@@ -267,6 +321,17 @@ const grids = {
                     openCheckPop(e);
                 }
             });
+
+            AUIGrid.bind(grids.s.id[1], "cellClick", function (e) {
+                $("#fiCommentInConfirm").val(e.item.fiComment);
+                if(e.item.fiPhotoYn === "Y") {
+                    $("#imgThumb").attr("src", e.item.ffPath + "s_" + e.item.ffFilename);
+                    $("#imgFull").attr("href", e.item.ffPath + e.item.ffFilename);
+                    $("#imgFull").show();
+                }else{
+                    $("#imgFull").hide();
+                }
+            });
         }
     }
 };
@@ -290,6 +355,10 @@ const trigs = {
                     searchOrder();
                 }
             });
+
+            $("#closeCheckPop").on("click", function () {
+                $("#checkPop").removeClass("active");
+            });
         },
     },
     r: { // 이벤트 해제
@@ -300,6 +369,15 @@ const trigs = {
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
 const wares = {
     currentRequest: {},
+    fiCustomerConfirmName: {
+        "1": "미확인",
+        "2": "고객수락",
+        "3": "고객거부",
+    },
+    fiTypeName: {
+        F: "가맹검품",
+        B: "확인품",
+    },
 }
 
 $(function() { // 페이지가 로드되고 나서 실행
@@ -310,9 +388,16 @@ $(function() { // 페이지가 로드되고 나서 실행
 function onPageLoad() {
     grids.f.initialization();
     grids.f.create();
+    grids.t.basic();
     enableDatepicker();
     comms.getFrList();
     trigs.s.basic();
+
+    // lightbox option
+    lightbox.option({
+        'maxWidth': 1100,
+        'positionFromTop': 190
+    });
 }
 
 function enableDatepicker() {
@@ -348,7 +433,7 @@ function searchOrder() {
         tagNo: $("#aftTag").val().numString(),
         filterFromDt: $("#filterFromDt").val(),
         filterToDt: $("#filterToDt").val(),
-        frId: parseInt(frId),
+        franchiseId: parseInt(frId),
     };
 
     if(searchCondition.tagNo.length !== 0 && searchCondition.tagNo.length !== 4) {
@@ -362,9 +447,21 @@ function searchOrder() {
 function openCheckPop(e) {
     resetCheckPop();
 
+    $("#confirmInspectPop").addClass("active");
+    const searchCondition = {
+        fdId: e.item.fdId,
+        type: "3"
+    }
+    comms.getInspectionList(searchCondition);
     $("#checkPop").addClass("active");
+    grids.f.resize(1);
 }
 
 function resetCheckPop() {
-    $("#fiComment").val("");
+    $("#fiCommentInConfirm").val("");
+    $("#imgFull").hide();
+}
+
+function ynStyle(rowIndex, columnIndex, value, headerText, item, dataField) {
+    return value === "Y" ? "yesBlue" : "noRed"
 }
