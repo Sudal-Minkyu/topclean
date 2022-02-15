@@ -27,7 +27,7 @@ public class TagNoticeRepositoryCustomImplTest {
     TagNoticeRepositoryCustomImpl tagNoticeRepositoryCustom;
 
     @Test
-    //@Ignore
+    @Ignore
     @DisplayName("QueryDSL Group by 테스트")
     public void querydsl_Group_by_Test(){
         List<TagNoticeTestDto> results = tagNoticeRepositoryCustom.findByGroupByTest();
