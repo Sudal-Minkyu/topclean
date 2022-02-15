@@ -9,10 +9,10 @@ const dtos = {
             tagNo: "s",
             filterFromDt: "s",
             filterToDt: "s",
-            frId: "n", // 가맹점 Id
+            franchiseId: "n", // 가맹점 Id
         },
 
-        franchiseInspectionList: { // fdId가 일치하는 모든 검품 리스트 type 1: 검품등록시, 2: 검품확인시 
+        branchInspectionList: { // fdId가 일치하는 모든 검품 리스트 type 1: 검품등록시, 2: 검품확인시 
             fdId: "nr",
             type: "s",
         },
@@ -26,9 +26,9 @@ const dtos = {
         },
 
         branchReceiptReturnList: {
-            fdId: "n", // 출고 처리를 위함
+            fdId: "n",
             frName: "s",
-			frYyyymmdd: "s",
+			insertDt: "s",
             fdS2Time: "s",
           
             fdTag: "s",
@@ -53,13 +53,31 @@ const dtos = {
             fdState: "s",
             fdPreState: "s",
         },
+
+        branchInspectionList: {
+            fiId: "nr",
+            fdId: "nr",
+            fiType: "s",
+            fiComment: "s",
+            fiAddAmt: "n",
+            fiPhotoYn: "s",
+            fiSendMsgYn: "s",
+            fiCustomerConfirm: "s",
+            insertDt: "s",
+
+            ffPath: "s",
+            ffFilename: "s",
+        },
     }
 };
 
 /* 통신에 사용되는 url들 기입 */
 const urls = {
     getFrList: "/api/manager/branchBelongList",
-    getMainGridList: "/api/manager/branchReceiptReturnList",
+    getMainGridList: "/api/manager/branchInspection",
+    getInspectionList: "/api/manager/branchInspectionList",
+    putNewInspect: "/api/manager/branchInspectionSave",
+    deleteInspection: "/api/manager/branchInspectionDelete",
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
@@ -88,26 +106,46 @@ const comms = {
     },
 
     getInspectionList(condition) {
-        dv.chk(condition, dtos.send.franchiseInspectionList, "등록된 검품조회 조건");
+        dv.chk(condition, dtos.send.branchInspectionList, "등록된 검품조회 조건");
 
-        CommonUI.ajax(urls, "GET", condition, function(res) {
+        CommonUI.ajax(urls.getInspectionList, "GET", condition, function(res) {
             const data = res.sendData.gridListData;
-            dv.chk(data, dtos.receive.franchiseInspectionList, "등록된 검품의 조회");
-            grids.f.clearData(0);
-            grids.f.setData(0, data);
+            console.log(data);
+            dv.chk(data, dtos.receive.branchInspectionList, "등록된 검품의 조회");
+            grids.f.clearData(1);
+            grids.f.setData(1, data);
         });
     },
 
     deleteInspection(targets, fdId) {
-        dv.chk(targets, dto.send.franchiseInspectionDelete, "검품 삭제 목록");
+        dv.chk(targets, dtos.send.branchInspectionDelete, "검품 삭제 목록");
         const data = {list: targets};
-        const url = "/api/user/franchiseInspectionDelete";
-        CommonUI.ajax(url, "MAPPER", data, function(res) {
+        CommonUI.ajax(urls.deleteInspection, "MAPPER", data, function(res) {
             const searchCondition = {
                 fdId: fdId,
-                type: "1"
+                type: "3"
             };
-            ajax.getInspectionList(searchCondition);
+            comms.getInspectionList(searchCondition);
+        });
+    },
+
+    putNewInspect(formData) {
+        const testObj = Object.fromEntries(formData);
+        testObj.fdId = parseInt(testObj.fdId);
+        testObj.fiAddAmt = parseInt(testObj.fiAddAmt) | 0;
+        
+        dv.chk(testObj, dtos.send.branchInspectionSave, "확인품 등록");
+
+        CommonUI.ajax(urls.putNewInspect, "POST", formData, function (res) {
+            const searchCondition = {
+                fdId: testObj.fdId,
+                type: "3"
+            };
+            wares.currentRequest.fdState = "B";
+            comms.getInspectionList(searchCondition);
+            $("#fiComment").val("");
+            $("#fiAddAmt").val("0");
+            alertSuccess("확인품내역이 저장되었습니다.");
         });
     },
 };
@@ -121,7 +159,7 @@ const comms = {
 const grids = {
     s: { // 그리드 세팅
         targetDiv: [
-            "grid_main"
+            "grid_main", "grid_check"
         ],
         columnLayout: [],
         prop: [],
@@ -136,23 +174,19 @@ const grids = {
             grids.s.columnLayout[0] = [
                 {
                     dataField: "frName",
-                    headerText: "가맹점명",
+                    headerText: "가맹점",
                 }, {
                     dataField: "bcName",
                     headerText: "고객",
                     width: 70,
                 }, {
-                    dataField: "frYyyymmdd",
-                    headerText: "상품접수",
-                    width: 70,
+                    dataField: "insertDt",
+                    headerText: "접수일시",
                     dataType: "date",
-                    formatString: "yyyy-mm-dd",
                 }, {
                     dataField: "fdS2Time",
-                    headerText: "지점입고",
-                    width: 70,
+                    headerText: "지점입고일시",
                     dataType: "date",
-                    formatString: "yyyy-mm-dd",
                 }, {
                     dataField: "fdTag",
                     headerText: "택번호",
@@ -234,6 +268,42 @@ const grids = {
                 headerHeight : 48,
             };
 
+            grids.s.columnLayout[1] = [
+                {
+                    dataField: "insertDt",
+                    headerText: "등록일시",
+                    dataType: "date",
+                    formatString: "yyyy-mm-dd",
+                }, {
+                    dataField: "fiComment",
+                    headerText: "검품내용",
+                }, {
+                    dataField: "fiSendMsgYn",
+                    headerText: "메세지",
+                    styleFunction: ynStyle,
+                }, {
+                    dataField: "fiPhotoYn",
+                    headerText: "이미지",
+                    styleFunction: ynStyle,
+                },
+            ];
+
+            grids.s.prop[1] = {
+                editable : false,
+                selectionMode : "singleRow",
+                noDataMessage : "출력할 데이터가 없습니다.",
+                showAutoNoDataMessage: false,
+                enableColumnResize : false,
+                showRowAllCheckBox: true,
+                showRowCheckColumn: true,
+                showRowNumColumn : false,
+                showStateColumn : false,
+                enableFilter : false,
+                rowHeight : 48,
+                headerHeight : 48,
+            };
+
+
         },
 
         create() { // 그리드 동작 처음 빈 그리드를 생성
@@ -260,7 +330,11 @@ const grids = {
 
         getCheckedItems(numOfGrid) { // 해당 배열 번호 그리드의 엑스트라 체크박스 선택된 (아이템 + 행번호) 객체 반환
             return AUIGrid.getCheckedRowItems(grids.s.id[numOfGrid]);
-        }
+        },
+
+        updateRowsById(numOfGrid, data) {
+            AUIGrid.updateRowsById(numOfGrid, data);
+        },
     },
 
     t: {
@@ -295,6 +369,24 @@ const trigs = {
                     searchOrder();
                 }
             });
+
+            $("#commitInspect").on("click", function() {
+                putInspect();
+            });
+
+            $("#closeCheckPop").on("click", function () {
+                grids.f.updateRowsById(0, wares.currentRequest);
+                $("#putCheckPop").removeClass("active");
+                if(wares.isCameraExist) {
+                    try {
+                        wares.cameraStream.getTracks().forEach(function (track) {
+                            track.stop();
+                        });
+                    }catch (e) {
+                        console.log(e);
+                    }
+                }
+            });
         },
     },
     r: { // 이벤트 해제
@@ -315,6 +407,7 @@ $(function() { // 페이지가 로드되고 나서 실행
 function onPageLoad() {
     grids.f.initialization();
     grids.f.create();
+    grids.t.basic();
     enableDatepicker();
     comms.getFrList();
     trigs.s.basic();
@@ -340,7 +433,7 @@ function enableDatepicker() {
 
     CommonUI.setDatePicker(datePickerTargetIds);
     CommonUI.restrictDateAToB(dateAToBTargetIds);
-}
+} 
 
 function searchOrder() {
     const frId = $("#frList").val();
@@ -353,7 +446,7 @@ function searchOrder() {
         tagNo: $("#aftTag").val().numString(),
         filterFromDt: $("#filterFromDt").val(),
         filterToDt: $("#filterToDt").val(),
-        frId: parseInt(frId),
+        franchiseId: parseInt(frId),
     };
 
     if(searchCondition.tagNo.length !== 0 && searchCondition.tagNo.length !== 4) {
@@ -368,8 +461,8 @@ async function openCheckPop(e) {
     resetCheckPop();
 
     try {
-        comms.isCameraExist = true;
-        comms.cameraStream = await navigator.mediaDevices.getUserMedia({
+        wares.isCameraExist = true;
+        wares.cameraStream = await navigator.mediaDevices.getUserMedia({
             audio: false,
             video: {
                 width: {ideal: 4096},
@@ -378,17 +471,17 @@ async function openCheckPop(e) {
         });
 
         const screen = document.getElementById("cameraScreen");
-        screen.srcObject = comms.cameraStream;
+        screen.srcObject = wares.cameraStream;
     }catch (e) {
         if(!(e instanceof DOMException)) {
             console.log(e);
         }
-        comms.isCameraExist = false;
+        wares.isCameraExist = false;
     }
 
     
-    $("#fdRequestAmtInPut").val(comms.currentRequest.fdRequestAmt.toLocaleString());
-    if(comms.isCameraExist) {
+    $("#fdTotAmtInPut").val(wares.currentRequest.fdTotAmt.toLocaleString());
+    if(wares.isCameraExist) {
         $("#isIncludeImg").prop("checked", true);
         $("#isIncludeImg").prop("disabled", false);
     }else{
@@ -408,3 +501,55 @@ function resetCheckPop() {
     $("#fiComment").val("");
     $("#fiAddAmt").val("0");
 }
+
+function ynStyle(rowIndex, columnIndex, value, headerText, item, dataField) {
+    return value === "Y" ? "yesBlue" : "noRed"
+}
+
+function putInspect() {
+    const $fiComment = $("#fiComment");
+    if (!$fiComment.val().length) {
+        alertCaution("검품내용을 입력해 주세요", 1);
+        return false;
+    }
+    if(wares.isCameraExist && wares.cameraStream.active) {
+        try {
+            const formData = new FormData();
+            formData.append("fdId", wares.currentRequest.fdId);
+
+            if($("#isIncludeImg").is(":checked")) {
+                const video = document.getElementById("cameraScreen");
+                const canvas = document.getElementById('cameraCanvas');
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                const context = canvas.getContext('2d');
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    
+                const takenPic = canvas.toDataURL();
+    
+                const blob = b64toBlob(takenPic);
+                formData.append("source", blob);
+            }else{
+                formData.append("source", null);
+            }
+
+            formData.append("fiComment", $fiComment.val());
+            formData.append("fiType", "B");
+            formData.append("fiAddAmt", $("#fiAddAmt").val().numString());
+
+            comms.putNewInspect(formData);
+
+        } catch (e) {
+            console.log(e);
+        }
+    }else{
+        const formData = new FormData();
+        formData.append("fdId", wares.currentRequest.fdId);
+        formData.append("fiComment", $fiComment.val());
+        formData.append("fiType", "B");
+        formData.append("fiAddAmt", $("#fiAddAmt").val().numString());
+        formData.append("source", null);
+        comms.putNewInspect(formData);
+    }
+}
+
