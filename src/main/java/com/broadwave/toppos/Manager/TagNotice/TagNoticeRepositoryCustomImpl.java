@@ -10,12 +10,15 @@ import com.broadwave.toppos.Manager.TagNotice.TagNoticeDtos.TagNoticeViewSubDto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
 import lombok.extern.slf4j.Slf4j;
+import org.qlrm.mapper.JpaResultMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -150,6 +153,31 @@ public class TagNoticeRepositoryCustomImpl extends QuerydslRepositorySupport imp
         query.groupBy(tagNotice.htSubject,tagNotice.insert_id);
 
         return query.fetch();
+
+    }
+
+    @Override
+    public List<TagNoticeTestDto> findByGroupByNativeTest() {
+
+        EntityManager em = getEntityManager();
+
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("SELECT ht_subject as subject ,insert_id, \n");
+        sb.append("  sum(case WHEN LENGTH(ht_subject) > 5 THEN 2 ELSE 0 END )  numOfCount  \n");
+        sb.append("   FROM hb_tag_notice where insert_id = ?1  GROUP BY insert_id,ht_subject  \n");
+
+
+        Query query = em.createNativeQuery(sb.toString());
+
+
+        query.setParameter(1, "admin1");
+
+        JpaResultMapper jpaResultMapper = new JpaResultMapper();
+        List<TagNoticeTestDto> result = jpaResultMapper.list(query, TagNoticeTestDto.class);
+
+
+        return result;
 
     }
 

@@ -23,5 +23,6 @@ public interface TagNoticeRepositoryCustom {
     TagNoticeViewSubDto findByTagNoticePreView(Long htId, String frbrCode);
     TagNoticeViewSubDto findByTagNoticeNextView(Long htId, String frbrCode);
     List<TagNoticeTestDto> findByGroupByTest();
+    List<TagNoticeTestDto> findByGroupByNativeTest();
 
 }

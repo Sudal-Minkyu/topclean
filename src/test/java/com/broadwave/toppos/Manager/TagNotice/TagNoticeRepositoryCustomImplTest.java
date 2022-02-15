@@ -38,6 +38,18 @@ public class TagNoticeRepositoryCustomImplTest {
         }
     }
 
+    @Test
+    @Ignore
+    @DisplayName("QueryDSL Group by 테스트")
+    public void querydsl_native_query_Test(){
+        List<TagNoticeTestDto> results = tagNoticeRepositoryCustom.findByGroupByNativeTest();
+        for (TagNoticeTestDto v: results) {
+            System.out.println(v);
+
+
+        }
+    }
+
 
 
 

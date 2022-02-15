@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.math.BigDecimal;
+
 /**
  * @author InSeok
  * Date : 2022-02-15
@@ -17,6 +19,7 @@ import lombok.ToString;
 public class TagNoticeTestDto {
     private String subject; // 제목
     private String insert_id;
-    private Long numOfCount;
+    private BigDecimal numOfCount;
+
 
 }
