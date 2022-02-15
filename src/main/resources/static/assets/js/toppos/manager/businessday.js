@@ -133,8 +133,10 @@ gridProp = {
     showRowNumColumn : false,
     enableFilter : false,
     enableSorting : false,
-    defaultColumnWidth : 40,
-    width : 400,
+    defaultColumnWidth : 30,
+    width : 220,
+    headerHeights: 28,
+    rowHeight: 28,
 };
 
 

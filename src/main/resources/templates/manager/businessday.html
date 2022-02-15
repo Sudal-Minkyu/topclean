@@ -7,13 +7,55 @@
 <!-- 사용자 CSS 추가 -->
 <th:block layout:fragment="css">
 <style>
-    /* 작업시 잠깐 문의 부탁드려요. - SNW */
-    .cellSelected {
-        background-color: red;
+	/* 헤더 */
+	.aui-grid-default-header {
+		background-color: #fff;
+		color: #333;
+		font-size: 16px;
+	}
+
+	/* border */
+	.aui-grid,
+	.aui-grid-header-panel .aui-grid-table tr td,
+	.aui-grid-body-panel .aui-grid-table tr td {
+		border: 0 none;
+	}
+
+	/* 선택시 */
+	.aui-grid-renderer-base {
+        width: 24px;
+		height: 24px;
+		margin: 0 auto;
+		padding: 0 !important;
+		border-radius: 12px;
+		background-color: #fff;
+		font-size: 16px;
+		line-height: 24px;
+		text-align: center;
+		box-sizing: border-box;
+	}
+    .cellSelected .aui-grid-renderer-base {
+		background-color: #d9e5ff;
+		color: #0082f0;
+		font-weight: 700;
     }
     .cellNoSelected {
-        background-color: white;
+        background-color: #fff;
     }
+	.aui-grid-alternative-row-background {
+		background-color: #fff;
+	}
+
+	/* hover */
+	.aui-grid-default-header:hover {
+		background-color: #fff;
+	}
+	.aui-grid-body-panel .aui-grid-table tr td:hover {
+		background-color: #fff;
+	}
+	.aui-grid-body-panel .aui-grid-table tr td:hover .aui-grid-renderer-base {
+		background-color: #f0edff;
+	}
 </style>
 </th:block>
 
@@ -24,76 +66,85 @@
 
 <div layout:fragment="content" class="content content--padding">
 	<section class="section">
-		<div class="search-form search-form--left">
-			<ul class="search-form__list">
-				<li class="search-form__item">
-					<div class="search-form__title">대상년도</div>
-					<div class="search-form__input">
-						<input id="target_year" type="text">
-					</div>
+		<article class="article">
+			<div class="article__header">
+				<h3 class="article__heading">영업일 관리</h3>
+			</div>
+			<div class="article__body">
+				<div class="inquiry">
+                    <div class="inquiry__condition">
+                        <ul>
+                            <li>
+                                <div class="inquiry__title">대상년도</div>
+                                <div class="inquiry__input">
+                                    <input id="target_year" type="text">
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="inquiry__button">
+                        <button id="searchListBtn" class="c-button c-button--small c-button--darksolid" onclick="setGridByYear()">조회</button>
+                    </div>
+                </div>
+			</div>
+
+			<div class="businessday">
+				<div class="businessday__month">
+					<div class="calendar_label"></div>
+					<div id="grid_calendar_0" style="height: 196px;"></div>
+				</div>
+				<div class="businessday__month">
+					<div class="calendar_label"></div>
+					<div id="grid_calendar_1" style="height: 196px;"></div>
+				</div>
+				<div class="businessday__month">
+					<div class="calendar_label"></div>
+					<div id="grid_calendar_2" style="height: 196px;"></div>
+				</div>
+				<div class="businessday__month">
+					<div class="calendar_label"></div>
+					<div id="grid_calendar_3" style="height: 196px;"></div>
+				</div>
+				<div class="businessday__month">
+					<div class="calendar_label"></div>
+					<div id="grid_calendar_4" style="height: 196px;"></div>
+				</div>
+				<div class="businessday__month">
+					<div class="calendar_label"></div>
+					<div id="grid_calendar_5" style="height: 196px;"></div>
+				</div>
+				<div class="businessday__month">
+					<div class="calendar_label"></div>
+					<div id="grid_calendar_6" style="height: 196px;"></div>
+				</div>
+				<div class="businessday__month">
+					<div class="calendar_label"></div>
+					<div id="grid_calendar_7" style="height: 196px;"></div>
+				</div>
+				<div class="businessday__month">
+					<div class="calendar_label"></div>
+					<div id="grid_calendar_8" style="height: 196px;"></div>
+				</div>
+				<div class="businessday__month">
+					<div class="calendar_label"></div>
+					<div id="grid_calendar_9" style="height: 196px;"></div>
+				</div>
+				<div class="businessday__month">
+					<div class="calendar_label"></div>
+					<div id="grid_calendar_10" style="height: 196px;"></div>
+				</div>
+				<div class="businessday__month">
+					<div class="calendar_label"></div>
+					<div id="grid_calendar_11" style="height: 196px;"></div>
+				</div>
+			</div>
+
+			<ul class="article__console article__console--non-border">
+				<li>
+					<button type="button" class="c-button c-button--large c-button--solid" onclick="gridSave()">저장</button>
 				</li>
 			</ul>
-			<ul class="seach-form__console">
-				<li class="search-form__btn">
-					<button type="button" class="c-button c-button--solid" onclick="setGridByYear()">조회</button>
-				</li>
-				<li class="search-form__btn">
-					<button type="button" class="c-button" onclick="gridSave()">저장</button>
-				</li>
-			</ul>
-		</div>
-		
-		
-		<div class="businessday">
-	        <div class="businessday__month">
-	            <div class="calendar_label"></div>
-	            <div id="grid_calendar_0" style="height: 186px;"></div>
-	        </div>
-	        <div class="businessday__month">
-	            <div class="calendar_label"></div>
-	            <div id="grid_calendar_1" style="height: 186px;"></div>
-	        </div>
-	        <div class="businessday__month">
-	            <div class="calendar_label"></div>
-	            <div id="grid_calendar_2" style="height: 186px;"></div>
-	        </div>
-	        <div class="businessday__month">
-	            <div class="calendar_label"></div>
-	            <div id="grid_calendar_3" style="height: 186px;"></div>
-	        </div>
-	        <div class="businessday__month">
-	            <div class="calendar_label"></div>
-	            <div id="grid_calendar_4" style="height: 186px;"></div>
-	        </div>
-	        <div class="businessday__month">
-	            <div class="calendar_label"></div>
-	            <div id="grid_calendar_5" style="height: 186px;"></div>
-	        </div>
-	        <div class="businessday__month">
-	            <div class="calendar_label"></div>
-	            <div id="grid_calendar_6" style="height: 186px;"></div>
-	        </div>
-	        <div class="businessday__month">
-	            <div class="calendar_label"></div>
-	            <div id="grid_calendar_7" style="height: 186px;"></div>
-	        </div>
-	        <div class="businessday__month">
-	            <div class="calendar_label"></div>
-	            <div id="grid_calendar_8" style="height: 186px;"></div>
-	        </div>
-	        <div class="businessday__month">
-	            <div class="calendar_label"></div>
-	            <div id="grid_calendar_9" style="height: 186px;"></div>
-	        </div>
-	        <div class="businessday__month">
-	            <div class="calendar_label"></div>
-	            <div id="grid_calendar_10" style="height: 186px;"></div>
-	        </div>
-	        <div class="businessday__month">
-	            <div class="calendar_label"></div>
-	            <div id="grid_calendar_11" style="height: 186px;"></div>
-	        </div>
-	    </div>
+		</article>
 	</section>
 	
 	
