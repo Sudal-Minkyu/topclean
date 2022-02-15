@@ -173,6 +173,7 @@ public class TagNoticeRepositoryCustomImpl extends QuerydslRepositorySupport imp
 
         query.setParameter(1, "admin1");
 
+
         JpaResultMapper jpaResultMapper = new JpaResultMapper();
         List<TagNoticeTestDto> result = jpaResultMapper.list(query, TagNoticeTestDto.class);
 
