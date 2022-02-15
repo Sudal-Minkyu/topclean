@@ -1,12 +1,14 @@
 package com.broadwave.toppos.Manager.TagNotice;
 
 import com.broadwave.toppos.Manager.TagNotice.TagNoticeDtos.TagNoticeListDto;
+import com.broadwave.toppos.Manager.TagNotice.TagNoticeDtos.TagNoticeTestDto;
 import com.broadwave.toppos.Manager.TagNotice.TagNoticeDtos.TagNoticeViewDto;
 import com.broadwave.toppos.Manager.TagNotice.TagNoticeDtos.TagNoticeViewSubDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * @author Minkyu
@@ -20,5 +22,6 @@ public interface TagNoticeRepositoryCustom {
     TagNoticeViewDto findByTagNoticeView(Long htId, String frbrCode);
     TagNoticeViewSubDto findByTagNoticePreView(Long htId, String frbrCode);
     TagNoticeViewSubDto findByTagNoticeNextView(Long htId, String frbrCode);
+    List<TagNoticeTestDto> findByGroupByTest();
 
 }

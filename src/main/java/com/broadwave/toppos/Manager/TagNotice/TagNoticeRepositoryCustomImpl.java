@@ -1,8 +1,10 @@
 package com.broadwave.toppos.Manager.TagNotice;
 
+import com.broadwave.toppos.Account.AccountListDto;
 import com.broadwave.toppos.Account.QAccount;
 import com.broadwave.toppos.Manager.TagNotice.Comment.QTagNoticeComment;
 import com.broadwave.toppos.Manager.TagNotice.TagNoticeDtos.TagNoticeListDto;
+import com.broadwave.toppos.Manager.TagNotice.TagNoticeDtos.TagNoticeTestDto;
 import com.broadwave.toppos.Manager.TagNotice.TagNoticeDtos.TagNoticeViewDto;
 import com.broadwave.toppos.Manager.TagNotice.TagNoticeDtos.TagNoticeViewSubDto;
 import com.querydsl.core.types.Projections;
@@ -131,6 +133,25 @@ public class TagNoticeRepositoryCustomImpl extends QuerydslRepositorySupport imp
         return query.fetchOne();
     }
 
+    @Override
+    public List<TagNoticeTestDto> findByGroupByTest() {
+
+
+        QTagNotice tagNotice  = QTagNotice.tagNotice;
+
+
+        JPQLQuery<TagNoticeTestDto> query = from(tagNotice)
+                .select(Projections.constructor(TagNoticeTestDto.class,
+                        tagNotice.htSubject,
+                        tagNotice.insert_id,
+                        tagNotice.count()
+                ));
+
+        query.groupBy(tagNotice.htSubject,tagNotice.insert_id);
+
+        return query.fetch();
+
+    }
 
 
 }
