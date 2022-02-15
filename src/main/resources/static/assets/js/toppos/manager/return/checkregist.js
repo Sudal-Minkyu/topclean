@@ -120,10 +120,8 @@ const comms = {
 
     getInspectionList(condition) {
         dv.chk(condition, dtos.send.branchInspectionList, "등록된 검품조회 조건");
-
         CommonUI.ajax(urls.getInspectionList, "GET", condition, function(res) {
             const data = res.sendData.gridListData;
-            console.log(data);
             dv.chk(data, dtos.receive.branchInspectionList, "등록된 검품의 조회");
             grids.f.clearData(1);
             grids.f.setData(1, data);
@@ -315,7 +313,6 @@ const grids = {
                 rowHeight : 48,
                 headerHeight : 48,
             };
-
 
         },
 
