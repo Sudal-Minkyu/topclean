@@ -11,6 +11,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.qlrm.mapper.JpaResultMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -32,6 +33,9 @@ import java.util.Objects;
 @Slf4j
 @Repository
 public class TagNoticeRepositoryCustomImpl extends QuerydslRepositorySupport implements TagNoticeRepositoryCustom {
+
+    @Autowired
+    JpaResultMapper jpaResultMapper;
 
     public TagNoticeRepositoryCustomImpl() {
         super(TagNotice.class);
@@ -174,7 +178,6 @@ public class TagNoticeRepositoryCustomImpl extends QuerydslRepositorySupport imp
         query.setParameter(1, "admin1");
 
 
-        JpaResultMapper jpaResultMapper = new JpaResultMapper();
         List<TagNoticeTestDto> result = jpaResultMapper.list(query, TagNoticeTestDto.class);
 
 

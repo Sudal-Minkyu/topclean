@@ -1,6 +1,7 @@
 package com.broadwave.toppos.configs;
 
 import org.modelmapper.ModelMapper;
+import org.qlrm.mapper.JpaResultMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
@@ -32,6 +33,11 @@ public class WebConfig implements WebMvcConfigurer {
     @Bean
     public ModelMapper modelMapper() {
         return new ModelMapper();
+    }
+
+    @Bean
+    public JpaResultMapper jpaResultMapper(){
+        return new JpaResultMapper();
     }
 
 }
