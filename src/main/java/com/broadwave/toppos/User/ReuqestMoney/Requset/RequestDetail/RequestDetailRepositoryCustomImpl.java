@@ -4,6 +4,8 @@ import com.broadwave.toppos.Head.Franchise.QFranchise;
 import com.broadwave.toppos.Head.Item.Group.A.QItemGroup;
 import com.broadwave.toppos.Head.Item.Group.B.QItemGroupS;
 import com.broadwave.toppos.Head.Item.Group.C.QItem;
+import com.broadwave.toppos.Manager.TagNotice.TagNotice;
+import com.broadwave.toppos.Manager.TagNotice.TagNoticeDtos.TagNoticeTestDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.QRequest;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.QInspeot;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.manager.*;
@@ -12,9 +14,13 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.JPQLQuery;
 import lombok.extern.slf4j.Slf4j;
+import org.qlrm.mapper.JpaResultMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -27,6 +33,9 @@ import java.util.List;
 @Slf4j
 @Repository
 public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport implements RequestDetailRepositoryCustom {
+
+    @Autowired
+    JpaResultMapper jpaResultMapper;
 
     public RequestDetailRepositoryCustomImpl() {
         super(RequestDetailRepository.class);
@@ -1229,6 +1238,47 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         return query.fetch();
     }
 
+    // 입고현황 리스트 호출API
+    @Override
+    public List<RequestDetailBranchStoreCurrentListDto> findByRequestDetailBranchStoreCurrentList(String brCode, Long franchiseId, String filterFromDt, String filterToDt) {
+
+        EntityManager em = getEntityManager();
+
+        StringBuilder sb = new StringBuilder();
+
+//        sb.append("SELECT ht_subject as subject ,insert_id, \n");
+//        sb.append("  sum(case WHEN LENGTH(ht_subject) > 5 THEN 2 ELSE 0 END )  numOfCount  \n");
+//        sb.append("   FROM hb_tag_notice where insert_id = ?1  GROUP BY insert_id,ht_subject  \n");
+
+        sb.append("SELECT a.fr_code, c.fr_name, b.fd_s2_dt, \n");
+        sb.append("  COUNT(*) input_cnt,  \n");
+        sb.append("  sum(case when IFNULL(b.fd_s4_dt,'') = '' THEN 0 ELSE 1 END) output_cnt,  \n");
+        sb.append("  (COUNT(*) -sum(case when IFNULL(b.fd_s4_dt,'') = '' THEN 0 ELSE 1 END)) remain_cnt,  \n");
+        sb.append("     sum(b.fd_tot_amt) tot_amt ");
+        sb.append("         FROM fs_request a \n");
+        sb.append("             INNER JOIN fs_request_dtl b ON a.fr_id = b.fr_id  \n");
+        sb.append("             INNER JOIN bs_franchise c ON a.fr_code = c.fr_code  \n");
+        sb.append("             WHERE a.br_code = ?1 AND a.fr_confirm_yn ='Y' AND b.fd_cancel ='N'  \n");
+        if(franchiseId != null){
+            sb.append("             WHERE c.fr_id = ?2  \n");
+        }
+        sb.append("             AND b.fd_s2_dt >= ?3  \n");
+        sb.append("             AND b.fd_s2_dt <= ?4  \n");
+        sb.append("             GROUP BY a.fr_code,c.fr_name,b.fd_s2_dt  \n");
+        sb.append("             ORDER BY c.fr_name,b.fd_s2_dt  \n");
+
+        log.info("sb : "+sb);
+        Query query = em.createNativeQuery(sb.toString());
+
+
+        query.setParameter(1, brCode);
+        query.setParameter(2, franchiseId);
+        query.setParameter(3, filterFromDt);
+        query.setParameter(4, filterToDt);
+
+        return jpaResultMapper.list(query, RequestDetailBranchStoreCurrentListDto.class);
+
+    }
 
 }
 
