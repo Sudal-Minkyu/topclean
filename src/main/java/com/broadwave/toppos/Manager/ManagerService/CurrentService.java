@@ -1,10 +1,8 @@
 package com.broadwave.toppos.Manager.ManagerService;
 
 import com.broadwave.toppos.Jwt.token.TokenProvider;
-import com.broadwave.toppos.Manager.TagNotice.Comment.TagNoticeCommentRepository;
-import com.broadwave.toppos.Manager.TagNotice.Comment.TagNoticeCommentRepositoryCustom;
-import com.broadwave.toppos.Manager.TagNotice.TagNoticeRepositoryCustom;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.manager.RequestDetailTagSearchListDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.manager.RequestDetailBranchStoreCurrentListDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepositoryCustom;
 import com.broadwave.toppos.common.AjaxResponse;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
@@ -23,17 +21,12 @@ public class CurrentService {
 
     private final TokenProvider tokenProvider;
 
-    private final TagNoticeRepositoryCustom tagNoticeRepositoryCustom;
-    private final TagNoticeCommentRepository tagNoticeCommentRepository;
-    private final TagNoticeCommentRepositoryCustom tagNoticeCommentRepositoryCustom;
+    private final RequestDetailRepositoryCustom requestDetailRepositoryCustom;
 
     @Autowired
-    public CurrentService(TokenProvider tokenProvider, TagNoticeRepositoryCustom tagNoticeRepositoryCustom,
-                            TagNoticeCommentRepository tagNoticeCommentRepository, TagNoticeCommentRepositoryCustom tagNoticeCommentRepositoryCustom){
+    public CurrentService(TokenProvider tokenProvider, RequestDetailRepositoryCustom requestDetailRepositoryCustom){
         this.tokenProvider = tokenProvider;
-        this.tagNoticeRepositoryCustom = tagNoticeRepositoryCustom;
-        this.tagNoticeCommentRepository = tagNoticeCommentRepository;
-        this.tagNoticeCommentRepositoryCustom = tagNoticeCommentRepositoryCustom;
+        this.requestDetailRepositoryCustom = requestDetailRepositoryCustom;
     }
 
     //  지사 - 입고현황 리스트 호출API
@@ -49,8 +42,8 @@ public class CurrentService {
         log.info("현재 접속한 아이디 : "+login_id);
         log.info("현재 접속한 지사 코드 : "+brCode);
 
-//        List<RequestDetailTagSearchListDto> requestDetailTagSearchListDtos =  requestDetailRepositoryCustom.findByRequestDetailTagSearchList(brCode, franchiseId, tagNo);
-//        data.put("franchiseList",requestDetailTagSearchListDtos);
+        List<RequestDetailBranchStoreCurrentListDto> requestDetailBranchStoreCurrentListDtos =  requestDetailRepositoryCustom.findByRequestDetailBranchStoreCurrentList(brCode, franchiseId, filterFromDt, filterToDt);
+        data.put("franchiseList",requestDetailBranchStoreCurrentListDtos);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }

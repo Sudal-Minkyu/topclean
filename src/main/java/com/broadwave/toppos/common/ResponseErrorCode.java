@@ -35,6 +35,7 @@ public enum ResponseErrorCode {
     TP026("TP026", "권한이 존재하지 않습니다."),
     TP027("TP027", "새로고침이후 다시 시도해주세요."),
     TP028("TP028", "대상이 아닙니다."),
+    TP029("TP029", "상품을 선택해주세요."),
     ;
 
     private String code;

@@ -19,10 +19,7 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Minkyu
@@ -158,7 +155,7 @@ public class ReceiptStateService {
             }
             case "S7": {
                 log.info("가맹점강제입고 처리");
-                InhouceForce inhouceForce;
+                Optional<InhouceForce> inhouceForce;
                 List<InhouceForce> inhouceForceList = new ArrayList<>();
                 List<RequestDetail> requestDetailList = requestDetailRepository.findByRequestDetailS7List(fdIdList);
 //            log.info("requestDetailList : "+requestDetailList);
@@ -175,18 +172,26 @@ public class ReceiptStateService {
                     requestDetail.setModify_id(login_id);
                     requestDetail.setModify_date(LocalDateTime.now());
 
-                    inhouceForce = inhouseRepository.findByFdId(requestDetail.getId());
+                    inhouceForce = inhouseRepository.findById(requestDetail.getId());
                     // 가맹 입고처리 insert
-                    if (inhouceForce == null) {
-                        inhouceForce = new InhouceForce();
-                        inhouceForce.setFdId(requestDetail.getId());
-                        inhouceForce.setFrCode(frCode);
-                        inhouceForce.setBrCode(frbrCode);
+                    if(inhouceForce.isPresent()){
+                        inhouceForce.get().setFdId(requestDetail.getId());
+                        inhouceForce.get().setFrCode(frCode);
+                        inhouceForce.get().setBrCode(frbrCode);
+                        inhouceForce.get().setFiDt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
+                        inhouceForce.get().setFiTime(LocalDateTime.now());
+                        inhouceForce.get().setInsert_id(login_id);
+                        inhouceForceList.add(inhouceForce.get());
+                    }else{
+                        InhouceForce newInhouceForce = new InhouceForce();
+                        newInhouceForce.setFdId(requestDetail.getId());
+                        newInhouceForce.setFrCode(frCode);
+                        newInhouceForce.setBrCode(frbrCode);
+                        newInhouceForce.setFiDt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
+                        newInhouceForce.setFiTime(LocalDateTime.now());
+                        newInhouceForce.setInsert_id(login_id);
+                        inhouceForceList.add(newInhouceForce);
                     }
-                    inhouceForce.setFiDt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
-                    inhouceForce.setFiTime(LocalDateTime.now());
-                    inhouceForce.setInsert_id(login_id);
-                    inhouceForceList.add(inhouceForce);
                 }
                 requestDetailRepository.saveAll(requestDetailList);
                 inhouseRepository.saveAll(inhouceForceList);
