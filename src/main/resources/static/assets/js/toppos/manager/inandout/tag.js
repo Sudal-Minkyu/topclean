@@ -132,7 +132,7 @@ const grids = {
                     formatString: "yyyy-mm-dd",
                 }, {
                     dataField: "fdS4Dt",
-                    headerText: "입고일자",
+                    headerText: "출고일자",
                     width: 80,
                     dataType: "date",
                     formatString: "yyyy-mm-dd",

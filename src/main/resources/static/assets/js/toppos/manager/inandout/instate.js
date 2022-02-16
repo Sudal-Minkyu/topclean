@@ -5,21 +5,66 @@
 * */
 const dtos = {
     send: {
-        조회기능: {
+        조회기능: { // 미출고 현황을 제외하고는 동일한 양식
             filterFromDt: "s",
             filterToDt: "s",
-            frId: "n", // 가맹점 Id
+            frId: "n", // 가맹점 Id, 전체선택일 경우에는 0을 보내는게 어떨까 합니다.
+        },
+
+        디테일리스트받아오기: {
+            franchiseId: "nr",
+            date: "sr", // 각 현황 페이지마다 디테일 조회 조건이 되는 dt가 담긴다. 이쪽에서 보내는 이름은 date로 통일했으면 함.
         },
     },
 
     receive: {
         managerBelongList: { // 가맹점 선택 셀렉트박스에 띄울 가맹점의 리스트
-            frId: "nr", // 가맹점 Id
+            frId: "nr", // 가맹점 id
             frName: "s",
             frTagNo: "s",
         },
         
         조회기능: {
+            frId: "s", // 가맹점 id
+            fdS2Dt: "s", // 입고일
+            입고건수: "n",
+            출고건수: "n",
+            체류건수: "n",
+            접수총액: "n",
+        },
+
+        디테일리스트받아오기: { //해당 항목은 모든 현황페이지에서 쓸 수 있게, 모든 페이지에 맨 아래의 세개 항목까지 항상 포함하는게 좋을듯 합니다.
+            frRefType: "s", // 구분
+            fdS2Type: "", // 입고타입 (확실치않음)
+            fdS2Dt: "s", // 입고일
+            fdS4Dt: "s", // 출고일
+            bcName: "s", // 고객명
+            fdTag: "s", // 택번호
+
+            fdColor: "s",
+            bgName: "s",
+            bsName: "s",
+            biName: "s",
+            fdPriceGrade: "s",
+            fdRetryYn: "s",
+            fdPressed: "n",
+            fdAdd1Amt: "n",
+            fdAdd1Remark: "s",
+            fdRepairAmt: "n",
+            fdRepairRemark: "s",
+            fdWhitening: "n",
+            fdPollution: "n",
+            fdWaterRepellent: "n",
+            fdStarch: "n",
+            fdUrgentYn: "s",
+
+            fdTotAmt: "n",
+            fdState: "s",
+            fdRemark: "s",
+
+            fdS7Dt: "s", // 강제출고일
+            fdS3Dt: "s", // 반송일
+            fdEstimateDt: "s", //인도예정일
         },
     }
 };
@@ -179,7 +224,7 @@ const grids = {
         basic() {
             /* 0번그리드 내의 셀 클릭시 이벤트 */
             AUIGrid.bind(grids.s.id[0], "cellClick", function (e) {
-                console.log(e.item); // 이밴트 콜백으로 불러와진 객체의, 클릭한 대상 row 키(파라메터)와 값들을 보여준다.
+                showDetail(e.item);
             });
         }
     }
@@ -263,4 +308,11 @@ function searchOrder() {
     }
 
     comms.getMainGridList(searchCondition);
+}
+
+function showDetail(item) {
+    const condition = {
+        franchiseId: item.frId,
+        date: "", // 각 조회 조건에 해당하는 Dt
+    }
 }
