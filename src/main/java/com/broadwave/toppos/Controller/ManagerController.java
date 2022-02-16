@@ -94,10 +94,21 @@ public class ManagerController {
         return "manager/unpaid/notrelease";
     }
 
+    // 설정
     // 영업일관리 페이지
     @RequestMapping("businessday")
     public String businessday(){
-        return "manager/businessday";
+        return "manager/setting/businessday";
+    }
+    // Tag분실 게시판 - 리스트
+    @RequestMapping("tagboard")
+    public String tagboard(){
+        return "manager/setting/board/tagboard";
+    }
+    // Tag분실 게시판 - 보기
+    @RequestMapping("tagview")
+    public String tagview(){
+        return "manager/setting/board/view";
     }
 
 }

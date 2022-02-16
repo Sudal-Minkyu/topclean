@@ -6,27 +6,17 @@
 
 <!-- 사용자 CSS 추가 -->
 <th:block layout:fragment="css">
-
+	<script src="/assets/js/toppos/manager/inandout/tag.js"></script>
 </th:block>
 
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
-
-	<script type="text/javascript">
-
-		$(function() {
-			$('.gnb').on('mouseenter', function () {
-				$('.gnb__layer').stop().slideDown(200);
-				$('.gnb__depth2').stop().slideDown(200);
-			});
-
-			$('.header').on('mouseleave', function(){
-				$('.gnb__layer').stop().slideUp(200);
-				$('.gnb__depth2').stop().slideUp(200);
-			});
-		});
-
-	</script>
+    <style>
+        .color_and_name {
+            text-align: left;
+            margin-left: 10px;
+        }
+    </style>
 </th:block>
 
 <div layout:fragment="content" class="content">
@@ -43,17 +33,17 @@
                                 <div class="inquiry__title">가맹점</div>
                                 <div class="inquiry__input">
                                     <div class="c-select">
-                                        <select>
-                                            <option>서정마을점</option>
+                                        <select id="frList">
+                                            <option value="" data-tagno="">가맹점 선택</option>
                                         </select>
                                     </div>
                                 </div>
                             </li>
                             <li>
-                                <div class="inquiry__title">택번호(앞 3자리)</div>
+                                <div id="frTagNo" class="inquiry__title">택번호(앞 3자리)</div>
                                 <div class="inquiry__input">
                                     <div class="inquiry__input-tag">
-                                        <input type="text" />
+                                        <input id="foreTag" type="text" style="color: black;" readonly/>
                                     </div>
                                 </div>
                             </li>
@@ -61,14 +51,14 @@
                                 <div class="inquiry__title">택번호(뒤 4자리)</div>
                                 <div class="inquiry__input">
                                     <div class="inquiry__input-tag">
-                                        <input type="text" />
+                                        <input id="aftTag" type="text" maxlength="4" />
                                     </div>
                                 </div>
                             </li>
                         </ul>
                     </div>
                     <div class="inquiry__button">
-                        <button class="c-button c-button--small c-button--darksolid">조회</button>
+                        <button id="searchListBtn" class="c-button c-button--small c-button--darksolid">조회</button>
                     </div>
                 </div>
             </div>
@@ -76,8 +66,8 @@
 
         <div class="article">
             <div class="article__body">
-                <div style="width: 100%; height: 530px; border: 1px solid #bdbdbd;">
-                    grid area
+                <div style="height: 600px; margin-top: 20px; border: 1px solid #ddd">
+                    <div id="grid_main" style="height: 600px;"></div>
                 </div>
             </div>
         </div>
