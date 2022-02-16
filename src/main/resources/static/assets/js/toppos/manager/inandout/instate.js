@@ -26,6 +26,7 @@ const dtos = {
         
         조회기능: {
             frId: "s", // 가맹점 id
+            frName: "s",
             fdS2Dt: "s", // 입고일
             입고건수: "n",
             출고건수: "n",
@@ -92,16 +93,22 @@ const comms = {
     },
 
     getMainList(searchCondition) {
-        dv.chk(searchCondition, dtos.send.branchReceiptBranchInCancelList, "메인 그리드 검색 조건 보내기");
+        dv.chk(searchCondition, dtos.send.조회기능, "프랜차이즈 그리드 검색 조건 보내기");
         console.log(searchCondition);
         CommonUI.ajax(urls.getMainGridList, "GET", searchCondition, function (res) {
             const data = res.sendData.gridListData;
             grids.f.setData(0, data);
+            $("#exportXlsx").hide();
         });
     },
 
     getDetailList(searchCondition) {
-
+        dv.chk(searchCondition, dtos.send.디테일리스트받아오기, "디테일 그리드 검색 조건 보내기");
+        CommonUI.ajax(urls.getDetailList, "GET", searchCondition, function (res) {
+            const data = res.sendData.gridListData;
+            grids.f.setData(1, data);
+            $("#exportXlsx").show();
+        });
     },
 };
 
@@ -128,11 +135,37 @@ const grids = {
             /* 0번 그리드의 레이아웃 */
             grids.s.columnLayout[0] = [
                 {
-                    dataField: "",
-                    headerText: "",
+                    dataField: "frName",
+                    headerText: "가맹점",
+                    width: 80,
+                    dataType: "date",
+                    formatString: "yyyy-mm-dd",
+                }, {
+                    dataField: "fdS2Dt",
+                    headerText: "입고일자",
+                    width: 80,
+                    dataType: "date",
+                    formatString: "yyyy-mm-dd",
                 }, {
                     dataField: "",
-                    headerText: "",
+                    headerText: "입고건수",
+                    dataType: "numeric",
+                    autoThousandSeparator: "true",
+                }, {
+                    dataField: "",
+                    headerText: "출고건수",
+                    dataType: "numeric",
+                    autoThousandSeparator: "true",
+                }, {
+                    dataField: "",
+                    headerText: "체류건수",
+                    dataType: "numeric",
+                    autoThousandSeparator: "true",
+                }, {
+                    dataField: "",
+                    headerText: "접수총액",
+                    dataType: "numeric",
+                    autoThousandSeparator: "true",
                 },
             ];
 
@@ -156,11 +189,75 @@ const grids = {
 
             grids.s.columnLayout[1] = [
                 {
-                    dataField: "",
-                    headerText: "",
+                    dataField: "frRefType",
+                    headerText: "구분",
+                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                        return CommonData.name.frRefType[value];
+                    },
+                }, {
+                    dataField: "fdS2Type",
+                    headerText: "입고타입",
+                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                        return value;
+                    },
+                }, {
+                    dataField: "fdS2Dt",
+                    headerText: "입고일자",
+                    width: 80,
+                    dataType: "date",
+                    formatString: "yyyy-mm-dd",
+                }, {
+                    dataField: "fd42Dt",
+                    headerText: "출고일자",
+                    width: 80,
+                    dataType: "date",
+                    formatString: "yyyy-mm-dd",
+                }, {
+                    dataField: "bcName",
+                    headerText: "고객명",
+                }, {
+                    dataField: "fdTag",
+                    headerText: "택번호",
+                    width: 70,
+                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
+                        return CommonData.formatTagNo(value);
+                    },
                 }, {
                     dataField: "",
-                    headerText: "",
+                    headerText: "상품명",
+                    width: 200,
+                    style: "color_and_name",
+                    renderer : {
+                        type : "TemplateRenderer",
+                    },
+                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                        const colorSquare =
+                            `<span class="colorSquare" style="background-color: ${CommonData.name.fdColorCode[item.fdColor]}; vertical-align: middle;"></span>`;
+                        const sumName = CommonUI.toppos.makeSimpleProductName(item);
+                        return colorSquare + ` <span style="vertical-align: middle;">` + sumName + `</span>`;
+                    },
+                }, {
+                    dataField: "fdTotAmt",
+                    headerText: "접수금액",
+                    width: 70,
+                    dataType: "numeric",
+                    autoThousandSeparator: "true",
+                }, {
+                    dataField: "fdState",
+                    headerText: "현재상태",
+                    width: 70,
+                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                        return CommonData.name.fdState[value];
+                    },
+                }, {
+                    dataField: "fdUrgentYn",
+                    headerText: "급세탁",
+                }, {
+                    dataField: "fdRetryYn",
+                    headerText: "재세탁",
+                }, {
+                    dataField: "fdRemark",
+                    headerText: "특이사항",
                 },
             ];
 
@@ -214,7 +311,7 @@ const grids = {
                 return;
             }
             AUIGrid.exportToXlsx(grids.s.id[1], {
-                fileName : "임시파일명",
+                fileName : `${wares.title}_${wares.currentDetail.frName}_${wares.currentDetail.date}`,
                 progressBar : true,
             });
         }
@@ -254,7 +351,12 @@ const trigs = {
 
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
 const wares = {
-    
+    title: "지사 입고 현황", // 엑셀 다운로드 파일명 생성에 쓰인다.
+    currentDetail: { // 디테일 그리드를 뿌리기 위해 선택된 가맹점과 일자의 정보. 엑셀 파일명 생성에 쓰인다.
+        franchiseId: 0,
+        frName: "",
+        date: "",
+    },
 }
 
 $(function() { // 페이지가 로드되고 나서 실행
@@ -311,8 +413,15 @@ function searchOrder() {
 }
 
 function showDetail(item) {
-    const condition = {
+    const searchCondition = {
         franchiseId: item.frId,
         date: "", // 각 조회 조건에 해당하는 Dt
     }
+
+    /* 선택된 가맹점과 날짜 항목에 대한 기억 */
+    wares.currentDetail.franchiseId = searchCondition.franchiseId;
+    wares.currentDetail.date = searchCondition.date;
+    wares.currentDetail.frName = item.frName;
+
+    comms.getDetailList(searchCondition);
 }

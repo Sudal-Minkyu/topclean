@@ -12,12 +12,13 @@
             margin-left: 10px;
         }
     </style>
-
 </th:block>
 
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
 	<script src="/assets/js/toppos/manager/inandout/instate.js"></script>
+    <!-- 엑셀 다운로드 기능을 사용하기 위함 -->
+	<script src="/assets/js/filesaver/FileSaver.min.js"></script>
 </th:block>
 
 <div layout:fragment="content" class="content">
@@ -72,7 +73,9 @@
                 <div style="height: 600px; margin-top: 20px; border: 1px solid #ddd">
                     <div id="grid_detail" style="height: 600px;"></div>
                 </div>
-                <button type="button" id="exportXlsx" class="c-button c-button--green c-button--icon c-button--icon-excel">엑셀 다운로드</button>
+                <button type="button" id="exportXlsx" 
+                    class="c-button c-button--green c-button--icon c-button--icon-excel" style="display: none;">
+                    엑셀 다운로드</button>
             </div>
         </div>
     </section>
