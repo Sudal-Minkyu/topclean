@@ -112,7 +112,7 @@ const grids = {
                     dataField: "frRefType",
                     headerText: "구분",
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
-                        return wares.frRefTypeName[value];
+                        return CommonData.name.frRefType[value];
                     },
                 }, {
                     dataField: "bcName",
@@ -141,7 +141,7 @@ const grids = {
                     headerText: "택번호",
                     width: 70,
                     labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
-                        return value.substr(0, 3) + "-" + value.substr(-4);
+                        return CommonData.formatTagNo(value);
                     },
                 }, {
                     dataField: "",

@@ -11,13 +11,14 @@ const dtos = {
             frId: "n", // 가맹점 Id
         },
     },
-    
+
     receive: {
         managerBelongList: { // 가맹점 선택 셀렉트박스에 띄울 가맹점의 리스트
             frId: "nr", // 가맹점 Id
             frName: "s",
             frTagNo: "s",
         },
+        
         조회기능: {
         },
     }

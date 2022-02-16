@@ -364,7 +364,7 @@ gridColumnLayout[0] = [
         headerText: "택번호",
         width: 80,
         labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
-            return value.substr(0, 3) + "-" + value.substr(-4);
+            return CommonData.formatTagNo(value);
         },
         style: "aui-grid-tagno-column",
     }, {
@@ -573,17 +573,11 @@ gridProp[2] = {
     headerHeight : 48,
 };
 
-const fpTypeName = {
-    "01" : "현금",
-    "02" : "카드",
-    "03" : "적립금",
-}
-
 gridColumnLayout[3] = [
     {
         dataField: "fpType",
         labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
-            return item.fpCatIssuername ? item.fpCatIssuername : fpTypeName[value];
+            return item.fpCatIssuername ? item.fpCatIssuername : CommonData.name.fpType[value];
         },
     }, {
         dataField: "fpAmt",
