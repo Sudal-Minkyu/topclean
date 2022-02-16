@@ -121,19 +121,19 @@ const grids = {
                 }, {
                     dataField: "frYyyymmdd",
                     headerText: "접수일자",
-                    width: 70,
+                    width: 80,
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
                 }, {
                     dataField: "fdS2Dt",
                     headerText: "입고일자",
-                    width: 70,
+                    width: 80,
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
                 }, {
                     dataField: "fdS4Dt",
                     headerText: "입고일자",
-                    width: 70,
+                    width: 80,
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
                 }, {
@@ -146,6 +146,7 @@ const grids = {
                 }, {
                     dataField: "",
                     headerText: "상품명",
+                    width: 200,
                     style: "color_and_name",
                     renderer : {
                         type : "TemplateRenderer",
@@ -179,28 +180,31 @@ const grids = {
                 }, {
                     dataField: "fdUrgentYn",
                     headerText: "급세탁",
+                    width: 50,
                 }, {
                     dataField: "fdRetryYn",
                     headerText: "재세탁",
+                    width: 50,
                 }, {
                     dataField: "fdRemark",
                     headerText: "특이사항",
+                    width: 200,
                 }, {
                     dataField: "fdS3Dt",
                     headerText: "반송일자",
-                    width: 70,
+                    width: 80,
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
                 }, {
                     dataField: "fdS7Dt",
                     headerText: "강제출고일",
-                    width: 70,
+                    width: 80,
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
                 }, {
                     dataField: "fdS8Dt",
                     headerText: "강제입고일",
-                    width: 70,
+                    width: 80,
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
                 },
