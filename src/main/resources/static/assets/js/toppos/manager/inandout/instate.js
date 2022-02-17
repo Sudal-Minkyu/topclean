@@ -5,15 +5,16 @@
 * */
 const dtos = {
     send: {
-        조회기능: { // 미출고 현황을 제외하고는 동일한 양식
+        branchStoreCurrentList: { // 좌측 가맹점 그리드의 조회시
             filterFromDt: "s",
             filterToDt: "s",
-            frId: "n", // 가맹점 Id, 전체선택일 경우에는 0을 보내는게 어떨까 합니다.
+            franchiseId: "n",
+            type: "s",
         },
 
         디테일리스트받아오기: {
-            franchiseId: "nr",
-            date: "sr", // 각 현황 페이지마다 디테일 조회 조건이 되는 dt가 담긴다. 이쪽에서 보내는 이름은 date로 통일했으면 함.
+            frCode: "nr",
+            fdS2Dt: "sr",
         },
     },
 
@@ -24,14 +25,14 @@ const dtos = {
             frTagNo: "s",
         },
         
-        조회기능: {
-            frId: "s", // 가맹점 id
+        branchStoreCurrentList: {
+            frCode: "s", // 가맹점 id
             frName: "s",
             fdS2Dt: "s", // 입고일
-            입고건수: "n",
-            출고건수: "n",
-            체류건수: "n",
-            접수총액: "n",
+            input_cnt: "n",
+            output_cnt: "n",
+            remain_cnt: "n",
+            tot_amt: "n",
         },
 
         디테일리스트받아오기: { //해당 항목은 모든 현황페이지에서 쓸 수 있게, 모든 페이지에 맨 아래의 세개 항목까지 항상 포함하는게 좋을듯 합니다.
@@ -73,7 +74,7 @@ const dtos = {
 /* 통신에 사용되는 url들 기입 */
 const urls = {
     getFrList: "/api/manager/branchBelongList",
-    getMainList: "",
+    getMainList: "/api/manager/branchStoreCurrentList",
     getDetailList: "",
 }
 
