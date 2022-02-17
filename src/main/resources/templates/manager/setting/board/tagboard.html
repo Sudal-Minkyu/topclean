@@ -16,7 +16,7 @@
     
 </th:block>
 
-<div layout:fragment="content" class="content">
+<div layout:fragment="content" class="content content--board">
     <div class="board">
         <div class="board__header">
             <h3 class="board__title">TAG 분실 게시판</h3>
@@ -40,8 +40,11 @@
             </div>
         </div>
         <div class="board__body">
-             <div id="grid_list" style="height: 676px;"></div>
-             <div id="grid_paging" class="aui-grid-paging-panel my-grid-paging-panel"></div>
+            <div id="grid_list" style="height: 570px;"></div>
+            <div class="board__console">
+                <a href="/manager/boardwrite" class="c-button c-button--solid">글작성</a>
+            </div>
+            <div id="grid_paging" class="aui-grid-paging-panel my-grid-paging-panel"></div>
         </div>
     </div>
 </div>

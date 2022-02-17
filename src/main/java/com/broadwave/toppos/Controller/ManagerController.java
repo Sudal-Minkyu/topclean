@@ -100,6 +100,7 @@ public class ManagerController {
     public String businessday(){
         return "manager/setting/businessday";
     }
+    // 게시판
     // Tag분실 게시판 - 리스트
     @RequestMapping("tagboard")
     public String tagboard(){
@@ -110,5 +111,9 @@ public class ManagerController {
     public String tagview(){
         return "manager/setting/board/view";
     }
-
+    // Tag분실 게시판 - 작성
+    @RequestMapping("boardwrite")
+    public String boardwrite(){
+        return "manager/setting/board/boardwrite";
+    }
 }
