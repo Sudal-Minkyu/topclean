@@ -83,17 +83,18 @@ const comms = {
             dv.chk(data, dtos.receive.managerBelongList, "지점에 속한 가맹점 받아오기");
             const $frList = $("#frList");
             data.forEach(obj => {
-                const htmlText = `<option value="${obj.frId}" data-tagno="${obj.frTagNo}">${obj.frName}</option>`
+                const htmlText = `<option value="${obj.frId}">${obj.frName}</option>`
                 $frList.append(htmlText);
             });
         });
     },
 
     getMainList(searchCondition) {
-        dv.chk(searchCondition, dtos.send.조회기능, "프랜차이즈 그리드 검색 조건 보내기");
+        dv.chk(searchCondition, dtos.send.branchStoreCurrentList, "프랜차이즈 그리드 검색 조건 보내기");
         console.log(searchCondition);
-        CommonUI.ajax(urls.getMainGridList, "GET", searchCondition, function (res) {
+        CommonUI.ajax(urls.getMainList, "GET", searchCondition, function (res) {
             const data = res.sendData.gridListData;
+            console.log(res);
             grids.f.setData(0, data);
             $("#exportXlsx").hide();
         });
@@ -342,10 +343,6 @@ const grids = {
 const trigs = {
     s: { // 이벤트 설정
         basic() {
-            $("#frList").on("change", function () {
-                $("#foreTag").val($("#frList option:selected").attr("data-tagno"));
-            });
-
             $("#searchListBtn").on("click", function () {
                 searchOrder();
             });
@@ -413,14 +410,10 @@ function searchOrder() {
         filterFromDt: $("#filterFromDt").val(),
         filterToDt: $("#filterToDt").val(),
         franchiseId: parseInt(frId),
+        type: "1", // 1 지사입고현황, 2 지사출고현황
     };
 
-    if(searchCondition.tagNo.length !== 0 && searchCondition.tagNo.length !==4) {
-        alertCaution("택번호는 완전히 입력하거나,<br>입력하지 말아주세요.(전체검색)", 1);
-        return false;
-    }
-
-    comms.getMainGridList(searchCondition);
+    comms.getMainList(searchCondition);
 }
 
 function showDetail(item) {
