@@ -69,10 +69,8 @@
                                     </div>
                                 </div>
                             </li>
-                        </ul>
-                        <ul>
                             <li>
-                                <div class="inquiry__title">출고일자</div>
+                                <div class="inquiry__title">입고일자</div>
                                 <div class="inquiry__input">
                                     <div class="c-period">
                                         <!-- 시작일 -->
@@ -94,8 +92,8 @@
 
         <div class="article">
             <div class="article__body">
-                <div style="height: 600px; margin-top: 20px; border: 1px solid #ddd">
-                    <div id="grid_main" style="height: 600px;"></div>
+                <div style="height: 570px; margin-top: 20px; border: 1px solid #ddd">
+                    <div id="grid_main" style="height: 570px;"></div>
                 </div>
             </div>
         </div>
@@ -130,6 +128,20 @@
 			</div>
 			
 			<ul class="pop__console">
+                <li class="pop__console-left">
+					<div class="pop__console-cost">
+						<div class="pop__console-title">현재 접수금액</div>
+						<div class="pop__console-input">
+							<div class="c-text"><input type="text" readonly="readonly" id="fdRequestAmtInConfirm" /></div>
+						</div>
+					</div>
+					<div class="pop__console-cost">
+						<div class="pop__console-title">추가 비용발생</div>
+						<div class="pop__console-input">
+							<div class="c-text"><input type="text" id="fiAddAmtInConfirm" readonly="readonly" /></div>
+						</div>
+					</div>
+				</li>
 				<li><button type="button" id="closeCheckPop" class="c-button">닫기</button></li>
 			</ul>
 		</div>

@@ -222,6 +222,7 @@ const grids = {
                 editable : false,
                 selectionMode : "singleRow",
                 noDataMessage : "출력할 데이터가 없습니다.",
+                showAutoNoDataMessage: false,
                 enableColumnResize : false,
                 showRowAllCheckBox: true,
                 showRowCheckColumn: true,
@@ -290,9 +291,12 @@ const trigs = {
 
             $('#franchiseIn').on('click', function() {
                 const checkedItems = grids.f.getCheckedItems(0);
-                const saveDataset = makeSaveDataset(checkedItems);
+                wares.saveDataset = makeSaveDataset(checkedItems);
                 if (checkedItems.length) {
-                    comms.changeClosedList(saveDataset);
+                    alertCheck("선택된 상품을 가맹점입고 하시겠습니까?");
+                    $("#checkDelSuccessBtn").on("click", function () {
+                        comms.changeClosedList(wares.saveDataset);
+                    });
                 } else {
                     alertCaution("입고 할 리스트를 선택해주세요", 1);
                 }
@@ -315,6 +319,7 @@ const wares = {
         C00: "#D4D9E1", C01: "#D4D9E1", C02: "#3F3C32", C03: "#D7D7D7", C04: "#F54E50", C05: "#FB874B",
         C06: "#F1CE32", C07: "#349A50", C08: "#55CAB7", C09: "#398BE0", C10: "#DE9ACE", C11: "#FF9FB0",
     },
+    saveDataset: [],
 }
 
 $(function() { // 페이지가 로드되고 나서 실행

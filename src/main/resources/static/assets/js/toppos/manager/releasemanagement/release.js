@@ -75,15 +75,17 @@ const comms = {
             });
         })
     },
+    
     getReceiptList(searchCondition) {
         dv.chk(searchCondition, dtos.send.branchReceiptBranchInList, "출고 품목 조회 조건 보내기");
         CommonUI.ajax(urls.getReceiptList, "GET", searchCondition, function (res) {
-            wares.receiptList = res.sendData.gridListData;
+            wares.receiptList = CommonUI.toppos.killNullFromArray(res.sendData.gridListData);
             $("#frName").html($("#frList option:selected").html());
             $("#numOfList").html(wares.receiptList.length);
             $("#listStatBar").show();
         });
     },
+
     sendOutReceipt(sendList) {
         console.log(sendList);
         wares.sl = sendList;
@@ -124,27 +126,28 @@ const grids = {
                 {
                     dataField: "frName",
                     headerText: "가맹점명",
+                    style: "grid_textalign_left",
                 }, {
                     dataField: "",
-                    headerText: "지점입고",
-                    width: 90,
+                    headerText: "지점입고일",
+                    width: 100,
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
                 }, {
                     dataField: "fdUrgentYn",
-                    headerText: "급",
-                    width: 35,
+                    headerText: "급세탁",
+                    width: 70,
                 }, {
                     dataField: "fdTag",
                     headerText: "택번호",
-                    width: 70,
+                    width: 90,
                     labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
                         return CommonData.formatTagNo(value);
                     },
                 }, {
                     dataField: "",
                     headerText: "상품명",
-                    style: "color_and_name",
+                    style: "grid_textalign_left",
                     renderer : {
                         type : "TemplateRenderer",
                     },
@@ -157,30 +160,32 @@ const grids = {
                 }, {
                     dataField: "",
                     headerText: "처리내역",
-                    width: 90,
+                    style: "grid_textalign_left",
+                    width: 130,
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
                         return CommonUI.toppos.processName(item);
                     }
                 }, {
                     dataField: "bcName",
                     headerText: "고객",
-                    width: 70,
+                    width: 100,
                 }, {
                     dataField: "fdEstimateDt",
                     headerText: "출고예정일",
-                    width: 70,
+                    width: 100,
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
                 }, {
                     dataField: "fdTotAmt",
                     headerText: "접수금액",
-                    width: 70,
+                    style: "grid_textalign_right",
+                    width: 90,
                     dataType: "numeric",
                     autoThousandSeparator: "true",
                 }, {
                     dataField: "fdState",
                     headerText: "현재상태",
-                    width: 70,
+                    width: 90,
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
                         return CommonData.name.fdState[value];
                     },
@@ -193,14 +198,14 @@ const grids = {
             grids.s.prop[0] = {
                 editable : false,
                 selectionMode : "singleRow",
-                noDataMessage : "출력할 데이터가 없습니다.",
+                noDataMessage : "존재하는 데이터가 없습니다.",
                 showAutoNoDataMessage: false,
-                enableColumnResize : false,
+                enableColumnResize : true,
                 showRowAllCheckBox: true,
                 showRowCheckColumn: true,
                 showRowNumColumn : false,
                 showStateColumn : false,
-                enableFilter : false,
+                enableFilter : true,
                 rowHeight : 48,
                 headerHeight : 48,
             };
@@ -211,21 +216,24 @@ const grids = {
                     headerText: "가맹점",
                 }, {
                     dataField: "qty",
+                    width: 100,
                     headerText: "수량",
+                    dataType: "numeric",
+                    autoThousandSeparator: "true",
                 },
             ];
     
             grids.s.prop[1] = {
                 editable : false,
                 selectionMode : "singleRow",
-                noDataMessage : "출력할 데이터가 없습니다.",
+                noDataMessage : "존재하는 데이터가 없습니다.",
                 showAutoNoDataMessage: false,
-                enableColumnResize : false,
+                enableColumnResize : true,
                 showRowAllCheckBox: false,
                 showRowCheckColumn: false,
                 showRowNumColumn : false,
                 showStateColumn : false,
-                enableFilter : false,
+                enableFilter : true,
                 rowHeight : 48,
                 headerHeight : 48,
             };
@@ -297,7 +305,16 @@ const trigs = {
             });
 
             $("#sendOutBtn").on("click", function () {
-                sendOut();
+                wares.checkedItems = grids.f.getCheckedItems(0);
+                if(wares.checkedItems.length) {
+                    alertCheck("선택된 상품을 출고처리 하시겠습니까?");
+                    $("#checkDelSuccessBtn").on("click", function () {
+                        sendOut();
+                    });
+                } else {
+                    alertCaution("출고처리할 상품을 선택해 주세요.", 1);
+                }
+                
             });
 
             $("#addAll").on("click", function () {
@@ -323,6 +340,7 @@ const trigs = {
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
 const wares = {
     receiptList: "",
+    checkedItems: [],
 }
 
 $(function() { // 페이지가 로드되고 나서 실행
@@ -396,7 +414,6 @@ function inputTag() {
         if(obj.fdTag === tagNo) {
             grids.f.addRow(0, obj);
             noExist = false;
-            $("#inputTagNo").val("");
         }
     });
 
@@ -406,15 +423,14 @@ function inputTag() {
 }
 
 function sendOut() {
-    const checkedItems = grids.f.getCheckedItems(0);
 
-    if(checkedItems.length) {
+    if(wares.checkedItems.length) {
         let fdIdList = [];
         let codeIndex = [];
         fdIdList.push([0]);
         codeIndex.push("dummy");
 
-        checkedItems.forEach(obj => {
+        wares.checkedItems.forEach(obj => {
             const i = codeIndex.indexOf(obj.item.frCode);
             if(i + 1) {
                 fdIdList[i].push(obj.item.fdId);

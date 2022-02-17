@@ -78,10 +78,8 @@ const comms = {
     getMainGridList(searchCondition) {
         dv.chk(searchCondition, dtos.send.branchReceiptForceReleaseList, "메인 그리드 검색 조건 보내기");
         CommonUI.ajax(urls.getMainGridList, "GET", searchCondition, function (res) {
-            const data = res.sendData.gridListData;
-            console.log(res);
+            const data = CommonUI.toppos.killNullFromArray(res.sendData.gridListData);
             grids.f.setData(0, data);
-            $("#aftTag").val("");
         });
     },
 
@@ -120,33 +118,35 @@ const grids = {
                 {
                     dataField: "frName",
                     headerText: "가맹점명",
+                    style: "grid_textalign_left",
                 }, {
                     dataField: "bcName",
                     headerText: "고객",
-                    width: 70,
+                    style: "grid_textalign_left",
+                    width: 100,
                 }, {
                     dataField: "insertDt",
                     headerText: "상품접수",
-                    width: 70,
+                    width: 100,
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
                 }, {
                     dataField: "fdS2Time",
                     headerText: "지점입고",
-                    width: 70,
+                    width: 100,
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
                 }, {
                     dataField: "fdTag",
                     headerText: "택번호",
-                    width: 70,
+                    width: 90,
                     labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
                         return CommonData.formatTagNo(value);
                     },
                 }, {
                     dataField: "",
                     headerText: "상품명",
-                    style: "color_and_name",
+                    style: "grid_textalign_left",
                     renderer : {
                         type : "TemplateRenderer",
                     },
@@ -159,27 +159,29 @@ const grids = {
                 }, {
                     dataField: "",
                     headerText: "처리내역",
-                    width: 90,
+                    style: "grid_textalign_left",
+                    width: 130,
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
                         return CommonUI.toppos.processName(item);
                     }
                 }, {
                     dataField: "fdTotAmt",
                     headerText: "접수금액",
-                    width: 70,
+                    style: "grid_textalign_right",
+                    width: 90,
                     dataType: "numeric",
                     autoThousandSeparator: "true",
                 }, {
                     dataField: "fdState",
                     headerText: "현재상태",
-                    width: 70,
+                    width: 90,
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
                         return CommonData.name.fdState[value];
                     },
                 }, {
                     dataField: "fdPreState",
                     headerText: "이전상태",
-                    width: 70,
+                    width: 90,
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
                         return CommonData.name.fdState[value];
                     },
@@ -192,14 +194,14 @@ const grids = {
             grids.s.prop[0] = {
                 editable : false,
                 selectionMode : "singleRow",
-                noDataMessage : "출력할 데이터가 없습니다.",
-                showAutoNoDataMessage: false,
-                enableColumnResize : false,
+                noDataMessage : "존재하는 데이터가 없습니다.",
+                showAutoNoDataMessage: true,
+                enableColumnResize : true,
                 showRowAllCheckBox: true,
                 showRowCheckColumn: true,
                 showRowNumColumn : false,
                 showStateColumn : false,
-                enableFilter : false,
+                enableFilter : true,
                 rowHeight : 48,
                 headerHeight : 48,
             };
@@ -338,7 +340,7 @@ function searchOrder() {
 function askExcute() {
     wares.checkedItems = grids.f.getCheckedItems(0);
     if(wares.checkedItems.length) {
-        alertCheck("선택된 상품을 처리 하시겠습니까?");
+        alertCheck("선택된 상품을 강제출고처리 하시겠습니까?");
         $("#checkDelSuccessBtn").on("click", function () {
             executeCheckedReceipts();
         });

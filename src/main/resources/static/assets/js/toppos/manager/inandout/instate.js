@@ -35,13 +35,13 @@ const dtos = {
             tot_amt: "n",
         },
 
-        디테일리스트받아오기: { //해당 항목은 모든 현황페이지에서 쓸 수 있게, 모든 페이지에 맨 아래의 세개 항목까지 항상 포함하는게 좋을듯 합니다.
-            frRefType: "s", // 구분
-            fdS2Type: "", // 입고타입 (확실치않음)
-            fdS2Dt: "s", // 입고일
-            fdS4Dt: "s", // 출고일
-            bcName: "s", // 고객명
-            fdTag: "s", // 택번호
+        디테일리스트받아오기: {
+            frRefType: "s",
+            fdS2Type: "",
+            fdS2Dt: "s",
+            fdS4Dt: "s",
+            bcName: "s",
+            fdTag: "s",
 
             fdColor: "s",
             bgName: "s",
@@ -63,10 +63,6 @@ const dtos = {
             fdTotAmt: "n",
             fdState: "s",
             fdRemark: "s",
-
-            fdS7Dt: "s", // 강제출고일
-            fdS3Dt: "s", // 반송일
-            fdEstimateDt: "s", //인도예정일
         },
     }
 };
@@ -87,17 +83,18 @@ const comms = {
             dv.chk(data, dtos.receive.managerBelongList, "지점에 속한 가맹점 받아오기");
             const $frList = $("#frList");
             data.forEach(obj => {
-                const htmlText = `<option value="${obj.frId}" data-tagno="${obj.frTagNo}">${obj.frName}</option>`
+                const htmlText = `<option value="${obj.frId}">${obj.frName}</option>`
                 $frList.append(htmlText);
             });
         });
     },
 
     getMainList(searchCondition) {
-        dv.chk(searchCondition, dtos.send.조회기능, "프랜차이즈 그리드 검색 조건 보내기");
+        dv.chk(searchCondition, dtos.send.branchStoreCurrentList, "프랜차이즈 그리드 검색 조건 보내기");
         console.log(searchCondition);
-        CommonUI.ajax(urls.getMainGridList, "GET", searchCondition, function (res) {
+        CommonUI.ajax(urls.getMainList, "GET", searchCondition, function (res) {
             const data = res.sendData.gridListData;
+            console.log(res);
             grids.f.setData(0, data);
             $("#exportXlsx").hide();
         });
@@ -138,33 +135,38 @@ const grids = {
                 {
                     dataField: "frName",
                     headerText: "가맹점",
-                    width: 80,
+                    style: "grid_textalign_left",
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
                 }, {
                     dataField: "fdS2Dt",
                     headerText: "입고일자",
-                    width: 80,
+                    width: 100,
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
                 }, {
                     dataField: "",
-                    headerText: "입고건수",
+                    headerText: "입고<br>건수",
+                    width: 50,
                     dataType: "numeric",
                     autoThousandSeparator: "true",
                 }, {
                     dataField: "",
-                    headerText: "출고건수",
+                    headerText: "출고<br>건수",
+                    width: 50,
                     dataType: "numeric",
                     autoThousandSeparator: "true",
                 }, {
                     dataField: "",
-                    headerText: "체류건수",
+                    headerText: "체류<br>건수",
+                    width: 50,
                     dataType: "numeric",
                     autoThousandSeparator: "true",
                 }, {
                     dataField: "",
                     headerText: "접수총액",
+                    style: "grid_textalign_right",
+                    width: 90,
                     dataType: "numeric",
                     autoThousandSeparator: "true",
                 },
@@ -176,14 +178,14 @@ const grids = {
             grids.s.prop[0] = {
                 editable : false,
                 selectionMode : "singleRow",
-                noDataMessage : "출력할 데이터가 없습니다.",
-                showAutoNoDataMessage: false,
-                enableColumnResize : false,
+                noDataMessage : "존재하는 데이터가 없습니다.",
+                showAutoNoDataMessage: true,
+                enableColumnResize : true,
                 showRowAllCheckBox: false,
                 showRowCheckColumn: false,
                 showRowNumColumn : false,
                 showStateColumn : false,
-                enableFilter : false,
+                enableFilter : true,
                 rowHeight : 48,
                 headerHeight : 48,
             };
@@ -192,42 +194,46 @@ const grids = {
                 {
                     dataField: "frRefType",
                     headerText: "구분",
+                    width: 50,
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
                         return CommonData.name.frRefType[value];
                     },
                 }, {
                     dataField: "fdS2Type",
-                    headerText: "입고타입",
+                    headerText: "입고<br>타입",
+                    width: 60,
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
                         return value;
                     },
                 }, {
                     dataField: "fdS2Dt",
                     headerText: "입고일자",
-                    width: 80,
+                    width: 100,
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
                 }, {
                     dataField: "fd42Dt",
                     headerText: "출고일자",
-                    width: 80,
+                    width: 100,
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
                 }, {
                     dataField: "bcName",
                     headerText: "고객명",
+                    style: "grid_textalign_left",
+                    width: 100,
                 }, {
                     dataField: "fdTag",
                     headerText: "택번호",
-                    width: 70,
+                    width: 90,
                     labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
                         return CommonData.formatTagNo(value);
                     },
                 }, {
                     dataField: "",
                     headerText: "상품명",
+                    style: "grid_textalign_left",
                     width: 200,
-                    style: "color_and_name",
                     renderer : {
                         type : "TemplateRenderer",
                     },
@@ -240,39 +246,44 @@ const grids = {
                 }, {
                     dataField: "fdTotAmt",
                     headerText: "접수금액",
-                    width: 70,
+                    style: "grid_textalign_right",
+                    width: 90,
                     dataType: "numeric",
                     autoThousandSeparator: "true",
                 }, {
                     dataField: "fdState",
                     headerText: "현재상태",
-                    width: 70,
+                    width: 90,
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
                         return CommonData.name.fdState[value];
                     },
                 }, {
                     dataField: "fdUrgentYn",
                     headerText: "급세탁",
+                    width: 70,
                 }, {
                     dataField: "fdRetryYn",
                     headerText: "재세탁",
+                    width: 70,
                 }, {
                     dataField: "fdRemark",
                     headerText: "특이사항",
+                    style: "grid_textalign_left",
+                    width: 200,
                 },
             ];
 
             grids.s.prop[1] = {
                 editable : false,
                 selectionMode : "singleRow",
-                noDataMessage : "출력할 데이터가 없습니다.",
+                noDataMessage : "존재하는 데이터가 없습니다.",
                 showAutoNoDataMessage: false,
-                enableColumnResize : false,
+                enableColumnResize : true,
                 showRowAllCheckBox: false,
                 showRowCheckColumn: false,
                 showRowNumColumn : false,
                 showStateColumn : false,
-                enableFilter : false,
+                enableFilter : true,
                 rowHeight : 48,
                 headerHeight : 48,
             };
@@ -332,10 +343,6 @@ const grids = {
 const trigs = {
     s: { // 이벤트 설정
         basic() {
-            $("#frList").on("change", function () {
-                $("#foreTag").val($("#frList option:selected").attr("data-tagno"));
-            });
-
             $("#searchListBtn").on("click", function () {
                 searchOrder();
             });
@@ -402,21 +409,17 @@ function searchOrder() {
     const searchCondition = {
         filterFromDt: $("#filterFromDt").val(),
         filterToDt: $("#filterToDt").val(),
-        frId: parseInt(frId),
+        franchiseId: parseInt(frId),
+        type: "1", // 1 지사입고현황, 2 지사출고현황
     };
 
-    if(searchCondition.tagNo.length !== 0 && searchCondition.tagNo.length !==4) {
-        alertCaution("택번호는 완전히 입력하거나,<br>입력하지 말아주세요.(전체검색)", 1);
-        return false;
-    }
-
-    comms.getMainGridList(searchCondition);
+    comms.getMainList(searchCondition);
 }
 
 function showDetail(item) {
     const searchCondition = {
         franchiseId: item.frId,
-        date: "", // 각 조회 조건에 해당하는 Dt
+        fdS2Dt: item.fdS2Dt,
     }
 
     /* 선택된 가맹점과 날짜 항목에 대한 기억 */

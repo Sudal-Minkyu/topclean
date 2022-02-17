@@ -111,10 +111,9 @@ const comms = {
     getMainGridList(searchCondition) {
         dv.chk(searchCondition, dtos.send.branchReceiptReturnList, "메인 그리드 검색 조건 보내기");
         CommonUI.ajax(urls.getMainGridList, "GET", searchCondition, function (res) {
-            const data = res.sendData.gridListData;
+            const data = CommonUI.toppos.killNullFromArray(res.sendData.gridListData);
             console.log(data);
             grids.f.setData(0, data);
-            $("#aftTag").val("");
         });
     },
 
@@ -186,29 +185,33 @@ const grids = {
                 {
                     dataField: "frName",
                     headerText: "가맹점",
+                    style: "grid_textalign_left",
                 }, {
                     dataField: "bcName",
                     headerText: "고객",
-                    width: 70,
+                    style: "grid_textalign_left",
+                    width: 100,
                 }, {
                     dataField: "insertDt",
                     headerText: "접수일시",
+                    width: 150,
                     dataType: "date",
                 }, {
                     dataField: "fdS2Time",
                     headerText: "지점입고일시",
+                    width: 150,
                     dataType: "date",
                 }, {
                     dataField: "fdTag",
                     headerText: "택번호",
-                    width: 70,
+                    width: 90,
                     labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
                         return CommonData.formatTagNo(value);
                     },
                 }, {
                     dataField: "",
                     headerText: "상품명",
-                    style: "color_and_name",
+                    style: "grid_textalign_left",
                     renderer : {
                         type : "TemplateRenderer",
                     },
@@ -221,27 +224,29 @@ const grids = {
                 }, {
                     dataField: "",
                     headerText: "처리내역",
-                    width: 90,
+                    style: "grid_textalign_left",
+                    width: 130,
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
                         return CommonUI.toppos.processName(item);
                     }
                 }, {
                     dataField: "fdTotAmt",
                     headerText: "접수금액",
-                    width: 70,
+                    style: "grid_textalign_right",
+                    width: 90,
                     dataType: "numeric",
                     autoThousandSeparator: "true",
                 }, {
                     dataField: "fdState",
                     headerText: "현재상태",
-                    width: 70,
+                    width: 90,
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
                         return CommonData.name.fdState[value];
                     },
                 }, {
                     dataField: "fdPreState",
                     headerText: "이전상태",
-                    width: 70,
+                    width: 90,
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
                         return CommonData.name.fdState[value];
                     },
@@ -267,14 +272,14 @@ const grids = {
             grids.s.prop[0] = {
                 editable : false,
                 selectionMode : "singleRow",
-                noDataMessage : "출력할 데이터가 없습니다.",
-                showAutoNoDataMessage: false,
-                enableColumnResize : false,
+                noDataMessage : "존재하는 데이터가 없습니다.",
+                showAutoNoDataMessage: true,
+                enableColumnResize : true,
                 showRowAllCheckBox: false,
                 showRowCheckColumn: false,
                 showRowNumColumn : false,
                 showStateColumn : false,
-                enableFilter : false,
+                enableFilter : true,
                 rowHeight : 48,
                 headerHeight : 48,
             };
@@ -288,6 +293,7 @@ const grids = {
                 }, {
                     dataField: "fiComment",
                     headerText: "검품내용",
+                    style: "grid_textalign_left",
                 }, {
                     dataField: "fiSendMsgYn",
                     headerText: "메세지",
@@ -302,14 +308,14 @@ const grids = {
             grids.s.prop[1] = {
                 editable : false,
                 selectionMode : "singleRow",
-                noDataMessage : "출력할 데이터가 없습니다.",
-                showAutoNoDataMessage: false,
-                enableColumnResize : false,
+                noDataMessage : "존재하는 데이터가 없습니다.",
+                showAutoNoDataMessage: true,
+                enableColumnResize : true,
                 showRowAllCheckBox: true,
                 showRowCheckColumn: true,
                 showRowNumColumn : false,
                 showStateColumn : false,
-                enableFilter : false,
+                enableFilter : true,
                 rowHeight : 48,
                 headerHeight : 48,
             };
