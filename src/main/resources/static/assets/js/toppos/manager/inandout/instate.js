@@ -134,6 +134,7 @@ const grids = {
                 {
                     dataField: "frName",
                     headerText: "가맹점",
+                    style: "grid_textalign_left",
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
                 }, {
@@ -163,6 +164,7 @@ const grids = {
                 }, {
                     dataField: "",
                     headerText: "접수총액",
+                    style: "grid_textalign_right",
                     width: 90,
                     dataType: "numeric",
                     autoThousandSeparator: "true",
@@ -175,14 +177,14 @@ const grids = {
             grids.s.prop[0] = {
                 editable : false,
                 selectionMode : "singleRow",
-                noDataMessage : "출력할 데이터가 없습니다.",
-                showAutoNoDataMessage: false,
-                enableColumnResize : false,
+                noDataMessage : "존재하는 데이터가 없습니다.",
+                showAutoNoDataMessage: true,
+                enableColumnResize : true,
                 showRowAllCheckBox: false,
                 showRowCheckColumn: false,
                 showRowNumColumn : false,
                 showStateColumn : false,
-                enableFilter : false,
+                enableFilter : true,
                 rowHeight : 48,
                 headerHeight : 48,
             };
@@ -217,6 +219,7 @@ const grids = {
                 }, {
                     dataField: "bcName",
                     headerText: "고객명",
+                    style: "grid_textalign_left",
                     width: 100,
                 }, {
                     dataField: "fdTag",
@@ -228,8 +231,8 @@ const grids = {
                 }, {
                     dataField: "",
                     headerText: "상품명",
+                    style: "grid_textalign_left",
                     width: 200,
-                    style: "color_and_name",
                     renderer : {
                         type : "TemplateRenderer",
                     },
@@ -242,6 +245,7 @@ const grids = {
                 }, {
                     dataField: "fdTotAmt",
                     headerText: "접수금액",
+                    style: "grid_textalign_right",
                     width: 90,
                     dataType: "numeric",
                     autoThousandSeparator: "true",
@@ -263,6 +267,7 @@ const grids = {
                 }, {
                     dataField: "fdRemark",
                     headerText: "특이사항",
+                    style: "grid_textalign_left",
                     width: 200,
                 },
             ];
@@ -270,14 +275,14 @@ const grids = {
             grids.s.prop[1] = {
                 editable : false,
                 selectionMode : "singleRow",
-                noDataMessage : "출력할 데이터가 없습니다.",
+                noDataMessage : "존재하는 데이터가 없습니다.",
                 showAutoNoDataMessage: false,
-                enableColumnResize : false,
+                enableColumnResize : true,
                 showRowAllCheckBox: false,
                 showRowCheckColumn: false,
                 showRowNumColumn : false,
                 showStateColumn : false,
-                enableFilter : false,
+                enableFilter : true,
                 rowHeight : 48,
                 headerHeight : 48,
             };

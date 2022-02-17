@@ -107,6 +107,7 @@ const grids = {
                 {
                     dataField: "frName",
                     headerText: "가맹점명",
+                    style: "grid_textalign_left",
                     width: 130,
                 }, {
                     dataField: "frRefType",
@@ -117,6 +118,7 @@ const grids = {
                 }, {
                     dataField: "bcName",
                     headerText: "고객",
+                    style: "grid_textalign_left",
                     width: 100,
                 }, {
                     dataField: "frYyyymmdd",
@@ -146,8 +148,8 @@ const grids = {
                 }, {
                     dataField: "",
                     headerText: "상품명",
+                    style: "grid_textalign_left",
                     width: 200,
-                    style: "color_and_name",
                     renderer : {
                         type : "TemplateRenderer",
                     },
@@ -160,6 +162,7 @@ const grids = {
                 }, {
                     dataField: "",
                     headerText: "처리내역",
+                    style: "grid_textalign_left",
                     width: 130,
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
                         return CommonUI.toppos.processName(item);
@@ -167,6 +170,7 @@ const grids = {
                 }, {
                     dataField: "fdTotAmt",
                     headerText: "접수금액",
+                    style: "grid_textalign_right",
                     width: 90,
                     dataType: "numeric",
                     autoThousandSeparator: "true",
@@ -188,6 +192,7 @@ const grids = {
                 }, {
                     dataField: "fdRemark",
                     headerText: "특이사항",
+                    style: "grid_textalign_left",
                     width: 200,
                 }, {
                     dataField: "fdS3Dt",
@@ -216,14 +221,14 @@ const grids = {
             grids.s.prop[0] = {
                 editable : false,
                 selectionMode : "singleRow",
-                noDataMessage : "출력할 데이터가 없습니다.",
-                showAutoNoDataMessage: false,
-                enableColumnResize : false,
+                noDataMessage : "존재하는 데이터가 없습니다.",
+                showAutoNoDataMessage: true,
+                enableColumnResize : true,
                 showRowAllCheckBox: false,
                 showRowCheckColumn: false,
                 showRowNumColumn : false,
                 showStateColumn : false,
-                enableFilter : false,
+                enableFilter : true,
                 rowHeight : 48,
                 headerHeight : 48,
             };

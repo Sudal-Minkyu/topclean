@@ -119,9 +119,11 @@ const grids = {
                 {
                     dataField: "frName",
                     headerText: "가맹점명",
+                    style: "grid_textalign_left",
                 }, {
                     dataField: "bcName",
                     headerText: "고객",
+                    style: "grid_textalign_left",
                     width: 100,
                 }, {
                     dataField: "insertDt",
@@ -149,7 +151,7 @@ const grids = {
                 }, {
                     dataField: "",
                     headerText: "상품명",
-                    style: "color_and_name",
+                    style: "grid_textalign_left",
                     renderer : {
                         type : "TemplateRenderer",
                     },
@@ -162,6 +164,7 @@ const grids = {
                 }, {
                     dataField: "",
                     headerText: "처리내역",
+                    style: "grid_textalign_left",
                     width: 130,
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
                         let result = "";
@@ -173,6 +176,7 @@ const grids = {
                 }, {
                     dataField: "fdTotAmt",
                     headerText: "접수금액",
+                    style: "grid_textalign_right",
                     width: 90,
                     dataType: "numeric",
                     autoThousandSeparator: "true",
@@ -207,14 +211,14 @@ const grids = {
             grids.s.prop[0] = {
                 editable : false,
                 selectionMode : "singleRow",
-                noDataMessage : "출력할 데이터가 없습니다.",
-                showAutoNoDataMessage: false,
-                enableColumnResize : false,
+                noDataMessage : "존재하는 데이터가 없습니다.",
+                showAutoNoDataMessage: true,
+                enableColumnResize : true,
                 showRowAllCheckBox: true,
                 showRowCheckColumn: true,
                 showRowNumColumn : false,
                 showStateColumn : false,
-                enableFilter : false,
+                enableFilter : true,
                 rowHeight : 48,
                 headerHeight : 48,
             };
