@@ -26,7 +26,7 @@ public class RequestDetailRepositoryCustomImplTest {
     @Test
     @Ignore
     public void findByRequestDetailBranchStoreCurrentList_Test(){
-        List<RequestDetailBranchStoreCurrentListDto> results = requestDetailRepositoryCustom.findByRequestDetailBranchStoreCurrentList("",null,null,null, null);
+        List<RequestDetailBranchStoreCurrentListDto> results = requestDetailRepositoryCustom.findByRequestDetailBranchStoreCurrentList("br",2L,"20220201","20220216", "1");
 
     }
 
