@@ -43,7 +43,7 @@ public interface RequestDetailRepositoryCustom {
     List<RequestDetailTagSearchListDto> findByRequestDetailTagSearchList(String brCode, Long frId, String tagNo); // 택번호조회
 
 
-    List<RequestDetailBranchStoreCurrentListDto> findByRequestDetailBranchStoreCurrentList(String brCode, Long franchiseId, String filterFromDt, String filterToDt); // 입고현황 리스트 호출API
+    List<RequestDetailBranchStoreCurrentListDto> findByRequestDetailBranchStoreCurrentList(String brCode, Long franchiseId, String filterFromDt, String filterToDt, String type); // 입고현황 리스트 호출API
 
 
 }

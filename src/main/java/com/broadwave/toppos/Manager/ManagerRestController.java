@@ -295,11 +295,11 @@ public class ManagerRestController {
     }
 
 //@@@@@@@@@@@@@@@@@@@@@ 입출고현황 관련 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    //  지사 입고현황 - 리스트 호출API
+    //  지사 입고현황, 체류세탁물현황 - 리스트 호출API
     @GetMapping("branchStoreCurrentList")
     public ResponseEntity<Map<String,Object>> branchStoreCurrentList(@RequestParam("franchiseId")Long franchiseId, @RequestParam("filterFromDt")String filterFromDt,
-                                                                     @RequestParam("filterToDt")String filterToDt, HttpServletRequest request){
-        return currentService.branchStoreCurrentList(franchiseId, filterFromDt, filterToDt, request);
+                                                                     @RequestParam("filterToDt")String filterToDt, @RequestParam("type")String type, HttpServletRequest request){
+        return currentService.branchStoreCurrentList(franchiseId, filterFromDt, filterToDt, type, request);
     }
 
 

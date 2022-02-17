@@ -30,7 +30,7 @@ public class CurrentService {
     }
 
     //  지사 - 입고현황 리스트 호출API
-    public ResponseEntity<Map<String, Object>> branchStoreCurrentList(Long franchiseId, String filterFromDt, String filterToDt, HttpServletRequest request) {
+    public ResponseEntity<Map<String, Object>> branchStoreCurrentList(Long franchiseId, String filterFromDt, String filterToDt, String type, HttpServletRequest request) {
         log.info("branchStoreCurrentList 호출");
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
@@ -42,8 +42,8 @@ public class CurrentService {
         log.info("현재 접속한 아이디 : "+login_id);
         log.info("현재 접속한 지사 코드 : "+brCode);
 
-        List<RequestDetailBranchStoreCurrentListDto> requestDetailBranchStoreCurrentListDtos =  requestDetailRepositoryCustom.findByRequestDetailBranchStoreCurrentList(brCode, franchiseId, filterFromDt, filterToDt);
-        data.put("franchiseList",requestDetailBranchStoreCurrentListDtos);
+        List<RequestDetailBranchStoreCurrentListDto> requestDetailBranchStoreCurrentListDtos =  requestDetailRepositoryCustom.findByRequestDetailBranchStoreCurrentList(brCode, franchiseId, filterFromDt, filterToDt, type);
+        data.put("gridListData",requestDetailBranchStoreCurrentListDtos);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
