@@ -1342,3 +1342,6 @@ textarea {
 	text-align: left;
 	margin-left: 10px;
 }
+.aui-grid .aui-grid-table, .aui-grid .aui-grid-table tr, .aui-grid .aui-grid-table td {
+    font-size: 14px;
+}
