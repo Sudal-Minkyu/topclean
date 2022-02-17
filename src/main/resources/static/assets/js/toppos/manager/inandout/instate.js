@@ -35,13 +35,13 @@ const dtos = {
             tot_amt: "n",
         },
 
-        디테일리스트받아오기: { //해당 항목은 모든 현황페이지에서 쓸 수 있게, 모든 페이지에 맨 아래의 세개 항목까지 항상 포함하는게 좋을듯 합니다.
-            frRefType: "s", // 구분
-            fdS2Type: "", // 입고타입 (확실치않음)
-            fdS2Dt: "s", // 입고일
-            fdS4Dt: "s", // 출고일
-            bcName: "s", // 고객명
-            fdTag: "s", // 택번호
+        디테일리스트받아오기: {
+            frRefType: "s",
+            fdS2Type: "",
+            fdS2Dt: "s",
+            fdS4Dt: "s",
+            bcName: "s",
+            fdTag: "s",
 
             fdColor: "s",
             bgName: "s",
@@ -63,10 +63,6 @@ const dtos = {
             fdTotAmt: "n",
             fdState: "s",
             fdRemark: "s",
-
-            fdS7Dt: "s", // 강제출고일
-            fdS3Dt: "s", // 반송일
-            fdEstimateDt: "s", //인도예정일
         },
     }
 };
@@ -138,33 +134,36 @@ const grids = {
                 {
                     dataField: "frName",
                     headerText: "가맹점",
-                    width: 80,
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
                 }, {
                     dataField: "fdS2Dt",
                     headerText: "입고일자",
-                    width: 80,
+                    width: 100,
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
                 }, {
                     dataField: "",
-                    headerText: "입고건수",
+                    headerText: "입고<br>건수",
+                    width: 50,
                     dataType: "numeric",
                     autoThousandSeparator: "true",
                 }, {
                     dataField: "",
-                    headerText: "출고건수",
+                    headerText: "출고<br>건수",
+                    width: 50,
                     dataType: "numeric",
                     autoThousandSeparator: "true",
                 }, {
                     dataField: "",
-                    headerText: "체류건수",
+                    headerText: "체류<br>건수",
+                    width: 50,
                     dataType: "numeric",
                     autoThousandSeparator: "true",
                 }, {
                     dataField: "",
                     headerText: "접수총액",
+                    width: 90,
                     dataType: "numeric",
                     autoThousandSeparator: "true",
                 },
@@ -192,34 +191,37 @@ const grids = {
                 {
                     dataField: "frRefType",
                     headerText: "구분",
+                    width: 50,
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
                         return CommonData.name.frRefType[value];
                     },
                 }, {
                     dataField: "fdS2Type",
-                    headerText: "입고타입",
+                    headerText: "입고<br>타입",
+                    width: 60,
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
                         return value;
                     },
                 }, {
                     dataField: "fdS2Dt",
                     headerText: "입고일자",
-                    width: 80,
+                    width: 100,
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
                 }, {
                     dataField: "fd42Dt",
                     headerText: "출고일자",
-                    width: 80,
+                    width: 100,
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
                 }, {
                     dataField: "bcName",
                     headerText: "고객명",
+                    width: 100,
                 }, {
                     dataField: "fdTag",
                     headerText: "택번호",
-                    width: 70,
+                    width: 90,
                     labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
                         return CommonData.formatTagNo(value);
                     },
@@ -240,25 +242,28 @@ const grids = {
                 }, {
                     dataField: "fdTotAmt",
                     headerText: "접수금액",
-                    width: 70,
+                    width: 90,
                     dataType: "numeric",
                     autoThousandSeparator: "true",
                 }, {
                     dataField: "fdState",
                     headerText: "현재상태",
-                    width: 70,
+                    width: 90,
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
                         return CommonData.name.fdState[value];
                     },
                 }, {
                     dataField: "fdUrgentYn",
                     headerText: "급세탁",
+                    width: 70,
                 }, {
                     dataField: "fdRetryYn",
                     headerText: "재세탁",
+                    width: 70,
                 }, {
                     dataField: "fdRemark",
                     headerText: "특이사항",
+                    width: 200,
                 },
             ];
 
@@ -402,7 +407,7 @@ function searchOrder() {
     const searchCondition = {
         filterFromDt: $("#filterFromDt").val(),
         filterToDt: $("#filterToDt").val(),
-        frId: parseInt(frId),
+        franchiseId: parseInt(frId),
     };
 
     if(searchCondition.tagNo.length !== 0 && searchCondition.tagNo.length !==4) {
@@ -416,7 +421,7 @@ function searchOrder() {
 function showDetail(item) {
     const searchCondition = {
         franchiseId: item.frId,
-        date: "", // 각 조회 조건에 해당하는 Dt
+        fdS2Dt: item.fdS2Dt,
     }
 
     /* 선택된 가맹점과 날짜 항목에 대한 기억 */

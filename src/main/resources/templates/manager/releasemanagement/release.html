@@ -7,16 +7,6 @@
 <!-- 사용자 CSS 추가 -->
 <th:block layout:fragment="css">
     <style>
-        .color_and_name {
-            text-align: left;
-            margin-left: 10px;
-        }
-		.colorSquare {
-			height: 20px;
-			width: 20px;
-			border-radius: 5px;
-			display: inline-block;
-		}
     </style>
 </th:block>
 
@@ -58,8 +48,6 @@
                                     </div>
                                 </div>
                             </li>
-                        </ul>
-                        <ul>
                             <li>
                                 <div class="inquiry__title">입고일자</div>
                                 <div class="inquiry__input">
@@ -118,8 +106,8 @@
                         <button class="c-button c-button--darksolid">선택취소</button>
                     </li>
                 </ul> -->
-                <div style="width: 100%; height: 530px; border: 1px solid #bdbdbd;">
-                    <div id="grid_main" style="height: 530px;"></div>
+                <div style="width: 100%; height: 500px; border: 1px solid #bdbdbd;">
+                    <div id="grid_main" style="height: 500px;"></div>
                 </div>
             </div>
 
@@ -128,7 +116,7 @@
                     <h3 class="article__heading">출고 선택 품목 요약</h3>
                 </div>
                 <div class="article__body">
-                    <div id="grid_selected" style="width: 100%; height: 378px; border: 1px solid #bdbdbd;"></div>
+                    <div id="grid_selected" style="width: 100%; height: 348px; border: 1px solid #bdbdbd;"></div>
                     <div class="process">
                         <div class="process__count">
                             <div class="process__count-input"><input id="miDegree" type="text" value="1" maxlength="2" /></div>

@@ -75,15 +75,17 @@ const comms = {
             });
         })
     },
+    
     getReceiptList(searchCondition) {
         dv.chk(searchCondition, dtos.send.branchReceiptBranchInList, "출고 품목 조회 조건 보내기");
         CommonUI.ajax(urls.getReceiptList, "GET", searchCondition, function (res) {
-            wares.receiptList = res.sendData.gridListData;
+            wares.receiptList = CommonUI.toppos.killNullFromArray(res.sendData.gridListData);
             $("#frName").html($("#frList option:selected").html());
             $("#numOfList").html(wares.receiptList.length);
             $("#listStatBar").show();
         });
     },
+
     sendOutReceipt(sendList) {
         console.log(sendList);
         wares.sl = sendList;
@@ -127,17 +129,17 @@ const grids = {
                 }, {
                     dataField: "",
                     headerText: "지점입고",
-                    width: 90,
+                    width: 100,
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
                 }, {
                     dataField: "fdUrgentYn",
-                    headerText: "급",
-                    width: 35,
+                    headerText: "급세탁",
+                    width: 70,
                 }, {
                     dataField: "fdTag",
                     headerText: "택번호",
-                    width: 70,
+                    width: 90,
                     labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
                         return CommonData.formatTagNo(value);
                     },
@@ -157,30 +159,30 @@ const grids = {
                 }, {
                     dataField: "",
                     headerText: "처리내역",
-                    width: 90,
+                    width: 130,
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
                         return CommonUI.toppos.processName(item);
                     }
                 }, {
                     dataField: "bcName",
                     headerText: "고객",
-                    width: 70,
+                    width: 100,
                 }, {
                     dataField: "fdEstimateDt",
                     headerText: "출고예정일",
-                    width: 70,
+                    width: 100,
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
                 }, {
                     dataField: "fdTotAmt",
                     headerText: "접수금액",
-                    width: 70,
+                    width: 90,
                     dataType: "numeric",
                     autoThousandSeparator: "true",
                 }, {
                     dataField: "fdState",
                     headerText: "현재상태",
-                    width: 70,
+                    width: 90,
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
                         return CommonData.name.fdState[value];
                     },
@@ -211,7 +213,10 @@ const grids = {
                     headerText: "가맹점",
                 }, {
                     dataField: "qty",
+                    width: 100,
                     headerText: "수량",
+                    dataType: "numeric",
+                    autoThousandSeparator: "true",
                 },
             ];
     
@@ -396,7 +401,6 @@ function inputTag() {
         if(obj.fdTag === tagNo) {
             grids.f.addRow(0, obj);
             noExist = false;
-            $("#inputTagNo").val("");
         }
     });
 

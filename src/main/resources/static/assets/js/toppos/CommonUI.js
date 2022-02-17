@@ -61,6 +61,14 @@ class CommonUIClass {
             } catch (e) {
                 console.log(e);
             }
+        },
+
+        killNullFromArray(array) {
+            let resultArray = [];
+            for(const obj of array) {
+                if(obj !== null) resultArray.push(obj);
+            }
+            return resultArray;
         }
     }
 

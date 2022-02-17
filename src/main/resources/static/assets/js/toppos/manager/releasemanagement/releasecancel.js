@@ -82,10 +82,9 @@ const comms = {
         dv.chk(searchCondition, dtos.send.branchReceiptBranchInCancelList, "메인 그리드 검색 조건 보내기");
         console.log(searchCondition);
         CommonUI.ajax(urls.getMainGridList, "GET", searchCondition, function (res) {
-            const data = res.sendData.gridListData;
+            const data = CommonUI.toppos.killNullFromArray(res.sendData.gridListData);
             console.log(res);
             grids.f.setData(0, data);
-            $("#aftTag").val("");
         });
     },
 
@@ -127,19 +126,19 @@ const grids = {
                 }, {
                     dataField: "fdS2Time",
                     headerText: "지점입고",
-                    width: 70,
+                    width: 100,
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
                 }, {
                     dataField: "fdS4Time",
                     headerText: "지점출고",
-                    width: 70,
+                    width: 100,
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
                 }, {
                     dataField: "fdTag",
                     headerText: "택번호",
-                    width: 70,
+                    width: 90,
                     labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
                         return CommonData.formatTagNo(value);
                     },
@@ -159,18 +158,18 @@ const grids = {
                 }, {
                     dataField: "",
                     headerText: "처리내역",
-                    width: 90,
+                    width: 130,
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
                         return CommonUI.toppos.processName(item);
                     }
                 }, {
                     dataField: "bcName",
                     headerText: "고객",
-                    width: 70,
+                    width: 100,
                 }, {
                     dataField: "fdTotAmt",
                     headerText: "접수금액",
-                    width: 70,
+                    width: 90,
                     dataType: "numeric",
                     autoThousandSeparator: "true",
                 }, {
@@ -179,14 +178,14 @@ const grids = {
                 }, {
                     dataField: "fdState",
                     headerText: "현재상태",
-                    width: 70,
+                    width: 90,
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
                         return CommonData.name.fdState[value];
                     },
                 }, {
                     dataField: "fdPreState",
                     headerText: "이전상태",
-                    width: 70,
+                    width: 90,
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
                         return CommonData.name.fdState[value];
                     },
