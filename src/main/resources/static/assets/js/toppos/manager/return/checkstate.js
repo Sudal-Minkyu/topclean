@@ -160,7 +160,7 @@ const grids = {
                     headerText: "택번호",
                     width: 70,
                     labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
-                        return value.substr(0, 3) + "-" + value.substr(-4);
+                        return CommonData.formatTagNo(value);
                     },
                 }, {
                     dataField: "",
@@ -245,7 +245,7 @@ const grids = {
                     dataField: "fiType",
                     headerText: "유형",
                     labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
-                        return wares.fiTypeName[value];
+                        return CommonData.name.fiType[value];
                     },
                 }, {
                     dataField: "fiComment",
@@ -262,7 +262,7 @@ const grids = {
                     dataField: "fiCustomerConfirm",
                     headerText: "고객수락",
                     labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
-                        return wares.fiCustomerConfirmName[value];
+                        return CommonData.name.fiCustomerConfirm[value];
                     },
                 },
             ];
@@ -368,15 +368,6 @@ const trigs = {
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
 const wares = {
     currentRequest: {},
-    fiCustomerConfirmName: {
-        "1": "미확인",
-        "2": "고객수락",
-        "3": "고객거부",
-    },
-    fiTypeName: {
-        F: "가맹검품",
-        B: "확인품",
-    },
 }
 
 $(function() { // 페이지가 로드되고 나서 실행

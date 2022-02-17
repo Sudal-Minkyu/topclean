@@ -141,7 +141,11 @@ const grids = {
                     headerText: "택번호",
                     width: 70,
                     labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
-                        return value.substr(0, 3) + "-" + value.substr(-4);
+                        let result = "";
+                        if(value) {
+                            result = value.substr(0, 3) + "-" + value.substr(-4);
+                        }
+                        return result;
                     },
                 }, {
                     dataField: "",
@@ -161,7 +165,11 @@ const grids = {
                     headerText: "처리내역",
                     width: 90,
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
-                        return CommonUI.toppos.processName(item);
+                        let result = "";
+                        if(value) {
+                            result = CommonUI.toppos.processName(item);
+                        }
+                        return result;
                     }
                 }, {
                     dataField: "fdTotAmt",
@@ -174,14 +182,22 @@ const grids = {
                     headerText: "현재상태",
                     width: 70,
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
-                        return CommonData.name.fdState[value];
+                        let result = "";
+                        if(value) {
+                            result = CommonData.name.fdState[value];
+                        }
+                        return result;
                     },
                 }, {
                     dataField: "fdPreState",
                     headerText: "이전상태",
                     width: 70,
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
-                        return CommonData.name.fdState[value];
+                        let result = "";
+                        if(value) {
+                            result = CommonData.name.fdState[value];
+                        }
+                        return result;
                     },
                 },
             ];
@@ -264,7 +280,7 @@ const trigs = {
             });
 
             $("#executeBtn").on("click", function () {
-                executeCheckedReceipts();
+                askExcute();
             });
         },
     },

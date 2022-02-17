@@ -38,6 +38,31 @@ class CommonDataClass {
             "03": "VVIP",
         };
 
+        this.name.fiType = {
+            F: "가맹검품",
+            B: "확인품",
+        };
+
+        this.name.fpType = {
+            "01": "현금",
+            "02": "카드",
+            "03": "적립금",
+            "04": "미수결제",
+        };
+
+        this.name.fiCustomerConfirm = {
+            "1": "미확인",
+            "2": "고객수락",
+            "3": "고객거부",
+        };
+    }
+
+    formatTagNo(tagNo) {
+        let result = "";
+        if(tagNo) {
+            result = tagNo.substr(0, 3) + "-" + tagNo.substr(-4);
+        }
+        return result;
     }
 }
 

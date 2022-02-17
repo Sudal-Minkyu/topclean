@@ -124,7 +124,7 @@ const grids = {
                     headerText: "택번호",
                     width: 90,
                     labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
-                        return value.substr(0, 3) + "-" + value.substr(-4);
+                        return CommonData.formatTagNo(value);
                     },
                 }, {
                     dataField: "",

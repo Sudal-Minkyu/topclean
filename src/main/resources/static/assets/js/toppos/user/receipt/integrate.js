@@ -549,7 +549,7 @@ const grid = {
                     headerText: "택번호",
                     width: 80,
                     labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
-                        return value.substr(0, 3) + "-" + value.substr(-4);
+                        return CommonData.formatTagNo(value);
                     },
                 }, {
                     dataField: "sumName",
@@ -790,7 +790,7 @@ const grid = {
                         if(item.fpCatIssuername) {
                             resultText = item.fpCatIssuername;
                         }else{
-                            resultText = data.fpTypeName[value];
+                            resultText = CommonData.name.fpType[value];
                         }
                         return resultText;
                     }
@@ -852,7 +852,7 @@ const grid = {
                     dataField: "fiType",
                     headerText: "유형",
                     labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
-                        return data.fiTypeName[value];
+                        return CommonData.name.fiType[value];
                     },
                 }, {
                     dataField: "fiComment",
@@ -869,7 +869,7 @@ const grid = {
                     dataField: "fiCustomerConfirm",
                     headerText: "고객수락",
                     labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
-                        return data.fiCustomerConfirmName[value];
+                        return CommonData.name.fiCustomerConfirm[value];
                     },
                 },
             ];
@@ -1032,21 +1032,6 @@ const data = {
     startPrice: 0,
     cameraStream: null,
     isCameraExist: false,
-    fpTypeName: {
-        "01": "현금",
-        "02": "카드",
-        "03": "적립금",
-        "04": "미수결제",
-    },
-    fiTypeName: {
-        F: "가맹검품",
-        B: "확인품",
-    },
-    fiCustomerConfirmName: {
-        "1": "미확인",
-        "2": "고객수락",
-        "3": "고객거부",
-    },
     keypadNum: 0,
 }
 

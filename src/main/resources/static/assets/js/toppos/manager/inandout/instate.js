@@ -5,25 +5,43 @@
 * */
 const dtos = {
     send: {
-        branchTagSearchList: {
-            tagNo: "s",
-            franchiseId: "n", // 가맹점 Id
+        조회기능: { // 미출고 현황을 제외하고는 동일한 양식
+            filterFromDt: "s",
+            filterToDt: "s",
+            frId: "n", // 가맹점 Id, 전체선택일 경우에는 0을 보내는게 어떨까 합니다.
+        },
+
+        디테일리스트받아오기: {
+            franchiseId: "nr",
+            date: "sr", // 각 현황 페이지마다 디테일 조회 조건이 되는 dt가 담긴다. 이쪽에서 보내는 이름은 date로 통일했으면 함.
         },
     },
+
     receive: {
         managerBelongList: { // 가맹점 선택 셀렉트박스에 띄울 가맹점의 리스트
-            frId: "nr", // 가맹점 Id
+            frId: "nr", // 가맹점 id
             frName: "s",
             frTagNo: "s",
         },
-
-        branchTagSearchList: {
+        
+        조회기능: {
+            frId: "s", // 가맹점 id
             frName: "s",
-            frRefType: "s",
-            frYyyymmdd: "s",
-            fdS2Dt: "s",
-            fdS4Dt: "s",
-            fdTag: "s",
+            fdS2Dt: "s", // 입고일
+            입고건수: "n",
+            출고건수: "n",
+            체류건수: "n",
+            접수총액: "n",
+        },
+
+        디테일리스트받아오기: { //해당 항목은 모든 현황페이지에서 쓸 수 있게, 모든 페이지에 맨 아래의 세개 항목까지 항상 포함하는게 좋을듯 합니다.
+            frRefType: "s", // 구분
+            fdS2Type: "", // 입고타입 (확실치않음)
+            fdS2Dt: "s", // 입고일
+            fdS4Dt: "s", // 출고일
+            bcName: "s", // 고객명
+            fdTag: "s", // 택번호
+
             fdColor: "s",
             bgName: "s",
             bsName: "s",
@@ -40,13 +58,14 @@ const dtos = {
             fdWaterRepellent: "n",
             fdStarch: "n",
             fdUrgentYn: "s",
-            bcName: "s",
+
             fdTotAmt: "n",
             fdState: "s",
             fdRemark: "s",
-            fdS3Dt: "s",
-            fdS7Dt: "s",
-            fdS8Dt: "s",
+
+            fdS7Dt: "s", // 강제출고일
+            fdS3Dt: "s", // 반송일
+            fdEstimateDt: "s", //인도예정일
         },
     }
 };
@@ -54,7 +73,8 @@ const dtos = {
 /* 통신에 사용되는 url들 기입 */
 const urls = {
     getFrList: "/api/manager/branchBelongList",
-    getMainGridList: "/api/manager/branchTagSearchList",
+    getMainList: "",
+    getDetailList: "",
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
@@ -72,13 +92,22 @@ const comms = {
         });
     },
 
-    getMainGridList(searchCondition) {
-        dv.chk(searchCondition, dtos.send.branchTagSearchList, "메인 그리드 검색 조건 보내기");
+    getMainList(searchCondition) {
+        dv.chk(searchCondition, dtos.send.조회기능, "프랜차이즈 그리드 검색 조건 보내기");
+        console.log(searchCondition);
         CommonUI.ajax(urls.getMainGridList, "GET", searchCondition, function (res) {
             const data = res.sendData.gridListData;
-            dv.chk(data, dtos.receive.branchTagSearchList, "메인 그리드 받은 리스트");
             grids.f.setData(0, data);
-            $("#aftTag").val("");
+            $("#exportXlsx").hide();
+        });
+    },
+
+    getDetailList(searchCondition) {
+        dv.chk(searchCondition, dtos.send.디테일리스트받아오기, "디테일 그리드 검색 조건 보내기");
+        CommonUI.ajax(urls.getDetailList, "GET", searchCondition, function (res) {
+            const data = res.sendData.gridListData;
+            grids.f.setData(1, data);
+            $("#exportXlsx").show();
         });
     },
 };
@@ -92,7 +121,7 @@ const comms = {
 const grids = {
     s: { // 그리드 세팅
         targetDiv: [
-            "grid_main"
+            "grid_franchise", "grid_detail"
         ],
         columnLayout: [],
         prop: [],
@@ -107,20 +136,7 @@ const grids = {
             grids.s.columnLayout[0] = [
                 {
                     dataField: "frName",
-                    headerText: "가맹점명",
-                }, {
-                    dataField: "frRefType",
-                    headerText: "구분",
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
-                        return CommonData.name.frRefType[value];
-                    },
-                }, {
-                    dataField: "bcName",
-                    headerText: "고객",
-                    width: 70,
-                }, {
-                    dataField: "frYyyymmdd",
-                    headerText: "접수일자",
+                    headerText: "가맹점",
                     width: 80,
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
@@ -131,11 +147,74 @@ const grids = {
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
                 }, {
-                    dataField: "fdS4Dt",
+                    dataField: "",
+                    headerText: "입고건수",
+                    dataType: "numeric",
+                    autoThousandSeparator: "true",
+                }, {
+                    dataField: "",
+                    headerText: "출고건수",
+                    dataType: "numeric",
+                    autoThousandSeparator: "true",
+                }, {
+                    dataField: "",
+                    headerText: "체류건수",
+                    dataType: "numeric",
+                    autoThousandSeparator: "true",
+                }, {
+                    dataField: "",
+                    headerText: "접수총액",
+                    dataType: "numeric",
+                    autoThousandSeparator: "true",
+                },
+            ];
+
+            /* 0번 그리드의 프로퍼티(옵션) 아래의 링크를 참조
+            * https://www.auisoft.net/documentation/auigrid/DataGrid/Properties.html
+            * */
+            grids.s.prop[0] = {
+                editable : false,
+                selectionMode : "singleRow",
+                noDataMessage : "출력할 데이터가 없습니다.",
+                showAutoNoDataMessage: false,
+                enableColumnResize : false,
+                showRowAllCheckBox: false,
+                showRowCheckColumn: false,
+                showRowNumColumn : false,
+                showStateColumn : false,
+                enableFilter : false,
+                rowHeight : 48,
+                headerHeight : 48,
+            };
+
+            grids.s.columnLayout[1] = [
+                {
+                    dataField: "frRefType",
+                    headerText: "구분",
+                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                        return CommonData.name.frRefType[value];
+                    },
+                }, {
+                    dataField: "fdS2Type",
+                    headerText: "입고타입",
+                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                        return value;
+                    },
+                }, {
+                    dataField: "fdS2Dt",
+                    headerText: "입고일자",
+                    width: 80,
+                    dataType: "date",
+                    formatString: "yyyy-mm-dd",
+                }, {
+                    dataField: "fd42Dt",
                     headerText: "출고일자",
                     width: 80,
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
+                }, {
+                    dataField: "bcName",
+                    headerText: "고객명",
                 }, {
                     dataField: "fdTag",
                     headerText: "택번호",
@@ -158,13 +237,6 @@ const grids = {
                         return colorSquare + ` <span style="vertical-align: middle;">` + sumName + `</span>`;
                     },
                 }, {
-                    dataField: "",
-                    headerText: "처리내역",
-                    width: 90,
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
-                        return CommonUI.toppos.processName(item);
-                    }
-                }, {
                     dataField: "fdTotAmt",
                     headerText: "접수금액",
                     width: 70,
@@ -180,40 +252,16 @@ const grids = {
                 }, {
                     dataField: "fdUrgentYn",
                     headerText: "급세탁",
-                    width: 50,
                 }, {
                     dataField: "fdRetryYn",
                     headerText: "재세탁",
-                    width: 50,
                 }, {
                     dataField: "fdRemark",
                     headerText: "특이사항",
-                    width: 200,
-                }, {
-                    dataField: "fdS3Dt",
-                    headerText: "반송일자",
-                    width: 80,
-                    dataType: "date",
-                    formatString: "yyyy-mm-dd",
-                }, {
-                    dataField: "fdS7Dt",
-                    headerText: "강제출고일",
-                    width: 80,
-                    dataType: "date",
-                    formatString: "yyyy-mm-dd",
-                }, {
-                    dataField: "fdS8Dt",
-                    headerText: "강제입고일",
-                    width: 80,
-                    dataType: "date",
-                    formatString: "yyyy-mm-dd",
                 },
             ];
 
-            /* 0번 그리드의 프로퍼티(옵션) 아래의 링크를 참조
-            * https://www.auisoft.net/documentation/auigrid/DataGrid/Properties.html
-            * */
-            grids.s.prop[0] = {
+            grids.s.prop[1] = {
                 editable : false,
                 selectionMode : "singleRow",
                 noDataMessage : "출력할 데이터가 없습니다.",
@@ -227,7 +275,6 @@ const grids = {
                 rowHeight : 48,
                 headerHeight : 48,
             };
-
         },
 
         create() { // 그리드 동작 처음 빈 그리드를 생성
@@ -254,6 +301,19 @@ const grids = {
 
         getCheckedItems(numOfGrid) { // 해당 배열 번호 그리드의 엑스트라 체크박스 선택된 (아이템 + 행번호) 객체 반환
             return AUIGrid.getCheckedRowItems(grids.s.id[numOfGrid]);
+        },
+
+        // 엑셀 내보내기(Export)
+        exportToXlsx() {
+            //FileSaver.js 로 로컬 다운로드가능 여부 확인
+            if(!AUIGrid.isAvailableLocalDownload(grids.s.id[1])) {
+                alertCaution("파일 다운로드가 불가능한 브라우저 입니다.", 1);
+                return;
+            }
+            AUIGrid.exportToXlsx(grids.s.id[1], {
+                fileName : `${wares.title}_${wares.currentDetail.frName}_${wares.currentDetail.date}`,
+                progressBar : true,
+            });
         }
     },
 
@@ -261,7 +321,7 @@ const grids = {
         basic() {
             /* 0번그리드 내의 셀 클릭시 이벤트 */
             AUIGrid.bind(grids.s.id[0], "cellClick", function (e) {
-                console.log(e.item); // 이밴트 콜백으로 불러와진 객체의, 클릭한 대상 row 키(파라메터)와 값들을 보여준다.
+                showDetail(e.item);
             });
         }
     }
@@ -279,16 +339,8 @@ const trigs = {
                 searchOrder();
             });
 
-            const $aftTag = $("#aftTag");
-            $aftTag.on("keyup", function (e) {
-                $aftTag.val($aftTag.val().numString());
-                if(e.originalEvent.code === "Enter") {
-                    searchOrder();
-                }
-            });
-
-            $("#executeBtn").on("click", function () {
-                askExcute();
+            $("#exportXlsx").on("click", function () {
+                grids.f.exportToXlsx();
             });
         },
     },
@@ -299,10 +351,11 @@ const trigs = {
 
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
 const wares = {
-    frRefTypeName: {
-        "01": "-",
-        "02": "무",
-        "03": "배",
+    title: "지사 입고 현황", // 엑셀 다운로드 파일명 생성에 쓰인다.
+    currentDetail: { // 디테일 그리드를 뿌리기 위해 선택된 가맹점과 일자의 정보. 엑셀 파일명 생성에 쓰인다.
+        franchiseId: 0,
+        frName: "",
+        date: "",
     },
 }
 
@@ -314,20 +367,41 @@ $(function() { // 페이지가 로드되고 나서 실행
 function onPageLoad() {
     grids.f.initialization();
     grids.f.create();
+    grids.t.basic();
+    enableDatepicker();
     comms.getFrList();
     trigs.s.basic();
 }
 
+function enableDatepicker() {
+    let fromday = new Date();
+    fromday.setDate(fromday.getDate() - 6);
+    fromday = fromday.format("yyyy-MM-dd");
+    const today = new Date().format("yyyy-MM-dd");
+
+    /* datepicker를 적용시킬 대상들의 dom id들 */
+    const datePickerTargetIds = [
+        "filterFromDt", "filterToDt"
+    ];
+
+    $("#" + datePickerTargetIds[0]).val(fromday);
+    $("#" + datePickerTargetIds[1]).val(today);
+
+    const dateAToBTargetIds = [
+        ["filterFromDt", "filterToDt"]
+    ];
+
+    CommonUI.setDatePicker(datePickerTargetIds);
+    CommonUI.restrictDateAToB(dateAToBTargetIds);
+}
+
 function searchOrder() {
     const frId = $("#frList").val();
-    if(frId === "") {
-        alertCaution("가맹점을 선택해 주세요.", 1);
-        return false;
-    }
 
     const searchCondition = {
-        tagNo: $("#aftTag").val().numString(),
-        franchiseId: parseInt(frId),
+        filterFromDt: $("#filterFromDt").val(),
+        filterToDt: $("#filterToDt").val(),
+        frId: parseInt(frId),
     };
 
     if(searchCondition.tagNo.length !== 0 && searchCondition.tagNo.length !==4) {
@@ -336,4 +410,18 @@ function searchOrder() {
     }
 
     comms.getMainGridList(searchCondition);
+}
+
+function showDetail(item) {
+    const searchCondition = {
+        franchiseId: item.frId,
+        date: "", // 각 조회 조건에 해당하는 Dt
+    }
+
+    /* 선택된 가맹점과 날짜 항목에 대한 기억 */
+    wares.currentDetail.franchiseId = searchCondition.franchiseId;
+    wares.currentDetail.date = searchCondition.date;
+    wares.currentDetail.frName = item.frName;
+
+    comms.getDetailList(searchCondition);
 }
