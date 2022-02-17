@@ -42,8 +42,14 @@ public interface RequestDetailRepositoryCustom {
     List<RequestDetailBranchInspectionCurrentListDto> findByRequestDetailBranchInspectionCurrentList(String brCode, Long frId, LocalDateTime fromDt, LocalDateTime toDt, String tagNo); // 확인품현황
     List<RequestDetailTagSearchListDto> findByRequestDetailTagSearchList(String brCode, Long frId, String tagNo); // 택번호조회
 
+    List<RequestDetailBranchStoreCurrentListDto> findByRequestDetailBranchStoreCurrentList(String brCode, Long franchiseId, String filterFromDt, String filterToDt, String type); // 입고현황, 체류세탁물현황 - 왼쪽 리스트 호출API
+    List<RequestDetailBranchInputCurrentListDto> findByRequestDetailBranchInputCurrentList(String brCode, String frCode, String fdS2Dt); // 지사입고현황 - 오른쪽 리스트 호출API
+    List<RequestDetailBranchRemainCurrentListDto> findByRequestDetailBranchRemainCurrentList(String brCode, String frCode, String fdS2Dt); // 체류세탁물현황 - 오른쪽 리스트 호출API
 
-    List<RequestDetailBranchStoreCurrentListDto> findByRequestDetailBranchStoreCurrentList(String brCode, Long franchiseId, String filterFromDt, String filterToDt, String type); // 입고현황 리스트 호출API
+    List<RequestDetailBranchReleaseCurrentListDto> findByRequestDetailBranchReleaseCurrentList(String brCode, Long franchiseId, String filterFromDt, String filterToDt, String type); // 지사출고현황, 지사강제출고현황 - 왼쪽 리스트 호출API
+
+
+
 
 
 }

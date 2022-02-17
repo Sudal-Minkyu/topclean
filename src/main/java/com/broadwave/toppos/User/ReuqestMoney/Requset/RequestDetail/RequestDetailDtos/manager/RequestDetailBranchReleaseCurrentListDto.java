@@ -10,24 +10,22 @@ import java.math.BigInteger;
 
 /**
  * @author Minkyu
- * Date : 2022-02-11
+ * Date : 2022-02-17
  * Time :
- * Remark : Toppos 지사 지사입고현황, 체류세탁물현황 왼쪽 ListDto
+ * Remark : Toppos 지사 지사출고현황, 지사강제출고현황 왼쪽 ListDto
  */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RequestDetailBranchStoreCurrentListDto {
+public class RequestDetailBranchReleaseCurrentListDto {
 
     private String frCode; // 가맹점코드
     private String frName; // 가맹점명
-    private String fdS2Dt; // 입고일자
+    private String fdS4Dt; // 출고일자
 
-    private BigInteger input_cnt; // 입고건수
     private BigDecimal output_cnt; // 출고건수
-    private BigDecimal remain_cnt; // 체류건수
 
-    private BigDecimal tot_amt; // 접수총액 - 입고건수 금액 sum
+    private BigDecimal tot_amt; // 접수총액 - 출고건수 금액 sum
 
 }

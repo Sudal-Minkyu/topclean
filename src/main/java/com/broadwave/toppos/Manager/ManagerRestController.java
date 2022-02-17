@@ -294,13 +294,53 @@ public class ManagerRestController {
         return managerService.branchTagSearchList(franchiseId, tagNo, request);
     }
 
-//@@@@@@@@@@@@@@@@@@@@@ 입출고현황 관련 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    //  지사 입고현황, 체류세탁물현황 - 리스트 호출API
+//@@@@@@@@@@@@@@@@@@@@@ 지사입고현황, 체류세탁물현황, 출고현황, 강제출고현황, 미출고현황, 가맹반송현황 관련 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    //  지사입고현황, 체류세탁물현황 - 왼쪽 리스트 호출API
     @GetMapping("branchStoreCurrentList")
     public ResponseEntity<Map<String,Object>> branchStoreCurrentList(@RequestParam("franchiseId")Long franchiseId, @RequestParam("filterFromDt")String filterFromDt,
                                                                      @RequestParam("filterToDt")String filterToDt, @RequestParam("type")String type, HttpServletRequest request){
         return currentService.branchStoreCurrentList(franchiseId, filterFromDt, filterToDt, type, request);
     }
+
+    //  지사입고현황 - 오른쪽 리스트 호출API
+    @GetMapping("branchStoreInputList")
+    public ResponseEntity<Map<String,Object>> branchStoreInputList(@RequestParam("frCode")String frCode, @RequestParam("fdS2Dt")String fdS2Dt, HttpServletRequest request){
+        return currentService.branchStoreInputList(frCode, fdS2Dt, request);
+    }
+
+    //  체류세탁물현황 - 오른쪽 리스트 호출API
+    @GetMapping("branchStoreRemainList")
+    public ResponseEntity<Map<String,Object>> branchStoreRemainList(@RequestParam("frCode")String frCode, @RequestParam("fdS2Dt")String fdS2Dt, HttpServletRequest request){
+        return currentService.branchStoreRemainList(frCode, fdS2Dt, request);
+    }
+
+    // 지사출고현황, 지사강제출고현황 - 왼쪽 리스트 호출API
+    @GetMapping("branchReleaseCurrentList")
+    public ResponseEntity<Map<String,Object>> branchReleaseCurrentList(@RequestParam("franchiseId")Long franchiseId, @RequestParam("filterFromDt")String filterFromDt,
+                                                                     @RequestParam("filterToDt")String filterToDt, @RequestParam("type")String type, HttpServletRequest request){
+        return currentService.branchReleaseCurrentList(franchiseId, filterFromDt, filterToDt, type, request);
+    }
+//
+//    //  지사출고현황 - 오른쪽 리스트 호출API
+//    @GetMapping("branchReleaseInputList")
+//    public ResponseEntity<Map<String,Object>> branchReleaseInputList(@RequestParam("frCode")String frCode, @RequestParam("fdS3Dt")String fdS3Dt, HttpServletRequest request){
+//        return currentService.branchReleaseInputList(frCode, fdS3Dt, request);
+//    }
+//
+//    //  지사강제출고현황 - 오른쪽 리스트 호출API
+//    @GetMapping("branchReleaseForceList")
+//    public ResponseEntity<Map<String,Object>> branchReleaseForceList(@RequestParam("frCode")String frCode, @RequestParam("fdS7Dt")String fdS7Dt, HttpServletRequest request){
+//        return currentService.branchReleaseForceList(frCode, fdS7Dt, request);
+//    }
+
+
+
+
+
+
+
+
+
 
 
 
