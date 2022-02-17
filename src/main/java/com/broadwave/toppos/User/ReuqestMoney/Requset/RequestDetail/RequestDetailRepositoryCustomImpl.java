@@ -4,7 +4,6 @@ import com.broadwave.toppos.Head.Franchise.QFranchise;
 import com.broadwave.toppos.Head.Item.Group.A.QItemGroup;
 import com.broadwave.toppos.Head.Item.Group.B.QItemGroupS;
 import com.broadwave.toppos.Head.Item.Group.C.QItem;
-import com.broadwave.toppos.Manager.TagNotice.TagNotice;
 import com.broadwave.toppos.Manager.TagNotice.TagNoticeDtos.TagNoticeTestDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.QRequest;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.QInspeot;
@@ -778,11 +777,11 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         }
 
         if(fromDt != null){
-            query.where(requestDetail.insert_date.goe(fromDt));
+            query.where(requestDetail.fdS2Time.goe(fromDt));
         }
 
         if(toDt != null){
-            query.where(requestDetail.insert_date.loe(toDt));
+            query.where(requestDetail.fdS2Time.loe(toDt));
         }
 
         return query.fetch();
@@ -854,11 +853,11 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         }
 
         if(fromDt != null){
-            query.where(requestDetail.insert_date.goe(fromDt));
+            query.where(requestDetail.fdS4Time.goe(fromDt));
         }
 
         if(toDt != null){
-            query.where(requestDetail.insert_date.loe(toDt));
+            query.where(requestDetail.fdS4Time.loe(toDt));
         }
 
         return query.fetch();
@@ -929,11 +928,11 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         }
 
         if(fromDt != null){
-            query.where(requestDetail.insert_date.goe(fromDt));
+            query.where(requestDetail.fdS2Time.goe(fromDt));
         }
 
         if(toDt != null){
-            query.where(requestDetail.insert_date.loe(toDt));
+            query.where(requestDetail.fdS2Time.loe(toDt));
         }
 
         return query.fetch();
@@ -1004,11 +1003,11 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         }
 
         if(fromDt != null){
-            query.where(requestDetail.insert_date.goe(fromDt));
+            query.where(requestDetail.fdS2Time.goe(fromDt));
         }
 
         if(toDt != null){
-            query.where(requestDetail.insert_date.loe(toDt));
+            query.where(requestDetail.fdS2Time.loe(toDt));
         }
 
         return query.fetch();
@@ -1079,17 +1078,17 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         }
 
         if(fromDt != null){
-            query.where(requestDetail.insert_date.goe(fromDt));
+            query.where(requestDetail.fdS2Time.goe(fromDt));
         }
 
         if(toDt != null){
-            query.where(requestDetail.insert_date.loe(toDt));
+            query.where(requestDetail.fdS2Time.loe(toDt));
         }
 
         return query.fetch();
     }
 
-    // 확인품등록 querydsl
+    // 확인품현황 querydsl
     public  List<RequestDetailBranchInspectionCurrentListDto> findByRequestDetailBranchInspectionCurrentList(String brCode, Long frId, LocalDateTime fromDt, LocalDateTime toDt, String tagNo){
 
         QRequestDetail requestDetail = QRequestDetail.requestDetail;
@@ -1156,11 +1155,11 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         }
 
         if(fromDt != null){
-            query.where(requestDetail.insert_date.goe(fromDt));
+            query.where(requestDetail.fdS2Time.goe(fromDt));
         }
 
         if(toDt != null){
-            query.where(requestDetail.insert_date.loe(toDt));
+            query.where(requestDetail.fdS2Time.loe(toDt));
         }
 
         return query.fetch();
@@ -1246,38 +1245,14 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
 
         StringBuilder sb = new StringBuilder();
 
-//        sb.append("SELECT ht_subject as subject ,insert_id, \n");
-//        sb.append("  sum(case WHEN LENGTH(ht_subject) > 5 THEN 2 ELSE 0 END )  numOfCount  \n");
-//        sb.append("   FROM hb_tag_notice where insert_id = ?1  GROUP BY insert_id,ht_subject  \n");
-
-        sb.append("SELECT a.fr_code, c.fr_name, b.fd_s2_dt, \n");
-        sb.append("  COUNT(*) input_cnt,  \n");
-        sb.append("  sum(case when IFNULL(b.fd_s4_dt,'') = '' THEN 0 ELSE 1 END) output_cnt,  \n");
-        sb.append("  (COUNT(*) -sum(case when IFNULL(b.fd_s4_dt,'') = '' THEN 0 ELSE 1 END)) remain_cnt,  \n");
-        sb.append("     sum(b.fd_tot_amt) tot_amt ");
-        sb.append("         FROM fs_request a \n");
-        sb.append("             INNER JOIN fs_request_dtl b ON a.fr_id = b.fr_id  \n");
-        sb.append("             INNER JOIN bs_franchise c ON a.fr_code = c.fr_code  \n");
-        sb.append("             WHERE a.br_code = ?1 AND a.fr_confirm_yn ='Y' AND b.fd_cancel ='N'  \n");
-        if(franchiseId != null){
-            sb.append("             WHERE c.fr_id = ?2  \n");
-        }
-        sb.append("             AND b.fd_s2_dt >= ?3  \n");
-        sb.append("             AND b.fd_s2_dt <= ?4  \n");
-        sb.append("             GROUP BY a.fr_code,c.fr_name,b.fd_s2_dt  \n");
-        sb.append("             ORDER BY c.fr_name,b.fd_s2_dt  \n");
+        sb.append("SELECT fr_code as frCode FROM fs_request");
 
         log.info("sb : "+sb);
         Query query = em.createNativeQuery(sb.toString());
 
+        List<RequestDetailBranchStoreCurrentListDto> result =  jpaResultMapper.list(query, RequestDetailBranchStoreCurrentListDto.class);
 
-        query.setParameter(1, brCode);
-        query.setParameter(2, franchiseId);
-        query.setParameter(3, filterFromDt);
-        query.setParameter(4, filterToDt);
-
-        return jpaResultMapper.list(query, RequestDetailBranchStoreCurrentListDto.class);
-
+        return result;
     }
 
 }

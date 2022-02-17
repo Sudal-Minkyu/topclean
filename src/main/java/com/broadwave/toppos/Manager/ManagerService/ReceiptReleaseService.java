@@ -149,8 +149,10 @@ public class ReceiptReleaseService {
     public ResponseEntity<Map<String, Object>> branchReceiptBranchInCancelList(Long frId, LocalDateTime fromDt, LocalDateTime toDt, String tagNo, HttpServletRequest request) {
         log.info("branchReceiptBranchInCancelList 호출");
 
-//        log.info("frId : "+frId);
-//        log.info("tagNo : "+tagNo);
+        log.info("frId : "+frId);
+        log.info("fromDt : "+fromDt);
+        log.info("toDt : "+toDt);
+        log.info("tagNo : "+tagNo);
 
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
