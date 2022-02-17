@@ -252,7 +252,10 @@ const trigs = {
                 const checkedItems = grids.f.getCheckedItems(0);
                 const saveDataset = makeSaveDataset(checkedItems);
                 if (checkedItems.length) {
-                    comms.changeClosedList(saveDataset);
+                    alertCheck("선택된 상품을 수기마감 하시겠습니까?");
+                    $("#checkDelSuccessBtn").on("click", function () {
+                        comms.changeClosedList(saveDataset);
+                    });
                 } else {
                     alertCaution("마감 리스트를 선택해주세요", 1);
                 }

@@ -349,7 +349,7 @@ function searchOrder() {
 function askExcute() {
     wares.checkedItems = grids.f.getCheckedItems(0);
     if(wares.checkedItems.length) {
-        alertCheck("선택된 상품을 처리 하시겠습니까?");
+        alertCheck("선택된 상품을 출고취소처리 하시겠습니까?");
         $("#checkDelSuccessBtn").on("click", function () {
             executeCheckedReceipts();
         });

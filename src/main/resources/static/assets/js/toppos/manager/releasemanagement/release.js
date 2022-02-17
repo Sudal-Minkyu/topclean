@@ -305,7 +305,16 @@ const trigs = {
             });
 
             $("#sendOutBtn").on("click", function () {
-                sendOut();
+                wares.checkedItems = grids.f.getCheckedItems(0);
+                if(wares.checkedItems.length) {
+                    alertCheck("선택된 상품을 출고처리 하시겠습니까?");
+                    $("#checkDelSuccessBtn").on("click", function () {
+                        sendOut();
+                    });
+                } else {
+                    alertCaution("출고처리할 상품을 선택해 주세요.", 1);
+                }
+                
             });
 
             $("#addAll").on("click", function () {
@@ -331,6 +340,7 @@ const trigs = {
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
 const wares = {
     receiptList: "",
+    checkedItems: [],
 }
 
 $(function() { // 페이지가 로드되고 나서 실행
@@ -413,15 +423,14 @@ function inputTag() {
 }
 
 function sendOut() {
-    const checkedItems = grids.f.getCheckedItems(0);
 
-    if(checkedItems.length) {
+    if(wares.checkedItems.length) {
         let fdIdList = [];
         let codeIndex = [];
         fdIdList.push([0]);
         codeIndex.push("dummy");
 
-        checkedItems.forEach(obj => {
+        wares.checkedItems.forEach(obj => {
             const i = codeIndex.indexOf(obj.item.frCode);
             if(i + 1) {
                 fdIdList[i].push(obj.item.fdId);

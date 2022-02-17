@@ -329,6 +329,7 @@ const grids = {
             });
 
             AUIGrid.bind(grids.s.id[1], "cellClick", function (e) {
+                $("#fiAddAmtInConfirm").val(e.item.fiAddAmt.toLocaleString());
                 $("#fiCommentInConfirm").val(e.item.fiComment);
                 if(e.item.fiPhotoYn === "Y") {
                     $("#imgThumb").attr("src", e.item.ffPath + "s_" + e.item.ffFilename);
@@ -444,6 +445,7 @@ function searchOrder() {
 function openCheckPop(e) {
     resetCheckPop();
 
+    $("#fdRequestAmtInConfirm").val(e.item.fdTotAmt.toLocaleString());
     $("#confirmInspectPop").addClass("active");
     const searchCondition = {
         fdId: e.item.fdId,
@@ -456,6 +458,7 @@ function openCheckPop(e) {
 
 function resetCheckPop() {
     $("#fiCommentInConfirm").val("");
+    $("#fiAddAmtInConfirm").val("");
     $("#imgFull").hide();
 }
 
