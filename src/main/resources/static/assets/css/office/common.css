@@ -1331,12 +1331,14 @@ textarea {
 	margin-left: 0.625rem;
 }
 
-
+/* grid 컬러박스 */
 .colorSquare {
 	height: 20px;
 	width: 20px;
 	border-radius: 5px;
 	display: inline-block;
 }
-
-
+.color_and_name {
+	text-align: left;
+	margin-left: 10px;
+}
