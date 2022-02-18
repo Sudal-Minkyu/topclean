@@ -359,11 +359,11 @@ const trigs = {
 
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
 const wares = {
-    title: "지사입고현황", // 엑셀 다운로드 파일명 생성에 쓰인다.
+    title: "체류세탁물현황", // 엑셀 다운로드 파일명 생성에 쓰인다.
     currentDetail: { // 디테일 그리드를 뿌리기 위해 선택된 가맹점과 일자의 정보. 엑셀 파일명 생성에 쓰인다.
         franchiseId: 0,
         frName: "",
-        fdS2Dt: "",
+        date: "",
     },
 }
 
@@ -410,7 +410,7 @@ function searchOrder() {
         filterFromDt: $("#filterFromDt").val(),
         filterToDt: $("#filterToDt").val(),
         franchiseId: parseInt(frId),
-        type: "1", // 1 지사입고현황, 2 지사출고현황
+        type: "2", // 1 지사입고현황, 2 체류세탁물현황
     };
 
     comms.getMainList(searchCondition);
@@ -425,7 +425,7 @@ function showDetail(item) {
     /* 선택된 가맹점과 날짜 항목에 대한 기억 */
     wares.currentDetail.franchiseId = searchCondition.franchiseId;
     wares.currentDetail.date = searchCondition.date;
-    wares.currentDetail.fdS2Dt = item.fdS2Dt;
+    wares.currentDetail.frName = item.frName;
 
     comms.getDetailList(searchCondition);
 }

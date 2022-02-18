@@ -69,7 +69,14 @@ class CommonUIClass {
                 if(obj !== null) resultArray.push(obj);
             }
             return resultArray;
-        }
+        },
+
+        printReceipt(condition) {
+            const url = "/api/user/requestPaymentPaper";
+            CommonUI.ajax(url, "GET", condition, function (res) {
+                console.log(res);
+            });
+        },
     }
 
     /*

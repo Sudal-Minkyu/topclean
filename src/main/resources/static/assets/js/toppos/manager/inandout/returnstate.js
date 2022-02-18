@@ -5,16 +5,15 @@
 * */
 const dtos = {
     send: {
-        branchReleaseCurrentList: { // 좌측 가맹점 그리드의 조회시
+        branchReturnCurrentList: { // 좌측 가맹점 그리드의 조회시
             filterFromDt: "s",
             filterToDt: "s",
             franchiseId: "n",
-            type: "s",
         },
 
         branchStoreInputList: {
             frCode: "nr",
-            fdS2Dt: "sr",
+            fdS3Dt: "sr",
         },
     },
 
@@ -25,21 +24,19 @@ const dtos = {
             frTagNo: "s",
         },
         
-        branchReleaseCurrentList: {
+        branchReturnCurrentList: {
             frCode: "s", // 가맹점 id
             frName: "s",
-            fdS2Dt: "s", // 입고일
-            input_cnt: "n",
-            output_cnt: "n",
-            remain_cnt: "n",
-            tot_amt: "n",
+            fdS3Dt: "s",
+            return_cnt: "n",
+            tot_cnt: "n",
         },
 
         branchStoreInputList: {
             frRefType: "s",
             fdS2Type: "",
             fdS2Dt: "s",
-            fdS4Dt: "s",
+            fdS3Dt: "s",
             bcName: "s",
             fdTag: "s",
 
@@ -70,7 +67,7 @@ const dtos = {
 /* 통신에 사용되는 url들 기입 */
 const urls = {
     getFrList: "/api/manager/branchBelongList",
-    getMainList: "/api/manager/branchStoreCurrentList",
+    getMainList: "/api/manager/branchReturnCurrentList",
     getDetailList: "/api/manager/branchStoreInputList",
 }
 
@@ -359,11 +356,11 @@ const trigs = {
 
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
 const wares = {
-    title: "지사입고현황", // 엑셀 다운로드 파일명 생성에 쓰인다.
+    title: "가맹점반송현황", // 엑셀 다운로드 파일명 생성에 쓰인다.
     currentDetail: { // 디테일 그리드를 뿌리기 위해 선택된 가맹점과 일자의 정보. 엑셀 파일명 생성에 쓰인다.
         franchiseId: 0,
         frName: "",
-        fdS2Dt: "",
+        date: "",
     },
 }
 
@@ -410,7 +407,6 @@ function searchOrder() {
         filterFromDt: $("#filterFromDt").val(),
         filterToDt: $("#filterToDt").val(),
         franchiseId: parseInt(frId),
-        type: "1", // 1 지사입고현황, 2 지사출고현황
     };
 
     comms.getMainList(searchCondition);
@@ -425,7 +421,7 @@ function showDetail(item) {
     /* 선택된 가맹점과 날짜 항목에 대한 기억 */
     wares.currentDetail.franchiseId = searchCondition.franchiseId;
     wares.currentDetail.date = searchCondition.date;
-    wares.currentDetail.fdS2Dt = item.fdS2Dt;
+    wares.currentDetail.frName = item.frName;
 
     comms.getDetailList(searchCondition);
 }

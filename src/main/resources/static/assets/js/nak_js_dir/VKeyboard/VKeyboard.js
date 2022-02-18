@@ -1009,8 +1009,8 @@ class VKeyboard {
     keypadMidprocess(value) {
         switch(this.keypadProp.midprocess) {
             case "default":
+                if(value === "") value = 0;
                 value = parseInt(value).toLocaleString();
-                if(isNaN(value)) value = 0;
                 break;
             case "none":
                 break;

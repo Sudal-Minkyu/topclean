@@ -12,9 +12,9 @@ const dtos = {
             type: "s",
         },
 
-        branchStoreInputList: {
+        branchReleaseInputList: {
             frCode: "nr",
-            fdS2Dt: "sr",
+            fdS4Dt: "sr",
         },
     },
 
@@ -28,16 +28,13 @@ const dtos = {
         branchReleaseCurrentList: {
             frCode: "s", // 가맹점 id
             frName: "s",
-            fdS2Dt: "s", // 입고일
-            input_cnt: "n",
+            fdS4Dt: "s", // 출고일
             output_cnt: "n",
-            remain_cnt: "n",
             tot_amt: "n",
         },
 
-        branchStoreInputList: {
+        branchReleaseInputList: {
             frRefType: "s",
-            fdS2Type: "",
             fdS2Dt: "s",
             fdS4Dt: "s",
             bcName: "s",
@@ -70,8 +67,8 @@ const dtos = {
 /* 통신에 사용되는 url들 기입 */
 const urls = {
     getFrList: "/api/manager/branchBelongList",
-    getMainList: "/api/manager/branchStoreCurrentList",
-    getDetailList: "/api/manager/branchStoreInputList",
+    getMainList: "/api/manager/branchReleaseCurrentList",
+    getDetailList: "/api/manager/branchReleaseInputList",
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
@@ -90,7 +87,7 @@ const comms = {
     },
 
     getMainList(searchCondition) {
-        dv.chk(searchCondition, dtos.send.branchReleaseCurrentList, "프랜차이즈 그리드 검색 조건 보내기");
+        dv.chk(searchCondition, dtos.send.branchStoreCurrentList, "프랜차이즈 그리드 검색 조건 보내기");
         console.log(searchCondition);
         CommonUI.ajax(urls.getMainList, "GET", searchCondition, function (res) {
             const data = res.sendData.gridListData;
@@ -101,7 +98,7 @@ const comms = {
     },
 
     getDetailList(searchCondition) {
-        dv.chk(searchCondition, dtos.send.branchStoreInputList, "디테일 그리드 검색 조건 보내기");
+        dv.chk(searchCondition, dtos.send.branchReleaseInputList, "디테일 그리드 검색 조건 보내기");
         CommonUI.ajax(urls.getDetailList, "GET", searchCondition, function (res) {
             const data = res.sendData.gridListData;
             grids.f.setData(1, data);
@@ -359,11 +356,11 @@ const trigs = {
 
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
 const wares = {
-    title: "지사입고현황", // 엑셀 다운로드 파일명 생성에 쓰인다.
+    title: "지사출고현황", // 엑셀 다운로드 파일명 생성에 쓰인다.
     currentDetail: { // 디테일 그리드를 뿌리기 위해 선택된 가맹점과 일자의 정보. 엑셀 파일명 생성에 쓰인다.
         franchiseId: 0,
         frName: "",
-        fdS2Dt: "",
+        fdS4Dt: "",
     },
 }
 
@@ -410,7 +407,7 @@ function searchOrder() {
         filterFromDt: $("#filterFromDt").val(),
         filterToDt: $("#filterToDt").val(),
         franchiseId: parseInt(frId),
-        type: "1", // 1 지사입고현황, 2 지사출고현황
+        type: "1", // 1 지사출고현황, 2 지사강제출고현황
     };
 
     comms.getMainList(searchCondition);
@@ -419,13 +416,13 @@ function searchOrder() {
 function showDetail(item) {
     const searchCondition = {
         franchiseId: item.frId,
-        fdS2Dt: item.fdS2Dt,
+        fdS4Dt: item.fdS4Dt,
     }
 
     /* 선택된 가맹점과 날짜 항목에 대한 기억 */
     wares.currentDetail.franchiseId = searchCondition.franchiseId;
-    wares.currentDetail.date = searchCondition.date;
-    wares.currentDetail.fdS2Dt = item.fdS2Dt;
+    wares.currentDetail.fdS4Dt = searchCondition.fdS4Dt;
+    wares.currentDetail.frName = item.frName;
 
     comms.getDetailList(searchCondition);
 }

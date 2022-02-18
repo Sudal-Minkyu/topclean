@@ -221,7 +221,58 @@
                     },
                 ];
 
-            CAT.CatPrint_Multi(paymentData, creditData,"N");
+const temp = {
+    "creditData": [
+        {
+            "approvalNo": "61617015    ",
+            "payAmount": 500,
+            "cardName": "NH카드          ",
+            "month": 0,
+            "approvalTime": "2202171746315",
+            "type": "card",
+            "cardNo": "409216******9758"
+        },
+        {
+            "payAmount": 1000,
+            "type": "cash",
+
+        }
+    ],
+    "paymentData": {
+        "requestDt": "2022-02-17",
+        "totalUncollectAmount": 33220,
+        "changeAmount": 0,
+        "paymentAmount": 1500,
+        "customerName": "테스트",
+        "uncollectPayAmount": 0,
+        "curUncollectAmount": 8820,
+        "businessNO": "1234567890",
+        "franchiseTel": "02111222200",
+        "normalAmount": 6000,
+        "preUncollectAmount": 24400,
+        "repreName": "이태진4",
+        "customerTel": "01022221111",
+        "franchiseNo": "111",
+        "franchiseName": "브로드웨이브",
+                    "totalAmount":10500,
+            "estimateDt": "2022-02-20",
+            
+
+"items": [
+        {
+            "specialyn": "N",
+            "estimateDt": "2022-02-20",
+            "color": "00",
+            "itemname": "마 상의",
+            "price": 6000,
+            "tagno": "2220452"
+        }
+    ]
+    },
+    
+}
+
+            CAT.CatPrint_Multi(temp.paymentData, temp.creditData,"N");
         }
 
         function appExit() {

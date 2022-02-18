@@ -12,9 +12,9 @@ const dtos = {
             type: "s",
         },
 
-        branchStoreInputList: {
+        branchReleaseForceList: {
             frCode: "nr",
-            fdS2Dt: "sr",
+            fdS7Dt: "sr",
         },
     },
 
@@ -28,18 +28,15 @@ const dtos = {
         branchReleaseCurrentList: {
             frCode: "s", // 가맹점 id
             frName: "s",
-            fdS2Dt: "s", // 입고일
-            input_cnt: "n",
+            fdS7Dt: "s", // 강제출고일
             output_cnt: "n",
-            remain_cnt: "n",
             tot_amt: "n",
         },
 
-        branchStoreInputList: {
+        branchReleaseForceList: {
             frRefType: "s",
-            fdS2Type: "",
             fdS2Dt: "s",
-            fdS4Dt: "s",
+            fdS7Dt: "s",
             bcName: "s",
             fdTag: "s",
 
@@ -70,8 +67,8 @@ const dtos = {
 /* 통신에 사용되는 url들 기입 */
 const urls = {
     getFrList: "/api/manager/branchBelongList",
-    getMainList: "/api/manager/branchStoreCurrentList",
-    getDetailList: "/api/manager/branchStoreInputList",
+    getMainList: "/api/manager/branchReleaseCurrentList",
+    getDetailList: "/api/manager/branchReleaseForceList",
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
@@ -359,11 +356,11 @@ const trigs = {
 
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
 const wares = {
-    title: "지사입고현황", // 엑셀 다운로드 파일명 생성에 쓰인다.
+    title: "지사강제출고현황", // 엑셀 다운로드 파일명 생성에 쓰인다.
     currentDetail: { // 디테일 그리드를 뿌리기 위해 선택된 가맹점과 일자의 정보. 엑셀 파일명 생성에 쓰인다.
         franchiseId: 0,
         frName: "",
-        fdS2Dt: "",
+        fdS7Dt: "",
     },
 }
 
@@ -410,7 +407,7 @@ function searchOrder() {
         filterFromDt: $("#filterFromDt").val(),
         filterToDt: $("#filterToDt").val(),
         franchiseId: parseInt(frId),
-        type: "1", // 1 지사입고현황, 2 지사출고현황
+        type: "2", // 1 지사출고현황, 2 지사강제출고현황
     };
 
     comms.getMainList(searchCondition);
@@ -419,13 +416,13 @@ function searchOrder() {
 function showDetail(item) {
     const searchCondition = {
         franchiseId: item.frId,
-        fdS2Dt: item.fdS2Dt,
+        fdS7Dt: item.fdS7Dt,
     }
 
     /* 선택된 가맹점과 날짜 항목에 대한 기억 */
     wares.currentDetail.franchiseId = searchCondition.franchiseId;
-    wares.currentDetail.date = searchCondition.date;
-    wares.currentDetail.fdS2Dt = item.fdS2Dt;
+    wares.currentDetail.fdS7Dt = searchCondition.fdS7Dt;
+    wares.currentDetail.frName = item.frName;
 
     comms.getDetailList(searchCondition);
 }

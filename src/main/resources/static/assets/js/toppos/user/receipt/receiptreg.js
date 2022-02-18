@@ -1999,9 +1999,5 @@ function onPrintReceipt() {
         frId: "",
     }
 
-    console.log(condition);
-    const url = "/api/user/requestPaymentPaper";
-    CommonUI.ajax(url, "GET", condition, function (res) {
-        console.log(res);
-    });
+    CommonUI.toppos.printReceipt(condition);
 }
