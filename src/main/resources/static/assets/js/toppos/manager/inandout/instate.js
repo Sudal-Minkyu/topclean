@@ -415,8 +415,8 @@ function searchOrder() {
     const frId = $("#frList").val();
 
     const searchCondition = {
-        filterFromDt: $("#filterFromDt").val(),
-        filterToDt: $("#filterToDt").val(),
+        filterFromDt: $("#filterFromDt").val().numString(),
+        filterToDt: $("#filterToDt").val().numString(),
         franchiseId: parseInt(frId),
         type: "1", // 1 지사입고현황, 2 지사출고현황
     };

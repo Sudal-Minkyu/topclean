@@ -388,8 +388,8 @@ function searchOrder() {
     const frId = $("#frList").val();
 
     const searchCondition = {
-        filterFromDt: $("#filterFromDt").val(),
-        filterToDt: $("#filterToDt").val(),
+        filterFromDt: $("#filterFromDt").val().numString(),
+        filterToDt: $("#filterToDt").val().numString(),
         franchiseId: parseInt(frId),
         type: $("input[name='dateType']:checked").val(), // 1 접수일자, 2 인도예정일
     };

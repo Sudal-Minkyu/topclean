@@ -393,8 +393,8 @@ function searchOrder() {
     const frId = $("#frList").val();
 
     const searchCondition = {
-        filterFromDt: $("#filterFromDt").val(),
-        filterToDt: $("#filterToDt").val(),
+        filterFromDt: $("#filterFromDt").val().numString(),
+        filterToDt: $("#filterToDt").val().numString(),
         franchiseId: parseInt(frId),
     };
 
