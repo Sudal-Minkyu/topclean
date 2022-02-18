@@ -47,9 +47,13 @@ public interface RequestDetailRepositoryCustom {
     List<RequestDetailBranchRemainCurrentListDto> findByRequestDetailBranchRemainCurrentList(String brCode, String frCode, String fdS2Dt); // 체류세탁물현황 - 오른쪽 리스트 호출API
 
     List<RequestDetailBranchReleaseCurrentListDto> findByRequestDetailBranchReleaseCurrentList(String brCode, Long franchiseId, String filterFromDt, String filterToDt, String type); // 지사출고현황, 지사강제출고현황 - 왼쪽 리스트 호출API
+    List<RequestDetailBranchReleaseCurrentRightListDto> findByRequestDetailBranchReleaseCurrentRightList(String brCode, String frCode, String fdS4Dt); // 지사출고현황 - 오른쪽 리스트 호출API
+    List<RequestDetailBranchReleaseForceCurrentRightListDto> findByRequestDetailBranchReleaseForceCurrentRightList(String brCode, String frCode, String fdS7Dt); // 지사강제출고현황 - 오른쪽 리스트 호출API
 
+    List<RequestDetailBranchUnReleaseCurrentListDto> findByRequestDetailBranchUnReleaseList(String brCode, Long franchiseId, String filterFromDt, String filterToDt, String type); // 미출고현황 - 왼쪽 리스트 호출API
+    List<RequestDetailBranchUnReleaseCurrentRightListDto> findByRequestDetailBranchUnReleaseCurrentRightList(String brCode, String frCode, String filterFromDt, String filterToDt, String type); // 미출고현황 - 오른쪽 리스트 호출API
 
-
-
+    List<RequestDetailBranchReturnCurrentListDto> findByRequestDetailBranchReturnCurrentList(String brCode, Long franchiseId, String filterFromDt, String filterToDt); // 가맹반송현황 - 왼쪽 리스트 호출API
+    List<RequestDetailBranchReturnCurrentRightListDto> findByRequestDetailBranchReturnRightCurrentList(String brCode, String frCode, String fdS3Dt); // 가맹반송현황 - 오른쪽 리스트 호출API
 
 }

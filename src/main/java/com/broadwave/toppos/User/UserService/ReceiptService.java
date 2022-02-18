@@ -818,7 +818,7 @@ public class ReceiptService {
             paymentData = new HashMap<>();
             paymentData.put("franchiseNo", requestPaymentPaperDto.getFrCode());
             paymentData.put("franchiseName", requestPaymentPaperDto.getFrName());
-            paymentData.put("businessNo", requestPaymentPaperDto.getFrBusinessNo());
+            paymentData.put("businessNO", requestPaymentPaperDto.getFrBusinessNo());
             paymentData.put("repreName", requestPaymentPaperDto.getFrRpreName());
             paymentData.put("franchiseTel", requestPaymentPaperDto.getFrTelNo());
             paymentData.put("customerName", requestPaymentPaperDto.getCustomer().getBcName());
@@ -826,6 +826,7 @@ public class ReceiptService {
             paymentData.put("requestDt", requestPaymentPaperDto.getFrYyyymmdd());
             paymentData.put("normalAmount", requestPaymentPaperDto.getFrNormalAmount());
             paymentData.put("changeAmount", requestPaymentPaperDto.getFrDiscountAmount());
+            paymentData.put("totalAmount", requestPaymentPaperDto.getFrNormalAmount() + requestPaymentPaperDto.getFrDiscountAmount());
             paymentData.put("paymentAmount", requestPaymentPaperDto.getFrPayAmount());
 
 //                    preUncollectAmount: "n", // 고객 전일미수금

@@ -6,26 +6,22 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 
 /**
  * @author Minkyu
- * Date : 2022-02-17
+ * Date : 2022-02-18
  * Time :
- * Remark : Toppos 지사 지사출고현황, 지사강제출고현황 왼쪽 ListDto
+ * Remark : Toppos 지사 미출고현황 왼쪽 ListDto
  */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RequestDetailBranchReleaseCurrentListDto {
+public class RequestDetailBranchUnReleaseCurrentListDto {
 
     private String frCode; // 가맹점코드
     private String frName; // 가맹점명
-    private String fdSDt; // 출고일자 or 강제출고일자
-
-    private BigDecimal output_cnt; // 출고건수
-
-    private BigDecimal tot_amt; // 접수총액 - 출고건수 금액 sum
+    private Long unoutput_cnt; // 미출고건수
+    private Integer tot_amt; // 접수총액
 
 }

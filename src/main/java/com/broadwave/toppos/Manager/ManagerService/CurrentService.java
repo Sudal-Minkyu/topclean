@@ -1,10 +1,7 @@
 package com.broadwave.toppos.Manager.ManagerService;
 
 import com.broadwave.toppos.Jwt.token.TokenProvider;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.manager.RequestDetailBranchInputCurrentListDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.manager.RequestDetailBranchReleaseCurrentListDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.manager.RequestDetailBranchRemainCurrentListDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.manager.RequestDetailBranchStoreCurrentListDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.manager.*;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepositoryCustom;
 import com.broadwave.toppos.common.AjaxResponse;
 import io.jsonwebtoken.Claims;
@@ -14,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +41,11 @@ public class CurrentService {
         log.info("branchStoreCurrentList 호출");
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
+
+        log.info("franchiseId : "+franchiseId);
+        log.info("filterFromDt : "+filterFromDt);
+        log.info("filterToDt : "+filterToDt);
+        log.info("type : "+type);
 
         // 클레임데이터 가져오기
         Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
@@ -109,7 +112,140 @@ public class CurrentService {
         log.info("현재 접속한 지사 코드 : "+brCode);
 
         List<RequestDetailBranchReleaseCurrentListDto> requestDetailBranchReleaseCurrentListDtos =  requestDetailRepositoryCustom.findByRequestDetailBranchReleaseCurrentList(brCode, franchiseId, filterFromDt, filterToDt, type);
-        data.put("gridListData",requestDetailBranchReleaseCurrentListDtos);
+        List<HashMap<String,Object>> releaseViewData = new ArrayList<>();
+        HashMap<String,Object> releaseInfo;
+        if(requestDetailBranchReleaseCurrentListDtos != null) {
+            for (RequestDetailBranchReleaseCurrentListDto requestDetailBranchReleaseCurrentListDto : requestDetailBranchReleaseCurrentListDtos) {
+                releaseInfo = new HashMap<>();
+                releaseInfo.put("frCode", requestDetailBranchReleaseCurrentListDto.getFrCode());
+                releaseInfo.put("frName", requestDetailBranchReleaseCurrentListDto.getFrName());
+                if (type.equals("1")) {
+                    releaseInfo.put("fdS4Dt", requestDetailBranchReleaseCurrentListDto.getFdSDt());
+                } else {
+                    releaseInfo.put("fdS7Dt", requestDetailBranchReleaseCurrentListDto.getFdSDt());
+                }
+                releaseInfo.put("output_cnt", requestDetailBranchReleaseCurrentListDto.getOutput_cnt());
+                releaseInfo.put("tot_amt", requestDetailBranchReleaseCurrentListDto.getTot_amt());
+                releaseViewData.add(releaseInfo);
+            }
+        }
+        data.put("gridListData",releaseViewData);
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
+    //  지사출고현황 - 오른쪽 리스트 호출API
+    public ResponseEntity<Map<String, Object>> branchReleaseInputList(String frCode, String fdS4Dt, HttpServletRequest request) {
+        log.info("branchReleaseInputList 호출");
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String brCode = (String) claims.get("brCode"); // 현재 지사의 코드(2자리) 가져오기
+        String login_id = claims.getSubject(); // 현재 아이디
+        log.info("현재 접속한 아이디 : "+login_id);
+        log.info("현재 접속한 지사 코드 : "+brCode);
+
+        List<RequestDetailBranchReleaseCurrentRightListDto> requestDetailBranchReleaseCurrentRightListDtos =  requestDetailRepositoryCustom.findByRequestDetailBranchReleaseCurrentRightList(brCode, frCode, fdS4Dt);
+        data.put("gridListData",requestDetailBranchReleaseCurrentRightListDtos);
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
+    //  지사강제출고현황 - 오른쪽 리스트 호출API
+    public ResponseEntity<Map<String, Object>> branchReleaseForceList(String frCode, String fdS7Dt, HttpServletRequest request) {
+        log.info("branchReleaseForceList 호출");
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String brCode = (String) claims.get("brCode"); // 현재 지사의 코드(2자리) 가져오기
+        String login_id = claims.getSubject(); // 현재 아이디
+        log.info("현재 접속한 아이디 : "+login_id);
+        log.info("현재 접속한 지사 코드 : "+brCode);
+
+        List<RequestDetailBranchReleaseForceCurrentRightListDto> requestDetailBranchReleaseForceCurrentRightListDtos =  requestDetailRepositoryCustom.findByRequestDetailBranchReleaseForceCurrentRightList(brCode, frCode, fdS7Dt);
+        data.put("gridListData",requestDetailBranchReleaseForceCurrentRightListDtos);
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
+    // 미출고현황 - 왼쪽 리스트 호출API
+    public ResponseEntity<Map<String, Object>> branchUnReleaseCurrentList(Long franchiseId, String filterFromDt, String filterToDt, String type, HttpServletRequest request) {
+        log.info("branchUnReleaseCurrentList 호출");
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String brCode = (String) claims.get("brCode"); // 현재 지사의 코드(2자리) 가져오기
+        String login_id = claims.getSubject(); // 현재 아이디
+        log.info("현재 접속한 아이디 : "+login_id);
+        log.info("현재 접속한 지사 코드 : "+brCode);
+
+        List<RequestDetailBranchUnReleaseCurrentListDto> requestDetailBranchUnReleaseCurrentListDtos =  requestDetailRepositoryCustom.findByRequestDetailBranchUnReleaseList(brCode, franchiseId, filterFromDt, filterToDt, type);
+        data.put("gridListData",requestDetailBranchUnReleaseCurrentListDtos);
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
+    // 미출고현황 - 오른쪽 리스트 호출API
+    public ResponseEntity<Map<String, Object>> branchUnReleaseCurrentInputList(String frCode, String filterFromDt, String filterToDt, String type, HttpServletRequest request) {
+        log.info("branchUnReleaseCurrentInputList 호출");
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String brCode = (String) claims.get("brCode"); // 현재 지사의 코드(2자리) 가져오기
+        String login_id = claims.getSubject(); // 현재 아이디
+        log.info("현재 접속한 아이디 : "+login_id);
+        log.info("현재 접속한 지사 코드 : "+brCode);
+
+        List<RequestDetailBranchUnReleaseCurrentRightListDto> requestDetailBranchUnReleaseCurrentRightListDtos =  requestDetailRepositoryCustom.findByRequestDetailBranchUnReleaseCurrentRightList(brCode, frCode, filterFromDt, filterToDt, type);
+        data.put("gridListData",requestDetailBranchUnReleaseCurrentRightListDtos);
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
+    // 가맹반송현황 - 왼쪽 리스트 호출API
+    public ResponseEntity<Map<String, Object>> branchReturnCurrentList(Long franchiseId, String filterFromDt, String filterToDt, HttpServletRequest request) {
+        log.info("branchReturnCurrentList 호출");
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String brCode = (String) claims.get("brCode"); // 현재 지사의 코드(2자리) 가져오기
+        String login_id = claims.getSubject(); // 현재 아이디
+        log.info("현재 접속한 아이디 : "+login_id);
+        log.info("현재 접속한 지사 코드 : "+brCode);
+
+        List<RequestDetailBranchReturnCurrentListDto> requestDetailBranchReturnCurrentListDtos =  requestDetailRepositoryCustom.findByRequestDetailBranchReturnCurrentList(brCode, franchiseId, filterFromDt, filterToDt);
+        data.put("gridListData",requestDetailBranchReturnCurrentListDtos);
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
+    // 가맹반송현황 - 오른쪽 리스트 호출API
+    public ResponseEntity<Map<String, Object>> branchReturnCurrentInputList(String frCode, String fdS3Dt, HttpServletRequest request) {
+        log.info("branchReturnCurrentInputList 호출");
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String brCode = (String) claims.get("brCode"); // 현재 지사의 코드(2자리) 가져오기
+        String login_id = claims.getSubject(); // 현재 아이디
+        log.info("현재 접속한 아이디 : "+login_id);
+        log.info("현재 접속한 지사 코드 : "+brCode);
+
+        List<RequestDetailBranchReturnCurrentRightListDto> requestDetailBranchReturnCurrentRightListDtos =  requestDetailRepositoryCustom.findByRequestDetailBranchReturnRightCurrentList(brCode, frCode, fdS3Dt);
+        data.put("gridListData",requestDetailBranchReturnCurrentRightListDtos);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }

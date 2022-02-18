@@ -30,8 +30,10 @@ import java.util.List;
 @Slf4j
 @Repository
 public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport implements RequestDetailRepositoryCustom {
+
     @Autowired
     JpaResultMapper jpaResultMapper;
+
     public RequestDetailRepositoryCustomImpl() {
         super(RequestDetailRepository.class);
     }
@@ -1024,13 +1026,11 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
     public  List<RequestDetailBranchInputCurrentListDto> findByRequestDetailBranchInputCurrentList(String brCode, String frCode, String fdS2Dt){
         QRequestDetail requestDetail = QRequestDetail.requestDetail;
         QRequest request = QRequest.request;
-        QFranchise franchise = QFranchise.franchise;
         QItemGroup itemGroup = QItemGroup.itemGroup;
         QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
         QItem item = QItem.item;
         JPQLQuery<RequestDetailBranchInputCurrentListDto> query = from(requestDetail)
                 .innerJoin(request).on(requestDetail.frId.eq(request))
-                .innerJoin(franchise).on(request.frCode.eq(franchise.frCode))
                 .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
                 .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
                 .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
@@ -1070,7 +1070,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                 ));
 
         query.orderBy(requestDetail.id.asc()).groupBy(requestDetail);
-        query.where(franchise.frCode.eq(frCode));
+        query.where(request.frCode.eq(frCode));
         query.where(requestDetail.fdS2Dt.eq(fdS2Dt));
 
         return query.fetch();
@@ -1080,13 +1080,11 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
     public  List<RequestDetailBranchRemainCurrentListDto> findByRequestDetailBranchRemainCurrentList(String brCode, String frCode, String fdS2Dt){
         QRequestDetail requestDetail = QRequestDetail.requestDetail;
         QRequest request = QRequest.request;
-        QFranchise franchise = QFranchise.franchise;
         QItemGroup itemGroup = QItemGroup.itemGroup;
         QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
         QItem item = QItem.item;
         JPQLQuery<RequestDetailBranchRemainCurrentListDto> query = from(requestDetail)
                 .innerJoin(request).on(requestDetail.frId.eq(request))
-                .innerJoin(franchise).on(request.frCode.eq(franchise.frCode))
                 .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
                 .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
                 .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
@@ -1127,8 +1125,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                 ));
 
         query.orderBy(requestDetail.id.asc()).groupBy(requestDetail);
-        query.where(requestDetail.fdState.eq("S2"));
-        query.where(franchise.frCode.eq(frCode));
+        query.where(request.frCode.eq(frCode));
         query.where(requestDetail.fdS2Dt.eq(fdS2Dt));
 
         return query.fetch();
@@ -1159,7 +1156,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         }
         sb.append("             GROUP BY a.fr_code, c.fr_name, b.fd_s2_dt  \n");
         sb.append("             HAVING output_cnt > 0  \n");
-        sb.append("             ORDER BY b.fd_s2_dt ASC \n");
+        sb.append("             ORDER BY c.fr_name ASC, b.fd_s2_dt ASC \n");
 
         Query query = em.createNativeQuery(sb.toString());
 
@@ -1172,5 +1169,308 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
 
         return jpaResultMapper.list(query, RequestDetailBranchReleaseCurrentListDto.class);
     }
+
+    //  지사출고현황 - querydsl
+    public List<RequestDetailBranchReleaseCurrentRightListDto> findByRequestDetailBranchReleaseCurrentRightList(String brCode, String frCode, String fdS4Dt){
+        QRequestDetail requestDetail = QRequestDetail.requestDetail;
+        QRequest request = QRequest.request;
+        QItemGroup itemGroup = QItemGroup.itemGroup;
+        QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
+        QItem item = QItem.item;
+        JPQLQuery<RequestDetailBranchReleaseCurrentRightListDto> query = from(requestDetail)
+                .innerJoin(request).on(requestDetail.frId.eq(request))
+                .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
+                .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
+                .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
+                .where(request.frConfirmYn.eq("Y"))
+                .where(requestDetail.frId.brCode.eq(brCode).and(requestDetail.fdCancel.eq("N")))
+                .select(Projections.constructor(RequestDetailBranchReleaseCurrentRightListDto.class,
+
+                        request.frRefType,
+
+                        requestDetail.fdS2Dt,
+                        requestDetail.fdS4Dt,
+
+                        requestDetail.fdTag,
+                        requestDetail.fdColor,
+
+                        itemGroup.bgName,
+                        itemGroupS.bsName,
+                        item.biName,
+
+                        requestDetail.fdPriceGrade,
+                        requestDetail.fdRetryYn,
+                        requestDetail.fdPressed,
+                        requestDetail.fdAdd1Amt,
+                        requestDetail.fdAdd1Remark,
+                        requestDetail.fdRepairAmt,
+                        requestDetail.fdRepairRemark,
+                        requestDetail.fdWhitening,
+                        requestDetail.fdPollution,
+                        requestDetail.fdWaterRepellent,
+                        requestDetail.fdStarch,
+                        requestDetail.fdUrgentYn,
+
+                        request.bcId.bcName,
+                        requestDetail.fdTotAmt,
+                        requestDetail.fdState,
+                        requestDetail.fdRemark
+                ));
+
+        query.orderBy(requestDetail.id.asc()).groupBy(requestDetail);
+        query.where(request.frCode.eq(frCode));
+        query.where(requestDetail.fdS4Dt.eq(fdS4Dt));
+
+        return query.fetch();
+    }
+
+    // 지사강제출고현황 - querydsl
+    public  List<RequestDetailBranchReleaseForceCurrentRightListDto> findByRequestDetailBranchReleaseForceCurrentRightList(String brCode, String frCode, String fdS7Dt){
+        QRequestDetail requestDetail = QRequestDetail.requestDetail;
+        QRequest request = QRequest.request;
+        QItemGroup itemGroup = QItemGroup.itemGroup;
+        QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
+        QItem item = QItem.item;
+        JPQLQuery<RequestDetailBranchReleaseForceCurrentRightListDto> query = from(requestDetail)
+                .innerJoin(request).on(requestDetail.frId.eq(request))
+                .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
+                .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
+                .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
+                .where(request.frConfirmYn.eq("Y"))
+                .where(requestDetail.frId.brCode.eq(brCode).and(requestDetail.fdCancel.eq("N")))
+                .select(Projections.constructor(RequestDetailBranchReleaseForceCurrentRightListDto.class,
+
+                        request.frRefType,
+
+                        requestDetail.fdS2Dt,
+                        requestDetail.fdS7Dt,
+
+                        requestDetail.fdTag,
+                        requestDetail.fdColor,
+
+                        itemGroup.bgName,
+                        itemGroupS.bsName,
+                        item.biName,
+
+                        requestDetail.fdPriceGrade,
+                        requestDetail.fdRetryYn,
+                        requestDetail.fdPressed,
+                        requestDetail.fdAdd1Amt,
+                        requestDetail.fdAdd1Remark,
+                        requestDetail.fdRepairAmt,
+                        requestDetail.fdRepairRemark,
+                        requestDetail.fdWhitening,
+                        requestDetail.fdPollution,
+                        requestDetail.fdWaterRepellent,
+                        requestDetail.fdStarch,
+                        requestDetail.fdUrgentYn,
+
+                        request.bcId.bcName,
+                        requestDetail.fdTotAmt,
+                        requestDetail.fdState,
+                        requestDetail.fdRemark
+                ));
+
+        query.orderBy(requestDetail.id.asc()).groupBy(requestDetail);
+        query.where(request.frCode.eq(frCode));
+        query.where(requestDetail.fdS7Dt.eq(fdS7Dt));
+
+        return query.fetch();
+    }
+
+    // 미출고현황 - querydsl
+    public List<RequestDetailBranchUnReleaseCurrentListDto> findByRequestDetailBranchUnReleaseList(String brCode, Long franchiseId, String filterFromDt, String filterToDt, String type){
+        QRequestDetail requestDetail = QRequestDetail.requestDetail;
+        QRequest request = QRequest.request;
+        QFranchise franchise = QFranchise.franchise;
+
+        JPQLQuery<RequestDetailBranchUnReleaseCurrentListDto> query = from(requestDetail)
+                .innerJoin(request).on(requestDetail.frId.eq(request))
+                .innerJoin(franchise).on(request.frCode.eq(franchise.frCode))
+                .where(request.frConfirmYn.eq("Y"))
+                .where(requestDetail.frId.brCode.eq(brCode).and(requestDetail.fdCancel.eq("N")))
+                .select(Projections.constructor(RequestDetailBranchUnReleaseCurrentListDto.class,
+                        request.frCode,
+                        franchise.frName,
+                        requestDetail.count(),
+                        requestDetail.fdTotAmt.sum()
+                ));
+
+        query.orderBy(franchise.frName.asc()).groupBy(request.frCode,franchise.frName).having(requestDetail.count().gt(0));;
+
+        if(franchiseId != null) {
+            query.where(franchise.id.eq(franchiseId));
+        }
+
+        if(type.equals("1")) {
+            query.where(request.frYyyymmdd.goe(filterFromDt).and(request.frYyyymmdd.loe(filterToDt)));
+        }else{
+            query.where(requestDetail.fdEstimateDt.goe(filterFromDt).and(requestDetail.fdEstimateDt.loe(filterToDt)));
+        }
+
+        query.where(requestDetail.fdState.eq("S2"));
+
+        return query.fetch();
+    }
+
+    // 미출고현황 오른쪽리스트 - querydsl
+    public List<RequestDetailBranchUnReleaseCurrentRightListDto> findByRequestDetailBranchUnReleaseCurrentRightList(String brCode, String frCode, String filterFromDt, String filterToDt, String type) {
+        QRequestDetail requestDetail = QRequestDetail.requestDetail;
+        QRequest request = QRequest.request;
+        QItemGroup itemGroup = QItemGroup.itemGroup;
+        QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
+        QItem item = QItem.item;
+        JPQLQuery<RequestDetailBranchUnReleaseCurrentRightListDto> query = from(requestDetail)
+                .innerJoin(request).on(requestDetail.frId.eq(request))
+                .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
+                .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
+                .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
+                .where(request.frConfirmYn.eq("Y"))
+                .where(requestDetail.frId.brCode.eq(brCode).and(requestDetail.fdCancel.eq("N")))
+                .select(Projections.constructor(RequestDetailBranchUnReleaseCurrentRightListDto.class,
+
+                        request.frRefType,
+
+                        request.frYyyymmdd,
+                        requestDetail.fdS2Dt,
+                        requestDetail.fdEstimateDt,
+
+                        requestDetail.fdTag,
+                        requestDetail.fdColor,
+
+                        itemGroup.bgName,
+                        itemGroupS.bsName,
+                        item.biName,
+
+                        requestDetail.fdPriceGrade,
+                        requestDetail.fdRetryYn,
+                        requestDetail.fdPressed,
+                        requestDetail.fdAdd1Amt,
+                        requestDetail.fdAdd1Remark,
+                        requestDetail.fdRepairAmt,
+                        requestDetail.fdRepairRemark,
+                        requestDetail.fdWhitening,
+                        requestDetail.fdPollution,
+                        requestDetail.fdWaterRepellent,
+                        requestDetail.fdStarch,
+                        requestDetail.fdUrgentYn,
+
+                        request.bcId.bcName,
+                        requestDetail.fdTotAmt,
+                        requestDetail.fdState,
+                        requestDetail.fdRemark
+                ));
+
+        query.orderBy(requestDetail.id.asc()).groupBy(requestDetail);
+        query.where(request.frCode.eq(frCode));
+
+        if(type.equals("1")) {
+            query.where(request.frYyyymmdd.goe(filterFromDt).and(request.frYyyymmdd.loe(filterToDt)));
+        }else{
+            query.where(requestDetail.fdEstimateDt.goe(filterFromDt).and(requestDetail.fdEstimateDt.loe(filterToDt)));
+        }
+
+        query.where(requestDetail.fdState.eq("S2"));
+
+        return query.fetch();
+    }
+
+    // 가맹반송현황 - querydsl
+    public List<RequestDetailBranchReturnCurrentListDto> findByRequestDetailBranchReturnCurrentList(String brCode, Long franchiseId, String filterFromDt, String filterToDt) {
+
+        EntityManager em = getEntityManager();
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("SELECT a.fr_code, c.fr_name, b.fd_s3_dt, \n");
+        sb.append("  sum(case when IFNULL(b.fd_s3_dt,'') = '' THEN 0 ELSE 1 END) as tot_amt,  \n");
+        sb.append("  sum(b.fd_tot_amt)");
+        sb.append("         FROM fs_request a \n");
+        sb.append("             INNER JOIN fs_request_dtl b ON a.fr_id = b.fr_id  \n");
+        sb.append("             INNER JOIN bs_franchise c ON a.fr_code = c.fr_code  \n");
+        sb.append("             WHERE a.br_code = ?1 AND a.fr_confirm_yn ='Y' AND b.fd_cancel ='N'  \n");
+        sb.append("             AND b.fd_s2_dt >= ?2 \n");
+        sb.append("             AND b.fd_s2_dt <= ?3  \n");
+        if(franchiseId != null){
+            sb.append("             AND c.fr_id = ?4  \n");
+        }
+        sb.append("             GROUP BY a.fr_code, c.fr_name, b.fd_s3_dt  \n");
+        sb.append("             HAVING tot_amt > 0  \n");
+        sb.append("             ORDER BY c.fr_name ASC, b.fd_s3_dt ASC \n");
+
+        Query query = em.createNativeQuery(sb.toString());
+
+        query.setParameter(1, brCode);
+        query.setParameter(2, filterFromDt);
+        query.setParameter(3, filterToDt);
+        if(franchiseId != null) {
+            query.setParameter(4, franchiseId);
+        }
+
+        return jpaResultMapper.list(query, RequestDetailBranchReturnCurrentListDto.class);
+    }
+
+    // 가맹반송현황 오른쪽리스트 - querydsl
+    public List<RequestDetailBranchReturnCurrentRightListDto> findByRequestDetailBranchReturnRightCurrentList(String brCode, String frCode, String fdS3Dt) {
+        QRequestDetail requestDetail = QRequestDetail.requestDetail;
+        QRequest request = QRequest.request;
+        QItemGroup itemGroup = QItemGroup.itemGroup;
+        QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
+        QItem item = QItem.item;
+        JPQLQuery<RequestDetailBranchReturnCurrentRightListDto> query = from(requestDetail)
+                .innerJoin(request).on(requestDetail.frId.eq(request))
+                .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
+                .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
+                .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
+                .where(request.frConfirmYn.eq("Y"))
+                .where(requestDetail.frId.brCode.eq(brCode).and(requestDetail.fdCancel.eq("N")))
+                .select(Projections.constructor(RequestDetailBranchReturnCurrentRightListDto.class,
+
+                        request.frRefType,
+
+                        requestDetail.fdS2Dt,
+                        requestDetail.fdS3Dt,
+
+                        requestDetail.fdTag,
+                        requestDetail.fdColor,
+
+                        itemGroup.bgName,
+                        itemGroupS.bsName,
+                        item.biName,
+
+                        requestDetail.fdPriceGrade,
+                        requestDetail.fdRetryYn,
+                        requestDetail.fdPressed,
+                        requestDetail.fdAdd1Amt,
+                        requestDetail.fdAdd1Remark,
+                        requestDetail.fdRepairAmt,
+                        requestDetail.fdRepairRemark,
+                        requestDetail.fdWhitening,
+                        requestDetail.fdPollution,
+                        requestDetail.fdWaterRepellent,
+                        requestDetail.fdStarch,
+                        requestDetail.fdUrgentYn,
+
+                        request.bcId.bcName,
+                        requestDetail.fdTotAmt,
+                        requestDetail.fdState,
+                        requestDetail.fdRemark
+                ));
+
+        query.orderBy(requestDetail.id.asc()).groupBy(requestDetail);
+        query.where(request.frCode.eq(frCode));
+
+        query.where(requestDetail.fdS3Dt.eq(fdS3Dt));
+
+        return query.fetch();
+    }
+
+
+
+
+
+
+
+
+
 
 }
