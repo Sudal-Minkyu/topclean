@@ -310,52 +310,24 @@ select + .c-button {
 
 /* button file */
 .c-file {
-    overflow: hidden;
     display: inline-block;
-	width: 100%;
-	-webkit-box-sizing: border-box;
-	        box-sizing: border-box;
+	height: 2rem;
+	min-width: 5.625rem;
+	padding: 0 0.625rem;
+	background-color: #fff;
+	border: 0.063rem solid #0082f0;
+	-webkit-border-radius: 0.313rem;
+	-moz-border-radius: 0.313rem;
+	border-radius: 0.313rem;
+	color: #0082f0;
+	font-size: 1rem;
+	font-weight: 700;
+	line-height: 2rem;
+	text-align: center;
+	cursor: pointer;
 }
-input[type="text"].c-file__input {
-    float: left;
-    width: calc(100% - 84px);
-    height: 2rem;
-    padding: 0 10px;
-	border: 1px solid #c4c4c4;
-	border-top-left-radius: 0.313rem;
-	border-bottom-left-radius: 0.313rem;
-	border-top-right-radius: 0;
-	border-bottom-right-radius: 0;
-    background-color: #fff;
-    -webkit-box-sizing: border-box;
-            box-sizing: border-box;
-    outline: none;
-}
-
-.c-file__btn {
-    float: left;
-    width: 6.25rem;
-    height: 2rem;
-    padding: 0 14px;
-    border: 0.063rem solid #c4c4c4;
-    border-top-right-radius: 0.313rem;
-	border-bottom-right-radius: 0.313rem;
-    background-color: #eee;
-    color: #222;
-    font-size: 14px;
-    line-height: 28px;
-    cursor: pointer;
-    -webkit-box-sizing: border-box;
-            box-sizing: border-box;
-    -webkit-transition: background-color .2s;
-    transition: background-color .2s;
-}
-.c-file__btn input[type="file"] {
+.c-file input[type="file"] {
   display: none;
-}
-.c-file__btn:hover,
-.c-file__btn:focus {
-  background-color: #d6d6d6;
 }
 
 /* select */

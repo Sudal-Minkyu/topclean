@@ -17,12 +17,36 @@
 </th:block>
 
 <div layout:fragment="content" class="content content--board">
+    <div class="board-view__console">
+        <a href="/manager/tagboard" class="c-button c-button--small">목록</a>
+        <a href="#" class="c-button c-button--small c-button--darksolid">글 수정</a>
+    </div>
+
     <div class="board-view">
         <div class="board-view__header">
             <h3 class="board-view__heading">제목</h3>
             <ul class="board-view__info">
                 <li><span>작성자</span></li>
                 <li><span>9999-99-99</span></li>
+                <li class="board-view__info-file">
+                    <button class="board-view__btn">첨부파일<span>(2)</span></button>
+                    <div class="board-view__file-box active">
+                        <ul>
+                            <li>
+                                <a href="#" class="board-view__file">
+                                    <span class="board-view__filename">filename filename filename filename filename</span>
+                                    <span class="board-view__filesize">288KB</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" class="board-view__file">
+                                    <span class="board-view__filename">filename</span>
+                                    <span class="board-view__filesize">1.4MB</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
             </ul>
         </div>
         <div class="board-view__content">
@@ -45,21 +69,21 @@
                     </a>
                 </li>
             </ul>
-            <div class="board-view__console">
-                <a href="#" class="c-button c-button--small">목록</a>
-            </div>
         </div>
     </div>
 
     <div class="reply">
         <div class="reply__write">
-            <div class="c-textarea">
-                <textarea id="replyField" placeholder="댓글 작성"></textarea>
-            </div>
+            <textarea id="replyField" placeholder="댓글 작성"></textarea>
             <button id="commitReply" class="c-button c-button--small c-button--solid">덧글 달기</button>
         </div>
         <ul id="replyList" class="reply__list">
         </ul>
+    </div>
+
+    <div class="board-view__console board-view__console--bottom">
+        <a href="/manager/tagboard" class="c-button c-button--small">목록</a>
+        <a href="#" class="c-button c-button--small c-button--darksolid">글 수정</a>
     </div>
 </div>
 </html>
