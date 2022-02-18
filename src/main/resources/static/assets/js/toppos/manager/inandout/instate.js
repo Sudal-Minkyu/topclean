@@ -136,8 +136,6 @@ const grids = {
                     dataField: "frName",
                     headerText: "가맹점",
                     style: "grid_textalign_left",
-                    dataType: "date",
-                    formatString: "yyyy-mm-dd",
                 }, {
                     dataField: "fdS2Dt",
                     headerText: "입고일자",
@@ -331,7 +329,7 @@ const grids = {
                 return;
             }
             AUIGrid.exportToXlsx(grids.s.id[1], {
-                fileName : `${wares.title}_${wares.currentDetail.frName}_${wares.currentDetail.date}`,
+                fileName : `${wares.title}_${wares.currentDetail.frName}_${wares.currentDetail.fdS2Dt}`,
                 progressBar : true,
             });
         }
@@ -369,7 +367,7 @@ const trigs = {
 const wares = {
     title: "지사입고현황", // 엑셀 다운로드 파일명 생성에 쓰인다.
     currentDetail: { // 디테일 그리드를 뿌리기 위해 선택된 가맹점과 일자의 정보. 엑셀 파일명 생성에 쓰인다.
-        franchiseId: 0,
+        frCode: 0,
         frName: "",
         fdS2Dt: "",
     },
@@ -426,14 +424,14 @@ function searchOrder() {
 
 function showDetail(item) {
     const searchCondition = {
-        franchiseId: item.frId,
+        frCode: item.frCode,
         fdS2Dt: item.fdS2Dt,
     }
 
     /* 선택된 가맹점과 날짜 항목에 대한 기억 */
-    wares.currentDetail.franchiseId = searchCondition.franchiseId;
-    wares.currentDetail.date = searchCondition.date;
-    wares.currentDetail.fdS2Dt = item.fdS2Dt;
+    wares.currentDetail.frCode = searchCondition.frCode;
+    wares.currentDetail.fdS2Dt = searchCondition.fdS2Dt;
+    wares.currentDetail.frName = item.frName;
 
     comms.getDetailList(searchCondition);
 }

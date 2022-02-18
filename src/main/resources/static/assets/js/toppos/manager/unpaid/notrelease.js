@@ -135,8 +135,6 @@ const grids = {
                     dataField: "frName",
                     headerText: "가맹점",
                     style: "grid_textalign_left",
-                    dataType: "date",
-                    formatString: "yyyy-mm-dd",
                 }, {
                     dataField: "unoutput_cnt",
                     headerText: "미출고<br>건수",
@@ -305,7 +303,7 @@ const grids = {
                 return;
             }
             AUIGrid.exportToXlsx(grids.s.id[1], {
-                fileName : `${wares.title}_${wares.currentDetail.frName}_${wares.currentDetail.date}`,
+                fileName : `${wares.title}_${wares.currentDetail.frName}_${wares.currentDetail.filterFromDt}_${wares.currentDetail.filterToDt}`,
                 progressBar : true,
             });
         }
@@ -343,8 +341,11 @@ const trigs = {
 const wares = {
     title: "미출고현황", // 엑셀 다운로드 파일명 생성에 쓰인다.
     currentDetail: { // 디테일 그리드를 뿌리기 위해 선택된 가맹점과 일자의 정보. 엑셀 파일명 생성에 쓰인다.
-        franchiseId: 0,
+        frCode: 0,
         frName: "",
+        type: "",
+        filterFromDt: "",
+        filterToDt: "",
     },
 }
 
@@ -394,16 +395,23 @@ function searchOrder() {
         type: $("input[name='dateType']:checked").val(), // 1 접수일자, 2 인도예정일
     };
 
+    wares.currentDetail.type = searchCondition.type;
+    wares.currentDetail.filterFromDt = searchCondition.filterFromDt;
+    wares.currentDetail.filterToDt = searchCondition.filterToDt;
+
     comms.getMainList(searchCondition);
 }
 
 function showDetail(item) {
     const searchCondition = {
-        franchiseId: item.frId,
+        frCode: item.frCode,
+        type: wares.currentDetail.type,
+        filterFromDt: wares.currentDetail.filterFromDt,
+        filterToDt: wares.currentDetail.filterToDt,
     }
 
     /* 선택된 가맹점과 날짜 항목에 대한 기억 */
-    wares.currentDetail.franchiseId = searchCondition.franchiseId;
+    wares.currentDetail.frCode = searchCondition.frCode;
     wares.currentDetail.frName = item.frName;
 
     comms.getDetailList(searchCondition);
