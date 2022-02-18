@@ -145,25 +145,25 @@ const grids = {
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
                 }, {
-                    dataField: "",
+                    dataField: "input_cnt",
                     headerText: "입고<br>건수",
                     width: 50,
                     dataType: "numeric",
                     autoThousandSeparator: "true",
                 }, {
-                    dataField: "",
+                    dataField: "output_cnt",
                     headerText: "출고<br>건수",
                     width: 50,
                     dataType: "numeric",
                     autoThousandSeparator: "true",
                 }, {
-                    dataField: "",
+                    dataField: "remain_cnt",
                     headerText: "체류<br>건수",
                     width: 50,
                     dataType: "numeric",
                     autoThousandSeparator: "true",
                 }, {
-                    dataField: "",
+                    dataField: "tot_amt",
                     headerText: "접수총액",
                     style: "grid_textalign_right",
                     width: 90,
@@ -212,7 +212,7 @@ const grids = {
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
                 }, {
-                    dataField: "fd42Dt",
+                    dataField: "fdS4Dt",
                     headerText: "출고일자",
                     width: 100,
                     dataType: "date",
@@ -243,6 +243,14 @@ const grids = {
                         const sumName = CommonUI.toppos.makeSimpleProductName(item);
                         return colorSquare + ` <span style="vertical-align: middle;">` + sumName + `</span>`;
                     },
+                }, {
+                    dataField: "",
+                    headerText: "처리내역",
+                    style: "grid_textalign_left",
+                    width: 130,
+                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                        return CommonUI.toppos.processName(item);
+                    }
                 }, {
                     dataField: "fdTotAmt",
                     headerText: "접수금액",

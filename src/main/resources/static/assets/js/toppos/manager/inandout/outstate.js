@@ -87,7 +87,7 @@ const comms = {
     },
 
     getMainList(searchCondition) {
-        dv.chk(searchCondition, dtos.send.branchStoreCurrentList, "프랜차이즈 그리드 검색 조건 보내기");
+        dv.chk(searchCondition, dtos.send.branchReleaseCurrentList, "프랜차이즈 그리드 검색 조건 보내기");
         console.log(searchCondition);
         CommonUI.ajax(urls.getMainList, "GET", searchCondition, function (res) {
             const data = res.sendData.gridListData;
@@ -136,31 +136,19 @@ const grids = {
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
                 }, {
-                    dataField: "fdS2Dt",
-                    headerText: "입고일자",
+                    dataField: "fdS4Dt",
+                    headerText: "출고일자",
                     width: 100,
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
                 }, {
-                    dataField: "",
-                    headerText: "입고<br>건수",
-                    width: 50,
-                    dataType: "numeric",
-                    autoThousandSeparator: "true",
-                }, {
-                    dataField: "",
+                    dataField: "output_cnt",
                     headerText: "출고<br>건수",
                     width: 50,
                     dataType: "numeric",
                     autoThousandSeparator: "true",
                 }, {
-                    dataField: "",
-                    headerText: "체류<br>건수",
-                    width: 50,
-                    dataType: "numeric",
-                    autoThousandSeparator: "true",
-                }, {
-                    dataField: "",
+                    dataField: "tot_amt",
                     headerText: "접수총액",
                     style: "grid_textalign_right",
                     width: 90,
@@ -196,20 +184,7 @@ const grids = {
                         return CommonData.name.frRefType[value];
                     },
                 }, {
-                    dataField: "fdS2Type",
-                    headerText: "입고<br>타입",
-                    width: 60,
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
-                        return value;
-                    },
-                }, {
-                    dataField: "fdS2Dt",
-                    headerText: "입고일자",
-                    width: 100,
-                    dataType: "date",
-                    formatString: "yyyy-mm-dd",
-                }, {
-                    dataField: "fd42Dt",
+                    dataField: "fdS4Dt",
                     headerText: "출고일자",
                     width: 100,
                     dataType: "date",
@@ -240,6 +215,14 @@ const grids = {
                         const sumName = CommonUI.toppos.makeSimpleProductName(item);
                         return colorSquare + ` <span style="vertical-align: middle;">` + sumName + `</span>`;
                     },
+                }, {
+                    dataField: "",
+                    headerText: "처리내역",
+                    style: "grid_textalign_left",
+                    width: 130,
+                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                        return CommonUI.toppos.processName(item);
+                    }
                 }, {
                     dataField: "fdTotAmt",
                     headerText: "접수금액",

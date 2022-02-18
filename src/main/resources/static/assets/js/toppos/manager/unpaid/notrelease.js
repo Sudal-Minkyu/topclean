@@ -14,7 +14,9 @@ const dtos = {
 
         branchStoreRemainList: {
             frCode: "nr",
-            fdS2Dt: "sr",
+            type: "s",
+            filterFromDt: "s",
+            filterToDt: "s",
         },
     },
 
@@ -36,7 +38,7 @@ const dtos = {
             frRefType: "s",
             fdS2Type: "",
             fdS2Dt: "s",
-            fdS4Dt: "s",
+            estimateDt: "s", //수정필요
             bcName: "s",
             fdTag: "s",
 
@@ -68,7 +70,7 @@ const dtos = {
 const urls = {
     getFrList: "/api/manager/branchBelongList",
     getMainList: "/api/manager/branchUnReleaseCurrentList",
-    getDetailList: "/api/manager/branchStoreRemainList",
+    getDetailList: "",
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
@@ -87,7 +89,7 @@ const comms = {
     },
 
     getMainList(searchCondition) {
-        dv.chk(searchCondition, dtos.send.branchReleaseCurrentList, "프랜차이즈 그리드 검색 조건 보내기");
+        dv.chk(searchCondition, dtos.send.branchUnReleaseCurrentList, "프랜차이즈 그리드 검색 조건 보내기");
         console.log(searchCondition);
         CommonUI.ajax(urls.getMainList, "GET", searchCondition, function (res) {
             const data = res.sendData.gridListData;
@@ -136,31 +138,13 @@ const grids = {
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
                 }, {
-                    dataField: "fdS2Dt",
-                    headerText: "입고일자",
-                    width: 100,
-                    dataType: "date",
-                    formatString: "yyyy-mm-dd",
-                }, {
-                    dataField: "",
-                    headerText: "입고<br>건수",
-                    width: 50,
+                    dataField: "unoutput_cnt",
+                    headerText: "미출고<br>건수",
+                    width: 60,
                     dataType: "numeric",
                     autoThousandSeparator: "true",
                 }, {
-                    dataField: "",
-                    headerText: "출고<br>건수",
-                    width: 50,
-                    dataType: "numeric",
-                    autoThousandSeparator: "true",
-                }, {
-                    dataField: "",
-                    headerText: "체류<br>건수",
-                    width: 50,
-                    dataType: "numeric",
-                    autoThousandSeparator: "true",
-                }, {
-                    dataField: "",
+                    dataField: "tot_amt",
                     headerText: "접수총액",
                     style: "grid_textalign_right",
                     width: 90,
@@ -196,21 +180,14 @@ const grids = {
                         return CommonData.name.frRefType[value];
                     },
                 }, {
-                    dataField: "fdS2Type",
-                    headerText: "입고<br>타입",
-                    width: 60,
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
-                        return value;
-                    },
-                }, {
                     dataField: "fdS2Dt",
                     headerText: "입고일자",
                     width: 100,
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
                 }, {
-                    dataField: "fd42Dt",
-                    headerText: "출고일자",
+                    dataField: "estimateDt",
+                    headerText: "인도예정일",
                     width: 100,
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
@@ -240,6 +217,14 @@ const grids = {
                         const sumName = CommonUI.toppos.makeSimpleProductName(item);
                         return colorSquare + ` <span style="vertical-align: middle;">` + sumName + `</span>`;
                     },
+                }, {
+                    dataField: "",
+                    headerText: "처리내역",
+                    style: "grid_textalign_left",
+                    width: 130,
+                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                        return CommonUI.toppos.processName(item);
+                    }
                 }, {
                     dataField: "fdTotAmt",
                     headerText: "접수금액",
@@ -360,7 +345,6 @@ const wares = {
     currentDetail: { // 디테일 그리드를 뿌리기 위해 선택된 가맹점과 일자의 정보. 엑셀 파일명 생성에 쓰인다.
         franchiseId: 0,
         frName: "",
-        date: "",
     },
 }
 
@@ -407,7 +391,7 @@ function searchOrder() {
         filterFromDt: $("#filterFromDt").val(),
         filterToDt: $("#filterToDt").val(),
         franchiseId: parseInt(frId),
-        type: "1", // 1 접수일자, 2 인도예정일
+        type: $("input[name='dateType']:checked").val(), // 1 접수일자, 2 인도예정일
     };
 
     comms.getMainList(searchCondition);
@@ -416,12 +400,10 @@ function searchOrder() {
 function showDetail(item) {
     const searchCondition = {
         franchiseId: item.frId,
-        fdS2Dt: item.fdS2Dt,
     }
 
     /* 선택된 가맹점과 날짜 항목에 대한 기억 */
     wares.currentDetail.franchiseId = searchCondition.franchiseId;
-    wares.currentDetail.date = searchCondition.date;
     wares.currentDetail.frName = item.frName;
 
     comms.getDetailList(searchCondition);
