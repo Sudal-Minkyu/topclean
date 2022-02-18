@@ -73,8 +73,39 @@ class CommonUIClass {
 
         printReceipt(condition) {
             const url = "/api/user/requestPaymentPaper";
+            
             CommonUI.ajax(url, "GET", condition, function (res) {
-                console.log(res);
+                console.log(res.sendData);
+
+                const typeTrans = {
+                    "01": "cash",
+                    "02": "card",
+                    "03": "save",
+                    "04": "미수결제",
+                };
+
+                const colorName = { // 컬러코드에 따른 실제 색상
+                    "00": "없음", "01": "흰색", "02": "검정", "03": "회색", "04": "빨강", "05": "주황",
+                    "06": "노랑", "07": "초록", "08": "파랑", "09": "남색", "10": "보라", "11": "핑크",
+                };
+
+                const paymentData = res.sendData.paymentData;
+                paymentData.items = res.sendData.items;
+                paymentData.items.forEach(obj => {
+                    obj.color = colorName[obj.color];
+                });
+
+                paymentData.estimateDt = paymentData.items[0].estimateDt;
+                paymentData.franchiseTel = CommonUI.formatTel(paymentData.franchiseTel);
+                paymentData.customerTel = CommonUI.formatTel(paymentData.customerTel);
+                paymentData.businessNO = CommonUI.formatBusinessNo(paymentData.businessNO);
+
+                const creditData = res.sendData.creditData;
+                creditData.forEach(obj => {
+                    obj.type = typeTrans[obj.type];
+                });
+
+                CAT.CatPrint_Multi(paymentData, creditData, "N");
             });
         },
     }

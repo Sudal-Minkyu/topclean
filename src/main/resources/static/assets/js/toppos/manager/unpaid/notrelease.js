@@ -12,7 +12,7 @@ const dtos = {
             type: "s",
         },
 
-        branchStoreRemainList: {
+        branchUnReleaseCurrentInputList: {
             frCode: "nr",
             type: "s",
             filterFromDt: "s",
@@ -34,9 +34,9 @@ const dtos = {
             tot_amt: "n",
         },
 
-        branchStoreRemainList: {
+        branchUnReleaseCurrentInputList: {
             frRefType: "s",
-            fdS2Type: "",
+            frYyyymmdd: "s",
             fdS2Dt: "s",
             estimateDt: "s", //수정필요
             bcName: "s",
@@ -70,7 +70,7 @@ const dtos = {
 const urls = {
     getFrList: "/api/manager/branchBelongList",
     getMainList: "/api/manager/branchUnReleaseCurrentList",
-    getDetailList: "",
+    getDetailList: "/api/manager/branchUnReleaseCurrentInputList",
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
@@ -100,7 +100,7 @@ const comms = {
     },
 
     getDetailList(searchCondition) {
-        dv.chk(searchCondition, dtos.send.branchStoreInputList, "디테일 그리드 검색 조건 보내기");
+        dv.chk(searchCondition, dtos.send.branchUnReleaseCurrentInputList, "디테일 그리드 검색 조건 보내기");
         CommonUI.ajax(urls.getDetailList, "GET", searchCondition, function (res) {
             const data = res.sendData.gridListData;
             grids.f.setData(1, data);
@@ -177,6 +177,12 @@ const grids = {
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
                         return CommonData.name.frRefType[value];
                     },
+                }, {
+                    dataField: "frYyyymmdd",
+                    headerText: "접수일자",
+                    width: 100,
+                    dataType: "date",
+                    formatString: "yyyy-mm-dd",
                 }, {
                     dataField: "fdS2Dt",
                     headerText: "입고일자",

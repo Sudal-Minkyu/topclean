@@ -11,7 +11,7 @@ const dtos = {
             franchiseId: "n",
         },
 
-        branchStoreInputList: {
+        branchUnReleaseCurrentInputList: {
             frCode: "nr",
             fdS3Dt: "sr",
         },
@@ -32,9 +32,8 @@ const dtos = {
             tot_cnt: "n",
         },
 
-        branchStoreInputList: {
+        branchUnReleaseCurrentInputList: {
             frRefType: "s",
-            fdS2Type: "",
             fdS2Dt: "s",
             fdS3Dt: "s",
             bcName: "s",
@@ -68,7 +67,7 @@ const dtos = {
 const urls = {
     getFrList: "/api/manager/branchBelongList",
     getMainList: "/api/manager/branchReturnCurrentList",
-    getDetailList: "",
+    getDetailList: "/api/manager/branchUnReleaseCurrentInputList",
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */

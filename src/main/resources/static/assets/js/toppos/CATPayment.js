@@ -174,15 +174,15 @@ function CatCreate_PrintTest(){
     //     message += String.fromCharCode(27);
     //     message += String.fromCharCode(33);
     //     message += String.fromCharCode(8);
-    //     message += item.tagno.substr(0,3);
-    //     message += "-" + item.tagno.substr(3,4);
+    //     message += item.tagno.substr(3,1);
+    //     message += "-" + item.tagno.substr(4,3);
     //     message += String.fromCharCode(27);
     //     message += String.fromCharCode(33);
     //     message += String.fromCharCode(0);
     //     if (cancelYN==="Y"){
-    //         message += " " + item.itemname.fillSpaceUnicode(23) + " " + item.color.fillSpaceUnicode(4)+ " " + numberWithCommasCat(-1 * item.price).padStart(7);
+    //         message += " " + item.itemname.fillSpaceUnicode(21) + " " + item.color.fillSpaceUnicode(5)+ " " + numberWithCommasCat(-1 * item.price).padStart(8);
     //     }else {
-    //         message += " " + item.itemname.fillSpaceUnicode(23) + " " + item.color.fillSpaceUnicode(4) + " " + numberWithCommasCat(item.price).padStart(7);
+    //         message += " " + item.itemname.fillSpaceUnicode(21) + " " + item.color.fillSpaceUnicode(5) + " " + numberWithCommasCat(item.price).padStart(8);
     //     }
     //     message += String.fromCharCode(10);
     //
@@ -402,7 +402,7 @@ function CatCreate_Print(params,creditResult,cancelYN){
     message += String.fromCharCode(10);
     message += "사업자번호 " + params.businessNO;
     message += String.fromCharCode(10);
-    message += "대표자     " + params.repreName+ "  | 전화    " + params.franchiseTel;
+    message += "대표자     " + params.repreName+ "  | 전화  " + params.franchiseTel;
     message += String.fromCharCode(10);
     message += "고객성명   " + params.customerName + " 님";
     message += String.fromCharCode(10);
@@ -417,7 +417,7 @@ function CatCreate_Print(params,creditResult,cancelYN){
     message += String.fromCharCode(0);
     message += "==========================================";
     message += String.fromCharCode(10);
-    message += " 택번호   상품                색상   금액 ";
+    message += " 택번호   상품              색상     금액 ";
     message += String.fromCharCode(10);
     message += "==========================================";
     message += String.fromCharCode(10);
@@ -426,16 +426,16 @@ function CatCreate_Print(params,creditResult,cancelYN){
         message += String.fromCharCode(27);
         message += String.fromCharCode(33);
         message += String.fromCharCode(8);
-        message += item.tagno.substr(0,3);
-        message += "-" + item.tagno.substr(3,4);
+        message += item.tagno.substr(3,1);
+        message += "-" + item.tagno.substr(4,3);
         message += String.fromCharCode(27);
         message += String.fromCharCode(33);
         message += String.fromCharCode(0);
         if (item.specialyn =="Y") specialCnt += 1;
         if (cancelYN==="Y"){
-            message += " " + item.itemname.fillSpaceUnicode(23) + " " + item.color.fillSpaceUnicode(4)+ " " + numberWithCommasCat(-1 * item.price).padStart(7);
+            message += " " + item.itemname.fillSpaceUnicode(21) + " " + item.color.fillSpaceUnicode(5)+ " " + numberWithCommasCat(-1 * item.price).padStart(8);
         }else {
-            message += " " + item.itemname.fillSpaceUnicode(23) + " " + item.color.fillSpaceUnicode(4) + " " + numberWithCommasCat(item.price).padStart(7);
+            message += " " + item.itemname.fillSpaceUnicode(21) + " " + item.color.fillSpaceUnicode(5) + " " + numberWithCommasCat(item.price).padStart(8);
         }
         message += String.fromCharCode(10);
 
@@ -586,7 +586,7 @@ function CatCreate_Print(params,creditResult,cancelYN){
     message += String.fromCharCode(0);
     message += "==========================================";
     message += String.fromCharCode(10);
-    message += " 택번호   상품                색상   금액 ";
+    message += " 택번호   상품              색상     금액 ";
     message += String.fromCharCode(10);
     message += "==========================================";
     message += String.fromCharCode(10);
@@ -595,15 +595,15 @@ function CatCreate_Print(params,creditResult,cancelYN){
         message += String.fromCharCode(27);
         message += String.fromCharCode(33);
         message += String.fromCharCode(8);
-        message += item.tagno.substr(0,3);
-        message += "-" + item.tagno.substr(3,4);
+        message += item.tagno.substr(3,1);
+        message += "-" + item.tagno.substr(4,3);
         message += String.fromCharCode(27);
         message += String.fromCharCode(33);
         message += String.fromCharCode(0);
         if (cancelYN==="Y"){
-            message += " " + item.itemname.fillSpaceUnicode(23) + " " + item.color.fillSpaceUnicode(4)+ " " + numberWithCommasCat(-1 * item.price).padStart(7);
+            message += " " + item.itemname.fillSpaceUnicode(21) + " " + item.color.fillSpaceUnicode(5)+ " " + numberWithCommasCat(-1 * item.price).padStart(8);
         }else {
-            message += " " + item.itemname.fillSpaceUnicode(23) + " " + item.color.fillSpaceUnicode(4) + " " + numberWithCommasCat(item.price).padStart(7);
+            message += " " + item.itemname.fillSpaceUnicode(21) + " " + item.color.fillSpaceUnicode(5) + " " + numberWithCommasCat(item.price).padStart(8);
         }
         message += String.fromCharCode(10);
 
@@ -864,7 +864,7 @@ function CatCreate_MultiPrint(params,creditResults,cancelYN){
     message += String.fromCharCode(10);
     message += "사업자번호 " + params.businessNO;
     message += String.fromCharCode(10);
-    message += "대표자     " + params.repreName+ "  | 전화    " + params.franchiseTel;
+    message += "대표자     " + params.repreName+ "  | 전화  " + params.franchiseTel;
     message += String.fromCharCode(10);
     message += "고객성명   " + params.customerName + " 님";
     message += String.fromCharCode(10);
@@ -879,7 +879,7 @@ function CatCreate_MultiPrint(params,creditResults,cancelYN){
     message += String.fromCharCode(0);
     message += "==========================================";
     message += String.fromCharCode(10);
-    message += " 택번호   상품                색상   금액 ";
+    message += " 택번호   상품              색상     금액 ";
     message += String.fromCharCode(10);
     message += "==========================================";
     message += String.fromCharCode(10);
@@ -888,16 +888,16 @@ function CatCreate_MultiPrint(params,creditResults,cancelYN){
         message += String.fromCharCode(27);
         message += String.fromCharCode(33);
         message += String.fromCharCode(8);
-        message += item.tagno.substr(0,3);
-        message += "-" + item.tagno.substr(3,4);
+        message += item.tagno.substr(3,1);
+        message += "-" + item.tagno.substr(4,3);
         message += String.fromCharCode(27);
         message += String.fromCharCode(33);
         message += String.fromCharCode(0);
         if (item.specialyn =="Y") specialCnt += 1;
         if (cancelYN==="Y"){
-            message += " " + item.itemname.fillSpaceUnicode(23) + " " + item.color.fillSpaceUnicode(4)+ " " + numberWithCommasCat(-1 * item.price).padStart(7);
+            message += " " + item.itemname.fillSpaceUnicode(21) + " " + item.color.fillSpaceUnicode(5)+ " " + numberWithCommasCat(-1 * item.price).padStart(8);
         }else {
-            message += " " + item.itemname.fillSpaceUnicode(23) + " " + item.color.fillSpaceUnicode(4) + " " + numberWithCommasCat(item.price).padStart(7);
+            message += " " + item.itemname.fillSpaceUnicode(21) + " " + item.color.fillSpaceUnicode(5) + " " + numberWithCommasCat(item.price).padStart(8);
         }
         message += String.fromCharCode(10);
 
@@ -1076,7 +1076,7 @@ function CatCreate_MultiPrint(params,creditResults,cancelYN){
     message += String.fromCharCode(0);
     message += "==========================================";
     message += String.fromCharCode(10);
-    message += " 택번호   상품                색상   금액 ";
+    message += " 택번호   상품              색상     금액 ";
     message += String.fromCharCode(10);
     message += "==========================================";
     message += String.fromCharCode(10);
@@ -1085,15 +1085,15 @@ function CatCreate_MultiPrint(params,creditResults,cancelYN){
         message += String.fromCharCode(27);
         message += String.fromCharCode(33);
         message += String.fromCharCode(8);
-        message += item.tagno.substr(0,3);
-        message += "-" + item.tagno.substr(3,4);
+        message += item.tagno.substr(3,1);
+        message += "-" + item.tagno.substr(4,3);
         message += String.fromCharCode(27);
         message += String.fromCharCode(33);
         message += String.fromCharCode(0);
         if (cancelYN==="Y"){
-            message += " " + item.itemname.fillSpaceUnicode(23) + " " + item.color.fillSpaceUnicode(4)+ " " + numberWithCommasCat(-1 * item.price).padStart(7);
+            message += " " + item.itemname.fillSpaceUnicode(21) + " " + item.color.fillSpaceUnicode(5)+ " " + numberWithCommasCat(-1 * item.price).padStart(8);
         }else {
-            message += " " + item.itemname.fillSpaceUnicode(23) + " " + item.color.fillSpaceUnicode(4) + " " + numberWithCommasCat(item.price).padStart(7);
+            message += " " + item.itemname.fillSpaceUnicode(21) + " " + item.color.fillSpaceUnicode(5) + " " + numberWithCommasCat(item.price).padStart(8);
         }
         message += String.fromCharCode(10);
 
