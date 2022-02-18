@@ -5,7 +5,7 @@
 * */
 const dtos = {
     send: {
-        branchReleaseCurrentList: { // 좌측 가맹점 그리드의 조회시
+        branchStoreCurrentList: { // 좌측 가맹점 그리드의 조회시
             filterFromDt: "s",
             filterToDt: "s",
             franchiseId: "n",
@@ -25,7 +25,7 @@ const dtos = {
             frTagNo: "s",
         },
         
-        branchReleaseCurrentList: {
+        branchStoreCurrentList: {
             frCode: "s", // 가맹점 id
             frName: "s",
             fdS2Dt: "s", // 입고일
