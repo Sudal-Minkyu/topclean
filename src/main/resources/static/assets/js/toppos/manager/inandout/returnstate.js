@@ -11,7 +11,7 @@ const dtos = {
             franchiseId: "s",
         },
 
-        branchUnReleaseCurrentInputList: {
+        branchReturnCurrentInputList: {
             frCode: "s",
             fdS3Dt: "sr",
         },
@@ -32,7 +32,7 @@ const dtos = {
             tot_cnt: "n",
         },
 
-        branchUnReleaseCurrentInputList: {
+        branchReturnCurrentInputList: {
             frRefType: "s",
             fdS2Dt: "s",
             fdS3Dt: "s",
@@ -67,7 +67,7 @@ const dtos = {
 const urls = {
     getFrList: "/api/manager/branchBelongList",
     getMainList: "/api/manager/branchReturnCurrentList",
-    getDetailList: "/api/manager/branchUnReleaseCurrentInputList",
+    getDetailList: "/api/manager/branchReturnCurrentInputList",
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
@@ -97,7 +97,7 @@ const comms = {
     },
 
     getDetailList(searchCondition) {
-        dv.chk(searchCondition, dtos.send.branchUnReleaseCurrentInputList, "디테일 그리드 검색 조건 보내기");
+        dv.chk(searchCondition, dtos.send.branchReturnCurrentInputList, "디테일 그리드 검색 조건 보내기");
         console.log(searchCondition);
         CommonUI.ajax(urls.getDetailList, "GET", searchCondition, function (res) {
             const data = res.sendData.gridListData;
