@@ -1096,7 +1096,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdS2Type,
 
                         requestDetail.fdS2Dt,
-                        requestDetail.fdS4Dt,
+//                        requestDetail.fdS4Dt,
 
                         requestDetail.fdTag,
                         requestDetail.fdColor,
@@ -1126,7 +1126,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
 
         query.orderBy(requestDetail.id.asc()).groupBy(requestDetail);
         query.where(request.frCode.eq(frCode));
-        query.where(requestDetail.fdS2Dt.eq(fdS2Dt));
+        query.where(requestDetail.fdS2Dt.eq(fdS2Dt).and(requestDetail.fdS4Dt.isNull()));
 
         return query.fetch();
     }
