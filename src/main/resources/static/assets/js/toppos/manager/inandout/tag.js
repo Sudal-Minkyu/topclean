@@ -146,7 +146,7 @@ const grids = {
                         return CommonData.formatTagNo(value);
                     },
                 }, {
-                    dataField: "",
+                    dataField: "productName",
                     headerText: "상품명",
                     style: "grid_textalign_left",
                     width: 200,
@@ -157,15 +157,17 @@ const grids = {
                         const colorSquare =
                             `<span class="colorSquare" style="background-color: ${CommonData.name.fdColorCode[item.fdColor]}; vertical-align: middle;"></span>`;
                         const sumName = CommonUI.toppos.makeSimpleProductName(item);
+                        item.productName = sumName;
                         return colorSquare + ` <span style="vertical-align: middle;">` + sumName + `</span>`;
                     },
                 }, {
-                    dataField: "",
+                    dataField: "processName",
                     headerText: "처리내역",
                     style: "grid_textalign_left",
                     width: 130,
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
-                        return CommonUI.toppos.processName(item);
+                        item.processName = CommonUI.toppos.processName(item);
+                        return item.processName;
                     }
                 }, {
                     dataField: "fdTotAmt",
@@ -332,8 +334,7 @@ function searchOrder() {
 
     const searchCondition = {
         tagNo: $("#aftTag").val().numString(),
-        franchiseId: parseInt(frId),
-    };
+        franchiseId: $("#frList").val(), };
 
     if(searchCondition.tagNo.length !== 0 && searchCondition.tagNo.length !==4) {
         alertCaution("택번호는 완전히 입력하거나,<br>입력하지 말아주세요.(전체검색)", 1);
