@@ -39,7 +39,7 @@ const dtos = {
             frRefType: "s",
             fdS2Type: "",
             fdS2Dt: "s",
-            fdS4Dt: "s",
+            // fdS4Dt: "s",
             bcName: "s",
             fdTag: "s",
 
@@ -202,7 +202,7 @@ const grids = {
                     headerText: "입고<br>타입",
                     width: 60,
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
-                        return value;
+                        return CommonData.name.fdS2Type[value];
                     },
                 }, {
                     dataField: "fdS2Dt",
@@ -210,13 +210,13 @@ const grids = {
                     width: 100,
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
-                }, {
+                },/*  {
                     dataField: "fdS4Dt",
                     headerText: "출고일자",
                     width: 100,
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
-                }, {
+                }, */ {
                     dataField: "bcName",
                     headerText: "고객명",
                     style: "grid_textalign_left",

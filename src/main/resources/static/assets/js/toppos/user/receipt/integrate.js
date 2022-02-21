@@ -1063,10 +1063,12 @@ const event = {
             $("#searchCustomer").on("click", function() {
                 mainSearch();
             });
+
             $("#selectCustomer").on("click", function() {
                 grid.f.getSelectedCustomer();
                 selectCustomerFromList();
             });
+
             $("#resetCustomer").on("click", function() {
                 data.selectedCustomer = {
                     bcId: null,
@@ -1077,22 +1079,39 @@ const event = {
                 };
                 putCustomer();
             });
+
             $("#filter").on("click", function() {
                 filterMain();
             });
+
             $("#modifyOn").on("click", function() {
                 grid.f.switchModifyMode(true);
                 $("#modifyOff").show();
                 $("#modifyOn").hide();
             });
+
             $("#modifyOff").on("click", function() {
                 grid.f.switchModifyMode(false);
                 $("#modifyOn").show();
                 $("#modifyOff").hide();
             });
+
             $("#searchString").on("keypress", function(e) {
                 if(e.originalEvent.code === "Enter") {
                     searchCustomer();
+                }
+            });
+
+            $("#printReceipt").on("click", function() {
+                const selectedItem = grid.f.getSelectedItem(0);
+                if(selectedItem) {
+                    alertCheck("영수증을 인쇄 하시겠습니까?");
+                    $("#checkDelSuccessBtn").on("click", function () {
+                        printReceipt(selectedItem.frNo);
+                        $('#popupId').remove();
+                    });
+                } else {
+                    alertCaution("영수증을 출력할 상품을 선택해 주세요.", 1);
                 }
             });
         },
@@ -2039,4 +2058,13 @@ function b64toBlob(dataURI) { // 파일을 ajax 통신에 쓰기 위해 변환
 function onKeypadConfirm() {
     const targetId = ["fiAddAmt"];
     $("#" + targetId[data.keypadNum]).val(parseInt($("#" + targetId[data.keypadNum]).val()).toLocaleString());
+}
+
+function printReceipt(frNo) {
+    const condition = {
+        frNo: frNo,
+        frId: "",
+    }
+
+    CommonUI.toppos.printReceipt(condition);
 }

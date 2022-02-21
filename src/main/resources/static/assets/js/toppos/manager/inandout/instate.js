@@ -202,7 +202,7 @@ const grids = {
                     headerText: "입고<br>타입",
                     width: 60,
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
-                        return value;
+                        return CommonData.name.fdS2Type[value];
                     },
                 }, {
                     dataField: "fdS2Dt",

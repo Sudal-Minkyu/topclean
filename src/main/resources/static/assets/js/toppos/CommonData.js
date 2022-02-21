@@ -55,6 +55,12 @@ class CommonDataClass {
             "2": "고객수락",
             "3": "고객거부",
         };
+
+        this.name.fdS2Type = {
+            "01": "수기",
+            "02": "자동",
+            "03": "반송",
+        };
     }
 
     formatTagNo(tagNo) {
