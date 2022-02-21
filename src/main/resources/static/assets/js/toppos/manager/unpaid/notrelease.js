@@ -8,12 +8,12 @@ const dtos = {
         branchUnReleaseCurrentList: { // 좌측 가맹점 그리드의 조회시
             filterFromDt: "s",
             filterToDt: "s",
-            franchiseId: "n",
+            franchiseId: "s",
             type: "s",
         },
 
         branchUnReleaseCurrentInputList: {
-            frCode: "nr",
+            frCode: "s",
             type: "s",
             filterFromDt: "s",
             filterToDt: "s",
@@ -38,7 +38,7 @@ const dtos = {
             frRefType: "s",
             frYyyymmdd: "s",
             fdS2Dt: "s",
-            estimateDt: "s", //수정필요
+            fdEstimateDt: "s", //수정필요
             bcName: "s",
             fdTag: "s",
 
@@ -190,7 +190,7 @@ const grids = {
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
                 }, {
-                    dataField: "estimateDt",
+                    dataField: "fdEstimateDt",
                     headerText: "인도예정일",
                     width: 100,
                     dataType: "date",
@@ -392,12 +392,10 @@ function enableDatepicker() {
 }
 
 function searchOrder() {
-    const frId = $("#frList").val();
-
     const searchCondition = {
         filterFromDt: $("#filterFromDt").val().numString(),
         filterToDt: $("#filterToDt").val().numString(),
-        franchiseId: parseInt(frId),
+        franchiseId: $("#frList").val(),
         type: $("input[name='dateType']:checked").val(), // 1 접수일자, 2 인도예정일
     };
 

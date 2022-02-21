@@ -8,12 +8,12 @@ const dtos = {
         branchReleaseCurrentList: { // 좌측 가맹점 그리드의 조회시
             filterFromDt: "s",
             filterToDt: "s",
-            franchiseId: "n",
+            franchiseId: "s",
             type: "s",
         },
 
         branchReleaseForceList: {
-            frCode: "nr",
+            frCode: "s",
             fdS7Dt: "sr",
         },
     },
@@ -388,12 +388,11 @@ function enableDatepicker() {
 }
 
 function searchOrder() {
-    const frId = $("#frList").val();
 
     const searchCondition = {
         filterFromDt: $("#filterFromDt").val().numString(),
         filterToDt: $("#filterToDt").val().numString(),
-        franchiseId: parseInt(frId),
+        franchiseId: $("#frList").val(),
         type: "2", // 1 지사출고현황, 2 지사강제출고현황
     };
 

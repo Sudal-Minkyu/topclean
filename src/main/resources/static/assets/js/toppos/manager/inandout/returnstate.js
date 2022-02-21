@@ -8,11 +8,11 @@ const dtos = {
         branchReturnCurrentList: { // 좌측 가맹점 그리드의 조회시
             filterFromDt: "s",
             filterToDt: "s",
-            franchiseId: "n",
+            franchiseId: "s",
         },
 
         branchUnReleaseCurrentInputList: {
-            frCode: "nr",
+            frCode: "s",
             fdS3Dt: "sr",
         },
     },
@@ -97,7 +97,8 @@ const comms = {
     },
 
     getDetailList(searchCondition) {
-        dv.chk(searchCondition, dtos.send.branchStoreInputList, "디테일 그리드 검색 조건 보내기");
+        dv.chk(searchCondition, dtos.send.branchUnReleaseCurrentInputList, "디테일 그리드 검색 조건 보내기");
+        console.log(searchCondition);
         CommonUI.ajax(urls.getDetailList, "GET", searchCondition, function (res) {
             const data = res.sendData.gridListData;
             grids.f.setData(1, data);
@@ -387,12 +388,11 @@ function enableDatepicker() {
 }
 
 function searchOrder() {
-    const frId = $("#frList").val();
 
     const searchCondition = {
         filterFromDt: $("#filterFromDt").val().numString(),
         filterToDt: $("#filterToDt").val().numString(),
-        franchiseId: parseInt(frId),
+        franchiseId: $("#frList").val(),
     };
 
     comms.getMainList(searchCondition);

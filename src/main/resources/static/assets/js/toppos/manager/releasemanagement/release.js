@@ -25,7 +25,7 @@ const dtos = {
         branchReceiptBranchInList: {
             fdId: "n", // 출고 처리를 위함
             frName: "s",
-            frCode: "n",
+            frCode: "s",
             fdS2Dt: "s",
             fdTag: "s",
             fdColor: "s",
