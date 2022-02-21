@@ -1154,7 +1154,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         if(franchiseId != null){
             sb.append("             AND c.fr_id = ?4  \n");
         }
-        sb.append("             GROUP BY a.fr_code, c.fr_name, b.fd_s2_dt  \n");
+        sb.append("             GROUP BY a.fr_code, c.fr_name, b.fd_s4_dt  \n");
         sb.append("             HAVING output_cnt > 0  \n");
         sb.append("             ORDER BY c.fr_name ASC, b.fd_s2_dt ASC \n");
 
