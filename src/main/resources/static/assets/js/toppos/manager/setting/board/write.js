@@ -6,9 +6,11 @@
 const dtos = {
     send: {
         save: { // 이번만은 예외적으로 게시판의 id 요소가 숨어있다. 또한 삭제할 파일의 아이디리스트를 다루는 항목 추가 예정,
-            htSubject: "s",
-            htContent: "s",
+            id: "n",
+            subject: "s",
+            content: "s",
             multipartFileList: "",
+            deleteFileList: "a", // 지울 파일들의 id 리스트
         },
     },
     receive: {
@@ -28,9 +30,6 @@ const comms = {
     },
 
     save(formData) {
-        /* 게시판에 따른 dtos의 검사조건 동적으로 추가 ex. 택분실의 경우 htId */
-        dtos.send.save[wares.idname[wares.boardType]] = "n";
-        formData.set(wares.idname[wares.boardType], wares.id);
         const jsonFormData = Object.fromEntries(formData);
         dv.chk(jsonFormData, dtos.send.save, "글쓰기 데이터 보내기");
         console.log(jsonFormData);
@@ -64,9 +63,6 @@ const wares = {
     boardType: "",
     params: "",
     id: "",
-    idname: {
-        taglost: "htId",
-    }
 }
 
 $(function() { // 페이지가 로드되고 나서 실행
@@ -124,8 +120,8 @@ function addFile() {
 
 function saveProgress() {
     const formData = new FormData();
-    formData.set("htSubject", $("#htSubject").val());
-    formData.set("htContent", $('#summernote').summernote('code'));
+    formData.set("subject", $("#subject").val());
+    formData.set("content", $('#summernote').summernote('code'));
     formData.set("id", wares.id);
     for(let file of wares.dataTransfer.files) {
         formData.append("multipartFileList", file, file.name);
