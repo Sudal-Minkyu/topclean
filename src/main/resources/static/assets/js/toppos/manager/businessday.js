@@ -6,6 +6,13 @@ $(function() {
     /* 대상년도 text창에 년도를 세팅 */
     $("#target_year").val(targetYear);
 
+    $("#target_year").on("keyup", function (e) {
+        this.value = this.value.numString();
+        if(e.originalEvent.code === "Enter") {
+            setGridByYear();
+        }
+    });
+
     /* 입력되어 있는 년도를 기반으로 프론트 페이지 달려 제목 구성 및 기본 그리드 데이터를 생성하여 뿌린다 */
     setGridByYear();
 
@@ -238,21 +245,17 @@ function setGridByYear() {
     const url = "/api/manager/calendarInfo";
     CommonUI.ajax(url, "GET", params, function (req) {
         const daysData = req.sendData.gridListData;
+        console.log(daysData);
         if(daysData.length) {
             setDataIntoGrid(daysData);
         }else{
-            alertMiddleSaveCheck("기존 데이터가 없습니다.<br> 기본 데이터를 생성하시겠습니까?");
-
-            $("#checkYesBtn").on("click", function() {
+            for(let m = 0; m < 12; m++) {
+                AUIGrid.clearGridData(gridId[m]);
+            }
+            alertCheck("기존 데이터가 없습니다.<br> 기본 데이터를 생성하시겠습니까?");
+            $("#checkDelSuccessBtn").on("click", function () {
                 setDataIntoGrid({});
                 gridSave();
-                $('#popupId').remove();
-            });
-
-            $("#checkNoBtn").on("click", function() {
-                for(let m = 0; m < 12; m++) {
-                    AUIGrid.clearGridData(gridId[m]);
-                }
                 $('#popupId').remove();
             });
         }

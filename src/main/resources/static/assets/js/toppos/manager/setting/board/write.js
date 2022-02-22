@@ -6,7 +6,7 @@
 const dtos = {
     send: {
         save: { // 이번만은 예외적으로 게시판의 id 요소가 숨어있다. 또한 삭제할 파일의 아이디리스트를 다루는 항목 추가 예정,
-            id: "", // 존재할 경우 수정작업, null일 경우 새 글 쓰기가 된다.
+            id: "", // 존재할 경우 수정작업, 빈 문자일 경우 새 글 작성이 된다.
             subject: "s", // 제목
             content: "s", // 내용
             multipartFileList: "", // 업로드할 파일들이 input type="file" multiple 과 같은 형태로 올라간다.
@@ -90,9 +90,16 @@ function getParams() {
 
     if(wares.params.has("id")) {
         wares.id = wares.params.get("id");
-    } else {
-        wares.id = null;
     }
+}
+
+function setInputs() {
+    if(wares.filterFromDt) $("#filterFromDt").val(wares.filterFromDt);
+    if(wares.filterToDt) $("#filterToDt").val(wares.filterToDt);
+    if(wares.searchString) $("#searchString").val(wares.searchString);
+    $("#boardTitle").html(wares[wares.boardType].title);
+    $("#boardLink").attr("href", `./${wares.boardType}list`);
+    $("#writeLink").attr("href", `./${wares.boardType}write`);
 }
 
 function getData() {
@@ -128,9 +135,9 @@ function saveProgress() {
             formData.append("multipartFileList", file, file.name);
         }
     } else {
-        formData.set("multipartFileList", null);
+        formData.set("multipartFileList", "");
     }
-    formData.set("deleteFileList", null); // 삭제리스트 작성할 때 까지만
+    formData.set("deleteFileList", []); // 삭제리스트 작성할 때 까지만
     comms.save(formData);
 }
 
