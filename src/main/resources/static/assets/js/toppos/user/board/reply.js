@@ -175,7 +175,6 @@ function reply(commentId, obj) {
     $(obj).hide();
     $(obj).siblings("button").hide();
     const $targetReply = $(obj).parents(".replyItem");
-    const targetId = $targetReply.attr("data-id");
 
     const newTextarea = `
         <div class="reply__item newItem">

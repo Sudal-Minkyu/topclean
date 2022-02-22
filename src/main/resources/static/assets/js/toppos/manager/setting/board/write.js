@@ -6,11 +6,11 @@
 const dtos = {
     send: {
         save: { // 이번만은 예외적으로 게시판의 id 요소가 숨어있다. 또한 삭제할 파일의 아이디리스트를 다루는 항목 추가 예정,
-            id: "n",
-            subject: "s",
-            content: "s",
-            multipartFileList: "",
-            deleteFileList: "a", // 지울 파일들의 id 리스트
+            id: "", // 존재할 경우 수정작업, null일 경우 새 글 쓰기가 된다.
+            subject: "s", // 제목
+            content: "s", // 내용
+            multipartFileList: "", // 업로드할 파일들이 input type="file" multiple 과 같은 형태로 올라간다.
+            deleteFileList: "", // 지울 파일들의 id 리스트
         },
     },
     receive: {
@@ -123,9 +123,14 @@ function saveProgress() {
     formData.set("subject", $("#subject").val());
     formData.set("content", $('#summernote').summernote('code'));
     formData.set("id", wares.id);
-    for(let file of wares.dataTransfer.files) {
-        formData.append("multipartFileList", file, file.name);
+    if(wares.dataTransfer.files.length) {
+        for(let file of wares.dataTransfer.files) {
+            formData.append("multipartFileList", file, file.name);
+        }
+    } else {
+        formData.set("multipartFileList", null);
     }
+    formData.set("deleteFileList", null); // 삭제리스트 작성할 때 까지만
     comms.save(formData);
 }
 
