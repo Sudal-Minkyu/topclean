@@ -17,67 +17,59 @@
 	<script src="/assets/js/toppos/manager/setting/board/write.js"></script>
     <!-- 글쓰기용 js summernote 라이브러리 -->
     <script src="/assets/js/summernote/summernote-lite.js"></script>
-    <script>
-        $(document).ready(function() {
-            $('#summernote').summernote({
-                height: 530,
-                minHeight: null,
-                maxHeight: null,
-                focus: true,
-                lang: "ko-KR"
-            })
-        });
-    </script>
 </th:block>
 
 <div layout:fragment="content" class="content content--board">
     <div class="board board--bottom-nonpadding">
-        <div class="board__header">
-            <div class="board__header-console">
-                <div class="c-select">
-                    <select>
-                        <option>TAG 분실 게시판</option>
-                    </select>
-                </div>
-                <div class="board__header-input">
-                    <input type="text" placeholder="제목입력" />
+        <form id="writeForm">
+            <div class="board__header">
+                <div class="board__header-console">
+                    <div class="c-select">
+                        <select id="selectBoard">
+                            <option value="taglost">TAG 분실 게시판</option>
+                        </select>
+                    </div>
+                    <div class="board__header-input">
+                        <input id="htSubject" type="text" placeholder="제목입력" />
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="board__body">
-            <div class="board__upload">
-                <div class="board__upload-title">업로드 파일 선택</div>
-                <div class="board__upload-input">
-                    <label class="c-file">파일선택<input type="file" /></label>
-                    <button class="board__upload-count">첨부파일 <span>0</span>개 (<span>0KB</span>)</button>
+            <div class="board__body">
+                <div class="board__upload">
+                    <div class="board__upload-title">업로드 파일 선택</div>
+                    <div class="board__upload-input">
+                        <label class="c-file">파일선택<input id="fileSelector" type="file" /></label>
+                        <input id="selectedFiles" type="file" style="display: none;" />
+                        <button type="button" class="board__upload-count">첨부파일 <span>0</span>개 (<span>0KB</span>)</button>
+                    </div>
+                    <div class="board__upload-list active">
+                        <ul>
+                            <li>
+                                <div class="board__upload-file-item">
+                                    <span class="board__upload-filename">filename filename filename filename filename</span>
+                                    <span class="board__upload-filesize">288KB</span>
+                                    <a href="#" class="board__upload-delete">삭제</a>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="board__upload-file-item">
+                                    <span class="board__upload-filename">filename</span>
+                                    <span class="board__upload-filesize">288KB</span>
+                                    <a href="#" class="board__upload-delete">삭제</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
-                <div class="board__upload-list active">
-                    <ul>
-                        <li>
-                            <div class="board__upload-file-item">
-                                <span class="board__upload-filename">filename filename filename filename filename</span>
-                                <span class="board__upload-filesize">288KB</span>
-                                <a href="#" class="board__upload-delete">삭제</a>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="board__upload-file-item">
-                                <span class="board__upload-filename">filename</span>
-                                <span class="board__upload-filesize">288KB</span>
-                                <a href="#" class="board__upload-delete">삭제</a>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
+                <div id="summernote"></div>
             </div>
-            <div id="summernote"></div>
-        </div>
+        </form>
     </div>
 
     <div class="board-view__console board-view__console--bottom">
         <a href="#" class="c-button">이전</a>
-        <button class="c-button c-button--solid">완료</button>
+        <button type="button" id="saveBtn" class="c-button c-button--solid">완료</button>
     </div>
 </div>
 </html>
