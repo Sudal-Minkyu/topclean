@@ -5,8 +5,7 @@
 * */
 const dtos = {
     send: {
-        save: {
-            htId: "",
+        save: { // 이번만은 예외적으로 게시판의 id 요소가 숨어있다. 또한 삭제할 파일의 아이디리스트를 다루는 항목 추가 예정,
             htSubject: "s",
             htContent: "s",
             multipartFileList: "",
@@ -24,7 +23,14 @@ const urls = {
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
+    getData() {
+
+    },
+
     save(formData) {
+        /* 게시판에 따른 dtos의 검사조건 동적으로 추가 ex. 택분실의 경우 htId */
+        dtos.send.save[wares.idname[wares.boardType]] = "n";
+        formData.set(wares.idname[wares.boardType], wares.id);
         const jsonFormData = Object.fromEntries(formData);
         dv.chk(jsonFormData, dtos.send.save, "글쓰기 데이터 보내기");
         console.log(jsonFormData);
@@ -57,6 +63,10 @@ const wares = {
     url: window.location.href,
     boardType: "",
     params: "",
+    id: "",
+    idname: {
+        taglost: "htId",
+    }
 }
 
 $(function() { // 페이지가 로드되고 나서 실행
@@ -68,6 +78,29 @@ function onPageLoad() {
     trigs.basic();
     getParams();
     summernoteInit();
+    if(wares.id) { // 글의 id가 왔다는 것은 글이 새글쓰기가 아닌 수정모드임을 의미한다.
+        getData();
+    } else {
+
+    }
+}
+
+function getParams() {
+    const url = new URL(wares.url);
+    const tokenedPath = url.pathname.split("/");
+    const lastUrl = tokenedPath[tokenedPath.length - 1];
+    wares.boardType = lastUrl.substring(0, lastUrl.length - 5);
+    wares.params = url.searchParams;
+
+    if(wares.params.has("id")) {
+        wares.id = wares.params.get("id");
+    } else {
+        wares.id = null;
+    }
+}
+
+function getData() {
+
 }
 
 function summernoteInit() {
@@ -93,6 +126,7 @@ function saveProgress() {
     const formData = new FormData();
     formData.set("htSubject", $("#htSubject").val());
     formData.set("htContent", $('#summernote').summernote('code'));
+    formData.set("id", wares.id);
     for(let file of wares.dataTransfer.files) {
         formData.append("multipartFileList", file, file.name);
     }
@@ -139,12 +173,4 @@ function removeFile(index) {
 
     wares.dataTransfer = dt;
     refreshFileList();
-}
-
-function getParams() {
-    const url = new URL(wares.url);
-    const tokenedPath = url.pathname.split("/");
-    const lastUrl = tokenedPath[tokenedPath.length - 1];
-    wares.boardType = lastUrl.substring(0, lastUrl.length - 5);
-    wares.params = url.searchParams;
 }
