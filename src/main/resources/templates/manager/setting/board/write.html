@@ -21,50 +21,33 @@
 
 <div layout:fragment="content" class="content content--board">
     <div class="board board--bottom-nonpadding">
-        <form id="writeForm">
-            <div class="board__header">
-                <div class="board__header-console">
-                    <div class="c-select">
-                        <select id="selectBoard">
-                            <option value="taglost">TAG 분실 게시판</option>
-                        </select>
-                    </div>
-                    <div class="board__header-input">
-                        <input name="htSubject" type="text" placeholder="제목입력" />
-                    </div>
+        <div class="board__header">
+            <div class="board__header-console">
+                <div class="c-select">
+                    <select id="selectBoard">
+                        <option value="taglost">TAG 분실 게시판</option>
+                    </select>
+                </div>
+                <div class="board__header-input">
+                    <input name="htSubject" type="text" placeholder="제목입력" />
                 </div>
             </div>
+        </div>
 
-            <div class="board__body">
-                <div class="board__upload">
-                    <div class="board__upload-title">업로드 파일 선택</div>
-                    <div class="board__upload-input">
-                        <label class="c-file">파일선택<input id="fileSelector" name="filesOne" type="file" multiple/></label>
-                        <input id="selectedFiles" name="filesTwo" type="file" style="display: none;" />
-                        <button type="button" class="board__upload-count">첨부파일 <span>0</span>개 (<span>0KB</span>)</button>
-                    </div>
-                    <div class="board__upload-list active">
-                        <ul>
-                            <li>
-                                <div class="board__upload-file-item">
-                                    <span class="board__upload-filename">filename filename filename filename filename</span>
-                                    <span class="board__upload-filesize">288KB</span>
-                                    <a href="#" class="board__upload-delete">삭제</a>
-                                </div>
-                            </li>
-                            <li>
-                                <div class="board__upload-file-item">
-                                    <span class="board__upload-filename">filename</span>
-                                    <span class="board__upload-filesize">288KB</span>
-                                    <a href="#" class="board__upload-delete">삭제</a>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
+        <div class="board__body">
+            <div class="board__upload">
+                <div class="board__upload-title">업로드 파일 선택</div>
+                <div class="board__upload-input">
+                    <label class="c-file">파일선택<input id="fileSelector" type="file" multiple/></label>
+                    <button type="button" id="fileListBtn" class="board__upload-count">첨부파일 <span id="fileCnt">0</span>개 (<span id="fileTotVolume">0</span>KB)</button>
                 </div>
-                <div id="summernote"></div>
+                <div id="fileListPanel" class="board__upload-list">
+                    <ul id="fileList">
+                    </ul>
+                </div>
             </div>
-        </form>
+            <div id="summernote"></div>
+        </div>
     </div>
 
     <div class="board-view__console board-view__console--bottom">

@@ -5,7 +5,12 @@
 * */
 const dtos = {
     send: {
-
+        save: {
+            htId: "",
+            htSubject: "s",
+            htContent: "s",
+            multipartFileList: "",
+        },
     },
     receive: {
 
@@ -14,20 +19,18 @@ const dtos = {
 
 /* 통신에 사용되는 url들 기입 */
 const urls = {
-    save: "/api/manager/lostNoticeSave",
+    taglostsave: "/api/manager/lostNoticeSave",
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
     save(formData) {
-        console.log(Object.fromEntries(formData));
-        wares.fdata = Object.fromEntries(formData);
-
-        // API 시험시 주석을 풀고 urls.save 에 API 주소를 입력
-        CommonUI.ajax(urls.save, "POST", formData, function (res) {
+        const jsonFormData = Object.fromEntries(formData);
+        dv.chk(jsonFormData, dtos.send.save, "글쓰기 데이터 보내기");
+        console.log(jsonFormData);
+        CommonUI.ajax(urls[wares.boardType + "save"], "POST", formData, function (res) {
             console.log(res);
         });
-
     }
 };
 
@@ -41,12 +44,19 @@ const trigs = {
         $("#saveBtn").on("click", function () {
             saveProgress();
         });
+
+        $("#fileListBtn").on("click", function () {
+            $("#fileListPanel").toggleClass("active");
+        });
     },
 }
 
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
 const wares = {
     dataTransfer: new DataTransfer(),
+    url: window.location.href,
+    boardType: "",
+    params: "",
 }
 
 $(function() { // 페이지가 로드되고 나서 실행
@@ -56,6 +66,7 @@ $(function() { // 페이지가 로드되고 나서 실행
 /* 페이지가 로드되고 나서 실행 될 코드들을 담는다. */
 function onPageLoad() {
     trigs.basic();
+    getParams();
     summernoteInit();
 }
 
@@ -74,16 +85,66 @@ function addFile() {
     for(let file of files) {
         wares.dataTransfer.items.add(file);
     }
+    refreshFileList();
+    $("#fileListPanel").addClass("active");
 }
 
 function saveProgress() {
-
-    $("#selectedFiles")[0].files = wares.dataTransfer.files;
-    const formData = new FormData(document.getElementById('writeForm'));
+    const formData = new FormData();
+    formData.set("htSubject", $("#htSubject").val());
     formData.set("htContent", $('#summernote').summernote('code'));
     for(let file of wares.dataTransfer.files) {
         formData.append("multipartFileList", file, file.name);
     }
-
     comms.save(formData);
+}
+
+function refreshFileList() {
+    $("#fileList").html("");
+    for(let i = 0; i <wares.dataTransfer.files.length; i++) {
+        $("#fileList").append(`
+            <li>
+                <div class="board__upload-file-item">
+                    <span class="board__upload-filename">${wares.dataTransfer.files[i].name}</span>
+                    <span class="board__upload-filesize">
+                        ${Math.floor(wares.dataTransfer.files[i].size / 1024).toLocaleString()}KB</span>
+                    <button type="button" class="board__upload-delete" onclick="removeFile(${i})">삭제</button>
+                </div>
+            </li>
+        `);
+    }
+    calculateFileStatus();
+}
+
+function calculateFileStatus() {
+    let cnt = 0;
+    let totVolume = 0;
+    for(let file of wares.dataTransfer.files) {
+        cnt++;
+        totVolume += file.size;
+    }
+
+    $("#fileCnt").html(cnt);
+    $("#fileTotVolume").html(Math.floor(totVolume / 1024).toLocaleString());
+}
+
+function removeFile(index) {
+    const dt = new DataTransfer();
+    const files = wares.dataTransfer.files;
+
+    for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        if (index !== i) dt.items.add(file);
+    }
+
+    wares.dataTransfer = dt;
+    refreshFileList();
+}
+
+function getParams() {
+    const url = new URL(wares.url);
+    const tokenedPath = url.pathname.split("/");
+    const lastUrl = tokenedPath[tokenedPath.length - 1];
+    wares.boardType = lastUrl.substring(0, lastUrl.length - 5);
+    wares.params = url.searchParams;
 }
