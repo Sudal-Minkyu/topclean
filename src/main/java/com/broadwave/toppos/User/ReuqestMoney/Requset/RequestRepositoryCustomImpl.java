@@ -37,7 +37,7 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
         QCustomer customer = QCustomer.customer;
 
         JPQLQuery<RequestListDto> query = from(request)
-                .innerJoin(customer).on(request.bcId.eq(customer))
+                .innerJoin(request.bcId, customer)
                 .select(Projections.constructor(RequestListDto.class,
                         request.frNo,
                         request.fr_insert_date,
@@ -135,7 +135,7 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
         QCustomer qcustomer = QCustomer.customer;
 
         JPQLQuery<RequestInfoDto> query = from(request)
-                .innerJoin(qcustomer).on(request.bcId.eq(qcustomer))
+                .innerJoin(request.bcId, qcustomer)
                 .select(Projections.constructor(RequestInfoDto.class,
                         request.id,
                         request.frNo,
@@ -194,7 +194,7 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
         QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
 
         JPQLQuery<RequestCustomerUnCollectDto> query = from(request)
-                .innerJoin(requestDetail).on(requestDetail.frId.eq(request))
+                .innerJoin(requestDetail.frId, request)
                 .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
                 .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
                 .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
@@ -231,7 +231,7 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
         QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
 
         JPQLQuery<RequestCustomerUnCollectDto> query = from(request)
-                .innerJoin(requestDetail).on(requestDetail.frId.eq(request))
+                .innerJoin(requestDetail.frId, request)
                 .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
                 .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
                 .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))

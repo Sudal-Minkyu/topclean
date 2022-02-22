@@ -23,7 +23,6 @@ import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.PhotoR
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetail;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.manager.RequestDetailBranchInspectListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.manager.RequestDetailBranchInspectionCurrentListDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.manager.RequestDetailBranchReturnListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailInspectDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailSearchDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailSearchDtoSub;
@@ -422,7 +421,7 @@ public class InspectService {
                         }
 
                         String storedFileName = genId + ".png";
-                        String ffFilename = awss3Service.uploadObject(mFile, storedFileName, filePath);
+                        String ffFilename = awss3Service.imageFileUpload(mFile, storedFileName, filePath);
 
                         photo.setFiId(saveInspeot);
                         photo.setFfPath(AWSBUCKETURL+filePath+"/");

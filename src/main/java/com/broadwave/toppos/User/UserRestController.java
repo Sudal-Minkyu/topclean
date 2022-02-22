@@ -645,7 +645,7 @@ public class UserRestController {
 //            log.info("filePath : "+filePath);
             String storedFileName = genId + ".png";
 //            log.info("storedFileName : "+storedFileName);
-            String ffFilename = awss3Service.uploadObject(mFile, storedFileName, filePath);
+            String ffFilename = awss3Service.imageFileUpload(mFile, storedFileName, filePath);
             data.put("ffPath",AWSBUCKETURL+filePath+"/");
             data.put("ffFilename",ffFilename);
         }else{

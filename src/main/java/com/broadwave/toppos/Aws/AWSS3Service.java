@@ -36,8 +36,8 @@ public class AWSS3Service {
     }
 
 
-    // AWS 파일 업로드
-    public String uploadObject(MultipartFile multipartFile, String storedFileName,String uploadPath) throws IOException {
+    // AWS 사진 파일 업로드
+    public String imageFileUpload(MultipartFile multipartFile, String storedFileName,String uploadPath) throws IOException {
 
         ObjectMetadata omd = new ObjectMetadata();
         omd.setContentType(multipartFile.getContentType());
@@ -70,6 +70,19 @@ public class AWSS3Service {
         }else{
             return null;
         }
+    }
+
+    // AWS 일반 파일 업로드
+    public void nomalFileUploadObject(MultipartFile multipartFile, String fileName,String uploadPath) throws IOException {
+
+        ObjectMetadata omd = new ObjectMetadata();
+        omd.setContentType(multipartFile.getContentType());
+        omd.setContentLength(multipartFile.getSize());
+        omd.setHeader("filename", fileName);//한글명들어가면 오류남
+        String awsFilePath =AWSBUCKET+ uploadPath;
+
+        // Copy file to the target location (Replacing existing file with the same name)
+        s3Client.putObject(new PutObjectRequest(awsFilePath, fileName, multipartFile.getInputStream(), omd));
     }
 
     public void deleteObject(String bucketPath, String fileName) throws AmazonServiceException {

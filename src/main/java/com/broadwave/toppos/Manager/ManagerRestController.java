@@ -74,9 +74,9 @@ public class ManagerRestController {
 
 
 //@@@@@@@@@@@@@@@@@@@@@ 택분실게시판 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    //  택분실게시판 - 등록
+    //  택분실게시판 - 등록&수정
     @PostMapping("lostNoticeSave")
-    public ResponseEntity<Map<String,Object>> lostNoticeSave(@ModelAttribute TagNoticeMapperDto tagNoticeMapperDto, HttpServletRequest request){
+    public ResponseEntity<Map<String,Object>> lostNoticeSave(@ModelAttribute TagNoticeMapperDto tagNoticeMapperDto, HttpServletRequest request) throws IOException {
         return tagNoticeService.lostNoticeSave(tagNoticeMapperDto, request);
     }
 

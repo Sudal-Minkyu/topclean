@@ -24,7 +24,7 @@ public class RequestDetailBranchRemainCurrentListDto {
     private String fdS2Type; // 지사입고방법
 
     private String fdS2Dt; // 입고일
-//    private String fdS4Dt; // 출고일
+    private String fdEstimateDt; // 인도예정일
 
     private String fdTag; // 택번호
     private String fdColor; // 색상코드 (00:미선택 01 흰색 02:검정 03: 회색, 04 빨강 05:주황, 06: 노랑, 07 초록 08 파랑 09:남색 10 보라 11 핑크)

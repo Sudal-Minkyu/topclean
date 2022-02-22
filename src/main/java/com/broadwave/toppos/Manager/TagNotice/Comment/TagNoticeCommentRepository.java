@@ -4,6 +4,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface TagNoticeCommentRepository extends JpaRepository<TagNoticeComment,Long> {
+public interface TagNoticeCommentRepository extends JpaRepository<TagNoticeComment,Long>, TagNoticeCommentRepositoryCustom {
 
 }

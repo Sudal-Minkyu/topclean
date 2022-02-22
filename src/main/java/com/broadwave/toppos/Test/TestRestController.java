@@ -95,7 +95,7 @@ public class TestRestController {
             log.info("filePath : "+filePath);
             String storedFileName = genId + ".png";
             log.info("storedFileName : "+storedFileName);
-            String aws_firle_url = awss3Service.uploadObject(mFile, storedFileName, filePath);
+            String aws_firle_url = awss3Service.imageFileUpload(mFile, storedFileName, filePath);
             log.info("aws_firle_url : "+aws_firle_url);
             data.put("fileUrl",aws_firle_url);
         }else{
@@ -104,16 +104,6 @@ public class TestRestController {
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
-
-//    private String getExtension(String fileName) {
-//        int dotPosition = fileName.lastIndexOf('.');
-//
-//        if (-1 != dotPosition && fileName.length() - 1 > dotPosition) {
-//            return fileName.substring(dotPosition + 1);
-//        } else {
-//            return "";
-//        }
-//    }
 
     //  택분실게시판 - 리스트호출 테이블(테스트)
     @PostMapping("/lostNoticeList")

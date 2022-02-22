@@ -1,6 +1,5 @@
 package com.broadwave.toppos.Manager.TagNotice;
 
-import com.broadwave.toppos.Account.AccountListDto;
 import com.broadwave.toppos.Account.QAccount;
 import com.broadwave.toppos.Manager.TagNotice.Comment.QTagNoticeComment;
 import com.broadwave.toppos.Manager.TagNotice.TagNoticeDtos.TagNoticeListDto;

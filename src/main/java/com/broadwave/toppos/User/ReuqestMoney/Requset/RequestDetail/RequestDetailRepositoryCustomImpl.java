@@ -4,6 +4,8 @@ import com.broadwave.toppos.Head.Franchise.QFranchise;
 import com.broadwave.toppos.Head.Item.Group.A.QItemGroup;
 import com.broadwave.toppos.Head.Item.Group.B.QItemGroupS;
 import com.broadwave.toppos.Head.Item.Group.C.QItem;
+import com.broadwave.toppos.Manager.Process.Issue.QIssue;
+import com.broadwave.toppos.User.Customer.QCustomer;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.QRequest;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.QInspeot;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.manager.*;
@@ -113,7 +115,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         QRequest request = QRequest.request;
         QInspeot inspeot = QInspeot.inspeot;
         JPQLQuery<RequestDetailSearchDto> query = from(requestDetail)
-                .innerJoin(request).on(requestDetail.frId.eq(request))
+                .innerJoin(requestDetail.frId, request)
                 .leftJoin(inspeot).on(inspeot.fdId.eq(requestDetail))
                 .where(requestDetail.frId.frCode.eq(frCode).and(requestDetail.fdCancel.eq("N")))
                 .where(request.frYyyymmdd.loe(filterFromDt).and(request.frYyyymmdd.goe(filterToDt)).and(request.frConfirmYn.eq("Y")))
@@ -204,7 +206,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
         QItem item = QItem.item;
         JPQLQuery<RequestDetailUncollectDto> query = from(requestDetail)
-                .innerJoin(request).on(requestDetail.frId.eq(request))
+                .innerJoin(requestDetail.frId, request)
                 .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
                 .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
                 .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
@@ -243,7 +245,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
         QItem item = QItem.item;
         JPQLQuery<RequestDetailCloseListDto> query = from(requestDetail)
-                .innerJoin(request).on(requestDetail.frId.eq(request))
+                 .innerJoin(requestDetail.frId, request)
                 .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
                 .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
                 .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
@@ -284,7 +286,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
         QItem item = QItem.item;
         JPQLQuery<RequestDetailFranchiseInListDto> query = from(requestDetail)
-                .innerJoin(request).on(requestDetail.frId.eq(request))
+                .innerJoin(requestDetail.frId, request)
                 .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
                 .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
                 .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
@@ -328,7 +330,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
         QItem item = QItem.item;
         JPQLQuery<RequestDetailReturnListDto> query = from(requestDetail)
-                .innerJoin(request).on(requestDetail.frId.eq(request))
+                .innerJoin(requestDetail.frId, request)
                 .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
                 .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
                 .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
@@ -369,7 +371,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
         QItem item = QItem.item;
         JPQLQuery<RequestDetailForceListDto> query = from(requestDetail)
-                .innerJoin(request).on(requestDetail.frId.eq(request))
+                .innerJoin(requestDetail.frId, request)
                 .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
                 .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
                 .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
@@ -412,7 +414,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
         QItem item = QItem.item;
         JPQLQuery<RequestDetailDeliveryDto> query = from(requestDetail)
-                .innerJoin(request).on(requestDetail.frId.eq(request))
+                .innerJoin(requestDetail.frId, request)
                 .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
                 .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
                 .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
@@ -464,7 +466,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
         QItem item = QItem.item;
         JPQLQuery<RequestDetailInspectDto> query = from(requestDetail)
-                .innerJoin(request).on(requestDetail.frId.eq(request))
+                .innerJoin(requestDetail.frId, request)
                 .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
                 .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
                 .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
@@ -585,7 +587,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
         QItem item = QItem.item;
         JPQLQuery<RequestDetailReleaseListDto> query = from(requestDetail)
-                .innerJoin(request).on(requestDetail.frId.eq(request))
+                 .innerJoin(requestDetail.frId, request)
                 .innerJoin(franchise).on(request.frCode.eq(franchise.frCode))
                 .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
                 .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
@@ -645,7 +647,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
         QItem item = QItem.item;
         JPQLQuery<RequestDetailReleaseCancelListDto> query = from(requestDetail)
-                .innerJoin(request).on(requestDetail.frId.eq(request))
+                .innerJoin(requestDetail.frId, request)
                 .innerJoin(franchise).on(request.frCode.eq(franchise.frCode))
                 .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
                 .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
@@ -704,7 +706,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
         QItem item = QItem.item;
         JPQLQuery<RequestDetailBranchReturnListDto> query = from(requestDetail)
-                .innerJoin(request).on(requestDetail.frId.eq(request))
+                .innerJoin(requestDetail.frId, request)
                 .innerJoin(franchise).on(request.frCode.eq(franchise.frCode))
                 .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
                 .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
@@ -762,7 +764,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
         QItem item = QItem.item;
         JPQLQuery<RequestDetailBranchForceListDto> query = from(requestDetail)
-                .innerJoin(request).on(requestDetail.frId.eq(request))
+                .innerJoin(requestDetail.frId, request)
                 .innerJoin(franchise).on(request.frCode.eq(franchise.frCode))
                 .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
                 .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
@@ -820,7 +822,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
         QItem item = QItem.item;
         JPQLQuery<RequestDetailBranchInspectListDto> query = from(requestDetail)
-                .innerJoin(request).on(requestDetail.frId.eq(request))
+                .innerJoin(requestDetail.frId, request)
                 .innerJoin(franchise).on(request.frCode.eq(franchise.frCode))
                 .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
                 .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
@@ -879,7 +881,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         QItem item = QItem.item;
         QInspeot inspeot = QInspeot.inspeot;
         JPQLQuery<RequestDetailBranchInspectionCurrentListDto> query = from(requestDetail)
-                .innerJoin(request).on(requestDetail.frId.eq(request))
+                 .innerJoin(requestDetail.frId, request)
                 .innerJoin(inspeot).on(inspeot.fdId.eq(requestDetail))
                 .innerJoin(franchise).on(request.frCode.eq(franchise.frCode))
                 .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
@@ -938,7 +940,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
         QItem item = QItem.item;
         JPQLQuery<RequestDetailTagSearchListDto> query = from(requestDetail)
-                .innerJoin(request).on(requestDetail.frId.eq(request))
+                .innerJoin(requestDetail.frId, request)
                 .innerJoin(franchise).on(request.frCode.eq(franchise.frCode))
                 .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
                 .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
@@ -1008,7 +1010,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         if(type.equals("2")){
             sb.append("          HAVING remain_cnt > 0  \n");
         }
-        sb.append("             ORDER BY b.fd_s2_dt ASC \n");
+        sb.append("             ORDER BY c.fr_name ASC, b.fd_s2_dt ASC \n");
 
         Query query = em.createNativeQuery(sb.toString());
 
@@ -1029,8 +1031,11 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         QItemGroup itemGroup = QItemGroup.itemGroup;
         QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
         QItem item = QItem.item;
+        QCustomer customer = QCustomer.customer;
+
         JPQLQuery<RequestDetailBranchInputCurrentListDto> query = from(requestDetail)
-                .innerJoin(request).on(requestDetail.frId.eq(request))
+                .innerJoin(requestDetail.frId, request)
+                .innerJoin(request.bcId, customer)
                 .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
                 .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
                 .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
@@ -1063,7 +1068,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdStarch,
                         requestDetail.fdUrgentYn,
 
-                        request.bcId.bcName,
+                        customer.bcName,
                         requestDetail.fdTotAmt,
                         requestDetail.fdState,
                         requestDetail.fdRemark
@@ -1083,8 +1088,11 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         QItemGroup itemGroup = QItemGroup.itemGroup;
         QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
         QItem item = QItem.item;
+        QCustomer customer = QCustomer.customer;
+
         JPQLQuery<RequestDetailBranchRemainCurrentListDto> query = from(requestDetail)
-                .innerJoin(request).on(requestDetail.frId.eq(request))
+                .innerJoin(requestDetail.frId, request)
+                .innerJoin(request.bcId, customer)
                 .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
                 .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
                 .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
@@ -1096,7 +1104,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdS2Type,
 
                         requestDetail.fdS2Dt,
-//                        requestDetail.fdS4Dt,
+                        requestDetail.fdEstimateDt,
 
                         requestDetail.fdTag,
                         requestDetail.fdColor,
@@ -1118,7 +1126,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdStarch,
                         requestDetail.fdUrgentYn,
 
-                        request.bcId.bcName,
+                        customer.bcName,
                         requestDetail.fdTotAmt,
                         requestDetail.fdState,
                         requestDetail.fdRemark
@@ -1137,26 +1145,41 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         EntityManager em = getEntityManager();
         StringBuilder sb = new StringBuilder();
 
-        sb.append("SELECT a.fr_code, c.fr_name, b.fd_s4_dt, \n");
-        sb.append("  sum(case when IFNULL(b.fd_s4_dt,'') = '' THEN 0 ELSE 1 END) as output_cnt,  \n");
-        sb.append("  sum(b.fd_tot_amt)");
-        sb.append("         FROM fs_request a \n");
-        sb.append("             INNER JOIN fs_request_dtl b ON a.fr_id = b.fr_id  \n");
-        sb.append("             INNER JOIN bs_franchise c ON a.fr_code = c.fr_code  \n");
-        sb.append("             WHERE a.br_code = ?1 AND a.fr_confirm_yn ='Y' AND b.fd_cancel ='N'  \n");
         if(type.equals("1")){
-            sb.append("             AND b.fd_s4_dt >= ?2 \n");
-            sb.append("             AND b.fd_s4_dt <= ?3  \n");
+            sb.append("SELECT a.fr_code, d.fr_name, a.mi_dt, \n");
+            sb.append("  sum(case when IFNULL(b.fd_s4_dt,'') = '' THEN 0 ELSE 1 END) as output_cnt,  \n");
+            sb.append("  sum(b.fd_tot_amt)");
+            sb.append("         FROM mr_issue a \n");
+            sb.append("             INNER JOIN fs_request_dtl b ON a.mi_id = b.mi_id  \n");
+            sb.append("             INNER JOIN fs_request c ON c.fr_id = b.fr_id  \n");
+            sb.append("             INNER JOIN bs_franchise d ON c.fr_code = d.fr_code  \n");
+            sb.append("             WHERE a.br_code = ?1 AND c.fr_confirm_yn ='Y' AND b.fd_cancel ='N'  \n");
+            sb.append("             AND a.mi_dt >= ?2 \n");
+            sb.append("             AND a.mi_dt <= ?3  \n");
+            if(franchiseId != null){
+                sb.append("             AND d.fr_id = ?4  \n");
+            }
+            sb.append("             GROUP BY a.fr_code, d.fr_name, a.mi_dt  \n");
+            sb.append("             HAVING output_cnt > 0  \n");
+            sb.append("             ORDER BY d.fr_name ASC, a.mi_dt ASC \n");
         }else{
-            sb.append("             AND b.fd_s7_dt >= ?2 \n");
-            sb.append("             AND b.fd_s7_dt <= ?3  \n");
+            sb.append("SELECT a.fr_code, d.fr_name, a.mr_dt, \n");
+            sb.append("  sum(case when IFNULL(b.fd_s7_dt,'') = '' THEN 0 ELSE 1 END) as output_cnt,  \n");
+            sb.append("  sum(b.fd_tot_amt)");
+            sb.append("         FROM mr_issue_force a \n");
+            sb.append("             INNER JOIN fs_request_dtl b ON a.fd_id = b.fd_id  \n");
+            sb.append("             INNER JOIN fs_request c ON b.fr_id = c.fr_id  \n");
+            sb.append("             INNER JOIN bs_franchise d ON c.fr_code = d.fr_code  \n");
+            sb.append("             WHERE a.br_code = ?1 AND c.fr_confirm_yn ='Y' AND b.fd_cancel ='N'  \n");
+            sb.append("             AND a.mr_dt >= ?2 \n");
+            sb.append("             AND a.mr_dt <= ?3  \n");
+            if(franchiseId != null){
+                sb.append("             AND d.fr_id = ?4  \n");
+            }
+            sb.append("             GROUP BY a.fr_code, d.fr_name, a.mr_dt  \n");
+            sb.append("             HAVING output_cnt > 0  \n");
+            sb.append("             ORDER BY d.fr_name ASC, a.mr_dt ASC \n");
         }
-        if(franchiseId != null){
-            sb.append("             AND c.fr_id = ?4  \n");
-        }
-        sb.append("             GROUP BY a.fr_code, c.fr_name, b.fd_s4_dt  \n");
-        sb.append("             HAVING output_cnt > 0  \n");
-        sb.append("             ORDER BY c.fr_name ASC, b.fd_s2_dt ASC \n");
 
         Query query = em.createNativeQuery(sb.toString());
 
@@ -1172,18 +1195,23 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
 
     //  지사출고현황 - querydsl
     public List<RequestDetailBranchReleaseCurrentRightListDto> findByRequestDetailBranchReleaseCurrentRightList(String brCode, String frCode, String fdS4Dt){
-        QRequestDetail requestDetail = QRequestDetail.requestDetail;
+        QIssue issue = QIssue.issue;
         QRequest request = QRequest.request;
+        QRequestDetail requestDetail = QRequestDetail.requestDetail;
         QItemGroup itemGroup = QItemGroup.itemGroup;
         QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
         QItem item = QItem.item;
-        JPQLQuery<RequestDetailBranchReleaseCurrentRightListDto> query = from(requestDetail)
-                .innerJoin(request).on(requestDetail.frId.eq(request))
+        QCustomer customer = QCustomer.customer;
+
+        JPQLQuery<RequestDetailBranchReleaseCurrentRightListDto> query = from(issue)
+                .innerJoin(requestDetail).on(issue.eq(requestDetail.miId))
+                .innerJoin(requestDetail.frId, request)
+                .innerJoin(request.bcId, customer)
                 .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
                 .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
                 .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
                 .where(request.frConfirmYn.eq("Y"))
-                .where(requestDetail.frId.brCode.eq(brCode).and(requestDetail.fdCancel.eq("N")))
+                .where(issue.brCode.eq(brCode).and(requestDetail.fdCancel.eq("N")))
                 .select(Projections.constructor(RequestDetailBranchReleaseCurrentRightListDto.class,
 
                         request.frRefType,
@@ -1211,14 +1239,14 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdStarch,
                         requestDetail.fdUrgentYn,
 
-                        request.bcId.bcName,
+                        customer.bcName,
                         requestDetail.fdTotAmt,
                         requestDetail.fdState,
                         requestDetail.fdRemark
                 ));
 
         query.orderBy(requestDetail.id.asc()).groupBy(requestDetail);
-        query.where(request.frCode.eq(frCode));
+        query.where(issue.frCode.eq(frCode));
         query.where(requestDetail.fdS4Dt.eq(fdS4Dt));
 
         return query.fetch();
@@ -1231,8 +1259,11 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         QItemGroup itemGroup = QItemGroup.itemGroup;
         QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
         QItem item = QItem.item;
+        QCustomer customer = QCustomer.customer;
+
         JPQLQuery<RequestDetailBranchReleaseForceCurrentRightListDto> query = from(requestDetail)
-                .innerJoin(request).on(requestDetail.frId.eq(request))
+                .innerJoin(requestDetail.frId, request)
+                .innerJoin(request.bcId, customer)
                 .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
                 .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
                 .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
@@ -1265,7 +1296,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdStarch,
                         requestDetail.fdUrgentYn,
 
-                        request.bcId.bcName,
+                        customer.bcName,
                         requestDetail.fdTotAmt,
                         requestDetail.fdState,
                         requestDetail.fdRemark
@@ -1285,7 +1316,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         QFranchise franchise = QFranchise.franchise;
 
         JPQLQuery<RequestDetailBranchUnReleaseCurrentListDto> query = from(requestDetail)
-                .innerJoin(request).on(requestDetail.frId.eq(request))
+                .innerJoin(requestDetail.frId, request)
                 .innerJoin(franchise).on(request.frCode.eq(franchise.frCode))
                 .where(request.frConfirmYn.eq("Y"))
                 .where(requestDetail.frId.brCode.eq(brCode).and(requestDetail.fdCancel.eq("N")))
@@ -1320,8 +1351,11 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         QItemGroup itemGroup = QItemGroup.itemGroup;
         QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
         QItem item = QItem.item;
+        QCustomer customer = QCustomer.customer;
+
         JPQLQuery<RequestDetailBranchUnReleaseCurrentRightListDto> query = from(requestDetail)
-                .innerJoin(request).on(requestDetail.frId.eq(request))
+                .innerJoin(requestDetail.frId, request)
+                .innerJoin(request.bcId, customer)
                 .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
                 .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
                 .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
@@ -1355,7 +1389,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdStarch,
                         requestDetail.fdUrgentYn,
 
-                        request.bcId.bcName,
+                        customer.bcName,
                         requestDetail.fdTotAmt,
                         requestDetail.fdState,
                         requestDetail.fdRemark
@@ -1416,8 +1450,11 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         QItemGroup itemGroup = QItemGroup.itemGroup;
         QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
         QItem item = QItem.item;
+        QCustomer customer = QCustomer.customer;
+
         JPQLQuery<RequestDetailBranchReturnCurrentRightListDto> query = from(requestDetail)
-                .innerJoin(request).on(requestDetail.frId.eq(request))
+          .innerJoin(requestDetail.frId, request)
+                .innerJoin(request.bcId, customer)
                 .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
                 .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
                 .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
@@ -1450,7 +1487,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdStarch,
                         requestDetail.fdUrgentYn,
 
-                        request.bcId.bcName,
+                        customer.bcName,
                         requestDetail.fdTotAmt,
                         requestDetail.fdState,
                         requestDetail.fdRemark
