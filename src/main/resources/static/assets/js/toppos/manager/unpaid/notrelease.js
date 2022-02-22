@@ -38,7 +38,7 @@ const dtos = {
             frRefType: "s",
             frYyyymmdd: "s",
             fdS2Dt: "s",
-            fdEstimateDt: "s", //수정필요
+            fdEstimateDt: "s",
             bcName: "s",
             fdTag: "s",
 

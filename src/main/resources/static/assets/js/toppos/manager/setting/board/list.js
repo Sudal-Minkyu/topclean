@@ -31,8 +31,8 @@ const dtos = {
 
 /* 통신에 사용되는 url들 기입 */
 const urls = {
-    taglost: "/api/user/lostNoticeList",
-    notice: "/api/user/noticeList",
+    taglost: "/api/manager/lostNoticeList",
+    notice: "/api/manager/noticeList",
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */

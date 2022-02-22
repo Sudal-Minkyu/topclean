@@ -24,15 +24,17 @@ const dtos = {
 
 /* 통신에 사용되는 url들 기입 */
 const urls = {
-    taglost: "/api/user/lostNoticeView",
-    notice: "/api/user/noticeView",
-    taglostReplyList: "/api/user/lostNoticeCommentList",
+    taglost: "/api/manager/lostNoticeView",
+    notice: "/api/manager/noticeView",
+    taglostReplyList: "/api/manager/lostNoticeCommentList",
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
     getData(condition) {
+        console.log(condition);
         CommonUI.ajax(urls[wares.boardType], "GET", condition, function (res) {
+            console.log(res);
             const data = res.sendData[wares[wares.boardType].dataKeyName];
             setFields(data);
         });
