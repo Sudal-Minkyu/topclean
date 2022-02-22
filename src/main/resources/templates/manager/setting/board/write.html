@@ -30,7 +30,7 @@
                         </select>
                     </div>
                     <div class="board__header-input">
-                        <input id="htSubject" type="text" placeholder="제목입력" />
+                        <input name="htSubject" type="text" placeholder="제목입력" />
                     </div>
                 </div>
             </div>
@@ -39,8 +39,8 @@
                 <div class="board__upload">
                     <div class="board__upload-title">업로드 파일 선택</div>
                     <div class="board__upload-input">
-                        <label class="c-file">파일선택<input id="fileSelector" type="file" /></label>
-                        <input id="selectedFiles" type="file" style="display: none;" />
+                        <label class="c-file">파일선택<input id="fileSelector" name="filesOne" type="file" multiple/></label>
+                        <input id="selectedFiles" name="filesTwo" type="file" style="display: none;" />
                         <button type="button" class="board__upload-count">첨부파일 <span>0</span>개 (<span>0KB</span>)</button>
                     </div>
                     <div class="board__upload-list active">

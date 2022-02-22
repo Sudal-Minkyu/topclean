@@ -69,16 +69,19 @@ function summernoteInit() {
 }
 
 function addFile() {
-    const file = $("#fileSelector")[0].files[0];
-    wares.dataTransfer.items.add(file);
+    const files = $("#fileSelector")[0].files;
+    for(let file of files) {
+        wares.dataTransfer.items.add(file);
+    }
 }
 
 function saveProgress() {
-    const formData = new FormData();
-    formData.set("htSubject", $('#htSubject').val());
+
+    $("#selectedFiles")[0].files = wares.dataTransfer.files;
+    const formData = new FormData(document.getElementById('writeForm'));
     formData.set("htContent", $('#summernote').summernote('code'));
-    for(let i in wares.dataTransfer.files) {
-        formData.append("files", wares.dataTransfer.files[i]);
+    for(let file of wares.dataTransfer.files) {
+        formData.append("filesThree", file, file.name);
     }
 
     comms.save(formData);
