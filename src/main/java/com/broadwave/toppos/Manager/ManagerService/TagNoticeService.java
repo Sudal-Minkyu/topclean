@@ -6,9 +6,10 @@ import com.broadwave.toppos.Manager.TagNotice.Comment.TagNoticeCommentListDto;
 import com.broadwave.toppos.Manager.TagNotice.Comment.TagNoticeCommentRepository;
 import com.broadwave.toppos.Manager.TagNotice.Comment.TagNoticeCommentRepositoryCustom;
 import com.broadwave.toppos.Manager.TagNotice.TagNoticeDtos.TagNoticeListDto;
-import com.broadwave.toppos.Manager.TagNotice.TagNoticeRepositoryCustom;
+import com.broadwave.toppos.Manager.TagNotice.TagNoticeDtos.TagNoticeMapperDto;
 import com.broadwave.toppos.Manager.TagNotice.TagNoticeDtos.TagNoticeViewDto;
 import com.broadwave.toppos.Manager.TagNotice.TagNoticeDtos.TagNoticeViewSubDto;
+import com.broadwave.toppos.Manager.TagNotice.TagNoticeRepositoryCustom;
 import com.broadwave.toppos.common.AjaxResponse;
 import com.broadwave.toppos.common.ResponseErrorCode;
 import io.jsonwebtoken.Claims;
@@ -18,8 +19,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -48,12 +52,64 @@ public class TagNoticeService {
         this.tagNoticeCommentRepositoryCustom = tagNoticeCommentRepositoryCustom;
     }
 
+    //  택분실게시판 - 등록
+    public ResponseEntity<Map<String, Object>> lostNoticeSave(TagNoticeMapperDto tagNoticeMapperDto, HttpServletRequest request) {
+        log.info("lostNoticeSave 호출");
+
+        log.info("tagNoticeMapperDto : "+tagNoticeMapperDto);
+        AjaxResponse res = new AjaxResponse();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String brCode = (String) claims.get("brCode"); // 현재 지사의 코드(2자리) 가져오기
+        String login_id = claims.getSubject(); // 현재 아이디
+        log.info("현재 접속한 아이디 : "+login_id);
+        log.info("현재 접속한 지사 코드 : "+brCode);
+
+        // AWS 파일저장
+        if(tagNoticeMapperDto.getMultipartFileList() != null){
+            log.info("multipartFileList.size() : "+tagNoticeMapperDto.getMultipartFileList().size());
+            for(MultipartFile multipartFile : tagNoticeMapperDto.getMultipartFileList()){
+
+                // 파일 오리지널 Name
+                String files = multipartFile.getOriginalFilename();
+                log.info("files : "+files);
+
+                // 확장자
+                String ext;
+                if(files != null){
+                    ext = '.'+files.substring(files.lastIndexOf(".") + 1);
+                    log.info("ext : "+ext);
+                }else{
+                    ext = "";
+                }
+
+                // 파일 중복명 처리
+                String storedFileName = UUID.randomUUID().toString().replace("-", "")+ext;
+                log.info("storedFileName : "+storedFileName);
+
+                // S3에 저장 할 파일주소
+                SimpleDateFormat date = new SimpleDateFormat("yyyyMMdd");
+                String filePath = "/toppos-branch-tagNotice/" + date.format(new Date());
+                log.info("filePath : "+filePath);
+
+//                String ffFilename = awss3Service.uploadObject(mFile, storedFileName, filePath);
+//                data.put("ffPath",AWSBUCKETURL+filePath+"/");
+//                data.put("ffFilename",ffFilename);
+            }
+        }else{
+            log.info("첨부파일이 존재하지 않습니다");
+        }
+
+
+        return ResponseEntity.ok(res.success());
+    }
+
     //  택분실게시판 - 리스트호출 테이블
     public ResponseEntity<Map<String, Object>> lostNoticeList(String searchString, LocalDateTime filterFromDt, LocalDateTime filterToDt, Pageable pageable, HttpServletRequest request, String type) {
         log.info("lostNoticeList 호출성공");
 
         AjaxResponse res = new AjaxResponse();
-//        HashMap<String, Object> data = new HashMap<>();
 
         // 클레임데이터 가져오기
         Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
@@ -73,23 +129,6 @@ public class TagNoticeService {
 //        log.info("filterFromDt : "+filterFromDt);
 //        log.info("filterToDt : "+filterToDt);
         Page<TagNoticeListDto> tagNoticeListDtoPage = tagNoticeRepositoryCustom.findByTagNoticeList(searchString, filterFromDt, filterToDt, frbrCode, pageable);
-
-
-//        res.put("type",type);
-//        if(tagNoticeListDtoPage.getTotalElements()> 0 ){
-//            data.put("datalist",pages.getContent());
-//            res.put("total_page",pages.getTotalPages());
-//            res.put("current_page",pages.getNumber() + 1);
-//            res.put("total_rows",pages.getTotalElements());
-//            res.put("current_rows",pages.getNumberOfElements());
-//        }else{
-//            res.put("total_page",pages.getTotalPages());
-//            res.put("current_page",pages.getNumber() + 1);
-//            res.put("total_rows",pages.getTotalElements());
-//            res.put("current_rows",pages.getNumberOfElements());
-//        }
-
-
         return ResponseEntity.ok(res.ResponseEntityPage(tagNoticeListDtoPage,type));
     }
 
@@ -206,12 +245,5 @@ public class TagNoticeService {
 
         return ResponseEntity.ok(res.success());
     }
-
-
-
-
-
-
-
 
 }

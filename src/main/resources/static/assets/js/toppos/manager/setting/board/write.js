@@ -14,7 +14,7 @@ const dtos = {
 
 /* 통신에 사용되는 url들 기입 */
 const urls = {
-    save: "/api/",
+    save: "/api/manager/lostNoticeSave",
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
@@ -24,9 +24,10 @@ const comms = {
         wares.fdata = Object.fromEntries(formData);
 
         // API 시험시 주석을 풀고 urls.save 에 API 주소를 입력
-        // CommonUI.ajax(urls.save, "POST", formData, function (res) {
-        //     console.log(res);
-        // });
+        CommonUI.ajax(urls.save, "POST", formData, function (res) {
+            console.log(res);
+        });
+
     }
 };
 
@@ -81,7 +82,7 @@ function saveProgress() {
     const formData = new FormData(document.getElementById('writeForm'));
     formData.set("htContent", $('#summernote').summernote('code'));
     for(let file of wares.dataTransfer.files) {
-        formData.append("filesThree", file, file.name);
+        formData.append("multipartFileList", file, file.name);
     }
 
     comms.save(formData);

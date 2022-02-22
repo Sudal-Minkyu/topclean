@@ -2,6 +2,7 @@ package com.broadwave.toppos.Manager;
 
 import com.broadwave.toppos.Manager.Calendar.CalendarDtos.BranchCalendarDto;
 import com.broadwave.toppos.Manager.ManagerService.*;
+import com.broadwave.toppos.Manager.TagNotice.TagNoticeDtos.TagNoticeMapperDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotMapperDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotSet;
 import com.broadwave.toppos.User.UserService.InspectService;
@@ -11,9 +12,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -71,6 +74,12 @@ public class ManagerRestController {
 
 
 //@@@@@@@@@@@@@@@@@@@@@ 택분실게시판 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    //  택분실게시판 - 등록
+    @PostMapping("lostNoticeSave")
+    public ResponseEntity<Map<String,Object>> lostNoticeSave(@ModelAttribute TagNoticeMapperDto tagNoticeMapperDto, HttpServletRequest request){
+        return tagNoticeService.lostNoticeSave(tagNoticeMapperDto, request);
+    }
+
     //  택분실게시판 - 리스트 호출
     @PostMapping("/lostNoticeList")
     public ResponseEntity<Map<String,Object>> lostNoticeList(@RequestParam("searchString")String searchString, @RequestParam("filterFromDt")String filterFromDt,
