@@ -257,7 +257,8 @@ function setInputs() {
     if(wares.searchString) $("#searchString").val(wares.searchString);
     $("#boardTitle").html(wares[wares.boardType].title);
     $("#boardLink").attr("href", `./${wares.boardType}list`);
-    $("#writeLink").attr("href", `./${wares.boardType}write`);
+    $("#writeLink").attr("href", `./${wares.boardType}write?prevPage=` + wares.page + "&prevSearchString=" + wares.searchString
+    + "&prevFilterFromDt=" + wares.filterFromDt + "&prevFilterToDt=" + wares.filterToDt);
 }
 
 /* 페이지내이션 적절한 값 완성후 wares의 데이터를 이용하도록 수정 */

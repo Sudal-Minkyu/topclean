@@ -18,16 +18,16 @@
 
 <div layout:fragment="content" class="content content--board">
     <div class="board-view__console">
-        <a href="#" class="c-button c-button--small">목록</a>
-        <a href="#" class="c-button c-button--small c-button--darksolid">글 수정</a>
+        <a href="#" class="c-button c-button--small listLink">목록</a>
+        <a href="#" class="c-button c-button--small c-button--darksolid modifyLink">글 수정</a>
     </div>
 
     <div class="board-view">
         <div class="board-view__header">
-            <h3 class="board-view__heading">제목</h3>
+            <h3 id="subject" class="board-view__heading"></h3>
             <ul class="board-view__info">
-                <li><span>작성자</span></li>
-                <li><span>9999-99-99</span></li>
+                <li><span id="name"></span></li>
+                <li><span id="insertDateTime"></span></li>
                 <li class="board-view__info-file">
                     <button class="board-view__btn">첨부파일<span>(2)</span></button>
                     <div class="board-view__file-box active">
@@ -49,23 +49,23 @@
                 </li>
             </ul>
         </div>
-        <div class="board-view__content">
+        <div id="content" class="board-view__content">
             <!-- 게시글이 작성될 부분 -->
         </div>
         <div class="board-view__footer">
             <ul class="board-view__links">
                 <li>
-                    <a href="#" id="linkPrev" class="board__link board__link--prev">
-                        <span class="board__turn">이전글</span>
-                        <span class="board__link-title">이전글 제목</span>
-                        <span class="board__link-date">작성일</span>
+                    <a href="#" id="linkNext" class="board__link board__link--prev">
+                        <span class="board__turn">다음글</span>
+                        <span id="nextSubject" class="board__link-title"></span>
+                        <span id="nextInsertDateTime" class="board__link-date"></span>
                     </a>
                 </li>
                 <li>
-                    <a href="#" id="linkNext" class="board__link board__link--next">
-                        <span class="board__turn">다음글</span>
-                        <span class="board__link-title">다음글 제목</span>
-                        <span class="board__link-date">작성일</span>
+                    <a href="#" id="linkPrev" class="board__link board__link--next">
+                        <span class="board__turn">이전글</span>
+                        <span id="prevSubject" class="board__link-title"></span>
+                        <span id="prevInsertDateTime" class="board__link-date"></span>
                     </a>
                 </li>
             </ul>
@@ -84,8 +84,8 @@
     </div>
 
     <div class="board-view__console board-view__console--bottom">
-        <a href="#" class="c-button c-button--small">목록</a>
-        <a href="#" class="c-button c-button--small c-button--darksolid">글 수정</a>
+        <a href="#" class="c-button c-button--small listLink">목록</a>
+        <a href="#" class="c-button c-button--small c-button--darksolid modifyLink">글 수정</a>
     </div>
 </div>
 </html>

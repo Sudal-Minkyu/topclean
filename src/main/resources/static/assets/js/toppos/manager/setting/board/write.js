@@ -31,7 +31,7 @@ const comms = {
 
     save(formData) {
         const jsonFormData = Object.fromEntries(formData);
-        dv.chk(jsonFormData, dtos.send.save, "글쓰기 데이터 보내기");
+        // dv.chk(jsonFormData, dtos.send.save, "글쓰기 데이터 보내기");
         console.log(jsonFormData);
         CommonUI.ajax(urls[wares.boardType + "save"], "POST", formData, function (res) {
             console.log(res);
@@ -58,11 +58,15 @@ const trigs = {
 
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
 const wares = {
-    dataTransfer: new DataTransfer(),
     url: window.location.href,
+    dataTransfer: new DataTransfer(),
     boardType: "",
-    params: "",
     id: "",
+    params: "",
+    page: "",
+    searchString: "",
+    filterFromDt: "",
+    filterToDt: "",
 }
 
 $(function() { // 페이지가 로드되고 나서 실행
@@ -73,6 +77,7 @@ $(function() { // 페이지가 로드되고 나서 실행
 function onPageLoad() {
     trigs.basic();
     getParams();
+    setInputs();
     summernoteInit();
     if(wares.id) { // 글의 id가 왔다는 것은 글이 새글쓰기가 아닌 수정모드임을 의미한다.
         getData();
@@ -91,15 +96,35 @@ function getParams() {
     if(wares.params.has("id")) {
         wares.id = wares.params.get("id");
     }
+
+    if(wares.params.has("prevPage")) {
+        wares.page = wares.params.get("prevPage");
+    } else {
+        wares.page = "1";
+    }
+
+    if(wares.params.has("prevFilterFromDt")) {
+        wares.filterFromDt = wares.params.get("prevFilterFromDt");
+    }
+
+    if(wares.params.has("prevFilterToDt")) {
+        wares.filterToDt = wares.params.get("prevFilterToDt");
+    }
+
+    if(wares.params.has("prevSearchString")) {
+        wares.searchString = wares.params.get("prevSearchString");
+    }
 }
 
 function setInputs() {
-    if(wares.filterFromDt) $("#filterFromDt").val(wares.filterFromDt);
-    if(wares.filterToDt) $("#filterToDt").val(wares.filterToDt);
-    if(wares.searchString) $("#searchString").val(wares.searchString);
-    $("#boardTitle").html(wares[wares.boardType].title);
-    $("#boardLink").attr("href", `./${wares.boardType}list`);
-    $("#writeLink").attr("href", `./${wares.boardType}write`);
+    if(wares.id) {
+        $("#previousLink").attr("href", `./${wares.boardType}view?prevPage=` + wares.page + "&id=" + wares.id
+            + "&prevSearchString=" + wares.searchString + "&prevFilterFromDt="
+            + wares.filterFromDt + "&prevFilterToDt=" + wares.filterToDt);
+    } else {
+        $("#previousLink").attr("href", `./${wares.boardType}list?page=` + wares.page + "&searchString=" + wares.searchString
+            + "&filterFromDt=" + wares.filterFromDt + "&filterToDt=" + wares.filterToDt);
+    }
 }
 
 function getData() {
@@ -129,15 +154,17 @@ function saveProgress() {
     const formData = new FormData();
     formData.set("subject", $("#subject").val());
     formData.set("content", $('#summernote').summernote('code'));
-    formData.set("id", wares.id);
+
+    if(wares.id) {
+        formData.set("id", wares.id);
+    }
+
     if(wares.dataTransfer.files.length) {
         for(let file of wares.dataTransfer.files) {
             formData.append("multipartFileList", file, file.name);
         }
-    } else {
-        formData.set("multipartFileList", "");
     }
-    formData.set("deleteFileList", []); // 삭제리스트 작성할 때 까지만
+
     comms.save(formData);
 }
 

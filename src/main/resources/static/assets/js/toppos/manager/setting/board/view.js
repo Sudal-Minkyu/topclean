@@ -128,6 +128,7 @@ $(function() { // 페이지가 로드되고 나서 실행
 /* 페이지가 로드되고 나서 실행 될 코드들을 담는다. */
 function onPageLoad() {
     getParams();
+    setInputs();
     let condition = {};
     condition[wares[wares.boardType].idKeyName] = wares.id;
     comms.getData(condition);
@@ -182,6 +183,14 @@ function getParams() {
     }
 }
 
+function setInputs() {
+    $(".listLink").attr("href", `./${wares.boardType}list?page=` + wares.page + "&searchString=" + wares.searchString
+        + "&filterFromDt=" + wares.filterFromDt + "&filterToDt=" + wares.filterToDt);
+
+    $(".modifyLink").attr("href", `./${wares.boardType}write?prevPage=` + wares.page + "&id=" + wares.id + "&prevSearchString=" + wares.searchString
+    + "&prevFilterFromDt=" + wares.filterFromDt + "&prevFilterToDt=" + wares.filterToDt);
+}
+
 function setFields(data) {
     $("#subject").html(data.subject);
     $("#name").html(data.name);
@@ -211,14 +220,6 @@ function setFields(data) {
         $("#replyList").css("height", "300px");
         $("#content").css("height", "200px");
     }
-
-    $("#linkReply").attr("href", `./${wares.boardType}reply?id=` + data[wares[wares.boardType].idKeyName] + "&prevPage=" + wares.page 
-    + "&prevSearchString=" + wares.searchString + "&prevFilterFromDt=" + wares.filterFromDt
-    + "&prevFilterToDt=" + wares.filterToDt);
-
-    // 페이지 정보 가져와서 해당 페이지로 바로 갈 수 있도록 조치
-    $("#linkPrevPage").attr("href", `./${wares.boardType}list?page=` + wares.page + "&searchString=" + wares.searchString
-        + "&filterFromDt=" + wares.filterFromDt + "&filterToDt=" + wares.filterToDt);
 }
 
 function createReplyHtml(commentId, name, modifyDt, comment, type, isWriter, preId) {
