@@ -114,13 +114,16 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         QRequestDetail requestDetail = QRequestDetail.requestDetail;
         QRequest request = QRequest.request;
         QInspeot inspeot = QInspeot.inspeot;
+        QCustomer customer = QCustomer.customer;
+
         JPQLQuery<RequestDetailSearchDto> query = from(requestDetail)
                 .innerJoin(requestDetail.frId, request)
+                .innerJoin(request.bcId, customer)
                 .leftJoin(inspeot).on(inspeot.fdId.eq(requestDetail))
                 .where(requestDetail.frId.frCode.eq(frCode).and(requestDetail.fdCancel.eq("N")))
                 .where(request.frYyyymmdd.loe(filterFromDt).and(request.frYyyymmdd.goe(filterToDt)).and(request.frConfirmYn.eq("Y")))
                 .select(Projections.constructor(RequestDetailSearchDto.class,
-                        request.bcId.bcName,
+                        customer.bcName,
                         request.frYyyymmdd,
                         requestDetail.id,
                         request.id,
@@ -179,7 +182,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdPollutionLocBlf,
                         request.frRefType
                 ));
-        query.orderBy(requestDetail.id.asc()).groupBy(requestDetail);
+        query.orderBy(requestDetail.id.asc());
         if(bcId != null){
             query.where(request.bcId.bcId.eq(bcId));
         }
@@ -370,8 +373,11 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         QItemGroup itemGroup = QItemGroup.itemGroup;
         QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
         QItem item = QItem.item;
+        QCustomer customer = QCustomer.customer;
+
         JPQLQuery<RequestDetailForceListDto> query = from(requestDetail)
                 .innerJoin(requestDetail.frId, request)
+                .innerJoin(request.bcId, customer)
                 .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
                 .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
                 .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
@@ -380,7 +386,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                 .select(Projections.constructor(RequestDetailForceListDto.class,
                         requestDetail.id,
                         requestDetail.fdS4Dt,
-                        request.bcId.bcName,
+                        customer.bcName,
                         requestDetail.fdTag,
                         requestDetail.fdColor,
                         itemGroup.bgName,
@@ -413,8 +419,11 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         QItemGroup itemGroup = QItemGroup.itemGroup;
         QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
         QItem item = QItem.item;
+        QCustomer customer = QCustomer.customer;
+
         JPQLQuery<RequestDetailDeliveryDto> query = from(requestDetail)
                 .innerJoin(requestDetail.frId, request)
+                .innerJoin(request.bcId, customer)
                 .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
                 .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
                 .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
@@ -422,7 +431,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                 .where(requestDetail.frId.frCode.eq(frCode).and(requestDetail.fdCancel.eq("N")))
                 .select(Projections.constructor(RequestDetailDeliveryDto.class,
                         request.frRefType,
-                        request.bcId.bcName,
+                        customer.bcName,
                         requestDetail.id,
                         request.frYyyymmdd,
                         requestDetail.fdTag,
@@ -450,7 +459,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdRemark,
                         requestDetail.fdEstimateDt
                 ));
-        query.orderBy(requestDetail.id.asc()).groupBy(requestDetail);
+        query.orderBy(requestDetail.id.asc());
         query.where(requestDetail.fdState.eq("S5").or(requestDetail.fdState.eq("S8")));
         if(bcId != null){
             query.where(request.bcId.bcId.eq(bcId));
@@ -465,16 +474,21 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         QItemGroup itemGroup = QItemGroup.itemGroup;
         QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
         QItem item = QItem.item;
+        QCustomer customer = QCustomer.customer;
+
         JPQLQuery<RequestDetailInspectDto> query = from(requestDetail)
+
                 .innerJoin(requestDetail.frId, request)
+                .innerJoin(request.bcId, customer)
                 .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
                 .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
                 .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
+
                 .where(request.frYyyymmdd.loe(filterToDt).and(request.frYyyymmdd.goe(filterFromDt)).and(request.frConfirmYn.eq("Y")))
                 .where(requestDetail.frId.frCode.eq(frCode).and(requestDetail.fdCancel.eq("N")))
                 .select(Projections.constructor(RequestDetailInspectDto.class,
                         request.frRefType,
-                        request.bcId.bcName,
+                        customer.bcName,
                         requestDetail.id,
                         request.frYyyymmdd,
                         requestDetail.fdTag,
@@ -502,7 +516,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdTotAmt,
                         requestDetail.fdRemark
                 ));
-        query.orderBy(requestDetail.id.asc()).groupBy(requestDetail);
+        query.orderBy(requestDetail.id.asc());
         if(!searchTag.equals("")){
             query.where(requestDetail.fdTag.likeIgnoreCase(searchTag));
         }
@@ -518,7 +532,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         QRequestDetail requestDetail = QRequestDetail.requestDetail;
         QRequest request = QRequest.request;
         JPQLQuery<RequestDetailBusinessdayListDto> query = from(requestDetail)
-                .innerJoin(request).on(request.eq(requestDetail.frId))
+                .innerJoin(requestDetail.frId, request)
                 .where(request.frYyyymmdd.goe(filterFromDt).and(request.frYyyymmdd.loe(filterToDt)))
                 .select(Projections.constructor(RequestDetailBusinessdayListDto.class,
                         request.frYyyymmdd,
@@ -539,12 +553,15 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
     public List<RequestDetailBusinessdayDeliveryDto> findByRequestDetailBusinessdayDeliveryList(String frCode, String filterFromDt, String filterToDt){
         QRequestDetail requestDetail = QRequestDetail.requestDetail;
         QRequest request = QRequest.request;
+        QCustomer customer = QCustomer.customer;
+
         JPQLQuery<RequestDetailBusinessdayDeliveryDto> query = from(requestDetail)
-                .innerJoin(request).on(request.eq(requestDetail.frId))
+                .innerJoin(requestDetail.frId, request)
+                .innerJoin(request.bcId, customer)
                 .where(requestDetail.fdS6Dt.goe(filterFromDt).and(requestDetail.fdS6Dt.loe(filterToDt)).and(requestDetail.fdS6Dt.isNotNull()))
                 .select(Projections.constructor(RequestDetailBusinessdayDeliveryDto.class,
                         requestDetail.fdS6Dt,
-                        request.bcId.countDistinct()
+                        customer.countDistinct()
                 ));
         query.groupBy(requestDetail.fdS6Dt).orderBy(requestDetail.fdS6Dt.asc());
         // 기본조건문
@@ -621,7 +638,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdTotAmt,
                         requestDetail.fdState
                 ));
-        query.orderBy(requestDetail.id.asc()).groupBy(requestDetail);
+        query.orderBy(requestDetail.id.asc());
         query.where(requestDetail.fdState.eq("S2"));
         if(frId != 0){
             query.where(franchise.id.eq(frId));
@@ -682,7 +699,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdState,
                         requestDetail.fdPreState
                 ));
-        query.orderBy(requestDetail.id.asc()).groupBy(requestDetail);
+        query.orderBy(requestDetail.id.asc());
         query.where(requestDetail.fdState.eq("S4"));
         query.where(franchise.id.eq(frId));
         if(!tagNo.equals("")){
@@ -705,8 +722,11 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         QItemGroup itemGroup = QItemGroup.itemGroup;
         QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
         QItem item = QItem.item;
+        QCustomer customer = QCustomer.customer;
+
         JPQLQuery<RequestDetailBranchReturnListDto> query = from(requestDetail)
                 .innerJoin(requestDetail.frId, request)
+                .innerJoin(request.bcId, customer)
                 .innerJoin(franchise).on(request.frCode.eq(franchise.frCode))
                 .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
                 .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
@@ -735,12 +755,12 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdWaterRepellent,
                         requestDetail.fdStarch,
                         requestDetail.fdUrgentYn,
-                        request.bcId.bcName,
+                        customer.bcName,
                         requestDetail.fdTotAmt,
                         requestDetail.fdState,
                         requestDetail.fdPreState
                 ));
-        query.orderBy(requestDetail.id.asc()).groupBy(requestDetail);
+        query.orderBy(requestDetail.id.asc());
         query.where(requestDetail.fdState.eq("S2"));
         query.where(franchise.id.eq(frId));
         if(!tagNo.equals("")){
@@ -798,7 +818,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdState,
                         requestDetail.fdPreState
                 ));
-        query.orderBy(requestDetail.id.asc()).groupBy(requestDetail);
+        query.orderBy(requestDetail.id.asc());
         query.where(requestDetail.fdState.eq("S2"));
         query.where(franchise.id.eq(frId));
         if(!tagNo.equals("")){
@@ -856,7 +876,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdState,
                         requestDetail.fdPreState
                 ));
-        query.orderBy(requestDetail.id.asc()).groupBy(requestDetail);
+        query.orderBy(requestDetail.id.asc());
         query.where(requestDetail.fdState.eq("S2"));
         query.where(franchise.id.eq(frId));
         if(!tagNo.equals("")){
@@ -916,7 +936,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdState,
                         inspeot.fiAddAmt.sum()
                 ));
-        query.orderBy(requestDetail.id.asc()).groupBy(requestDetail);
+        query.orderBy(requestDetail.id.asc());
         query.where(requestDetail.fdState.eq("S2"));
         query.where(franchise.id.eq(frId));
         if(!tagNo.equals("")){
@@ -978,7 +998,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdS7Dt,
                         requestDetail.fdS8Dt
                 ));
-        query.orderBy(requestDetail.id.asc()).groupBy(requestDetail);
+        query.orderBy(requestDetail.id.asc());
         query.where(franchise.id.eq(frId));
         if(!tagNo.equals("")){
             query.where(requestDetail.fdTag.substring(3,7).likeIgnoreCase(tagNo));
@@ -1074,7 +1094,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdRemark
                 ));
 
-        query.orderBy(requestDetail.id.asc()).groupBy(requestDetail);
+        query.orderBy(requestDetail.id.asc());
         query.where(request.frCode.eq(frCode));
         query.where(requestDetail.fdS2Dt.eq(fdS2Dt));
 
@@ -1132,7 +1152,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdRemark
                 ));
 
-        query.orderBy(requestDetail.id.asc()).groupBy(requestDetail);
+        query.orderBy(requestDetail.id.asc());
         query.where(request.frCode.eq(frCode));
         query.where(requestDetail.fdS2Dt.eq(fdS2Dt).and(requestDetail.fdS4Dt.isNull()));
 
@@ -1245,7 +1265,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdRemark
                 ));
 
-        query.orderBy(requestDetail.id.asc()).groupBy(requestDetail);
+        query.orderBy(requestDetail.id.asc());
         query.where(issue.frCode.eq(frCode));
         query.where(requestDetail.fdS4Dt.eq(fdS4Dt));
 
@@ -1302,7 +1322,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdRemark
                 ));
 
-        query.orderBy(requestDetail.id.asc()).groupBy(requestDetail);
+        query.orderBy(requestDetail.id.asc());
         query.where(request.frCode.eq(frCode));
         query.where(requestDetail.fdS7Dt.eq(fdS7Dt));
 
@@ -1395,7 +1415,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdRemark
                 ));
 
-        query.orderBy(requestDetail.id.asc()).groupBy(requestDetail);
+        query.orderBy(requestDetail.id.asc());
         query.where(request.frCode.eq(frCode));
 
         if(type.equals("1")) {
@@ -1493,7 +1513,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdRemark
                 ));
 
-        query.orderBy(requestDetail.id.asc()).groupBy(requestDetail);
+        query.orderBy(requestDetail.id.asc());
         query.where(request.frCode.eq(frCode));
 
         query.where(requestDetail.fdS3Dt.eq(fdS3Dt));

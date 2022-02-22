@@ -81,14 +81,11 @@ public class AWSS3Service {
         omd.setHeader("filename", fileName);//한글명들어가면 오류남
         String awsFilePath =AWSBUCKET+ uploadPath;
 
-        // Copy file to the target location (Replacing existing file with the same name)
         s3Client.putObject(new PutObjectRequest(awsFilePath, fileName, multipartFile.getInputStream(), omd));
     }
 
     public void deleteObject(String bucketPath, String fileName) throws AmazonServiceException {
-
         s3Client.deleteObject(new DeleteObjectRequest(AWSBUCKET +  bucketPath, fileName));
-
     }
 
     public byte[] getObject(String bucketPath, String fileName) throws IOException {

@@ -27,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -80,19 +81,23 @@ public class TagNoticeService {
 
         TagNotice tagNotice = new TagNotice();
         TagNotice saveTagNotice;
-        Optional<TagNotice> optionalTagNotice = tagNoticeRepository.findById(tagNoticeMapperDto.getHtId());
-        if(optionalTagNotice.isPresent()){
-            log.info("수정입니다.");
-            optionalTagNotice.get().setHtSubject(tagNoticeMapperDto.getHtSubject());
-            optionalTagNotice.get().setHtContent(tagNoticeMapperDto.getHtContent());
-            optionalTagNotice.get().setModify_id(login_id);
-            optionalTagNotice.get().setModifyDateTime(LocalDateTime.now());
-            saveTagNotice = tagNoticeRepository.save(optionalTagNotice.get());
+        if(tagNoticeMapperDto.getId() != null){
+            Optional<TagNotice> optionalTagNotice = tagNoticeRepository.findById(tagNoticeMapperDto.getId());
+            if(optionalTagNotice.isPresent()){
+                log.info("수정입니다.");
+                optionalTagNotice.get().setHtSubject(tagNoticeMapperDto.getSubject());
+                optionalTagNotice.get().setHtContent(tagNoticeMapperDto.getContent());
+                optionalTagNotice.get().setModify_id(login_id);
+                optionalTagNotice.get().setModifyDateTime(LocalDateTime.now());
+                saveTagNotice = tagNoticeRepository.save(optionalTagNotice.get());
+            }else{
+                return ResponseEntity.ok(res.fail(ResponseErrorCode.TP030.getCode(), "해당 글은 "+ResponseErrorCode.TP030.getDesc(), ResponseErrorCode.TP027.getCode(), ResponseErrorCode.TP027.getDesc()));
+            }
         }else{
             log.info("신규입니다.");
             tagNotice.setBrCode(brCode);
-            tagNotice.setHtSubject(tagNoticeMapperDto.getHtSubject());
-            tagNotice.setHtContent(tagNoticeMapperDto.getHtContent());
+            tagNotice.setHtSubject(tagNoticeMapperDto.getSubject());
+            tagNotice.setHtContent(tagNoticeMapperDto.getContent());
             tagNotice.setInsert_id(login_id);
             tagNotice.setInsertDateTime(LocalDateTime.now());
             saveTagNotice = tagNoticeRepository.save(tagNotice);
@@ -111,8 +116,11 @@ public class TagNoticeService {
 
                 // 파일 오리지널 Name
                 String originalFilename = multipartFile.getOriginalFilename();
+                assert originalFilename != null;
+                String name = new String(originalFilename.getBytes("8859_1"), StandardCharsets.UTF_8);
                 log.info("originalFilename : "+originalFilename);
-                tagNoticeFile.setHfOriginalFilename(originalFilename);
+                log.info("바꾼 이름 : "+name);
+                tagNoticeFile.setHfOriginalFilename(name);
 
                 // 파일 오리지널 Name
                 long fileSize = multipartFile.getSize();

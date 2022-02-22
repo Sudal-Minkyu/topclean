@@ -20,9 +20,10 @@ import java.util.List;
 @AllArgsConstructor
 public class TagNoticeMapperDto {
 
-    private Long htId; // 게시판ID
-    private String htSubject; // 게시판 제목
-    private String htContent; // 게시물 내용
+    private Long id; // 게시판ID
+    private String subject; // 게시판 제목
+    private String content; // 게시물 내용
     private List<MultipartFile> multipartFileList;
+    private List<Long> deleteFileList; // 지울 파일들의 id 리스트
 
 }
