@@ -1,36 +1,70 @@
 /* 서버 API와 주고 받게 될 데이터 정의
-* "s" 문자형, "n" 숫자형, "a" 배열형, "r" 필수값, "d" 불필요한 데이터 삭제(receive에 있을 경우 앞으로도 불필요할 경우에는 API에서 삭제요청할것)
+* "s" 문자형, "n" 숫자형, "r" 필수값, "d" 불필요한 데이터 삭제(receive에 있을 경우 앞으로도 불필요할 경우에는 API에서 삭제요청할것)
 * 조합하여 "sr", "nr" 같은 형식도 가능
 * 추가로 필요한 검사항목이 생긴다면 문의 바랍니다.
 * */
 const dtos = {
     send: {
-
+        페이지에따른게시판데이터받아오기: {
+            page: "nr",
+            size: "n", // 한 페이지에 띄울 글의 숫자 
+            searchString: "s", // 빈 문자일 경우 일반적인 조회
+            filterFromDt: "s", // 검색조건 from 오지 않을경우 시작기간은 전체기간
+            filterToDt: "s", // 검색조건 to 오지 않을 경우 끝기간은 전체기간
+        },
     },
     receive: {
-
+        페이지에따른게시판데이터받아오기: {
+            작성글의리스트: {
+                id: "nr", // 게시판 글 id
+                subject: "s",
+                numOfComment: "n", // 덧글이 달린 숫자.
+                insertDateTime: "s", // yyyymmdd만
+                insert_id: "s",
+            },
+            페이징필요정보: {
+                totalRowCount: "nr", // 전체 게시물 건수
+            },
+        },
     }
 };
 
 /* 통신에 사용되는 url들 기입 */
 const urls = {
-    
+    taglost: "/api/user/lostNoticeList",
+    notice: "/api/user/noticeList",
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
-    
+    getList() {
+        const condition = {
+            page: wares.page - 1,
+            size: 10,
+            searchString: wares.searchString,
+            filterFromDt: wares.filterFromDt,
+            filterToDt: wares.filterToDt,
+        };
+
+        console.log(condition);
+        CommonUI.ajax(urls[wares.boardType], "PARAM", condition, function (res) {
+            wares.totalPage = res.total_page;
+            createPagingNavigator(wares.page);
+            grids.f.setData(0, res.datalist);
+        });
+    }
 };
 
 /* .s : AUI 그리드 관련 설정들
 *  같은 번호의 배열에 있는 요소들 끼리 철저하게 연동한다는 원칙을 따른다.
 *  어쩔 수 없이 한 그리드에 여러개의 요소가 필요할 경우 다차원 배열을 통해 구현한다.
 *  .f : 그리드 관련 함수들 배치
+*  .e : 그리드 객체에 걸리는 이벤트들 배치
 * */
 const grids = {
     s: { // 그리드 세팅
         targetDiv: [
-            "grid_main"
+            "grid_list"
         ],
         columnLayout: [],
         prop: [],
@@ -44,11 +78,22 @@ const grids = {
             /* 0번 그리드의 레이아웃 */
             grids.s.columnLayout[0] = [
                 {
-                    dataField: "",
-                    headerText: "",
+                    dataField: "subject",
+                    headerText: "제목",
+                    renderer : {
+                        type : "TemplateRenderer",
+                    },
+                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                        let result = value;
+                        if(item.numOfComment) {
+                            result += ` <span class="numOfComment">(${item.numOfComment})</span>`
+                        }
+                        return result;
+                    }
                 }, {
-                    dataField: "",
-                    headerText: "",
+                    dataField: "insertDateTime",
+                    headerText: "작성일",
+                    width: 150,
                 },
             ];
 
@@ -57,12 +102,10 @@ const grids = {
             * */
             grids.s.prop[0] = {
                 editable : false,
-                selectionMode : "singleRow",
+                selectionMode : "none",
                 noDataMessage : "출력할 데이터가 없습니다.",
                 showAutoNoDataMessage: false,
                 enableColumnResize : false,
-                showRowAllCheckBox: false,
-                showRowCheckColumn: false,
                 showRowNumColumn : false,
                 showStateColumn : false,
                 enableFilter : false,
@@ -96,26 +139,64 @@ const grids = {
 
         getCheckedItems(numOfGrid) { // 해당 배열 번호 그리드의 엑스트라 체크박스 선택된 (아이템 + 행번호) 객체 반환
             return AUIGrid.getCheckedRowItems(grids.s.id[numOfGrid]);
-        }
+        },
+
+        
     },
+
+    t: {
+        basicTrigger() {
+            /* 0번그리드 내의 셀 클릭시 이벤트 */
+            AUIGrid.bind(grids.s.id[0], "cellClick", function (e) {
+                location.href = `./${wares.boardType}view?id=` + e.item[wares[wares.boardType].idKeyName] + "&prevPage=" + wares.page 
+                    + "&prevSearchString=" + wares.searchString + "&prevFilterFromDt=" + wares.filterFromDt
+                    + "&prevFilterToDt=" + wares.filterToDt;
+            });
+        }
+    }
 };
 
-/* 이벤트를 설정하거나 해지하는 함수들을 담는다. */
+/* 이벤트를 s : 설정하거나 r : 해지하는 함수들을 담는다. 그리드 관련 이벤트는 grids.e에 위치 (trigger) */
 const trigs = {
-    grid() {
-        /* 0번그리드 내의 셀 클릭시 이벤트 */
-        AUIGrid.bind(grids.s.id[0], "cellClick", function (e) {
-            console.log(e.item); // 이밴트 콜백으로 불러와진 객체의, 클릭한 대상 row 키(파라메터)와 값들을 보여준다.
-        });
-    },
+    s: { // 이벤트 설정
+        basicTrigger() {
+            $("#searchBtn").on("click", function () {
+                mainSearch();
+            });
 
-    basic() {
-
+            $("#searchString").on("keypress", function (e) {
+                if(e.originalEvent.code === "Enter") {
+                    mainSearch();
+                }
+            });
+        }
     },
+    r: { // 이벤트 해제
+
+    }
 }
 
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
 const wares = {
+    url: window.location.href,
+    params: "", // url에 내포한 파라메터들을 담는다.
+    rowCount: 0, // 1페이지에서 보여줄 행 수
+    pageButtonCount: 10, // 페이지 네비게이션에서 보여줄 페이지의 수
+    page: 1, // 현재 페이지
+    totalPage: 0, // 전체 페이지
+    searchString: "",
+    filterFromDt: "",
+    filterToDt: "",
+
+    boardType: "",
+    taglost: {
+        title: "택 분실 게시판",
+        idKeyName: "htId",
+    },
+    notice: {
+        title: "공지사항",
+        idKeyName: "hnId",
+    },
 
 }
 
@@ -126,7 +207,133 @@ $(function() { // 페이지가 로드되고 나서 실행
 /* 페이지가 로드되고 나서 실행 될 코드들을 담는다. */
 function onPageLoad() {
     grids.f.initialization();
+    grids.f.create();
+    grids.t.basicTrigger();
+    trigs.s.basicTrigger();
+    enableDatepicker();
 
-    trigs.basic();
-    trigs.grid();
+    getParams();
+    setInputs();
+    comms.getList();
+    createPagingNavigator(wares.page);
+
+}
+
+function getParams() {
+    const url = new URL(wares.url);
+    const tokenedPath = url.pathname.split("/");
+    const lastUrl = tokenedPath[tokenedPath.length - 1];
+    wares.boardType = lastUrl.substring(0, lastUrl.length - 4);
+    wares.params = url.searchParams;
+
+    if(wares.params.has("page")) {
+        wares.page = wares.params.get("page");
+    } else {
+        wares.page = "1";
+    }
+
+    if(wares.params.has("filterFromDt")) {
+        wares.filterFromDt = wares.params.get("filterFromDt");
+    } else {
+        wares.filterFromDt = $("#filterFromDt").val();
+    }
+
+    if(wares.params.has("filterToDt")) {
+        wares.filterToDt = wares.params.get("filterToDt");
+    } else {
+        wares.filterToDt = $("#filterToDt").val();
+    }
+
+    if(wares.params.has("searchString")) {
+        wares.searchString = wares.params.get("searchString");
+    } else {
+        wares.searchString = "";
+    }
+}
+
+function setInputs() {
+    if(wares.filterFromDt) $("#filterFromDt").val(wares.filterFromDt);
+    if(wares.filterToDt) $("#filterToDt").val(wares.filterToDt);
+    if(wares.searchString) $("#searchString").val(wares.searchString);
+    $("#boardTitle").html(wares[wares.boardType].title);
+    $("#boardLink").attr("href", `./${wares.boardType}list`);
+}
+
+/* 페이지내이션 적절한 값 완성후 wares의 데이터를 이용하도록 수정 */
+var pageButtonCount = 10;		// 페이지 네비게이션에서 보여줄 페이지의 수
+var page = 1;	// 현재 페이지
+
+// 페이징 네비게이터를 동적 생성합니다.
+function createPagingNavigator(goPage) {
+	var retStr = "";
+	var prevPage = parseInt((goPage - 1)/pageButtonCount) * pageButtonCount;
+	var nextPage = ((parseInt((goPage - 1)/pageButtonCount)) * pageButtonCount) + pageButtonCount + 1;
+
+	prevPage = Math.max(0, prevPage);
+	nextPage = Math.min(nextPage, wares.totalPage);
+	
+	// 처음
+	retStr += "<a href='javascript:moveToPage(1)'><span class='aui-grid-paging-number aui-grid-paging-first'>first</span></a>";
+
+	// 이전
+	retStr += "<a href='javascript:moveToPage(" + Math.max(1, prevPage) + ")'><span class='aui-grid-paging-number aui-grid-paging-prev'>prev</span></a>";
+
+	for (var i=(prevPage+1), len=(pageButtonCount+prevPage); i<=len; i++) {
+		if (goPage == i) {
+			retStr += "<span class='aui-grid-paging-number aui-grid-paging-number-selected'>" + i + "</span>";
+		} else {
+			retStr += "<a href='javascript:moveToPage(" + i + ")'><span class='aui-grid-paging-number'>";
+			retStr += i;
+			retStr += "</span></a>";
+		}
+		
+		if (i >= wares.totalPage) {
+			break;
+		}
+
+	}
+
+	// 다음
+	retStr += "<a href='javascript:moveToPage(" + nextPage + ")'><span class='aui-grid-paging-number aui-grid-paging-next'>next</span></a>";
+
+	// 마지막
+	retStr += "<a href='javascript:moveToPage(" + wares.totalPage + ")'><span class='aui-grid-paging-number aui-grid-paging-last'>last</span></a>";
+
+	document.getElementById("grid_paging").innerHTML = retStr;
+}
+
+function moveToPage(goPage) {
+	var url = `./${wares.boardType}list?page=` + goPage + "&searchString=" + wares.searchString + "&filterFromDt=" + wares.filterFromDt + "&filterToDt=" + wares.filterToDt;
+    location.href = url;
+}
+
+function mainSearch() {
+    wares.searchString = $("#searchString").val();
+    wares.filterFromDt = $("#filterFromDt").val();
+    wares.filterToDt = $("#filterToDt").val();
+    moveToPage(1);
+}
+
+function enableDatepicker() {
+    
+    let fromday = new Date();
+    fromday.setDate(fromday.getDate() - 90);
+    fromday = fromday.format("yyyy-MM-dd");
+    const today = new Date().format("yyyy-MM-dd");
+
+    /* datepicker를 적용시킬 대상들의 dom id들 */
+    const datePickerTargetIds = [
+        "filterFromDt", "filterToDt"
+    ];
+
+
+    $("#" + datePickerTargetIds[0]).val(fromday);
+    $("#" + datePickerTargetIds[1]).val(today);
+
+    const dateAToBTargetIds = [
+        ["filterFromDt", "filterToDt"]
+    ];
+
+    CommonUI.setDatePicker(datePickerTargetIds);
+    CommonUI.restrictDateAToB(dateAToBTargetIds);
 }

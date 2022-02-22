@@ -7,6 +7,7 @@ const dtos = {
     send: {
         페이지에따른게시판데이터받아오기: {
             page: "nr",
+            size: "n", // 한 페이지에 띄울 글의 숫자 
             searchString: "s", // 빈 문자일 경우 일반적인 조회
             filterFromDt: "s", // 검색조건 from 오지 않을경우 시작기간은 전체기간
             filterToDt: "s", // 검색조건 to 오지 않을 경우 끝기간은 전체기간

@@ -102,17 +102,17 @@ public class ManagerController {
     }
     // 게시판
     // Tag분실 게시판 - 리스트
-    @RequestMapping("list")
+    @RequestMapping("taglostlist")
     public String list(){
         return "manager/setting/board/list";
     }
     // Tag분실 게시판 - 보기
-    @RequestMapping("tagview")
+    @RequestMapping("taglostview")
     public String tagview(){
         return "manager/setting/board/view";
     }
     // Tag분실 게시판 - 작성
-    @RequestMapping("write")
+    @RequestMapping("taglostwrite")
     public String write(){
         return "manager/setting/board/write";
     }
