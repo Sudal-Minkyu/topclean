@@ -186,6 +186,10 @@ public class TagNoticeService {
         Optional<TagNotice> optionalTagNotice = tagNoticeRepository.findById(htId);
         if(optionalTagNotice.isPresent()){
 //            log.info("optionalTagNotice : "+optionalTagNotice.get().getHtId());
+
+            List<TagNoticeComment> tagNoticeCommentList = tagNoticeCommentRepository.findByTagNoticeCommentDelete(optionalTagNotice.get().getHtId());
+//            log.info("tagNoticeCommentList : "+tagNoticeCommentList);
+
             List<TagNoticeFile> tagNoticeFileList = tagNoticeFileRepository.findByTagNoticeFileDelete(optionalTagNotice.get().getHtId());
 //            log.info("tagNoticeFileList : "+tagNoticeFileList);
 
@@ -197,10 +201,12 @@ public class TagNoticeService {
                 String filename = tagNoticeFile.getHfFilename();
 //                log.info("filename : "+filename);
                 awss3Service.deleteObject(path,filename);
+//                log.info("AWS삭제성공");
             }
 
-            tagNoticeRepository.delete(optionalTagNotice.get());
+            tagNoticeCommentRepository.deleteAll(tagNoticeCommentList);
             tagNoticeFileRepository.deleteAll(tagNoticeFileList);
+            tagNoticeRepository.delete(optionalTagNotice.get());
         }else{
             return ResponseEntity.ok(res.fail(ResponseErrorCode.TP022.getCode(), "삭제 할 "+ResponseErrorCode.TP022.getDesc(), ResponseErrorCode.TP027.getCode(), ResponseErrorCode.TP027.getDesc()));
         }
