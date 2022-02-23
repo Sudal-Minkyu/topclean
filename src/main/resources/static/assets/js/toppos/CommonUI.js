@@ -112,6 +112,28 @@ class CommonUIClass {
                 console.log(e)
             }
         },
+
+        speak(text) {
+            if(!window.voices) {
+                window.voices = window.speechSynthesis.getVoices();
+                if (window.speechSynthesis.onvoiceschanged !== undefined) {
+                    window.speechSynthesis.onvoiceschanged = window.voices;
+                }
+            }
+
+            const voiceProp = new SpeechSynthesisUtterance(text);
+
+            for(var i = 0; i < window.voices.length ; i++) {
+                if(window.voices[i].lang.indexOf('ko-KR') >= 0 || window.voices[i].lang.indexOf('ko_KR') >= 0) {
+                    voiceProp.voice = window.voices[i];
+                    break;
+                }
+            }
+            voiceProp.lang = 'ko-KR';
+            voiceProp.pitch = 1;
+            voiceProp.rate = 1;
+            window.speechSynthesis.speak(voiceProp);
+        },
     }
 
     /*

@@ -14,7 +14,7 @@ const dtos = {
         branchStateChange: {
             miDegree: "n", // 몇차 출고인지에 대한 신호
             fdIdList: "a", // fdId의 목록이 담긴 배열(3차원 배열)
-        }
+        },
     },
     receive: {
         managerBelongList: { // 가맹점 선택 셀렉트박스에 띄울 가맹점의 리스트
@@ -73,7 +73,7 @@ const comms = {
                 const htmlText = `<option value="${obj.frId}">${obj.frName}</option>`
                 $frList.append(htmlText);
             });
-        })
+        });
     },
     
     getReceiptList(searchCondition) {
@@ -268,6 +268,10 @@ const grids = {
         addRow(numOfGrid, item) {
             AUIGrid.addRow(grids.s.id[numOfGrid], item, "last");
         },
+
+        addCheckedRowByTagNo(tagNo) {
+            AUIGrid.addCheckedRowsByValue(grids.s.id[0], "fdTag", tagNo);
+        },
     },
 
     t: {
@@ -302,6 +306,12 @@ const trigs = {
 
             $("#inputTagBtn").on("click", function () {
                 inputTag();
+            });
+
+            $("#inputTagNo").on("keyup", function (e) {
+                if(e.originalEvent.code === "Enter") {
+                    inputTag();
+                }
             });
 
             $("#sendOutBtn").on("click", function () {
@@ -396,15 +406,36 @@ function getReceiptList() {
 
 function inputTag() {
     if(wares.receiptList === "") {
-        alertCaution("먼저 입고된 품목을 조회해 주세요.", 1);
+        CommonUI.toppos.speak("입고된 품목을 먼저 조회해 주세요.");
         return false;
     }
+    
     const tagNo = $("#inputTagNo").val().replace(/-/g, "");
+    if(tagNo.length < 7) {
+        CommonUI.toppos.speak("택번호 7자리를 입력해 주세요.");
+        $("#inputTagNo").focus();
+        return false;
+    }
+
+
+    const checkedItems = grids.f.getCheckedItems(0);
+    for(let i = 0; i < checkedItems.length; i++) {
+        if(checkedItems[i].item.fdTag  === tagNo) {
+            CommonUI.toppos.speak("이미 조회한 택번호 입니다.");
+            $("#inputTagNo").val("");
+            $("#inputTagNo").focus();
+            return false;
+        }
+    }
+    
 
     const gridItems = grids.f.getData(0);
     for(let i = 0; i < gridItems.length; i++) {
         if(gridItems[i].fdTag  === tagNo) {
-            alertCaution("이미 조회한 택번호 입니다.", 1);
+            grids.f.addCheckedRowByTagNo(tagNo);
+            CommonUI.toppos.speak(CommonUI.toppos.makeSimpleProductName(gridItems[i]));
+            $("#inputTagNo").val("");
+            $("#inputTagNo").focus();
             return false;
         }
     }
@@ -412,14 +443,19 @@ function inputTag() {
     let noExist = true;
     wares.receiptList.forEach(obj => {
         if(obj.fdTag === tagNo) {
+            CommonUI.toppos.speak(CommonUI.toppos.makeSimpleProductName(obj));
             grids.f.addRow(0, obj);
+            grids.f.addCheckedRowByTagNo(tagNo);
             noExist = false;
         }
     });
 
     if(noExist) {
-        alertCaution("택번호가 리스트에 존재하지 않습니다.", 1);
+        CommonUI.toppos.speak("택번호가 리스트에 존재하지 않습니다.");
     }
+
+    $("#inputTagNo").val("");
+    $("#inputTagNo").focus();
 }
 
 function sendOut() {
