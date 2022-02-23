@@ -220,7 +220,7 @@ $(function() {
 
     // 검색 엔터 이벤트
     $("#searchCustomerField").on("keypress", function(e) {
-        if(e.originalEvent.code === "Enter") {
+        if(e.originalEvent.code === "Enter" || e.originalEvent.code === "NumpadEnter") {
             onSearchCustomer();
         }
     });
