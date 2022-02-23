@@ -11,6 +11,7 @@ import com.broadwave.toppos.Manager.TagNotice.TagNoticeDtos.TagNoticeMapperDto;
 import com.broadwave.toppos.Manager.TagNotice.TagNoticeDtos.TagNoticeViewDto;
 import com.broadwave.toppos.Manager.TagNotice.TagNoticeDtos.TagNoticeViewSubDto;
 import com.broadwave.toppos.Manager.TagNotice.TagNoticeFile.TagNoticeFile;
+import com.broadwave.toppos.Manager.TagNotice.TagNoticeFile.TagNoticeFileListDto;
 import com.broadwave.toppos.Manager.TagNotice.TagNoticeFile.TagNoticeFileRepository;
 import com.broadwave.toppos.Manager.TagNotice.TagNoticeRepository;
 import com.broadwave.toppos.common.AjaxResponse;
@@ -27,7 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import java.text.Normalizer;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -115,26 +116,19 @@ public class TagNoticeService {
                 tagNoticeFile.setHtId(saveTagNotice);
 
                 // 파일 오리지널 Name
-                String originalFilename = multipartFile.getOriginalFilename();
-                assert originalFilename != null;
-                String name = new String(originalFilename.getBytes("8859_1"), StandardCharsets.UTF_8);
+                String originalFilename = Normalizer.normalize(Objects.requireNonNull(multipartFile.getOriginalFilename()), Normalizer.Form.NFC);
                 log.info("originalFilename : "+originalFilename);
-                log.info("바꾼 이름 : "+name);
-                tagNoticeFile.setHfOriginalFilename(name);
+                tagNoticeFile.setHfOriginalFilename(originalFilename);
 
-                // 파일 오리지널 Name
+                // 파일 Size
                 long fileSize = multipartFile.getSize();
                 log.info("fileSize : "+fileSize);
-                tagNoticeFile.setHtVolume(fileSize);
+                tagNoticeFile.setHfVolume(fileSize);
 
                 // 확장자
                 String ext;
-                if(originalFilename != null){
-                    ext = '.'+originalFilename.substring(originalFilename.lastIndexOf(".") + 1);
-                    log.info("ext : "+ext);
-                }else{
-                    ext = "";
-                }
+                ext = '.'+originalFilename.substring(originalFilename.lastIndexOf(".") + 1);
+                log.info("ext : "+ext);
 
                 // 파일 중복명 처리
                 String fileName = UUID.randomUUID().toString().replace("-", "")+ext;
@@ -211,6 +205,8 @@ public class TagNoticeService {
 //        log.info("htId : "+htId);
         TagNoticeViewDto tagNoticeViewDto = tagNoticeRepository.findByTagNoticeView(htId, code);
 
+        List<TagNoticeFileListDto> tagNoticeFileListDtos = tagNoticeFileRepository.findByTagNoticeFileList(htId);
+
         HashMap<String,Object> tagNoticeViewInfo = new HashMap<>();
         if(tagNoticeViewDto != null){
             if(!tagNoticeViewDto.getBrCode().equals(code)){
@@ -222,6 +218,7 @@ public class TagNoticeService {
             tagNoticeViewInfo.put("content", tagNoticeViewDto.getContent());
             tagNoticeViewInfo.put("name", tagNoticeViewDto.getName());
             tagNoticeViewInfo.put("insertDateTime", tagNoticeViewDto.getInsertDateTime());
+            tagNoticeViewInfo.put("fileList", tagNoticeFileListDtos);
 
             TagNoticeViewSubDto tagNoticeViewPreDto = tagNoticeRepository.findByTagNoticePreView(tagNoticeViewDto.getHtId(), code);
             if(tagNoticeViewPreDto != null){

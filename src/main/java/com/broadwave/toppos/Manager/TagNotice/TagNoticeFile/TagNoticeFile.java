@@ -41,7 +41,7 @@ public class TagNoticeFile {
     private String hfOriginalFilename; // 원래 파일 명
 
     @Column(name="hf_volume")
-    private Long htVolume; // 파일용량
+    private Long hfVolume; // 파일용량
 
     @Column(name="insert_id")
     private String insert_id;
