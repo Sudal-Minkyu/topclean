@@ -120,7 +120,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                 .innerJoin(requestDetail.frId, request)
                 .innerJoin(request.bcId, customer)
                 .leftJoin(inspeot).on(inspeot.fdId.eq(requestDetail))
-                .where(requestDetail.frId.frCode.eq(frCode).and(requestDetail.fdCancel.eq("N")))
+                .where(request.frCode.eq(frCode).and(requestDetail.fdCancel.eq("N")))
                 .where(request.frYyyymmdd.loe(filterFromDt).and(request.frYyyymmdd.goe(filterToDt)).and(request.frConfirmYn.eq("Y")))
                 .select(Projections.constructor(RequestDetailSearchDto.class,
                         customer.bcName,
@@ -135,7 +135,16 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdS2Dt,
                         requestDetail.fdS3Dt,
                         requestDetail.fdS4Dt,
-                        requestDetail.fdS5Dt,
+                        // 버그픽스 - 완성일자는 가맹점입고일(fd_s5_dt) 또는 강제입고일(fd_s8_dt) 중 큰값을 표기하도록 변경
+                        new CaseBuilder()
+                                .when(requestDetail.fdS8Dt.isNull()).then(requestDetail.fdS5Dt)
+                                .otherwise(
+                                        new CaseBuilder()
+                                                .when(requestDetail.fdS5Dt.isNull()).then(requestDetail.fdS8Dt)
+                                                .otherwise(
+                                                        new CaseBuilder()
+                                                                .when(requestDetail.fdS5Dt.goe(requestDetail.fdS8Dt)).then(requestDetail.fdS5Dt)
+                                                                .otherwise(requestDetail.fdS8Dt))),
                         requestDetail.fdS6Dt,
                         requestDetail.fdCancel,
                         requestDetail.fdCacelDt,
@@ -182,9 +191,9 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdPollutionLocBlf,
                         request.frRefType
                 ));
-        query.orderBy(requestDetail.id.asc());
+        query.orderBy(requestDetail.id.asc()).groupBy(requestDetail.id);
         if(bcId != null){
-            query.where(request.bcId.bcId.eq(bcId));
+            query.where(customer.bcId.eq(bcId));
         }
         if(!searchTag.equals("")){
             query.where(requestDetail.fdTag.likeIgnoreCase(searchTag));
@@ -281,6 +290,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         query.orderBy(requestDetail.id.asc());
         return query.fetch();
     }
+
     // 가맹접입고 querydsl
     public List<RequestDetailFranchiseInListDto> findByRequestDetailFranchiseInList(String frCode){
         QRequestDetail requestDetail = QRequestDetail.requestDetail;
@@ -288,8 +298,10 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         QItemGroup itemGroup = QItemGroup.itemGroup;
         QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
         QItem item = QItem.item;
+        QCustomer customer = QCustomer.customer;
         JPQLQuery<RequestDetailFranchiseInListDto> query = from(requestDetail)
                 .innerJoin(requestDetail.frId, request)
+                .innerJoin(request.bcId, customer)
                 .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
                 .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
                 .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
@@ -298,7 +310,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                 .select(Projections.constructor(RequestDetailFranchiseInListDto.class,
                         requestDetail.id,
                         requestDetail.fdS4Dt,
-                        request.bcId.bcName,
+                        customer.bcName,
                         requestDetail.fdTag,
                         requestDetail.fdColor,
                         itemGroup.bgName,
@@ -476,10 +488,15 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         QItem item = QItem.item;
         QCustomer customer = QCustomer.customer;
 
+        QInspeot inspeot = QInspeot.inspeot;
+
         JPQLQuery<RequestDetailInspectDto> query = from(requestDetail)
 
                 .innerJoin(requestDetail.frId, request)
                 .innerJoin(request.bcId, customer)
+
+                .innerJoin(inspeot).on(inspeot.fdId.eq(requestDetail))
+
                 .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
                 .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
                 .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
@@ -499,7 +516,16 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdState,
                         requestDetail.fdS2Dt,
                         requestDetail.fdS4Dt,
-                        requestDetail.fdS5Dt,
+                        // 버그픽스 - 완성일자는 가맹점입고일(fd_s5_dt) 또는 강제입고일(fd_s8_dt) 중 큰값을 표기하도록 변경
+                        new CaseBuilder()
+                                .when(requestDetail.fdS8Dt.isNull()).then(requestDetail.fdS5Dt)
+                                .otherwise(
+                                        new CaseBuilder()
+                                                .when(requestDetail.fdS5Dt.isNull()).then(requestDetail.fdS8Dt)
+                                                .otherwise(
+                                                        new CaseBuilder()
+                                                                .when(requestDetail.fdS5Dt.goe(requestDetail.fdS8Dt)).then(requestDetail.fdS5Dt)
+                                                                .otherwise(requestDetail.fdS8Dt))),
                         requestDetail.fdS6Dt,
                         requestDetail.fdPriceGrade,
                         requestDetail.fdRetryYn,
@@ -516,13 +542,14 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdTotAmt,
                         requestDetail.fdRemark
                 ));
-        query.orderBy(requestDetail.id.asc());
+        query.orderBy(requestDetail.id.asc()).groupBy(requestDetail, inspeot.fdId);
         if(!searchTag.equals("")){
             query.where(requestDetail.fdTag.likeIgnoreCase(searchTag));
         }
         if(bcId != null){
             query.where(request.bcId.bcId.eq(bcId));
         }
+
         return query.fetch();
     }
 

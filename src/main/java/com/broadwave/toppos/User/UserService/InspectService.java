@@ -115,6 +115,7 @@ public class InspectService {
         log.info("현재 접속한 가맹점 코드 : "+frCode);
 
         List<RequestDetailSearchDto> requestDetailSearchDtoList = requestDetailSearch(frCode, bcId, searchTag, filterCondition, filterFromDt, filterToDt); //  통합조회용 - 접수세부 호출
+        log.info("requestDetailSearchDtoList 크기 : "+requestDetailSearchDtoList.size());
 
         List<Long> frIdList = new ArrayList<>();
         List<Long> fdIdList = new ArrayList<>();
@@ -149,6 +150,8 @@ public class InspectService {
             requestDetailSearchDtoSub.setFpCancelYn("Y");
             requestDetailSearchDtoSubList.add(requestDetailSearchDtoSub);
         }
+
+        log.info("requestDetailSearchDtoSubList 크기 : "+requestDetailSearchDtoSubList.size());
 
         data.put("gridListData",requestDetailSearchDtoSubList);
         data.put("cencelList",cencelList);
@@ -489,6 +492,8 @@ public class InspectService {
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
 
+        log.info("fdId : "+fdId);
+        log.info("type : "+type);
         List<InspeotListDto> inspeotList = inspeotRepositoryCustom.findByInspeotList(fdId, type);
         data.put("gridListData",inspeotList);
 
@@ -645,14 +650,11 @@ public class InspectService {
         // 클레임데이터 가져오기
         Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
         String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
-//        String frbrCode = (String) claims.get("frbrCode"); // 소속된 지사 코드
-//        String login_id = claims.getSubject(); // 현재 아이디
-//        log.info("현재 접속한 아이디 : "+login_id);
         log.info("현재 접속한 가맹점 코드 : "+frCode);
-//        log.info("소속된 지사 코드 : "+frbrCode);
 
         List<RequestDetailInspectDto> requestDetailInspectDtos = requestDetailRepositoryCustom.findByRequestDetailInspectList(frCode, bcId, searchTag, filterFromDt, filterToDt);
         data.put("gridListData",requestDetailInspectDtos);
+
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 

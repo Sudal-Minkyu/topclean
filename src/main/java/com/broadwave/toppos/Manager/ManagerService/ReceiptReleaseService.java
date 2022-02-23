@@ -306,9 +306,9 @@ public class ReceiptReleaseService {
                 case "2": { // 지사반송
                     log.info("지사반송 처리");
                     List<RequestDetail> requestDetailList = requestDetailRepository.findByRequestDetailS2List(fdIdList);
-//            log.info("requestDetailList : "+requestDetailList);
+//                    log.info("requestDetailList : "+requestDetailList);
                     for (RequestDetail requestDetail : requestDetailList) {
-//                log.info("가져온 frID 값 : "+requestDetailList.get(i).getFrId());
+//                        log.info("가져온 frID 값 : "+requestDetail.getFrId());
                         if(requestDetail.getFdState().equals("S2")){
                             requestDetail.setFdPreState(requestDetail.getFdState()); // 이전상태 값
                             requestDetail.setFdPreStateDt(LocalDateTime.now());

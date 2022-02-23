@@ -64,7 +64,7 @@ public class InspeotRepositoryCustomImpl extends QuerydslRepositorySupport imple
 
         if(type.equals("1")){
             query.where(inspeot.fiType.eq("F"));
-        }else{
+        }else if(type.equals("2")) {
             query.where(inspeot.fiType.eq("B"));
         }
 
@@ -83,7 +83,7 @@ public class InspeotRepositoryCustomImpl extends QuerydslRepositorySupport imple
                 .select(Projections.constructor(InspeotYnDto.class,
                         inspeot.fdId.id
                 ));
-//.and(inspeot.fiCustomerConfirm.eq("1")).and(inspeot.fiCustomerConfirm.eq("3")).and(inspeot.fiType.eq("B")
+
         if(type.equals("1")){
             query.where(inspeot.fdId.id.in(fdIdList).and(inspeot.fiCustomerConfirm.eq("1")).and(inspeot.fiCustomerConfirm.eq("3")));
         }else{

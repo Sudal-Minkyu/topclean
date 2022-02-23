@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.text.Normalizer;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**
@@ -70,8 +71,9 @@ public class TagNoticeService {
     public ResponseEntity<Map<String, Object>> lostNoticeSave(TagNoticeMapperDto tagNoticeMapperDto, HttpServletRequest request) throws IOException {
         log.info("lostNoticeSave 호출");
 
-        log.info("tagNoticeMapperDto : "+tagNoticeMapperDto);
+//        log.info("tagNoticeMapperDto : "+tagNoticeMapperDto);
         AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
 
         // 클레임데이터 가져오기
         Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
@@ -90,6 +92,22 @@ public class TagNoticeService {
                 optionalTagNotice.get().setHtContent(tagNoticeMapperDto.getContent());
                 optionalTagNotice.get().setModify_id(login_id);
                 optionalTagNotice.get().setModifyDateTime(LocalDateTime.now());
+
+                if(tagNoticeMapperDto.getDeleteFileList() != null) {
+                    // AWS 파일 삭제
+                    List<TagNoticeFile> optionalTagNoticeFile = tagNoticeFileRepository.findByTagNoticeFileDeleteList(tagNoticeMapperDto.getDeleteFileList());
+                    for(TagNoticeFile tagNoticeFile : optionalTagNoticeFile){
+                        String insertDate =tagNoticeFile.getInsertDateTime().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+                        String path = "/toppos-manager-tagNotice/"+insertDate;
+                        log.info("path : "+path);
+                        String filename = tagNoticeFile.getHfFilename();
+                        log.info("filename : "+filename);
+                        awss3Service.deleteObject(path,filename);
+                    }
+
+                    tagNoticeFileRepository.tagNoticeFileListDelete(tagNoticeMapperDto.getDeleteFileList());
+                }
+
                 saveTagNotice = tagNoticeRepository.save(optionalTagNotice.get());
             }else{
                 return ResponseEntity.ok(res.fail(ResponseErrorCode.TP030.getCode(), "해당 글은 "+ResponseErrorCode.TP030.getDesc(), ResponseErrorCode.TP027.getCode(), ResponseErrorCode.TP027.getDesc()));
@@ -140,7 +158,10 @@ public class TagNoticeService {
                 String filePath = "/toppos-manager-tagNotice/" + date.format(new Date());
                 log.info("filePath : "+AWSBUCKETURL+filePath+"/");
                 tagNoticeFile.setHfPath(AWSBUCKETURL+filePath+"/");
-                awss3Service.nomalFileUploadObject(multipartFile, fileName, filePath);
+                awss3Service.nomalFileUpload(multipartFile, fileName, filePath);
+
+                tagNoticeFile.setInsert_id(login_id);
+                tagNoticeFile.setInsertDateTime(LocalDateTime.now());
 
                 tagNoticeFileList.add(tagNoticeFile);
             }
@@ -151,6 +172,35 @@ public class TagNoticeService {
             log.info("첨부파일이 존재하지 않습니다");
         }
 
+        data.put("noticeId",saveTagNotice.getHtId());
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
+    //  택분실게시판 - 글삭제
+    public ResponseEntity<Map<String, Object>> lostNoticeDelete(Long htId, HttpServletRequest request) {
+        log.info("lostNoticeDelete 호출");
+
+        AjaxResponse res = new AjaxResponse();
+
+        Optional<TagNotice> optionalTagNotice = tagNoticeRepository.findById(htId);
+        if(optionalTagNotice.isPresent()){
+            List<TagNoticeFile> tagNoticeFileList = tagNoticeFileRepository.findByTagNoticeFileDelete(optionalTagNotice.get().getHtId());
+
+            for(TagNoticeFile tagNoticeFile : tagNoticeFileList){
+                // AWS 파일 삭제
+                String insertDate =tagNoticeFile.getInsertDateTime().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+                String path = "/toppos-manager-tagNotice/"+insertDate;
+                log.info("path : "+path);
+                String filename = tagNoticeFile.getHfFilename();
+                log.info("filename : "+filename);
+                awss3Service.deleteObject(path,filename);
+            }
+            tagNoticeRepository.delete(optionalTagNotice.get());
+            tagNoticeFileRepository.deleteAll(tagNoticeFileList);
+        }else{
+            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP022.getCode(), "삭제 할 "+ResponseErrorCode.TP022.getDesc(), ResponseErrorCode.TP027.getCode(), ResponseErrorCode.TP027.getDesc()));
+        }
 
         return ResponseEntity.ok(res.success());
     }

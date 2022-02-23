@@ -2,8 +2,9 @@ package com.broadwave.toppos.Aws;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.*;
-import com.amazonaws.util.IOUtils;
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.imgscalr.Scalr;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Objects;
 
 /**
@@ -73,7 +77,7 @@ public class AWSS3Service {
     }
 
     // AWS 일반 파일 업로드
-    public void nomalFileUploadObject(MultipartFile multipartFile, String fileName,String uploadPath) throws IOException {
+    public void nomalFileUpload(MultipartFile multipartFile, String fileName,String uploadPath) throws IOException {
 
         ObjectMetadata omd = new ObjectMetadata();
         omd.setContentType(multipartFile.getContentType());
@@ -84,34 +88,35 @@ public class AWSS3Service {
         s3Client.putObject(new PutObjectRequest(awsFilePath, fileName, multipartFile.getInputStream(), omd));
     }
 
+    // AWS 파일삭제
     public void deleteObject(String bucketPath, String fileName) throws AmazonServiceException {
         s3Client.deleteObject(new DeleteObjectRequest(AWSBUCKET +  bucketPath, fileName));
     }
 
-    public byte[] getObject(String bucketPath, String fileName) throws IOException {
-        S3Object o = s3Client.getObject(new GetObjectRequest(AWSBUCKET +  bucketPath, fileName));
-        S3ObjectInputStream objectInputStream = o.getObjectContent();
-        byte[] bytes = IOUtils.toByteArray(objectInputStream);
-        return bytes;
-        //Resource resource = new ByteArrayResource(bytes);
-        //return resource;
-    }
+//    public byte[] getObject(String bucketPath, String fileName) throws IOException {
+//        S3Object o = s3Client.getObject(new GetObjectRequest(AWSBUCKET +  bucketPath, fileName));
+//        S3ObjectInputStream objectInputStream = o.getObjectContent();
+//        byte[] bytes = IOUtils.toByteArray(objectInputStream);
+//        return bytes;
+//        //Resource resource = new ByteArrayResource(bytes);
+//        //return resource;
+//    }
 
-    private static String makeThumbnail(String uploadPath, String path, String fileName) throws Exception {
-
-        BufferedImage sourceImg = ImageIO.read(new File(uploadPath + path, fileName));
-
-        BufferedImage destImg = Scalr.resize(sourceImg, Scalr.Method.AUTOMATIC, Scalr.Mode.FIT_TO_HEIGHT, 100);
-
-        String thumbnailName = uploadPath + path + File.separator + "s_" + fileName;
-
-        File newFile = new File(thumbnailName);
-        String formatName = fileName.substring(fileName.lastIndexOf(".") + 1);
-
-        ImageIO.write(destImg, formatName.toUpperCase(), newFile);
-
-        return thumbnailName.substring(uploadPath.length()).replace(File.separatorChar, '/');
-    }
+//    private static String makeThumbnail(String uploadPath, String path, String fileName) throws Exception {
+//
+//        BufferedImage sourceImg = ImageIO.read(new File(uploadPath + path, fileName));
+//
+//        BufferedImage destImg = Scalr.resize(sourceImg, Scalr.Method.AUTOMATIC, Scalr.Mode.FIT_TO_HEIGHT, 100);
+//
+//        String thumbnailName = uploadPath + path + File.separator + "s_" + fileName;
+//
+//        File newFile = new File(thumbnailName);
+//        String formatName = fileName.substring(fileName.lastIndexOf(".") + 1);
+//
+//        ImageIO.write(destImg, formatName.toUpperCase(), newFile);
+//
+//        return thumbnailName.substring(uploadPath.length()).replace(File.separatorChar, '/');
+//    }
 
 
     private String getExtension(String fileName) {
