@@ -441,7 +441,7 @@ const ajax = {
         let gridNum = 7;
         if(condition.type === "1") {
             gridNum = 3;
-        }else if(condition.type ==="2") {
+        }else if(condition.type ==="0") {
             gridNum = 4;
         }
 
