@@ -14,9 +14,9 @@ import lombok.*;
 @AllArgsConstructor
 public class TagNoticeFileListDto {
 
-    private Long hfId; // ID
-    private String hfPath; // S3파일경로
-    private String hfOriginalFilename; // 원래 파일 명
-    private Long htVolume; // 파일용량
+    private Long fileId; // ID
+    private String filePath; // S3파일경로
+    private String fileOriginalFilename; // 원래 파일 명
+    private Long fileVolume; // 파일용량
 
 }
