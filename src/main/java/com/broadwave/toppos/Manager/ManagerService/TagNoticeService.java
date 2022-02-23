@@ -99,9 +99,9 @@ public class TagNoticeService {
                     for(TagNoticeFile tagNoticeFile : optionalTagNoticeFile){
                         String insertDate =tagNoticeFile.getInsertDateTime().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
                         String path = "/toppos-manager-tagNotice/"+insertDate;
-                        log.info("path : "+path);
+//                        log.info("path : "+path);
                         String filename = tagNoticeFile.getHfFilename();
-                        log.info("filename : "+filename);
+//                        log.info("filename : "+filename);
                         awss3Service.deleteObject(path,filename);
                     }
 
@@ -127,7 +127,7 @@ public class TagNoticeService {
         if(tagNoticeMapperDto.getMultipartFileList() != null){
             TagNoticeFile tagNoticeFile;
 
-            log.info("multipartFileList.size() : "+tagNoticeMapperDto.getMultipartFileList().size());
+//            log.info("multipartFileList.size() : "+tagNoticeMapperDto.getMultipartFileList().size());
             for(MultipartFile multipartFile : tagNoticeMapperDto.getMultipartFileList()){
 
                 tagNoticeFile = new TagNoticeFile();
@@ -135,28 +135,28 @@ public class TagNoticeService {
 
                 // 파일 오리지널 Name
                 String originalFilename = Normalizer.normalize(Objects.requireNonNull(multipartFile.getOriginalFilename()), Normalizer.Form.NFC);
-                log.info("originalFilename : "+originalFilename);
+//                log.info("originalFilename : "+originalFilename);
                 tagNoticeFile.setHfOriginalFilename(originalFilename);
 
                 // 파일 Size
                 long fileSize = multipartFile.getSize();
-                log.info("fileSize : "+fileSize);
+//                log.info("fileSize : "+fileSize);
                 tagNoticeFile.setHfVolume(fileSize);
 
                 // 확장자
                 String ext;
                 ext = '.'+originalFilename.substring(originalFilename.lastIndexOf(".") + 1);
-                log.info("ext : "+ext);
+//                log.info("ext : "+ext);
 
                 // 파일 중복명 처리
                 String fileName = UUID.randomUUID().toString().replace("-", "")+ext;
-                log.info("fileName : "+fileName);
+//                log.info("fileName : "+fileName);
                 tagNoticeFile.setHfFilename(fileName);
 
                 // S3에 저장 할 파일주소
                 SimpleDateFormat date = new SimpleDateFormat("yyyyMMdd");
                 String filePath = "/toppos-manager-tagNotice/" + date.format(new Date());
-                log.info("filePath : "+AWSBUCKETURL+filePath+"/");
+//                log.info("filePath : "+AWSBUCKETURL+filePath+"/");
                 tagNoticeFile.setHfPath(AWSBUCKETURL+filePath+"/");
                 awss3Service.nomalFileUpload(multipartFile, fileName, filePath);
 
@@ -166,7 +166,7 @@ public class TagNoticeService {
                 tagNoticeFileList.add(tagNoticeFile);
             }
 
-            log.info("tagNoticeFileList : "+tagNoticeFileList);
+//            log.info("tagNoticeFileList : "+tagNoticeFileList);
             tagNoticeFileRepository.saveAll(tagNoticeFileList);
         }else{
             log.info("첨부파일이 존재하지 않습니다");
@@ -178,24 +178,27 @@ public class TagNoticeService {
     }
 
     //  택분실게시판 - 글삭제
-    public ResponseEntity<Map<String, Object>> lostNoticeDelete(Long htId, HttpServletRequest request) {
+    public ResponseEntity<Map<String, Object>> lostNoticeDelete(Long htId) {
         log.info("lostNoticeDelete 호출");
 
         AjaxResponse res = new AjaxResponse();
 
         Optional<TagNotice> optionalTagNotice = tagNoticeRepository.findById(htId);
         if(optionalTagNotice.isPresent()){
+//            log.info("optionalTagNotice : "+optionalTagNotice.get().getHtId());
             List<TagNoticeFile> tagNoticeFileList = tagNoticeFileRepository.findByTagNoticeFileDelete(optionalTagNotice.get().getHtId());
+//            log.info("tagNoticeFileList : "+tagNoticeFileList);
 
             for(TagNoticeFile tagNoticeFile : tagNoticeFileList){
                 // AWS 파일 삭제
                 String insertDate =tagNoticeFile.getInsertDateTime().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
                 String path = "/toppos-manager-tagNotice/"+insertDate;
-                log.info("path : "+path);
+//                log.info("path : "+path);
                 String filename = tagNoticeFile.getHfFilename();
-                log.info("filename : "+filename);
+//                log.info("filename : "+filename);
                 awss3Service.deleteObject(path,filename);
             }
+
             tagNoticeRepository.delete(optionalTagNotice.get());
             tagNoticeFileRepository.deleteAll(tagNoticeFileList);
         }else{

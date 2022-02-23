@@ -12,8 +12,8 @@ import java.util.List;
 public interface TagNoticeFileRepository extends JpaRepository<TagNoticeFile,Long>, TagNoticeFileRepositoryCustom {
 
     // 게시물ID로 파일리스트 찾기
-    @Query("select a from TagNoticeFile a where a.htId in :deleteFile")
-    List<TagNoticeFile> findByTagNoticeFileDelete(Long deleteFile);
+    @Query("select a from TagNoticeFile a inner join TagNotice b on a.htId = b where b.htId = :htId")
+    List<TagNoticeFile> findByTagNoticeFileDelete(Long htId);
 
     // 게시물ID로 삭제할 파일만 골라 찾기
     @Query("select a from TagNoticeFile a where a.hfId in :deleteFileList")

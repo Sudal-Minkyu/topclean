@@ -27,7 +27,7 @@ public class TagNoticeFile {
     @Column(name="hf_id")
     private Long hfId;
 
-    @ManyToOne(targetEntity = TagNotice.class,fetch = FetchType.LAZY)
+    @ManyToOne(targetEntity = TagNotice.class,fetch = FetchType.EAGER)
     @JoinColumn(name="ht_id")
     private TagNotice htId; // 택분실게시판 고유값 ID
 

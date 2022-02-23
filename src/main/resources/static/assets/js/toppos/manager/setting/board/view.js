@@ -97,7 +97,7 @@ const comms = {
     deletePost(target) {
         dv.chk(target, dtos.send.lostNoticeDelete, "삭제할 글 아이디 보내기");
         CommonUI.ajax(urls.deletePost, "PARAM", target, function (res) {
-            console.log(res);
+            location.href = "/manager/taglostlist";
         });
     },
 };

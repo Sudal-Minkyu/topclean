@@ -82,8 +82,8 @@ public class ManagerRestController {
 
     //  택분실게시판 - 글삭제
     @PostMapping("lostNoticeDelete")
-    public ResponseEntity<Map<String,Object>> lostNoticeDelete(@RequestParam("htId") Long htId, HttpServletRequest request) {
-        return tagNoticeService.lostNoticeDelete(htId, request);
+    public ResponseEntity<Map<String,Object>> lostNoticeDelete(@RequestParam("htId") Long htId) {
+        return tagNoticeService.lostNoticeDelete(htId);
     }
 
     //  택분실게시판 - 리스트 호출
