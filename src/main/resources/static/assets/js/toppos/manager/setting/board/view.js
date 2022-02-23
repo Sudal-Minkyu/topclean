@@ -21,8 +21,8 @@ const dtos = {
             comment: "", // 덧글의 내용
             preId: "", // 덧글의 덧글일 경우 원댓글의 아이디
         },
-        글삭제: {
-            id: "n",
+        lostNoticeDelete: {
+            htId: "n",
         }
     },
     receive: {
@@ -57,7 +57,7 @@ const urls = {
     notice: "/api/manager/noticeView",
     taglostReplyList: "/api/manager/lostNoticeCommentList",
     putReply: "/api/manager/lostNoticeCommentSave",
-    deletePost: "",
+    deletePost: "/api/manager/lostNoticeDelete",
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
@@ -95,11 +95,10 @@ const comms = {
     },
 
     deletePost(target) {
-        dv.chk(target, dtos.send.글삭제, "삭제할 글 아이디 보내기");
-        console.log(target);
-        // CommonUI.ajax(urls.deletePost, "", target, function (res) {
-        //     console.log(res);
-        // });
+        dv.chk(target, dtos.send.lostNoticeDelete, "삭제할 글 아이디 보내기");
+        CommonUI.ajax(urls.deletePost, "PARAM", target, function (res) {
+            console.log(res);
+        });
     },
 };
 
@@ -118,7 +117,7 @@ const trigs = {
             alertCheck("정말 삭제하시겠습니까?");
             $("#checkDelSuccessBtn").on("click", function () {
                 const target = {
-                    id: parseInt(wares.id),
+                    htId: parseInt(wares.id),
                 }
                 comms.deletePost(target);
                 $('#popupId').remove();
