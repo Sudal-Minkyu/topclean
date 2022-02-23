@@ -309,7 +309,7 @@ const trigs = {
             });
 
             $("#inputTagNo").on("keyup", function (e) {
-                if(e.originalEvent.code === "Enter") {
+                if(e.originalEvent.code === "Enter" || e.originalEvent.code === "NumpadEnter") {
                     inputTag();
                 }
             });

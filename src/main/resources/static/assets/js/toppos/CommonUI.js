@@ -114,24 +114,37 @@ class CommonUIClass {
         },
 
         speak(text) {
-            if(!window.voices) {
-                window.voices = window.speechSynthesis.getVoices();
-                if (window.speechSynthesis.onvoiceschanged !== undefined) {
-                    window.speechSynthesis.onvoiceschanged = window.voices;
-                }
+            if(typeof speechSynthesis === 'undefined') {
+                return;
             }
+            
+            const voices = speechSynthesis.getVoices();
 
             const voiceProp = new SpeechSynthesisUtterance(text);
 
-            for(var i = 0; i < window.voices.length ; i++) {
-                if(window.voices[i].lang.indexOf('ko-KR') >= 0 || window.voices[i].lang.indexOf('ko_KR') >= 0) {
-                    voiceProp.voice = window.voices[i];
+            let recommendNotExist = true;
+            for(var i = 0; i < voices.length ; i++) {
+                if(voices[i].name === "Google 한국의") {
+                    voiceProp.voice = voices[i];
+                    voiceProp.pitch = 1;
+                    voiceProp.rate = 1.1;
+                    recommendNotExist = false;
                     break;
                 }
             }
+
+            if(recommendNotExist) {
+                for(var i = 0; i < voices.length ; i++) {
+                    if(voices[i].lang.indexOf('ko-KR') >= 0 || voices[i].lang.indexOf('ko_KR') >= 0) {
+                        voiceProp.voice = voices[i];
+                        voiceProp.pitch = 1;
+                        voiceProp.rate = 1;
+                        break;
+                    }
+                }
+            }
+
             voiceProp.lang = 'ko-KR';
-            voiceProp.pitch = 1;
-            voiceProp.rate = 1;
             window.speechSynthesis.speak(voiceProp);
         },
     }

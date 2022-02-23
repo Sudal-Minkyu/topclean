@@ -260,7 +260,7 @@ const trigs = {
             const $aftTag = $("#aftTag");
             $aftTag.on("keyup", function (e) {
                 $aftTag.val($aftTag.val().numString());
-                if(e.originalEvent.code === "Enter") {
+                if(e.originalEvent.code === "Enter" || e.originalEvent.code === "NumpadEnter") {
                     searchOrder();
                 }
             });

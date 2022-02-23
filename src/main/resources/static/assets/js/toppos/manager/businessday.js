@@ -8,7 +8,7 @@ $(function() {
 
     $("#target_year").on("keyup", function (e) {
         this.value = this.value.numString();
-        if(e.originalEvent.code === "Enter") {
+        if(e.originalEvent.code === "Enter" || e.originalEvent.code === "NumpadEnter") {
             setGridByYear();
         }
     });
