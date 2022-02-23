@@ -88,7 +88,7 @@ $(function() { // 페이지가 로드되고 나서 실행
 /* 페이지가 로드되고 나서 실행 될 코드들을 담는다. */
 function onPageLoad() {
     let fromday = new Date();
-    fromday.setDate(fromday.getDate() - 363);
+    fromday.setDate(fromday.getDate() - 365);
     fromday = fromday.format("yyyy-MM-dd");
     const today = new Date().format("yyyy-MM-dd");
     wares.boardConditionThree.filterFromDt = fromday;

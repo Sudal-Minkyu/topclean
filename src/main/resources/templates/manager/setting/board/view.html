@@ -29,21 +29,9 @@
                 <li><span id="name"></span></li>
                 <li><span id="insertDateTime"></span></li>
                 <li class="board-view__info-file">
-                    <button class="board-view__btn">첨부파일<span>(2)</span></button>
-                    <div class="board-view__file-box active">
-                        <ul>
-                            <li>
-                                <a href="#" class="board-view__file">
-                                    <span class="board-view__filename">filename filename filename filename filename</span>
-                                    <span class="board-view__filesize">288KB</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#" class="board-view__file">
-                                    <span class="board-view__filename">filename</span>
-                                    <span class="board-view__filesize">1.4MB</span>
-                                </a>
-                            </li>
+                    <button type="button" id="attachSwitch" class="board-view__btn">첨부파일<span id="fileCnt">(2)</span></button>
+                    <div id="fileListPanel" class="board-view__file-box">
+                        <ul id="fileList">
                         </ul>
                     </div>
                 </li>

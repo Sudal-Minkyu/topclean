@@ -101,7 +101,7 @@ function onPageLoad() {
 
 function getParams() {
     let fromday = new Date();
-    fromday.setDate(fromday.getDate() - 363);
+    fromday.setDate(fromday.getDate() - 365);
     fromday = fromday.format("yyyy-MM-dd");
     const today = new Date().format("yyyy-MM-dd");
 

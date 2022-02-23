@@ -24,7 +24,12 @@ const dtos = {
     },
     receive: {
         taglost: {
-
+            fileList: {
+                fileId: "n",
+                filePath: "s",
+                fileOriginalFileName: "s",
+                fileVolume: "n",
+            }
         },
 
         notice: {
@@ -92,6 +97,10 @@ const trigs = {
         $("#commitReply").on("click", function () {
             commitReply("1", "#replyField");
         });
+
+        $("#attachSwitch").on("click", function () {
+            $("#fileListPanel").toggleClass("active");
+        });
     }
 }
 
@@ -129,10 +138,13 @@ $(function() { // 페이지가 로드되고 나서 실행
 function onPageLoad() {
     getParams();
     setInputs();
+
     let condition = {};
     condition[wares[wares.boardType].idKeyName] = wares.id;
     comms.getData(condition);
+
     trigs.basic();
+
     if(wares.boardType !== "notice") {
         condition = {};
         condition[wares[wares.boardType].masterKeyName] = wares.id;
@@ -142,7 +154,7 @@ function onPageLoad() {
 
 function getParams() {
     let fromday = new Date();
-    fromday.setDate(fromday.getDate() - 363);
+    fromday.setDate(fromday.getDate() - 365);
     fromday = fromday.format("yyyy-MM-dd");
     const today = new Date().format("yyyy-MM-dd");
 
@@ -219,6 +231,28 @@ function setFields(data) {
         $("#replyList").show();
         $("#replyList").css("height", "300px");
         $("#content").css("height", "200px");
+    }
+
+    $("#fileCnt").val(data.fileList.length);
+
+    for(let file of data.fileList) {
+        let volume = 0;
+        if(file.fileVolume > 1000000) {
+            volume = (file.fileVolume / 1048576).toFixed(1).toLocaleString() + "MB"
+        } else {
+            volume = Math.ceil(file.fileVolume / 1024).toLocaleString() + "KB";
+        }
+
+        const element = `
+            <li>
+                <a href="${file.filePath + file.fileOriginalFilename}" class="board-view__file">
+                    <span class="board-view__filename">${file.fileOriginalFilename}</span>
+                    <span class="board-view__filesize">${volume}</span>
+                </a>
+            </li>
+        `;
+
+        $("#fileList").append(element);
     }
 }
 

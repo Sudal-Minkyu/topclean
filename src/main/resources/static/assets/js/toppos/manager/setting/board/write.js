@@ -151,8 +151,17 @@ function addFile() {
 }
 
 function saveProgress() {
+    if(wares.totVolume > 52428800) {
+        alertCaution("첨부파일 총용량은 50MB를 넘을 수 없습니다.", 1);
+    }
+    
+    const subject = $("#subject").val();
+    if(!subject) {
+        alertCaution("제목을 입력해 주세요.", 1);
+    }
+
     const formData = new FormData();
-    formData.set("subject", $("#subject").val());
+    formData.set("subject", subject);
     formData.set("content", $('#summernote').summernote('code'));
 
     if(wares.id) {
@@ -171,12 +180,18 @@ function saveProgress() {
 function refreshFileList() {
     $("#fileList").html("");
     for(let i = 0; i <wares.dataTransfer.files.length; i++) {
+        let volume = "";
+        if(wares.dataTransfer.files[i].size > 1000000) {
+            volume = (wares.dataTransfer.files[i].size / 1048576).toFixed(1).toLocaleString() + "MB"
+        } else {
+            volume = Math.ceil(wares.dataTransfer.files[i].size / 1024).toLocaleString() + "KB";
+        }
         $("#fileList").append(`
             <li>
                 <div class="board__upload-file-item">
                     <span class="board__upload-filename">${wares.dataTransfer.files[i].name}</span>
                     <span class="board__upload-filesize">
-                        ${Math.floor(wares.dataTransfer.files[i].size / 1024).toLocaleString()}KB</span>
+                        ${volume}</span>
                     <button type="button" class="board__upload-delete" onclick="removeFile(${i})">삭제</button>
                 </div>
             </li>
@@ -188,13 +203,22 @@ function refreshFileList() {
 function calculateFileStatus() {
     let cnt = 0;
     let totVolume = 0;
+
     for(let file of wares.dataTransfer.files) {
         cnt++;
         totVolume += file.size;
     }
 
+    wares.totVolume = totVolume;
+
+    if(totVolume > 1000000) {
+        totVolume = (totVolume / 1048576).toFixed(1).toLocaleString() + "MB"
+    } else {
+        totVolume = Math.ceil(totVolume / 1024).toLocaleString() + "KB";
+    }
+
     $("#fileCnt").html(cnt);
-    $("#fileTotVolume").html(Math.floor(totVolume / 1024).toLocaleString());
+    $("#fileTotVolume").html(totVolume);
 }
 
 function removeFile(index) {
