@@ -20,13 +20,19 @@ const dtos = {
 
 /* 통신에 사용되는 url들 기입 */
 const urls = {
+    taglostget: "/api/manager/lostNoticeView",
     taglostsave: "/api/manager/lostNoticeSave",
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
-    getData() {
-
+    getData(condition) {
+        console.log(condition);
+        CommonUI.ajax(urls[wares.boardType + "get"], "GET", condition, function (res) {
+            console.log(res);
+            const data = res.sendData[wares[wares.boardType].dataKeyName];
+            setFields(data);
+        });
     },
 
     save(formData) {
@@ -60,6 +66,7 @@ const trigs = {
 const wares = {
     url: window.location.href,
     dataTransfer: new DataTransfer(),
+    existFileList: [],
     boardType: "",
     id: "",
     params: "",
@@ -67,6 +74,17 @@ const wares = {
     searchString: "",
     filterFromDt: "",
     filterToDt: "",
+    totVolume: 0,
+    existTotVolume: 0,
+    totCnt: 0,
+    existTotCnt: 0,
+    taglost: {
+        idKeyName: "htId",
+        dataKeyName: "tagNoticeViewDto",
+        masterKeyName: "htId",
+        commentKeyName: "hcId",
+    },
+    deleteFileList: [], // 서버에 올라가 있는 지울 파일들의 id 리스트
 }
 
 $(function() { // 페이지가 로드되고 나서 실행
@@ -78,9 +96,12 @@ function onPageLoad() {
     trigs.basic();
     getParams();
     setInputs();
+    
     summernoteInit();
     if(wares.id) { // 글의 id가 왔다는 것은 글이 새글쓰기가 아닌 수정모드임을 의미한다.
-        getData();
+        let condition = {};
+        condition[wares[wares.boardType].idKeyName] = wares.id;
+        comms.getData(condition);
     } else {
 
     }
@@ -174,13 +195,39 @@ function saveProgress() {
         }
     }
 
+    if(wares.deleteFileList.length) {
+        formData.append("deleteFileList", wares.deleteFileList);
+    }
+
     comms.save(formData);
 }
 
 function refreshFileList() {
     $("#fileList").html("");
+
+    /* 이미 서버에 존재하는 첨부 파일들의 리프래시 */
+    for(let i = 0; i < wares.existFileList.length; i++) {
+        let existVolume = 0;
+        if(wares.existFileList[i].fileVolume > 1000000) {
+            existVolume = (wares.existFileList[i].fileVolume / 1048576).toFixed(1).toLocaleString() + "MB"
+        } else {
+            existVolume = Math.ceil(wares.existFileList[i].fileVolume / 1024).toLocaleString() + "KB";
+        }
+        $("#fileList").append(`
+            <li>
+                <div class="board__upload-file-item">
+                    <span class="board__upload-filename">${wares.existFileList[i].fileOriginalFilename}</span>
+                    <span class="board__upload-filesize">${existVolume}</span>
+                    <button type="button" class="board__upload-delete"
+                        onclick="removeExistFile(${i})">삭제</button>
+                </div>
+            </li>
+        `);
+    }
+
+    /* 새로 추가되는 첨부 파일들의 리프래시 */
     for(let i = 0; i <wares.dataTransfer.files.length; i++) {
-        let volume = "";
+        let volume = 0;
         if(wares.dataTransfer.files[i].size > 1000000) {
             volume = (wares.dataTransfer.files[i].size / 1048576).toFixed(1).toLocaleString() + "MB"
         } else {
@@ -190,8 +237,7 @@ function refreshFileList() {
             <li>
                 <div class="board__upload-file-item">
                     <span class="board__upload-filename">${wares.dataTransfer.files[i].name}</span>
-                    <span class="board__upload-filesize">
-                        ${volume}</span>
+                    <span class="board__upload-filesize">${volume}</span>
                     <button type="button" class="board__upload-delete" onclick="removeFile(${i})">삭제</button>
                 </div>
             </li>
@@ -201,6 +247,19 @@ function refreshFileList() {
 }
 
 function calculateFileStatus() {
+    /* 서버에 존재하는 파일 - 삭제예정인 파일의 카운팅 */
+    let existCnt = 0;
+    let existTotVolume = 0;
+
+    for(let file of wares.existFileList) {
+        existCnt++;
+        existTotVolume += file.fileVolume;
+    }
+
+    wares.existTotCnt = existCnt;
+    wares.existTotVolume = existTotVolume;
+
+    /* 새로 추가한 파일의 카운팅 */
     let cnt = 0;
     let totVolume = 0;
 
@@ -209,16 +268,18 @@ function calculateFileStatus() {
         totVolume += file.size;
     }
 
+    wares.totCnt = cnt;
     wares.totVolume = totVolume;
 
-    if(totVolume > 1000000) {
-        totVolume = (totVolume / 1048576).toFixed(1).toLocaleString() + "MB"
+    let sumVolume = wares.totVolume + wares.existTotVolume;
+    if(sumVolume > 1000000) {
+        sumVolume = (sumVolume / 1048576).toFixed(1).toLocaleString() + "MB"
     } else {
-        totVolume = Math.ceil(totVolume / 1024).toLocaleString() + "KB";
+        sumVolume = Math.ceil(sumVolume / 1024).toLocaleString() + "KB";
     }
 
-    $("#fileCnt").html(cnt);
-    $("#fileTotVolume").html(totVolume);
+    $("#fileCnt").html(wares.totCnt + wares.existTotCnt);
+    $("#fileTotVolume").html(sumVolume);
 }
 
 function removeFile(index) {
@@ -231,5 +292,28 @@ function removeFile(index) {
     }
 
     wares.dataTransfer = dt;
+    refreshFileList();
+}
+
+function setFields(data) {
+    $("#subject").val(data.subject);
+    $('#summernote').summernote('code', data.content);
+
+    wares.existFileList = data.fileList;
+    refreshFileList();
+}
+
+function removeExistFile(index) {
+    wares.deleteFileList.push(wares.existFileList[index].fileId);
+
+    const newFileList = [];
+    const files = wares.existFileList;
+
+    for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        if (index !== i) newFileList.push(file);
+    }
+
+    wares.existFileList = newFileList;
     refreshFileList();
 }

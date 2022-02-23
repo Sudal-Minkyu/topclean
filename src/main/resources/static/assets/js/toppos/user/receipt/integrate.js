@@ -657,7 +657,7 @@ const grid = {
                     },
                     labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
                         let template = "";
-                        if(["S1", "F", "B"].includes(item.fdState)) {
+                        if(["S1", "F"].includes(item.fdState)) {
                             template = `
                                 <button class="c-state c-state--modify">수정</button>
                             `;
