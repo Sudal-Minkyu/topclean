@@ -1890,7 +1890,7 @@ function confirmInspect(e) {
     grid.f.resize(4);
     const searchCondition = {
         fdId: e.item.fdId,
-        type: "2"
+        type: "0"
     }
     ajax.getInspectionList(searchCondition);
 }
