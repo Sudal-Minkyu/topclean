@@ -151,7 +151,7 @@ const comms = {
         CommonUI.ajax(urls.sendKakaoMessage, "PARAM", data, function (res) {
             const searchCondition = {
                 fdId: wares.selectedInspect.fdId,
-                type: "2"
+                type: "0"
             }
             comms.getInspectionList(searchCondition);
         });
@@ -696,7 +696,7 @@ function setupMsgPop(e) {
     grids.f.resize(2);
     const searchCondition = {
         fdId: e.item.fdId,
-        type: "2"
+        type: "0"
     }
     comms.getInspectionList(searchCondition);
 }

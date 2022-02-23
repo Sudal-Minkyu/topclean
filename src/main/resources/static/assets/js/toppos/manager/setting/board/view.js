@@ -21,6 +21,9 @@ const dtos = {
             comment: "", // 덧글의 내용
             preId: "", // 덧글의 덧글일 경우 원댓글의 아이디
         },
+        글삭제: {
+            id: "n",
+        }
     },
     receive: {
         taglost: {
@@ -54,6 +57,7 @@ const urls = {
     notice: "/api/manager/noticeView",
     taglostReplyList: "/api/manager/lostNoticeCommentList",
     putReply: "/api/manager/lostNoticeCommentSave",
+    deletePost: "",
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
@@ -89,6 +93,14 @@ const comms = {
     modifyReply(data) {
         console.log(data);
     },
+
+    deletePost(target) {
+        dv.chk(target, dtos.send.글삭제, "삭제할 글 아이디 보내기");
+        console.log(target);
+        // CommonUI.ajax(urls.deletePost, "", target, function (res) {
+        //     console.log(res);
+        // });
+    },
 };
 
 /* 이벤트를 s : 설정하거나 r : 해지하는 함수들을 담는다. 그리드 관련 이벤트는 grids.e에 위치 (trigger) */
@@ -100,6 +112,17 @@ const trigs = {
 
         $("#attachSwitch").on("click", function () {
             $("#fileListPanel").toggleClass("active");
+        });
+
+        $(".deleteBtn").on("click", function () {
+            alertCheck("정말 삭제하시겠습니까?");
+            $("#checkDelSuccessBtn").on("click", function () {
+                const target = {
+                    id: parseInt(wares.id),
+                }
+                comms.deletePost(target);
+                $('#popupId').remove();
+            });
         });
     }
 }
