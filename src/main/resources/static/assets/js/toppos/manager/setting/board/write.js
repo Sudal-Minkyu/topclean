@@ -40,7 +40,10 @@ const comms = {
         // dv.chk(jsonFormData, dtos.send.save, "글쓰기 데이터 보내기");
         console.log(jsonFormData);
         CommonUI.ajax(urls[wares.boardType + "save"], "POST", formData, function (res) {
-            location.href = $("#previousLink").attr("href");
+            alertSuccess("저장이 완료되었습니다.");
+            $("#successBtn").on("click", function () {
+                location.href = $("#previousLink").attr("href");
+            });
         });
     }
 };

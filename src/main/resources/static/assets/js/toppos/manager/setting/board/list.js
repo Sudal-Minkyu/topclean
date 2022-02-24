@@ -40,7 +40,7 @@ const comms = {
     getList() {
         const condition = {
             page: wares.page - 1,
-            size: 10,
+            size: 15,
             searchString: wares.searchString,
             filterFromDt: wares.filterFromDt,
             filterToDt: wares.filterToDt,
@@ -109,8 +109,8 @@ const grids = {
                 showRowNumColumn : false,
                 showStateColumn : false,
                 enableFilter : false,
-                rowHeight : 48,
-                headerHeight : 48,
+                rowHeight : 35,
+                headerHeight : 40,
             };
 
         },

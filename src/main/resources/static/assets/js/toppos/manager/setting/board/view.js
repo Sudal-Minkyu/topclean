@@ -30,6 +30,7 @@ const dtos = {
             fileList: {
                 fileId: "n",
                 filePath: "s",
+                fileFileName: "s",
                 fileOriginalFileName: "s",
                 fileVolume: "n",
             }
@@ -271,7 +272,7 @@ function setFields(data) {
 
         const element = `
             <li>
-                <a href="${file.filePath + file.fileOriginalFilename}" class="board-view__file">
+                <a href="${file.filePath + file.fileFileName}" class="board-view__file">
                     <span class="board-view__filename">${file.fileOriginalFilename}</span>
                     <span class="board-view__filesize">${volume}</span>
                 </a>
