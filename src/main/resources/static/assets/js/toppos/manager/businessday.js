@@ -135,7 +135,8 @@ let gridColumnLayout = [
 gridProp = {
     editable : false,
     selectionMode : "none",
-    noDataMessage : "존재하는 데이터가 없습니다.",
+    noDataMessage : "데이터가 없습니다.",
+    showAutoNoDataMessage: false,
     enableColumnResize : false,
     showRowNumColumn : false,
     enableFilter : false,

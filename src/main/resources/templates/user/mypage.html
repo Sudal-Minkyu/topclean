@@ -14,8 +14,34 @@
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
 	<!-- 사용자 스크립트 추가 -->
+	<!-- 주소 검색 -->
+	<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 	<script src="/assets/js/toppos/user/mypage/mypage.js"></script>
 	<script type="text/javascript">
+		// 우편번호 검색
+		function execDaumPostcode() {
+			new daum.Postcode({
+				oncomplete: function(data) {
+					console.log(data);
+					var addr = ''; // 주소 변수
+
+					//사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져온다.
+					if (data.userSelectedType === 'R') { // 사용자가 도로명 주소를 선택했을 경우
+						addr = data.roadAddress;
+					} else { // 사용자가 지번 주소를 선택했을 경우(J)
+						addr = data.jibunAddress;
+					}
+
+					// 우편번호와 주소 정보를 해당 필드에 넣는다.
+					document.getElementById('postcode').value = data.zonecode;
+					document.getElementById("address").value = addr;
+					// 커서를 상세주소 필드로 이동한다.
+					document.getElementById("detailAddress").focus();
+				}
+			}).open();
+		}
+
+
 		$(document).ready(function() {
 			
 		})
@@ -159,6 +185,32 @@
 												<span>일 후 출고</span>
 											</div>
 										</div>
+									</div>
+								</div>
+							</div>
+							<div class="form__item form__item--100">
+								<div class="form__title">주소</div>
+								<div class="form__input">
+									<div class="address">
+										<ul>
+											<li>
+												<div class="c-text address__postcode">
+													<input type="text" id="postcode" placeholder="우편번호" />
+												</div>
+												<button class="c-button c-button--small" onclick="execDaumPostcode()">우편번호 검색</button>
+											</li>
+											<li>
+												<div class="c-text">
+													<input type="text" id="address" placeholder="주소" />
+												</div>
+											</li>
+											<li>
+												<div class="c-text">
+													<input type="text" id="detailAddress" placeholder="상세주소 입력" />
+													<button class="keypadBtn">키보드</button>
+												</div>
+											</li>
+										</ul>
 									</div>
 								</div>
 							</div>
