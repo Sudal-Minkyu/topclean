@@ -16,6 +16,7 @@ public class TagNoticeFileListDto {
 
     private Long fileId; // ID
     private String filePath; // S3파일경로
+    private String fileFileName; // S3파일명
     private String fileOriginalFilename; // 원래 파일 명
     private Long fileVolume; // 파일용량
 
