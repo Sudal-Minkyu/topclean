@@ -85,7 +85,7 @@ const comms = {
             const data = CommonUI.toppos.killNullFromArray(res.sendData.gridListData);
             console.log(res);
             grids.f.setData(0, data);
-            $("#exportXlsx").show();
+            // $("#exportXlsx").show();
         });
     },
 
@@ -93,9 +93,9 @@ const comms = {
         dv.chk(sendList, dtos.send.branchRelease, "체크된 품목에 대해 최종 처리하기");
         CommonUI.ajax(urls.executeReceipt, "PARAM", sendList, function (res) {
             console.log(res);
-            alertSuccess("출고취소처리가 완료 되었습니다.");
-            grids.f.clearData(0);
-            $("#exportXlsx").hide();
+            alertSuccess("출고처리취소가 완료 되었습니다.");
+            comms.getMainGridList(wares.searchCondition);
+            // $("#exportXlsx").hide();
         });
     },
 };
@@ -317,6 +317,7 @@ const wares = {
         filterFromDt: "",
         filterToDt: "",
     },
+    searchCondition: {},
 }
 
 $(function() { // 페이지가 로드되고 나서 실행
@@ -367,6 +368,7 @@ function searchOrder() {
         filterToDt: $("#filterToDt").val(),
         frId: parseInt(frId),
     };
+    wares.searchCondition = searchCondition;
 
     wares.currentDetail.filterFromDt = searchCondition.filterFromDt;
     wares.currentDetail.filterToDt = searchCondition.filterToDt;
@@ -383,12 +385,12 @@ function searchOrder() {
 function askExcute() {
     wares.checkedItems = grids.f.getCheckedItems(0);
     if(wares.checkedItems.length) {
-        alertCheck("선택된 상품을 출고취소처리 하시겠습니까?");
+        alertCheck("선택된 상품을 출고처리취소 하시겠습니까?");
         $("#checkDelSuccessBtn").on("click", function () {
             executeCheckedReceipts();
         });
     } else {
-        alertCaution("출고취소처리할 품목을 선택해 주세요.", 1);
+        alertCaution("출고처리취소할 품목을 선택해 주세요.", 1);
     }
 }
 
