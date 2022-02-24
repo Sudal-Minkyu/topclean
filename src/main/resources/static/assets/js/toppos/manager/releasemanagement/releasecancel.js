@@ -85,6 +85,7 @@ const comms = {
             const data = CommonUI.toppos.killNullFromArray(res.sendData.gridListData);
             console.log(res);
             grids.f.setData(0, data);
+            $("#exportXlsx").show();
         });
     },
 
@@ -94,6 +95,7 @@ const comms = {
             console.log(res);
             alertSuccess("출고취소처리가 완료 되었습니다.");
             grids.f.clearData(0);
+            $("#exportXlsx").hide();
         });
     },
 };
@@ -144,9 +146,10 @@ const grids = {
                         return CommonData.formatTagNo(value);
                     },
                 }, {
-                    dataField: "",
+                    dataField: "productName",
                     headerText: "상품명",
                     style: "grid_textalign_left",
+                    width: 200,
                     renderer : {
                         type : "TemplateRenderer",
                     },
@@ -154,15 +157,17 @@ const grids = {
                         const colorSquare =
                             `<span class="colorSquare" style="background-color: ${CommonData.name.fdColorCode[item.fdColor]}; vertical-align: middle;"></span>`;
                         const sumName = CommonUI.toppos.makeSimpleProductName(item);
+                        item.productName = sumName;
                         return colorSquare + ` <span style="vertical-align: middle;">` + sumName + `</span>`;
                     },
                 }, {
-                    dataField: "",
+                    dataField: "processName",
                     headerText: "처리내역",
                     style: "grid_textalign_left",
                     width: 130,
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
-                        return CommonUI.toppos.processName(item);
+                        item.processName = CommonUI.toppos.processName(item);
+                        return item.processName;
                     }
                 }, {
                     dataField: "bcName",
@@ -241,7 +246,22 @@ const grids = {
 
         getCheckedItems(numOfGrid) { // 해당 배열 번호 그리드의 엑스트라 체크박스 선택된 (아이템 + 행번호) 객체 반환
             return AUIGrid.getCheckedRowItems(grids.s.id[numOfGrid]);
-        }
+        },
+
+        // 엑셀 내보내기(Export)
+        exportToXlsx() {
+            //FileSaver.js 로 로컬 다운로드가능 여부 확인
+            if(!AUIGrid.isAvailableLocalDownload(grids.s.id[1])) {
+                alertCaution("파일 다운로드가 불가능한 브라우저 입니다.", 1);
+                return;
+            }
+            
+            AUIGrid.exportToXlsx(grids.s.id[0], {
+                fileName : `${wares.title}_${wares.currentDetail.frName}_${wares.currentDetail.filterFromDt}`
+                    + `_${wares.currentDetail.filterToDt}`,
+                progressBar : true,
+            });
+        },
     },
 
     t: {
@@ -277,6 +297,10 @@ const trigs = {
             $("#executeBtn").on("click", function () {
                 askExcute();
             });
+
+            $("#exportXlsx").on("click", function () {
+                grids.f.exportToXlsx();
+            });
         },
     },
     r: { // 이벤트 해제
@@ -287,6 +311,12 @@ const trigs = {
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
 const wares = {
     checkedItems: [],
+    title: "지사출고취소", // 엑셀 다운로드 파일명 생성에 쓰인다.
+    currentDetail: { // 디테일 그리드를 뿌리기 위해 선택된 가맹점과 일자의 정보. 엑셀 파일명 생성에 쓰인다.
+        frName: "",
+        filterFromDt: "",
+        filterToDt: "",
+    },
 }
 
 $(function() { // 페이지가 로드되고 나서 실행
@@ -337,6 +367,10 @@ function searchOrder() {
         filterToDt: $("#filterToDt").val(),
         frId: parseInt(frId),
     };
+
+    wares.currentDetail.filterFromDt = searchCondition.filterFromDt;
+    wares.currentDetail.filterToDt = searchCondition.filterToDt;
+    wares.currentDetail.frName = $("#frList option:selected").html();
 
     if(searchCondition.tagNo.length !== 0 && searchCondition.tagNo.length !==4) {
         alertCaution("택번호는 완전히 입력하거나,<br>입력하지 말아주세요.(전체검색)", 1);

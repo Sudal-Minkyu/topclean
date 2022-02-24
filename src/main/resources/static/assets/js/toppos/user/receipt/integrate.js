@@ -53,11 +53,11 @@ const dto = {
         franchiseRequestDetailUpdate: {
             bcName: "d",
             frYyyymmdd: "d",
-            fdId: "",
-            frId: "",
+            fdId: "n",
+            frId: "n",
             frNo: "s",
             fdTag: "d",
-            biItemcode: "d",
+            biItemcode: "s",
             fdPreState: "d",
             fdState: "d",
             fdS2Dt: "d",
@@ -361,6 +361,7 @@ const ajax = {
     },
 
     saveModifiedOrder(data) {
+        console.log(data);
         dv.chk(data, dto.send.franchiseRequestDetailUpdate, "상품 수정내용 저장");
         CommonUI.ajax(grid.s.url.update[0], "MAPPER", data, function(res) {
             onCloseAddOrder();
