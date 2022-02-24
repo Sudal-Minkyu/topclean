@@ -17,6 +17,8 @@
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
     <script src="/assets/js/toppos/manager/releasemanagement/forcerelease.js"></script>
+    <!-- 엑셀 다운로드 기능을 사용하기 위함 -->
+	<script src="/assets/js/filesaver/FileSaver.min.js"></script>
 </th:block>
 
 <div layout:fragment="content" class="content">
@@ -78,6 +80,11 @@
 
         <article class="article">
             <ul class="article__console article__console--left article__console--non-border">
+                <li>
+                    <button type="button" id="exportXlsx" 
+                    class="c-button c-button--green c-button--icon c-button--icon-excel" style="display: none;">
+                    엑셀 다운로드</button>
+                </li>
                 <li style="margin-left: auto;">
                     <button id="executeBtn" class="c-button c-button--red">강제출고처리</button>
                 </li>

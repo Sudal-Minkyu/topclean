@@ -31,6 +31,7 @@ public class TagNoticeFileRepositoryCustomImpl extends QuerydslRepositorySupport
                 .select(Projections.constructor(TagNoticeFileListDto.class,
                         tagNoticeFile.hfId,
                         tagNoticeFile.hfPath,
+                        tagNoticeFile.hfFilename,
                         tagNoticeFile.hfOriginalFilename,
                         tagNoticeFile.hfVolume
                 ));

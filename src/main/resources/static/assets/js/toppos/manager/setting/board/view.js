@@ -30,6 +30,7 @@ const dtos = {
             fileList: {
                 fileId: "n",
                 filePath: "s",
+                fileFileName: "s",
                 fileOriginalFileName: "s",
                 fileVolume: "n",
             }
@@ -97,7 +98,10 @@ const comms = {
     deletePost(target) {
         dv.chk(target, dtos.send.lostNoticeDelete, "삭제할 글 아이디 보내기");
         CommonUI.ajax(urls.deletePost, "PARAM", target, function (res) {
-            location.href = "/manager/taglostlist";
+            alertSuccess("글을 삭제 하였습니다.");
+            $("#successBtn").on("click", function () {
+                location.href = $(".listLink").first().attr("href");
+            });
         });
     },
 };
@@ -255,7 +259,8 @@ function setFields(data) {
         $("#content").css("height", "200px");
     }
 
-    $("#fileCnt").val(data.fileList.length);
+    console.log(data.fileList);
+    $("#fileCnt").html(data.fileList.length);
 
     for(let file of data.fileList) {
         let volume = 0;
@@ -267,7 +272,7 @@ function setFields(data) {
 
         const element = `
             <li>
-                <a href="${file.filePath + file.fileOriginalFilename}" class="board-view__file">
+                <a href="${file.filePath + file.fileFileName}" class="board-view__file">
                     <span class="board-view__filename">${file.fileOriginalFilename}</span>
                     <span class="board-view__filesize">${volume}</span>
                 </a>
