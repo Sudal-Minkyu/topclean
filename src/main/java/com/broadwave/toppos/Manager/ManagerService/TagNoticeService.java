@@ -308,7 +308,7 @@ public class TagNoticeService {
 
     //  택분실게시판 - 댓글 리스트 호출
     public ResponseEntity<Map<String, Object>> lostNoticeCommentList(Long htId, HttpServletRequest request) {
-        log.info("lostNoticeList 호출성공");
+        log.info("lostNoticeCommentList 호출성공");
 
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
@@ -318,7 +318,7 @@ public class TagNoticeService {
         String login_id = claims.getSubject(); // 현재 아이디
 
         // 검색조건
-        log.info(htId+" 의 댓글리스트 호출");
+//        log.info(htId+" 의 댓글리스트 호출");
         List<TagNoticeCommentListDto> tagNoticeCommentList = tagNoticeCommentRepository.findByTagNoticeCommentList(htId,login_id);
         data.put("commentListDto",tagNoticeCommentList);
 
