@@ -97,7 +97,8 @@ public class ManagerService {
         log.info("현재 접속한 지사 코드 : "+brCode);
 
         List<NoticeListDto> noticeListDtos = noticeService.branchMainNoticeList();
-        
+//        List<I> noticeListDtos = noticeService.branchMainNoticeList(brCode);
+
         data.put("noticeData",noticeListDtos); // 공지사항 리스트(본사의 공지사항) - 최근3개
 //        data.put("checkformData",checkformData); // 확인폼(검품) 리스트 - 최근3개만
 //        data.put("chartFranchReceipData",chartFranchReceipData); // 1주일간의 가맹점 접수금액
