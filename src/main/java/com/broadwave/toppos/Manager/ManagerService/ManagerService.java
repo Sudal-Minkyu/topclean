@@ -77,8 +77,29 @@ public class ManagerService {
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
+    // 현재 로그인한 지사 정보 가져오기
+    public ResponseEntity<Map<String, Object>> branchInfo(HttpServletRequest request) {
+        log.info("branchInfo 호출");
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String brCode = (String) claims.get("brCode"); // 현재 지사의 코드(2자리) 가져오기
+        String login_id = claims.getSubject(); // 현재 아이디
+        log.info("현재 접속한 아이디 : "+login_id);
+        log.info("현재 접속한 지사 코드 : "+brCode);
 
 
 
+//        data.put("noticeData",noticeData); // 공지사항 리스트(본사의 공지사항) - 최근3개
+//        data.put("checkformData",checkformData); // 확인폼(검품) 리스트 - 최근3개만
+//        data.put("chartFranchReceipData",chartFranchReceipData); // 1주일간의 가맹점 접수금액
+//        data.put("chartFranchOpenData",chartFranchOpenData); // 가맹점 오픈 현황
+//        data.put("chartBranchReleaseData",chartBranchReleaseData); // 1주일간의 지사 출고금액
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
 
 }

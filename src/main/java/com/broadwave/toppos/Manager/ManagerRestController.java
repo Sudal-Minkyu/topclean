@@ -6,6 +6,9 @@ import com.broadwave.toppos.Manager.TagNotice.TagNoticeDtos.TagNoticeMapperDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotMapperDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotSet;
 import com.broadwave.toppos.User.UserService.InspectService;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -52,6 +55,15 @@ public class ManagerRestController {
         this.inspectService = inspectService;
         this.currentService = currentService;
         this.receiptReleaseService = receiptReleaseService;
+    }
+
+    //@@@@@@@@@@@@@@@@@@@@@ 가맹점 메인화면 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    // 현재 로그인한 지사 정보 가져오기
+    @GetMapping("branchInfo")
+    @ApiOperation(value = "지사 점보조회" , notes = "현재 로그인한 지사 정보를 가져온다.")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
+    public ResponseEntity<Map<String,Object>> branchInfo(HttpServletRequest request){
+        return managerService.branchInfo(request);
     }
 
 

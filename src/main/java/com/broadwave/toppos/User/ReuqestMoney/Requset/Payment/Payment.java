@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 @Entity
 @Data
 @Builder
+@EqualsAndHashCode(of = "id")
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString

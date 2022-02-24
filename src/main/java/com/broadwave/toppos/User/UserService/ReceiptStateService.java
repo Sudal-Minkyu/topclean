@@ -270,6 +270,59 @@ public class ReceiptStateService {
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
+    //  가맹점입고취소 상태 변화 API
+    public ResponseEntity<Map<String, Object>> franchiseInCancelChange(List<Long> fdIdList, HttpServletRequest request) {
+        log.info("franchiseInCancelChange 호출");
+
+//        log.info("fdIdList : "+fdIdList);
+
+        AjaxResponse res = new AjaxResponse();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
+        String frbrCode = (String) claims.get("frbrCode"); // 소속된 지사 코드
+        String login_id = claims.getSubject(); // 현재 아이디
+        log.info("현재 접속한 아이디 : "+login_id);
+        log.info("현재 접속한 가맹점 코드 : "+frCode);
+        log.info("소속된 지사 코드 : "+frbrCode);
+
+        List<RequestDetail> requestDetailList = requestDetailRepository.findByRequestDetailS5List(fdIdList);
+//          log.info("requestDetailList : "+requestDetailList);
+        for (RequestDetail requestDetail : requestDetailList) {
+//         log.info("가져온 frID 값 : "+requestDetailList.get(i).getFrId());
+            requestDetail.setFdPreState(requestDetail.getFdState()); // 이전상태 값
+            requestDetail.setFdPreStateDt(LocalDateTime.now());
+            requestDetail.setFdState("S4");
+            requestDetail.setFdStateDt(LocalDateTime.now());
+
+            requestDetail.setModify_id(login_id);
+            requestDetail.setModify_date(LocalDateTime.now());
+        }
+        requestDetailRepository.saveAll(requestDetailList);
+
+        return ResponseEntity.ok(res.success());
+    }
+
+    //  가맹점입고취소 - 세부테이블 가맹점입고상태 리스트
+    public ResponseEntity<Map<String, Object>> franchiseReceiptFranchiseInCancelList(String filterFromDt, String filterToDt, HttpServletRequest request) {
+        log.info("franchiseReceiptFranchiseInCancelList 호출");
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
+        log.info("현재 접속한 가맹점 코드 : "+frCode);
+
+        // 지사반송 페이지에 보여줄 리스트 호출
+        List<RequestDetailFranchiseInCancelListDto> requestDetailFranchiseInCancelListDtos = requestDetailRepositoryCustom.findByRequestDetailFranchiseInCancelList(frCode, filterFromDt, filterToDt);
+        data.put("gridListData",requestDetailFranchiseInCancelListDtos);
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
     //  지사반송 - 세부테이블 지사반송 상태 리스트
     public ResponseEntity<Map<String, Object>> franchiseReceiptReturnList(HttpServletRequest request) {
         log.info("franchiseReceiptReturnList 호출");

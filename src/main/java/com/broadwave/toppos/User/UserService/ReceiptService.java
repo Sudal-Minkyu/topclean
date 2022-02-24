@@ -154,6 +154,8 @@ public class ReceiptService {
 
     // 접수페이지 가맹점 임시저장 및 결제하기 세탁접수 API
     public ResponseEntity<Map<String,Object>> requestSave(RequestDetailSet requestDetailSet, HttpServletRequest request) {
+        log.info("requestSave 호출");
+
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
 

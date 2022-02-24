@@ -23,6 +23,7 @@ public interface RequestDetailRepositoryCustom {
     List<RequestDetailReturnListDto> findByRequestDetailReturnList(String frCode); // 지사반송
     List<RequestDetailForceListDto> findByRequestDetailForceList(String frCode); // 가맹점강제입고
     List<RequestDetailDeliveryDto> findByRequestDetailDeliveryList(String frCode, Long bcId); // 세탁인도
+    List<RequestDetailFranchiseInCancelListDto> findByRequestDetailFranchiseInCancelList(String frCode, String fromDt, String toDt); // 가맹점입고취소
 
     List<RequestDetailUncollectDto> findByRequestDetailUncollectList(String frCode, Long frId);
     List<RequestDetailInspectDto> findByRequestDetailInspectList(String frCode, Long bcId, String searchTag, String filterFromDt, String filterToDt); // 검품이력 및 메세지

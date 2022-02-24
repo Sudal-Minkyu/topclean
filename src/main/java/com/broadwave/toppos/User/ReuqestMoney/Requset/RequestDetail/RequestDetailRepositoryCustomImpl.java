@@ -337,6 +337,62 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         query.orderBy(requestDetail.id.asc());
         return query.fetch();
     }
+
+    // 가맹접입고취소 querydsl
+    public List<RequestDetailFranchiseInCancelListDto> findByRequestDetailFranchiseInCancelList(String frCode, String fromDt, String toDt){
+        QRequestDetail requestDetail = QRequestDetail.requestDetail;
+        QRequest request = QRequest.request;
+        QItemGroup itemGroup = QItemGroup.itemGroup;
+        QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
+        QItem item = QItem.item;
+        QCustomer customer = QCustomer.customer;
+        JPQLQuery<RequestDetailFranchiseInCancelListDto> query = from(requestDetail)
+                .innerJoin(requestDetail.frId, request)
+                .innerJoin(request.bcId, customer)
+                .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
+                .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
+                .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
+                .where(request.frConfirmYn.eq("Y"))
+                .where(requestDetail.frId.frCode.eq(frCode).and(requestDetail.fdCancel.eq("N")).and(requestDetail.fdState.eq("S5")))
+                .select(Projections.constructor(RequestDetailFranchiseInCancelListDto.class,
+                        requestDetail.id,
+                        requestDetail.fdS5Dt,
+                        customer.bcName,
+                        requestDetail.fdTag,
+                        requestDetail.fdColor,
+                        itemGroup.bgName,
+                        itemGroupS.bsName,
+                        item.biName,
+                        requestDetail.biItemcode,
+                        requestDetail.fdPriceGrade,
+                        requestDetail.fdRetryYn,
+                        requestDetail.fdPressed,
+                        requestDetail.fdAdd1Amt,
+                        requestDetail.fdAdd1Remark,
+                        requestDetail.fdRepairAmt,
+                        requestDetail.fdRepairRemark,
+                        requestDetail.fdWhitening,
+                        requestDetail.fdPollution,
+                        requestDetail.fdStarch,
+                        requestDetail.fdWaterRepellent,
+                        requestDetail.fdUrgentYn,
+                        requestDetail.fdTotAmt,
+                        requestDetail.fdRemark,
+                        request.frYyyymmdd,
+                        requestDetail.fdS4Dt
+                ));
+        query.orderBy(requestDetail.id.asc());
+
+        if(fromDt != null){
+            query.where(requestDetail.fdS5Dt.goe(fromDt));
+        }
+        if(toDt != null){
+            query.where(requestDetail.fdS5Dt.loe(toDt));
+        }
+
+        return query.fetch();
+    }
+
     // 지사반송 querydsl
     public List<RequestDetailReturnListDto> findByRequestDetailReturnList(String frCode){
         QRequestDetail requestDetail = QRequestDetail.requestDetail;
@@ -1469,8 +1525,8 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         sb.append("             INNER JOIN fs_request_dtl b ON a.fr_id = b.fr_id  \n");
         sb.append("             INNER JOIN bs_franchise c ON a.fr_code = c.fr_code  \n");
         sb.append("             WHERE a.br_code = ?1 AND a.fr_confirm_yn ='Y' AND b.fd_cancel ='N'  \n");
-        sb.append("             AND b.fd_s2_dt >= ?2 \n");
-        sb.append("             AND b.fd_s2_dt <= ?3  \n");
+        sb.append("             AND b.fd_s3_dt >= ?2 \n");
+        sb.append("             AND b.fd_s3_dt <= ?3  \n");
         if(franchiseId != null){
             sb.append("             AND c.fr_id = ?4  \n");
         }

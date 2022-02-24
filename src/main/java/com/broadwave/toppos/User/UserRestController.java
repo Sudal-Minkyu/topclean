@@ -117,7 +117,7 @@ public class UserRestController {
 //@@@@@@@@@@@@@@@@@@@@@ 가맹점 메인화면 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     // 현재 로그인한 가맹점 정보 가져오기
     @GetMapping("franchiseInfo")
-    @ApiOperation(value = "가맹정점보조회" , notes = "현재로그인한 가맹점정보를가져온다.")
+    @ApiOperation(value = "가맹정 점보조회" , notes = "현재 로그인한 가맹점정보를 가져온다.")
     @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
     public ResponseEntity<Map<String,Object>> franchiseInfo(HttpServletRequest request){
         log.info("franchiseInfo 호출");
@@ -147,6 +147,8 @@ public class UserRestController {
 //@@@@@@@@@@@@@@@@@@@@@ 가맹점 고객조회 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     // 고객 등록 API
     @PostMapping("customerSave")
+    @ApiOperation(value = "고객등록 API" , notes = "현재 로그인한 가맹점의 고객을 등록한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
     public ResponseEntity<Map<String,Object>> customerSave(@ModelAttribute CustomerMapperDto customerMapperDto, HttpServletRequest request){
 
         AjaxResponse res = new AjaxResponse();
@@ -214,6 +216,8 @@ public class UserRestController {
 
     // 고객 정보 호출 API (현재 로그인한 가맹점의 대한 고객만 호출한다.)
     @GetMapping("customerInfo")
+    @ApiOperation(value = "고객 정보 호출 API" , notes = "고객의 대한 정보를 가져온다.")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
     public ResponseEntity<Map<String,Object>> customerInfo(HttpServletRequest request,
                                                            @RequestParam(value="searchType", defaultValue="") String searchType,
                                                            @RequestParam(value="searchString", defaultValue="") String searchString){
@@ -266,6 +270,8 @@ public class UserRestController {
 
     // 고객 리스트 API(현재 로그인한 가맹점의 대한 고객리스트만 호출한다.)
     @GetMapping("customerList")
+    @ApiOperation(value = "고객 리스트 API" , notes = "현재 로그인한 가맹점의 고객리스트를 가져온다.")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
     public ResponseEntity<Map<String,Object>> customerList(HttpServletRequest request,
                                                            @RequestParam(value="searchType", defaultValue="") String searchType,
                                                            @RequestParam(value="searchString", defaultValue="") String searchString){
@@ -327,6 +333,8 @@ public class UserRestController {
 
     // 고객 적립금조정 API(현재 로그인한 가맹점의 대한 고객리스트만 호출한다.)
     @PostMapping("customerSaveMoneyControl")
+    @ApiOperation(value = "고객 적립금조정 API" , notes = "고객의 적립금을 조정한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
     public ResponseEntity<Map<String,Object>> customerSaveMoneyControl(@RequestParam(value="bcId", defaultValue="") Long bcId,
                                                                        @RequestParam(value="controlMoney", defaultValue="") Integer controlMoney, HttpServletRequest request){
         log.info("customerSaveMoneyControl 호출");
@@ -366,6 +374,8 @@ public class UserRestController {
 //@@@@@@@@@@@@@@@@@@@@@ 가맹점 세탁접수 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     // 접수페이지 진입시 기본적으롤 받는 데이터 API (대분류 목록리스트)
     @GetMapping("itemGroupAndPriceList")
+    @ApiOperation(value = "접수페이지 진입시 받아오는 API" , notes = "기본 데이터를 받는다.")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
     public ResponseEntity<Map<String,Object>> itemGroupAndPriceList(HttpServletRequest request){
         log.info("itemGroupAndPriceList 호출");
 
@@ -457,7 +467,6 @@ public class UserRestController {
     // 접수페이지 가맹점 세탁접수 API
     @PostMapping("requestSave")
     public ResponseEntity<Map<String,Object>> requestSave(@RequestBody RequestDetailSet requestDetailSet, HttpServletRequest request){
-        log.info("requestSave 호출");
         return receiptService.requestSave(requestDetailSet, request);
     }
 
@@ -890,6 +899,19 @@ public class UserRestController {
     @GetMapping("franchiseReceiptReturnList")
     public ResponseEntity<Map<String,Object>> franchiseReceiptReturnList(HttpServletRequest request){
         return receiptStateService.franchiseReceiptReturnList(request);
+    }
+
+    //  가맹점입고취소 - 세부테이블 가맹점입고상태 리스트
+    @GetMapping("franchiseReceiptFranchiseInCancelList")
+    public ResponseEntity<Map<String,Object>> franchiseReceiptFranchiseInCancelList(@RequestParam("filterFromDt")String filterFromDt,
+                                                                                    @RequestParam("filterToDt")String filterToDt, HttpServletRequest request){
+        return receiptStateService.franchiseReceiptFranchiseInCancelList(filterFromDt, filterToDt, request);
+    }
+
+    //  가맹점입고취소 상태 변화 API
+    @PostMapping("franchiseInCancelChange")
+    public ResponseEntity<Map<String,Object>> franchiseInCancelChange(@RequestParam(value="fdIdList", defaultValue="") List<Long> fdIdList, HttpServletRequest request){
+        return receiptStateService.franchiseInCancelChange(fdIdList, request);
     }
 
     //  가맹점강제입고 - 세부테이블 강제출고상태 리스트
