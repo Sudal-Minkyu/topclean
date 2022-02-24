@@ -42,7 +42,12 @@ const comms = {
         CommonUI.ajax(urls[wares.boardType + "save"], "POST", formData, function (res) {
             alertSuccess("저장이 완료되었습니다.");
             $("#successBtn").on("click", function () {
-                location.href = $("#previousLink").attr("href");
+                if(wares.id) {
+                    location.href = $("#previousLink").attr("href");
+                } else {
+                    location.href = `./${wares.boardType}view?prevPage=` 
+                        + wares.page + "&id=" + res.sendData.noticeId;
+                }
             });
         });
     }
@@ -71,7 +76,7 @@ const wares = {
     dataTransfer: new DataTransfer(),
     existFileList: [],
     boardType: "",
-    id: "",
+    id: 0,
     params: "",
     page: "",
     searchString: "",
