@@ -1617,6 +1617,9 @@ textarea {
 	width: calc(50% - 1.875rem);
 	padding: 0.625rem 0;
 }
+.form__item.form__item--100 {
+	width: 100%;
+}
 .form__item + .form__item {
 	margin-left: auto;
 }
@@ -1643,6 +1646,24 @@ textarea {
 .form__item .form__item .form__input .c-text input[type="text"] {
 	width: 3.125rem;
 	padding: 0 0.313rem;
+}
+
+/* address */
+.address {
+	position: relative;
+	width: 100%;
+}
+.address > ul > li {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+}
+.address > ul > li + li {
+	margin-top: 0.625rem;
+}
+.address__postcode {
+	width: 7.5rem;
+	margin-right: 0.625rem;
 }
 
 /* 미수조회 */
@@ -3157,6 +3178,20 @@ textarea {
 	text-indent: -99999px;
 }
 
+
+.grid_textalign_left div{
+	text-align: left;
+	padding: 0 2px!important;
+	margin-left: 4px!important;
+	box-sizing: border-box;
+}
+
+.grid_textalign_right div{
+	text-align: right;
+	padding: 0 2px!important;
+	margin-left: 4px!important;
+	box-sizing: border-box;
+}
 
 
 
