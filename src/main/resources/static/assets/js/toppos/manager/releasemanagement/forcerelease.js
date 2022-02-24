@@ -80,7 +80,7 @@ const comms = {
         CommonUI.ajax(urls.getMainGridList, "GET", searchCondition, function (res) {
             const data = CommonUI.toppos.killNullFromArray(res.sendData.gridListData);
             grids.f.setData(0, data);
-            $("#exportXlsx").show();
+            // $("#exportXlsx").show();
         });
     },
 
@@ -89,8 +89,8 @@ const comms = {
         CommonUI.ajax(urls.executeReceipt, "PARAM", sendList, function (res) {
             console.log(res);
             alertSuccess("강제출고처리가 완료 되었습니다.");
-            grids.f.clearData(0);
-            $("#exportXlsx").hide();
+            comms.getMainGridList(wares.searchCondition);
+            // $("#exportXlsx").hide();
         });
     },
 };
@@ -134,7 +134,7 @@ const grids = {
                     formatString: "yyyy-mm-dd",
                 }, {
                     dataField: "fdS2Time",
-                    headerText: "지점입고",
+                    headerText: "지사입고일",
                     width: 100,
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
@@ -308,6 +308,7 @@ const wares = {
         filterFromDt: "",
         filterToDt: "",
     },
+    searchCondition: {},
 }
 
 $(function() { // 페이지가 로드되고 나서 실행
@@ -358,6 +359,7 @@ function searchOrder() {
         filterToDt: $("#filterToDt").val(),
         frId: parseInt(frId),
     };
+    wares.searchCondition = searchCondition;
 
     wares.currentDetail.filterFromDt = searchCondition.filterFromDt;
     wares.currentDetail.filterToDt = searchCondition.filterToDt;
