@@ -190,6 +190,7 @@ public class InspectService {
             // RequestDetail 수정 시작
             optionalRequestDetail.get().setFdTotAmt(updateFdTotAmt);
 
+            optionalRequestDetail.get().setBiItemcode(requestDetailUpdateDto.getBiItemcode());
             optionalRequestDetail.get().setFdColor(requestDetailUpdateDto.getFdColor());
             optionalRequestDetail.get().setFdPattern(requestDetailUpdateDto.getFdPattern());
             optionalRequestDetail.get().setFdPriceGrade(requestDetailUpdateDto.getFdPriceGrade());

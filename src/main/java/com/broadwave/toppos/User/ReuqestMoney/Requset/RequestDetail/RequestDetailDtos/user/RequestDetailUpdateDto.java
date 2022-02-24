@@ -17,6 +17,7 @@ public class RequestDetailUpdateDto {
     private Long fdId; // 접수세부테이블 고유값 ID
     private String frNo; // 접수코드
 
+    private String biItemcode; // 상품코드
     private String fdColor; // 색상코드 (00:미선택 01 흰색 02:검정 03: 회색, 04 빨강 05:주황, 06: 노랑, 07 초록 08 파랑 09:남색 10 보라 11 핑크)
     private String fdPattern; // 패턴 (00: 미선택 , 01:체크, 02:혼합, 03: 줄)
     private String fdPriceGrade; // 가격등급  1:일반, 2:고급: 3명품 4:아동
