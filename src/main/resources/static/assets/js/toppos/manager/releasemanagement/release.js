@@ -133,7 +133,7 @@ const grids = {
                     style: "grid_textalign_left",
                 }, {
                     dataField: "fdS2Dt",
-                    headerText: "지점입고일",
+                    headerText: "지사입고일",
                     width: 100,
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
