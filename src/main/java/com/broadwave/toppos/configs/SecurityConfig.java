@@ -29,7 +29,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) {
         web.ignoring()
-                .antMatchers("/favicon.ico");
+                .antMatchers("/favicon.ico","/swagger*/**","/v2/api-docs","/webjars/**");
     }
 
     @Override
@@ -40,6 +40,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable() // csrf 보안 토큰 disable처리
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // 토큰 기반 인증이므로 세션은 사용하지 않음
                 .and()
+
 
                 // exception handling 할 때 만든 클래스를 추가
                 .exceptionHandling()
