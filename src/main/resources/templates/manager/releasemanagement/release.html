@@ -11,6 +11,8 @@
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
     <script src="/assets/js/toppos/manager/releasemanagement/release.js"></script>
+    <!-- 엑셀 다운로드 기능을 사용하기 위함 -->
+	<script src="/assets/js/filesaver/FileSaver.min.js"></script>
 </th:block>
 
 <div layout:fragment="content" class="content">
@@ -83,12 +85,15 @@
                         <input id="inputTagNo" type="text" />
                     </div>
                     <button id="inputTagBtn" class="c-button c-button--small">조회</button>
+                    <button type="button" id="exportXlsx" 
+                    class="c-button c-button--green c-button--icon c-button--icon-excel" style="display: none;">
+                    엑셀 다운로드</button>
                 </div>
                 <div id="listStatBar" class="release-console__list" style="display: none;">
                     <div class="release-console__comment">[<span id="frName">전체</span>] 상품이 <span id="numOfList">0</span>건 조회되었습니다.</div>
                     <ul class="release-console__btn-list">
                         <li id="addAll"><button class="release-console__btn">전체리스트 보기</button></li>
-                        <li id="clearAll"><button class="release-console__btn">전체리스트 숨기기</button></li>
+                        <li id="clearUnchecked"><button class="release-console__btn">전체리스트 숨기기</button></li>
                     </ul>
                 </div>
             </div>

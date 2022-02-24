@@ -82,7 +82,10 @@ const comms = {
             wares.receiptList = CommonUI.toppos.killNullFromArray(res.sendData.gridListData);
             $("#frName").html($("#frList option:selected").html());
             $("#numOfList").html(wares.receiptList.length);
+            grids.f.clearData(0);
+            grids.f.clearData(1);
             $("#listStatBar").show();
+            $("#exportXlsx").show();
         });
     },
 
@@ -97,6 +100,7 @@ const comms = {
             grids.f.clearData(1);
             wares.receiptList = "";
             $("#listStatBar").hide();
+            $("#exportXlsx").hide();
         });
     },
 };
@@ -128,7 +132,7 @@ const grids = {
                     headerText: "가맹점명",
                     style: "grid_textalign_left",
                 }, {
-                    dataField: "",
+                    dataField: "fdS2Dt",
                     headerText: "지점입고일",
                     width: 100,
                     dataType: "date",
@@ -145,9 +149,10 @@ const grids = {
                         return CommonData.formatTagNo(value);
                     },
                 }, {
-                    dataField: "",
+                    dataField: "productName",
                     headerText: "상품명",
                     style: "grid_textalign_left",
+                    width: 200,
                     renderer : {
                         type : "TemplateRenderer",
                     },
@@ -155,15 +160,17 @@ const grids = {
                         const colorSquare =
                             `<span class="colorSquare" style="background-color: ${CommonData.name.fdColorCode[item.fdColor]}; vertical-align: middle;"></span>`;
                         const sumName = CommonUI.toppos.makeSimpleProductName(item);
+                        item.productName = sumName;
                         return colorSquare + ` <span style="vertical-align: middle;">` + sumName + `</span>`;
                     },
                 }, {
-                    dataField: "",
+                    dataField: "processName",
                     headerText: "처리내역",
                     style: "grid_textalign_left",
                     width: 130,
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
-                        return CommonUI.toppos.processName(item);
+                        item.processName = CommonUI.toppos.processName(item);
+                        return item.processName;
                     }
                 }, {
                     dataField: "bcName",
@@ -171,7 +178,7 @@ const grids = {
                     width: 100,
                 }, {
                     dataField: "fdEstimateDt",
-                    headerText: "출고예정일",
+                    headerText: "인도예정일",
                     width: 100,
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
@@ -257,6 +264,24 @@ const grids = {
             AUIGrid.clearGridData(grids.s.id[numOfGrid]);
         },
 
+        addAllData() {
+            const checkedRows = grids.f.getCheckedItems(0);
+            grids.f.setData(0, wares.receiptList);
+            for({item} of checkedRows) {
+                grids.f.addCheckedRowByTagNo(item.fdTag);
+            }
+        },
+
+        removeUncheckedData() {
+            const checkedRows = grids.f.getCheckedItems(0);
+            const refinedData = [];
+            checkedRows.forEach(obj => {
+                refinedData.push(obj.item);
+            });
+            grids.f.setData(0, refinedData);
+            AUIGrid.setAllCheckedRows(grids.s.id[0], true);
+        },
+
         resize(num) { // 해당 배열 번호 그리드의 크기를 현제 그리드를 감싼 엘리먼트에 맞춰 조절
 			AUIGrid.resize(grids.s.id[num]);
 		},
@@ -271,6 +296,23 @@ const grids = {
 
         addCheckedRowByTagNo(tagNo) {
             AUIGrid.addCheckedRowsByValue(grids.s.id[0], "fdTag", tagNo);
+        },
+
+        // 엑셀 내보내기(Export)
+        exportToXlsx() {
+            //FileSaver.js 로 로컬 다운로드가능 여부 확인
+            if(!AUIGrid.isAvailableLocalDownload(grids.s.id[1])) {
+                alertCaution("파일 다운로드가 불가능한 브라우저 입니다.", 1);
+                return;
+            }
+
+            const frName = wares.currentDetail.frName ? wares.currentDetail.frName + "_" : "";
+            const urgent = wares.currentDetail.urgent ? wares.currentDetail.urgent + "_" : "";
+            
+            AUIGrid.exportToXlsx(grids.s.id[0], {
+                fileName : `${wares.title}_${frName}${urgent}${wares.currentDetail.filterFromDt}_${wares.currentDetail.filterToDt}`,
+                progressBar : true,
+            });
         },
     },
 
@@ -328,17 +370,20 @@ const trigs = {
             });
 
             $("#addAll").on("click", function () {
-                grids.f.clearData(0);
-                grids.f.setData(0, wares.receiptList);
+                grids.f.addAllData();
             });
 
-            $("#clearAll").on("click", function () {
-                grids.f.clearData(0);
+            $("#clearUnchecked").on("click", function () {
+                grids.f.removeUncheckedData();
             });
 
             const $miDegree = $("#miDegree");
             $miDegree.on("keyup", function () {
                 $miDegree.val($miDegree.val().substring(0, 2));
+            });
+
+            $("#exportXlsx").on("click", function () {
+                grids.f.exportToXlsx();
             });
         },
     },
@@ -351,6 +396,13 @@ const trigs = {
 const wares = {
     receiptList: "",
     checkedItems: [],
+    title: "지사출고", // 엑셀 다운로드 파일명 생성에 쓰인다.
+    currentDetail: { // 디테일 그리드를 뿌리기 위해 선택된 가맹점과 일자의 정보. 엑셀 파일명 생성에 쓰인다.
+        filterFromDt: "",
+        filterToDt: "",
+        urgent: "",
+        frName: "",
+    },
 }
 
 $(function() { // 페이지가 로드되고 나서 실행
@@ -398,9 +450,15 @@ function getReceiptList() {
         isUrgent: $("#isUrgent").is(":checked") ? "Y" : "N",
         frId: 0,
     }
+    wares.currentDetail.filterFromDt = searchCondition.filterFromDt;
+    wares.currentDetail.filterToDt = searchCondition.filterToDt;
+    wares.currentDetail.urgent = searchCondition.isUrgent === "Y" ? "급세탁" : "";
+
     if($("#type02").is(":checked")) {
         searchCondition.frId = parseInt($("#frList").val());
     }
+    wares.currentDetail.frName = searchCondition.frId ? $("#frList option:selected").html() : "";
+
     comms.getReceiptList(searchCondition);
 }
 
@@ -434,6 +492,7 @@ function inputTag() {
         if(gridItems[i].fdTag  === tagNo) {
             grids.f.addCheckedRowByTagNo(tagNo);
             CommonUI.toppos.speak(CommonUI.toppos.makeSimpleProductName(gridItems[i]));
+            listCheckChanged();
             $("#inputTagNo").val("");
             $("#inputTagNo").focus();
             return false;
@@ -446,6 +505,7 @@ function inputTag() {
             CommonUI.toppos.speak(CommonUI.toppos.makeSimpleProductName(obj));
             grids.f.addRow(0, obj);
             grids.f.addCheckedRowByTagNo(tagNo);
+            listCheckChanged();
             noExist = false;
         }
     });
@@ -496,7 +556,6 @@ function listCheckChanged() {
     const refinedData = [];
 
     items.forEach(obj => {
-
         let isNoMatchName = true;
         for(let i = 0; i < refinedData.length; i++) {
             if(refinedData[i].frCode === obj.item.frCode) {
