@@ -91,6 +91,7 @@ const comms = {
         CommonUI.ajax(urls.getMainList, "GET", searchCondition, function (res) {
             const data = res.sendData.gridListData;
             console.log(res);
+            grids.f.clearData(1);
             grids.f.setData(0, data);
             $("#exportXlsx").hide();
         });
