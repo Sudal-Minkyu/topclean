@@ -80,12 +80,12 @@ const comms = {
         dv.chk(searchCondition, dtos.send.branchReceiptBranchInList, "출고 품목 조회 조건 보내기");
         CommonUI.ajax(urls.getReceiptList, "GET", searchCondition, function (res) {
             wares.receiptList = CommonUI.toppos.killNullFromArray(res.sendData.gridListData);
-            $("#frName").html($("#frList option:selected").html());
-            $("#numOfList").html(wares.receiptList.length);
+            $("#statPanel").html(
+                `[${$("#frList option:selected").html()}] 상품이 ${wares.receiptList.length}건 조회되었습니다.`);
             grids.f.clearData(0);
             grids.f.clearData(1);
-            $("#listStatBar").show();
-            $("#exportXlsx").show();
+            // $("#listStatBar").show();
+            // $("#exportXlsx").show();
         });
     },
 
@@ -99,7 +99,7 @@ const comms = {
             grids.f.clearData(0);
             grids.f.clearData(1);
             wares.receiptList = "";
-            $("#listStatBar").hide();
+            // $("#listStatBar").hide();
             $("#exportXlsx").hide();
         });
     },
