@@ -29,7 +29,7 @@ const dtos = {
             frName: "s",
             fdS3Dt: "s",
             return_cnt: "n",
-            tot_cnt: "n",
+            tot_amt: "n",
         },
 
         branchReturnCurrentInputList: {
@@ -147,7 +147,7 @@ const grids = {
                     dataType: "numeric",
                     autoThousandSeparator: "true",
                 }, {
-                    dataField: "tot_cnt",
+                    dataField: "tot_amt",
                     headerText: "접수총액",
                     style: "grid_textalign_right",
                     width: 90,
