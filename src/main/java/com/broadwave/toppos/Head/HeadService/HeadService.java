@@ -58,7 +58,6 @@ public class HeadService {
     private final FranchisePriceRepository franchisePriceRepository;
     private final AddCostRepository addCostRepository;
 
-    private final FranchiseRepositoryCustom franchiseRepositoryCustom;
     private final BranchRepositoryCustomImpl branohRepositoryCustom;
     private final ItemGroupRepositoryCustom itemGroupRepositoryCustom;
     private final ItemGroupSRepositoryCustom itemGroupSRepositoryCustom;
@@ -69,7 +68,7 @@ public class HeadService {
 
     @Autowired
     public HeadService(ModelMapper modelMapper, AddCostRepository addCostRepository,
-                       BranchRepository branchRepository, FranchiseRepository franchiseRepository, FranchiseRepositoryCustom franchiseRepositoryCustom, BranchRepositoryCustomImpl branohRepositoryCustom,
+                       BranchRepository branchRepository, FranchiseRepository franchiseRepository, BranchRepositoryCustomImpl branohRepositoryCustom,
                        ItemGroupRepository ItemGroupRepository, ItemGroupRepositoryCustom itemGroupRepositoryCustom, ItemGroupSRepository ItemGroupSRepository, ItemGroupSRepositoryCustom itemGroupSRepositoryCustom,
                        ItemRepository ItemRepository, ItemRepositoryCustom itemRepositoryCustom, ItemPriceRepository itemPriceRepository, ItemPriceRepositoryCustom itemPriceRepositoryCustom,
                        FranchisePriceRepository franchisePriceRepository, FranchisePriceRepositoryCustom franchisePriceRepositoryCustom,
@@ -78,7 +77,6 @@ public class HeadService {
         this.addCostRepository = addCostRepository;
         this.branchRepository = branchRepository;
         this.franchiseRepository = franchiseRepository;
-        this.franchiseRepositoryCustom = franchiseRepositoryCustom;
         this.branohRepositoryCustom = branohRepositoryCustom;
         this.ItemGroupRepository = ItemGroupRepository;
         this.itemGroupRepositoryCustom = itemGroupRepositoryCustom;
@@ -207,7 +205,7 @@ public class HeadService {
 
     // 가맹점 리스트 API
     public List<FranchiseListDto> findByFranchiseList(String brCode, String brAssignState, String frName, String frCode, String frContractState) {
-        return franchiseRepositoryCustom.findByFranchiseList(brCode, brAssignState, frName, frCode, frContractState);
+        return franchiseRepository.findByFranchiseList(brCode, brAssignState, frName, frCode, frContractState);
     }
 
     // 지사 리스트 API
@@ -227,12 +225,12 @@ public class HeadService {
 
     // 가맹점 정보 호출하기
     public FranchisInfoDto findByFranchiseInfo(String frCode) {
-        return franchiseRepositoryCustom.findByFranchiseInfo(frCode);
+        return franchiseRepository.findByFranchiseInfo(frCode);
     }
 
     // 가맹점 전용 나의정보 호출하기
     public FranchisUserDto findByFranchiseUserInfo(String frCode) {
-        return franchiseRepositoryCustom.findByFranchiseUserInfo(frCode);
+        return franchiseRepository.findByFranchiseUserInfo(frCode);
     }
 
     // @@@@@@@@@@@@@@@@@@@@    상품 그룹관리 페이지  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -439,7 +437,7 @@ public class HeadService {
 
     // 지사코드로 조회하여 해당 지사에 배치된 가맹점이 존재하는지 확인하는 함수
     public List<FranchiseSearchDto> findByFranchiseBrcode(String brCode) {
-        return franchiseRepositoryCustom.findByFranchiseBrcode(brCode);
+        return franchiseRepository.findByFranchiseBrcode(brCode);
     }
 
     // 지사삭제

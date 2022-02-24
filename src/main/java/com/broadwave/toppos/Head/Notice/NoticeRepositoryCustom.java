@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * @author Minkyu
@@ -21,4 +22,5 @@ public interface NoticeRepositoryCustom {
     NoticeViewSubDto findByNoticePreView(Long hnId);
     NoticeViewSubDto findByNoticeNextView(Long hnId);
 
+    List<NoticeListDto> findByMainNoticeList(); // 지사메인페이지용 공지사항리스트
 }

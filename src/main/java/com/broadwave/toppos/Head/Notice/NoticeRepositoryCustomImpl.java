@@ -31,6 +31,24 @@ public class NoticeRepositoryCustomImpl extends QuerydslRepositorySupport implem
         super(Notice.class);
     }
 
+    // 공지사항 메인페이지용 리스트 데이터 호출
+    @Override
+    public List<NoticeListDto> findByMainNoticeList() {
+        QNotice notice  = QNotice.notice;
+
+        JPQLQuery<NoticeListDto> query = from(notice)
+                .select(Projections.constructor(NoticeListDto.class,
+                        notice.hnId,
+                        notice.hnSubject,
+                        notice.insert_id,
+                        notice.insertDateTime
+                ));
+
+        query.orderBy(notice.hnId.desc()).limit(3);
+
+        return query.fetch();
+    }
+
     // 공지사항 리스트 데이터 호출
     @Override
     public Page<NoticeListDto> findByNoticeList(String searchString, LocalDateTime filterFromDt, LocalDateTime filterToDt, Pageable pageable) {

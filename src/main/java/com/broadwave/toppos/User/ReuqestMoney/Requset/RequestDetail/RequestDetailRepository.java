@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface RequestDetailRepository extends JpaRepository<RequestDetail,Long> {
+public interface RequestDetailRepository extends JpaRepository<RequestDetail,Long>, RequestDetailRepositoryCustom {
 
     @Query("select a from RequestDetail a where a.frNo = :frNo and a.fdTag = :fdTag")
     Optional<RequestDetail> findByRequestDetail(String frNo, String fdTag);

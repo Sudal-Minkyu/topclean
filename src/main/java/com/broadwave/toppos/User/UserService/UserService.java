@@ -5,12 +5,14 @@ import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.User.Addprocess.Addprocess;
 import com.broadwave.toppos.User.Addprocess.AddprocessDtos.AddprocessDto;
 import com.broadwave.toppos.User.Addprocess.AddprocessRepositoryCustom;
-import com.broadwave.toppos.User.Customer.*;
+import com.broadwave.toppos.User.Customer.Customer;
 import com.broadwave.toppos.User.Customer.CustomerDtos.CustomerInfoDto;
 import com.broadwave.toppos.User.Customer.CustomerDtos.CustomerListDto;
+import com.broadwave.toppos.User.Customer.CustomerRepository;
+import com.broadwave.toppos.User.Customer.CustomerRepositoryCustom;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Request;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailAmtDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepositoryCustom;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestRepository;
 import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoney;
 import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoneyRepository;
@@ -39,7 +41,7 @@ import java.util.Optional;
 public class UserService {
     private final TokenProvider tokenProvider;
 
-    private final RequestDetailRepositoryCustom requestDetailRepositoryCustom;
+    private final RequestDetailRepository requestDetailRepository;
 
     private final SaveMoneyRepository saveMoneyRepository;
     private final RequestRepository requestRepository;
@@ -51,14 +53,14 @@ public class UserService {
     private final AddprocessRepositoryCustom addProcessRepositoryCustom;
 
     @Autowired
-    public UserService(TokenProvider tokenProvider, SaveMoneyRepository saveMoneyRepository, RequestRepository requestRepository, RequestDetailRepositoryCustom requestDetailRepositoryCustom,
+    public UserService(TokenProvider tokenProvider, SaveMoneyRepository saveMoneyRepository, RequestRepository requestRepository, RequestDetailRepository requestDetailRepository,
                        CustomerRepository customerRepository, UserLoginLogRepository userLoginLogRepository,
                        CustomerRepositoryCustom customerRepositoryCustom, AccountRepositoryCustom accountRepositoryCustom,
                        AddprocessRepositoryCustom addProcessRepositoryCustom){
         this.tokenProvider = tokenProvider;
         this.requestRepository = requestRepository;
         this.saveMoneyRepository = saveMoneyRepository;
-        this.requestDetailRepositoryCustom = requestDetailRepositoryCustom;
+        this.requestDetailRepository = requestDetailRepository;
         this.customerRepository = customerRepository;
         this.userLoginLogRepository = userLoginLogRepository;
         this.customerRepositoryCustom = customerRepositoryCustom;
@@ -136,7 +138,7 @@ public class UserService {
 
         log.info("frNo : "+frNo);
         //디테일의 fdTotAmt를 합산한 결과가 frTotalAmount가 되고 frTotalAmount와 가져온 frPayAmount의 데이터를 비교하여 업데이트를 한다.
-        List<RequestDetailAmtDto> requestDetailAmtDtos =  requestDetailRepositoryCustom.findByRequestDetailAmtList(frNo); // 세부테이블의 합계금액 리스트 호출
+        List<RequestDetailAmtDto> requestDetailAmtDtos =  requestDetailRepository.findByRequestDetailAmtList(frNo); // 세부테이블의 합계금액 리스트 호출
         int totalAmt = 0;
         int normalAmt = 0;
         for(RequestDetailAmtDto requestDetailAmtDto : requestDetailAmtDtos){

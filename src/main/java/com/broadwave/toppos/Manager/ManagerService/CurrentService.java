@@ -2,7 +2,7 @@ package com.broadwave.toppos.Manager.ManagerService;
 
 import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.manager.*;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepositoryCustom;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepository;
 import com.broadwave.toppos.common.AjaxResponse;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
@@ -28,12 +28,12 @@ public class CurrentService {
 
     private final TokenProvider tokenProvider;
 
-    private final RequestDetailRepositoryCustom requestDetailRepositoryCustom;
+    private final RequestDetailRepository requestDetailRepository;
 
     @Autowired
-    public CurrentService(TokenProvider tokenProvider, RequestDetailRepositoryCustom requestDetailRepositoryCustom){
+    public CurrentService(TokenProvider tokenProvider, RequestDetailRepository requestDetailRepository){
         this.tokenProvider = tokenProvider;
-        this.requestDetailRepositoryCustom = requestDetailRepositoryCustom;
+        this.requestDetailRepository = requestDetailRepository;
     }
 
     //  지사 입고현황, 체류세탁물현황 - 왼쪽 리스트 호출API
@@ -54,7 +54,7 @@ public class CurrentService {
         log.info("현재 접속한 아이디 : "+login_id);
         log.info("현재 접속한 지사 코드 : "+brCode);
 
-        List<RequestDetailBranchStoreCurrentListDto> requestDetailBranchStoreCurrentListDtos =  requestDetailRepositoryCustom.findByRequestDetailBranchStoreCurrentList(brCode, franchiseId, filterFromDt, filterToDt, type);
+        List<RequestDetailBranchStoreCurrentListDto> requestDetailBranchStoreCurrentListDtos =  requestDetailRepository.findByRequestDetailBranchStoreCurrentList(brCode, franchiseId, filterFromDt, filterToDt, type);
         data.put("gridListData",requestDetailBranchStoreCurrentListDtos);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
@@ -73,7 +73,7 @@ public class CurrentService {
         log.info("현재 접속한 아이디 : "+login_id);
         log.info("현재 접속한 지사 코드 : "+brCode);
 
-        List<RequestDetailBranchInputCurrentListDto> requestDetailBranchInputCurrentListDtos =  requestDetailRepositoryCustom.findByRequestDetailBranchInputCurrentList(brCode, frCode, fdS2Dt);
+        List<RequestDetailBranchInputCurrentListDto> requestDetailBranchInputCurrentListDtos =  requestDetailRepository.findByRequestDetailBranchInputCurrentList(brCode, frCode, fdS2Dt);
         data.put("gridListData",requestDetailBranchInputCurrentListDtos);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
@@ -92,7 +92,7 @@ public class CurrentService {
         log.info("현재 접속한 아이디 : "+login_id);
         log.info("현재 접속한 지사 코드 : "+brCode);
 
-        List<RequestDetailBranchRemainCurrentListDto> requestDetailBranchRemainCurrentListDtos =  requestDetailRepositoryCustom.findByRequestDetailBranchRemainCurrentList(brCode, frCode, fdS2Dt);
+        List<RequestDetailBranchRemainCurrentListDto> requestDetailBranchRemainCurrentListDtos =  requestDetailRepository.findByRequestDetailBranchRemainCurrentList(brCode, frCode, fdS2Dt);
         data.put("gridListData",requestDetailBranchRemainCurrentListDtos);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
@@ -111,7 +111,7 @@ public class CurrentService {
         log.info("현재 접속한 아이디 : "+login_id);
         log.info("현재 접속한 지사 코드 : "+brCode);
 
-        List<RequestDetailBranchReleaseCurrentListDto> requestDetailBranchReleaseCurrentListDtos =  requestDetailRepositoryCustom.findByRequestDetailBranchReleaseCurrentList(brCode, franchiseId, filterFromDt, filterToDt, type);
+        List<RequestDetailBranchReleaseCurrentListDto> requestDetailBranchReleaseCurrentListDtos =  requestDetailRepository.findByRequestDetailBranchReleaseCurrentList(brCode, franchiseId, filterFromDt, filterToDt, type);
         List<HashMap<String,Object>> releaseViewData = new ArrayList<>();
         HashMap<String,Object> releaseInfo;
         if(requestDetailBranchReleaseCurrentListDtos != null) {
@@ -147,7 +147,7 @@ public class CurrentService {
         log.info("현재 접속한 아이디 : "+login_id);
         log.info("현재 접속한 지사 코드 : "+brCode);
 
-        List<RequestDetailBranchReleaseCurrentRightListDto> requestDetailBranchReleaseCurrentRightListDtos =  requestDetailRepositoryCustom.findByRequestDetailBranchReleaseCurrentRightList(brCode, frCode, fdS4Dt);
+        List<RequestDetailBranchReleaseCurrentRightListDto> requestDetailBranchReleaseCurrentRightListDtos =  requestDetailRepository.findByRequestDetailBranchReleaseCurrentRightList(brCode, frCode, fdS4Dt);
         data.put("gridListData",requestDetailBranchReleaseCurrentRightListDtos);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
@@ -166,7 +166,7 @@ public class CurrentService {
         log.info("현재 접속한 아이디 : "+login_id);
         log.info("현재 접속한 지사 코드 : "+brCode);
 
-        List<RequestDetailBranchReleaseForceCurrentRightListDto> requestDetailBranchReleaseForceCurrentRightListDtos =  requestDetailRepositoryCustom.findByRequestDetailBranchReleaseForceCurrentRightList(brCode, frCode, fdS7Dt);
+        List<RequestDetailBranchReleaseForceCurrentRightListDto> requestDetailBranchReleaseForceCurrentRightListDtos =  requestDetailRepository.findByRequestDetailBranchReleaseForceCurrentRightList(brCode, frCode, fdS7Dt);
         data.put("gridListData",requestDetailBranchReleaseForceCurrentRightListDtos);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
@@ -186,7 +186,7 @@ public class CurrentService {
         log.info("현재 접속한 아이디 : "+login_id);
         log.info("현재 접속한 지사 코드 : "+brCode);
 
-        List<RequestDetailBranchUnReleaseCurrentListDto> requestDetailBranchUnReleaseCurrentListDtos =  requestDetailRepositoryCustom.findByRequestDetailBranchUnReleaseList(brCode, franchiseId, filterFromDt, filterToDt, type);
+        List<RequestDetailBranchUnReleaseCurrentListDto> requestDetailBranchUnReleaseCurrentListDtos =  requestDetailRepository.findByRequestDetailBranchUnReleaseList(brCode, franchiseId, filterFromDt, filterToDt, type);
         data.put("gridListData",requestDetailBranchUnReleaseCurrentListDtos);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
@@ -205,7 +205,7 @@ public class CurrentService {
         log.info("현재 접속한 아이디 : "+login_id);
         log.info("현재 접속한 지사 코드 : "+brCode);
 
-        List<RequestDetailBranchUnReleaseCurrentRightListDto> requestDetailBranchUnReleaseCurrentRightListDtos =  requestDetailRepositoryCustom.findByRequestDetailBranchUnReleaseCurrentRightList(brCode, frCode, filterFromDt, filterToDt, type);
+        List<RequestDetailBranchUnReleaseCurrentRightListDto> requestDetailBranchUnReleaseCurrentRightListDtos =  requestDetailRepository.findByRequestDetailBranchUnReleaseCurrentRightList(brCode, frCode, filterFromDt, filterToDt, type);
         data.put("gridListData",requestDetailBranchUnReleaseCurrentRightListDtos);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
@@ -225,7 +225,7 @@ public class CurrentService {
         log.info("현재 접속한 아이디 : "+login_id);
         log.info("현재 접속한 지사 코드 : "+brCode);
 
-        List<RequestDetailBranchReturnCurrentListDto> requestDetailBranchReturnCurrentListDtos =  requestDetailRepositoryCustom.findByRequestDetailBranchReturnCurrentList(brCode, franchiseId, filterFromDt, filterToDt);
+        List<RequestDetailBranchReturnCurrentListDto> requestDetailBranchReturnCurrentListDtos =  requestDetailRepository.findByRequestDetailBranchReturnCurrentList(brCode, franchiseId, filterFromDt, filterToDt);
         data.put("gridListData",requestDetailBranchReturnCurrentListDtos);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
@@ -244,7 +244,7 @@ public class CurrentService {
         log.info("현재 접속한 아이디 : "+login_id);
         log.info("현재 접속한 지사 코드 : "+brCode);
 
-        List<RequestDetailBranchReturnCurrentRightListDto> requestDetailBranchReturnCurrentRightListDtos =  requestDetailRepositoryCustom.findByRequestDetailBranchReturnRightCurrentList(brCode, frCode, fdS3Dt);
+        List<RequestDetailBranchReturnCurrentRightListDto> requestDetailBranchReturnCurrentRightListDtos =  requestDetailRepository.findByRequestDetailBranchReturnRightCurrentList(brCode, frCode, fdS3Dt);
         data.put("gridListData",requestDetailBranchReturnCurrentRightListDtos);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));

@@ -6,7 +6,6 @@ import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.Insp
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetail;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.*;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepository;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepositoryCustom;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.force.InhouceForce;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.force.InhouseRepository;
 import com.broadwave.toppos.common.AjaxResponse;
@@ -36,17 +35,15 @@ public class ReceiptStateService {
     private final InhouseRepository inhouseRepository;
     private final InspeotRepositoryCustom inspeotRepositoryCustom;
     private final RequestDetailRepository requestDetailRepository;
-    private final RequestDetailRepositoryCustom requestDetailRepositoryCustom;
 
     @Autowired
     public ReceiptStateService(TokenProvider tokenProvider,
                                InhouseRepository inhouseRepository, InspeotRepositoryCustom inspeotRepositoryCustom,
-                               RequestDetailRepository requestDetailRepository, RequestDetailRepositoryCustom requestDetailRepositoryCustom){
+                               RequestDetailRepository requestDetailRepository){
         this.tokenProvider = tokenProvider;
         this.inhouseRepository = inhouseRepository;
         this.requestDetailRepository = requestDetailRepository;
         this.inspeotRepositoryCustom = inspeotRepositoryCustom;
-        this.requestDetailRepositoryCustom = requestDetailRepositoryCustom;
     }
 
     //  접수테이블의 상태 변화 API - 수기마감페이지, 가맹점입고 페이지, 지사반송건전송 페이지, 세탁인도 페이지 공용함수
@@ -238,7 +235,7 @@ public class ReceiptStateService {
         log.info("현재 접속한 가맹점 코드 : "+frCode);
 
         // 수기마감 페이지에 보여줄 리스트 호출
-        List<RequestDetailCloseListDto> requestDetailCloseListDtos = requestDetailRepositoryCustom.findByRequestDetailCloseList(frCode);
+        List<RequestDetailCloseListDto> requestDetailCloseListDtos = requestDetailRepository.findByRequestDetailCloseList(frCode);
         List<Long> fdIdList = new ArrayList<>();
         for(RequestDetailCloseListDto requestDetailCloseListDto : requestDetailCloseListDtos){
             fdIdList.add(requestDetailCloseListDto.getFdId());
@@ -264,7 +261,7 @@ public class ReceiptStateService {
         log.info("현재 접속한 가맹점 코드 : "+frCode);
 
         // 가맹점입고 페이지에 보여줄 리스트 호출
-        List<RequestDetailFranchiseInListDto> requestDetailFranchiseInListDtos = requestDetailRepositoryCustom.findByRequestDetailFranchiseInList(frCode);
+        List<RequestDetailFranchiseInListDto> requestDetailFranchiseInListDtos = requestDetailRepository.findByRequestDetailFranchiseInList(frCode);
         data.put("gridListData",requestDetailFranchiseInListDtos);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
@@ -317,7 +314,7 @@ public class ReceiptStateService {
         log.info("현재 접속한 가맹점 코드 : "+frCode);
 
         // 지사반송 페이지에 보여줄 리스트 호출
-        List<RequestDetailFranchiseInCancelListDto> requestDetailFranchiseInCancelListDtos = requestDetailRepositoryCustom.findByRequestDetailFranchiseInCancelList(frCode, filterFromDt, filterToDt);
+        List<RequestDetailFranchiseInCancelListDto> requestDetailFranchiseInCancelListDtos = requestDetailRepository.findByRequestDetailFranchiseInCancelList(frCode, filterFromDt, filterToDt);
         data.put("gridListData",requestDetailFranchiseInCancelListDtos);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
@@ -336,7 +333,7 @@ public class ReceiptStateService {
         log.info("현재 접속한 가맹점 코드 : "+frCode);
 
         // 지사반송 페이지에 보여줄 리스트 호출
-        List<RequestDetailReturnListDto> requestDetailFranchiseInListDtos = requestDetailRepositoryCustom.findByRequestDetailReturnList(frCode);
+        List<RequestDetailReturnListDto> requestDetailFranchiseInListDtos = requestDetailRepository.findByRequestDetailReturnList(frCode);
         data.put("gridListData",requestDetailFranchiseInListDtos);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
@@ -355,7 +352,7 @@ public class ReceiptStateService {
         log.info("현재 접속한 가맹점 코드 : "+frCode);
 
         // 가맹점강제입고 페이지에 보여줄 리스트 호출
-        List<RequestDetailForceListDto> requestDetailForceListDtos = requestDetailRepositoryCustom.findByRequestDetailForceList(frCode);
+        List<RequestDetailForceListDto> requestDetailForceListDtos = requestDetailRepository.findByRequestDetailForceList(frCode);
         List<Long> fdIdList = new ArrayList<>();
         for(RequestDetailForceListDto requestDetailForceListDto : requestDetailForceListDtos){
             fdIdList.add(requestDetailForceListDto.getFdId());
@@ -386,7 +383,7 @@ public class ReceiptStateService {
         log.info("현재 접속한 가맹점 코드 : "+frCode);
 
         // 세탁인도 페이지에 보여줄 리스트 호출
-        List<RequestDetailDeliveryDto> requestDetailDeliveryDtos = requestDetailRepositoryCustom.findByRequestDetailDeliveryList(frCode, bcId);
+        List<RequestDetailDeliveryDto> requestDetailDeliveryDtos = requestDetailRepository.findByRequestDetailDeliveryList(frCode, bcId);
         data.put("gridListData",requestDetailDeliveryDtos);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));

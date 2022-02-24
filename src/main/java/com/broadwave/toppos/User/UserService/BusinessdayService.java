@@ -5,7 +5,7 @@ import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentDtos.Paymen
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentRepositoryCustom;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailBusinessdayDeliveryDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailBusinessdayListDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepositoryCustom;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.RequestBusinessdayCustomerListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.RequestBusinessdayListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestRepositoryCustom;
@@ -37,16 +37,16 @@ public class BusinessdayService {
     private final TokenProvider tokenProvider;
 
     private final RequestRepositoryCustom requestRepositoryCustom;
-    private final RequestDetailRepositoryCustom requestDetailRepositoryCustom;
+    private final RequestDetailRepository requestDetailRepository;
     private final PaymentRepositoryCustom paymentRepositoryCustom;
     private final SaveMoneyRepositoryCustom saveMoneyRepositoryCustom;
 
     @Autowired
     public BusinessdayService(TokenProvider tokenProvider, RequestRepositoryCustom requestRepositoryCustom,
-                              RequestDetailRepositoryCustom requestDetailRepositoryCustom, PaymentRepositoryCustom paymentRepositoryCustom, SaveMoneyRepositoryCustom saveMoneyRepositoryCustom){
+                              RequestDetailRepository requestDetailRepository, PaymentRepositoryCustom paymentRepositoryCustom, SaveMoneyRepositoryCustom saveMoneyRepositoryCustom){
         this.tokenProvider = tokenProvider;
         this.requestRepositoryCustom = requestRepositoryCustom;
-        this.requestDetailRepositoryCustom = requestDetailRepositoryCustom;
+        this.requestDetailRepository = requestDetailRepository;
         this.paymentRepositoryCustom = paymentRepositoryCustom;
         this.saveMoneyRepositoryCustom = saveMoneyRepositoryCustom;
     }
@@ -73,7 +73,7 @@ public class BusinessdayService {
         List<RequestBusinessdayListDto> requestBusinessdayListDtos = requestRepositoryCustom.findByBusinessDayList(frCode, filterFromDt, filterToDt);
 
         // 접수세부(부착물, 재세탁) 통계
-        List<RequestDetailBusinessdayListDto> requestDetailBusinessSumDtos = requestDetailRepositoryCustom.findByRequestDetailBusinessdayList(frCode, filterFromDt,  filterToDt);
+        List<RequestDetailBusinessdayListDto> requestDetailBusinessSumDtos = requestDetailRepository.findByRequestDetailBusinessdayList(frCode, filterFromDt,  filterToDt);
 
         // 결제 통계
         List<PaymentBusinessdayListDto> paymentBusinessdayListDtos = paymentRepositoryCustom.findByPaymentBusinessdayListDto(frCode, filterFromDt,  filterToDt);
@@ -85,7 +85,7 @@ public class BusinessdayService {
         List<RequestBusinessdayCustomerListDto> requestBusinessdayCustomerListDtos = requestRepositoryCustom.findByBusinessDayCustomerList(frCode, filterFromDt,  filterToDt);
 
         // 방문고객 출고 통계
-        List<RequestDetailBusinessdayDeliveryDto> requestDetailBusinessdayDeliveryDtos = requestDetailRepositoryCustom.findByRequestDetailBusinessdayDeliveryList(frCode, filterFromDt,  filterToDt);
+        List<RequestDetailBusinessdayDeliveryDto> requestDetailBusinessdayDeliveryDtos = requestDetailRepository.findByRequestDetailBusinessdayDeliveryList(frCode, filterFromDt,  filterToDt);
 
         List<HashMap<String,Object>> businessdayListData = new ArrayList<>();
         HashMap<String,Object> businessdayListInfo;

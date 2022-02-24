@@ -1,5 +1,6 @@
 package com.broadwave.toppos.Manager.TagNotice;
 
+import com.broadwave.toppos.Head.Notice.NoticeDtos.NoticeListDto;
 import com.broadwave.toppos.Manager.TagNotice.TagNoticeDtos.TagNoticeListDto;
 import com.broadwave.toppos.Manager.TagNotice.TagNoticeDtos.TagNoticeTestDto;
 import com.broadwave.toppos.Manager.TagNotice.TagNoticeDtos.TagNoticeViewDto;

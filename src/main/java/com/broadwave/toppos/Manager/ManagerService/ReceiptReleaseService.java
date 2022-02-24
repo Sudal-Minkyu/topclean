@@ -13,7 +13,6 @@ import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetai
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.manager.RequestDetailReleaseCancelListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.manager.RequestDetailReleaseListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepository;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepositoryCustom;
 import com.broadwave.toppos.common.AjaxResponse;
 import com.broadwave.toppos.common.ResponseErrorCode;
 import com.broadwave.toppos.keygenerate.KeyGenerateService;
@@ -49,7 +48,6 @@ public class ReceiptReleaseService {
     private final KeyGenerateService keyGenerateService;
 
     private final RequestDetailRepository requestDetailRepository;
-    private final RequestDetailRepositoryCustom requestDetailRepositoryCustom;
 
     private final InspeotRepositoryCustom inspeotRepositoryCustom;
 
@@ -58,11 +56,10 @@ public class ReceiptReleaseService {
 
     @Autowired
     public ReceiptReleaseService(TokenProvider tokenProvider, KeyGenerateService keyGenerateService, IssueRepository issueRepository, IssueForceRepository issueForceRepository,
-                                 RequestDetailRepository requestDetailRepository, RequestDetailRepositoryCustom requestDetailRepositoryCustom, InspeotRepositoryCustom inspeotRepositoryCustom){
+                                 RequestDetailRepository requestDetailRepository, InspeotRepositoryCustom inspeotRepositoryCustom){
         this.keyGenerateService = keyGenerateService;
         this.tokenProvider = tokenProvider;
         this.requestDetailRepository = requestDetailRepository;
-        this.requestDetailRepositoryCustom = requestDetailRepositoryCustom;
         this.issueRepository = issueRepository;
         this.issueForceRepository = issueForceRepository;
         this.inspeotRepositoryCustom = inspeotRepositoryCustom;
@@ -139,7 +136,7 @@ public class ReceiptReleaseService {
         log.info("현재 접속한 지사 코드 : "+brCode);
 
         // 지사출고 페이지에 보여줄 리스트 호출
-        List<RequestDetailReleaseListDto> requestDetailReleaseListDtos = requestDetailRepositoryCustom.findByRequestDetailReleaseList(brCode, frId, fromDt, toDt, isUrgent);
+        List<RequestDetailReleaseListDto> requestDetailReleaseListDtos = requestDetailRepository.findByRequestDetailReleaseList(brCode, frId, fromDt, toDt, isUrgent);
         data.put("gridListData",requestDetailReleaseListDtos);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
@@ -163,7 +160,7 @@ public class ReceiptReleaseService {
         log.info("현재 접속한 지사 코드 : "+brCode);
 
         // 지사출고취소 페이지에 보여줄 리스트 호출
-        List<RequestDetailReleaseCancelListDto> requestDetailReleaseCancelListDtos = requestDetailRepositoryCustom.findByRequestDetailReleaseCancelList(brCode, frId, fromDt, toDt, tagNo);
+        List<RequestDetailReleaseCancelListDto> requestDetailReleaseCancelListDtos = requestDetailRepository.findByRequestDetailReleaseCancelList(brCode, frId, fromDt, toDt, tagNo);
         data.put("gridListData",requestDetailReleaseCancelListDtos);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
@@ -185,7 +182,7 @@ public class ReceiptReleaseService {
         log.info("현재 접속한 지사 코드 : "+brCode);
 
         // 반송 처리 할 리스트 호출
-        List<RequestDetailBranchReturnListDto> requestDetailBranchReturnListDtos = requestDetailRepositoryCustom.findByRequestDetailBranchReturnList(brCode, frId, fromDt, toDt, tagNo);
+        List<RequestDetailBranchReturnListDto> requestDetailBranchReturnListDtos = requestDetailRepository.findByRequestDetailBranchReturnList(brCode, frId, fromDt, toDt, tagNo);
 
         List<Long> fdIdList = new ArrayList<>();
         for (RequestDetailBranchReturnListDto requestDetailBranchReturnListDto : requestDetailBranchReturnListDtos) {
@@ -223,7 +220,7 @@ public class ReceiptReleaseService {
         log.info("현재 접속한 지사 코드 : "+brCode);
 
         // 가맹점 강제츨고 처리 할 리스트 호출
-        List<RequestDetailBranchForceListDto> requestDetailBranchForceListDtos = requestDetailRepositoryCustom.findByRequestDetailBranchForceList(brCode, frId, fromDt, toDt, tagNo);
+        List<RequestDetailBranchForceListDto> requestDetailBranchForceListDtos = requestDetailRepository.findByRequestDetailBranchForceList(brCode, frId, fromDt, toDt, tagNo);
 
         List<Long> fdIdList = new ArrayList<>();
         for (RequestDetailBranchForceListDto requestDetailBranchForceListDto : requestDetailBranchForceListDtos) {

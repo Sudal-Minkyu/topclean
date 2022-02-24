@@ -70,7 +70,6 @@ public class ReceiptService {
     private final PhotoRepository photoRepository;
 
     private final RequestRepositoryCustom requestRepositoryCustom;
-    private final RequestDetailRepositoryCustom requestDetailRepositoryCustom;
     private final SaveMoneyRepositoryCustom saveMoneyRepositoryCustom;
     private final PhotoRepositoryCustom photoRepositoryCustom;
 
@@ -81,7 +80,7 @@ public class ReceiptService {
     @Autowired
     public ReceiptService(UserService userService, KeyGenerateService keyGenerateService, TokenProvider tokenProvider, ModelMapper modelMapper,
                           RequestRepository requestRepository, RequestDetailRepository requestDetailRepository, PaymentRepository paymentRepository, SaveMoneyRepository saveMoneyRepository, PhotoRepository photoRepository,
-                          RequestRepositoryCustom requestRepositoryCustom, RequestDetailRepositoryCustom requestDetailRepositoryCustom, SaveMoneyRepositoryCustom saveMoneyRepositoryCustom, PhotoRepositoryCustom photoRepositoryCustom,
+                          RequestRepositoryCustom requestRepositoryCustom, SaveMoneyRepositoryCustom saveMoneyRepositoryCustom, PhotoRepositoryCustom photoRepositoryCustom,
                           HeadService headService, CustomerRepository customerRepository, BranchCalendarRepositoryCustom branchCalendarRepositoryCustom, PaymentRepositoryCustom paymentRepositoryCustom){
         this.userService = userService;
         this.headService = headService;
@@ -99,7 +98,6 @@ public class ReceiptService {
         this.keyGenerateService = keyGenerateService;
         this.requestRepositoryCustom = requestRepositoryCustom;
         this.saveMoneyRepositoryCustom = saveMoneyRepositoryCustom;
-        this.requestDetailRepositoryCustom = requestDetailRepositoryCustom;
     }
 
     // 태그번호, 출고예정일 데이터
@@ -139,12 +137,12 @@ public class ReceiptService {
 
     // 접수 세부테이블 임시저장 리스트 호출
     public List<RequestDetailDto> findByRequestTempDetailList(String frNo) {
-        return requestDetailRepositoryCustom.findByRequestTempDetailList(frNo);
+        return requestDetailRepository.findByRequestTempDetailList(frNo);
     }
 
     // 접수 세부테이블 가격관련 리스트 호출
     public List<RequestDetailAmtDto> findByRequestDetailAmtList(String frNo) {
-        return requestDetailRepositoryCustom.findByRequestDetailAmtList(frNo);
+        return requestDetailRepository.findByRequestDetailAmtList(frNo);
     }
 
     // 결제 마스터테이블 미수금액 리스트 호출
@@ -859,7 +857,7 @@ public class ReceiptService {
 //            paymentData.put("uncollectPayAmount", customerUncollectListDto.getBcHp());
 //            paymentData.put("totalUncollectAmount", customerUncollectListDto.getBcAddress());
 
-            List<RequestDetailPaymentPaper> requestDetailPaymentPapers = requestDetailRepositoryCustom.findByRequestDetailPaymentPaper(requestPaymentPaperDto.getFrNo());
+            List<RequestDetailPaymentPaper> requestDetailPaymentPapers = requestDetailRepository.findByRequestDetailPaymentPaper(requestPaymentPaperDto.getFrNo());
             for(RequestDetailPaymentPaper requestDetailPaymentPaper : requestDetailPaymentPapers){
                 requestDetailPaymentInfo = new HashMap<>();
                 requestDetailPaymentInfo.put("tagno", requestDetailPaymentPaper.getFdTag());

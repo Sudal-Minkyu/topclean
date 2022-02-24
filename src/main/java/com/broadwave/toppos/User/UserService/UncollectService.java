@@ -12,7 +12,7 @@ import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentDtos.Paymen
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Request;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailUncollectDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepositoryCustom;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.RequestCustomerUnCollectDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestRepositoryCustom;
@@ -47,7 +47,8 @@ public class UncollectService {
     private final FranchiseRepository franchiseRepository;
     private final RequestRepository requestRepository;
     private final RequestRepositoryCustom requestRepositoryCustom;
-    private final RequestDetailRepositoryCustom requestDetailRepositoryCustom;
+
+    private final RequestDetailRepository requestDetailRepository;
 
     private final CustomerRepository customerRepository;
     private final CustomerRepositoryCustom customerRepositoryCustom;
@@ -55,7 +56,7 @@ public class UncollectService {
     @Autowired
     public UncollectService(ModelMapper modelMapper, TokenProvider tokenProvider, ReceiptService receiptService,
                             RequestRepositoryCustom requestRepositoryCustom, FranchiseRepository franchiseRepository, CustomerRepository customerRepository,
-                            PaymentRepository paymentRepository, RequestRepository requestRepository, RequestDetailRepositoryCustom requestDetailRepositoryCustom,
+                            PaymentRepository paymentRepository, RequestRepository requestRepository, RequestDetailRepository requestDetailRepository,
                             CustomerRepositoryCustom customerRepositoryCustom){
         this.modelMapper = modelMapper;
         this.requestRepositoryCustom = requestRepositoryCustom;
@@ -65,8 +66,8 @@ public class UncollectService {
         this.tokenProvider = tokenProvider;
         this.requestRepository = requestRepository;
         this.paymentRepository = paymentRepository;
+        this.requestDetailRepository = requestDetailRepository;
         this.customerRepositoryCustom = customerRepositoryCustom;
-        this.requestDetailRepositoryCustom = requestDetailRepositoryCustom;
     }
 
     // 미수관리페이지 - 고객검색 리스트 호출
@@ -164,7 +165,7 @@ public class UncollectService {
 //        log.info("현재 접속한 아이디 : "+login_id);
         log.info("현재 접속한 가맹점 코드 : "+frCode);
 
-        List<RequestDetailUncollectDto> requestDetailUncollectDtos = requestDetailRepositoryCustom.findByRequestDetailUncollectList(frCode, frId);
+        List<RequestDetailUncollectDto> requestDetailUncollectDtos = requestDetailRepository.findByRequestDetailUncollectList(frCode, frId);
         data.put("gridListData",requestDetailUncollectDtos);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));

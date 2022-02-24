@@ -1,10 +1,12 @@
 package com.broadwave.toppos.Manager.ManagerService;
 
 import com.broadwave.toppos.Head.Franchise.FranchiseDtos.FranchiseManagerListDto;
-import com.broadwave.toppos.Head.Franchise.FranchiseRepositoryCustom;
+import com.broadwave.toppos.Head.Franchise.FranchiseRepository;
+import com.broadwave.toppos.Head.HeadService.NoticeService;
+import com.broadwave.toppos.Head.Notice.NoticeDtos.NoticeListDto;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.manager.RequestDetailTagSearchListDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepositoryCustom;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepository;
 import com.broadwave.toppos.common.AjaxResponse;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
@@ -29,14 +31,17 @@ public class ManagerService {
 
     private final TokenProvider tokenProvider;
 
-    private final RequestDetailRepositoryCustom requestDetailRepositoryCustom;
-    private final FranchiseRepositoryCustom franchiseRepositoryCustom;
+    private final NoticeService noticeService;
+    private final FranchiseRepository franchiseRepository;
+
+    private final RequestDetailRepository requestDetailRepository;
 
     @Autowired
-    public ManagerService(TokenProvider tokenProvider, FranchiseRepositoryCustom franchiseRepositoryCustom, RequestDetailRepositoryCustom requestDetailRepositoryCustom){
+    public ManagerService(TokenProvider tokenProvider, NoticeService noticeService, FranchiseRepository franchiseRepository, RequestDetailRepository requestDetailRepository){
         this.tokenProvider = tokenProvider;
-        this.franchiseRepositoryCustom = franchiseRepositoryCustom;
-        this.requestDetailRepositoryCustom = requestDetailRepositoryCustom;
+        this.noticeService = noticeService;
+        this.franchiseRepository = franchiseRepository;
+        this.requestDetailRepository = requestDetailRepository;
     }
 
     //  현 지사의 소속된 가맹점명 리스트 호출(앞으로 공용으로 쓰일 것)
@@ -52,7 +57,7 @@ public class ManagerService {
         log.info("현재 접속한 아이디 : "+login_id);
         log.info("현재 접속한 지사 코드 : "+brCode);
 
-        List<FranchiseManagerListDto> franchiseManagerListDtos =  franchiseRepositoryCustom.findByManagerInFranchise(brCode);
+        List<FranchiseManagerListDto> franchiseManagerListDtos =  franchiseRepository.findByManagerInFranchise(brCode);
         data.put("franchiseList",franchiseManagerListDtos);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
@@ -71,7 +76,7 @@ public class ManagerService {
         log.info("현재 접속한 아이디 : "+login_id);
         log.info("현재 접속한 지사 코드 : "+brCode);
 
-        List<RequestDetailTagSearchListDto> requestDetailTagSearchListDtos =  requestDetailRepositoryCustom.findByRequestDetailTagSearchList(brCode, franchiseId, tagNo);
+        List<RequestDetailTagSearchListDto> requestDetailTagSearchListDtos =  requestDetailRepository.findByRequestDetailTagSearchList(brCode, franchiseId, tagNo);
         data.put("gridListData",requestDetailTagSearchListDtos);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
@@ -91,9 +96,9 @@ public class ManagerService {
         log.info("현재 접속한 아이디 : "+login_id);
         log.info("현재 접속한 지사 코드 : "+brCode);
 
-
-
-//        data.put("noticeData",noticeData); // 공지사항 리스트(본사의 공지사항) - 최근3개
+        List<NoticeListDto> noticeListDtos = noticeService.branchMainNoticeList();
+        
+        data.put("noticeData",noticeListDtos); // 공지사항 리스트(본사의 공지사항) - 최근3개
 //        data.put("checkformData",checkformData); // 확인폼(검품) 리스트 - 최근3개만
 //        data.put("chartFranchReceipData",chartFranchReceipData); // 1주일간의 가맹점 접수금액
 //        data.put("chartFranchOpenData",chartFranchOpenData); // 가맹점 오픈 현황

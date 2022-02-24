@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -25,13 +26,17 @@ public class NoticeService {
 
     private final TokenProvider tokenProvider;
     private final NoticeRepository noticeRepository;
-    private final NoticeRepositoryCustom noticeRepositoryCustom;
 
     @Autowired
-    public NoticeService(TokenProvider tokenProvider, NoticeRepository noticeRepository, NoticeRepositoryCustom noticeRepositoryCustom){
+    public NoticeService(TokenProvider tokenProvider, NoticeRepository noticeRepository){
         this.tokenProvider = tokenProvider;
         this.noticeRepository = noticeRepository;
-        this.noticeRepositoryCustom = noticeRepositoryCustom;
+    }
+
+    // 메인페이지에 필요한 공지사항리스트 가져오기 (limit 3)
+    public List<NoticeListDto> branchMainNoticeList() {
+        log.info("branchMainNoticeList 호출");
+        return noticeRepository.findByMainNoticeList();
     }
 
     // 공지사항 게시판 - 리스트 호출
@@ -44,7 +49,7 @@ public class NoticeService {
         log.info("searchString : "+searchString);
         log.info("filterFromDt : "+filterFromDt);
         log.info("filterToDt : "+filterToDt);
-        Page<NoticeListDto> noticeListDtoPage = noticeRepositoryCustom.findByNoticeList(searchString, filterFromDt, filterToDt, pageable);
+        Page<NoticeListDto> noticeListDtoPage = noticeRepository.findByNoticeList(searchString, filterFromDt, filterToDt, pageable);
 
         return ResponseEntity.ok(res.ResponseEntityPage(noticeListDtoPage,type));
     }
@@ -67,7 +72,7 @@ public class NoticeService {
 
         // 검색조건
 //        log.info("htId : "+htId);
-        NoticeViewDto noticeViewDto = noticeRepositoryCustom.findByNoticeView(hnId);
+        NoticeViewDto noticeViewDto = noticeRepository.findByNoticeView(hnId);
         HashMap<String,Object> noticeViewInfo = new HashMap<>();
 
         if(noticeViewDto != null){
@@ -78,7 +83,7 @@ public class NoticeService {
             noticeViewInfo.put("name", noticeViewDto.getName());
             noticeViewInfo.put("insertDateTime", noticeViewDto.getInsertDateTime());
 
-            NoticeViewSubDto noticeViewPreDto = noticeRepositoryCustom.findByNoticePreView(noticeViewDto.getHnId());
+            NoticeViewSubDto noticeViewPreDto = noticeRepository.findByNoticePreView(noticeViewDto.getHnId());
             if(noticeViewPreDto != null){
                 noticeViewInfo.put("prevId", noticeViewPreDto.getSubId());
                 noticeViewInfo.put("prevSubject", noticeViewPreDto.getSubSubject());
@@ -88,7 +93,7 @@ public class NoticeService {
                 noticeViewInfo.put("prevSubject", "이전 글은 존재하지 않습니다.");
                 noticeViewInfo.put("prevInsertDateTime", "");
             }
-            NoticeViewSubDto noticeViewNextDto = noticeRepositoryCustom.findByNoticeNextView(noticeViewDto.getHnId());
+            NoticeViewSubDto noticeViewNextDto = noticeRepository.findByNoticeNextView(noticeViewDto.getHnId());
             if(noticeViewNextDto != null){
                 noticeViewInfo.put("nextId", noticeViewNextDto.getSubId());
                 noticeViewInfo.put("nextSubject", noticeViewNextDto.getSubSubject());

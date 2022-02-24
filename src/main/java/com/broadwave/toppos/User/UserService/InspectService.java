@@ -28,7 +28,6 @@ import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetai
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailSearchDtoSub;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailUpdateDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepository;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepositoryCustom;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestRepository;
 import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoney;
 import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoneyRepository;
@@ -72,14 +71,13 @@ public class InspectService {
     private final InspeotRepositoryCustom inspeotRepositoryCustom;
     private final RequestRepository requestRepository;
     private final RequestDetailRepository requestDetailRepository;
-    private final RequestDetailRepositoryCustom requestDetailRepositoryCustom;
     private final SaveMoneyRepository saveMoneyRepository;
     private final MessageHistoryRepository messageHistoryRepository;
 
     @Autowired
     public InspectService(ModelMapper modelMapper, TokenProvider tokenProvider, UserService userService, AWSS3Service awss3Service, PhotoRepository photoRepository,
                           PaymentRepository paymentRepository, PaymentRepositoryCustom paymentRepositoryCustom, InspeotRepository inspeotRepository,
-                          RequestRepository requestRepository, RequestDetailRepositoryCustom requestDetailRepositoryCustom, InspeotRepositoryCustom inspeotRepositoryCustom,
+                          RequestRepository requestRepository, InspeotRepositoryCustom inspeotRepositoryCustom,
                           RequestDetailRepository requestDetailRepository, SaveMoneyRepository saveMoneyRepository, MessageHistoryRepository messageHistoryRepository){
         this.modelMapper = modelMapper;
         this.inspeotRepository = inspeotRepository;
@@ -91,7 +89,6 @@ public class InspectService {
         this.requestDetailRepository = requestDetailRepository;
         this.inspeotRepositoryCustom = inspeotRepositoryCustom;
         this.paymentRepository = paymentRepository;
-        this.requestDetailRepositoryCustom = requestDetailRepositoryCustom;
         this.paymentRepositoryCustom = paymentRepositoryCustom;
         this.saveMoneyRepository = saveMoneyRepository;
         this.messageHistoryRepository = messageHistoryRepository;
@@ -162,7 +159,7 @@ public class InspectService {
 
     //  통합조회용 - 접수세부 호출용 함수
     private List<RequestDetailSearchDto> requestDetailSearch(String frCode, Long bcId, String searchTag, String filterCondition, String filterFromDt, String filterToDt) {
-        return requestDetailRepositoryCustom.requestDetailSearch(frCode, bcId, searchTag, filterCondition, filterFromDt, filterToDt);
+        return requestDetailRepository.requestDetailSearch(frCode, bcId, searchTag, filterCondition, filterFromDt, filterToDt);
     }
 
     //  통합조회용 - 접수 세부테이블 수정
@@ -653,7 +650,7 @@ public class InspectService {
         String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
         log.info("현재 접속한 가맹점 코드 : "+frCode);
 
-        List<RequestDetailInspectDto> requestDetailInspectDtos = requestDetailRepositoryCustom.findByRequestDetailInspectList(frCode, bcId, searchTag, filterFromDt, filterToDt);
+        List<RequestDetailInspectDto> requestDetailInspectDtos = requestDetailRepository.findByRequestDetailInspectList(frCode, bcId, searchTag, filterFromDt, filterToDt);
         data.put("gridListData",requestDetailInspectDtos);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
@@ -720,7 +717,7 @@ public class InspectService {
         log.info("현재 접속한 지사 코드 : "+brCode);
 
         // 확인품 등록 할 리스트 호출
-        List<RequestDetailBranchInspectListDto> requestDetailBranchForceListDtos = requestDetailRepositoryCustom.findByRequestDetailBranchInspectList(brCode, franchiseId, fromDt, toDt, tagNo);
+        List<RequestDetailBranchInspectListDto> requestDetailBranchForceListDtos = requestDetailRepository.findByRequestDetailBranchInspectList(brCode, franchiseId, fromDt, toDt, tagNo);
         data.put("gridListData",requestDetailBranchForceListDtos);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
@@ -755,7 +752,7 @@ public class InspectService {
         log.info("현재 접속한 지사 코드 : "+brCode);
 
         // 반송 처리 할 리스트 호출
-        List<RequestDetailBranchInspectionCurrentListDto> requestDetailBranchInspectionCurrentListDtos = requestDetailRepositoryCustom.findByRequestDetailBranchInspectionCurrentList
+        List<RequestDetailBranchInspectionCurrentListDto> requestDetailBranchInspectionCurrentListDtos = requestDetailRepository.findByRequestDetailBranchInspectionCurrentList
                 (brCode, franchiseId, fromDt, toDt, tagNo);
 
         data.put("gridListData",requestDetailBranchInspectionCurrentListDtos);
