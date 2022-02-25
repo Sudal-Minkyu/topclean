@@ -470,10 +470,11 @@ const ajax = {
     franchiseInspectionYn(target) {
         dv.chk(target, dto.send.franchiseInspectionYn, "고객 수락 거부 응답 보내기");
         const url = "/api/user/franchiseInspectionYn";
+        console.log(target);
         CommonUI.ajax(url, "PARAM", target, function(res) {
             const searchCondition = {
                 fdId: data.currentRequest.fdId,
-                type: "2",
+                type: "0",
             }
             ajax.getInspectionList(searchCondition);
             const cautionText = ["고객 수락 승인 완료되었습니다.", " 고객 수락 거부 완료되었습니다."];
