@@ -38,23 +38,27 @@ const comms = {
     notice() {
         CommonUI.ajax(urls.notice, "PARAM", wares.boardConditionThree, function (res) {
             const data = res.datalist;
-            const field = $("#noticeList").children("li").children("a");
-            for(let i = 0; i < data.length; i++) {
-                $(field[i]).attr("href", `./user/noticeview?id=${data[i].hnId}`);
-                $(field[i]).children(".main__board-title").children("span").html(data[i].subject);
-                $(field[i]).children(".main__board-date").children("span").html(data[i].insertDateTime);
+            if(data) {
+                const field = $("#noticeList").children("li").children("a");
+                for(let i = 0; i < data.length; i++) {
+                    $(field[i]).attr("href", `./user/noticeview?id=${data[i].hnId}`);
+                    $(field[i]).children(".main__board-title").children("span").html(data[i].subject);
+                    $(field[i]).children(".main__board-date").children("span").html(data[i].insertDateTime);
+                }
             }
         });
     },
     taglost() {
         CommonUI.ajax(urls.taglost, "PARAM", wares.boardConditionThree, function (res) {
             const data = res.datalist;
-            const field = $("#taglostList").children("li").children("a");;
-            for(let i = 0; i < data.length; i++) {
-                $(field[i]).attr("href", `./user/taglostview?id=${data[i].htId}`);
-                $(field[i]).children(".main__board-title").children("span:nth-child(1)").html(data[i].subject);
-                $(field[i]).children(".main__board-title").children("span:nth-child(2)").html("(" + data[i].numOfComment + ")");
-                $(field[i]).children(".main__board-date").children("span").html(data[i].insertDateTime);
+            if(data) {
+                const field = $("#taglostList").children("li").children("a");;
+                for(let i = 0; i < data.length; i++) {
+                    $(field[i]).attr("href", `./user/taglostview?id=${data[i].htId}`);
+                    $(field[i]).children(".main__board-title").children("span:nth-child(1)").html(data[i].subject);
+                    $(field[i]).children(".main__board-title").children("span:nth-child(2)").html("(" + data[i].numOfComment + ")");
+                    $(field[i]).children(".main__board-date").children("span").html(data[i].insertDateTime);
+                }
             }
         });
     },

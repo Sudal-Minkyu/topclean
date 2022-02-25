@@ -137,9 +137,6 @@ class VKeyboard {
 
 
     constructor() {
-
-        console.log(this.defaultKeypadProp);
-
         /* div 하나를 생성하여 키보드 html을 뿌린다. */
         const virtualKeyboardBody = document.createElement('div');
         virtualKeyboardBody.id = "VKEY_body";

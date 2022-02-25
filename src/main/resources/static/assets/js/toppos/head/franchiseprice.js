@@ -15,14 +15,14 @@ $(function() {
         setDataIntoGrid(1, gridCreateUrl[1], {frCode : selectedFrCode});
     });
 
-    AUIGrid.bind(gridId[1], "cellDoubleClick", function (e) {
+    AUIGrid.bind(gridId[1], "cellClick", function (e) {
         if(e.columnIndex < 4 && AUIGrid.isAddedById(gridId[1], e.rowIdValue) ) {
             setDataIntoGrid(2, gridCreateUrl[2]);
             itemListPop(e.rowIdValue);
         }
     });
 
-    AUIGrid.bind(gridId[2], "cellDoubleClick", function (e) {
+    AUIGrid.bind(gridId[2], "cellClick", function (e) {
         delete e.item["_$uid"];
         e.item["_$uid"] = idIndex;
         AUIGrid.updateRowsById(gridId[1], e.item);

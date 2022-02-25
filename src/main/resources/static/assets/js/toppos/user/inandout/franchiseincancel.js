@@ -5,15 +5,14 @@
 * */
 const dtos = {
     send: {
-        franchiseStateChange: {
+        franchiseInCancelChange: {
             fdIdList: "a",
-            stateType: "sr",
         }
     },
     receive: {
         franchiseReceiptFranchiseInList: {
             fdId: "nr",
-            fdS4Dt: "s",
+            fdS5Dt: "s",
             bcName: "sr",
             fdTag: "sr",
 
@@ -35,68 +34,41 @@ const dtos = {
             fdWaterRepellent: "",
             fdStarch: "",
             fdUrgentYn: "s",
+
             fdTotAmt: "n",
             fdRemark: "s",
-
             frYyyymmdd: "sr",
-            fdS2Dt: "s",
+            fdS4Dt: "s",
         }
     }
 };
 
 /* 통신에 사용되는 url들 기입 */
 const urls = {
-    getFranchiseInList: "/api/user/franchiseReceiptFranchiseInList",
-    changeClosedList: '/api/user/franchiseStateChange',
+    getMainList: "/api/user/franchiseReceiptFranchiseInCancelList",
+    cancelInState: '/api/user/franchiseInCancelChange',
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
     // 입고 리스트 받기
-    getGridList() {
-        CommonUI.ajax(urls.getFranchiseInList, "GET", false, function (res) {
-            const data = res.sendData;
-            const dataLength = data.gridListData.length;
-            let fastItemCount = 0;
-            let retryItemCount = 0;
-            let totalAmount = 0;
-            console.log(data);
+    getMainList() {
+        console.log(wares.searchCondition);
+        CommonUI.ajax(urls.getMainList, "GET", wares.searchCondition, function (res) {
+            const data = res.sendData.gridListData;
 
-            for (let i = 0; i < data.gridListData.length; i++) {
-                // 접수총액
-                totalAmount += data.gridListData[i].fdTotAmt;
-                // 급세탁건수
-                if (data.gridListData[i].fdUrgentYn == "Y") {
-                    fastItemCount = fastItemCount + 1;
-                }
-                // 재세탁건수
-                if (data.gridListData[i].fdRetryYn == "Y") {
-                    retryItemCount = retryItemCount + 1;
-                }
-            }
-
-            dv.chk(data.gridListData, dtos.receive.franchiseReceiptFranchiseInList, '입고 리스트 항목 받아오기');
-            grids.f.setData(0, data.gridListData);
-            
-            $('#totalNum').text(dataLength);
-            $('#totalItems').val(dataLength);
-            $('#totalAmount').val(totalAmount.toLocaleString());
-            $('#fastItems').val(fastItemCount);
-            $('#retryItems').val(retryItemCount);
+            dv.chk(data, dtos.receive.franchiseReceiptFranchiseInList, '입고 리스트 항목 받아오기');
+            grids.f.setData(0, data);
         });
     },
 
-    // 입고리스트 저장
-    changeClosedList(saveData) {
-        dv.chk(saveData, dtos.send.franchiseStateChange, '입고 항목 보내기');
+    cancelInState(targetDataSet) {
+        dv.chk(targetDataSet, dtos.send.franchiseInCancelChange, '입고취소 항목 보내기');
     
-        CommonUI.ajax(urls.changeClosedList, "PARAM", saveData, function(res) {
-            alertSuccess("입고 완료");
+        CommonUI.ajax(urls.cancelInState, "PARAM", targetDataSet, function(res) {
+            alertSuccess("입고취소 완료");
             grids.f.clearData(0);
-            comms.getGridList();
-
-            $('#selectItems').val(0);
-            $('#selectAmount').val(0);
+            comms.getMainList();
         });
     }
 };
@@ -124,8 +96,8 @@ const grids = {
             /* 0번 그리드의 레이아웃 */
             grids.s.columnLayout[0] = [
                 {
-                    dataField: "fdS4Dt",
-                    headerText: "자사출고일",
+                    dataField: "fdS5Dt",
+                    headerText: "가맹점입고일",
                     width: 100,
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
@@ -152,7 +124,7 @@ const grids = {
                     },
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
                         const colorSquare =
-                            `<span class="colorSquare" style="background-color: ${wares.fdColorCode['C'+item.fdColor]}; vertical-align: middle;"></span>`;
+                            `<span class="colorSquare" style="background-color: ${CommonData.name.fdColorCode[item.fdColor]}; vertical-align: middle;"></span>`;
                         const sumName = CommonUI.toppos.makeSimpleProductName(item);
                         return colorSquare + ` <span style="vertical-align: middle;">` + sumName + `</span>`;
                     },
@@ -207,7 +179,7 @@ const grids = {
                     formatString: "yyyy-mm-dd",
                 }, 
                 {
-                    dataField: "fdS2Dt",
+                    dataField: "fdS4Dt",
                     headerText: "지사입고일",
                     width: 100,
                     dataType: "date",
@@ -275,36 +247,21 @@ const grids = {
 const trigs = {
     s: { // 이벤트 설정
         basicTrigger() {
-            $('.aui-checkbox').on('click', function () {
+            $('#cancelInBtn').on('click', function() {
                 const checkedItems = grids.f.getCheckedItems(0);
-                const checkedLength = checkedItems.length;
-                let totalAmount = 0;
-                
-                checkedItems.forEach(checkedItem => {
-                    // 접수총액
-                    totalAmount += checkedItem.item.fdTotAmt;
-                });
-
-                $('#selectItems').val(checkedLength);
-                $('#selectAmount').val(totalAmount.toLocaleString());
-            });
-
-            $('#franchiseIn').on('click', function() {
-                const checkedItems = grids.f.getCheckedItems(0);
-                wares.saveDataset = makeSaveDataset(checkedItems);
+                wares.targetDataSet = makeSaveDataset(checkedItems);
                 if (checkedItems.length) {
-                    alertCheck("선택된 상품을 가맹점입고 하시겠습니까?");
+                    alertCheck("선택된 상품을 가맹점입고취소 하시겠습니까?");
                     $("#checkDelSuccessBtn").on("click", function () {
-                        comms.changeClosedList(wares.saveDataset);
+                        comms.cancelInState(wares.targetDataSet);
                     });
                 } else {
-                    alertCaution("입고 할 리스트를 선택해주세요", 1);
+                    alertCaution("입고취소 할 리스트를 선택해주세요", 1);
                 }
             });
 
-            $("#refresh").on("click", function () {
-                grids.f.clearData(0);
-                comms.getGridList();
+            $("#searchBtn").on("click", function () {
+                getMainList();
             });
         }
     },
@@ -315,11 +272,8 @@ const trigs = {
 
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
 const wares = {
-    fdColorCode: { // 컬러코드에 따른 실제 색상
-        C00: "#D4D9E1", C01: "#D4D9E1", C02: "#3F3C32", C03: "#D7D7D7", C04: "#F54E50", C05: "#FB874B",
-        C06: "#F1CE32", C07: "#349A50", C08: "#55CAB7", C09: "#398BE0", C10: "#DE9ACE", C11: "#FF9FB0",
-    },
-    saveDataset: [],
+    targetDataSet: [],
+    searchCondition: {},
 }
 
 $(function() { // 페이지가 로드되고 나서 실행
@@ -330,9 +284,8 @@ $(function() { // 페이지가 로드되고 나서 실행
 function onPageLoad() {
     grids.f.initialization();
     grids.f.create();
-
+    enableDatepicker();
     trigs.s.basicTrigger();
-    comms.getGridList();
 
     /* 생성된 그리드에 기본적으로 필요한 이벤트들을 적용한다. */
     // grids.e.basicEvent();
@@ -344,8 +297,39 @@ function makeSaveDataset(checkedItems) { // 저장 데이터셋 만들기
         fdIdList.push(data.item.fdId);
     });
     const changeData = {
-        stateType: "S4",
         fdIdList: fdIdList,
     };
     return changeData;
+}
+
+function enableDatepicker() {
+    let fromday = new Date();
+    fromday.setDate(fromday.getDate() - 6);
+    fromday = fromday.format("yyyy-MM-dd");
+    const today = new Date().format("yyyy-MM-dd");
+
+    /* datepicker를 적용시킬 대상들의 dom id들 */
+    const datePickerTargetIds = [
+        "filterFromDt", "filterToDt"
+    ];
+
+    $("#" + datePickerTargetIds[0]).val(fromday);
+    $("#" + datePickerTargetIds[1]).val(today);
+
+    const dateAToBTargetIds = [
+        ["filterFromDt", "filterToDt"]
+    ];
+
+    CommonUI.setDatePicker(datePickerTargetIds);
+    CommonUI.restrictDateAToB(dateAToBTargetIds);
+}
+
+function getMainList() {
+    const searchCondition = {
+        filterFromDt: $("#filterFromDt").val().numString(),
+        filterToDt: $("#filterToDt").val().numString(),
+    };
+    wares.searchCondition = searchCondition;
+
+    comms.getMainList();
 }

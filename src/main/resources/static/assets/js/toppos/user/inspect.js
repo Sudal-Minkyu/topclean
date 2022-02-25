@@ -330,11 +330,13 @@ const grids = {
                 {
                     dataField: "insertDt",
                     headerText: "등록일시",
+                    width: 90,
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
                 }, {
                     dataField: "fiType",
                     headerText: "유형",
+                    width: 55,
                     labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
                         return CommonData.name.fiType[value];
                     },
@@ -342,16 +344,25 @@ const grids = {
                     dataField: "fiComment",
                     headerText: "검품내용",
                 }, {
+                    dataField: "fiAddAmt",
+                    headerText: "추가비용",
+                    width: 80,
+                    dataType: "numeric",
+                    autoThousandSeparator: "true",
+                }, {
                     dataField: "fiSendMsgYn",
                     headerText: "메시지",
+                    width: 55,
                     styleFunction: ynStyle,
                 }, {
                     dataField: "fiPhotoYn",
                     headerText: "이미지",
+                    width: 55,
                     styleFunction: ynStyle,
                 }, {
                     dataField: "fiCustomerConfirm",
                     headerText: "고객수락",
+                    width: 65,
                     labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
                         return CommonData.name.fiCustomerConfirm[value];
                     },
@@ -418,8 +429,8 @@ const grids = {
             });
 
             AUIGrid.bind(grids.s.id[2], "cellClick", function (e) {
-                $("#messageField").val("");
                 wares.selectedInspect = e.item;
+                $("#messageField").val(e.item.fiComment);
                 if(e.item.fiPhotoYn === "Y") {
                     $("#imgThumb").attr("src", e.item.ffPath + "s_" + e.item.ffFilename);
                     $("#imgFull").attr("href", e.item.ffPath + e.item.ffFilename);

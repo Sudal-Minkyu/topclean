@@ -111,6 +111,12 @@ public class UserController {
     public String franchisein(){
         return "user/inandout/franchisein";
     }
+
+    // 가맹점 입고취소
+    @RequestMapping("franchiseincancel")
+    public String franchiseincancel(){
+        return "user/inandout/franchiseincancel";
+    }
     
     // 가맹점 강제 입고
     @RequestMapping("force")

@@ -245,6 +245,9 @@ $(function() {
     });
 });
 
+/* 결제창 영수증 자동인쇄 체크박스 체크 여부를 기억해 두었다가, 해당 동작 수행  */
+let autoPrintReceipt = false;
+
 /* 목록의 카메라 버튼을 누를 때 마다 카메라의 존재를 감지해 그 유무를 저장해둠 */
 let isCameraExist = false;
 
@@ -1690,6 +1693,7 @@ function onKeypadConfirm() {
 function onPaymentStageOne() {
     try {
         const applyUncollectAmt = $("#applyUncollectAmt").html().toInt();
+        autoPrintReceipt = $("#autoPrintReceipt").is(":checked");
 
         let items = [];
         const orderData = AUIGrid.getGridData(gridId[0]);
@@ -1769,7 +1773,7 @@ function onPaymentStageOne() {
                                 approvalTime: resjson.APPROVALTIME,
                                 approvalNo: resjson.APPROVALNO
                             };
-                        CAT.CatPrint(paymentData, creditData, "N");
+                        if(autoPrintReceipt) CAT.CatPrint(paymentData, creditData, "N");
                         onPaymentStageTwo(paymentData, resjson);
                     }
                     // 결제 실패의 경우
@@ -1786,7 +1790,7 @@ function onPaymentStageOne() {
             $('#payStatus').show();
             console.log(paymentData);
             try {
-                CAT.CatPrint(paymentData, "", "N");
+                if(autoPrintReceipt) CAT.CatPrint(paymentData, "", "N");
             }catch (e) {
                 console.log(e);
             }

@@ -11,12 +11,12 @@ $(function() {
         $password.attr("disabled", true);
     });
 
-    AUIGrid.bind(gridId[1], "cellDoubleClick", function (e) {
+    AUIGrid.bind(gridId[1], "cellClick", function (e) {
         $("#brCode").val(e.item.brCode);
         branchClose();
     });
 
-    AUIGrid.bind(gridId[2], "cellDoubleClick", function (e) {
+    AUIGrid.bind(gridId[2], "cellClick", function (e) {
         $("#frCode").val(e.item.frCode);
         franchiseClose();
     });
