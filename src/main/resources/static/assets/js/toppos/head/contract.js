@@ -228,7 +228,7 @@ $(function () {
         });
     });
 
-    AUIGrid.bind(gridId[4], "cellDoubleClick", function (e) {
+    AUIGrid.bind(gridId[4], "cellClick", function (e) {
         $("#bot_brCode").val(e.item.brCode);
         $("#bot_brName").val(e.item.brName);
         $("#bot_brCarculateRateHq").val(e.item.brCarculateRateHq);

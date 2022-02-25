@@ -5,7 +5,7 @@
 * */
 const dtos = {
     send: {
-        페이지에따른게시판데이터받아오기: {
+        getPostList: {
             page: "nr",
             size: "n", // 한 페이지에 띄울 글의 숫자 
             searchString: "s", // 빈 문자일 경우 일반적인 조회
@@ -14,17 +14,27 @@ const dtos = {
         },
     },
     receive: {
-        페이지에따른게시판데이터받아오기: {
-            작성글의리스트: {
-                id: "nr", // 게시판 글 id
+        getPostList: {
+            datalist: {
                 subject: "s",
                 numOfComment: "n", // 덧글이 달린 숫자.
                 insertDateTime: "s", // yyyymmdd만
                 insert_id: "s",
             },
-            페이징필요정보: {
-                totalRowCount: "nr", // 전체 게시물 건수
-            },
+            total_page: "n", // 전체 페이지수
+
+            total_rows: "n",
+            current_page: "n",
+            current_rows: "n",
+
+            current_page: "n",
+            current_rows: "n",
+            err_code: "s",
+            err_msg: "s",
+            message: "s",
+            status: "n",
+            timestamp: "n",
+            type: "s",
         },
     }
 };
@@ -45,9 +55,11 @@ const comms = {
             filterFromDt: wares.filterFromDt,
             filterToDt: wares.filterToDt,
         };
-
-        console.log(condition);
+        dv.chk(condition, dtos.send.getPostList, "게시판 조회 속성과, 검색값 보내기");
+        
         CommonUI.ajax(urls[wares.boardType], "PARAM", condition, function (res) {
+            dtos.receive.getPostList.datalist[wares[wares.boardType].idKeyName] = "n"; // 검사 조건에 임의로 각 게시판의 아이디 추가
+            dv.chk(res, dtos.receive.getPostList, "게시글들 받아오기");
             wares.totalPage = res.total_page;
             createPagingNavigator(wares.page);
             grids.f.setData(0, res.datalist);

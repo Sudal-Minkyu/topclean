@@ -5,19 +5,29 @@
 * */
 const dtos = {
     send: {
-        taglost: {
-            htId: "n",
+        getPost: {
         },
-        notice: {
-            hnId: "n",
-        }
     },
     receive: {
-        taglost: {
-
-        },
-        notice: {
-
+        getPost: { // 아이디는 동적으로 추가
+            content: "s",
+            subject: "s",
+            insertDateTime: "s",
+            isWritter: "s",
+            name: "s",
+            nextId: "n",
+            nextSubject: "s",
+            nextvInsertDateTime: "s",
+            prevId: "n",
+            prevSubject: "s",
+            prevInsertDateTime: "s",
+            fileList: {
+                fileId: "n",
+                fileVolume: "n",
+                filePath: "s",
+                fileOriginalFilename: "s",
+                fileFileName: "s",
+            }
         },
     }
 };
@@ -32,14 +42,19 @@ const urls = {
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
     getData(condition) {
+        dtos.send.getPost[wares[wares.boardType].idKeyName] = "n"; // 게시판마다 id가 다르므로 dtos의 항목도 동적 추가
+        dv.chk(condition, dtos.send.getPost, "게시글의 아이디를 보내기");
+        dtos.receive.getPost[wares[wares.boardType].idKeyName] = "n"; // 받는 dtos도 위와 마찬가지
         CommonUI.ajax(urls[wares.boardType], "GET", condition, function (res) {
             const data = res.sendData[wares[wares.boardType].dataKeyName];
+            dv.chk(data, dtos.receive.getPost, "게시글 받기");
             setFields(data);
         });
     },
 
     getReplyList(condition) {
         CommonUI.ajax(urls[wares.boardType + "ReplyList"], "GET", condition, function (res) {
+            //console.log(res);
             const data = res.sendData.commentListDto;
             data.forEach(obj => {
                 createReplyHtml(obj[wares[wares.boardType].commentKeyName], obj.name, obj.modifyDt, obj.hcComment, obj.type, obj.isWritter, obj.preId);
@@ -90,7 +105,7 @@ $(function() { // 페이지가 로드되고 나서 실행
 function onPageLoad() {
     getParams();
     let condition = {};
-    condition[wares[wares.boardType].idKeyName] = wares.id;
+    condition[wares[wares.boardType].idKeyName] = parseInt(wares.id);
     comms.getData(condition);
     if(wares.boardType !== "notice") {
         condition = {};

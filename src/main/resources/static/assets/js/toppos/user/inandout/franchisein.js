@@ -92,7 +92,7 @@ const comms = {
     
         CommonUI.ajax(urls.changeClosedList, "PARAM", saveData, function(res) {
             alertSuccess("입고 완료");
-            grids.f.clearData();
+            grids.f.clearData(0);
             comms.getGridList();
 
             $('#selectItems').val(0);
@@ -347,6 +347,5 @@ function makeSaveDataset(checkedItems) { // 저장 데이터셋 만들기
         stateType: "S4",
         fdIdList: fdIdList,
     };
-    changeData.fdIdList = fdIdList;
     return changeData;
 }

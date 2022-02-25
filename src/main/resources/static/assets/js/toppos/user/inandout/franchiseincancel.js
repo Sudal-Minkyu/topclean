@@ -5,9 +5,8 @@
 * */
 const dtos = {
     send: {
-        franchiseStateChange: {
+        franchiseInCancelChange: {
             fdIdList: "a",
-            stateType: "sr",
         }
     },
     receive: {
@@ -87,15 +86,12 @@ const comms = {
     },
 
     cancelInState(saveData) {
-        dv.chk(saveData, dtos.send.franchiseStateChange, '입고취소 항목 보내기');
+        dv.chk(saveData, dtos.send.franchiseInCancelChange, '입고취소 항목 보내기');
     
         CommonUI.ajax(urls.cancelInState, "PARAM", saveData, function(res) {
             alertSuccess("입고취소 완료");
-            grids.f.clearData();
+            grids.f.clearData(0);
             comms.getGridList();
-
-            $('#selectItems').val(0);
-            $('#selectAmount').val(0);
         });
     }
 };
@@ -328,7 +324,7 @@ $(function() { // 페이지가 로드되고 나서 실행
 function onPageLoad() {
     grids.f.initialization();
     grids.f.create();
-
+    enableDatepicker();
     trigs.s.basicTrigger();
 
     /* 생성된 그리드에 기본적으로 필요한 이벤트들을 적용한다. */
@@ -341,9 +337,29 @@ function makeSaveDataset(checkedItems) { // 저장 데이터셋 만들기
         fdIdList.push(data.item.fdId);
     });
     const changeData = {
-        stateType: "S5",
         fdIdList: fdIdList,
     };
-    changeData.fdIdList = fdIdList;
     return changeData;
+}
+
+function enableDatepicker() {
+    let fromday = new Date();
+    fromday.setDate(fromday.getDate() - 6);
+    fromday = fromday.format("yyyy-MM-dd");
+    const today = new Date().format("yyyy-MM-dd");
+
+    /* datepicker를 적용시킬 대상들의 dom id들 */
+    const datePickerTargetIds = [
+        "filterFromDt", "filterToDt"
+    ];
+
+    $("#" + datePickerTargetIds[0]).val(fromday);
+    $("#" + datePickerTargetIds[1]).val(today);
+
+    const dateAToBTargetIds = [
+        ["filterFromDt", "filterToDt"]
+    ];
+
+    CommonUI.setDatePicker(datePickerTargetIds);
+    CommonUI.restrictDateAToB(dateAToBTargetIds);
 }
