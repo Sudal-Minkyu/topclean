@@ -12,6 +12,7 @@
 
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
+	<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
     <script src="/assets/js/toppos/head/contract.js"></script>
     <script>
     	$(document).ready(function() {
@@ -31,8 +32,31 @@
 				AUIGrid.resize(gridId[1]);
 				AUIGrid.resize(gridId[2]);
 				AUIGrid.resize(gridId[3]);
-			})
+			});
     	})
+
+		// 우편번호 검색
+		function execDaumPostcode() {
+			new daum.Postcode({
+				oncomplete: function(data) {
+					console.log(data);
+					var addr = ''; // 주소 변수
+
+					//사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져온다.
+					if (data.userSelectedType === 'R') { // 사용자가 도로명 주소를 선택했을 경우
+						addr = data.roadAddress;
+					} else { // 사용자가 지번 주소를 선택했을 경우(J)
+						addr = data.jibunAddress;
+					}
+
+					// 우편번호와 주소 정보를 해당 필드에 넣는다.
+					document.getElementById('postcode').value = data.zonecode;
+					document.getElementById("address").value = addr;
+					// 커서를 상세주소 필드로 이동한다.
+					document.getElementById("detailAddress").focus();
+				}
+			}).open();
+		}
     </script>
 </th:block>
 
@@ -64,29 +88,31 @@
 							<form id="brFormData" enctype="multipart/form-data">
 								<div class="form">
 									<ul class="form__list">
-										<li class="form__item form__item--100">
+										<li class="form__item">
 											<div class="form__title">지사코드</div>
 											<div class="form__input">
 												<div class="c-text-button">
 													<input type="text" name="brCode" id="brCode" maxlength="2" />
 								                    <input type="hidden" id="brCodeChecked" value="0">
-								                    <button type="button" class="c-button" id="brCodeChkBtn" onclick="codeOverlap(1)">중복확인</button>
+								                    <button type="button" class="c-button c-button--small" id="brCodeChkBtn" onclick="codeOverlap(1)">중복확인</button>
 												</div>
 											</div>
 										</li>
-										<li class="form__item form__item--100">
-											<div class="form__title">지사명</div>
-											<div class="form__input">
-												<input type="text" name="brName" id="brName" />
-											</div>
-										</li>
-										<li class="form__item form__item--100">
+										<li class="form__item">
 											<div class="form__title">계약일자</div>
 											<div class="form__input">
 												<input type="text" class="c-date" id="brContractDt" name="brContractDt" maxlength="10" placeholder="연 - 월 - 일" readonly>
 											</div>
 										</li>
-										<li class="form__item form__item--100">
+									</ul>
+									<ul class="form__list">
+										<li class="form__item">
+											<div class="form__title">지사명</div>
+											<div class="form__input">
+												<input type="text" name="brName" id="brName" />
+											</div>
+										</li>
+										<li class="form__item">
 											<div class="form__title">계약상태</div>
 											<div class="form__input">
 												<div class="c-select">
@@ -97,7 +123,9 @@
 								                </div>
 											</div>
 										</li>
-										<li class="form__item form__item--100">
+									</ul>
+									<ul class="form__list form__list--100">
+										<li class="form__item">
 											<div class="form__title">계약기간</div>
 											<div class="form__input">
 												<input type="text" class="c-date" id="brContractFromDt" name="brContractFromDt" maxlength="10" placeholder="연 - 월 - 일" readonly>
@@ -105,7 +133,7 @@
 							                    <input type="text" class="c-date" id="brContractToDt" name="brContractToDt" maxlength="10" placeholder="연 - 월 - 일" readonly>
 											</div>
 										</li>										
-										<li class="form__item form__item--100">
+										<li class="form__item">
 											<div class="form__title">정산비율</div>
 											<div class="form__input">
 												<ul class="percent">
@@ -135,7 +163,7 @@
 												</ul>
 											</div>
 										</li>
-										<li class="form__item form__item--100">
+										<li class="form__item">
 											<div class="form__title">특이사항</div>
 											<div class="form__input">
 												<textarea  id="brRemark" name="brRemark"></textarea>
@@ -161,24 +189,23 @@
 						<div class="contract__list">
 							<div class="contract__head"><h3>가맹점 리스트</h3></div>
 							<div class="contract__body">
-								<div class="contract__search">
-									<div class="search-form search-form--right">
-										<ul class="search-form__list">
-											<li class="search-form__item">
-												<div class="search-form__title">가맹점명</div>
-												<div class="search-form__input">
-													<input id="frNameFilter" type="text">
+								<div class="inquiry">
+									<div class="inquiry__condition">
+										<ul>
+											<li>
+												<div class="inquiry__title">가맹점명</div>
+												<div class="inquiry__input">
+													<div class="inquiry__input-tag">
+														<input id="frNameFilter" type="text" />
+													</div>
 												</div>
 											</li>
+											
 										</ul>
-										<ul class="seach-form__console">
-											<li class="search-form__btn">
-												<button type="button" class="c-button c-button--solid" onclick="filterFranchiseList(1)">검색</button>
-											</li>
-											<li class="search-form__btn">
-												<button type="button" class="c-button" onclick="filterFranchiseList(2)">초기화</button>
-											</li>
-										</ul>
+									</div>
+									<div class="inquiry__button inquiry__button--row">
+										<button type="button" class="c-button c-button--small c-button--solid" onclick="filterFranchiseList(1)">검색</button>
+										<button type="button" class="c-button c-button--small" onclick="filterFranchiseList(2)">초기화</button>
 									</div>
 								</div>
 								
@@ -190,117 +217,152 @@
 					<div class="contract__regist">
 						<div class="contract__head"><h3>가맹점 계약 정보</h3></div>
 						<div class="contract__body">
-							<div class="form">
-								<form id="frFormData" enctype="multipart/form-data">
-									<ul class="form__list">
-										<li class="form__item form__item--100">
-											<div class="form__title">가맹점코드</div>
-											<div class="form__input">
-												<div class="c-text-button">
-													<input type="text" id="frCode" name="frCode" maxlength="3" />
-								                    <input type="hidden" id="frCodeChecked" value="0">
-								                    <button type="button" class="c-button" id="frCodeChkBtn" onclick="codeOverlap(2)">중복확인</button>
-												</div>
+							<form class="form" id="frFormData" enctype="multipart/form-data">
+								<ul class="form__list">
+									<li class="form__item">
+										<div class="form__title">가맹점코드</div>
+										<div class="form__input">
+											<div class="c-text-button">
+												<input type="text" id="frCode" name="frCode" maxlength="3" />
+												<input type="hidden" id="frCodeChecked" value="0">
+												<button type="button" class="c-button c-button--small" id="frCodeChkBtn" onclick="codeOverlap(2)">중복확인</button>
 											</div>
-										</li>
-										<li class="form__item form__item--100">
-											<div class="form__title">가맹점명</div>
-											<div class="form__input">
-												<input type="text" id="frName" name="frName" />
+										</div>
+									</li>
+									<li class="form__item">
+										<div class="form__title">가맹점관리코드</div>
+										<div class="form__input">
+											<input type="text" id="frRefCode" name="frRefCode">
+										</div>
+									</li>
+									<li class="form__item">
+										<div class="form__title">계약일자</div>
+										<div class="form__input">
+											<input id="frContractDt" class="c-date" name="frContractDt" type="text" maxlength="10" placeholder="연 - 월 - 일" readonly>
+										</div>
+									</li>
+								</ul>
+								<ul class="form__list">
+									<li class="form__item">
+										<div class="form__title">가맹점명</div>
+										<div class="form__input">
+											<input type="text" id="frName" name="frName" />
+										</div>
+									</li>
+									<li class="form__item">
+										<div class="form__title"></div>
+										<div class="form__input">
+											
+										</div>
+									</li>
+									<li class="form__item">
+										<div class="form__title">계약상태</div>
+										<div class="form__input">
+											<div class="c-select">
+												<select id="frContractState" name="frContractState">
+													<option value="01">진행중</option>
+													<option value="02">계약완료</option>
+												</select>
 											</div>
-										</li>
-										<li class="form__item form__item--100">
-											<div class="form__title">가맹점관리코드</div>
-											<div class="form__input">
-												<input type="text" id="frRefCode" name="frRefCode">
+										</div>
+									</li>
+								</ul>
+								<ul class="form__list form__list--100">
+									<li class="form__item">
+										<div class="form__title">계약기간</div>
+										<div class="form__input">
+											<input id="frContractFromDt" class="c-date" name="frContractFromDt" type="text" maxlength="10" placeholder="연 - 월 - 일" readonly />
+											~
+											<input id="frContractToDt" class="c-date" name="frContractToDt" type="text" maxlength="10" placeholder="연 - 월 - 일" readonly />
+										</div>
+									</li>
+								</ul>
+
+								<ul class="form__list">
+									<li class="form__item">
+										<div class="form__title">적용가격등급</div>
+										<div class="form__input">
+											<div class="c-select">
+												<select id="frPriceGrade" name="frPriceGrade">
+													<option value="">선택</option>
+													<option value="A">A</option>
+													<option value="B">B</option>
+													<option value="C">C</option>
+													<option value="D">D</option>
+													<option value="E">E</option>
+												</select>
 											</div>
-										</li>
-										<li class="form__item form__item--100">
-											<div class="form__title">계약일자</div>
-											<div class="form__input">
-												<input id="frContractDt" class="c-date" name="frContractDt" type="text" maxlength="10" placeholder="연 - 월 - 일" readonly>
+										</div>
+									</li>
+									<li class="form__item">
+										<div class="form__title">대표자</div>
+										<div class="form__input">
+											<input type="text" id="frRpreName" name="frRpreName" />
+										</div>
+									</li>
+									<li class="form__item">
+										<div class="form__title">가맹점택코드 (3자리)</div>
+										<div class="form__input">
+											<input type="text" id="frTagNo" name="frTagNo" maxlength="3" />
+										</div>
+									</li>
+								</ul>
+								
+								<ul class="form__list">
+									<li class="form__item">
+										<div class="form__title">사업자번호</div>
+										<div class="form__input">
+											<input type="text" id="frBusinessNo" name="frBusinessNo" maxlength="12"
+											onkeyup="onKeyupFrBusinessNo(this)"/>
+										</div>
+									</li>
+									<li class="form__item">
+										<div class="form__title">매장전화</div>
+										<div class="form__input">
+											<input type="text" id="frTelNo" name="frTelNo" onkeyup="onKeyupFrTelNo(this)" />
+										</div>
+									</li>
+									<li class="form__item">
+										<div class="form__title">출고예정일계산</div>
+										<div class="form__input">
+											<input type="text" style="width: 40px;" id="frEstimateDuration" name="frEstimateDuration" onkeyup="validateNumber(this, 2)" onchange="validateNumber(this, 2)"><span>일후 출고</span>
+										</div>
+									</li>
+								</ul>
+								<ul class="form__list form__list--100">
+									<li class="form__item">
+										<div class="form__title">주소</div>
+										<div class="form__input">
+											<div class="address">
+												<ul>
+													<li>
+														<input class="address__postcode" type="text" id="postcode" placeholder="우편번호" />
+														<button class="c-button c-button--small" onclick="execDaumPostcode()">우편번호 검색</button>
+													</li>
+													<li>
+														<input type="text" id="address" placeholder="주소" />
+													</li>
+													<li>
+														<input type="text" id="detailAddress" placeholder="상세주소 입력" />
+													</li>
+												</ul>
 											</div>
-										</li>
-										<li class="form__item form__item--100">
-											<div class="form__title">계약상태</div>
-											<div class="form__input">
-												<div class="c-select">
-								                    <select id="frContractState" name="frContractState">
-								                        <option value="01">진행중</option>
-								                        <option value="02">계약완료</option>
-								                    </select>
-								                </div>
-											</div>
-										</li>
-										<li class="form__item form__item--100">
-											<div class="form__title">계약기간</div>
-											<div class="form__input">
-												<input id="frContractFromDt" class="c-date" name="frContractFromDt" type="text" maxlength="10" placeholder="연 - 월 - 일" readonly />
-							                    ~
-							                    <input id="frContractToDt" class="c-date" name="frContractToDt" type="text" maxlength="10" placeholder="연 - 월 - 일" readonly />
-											</div>
-										</li>
-										<li class="form__item form__item--100">
-											<div class="form__title">적용가격등급</div>
-											<div class="form__input">
-												<div class="c-select">
-								                    <select id="frPriceGrade" name="frPriceGrade">
-								                        <option value="">선택</option>
-								                        <option value="A">A</option>
-								                        <option value="B">B</option>
-								                        <option value="C">C</option>
-								                        <option value="D">D</option>
-								                        <option value="E">E</option>
-								                    </select>
-								                </div>
-											</div>
-										</li>
-										<li class="form__item form__item--100">
-											<div class="form__title">사업자번호</div>
-											<div class="form__input">
-												<input type="text" id="frBusinessNo" name="frBusinessNo" maxlength="12"
-												onkeyup="onKeyupFrBusinessNo(this)"/>
-											</div>
-										</li>
-										<li class="form__item form__item--100">
-											<div class="form__title">대표자</div>
-											<div class="form__input">
-												<input type="text" id="frRpreName" name="frRpreName" />
-											</div>
-										</li>
-										<li class="form__item form__item--100">
-											<div class="form__title">매장전화</div>
-											<div class="form__input">
-												<input type="text" id="frTelNo" name="frTelNo" onkeyup="onKeyupFrTelNo(this)" />
-											</div>
-										</li>
-										<li class="form__item form__item--100">
-											<div class="form__title">가맹점택코드<br />(3자리)</div>
-											<div class="form__input">
-												<input type="text" id="frTagNo" name="frTagNo" maxlength="3" />
-											</div>
-										</li>
-										<li class="form__item form__item--100">
-											<div class="form__title">출고예정일계산</div>
-											<div class="form__input">
-												<input type="text" id="frEstimateDuration" name="frEstimateDuration" onkeyup="validateNumber(this, 2)" onchange="validateNumber(this, 2)"><span>일후 출고</span>
-											</div>
-										</li>
-										<li class="form__item form__item--100">
-											<div class="form__title">특이사항</div>
-											<div class="form__input">
-												<textarea id="frRemark" name="frRemark"></textarea>
-											</div>
-										</li>
-									</ul>
-									
-									<ul class="article__console article__console--right">
-										<li><button type="button" class="c-button c-button--solid" onclick="createNewPost(1)">신규</button></li>
-										<li><button type="button" class="c-button c-button--darksolid" onclick="franchiseSave()">저장</button></li>
-										<li><button type="button" class="c-button c-button--red" onclick="franchiseDelete()">삭제</button></li>
-									</ul>
-								</form>
-							</div>
+										</div>
+									</li>
+									<li class="form__item">
+										<div class="form__title">특이사항</div>
+										<div class="form__input">
+											<textarea id="frRemark" name="frRemark"></textarea>
+										</div>
+									</li>
+								</ul>
+								
+								<ul class="article__console article__console--right">
+									<li><button type="button" class="c-button c-button--solid" onclick="createNewPost(1)">신규</button></li>
+									<li><button type="button" class="c-button c-button--darksolid" onclick="franchiseSave()">저장</button></li>
+									<li><button type="button" class="c-button c-button--red" onclick="franchiseDelete()">삭제</button></li>
+								</ul>
+							</form>
 						</div>
 					</div>
 				</div>
@@ -309,38 +371,41 @@
 			<div class="c-tabs__content">
 				<div class="contract">
 					<div class="contract__list-area">
-						<div class="contract__search">
-							<div class="search-form search-form--right">
-								<ul class="search-form__list">
-									<li class="search-form__item">
-										<div class="search-form__title">배정상태</div>
-										<div class="search-form__input">
-											<div class="c-select">
-												<select id="s_brAssignState" name="brAssignState">
-									                <option value="">선택안함</option>
-									                <option value="01">미배정</option>
-									                <option value="02">배정완료</option>
-									            </select>
-											</div>
-										</div>
-									</li>
-									<li class="search-form__item">
-										<div class="search-form__title">가맹점명</div>
-										<div class="search-form__input">
-											<input id="s_frName" type="text">
-										</div>
-									</li>
-								</ul>
-								<ul class="seach-form__console">
-									<li class="search-form__btn">
+						<div class="contract__list">
+							<div class="contract__body">
+								<div class="inquiry" style="margin-top: 0;">
+									<div class="inquiry__condition">
+										<ul>
+											<li>
+												<div class="inquiry__title">배정상태</div>
+												<div class="inquiry__input">
+													<div class="c-select">
+														<select id="s_brAssignState" name="brAssignState">
+															<option value="">선택안함</option>
+															<option value="01">미배정</option>
+															<option value="02">배정완료</option>
+														</select>
+													</div>
+												</div>
+											</li>
+											<li>
+												<div class="inquiry__title">가맹점명</div>
+												<div class="inquiry__input">
+													<div class="inquiry__input-tag">
+														<input id="s_frName" type="text" />
+													</div>
+												</div>
+											</li>
+										</ul>
+									</div>
+									<div class="inquiry__button inquiry__button--row">
 										<button type="button" class="c-button c-button--solid" onclick="filterFranchiseList(3)">검색</button>
-									</li>
-									<li class="search-form__btn">
 										<button type="button" class="c-button" onclick="filterFranchiseList(4)">초기화</button>
-									</li>
-								</ul>
+									</div>
+								</div>
 							</div>
 						</div>
+						
 						
 						<div class="contract__list">
 							<div class="contract__head"><h3>계약 지사 리스트</h3></div>
@@ -362,31 +427,37 @@
 						<div class="contract__body">
 							<div class="form">
 								<ul class="form__list">
-									<li class="form__item form__item--100">
+									<li class="form__item">
 										<div class="form__title">가맹점코드</div>
 										<div class="form__input">
 											<input id="bot_frCode" type="text" readonly>
 										</div>
 									</li>
-									<li class="form__item form__item--100">
-										<div class="form__title">가맹점명</div>
-										<div class="form__input">
-											<input id="bot_frName" type="text" readonly>
-										</div>
-									</li>
-									<li class="form__item form__item--100">
+									<li class="form__item">
 										<div class="form__title">계약일자</div>
 										<div class="form__input">
 											<input class="c-date" id="bot_frContractDt" type="text" readonly>
 										</div>
 									</li>
-									<li class="form__item form__item--100">
+								</ul>
+
+								<ul class="form__list">
+									<li class="form__item">
+										<div class="form__title">가맹점명</div>
+										<div class="form__input">
+											<input id="bot_frName" type="text" readonly>
+										</div>
+									</li>
+									<li class="form__item">
 										<div class="form__title">계약상태</div>
 										<div class="form__input">
 											<input id="bot_frContractStateValue" type="text" readonly>
 										</div>
 									</li>
-									<li class="form__item form__item--100">
+								</ul>
+
+								<ul class="form__list form__list--100">
+									<li class="form__item">
 										<div class="form__title">계약기간</div>
 										<div class="form__input">
 											<input class="c-date" id="bot_frContractFromDt" type="text" readonly>
@@ -394,19 +465,19 @@
 							                <input class="c-date" id="bot_frContractToDt" type="text" readonly>
 										</div>
 									</li>
-									<li class="form__item form__item--100">
-										<div class="form__title form__item--100">지사</div>
+									<li class="form__item">
+										<div class="form__title">지사</div>
 										<div class="form__input">
 											<div class="c-text-button">
 												<div class="c-text-button__dual-input">
 													<input id="bot_brCode" type="text" readonly>
 									                <input id="bot_brName" type="text" readonly>
 												</div>
-								                <button class="c-button" type="button" onclick="brListPop()">지사변경</button>
+								                <button class="c-button c-button--small" type="button" onclick="brListPop()">지사변경</button>
 											</div>
 										</div>
 									</li>
-									<li class="form__item form__item--100">
+									<li class="form__item">
 										<div class="form__title">배정상태</div>
 										<div class="form__input">
 											<div class="c-select">
@@ -417,7 +488,7 @@
 											</div>
 										</div>
 									</li>
-									<li class="form__item form__item--100">
+									<li class="form__item">
 										<div class="form__title">정산비율</div>
 										<div class="form__input">
 											<ul class="percent">
