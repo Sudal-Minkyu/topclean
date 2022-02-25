@@ -5,18 +5,11 @@
 * */
 const dtos = {
     send: {
-        taglost: {
-            htId: "n",
+        getPost: {
         },
-        notice: {
-            hnId: "n",
+        getReply: {
         },
-        덧글리스트불러오기: {
-            htId: "", // 글의 id
-        },
-        덧글달기와수정: {
-            htId: "", // 글의 id
-            hcId: "", // 덧글 수정일 경우 필요
+        lostNoticeCommentSave: {
             type: "", // 덧글 타입
             comment: "", // 덧글의 내용
             preId: "", // 덧글의 덧글일 경우 원댓글의 아이디
@@ -26,28 +19,33 @@ const dtos = {
         }
     },
     receive: {
-        taglost: {
+        getPost: {
             fileList: {
                 fileId: "n",
                 filePath: "s",
                 fileFileName: "s",
-                fileOriginalFileName: "s",
+                fileOriginalFilename: "s",
                 fileVolume: "n",
-            }
+            },
+            content: "s",
+            subject: "s",
+            insertDateTime: "s",
+            isWritter: "s",
+            name: "s",
+            nextId: "",
+            nextSubject: "s",
+            nextvInsertDateTime: "s",
+            prevId: "",
+            prevSubject: "s",
+            prevInsertDateTime: "s",
         },
 
-        notice: {
-
-        },
-
-        덧글리스트불러오기: { // insertDt 가 빠른 순서대로 불러온다.
-            hcId: "", // 덧글의 id
-            name: "", // 덧글 작성자 이름
-            modifyDt: "", // 덧글의 수정시간(없을 경우 등록시간)
-            comment: "", // 덧글 내용
-            type: "", // 덧글 타입
-            preId: "", // 덧글의 덧글일 경우 원댓글의 아이디
-            isWritter: "s", // 1이면 본인글, 2이면 본인글 아님
+        getReply: {
+            isWritter: "s",
+            modifyDt: "s",
+            name: "s",
+            preId: "",
+            type: "s",
         },
     }
 };
@@ -64,35 +62,42 @@ const urls = {
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
     getData(condition) {
-        console.log(condition);
+        dtos.send.getPost[wares[wares.boardType].idKeyName] = "n"; // 게시판마다 id가 다르므로 dtos의 항목도 동적 추가
+        dv.chk(condition, dtos.send.getPost, "읽어올 게시물의 아이디 보내기");
+        dtos.receive.getPost[wares[wares.boardType].idKeyName] = "n"; // 받는 dtos도 위와 마찬가지
         CommonUI.ajax(urls[wares.boardType], "GET", condition, function (res) {
-            console.log(res);
             const data = res.sendData[wares[wares.boardType].dataKeyName];
+            dv.chk(data, dtos.receive.getPost, "받아온 게시물");
             setFields(data);
         });
     },
 
     getReplyList(condition) {
+        dtos.send.getReply[wares[wares.boardType].idKeyName] = "n";
+        dv.chk(condition, dtos.send.getReply, "덧글 조회를 위한 게시글의 아이디 보내기");
+        dtos.receive.getReply[wares[wares.boardType].commentIdKeyName] = "n";
+        dtos.receive.getReply[wares[wares.boardType].commentKeyName] = "s";
+
         CommonUI.ajax(urls[wares.boardType + "ReplyList"], "GET", condition, function (res) {
             const data = res.sendData.commentListDto;
+            dv.chk(data, dtos.receive.getReply, "조회한 덧글 가져오기");
             data.forEach(obj => {
-                createReplyHtml(obj[wares[wares.boardType].commentKeyName], obj.name, obj.modifyDt, obj.hcComment, obj.type, obj.isWritter, obj.preId);
+                createReplyHtml(obj[wares[wares.boardType].commentIdKeyName], obj.name, obj.modifyDt, obj.hcComment, obj.type, obj.isWritter, obj.preId);
             });
         });
     },
 
     putReply(data) {
+        dtos.send.lostNoticeCommentSave[wares[wares.boardType].idKeyName] = "n";
+        dtos.send.lostNoticeCommentSave[wares[wares.boardType].commentIdKeyName] = "";
+        dv.chk(data, dtos.send.lostNoticeCommentSave, "덧글 달기와 수정 정보 보내기");
         CommonUI.ajax(urls.putReply, "PARAM", data, function (res) {
             $("#replyList").children().remove();
             $("#replyField").val("");
             const condition = {};
-            condition[wares[wares.boardType].masterKeyName] = wares.id;
+            condition[wares[wares.boardType].idKeyName] = parseInt(wares.id);
             comms.getReplyList(condition);
         });
-    },
-
-    modifyReply(data) {
-        console.log(data);
     },
 
     deletePost(target) {
@@ -121,8 +126,8 @@ const trigs = {
             alertCheck("정말 삭제하시겠습니까?");
             $("#checkDelSuccessBtn").on("click", function () {
                 const target = {
-                    htId: parseInt(wares.id),
                 }
+                target.wares[wares.boardType].idKeyName = parseInt(wares.id);
                 comms.deletePost(target);
                 $('#popupId').remove();
             });
@@ -147,8 +152,8 @@ const wares = {
     taglost: {
         idKeyName: "htId",
         dataKeyName: "tagNoticeViewDto",
-        masterKeyName: "htId",
-        commentKeyName: "hcId",
+        commentIdKeyName: "hcId",
+        commentKeyName: "hcComment",
     },
     notice: {
         idKeyName: "hnId",
@@ -166,14 +171,14 @@ function onPageLoad() {
     setInputs();
 
     let condition = {};
-    condition[wares[wares.boardType].idKeyName] = wares.id;
+    condition[wares[wares.boardType].idKeyName] = parseInt(wares.id);
     comms.getData(condition);
 
     trigs.basic();
 
     if(wares.boardType !== "notice") {
         condition = {};
-        condition[wares[wares.boardType].masterKeyName] = wares.id;
+        condition[wares[wares.boardType].idKeyName] = parseInt(wares.id);
         comms.getReplyList(condition);
     }
 }
@@ -191,9 +196,9 @@ function getParams() {
     wares.params = url.searchParams;
 
     if(wares.params.has("id")) {
-        wares.id = wares.params.get("id");
+        wares.id = parseInt(wares.params.get("id"));
     } else {
-        wares.id = "";
+        wares.id = 0;
     }
 
     if(wares.params.has("prevPage")) {
@@ -259,7 +264,6 @@ function setFields(data) {
         $("#content").css("height", "200px");
     }
 
-    console.log(data.fileList);
     $("#fileCnt").html(data.fileList.length);
 
     for(let file of data.fileList) {
@@ -373,8 +377,8 @@ function commitReply(type = "", fieldId, preId = "", commentId = "") {
         comment: $(fieldId).val(),
         preId: preId,
     };
-    data[wares[wares.boardType].masterKeyName] = wares.id;
-    data[wares[wares.boardType].commentKeyName] = commentId;
+    data[wares[wares.boardType].idKeyName] = parseInt(wares.id);
+    data[wares[wares.boardType].commentIdKeyName] = commentId;
 
     comms.putReply(data);
 }

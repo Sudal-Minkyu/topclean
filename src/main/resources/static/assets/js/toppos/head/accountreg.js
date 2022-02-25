@@ -11,12 +11,12 @@ $(function() {
         $password.attr("disabled", true);
     });
 
-    AUIGrid.bind(gridId[1], "cellClick", function (e) {
+    AUIGrid.bind(gridId[1], "cellDoubleClick", function (e) {
         $("#brCode").val(e.item.brCode);
         branchClose();
     });
 
-    AUIGrid.bind(gridId[2], "cellClick", function (e) {
+    AUIGrid.bind(gridId[2], "cellDoubleClick", function (e) {
         $("#frCode").val(e.item.frCode);
         franchiseClose();
     });
@@ -403,19 +403,23 @@ function restrictCodeSelection(selectedCode) {
         case "ROLE_USER" :
             $frCode.attr("disabled", false);
             $frCodeBtn.attr("disabled", false);
+            $brCode.val("");
             $brCode.attr("disabled", true);
             $brCodeBtn.attr("disabled", true);
             break;
         case "ROLE_MANAGER" :
         case "ROLE_NORMAL" :
+            $frCode.val("");
             $frCode.attr("disabled", true);
             $frCodeBtn.attr("disabled", true);
             $brCode.attr("disabled", false);
             $brCodeBtn.attr("disabled", false);
             break;
         default :
+            $frCode.val("");
             $frCode.attr("disabled", true);
             $frCodeBtn.attr("disabled", true);
+            $brCode.val("");
             $brCode.attr("disabled", true);
             $brCodeBtn.attr("disabled", true);
             break;
@@ -456,3 +460,22 @@ function formatTel(element) {
     element.value = CommonUI.formatTel(phoneNumber);
 }
 
+function branchSelect() {
+    const selectedItem = AUIGrid.getSelectedItems(gridId[1])[0];
+    if(selectedItem) {
+        $("#brCode").val(selectedItem.item.brCode);
+        branchClose();
+    } else {
+        alertCaution("지사를 선택해 주세요", 1);
+    }
+}
+
+function franchiseSelect() {
+    const selectedItem = AUIGrid.getSelectedItems(gridId[2])[0];
+    if(selectedItem) {
+        $("#frCode").val(selectedItem.item.frCode);
+        franchiseClose();
+    } else {
+        alertCaution("가맹점을 선택해 주세요", 1);
+    }
+}

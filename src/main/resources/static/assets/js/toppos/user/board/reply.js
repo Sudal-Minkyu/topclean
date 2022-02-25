@@ -5,26 +5,20 @@
 * */
 const dtos = {
     send: {
-        덧글리스트불러오기: {
-            htId: "", // 글의 id
-        },
-        덧글달기와수정: {
-            htId: "", // 글의 id
-            hcId: "", // 덧글 수정일 경우 필요
+        getReply: {},
+        lostNoticeCommentSave: {
             type: "", // 덧글 타입
             comment: "", // 덧글의 내용
             preId: "", // 덧글의 덧글일 경우 원댓글의 아이디
         }
     },
     receive: {
-        덧글리스트불러오기: { // insertDt 가 빠른 순서대로 불러온다.
-            hcId: "", // 덧글의 id
-            name: "", // 덧글 작성자 이름
-            modifyDt: "", // 덧글의 수정시간(없을 경우 등록시간)
-            comment: "", // 덧글 내용
-            type: "", // 덧글 타입
-            preId: "", // 덧글의 덧글일 경우 원댓글의 아이디
-            isWritter: "s", // 1이면 본인글, 2이면 본인글 아님
+        getReply: {
+            isWritter: "s",
+            modifyDt: "s",
+            name: "s",
+            preId: "",
+            type: "s",
         },
     }
 };
@@ -38,26 +32,31 @@ const urls = {
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
     getReplyList(condition) {
+        dtos.send.getReply[wares[wares.boardType].idKeyName] = "n";
+        dv.chk(condition, dtos.send.getReply, "덧글 조회를 위한 게시글의 아이디 보내기");
+        dtos.receive.getReply[wares[wares.boardType].commentIdKeyName] = "n";
+        dtos.receive.getReply[wares[wares.boardType].commentKeyName] = "s";
+
         CommonUI.ajax(urls.getReplyList, "GET", condition, function (res) {
             const data = res.sendData.commentListDto;
+            dv.chk(data, dtos.receive.getReply, "조회한 덧글 가져오기");
             data.forEach(obj => {
-                createReplyHtml(obj[wares[wares.boardType].commentKeyName], obj.name, obj.modifyDt, obj.hcComment, obj.type, obj.isWritter, obj.preId);
+                createReplyHtml(obj[wares[wares.boardType].commentIdKeyName], obj.name, obj.modifyDt, obj.hcComment, obj.type, obj.isWritter, obj.preId);
             });
         });
     },
 
     putReply(data) {
+        dtos.send.lostNoticeCommentSave[wares[wares.boardType].idKeyName] = "n";
+        dtos.send.lostNoticeCommentSave[wares[wares.boardType].commentIdKeyName] = "";
+        dv.chk(data, dtos.send.lostNoticeCommentSave, "덧글 달기와 수정 정보 보내기");
         CommonUI.ajax(urls.putReply, "PARAM", data, function (res) {
             $("#replyList").children().remove();
             $("#replyField").val("");
             const condition = {};
-            condition[wares[wares.boardType].masterKeyName] = wares.id;
+            condition[wares[wares.boardType].idKeyName] = parseInt(wares.id);
             comms.getReplyList(condition);
         });
-    },
-
-    modifyReply(data) {
-        console.log(data);
     },
 };
 
@@ -97,8 +96,10 @@ const wares = {
 
     boardType: "",
     taglost: {
-        masterKeyName: "htId",
-        commentKeyName: "hcId",
+        idKeyName: "htId",
+        dataKeyName: "tagNoticeViewDto",
+        commentIdKeyName: "hcId",
+        commentKeyName: "hcComment",
     },
 }
 
@@ -110,7 +111,7 @@ $(function() { // 페이지가 로드되고 나서 실행
 function onPageLoad() {
     getParams();
     const condition = {};
-    condition[wares[wares.boardType].masterKeyName] = wares.id;
+    condition[wares[wares.boardType].idKeyName] = parseInt(wares.id);
     comms.getReplyList(condition);
 
     trigs.s.basic();
@@ -159,7 +160,7 @@ function getParams() {
     wares.params = url.searchParams;
 
     if(wares.params.has("id")) {
-        wares.id = wares.params.get("id");
+        wares.id = parseInt(wares.params.get("id"));
     } else {
         wares.id = "";
     }
@@ -267,8 +268,8 @@ function commitReply(type = "", fieldId, preId = "", commentId = "") {
         comment: $(fieldId).val(),
         preId: preId,
     };
-    data[wares[wares.boardType].masterKeyName] = wares.id;
-    data[wares[wares.boardType].commentKeyName] = commentId;
+    data[wares[wares.boardType].idKeyName] = parseInt(wares.id);
+    data[wares[wares.boardType].commentIdKeyName] = commentId;
 
     comms.putReply(data);
 }

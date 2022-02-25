@@ -1766,15 +1766,7 @@ function onPaymentStageOne() {
                     let resjson = JSON.parse(res);
                     // 결제 성공일경우 Print
                     if (resjson.STATUS === "SUCCESS") {
-                        let creditData =
-                            {
-                                cardNo: resjson.CARDNO,
-                                cardName: resjson.ISSUERNAME,
-                                approvalTime: resjson.APPROVALTIME,
-                                approvalNo: resjson.APPROVALNO
-                            };
-                        if(autoPrintReceipt) CAT.CatPrint(paymentData, creditData, "N");
-                        onPaymentStageTwo(paymentData, resjson);
+                        onPaymentStageTwo(resjson);
                     }
                     // 결제 실패의 경우
                     if (resjson.STATUS === "FAILURE") {
@@ -1783,31 +1775,21 @@ function onPaymentStageOne() {
                         alertCancel("단말기 처리 중 에러가 발생하였습니다<br>잠시후 다시 시도해주세요");
                     }
                 });
-            }catch (e) {
+            } catch (e) {
                 console.log(e);
             }
-        }else if (paymentData.type ==="cash") {
-            $('#payStatus').show();
-            console.log(paymentData);
-            try {
-                if(autoPrintReceipt) CAT.CatPrint(paymentData, "", "N");
-            }catch (e) {
-                console.log(e);
-            }
-            $('#payStatus').hide();
-            onPaymentStageTwo(paymentData);
-        }else{
+        } else {
             onPaymentStageTwo();
         }
 
-    }catch (e) {
+    } catch (e) {
         console.log(e);
         return false;
     }
 }
 
 /* 결재할 때 */
-function onPaymentStageTwo(paymentData = {}, creditData = {}) {
+function onPaymentStageTwo(creditData = {}) {
     try {
         const url = "/api/user/requestPayment";
         let data = {
@@ -1891,6 +1873,10 @@ function onPaymentStageTwo(paymentData = {}, creditData = {}) {
             calculateOne();
             calculateTwo();
             calculateThree();
+            if($("#totalAmt").html() === "0" && autoPrintReceipt) {
+                onPrintReceipt();
+                onClosePayment();
+            }
         });
     }catch (e) {
         console.log(e);

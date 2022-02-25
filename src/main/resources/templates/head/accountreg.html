@@ -82,8 +82,8 @@
 								<div class="form__title">가맹점코드 3자리</div>
 								<div class="form__input">
 									<div class="c-text-button">
-										<input type="text" id="frCode" maxlength="3" name="frCode" readonly/>
-										<button id="frCodeBtn" type="button" class="c-button c-button--small" onclick="frListPop()">가맹점선택</button>
+										<input type="text" id="frCode" maxlength="3" name="frCode" readonly=""/>
+										<button id="frCodeBtn" type="button" class="c-button c-button--small" onclick="frListPop()" disabled="">가맹점선택</button>
 									</div>
 									<span class="text-color--red">*가맹점 권한 시 필수</span>
 								</div>
@@ -92,8 +92,8 @@
 								<div class="form__title">지사코드 2자리</div>
 								<div class="form__input">
 									<div class="c-text-button">
-										<input type="text" id="brCode" maxlength="2" name="brCode" readonly/>
-										<button id="brCodeBtn" type="button" class="c-button c-button--small" onclick="brListPop()">지사선택</button>
+										<input type="text" id="brCode" maxlength="2" name="brCode" readonly=""/>
+										<button id="brCodeBtn" type="button" class="c-button c-button--small" onclick="brListPop()" disabled="">지사선택</button>
 									</div>
 									<span class="text-color--red">*지사 권한 시 필수</span>
 								</div>
@@ -241,7 +241,8 @@
 				</div>
 			</div>
 			<div class="l-popup__console">
-				<button onclick="branchClose()" class="c-button c-button--dark">팝업닫기</button>
+				<button onclick="branchClose()" class="c-button c-button--red">취소</button>
+				<button onclick="branchSelect()" class="c-button c-button--darksolid">선택</button>
 			</div>
 		</div>
 	</div>
@@ -295,7 +296,8 @@
 
 			</div>
 			<div class="l-popup__console">
-				<button onclick="franchiseClose()" class="c-button c-button--dark">팝업닫기</button>
+				<button onclick="franchiseClose()" class="c-button c-button--red">취소</button>
+				<button onclick="franchiseSelect()" class="c-button c-button--darksolid">선택</button>
 			</div>
 		</div>
 	</div>

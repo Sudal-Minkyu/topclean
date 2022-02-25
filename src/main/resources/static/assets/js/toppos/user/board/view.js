@@ -5,8 +5,8 @@
 * */
 const dtos = {
     send: {
-        getPost: {
-        },
+        getPost: {},
+        getReply: {},
     },
     receive: {
         getPost: { // 아이디는 동적으로 추가
@@ -15,10 +15,10 @@ const dtos = {
             insertDateTime: "s",
             isWritter: "s",
             name: "s",
-            nextId: "n",
+            nextId: "",
             nextSubject: "s",
             nextvInsertDateTime: "s",
-            prevId: "n",
+            prevId: "",
             prevSubject: "s",
             prevInsertDateTime: "s",
             fileList: {
@@ -28,6 +28,14 @@ const dtos = {
                 fileOriginalFilename: "s",
                 fileFileName: "s",
             }
+        },
+
+        getReply: {
+            isWritter: "s",
+            modifyDt: "s",
+            name: "s",
+            preId: "",
+            type: "s",
         },
     }
 };
@@ -53,11 +61,16 @@ const comms = {
     },
 
     getReplyList(condition) {
+        dtos.send.getReply[wares[wares.boardType].idKeyName] = "n"; // 게시판마다 id가 다르므로 dtos의 항목도 동적 추가
+        dv.chk(condition, dtos.send.getReply, "덧글 조회를 위한 게시글의 아이디 보내기");
+        dtos.receive.getReply[wares[wares.boardType].commentIdKeyName] = "n";
+        dtos.receive.getReply[wares[wares.boardType].commentKeyName] = "s";
+
         CommonUI.ajax(urls[wares.boardType + "ReplyList"], "GET", condition, function (res) {
-            //console.log(res);
             const data = res.sendData.commentListDto;
+            dv.chk(data, dtos.receive.getReply, "조회한 덧글 가져오기");
             data.forEach(obj => {
-                createReplyHtml(obj[wares[wares.boardType].commentKeyName], obj.name, obj.modifyDt, obj.hcComment, obj.type, obj.isWritter, obj.preId);
+                createReplyHtml(obj[wares[wares.boardType].commentIdKeyName], obj.name, obj.modifyDt, obj.hcComment, obj.type, obj.isWritter, obj.preId);
             });
         });
     },
@@ -88,8 +101,8 @@ const wares = {
     taglost: {
         idKeyName: "htId",
         dataKeyName: "tagNoticeViewDto",
-        masterKeyName: "htId",
-        commentKeyName: "hcId",
+        commentIdKeyName: "hcId",
+        commentKeyName: "hcComment",
     },
     notice: {
         idKeyName: "hnId",
@@ -109,7 +122,7 @@ function onPageLoad() {
     comms.getData(condition);
     if(wares.boardType !== "notice") {
         condition = {};
-        condition[wares[wares.boardType].masterKeyName] = wares.id;
+        condition[wares[wares.boardType].idKeyName] = parseInt(wares.id);
         comms.getReplyList(condition);
     }
 }
