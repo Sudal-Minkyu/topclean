@@ -11,6 +11,7 @@ const dto = {
     send: {
         franchiseItemGroupUpdate: {
             bgItemGroupcode: "sr",
+            bgFavoriteYn: "s",
             bgSort: "nr",
         },
         franchiseItemSortList: {
@@ -30,6 +31,7 @@ const dto = {
         franchiseItemGroupList: {
             bgSort: "nr",
             bgItemGroupcode: "sr",
+            bgFavoriteYn: "s",
             bgName: "s",
             bgIconFilename: "d",
         },
@@ -74,8 +76,9 @@ const ajax = {
                 return;
             }
         }
+        console.log(dataList);
         CommonUI.ajax(grid.s.url.update[numOfGrid], "MAPPER", dataList, function(req) {
-            alertSuccess("위치 조정을 완료했습니다.");
+            alertSuccess("조정 정보 저장을 완료했습니다.");
         });
     },
     filterBsList(condition) {
@@ -138,7 +141,14 @@ const grid = {
                 }, {
                     dataField: "bgName",
                     headerText: "분류명칭",
-                },
+                }, {
+                    dataField: "bgFavoriteYn",
+                    headerText: "즐겨찾기",
+                    renderer : {
+                        type : "DropDownListRenderer",
+                        list : ["Y", "N"],
+                    },
+                }
             ];
 
             /* 0번 그리드의 프로퍼티(옵션) 아래의 링크를 참조
@@ -346,6 +356,7 @@ function saveSort(numOfGrid) {
         if(numOfGrid === 0) {
             newDto = CommonUI.newDto(dto.send.franchiseItemGroupUpdate);
             newDto.bgItemGroupcode = gridData[i].bgItemGroupcode;
+            newDto.bgFavoriteYn = gridData[i].bgFavoriteYn;
             newDto.bgSort = i;
             refinedData.push(newDto);
         }else if(numOfGrid === 2) {
