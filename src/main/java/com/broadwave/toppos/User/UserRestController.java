@@ -802,6 +802,8 @@ public class UserRestController {
 
     //  통합조회용 - 결제취소/적립금전환 요청
     @PostMapping("franchiseRequestDetailCencel")
+    @ApiOperation(value = "통합조회용" , notes = "결제취소/적립금전환 요청")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
     public ResponseEntity<Map<String,Object>> franchiseRequestDetailCencel(@RequestParam(value="fpId", defaultValue="") Long fpId,
                                                                                                                 @RequestParam(value="type", defaultValue="") String type, HttpServletRequest request){
         return inspectService.franchiseRequestDetailCencel(fpId, type, request);
@@ -821,6 +823,8 @@ public class UserRestController {
 
     //  통합조회용 - 검품 리스트 요청
     @GetMapping("franchiseInspectionList")
+    @ApiOperation(value = "통합조회용" , notes = "검품 리스트 요청한다 ")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
     public ResponseEntity<Map<String,Object>> franchiseInspectionList(@RequestParam(value="fdId", defaultValue="") Long fdId,
                                                                            @RequestParam(value="type", defaultValue="") String type){
         return inspectService.franchiseInspectionList(fdId, type);
@@ -840,6 +844,8 @@ public class UserRestController {
 
     //  통합조회용 - 검품 고객 수락/거부
     @PostMapping("franchiseInspectionYn")
+    @ApiOperation(value = "통합조회용" , notes = "검품 고객 수락/거부를 요청한다 ")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
     public ResponseEntity<Map<String,Object>> franchiseInspectionYn(@RequestParam(value="fiId", defaultValue="") Long fiId,
                                                                     @RequestParam(value="type", defaultValue="") String type,
                                                                     @RequestParam(value="fiAddAmt", defaultValue="") Integer fiAddAmt,
@@ -1027,6 +1033,8 @@ public class UserRestController {
     }
 
     //  택분실게시판 - 댓글 작성 and 수정
+    @ApiOperation(value = "택분실게시판" , notes = "게시판의 댓글작성 및 수정을 요청한다 ")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
     @PostMapping("/lostNoticeCommentSave")
     public ResponseEntity<Map<String,Object>> lostNoticeCommentSave(@RequestParam("hcId") Long hcId, @RequestParam("htId") Long htId, @RequestParam("type") String type,
                                                                                                             @RequestParam("comment") String comment, @RequestParam("preId") Long preId,

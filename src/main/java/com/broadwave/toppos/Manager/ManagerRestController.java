@@ -133,6 +133,8 @@ public class ManagerRestController {
 
     //  택분실게시판 - 댓글 작성 and 수정
     @PostMapping("lostNoticeCommentSave")
+    @ApiOperation(value = "택분실게시판" , notes = "댓글작성 및 수정을 요청한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
     public ResponseEntity<Map<String,Object>> lostNoticeCommentSave(@RequestParam("hcId") Long hcId, @RequestParam("htId") Long htId, @RequestParam("type") String type,
                                                                     @RequestParam("comment") String comment, @RequestParam("preId") Long preId,
                                                                     HttpServletRequest request) {
@@ -241,8 +243,10 @@ public class ManagerRestController {
         return receiptReleaseService.branchReceiptForceReleaseList(frId, fromDt, toDt, tagNo, request);
     }
 
-    //  접수테이블의 상태 변화 API - 지사출고취소, 지사반송, 가맹점입고 실행 함수
+    //  접수테이블의 상태 변화 API - 지사출고취소, 지사반송, 가맹점강제출고 실행 함수
     @PostMapping("branchRelease")
+    @ApiOperation(value = "접수테이블의 상태 변화" , notes = "지사출고취소(type : 1), 지사반송(type : 2), 가맹점강제출고(type : 3)를 요청한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
     public ResponseEntity<Map<String,Object>> branchReleaseCancel(@RequestParam(value="fdIdList", defaultValue="") List<Long> fdIdList,
                                                                   @RequestParam("type")String type, HttpServletRequest request){
         return receiptReleaseService.branchRelease(fdIdList, type, request);
@@ -273,6 +277,8 @@ public class ManagerRestController {
 
     // 확인품 검품 리스트 요청
     @GetMapping("branchInspectionList")
+    @ApiOperation(value = "확인품 검품 리스트" , notes = "확인품리스트를 요청한다.(type : '1'은 가맹검품만, type : '2'는 확인품만, type : '0'은 모든항목 )")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
     public ResponseEntity<Map<String,Object>> branchInspectionList(@RequestParam(value="fdId", defaultValue="") Long fdId,
                                                                       @RequestParam(value="type", defaultValue="") String type){
         return inspectService.branchInspectionList(fdId, type);
@@ -322,6 +328,8 @@ public class ManagerRestController {
 //@@@@@@@@@@@@@@@@@@@@@ 지사입고현황, 체류세탁물현황, 출고현황, 강제출고현황, 미출고현황, 가맹반송현황 관련 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     //  지사입고현황, 체류세탁물현황 - 왼쪽 리스트 호출API
     @GetMapping("branchStoreCurrentList")
+    @ApiOperation(value = "지사입고현황, 체류세탁물현황 리스트" , notes = "지사입고현황, 체류세탁물현황 리스트를 요청한다.(type : '2'가 아닌 모든 값은 지사입고현황 , type : '2'는 체류세탁물현황)")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
     public ResponseEntity<Map<String,Object>> branchStoreCurrentList(@RequestParam("franchiseId")Long franchiseId, @RequestParam("filterFromDt")String filterFromDt,
                                                                      @RequestParam("filterToDt")String filterToDt, @RequestParam("type")String type, HttpServletRequest request){
         return currentService.branchStoreCurrentList(franchiseId, filterFromDt, filterToDt, type, request);
@@ -341,6 +349,8 @@ public class ManagerRestController {
 
     // 지사출고현황, 지사강제출고현황 - 왼쪽 리스트 호출API
     @GetMapping("branchReleaseCurrentList")
+    @ApiOperation(value = "지사출고현황, 지사강제출고현황 리스트" , notes = "지사입고현황, 체류세탁물현황 리스트를 요청한다.(type : '1'은 지사출고현황, type : '1'이 아닌 모든 값은 지사강제출고현황)")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
     public ResponseEntity<Map<String,Object>> branchReleaseCurrentList(@RequestParam("franchiseId")Long franchiseId, @RequestParam("filterFromDt")String filterFromDt,
                                                                      @RequestParam("filterToDt")String filterToDt, @RequestParam("type")String type, HttpServletRequest request){
         return currentService.branchReleaseCurrentList(franchiseId, filterFromDt, filterToDt, type, request);
@@ -360,12 +370,16 @@ public class ManagerRestController {
 
     // 미출고현황 - 왼쪽 리스트 호출API
     @GetMapping("branchUnReleaseCurrentList")
+    @ApiOperation(value = "미출고현황" , notes = "미출고현황의 왼쪽리스트 호출한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
     public ResponseEntity<Map<String,Object>> branchUnReleaseCurrentList(@RequestParam("franchiseId")Long franchiseId, @RequestParam("filterFromDt")String filterFromDt,
                                                                        @RequestParam("filterToDt")String filterToDt, @RequestParam("type")String type, HttpServletRequest request){
         return currentService.branchUnReleaseCurrentList(franchiseId, filterFromDt, filterToDt, type, request);
     }
 
     // 미출고현황 - 오른쪽 리스트 호출API
+    @ApiOperation(value = "미출고현황" , notes = "오른쪽 리스트를 요청한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
     @GetMapping("branchUnReleaseCurrentInputList")
     public ResponseEntity<Map<String,Object>> branchUnReleaseCurrentInputList(@RequestParam("frCode")String frCode, @RequestParam("filterFromDt")String filterFromDt,
                                                                          @RequestParam("filterToDt")String filterToDt, @RequestParam("type")String type, HttpServletRequest request){
