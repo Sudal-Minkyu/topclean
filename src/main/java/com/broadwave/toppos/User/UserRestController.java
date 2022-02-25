@@ -73,10 +73,6 @@ public class UserRestController {
     @Value("${toppos.aws.s3.bucket.url}")
     private String AWSBUCKETURL;
 
-    // 현재 날짜 받아오기
-    LocalDateTime localDateTime = LocalDateTime.now();
-    private final  String nowDate = localDateTime.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-
     private final AWSS3Service awss3Service; // AWS S3 서비스
     private final UserService userService; // 가맹점 통합 서비스
     private final ReceiptService receiptService; // 가맹점 접수페이지 전용 서비스
@@ -358,6 +354,7 @@ public class UserRestController {
 
             SaveMoney saveMoneySave = new SaveMoney();
             saveMoneySave.setBcId(optionalCustomer.get());
+            saveMoneySave.setFsYyyymmdd(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
             saveMoneySave.setFsType("1");
             saveMoneySave.setFsClose("N");
             saveMoneySave.setFsAmt(controlMoney);
@@ -378,6 +375,9 @@ public class UserRestController {
     @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
     public ResponseEntity<Map<String,Object>> itemGroupAndPriceList(HttpServletRequest request){
         log.info("itemGroupAndPriceList 호출");
+
+        String nowDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+//        log.info("금일날짜 : "+nowDate);
 
         // 클레임데이터 가져오기
         Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
@@ -702,6 +702,10 @@ public class UserRestController {
     @PostMapping("franchiseItemList")
     public ResponseEntity<Map<String,Object>> franchiseItemList(@RequestParam(value="bgItemGroupcode", defaultValue="") String bgItemGroupcode,
                                                                     @RequestParam(value="bsItemGroupcodeS", defaultValue="") String bsItemGroupcodeS, HttpServletRequest request){
+
+        String nowDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+//        log.info("금일날짜 : "+nowDate);
+
         String biItemMgroup = bgItemGroupcode+bsItemGroupcodeS;
         return sortService.franchiseItemList(biItemMgroup, request, nowDate);
     }

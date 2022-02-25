@@ -111,6 +111,11 @@ public class CurrentService {
         log.info("현재 접속한 아이디 : "+login_id);
         log.info("현재 접속한 지사 코드 : "+brCode);
 
+//        log.info("franchiseId : "+franchiseId);
+//        log.info("filterFromDt : "+filterFromDt);
+//        log.info("filterToDt : "+filterToDt);
+//        log.info("type : "+type);
+
         List<RequestDetailBranchReleaseCurrentListDto> requestDetailBranchReleaseCurrentListDtos =  requestDetailRepository.findByRequestDetailBranchReleaseCurrentList(brCode, franchiseId, filterFromDt, filterToDt, type);
         List<HashMap<String,Object>> releaseViewData = new ArrayList<>();
         HashMap<String,Object> releaseInfo;
@@ -147,6 +152,8 @@ public class CurrentService {
         log.info("현재 접속한 아이디 : "+login_id);
         log.info("현재 접속한 지사 코드 : "+brCode);
 
+//        log.info("frCode : "+frCode);
+//        log.info("fdS4Dt : "+fdS4Dt);
         List<RequestDetailBranchReleaseCurrentRightListDto> requestDetailBranchReleaseCurrentRightListDtos =  requestDetailRepository.findByRequestDetailBranchReleaseCurrentRightList(brCode, frCode, fdS4Dt);
         data.put("gridListData",requestDetailBranchReleaseCurrentRightListDtos);
 

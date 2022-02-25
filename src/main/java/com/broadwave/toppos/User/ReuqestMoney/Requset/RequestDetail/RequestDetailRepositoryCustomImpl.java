@@ -5,6 +5,7 @@ import com.broadwave.toppos.Head.Item.Group.A.QItemGroup;
 import com.broadwave.toppos.Head.Item.Group.B.QItemGroupS;
 import com.broadwave.toppos.Head.Item.Group.C.QItem;
 import com.broadwave.toppos.Manager.Process.Issue.QIssue;
+import com.broadwave.toppos.Manager.Process.IssueForce.QIssueForce;
 import com.broadwave.toppos.User.Customer.QCustomer;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.QRequest;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.QInspeot;
@@ -1366,14 +1367,16 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                 ));
 
         query.orderBy(requestDetail.id.asc());
-        query.where(issue.frCode.eq(frCode));
-        query.where(requestDetail.fdS4Dt.eq(fdS4Dt));
+        query.where(issue.frCode.eq(frCode).and(issue.miDt.eq(fdS4Dt)));
 
         return query.fetch();
     }
 
     // 지사강제출고현황 - querydsl
     public  List<RequestDetailBranchReleaseForceCurrentRightListDto> findByRequestDetailBranchReleaseForceCurrentRightList(String brCode, String frCode, String fdS7Dt){
+
+        QIssueForce issueForce = QIssueForce.issueForce;
+
         QRequestDetail requestDetail = QRequestDetail.requestDetail;
         QRequest request = QRequest.request;
         QItemGroup itemGroup = QItemGroup.itemGroup;
@@ -1381,7 +1384,8 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         QItem item = QItem.item;
         QCustomer customer = QCustomer.customer;
 
-        JPQLQuery<RequestDetailBranchReleaseForceCurrentRightListDto> query = from(requestDetail)
+        JPQLQuery<RequestDetailBranchReleaseForceCurrentRightListDto> query = from(issueForce)
+                .innerJoin(requestDetail).on(issueForce.fdId.eq(requestDetail.id))
                 .innerJoin(requestDetail.frId, request)
                 .innerJoin(request.bcId, customer)
                 .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
@@ -1423,8 +1427,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                 ));
 
         query.orderBy(requestDetail.id.asc());
-        query.where(request.frCode.eq(frCode));
-        query.where(requestDetail.fdS7Dt.eq(fdS7Dt));
+        query.where(request.frCode.eq(frCode).and(issueForce.mrDt.eq(fdS7Dt)));
 
         return query.fetch();
     }

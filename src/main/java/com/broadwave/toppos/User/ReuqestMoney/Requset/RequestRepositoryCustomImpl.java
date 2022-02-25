@@ -194,16 +194,16 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
         QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
 
         JPQLQuery<RequestCustomerUnCollectDto> query = from(request)
-                .innerJoin(requestDetail.frId, request)
+                .innerJoin(requestDetail).on(requestDetail.frId.eq(request))
                 .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
                 .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
                 .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
 
-                .groupBy(request.id).orderBy(request.id.desc())
+                .groupBy(request).orderBy(request.id.desc())
                 .select(Projections.constructor(RequestCustomerUnCollectDto.class,
                         request.id,
                         request.frYyyymmdd,
-                        request.id.count(),
+                        request.count(),
                         itemGroup.bgName,
                         itemGroupS.bsName,
                         item.biName,
@@ -231,16 +231,16 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
         QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
 
         JPQLQuery<RequestCustomerUnCollectDto> query = from(request)
-                .innerJoin(requestDetail.frId, request)
+                .innerJoin(requestDetail).on(requestDetail.frId.eq(request))
                 .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
                 .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
                 .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
 
-                .groupBy(request.id).orderBy(request.id.desc())
+                .groupBy(request).orderBy(request.id.desc())
                 .select(Projections.constructor(RequestCustomerUnCollectDto.class,
                         request.id,
                         request.frYyyymmdd,
-                        request.id.count(),
+                        request.count(),
                         itemGroup.bgName,
                         itemGroupS.bsName,
                         item.biName,

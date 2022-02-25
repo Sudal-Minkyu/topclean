@@ -164,7 +164,7 @@ public class ReceiptService {
         log.info("소속된 지사 코드 : "+frbrCode);
 
         String nowDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-        log.info("금일날짜 : "+nowDate);
+//        log.info("금일날짜 : "+nowDate);
 
         RequestMapperDto etcData = requestDetailSet.getEtc(); // etc 데이터 얻기
 
