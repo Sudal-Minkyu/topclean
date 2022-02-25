@@ -1,5 +1,8 @@
 FROM openjdk:8-jdk-alpine
-RUN echo "Asia/Seoul" > /etc/timezone
+ENV TZ=Asia/Seoul
+RUN apk add --no-cache tzdata && \
+    cp /usr/share/zoneinfo/$TZ /etc/localtime && \
+    echo $TZ > /etc/timezone
 VOLUME /tmp
 ARG JAR_FILE
 COPY ./target/Toppos-1.0.0.jar app.jar
