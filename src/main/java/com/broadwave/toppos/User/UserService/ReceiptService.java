@@ -53,10 +53,6 @@ import java.util.*;
 @Service
 public class ReceiptService {
 
-    // 현재 날짜 받아오기
-    LocalDateTime localDateTime = LocalDateTime.now();
-    private final  String nowDate = localDateTime.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-
     private final UserService userService;
     private final TokenProvider tokenProvider;
     private final KeyGenerateService keyGenerateService;
@@ -166,6 +162,9 @@ public class ReceiptService {
         log.info("현재 접속한 아이디 : "+login_id);
         log.info("현재 접속한 가맹점 코드 : "+frCode);
         log.info("소속된 지사 코드 : "+frbrCode);
+
+        String nowDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        log.info("금일날짜 : "+nowDate);
 
         RequestMapperDto etcData = requestDetailSet.getEtc(); // etc 데이터 얻기
 
@@ -497,6 +496,9 @@ public class ReceiptService {
         log.info("현재 접속한 가맹점 코드 : "+frCode);
         log.info("소속된 지사 코드 : "+frbrCode);
 
+        String nowDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        log.info("금일날짜 : "+nowDate);
+
         // 현재 고객을 받아오기 -> 고객정보가 존재해야 결제를 진행할 수 있다.
         Optional<Customer> optionalCustomer = userService.findByBcId(etcData.getBcId());
         if(!optionalCustomer.isPresent()){
@@ -698,6 +700,9 @@ public class ReceiptService {
     // 여러사람의 고객정보 조회용 적립금, 미수금 호출 함수
     public List<HashMap<String,Object>> findByUnCollectAndSaveMoney(List<HashMap<String, Object>> customerListData, List<Long> customerIdList, String type){
 
+        String nowDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        log.info("금일날짜 : "+nowDate);
+
         if(type.equals("1")){
             log.info("전일~금일 미수금 리스트를 받아옵니다.");
             List<RequestUnCollectDto> requestUnCollectDtoList = requestRepositoryCustom.findByUnCollectList(customerIdList, nowDate);
@@ -803,6 +808,9 @@ public class ReceiptService {
         Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
         String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
         log.info("현재 접속한 가맹점 코드 : "+frCode);
+
+        String nowDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        log.info("금일날짜 : "+nowDate);
 
         RequestPaymentPaperDto requestPaymentPaperDto = requestRepositoryCustom.findByRequestPaymentPaper(frNo, frId, frCode);
         HashMap<String,Object> paymentData;
