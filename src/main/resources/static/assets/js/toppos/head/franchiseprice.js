@@ -22,11 +22,8 @@ $(function() {
         }
     });
 
-    AUIGrid.bind(gridId[2], "cellClick", function (e) {
-        delete e.item["_$uid"];
-        e.item["_$uid"] = idIndex;
-        AUIGrid.updateRowsById(gridId[1], e.item);
-        itemListClose();
+    AUIGrid.bind(gridId[2], "cellDoubleClick", function (e) {
+        putItemListInfo(e.item);
     });
 
     AUIGrid.bind(gridId[1], "cellEditBegin", function (e) {
@@ -197,6 +194,22 @@ function itemListPop(rowIdValue) {
     filterItemList(2);
     $('#itemList_popup').addClass('open');
     AUIGrid.resize(gridId[2]);
+}
+
+function itemListSelect() {
+    const selectedItem = AUIGrid.getSelectedItems(gridId[2])[0];
+    if(selectedItem) {
+        putItemListInfo(selectedItem.item);
+    } else {
+        alertCaution("지사를 선택해 주세요", 1);
+    }
+}
+
+function putItemListInfo(item) {
+    delete item["_$uid"];
+    item["_$uid"] = idIndex;
+    AUIGrid.updateRowsById(gridId[1], item);
+    itemListClose();
 }
 
 function itemListClose() {

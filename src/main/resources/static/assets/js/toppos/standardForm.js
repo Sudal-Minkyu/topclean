@@ -99,27 +99,16 @@ const grids = {
             return AUIGrid.getCheckedRowItems(grids.s.id[numOfGrid]);
         }
     },
-
-    t: {
-        basic() {
-            /* 0번그리드 내의 셀 클릭시 이벤트 */
-            AUIGrid.bind(grids.s.id[0], "cellClick", function (e) {
-                console.log(e.item); // 이밴트 콜백으로 불러와진 객체의, 클릭한 대상 row 키(파라메터)와 값들을 보여준다.
-            });
-        }
-    }
 };
 
-/* 이벤트를 s : 설정하거나 r : 해지하는 함수들을 담는다. 그리드 관련 이벤트는 grids.e에 위치 (trigger) */
+/* 이벤트를 설정하거나 해지하는 함수들을 담는다. */
 const trigs = {
-    s: { // 이벤트 설정
-        basic() {
-
-        }
+    basic() {
+        /* 0번그리드 내의 셀 클릭시 이벤트 */
+        AUIGrid.bind(grids.s.id[0], "cellClick", function (e) {
+            console.log(e.item); // 이밴트 콜백으로 불러와진 객체의, 클릭한 대상 row 키(파라메터)와 값들을 보여준다.
+        });
     },
-    r: { // 이벤트 해제
-
-    }
 }
 
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */

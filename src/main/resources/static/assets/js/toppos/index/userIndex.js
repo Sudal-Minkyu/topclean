@@ -8,7 +8,13 @@ const dtos = {
 
     },
     receive: {
-
+        franchiseInfo: {
+            slidingText: "s", // 2022.03.02 추가
+            brName: "s",
+            frName: "s",
+            username: "s",
+            usertel: "s",
+        },
     }
 };
 
@@ -22,8 +28,9 @@ const urls = {
 const comms = {
     franchiseInfo() {
         const url = "/api/user/franchiseInfo";
-        CommonUI.ajax(url, "GET", null, function (req) {
-            const userIndexDto = req.sendData.userIndexDto;
+        CommonUI.ajax(url, "GET", null, function (res) {
+            console.log(res.sendData.userIndexDto);
+            const userIndexDto = res.sendData.userIndexDto;
             // console.log(userIndexDto);
             if(userIndexDto.brName===null){
                 $("#brName").text("무소속");
@@ -33,8 +40,13 @@ const comms = {
             $("#frName").text(userIndexDto.frName+" 점");
             $("#userName").text(userIndexDto.username);
             $("#userTel").text(CommonUI.formatTel(userIndexDto.usertel));
+
+            if(false) {
+                $("#slidingText").html("받아온 값 추가");//////
+            }
         });
     },
+
     notice() {
         CommonUI.ajax(urls.notice, "PARAM", wares.boardConditionThree, function (res) {
             const data = res.datalist;
@@ -48,6 +60,7 @@ const comms = {
             }
         });
     },
+
     taglost() {
         CommonUI.ajax(urls.taglost, "PARAM", wares.boardConditionThree, function (res) {
             const data = res.datalist;
