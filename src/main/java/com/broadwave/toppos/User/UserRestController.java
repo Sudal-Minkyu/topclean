@@ -12,6 +12,7 @@ import com.broadwave.toppos.Head.Item.Group.B.UserItemGroupSListDto;
 import com.broadwave.toppos.Head.Item.ItemDtos.UserItemPriceSortDto;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.Manager.Calendar.BranchCalendar;
+import com.broadwave.toppos.Manager.Calendar.CalendarDtos.BranchCalendarListDto;
 import com.broadwave.toppos.Manager.ManagerService.CalendarService;
 import com.broadwave.toppos.Manager.ManagerService.TagNoticeService;
 import com.broadwave.toppos.User.Addprocess.AddprocessDtos.AddprocessDto;
@@ -55,6 +56,8 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -84,10 +87,11 @@ public class UserRestController {
     private final BusinessdayService businessdayService; // 일일영업일보 서비스
     private final TagNoticeService tagNoticeService; // 택분실 게시판 서비스
     private final NoticeService noticeService; // 공지사항 게시판 서비스
+    private final CalendarService calendarService; // 휴무일 서비스
+
     private final ModelMapper modelMapper;
     private final TokenProvider tokenProvider;
     private final HeadService headService;
-    private final CalendarService calendarService;
 
     @Autowired
     public UserRestController(AWSS3Service awss3Service, UserService userService, ReceiptService receiptService, SortService sortService, InfoService infoService, InspectService inspectService,
@@ -130,10 +134,42 @@ public class UserRestController {
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
 
-        UserIndexDto userIndexDto = userService.findByUserInfo(login_id, frCode);
-        //        log.info("userIndexDto : "+userIndexDto);
+        String nowDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        log.info("금일날짜 : "+nowDate);
 
-        data.put("userIndexDto",userIndexDto);
+        UserIndexDto userIndexDto = userService.findByUserInfo(login_id, frCode);
+        List<BranchCalendarListDto> branchCalendarListDtos = calendarService.branchCalendarSlidingDtoList(frbrCode, nowDate);
+
+        List<String> calendar = new ArrayList<>();
+        if(branchCalendarListDtos.size()!=0){
+            for(BranchCalendarListDto branchCalendarListDto : branchCalendarListDtos){
+                if(branchCalendarListDto.getBcDayoffYn().equals("Y")){
+                    int year = Integer.parseInt(branchCalendarListDto.getBcDate().substring(0,4));
+                    int month = Integer.parseInt(branchCalendarListDto.getBcDate().substring(4,6));
+                    int day = Integer.parseInt(branchCalendarListDto.getBcDate().substring(6,8));
+                    LocalDate date = LocalDate.of(year, month, day);
+                    DayOfWeek dayOfWeek = date.getDayOfWeek();
+                    int dayOfWeekNumber = dayOfWeek.getValue();
+                    if(dayOfWeekNumber != 7){
+                        calendar.add(branchCalendarListDto.getBcDate());
+                    }
+                }
+            }
+        }
+
+        List<HashMap<String,Object>> userIndexData = new ArrayList<>();
+        HashMap<String,Object> userIndexInfo;
+        if(userIndexDto != null){
+            userIndexInfo = new HashMap<>();
+            userIndexInfo.put("username", userIndexDto.getUsername());
+            userIndexInfo.put("usertel", userIndexDto.getUsertel());
+            userIndexInfo.put("brName", userIndexDto.getBrName());
+            userIndexInfo.put("frName", userIndexDto.getFrName());
+            userIndexInfo.put("slidingText", calendar);
+            userIndexData.add(userIndexInfo);
+        }
+
+        data.put("userIndexDto",userIndexData);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }

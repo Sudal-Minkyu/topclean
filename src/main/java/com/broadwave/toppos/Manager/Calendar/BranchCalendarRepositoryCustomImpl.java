@@ -41,6 +41,24 @@ public class BranchCalendarRepositoryCustomImpl extends QuerydslRepositorySuppor
         return query.fetch();
     }
 
+    // 가맹점 메인페이지용 10일이후의 휴무일을 보여줌
+    @Override
+    public List<BranchCalendarListDto> branchCalendarSlidingDtoList(String brCode, String nowDate) {
+        QBranchCalendar branchCalendar = QBranchCalendar.branchCalendar;
+
+        JPQLQuery<BranchCalendarListDto> query = from(branchCalendar)
+                .select(Projections.constructor(BranchCalendarListDto.class,
+                        branchCalendar.bcDate,
+                        branchCalendar.bcDayoffYn
+                ));
+
+        query.orderBy(branchCalendar.bcDate.asc()).limit(10);
+        query.where(branchCalendar.brCode.eq(brCode));
+        query.where(branchCalendar.bcDate.goe(nowDate));
+
+        return query.fetch();
+    }
+
     // 가맹점 출고예정일, 택번호 호출
     @Override
     public List<EtcDataDto> findByEtc(Long frEstimateDuration, String frCode, String nowDate) {

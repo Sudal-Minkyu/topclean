@@ -3,29 +3,38 @@ package com.broadwave.toppos.User.UserService;
 import com.broadwave.toppos.Head.Franchise.Franchise;
 import com.broadwave.toppos.Head.HeadService.HeadService;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
-import com.broadwave.toppos.Manager.Calendar.BranchCalendarRepositoryCustom;
+import com.broadwave.toppos.Manager.Calendar.BranchCalendarRepository;
 import com.broadwave.toppos.User.Customer.Customer;
 import com.broadwave.toppos.User.Customer.CustomerRepository;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentDtos.PaymentPaperDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailPaymentPaper;
-import com.broadwave.toppos.User.UserDtos.EtcDataDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.*;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.*;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.Payment;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentDtos.PaymentDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentDtos.PaymentEtcDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentDtos.PaymentMapperDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.*;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentDtos.PaymentPaperDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentRepository;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentRepositoryCustom;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentSet;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.Request;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.Photo;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.PhotoDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.PhotoRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.PhotoRepositoryCustom;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetail;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.RequestDetailMapperDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailAmtDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.RequestDetailMapperDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailPaymentPaper;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepository;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailSet;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.*;
-import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.*;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestRepository;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestRepositoryCustom;
+import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoney;
 import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoneyDtos.SaveMoneyDto;
 import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoneyDtos.SaveMoneyListDto;
+import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoneyRepository;
+import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoneyRepositoryCustom;
+import com.broadwave.toppos.User.UserDtos.EtcDataDto;
 import com.broadwave.toppos.common.AjaxResponse;
 import com.broadwave.toppos.common.ResponseErrorCode;
 import com.broadwave.toppos.keygenerate.KeyGenerateService;
@@ -71,13 +80,13 @@ public class ReceiptService {
 
     private final HeadService headService;
     private final CustomerRepository customerRepository;
-    private final BranchCalendarRepositoryCustom branchCalendarRepositoryCustom;
+    private final BranchCalendarRepository branchCalendarRepository;
 
     @Autowired
     public ReceiptService(UserService userService, KeyGenerateService keyGenerateService, TokenProvider tokenProvider, ModelMapper modelMapper,
                           RequestRepository requestRepository, RequestDetailRepository requestDetailRepository, PaymentRepository paymentRepository, SaveMoneyRepository saveMoneyRepository, PhotoRepository photoRepository,
                           RequestRepositoryCustom requestRepositoryCustom, SaveMoneyRepositoryCustom saveMoneyRepositoryCustom, PhotoRepositoryCustom photoRepositoryCustom,
-                          HeadService headService, CustomerRepository customerRepository, BranchCalendarRepositoryCustom branchCalendarRepositoryCustom, PaymentRepositoryCustom paymentRepositoryCustom){
+                          HeadService headService, CustomerRepository customerRepository, BranchCalendarRepository branchCalendarRepository, PaymentRepositoryCustom paymentRepositoryCustom){
         this.userService = userService;
         this.headService = headService;
         this.requestRepository = requestRepository;
@@ -88,7 +97,7 @@ public class ReceiptService {
         this.requestDetailRepository = requestDetailRepository;
         this.customerRepository = customerRepository;
         this.saveMoneyRepository = saveMoneyRepository;
-        this.branchCalendarRepositoryCustom = branchCalendarRepositoryCustom;
+        this.branchCalendarRepository = branchCalendarRepository;
         this.paymentRepositoryCustom = paymentRepositoryCustom;
         this.photoRepositoryCustom = photoRepositoryCustom;
         this.keyGenerateService = keyGenerateService;
@@ -98,7 +107,7 @@ public class ReceiptService {
 
     // 태그번호, 출고예정일 데이터
     public List<EtcDataDto> findByEtc(Long frEstimateDuration, String frCode, String nowDate) {
-        return branchCalendarRepositoryCustom.findByEtc(frEstimateDuration, frCode, nowDate);
+        return branchCalendarRepository.findByEtc(frEstimateDuration, frCode, nowDate);
     }
 
     // 접수코드를 통한 접수마스터 테이블 조회

@@ -15,4 +15,6 @@ public interface BranchCalendarRepositoryCustom {
     List<BranchCalendarListDto> branchCalendarDtoList(String brCode, String targetYear);
 
     List<EtcDataDto> findByEtc(Long frEstimateDuration, String frCode, String nowDate);
+
+    List<BranchCalendarListDto> branchCalendarSlidingDtoList(String brCode, String nowDate);
 }

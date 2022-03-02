@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface BranchCalendarRepository extends JpaRepository<BranchCalendar,Long> {
+public interface BranchCalendarRepository extends JpaRepository<BranchCalendar,Long>, BranchCalendarRepositoryCustom {
     @Query("select a from BranchCalendar a where a.brCode = :brCode and a.bcDate = :bcDate")
     Optional<BranchCalendar> branchCalendarInfo(String brCode, String bcDate);
 }

@@ -3,7 +3,6 @@ package com.broadwave.toppos.Manager.ManagerService;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.Manager.Calendar.BranchCalendar;
 import com.broadwave.toppos.Manager.Calendar.BranchCalendarRepository;
-import com.broadwave.toppos.Manager.Calendar.BranchCalendarRepositoryCustom;
 import com.broadwave.toppos.Manager.Calendar.CalendarDtos.BranchCalendarDto;
 import com.broadwave.toppos.Manager.Calendar.CalendarDtos.BranchCalendarListDto;
 import com.broadwave.toppos.common.AjaxResponse;
@@ -31,14 +30,12 @@ public class CalendarService {
     private final TokenProvider tokenProvider;
 
     private final BranchCalendarRepository branchCalendarRepository;
-    private final BranchCalendarRepositoryCustom branchCalendarRepositoryCustom;
 
     @Autowired
     public CalendarService(TokenProvider tokenProvider,
-                           BranchCalendarRepository branchCalendarRepository, BranchCalendarRepositoryCustom branchCalendarRepositoryCustom){
+                           BranchCalendarRepository branchCalendarRepository){
         this.tokenProvider = tokenProvider;
         this.branchCalendarRepository = branchCalendarRepository;
-        this.branchCalendarRepositoryCustom = branchCalendarRepositoryCustom;
     }
 
     // 업무휴무일지정 Save 저장
@@ -157,7 +154,7 @@ public class CalendarService {
         List<HashMap<String,Object>> branchCalendarListData = new ArrayList<>();
         HashMap<String,Object> branchCalendarInfo;
 
-        List<BranchCalendarListDto> branchCalendarListDtos = branchCalendarRepositoryCustom.branchCalendarDtoList(brCode, targetYear);
+        List<BranchCalendarListDto> branchCalendarListDtos = branchCalendarRepository.branchCalendarDtoList(brCode, targetYear);
 //        log.info("branchCalendarListDtos : "+branchCalendarListDtos);
 
         for (BranchCalendarListDto branchCalendarListDto : branchCalendarListDtos) {
@@ -179,6 +176,11 @@ public class CalendarService {
     // 업무휴무일 검색
     public Optional<BranchCalendar> branchCalendarInfo(String brCode, String bcDate) {
         return branchCalendarRepository.branchCalendarInfo(brCode, bcDate);
+    }
+
+    // 가맹점 메인페이지용 10일이후의 휴무일을 보여줌
+    public List<BranchCalendarListDto> branchCalendarSlidingDtoList(String frbrCode, String nowDate) {
+        return branchCalendarRepository.branchCalendarSlidingDtoList(frbrCode, nowDate);
     }
 
 }
