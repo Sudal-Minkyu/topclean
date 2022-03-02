@@ -6,6 +6,7 @@ const dtos = {
             frNo: "s",
         }
     },
+
     receive: {
         영수증발행: {
             paymentData: {
@@ -26,6 +27,7 @@ const dtos = {
                 uncollectPayAmount: "n", // 미수금 상환액
                 totalUncollectAmount: "n", // 총미수금
             },
+
             items: { // 디테일 품목들의 배열
                 tagno: "s",
                 color: "s", // 남색
@@ -34,6 +36,7 @@ const dtos = {
                 price: "n",
 				estimateDt: "s", // fdEstimateDt
             },
+            
             creditData: { // 결제한 내역들의 배열, 적립금이나 현금은 금액과 타입만 오면 됨
                 type: "sr", // fpType 기준 01: cash, 02: card, 03: save 
                 cardNo: "s", // fpCatCardNo
@@ -314,7 +317,7 @@ let initialData = [];
 let vkey;
 let vkeyProp = [];
 let vkeyTargetId = ["searchCustomerField", "fdTag", "fdRemark", "fdRepairRemark", "fdAdd1Remark",
-                    "ffRemark"];
+                    "ffRemark", "fdTagPassword"];
 
 vkeyProp[0] = {
     title : "동작시 제목설정",
@@ -332,11 +335,19 @@ vkeyProp[2] = {
 }
 
 vkeyProp[3] = {
-    title : "",
+    title : "수선 내용 입력",
 }
 
 vkeyProp[4] = {
-    title : "",
+    title : "추가 내용 입력",
+}
+
+vkeyProp[5] = {
+    title : "검품 특이사항 입력",
+}
+
+vkeyProp[6] = {
+    title : "비밀번호 입력",
 }
 
 /* 그리드 생성과 운영에 관한 중요 변수들. grid라는 이름으로 시작하도록 통일했다. */
@@ -2020,4 +2031,29 @@ function onPrintReceipt() {
     }
 
     CommonUI.toppos.printReceipt(condition);
+}
+
+function onSaveFdTag() {
+    alertCheck(`다음 택번호는 ${nextFdTag} 입니다.<br>${$("#fdTag").val()}(으)로 변경 하시겠습니까?`);
+    $("#checkDelSuccessBtn").on("click", function () {
+        $("#fdTagChange").addClass("active");
+        $('#popupId').remove();
+    });
+}
+
+function onConfirmFdTag() {
+    const password = {
+        password: $("#fdTagPassword").val(),
+    }
+    const url = "";
+    CommonUI.ajax(url, "", password, function (res) {
+        const tag = $("#fdTag").val().replace(/[^0-9A-Za-z]/g, "");
+        nextFdTag = tag.substr(0,3) + "-" + (parseInt(tag.substr(-4)) + 1).toString().padStart(4, '0');
+        onCloseFdTag();
+    });
+
+}
+
+function onCloseFdTag() {
+    $("#fdTagChange").removeClass("active");
 }

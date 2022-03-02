@@ -29,8 +29,7 @@ const comms = {
     franchiseInfo() {
         const url = "/api/user/franchiseInfo";
         CommonUI.ajax(url, "GET", null, function (res) {
-            console.log(res.sendData.userIndexDto);
-            const userIndexDto = res.sendData.userIndexDto;
+            const userIndexDto = res.sendData.userIndexDto[0];
             // console.log(userIndexDto);
             if(userIndexDto.brName===null){
                 $("#brName").text("무소속");
@@ -41,8 +40,14 @@ const comms = {
             $("#userName").text(userIndexDto.username);
             $("#userTel").text(CommonUI.formatTel(userIndexDto.usertel));
 
-            if(false) {
-                $("#slidingText").html("받아온 값 추가");//////
+            if(userIndexDto.slidingText.length) {
+                let slidingText = $("#brName").html() + " 의 휴무일은 ";
+                userIndexDto.slidingText.forEach(date => {
+                    slidingText += date.substring(0, 4) + "년 " + date.substring(4, 6) + "월 "
+                        + date.substring(6, 8) + "일, ";
+                });
+                slidingText = slidingText.substring(0, slidingText.length - 2) + " 입니다.";
+                $("#slidingText").html(slidingText);
             }
         });
     },

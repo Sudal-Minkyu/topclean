@@ -1035,6 +1035,19 @@
         </div>
     </div>
 
+    <!-- 택번호 저장 팝업 -->
+    <div class="pop" id="fdTagChange">
+        <div class="pop__box">
+            택번호 변경을 위한 비밀번호 확인
+            <div class="c-search__input">
+                <input id="fdTagPassword" type="password" placeholder="비밀번호 입력" />
+                <button class="c-search__key" type="button" onclick="onShowVKeyboard(6)">키보드</button>
+                <button class="c-button c-button--red" onclick="onCloseFdTag()">취소</button>
+                <button class="c-button c-button--darksolid" onclick="onConfirmFdTag()">확인</button>
+            </div>
+        </div>
+    </div>
+
     <div id ="payStatus" style="position: absolute; left: 0; top: 0; height: 1024px; width: 1280px;
         z-index: 100; background-color: transparent; display: none;" >
     </div>
