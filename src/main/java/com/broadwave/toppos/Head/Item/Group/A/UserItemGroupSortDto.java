@@ -1,9 +1,6 @@
 package com.broadwave.toppos.Head.Item.Group.A;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 /**
  * @author Minkyu
@@ -11,20 +8,17 @@ import lombok.Setter;
  * Time :
  * Remark : Toppos 상품그룹관리 가맹점 전용 GroutSortDto
  */
-@Setter
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserItemGroupSortDto {
 
     private Integer bgSort; // 순번
+    private String bgFavoriteYn; // 즐겨찾기 YN , 기본값 N
     private String bgItemGroupcode; // 대문류코드
     private String bgName; // 대문류명칭
     private String bgIconFilename; // 아이콘이미지파일명
-
-    public String getBgItemGroupcode() {
-        return bgItemGroupcode;
-    }
 
     public Integer getBgSort() {
         if(bgSort==null){
@@ -34,11 +28,4 @@ public class UserItemGroupSortDto {
         }
     }
 
-    public String getBgName() {
-        return bgName;
-    }
-
-    public String getBgIconFilename() {
-        return bgIconFilename;
-    }
 }

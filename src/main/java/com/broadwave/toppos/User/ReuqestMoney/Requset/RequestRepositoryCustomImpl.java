@@ -7,14 +7,19 @@ import com.broadwave.toppos.Head.Item.Group.C.QItem;
 import com.broadwave.toppos.User.Customer.Customer;
 import com.broadwave.toppos.User.Customer.QCustomer;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.QRequestDetail;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.manager.RequestDetailBranchReleaseCurrentListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.*;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.JPQLQuery;
 import lombok.extern.slf4j.Slf4j;
+import org.qlrm.mapper.JpaResultMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import java.util.List;
 
 /**
@@ -26,6 +31,9 @@ import java.util.List;
 @Slf4j
 @Repository
 public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport implements RequestRepositoryCustom {
+
+    @Autowired
+    JpaResultMapper jpaResultMapper;
 
     public RequestRepositoryCustomImpl() {
         super(Request.class);
@@ -340,5 +348,45 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
 
         return query.fetchOne();
     }
+
+    // 가맹점 메인페이지 History 리스트 호출 함수
+    @Override
+    public List<RequestHistoryListDto> findByRequestHistory(String frCode,  String nowDate) {
+
+        EntityManager em = getEntityManager();
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("SELECT a.typename, a.ctime, a.bc_name, a.bc_hp \n");
+        sb.append("     FROM ( \n");
+
+        sb.append("SELECT DISTINCT '접수' AS typename, a.fr_insert_date ctime, b.bc_name, b.bc_hp \n");
+        sb.append("FROM fs_request a \n");
+        sb.append("INNER JOIN bs_customer b ON a.bc_id = b.bc_id \n");
+        sb.append("WHERE a.fr_code=?1 AND  a.fr_confirm_yn='Y' AND a.fr_yyyymmdd=?2 \n");
+
+        sb.append("UNION ALL \n");
+
+        sb.append("SELECT DISTINCT '인도' AS typename, c.fd_s6_time ctime, b.bc_name, b.bc_hp \n");
+        sb.append("FROM fs_request a \n");
+        sb.append("INNER JOIN bs_customer b ON a.bc_id = b.bc_id \n");
+        sb.append("INNER JOIN fs_request_dtl c ON a.fr_id = c.fr_id \n");
+        sb.append("WHERE a.fr_code=?1 AND  a.fr_confirm_yn='Y' AND  c.fd_cancel='N' AND c.fd_s6_dt=?2 \n");
+
+        sb.append(") a  \n");
+        sb.append("ORDER BY a.ctime DESC limit 6 \n");
+
+
+        Query query = em.createNativeQuery(sb.toString());
+
+        query.setParameter(1, frCode);
+        query.setParameter(2, nowDate);
+
+        return jpaResultMapper.list(query, RequestHistoryListDto.class);
+
+    }
+
+
+
+
 
 }

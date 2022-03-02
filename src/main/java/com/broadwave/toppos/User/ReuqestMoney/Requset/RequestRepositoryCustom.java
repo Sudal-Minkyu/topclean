@@ -30,4 +30,6 @@ public interface RequestRepositoryCustom {
     List<RequestBusinessdayCustomerListDto> findByBusinessDayCustomerList(String frCode, String filterFromDt, String filterToDt); // 영업일보 통계 리스트-4 querydsl
 
     RequestPaymentPaperDto findByRequestPaymentPaper(String frNo, Long frId, String frCode);
+
+    List<RequestHistoryListDto> findByRequestHistory(String frCode, String nowDate);
 }

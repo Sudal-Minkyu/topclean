@@ -66,6 +66,7 @@ public class ItemGroupRepositoryCustomImpl extends QuerydslRepositorySupport imp
                 .orderBy(groupSort.bgSort.coalesce(999).asc()).orderBy(itemGroup.bgItemGroupcode.asc())
                 .select(Projections.constructor(UserItemGroupSortDto.class,
                         groupSort.bgSort,
+                        groupSort.bgFavoriteYn,
                         itemGroup.bgItemGroupcode,
                         itemGroup.bgName,
                         itemGroup.bgIconFilename

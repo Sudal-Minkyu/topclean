@@ -32,6 +32,9 @@ public class GroupSort {
     @Column(name="bg_sort")
     private Integer bgSort; // 정렬순서
 
+    @Column(name="bg_favorite_yn")
+    private String bgFavoriteYn; // 즐겨찾기 YN , 기본값 N
+
     @Column(name="insert_id")
     private String insert_id;
 

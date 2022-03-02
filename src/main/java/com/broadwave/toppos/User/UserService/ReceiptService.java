@@ -922,6 +922,11 @@ public class ReceiptService {
 
     }
 
+    // 가맹점 메인페이지 History 리스트 호출 함수
+    public List<RequestHistoryListDto> findByRequestHistory(String frCode, String nowDate) {
+        return requestRepositoryCustom.findByRequestHistory(frCode, nowDate);
+    }
+
 }
 
 

@@ -32,6 +32,7 @@ import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.PhotoD
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailUpdateDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailSet;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.RequestHistoryListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.RequestListDto;
 import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoney;
 import com.broadwave.toppos.User.UserDtos.EtcDataDto;
@@ -169,7 +170,10 @@ public class UserRestController {
             userIndexData.add(userIndexInfo);
         }
 
+        List<RequestHistoryListDto> requestHistoryListDtos = receiptService.findByRequestHistory(frCode, nowDate);
+
         data.put("userIndexDto",userIndexData);
+        data.put("requestHistoryList",requestHistoryListDtos);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
@@ -670,7 +674,7 @@ public class UserRestController {
         return receiptService.requestPayment(paymentSet, request);
     }
 
-    // 사진촬영 API
+    // 접수 사진촬영 API
     @PostMapping("takePicture")
     public ResponseEntity<Map<String,Object>> takePicture(MultipartHttpServletRequest multi) throws IOException {
 

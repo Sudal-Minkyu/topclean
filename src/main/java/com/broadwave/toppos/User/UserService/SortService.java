@@ -101,6 +101,7 @@ public class SortService {
             groupSort = new GroupSort();
             groupSort.setFrCode(frCode);
             groupSort.setBgItemGroupcode(groupSortSet.getList().get(i).getBgItemGroupcode());
+            groupSort.setBgFavoriteYn(groupSortSet.getList().get(i).getBgFavoriteYn());
             groupSort.setBgSort(groupSortSet.getList().get(i).getBgSort());
 
             if(bgItemGroupcodeList.contains(groupSortSet.getList().get(i).getBgItemGroupcode())){
