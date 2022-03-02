@@ -68,6 +68,18 @@ public class Franchise {
     @Column(name="fr_tel_no")
     private String frTelNo; // 가맹점 전화번호
 
+    @Column(name="fr_post_no")
+    private String frPostNo; // 가맹점 우편번호
+
+    @Column(name="fr_address")
+    private String frAddress; // 가맹점 주소
+
+    @Column(name="fr_address_detail")
+    private String frAddressDetail; // 가맹점 상세주소
+
+    @Column(name="fr_multiscreen_yn")
+    private String frMultiscreenYn; // 멀티스크린 사용여부
+
     @Column(name="fr_remark")
     private String frRemark; // 특이사항
 

@@ -117,6 +117,10 @@ public class InfoService {
             franchise.setFrTagNo(franchisUserDto.getFrTagNo());
             franchise.setFrLastTagno(franchisUserDto.getFrTagNo() + optionalFranohise.get().getFrLastTagno().substring(3, 7));
             franchise.setFrEstimateDuration(franchisUserDto.getFrEstimateDuration());
+            franchise.setFrPostNo(franchisUserDto.getFrPostNo());
+            franchise.setFrAddress(franchisUserDto.getFrAddress());
+            franchise.setFrAddressDetail(franchisUserDto.getFrAddressDetail());
+            franchise.setFrMultiscreenYn(franchisUserDto.getFrMultiscreenYn());
 
             franchise.setModify_id(login_id);
             franchise.setModifyDateTime(LocalDateTime.now());

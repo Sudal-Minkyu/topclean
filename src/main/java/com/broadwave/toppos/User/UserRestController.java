@@ -727,7 +727,7 @@ public class UserRestController {
     // 가맹점 나의정보 수정 API
     @PostMapping("franchiseMyInfoSave")
     public ResponseEntity<Map<String,Object>> franchiseMyInfoSave(@ModelAttribute FranchisUserDto franchisUserDto, HttpServletRequest request){
-        log.info("franchisUserDto : "+franchisUserDto);
+//        log.info("franchisUserDto : "+franchisUserDto);
         return infoService.franchiseMyInfoSave(franchisUserDto, request);
     }
 

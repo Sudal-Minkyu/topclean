@@ -1,9 +1,6 @@
 package com.broadwave.toppos.Head.Franchise.FranchiseDtos;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 /**
  * @author Minkyu
@@ -11,7 +8,7 @@ import lombok.Setter;
  * Time :
  * Remark : Toppos 가맹점전용 나의정보용 Dto
  */
-@Setter
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -36,33 +33,10 @@ public class FranchisUserDto {
     private String frRpreName; // 가맹점주이름
     private String frTelNo; // 가맹점 전화번호
 
-    public String getFrBusinessNo() {
-        return frBusinessNo;
-    }
-
-    public String getFrRpreName() {
-        return frRpreName;
-    }
-
-    public String getFrTelNo() {
-        return frTelNo;
-    }
-
-    public Integer getFrEstimateDuration() {
-        return frEstimateDuration;
-    }
-
-    public String getFrTagNo() {
-        return frTagNo;
-    }
-
-    public String getFrCode() {
-        return frCode;
-    }
-
-    public String getFrName() {
-        return frName;
-    }
+    private String frPostNo; // 가맹점 우편번호
+    private String frAddress; // 가맹점 주소
+    private String frAddressDetail; // 가맹점 상세주소
+    private String frMultiscreenYn; // 멀티스크린 사용여부
 
     public StringBuffer getFrContractDt() {
         if(!frContractDt.equals("")){
@@ -97,20 +71,4 @@ public class FranchisUserDto {
         }
     }
 
-
-    public String getBrName() {
-        return brName;
-    }
-
-    public Double getBrCarculateRateHq() {
-        return brCarculateRateHq;
-    }
-
-    public Double getBrCarculateRateBr() {
-        return brCarculateRateBr;
-    }
-
-    public Double getBrCarculateRateFr() {
-        return brCarculateRateFr;
-    }
 }

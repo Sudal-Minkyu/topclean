@@ -170,7 +170,12 @@ public class FranchiseRepositoryCustomImpl extends QuerydslRepositorySupport imp
 
                         franchise.frBusinessNo,
                         franchise.frRpreName,
-                        franchise.frTelNo
+                        franchise.frTelNo,
+
+                        franchise.frPostNo,
+                        franchise.frAddress,
+                        franchise.frAddressDetail,
+                        franchise.frMultiscreenYn
                 ));
 
         query.where(franchise.frCode.eq(frCode));
