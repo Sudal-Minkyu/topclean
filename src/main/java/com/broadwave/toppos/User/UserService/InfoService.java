@@ -153,7 +153,7 @@ public class InfoService {
         }else{
             //현재암호비교
             if (!passwordEncoder.matches(accountPasswordDto.getOldpassword(),optionalAccount.get().getPassword())){
-                return ResponseEntity.ok(res.fail(ResponseErrorCode.TP020.getCode(), ResponseErrorCode.TP020.getDesc(), null, null));
+                return ResponseEntity.ok(res.fail(ResponseErrorCode.TP020.getCode(), "현재 "+ResponseErrorCode.TP020.getDesc(), null, null));
             }
             if( !accountPasswordDto.getNewpassword().equals(accountPasswordDto.getPasswordconfirm()) ){
                 return ResponseEntity.ok(res.fail(ResponseErrorCode.TP021.getCode(), ResponseErrorCode.TP021.getDesc(), null, null));
@@ -225,7 +225,29 @@ public class InfoService {
         return ResponseEntity.ok(res.success());
     }
 
+    // 택번호 변경시 비밀번호 입력후 확인 API
+    public ResponseEntity<Map<String, Object>> franchiseCheck(String password, HttpServletRequest request) {
+        log.info("franchiseCheck 호출");
 
+        AjaxResponse res = new AjaxResponse();
+
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String login_id = claims.getSubject(); // 현재 아이디
+        log.info("현재 접속한 아이디 : "+login_id);
+
+        Optional<Account> optionalAccount = accountService.findByUserid(login_id);
+
+        //수정일때
+        if(!optionalAccount.isPresent()){
+            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP005.getCode(), "나의 "+ResponseErrorCode.TP005.getDesc(), "문자", "고객센터에 문의해주세요."));
+        }else{
+            //현재암호비교
+            if (!passwordEncoder.matches(password,optionalAccount.get().getPassword())){
+                return ResponseEntity.ok(res.fail(ResponseErrorCode.TP020.getCode(), ResponseErrorCode.TP020.getDesc(), null, null));
+            }
+        }
+        return ResponseEntity.ok(res.success());
+    }
 
 
 }

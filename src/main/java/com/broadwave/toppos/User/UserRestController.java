@@ -409,6 +409,14 @@ public class UserRestController {
 
 
 //@@@@@@@@@@@@@@@@@@@@@ 가맹점 세탁접수 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    // 택번호 변경시 비밀번호 입력후 확인 API
+    @GetMapping("franchiseCheck")
+    @ApiOperation(value = "가맹정 택번호 변경" , notes = "비밀번호를 가져와 확인한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
+    public ResponseEntity<Map<String,Object>> franchiseCheck(@RequestParam(value="password", defaultValue="") String password, HttpServletRequest request){
+        return infoService.franchiseCheck(password, request);
+    }
+
     // 접수페이지 진입시 기본적으롤 받는 데이터 API (대분류 목록리스트)
     @GetMapping("itemGroupAndPriceList")
     @ApiOperation(value = "접수페이지 진입시 받아오는 API" , notes = "기본 데이터를 받는다.")
@@ -670,7 +678,6 @@ public class UserRestController {
     // 접수페이지 가맹점 세탁접수 결제 API
     @PostMapping("requestPayment")
     public ResponseEntity<Map<String,Object>> requestPayment(@RequestBody PaymentSet paymentSet, HttpServletRequest request){
-        log.info("requestPayment 호출");
         return receiptService.requestPayment(paymentSet, request);
     }
 

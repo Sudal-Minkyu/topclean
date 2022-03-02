@@ -486,6 +486,8 @@ public class ReceiptService {
 
     //  접수페이지 가맹점 세탁접수 결제 API
     public ResponseEntity<Map<String, Object>> requestPayment(PaymentSet paymentSet, HttpServletRequest request) {
+        log.info("requestPayment 호출");
+
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
 
