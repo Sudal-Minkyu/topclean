@@ -91,6 +91,7 @@ const grids = {
                 {
                     dataField: "subject",
                     headerText: "제목",
+                    style: "grid_textalign_left",
                     renderer : {
                         type : "TemplateRenderer",
                     },
@@ -117,6 +118,8 @@ const grids = {
                 noDataMessage : "출력할 데이터가 없습니다.",
                 showAutoNoDataMessage: false,
                 enableColumnResize : false,
+                showRowAllCheckBox: false,
+                showRowCheckColumn: false,
                 showRowNumColumn : false,
                 showStateColumn : false,
                 enableFilter : false,

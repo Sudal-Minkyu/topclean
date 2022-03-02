@@ -80,22 +80,26 @@ const grids = {
                     children: [{
                         dataField: "frQtyAll",
                         headerText: "총건수",
+                        style: "grid_textalign_right",
                         dataType: "numeric",
                         autoThousandSeparator: "true",
                     }, {
                         dataField: "fdRetryYnAll",
                         headerText: "재세탁",
+                        style: "grid_textalign_right",
                         dataType: "numeric",
                         autoThousandSeparator: "true",
                     }, {
                         dataField: "biItemGroupAll",
                         headerText: "부착물",
+                        style: "grid_textalign_right",
                         dataType: "numeric",
                         autoThousandSeparator: "true",
                     },]
                 }, {
                     dataField: "frTotalAmountAll",
                     headerText: "접수금액",
+                    style: "grid_textalign_right",
                     dataType: "numeric",
                     autoThousandSeparator: "true",
                 }, {
@@ -103,32 +107,38 @@ const grids = {
                     children: [ {
                         dataField: "fpAmtType02All",
                         headerText: "카드결제",
+                        style: "grid_textalign_right",
                         dataType: "numeric",
                         autoThousandSeparator: "true",
                     }, {
                         dataField: "fpAmtType01All",
                         headerText: "현금결제",
+                        style: "grid_textalign_right",
                         dataType: "numeric",
                         autoThousandSeparator: "true",
                     }, {
                         dataField: "fsAmtType02All",
                         headerText: "적립금사용",
+                        style: "grid_textalign_right",
                         dataType: "numeric",
                         autoThousandSeparator: "true",
                     }, {
                         dataField: "fpAmtCancelAll",
                         headerText: "취소금액",
+                        style: "grid_textalign_right",
                         dataType: "numeric",
                         autoThousandSeparator: "true",
                     }, {
                         dataField: "fpAmtUncollectAll",
                         headerText: "미수결제",
+                        style: "grid_textalign_right",
                         dataType: "numeric",
                         autoThousandSeparator: "true",
                     },]
                 }, {
                     dataField: "totalAverageAll",
                     headerText: "1점<br>평균단가",
+                    style: "grid_textalign_right",
                     dataType: "numeric",
                     autoThousandSeparator: "true",
                 }, {
@@ -136,17 +146,20 @@ const grids = {
                     children: [{
                         dataField: "totalReceipt",
                         headerText: "접수",
+                        style: "grid_textalign_right",
                         dataType: "numeric",
                         autoThousandSeparator: "true",
                     }, {
                         dataField: "totalDelivery",
                         headerText: "출고",
+                        style: "grid_textalign_right",
                         dataType: "numeric",
                         autoThousandSeparator: "true",
                     },]
                 }, {
                     dataField: "averageReceiptMoney",
                     headerText: "고객평균<br>접수단가",
+                    style: "grid_textalign_right",
                     dataType: "numeric",
                     autoThousandSeparator: "true",
                 },
@@ -158,9 +171,11 @@ const grids = {
             grids.s.prop[0] = {
                 editable : false,
                 selectionMode : "singleRow",
-                noDataMessage : "출력할 데이터가 없습니다.",
-                showAutoNoDataMessage: false,
+                noDataMessage : "조건에 부합하는 데이터가 없습니다.",
+                showAutoNoDataMessage: true,
                 enableColumnResize : false,
+                showRowAllCheckBox: false,
+                showRowCheckColumn: false,
                 showRowNumColumn : false,
                 showStateColumn : false,
                 enableFilter : true,

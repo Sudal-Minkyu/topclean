@@ -29,6 +29,7 @@ gridColumnLayout[0] = [
     }, {
         dataField: "brName",
         headerText: "지사명",
+        style: "grid_textalign_left",
     }, {
         dataField: "brContractFromDt",
         headerText: "계약시작일",
@@ -43,10 +44,16 @@ gridProp[0] = {
     editable : false,
     selectionMode : "singleRow",
     noDataMessage : "출력할 데이터가 없습니다.",
-    enableColumnResize : false,
     rowNumHeaderText : "순번",
     rowIdField : "brCode",
-    rowIdTrustMode : true
+    rowIdTrustMode : true,
+    showAutoNoDataMessage: false,
+    enableColumnResize : true,
+    showRowAllCheckBox: false,
+    showRowCheckColumn: false,
+    showRowNumColumn : true,
+    showStateColumn : false,
+    enableFilter : true,
 };
 
 gridColumnLayout[1] = [
@@ -56,6 +63,7 @@ gridColumnLayout[1] = [
     }, {
         dataField: "frName",
         headerText: "가맹점명",
+        style: "grid_textalign_left",
     }, {
         dataField: "frContractFromDt",
         headerText: "계약시작일",
@@ -65,6 +73,7 @@ gridColumnLayout[1] = [
     }, {
         dataField: "brName",
         headerText: "배정지사명",
+        style: "grid_textalign_left",
     }
 ];
 
@@ -72,11 +81,16 @@ gridProp[1] = {
     editable : false,
     selectionMode : "singleRow",
     noDataMessage : "출력할 데이터가 없습니다.",
-    enableColumnResize : false,
     rowNumHeaderText : "순번",
     rowIdField : "frCode",
     rowIdTrustMode : true,
-    enableFilter: true,
+    showAutoNoDataMessage: false,
+    enableColumnResize : true,
+    showRowAllCheckBox: false,
+    showRowCheckColumn: false,
+    showRowNumColumn : true,
+    showStateColumn : false,
+    enableFilter : true,
 };
 
 gridColumnLayout[2] = [
@@ -86,6 +100,7 @@ gridColumnLayout[2] = [
     }, {
         dataField: "brName",
         headerText: "지사명",
+        style: "grid_textalign_left",
     }, {
         dataField: "brContractFromDt",
         headerText: "계약시작일",
@@ -99,10 +114,16 @@ gridProp[2] = {
     editable : false,
     selectionMode : "singleRow",
     noDataMessage : "출력할 데이터가 없습니다.",
-    enableColumnResize : false,
     rowNumHeaderText : "순번",
     rowIdField : "brCode",
-    rowIdTrustMode : true
+    rowIdTrustMode : true,
+    showAutoNoDataMessage: false,
+    enableColumnResize : true,
+    showRowAllCheckBox: false,
+    showRowCheckColumn: false,
+    showRowNumColumn : true,
+    showStateColumn : false,
+    enableFilter : true,
 };
 
 gridColumnLayout[3] = [
@@ -112,6 +133,7 @@ gridColumnLayout[3] = [
     }, {
         dataField: "frName",
         headerText: "가맹점명",
+        style: "grid_textalign_left",
     }, {
         dataField: "frContractFromDt",
         headerText: "계약시작일",
@@ -121,6 +143,7 @@ gridColumnLayout[3] = [
     }, {
         dataField: "brName",
         headerText: "배정지사명",
+        style: "grid_textalign_left",
     }, {
         dataField: "brAssignStateValue",
         headerText: "배정상태"
@@ -130,10 +153,15 @@ gridColumnLayout[3] = [
 gridProp[3] = {
     editable : false,
     selectionMode : "singleRow",
-    showAutoNoDataMessage : false,
     rowNumHeaderText : "순번",
     rowIdField : "frCode",
     rowIdTrustMode : true,
+    showAutoNoDataMessage: false,
+    enableColumnResize : true,
+    showRowAllCheckBox: false,
+    showRowCheckColumn: false,
+    showRowNumColumn : true,
+    showStateColumn : false,
     enableFilter : true,
 };
 
@@ -144,6 +172,7 @@ gridColumnLayout[4] = [
     }, {
         dataField: "brName",
         headerText: "지사명",
+        style: "grid_textalign_left",
     }, {
         dataField: "brContractDt",
         headerText: "계약일자",
@@ -164,7 +193,12 @@ gridProp[4] = {
     selectionMode : "singleRow",
     noDataMessage : "출력할 데이터가 없습니다.",
     rowNumHeaderText : "순번",
-    enableColumnResize : false,
+    showAutoNoDataMessage: false,
+    enableColumnResize : true,
+    showRowAllCheckBox: false,
+    showRowCheckColumn: false,
+    showRowNumColumn : true,
+    showStateColumn : false,
     enableFilter : true,
     width : 660,
     height : 480,

@@ -215,9 +215,11 @@ const grids = {
 				{
 					dataField: "baName",
 					headerText: "항목",
+                    style: "grid_textalign_left",
 				}, {
 					dataField: "baRemark",
 					headerText: "비고",
+                    style: "grid_textalign_left",
 				}, {
 					dataField: "",
 					headerText: "수정",
@@ -239,9 +241,11 @@ const grids = {
 				{
 					dataField: "baName",
 					headerText: "항목",
+                    style: "grid_textalign_left",
 				}, {
 					dataField: "baRemark",
 					headerText: "비고",
+                    style: "grid_textalign_left",
 				}, {
 					dataField: "",
 					headerText: "수정",
@@ -263,9 +267,11 @@ const grids = {
 				{
 					dataField: "baName",
 					headerText: "항목",
+                    style: "grid_textalign_left",
 				}, {
 					dataField: "baRemark",
 					headerText: "비고",
+                    style: "grid_textalign_left",
 				}, {
 					dataField: "",
 					headerText: "수정",
@@ -289,10 +295,14 @@ const grids = {
 				editable: true,
 				selectionMode: "singleRow",
 				noDataMessage: "출력할 데이터가 없습니다.",
-				enableColumnResize: false,
-				showStateColumn: true,
-				enableFilter: true,
-				showRowCheckColumn: true,
+				rowNumHeaderText : "순번",
+                showAutoNoDataMessage: false,
+                enableColumnResize : false,
+                showRowAllCheckBox: true,
+                showRowCheckColumn: true,
+                showRowNumColumn : true,
+                showStateColumn : false,
+                enableFilter : false,
 				rowHeight: 48,
 				headerHeight: 48,
 			};
@@ -301,10 +311,14 @@ const grids = {
 				editable: true,
 				selectionMode: "singleRow",
 				noDataMessage: "출력할 데이터가 없습니다.",
-				enableColumnResize: false,
-				showStateColumn: true,
-				enableFilter: true,
-				showRowCheckColumn: true,
+				rowNumHeaderText : "순번",
+                showAutoNoDataMessage: false,
+                enableColumnResize : false,
+                showRowAllCheckBox: true,
+                showRowCheckColumn: true,
+                showRowNumColumn : true,
+                showStateColumn : false,
+                enableFilter : false,
 				rowHeight: 48,
 				headerHeight: 48,
 			};
@@ -313,10 +327,14 @@ const grids = {
 				editable: true,
 				selectionMode: "singleRow",
 				noDataMessage: "출력할 데이터가 없습니다.",
-				enableColumnResize: false,
-				showStateColumn: true,
-				enableFilter: true,
-				showRowCheckColumn: true,
+				rowNumHeaderText : "순번",
+                showAutoNoDataMessage: false,
+                enableColumnResize : false,
+                showRowAllCheckBox: true,
+                showRowCheckColumn: true,
+                showRowNumColumn : true,
+                showStateColumn : false,
+                enableFilter : false,
 				rowHeight: 48,
 				headerHeight: 48,
 			};
