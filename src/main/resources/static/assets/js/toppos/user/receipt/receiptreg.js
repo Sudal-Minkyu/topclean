@@ -1476,10 +1476,13 @@ function onRemoveOrder() {
 }
 
 function setNextTag(tag) {
-    $("#fdTag").val(tag.substr(0,3) + "-"
-        + (parseInt(tag.substr(-4)) + 1).toString().padStart(4, '0'));
-    nextFdTag = tag.substr(0,3) + "-"
-    + (parseInt(tag.substr(-4)) + 1).toString().padStart(4, '0');
+    let nextNo = tag.substr(0,3) + "-" + (parseInt(tag.substr(-4)) + 1).toString().padStart(4, '0');
+    if(tag.substring(tag.length - 4, tag.length) === "9999") {
+        nextNo = tag.substr(0,3) + "-0001";
+        alertCaution("택번호 뒷자리가 9999번에 도달했습니다.<br>다음 택번호 뒷자리를 0001로 설정합니다.", 1);
+    }
+    $("#fdTag").val(nextNo);
+    nextFdTag = nextNo;
 }
 
 /* 임시저장을 두단계로 분리하기 위해 데이터를 임시로 전역변수화 */
