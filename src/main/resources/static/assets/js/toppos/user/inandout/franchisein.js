@@ -132,6 +132,7 @@ const grids = {
                 }, {
                     dataField: "bcName",
                     headerText: "고객명",
+                    style: "grid_textalign_left",
                     width: 80,
                 },
                 {
@@ -160,7 +161,7 @@ const grids = {
                 {
                     dataField: "",
                     headerText: "입고유형",
-                    width: 100,
+                    width: 80,
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
                         let type = "";
                         if (item.fdRetryYn === "Y") {
@@ -178,7 +179,8 @@ const grids = {
                 {
                     dataField: "",
                     headerText: "처리내역",
-                    width: 100,
+                    style: "grid_textalign_left",
+                    width: 120,
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
                         return CommonUI.toppos.processName(item);
                     },
@@ -186,7 +188,8 @@ const grids = {
                 {
                     dataField: "fdTotAmt",
                     headerText: "접수금액",
-                    width: 120,
+                    style: "grid_textalign_right",
+                    width: 100,
                     dataType: "numeric",
                     autoThousandSeparator: "true",
                 }, 
@@ -198,6 +201,7 @@ const grids = {
                 {
                     dataField: "fdRemark",
                     headerText: "특이사항",
+                    style: "grid_textalign_left",
                 }, 
                 {
                     dataField: "frYyyymmdd",
@@ -227,7 +231,7 @@ const grids = {
                 showRowAllCheckBox: true,
                 showRowCheckColumn: true,
                 showRowNumColumn : false,
-                showStateColumn : true,
+                showStateColumn : false,
                 enableFilter : true,
                 rowHeight : 48,
                 headerHeight : 48,

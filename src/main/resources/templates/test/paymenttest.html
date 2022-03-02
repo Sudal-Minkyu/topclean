@@ -279,6 +279,10 @@ const temp = {
             alert("종료하시겠습니까? 확인후 ");
             cAPI.pExit();
         }
+        function getMaccaddress() {
+            let macaddress = cAPI.getMacAddress();
+            alert ("MacAddress : " + macaddress);
+        }
     </script>
 </th:block>
 
@@ -293,6 +297,7 @@ const temp = {
         <input type="button" value="인쇄테스트2" onclick="paymentPrint();"/>
         <input type="button" value="금전함열기" onclick="cashdrawer();"/>
         <input type="button" value="윈도우프로그램종료" onclick="appExit();"/>
+        <input type="button" value="MacAccress가져오기" onclick="getMaccaddress();"/>
     </div>
     <div>
         <input type="button" value="로그아웃" onclick="logout()"/>

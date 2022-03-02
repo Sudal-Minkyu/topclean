@@ -134,6 +134,7 @@ gridColumnLayout[0] = [
     {
         dataField: "bcName",
         headerText: "고객명",
+        style: "grid_textalign_left",
         width: 80,
     }, {
         dataField: "bcHp",
@@ -145,6 +146,7 @@ gridColumnLayout[0] = [
     }, {
         dataField: "bcAddress",
         headerText: "주소",
+        style: "grid_textalign_left",
         width: 190,
     }, {
         dataField: "bcGrade",
@@ -156,12 +158,14 @@ gridColumnLayout[0] = [
     }, {
         dataField: "beforeUncollectMoney",
         headerText: "전일미수금",
+        style: "grid_textalign_right",
         dataType: "numeric",
         autoThousandSeparator: "true",
 
     }, {
         dataField: "saveMoney",
         headerText: "적립금",
+        style: "grid_textalign_right",
         dataType: "numeric",
         autoThousandSeparator: "true",
     }, {
@@ -222,7 +226,12 @@ gridProp[0] = {
     editable : false,
     selectionMode : "singleRow",
     noDataMessage : "출력할 데이터가 없습니다.",
+    showAutoNoDataMessage: true,
     enableColumnResize : false,
+    showRowAllCheckBox: false,
+    showRowCheckColumn: false,
+    showRowNumColumn : false,
+    showStateColumn : false,
     enableFilter : true,
     rowHeight : 48,
     headerHeight : 48,

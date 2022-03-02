@@ -150,12 +150,15 @@ gridColumnLayout[0] = [
     }, {
         dataField: "bgName",
         headerText: "명칭",
+        style: "grid_textalign_left",
     }, {
         dataField: "bgRemark",
         headerText: "대분류 특이사항",
+        style: "grid_textalign_left",
     }, {
         dataField: "bgIconFilename",
         headerText: "아이콘 이미지 파일명",
+        style: "grid_textalign_left",
     },{
         dataField: "bgUseYn",
         headerText: "사용여부",
@@ -173,12 +176,14 @@ gridProp[0] = {
     editable: true,
     selectionMode : "singleRow",
     noDataMessage : "출력할 데이터가 없습니다.",
-    showRowNumColumn : false,
-    enableColumnResize : false,
     rowIdTrustMode : true,
-    showStateColumn : true,
+    showAutoNoDataMessage: false,
+    enableColumnResize : true,
+    showRowAllCheckBox: true,
+    showRowCheckColumn: true,
+    showRowNumColumn : false,
+    showStateColumn : false,
     enableFilter : true,
-    showRowCheckColumn : true,
 };
 
 gridColumnLayout[1] = [
@@ -189,6 +194,7 @@ gridColumnLayout[1] = [
     }, {
         dataField: "bgName",
         headerText: "대분류명",
+        style: "grid_textalign_left",
         editable: false,
     }, {
         dataField: "bsItemGroupcodeS",
@@ -202,9 +208,11 @@ gridColumnLayout[1] = [
     }, {
         dataField: "bsName",
         headerText: "명칭",
+        style: "grid_textalign_left",
     }, {
         dataField: "bsRemark",
         headerText: "중분류 특이사항",
+        style: "grid_textalign_left",
     }, {
         dataField: "bsUseYn",
         headerText: "사용여부",
@@ -219,12 +227,14 @@ gridProp[1] = {
     editable: true,
     selectionMode : "singleRow",
     noDataMessage : "출력할 데이터가 없습니다.",
-    showRowNumColumn : false,
-    enableColumnResize : false,
     rowIdTrustMode : true,
-    showStateColumn : true,
+    showAutoNoDataMessage: false,
+    enableColumnResize : true,
+    showRowAllCheckBox: true,
+    showRowCheckColumn: true,
+    showRowNumColumn : false,
+    showStateColumn : false,
     enableFilter : true,
-    showRowCheckColumn : true,
 };
 
 gridColumnLayout[2] = [
@@ -235,6 +245,7 @@ gridColumnLayout[2] = [
     }, {
         dataField: "bgName",
         headerText: "대분류명",
+        style: "grid_textalign_left",
         editable: false,
     }, {
         dataField: "bsItemGroupcodeS",
@@ -243,6 +254,7 @@ gridColumnLayout[2] = [
     }, {
         dataField: "bsName",
         headerText: "중분류명",
+        style: "grid_textalign_left",
         editable: false,
     }, {
         dataField: "biItemcode",
@@ -260,9 +272,11 @@ gridColumnLayout[2] = [
     }, {
         dataField: "biName",
         headerText: "상품명",
+        style: "grid_textalign_left",
     }, {
         dataField: "biRemark",
         headerText: "상품 특이사항",
+        style: "grid_textalign_left",
     }, {
         dataField: "biUseYn",
         headerText: "사용여부",
@@ -277,12 +291,14 @@ gridProp[2] = {
     editable: true,
     selectionMode : "singleRow",
     noDataMessage : "출력할 데이터가 없습니다.",
-    showRowNumColumn : false,
-    enableColumnResize : false,
     rowIdTrustMode : true,
-    showStateColumn : true,
+    showAutoNoDataMessage: false,
+    enableColumnResize : true,
+    showRowAllCheckBox: true,
+    showRowCheckColumn: true,
+    showRowNumColumn : false,
+    showStateColumn : false,
     enableFilter : true,
-    showRowCheckColumn : true,
 };
 
 

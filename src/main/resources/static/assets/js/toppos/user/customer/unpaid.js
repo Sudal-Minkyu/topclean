@@ -205,6 +205,7 @@ const grids = {
                 {
                     dataField: "bcName",
                     headerText: "고객명",
+                    style: "grid_textalign_left",
                     width: 70,
                 }, {
                     dataField: "bcHp",
@@ -216,15 +217,18 @@ const grids = {
                 }, {
                     dataField: "bcAddress",
                     headerText: "주소",
+                    style: "grid_textalign_left",
                 }, {
                     dataField: "saveMoney",
                     headerText: "적립금",
+                    style: "grid_textalign_right",
                     width: 90,
                     dataType: "numeric",
                     autoThousandSeparator: "true",
                 }, {
                     dataField: "uncollectMoney",
                     headerText: "미수금",
+                    style: "grid_textalign_right",
                     width: 90,
                     dataType: "numeric",
                     autoThousandSeparator: "true",
@@ -239,7 +243,10 @@ const grids = {
                 selectionMode : "singleRow",
                 showAutoNoDataMessage: false,
                 noDataMessage : "출력할 데이터가 없습니다.",
-                enableColumnResize : true,
+                showAutoNoDataMessage: true,
+                enableColumnResize : false,
+                showRowAllCheckBox: false,
+                showRowCheckColumn: false,
                 showRowNumColumn : false,
                 showStateColumn : false,
                 enableFilter : true,
@@ -257,6 +264,7 @@ const grids = {
                 }, {
                     dataField: "requestDetailCount",
                     headerText: "상품내역",
+                    style: "grid_textalign_left",
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
                         let rearText = "";
                         if(value > 1) {
@@ -267,18 +275,21 @@ const grids = {
                 }, {
                     dataField: "frTotalAmount",
                     headerText: "접수금액",
+                    style: "grid_textalign_right",
                     width: 90,
                     dataType: "numeric",
                     autoThousandSeparator: "true",
                 }, {
                     dataField: "frPayAmount",
                     headerText: "입금액",
+                    style: "grid_textalign_right",
                     width: 90,
                     dataType: "numeric",
                     autoThousandSeparator: "true",
                 }, {
                     dataField: "uncollectMoney",
                     headerText: "미수금액",
+                    style: "grid_textalign_right",
                     width: 90,
                     dataType: "numeric",
                     autoThousandSeparator: "true",
@@ -290,11 +301,12 @@ const grids = {
                 selectionMode : "singleRow",
                 showAutoNoDataMessage: false,
                 noDataMessage : "출력할 데이터가 없습니다.",
-                enableColumnResize : true,
+                showAutoNoDataMessage: false,
+                enableColumnResize : false,
                 showRowAllCheckBox: true,
                 showRowCheckColumn: true,
                 showRowNumColumn : false,
-                showStateColumn : true,
+                showStateColumn : false,
                 enableFilter : true,
                 rowHeight : 48,
                 headerHeight : 48,
@@ -330,6 +342,7 @@ const grids = {
                 }, {
                     dataField: "",
                     headerText: "처리내역",
+                    style: "grid_textalign_left",
                     width: 90,
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
                         return CommonUI.toppos.processName(item);
@@ -337,6 +350,7 @@ const grids = {
                 }, {
                     dataField: "fdTotAmt",
                     headerText: "접수금액",
+                    style: "grid_textalign_right",
                     width: 90,
                     dataType: "numeric",
                     autoThousandSeparator: "true",
@@ -361,7 +375,10 @@ const grids = {
                 selectionMode : "singleRow",
                 showAutoNoDataMessage: false,
                 noDataMessage : "출력할 데이터가 없습니다.",
-                enableColumnResize : true,
+                showAutoNoDataMessage: false,
+                enableColumnResize : false,
+                showRowAllCheckBox: false,
+                showRowCheckColumn: false,
                 showRowNumColumn : false,
                 showStateColumn : false,
                 enableFilter : true,
@@ -378,6 +395,7 @@ const grids = {
                 }, {
                     dataField: "requestDetailCount",
                     headerText: "상품내역",
+                    style: "grid_textalign_left",
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
                         let rearText = "";
                         if(value > 1) {
@@ -388,11 +406,13 @@ const grids = {
                 }, {
                     dataField: "frTotalAmount",
                     headerText: "접수금액",
+                    style: "grid_textalign_right",
                     dataType: "numeric",
                     autoThousandSeparator: "true",
                 }, {
                     dataField: "uncollectMoney",
                     headerText: "미수금액",
+                    style: "grid_textalign_right",
                     dataType: "numeric",
                     autoThousandSeparator: "true",
                 },
@@ -402,9 +422,12 @@ const grids = {
                 editable : false,
                 selectionMode : "singleRow",
                 noDataMessage : "출력할 데이터가 없습니다.",
+                showAutoNoDataMessage: false,
                 enableColumnResize : false,
+                showRowAllCheckBox: false,
+                showRowCheckColumn: false,
                 showRowNumColumn : false,
-                showStateColumn : true,
+                showStateColumn : false,
                 enableFilter : true,
                 rowHeight : 48,
                 headerHeight : 48,

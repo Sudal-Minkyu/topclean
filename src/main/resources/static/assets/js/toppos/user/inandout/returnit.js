@@ -109,6 +109,7 @@ const grids = {
                 }, {
                     dataField: "bcName",
                     headerText: "고객명",
+                    style: "grid_textalign_left",
                     width: 80,
                 }, {
                     dataField: "fdTag",
@@ -134,6 +135,7 @@ const grids = {
                 }, {
                     dataField: "",
                     headerText: "처리내역",
+                    style: "grid_textalign_left",
                     width: 100,
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
                         return CommonUI.toppos.processName(item);
@@ -141,6 +143,7 @@ const grids = {
                 }, {
                     dataField: "fdTotAmt",
                     headerText: "접수금액",
+                    style: "grid_textalign_right",
                     width: 120,
                     dataType: "numeric",
                     autoThousandSeparator: "true",
@@ -151,6 +154,7 @@ const grids = {
                 }, {
                     dataField: "fdRemark",
                     headerText: "특이사항",
+                    style: "grid_textalign_left",
                 },
             ];
 
@@ -161,11 +165,12 @@ const grids = {
                 editable : false,
                 selectionMode : "singleRow",
                 noDataMessage : "출력할 데이터가 없습니다.",
+                showAutoNoDataMessage: true,
                 enableColumnResize : false,
                 showRowAllCheckBox: true,
                 showRowCheckColumn: true,
                 showRowNumColumn : false,
-                showStateColumn : true,
+                showStateColumn : false,
                 enableFilter : true,
                 rowHeight : 48,
                 headerHeight : 48,

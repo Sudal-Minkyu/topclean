@@ -55,9 +55,11 @@ gridColumnLayout[0] = [
     {
         dataField: "userid",
         headerText: "아이디",
+        style: "grid_textalign_left",
     }, {
         dataField: "username",
         headerText: "이름",
+        style: "grid_textalign_left",
     }, {
         dataField: "role",
         headerText: "권한",
@@ -76,9 +78,11 @@ gridColumnLayout[0] = [
     }, {
         dataField: "useremail",
         headerText: "이메일",
+        style: "grid_textalign_left",
     }, {
         dataField: "userremark",
         headerText: "특이사항",
+        style: "grid_textalign_left",
     },
 ];
 
@@ -88,7 +92,12 @@ gridProp[0] = {
     selectionMode : "singleRow",
     noDataMessage : "출력할 데이터가 없습니다.",
     rowNumHeaderText : "순번",
-    enableColumnResize : false,
+    showAutoNoDataMessage: false,
+    enableColumnResize : true,
+    showRowAllCheckBox: false,
+    showRowCheckColumn: false,
+    showRowNumColumn : false,
+    showStateColumn : false,
     enableFilter : true,
 };
 
@@ -99,6 +108,7 @@ gridColumnLayout[1] = [
     }, {
         dataField: "brName",
         headerText: "지사명",
+        style: "grid_textalign_left",
     }, {
         dataField: "brContractDt",
         headerText: "계약일자",
@@ -119,7 +129,12 @@ gridProp[1] = {
     selectionMode : "singleRow",
     noDataMessage : "출력할 데이터가 없습니다.",
     rowNumHeaderText : "순번",
-    enableColumnResize : false,
+    showAutoNoDataMessage: false,
+    enableColumnResize : true,
+    showRowAllCheckBox: false,
+    showRowCheckColumn: false,
+    showRowNumColumn : false,
+    showStateColumn : false,
     enableFilter : true,
     width : 660,
     height : 400,
@@ -132,6 +147,7 @@ gridColumnLayout[2] = [
     }, {
         dataField: "frName",
         headerText: "가맹점명",
+        style: "grid_textalign_left",
     }, {
         dataField: "frContractDt",
         headerText: "계약시작일",
@@ -152,7 +168,12 @@ gridProp[2] = {
     selectionMode : "singleRow",
     noDataMessage : "출력할 데이터가 없습니다.",
     rowNumHeaderText : "순번",
-    enableColumnResize : false,
+    showAutoNoDataMessage: false,
+    enableColumnResize : true,
+    showRowAllCheckBox: false,
+    showRowCheckColumn: false,
+    showRowNumColumn : false,
+    showStateColumn : false,
     enableFilter : true,
     width : 660,
     height : 400,

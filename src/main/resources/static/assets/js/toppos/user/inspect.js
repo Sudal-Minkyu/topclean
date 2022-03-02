@@ -189,6 +189,7 @@ const grids = {
                 }, {
                     dataField: "bcName",
                     headerText: "고객명",
+                    style: "grid_textalign_left",
                     width: 70,
                 }, {
                     dataField: "frYyyymmdd",
@@ -225,6 +226,7 @@ const grids = {
                 }, {
                     dataField: "",
                     headerText: "처리내역",
+                    style: "grid_textalign_left",
                     width: 80,
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
                         return CommonUI.toppos.processName(item);
@@ -232,6 +234,7 @@ const grids = {
                 }, {
                     dataField: "fdTotAmt",
                     headerText: "접수금액",
+                    style: "grid_textalign_right",
                     width: 90,
                     dataType: "numeric",
                     autoThousandSeparator: "true",
@@ -249,6 +252,7 @@ const grids = {
                 }, {
                     dataField: "fdRemark",
                     headerText: "특이사항",
+                    style: "grid_textalign_left",
                     width: 100,
                 }, /* { // UI가 완전히 확정될 때 까지 임시로 숨겨둠
                     dataField: "fdS2Dt",
@@ -271,6 +275,7 @@ const grids = {
                 }, {
                     dataField: "sendMsgBtn",
                     headerText: "메시지",
+                    style: "grid_textalign_left",
                     width: 70,
                     renderer : {
                         type: "TemplateRenderer",
@@ -288,8 +293,10 @@ const grids = {
                 editable : false,
                 selectionMode : "singleRow",
                 noDataMessage : "출력할 데이터가 없습니다.",
-                showAutoNoDataMessage: false,
+                showAutoNoDataMessage: true,
                 enableColumnResize : false,
+                showRowAllCheckBox: false,
+                showRowCheckColumn: false,
                 showRowNumColumn : false,
                 showStateColumn : false,
                 enableFilter : true,
@@ -310,6 +317,7 @@ const grids = {
                 }, {
                     dataField: "bcAddress",
                     headerText: "주소",
+                    style: "grid_textalign_left",
                 },
             ];
 
@@ -318,7 +326,12 @@ const grids = {
                 selectionMode : "singleRow",
                 noDataMessage : "출력할 데이터가 없습니다.",
                 rowNumHeaderText : "순번",
+                showAutoNoDataMessage: false,
                 enableColumnResize : false,
+                showRowAllCheckBox: false,
+                showRowCheckColumn: false,
+                showRowNumColumn : false,
+                showStateColumn : false,
                 enableFilter : true,
                 width : 830,
                 height : 480,
@@ -343,15 +356,18 @@ const grids = {
                 }, {
                     dataField: "fiComment",
                     headerText: "검품내용",
+                    style: "grid_textalign_left",
                 }, {
                     dataField: "fiAddAmt",
                     headerText: "추가비용",
+                    style: "grid_textalign_right",
                     width: 80,
                     dataType: "numeric",
                     autoThousandSeparator: "true",
                 }, {
                     dataField: "fiSendMsgYn",
                     headerText: "메시지",
+                    style: "grid_textalign_left",
                     width: 55,
                     styleFunction: ynStyle,
                 }, {
@@ -373,9 +389,12 @@ const grids = {
                 editable : false,
                 selectionMode : "singleRow",
                 noDataMessage : "출력할 데이터가 없습니다.",
+                showAutoNoDataMessage: true,
                 enableColumnResize : false,
+                showRowAllCheckBox: false,
+                showRowCheckColumn: false,
                 showRowNumColumn : false,
-                showStateColumn : true,
+                showStateColumn : false,
                 enableFilter : true,
                 rowHeight : 48,
                 headerHeight : 48,

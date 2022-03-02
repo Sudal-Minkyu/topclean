@@ -55,14 +55,17 @@ gridColumnLayout[0] = [
     }, {
         dataField: "bgName",
         headerText: "대분류",
+        style: "grid_textalign_left",
         editable: false,
     }, {
         dataField: "bsName",
         headerText: "중분류",
+        style: "grid_textalign_left",
         editable: false,
     }, {
         dataField: "biName",
         headerText: "상품명",
+        style: "grid_textalign_left",
         editable: false,
     }, {
         dataField: "setDt",
@@ -79,6 +82,7 @@ gridColumnLayout[0] = [
     }, {
         dataField: "bpBasePrice",
         headerText: "기본금액",
+        style: "grid_textalign_right",
         dataType: "numeric",
         editRenderer: {
             type: "InputEditRenderer",
@@ -91,6 +95,7 @@ gridColumnLayout[0] = [
     }, {
         dataField: "bpAddPrice",
         headerText: "추가금액",
+        style: "grid_textalign_right",
         dataType: "numeric",
         editRenderer: {
             type: "InputEditRenderer",
@@ -103,6 +108,7 @@ gridColumnLayout[0] = [
     }, {
         dataField: "bpPriceA",
         headerText: "최종금액(A)",
+        style: "grid_textalign_right",
         dataType: "numeric",
         editRenderer: {
             type: "InputEditRenderer",
@@ -115,6 +121,7 @@ gridColumnLayout[0] = [
     }, {
         dataField: "bpPriceB",
         headerText: "최종금액(B)",
+        style: "grid_textalign_right",
         dataType: "numeric",
         editRenderer: {
             type: "InputEditRenderer",
@@ -127,6 +134,7 @@ gridColumnLayout[0] = [
     }, {
         dataField: "bpPriceC",
         headerText: "최종금액(C)",
+        style: "grid_textalign_right",
         dataType: "numeric",
         editRenderer: {
             type: "InputEditRenderer",
@@ -139,6 +147,7 @@ gridColumnLayout[0] = [
     }, {
         dataField: "bpPriceD",
         headerText: "최종금액(D)",
+        style: "grid_textalign_right",
         dataType: "numeric",
         editRenderer: {
             type: "InputEditRenderer",
@@ -151,6 +160,7 @@ gridColumnLayout[0] = [
     }, {
         dataField: "bpPriceE",
         headerText: "최종금액(E)",
+        style: "grid_textalign_right",
         dataType: "numeric",
         editRenderer: {
             type: "InputEditRenderer",
@@ -163,6 +173,7 @@ gridColumnLayout[0] = [
     }, {
         dataField: "bpRemark",
         headerText: "특이사항",
+        style: "grid_textalign_left",
     },
 ];
 
@@ -173,11 +184,13 @@ gridProp[0] = {
     editable : true,
     selectionMode : "singleRow",
     noDataMessage : "출력할 데이터가 없습니다.",
+    showAutoNoDataMessage: false,
+    enableColumnResize : true,
+    showRowAllCheckBox: true,
+    showRowCheckColumn: true,
     showRowNumColumn : false,
-    enableColumnResize : false,
-    showStateColumn : true,
+    showStateColumn : false,
     enableFilter : true,
-    showRowCheckColumn : true,
 };
 
 /* 인수로 온 배열의 설정에 따라 빈 그리드를 생성 */

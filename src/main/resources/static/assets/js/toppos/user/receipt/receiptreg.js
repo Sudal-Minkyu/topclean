@@ -245,6 +245,9 @@ $(function() {
     });
 });
 
+/* 다음 택번호가 기억된다. */
+let nextFdTag = false;
+
 /* 결제창 영수증 자동인쇄 체크박스 체크 여부를 기억해 두었다가, 해당 동작 수행  */
 let autoPrintReceipt = false;
 
@@ -373,12 +376,12 @@ gridColumnLayout[0] = [
     }, {
         dataField: "sumName",
         headerText: "상품명",
+        style: "receiptreg-product-name",
         width: 200,
         labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
             CommonUI.toppos.makeProductName(item, initialData.userItemPriceSortData);
             return item.sumName;
         },
-        style: "receiptreg-product-name",
         renderer : {
             type: "IconRenderer",
             iconPosition: "left",
@@ -401,12 +404,14 @@ gridColumnLayout[0] = [
     }, {
         dataField: "sumProcess",
         headerText: "처리내역",
+        style: "grid_textalign_left",
         labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
             return CommonUI.toppos.processName(item);
         }
     }, {
         dataField: "fdNormalAmt",
         headerText: "기본금액",
+        style: "grid_textalign_right",
         width: 70,
         dataType: "numeric",
         autoThousandSeparator: "true",
@@ -416,6 +421,7 @@ gridColumnLayout[0] = [
     }, {
         dataField: "fdRepairAmt",
         headerText: "수선금액",
+        style: "grid_textalign_right",
         width: 70,
         dataType: "numeric",
         autoThousandSeparator: "true",
@@ -425,6 +431,7 @@ gridColumnLayout[0] = [
     }, {
         dataField: "",
         headerText: "추가금액",
+        style: "grid_textalign_right",
         width: 70,
         dataType: "numeric",
         autoThousandSeparator: "true",
@@ -436,6 +443,7 @@ gridColumnLayout[0] = [
     }, {
         dataField: "fdDiscountAmt",
         headerText: "할인금액",
+        style: "grid_textalign_right",
         width: 70,
         dataType: "numeric",
         autoThousandSeparator: "true",
@@ -445,12 +453,14 @@ gridColumnLayout[0] = [
     }, {
         dataField: "fdQty",
         headerText: "수량",
+        style: "grid_textalign_right",
         width: 50,
         dataType: "numeric",
         autoThousandSeparator: "true",
     }, {
         dataField: "fdRequestAmt",
         headerText: "접수금액",
+        style: "grid_textalign_right",
         width: 90,
         dataType: "numeric",
         autoThousandSeparator: "true",
@@ -471,6 +481,7 @@ gridColumnLayout[0] = [
     }, {
         dataField: "fdRemark",
         headerText: "특이사항",
+        style: "grid_textalign_left",
     }, {
         dataField: "frEstimateDate",
         headerText: "출고예정일",
@@ -503,10 +514,13 @@ gridProp[0] = {
     selectionMode : "singleRow",
     noDataMessage : "주문받은 품목을 선택하여 주세요",
     rowNumHeaderText : "순번",
+    showAutoNoDataMessage: true,
     enableColumnResize : false,
+    showRowAllCheckBox: true,
+    showRowCheckColumn: true,
+    showRowNumColumn : false,
     showStateColumn : false,
-    enableFilter : true,
-    showRowCheckColumn : true,
+    enableFilter : false,
     rowHeight : 48,
     headerHeight : 48,
 };
@@ -524,6 +538,7 @@ gridColumnLayout[1] = [
     }, {
         dataField: "bcAddress",
         headerText: "주소",
+        style: "grid_textalign_left",
     },
 ];
 
@@ -532,8 +547,13 @@ gridProp[1] = {
     selectionMode : "singleRow",
     noDataMessage : "출력할 데이터가 없습니다.",
     rowNumHeaderText : "순번",
+    showAutoNoDataMessage: false,
     enableColumnResize : false,
-    enableFilter : true,
+    showRowAllCheckBox: false,
+    showRowCheckColumn: false,
+    showRowNumColumn : false,
+    showStateColumn : false,
+    enableFilter : false,
     width : 830,
     height : 480,
     rowHeight : 48,
@@ -567,10 +587,14 @@ gridColumnLayout[2] = [
 gridProp[2] = {
     editable : false,
     selectionMode : "singleRow",
-    noDataMessage : "출력할 데이터가 없습니다.",
+    noDataMessage : "임시저장 내역이 없습니다.",
     rowNumHeaderText : "순번",
+    showAutoNoDataMessage: true,
     enableColumnResize : false,
-    showStateColumn : true,
+    showRowAllCheckBox: false,
+    showRowCheckColumn: false,
+    showRowNumColumn : false,
+    showStateColumn : false,
     enableFilter : true,
     rowHeight : 48,
     headerHeight : 48,
@@ -584,6 +608,7 @@ gridColumnLayout[3] = [
         },
     }, {
         dataField: "fpAmt",
+        style: "grid_textalign_right",
         dataType: "numeric",
         autoThousandSeparator: "true",
     },
@@ -592,13 +617,16 @@ gridColumnLayout[3] = [
 gridProp[3] = {
     editable : false,
     selectionMode : "singleRow",
-    showAutoNoDataMessage : false,
+    showAutoNoDataMessage: false,
     enableColumnResize : false,
-    height : 140,
-    showHeader : false,
+    showRowAllCheckBox: false,
+    showRowCheckColumn: false,
     showRowNumColumn : false,
-    rowHeight : 48,
-    headerHeight : 48,
+    showStateColumn : false,
+    enableFilter : false,
+    height : 140,
+    rowHeight : 32,
+    headerHeight : 40,
 };
 
 
@@ -1237,7 +1265,7 @@ function onAddOrder() {
         }
         AUIGrid.updateRowsById(gridId[0], copyObj);
     }else{
-        currentRequest.fdTag = $("#fdTag").val().replace(/[^0-9A-Za-z]/g, "");
+        currentRequest.fdTag = nextFdTag.replace(/[^0-9A-Za-z]/g, "");
         AUIGrid.addRow(gridId[0], currentRequest, "last");
         setNextTag(currentRequest.fdTag);
     }
@@ -1439,6 +1467,8 @@ function onRemoveOrder() {
 function setNextTag(tag) {
     $("#fdTag").val(tag.substr(0,3) + "-"
         + (parseInt(tag.substr(-4)) + 1).toString().padStart(4, '0'));
+    nextFdTag = tag.substr(0,3) + "-"
+    + (parseInt(tag.substr(-4)) + 1).toString().padStart(4, '0');
 }
 
 /* 임시저장을 두단계로 분리하기 위해 데이터를 임시로 전역변수화 */
@@ -1574,7 +1604,7 @@ function onRepeatRequest() {
     let items = AUIGrid.getSelectedItems(gridId[0]);
     if(items.length) {
         delete items[0].item["_$uid"];
-        items[0].item["fdTag"] = $("#fdTag").val().replace(/[^0-9a-zA-Z]/g, "");
+        items[0].item["fdTag"] = nextFdTag.replace(/[^0-9a-zA-Z]/g, "");
         AUIGrid.addRow(gridId[0], items[0].item, "last");
         setNextTag(items[0].item.fdTag);
         calculateMainPrice();

@@ -141,6 +141,7 @@ const grid = {
                 }, {
                     dataField: "bgName",
                     headerText: "분류명칭",
+                    style: "grid_textalign_left",
                 }, {
                     dataField: "bgFavoriteYn",
                     headerText: "즐겨찾기",
@@ -159,10 +160,14 @@ const grid = {
                 editable : false,
                 selectionMode : "singleRow",
                 noDataMessage : "출력할 데이터가 없습니다.",
+                rowNumHeaderText : "순번",
+                showAutoNoDataMessage: false,
                 enableColumnResize : false,
+                showRowAllCheckBox: false,
+                showRowCheckColumn: false,
+                showRowNumColumn : true,
                 showStateColumn : false,
-                enableFilter : true,
-                showRowNumColumn : false,
+                enableFilter : false,
                 rowHeight : 48,
                 headerHeight : 48,
             };
@@ -177,6 +182,7 @@ const grid = {
                 }, {
                     dataField: "",
                     headerText: "분류명칭",
+                    style: "grid_textalign_left",
                     labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
                         return item.bgName + " " + item.bsName;
                     }
@@ -187,10 +193,13 @@ const grid = {
                 editable : false,
                 selectionMode : "singleRow",
                 noDataMessage : "출력할 데이터가 없습니다.",
+                showAutoNoDataMessage: true,
                 enableColumnResize : false,
-                showStateColumn : false,
-                enableFilter : true,
+                showRowAllCheckBox: false,
+                showRowCheckColumn: false,
                 showRowNumColumn : false,
+                showStateColumn : false,
+                enableFilter : false,
                 rowHeight : 48,
                 headerHeight : 48,
             };
@@ -205,6 +214,7 @@ const grid = {
                 }, {
                     dataField: "",
                     headerText: "상품명",
+                    style: "grid_textalign_left",
                     labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
                         return item.biName;
                     }
@@ -215,10 +225,14 @@ const grid = {
                 editable : false,
                 selectionMode : "singleRow",
                 noDataMessage : "출력할 데이터가 없습니다.",
+                rowNumHeaderText : "순번",
+                showAutoNoDataMessage: false,
                 enableColumnResize : false,
+                showRowAllCheckBox: false,
+                showRowCheckColumn: false,
+                showRowNumColumn : true,
                 showStateColumn : false,
-                enableFilter : true,
-                showRowNumColumn : false,
+                enableFilter : false,
                 rowHeight : 48,
                 headerHeight : 48,
             };

@@ -135,7 +135,7 @@ const comms = {
 const grids = {
     s: { // 그리드 세팅
         targetDiv: [
-            "grid_laundryList", "grid_customerList" ,"grid_selectedLaundry"
+            "grid_laundryList", "grid_customerList"
         ],
         columnLayout: [],
         prop: [],
@@ -156,6 +156,7 @@ const grids = {
                 }, {
                     dataField: "bcName",
                     headerText: "고객명",
+                    style: "grid_textalign_left",
                     width: 70,
                 }, {
                     dataField: "frYyyymmdd",
@@ -192,6 +193,7 @@ const grids = {
                 }, {
                     dataField: "",
                     headerText: "처리내역",
+                    style: "grid_textalign_left",
                     width: 80,
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
                         return CommonUI.toppos.processName(item);
@@ -199,6 +201,7 @@ const grids = {
                 }, {
                     dataField: "fdTotAmt",
                     headerText: "접수금액",
+                    style: "grid_textalign_right",
                     width: 90,
                     dataType: "numeric",
                     autoThousandSeparator: "true",
@@ -216,6 +219,7 @@ const grids = {
                 }, {
                     dataField: "fdRemark",
                     headerText: "특이사항",
+                    style: "grid_textalign_left",
                     width: 100,
                 }, {
                     dataField: "fdS2Dt",
@@ -244,10 +248,10 @@ const grids = {
                 noDataMessage : "인도할 세탁물이 존재하지 않습니다.",
                 showAutoNoDataMessage: true,
                 enableColumnResize : false,
-                showRowNumColumn : false,
-                showStateColumn : false,
                 showRowAllCheckBox: true,
                 showRowCheckColumn: true,
+                showRowNumColumn : false,
+                showStateColumn : false,
                 enableFilter : true,
                 rowHeight : 48,
                 headerHeight : 48,
@@ -265,6 +269,7 @@ const grids = {
                     }
                 }, {
                     dataField: "bcAddress",
+                    style: "grid_textalign_left",
                     headerText: "주소",
                 },
             ];
@@ -274,40 +279,18 @@ const grids = {
                 selectionMode : "singleRow",
                 noDataMessage : "출력할 데이터가 없습니다.",
                 rowNumHeaderText : "순번",
+                showAutoNoDataMessage: false,
                 enableColumnResize : false,
+                showRowAllCheckBox: false,
+                showRowCheckColumn: false,
+                showRowNumColumn : false,
+                showStateColumn : false,
                 enableFilter : true,
                 width : 830,
                 height : 480,
                 rowHeight : 48,
                 headerHeight : 48,
             };
-
-            grids.s.columnLayout[2] = [
-                {
-                    dataField: "",
-                    headerText: "접수일",
-                }, {
-                    dataField: "",
-                    headerText: "택번호",
-                }, {
-                    dataField: "",
-                    headerText: "상품명",
-                },
-            ];
-
-            grids.s.prop[2] = {
-                editable : false,
-                selectionMode : "singleRow",
-                noDataMessage : "출력할 데이터가 없습니다.",
-                showAutoNoDataMessage: false,
-                enableColumnResize : false,
-                showRowNumColumn : false,
-                showStateColumn : true,
-                enableFilter : true,
-                rowHeight : 48,
-                headerHeight : 48,
-            };
-
         },
 
         create() { // 그리드 동작 처음 빈 그리드를 생성
