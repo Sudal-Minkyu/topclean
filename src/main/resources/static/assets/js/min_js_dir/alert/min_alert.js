@@ -29,6 +29,10 @@ $(function() {
         $('#popupId').remove();
     });
 
+    $(document).on("click","#threeCancelBtn",function(){
+        $('#popupId').remove();
+    });
+
 });
 
 //Ajax 호출시 에러가났을경우의 메세지 함수
@@ -121,8 +125,7 @@ function alertCaution(text,type) { //경고창
     $('#cautionBtn'+type).trigger("focus");
 }
 
-// 삭제 알림창.
-function alertCheck(text) { //정말삭제할껀지확인하는창
+function alertCheck(text) { // 확인 취소 물음창
     let html = '';
 
     html +='<div id="popupId" class="popup popup--dim">';
@@ -134,6 +137,26 @@ function alertCheck(text) { //정말삭제할껀지확인하는창
     html +='<div class="popup__buttons">';
     html +='<button id="checkDelSuccessBtn" class="popup__btn popup__btn--solid">확인</button>';
     html +='<button id="checkDelCancelBtn" class="popup__btn">취소</button>';
+    html +='</div>';
+    html +='</div>';
+    html +='</div>';
+
+    $('#alertpop').html(html);
+}
+
+function alertThree(text) { // 예, 아니오, 취소 물음창
+    let html = '';
+
+    html +='<div id="popupId" class="popup popup--dim"">';
+    html +='<div class="popup__box">';
+    html +='<div class="popup__content">';
+    html +='<div class="popup__stat check"></div>';
+    html +='<div class="popup__text">'+text+'</div>';
+    html +='</div>';
+    html +='<div class="popup__buttons">';
+    html +='<button id="threeYesBtn" class="popup__btn popup__btn--solid">예</button>';
+    html +='<button id="threeNoBtn" class="popup__btn">아니오</button>';
+    html +='<button id="threeCancelBtn" class="popup__btn">취소</button>';
     html +='</div>';
     html +='</div>';
     html +='</div>';
