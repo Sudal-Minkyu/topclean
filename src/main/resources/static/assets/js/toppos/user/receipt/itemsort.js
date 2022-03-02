@@ -144,6 +144,7 @@ const grid = {
                 }, {
                     dataField: "bgFavoriteYn",
                     headerText: "즐겨찾기",
+                    style: "grid_input_bgfavoriteyn",
                     renderer : {
                         type : "DropDownListRenderer",
                         list : ["Y", "N"],

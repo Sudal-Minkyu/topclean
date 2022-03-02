@@ -228,13 +228,8 @@ $(function () {
         });
     });
 
-    AUIGrid.bind(gridId[4], "cellClick", function (e) {
-        $("#bot_brCode").val(e.item.brCode);
-        $("#bot_brName").val(e.item.brName);
-        $("#bot_brCarculateRateHq").val(e.item.brCarculateRateHq);
-        $("#bot_brCarculateRateBr").val(e.item.brCarculateRateBr);
-        $("#bot_brCarculateRateFr").val(e.item.brCarculateRateFr);
-        $('#branch_popup').removeClass('open');
+    AUIGrid.bind(gridId[4], "cellDoubleClick", function (e) {
+        putBranchInfo(e.item);
     });
 });
 
@@ -596,6 +591,24 @@ function brListPop(){
     $('#branch_popup').addClass('open');
     
     AUIGrid.resize(gridId[4]);
+}
+
+function branchSelect() {
+    const selectedItem = AUIGrid.getSelectedItems(gridId[4])[0];
+    if(selectedItem) {
+        putBranchInfo(selectedItem.item);
+    } else {
+        alertCaution("지사를 선택해 주세요", 1);
+    }
+}
+
+function putBranchInfo(item) {
+    $("#bot_brCode").val(item.brCode);
+    $("#bot_brName").val(item.brName);
+    $("#bot_brCarculateRateHq").val(item.brCarculateRateHq);
+    $("#bot_brCarculateRateBr").val(item.brCarculateRateBr);
+    $("#bot_brCarculateRateFr").val(item.brCarculateRateFr);
+    branchClose();
 }
 
 // 지사 점 팝업닫기
