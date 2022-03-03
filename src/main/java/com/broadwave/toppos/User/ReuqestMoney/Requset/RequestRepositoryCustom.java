@@ -32,4 +32,7 @@ public interface RequestRepositoryCustom {
     RequestPaymentPaperDto findByRequestPaymentPaper(String frNo, Long frId, String frCode);
 
     List<RequestHistoryListDto> findByRequestHistory(String frCode, String nowDate);
+
+    RequestTempDto findByRequestTemp(String frCode);
+
 }

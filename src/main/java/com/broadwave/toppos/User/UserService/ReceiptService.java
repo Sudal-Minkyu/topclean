@@ -929,6 +929,11 @@ public class ReceiptService {
         return requestRepositoryCustom.findByRequestHistory(frCode, nowDate);
     }
 
+    // 임시저장한 내역이 존재하는지
+    public RequestTempDto findByRequestTemp(String frCode) {
+        return requestRepositoryCustom.findByRequestTemp(frCode);
+    }
+
 }
 
 

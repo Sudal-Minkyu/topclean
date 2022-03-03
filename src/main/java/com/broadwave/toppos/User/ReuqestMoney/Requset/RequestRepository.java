@@ -19,20 +19,4 @@ public interface RequestRepository extends JpaRepository<Request,Long> {
     @Query("select a from Request a where a.id in :frIdList order by a.id desc")
     List<Request> findByRequestList(List<Long> frIdList);
 
-//    @Query("select a from Request a where a.frYyyymmdd >= :filterFromDt and a.frYyyymmdd <= :filterToDt and a.frCode = :frCode ")
-//    List<Request> findByBusinessDayList(String frCode, String filterFromDt, String filterToDt);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

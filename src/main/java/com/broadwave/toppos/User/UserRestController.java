@@ -34,6 +34,7 @@ import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetai
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailSet;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.RequestHistoryListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.RequestListDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.RequestTempDto;
 import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoney;
 import com.broadwave.toppos.User.UserDtos.EtcDataDto;
 import com.broadwave.toppos.User.UserDtos.UserIndexDto;
@@ -258,8 +259,8 @@ public class UserRestController {
                                                            @RequestParam(value="searchType", defaultValue="") String searchType,
                                                            @RequestParam(value="searchString", defaultValue="") String searchString){
         log.info("customerInfo 호출");
-        log.info("searchType :"+searchType);
-        log.info("searchString :"+searchString);
+//        log.info("searchType :"+searchType);
+//        log.info("searchString :"+searchString);
 
         // 클레임데이터 가져오기
         Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
@@ -276,6 +277,9 @@ public class UserRestController {
         List<CustomerInfoDto> customerInfoListDto = userService.findByCustomerInfo(frCode, searchType, searchString);
         log.info("customerInfoListDto : "+customerInfoListDto);
 
+        // 임시저장한 내역이 존재하는지
+        RequestTempDto requestTemp = receiptService.findByRequestTemp(frCode);
+        log.info("requestTemp : "+requestTemp);
         for (CustomerInfoDto customerInfoDto: customerInfoListDto) {
             customerListInfo = new HashMap<>();
             customerIdList.add(customerInfoDto.getBcId());
@@ -290,6 +294,11 @@ public class UserRestController {
             customerListInfo.put("bcLastRequestDt", customerInfoDto.getBcLastRequestDt());
             customerListInfo.put("beforeUncollectMoney", 0);
             customerListInfo.put("saveMoney", 0);
+            if(requestTemp != null){
+                customerListInfo.put("tempSaveFrNo", requestTemp.getFrNo());
+            }else{
+                customerListInfo.put("tempSaveFrNo", null);
+            }
             customerListData.add(customerListInfo);
         }
 

@@ -385,7 +385,22 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
 
     }
 
+    // 임시저장한 내역이 존재하는지
+    @Override
+    public RequestTempDto findByRequestTemp(String frCode) {
 
+        QRequest request = QRequest.request;
+
+        JPQLQuery<RequestTempDto> query =
+                from(request)
+                        .where(request.frCode.eq(frCode).and(request.frConfirmYn.eq("N")))
+                        .groupBy(request.frNo).limit(1)
+                        .select(Projections.constructor(RequestTempDto.class,
+                                request.frNo
+                        ));
+
+        return query.fetchOne();
+    }
 
 
 
