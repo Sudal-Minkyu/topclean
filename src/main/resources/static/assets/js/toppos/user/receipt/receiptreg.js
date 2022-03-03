@@ -120,7 +120,7 @@ $(function() {
         initialData = req.sendData;
         console.log(initialData);
 
-        setBgMenu(true);
+        setBgMenu(false);
 
         setNextTag(initialData.etcData.fdTag);
         frTagNo = initialData.etcData.fdTag.substring(0, 3);
