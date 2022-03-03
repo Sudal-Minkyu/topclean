@@ -26,9 +26,10 @@ const urls = {
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
-    franchiseInfo() {
+    franchiseInfo(condition) {
+        console.log(condition);
         const url = "/api/user/franchiseInfo";
-        CommonUI.ajax(url, "GET", null, function (res) {
+        CommonUI.ajax(url, "GET", condition, function (res) {
             const userIndexDto = res.sendData.userIndexDto[0];
             const historyList = res.sendData.requestHistoryList;
             console.log(res);
@@ -54,11 +55,15 @@ const comms = {
 
             if(historyList) {
                 const field = $("#historyList").children("li").children("a");
+                field.children(".main__board-badge").children("span").html("");
+                field.children(".main__board-time").children("span").html("");
+                field.children(".main__board-title").children("span").html("");
+                field.children(".main__board-phone").children("span").html("");
+
                 for(let i = 0; i < historyList.length; i++) {
                     $(field[i]).children(".main__board-badge").children("span").html(historyList[i].typename);
                     switch(historyList[i].typename) {
                         case "접수" :
-                            console.log("wjqtn");
                             $(field[i]).children(".main__board-badge").children("span").addClass("badge green");
                             break;
                         case "인도" :
@@ -105,11 +110,14 @@ const comms = {
 
 /* 이벤트를 s : 설정하거나 r : 해지하는 함수들을 담는다. 그리드 관련 이벤트는 grids.e에 위치 (trigger) */
 const trigs = {
-    s: { // 이벤트 설정
-
-    },
-    r: { // 이벤트 해제
-
+    basic() {
+        const $historyDate = $("#historyDate");
+        $historyDate.on("change", function () {
+            const condition = {
+                date: $historyDate.val(),
+            }
+            comms.franchiseInfo(condition);
+        });
     }
 }
 
@@ -137,10 +145,16 @@ function onPageLoad() {
     wares.boardConditionThree.filterFromDt = fromday;
     wares.boardConditionThree.filterToDt = today;
 
-    comms.franchiseInfo();
+    const condition = {
+        date: today,
+    }
+
+    comms.franchiseInfo(condition);
     comms.notice();
     comms.taglost();
-    const datePickerId = ["indexDate"];
+    const datePickerId = ["historyDate"];
     CommonUI.setDatePicker(datePickerId);
-	$("#indexDate").val(new Date().format("yyyy-MM-dd"));
+	$("#historyDate").val(today);
+    $("#historyDate").datepicker("option", "maxDate", today);
+    trigs.basic();
 }
