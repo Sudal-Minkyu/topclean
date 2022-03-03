@@ -300,31 +300,31 @@ public class ReceiptReleaseService {
                     requestDetailRepository.saveAll(requestDetailList);
                     break;
                 }
-                case "2": { // 지사반송
-                    log.info("지사반송 처리");
-                    List<RequestDetail> requestDetailList = requestDetailRepository.findByRequestDetailS2List(fdIdList);
-//                    log.info("requestDetailList : "+requestDetailList);
-                    for (RequestDetail requestDetail : requestDetailList) {
-//                        log.info("가져온 frID 값 : "+requestDetail.getFrId());
-                        if(requestDetail.getFdState().equals("S2")){
-                            requestDetail.setFdPreState(requestDetail.getFdState()); // 이전상태 값
-                            requestDetail.setFdPreStateDt(LocalDateTime.now());
-                            requestDetail.setFdState("S3");
-                            requestDetail.setFdStateDt(LocalDateTime.now());
-
-                            requestDetail.setFdS3Dt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
-                            requestDetail.setFdS3Time(LocalDateTime.now());
-                            requestDetail.setFdS3Id(login_id);
-
-                            requestDetail.setModify_id(login_id);
-                            requestDetail.setModify_date(LocalDateTime.now());
-                        }else{
-                            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP028.getCode(), "지사반송 "+ResponseErrorCode.TP028.getDesc(), "문자", "새로고침이후 다시 시도해주세요."));
-                        }
-                    }
-                    requestDetailRepository.saveAll(requestDetailList);
-                    break;
-                }
+//                case "2": { // 지사반송
+//                    log.info("지사반송 처리");
+//                    List<RequestDetail> requestDetailList = requestDetailRepository.findByRequestDetailS2List(fdIdList);
+////                    log.info("requestDetailList : "+requestDetailList);
+//                    for (RequestDetail requestDetail : requestDetailList) {
+////                        log.info("가져온 frID 값 : "+requestDetail.getFrId());
+//                        if(requestDetail.getFdState().equals("S2")){
+//                            requestDetail.setFdPreState(requestDetail.getFdState()); // 이전상태 값
+//                            requestDetail.setFdPreStateDt(LocalDateTime.now());
+//                            requestDetail.setFdState("S3");
+//                            requestDetail.setFdStateDt(LocalDateTime.now());
+//
+//                            requestDetail.setFdS3Dt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
+//                            requestDetail.setFdS3Time(LocalDateTime.now());
+//                            requestDetail.setFdS3Id(login_id);
+//
+//                            requestDetail.setModify_id(login_id);
+//                            requestDetail.setModify_date(LocalDateTime.now());
+//                        }else{
+//                            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP028.getCode(), "지사반송 "+ResponseErrorCode.TP028.getDesc(), "문자", "새로고침이후 다시 시도해주세요."));
+//                        }
+//                    }
+//                    requestDetailRepository.saveAll(requestDetailList);
+//                    break;
+//                }
                 case "3": { // 가맹점강제출고
                     log.info("가맹점강제출고 처리");
                     IssueForce issueForce;

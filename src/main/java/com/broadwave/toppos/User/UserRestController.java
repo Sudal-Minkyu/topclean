@@ -952,11 +952,11 @@ public class UserRestController {
         return receiptStateService.franchiseReceiptFranchiseInList(request);
     }
 
-    //  지사반송 - 세부테이블 지사반송상태 리스트
-    @GetMapping("franchiseReceiptReturnList")
-    public ResponseEntity<Map<String,Object>> franchiseReceiptReturnList(HttpServletRequest request){
-        return receiptStateService.franchiseReceiptReturnList(request);
-    }
+//    //  지사반송 - 세부테이블 지사반송상태 리스트
+//    @GetMapping("franchiseReceiptReturnList")
+//    public ResponseEntity<Map<String,Object>> franchiseReceiptReturnList(HttpServletRequest request){
+//        return receiptStateService.franchiseReceiptReturnList(request);
+//    }
 
     //  가맹점입고취소 - 세부테이블 가맹점입고상태 리스트
     @GetMapping("franchiseReceiptFranchiseInCancelList")
