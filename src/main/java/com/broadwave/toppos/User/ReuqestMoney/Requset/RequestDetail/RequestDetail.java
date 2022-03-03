@@ -68,11 +68,11 @@ public class RequestDetail {
     @Column(name="fd_s3_time")
     private LocalDateTime fdS3Time; // 지사반송시간
 
-    @Column(name="fd_s3_id")
-    private String fdS3Id; // 지사반송 담장자ID
-
     @Column(name="fd_s4_dt")
     private String fdS4Dt; // 지사출고일
+
+    @Column(name="fd_s4_type")
+    private String fdS4Type; // 지사출고타입(01:일반출고, 02:강제출고, 03:가맹점강제입고출고)
 
     @ManyToOne(targetEntity = Issue.class,fetch = FetchType.EAGER)
     @JoinColumn(name="mi_id")
