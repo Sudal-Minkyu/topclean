@@ -62,7 +62,7 @@ const comms = {
                             $(field[i]).children(".main__board-badge").children("span").addClass("badge green");
                             break;
                         case "인도" :
-                            $(field[i]).children(".main__board-badge").children("span").addClass("badge green");
+                            $(field[i]).children(".main__board-badge").children("span").addClass("badge red");
                             break;
                     }
                     $(field[i]).children(".main__board-time").children("span").html(historyList[i].requestTime);
