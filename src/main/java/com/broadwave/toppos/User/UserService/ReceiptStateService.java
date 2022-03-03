@@ -70,6 +70,7 @@ public class ReceiptStateService {
         // "S3"이면 지사반송페이지 버튼 "S3" -> "S2"
         // "S7"이면 가맹점강제입고 페이지 버튼 "S7" -> "S8"
         switch (stateType) {
+            // 수정완료 - 2022/03/03
             case "S1": { // 수기마감
                 log.info("수기마감 처리");
                 List<RequestDetail> requestDetailList = requestDetailRepository.findByRequestDetailS1List(fdIdList);
@@ -85,12 +86,16 @@ public class ReceiptStateService {
                     requestDetail.setFdS2Time(LocalDateTime.now());
                     requestDetail.setFdS2Type("01");
 
+                    requestDetail.setFdFrState("S2");
+                    requestDetail.setFdFrStateTime(LocalDateTime.now());
+
                     requestDetail.setModify_id(login_id);
                     requestDetail.setModify_date(LocalDateTime.now());
                 }
                 requestDetailRepository.saveAll(requestDetailList);
                 break;
             }
+            // 수정완료 - 2022/03/03
             case "S4": {
                 log.info("가맹점입고 처리");
                 List<RequestDetail> requestDetailList = requestDetailRepository.findByRequestDetailS4List(fdIdList);
@@ -99,30 +104,22 @@ public class ReceiptStateService {
 //                log.info("가져온 frID 값 : "+requestDetailList.get(i).getFrId());
                     requestDetail.setFdPreState(stateType); // 이전상태 값
                     requestDetail.setFdPreStateDt(LocalDateTime.now());
-                    requestDetail.setFdState("S5");
+
+                    if(requestDetail.getFdS4Type().equals("01")){
+                        requestDetail.setFdState("S5");
+                        requestDetail.setFdS5Dt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
+                        requestDetail.setFdS5Time(LocalDateTime.now());
+                        requestDetail.setFdFrState("S5");
+                    }else{
+                        requestDetail.setFdState("S3");
+                        requestDetail.setFdS3Dt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
+                        requestDetail.setFdS3Time(LocalDateTime.now());
+                        requestDetail.setFdFrState("S3");
+                    }
                     requestDetail.setFdStateDt(LocalDateTime.now());
 
-                    requestDetail.setFdS5Dt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
-                    requestDetail.setFdS5Time(LocalDateTime.now());
-                    requestDetail.setModify_id(login_id);
-                    requestDetail.setModify_date(LocalDateTime.now());
-                }
-                requestDetailRepository.saveAll(requestDetailList);
-                break;
-            }
-            case "S2": {
-                log.info("지사출고 처리");
-                List<RequestDetail> requestDetailList = requestDetailRepository.findByRequestDetailS2List(fdIdList);
-//            log.info("requestDetailList : "+requestDetailList);
-                for (RequestDetail requestDetail : requestDetailList) {
-//                log.info("가져온 frID 값 : "+requestDetailList.get(i).getFrId());
-                    requestDetail.setFdPreState(stateType); // 이전상태 값
-                    requestDetail.setFdPreStateDt(LocalDateTime.now());
-                    requestDetail.setFdState("S4");
-                    requestDetail.setFdStateDt(LocalDateTime.now());
+                    requestDetail.setFdFrStateTime(LocalDateTime.now());
 
-                    requestDetail.setFdS2Dt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
-                    requestDetail.setFdS2Time(LocalDateTime.now());
                     requestDetail.setModify_id(login_id);
                     requestDetail.setModify_date(LocalDateTime.now());
                 }
@@ -150,6 +147,7 @@ public class ReceiptStateService {
 //                requestDetailRepository.saveAll(requestDetailList);
 //                break;
 //            }
+            // 수정완료 - 2022/03/03
             case "S7": {
                 log.info("가맹점강제입고 처리");
                 Optional<InhouceForce> inhouceForce;
@@ -158,13 +156,21 @@ public class ReceiptStateService {
 //            log.info("requestDetailList : "+requestDetailList);
                 for (RequestDetail requestDetail : requestDetailList) {
 //                log.info("가져온 frID 값 : "+requestDetailList.get(i).getFrId());
-                    requestDetail.setFdPreState(stateType); // 이전상태 값
+                    requestDetail.setFdPreState(requestDetail.getFdState()); // 이전상태 값
                     requestDetail.setFdPreStateDt(LocalDateTime.now());
                     requestDetail.setFdState("S8");
                     requestDetail.setFdStateDt(LocalDateTime.now());
 
                     requestDetail.setFdS8Dt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
                     requestDetail.setFdS8Time(LocalDateTime.now());
+
+                    requestDetail.setFdS4Dt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
+                    requestDetail.setFdS4Time(LocalDateTime.now());
+                    requestDetail.setFdS4Id(login_id);
+                    requestDetail.setFdS4Type("03");
+
+                    requestDetail.setFdFrState("S8");
+                    requestDetail.setFdFrStateTime(LocalDateTime.now());
 
                     requestDetail.setModify_id(login_id);
                     requestDetail.setModify_date(LocalDateTime.now());
@@ -194,6 +200,7 @@ public class ReceiptStateService {
                 inhouseRepository.saveAll(inhouceForceList);
                 break;
             }
+            // 수정완료 - 2022/03/03
             case "S5":
             case "S8": {
                 log.info("세탁인도 처리");
@@ -208,6 +215,9 @@ public class ReceiptStateService {
 
                     requestDetail.setFdS6Dt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
                     requestDetail.setFdS6Time(LocalDateTime.now());
+
+                    requestDetail.setFdFrState("S6");
+                    requestDetail.setFdFrStateTime(LocalDateTime.now());
 
                     requestDetail.setModify_id(login_id);
                     requestDetail.setModify_date(LocalDateTime.now());
@@ -277,12 +287,8 @@ public class ReceiptStateService {
 
         // 클레임데이터 가져오기
         Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
-        String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
-        String frbrCode = (String) claims.get("frbrCode"); // 소속된 지사 코드
         String login_id = claims.getSubject(); // 현재 아이디
         log.info("현재 접속한 아이디 : "+login_id);
-        log.info("현재 접속한 가맹점 코드 : "+frCode);
-        log.info("소속된 지사 코드 : "+frbrCode);
 
         List<RequestDetail> requestDetailList = requestDetailRepository.findByRequestDetailS5List(fdIdList);
 //          log.info("requestDetailList : "+requestDetailList);
@@ -292,6 +298,9 @@ public class ReceiptStateService {
             requestDetail.setFdPreStateDt(LocalDateTime.now());
             requestDetail.setFdState("S4");
             requestDetail.setFdStateDt(LocalDateTime.now());
+
+            requestDetail.setFdFrState("S4");
+            requestDetail.setFdFrStateTime(LocalDateTime.now());
 
             requestDetail.setModify_id(login_id);
             requestDetail.setModify_date(LocalDateTime.now());
@@ -340,7 +349,7 @@ public class ReceiptStateService {
 //    }
 
     //  가맹점강제입고 - 세부테이블 강제출고 상태 리스트
-    public ResponseEntity<Map<String, Object>> franchiseReceiptForceList(HttpServletRequest request) {
+    public ResponseEntity<Map<String, Object>> franchiseReceiptForceList(Long bcId, HttpServletRequest request) {
         log.info("franchiseReceiptForceList 호출");
 
         AjaxResponse res = new AjaxResponse();
@@ -352,20 +361,20 @@ public class ReceiptStateService {
         log.info("현재 접속한 가맹점 코드 : "+frCode);
 
         // 가맹점강제입고 페이지에 보여줄 리스트 호출
-        List<RequestDetailForceListDto> requestDetailForceListDtos = requestDetailRepository.findByRequestDetailForceList(frCode);
-        List<Long> fdIdList = new ArrayList<>();
-        for(RequestDetailForceListDto requestDetailForceListDto : requestDetailForceListDtos){
-            fdIdList.add(requestDetailForceListDto.getFdId());
-        }
+        List<RequestDetailForceListDto> requestDetailForceListDtos = requestDetailRepository.findByRequestDetailForceList(bcId, frCode);
+//        List<Long> fdIdList = new ArrayList<>();
+//        for(RequestDetailForceListDto requestDetailForceListDto : requestDetailForceListDtos){
+//            fdIdList.add(requestDetailForceListDto.getFdId());
+//        }
 //        log.info("fdIdList : "+fdIdList);
-        List<InspeotYnDto> inspeotYnDtos = inspeotRepositoryCustom.findByInspeotStateList(fdIdList,"2");
+//        List<InspeotYnDto> inspeotYnDtos = inspeotRepositoryCustom.findByInspeotStateList(fdIdList,"2");
 //        log.info("inspeotYnDtos : "+inspeotYnDtos);
-        fdIdList.clear();
-        for(InspeotYnDto inspeotYnDto : inspeotYnDtos){
-            fdIdList.add(inspeotYnDto.getFdId());
-        }
+//        fdIdList.clear();
+//        for(InspeotYnDto inspeotYnDto : inspeotYnDtos){
+//            fdIdList.add(inspeotYnDto.getFdId());
+//        }
         data.put("gridListData",requestDetailForceListDtos);
-        data.put("checkFdId",fdIdList);
+//        data.put("checkFdId",fdIdList);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }

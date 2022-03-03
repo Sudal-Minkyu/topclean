@@ -41,7 +41,7 @@ public class RequestDetailUncollectDto {
     private String fdUrgentYn; // 급세탁 여부 (Y  / N) 기본값 : N
 
     private Integer fdTotAmt; // 합계금액( (정상 + 수선 + 추가1 + 추가2 -할인) * 수량 )
-    private String fdState; // 현재상태 ( S1 : 접수, S2: 지사입고, S3 지사반송, S4 지사출고 ,S5:가맹점입고, S6: 고객인도, S7 강제출고,S8 강제입고)
+    private String fdState; // 현재상태 ( S1 : 접수, S2: 지사입고,S3 강제출고, S4:가맹점입고, S6: 고객인도, S7: 지사강제출고, S8: 가맹점강제입고)
     private String fdS6Dt; // 고객인도일
 
     public StringBuffer getFrYyyymmdd() {

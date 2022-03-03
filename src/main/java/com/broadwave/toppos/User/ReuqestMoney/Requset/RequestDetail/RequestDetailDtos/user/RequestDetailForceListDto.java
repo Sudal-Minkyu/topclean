@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 public class RequestDetailForceListDto {
 
     private Long fdId; // 고유ID값
-    private String fdS4Dt; // 지사출고일
+    private String fdState; // 현재상태 ( S1 : 접수, S2: 지사입고,S3 강제출고, S4:가맹점입고, S6: 고객인도, S7: 지사강제출고, S8: 가맹점강제입고)
     private String bcName; // 고객명
     private String fdTag; // 택번호
 
@@ -52,17 +52,6 @@ public class RequestDetailForceListDto {
             getFrYyyymmdd.insert(4,'-');
             getFrYyyymmdd.insert(7,'-');
             return getFrYyyymmdd;
-        }else{
-            return null;
-        }
-    }
-
-    public StringBuffer getFdS4Dt() {
-        if(fdS4Dt != null){
-            StringBuffer getFdS4Dt = new StringBuffer(fdS4Dt);
-            getFdS4Dt.insert(4,'-');
-            getFdS4Dt.insert(7,'-');
-            return getFdS4Dt;
         }else{
             return null;
         }

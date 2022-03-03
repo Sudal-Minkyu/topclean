@@ -116,67 +116,67 @@ public class UserRestController {
     }
 
 //@@@@@@@@@@@@@@@@@@@@@ 가맹점 메인화면 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    // 현재 로그인한 가맹점 정보 가져오기
-    @GetMapping("franchiseInfo")
-    @ApiOperation(value = "가맹정 점보조회" , notes = "현재 로그인한 가맹점정보를 가져온다.")
-    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
-    public ResponseEntity<Map<String,Object>> franchiseInfo(HttpServletRequest request){
-        log.info("franchiseInfo 호출");
+        // 현재 로그인한 가맹점 정보 가져오기
+        @GetMapping("franchiseInfo")
+        @ApiOperation(value = "가맹정 점보조회" , notes = "현재 로그인한 가맹점정보를 가져온다.")
+        @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
+        public ResponseEntity<Map<String,Object>> franchiseInfo(@RequestParam(value="date", defaultValue="") String date, HttpServletRequest request){
+            log.info("franchiseInfo 호출");
 
-        // 클레임데이터 가져오기
-        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
-        String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
-        String frbrCode = (String) claims.get("frbrCode"); // 소속된 지사 코드
-        String login_id = claims.getSubject(); // 현재 아이디
-        log.info("현재 접속한 아이디 : "+login_id);
-        log.info("현재 접속한 가맹점 코드 : "+frCode);
-        log.info("소속된 지사 코드 : "+frbrCode);
+            // 클레임데이터 가져오기
+            Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+            String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
+            String frbrCode = (String) claims.get("frbrCode"); // 소속된 지사 코드
+            String login_id = claims.getSubject(); // 현재 아이디
+            log.info("현재 접속한 아이디 : "+login_id);
+            log.info("현재 접속한 가맹점 코드 : "+frCode);
+            log.info("소속된 지사 코드 : "+frbrCode);
 
-        AjaxResponse res = new AjaxResponse();
-        HashMap<String, Object> data = new HashMap<>();
+            AjaxResponse res = new AjaxResponse();
+            HashMap<String, Object> data = new HashMap<>();
 
-        String nowDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-        log.info("금일날짜 : "+nowDate);
+//        String nowDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+            log.info("조회날짜 "+date);
 
-        UserIndexDto userIndexDto = userService.findByUserInfo(login_id, frCode);
-        List<BranchCalendarListDto> branchCalendarListDtos = calendarService.branchCalendarSlidingDtoList(frbrCode, nowDate);
+            UserIndexDto userIndexDto = userService.findByUserInfo(login_id, frCode);
+            List<BranchCalendarListDto> branchCalendarListDtos = calendarService.branchCalendarSlidingDtoList(frbrCode, date);
 
-        List<String> calendar = new ArrayList<>();
-        if(branchCalendarListDtos.size()!=0){
-            for(BranchCalendarListDto branchCalendarListDto : branchCalendarListDtos){
-                if(branchCalendarListDto.getBcDayoffYn().equals("Y")){
-                    int year = Integer.parseInt(branchCalendarListDto.getBcDate().substring(0,4));
-                    int month = Integer.parseInt(branchCalendarListDto.getBcDate().substring(4,6));
-                    int day = Integer.parseInt(branchCalendarListDto.getBcDate().substring(6,8));
-                    LocalDate date = LocalDate.of(year, month, day);
-                    DayOfWeek dayOfWeek = date.getDayOfWeek();
-                    int dayOfWeekNumber = dayOfWeek.getValue();
-                    if(dayOfWeekNumber != 7){
-                        calendar.add(branchCalendarListDto.getBcDate());
+            List<String> calendar = new ArrayList<>();
+            if(branchCalendarListDtos.size()!=0){
+                for(BranchCalendarListDto branchCalendarListDto : branchCalendarListDtos){
+                    if(branchCalendarListDto.getBcDayoffYn().equals("Y")){
+                        int year = Integer.parseInt(branchCalendarListDto.getBcDate().substring(0,4));
+                        int month = Integer.parseInt(branchCalendarListDto.getBcDate().substring(4,6));
+                        int day = Integer.parseInt(branchCalendarListDto.getBcDate().substring(6,8));
+                        LocalDate weekDate = LocalDate.of(year, month, day);
+                        DayOfWeek dayOfWeek = weekDate.getDayOfWeek();
+                        int dayOfWeekNumber = dayOfWeek.getValue();
+                        if(dayOfWeekNumber != 7){
+                            calendar.add(branchCalendarListDto.getBcDate());
+                        }
                     }
                 }
             }
+
+            List<HashMap<String,Object>> userIndexData = new ArrayList<>();
+            HashMap<String,Object> userIndexInfo;
+            if(userIndexDto != null){
+                userIndexInfo = new HashMap<>();
+                userIndexInfo.put("username", userIndexDto.getUsername());
+                userIndexInfo.put("usertel", userIndexDto.getUsertel());
+                userIndexInfo.put("brName", userIndexDto.getBrName());
+                userIndexInfo.put("frName", userIndexDto.getFrName());
+                userIndexInfo.put("slidingText", calendar);
+                userIndexData.add(userIndexInfo);
+            }
+
+            List<RequestHistoryListDto> requestHistoryListDtos = receiptService.findByRequestHistory(frCode, date);
+
+            data.put("userIndexDto",userIndexData);
+            data.put("requestHistoryList",requestHistoryListDtos);
+
+            return ResponseEntity.ok(res.dataSendSuccess(data));
         }
-
-        List<HashMap<String,Object>> userIndexData = new ArrayList<>();
-        HashMap<String,Object> userIndexInfo;
-        if(userIndexDto != null){
-            userIndexInfo = new HashMap<>();
-            userIndexInfo.put("username", userIndexDto.getUsername());
-            userIndexInfo.put("usertel", userIndexDto.getUsertel());
-            userIndexInfo.put("brName", userIndexDto.getBrName());
-            userIndexInfo.put("frName", userIndexDto.getFrName());
-            userIndexInfo.put("slidingText", calendar);
-            userIndexData.add(userIndexInfo);
-        }
-
-        List<RequestHistoryListDto> requestHistoryListDtos = receiptService.findByRequestHistory(frCode, nowDate);
-
-        data.put("userIndexDto",userIndexData);
-        data.put("requestHistoryList",requestHistoryListDtos);
-
-        return ResponseEntity.ok(res.dataSendSuccess(data));
-    }
 
 
 
@@ -973,8 +973,8 @@ public class UserRestController {
 
     //  가맹점강제입고 - 세부테이블 강제출고상태 리스트
     @GetMapping("franchiseReceiptForceList")
-    public ResponseEntity<Map<String,Object>> franchiseReceiptForceList(HttpServletRequest request){
-        return receiptStateService.franchiseReceiptForceList(request);
+    public ResponseEntity<Map<String,Object>> franchiseReceiptForceList(@RequestParam(value="bcId", defaultValue="") Long bcId, HttpServletRequest request){
+        return receiptStateService.franchiseReceiptForceList(bcId, request);
     }
 
     //  세탁인도 - 세부테이블 지사입고, 강제입고 상태 리스트

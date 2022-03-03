@@ -18,6 +18,7 @@ import lombok.NoArgsConstructor;
 public class RequestDetailFranchiseInListDto {
 
     private Long fdId; // 고유ID값
+    private String fdS4Type; // 출고타입
     private String fdS4Dt; // 지사출고일
     private String bcName; // 고객명
     private String fdTag; // 택번호

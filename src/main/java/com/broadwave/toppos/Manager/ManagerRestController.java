@@ -155,7 +155,7 @@ public class ManagerRestController {
          return receiptReleaseService.branchStateChange(fdIdList, miDegree, request);
     }
 
-    //  지사출고 - 세부테이블 지사입고상태 리스트
+    //  지사출고 - 세부테이블 지사입고상태, 지사강제출고 리스트
     @GetMapping("branchReceiptBranchInList")
     public ResponseEntity<Map<String,Object>> branchReceiptBranchInList(@RequestParam("frId")Long frId, @RequestParam("filterFromDt")String filterFromDt,
                                                                            @RequestParam("filterToDt")String filterToDt, @RequestParam("isUrgent")String isUrgent, HttpServletRequest request){
@@ -199,27 +199,27 @@ public class ManagerRestController {
         return receiptReleaseService.branchReceiptBranchInCancelList(frId, fromDt, toDt, tagNo, request);
     }
 
-    //  지사반송 - 세부테이블 반송 처리 할 리스트
-    @GetMapping("branchReceiptReturnList")
-    public ResponseEntity<Map<String,Object>> branchReceiptReturnList(@RequestParam("frId")Long frId, @RequestParam("filterFromDt")String filterFromDt,
-                                                                              @RequestParam("filterToDt")String filterToDt, @RequestParam("tagNo")String tagNo, HttpServletRequest request){
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
-        LocalDateTime fromDt = null;
-        if(filterFromDt != null){
-            filterFromDt = filterFromDt+" 00:00:00.000";
-            fromDt = LocalDateTime.parse(filterFromDt, formatter);
-            //            log.info("fromDt :"+fromDt);
-        }
-
-        LocalDateTime toDt = null;
-        if(filterToDt != null){
-            filterToDt = filterToDt+" 23:59:59.999";
-            toDt = LocalDateTime.parse(filterToDt, formatter);
-            //            log.info("toDt :"+toDt);
-        }
-
-        return receiptReleaseService.branchReceiptReturnList(frId, fromDt, toDt, tagNo, request);
-    }
+//    //  지사반송 - 세부테이블 반송 처리 할 리스트
+//    @GetMapping("branchReceiptReturnList")
+//    public ResponseEntity<Map<String,Object>> branchReceiptReturnList(@RequestParam("frId")Long frId, @RequestParam("filterFromDt")String filterFromDt,
+//                                                                              @RequestParam("filterToDt")String filterToDt, @RequestParam("tagNo")String tagNo, HttpServletRequest request){
+//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
+//        LocalDateTime fromDt = null;
+//        if(filterFromDt != null){
+//            filterFromDt = filterFromDt+" 00:00:00.000";
+//            fromDt = LocalDateTime.parse(filterFromDt, formatter);
+//            //            log.info("fromDt :"+fromDt);
+//        }
+//
+//        LocalDateTime toDt = null;
+//        if(filterToDt != null){
+//            filterToDt = filterToDt+" 23:59:59.999";
+//            toDt = LocalDateTime.parse(filterToDt, formatter);
+//            //            log.info("toDt :"+toDt);
+//        }
+//
+//        return receiptReleaseService.branchReceiptReturnList(frId, fromDt, toDt, tagNo, request);
+//    }
 
     //  가맹점 강제츨고 - 세부테이블 강제출고 처리 할 리스트
     @GetMapping("branchReceiptForceReleaseList")

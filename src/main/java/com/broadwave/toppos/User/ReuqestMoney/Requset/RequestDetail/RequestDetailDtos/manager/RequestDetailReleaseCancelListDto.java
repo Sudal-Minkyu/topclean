@@ -47,8 +47,8 @@ public class RequestDetailReleaseCancelListDto {
 
     private String bcName; // 고객명
     private Integer fdTotAmt; // 합계금액( (정상 + 수선 + 추가1 + 추가2 -할인) * 수량 )
-    private String fdState; // 현재상태 ( S1 : 접수, S2: 지사입고,S3 지사출고, S4:가맹점입고, S5: 고객인도)
-    private String fdPreState; // 이전상태  ( S1 : 접수, S2: 지사입고,S3 지사출고, S4:가맹점입고, S5: 고객인도)
+    private String fdState; // 현재상태 ( S1 : 접수, S2: 지사입고,S3 강제출고, S4:가맹점입고, S6: 고객인도, S7: 지사강제출고, S8: 가맹점강제입고)
+    private String fdPreState; // 이전상태 ( S1 : 접수, S2: 지사입고,S3 강제출고, S4:가맹점입고, S6: 고객인도, S7: 지사강제출고, S8: 가맹점강제입고)
 
     public String getFdS2Time() {
         return fdS2Time.format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm"));

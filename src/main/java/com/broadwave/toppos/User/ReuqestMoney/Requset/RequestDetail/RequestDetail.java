@@ -42,16 +42,28 @@ public class RequestDetail {
     private String biItemcode; // 상품코드
 
     @Column(name="fd_state")
-    private String fdState; // 현재상태 ( S1 : 접수, S2: 지사입고,S3 지사출고, S4:가맹점입고, S5: 고객인도)
+    private String fdState; // 현재상태 ( S1 : 접수, S2: 지사입고,S3 강제출고, S4:가맹점입고, S6: 고객인도, S7: 지사강제출고, S8: 가맹점강제입고)
 
     @Column(name="fd_state_dt")
     private LocalDateTime fdStateDt; // 현재상태변경시간
 
     @Column(name="fd_pre_state")
-    private String fdPreState; // 이전상태  ( S1 : 접수, S2: 지사입고,S3 지사출고, S4:가맹점입고, S5: 고객인도)
+    private String fdPreState; // 이전상태 ( S1 : 접수, S2: 지사입고,S3 강제출고, S4:가맹점입고, S6: 고객인도, S7: 지사강제출고, S8: 가맹점강제입고)
 
     @Column(name="fd_pre_state_dt")
     private LocalDateTime fdPreStateDt; // 이전상태변경시간
+
+    @Column(name="fd_fr_state")
+    private String fdFrState; // 가맹점프로그램 에서변경한최종상태
+
+    @Column(name="fd_fr_state_time")
+    private LocalDateTime fdFrStateTime; // 가맹점프로그램 에서변경한최종상태변경일시
+
+    @Column(name="fd_br_state")
+    private String fdBrState; // 지사프로그램 에서변경한최종상태
+
+    @Column(name="fd_br_state_time")
+    private LocalDateTime fdBrStateTime; // 지사프로그램 에서변경한최종상태변경일시
 
     @Column(name="fd_s2_dt")
     private String fdS2Dt; // 지사입고일

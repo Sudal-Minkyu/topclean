@@ -20,8 +20,8 @@ public interface RequestDetailRepositoryCustom {
 
     List<RequestDetailCloseListDto> findByRequestDetailCloseList(String frCode); // 수기마감
     List<RequestDetailFranchiseInListDto> findByRequestDetailFranchiseInList(String frCode); // 가맹점입고
-    List<RequestDetailReturnListDto> findByRequestDetailReturnList(String frCode); // 지사반송
-    List<RequestDetailForceListDto> findByRequestDetailForceList(String frCode); // 가맹점강제입고
+//    List<RequestDetailReturnListDto> findByRequestDetailReturnList(String frCode); // 지사반송
+    List<RequestDetailForceListDto> findByRequestDetailForceList(Long bcId, String frCode); // 가맹점강제입고
     List<RequestDetailDeliveryDto> findByRequestDetailDeliveryList(String frCode, Long bcId); // 세탁인도
     List<RequestDetailFranchiseInCancelListDto> findByRequestDetailFranchiseInCancelList(String frCode, String fromDt, String toDt); // 가맹점입고취소
 
@@ -37,7 +37,7 @@ public interface RequestDetailRepositoryCustom {
     List<RequestDetailReleaseListDto> findByRequestDetailReleaseList(String brCode, Long frId, LocalDateTime fromDt, java.time.LocalDateTime toDt, String isUrgent); // 지사출고
 
     List<RequestDetailReleaseCancelListDto> findByRequestDetailReleaseCancelList(String brCode, Long frId, LocalDateTime fromDt, LocalDateTime toDt, String tagNo); // 지사출고취소
-    List<RequestDetailBranchReturnListDto> findByRequestDetailBranchReturnList(String brCode, Long frId, LocalDateTime fromDt, LocalDateTime toDt, String tagNo); // 지사반송
+//    List<RequestDetailBranchReturnListDto> findByRequestDetailBranchReturnList(String brCode, Long frId, LocalDateTime fromDt, LocalDateTime toDt, String tagNo); // 지사반송
     List<RequestDetailBranchForceListDto> findByRequestDetailBranchForceList(String brCode, Long frId, LocalDateTime fromDt, LocalDateTime toDt, String tagNo); // 지사 가맹점강제출고
     List<RequestDetailBranchInspectListDto> findByRequestDetailBranchInspectList(String brCode, Long franchiseId, LocalDateTime fromDt, LocalDateTime toDt, String tagNo); // 확인품등록
     List<RequestDetailBranchInspectionCurrentListDto> findByRequestDetailBranchInspectionCurrentList(String brCode, Long frId, LocalDateTime fromDt, LocalDateTime toDt, String tagNo); // 확인품현황

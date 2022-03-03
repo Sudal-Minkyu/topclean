@@ -69,8 +69,8 @@ public class ReceiptReleaseService {
     public ResponseEntity<Map<String, Object>> branchStateChange(List<List<Long>> fdIdList, Integer miDegree, HttpServletRequest request) {
         log.info("branchStateChange 호출");
 
-        log.info("출고처리할 ID : "+fdIdList);
-        log.info("출고차수 : "+miDegree);
+//        log.info("출고처리할 ID : "+fdIdList);
+//        log.info("출고차수 : "+miDegree);
 
         AjaxResponse res = new AjaxResponse();
 
@@ -103,7 +103,7 @@ public class ReceiptReleaseService {
 
             for (RequestDetail requestDetail : requestDetailList) {
 //                log.info("가져온 frID 값 : " + requestDetail.getFrId());
-                requestDetail.setFdPreState("S2"); // 이전상태 값
+                requestDetail.setFdPreState(requestDetail.getFdState()); // 이전상태 값
                 requestDetail.setFdPreStateDt(LocalDateTime.now());
 
                 requestDetail.setFdState("S4");
@@ -112,6 +112,15 @@ public class ReceiptReleaseService {
                 requestDetail.setFdS4Dt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
                 requestDetail.setFdS4Time(LocalDateTime.now());
                 requestDetail.setFdS4Id(login_id);
+                if(requestDetail.getFdState().equals("S2")){
+                    requestDetail.setFdS4Type("01");
+                }else {
+                    requestDetail.setFdS4Type("02");
+                }
+
+                requestDetail.setFdBrState("S4");
+                requestDetail.setFdBrStateTime(LocalDateTime.now());
+
                 requestDetail.setMiId(issue);
 
                 requestDetail.setModify_id(login_id);
@@ -146,10 +155,10 @@ public class ReceiptReleaseService {
     public ResponseEntity<Map<String, Object>> branchReceiptBranchInCancelList(Long frId, LocalDateTime fromDt, LocalDateTime toDt, String tagNo, HttpServletRequest request) {
         log.info("branchReceiptBranchInCancelList 호출");
 
-        log.info("frId : "+frId);
-        log.info("fromDt : "+fromDt);
-        log.info("toDt : "+toDt);
-        log.info("tagNo : "+tagNo);
+//        log.info("frId : "+frId);
+//        log.info("fromDt : "+fromDt);
+//        log.info("toDt : "+toDt);
+//        log.info("tagNo : "+tagNo);
 
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
@@ -166,50 +175,50 @@ public class ReceiptReleaseService {
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
-    //  지사반송 - 세부테이블 반송 처리 할 리스트
-    public ResponseEntity<Map<String, Object>> branchReceiptReturnList(Long frId, LocalDateTime fromDt, LocalDateTime toDt, String tagNo, HttpServletRequest request) {
-        log.info("branchReceiptReturnList 호출");
-
-        log.info("frId : "+frId);
-        log.info("tagNo : "+tagNo);
-
-        AjaxResponse res = new AjaxResponse();
-        HashMap<String, Object> data = new HashMap<>();
-
-        // 클레임데이터 가져오기
-        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
-        String brCode = (String) claims.get("brCode"); // 현재 지사의 코드(2자리) 가져오기
-        log.info("현재 접속한 지사 코드 : "+brCode);
-
-        // 반송 처리 할 리스트 호출
-        List<RequestDetailBranchReturnListDto> requestDetailBranchReturnListDtos = requestDetailRepository.findByRequestDetailBranchReturnList(brCode, frId, fromDt, toDt, tagNo);
-
-        List<Long> fdIdList = new ArrayList<>();
-        for (RequestDetailBranchReturnListDto requestDetailBranchReturnListDto : requestDetailBranchReturnListDtos) {
-            fdIdList.add(requestDetailBranchReturnListDto.getFdId());
-        }
-
-        List<InspeotYnDto> inspeotYnDtoBList = inspeotRepositoryCustom.findByInspeotYnBAndType3(fdIdList); // 지사검품(확인품) 여부
-
-        for (int i=0; i< requestDetailBranchReturnListDtos.size(); i++) {
-            for(InspeotYnDto inspeotYnDto : inspeotYnDtoBList){
-                if(!inspeotYnDto.getFdId().equals(requestDetailBranchReturnListDtos.get(i).getFdId())){
-                    requestDetailBranchReturnListDtos.set(i,null);
-                }
-            }
-        }
-
-        data.put("gridListData",requestDetailBranchReturnListDtos);
-
-        return ResponseEntity.ok(res.dataSendSuccess(data));
-    }
+//    //  지사반송 - 세부테이블 반송 처리 할 리스트
+//    public ResponseEntity<Map<String, Object>> branchReceiptReturnList(Long frId, LocalDateTime fromDt, LocalDateTime toDt, String tagNo, HttpServletRequest request) {
+//        log.info("branchReceiptReturnList 호출");
+//
+//        log.info("frId : "+frId);
+//        log.info("tagNo : "+tagNo);
+//
+//        AjaxResponse res = new AjaxResponse();
+//        HashMap<String, Object> data = new HashMap<>();
+//
+//        // 클레임데이터 가져오기
+//        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+//        String brCode = (String) claims.get("brCode"); // 현재 지사의 코드(2자리) 가져오기
+//        log.info("현재 접속한 지사 코드 : "+brCode);
+//
+//        // 반송 처리 할 리스트 호출
+//        List<RequestDetailBranchReturnListDto> requestDetailBranchReturnListDtos = requestDetailRepository.findByRequestDetailBranchReturnList(brCode, frId, fromDt, toDt, tagNo);
+//
+//        List<Long> fdIdList = new ArrayList<>();
+//        for (RequestDetailBranchReturnListDto requestDetailBranchReturnListDto : requestDetailBranchReturnListDtos) {
+//            fdIdList.add(requestDetailBranchReturnListDto.getFdId());
+//        }
+//
+//        List<InspeotYnDto> inspeotYnDtoBList = inspeotRepositoryCustom.findByInspeotYnBAndType3(fdIdList); // 지사검품(확인품) 여부
+//
+//        for (int i=0; i< requestDetailBranchReturnListDtos.size(); i++) {
+//            for(InspeotYnDto inspeotYnDto : inspeotYnDtoBList){
+//                if(!inspeotYnDto.getFdId().equals(requestDetailBranchReturnListDtos.get(i).getFdId())){
+//                    requestDetailBranchReturnListDtos.set(i,null);
+//                }
+//            }
+//        }
+//
+//        data.put("gridListData",requestDetailBranchReturnListDtos);
+//
+//        return ResponseEntity.ok(res.dataSendSuccess(data));
+//    }
 
     //  가맹점 강제츨고 - 세부테이블 강제출고 처리 할 리스트
     public ResponseEntity<Map<String, Object>> branchReceiptForceReleaseList(Long frId, LocalDateTime fromDt, LocalDateTime toDt, String tagNo, HttpServletRequest request) {
         log.info("branchReceiptForceReleaseList 호출");
 
-        log.info("frId : "+frId);
-        log.info("tagNo : "+tagNo);
+//        log.info("frId : "+frId);
+//        log.info("tagNo : "+tagNo);
 
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
@@ -222,20 +231,20 @@ public class ReceiptReleaseService {
         // 가맹점 강제츨고 처리 할 리스트 호출
         List<RequestDetailBranchForceListDto> requestDetailBranchForceListDtos = requestDetailRepository.findByRequestDetailBranchForceList(brCode, frId, fromDt, toDt, tagNo);
 
-        List<Long> fdIdList = new ArrayList<>();
-        for (RequestDetailBranchForceListDto requestDetailBranchForceListDto : requestDetailBranchForceListDtos) {
-            fdIdList.add(requestDetailBranchForceListDto.getFdId());
-        }
-
-        List<InspeotYnDto> inspeotYnDtoBList = inspeotRepositoryCustom.findByInspeotYnBAndType1(fdIdList); // 지사검품(확인품) 여부
-
-        for (int i=0; i< requestDetailBranchForceListDtos.size(); i++) {
-            for(InspeotYnDto inspeotYnDto : inspeotYnDtoBList){
-                if(!inspeotYnDto.getFdId().equals(requestDetailBranchForceListDtos.get(i).getFdId())){
-                    requestDetailBranchForceListDtos.set(i,null);
-                }
-            }
-        }
+//        List<Long> fdIdList = new ArrayList<>();
+//        for (RequestDetailBranchForceListDto requestDetailBranchForceListDto : requestDetailBranchForceListDtos) {
+//            fdIdList.add(requestDetailBranchForceListDto.getFdId());
+//        }
+//
+//        List<InspeotYnDto> inspeotYnDtoBList = inspeotRepositoryCustom.findByInspeotYnBAndType1(fdIdList); // 지사검품(확인품) 여부
+//
+//        for (int i=0; i< requestDetailBranchForceListDtos.size(); i++) {
+//            for(InspeotYnDto inspeotYnDto : inspeotYnDtoBList){
+//                if(!inspeotYnDto.getFdId().equals(requestDetailBranchForceListDtos.get(i).getFdId())){
+//                    requestDetailBranchForceListDtos.set(i,null);
+//                }
+//            }
+//        }
 
         data.put("gridListData",requestDetailBranchForceListDtos);
 
@@ -282,7 +291,13 @@ public class ReceiptReleaseService {
                         if(requestDetail.getFdState().equals("S4")){
                             requestDetail.setFdPreState(requestDetail.getFdState()); // 이전상태 값
                             requestDetail.setFdPreStateDt(LocalDateTime.now());
-                            requestDetail.setFdState("S2");
+                            if(requestDetail.getFdS4Type().equals("01")){
+                                requestDetail.setFdState("S2");
+                                requestDetail.setFdBrState("S2");
+                            }else{
+                                requestDetail.setFdState("S7");
+                                requestDetail.setFdBrState("S7");
+                            }
                             requestDetail.setFdStateDt(LocalDateTime.now());
 
                             // 출고처리취소시 아래 값 모두 null 처리
@@ -290,6 +305,10 @@ public class ReceiptReleaseService {
                             requestDetail.setFdS4Dt(null);
                             requestDetail.setFdS4Time(null);
                             requestDetail.setFdS4Id(null);
+                            requestDetail.setFdS4Type(null);
+
+                            requestDetail.setFdBrStateTime(LocalDateTime.now());
+
 
                             requestDetail.setModify_id(login_id);
                             requestDetail.setModify_date(LocalDateTime.now());
@@ -346,6 +365,9 @@ public class ReceiptReleaseService {
 
                             requestDetail.setModify_id(login_id);
                             requestDetail.setModify_date(LocalDateTime.now());
+
+                            requestDetail.setFdBrState("S7");
+                            requestDetail.setFdBrStateTime(LocalDateTime.now());
 
                             issueForce = issueForceRepository.findByFdId(requestDetail.getId());
                             // 가맹점 강제 출고처리

@@ -310,8 +310,10 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                 .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
                 .where(request.frConfirmYn.eq("Y"))
                 .where(requestDetail.frId.frCode.eq(frCode).and(requestDetail.fdCancel.eq("N")).and(requestDetail.fdState.eq("S4")))
+                .where(requestDetail.fdS4Type.eq("01").or(requestDetail.fdS4Type.eq("02")))
                 .select(Projections.constructor(RequestDetailFranchiseInListDto.class,
                         requestDetail.id,
+                        requestDetail.fdS4Type,
                         requestDetail.fdS4Dt,
                         customer.bcName,
                         requestDetail.fdTag,
@@ -356,7 +358,8 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                 .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
                 .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
                 .where(request.frConfirmYn.eq("Y"))
-                .where(requestDetail.frId.frCode.eq(frCode).and(requestDetail.fdCancel.eq("N")).and(requestDetail.fdState.eq("S5")))
+                .where(requestDetail.frId.frCode.eq(frCode).and(requestDetail.fdCancel.eq("N")))
+                .where(requestDetail.fdState.eq("S3").or(requestDetail.fdState.eq("S5")))
                 .select(Projections.constructor(RequestDetailFranchiseInCancelListDto.class,
                         requestDetail.id,
                         requestDetail.fdS5Dt,
@@ -396,51 +399,52 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         return query.fetch();
     }
 
-    // 지사반송 querydsl
-    public List<RequestDetailReturnListDto> findByRequestDetailReturnList(String frCode){
-        QRequestDetail requestDetail = QRequestDetail.requestDetail;
-        QRequest request = QRequest.request;
-        QItemGroup itemGroup = QItemGroup.itemGroup;
-        QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
-        QItem item = QItem.item;
-        QCustomer customer = QCustomer.customer;
-        JPQLQuery<RequestDetailReturnListDto> query = from(requestDetail)
-                .innerJoin(requestDetail.frId, request)
-                .innerJoin(request.bcId, customer)
-                .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
-                .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
-                .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
-                .where(request.frConfirmYn.eq("Y"))
-                .where(requestDetail.frId.frCode.eq(frCode).and(requestDetail.fdCancel.eq("N")).and(requestDetail.fdState.eq("S3")))
-                .select(Projections.constructor(RequestDetailReturnListDto.class,
-                        requestDetail.id,
-                        request.frYyyymmdd,
-                        customer.bcName,
-                        requestDetail.fdTag,
-                        itemGroup.bgName,
-                        itemGroupS.bsName,
-                        item.biName,
-                        requestDetail.fdPriceGrade,
-                        requestDetail.fdRetryYn,
-                        requestDetail.fdPressed,
-                        requestDetail.fdAdd1Amt,
-                        requestDetail.fdAdd1Remark,
-                        requestDetail.fdRepairAmt,
-                        requestDetail.fdRepairRemark,
-                        requestDetail.fdWhitening,
-                        requestDetail.fdPollution,
-                        requestDetail.fdWaterRepellent,
-                        requestDetail.fdStarch,
-                        requestDetail.fdUrgentYn,
-                        requestDetail.fdTotAmt,
-                        requestDetail.fdRemark,
-                        requestDetail.fdColor
-                ));
-        query.orderBy(requestDetail.id.asc());
-        return query.fetch();
-    }
+//    // 지사반송 querydsl
+//    public List<RequestDetailReturnListDto> findByRequestDetailReturnList(String frCode){
+//        QRequestDetail requestDetail = QRequestDetail.requestDetail;
+//        QRequest request = QRequest.request;
+//        QItemGroup itemGroup = QItemGroup.itemGroup;
+//        QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
+//        QItem item = QItem.item;
+//        QCustomer customer = QCustomer.customer;
+//        JPQLQuery<RequestDetailReturnListDto> query = from(requestDetail)
+//                .innerJoin(requestDetail.frId, request)
+//                .innerJoin(request.bcId, customer)
+//                .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
+//                .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
+//                .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
+//                .where(request.frConfirmYn.eq("Y"))
+//                .where(requestDetail.frId.frCode.eq(frCode).and(requestDetail.fdCancel.eq("N")).and(requestDetail.fdState.eq("S3")))
+//                .select(Projections.constructor(RequestDetailReturnListDto.class,
+//                        requestDetail.id,
+//                        request.frYyyymmdd,
+//                        customer.bcName,
+//                        requestDetail.fdTag,
+//                        itemGroup.bgName,
+//                        itemGroupS.bsName,
+//                        item.biName,
+//                        requestDetail.fdPriceGrade,
+//                        requestDetail.fdRetryYn,
+//                        requestDetail.fdPressed,
+//                        requestDetail.fdAdd1Amt,
+//                        requestDetail.fdAdd1Remark,
+//                        requestDetail.fdRepairAmt,
+//                        requestDetail.fdRepairRemark,
+//                        requestDetail.fdWhitening,
+//                        requestDetail.fdPollution,
+//                        requestDetail.fdWaterRepellent,
+//                        requestDetail.fdStarch,
+//                        requestDetail.fdUrgentYn,
+//                        requestDetail.fdTotAmt,
+//                        requestDetail.fdRemark,
+//                        requestDetail.fdColor
+//                ));
+//        query.orderBy(requestDetail.id.asc());
+//        return query.fetch();
+//    }
+
     // 가맹접강제입고 querydsl
-    public List<RequestDetailForceListDto> findByRequestDetailForceList(String frCode){
+    public List<RequestDetailForceListDto> findByRequestDetailForceList(Long bcId, String frCode){
         QRequestDetail requestDetail = QRequestDetail.requestDetail;
         QRequest request = QRequest.request;
         QItemGroup itemGroup = QItemGroup.itemGroup;
@@ -455,10 +459,12 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                 .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
                 .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
                 .where(request.frConfirmYn.eq("Y"))
-                .where(requestDetail.frId.frCode.eq(frCode).and(requestDetail.fdCancel.eq("N")).and(requestDetail.fdState.eq("S7")))
+                .where(requestDetail.frId.frCode.eq(frCode).and(requestDetail.fdCancel.eq("N")))
+                .where(requestDetail.fdState.eq("S1").or(requestDetail.fdState.eq("S2")))
+                .where(customer.bcId.eq(bcId))
                 .select(Projections.constructor(RequestDetailForceListDto.class,
                         requestDetail.id,
-                        requestDetail.fdS4Dt,
+                        requestDetail.fdState,
                         customer.bcName,
                         requestDetail.fdTag,
                         requestDetail.fdColor,
@@ -485,6 +491,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         query.orderBy(requestDetail.id.asc());
         return query.fetch();
     }
+
     // 세탁인도 querydsl
     public List<RequestDetailDeliveryDto> findByRequestDetailDeliveryList(String frCode, Long bcId){
         QRequestDetail requestDetail = QRequestDetail.requestDetail;
@@ -681,10 +688,8 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         return query.fetch();
     }
 
-    // 지사출고 querydsl
+    // 지사출고 querydsl + 추가 2022/03/03 - 지사강제출고
     public List<RequestDetailReleaseListDto> findByRequestDetailReleaseList(String brCode, Long frId, LocalDateTime fromDt, java.time.LocalDateTime toDt, String isUrgent){
-//        Long frId, LocalDateTime fromDt, java.time.LocalDateTime toDt, String isUrgent
-//        brCode
         QRequestDetail requestDetail = QRequestDetail.requestDetail;
         QRequest request = QRequest.request;
         QFranchise franchise = QFranchise.franchise;
@@ -729,7 +734,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdState
                 ));
         query.orderBy(requestDetail.id.asc());
-        query.where(requestDetail.fdState.eq("S2"));
+        query.where(requestDetail.fdState.eq("S2").or(requestDetail.fdState.eq("S7")));
         if(frId != 0){
             query.where(franchise.id.eq(frId));
         }
@@ -806,66 +811,66 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         return query.fetch();
     }
 
-    // 지사반송 querydsl
-    public  List<RequestDetailBranchReturnListDto> findByRequestDetailBranchReturnList(String brCode, Long frId, LocalDateTime fromDt, LocalDateTime toDt, String tagNo){
-        QRequestDetail requestDetail = QRequestDetail.requestDetail;
-        QRequest request = QRequest.request;
-        QFranchise franchise = QFranchise.franchise;
-        QItemGroup itemGroup = QItemGroup.itemGroup;
-        QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
-        QItem item = QItem.item;
-        QCustomer customer = QCustomer.customer;
-
-        JPQLQuery<RequestDetailBranchReturnListDto> query = from(requestDetail)
-                .innerJoin(requestDetail.frId, request)
-                .innerJoin(request.bcId, customer)
-                .innerJoin(franchise).on(request.frCode.eq(franchise.frCode))
-                .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
-                .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
-                .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
-                .where(request.frConfirmYn.eq("Y"))
-                .where(request.brCode.eq(brCode).and(requestDetail.fdCancel.eq("N")))
-                .select(Projections.constructor(RequestDetailBranchReturnListDto.class,
-                        requestDetail.id,
-                        franchise.frName,
-                        requestDetail.insert_date,
-                        requestDetail.fdS2Time,
-                        requestDetail.fdTag,
-                        requestDetail.fdColor,
-                        itemGroup.bgName,
-                        itemGroupS.bsName,
-                        item.biName,
-                        requestDetail.fdPriceGrade,
-                        requestDetail.fdRetryYn,
-                        requestDetail.fdPressed,
-                        requestDetail.fdAdd1Amt,
-                        requestDetail.fdAdd1Remark,
-                        requestDetail.fdRepairAmt,
-                        requestDetail.fdRepairRemark,
-                        requestDetail.fdWhitening,
-                        requestDetail.fdPollution,
-                        requestDetail.fdWaterRepellent,
-                        requestDetail.fdStarch,
-                        requestDetail.fdUrgentYn,
-                        customer.bcName,
-                        requestDetail.fdTotAmt,
-                        requestDetail.fdState,
-                        requestDetail.fdPreState
-                ));
-        query.orderBy(requestDetail.id.asc());
-        query.where(requestDetail.fdState.eq("S2"));
-        query.where(franchise.id.eq(frId));
-        if(!tagNo.equals("")){
-            query.where(requestDetail.fdTag.substring(3,7).likeIgnoreCase(tagNo));
-        }
-        if(fromDt != null){
-            query.where(requestDetail.fdS2Time.goe(fromDt));
-        }
-        if(toDt != null){
-            query.where(requestDetail.fdS2Time.loe(toDt));
-        }
-        return query.fetch();
-    }
+//    // 지사반송 querydsl
+//    public  List<RequestDetailBranchReturnListDto> findByRequestDetailBranchReturnList(String brCode, Long frId, LocalDateTime fromDt, LocalDateTime toDt, String tagNo){
+//        QRequestDetail requestDetail = QRequestDetail.requestDetail;
+//        QRequest request = QRequest.request;
+//        QFranchise franchise = QFranchise.franchise;
+//        QItemGroup itemGroup = QItemGroup.itemGroup;
+//        QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
+//        QItem item = QItem.item;
+//        QCustomer customer = QCustomer.customer;
+//
+//        JPQLQuery<RequestDetailBranchReturnListDto> query = from(requestDetail)
+//                .innerJoin(requestDetail.frId, request)
+//                .innerJoin(request.bcId, customer)
+//                .innerJoin(franchise).on(request.frCode.eq(franchise.frCode))
+//                .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
+//                .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
+//                .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
+//                .where(request.frConfirmYn.eq("Y"))
+//                .where(request.brCode.eq(brCode).and(requestDetail.fdCancel.eq("N")))
+//                .select(Projections.constructor(RequestDetailBranchReturnListDto.class,
+//                        requestDetail.id,
+//                        franchise.frName,
+//                        requestDetail.insert_date,
+//                        requestDetail.fdS2Time,
+//                        requestDetail.fdTag,
+//                        requestDetail.fdColor,
+//                        itemGroup.bgName,
+//                        itemGroupS.bsName,
+//                        item.biName,
+//                        requestDetail.fdPriceGrade,
+//                        requestDetail.fdRetryYn,
+//                        requestDetail.fdPressed,
+//                        requestDetail.fdAdd1Amt,
+//                        requestDetail.fdAdd1Remark,
+//                        requestDetail.fdRepairAmt,
+//                        requestDetail.fdRepairRemark,
+//                        requestDetail.fdWhitening,
+//                        requestDetail.fdPollution,
+//                        requestDetail.fdWaterRepellent,
+//                        requestDetail.fdStarch,
+//                        requestDetail.fdUrgentYn,
+//                        customer.bcName,
+//                        requestDetail.fdTotAmt,
+//                        requestDetail.fdState,
+//                        requestDetail.fdPreState
+//                ));
+//        query.orderBy(requestDetail.id.asc());
+//        query.where(requestDetail.fdState.eq("S2"));
+//        query.where(franchise.id.eq(frId));
+//        if(!tagNo.equals("")){
+//            query.where(requestDetail.fdTag.substring(3,7).likeIgnoreCase(tagNo));
+//        }
+//        if(fromDt != null){
+//            query.where(requestDetail.fdS2Time.goe(fromDt));
+//        }
+//        if(toDt != null){
+//            query.where(requestDetail.fdS2Time.loe(toDt));
+//        }
+//        return query.fetch();
+//    }
 
     // 가맹점강제출고 querydsl
     public  List<RequestDetailBranchForceListDto> findByRequestDetailBranchForceList(String brCode, Long frId, LocalDateTime fromDt, LocalDateTime toDt, String tagNo){
