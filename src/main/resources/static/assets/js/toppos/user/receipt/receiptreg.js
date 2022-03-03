@@ -650,14 +650,19 @@ function checkYesOrNo(booleanValue) {
         return false;
     } else {
         const frNo = AUIGrid.getSelectedRows(gridId[2])[0].frNo;
-        const params = {
-            frNo: frNo
-        };
-        CommonUI.ajax(gridCreateUrl[1], "PARAM", params, function () {
-            // 성공하면 임시저장 마스터테이블 조회
-            setDataIntoGrid(2, gridCreateUrl[2]);
-        });
+        ajaxRemoveTempSave(frNo);
     }
+}
+
+/* 실제 임시저장 삭제 동작 */
+function ajaxRemoveTempSave(frNo) {
+    const params = {
+        frNo: frNo
+    };
+    CommonUI.ajax(gridCreateUrl[1], "PARAM", params, function () {
+        // 성공하면 임시저장 마스터테이블 조회
+        setDataIntoGrid(2, gridCreateUrl[2]);
+    });
 }
 
 function onShowVKeyboard(num) {
@@ -723,7 +728,7 @@ function onSearchCustomer() {
         console.log(items);
         if(items.length === 1) {
             selectedCustomer = items[0];
-            onPutCustomer(selectedCustomer);
+            checkCustomer();
             delete initialData.etcData["frNo"];
             checkNum = "1";
         }else if(items.length > 1) {
@@ -741,7 +746,7 @@ function onSearchCustomer() {
 function onSelectCustomer() {
     selectedCustomer = AUIGrid.getSelectedRows(gridId[1])[0];
     if(selectedCustomer) {
-        onPutCustomer(selectedCustomer);
+        checkCustomer();
         delete initialData.etcData["frNo"];
         checkNum = "1";
         $("#customerListPop").removeClass("active");
@@ -757,10 +762,14 @@ function onReadTempSave() {
 
 function onSelectTempSave() {
     const frNo = AUIGrid.getSelectedRows(gridId[2])[0].frNo;
+    loadTempSave(frNo);
+}
+
+function loadTempSave(frNo) {
     CommonUI.ajax(gridCreateUrl[0], "GET", {frNo: frNo}, function (req) {
         initialData.etcData.frNo = frNo;
         selectedCustomer = req.sendData.gridListData[0];
-        onPutCustomer(selectedCustomer);
+        checkCustomer();
         AUIGrid.clearGridData(gridId[0]);
         AUIGrid.setGridData(gridId[0], req.sendData.requestDetailList);
         $("#tempSaveListPop").removeClass("active");
@@ -769,7 +778,15 @@ function onSelectTempSave() {
     });
 }
 
-function onPutCustomer(selectedCustomer) {
+function checkCustomer() {
+    if(selectedCustomer.tempSaveFrNo) {
+        tempSaveExistWarning();
+    } else {
+        onPutCustomer();
+    }
+}
+
+function onPutCustomer() {
     let bcGradeName;
     $(".client__badge").removeClass("active");
     switch (selectedCustomer.bcGrade) {
@@ -1641,15 +1658,16 @@ function onApply() {
     checkNum = "2";
     onSave();
 
-    // ======================
-
     const totRequestAmt = $("#totFdRequestAmount").html().toInt();
     $("#payNormalAmt").html($("#totFdNormalAmount").html().toInt().toLocaleString());
     $("#payChangeAmt").html($("#totChangeAmount").html().toInt().toLocaleString());
-    $("#applySaveMoney").html("0");
+
+    const applySaveMoney = selectedCustomer.saveMoney > totRequestAmt ? totRequestAmt : selectedCustomer.saveMoney;
+    $("#applySaveMoney").html(applySaveMoney.toLocaleString());
+
     $("#applyUncollectAmt").html("0");
-    $("#payRequestAmt").html(totRequestAmt.toLocaleString());
-    $("#totalAmt").html(totRequestAmt.toLocaleString());
+    $("#payRequestAmt").html((totRequestAmt - applySaveMoney).toLocaleString());
+    $("#totalAmt").html((totRequestAmt - applySaveMoney).toLocaleString());
     setReceiveAmtToTotalAmt();
     calculateOne();
     calculateTwo();
@@ -2019,9 +2037,9 @@ function payAmtLimitation() {
 }
 
 function setReceiveAmtToTotalAmt() {
-    const totalAmt = $("#totalAmt").html();
-    $("#receiveCash").html(totalAmt);
-    $("#receiveCard").html(totalAmt);
+    const totalAmt = $("#totalAmt").html().toInt();
+    $("#receiveCash").html(totalAmt.toLocaleString());
+    $("#receiveCard").html(totalAmt.toLocaleString());
 }
 
 function onPrintReceipt() {
@@ -2094,4 +2112,24 @@ function setBgMenu(isFavorite) {
             });
         }
     });
+}
+
+function tempSaveExistWarning() {
+    alertThree("해당 고객의 임시저장 내역이 존재합니다.<br>어떻게 하시겠습니까?",
+        "이어서 접수", "삭제후 접수", "취소");
+
+    $("#popFirstBtn").on("click", function() {
+        loadTempSave(selectedCustomer.tempSaveFrNo);
+        $('#popupId').remove();
+    });
+
+    $("#popSecondBtn").on("click", function() {
+        ajaxRemoveTempSave(selectedCustomer.tempSaveFrNo);
+        $('#popupId').remove();
+    });
+
+    $("#popThirdBtn").on("click", function() {
+        $('#popupId').remove();
+    });
+
 }

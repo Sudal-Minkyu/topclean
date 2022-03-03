@@ -14,6 +14,7 @@ const dtos = {
         franchiseReceiptFranchiseInList: {
             fdId: "nr",
             fdS4Dt: "s",
+            fdS4Type: "s", // 2022.03.03 추가
             bcName: "sr",
             fdTag: "sr",
 
@@ -129,6 +130,13 @@ const grids = {
                     width: 100,
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
+                }, {
+                    dataField: "fdS4Type",
+                    headerText: "출고타입",
+                    width: 80,
+                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
+                        return CommonData.name.fdS4Type[value];
+                    },
                 }, {
                     dataField: "bcName",
                     headerText: "고객명",

@@ -6,73 +6,102 @@
 
 <!-- 사용자 CSS 추가 -->
 <th:block layout:fragment="css">
-    <style>
-        
-    </style>
 </th:block>
 
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
     <script src="/assets/js/toppos/user/inandout/force.js"></script>
-    <script type="text/javascript">
-
-        $(function() {
-
-        });
-
-    </script>
 </th:block>
 
 <div layout:fragment="content" class="content content--column">
 	<div class="content__header">
-		<div class="content__header-text">
-			<h3>가맹점 강제 입고 대기 리스트 (<span id="totalNum">0</span>) 건</h3>
+		<!-- 검색 -->
+		<div class="search">
+			<div class="c-select">
+				<select id="searchType">
+                    <option value="0">통합검색</option>
+                    <option value="1">고객명</option>
+                    <option value="2">전화번호</option>
+					<option value="3">주소</option>
+                </select>
+			</div>
+			
+			<div class="c-search">
+				<div class="c-search__input">
+					<input id="searchString" type="text" placeholder="검색어를 입력하세요" />
+               		<button class="c-search__key" type="button" id="vkeyboard0">키보드</button>
+				</div>
+				<button id="searchCustomer" class="c-search__bth" type="button">검색</button>
+			</div>
+			
+			<div class="search__reset">
+				<button id="resetCustomer" class="c-button c-button--darksolid c-button--small" type="button">고객 초기화</button>
+			</div>
 		</div>
+
+		<!-- 고객정보 -->
+		<div class="client">
+			<div class="client__rating">
+				<!-- 고객뱃지  -->
+				<!-- 맞는 등급 뱃지 .active 주기 -->
+				<span class="client__badge">N</span>
+				<span class="client__badge">V</span>
+				<span class="client__badge client__badge--vvip">V</span>
+				<!-- #bcGrade 등급 넣어주기 -->
+				<span id="bcGrade"></span>
+			</div>
+			<div class="client__name"><span id="bcName"></span></div>
+			<div class="client__propensity"><span style="display: none;" id="bcValuation" class="propensity__star propensity__star--0"></span></div>
+			<div class="client__address"><span id="bcAddress"></span></div>
+			<div class="client__phone"><span id="bcHp"></span></div>
+		</div>
+
+		<!-- 고객정보2 -->
+		<ul class="client-info">
+			<li>
+				<h4>전일미수금</h4>
+				<p><span class="client-info__num" id="beforeUncollectMoneyMain">0</span><span class="won">원</span></p>
+			</li>
+			<li>
+				<h4>적립금</h4>
+				<p><span class="client-info__num" id="saveMoneyMain">0</span><span class="won">원</span></p>
+			</li>
+			<li>
+				<h4>특이사항</h4>
+				<p><span id="bcRemark"></span></p>
+			</li>
+			<li>
+				<h4>최근방문일</h4>
+				<p><span class="client-info__num" id="bcLastRequestDt"></span></p>
+			</li>
+		</ul>
+
 		<div class="content__header-btns">
-			<button class="c-button c-button--small c-button--darksolid" id="refresh">재조회</button>
+			<button class="c-button c-button--small c-button--darksolid" id="forceIn">가맹점 강제입고</button>
 		</div>
 	</div>
 	
     <div class="content__body">
     	<!-- grid -->
     	<div id="forceList" style="height: 616px;"></div>
-    
-        <div class="content__bottom">
-        	<div class="content__bottom-total">
-        		<div class="content__bottom-total-item">
-        			<h4 class="content__bottom-total-title">총강제입고건수</h4>
-        			<input type="text" class="content__bottom-total-input" id="totalItems" value="0" readonly />
-        		</div>
-        		<div class="content__bottom-total-item">
-        			<h4 class="content__bottom-total-title">접수총액</h4>
-        			<input type="text" class="content__bottom-total-input content__bottom-total-input--amount" id="totalAmount" value="0" readonly />
-        		</div>
-        		<div class="content__bottom-total-item">
-        			<h4 class="content__bottom-total-title">급세탁건수</h4>
-        			<input type="text" class="content__bottom-total-input" id="fastItems" value="0" readonly />
-        		</div>
-        		<div class="content__bottom-total-item">
-        			<h4 class="content__bottom-total-title">재세탁건수</h4>
-        			<input type="text" class="content__bottom-total-input" id="retryItems" value="0" readonly />
-        		</div>
-        	</div>
-        	<div class="content__bottom-total content__bottom-total--border">
-        		<div class="content__bottom-total-item">
-        			<h4 class="content__bottom-total-title">선택 건수</h4>
-        			<input type="text" class="content__bottom-total-input" id="selectItems" value="0" readonly />
-        		</div>
-        		<div class="content__bottom-total-item">
-        			<h4 class="content__bottom-total-title">선택 접수금액</h4>
-        			<input type="text" class="content__bottom-total-input content__bottom-total-input--amount" id="selectAmount" value="0" readonly />
-        		</div>
-        	</div>
-        	<div class="content__bottom-btns">
-        		<button class="c-button c-button--solid" id="forceIn">가맹점 강제입고</button>
-        	</div>
-        </div>
     </div>
 
-    
-    
+    <!-- 고객선택 팝업 -->
+    <div class="pop" id="customerListPop">
+        <div class="pop__box">
+            <div class="pop__article">
+                <h3 class="pop__article-header">고객선택</h3>
+                <div class="pop__aricle-content">
+                    <div id="grid_customerList"></div>
+                </div>
+            </div>
+
+            <ul class="pop__console">
+                <li><button class="c-button pop__close">닫기</button></li>
+                <li><button class="c-button c-button--dark" id="selectCustomer">선택</button></li>
+            </ul>
+        </div>
+    </div>
+	
 </div>
 </html>

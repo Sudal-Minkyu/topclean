@@ -153,6 +153,12 @@ const grid = {
                         type : "DropDownListRenderer",
                         list : ["Y", "N"],
                     },
+                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                        if(value !== "Y") {
+                            item.bgFavoriteYn = "N";
+                        }
+                        return item.bgFavoriteYn;
+                    },
                 }
             ];
 
