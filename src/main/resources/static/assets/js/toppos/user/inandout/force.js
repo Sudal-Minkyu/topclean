@@ -8,12 +8,36 @@ const dtos = {
         franchiseStateChange: {
             fdIdList: "a",
             stateType: "sr",
-        }
+        },
+
+        customerInfo: { // integrate 의 customerInfo와 같은 구성이지만 택번호도 포함
+            searchType: "sr", // 0 통합검색, 1 고객명, 2 전화번호, 3 주소
+            searchString: "sr", // 검색문자
+        },
+
+        franchiseReceiptForceList: {
+            bcId: "sr",
+        },
     },
     receive: {
-        franchiseStateChange: {
+
+        customerInfo: { // integrate 의 customerInfo와 같은 구성
+            bcAddress: "s",
+            bcGrade: "s",
+            bcHp: "s",
+            bcId: "nr",
+            bcLastRequestDt: "s",
+            bcName: "s",
+            bcRemark: "s",
+            bcValuation: "s",
+            beforeUncollectMoney: "nr",
+            saveMoney: "nr",
+        },
+
+        franchiseReceiptForceList: {
             fdId: "nr",
-            fdS4Dt: "s", 
+            fdState: "s", // 2022.03.03 추가
+            fdS4Dt: "d",  // 2022.03.03 삭제
             bcName: "sr",
             fdTag: "sr",
 
@@ -45,51 +69,43 @@ const dtos = {
 
 /* 통신에 사용되는 url들 기입 */
 const urls = {
-    getForceList: '/api/user/franchiseReceiptForceList',
-    changeClosedList: '/api/user/franchiseStateChange',
+    searchCustomer: "/api/user/customerInfo", // 고객 검색
+    getForceList: '/api/user/franchiseReceiptForceList', // 강제입고할 수 있는 세탁물 리스트 가져오기
+    changeClosedList: '/api/user/franchiseStateChange', // 강제입고될 항목 보내기
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
-    getForceList() {
-        CommonUI.ajax(urls.getForceList, "GET", false, function (res) {
+    searchCustomer(searchCondition) {
+        dv.chk(searchCondition, dtos.send.customerInfo, "고객 검색 조건 보내기");
+        CommonUI.ajax(urls.searchCustomer, "GET", searchCondition, function (res) {
+            const items = res.sendData.gridListData;
+            dv.chk(items, dtos.receive.customerInfo, "검색된 고객 리스트 받기");
+            if(items.length === 1) {
+                wares.selectedCustomer = items[0];
+                putCustomer();
+            }else if(items.length > 1) {
+                grids.f.setData(1, items);
+                $("#customerListPop").addClass("active");
+            }else{
+                alertCheck("일치하는 고객 정보가 없습니다.<br>신규고객으로 등록 하시겠습니까?");
+                $("#checkDelSuccessBtn").on("click", function () {
+                    location.href="/user/customerreg";
+                });
+            }
+        });
+    },
+
+    getForceList(customerId) {
+        dv.chk(customerId, dtos.send.franchiseReceiptForceList, "가맹점 강제입고 가능한 품목 가져오기 위한 고객아이디");
+        CommonUI.ajax(urls.getForceList, "GET", customerId, function (res) {
             const data = res.sendData;
-            const dataLength = data.gridListData.length;
-            let fastItemCount = 0;
-            let retryItemCount = 0;
-            let totalAmount = 0;
             console.log(data);
-            
             console.log(data.gridListData);
 
-            dv.chk(data.gridListData, dtos.receive.franchiseStateChange, '강제입고 항목 받아오기');
-    
-            for (let i = 0; i < data.gridListData.length; i++) {
-                // 접수총액
-                totalAmount += data.gridListData[i].fdTotAmt;
-                // 급세탁건수
-                if (data.gridListData[i].fdUrgentYn == "Y") {
-                    fastItemCount = fastItemCount + 1;
-                }
-                // 재세탁건수
-                if (data.gridListData[i].fdRetryYn == "Y") {
-                    retryItemCount = retryItemCount + 1;
-                }
-
-                if (data.checkFdId.includes(data.gridListData[i].fdId)) {
-                    data.gridListData[i].typeName = "확인품";
-                } else {
-                    data.gridListData[i].typeName = "일반";
-                }
-            }
-
+            dv.chk(data.gridListData, dtos.receive.franchiseReceiptForceList, '강제입고 항목 받아오기');
             grids.f.setData(0, data.gridListData);
             
-            $('#totalNum').text(dataLength);
-            $('#totalItems').val(dataLength);
-            $('#totalAmount').val(totalAmount.toLocaleString());
-            $('#fastItems').val(fastItemCount);
-            $('#retryItems').val(retryItemCount);
         });
     },
 
@@ -99,11 +115,13 @@ const comms = {
     
         CommonUI.ajax(urls.changeClosedList, "PARAM", saveData, function(res) {
             alertSuccess("강제입고 완료");
-            grids.f.clearData();
-            comms.getForceList();
+            grids.f.clearData(0);
 
-            $('#selectItems').val(0);
-            $('#selectAmount').val(0);
+            const customerId = {
+                bcId: wares.selectedCustomer.bcId,
+            };
+    
+            comms.getForceList(customerId);
         });
     }
 };
@@ -117,7 +135,7 @@ const comms = {
 const grids = {
     s: { // 그리드 세팅
         targetDiv: [
-            "forceList"
+            "forceList", "grid_customerList"
         ],
         columnLayout: [],
         prop: [],
@@ -131,8 +149,8 @@ const grids = {
             /* 0번 그리드의 레이아웃 */
             grids.s.columnLayout[0] = [
                 {
-                    dataField: "fdS4Dt",
-                    headerText: "자사출고일",
+                    dataField: "frYyyymmdd",
+                    headerText: "접수일자",
                     width: 100,
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
@@ -160,15 +178,18 @@ const grids = {
                     },
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
                         const colorSquare =
-                            `<span class="colorSquare" style="background-color: ${wares.fdColorCode['C'+item.fdColor]}; vertical-align: middle;"></span>`;
+                            `<span class="colorSquare" style="background-color: ${CommonData.name.fdColorCode[item.fdColor]}; vertical-align: middle;"></span>`;
                         const sumName = CommonUI.toppos.makeSimpleProductName(item);
                         return colorSquare + ` <span style="vertical-align: middle;">` + sumName + `</span>`;
                     },
                 },
                 {
-                    dataField: "",
-                    headerText: "반품유형(미완)",
-                    width: 100,
+                    dataField: "fdState",
+                    headerText: "현재상태",
+                    width: 90,
+                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                        return CommonData.name.fdState[value];
+                    },
                 }, 
                 {
                     dataField: "",
@@ -229,6 +250,40 @@ const grids = {
                 rowCheckColumnWidth: 40,
             };
 
+            grids.s.columnLayout[1] = [
+                {
+                    dataField: "bcName",
+                    headerText: "고객명",
+                }, {
+                    dataField: "bcHp",
+                    headerText: "전화번호",
+                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                        return CommonUI.formatTel(value);
+                    }
+                }, {
+                    dataField: "bcAddress",
+                    style: "grid_textalign_left",
+                    headerText: "주소",
+                },
+            ];
+
+            grids.s.prop[1] = {
+                editable : false,
+                selectionMode : "singleRow",
+                noDataMessage : "출력할 데이터가 없습니다.",
+                rowNumHeaderText : "순번",
+                showAutoNoDataMessage: false,
+                enableColumnResize : false,
+                showRowAllCheckBox: false,
+                showRowCheckColumn: false,
+                showRowNumColumn : false,
+                showStateColumn : false,
+                enableFilter : true,
+                width : 830,
+                height : 480,
+                rowHeight : 48,
+                headerHeight : 48,
+            };
         },
 
         create() { // 그리드 동작 처음 빈 그리드를 생성
@@ -255,20 +310,9 @@ const grids = {
 			AUIGrid.clearGridData(grids.s.id[numOfGrid]);
 		},
 
-        // 그리드 데이터 저장
-        // saveGridData(numOfGrid) {
-        //     const checkedItems = this.getCheckedItems(numOfGrid);
-        //     let changData = {stateType: "S7"};
-        //     let fdIdList = [];
-            
-        //     checkedItems.forEach(data => {
-        //         fdIdList.push(data.item.fdId);
-        //     });
-
-        //     changData.fdIdList = fdIdList;
-        //     console.log(changData);
-        //     comms.changeClosedList(changData);
-        // },
+        getSelectedCustomer() {
+            return AUIGrid.getSelectedRows(grids.s.id[1])[0];
+        },
     },
 
     t: {
@@ -285,20 +329,6 @@ const grids = {
 const trigs = {
     s: { // 이벤트 설정
         basicTrigger() {
-            $('.aui-checkbox').on('click', function () {
-                const checkedItems = grids.f.getCheckedItems(0);
-                const checkedLength = checkedItems.length;
-                let totalAmount = 0;
-                
-                checkedItems.forEach(checkedItem => {
-                    // 접수총액
-                    totalAmount += checkedItem.item.fdTotAmt;
-                });
-
-                $('#selectItems').val(checkedLength);
-                $('#selectAmount').val(totalAmount.toLocaleString());
-            });
-
             $('#forceIn').on('click', function() {
                 const checkedItems = grids.f.getCheckedItems(0);
                 const saveDataset = makeSaveDataset(checkedItems);
@@ -309,9 +339,24 @@ const trigs = {
                 }
             });
 
-            $("#refresh").on("click", function () {
-                grids.f.clearData(0);
-                comms.getForceList();
+            $("#searchCustomer").on("click", function () {
+                mainSearch();
+            });
+
+            $("#selectCustomer").on("click", function () {
+                const selectedItem = grids.f.getSelectedCustomer();
+                selectCustomerFromList(selectedItem);
+            });
+
+            $("#resetCustomer").on("click", function () {
+                wares.selectedCustomer = {
+                    bcId: null,
+                    beforeUncollectMoney: 0,
+                    saveMoney: 0,
+                    bcAddress: "",
+                    bcRemark: "",
+                };
+                putCustomer();
             });
         }
     },
@@ -322,10 +367,7 @@ const trigs = {
 
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
 const wares = {
-    fdColorCode: { // 컬러코드에 따른 실제 색상
-        C00: "#D4D9E1", C01: "#D4D9E1", C02: "#3F3C32", C03: "#D7D7D7", C04: "#F54E50", C05: "#FB874B",
-        C06: "#F1CE32", C07: "#349A50", C08: "#55CAB7", C09: "#398BE0", C10: "#DE9ACE", C11: "#FF9FB0",
-    },
+    selectedCustomer: {},
 }
 
 $(function() { // 페이지가 로드되고 나서 실행
@@ -338,7 +380,9 @@ function onPageLoad() {
     grids.f.create();
 
     trigs.s.basicTrigger();
-    comms.getForceList();
+
+
+    // comms.getForceList();
 
     /* 생성된 그리드에 기본적으로 필요한 이벤트들을 적용한다. */
     // grids.e.basicEvent();
@@ -355,4 +399,79 @@ function makeSaveDataset(checkedItems) { // 저장 데이터셋 만들기
     };
     changeData.fdIdList = fdIdList;
     return changeData;
+}
+
+function mainSearch() {
+    const searchCondition = {
+        searchType: $("#searchType").val(),
+        searchString: $("#searchString").val(),
+    }
+    if(searchCondition.searchString === "") {
+        alertCaution("검색조건을 입력해 주세요.", 1);
+    } else {
+        $("#searchType").val(0);
+        $("#searchString").val("");
+        comms.searchCustomer(searchCondition);
+    }
+}
+
+function putCustomer() {
+    let bcGradeName = "";
+    $(".client__badge").removeClass("active");
+    if(wares.selectedCustomer.bcGrade) {
+        $(".client__badge:nth-child(" + wares.selectedCustomer.bcGrade.substr(1, 1) + ")").addClass("active");
+        bcGradeName = CommonData.name.bcGradeName[wares.selectedCustomer.bcGrade];
+    }
+    $("#bcGrade").html(bcGradeName);
+
+    if(wares.selectedCustomer.bcName) {
+        $("#bcName").html(wares.selectedCustomer.bcName + "님");
+    }else{
+        $("#bcName").html("");
+    }
+
+    if(wares.selectedCustomer.bcValuation) {
+        $("#bcValuation").attr("class",
+            "propensity__star propensity__star--" + wares.selectedCustomer.bcValuation)
+            .css('display','block');
+    }else{
+        $("#bcValuation").css('display','none');
+    }
+    
+    $("#bcAddress").html(wares.selectedCustomer.bcAddress);
+    $("#bcHp").html(CommonUI.formatTel(wares.selectedCustomer.bcHp));
+    $("#beforeUncollectMoneyMain").html(wares.selectedCustomer.beforeUncollectMoney.toLocaleString());
+    $("#saveMoneyMain").html(wares.selectedCustomer.saveMoney.toLocaleString());
+    $("#bcRemark").html(wares.selectedCustomer.bcRemark);
+    if(wares.selectedCustomer.bcLastRequestDt) {
+        $("#bcLastRequestDt").html(
+            wares.selectedCustomer.bcLastRequestDt.substr(0, 4) + "-"
+            + wares.selectedCustomer.bcLastRequestDt.substr(4, 2) + "-"
+            + wares.selectedCustomer.bcLastRequestDt.substr(6, 2)
+        );
+    }else if(wares.selectedCustomer.bcId){
+        $("#bcLastRequestDt").html("없음");
+    }else{
+        $("#bcLastRequestDt").html("");
+    }
+
+    grids.f.clearData(0);
+
+    if(wares.selectedCustomer.bcId !== null) {
+        const customerId = {
+            bcId: wares.selectedCustomer.bcId
+        };
+
+        comms.getForceList(customerId);
+    }
+}
+
+function selectCustomerFromList(selectedItem) {
+    if(selectedItem) {
+        wares.selectedCustomer = selectedItem;
+        putCustomer();
+        $("#customerListPop").removeClass("active");
+    }else{
+        alertCaution("고객을 선택해 주세요", 1);
+    }
 }

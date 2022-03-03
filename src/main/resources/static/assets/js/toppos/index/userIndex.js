@@ -114,7 +114,7 @@ const trigs = {
         const $historyDate = $("#historyDate");
         $historyDate.on("change", function () {
             const condition = {
-                date: $historyDate.val(),
+                date: $historyDate.val().numString(),
             }
             comms.franchiseInfo(condition);
         });
@@ -146,7 +146,7 @@ function onPageLoad() {
     wares.boardConditionThree.filterToDt = today;
 
     const condition = {
-        date: today,
+        date: today.numString(),
     }
 
     comms.franchiseInfo(condition);
