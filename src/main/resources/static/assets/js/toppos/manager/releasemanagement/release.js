@@ -134,9 +134,17 @@ const grids = {
                 }, {
                     dataField: "fdS2Dt",
                     headerText: "지사입고일",
-                    width: 100,
+                    width: 90,
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
+                }, {
+                    dataField: "fdState",
+                    headerText: "출고타입",
+                    width: 60,
+                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
+                        const result = value === "S7" ? "강제" : "일반";
+                        return result;
+                    },
                 }, {
                     dataField: "fdUrgentYn",
                     headerText: "급세탁",
@@ -144,7 +152,7 @@ const grids = {
                 }, {
                     dataField: "fdTag",
                     headerText: "택번호",
-                    width: 90,
+                    width: 80,
                     labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
                         return CommonData.formatTagNo(value);
                     },
@@ -179,7 +187,7 @@ const grids = {
                 }, {
                     dataField: "fdEstimateDt",
                     headerText: "인도예정일",
-                    width: 100,
+                    width: 90,
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
                 }, {
@@ -266,7 +274,9 @@ const grids = {
 
         addAllData() {
             const checkedRows = grids.f.getCheckedItems(0);
-            grids.f.setData(0, wares.receiptList);
+            if(wares.receiptList !== "") {
+                grids.f.setData(0, wares.receiptList);
+            }
             for({item} of checkedRows) {
                 grids.f.addCheckedRowByTagNo(item.fdTag);
             }

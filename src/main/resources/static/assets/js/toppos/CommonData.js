@@ -61,6 +61,12 @@ class CommonDataClass {
             "02": "자동",
             "03": "반송",
         };
+
+        this.name.fdS4Type = {
+            "01": "일반",
+            "02": "강제",
+            "03": "가맹점강제입출", // 수정 필요할듯
+        }
     }
 
     formatTagNo(tagNo) {

@@ -288,6 +288,7 @@ const dto = {
                 bgItemGroupcode: "s",
                 bgName: "s",
                 bgIconFilename: "s",
+                bgFavoriteYn: "s",
             },
             userItemPriceSortData: {
                 bfSort: "n",
