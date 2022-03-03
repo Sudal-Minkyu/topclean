@@ -144,7 +144,7 @@ function alertCheck(text) { // 확인 취소 물음창
     $('#alertpop').html(html);
 }
 
-function alertThree(text) { // 예, 아니오, 취소 물음창
+function alertThree(text) { // 예, 아니오, 취소 물음창 (임시)
     let html = '';
 
     html +='<div id="popupId" class="popup popup--dim"">';

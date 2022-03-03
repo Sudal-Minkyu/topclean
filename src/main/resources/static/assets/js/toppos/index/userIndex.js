@@ -30,7 +30,9 @@ const comms = {
         const url = "/api/user/franchiseInfo";
         CommonUI.ajax(url, "GET", null, function (res) {
             const userIndexDto = res.sendData.userIndexDto[0];
-            // console.log(userIndexDto);
+            const historyList = res.sendData.requestHistoryList;
+            console.log(res);
+
             if(userIndexDto.brName===null){
                 $("#brName").text("무소속");
             }else{
@@ -48,6 +50,25 @@ const comms = {
                 });
                 slidingText = slidingText.substring(0, slidingText.length - 2) + " 입니다.";
                 $("#slidingText").html(slidingText);
+            }
+
+            if(historyList) {
+                const field = $("#historyList").children("li").children("a");
+                for(let i = 0; i < historyList.length; i++) {
+                    $(field[i]).children(".main__board-badge").children("span").html(historyList[i].typename);
+                    switch(historyList[i].typename) {
+                        case "접수" :
+                            console.log("wjqtn");
+                            $(field[i]).children(".main__board-badge").children("span").addClass("badge green");
+                            break;
+                        case "인도" :
+                            $(field[i]).children(".main__board-badge").children("span").addClass("badge green");
+                            break;
+                    }
+                    $(field[i]).children(".main__board-time").children("span").html(historyList[i].requestTime);
+                    $(field[i]).children(".main__board-title").children("span").html(historyList[i].bcName);
+                    $(field[i]).children(".main__board-phone").children("span").html(CommonUI.formatTel(historyList[i].bcHp));
+                }
             }
         });
     },

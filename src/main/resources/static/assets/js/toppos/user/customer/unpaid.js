@@ -551,6 +551,7 @@ const wares = {
     customerBcId: 0,
     frPaymentInfo: {},
     searchCondition: {},
+    url: window.location.href,
 }
 
 $(function() { // 페이지가 로드되고 나서 실행
@@ -568,6 +569,8 @@ function onPageLoad() {
 
     trigs.s.basic();
     trigs.s.vkeys();
+
+    hasBcHp();
 }
 
 function calculateGridCustomer() {
@@ -724,4 +727,19 @@ function mainSearch() {
     $("#searchType").val(0);
     $("#searchCustomerField").val("");
     comms.filterCustomerList(searchCondition);
+}
+
+function hasBcHp() { // 고객의 전화번호가 주소창을 통해 넘어온 경우 (미수금 바로 조회하기 위함)
+    const url = new URL(wares.url);
+    const tokenedPath = url.pathname.split("/");
+    wares.params = url.searchParams;
+
+    if(wares.params.has("bcHp")) {
+        const bcHp = wares.params.get("bcHp");
+        const searchCondition = {
+            searchType: "2",
+            searchText: bcHp,
+        }
+        comms.filterCustomerList(searchCondition);
+    }
 }

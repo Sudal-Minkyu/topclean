@@ -120,20 +120,14 @@ $(function() {
         initialData = req.sendData;
         console.log(initialData);
 
-        initialData.userItemGroupSortData.forEach(bgItem => {
-            $("#bgItemList").append(`
-                <li>
-                    <button type="button" class="regist__category-btn bgItemGroupcode" value="${bgItem.bgItemGroupcode}">
-                    <img src="/assets/images/category/${bgItem.bgIconFilename}" alt="${bgItem.bgName}" />
-                    <span>${bgItem.bgName}</span></button>
-                </li>
-            `);
-            $(".bgItemGroupcode").on("click", function () {
-                onPopReceiptReg(this);
-            });
-        });
+        setBgMenu(true);
 
         setNextTag(initialData.etcData.fdTag);
+        frTagNo = initialData.etcData.fdTag.substring(0, 3);
+    });
+
+    $("#toggleFavorite").on("change", function () {
+        setBgMenu($("#toggleFavorite").is(":checked"));
     });
 
     $("#fdRepair").on("click", function () {
@@ -250,6 +244,9 @@ $(function() {
 
 /* 다음 택번호가 기억된다. */
 let nextFdTag = false;
+
+/* 가맹점 고유 택번호 3자리가 기억된다. */
+let frTagNo = false;
 
 /* 결제창 영수증 자동인쇄 체크박스 체크 여부를 기억해 두었다가, 해당 동작 수행  */
 let autoPrintReceipt = false;
@@ -2037,6 +2034,23 @@ function onPrintReceipt() {
 }
 
 function onSaveFdTag() {
+    const tag = $("#fdTag").val().replace(/[^0-9A-Za-z]/g, "");
+
+    if(tag.substring(0, 3) !== frTagNo) {
+        alertCaution("현 가맹점의 택번호 앞 3자리는<br>" + frTagNo + "로 시작해야 합니다. ", 1);
+        return false;
+    }
+
+    if(tag.length < 7) {
+        alertCaution("택번호는 7자리의 숫자여야 합니다.", 1);
+        return false;
+    }
+    
+    if(tag.substr(-4) === "0000") {
+        alertCaution("다음 택번호는 최소 0001 부터 시작해 주세요.", 1);
+        return false;
+    }
+
     alertCheck(`다음 택번호는 ${nextFdTag} 입니다.<br>${$("#fdTag").val()}(으)로 변경 하시겠습니까?`);
     $("#checkDelSuccessBtn").on("click", function () {
         $("#fdTagChange").addClass("active");
@@ -2045,18 +2059,39 @@ function onSaveFdTag() {
 }
 
 function onConfirmFdTag() {
-    const password = {
+    const tag = $("#fdTag").val().replace(/[^0-9A-Za-z]/g, "");
+    const data = {
         password: $("#fdTagPassword").val(),
+        frLastTagno: tag.substr(0,3) + (parseInt(tag.substr(-4)) - 1).toString().padStart(4, '0'),
     }
-    const url = "";
-    CommonUI.ajax(url, "", password, function (res) {
-        const tag = $("#fdTag").val().replace(/[^0-9A-Za-z]/g, "");
-        nextFdTag = tag.substr(0,3) + "-" + (parseInt(tag.substr(-4)) + 1).toString().padStart(4, '0');
+    
+    const url = "/api/user/franchiseCheck";
+    CommonUI.ajax(url, "GET", data, function (res) {
+        nextFdTag = tag.substr(0,3) + "-" + tag.substr(-4);
         onCloseFdTag();
+        alertSuccess("다음 택번호가 변경되었습니다.");
     });
 
 }
 
 function onCloseFdTag() {
     $("#fdTagChange").removeClass("active");
+}
+
+function setBgMenu(isFavorite) {
+    $("#bgItemList").html("");
+    initialData.userItemGroupSortData.forEach(bgItem => {
+        if(bgItem.bgFavoriteYn === "Y" || !isFavorite) {
+            $("#bgItemList").append(`
+                <li>
+                    <button type="button" class="regist__category-btn bgItemGroupcode" value="${bgItem.bgItemGroupcode}">
+                    <img src="/assets/images/category/${bgItem.bgIconFilename}" alt="${bgItem.bgName}" />
+                    <span>${bgItem.bgName}</span></button>
+                </li>
+            `);
+            $(".bgItemGroupcode").on("click", function () {
+                onPopReceiptReg(this);
+            });
+        }
+    });
 }

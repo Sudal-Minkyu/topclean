@@ -66,6 +66,7 @@ const ajax = {
             AUIGrid.setGridData(grid.s.id[numOfGrid], grid.s.data[numOfGrid]);
         });
     },
+
     saveSortData(numOfGrid, dataList) {
         if(numOfGrid === 0) {
             if(dv.chk(dataList.list, dto.send.franchiseItemGroupUpdate, "대분류 위치 저장", true)) {
@@ -79,8 +80,10 @@ const ajax = {
         console.log(dataList);
         CommonUI.ajax(grid.s.url.update[numOfGrid], "MAPPER", dataList, function(req) {
             alertSuccess("조정 정보 저장을 완료했습니다.");
+            grid.f.resetState(numOfGrid);
         });
     },
+
     filterBsList(condition) {
         dv.chk(condition, dto.send.franchiseItemSortList, "분류 항목 검색 조건");
         CommonUI.ajax(grid.s.url.read[1], "PARAM", condition, function(req) {
@@ -260,7 +263,11 @@ const grid = {
 
         getGridData(numOfGrid) {
             return AUIGrid.getGridData(grid.s.id[numOfGrid]);
-        }
+        },
+
+        resetState(numOfGrid) {
+            AUIGrid.resetUpdatedItems(grid.s.id[numOfGrid]);
+        },
     },
 
     e: {

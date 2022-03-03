@@ -113,7 +113,7 @@ const comms = {
         });
     },
 
-    deliverLaundry(selectedLaundry) {
+    deliverLaundry(selectedLaundry, goToUnpaid) {
         dv.chk(selectedLaundry, dtos.send.franchiseStateChange, "인도된 고객의 세탁물 리스트 보내기");
         CommonUI.ajax(urls.deliverLaundry, "PARAM", selectedLaundry, function(res) {
             alertSuccess("세탁물 인도 완료");
@@ -121,6 +121,11 @@ const comms = {
                 bcId: wares.selectedCustomer.bcId
             };
             comms.getCustomersRequest(customerId);
+            if(goToUnpaid) { // 미수금 메뉴로 넘어가기 상태일 경우 인도완료후 2초 뒤 이동
+                setTimeout(function () {
+                    location.href = "./unpaid?bcHp=" + wares.selectedCustomer.bcHp;
+                }, 2000);
+            }
         });
     },
 
@@ -364,32 +369,32 @@ const trigs = {
             });
 
             $("#deliverLaundry").on("click", function () {
-                const items = grids.f.getCheckedItems(0);
-                if(items.length) {
-                    alertCheck("선택된 세탁물들을 인도 하시겠습니까?");
-                    $("#checkDelSuccessBtn").on("click", function () {
-                        let laundry = [];
-                        let type1 = false;
-                        let type2 = false;
-                        let type3 = false;
-                        items.forEach(obj => {
-                            laundry.push(obj.item.fdId);
-                            if(obj.item.frRefType === "01") type1 = true;
-                            if(obj.item.frRefType === "02") type2 = true;
-                            if(obj.item.frRefType === "03") type3 = true;
+                wares.checkedItems = grids.f.getCheckedItems(0);
+                if(wares.checkedItems.length) {
+                    if(wares.selectedCustomer.beforeUncollectMoney) {
+                        alertCheck(`미수금이 ${wares.selectedCustomer.beforeUncollectMoney.toLocaleString()}원` 
+                            + ` 존재합니다.<br>인도완료 후 미수금 결제를 하시겠습니까?`);
+                        $("#checkDelSuccessBtn").on("click", function () { // 인도완료후 미수금결제
+                            $('#popupId').remove();
+                            giveLaundry(true);
+                        });
+                        $("#checkDelCancelBtn").on("click", function () {
+                            setTimeout(function () {
+                                alertCheck("선택된 세탈물을 인도 하고<br>미수금 결제는 하지 않으시겠습니까?");
+                                $("#checkDelSuccessBtn").on("click", function () { // 인도완료후 미수금결제
+                                    $('#popupId').remove();
+                                    giveLaundry();
+                                });
+                            }, 0);
                         });
 
-                        if(type1 && !type2 && !type3) {
-                            const selectedLaundry = {
-                                fdIdList: laundry,
-                                stateType: "S5",
-                            }
-                            comms.deliverLaundry(selectedLaundry);
+                    } else {
+                        alertCheck("선택된 세탁물들을 인도 하시겠습니까?");
+                        $("#checkDelSuccessBtn").on("click", function () {
                             $('#popupId').remove();
-                        }else{
-                            alertCaution("현재 구분:일반 외의 항목은 세탁물 인도가 불가능합니다.", 1);
-                        }
-                    });
+                            giveLaundry();
+                        });
+                    }
                 } else {
                     alertCaution("인도할 세탁물을 선택해 주세요.", 1);
                 }
@@ -422,6 +427,7 @@ const trigs = {
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
 const wares = {
     selectedCustomer: {},
+    checkedItems: {},
 }
 
 $(function() { // 페이지가 로드되고 나서 실행
@@ -549,5 +555,28 @@ function mainSearch() {
         $("#searchType").val(0);
         $("#searchString").val("");
         comms.searchCustomer(searchCondition);
+    }
+}
+
+function giveLaundry(goToUnpaid = false) {
+    let laundry = [];
+    let type1 = false;
+    let type2 = false;
+    let type3 = false;
+    wares.checkedItems.forEach(obj => {
+        laundry.push(obj.item.fdId);
+        if(obj.item.frRefType === "01") type1 = true;
+        if(obj.item.frRefType === "02") type2 = true;
+        if(obj.item.frRefType === "03") type3 = true;
+    });
+
+    if(type1 && !type2 && !type3) {
+        const selectedLaundry = {
+            fdIdList: laundry,
+            stateType: "S5",
+        }
+        comms.deliverLaundry(selectedLaundry, goToUnpaid);
+    }else{
+        alertCaution("현재 구분:일반 외의 항목은 세탁물 인도가 불가능합니다.", 1);
     }
 }
