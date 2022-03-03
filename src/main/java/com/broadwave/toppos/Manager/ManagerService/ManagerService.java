@@ -7,6 +7,8 @@ import com.broadwave.toppos.Head.Notice.NoticeDtos.NoticeListDto;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.manager.RequestDetailTagSearchListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepository;
+import com.broadwave.toppos.User.UserLoginLog.UserLoginLogDto;
+import com.broadwave.toppos.User.UserLoginLog.UserLoginLogRepository;
 import com.broadwave.toppos.common.AjaxResponse;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +17,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,13 +38,15 @@ public class ManagerService {
 
     private final NoticeService noticeService;
     private final FranchiseRepository franchiseRepository;
-
+    private final UserLoginLogRepository userLoginLogRepository;
     private final RequestDetailRepository requestDetailRepository;
 
     @Autowired
-    public ManagerService(TokenProvider tokenProvider, NoticeService noticeService, FranchiseRepository franchiseRepository, RequestDetailRepository requestDetailRepository){
+    public ManagerService(TokenProvider tokenProvider, NoticeService noticeService,
+                          UserLoginLogRepository userLoginLogRepository, FranchiseRepository franchiseRepository, RequestDetailRepository requestDetailRepository){
         this.tokenProvider = tokenProvider;
         this.noticeService = noticeService;
+        this.userLoginLogRepository = userLoginLogRepository;
         this.franchiseRepository = franchiseRepository;
         this.requestDetailRepository = requestDetailRepository;
     }
@@ -97,12 +104,32 @@ public class ManagerService {
         log.info("현재 접속한 지사 코드 : "+brCode);
 
         List<NoticeListDto> noticeListDtos = noticeService.branchMainNoticeList();
-//        List<I> noticeListDtos = noticeService.branchMainNoticeList(brCode);
+
+        String nowDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        log.info("금일날짜 : "+nowDate);
+        List<FranchiseManagerListDto> franchiseManagerListDtos = franchiseRepository.findByManagerInFranchise(brCode);
+        List<UserLoginLogDto> chartFranchOpenListDtos = userLoginLogRepository.findByFranchiseLog(brCode, nowDate);
+
+        int franchiseAll = franchiseManagerListDtos.size();
+        int franchiseLog = chartFranchOpenListDtos.size();
+        List<HashMap<String,Object>> chartFranchOpenData = new ArrayList<>();
+        HashMap<String,Object> chartFranchOpenInfo;
+        for(int i=0; i<2; i++){
+            chartFranchOpenInfo = new HashMap<>();
+            if(i==0){
+                chartFranchOpenInfo.put("category", "오픈");
+                chartFranchOpenInfo.put("value", franchiseLog);
+            }else{
+                chartFranchOpenInfo.put("category", "미오픈");
+                chartFranchOpenInfo.put("value", franchiseAll-franchiseLog);
+            }
+            chartFranchOpenData.add(chartFranchOpenInfo);
+        }
 
         data.put("noticeData",noticeListDtos); // 공지사항 리스트(본사의 공지사항) - 최근3개
 //        data.put("checkformData",checkformData); // 확인폼(검품) 리스트 - 최근3개만
 //        data.put("chartFranchReceipData",chartFranchReceipData); // 1주일간의 가맹점 접수금액
-//        data.put("chartFranchOpenData",chartFranchOpenData); // 가맹점 오픈 현황
+        data.put("chartFranchOpenData",chartFranchOpenData); // 가맹점 오픈 현황
 //        data.put("chartBranchReleaseData",chartBranchReleaseData); // 1주일간의 지사 출고금액
 
         return ResponseEntity.ok(res.dataSendSuccess(data));

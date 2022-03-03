@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface UserLoginLogRepository extends JpaRepository<UserLoginLog,Long> {
+public interface UserLoginLogRepository extends JpaRepository<UserLoginLog,Long>, UserLoginLogRepositoryCustom {
     @Query("select a from UserLoginLog a where a.frCode = :frCode and a.blLoginDt = :blLoginDt")
     Optional<UserLoginLog> findByUserLoginLog(String frCode, String blLoginDt);
 }

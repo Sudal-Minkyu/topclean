@@ -12,6 +12,46 @@
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
 	<script src="/assets/js/toppos/index/managerIndex.js"></script>
+
+	<script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+	<script src="https://cdn.amcharts.com/lib/5/percent.js"></script>
+	<script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+
+	<script>
+		function chartResult(data) {
+			am5.ready(function () {
+
+				var root = am5.Root.new("franchiseOpen");
+
+				root.setThemes([
+					am5themes_Animated.new(root)
+				]);
+
+				var chart = root.container.children.push(am5percent.PieChart.new(root, {
+					layout: root.verticalLayout
+				}));
+
+				var series = chart.series.push(am5percent.PieSeries.new(root, {
+					valueField: "value",
+					categoryField: "category"
+				}));
+
+				series.data.setAll(data);
+
+				var legend = chart.children.push(am5.Legend.new(root, {
+					centerX: am5.percent(50),
+					x: am5.percent(50),
+					marginTop: 15,
+					marginBottom: 15
+				}));
+
+				legend.data.setAll(series.dataItems);
+				series.appear(1000, 100);
+
+			}); // end am5.ready()
+		}
+	</script>
+
 </th:block>
 
 <div layout:fragment="content" class="content content--main">
@@ -106,7 +146,7 @@
 				<h3><a href="#">가맹점 오픈 현황</a></h3>
 			</div>
 			<div class="main__board-contents">
-				<div style="width: 100%; height: 280px">chart 영역</div>
+				<div id="franchiseOpen" style="width: 100%; height: 280px"></div>
 			</div>
 		</div>
 
