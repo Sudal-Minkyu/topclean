@@ -88,6 +88,7 @@ const dtos = {
             bcValuation: "s",
             beforeUncollectMoney: "nr",
             saveMoney: "nr",
+            tempSaveFrNo: "n",
         },
     }
 };

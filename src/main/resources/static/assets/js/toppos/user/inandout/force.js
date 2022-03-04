@@ -16,7 +16,7 @@ const dtos = {
         },
 
         franchiseReceiptForceList: {
-            bcId: "sr",
+            bcId: "nr",
         },
     },
     receive: {
@@ -32,12 +32,12 @@ const dtos = {
             bcValuation: "s",
             beforeUncollectMoney: "nr",
             saveMoney: "nr",
+            tempSaveFrNo: "n",
         },
 
         franchiseReceiptForceList: {
             fdId: "nr",
-            fdState: "s", // 2022.03.03 추가
-            fdS4Dt: "d",  // 2022.03.03 삭제
+            fdState: "s",
             bcName: "sr",
             fdTag: "sr",
 
@@ -333,7 +333,10 @@ const trigs = {
                 const checkedItems = grids.f.getCheckedItems(0);
                 const saveDataset = makeSaveDataset(checkedItems);
                 if (checkedItems.length) {
-                    comms.changeClosedList(saveDataset);
+                    alertCheck("선택된 물품을 가맹점 강제입고 하시겠습니까?");
+                    $("#checkDelSuccessBtn").on("click", function () {
+                        comms.changeClosedList(saveDataset);
+                    });
                 } else {
                     alertCaution("강제입고 할 리스트를 선택해주세요", 1);
                 }

@@ -240,6 +240,7 @@ const dto = {
             bcValuation: "s",
             beforeUncollectMoney: "nr",
             saveMoney: "nr",
+            tempSaveFrNo: "n",
         },
 
         itemGroupAndPriceList: { // 접수페이지 시작때 호출되는 API와 같은 API, 이건 dto검증기를 다차원 검증 가능하도록 개량후 검증.
