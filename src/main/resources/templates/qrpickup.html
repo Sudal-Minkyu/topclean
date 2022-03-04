@@ -16,6 +16,8 @@
     <script src="/assets/js/jquery.min.js"></script>
     <script src="/assets/js/min_js_dir/alert/min_alert.js"></script>
 	<script src="/assets/js/toppos/qrpickup.js"></script>
+    <script src="/assets/js/toppos/CommonUI.js"></script>
+    <script src="/assets/js/toppos/DtoValidator.js"></script>
 </th:block>
 
 <div layout:fragment="content" class="content">
@@ -29,8 +31,8 @@
 
     <div>
         <span class="frName">서정마을</span>점의<br>
-        현재시간까지 접수된 세탁물을<br>
-        수거완료합니다.
+        <span id="pickStatus">현재시간까지 접수된 세탁물을<br>
+        수거완료합니다.</span>
     </div>
 
     <button class="c-button c-button--solid" id="pickUpBtn">수거완료</button>
