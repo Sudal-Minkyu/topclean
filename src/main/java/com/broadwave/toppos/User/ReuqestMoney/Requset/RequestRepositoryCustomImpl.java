@@ -20,6 +20,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -402,6 +403,28 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
         return query.fetchOne();
     }
 
+    // 지사 메인페이지 일주일간 접수한 금액 그래프용
+    @Override
+    public List<RequestWeekAmountDto> findByRequestWeekAmount(String brCode, List<String> frNameList, LocalDateTime weekDays){
+        QRequest request = QRequest.request;
+        QFranchise franchise = QFranchise.franchise;
+
+        JPQLQuery<RequestWeekAmountDto> query = from(request)
+                .innerJoin(franchise).on(franchise.frCode.eq(request.frCode))
+                .where(request.fr_insert_date.goe(weekDays))
+                .select(Projections.constructor(RequestWeekAmountDto.class,
+                        franchise.frName,
+                        request.frNormalAmount.sum()
+                ));
+
+        query.groupBy(franchise.frName);
+
+        // 기본조건문
+        query.where(franchise.frName.in(frNameList));
+        query.where(request.brCode.eq(brCode).and(request.frConfirmYn.eq("Y")));
+
+        return query.fetch();
+    }
 
 
 }

@@ -1,5 +1,6 @@
 package com.broadwave.toppos.User.ReuqestMoney.Requset;
 
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.RequestWeekAmountDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;

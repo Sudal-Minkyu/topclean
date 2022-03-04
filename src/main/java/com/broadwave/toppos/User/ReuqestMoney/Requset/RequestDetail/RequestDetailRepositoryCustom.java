@@ -21,7 +21,7 @@ public interface RequestDetailRepositoryCustom {
     List<RequestDetailCloseListDto> findByRequestDetailCloseList(String frCode); // 수기마감
     List<RequestDetailFranchiseInListDto> findByRequestDetailFranchiseInList(String frCode); // 가맹점입고
 //    List<RequestDetailReturnListDto> findByRequestDetailReturnList(String frCode); // 지사반송
-    List<RequestDetailForceListDto> findByRequestDetailForceList(Long bcId, String frCode); // 가맹점강제입고
+    List<RequestDetailForceListDto> findByRequestDetailForceList(Long bcId, String fdTag, String frCode); // 가맹점강제입고
     List<RequestDetailDeliveryDto> findByRequestDetailDeliveryList(String frCode, Long bcId); // 세탁인도
     List<RequestDetailFranchiseInCancelListDto> findByRequestDetailFranchiseInCancelList(String frCode, String fromDt, String toDt); // 가맹점입고취소
 

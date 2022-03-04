@@ -7,6 +7,8 @@ import com.broadwave.toppos.Head.Notice.NoticeDtos.NoticeListDto;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.manager.RequestDetailTagSearchListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepository;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.RequestWeekAmountDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestRepositoryCustom;
 import com.broadwave.toppos.User.UserLoginLog.UserLoginLogDto;
 import com.broadwave.toppos.User.UserLoginLog.UserLoginLogRepository;
 import com.broadwave.toppos.common.AjaxResponse;
@@ -40,14 +42,16 @@ public class ManagerService {
     private final FranchiseRepository franchiseRepository;
     private final UserLoginLogRepository userLoginLogRepository;
     private final RequestDetailRepository requestDetailRepository;
+    private final RequestRepositoryCustom requestRepositoryCustom;
 
     @Autowired
-    public ManagerService(TokenProvider tokenProvider, NoticeService noticeService,
+    public ManagerService(TokenProvider tokenProvider, NoticeService noticeService, RequestRepositoryCustom requestRepositoryCustom,
                           UserLoginLogRepository userLoginLogRepository, FranchiseRepository franchiseRepository, RequestDetailRepository requestDetailRepository){
         this.tokenProvider = tokenProvider;
         this.noticeService = noticeService;
         this.userLoginLogRepository = userLoginLogRepository;
         this.franchiseRepository = franchiseRepository;
+        this.requestRepositoryCustom = requestRepositoryCustom;
         this.requestDetailRepository = requestDetailRepository;
     }
 
@@ -126,9 +130,22 @@ public class ManagerService {
             chartFranchOpenData.add(chartFranchOpenInfo);
         }
 
+        List<String> frNameList = new ArrayList<>();
+        for (FranchiseManagerListDto franchiseManagerListDto : franchiseManagerListDtos) {
+            frNameList.add(franchiseManagerListDto.getFrName());
+        }
+
+        // 일주일전 LocalDataTime
+        LocalDateTime weekDays = LocalDateTime.now().minusDays(7);
+        log.info("weekDays : "+weekDays);
+        List<RequestWeekAmountDto> requestWeekAmountDtos = requestRepositoryCustom.findByRequestWeekAmount(brCode, frNameList, weekDays);
+        log.info("requestWeekAmountDtos : "+requestWeekAmountDtos);
+
+
+
         data.put("noticeData",noticeListDtos); // 공지사항 리스트(본사의 공지사항) - 최근3개
 //        data.put("checkformData",checkformData); // 확인폼(검품) 리스트 - 최근3개만
-//        data.put("chartFranchReceipData",chartFranchReceipData); // 1주일간의 가맹점 접수금액
+        data.put("requestWeekAmountData",requestWeekAmountDtos); // 1주일간의 가맹점 접수금액
         data.put("chartFranchOpenData",chartFranchOpenData); // 가맹점 오픈 현황
 //        data.put("chartBranchReleaseData",chartBranchReleaseData); // 1주일간의 지사 출고금액
 

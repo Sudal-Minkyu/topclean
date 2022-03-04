@@ -3,6 +3,7 @@ package com.broadwave.toppos.User.ReuqestMoney.Requset;
 import com.broadwave.toppos.User.Customer.Customer;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -34,5 +35,7 @@ public interface RequestRepositoryCustom {
     List<RequestHistoryListDto> findByRequestHistory(String frCode, String nowDate);
 
     RequestTempDto findByRequestTemp(String frCode);
+
+    List<RequestWeekAmountDto> findByRequestWeekAmount(String brCode, List<String> frNameList, LocalDateTime weekDays);
 
 }

@@ -982,8 +982,8 @@ public class UserRestController {
 
     //  가맹점강제입고 - 세부테이블 강제출고상태 리스트
     @GetMapping("franchiseReceiptForceList")
-    public ResponseEntity<Map<String,Object>> franchiseReceiptForceList(@RequestParam(value="bcId", defaultValue="") Long bcId, HttpServletRequest request){
-        return receiptStateService.franchiseReceiptForceList(bcId, request);
+    public ResponseEntity<Map<String,Object>> franchiseReceiptForceList(@RequestParam(value="bcId", defaultValue="") Long bcId, @RequestParam(value="fdTag", defaultValue="") String fdTag, HttpServletRequest request){
+        return receiptStateService.franchiseReceiptForceList(bcId, fdTag, request);
     }
 
     //  세탁인도 - 세부테이블 지사입고, 강제입고 상태 리스트

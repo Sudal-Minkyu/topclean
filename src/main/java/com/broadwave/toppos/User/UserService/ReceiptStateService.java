@@ -349,7 +349,7 @@ public class ReceiptStateService {
 //    }
 
     //  가맹점강제입고 - 세부테이블 강제출고 상태 리스트
-    public ResponseEntity<Map<String, Object>> franchiseReceiptForceList(Long bcId, HttpServletRequest request) {
+    public ResponseEntity<Map<String, Object>> franchiseReceiptForceList(Long bcId, String fdTag, HttpServletRequest request) {
         log.info("franchiseReceiptForceList 호출");
 
         AjaxResponse res = new AjaxResponse();
@@ -361,7 +361,7 @@ public class ReceiptStateService {
         log.info("현재 접속한 가맹점 코드 : "+frCode);
 
         // 가맹점강제입고 페이지에 보여줄 리스트 호출
-        List<RequestDetailForceListDto> requestDetailForceListDtos = requestDetailRepository.findByRequestDetailForceList(bcId, frCode);
+        List<RequestDetailForceListDto> requestDetailForceListDtos = requestDetailRepository.findByRequestDetailForceList(bcId, fdTag, frCode);
 //        List<Long> fdIdList = new ArrayList<>();
 //        for(RequestDetailForceListDto requestDetailForceListDto : requestDetailForceListDtos){
 //            fdIdList.add(requestDetailForceListDto.getFdId());

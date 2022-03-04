@@ -1,9 +1,6 @@
 package com.broadwave.toppos.User.Customer.CustomerDtos;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 /**
  * @author Minkyu
@@ -11,10 +8,10 @@ import lombok.Setter;
  * Time :
  * Remark : Toppos 고객테이블 InfoDto
  */
-@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Data
 public class CustomerInfoDto {
 
     private Long bcId; // 고객고유 ID값
@@ -26,35 +23,4 @@ public class CustomerInfoDto {
     private String bcRemark; // 특이사항
     private String bcLastRequestDt; // 마지막방문일자
 
-    public Long getBcId() {
-        return bcId;
-    }
-
-    public String getBcName() {
-        return bcName;
-    }
-
-    public String getBcHp() {
-        return bcHp;
-    }
-
-    public String getBcAddress() {
-        return bcAddress;
-    }
-
-    public String getBcGrade() {
-        return bcGrade;
-    }
-
-    public String getBcValuation() {
-        return bcValuation;
-    }
-
-    public String getBcRemark() {
-        return bcRemark;
-    }
-
-    public String getBcLastRequestDt() {
-        return bcLastRequestDt;
-    }
 }

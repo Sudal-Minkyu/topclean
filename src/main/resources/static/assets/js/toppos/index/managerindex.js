@@ -31,7 +31,8 @@ const comms = {
         CommonUI.ajax(urls.branchInfo, "GET", null, function (res) {
             const data = res.sendData;
             dv.chk(data, dtos.receive.branchInfo, "인덱스페이지 데이터 받기");
-            chartResult(data.chartFranchOpenData);
+            pieGraph(data.chartFranchOpenData);
+            barGraph(data.requestWeekAmountData,"0");
             console.log(data);
             if(data.noticeData) {
                 const field = $("#noticeList").children("li").children("a");

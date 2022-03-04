@@ -444,7 +444,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
 //    }
 
     // 가맹접강제입고 querydsl
-    public List<RequestDetailForceListDto> findByRequestDetailForceList(Long bcId, String frCode){
+    public List<RequestDetailForceListDto> findByRequestDetailForceList(Long bcId, String fdTag, String frCode){
         QRequestDetail requestDetail = QRequestDetail.requestDetail;
         QRequest request = QRequest.request;
         QItemGroup itemGroup = QItemGroup.itemGroup;
@@ -488,7 +488,12 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         request.frYyyymmdd,
                         requestDetail.fdS2Dt
                 ));
-        query.orderBy(requestDetail.id.asc());
+        query.groupBy(requestDetail.fdTag).orderBy(requestDetail.id.asc());
+
+        if(!fdTag.equals("")){
+            query.where(requestDetail.fdTag.likeIgnoreCase(fdTag));
+        }
+
         return query.fetch();
     }
 

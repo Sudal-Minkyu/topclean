@@ -16,9 +16,10 @@
 	<script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 	<script src="https://cdn.amcharts.com/lib/5/percent.js"></script>
 	<script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+	<script src="https://cdn.amcharts.com/lib/5/xy.js"></script>
 
 	<script>
-		function chartResult(data) {
+		function pieGraph(data) {
 			am5.ready(function () {
 
 				var root = am5.Root.new("franchiseOpen");
@@ -50,6 +51,81 @@
 
 			}); // end am5.ready()
 		}
+
+		function barGraph(data, num) {
+			am5.ready(function () {
+
+				let root;
+				if(num === "0"){
+					root = am5.Root.new("franchiseWeekReceipt");
+				}else{
+					root = am5.Root.new("franchiseWeekAmount");
+				}
+
+				root.setThemes([
+					am5themes_Animated.new(root)
+				]);
+
+				var chart = root.container.children.push(am5xy.XYChart.new(root, {
+					panX: true,
+					panY: true,
+					wheelX: "panX",
+					wheelY: "zoomX"
+				}));
+
+				var cursor = chart.set("cursor", am5xy.XYCursor.new(root, {}));
+				cursor.lineY.set("visible", false);
+
+				var xRenderer = am5xy.AxisRendererX.new(root, { minGridDistance: 30 });
+				xRenderer.labels.template.setAll({
+					rotation: -90,
+					centerY: am5.p50,
+					centerX: am5.p100,
+					paddingRight: 15
+				});
+
+				var xAxis = chart.xAxes.push(am5xy.CategoryAxis.new(root, {
+					maxDeviation: 0.3,
+					categoryField: "frName",
+					renderer: xRenderer,
+					tooltip: am5.Tooltip.new(root, {})
+				}));
+
+				var yAxis = chart.yAxes.push(am5xy.ValueAxis.new(root, {
+					maxDeviation: 0.3,
+					renderer: am5xy.AxisRendererY.new(root, {})
+				}));
+
+				var series = chart.series.push(am5xy.ColumnSeries.new(root, {
+					name: "Series 1",
+					xAxis: xAxis,
+					yAxis: yAxis,
+					valueYField: "value",
+					sequencedInterpolation: true,
+					categoryXField: "frName",
+					tooltip: am5.Tooltip.new(root, {
+						labelText:"{valueY}"
+					})
+				}));
+
+				series.columns.template.setAll({ cornerRadiusTL: 5, cornerRadiusTR: 5 });
+				series.columns.template.adapters.add("fill", function(fill, target) {
+					return chart.get("colors").getIndex(series.columns.indexOf(target));
+				});
+
+				series.columns.template.adapters.add("stroke", function(stroke, target) {
+					return chart.get("colors").getIndex(series.columns.indexOf(target));
+				});
+
+				xAxis.data.setAll(data);
+				series.data.setAll(data);
+
+				series.appear(1000);
+				chart.appear(1000, 100);
+
+			});
+		}
+
 	</script>
 
 </th:block>
@@ -137,7 +213,7 @@
 				<h3><a href="#">1주일간의 가맹점 접수금액</a></h3>
 			</div>
 			<div class="main__board-contents">
-				<div style="width: 100%; height: 280px">chart 영역</div>
+				<div id="franchiseWeekReceipt" style="width: 100%; height: 280px"></div>
 			</div>
 		</div>
 
@@ -155,7 +231,7 @@
 				<h3><a href="#">1주일간의 지사 출고 금액</a></h3>
 			</div>
 			<div class="main__board-contents">
-				<div style="width: 100%; height: 280px">chart 영역</div>
+				<div id="franchiseWeekAmount" style="width: 100%; height: 280px"></div>
 			</div>
 		</div>
 	</div>
