@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ko"
+	  xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate ="~{layout/defaulttest}">
+
+<!-- 사용자 CSS 추가 -->
+<th:block layout:fragment="css">
+</th:block>
+
+<!-- 사용자 스크립트 추가 -->
+<th:block layout:fragment="script">
+	<script src="/assets/js/toppos/qrpickup.js"></script>
+</th:block>
+
+<div layout:fragment="content" class="content">
+	<div>
+        <span class="frName">서정마을</span>점
+    </div>
+
+    <div>
+        <saan id="timeNow">현재시간</saan>
+    </div>
+
+    <div>
+        <span class="frName">서정마을</span>점의
+        현재시간까지 접수된 세탁물을
+        수거완료합니다.
+    </div>
+
+    
+
+</div>
+</html>
