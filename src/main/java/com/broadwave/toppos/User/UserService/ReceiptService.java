@@ -932,11 +932,6 @@ public class ReceiptService {
         return requestRepositoryCustom.findByRequestTemp(frCode);
     }
 
-    // 모바일 수기마감 리스트
-    public List<RequestDetailMobileListDto> findByRequestDetailMobileCloseList(String frCode) {
-        return requestDetailRepository.findByRequestDetailMobileCloseList(frCode);
-    }
-
 }
 
 

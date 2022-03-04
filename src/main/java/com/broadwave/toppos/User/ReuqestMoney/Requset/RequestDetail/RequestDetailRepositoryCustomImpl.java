@@ -23,6 +23,7 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 /**
  * @author Minkyu
@@ -296,19 +297,26 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
     }
 
     // 모바일 전용 수기마감 querydsl
-    public List<RequestDetailMobileListDto> findByRequestDetailMobileCloseList(String frCode){
-        QRequestDetail requestDetail = QRequestDetail.requestDetail;
-        QRequest request = QRequest.request;
-        JPQLQuery<RequestDetailMobileListDto> query = from(requestDetail)
-                .innerJoin(requestDetail.frId, request)
-                .where(request.frConfirmYn.eq("Y"))
-                .where(requestDetail.frId.frCode.eq(frCode).and(requestDetail.fdCancel.eq("N")).and(requestDetail.fdState.eq("S1")))
-                .select(Projections.constructor(RequestDetailMobileListDto.class,
-                        requestDetail.id
-                ));
-        query.groupBy(requestDetail.fdTag).orderBy(requestDetail.id.asc());
+    public int findByRequestDetailMobileCloseList(String frCode){
 
-        return query.fetch();
+        EntityManager em = getEntityManager();
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("UPDATE fs_request_dtl a\n");
+        sb.append("     INNER JOIN fs_request b ON a.fr_id = b.fr_id \n");
+        sb.append("     LEFT OUTER JOIN fs_request_inspect c ON a.fd_id = c.fd_id \n");
+        sb.append("         SET a.fd_state = 'S2', a.fd_state_dt= NOW(), \n");
+        sb.append("         a.fd_pre_state = 'S1', a.fd_pre_state_dt= NOW(), \n");
+        sb.append("         a.fd_s2_dt = DATE_FORMAT(NOW(),'%Y%m%d'), a.fd_s2_time= NOW(), a.fd_s2_type= '02', \n");
+        sb.append("         a.fd_fr_state = 'S2', a.fd_fr_state_time= NOW(), \n");
+        sb.append("         a.modify_id = 'QRClose', a.modify_date= NOW() \n");
+        sb.append("             WHERE b.fr_code = ?1 AND b.fr_confirm_yn ='Y' AND a.fd_cancel ='N' AND a.fd_state ='S1' \n");
+        sb.append("             AND IFNULL(c.fi_customer_confirm,'x') IN('2','x' ); \n"); // # 미확인이거나 거절한경우 제외
+
+        Query query = em.createNativeQuery(sb.toString());
+        query.setParameter(1, frCode);
+
+        return query.executeUpdate();
     }
 
     // 가맹접입고 querydsl

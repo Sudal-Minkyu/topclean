@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigInteger;
+
 /**
  * @author Minkyu
  * Date : 2022-01-18
@@ -16,5 +18,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RequestDetailMobileListDto {
-    private Long fdId; // 고유ID값
+    private BigInteger fdId; // 고유ID값
 }

@@ -2,7 +2,9 @@ package com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail;
 
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.manager.*;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.*;
+import org.springframework.data.jpa.repository.Modifying;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -19,7 +21,11 @@ public interface RequestDetailRepositoryCustom {
     List<RequestDetailSearchDto> requestDetailSearch(String frCode, Long bcId, String searchTag, String filterCondition, String filterFromDt, String filterToDt);
 
     List<RequestDetailCloseListDto> findByRequestDetailCloseList(String frCode); // 수기마감
-    List<RequestDetailMobileListDto> findByRequestDetailMobileCloseList(String frCode); // 모바일 수기마감
+
+    @Transactional
+    @Modifying
+    int findByRequestDetailMobileCloseList(String frCode); // 모바일 수기마감
+
     List<RequestDetailFranchiseInListDto> findByRequestDetailFranchiseInList(String frCode); // 가맹점입고
 //    List<RequestDetailReturnListDto> findByRequestDetailReturnList(String frCode); // 지사반송
     List<RequestDetailForceListDto> findByRequestDetailForceList(Long bcId, String fdTag, String frCode); // 가맹점강제입고

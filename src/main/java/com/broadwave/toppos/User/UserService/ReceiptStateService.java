@@ -258,6 +258,11 @@ public class ReceiptStateService {
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
+    // 모바일 수기마감 리스트
+    public int findByRequestDetailMobileCloseList(String frCode) {
+        return requestDetailRepository.findByRequestDetailMobileCloseList(frCode);
+    }
+
     //  가맹점입고 - 세부테이블 지사출고 상태 리스트
     public ResponseEntity<Map<String, Object>> franchiseReceiptFranchiseInList(HttpServletRequest request) {
         log.info("franchiseReceiptFranchiseInList 호출");

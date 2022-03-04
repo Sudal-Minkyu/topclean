@@ -1,20 +1,27 @@
-package com.broadwave.toppos.User;
+package com.broadwave.toppos.User.ReuqestMoney.Mobile;
 
 import com.broadwave.toppos.Head.Franchise.FranchiseDtos.FranchiseNameInfoDto;
 import com.broadwave.toppos.Head.HeadService.HeadService;
+import com.broadwave.toppos.User.ReuqestMoney.Mobile.QrClose.QrClose;
+import com.broadwave.toppos.User.ReuqestMoney.Mobile.QrClose.QrCloseRepository;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotYnDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailCloseListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailMobileListDto;
 import com.broadwave.toppos.User.UserService.ReceiptService;
+import com.broadwave.toppos.User.UserService.ReceiptStateService;
 import com.broadwave.toppos.common.AjaxResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,12 +39,14 @@ import java.util.Map;
 public class UserCollectionRestController {
 
     private final HeadService headService;
-    private final ReceiptService receiptService;
+    private final ReceiptStateService receiptStateService;
+    private final QrCloseRepository qrCloseRepository;
 
     @Autowired
-    public UserCollectionRestController(HeadService headService, ReceiptService receiptService) {
+    public UserCollectionRestController(HeadService headService, ReceiptStateService receiptStateService, QrCloseRepository qrCloseRepository) {
         this.headService = headService;
-        this.receiptService = receiptService;
+        this.receiptStateService = receiptStateService;
+        this.qrCloseRepository = qrCloseRepository;
     }
 
     // 가맹점명 호출
@@ -66,20 +75,21 @@ public class UserCollectionRestController {
 
         log.info("collectProcess 호출성공");
 
-        LocalDateTime nowTime = LocalDateTime.now();
-        log.info("현재시간 : "+nowTime);
+        LocalDateTime nowDate = LocalDateTime.now();
+        log.info("현재날짜 : "+nowDate);
         log.info("가맹코드 : "+frCode);
 
         AjaxResponse res = new AjaxResponse();
+
         // 수기마감 페이지에 보여줄 리스트 호출
-        List<RequestDetailMobileListDto> requestDetailMobileListDtos = receiptService.findByRequestDetailMobileCloseList(frCode);
-        log.info("requestDetailMobileListDtos : "+requestDetailMobileListDtos);
-        List<Long> fdIdList = new ArrayList<>();
-        for(RequestDetailMobileListDto requestDetailMobileListDto : requestDetailMobileListDtos){
-            fdIdList.add(requestDetailMobileListDto.getFdId());
-        }
-        log.info("fdIdList : "+fdIdList);
-//        List<InspeotYnDto> inspeotYnDtos = inspeotRepositoryCustom.findByInspeotStateList(fdIdList,"1");
+        int requestDetailMobileListDtos = receiptStateService.findByRequestDetailMobileCloseList(frCode);
+
+        QrClose qrClose = new QrClose();
+        qrClose.setFrCode(frCode);
+        qrClose.setFqCloseCnt(requestDetailMobileListDtos);
+        qrClose.setInsertYyyymmdd(nowDate.format(DateTimeFormatter.ofPattern("yyyyMMdd")));
+        qrClose.setInsertDt(nowDate);
+        qrCloseRepository.save(qrClose);
 
         return ResponseEntity.ok(res.success());
     }
