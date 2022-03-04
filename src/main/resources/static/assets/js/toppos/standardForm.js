@@ -124,5 +124,5 @@ $(function() { // 페이지가 로드되고 나서 실행
 function onPageLoad() {
     grids.f.initialization();
 
-    trigs.s.basic();
+    trigs.basic();
 }
