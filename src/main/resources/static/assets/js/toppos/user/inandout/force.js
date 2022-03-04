@@ -17,6 +17,7 @@ const dtos = {
 
         franchiseReceiptForceList: {
             bcId: "nr",
+            fdTag: "s",
         },
     },
     receive: {
@@ -100,17 +101,14 @@ const comms = {
         dv.chk(customerId, dtos.send.franchiseReceiptForceList, "가맹점 강제입고 가능한 품목 가져오기 위한 고객아이디");
         CommonUI.ajax(urls.getForceList, "GET", customerId, function (res) {
             const data = res.sendData;
-            console.log(data);
-            console.log(data.gridListData);
-
             dv.chk(data.gridListData, dtos.receive.franchiseReceiptForceList, '강제입고 항목 받아오기');
             grids.f.setData(0, data.gridListData);
-            
         });
     },
 
     // 강제입고 항목 보내기
     changeClosedList(saveData) {
+        console.log(saveData);
         dv.chk(saveData, dtos.send.franchiseStateChange, '강제입고 항목 보내기');
     
         CommonUI.ajax(urls.changeClosedList, "PARAM", saveData, function(res) {
@@ -405,6 +403,22 @@ function makeSaveDataset(checkedItems) { // 저장 데이터셋 만들기
 }
 
 function mainSearch() {
+    if($("#searchType").val() === "4") {
+        filterMain();
+    }else{
+        searchCustomer();
+    }
+}
+
+function filterMain() {
+    const condition = {
+        bcId: "",
+        fdTag: $("#searchString").val().numString(),
+    }
+
+}
+
+function searchCustomer() {
     const searchCondition = {
         searchType: $("#searchType").val(),
         searchString: $("#searchString").val(),
@@ -462,7 +476,8 @@ function putCustomer() {
 
     if(wares.selectedCustomer.bcId !== null) {
         const customerId = {
-            bcId: wares.selectedCustomer.bcId
+            bcId: wares.selectedCustomer.bcId,
+            fdTag: "",
         };
 
         comms.getForceList(customerId);
