@@ -93,4 +93,10 @@ public class MainController {
         return "assistant";
     }
 
+    // QR 모바일 마감페이지
+    @RequestMapping("/qrpickup")
+    public String qrpickup(){
+        return "qrpickup";
+    }
+
 }
