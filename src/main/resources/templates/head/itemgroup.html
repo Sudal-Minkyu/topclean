@@ -15,67 +15,69 @@
 </th:block>
 
 <div layout:fragment="content" class="content content--padding">
-	<h2 class="content__heading">상품그룹관리지</h2>
-	
-	<div class="float">
-		<div class="float__content">
-			<div class="type">
-				<div class="type__head">
-					<h3 class="type__heading">대분류</h3>
-				</div>
-				<div class="type__content">
-					<ul class="article__console article__console--right article__console--non-border">
-						<li><button type="button" class="c-button c-button--solid" onclick="addRow(0)">추가</button></li>
-						<li><button type="button" class="c-button c-button--darksolid" onclick="removeRow(0)">삭제</button></li>
-					</ul>
-					<div class="type__grid">
-						<div id="grid_bigclass" style="height: 160px;"></div>
+	<section class="section">
+		<div class="float">
+			<div class="float__content">
+				<div class="type">
+					<div class="type__head">
+						<h3 class="type__heading">대분류</h3>
 					</div>
-					<ul class="article__console">
-						<li><button type="button" class="c-button c-button--solid" onclick="gridSave(0)">대분류 저장</button></li>
-					</ul>
+					<div class="type__content">
+						<ul class="article__console article__console--right article__console--non-border">
+							<li><button type="button" class="c-button c-button--solid" onclick="addRow(0)">추가</button></li>
+							<li><button type="button" class="c-button c-button--darksolid" onclick="removeRow(0)">삭제</button></li>
+						</ul>
+						<div class="type__grid">
+							<div id="grid_bigclass" style="height: 160px;"></div>
+						</div>
+						<ul class="article__console">
+							<li><button type="button" class="c-button c-button--solid" onclick="gridSave(0)">대분류 저장</button></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			
+			<div class="float__content">
+				<div class="type">
+					<div class="type__head">
+						<h3 class="type__heading">중분류</h3>
+					</div>
+					<div class="type__content">
+						<ul class="article__console article__console--right article__console--non-border">
+							<li><button type="button" class="c-button c-button--solid" onclick="addRow(1)">추가</button></li>
+							<li><button type="button" class="c-button c-button--darksolid" onclick="removeRow(1)">삭제</button></li>
+						</ul>
+						<div class="type__grid">
+							<div id="grid_mediumclass" style="height: 160px;"></div>
+						</div>
+						<ul class="article__console">
+							<li><button type="button" class="c-button c-button--solid" onclick="gridSave(1)">중분류 저장</button></li>
+						</ul>
+					</div>
 				</div>
 			</div>
 		</div>
 		
-		<div class="float__content">
-			<div class="type">
-				<div class="type__head">
-					<h3 class="type__heading">중분류</h3>
+		<div class="type type--padding">
+			<div class="type__head">
+				<h3 class="type__heading">최종상품</h3>
+			</div>
+			<div class="type__content">
+				<ul class="article__console article__console--right article__console--non-border">
+					<li><button type="button" class="c-button c-button--solid" onclick="addRow(2)">추가</button></li>
+					<li><button type="button" class="c-button c-button--darksolid" onclick="removeRow(2)">삭제</button></li>
+				</ul>
+				<div class="type__grid">
+					<div id="grid_finalproduct" style="height: 160px;"></div>
 				</div>
-				<div class="type__content">
-					<ul class="article__console article__console--right article__console--non-border">
-						<li><button type="button" class="c-button c-button--solid" onclick="addRow(1)">추가</button></li>
-						<li><button type="button" class="c-button c-button--darksolid" onclick="removeRow(1)">삭제</button></li>
-					</ul>
-					<div class="type__grid">
-						<div id="grid_mediumclass" style="height: 160px;"></div>
-					</div>
-					<ul class="article__console">
-						<li><button type="button" class="c-button c-button--solid" onclick="gridSave(1)">중분류 저장</button></li>
-					</ul>
-				</div>
+				<ul class="article__console">
+					<li><button type="button" class="c-button c-button--solid" onclick="gridSave(2)">중분류 저장</button></li>
+				</ul>
 			</div>
 		</div>
-	</div>
+	</section>
 	
-	<div class="type type--padding">
-		<div class="type__head">
-			<h3 class="type__heading">최종상품</h3>
-		</div>
-		<div class="type__content">
-			<ul class="article__console article__console--right article__console--non-border">
-				<li><button type="button" class="c-button c-button--solid" onclick="addRow(2)">추가</button></li>
-				<li><button type="button" class="c-button c-button--darksolid" onclick="removeRow(2)">삭제</button></li>
-			</ul>
-			<div class="type__grid">
-				<div id="grid_finalproduct" style="height: 160px;"></div>
-			</div>
-			<ul class="article__console">
-				<li><button type="button" class="c-button c-button--solid" onclick="gridSave(2)">중분류 저장</button></li>
-			</ul>
-		</div>
-	</div>
+	
 	
 </div>
 </html>

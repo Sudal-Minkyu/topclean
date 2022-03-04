@@ -814,11 +814,6 @@ textarea {
 	padding: 2.5rem;
 	background-color: #fff;
 }
-.contract__list-area.contract__list-area--flex {
-	
-}
-.contract__list {
-}
 .contract__list-area.contract__list-area--flex .contract__list {
 	flex: 1;
 	display: flex;

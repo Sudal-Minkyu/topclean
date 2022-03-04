@@ -157,4 +157,41 @@ function onPageLoad() {
 	$("#historyDate").val(today);
     $("#historyDate").datepicker("option", "maxDate", today);
     trigs.basic();
+
+    // 슬라이딩 텍스트 실행
+    marquee(1);
+}
+
+// 메인페이지 슬라이딩 텍스트
+function marquee(speed) {
+    // text width
+    var initWidth = $(".marquee__text").width();
+
+    // position
+    $(".marquee__text").css('margin-left', function() {
+        return($(".marquee").width() - initWidth) / 2;
+    });
+
+    // marquee text width
+    var initWidth = $(".marquee__text").width();
+
+    // resetting
+    function resMarqueeRight () {
+        $(".marquee__text").css('margin-left', $('.marquee').width());
+    }
+
+    //marquee function
+    function marqueeRight () {
+        $(".marquee__text").css('margin-left', function(index, val) {
+            return parseInt(val, 10) - speed + 'px';
+        });
+
+        //reset the element if it's out of it's container
+        if (parseInt($(".marquee__text").css('margin-left')) < -1 * $(".marquee__text").width()) {
+            resMarqueeRight();
+        }
+
+    }
+
+    setInterval(marqueeRight, 10);
 }

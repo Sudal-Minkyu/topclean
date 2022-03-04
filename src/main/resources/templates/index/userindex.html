@@ -12,14 +12,22 @@
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
 	<script src="/assets/js/toppos/index/userIndex.js"></script>
+	<script>
+		$(document).ready(function() {
+			
+		})
+	</script>
 </th:block>
 
 <div layout:fragment="content" class="content">
 	<div class="main">
 		<div class="main__header">
 			
-			<div> <!-- 슬라이딩 텍스트 div -->
-				<span id="slidingText">슬라이딩 텍스트 영역</span>
+			<div class="marquee">
+				<div class="marquee__fade-left"></div>
+				<div class="marquee__fade-right"></div>
+				<!-- 슬라이딩 텍스트 div -->
+				<span class="marquee__text" id="slidingText">슬라이딩 텍스트 영역</span>
 			</div>
 
 			<div class="main__store">
