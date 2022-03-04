@@ -85,8 +85,6 @@ const comms = {
         dv.chk(searchCondition, dtos.send.customerInfo, "고객 검색 조건 보내기");
         CommonUI.ajax(urls.searchCustomer, "GET", searchCondition, function (req) {
             const items = req.sendData.gridListData;
-            $("#searchCustomerType").val(0);
-            $("#searchCustomerField").val("");
             dv.chk(items, dtos.receive.customerInfo, "검색된 고객 리스트 받기");
             if(items.length === 1) {
                 wares.selectedCustomer = items[0];

@@ -16,7 +16,7 @@ const dtos = {
         },
 
         franchiseReceiptForceList: {
-            bcId: "nr",
+            bcId: "",
             fdTag: "s",
         },
     },
@@ -97,9 +97,10 @@ const comms = {
         });
     },
 
-    getForceList(customerId) {
-        dv.chk(customerId, dtos.send.franchiseReceiptForceList, "가맹점 강제입고 가능한 품목 가져오기 위한 고객아이디");
-        CommonUI.ajax(urls.getForceList, "GET", customerId, function (res) {
+    getForceList(condition) {
+        dv.chk(condition, dtos.send.franchiseReceiptForceList, "가맹점 강제입고 가능한 품목 가져오기 위한 고객아이디");
+        console.log(condition);
+        CommonUI.ajax(urls.getForceList, "GET", condition, function (res) {
             const data = res.sendData;
             dv.chk(data.gridListData, dtos.receive.franchiseReceiptForceList, '강제입고 항목 받아오기');
             grids.f.setData(0, data.gridListData);
@@ -114,12 +115,8 @@ const comms = {
         CommonUI.ajax(urls.changeClosedList, "PARAM", saveData, function(res) {
             alertSuccess("강제입고 완료");
             grids.f.clearData(0);
-
-            const customerId = {
-                bcId: wares.selectedCustomer.bcId,
-            };
     
-            comms.getForceList(customerId);
+            comms.getForceList(wares.condition);
         });
     }
 };
@@ -359,6 +356,10 @@ const trigs = {
                 };
                 putCustomer();
             });
+
+            $("#closeCustomerPop").on("click", function () {
+                closeCustomerPop();
+            });
         }
     },
     r: { // 이벤트 해제
@@ -369,6 +370,7 @@ const trigs = {
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
 const wares = {
     selectedCustomer: {},
+    condition: {},
 }
 
 $(function() { // 페이지가 로드되고 나서 실행
@@ -415,7 +417,7 @@ function filterMain() {
         bcId: "",
         fdTag: $("#searchString").val().numString(),
     }
-
+    comms.getForceList(condition);
 }
 
 function searchCustomer() {
@@ -426,8 +428,6 @@ function searchCustomer() {
     if(searchCondition.searchString === "") {
         alertCaution("검색조건을 입력해 주세요.", 1);
     } else {
-        $("#searchType").val(0);
-        $("#searchString").val("");
         comms.searchCustomer(searchCondition);
     }
 }
@@ -475,12 +475,12 @@ function putCustomer() {
     grids.f.clearData(0);
 
     if(wares.selectedCustomer.bcId !== null) {
-        const customerId = {
+        const condition = {
             bcId: wares.selectedCustomer.bcId,
             fdTag: "",
         };
-
-        comms.getForceList(customerId);
+        wares.condition = condition;
+        comms.getForceList(condition);
     }
 }
 
@@ -492,4 +492,8 @@ function selectCustomerFromList(selectedItem) {
     }else{
         alertCaution("고객을 선택해 주세요", 1);
     }
+}
+
+function closeCustomerPop() {
+    $("#customerListPop").removeClass("active");
 }

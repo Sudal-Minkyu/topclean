@@ -1,15 +1,20 @@
 <!DOCTYPE html>
 <html lang="ko"
 	  xmlns:th="http://www.thymeleaf.org"
-	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	  layout:decorate ="~{layout/defaulttest}">
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 
 <!-- 사용자 CSS 추가 -->
 <th:block layout:fragment="css">
+    <link rel="stylesheet" href="/assets/js/min_js_dir/alert/min_alert.css" />
+    <style>
+
+    </style>
 </th:block>
 
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
+    <script src="/assets/js/jquery.min.js"></script>
+    <script src="/assets/js/min_js_dir/alert/min_alert.js"></script>
 	<script src="/assets/js/toppos/qrpickup.js"></script>
 </th:block>
 
@@ -19,16 +24,16 @@
     </div>
 
     <div>
-        <saan id="timeNow">현재시간</saan>
+        <saan id="timeNow"></saan>
     </div>
 
     <div>
-        <span class="frName">서정마을</span>점의
-        현재시간까지 접수된 세탁물을
+        <span class="frName">서정마을</span>점의<br>
+        현재시간까지 접수된 세탁물을<br>
         수거완료합니다.
     </div>
 
-    
+    <button class="c-button c-button--solid" id="pickUpBtn">수거완료</button>
 
 </div>
 </html>
