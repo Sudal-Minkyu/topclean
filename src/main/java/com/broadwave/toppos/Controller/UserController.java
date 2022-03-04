@@ -179,4 +179,9 @@ public class UserController {
         return "user/board/view";
     }
 
+    @RequestMapping("test")
+    public String usertest() {
+        return "jstest/test";
+    }
+
 }
