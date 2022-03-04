@@ -1,29 +1,29 @@
 const dtos = {
     send: {
-        가맹점명받아오기: {
+        info: {
             frCode: "s",
         },
 
-        세탁물수거완료: {
+        process: {
             frCode: "s",
         },
     },
     receive: {
-        가맹점명받아오기: {
+        info: {
             frName: "s",
         }
     }
 };
 
 const urls = {
-    getFrName: "",
-    confirmPickUp: "",
+    getFrName: "/api/collection/info",
+    confirmPickUp: "/api/collection/process",
 }
 
 const comms = {
     /* 가맹점 코드를 통해서 가맹점명을 받아온다. */
     getFrName(condition) {
-        dv.chk(condition, dtos.send.가맹점명받아오기, "가맹점명 받아오기 위한 가맹점 코드 보내기");
+        dv.chk(condition, dtos.send.info, "가맹점명 받아오기 위한 가맹점 코드 보내기");
         CommonUI.ajax(urls.getFrName, "GET", condition, function (res) {
             console.log(res);
         });
@@ -31,10 +31,12 @@ const comms = {
 
     /* 가맹점 세탁물 수거완료신호 보내기 */
     confirmPickUp(condition) {
-        dv.chk(condition, dtos.send.세탁물수거완료, "세탁물 수거완료 처리를 위한 가맹점 코드 보내기");
+        dv.chk(condition, dtos.send.process, "세탁물 수거완료 처리를 위한 가맹점 코드 보내기");
         CommonUI.ajax(urls.confirmPickUp, "GET", condition, function (res) {
             console.log(res);
-            history.replaceState({}, "", `qrpickup?frcode=${wares.frCode}&isdone=1`);
+
+            /* 완료이후 get주소에 완료했음을 알리는 신호 추가하여 히스토리 바꿔치기 */
+            history.replaceState({}, "", `qrpickup?frcode=${wares.frCode}&isdone=1`); 
         });
     },
 };
