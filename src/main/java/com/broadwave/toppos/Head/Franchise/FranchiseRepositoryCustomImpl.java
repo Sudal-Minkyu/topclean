@@ -77,14 +77,14 @@ public class FranchiseRepositoryCustomImpl extends QuerydslRepositorySupport imp
     }
 
     @Override
-    public FranchisInfoDto findByFranchiseInfo(String frCode) {
+    public FranchiseInfoDto findByFranchiseInfo(String frCode) {
 
         QFranchise franchise = QFranchise.franchise;
         QBranch branch = QBranch.branch;
 
-        JPQLQuery<FranchisInfoDto> query = from(franchise)
+        JPQLQuery<FranchiseInfoDto> query = from(franchise)
             .leftJoin(franchise.brId,branch)
-            .select(Projections.constructor(FranchisInfoDto.class,
+            .select(Projections.constructor(FranchiseInfoDto.class,
                     franchise.frCode,
                     franchise.frName,
                     franchise.frContractDt,
@@ -146,14 +146,14 @@ public class FranchiseRepositoryCustomImpl extends QuerydslRepositorySupport imp
     }
 
     @Override
-    public FranchisUserDto findByFranchiseUserInfo(String frCode) {
+    public FranchiseUserDto findByFranchiseUserInfo(String frCode) {
 
         QFranchise franchise = QFranchise.franchise;
         QBranch branch = QBranch.branch;
 
-        JPQLQuery<FranchisUserDto> query = from(franchise)
+        JPQLQuery<FranchiseUserDto> query = from(franchise)
                 .leftJoin(franchise.brId,branch)
-                .select(Projections.constructor(FranchisUserDto.class,
+                .select(Projections.constructor(FranchiseUserDto.class,
                         franchise.frCode,
                         franchise.frName,
                         franchise.frContractDt,
@@ -176,6 +176,21 @@ public class FranchiseRepositoryCustomImpl extends QuerydslRepositorySupport imp
                         franchise.frAddress,
                         franchise.frAddressDetail,
                         franchise.frMultiscreenYn
+                ));
+
+        query.where(franchise.frCode.eq(frCode));
+
+        return query.fetchOne();
+    }
+
+    @Override
+    public FranchiseNameInfoDto findByFranchiseNameInfo(String frCode) {
+
+        QFranchise franchise = QFranchise.franchise;
+
+        JPQLQuery<FranchiseNameInfoDto> query = from(franchise)
+                .select(Projections.constructor(FranchiseNameInfoDto.class,
+                        franchise.frName
                 ));
 
         query.where(franchise.frCode.eq(frCode));

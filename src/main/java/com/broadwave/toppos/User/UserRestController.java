@@ -3,8 +3,8 @@ package com.broadwave.toppos.User;
 import com.broadwave.toppos.Account.AccountPasswordDto;
 import com.broadwave.toppos.Aws.AWSS3Service;
 import com.broadwave.toppos.Head.AddCost.AddCostDto;
-import com.broadwave.toppos.Head.Franchise.FranchiseDtos.FranchisInfoDto;
-import com.broadwave.toppos.Head.Franchise.FranchiseDtos.FranchisUserDto;
+import com.broadwave.toppos.Head.Franchise.FranchiseDtos.FranchiseInfoDto;
+import com.broadwave.toppos.Head.Franchise.FranchiseDtos.FranchiseUserDto;
 import com.broadwave.toppos.Head.HeadService.HeadService;
 import com.broadwave.toppos.Head.HeadService.NoticeService;
 import com.broadwave.toppos.Head.Item.Group.A.UserItemGroupSortDto;
@@ -448,8 +448,8 @@ public class UserRestController {
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
 
-        FranchisInfoDto franchisInfoDto = headService.findByFranchiseInfo(frCode);
-        Long frEstimateDuration = Long.parseLong(String.valueOf(franchisInfoDto.getFrEstimateDuration()+1));
+        FranchiseInfoDto franchiseInfoDto = headService.findByFranchiseInfo(frCode);
+        Long frEstimateDuration = Long.parseLong(String.valueOf(franchiseInfoDto.getFrEstimateDuration()+1));
 
         // 현재 가맹점의 대분류 리스트 가져오기 + 가맹점이 등록한 대분류 순서 테이블 leftjoin
         List<UserItemGroupSortDto> userItemGroupSortData = headService.findByUserItemGroupSortDtoList(frCode);
@@ -491,12 +491,12 @@ public class UserRestController {
         data.put("addAmountData",addAmountData);
 
 
-        Optional<BranchCalendar> optionalBranchCalendar = calendarService.branchCalendarInfo(franchisInfoDto.getBrCode(), nowDate);
+        Optional<BranchCalendar> optionalBranchCalendar = calendarService.branchCalendarInfo(franchiseInfoDto.getBrCode(), nowDate);
         if(optionalBranchCalendar.isPresent()){
             // 태그번호, 출고예정일 데이터
             List<EtcDataDto> etcData = receiptService.findByEtc(frEstimateDuration, frCode, nowDate);
-            log.info("etcData : "+etcData.get(franchisInfoDto.getFrEstimateDuration()));
-            data.put("etcData",etcData.get(franchisInfoDto.getFrEstimateDuration()));
+            log.info("etcData : "+etcData.get(franchiseInfoDto.getFrEstimateDuration()));
+            data.put("etcData",etcData.get(franchiseInfoDto.getFrEstimateDuration()));
         }else{
             Calendar cal= Calendar.getInstance();
             cal.add(Calendar.DATE, 3); // 3일 후
@@ -506,14 +506,14 @@ public class UserRestController {
 
             log.info("지사 휴무일 데이터가 존재하지 않음 -> 3일 후 출고예정일 날짜 : "+resultDate);
             EtcDataDto etcData = new EtcDataDto();
-            etcData.setFrCode(franchisInfoDto.getFrCode());
-            etcData.setFrName(franchisInfoDto.getFrName());
-            etcData.setFdTag(franchisInfoDto.getFrLastTagno());
+            etcData.setFrCode(franchiseInfoDto.getFrCode());
+            etcData.setFrName(franchiseInfoDto.getFrName());
+            etcData.setFdTag(franchiseInfoDto.getFrLastTagno());
             etcData.setFrEstimateDate(resultDate);
-            etcData.setFrBusinessNo(franchisInfoDto.getFrBusinessNo());
-            etcData.setFrRpreName(franchisInfoDto.getFrBusinessNo());
-            etcData.setFrTelNo(franchisInfoDto.getFrBusinessNo());
-            etcData.setFdTag(franchisInfoDto.getFrLastTagno());
+            etcData.setFrBusinessNo(franchiseInfoDto.getFrBusinessNo());
+            etcData.setFrRpreName(franchiseInfoDto.getFrBusinessNo());
+            etcData.setFrTelNo(franchiseInfoDto.getFrBusinessNo());
+            etcData.setFdTag(franchiseInfoDto.getFrLastTagno());
             log.info("etcData : "+etcData);
             data.put("etcData",etcData);
         }
@@ -782,9 +782,9 @@ public class UserRestController {
 
     // 가맹점 나의정보 수정 API
     @PostMapping("franchiseMyInfoSave")
-    public ResponseEntity<Map<String,Object>> franchiseMyInfoSave(@ModelAttribute FranchisUserDto franchisUserDto, HttpServletRequest request){
+    public ResponseEntity<Map<String,Object>> franchiseMyInfoSave(@ModelAttribute FranchiseUserDto franchiseUserDto, HttpServletRequest request){
 //        log.info("franchisUserDto : "+franchisUserDto);
-        return infoService.franchiseMyInfoSave(franchisUserDto, request);
+        return infoService.franchiseMyInfoSave(franchiseUserDto, request);
     }
 
     // 가맹점 비밀번호 수정 API

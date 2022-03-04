@@ -141,8 +141,6 @@ public class ManagerService {
         List<RequestWeekAmountDto> requestWeekAmountDtos = requestRepositoryCustom.findByRequestWeekAmount(brCode, frNameList, weekDays);
         log.info("requestWeekAmountDtos : "+requestWeekAmountDtos);
 
-
-
         data.put("noticeData",noticeListDtos); // 공지사항 리스트(본사의 공지사항) - 최근3개
 //        data.put("checkformData",checkformData); // 확인폼(검품) 리스트 - 최근3개만
         data.put("requestWeekAmountData",requestWeekAmountDtos); // 1주일간의 가맹점 접수금액

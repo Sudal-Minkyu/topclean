@@ -197,7 +197,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
             query.where(customer.bcId.eq(bcId));
         }
         if(!searchTag.equals("")){
-            query.where(requestDetail.fdTag.likeIgnoreCase(searchTag));
+            query.where(requestDetail.fdTag.likeIgnoreCase("%"+searchTag+"%"));
         }
         if(!filterCondition.equals("")){
             if(filterCondition.equals("B") || filterCondition.equals("F")){
@@ -250,6 +250,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         query.orderBy(requestDetail.id.desc());
         return query.fetch();
     }
+
     // 수기마감 querydsl
     public List<RequestDetailCloseListDto> findByRequestDetailCloseList(String frCode){
         QRequestDetail requestDetail = QRequestDetail.requestDetail;
@@ -291,6 +292,22 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdColor
                 ));
         query.orderBy(requestDetail.id.asc());
+        return query.fetch();
+    }
+
+    // 모바일 전용 수기마감 querydsl
+    public List<RequestDetailMobileListDto> findByRequestDetailMobileCloseList(String frCode){
+        QRequestDetail requestDetail = QRequestDetail.requestDetail;
+        QRequest request = QRequest.request;
+        JPQLQuery<RequestDetailMobileListDto> query = from(requestDetail)
+                .innerJoin(requestDetail.frId, request)
+                .where(request.frConfirmYn.eq("Y"))
+                .where(requestDetail.frId.frCode.eq(frCode).and(requestDetail.fdCancel.eq("N")).and(requestDetail.fdState.eq("S1")))
+                .select(Projections.constructor(RequestDetailMobileListDto.class,
+                        requestDetail.id
+                ));
+        query.groupBy(requestDetail.fdTag).orderBy(requestDetail.id.asc());
+
         return query.fetch();
     }
 
@@ -461,7 +478,6 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                 .where(request.frConfirmYn.eq("Y"))
                 .where(requestDetail.frId.frCode.eq(frCode).and(requestDetail.fdCancel.eq("N")))
                 .where(requestDetail.fdState.eq("S1").or(requestDetail.fdState.eq("S2")))
-                .where(customer.bcId.eq(bcId))
                 .select(Projections.constructor(RequestDetailForceListDto.class,
                         requestDetail.id,
                         requestDetail.fdState,
@@ -488,10 +504,14 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         request.frYyyymmdd,
                         requestDetail.fdS2Dt
                 ));
-        query.groupBy(requestDetail.fdTag).orderBy(requestDetail.id.asc());
+//        query.groupBy(requestDetail.fdTag).orderBy(requestDetail.id.asc());
+
+        if(bcId != null){
+            query.where(customer.bcId.eq(bcId));
+        }
 
         if(!fdTag.equals("")){
-            query.where(requestDetail.fdTag.likeIgnoreCase(fdTag));
+            query.where(requestDetail.fdTag.likeIgnoreCase("%"+fdTag+"%"));
         }
 
         return query.fetch();
@@ -617,7 +637,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                 ));
         query.orderBy(requestDetail.id.asc()).groupBy(requestDetail, inspeot.fdId);
         if(!searchTag.equals("")){
-            query.where(requestDetail.fdTag.likeIgnoreCase(searchTag));
+            query.where(requestDetail.fdTag.likeIgnoreCase("%"+searchTag+"%"));
         }
         if(bcId != null){
             query.where(request.bcId.bcId.eq(bcId));
@@ -805,7 +825,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         query.where(requestDetail.fdState.eq("S4"));
         query.where(franchise.id.eq(frId));
         if(!tagNo.equals("")){
-            query.where(requestDetail.fdTag.substring(3,7).likeIgnoreCase(tagNo));
+            query.where(requestDetail.fdTag.substring(3,7).likeIgnoreCase("%"+tagNo+"%"));
         }
         if(fromDt != null){
             query.where(requestDetail.fdS4Time.goe(fromDt));
@@ -926,7 +946,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         query.where(requestDetail.fdState.eq("S2"));
         query.where(franchise.id.eq(frId));
         if(!tagNo.equals("")){
-            query.where(requestDetail.fdTag.substring(3,7).likeIgnoreCase(tagNo));
+            query.where(requestDetail.fdTag.substring(3,7).likeIgnoreCase("%"+tagNo+"%"));
         }
         if(fromDt != null){
             query.where(requestDetail.fdS2Time.goe(fromDt));
@@ -986,7 +1006,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         query.where(requestDetail.fdState.eq("S2"));
         query.where(franchise.id.eq(frId));
         if(!tagNo.equals("")){
-            query.where(requestDetail.fdTag.substring(3,7).likeIgnoreCase(tagNo));
+            query.where(requestDetail.fdTag.substring(3,7).likeIgnoreCase("%"+tagNo+"%"));
         }
         if(fromDt != null){
             query.where(requestDetail.fdS2Time.goe(fromDt));
@@ -1049,7 +1069,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         query.where(requestDetail.fdState.eq("S2"));
         query.where(franchise.id.eq(frId));
         if(!tagNo.equals("")){
-            query.where(requestDetail.fdTag.substring(3,7).likeIgnoreCase(tagNo));
+            query.where(requestDetail.fdTag.substring(3,7).likeIgnoreCase("%"+tagNo+"%"));
         }
         if(fromDt != null){
             query.where(requestDetail.fdS2Time.goe(fromDt));
@@ -1112,7 +1132,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         query.orderBy(requestDetail.id.asc());
         query.where(franchise.id.eq(frId));
         if(!tagNo.equals("")){
-            query.where(requestDetail.fdTag.substring(3,7).likeIgnoreCase(tagNo));
+            query.where(requestDetail.fdTag.substring(3,7).likeIgnoreCase("%"+tagNo+"%"));
         }
         return query.fetch();
     }

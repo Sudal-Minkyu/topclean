@@ -3,7 +3,7 @@ package com.broadwave.toppos.User.UserService;
 import com.broadwave.toppos.Account.Account;
 import com.broadwave.toppos.Account.AccountPasswordDto;
 import com.broadwave.toppos.Account.AccountService;
-import com.broadwave.toppos.Head.Franchise.FranchiseDtos.FranchisUserDto;
+import com.broadwave.toppos.Head.Franchise.FranchiseDtos.FranchiseUserDto;
 import com.broadwave.toppos.Head.Franchise.Franchise;
 import com.broadwave.toppos.Head.HeadService.HeadService;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
@@ -70,7 +70,7 @@ public class InfoService {
         log.info("현재 접속한 아이디 : "+login_id);
         log.info("현재 접속한 가맹점 코드 : "+frCode);
 
-        FranchisUserDto franchisInfoDto = headService.findByFranchiseUserInfo(frCode);
+        FranchiseUserDto franchisInfoDto = headService.findByFranchiseUserInfo(frCode);
         data.put("franchisInfoDto",franchisInfoDto);
 
         // 수선 항목 리스트 데이터 가져오기
@@ -95,7 +95,7 @@ public class InfoService {
     }
 
     // 가맹점 나의정보 수정 API
-    public ResponseEntity<Map<String,Object>> franchiseMyInfoSave(FranchisUserDto franchisUserDto, HttpServletRequest request) {
+    public ResponseEntity<Map<String,Object>> franchiseMyInfoSave(FranchiseUserDto franchiseUserDto, HttpServletRequest request) {
         log.info("franchiseMyInfoSave 호출");
 
         AjaxResponse res = new AjaxResponse();
@@ -111,16 +111,16 @@ public class InfoService {
         if(optionalFranohise.isPresent()){
             Franchise franchise = modelMapper.map(optionalFranohise.get(), Franchise.class);
 
-            franchise.setFrBusinessNo(franchisUserDto.getFrBusinessNo());
-            franchise.setFrRpreName(franchisUserDto.getFrRpreName());
-            franchise.setFrTelNo(franchisUserDto.getFrTelNo());
-            franchise.setFrTagNo(franchisUserDto.getFrTagNo());
-            franchise.setFrLastTagno(franchisUserDto.getFrTagNo() + optionalFranohise.get().getFrLastTagno().substring(3, 7));
-            franchise.setFrEstimateDuration(franchisUserDto.getFrEstimateDuration());
-            franchise.setFrPostNo(franchisUserDto.getFrPostNo());
-            franchise.setFrAddress(franchisUserDto.getFrAddress());
-            franchise.setFrAddressDetail(franchisUserDto.getFrAddressDetail());
-            franchise.setFrMultiscreenYn(franchisUserDto.getFrMultiscreenYn());
+            franchise.setFrBusinessNo(franchiseUserDto.getFrBusinessNo());
+            franchise.setFrRpreName(franchiseUserDto.getFrRpreName());
+            franchise.setFrTelNo(franchiseUserDto.getFrTelNo());
+            franchise.setFrTagNo(franchiseUserDto.getFrTagNo());
+            franchise.setFrLastTagno(franchiseUserDto.getFrTagNo() + optionalFranohise.get().getFrLastTagno().substring(3, 7));
+            franchise.setFrEstimateDuration(franchiseUserDto.getFrEstimateDuration());
+            franchise.setFrPostNo(franchiseUserDto.getFrPostNo());
+            franchise.setFrAddress(franchiseUserDto.getFrAddress());
+            franchise.setFrAddressDetail(franchiseUserDto.getFrAddressDetail());
+            franchise.setFrMultiscreenYn(franchiseUserDto.getFrMultiscreenYn());
 
             franchise.setModify_id(login_id);
             franchise.setModifyDateTime(LocalDateTime.now());

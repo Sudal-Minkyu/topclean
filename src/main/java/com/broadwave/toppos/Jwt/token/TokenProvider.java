@@ -2,7 +2,7 @@ package com.broadwave.toppos.Jwt.token;
 
 import com.broadwave.toppos.Account.Account;
 import com.broadwave.toppos.Account.AccountService;
-import com.broadwave.toppos.Head.Franchise.FranchiseDtos.FranchisInfoDto;
+import com.broadwave.toppos.Head.Franchise.FranchiseDtos.FranchiseInfoDto;
 import com.broadwave.toppos.Head.HeadService.HeadService;
 import com.broadwave.toppos.Jwt.dto.TokenDto;
 import io.jsonwebtoken.*;
@@ -58,18 +58,18 @@ public class TokenProvider {
 
         long now = (new Date()).getTime();
 
-        FranchisInfoDto franchisInfoDto = new FranchisInfoDto();
+        FranchiseInfoDto franchiseInfoDto = new FranchiseInfoDto();
         // Access Token 생성
         Date accessTokenExpiresIn = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
         String accessToken = null;
         if(optionalAccount.isPresent()) {
             if(!optionalAccount.get().getFrCode().equals("not")){
-                franchisInfoDto = headService.findByFranchiseInfo(optionalAccount.get().getFrCode());
+                franchiseInfoDto = headService.findByFranchiseInfo(optionalAccount.get().getFrCode());
             }
             accessToken = Jwts.builder()
                     .claim("frCode", optionalAccount.get().getFrCode())
                     .claim("brCode", optionalAccount.get().getBrCode())
-                    .claim("frbrCode", franchisInfoDto.getBrCode())
+                    .claim("frbrCode", franchiseInfoDto.getBrCode())
                     .setSubject(authentication.getName())       // payload "sub": "name"
                     .claim(AUTHORITIES_KEY, authorities)        // payload "auth": "ROLE_USER"
                     .setExpiration(accessTokenExpiresIn)        // payload "exp": 1516239022 (예시)

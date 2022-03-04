@@ -224,12 +224,12 @@ public class HeadService {
     }
 
     // 가맹점 정보 호출하기
-    public FranchisInfoDto findByFranchiseInfo(String frCode) {
+    public FranchiseInfoDto findByFranchiseInfo(String frCode) {
         return franchiseRepository.findByFranchiseInfo(frCode);
     }
 
     // 가맹점 전용 나의정보 호출하기
-    public FranchisUserDto findByFranchiseUserInfo(String frCode) {
+    public FranchiseUserDto findByFranchiseUserInfo(String frCode) {
         return franchiseRepository.findByFranchiseUserInfo(frCode);
     }
 
@@ -448,6 +448,11 @@ public class HeadService {
     // 가맹점삭제
     public void findByFranchiseDelete(Franchise franchise) {
         franchiseRepository.delete(franchise);
+    }
+
+    // 모바일전용 가맹점명 호출 함수
+    public FranchiseNameInfoDto findByFranchiseNameInfo(String frCode) {
+        return franchiseRepository.findByFranchiseNameInfo(frCode);
     }
 
 }

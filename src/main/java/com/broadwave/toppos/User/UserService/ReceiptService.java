@@ -21,9 +21,7 @@ import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.PhotoR
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.PhotoRepositoryCustom;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetail;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.RequestDetailMapperDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailAmtDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailPaymentPaper;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.*;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailSet;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.*;
@@ -932,6 +930,11 @@ public class ReceiptService {
     // 임시저장한 내역이 존재하는지
     public RequestTempDto findByRequestTemp(String frCode) {
         return requestRepositoryCustom.findByRequestTemp(frCode);
+    }
+
+    // 모바일 수기마감 리스트
+    public List<RequestDetailMobileListDto> findByRequestDetailMobileCloseList(String frCode) {
+        return requestDetailRepository.findByRequestDetailMobileCloseList(frCode);
     }
 
 }

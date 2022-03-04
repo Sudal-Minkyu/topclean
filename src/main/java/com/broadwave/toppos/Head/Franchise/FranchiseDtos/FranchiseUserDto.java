@@ -12,7 +12,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class FranchisUserDto {
+public class FranchiseUserDto {
 
     private String frCode; // 가맹점코드 3자리
     private String frName; // 가맹점명

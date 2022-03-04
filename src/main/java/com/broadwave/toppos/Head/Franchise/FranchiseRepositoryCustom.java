@@ -13,12 +13,14 @@ import java.util.List;
 public interface FranchiseRepositoryCustom {
     List<FranchiseListDto> findByFranchiseList(String brCode, String brAssignState, String frName, String frCode, String frContractState);
 
-    FranchisInfoDto findByFranchiseInfo(String frCode);
+    FranchiseInfoDto findByFranchiseInfo(String frCode);
 
     List<FranchiseSearchDto> findByFranchiseBrcode(String brCode);
 
-    FranchisUserDto findByFranchiseUserInfo(String frCode);
+    FranchiseUserDto findByFranchiseUserInfo(String frCode);
 
     List<FranchiseManagerListDto> findByManagerInFranchise(String brCode);
+
+    FranchiseNameInfoDto findByFranchiseNameInfo(String frCode);
 
 }

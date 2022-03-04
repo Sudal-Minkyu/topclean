@@ -6,7 +6,7 @@ import com.broadwave.toppos.Head.Branoh.Branch;
 import com.broadwave.toppos.Head.Branoh.BranchListDto;
 import com.broadwave.toppos.Head.Branoh.BranchMapperDto;
 import com.broadwave.toppos.Head.Franchise.*;
-import com.broadwave.toppos.Head.Franchise.FranchiseDtos.FranchisInfoDto;
+import com.broadwave.toppos.Head.Franchise.FranchiseDtos.FranchiseInfoDto;
 import com.broadwave.toppos.Head.Franchise.FranchiseDtos.FranchiseListDto;
 import com.broadwave.toppos.Head.Franchise.FranchiseDtos.FranchiseMapperDto;
 import com.broadwave.toppos.Head.Franchise.FranchiseDtos.FranchiseSearchDto;
@@ -442,8 +442,8 @@ public class HeadRestController {
         HashMap<String, Object> data = new HashMap<>();
 
 
-        FranchisInfoDto franchisInfoDto = headService.findByFranchiseInfo(frCode);
-        data.put("franchiseInfoData",franchisInfoDto);
+        FranchiseInfoDto franchiseInfoDto = headService.findByFranchiseInfo(frCode);
+        data.put("franchiseInfoData", franchiseInfoDto);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }

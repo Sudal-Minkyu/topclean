@@ -352,6 +352,9 @@ public class ReceiptStateService {
     public ResponseEntity<Map<String, Object>> franchiseReceiptForceList(Long bcId, String fdTag, HttpServletRequest request) {
         log.info("franchiseReceiptForceList 호출");
 
+        log.info("bcId: "+bcId);
+        log.info("fdTag: "+fdTag);
+
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
 
