@@ -186,7 +186,7 @@ function reply(commentId, obj) {
                 </div>
             </div>
             <div class="reply__console">
-                <button onclick="newCancel(${commentId}, this)" class="c-button c-button--small reply__console-right">취소</button>
+                <button onclick="newCancel(${commentId}, this)" class="c-button c-button--small">취소</button>
                 <button onclick="commitReply('2', '#newarea${commentId}', ${commentId}, '')" class="c-button c-button--small reply__console-right">덧글 달기</button>
             </div>
         </div>
@@ -207,7 +207,7 @@ function modify(commentId, obj) {
     
     const modBtns = `
         <div class="reply__console">
-            <button onclick="modifyCancel(${commentId}, this)" class="c-button c-button--small reply__console-right">수정 취소</button>
+            <button onclick="modifyCancel(${commentId}, this)" class="c-button c-button--small">수정 취소</button>
             <button onclick="modifyComp(${commentId})" class="c-button c-button--small reply__console-right">수정 완료</button>
         </div>
     `;

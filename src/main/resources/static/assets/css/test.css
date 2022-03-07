@@ -1947,9 +1947,17 @@ textarea {
 	justify-content: space-between;
 	width: 100%;
 }
+.reply__write {
+	display: flex;
+	flex-direction: column;
+}
+.reply__write > .c-button {
+	margin-top: 0.625rem;
+	margin-left: auto;
+}
 .reply__list {
 	overflow-y: auto;
-	height: 42rem;
+	height: 39rem;
 	margin-top: 2.5rem;
 	border-top: 0.125rem solid #333;
 }
@@ -1995,9 +2003,12 @@ textarea {
 .reply__console {
 	display: flex;
 	flex-wrap: wrap;
-	justify-content: space-between;
+	justify-content: flex-end;
 	align-items: center;
 	margin-top: 1.25rem;
+}
+.reply__console .c-button:nth-child(2) {
+	margin-left: auto;
 }
 .reply__item .reply__console {
 	padding: 0 1.25rem;
