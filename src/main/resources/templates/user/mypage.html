@@ -20,6 +20,8 @@
 	<script type="text/javascript">
 
 		function printingReport() {
+			console.log(" location.protocol : "+ location.protocol);
+			console.log(" location.protocol : "+ location.host);
 			const _params = {
 				projectName: "toppos",
 				formName: "qrprint02",
@@ -31,7 +33,7 @@
 				UBIPRINT_SCALE_Y: 1,
 
 				name: $("input[name='frName']").val(),
-				url: window.location.hostname,
+				url: location.protocol+"//"+location.host,
 				frcode : "/qrpickup?frcode="+$("input[name='frCode']").val(),
 			};
 
