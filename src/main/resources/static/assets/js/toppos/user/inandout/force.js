@@ -347,19 +347,14 @@ const trigs = {
             });
 
             $("#resetCustomer").on("click", function () {
-                wares.selectedCustomer = {
-                    bcId: null,
-                    beforeUncollectMoney: 0,
-                    saveMoney: 0,
-                    bcAddress: "",
-                    bcRemark: "",
-                };
-                putCustomer();
+                resetCustomer();
             });
 
             $("#closeCustomerPop").on("click", function () {
                 closeCustomerPop();
             });
+
+            
         }
     },
     r: { // 이벤트 해제
@@ -406,6 +401,7 @@ function makeSaveDataset(checkedItems) { // 저장 데이터셋 만들기
 
 function mainSearch() {
     if($("#searchType").val() === "4") {
+        resetCustomer();
         filterMain();
     }else{
         searchCustomer();
@@ -496,4 +492,15 @@ function selectCustomerFromList(selectedItem) {
 
 function closeCustomerPop() {
     $("#customerListPop").removeClass("active");
+}
+
+function resetCustomer() {
+    wares.selectedCustomer = {
+        bcId: null,
+        beforeUncollectMoney: 0,
+        saveMoney: 0,
+        bcAddress: "",
+        bcRemark: "",
+    };
+    putCustomer();
 }

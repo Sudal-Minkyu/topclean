@@ -9,7 +9,7 @@ const dtos = {
             tagNo: "s",
             filterFromDt: "s",
             filterToDt: "s",
-            franchiseId: "n", // 가맹점 Id
+            franchiseId: "s", // 가맹점 Id (빈문자를 보내기 위해 파스인트 하지 않음);
         },
 
         branchInspectionList: { // fdId가 일치하는 모든 검품 리스트 type 1: 검품등록시, 2: 검품확인시 
@@ -349,6 +349,13 @@ const trigs = {
         basic() {
             $("#frList").on("change", function () {
                 $("#foreTag").val($("#frList option:selected").attr("data-tagno"));
+                const $aftTag = $("#aftTag");
+                if($("#frList").val() === "") {
+                    $aftTag.val("");
+                    $aftTag.prop("disabled", true);
+                } else {
+                    $aftTag.prop("disabled", false);
+                }
             });
 
             $("#searchListBtn").on("click", function () {
@@ -431,7 +438,7 @@ function searchOrder() {
         tagNo: $("#aftTag").val().numString(),
         filterFromDt: $("#filterFromDt").val(),
         filterToDt: $("#filterToDt").val(),
-        franchiseId: parseInt(frId),
+        franchiseId: frId,
     };
 
     if(searchCondition.tagNo.length !== 0 && searchCondition.tagNo.length !== 4) {
