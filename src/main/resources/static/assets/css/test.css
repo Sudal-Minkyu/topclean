@@ -1309,6 +1309,48 @@ textarea {
 	flex-direction: column;
 	height: 7.5rem;
 }
+.condition__count {
+	display: inline-flex;
+	flex-wrap: wrap;
+	align-items: center;
+}
+.condition__count-item {
+	display: flex;
+	align-items: center;
+	position: relative;
+}
+.condition__count-item:before {
+	content: " ";
+	display: block;
+	position: absolute;
+	top: 50%;
+	left: 0;
+	width: 0.063rem;
+	height: 1.25rem;
+	margin-top: -0.625rem;
+	background-color: #bdbdbd;
+}
+.condition__count-item:first-child:before {
+	display: none;
+}
+.condition__count-title {
+	padding: 0 0.625rem;
+}
+.condition__count-input {
+	padding-right: 0.625rem;
+}
+.condition__count-input input {
+	width: 3.125rem;
+	height: 2.5rem;
+	border: 0.063rem solid #bdbdbd;
+	border-radius: 0.313rem;
+}
+.condition__count-input:nth-child(2n) input {
+	width: 5rem;
+}
+.condition__count-input input:read-only {
+	background-color: #f2f2f6;
+}
 .condition__radio {
 	display: flex;
 	flex-wrap: wrap;

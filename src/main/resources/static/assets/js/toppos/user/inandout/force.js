@@ -324,6 +324,20 @@ const grids = {
 const trigs = {
     s: { // 이벤트 설정
         basicTrigger() {
+            $('.aui-checkbox').on('click', function () {
+                const checkedItems = grids.f.getCheckedItems(0);
+                const checkedLength = checkedItems.length;
+                let totalAmount = 0;
+                
+                checkedItems.forEach(checkedItem => {
+                    // 접수총액
+                    totalAmount += checkedItem.item.fdTotAmt;
+                });
+
+                $('#selectItems').val(checkedLength);
+                $('#selectAmount').val(totalAmount.toLocaleString());
+            });
+            
             $('#forceIn').on('click', function() {
                 const checkedItems = grids.f.getCheckedItems(0);
                 const saveDataset = makeSaveDataset(checkedItems);
