@@ -9,7 +9,6 @@ const dtos = {
             tagNo: "s",
             filterFromDt: "s",
             filterToDt: "s",
-            franchiseId: "s", // 가맹점 Id (빈문자를 보내기 위해 파스인트 하지 않음);
         },
 
         branchInspectionList: { // fdId가 일치하는 모든 검품 리스트 type 1: 검품등록시, 2: 검품확인시 
@@ -99,6 +98,10 @@ const comms = {
 
     getMainGridList(searchCondition) {
         dv.chk(searchCondition, dtos.send.branchInspectionCurrentList, "메인 그리드 검색 조건 보내기");
+        if(searchCondition.franchiseId === 0) {
+            delete searchCondition.franchiseId;
+        }
+        console.log(searchCondition);
         CommonUI.ajax(urls.getMainGridList, "GET", searchCondition, function (res) {
             const data = CommonUI.toppos.killNullFromArray(res.sendData.gridListData);
             dv.chk(data, dtos.receive.branchInspectionCurrentList, "메인 그리드 받아온 리스트");
@@ -429,16 +432,12 @@ function enableDatepicker() {
 
 function searchOrder() {
     const frId = $("#frList").val();
-    if(frId === "") {
-        alertCaution("가맹점을 선택해 주세요.", 1);
-        return false;
-    }
 
     const searchCondition = {
         tagNo: $("#aftTag").val().numString(),
         filterFromDt: $("#filterFromDt").val(),
         filterToDt: $("#filterToDt").val(),
-        franchiseId: frId,
+        franchiseId: parseInt(frId),
     };
 
     if(searchCondition.tagNo.length !== 0 && searchCondition.tagNo.length !== 4) {
