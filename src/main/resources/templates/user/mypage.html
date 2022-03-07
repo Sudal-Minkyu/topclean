@@ -20,32 +20,23 @@
 	<script type="text/javascript">
 
 		function printingReport() {
-			console.log(" location.protocol : "+ location.protocol);
-			console.log(" location.protocol : "+ location.host);
+
 			const _params = {
 				projectName: "toppos",
 				formName: "qrprint02",
-				UBIPRINT_USE_UI: true,
-				UBIPRINT_UBF_USE_UI: true,
-				Timeout: 1800,
-				UBPRINT_CIRCUALTION_CNT: 1,
-				UBIPRINT_SCALE_X: 1,
-				UBIPRINT_SCALE_Y: 1,
-
 				name: $("input[name='frName']").val(),
-				url: location.protocol+"//"+location.host,
-				frcode : "/qrpickup?frcode="+$("input[name='frCode']").val(),
+				url: location.protocol+"//"+location.host+"/qrpickup?frcode="+$("input[name='frCode']").val(),
 			};
 
 			const _url = "https://report.topcleaners.kr:443/UBIFORM/UView5/index.jsp";
-			var form = document.createElement("form");
+			const form = document.createElement("form");
 			form.setAttribute("method", "post");
 			form.setAttribute("action", _url);
-
-
-			for (var i in _params) {
+			
+			for (const i in _params) {
 				if (_params.hasOwnProperty(i)) {
-					var param = document.createElement('input'); param.type = 'hidden';
+					const param = document.createElement('input');
+					param.type = 'hidden';
 					param.name = i;
 					param.value = encodeURI( _params[i] ); form.appendChild(param);
 				}
