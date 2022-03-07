@@ -45,7 +45,7 @@ const comms = {
         });
     },
 
-    taglost() { // 참고용
+    taglost() {
         CommonUI.ajax(urls.taglost, "PARAM", wares.boardConditionThree, function (res) {
             const data = res.datalist;
             if(data) {
