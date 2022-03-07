@@ -31,7 +31,7 @@
 				UBIPRINT_SCALE_Y: 1,
 
 				name: $("input[name='frName']").val(),
-				url: location.href + "/qrpickup?frcode=" + $("input[name='frCode']").val(),
+				url: location.host + "/qrpickup?frcode=" + $("input[name='frCode']").val(),
 			};
 
 			const _url = "https://report.topcleaners.kr:443/UBIFORM/UView5/index.jsp";
