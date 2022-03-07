@@ -573,7 +573,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdEstimateDt
                 ));
         query.orderBy(requestDetail.id.asc());
-        query.where(requestDetail.fdState.eq("S5").or(requestDetail.fdState.eq("S8")));
+        query.where(requestDetail.fdState.eq("S5").or(requestDetail.fdState.eq("S8").or(requestDetail.fdState.eq("S3"))));
         if(bcId != null){
             query.where(request.bcId.bcId.eq(bcId));
         }
@@ -1075,8 +1075,9 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                 ));
         query.orderBy(requestDetail.id.asc()).groupBy(requestDetail.id);
         query.where(requestDetail.fdState.eq("S2"));
-        query.where(franchise.id.eq(frId));
-        if(!tagNo.equals("")){
+
+        if(frId != null || !tagNo.equals("")){
+            query.where(franchise.id.eq(frId));
             query.where(requestDetail.fdTag.substring(3,7).likeIgnoreCase("%"+tagNo+"%"));
         }
         if(fromDt != null){

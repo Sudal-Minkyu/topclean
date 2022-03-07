@@ -207,8 +207,13 @@ public class ReceiptStateService {
                 List<RequestDetail> requestDetailList = requestDetailRepository.findByRequestDetailS5OrS8List(fdIdList);
 //            log.info("requestDetailList : "+requestDetailList);
                 for (RequestDetail requestDetail : requestDetailList) {
-//                log.info("가져온 frID 값 : "+requestDetailList.get(i).getFrId());
-                    requestDetail.setFdPreState(stateType); // 이전상태 값
+//                log.info("가져온 frID 값 : "+requestDetailList.get(i).getFrId());인
+                    if(requestDetail.getFdState().equals("S3")){
+                        requestDetail.setFdS6Type("02");
+                    }else{
+                        requestDetail.setFdS6Type("01");
+                    }
+                    requestDetail.setFdPreState(requestDetail.getFdState()); // 이전상태 값
                     requestDetail.setFdPreStateDt(LocalDateTime.now());
                     requestDetail.setFdState("S6");
                     requestDetail.setFdStateDt(LocalDateTime.now());

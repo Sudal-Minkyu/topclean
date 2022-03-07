@@ -564,6 +564,7 @@ public class InspectService {
                 optionalRequestDetail.get().setFdStateDt(LocalDateTime.now());
                 optionalRequestDetail.get().setFdPreState(fdState);
                 optionalRequestDetail.get().setFdPreStateDt(LocalDateTime.now());
+                optionalRequestDetail.get().setFdS6Type(null);
                 optionalRequestDetail.get().setModify_id(login_id);
                 optionalRequestDetail.get().setModify_date(LocalDateTime.now());
                 requestDetailRepository.save(optionalRequestDetail.get());
@@ -740,8 +741,8 @@ public class InspectService {
     public ResponseEntity<Map<String, Object>> branchInspectionCurrentList(Long franchiseId, LocalDateTime fromDt, LocalDateTime toDt, String tagNo, HttpServletRequest request) {
         log.info("branchInspectionCurrentList 호출");
 
-        log.info("franchiseId : "+franchiseId);
-        log.info("tagNo : "+tagNo);
+//        log.info("franchiseId : "+franchiseId);
+//        log.info("tagNo : "+tagNo);
 
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
@@ -751,7 +752,6 @@ public class InspectService {
         String brCode = (String) claims.get("brCode"); // 현재 지사의 코드(2자리) 가져오기
         log.info("현재 접속한 지사 코드 : "+brCode);
 
-        // 반송 처리 할 리스트 호출
         List<RequestDetailBranchInspectionCurrentListDto> requestDetailBranchInspectionCurrentListDtos = requestDetailRepository.findByRequestDetailBranchInspectionCurrentList
                 (brCode, franchiseId, fromDt, toDt, tagNo);
 

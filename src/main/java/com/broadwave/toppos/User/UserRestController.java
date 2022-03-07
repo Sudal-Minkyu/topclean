@@ -986,7 +986,7 @@ public class UserRestController {
         return receiptStateService.franchiseReceiptForceList(bcId, fdTag, request);
     }
 
-    //  세탁인도 - 세부테이블 지사입고, 강제입고 상태 리스트
+    //  세탁인도 - 세부테이블 S5-가맹점입고, S8- 강제입고 상태 리스트, S3 - 강제출고입고 상태(22/03/07 추가)
     @GetMapping("franchiseReceiptDeliveryList")
     public ResponseEntity<Map<String,Object>> franchiseReceiptDeliveryList(@RequestParam(value="bcId", defaultValue="") Long bcId, HttpServletRequest request){
         return receiptStateService.franchiseReceiptDeliveryList(bcId, request);

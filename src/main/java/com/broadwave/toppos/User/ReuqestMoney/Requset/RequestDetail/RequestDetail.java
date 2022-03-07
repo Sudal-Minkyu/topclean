@@ -102,6 +102,9 @@ public class RequestDetail {
     @Column(name="fd_s5_time")
     private LocalDateTime fdS5Time; // 가맹점입고시간
 
+    @Column(name="fd_s6_type")
+    private String fdS6Type; // 고객인도타입(01:일반인도, 02:반품인도(강제출고건))
+
     @Column(name="fd_s6_dt")
     private String fdS6Dt; // 고객인도일
 
