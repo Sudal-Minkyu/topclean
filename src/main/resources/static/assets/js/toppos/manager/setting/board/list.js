@@ -92,14 +92,15 @@ const grids = {
                 {
                     dataField: "subject",
                     headerText: "제목",
-                    renderer : {
+                    renderer: {
                         type : "TemplateRenderer",
                     },
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
-                        let result = value;
+                        let result = "<div clasee='list_subject'><span>" + value + "</span>";
                         if(item.numOfComment) {
                             result += ` <span class="numOfComment">(${item.numOfComment})</span>`
                         }
+                        result += "</div>";
                         return result;
                     }
                 }, {

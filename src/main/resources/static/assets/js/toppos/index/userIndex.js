@@ -156,6 +156,7 @@ function onPageLoad() {
     CommonUI.setDatePicker(datePickerId);
 	$("#historyDate").val(today);
     $("#historyDate").datepicker("option", "maxDate", today);
+    $("#ui-datepicker-div").hide();
     trigs.basic();
 
     // 슬라이딩 텍스트 실행

@@ -21,6 +21,17 @@ public class UserController {
         return "user/sign";
     }
 
+    // 운동화 세탁 접수 동의서
+    @RequestMapping("consent")
+    public String consent(){
+        return "user/consent";
+    }
+    // 운동화 세탁 접수 동의서 - 사인
+    @RequestMapping("consentsign")
+    public String consentsign(){
+        return "user/consentsign";
+    }
+    
     // 가맹점주 메인페이지
     @RequestMapping("")
     public String user_index(){
