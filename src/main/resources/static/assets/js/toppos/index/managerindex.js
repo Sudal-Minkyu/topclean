@@ -16,6 +16,7 @@ const dtos = {
                 subject: "s",
             },
             inspeotList: {
+                frName: "s", // 2022.03.08 추가
                 bcName: "s",
                 bgName: "s",
                 fdS2Dt: "s",
@@ -70,6 +71,7 @@ const comms = {
 
             if(inspectList) {
                 const field = $("#inspectList").children("li").children("a");
+                field.children(".main__board-frname").children("span").html("");
                 field.children(".main__board-bcname").children("span").html("");
                 field.children(".main__board-bgname").children("span").html("");
                 field.children(".main__board-afttag").children("span").html("");
@@ -78,6 +80,8 @@ const comms = {
                 for(let i = 0; i < inspectList.length; i++) {
                     $(field[i]).attr("href", `./manager/checkstate?fdTag=${inspectList[i].fdTag}&fdS2Dt=${
                         inspectList[i].fdS2Dt}`);
+                    $(field[i]).children(".main__board-frname").children("span")
+                        .html("&lt;" + inspectList[i].frName + "&gt;");
                     $(field[i]).children(".main__board-bcname").children("span").html(inspectList[i].bcName);
                     $(field[i]).children(".main__board-bgname").children("span").html(inspectList[i].bgName);
                     $(field[i]).children(".main__board-afttag").children("span")
