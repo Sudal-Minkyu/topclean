@@ -97,10 +97,10 @@ const comms = {
 	getFrInfo() {
 		const url = "/api/user/myInfo";
 		CommonUI.ajax(url, "GET", false, function (res) {
-
 			const data = res.sendData.franchisInfoDto;
 			dv.chk(data, dtos.receive.myInfo, "가맹점 정보 받아오기");
 			putFrInfoDataInField(data);
+			setIframeSrc(data.frCode);
 		});
 	},
 	// 가맹점 정보 저장
@@ -730,3 +730,17 @@ function execDaumPostcode() {
 	}).open();
 }
 
+function setIframeSrc(frCode) {
+	const _params = {
+		projectName: "toppos",
+		formName: "qrprint02",
+		name: $("input[name='frName']").val(),
+		url: location.protocol+"//"+location.host+"/qrpickup?frcode="+frCode,
+	};
+
+	const _url = "https://report.topcleaners.kr:443/UBIFORM/UView5/index.jsp";
+	const fullURL = _url + "?projectName=" + _params.projectName + "&formName=" + _params.formName
+		+ "&name=" + _params.name + "&url=" + _params.url;
+		
+	$("#qrcode").attr("src", fullURL);
+}
