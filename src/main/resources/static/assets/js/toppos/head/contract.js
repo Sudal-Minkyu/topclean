@@ -225,6 +225,24 @@ let filterCondition1B = "";
 /* 실행부 */
 $(function () {
 
+    // 탭
+    const $tabsBtn = $('.c-tabs__btn');
+    const $tabsContent = $('.c-tabs__content');
+    
+    $tabsBtn.on('click', function() {
+        const idx = $(this).index();
+        
+        $tabsBtn.removeClass('active');
+        $tabsBtn.eq(idx).addClass('active');
+        $tabsContent.removeClass('active');
+        $tabsContent.eq(idx).addClass('active');
+        
+        AUIGrid.resize(gridId[0]);
+        AUIGrid.resize(gridId[1]);
+        AUIGrid.resize(gridId[2]);
+        AUIGrid.resize(gridId[3]);
+    });
+
     /* 그리드 생성과 데이터 세팅 */
     createGrid(gridColumnLayout, gridProp);
 
@@ -250,6 +268,7 @@ $(function () {
             const resultData = req.sendData.gridListData;
             AUIGrid.clearGridData(gridId[3]);
             AUIGrid.setGridData(gridId[3], resultData);
+            resetFieldData3();
         });
     });
 
@@ -264,6 +283,16 @@ $(function () {
 
     AUIGrid.bind(gridId[4], "cellDoubleClick", function (e) {
         putBranchInfo(e.item);
+    });
+
+    $("#brCode").on("change", function () {
+        $("#brCodeChecked").val("0");
+        $("#brCodeChkBtn").prop("disabled", false);
+    });
+
+    $("#frCode").on("change", function () {
+        $("#frCodeChecked").val("0");
+        $("#frCodeChkBtn").prop("disabled", false);
     });
 });
 
@@ -299,18 +328,28 @@ function codeOverlap(num){
         params = {
             brCode: $("#brCode").val()
         };
+        if(params.brCode.length !== 2) {
+            alertCaution("지사코드는 2자리로 입력해 주세요.", 1);
+            return false;
+        }
     }else{
         url = "/api/head/franchiseOverlap";
         params = {
             frCode: $("#frCode").val()
         };
+        if(params.frCode.length !== 3) {
+            alertCaution("가맹점코드는 3자리로 입력해 주세요.", 1);
+            return false;
+        }
     }
 
     CommonUI.ajax(url,"GET",params, function (req){
         if(num===1){
             $("#brCodeChecked").val("1");
+            $("#brCodeChkBtn").prop("disabled", true);
         }else{
             $("#frCodeChecked").val("1");
+            $("#frCodeChkBtn").prop("disabled", true);
         }
         alertSuccess("사용할 수 있는  코드입니다.");
     });
@@ -324,9 +363,14 @@ function branchSave(){
         alertCaution("지사코드 중복확인을 해주세요.",1);
         return false;
     }
-    const valCalRateHq = $("#brCarculateRateHq").val();
-    const valCalRateBr = $("#brCarculateRateBr").val();
-    const valCalRateFr = $("#brCarculateRateFr").val();
+    if($("#brName").val() === "") {
+        alertCaution("지사명을 입력해 주세요", 1);
+        return false;
+    }
+
+    const valCalRateHq = $("#brCarculateRateHq").val() ? $("#brCarculateRateHq").val() : 0;
+    const valCalRateBr = $("#brCarculateRateBr").val() ? $("#brCarculateRateBr").val() : 0;
+    const valCalRateFr = $("#brCarculateRateFr").val() ? $("#brCarculateRateFr").val() : 0;
     const sumCalRate = parseFloat(valCalRateHq) + parseFloat(valCalRateBr) + parseFloat(valCalRateFr);
     if(sumCalRate !== 100) {
         alertCaution("정산비율의 합은 100 이어야 합니다." +
@@ -382,6 +426,16 @@ function franchiseSave() {
         alertCaution("가맹점코드 중복확인을 해주세요.",1);
         return false;
     }
+    if($("#frName").val() === "") {
+        alertCaution("가맹점명을 입력해 주세요", 1);
+        return false;
+    }
+
+    if($("#frTagNo").val().length !== 3) {
+        alertCaution("가맹점택코드 3자리를 입력해 주세요", 1);
+        return false;
+    }
+
     if(!$("#frEstimateDuration").val()) {
         alertCaution("출고예정일계산을 입력해 주세요",1);
         return false;
@@ -503,6 +557,9 @@ function setFieldData(numOfGrid, item) {
             $("#frTagNo").val(item.frTagNo);
             $("#frEstimateDuration").val(item.frEstimateDuration);
             $("#frRemark").val(item.frRemark);
+            $("#frPostNo").val(item.frPostNo);
+            $("#frAddress").val(item.frAddress);
+            $("#frAddressDetail").val(item.frAddressDetail);
             CommonUI.restrictDate(dateAToBTargetIds[1][0], dateAToBTargetIds[1][1], false);
             CommonUI.restrictDate(dateAToBTargetIds[1][0], dateAToBTargetIds[1][1], true);
             break;
@@ -524,12 +581,31 @@ function setFieldData(numOfGrid, item) {
     }
 }
 
+function resetFieldData3() {
+    const item = {
+        frCode: "",
+        frName: "",
+        frContractDt: "",
+        frContractFromDt: "",
+        frContractToDt: "",
+        frContractStateValue: "",
+        brAssignState: "01",
+        brCode: "",
+        brName: "",
+        brCarculateRateHq: "",
+        brCarculateRateBr: "",
+        brCarculateRateFr: "",
+    }
+    setFieldData(3, item);
+}
+
 /* 그리드에 새로운 row를 생성하고 입력창을 비워 새로운 데이터 저장 준비에 들어간다. */
 function createNewPost(numOfGrid) {
     /* 기본적으로 undefined 로 되어있을시 데이터 배치에 문제가 생기는 값이나
     * 초기값 지정한 값들은 기본값을 지정하여 문제가 생기지 않도록 한다. */
     setFieldData(numOfGrid, {brRemark : "", frRemark : "",
-                brCodeChecked : "0", frCodeChecked : "0", brContractState : "01", frContractState : "01"});
+                brCodeChecked : "0", frCodeChecked : "0", brContractState : "01", 
+                frContractState : "01", frBusinessNo: ""});
     /* 신규 row를 추가하고 나서 편집이 용이하도록 포커스를 준다. */
     switch (numOfGrid) {
         case 0 :
@@ -557,9 +633,12 @@ function filterFranchiseList(type) {
                     return new RegExp(s_frNameFilter.toUpperCase()).test(value.toUpperCase());
                 });
             }
+            createNewPost(1);
             break;
         case 2 :
             AUIGrid.clearFilterAll(gridId[1]);
+            $("#frNameFilter").val("");
+            createNewPost(1);
             break;
         case 3 :
             AUIGrid.clearFilterAll(gridId[3]);
@@ -673,4 +752,26 @@ function onKeyupFrTelNo(el) {
 
 function onKeyupFrBusinessNo(el) {
     el.value = CommonUI.formatBusinessNo(el.value);
+}
+
+// 우편번호 검색
+function execDaumPostcode() {
+    new daum.Postcode({
+        oncomplete: function(data) {
+            let addr = ''; // 주소 변수
+
+            //사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져온다.
+            if (data.userSelectedType === 'R') { // 사용자가 도로명 주소를 선택했을 경우
+                addr = data.roadAddress;
+            } else { // 사용자가 지번 주소를 선택했을 경우(J)
+                addr = data.jibunAddress;
+            }
+
+            // 우편번호와 주소 정보를 해당 필드에 넣는다.
+            document.getElementById('frPostNo').value = data.zonecode;
+            document.getElementById("frAddress").value = addr;
+            // 커서를 상세주소 필드로 이동한다.
+            document.getElementById("frAddressDetail").focus();
+        }
+    }).open();
 }

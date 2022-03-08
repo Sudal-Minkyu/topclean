@@ -12,52 +12,8 @@
 
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
-	<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
     <script src="/assets/js/toppos/head/contract.js"></script>
-    <script>
-    	$(document).ready(function() {
-    		// 탭
-			const $tabsBtn = $('.c-tabs__btn');
-			const $tabsContent = $('.c-tabs__content');
-			
-			$tabsBtn.on('click', function() {
-				const idx = $(this).index();
-				
-				$tabsBtn.removeClass('active');
-				$tabsBtn.eq(idx).addClass('active');
-				$tabsContent.removeClass('active');
-				$tabsContent.eq(idx).addClass('active');
-				
-				AUIGrid.resize(gridId[0]);
-				AUIGrid.resize(gridId[1]);
-				AUIGrid.resize(gridId[2]);
-				AUIGrid.resize(gridId[3]);
-			});
-    	})
-
-		// 우편번호 검색
-		function execDaumPostcode() {
-			new daum.Postcode({
-				oncomplete: function(data) {
-					console.log(data);
-					var addr = ''; // 주소 변수
-
-					//사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져온다.
-					if (data.userSelectedType === 'R') { // 사용자가 도로명 주소를 선택했을 경우
-						addr = data.roadAddress;
-					} else { // 사용자가 지번 주소를 선택했을 경우(J)
-						addr = data.jibunAddress;
-					}
-
-					// 우편번호와 주소 정보를 해당 필드에 넣는다.
-					document.getElementById('postcode').value = data.zonecode;
-					document.getElementById("address").value = addr;
-					// 커서를 상세주소 필드로 이동한다.
-					document.getElementById("detailAddress").focus();
-				}
-			}).open();
-		}
-    </script>
+	<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 </th:block>
 
 <div layout:fragment="content" class="content content--padding">
@@ -336,14 +292,14 @@
 											<div class="address">
 												<ul>
 													<li>
-														<input class="address__postcode" type="text" id="postcode" placeholder="우편번호" />
-														<button class="c-button c-button--small" onclick="execDaumPostcode()">우편번호 검색</button>
+														<input class="address__postcode" type="text" id="frPostNo" name="frPostNo" placeholder="우편번호" readonly/>
+														<button type="button" class="c-button c-button--small" onclick="execDaumPostcode()">우편번호 검색</button>
 													</li>
 													<li>
-														<input type="text" id="address" placeholder="주소" />
+														<input type="text" id="frAddress" name="frAddress" placeholder="주소" readonly/>
 													</li>
 													<li>
-														<input type="text" id="detailAddress" placeholder="상세주소 입력" />
+														<input type="text" id="frAddressDetail" name="frAddressDetail" placeholder="상세주소 입력" />
 													</li>
 												</ul>
 											</div>
@@ -506,7 +462,6 @@
 														<input id="bot_brCarculateRateBr" type="number" readonly>
 														<span>%</span>
 													</div>
-													
 												</li>
 												<li>
 													<div class="percent__title">가맹 : </div>
