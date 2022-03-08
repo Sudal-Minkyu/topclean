@@ -59,6 +59,7 @@ const comms = {
                 field.children(".main__board-time").children("span").html("");
                 field.children(".main__board-title").children("span").html("");
                 field.children(".main__board-phone").children("span").html("");
+                $(field).children(".main__board-badge").children("span").removeClass();
 
                 for(let i = 0; i < historyList.length; i++) {
                     $(field[i]).children(".main__board-badge").children("span").html(historyList[i].typename);
