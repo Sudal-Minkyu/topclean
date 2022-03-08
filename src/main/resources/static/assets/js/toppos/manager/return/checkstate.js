@@ -94,12 +94,12 @@ const comms = {
                 const htmlText = `<option value="${obj.frId}" data-tagno="${obj.frTagNo}">${obj.frName}</option>`
                 $frList.append(htmlText);
             });
+            chkParams();
         });
     },
 
     getMainGridList(searchCondition) {
         dv.chk(searchCondition, dtos.send.branchInspectionCurrentList, "메인 그리드 검색 조건 보내기");
-
         // console.log(searchCondition);
         CommonUI.ajax(urls.getMainGridList, "GET", searchCondition, function (res) {
             const data = CommonUI.toppos.killNullFromArray(res.sendData.gridListData);
@@ -384,6 +384,8 @@ const trigs = {
 
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
 const wares = {
+    url: window.location.href,
+    params: "", // url에 내포한 파라메터들을 담는다.
     currentRequest: {},
 }
 
@@ -468,4 +470,23 @@ function resetCheckPop() {
 
 function ynStyle(rowIndex, columnIndex, value, headerText, item, dataField) {
     return value === "Y" ? "yesBlue" : "noRed"
+}
+
+/* 넘어온 fdTag값이 있다면 해당 정보를 통해 검색한다. */
+function chkParams() {
+    const url = new URL(wares.url);
+    wares.params = url.searchParams;
+
+    if(wares.params.has("fdTag") && wares.params.has("fdS2Dt")) {
+        $("#aftTag").prop("disabled", false);
+        const fdTag = wares.params.get("fdTag");
+        const dateNum = wares.params.get("fdS2Dt");
+        const date = dateNum.substring(0, 4) + "-" + dateNum.substring(4, 6) + "-" + dateNum.substring(6, 8);
+        $("#frList option[data-tagno=" + fdTag.substring(0, 3) + "]").prop("selected", true);
+        $("#foreTag").val(fdTag.substring(0, 3));
+        $("#aftTag").val(fdTag.substring(3, 7));
+        $("#filterFromDt").val(date);
+        $("#filterToDt").val(date);
+        $("#searchListBtn").trigger("click");
+    }
 }

@@ -9,11 +9,27 @@ const dtos = {
     },
     receive: {
         franchiseInfo: {
-            slidingText: "s", // 2022.03.02 추가
-            brName: "s",
-            frName: "s",
-            username: "s",
-            usertel: "s",
+            inspeotList: {
+                bcName: "s",
+                bgName: "s",
+                fdS2Dt: "s",
+                fdTag: "s",
+                fiCustomerConfirm: "s",
+                frYyyymmdd: "s",
+            },
+            requestHistoryList: {
+                typename: "s",
+                requestTime: "s",
+                bcName: "s",
+                bcHp: "s",
+            },
+            userIndexDto: {
+                slidingText: "a", // 2022.03.02 추가
+                brName: "s",
+                frName: "s",
+                username: "s",
+                usertel: "s",
+            },
         },
     }
 };
@@ -27,12 +43,13 @@ const urls = {
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
     franchiseInfo(condition) {
-        console.log(condition);
         const url = "/api/user/franchiseInfo";
         CommonUI.ajax(url, "GET", condition, function (res) {
-            const userIndexDto = res.sendData.userIndexDto[0];
-            const historyList = res.sendData.requestHistoryList;
-            console.log(res);
+            const data = res.sendData;
+            dv.chk(data, dtos.receive.franchiseInfo, "메인페이지 각종 값 받아오기");
+            const userIndexDto = data.userIndexDto[0];
+            const historyList = data.requestHistoryList;
+            const inspectList = data.inspeotList;
 
             if(userIndexDto.brName===null){
                 $("#brName").text("무소속");
@@ -74,6 +91,26 @@ const comms = {
                     $(field[i]).children(".main__board-time").children("span").html(historyList[i].requestTime);
                     $(field[i]).children(".main__board-title").children("span").html(historyList[i].bcName);
                     $(field[i]).children(".main__board-phone").children("span").html(CommonUI.formatTel(historyList[i].bcHp));
+                }
+            }
+            console.log(inspectList);
+
+            if(inspectList) {
+                const field = $("#inspectList").children("li").children("a");
+                field.children(".main__board-bcname").children("span").html("");
+                field.children(".main__board-bgname").children("span").html("");
+                field.children(".main__board-afttag").children("span").html("");
+                field.children(".main__board-confirm").children("span").html("");
+
+                for(let i = 0; i < inspectList.length; i++) {
+                    $(field[i]).attr("href", `./user/integrate?fdTag=${inspectList[i].fdTag}&frYyyymmdd=${
+                        inspectList[i].frYyyymmdd}`);
+                    $(field[i]).children(".main__board-bcname").children("span").html(inspectList[i].bcName);
+                    $(field[i]).children(".main__board-bgname").children("span").html(inspectList[i].bgName);
+                    $(field[i]).children(".main__board-afttag").children("span")
+                        .html(reformAftTagNo(inspectList[i].fdTag));
+                    $(field[i]).children(".main__board-confirm").children("span")
+                        .html(wares.fiCustomerConfirmName[inspectList[i].fiCustomerConfirm]);
                 }
             }
         });
@@ -124,13 +161,18 @@ const trigs = {
 
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
 const wares = {
-    boardConditionThree : {
+    boardConditionThree: {
         page: 0,
         size: 3,
         searchString: "",
         filterFromDt: "",
         filterToDt: "",
-    }
+    },
+    fiCustomerConfirmName: {
+        "1": "(미처리)",
+        "2": "(수락)",
+        "3": "(거부)",
+    },
 }
 
 $(function() { // 페이지가 로드되고 나서 실행
@@ -196,4 +238,8 @@ function marquee(speed) {
     }
 
     setInterval(marqueeRight, 10);
+}
+
+function reformAftTagNo(fdTag) {
+    return fdTag.substring(3, 4) + "-" + fdTag.substring(4, 7);
 }

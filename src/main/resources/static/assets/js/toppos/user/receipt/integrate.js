@@ -1050,6 +1050,8 @@ const grid = {
 
 /* dto가 아닌 일반적인 데이터들 정의 */
 const data = {
+    url: window.location.href,
+    params: "", // url에 내포한 파라메터들을 담는다.
     initialData: {},
     currentCondition: {},
     selectedCustomer: {
@@ -1401,10 +1403,8 @@ function onPageLoad() {
     event.s.modify();
     event.s.subMenu();
 
-    /* grid.s 에 적절한 값을 세팅하였다면, 해당 함수 호출시 해당 배열번호의 그리드에 의도한 데이터들이 주입되어진다. */
+    chkParams();
 
-    /* 생성된 그리드에 기본적으로 필요한 이벤트들을 적용한다. */
-    // grid.e.basicEvent();
 
     // lightbox option
     lightbox.option({
@@ -2095,4 +2095,21 @@ function printReceipt(frNo) {
     }
 
     CommonUI.toppos.printReceipt(condition);
+}
+
+/* 넘어온 fdTag값이 있다면 해당 정보를 통해 검색한다. */
+function chkParams() {
+    const url = new URL(data.url);
+    data.params = url.searchParams;
+
+    if(data.params.has("fdTag") && data.params.has("frYyyymmdd")) {
+        const dateNum = data.params.get("frYyyymmdd");
+        const date = dateNum.substring(0, 4) + "-" + dateNum.substring(4, 6) + "-" + dateNum.substring(6, 8);
+        $("#searchType").val("4");
+        $("#searchString").val(data.params.get("fdTag"));
+        $("#filterFromDt").val(date);
+        $("#filterToDt").val(date);
+        $("#searchCustomer").trigger("click");
+    }
+
 }
