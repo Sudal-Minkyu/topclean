@@ -26,6 +26,7 @@ import com.broadwave.toppos.User.ItemSort.ItemSortSet;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentDtos.PaymentUncollectSet;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentSet;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Request;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotMainListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotMapperDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotSet;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.PhotoDto;
@@ -141,6 +142,7 @@ public class UserRestController {
 
             UserIndexDto userIndexDto = userService.findByUserInfo(login_id, frCode);
             List<BranchCalendarListDto> branchCalendarListDtos = calendarService.branchCalendarSlidingDtoList(frbrCode, date);
+            List<InspeotMainListDto> inspeotMainListDtos = inspectService.infindByInspeotB1(frbrCode, 2);
 
             List<String> calendar = new ArrayList<>();
             if(branchCalendarListDtos.size()!=0){
@@ -175,6 +177,7 @@ public class UserRestController {
 
             data.put("userIndexDto",userIndexData);
             data.put("requestHistoryList",requestHistoryListDtos);
+            data.put("inspeotList",inspeotMainListDtos);
 
             return ResponseEntity.ok(res.dataSendSuccess(data));
         }
@@ -1125,8 +1128,8 @@ public class UserRestController {
 
     //  공지사항 게시판 - 글보기
     @GetMapping("/noticeView")
-    public ResponseEntity<Map<String,Object>> noticeView(@RequestParam("hnId") Long hnId, HttpServletRequest request) {
-        return noticeService.noticeView(hnId, request, "2");
+    public ResponseEntity<Map<String,Object>> noticeView(@RequestParam("hnId") Long hnId) {
+        return noticeService.noticeView(hnId, "2");
     }
 
 

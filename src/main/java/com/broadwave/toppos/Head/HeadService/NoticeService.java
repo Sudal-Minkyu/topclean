@@ -4,7 +4,10 @@ import com.broadwave.toppos.Head.Notice.*;
 import com.broadwave.toppos.Head.Notice.NoticeDtos.NoticeListDto;
 import com.broadwave.toppos.Head.Notice.NoticeDtos.NoticeViewDto;
 import com.broadwave.toppos.Head.Notice.NoticeDtos.NoticeViewSubDto;
+import com.broadwave.toppos.Head.Notice.NoticeFile.NoticeFileListDto;
+import com.broadwave.toppos.Head.Notice.NoticeFile.NoticeFileRepository;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
+import com.broadwave.toppos.Manager.TagNotice.TagNoticeFile.TagNoticeFileListDto;
 import com.broadwave.toppos.common.AjaxResponse;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
@@ -26,11 +29,13 @@ public class NoticeService {
 
     private final TokenProvider tokenProvider;
     private final NoticeRepository noticeRepository;
+    private final NoticeFileRepository noticeFileRepository;
 
     @Autowired
-    public NoticeService(TokenProvider tokenProvider, NoticeRepository noticeRepository){
+    public NoticeService(TokenProvider tokenProvider, NoticeRepository noticeRepository, NoticeFileRepository noticeFileRepository){
         this.tokenProvider = tokenProvider;
         this.noticeRepository = noticeRepository;
+        this.noticeFileRepository = noticeFileRepository;
     }
 
     // 메인페이지에 필요한 공지사항리스트 가져오기 (limit 3)
@@ -55,33 +60,26 @@ public class NoticeService {
     }
 
     //  공지사항 게시판 - 글보기
-    public ResponseEntity<Map<String, Object>> noticeView(Long hnId, HttpServletRequest request, String type) {
+    public ResponseEntity<Map<String, Object>> noticeView(Long hnId, String type) {
         log.info("noticeView 호출성공");
 
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
-
-        // 클레임데이터 가져오기
-        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
-        String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
-        String frbrCode = (String) claims.get("frbrCode"); // 소속된 지사 코드
-        String login_id = claims.getSubject(); // 현재 아이디
-        log.info("현재 접속한 아이디 : "+login_id);
-        log.info("현재 접속한 가맹점 코드 : "+frCode);
-        log.info("소속된 지사 코드 : "+frbrCode);
 
         // 검색조건
 //        log.info("htId : "+htId);
         NoticeViewDto noticeViewDto = noticeRepository.findByNoticeView(hnId);
         HashMap<String,Object> noticeViewInfo = new HashMap<>();
 
+        List<NoticeFileListDto> noticeFileListDtos = noticeFileRepository.findByNoticeFileList(hnId);
         if(noticeViewDto != null){
             noticeViewInfo.put("hnId", noticeViewDto.getHnId());
-            noticeViewInfo.put("isWritter", type); // 1이면 지사, 2이면 가맹점
+            noticeViewInfo.put("isWritter", type); // 1이면 본사, 2이면 지사 or 가맹점
             noticeViewInfo.put("subject", noticeViewDto.getSubject());
             noticeViewInfo.put("content", noticeViewDto.getContent());
             noticeViewInfo.put("name", noticeViewDto.getName());
             noticeViewInfo.put("insertDateTime", noticeViewDto.getInsertDateTime());
+            noticeViewInfo.put("fileList", noticeFileListDtos);
 
             NoticeViewSubDto noticeViewPreDto = noticeRepository.findByNoticePreView(noticeViewDto.getHnId());
             if(noticeViewPreDto != null){

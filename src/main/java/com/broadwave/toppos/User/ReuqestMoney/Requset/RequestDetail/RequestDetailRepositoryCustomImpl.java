@@ -23,7 +23,6 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 /**
  * @author Minkyu
@@ -1076,7 +1075,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         query.orderBy(requestDetail.id.asc()).groupBy(requestDetail.id);
         query.where(requestDetail.fdState.eq("S2"));
 
-        if(frId != null || !tagNo.equals("")){
+        if(frId != 0 || !tagNo.equals("")){
             query.where(franchise.id.eq(frId));
             query.where(requestDetail.fdTag.substring(3,7).likeIgnoreCase("%"+tagNo+"%"));
         }

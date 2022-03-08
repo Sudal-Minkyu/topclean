@@ -1,9 +1,6 @@
 package com.broadwave.toppos.Head.Franchise.FranchiseDtos;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 /**
  * @author Minkyu
@@ -11,7 +8,7 @@ import lombok.Setter;
  * Time :
  * Remark : Toppos 가맹점 MapperDto
  */
-@Setter
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -32,41 +29,9 @@ public class FranchiseMapperDto {
     private String frRpreName; // 가맹점주이름
     private String frTelNo; // 가맹점 전화번호
 
-    public String getFrBusinessNo() {
-        return frBusinessNo;
-    }
-
-    public String getFrRpreName() {
-        return frRpreName;
-    }
-
-    public String getFrTelNo() {
-        return frTelNo;
-    }
-
-    public Integer getFrEstimateDuration() {
-        return frEstimateDuration;
-    }
-
-    public String getFrPriceGrade() {
-        return frPriceGrade;
-    }
-
-    public String getFrCode() {
-        return frCode;
-    }
-
-    public String getFrRefCode() {
-        return frRefCode;
-    }
-
-    public String getFrTagNo() {
-        return frTagNo;
-    }
-
-    public String getFrName() {
-        return frName;
-    }
+    private String frPostNo; // 가맹점 우편번호
+    private String frAddress; // 가맹점 주소
+    private String frAddressDetail; // 가맹점 상세주소
 
     public String getFrContractDt() {
         String getFrContractDt = frContractDt;
@@ -85,15 +50,5 @@ public class FranchiseMapperDto {
         getFrContractToDt = getFrContractToDt.replaceAll("-","");
         return getFrContractToDt;
     }
-
-    public String getFrContractState() {
-        return frContractState;
-    }
-
-    public String getFrRemark() {
-        return frRemark;
-    }
-
-    //    private String brAssignState; // 지사 배정상태 미배정: 01, 배정완료: 02
 
 }

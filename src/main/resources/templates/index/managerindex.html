@@ -86,7 +86,7 @@
 
 				var xAxis = chart.xAxes.push(am5xy.CategoryAxis.new(root, {
 					maxDeviation: 0.3,
-					categoryField: "frName",
+					categoryField: "name",
 					renderer: xRenderer,
 					tooltip: am5.Tooltip.new(root, {})
 				}));
@@ -102,7 +102,7 @@
 					yAxis: yAxis,
 					valueYField: "value",
 					sequencedInterpolation: true,
-					categoryXField: "frName",
+					categoryXField: "name",
 					tooltip: am5.Tooltip.new(root, {
 						labelText:"{valueY}"
 					})

@@ -5,6 +5,10 @@ import com.broadwave.toppos.Head.Franchise.FranchiseRepository;
 import com.broadwave.toppos.Head.HeadService.NoticeService;
 import com.broadwave.toppos.Head.Notice.NoticeDtos.NoticeListDto;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
+import com.broadwave.toppos.Manager.Process.Issue.IssueRepository;
+import com.broadwave.toppos.Manager.Process.Issue.IssueWeekAmountDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotMainListDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotRepositoryCustom;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.manager.RequestDetailTagSearchListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.RequestWeekAmountDto;
@@ -43,16 +47,21 @@ public class ManagerService {
     private final UserLoginLogRepository userLoginLogRepository;
     private final RequestDetailRepository requestDetailRepository;
     private final RequestRepositoryCustom requestRepositoryCustom;
+    private final InspeotRepositoryCustom inspeotRepositoryCustom;
+    private final IssueRepository issueRepository;
 
     @Autowired
     public ManagerService(TokenProvider tokenProvider, NoticeService noticeService, RequestRepositoryCustom requestRepositoryCustom,
-                          UserLoginLogRepository userLoginLogRepository, FranchiseRepository franchiseRepository, RequestDetailRepository requestDetailRepository){
+                          UserLoginLogRepository userLoginLogRepository, FranchiseRepository franchiseRepository, RequestDetailRepository requestDetailRepository,
+                          InspeotRepositoryCustom inspeotRepositoryCustom, IssueRepository issueRepository){
         this.tokenProvider = tokenProvider;
         this.noticeService = noticeService;
         this.userLoginLogRepository = userLoginLogRepository;
         this.franchiseRepository = franchiseRepository;
         this.requestRepositoryCustom = requestRepositoryCustom;
         this.requestDetailRepository = requestDetailRepository;
+        this.inspeotRepositoryCustom = inspeotRepositoryCustom;
+        this.issueRepository = issueRepository;
     }
 
     //  현 지사의 소속된 가맹점명 리스트 호출(앞으로 공용으로 쓰일 것)
@@ -113,6 +122,7 @@ public class ManagerService {
         log.info("금일날짜 : "+nowDate);
         List<FranchiseManagerListDto> franchiseManagerListDtos = franchiseRepository.findByManagerInFranchise(brCode);
         List<UserLoginLogDto> chartFranchOpenListDtos = userLoginLogRepository.findByFranchiseLog(brCode, nowDate);
+        List<InspeotMainListDto> inspeotMainListDtos = inspeotRepositoryCustom.findByInspeotB1(brCode, 3);
 
         int franchiseAll = franchiseManagerListDtos.size();
         int franchiseLog = chartFranchOpenListDtos.size();
@@ -137,15 +147,18 @@ public class ManagerService {
 
         // 일주일전 LocalDataTime
         LocalDateTime weekDays = LocalDateTime.now().minusDays(7);
-        log.info("weekDays : "+weekDays);
+        String formatWeekDays = weekDays.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+//        log.info("weekDays : "+weekDays);
+//        log.info("formatWeekDays : "+formatWeekDays);
         List<RequestWeekAmountDto> requestWeekAmountDtos = requestRepositoryCustom.findByRequestWeekAmount(brCode, frNameList, weekDays);
-        log.info("requestWeekAmountDtos : "+requestWeekAmountDtos);
+//        log.info("requestWeekAmountDtos : "+requestWeekAmountDtos);
+        List<IssueWeekAmountDto> issueWeekAmountDtos = issueRepository.findByIssueWeekAmount(brCode, formatWeekDays);
 
         data.put("noticeData",noticeListDtos); // 공지사항 리스트(본사의 공지사항) - 최근3개
-//        data.put("checkformData",checkformData); // 확인폼(검품) 리스트 - 최근3개만
+        data.put("inspeotList",inspeotMainListDtos);  // 검품리스트 3개호출
         data.put("requestWeekAmountData",requestWeekAmountDtos); // 1주일간의 가맹점 접수금액
         data.put("chartFranchOpenData",chartFranchOpenData); // 가맹점 오픈 현황
-//        data.put("chartBranchReleaseData",chartBranchReleaseData); // 1주일간의 지사 출고금액
+        data.put("issueWeekAmountDtos",issueWeekAmountDtos); // 1주일간의 지사 출고금액
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }

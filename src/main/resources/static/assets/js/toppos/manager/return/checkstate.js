@@ -6,6 +6,7 @@
 const dtos = {
     send: {
         branchInspectionCurrentList: {
+            franchiseId : "n",
             tagNo: "s",
             filterFromDt: "s",
             filterToDt: "s",
@@ -98,10 +99,8 @@ const comms = {
 
     getMainGridList(searchCondition) {
         dv.chk(searchCondition, dtos.send.branchInspectionCurrentList, "메인 그리드 검색 조건 보내기");
-        if(searchCondition.franchiseId === 0) {
-            delete searchCondition.franchiseId;
-        }
-        console.log(searchCondition);
+
+        // console.log(searchCondition);
         CommonUI.ajax(urls.getMainGridList, "GET", searchCondition, function (res) {
             const data = CommonUI.toppos.killNullFromArray(res.sendData.gridListData);
             dv.chk(data, dtos.receive.branchInspectionCurrentList, "메인 그리드 받아온 리스트");
@@ -432,7 +431,6 @@ function enableDatepicker() {
 
 function searchOrder() {
     const frId = $("#frList").val();
-
     const searchCondition = {
         tagNo: $("#aftTag").val().numString(),
         filterFromDt: $("#filterFromDt").val(),

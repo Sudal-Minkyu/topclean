@@ -33,6 +33,7 @@ const comms = {
             dv.chk(data, dtos.receive.branchInfo, "인덱스페이지 데이터 받기");
             pieGraph(data.chartFranchOpenData);
             barGraph(data.requestWeekAmountData,"0");
+            barGraph(data.issueWeekAmountDtos,"1");
             console.log(data);
             if(data.noticeData) {
                 const field = $("#noticeList").children("li").children("a");

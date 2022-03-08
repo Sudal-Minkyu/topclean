@@ -35,6 +35,10 @@ public class FranchiseListDto {
     private String frRpreName; // 가맹점주이름
     private String frTelNo; // 가맹점 전화번호
 
+    private String frPostNo; // 가맹점 우편번호
+    private String frAddress; // 가맹점 주소
+    private String frAddressDetail; // 가맹점 상세주소
+
     public String getFrBusinessNo() {
         return frBusinessNo;
     }

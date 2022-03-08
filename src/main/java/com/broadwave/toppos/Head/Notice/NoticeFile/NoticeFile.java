@@ -40,6 +40,9 @@ public class NoticeFile {
     @Column(name="hf_original_filename")
     private String hfOriginalFilename; // 원래 파일 명
 
+    @Column(name="hf_volume")
+    private Long hfVolume; // 파일용량
+
     @Column(name="insert_id")
     private String insert_id;
 

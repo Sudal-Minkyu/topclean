@@ -14,7 +14,7 @@ import lombok.*;
 @AllArgsConstructor
 public class RequestWeekAmountDto {
 
-    private String frName; // 가맹점명
+    private String name; // 가맹점명
     private Integer value; // 접수금액 합계
 
 }

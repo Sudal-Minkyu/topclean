@@ -1365,7 +1365,7 @@ public class HeadRestController {
     //  공지사항 게시판 - 글보기
     @GetMapping("/noticeView")
     public ResponseEntity<Map<String,Object>> noticeView(@RequestParam("hnId") Long hnId, HttpServletRequest request) {
-        return noticeService.noticeView(hnId, request, "1");
+        return noticeService.noticeView(hnId, "1");
     }
 
 
