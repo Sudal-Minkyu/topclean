@@ -283,6 +283,97 @@ const temp = {
             let macaddress = cAPI.getMacAddress();
             alert ("MacAddress : " + macaddress);
         }
+        function dispatchPrint(){
+            // 프로젝트명
+            var projectName = "toppos";
+
+            // 서식명
+            var formName = "dispatchPrint01";
+
+            // 데이터셋
+            var dataset_0 = [
+                {"barcode":"123123","outDate":"20220301","tag":"123-0-0123","type":"T01","t01Count":"1","t02Count":"2"},
+                {"barcode":"123123","outDate":"20220301","tag":"123-0-0124","type":"T02","t01Count":"1","t02Count":"2"}
+            ];
+
+            //데이터셋 Object
+            var datasetObject = {};
+
+            //데이터셋 Object에 생성된 DataSet 추가
+            datasetObject.dataset_0 = JSON.stringify(dataset_0);
+            //datasetObject.dataset_1 = JSON.stringify(dataset_1);
+            //파라미터 Object
+            var paramObject = {};
+
+            //파라미터
+            //paramObject.stDt = "2019-01-31";
+            //aramObject.endDt = "2019-12-31";
+
+            //뷰어 오픈 공통 함수 호출
+            fn_viewer_open(projectName, formName, datasetObject, paramObject);
+
+        }
+
+
+
+
+
+        function fn_viewer_open(projectName, formName, datasetObject, paramObject)
+        {
+
+            var _params = {"projectName":projectName 			//프로젝트명
+                ,"formName":formName             //서식명
+            };
+
+
+            for (var datasetValue in datasetObject) {
+                _params[datasetValue] = encodeURIComponent(datasetObject[datasetValue]);
+            }
+
+            for (var paramValue in paramObject) {
+                _params[paramValue] = paramObject[paramValue];
+            }
+
+            //var _url = window.location.protocol + "//" + window.location.hostname + ( window.location.port ? ':'+window.location.port : '' )+ "/UBIFORM/UView5/index.jsp"; //UBIFORM Viewer URL
+            var _url = "https://report.topcleaners.kr:443" + "/UBIFORM/UView5/index.jsp"; //UBIFORM Viewer URL
+
+            //팝업 오픈 Option 해당 설정은 window.open 설정을 참조
+            //var windowoption = 'location=0, directories=0,resizable=0,status=0,toolbar=0,menubar=0, width=1280px,height=650px,left=0, top=0,scrollbars=0';  //팝업사이즈 window.open참고
+            var windowoption = 'width=1280px,height=650px';
+            var d = new Date();
+            var n = d.getTime();
+
+            var name = "UBF_" + n;
+            //팝업사이즈 window.open참고
+
+            var form = document.createElement("form");
+
+            form.setAttribute("method", "post");
+            form.setAttribute("action", _url);
+            params = _params ;
+
+            for (var i in params)
+            {
+                if (params.hasOwnProperty(i))
+                {
+                    var param = document.createElement('input');
+                    param.type = 'hidden';
+                    param.name = i;
+                    param.value = encodeURI( params[i] );
+                    form.appendChild(param);
+                }
+            }
+
+
+
+
+            document.body.appendChild(form);
+            form.setAttribute("target", name);
+            window.open("", name, windowoption);
+            form.submit();
+            document.body.removeChild(form);
+
+        }
     </script>
 </th:block>
 
@@ -298,6 +389,7 @@ const temp = {
         <input type="button" value="금전함열기" onclick="cashdrawer();"/>
         <input type="button" value="윈도우프로그램종료" onclick="appExit();"/>
         <input type="button" value="MacAccress가져오기" onclick="getMaccaddress();"/>
+        <input type="button" value="출고증인쇄 테스트" onclick="dispatchPrint();"/>
     </div>
     <div>
         <input type="button" value="로그아웃" onclick="logout()"/>
