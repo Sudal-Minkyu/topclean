@@ -256,12 +256,14 @@ function setFields(data) {
         + "&prevFilterToDt=" + wares.filterToDt);
     }
 
-    /* 덧글 본문 처리방식 결정되면 수정할 것 */
+    /* 공지사항 게시판이 아닌 경우에만 덧글기능 활성화 */
     if(wares.boardType !== "notice"){
-        $("#linkReply").show();
-        $("#replyList").show();
-        $("#replyList").css("height", "300px");
-        $("#content").css("height", "200px");
+        $(".reply").show();
+    }
+
+    if(data.isWriter === "1") {
+        $(".modifyLink").show();
+        $(".deleteBtn").show();
     }
 
     $("#fileCnt").html(data.fileList.length);

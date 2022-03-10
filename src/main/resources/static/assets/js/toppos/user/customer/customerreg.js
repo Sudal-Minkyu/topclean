@@ -103,7 +103,7 @@ function saveRegister() {
     const url = "/api/user/customerSave";
     CommonUI.ajax(url, "POST", formData, function (){
         init();
-       alertSuccess("고객 데이터 저장 성공");
+        alertSuccess("고객 데이터 저장 성공");
     });
 
 }

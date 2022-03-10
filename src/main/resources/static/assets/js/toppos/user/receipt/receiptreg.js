@@ -864,16 +864,16 @@ function setBiItemList(bsCode) {
     initialData.userItemPriceSortData.forEach(el => {
        if(el.biItemcode.substr(0,4) === selectedLaundry.bgCode + bsCode) {
             $biItemList.append(`
-                            <li>
-                                <div class="choice choice--material">
-                                    <input type="radio" name="material" id="${el.biItemcode}" 
-                                            value="${el.price}" onclick="onSelectBiItem('${el.biItemcode}', ${el.price})" />
-                                    <label for="${el.biItemcode}">
-                                        <span class="choice__name">${el.biName}</span>
-                                        <span class="choice__cost">${parseInt(el.price).toLocaleString()}</span><span>원</span>
-                                    </label>
-                                </div>
-                            </li>
+                <li>
+                    <div class="choice choice--material">
+                        <input type="radio" name="material" id="${el.biItemcode}" 
+                                value="${el.price}" onclick="onSelectBiItem('${el.biItemcode}', ${el.price})" />
+                        <label for="${el.biItemcode}">
+                            <span class="choice__name">${el.biName}</span>
+                            <span class="choice__cost">${parseInt(el.price).toLocaleString()}</span><span>원</span>
+                        </label>
+                    </div>
+                </li>
             `);
        }
     });
@@ -1132,6 +1132,8 @@ function onCloseTakePicture() {
         frEstimateDate: currentRequest.frEstimateDate,
         sumName: "",
         photoList: photos,
+        fdAgreeType: currentRequest.fdAgreeType,
+        fdSignImage: currentRequest.fdSignImage,
     }
     AUIGrid.updateRowsById(gridId[0], copyObj);
 
@@ -1205,25 +1207,43 @@ function toggleBottom() {
 }
 
 function onAddOrder() {
-
-    if(!currentRequest.biItemcode.length) {
-        alertCaution("소재를 선택해 주세요", 1);
-        return false;
-    }
     if(selectedCustomer === undefined) {
         alertCaution("먼저 고객을 선택해 주세요", 1);
         return false;
     }
-
-    /*
-    const colorName = {
-        C00: "없음", C01: "흰색", C02: "검정", C03: "회색", C04: "빨강", C05: "주황",
-        C06: "노랑", C07: "초록", C08: "파랑", C09: "남색", C10: "보라", C11: "핑크"
+    if(!currentRequest.biItemcode.length) {
+        alertCaution("소재를 선택해 주세요", 1);
+        return false;
     }
-    */
+    if(currentRequest.biItemcode.substring(0, 3) === "D03") { // 스크린이 있을 경우(수정필요)
+        alertThree("운동화는 고객의 동의와 서명이 필요합니다.<br>어떻게 하시겠습니까?", "스크린 동의", "서면 동의", "취소");
+        if(initialData.etcData.frMultiscreenYn !== "Y") {
+            $("#popFirstBtn").hide();
+        }
+        $("#popFirstBtn").on("click", function () {
+            askConfirmShoes();
+            $('#popupId').remove();
+        });
+        $("#popSecondBtn").on("click", function () {
+            alertSuccess("접수의뢰를 리스트에 추가합니다.<br>고객으로부터 서류를 통해 동의를 받아주세요.");
+            $("#successBtn").on("click", function () {
+                currentRequest.fdAgreeType = "2";
+                currentRequest.fdSignImage = "";
+                putItemIntoGrid();
+                $('#popupId').remove();
+            });
+        });
+        $("#popThirdBtn").on("click", function () {
+            $('#popupId').remove();
+        });
+        return false;
+    }
+    
+    putItemIntoGrid();
+}
 
+function putItemIntoGrid() {
     currentRequest.fdColor = $("input[name='fdColor']:checked").val();
-    //item.fdColorName = colorName["C" + item.fdColor];
     currentRequest.fdPattern = $("input[name='fdPattern']:checked").val();
     currentRequest.fdPriceGrade = $("input[name='fdPriceGrade']:checked").val();
     currentRequest.fdDiscountGrade = $("input[name='fdDiscountGrade']:checked").val();
@@ -1287,6 +1307,8 @@ function onAddOrder() {
             frEstimateDate: currentRequest.frEstimateDate,
             sumName: "",
             photoList: currentRequest.photoList,
+            fdAgreeType: currentRequest.fdAgreeType,
+            fdSignImage: currentRequest.fdSignImage,
         }
         AUIGrid.updateRowsById(gridId[0], copyObj);
     }else{
@@ -2089,7 +2111,6 @@ function onConfirmFdTag() {
         onCloseFdTag();
         alertSuccess("다음 택번호가 변경되었습니다.");
     });
-
 }
 
 function onCloseFdTag() {
@@ -2107,10 +2128,10 @@ function setBgMenu(isFavorite) {
                     <span>${bgItem.bgName}</span></button>
                 </li>
             `);
-            $(".bgItemGroupcode").on("click", function () {
-                onPopReceiptReg(this);
-            });
         }
+    });
+    $(".bgItemGroupcode").on("click", function () {
+        onPopReceiptReg(this);
     });
 }
 
@@ -2134,8 +2155,76 @@ function tempSaveExistWarning() {
 
 }
 
-function testFunc(a, b) {
-    return a + b;
+/* 서명을 요청할 때 고객측의 모니터에 주의사항 고지 후 서명하도록 뜬다. */
+function requestSign() {
+    try {
+        const protocol = location.protocol;
+        const hostName = location.hostname;
+        const port = location.port;
+
+        cAPI.approvalCall(protocol + '//' + hostName + ':' + port + '/user/consent');
+    }catch (e) {
+        console.log(e);
+        return;
+    }
+    // $("#resultmsg").text(": 승인중 메세지- 고객이 서명중입니다. ------전체화면으로 가리기 ");
+
+    const maskHeight = $(document).height();
+    const maskWidth = $(window).width();
+
+    //마스크의 높이와 너비를 화면 것으로 만들어 전체 화면을 채운다.
+    $('#windowMask').css({'width':maskWidth,'height':maskHeight}).show();
+    $('#mask').show();
 }
 
-export {testFunc};
+/* 운동화일 경우 승인창을 먼저 띄운다. */
+function askConfirmShoes() {
+    try {
+        const protocol = location.protocol;
+        const hostName = location.hostname;
+        const port = location.port;
+
+        cAPI.approvalCall(protocol + '//' + hostName + ':' + port + '/user/consent');
+    } catch (e) {
+        console.log(e);
+        initialData.etcData.frMultiscreenYn = "N";
+        setTimeout(function () {
+            noScreenWarning();
+        }, 0);
+        return false;
+    }
+
+    const maskHeight = $(document).height();
+    const maskWidth = $(window).width();
+
+    //마스크의 높이와 너비를 화면 것으로 만들어 전체 화면을 채운다.
+    $('#windowMask').css({'width':maskWidth,'height':maskHeight}).show();
+    $('#mask').show();
+}
+
+function noScreenWarning() {
+    alertCheck("고객용 스크린이 감지되지 않습니다.<br>서면으로 동의를 받고 진행하시겠습니까?");
+    $("#checkDelSuccessBtn").on("click", function () {
+        alertSuccess("접수의뢰를 리스트에 추가합니다.<br>고객으로부터 서류를 통해 동의를 받아주세요.");
+        $("#successBtn").on("click", function () {
+            currentRequest.fdAgreeType = "2";
+            currentRequest.fdSignImage = "";
+            putItemIntoGrid();
+            $('#popupId').remove();
+        });
+    });
+}
+
+function resultFunction(msg) {
+    $("#windowMask").hide();
+    $("#mask").hide();
+    if(msg === "cancel") {
+        alertCaution("고객께서 서명을 취소하셨습니다.", 1);
+        return false;
+    }
+
+    currentRequest.fdSignImage = msg;
+    currentRequest.fdAgreeType = "1";
+    putItemIntoGrid();
+    alertSuccess("고객께서 서명을 완료하셨습니다.<br>접수된 항목을 리스트에 추가합니다.");
+}

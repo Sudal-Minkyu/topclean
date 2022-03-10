@@ -104,7 +104,7 @@
 			<!-- 저장 버튼 -->
 		    <!-- <button id="save">save</button> -->
 		    <button class="sign__btn" id="save">동의완료</button>
-            <button class="sign__btn sign__btn--red">취소</button>
+            <button class="sign__btn sign__btn--red" id="cancel">취소</button>
 		</div>
 	</div>
 
@@ -221,12 +221,16 @@
                     canvas.on("touchmove", touchdraw);
                     // save 버튼을 누르면 imageupload.php로 base64코드를 보내서 이미지로 변환합니다.
                     $("#save").on("click", function () {
-
                         let imageCode = canvas[0].toDataURL("image/png")
                        // $("#resultimage").text(imageCode);
                         secondcAPI.approvalCheck(imageCode);
-                        location.href = "/assistant"
-
+                        location.href = "/assistant";
+                    });
+                    $("#cancel").on("click", function () {
+                        alertCheck("신발세탁 접수를 취소하시겠습니까?");
+                        $("#checkDelSuccessBtn").on("click", function () {
+                            cancel();
+                        });
                     });
                 },
                 onLoad: function () {
@@ -235,7 +239,10 @@
                 }
             }
         })());
-
+        function cancel() {
+            secondcAPI.approvalCheck("cancel");
+            location.href = "/assistant";
+        }
 
     </script>
 </div>

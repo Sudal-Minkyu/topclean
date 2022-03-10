@@ -105,11 +105,15 @@
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
     <script type="text/javascript">
-
         $(function() {
-
+			$("#disagree").on("click", function () {
+				alertCheck("신발세탁 접수를 취소하시겠습니까?");
+				$("#checkDelSuccessBtn").on("click", function () {
+					secondcAPI.approvalCheck("cancel");
+					location.href = "/assistant";
+				});
+			});
         });
-
     </script>
 </th:block>
 
@@ -145,7 +149,7 @@
 			<!-- 저장 버튼 -->
 		    <!-- <button id="save">save</button> -->
 		    <a href="/user/consentsign" class="consent__btn">동의</a>
-			<button class="consent__btn consent__btn--red">비동의</button>
+			<button id="disagree" type="button" class="consent__btn consent__btn--red">비동의</button>
 		</div>
 	</div>
 
