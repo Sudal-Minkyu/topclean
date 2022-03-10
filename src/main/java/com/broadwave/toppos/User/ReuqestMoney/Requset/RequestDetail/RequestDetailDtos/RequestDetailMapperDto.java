@@ -72,6 +72,9 @@ public class RequestDetailMapperDto {
     private String bsName; // 중분류명
     private String biName; // 상품명
 
+    private String fdAgreeType; // 동의타입 (온라인 : 1, 서면 : 2)
+    private String fdSignImage; // 운동화 세탁 동의사인이미지 Blob객체사용
+
     private List<PhotoDto> photoList; // 해당 상품의 대한 이미지 파일 리스트
 
 }

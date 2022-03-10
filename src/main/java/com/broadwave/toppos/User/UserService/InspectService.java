@@ -232,6 +232,9 @@ public class InspectService {
             optionalRequestDetail.get().setFdUrgentYn(requestDetailUpdateDto.getFdUrgentYn());
             optionalRequestDetail.get().setFdRemark(requestDetailUpdateDto.getFdRemark());
 
+            optionalRequestDetail.get().setFdAgreeType(requestDetailUpdateDto.getFdAgreeType());
+            optionalRequestDetail.get().setFdSignImage(requestDetailUpdateDto.getFdSignImage());
+
             optionalRequestDetail.get().setModify_id(login_id);
             optionalRequestDetail.get().setModify_date(LocalDateTime.now());
             RequestDetail requestDetailSave = optionalRequestDetail.get();

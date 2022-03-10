@@ -517,6 +517,8 @@ public class UserRestController {
             etcData.setFrRpreName(franchiseInfoDto.getFrBusinessNo());
             etcData.setFrTelNo(franchiseInfoDto.getFrBusinessNo());
             etcData.setFdTag(franchiseInfoDto.getFrLastTagno());
+            etcData.setFrMultiscreenYn(franchiseInfoDto.getFrMultiscreenYn());
+
             log.info("etcData : "+etcData);
             data.put("etcData",etcData);
         }
@@ -666,6 +668,9 @@ public class UserRestController {
                 requestDetailInfo.put("bgName", requestDetailDto.getBgName());
                 requestDetailInfo.put("bsName", requestDetailDto.getBsName());
                 requestDetailInfo.put("biName", requestDetailDto.getBiName());
+
+                requestDetailInfo.put("fdAgreeType", requestDetailDto.getFdAgreeType());
+                requestDetailInfo.put("fdSignImage", requestDetailDto.getFdSignImage());
 
                 List<PhotoDto> photoDtoList = receiptService.findByPhotoDto(requestDetailDto.getId());
                 requestDetailInfo.put("photoList", photoDtoList);

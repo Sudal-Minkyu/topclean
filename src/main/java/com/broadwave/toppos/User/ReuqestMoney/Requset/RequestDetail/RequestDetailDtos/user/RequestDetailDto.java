@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Column;
+
 /**
  * @author Minkyu
  * Date : 2021-12-13
@@ -72,4 +74,6 @@ public class RequestDetailDto {
     private String bsName; // 중분류명
     private String biName; // 상품명
 
+    private String fdAgreeType; // 동의타입 (온라인 : 1, 서면 : 2)
+    private String fdSignImage; // 운동화 세탁 동의사인이미지 Blob객체사용
 }

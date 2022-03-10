@@ -96,4 +96,7 @@ public class RequestDetailSearchDto {
 
     private String frRefType; // 접수타입(01:일반, 02:무인보관함, 03:배송APP)
 
+    private String fdAgreeType; // 동의타입 (온라인 : 1, 서면 : 2)
+    private String fdSignImage; // 운동화 세탁 동의사인이미지 Blob객체사용
+
 }

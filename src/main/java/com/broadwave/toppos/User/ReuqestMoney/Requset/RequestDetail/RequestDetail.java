@@ -237,6 +237,12 @@ public class RequestDetail {
     @Column(name="fd_qty")
     private Integer fdQty; // 수량
 
+    @Column(name="fd_agree_type")
+    private String fdAgreeType; // 동의타입 (온라인 : 1, 서면 : 2)
+
+    @Column(length = 100000, name="fd_sign_image")
+    private String fdSignImage; // 운동화 세탁 동의사인이미지 Blob객체사용
+
     @Column(name="fd_request_amt")
     private Integer fdRequestAmt; // 접수금액( (정상 + 수선 + 추가1 -할인) * 수량 )
 

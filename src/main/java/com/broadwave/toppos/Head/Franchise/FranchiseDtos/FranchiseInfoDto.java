@@ -2,8 +2,8 @@ package com.broadwave.toppos.Head.Franchise.FranchiseDtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 /**
  * @author Minkyu
@@ -11,7 +11,7 @@ import lombok.Setter;
  * Time :
  * Remark : Toppos 가맹점 InfoDto
  */
-@Setter
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -38,29 +38,7 @@ public class FranchiseInfoDto {
     private String frRpreName; // 가맹점주이름
     private String frTelNo; // 가맹점 전화번호
 
-    public String getFrBusinessNo() {
-        return frBusinessNo;
-    }
-
-    public String getFrRpreName() {
-        return frRpreName;
-    }
-
-    public String getFrTelNo() {
-        return frTelNo;
-    }
-
-    public Integer getFrEstimateDuration() {
-        return frEstimateDuration;
-    }
-
-    public String getFrLastTagno() {
-        return frLastTagno;
-    }
-
-    public String getBrContractFromDt() {
-        return brContractFromDt;
-    }
+    private String frMultiscreenYn; // 멀티스크린 사용여부
 
     public String getFrContractStateValue() {
         if(frContractStateValue.equals("01")){
@@ -68,23 +46,6 @@ public class FranchiseInfoDto {
         }else{
             return "배정완료";
         }
-    }
-
-    public String getBrAssignState() {
-        return brAssignState;
-    }
-
-    public String getFrCode() {
-        return frCode;
-    }
-
-    public String getFrContractState() {
-        return frContractState;
-    }
-
-
-    public String getFrName() {
-        return frName;
     }
 
     public StringBuffer getFrContractDt() {
@@ -108,23 +69,4 @@ public class FranchiseInfoDto {
         return getFrContractToDtDate;
     }
 
-    public String getBrCode() {
-        return brCode;
-    }
-
-    public String getBrName() {
-        return brName;
-    }
-
-    public Double getBrCarculateRateHq() {
-        return brCarculateRateHq;
-    }
-
-    public Double getBrCarculateRateBr() {
-        return brCarculateRateBr;
-    }
-
-    public Double getBrCarculateRateFr() {
-        return brCarculateRateFr;
-    }
 }

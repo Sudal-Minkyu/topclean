@@ -95,7 +95,10 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdEstimateDt,
                         itemGroup.bgName,
                         itemGroupS.bsName,
-                        item.biName
+                        item.biName,
+                        requestDetail.fdAgreeType,
+                        requestDetail.fdSignImage
+
                 ));
         query.where(requestDetail.frNo.eq(frNo));
         return query.fetch();
@@ -190,7 +193,11 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdPollutionLocBlh,
                         requestDetail.fdPollutionLocBrf,
                         requestDetail.fdPollutionLocBlf,
-                        request.frRefType
+
+                        request.frRefType,
+
+                        requestDetail.fdAgreeType,
+                        requestDetail.fdSignImage
                 ));
         query.orderBy(requestDetail.id.asc()).groupBy(requestDetail.id);
         if(bcId != null){
