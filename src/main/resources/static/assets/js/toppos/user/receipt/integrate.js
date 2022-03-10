@@ -51,6 +51,8 @@ const dto = {
         },
 
         franchiseRequestDetailUpdate: {
+            fdAgreeType: "s", // 2022.03.10 추가
+            fdSignImage: "s", // 2022.03.10 추가
             bcName: "d",
             frYyyymmdd: "d",
             fdId: "n",
@@ -168,14 +170,16 @@ const dto = {
         },
 
         franchiseRequestDetailSearch: { // 접수 세부 테이블의 거의 모든 요소와, 고객이름
-            frRefType: "sr", // 1월 19일 추가
+            fdAgreeType: "s", // 2022.03.10 추가
+            fdSignImage: "s", // 2022.03.10 추가
+            frRefType: "sr",
             bcName: "s", // 고객의 이름
             frYyyymmdd: "s", // 접수일자
             fdId: "n",
             frId: "n",
             frNo: "s",
             fdTag: "s",
-            fdPreState: "s", // 1월 17일 추가
+            fdPreState: "s",
             fdState: "s",
             biItemcode: "s",
             fdS2Dt: "s",
@@ -266,6 +270,7 @@ const dto = {
                 bcWhitening: "nr",
             },
             etcData: {
+                frMultiscreenYn: "s", // 2022.03.10 추가
                 fdTag: "s",
                 frBusinessNo: "s",
                 frCode: "s",
@@ -2111,5 +2116,4 @@ function chkParams() {
         $("#filterToDt").val(date);
         $("#searchCustomer").trigger("click");
     }
-
 }

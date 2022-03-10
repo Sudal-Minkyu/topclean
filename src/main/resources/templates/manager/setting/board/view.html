@@ -19,8 +19,8 @@
 <div layout:fragment="content" class="content content--board">
     <div class="board-view__console">
         <a href="#" class="c-button c-button--small listLink">목록</a>
-        <a href="#" class="c-button c-button--small c-button--darksolid modifyLink">글 수정</a>
-        <button class="c-button c-button--small c-button--red deleteBtn">글 삭제</button>
+        <a href="#" class="c-button c-button--small c-button--darksolid modifyLink" style="display:none;">글 수정</a>
+        <button class="c-button c-button--small c-button--red deleteBtn" style="display:none;">글 삭제</button>
     </div>
 
     <div class="board-view">
@@ -61,7 +61,7 @@
         </div>
     </div>
 
-    <div class="reply">
+    <div class="reply"  style="display: none;">
         <div class="reply__write">
             <textarea id="replyField" placeholder="댓글 작성"></textarea>
             <button id="commitReply" class="c-button c-button--small c-button--solid">덧글 달기</button>
@@ -74,8 +74,8 @@
 
     <div class="board-view__console board-view__console--bottom">
         <a href="#" class="c-button c-button--small listLink">목록</a>
-        <a href="#" class="c-button c-button--small c-button--darksolid modifyLink">글 수정</a>
-        <button class="c-button c-button--small c-button--red deleteBtn">글 삭제</button>
+        <a href="#" class="c-button c-button--small c-button--darksolid modifyLink" style="display:none;">글 수정</a>
+        <button class="c-button c-button--small c-button--red deleteBtn" style="display:none;">글 삭제</button>
     </div>
 </div>
 </html>

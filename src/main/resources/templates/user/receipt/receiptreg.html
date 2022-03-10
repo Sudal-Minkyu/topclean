@@ -10,6 +10,38 @@
         .colorColumn {
             text-align: center;
         }
+
+		#windowMask {
+			position: fixed;
+			left: 0;
+			top: 0;
+			width: 100vw;
+			height: 100vh;
+			z-index: 10;
+			background-color: rgba(0, 0, 0, .4);
+			display: none;
+		}
+
+		#mask{
+			position: absolute;
+			display: none;
+			left: 50%;
+			top: 50%;
+			max-width: 1000px; 
+			padding: 20px;
+			background-color: #ffffff;
+			z-index: 100;
+			font-size: 40px;
+			line-height: 1.4;
+			-webkit-border-radius: 0.625rem;
+			-moz-border-radius: 0.625rem;
+			border-radius: 0.625rem;
+			-webkit-transform: translate(-50%, -50%);
+			-moz-transform: translate(-50%, -50%);
+			-ms-transform: translate(-50%, -50%);
+			-o-transform: translate(-50%, -50%);
+			transform: translate(-50%, -50%);
+		}
     </style>
     <!-- lightbox 추가 -->
     <link rel="stylesheet" href="/assets/js/lightbox2/css/lightbox.min.css" />
@@ -1058,6 +1090,12 @@
             </ul>
         </div>
     </div>
+
+    <div id="windowMask"></div>
+    <div id="mask">운동화 세탁에는<br />고객의 서명이 필요합니다.<br /><br />
+        운동화 세탁 접수의뢰 동의서<br />에 대하여 안내해 주시고,<br /><br />
+        고객께서 동의하시면<br />운동화 접수가 진행 됩니다.</div>
+    <div id="resultmsg" style="display: none">결과메세지</div>
 
     <div id ="payStatus" style="position: absolute; left: 0; top: 0; height: 1024px; width: 1280px;
         z-index: 100; background-color: transparent; display: none;" >

@@ -10,6 +10,7 @@ const dtos = {
     receive: {
         franchiseInfo: {
             inspeotList: {
+                frName: "s", // 2022.03.08 추가
                 bcName: "s",
                 bgName: "s",
                 fdS2Dt: "s",
@@ -17,12 +18,14 @@ const dtos = {
                 fiCustomerConfirm: "s",
                 frYyyymmdd: "s",
             },
+
             requestHistoryList: {
                 typename: "s",
                 requestTime: "s",
                 bcName: "s",
                 bcHp: "s",
             },
+
             userIndexDto: {
                 slidingText: "a", // 2022.03.02 추가
                 brName: "s",
@@ -118,6 +121,7 @@ const comms = {
 
     notice() {
         CommonUI.ajax(urls.notice, "PARAM", wares.boardConditionThree, function (res) {
+            console.log(res);
             const data = res.datalist;
             if(data) {
                 const field = $("#noticeList").children("li").children("a");

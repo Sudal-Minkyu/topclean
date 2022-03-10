@@ -17,7 +17,6 @@ const dtos = {
         getPostList: {
             datalist: {
                 subject: "s",
-                numOfComment: "n", // 덧글이 달린 숫자.
                 insertDateTime: "s", // yyyymmdd만
                 insert_id: "s",
             },
@@ -59,6 +58,7 @@ const comms = {
         
         CommonUI.ajax(urls[wares.boardType], "PARAM", condition, function (res) {
             dtos.receive.getPostList.datalist[wares[wares.boardType].idKeyName] = "n"; // 검사 조건에 임의로 각 게시판의 아이디 추가
+            if(wares.boardType !== "notice") dtos.receive.getPostList.datalist.numOfComment = "n";
             dv.chk(res, dtos.receive.getPostList, "게시글들 받아오기");
             wares.totalPage = res.total_page;
             createPagingNavigator(wares.page);
