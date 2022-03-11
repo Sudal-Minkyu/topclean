@@ -21,69 +21,84 @@
 </th:block>
 
 <div layout:fragment="content" class="content content--padding">
-	<h2 class="content__heading">상품그룹가격</h2>
+    <section class="section">
+        <article class="article">
+            <div class="article__header">
+                <h3 class="article__heading">상품그룹가격</h3>
+            </div>
+            <div class="article__body">
+                <div class="inquiry">
+                    <div class="inquiry__condition">
+                        <ul>
+                            <li>
+                                <div class="inquiry__title">대분류</div>
+                                <div class="inquiry__input-tag">
+                                    <div class="c-select">
+                                        <select id="s_bgName">
+                                            <option value="">전체</option>
+                                            <option th:each ="groupName : ${groupNames}"
+                                                    th:value="${groupName.bgName}"
+                                                    th:text="${groupName.bgName}">
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="inquiry__title">상품코드</div>
+                                <div class="inquiry__input-tag">
+                                    <input type="text" id="s_biItemcode" onkeyup="itemCodeValidator()">
+                                </div>
+                            </li>
+                            <li>
+                                <div class="inquiry__title">상품명</div>
+                                <div class="inquiry__input-tag">
+                                    <input type="text" id="s_biName">
+                                </div>
+                            </li>
+                            <li>
+                                <div class="inquiry__title">가격적용일</div>
+                                <div class="inquiry__input-tag">
+                                    <div class="c-select">
+                                        <select id="s_setDt" name="s_setDt">
+                                        </select>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="inquiry__button inquiry__button--row">
+                        <button type="button" class="c-button c-button--solid" onclick="filterItems()">검색</button>
+                        <button type="button" class="c-button" onclick="filterReset()">초기화</button>
+                        <button type="button" class="c-button c-button--darksolid" onclick="removeRow()">선택삭제</button>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <article class="article">
+            <div class="article__body">
+                <ul class="article__console article__console--left article__console--top">
+                    <li><button type="button" class="c-button c-button--green c-button--icon c-button--icon-excel" onclick="exportToXlsx()">엑셀 다운로드</button></li>
+                </ul>
+                <div id="grid_main" style="height: 560px;"></div>
+                <ul class="article__console">
+                    <li><button type="button" class="c-button c-button--solid" onclick="saveRegPrice()">저장</button></li>
+                    <li><button type="button" class="c-button c-button--darksolid" onclick="regPricePop()">일괄업로드</button></li>
+                </ul>
+            </div>
+        </article>
+    </section>
+	
 	<div class="type">
 		<div class="type__content">
-			<div class="search-form search-form--right">
-				<ul class="search-form__list">
-					<li class="search-form__item">
-						<div class="search-form__title">대분류</div>
-						<div class="search-form__input">
-							<div class="c-select">
-								<select id="s_bgName">
-									<option value="">전체</option>
-									<option th:each ="groupName : ${groupNames}"
-											th:value="${groupName.bgName}"
-											th:text="${groupName.bgName}">
-									</option>
-								</select>
-							</div>
-						</div>
-					</li>
-					<li class="search-form__item">
-						<div class="search-form__title">상품코드</div>
-						<div class="search-form__input">
-							<input type="text" id="s_biItemcode" onkeyup="itemCodeValidator()">
-						</div>
-					</li>
-					<li class="search-form__item">
-						<div class="search-form__title">상품명</div>
-						<div class="search-form__input">
-							<input type="text" id="s_biName">
-						</div>
-					</li>
-					<li class="search-form__item">
-						<div class="search-form__title">가격적용일</div>
-						<div class="search-form__input">
-							<div class="c-select">
-								<select id="s_setDt" name="s_setDt">
-								</select>
-							</div>
-						</div>
-					</li>
-				</ul>
-				<ul class="seach-form__console">
-					<li class="search-form__btn">
-						<button type="button" class="c-button c-button--solid" onclick="filterItems()">검색</button>
-					</li>
-					<li class="search-form__btn">
-						<button type="button" class="c-button" onclick="filterReset()">초기화</button>
-					</li>
-					<li class="search-form__btn">
-						<button type="button" class="c-button c-button--darksolid" onclick="removeRow()">선택삭제</button>
-					</li>
-				</ul>
-			</div>
+			
 			
 			<div class="type__grid">
-				<div id="grid_main" style="height: 560px;"></div>
+				
 			</div>
 			
-			<ul class="article__console">
-				<li><button type="button" class="c-button c-button--solid" onclick="saveRegPrice()">저장</button></li>
-				<li><button type="button" class="c-button c-button--darksolid" onclick="regPricePop()">일괄업로드</button></li>
-				<li><button type="button" class="c-button c-button--green c-button--icon c-button--icon-excel" onclick="exportToXlsx()">엑셀 다운로드</button></li>
-			</ul>
+			
 		</div>
 	</div>
 

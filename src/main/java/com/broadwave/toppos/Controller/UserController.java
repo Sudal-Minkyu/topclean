@@ -164,7 +164,7 @@ public class UserController {
     // 게시판 리스트
     @RequestMapping("taglostlist")
     public String taglostlist() {
-        return "user/board/list";
+        return "user/board/tagboard";
     }
 
     // 게시판 보기

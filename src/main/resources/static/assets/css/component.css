@@ -291,6 +291,10 @@ input[type="number"]::-webkit-inner-spin-button {
 .c-textarea textarea::placeholder {
     color: #959595;
 }
+.c-textarea textarea:read-only {
+    background-color: #f2f2f6;
+	color: #555;
+}
 .c-textarea button {
 	position: absolute;
 	bottom: 0.625rem;

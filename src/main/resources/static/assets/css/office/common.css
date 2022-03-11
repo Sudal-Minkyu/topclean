@@ -530,9 +530,10 @@ textarea {
 	justify-content: center;
 	align-items: center;
 	width: 100%;
-	margin-top: 0.625rem;
-	padding-top: 1.25rem;
-	border-top: 0.063rem solid #c8c8c8;
+	margin-top: 1.25rem;
+}
+.article__console.article__console--top {
+	margin-bottom: 0.625rem;
 }
 .article__console.article__console--right {
 	justify-content: flex-end;
@@ -584,7 +585,7 @@ textarea {
 	margin-right: 1.25rem;
 }
 .inquiry__input-tag {
-	width: 5rem;
+	min-width: 5rem;
 }
 .inquiry__button {
 	display: flex;
@@ -915,10 +916,24 @@ textarea {
 }
 .float__content {
 	float: left;
-	width: calc(50% - 0.625rem);
+    position: relative;
+	width: calc(50% - 1.25rem);
 }
 .float__content:nth-child(2n) {
-	margin-left: 1.25rem;
+	margin-left: 2.5rem;
+}
+.float__content.float__content--step2:before {
+    content: " ";
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: -2.5rem;
+    width: 2.5rem;
+    height: 2.5rem;
+    margin-top: -1.25rem;
+    background: url(/assets/images/icon__arrow--right2-black.svg) no-repeat;
+    background-size: 2.5rem 2.5rem;
+    background-position: center center;
 }
 
 /* type */
@@ -933,27 +948,43 @@ textarea {
 .type.type--padding {
 	padding: 1.25rem;
 }
+.type.type--step3 {
+    margin-top: 1.25rem;
+    padding-top: 2.5rem;
+    border-top: 0.125rem solid #bdbdbd;
+}
+.type.type--step3:before {
+    content: " ";
+    display: block;
+    position: absolute;
+    top: -1.25rem;
+    left: 50%;
+    width: 2.5rem;
+    height: 2.5rem;
+    margin-left: -1.25rem;
+    background: #fff url(/assets/images/icon__arrow--down.svg) no-repeat;
+    background-size: 2.5rem 2.5rem;
+    background-position: center center;
+}
 .type__head {
-	background-color: #c4c4c4;
-	padding: 0.125rem 0;
+	padding: 0 0 0.125rem;
+    margin-bottom: 1.25rem;
+    border-bottom: 0.125rem solid #c8c8c8;
 }
 .type__heading {
-	color: #fff;
-	text-align: center;
+	font-size: 1.25rem;
 }
 .type__content {
 	position: relative;
 	width: 100%;
-	padding: 1.25rem;
 	background-color: #fff;
-	border: 0.063rem solid #c4c4c4;
 }
 .article__console + .type__grid,
 .search-form + .type__grid {
 	margin-top: 1.25rem;
 }
 .type__grid + .article__console {
-	margin-top: 1.25rem;
+	border: 0 none;
 }
 
 

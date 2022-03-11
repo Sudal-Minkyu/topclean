@@ -1164,6 +1164,15 @@ textarea {
 .search__reset {
 	margin-left: 1.25rem;
 }
+.search__period {
+    display: flex;
+    align-items: center;
+    margin-right: 1.25rem;
+}
+.search__period-title {
+    color: #fff;
+    margin-right: 0.625rem;
+}
 .client {
 	display: inline-flex;
 	flex-wrap: wrap;
@@ -1305,6 +1314,9 @@ textarea {
 	-moz-border-radius: 0.313rem;;
 	border-radius: 0.313rem;;
 }
+.condition:first-child {
+    margin-top: 0;
+}
 .condition.condition--column {
 	flex-direction: column;
 	height: 7.5rem;
@@ -1368,6 +1380,13 @@ textarea {
 /* .condition__radio .c-radio:last-child {
 	margin-right: 0;
 } */
+.condition__date {
+    display: flex;
+    align-items: center;
+}
+.condition__date-title {
+    margin-right: 0.625rem;
+}
 .condition.condition--column .condition__console {
 	margin-top: 0.625rem;
 }
@@ -2104,6 +2123,9 @@ textarea {
 }
 .pop__box.pop__box--small {
 	width: 28.75rem;
+}
+.pop__box.pop__box--large {
+	width: 75rem;
 }
 .pop__box.pop__box--flex {
 	display: flex;
@@ -3200,6 +3222,105 @@ textarea {
 .groin {
 	top: 160px;
 	left: 158px;
+}
+
+/* 택분실 이미지 팝업 */
+/* .tag-pop {
+    display: flex;
+    flex-wrap: wrap;
+} */
+.tag-imgs {
+    flex: 1;
+    position: relative;
+}
+.tag-imgs__list {
+    display: flex;
+    flex-wrap: wrap;
+}
+.tag-imgs__item {
+    flex: 1;
+    min-width: 33.3333%;
+    width: 100%;
+    max-width: 50%;
+    padding: 0.313rem;
+}
+.tag-imgs__item:only-child {
+    flex: 0 1 auto;
+    max-width: 100%;
+    padding: 0;
+    text-align: center;
+}
+.tag-imgs__img {
+    width: 100%;
+}
+.tag-imgs__item:only-child .tag-imgs__img {
+    width: 80%;
+}
+.tag-info {
+    margin-top: 1.25rem;
+}
+.tag-info:only-child {
+    margin-top: 0;
+}
+.tag-info__list {
+    display: flex;
+    flex-wrap: wrap;
+}
+.tag-info__item {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    padding: 0 0.625rem;
+}
+.tag-info__item:last-child {
+    flex: 0 1 auto;
+    width: 100%;
+    margin-top: 1.25rem;
+    margin-right: 0;
+}
+.tag-info__item:only-child {
+    margin-top: 0;
+}
+.tag-info__title {
+    display: inline-block;
+    min-width: 3.75rem;
+    margin-right: 0.625rem;
+}
+.tag-info__input {
+    flex: 1;
+}
+.tag-info__input .c-textarea {
+    height: 6.25rem;
+}
+.tag-info__button {
+    position: relative;
+    width: 6.25rem;
+}
+.tag-info__button input[type="checkbox"] {
+    overflow: hidden;
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    clip: rect(0, 0, 0, 0);
+}
+.tag-info__button label {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 6.25rem;
+    height: 6.25rem;
+    background-color: #fff;
+    border: 0.125rem solid #0082f0;
+    border-radius: 0.313rem;
+    color: #0082f0;
+    /* font-weight: 700; */
+    text-align: center;
+}
+.tag-info__button input[type="checkbox"]:checked + label {
+    background-color: #0082f0;
+    color: #fff;
 }
 
 
