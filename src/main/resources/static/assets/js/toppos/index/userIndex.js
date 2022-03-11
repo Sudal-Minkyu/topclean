@@ -120,7 +120,9 @@ const comms = {
     },
 
     notice() {
-        CommonUI.ajax(urls.notice, "PARAM", wares.boardConditionThree, function (res) {
+        const conditionSix = wares.boardConditionThree; // 공지사항 길이 확정날 때 까지 임시
+        conditionSix.size = 6; // 공지사항 길이 확정날 때 까지 임시
+        CommonUI.ajax(urls.notice, "PARAM", conditionSix, function (res) {
             console.log(res);
             const data = res.datalist;
             if(data) {
@@ -238,7 +240,6 @@ function marquee(speed) {
         if (parseInt($(".marquee__text").css('margin-left')) < -1 * $(".marquee__text").width()) {
             resMarqueeRight();
         }
-
     }
 
     setInterval(marqueeRight, 10);
