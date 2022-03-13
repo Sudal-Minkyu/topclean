@@ -24,7 +24,12 @@ public class MobileController {
     // QR 모바일 마감페이지
     @RequestMapping("/unAuth/qrpickup")
     public String qrpickup(){
-        return "mobile//unAuth/qrpickup";
+        return "mobile/unAuth/qrpickup";
     }
 
+    // 모바일 고객용 접수증(영수증)
+    @RequestMapping("/unAuth/receipt")
+    public String receipt(){
+        return "mobile/unAuth/receipt";
+    }
 }

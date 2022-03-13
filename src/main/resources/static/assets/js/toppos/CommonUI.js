@@ -429,6 +429,15 @@ class CommonUIClass {
         }
         return babyDto;
     }
+
+    cloneObj(dto) {
+        const keys = Object.keys(dto);
+        let babyDto = {};
+        for(let key in keys) {
+            babyDto[keys[key]] = dto[keys[key]];
+        }
+        return babyDto;
+    }
 }
 
 let CommonUI = new CommonUIClass();

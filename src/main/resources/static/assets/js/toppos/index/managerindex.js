@@ -54,9 +54,8 @@ const comms = {
             const inspectList = data.inspeotList;
             dv.chk(data, dtos.receive.branchInfo, "인덱스페이지 데이터 받기");
             pieGraph(data.chartFranchOpenData);
-            barGraph(data.requestWeekAmountData,"0");
-            barGraph(data.issueWeekAmountDtos,"1");
-            console.log(data);
+            barGraph(data.requestWeekAmountData, "0");
+            barGraph(data.issueWeekAmountDtos, "1");
 
             if(data.noticeData) {
                 const field = $("#noticeList").children("li").children("a");
@@ -66,8 +65,6 @@ const comms = {
                     $(field[i]).children(".main__board-date").children("span").html(data.noticeData[i].insertDateTime);
                 }
             }
-
-            console.log(inspectList);
 
             if(inspectList) {
                 const field = $("#inspectList").children("li").children("a");
@@ -137,4 +134,106 @@ function onPageLoad() {
 
 function reformAftTagNo(fdTag) {
     return fdTag.substring(3, 4) + "-" + fdTag.substring(4, 7);
+}
+
+function pieGraph(data) {
+    am5.ready(function () {
+
+        var root = am5.Root.new("franchiseOpen");
+
+        root.setThemes([
+            am5themes_Animated.new(root)
+        ]);
+
+        var chart = root.container.children.push(am5percent.PieChart.new(root, {
+            layout: root.verticalLayout
+        }));
+
+        var series = chart.series.push(am5percent.PieSeries.new(root, {
+            valueField: "value",
+            categoryField: "category"
+        }));
+
+        series.data.setAll(data);
+
+        var legend = chart.children.push(am5.Legend.new(root, {
+            centerX: am5.percent(50),
+            x: am5.percent(50),
+            marginTop: 15,
+            marginBottom: 15
+        }));
+
+        legend.data.setAll(series.dataItems);
+        series.appear(1000, 100);
+
+    }); // end am5.ready()
+}
+
+function barGraph(data, num) {
+    am5.ready(function () {
+
+        let root;
+        if(num === "0"){
+            root = am5.Root.new("franchiseWeekReceipt");
+        }else{
+            root = am5.Root.new("franchiseWeekAmount");
+        }
+
+        root.setThemes([
+            am5themes_Animated.new(root)
+        ]);
+
+        var chart = root.container.children.push(am5xy.XYChart.new(root, {
+            panX: false,
+            panY: false,
+        }));
+
+        var cursor = chart.set("cursor", am5xy.XYCursor.new(root, {}));
+        cursor.lineY.set("visible", false);
+
+        var xRenderer = am5xy.AxisRendererX.new(root, { minGridDistance: 30 });
+        xRenderer.labels.template.setAll({
+            rotation: 0,
+        });
+
+        var xAxis = chart.xAxes.push(am5xy.CategoryAxis.new(root, {
+            maxDeviation: 0.2,
+            categoryField: "name",
+            renderer: xRenderer,
+            tooltip: am5.Tooltip.new(root, {})
+        }));
+
+        var yAxis = chart.yAxes.push(am5xy.ValueAxis.new(root, {
+            maxDeviation: 0.5,
+            renderer: am5xy.AxisRendererY.new(root, {})
+        }));
+
+        var series = chart.series.push(am5xy.ColumnSeries.new(root, {
+            name: "Series 1",
+            xAxis: xAxis,
+            yAxis: yAxis,
+            valueYField: "value",
+            sequencedInterpolation: true,
+            categoryXField: "name",
+            tooltip: am5.Tooltip.new(root, {
+                labelText:"{valueY}"
+            })
+        }));
+
+        series.columns.template.setAll({ cornerRadiusTL: 5, cornerRadiusTR: 5 });
+        series.columns.template.adapters.add("fill", function(fill, target) {
+            return chart.get("colors").getIndex(series.columns.indexOf(target));
+        });
+
+        series.columns.template.adapters.add("stroke", function(stroke, target) {
+            return chart.get("colors").getIndex(series.columns.indexOf(target));
+        });
+
+        xAxis.data.setAll(data);
+        series.data.setAll(data);
+
+        series.appear(1000);
+        chart.appear(1000, 100);
+
+    });
 }
