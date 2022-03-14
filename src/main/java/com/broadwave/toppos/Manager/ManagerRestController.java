@@ -161,12 +161,7 @@ public class ManagerRestController {
 
     // 출고증인쇄 함수
     @GetMapping("branchDispatchPrint")
-    public ResponseEntity<Map<String,Object>> branchDispatchPrint(HttpServletRequest request){
-        List<String> miNoList = new ArrayList<>();
-        miNoList.add("br111202202240001");
-        miNoList.add("br111202202240002");
-        miNoList.add("br111202202160001");
-
+    public ResponseEntity<Map<String,Object>> branchDispatchPrint(@RequestParam(value="miNoList", defaultValue="") List<String> miNoList, HttpServletRequest request){
         return receiptReleaseService.branchDispatchPrint(miNoList, request);
     }
 

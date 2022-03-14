@@ -76,6 +76,7 @@ public class ReceiptReleaseService {
 //        log.info("출고차수 : "+miDegree);
 
         AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
 
         // 클레임데이터 가져오기
         Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
@@ -83,6 +84,8 @@ public class ReceiptReleaseService {
         String login_id = claims.getSubject(); // 현재 아이디
         log.info("현재 접속한 아이디 : "+login_id);
         log.info("현재 접속한 지사 코드 : "+brCode);
+
+        List<String> miNoList = new ArrayList<>();
 
         // stateType 상태값
         // "S2"이면 지사출고 페이지 버튼 "S2" -> "S4"
@@ -93,7 +96,7 @@ public class ReceiptReleaseService {
 
             String frCode = requestDetailList.get(0).getFrId().getFrCode();
             String miNo = keyGenerateService.keyGenerate("mr_issue", brCode+frCode+nowDate, login_id); // 지사출고 miNo 채번
-
+            miNoList.add(miNo);
             Issue newIssue = new Issue();
             newIssue.setBrCode(brCode);
             newIssue.setFrCode(frCode);
@@ -132,7 +135,8 @@ public class ReceiptReleaseService {
             requestDetailRepository.saveAll(requestDetailList);
         }
 
-        return ResponseEntity.ok(res.success());
+        data.put("miNoList",miNoList);
+        return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
     //  지사출고 - 세부테이블 지사입고 상태 리스트
