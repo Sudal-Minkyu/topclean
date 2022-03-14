@@ -162,21 +162,9 @@ public class UserController {
 
     // 택분실
     // 게시판 리스트
-    @RequestMapping("taglostlist")
-    public String taglostlist() {
-        return "user/board/tagboard";
-    }
-
-    // 게시판 보기
-    @RequestMapping("taglostview")
-    public String taglostview() {
-        return "user/board/view";
-    }
-
-    // 댓글
-    @RequestMapping("taglostreply")
-    public String taglostreply() {
-        return "user/board/reply";
+    @RequestMapping("taglost")
+    public String taglost() {
+        return "user/board/taglost";
     }
 
     //공지사항

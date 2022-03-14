@@ -17,6 +17,7 @@ import java.time.format.DateTimeFormatter;
 @AllArgsConstructor
 public class InspeotMainListDto {
 
+    private String frName; // 가맹점명
     private String bcName; // 고객명
     private String bgName; // 대분류명
     private String fdTag; // 택번호

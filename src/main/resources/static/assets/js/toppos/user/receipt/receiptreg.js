@@ -1999,6 +1999,10 @@ function closePaymentPop() {
     AUIGrid.clearGridData(gridId[3]);
     calculateMainPrice();
     $("#paymentPop").removeClass("active");
+    // const url = "/api/user/"
+    // CommonUI.ajax(url, "PARAM", {frNo: initialData.etcData.frNo}, function (res) { // 접수 완료 카카오 메시지를 보낸다.
+    //     console.log(res);
+    // });
     delete initialData.etcData["frNo"];
 }
 

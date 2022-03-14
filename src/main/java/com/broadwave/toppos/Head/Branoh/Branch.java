@@ -32,6 +32,9 @@ public class Branch {
     @Column(name="br_name")
     private String brName; // 지점명
 
+    @Column(name="br_tel_no")
+    private String brTelNo; // 지사 전화번호
+
     @Column(name="br_contract_dt")
     private String brContractDt; // 계약일자
 

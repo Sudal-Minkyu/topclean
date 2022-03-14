@@ -8,9 +8,11 @@ import com.broadwave.toppos.Manager.Process.Issue.QIssue;
 import com.broadwave.toppos.Manager.Process.IssueForce.QIssueForce;
 import com.broadwave.toppos.User.Customer.QCustomer;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.QRequest;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotMainListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.QInspeot;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.manager.*;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.*;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.RequestUnCollectDto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.JPQLQuery;
@@ -1669,9 +1671,60 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         return query.fetch();
     }
 
+    @Override
+    public List<RequestDetailInputMessageDto> findByRequestDetailInputMessage(List<String> frNoList){
 
+        EntityManager em = getEntityManager();
+        StringBuilder sb = new StringBuilder();
 
+        sb.append("SELECT b.fr_code, a.fr_no, d, b.fr_qty, e.bi_name, f.bg_name \n");
+        sb.append("FROM fs_request_dtl a \n");
+        sb.append("INNER JOIN fs_request b ON a.fr_id = b.fr_id \n");
+        sb.append("INNER JOIN bs_franchise c ON c.fr_code = b.fr_code \n");
+        sb.append("INNER JOIN bs_customer d ON d.bc_id = b.bc_id \n");
+        sb.append("INNER JOIN bs_item e ON e.bi_itemcode = b.bi_itemcode \n");
+        sb.append("INNER JOIN bs_item_group f ON f.bg_item_groupcode = e.bg_item_groupcode \n");
+        sb.append("WHERE a IN = ?1 \n");
+//        AND b.fd_cancel = 'N' AND a.fr_confirm_yn = 'Y'
+        sb.append("GROUP BY a.fr_no \n");
 
+        Query query = em.createNativeQuery(sb.toString());
+        query.setParameter(1, frNoList);
+
+        return jpaResultMapper.list(query, RequestDetailInputMessageDto.class);
+
+//        QRequestDetail requestDetail = QRequestDetail.requestDetail;
+//        QRequest request = QRequest.request;
+//        QItemGroup itemGroup = QItemGroup.itemGroup;
+//        QItem item = QItem.item;
+//        QCustomer customer = QCustomer.customer;
+//
+//        JPQLQuery<RequestDetailInputMessageDto> query = from(requestDetail)
+//                .where(requestDetail.frNo.in(frNoList).and(requestDetail.fdState.ne("S4")).and(requestDetail.fdCancel.eq("N")))
+//                .innerJoin(requestDetail.frId, request)
+//                .innerJoin(request.bcId, customer)
+//                .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
+//                .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
+//
+//                .groupBy(requestDetail.frNo)
+//                .orderBy(requestDetail.id.desc())
+//                .select(Projections.constructor(RequestDetailInputMessageDto.class,
+//                        request.frCode,
+//                        request.frNo,
+//                        customer,
+//                        request.frQty,
+//                        itemGroup.bgName,
+//                        item.biName
+//                ));
+//
+//        query.where(request.frUncollectYn.eq("Y")
+//                .and(request.frConfirmYn.eq("Y")
+////                        .and(requestDetail.fdCancel.eq("N")
+////                                .and(requestDetail.fdState.eq("S3").or(requestDetail.fdState.eq("S5").or(requestDetail.fdState.eq("S8")))
+//                        ));
+//
+//        return query.fetch();
+    }
 
 
 

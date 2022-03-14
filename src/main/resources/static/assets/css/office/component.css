@@ -387,6 +387,11 @@ textarea {
 textarea::placeholder {
     color: #959595;
 }
+textarea:read-only,
+textarea:disabled {
+    background-color: #f2f2f6;
+	color: #bdbdbd;
+}
 
 
 /* tabs */

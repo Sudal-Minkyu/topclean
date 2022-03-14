@@ -533,6 +533,7 @@ textarea {
 	margin-top: 1.25rem;
 }
 .article__console.article__console--top {
+    margin-top: 0;
 	margin-bottom: 0.625rem;
 }
 .article__console.article__console--right {
@@ -540,6 +541,9 @@ textarea {
 }
 .article__console.article__console--left {
 	justify-content: flex-start;
+}
+.article__console.article__console--between {
+	justify-content: space-between;
 }
 .article__console.article__console--non-border {
 	border: 0 none;
@@ -1543,6 +1547,9 @@ textarea {
 	-o-transform: translate(-50%, -50%);
 	transform: translate(-50%, -50%);
 }
+.pop__box.pop__box--large {
+    width: 100rem;
+}
 .pop__article {
 	width: 100%;
 	padding: 2.5rem 2.5rem 1.25rem 2.5rem;
@@ -1723,6 +1730,136 @@ textarea {
 }
 .l-popup__console button + button {
 	margin-left: 0.625rem;
+}
+
+/* 택분실 이미지 팝업 */
+.tag-pop {
+    display: flex;
+    flex-wrap: wrap;
+}
+.tag__shoot-area {
+    position: relative;
+    width: 31.25rem;
+}
+.tag__shooting {
+    overflow: hidden;
+	position: relative;
+	width: 100%;
+	height: 0;
+    margin-bottom: 1.25rem;
+	padding-bottom: 56.25%;
+    background-color: #ddd;
+}
+.tag__shoot-area .c-button {
+    width: 100%;
+    max-width: 100%;
+}
+.tag__shooting video,
+.tag__shooting img {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+}
+.tag-imgs {
+    flex: 1;
+    display: flex;
+    position: relative;
+    margin-left: 1.25rem;
+}
+.tag-imgs__empty {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+    border: 0.125rem dashed #bdbdbd;
+    border-radius: 0.625rem;
+    color: #959595;
+    font-size: 2rem;
+    font-weight: 700;
+}
+.tag-imgs__list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+.tag-imgs__item {
+    flex: 1;
+    min-width: 33.3333%;
+    width: 33.3333%;
+    max-width: 33.3333%;
+    padding: 0.313rem;
+}
+.tag-imgs__item:only-child {
+    flex: 0 1 auto;
+    width: 100%;
+    max-width: 100%;
+    padding: 0;
+    text-align: center;
+}
+.tag-imgs__item a {
+    display: block;;
+}
+.tag-imgs__img {
+    width: 100%;
+}
+.tag-imgs__item:only-child .tag-imgs__img {
+    width: 68%;
+}
+.tag-info {
+    position: relative;
+    width: 100%;
+    margin-top: 1.25rem;
+}
+.tag-info:only-child {
+    margin-top: 0;
+}
+.tag-info__list {
+    display: flex;
+    flex-wrap: wrap;
+}
+.tag-info__item {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    padding: 0 0.625rem;
+}
+.tag-info__item:last-child {
+    flex: 0 1 auto;
+    width: 100%;
+    margin-top: 1.25rem;
+    margin-right: 0;
+}
+.tag-info__item:only-child {
+    margin-top: 0;
+}
+.tag-info__title {
+    display: inline-block;
+    width: 6.875rem;
+    margin-right: 0.625rem;
+}
+.tag-info__input {
+    flex: 1;
+}
+.tag-info__input input[type="text"] {
+    max-width: 100%;
+}
+.tag__info-console {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    margin-top: 0.625rem;
+}
+.tag__info-console > li + li {
+    margin-left: 1.25rem;
 }
 
 /* grid 컬러박스 */

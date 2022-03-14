@@ -10,4 +10,7 @@ import java.util.List;
  */
 public interface IssueRepositoryCustom {
     List<IssueWeekAmountDto> findByIssueWeekAmount(String brCode, String formatWeekDays);
+
+    List<IssueDispatchDto> findByDispatchPrintData(List<String> miNoList); // 출고증인쇄 함수
+
 }
