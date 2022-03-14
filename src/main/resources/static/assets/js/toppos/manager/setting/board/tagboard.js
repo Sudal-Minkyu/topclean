@@ -11,6 +11,7 @@ const dtos = {
             type: "s", // 1 미완료, 2 전체, 3 가맹 응답
         },
         택분실등록: {
+            btId: "n",
             btBrandName: "s",
             btInputDate: "s",
             btMaterial: "s",
@@ -58,7 +59,10 @@ const comms = {
         });
     },
     putNewTaglost(formData) {
-        console.log(Object.fromEntries(formData));
+        const testObj = Object.fromEntries(formData);
+        console.log(testObj);
+        if(!testObj.btId) testObj.btId = 0; // btId값이 없는 신규등록건
+        dv.chk(testObj, dtos.send.택분실등록, "택분실 등록하기");
         // CommonUI.ajax(urls.putNewTaglost, "POST", formData, function (res)  {
         //     console.log(res);
         // });
