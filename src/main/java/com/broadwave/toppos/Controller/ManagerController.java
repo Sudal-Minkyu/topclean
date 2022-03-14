@@ -102,9 +102,9 @@ public class ManagerController {
     }
     // 게시판
     // Tag분실 게시판 - 리스트
-    @RequestMapping("taglost")
-    public String taglost(){
-        return "manager/setting/board/list";
+    @RequestMapping("tagboard")
+    public String tagboard(){
+        return "manager/setting/board/tagboard";
     }
     // 공지사항 게시판 - 리스트
     @RequestMapping("noticelist")
