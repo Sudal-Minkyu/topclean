@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -158,10 +159,22 @@ public class ManagerRestController {
          return receiptReleaseService.branchStateChange(fdIdList, miDegree, request);
     }
 
+    // 출고증인쇄 함수
+    @GetMapping("branchDispatchPrint")
+    public ResponseEntity<Map<String,Object>> branchDispatchPrint(HttpServletRequest request){
+        List<String> miNoList = new ArrayList<>();
+        miNoList.add("br111202202240001");
+        miNoList.add("br111202202240002");
+        miNoList.add("br111202202160001");
+
+        return receiptReleaseService.branchDispatchPrint(miNoList, request);
+    }
+
     //  지사출고 - 세부테이블 지사입고상태, 지사강제출고 리스트
     @GetMapping("branchReceiptBranchInList")
     public ResponseEntity<Map<String,Object>> branchReceiptBranchInList(@RequestParam("frId")Long frId, @RequestParam("filterFromDt")String filterFromDt,
                                                                            @RequestParam("filterToDt")String filterToDt, @RequestParam("isUrgent")String isUrgent, HttpServletRequest request){
+
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
         LocalDateTime fromDt = null;
         if(filterFromDt != null){

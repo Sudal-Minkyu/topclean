@@ -5,7 +5,6 @@ import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.Insp
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotMainListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotYnDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.QPhoto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.manager.RequestDetailBranchStoreCurrentListDto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
 import lombok.extern.slf4j.Slf4j;
@@ -175,13 +174,14 @@ public class InspeotRepositoryCustomImpl extends QuerydslRepositorySupport imple
         EntityManager em = getEntityManager();
         StringBuilder sb = new StringBuilder();
 
-        sb.append("SELECT d.bc_name, f.bg_name, b.fd_tag, c.fi_customer_confirm, a.fr_yyyymmdd, IFNULL(b.fd_s2_dt,'x') \n");
+        sb.append("SELECT g.fr_name, d.bc_name, f.bg_name, b.fd_tag, c.fi_customer_confirm, a.fr_yyyymmdd, IFNULL(b.fd_s2_dt,'x') \n");
         sb.append("FROM fs_request a \n");
         sb.append("INNER JOIN fs_request_dtl b ON a.fr_id = b.fr_id \n");
         sb.append("LEFT OUTER JOIN fs_request_inspect c ON c.fd_id = b.fd_id \n");
         sb.append("INNER JOIN bs_customer d ON d.bc_id = a.bc_id \n");
         sb.append("INNER JOIN bs_item e ON e.bi_itemcode = b.bi_itemcode \n");
         sb.append("INNER JOIN bs_item_group f ON f.bg_item_groupcode = e.bg_item_groupcode \n");
+        sb.append("INNER JOIN bs_franchise g ON g.fr_code = a.fr_code \n");
         sb.append("WHERE a.br_code = ?1 AND b.fd_cancel = 'N' AND a.fr_confirm_yn = 'Y' \n");
         if(limit==3){
             sb.append("AND IFNULL(b.fd_s2_dt,'x') <>'x' \n");

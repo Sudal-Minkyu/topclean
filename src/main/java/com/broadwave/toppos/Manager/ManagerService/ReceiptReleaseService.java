@@ -2,6 +2,7 @@ package com.broadwave.toppos.Manager.ManagerService;
 
 import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.Manager.Process.Issue.Issue;
+import com.broadwave.toppos.Manager.Process.Issue.IssueDispatchDto;
 import com.broadwave.toppos.Manager.Process.Issue.IssueRepository;
 import com.broadwave.toppos.Manager.Process.IssueForce.IssueForce;
 import com.broadwave.toppos.Manager.Process.IssueForce.IssueForceRepository;
@@ -23,6 +24,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -106,17 +109,17 @@ public class ReceiptReleaseService {
                 requestDetail.setFdPreState(requestDetail.getFdState()); // 이전상태 값
                 requestDetail.setFdPreStateDt(LocalDateTime.now());
 
-                requestDetail.setFdState("S4");
-                requestDetail.setFdStateDt(LocalDateTime.now());
-
-                requestDetail.setFdS4Dt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
-                requestDetail.setFdS4Time(LocalDateTime.now());
-                requestDetail.setFdS4Id(login_id);
                 if(requestDetail.getFdState().equals("S2")){
                     requestDetail.setFdS4Type("01");
                 }else {
                     requestDetail.setFdS4Type("02");
                 }
+
+                requestDetail.setFdState("S4");
+                requestDetail.setFdStateDt(LocalDateTime.now());
+                requestDetail.setFdS4Dt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
+                requestDetail.setFdS4Time(LocalDateTime.now());
+                requestDetail.setFdS4Id(login_id);
 
                 requestDetail.setFdBrState("S4");
                 requestDetail.setFdBrStateTime(LocalDateTime.now());
@@ -395,6 +398,18 @@ public class ReceiptReleaseService {
         }
 
         return ResponseEntity.ok(res.success());
+    }
+
+    // 출고증인쇄 함수
+    public ResponseEntity<Map<String, Object>> branchDispatchPrint(List<String> miNoList, HttpServletRequest request) {
+        log.info("branchDispatchPrint 호출");
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        List<IssueDispatchDto> issueDispatchDtos = issueRepository.findByDispatchPrintData(miNoList);
+        data.put("issueDispatchDtos",issueDispatchDtos);
+        return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
 }

@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -47,6 +48,7 @@ public class ReceiptStateService {
     }
 
     //  접수테이블의 상태 변화 API - 수기마감페이지, 가맹점입고 페이지, 지사반송건전송 페이지, 세탁인도 페이지 공용함수
+    @Transactional
     public ResponseEntity<Map<String, Object>> franchiseStateChange(List<Long> fdIdList, String stateType, HttpServletRequest request) {
         log.info("franchiseStateChange 호출");
 
@@ -100,7 +102,13 @@ public class ReceiptStateService {
                 log.info("가맹점입고 처리");
                 List<RequestDetail> requestDetailList = requestDetailRepository.findByRequestDetailS4List(fdIdList);
 //            log.info("requestDetailList : "+requestDetailList);
+
+                List<String> frNoList = new ArrayList<>();
                 for (RequestDetail requestDetail : requestDetailList) {
+                    if(!frNoList.contains(requestDetail.getFrNo())){
+                        frNoList.add(requestDetail.getFrNo());
+                    }
+
 //                log.info("가져온 frID 값 : "+requestDetailList.get(i).getFrId());
                     requestDetail.setFdPreState(stateType); // 이전상태 값
                     requestDetail.setFdPreStateDt(LocalDateTime.now());
@@ -124,6 +132,17 @@ public class ReceiptStateService {
                     requestDetail.setModify_date(LocalDateTime.now());
                 }
                 requestDetailRepository.saveAll(requestDetailList);
+
+                log.info("frNoList : "+frNoList);
+                List<RequestDetailInputMessageDto> requestDetailInputMessageDtos = requestDetailRepository.findByRequestDetailInputMessage(frNoList);
+                log.info("requestDetailInputMessageDtos : "+requestDetailInputMessageDtos);
+                for(RequestDetailInputMessageDto requestDetailInputMessageDto : requestDetailInputMessageDtos){
+                    log.info("bgName : "+requestDetailInputMessageDto.getBgName());
+                    log.info("frCode : "+requestDetailInputMessageDto.getFrCode());
+                }
+
+
+
                 break;
             }
 //            case "S3": {
