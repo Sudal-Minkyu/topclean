@@ -9,6 +9,17 @@ const dtos = {
             filterFromDt: "s",
             filterToDt: "s",
             type: "s", // 1 미완료, 2 전체, 3 가맹 응답
+        },
+        택분실등록: {
+            btId: "n",
+            btBrandName: "s",
+            btInputDate: "s",
+            btMaterial: "s",
+            btRemark: "s",
+            addPhotoList : "", // 새로 등록된 사진들의 리스트
+            deletePhotoList : { // 수정일 경우 지울 사진들의 
+                bfId: "n",
+            },
         }
     },
     receive: {
@@ -20,6 +31,7 @@ const dtos = {
             btMaterial: "s",
             btRemark: "s",
             사진리스트: { // 썸네일 경로의 경우 이전처럼 파일이름 부분에 s_ 붙여서 오는 방식으로 처리하면 좋을듯 합니다.
+                bfId: "n",
                 bfPath: "s",
                 bfFilename: "s",
             },
@@ -35,6 +47,7 @@ const dtos = {
 /* 통신에 사용되는 url들 기입 */
 const urls = {
     getMainList: "",
+    putNewTaglost: "",
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
@@ -44,6 +57,15 @@ const comms = {
         CommonUI.ajax(urls.getMainList, "GET", searchCondition, function (res) {
             console.log(res);
         });
+    },
+    putNewTaglost(formData) {
+        const testObj = Object.fromEntries(formData);
+        console.log(testObj);
+        if(!testObj.btId) testObj.btId = 0; // btId값이 없는 신규등록건
+        dv.chk(testObj, dtos.send.택분실등록, "택분실 등록하기");
+        // CommonUI.ajax(urls.putNewTaglost, "POST", formData, function (res)  {
+        //     console.log(res);
+        // });
     }
 };
 
@@ -200,6 +222,7 @@ const trigs = {
         });
 
         $("#addBtn").on("click", function () {
+            wares.currentRequest = {};
             openTaglostPop();
         });
 
@@ -207,15 +230,27 @@ const trigs = {
             closeTaglostPop();
         });
 
+        $("#savePost").on("click", function () {
+            savePost();
+        });
+
+        $("#removePost").on("click", function () {
+
+        });
+
         $("#endPost").on("click", function () {
 
+        });
+
+        $("#takePhotoBtn").on("click", function () {
+            takePhoto();
         });
     },
 }
 
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
 const wares = {
-
+    currentRequest: {},
 }
 
 $(function() { // 페이지가 로드되고 나서 실행
@@ -227,8 +262,6 @@ function onPageLoad() {
     grids.f.initialization();
     enableDatepicker();
     trigs.basic();
-
-    $("#taglostPop").addClass("active");
 
     // lightbox option
     lightbox.option({
@@ -298,10 +331,116 @@ async function openTaglostPop(e) {
     $("#taglostPop").addClass("active");
 }
 
+function takePhoto() {
+    if(wares.isCameraExist && wares.cameraStream.active) {
+        try {
+            const video = document.getElementById("cameraScreen");
+            const canvas = document.getElementById('cameraCanvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            const takenPic = canvas.toDataURL();
+            const blob = b64toBlob(takenPic);
+
+            const photoHtml = `<li class="tag-imgs__item newPhoto">
+                <a href="${takenPic}" data-lightbox="images" data-title="이미지 확대">
+                    <img src="${takenPic}" class="tag-imgs__img" alt=""/>
+                </a>
+            </li>`
+            if(!wares.currentRequest.addPhotoList) {
+                wares.currentRequest.addPhotoList = [];
+            }
+            wares.currentRequest.addPhotoList.push(blob);
+            $("#photoList").append(photoHtml);
+            $("#noImgScreen").hide();
+        } catch (e) {
+            console.log(e);
+        }
+    } else {
+        alertCaution("카메라가 감지되지 않아서<br>촬영을 할 수 없습니다.", 1);
+    }
+}
+
 function resetTaglostPop() {
+    resetDatePicker();
     $("#btBrandName").val("");
     $("#btMaterial").val("");
-    $("#btInputDate").val("");
     $("#btRemark").val("");
+    $("#frResponse").val("");
+    $("#photoList").html("");
     $("#noImgScreen").show();
+}
+
+function closeTaglostPop() {
+    $("#taglostPop").removeClass("active");
+    if(wares.isCameraExist) {
+        try {
+            wares.cameraStream.getTracks().forEach(function (track) {
+                track.stop();
+            });
+        }catch (e) {
+            console.log(e);
+        }
+    }
+}
+
+function enableDatepicker() {
+    let fromday = new Date();
+    fromday.setDate(fromday.getDate() - 6);
+    fromday = fromday.format("yyyy-MM-dd");
+    const today = new Date().format("yyyy-MM-dd");
+    /* datepicker를 적용시킬 대상들의 dom id들 */
+    const datePickerTargetIds = [
+        "btInputDate", "filterFromDt", "filterToDt"
+    ];
+
+    $("#" + datePickerTargetIds[0]).val(today);
+    $("#" + datePickerTargetIds[1]).val(fromday);
+    $("#" + datePickerTargetIds[2]).val(today);
+
+    const dateAToBTargetIds = [
+        ["filterFromDt", "filterToDt"]
+    ];
+
+    CommonUI.setDatePicker(datePickerTargetIds);
+    CommonUI.restrictDateAToB(dateAToBTargetIds);
+    CommonUI.restrictDate("btInputDate", "btInputDate", false);
+}
+
+function resetDatePicker() {
+    const today = new Date().format("yyyy-MM-dd");
+    $("#btInputDate").val(today);
+}
+
+function b64toBlob(dataURI) { // 파일을 ajax 통신에 쓰기 위해 변환
+    const byteString = atob(dataURI.split(',')[1]);
+    const ab = new ArrayBuffer(byteString.length);
+    const ia = new Uint8Array(ab);
+
+    for (let i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+    }
+    return new Blob([ab], { type: 'image/jpeg' });
+}
+
+function savePost() {
+    if(!wares.currentRequest.addPhotoList) {
+        alertCaution("최소한 한장의 사진을 촬영해 주세요.", 1);
+        return false;
+    }
+
+    const formData = new FormData();
+    for(addPhoto of wares.currentRequest.addPhotoList) { // 새로 촬영된 사진들의 추가
+        formData.append("addPhotoList", addPhoto);
+    }
+    
+    formData.append("deletePhotoList", wares.currentRequest.deletePhotoList ? wares.currentRequest.deletePhotoList : "");
+    formData.append("btBrandName", $("#btBrandName").val());
+    formData.append("btMaterial", $("#btMaterial").val());
+    formData.append("btInputDate", $("#btInputDate").val());
+    formData.append("btRemark", $("#btRemark").val());
+    
+    comms.putNewTaglost(formData);
 }

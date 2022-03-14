@@ -77,17 +77,13 @@
                         <div class="tag__shooting">
                             <!-- 캠 영상 들어갈 곳 -->
                             <video id="cameraScreen" playsinline autoplay></video>
+                            <canvas id="cameraCanvas" style="display: none"></canvas>
                         </div>
-                        <button class="c-button c-button--large c-button--darksolid">사진촬영</button>
+                        <button id="takePhotoBtn" class="c-button c-button--large c-button--darksolid">사진촬영</button>
                     </div>
                     <div class="tag-imgs">
                         <div id="noImgScreen" class="tag-imgs__empty">사진을 촬영해주세요.</div>
-                        <ul class="tag-imgs__list">
-                            <li class="tag-imgs__item">
-                                <a href="/assets/images/dummy/cam.png" data-lightbox="images" data-title="이미지 확대">
-                                    <img src="/assets/images/dummy/cam.png" class="tag-imgs__img" alt=""/>
-                                </a>
-                            </li>
+                        <ul id="photoList" class="tag-imgs__list">
                         </ul>
                     </div>
         
@@ -119,7 +115,7 @@
                             </li>
                         </ul>
                         <ul class="tag__info-console">
-                            <li><button type="button" id="updatePost" class="c-button c-button--solid">저장</button></li>
+                            <li><button type="button" id="savePost" class="c-button c-button--solid">저장</button></li>
                             <li><button type="button" id="removePost" class="c-button c-button--red">삭제</button></li>
                         </ul>
                     </div>
