@@ -171,6 +171,7 @@ class CommonUIClass {
                 $("#"+targetIdArray[i][j]).on("change", function() {
                     CommonUI.restrictDate(targetIdArray[i][0], targetIdArray[i][1], j);
                 });
+                this.restrictDate(targetIdArray[i][0], targetIdArray[i][1], j);
             }
         }
     }

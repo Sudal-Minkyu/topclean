@@ -96,7 +96,6 @@ const comms = {
             console.log(res);
             grids.f.clearData(1);
             grids.f.setData(0, data);
-            $("#exportXlsx").hide();
         });
     },
 
@@ -105,7 +104,6 @@ const comms = {
         CommonUI.ajax(urls.getDetailList, "GET", searchCondition, function (res) {
             const data = res.sendData.gridListData;
             grids.f.setData(1, data);
-            $("#exportXlsx").show();
         });
     },
 };
