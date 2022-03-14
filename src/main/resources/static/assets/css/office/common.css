@@ -533,6 +533,7 @@ textarea {
 	margin-top: 1.25rem;
 }
 .article__console.article__console--top {
+    margin-top: 0;
 	margin-bottom: 0.625rem;
 }
 .article__console.article__console--right {
@@ -540,6 +541,9 @@ textarea {
 }
 .article__console.article__console--left {
 	justify-content: flex-start;
+}
+.article__console.article__console--between {
+	justify-content: space-between;
 }
 .article__console.article__console--non-border {
 	border: 0 none;
@@ -1800,6 +1804,9 @@ textarea {
     max-width: 100%;
     padding: 0;
     text-align: center;
+}
+.tag-imgs__item a {
+    display: block;;
 }
 .tag-imgs__img {
     width: 100%;
