@@ -8,7 +8,7 @@ const dtos = {
         택분실게시판조회: {
             filterFromDt: "s",
             filterToDt: "s",
-            type: "s", // 1 미완료, 2 전체, 3 내 가맹점
+            type: "s", // 1 미완료, 2 전체, 3 가맹 응답
         }
     },
     receive: {
@@ -199,8 +199,16 @@ const trigs = {
             searchOrder();
         });
 
+        $("#addBtn").on("click", function () {
+            openTaglostPop();
+        });
+
         $("#closeTaglostPop").on("click", function () {
             closeTaglostPop();
+        });
+
+        $("#endPost").on("click", function () {
+
         });
     },
 }
@@ -221,7 +229,6 @@ function onPageLoad() {
     trigs.basic();
 
     $("#taglostPop").addClass("active");
-
 
     // lightbox option
     lightbox.option({
@@ -264,4 +271,37 @@ function searchOrder() {
 
 function closeTaglostPop() {
     $("#taglostPop").removeClass("active");
+}
+
+async function openTaglostPop(e) {
+    resetTaglostPop();
+
+    try {
+        wares.isCameraExist = true;
+        wares.cameraStream = await navigator.mediaDevices.getUserMedia({
+            audio: false,
+            video: {
+                width: {ideal: 4096},
+                height: {ideal: 2160}
+            },
+        });
+
+        const screen = document.getElementById("cameraScreen");
+        screen.srcObject = wares.cameraStream;
+    }catch (e) {
+        if(!(e instanceof DOMException)) {
+            console.log(e);
+        }
+        wares.isCameraExist = false;
+    }
+
+    $("#taglostPop").addClass("active");
+}
+
+function resetTaglostPop() {
+    $("#btBrandName").val("");
+    $("#btMaterial").val("");
+    $("#btInputDate").val("");
+    $("#btRemark").val("");
+    $("#noImgScreen").show();
 }

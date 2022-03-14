@@ -6,14 +6,15 @@
 
 <!-- 사용자 CSS 추가 -->
 <th:block layout:fragment="css">
-    <style>
-        
-    </style>
+	<!-- lightbox 추가 -->
+    <link rel="stylesheet" href="/assets/js/lightbox2/css/lightbox.min.css" />
 </th:block>
 
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
     <script src="/assets/js/toppos/user/board/taglost.js"></script>
+    <!-- lightbox 추가 -->
+    <script src="/assets/js/lightbox2/js/lightbox.js"></script>
 </th:block>
 
 <div layout:fragment="content" class="content content--column">
@@ -24,45 +25,44 @@
                 <div class="search__period-title">등록일자</div>
                 <div class="c-period">
                     <!-- 시작일 -->
-                    <input type="text" id="filterFromDt" class="hasDatepicker">
+                    <input type="text" id="filterFromDt">
                     <span class="c-period__code">-</span>
                     <!-- 종료일 -->
-                    <input type="text" id="filterToDt" class="hasDatepicker">
+                    <input type="text" id="filterToDt">
                 </div>
             </div>
             
 			<div class="c-select">
-				<select>
-                    <option>미완료</option>
-                    <option>전체</option>
-                    <option>내 가맹점</option>
+				<select id="type">
+                    <option value="1">미완료</option>
+                    <option value="2">전체</option>
+                    <option value="3">내 가맹점</option>
                 </select>
 			</div>
 		</div>
 
 		<div class="content__header-btns">
-			<button class="c-button c-button--small c-button--darksolid">조회</button>
+			<button id="searchBtn" class="c-button c-button--small c-button--darksolid">조회</button>
 		</div>
 	</div>
 	
     <div class="content__body">
     	<!-- grid -->
-        <div id="gird" style="height: 776px;"></div>
+        <div id="grid_main" style="height: 776px;"></div>
     </div>
 
     <!-- 상세보기 팝업 -->
-    <div class="pop active">
+    <div id="taglostPop" class="pop">
         <div class="pop__box">
             <div class="pop__article">
                 <div class="tag-pop">
                     <div class="tag-imgs">
                         <ul class="tag-imgs__list">
-                            <li class="tag-imgs__item"><img src="/assets/images/dummy/cam.png" alt="" class="tag-imgs__img"></li>
-                            <li class="tag-imgs__item"><img src="/assets/images/dummy/cam.png" alt="" class="tag-imgs__img"></li>
-                            <li class="tag-imgs__item"><img src="/assets/images/dummy/cam.png" alt="" class="tag-imgs__img"></li>
-                            <li class="tag-imgs__item"><img src="/assets/images/dummy/cam.png" alt="" class="tag-imgs__img"></li>
-                            <li class="tag-imgs__item"><img src="/assets/images/dummy/cam.png" alt="" class="tag-imgs__img"></li>
-                            <li class="tag-imgs__item"><img src="/assets/images/dummy/cam.png" alt="" class="tag-imgs__img"></li>
+                            <li class="tag-imgs__item">
+                                <a href="/assets/images/dummy/cam.png" data-lightbox="images" data-title="이미지 확대">
+                                    <img src="/assets/images/dummy/cam.png" alt=""/>
+                                </a>
+                            </li>
                         </ul>
                     </div>
         
@@ -119,10 +119,9 @@
                     </ul>
                 </div>
             </div>
-
             <ul class="pop__console">
-                <li><button class="c-button c-button--dark pop__close">최종확인완료</button></li>
-				<li><button class="c-button pop__close">닫기</button></li>
+                <li><button class="c-button c-button--dark">최종확인완료</button></li>
+				<li><button id="closeTaglostPop" class="c-button">닫기</button></li>
 			</ul>
         </div>
     </div>
