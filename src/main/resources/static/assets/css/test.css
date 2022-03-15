@@ -699,6 +699,10 @@ textarea {
 	-moz-border-radius: 0.625rem;
 	border-radius: 0.625rem;
 }
+.login__btn.login__btn--darksolid {
+    margin-top: 1.25rem;
+    background-color: #003b7a;
+}
 
 /* main */
 .main {
