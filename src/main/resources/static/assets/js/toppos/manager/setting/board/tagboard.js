@@ -437,7 +437,7 @@ function savePost() {
     formData.append("deletePhotoList", wares.currentRequest.deletePhotoList ? wares.currentRequest.deletePhotoList : "");
     formData.append("btBrandName", $("#btBrandName").val());
     formData.append("btMaterial", $("#btMaterial").val());
-    formData.append("btInputDate", $("#btInputDate").val());
+    formData.append("btInputDate", $("#btInputDate").val().numString());
     formData.append("btRemark", $("#btRemark").val());
     
     comms.putNewTaglost(formData);
