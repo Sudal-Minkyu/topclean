@@ -12,7 +12,7 @@ import java.util.List;
  * @author Minkyu
  * Date : 2022-02-21
  * Time :
- * Remark : Toppos 가맹점 접수세부 Dto
+ * Remark : Toppos 가맹점 택분실 MapperDto
  */
 @Data
 @Builder

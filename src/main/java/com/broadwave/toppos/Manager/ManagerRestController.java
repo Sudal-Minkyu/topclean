@@ -3,6 +3,7 @@ package com.broadwave.toppos.Manager;
 import com.broadwave.toppos.Head.HeadService.NoticeService;
 import com.broadwave.toppos.Manager.Calendar.CalendarDtos.BranchCalendarDto;
 import com.broadwave.toppos.Manager.ManagerService.*;
+import com.broadwave.toppos.Manager.TagGallery.TagGalleryDtos.TagGalleryMapperDto;
 import com.broadwave.toppos.Manager.TagNotice.TagNoticeDtos.TagNoticeMapperDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotMapperDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotSet;
@@ -22,7 +23,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -43,6 +43,7 @@ public class ManagerRestController {
     private final ManagerService managerService; // 지사전용 서비스
     private final CalendarService calendarService; // 휴무일지정 서비스
     private final TagNoticeService tagNoticeService; // 택분실게시판 서비스
+    private final TagGalleryService tagGalleryService; // NEW 택분실게시판 서비스
     private final InspectService inspectService; // 검품등록게시판 서비스
     private final CurrentService currentService; // 현황페이지 서비스
     private final NoticeService noticeService; // 공지사항페이지 서비스
@@ -50,11 +51,12 @@ public class ManagerRestController {
     private final ReceiptReleaseService receiptReleaseService; // 지사 출고 전용 서비스
 
     @Autowired
-    public ManagerRestController(ManagerService managerService, CalendarService calendarService, TagNoticeService tagNoticeService,
+    public ManagerRestController(ManagerService managerService, CalendarService calendarService, TagNoticeService tagNoticeService, TagGalleryService tagGalleryService,
                                  ReceiptReleaseService receiptReleaseService, InspectService inspectService, CurrentService currentService, NoticeService noticeService) {
         this.managerService = managerService;
         this.calendarService = calendarService;
         this.tagNoticeService = tagNoticeService;
+        this.tagGalleryService = tagGalleryService;
         this.inspectService = inspectService;
         this.currentService = currentService;
         this.noticeService = noticeService;
@@ -144,6 +146,17 @@ public class ManagerRestController {
                                                                     HttpServletRequest request) {
         return tagNoticeService.lostNoticeCommentSave(hcId, htId, type, comment, preId, request);
     }
+
+
+//@@@@@@@@@@@@@@@@@@@@@ NEW 택분실게시판 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    //  택분실게시판 - 등록&수정
+    @PostMapping("tagGallerySave")
+    public ResponseEntity<Map<String,Object>> tagGallerySave(@ModelAttribute TagGalleryMapperDto tagGalleryMapperDto, HttpServletRequest request) throws IOException {
+        return tagGalleryService.tagGallerySave(tagGalleryMapperDto, request);
+    }
+
+
+
 
 //@@@@@@@@@@@@@@@@@@@@@ 지사출고, 지사출고 취소, 가맹점강제출고, 가맹점반송 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     //  현 지사의 소속된 가맹점명 리스트 호출(앞으로 공용으로 쓰일 것)
