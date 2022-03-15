@@ -734,7 +734,7 @@ function printingReport() {
 		projectName: "toppos",
 		formName: "qrprint02",
 		name: $("input[name='frName']").val(),
-		url: location.protocol+"//"+location.host+"/qrpickup?frcode="+$("#frCode").val(),
+		url: location.protocol+"//"+location.host+"/mobile/unAuth/qrpickup?frcode="+$("#frCode").val(),
 	};
 
 	const _url = "https://report.topcleaners.kr:443/UBIFORM/UView5/index.jsp";

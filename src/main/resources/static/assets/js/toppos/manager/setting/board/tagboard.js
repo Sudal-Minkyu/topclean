@@ -10,16 +10,14 @@ const dtos = {
             filterToDt: "s",
             type: "s", // 1 미완료, 2 전체, 3 가맹 응답
         },
-        택분실등록: {
+        tagGallerySave: {
             btId: "n",
             btBrandName: "s",
             btInputDate: "s",
             btMaterial: "s",
             btRemark: "s",
-            addPhotoList : "", // 새로 등록된 사진들의 리스트
-            deletePhotoList : { // 수정일 경우 지울 사진들의 
-                bfId: "n",
-            },
+            addPhotoList: "", // 새로 등록된 사진들의 리스트
+            deletePhotoList: "",
         }
     },
     receive: {
@@ -47,7 +45,7 @@ const dtos = {
 /* 통신에 사용되는 url들 기입 */
 const urls = {
     getMainList: "",
-    putNewTaglost: "",
+    putNewTaglost: "/api/manager/tagGallerySave",
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
@@ -62,10 +60,10 @@ const comms = {
         const testObj = Object.fromEntries(formData);
         console.log(testObj);
         if(!testObj.btId) testObj.btId = 0; // btId값이 없는 신규등록건
-        dv.chk(testObj, dtos.send.택분실등록, "택분실 등록하기");
-        // CommonUI.ajax(urls.putNewTaglost, "POST", formData, function (res)  {
-        //     console.log(res);
-        // });
+        dv.chk(testObj, dtos.send.tagGallerySave, "택분실 등록하기");
+        CommonUI.ajax(urls.putNewTaglost, "POST", formData, function (res)  {
+            console.log(res);
+        });
     }
 };
 
