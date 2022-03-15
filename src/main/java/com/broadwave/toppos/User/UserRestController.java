@@ -917,16 +917,6 @@ public class UserRestController {
         return inspectService.franchiseInspectionYn(fiId, type, fiAddAmt, request);
     }
 
-    //  통합조회용 - 카카오 메세지 보내기
-    @PostMapping("franchiseInspectionMessageSend")
-    public ResponseEntity<Map<String,Object>> franchiseInspectionMessageSend(@RequestParam(value="fiId", defaultValue="") Long fiId,
-                                                                    @RequestParam(value="fmMessage", defaultValue="") String fmMessage,
-                                                                    @RequestParam(value="isIncludeImg", defaultValue="") String isIncludeImg,
-                                                                    HttpServletRequest request){
-        return inspectService.franchiseInspectionMessageSend(fiId, fmMessage, isIncludeImg, request);
-    }
-
-
 
 //@@@@@@@@@@@@@@@@@@@@@ 검품이력 조회 및 메세지 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     //  검품이력 조회 및 메세지 - 리스트호출 테이블
@@ -947,9 +937,18 @@ public class UserRestController {
         return inspectService.inspectList(bcId, searchTag, filterFromDt, filterToDt, request);
     }
 
+    //  검품이력 조회 및 메세지 - 카카오 메세지 보내기
+    @PostMapping("franchiseInspectionMessageSend")
+    public ResponseEntity<Map<String,Object>> franchiseInspectionMessageSend(@RequestParam(value="bcId", defaultValue="") Long bcId, @RequestParam(value="fiId", defaultValue="") Long fiId,
+                                                                             @RequestParam(value="fmMessage", defaultValue="") String fmMessage,
+                                                                             @RequestParam(value="isIncludeImg", defaultValue="") String isIncludeImg,
+                                                                             HttpServletRequest request){
+        return inspectService.franchiseInspectionMessageSend(bcId, fiId, fmMessage, isIncludeImg, request);
+    }
 
 
-//@@@@@@@@@@@@@@@@@@@@@ 가맹점 수기마감, 가맹점입고, 지사반송, 가맹점강제입고, 세탁인도 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+    //@@@@@@@@@@@@@@@@@@@@@ 가맹점 수기마감, 가맹점입고, 지사반송, 가맹점강제입고, 세탁인도 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     //  접수테이블의 상태 변화 API - 수기마감페이지, 가맹점입고 페이지, 지사반송건전송 페이지, 세탁인도 페이지 공용함수
     @PostMapping("franchiseStateChange")
     public ResponseEntity<Map<String,Object>> franchiseStateChange(@RequestParam(value="fdIdList", defaultValue="") List<Long> fdIdList,

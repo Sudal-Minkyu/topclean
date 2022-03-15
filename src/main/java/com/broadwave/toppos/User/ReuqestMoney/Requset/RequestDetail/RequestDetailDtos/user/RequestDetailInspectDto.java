@@ -19,6 +19,7 @@ public class RequestDetailInspectDto {
     private String frRefType; // 접수타입(01:일반, 02:무인보관함, 03:배송APP)
     private String bcName; // 고객이름
 
+    private Long bcId; // 고객테이블 고유값 ID
     private Long fdId; // 접수세부테이블 고유값 ID
 
     private String frYyyymmdd; // 접수일자

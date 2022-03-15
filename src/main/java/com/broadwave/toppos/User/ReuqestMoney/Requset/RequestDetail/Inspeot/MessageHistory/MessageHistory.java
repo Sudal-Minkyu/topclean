@@ -1,6 +1,6 @@
 package com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.MessageHistory;
 
-import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.Payment;
+import com.broadwave.toppos.User.Customer.Customer;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.Inspeot;
 import lombok.*;
 
@@ -27,6 +27,10 @@ public class MessageHistory {
     @Column(name="fm_id")
     private Long fmId;
 
+    @ManyToOne(targetEntity = Customer.class,fetch = FetchType.LAZY)
+    @JoinColumn(name="bc_id")
+    private Customer bcId; // 고객
+
     @Column(name="fm_type")
     private String fmType; // 검품:01, 자동:02, 수동: 03
 
@@ -42,9 +46,6 @@ public class MessageHistory {
 
     @Column(length = 100000, name="fm_message")
     private String fmMessage; // 메세지 내용
-
-    @Column(name="fm_success_yn")
-    private String fmSuccessYn; // 성공여부 - 기본값:N
 
     @Column(name="insert_id")
     private String insert_id;

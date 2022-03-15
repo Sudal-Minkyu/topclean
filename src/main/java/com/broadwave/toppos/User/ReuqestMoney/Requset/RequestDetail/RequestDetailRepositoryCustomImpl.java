@@ -615,6 +615,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                 .select(Projections.constructor(RequestDetailInspectDto.class,
                         request.frRefType,
                         customer.bcName,
+                        customer.bcId,
                         requestDetail.id,
                         request.frYyyymmdd,
                         requestDetail.fdTag,
@@ -1677,53 +1678,27 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         EntityManager em = getEntityManager();
         StringBuilder sb = new StringBuilder();
 
-        sb.append("SELECT b.fr_code, a.fr_no, d, b.fr_qty, e.bi_name, f.bg_name \n");
+        sb.append("WITH RECURSIVE checkdata AS \n");
+        sb.append("( \n");
+        sb.append("SELECT b.fr_code, a.fr_no, a.fd_state, b.fr_qty, d.bc_id, e.bi_name, f.bg_name \n");
         sb.append("FROM fs_request_dtl a \n");
-        sb.append("INNER JOIN fs_request b ON a.fr_id = b.fr_id \n");
-        sb.append("INNER JOIN bs_franchise c ON c.fr_code = b.fr_code \n");
+        sb.append("INNER JOIN fs_request b ON b.fr_id = a.fr_id \n");
         sb.append("INNER JOIN bs_customer d ON d.bc_id = b.bc_id \n");
-        sb.append("INNER JOIN bs_item e ON e.bi_itemcode = b.bi_itemcode \n");
+        sb.append("INNER JOIN bs_item e ON e.bi_itemcode = a.bi_itemcode \n");
         sb.append("INNER JOIN bs_item_group f ON f.bg_item_groupcode = e.bg_item_groupcode \n");
-        sb.append("WHERE a IN = ?1 \n");
-//        AND b.fd_cancel = 'N' AND a.fr_confirm_yn = 'Y'
-        sb.append("GROUP BY a.fr_no \n");
+        sb.append("WHERE a.fr_no IN ?1 AND a.fd_cancel = 'N'  AND b.fr_confirm_yn = 'Y' \n");
+        sb.append(") \n");
+        // 해당 접수건의 상품이 모두 가맹점입고 상태인것만 리스트 호출한다.
+        sb.append("SELECT a.fr_code, a.fr_no, a.bc_id, a.fr_qty, a.bg_name, a.bi_name \n");
+        sb.append("FROM checkdata a \n");
+        sb.append("WHERE (SELECT COUNT(*) FROM checkdata x1 WHERE x1.fr_no = a.fr_no) = \n");
+        sb.append("(SELECT COUNT(*) FROM checkdata x1 WHERE x1.fr_no = a.fr_no AND (x1.fd_state = 'S5' OR x1.fd_state = 'S8')) \n");
+        sb.append("GROUP BY a.fr_no, a.bc_id \n");
 
         Query query = em.createNativeQuery(sb.toString());
         query.setParameter(1, frNoList);
 
         return jpaResultMapper.list(query, RequestDetailInputMessageDto.class);
-
-//        QRequestDetail requestDetail = QRequestDetail.requestDetail;
-//        QRequest request = QRequest.request;
-//        QItemGroup itemGroup = QItemGroup.itemGroup;
-//        QItem item = QItem.item;
-//        QCustomer customer = QCustomer.customer;
-//
-//        JPQLQuery<RequestDetailInputMessageDto> query = from(requestDetail)
-//                .where(requestDetail.frNo.in(frNoList).and(requestDetail.fdState.ne("S4")).and(requestDetail.fdCancel.eq("N")))
-//                .innerJoin(requestDetail.frId, request)
-//                .innerJoin(request.bcId, customer)
-//                .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
-//                .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
-//
-//                .groupBy(requestDetail.frNo)
-//                .orderBy(requestDetail.id.desc())
-//                .select(Projections.constructor(RequestDetailInputMessageDto.class,
-//                        request.frCode,
-//                        request.frNo,
-//                        customer,
-//                        request.frQty,
-//                        itemGroup.bgName,
-//                        item.biName
-//                ));
-//
-//        query.where(request.frUncollectYn.eq("Y")
-//                .and(request.frConfirmYn.eq("Y")
-////                        .and(requestDetail.fdCancel.eq("N")
-////                                .and(requestDetail.fdState.eq("S3").or(requestDetail.fdState.eq("S5").or(requestDetail.fdState.eq("S8")))
-//                        ));
-//
-//        return query.fetch();
     }
 
 

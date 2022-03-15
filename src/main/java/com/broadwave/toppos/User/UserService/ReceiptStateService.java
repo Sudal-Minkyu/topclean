@@ -1,11 +1,15 @@
 package com.broadwave.toppos.User.UserService;
 
 import com.broadwave.toppos.Jwt.token.TokenProvider;
+import com.broadwave.toppos.User.Customer.Customer;
+import com.broadwave.toppos.User.Customer.CustomerRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotYnDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotRepositoryCustom;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetail;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.*;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepository;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestMessage.RequestMessage;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestMessage.RequestMessageRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.force.InhouceForce;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.force.InhouseRepository;
 import com.broadwave.toppos.common.AjaxResponse;
@@ -34,15 +38,19 @@ public class ReceiptStateService {
     private final TokenProvider tokenProvider;
 
     private final InhouseRepository inhouseRepository;
+    private final CustomerRepository customerRepository;
+    private final RequestMessageRepository requestMessageRepository;
     private final InspeotRepositoryCustom inspeotRepositoryCustom;
     private final RequestDetailRepository requestDetailRepository;
 
     @Autowired
-    public ReceiptStateService(TokenProvider tokenProvider,
+    public ReceiptStateService(TokenProvider tokenProvider, RequestMessageRepository requestMessageRepository, CustomerRepository customerRepository,
                                InhouseRepository inhouseRepository, InspeotRepositoryCustom inspeotRepositoryCustom,
                                RequestDetailRepository requestDetailRepository){
         this.tokenProvider = tokenProvider;
         this.inhouseRepository = inhouseRepository;
+        this.customerRepository = customerRepository;
+        this.requestMessageRepository = requestMessageRepository;
         this.requestDetailRepository = requestDetailRepository;
         this.inspeotRepositoryCustom = inspeotRepositoryCustom;
     }
@@ -134,15 +142,7 @@ public class ReceiptStateService {
                 requestDetailRepository.saveAll(requestDetailList);
 
                 log.info("frNoList : "+frNoList);
-                List<RequestDetailInputMessageDto> requestDetailInputMessageDtos = requestDetailRepository.findByRequestDetailInputMessage(frNoList);
-                log.info("requestDetailInputMessageDtos : "+requestDetailInputMessageDtos);
-                for(RequestDetailInputMessageDto requestDetailInputMessageDto : requestDetailInputMessageDtos){
-                    log.info("bgName : "+requestDetailInputMessageDto.getBgName());
-                    log.info("frCode : "+requestDetailInputMessageDto.getFrCode());
-                }
-
-
-
+                InputCheckMessage(frNoList);
                 break;
             }
 //            case "S3": {
@@ -172,8 +172,15 @@ public class ReceiptStateService {
                 Optional<InhouceForce> inhouceForce;
                 List<InhouceForce> inhouceForceList = new ArrayList<>();
                 List<RequestDetail> requestDetailList = requestDetailRepository.findByRequestDetailS7List(fdIdList);
+
+                List<String> frNoList = new ArrayList<>();
+
 //            log.info("requestDetailList : "+requestDetailList);
                 for (RequestDetail requestDetail : requestDetailList) {
+                    if(!frNoList.contains(requestDetail.getFrNo())){
+                        frNoList.add(requestDetail.getFrNo());
+                    }
+
 //                log.info("가져온 frID 값 : "+requestDetailList.get(i).getFrId());
                     requestDetail.setFdPreState(requestDetail.getFdState()); // 이전상태 값
                     requestDetail.setFdPreStateDt(LocalDateTime.now());
@@ -217,6 +224,8 @@ public class ReceiptStateService {
                 }
                 requestDetailRepository.saveAll(requestDetailList);
                 inhouseRepository.saveAll(inhouceForceList);
+                log.info("frNoList : "+frNoList);
+                InputCheckMessage(frNoList);
                 break;
             }
             // 수정완료 - 2022/03/03
@@ -254,6 +263,45 @@ public class ReceiptStateService {
         }
         
         return ResponseEntity.ok(res.success());
+    }
+
+    // 가맹점 입고시 메세지테이블 insert 함수
+    public void InputCheckMessage(List<String> frNoList){
+        log.info("frNoList : "+frNoList);
+        List<RequestDetailInputMessageDto> requestDetailInputMessageDtos = requestDetailRepository.findByRequestDetailInputMessage(frNoList);
+        log.info("requestDetailInputMessageDtos : "+requestDetailInputMessageDtos);
+        List<RequestMessage> requestMessageList = new ArrayList<>();
+        String fmMessage;
+        String bcName;
+        for(RequestDetailInputMessageDto requestDetailInputMessageDto : requestDetailInputMessageDtos){
+            // 모든 상품 가맹점입고시 메세지 테이블 insert
+            Optional<Customer> optionalCustomer = customerRepository.findByBcId(requestDetailInputMessageDto.getBcId());
+            RequestMessage requestMessage = new RequestMessage(); // \n\n
+            requestMessage.setFrCode(requestDetailInputMessageDto.getFrCode());
+            requestMessage.setFrNo(requestDetailInputMessageDto.getFrNo());
+            if(optionalCustomer.isPresent()){
+                bcName = optionalCustomer.get().getBcName()+"님";
+                requestMessage.setBcId(optionalCustomer.get());
+            }else{
+                requestMessage.setBcId(null);
+                bcName = "";
+            }
+
+            fmMessage = "안녕하세요 "+bcName+"\n"+"맡겨주신 "+requestDetailInputMessageDto.getBgName()+" "+requestDetailInputMessageDto.getBiName();
+            if(requestDetailInputMessageDto.getFrQty() > 1){
+                int qty = requestDetailInputMessageDto.getFrQty()-1;
+                fmMessage = fmMessage +"외 "+qty+"건의 물품이 세탁완료 되었습니다.";
+            }else{
+                fmMessage = fmMessage +"물품이 세탁완료 되었습니다.";
+            }
+
+            requestMessage.setFmMessage(fmMessage);
+            requestMessage.setFmMessageYn("N");
+            requestMessage.setInsertYyyymmdd(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
+            requestMessage.setInsertDateTime(LocalDateTime.now());
+            requestMessageList.add(requestMessage);
+        }
+        requestMessageRepository.saveAll(requestMessageList);
     }
 
     //  수기마감 - 세부테이블 접수상태 리스트 + 검품이 존재할시 상태가 고객수락일 경우에만 호출

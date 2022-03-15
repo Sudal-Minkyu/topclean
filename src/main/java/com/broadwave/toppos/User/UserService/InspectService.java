@@ -2,6 +2,8 @@ package com.broadwave.toppos.User.UserService;
 
 import com.broadwave.toppos.Aws.AWSS3Service;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
+import com.broadwave.toppos.User.Customer.Customer;
+import com.broadwave.toppos.User.Customer.CustomerRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.Payment;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentDtos.PaymentCencelDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentDtos.PaymentCencelYnDto;
@@ -70,12 +72,14 @@ public class InspectService {
     private final RequestDetailRepository requestDetailRepository;
     private final SaveMoneyRepository saveMoneyRepository;
     private final MessageHistoryRepository messageHistoryRepository;
+    private final CustomerRepository customerRepository;
 
     @Autowired
     public InspectService(ModelMapper modelMapper, TokenProvider tokenProvider, UserService userService, AWSS3Service awss3Service, PhotoRepository photoRepository,
                           PaymentRepository paymentRepository, PaymentRepositoryCustom paymentRepositoryCustom, InspeotRepository inspeotRepository,
                           RequestRepository requestRepository, InspeotRepositoryCustom inspeotRepositoryCustom,
-                          RequestDetailRepository requestDetailRepository, SaveMoneyRepository saveMoneyRepository, MessageHistoryRepository messageHistoryRepository){
+                          RequestDetailRepository requestDetailRepository, SaveMoneyRepository saveMoneyRepository, MessageHistoryRepository messageHistoryRepository,
+                          CustomerRepository customerRepository){
         this.modelMapper = modelMapper;
         this.inspeotRepository = inspeotRepository;
         this.awss3Service = awss3Service;
@@ -89,6 +93,7 @@ public class InspectService {
         this.paymentRepositoryCustom = paymentRepositoryCustom;
         this.saveMoneyRepository = saveMoneyRepository;
         this.messageHistoryRepository = messageHistoryRepository;
+        this.customerRepository = customerRepository;
     }
 
     //  통합조회용 - 접수세부 테이블
@@ -658,7 +663,7 @@ public class InspectService {
     }
 
     //  통합조회용 - 카카오톡 메세지 보내기
-    public ResponseEntity<Map<String, Object>> franchiseInspectionMessageSend(Long fiId, String fmMessage, String isIncludeImg, HttpServletRequest request) {
+    public ResponseEntity<Map<String, Object>> franchiseInspectionMessageSend(Long bcId, Long fiId, String fmMessage, String isIncludeImg, HttpServletRequest request) {
         log.info("franchiseInspectionMessageSend 호출");
 
         AjaxResponse res = new AjaxResponse();
@@ -675,6 +680,7 @@ public class InspectService {
         log.info("이미지 여부 : "+isIncludeImg);
         MessageHistory messageHistory = new MessageHistory();
         messageHistory.setFmType("01");
+
         if(fiId != null){
             Optional<Inspeot> optionalInspeot = inspeotRepository.findById(fiId);
             if(optionalInspeot.isPresent()){
@@ -687,15 +693,19 @@ public class InspectService {
                 inspeotRepository.save(optionalInspeot.get());
             }
         }
+
+        Optional<Customer> optionalCustomer = customerRepository.findByBcId(bcId);
+        if (optionalCustomer.isPresent()) {
+            messageHistory.setBcId(optionalCustomer.get());
+        } else {
+            messageHistory.setBcId(null);
+        }
         messageHistory.setFrCode(frCode);
         messageHistory.setBrCode(frbrCode);
         messageHistory.setFmMessage(fmMessage);
-        messageHistory.setFmSuccessYn("N");
         messageHistory.setInsert_id(login_id);
         messageHistory.setInsertDateTime(LocalDateTime.now());
         messageHistoryRepository.save(messageHistory);
-
-
 
         return ResponseEntity.ok(res.success());
     }

@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigInteger;
+
 /**
  * @author Minkyu
  * Date : 2022-03-14
@@ -19,8 +21,12 @@ import lombok.NoArgsConstructor;
 public class RequestDetailInputMessageDto {
     private String frCode;
     private String frNo;
-    private Customer bcId;
+    private BigInteger bcId;
     private Integer frQty; // 건수
     private String bgName; // 대분류명
     private String biName; // 상품명
+
+    public Long getBcId() {
+        return Long.parseLong(String.valueOf(bcId));
+    }
 }
