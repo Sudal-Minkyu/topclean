@@ -898,15 +898,21 @@ textarea {
 	display: flex;
 	flex-wrap: wrap;
 }
+.percent > li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}
 .percent > li + li {
-	margin-left: 1.254rem;
+	margin-left: 1.25rem;
 }
 .percent__title {
 	font-size: 0.875rem;
-	margin-bottom: 0.313rem;
+	margin-right: 0.625rem;
 }
+.percent__input > input[type="text"],
 .percent__input > input[type="number"] {
-	width: 6.25rem;
+	width: 5rem;
 }
 
 
@@ -915,7 +921,6 @@ textarea {
 	display: block;
 	position: relative;
 	width: 100%;
-	padding: 1.25rem;
 	background-color: #fff;
 }
 .float:before {
