@@ -9,6 +9,7 @@ const dtos = {
             fiId: "nr",
             isIncludeImg: "s",
             fmMessage: "s",
+            bcId: "n",
         },
 
         inspectList: { // 통합조회 페이지와 비슷하지만, fdState에 대한 조건이 빠진 형태
@@ -47,6 +48,7 @@ const dtos = {
 
         inspectList: { // 인계페이지와 거의 비슷하지만, estimateDt가 빠지고, fdS6Dt가 들어간 형태
             frRefType: "sr",
+            bcId: "n",
             bcName: "s",
             frYyyymmdd: "s",
             fdId: "n",
@@ -147,7 +149,6 @@ const comms = {
     },
 
     sendKakaoMessage(data) {
-        console.log(data);
         dv.chk(data, dtos.send.franchiseInspectionMessageSend, "검품 카카오 메시지 보내기");
         CommonUI.ajax(urls.sendKakaoMessage, "PARAM", data, function (res) {
             const searchCondition = {
@@ -513,6 +514,7 @@ const trigs = {
                         isIncludeImg: "N",
                         fmMessage: $("#messageField").val(),
                         fiId: wares.selectedInspect.fiId,
+                        bcId: wares.selectedItem.bcId,
                     }
                     if(wares.selectedInspect.fiPhotoYn === "Y") {
                         data.isIncludeImg = $("#isIncludeImg").is(":checked") ? "Y" : "N";

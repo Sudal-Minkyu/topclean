@@ -10,7 +10,7 @@
 		<button class="header__btn" id="openNav">
 			<img src="/assets/images/icon__menu--g.svg" alt="메뉴" /><span>메뉴</span>
 		</button>
-        <button class="header__btn">
+        <button class="header__btn" onclick="drawerOpen()">
             <img src="/assets/images/icon__bank.svg" alt="금고열기"><span>금고</span>
         </button>
 		<button class="header__btn" onclick="logout()">
@@ -78,12 +78,15 @@
 		$(document).ready(function() {
 			$('#openNav').on('click', function() {
 				$('.nav').addClass('active');
-			})
+			});
 			
 			$('#closeNav').on('click', function() {
 				$('.nav').removeClass('active');
-			})
-		})
+			});
+		});
+		function drawerOpen() {
+			CAT.CatCashdrawer();
+		}
 	</script>
 	
 	
