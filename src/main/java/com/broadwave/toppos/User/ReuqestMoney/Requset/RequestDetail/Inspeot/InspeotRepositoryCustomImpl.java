@@ -189,7 +189,7 @@ public class InspeotRepositoryCustomImpl extends QuerydslRepositorySupport imple
         if(frCode != null){
             sb.append("AND c.fr_code = ?3 \n");
         }
-        sb.append("AND (c.fi_type = 'B' OR c.fi_type = 'F') \n");
+        sb.append("AND c.fi_type = 'B' \n");
         sb.append("ORDER BY c.insert_date DESC LIMIT ?2 \n");
 
         Query query = em.createNativeQuery(sb.toString());
