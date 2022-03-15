@@ -5,6 +5,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.PutObjectResult;
 import lombok.extern.slf4j.Slf4j;
 import org.imgscalr.Scalr;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +39,6 @@ public class AWSS3Service {
     public AWSS3Service(AmazonS3 s3Client) {
         this.s3Client = s3Client;
     }
-
 
     // AWS 사진 파일 업로드
     public String imageFileUpload(MultipartFile multipartFile, String storedFileName,String uploadPath) throws IOException {

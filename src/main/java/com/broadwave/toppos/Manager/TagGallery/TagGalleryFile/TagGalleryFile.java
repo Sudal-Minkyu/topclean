@@ -37,9 +37,6 @@ public class TagGalleryFile {
     @Column(name="bf_filename")
     private String bfFilename; // S3파일명
 
-    @Column(name="bf_original_filename")
-    private String bfOriginalFilename; // 원래 파일 명
-
     @Column(name="bf_volume")
     private Long bfVolume; // 파일용량
 

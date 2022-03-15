@@ -748,7 +748,7 @@ public class InspectService {
     }
 
     //  확인품현황 리스트 호출 API
-    public ResponseEntity<Map<String, Object>> branchInspectionCurrentList(Long franchiseId, LocalDateTime fromDt, LocalDateTime toDt, String tagNo, HttpServletRequest request) {
+    public ResponseEntity<Map<String, Object>> branchInspectionCurrentList(Long franchiseId, String fromDt, String toDt, String tagNo, HttpServletRequest request) {
         log.info("branchInspectionCurrentList 호출");
 
 //        log.info("franchiseId : "+franchiseId);

@@ -8,6 +8,8 @@ import com.broadwave.toppos.Manager.TagGallery.TagGalleryDtos.TagGalleryMapperDt
 import com.broadwave.toppos.Manager.TagGallery.TagGalleryFile.TagGalleryFile;
 import com.broadwave.toppos.Manager.TagGallery.TagGalleryFile.TagGalleryFileRepository;
 import com.broadwave.toppos.Manager.TagGallery.TagGalleryRepository;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.PhotoDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailDto;
 import com.broadwave.toppos.common.AjaxResponse;
 import com.broadwave.toppos.common.ResponseErrorCode;
 import io.jsonwebtoken.Claims;
@@ -115,6 +117,7 @@ public class TagGalleryService {
             tagGallery.setBtInputDate(tagGalleryMapperDto.getBtInputDate());
             tagGallery.setBtMaterial(tagGalleryMapperDto.getBtMaterial());
             tagGallery.setBtRemark(tagGalleryMapperDto.getBtRemark());
+            tagGallery.setBrCloseYn("N");
             tagGallery.setInsert_id(login_id);
             tagGallery.setInsertDateTime(LocalDateTime.now());
             saveTagGallery = tagGalleryRepository.save(tagGallery);
@@ -131,23 +134,23 @@ public class TagGalleryService {
                 tagGalleryFile = new TagGalleryFile();
                 tagGalleryFile.setBtId(saveTagGallery);
 
-                // 파일 오리지널 Name
-                String originalFilename = Normalizer.normalize(Objects.requireNonNull(multipartFile.getOriginalFilename()), Normalizer.Form.NFC);
+                // 파일 오리지널 Name(이미지일경우 제외)
+//                String originalFilename = Normalizer.normalize(Objects.requireNonNull(multipartFile.getOriginalFilename()), Normalizer.Form.NFC);
 //                log.info("originalFilename : "+originalFilename);
-                tagGalleryFile.setBfOriginalFilename(originalFilename);
+//                tagGalleryFile.setBfOriginalFilename(originalFilename);
 
                 // 파일 Size
                 long fileSize = multipartFile.getSize();
 //                log.info("fileSize : "+fileSize);
                 tagGalleryFile.setBfVolume(fileSize);
 
-                // 확장자
-                String ext;
-                ext = '.'+originalFilename.substring(originalFilename.lastIndexOf(".") + 1);
+                // 확장자 (이미지일경우 제외)
+//                String ext;
+//                ext = '.'+originalFilename.substring(originalFilename.lastIndexOf(".") + 1);
 //                log.info("ext : "+ext);
 
                 // 파일 중복명 처리
-                String fileName = UUID.randomUUID().toString().replace("-", "")+ext;
+                String fileName = UUID.randomUUID().toString().replace("-", "")+".png";
 //                log.info("fileName : "+fileName);
                 tagGalleryFile.setBfFilename(fileName);
 
@@ -169,11 +172,44 @@ public class TagGalleryService {
         }else{
             log.info("첨부파일이 존재하지 않습니다");
         }
-
-//        data.put("galleryId",saveTagGallery.getBtId());
-
-        return ResponseEntity.ok(res.dataSendSuccess(data));
+        return ResponseEntity.ok(res.success());
     }
+
+    //  NEW 택분실게시판 - 리스트 호출
+    public ResponseEntity<Map<String, Object>> tagGalleryList(String searchString, String filterFromDt, String filterToDt, HttpServletRequest request) {
+        log.info("tagGalleryList 호출");
+
+        log.info("searchString : "+searchString);
+        log.info("filterFromDt : "+filterFromDt);
+        log.info("filterToDt : "+filterToDt);
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        List<HashMap<String,Object>> requestDetailListData = new ArrayList<>();
+        HashMap<String,Object> requestDetailInfo;
+
+//        List<RequestDetailDto> requestDetailList = receiptService.findByRequestTempDetailList(frNo);
+//        for(RequestDetailDto requestDetailDto : requestDetailList){
+//            requestDetailInfo = new HashMap<>();
+//
+//            // 이미지 리스트
+//            List<PhotoDto> photoDtoList = receiptService.findByPhotoDto(requestDetailDto.getId());
+//            requestDetailInfo.put("photoList", photoDtoList);
+//
+//            // 가맹점응답 리스트
+////            List<PhotoDto> photoDtoList = receiptService.findByPhotoDto(requestDetailDto.getId());
+////            requestDetailInfo.put("franchiseCheckList", photoDtoList);
+//
+//            requestDetailListData.add(requestDetailInfo);
+//        }
+//        data.put("requestDetailList",requestDetailListData);
+
+
+
+        return ResponseEntity.ok(res.success());
+    }
+
 
 //    //  택분실게시판 - 글삭제
 //    public ResponseEntity<Map<String, Object>> lostGalleryDelete(Long htId) {

@@ -1035,7 +1035,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
     }
 
     // 확인품현황 querydsl
-    public  List<RequestDetailBranchInspectionCurrentListDto> findByRequestDetailBranchInspectionCurrentList(String brCode, Long frId, LocalDateTime fromDt, LocalDateTime toDt, String tagNo){
+    public  List<RequestDetailBranchInspectionCurrentListDto> findByRequestDetailBranchInspectionCurrentList(String brCode, Long frId, String fromDt, String toDt, String tagNo){
 
         QRequestDetail requestDetail = QRequestDetail.requestDetail;
         QRequest request = QRequest.request;
@@ -1083,17 +1083,17 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         inspeot.fiAddAmt.sum()
                 ));
         query.orderBy(requestDetail.id.asc()).groupBy(requestDetail.id);
-        query.where(requestDetail.fdState.eq("S2"));
+        query.where(inspeot.fiType.eq("B"));
 
         if(frId != 0 || !tagNo.equals("")){
             query.where(franchise.id.eq(frId));
             query.where(requestDetail.fdTag.substring(3,7).likeIgnoreCase("%"+tagNo+"%"));
         }
         if(fromDt != null){
-            query.where(requestDetail.fdS2Time.goe(fromDt));
+            query.where(requestDetail.fdS2Dt.goe(fromDt));
         }
         if(toDt != null){
-            query.where(requestDetail.fdS2Time.loe(toDt));
+            query.where(requestDetail.fdS2Dt.loe(toDt));
         }
         return query.fetch();
     }

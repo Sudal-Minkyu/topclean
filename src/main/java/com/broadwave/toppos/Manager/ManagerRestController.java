@@ -139,8 +139,6 @@ public class ManagerRestController {
 
     //  택분실게시판 - 댓글 작성 and 수정
     @PostMapping("lostNoticeCommentSave")
-    @ApiOperation(value = "택분실게시판" , notes = "댓글작성 및 수정을 요청한다.")
-    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
     public ResponseEntity<Map<String,Object>> lostNoticeCommentSave(@RequestParam("hcId") Long hcId, @RequestParam("htId") Long htId, @RequestParam("type") String type,
                                                                     @RequestParam("comment") String comment, @RequestParam("preId") Long preId,
                                                                     HttpServletRequest request) {
@@ -149,12 +147,22 @@ public class ManagerRestController {
 
 
 //@@@@@@@@@@@@@@@@@@@@@ NEW 택분실게시판 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    //  택분실게시판 - 등록&수정
+    //  NEW 택분실게시판 - 등록&수정
+    @ApiOperation(value = "택분실 등록" , notes = "지사가 택분실을 등록한다 ")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
     @PostMapping("tagGallerySave")
     public ResponseEntity<Map<String,Object>> tagGallerySave(@ModelAttribute TagGalleryMapperDto tagGalleryMapperDto, HttpServletRequest request) throws IOException {
         return tagGalleryService.tagGallerySave(tagGalleryMapperDto, request);
     }
 
+    //  NEW 택분실게시판 - 리스트 호출
+    @ApiOperation(value = "택분실 조회" , notes = "지사가 택분실 리스트 요청한다 ")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
+    @GetMapping("tagGalleryList")
+    public ResponseEntity<Map<String,Object>> tagGalleryList(@RequestParam("searchString")String searchString, @RequestParam("filterFromDt")String filterFromDt,
+                                                             @RequestParam("filterToDt")String filterToDt, HttpServletRequest request) {
+        return tagGalleryService.tagGalleryList(searchString, filterFromDt, filterToDt, request);
+    }
 
 
 
@@ -324,22 +332,7 @@ public class ManagerRestController {
     @GetMapping("branchInspectionCurrentList")
     public ResponseEntity<Map<String,Object>> branchInspectionCurrentList(@RequestParam("franchiseId")Long franchiseId, @RequestParam("filterFromDt")String filterFromDt,
                                                                @RequestParam("filterToDt")String filterToDt, @RequestParam("tagNo")String tagNo, HttpServletRequest request){
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
-        LocalDateTime fromDt = null;
-        if(filterFromDt != null){
-            filterFromDt = filterFromDt+" 00:00:00.000";
-            fromDt = LocalDateTime.parse(filterFromDt, formatter);
-            //            log.info("fromDt :"+fromDt);
-        }
-
-        LocalDateTime toDt = null;
-        if(filterToDt != null){
-            filterToDt = filterToDt+" 23:59:59.999";
-            toDt = LocalDateTime.parse(filterToDt, formatter);
-            //            log.info("toDt :"+toDt);
-        }
-
-        return inspectService.branchInspectionCurrentList(franchiseId, fromDt, toDt, tagNo, request);
+        return inspectService.branchInspectionCurrentList(franchiseId, filterFromDt, filterToDt, tagNo, request);
     }
 
 //@@@@@@@@@@@@@@@@@@@@@ TAG번호조회 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
