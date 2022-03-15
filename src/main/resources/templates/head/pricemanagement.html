@@ -20,157 +20,152 @@
 </th:block>
 
 <div layout:fragment="content" class="content content--padding">
-	<h2 class="content__heading">가격 기초정보</h2>
-	<div class="type" style="width: 800px;">
-		<div class="type__head">
-			<h3 class="type__heading">가격기본정보</h3>
-		</div>
-		<div class="type__content">
-			<form  id="priceManagementForm" enctype="multipart/form-data">
-				<div class="form">
-					<ul class="form__list">
-						<li class="form__item form__item--100">
-							<div class="form__title">가격비율</div>
-							<div class="form__input">
-								<ul class="percent">
-									<li>
-										<div class="percent__title">고급 : </div>
-										<div class="percent__input">
-											<input type="text" id="bcHighRt" name="bcHighRt" />
-											<span>%</span>
-										</div>
+    <section class="section">
+        <article class="article">
+            <div class="article__head">
+                <h3 class="article__heading">가격기본정보</h3>
+            </div>
+            <div class="article__body">
+                <form  id="priceManagementForm" enctype="multipart/form-data"></form>
+                    <table class="c-table">
+                        <colgroup>
+                            <col style="width: 200px;">
+                            <col>
+                            <col style="width: 100px;">
+                            <col style="width: 200px;">
+                            <col>
+                        </colgroup>
+                        <tbody>
+                            <tr>
+                                <th>가격비율</th>
+                                <td colspan="4">
+                                    <ul class="percent">
+                                        <li>
+                                            <div class="percent__title">고급 : </div>
+                                            <div class="percent__input">
+                                                <input type="text" id="bcHighRt" name="bcHighRt" />
+                                                <span>%</span>
+                                            </div>
 
-									</li>
-									<li>
-										<div class="percent__title">명품 : </div>
-										<div class="percent__input">
-											<input type="text" id="bcPremiumRt" name="bcPremiumRt" />
-											<span>%</span>
-										</div>
+                                        </li>
+                                        <li>
+                                            <div class="percent__title">명품 : </div>
+                                            <div class="percent__input">
+                                                <input type="text" id="bcPremiumRt" name="bcPremiumRt" />
+                                                <span>%</span>
+                                            </div>
 
-									</li>
-									<li>
-										<div class="percent__title">아동 : </div>
-										<div class="percent__input">
-											<input type="text" id="bcChildRt" name="bcChildRt" />
-											<span>%</span>
-										</div>
-									</li>
-								</ul>
-							</div>
-						</li>
-						<li class="form__item">
-							<div class="form__title">VIP 고객 할인율</div>
-							<div class="form__input">
-								<div class="percent__input">
-									<input type="text" id="bcVipDcRt" name="bcVipDcRt" />
-									<span>%</span>
-								</div>
-							</div>
-						</li>
-						<li class="form__item">
-							<div class="form__title">VVIP 고객 할인율</div>
-							<div class="form__input">
-								<div class="percent__input">
-									<input type="text" id="bcVvipDcRt" name="bcVvipDcRt" />
-									<span>%</span>
-								</div>
-							</div>
-						</li>
-						<li class="form__item">
-							<div class="form__title">다림질 추가요금</div>
-							<div class="form__input">
-								<div class="percent__input">
-									<input type="text" id="bcPressed" name="bcPressed" />
-									<span>원</span>
-								</div>
-							</div>
-						</li>
-						<li class="form__item">
-							<div class="form__title">표백 추가요금</div>
-							<div class="form__input">
-								<div class="percent__input">
-									<input type="text" id="bcWhitening" name="bcWhitening" />
-									<span>원</span>
-								</div>
-							</div>
-						</li>
-						<li class="form__item">
-							<div class="form__title">발수가공 추가요금</div>
-							<div class="form__input">
-								<div class="percent__input">
-									<input type="text" id="bcWaterRepellent" name="bcWaterRepellent" />
-									<span>원</span>
-								</div>
-							</div>
-						</li>
-						<li class="form__item">
-							<div class="form__title">풀먹임 추가요금</div>
-							<div class="form__input">
-								<div class="percent__input">
-									<input type="text" id="bcStarch" name="bcStarch" />
-									<span>원</span>
-								</div>
-							</div>
-						</li>
-					</ul>
-				</div>
+                                        </li>
+                                        <li>
+                                            <div class="percent__title">아동 : </div>
+                                            <div class="percent__input">
+                                                <input type="text" id="bcChildRt" name="bcChildRt" />
+                                                <span>%</span>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>VIP 고객 할인율</th>
+                                <td>
+                                    <div class="percent__input">
+                                        <input type="text" id="bcVipDcRt" name="bcVipDcRt" />
+                                        <span>%</span>
+                                    </div>
+                                </td>
+                                <th rowspan="5">오염</th>
+                                <th>오염 1cm 이하</th>
+                                <td>
+                                    <div class="percent__input">
+                                        <input type="text" id="bcPollution1" name="bcPollution1" />
+                                        <span>원</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>VVIP 고객 할인율</th>
+                                <td>
+                                    <div class="percent__input">
+                                        <input type="text" id="bcVvipDcRt" name="bcVvipDcRt" />
+                                        <span>%</span>
+                                    </div>
+                                </td>
+                                <th>오염 1cm ~ 3cm 이하</th>
+                                <td>
+                                    <div class="percent__input">
+                                        <input type="text" id="bcPollution2" name="bcPollution2" />
+                                        <span>원</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>다림질 추가요금</th>
+                                <td>
+                                    <div class="percent__input">
+                                        <input type="text" id="bcPressed" name="bcPressed" />
+                                        <span>원</span>
+                                    </div>
+                                </td>
+                                <th>오염 3cm ~ 7cm 이하</th>
+                                <td>
+                                    <div class="percent__input">
+                                        <input type="text" id="bcPollution3" name="bcPollution3" />
+                                        <span>원</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>표백 추가요금</th>
+                                <td>
+                                    <div class="percent__input">
+                                        <input type="text" id="bcWhitening" name="bcWhitening" />
+                                        <span>원</span>
+                                    </div>
+                                </td>
+                                <th>오염 7cm ~ 10cm 이하</th>
+                                <td>
+                                    <div class="percent__input">
+                                        <input type="text" id="bcPollution4" name="bcPollution4" />
+                                        <span>원</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>발수가공 추가요금</th>
+                                <td>
+                                    <div class="percent__input">
+                                        <input type="text" id="bcWaterRepellent" name="bcWaterRepellent" />
+                                        <span>원</span>
+                                    </div>
+                                </td>
+                                <th>오염 10cm 초과</th>
+                                <td>
+                                    <div class="percent__input">
+                                        <input type="text" id="bcPollution5" name="bcPollution5" />
+                                        <span>원</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>풀먹임 추가요금</th>
+                                <td colspan="4">
+                                    <div class="percent__input">
+                                        <input type="text" id="bcStarch" name="bcStarch" />
+                                        <span>원</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
 
-				<div class="form">
-					<h4 class="form__heading">오염</h4>
-					<ul class="form__list">
-						<li class="form__item">
-							<div class="form__title">1cm 이하</div>
-							<div class="form__input">
-								<div class="percent__input">
-									<input type="text" id="bcPollution1" name="bcPollution1" />
-									<span>원</span>
-								</div>
-							</div>
-						</li>
-						<li class="form__item">
-							<div class="form__title">1cm ~ 3cm 이하</div>
-							<div class="form__input">
-								<div class="percent__input">
-									<input type="text" id="bcPollution2" name="bcPollution2" />
-									<span>원</span>
-								</div>
-							</div>
-						</li>
-						<li class="form__item">
-							<div class="form__title">3cm ~ 7cm 이하</div>
-							<div class="form__input">
-								<div class="percent__input">
-									<input type="text" id="bcPollution3" name="bcPollution3" />
-									<span>원</span>
-								</div>
-							</div>
-						</li>
-						<li class="form__item">
-							<div class="form__title">7cm ~ 10cm 이하</div>
-							<div class="form__input">
-								<div class="percent__input">
-									<input type="text" id="bcPollution4" name="bcPollution4" />
-									<span>원</span>
-								</div>
-							</div>
-						</li>
-						<li class="form__item">
-							<div class="form__title">10cm 초과</div>
-							<div class="form__input">
-								<div class="percent__input">
-									<input type="text" id="bcPollution5" name="bcPollution5" />
-									<span>원</span>
-								</div>
-							</div>
-						</li>
-					</ul>
-				</div>
-				<ul class="article__console">
-					<li><button type="button" class="c-button c-button--solid" onclick="onSave()">저장</button></li>
-				</ul>
-			</form>
-		</div>
-	</div>
+                    <ul class="article__console">
+                        <li><button type="button" class="c-button c-button--solid c-button--large" style="width: 200px;" onclick="onSave()">저장</button></li>
+                    </ul>
+                </form>
+            </div>
+        </article>
+    </section>
+
 </div>
 </html>

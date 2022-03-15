@@ -10,7 +10,14 @@
 		 // 가상키보드
 		 let vkey;
 		 $(function () {
-		     vkey = new VKeyboard();
+		    vkey = new VKeyboard();
+
+			$("#exitProgram").on("click", function () {
+				alertCheck("프로그램을 종료 하시겠습니까?");
+				$("#checkDelSuccessBtn").on("click", function () {
+					cAPI.pExit();
+				});
+			});
 		 });
 		 
 		 let targetFieldID = ["userid", "password"];
@@ -54,7 +61,7 @@
 				<label for="idSaveCheck" class="login__check-label">아이디 저장</label>
 			</div>
 			<input class="login__btn" type="button" value="로그인" onclick="loginActive()" />
-            <input type="button" value="프로그램 종료" class="login__btn login__btn--darksolid" />
+            <input id="exitProgram" type="button" value="프로그램 종료" class="login__btn login__btn--darksolid" />
 		</div>
 	</div>
 	

@@ -211,7 +211,7 @@ function setDataIntoGrid(numOfGrid, url, code = false) {
 function itemListPop(rowIdValue) {
     idIndex = rowIdValue;
     filterItemList(2);
-    $('#itemList_popup').addClass('open');
+    $('#itemList_popup').addClass('active');
     AUIGrid.resize(gridId[2]);
 }
 
@@ -232,7 +232,7 @@ function putItemListInfo(item) {
 }
 
 function itemListClose() {
-    $('#itemList_popup').removeClass('open');
+    $('#itemList_popup').removeClass('active');
 }
 
 /* 가맹점 필터링 type 1 : 필터링  type 2 : 필터링 초기화 */

@@ -15,111 +15,126 @@
 </th:block>
 
 <div layout:fragment="content" class="content content--padding">
-	<h2 class="content__heading">특정품목가격 페이지</h2>
+    <section class="section">
+        <article class="article">
+            <div class="article__body">
+                <div class="inquiry">
+                    <div class="inquiry__condition">
+                        <ul>
+                            <li>
+                                <div class="inquiry__title">가맹점 코드</div>
+                                <div class="inquiry__input-tag">
+                                    <input id="s_frCode" type="text" />
+                                </div>
+                            </li>
+                            <li>
+                                <div class="inquiry__title">가맹관리코드</div>
+                                <div class="inquiry__input-tag">
+                                    <input id="s_frRefCode" type="text" />
+                                </div>
+                            </li>
+                            <li>
+                                <div class="inquiry__title">가맹점명</div>
+                                <div class="inquiry__input-tag">
+                                    <input id="s_frName" type="text" />
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="inquiry__button inquiry__button--row">
+                        <button type="button" class="c-button c-button--darksolid" onclick="filterFranchise(1)">조회</button>
+                        <button type="button" class="c-button" onclick="filterFranchise(2)">초기화</button>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <article class="article">
+            <div class="article__body">
+                <div class="float">
+                    <div class="float__content">
+                        <div class="type">
+                            <div class="type__head">
+                                <h3 class="type__heading">계약 가맹점</h3>
+                            </div>
+                            <div class="type__content">
+                                <div class="type__grid">
+                                    <div id="grid_franchise" style="height: 560px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="float__content">
+                        <div class="type">
+                            <div class="type__head">
+                                <h3 class="type__heading">특정가격 적용품목</h3>
+                            </div>
+                            <div class="type__content">
+                                <ul class="article__console article__console--right article__console--non-border">
+                                    <li><button type="button" class="c-button c-button--solid" onclick="addPriceRow()">라인추가</button></li>
+                                    <li><button type="button" class="c-button c-button--darksolid" onclick="deletePriceRow()">라인삭제</button></li>
+                                </ul>
+                                <div class="type__grid">
+                                    <div id="grid_franchisePrice" style="height: 500px;"></div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <ul class="article__console">
+                    <li><button type="button" class="c-button c-button--large c-button--solid" onclick="savePriceList()" style="width: 200px;">저장</button></li>
+                </ul>
+            </div>
+        </article>
+    </section>
+
+
+
 	
-	<div class="float">
-		<div class="float__content">
-			<div class="type">
-				<div class="type__head">
-					<h3 class="type__heading">계약 가맹점</h3>
-				</div>
-				<div class="type__content">
-					<div class="search-form search-form--right">
-						<ul class="search-form__list">
-							<li class="search-form__item">
-								<div class="search-form__title">가맹점 코드</div>
-								<div class="search-form__input">
-									<input id="s_frCode" type="text">
-								</div>
-							</li>
-							<li class="search-form__item">
-								<div class="search-form__title">가맹관리코드</div>
-								<div class="search-form__input">
-									<input id="s_frRefCode" type="text">
-								</div>
-							</li>
-							<li class="search-form__item">
-								<div class="search-form__title">가맹점명</div>
-								<div class="search-form__input">
-									<input id="s_frName" type="text">
-								</div>
-							</li>
-						</ul>
-						<ul class="seach-form__console">
-							<li class="search-form__btn">
-								<button type="button" class="c-button c-button--solid" onclick="filterFranchise(1)">조회</button>
-							</li>
-							<li class="search-form__btn">
-								<button type="button" class="c-button" onclick="filterFranchise(2)">초기화</button>
-							</li>
-						</ul>
-					</div>
-					<div class="type__grid">
-						<div id="grid_franchise" style="height: 560px;"></div>
-					</div>
-				</div>
-			</div>
-		</div>
-		
-		<div class="float__content">
-			<div class="type">
-				<div class="type__head">
-					<h3 class="type__heading">특정가격 적용품목</h3>
-				</div>
-				<div class="type__content">
-					<ul class="article__console article__console--right article__console--non-border">
-						<li><button type="button" class="c-button c-button--solid" onclick="addPriceRow()">라인추가</button></li>
-						<li><button type="button" class="c-button c-button--darksolid" onclick="deletePriceRow()">라인삭제</button></li>
-					</ul>
-					<div class="type__grid">
-						<div id="grid_franchisePrice" style="height: 510px;"></div>
-					</div>
-					<ul class="article__console">
-						<li><button type="button" class="c-button c-button--solid" onclick="savePriceList()">저장</button></li>
-					</ul>
-				</div>
-			</div>
-		</div>
-	</div>
 
     <!-- 상품 팝업 -->
-    <div class="l-popup" id="itemList_popup">
-        <div class="l-popup__container">
-            <div class="l-popup__head">
-                <h3 class="l-popup__heading">상품 선택</h3>
-            </div>
-            <div class="l-popup__content">
-                <div class="l-popup__section">
-                	<div class="search-form search-form--right">
-						<ul class="search-form__list">
-							<li class="search-form__item">
-								<div class="search-form__title">상품코드</div>
-								<div class="search-form__input">
-									<input type="text" id="s_biItemcode" />
-								</div>
-							</li>
-							<li class="search-form__item">
-								<div class="search-form__title">상품명</div>
-								<div class="search-form__input">
-									<input type="text" id="s_biName" />
-								</div>
-							</li>
-						</ul>
-						<ul class="seach-form__console">
-							<li class="search-form__btn">
-								<button class="c-button c-button--darksolid" type="button" onclick="filterItemList(1)">조회</button>
-							</li>
-						</ul>
-					</div>
-                </div>
-                <div class="l-popup__section">
-                    <div id="grid_itemList" style="height: 400px;"></div>
+    <div class="pop" id="itemList_popup">
+        <div class="pop__box">
+            <div class="pop__article">
+                <h3 class="pop__article-header">상품 선택</h3>
+                <div class="inquiry">
+                    <div class="inquiry__condition">
+                        <ul>
+                            <li>
+                                <div class="inquiry__title">상품코드</div>
+                                <div class="inquiry__input-tag">
+                                    <input type="text" id="s_biItemcode" />
+                                </div>
+                            </li>
+                            <li>
+                                <div class="inquiry__title">상품명</div>
+                                <div class="inquiry__input-tag">
+                                    <input type="text" id="s_biName" />
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="inquiry__button">
+                        <button class="c-button c-button--darksolid c-button--small" type="button" onclick="filterItemList(1)">조회</button>
+                    </div>
                 </div>
             </div>
-            <div class="l-popup__console">
-				<button onclick="itemListClose()" class="c-button c-button--red">취소</button>
-				<button onclick="itemListSelect()" class="c-button c-button--darksolid">선택</button>
-			</div>
+
+            <div class="pop__article">
+                <div id="grid_itemList" style="height: 400px;"></div>
+            </div>
+            
+            <ul class="pop__console">
+                <li>
+                    <button onclick="itemListClose()" class="c-button">취소</button>
+                </li>
+                <li>
+                    <button onclick="itemListSelect()" class="c-button c-button--dark">선택</button>
+                </li>
+            </ul>
         </div>
     </div>
 
