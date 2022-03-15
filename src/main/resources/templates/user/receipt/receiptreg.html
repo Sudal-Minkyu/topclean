@@ -49,6 +49,10 @@
 
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
+    <script type="module">
+        import { calculateMainPrice } from "../assets/js/toppos/module/m_moneyProblem.js";
+        window.calculateMainPrice = calculateMainPrice;
+    </script>
     <script src="/assets/js/toppos/user/receipt/receiptreg.js"></script>
     <script src="/assets/js/toppos/CATPayment.js"></script>
     <!-- lightbox 추가 -->

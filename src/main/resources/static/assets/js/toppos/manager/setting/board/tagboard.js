@@ -16,8 +16,8 @@ const dtos = {
             btInputDate: "s",
             btMaterial: "s",
             btRemark: "s",
-            addPhotoList: "", // 새로 등록된 사진들의 리스트
-            deletePhotoList: "",
+            addPhotoList: "", // 새로 등록된 사진파일들의 리스트
+            deletePhotoList: "", // 지울 사진 id들의 리스트
         }
     },
     receive: {
@@ -37,7 +37,6 @@ const dtos = {
                 frName: "s",
                 brCompleteYn: "s", // 확인완료시 Y가 된다.
             },
-            
         }
     }
 };
@@ -56,6 +55,7 @@ const comms = {
             console.log(res);
         });
     },
+
     putNewTaglost(formData) {
         const testObj = Object.fromEntries(formData);
         console.log(testObj);
@@ -108,6 +108,10 @@ const grids = {
                 }, {
                     dataField: "btMaterial",
                     headerText: "소재",
+                    style: "grid_textalign_left",
+                }, {
+                    dataField: "btRemark",
+                    headerText: "특이사항",
                     style: "grid_textalign_left",
                 }, {
                     dataField: "thumbnail1", // src 내용이 와야 함
@@ -258,6 +262,7 @@ $(function() { // 페이지가 로드되고 나서 실행
 /* 페이지가 로드되고 나서 실행 될 코드들을 담는다. */
 function onPageLoad() {
     grids.f.initialization();
+    grids.f.create();
     enableDatepicker();
     trigs.basic();
 

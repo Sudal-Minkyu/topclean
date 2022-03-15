@@ -1,4 +1,3 @@
-
 const dtos = {
     send: {
         영수증발행: { // 사용메뉴에 따라 frId나 frNo 둘중 하나가 식별자로 보내질 수 있음.
@@ -773,7 +772,7 @@ function loadTempSave(frNo) {
         AUIGrid.clearGridData(gridId[0]);
         AUIGrid.setGridData(gridId[0], req.sendData.requestDetailList);
         $("#tempSaveListPop").removeClass("active");
-        calculateMainPrice();
+        calculateMainPrice(AUIGrid.getGridData(gridId[0]), AUIGrid.getRemovedItems(gridId[0]));
         checkNum = "1";
     });
 }
@@ -825,7 +824,7 @@ function onPutCustomer() {
     $("#class02, #class03").parents("li").css("display", "none");
     $("#class" + selectedCustomer.bcGrade).parents("li").css("display", "block");
     AUIGrid.clearGridData(gridId[0]);
-    calculateMainPrice();
+    calculateMainPrice(AUIGrid.getGridData(gridId[0]), AUIGrid.getRemovedItems(gridId[0]));
 }
 
 /* 하단의 세탁물 종류 버튼 클릭시 해당 세탁물 대분류 코드를 가져와 팝업을 띄운다. */
@@ -943,40 +942,6 @@ function ceil100(num) {
     }
     return parseInt(num) + ceilAmount;
 }
-
-function calculateMainPrice() {
-    const items = AUIGrid.getGridData(gridId[0]);
-    let fdQty = 0;
-    let fdNormalAmt = 0;
-    let changeAmt = 0;
-    let fdRequestAmt = 0;
-
-    items.forEach(el => {
-        fdQty++;
-        if(el.fdRetryYn === "N") {
-            fdNormalAmt += el.fdNormalAmt * el.fdQty;
-            changeAmt += (el.fdPressed + el.fdWhitening + el.fdWaterRepellent + el.fdStarch
-                + el.fdPollution + el.fdAdd1Amt + el.fdRepairAmt -el.fdDiscountAmt) * el.fdQty;
-            fdRequestAmt += el.fdRequestAmt;
-        }
-    });
-    const softDeleteItems = AUIGrid.getRemovedItems(gridId[0]);
-    softDeleteItems.forEach(el => {
-        fdQty--;
-        if(el.fdRetryYn === "N") {
-            fdNormalAmt -= el.fdNormalAmt * el.fdQty;
-            changeAmt -= (el.fdPressed + el.fdWhitening + el.fdWaterRepellent + el.fdStarch
-                + el.fdPollution + el.fdAdd1Amt + el.fdRepairAmt -el.fdDiscountAmt) * el.fdQty;
-            fdRequestAmt -= el.fdRequestAmt;
-        }
-    });
-
-    $("#totFdQty").html(fdQty.toLocaleString());
-    $("#totFdNormalAmount").html(fdNormalAmt.toLocaleString());
-    $("#totChangeAmount").html(changeAmt.toLocaleString());
-    $("#totFdRequestAmount").html(fdRequestAmt.toLocaleString());
-}
-
 
 /* 웹 카메라 촬영 스트림이 담긴다. */
 let cameraStream;
@@ -1321,7 +1286,7 @@ function putItemIntoGrid() {
         setNextTag(currentRequest.fdTag);
     }
 
-    calculateMainPrice();
+    calculateMainPrice(AUIGrid.getGridData(gridId[0]), AUIGrid.getRemovedItems(gridId[0]));
     onCloseAddOrder();
 }
 
@@ -1512,7 +1477,7 @@ function onRemoveOrder() {
     }else{
         AUIGrid.removeRow(gridId[0], "selectedIndex");
     }
-    calculateMainPrice();
+    calculateMainPrice(AUIGrid.getGridData(gridId[0]), AUIGrid.getRemovedItems(gridId[0]));
 }
 
 function setNextTag(tag) {
@@ -1661,7 +1626,7 @@ function onRepeatRequest() {
         items[0].item["fdTag"] = nextFdTag.replace(/[^0-9a-zA-Z]/g, "");
         AUIGrid.addRow(gridId[0], items[0].item, "last");
         setNextTag(items[0].item.fdTag);
-        calculateMainPrice();
+        calculateMainPrice(AUIGrid.getGridData(gridId[0]), AUIGrid.getRemovedItems(gridId[0]));
     }
 }
 
@@ -1672,7 +1637,7 @@ function changeQty() {
         + tempItem.fdAdd1Amt - tempItem.fdDiscountAmt) * tempItem.fdQty;
     tempItem.fdTotAmt = tempItem.fdRequestAmt;
     AUIGrid.updateRowsById(gridId[0], tempItem);
-    calculateMainPrice();
+    calculateMainPrice(AUIGrid.getGridData(gridId[0]), AUIGrid.getRemovedItems(gridId[0]));
 }
 
 /* 접수완료시 호출 API */
@@ -1997,7 +1962,7 @@ function onClosePayment() {
 function closePaymentPop() {
     AUIGrid.clearGridData(gridId[0]);
     AUIGrid.clearGridData(gridId[3]);
-    calculateMainPrice();
+    calculateMainPrice(AUIGrid.getGridData(gridId[0]), AUIGrid.getRemovedItems(gridId[0]));
     $("#paymentPop").removeClass("active");
     // const url = "/api/user/"
     // CommonUI.ajax(url, "PARAM", {frNo: initialData.etcData.frNo}, function (res) { // 접수 완료 카카오 메시지를 보낸다.
