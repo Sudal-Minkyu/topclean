@@ -7,7 +7,7 @@ const dtos = {
     send: {
         branchTagSearchList: {
             tagNo: "s",
-            franchiseId: "n", // 가맹점 Id
+            franchiseId: "", // 가맹점 Id
         },
     },
     receive: {

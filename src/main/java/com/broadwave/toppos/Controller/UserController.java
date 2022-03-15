@@ -18,18 +18,18 @@ public class UserController {
     // 가맹점주전용 사인창
     @RequestMapping("sign")
     public String sign(){
-        return "user/sign";
+        return "user/customer/sign";
     }
 
     // 운동화 세탁 접수 동의서
     @RequestMapping("consent")
     public String consent(){
-        return "user/consent";
+        return "user/receipt/consent";
     }
     // 운동화 세탁 접수 동의서 - 사인
     @RequestMapping("consentsign")
     public String consentsign(){
-        return "user/consentsign";
+        return "user/receipt/consentsign";
     }
     
     // 가맹점주 메인페이지
@@ -71,19 +71,13 @@ public class UserController {
     // 나의 정보 관리
     @RequestMapping("mypage")
     public String mypage(){
-        return "user/mypage";
+        return "user/setting/mypage";
     }
     
     // 외부연계
     @RequestMapping("externallink")
     public String externallink(){
-        return "user/externallink";
-    }
-    
-    // 상품 순서 관리 - 상품 분류
-    @RequestMapping("classification")
-    public String classification(){
-        return "user/classification";
+        return "user/receipt/externallink";
     }
     
     // 통합조회
@@ -95,25 +89,25 @@ public class UserController {
     // 검품이력 조회 및 메세지
     @RequestMapping("inspect")
     public String inspect(){
-        return "user/inspect";
+        return "user/receipt/inspect";
     }
 
     // 상품 순서 관리 - 상품 분류
     @RequestMapping("itemsort")
     public String itemsort(){
-        return "user/receipt/itemsort";
+        return "user/setting/itemsort";
     }
     
     // 일일 영업일보
     @RequestMapping("dailystat")
     public String businessday(){
-        return "user/dailystat";
+        return "user/manage/dailystat";
     }
 
     // 수기마감(일마감)
     @RequestMapping("closed")
     public String closed(){
-        return "user/closed";
+        return "user/manage/closed";
     }
     
     // 입출고
@@ -141,32 +135,13 @@ public class UserController {
         return "user/inandout/returnit";
     }
 
-    // 게시판
-    // 게시판 리스트
-    @RequestMapping("boardlist")
-    public String boardlist(){
-        return "user/board/list";
-    }
-
-    // 게시판 보기
-    @RequestMapping("boardview")
-    public String boardview(){
-        return "user/board/view";
-    }
-
-    // 댓글
-    @RequestMapping("reply")
-    public String reply(){
-        return "user/board/reply";
-    }
-
     // 택분실
-    // 게시판 리스트
     @RequestMapping("taglost")
     public String taglost() {
         return "user/board/taglost";
     }
 
+    // 게시판 리스트
     //공지사항
     @RequestMapping("noticelist")
     public String noticelist() {
