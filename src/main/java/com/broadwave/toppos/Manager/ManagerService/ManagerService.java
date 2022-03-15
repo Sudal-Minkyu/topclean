@@ -122,7 +122,7 @@ public class ManagerService {
         log.info("금일날짜 : "+nowDate);
         List<FranchiseManagerListDto> franchiseManagerListDtos = franchiseRepository.findByManagerInFranchise(brCode);
         List<UserLoginLogDto> chartFranchOpenListDtos = userLoginLogRepository.findByFranchiseLog(brCode, nowDate);
-        List<InspeotMainListDto> inspeotMainListDtos = inspeotRepositoryCustom.findByInspeotB1(brCode, 3);
+        List<InspeotMainListDto> inspeotMainListDtos = inspeotRepositoryCustom.findByInspeotB1(brCode, 3, null);
 
         int franchiseAll = franchiseManagerListDtos.size();
         int franchiseLog = chartFranchOpenListDtos.size();

@@ -169,7 +169,7 @@ public class InspeotRepositoryCustomImpl extends QuerydslRepositorySupport imple
 
     // 메인페이지용 검품 리스트 호출쿼리
     @Override
-    public List<InspeotMainListDto> findByInspeotB1(String brCode, Integer limit){
+    public List<InspeotMainListDto> findByInspeotB1(String brCode, Integer limit, String frCode){
 
         EntityManager em = getEntityManager();
         StringBuilder sb = new StringBuilder();
@@ -186,13 +186,18 @@ public class InspeotRepositoryCustomImpl extends QuerydslRepositorySupport imple
         if(limit==3){
             sb.append("AND IFNULL(b.fd_s2_dt,'x') <>'x' \n");
         }
+        if(frCode != null){
+            sb.append("AND c.fr_code = ?3 \n");
+        }
         sb.append("AND (c.fi_type = 'B' OR c.fi_type = 'F') \n");
         sb.append("ORDER BY c.insert_date DESC LIMIT ?2 \n");
 
         Query query = em.createNativeQuery(sb.toString());
         query.setParameter(1, brCode);
         query.setParameter(2, limit);
-
+        if(frCode != null){
+            query.setParameter(3, frCode);
+        }
         return jpaResultMapper.list(query, InspeotMainListDto.class);
 
     }

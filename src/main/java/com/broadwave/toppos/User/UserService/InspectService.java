@@ -771,8 +771,8 @@ public class InspectService {
     }
 
     // 메인페이지용 검품 리스트 호출 API
-    public List<InspeotMainListDto> infindByInspeotB1(String frbrCode, int limit) {
-        return inspeotRepositoryCustom.findByInspeotB1(frbrCode, limit);
+    public List<InspeotMainListDto> findByInspeotB1(String frbrCode, int limit, String frCode) {
+        return inspeotRepositoryCustom.findByInspeotB1(frbrCode, limit, frCode);
     }
 
 }

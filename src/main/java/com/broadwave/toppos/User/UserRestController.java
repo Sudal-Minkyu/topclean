@@ -142,7 +142,7 @@ public class UserRestController {
 
             UserIndexDto userIndexDto = userService.findByUserInfo(login_id, frCode);
             List<BranchCalendarListDto> branchCalendarListDtos = calendarService.branchCalendarSlidingDtoList(frbrCode, date);
-            List<InspeotMainListDto> inspeotMainListDtos = inspectService.infindByInspeotB1(frbrCode, 3);
+            List<InspeotMainListDto> inspeotMainListDtos = inspectService.findByInspeotB1(frbrCode, 3, frCode);
 
             List<String> calendar = new ArrayList<>();
             if(branchCalendarListDtos.size()!=0){
