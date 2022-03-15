@@ -435,6 +435,18 @@ textarea {
 	align-items: center;
 	height: 3.125rem;
 	padding: 0.625rem;
+    color: #333;
+}
+.main__board-frname {
+    width: 7.5rem;
+}
+.main__board-bcname,
+.main__board-afttag,
+.main__board-confirm {
+    width: 5rem;
+}
+.main__board-bgname {
+    flex: 1;
 }
 .main__board-title {
 	flex: 1;

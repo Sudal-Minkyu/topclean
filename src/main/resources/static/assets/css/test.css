@@ -905,6 +905,7 @@ textarea {
 	align-items: center;
 	height: 3.125rem;
 	padding: 0.625rem;
+    color: #333
 }
 .main__board-badge,
 .main__board-time {
@@ -975,6 +976,14 @@ textarea {
 }
 .stamp.blue {
 	color: #2f73ea;
+}
+.main__board-bcname,
+.main__board-afttag,
+.main__board-confirm {
+    width: 5rem;
+}
+.main__board-bgname {
+    flex: 1;
 }
 
 /* marquee */
