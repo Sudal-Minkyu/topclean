@@ -56,7 +56,7 @@ const comms = {
 
             if(userIndexDto.brName===null){
                 $("#brName").text("무소속");
-            }else{
+            } else {
                 $("#brName").text(userIndexDto.brName);
             }
             $("#frName").text(userIndexDto.frName+" 점");
