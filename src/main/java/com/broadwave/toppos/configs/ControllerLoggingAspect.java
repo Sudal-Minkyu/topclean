@@ -16,7 +16,7 @@ import org.springframework.util.StopWatch;
 @Aspect
 @Component
 @Slf4j
-public class RestControllerLoggingAspect {
+public class ControllerLoggingAspect {
     @Around("execution(* com.broadwave..*RestController.*(..))")
     public Object restControllerLogging(ProceedingJoinPoint pjp) throws Throwable {
 
