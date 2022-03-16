@@ -638,8 +638,12 @@ gridProp[3] = {
 
 
 // 1. 임시저장 삭제여부 묻기
-function onRemoveTempSave(){
-    alertDeleteCheck("해당 임시저장을 삭제하시겠습니까?");
+function onRemoveTempSave(e){
+    alertCheck("해당 임시저장을 삭제하시겠습니까?");
+    $("#checkDelSuccessBtn").on("click", function () {
+        ajaxRemoveTempSave(e.item.frNo);
+    });
+
 }
 
 // 2. 삭제로식 실행
@@ -658,9 +662,12 @@ function ajaxRemoveTempSave(frNo) {
     const params = {
         frNo: frNo
     };
-    CommonUI.ajax(gridCreateUrl[1], "PARAM", params, function () {
+    console.log(params);
+    CommonUI.ajax(gridCreateUrl[1], "PARAM", params, function (res) {
+        console.log(res);
         // 성공하면 임시저장 마스터테이블 조회
         setDataIntoGrid(2, gridCreateUrl[2]);
+        alertSuccess("임시저장이 삭제되었습니다.");
     });
 }
 
@@ -760,8 +767,15 @@ function onReadTempSave() {
 }
 
 function onSelectTempSave() {
-    const frNo = AUIGrid.getSelectedRows(gridId[2])[0].frNo;
-    loadTempSave(frNo);
+    const selectedSave = AUIGrid.getSelectedRows(gridId[2])[0];
+    if(selectedSave) {
+        const frNo = AUIGrid.getSelectedRows(gridId[2])[0].frNo;
+        loadTempSave(frNo);
+    } else {
+        // 오류 출력
+        alertCaution("불러올 내역을 선택해 주세요", 1);
+    }
+
 }
 
 function loadTempSave(frNo) {
@@ -884,64 +898,7 @@ function onSelectBiItem(biCode, price) {
     calculateItemPrice();
 }
 
-function calculateItemPrice() {
-    const ap = initialData.addCostData;
-    const gradePrice = [100, 100, ap.bcHighRt, ap.bcPremiumRt, ap.bcChildRt];
-    const gradeDiscount = [0, 0, ap.bcVipDcRt, ap.bcVvipDcRt];
-    currentRequest.fdPriceGrade = $("input[name='fdPriceGrade']:checked").val();
-    currentRequest.fdDiscountGrade = $("input[name='fdDiscountGrade']:checked").val();
 
-    currentRequest.fdPressed = $("#fdPress").is(":checked") ?
-            parseInt(initialData.addCostData.bcPressed) : 0;
-    currentRequest.fdWhitening = $("#fdWhitening").is(":checked") ?
-        parseInt(initialData.addCostData.bcWhitening) : 0;
-    currentRequest.fdWaterRepellent = $("#fdWaterRepellent").is(":checked") ?
-        parseInt(initialData.addCostData.bcWaterRepellent) : 0;
-    currentRequest.fdStarch = $("#fdStarch").is(":checked") ?
-        parseInt(initialData.addCostData.bcStarch) : 0;
-    currentRequest.fdPollutionLevel = $("input[name='cleanDirt']:checked").first().val() | 0;
-    currentRequest.fdPollution = parseInt(initialData.addCostData["bcPollution" + currentRequest.fdPollutionLevel]) | 0;
-
-    currentRequest.fdRepairAmt = ceil100(currentRequest.fdRepairAmt);
-    currentRequest.fdAdd1Amt = ceil100(currentRequest.fdAdd1Amt);
-
-    currentRequest.totAddCost = currentRequest.fdPressed + currentRequest.fdWhitening + currentRequest.fdWaterRepellent
-            + currentRequest.fdStarch + currentRequest.fdPollution + currentRequest.fdAdd1Amt + currentRequest.fdRepairAmt;
-
-    currentRequest.fdNormalAmt = ceil100(currentRequest.fdOriginAmt * gradePrice[currentRequest.fdPriceGrade] / 100);
-    let sumAmt = ceil100((currentRequest.fdNormalAmt + currentRequest.totAddCost)
-        * (100 - gradeDiscount[currentRequest.fdDiscountGrade]) / 100);
-    currentRequest.fdRequestAmt = sumAmt * currentRequest.fdQty;
-    currentRequest.fdTotAmt = currentRequest.fdRequestAmt;
-    currentRequest.fdDiscountAmt = currentRequest.fdNormalAmt + currentRequest.totAddCost - sumAmt;
-
-    if($("#fdRetry").is(":checked")) {
-        currentRequest.fdRetryYn = "Y";
-        currentRequest.fdNormalAmt = 0;
-        currentRequest.totAddCost = 0;
-        currentRequest.fdDiscountAmt = 0;
-        currentRequest.fdRequestAmt = 0;
-        currentRequest.fdTotAmt = 0;
-        sumAmt = 0;
-    }else{
-        currentRequest.fdRetryYn = "N";
-    }
-
-    $("#fdNormalAmt").html(currentRequest.fdNormalAmt.toLocaleString());
-    $("#totAddCost").html(currentRequest.totAddCost.toLocaleString());
-    $("#fdDiscountAmt").html(currentRequest.fdDiscountAmt.toLocaleString());
-    $("#sumAmt").html(sumAmt.toLocaleString());
-}
-
-function ceil100(num) {
-    num = num.toString();
-    let ceilAmount = 0;
-    if(num.length >= 2 && num.substr(num.length - 2, 2) !== "00") {
-        num = num.substr(0, num.length - 2) + "00";
-        ceilAmount = 100;
-    }
-    return parseInt(num) + ceilAmount;
-}
 
 /* 웹 카메라 촬영 스트림이 담긴다. */
 let cameraStream;
