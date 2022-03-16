@@ -105,14 +105,14 @@
 											<div class="form__title">정산비율</div>
 											<div class="form__input">
 												<ul class="percent">
-													<li>
+													<!-- <li>
 														<div class="percent__title">본사 : </div>
 														<div class="percent__input">
 															<input type="number" id="brCarculateRateHq" name="brCarculateRateHq" onkeyup="validateNumber(this, 1)" onchange="validateNumber(this, 1)"/>
 															<span>%</span>
 														</div>
 														
-													</li>
+													</li> -->
 													<li>
 														<div class="percent__title">지사 : </div>
 														<div class="percent__input">
@@ -122,9 +122,31 @@
 														
 													</li>
 													<li>
-														<div class="percent__title">가맹 : </div>
+														<div class="percent__title">가맹점 : </div>
 														<div class="percent__input">
 															<input type="number" id="brCarculateRateFr" name="brCarculateRateFr" onkeyup="validateNumber(this, 1)" onchange="validateNumber(this, 1)"/>
+															<span>%</span>
+														</div>
+													</li>
+												</ul>
+											</div>
+										</li>
+										<li class="form__item">
+											<div class="form__title">로열티율</div>
+											<div class="form__input">
+												<ul class="percent">
+													<li>
+														<div class="percent__title">지사 : </div>
+														<div class="percent__input">
+															<input type="number" id="brRoyaltyRateBr" name="brRoyaltyRateBr"/>
+															<span>%</span>
+														</div>
+														
+													</li>
+													<li>
+														<div class="percent__title">가맹점 : </div>
+														<div class="percent__input">
+															<input type="number" id="brRoyaltyRateFr" name="brRoyaltyRateFr"/>
 															<span>%</span>
 														</div>
 													</li>
@@ -457,17 +479,9 @@
 										</div>
 									</li>
 									<li class="form__item">
-										<div class="form__title">정산비율</div>
+										<div class="form__title">정산비율 참조표</div>
 										<div class="form__input">
 											<ul class="percent">
-												<li>
-													<div class="percent__title">본사 : </div>
-													<div class="percent__input">
-														<input id="bot_brCarculateRateHq" type="number" readonly>
-														<span>%</span>
-													</div>
-													
-												</li>
 												<li>
 													<div class="percent__title">지사 : </div>
 													<div class="percent__input">
@@ -476,9 +490,72 @@
 													</div>
 												</li>
 												<li>
-													<div class="percent__title">가맹 : </div>
+													<div class="percent__title">가맹점 : </div>
 													<div class="percent__input">
 														<input id="bot_brCarculateRateFr" type="number" readonly>
+														<span>%</span>
+													</div>
+												</li>
+											</ul>
+										</div>
+									</li>
+									<li class="form__item">
+										<div class="form__title"></div>
+										<div class="form__input">
+											<ul class="percent">
+												<li>
+													<div class="percent__title">지사 로열티 : </div>
+													<div class="percent__input">
+														<input id="bot_brRoyaltyRateBr" type="number" readonly>
+														<span>%</span>
+													</div>
+												</li>
+												<li>
+													<div class="percent__title">가맹점 로열티 : </div>
+													<div class="percent__input">
+														<input id="bot_brRoyaltyRateFr" type="number" readonly>
+														<span>%</span>
+													</div>
+												</li>
+											</ul>
+										</div>
+									</li>
+									<li class="form__item">
+										<div class="form__title">적용 정산비율</div>
+										<div class="form__input">
+											<ul class="percent">
+												<li>
+													<div class="percent__title">지사 : </div>
+													<div class="percent__input">
+														<input id="bot_frCarculateRateBr" type="number" onkeyup="validateNumber(this, 1)" onchange="validateNumber(this, 1)">
+														<span>%</span>
+													</div>
+												</li>
+												<li>
+													<div class="percent__title">가맹점 : </div>
+													<div class="percent__input">
+														<input id="bot_frCarculateRateFr" type="number" onkeyup="validateNumber(this, 1)" onchange="validateNumber(this, 1)">
+														<span>%</span>
+													</div>
+												</li>
+											</ul>
+										</div>
+									</li>
+									<li class="form__item">
+										<div class="form__title"></div>
+										<div class="form__input">
+											<ul class="percent">
+												<li>
+													<div class="percent__title">지사 로열티 : </div>
+													<div class="percent__input">
+														<input id="bot_frRoyaltyRateBr" type="number">
+														<span>%</span>
+													</div>
+												</li>
+												<li>
+													<div class="percent__title">가맹점 로열티 : </div>
+													<div class="percent__input">
+														<input id="bot_frRoyaltyRateFr" type="number">
 														<span>%</span>
 													</div>
 												</li>

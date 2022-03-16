@@ -368,16 +368,22 @@ function branchSave(){
         return false;
     }
 
-    const valCalRateHq = $("#brCarculateRateHq").val() ? $("#brCarculateRateHq").val() : 0;
     const valCalRateBr = $("#brCarculateRateBr").val() ? $("#brCarculateRateBr").val() : 0;
     const valCalRateFr = $("#brCarculateRateFr").val() ? $("#brCarculateRateFr").val() : 0;
-    const sumCalRate = parseFloat(valCalRateHq) + parseFloat(valCalRateBr) + parseFloat(valCalRateFr);
+    const sumCalRate = parseFloat(valCalRateBr) + parseFloat(valCalRateFr);
     if(sumCalRate !== 100) {
         alertCaution("정산비율의 합은 100 이어야 합니다." +
-            "<br> 현재값 :" + parseFloat(sumCalRate.toFixed(2))
-            + "&nbsp; 차이 :" + parseFloat((100 - sumCalRate).toFixed(2)), 1);
+            "<br>현재값 :" + parseFloat(sumCalRate.toFixed(2))
+            +" &nbsp 차이 :" + parseFloat((sumCalRate - 100).toFixed(2)), 1);
         return false;
     }
+
+    if($("#brRoyaltyRateBr").val() === "" || $("#brRoyaltyRateFr").val() === "") {
+        alertCaution("로열티율을 입력해 주세요.", 1);
+        return false;
+    }
+
+
 
     const formData = new FormData(document.getElementById('brFormData'));
     const url = "/api/head/branchSave";
@@ -501,10 +507,33 @@ function assignmentSave() {
         return false;
     }
 
+    const valCalRateBr = $("#bot_frCarculateRateBr").val() ? $("#bot_frCarculateRateBr").val() : 0;
+    const valCalRateFr = $("#bot_frCarculateRateFr").val() ? $("#bot_frCarculateRateFr").val() : 0;
+    const sumCalRate = parseFloat(valCalRateBr) + parseFloat(valCalRateFr);
+    if(sumCalRate !== 100) {
+        alertCaution("정산비율의 합은 100 이어야 합니다." +
+            "<br>현재값 :" + parseFloat(sumCalRate.toFixed(2))
+            +"<br>차이 :" + parseFloat((sumCalRate - 100).toFixed(2)), 1);
+        return false;
+    }
+
+    const valRoyalRateBr =  $("#bot_frRoyaltyRateBr").val() ? $("#bot_frRoyaltyRateBr").val() : 0;
+    const valRoyalRateFr =  $("#bot_frRoyaltyRateFr").val() ? $("#bot_frRoyaltyRateFr").val() : 0;
+
+    if($("#bot_frRoyaltyRateBr").val() === "" || $("#bot_frRoyaltyRateFr").val() === "") {
+        alertCaution("로열티율을 입력해 주세요.", 1);
+        return false;
+    }
+
     const formData = new FormData();
     formData.append("frCode", frCode);
     formData.append("brCode", brCode);
     formData.append("bot_brAssignState", brAssignState);
+    formData.append("bot_frCarculateRateBr", valCalRateBr);
+    formData.append("bot_frCarculateRateFr", valCalRateFr);
+    formData.append("bot_frRoyaltyRateBr", valRoyalRateBr);
+    formData.append("bot_frRoyaltyRateFr", valRoyalRateFr);
+
     const url = "/api/head/franchiseAssignment";
 
     CommonUI.ajax(url, "POST", formData, function(req) {
@@ -532,9 +561,10 @@ function setFieldData(numOfGrid, item) {
             $("#brContractFromDt").val(item.brContractFromDt);
             $("#brContractToDt").val(item.brContractToDt);
             $("#brContractState").val(item.brContractState);
-            $("#brCarculateRateHq").val(item.brCarculateRateHq);
             $("#brCarculateRateBr").val(item.brCarculateRateBr);
             $("#brCarculateRateFr").val(item.brCarculateRateFr);
+            $("#brRoyaltyRateBr").val(item.brRoyaltyRateBr);
+            $("#brRoyaltyRateFr").val(item.brRoyaltyRateFr);
             $("#brRemark").val(item.brRemark);
             CommonUI.restrictDate(dateAToBTargetIds[0][0], dateAToBTargetIds[0][1], false);
             CommonUI.restrictDate(dateAToBTargetIds[0][0], dateAToBTargetIds[0][1], true);
@@ -574,9 +604,14 @@ function setFieldData(numOfGrid, item) {
             $("#bot_brAssignState").val(item.brAssignState);
             $("#bot_brCode").val(item.brCode);
             $("#bot_brName").val(item.brName);
-            $("#bot_brCarculateRateHq").val(item.brCarculateRateHq);
             $("#bot_brCarculateRateBr").val(item.brCarculateRateBr);
             $("#bot_brCarculateRateFr").val(item.brCarculateRateFr);
+            $("#bot_brRoyaltyRateBr").val(item.brRoyaltyRateBr);
+            $("#bot_brRoyaltyRateFr").val(item.brRoyaltyRateFr);
+            $("#bot_frCarculateRateBr").val(item.frCarculateRateBr);
+            $("#bot_frCarculateRateFr").val(item.frCarculateRateFr);
+            $("#bot_frRoyaltyRateBr").val(item.frRoyaltyRateBr);
+            $("#bot_frRoyaltyRateFr").val(item.frRoyaltyRateFr);
             break;
     }
 }
@@ -592,9 +627,14 @@ function resetFieldData3() {
         brAssignState: "01",
         brCode: "",
         brName: "",
-        brCarculateRateHq: "",
         brCarculateRateBr: "",
         brCarculateRateFr: "",
+        brRoyaltyRateBr: "",
+        brRoyaltyRateFr: "",
+        frCarculateRateBr: "",
+        frCarculateRateFr: "",
+        frRoyaltyRateBr: "",
+        frRoyaltyRateFr: "",
     }
     setFieldData(3, item);
 }
@@ -718,9 +758,10 @@ function branchSelect() {
 function putBranchInfo(item) {
     $("#bot_brCode").val(item.brCode);
     $("#bot_brName").val(item.brName);
-    $("#bot_brCarculateRateHq").val(item.brCarculateRateHq);
     $("#bot_brCarculateRateBr").val(item.brCarculateRateBr);
     $("#bot_brCarculateRateFr").val(item.brCarculateRateFr);
+    $("#bot_brRoyaltyRateBr").val(item.brRoyaltyRateBr);
+    $("#bot_brRoyaltyRateFr").val(item.brRoyaltyRateFr);
     branchClose();
 }
 

@@ -1614,7 +1614,7 @@ function onApply() {
     $("#applySaveMoney").html(applySaveMoney.toLocaleString());
 
     $("#applyUncollectAmt").html("0");
-    $("#payRequestAmt").html((totRequestAmt - applySaveMoney).toLocaleString());
+    $("#payRequestAmt").html((totRequestAmt).toLocaleString());
     $("#totalAmt").html((totRequestAmt - applySaveMoney).toLocaleString());
     setReceiveAmtToTotalAmt();
     calculateOne();
