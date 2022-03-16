@@ -1893,3 +1893,17 @@ textarea {
 .aui-grid .aui-grid-table, .aui-grid .aui-grid-table tr, .aui-grid .aui-grid-table td {
     font-size: 14px;
 }
+
+.grid_textalign_left div {
+    text-align: left;
+    padding: 0 2px!important;
+    margin-left: 4px!important;
+    box-sizing: border-box;
+}
+    
+    .grid_textalign_right div {
+    text-align: right;
+    padding: 0 2px!important;
+    margin-left: 4px!important;
+    box-sizing: border-box;
+}

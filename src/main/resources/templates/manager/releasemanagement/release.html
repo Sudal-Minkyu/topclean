@@ -15,7 +15,7 @@
 	<script src="/assets/js/filesaver/FileSaver.min.js"></script>
 </th:block>
 
-<div layout:fragment="content" class="content">
+<div layout:fragment="content" class="content content--padding">
     <section class="section">
         <article class="article">
             <div class="article__header">
@@ -135,8 +135,22 @@
         </div>
     </section>
 
-
-    <iframe name="printArea" width="700" height="400" frameborder="1"
-            marginheight="100" marginwidth="0" scrolling="auto" style="position: absolute;"></iframe>
+    <div class="pop">
+        <div class="pop__box">
+            <div class="pop__article">
+                <iframe name="printArea" frameborder="0" cellspacing="0" scrolling="auto" style="width: 100%; height: 600px;"></iframe>
+            </div>
+            
+            <ul class="pop__console">
+                <li>
+                    <button onclick="itemListClose()" class="c-button">취소</button>
+                </li>
+                <li>
+                    <button onclick="itemListSelect()" class="c-button c-button--dark">선택</button>
+                </li>
+            </ul>
+        </div>
+    </div>
+    
 </div>
 </html>
