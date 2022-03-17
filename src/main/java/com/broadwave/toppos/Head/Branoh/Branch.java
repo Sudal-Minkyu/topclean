@@ -47,14 +47,20 @@ public class Branch {
     @Column(name="br_contract_state")
     private String brContractState; // 진행중 : 01, 계약완료 : 02
 
-    @Column(name="br_carculate_rate_hq")
-    private Double brCarculateRateHq; // 정산비율(본사)
+//    @Column(name="br_carculate_rate_hq")
+//    private Double brCarculateRateHq; // 정산비율(본사)
 
-    @Column(name="br_carculate_rate_br")
-    private Double brCarculateRateBr; // 정산비율(지사)
+    @Column(name="carculate_rate_br")
+    private Double brCaculateRateBr; // 정산비율(지사)
 
-    @Column(name="br_carculate_rate_fr")
-    private Double brCarculateRateFr; // 정산비율(가맹점)
+    @Column(name="carculate_rate_fr")
+    private Double brCaculateRateFr; // 정산비율(가맹점)
+
+    @Column(name="royalty_rate_br")
+    private Double brRoyaltyRateBr; // 로얄티율(지사)
+
+    @Column(name="royalty_rate_fr")
+    private Double brRoyaltyRateFr; // 정산비율(가맹점)
 
     @Column(name="br_remark")
     private String brRemark; // 특이사항

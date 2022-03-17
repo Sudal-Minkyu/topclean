@@ -21,9 +21,12 @@ public class BranchMapperDto {
     private String brContractFromDt; // 계약기간 from
     private String brContractToDt; // 계약기간 to
     private String brContractState; // 진행중 : 01, 계약완료 : 02
-    private Double brCarculateRateHq; // 정산비율(본사)
-    private Double brCarculateRateBr; // 정산비율(지사)
-    private Double brCarculateRateFr; // 정산비율(가맹점)
+
+    private Double frCaculateRateBr; // 정산비율(지사)
+    private Double frCaculateRateFr; // 정산비율(가맹점)
+    private Double frRoyaltyRateBr; // 로얄티율(지사)
+    private Double frRoyaltyRateFr; // 정산비율(가맹점)
+
     private String brRemark; // 특이사항
 
     public String getBrContractDt() {

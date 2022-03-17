@@ -2,6 +2,8 @@ package com.broadwave.toppos.Head.Franchise.FranchiseDtos;
 
 import lombok.*;
 
+import javax.persistence.Column;
+
 /**
  * @author Minkyu
  * Date : 2021-12-29
@@ -22,9 +24,10 @@ public class FranchiseUserDto {
 
     private String brName; // 배정지사명
 
-    private Double brCarculateRateHq; // 정산비율 본사
-    private Double brCarculateRateBr; // 정산비율 지사
-    private Double brCarculateRateFr; // 정산비율 가맹점
+    private Double frCaculateRateBr; // 정산비율(지사)
+    private Double frCaculateRateFr; // 정산비율(가맹점)
+    private Double frRoyaltyRateBr; // 로얄티율(지사)
+    private Double frRoyaltyRateFr; // 정산비율(가맹점)
 
     private Integer frEstimateDuration; // 출고예정일
     private String frTagNo; // 가맹점 택번호(3자리)

@@ -243,9 +243,11 @@ public class HeadRestController {
             }else{
                 branchsetInfo.put("brContractStateValue","계약완료");
             }
-            branchsetInfo.put("brCarculateRateHq", branch.getBrCarculateRateHq());
-            branchsetInfo.put("brCarculateRateBr", branch.getBrCarculateRateBr());
-            branchsetInfo.put("brCarculateRateFr", branch.getBrCarculateRateFr());
+            branchsetInfo.put("brCaculateRateBr", branch.getBrCaculateRateBr());
+            branchsetInfo.put("brCaculateRateFr", branch.getBrCaculateRateFr());
+            branchsetInfo.put("brRoyaltyRateBr", branch.getBrRoyaltyRateBr());
+            branchsetInfo.put("brRoyaltyRateFr", branch.getBrRoyaltyRateFr());
+
             branchsetInfo.put("brRemark", branch.getBrRemark());
             branchListData.add(branchsetInfo);
 
@@ -305,6 +307,11 @@ public class HeadRestController {
             franohisetInfo.put("frBusinessNo", franohise.getFrBusinessNo());
             franohisetInfo.put("frRpreName", franohise.getFrRpreName());
             franohisetInfo.put("frTelNo", franohise.getFrTelNo());
+
+            franohisetInfo.put("frCaculateRateBr", franohise.getFrCaculateRateBr());
+            franohisetInfo.put("frCaculateRateFr", franohise.getFrCaculateRateFr());
+            franohisetInfo.put("frRoyaltyRateBr", franohise.getFrRoyaltyRateBr());
+            franohisetInfo.put("frRoyaltyRateFr", franohise.getFrRoyaltyRateFr());
 
             franohiseListData.add(franohisetInfo);
 

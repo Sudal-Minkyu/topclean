@@ -29,13 +29,15 @@ public class BranchRepositoryCustomImpl extends QuerydslRepositorySupport implem
                 .select(Projections.constructor(BranchListDto.class,
                         branch.brCode,
                         branch.brName,
+                        branch.brTelNo,
                         branch.brContractDt,
                         branch.brContractFromDt,
                         branch.brContractToDt,
                         branch.brContractState,
-                        branch.brCarculateRateHq,
-                        branch.brCarculateRateBr,
-                        branch.brCarculateRateFr,
+                        branch.brCaculateRateBr,
+                        branch.brCaculateRateFr,
+                        branch.brRoyaltyRateBr,
+                        branch.brRoyaltyRateFr,
                         branch.brRemark
                 ));
 

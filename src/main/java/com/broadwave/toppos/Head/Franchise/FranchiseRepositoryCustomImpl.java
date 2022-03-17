@@ -52,7 +52,12 @@ public class FranchiseRepositoryCustomImpl extends QuerydslRepositorySupport imp
 
                     franchise.frPostNo,
                     franchise.frAddress,
-                    franchise.frAddressDetail
+                    franchise.frAddressDetail,
+
+                    franchise.frCaculateRateBr,
+                    franchise.frCaculateRateFr,
+                    franchise.frRoyaltyRateBr,
+                    franchise.frRoyaltyRateFr
             ));
 
         query.orderBy(franchise.id.desc());
@@ -99,9 +104,11 @@ public class FranchiseRepositoryCustomImpl extends QuerydslRepositorySupport imp
                     franchise.brAssignState,
                     franchise.brCode,
                     branch.brName,
-                    branch.brCarculateRateHq,
-                    branch.brCarculateRateBr,
-                    branch.brCarculateRateFr,
+
+                    franchise.frCaculateRateBr,
+                    franchise.frCaculateRateFr,
+                    franchise.frRoyaltyRateBr,
+                    franchise.frRoyaltyRateFr,
 
                     franchise.frEstimateDuration,
                     franchise.frLastTagno,
@@ -166,9 +173,10 @@ public class FranchiseRepositoryCustomImpl extends QuerydslRepositorySupport imp
                         franchise.frContractToDt,
                         branch.brName,
 
-                        branch.brCarculateRateHq,
-                        branch.brCarculateRateBr,
-                        branch.brCarculateRateFr,
+                        franchise.frCaculateRateBr,
+                        franchise.frCaculateRateFr,
+                        franchise.frCaculateRateBr,
+                        franchise.frCaculateRateFr,
 
                         franchise.frEstimateDuration,
                         franchise.frTagNo,

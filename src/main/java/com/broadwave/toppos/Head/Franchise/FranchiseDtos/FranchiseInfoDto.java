@@ -27,9 +27,11 @@ public class FranchiseInfoDto {
     private String brAssignState; // 지사 배정상태 미배정: 01, 배정완료: 02
     private String brCode; // 배정코드
     private String brName; // 배정지사명
-    private Double brCarculateRateHq; // 정산비율 본사
-    private Double brCarculateRateBr; // 정산비율 지사
-    private Double brCarculateRateFr; // 정산비율 가맹점
+
+    private Double frCaculateRateBr; // 정산비율(지사)
+    private Double frCaculateRateFr; // 정산비율(가맹점)
+    private Double frRoyaltyRateBr; // 로얄티율(지사)
+    private Double frRoyaltyRateFr; // 정산비율(가맹점)
 
     private Integer frEstimateDuration; // 출고예정일
     private String frLastTagno; // 가맹점 태그번호

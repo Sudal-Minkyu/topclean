@@ -1,9 +1,6 @@
 package com.broadwave.toppos.Head.Franchise.FranchiseDtos;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 /**
  * @author Minkyu
@@ -11,7 +8,7 @@ import lombok.Setter;
  * Time :
  * Remark : Toppos 가맹점 ListDto
  */
-@Setter
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -39,44 +36,10 @@ public class FranchiseListDto {
     private String frAddress; // 가맹점 주소
     private String frAddressDetail; // 가맹점 상세주소
 
-    public String getFrBusinessNo() {
-        return frBusinessNo;
-    }
-
-    public String getFrRpreName() {
-        return frRpreName;
-    }
-
-    public String getFrTelNo() {
-        return frTelNo;
-    }
-
-    public Integer getFrEstimateDuration() {
-        return frEstimateDuration;
-    }
-
-    public String getFrRefCode() {
-        return frRefCode;
-    }
-
-    public String getFrTagNo() {
-        return frTagNo;
-    }
-
-    public String getFrPriceGrade() {
-        return frPriceGrade;
-    }
-
-    public String getBrContractFromDt() {
-        return brContractFromDt;
-    }
-
-    public String getBrAssignState() {
-        return brAssignState;
-    }
-    public String getFrCode() {
-        return frCode;
-    }
+    private Double frCaculateRateBr; // 정산비율(지사)
+    private Double frCaculateRateFr; // 정산비율(가맹점)
+    private Double frRoyaltyRateBr; // 로얄티율(지사)
+    private Double frRoyaltyRateFr; // 정산비율(가맹점)
 
     public StringBuffer getFrContractDt() {
         if(!frContractDt.equals("")){
@@ -87,18 +50,6 @@ public class FranchiseListDto {
         }else{
             return null;
         }
-    }
-
-    public String getFrContractState() {
-        return frContractState;
-    }
-
-    public String getFrRemark() {
-        return frRemark;
-    }
-
-    public String getFrName() {
-        return frName;
     }
 
     public StringBuffer getFrContractFromDt() {
@@ -121,10 +72,6 @@ public class FranchiseListDto {
         }else{
             return null;
         }
-    }
-
-    public String getBrName() {
-        return brName;
     }
 
 }
