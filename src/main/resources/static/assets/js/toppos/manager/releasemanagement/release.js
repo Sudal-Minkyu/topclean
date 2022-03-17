@@ -107,6 +107,7 @@ const comms = {
             $("#checkDelSuccessBtn").on("click", function () {
                 comms.dispatchPrint(data);
                 $('#popupId').remove();
+                $("#releaseListPrint").addClass("active");
             });
             grids.f.clearData(0);
             grids.f.clearData(1);
@@ -671,4 +672,8 @@ function fn_viewer_open(projectName, formName, datasetObject, paramObject){
     window.open("", name, windowoption);
     form.submit();
     document.body.removeChild(form);
+}
+
+function releaseListPrintClose() {
+    $("#releaseListPrint").removeClass("active");
 }
