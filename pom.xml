@@ -95,6 +95,12 @@
             <version>2.3.1</version>
         </dependency>
 
+        <!--AOP-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+
         <!--querydsl-->
         <dependency>
             <groupId>com.querydsl</groupId>
@@ -185,11 +191,12 @@
             <artifactId>spring-boot-starter-aop</artifactId>
         </dependency>
 
-        <!--  JPA 캐싱 관련 : Ehcache3 -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-cache</artifactId>
-        </dependency>
+<!--        &lt;!&ndash;  JPA 캐싱 관련 : Ehcache3 &ndash;&gt;-->
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.boot</groupId>-->
+<!--            <artifactId>spring-boot-starter-cache</artifactId>-->
+<!--        </dependency>-->
+<!--        -->
         <!-- https://mvnrepository.com/artifact/io.springfox/springfox-swagger2 -->
         <dependency>
             <groupId>io.springfox</groupId>
