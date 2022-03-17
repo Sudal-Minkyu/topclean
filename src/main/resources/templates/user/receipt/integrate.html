@@ -23,28 +23,14 @@
 
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
+	<script type="module">
+		import {calculateItemPrice, ceil100} from "../assets/js/toppos/module/m_moneyProblem.js";
+		window.calculateItemPrice = calculateItemPrice;
+		window.ceil100 = ceil100;
+	</script>
 	<script src="/assets/js/toppos/user/receipt/integrate.js"></script>
     <!-- lightbox 추가 -->
     <script src="/assets/js/lightbox2/js/lightbox.js"></script>
-	<script type="text/javascript">
-		$(function() {
-			//카테고리 선택 시 팝업 열기
-			$('.openpop').on('click', function(e) {
-				$('.pop').addClass('active');
-				
-				e.preventDefault()
-			});
-			
-			// 팝업 닫기
-			$('.pop__close').on('click', function(e) {
-				$(this).parents('.pop').removeClass('active');
-				
-				e.preventDefault()
-			});
-			
-		});
-
-	</script>
 </th:block>
 
 <div layout:fragment="content" class="content content--column">

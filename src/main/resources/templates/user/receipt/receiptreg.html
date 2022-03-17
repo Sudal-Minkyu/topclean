@@ -50,10 +50,11 @@
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
     <script type="module">
-        import { calculateMainPrice, calculateItemPrice, ceil100 } from "../assets/js/toppos/module/m_moneyProblem.js";
+        import { calculateMainPrice, calculateItemPrice, ceil100, calculatePaymentStage } from "../assets/js/toppos/module/m_moneyProblem.js";
         window.calculateMainPrice = calculateMainPrice;
         window.calculateItemPrice = calculateItemPrice;
         window.ceil100 = ceil100;
+        window.calculatePaymentStage = calculatePaymentStage;
     </script>
     <script src="/assets/js/toppos/user/receipt/receiptreg.js"></script>
     <!-- lightbox 추가 -->

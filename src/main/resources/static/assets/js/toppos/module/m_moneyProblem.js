@@ -51,9 +51,12 @@ function calculateItemPrice() {
 
     currentRequest.fdRepairAmt = ceil100(currentRequest.fdRepairAmt);
     currentRequest.fdAdd1Amt = ceil100(currentRequest.fdAdd1Amt);
+    if(!currentRequest.fdAdd2Amt) currentRequest.fdAdd2Amt = 0;
+    currentRequest.fdAdd2Amt = ceil100(currentRequest.fdAdd2Amt);
 
     currentRequest.totAddCost = currentRequest.fdPressed + currentRequest.fdWhitening + currentRequest.fdWaterRepellent
-            + currentRequest.fdStarch + currentRequest.fdPollution + currentRequest.fdAdd1Amt + currentRequest.fdRepairAmt;
+            + currentRequest.fdStarch + currentRequest.fdPollution + currentRequest.fdAdd1Amt 
+            + currentRequest.fdAdd2Amt + currentRequest.fdRepairAmt;
 
     currentRequest.fdNormalAmt = ceil100(currentRequest.fdOriginAmt * gradePrice[currentRequest.fdPriceGrade] / 100);
     let sumAmt = ceil100((currentRequest.fdNormalAmt + currentRequest.totAddCost)
@@ -80,6 +83,7 @@ function calculateItemPrice() {
     $("#sumAmt").html(sumAmt.toLocaleString());
 }
 
+/* 100원 단위 이하 100원 단위 올림처리 */
 function ceil100(num) {
     num = num.toString();
     let ceilAmount = 0;
@@ -90,4 +94,36 @@ function ceil100(num) {
     return parseInt(num) + ceilAmount;
 }
 
-export {calculateMainPrice, calculateItemPrice, ceil100};
+/* 결제 단계의 조작가능한 항목의 동작마다 이루어질 거스름돈(현금)과 미수발생금액 계산 */
+function calculatePaymentStage(paidAmt) {
+    const totRequestAmt = $("#totFdRequestAmount").html().toInt();
+    const applySaveMoney = $("#applySaveMoney").html().toInt();
+    const applyUncollectAmt = $("#applyUncollectAmt").html().toInt();
+
+    /* 최종결제금액 = A - B + C - D */
+    const totalAmt = totRequestAmt - applySaveMoney + applyUncollectAmt - paidAmt;
+
+    $("#totalAmt").html(totalAmt.toLocaleString());
+
+    const receiveCash = $("#receiveCash").html().toInt();
+    const changeCash = receiveCash - totalAmt;
+    const uncollectAmtCash = totalAmt - receiveCash;
+
+    if(changeCash > 0) {
+        $("#changeCash").html(changeCash.toLocaleString());
+        $("#uncollectAmtCash").html("0");
+    } else {
+        $("#changeCash").html("0");
+        $("#uncollectAmtCash").html(uncollectAmtCash.toLocaleString());
+    }
+
+    const receiveCard = $("#receiveCard").html().toInt();
+    const uncollectAmtCard = totalAmt - receiveCard;
+    if(uncollectAmtCard > 0) {
+        $("#uncollectAmtCard").html(uncollectAmtCard.toLocaleString());
+    }else{
+        $("#uncollectAmtCard").html("0");
+    }
+}
+
+export {calculateMainPrice, calculateItemPrice, ceil100, calculatePaymentStage};

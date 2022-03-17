@@ -312,9 +312,9 @@ const dto = {
 const ajax = {
     getInitialData() {
         CommonUI.ajax("/api/user/itemGroupAndPriceList", "GET", false, function (req){
-            data.initialData = req.sendData;
-            dv.chk(data.initialData, dto.receive.itemGroupAndPriceList, "initialData 받아오기");
-            console.log(data.initialData);
+            initialData = req.sendData;
+            dv.chk(initialData, dto.receive.itemGroupAndPriceList, "initialData 받아오기");
+            console.log(initialData);
         });
     },
 
@@ -328,7 +328,7 @@ const ajax = {
             if(items.length === 1) {
                 data.selectedCustomer = items[0];
                 putCustomer(data.selectedCustomer);
-                delete data.initialData.etcData["frNo"];
+                delete initialData.etcData["frNo"];
             }else if(items.length > 1) {
                 grid.f.setData(1, items);
                 $("#customerListPop").addClass("active");
@@ -397,7 +397,7 @@ const ajax = {
             }else if(target.type === "2") {
                 alertSuccess("적립금 전환을 완료하였습니다.");
             }
-            ajax.getPaymentList(data.currentRequest.frId);
+            ajax.getPaymentList(currentRequest.frId);
         });
     },
 
@@ -405,7 +405,7 @@ const ajax = {
         const condition = {fdId: fdId};
         dv.chk(condition, dto.send.franchiseReceiptCancel, "접수 취소");
         CommonUI.ajax(grid.s.url.delete[0], "PARAM", condition, function(res) {
-            AUIGrid.removeRowByRowId(grid.s.id[0], data.currentRequest._$uid);
+            AUIGrid.removeRowByRowId(grid.s.id[0], currentRequest._$uid);
             AUIGrid.removeSoftRows(grid.s.id[0]);
             alertSuccess("접수 취소를 완료하였습니다.");
         });
@@ -416,10 +416,10 @@ const ajax = {
         dv.chk(condition, dto.send.franchiseLeadCancel, "인도 취소");
         const url = "/api/user/franchiseLeadCancel";
         CommonUI.ajax(url, "PARAM", condition, function(res) {
-            const tempVar = data.currentRequest.fdPreState;
-            data.currentRequest.fdPreState = data.currentRequest.fdState;
-            data.currentRequest.fdState = tempVar;
-            AUIGrid.updateRowsById(grid.s.id[0], data.currentRequest);
+            const tempVar = currentRequest.fdPreState;
+            currentRequest.fdPreState = currentRequest.fdState;
+            currentRequest.fdState = tempVar;
+            AUIGrid.updateRowsById(grid.s.id[0], currentRequest);
             alertSuccess("인도 취소를 완료하였습니다.");
         });
     },
@@ -436,7 +436,7 @@ const ajax = {
                 fdId: testObj.fdId,
                 type: "1"
             };
-            data.currentRequest.fdState = "F";
+            currentRequest.fdState = "F";
             ajax.getInspectionList(searchCondition);
             $("#fiComment").val("");
             $("#fiAddAmt").val("0");
@@ -480,7 +480,7 @@ const ajax = {
         console.log(target);
         CommonUI.ajax(url, "PARAM", target, function(res) {
             const searchCondition = {
-                fdId: data.currentRequest.fdId,
+                fdId: currentRequest.fdId,
                 type: "0",
             }
             ajax.getInspectionList(searchCondition);
@@ -571,7 +571,7 @@ const grid = {
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
                         const colorSquare =
                             `<span class="colorSquare" style="background-color: ${CommonData.name.fdColorCode[item.fdColor]}"></span>`;
-                        CommonUI.toppos.makeProductName(item, data.initialData.userItemPriceSortData);
+                        CommonUI.toppos.makeProductName(item, initialData.userItemPriceSortData);
                         return colorSquare + ` <span>` + item.sumName + `</span>`;
                     }
                 }, {
@@ -988,7 +988,7 @@ const grid = {
         basicEvent() {
             /* 0번그리드 내의 셀 클릭시 이벤트 */
             AUIGrid.bind(grid.s.id[0], "cellClick", function (e) {
-                data.currentRequest = e.item;
+                currentRequest = e.item;
                 switch (e.dataField) {
                     case "blueBtn1":
                         // 가맹점 검품등록창 진입
@@ -1057,18 +1057,21 @@ const grid = {
 const data = {
     url: window.location.href,
     params: "", // url에 내포한 파라메터들을 담는다.
-    initialData: {},
     currentCondition: {},
     selectedCustomer: {
         bcId: null,
     },
-    currentRequest: {},
     selectedLaundry: {},
     startPrice: 0,
     cameraStream: null,
     isCameraExist: false,
     keypadNum: 0,
 }
+
+/* 모듈 사용을 위해 data 밖에 선언된 변수들 */
+let currentRequest = {};
+let initialData = {};
+
 
 /* 이벤트를 s : 설정하거나 r : 해지하는 함수들을 담는다. 그리드 관련 이벤트는 grid.e에 위치 */
 const event = {
@@ -1194,8 +1197,8 @@ const event = {
             });
 
             $("#fdRepairCancel").on("click", function () {
-                data.currentRequest.fdRepairAmt = 0;
-                data.currentRequest.fdRepairRemark = "";
+                currentRequest.fdRepairAmt = 0;
+                currentRequest.fdRepairRemark = "";
                 $("#fdRepair").prop("checked", false);
                 $("#fdRepairAmt").val(0);
                 $("#fdRepairRemark").val("");
@@ -1204,9 +1207,9 @@ const event = {
             });
 
             $("#fdRepairComplete").on("click", function () {
-                data.currentRequest.fdRepairAmt = $("#fdRepairAmt").val().toInt();
-                data.currentRequest.fdRepairRemark = $("#fdRepairRemark").val();
-                if(data.currentRequest.fdRepairAmt || data.currentRequest.fdRepairRemark.length) {
+                currentRequest.fdRepairAmt = $("#fdRepairAmt").val().toInt();
+                currentRequest.fdRepairRemark = $("#fdRepairRemark").val();
+                if(currentRequest.fdRepairAmt || currentRequest.fdRepairRemark.length) {
                     $("#fdRepair").prop("checked", true);
                 }else{
                     $("#fdRepair").prop("checked", false);
@@ -1216,8 +1219,8 @@ const event = {
             });
 
             $("#fdAddCancel").on("click", function () {
-                data.currentRequest.fdAdd1Amt = 0;
-                data.currentRequest.fdAdd1Remark = "";
+                currentRequest.fdAdd1Amt = 0;
+                currentRequest.fdAdd1Remark = "";
                 $("#fdAdd1").prop("checked", false);
                 $("#fdAdd1Amt").val(0);
                 $("#fdAdd1Remark").val("");
@@ -1226,9 +1229,9 @@ const event = {
             });
 
             $("#fdAddComplete").on("click", function () {
-                data.currentRequest.fdAdd1Amt = $("#fdAdd1Amt").val().toInt();
-                data.currentRequest.fdAdd1Remark = $("#fdAdd1Remark").val();
-                if(data.currentRequest.fdAdd1Amt || data.currentRequest.fdAdd1Remark.length) {
+                currentRequest.fdAdd1Amt = $("#fdAdd1Amt").val().toInt();
+                currentRequest.fdAdd1Remark = $("#fdAdd1Remark").val();
+                if(currentRequest.fdAdd1Amt || currentRequest.fdAdd1Remark.length) {
                     $("#fdAdd1").prop("checked", true);
                 }else{
                     $("#fdAdd1").prop("checked", false);
@@ -1257,7 +1260,7 @@ const event = {
             });
 
             $("#closePutInspectPop").on("click", function () {
-                AUIGrid.updateRowsById(grid.s.id[0], data.currentRequest);
+                AUIGrid.updateRowsById(grid.s.id[0], currentRequest);
                 $("#putInspectPop").removeClass("active");
                 if(data.isCameraExist) {
                     try {
@@ -1339,7 +1342,7 @@ const event = {
 
             $("#closePaymentPop").on("click", function () {
                 if(!AUIGrid.getGridData(grid.s.id[2]).length) { // 결제내역 전부 사라질 경우 해당 마스터테이블 결제취소 버튼 제거, 접수취소 버튼 일괄 부여
-                    const frId = data.currentRequest.frId;
+                    const frId = currentRequest.frId;
                     const gridData = AUIGrid.getGridData(grid.s.id[0]);
                     gridData.forEach(item => {
                         if(item.frId === frId) {
@@ -1365,8 +1368,8 @@ const event = {
                     }
                 });
                 if(isInspectionDone) {
-                    data.currentRequest.fdState = lastFdState;
-                    AUIGrid.updateRowsById(grid.s.id[0], data.currentRequest);
+                    currentRequest.fdState = lastFdState;
+                    AUIGrid.updateRowsById(grid.s.id[0], currentRequest);
                 }
                 $("#confirmInspectPop").removeClass("active");
             });
@@ -1419,12 +1422,12 @@ function onPageLoad() {
 }
 
 function modifyOrder(rowIndex) {
-    data.currentRequest.sumName = undefined;
-    data.startPrice = data.currentRequest.fdTotAmt;
-    data.selectedLaundry.bgCode = data.currentRequest.biItemcode.substr(0, 3);
+    currentRequest.sumName = undefined;
+    data.startPrice = currentRequest.fdTotAmt;
+    data.selectedLaundry.bgCode = currentRequest.biItemcode.substr(0, 3);
 
     let bsType = ["N", "L", "S"];
-    data.initialData.userItemGroupSListData.forEach(el => {
+    initialData.userItemGroupSListData.forEach(el => {
         for(let i = 0; i < bsType.length; i++) {
             if(el.bgItemGroupcode === data.selectedLaundry.bgCode && el.bsItemGroupcodeS === bsType[i]) {
                 $("#size" + bsType[i]).css("display", "block");
@@ -1438,53 +1441,53 @@ function modifyOrder(rowIndex) {
         $("#size" + type).css("display", "none");
     });
 
-    setBiItemList(data.currentRequest.biItemcode.substr(3, 1));
+    setBiItemList(currentRequest.biItemcode.substr(3, 1));
 
-    data.selectedLaundry.bgCode = data.currentRequest.biItemcode.substr(0, 3);
-    data.selectedLaundry.bsCode = data.currentRequest.biItemcode.substr(3, 1);
+    data.selectedLaundry.bgCode = currentRequest.biItemcode.substr(0, 3);
+    data.selectedLaundry.bsCode = currentRequest.biItemcode.substr(3, 1);
     $("input[name='bsItemGroupcodeS']:input[value='" + data.selectedLaundry.bsCode + "']").prop("checked", true);
-    $("#" + data.currentRequest.biItemcode).prop("checked", true);
-    $(".choice-color__input[value='" + data.currentRequest.fdColor + "']").prop("checked", true);
-    $("input[name='fdPattern']:input[value='" + data.currentRequest.fdPattern +"']").prop("checked", true);
-    $("input[name='fdPriceGrade']:input[value='" + data.currentRequest.fdPriceGrade +"']").prop("checked", true);
-    $("input[name='fdDiscountGrade']:input[value='" + data.currentRequest.fdDiscountGrade +"']").prop("checked", true);
+    $("#" + currentRequest.biItemcode).prop("checked", true);
+    $(".choice-color__input[value='" + currentRequest.fdColor + "']").prop("checked", true);
+    $("input[name='fdPattern']:input[value='" + currentRequest.fdPattern +"']").prop("checked", true);
+    $("input[name='fdPriceGrade']:input[value='" + currentRequest.fdPriceGrade +"']").prop("checked", true);
+    $("input[name='fdDiscountGrade']:input[value='" + currentRequest.fdDiscountGrade +"']").prop("checked", true);
 
-    if(data.currentRequest.fdPressed) {
+    if(currentRequest.fdPressed) {
         $("#fdPress").prop("checked", true);
     }
-    if(data.currentRequest.fdRetryYn === "Y") {
+    if(currentRequest.fdRetryYn === "Y") {
         $("#fdRetry").prop("checked", true);
     }
 
-    if(data.currentRequest.fdRepairRemark.length || data.currentRequest.fdRepairAmt) {
+    if(currentRequest.fdRepairRemark.length || currentRequest.fdRepairAmt) {
         $("#fdRepair").prop("checked", true);
-        $("#fdRepairAmt").val(data.currentRequest.fdRepairAmt);
-        $("#fdRepairRemark").val(data.currentRequest.fdRepairRemark);
+        $("#fdRepairAmt").val(currentRequest.fdRepairAmt);
+        $("#fdRepairRemark").val(currentRequest.fdRepairRemark);
     }
 
-    if(data.currentRequest.fdAdd1Remark.length || data.currentRequest.fdAdd1Amt) {
+    if(currentRequest.fdAdd1Remark.length || currentRequest.fdAdd1Amt) {
         $("#fdAdd1").prop("checked", true);
-        $("#fdAdd1Amt").val(data.currentRequest.fdAdd1Amt);
-        $("#fdAdd1Remark").val(data.currentRequest.fdAdd1Remark);
+        $("#fdAdd1Amt").val(currentRequest.fdAdd1Amt);
+        $("#fdAdd1Remark").val(currentRequest.fdAdd1Remark);
     }
 
-    if(data.currentRequest.fdSpecialYn === "Y") {
+    if(currentRequest.fdSpecialYn === "Y") {
         $("#fdSpecialYn").prop("checked", true);
     }else{
         $("#fdSpecialYn").prop("checked", false);
     }
 
-    if(data.currentRequest.fdUrgentYn === "Y") {
+    if(currentRequest.fdUrgentYn === "Y") {
         $("#fdUrgentYn").prop("checked", true);
     }else{
         $("#fdUrgentYn").prop("checked", false);
     }
 
-    if(data.currentRequest.fdWhitening) {
+    if(currentRequest.fdWhitening) {
         $("#fdWhitening").prop("checked", true);
     }
 
-    $("input[name='cleanDirt']:input[value='" + data.currentRequest.fdPollutionLevel +"']").prop("checked", true);
+    $("input[name='cleanDirt']:input[value='" + currentRequest.fdPollutionLevel +"']").prop("checked", true);
     if($("#pollution00").is(":checked")) {
         $("#fdPollution").prop("checked", false);
     }else{
@@ -1499,15 +1502,15 @@ function modifyOrder(rowIndex) {
     ];
 
     pollutionLocKeys.forEach(key => {
-        if(data.currentRequest[key] === "Y") {
+        if(currentRequest[key] === "Y") {
             $("#" + key).prop("checked", true);
         }
     });
 
-    if(data.currentRequest.fdWaterRepellent) {
+    if(currentRequest.fdWaterRepellent) {
         $("#fdWaterRepellent").prop("checked", true);
     }
-    if(data.currentRequest.fdStarch) {
+    if(currentRequest.fdStarch) {
         $("#fdStarch").prop("checked", true);
     }
     if($("#waterNone").is(":checked")) {
@@ -1518,8 +1521,8 @@ function modifyOrder(rowIndex) {
 
 
 
-    if(data.currentRequest.fdRemark.length) {
-        $("#fdRemark").val(data.currentRequest.fdRemark);
+    if(currentRequest.fdRemark.length) {
+        $("#fdRemark").val(currentRequest.fdRemark);
     }
 
     if($("#processCheck input:checked").length > 2 || $("#processCheck .choice-drop__btn--active").length) {
@@ -1535,76 +1538,13 @@ function modifyOrder(rowIndex) {
     $('#productPop').addClass('active');
 }
 
-/* 수정창에서 항목의 가격을 계산한다. */
-function calculateItemPrice() {
-    const ap = data.initialData.addCostData;
-    const gradePrice = [100, 100, ap.bcHighRt, ap.bcPremiumRt, ap.bcChildRt];
-    const gradeDiscount = [0, 0, ap.bcVipDcRt, ap.bcVvipDcRt];
-    data.currentRequest.fdPriceGrade = $("input[name='fdPriceGrade']:checked").val();
-    data.currentRequest.fdDiscountGrade = $("input[name='fdDiscountGrade']:checked").val();
-
-    data.currentRequest.fdPressed = $("#fdPress").is(":checked") ?
-        parseInt(data.initialData.addCostData.bcPressed) : 0;
-    data.currentRequest.fdWhitening = $("#fdWhitening").is(":checked") ?
-        parseInt(data.initialData.addCostData.bcWhitening) : 0;
-    data.currentRequest.fdWaterRepellent = $("#fdWaterRepellent").is(":checked") ?
-        parseInt(data.initialData.addCostData.bcWaterRepellent) : 0;
-    data.currentRequest.fdStarch = $("#fdStarch").is(":checked") ?
-        parseInt(data.initialData.addCostData.bcStarch) : 0;
-    data.currentRequest.fdPollutionLevel = $("input[name='cleanDirt']:checked").first().val() | 0;
-    data.currentRequest.fdPollution = parseInt(data.initialData.addCostData["bcPollution" + data.currentRequest.fdPollutionLevel]) | 0;
-
-    data.currentRequest.fdRepairAmt = ceil100(data.currentRequest.fdRepairAmt);
-    data.currentRequest.fdAdd1Amt = ceil100(data.currentRequest.fdAdd1Amt);
-
-    data.currentRequest.totAddCost = data.currentRequest.fdPressed + data.currentRequest.fdWhitening + data.currentRequest.fdWaterRepellent
-        + data.currentRequest.fdStarch + data.currentRequest.fdPollution + data.currentRequest.fdAdd1Amt
-        + data.currentRequest.fdAdd2Amt + data.currentRequest.fdRepairAmt;
-
-    data.currentRequest.fdNormalAmt = ceil100(data.currentRequest.fdOriginAmt * gradePrice[data.currentRequest.fdPriceGrade] / 100);
-    let sumAmt = ceil100((data.currentRequest.fdNormalAmt + data.currentRequest.totAddCost)
-        * (100 - gradeDiscount[data.currentRequest.fdDiscountGrade]) / 100);
-    data.currentRequest.fdRequestAmt = sumAmt * data.currentRequest.fdQty;
-    data.currentRequest.fdTotAmt = data.currentRequest.fdRequestAmt;  // 확인품 등록작업 완료 후 수정이 필요
-
-    data.currentRequest.fdDiscountAmt = data.currentRequest.fdNormalAmt + data.currentRequest.totAddCost - sumAmt;
-
-    if($("#fdRetry").is(":checked")) {
-        data.currentRequest.fdRetryYn = "Y";
-        data.currentRequest.fdNormalAmt = 0;
-        data.currentRequest.totAddCost = 0;
-        data.currentRequest.fdDiscountAmt = 0;
-        data.currentRequest.fdRequestAmt = 0;
-        data.currentRequest.fdTotAmt = 0;
-        sumAmt = 0;
-    }else{
-        data.currentRequest.fdRetryYn = "N";
-    }
-
-    $("#fdNormalAmt").html(data.currentRequest.fdNormalAmt.toLocaleString());
-    $("#totAddCost").html(data.currentRequest.totAddCost.toLocaleString());
-    $("#fdDiscountAmt").html(data.currentRequest.fdDiscountAmt.toLocaleString());
-    $("#sumAmt").html(sumAmt.toLocaleString());
-}
-
-/* 100원 단위 이하 100원 단위 올림처리 */
-function ceil100(num) {
-    num = num.toString();
-    let ceilAmount = 0;
-    if(num.length >= 2 && num.substr(num.length - 2, 2) !== "00") {
-        num = num.substr(0, num.length - 2) + "00";
-        ceilAmount = 100;
-    }
-    return parseInt(num) + ceilAmount;
-}
-
 function setBiItemList(bsCode) {
     data.selectedLaundry.bsCode = bsCode;
 
     const $biItemList = $("#biItemList");
     $biItemList.html("");
 
-    data.initialData.userItemPriceSortData.forEach(el => {
+    initialData.userItemPriceSortData.forEach(el => {
         if(el.biItemcode.substr(0,4) === data.selectedLaundry.bgCode + bsCode) {
             $biItemList.append(`
                             <li>
@@ -1623,7 +1563,7 @@ function setBiItemList(bsCode) {
 }
 
 function onCloseAddOrder() {
-    data.currentRequest = {};
+    currentRequest = {};
     $("input[name='bsItemGroupcodeS']").first().prop("checked", true);
     $("input[name='fdColor']").first().prop("checked", true);
     $("input[name='fdPattern']").first().prop("checked", true);
@@ -1648,36 +1588,36 @@ function onCloseAddOrder() {
 }
 
 function onAddOrder() {
-    if(!data.currentRequest.biItemcode.length) {
+    if(!currentRequest.biItemcode.length) {
         alertCaution("소재를 선택해 주세요", 1);
         return false;
     }
 
-    if(data.currentRequest.redBtn2 && data.startPrice > data.currentRequest.fdTotAmt) {
+    if(currentRequest.redBtn2 && data.startPrice > currentRequest.fdTotAmt) {
         alertCaution("이미 결제가 완료된 접수내역은<br>더 낮은금액으로 수정이 불가합니다." 
             + "<br>결제취소 후 수정해주세요.", 1);
         return false;
     }
 
-    data.currentRequest.fdColor = $("input[name='fdColor']:checked").val();
-    data.currentRequest.fdPattern = $("input[name='fdPattern']:checked").val();
-    data.currentRequest.fdPriceGrade = $("input[name='fdPriceGrade']:checked").val();
-    data.currentRequest.fdDiscountGrade = $("input[name='fdDiscountGrade']:checked").val();
-    data.currentRequest.fdRemark = $("#fdRemark").val();
-    data.currentRequest.frEstimateDate = data.initialData.etcData.frEstimateDate.numString();
-    data.currentRequest.fdSpecialYn = $("#fdSpecialYn").is(":checked") ? "Y" : "N";
-    data.currentRequest.fdUrgentYn = $("#fdUrgentYn").is(":checked") ? "Y" : "N";
+    currentRequest.fdColor = $("input[name='fdColor']:checked").val();
+    currentRequest.fdPattern = $("input[name='fdPattern']:checked").val();
+    currentRequest.fdPriceGrade = $("input[name='fdPriceGrade']:checked").val();
+    currentRequest.fdDiscountGrade = $("input[name='fdDiscountGrade']:checked").val();
+    currentRequest.fdRemark = $("#fdRemark").val();
+    currentRequest.frEstimateDate = initialData.etcData.frEstimateDate.numString();
+    currentRequest.fdSpecialYn = $("#fdSpecialYn").is(":checked") ? "Y" : "N";
+    currentRequest.fdUrgentYn = $("#fdUrgentYn").is(":checked") ? "Y" : "N";
 
     const pollutionLoc = $("input[name='pollutionLoc']");
     for(let i = 0; i < pollutionLoc.length; i++) {
         if($(pollutionLoc[i]).is(":checked")) {
-            data.currentRequest[pollutionLoc[i].id] = "Y";
+            currentRequest[pollutionLoc[i].id] = "Y";
         }else {
-            data.currentRequest[pollutionLoc[i].id] = "N";
+            currentRequest[pollutionLoc[i].id] = "N";
         }
     }
     
-    ajax.saveModifiedOrder(data.currentRequest);
+    ajax.saveModifiedOrder(currentRequest);
 }
 
 function confirmPollutionPop() {
@@ -1792,7 +1732,7 @@ function searchCustomer() {
 function selectCustomerFromList() {
     if(data.selectedCustomer) {
         putCustomer();
-        delete data.initialData.etcData["frNo"];
+        delete initialData.etcData["frNo"];
         $("#customerListPop").removeClass("active");
     }else{
         alertCaution("고객을 선택해 주세요", 1);
@@ -1858,8 +1798,8 @@ function putCustomer() {
 }
 
 function onSelectBiItem(biCode, price) {
-    data.currentRequest.biItemcode = biCode;
-    data.currentRequest.fdOriginAmt = price;
+    currentRequest.biItemcode = biCode;
+    currentRequest.fdOriginAmt = price;
     calculateItemPrice();
 }
 
@@ -1917,7 +1857,7 @@ function confirmInspect(e) {
     $("#fiCommentInConfirm").val("");
     $("#fiAddAmtInConfirm").val("");
     $("#imgFull").hide();
-    $("#fdRequestAmtInConfirm").val(data.currentRequest.fdRequestAmt.toLocaleString());
+    $("#fdRequestAmtInConfirm").val(currentRequest.fdRequestAmt.toLocaleString());
 
     $("#confirmInspectPop").addClass("active");
     grid.f.resize(4);
@@ -1998,7 +1938,7 @@ async function openPutInspectPop(e) {
 
     $("#fiComment").val("");
     $("#fiAddAmt").val("0");
-    $("#fdRequestAmtInPut").val(data.currentRequest.fdRequestAmt.toLocaleString());
+    $("#fdRequestAmtInPut").val(currentRequest.fdRequestAmt.toLocaleString());
     if(data.isCameraExist) {
         $("#isIncludeImg").prop("checked", true);
         $("#isIncludeImg").prop("disabled", false);
@@ -2039,7 +1979,7 @@ function putInspect() {
     if(data.isCameraExist && data.cameraStream.active) {
         try {
             const formData = new FormData();
-            formData.append("fdId", data.currentRequest.fdId);
+            formData.append("fdId", currentRequest.fdId);
 
             if($("#isIncludeImg").is(":checked")) {
                 const video = document.getElementById("cameraScreen");
@@ -2068,7 +2008,7 @@ function putInspect() {
         }
     }else{
         const formData = new FormData();
-        formData.append("fdId", data.currentRequest.fdId);
+        formData.append("fdId", currentRequest.fdId);
         formData.append("fiComment", $fiComment.val());
         formData.append("fiType", "F");
         formData.append("fiAddAmt", $("#fiAddAmt").val().numString());

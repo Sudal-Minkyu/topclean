@@ -1617,53 +1617,18 @@ function onApply() {
     $("#payRequestAmt").html((totRequestAmt).toLocaleString());
     $("#totalAmt").html((totRequestAmt - applySaveMoney).toLocaleString());
     setReceiveAmtToTotalAmt();
-    calculateOne();
-    calculateTwo();
-    calculateThree();
+    calculatePaymentStage(getPaidAmt());
 
     $("#paymentPop").addClass("active");
 }
 
-function calculateOne() {
-    const totRequestAmt = $("#totFdRequestAmount").html().toInt();
-    const applySaveMoney = $("#applySaveMoney").html().toInt();
-    const applyUncollectAmt = $("#applyUncollectAmt").html().toInt();
+function getPaidAmt() {
     const paidData =  AUIGrid.getGridData(gridId[3]);
     let paidAmt = 0;
     paidData.forEach(el => {
        paidAmt += el.fpAmt;
     });
-
-    /* 최종결제금액 = A - B + C - D */
-    const totalAmt = totRequestAmt - applySaveMoney + applyUncollectAmt - paidAmt;
-
-    $("#totalAmt").html(totalAmt.toLocaleString());
-}
-
-function calculateTwo() {
-    const totalAmt = $("#totalAmt").html().toInt();
-    const receiveCash = $("#receiveCash").html().toInt();
-    const changeCash = receiveCash - totalAmt;
-    const uncollectAmtCash = totalAmt - receiveCash;
-
-    if(changeCash > 0) {
-        $("#changeCash").html(changeCash.toLocaleString());
-        $("#uncollectAmtCash").html("0");
-    }else{
-        $("#changeCash").html("0");
-        $("#uncollectAmtCash").html(uncollectAmtCash.toLocaleString());
-    }
-}
-
-function calculateThree() {
-    const totalAmt = $("#totalAmt").html().toInt();
-    const receiveCard = $("#receiveCard").html().toInt();
-    const uncollectAmtCard = totalAmt - receiveCard;
-    if(uncollectAmtCard > 0) {
-        $("#uncollectAmtCard").html(uncollectAmtCard.toLocaleString());
-    }else{
-        $("#uncollectAmtCard").html("0");
-    }
+    return paidAmt;
 }
 
 /* 키패드 작동용 */
@@ -1679,20 +1644,7 @@ function onKeypadConfirm() {
     const targetId = ["applySaveMoney", "receiveCash", "receiveCard"];
     $("#" + targetId[keypadNum]).html($("#hiddenKeypad").val());
 
-    switch (keypadNum) {
-        case 0 :
-            calculateOne();
-            calculateTwo();
-            calculateThree();
-            break;
-        case 1 :
-            calculateTwo();
-            break;
-        case 2 :
-            calculateThree();
-            break;
-    }
-
+    calculatePaymentStage(getPaidAmt());
     payAmtLimitation();
 }
 
@@ -1877,9 +1829,7 @@ function onPaymentStageTwo(creditData = {}) {
             $("#changeCash").html("0");
             $("#receiveCard").html("0");
             //$("#saveMoney").html(req.sendData.saveMoney);
-            calculateOne();
-            calculateTwo();
-            calculateThree();
+            calculatePaymentStage(getPaidAmt());
             if($("#totalAmt").html() === "0" && autoPrintReceipt) {
                 onPrintReceipt();
                 onClosePayment();
@@ -1900,6 +1850,7 @@ function onPayUncollectMoney() {
 function cancelPayUncollectMoney() {
     $("#applyUncollectAmt").html(0);
     payAmtLimitation();
+    setReceiveAmtToTotalAmt();
 }
 
 function onClosePayment() {
@@ -1983,15 +1934,15 @@ function payAmtLimitation() {
     $receiveCash.html(receivedCashAmt.toLocaleString());
     $receiveCard.html(receivedCardAmt.toLocaleString());
 
-    calculateOne();
-    calculateTwo();
-    calculateThree();
+    calculatePaymentStage(getPaidAmt());
 }
 
 function setReceiveAmtToTotalAmt() {
     const totalAmt = $("#totalAmt").html().toInt();
     $("#receiveCash").html(totalAmt.toLocaleString());
     $("#receiveCard").html(totalAmt.toLocaleString());
+    calculatePaymentStage(getPaidAmt());
+
 }
 
 function onPrintReceipt() {

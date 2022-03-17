@@ -698,5 +698,38 @@ QUnit.module('moneyProblem 돈계산', function() {
         delete window.ceil100;
         delete window.currentRequest;
     });
+
+
+    QUnit.test('접수페이지 결제창 거스름돈, 미수발생금액 계산', function(assert) {
+
+        const testDOM = `
+            <div id="testDiv">
+                <span id="totFdRequestAmount">10,500</span>
+                <span id="applySaveMoney">2,000</span>
+                <span id="applyUncollectAmt">3,000</span>
+                <span id="receiveCash">12,500</span>
+                <span id="receiveCard">4,000</span>
+
+                <span id="totalAmt">0</span>
+                <span id="changeCash">0</span>
+                <span id="uncollectAmtCash">0</span>
+                <span id="uncollectAmtCard">0</span>
+            </div>
+        `;
+
+        const playGround = document.createElement("div");
+        $(playGround).html(testDOM);
+        $("body").append(playGround);
+
+        /* 미리 한 결제 총 금액이 3000원이라 상정하고 구동  */
+        moneyProblem.calculatePaymentStage(3000);
+
+        assert.equal($("#totalAmt").html(), "8,500", "총 결제할(현금, 카드) 금액");
+        assert.equal($("#changeCash").html(), "4,000", "현금 거스름돈");
+        assert.equal($("#uncollectAmtCash").html(), "0", "미수금발생(현금)");
+        assert.equal($("#uncollectAmtCard").html(), "4,500", "미수금발생(카드)");
+
+        $("#testDiv").parent("div").remove();
+    });
     
 });

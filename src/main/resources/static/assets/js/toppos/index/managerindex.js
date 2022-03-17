@@ -124,11 +124,11 @@ const wares = {
 
 $(function() { // 페이지가 로드되고 나서 실행
     onPageLoad();
-    comms.branchInfo();
 });
 
 /* 페이지가 로드되고 나서 실행 될 코드들을 담는다. */
 function onPageLoad() {
+    comms.branchInfo();
     trigs.basic();
 }
 

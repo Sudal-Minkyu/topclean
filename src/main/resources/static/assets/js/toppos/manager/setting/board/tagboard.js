@@ -335,6 +335,11 @@ async function openTaglostPop(e) {
 }
 
 function takePhoto() {
+    if($("#photoList").children().length > 5) {
+        alertCaution("사진은 최대 6장 까지 촬영하실 수 있습니다.", 1);
+        return false;
+    }
+    
     if(wares.isCameraExist && wares.cameraStream.active) {
         try {
             const video = document.getElementById("cameraScreen");
