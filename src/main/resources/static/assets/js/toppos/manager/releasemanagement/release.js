@@ -120,15 +120,9 @@ const comms = {
     dispatchPrint(miNoList) {
         dv.chk(miNoList, dtos.send.branchDispatchPrint, "출고증 인쇄를 위한 miNoList 보내기");
         CommonUI.ajax(urls.dispatchPrint, "GET", miNoList, function (res) {
-            console.log(res);
-            for(let i=0; i < res.sendData.issueDispatchDtos.length; i++){
-                const frCode = res.sendData.issueDispatchDtos[i]["qrCode"];
-                res.sendData.issueDispatchDtos[i]["qrCode"] = location.protocol+"//"+location.host+"/qrpickup?frcode="+frCode;
-            }
-            console.log(res.sendData.issueDispatchDtos);
             dispatchPrintData(res.sendData.issueDispatchDtos)
         });
-    }
+    },
 };
 
 /* .s : AUI 그리드 관련 설정들

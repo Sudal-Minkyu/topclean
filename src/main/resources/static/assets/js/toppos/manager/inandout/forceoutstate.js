@@ -333,7 +333,9 @@ const trigs = {
             });
 
             $("#exportXlsx").on("click", function () {
-                grids.f.exportToXlsx();
+                if(hasGrid1Data()) {
+                    grids.f.exportToXlsx();
+                }
             });
         },
     },
@@ -412,4 +414,10 @@ function showDetail(item) {
     wares.currentDetail.frName = item.frName;
 
     comms.getDetailList(searchCondition);
+}
+
+function hasGrid1Data() {
+    let result = grids.f.getData(1).length ? true : false ;
+    if(!result) alertCaution("엑셀 다운로드를 실행할 데이터가 없습니다.<br>조회후 왼쪽 표에서 데이터를 선택해 주세요.", 1);
+    return result;
 }

@@ -198,7 +198,7 @@ const grids = {
                     width: 200,
                 }, {
                     dataField: "fdS3Dt",
-                    headerText: "반송일자",
+                    headerText: "반품입고일",
                     width: 100,
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
