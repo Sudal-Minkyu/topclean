@@ -431,26 +431,31 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
         EntityManager em = getEntityManager();
         StringBuilder sb = new StringBuilder();
 
-        sb.append("insert into SMSQ_SEND \n");
-        sb.append("(dest_no, call_back, msg_contents, sendreq_time, msg_instm, msg_type, \n");
-        sb.append("k_next_type, k_next_contents, k_resyes, k_template_code, k_button_json, app_etc1, app_etc2) \n");
+        try{
+            sb.append("insert into SMSQ_SEND \n");
+            sb.append("(dest_no, call_back, msg_contents, sendreq_time, msg_instm, msg_type, \n");
+            sb.append("k_next_type, k_next_contents, k_resyes, k_template_code, k_button_json, app_etc1, app_etc2) \n");
 
-        sb.append("VALUES( ?1, ?2, ?3, NOW(), NOW(), 'K', \n");
-        sb.append("'A', ?4, 'Y', ?5, ?6, \n");
-        sb.append(" 'fs_request', CONCAT(?7) ); \n");
+            sb.append("VALUES( ?1, ?2, ?3, NOW(), NOW(), 'K', \n");
+            sb.append("'A', ?4, 'Y', ?5, ?6, \n");
+            sb.append(" 'fs_request', CONCAT(?7) ); \n");
 
-        Query query = em.createNativeQuery(sb.toString());
-        query.setParameter(1, bcHp);
-        query.setParameter(2, templatecodeNumber);
-        query.setParameter(3, message);
-        query.setParameter(4, nextmessage);
-        query.setParameter(5, templatecodeReceipt);
-        query.setParameter(6, buttonJson);
-        query.setParameter(7, frId);
+            Query query = em.createNativeQuery(sb.toString());
+            query.setParameter(1, bcHp);
+            query.setParameter(2, templatecodeNumber);
+            query.setParameter(3, message);
+            query.setParameter(4, nextmessage);
+            query.setParameter(5, templatecodeReceipt);
+            query.setParameter(6, buttonJson);
+            query.setParameter(7, frId);
 
-        query.executeUpdate();
+            query.executeUpdate();
 
-        return true;
+            return true;
+
+        }catch (Exception e){
+            return false;
+        }
     }
 
 }

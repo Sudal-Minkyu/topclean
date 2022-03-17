@@ -12,6 +12,8 @@ import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentRepositoryCustom;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentSet;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Request;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.MessageHistory.MessageHistory;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.MessageHistory.MessageHistoryRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.Photo;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.PhotoDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.PhotoRepository;
@@ -85,19 +87,21 @@ public class ReceiptService {
     private final RequestRepositoryCustom requestRepositoryCustom;
     private final SaveMoneyRepositoryCustom saveMoneyRepositoryCustom;
     private final PhotoRepositoryCustom photoRepositoryCustom;
+    private final MessageHistoryRepository messageHistoryRepository;
 
     private final HeadService headService;
     private final CustomerRepository customerRepository;
     private final BranchCalendarRepository branchCalendarRepository;
 
     @Autowired
-    public ReceiptService(UserService userService, KeyGenerateService keyGenerateService, TokenProvider tokenProvider, ModelMapper modelMapper,
+    public ReceiptService(UserService userService, KeyGenerateService keyGenerateService, TokenProvider tokenProvider, ModelMapper modelMapper, MessageHistoryRepository messageHistoryRepository,
                           RequestRepository requestRepository, RequestDetailRepository requestDetailRepository, PaymentRepository paymentRepository, SaveMoneyRepository saveMoneyRepository, PhotoRepository photoRepository,
                           RequestRepositoryCustom requestRepositoryCustom, SaveMoneyRepositoryCustom saveMoneyRepositoryCustom, PhotoRepositoryCustom photoRepositoryCustom,
                           HeadService headService, CustomerRepository customerRepository, BranchCalendarRepository branchCalendarRepository, PaymentRepositoryCustom paymentRepositoryCustom){
         this.userService = userService;
         this.headService = headService;
         this.requestRepository = requestRepository;
+        this.messageHistoryRepository = messageHistoryRepository;
         this.tokenProvider = tokenProvider;
         this.modelMapper = modelMapper;
         this.paymentRepository = paymentRepository;
@@ -1084,6 +1088,15 @@ public class ReceiptService {
         }else{
             return ResponseEntity.ok(res.fail(ResponseErrorCode.TP005.getCode(), "접수 "+ResponseErrorCode.TP005.getDesc(), null, null));
         }
+
+        MessageHistory messageHistory = new MessageHistory();
+        messageHistory.setFmType("02");
+        messageHistory.setFrCode(frCode);
+        messageHistory.setBrCode(frbrCode);
+        messageHistory.setFmMessage(message);
+        messageHistory.setInsert_id(login_id);
+        messageHistory.setInsertDateTime(LocalDateTime.now());
+        messageHistoryRepository.save(messageHistory);
 
         boolean successBoolean = requestRepositoryCustom.InsertMessage(message, nextmessage, buttonJson, templatecodeReceipt, frId, bcHp, templatecodeNumber);
         log.info("successBoolean : "+successBoolean);
