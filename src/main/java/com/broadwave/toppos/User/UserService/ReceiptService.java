@@ -7,10 +7,7 @@ import com.broadwave.toppos.Manager.Calendar.BranchCalendarRepository;
 import com.broadwave.toppos.User.Customer.Customer;
 import com.broadwave.toppos.User.Customer.CustomerRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.Payment;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentDtos.PaymentDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentDtos.PaymentEtcDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentDtos.PaymentMapperDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentDtos.PaymentPaperDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentDtos.*;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentRepositoryCustom;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentSet;
@@ -21,7 +18,10 @@ import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.PhotoR
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.PhotoRepositoryCustom;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetail;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.RequestDetailMapperDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.*;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailAmtDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailMessageDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailPaymentPaper;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailSet;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.*;
@@ -38,14 +38,18 @@ import com.broadwave.toppos.common.ResponseErrorCode;
 import com.broadwave.toppos.keygenerate.KeyGenerateService;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -59,6 +63,12 @@ import java.util.*;
 @Slf4j
 @Service
 public class ReceiptService {
+
+    @Value("${toppos.templatecode.number}")
+    private String templatecodeNumber;
+
+    @Value("${toppos.templatecode.receipt}")
+    private String templatecodeReceipt;
 
     private final UserService userService;
     private final TokenProvider tokenProvider;
@@ -447,7 +457,7 @@ public class ReceiptService {
         // 클레임데이터 가져오기
         Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
         String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
-//        log.info("frNo2 : "+frNo);
+//        log.info("frNo : "+frNo);
         Optional<Request> optionalRequest = findByRequest(frNo, "N", frCode);
 //        log.info("optionalRequest : "+optionalRequest);
         if(!optionalRequest.isPresent()){
@@ -460,7 +470,7 @@ public class ReceiptService {
             }
 //            log.info("requestDetailList : "+requestDetailList);
 //            log.info("requestDetailList.size() : "+requestDetailList.size());
-//            log.info("photoDeleteList : "+photoDeleteList);
+//            log.info("frIdList : "+frIdList);
             requestDeleteStart(optionalRequest.get(), requestDetailList, frIdList);
         }
 
@@ -471,8 +481,12 @@ public class ReceiptService {
     @Transactional(rollbackFor = SQLException.class)
     public void requestDeleteStart(Request optionalRequest, List<RequestDetail> requestDetailList, List<Long> frIdList) {
         try{
-            photoRepository.findByRequestDetailPhotoListDelete(frIdList);
-            requestDetailRepository.deleteAll(requestDetailList);
+            if(frIdList.size() != 0){
+                photoRepository.findByRequestDetailPhotoListDelete(frIdList);
+            }
+            if(requestDetailList.size() != 0){
+                requestDetailRepository.deleteAll(requestDetailList);
+            }
             requestRepository.delete(optionalRequest);
         }catch (Exception e){
             log.info("에러발생 트랜젝션실행1 : "+e);
@@ -846,10 +860,10 @@ public class ReceiptService {
             paymentData.put("totalAmount", requestPaymentPaperDto.getFrNormalAmount() + requestPaymentPaperDto.getFrDiscountAmount());
             paymentData.put("paymentAmount", requestPaymentPaperDto.getFrPayAmount());
 
-//                    preUncollectAmount: "n", // 고객 전일미수금
-//                    curUncollectAmount: "n", // 고객 당일미수금
-//                    uncollectPayAmount: "n", // 미수금 상환액
-//                    totalUncollectAmount: "n", // 총미수금
+//         preUncollectAmount: "n", // 고객 전일미수금
+//         curUncollectAmount: "n", // 고객 당일미수금
+//         uncollectPayAmount: "n", // 미수금 상환액
+//         totalUncollectAmount: "n", // 총미수금
             List<RequestCollectDto>  requestCollectDtoList = findByRequestCollectList(requestPaymentPaperDto.getCustomer(), null);
             List<Integer> uncollectMoneyList = findByBeforeAndTodayUnCollect(requestCollectDtoList, nowDate);
             int preUncollectAmount;
@@ -867,12 +881,6 @@ public class ReceiptService {
             }
             log.info("전일 미수금액 : "+ preUncollectAmount);
             log.info("당일 미수금액 : "+ curUncollectAmount);
-
-
-//            paymentData.put("preUncollectAmount", customerUncollectListDto.getBcId());
-//            paymentData.put("curUncollectAmount", customerUncollectListDto.getBcName());
-//            paymentData.put("uncollectPayAmount", customerUncollectListDto.getBcHp());
-//            paymentData.put("totalUncollectAmount", customerUncollectListDto.getBcAddress());
 
             List<RequestDetailPaymentPaper> requestDetailPaymentPapers = requestDetailRepository.findByRequestDetailPaymentPaper(requestPaymentPaperDto.getFrNo());
             for(RequestDetailPaymentPaper requestDetailPaymentPaper : requestDetailPaymentPapers){
@@ -930,6 +938,162 @@ public class ReceiptService {
     // 임시저장한 내역이 존재하는지
     public RequestTempDto findByRequestTemp(String frCode) {
         return requestRepositoryCustom.findByRequestTemp(frCode);
+    }
+
+    // 접수페이지 접수완료시 카톡메세지
+    @Transactional
+    public ResponseEntity<Map<String, Object>> requestReceiptMessage(String frNo, String  locationHost, HttpServletRequest request) {
+//        location.protocol+"//"+location.host
+        log.info("requestReceiptMessage 호출");
+        AjaxResponse res = new AjaxResponse();
+
+        log.info("접수코드 : "+frNo);
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
+        String frbrCode = (String) claims.get("frbrCode"); // 소속된 지사 코드
+        String login_id = claims.getSubject(); // 현재 아이디
+        log.info("현재 접속한 아이디 : "+login_id);
+        log.info("현재 접속한 가맹점 코드 : "+frCode);
+        log.info("소속된 지사 코드 : "+frbrCode);
+
+        String greet = "언제나 정성을 다하는 탑 크리닝업 메가샵 입니다.\n안녕하세요. ";
+        String message;
+        String nextmessage;
+        String buttonJson;
+        String bcHp;
+        Long frId;
+
+        // 가격 콤마찍기
+        DecimalFormat decimalFormat = new DecimalFormat("###,###");
+        String uncollect_message; // 미수금메세지
+        RequestDetailMessageDto requestDetailMessageDto = requestDetailRepository.findByRequestDetailReceiptMessage(frNo,frCode);
+        if(requestDetailMessageDto != null){
+
+            List<RequestCollectDto>  requestCollectDtoList = findByRequestCollectList(requestDetailMessageDto.getCustomer(), null);
+            List<Integer> uncollectMoneyList = findByBeforeAndTodayUnCollect(requestCollectDtoList, LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
+            int preUncollectAmount; // 전일 미수금액
+            int curUncollectAmount; // 당일 미수금액
+            if(requestCollectDtoList.size() != 0){
+                preUncollectAmount = uncollectMoneyList.get(0);
+                curUncollectAmount = uncollectMoneyList.get(1);
+            }else{
+                preUncollectAmount = 0;
+                curUncollectAmount = 0;
+            }
+//            log.info("전일 미수금액 : "+ preUncollectAmount);
+//            log.info("당일 미수금액 : "+ curUncollectAmount);
+
+            int totalUncollectAmount; // 전체미수금
+            int fpCollectAmt = 0; // 미수상환액
+            StringBuilder payDetail = new StringBuilder(); // 결제 상세정보
+            int money = 0; // 현금
+            List<String> cardName = new ArrayList<>(); // 카드 이름리스트
+            List<Integer> cardMoney = new ArrayList<>(); // 카드 금액리스트
+            int savemoney = 0; // 적립금
+            List<PaymentMessageDto> paymentMessageDtos = paymentRepositoryCustom.findByPaymentMessage(frNo);
+            for(PaymentMessageDto paymentMessageDto : paymentMessageDtos){
+                if(paymentMessageDto.getFpType().equals("01")){
+                    money = money+paymentMessageDto.getFpAmt();
+                }else if(paymentMessageDto.getFpType().equals("02")){
+                    cardName.add(paymentMessageDto.getFpCatIssuername());
+                    cardMoney.add(paymentMessageDto.getFpAmt());
+                }else{
+                    savemoney = savemoney+paymentMessageDto.getFpAmt();
+                }
+                fpCollectAmt = fpCollectAmt+ paymentMessageDto.getFpCollectAmt();
+            }
+
+            totalUncollectAmount = preUncollectAmount+curUncollectAmount-fpCollectAmt;
+
+//            log.info("미수상환액 : "+ fpCollectAmt);
+//            log.info("전체미수금 : "+ totalUncollectAmount);
+
+            if(money != 0){
+                payDetail.append("현금 : ").append(decimalFormat.format(money)).append("원");
+            }
+
+            for(int i=0; i<cardName.size(); i++){
+                if(i==0){
+                    payDetail.append(", ");
+                }
+                String a = cardName.get(i)+" : "+decimalFormat.format(cardMoney.get(i));
+                payDetail.append(a);
+                if(i==cardName.size()-1){
+                    payDetail.append("원");
+                }else{
+                    if(savemoney != 0) {
+                        payDetail.append("원, ");
+                    }else{
+                        payDetail.append("원");
+                    }
+                }
+            }
+            if(savemoney != 0) {
+                payDetail.append("적립금 : ").append(decimalFormat.format(savemoney)).append("원\n");
+            }else{
+                payDetail.append("\n");
+            }
+
+//            log.info("결제 상세정보 : "+ payDetail);
+
+            frId= requestDetailMessageDto.getFrId();
+            bcHp = requestDetailMessageDto.getCustomer().getBcHp();
+
+            uncollect_message = "전일미수금 : "+decimalFormat.format(preUncollectAmount)+"원, 당일미수금 : "+decimalFormat.format(curUncollectAmount)+"원\n"+
+                    "미수금상환액 : "+decimalFormat.format(fpCollectAmt)+"원, 전체 미수금 : "+decimalFormat.format(totalUncollectAmount)+"원\n";
+            message = greet+requestDetailMessageDto.getCustomer().getBcName()+"님\n\n고객님의 세탁접수가 완료 되었습니다.\n\n" +
+                    "대리점 : "+requestDetailMessageDto.getFrName()+"("+requestDetailMessageDto.getFrTelNo()+")\n\n접수내역\n"+requestDetailMessageDto.getBiName()+" "+requestDetailMessageDto.getBgName();
+
+            int qty = requestDetailMessageDto.getFrQty()-1;
+            if(requestDetailMessageDto.getFrQty() > 1){
+                message = message+" 외 "+qty+"건\n\n";
+            }else{
+                message = message+"\n\n";
+            }
+
+            message = message+"결제정보\n"+"총 접수금액 : "+requestDetailMessageDto.getFrTotalAmount()+"원\n"+uncollect_message+"\n총 결제금액 : "+requestDetailMessageDto.getFrPayAmount()+"원\n\n"
+                    +"결제 상세정보\n"+payDetail;
+
+            if(locationHost.startsWith("loc") || locationHost.startsWith("top") || locationHost.startsWith("192")){
+                locationHost = "toppos.broadwave.co.kr";
+            }else{
+                locationHost = "pos.topcleaners.kr";
+            }
+
+            nextmessage = greet+requestDetailMessageDto.getCustomer().getBcName()+"고객님\n"+"맡기신 세탁물의 접수를 완료하였습니다.\n"+
+                    "상세내역\n"+"https"+"://"+locationHost+"/mobile/unAuth/receipt?id="+frNo;
+
+            JSONObject resultObj = new JSONObject();
+            try {
+                resultObj.put("name1","상세내역");
+                resultObj.put("url1_1","https"+"://"+locationHost+"/mobile/unAuth/receipt?id="+frNo);
+                resultObj.put("type1","2");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            buttonJson =  resultObj.toString().replaceAll("\"\\[" ,"\\[").replaceAll("\\]\"" ,"\\]").replaceAll("\\\\" ,"");
+
+//            log.info("접수 고정값ID : "+ frId);
+//            log.info("고객번호 : "+ bcHp);
+//            log.info("카톡메세지 : "+ message);
+//            log.info("문자메세지 : "+ nextmessage);
+//            log.info("버튼_json : "+ resultObj);
+//            log.info("버튼_string : "+ buttonJson);
+        }else{
+            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP005.getCode(), "접수 "+ResponseErrorCode.TP005.getDesc(), null, null));
+        }
+
+        boolean successBoolean = requestRepositoryCustom.InsertMessage(message, nextmessage, buttonJson, templatecodeReceipt, frId, bcHp, templatecodeNumber);
+        log.info("successBoolean : "+successBoolean);
+        if(successBoolean) {
+            log.info("인서트 성공");
+        }else{
+            log.info("인서트 실패");
+        }
+
+        return ResponseEntity.ok(res.success());
     }
 
 }

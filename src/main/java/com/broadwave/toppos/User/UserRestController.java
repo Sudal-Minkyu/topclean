@@ -532,6 +532,15 @@ public class UserRestController {
         return receiptService.requestSave(requestDetailSet, request);
     }
 
+    // 접수페이지 접수완료시 카톡메세지
+    @PostMapping("requestReceiptMessage")
+    @ApiOperation(value = "가맹점 접수완료 메세지" , notes = "세탁접수를 완료하면 메세지보낼 테이블에 Insert 한다")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
+    public ResponseEntity<Map<String,Object>> requestReceiptMessage(HttpServletRequest request, @RequestParam(value="frNo", defaultValue="") String frNo,
+                                                                    @RequestParam(value="locationHost", defaultValue="") String locationHost){
+        return receiptService.requestReceiptMessage(frNo, locationHost,request);
+    }
+
     // 접수페이지 임시저장 내역 리스트 호출 APi
     @GetMapping("tempRequestList")
     public ResponseEntity<Map<String,Object>> tempRequestList(HttpServletRequest request){

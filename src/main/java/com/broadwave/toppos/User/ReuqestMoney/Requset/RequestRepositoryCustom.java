@@ -38,4 +38,7 @@ public interface RequestRepositoryCustom {
 
     List<RequestWeekAmountDto> findByRequestWeekAmount(String brCode, List<String> frNameList, LocalDateTime weekDays);
 
+    // 메세지 테이블 Native쿼리 호출
+    boolean InsertMessage(String message, String nextmessage, String buttonJson, String templatecodeReceipt, Long frId, String bcHp, String templatecodeNumber);
+
 }

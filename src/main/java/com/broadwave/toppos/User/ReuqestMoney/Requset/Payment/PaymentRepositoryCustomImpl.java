@@ -1,10 +1,7 @@
 package com.broadwave.toppos.User.ReuqestMoney.Requset.Payment;
 
 import com.broadwave.toppos.Head.Franchise.QFranchise;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentDtos.PaymentBusinessdayListDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentDtos.PaymentCencelDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentDtos.PaymentCencelYnDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentDtos.PaymentPaperDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentDtos.*;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.QRequest;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.CaseBuilder;
@@ -126,6 +123,24 @@ public class PaymentRepositoryCustomImpl extends QuerydslRepositorySupport imple
                         payment.fpCatApprovaltime,
                         payment.fpCatApprovalno,
                         payment.fpMonth,
+                        payment.fpAmt,
+                        payment.fpCollectAmt
+                ));
+
+        query.orderBy(payment.id.desc());
+
+        return query.fetch();
+    }
+
+    @Override
+    public List<PaymentMessageDto> findByPaymentMessage(String frNo) {
+        QPayment payment = QPayment.payment;
+
+        JPQLQuery<PaymentMessageDto> query = from(payment)
+                .where(payment.frId.frNo.eq(frNo).and(payment.fpCancelYn.eq("N")))
+                .select(Projections.constructor(PaymentMessageDto.class,
+                        payment.fpType,
+                        payment.fpCatIssuername,
                         payment.fpAmt,
                         payment.fpCollectAmt
                 ));

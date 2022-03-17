@@ -1701,7 +1701,44 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         return jpaResultMapper.list(query, RequestDetailInputMessageDto.class);
     }
 
+    public RequestDetailMessageDto findByRequestDetailReceiptMessage(String frNo, String frCode) {
+        QRequestDetail requestDetail = QRequestDetail.requestDetail;
+        QRequest request = QRequest.request;
+        QItemGroup itemGroup = QItemGroup.itemGroup;
+        QItem item = QItem.item;
+        QCustomer customer = QCustomer.customer;
+        QFranchise franchise = QFranchise.franchise;
+        JPQLQuery<RequestDetailMessageDto> query = from(requestDetail)
+                .innerJoin(requestDetail.frId, request)
+                .innerJoin(request.bcId, customer)
+                .innerJoin(franchise).on(franchise.frCode.eq(request.frCode))
+                .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
+                .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
 
+                .where(request.frConfirmYn.eq("Y"))
+                .where(request.frCode.eq(frCode).and(requestDetail.fdCancel.eq("N")))
+                .select(Projections.constructor(RequestDetailMessageDto.class,
+                        request.id,
+                        customer,
+
+                        franchise.frName,
+                        franchise.frTelNo,
+
+                        request.frQty,
+
+                        request.frTotalAmount,
+                        request.frPayAmount,
+
+                        itemGroup.bgName,
+                        item.biName
+                ));
+
+        query.groupBy(requestDetail.frNo);
+
+        query.where(requestDetail.frNo.eq(frNo));
+
+        return query.fetchOne();
+    }
 
 
 

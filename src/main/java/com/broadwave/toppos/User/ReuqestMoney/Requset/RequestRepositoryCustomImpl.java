@@ -7,7 +7,6 @@ import com.broadwave.toppos.Head.Item.Group.C.QItem;
 import com.broadwave.toppos.User.Customer.Customer;
 import com.broadwave.toppos.User.Customer.QCustomer;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.QRequestDetail;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.manager.RequestDetailBranchReleaseCurrentListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.*;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.CaseBuilder;
@@ -426,5 +425,32 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
         return query.fetch();
     }
 
+    // 메세지 테이블 Native쿼리
+    @Override
+    public boolean InsertMessage(String message, String nextmessage, String buttonJson, String templatecodeReceipt, Long frId, String bcHp, String templatecodeNumber) {
+        EntityManager em = getEntityManager();
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("insert into SMSQ_SEND \n");
+        sb.append("(dest_no, call_back, msg_contents, sendreq_time, msg_instm, msg_type, \n");
+        sb.append("k_next_type, k_next_contents, k_resyes, k_template_code, k_button_json, app_etc1, app_etc2) \n");
+
+        sb.append("VALUES( ?1, ?2, ?3, NOW(), NOW(), 'K', \n");
+        sb.append("'A', ?4, 'Y', ?5, ?6, \n");
+        sb.append(" 'fs_request', CONCAT(?7) ); \n");
+
+        Query query = em.createNativeQuery(sb.toString());
+        query.setParameter(1, bcHp);
+        query.setParameter(2, templatecodeNumber);
+        query.setParameter(3, message);
+        query.setParameter(4, nextmessage);
+        query.setParameter(5, templatecodeReceipt);
+        query.setParameter(6, buttonJson);
+        query.setParameter(7, frId);
+
+        query.executeUpdate();
+
+        return true;
+    }
 
 }

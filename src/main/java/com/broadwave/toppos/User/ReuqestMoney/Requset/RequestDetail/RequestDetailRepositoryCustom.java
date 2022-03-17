@@ -42,6 +42,8 @@ public interface RequestDetailRepositoryCustom {
 
     List<RequestDetailInputMessageDto> findByRequestDetailInputMessage(List<String> frNoList); // 가맹점입고시 고객에게 보내는 메세지 전달할 고객및데이터 리스트 호출
 
+    RequestDetailMessageDto findByRequestDetailReceiptMessage(String frNo, String frCode); // 접수완료이후 메세지테이블에 등록할 데이터 호출
+
     // 지사 페이지 쿼리 //
     List<RequestDetailReleaseListDto> findByRequestDetailReleaseList(String brCode, Long frId, LocalDateTime fromDt, java.time.LocalDateTime toDt, String isUrgent); // 지사출고
 
