@@ -557,6 +557,7 @@ function setFieldData(numOfGrid, item) {
             $("#brCodeChkBtn").attr("disabled", isLockField);
             $("#brCodeChecked").val('1');
             $("#brName").val(item.brName);
+            $("#brTelNo").val(item.brTelNo);
             $("#brContractDt").val(item.brContractDt);
             $("#brContractFromDt").val(item.brContractFromDt);
             $("#brContractToDt").val(item.brContractToDt);
