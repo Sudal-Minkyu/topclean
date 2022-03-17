@@ -62,7 +62,6 @@ const comms = {
     getFrList() {
         CommonUI.ajax(urls.getFrList, "GET", false, function (res) {
             const data = res.sendData.franchiseList;
-            console.log(res);
             dv.chk(data, dtos.receive.managerBelongList, "지점에 속한 가맹점 받아오기");
             const $frList = $("#frList");
             data.forEach(obj => {
@@ -327,13 +326,17 @@ function onPageLoad() {
 
 function searchOrder() {
     const frId = $("#frList").val();
+    const aftTag = $("#aftTag").val();
     if(frId === "") {
         alertCaution("가맹점을 선택해 주세요.", 1);
         return false;
     }
+    if(aftTag === "") {
+        alertCaution("택번호를 입력해 주세요.", 1);
+    }
 
     const searchCondition = {
-        tagNo: $("#aftTag").val().numString(),
+        tagNo: aftTag.numString(),
         franchiseId: $("#frList").val(), };
 
     if(searchCondition.tagNo.length !== 0 && searchCondition.tagNo.length !==4) {

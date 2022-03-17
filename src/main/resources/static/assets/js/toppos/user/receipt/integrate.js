@@ -1268,7 +1268,7 @@ const event = {
                             track.stop();
                         });
                     }catch (e) {
-                        console.log(e);
+                        CommonUI.toppos.underTaker(e, "integrate : 카메라 스트림 트랙 감지하여 취소");
                     }
                 }
             });
@@ -1902,7 +1902,7 @@ function cancelPayment(cancelType) {
                     }
                 });
             } catch (e) {
-                console.log(e);
+                CommonUI.toppos.underTaker(e, "integrate : 결제취소");
                 return false;
             }
         }else{
@@ -1931,7 +1931,7 @@ async function openPutInspectPop(e) {
         screen.srcObject = data.cameraStream;
     }catch (e) {
         if(!(e instanceof DOMException)) {
-            console.log(e);
+            CommonUI.toppos.underTaker(e, "integrate : 카메라 감지");
         }
         data.isCameraExist = false;
     }
@@ -2004,7 +2004,7 @@ function putInspect() {
             ajax.putNewInspect(formData);
 
         } catch (e) {
-            console.log(e);
+            CommonUI.toppos.underTaker(e, "integrate : 검품등록");
         }
     }else{
         const formData = new FormData();

@@ -216,7 +216,6 @@ const trigs = {
     basic() {
         /* 0번그리드 내의 셀 클릭시 이벤트 */
         AUIGrid.bind(grids.s.id[0], "cellClick", function (e) {
-            console.log(e);
         });
 
         $("#searchBtn").on("click", function () {
@@ -326,7 +325,7 @@ async function openTaglostPop(e) {
         screen.srcObject = wares.cameraStream;
     }catch (e) {
         if(!(e instanceof DOMException)) {
-            console.log(e);
+            CommonUI.toppos.underTaker(e, "tagboard : 카메라 찾기");
         }
         wares.isCameraExist = false;
     }
@@ -364,7 +363,7 @@ function takePhoto() {
             $("#photoList").append(photoHtml);
             $("#noImgScreen").hide();
         } catch (e) {
-            console.log(e);
+            CommonUI.toppos.underTaker(e, "tagboard : 사진 촬영");
         }
     } else {
         alertCaution("카메라가 감지되지 않아서<br>촬영을 할 수 없습니다.", 1);
@@ -389,7 +388,7 @@ function closeTaglostPop() {
                 track.stop();
             });
         }catch (e) {
-            console.log(e);
+            CommonUI.toppos.underTaker(e, "tagboard : 카메라 스트림 찾아서 끄기");
         }
     }
 }

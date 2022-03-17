@@ -167,7 +167,7 @@ function requestSign() {
 
         cAPI.approvalCall(protocol + '//' + hostName + ':' + port + '/user/sign');
     }catch (e) {
-        console.log(e);
+        CommonUI.toppos.underTaker(e, "customerreg : 서명요청");
         return;
     }
     // $("#resultmsg").text(": 승인중 메세지- 고객이 서명중입니다. ------전체화면으로 가리기 ");

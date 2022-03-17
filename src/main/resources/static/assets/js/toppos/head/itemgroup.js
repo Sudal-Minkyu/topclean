@@ -401,7 +401,10 @@ function gridSave(numOfGrid) {
                 if(item.bsItemGroupcodeS === undefined || item.bsItemGroupcodeS === "") {
                     alertCaution("모든 중분류 코드를 입력해 주세요", 1);
                     isExecute = false;
-                }else if(item.bsName === undefined || item.bsName === "") {
+                } else if(item.bsItemGroupcodeS !== "N" && item.bsItemGroupcodeS !== "S" && item.bsItemGroupcodeS !== "L") {
+                    alertCaution("중분류 코드는 S, N, L 만 가능합니다.", 1);
+                    isExecute = false;
+                } else if(item.bsName === undefined || item.bsName === "") {
                     alertCaution("모든 명칭을 입력해 주세요", 1);
                     isExecute = false;
                 }
@@ -409,6 +412,11 @@ function gridSave(numOfGrid) {
             updatedRowItems.forEach(function (item) {
                 if(item.bsName === undefined || item.bsName === "") {
                     alertCaution("모든 명칭을 입력해 주세요", 1);
+                    isExecute = false;
+                }
+
+                if(item.bsItemGroupcodeS !== "N" && item.bsItemGroupcodeS !== "S" && item.bsItemGroupcodeS !== "L") {
+                    alertCaution("중분류 코드는 S, N, L 만 가능합니다.", 1);
                     isExecute = false;
                 }
             });
