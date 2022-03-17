@@ -16,6 +16,10 @@ const dtos = {
             frCode: "s",
             fdS4Dt: "sr",
         },
+
+        branchDispatchPrint: {
+            miNoList: "a",
+        },
     },
 
     receive: {
@@ -26,6 +30,7 @@ const dtos = {
         },
         
         branchReleaseCurrentList: {
+            miNoList: "a", // 2022.03.17 추가
             frCode: "s", // 가맹점 id
             frName: "s",
             fdS4Dt: "s", // 출고일
@@ -69,6 +74,7 @@ const urls = {
     getFrList: "/api/manager/branchBelongList",
     getMainList: "/api/manager/branchReleaseCurrentList",
     getDetailList: "/api/manager/branchReleaseInputList",
+    dispatchPrint: "/api/manager/branchDispatchPrint",
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
@@ -102,6 +108,13 @@ const comms = {
         CommonUI.ajax(urls.getDetailList, "GET", searchCondition, function (res) {
             const data = res.sendData.gridListData;
             grids.f.setData(1, data);
+        });
+    },
+
+    dispatchPrint(miNoList) {
+        dv.chk(miNoList, dtos.send.branchDispatchPrint, "출고증 인쇄를 위한 miNoList 보내기");
+        CommonUI.ajax(urls.dispatchPrint, "GET", miNoList, function (res) {
+            dispatchPrintData(res.sendData.issueDispatchDtos)
         });
     },
 };
@@ -327,7 +340,20 @@ const trigs = {
             });
 
             $("#exportXlsx").on("click", function () {
-                grids.f.exportToXlsx();
+                if(hasGrid1Data()) {
+                    grids.f.exportToXlsx();
+                }
+            });
+
+            $("#releaseListPrint").on("click", function () {
+                if(hasGrid1Data()) {
+                    alertCheck("출고증을 인쇄 하시겠습니까?");
+                    $("#checkDelSuccessBtn").on("click", function () {
+                        comms.dispatchPrint({miNoList: wares.currentDetail.miNoList});
+                        $('#popupId').remove();
+                        $("#releaseListPrint").addClass("active");
+                    });
+                }
             });
         },
     },
@@ -343,6 +369,7 @@ const wares = {
         frCode: 0,
         frName: "",
         fdS4Dt: "",
+        miNoList: [],
     },
 }
 
@@ -404,6 +431,79 @@ function showDetail(item) {
     wares.currentDetail.frCode = searchCondition.frCode;
     wares.currentDetail.fdS4Dt = searchCondition.fdS4Dt;
     wares.currentDetail.frName = item.frName;
+    wares.currentDetail.miNoList = item.miNoList;
 
     comms.getDetailList(searchCondition);
+}
+
+function hasGrid1Data() {
+    let result = grids.f.getData(1).length ? true : false ;
+    if(!result) alertCaution("명령을 실행할 데이터가 없습니다.<br>조회후 왼쪽 표에서 데이터를 선택해 주세요.", 1);
+    return result;
+}
+
+function dispatchPrintData(jsonData){
+    // 프로젝트명
+    const projectName = "toppos";
+    // 서식명
+    const formName = "dispatchPrint02";
+
+    //데이터셋 Object
+    const datasetObject = {};
+    //데이터셋 Object에 생성된 DataSet 추가
+    datasetObject.dataset_0 = JSON.stringify(jsonData);
+    //파라미터 Object
+    const paramObject = {};
+    //파라미터
+    //paramObject.stDt = "2019-01-31";
+    //paramObject.endDt = "2019-12-31";
+    //뷰어 오픈 공통 함수 호출
+    fn_viewer_open(projectName, formName, datasetObject, paramObject);
+}
+
+
+function fn_viewer_open(projectName, formName, datasetObject, paramObject){
+    var _params = {
+        "projectName":projectName, 			//프로젝트명
+        "formName":formName             //서식명
+    };
+    for (var datasetValue in datasetObject) {
+        _params[datasetValue] = encodeURIComponent(datasetObject[datasetValue]);
+    }
+    for (var paramValue in paramObject) {
+        _params[paramValue] = paramObject[paramValue];
+    }
+
+    var _url = "https://report.topcleaners.kr:443" + "/UBIFORM/UView5/index.jsp"; //UBIFORM Viewer URL
+    //팝업 오픈 Option 해당 설정은 window.open 설정을 참조
+    //var windowoption = 'location=0, directories=0,resizable=0,status=0,toolbar=0,menubar=0, width=1280px,height=650px,left=0, top=0,scrollbars=0';  //팝업사이즈 window.open참고
+    var windowoption = 'width=1280px,height=650px';
+    var d = new Date();
+    var n = d.getTime();
+    var name = "printArea";// "UBF_" + n;
+    //팝업사이즈 window.open참고
+    var form = document.createElement("form");
+    form.setAttribute("method", "post");
+    form.setAttribute("action", _url);
+    params = _params ;
+    for (var i in params)
+    {
+        if (params.hasOwnProperty(i))
+        {
+            var param = document.createElement('input');
+            param.type = 'hidden';
+            param.name = i;
+            param.value = encodeURI( params[i] );
+            form.appendChild(param);
+        }
+    }
+    document.body.appendChild(form);
+    form.setAttribute("target", name);
+    window.open("", name, windowoption);
+    form.submit();
+    document.body.removeChild(form);
+}
+
+function releaseListPrintClose() {
+    $("#releaseListPrint").removeClass("active");
 }
