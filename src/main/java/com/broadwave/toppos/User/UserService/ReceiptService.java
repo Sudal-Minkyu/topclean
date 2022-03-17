@@ -28,7 +28,6 @@ import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetai
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailSet;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.*;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestRepository;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestRepositoryCustom;
 import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoney;
 import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoneyDtos.SaveMoneyDto;
 import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoneyDtos.SaveMoneyListDto;
@@ -36,6 +35,7 @@ import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoneyRepository;
 import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoneyRepositoryCustom;
 import com.broadwave.toppos.User.UserDtos.EtcDataDto;
 import com.broadwave.toppos.common.AjaxResponse;
+import com.broadwave.toppos.common.CommonUtils;
 import com.broadwave.toppos.common.ResponseErrorCode;
 import com.broadwave.toppos.keygenerate.KeyGenerateService;
 import io.jsonwebtoken.Claims;
@@ -84,7 +84,6 @@ public class ReceiptService {
     private final SaveMoneyRepository saveMoneyRepository;
     private final PhotoRepository photoRepository;
 
-    private final RequestRepositoryCustom requestRepositoryCustom;
     private final SaveMoneyRepositoryCustom saveMoneyRepositoryCustom;
     private final PhotoRepositoryCustom photoRepositoryCustom;
     private final MessageHistoryRepository messageHistoryRepository;
@@ -95,8 +94,8 @@ public class ReceiptService {
 
     @Autowired
     public ReceiptService(UserService userService, KeyGenerateService keyGenerateService, TokenProvider tokenProvider, ModelMapper modelMapper, MessageHistoryRepository messageHistoryRepository,
-                          RequestRepository requestRepository, RequestDetailRepository requestDetailRepository, PaymentRepository paymentRepository, SaveMoneyRepository saveMoneyRepository, PhotoRepository photoRepository,
-                          RequestRepositoryCustom requestRepositoryCustom, SaveMoneyRepositoryCustom saveMoneyRepositoryCustom, PhotoRepositoryCustom photoRepositoryCustom,
+                          RequestRepository requestRepository, RequestDetailRepository requestDetailRepository, PaymentRepository paymentRepository, SaveMoneyRepository saveMoneyRepository,
+                          PhotoRepository photoRepository, SaveMoneyRepositoryCustom saveMoneyRepositoryCustom, PhotoRepositoryCustom photoRepositoryCustom,
                           HeadService headService, CustomerRepository customerRepository, BranchCalendarRepository branchCalendarRepository, PaymentRepositoryCustom paymentRepositoryCustom){
         this.userService = userService;
         this.headService = headService;
@@ -113,7 +112,6 @@ public class ReceiptService {
         this.paymentRepositoryCustom = paymentRepositoryCustom;
         this.photoRepositoryCustom = photoRepositoryCustom;
         this.keyGenerateService = keyGenerateService;
-        this.requestRepositoryCustom = requestRepositoryCustom;
         this.saveMoneyRepositoryCustom = saveMoneyRepositoryCustom;
     }
 
@@ -129,7 +127,7 @@ public class ReceiptService {
 
     // 접수코드를 통한 접수마스터 테이블 조회
     public List<RequestInfoDto> findByRequestList(String frCode, String nowDate, Customer customer){
-        return requestRepositoryCustom.findByRequestList(frCode, nowDate, customer);
+        return requestRepository.findByRequestList(frCode, nowDate, customer);
     }
 
     // 접수코드와 태그번호를 통한 접수세부 테이블 조회
@@ -144,7 +142,7 @@ public class ReceiptService {
 
     // 접수 마스터테이블 임시저장 리스트 호출
     public List<RequestListDto> findByRequestTempList(String frCode){
-        return requestRepositoryCustom.findByRequestTempList(frCode);
+        return requestRepository.findByRequestTempList(frCode);
     }
 
     // 삭제를 위한 세부테이블 임시저장 리스트 호출
@@ -164,7 +162,7 @@ public class ReceiptService {
 
     // 결제 마스터테이블 미수금액 리스트 호출
     public List<RequestCollectDto> findByRequestCollectList(Customer customer, String nowDate) {
-        return requestRepositoryCustom.findByRequestCollectList(customer, nowDate);
+        return requestRepository.findByRequestCollectList(customer, nowDate);
     }
 
     // 접수페이지 가맹점 임시저장 및 결제하기 세탁접수 API
@@ -732,7 +730,7 @@ public class ReceiptService {
 
         if(type.equals("1")){
             log.info("전일~금일 미수금 리스트를 받아옵니다.");
-            List<RequestUnCollectDto> requestUnCollectDtoList = requestRepositoryCustom.findByUnCollectList(customerIdList, nowDate);
+            List<RequestUnCollectDto> requestUnCollectDtoList = requestRepository.findByUnCollectList(customerIdList, nowDate);
             for (HashMap<String, Object> listDatum : customerListData) {
                 for (int j = 0; j < requestUnCollectDtoList.size(); j++) {
                     if (listDatum.get("bcId").equals(requestUnCollectDtoList.get(j).getBcId())) {
@@ -744,7 +742,7 @@ public class ReceiptService {
             }
         }else{
             log.info("전일미수금 리스트를 받아옵니다.");
-            List<RequestUnCollectDto> requestUnCollectDtoList = requestRepositoryCustom.findByBeforeUnCollectList(customerIdList, nowDate);
+            List<RequestUnCollectDto> requestUnCollectDtoList = requestRepository.findByBeforeUnCollectList(customerIdList, nowDate);
             for (HashMap<String, Object> listDatum : customerListData) {
                 for (int j = 0; j < requestUnCollectDtoList.size(); j++) {
                     if (listDatum.get("bcId").equals(requestUnCollectDtoList.get(j).getBcId())) {
@@ -816,7 +814,7 @@ public class ReceiptService {
 
     // 가맹점코드로 조회하여 해당 가맹점이 한번이라도 접수나 임시저장을 했는지 조회하는 함수
     public List<RequestSearchDto> findByRequestFrCode(String frCode) {
-        return requestRepositoryCustom.findByRequestFrCode(frCode);
+        return requestRepository.findByRequestFrCode(frCode);
     }
 
     // 상품세부의 파일리스트 호출
@@ -839,7 +837,7 @@ public class ReceiptService {
         String nowDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         log.info("금일날짜 : "+nowDate);
 
-        RequestPaymentPaperDto requestPaymentPaperDto = requestRepositoryCustom.findByRequestPaymentPaper(frNo, frId, frCode);
+        RequestPaymentPaperDto requestPaymentPaperDto = requestRepository.findByRequestPaymentPaper(frNo, frId, frCode);
         HashMap<String,Object> paymentData;
 
         List<HashMap<String,Object>> requestDetailPaymentListData = new ArrayList<>();
@@ -936,17 +934,17 @@ public class ReceiptService {
 
     // 가맹점 메인페이지 History 리스트 호출 함수
     public List<RequestHistoryListDto> findByRequestHistory(String frCode, String nowDate) {
-        return requestRepositoryCustom.findByRequestHistory(frCode, nowDate);
+        return requestRepository.findByRequestHistory(frCode, nowDate);
     }
 
     // 임시저장한 내역이 존재하는지
     public RequestTempDto findByRequestTemp(String frCode) {
-        return requestRepositoryCustom.findByRequestTemp(frCode);
+        return requestRepository.findByRequestTemp(frCode);
     }
 
     // 접수페이지 접수완료시 카톡메세지
     @Transactional
-    public ResponseEntity<Map<String, Object>> requestReceiptMessage(String frNo, String  locationHost, HttpServletRequest request) {
+    public ResponseEntity<Map<String, Object>> requestReceiptMessage(String frNo, String  locationHost, HttpServletRequest request) throws Exception {
 //        location.protocol+"//"+location.host
         log.info("requestReceiptMessage 호출");
         AjaxResponse res = new AjaxResponse();
@@ -962,6 +960,7 @@ public class ReceiptService {
         log.info("현재 접속한 가맹점 코드 : "+frCode);
         log.info("소속된 지사 코드 : "+frbrCode);
 
+        MessageHistory messageHistory = new MessageHistory();
         String greet = "언제나 정성을 다하는 탑 크리닝업 메가샵 입니다.\n안녕하세요. ";
         String message;
         String nextmessage;
@@ -974,7 +973,7 @@ public class ReceiptService {
         String uncollect_message; // 미수금메세지
         RequestDetailMessageDto requestDetailMessageDto = requestDetailRepository.findByRequestDetailReceiptMessage(frNo,frCode);
         if(requestDetailMessageDto != null){
-
+            messageHistory.setBcId(requestDetailMessageDto.getCustomer());
             List<RequestCollectDto>  requestCollectDtoList = findByRequestCollectList(requestDetailMessageDto.getCustomer(), null);
             List<Integer> uncollectMoneyList = findByBeforeAndTodayUnCollect(requestCollectDtoList, LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
             int preUncollectAmount; // 전일 미수금액
@@ -1048,7 +1047,7 @@ public class ReceiptService {
             uncollect_message = "전일미수금 : "+decimalFormat.format(preUncollectAmount)+"원, 당일미수금 : "+decimalFormat.format(curUncollectAmount)+"원\n"+
                     "미수금상환액 : "+decimalFormat.format(fpCollectAmt)+"원, 전체 미수금 : "+decimalFormat.format(totalUncollectAmount)+"원\n";
             message = greet+requestDetailMessageDto.getCustomer().getBcName()+"님\n\n고객님의 세탁접수가 완료 되었습니다.\n\n" +
-                    "대리점 : "+requestDetailMessageDto.getFrName()+"("+requestDetailMessageDto.getFrTelNo()+")\n\n접수내역\n"+requestDetailMessageDto.getBiName()+" "+requestDetailMessageDto.getBgName();
+                    "대리점 : "+requestDetailMessageDto.getFrName()+"("+ CommonUtils.hpNumberChange(requestDetailMessageDto.getFrTelNo())+")\n\n접수내역\n"+requestDetailMessageDto.getBiName()+" "+requestDetailMessageDto.getBgName();
 
             int qty = requestDetailMessageDto.getFrQty()-1;
             if(requestDetailMessageDto.getFrQty() > 1){
@@ -1057,7 +1056,7 @@ public class ReceiptService {
                 message = message+"\n\n";
             }
 
-            message = message+"결제정보\n"+"총 접수금액 : "+requestDetailMessageDto.getFrTotalAmount()+"원\n"+uncollect_message+"\n총 결제금액 : "+requestDetailMessageDto.getFrPayAmount()+"원\n\n"
+            message = message+"결제정보\n"+"총 접수금액 : "+decimalFormat.format(+requestDetailMessageDto.getFrTotalAmount())+"원\n"+uncollect_message+"\n총 결제금액 : "+decimalFormat.format(requestDetailMessageDto.getFrPayAmount())+"원\n\n"
                     +"결제 상세정보\n"+payDetail;
 
             if(locationHost.startsWith("loc") || locationHost.startsWith("top") || locationHost.startsWith("192")){
@@ -1089,7 +1088,6 @@ public class ReceiptService {
             return ResponseEntity.ok(res.fail(ResponseErrorCode.TP005.getCode(), "접수 "+ResponseErrorCode.TP005.getDesc(), null, null));
         }
 
-        MessageHistory messageHistory = new MessageHistory();
         messageHistory.setFmType("02");
         messageHistory.setFrCode(frCode);
         messageHistory.setBrCode(frbrCode);
@@ -1098,12 +1096,12 @@ public class ReceiptService {
         messageHistory.setInsertDateTime(LocalDateTime.now());
         messageHistoryRepository.save(messageHistory);
 
-        boolean successBoolean = requestRepositoryCustom.InsertMessage(message, nextmessage, buttonJson, templatecodeReceipt, frId, bcHp, templatecodeNumber);
+        boolean successBoolean = requestRepository.InsertMessage(message, nextmessage, buttonJson, templatecodeReceipt, "fs_request", frId, bcHp, templatecodeNumber);
         log.info("successBoolean : "+successBoolean);
         if(successBoolean) {
-            log.info("인서트 성공");
+            log.info("메세지 인서트 성공");
         }else{
-            log.info("인서트 실패");
+            log.info("메세지 인서트 실패");
         }
 
         return ResponseEntity.ok(res.success());

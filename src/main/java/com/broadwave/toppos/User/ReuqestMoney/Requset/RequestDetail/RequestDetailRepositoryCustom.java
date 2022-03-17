@@ -68,4 +68,5 @@ public interface RequestDetailRepositoryCustom {
     List<RequestDetailBranchReturnCurrentListDto> findByRequestDetailBranchReturnCurrentList(String brCode, Long franchiseId, String filterFromDt, String filterToDt); // 가맹반송현황 - 왼쪽 리스트 호출API
     List<RequestDetailBranchReturnCurrentRightListDto> findByRequestDetailBranchReturnRightCurrentList(String brCode, String frCode, String fdS3Dt); // 가맹반송현황 - 오른쪽 리스트 호출API
 
+    RequestDetailBranchInspeotDto findByBranchInspeotDto(Long fdId); // 확인품등록전 받아올 데이터 호출API
 }

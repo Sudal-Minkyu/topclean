@@ -1,10 +1,12 @@
 package com.broadwave.toppos.Manager.Process.Issue;
 
-import lombok.*;
+import com.broadwave.toppos.common.CommonUtils;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
 import java.math.BigInteger;
-import java.time.LocalDateTime;
 
 /**
  * @author Minkyu
@@ -41,6 +43,14 @@ public class IssueDispatchDto {
     private BigInteger t07Count; // 침구,커튼 갯수
     private BigInteger t08Count; // 오염제거 갯수
     private BigInteger total; // 총 합계
+
+    public String getFrTelNo() {
+        return CommonUtils.hpNumberChange(frTelNo);
+    }
+
+    public String getBrTelNo() {
+        return CommonUtils.hpNumberChange(brTelNo);
+    }
 
     public StringBuffer getMiDt() {
         if(!miDt.equals("")){

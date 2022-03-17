@@ -8,6 +8,7 @@ import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetai
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.RequestBusinessdayCustomerListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.RequestBusinessdayListDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestRepositoryCustom;
 import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoneyDtos.SaveMoneyBusinessdayListDto;
 import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoneyRepositoryCustom;
@@ -36,16 +37,16 @@ public class BusinessdayService {
 
     private final TokenProvider tokenProvider;
 
-    private final RequestRepositoryCustom requestRepositoryCustom;
+    private final RequestRepository requestRepository;
     private final RequestDetailRepository requestDetailRepository;
     private final PaymentRepositoryCustom paymentRepositoryCustom;
     private final SaveMoneyRepositoryCustom saveMoneyRepositoryCustom;
 
     @Autowired
-    public BusinessdayService(TokenProvider tokenProvider, RequestRepositoryCustom requestRepositoryCustom,
+    public BusinessdayService(TokenProvider tokenProvider, RequestRepository requestRepository,
                               RequestDetailRepository requestDetailRepository, PaymentRepositoryCustom paymentRepositoryCustom, SaveMoneyRepositoryCustom saveMoneyRepositoryCustom){
         this.tokenProvider = tokenProvider;
-        this.requestRepositoryCustom = requestRepositoryCustom;
+        this.requestRepository = requestRepository;
         this.requestDetailRepository = requestDetailRepository;
         this.paymentRepositoryCustom = paymentRepositoryCustom;
         this.saveMoneyRepositoryCustom = saveMoneyRepositoryCustom;
@@ -70,7 +71,7 @@ public class BusinessdayService {
         log.info("현재 접속한 가맹점 코드 : "+frCode);
 
         // 접수 총건수, 접수금액 통계
-        List<RequestBusinessdayListDto> requestBusinessdayListDtos = requestRepositoryCustom.findByBusinessDayList(frCode, filterFromDt, filterToDt);
+        List<RequestBusinessdayListDto> requestBusinessdayListDtos = requestRepository.findByBusinessDayList(frCode, filterFromDt, filterToDt);
 
         // 접수세부(부착물, 재세탁) 통계
         List<RequestDetailBusinessdayListDto> requestDetailBusinessSumDtos = requestDetailRepository.findByRequestDetailBusinessdayList(frCode, filterFromDt,  filterToDt);
@@ -82,7 +83,7 @@ public class BusinessdayService {
         List<SaveMoneyBusinessdayListDto> saveMoneyBusinessdayListDtos = saveMoneyRepositoryCustom.findBySaveMoneyBusinessdayListDto(frCode, filterFromDt,  filterToDt);
 
         // 방문고객 접수 통계
-        List<RequestBusinessdayCustomerListDto> requestBusinessdayCustomerListDtos = requestRepositoryCustom.findByBusinessDayCustomerList(frCode, filterFromDt,  filterToDt);
+        List<RequestBusinessdayCustomerListDto> requestBusinessdayCustomerListDtos = requestRepository.findByBusinessDayCustomerList(frCode, filterFromDt,  filterToDt);
 
         // 방문고객 출고 통계
         List<RequestDetailBusinessdayDeliveryDto> requestDetailBusinessdayDeliveryDtos = requestDetailRepository.findByRequestDetailBusinessdayDeliveryList(frCode, filterFromDt,  filterToDt);

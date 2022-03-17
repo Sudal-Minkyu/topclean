@@ -24,6 +24,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.time.LocalDateTime;
@@ -405,7 +406,7 @@ public class ReceiptReleaseService {
     }
 
     // 출고증인쇄 함수
-    public ResponseEntity<Map<String, Object>> branchDispatchPrint(List<String> miNoList, HttpServletRequest request) {
+    public ResponseEntity<Map<String, Object>> branchDispatchPrint(List<String> miNoList) {
         log.info("branchDispatchPrint 호출");
 
         AjaxResponse res = new AjaxResponse();

@@ -15,7 +15,6 @@ import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetai
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.RequestCustomerUnCollectDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestRepository;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestRepositoryCustom;
 import com.broadwave.toppos.common.AjaxResponse;
 import com.broadwave.toppos.common.ResponseErrorCode;
 import io.jsonwebtoken.Claims;
@@ -46,7 +45,6 @@ public class UncollectService {
     private final PaymentRepository paymentRepository;
     private final FranchiseRepository franchiseRepository;
     private final RequestRepository requestRepository;
-    private final RequestRepositoryCustom requestRepositoryCustom;
 
     private final RequestDetailRepository requestDetailRepository;
 
@@ -55,16 +53,15 @@ public class UncollectService {
 
     @Autowired
     public UncollectService(ModelMapper modelMapper, TokenProvider tokenProvider, ReceiptService receiptService,
-                            RequestRepositoryCustom requestRepositoryCustom, FranchiseRepository franchiseRepository, CustomerRepository customerRepository,
-                            PaymentRepository paymentRepository, RequestRepository requestRepository, RequestDetailRepository requestDetailRepository,
+                            RequestRepository requestRepository, FranchiseRepository franchiseRepository, CustomerRepository customerRepository,
+                            PaymentRepository paymentRepository, RequestDetailRepository requestDetailRepository,
                             CustomerRepositoryCustom customerRepositoryCustom){
         this.modelMapper = modelMapper;
-        this.requestRepositoryCustom = requestRepositoryCustom;
+        this.requestRepository = requestRepository;
         this.customerRepository = customerRepository;
         this.franchiseRepository = franchiseRepository;
         this.receiptService = receiptService;
         this.tokenProvider = tokenProvider;
-        this.requestRepository = requestRepository;
         this.paymentRepository = paymentRepository;
         this.requestDetailRepository = requestDetailRepository;
         this.customerRepositoryCustom = customerRepositoryCustom;
@@ -127,7 +124,7 @@ public class UncollectService {
         log.info("현재 접속한 아이디 : "+login_id);
         log.info("현재 접속한 가맹점 코드 : "+frCode);
 
-        List<RequestCustomerUnCollectDto> requestCustomerUnCollectDtos = requestRepositoryCustom.findByRequestCustomerUnCollectList(bcId, frCode);
+        List<RequestCustomerUnCollectDto> requestCustomerUnCollectDtos = requestRepository.findByRequestCustomerUnCollectList(bcId, frCode);
         List<HashMap<String,Object>> uncollectListData = new ArrayList<>();
         HashMap<String,Object> uncollectListInfo;
         for (RequestCustomerUnCollectDto requestCustomerUnCollectDto: requestCustomerUnCollectDtos) {
@@ -205,7 +202,7 @@ public class UncollectService {
             payInfo.put("bcHp", optionalCustomer.get().getBcHp());
             payInfoData.add(payInfo);
 
-            List<RequestCustomerUnCollectDto> requestCustomerUnCollectDtos = requestRepositoryCustom.findByRequestUnCollectPayList(frIdList, frCode);
+            List<RequestCustomerUnCollectDto> requestCustomerUnCollectDtos = requestRepository.findByRequestUnCollectPayList(frIdList, frCode);
             List<HashMap<String,Object>> uncollectListData = new ArrayList<>();
             HashMap<String,Object> uncollectListInfo;
             for (RequestCustomerUnCollectDto requestCustomerUnCollectDto: requestCustomerUnCollectDtos) {

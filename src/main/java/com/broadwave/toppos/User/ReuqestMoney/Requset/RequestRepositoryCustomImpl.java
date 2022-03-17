@@ -427,7 +427,7 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
 
     // 메세지 테이블 Native쿼리
     @Override
-    public boolean InsertMessage(String message, String nextmessage, String buttonJson, String templatecodeReceipt, Long frId, String bcHp, String templatecodeNumber) {
+    public boolean InsertMessage(String message, String nextmessage, String buttonJson, String templatecode, String tableName, Long tableId, String TelNumber, String templatecodeNumber) {
         EntityManager em = getEntityManager();
         StringBuilder sb = new StringBuilder();
 
@@ -438,16 +438,17 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
 
             sb.append("VALUES( ?1, ?2, ?3, NOW(), NOW(), 'K', \n");
             sb.append("'A', ?4, 'Y', ?5, ?6, \n");
-            sb.append(" 'fs_request', CONCAT(?7) ); \n");
+            sb.append("?7, CONCAT(?8) ); \n");
 
             Query query = em.createNativeQuery(sb.toString());
-            query.setParameter(1, bcHp);
+            query.setParameter(1, TelNumber);
             query.setParameter(2, templatecodeNumber);
             query.setParameter(3, message);
             query.setParameter(4, nextmessage);
-            query.setParameter(5, templatecodeReceipt);
+            query.setParameter(5, templatecode);
             query.setParameter(6, buttonJson);
-            query.setParameter(7, frId);
+            query.setParameter(7, tableName);
+            query.setParameter(8, tableId);
 
             query.executeUpdate();
 

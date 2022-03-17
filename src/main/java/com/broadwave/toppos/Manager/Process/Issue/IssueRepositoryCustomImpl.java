@@ -54,7 +54,7 @@ public class IssueRepositoryCustomImpl extends QuerydslRepositorySupport impleme
 
     // 출고증인쇄 데이터 호출
     @Override
-    public List<IssueDispatchDto> findByDispatchPrintData(List<String> miNoList){
+    public List<IssueDispatchDto> findByDispatchPrintData(List<String> miNoList) {
 
         EntityManager em = getEntityManager();
         StringBuilder sb = new StringBuilder();

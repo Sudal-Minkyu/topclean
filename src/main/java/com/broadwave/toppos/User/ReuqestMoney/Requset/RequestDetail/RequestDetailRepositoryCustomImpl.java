@@ -1,5 +1,6 @@
 package com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail;
 
+import com.broadwave.toppos.Head.Branoh.QBranch;
 import com.broadwave.toppos.Head.Franchise.QFranchise;
 import com.broadwave.toppos.Head.Item.Group.A.QItemGroup;
 import com.broadwave.toppos.Head.Item.Group.B.QItemGroupS;
@@ -1740,7 +1741,34 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         return query.fetchOne();
     }
 
+    // 확인품등록전 받아올 데이터 호출API
+    public RequestDetailBranchInspeotDto findByBranchInspeotDto(Long fdId) {
+        QRequestDetail requestDetail = QRequestDetail.requestDetail;
+        QRequest request = QRequest.request;
+        QItemGroup itemGroup = QItemGroup.itemGroup;
+        QItem item = QItem.item;
+        QBranch branch = QBranch.branch;
+        QFranchise franchise = QFranchise.franchise;
 
+        JPQLQuery<RequestDetailBranchInspeotDto> query = from(requestDetail)
+                .innerJoin(requestDetail.frId, request)
+                .innerJoin(branch).on(branch.brCode.eq(request.brCode))
+                .innerJoin(franchise).on(franchise.frCode.eq(request.frCode))
+                .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
+                .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
 
+                .where(request.frConfirmYn.eq("Y"))
+                .where(requestDetail.fdCancel.eq("N"))
+                .select(Projections.constructor(RequestDetailBranchInspeotDto.class,
+                        requestDetail,
+                        branch.brName,
+                        franchise.frTelNo,
+                        itemGroup.bgName,
+                        item.biName
+                ));
+        query.where(requestDetail.id.eq(fdId));
+
+        return query.fetchOne();
+    }
 
 }

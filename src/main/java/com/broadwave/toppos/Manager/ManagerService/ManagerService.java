@@ -12,7 +12,7 @@ import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.Insp
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.manager.RequestDetailTagSearchListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.RequestWeekAmountDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestRepositoryCustom;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestRepository;
 import com.broadwave.toppos.User.UserLoginLog.UserLoginLogDto;
 import com.broadwave.toppos.User.UserLoginLog.UserLoginLogRepository;
 import com.broadwave.toppos.common.AjaxResponse;
@@ -46,19 +46,19 @@ public class ManagerService {
     private final FranchiseRepository franchiseRepository;
     private final UserLoginLogRepository userLoginLogRepository;
     private final RequestDetailRepository requestDetailRepository;
-    private final RequestRepositoryCustom requestRepositoryCustom;
+    private final RequestRepository requestRepository;
     private final InspeotRepositoryCustom inspeotRepositoryCustom;
     private final IssueRepository issueRepository;
 
     @Autowired
-    public ManagerService(TokenProvider tokenProvider, NoticeService noticeService, RequestRepositoryCustom requestRepositoryCustom,
+    public ManagerService(TokenProvider tokenProvider, NoticeService noticeService, RequestRepository requestRepository,
                           UserLoginLogRepository userLoginLogRepository, FranchiseRepository franchiseRepository, RequestDetailRepository requestDetailRepository,
                           InspeotRepositoryCustom inspeotRepositoryCustom, IssueRepository issueRepository){
         this.tokenProvider = tokenProvider;
         this.noticeService = noticeService;
         this.userLoginLogRepository = userLoginLogRepository;
         this.franchiseRepository = franchiseRepository;
-        this.requestRepositoryCustom = requestRepositoryCustom;
+        this.requestRepository = requestRepository;
         this.requestDetailRepository = requestDetailRepository;
         this.inspeotRepositoryCustom = inspeotRepositoryCustom;
         this.issueRepository = issueRepository;
@@ -150,7 +150,7 @@ public class ManagerService {
         String formatWeekDays = weekDays.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 //        log.info("weekDays : "+weekDays);
 //        log.info("formatWeekDays : "+formatWeekDays);
-        List<RequestWeekAmountDto> requestWeekAmountDtos = requestRepositoryCustom.findByRequestWeekAmount(brCode, frNameList, weekDays);
+        List<RequestWeekAmountDto> requestWeekAmountDtos = requestRepository.findByRequestWeekAmount(brCode, frNameList, weekDays);
 //        log.info("requestWeekAmountDtos : "+requestWeekAmountDtos);
         List<IssueWeekAmountDto> issueWeekAmountDtos = issueRepository.findByIssueWeekAmount(brCode, formatWeekDays);
 
