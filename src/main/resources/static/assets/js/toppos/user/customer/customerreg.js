@@ -89,15 +89,12 @@ function saveRegister() {
     formData.append("bcGrade", "01");
 
     if($("#bcAgreeType").val()==="1"){
-        console.log("온라인 입니다.");
-        if($("#SignImage").val().length){
+        if($("#SignImage").val() && $("#SignImage").val().length){
             formData.append("bcSignImage", $("#bcSignImage").val());
         }else{
-            alertCaution("사인을 해주세요",1);
+            alertCaution("고객 서명을 해주세요", 1);
             return false;
         }
-    }else{
-        console.log("서면 입니다.");
     }
 
     const url = "/api/user/customerSave";
