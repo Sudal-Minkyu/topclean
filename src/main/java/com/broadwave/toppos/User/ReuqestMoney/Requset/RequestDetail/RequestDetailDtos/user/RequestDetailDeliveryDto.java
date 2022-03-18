@@ -98,7 +98,7 @@ public class RequestDetailDeliveryDto {
     }
 
     public StringBuffer getFdS5Dt() {
-        if(fdS5Dt != null){
+        if(!fdS5Dt.equals("")){
             StringBuffer getFdS5Dt = new StringBuffer(fdS5Dt);
             getFdS5Dt.insert(4,'-');
             getFdS5Dt.insert(7,'-');

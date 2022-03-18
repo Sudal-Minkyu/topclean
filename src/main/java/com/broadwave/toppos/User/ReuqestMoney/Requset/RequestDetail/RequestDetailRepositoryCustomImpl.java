@@ -9,11 +9,9 @@ import com.broadwave.toppos.Manager.Process.Issue.QIssue;
 import com.broadwave.toppos.Manager.Process.IssueForce.QIssueForce;
 import com.broadwave.toppos.User.Customer.QCustomer;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.QRequest;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotMainListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.QInspeot;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.manager.*;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.*;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.RequestUnCollectDto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.JPQLQuery;
@@ -147,11 +145,14 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                                 .when(requestDetail.fdS8Dt.isNull()).then(requestDetail.fdS5Dt)
                                 .otherwise(
                                         new CaseBuilder()
-                                                .when(requestDetail.fdS5Dt.isNull()).then(requestDetail.fdS8Dt)
+                                                .when(requestDetail.fdS5Dt.isNull()).then(requestDetail.fdS7Dt)
                                                 .otherwise(
                                                         new CaseBuilder()
-                                                                .when(requestDetail.fdS5Dt.goe(requestDetail.fdS8Dt)).then(requestDetail.fdS5Dt)
-                                                                .otherwise(requestDetail.fdS8Dt))),
+                                                            .when(requestDetail.fdS5Dt.goe(requestDetail.fdS8Dt)).then(requestDetail.fdS5Dt)
+                                                            .otherwise(
+                                                                    new CaseBuilder()
+                                                                        .when(requestDetail.fdS8Dt.goe(requestDetail.fdS7Dt)).then(requestDetail.fdS8Dt)
+                                                                        .otherwise(requestDetail.fdS7Dt)))),
                         requestDetail.fdS6Dt,
                         requestDetail.fdCancel,
                         requestDetail.fdCacelDt,
@@ -543,6 +544,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         QItem item = QItem.item;
         QCustomer customer = QCustomer.customer;
 
+        QFranchise franchise;
         JPQLQuery<RequestDetailDeliveryDto> query = from(requestDetail)
                 .innerJoin(requestDetail.frId, request)
                 .innerJoin(request.bcId, customer)
@@ -564,7 +566,12 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdState,
                         requestDetail.fdS2Dt,
                         requestDetail.fdS4Dt,
-                        requestDetail.fdS5Dt,
+                        new CaseBuilder()
+                                .when(requestDetail.fdS5Dt.isNotNull()).then(requestDetail.fdS5Dt)
+                                .otherwise(
+                                        new CaseBuilder()
+                                            .when(requestDetail.fdS7Dt.isNotNull()).then(requestDetail.fdS7Dt)
+                                            .otherwise("")),
                         requestDetail.fdPriceGrade,
                         requestDetail.fdRetryYn,
                         requestDetail.fdPressed,
