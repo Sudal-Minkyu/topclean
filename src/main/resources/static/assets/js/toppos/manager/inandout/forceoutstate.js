@@ -28,7 +28,7 @@ const dtos = {
         branchReleaseCurrentList: {
             frCode: "s", // 가맹점 id
             frName: "s",
-            fdS7Dt: "s", // 강제출고일
+            fdS7Dt: "s", // 강제출고등록일
             output_cnt: "n",
             tot_amt: "n",
         },
@@ -134,7 +134,7 @@ const grids = {
                     style: "grid_textalign_left",
                 }, {
                     dataField: "fdS7Dt",
-                    headerText: "강제<br>출고일자",
+                    headerText: "강제출고<br>등록일자",
                     width: 100,
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
@@ -188,7 +188,7 @@ const grids = {
                     formatString: "yyyy-mm-dd",
                 }, {
                     dataField: "fdS7Dt",
-                    headerText: "강제<br>출고일자",
+                    headerText: "강제출고<br>등록일자",
                     width: 100,
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
