@@ -5,10 +5,12 @@
 * */
 const dtos = {
     send: {
+        상세보기: {
+            btId: "nr",
+        },
         tagGalleryList: {
             filterFromDt: "s",
             filterToDt: "s",
-            searchString: "s", // 아직 사용 안함
             type: "s", // 1 미완료, 2 전체, 3 가맹 응답
         },
         tagGallerySave: {
@@ -19,7 +21,7 @@ const dtos = {
             btRemark: "s",
             addPhotoList: "", // 새로 등록된 사진파일들의 리스트
             deletePhotoList: "", // 지울 사진 id들의 리스트
-        }
+        },
     },
     receive: {
         tagGalleryList: {
@@ -59,15 +61,16 @@ const dtos = {
 const urls = {
     getMainList: "/api/manager/tagGalleryList",
     putNewTaglost: "/api/manager/tagGallerySave",
+    getDetail: "",
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
     getMainList(searchCondition) {
-        dv.chk(searchCondition, dtos.send.tagGalleryList, "택분실 조회 조건 보내기");
+        // dv.chk(searchCondition, dtos.send.tagGalleryList, "택분실 조회 조건 보내기");
         CommonUI.ajax(urls.getMainList, "GET", searchCondition, function (res) {
             const dataList = res.sendData.tagGalleryList;
-            dv.chk(dataList, dtos.receive.tagGalleryList, "조회된 택분실 리스트 받기");
+            // dv.chk(dataList, dtos.receive.tagGalleryList, "조회된 택분실 리스트 받기");
 
             for(data of dataList) {
                 for(const [i, obj] of data.bfPathFilename.entries()) {
@@ -87,6 +90,34 @@ const comms = {
         dv.chk(testObj, dtos.send.tagGallerySave, "택분실 등록하기");
         CommonUI.ajax(urls.putNewTaglost, "POST", formData, function (res)  {
             console.log(res);
+        });
+    },
+
+    getDetail(getCondition) {
+        
+        CommonUI.ajax(urls.getDetail, "GET", getCondition, function (res) {
+            console.log(res);
+            const data = res.sendData;
+            wares.currentRequest = data;
+            resetTaglostPop();
+            tagLostPopUpdateMode();
+
+            for(photo of data.bfPathFilename) {
+                const photoHtml = `<li class="tag-imgs__item">
+                    <a href="${photo.bfPath + photo.bfFilename}" data-lightbox="images" data-title="이미지 확대">
+                        <img src="${photo.bfPath + "s_" + photo.bfFilename}" class="tag-imgs__img" alt=""/>
+                    </a>
+                </li>`
+                $("#photoList").append(photoHtml);
+                $("#noImgScreen").hide();
+            }
+            $("#btBrandName").val(data.btBrandName);
+            $("#btMaterial").val(data.btMaterial);
+            $("#btRemark").val(data.btRemark);
+
+            $("#frResponse").val(""); // 프랜차이즈의 반응 리스트를 조합하여 생성
+
+            openTaglostPop();
         });
     }
 };
@@ -176,7 +207,7 @@ const grids = {
                         return value;
                     },
                 }, {
-                    dataField: "",
+                    dataField: "detail",
                     headerText: "상세보기",
                     width: 70,
                     renderer : {
@@ -237,17 +268,35 @@ const grids = {
 
 /* 이벤트를 설정하거나 해지하는 함수들을 담는다. */
 const trigs = {
-    basic() {
-        /* 0번그리드 내의 셀 클릭시 이벤트 */
+    grid() {
         AUIGrid.bind(grids.s.id[0], "cellClick", function (e) {
+            console.log(e);
+            switch(e.dataField) { // 썸네일 클릭시 이미지가 뜨고 디테일 클릭시 상세보기가 작동한다.
+                case "thumbnail1" :
+                case "thumbnail2" :
+                case "thumbnail3" :
+                    if(e.item[e.dataField]) {
+                        $("#gridPhoto").attr("href", e.item.bfPathFilename[e.dataField.substring(9, 10) - 1].bfPath
+                            + e.item.bfPathFilename[e.dataField.substring(9, 10) - 1].bfFilename);
+                        $("#gridPhoto").trigger("click");
+                    }
+                    break;
+                case "detail" :
+                        showDetail(e.item.btId);
+                    break;
+            }
         });
+    },
 
+    basic() {
         $("#searchBtn").on("click", function () {
             searchOrder();
         });
 
         $("#addBtn").on("click", function () {
             wares.currentRequest = {};
+            resetTaglostPop();
+            tagLostPopCreateMode();
             openTaglostPop();
         });
 
@@ -288,6 +337,7 @@ function onPageLoad() {
     grids.f.create();
     enableDatepicker();
     trigs.basic();
+    trigs.grid();
 
     // lightbox option
     lightbox.option({
@@ -333,8 +383,7 @@ function closeTaglostPop() {
     $("#taglostPop").removeClass("active");
 }
 
-async function openTaglostPop(e) {
-    resetTaglostPop();
+async function openTaglostPop() {
 
     try {
         wares.isCameraExist = true;
@@ -403,6 +452,18 @@ function resetTaglostPop() {
     $("#frResponse").val("");
     $("#photoList").html("");
     $("#noImgScreen").show();
+}
+
+function tagLostPopCreateMode() {
+    $("#responseDiv").hide();
+    $("#endPost").hide();
+    $("#removePost").hide();
+}
+
+function tagLostPopUpdateMode() {
+    $("#responseDiv").show();
+    $("#endPost").show();
+    $("#removePost").show();
 }
 
 function closeTaglostPop() {
@@ -475,4 +536,12 @@ function savePost() {
     formData.append("btRemark", $("#btRemark").val());
     
     comms.putNewTaglost(formData);
+}
+
+function showDetail(btId) {
+    const getCondition = {
+        btId: btId
+    };
+
+    comms.getDetail(getCondition);
 }

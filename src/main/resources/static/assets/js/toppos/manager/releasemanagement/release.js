@@ -347,80 +347,77 @@ const grids = {
     },
 
     t: {
-        basicTrigger() {
-            AUIGrid.bind(grids.s.id[0], "rowCheckClick", function (e) {
-                listCheckChanged();
-            });
-
-            AUIGrid.bind(grids.s.id[0], "rowAllCheckClick", function (check) {
-                listCheckChanged();
-            });
-        }
+        
     }
 };
 
 /* 이벤트를 s : 설정하거나 r : 해지하는 함수들을 담는다. 그리드 관련 이벤트는 grids.e에 위치 (trigger) */
 const trigs = {
-    s: { // 이벤트 설정
-        basic() {
-            $("#type01").on("click", function () {
-                $("#frSelectUI").hide();
-                $("#frList option").first().prop("selected", true);
-            })
+    grid() {
+        AUIGrid.bind(grids.s.id[0], "rowCheckClick", function (e) {
+            listCheckChanged();
+        });
 
-            $("#type02").on("click", function () {
-                $("#frSelectUI").show();
-            });
-
-            $("#getListBtn").on("click", function () {
-                getReceiptList();
-            });
-
-            $("#inputTagBtn").on("click", function () {
-                inputTag();
-            });
-
-            $("#inputTagNo").on("keyup", function (e) {
-                if(e.originalEvent.code === "Enter" || e.originalEvent.code === "NumpadEnter") {
-                    inputTag();
-                }
-            });
-
-            $("#sendOutBtn").on("click", function () {
-                wares.checkedItems = grids.f.getCheckedItems(0);
-                if(wares.checkedItems.length) {
-                    alertCheck("선택된 상품을 출고처리 하시겠습니까?");
-                    $("#checkDelSuccessBtn").on("click", function () {
-                        sendOut();
-                        $('#popupId').remove();
-                    });
-                } else {
-                    alertCaution("출고처리할 상품을 선택해 주세요.", 1);
-                }
-                
-            });
-
-            $("#addAll").on("click", function () {
-                grids.f.addAllData();
-            });
-
-            $("#clearUnchecked").on("click", function () {
-                grids.f.removeUncheckedData();
-            });
-
-            const $miDegree = $("#miDegree");
-            $miDegree.on("keyup", function () {
-                $miDegree.val($miDegree.val().substring(0, 2));
-            });
-
-            $("#exportXlsx").on("click", function () {
-                grids.f.exportToXlsx();
-            });
-        },
+        AUIGrid.bind(grids.s.id[0], "rowAllCheckClick", function (check) {
+            listCheckChanged();
+        });
     },
-    r: { // 이벤트 해제
 
-    }
+    basic() {
+        $("#type01").on("click", function () {
+            $("#frSelectUI").hide();
+            $("#frList option").first().prop("selected", true);
+        })
+
+        $("#type02").on("click", function () {
+            $("#frSelectUI").show();
+        });
+
+        $("#getListBtn").on("click", function () {
+            getReceiptList();
+        });
+
+        $("#inputTagBtn").on("click", function () {
+            inputTag();
+        });
+
+        $("#inputTagNo").on("keyup", function (e) {
+            if(e.originalEvent.code === "Enter" || e.originalEvent.code === "NumpadEnter") {
+                inputTag();
+            }
+        });
+
+        $("#sendOutBtn").on("click", function () {
+            wares.checkedItems = grids.f.getCheckedItems(0);
+            if(wares.checkedItems.length) {
+                alertCheck("선택된 상품을 출고처리 하시겠습니까?");
+                $("#checkDelSuccessBtn").on("click", function () {
+                    sendOut();
+                    $('#popupId').remove();
+                });
+            } else {
+                alertCaution("출고처리할 상품을 선택해 주세요.", 1);
+            }
+            
+        });
+
+        $("#addAll").on("click", function () {
+            grids.f.addAllData();
+        });
+
+        $("#clearUnchecked").on("click", function () {
+            grids.f.removeUncheckedData();
+        });
+
+        const $miDegree = $("#miDegree");
+        $miDegree.on("keyup", function () {
+            $miDegree.val($miDegree.val().substring(0, 2));
+        });
+
+        $("#exportXlsx").on("click", function () {
+            grids.f.exportToXlsx();
+        });
+    },
 }
 
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
@@ -444,8 +441,8 @@ $(function() { // 페이지가 로드되고 나서 실행
 function onPageLoad() {
     grids.f.initialization();
     grids.f.create();
-    grids.t.basicTrigger();
-    trigs.s.basic();
+    trigs.grid();
+    trigs.basic();
 
     enableDatepicker();
     comms.getFrList();

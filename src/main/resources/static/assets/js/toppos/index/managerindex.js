@@ -275,27 +275,27 @@ function clusteredBarGraph(data) {
         );
         
         var data = [{
-          "year": "03.17",
-          "브로드웨이브": 2.5,
-          "서정마을": 2.5,
-          "테스트가맹": 2.1,
+          "date": "03.17",
+          "브로드웨이브": 250000,
+          "서정마을": 250000,
+          "테스트가맹": 210000,
         }, {
-          "year": "03.18",
-          "브로드웨이브": 2.6,
-          "서정마을": 2.7,
-          "테스트가맹": 2.2,
+          "date": "03.18",
+          "브로드웨이브": 260000,
+          "서정마을": 270000,
+          "테스트가맹": 220000,
         }, {
-          "year": "03.19",
-          "브로드웨이브": 2.8,
-          "서정마을": 2.9,
-          "테스트가맹": 2.4,
-        }]
+          "date": "03.19",
+          "브로드웨이브": 280000,
+          "서정마을": 290000,
+          "테스트가맹": 240000,
+        }];
         
         
         // Create axes
         // https://www.amcharts.com/docs/v5/charts/xy-chart/axes/
         var xAxis = chart.xAxes.push(am5xy.CategoryAxis.new(root, {
-          categoryField: "year",
+          categoryField: "date",
           renderer: am5xy.AxisRendererX.new(root, {
             cellStartLocation: 0.1,
             cellEndLocation: 0.9
@@ -318,7 +318,7 @@ function clusteredBarGraph(data) {
             xAxis: xAxis,
             yAxis: yAxis,
             valueYField: fieldName,
-            categoryXField: "year"
+            categoryXField: "date"
           }));
         
           series.columns.template.setAll({
