@@ -610,11 +610,13 @@ gridProp[2] = {
 gridColumnLayout[3] = [
     {
         dataField: "fpType",
+        headerText: "결제수단",
         labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
             return item.fpCatIssuername ? item.fpCatIssuername : CommonData.name.fpType[value];
         },
     }, {
         dataField: "fpAmt",
+        headerText: "결제금액",
         style: "grid_textalign_right",
         dataType: "numeric",
         autoThousandSeparator: "true",

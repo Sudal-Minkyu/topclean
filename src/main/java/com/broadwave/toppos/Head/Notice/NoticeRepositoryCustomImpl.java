@@ -44,7 +44,7 @@ public class NoticeRepositoryCustomImpl extends QuerydslRepositorySupport implem
                         notice.insertDateTime
                 ));
 
-        query.orderBy(notice.hnId.desc()).limit(3);
+        query.orderBy(notice.hnId.desc()).limit(5);
 
         return query.fetch();
     }

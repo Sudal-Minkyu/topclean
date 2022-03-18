@@ -1029,6 +1029,7 @@ class VKeyboard {
                     <h3 id="VKEY_field_title">가상키보드 제목위치</h3>
                     <!-- 가상키보드 입력창 value가 아닌 html에 글자가 위치-->
                     <div id="VKEY_field_editable" contenteditable="true" spellcheck="false" readonly="true"></div>
+                    <div id="VKEY_click_blocker"></div>
                     <input type="button" id="VKEY_btn_delete" value="삭제" />
                     <input type="button" id="VKEY_btn_clear" value="전체삭제" />
                 </div>

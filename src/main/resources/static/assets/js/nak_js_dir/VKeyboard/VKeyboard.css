@@ -53,6 +53,12 @@
     -moz-box-sizing: border-box;
     box-sizing: border-box;
 }
+
+#VKEY_click_blocker {
+	z-index: 100;
+	background-color: transparent;
+}
+
 .vkey__header input[type="button"] {
 	height: 3.125rem;
 	margin-left: 0.625rem;

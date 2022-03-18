@@ -149,10 +149,10 @@ class CommonUIClass {
         },
 
         /* js단 에러메시지를 db에 등록하기 위해 */
-        underTaker(errMsg, title) {
+        underTaker(erMsg, erTitle) {
             const data = {
-                errMsg: errMsg,
-                title: title,
+                erMsg: erMsg,
+                erTitle: erTitle,
             };
             const url = "/api/";
             // this.ajax(url, "PARAM", data);

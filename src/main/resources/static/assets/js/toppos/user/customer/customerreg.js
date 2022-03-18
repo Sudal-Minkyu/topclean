@@ -55,6 +55,9 @@ function init(){
     $("#bcBirthMM").val("");
     $("#bcBirthDD").val("");
     $("#bcAge").val("");
+    $("#bcWeddingAnniversaryYYYY").val("");
+    $("#bcWeddingAnniversaryMM").val("");
+    $("#bcWeddingAnniversaryDD").val("");
     $("#bcValuation").val("3");
     $("#yes2").prop("checked",true);
     $("#bcAgreeType").val("1");
@@ -69,7 +72,9 @@ function init(){
 /* 입력된 폼 정보 저장 */
 function saveRegister() {
     const formData = new FormData(document.getElementById('userregForm'));
-    const birthday = $("#bcBirthYYYY").val()+$("#bcBirthMM").val()+$("#bcBirthDD").val();
+    const birthday = $("#bcBirthYYYY").val() + $("#bcBirthMM").val() + $("#bcBirthDD").val();
+    const weddingAnniversary = $("#bcWeddingAnniversaryYYYY").val() + $("#bcWeddingAnniversaryMM").val() 
+        + $("#bcWeddingAnniversaryDD").val();
 
     if(!$("#bcName").val()) {
         alertCaution("고객명을 입력해 주세요", 1);
@@ -80,12 +85,17 @@ function saveRegister() {
         return false;
     }
     if(!CommonUI.regularValidator(birthday, "dateExist") && birthday !== "") {
-        alertCaution("존재할 수 없는 생년월일 입니다", 1);
+        alertCaution("해당 생년월일은 달력에 존재하지 않습니다.", 1);
+        return false;
+    }
+    if(!CommonUI.regularValidator(weddingAnniversary, "dateExist") && weddingAnniversary !== "") {
+        alertCaution("해당 결혼기념일은 달력에 존재하지 않습니다.", 1);
         return false;
     }
 
     formData.set("bcHp", formData.get("bcHp").numString());
     formData.append("bcBirthday", birthday);
+    formData.append("bcWeddingAnniversary", weddingAnniversary);
     formData.append("bcGrade", "01");
 
     if($("#bcAgreeType").val()==="1"){

@@ -386,6 +386,7 @@ function branchSave(){
 
 
     const formData = new FormData(document.getElementById('brFormData'));
+    formData.set("brTelNo", formData.get("brTelNo").numString());
     const url = "/api/head/branchSave";
 
     CommonUI.ajax(url, "POST", formData, function (req){
@@ -557,7 +558,7 @@ function setFieldData(numOfGrid, item) {
             $("#brCodeChkBtn").attr("disabled", isLockField);
             $("#brCodeChecked").val('1');
             $("#brName").val(item.brName);
-            $("#brTelNo").val(item.brTelNo);
+            $("#brTelNo").val(CommonUI.formatTel(item.brTelNo));
             $("#brContractDt").val(item.brContractDt);
             $("#brContractFromDt").val(item.brContractFromDt);
             $("#brContractToDt").val(item.brContractToDt);
@@ -584,7 +585,7 @@ function setFieldData(numOfGrid, item) {
             $("#frRefCode").val(item.frRefCode);
             $("#frBusinessNo").val(CommonUI.formatBusinessNo(item.frBusinessNo));
             $("#frRpreName").val(item.frRpreName);
-            $("#frTelNo").val(item.frTelNo);
+            $("#frTelNo").val(CommonUI.formatTel(item.frTelNo));
             $("#frTagNo").val(item.frTagNo);
             $("#frEstimateDuration").val(item.frEstimateDuration);
             $("#frRemark").val(item.frRemark);
@@ -789,7 +790,6 @@ function validateNumber(element, type) {
 
 function onKeyupFrTelNo(el) {
     el.value = CommonUI.formatTel(el.value);
-    console.log("act");
 }
 
 function onKeyupFrBusinessNo(el) {

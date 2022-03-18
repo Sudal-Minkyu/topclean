@@ -345,7 +345,7 @@ const trigs = {
                 }
             });
 
-            $("#releaseListPrint").on("click", function () {
+            $("#releaseListPrintBtn").on("click", function () {
                 const selectedRow = AUIGrid.getSelectedRows(grids.s.id[1]);
                 if(selectedRow.length) {
                     alertCheck("출고증을 재인쇄 하시겠습니까?");
