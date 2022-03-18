@@ -343,7 +343,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                 .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
                 .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
                 .where(request.frConfirmYn.eq("Y"))
-                .where(requestDetail.frId.frCode.eq(frCode).and(requestDetail.fdCancel.eq("N")).and(requestDetail.fdState.eq("S4")))
+                .where(requestDetail.frId.frCode.eq(frCode).and(requestDetail.fdCancel.eq("N").and(requestDetail.fdState.eq("S4"))))
                 .where(requestDetail.fdS4Type.eq("01").or(requestDetail.fdS4Type.eq("02")))
                 .select(Projections.constructor(RequestDetailFranchiseInListDto.class,
                         requestDetail.id,
@@ -1412,7 +1412,9 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         customer.bcName,
                         requestDetail.fdTotAmt,
                         requestDetail.fdState,
-                        requestDetail.fdRemark
+                        requestDetail.fdRemark,
+
+                        issue.miNo
                 ));
 
         query.orderBy(requestDetail.id.asc());
@@ -1693,7 +1695,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         sb.append("SELECT a.fr_code, a.fr_no, a.bc_id, a.fr_qty, a.bg_name, a.bi_name \n");
         sb.append("FROM checkdata a \n");
         sb.append("WHERE (SELECT COUNT(*) FROM checkdata x1 WHERE x1.fr_no = a.fr_no) = \n");
-        sb.append("(SELECT COUNT(*) FROM checkdata x1 WHERE x1.fr_no = a.fr_no AND (x1.fd_state = 'S5' OR x1.fd_state = 'S8')) \n");
+        sb.append("(SELECT COUNT(*) FROM checkdata x1 WHERE x1.fr_no = a.fr_no AND (x1.fd_state = 'S5' OR x1.fd_state = 'S8' OR x1.fd_state = 'S3')) \n");
         sb.append("GROUP BY a.fr_no, a.bc_id \n");
 
         Query query = em.createNativeQuery(sb.toString());

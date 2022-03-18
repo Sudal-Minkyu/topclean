@@ -47,6 +47,8 @@ public class RequestDetailBranchReleaseCurrentRightListDto {
     private String fdState; // 현재상태 ( S1 : 접수, S2: 지사입고,S3 강제출고, S4:가맹점입고, S6: 고객인도, S7: 지사강제출고, S8: 가맹점강제입고)
     private String fdRemark; // 특이사항
 
+    private String miNo; // 바코드
+
     public StringBuffer getFdS2Dt() {
         if(fdS2Dt != null){
             StringBuffer getFdS2Dt = new StringBuffer(fdS2Dt);
