@@ -1879,6 +1879,60 @@ textarea {
     margin-left: 1.25rem;
 }
 
+/* mastercode */
+.code {
+    position: relative;
+    width: 100%;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+.code__list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}
+.code__item {
+    display: flex;
+    align-items: center;
+    width: 25%;
+    padding: 10px;
+}
+.code__item.code__item--100 {
+    width: 100%;
+}
+.code__title {
+    width: 90px;
+}
+.code__input {
+    flex: 1;
+}
+.code__input input[type="text"],
+.code__input input[type="password"],
+.code__input input[type="number"] {
+    max-width: 100%;
+}
+.code__input .c-select {
+    width: 100%;
+}
+.code__item:first-child {
+    padding: 0;
+}
+.code__item:first-child,
+.code__item:nth-child(2),
+.code__item:nth-child(3) {
+    width: 33.3333%;
+}
+.code__category {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 10px 20px;
+    background-color: #f1f8fe;
+    border: 1px solid #d9e5ff;
+    border-radius: 5px;
+}
+
+
 /* grid 컬러박스 */
 .colorSquare {
 	height: 20px;
@@ -1901,7 +1955,7 @@ textarea {
     box-sizing: border-box;
 }
     
-    .grid_textalign_right div {
+.grid_textalign_right div {
     text-align: right;
     padding: 0 2px!important;
     margin-left: 4px!important;
