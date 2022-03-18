@@ -14,6 +14,7 @@ import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetai
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.*;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.CaseBuilder;
+import com.querydsl.core.types.dsl.Coalesce;
 import com.querydsl.jpa.JPQLQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.qlrm.mapper.JpaResultMapper;
@@ -140,19 +141,16 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdS2Dt,
                         requestDetail.fdS3Dt,
                         requestDetail.fdS4Dt,
-                        // 버그픽스 - 완성일자는 가맹점입고일(fd_s5_dt) 또는 강제입고일(fd_s8_dt) 중 큰값을 표기하도록 변경
+                        //완성일자 Case 문
                         new CaseBuilder()
-                                .when(requestDetail.fdS8Dt.isNull()).then(requestDetail.fdS5Dt)
-                                .otherwise(
+                                .when(requestDetail.fdS8Dt.isNull().or(requestDetail.fdS8Dt.isEmpty())).then(
                                         new CaseBuilder()
-                                                .when(requestDetail.fdS5Dt.isNull()).then(requestDetail.fdS7Dt)
-                                                .otherwise(
-                                                        new CaseBuilder()
-                                                            .when(requestDetail.fdS5Dt.goe(requestDetail.fdS8Dt)).then(requestDetail.fdS5Dt)
-                                                            .otherwise(
-                                                                    new CaseBuilder()
-                                                                        .when(requestDetail.fdS8Dt.goe(requestDetail.fdS7Dt)).then(requestDetail.fdS8Dt)
-                                                                        .otherwise(requestDetail.fdS7Dt)))),
+                                            .when(requestDetail.fdS7Dt.isNull().or(requestDetail.fdS7Dt.isEmpty())).then(
+                                                    requestDetail.fdS5Dt
+                                        )
+                                            .otherwise(requestDetail.fdS7Dt)
+                                )
+                                .otherwise(requestDetail.fdS8Dt),
                         requestDetail.fdS6Dt,
                         requestDetail.fdCancel,
                         requestDetail.fdCacelDt,
@@ -203,7 +201,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdAgreeType,
                         requestDetail.fdSignImage
                 ));
-        query.orderBy(requestDetail.id.asc()).groupBy(requestDetail.id);
+        query.orderBy(requestDetail.id.asc());
         if(bcId != null){
             query.where(customer.bcId.eq(bcId));
         }

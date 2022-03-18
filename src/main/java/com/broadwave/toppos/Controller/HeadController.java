@@ -73,4 +73,10 @@ public class HeadController {
     public String pricemanagement(){
         return "head/pricemanagement";
     }
+
+    // 마스터코드
+    @RequestMapping("mastercode")
+    public String mastercode(){
+        return "head/admin/mastercode";
+    }
 }

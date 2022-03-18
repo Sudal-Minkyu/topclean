@@ -19,6 +19,8 @@
 </th:block>
 
 <div layout:fragment="content" class="content content--padding">
+    <!-- menu명 -->
+    <h2 class="content__heading content__heading--black"><spans class="content__heading-home">Home</spans>&nbsp;&gt;&nbsp;가맹정 설정&nbsp;&gt;&nbsp;상품 순서 관리</h2>
     <div class="c-tabs">
         <div class="c-tabs__head">
             <button class="c-tabs__btn active">대분류</button>
@@ -65,7 +67,7 @@
                                     <div class="c-tabs__search-input">
                                         <div class="c-text">
                                             <input type="text" id="filterCode" maxlength="4" />
-                                            <button>키보드</button>
+                                            <button id="vkeyboard0">키보드</button>
                                         </div>
                                     </div>
                                 </div>
@@ -74,7 +76,7 @@
                                     <div class="c-tabs__search-input">
                                         <div class="c-text">
                                             <input type="text" id="filterName" />
-                                            <button>키보드</button>
+                                            <button id="vkeyboard1">키보드</button>
                                         </div>
                                     </div>
                                 </div>
