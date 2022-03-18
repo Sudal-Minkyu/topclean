@@ -35,10 +35,10 @@ public class TagGalleryCheck {
     private String frCode; // 가맹점 3자리
 
     @Column(name="br_complete_yn")
-    private String br_complete_yn; // 기본값 N, 해당 분실 세탁물을 고객에게 인수완료했을 경우 Y로 변경
+    private String brCompleteYn; // 기본값 N, 해당 분실 세탁물을 고객에게 인수완료했을 경우 Y로 변경
 
     @Column(name="br_complete_dt")
-    private LocalDateTime br_complete_dt; // br_complete_yn 이 Y로 변경될떄 시간저장
+    private LocalDateTime brCompleteDt; // br_complete_yn 이 Y로 변경될떄 시간저장
 
     @Column(name="insert_id")
     private String insert_id;

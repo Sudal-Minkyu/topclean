@@ -1,8 +1,12 @@
 package com.broadwave.toppos.Manager.TagGallery.TagGalleryFile;
 
+import com.querydsl.core.types.Projections;
+import com.querydsl.jpa.JPQLQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * @author Minkyu
@@ -18,5 +22,19 @@ public class TagGalleryFileRepositoryCustomImpl extends QuerydslRepositorySuppor
         super(TagGalleryFile.class);
     }
 
+    public List<TagGalleryFileListDto> findByTagGalleryFileList(Long btId){
+        QTagGalleryFile tagGalleryFile = QTagGalleryFile.tagGalleryFile;
+        JPQLQuery<TagGalleryFileListDto> query = from(tagGalleryFile)
+            .where(tagGalleryFile.btId.btId.eq(btId))
+
+            .select(Projections.constructor(TagGalleryFileListDto.class,
+                    tagGalleryFile.bfPath,
+                    tagGalleryFile.bfFilename
+            ));
+
+        query.orderBy(tagGalleryFile.bfId.desc()).limit(3);
+
+        return query.fetch();
+    }
 
 }

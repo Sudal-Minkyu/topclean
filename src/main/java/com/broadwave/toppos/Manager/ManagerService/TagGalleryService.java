@@ -3,11 +3,15 @@ package com.broadwave.toppos.Manager.ManagerService;
 import com.broadwave.toppos.Aws.AWSS3Service;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.Manager.TagGallery.TagGallery;
+import com.broadwave.toppos.Manager.TagGallery.TagGalleryCheck.TagGalleryCheckListDto;
 import com.broadwave.toppos.Manager.TagGallery.TagGalleryCheck.TagGalleryCheckRepository;
+import com.broadwave.toppos.Manager.TagGallery.TagGalleryDtos.TagGalleryListDto;
 import com.broadwave.toppos.Manager.TagGallery.TagGalleryDtos.TagGalleryMapperDto;
 import com.broadwave.toppos.Manager.TagGallery.TagGalleryFile.TagGalleryFile;
+import com.broadwave.toppos.Manager.TagGallery.TagGalleryFile.TagGalleryFileListDto;
 import com.broadwave.toppos.Manager.TagGallery.TagGalleryFile.TagGalleryFileRepository;
 import com.broadwave.toppos.Manager.TagGallery.TagGalleryRepository;
+import com.broadwave.toppos.Manager.TagNotice.TagNoticeDtos.TagNoticeViewSubDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.PhotoDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailDto;
 import com.broadwave.toppos.common.AjaxResponse;
@@ -47,8 +51,8 @@ public class TagGalleryService {
     private final AWSS3Service awss3Service;
 
     private final TagGalleryRepository tagGalleryRepository;
-    private final TagGalleryCheckRepository tagGalleryCheckRepository;
     private final TagGalleryFileRepository tagGalleryFileRepository;
+    private final TagGalleryCheckRepository tagGalleryCheckRepository;
 
     @Autowired
     public TagGalleryService(TokenProvider tokenProvider, AWSS3Service awss3Service,
@@ -69,7 +73,6 @@ public class TagGalleryService {
 
         log.info("tagGalleryMapperDto : "+tagGalleryMapperDto);
         AjaxResponse res = new AjaxResponse();
-        HashMap<String, Object> data = new HashMap<>();
 
         // 클레임데이터 가져오기
         Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
@@ -179,35 +182,51 @@ public class TagGalleryService {
     public ResponseEntity<Map<String, Object>> tagGalleryList(String searchString, String filterFromDt, String filterToDt, HttpServletRequest request) {
         log.info("tagGalleryList 호출");
 
-        log.info("searchString : "+searchString);
-        log.info("filterFromDt : "+filterFromDt);
-        log.info("filterToDt : "+filterToDt);
+//        log.info("searchString : "+searchString);
+//        log.info("filterFromDt : "+filterFromDt);
+//        log.info("filterToDt : "+filterToDt);
 
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
 
-        List<HashMap<String,Object>> requestDetailListData = new ArrayList<>();
-        HashMap<String,Object> requestDetailInfo;
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String brCode = (String) claims.get("brCode"); // 현재 지사의 코드(2자리) 가져오기
+        String login_id = claims.getSubject(); // 현재 아이디
+        log.info("현재 접속한 아이디 : "+login_id);
+        log.info("현재 접속한 지사 코드 : "+brCode);
 
-//        List<RequestDetailDto> requestDetailList = receiptService.findByRequestTempDetailList(frNo);
-//        for(RequestDetailDto requestDetailDto : requestDetailList){
-//            requestDetailInfo = new HashMap<>();
-//
-//            // 이미지 리스트
-//            List<PhotoDto> photoDtoList = receiptService.findByPhotoDto(requestDetailDto.getId());
-//            requestDetailInfo.put("photoList", photoDtoList);
-//
-//            // 가맹점응답 리스트
-////            List<PhotoDto> photoDtoList = receiptService.findByPhotoDto(requestDetailDto.getId());
-////            requestDetailInfo.put("franchiseCheckList", photoDtoList);
-//
-//            requestDetailListData.add(requestDetailInfo);
-//        }
-//        data.put("requestDetailList",requestDetailListData);
+        List<HashMap<String,Object>> tagGalleryListData = new ArrayList<>();
+        HashMap<String,Object> tagGalleryInfo;
+
+        List<TagGalleryListDto> tagGalleryListDtos = tagGalleryRepository.findByTagGalleryList(searchString, filterFromDt, filterToDt, brCode);
+        log.info("tagGalleryListDtos : "+tagGalleryListDtos);
 
 
+        for(TagGalleryListDto tagGalleryListDto : tagGalleryListDtos){
+            tagGalleryInfo = new HashMap<>();
 
-        return ResponseEntity.ok(res.success());
+            tagGalleryInfo.put("insertDateTime", tagGalleryListDto.getInsertDateTime());
+            tagGalleryInfo.put("btId", tagGalleryListDto.getBtId());
+            tagGalleryInfo.put("btBrandName", tagGalleryListDto.getBtBrandName());
+            tagGalleryInfo.put("btInputDate", tagGalleryListDto.getBtInputDate());
+            tagGalleryInfo.put("btMaterial", tagGalleryListDto.getBtMaterial());
+            tagGalleryInfo.put("btRemark", tagGalleryListDto.getBtRemark());
+
+            List<TagGalleryFileListDto> tagGalleryFileListDto = tagGalleryFileRepository.findByTagGalleryFileList(tagGalleryListDto.getBtId());
+            tagGalleryInfo.put("bfPathFilename", tagGalleryFileListDto);
+
+            TagGalleryCheckListDto tagGalleryCheckListDtos = tagGalleryCheckRepository.findByTagGalleryCheckList(tagGalleryListDto.getBtId());
+            log.info("tagGalleryCheckListDtos : "+tagGalleryCheckListDtos);
+
+            tagGalleryInfo.put("tagGalleryCheckFranchise", tagGalleryCheckListDtos.getFrName());
+
+            tagGalleryListData.add(tagGalleryInfo);
+        }
+        data.put("tagGalleryList",tagGalleryListData);
+
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
 

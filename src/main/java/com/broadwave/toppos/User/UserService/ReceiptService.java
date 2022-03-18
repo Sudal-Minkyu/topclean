@@ -1014,22 +1014,22 @@ public class ReceiptService {
 //            log.info("전체미수금 : "+ totalUncollectAmount);
 
             if(money != 0){
-                payDetail.append("현금 : ").append(decimalFormat.format(money)).append("원");
+                payDetail.append("현금 : ").append(decimalFormat.format(money)).append("원\n");
             }
 
             for(int i=0; i<cardName.size(); i++){
                 if(i==0){
                     payDetail.append(", ");
                 }
-                String a = cardName.get(i)+" : "+decimalFormat.format(cardMoney.get(i));
+                String a = cardName.get(i).replaceAll(" ", "")+" : "+decimalFormat.format(cardMoney.get(i));
                 payDetail.append(a);
                 if(i==cardName.size()-1){
-                    payDetail.append("원");
+                    payDetail.append("원\n");
                 }else{
                     if(savemoney != 0) {
-                        payDetail.append("원, ");
+                        payDetail.append("원,\n");
                     }else{
-                        payDetail.append("원");
+                        payDetail.append("원\n");
                     }
                 }
             }

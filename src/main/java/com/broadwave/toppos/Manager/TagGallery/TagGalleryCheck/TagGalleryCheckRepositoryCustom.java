@@ -7,5 +7,6 @@ package com.broadwave.toppos.Manager.TagGallery.TagGalleryCheck;
  * Remark :
  */
 public interface TagGalleryCheckRepositoryCustom {
-
+    // 택분실 갤러리 가맹점 응답데이터
+    TagGalleryCheckListDto findByTagGalleryCheckList(Long btId);
 }
