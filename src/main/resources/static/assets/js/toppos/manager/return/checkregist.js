@@ -412,7 +412,7 @@ const trigs = {
                             track.stop();
                         });
                     }catch (e) {
-                        console.log(e);
+                        CommonUI.toppos.underTaker(e, "checkregist : 카메라 스트림 찾아서 끄기");
                     }
                 }
             });
@@ -534,7 +534,7 @@ async function openCheckPop(e) {
         screen.srcObject = wares.cameraStream;
     }catch (e) {
         if(!(e instanceof DOMException)) {
-            console.log(e);
+            CommonUI.toppos.underTaker(e, "checkregist : 카메라 찾기");
         }
         wares.isCameraExist = false;
     }
@@ -600,7 +600,7 @@ function putInspect() {
             comms.putNewInspect(formData);
 
         } catch (e) {
-            console.log(e);
+            CommonUI.toppos.underTaker(e, "checkregist : 카메라 촬영하려 검품등록");
         }
     }else{
         const formData = new FormData();

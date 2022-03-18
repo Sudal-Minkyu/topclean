@@ -72,6 +72,9 @@ gridColumnLayout[0] = [
         headerText: "가맹점명",
         style: "grid_textalign_left",
     }, {
+        dataField: "frCode",
+        headerText: "가맹점코드",
+    }, {
         dataField: "frRefCode",
         headerText: "관리코드",
     }, {
@@ -190,7 +193,6 @@ gridProp[2] = {
     height : 480,
 };
 
-
 /* 인수로 온 배열의 설정에 따라 빈 그리드를 생성 */
 function createGrids() {
     for (const i in gridColumnLayout) {
@@ -244,20 +246,22 @@ function filterFranchise(type) {
             const s_frCode = $("#s_frCode").val();
             const s_frRefCode = $("#s_frRefCode").val();
             const s_frName = $("#s_frName").val();
-
             if(s_frCode !== "") {
                 AUIGrid.setFilter(gridId[0], "frCode", function (dataField, value, item) {
-                    return new RegExp("^" + s_frCode.toUpperCase()).test(value.toUpperCase());
+                    const upValue = value ? value.toUpperCase() : "";
+                    return new RegExp("^" + s_frCode.toUpperCase()).test(upValue);
                 });
             }
             if(s_frRefCode !== "") {
                 AUIGrid.setFilter(gridId[0], "frRefCode", function (dataField, value, item) {
-                    return new RegExp("^" + s_frRefCode.toUpperCase()).test(value.toUpperCase());
+                    const upValue = value ? value.toUpperCase() : "";
+                    return new RegExp("^" + s_frRefCode.toUpperCase()).test(upValue);
                 });
             }
             if(s_frName !== "") {
                 AUIGrid.setFilter(gridId[0], "frName", function (dataField, value, item) {
-                    return new RegExp(s_frName.toUpperCase()).test(value.toUpperCase());
+                    const upValue = value ? value.toUpperCase() : "";
+                    return new RegExp(s_frName.toUpperCase()).test(upValue);
                 });
             }
             break;

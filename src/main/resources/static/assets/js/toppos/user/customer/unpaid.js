@@ -125,7 +125,6 @@ const comms = {
     filterCustomerList(searchCondition = {searchText: "", searchType: ""}) {
         wares.searchCondition = searchCondition;
         dv.chk(searchCondition, dtos.send.franchiseUncollectCustomerList, "메인그리드 고객 필터 조건 보내기", true);
-        console.log(searchCondition);
         CommonUI.ajax(urls.filterCustomerList, "GET", searchCondition, function(res) {
             console.log(res.sendData);
             const data = res.sendData.gridListData;
@@ -635,7 +634,6 @@ function uncollectPaymentStageOne() {
                 CAT.CatCredit(paymentData, function (res) {
                     $('#payStatus').hide();
                     let resjson = JSON.parse(res);
-                    console.log(resjson);
 
                     // 결제 성공일경우 Print
                     if (resjson.STATUS === "SUCCESS") {
@@ -657,7 +655,7 @@ function uncollectPaymentStageOne() {
                     }
                 });
             }catch (e) {
-                console.log(e);
+                CommonUI.toppos.underTaker(e, "unpaid : 카드 단말 결제");
             }
         }else if (paymentData.type ==="cash") {
             // $('#payStatus').show();
@@ -670,7 +668,7 @@ function uncollectPaymentStageOne() {
             uncollectPaymentStageTwo(paymentData);
         }
     }catch (e) {
-        console.log(e);
+        CommonUI.toppos.underTaker(e, "unpaid : 미수금 결제 1단계");
         return false;
     }
 }
@@ -689,18 +687,18 @@ function uncollectPaymentStageTwo(paymentData, creditData = {}) {
             fpRealAmt: paymentData.totalAmount,
             fpType: paymentData.fpType,
             fpMonth: paymentData.month,
-            fpCatApprovalno: creditData.APPROVALNO,
-            fpCatApprovaltime: creditData.APPROVALTIME,
-            fpCatCardno: creditData.CARDNO,
-            fpCatIssuercode: creditData.ISSUERCODE,
-            fpCatIssuername: creditData.ISSUERNAME,
-            fpCatMuechantnumber: creditData.MERCHANTNUMBER,
-            fpCatMessage1: creditData.MESSAGE1,
-            fpCatMessage2: creditData.MESSAGE2,
-            fpCatNotice1: creditData.NOTICE1,
-            fpCatTotamount: creditData.TOTAMOUNT,
-            fpCatVatamount: creditData.VATAMOUNT,
-            fpCatTelegramflagt: creditData.TELEGRAMFLAG
+            fpCatApprovalno: creditData.APPROVALNO ? creditData.APPROVALNO : "",
+            fpCatApprovaltime: creditData.APPROVALTIME ? creditData.APPROVALTIME : "",
+            fpCatCardno: creditData.CARDNO ? creditData.CARDNO : "",
+            fpCatIssuercode: creditData.ISSUERCODE ? creditData.ISSUERCODE : "",
+            fpCatIssuername: creditData.ISSUERNAME ? creditData.ISSUERNAME : "",
+            fpCatMuechantnumber: creditData.MERCHANTNUMBER ? creditData.MERCHANTNUMBER : "",
+            fpCatMessage1: creditData.MESSAGE1 ? creditData.MESSAGE1 : "",
+            fpCatMessage2: creditData.MESSAGE2 ? creditData.MESSAGE2 : "",
+            fpCatNotice1: creditData.NOTICE1 ? creditData.NOTICE1 : "",
+            fpCatTotamount: creditData.TOTAMOUNT ? creditData.TOTAMOUNT : "",
+            fpCatVatamount: creditData.VATAMOUNT ? creditData.VATAMOUNT : "",
+            fpCatTelegramflagt: creditData.TELEGRAMFLAG ? creditData.TELEGRAMFLAG : "",
         }
     }
     comms.sendPaidInfo(paidInfo);

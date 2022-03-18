@@ -928,9 +928,8 @@ async function onPopTakePicture(event) {
     }catch (e) {
         if(e instanceof DOMException) {
             alertCaution("연결된 카메라가 존재하지 않습니다", 1);
-        }else{
-            console.log(e);
         }
+        CommonUI.toppos.underTaker(e, "receiptreg : 카메라");
         isCameraExist = false;
     }
 
@@ -980,7 +979,7 @@ function onTakePicture() {
                 putTakenPictureOnTheRightSide(picJson);
             });
         } catch (e) {
-            console.log(e);
+            CommonUI.toppos.underTaker(e, "receiptreg : 사진촬영");
         }
     }
 }
@@ -996,7 +995,7 @@ function onCloseTakePicture() {
                 track.stop();
             });
         }catch (e) {
-            console.log(e);
+            CommonUI.toppos.underTaker(e, "receiptreg : 카메라가 끊어졌을 가능성");
         }
     }
 
@@ -1735,14 +1734,14 @@ function onPaymentStageOne() {
                     }
                 });
             } catch (e) {
-                console.log(e);
+                CommonUI.toppos.underTaker(e, "receiptreg : 카드 단말기 결제");
             }
         } else {
             onPaymentStageTwo();
         }
 
     } catch (e) {
-        console.log(e);
+        CommonUI.toppos.underTaker(e, "receiptreg : 결제 1단계");
         return false;
     }
 }
@@ -1813,6 +1812,7 @@ function onPaymentStageTwo(creditData = {}) {
         CommonUI.ajax(url, "MAPPER", data, function (req){
             console.log("결제후 :");
             console.log(req);
+
             AUIGrid.addRow(gridId[3], req.sendData.paymentEtcDtos, "last");
             initialData.etcData.beforeUncollectMoney = req.sendData.beforeUncollectMoney;
             initialData.etcData.saveMoney = req.sendData.saveMoney;
@@ -1829,6 +1829,7 @@ function onPaymentStageTwo(creditData = {}) {
             $("#changeCash").html("0");
             $("#receiveCard").html("0");
             //$("#saveMoney").html(req.sendData.saveMoney);
+
             calculatePaymentStage(getPaidAmt());
             if($("#totalAmt").html() === "0" && autoPrintReceipt) {
                 onPrintReceipt();
@@ -1836,7 +1837,7 @@ function onPaymentStageTwo(creditData = {}) {
             }
         });
     }catch (e) {
-        console.log(e);
+        CommonUI.toppos.underTaker(e, "receiptreg : 결제 2단계");
         return false;
     }
 }
@@ -1872,10 +1873,17 @@ function closePaymentPop() {
     AUIGrid.clearGridData(gridId[3]);
     calculateMainPrice(AUIGrid.getGridData(gridId[0]), AUIGrid.getRemovedItems(gridId[0]));
     $("#paymentPop").removeClass("active");
-    // const url = "/api/user/"
-    // CommonUI.ajax(url, "PARAM", {frNo: initialData.etcData.frNo}, function (res) { // 접수 완료 카카오 메시지를 보낸다.
-    //     console.log(res);
-    // });
+
+    const url = "/api/user/requestReceiptMessage";
+    const sendData = {
+        frNo: initialData.etcData.frNo,
+        locationHost: location.host,
+    }
+    console.log(sendData);
+    CommonUI.ajax(url, "PARAM", sendData, function (res) {
+        console.log(res);
+    });
+
     delete initialData.etcData["frNo"];
 }
 
@@ -2045,7 +2053,7 @@ function requestSign() {
 
         cAPI.approvalCall(protocol + '//' + hostName + ':' + port + '/user/consent');
     }catch (e) {
-        console.log(e);
+        CommonUI.toppos.underTaker(e, "receiptreg : 사인 요청단계");
         return;
     }
     // $("#resultmsg").text(": 승인중 메세지- 고객이 서명중입니다. ------전체화면으로 가리기 ");
@@ -2067,7 +2075,7 @@ function askConfirmShoes() {
 
         cAPI.approvalCall(protocol + '//' + hostName + ':' + port + '/user/consent');
     } catch (e) {
-        console.log(e);
+        CommonUI.toppos.underTaker(e, "신발접수 사인 요청");
         initialData.etcData.frMultiscreenYn = "N";
         setTimeout(function () {
             noScreenWarning();

@@ -59,7 +59,7 @@ class CommonUIClass {
                 statusText += item.fdWaterRepellent || item.fdStarch ? "발" : "";
                 return statusText;
             } catch (e) {
-                console.log(e);
+                this.toppos.underTaker(e, "CommonUI : 처리내역 문자조합");
             }
         },
 
@@ -109,7 +109,7 @@ class CommonUIClass {
                     CAT.CatPrint_Multi(paymentData, creditData, "N");
                 });
             } catch (e) {
-                console.log(e)
+                this.toppos.underTaker(e, "CommonUI : 영수증 프린트");
             }
         },
 
@@ -147,6 +147,16 @@ class CommonUIClass {
             voiceProp.lang = 'ko-KR';
             window.speechSynthesis.speak(voiceProp);
         },
+
+        /* js단 에러메시지를 db에 등록하기 위해 */
+        underTaker(errMsg, title) {
+            const data = {
+                errMsg: errMsg,
+                title: title,
+            };
+            const url = "/api/";
+            // this.ajax(url, "PARAM", data);
+        }
     }
 
     /*
