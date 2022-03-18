@@ -5,9 +5,10 @@
 * */
 const dtos = {
     send: {
-        택분실게시판조회: {
+        tagGalleryList: {
             filterFromDt: "s",
             filterToDt: "s",
+            searchString: "s", // 아직 사용 안함
             type: "s", // 1 미완료, 2 전체, 3 가맹 응답
         },
         tagGallerySave: {
@@ -21,14 +22,27 @@ const dtos = {
         }
     },
     receive: {
-        택분실게시판조회: {
+        tagGalleryList: {
             btId: "n",
-            insertDt: "s",
+            insertDateTime: "s",
             btBrandName: "s",
             btInputDate: "s",
             btMaterial: "s",
             btRemark: "s",
-            사진리스트: { // 썸네일 경로의 경우 이전처럼 파일이름 부분에 s_ 붙여서 오는 방식으로 처리하면 좋을듯 합니다.
+            tagGalleryCheckFranchise: "s",
+            bfPathFilename: { // 썸네일 경로의 경우 이전처럼 파일이름 부분에 s_ 붙여서 오는 방식으로 처리하면 좋을듯 합니다.
+                bfPath: "s",
+                bfFilename: "s",
+            },
+        },
+        상세보기: {
+            btId: "n",
+            insertDateTime: "s",
+            btBrandName: "s",
+            btInputDate: "s",
+            btMaterial: "s",
+            btRemark: "s",
+            bfPathFilename: { // 썸네일 경로의 경우 이전처럼 파일이름 부분에 s_ 붙여서 오는 방식으로 처리하면 좋을듯 합니다.
                 bfId: "n",
                 bfPath: "s",
                 bfFilename: "s",
@@ -43,16 +57,26 @@ const dtos = {
 
 /* 통신에 사용되는 url들 기입 */
 const urls = {
-    getMainList: "",
+    getMainList: "/api/manager/tagGalleryList",
     putNewTaglost: "/api/manager/tagGallerySave",
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
     getMainList(searchCondition) {
-        dv.chk(searchCondition, dtos.send.택분실게시판조회);
+        dv.chk(searchCondition, dtos.send.tagGalleryList, "택분실 조회 조건 보내기");
         CommonUI.ajax(urls.getMainList, "GET", searchCondition, function (res) {
-            console.log(res);
+            const dataList = res.sendData.tagGalleryList;
+            dv.chk(dataList, dtos.receive.tagGalleryList, "조회된 택분실 리스트 받기");
+
+            for(data of dataList) {
+                for(const [i, obj] of data.bfPathFilename.entries()) {
+                    data["thumbnail" + (i + 1)] = obj.bfPath + "s_" + obj.bfFilename;
+                    if(i === 3) break;
+                }
+            }
+
+            grids.f.setData(0, dataList);
         });
     },
 
@@ -90,11 +114,11 @@ const grids = {
             /* 0번 그리드의 레이아웃 */
             grids.s.columnLayout[0] = [
                 {
-                    dataField: "insertDt",
+                    dataField: "insertDateTime",
                     headerText: "등록일시",
-                    width: 100,
+                    width: 150,
                     dataType: "date",
-                    formatString: "yyyy-mm-dd",
+                    formatString: "yyyy-mm-dd hh:mm",
                 }, {
                     dataField: "btBrandName",
                     headerText: "추정브랜드",
@@ -298,6 +322,7 @@ function searchOrder() {
     const searchCondition = {
         filterFromDt: $("#filterFromDt").val().numString(),
         filterToDt: $("#filterToDt").val().numString(),
+        searchString: "",
         type: $("#type").val(), // 1 미완료, 2 전체, 3 내 가맹점
     };
 
