@@ -157,7 +157,10 @@ public class HeadService {
     }
 
     // 가맹점의 대한 지사배치 등록 API
-    public ResponseEntity<Map<String,Object>> franchiseAssignment(String frCode, String brCode, String bot_brAssignState, HttpServletRequest request){
+    public ResponseEntity<Map<String,Object>> franchiseAssignment(String frCode, String brCode, String bot_brAssignState,
+                                                                  Double bot_frCarculateRateBr, Double bot_frCarculateRateFr,
+                                                                  Double bot_frRoyaltyRateBr, Double bot_frRoyaltyRateFr,
+                                                                  HttpServletRequest request){
         log.info("franchiseAssignment 호출");
 
         AjaxResponse res = new AjaxResponse();
@@ -177,6 +180,11 @@ public class HeadService {
             franchise.setFrContractState(optionalFranohise.get().getFrContractState());
             franchise.setFrPriceGrade(optionalFranohise.get().getFrPriceGrade());
             franchise.setFrRemark(optionalFranohise.get().getFrRemark());
+
+            franchise.setFrCaculateRateBr(bot_frCarculateRateBr);
+            franchise.setFrCaculateRateFr(bot_frCarculateRateFr);
+            franchise.setFrRoyaltyRateBr(bot_frRoyaltyRateBr);
+            franchise.setFrRoyaltyRateFr(bot_frRoyaltyRateFr);
 
             franchise.setBrId(optionalBranch.get());
             franchise.setBrCode(optionalBranch.get().getBrCode());

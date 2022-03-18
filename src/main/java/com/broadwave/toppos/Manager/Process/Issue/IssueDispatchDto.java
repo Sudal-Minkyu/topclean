@@ -44,6 +44,13 @@ public class IssueDispatchDto {
     private BigInteger t08Count; // 오염제거 갯수
     private BigInteger total; // 총 합계
 
+    public StringBuffer getTagNo() {
+        StringBuffer getTagNo = new StringBuffer(tagNo);
+        getTagNo.insert(3,'-');
+        getTagNo.insert(5,'-');
+        return getTagNo;
+    }
+
     public String getFrTelNo() {
         return CommonUtils.hpNumberChange(frTelNo);
     }

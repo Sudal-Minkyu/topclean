@@ -22,10 +22,10 @@ public class BranchMapperDto {
     private String brContractToDt; // 계약기간 to
     private String brContractState; // 진행중 : 01, 계약완료 : 02
 
-    private Double frCaculateRateBr; // 정산비율(지사)
-    private Double frCaculateRateFr; // 정산비율(가맹점)
-    private Double frRoyaltyRateBr; // 로얄티율(지사)
-    private Double frRoyaltyRateFr; // 정산비율(가맹점)
+    private Double brCaculateRateBr; // 정산비율(지사)
+    private Double brCaculateRateFr; // 정산비율(가맹점)
+    private Double brRoyaltyRateBr; // 로얄티율(지사)
+    private Double brRoyaltyRateFr; // 정산비율(가맹점)
 
     private String brRemark; // 특이사항
 

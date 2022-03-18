@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**
@@ -255,7 +256,7 @@ public class UncollectService {
             payment.setFpSavedMoneyYn("N");
             payment.setInsert_id(login_id);
             payment.setInsert_date(LocalDateTime.now());
-
+            payment.setFpYyyymmdd(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
             payment.setFrId(requestData);
             payment.setBcId(requestData.getBcId());
             int uncollectMoney = requestData.getFrTotalAmount()-requestData.getFrPayAmount();

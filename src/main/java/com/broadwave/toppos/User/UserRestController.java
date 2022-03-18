@@ -1068,7 +1068,7 @@ public class UserRestController {
 
 //@@@@@@@@@@@@@@@@@@@@@ 공지사항게시판, 택분실게시판 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 //  택분실게시판 - 리스트 호출
-    @PostMapping("/lostNoticeList")
+    @PostMapping("lostNoticeList")
     public ResponseEntity<Map<String,Object>> lostNoticeList(
                                                             @RequestParam("searchString")String searchString,
                                                             @RequestParam("filterFromDt")String filterFromDt,
@@ -1093,13 +1093,13 @@ public class UserRestController {
     }
 
     //  택분실게시판 - 글보기
-    @GetMapping("/lostNoticeView")
+    @GetMapping("lostNoticeView")
     public ResponseEntity<Map<String,Object>> lostNoticeView(@RequestParam("htId") Long htId, HttpServletRequest request) {
         return tagNoticeService.lostNoticeView(htId, request, "2");
     }
 
     //  택분실게시판 - 댓글 리스트 호출
-    @GetMapping("/lostNoticeCommentList")
+    @GetMapping("lostNoticeCommentList")
     public ResponseEntity<Map<String,Object>> lostNoticeCommentList(@RequestParam("htId") Long htId, HttpServletRequest request) {
         return tagNoticeService.lostNoticeCommentList(htId, request);
     }
@@ -1107,7 +1107,7 @@ public class UserRestController {
     //  택분실게시판 - 댓글 작성 and 수정
     @ApiOperation(value = "택분실게시판" , notes = "게시판의 댓글작성 및 수정을 요청한다 ")
     @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
-    @PostMapping("/lostNoticeCommentSave")
+    @PostMapping("lostNoticeCommentSave")
     public ResponseEntity<Map<String,Object>> lostNoticeCommentSave(@RequestParam("hcId") Long hcId, @RequestParam("htId") Long htId, @RequestParam("type") String type,
                                                                                                             @RequestParam("comment") String comment, @RequestParam("preId") Long preId,
                                                                                                             HttpServletRequest request) {
@@ -1117,7 +1117,7 @@ public class UserRestController {
 
 // @@@@@@@@@@@@@@@@@@@ 공지사항 게시판 API @@@@@@@@@@@@@@@@@@@@@@@@@@
     // 공지사항 게시판 - 리스트 호출
-    @PostMapping("/noticeList")
+    @PostMapping("noticeList")
     public ResponseEntity<Map<String,Object>> noticeList(@RequestParam("searchString")String searchString, @RequestParam("filterFromDt")String filterFromDt,
                                                          @RequestParam("filterToDt")String filterToDt,
                                                          Pageable pageable, HttpServletRequest request) {
@@ -1140,7 +1140,7 @@ public class UserRestController {
     }
 
     //  공지사항 게시판 - 글보기
-    @GetMapping("/noticeView")
+    @GetMapping("noticeView")
     public ResponseEntity<Map<String,Object>> noticeView(@RequestParam("hnId") Long hnId) {
         return noticeService.noticeView(hnId, "2");
     }

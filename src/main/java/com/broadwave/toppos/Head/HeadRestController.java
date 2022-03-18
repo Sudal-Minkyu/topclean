@@ -460,8 +460,12 @@ public class HeadRestController {
     public ResponseEntity<Map<String,Object>> franchiseAssignment(@RequestParam(value="frCode", defaultValue="") String frCode,
                                                                     @RequestParam(value="brCode", defaultValue="") String brCode,
                                                                     @RequestParam(value="bot_brAssignState", defaultValue="") String bot_brAssignState,
+                                                                    @RequestParam(value="bot_frCarculateRateBr", defaultValue="") Double bot_frCarculateRateBr,
+                                                                    @RequestParam(value="bot_frCarculateRateFr", defaultValue="") Double bot_frCarculateRateFr,
+                                                                    @RequestParam(value="bot_frRoyaltyRateBr", defaultValue="") Double bot_frRoyaltyRateBr,
+                                                                    @RequestParam(value="bot_frRoyaltyRateFr", defaultValue="") Double bot_frRoyaltyRateFr,
                                                                     HttpServletRequest request){
-        return headService.franchiseAssignment(frCode, brCode, bot_brAssignState, request);
+        return headService.franchiseAssignment(frCode, brCode, bot_brAssignState, bot_frCarculateRateBr, bot_frCarculateRateFr, bot_frRoyaltyRateBr, bot_frRoyaltyRateFr, request);
     }
 
     // 유저아이디 중복확인 API

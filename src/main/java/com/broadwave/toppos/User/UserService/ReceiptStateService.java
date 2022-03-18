@@ -229,6 +229,7 @@ public class ReceiptStateService {
                 break;
             }
             // 수정완료 - 2022/03/03
+            case "S3":
             case "S5":
             case "S8": {
                 log.info("세탁인도 처리");
