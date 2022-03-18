@@ -120,7 +120,7 @@ const comms = {
     dispatchPrint(miNoList) {
         dv.chk(miNoList, dtos.send.branchDispatchPrint, "출고증 인쇄를 위한 miNoList 보내기");
         CommonUI.ajax(urls.dispatchPrint, "GET", miNoList, function (res) {
-            dispatchPrintData(res.sendData.issueDispatchDtos)
+            dispatchPrintData(res.sendData.issueDispatchDtos);
         });
     },
 };

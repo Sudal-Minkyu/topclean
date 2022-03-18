@@ -122,7 +122,7 @@ public class ManagerService {
         log.info("금일날짜 : "+nowDate);
         List<FranchiseManagerListDto> franchiseManagerListDtos = franchiseRepository.findByManagerInFranchise(brCode);
         List<UserLoginLogDto> chartFranchOpenListDtos = userLoginLogRepository.findByFranchiseLog(brCode, nowDate);
-        List<InspeotMainListDto> inspeotMainListDtos = inspeotRepositoryCustom.findByInspeotB1(brCode, 3, null);
+        List<InspeotMainListDto> inspeotMainListDtos = inspeotRepositoryCustom.findByInspeotB1(brCode, 5, null);
 
         int franchiseAll = franchiseManagerListDtos.size();
         int franchiseLog = chartFranchOpenListDtos.size();
@@ -154,8 +154,8 @@ public class ManagerService {
 //        log.info("requestWeekAmountDtos : "+requestWeekAmountDtos);
         List<IssueWeekAmountDto> issueWeekAmountDtos = issueRepository.findByIssueWeekAmount(brCode, formatWeekDays);
 
-        data.put("noticeData",noticeListDtos); // 공지사항 리스트(본사의 공지사항) - 최근3개
-        data.put("inspeotList",inspeotMainListDtos);  // 검품리스트 3개호출
+        data.put("noticeData",noticeListDtos); // 공지사항 리스트(본사의 공지사항) - 최근5개
+        data.put("inspeotList",inspeotMainListDtos);  // 검품리스트 5개호출
         data.put("requestWeekAmountData",requestWeekAmountDtos); // 1주일간의 가맹점 접수금액
         data.put("chartFranchOpenData",chartFranchOpenData); // 가맹점 오픈 현황
         data.put("issueWeekAmountDtos",issueWeekAmountDtos); // 1주일간의 지사 출고금액

@@ -90,6 +90,10 @@ const grids = {
                     headerText: "소재",
                     style: "grid_textalign_left",
                 }, {
+                    dataField: "btRemark",
+                    headerText: "특이사항",
+                    style: "grid_textalign_left",
+                }, {
                     dataField: "thumbnail1", // src 내용이 와야 함
                     headerText: "사진1",
                     renderer : {
@@ -220,7 +224,7 @@ function onPageLoad() {
     enableDatepicker();
     trigs.basic();
 
-    $("#taglostPop").addClass("active");
+    //$("#taglostPop").addClass("active");
 
 
     // lightbox option

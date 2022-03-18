@@ -157,6 +157,40 @@
 						</div>
 					</li>
 					<li class="customer__form-item">
+						<h4 class="customer__form-title">결혼기념일</h4>
+						<div class="customer__form-input">
+							<div class="c-select">
+								<select id="bcWeddingAnniversaryYYYY">
+									<option value="">년도</option>
+									<option th:each="i : ${#numbers.sequence(2010, 1950, -1)}"
+											th:value="${i}"
+											th:text="${i}">
+									</option>
+								</select>
+							</div>
+							
+							<div class="c-select">
+								<select id="bcWeddingAnniversaryMM">
+									<option value="">월</option>
+									<option th:each="i : ${#numbers.sequence(1, 12, 1)}"
+											th:value="${#numbers.formatInteger(i, 2)}"
+											th:text="${i}">
+									</option>
+								</select>
+							</div>
+							
+							<div class="c-select">
+								<select id="bcWeddingAnniversaryDD">
+									<option value="">일</option>
+									<option th:each="i : ${#numbers.sequence(1, 31, 1)}"
+											th:value="${#numbers.formatInteger(i, 2)}"
+											th:text="${i}">
+									</option>
+								</select>
+							</div>
+						</div>
+					</li>
+					<li class="customer__form-item">
 						<h4 class="customer__form-title">성향</h4>
 						<div class="customer__form-input">
 							<div class="c-select c-select--blue">
@@ -170,9 +204,8 @@
 							</div>
 						</div>
 					</li>
-					<li class="customer__form-item">
-						<!-- 팝업 사용 시 주석 풀어주세요 -->
-						<!-- 
+					<!-- <li class="customer__form-item">
+						팝업 사용 시 주석 풀어주세요
 						<h4 class="customer__form-title">탈퇴</h4>
 						<div class="customer__form-input">
 							<div class="c-radio">
@@ -185,8 +218,7 @@
 								<label for="no">N</label>
 							</div>
 						</div>
-						 -->
-					</li>
+					</li> -->
 					<li class="customer__form-item">
 						<h4 class="customer__form-title">문자수신동의</h4>
 						<div class="customer__form-input">
