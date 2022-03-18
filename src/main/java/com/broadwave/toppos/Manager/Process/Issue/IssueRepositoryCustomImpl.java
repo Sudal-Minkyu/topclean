@@ -74,8 +74,8 @@ public class IssueRepositoryCustomImpl extends QuerydslRepositorySupport impleme
         sb.append("FROM mr_issue a \n");
         sb.append("INNER JOIN fs_request_dtl b ON a.mi_id = b.mi_id \n");
         sb.append("INNER JOIN fs_request c ON b.fr_id = c.fr_id \n");
-        sb.append("INNER JOIN bs_franchise d ON c.fr_code = d.fr_code \n");
-        sb.append("INNER JOIN bs_branch e ON e.br_code = d.br_code \n");
+        sb.append("LEFT OUTER JOIN bs_franchise d ON c.fr_code = d.fr_code \n");
+        sb.append("LEFT OUTER JOIN bs_branch e ON e.br_code = d.br_code \n");
         sb.append("WHERE a.mi_no IN ?1 \n");
         sb.append(") \n");
 

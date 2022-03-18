@@ -944,12 +944,13 @@ public class ReceiptService {
 
     // 접수페이지 접수완료시 카톡메세지
     @Transactional
-    public ResponseEntity<Map<String, Object>> requestReceiptMessage(String frNo, String  locationHost, HttpServletRequest request) throws Exception {
+    public ResponseEntity<Map<String, Object>> requestReceiptMessage(String frNo, String  locationHost, HttpServletRequest request) {
 //        location.protocol+"//"+location.host
         log.info("requestReceiptMessage 호출");
         AjaxResponse res = new AjaxResponse();
 
         log.info("접수코드 : "+frNo);
+        log.info("locationHost : "+locationHost);
 
         // 클레임데이터 가져오기
         Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));

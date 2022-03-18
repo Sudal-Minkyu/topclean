@@ -234,6 +234,7 @@ public class HeadRestController {
 
             branchsetInfo.put("brCode", branch.getBrCode());
             branchsetInfo.put("brName", branch.getBrName());
+            branchsetInfo.put("brTelNo", branch.getBrTelNo());
             branchsetInfo.put("brContractDt", branch.getBrContractDt());
             branchsetInfo.put("brContractFromDt",branch.getBrContractFromDt());
             branchsetInfo.put("brContractToDt", branch.getBrContractToDt());

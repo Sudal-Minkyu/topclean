@@ -177,9 +177,9 @@ public class TagGalleryService {
     public ResponseEntity<Map<String, Object>> tagGalleryList(String searchString, String filterFromDt, String filterToDt, HttpServletRequest request) {
         log.info("tagGalleryList 호출");
 
-//        log.info("searchString : "+searchString);
-//        log.info("filterFromDt : "+filterFromDt);
-//        log.info("filterToDt : "+filterToDt);
+        log.info("searchString : "+searchString);
+        log.info("filterFromDt : "+filterFromDt);
+        log.info("filterToDt : "+filterToDt);
 
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
@@ -211,16 +211,16 @@ public class TagGalleryService {
             List<TagGalleryFileListDto> tagGalleryFileListDto = tagGalleryFileRepository.findByTagGalleryFileList(Long.parseLong(String.valueOf(tagGalleryListDto.getBtId())));
             tagGalleryInfo.put("bfPathFilename", tagGalleryFileListDto);
 
-//            TagGalleryCheckListDto tagGalleryCheckListDtos = tagGalleryCheckRepository.findByTagGalleryCheckList(tagGalleryListDto.getBtId());
-//            log.info("tagGalleryCheckListDtos : "+tagGalleryCheckListDtos);
-//            tagGalleryInfo.put("tagGalleryCheckFranchise", tagGalleryCheckListDtos.getFrName());
-
             tagGalleryListData.add(tagGalleryInfo);
         }
         data.put("tagGalleryList",tagGalleryListData);
 
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
+    public ResponseEntity<Map<String, Object>> tagGalleryDetail(Long btId, HttpServletRequest request) {
+        return null;
     }
 
 

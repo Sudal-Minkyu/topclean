@@ -52,11 +52,19 @@ public class IssueDispatchDto {
     }
 
     public String getFrTelNo() {
-        return CommonUtils.hpNumberChange(frTelNo);
+        if(frTelNo != null) {
+            return CommonUtils.hpNumberChange(frTelNo);
+        }else{
+            return null;
+        }
     }
 
     public String getBrTelNo() {
-        return CommonUtils.hpNumberChange(brTelNo);
+        if(brTelNo != null) {
+            return CommonUtils.hpNumberChange(brTelNo);
+        }else{
+            return null;
+        }
     }
 
     public StringBuffer getMiDt() {

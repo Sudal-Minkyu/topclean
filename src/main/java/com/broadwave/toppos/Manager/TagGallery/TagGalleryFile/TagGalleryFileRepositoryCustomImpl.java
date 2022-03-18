@@ -32,7 +32,7 @@ public class TagGalleryFileRepositoryCustomImpl extends QuerydslRepositorySuppor
                     tagGalleryFile.bfFilename
             ));
 
-        query.orderBy(tagGalleryFile.bfId.desc()).limit(3);
+        query.orderBy(tagGalleryFile.bfId.asc()).limit(3);
 
         return query.fetch();
     }

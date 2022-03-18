@@ -47,6 +47,9 @@ public class Customer {
     @Column(name="bc_age")
     private String bcAge; // 연련대( 10:10대, 20:20대, 30:30대...80:80대)
 
+    @Column(name="bc_wedding_anniversary")
+    private String bcWeddingAnniversary; // 결혼기념일(8글자)
+
     @Column(name="bc_grade")
     private String bcGrade; // 고객등급( 일반-기본값 : 01, vip: 02, vvip: 03)
 

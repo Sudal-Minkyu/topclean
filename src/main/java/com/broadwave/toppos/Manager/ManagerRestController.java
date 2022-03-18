@@ -159,11 +159,18 @@ public class ManagerRestController {
     @ApiOperation(value = "택분실 조회" , notes = "지사가 택분실 리스트 요청한다 ")
     @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
     @GetMapping("tagGalleryList")
-    public ResponseEntity<Map<String,Object>> tagGalleryList(@RequestParam("searchString")String searchString, @RequestParam("filterFromDt")String filterFromDt,
+    public ResponseEntity<Map<String,Object>> tagGalleryList(@RequestParam("type")String searchString, @RequestParam("filterFromDt")String filterFromDt,
                                                              @RequestParam("filterToDt")String filterToDt, HttpServletRequest request) {
         return tagGalleryService.tagGalleryList(searchString, filterFromDt, filterToDt, request);
     }
 
+    //  NEW 택분실게시판 - 상세보기 호출
+    @ApiOperation(value = "택분실 상세보기" , notes = "지사가 택분실 상세보기 요청한다 ")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
+    @GetMapping("tagGalleryDetail")
+    public ResponseEntity<Map<String,Object>> tagGalleryDetail(@RequestParam("btId")Long btId, HttpServletRequest request) {
+        return tagGalleryService.tagGalleryDetail(btId, request);
+    }
 
 
 //@@@@@@@@@@@@@@@@@@@@@ 지사출고, 지사출고 취소, 가맹점강제출고, 가맹점반송 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -182,6 +189,8 @@ public class ManagerRestController {
 
     // 출고증인쇄 함수
     @GetMapping("branchDispatchPrint")
+    @ApiOperation(value = "출고증 인쇄" , notes = "출고증인쇄를 신청한다. ")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
     public ResponseEntity<Map<String,Object>> branchDispatchPrint(@RequestParam(value="miNoList", defaultValue="") List<String> miNoList) {
         return receiptReleaseService.branchDispatchPrint(miNoList);
     }
