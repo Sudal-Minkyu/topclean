@@ -3,6 +3,8 @@ package com.broadwave.toppos.Manager.TagGallery.TagGalleryDtos;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.math.BigInteger;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -19,19 +21,13 @@ import java.util.List;
 @AllArgsConstructor
 public class TagGalleryListDto {
 
-    private LocalDateTime insertDateTime; // 등록일시
-    private Long btId;
+    private Timestamp insertDateTime; // 등록일시
+    private BigInteger btId;
     private String btBrandName; // 추정브랜드명
     private String btInputDate; // 예상 지사입고일
     private String btMaterial; // 소재
     private String btRemark; // 특이사항
-//    private String bfPath1; // 사진PATH_1
-//    private String bfFilename1; // 사진Filename_1
-//    private String bfPath2; // 사진URL_2
-//    private String bfFilename2; // 사진Filename_2
-//    private String bfPath3; // 사진URL_3
-//    private String bfFilename3; // 사진Filename_3
-//    private String frCheck; // 가맹 응답상태
+    private String frName; // 가맹점명
 
     public StringBuffer getBtInputDate() {
         if(!btInputDate.equals("")){
@@ -45,22 +41,7 @@ public class TagGalleryListDto {
     }
 
     public String getInsertDateTime() {
-        return insertDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm"));
+        return insertDateTime.toLocalDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm"));
     }
 
-//    public String getBfPath1() {
-//        return bfPath1+"s_"+bfFilename1;
-//    }
-//
-//    public String getBfPath2() {
-//        return bfPath2+"s_"+bfFilename2;
-//    }
-//
-//    public String getBfPath3() {
-//        return bfPath3+"s_"+bfFilename3;
-//    }
-
-//    public String getFrCheck() {
-//        return frCheck;
-//    }
 }

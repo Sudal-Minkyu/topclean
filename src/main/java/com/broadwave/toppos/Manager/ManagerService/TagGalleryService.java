@@ -3,7 +3,6 @@ package com.broadwave.toppos.Manager.ManagerService;
 import com.broadwave.toppos.Aws.AWSS3Service;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.Manager.TagGallery.TagGallery;
-import com.broadwave.toppos.Manager.TagGallery.TagGalleryCheck.TagGalleryCheckListDto;
 import com.broadwave.toppos.Manager.TagGallery.TagGalleryCheck.TagGalleryCheckRepository;
 import com.broadwave.toppos.Manager.TagGallery.TagGalleryDtos.TagGalleryListDto;
 import com.broadwave.toppos.Manager.TagGallery.TagGalleryDtos.TagGalleryMapperDto;
@@ -11,9 +10,6 @@ import com.broadwave.toppos.Manager.TagGallery.TagGalleryFile.TagGalleryFile;
 import com.broadwave.toppos.Manager.TagGallery.TagGalleryFile.TagGalleryFileListDto;
 import com.broadwave.toppos.Manager.TagGallery.TagGalleryFile.TagGalleryFileRepository;
 import com.broadwave.toppos.Manager.TagGallery.TagGalleryRepository;
-import com.broadwave.toppos.Manager.TagNotice.TagNoticeDtos.TagNoticeViewSubDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.PhotoDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailDto;
 import com.broadwave.toppos.common.AjaxResponse;
 import com.broadwave.toppos.common.ResponseErrorCode;
 import io.jsonwebtoken.Claims;
@@ -27,7 +23,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.io.IOException;
-import java.text.Normalizer;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -200,8 +195,7 @@ public class TagGalleryService {
         HashMap<String,Object> tagGalleryInfo;
 
         List<TagGalleryListDto> tagGalleryListDtos = tagGalleryRepository.findByTagGalleryList(searchString, filterFromDt, filterToDt, brCode);
-        log.info("tagGalleryListDtos : "+tagGalleryListDtos);
-
+//        log.info("tagGalleryListDtos : "+tagGalleryListDtos);
 
         for(TagGalleryListDto tagGalleryListDto : tagGalleryListDtos){
             tagGalleryInfo = new HashMap<>();
@@ -212,14 +206,14 @@ public class TagGalleryService {
             tagGalleryInfo.put("btInputDate", tagGalleryListDto.getBtInputDate());
             tagGalleryInfo.put("btMaterial", tagGalleryListDto.getBtMaterial());
             tagGalleryInfo.put("btRemark", tagGalleryListDto.getBtRemark());
+            tagGalleryInfo.put("tagGalleryCheckFranchise", tagGalleryListDto.getFrName());
 
-            List<TagGalleryFileListDto> tagGalleryFileListDto = tagGalleryFileRepository.findByTagGalleryFileList(tagGalleryListDto.getBtId());
+            List<TagGalleryFileListDto> tagGalleryFileListDto = tagGalleryFileRepository.findByTagGalleryFileList(Long.parseLong(String.valueOf(tagGalleryListDto.getBtId())));
             tagGalleryInfo.put("bfPathFilename", tagGalleryFileListDto);
 
-            TagGalleryCheckListDto tagGalleryCheckListDtos = tagGalleryCheckRepository.findByTagGalleryCheckList(tagGalleryListDto.getBtId());
-            log.info("tagGalleryCheckListDtos : "+tagGalleryCheckListDtos);
-
-            tagGalleryInfo.put("tagGalleryCheckFranchise", tagGalleryCheckListDtos.getFrName());
+//            TagGalleryCheckListDto tagGalleryCheckListDtos = tagGalleryCheckRepository.findByTagGalleryCheckList(tagGalleryListDto.getBtId());
+//            log.info("tagGalleryCheckListDtos : "+tagGalleryCheckListDtos);
+//            tagGalleryInfo.put("tagGalleryCheckFranchise", tagGalleryCheckListDtos.getFrName());
 
             tagGalleryListData.add(tagGalleryInfo);
         }

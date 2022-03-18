@@ -36,11 +36,17 @@ public class TagGalleryCheckRepositoryCustomImpl extends QuerydslRepositorySuppo
         EntityManager em = getEntityManager();
         StringBuilder sb = new StringBuilder();
 
-        sb.append("SELECT group_concat(b.fr_Name) \n");
+        sb.append("SELECT b.fr_Name \n");
         sb.append("FROM br_tag_gallery_check a \n");
         sb.append("Inner JOIN bs_franchise b on b.fr_code = a.fr_code \n");
         sb.append("WHERE a.bt_id = ?1 \n");
-        sb.append("group BY a.bt_id \n");
+        sb.append("order BY a.bc_id asc limit 1 \n");
+
+//        sb.append("SELECT group_concat(b.fr_Name) \n");
+//        sb.append("FROM br_tag_gallery_check a \n");
+//        sb.append("Inner JOIN bs_franchise b on b.fr_code = a.fr_code \n");
+//        sb.append("WHERE a.bt_id = ?1 \n");
+//        sb.append("group BY a.bt_id \n");
 
         Query query = em.createNativeQuery(sb.toString());
 
