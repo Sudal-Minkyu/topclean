@@ -30,7 +30,6 @@ const dtos = {
         },
         
         branchReleaseCurrentList: {
-            miNoList: "a", // 2022.03.17 추가
             frCode: "s", // 가맹점 id
             frName: "s",
             fdS4Dt: "s", // 출고일
@@ -39,6 +38,7 @@ const dtos = {
         },
 
         branchReleaseInputList: {
+            miNo: "s",
             frRefType: "s",
             fdS2Dt: "s",
             fdS4Dt: "s",
@@ -114,7 +114,7 @@ const comms = {
     dispatchPrint(miNoList) {
         dv.chk(miNoList, dtos.send.branchDispatchPrint, "출고증 인쇄를 위한 miNoList 보내기");
         CommonUI.ajax(urls.dispatchPrint, "GET", miNoList, function (res) {
-            dispatchPrintData(res.sendData.issueDispatchDtos)
+            dispatchPrintData(res.sendData.issueDispatchDtos);
         });
     },
 };
@@ -346,13 +346,16 @@ const trigs = {
             });
 
             $("#releaseListPrint").on("click", function () {
-                if(hasGrid1Data()) {
-                    alertCheck("출고증을 인쇄 하시겠습니까?");
+                const selectedRow = AUIGrid.getSelectedRows(grids.s.id[1]);
+                if(selectedRow.length) {
+                    alertCheck("출고증을 재인쇄 하시겠습니까?");
                     $("#checkDelSuccessBtn").on("click", function () {
-                        comms.dispatchPrint({miNoList: wares.currentDetail.miNoList});
+                        comms.dispatchPrint({miNoList: [selectedRow[0].miNo]});
                         $('#popupId').remove();
                         $("#releaseListPrint").addClass("active");
                     });
+                } else {
+                    alertCaution("출고증을 재인쇄할 상품을 선택해 주세요.", 1);
                 }
             });
         },
@@ -369,7 +372,6 @@ const wares = {
         frCode: 0,
         frName: "",
         fdS4Dt: "",
-        miNoList: [],
     },
 }
 
@@ -431,14 +433,13 @@ function showDetail(item) {
     wares.currentDetail.frCode = searchCondition.frCode;
     wares.currentDetail.fdS4Dt = searchCondition.fdS4Dt;
     wares.currentDetail.frName = item.frName;
-    wares.currentDetail.miNoList = item.miNoList;
 
     comms.getDetailList(searchCondition);
 }
 
 function hasGrid1Data() {
     let result = grids.f.getData(1).length ? true : false ;
-    if(!result) alertCaution("명령을 실행할 데이터가 없습니다.<br>조회후 왼쪽 표에서 데이터를 선택해 주세요.", 1);
+    if(!result) alertCaution("엑셀 다운로드를 실행할 데이터가 없습니다.<br>조회후 왼쪽 표에서 데이터를 선택해 주세요.", 1);
     return result;
 }
 

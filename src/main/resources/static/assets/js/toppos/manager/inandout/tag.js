@@ -203,7 +203,7 @@ const grids = {
                     formatString: "yyyy-mm-dd",
                 }, {
                     dataField: "fdS7Dt",
-                    headerText: "강제출고일",
+                    headerText: "강제출고<br>등록일",
                     width: 100,
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
