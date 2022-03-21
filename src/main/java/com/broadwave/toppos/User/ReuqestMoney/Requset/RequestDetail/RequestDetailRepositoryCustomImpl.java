@@ -216,6 +216,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         if(!filterFromDt.equals("") && !filterToDt.equals("")){
             query.where(request.frYyyymmdd.loe(filterFromDt).and(request.frYyyymmdd.goe(filterToDt)));
         }
+        query.distinct();
         return query.fetch();
     }
     // 미수관리 페이지의 접수 상세보기 querydsl
