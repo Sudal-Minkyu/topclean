@@ -154,14 +154,7 @@ public class ReceiptReleaseService {
 
         // 지사출고 페이지에 보여줄 리스트 호출
         List<RequestDetailReleaseListDto> requestDetailReleaseListDtos = requestDetailRepository.findByRequestDetailReleaseList(brCode, frId, fromDt, toDt, isUrgent);
-        List<Long> fdIdList = new ArrayList<>();
-        for(RequestDetailReleaseListDto requestDetailReleaseListDto : requestDetailReleaseListDtos){
-            fdIdList.add(requestDetailReleaseListDto.getFdId());
-        }
-        List<InspeotYnDto> inspeotYnDtos = inspeotRepositoryCustom.findByInspeotStateList(fdIdList,"1");
-
         data.put("gridListData",requestDetailReleaseListDtos);
-        data.put("removeFrId",inspeotYnDtos);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }

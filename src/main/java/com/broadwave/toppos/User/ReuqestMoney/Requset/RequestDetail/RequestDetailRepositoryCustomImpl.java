@@ -274,6 +274,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                 .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
                 .where(request.frConfirmYn.eq("Y"))
                 .where(requestDetail.frId.frCode.eq(frCode).and(requestDetail.fdCancel.eq("N")).and(requestDetail.fdState.eq("S1")))
+                .where(itemGroup.bgItemGroupcode.notLike("D18"))
                 .select(Projections.constructor(RequestDetailCloseListDto.class,
                         requestDetail.id,
                         request.frYyyymmdd,
