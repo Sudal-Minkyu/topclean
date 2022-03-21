@@ -55,7 +55,7 @@ class CommonUIClass {
                 statusText += item.fdAdd1Amt || item.fdAdd1Remark.length ? "추" : "";
                 statusText += item.fdRepairAmt || item.fdRepairRemark.length ? "수" : "";
                 statusText += item.fdWhitening ? "표" : "";
-                statusText += item.fdPollutionLevel ? "오" : "";
+                statusText += item.fdPollution ? "오" : "";
                 statusText += item.fdWaterRepellent || item.fdStarch ? "발" : "";
                 return statusText;
             } catch (e) {
