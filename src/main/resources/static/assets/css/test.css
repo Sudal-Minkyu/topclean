@@ -2501,7 +2501,7 @@ textarea {
 	text-overflow: ellipsis;
 }
 .choice__cost {
-	float: left;
+    float: left;
 	display: inline-block;
 	width: 3.375rem;
 	height: 2.5rem;
