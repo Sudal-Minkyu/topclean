@@ -6,11 +6,9 @@ import com.broadwave.toppos.Manager.Process.Issue.IssueDispatchDto;
 import com.broadwave.toppos.Manager.Process.Issue.IssueRepository;
 import com.broadwave.toppos.Manager.Process.IssueForce.IssueForce;
 import com.broadwave.toppos.Manager.Process.IssueForce.IssueForceRepository;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotYnDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotRepositoryCustom;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetail;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.manager.RequestDetailBranchForceListDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.manager.RequestDetailBranchReturnListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.manager.RequestDetailReleaseCancelListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.manager.RequestDetailReleaseListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepository;
@@ -24,9 +22,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -141,8 +136,11 @@ public class ReceiptReleaseService {
     }
 
     //  지사출고 - 세부테이블 지사입고 상태 리스트
-    public ResponseEntity<Map<String, Object>> branchReceiptBranchInList(Long frId, LocalDateTime fromDt, LocalDateTime toDt, String isUrgent, HttpServletRequest request) {
+    public ResponseEntity<Map<String, Object>> branchReceiptBranchInList(Long frId, String fromDt, String toDt, String isUrgent, HttpServletRequest request) {
         log.info("franchiseReceiptBranchInList 호출");
+
+//        log.info("fromDt : "+fromDt);
+//        log.info("toDt : "+toDt);
 
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
@@ -159,13 +157,35 @@ public class ReceiptReleaseService {
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
+    //  지사출고 - 세부테이블 강제출고 리스트
+    public ResponseEntity<Map<String, Object>> branchReceiptBranchInForceList(Long frId, String fromDt, String toDt, HttpServletRequest request) {
+        log.info("franchiseReceiptBranchInList 호출");
+
+//        log.info("fromDt : "+fromDt);
+//        log.info("toDt : "+toDt);
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String brCode = (String) claims.get("brCode"); // 현재 지사의 코드(2자리) 가져오기
+        log.info("현재 접속한 지사 코드 : "+brCode);
+
+        // 지사출고 페이지에 보여줄 리스트 호출
+        List<RequestDetailReleaseListDto> requestDetailReleaseListDtos = requestDetailRepository.findByRequestDetailReleaseForceList(brCode, frId, fromDt, toDt);
+        data.put("gridListData",requestDetailReleaseListDtos);
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
     //  지사출고 취소 - 세부테이블 지사출고 상태 리스트
-    public ResponseEntity<Map<String, Object>> branchReceiptBranchInCancelList(Long frId, LocalDateTime fromDt, LocalDateTime toDt, String tagNo, HttpServletRequest request) {
+    public ResponseEntity<Map<String, Object>> branchReceiptBranchInCancelList(Long frId, String fromDt, String toDt, String tagNo, HttpServletRequest request) {
         log.info("branchReceiptBranchInCancelList 호출");
 
 //        log.info("frId : "+frId);
-//        log.info("fromDt : "+fromDt);
-//        log.info("toDt : "+toDt);
+        log.info("fromDt : "+fromDt);
+        log.info("toDt : "+toDt);
 //        log.info("tagNo : "+tagNo);
 
         AjaxResponse res = new AjaxResponse();
@@ -222,7 +242,7 @@ public class ReceiptReleaseService {
 //    }
 
     //  가맹점 강제츨고 - 세부테이블 강제출고 처리 할 리스트
-    public ResponseEntity<Map<String, Object>> branchReceiptForceReleaseList(Long frId, LocalDateTime fromDt, LocalDateTime toDt, String tagNo, HttpServletRequest request) {
+    public ResponseEntity<Map<String, Object>> branchReceiptForceReleaseList(Long frId, String fromDt, String toDt, String tagNo, HttpServletRequest request) {
         log.info("branchReceiptForceReleaseList 호출");
 
 //        log.info("frId : "+frId);
@@ -238,22 +258,6 @@ public class ReceiptReleaseService {
 
         // 가맹점 강제츨고 처리 할 리스트 호출
         List<RequestDetailBranchForceListDto> requestDetailBranchForceListDtos = requestDetailRepository.findByRequestDetailBranchForceList(brCode, frId, fromDt, toDt, tagNo);
-
-//        List<Long> fdIdList = new ArrayList<>();
-//        for (RequestDetailBranchForceListDto requestDetailBranchForceListDto : requestDetailBranchForceListDtos) {
-//            fdIdList.add(requestDetailBranchForceListDto.getFdId());
-//        }
-//
-//        List<InspeotYnDto> inspeotYnDtoBList = inspeotRepositoryCustom.findByInspeotYnBAndType1(fdIdList); // 지사검품(확인품) 여부
-//
-//        for (int i=0; i< requestDetailBranchForceListDtos.size(); i++) {
-//            for(InspeotYnDto inspeotYnDto : inspeotYnDtoBList){
-//                if(!inspeotYnDto.getFdId().equals(requestDetailBranchForceListDtos.get(i).getFdId())){
-//                    requestDetailBranchForceListDtos.set(i,null);
-//                }
-//            }
-//        }
-
         data.put("gridListData",requestDetailBranchForceListDtos);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));

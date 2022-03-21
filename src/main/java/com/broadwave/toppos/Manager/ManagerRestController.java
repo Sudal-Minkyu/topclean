@@ -48,7 +48,7 @@ public class ManagerRestController {
     private final CurrentService currentService; // 현황페이지 서비스
     private final NoticeService noticeService; // 공지사항페이지 서비스
 
-    private final ReceiptReleaseService receiptReleaseService; // 지사 출고 전용 서비스
+    private final ReceiptReleaseService receiptReleaseService; // 지사출고 전용 서비스
 
     @Autowired
     public ManagerRestController(ManagerService managerService, CalendarService calendarService, TagNoticeService tagNoticeService, TagGalleryService tagGalleryService,
@@ -210,49 +210,29 @@ public class ManagerRestController {
         return receiptReleaseService.branchDispatchPrint(miNoList);
     }
 
-    //  지사출고 - 세부테이블 지사입고상태, 지사강제출고 리스트
+    //  지사출고 - 세부테이블 지사입고상태 리스트
     @GetMapping("branchReceiptBranchInList")
+    @ApiOperation(value = "지사 출고 리스트" , notes = "지사출고 할 리스트를 호출한다. ")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
     public ResponseEntity<Map<String,Object>> branchReceiptBranchInList(@RequestParam("frId")Long frId, @RequestParam("filterFromDt")String filterFromDt,
                                                                            @RequestParam("filterToDt")String filterToDt, @RequestParam("isUrgent")String isUrgent, HttpServletRequest request){
+        return receiptReleaseService.branchReceiptBranchInList(frId, filterFromDt.replaceAll("-",""), filterToDt.replaceAll("-",""), isUrgent, request);
+    }
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
-        LocalDateTime fromDt = null;
-        if(filterFromDt != null){
-            filterFromDt = filterFromDt+" 00:00:00.000";
-            fromDt = LocalDateTime.parse(filterFromDt, formatter);
-//            log.info("fromDt :"+fromDt);
-        }
-
-        LocalDateTime toDt = null;
-        if(filterToDt != null){
-            filterToDt = filterToDt+" 23:59:59.999";
-            toDt = LocalDateTime.parse(filterToDt, formatter);
-//            log.info("toDt :"+toDt);
-        }
-
-        return receiptReleaseService.branchReceiptBranchInList(frId, fromDt, toDt, isUrgent, request);
+    //  지사출고 - 세부테이블 지사강제출고 리스트
+    @GetMapping("branchReceiptBranchInForceList")
+    @ApiOperation(value = "지사 강제출고 리스트" , notes = "지사강제출고 할 리스트를 호출한다. ")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
+    public ResponseEntity<Map<String,Object>> branchReceiptBranchInForceList(@RequestParam("frId")Long frId, @RequestParam("filterFromDt")String filterFromDt,
+                                                                        @RequestParam("filterToDt")String filterToDt, HttpServletRequest request){
+        return receiptReleaseService.branchReceiptBranchInForceList(frId, filterFromDt.replaceAll("-",""), filterToDt.replaceAll("-",""), request);
     }
 
     //  지사출고 취소 - 세부테이블 지사출고 상태 리스트
     @GetMapping("branchReceiptBranchInCancelList")
     public ResponseEntity<Map<String,Object>> branchReceiptBranchInCancelList(@RequestParam("frId")Long frId, @RequestParam("filterFromDt")String filterFromDt,
                                                                         @RequestParam("filterToDt")String filterToDt, @RequestParam("tagNo")String tagNo, HttpServletRequest request){
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
-        LocalDateTime fromDt = null;
-        if(filterFromDt != null){
-            filterFromDt = filterFromDt+" 00:00:00.000";
-            fromDt = LocalDateTime.parse(filterFromDt, formatter);
-    //            log.info("fromDt :"+fromDt);
-        }
-
-        LocalDateTime toDt = null;
-        if(filterToDt != null){
-            filterToDt = filterToDt+" 23:59:59.999";
-            toDt = LocalDateTime.parse(filterToDt, formatter);
-    //            log.info("toDt :"+toDt);
-        }
-
-        return receiptReleaseService.branchReceiptBranchInCancelList(frId, fromDt, toDt, tagNo, request);
+        return receiptReleaseService.branchReceiptBranchInCancelList(frId, filterFromDt.replaceAll("-",""), filterToDt.replaceAll("-",""), tagNo, request);
     }
 
 //    //  지사반송 - 세부테이블 반송 처리 할 리스트
@@ -281,22 +261,7 @@ public class ManagerRestController {
     @GetMapping("branchReceiptForceReleaseList")
     public ResponseEntity<Map<String,Object>> branchReceiptForceReleaseList(@RequestParam("frId")Long frId, @RequestParam("filterFromDt")String filterFromDt,
                                                                               @RequestParam("filterToDt")String filterToDt, @RequestParam("tagNo")String tagNo, HttpServletRequest request){
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
-        LocalDateTime fromDt = null;
-        if(filterFromDt != null){
-            filterFromDt = filterFromDt+" 00:00:00.000";
-            fromDt = LocalDateTime.parse(filterFromDt, formatter);
-            //            log.info("fromDt :"+fromDt);
-        }
-
-        LocalDateTime toDt = null;
-        if(filterToDt != null){
-            filterToDt = filterToDt+" 23:59:59.999";
-            toDt = LocalDateTime.parse(filterToDt, formatter);
-            //            log.info("toDt :"+toDt);
-        }
-
-        return receiptReleaseService.branchReceiptForceReleaseList(frId, fromDt, toDt, tagNo, request);
+        return receiptReleaseService.branchReceiptForceReleaseList(frId, filterFromDt.replaceAll("-",""), filterToDt.replaceAll("-",""), tagNo, request);
     }
 
     //  접수테이블의 상태 변화 API - 지사출고취소, 지사반송, 가맹점강제출고 실행 함수
@@ -313,22 +278,7 @@ public class ManagerRestController {
     @GetMapping("branchInspection")
     public ResponseEntity<Map<String,Object>> branchInspection(@RequestParam("franchiseId")Long franchiseId, @RequestParam("filterFromDt")String filterFromDt,
                                                                             @RequestParam("filterToDt")String filterToDt, @RequestParam("tagNo")String tagNo, HttpServletRequest request){
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
-        LocalDateTime fromDt = null;
-        if(filterFromDt != null){
-            filterFromDt = filterFromDt+" 00:00:00.000";
-            fromDt = LocalDateTime.parse(filterFromDt, formatter);
-            //            log.info("fromDt :"+fromDt);
-        }
-
-        LocalDateTime toDt = null;
-        if(filterToDt != null){
-            filterToDt = filterToDt+" 23:59:59.999";
-            toDt = LocalDateTime.parse(filterToDt, formatter);
-            //            log.info("toDt :"+toDt);
-        }
-
-        return inspectService.branchInspection(franchiseId, fromDt, toDt, tagNo, request);
+        return inspectService.branchInspection(franchiseId, filterFromDt.replaceAll("-",""), filterToDt.replaceAll("-",""), tagNo, request);
     }
 
     // 확인품 검품 리스트 요청

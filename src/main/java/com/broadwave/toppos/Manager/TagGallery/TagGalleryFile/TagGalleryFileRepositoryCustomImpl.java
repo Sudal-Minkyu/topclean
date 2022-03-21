@@ -28,6 +28,7 @@ public class TagGalleryFileRepositoryCustomImpl extends QuerydslRepositorySuppor
             .where(tagGalleryFile.btId.btId.eq(btId))
 
             .select(Projections.constructor(TagGalleryFileListDto.class,
+                    tagGalleryFile.bfId,
                     tagGalleryFile.bfPath,
                     tagGalleryFile.bfFilename
             ));

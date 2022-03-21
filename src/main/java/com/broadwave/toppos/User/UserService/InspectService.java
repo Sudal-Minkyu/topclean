@@ -767,7 +767,7 @@ public class InspectService {
 
 
     // 지사검품등록용 - 확인품 등록할 리스트 호출API
-    public ResponseEntity<Map<String, Object>> branchInspection(Long franchiseId, LocalDateTime fromDt, LocalDateTime toDt, String tagNo, HttpServletRequest request) {
+    public ResponseEntity<Map<String, Object>> branchInspection(Long franchiseId, String fromDt, String toDt, String tagNo, HttpServletRequest request) {
         log.info("branchInspection 호출");
 
         log.info("franchiseId : "+franchiseId);
