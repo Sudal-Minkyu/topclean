@@ -17,6 +17,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class TagGalleryCheckListDto {
 
+    private String frCode; // 가맹점코드
     private String frName; // 가맹점명
     private String brCompleteYn;  // 기본값 N, 해당 분실 세탁물을 고객에게 인수완료했을 경우 Y로 변경
 

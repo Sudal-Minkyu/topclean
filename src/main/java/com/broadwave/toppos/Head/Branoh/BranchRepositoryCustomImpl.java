@@ -34,8 +34,8 @@ public class BranchRepositoryCustomImpl extends QuerydslRepositorySupport implem
                         branch.brContractFromDt,
                         branch.brContractToDt,
                         branch.brContractState,
-                        branch.brCaculateRateBr,
-                        branch.brCaculateRateFr,
+                        branch.brCarculateRateBr,
+                        branch.brCarculateRateFr,
                         branch.brRoyaltyRateBr,
                         branch.brRoyaltyRateFr,
                         branch.brRemark

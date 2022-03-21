@@ -3,6 +3,7 @@ package com.broadwave.toppos.Manager.ManagerService;
 import com.broadwave.toppos.Aws.AWSS3Service;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.Manager.TagGallery.TagGallery;
+import com.broadwave.toppos.Manager.TagGallery.TagGalleryCheck.TagGalleryCheck;
 import com.broadwave.toppos.Manager.TagGallery.TagGalleryCheck.TagGalleryCheckListDto;
 import com.broadwave.toppos.Manager.TagGallery.TagGalleryCheck.TagGalleryCheckRepository;
 import com.broadwave.toppos.Manager.TagGallery.TagGalleryDtos.TagGalleryDetailDto;
@@ -176,7 +177,7 @@ public class TagGalleryService {
     }
 
     //  NEW 택분실게시판 - 리스트 호출
-    public ResponseEntity<Map<String, Object>> tagGalleryList(String searchString, String filterFromDt, String filterToDt, HttpServletRequest request) {
+    public ResponseEntity<Map<String, Object>> tagGalleryList(String searchString, String filterFromDt, String filterToDt, HttpServletRequest request, String type) {
         log.info("tagGalleryList 호출");
 
 //        log.info("searchString : "+searchString);
@@ -188,10 +189,16 @@ public class TagGalleryService {
 
         // 클레임데이터 가져오기
         Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
-        String brCode = (String) claims.get("brCode"); // 현재 지사의 코드(2자리) 가져오기
+        String brCode;
         String login_id = claims.getSubject(); // 현재 아이디
         log.info("현재 접속한 아이디 : "+login_id);
-        log.info("현재 접속한 지사 코드 : "+brCode);
+        if(type.equals("1")){
+            brCode = (String) claims.get("brCode"); // 현재 지사의 코드(2자리) 가져오기
+            log.info("현재 접속한 지사 코드 : "+brCode);
+        }else{
+            brCode = (String) claims.get("frbrCode"); // 현재 소속된 지사의 코드(2자리) 가져오기
+            log.info("현재 소속된 지사 코드 : "+brCode);
+        }
 
         List<HashMap<String,Object>> tagGalleryListData = new ArrayList<>();
         HashMap<String,Object> tagGalleryInfo;
@@ -222,7 +229,7 @@ public class TagGalleryService {
     }
 
     //  NEW 택분실게시판 - 상세보기 호출
-    public ResponseEntity<Map<String, Object>> tagGalleryDetail(Long btId, HttpServletRequest request) {
+    public ResponseEntity<Map<String, Object>> tagGalleryDetail(Long btId, HttpServletRequest request, String type) {
         log.info("tagGalleryDetail 호출");
 
 //        log.info("btId : "+btId);
@@ -232,10 +239,16 @@ public class TagGalleryService {
 
         // 클레임데이터 가져오기
         Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
-        String brCode = (String) claims.get("brCode"); // 현재 지사의 코드(2자리) 가져오기
+        String brCode;
         String login_id = claims.getSubject(); // 현재 아이디
         log.info("현재 접속한 아이디 : "+login_id);
-        log.info("현재 접속한 지사 코드 : "+brCode);
+        if(type.equals("1")){
+            brCode = (String) claims.get("brCode"); // 현재 지사의 코드(2자리) 가져오기
+            log.info("현재 접속한 지사 코드 : "+brCode);
+        }else{
+            brCode = (String) claims.get("frbrCode"); // 현재 소속된 지사의 코드(2자리) 가져오기
+            log.info("현재 소속된 지사 코드 : "+brCode);
+        }
 
         TagGalleryDetailDto tagGalleryDetailDto = tagGalleryRepository.findByTagGalleryDetail(btId, brCode);
 //        log.info("tagGalleryDetailDto : "+tagGalleryDetailDto);
@@ -247,193 +260,132 @@ public class TagGalleryService {
 //        log.info("tagGalleryCheckListDtos : "+tagGalleryCheckListDtos);
         data.put("tagGalleryCheckList", tagGalleryCheckListDtos);
 
+        int frCompleteCheck = 0;
+        if(type.equals("2")){
+            for(int i=0; i<tagGalleryCheckListDtos.size(); i++){
+                if(tagGalleryCheckListDtos.get(i).getFrCode().equals(brCode)){
+                    frCompleteCheck = 1;
+                }
+            }
+            data.put("frCompleteCheck", frCompleteCheck);
+        }
+
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
+    //  NEW 택분실게시판 - 삭제
+    public ResponseEntity<Map<String, Object>> tagGalleryDelete(Long btId, HttpServletRequest request) {
+        log.info("tagGalleryDelete 호출");
 
-//    //  택분실게시판 - 글삭제
-//    public ResponseEntity<Map<String, Object>> lostGalleryDelete(Long htId) {
-//        log.info("lostGalleryDelete 호출");
-//
-//        AjaxResponse res = new AjaxResponse();
-//
-//        Optional<TagGallery> optionalTagGallery = tagGalleryRepository.findById(htId);
-//        if(optionalTagGallery.isPresent()){
-////            log.info("optionalTagGallery : "+optionalTagGallery.get().getHtId());
-//
-//            List<TagGalleryComment> tagGalleryCommentList = tagGalleryCommentRepository.findByTagGalleryCommentDelete(optionalTagGallery.get().getHtId());
-////            log.info("tagGalleryCommentList : "+tagGalleryCommentList);
-//
-//            List<TagGalleryFile> tagGalleryFileList = tagGalleryFileRepository.findByTagGalleryFileDelete(optionalTagGallery.get().getHtId());
-////            log.info("tagGalleryFileList : "+tagGalleryFileList);
-//
-//            for(TagGalleryFile tagGalleryFile : tagGalleryFileList){
-//                // AWS 파일 삭제
-//                String insertDate =tagGalleryFile.getInsertDateTime().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-//                String path = "/toppos-manager-tagGallery/"+insertDate;
-////                log.info("path : "+path);
-//                String filename = tagGalleryFile.getHfFilename();
-////                log.info("filename : "+filename);
-//                awss3Service.deleteObject(path,filename);
-////                log.info("AWS삭제성공");
-//            }
-//
-//            tagGalleryCommentRepository.deleteAll(tagGalleryCommentList);
-//            tagGalleryFileRepository.deleteAll(tagGalleryFileList);
-//            tagGalleryRepository.delete(optionalTagGallery.get());
-//        }else{
-//            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP022.getCode(), "삭제 할 "+ResponseErrorCode.TP022.getDesc(), ResponseErrorCode.TP027.getCode(), ResponseErrorCode.TP027.getDesc()));
-//        }
-//
-//        return ResponseEntity.ok(res.success());
-//    }
-//
-//    //  택분실게시판 - 리스트호출 테이블
-//    public ResponseEntity<Map<String, Object>> lostGalleryList(String searchString, LocalDateTime filterFromDt, LocalDateTime filterToDt, Pageable pageable, HttpServletRequest request, String type) {
-//        log.info("lostGalleryList 호출성공");
-//
-//        AjaxResponse res = new AjaxResponse();
-//
-//        // 클레임데이터 가져오기
-//        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
-//        String frbrCode;
-//        String login_id = claims.getSubject(); // 현재 아이디
-//        log.info("현재 접속한 아이디 : "+login_id);
-//        if(type.equals("1")){
-//            frbrCode = (String) claims.get("brCode"); // 현재 지사 코드
-//            log.info("현재 접속한 지사 코드 : "+frbrCode);
-//        }else{
-//            frbrCode = (String) claims.get("frbrCode"); // 소속된 지사 코드
-//            log.info("현재 접속한 소속된 지사 코드 : "+frbrCode);
-//        }
-//
-//        // 검색조건
-////        log.info("searchString : "+searchString);
-////        log.info("filterFromDt : "+filterFromDt);
-////        log.info("filterToDt : "+filterToDt);
-//        Page<TagGalleryListDto> tagGalleryListDtoPage = tagGalleryRepository.findByTagGalleryList(searchString, filterFromDt, filterToDt, frbrCode, pageable);
-//        return ResponseEntity.ok(res.ResponseEntityPage(tagGalleryListDtoPage,type));
-//    }
-//
-//    //  택분실게시판 - 글보기
-//    public ResponseEntity<Map<String, Object>> lostGalleryView(Long htId, HttpServletRequest request, String type) {
-//
-//        log.info("tagGalleryView 호출성공");
-//
-//        AjaxResponse res = new AjaxResponse();
-//        HashMap<String, Object> data = new HashMap<>();
-//
-//        // 클레임데이터 가져오기
-//        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
-//
-//        String code;
-//        if(type.equals("1")){
-//            code = (String) claims.get("brCode"); // 현재 지사 코드
-//        }else{
-//            code = (String) claims.get("frbrCode"); // 소속된 지사 코드
-//        }
-//        log.info("소속된 지사 코드 : "+code);
-//
-//        // 검색조건
-////        log.info("htId : "+htId);
-//        TagGalleryViewDto tagGalleryViewDto = tagGalleryRepository.findByTagGalleryView(htId, code);
-//
-//        List<TagGalleryFileListDto> tagGalleryFileListDtos = tagGalleryFileRepository.findByTagGalleryFileList(htId);
-//
-//        HashMap<String,Object> tagGalleryViewInfo = new HashMap<>();
-//        if(tagGalleryViewDto != null){
-//            if(!tagGalleryViewDto.getBrCode().equals(code)){
-//                return ResponseEntity.ok(res.fail(ResponseErrorCode.TP026.getCode(), "해당 글의 "+ ResponseErrorCode.TP026.getDesc(), null, null));
-//            }
-//            tagGalleryViewInfo.put("htId", tagGalleryViewDto.getHtId());
-//            tagGalleryViewInfo.put("isWritter", type); // 1이면 지사, 2이면 가맹점
-//            tagGalleryViewInfo.put("subject", tagGalleryViewDto.getSubject());
-//            tagGalleryViewInfo.put("content", tagGalleryViewDto.getContent());
-//            tagGalleryViewInfo.put("name", tagGalleryViewDto.getName());
-//            tagGalleryViewInfo.put("insertDateTime", tagGalleryViewDto.getInsertDateTime());
-//            tagGalleryViewInfo.put("fileList", tagGalleryFileListDtos);
-//
-//            TagGalleryViewSubDto tagGalleryViewPreDto = tagGalleryRepository.findByTagGalleryPreView(tagGalleryViewDto.getHtId(), code);
-//            if(tagGalleryViewPreDto != null){
-//                tagGalleryViewInfo.put("prevId", tagGalleryViewPreDto.getSubId());
-//                tagGalleryViewInfo.put("prevSubject", tagGalleryViewPreDto.getSubSubject());
-//                tagGalleryViewInfo.put("prevInsertDateTime", tagGalleryViewPreDto.getSubInsertDateTime());
-//            }else{
-//                tagGalleryViewInfo.put("prevId", "");
-//                tagGalleryViewInfo.put("prevSubject", "이전 글은 존재하지 않습니다.");
-//                tagGalleryViewInfo.put("prevInsertDateTime", "");
-//            }
-//            TagGalleryViewSubDto tagGalleryViewNextDto = tagGalleryRepository.findByTagGalleryNextView(tagGalleryViewDto.getHtId(), code);
-//            if(tagGalleryViewNextDto != null){
-//                tagGalleryViewInfo.put("nextId", tagGalleryViewNextDto.getSubId());
-//                tagGalleryViewInfo.put("nextSubject", tagGalleryViewNextDto.getSubSubject());
-//                tagGalleryViewInfo.put("nextvInsertDateTime", tagGalleryViewNextDto.getSubInsertDateTime());
-//            }else{
-//                tagGalleryViewInfo.put("nextId", "");
-//                tagGalleryViewInfo.put("nextSubject", "다음 글은 존재하지 않습니다.");
-//                tagGalleryViewInfo.put("nextvInsertDateTime", "");
-//            }
-//        }
-//
-//        data.put("tagGalleryViewDto",tagGalleryViewInfo);
-//
-//        return ResponseEntity.ok(res.dataSendSuccess(data));
-//    }
-//
-//    //  택분실게시판 - 댓글 리스트 호출
-//    public ResponseEntity<Map<String, Object>> lostGalleryCommentList(Long htId, HttpServletRequest request) {
-//        log.info("lostGalleryCommentList 호출성공");
-//
-//        AjaxResponse res = new AjaxResponse();
-//        HashMap<String, Object> data = new HashMap<>();
-//
-//        // 클레임데이터 가져오기
-//        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
-//        String login_id = claims.getSubject(); // 현재 아이디
-//
-//        // 검색조건
-////        log.info(htId+" 의 댓글리스트 호출");
-//        List<TagGalleryCommentListDto> tagGalleryCommentList = tagGalleryCommentRepository.findByTagGalleryCommentList(htId,login_id);
-//        data.put("commentListDto",tagGalleryCommentList);
-//
-//        return ResponseEntity.ok(res.dataSendSuccess(data));
-//    }
-//
-//    //  택분실게시판 - 댓글 작성 and 수정
-//    public ResponseEntity<Map<String, Object>> lostGalleryCommentSave(Long hcId, Long htId, String type, String comment, Long preId, HttpServletRequest request) {
-//        log.info("lostGalleryCommentSave 호출");
-//
-//        AjaxResponse res = new AjaxResponse();
-//
-//        // 클레임데이터 가져오기
-//        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
-//        String login_id = claims.getSubject(); // 현재 아이디
-//        log.info("현재 접속한 아이디 : "+login_id);
-//
-//        if(hcId != null){
-//            Optional<TagGalleryComment> optionalTagGalleryComment = tagGalleryCommentRepository.findById(hcId);
-//            if(optionalTagGalleryComment.isPresent()){
-//                log.info("수정 댓글입니다.");
-//                optionalTagGalleryComment.get().setHcComment(comment);
-//                optionalTagGalleryComment.get().setModify_id(login_id);
-//                optionalTagGalleryComment.get().setModifyDateTime(LocalDateTime.now());
-//                tagGalleryCommentRepository.save(optionalTagGalleryComment.get());
-//            }
-//        }else{
-//            log.info("신규 댓글입니다.");
-//            TagGalleryComment tagGalleryComment = new TagGalleryComment();
-//            tagGalleryComment.setHtId(htId);
-//            tagGalleryComment.setHcComment(comment);
-//            tagGalleryComment.setHcType(type);
-//            if(type.equals("2")){
-//                tagGalleryComment.setHcPreId(preId);
-//            }
-//            tagGalleryComment.setInsert_id(login_id);
-//            tagGalleryComment.setInsertDateTime(LocalDateTime.now());
-//            tagGalleryCommentRepository.save(tagGalleryComment);
-//        }
-//
-//        return ResponseEntity.ok(res.success());
-//    }
+        log.info("btId : "+btId);
+
+        AjaxResponse res = new AjaxResponse();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String brCode = (String) claims.get("brCode"); // 현재 지사의 코드(2자리) 가져오기
+        String login_id = claims.getSubject(); // 현재 아이디
+        log.info("현재 접속한 아이디 : "+login_id);
+        log.info("현재 접속한 지사 코드 : "+brCode);
+
+        // AWS 파일 삭제
+        List<TagGalleryFile> tagGalleryFileList = tagGalleryFileRepository.findByTagGalleryFile(btId);
+        for(TagGalleryFile tagGalleryFile : tagGalleryFileList){
+            String insertDate =tagGalleryFile.getInsertDateTime().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+            String path = "/toppos-manager-tagGallery/"+insertDate;
+            String filename = tagGalleryFile.getBfFilename();
+            awss3Service.deleteObject(path,filename);
+        }
+        tagGalleryFileRepository.deleteAll(tagGalleryFileList);
+
+        List<TagGalleryCheck> tagGalleryCheckList = tagGalleryCheckRepository.findByTagGalleryCheck(btId);
+        tagGalleryCheckRepository.deleteAll(tagGalleryCheckList);
+
+        TagGallery tagGallery = tagGalleryRepository.findByTagGallery(btId);
+        tagGalleryRepository.delete(tagGallery);
+
+        return ResponseEntity.ok(res.success());
+    }
+
+    //  NEW 택분실게시판 - 해당 게시물을 종료하는 호출
+    public ResponseEntity<Map<String, Object>> tagGalleryEnd(Long btId, HttpServletRequest request) {
+        log.info("tagGalleryEnd 호출");
+
+        log.info("btId : "+btId);
+
+        AjaxResponse res = new AjaxResponse();
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String login_id = claims.getSubject(); // 현재 아이디
+        log.info("현재 접속한 아이디 : "+login_id);
+
+        TagGallery tagGallery = tagGalleryRepository.findByTagGallery(btId);
+        if(tagGallery != null){
+            tagGallery.setBrCloseYn("Y");
+            tagGallery.setModify_id(login_id);
+            tagGallery.setModifyDateTime(LocalDateTime.now());
+            tagGalleryRepository.save(tagGallery);
+
+            return ResponseEntity.ok(res.success());
+        }else{
+            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP030.getCode(), "해당 게시물이 "+ResponseErrorCode.TP030.getDesc(), null,null));
+        }
+    }
+
+    //  NEW 택분실게시판 - 가맹점 체크 and 완료 호출
+    public ResponseEntity<Map<String, Object>> tagGalleryCheck(Long btId, String type, HttpServletRequest request) {
+        log.info("tagGalleryCheck 호출");
+
+        log.info("btId : "+btId);
+        log.info("type : "+type);
+
+        AjaxResponse res = new AjaxResponse();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String frCode = (String) claims.get("frCode"); // 현재 소속된 지사의 코드(2자리) 가져오기
+        String frbrCode = (String) claims.get("frbrCode"); // 현재 소속된 지사의 코드(2자리) 가져오기
+        String login_id = claims.getSubject(); // 현재 아이디
+        log.info("현재 접속한 아이디 : "+login_id);
+        log.info("현재 소속된 지사 코드 : "+frbrCode);
+
+        TagGalleryCheck tagGalleryCheck = tagGalleryCheckRepository.findByTagGalleryFrCode(btId, frCode);
+        TagGallery tagGallery = tagGalleryRepository.findByTagGallery(btId);
+//        log.info("tagGallery : "+tagGallery);
+
+        // type = 1 이면 체크or해제, 2 이면 최종확인완료
+        if(tagGalleryCheck != null){
+            if(type.equals("1")){
+                tagGalleryCheckRepository.delete(tagGalleryCheck);
+
+                return ResponseEntity.ok(res.success());
+            }else{
+                tagGalleryCheck.setBrCompleteYn("Y");
+                tagGalleryCheck.setBrCompleteDt(LocalDateTime.now());
+                tagGalleryCheck.setModify_id(login_id);
+                tagGalleryCheck.setModifyDateTime(LocalDateTime.now());
+            }
+        }else{
+            tagGalleryCheck = new TagGalleryCheck();
+
+            tagGalleryCheck.setBtId(tagGallery);
+            tagGalleryCheck.setFrCode(frCode);
+            if(type.equals("1")){
+                tagGalleryCheck.setBrCompleteYn("N");
+            }else{
+                tagGalleryCheck.setBrCompleteYn("Y");
+                tagGalleryCheck.setBrCompleteDt(LocalDateTime.now());
+            }
+            tagGalleryCheck.setInsert_id(login_id);
+            tagGalleryCheck.setInsertDateTime(LocalDateTime.now());
+        }
+        tagGalleryCheckRepository.save(tagGalleryCheck);
+
+        return ResponseEntity.ok(res.success());
+    }
+
+
+
+
 
 }

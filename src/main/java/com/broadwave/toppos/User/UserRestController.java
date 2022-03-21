@@ -14,6 +14,7 @@ import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.Manager.Calendar.BranchCalendar;
 import com.broadwave.toppos.Manager.Calendar.CalendarDtos.BranchCalendarListDto;
 import com.broadwave.toppos.Manager.ManagerService.CalendarService;
+import com.broadwave.toppos.Manager.ManagerService.TagGalleryService;
 import com.broadwave.toppos.Manager.ManagerService.TagNoticeService;
 import com.broadwave.toppos.User.Addprocess.AddprocessDtos.AddprocessDto;
 import com.broadwave.toppos.User.Addprocess.AddprocessSet;
@@ -89,6 +90,7 @@ public class UserRestController {
     private final UncollectService uncollectService; // 미수관리 서비스
     private final BusinessdayService businessdayService; // 일일영업일보 서비스
     private final TagNoticeService tagNoticeService; // 택분실 게시판 서비스
+    private final TagGalleryService tagGalleryService; // NEW 택분실게시판 서비스
     private final NoticeService noticeService; // 공지사항 게시판 서비스
     private final CalendarService calendarService; // 휴무일 서비스
 
@@ -99,7 +101,7 @@ public class UserRestController {
     @Autowired
     public UserRestController(AWSS3Service awss3Service, UserService userService, ReceiptService receiptService, SortService sortService, InfoService infoService, InspectService inspectService,
                               TokenProvider tokenProvider, ModelMapper modelMapper, HeadService headService, CalendarService calendarService, ReceiptStateService receiptStateService,
-                              UncollectService uncollectService, BusinessdayService businessdayService, TagNoticeService tagNoticeService, NoticeService noticeService) {
+                              UncollectService uncollectService, BusinessdayService businessdayService, TagNoticeService tagNoticeService, TagGalleryService tagGalleryService, NoticeService noticeService) {
         this.awss3Service = awss3Service;
         this.userService = userService;
         this.receiptService = receiptService;
@@ -114,6 +116,7 @@ public class UserRestController {
         this.calendarService = calendarService;
         this.businessdayService = businessdayService;
         this.tagNoticeService = tagNoticeService;
+        this.tagGalleryService = tagGalleryService;
         this.noticeService = noticeService;
     }
 
@@ -1114,6 +1117,31 @@ public class UserRestController {
         return tagNoticeService.lostNoticeCommentSave(hcId, htId, type, comment, preId, request);
     }
 
+//@@@@@@@@@@@@@@@@@@@@@ NEW 택분실게시판 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    //  NEW 택분실게시판 - 리스트 호출
+    @ApiOperation(value = "택분실 조회" , notes = "가맹점이 택분실 리스트 요청한다 ")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
+    @GetMapping("tagGalleryList")
+    public ResponseEntity<Map<String,Object>> tagGalleryList(@RequestParam("type")String searchString, @RequestParam("filterFromDt")String filterFromDt,
+                                                             @RequestParam("filterToDt")String filterToDt, HttpServletRequest request) {
+        return tagGalleryService.tagGalleryList(searchString, filterFromDt, filterToDt, request, "2");
+    }
+
+    //  NEW 택분실게시판 - 상세보기 호출
+    @ApiOperation(value = "택분실 상세보기" , notes = "가맹점이 택분실 상세보기 요청한다 ")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
+    @GetMapping("tagGalleryDetail")
+    public ResponseEntity<Map<String,Object>> tagGalleryDetail(@RequestParam("btId")Long btId, HttpServletRequest request) {
+        return tagGalleryService.tagGalleryDetail(btId, request, "2");
+    }
+
+    //  NEW 택분실게시판 - 가맹점 체크 호출
+    @ApiOperation(value = "택분실 가맹점 체크" , notes = "가맹점이 택분실 체크 요청한다 ")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
+    @PostMapping("tagGalleryCheck")
+    public ResponseEntity<Map<String,Object>> tagGalleryCheck(@RequestParam("btId")Long btId, HttpServletRequest request, @RequestParam("type")String type) {
+        return tagGalleryService.tagGalleryCheck(btId, type, request);
+    }
 
 // @@@@@@@@@@@@@@@@@@@ 공지사항 게시판 API @@@@@@@@@@@@@@@@@@@@@@@@@@
     // 공지사항 게시판 - 리스트 호출

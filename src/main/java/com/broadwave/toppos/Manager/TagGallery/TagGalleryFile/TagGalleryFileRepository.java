@@ -13,7 +13,7 @@ public interface TagGalleryFileRepository extends JpaRepository<TagGalleryFile,L
 
     // 게시물ID로 파일리스트 찾기
     @Query("select a from TagGalleryFile a where a.btId.btId = :btId")
-    List<TagGalleryFile> findByTagGalleryFileDelete(Long btId);
+    List<TagGalleryFile> findByTagGalleryFile(Long btId);
 
     // 게시물ID로 삭제할 파일만 골라 찾기
     @Query("select a from TagGalleryFile a where a.bfId in :deleteFileList")

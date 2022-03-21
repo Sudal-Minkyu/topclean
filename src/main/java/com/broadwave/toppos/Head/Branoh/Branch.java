@@ -51,10 +51,10 @@ public class Branch {
 //    private Double brCarculateRateHq; // 정산비율(본사)
 
     @Column(name="carculate_rate_br")
-    private Double brCaculateRateBr; // 정산비율(지사)
+    private Double brCarculateRateBr; // 정산비율(지사)
 
     @Column(name="carculate_rate_fr")
-    private Double brCaculateRateFr; // 정산비율(가맹점)
+    private Double brCarculateRateFr; // 정산비율(가맹점)
 
     @Column(name="royalty_rate_br")
     private Double brRoyaltyRateBr; // 로얄티율(지사)

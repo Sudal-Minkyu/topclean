@@ -37,7 +37,7 @@ public class TagGalleryCheckRepositoryCustomImpl extends QuerydslRepositorySuppo
         EntityManager em = getEntityManager();
         StringBuilder sb = new StringBuilder();
 
-        sb.append("SELECT b.fr_Name, a.br_complete_yn \n");
+        sb.append("SELECT a.fr_code, b.fr_Name, a.br_complete_yn \n");
         sb.append("FROM br_tag_gallery_check a \n");
         sb.append("Inner JOIN bs_franchise b on b.fr_code = a.fr_code \n");
         sb.append("WHERE a.bt_id = ?1 \n");

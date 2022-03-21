@@ -161,7 +161,7 @@ public class ManagerRestController {
     @GetMapping("tagGalleryList")
     public ResponseEntity<Map<String,Object>> tagGalleryList(@RequestParam("type")String searchString, @RequestParam("filterFromDt")String filterFromDt,
                                                              @RequestParam("filterToDt")String filterToDt, HttpServletRequest request) {
-        return tagGalleryService.tagGalleryList(searchString, filterFromDt, filterToDt, request);
+        return tagGalleryService.tagGalleryList(searchString, filterFromDt, filterToDt, request, "1");
     }
 
     //  NEW 택분실게시판 - 상세보기 호출
@@ -169,9 +169,24 @@ public class ManagerRestController {
     @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
     @GetMapping("tagGalleryDetail")
     public ResponseEntity<Map<String,Object>> tagGalleryDetail(@RequestParam("btId")Long btId, HttpServletRequest request) {
-        return tagGalleryService.tagGalleryDetail(btId, request);
+        return tagGalleryService.tagGalleryDetail(btId, request, "1");
     }
 
+    //  NEW 택분실게시판 - 삭제
+    @ApiOperation(value = "택분실 삭제" , notes = "지사가 택분실 글을 삭제한다 ")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
+    @GetMapping("tagGalleryDelete")
+    public ResponseEntity<Map<String,Object>> tagGalleryDelete(@RequestParam("btId")Long btId, HttpServletRequest request) {
+        return tagGalleryService.tagGalleryDelete(btId, request);
+    }
+
+    //  NEW 택분실게시판 - 해당 게시물을 종료하는 호출
+    @ApiOperation(value = "택분실 게시종료" , notes = "지사가 택분실 게시를 종료한다 ")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
+    @PostMapping("tagGalleryEnd")
+    public ResponseEntity<Map<String,Object>> tagGalleryEnd(@RequestParam("btId")Long btId, HttpServletRequest request) {
+        return tagGalleryService.tagGalleryEnd(btId, request);
+    }
 
 //@@@@@@@@@@@@@@@@@@@@@ 지사출고, 지사출고 취소, 가맹점강제출고, 가맹점반송 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     //  현 지사의 소속된 가맹점명 리스트 호출(앞으로 공용으로 쓰일 것)
