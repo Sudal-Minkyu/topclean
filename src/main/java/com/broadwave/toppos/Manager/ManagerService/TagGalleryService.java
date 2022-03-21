@@ -240,6 +240,7 @@ public class TagGalleryService {
         // 클레임데이터 가져오기
         Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
         String brCode;
+        String frCode = null;
         String login_id = claims.getSubject(); // 현재 아이디
         log.info("현재 접속한 아이디 : "+login_id);
         if(type.equals("1")){
@@ -247,6 +248,8 @@ public class TagGalleryService {
             log.info("현재 접속한 지사 코드 : "+brCode);
         }else{
             brCode = (String) claims.get("frbrCode"); // 현재 소속된 지사의 코드(2자리) 가져오기
+            frCode = (String) claims.get("frCode"); // 현재 소속된 지사의 코드(2자리) 가져오기
+            log.info("현재 로그인한 가맹점 코드 : "+frCode);
             log.info("현재 소속된 지사 코드 : "+brCode);
         }
 
@@ -263,8 +266,11 @@ public class TagGalleryService {
         int frCompleteCheck = 0;
         if(type.equals("2")){
             for(int i=0; i<tagGalleryCheckListDtos.size(); i++){
-                if(tagGalleryCheckListDtos.get(i).getFrCode().equals(brCode)){
+                if(tagGalleryCheckListDtos.get(i).getFrCode().equals(frCode)){
                     frCompleteCheck = 1;
+                    if(tagGalleryCheckListDtos.get(i).getBrCompleteYn().equals("Y")){
+                        frCompleteCheck = 2;
+                    }
                 }
             }
             data.put("frCompleteCheck", frCompleteCheck);

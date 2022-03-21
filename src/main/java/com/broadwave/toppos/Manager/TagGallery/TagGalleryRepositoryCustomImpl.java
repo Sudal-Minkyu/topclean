@@ -67,11 +67,12 @@ public class TagGalleryRepositoryCustomImpl extends QuerydslRepositorySupport im
                 .where(tagGallery.btId.eq(btId))
 
                 .select(Projections.constructor(TagGalleryDetailDto.class,
+                        tagGallery.btId,
                         tagGallery.btBrandName,
                         tagGallery.btInputDate,
                         tagGallery.btMaterial,
                         tagGallery.btRemark
-                        ));
+                    ));
         return query.fetchOne();
     }
 

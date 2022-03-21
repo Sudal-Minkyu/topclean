@@ -737,65 +737,124 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
 
     // 지사출고 querydsl
     public List<RequestDetailReleaseListDto> findByRequestDetailReleaseList(String brCode, Long frId, String fromDt, String toDt, String isUrgent){
-        QRequestDetail requestDetail = QRequestDetail.requestDetail;
-        QRequest request = QRequest.request;
-        QFranchise franchise = QFranchise.franchise;
-        QItemGroup itemGroup = QItemGroup.itemGroup;
-        QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
-        QItem item = QItem.item;
-        QCustomer customer = QCustomer.customer;
 
-        JPQLQuery<RequestDetailReleaseListDto> query = from(requestDetail)
-                .innerJoin(requestDetail.frId, request)
-                .innerJoin(request.bcId, customer)
-                .innerJoin(franchise).on(request.frCode.eq(franchise.frCode))
-                .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
-                .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
-                .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
-                .where(request.frConfirmYn.eq("Y"))
-                .where(request.brCode.eq(brCode).and(requestDetail.fdCancel.eq("N")))
-                .select(Projections.constructor(RequestDetailReleaseListDto.class,
-                        requestDetail.id,
-                        franchise.frName,
-                        franchise.frCode,
-                        requestDetail.fdS2Dt,
-                        requestDetail.fdTag,
-                        requestDetail.fdColor,
-                        itemGroup.bgName,
-                        itemGroupS.bsName,
-                        item.biName,
-                        requestDetail.fdPriceGrade,
-                        requestDetail.fdRetryYn,
-                        requestDetail.fdPressed,
-                        requestDetail.fdAdd1Amt,
-                        requestDetail.fdAdd1Remark,
-                        requestDetail.fdRepairAmt,
-                        requestDetail.fdRepairRemark,
-                        requestDetail.fdWhitening,
-                        requestDetail.fdPollution,
-                        requestDetail.fdWaterRepellent,
-                        requestDetail.fdStarch,
-                        requestDetail.fdUrgentYn,
-                        customer.bcName,
-                        requestDetail.fdEstimateDt,
-                        requestDetail.fdTotAmt,
-                        requestDetail.fdState
-                ));
-        query.orderBy(requestDetail.id.asc());
-        query.where(requestDetail.fdState.eq("S2").or(requestDetail.fdState.eq("S7")));
+        EntityManager em = getEntityManager();
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("SELECT  DISTINCT \n");
+
+        sb.append("a.fd_id, d.fr_name, b.fr_code, a.fd_s2_dt, a.fd_tag, a.fd_color, f.bg_name, g.bs_name, e.bi_name, \n");
+        sb.append("a.fd_price_grade, a.fd_retry_yn, a.fd_pressed, a.fd_add1_amt, a.fd_add1_remark, a.fd_repair_amt, \n");
+        sb.append("a.fd_repair_remark, a.fd_whitening, a.fd_pollution, a.fd_water_repellent, a.fd_starch, a.fd_urgent_yn, \n");
+        sb.append("c.bc_name, a.fd_estimate_dt, a.fd_tot_amt, a.fd_state \n");
+
+        sb.append("FROM fs_request_dtl a \n");
+        sb.append("INNER JOIN fs_request b on a.fr_id=b.fr_id \n");
+        sb.append("INNER JOIN bs_customer c on b.bc_id=c.bc_id \n");
+        sb.append("INNER JOIN bs_franchise d on b.fr_code=d.fr_code \n");
+        sb.append("INNER JOIN bs_item e on a.bi_itemcode=e.bi_itemcode \n");
+        sb.append("INNER JOIN bs_item_group f ON e.bg_item_groupcode=f.bg_item_groupcode \n");
+        sb.append("INNER JOIN bs_item_group_s g on e.bs_item_groupcode_s=g.bs_item_groupcode_s and e.bg_item_groupcode=g.bg_item_groupcode \n");
+
+        sb.append("LEFT OUTER JOIN fs_request_inspect h ON a.fd_id =h.fd_id AND h.fi_type ='B' \n");
+        sb.append("WHERE b.fr_confirm_yn='Y' \n");
+        sb.append("AND b.br_code= ?1 \n");
+        sb.append("AND a.fd_cancel='N' \n");
+        sb.append("AND a.fd_s2_dt>= ?2 \n");
+        sb.append("AND a.fd_s2_dt<= ?3 \n");
         if(frId != 0){
-            query.where(franchise.id.eq(frId));
+            sb.append("AND d.fr_id = ?4 \n");
         }
         if(isUrgent.equals("Y")){
-            query.where(requestDetail.fdUrgentYn.eq(isUrgent));
+            if(frId != 0) {
+                sb.append("AND a.fd_urgent_yn = ?5 \n");
+            }else{
+                sb.append("AND a.fd_urgent_yn = ?4 \n");
+            }
         }
-        if(fromDt != null){
-            query.where(requestDetail.fdS2Dt.goe(fromDt));
+        sb.append("AND ( \n");
+        sb.append("(a.fd_state='S2' AND IFNULL(h.fi_customer_confirm,'X') IN ('X','2')) \n");
+        sb.append("OR a.fd_state='S7') \n");
+        sb.append("ORDER BY a.fd_id ASC \n");
+
+        Query query = em.createNativeQuery(sb.toString());
+
+        query.setParameter(1, brCode);
+        query.setParameter(2, fromDt);
+        query.setParameter(3, toDt);
+
+        if(frId != 0){
+            query.setParameter(4, frId);
         }
-        if(toDt != null){
-            query.where(requestDetail.fdS2Dt.loe(toDt));
+        if(isUrgent.equals("Y")){
+            if(frId != 0) {
+                query.setParameter(5, isUrgent);
+            }else{
+                query.setParameter(4, isUrgent);
+            }
         }
-        return query.fetch();
+
+        return jpaResultMapper.list(query, RequestDetailReleaseListDto.class);
+
+//        QRequestDetail requestDetail = QRequestDetail.requestDetail;
+//        QRequest request = QRequest.request;
+//        QFranchise franchise = QFranchise.franchise;
+//        QItemGroup itemGroup = QItemGroup.itemGroup;
+//        QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
+//        QItem item = QItem.item;
+//        QCustomer customer = QCustomer.customer;
+//
+//        JPQLQuery<RequestDetailReleaseListDto> query = from(requestDetail)
+//                .innerJoin(requestDetail.frId, request)
+//                .innerJoin(request.bcId, customer)
+//                .innerJoin(franchise).on(request.frCode.eq(franchise.frCode))
+//                .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
+//                .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
+//                .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
+//                .where(request.frConfirmYn.eq("Y"))
+//                .where(request.brCode.eq(brCode).and(requestDetail.fdCancel.eq("N")))
+//                .select(Projections.constructor(RequestDetailReleaseListDto.class,
+//                        requestDetail.id,
+//                        franchise.frName,
+//                        franchise.frCode,
+//                        requestDetail.fdS2Dt,
+//                        requestDetail.fdTag,
+//                        requestDetail.fdColor,
+//                        itemGroup.bgName,
+//                        itemGroupS.bsName,
+//                        item.biName,
+//                        requestDetail.fdPriceGrade,
+//                        requestDetail.fdRetryYn,
+//                        requestDetail.fdPressed,
+//                        requestDetail.fdAdd1Amt,
+//                        requestDetail.fdAdd1Remark,
+//                        requestDetail.fdRepairAmt,
+//                        requestDetail.fdRepairRemark,
+//                        requestDetail.fdWhitening,
+//                        requestDetail.fdPollution,
+//                        requestDetail.fdWaterRepellent,
+//                        requestDetail.fdStarch,
+//                        requestDetail.fdUrgentYn,
+//                        customer.bcName,
+//                        requestDetail.fdEstimateDt,
+//                        requestDetail.fdTotAmt,
+//                        requestDetail.fdState
+//                ));
+//        query.orderBy(requestDetail.id.asc());
+//        query.where(requestDetail.fdState.eq("S2").or(requestDetail.fdState.eq("S7")));
+//        if(frId != 0){
+//            query.where(franchise.id.eq(frId));
+//        }
+//        if(isUrgent.equals("Y")){
+//            query.where(requestDetail.fdUrgentYn.eq(isUrgent));
+//        }
+//        if(fromDt != null){
+//            query.where(requestDetail.fdS2Dt.goe(fromDt));
+//        }
+//        if(toDt != null){
+//            query.where(requestDetail.fdS2Dt.loe(toDt));
+//        }
+//        return query.fetch();
     }
 
     // 지사강제출고 querydsl

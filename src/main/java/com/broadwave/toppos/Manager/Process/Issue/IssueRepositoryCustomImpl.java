@@ -1,6 +1,5 @@
 package com.broadwave.toppos.Manager.Process.Issue;
 
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotMainListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.QRequestDetail;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
@@ -90,7 +89,7 @@ public class IssueRepositoryCustomImpl extends QuerydslRepositorySupport impleme
         sb.append("(SELECT COUNT(*) from printdata x8 WHERE a.mi_no = x8.mi_no AND x8.type ='T08') AS t08Count, \n");
         sb.append("(SELECT COUNT(*) from printdata x9 WHERE a.mi_no = x9.mi_no) AS total \n");
         sb.append("FROM printdata a \n");
-        sb.append("ORDER BY a.mi_no, a.type \n");
+        sb.append("ORDER BY a.mi_no, a.type, a.fd_tag \n");
 
         Query query = em.createNativeQuery(sb.toString());
         query.setParameter(1, miNoList);

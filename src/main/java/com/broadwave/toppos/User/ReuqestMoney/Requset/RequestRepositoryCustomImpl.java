@@ -385,7 +385,7 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
 
     }
 
-    // 임시저장한 내역이 존재하는지
+    // 임시저장한 내역이 존재하는지/
     @Override
     public RequestTempDto findByRequestTemp(String frCode) {
 

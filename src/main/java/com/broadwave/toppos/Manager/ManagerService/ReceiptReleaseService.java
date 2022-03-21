@@ -6,13 +6,10 @@ import com.broadwave.toppos.Manager.Process.Issue.IssueDispatchDto;
 import com.broadwave.toppos.Manager.Process.Issue.IssueRepository;
 import com.broadwave.toppos.Manager.Process.IssueForce.IssueForce;
 import com.broadwave.toppos.Manager.Process.IssueForce.IssueForceRepository;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotYnDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotRepositoryCustom;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetail;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.manager.RequestDetailBranchForceListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.manager.RequestDetailReleaseCancelListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.manager.RequestDetailReleaseListDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailCloseListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepository;
 import com.broadwave.toppos.common.AjaxResponse;
 import com.broadwave.toppos.common.ResponseErrorCode;
@@ -50,20 +47,17 @@ public class ReceiptReleaseService {
 
     private final RequestDetailRepository requestDetailRepository;
 
-    private final InspeotRepositoryCustom inspeotRepositoryCustom;
-
     private final IssueRepository issueRepository;
     private final IssueForceRepository issueForceRepository;
 
     @Autowired
     public ReceiptReleaseService(TokenProvider tokenProvider, KeyGenerateService keyGenerateService, IssueRepository issueRepository, IssueForceRepository issueForceRepository,
-                                 RequestDetailRepository requestDetailRepository, InspeotRepositoryCustom inspeotRepositoryCustom){
+                                 RequestDetailRepository requestDetailRepository){
         this.keyGenerateService = keyGenerateService;
         this.tokenProvider = tokenProvider;
         this.requestDetailRepository = requestDetailRepository;
         this.issueRepository = issueRepository;
         this.issueForceRepository = issueForceRepository;
-        this.inspeotRepositoryCustom = inspeotRepositoryCustom;
     }
 
     //  접수테이블의 상태 변화 API - 지사출고 실행함수
@@ -141,8 +135,8 @@ public class ReceiptReleaseService {
     public ResponseEntity<Map<String, Object>> branchReceiptBranchInList(Long frId, String fromDt, String toDt, String isUrgent, HttpServletRequest request) {
         log.info("franchiseReceiptBranchInList 호출");
 
-//        log.info("fromDt : "+fromDt);
-//        log.info("toDt : "+toDt);
+        log.info("fromDt : "+fromDt);
+        log.info("toDt : "+toDt);
 
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
@@ -152,6 +146,8 @@ public class ReceiptReleaseService {
         String brCode = (String) claims.get("brCode"); // 현재 지사의 코드(2자리) 가져오기
         log.info("현재 접속한 지사 코드 : "+brCode);
 
+        log.info("frId : "+frId);
+        log.info("isUrgent : "+isUrgent);
         // 지사출고 페이지에 보여줄 리스트 호출
         List<RequestDetailReleaseListDto> requestDetailReleaseListDtos = requestDetailRepository.findByRequestDetailReleaseList(brCode, frId, fromDt, toDt, isUrgent);
         data.put("gridListData",requestDetailReleaseListDtos);

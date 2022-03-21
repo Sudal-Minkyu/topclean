@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigInteger;
+
 /**
  * @author Minkyu
  * Date : 2022-02-10
@@ -17,7 +19,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class RequestDetailReleaseListDto {
 
-    private Long fdId; // 고유ID값
+    private BigInteger fdId; // 고유ID값
     private String frName; // 가맹점명
     private String frCode; // 가맹점코드
     private String fdS2Dt; // 지사입고일

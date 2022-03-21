@@ -21,6 +21,7 @@ import java.time.format.DateTimeFormatter;
 @AllArgsConstructor
 public class TagGalleryDetailDto {
 
+    private Long btId; // 고정값ID
     private String btBrandName; // 추정브랜드명
     private String btInputDate; // 예상 지사입고일
     private String btMaterial; // 소재
