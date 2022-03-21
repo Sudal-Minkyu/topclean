@@ -86,7 +86,18 @@ const comms = {
     getReceiptList(searchCondition) {
         dv.chk(searchCondition, dtos.send.branchReceiptBranchInList, "출고 품목 조회 조건 보내기");
         CommonUI.ajax(urls.getReceiptList, "GET", searchCondition, function (res) {
+            console.log(res);
             wares.receiptList = CommonUI.toppos.killNullFromArray(res.sendData.gridListData);
+            const removeFrId = res.sendData.removeFrId;
+
+            for (let i = 0; i < wares.receiptList.length; i++) {
+                if (removeFrId.includes(wares.receiptList[i].fdId)) {
+                    console.log(wares.receiptList[i].fdId);
+                    wares.receiptList.splice(i, 1);
+                    i--;
+                }
+            }
+
             $("#statPanel").html(
                 `[${$("#frList option:selected").html()}] 상품이 ${wares.receiptList.length}건 조회되었습니다.`);
             grids.f.clearData(0);

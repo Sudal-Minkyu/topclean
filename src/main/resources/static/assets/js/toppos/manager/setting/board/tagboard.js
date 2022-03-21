@@ -5,7 +5,7 @@
 * */
 const dtos = {
     send: {
-        상세보기: {
+        tagGalleryDetail: {
             btId: "nr",
         },
         tagGalleryList: {
@@ -22,6 +22,9 @@ const dtos = {
             addPhotoList: "", // 새로 등록된 사진파일들의 리스트
             deletePhotoList: "", // 지울 사진 id들의 리스트
         },
+        tagGalleryDelete: {
+            btId: "nr",
+        }
     },
     receive: {
         tagGalleryList: {
@@ -33,23 +36,26 @@ const dtos = {
             btRemark: "s",
             tagGalleryCheckFranchise: "s",
             bfPathFilename: { // 썸네일 경로의 경우 이전처럼 파일이름 부분에 s_ 붙여서 오는 방식으로 처리하면 좋을듯 합니다.
-                bfPath: "s",
-                bfFilename: "s",
-            },
-        },
-        상세보기: {
-            btId: "n",
-            insertDateTime: "s",
-            btBrandName: "s",
-            btInputDate: "s",
-            btMaterial: "s",
-            btRemark: "s",
-            bfPathFilename: { // 썸네일 경로의 경우 이전처럼 파일이름 부분에 s_ 붙여서 오는 방식으로 처리하면 좋을듯 합니다.
                 bfId: "n",
                 bfPath: "s",
                 bfFilename: "s",
             },
-            가맹응답상태: { // 가맹점 체크시 인서트, 해제시 딜리트가 된다.
+        },
+        tagGalleryDetail: {
+            tagGallery: {
+                btId: "n",
+                btBrandName: "s",
+                btInputDate: "s",
+                btMaterial: "s",
+                btRemark: "s",
+            },
+            tagGalleryFileList: { // 썸네일 경로의 경우 이전처럼 파일이름 부분에 s_ 붙여서 오는 방식으로 처리하면 좋을듯 합니다.
+                bfId: "n",
+                bfPath: "s",
+                bfFilename: "s",
+            },
+            tagGalleryCheckList: { // 가맹점 체크시 인서트, 해제시 딜리트가 된다.
+                frCode: "s",
                 frName: "s",
                 brCompleteYn: "s", // 확인완료시 Y가 된다.
             },
@@ -61,16 +67,17 @@ const dtos = {
 const urls = {
     getMainList: "/api/manager/tagGalleryList",
     putNewTaglost: "/api/manager/tagGallerySave",
-    getDetail: "",
+    getDetail: "/api/manager/tagGalleryDetail",
+    removeTaglost: "/api/manager/tagGalleryDelete",
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
     getMainList(searchCondition) {
-        // dv.chk(searchCondition, dtos.send.tagGalleryList, "택분실 조회 조건 보내기");
+        dv.chk(searchCondition, dtos.send.tagGalleryList, "택분실 조회 조건 보내기");
         CommonUI.ajax(urls.getMainList, "GET", searchCondition, function (res) {
             const dataList = res.sendData.tagGalleryList;
-            // dv.chk(dataList, dtos.receive.tagGalleryList, "조회된 택분실 리스트 받기");
+            dv.chk(dataList, dtos.receive.tagGalleryList, "조회된 택분실 리스트 받기");
 
             for(data of dataList) {
                 for(const [i, obj] of data.bfPathFilename.entries()) {
@@ -87,7 +94,7 @@ const comms = {
         const testObj = Object.fromEntries(formData);
         console.log(testObj);
         if(!testObj.btId) testObj.btId = 0; // btId값이 없는 신규등록건
-        dv.chk(testObj, dtos.send.tagGallerySave, "택분실 등록하기");
+        dv.chk(testObj, dtos.send.tagGallerySave, "택분실 등록, 수정하기");
         CommonUI.ajax(urls.putNewTaglost, "POST", formData, function (res)  {
             console.log(res);
         });
@@ -98,11 +105,22 @@ const comms = {
         CommonUI.ajax(urls.getDetail, "GET", getCondition, function (res) {
             console.log(res);
             const data = res.sendData;
-            wares.currentRequest = data;
+
+            const refinedData = {
+                btId: data.tagGallery.btId,
+                btBrandName: data.tagGallery.btBrandName,
+                btInputDate: data.tagGallery.btInputDate,
+                btMaterial: data.tagGallery.btMaterial,
+                btRemark: data.tagGallery.btRemark,
+                tagGalleryFileList: data.tagGalleryFileList,
+                tagGalleryCheckList: data.tagGalleryCheckList,
+            }
+
+            wares.currentRequest = refinedData;
             resetTaglostPop();
             tagLostPopUpdateMode();
 
-            for(photo of data.bfPathFilename) {
+            for(photo of data.tagGalleryFileList) {
                 const photoHtml = `<li class="tag-imgs__item">
                     <a href="${photo.bfPath + photo.bfFilename}" data-lightbox="images" data-title="이미지 확대">
                         <img src="${photo.bfPath + "s_" + photo.bfFilename}" class="tag-imgs__img" alt=""/>
@@ -118,6 +136,17 @@ const comms = {
             $("#frResponse").val(""); // 프랜차이즈의 반응 리스트를 조합하여 생성
 
             openTaglostPop();
+        });
+    },
+
+    removeTaglost(target) {
+        console.log(target);
+        dv.chk(target, dtos.send.tagGalleryDelete, "택분실 게시물 삭제 아이디 보내기");
+        CommonUI.ajax(urls.removeTaglost, "PARAM", target, function (res) {
+            alertSuccess("게시물 삭제가 완료되었습니다.");
+            resetTaglostPop();
+            closeTaglostPop();
+            console.log(res);
         });
     }
 };
@@ -319,6 +348,16 @@ const trigs = {
         $("#takePhotoBtn").on("click", function () {
             takePhoto();
         });
+
+        $("#removePost").on("click", function () {
+            alertCheck("현재 게시물을 삭제하시겠습니까?");
+            $("#checkDelSuccessBtn").on("click", function () {
+                const target = {
+                    btId: wares.currentRequest.btId,
+                }
+                comms.removeTaglost(target);
+            });
+        });
     },
 }
 
@@ -372,7 +411,6 @@ function searchOrder() {
     const searchCondition = {
         filterFromDt: $("#filterFromDt").val().numString(),
         filterToDt: $("#filterToDt").val().numString(),
-        searchString: "",
         type: $("#type").val(), // 1 미완료, 2 전체, 3 내 가맹점
     };
 
