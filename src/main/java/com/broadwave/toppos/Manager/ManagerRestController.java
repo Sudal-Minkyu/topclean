@@ -210,7 +210,7 @@ public class ManagerRestController {
         return receiptReleaseService.branchDispatchPrint(miNoList);
     }
 
-    //  지사출고 - 세부테이블 지사입고상태 리스트
+    //  지사출고 - 세부테이블 지사입고상태 지사출고 리스트
     @GetMapping("branchReceiptBranchInList")
     @ApiOperation(value = "지사 출고 리스트" , notes = "지사출고 할 리스트를 호출한다. ")
     @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})

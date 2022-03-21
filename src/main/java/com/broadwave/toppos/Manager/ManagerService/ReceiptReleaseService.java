@@ -6,11 +6,13 @@ import com.broadwave.toppos.Manager.Process.Issue.IssueDispatchDto;
 import com.broadwave.toppos.Manager.Process.Issue.IssueRepository;
 import com.broadwave.toppos.Manager.Process.IssueForce.IssueForce;
 import com.broadwave.toppos.Manager.Process.IssueForce.IssueForceRepository;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotYnDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotRepositoryCustom;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetail;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.manager.RequestDetailBranchForceListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.manager.RequestDetailReleaseCancelListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.manager.RequestDetailReleaseListDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailCloseListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepository;
 import com.broadwave.toppos.common.AjaxResponse;
 import com.broadwave.toppos.common.ResponseErrorCode;
@@ -152,7 +154,14 @@ public class ReceiptReleaseService {
 
         // 지사출고 페이지에 보여줄 리스트 호출
         List<RequestDetailReleaseListDto> requestDetailReleaseListDtos = requestDetailRepository.findByRequestDetailReleaseList(brCode, frId, fromDt, toDt, isUrgent);
+        List<Long> fdIdList = new ArrayList<>();
+        for(RequestDetailReleaseListDto requestDetailReleaseListDto : requestDetailReleaseListDtos){
+            fdIdList.add(requestDetailReleaseListDto.getFdId());
+        }
+        List<InspeotYnDto> inspeotYnDtos = inspeotRepositoryCustom.findByInspeotStateList(fdIdList,"1");
+
         data.put("gridListData",requestDetailReleaseListDtos);
+        data.put("removeFrId",inspeotYnDtos);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }

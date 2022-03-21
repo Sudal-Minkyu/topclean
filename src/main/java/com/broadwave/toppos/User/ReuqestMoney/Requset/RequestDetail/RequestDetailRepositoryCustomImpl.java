@@ -743,12 +743,10 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
         QItem item = QItem.item;
         QCustomer customer = QCustomer.customer;
-        QInspeot inspeot = QInspeot.inspeot;
 
         JPQLQuery<RequestDetailReleaseListDto> query = from(requestDetail)
                 .innerJoin(requestDetail.frId, request)
                 .innerJoin(request.bcId, customer)
-//                .leftJoin(inspeot).on(inspeot.brCode.eq(brCode))
                 .innerJoin(franchise).on(request.frCode.eq(franchise.frCode))
                 .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
                 .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
