@@ -314,6 +314,11 @@ public class HeadRestController {
             franohisetInfo.put("frRoyaltyRateBr", franohise.getFrRoyaltyRateBr());
             franohisetInfo.put("frRoyaltyRateFr", franohise.getFrRoyaltyRateFr());
 
+            franohisetInfo.put("frPostNo", franohise.getFrPostNo());
+            franohisetInfo.put("frAddress", franohise.getFrAddress());
+            franohisetInfo.put("frAddressDetail", franohise.getFrAddressDetail());
+
+
             franohiseListData.add(franohisetInfo);
 
         }
@@ -449,8 +454,8 @@ public class HeadRestController {
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
 
-
         FranchiseInfoDto franchiseInfoDto = headService.findByFranchiseInfo(frCode);
+        log.info("franchiseInfoDto : "+franchiseInfoDto);
         data.put("franchiseInfoData", franchiseInfoDto);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));

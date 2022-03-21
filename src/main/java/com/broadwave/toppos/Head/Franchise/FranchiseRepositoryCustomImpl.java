@@ -116,6 +116,11 @@ public class FranchiseRepositoryCustomImpl extends QuerydslRepositorySupport imp
                     franchise.frBusinessNo,
                     franchise.frRpreName,
                     franchise.frTelNo,
+
+                    franchise.frPostNo,
+                    franchise.frAddress,
+                    franchise.frAddressDetail,
+
                     franchise.frMultiscreenYn
             ));
 

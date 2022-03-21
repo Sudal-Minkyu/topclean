@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Column;
+
 /**
  * @author Minkyu
  * Date : 2021-11-15
@@ -39,6 +41,10 @@ public class FranchiseInfoDto {
     private String frBusinessNo; // 사업자번호(10자리)
     private String frRpreName; // 가맹점주이름
     private String frTelNo; // 가맹점 전화번호
+
+    private String frPostNo; // 가맹점 우편번호
+    private String frAddress; // 가맹점 주소
+    private String frAddressDetail; // 가맹점 상세주소
 
     private String frMultiscreenYn; // 멀티스크린 사용여부
 

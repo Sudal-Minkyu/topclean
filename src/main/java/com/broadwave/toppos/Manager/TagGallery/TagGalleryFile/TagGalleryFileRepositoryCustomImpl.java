@@ -22,7 +22,7 @@ public class TagGalleryFileRepositoryCustomImpl extends QuerydslRepositorySuppor
         super(TagGalleryFile.class);
     }
 
-    public List<TagGalleryFileListDto> findByTagGalleryFileList(Long btId){
+    public List<TagGalleryFileListDto> findByTagGalleryFileList(Long btId, Integer limit){
         QTagGalleryFile tagGalleryFile = QTagGalleryFile.tagGalleryFile;
         JPQLQuery<TagGalleryFileListDto> query = from(tagGalleryFile)
             .where(tagGalleryFile.btId.btId.eq(btId))
@@ -32,7 +32,7 @@ public class TagGalleryFileRepositoryCustomImpl extends QuerydslRepositorySuppor
                     tagGalleryFile.bfFilename
             ));
 
-        query.orderBy(tagGalleryFile.bfId.asc()).limit(3);
+        query.orderBy(tagGalleryFile.bfId.asc()).limit(limit);
 
         return query.fetch();
     }

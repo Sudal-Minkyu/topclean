@@ -1,6 +1,11 @@
 package com.broadwave.toppos.Manager.TagGallery;
 
+import com.broadwave.toppos.Manager.TagGallery.TagGalleryDtos.TagGalleryDetailDto;
 import com.broadwave.toppos.Manager.TagGallery.TagGalleryDtos.TagGalleryListDto;
+import com.broadwave.toppos.Manager.TagGallery.TagGalleryFile.QTagGalleryFile;
+import com.broadwave.toppos.Manager.TagGallery.TagGalleryFile.TagGalleryFileListDto;
+import com.querydsl.core.types.Projections;
+import com.querydsl.jpa.JPQLQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.qlrm.mapper.JpaResultMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +33,7 @@ public class TagGalleryRepositoryCustomImpl extends QuerydslRepositorySupport im
         super(TagGallery.class);
     }
 
+    // 택분실 갤러리 리스트 호출
     public List<TagGalleryListDto>  findByTagGalleryList(String searchString, String filterFromDt, String filterToDt, String brCode){
 
         EntityManager em = getEntityManager();
@@ -52,7 +58,21 @@ public class TagGalleryRepositoryCustomImpl extends QuerydslRepositorySupport im
         query.setParameter(3, filterToDt);
 
         return jpaResultMapper.list(query, TagGalleryListDto.class);
+    }
 
+    // 택분실 갤러리 상세보기 호출
+    public TagGalleryDetailDto findByTagGalleryDetail(Long btId, String brCode){
+        QTagGallery tagGallery = QTagGallery.tagGallery;
+        JPQLQuery<TagGalleryDetailDto> query = from(tagGallery)
+                .where(tagGallery.btId.eq(btId))
+
+                .select(Projections.constructor(TagGalleryDetailDto.class,
+                        tagGallery.btBrandName,
+                        tagGallery.btInputDate,
+                        tagGallery.btMaterial,
+                        tagGallery.btRemark
+                        ));
+        return query.fetchOne();
     }
 
 }

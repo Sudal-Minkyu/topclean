@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import java.util.List;
 
 /**
  * @author Minkyu
@@ -31,28 +32,22 @@ public class TagGalleryCheckRepositoryCustomImpl extends QuerydslRepositorySuppo
         super(TagGalleryCheck.class);
     }
 
-    public TagGalleryCheckListDto findByTagGalleryCheckList(Long btId){
+    public List<TagGalleryCheckListDto> findByTagGalleryCheckList(Long btId){
 
         EntityManager em = getEntityManager();
         StringBuilder sb = new StringBuilder();
 
-        sb.append("SELECT b.fr_Name \n");
+        sb.append("SELECT b.fr_Name, a.br_complete_yn \n");
         sb.append("FROM br_tag_gallery_check a \n");
         sb.append("Inner JOIN bs_franchise b on b.fr_code = a.fr_code \n");
         sb.append("WHERE a.bt_id = ?1 \n");
-        sb.append("order BY a.bc_id asc limit 1 \n");
-
-//        sb.append("SELECT group_concat(b.fr_Name) \n");
-//        sb.append("FROM br_tag_gallery_check a \n");
-//        sb.append("Inner JOIN bs_franchise b on b.fr_code = a.fr_code \n");
-//        sb.append("WHERE a.bt_id = ?1 \n");
-//        sb.append("group BY a.bt_id \n");
+        sb.append("order BY a.bc_id asc \n");
 
         Query query = em.createNativeQuery(sb.toString());
 
         query.setParameter(1, btId);
 
-        return jpaResultMapper.uniqueResult(query, TagGalleryCheckListDto.class);
+        return jpaResultMapper.list(query, TagGalleryCheckListDto.class);
     }
 
 }

@@ -166,37 +166,25 @@ public class HeadService {
         AjaxResponse res = new AjaxResponse();
         String login_id = CommonUtils.getCurrentuser(request);
 
+        log.info("bot_brAssignState : "+bot_brAssignState);
+
         Optional<Franchise> optionalFranohise = findByFrCode(frCode);
         Optional<Branch> optionalBranch = findByBrCode(brCode);
         if(optionalFranohise.isPresent() && optionalBranch.isPresent()){
-            Franchise franchise = new Franchise();
 
-            franchise.setId(optionalFranohise.get().getId());
-            franchise.setFrCode(optionalFranohise.get().getFrCode());
-            franchise.setFrName(optionalFranohise.get().getFrName());
-            franchise.setFrContractDt(optionalFranohise.get().getFrContractDt());
-            franchise.setFrContractFromDt(optionalFranohise.get().getFrContractFromDt());
-            franchise.setFrContractToDt(optionalFranohise.get().getFrContractToDt());
-            franchise.setFrContractState(optionalFranohise.get().getFrContractState());
-            franchise.setFrPriceGrade(optionalFranohise.get().getFrPriceGrade());
-            franchise.setFrRemark(optionalFranohise.get().getFrRemark());
+            optionalFranohise.get().setFrCaculateRateBr(bot_frCarculateRateBr);
+            optionalFranohise.get().setFrCaculateRateFr(bot_frCarculateRateFr);
+            optionalFranohise.get().setFrRoyaltyRateBr(bot_frRoyaltyRateBr);
+            optionalFranohise.get().setFrRoyaltyRateFr(bot_frRoyaltyRateFr);
 
-            franchise.setFrCaculateRateBr(bot_frCarculateRateBr);
-            franchise.setFrCaculateRateFr(bot_frCarculateRateFr);
-            franchise.setFrRoyaltyRateBr(bot_frRoyaltyRateBr);
-            franchise.setFrRoyaltyRateFr(bot_frRoyaltyRateFr);
+            optionalFranohise.get().setBrId(optionalBranch.get());
+            optionalFranohise.get().setBrCode(optionalBranch.get().getBrCode());
+            optionalFranohise.get().setBrAssignState(bot_brAssignState);
 
-            franchise.setBrId(optionalBranch.get());
-            franchise.setBrCode(optionalBranch.get().getBrCode());
-            franchise.setBrAssignState(bot_brAssignState);
+            optionalFranohise.get().setModify_id(login_id);
+            optionalFranohise.get().setModifyDateTime(LocalDateTime.now());
 
-            franchise.setInsert_id(optionalFranohise.get().getInsert_id());
-            franchise.setInsertDateTime(optionalFranohise.get().getInsertDateTime());
-
-            franchise.setModify_id(login_id);
-            franchise.setModifyDateTime(LocalDateTime.now());
-
-            franchiseRepository.save(franchise);
+            franchiseRepository.save(optionalFranohise.get());
         }else{
             log.info("정보가 존재하지 않습니다.");
             return ResponseEntity.ok(res.fail(ResponseErrorCode.TP005.getCode(), ResponseErrorCode.TP005.getDesc(),ResponseErrorCode.TP006.getCode(), ResponseErrorCode.TP006.getDesc()));
