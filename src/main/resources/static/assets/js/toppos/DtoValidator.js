@@ -176,7 +176,7 @@ class DtoValidator {
         let targetKeys = [];
         for(let i = 0; i < partRuleKeys.length; i++) {
             const chkRule = partRule[partRuleKeys[i]];
-            if(chkRule.includes("d")) {
+            if(Array.isArray(chkRule) && chkRule.includes("d")) {
                 targetKeys.push(partRuleKeys[i]);
             }
         }

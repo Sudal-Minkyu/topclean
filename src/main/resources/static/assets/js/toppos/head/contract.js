@@ -311,6 +311,7 @@ function createGrid(gridColumnLayout, gridProp) {
 /* 해당 그리드와 연관된 그리드의 데이터를 주입한다. */
 function setListData(url, numOfGrid, callback = function (){}) {
     CommonUI.ajax(url, "GET", false, function(req) {
+        console.log(req);
         gridData[numOfGrid] = req.sendData.gridListData;
         AUIGrid.setGridData(gridId[numOfGrid], gridData[numOfGrid]);
         return callback();
@@ -563,8 +564,8 @@ function setFieldData(numOfGrid, item) {
             $("#brContractFromDt").val(item.brContractFromDt);
             $("#brContractToDt").val(item.brContractToDt);
             $("#brContractState").val(item.brContractState);
-            $("#brCarculateRateBr").val(item.brCarculateRateBr);
-            $("#brCarculateRateFr").val(item.brCarculateRateFr);
+            $("#brCarculateRateBr").val(item.brCaculateRateBr);
+            $("#brCarculateRateFr").val(item.brCaculateRateFr);
             $("#brRoyaltyRateBr").val(item.brRoyaltyRateBr);
             $("#brRoyaltyRateFr").val(item.brRoyaltyRateFr);
             $("#brRemark").val(item.brRemark);
@@ -606,8 +607,8 @@ function setFieldData(numOfGrid, item) {
             $("#bot_brAssignState").val(item.brAssignState);
             $("#bot_brCode").val(item.brCode);
             $("#bot_brName").val(item.brName);
-            $("#bot_brCarculateRateBr").val(item.brCarculateRateBr);
-            $("#bot_brCarculateRateFr").val(item.brCarculateRateFr);
+            $("#bot_brCarculateRateBr").val(item.brCaculateRateBr);
+            $("#bot_brCarculateRateFr").val(item.brCaculateRateFr);
             $("#bot_brRoyaltyRateBr").val(item.brRoyaltyRateBr);
             $("#bot_brRoyaltyRateFr").val(item.brRoyaltyRateFr);
             $("#bot_frCarculateRateBr").val(item.frCarculateRateBr);
@@ -629,7 +630,7 @@ function resetFieldData3() {
         brAssignState: "01",
         brCode: "",
         brName: "",
-        brCarculateRateBr: "",
+        brCaculateRateBr: "",
         brCarculateRateFr: "",
         brRoyaltyRateBr: "",
         brRoyaltyRateFr: "",
@@ -760,8 +761,8 @@ function branchSelect() {
 function putBranchInfo(item) {
     $("#bot_brCode").val(item.brCode);
     $("#bot_brName").val(item.brName);
-    $("#bot_brCarculateRateBr").val(item.brCarculateRateBr);
-    $("#bot_brCarculateRateFr").val(item.brCarculateRateFr);
+    $("#bot_brCarculateRateBr").val(item.brCaculateRateBr);
+    $("#bot_brCarculateRateFr").val(item.brCaculateRateFr);
     $("#bot_brRoyaltyRateBr").val(item.brRoyaltyRateBr);
     $("#bot_brRoyaltyRateFr").val(item.brRoyaltyRateFr);
     branchClose();
