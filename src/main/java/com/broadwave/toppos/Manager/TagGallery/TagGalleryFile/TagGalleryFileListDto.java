@@ -17,7 +17,7 @@ import java.time.format.DateTimeFormatter;
 @AllArgsConstructor
 public class TagGalleryFileListDto {
 
-    private String bfId;
+    private Long bfId;
     private String bfPath;
     private String bfFilename;
 

@@ -748,7 +748,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         JPQLQuery<RequestDetailReleaseListDto> query = from(requestDetail)
                 .innerJoin(requestDetail.frId, request)
                 .innerJoin(request.bcId, customer)
-                .leftJoin(inspeot).on(inspeot.brCode.eq(brCode))
+//                .leftJoin(inspeot).on(inspeot.brCode.eq(brCode))
                 .innerJoin(franchise).on(request.frCode.eq(franchise.frCode))
                 .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
                 .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
