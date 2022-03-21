@@ -88,15 +88,16 @@ const comms = {
         CommonUI.ajax(urls.getReceiptList, "GET", searchCondition, function (res) {
             console.log(res);
             wares.receiptList = CommonUI.toppos.killNullFromArray(res.sendData.gridListData);
-            const removeFrId = res.sendData.removeFrId;
 
-            for (let i = 0; i < wares.receiptList.length; i++) {
-                if (removeFrId.includes(wares.receiptList[i].fdId)) {
-                    console.log(wares.receiptList[i].fdId);
-                    wares.receiptList.splice(i, 1);
-                    i--;
-                }
-            }
+            /* 확인품 삭제해야 할 목록 삭제 */
+            // const removeFrId = res.sendData.removeFrId;
+            // for (let i = 0; i < wares.receiptList.length; i++) {
+            //     if (removeFrId.includes(wares.receiptList[i].fdId)) {
+            //         console.log(wares.receiptList[i].fdId);
+            //         wares.receiptList.splice(i, 1);
+            //         i--;
+            //     }
+            // }
 
             $("#statPanel").html(
                 `[${$("#frList option:selected").html()}] 상품이 ${wares.receiptList.length}건 조회되었습니다.`);

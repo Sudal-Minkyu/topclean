@@ -120,7 +120,7 @@ const comms = {
             resetTaglostPop();
             tagLostPopUpdateMode();
 
-            for(photo of data.tagGalleryFileList) {
+            for(photo of wares.currentRequest.tagGalleryFileList) {
                 const photoHtml = `<li class="tag-imgs__item">
                     <a href="${photo.bfPath + photo.bfFilename}" data-lightbox="images" data-title="이미지 확대">
                         <img src="${photo.bfPath + "s_" + photo.bfFilename}" class="tag-imgs__img" alt=""/>
@@ -129,9 +129,10 @@ const comms = {
                 $("#photoList").append(photoHtml);
                 $("#noImgScreen").hide();
             }
-            $("#btBrandName").val(data.btBrandName);
-            $("#btMaterial").val(data.btMaterial);
-            $("#btRemark").val(data.btRemark);
+            $("#btBrandName").val(wares.currentRequest.btBrandName);
+            $("#btMaterial").val(wares.currentRequest.btMaterial);
+            $("#btRemark").val(wares.currentRequest.btRemark);
+            $("#btInputDate").val(wares.currentRequest.btInputDate);
 
             $("#frResponse").val(""); // 프랜차이즈의 반응 리스트를 조합하여 생성
 
