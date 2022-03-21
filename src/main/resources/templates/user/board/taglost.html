@@ -59,12 +59,7 @@
             <div class="pop__article">
                 <div class="tag-pop">
                     <div class="tag-imgs">
-                        <ul class="tag-imgs__list">
-                            <li class="tag-imgs__item">
-                                <a href="/assets/images/dummy/cam.png" data-lightbox="images" data-title="이미지 확대">
-                                    <img src="/assets/images/dummy/cam.png" alt=""/>
-                                </a>
-                            </li>
+                        <ul id="photoList" class="tag-imgs__list">
                         </ul>
                     </div>
         
@@ -74,7 +69,7 @@
                                 <div class="tag-info__title">브랜드</div>
                                 <div class="tag-info__input">
                                     <div class="c-text">
-                                        <input type="text" readonly="readonly" />
+                                        <input id="btBrandName" type="text" readonly="readonly" />
                                     </div>
                                 </div>
                             </li>
@@ -82,7 +77,7 @@
                                 <div class="tag-info__title">소재</div>
                                 <div class="tag-info__input">
                                     <div class="c-text">
-                                        <input type="text" readonly="readonly" />
+                                        <input id="btMaterial" type="text" readonly="readonly" />
                                     </div>
                                 </div>
                             </li>
@@ -90,14 +85,14 @@
                                 <div class="tag-info__title">예상지사 입고일</div>
                                 <div class="tag-info__input">
                                     <div class="c-text">
-                                        <input type="text" readonly="readonly" />
+                                        <input id="btInputDate" type="text" readonly="readonly" />
                                     </div>
                                 </div>
                             </li>
                             <li class="tag-info__item">
                                 <div class="tag-info__title">특이사항</div>
                                 <div class="tag-info__input">
-                                    <div class="c-textarea"><textarea readonly></textarea></div>
+                                    <div class="c-textarea"><textarea id="btRemark" readonly></textarea></div>
                                 </div>
                             </li>
                         </ul>
@@ -114,18 +109,21 @@
                                 <div class="c-textarea"><textarea readonly></textarea></div>
                             </div>
                             <div class="tag-info__button">
-                                <input type="checkbox" id="check" />
-                                <label for="check">가맹점<br />확인/해제</label>
+                                <input type="checkbox" id="frCheck" />
+                                <label for="frCheck">가맹점<br />확인/해제</label>
                             </div>
                         </li>
                     </ul>
                 </div>
             </div>
             <ul class="pop__console">
-                <li><button class="c-button c-button--dark">최종확인완료</button></li>
+                <li><button id="frComplete" class="c-button c-button--dark">최종확인완료</button></li>
 				<li><button id="closeTaglostPop" class="c-button">닫기</button></li>
 			</ul>
         </div>
     </div>
+
+    <!-- 그리드 사진을 누를 때 활성화시킬 태그 -->
+    <a id="gridPhoto" href="" data-lightbox="images" data-title="이미지 확대"></a>
 </div>
 </html>
