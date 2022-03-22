@@ -1268,9 +1268,11 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdS8Dt
                 ));
         query.orderBy(requestDetail.id.asc());
-        query.where(franchise.id.eq(frId));
+        if(frId != 0) {
+            query.where(franchise.id.eq(frId));
+        }
         if(!tagNo.equals("")){
-            query.where(requestDetail.fdTag.substring(3,7).likeIgnoreCase("%"+tagNo+"%"));
+            query.where(requestDetail.fdTag.likeIgnoreCase("%"+tagNo+"%"));
         }
         return query.fetch();
     }

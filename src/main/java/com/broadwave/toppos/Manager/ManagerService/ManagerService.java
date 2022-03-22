@@ -96,6 +96,8 @@ public class ManagerService {
         log.info("현재 접속한 아이디 : "+login_id);
         log.info("현재 접속한 지사 코드 : "+brCode);
 
+//        log.info("franchiseId : "+franchiseId);
+//        log.info("tagNo : "+tagNo);
         List<RequestDetailTagSearchListDto> requestDetailTagSearchListDtos =  requestDetailRepository.findByRequestDetailTagSearchList(brCode, franchiseId, tagNo);
         data.put("gridListData",requestDetailTagSearchListDtos);
 

@@ -18,9 +18,14 @@ public abstract class CommonUtils {
 
     // 전화번호 정규식변환 함수
     public static String hpNumberChange(String hp) {
+//        log.info("hp : "+hp);
         String[] phoneArray = phoneNumberSplit(hp);
 //        log.info("phoneArray : "+ Arrays.toString(phoneArray));
-        return phoneArray[0]+"-"+phoneArray[1]+"-"+phoneArray[2];
+        if(phoneArray != null) {
+            return phoneArray[0]+"-"+phoneArray[1]+"-"+phoneArray[2];
+        }else{
+            return null;
+        }
     }
 
     // 정규식변환
@@ -29,15 +34,21 @@ public abstract class CommonUtils {
         Pattern tellPattern = Pattern.compile( "^(01\\d{1}|02|0505|0502|0506|0\\d{1,2})-?(\\d{3,4})-?(\\d{4})");
 
         Matcher matcher = tellPattern.matcher(phoneNumber);
+
+//        log.info("matcher : "+matcher);
         if(matcher.matches()) {
             //정규식에 적합하면 matcher.group으로 리턴
             return new String[]{ matcher.group(1), matcher.group(2), matcher.group(3)};
         }else{
             //정규식에 적합하지 않으면 substring으로 휴대폰 번호 나누기
-            String str1 = phoneNumber.substring(0, 3);
-            String str2 = phoneNumber.substring(3, 7);
-            String str3 = phoneNumber.substring(7, 11);
-            return new String[]{str1, str2, str3};
+            try{
+                String str1 = phoneNumber.substring(0, 3);
+                String str2 = phoneNumber.substring(3, 7);
+                String str3 = phoneNumber.substring(7, 11);
+                return new String[]{str1, str2, str3};
+            }catch (Exception e){
+                return null;
+            }
         }
     }
 
