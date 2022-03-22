@@ -598,8 +598,6 @@ function savePost() {
         for(addPhoto of wares.currentRequest.addPhotoList) { // 새로 촬영된 사진들의 추가
             formData.append("addPhotoList", addPhoto);
         }
-    } else {
-        formData.append("addPhotoList", "");
     }
     
     if(wares.currentRequest.btId) {
