@@ -265,10 +265,12 @@ $(function () {
     /* 2번그리드 내의 아이템 클릭시 필드에 적용 */
     AUIGrid.bind(gridId[2], "cellClick", function (e) {
         CommonUI.ajax("/api/head/branchAssignList", "GET", {brCode : e.item.brCode}, function (req) {
+            console.log(req);
             const resultData = req.sendData.gridListData;
             AUIGrid.clearGridData(gridId[3]);
             AUIGrid.setGridData(gridId[3], resultData);
             resetFieldData3();
+            setFieldData(4, AUIGrid.getSelectedItems(gridId[2])[0].item);
         });
     });
 
@@ -282,6 +284,7 @@ $(function () {
     });
 
     AUIGrid.bind(gridId[4], "cellDoubleClick", function (e) {
+        console.log(e);
         putBranchInfo(e.item);
     });
 
@@ -311,7 +314,6 @@ function createGrid(gridColumnLayout, gridProp) {
 /* 해당 그리드와 연관된 그리드의 데이터를 주입한다. */
 function setListData(url, numOfGrid, callback = function (){}) {
     CommonUI.ajax(url, "GET", false, function(req) {
-        console.log(req);
         gridData[numOfGrid] = req.sendData.gridListData;
         AUIGrid.setGridData(gridId[numOfGrid], gridData[numOfGrid]);
         return callback();
@@ -564,8 +566,8 @@ function setFieldData(numOfGrid, item) {
             $("#brContractFromDt").val(item.brContractFromDt);
             $("#brContractToDt").val(item.brContractToDt);
             $("#brContractState").val(item.brContractState);
-            $("#brCarculateRateBr").val(item.brCaculateRateBr);
-            $("#brCarculateRateFr").val(item.brCaculateRateFr);
+            $("#brCarculateRateBr").val(item.brCarculateRateBr);
+            $("#brCarculateRateFr").val(item.brCarculateRateFr);
             $("#brRoyaltyRateBr").val(item.brRoyaltyRateBr);
             $("#brRoyaltyRateFr").val(item.brRoyaltyRateFr);
             $("#brRemark").val(item.brRemark);
@@ -607,14 +609,19 @@ function setFieldData(numOfGrid, item) {
             $("#bot_brAssignState").val(item.brAssignState);
             $("#bot_brCode").val(item.brCode);
             $("#bot_brName").val(item.brName);
-            $("#bot_brCarculateRateBr").val(item.brCaculateRateBr);
-            $("#bot_brCarculateRateFr").val(item.brCaculateRateFr);
-            $("#bot_brRoyaltyRateBr").val(item.brRoyaltyRateBr);
-            $("#bot_brRoyaltyRateFr").val(item.brRoyaltyRateFr);
             $("#bot_frCarculateRateBr").val(item.frCarculateRateBr);
             $("#bot_frCarculateRateFr").val(item.frCarculateRateFr);
             $("#bot_frRoyaltyRateBr").val(item.frRoyaltyRateBr);
             $("#bot_frRoyaltyRateFr").val(item.frRoyaltyRateFr);
+            break;
+
+        case 4 :
+            $("#bot_brCode").val(item.brCode);
+            $("#bot_brName").val(item.brName);
+            $("#bot_brCarculateRateBr").val(item.brCarculateRateBr);
+            $("#bot_brCarculateRateFr").val(item.brCarculateRateFr);
+            $("#bot_brRoyaltyRateBr").val(item.brRoyaltyRateBr);
+            $("#bot_brRoyaltyRateFr").val(item.brRoyaltyRateFr);
             break;
     }
 }
@@ -630,7 +637,7 @@ function resetFieldData3() {
         brAssignState: "01",
         brCode: "",
         brName: "",
-        brCaculateRateBr: "",
+        brCarculateRateBr: "",
         brCarculateRateFr: "",
         brRoyaltyRateBr: "",
         brRoyaltyRateFr: "",
@@ -761,8 +768,8 @@ function branchSelect() {
 function putBranchInfo(item) {
     $("#bot_brCode").val(item.brCode);
     $("#bot_brName").val(item.brName);
-    $("#bot_brCarculateRateBr").val(item.brCaculateRateBr);
-    $("#bot_brCarculateRateFr").val(item.brCaculateRateFr);
+    $("#bot_brCarculateRateBr").val(item.brCarculateRateBr);
+    $("#bot_brCarculateRateFr").val(item.brCarculateRateFr);
     $("#bot_brRoyaltyRateBr").val(item.brRoyaltyRateBr);
     $("#bot_brRoyaltyRateFr").val(item.brRoyaltyRateFr);
     branchClose();
