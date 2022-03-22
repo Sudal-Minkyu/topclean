@@ -279,6 +279,12 @@ const trigs = {
         basic() {
             $("#frList").on("change", function () {
                 $("#foreTag").val($("#frList option:selected").attr("data-tagno"));
+                if($(this).val() === "0") {
+                    $("#aftTag").val("");
+                    $("#aftTag").attr("disabled", "");
+                } else {
+                    $("#aftTag").removeAttr("disabled");
+                }
             });
 
             $("#searchListBtn").on("click", function () {
@@ -331,8 +337,9 @@ function searchOrder() {
         alertCaution("가맹점을 선택해 주세요.", 1);
         return false;
     }
-    if(aftTag === "") {
+    if(aftTag === "" && parseInt(frId)) {
         alertCaution("택번호를 입력해 주세요.", 1);
+        return false;
     }
 
     const searchCondition = {
