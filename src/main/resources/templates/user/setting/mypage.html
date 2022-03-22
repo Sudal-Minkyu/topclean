@@ -41,7 +41,7 @@
 							<div class="form__title">가맹점코드</div>
 							<div class="form__input">
 								<div class="c-text">
-									<input type="text" readonly name="frCode" />
+									<input type="text" id="frCode" readonly name="frCode" />
 								</div>
 							</div>
 						</div>
@@ -83,19 +83,10 @@
 							<div class="form__input">
 								<div class="form">
 									<div class="form__item">
-										<div class="form__title">본사 :</div>
-										<div class="form__input">
-											<div class="c-text">
-												<input type="text" readonly name="brCarculateRateHq" />
-												<span>%</span>
-											</div>
-										</div>
-									</div>
-									<div class="form__item">
 										<div class="form__title">지사 :</div>
 										<div class="form__input">
 											<div class="c-text">
-												<input type="text" readonly name="brCarculateRateBr" />
+												<input type="text" readonly name="frCarculateRateBr" />
 												<span>%</span>
 											</div>
 										</div>
@@ -104,7 +95,16 @@
 										<div class="form__title">가맹 :</div>
 										<div class="form__input">
 											<div class="c-text">
-												<input type="text" readonly name="brCarculateRateFr" />
+												<input type="text" readonly name="frCarculateRateFr" />
+												<span>%</span>
+											</div>
+										</div>
+									</div>
+									<div class="form__item">
+										<div class="form__title">로열티 :</div>
+										<div class="form__input">
+											<div class="c-text">
+												<input type="text" readonly name="frRoyaltyRateFr" />
 												<span>%</span>
 											</div>
 										</div>
@@ -343,7 +343,7 @@
     </div>
 	
 	<!-- 라인 추가 팝업 -->
-	<div class="pop">
+	<div id="linePop" class="pop">
 		<div class="pop__box">
 			<div class="pop__article">
 				<h3 class="pop__article-header">항목 추가 입력</h3>

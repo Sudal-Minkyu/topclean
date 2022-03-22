@@ -45,9 +45,10 @@ const dtos = {
 			frContractFromDt: "sr",
 			frContractToDt: "sr",
 			brName: "sr",
-			brCarculateRateHq: "nr",
-			brCarculateRateBr: "nr",
-			brCarculateRateFr: "nr",
+			frCarculateRateBr: "nr",
+			frCarculateRateFr: "nr",
+			frRoyaltyRateBr: "n",
+			frRoyaltyRateFr: "n",
 			frBusinessNo: "s",
 			frRpreName: "s",
 			frTelNo: "s",
@@ -99,6 +100,7 @@ const comms = {
 		CommonUI.ajax(url, "GET", false, function (res) {
 			const data = res.sendData.franchisInfoDto;
 			dv.chk(data, dtos.receive.myInfo, "가맹점 정보 받아오기");
+			console.log(data);
 			putFrInfoDataInField(data);
 		});
 	},
@@ -452,7 +454,7 @@ const trigs = {
 			// 팝업 열기
 			$('.openItemPop').on('click', function (e) {
 				wares.itemEditPopNum = $(this).attr('data-index');
-				$('.pop').addClass('active');
+				$('#linePop').addClass('active');
 				// input값 초기화
 				$('#baName').val('');
 				$('#baRemark').val('');
@@ -637,9 +639,9 @@ function putFrInfoDataInField(myInfoData) {
 	$("input[name='frContractFromDt']").val(myInfoData.frContractFromDt);
 	$("input[name='frContractToDt']").val(myInfoData.frContractToDt);
 	$("input[name='brName']").val(myInfoData.brName);
-	$("input[name='brCarculateRateHq']").val(myInfoData.brCarculateRateHq);
-	$("input[name='brCarculateRateBr']").val(myInfoData.brCarculateRateBr);
-	$("input[name='brCarculateRateFr']").val(myInfoData.brCarculateRateFr);
+	$("input[name='frCarculateRateBr']").val(myInfoData.frCarculateRateBr);
+	$("input[name='frCarculateRateFr']").val(myInfoData.frCarculateRateFr);
+	$("input[name='frRoyaltyRateFr']").val(myInfoData.frRoyaltyRateFr);
 	$("input[name='frBusinessNo']").val(CommonUI.formatBusinessNo(myInfoData.frBusinessNo));
 	$("input[name='frRpreName']").val(myInfoData.frRpreName);
 	$("input[name='frTelNo']").val(CommonUI.formatTel(myInfoData.frTelNo));
@@ -734,13 +736,13 @@ function printingReport() {
 		projectName: "toppos",
 		formName: "qrprint02",
 		name: $("input[name='frName']").val(),
-		url: location.protocol+"//"+location.host+"/mobile/unAuth/qrpickup?frcode="+$("#frCode").val(),
+		url: location.protocol+"//"+location.host+"/mobile/unAuth/qrpickup?frcode=" + $("#frCode").val(),
 	};
 
 	const _url = "https://report.topcleaners.kr:443/UBIFORM/UView5/index.jsp";
 	const fullURL = _url + "?projectName=" + _params.projectName + "&formName=" + _params.formName
 		+ "&name=" + _params.name + "&url=" + _params.url;
-		
+	console.log(_params);
 	$("#qrcode").attr("src", fullURL);
 	$("#qrPop").addClass("active");
 }
