@@ -132,7 +132,7 @@ const comms = {
                     <a href="${photo.bfPath + photo.bfFilename}" data-lightbox="images" data-title="이미지 확대">
                         <img src="${photo.bfPath + "s_" + photo.bfFilename}" class="tag-imgs__img" alt=""/>
                     </a>
-                    <button class="tag-imgs__delete deletePhotoBtn" data-bfId="">삭제</button>
+                    <button class="tag-imgs__delete deletePhotoBtn" data-bfId="${photo.bfId}">삭제</button>
                 </li>`
                 $("#photoList").append(photoHtml);
                 $("#noImgScreen").hide();
@@ -381,8 +381,16 @@ const trigs = {
 
         $("#photoList").on("click", ".deletePhotoBtn", function() {
             console.log(this);
-            $(this).attr("data-bfId");
-            wares.currentRequest.deletePhotoList;
+            const bfId = $(this).attr("data-bfId");
+            const addIdx = $(this).attr("data-addIdx");
+            if(bfId) {
+                if(!wares.currentRequest.deletePhotoList) wares.currentRequest.deletePhotoList = [];
+                wares.currentRequest.deletePhotoList.push(parseInt(bfId));
+            }
+            if(addIdx) {
+                wares.currentRequest.addPhotoList.splice(parseInt(addIdx), 1);
+            }
+            $(this).parents(".tag-imgs__item").remove();
         });
 
         $("#removePost").on("click", function () {
@@ -502,16 +510,17 @@ function takePhoto() {
             const takenPic = canvas.toDataURL();
             const blob = b64toBlob(takenPic);
 
+            if(!wares.currentRequest.addPhotoList) {
+                wares.currentRequest.addPhotoList = [];
+            }
             const photoHtml = `<li class="tag-imgs__item newPhoto">
                 <a href="${takenPic}" data-lightbox="images" data-title="이미지 확대">
                     <img src="${takenPic}" class="tag-imgs__img" alt=""/>
                 </a>
-                <button class="tag-imgs__delete deletePhotoBtn">삭제</button>
+                <button class="tag-imgs__delete deletePhotoBtn" data-addIdx="${wares.currentRequest.addPhotoList.length}">삭제</button>
             </li>`
-            if(!wares.currentRequest.addPhotoList) {
-                wares.currentRequest.addPhotoList = [];
-            }
             wares.currentRequest.addPhotoList.push(blob);
+            
             $("#photoList").append(photoHtml);
             $("#noImgScreen").hide();
         } catch (e) {
