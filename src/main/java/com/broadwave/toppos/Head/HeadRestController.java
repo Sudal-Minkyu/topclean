@@ -308,8 +308,8 @@ public class HeadRestController {
             franohisetInfo.put("frRpreName", franohise.getFrRpreName());
             franohisetInfo.put("frTelNo", franohise.getFrTelNo());
 
-            franohisetInfo.put("frCaculateRateBr", franohise.getFrCaculateRateBr());
-            franohisetInfo.put("frCaculateRateFr", franohise.getFrCaculateRateFr());
+            franohisetInfo.put("frCarculateRateBr", franohise.getFrCarculateRateBr());
+            franohisetInfo.put("frCarculateRateFr", franohise.getFrCarculateRateFr());
             franohisetInfo.put("frRoyaltyRateBr", franohise.getFrRoyaltyRateBr());
             franohisetInfo.put("frRoyaltyRateFr", franohise.getFrRoyaltyRateFr());
 
@@ -437,8 +437,8 @@ public class HeadRestController {
             franohisetInfo.put("frRemark", franohise.getFrRemark());
             franohisetInfo.put("brName", franohise.getBrName());
 
-            franohisetInfo.put("frCaculateRateBr", franohise.getFrCaculateRateBr());
-            franohisetInfo.put("frCaculateRateFr", franohise.getFrCaculateRateFr());
+            franohisetInfo.put("frCarculateRateBr", franohise.getFrCarculateRateBr());
+            franohisetInfo.put("frCarculateRateFr", franohise.getFrCarculateRateFr());
             franohisetInfo.put("frRoyaltyRateBr", franohise.getFrRoyaltyRateBr());
             franohisetInfo.put("frRoyaltyRateFr", franohise.getFrRoyaltyRateFr());
 

@@ -30,8 +30,8 @@ public class FranchiseInfoDto {
     private String brCode; // 배정코드
     private String brName; // 배정지사명
 
-    private Double frCaculateRateBr; // 정산비율(지사)
-    private Double frCaculateRateFr; // 정산비율(가맹점)
+    private Double frCarculateRateBr; // 정산비율(지사)
+    private Double frCarculateRateFr; // 정산비율(가맹점)
     private Double frRoyaltyRateBr; // 로얄티율(지사)
     private Double frRoyaltyRateFr; // 정산비율(가맹점)
 

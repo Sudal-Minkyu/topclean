@@ -120,12 +120,14 @@ public class ManagerService {
 
         String nowDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         log.info("금일날짜 : "+nowDate);
+
         List<FranchiseManagerListDto> franchiseManagerListDtos = franchiseRepository.findByManagerInFranchise(brCode);
         List<UserLoginLogDto> chartFranchOpenListDtos = userLoginLogRepository.findByFranchiseLog(brCode, nowDate);
         List<InspeotMainListDto> inspeotMainListDtos = inspeotRepositoryCustom.findByInspeotB1(brCode, 5, null);
 
         int franchiseAll = franchiseManagerListDtos.size();
         int franchiseLog = chartFranchOpenListDtos.size();
+        // 가맹점 오픈 현황
         List<HashMap<String,Object>> chartFranchOpenData = new ArrayList<>();
         HashMap<String,Object> chartFranchOpenInfo;
         for(int i=0; i<2; i++){
@@ -140,24 +142,31 @@ public class ManagerService {
             chartFranchOpenData.add(chartFranchOpenInfo);
         }
 
-        List<String> frNameList = new ArrayList<>();
-        for (FranchiseManagerListDto franchiseManagerListDto : franchiseManagerListDtos) {
-            frNameList.add(franchiseManagerListDto.getFrName());
-        }
-
         // 일주일전 LocalDataTime
-        LocalDateTime weekDays = LocalDateTime.now().minusDays(7);
-        String formatWeekDays = weekDays.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+//        LocalDateTime weekDays = LocalDateTime.now().minusDays(7);
+//        String formatWeekDays = weekDays.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 //        log.info("weekDays : "+weekDays);
 //        log.info("formatWeekDays : "+formatWeekDays);
-        List<RequestWeekAmountDto> requestWeekAmountDtos = requestRepository.findByRequestWeekAmount(brCode, frNameList, weekDays);
+
+        // 1주일간의 가맹점 접수금액
+        List<RequestWeekAmountDto> requestWeekAmountDtos = requestRepository.findByRequestWeekAmount(brCode);
 //        log.info("requestWeekAmountDtos : "+requestWeekAmountDtos);
-        List<IssueWeekAmountDto> issueWeekAmountDtos = issueRepository.findByIssueWeekAmount(brCode, formatWeekDays);
+
+        // 1주일간의 일자별 가맹점 접수금액
+        List<RequestWeekAmountDto> requestWeekDaysAmountDtos = requestRepository.findByRequestWeekDaysAmount(brCode);
+        log.info("receiptWeekDaysAmountDtos : "+requestWeekDaysAmountDtos);
+
+        // 1주일간의 지사 출고금액
+        List<IssueWeekAmountDto> issueWeekAmountDtos = issueRepository.findByIssueWeekAmount(brCode);
+        log.info("issueWeekAmountDtos : "+issueWeekAmountDtos);
 
         data.put("noticeData",noticeListDtos); // 공지사항 리스트(본사의 공지사항) - 최근5개
         data.put("inspeotList",inspeotMainListDtos);  // 검품리스트 5개호출
-        data.put("requestWeekAmountData",requestWeekAmountDtos); // 1주일간의 가맹점 접수금액
+
         data.put("chartFranchOpenData",chartFranchOpenData); // 가맹점 오픈 현황
+
+        data.put("requestWeekAmountData",requestWeekAmountDtos); // 1주일간의 가맹점 접수금액
+        data.put("requestWeekDaysAmountDtos",requestWeekDaysAmountDtos); // 1주일간의 일자별 가맹점 접수금액
         data.put("issueWeekAmountDtos",issueWeekAmountDtos); // 1주일간의 지사 출고금액
 
         return ResponseEntity.ok(res.dataSendSuccess(data));

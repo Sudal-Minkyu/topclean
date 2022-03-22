@@ -2,6 +2,8 @@ package com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos;
 
 import lombok.*;
 
+import java.math.BigDecimal;
+
 /**
  * @author Minkyu
  * Date : 2022-03-04
@@ -15,6 +17,6 @@ import lombok.*;
 public class RequestWeekAmountDto {
 
     private String name; // 가맹점명
-    private Integer value; // 접수금액 합계
+    private BigDecimal value; // 접수금액 합계
 
 }

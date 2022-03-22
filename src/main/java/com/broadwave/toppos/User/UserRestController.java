@@ -828,11 +828,11 @@ public class UserRestController {
         List<AddprocessDto> addprocessDtoList = userService.findByAddProcessDtoList(frCode, baType);
 
         if(baType.equals("1")){
-            data.put("repairListData",addprocessDtoList);
+            data.put("repairListData",addprocessDtoList); // 수선항목
         }else if(baType.equals("2")){
-            data.put("addAmountData",addprocessDtoList);
+            data.put("addAmountData",addprocessDtoList); // 추가항목
         }else{
-            data.put("keyWordData",addprocessDtoList);
+            data.put("keyWordData",addprocessDtoList); // 상용구
         }
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
@@ -1148,7 +1148,7 @@ public class UserRestController {
     @PostMapping("noticeList")
     public ResponseEntity<Map<String,Object>> noticeList(@RequestParam("searchString")String searchString, @RequestParam("filterFromDt")String filterFromDt,
                                                          @RequestParam("filterToDt")String filterToDt,
-                                                         Pageable pageable) {
+                                                         Pageable pageable, HttpServletRequest request) {
         return noticeService.noticeList(searchString, filterFromDt.replaceAll("-",""), filterToDt.replaceAll("-",""), pageable, "2");
     }
 

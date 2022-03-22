@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 /**
  * @author Minkyu
  * Date : 2022-03-08
@@ -18,6 +20,6 @@ import lombok.NoArgsConstructor;
 public class IssueWeekAmountDto {
 
     private String name; // 출고날짜
-    private Integer value; // 접수금액 합계
+    private BigDecimal value; // 접수금액 합계
 
 }

@@ -1,5 +1,6 @@
 package com.broadwave.toppos.User.ReuqestMoney.Requset;
 
+import com.broadwave.toppos.Manager.Process.Issue.IssueWeekAmountDto;
 import com.broadwave.toppos.User.Customer.Customer;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.*;
 
@@ -36,7 +37,11 @@ public interface RequestRepositoryCustom {
 
     RequestTempDto findByRequestTemp(String frCode);
 
-    List<RequestWeekAmountDto> findByRequestWeekAmount(String brCode, List<String> frNameList, LocalDateTime weekDays);
+    // 1주일간의 가맹점 접수금액
+    List<RequestWeekAmountDto> findByRequestWeekAmount(String brCode);
+
+    // 1주일간의 일자별 가맹점 접수금액
+    List<RequestWeekAmountDto> findByRequestWeekDaysAmount(String brCode);
 
     // 메세지 테이블 Native쿼리 호출
     boolean InsertMessage(String message, String nextmessage, String buttonJson, String templatecode, String tableName, Long tableId, String bcHp, String templatecodeNumber);

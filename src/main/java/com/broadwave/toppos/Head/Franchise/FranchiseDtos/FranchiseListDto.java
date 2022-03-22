@@ -36,8 +36,8 @@ public class FranchiseListDto {
     private String frAddress; // 가맹점 주소
     private String frAddressDetail; // 가맹점 상세주소
 
-    private Double frCaculateRateBr; // 정산비율(지사)
-    private Double frCaculateRateFr; // 정산비율(가맹점)
+    private Double frCarculateRateBr; // 정산비율(지사)
+    private Double frCarculateRateFr; // 정산비율(가맹점)
     private Double frRoyaltyRateBr; // 로얄티율(지사)
     private Double frRoyaltyRateFr; // 정산비율(가맹점)
 

@@ -172,8 +172,8 @@ public class HeadService {
         Optional<Branch> optionalBranch = findByBrCode(brCode);
         if(optionalFranohise.isPresent() && optionalBranch.isPresent()){
 
-            optionalFranohise.get().setFrCaculateRateBr(bot_frCarculateRateBr);
-            optionalFranohise.get().setFrCaculateRateFr(bot_frCarculateRateFr);
+            optionalFranohise.get().setFrCarculateRateBr(bot_frCarculateRateBr);
+            optionalFranohise.get().setFrCarculateRateFr(bot_frCarculateRateFr);
             optionalFranohise.get().setFrRoyaltyRateBr(bot_frRoyaltyRateBr);
             optionalFranohise.get().setFrRoyaltyRateFr(bot_frRoyaltyRateFr);
 

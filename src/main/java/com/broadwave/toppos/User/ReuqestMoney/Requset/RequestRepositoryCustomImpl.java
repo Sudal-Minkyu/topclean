@@ -4,9 +4,11 @@ import com.broadwave.toppos.Head.Franchise.QFranchise;
 import com.broadwave.toppos.Head.Item.Group.A.QItemGroup;
 import com.broadwave.toppos.Head.Item.Group.B.QItemGroupS;
 import com.broadwave.toppos.Head.Item.Group.C.QItem;
+import com.broadwave.toppos.Manager.Process.Issue.IssueWeekAmountDto;
 import com.broadwave.toppos.User.Customer.Customer;
 import com.broadwave.toppos.User.Customer.QCustomer;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.QRequestDetail;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.manager.RequestDetailBranchReturnCurrentListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.*;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.CaseBuilder;
@@ -402,27 +404,81 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
         return query.fetchOne();
     }
 
-    // 지사 메인페이지 일주일간 접수한 금액 그래프용
+    // 1주일간의 가맹점 접수금액 그래프용
     @Override
-    public List<RequestWeekAmountDto> findByRequestWeekAmount(String brCode, List<String> frNameList, LocalDateTime weekDays){
-        QRequest request = QRequest.request;
-        QFranchise franchise = QFranchise.franchise;
+    public List<RequestWeekAmountDto> findByRequestWeekAmount(String brCode){
 
-        JPQLQuery<RequestWeekAmountDto> query = from(request)
-                .innerJoin(franchise).on(franchise.frCode.eq(request.frCode))
-                .where(request.fr_insert_date.goe(weekDays))
-                .select(Projections.constructor(RequestWeekAmountDto.class,
-                        franchise.frName,
-                        request.frNormalAmount.sum()
-                ));
+        EntityManager em = getEntityManager();
+        StringBuilder sb = new StringBuilder();
 
-        query.groupBy(franchise.frName);
+        sb.append("WITH RECURSIVE chart1 AS ( \n");
+        sb.append("SELECT c.fr_name,sum(b.fd_tot_amt) amount \n");
+        sb.append("FROM fs_request a \n");
+        sb.append("INNER JOIN fs_request_dtl b ON a.fr_id = b.fr_id \n");
+        sb.append("INNER JOIN bs_franchise c ON a.fr_code = c.fr_code \n");
+        sb.append("WHERE a.br_code = ?1 \n");
+        sb.append("AND a.fr_confirm_yn ='Y' AND b.fd_cancel ='N' \n");
+        sb.append("AND a.fr_yyyymmdd > DATE_FORMAT(DATE_SUB(now(),INTERVAL 7 DAY  ),'%Y%m%d') \n"); // 7일전 조건문
+        sb.append("GROUP BY c.fr_name \n");
+        sb.append("UNION ALL \n");
+        sb.append("SELECT fr_name, 0 amount \n");
+        sb.append("FROM bs_franchise \n");
+        sb.append("WHERE br_code = ?1 ) \n");
 
-        // 기본조건문
-        query.where(franchise.frName.in(frNameList));
-        query.where(request.brCode.eq(brCode).and(request.frConfirmYn.eq("Y")));
+        sb.append("SELECT fr_name,SUM(amount) amount \n");
+        sb.append("FROM chart1 \n");
+        sb.append("GROUP BY fr_name \n");
+        sb.append("UNION ALL \n");
+        sb.append("SELECT '합계',SUM(amount) amount  \n");
+        sb.append("FROM chart1 \n");
+        sb.append("ORDER BY FIELD(fr_name,'합계') DESC, fr_name ASC; \n");
 
-        return query.fetch();
+        Query query = em.createNativeQuery(sb.toString());
+
+        query.setParameter(1, brCode);
+
+        return jpaResultMapper.list(query, RequestWeekAmountDto.class);
+    }
+
+    // 1주일간의 일자별 가맹점 접수금액
+    @Override
+    public List<RequestWeekAmountDto> findByRequestWeekDaysAmount(String brCode){
+
+        EntityManager em = getEntityManager();
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("WITH RECURSIVE chart2 AS ( \n");
+        sb.append("SELECT a.fr_yyyymmdd yyyymmdd ,sum(b.fd_tot_amt) amount \n");
+        sb.append("FROM fs_request a \n");
+
+        sb.append("INNER JOIN fs_request_dtl b ON a.fr_id = b.fr_id \n");
+        sb.append("INNER JOIN bs_franchise c ON a.fr_code = c.fr_code \n");
+
+        sb.append("WHERE a.br_code = ?1 \n");
+        sb.append("AND a.fr_confirm_yn ='Y' AND b.fd_cancel ='N' \n");
+        sb.append("AND a.fr_yyyymmdd > DATE_FORMAT(DATE_SUB(now(),INTERVAL 7 DAY  ),'%Y%m%d') \n"); // 7일전 조건문
+        sb.append("GROUP BY a.fr_yyyymmdd \n");
+        sb.append("UNION ALL SELECT DATE_FORMAT(DATE_SUB(now(),INTERVAL 6 DAY  ),'%Y%m%d'), 0 amount \n");
+        sb.append("UNION ALL SELECT DATE_FORMAT(DATE_SUB(now(),INTERVAL 5 DAY  ),'%Y%m%d'), 0 amount \n");
+        sb.append("UNION ALL SELECT DATE_FORMAT(DATE_SUB(now(),INTERVAL 4 DAY  ),'%Y%m%d'), 0 amount \n");
+        sb.append("UNION ALL SELECT DATE_FORMAT(DATE_SUB(now(),INTERVAL 3 DAY  ),'%Y%m%d'), 0 amount \n");
+        sb.append("UNION ALL SELECT DATE_FORMAT(DATE_SUB(now(),INTERVAL 2 DAY  ),'%Y%m%d'), 0 amount \n");
+        sb.append("UNION ALL SELECT DATE_FORMAT(DATE_SUB(now(),INTERVAL 1 DAY  ),'%Y%m%d'), 0 amount \n");
+        sb.append("UNION ALL SELECT DATE_FORMAT(DATE_SUB(now(),INTERVAL 0 DAY  ),'%Y%m%d'), 0 amount \n");
+        sb.append(") \n");
+        sb.append("SELECT yyyymmdd,SUM(amount) amount \n");
+        sb.append("FROM chart2 \n");
+        sb.append("GROUP BY yyyymmdd \n");
+        sb.append("UNION ALL \n");
+        sb.append("SELECT '합계',SUM(amount) amount \n");
+        sb.append("FROM chart2 \n");
+        sb.append("ORDER BY FIELD(yyyymmdd,'합계') DESC, yyyymmdd ASC \n");
+
+        Query query = em.createNativeQuery(sb.toString());
+
+        query.setParameter(1, brCode);
+
+        return jpaResultMapper.list(query, RequestWeekAmountDto.class);
     }
 
     // 메세지 테이블 Native쿼리

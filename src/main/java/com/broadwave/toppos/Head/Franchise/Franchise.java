@@ -94,10 +94,10 @@ public class Franchise {
     private String brAssignState; // 지사 배정상태 미배정: 01, 배정완료: 02
 
     @Column(name="carculate_rate_br")
-    private Double frCaculateRateBr; // 정산비율(지사)
+    private Double frCarculateRateBr; // 정산비율(지사)
 
     @Column(name="carculate_rate_fr")
-    private Double frCaculateRateFr; // 정산비율(가맹점)
+    private Double frCarculateRateFr; // 정산비율(가맹점)
 
     @Column(name="royalty_rate_br")
     private Double frRoyaltyRateBr; // 로얄티율(지사)

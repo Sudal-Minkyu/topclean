@@ -30,25 +30,73 @@ public class IssueRepositoryCustomImpl extends QuerydslRepositorySupport impleme
         super(IssueRepository.class);
     }
 
-    // 지사 메인페이지 일주일간 출고 금액 그래프용
+    // 1주일간의 지사 출고금액 그래프용
     @Override
-    public List<IssueWeekAmountDto> findByIssueWeekAmount(String brCode, String formatWeekDays){
+    public List<IssueWeekAmountDto> findByIssueWeekAmount(String brCode){
 
-        QIssue issue = QIssue.issue;
-        QRequestDetail requestDetail = QRequestDetail.requestDetail;
+//        WITH RECURSIVE chart4 AS (
+//                SELECT a.mi_dt yyyymmdd ,sum(b.fd_tot_amt) amount
+//        FROM mr_issue a
 
-        JPQLQuery<IssueWeekAmountDto> query = from(issue)
-//                .innerJoin(issue, requestDetail.miId)
-                .innerJoin(requestDetail).on(requestDetail.miId.eq(issue))
-                .where(issue.miDt.goe(formatWeekDays).and(issue.brCode.eq(brCode)))
-                .select(Projections.constructor(IssueWeekAmountDto.class,
-                        issue.miDt,
-                        requestDetail.fdTotAmt.sum()
-                ));
+//        INNER JOIN fs_request_dtl b ON a.mi_id = b.mi_id
+//        INNER JOIN  fs_request b1 ON b.fr_id = b1.fr_id
+//        INNER JOIN bs_franchise c ON a.fr_code = c.fr_code
+//        WHERE a.br_code ='02' # 지점코드
+//        AND b1.fr_confirm_yn ='Y'
+//        AND b.fd_cancel ='N'
+//        AND a.mi_dt > DATE_FORMAT(DATE_SUB(now(),INTERVAL 7 DAY  ),'%Y%m%d') #7일전
+//        GROUP BY a.mi_dt
+//        UNION ALL SELECT DATE_FORMAT(DATE_SUB(now(),INTERVAL 6 DAY  ),'%Y%m%d'), 0 amount
+//        UNION ALL SELECT DATE_FORMAT(DATE_SUB(now(),INTERVAL 5 DAY  ),'%Y%m%d'), 0 amount
+//        UNION ALL SELECT DATE_FORMAT(DATE_SUB(now(),INTERVAL 4 DAY  ),'%Y%m%d'), 0 amount
+//        UNION ALL SELECT DATE_FORMAT(DATE_SUB(now(),INTERVAL 3 DAY  ),'%Y%m%d'), 0 amount
+//        UNION ALL SELECT DATE_FORMAT(DATE_SUB(now(),INTERVAL 2 DAY  ),'%Y%m%d'), 0 amount
+//        UNION ALL SELECT DATE_FORMAT(DATE_SUB(now(),INTERVAL 1 DAY  ),'%Y%m%d'), 0 amount
+//        UNION ALL SELECT DATE_FORMAT(DATE_SUB(now(),INTERVAL 0 DAY  ),'%Y%m%d'), 0 amount
+//)
+//        SELECT yyyymmdd,SUM(amount) amount
+//        from chart4
+//        GROUP BY yyyymmdd
+//        UNION All
+//        SELECT 'Total',SUM(amount) amount
+//        from chart4
+//        ORDER BY FIELD(yyyymmdd,'Total') DESC, yyyymmdd ASC;
 
-        query.groupBy(issue.miDt).orderBy(issue.miDt.desc());
+        EntityManager em = getEntityManager();
+        StringBuilder sb = new StringBuilder();
 
-        return query.fetch();
+        sb.append("WITH RECURSIVE chart4 AS ( \n");
+        sb.append("SELECT a.mi_dt yyyymmdd, sum(b.fd_tot_amt) amount \n");
+        sb.append("FROM mr_issue a \n");
+        sb.append("INNER JOIN fs_request_dtl b ON a.mi_id = b.mi_id \n");
+        sb.append("INNER JOIN fs_request b1 ON b.fr_id = b1.fr_id \n");
+        sb.append("INNER JOIN bs_franchise c ON a.fr_code = c.fr_code \n");
+        sb.append("WHERE a.br_code = ?1 \n");
+        sb.append("AND b1.fr_confirm_yn ='Y' AND b.fd_cancel ='N' \n");
+        sb.append("AND a.mi_dt > DATE_FORMAT(DATE_SUB(now(),INTERVAL 7 DAY  ),'%Y%m%d') \n"); // 7일전 조건문
+        sb.append("GROUP BY a.mi_dt \n");
+        sb.append("UNION ALL SELECT DATE_FORMAT(DATE_SUB(now(),INTERVAL 6 DAY  ),'%Y%m%d'), 0 amount \n");
+        sb.append("UNION ALL SELECT DATE_FORMAT(DATE_SUB(now(),INTERVAL 5 DAY  ),'%Y%m%d'), 0 amount \n");
+        sb.append("UNION ALL SELECT DATE_FORMAT(DATE_SUB(now(),INTERVAL 4 DAY  ),'%Y%m%d'), 0 amount \n");
+        sb.append("UNION ALL SELECT DATE_FORMAT(DATE_SUB(now(),INTERVAL 3 DAY  ),'%Y%m%d'), 0 amount \n");
+        sb.append("UNION ALL SELECT DATE_FORMAT(DATE_SUB(now(),INTERVAL 2 DAY  ),'%Y%m%d'), 0 amount \n");
+        sb.append("UNION ALL SELECT DATE_FORMAT(DATE_SUB(now(),INTERVAL 1 DAY  ),'%Y%m%d'), 0 amount \n");
+        sb.append("UNION ALL SELECT DATE_FORMAT(DATE_SUB(now(),INTERVAL 0 DAY  ),'%Y%m%d'), 0 amount \n");
+        sb.append(") \n");
+
+        sb.append("SELECT yyyymmdd,SUM(amount) amount \n");
+        sb.append("FROM chart4 \n");
+        sb.append("GROUP BY yyyymmdd \n");
+        sb.append("UNION ALL \n");
+        sb.append("SELECT '합계',SUM(amount) amount \n");
+        sb.append("FROM chart4 \n");
+        sb.append("ORDER BY FIELD(yyyymmdd,'합계') DESC, yyyymmdd ASC \n");
+
+        Query query = em.createNativeQuery(sb.toString());
+
+        query.setParameter(1, brCode);
+
+        return jpaResultMapper.list(query, IssueWeekAmountDto.class);
     }
 
     // 출고증인쇄 데이터 호출
