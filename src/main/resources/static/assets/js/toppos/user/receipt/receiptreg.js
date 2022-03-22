@@ -1696,6 +1696,7 @@ function onPaymentStageOne() {
             if (receiveCash) {
                 if (applyUncollectAmt && $("#totalAmt").html().toInt() - receiveCash > 0) {
                     alertCaution("미수전액완납시, <br>한번에 전액을 상환하셔야 합니다.", 1);
+                    return false;
                 }
                 paymentData.type = "cash";
                 paymentData.paymentAmount = receiveCash;
@@ -1705,13 +1706,18 @@ function onPaymentStageOne() {
             if (receiveCard) {
                 if (applyUncollectAmt && $("#totalAmt").html().toInt() - receiveCard > 0) {
                     alertCaution("미수전액완납시, <br>한번에 전액을 상환하셔야 합니다.", 1);
+                    return false;
                 }
                 paymentData.type = "card";
                 paymentData.paymentAmount = receiveCard;
             }
         }
 
-
+        if(!paymentData.paymentAmount) {
+            alertCaution("0원을 결제시도 할 수 없습니다.<br>미수금이 남은채로 창을 닫기를 원하시면<br>"
+                + "닫기 버튼을 눌러주세요.", 1);
+            return false;
+        }
 
         // type: card or cash
         // franchiseNo : 가맹점코드 3자리 문자열
@@ -2001,6 +2007,7 @@ function onConfirmFdTag() {
         nextFdTag = tag.substr(0,3) + "-" + tag.substr(-4);
         onCloseFdTag();
         alertSuccess("다음 택번호가 변경되었습니다.");
+        $("#fdTagPassword").val("");
     });
 }
 

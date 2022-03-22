@@ -195,6 +195,12 @@ gridColumnLayout[0] = [
                 item.bcBirthday.substr(4, 2) + "-" + item.bcBirthday.substr(6, 2);
         },
     }, {
+        dataField: "bcWeddingAnniversary",
+        headerText: "결혼기념일",
+        width: 100,
+        dataType: "date",
+        formatString: "yyyy-mm-dd",
+    }, {
         dataField: "insertDateTime",
         headerText: "가입일자",
         width: 100,
@@ -284,6 +290,9 @@ function onModifyCustomer(rowIndex) {
     $("#bcBirthYYYY").val(item.bcBirthday.substr(0, 4));
     $("#bcBirthMM").val(item.bcBirthday.substr(4, 2));
     $("#bcBirthDD").val(item.bcBirthday.substr(6, 2));
+    $("#bcWeddingAnniversaryYYYY").val(item.bcWeddingAnniversary.substr(0, 4));
+    $("bcWeddingAnniversaryhMM").val(item.bcWeddingAnniversary.substr(4, 2));
+    $("#bcWeddingAnniversaryDD").val(item.bcWeddingAnniversary.substr(6, 2));
     $("#bcAge").val(item.bcAge);
     $("#bcGrade").val(bcGradeName[item.bcGrade]);
     $("#bcGradeNo").val(item.bcGrade);
@@ -349,7 +358,9 @@ function onHpChange () {
 /* 입력된 폼 정보 저장 */
 function saveRegister() {
     const formData = new FormData(document.getElementById('userregForm'));
-    const birthday = $("#bcBirthYYYY").val()+$("#bcBirthMM").val()+$("#bcBirthDD").val();
+    const birthday = $("#bcBirthYYYY").val() + $("#bcBirthMM").val() + $("#bcBirthDD").val();
+    const weddingAnniversary = $("#bcWeddingAnniversaryYYYY").val() + $("#bcWeddingAnniversaryMM").val() 
+        + $("#bcWeddingAnniversaryDD").val();
 
     if(!$("#bcName").val()) {
         alertCaution("고객명을 입력해 주세요", 1);
@@ -378,6 +389,7 @@ function saveRegister() {
 
     formData.set("bcHp", formData.get("bcHp").numString());
     formData.append("bcBirthday", birthday);
+    formData.append("bcWeddingAnniversary", weddingAnniversary);
     formData.append("bcGrade", $("#bcGradeNo").val());
     formData.append("bcSignImage", $("#signImage").attr("src"));
 

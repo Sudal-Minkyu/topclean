@@ -1,14 +1,16 @@
 /* 가상키보드 사용 선언 */
 let vkey;
 $(function () {
+    getBoilerPlate();
+
     vkey = new VKeyboard();
     $("#signImage").hide();
 
-    if(모니터한개의경우) { // API가 도착하면 작업
-        $("#bcAgreeType").val("2");
-        $("#bcAgreeType option").first().attr("disabled", "");
-        $("#reqSign").attr("disabled", "");
-    }
+    // if(모니터한개의경우) { // API가 도착하면 작업
+    //     $("#bcAgreeType").val("2");
+    //     $("#bcAgreeType option").first().attr("disabled", "");
+    //     $("#reqSign").attr("disabled", "");
+    // }
 });
 
 /* 가상키보드 입력 대상이 되는 텍스트 필드나 텍스트 에어리어 */
@@ -28,7 +30,19 @@ vkeyProp[2] = {
     title : "특이사항",
 }
 
-
+/* 상용구 받아와서 특정 가상 키보드에 세팅하기 */
+function getBoilerPlate() {
+    const url = "/api/user/franchiseAddProcessList";
+    CommonUI.ajax(url, "GET", {baType: "0"}, function (res) {
+        let boilerPlate = [];
+        const data = res.sendData.keyWordData;
+        for({baName} of data) {
+            boilerPlate.push(baName);
+        }
+        vkeyProp[1].boilerplate = boilerPlate;
+        vkeyProp[2].boilerplate = boilerPlate;
+    });
+}
 
 
 /* 호출하여 목표 가상 키보드 띄우기, 0번부터 배열 순서대로 */

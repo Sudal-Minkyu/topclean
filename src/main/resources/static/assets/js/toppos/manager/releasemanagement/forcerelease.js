@@ -23,7 +23,6 @@ const dtos = {
             frTagNo: "s",
         },
         branchReceiptForceReleaseList: {
-            fdS4Type: "s", // 2022.03.03 추가, 지사출고타입
             fdId: "n",
             frName: "s",
 			insertDt: "s",
@@ -66,7 +65,6 @@ const comms = {
     getFrList() {
         CommonUI.ajax(urls.getFrList, "GET", false, function (res) {
             const data = res.sendData.franchiseList;
-            console.log(res);
             dv.chk(data, dtos.receive.managerBelongList, "지점에 속한 가맹점 받아오기");
             const $frList = $("#frList");
             data.forEach(obj => {
@@ -80,6 +78,7 @@ const comms = {
         dv.chk(searchCondition, dtos.send.branchReceiptForceReleaseList, "메인 그리드 검색 조건 보내기");
         CommonUI.ajax(urls.getMainGridList, "GET", searchCondition, function (res) {
             const data = CommonUI.toppos.killNullFromArray(res.sendData.gridListData);
+            dv.chk(data, dtos.receive.branchReceiptForceReleaseList, "메인 그리드 검색 결과 받기");
             grids.f.setData(0, data);
             // $("#exportXlsx").show();
         });
@@ -88,7 +87,6 @@ const comms = {
     executeReceipt(sendList) {
         dv.chk(sendList, dtos.send.branchRelease, "체크된 품목에 대해 최종 처리하기");
         CommonUI.ajax(urls.executeReceipt, "PARAM", sendList, function (res) {
-            console.log(res);
             alertSuccess("강제출고처리가 완료 되었습니다.");
             comms.getMainGridList(wares.searchCondition);
             // $("#exportXlsx").hide();
@@ -121,6 +119,7 @@ const grids = {
                 {
                     dataField: "frName",
                     headerText: "가맹점명",
+                    width: 200,
                     style: "grid_textalign_left",
                 }, {
                     dataField: "bcName",
@@ -140,13 +139,6 @@ const grids = {
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
                 }, {
-                    dataField: "fdS4Type",
-                    headerText: "출고타입",
-                    width: 60,
-                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
-                        return CommonData.name.fdS4Type[value];
-                    },
-                }, {
                     dataField: "fdTag",
                     headerText: "택번호",
                     width: 90,
@@ -157,7 +149,6 @@ const grids = {
                     dataField: "productName",
                     headerText: "상품명",
                     style: "grid_textalign_left",
-                    width: 200,
                     renderer : {
                         type : "TemplateRenderer",
                     },
