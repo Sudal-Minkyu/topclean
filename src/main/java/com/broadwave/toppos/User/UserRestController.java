@@ -208,7 +208,11 @@ public class UserRestController {
         // 멀티스크린 사용여부 가져오기
         FranchiseMultiscreenDto franchiseMultiscreenDto = headService.findByFranchiseMultiscreen(frCode);
         log.info("franchiseMultiscreenDto : "+franchiseMultiscreenDto);
-        data.put("frMultiscreenYn", franchiseMultiscreenDto.getFrMultiscreenYn());
+        if(franchiseMultiscreenDto == null || franchiseMultiscreenDto.getFrMultiscreenYn().equals("")){
+            data.put("frMultiscreenYn", "N");
+        }else{
+            data.put("frMultiscreenYn", franchiseMultiscreenDto.getFrMultiscreenYn());
+        }
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
@@ -306,11 +310,11 @@ public class UserRestController {
         HashMap<String,Object> customerListInfo;
 
         List<CustomerInfoDto> customerInfoListDto = userService.findByCustomerInfo(frCode, searchType, searchString);
-        log.info("customerInfoListDto : "+customerInfoListDto);
+//        log.info("customerInfoListDto : "+customerInfoListDto);
 
         // 임시저장한 내역이 존재하는지
         RequestTempDto requestTemp = receiptService.findByRequestTemp(frCode);
-        log.info("requestTemp : "+requestTemp);
+//        log.info("requestTemp : "+requestTemp);
         for (CustomerInfoDto customerInfoDto: customerInfoListDto) {
             customerListInfo = new HashMap<>();
             customerIdList.add(customerInfoDto.getBcId());

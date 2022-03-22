@@ -16,13 +16,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FranchiseMultiscreenDto {
+
     private String frMultiscreenYn; // 멀티스크린 사용여부
 
-    public String getFrMultiscreenYn() {
-        if(frMultiscreenYn == null){
-            return "N";
-        }else{
-            return frMultiscreenYn;
-        }
-    }
 }

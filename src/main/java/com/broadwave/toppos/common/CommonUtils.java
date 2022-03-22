@@ -24,7 +24,7 @@ public abstract class CommonUtils {
         if(phoneArray != null) {
             return phoneArray[0]+"-"+phoneArray[1]+"-"+phoneArray[2];
         }else{
-            return null;
+            return hp;
         }
     }
 
