@@ -5,7 +5,7 @@ import com.broadwave.toppos.Head.AddCost.AddCostDto;
 import com.broadwave.toppos.Head.Branoh.Branch;
 import com.broadwave.toppos.Head.Branoh.BranchListDto;
 import com.broadwave.toppos.Head.Branoh.BranchMapperDto;
-import com.broadwave.toppos.Head.Franchise.*;
+import com.broadwave.toppos.Head.Franchise.Franchise;
 import com.broadwave.toppos.Head.Franchise.FranchiseDtos.FranchiseInfoDto;
 import com.broadwave.toppos.Head.Franchise.FranchiseDtos.FranchiseListDto;
 import com.broadwave.toppos.Head.Franchise.FranchiseDtos.FranchiseMapperDto;
@@ -21,10 +21,10 @@ import com.broadwave.toppos.Head.Item.Group.C.Item;
 import com.broadwave.toppos.Head.Item.Group.C.ItemDto;
 import com.broadwave.toppos.Head.Item.Group.C.ItemListDto;
 import com.broadwave.toppos.Head.Item.Group.C.ItemSet;
-import com.broadwave.toppos.Head.Item.Price.FranchisePrice.*;
-import com.broadwave.toppos.Head.Item.Price.ItemPrice;
 import com.broadwave.toppos.Head.Item.ItemDtos.ItemPriceDto;
 import com.broadwave.toppos.Head.Item.ItemDtos.ItemPriceListDto;
+import com.broadwave.toppos.Head.Item.Price.FranchisePrice.*;
+import com.broadwave.toppos.Head.Item.Price.ItemPrice;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.RequestSearchDto;
 import com.broadwave.toppos.User.UserService.ReceiptService;
 import com.broadwave.toppos.common.AjaxResponse;
@@ -45,7 +45,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**
@@ -1366,28 +1365,13 @@ public class HeadRestController {
     @PostMapping("/noticeList")
     public ResponseEntity<Map<String,Object>> noticeList(@RequestParam("searchString")String searchString, @RequestParam("filterFromDt")String filterFromDt,
                                                              @RequestParam("filterToDt")String filterToDt,
-                                                             Pageable pageable, HttpServletRequest request) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
-        LocalDateTime fromDt = null;
-        if(filterFromDt != null){
-            filterFromDt = filterFromDt+" 00:00:00.000";
-            fromDt = LocalDateTime.parse(filterFromDt, formatter);
-    //            log.info("fromDt :"+fromDt);
-        }
-
-        LocalDateTime toDt = null;
-        if(filterToDt != null){
-            filterToDt = filterToDt+" 23:59:59.999";
-            toDt = LocalDateTime.parse(filterToDt, formatter);
-    //            log.info("toDt :"+toDt);
-        }
-
-        return noticeService.noticeList(searchString, fromDt, toDt, pageable, request, "1");
+                                                             Pageable pageable) {
+        return noticeService.noticeList(searchString, filterFromDt.replaceAll("-",""), filterToDt.replaceAll("-",""), pageable, "1");
     }
 
     //  공지사항 게시판 - 글보기
     @GetMapping("/noticeView")
-    public ResponseEntity<Map<String,Object>> noticeView(@RequestParam("hnId") Long hnId, HttpServletRequest request) {
+    public ResponseEntity<Map<String,Object>> noticeView(@RequestParam("hnId") Long hnId) {
         return noticeService.noticeView(hnId, "1");
     }
 

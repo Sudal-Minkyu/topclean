@@ -32,6 +32,9 @@ public class Notice {
     @Column(length = 100000, name="hn_content")
     private String hnContent; // 내용
 
+    @Column(name="hn_yyyymmdd")
+    private String hnYyyymmdd;
+
     @Column(name="insert_id")
     private String insert_id;
 

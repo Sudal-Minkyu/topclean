@@ -1,15 +1,13 @@
 package com.broadwave.toppos.Head.HeadService;
 
-import com.broadwave.toppos.Head.Notice.*;
 import com.broadwave.toppos.Head.Notice.NoticeDtos.NoticeListDto;
 import com.broadwave.toppos.Head.Notice.NoticeDtos.NoticeViewDto;
 import com.broadwave.toppos.Head.Notice.NoticeDtos.NoticeViewSubDto;
 import com.broadwave.toppos.Head.Notice.NoticeFile.NoticeFileListDto;
 import com.broadwave.toppos.Head.Notice.NoticeFile.NoticeFileRepository;
+import com.broadwave.toppos.Head.Notice.NoticeRepository;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
-import com.broadwave.toppos.Manager.TagNotice.TagNoticeFile.TagNoticeFileListDto;
 import com.broadwave.toppos.common.AjaxResponse;
-import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -17,8 +15,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,13 +23,11 @@ import java.util.Map;
 @Service
 public class NoticeService {
 
-    private final TokenProvider tokenProvider;
     private final NoticeRepository noticeRepository;
     private final NoticeFileRepository noticeFileRepository;
 
     @Autowired
-    public NoticeService(TokenProvider tokenProvider, NoticeRepository noticeRepository, NoticeFileRepository noticeFileRepository){
-        this.tokenProvider = tokenProvider;
+    public NoticeService(NoticeRepository noticeRepository, NoticeFileRepository noticeFileRepository){
         this.noticeRepository = noticeRepository;
         this.noticeFileRepository = noticeFileRepository;
     }
@@ -45,7 +39,7 @@ public class NoticeService {
     }
 
     // 공지사항 게시판 - 리스트 호출
-    public ResponseEntity<Map<String, Object>> noticeList(String searchString, LocalDateTime filterFromDt, LocalDateTime filterToDt, Pageable pageable, HttpServletRequest request, String type) {
+    public ResponseEntity<Map<String, Object>> noticeList(String searchString, String filterFromDt, String filterToDt, Pageable pageable, String type) {
         log.info("noticeList 호출성공");
 
         AjaxResponse res = new AjaxResponse();

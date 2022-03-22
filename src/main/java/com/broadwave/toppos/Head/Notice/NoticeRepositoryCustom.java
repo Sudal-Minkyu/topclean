@@ -16,7 +16,7 @@ import java.util.List;
  * Remark :
  */
 public interface NoticeRepositoryCustom {
-    Page<NoticeListDto> findByNoticeList(String searchString, LocalDateTime filterFromDt, LocalDateTime filterToDt, Pageable pageable);
+    Page<NoticeListDto> findByNoticeList(String searchString, String filterFromDt, String filterToDt, Pageable pageable);
 
     NoticeViewDto findByNoticeView(Long hnId);
     NoticeViewSubDto findByNoticePreView(Long hnId);

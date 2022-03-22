@@ -13,7 +13,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -51,7 +50,7 @@ public class NoticeRepositoryCustomImpl extends QuerydslRepositorySupport implem
 
     // 공지사항 리스트 데이터 호출
     @Override
-    public Page<NoticeListDto> findByNoticeList(String searchString, LocalDateTime filterFromDt, LocalDateTime filterToDt, Pageable pageable) {
+    public Page<NoticeListDto> findByNoticeList(String searchString, String filterFromDt, String filterToDt, Pageable pageable) {
         QNotice notice  = QNotice.notice;
 
         JPQLQuery<NoticeListDto> query = from(notice)
@@ -69,11 +68,11 @@ public class NoticeRepositoryCustomImpl extends QuerydslRepositorySupport implem
         }
 
         if(filterFromDt != null){
-            query.where(notice.insertDateTime.goe(filterFromDt));
+            query.where(notice.hnYyyymmdd.goe(filterFromDt));
         }
 
         if(filterToDt != null){
-            query.where(notice.insertDateTime.loe(filterToDt));
+            query.where(notice.hnYyyymmdd.loe(filterToDt));
         }
 
         final List<NoticeListDto> noticeListDtos = Objects.requireNonNull(getQuerydsl()).applyPagination(pageable, query).fetch();
