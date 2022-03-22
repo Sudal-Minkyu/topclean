@@ -388,8 +388,9 @@ const trigs = {
                 wares.currentRequest.deletePhotoList.push(parseInt(bfId));
             }
             if(addIdx) {
-                wares.currentRequest.addPhotoList.splice(parseInt(addIdx), 1);
+                delete wares.currentRequest.addPhotoList[addIdx];
             }
+
             $(this).parents(".tag-imgs__item").remove();
         });
 
@@ -615,7 +616,7 @@ function savePost() {
     const formData = new FormData();
     if(wares.currentRequest.addPhotoList) {
         for(addPhoto of wares.currentRequest.addPhotoList) { // 새로 촬영된 사진들의 추가
-            formData.append("addPhotoList", addPhoto);
+            if(addPhoto) formData.append("addPhotoList", addPhoto);
         }
     }
     
