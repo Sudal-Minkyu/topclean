@@ -92,7 +92,7 @@ public class TagGalleryService {
                 optionalTagGallery.get().setModify_id(login_id);
                 optionalTagGallery.get().setModifyDateTime(LocalDateTime.now());
 
-                if(tagGalleryMapperDto.getDeletePhotoList() != null) {
+                if(tagGalleryMapperDto.getDeletePhotoList().size() != 0) {
                     // AWS 파일 삭제
                     List<TagGalleryFile> tagGalleryFileList = tagGalleryFileRepository.findByTagGalleryFileDeleteList(tagGalleryMapperDto.getDeletePhotoList());
                     for(TagGalleryFile tagGalleryFile : tagGalleryFileList){

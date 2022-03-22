@@ -411,10 +411,13 @@ public class ReceiptReleaseService {
     public ResponseEntity<Map<String, Object>> branchDispatchPrint(List<String> miNoList) {
         log.info("branchDispatchPrint 호출");
 
+        log.info("miNoList : "+miNoList);
+
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
 
         List<IssueDispatchDto> issueDispatchDtos = issueRepository.findByDispatchPrintData(miNoList);
+        log.info("issueDispatchDtos : "+issueDispatchDtos);
         data.put("issueDispatchDtos",issueDispatchDtos);
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }

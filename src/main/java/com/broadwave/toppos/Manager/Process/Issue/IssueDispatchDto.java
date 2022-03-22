@@ -29,7 +29,7 @@ public class IssueDispatchDto {
     private String frTelNo; // 가맹점번호
     private String brTelNo; // 지사번호
 
-    private String qrCode; // QR코드
+    private String qrcode; // QR코드
 
     private String miDt; // 출고일자
     private Integer miDegree; // 출고차수
