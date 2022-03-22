@@ -66,7 +66,7 @@ public class IssueRepositoryCustomImpl extends QuerydslRepositorySupport impleme
         StringBuilder sb = new StringBuilder();
 
         sb.append("WITH RECURSIVE chart4 AS ( \n");
-        sb.append("SELECT a.mi_dt yyyymmdd, sum(b.fd_tot_amt) amount \n");
+        sb.append("SELECT DATE_FORMAT(a.mi_dt,'%m.%d') yyyymmdd, sum(b.fd_tot_amt) amount \n");
         sb.append("FROM mr_issue a \n");
         sb.append("INNER JOIN fs_request_dtl b ON a.mi_id = b.mi_id \n");
         sb.append("INNER JOIN fs_request b1 ON b.fr_id = b1.fr_id \n");
@@ -74,14 +74,14 @@ public class IssueRepositoryCustomImpl extends QuerydslRepositorySupport impleme
         sb.append("WHERE a.br_code = ?1 \n");
         sb.append("AND b1.fr_confirm_yn ='Y' AND b.fd_cancel ='N' \n");
         sb.append("AND a.mi_dt > DATE_FORMAT(DATE_SUB(now(),INTERVAL 7 DAY  ),'%Y%m%d') \n"); // 7일전 조건문
-        sb.append("GROUP BY a.mi_dt \n");
-        sb.append("UNION ALL SELECT DATE_FORMAT(DATE_SUB(now(),INTERVAL 6 DAY  ),'%Y%m%d'), 0 amount \n");
-        sb.append("UNION ALL SELECT DATE_FORMAT(DATE_SUB(now(),INTERVAL 5 DAY  ),'%Y%m%d'), 0 amount \n");
-        sb.append("UNION ALL SELECT DATE_FORMAT(DATE_SUB(now(),INTERVAL 4 DAY  ),'%Y%m%d'), 0 amount \n");
-        sb.append("UNION ALL SELECT DATE_FORMAT(DATE_SUB(now(),INTERVAL 3 DAY  ),'%Y%m%d'), 0 amount \n");
-        sb.append("UNION ALL SELECT DATE_FORMAT(DATE_SUB(now(),INTERVAL 2 DAY  ),'%Y%m%d'), 0 amount \n");
-        sb.append("UNION ALL SELECT DATE_FORMAT(DATE_SUB(now(),INTERVAL 1 DAY  ),'%Y%m%d'), 0 amount \n");
-        sb.append("UNION ALL SELECT DATE_FORMAT(DATE_SUB(now(),INTERVAL 0 DAY  ),'%Y%m%d'), 0 amount \n");
+        sb.append("GROUP BY DATE_FORMAT(a.mi_dt,'%m.%d') \n");
+        sb.append("UNION ALL SELECT DATE_FORMAT(DATE_SUB(now(),INTERVAL 6 DAY  ),'%m.%d'), 0 amount \n");
+        sb.append("UNION ALL SELECT DATE_FORMAT(DATE_SUB(now(),INTERVAL 5 DAY  ),'%m.%d'), 0 amount \n");
+        sb.append("UNION ALL SELECT DATE_FORMAT(DATE_SUB(now(),INTERVAL 4 DAY  ),'%m.%d'), 0 amount \n");
+        sb.append("UNION ALL SELECT DATE_FORMAT(DATE_SUB(now(),INTERVAL 3 DAY  ),'%m.%d'), 0 amount \n");
+        sb.append("UNION ALL SELECT DATE_FORMAT(DATE_SUB(now(),INTERVAL 2 DAY  ),'%m.%d'), 0 amount \n");
+        sb.append("UNION ALL SELECT DATE_FORMAT(DATE_SUB(now(),INTERVAL 1 DAY  ),'%m.%d'), 0 amount \n");
+        sb.append("UNION ALL SELECT DATE_FORMAT(DATE_SUB(now(),INTERVAL 0 DAY  ),'%m.%d'), 0 amount \n");
         sb.append(") \n");
 
         sb.append("SELECT yyyymmdd,SUM(amount) amount \n");
