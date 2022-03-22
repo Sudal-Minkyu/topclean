@@ -132,6 +132,7 @@ const comms = {
                     <a href="${photo.bfPath + photo.bfFilename}" data-lightbox="images" data-title="이미지 확대">
                         <img src="${photo.bfPath + "s_" + photo.bfFilename}" class="tag-imgs__img" alt=""/>
                     </a>
+                    <button class="tab-imgs__delete deletePhotoBtn">삭제</button>
                 </li>`
                 $("#photoList").append(photoHtml);
                 $("#noImgScreen").hide();
@@ -378,6 +379,12 @@ const trigs = {
             takePhoto();
         });
 
+        $("#photoList").on("click", ".deletePhotoBtn", function() {
+            console.log(this);
+            $(this).attr("data-bfId");
+            wares.currentRequest.deletePhotoList;
+        });
+
         $("#removePost").on("click", function () {
             alertCheck("현재 게시물을 삭제하시겠습니까?");
             $("#checkDelSuccessBtn").on("click", function () {
@@ -499,6 +506,7 @@ function takePhoto() {
                 <a href="${takenPic}" data-lightbox="images" data-title="이미지 확대">
                     <img src="${takenPic}" class="tag-imgs__img" alt=""/>
                 </a>
+                <button class="tab-imgs__delete deletePhotoBtn">삭제</button>
             </li>`
             if(!wares.currentRequest.addPhotoList) {
                 wares.currentRequest.addPhotoList = [];
