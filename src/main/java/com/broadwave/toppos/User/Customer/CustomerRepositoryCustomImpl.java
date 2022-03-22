@@ -44,6 +44,7 @@ public class CustomerRepositoryCustomImpl extends QuerydslRepositorySupport impl
                         customer.bcAgreeType,
                         customer.bcSignImage,
                         customer.bcRemark,
+                        customer.bcWeddingAnniversary,
                         customer.bcQuitYn,
                         customer.bcQuitDate,
                         customer.insertDateTime
@@ -79,7 +80,8 @@ public class CustomerRepositoryCustomImpl extends QuerydslRepositorySupport impl
                         customer.bcGrade,
                         customer.bcValuation,
                         customer.bcRemark,
-                        customer.bcLastRequestDt
+                        customer.bcLastRequestDt,
+                        customer.bcWeddingAnniversary
                 ));
 
         query.where(customer.frCode.eq(frCode));

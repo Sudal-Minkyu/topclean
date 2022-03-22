@@ -293,7 +293,7 @@ public class ManagerRestController {
     //  확인품 등록 API
     @PostMapping("branchInspectionSave")
     public ResponseEntity<Map<String,Object>> branchInspectionSave(@ModelAttribute InspeotMapperDto inspeotMapperDto, MultipartHttpServletRequest multi) throws IOException {
-        return inspectService.InspectionSave(inspeotMapperDto, multi, AWSBUCKETURL);
+        return inspectService.InspectionSave(inspeotMapperDto, multi, AWSBUCKETURL,"2");
     }
 
     //  등록 확인품 삭제

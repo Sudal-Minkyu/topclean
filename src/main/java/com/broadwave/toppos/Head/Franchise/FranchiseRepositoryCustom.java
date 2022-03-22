@@ -23,4 +23,6 @@ public interface FranchiseRepositoryCustom {
 
     FranchiseNameInfoDto findByFranchiseNameInfo(String frCode);
 
+    // 멀티스크린 사용여부 가져오기
+    FranchiseMultiscreenDto findByFranchiseMultiscreen(String frCode);
 }

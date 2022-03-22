@@ -75,8 +75,8 @@ public class UserService {
     }
 
     // 핸드폰 번호로 고객 조회
-    public Optional<Customer> findByBcHp(String bcHp) {
-        return customerRepository.findByBcHp(bcHp);
+    public Optional<Customer> findByBcHp(String bcHp, String frCode) {
+        return customerRepository.findByBcHp(bcHp, frCode);
     }
 
     // 고유 ID값으로 고객 조회

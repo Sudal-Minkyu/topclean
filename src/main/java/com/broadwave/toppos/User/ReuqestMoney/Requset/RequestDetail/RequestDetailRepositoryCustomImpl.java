@@ -261,47 +261,38 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
 
     // 수기마감 querydsl
     public List<RequestDetailCloseListDto> findByRequestDetailCloseList(String frCode){
-        QRequestDetail requestDetail = QRequestDetail.requestDetail;
-        QRequest request = QRequest.request;
-        QItemGroup itemGroup = QItemGroup.itemGroup;
-        QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
-        QItem item = QItem.item;
-        QCustomer customer = QCustomer.customer;
-        JPQLQuery<RequestDetailCloseListDto> query = from(requestDetail)
-                .innerJoin(requestDetail.frId, request)
-                .innerJoin(request.bcId, customer)
-                .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
-                .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
-                .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
-                .where(request.frConfirmYn.eq("Y"))
-                .where(requestDetail.frId.frCode.eq(frCode).and(requestDetail.fdCancel.eq("N")).and(requestDetail.fdState.eq("S1")))
-                .where(itemGroup.bgItemGroupcode.notLike("D18"))
-                .select(Projections.constructor(RequestDetailCloseListDto.class,
-                        requestDetail.id,
-                        request.frYyyymmdd,
-                        customer.bcName,
-                        requestDetail.fdTag,
-                        itemGroup.bgName,
-                        itemGroupS.bsName,
-                        item.biName,
-                        requestDetail.fdPriceGrade,
-                        requestDetail.fdRetryYn,
-                        requestDetail.fdPressed,
-                        requestDetail.fdAdd1Amt,
-                        requestDetail.fdAdd1Remark,
-                        requestDetail.fdRepairAmt,
-                        requestDetail.fdRepairRemark,
-                        requestDetail.fdWhitening,
-                        requestDetail.fdPollution,
-                        requestDetail.fdWaterRepellent,
-                        requestDetail.fdStarch,
-                        requestDetail.fdUrgentYn,
-                        requestDetail.fdTotAmt,
-                        requestDetail.fdRemark,
-                        requestDetail.fdColor
-                ));
-        query.orderBy(requestDetail.id.asc());
-        return query.fetch();
+
+        EntityManager em = getEntityManager();
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("SELECT  DISTINCT \n");
+
+        sb.append("a.fd_id, b.fr_yyyymmdd, c.bc_name, a.fd_tag, f.bg_name, g.bs_name, e.bi_name, \n");
+        sb.append("a.fd_price_grade, a.fd_retry_yn, a.fd_pressed, a.fd_add1_amt, a.fd_add1_remark, a.fd_repair_amt, \n");
+        sb.append("a.fd_repair_remark, a.fd_whitening, a.fd_pollution, a.fd_starch, a.fd_water_repellent, a.fd_urgent_yn, \n");
+        sb.append("a.fd_tot_amt, a.fd_remark, a.fd_color \n");
+
+        sb.append("FROM fs_request_dtl a \n");
+
+        sb.append("INNER JOIN fs_request b on a.fr_id=b.fr_id \n");
+        sb.append("INNER JOIN bs_customer c on b.bc_id=c.bc_id \n");
+        sb.append("INNER JOIN bs_item e on a.bi_itemcode=e.bi_itemcode \n");
+        sb.append("INNER JOIN bs_item_group f ON e.bg_item_groupcode=f.bg_item_groupcode \n");
+        sb.append("INNER JOIN bs_item_group_s g on e.bs_item_groupcode_s=g.bs_item_groupcode_s and e.bg_item_groupcode=g.bg_item_groupcode \n");
+        sb.append("LEFT OUTER JOIN fs_request_inspect h ON a.fd_id =h.fd_id AND h.fi_type ='F' \n");
+
+        sb.append("WHERE b.fr_confirm_yn='Y' \n");
+        sb.append("AND b.fr_code= ?1 \n");
+        sb.append("AND a.fd_cancel='N' \n");
+        sb.append("AND f.bg_item_groupcode != 'D18' \n");
+        sb.append("AND (a.fd_state='S1' AND IFNULL(h.fi_customer_confirm,'X') IN ('X','2'))\n"); // 접수상태이면서 확인품이없거나 확인품이 고객수락인경우
+        sb.append("ORDER BY a.fd_id ASC \n");
+
+        Query query = em.createNativeQuery(sb.toString());
+
+        query.setParameter(1, frCode);
+
+        return jpaResultMapper.list(query, RequestDetailCloseListDto.class);
     }
 
     // 모바일 전용 수기마감 querydsl
@@ -312,14 +303,16 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
 
         sb.append("UPDATE fs_request_dtl a\n");
         sb.append("     INNER JOIN fs_request b ON a.fr_id = b.fr_id \n");
-        sb.append("     LEFT OUTER JOIN fs_request_inspect c ON a.fd_id = c.fd_id \n");
+        sb.append("     LEFT OUTER JOIN fs_request_inspect c ON a.fd_id =c.fd_id AND c.fi_type ='F' \n");
+        sb.append("     INNER JOIN bs_item d on a.bi_itemcode=d.bi_itemcode \n");
+        sb.append("     INNER JOIN bs_item_group e ON d.bg_item_groupcode=e.bg_item_groupcode \n");
         sb.append("         SET a.fd_state = 'S2', a.fd_state_dt= NOW(), \n");
         sb.append("         a.fd_pre_state = 'S1', a.fd_pre_state_dt= NOW(), \n");
         sb.append("         a.fd_s2_dt = DATE_FORMAT(NOW(),'%Y%m%d'), a.fd_s2_time= NOW(), a.fd_s2_type= '02', \n");
         sb.append("         a.fd_fr_state = 'S2', a.fd_fr_state_time= NOW(), \n");
         sb.append("         a.modify_id = 'QRClose', a.modify_date= NOW() \n");
-        sb.append("             WHERE b.fr_code = ?1 AND b.fr_confirm_yn ='Y' AND a.fd_cancel ='N' AND a.fd_state ='S1' \n");
-        sb.append("             AND IFNULL(c.fi_customer_confirm,'x') IN('2','x' ); \n"); // # 미확인이거나 거절한경우 제외
+        sb.append("             WHERE b.fr_code = ?1 AND b.fr_confirm_yn ='Y' AND a.fd_cancel ='N' AND e.bg_item_groupcode != 'D18' \n");
+        sb.append("             AND (a.fd_state='S1' AND IFNULL(c.fi_customer_confirm,'X') IN ('X','2')); \n"); // # 접수상태이면서 확인품이없거나 확인품이 고객수락인경우
 
         Query query = em.createNativeQuery(sb.toString());
         query.setParameter(1, frCode);

@@ -4,11 +4,9 @@ import com.broadwave.toppos.Head.Franchise.QFranchise;
 import com.broadwave.toppos.Head.Item.Group.A.QItemGroup;
 import com.broadwave.toppos.Head.Item.Group.B.QItemGroupS;
 import com.broadwave.toppos.Head.Item.Group.C.QItem;
-import com.broadwave.toppos.Manager.Process.Issue.IssueWeekAmountDto;
 import com.broadwave.toppos.User.Customer.Customer;
 import com.broadwave.toppos.User.Customer.QCustomer;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.QRequestDetail;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.manager.RequestDetailBranchReturnCurrentListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.*;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.CaseBuilder;
@@ -21,7 +19,6 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-import java.time.LocalDateTime;
 import java.util.List;
 
 /**

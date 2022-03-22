@@ -55,13 +55,13 @@ const comms = {
             const dataLength = data.gridListData.length;
             console.log(data);
 
-            for (let i = 0; i < data.gridListData.length; i++) {
-                if (data.removeFrId.includes(data.gridListData[i].fdId)) {
-                    console.log(data.gridListData[i].fdId);
-                    data.gridListData.splice(i, 1);
-                    i--;
-                }
-            }
+            // for (let i = 0; i < data.gridListData.length; i++) {
+            //     if (data.removeFrId.includes(data.gridListData[i].fdId)) {
+            //         console.log(data.gridListData[i].fdId);
+            //         data.gridListData.splice(i, 1);
+            //         i--;
+            //     }
+            // }
 
             dv.chk(data.gridListData, dtos.receive.franchiseReceiptCloseList, '마감 리스트 항목 받아오기');
             grids.f.setData(0, data.gridListData);

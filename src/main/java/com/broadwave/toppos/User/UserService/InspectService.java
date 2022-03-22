@@ -373,7 +373,7 @@ public class InspectService {
 
     // 검품등록 API(가맹점, 지사)
     @Transactional
-    public ResponseEntity<Map<String, Object>> InspectionSave(InspeotMapperDto inspeotMapperDto, MultipartHttpServletRequest multi, String AWSBUCKETURL) throws NoSuchElementException {
+    public ResponseEntity<Map<String, Object>> InspectionSave(InspeotMapperDto inspeotMapperDto, MultipartHttpServletRequest multi, String AWSBUCKETURL, String type) throws NoSuchElementException {
         log.info("InspectionSave 호출");
 
         AjaxResponse res = new AjaxResponse();
@@ -386,9 +386,9 @@ public class InspectService {
         MessageHistory messageHistory = new MessageHistory();
         Inspeot saveInspeot;
         Long inspeotId = null;
-        String strMessage;
-        String message;
-        String nextmessage;
+        String strMessage = null;
+        String message = null;
+        String nextmessage = null;
         RequestDetailBranchInspeotDto requestDetailBranchInspeotDto = requestDetailRepository.findByBranchInspeotDto(inspeotMapperDto.getFdId());
         if(requestDetailBranchInspeotDto == null){
             return ResponseEntity.ok(res.fail(ResponseErrorCode.TP024.getCode(),"검풍등록 할 "+ResponseErrorCode.TP024.getDesc(), "문자", "재조회 후 다시 시도해주세요."));
@@ -405,13 +405,14 @@ public class InspectService {
             inspeot.setFiSendMsgYn("N");
             inspeot.setFiCustomerConfirm("1");
 
-            message = requestDetailBranchInspeotDto.getRequestDetail().getFrId().getBcId().getBcName()+"님의 확인품이 등록되었습니다.";
-            nextmessage = "확인품 등록알림";
-            strMessage =
-                    "\n\n택번호 : "+requestDetailBranchInspeotDto.getRequestDetail().getFdTag().charAt(3)+"-"+requestDetailBranchInspeotDto.getRequestDetail().getFdTag().substring(4,7)+
-                    "\n상품명 : "+requestDetailBranchInspeotDto.getBgName()+" "+requestDetailBranchInspeotDto.getBiName()+
-                    "\n검품내용 : "+inspeotMapperDto.getFiComment();
-
+            if(type.equals("2")) {
+                message = requestDetailBranchInspeotDto.getRequestDetail().getFrId().getBcId().getBcName() + "님의 확인품이 등록되었습니다.";
+                nextmessage = "확인품 등록알림";
+                strMessage =
+                        "\n\n택번호 : " + requestDetailBranchInspeotDto.getRequestDetail().getFdTag().charAt(3) + "-" + requestDetailBranchInspeotDto.getRequestDetail().getFdTag().substring(4, 7) +
+                                "\n상품명 : " + requestDetailBranchInspeotDto.getBgName() + " " + requestDetailBranchInspeotDto.getBiName() +
+                                "\n검품내용 : " + inspeotMapperDto.getFiComment();
+            }
             // 밑에 주석 값은 널로 등록한다.
 //            inspeot.setFiProgressStateDt(); -> null;
 //            inspeot.setFiMessage(); -> null;
@@ -475,28 +476,29 @@ public class InspectService {
                 log.info(e+" -> 사진 미포함 등록");
             }
 
-            message = message+strMessage+"\n통합조회 페이지를 통해 확인해 주세요.";
-            nextmessage = nextmessage+strMessage+"\n통합조회 페이지를 통해 확인해 주세요.";
+            if(type.equals("2")){
+                message = message+strMessage+"\n통합조회 페이지를 통해 확인해 주세요.";
+                nextmessage = nextmessage+strMessage+"\n통합조회 페이지를 통해 확인해 주세요.";
 
-            // 송신이력 저장
-            messageHistory.setBcId(requestDetailBranchInspeotDto.getRequestDetail().getFrId().getBcId());
-            messageHistory.setFmType("01");
-            messageHistory.setFrCode(requestDetailBranchInspeotDto.getRequestDetail().getFrId().getFrCode());
-            messageHistory.setBrCode(requestDetailBranchInspeotDto.getRequestDetail().getFrId().getBrCode());
-            messageHistory.setFmMessage(message);
-            messageHistory.setInsert_id(login_id);
-            messageHistory.setInsertDateTime(LocalDateTime.now());
-            messageHistoryRepository.save(messageHistory);
+                // 송신이력 저장
+                messageHistory.setBcId(requestDetailBranchInspeotDto.getRequestDetail().getFrId().getBcId());
+                messageHistory.setFmType("01");
+                messageHistory.setFrCode(requestDetailBranchInspeotDto.getRequestDetail().getFrId().getFrCode());
+                messageHistory.setBrCode(requestDetailBranchInspeotDto.getRequestDetail().getFrId().getBrCode());
+                messageHistory.setFmMessage(message);
+                messageHistory.setInsert_id(login_id);
+                messageHistory.setInsertDateTime(LocalDateTime.now());
+                messageHistoryRepository.save(messageHistory);
 
-            boolean successBoolean = requestRepository.InsertMessage(message, nextmessage,"", templatecodeCheckt,
-                    "fs_request_inspect", inspeotId, requestDetailBranchInspeotDto.getFrTelNo(), templatecodeNumber);
-            log.info("successBoolean : "+successBoolean);
-            if(successBoolean) {
-                log.info("메세지 인서트 성공");
-            }else{
-                log.info("메세지 인서트 실패");
+                boolean successBoolean = requestRepository.InsertMessage(message, nextmessage,"", templatecodeCheckt,
+                        "fs_request_inspect", inspeotId, requestDetailBranchInspeotDto.getFrTelNo(), templatecodeNumber);
+                log.info("successBoolean : "+successBoolean);
+                if(successBoolean) {
+                    log.info("메세지 인서트 성공");
+                }else{
+                    log.info("메세지 인서트 실패");
+                }
             }
-
 
         }
 

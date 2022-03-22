@@ -216,4 +216,18 @@ public class FranchiseRepositoryCustomImpl extends QuerydslRepositorySupport imp
         return query.fetchOne();
     }
 
+    @Override
+    public FranchiseMultiscreenDto findByFranchiseMultiscreen(String frCode) {
+
+        QFranchise franchise = QFranchise.franchise;
+
+        JPQLQuery<FranchiseMultiscreenDto> query = from(franchise)
+                .select(Projections.constructor(FranchiseMultiscreenDto.class,
+                        franchise.frMultiscreenYn
+                ));
+
+        query.where(franchise.frCode.eq(frCode));
+        return query.fetchOne();
+    }
+
 }

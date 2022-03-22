@@ -451,4 +451,9 @@ public class HeadService {
         return franchiseRepository.findByFranchiseNameInfo(frCode);
     }
 
+    // 멀티스크린 사용여부 가져오기
+    public FranchiseMultiscreenDto findByFranchiseMultiscreen(String frCode) {
+        return franchiseRepository.findByFranchiseMultiscreen(frCode);
+    }
+
 }

@@ -3,7 +3,6 @@ package com.broadwave.toppos.User.UserService;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.User.Customer.Customer;
 import com.broadwave.toppos.User.Customer.CustomerRepository;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotYnDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotRepositoryCustom;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetail;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.*;
@@ -319,14 +318,14 @@ public class ReceiptStateService {
 
         // 수기마감 페이지에 보여줄 리스트 호출
         List<RequestDetailCloseListDto> requestDetailCloseListDtos = requestDetailRepository.findByRequestDetailCloseList(frCode);
-        List<Long> fdIdList = new ArrayList<>();
-        for(RequestDetailCloseListDto requestDetailCloseListDto : requestDetailCloseListDtos){
-            fdIdList.add(requestDetailCloseListDto.getFdId());
-        }
-        List<InspeotYnDto> inspeotYnDtos = inspeotRepositoryCustom.findByInspeotStateList(fdIdList,"1");
-
+//        List<Long> fdIdList = new ArrayList<>();
+//        for(RequestDetailCloseListDto requestDetailCloseListDto : requestDetailCloseListDtos){
+//            fdIdList.add(requestDetailCloseListDto.getFdId());
+//        }
+//        List<InspeotYnDto> inspeotYnDtos = inspeotRepositoryCustom.findByInspeotStateList(fdIdList,"1");
+        log.info("requestDetailCloseListDtos : "+requestDetailCloseListDtos);
         data.put("gridListData",requestDetailCloseListDtos);
-        data.put("removeFrId",inspeotYnDtos);
+//        data.put("removeFrId",inspeotYnDtos);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }

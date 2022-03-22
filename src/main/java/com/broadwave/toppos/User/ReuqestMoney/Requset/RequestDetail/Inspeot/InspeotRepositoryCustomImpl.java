@@ -93,7 +93,7 @@ public class InspeotRepositoryCustomImpl extends QuerydslRepositorySupport imple
                 ));
 
         if(type.equals("1")){
-            query.where(inspeot.fdId.id.in(fdIdList).and(inspeot.fiCustomerConfirm.eq("1")).and(inspeot.fiCustomerConfirm.eq("3")));
+            query.where(inspeot.fdId.id.in(fdIdList).and((inspeot.fiCustomerConfirm.eq("1").or(inspeot.fiCustomerConfirm.eq("3")))));
         }else{
             query.where(inspeot.fdId.id.in(fdIdList));
             query.where(inspeot.fiType.eq("B"));

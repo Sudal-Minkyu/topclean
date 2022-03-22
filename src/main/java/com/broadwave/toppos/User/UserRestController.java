@@ -4,6 +4,7 @@ import com.broadwave.toppos.Account.AccountPasswordDto;
 import com.broadwave.toppos.Aws.AWSS3Service;
 import com.broadwave.toppos.Head.AddCost.AddCostDto;
 import com.broadwave.toppos.Head.Franchise.FranchiseDtos.FranchiseInfoDto;
+import com.broadwave.toppos.Head.Franchise.FranchiseDtos.FranchiseMultiscreenDto;
 import com.broadwave.toppos.Head.Franchise.FranchiseDtos.FranchiseUserDto;
 import com.broadwave.toppos.Head.HeadService.HeadService;
 import com.broadwave.toppos.Head.HeadService.NoticeService;
@@ -188,6 +189,30 @@ public class UserRestController {
 
 
 //@@@@@@@@@@@@@@@@@@@@@ 가맹점 고객조회 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+    // 고객 등록 API
+    @GetMapping("franchiseMultiscreen")
+    @ApiOperation(value = "멀티스크린 사용여부 API" , notes = "현재 가맹점의 멀티스크린 사용여부 정보를 가져온다.")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
+    public ResponseEntity<Map<String,Object>> franchiseMultiscreen(HttpServletRequest request){
+        log.info("franchiseMultiscreen 호출");
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
+        log.info("현재 접속한 가맹점 코드 : "+frCode);
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        // 멀티스크린 사용여부 가져오기
+        FranchiseMultiscreenDto franchiseMultiscreenDto = headService.findByFranchiseMultiscreen(frCode);
+        log.info("franchiseMultiscreenDto : "+franchiseMultiscreenDto);
+        data.put("frMultiscreenYn", franchiseMultiscreenDto.getFrMultiscreenYn());
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
     // 고객 등록 API
     @PostMapping("customerSave")
     @ApiOperation(value = "고객등록 API" , notes = "현재 로그인한 가맹점의 고객을 등록한다.")
@@ -237,7 +262,7 @@ public class UserRestController {
             }
         }else{
             log.info("신규 고객 입니다.");
-            Optional<Customer> optionalCustomerByHp= userService.findByBcHp(customer.getBcHp());
+            Optional<Customer> optionalCustomerByHp= userService.findByBcHp(customer.getBcHp(),frCode);
             if(optionalCustomerByHp.isPresent()){
                 return ResponseEntity.ok(res.fail(ResponseErrorCode.TP014.getCode(), ResponseErrorCode.TP014.getDesc(), null, null));
             }else{
@@ -298,6 +323,7 @@ public class UserRestController {
             customerListInfo.put("bcRemark", customerInfoDto.getBcRemark());
             customerListInfo.put("bcAddress", customerInfoDto.getBcAddress());
             customerListInfo.put("bcLastRequestDt", customerInfoDto.getBcLastRequestDt());
+            customerListInfo.put("bcWeddingAnniversary", customerInfoDto.getBcWeddingAnniversary());
             customerListInfo.put("beforeUncollectMoney", 0);
             customerListInfo.put("saveMoney", 0);
             if(requestTemp != null){
@@ -365,6 +391,7 @@ public class UserRestController {
             customerListInfo.put("bcRemark", customerListDto.getBcRemark());
             customerListInfo.put("bcQuitYn", customerListDto.getBcQuitYn());
             customerListInfo.put("bcQuitDate", customerListDto.getBcQuitDate());
+            customerListInfo.put("bcWeddingAnniversary", customerListDto.getBcWeddingAnniversary());
             customerListInfo.put("beforeUncollectMoney", 0);
             customerListInfo.put("saveMoney", 0);
             customerListInfo.put("insertDateTime", customerListDto.getInsertDateTime());
@@ -888,7 +915,7 @@ public class UserRestController {
     // 검품 등록 API -> 지사도 사용
     @PostMapping("franchiseInspectionSave")
     public ResponseEntity<Map<String,Object>> franchiseInspectionSave(@ModelAttribute InspeotMapperDto inspeotMapperDto, MultipartHttpServletRequest multi) throws IOException {
-        return inspectService.InspectionSave(inspeotMapperDto, multi, AWSBUCKETURL);
+        return inspectService.InspectionSave(inspeotMapperDto, multi, AWSBUCKETURL,"1");
     }
 
     //  통합조회용 - 등록 검품 삭제

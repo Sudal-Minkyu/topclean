@@ -12,7 +12,7 @@ import java.time.format.DateTimeFormatter;
  * Time :
  * Remark : Toppos 고객테이블 ListDto
  */
-@Setter
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -31,65 +31,10 @@ public class CustomerListDto {
     private String bcAgreeType; // 동의타입 (온라인 : 1, 서면 : 2)
     private String bcSignImage; // 동의 사인이미지 Blob객체사용
     private String bcRemark; // 특이사항
+    private String bcWeddingAnniversary; // 결혼기념일(8글자)
     private String bcQuitYn; // 탈퇴여부 (기본값:N)
     private LocalDateTime bcQuitDate; // 탈퇴일시
     private LocalDateTime insertDateTime; // 가입일시
-
-    public Long getBcId() {
-        return bcId;
-    }
-
-    public String getBcName() {
-        return bcName;
-    }
-
-    public String getBcHp() {
-        return bcHp;
-    }
-
-    public String getBcSex() {
-        return bcSex;
-    }
-
-    public String getBcAddress() {
-        return bcAddress;
-    }
-
-    public String getBcBirthday() {
-        return bcBirthday;
-    }
-
-    public String getBcAge() {
-        return bcAge;
-    }
-
-    public String getBcGrade() {
-        return bcGrade;
-    }
-
-    public String getBcValuation() {
-        return bcValuation;
-    }
-
-    public String getBcMessageAgree() {
-        return bcMessageAgree;
-    }
-
-    public String getBcAgreeType() {
-        return bcAgreeType;
-    }
-
-    public String getBcSignImage() {
-        return bcSignImage;
-    }
-
-    public String getBcRemark() {
-        return bcRemark;
-    }
-
-    public String getBcQuitYn() {
-        return bcQuitYn;
-    }
 
     public String getBcQuitDate() {
         if(bcQuitDate!=null){
