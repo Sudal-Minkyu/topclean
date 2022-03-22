@@ -131,6 +131,10 @@ const comms = {
 
     dispatchPrint(miNoList) {
         dv.chk(miNoList, dtos.send.branchDispatchPrint, "출고증 인쇄를 위한 miNoList 보내기");
+        for(let i=0; i < res.sendData.issueDispatchDtos.length; i++){
+            const frCode = res.sendData.issueDispatchDtos[i]["qrcode"];
+            res.sendData.issueDispatchDtos[i]["qrcode"] = location.protocol+"//"+location.host+"/qrpickup?frcode="+frCode;
+        }
         CommonUI.ajax(urls.dispatchPrint, "GET", miNoList, function (res) {
             dispatchPrintData(res.sendData.issueDispatchDtos);
         });

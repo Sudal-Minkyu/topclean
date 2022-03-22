@@ -14,6 +14,7 @@ const dtos = {
             type: "s", // 1 미완료, 2 전체, 3 가맹 응답
         },
         tagGallerySave: {
+            btId: "s",
             btBrandName: "s",
             btInputDate: "s",
             btMaterial: "s",
@@ -95,13 +96,8 @@ const comms = {
 
     putNewTaglost(formData) {
         const testObj = Object.fromEntries(formData);
-        if(testObj.btId) {
-            dtos.send.tagGallerySave.btId = "s";
-        } else {
-            delete dtos.send.tagGallerySave.btId;
-        }
         console.log(testObj);
-        if(!testObj.btId) testObj.btId = 0; // btId값이 없는 신규등록건
+        if(!testObj.btId) testObj.btId = ""; // btId값이 없는 신규등록건
         dv.chk(testObj, dtos.send.tagGallerySave, "택분실 등록, 수정하기");
         CommonUI.ajax(urls.putNewTaglost, "POST", formData, function (res)  {
             alertSuccess("게시물 저장이 완료되었습니다.");
@@ -549,6 +545,7 @@ function closeTaglostPop() {
             CommonUI.toppos.underTaker(e, "tagboard : 카메라 스트림 찾아서 끄기");
         }
     }
+    comms.getMainList(wares.searchCondition);
 }
 
 function enableDatepicker() {
@@ -597,8 +594,12 @@ function savePost() {
     }
 
     const formData = new FormData();
-    for(addPhoto of wares.currentRequest.addPhotoList) { // 새로 촬영된 사진들의 추가
-        formData.append("addPhotoList", addPhoto);
+    if(wares.currentRequest.addPhotoList) {
+        for(addPhoto of wares.currentRequest.addPhotoList) { // 새로 촬영된 사진들의 추가
+            formData.append("addPhotoList", addPhoto);
+        }
+    } else {
+        formData.append("addPhotoList", "");
     }
     
     if(wares.currentRequest.btId) {
