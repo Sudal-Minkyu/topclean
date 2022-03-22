@@ -14,7 +14,6 @@ const dtos = {
             type: "s", // 1 미완료, 2 전체, 3 가맹 응답
         },
         tagGallerySave: {
-            btId: "n",
             btBrandName: "s",
             btInputDate: "s",
             btMaterial: "s",
@@ -24,7 +23,10 @@ const dtos = {
         },
         tagGalleryDelete: {
             btId: "nr",
-        }
+        },
+        tagGalleryEnd: {
+            btId: "nr",
+        },
     },
     receive: {
         tagGalleryList: {
@@ -69,6 +71,7 @@ const urls = {
     putNewTaglost: "/api/manager/tagGallerySave",
     getDetail: "/api/manager/tagGalleryDetail",
     removeTaglost: "/api/manager/tagGalleryDelete",
+    endTaglost: "/api/manager/tagGalleryEnd",
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
@@ -92,11 +95,17 @@ const comms = {
 
     putNewTaglost(formData) {
         const testObj = Object.fromEntries(formData);
+        if(testObj.btId) {
+            dtos.send.tagGallerySave.btId = "s";
+        } else {
+            delete dtos.send.tagGallerySave.btId;
+        }
         console.log(testObj);
         if(!testObj.btId) testObj.btId = 0; // btId값이 없는 신규등록건
         dv.chk(testObj, dtos.send.tagGallerySave, "택분실 등록, 수정하기");
         CommonUI.ajax(urls.putNewTaglost, "POST", formData, function (res)  {
-            console.log(res);
+            alertSuccess("게시물 저장이 완료되었습니다.");
+            closeTaglostPop();
         });
     },
 
@@ -129,12 +138,20 @@ const comms = {
                 $("#photoList").append(photoHtml);
                 $("#noImgScreen").hide();
             }
+
+            /* 가맹점 응답의 텍스트 구성 */
+            let responseList = ""
+            for(fr of wares.currentRequest.tagGalleryCheckList) {
+                responseList += fr.frName + " ";
+                responseList += fr.brCompleteYn === "Y" ? "(완료)" : "(확인요청)";
+                responseList += " ,"
+            }
+            $("#frResponse").val(responseList.substring(0, responseList.length - 2));
+
             $("#btBrandName").val(wares.currentRequest.btBrandName);
             $("#btMaterial").val(wares.currentRequest.btMaterial);
             $("#btRemark").val(wares.currentRequest.btRemark);
             $("#btInputDate").val(wares.currentRequest.btInputDate);
-
-            $("#frResponse").val(""); // 프랜차이즈의 반응 리스트를 조합하여 생성
 
             openTaglostPop();
         });
@@ -149,7 +166,18 @@ const comms = {
             closeTaglostPop();
             console.log(res);
         });
-    }
+    },
+
+    endTaglost(target) {
+        console.log(target);
+        // dv.chk(target, dtos.send., "택분실 게시종료 아이디 보내기");
+        CommonUI.ajax(urls.endTaglost, "PARAM", target, function (res) {
+            alertSuccess("게시 종료가 완료되었습니다.");
+            resetTaglostPop();
+            closeTaglostPop();
+            console.log(res);
+        });
+    },
 };
 
 /* .s : AUI 그리드 관련 설정들
@@ -229,7 +257,7 @@ const grids = {
                         }
                     }
                 }, {
-                    dataField: "",
+                    dataField: "tagGalleryCheckFranchise",
                     headerText: "가맹응답상태",
                     style: "grid_textalign_left",
                     labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
@@ -338,12 +366,14 @@ const trigs = {
             savePost();
         });
 
-        $("#removePost").on("click", function () {
-
-        });
-
         $("#endPost").on("click", function () {
-
+            alertCheck("게시종료 하시겠습니까?");
+            $("#checkDelSuccessBtn").on("click", function () {
+                const target = {
+                    btId: wares.currentRequest.btId,
+                }
+                comms.endTaglost(target);
+            });
         });
 
         $("#takePhotoBtn").on("click", function () {
@@ -365,6 +395,7 @@ const trigs = {
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
 const wares = {
     currentRequest: {},
+    searchCondition: {},
 }
 
 $(function() { // 페이지가 로드되고 나서 실행
@@ -414,12 +445,14 @@ function searchOrder() {
         filterToDt: $("#filterToDt").val().numString(),
         type: $("#type").val(), // 1 미완료, 2 전체, 3 내 가맹점
     };
+    wares.searchCondition = searchCondition;
 
     comms.getMainList(searchCondition);
 }
 
 function closeTaglostPop() {
     $("#taglostPop").removeClass("active");
+    comms.getMainList(wares.searchCondition);
 }
 
 async function openTaglostPop() {
@@ -558,7 +591,7 @@ function b64toBlob(dataURI) { // 파일을 ajax 통신에 쓰기 위해 변환
 }
 
 function savePost() {
-    if(!wares.currentRequest.addPhotoList) {
+    if(!$("#photoList").children().length) {
         alertCaution("최소한 한장의 사진을 촬영해 주세요.", 1);
         return false;
     }
@@ -568,6 +601,10 @@ function savePost() {
         formData.append("addPhotoList", addPhoto);
     }
     
+    if(wares.currentRequest.btId) {
+        formData.append("btId", wares.currentRequest.btId);
+    }
+
     formData.append("deletePhotoList", wares.currentRequest.deletePhotoList ? wares.currentRequest.deletePhotoList : "");
     formData.append("btBrandName", $("#btBrandName").val());
     formData.append("btMaterial", $("#btMaterial").val());

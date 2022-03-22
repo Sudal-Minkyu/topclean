@@ -37,7 +37,7 @@ const dtos = {
         },
 
         tagGalleryDetail: {
-            frCompeleteCheck: "n", // 0 해제상태, 1 가맹점 확인만 함, 2 최종확인완료
+            frCompleteCheck: "n", // 0 해제상태, 1 가맹점 확인만 함, 2 최종확인완료
             tagGallery: {
                 btId: "n",
                 btBrandName: "s",
@@ -71,6 +71,7 @@ const comms = {
     getMainList(searchCondition) {
         dv.chk(searchCondition, dtos.send.tagGalleryList);
         CommonUI.ajax(urls.getMainList, "GET", searchCondition, function (res) {
+            console.log(res);
             const dataList = res.sendData.tagGalleryList;
             dv.chk(dataList, dtos.receive.tagGalleryList, "조회된 택분실 리스트 받기");
 
@@ -91,7 +92,7 @@ const comms = {
             console.log(res);
 
             const refinedData = {
-                frCompeleteCheck: data.frCompeleteCheck,
+                frCompleteCheck: data.frCompleteCheck,
                 btId: data.tagGallery.btId,
                 btBrandName: data.tagGallery.btBrandName,
                 btInputDate: data.tagGallery.btInputDate,
@@ -113,27 +114,38 @@ const comms = {
                 $("#photoList").append(photoHtml);
             }
 
+            /* 가맹점 응답의 텍스트 구성 */
+            let responseList = ""
+            for(fr of wares.currentRequest.tagGalleryCheckList) {
+                responseList += fr.frName + " ";
+                responseList += fr.brCompleteYn === "Y" ? "(완료)" : "(확인요청)";
+                responseList += " ,"
+            }
+            $("#frResponse").val(responseList.substring(0, responseList.length - 2));
+
             $("#btBrandName").val(wares.currentRequest.btBrandName);
             $("#btMaterial").val(wares.currentRequest.btMaterial);
             $("#btRemark").val(wares.currentRequest.btRemark);
             $("#btInputDate").val(wares.currentRequest.btInputDate);
 
-            $("#frResponse").val(""); // 프랜차이즈의 반응 리스트를 조합하여 생성
 
             $frCheck = $("#frCheck");
             $frCheckLabel = $("#frCheck").siblings("label");
             $frComplete = $("#frComplete");
 
-            switch(wares.frCompeleteCheck) {
+            switch(wares.currentRequest.frCompleteCheck) {
                 case 0 :
                     $frCheck.prop("checked", false);
                     $frCheckLabel.show();
+                    $frCheck.prop("disabled", false);
                     $frComplete.hide();
                     break;
                 case 1 :
                     $frCheck.prop("checked", true);
                     $frCheckLabel.show();
+                    $frCheck.prop("disabled", false);
                     $frComplete.show();
+                    $frComplete.prop("disabled", false);
                     break;
                 case 2 :
                     $frCheck.prop("checked", true);
@@ -234,7 +246,7 @@ const grids = {
                         }
                     }
                 }, {
-                    dataField: "",
+                    dataField: "tagGalleryCheckFranchise",
                     headerText: "가맹응답상태",
                     style: "grid_textalign_left",
                     labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
@@ -268,7 +280,7 @@ const grids = {
                 showRowNumColumn : false,
                 showStateColumn : false,
                 enableFilter : false,
-                rowHeight : 100,
+                rowHeight : 80,
                 headerHeight : 48,
             };
         },
@@ -412,12 +424,14 @@ function searchOrder() {
         filterToDt: $("#filterToDt").val().numString(),
         type: $("#type").val(), // 1 미완료, 2 전체, 3 내 가맹점
     };
+    wares.searchCondition = searchCondition;
 
     comms.getMainList(searchCondition);
 }
 
 function closeTaglostPop() {
     $("#taglostPop").removeClass("active");
+    comms.getMainList(wares.searchCondition);
 }
 
 function resetTaglostPop() {
