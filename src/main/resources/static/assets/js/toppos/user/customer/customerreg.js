@@ -3,6 +3,12 @@ let vkey;
 $(function () {
     vkey = new VKeyboard();
     $("#signImage").hide();
+
+    if(모니터한개의경우) { // API가 도착하면 작업
+        $("#bcAgreeType").val("2");
+        $("#bcAgreeType option").first().attr("disabled", "");
+        $("#reqSign").attr("disabled", "");
+    }
 });
 
 /* 가상키보드 입력 대상이 되는 텍스트 필드나 텍스트 에어리어 */

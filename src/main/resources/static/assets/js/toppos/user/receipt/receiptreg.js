@@ -120,8 +120,8 @@ $(function() {
         console.log(initialData);
 
         setBgMenu(false);
-
         setNextTag(initialData.etcData.fdTag);
+        setPreDefinedKeywords();
         frTagNo = initialData.etcData.fdTag.substring(0, 3);
     });
 
@@ -2118,4 +2118,28 @@ function resultFunction(msg) {
     currentRequest.fdAgreeType = "1";
     putItemIntoGrid();
     alertSuccess("고객께서 서명을 완료하셨습니다.<br>접수된 항목을 리스트에 추가합니다.");
+}
+
+/* 추가요금과 수선항목의 상용구 버튼 나열 */
+function setPreDefinedKeywords() {
+    const $addCostBoilerList = $("#addCostBoilerList");
+    const $repairBoilerList = $("#repairBoilerList");
+
+    for(const [i, obj] of initialData.addAmountData.entries()) {
+        $addCostBoilerList.append(`
+            <li class="add-cost__example-item">
+                <button class="add-cost__example-btn">${obj.baName}</button>
+            </li>
+        `);
+        if(i === 11) break;
+    }
+
+    for(const [i, obj] of initialData.repairListData.entries()) {
+        $repairBoilerList.append(`
+            <li class="add-cost__example-item">
+                <button class="add-cost__example-btn">${obj.baName}</button>
+            </li>
+        `);
+        if(i === 11) break;
+    }
 }

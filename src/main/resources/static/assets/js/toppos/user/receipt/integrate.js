@@ -315,6 +315,7 @@ const comms = {
             initialData = req.sendData;
             dv.chk(initialData, dtos.receive.itemGroupAndPriceList, "initialData 받아오기");
             console.log(initialData);
+            setPreDefinedKeywords();
         });
     },
 
@@ -1410,6 +1411,10 @@ function onPageLoad() {
         'maxWidth': 1100,
         'positionFromTop': 190
     });
+
+    $('.pop__close').on('click', function(e) {
+        $(this).parents('.pop').removeClass('active');
+    })
 }
 
 function modifyOrder(rowIndex) {
@@ -2046,5 +2051,29 @@ function chkParams() {
         $("#filterFromDt").val(date);
         $("#filterToDt").val(date);
         $("#searchCustomer").trigger("click");
+    }
+}
+
+/* 추가요금과 수선항목의 상용구 버튼 나열 */
+function setPreDefinedKeywords() {
+    const $addCostBoilerList = $("#addCostBoilerList");
+    const $repairBoilerList = $("#repairBoilerList");
+
+    for(const [i, obj] of initialData.addAmountData.entries()) {
+        $addCostBoilerList.append(`
+            <li class="add-cost__example-item">
+                <button class="add-cost__example-btn">${obj.baName}</button>
+            </li>
+        `);
+        if(i === 11) break;
+    }
+
+    for(const [i, obj] of initialData.repairListData.entries()) {
+        $repairBoilerList.append(`
+            <li class="add-cost__example-item">
+                <button class="add-cost__example-btn">${obj.baName}</button>
+            </li>
+        `);
+        if(i === 11) break;
     }
 }
