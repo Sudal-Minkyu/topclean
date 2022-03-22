@@ -1,10 +1,7 @@
 package com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos;
 
 import com.broadwave.toppos.User.Customer.Customer;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -14,7 +11,7 @@ import java.time.LocalDateTime;
  * Time :
  * Remark : Toppos 가맹점 접수마스트 RequestInfoDto
  */
-@Setter
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -24,7 +21,7 @@ public class RequestInfoDto {
     private String frNo; // 접수코드
     private Customer bcId; // 고객 ID값
     private String frCode; // 가맹점코드
-    private String bcCode; // 지점코드
+    private String brCode; // 지점코드
     private String frYyyymmdd; // 접수일자
     private Integer frQty; // 접수건수
     private Integer frNormalAmount; // 접수금액
@@ -40,79 +37,4 @@ public class RequestInfoDto {
     private String modity_id;
     private LocalDateTime modity_date;
 
-    public String getFrRefType() {
-        return frRefType;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getFrNo() {
-        return frNo;
-    }
-
-    public Customer getBcId() {
-        return bcId;
-    }
-
-    public String getFrCode() {
-        return frCode;
-    }
-
-    public String getBcCode() {
-        return bcCode;
-    }
-
-    public String getFrYyyymmdd() {
-        return frYyyymmdd;
-    }
-
-    public Integer getFrQty() {
-        return frQty;
-    }
-
-    public Integer getFrNormalAmount() {
-        return frNormalAmount;
-    }
-
-    public Integer getFrDiscountAmount() {
-        return frDiscountAmount;
-    }
-
-    public Integer getFrTotalAmount() {
-        return frTotalAmount;
-    }
-
-    public Integer getFrPayAmount() {
-        return frPayAmount;
-    }
-
-    public String getFrUncollectYn() {
-        return frUncollectYn;
-    }
-
-    public String getFrConfirmYn() {
-        return frConfirmYn;
-    }
-
-    public String getFrRefBoxCode() {
-        return frRefBoxCode;
-    }
-
-    public String getFr_insert_id() {
-        return fr_insert_id;
-    }
-
-    public LocalDateTime getFr_insert_date() {
-        return fr_insert_date;
-    }
-
-    public String getModity_id() {
-        return modity_id;
-    }
-
-    public LocalDateTime getModity_date() {
-        return modity_date;
-    }
 }

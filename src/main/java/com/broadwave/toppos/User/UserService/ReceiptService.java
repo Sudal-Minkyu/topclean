@@ -499,6 +499,7 @@ public class ReceiptService {
 
 
     //  접수페이지 가맹점 세탁접수 결제 API
+    @Transactional
     public ResponseEntity<Map<String, Object>> requestPayment(PaymentSet paymentSet, HttpServletRequest request) {
         log.info("requestPayment 호출");
 
@@ -967,6 +968,7 @@ public class ReceiptService {
         String nextmessage;
         String buttonJson;
         String bcHp;
+        String frTelNo;
         Long frId;
 
         // 가격 콤마찍기
@@ -1045,10 +1047,16 @@ public class ReceiptService {
             frId= requestDetailMessageDto.getFrId();
             bcHp = requestDetailMessageDto.getCustomer().getBcHp();
 
+            if(requestDetailMessageDto.getFrTelNo() != null){
+                frTelNo = "("+requestDetailMessageDto.getFrTelNo()+")";
+            }else{
+                frTelNo = "";
+            }
+
             uncollect_message = "전일미수금 : "+decimalFormat.format(preUncollectAmount)+"원, 당일미수금 : "+decimalFormat.format(curUncollectAmount)+"원\n"+
                     "미수금상환액 : "+decimalFormat.format(fpCollectAmt)+"원, 전체 미수금 : "+decimalFormat.format(totalUncollectAmount)+"원\n";
             message = greet+requestDetailMessageDto.getCustomer().getBcName()+"님\n\n고객님의 세탁접수가 완료 되었습니다.\n\n" +
-                    "대리점 : "+requestDetailMessageDto.getFrName()+"("+ CommonUtils.hpNumberChange(requestDetailMessageDto.getFrTelNo())+")\n\n접수내역\n"+requestDetailMessageDto.getBiName()+" "+requestDetailMessageDto.getBgName();
+                    "대리점 : "+requestDetailMessageDto.getFrName()+frTelNo+"\n\n접수내역\n"+requestDetailMessageDto.getBiName()+" "+requestDetailMessageDto.getBgName();
 
             int qty = requestDetailMessageDto.getFrQty()-1;
             if(requestDetailMessageDto.getFrQty() > 1){

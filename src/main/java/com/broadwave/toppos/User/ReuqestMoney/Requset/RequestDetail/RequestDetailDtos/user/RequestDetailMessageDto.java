@@ -1,6 +1,7 @@
 package com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user;
 
 import com.broadwave.toppos.User.Customer.Customer;
+import com.broadwave.toppos.common.CommonUtils;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -28,5 +29,17 @@ public class RequestDetailMessageDto {
     private Integer frPayAmount; // 총 결제금액
     private String bgName; // 대분류명
     private String biName; // 상품명
+
+    public String getFrTelNo() {
+        if(frTelNo != null) {
+            if(frTelNo.equals("")){
+                return null;
+            }else{
+                return CommonUtils.hpNumberChange(frTelNo);
+            }
+        }else{
+            return null;
+        }
+    }
 
 }

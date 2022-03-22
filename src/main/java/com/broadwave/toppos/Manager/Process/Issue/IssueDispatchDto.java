@@ -53,7 +53,11 @@ public class IssueDispatchDto {
 
     public String getFrTelNo() {
         if(frTelNo != null) {
-            return CommonUtils.hpNumberChange(frTelNo);
+            if(frTelNo.equals("")){
+                return null;
+            }else{
+                return CommonUtils.hpNumberChange(frTelNo);
+            }
         }else{
             return null;
         }
@@ -61,7 +65,11 @@ public class IssueDispatchDto {
 
     public String getBrTelNo() {
         if(brTelNo != null) {
-            return CommonUtils.hpNumberChange(brTelNo);
+            if(brTelNo.equals("")){
+                return null;
+            }else{
+                return CommonUtils.hpNumberChange(brTelNo);
+            }
         }else{
             return null;
         }
