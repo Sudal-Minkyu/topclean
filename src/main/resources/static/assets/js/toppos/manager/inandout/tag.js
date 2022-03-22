@@ -281,9 +281,13 @@ const trigs = {
                 $("#foreTag").val($("#frList option:selected").attr("data-tagno"));
                 if($(this).val() === "0") {
                     $("#aftTag").val("");
-                    $("#aftTag").attr("disabled", "");
+                    $("#foreTag").val("");
+                    $(".doubleTag").css("display", "none");
+                    $(".singleTag").css("display", "flex");
                 } else {
-                    $("#aftTag").removeAttr("disabled");
+                    $("#fullTag").val("");
+                    $(".doubleTag").css("display", "flex");
+                    $(".singleTag").css("display", "none");
                 }
             });
 
@@ -294,6 +298,19 @@ const trigs = {
             const $aftTag = $("#aftTag");
             $aftTag.on("keyup", function (e) {
                 $aftTag.val($aftTag.val().numString());
+                if(e.originalEvent.code === "Enter" || e.originalEvent.code === "NumpadEnter") {
+                    searchOrder();
+                }
+            });
+
+            const $fullTag = $("#fullTag");
+            $fullTag.on("keyup", function (e) {
+                let refinedValue = $fullTag.val().numString();
+                if(refinedValue.length > 3) {
+                    refinedValue = refinedValue.substring(0, 3) + "-" + refinedValue.substring(3, 7);
+                }
+                $fullTag.val(refinedValue);
+
                 if(e.originalEvent.code === "Enter" || e.originalEvent.code === "NumpadEnter") {
                     searchOrder();
                 }
@@ -331,23 +348,21 @@ function onPageLoad() {
 }
 
 function searchOrder() {
-    const frId = $("#frList").val();
-    const aftTag = $("#aftTag").val();
-    if(frId === "") {
-        alertCaution("가맹점을 선택해 주세요.", 1);
-        return false;
-    }
-    if(aftTag === "" && parseInt(frId)) {
-        alertCaution("택번호를 입력해 주세요.", 1);
-        return false;
-    }
+    const frId = parseInt($("#frList").val());
 
     const searchCondition = {
-        tagNo: aftTag.numString(),
-        franchiseId: $("#frList").val(), };
+        franchiseId: frId,
+    };
 
-    if(searchCondition.tagNo.length !== 0 && searchCondition.tagNo.length !==4) {
-        alertCaution("택번호는 완전히 입력하거나,<br>입력하지 말아주세요.(전체검색)", 1);
+    if(parseInt(frId)) {
+        searchCondition.tagNo = $("#aftTag").val().numString();
+    } else {
+        searchCondition.tagNo = $("#fullTag").val().numString();
+    }
+
+    console.log(searchCondition);
+    if((searchCondition.tagNo.length !==4 && frId) || (searchCondition.tagNo.length !==7 && !frId)) {
+        alertCaution("택번호를 완전히 입력해 주세요.", 1);
         return false;
     }
 
