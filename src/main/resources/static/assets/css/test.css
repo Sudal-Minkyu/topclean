@@ -3226,10 +3226,13 @@ textarea {
 	width: 21.25rem;
 	height: 18.125rem;
 	margin: 0 auto;
-	background: #f8f8f8 url(/assets/images/clothes__back.svg) no-repeat;
+	background: #f8f8f8 url(/assets/images/clothes__front.svg) no-repeat;
 	background-position: center center;
 	background-size: 9.75rem 15rem;
 	border-radius: 0.625rem;
+}
+.pop__pollution-content.back {
+    background-image: url(/assets/images/clothes__back.svg);
 }
 .pop__position {
 	position: absolute;

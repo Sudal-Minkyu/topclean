@@ -1809,6 +1809,7 @@ textarea {
 }
 .tag-imgs__item {
     flex: 1;
+    position: relative;
     min-width: 33.3333%;
     width: 33.3333%;
     max-width: 33.3333%;
@@ -1829,6 +1830,22 @@ textarea {
 }
 .tag-imgs__item:only-child .tag-imgs__img {
     width: 68%;
+}
+.tag-imgs__delete {
+    position: absolute;
+    top: 0.313rem;
+    right: 0.313rem;
+    width: 30px;
+    height: 30px;
+    background: rgba(0, 0, 0, .4) url(/assets/images/icon__X--w.svg) no-repeat;
+    background-size: 30px 30px;
+    background-position: center center;
+    border: 0 none;
+    text-indent: -9999rem;
+}
+.tag-imgs__item:only-child .tag-imgs__delete {
+    top: 0;
+    right: 146px;
 }
 .tag-info {
     position: relative;
