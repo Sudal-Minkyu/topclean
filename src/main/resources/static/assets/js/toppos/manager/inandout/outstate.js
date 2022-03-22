@@ -116,7 +116,7 @@ const comms = {
         CommonUI.ajax(urls.dispatchPrint, "GET", miNoList, function (res) {
             for(let i=0; i < res.sendData.issueDispatchDtos.length; i++){
                 const frCode = res.sendData.issueDispatchDtos[i]["qrcode"];
-                res.sendData.issueDispatchDtos[i]["qrcode"] = location.protocol+"//"+location.host+"/qrpickup?frcode="+frCode;
+                res.sendData.issueDispatchDtos[i]["qrcode"] = location.protocol+"//"+location.host+"/mobile/unAuth/qrpickup?frcode="+frCode;
             }
             dispatchPrintData(res.sendData.issueDispatchDtos);
         });

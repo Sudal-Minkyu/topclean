@@ -98,6 +98,8 @@ const comms = {
         const testObj = Object.fromEntries(formData);
         console.log(testObj);
         if(!testObj.btId) testObj.btId = ""; // btId값이 없는 신규등록건
+        if(!testObj.addPhotoList) testObj.addPhotoList = []; // btId값이 없는 신규등록건
+        if(!testObj.deletePhotoList) testObj.deletePhotoList = []; // btId값이 없는 신규등록건
         dv.chk(testObj, dtos.send.tagGallerySave, "택분실 등록, 수정하기");
         CommonUI.ajax(urls.putNewTaglost, "POST", formData, function (res)  {
             alertSuccess("게시물 저장이 완료되었습니다.");
@@ -604,7 +606,9 @@ function savePost() {
         formData.append("btId", wares.currentRequest.btId);
     }
 
-    formData.append("deletePhotoList", wares.currentRequest.deletePhotoList ? wares.currentRequest.deletePhotoList : "");
+    if(wares.currentRequest.deletePhotoList) {
+        formData.append("deletePhotoList", wares.currentRequest.deletePhotoList);
+    }
     formData.append("btBrandName", $("#btBrandName").val());
     formData.append("btMaterial", $("#btMaterial").val());
     formData.append("btInputDate", $("#btInputDate").val().numString());
