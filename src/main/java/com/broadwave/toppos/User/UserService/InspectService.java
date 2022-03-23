@@ -303,11 +303,12 @@ public class InspectService {
     }
 
     //  통합조회용 - 결제취소 요청
+    @Transactional
     public ResponseEntity<Map<String, Object>> franchiseRequestDetailCencel(Long fpId, String type, HttpServletRequest request) {
         log.info("franchiseRequestDetailCencel 호출");
 
-        log.info("결제 ID fpId : "+fpId);
-        log.info("적립급/취소 타입 : "+type);
+//        log.info("결제 ID fpId : "+fpId);
+//        log.info("적립급/취소 타입 : "+type);
 
         AjaxResponse res = new AjaxResponse();
 
@@ -328,15 +329,27 @@ public class InspectService {
                     return ResponseEntity.ok(res.fail(ResponseErrorCode.TP022.getCode(), "결제 취소 할 " + ResponseErrorCode.TP022.getDesc(), null, null));
                 }else{
                     log.info("결제 취소합니다.");
+                    List<Request> requestList = requestRepository.findByRequestPaymentList(fpId);
+//                    log.info("requestList : "+requestList);
+                    for(int i=0; i<requestList.size(); i++){
+//                        log.info(i+"번째의 ID : "+requestList.get(i).getId());
+                        requestList.get(i).setFpId(null);
+                        requestList.get(i).setFrUncollectYn("Y");
+                        requestList.get(i).setModify_date(LocalDateTime.now());
+                        requestList.get(i).setModify_id(login_id);
+                    }
+
                     optionalPayment.get().setFpCancelYn("Y");
-                    paymentRepository.save(optionalPayment.get());
 
                     // 마스터테이블의 계산가격을 업데이트한다.
                     optionalRequest.get().setFrPayAmount(optionalRequest.get().getFrPayAmount()-optionalPayment.get().getFpAmt());
                     optionalRequest.get().setFrUncollectYn("Y");
                     optionalRequest.get().setModify_id(login_id);
                     optionalRequest.get().setModify_date(LocalDateTime.now());
+
+                    paymentRepository.save(optionalPayment.get());
                     requestRepository.save(optionalRequest.get());
+                    requestRepository.saveAll(requestList);
                 }
             }else{
                 if(!optionalRequest.isPresent()){

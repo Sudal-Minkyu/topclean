@@ -28,6 +28,7 @@ public class TagGalleryListDto {
     private String btMaterial; // 소재
     private String btRemark; // 특이사항
     private String frName; // 가맹점명
+    private String brCloseYn; // 종료(게시물내림) 여부 , 기본값 N
 
     public StringBuffer getBtInputDate() {
         if(!btInputDate.equals("")){

@@ -216,6 +216,7 @@ public class TagGalleryService {
             tagGalleryInfo.put("btMaterial", tagGalleryListDto.getBtMaterial());
             tagGalleryInfo.put("btRemark", tagGalleryListDto.getBtRemark());
             tagGalleryInfo.put("tagGalleryCheckFranchise", tagGalleryListDto.getFrName());
+            tagGalleryInfo.put("brCloseYn", tagGalleryListDto.getBrCloseYn());
 
             List<TagGalleryFileListDto> tagGalleryFileListDto = tagGalleryFileRepository.findByTagGalleryFileList(Long.parseLong(String.valueOf(tagGalleryListDto.getBtId())), 3);
             tagGalleryInfo.put("bfPathFilename", tagGalleryFileListDto);

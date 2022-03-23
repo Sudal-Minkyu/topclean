@@ -190,7 +190,7 @@ public class UserRestController {
 
 //@@@@@@@@@@@@@@@@@@@@@ 가맹점 고객조회 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-    // 고객 등록 API
+    // 멀티스크린 사용여부 API
     @GetMapping("franchiseMultiscreen")
     @ApiOperation(value = "멀티스크린 사용여부 API" , notes = "현재 가맹점의 멀티스크린 사용여부 정보를 가져온다.")
     @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})

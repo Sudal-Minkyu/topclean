@@ -19,4 +19,7 @@ public interface RequestRepository extends JpaRepository<Request,Long>, RequestR
     @Query("select a from Request a where a.id in :frIdList order by a.id desc")
     List<Request> findByRequestList(List<Long> frIdList);
 
+    @Query("select a from Request a where a.fpId.id in :fpId")
+    List<Request> findByRequestPaymentList(Long fpId);
+
 }

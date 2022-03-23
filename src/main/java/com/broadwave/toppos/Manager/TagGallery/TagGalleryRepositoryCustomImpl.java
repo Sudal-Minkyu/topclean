@@ -39,7 +39,7 @@ public class TagGalleryRepositoryCustomImpl extends QuerydslRepositorySupport im
         EntityManager em = getEntityManager();
         StringBuilder sb = new StringBuilder();
 
-        sb.append("SELECT a.insert_date, a.bt_id, a.bt_brand_name, a.bt_input_date, a.bt_material, a.bt_remark, c.fr_name \n");
+        sb.append("SELECT a.insert_date, a.bt_id, a.bt_brand_name, a.bt_input_date, a.bt_material, a.bt_remark, c.fr_name, a.br_close_yn \n");
         sb.append("FROM br_tag_gallery a \n");
         sb.append("LEFT OUTER JOIN br_tag_gallery_check b ON b.bt_id = a.bt_id \n");
         sb.append("LEFT OUTER JOIN bs_franchise c ON c.fr_code = b.fr_code \n");
@@ -71,7 +71,8 @@ public class TagGalleryRepositoryCustomImpl extends QuerydslRepositorySupport im
                         tagGallery.btBrandName,
                         tagGallery.btInputDate,
                         tagGallery.btMaterial,
-                        tagGallery.btRemark
+                        tagGallery.btRemark,
+                        tagGallery.brCloseYn
                     ));
         return query.fetchOne();
     }

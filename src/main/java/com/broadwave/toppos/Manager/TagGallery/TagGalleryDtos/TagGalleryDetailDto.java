@@ -26,6 +26,7 @@ public class TagGalleryDetailDto {
     private String btInputDate; // 예상 지사입고일
     private String btMaterial; // 소재
     private String btRemark; // 특이사항
+    private String brCloseYn; // 종료(게시물내림) 여부 , 기본값 N
 
     public StringBuffer getBtInputDate() {
         if(!btInputDate.equals("")){

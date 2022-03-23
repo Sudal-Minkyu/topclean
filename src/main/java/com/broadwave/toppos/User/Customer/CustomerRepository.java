@@ -8,7 +8,7 @@ import java.util.Optional;
 
 @Repository
 public interface CustomerRepository extends JpaRepository<Customer,Long> {
-    @Query("select a from Customer a where a.bcHp = :bcHp and a.frCode = :frCode")
+    @Query("select a from Customer a where a.bcHp = :bcHp and a.frCode = :frCode group by a.bcHp")
     Optional<Customer> findByBcHp(String bcHp, String frCode);
 
     @Query("select a from Customer a where a.bcId = :bcId")

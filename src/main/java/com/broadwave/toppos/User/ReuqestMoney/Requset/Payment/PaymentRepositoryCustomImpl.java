@@ -40,7 +40,7 @@ public class PaymentRepositoryCustomImpl extends QuerydslRepositorySupport imple
 
                         payment.id,
                         payment.fpType,
-                        payment.fpAmt,
+                        payment.fpRealAmt, // 2022/3/23 MK -> fpAmt(결제금액)에서 fpRealAmt(실제결제금액)으로 변경
 
                         payment.fpCatIssuername,
                         payment.fpCatApprovalno,
