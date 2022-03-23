@@ -280,6 +280,8 @@ $(function () {
             const resultData = req.sendData.franchiseInfoData;
             resultData.frContractStateValue = resultData.frContractState;
             setFieldData(3, resultData);
+            const brData = AUIGrid.getRowsByValue(gridId[2], "brCode", resultData.brCode)[0];
+            setFieldData(4, brData);
         });
     });
 

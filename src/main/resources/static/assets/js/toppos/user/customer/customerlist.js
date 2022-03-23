@@ -23,6 +23,8 @@ $(function() {
     })
 
     vkey = new VKeyboard();
+
+    getBoilerPlate();
 });
 /* 가상키보드 사용 */
 let vkey;
@@ -60,6 +62,20 @@ vkeyProp[3] = {
 
 /* 가상키보드 입력 대상이 되는 텍스트 필드나 텍스트 에어리어 */
 let vkeypadTargetId = ["addSaveMoney", "bcHp"];
+
+/* 상용구 받아와서 특정 가상 키보드에 세팅하기 */
+function getBoilerPlate() {
+    const url = "/api/user/franchiseAddProcessList";
+    CommonUI.ajax(url, "GET", {baType: "0"}, function (res) {
+        let boilerPlate = [];
+        const data = res.sendData.keyWordData;
+        for({baName} of data) {
+            boilerPlate.push(baName);
+        }
+        vkeyProp[1].boilerplate = boilerPlate;
+        vkeyProp[2].boilerplate = boilerPlate;
+    });
+}
 
 let vkeypadProp = [];
 

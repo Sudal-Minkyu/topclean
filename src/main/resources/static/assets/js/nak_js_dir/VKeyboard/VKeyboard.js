@@ -1006,7 +1006,7 @@ class VKeyboard {
 
     pushKeypadClose() {
         document.getElementById("VKEY_KEYPAD").style.display = "none";
-        document.getElementById("VKEY_plusminus").remove();
+        if(document.getElementById("VKEY_plusminus")) document.getElementById("VKEY_plusminus").remove();
         this.keypadField.value = "";
     }
 
