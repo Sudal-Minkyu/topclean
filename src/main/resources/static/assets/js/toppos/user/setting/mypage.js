@@ -668,7 +668,7 @@ function onModifyOrder(gridNum, rowIndex) {
 	wares.rowIndex = rowIndex;
 
 	const rowData = grids.f.getRowData(gridNum, rowIndex);
-	$('.pop').addClass('active');
+	$('#linePop').addClass('active');
 	// input값 초기화
 	$('#baName').val(rowData.baName);
 	$('#baRemark').val(rowData.baRemark);
