@@ -358,6 +358,7 @@
 	display: block;
 }
 .vkey-num__input {
+    position: relative;
 	width: 21.875rem;
 	margin-bottom: 0.938rem;
 }
@@ -373,6 +374,59 @@
 	-webkit-border-radius: 0.625rem;
 	-moz-border-radius: 0.625rem;
 	border-radius: 0.625rem;
+}
+#VKEY_plusminus {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+#VKEY_plusminus + input {
+    width: calc(100% - 70px);
+    margin-left: 70px;
+}
+#VKEY_keypad_sign {
+    overflow: hidden;
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    clip: rect(0, 0, 0, 0);
+}
+#VKEY_keypad_sign + label {
+    display: block;
+    position: relative;
+    width: 60px;
+    height: 60px;
+    background: #fff;
+    border-radius: 0.625rem;
+}
+#VKEY_keypad_sign + label:before {
+    content: " ";
+    display: block;
+    position: absolute;
+    top: 10px;
+    left: 28px;
+    width: 4px;
+    height: 40px;
+    background-color: #333;
+    border: 0.063rem solid #bdbdbd;
+    border-radius: 4px;
+    transition: opacity .2s;
+}
+#VKEY_keypad_sign + label:after {
+    content: " ";
+    display: block;
+    position: absolute;
+    top: 28px;
+    left: 10px;
+    width: 40px;
+    height: 4px;
+    background-color: #333;
+    border-radius: 4px;
+}
+#VKEY_keypad_sign:checked + label:before {
+    opacity: 0;
 }
 .vkey-num__pad {
 	display: flex;
