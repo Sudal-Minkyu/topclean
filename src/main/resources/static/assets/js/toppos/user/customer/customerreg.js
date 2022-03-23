@@ -1,3 +1,6 @@
+/* 듀얼모니터 여부 기억 */
+let hasDuelMonitor = "N";
+
 /* 가상키보드 사용 선언 */
 let vkey;
 $(function () {
@@ -75,7 +78,7 @@ function init(){
     $("#bcWeddingAnniversaryMM").val("");
     $("#bcWeddingAnniversaryDD").val("");
     $("#bcValuation").val("3");
-    $("#yes2").prop("checked",true);
+    $("#no2").prop("checked",true);
     $("#bcAgreeType").val("1");
     $("#bcRemark").val("");
     $("#bcSignImage").val("");
@@ -83,6 +86,12 @@ function init(){
     $signImage.attr("src", "");
     $("#windowMask").hide();
     $("#mask").hide();
+
+    if(hasDuelMonitor === "N") { // API가 도착하면 작업
+        $("#bcAgreeType").val("2");
+        $("#bcAgreeType option").first().attr("disabled", "");
+        $("#reqSign").attr("disabled", "");
+    }
 }
 
 /* 입력된 폼 정보 저장 */
