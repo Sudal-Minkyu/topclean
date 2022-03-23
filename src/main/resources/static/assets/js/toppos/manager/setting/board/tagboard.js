@@ -31,6 +31,7 @@ const dtos = {
     },
     receive: {
         tagGalleryList: {
+            brCloseYn: "s", // 2022.03.23 추가
             btId: "n",
             insertDateTime: "s",
             btBrandName: "s",
@@ -46,6 +47,7 @@ const dtos = {
         },
         tagGalleryDetail: {
             tagGallery: {
+                brCloseYn: "s", // 2022.03.23 추가
                 btId: "n",
                 btBrandName: "s",
                 btInputDate: "s",
@@ -119,6 +121,7 @@ const comms = {
                 btInputDate: data.tagGallery.btInputDate,
                 btMaterial: data.tagGallery.btMaterial,
                 btRemark: data.tagGallery.btRemark,
+                brCloseYn: data.tagGallery.brCloseYn,
                 tagGalleryFileList: data.tagGalleryFileList,
                 tagGalleryCheckList: data.tagGalleryCheckList,
             }
@@ -152,6 +155,18 @@ const comms = {
             $("#btRemark").val(wares.currentRequest.btRemark);
             $("#btInputDate").val(wares.currentRequest.btInputDate);
 
+            if(wares.currentRequest.tagGalleryCheckList.length) {
+                lockEdit(true);
+            } else {
+                lockEdit(false);
+            }
+
+            if(wares.currentRequest.brCloseYn === "Y") {
+                $("#endPost").hide();
+            } else {
+                $("#endPost").show();
+            }
+
             openTaglostPop();
         });
     },
@@ -159,11 +174,10 @@ const comms = {
     removeTaglost(target) {
         console.log(target);
         dv.chk(target, dtos.send.tagGalleryDelete, "택분실 게시물 삭제 아이디 보내기");
-        CommonUI.ajax(urls.removeTaglost, "PARAM", target, function (res) {
+        CommonUI.ajax(urls.removeTaglost, "GET", target, function (res) {
             alertSuccess("게시물 삭제가 완료되었습니다.");
             resetTaglostPop();
             closeTaglostPop();
-            console.log(res);
         });
     },
 
@@ -263,6 +277,11 @@ const grids = {
                         // 온 데이터 확인하여 가공필요
                         return value;
                     },
+                }, {
+                    dataField: "brCloseYn",
+                    headerText: "종료",
+                    width: 35,
+                    style: "grid_textalign_left",
                 }, {
                     dataField: "detail",
                     headerText: "상세보기",
@@ -641,4 +660,18 @@ function showDetail(btId) {
     };
 
     comms.getDetail(getCondition);
+}
+
+function lockEdit(editable) {
+
+    if(editable) {
+        $("#camInput").hide();
+        $("#editBtns").hide();
+        $(".deletePhotoBtn").hide();
+    } else {
+        $("#camInput").show();
+        $("#editBtns").show();
+        $(".deletePhotoBtn").show();
+    }
+    $("#popInputs input, #popInputs textarea").prop("disabled", editable);
 }

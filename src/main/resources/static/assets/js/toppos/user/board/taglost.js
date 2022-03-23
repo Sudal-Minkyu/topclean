@@ -22,6 +22,7 @@ const dtos = {
     },
     receive: {
         tagGalleryList: {
+            brCloseYn: "s",
             btId: "n",
             insertDateTime: "s",
             btBrandName: "s",
@@ -39,6 +40,7 @@ const dtos = {
         tagGalleryDetail: {
             frCompleteCheck: "n", // 0 해제상태, 1 가맹점 확인만 함, 2 최종확인완료
             tagGallery: {
+                brCloseYn: "s",
                 btId: "n",
                 btBrandName: "s",
                 btInputDate: "s",
@@ -98,6 +100,7 @@ const comms = {
                 btInputDate: data.tagGallery.btInputDate,
                 btMaterial: data.tagGallery.btMaterial,
                 btRemark: data.tagGallery.btRemark,
+                brCloseYn: data.tagGallery.brCloseYn,
                 tagGalleryFileList: data.tagGalleryFileList,
                 tagGalleryCheckList: data.tagGalleryCheckList,
             }
@@ -139,6 +142,7 @@ const comms = {
                     $frCheckLabel.show();
                     $frCheck.prop("disabled", false);
                     $frComplete.hide();
+                    $frComplete.prop("disabled", false);
                     break;
                 case 1 :
                     $frCheck.prop("checked", true);
@@ -152,6 +156,11 @@ const comms = {
                     $frCheckLabel.hide();
                     $frComplete.hide();
                     break;
+            }
+
+            if(wares.currentRequest.brCloseYn === "Y") {
+                $frCheckLabel.hide();
+                $frComplete.hide();
             }
 
             openTaglostPop();
@@ -249,10 +258,11 @@ const grids = {
                     dataField: "tagGalleryCheckFranchise",
                     headerText: "가맹응답상태",
                     style: "grid_textalign_left",
-                    labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
-                        // 온 데이터 확인하여 가공필요
-                        return value;
-                    },
+                }, {
+                    dataField: "brCloseYn",
+                    headerText: "종료",
+                    width: 35,
+                    style: "grid_textalign_left",
                 }, {
                     dataField: "detail",
                     headerText: "상세보기",
@@ -452,4 +462,17 @@ function showDetail(btId) {
 
 function openTaglostPop() {
     $("#taglostPop").addClass("active");
+}
+
+function lockResponse(responsable) {
+    $frCheckLabel = $("#frCheck").siblings("label");
+    $frComplete = $("#frComplete");
+
+    if(responsable) {
+        $frCheckLabel.hide();
+        $frComplete.hide();
+    } else {
+        $frCheckLabel.show();
+        $frComplete.show();
+    }
 }
