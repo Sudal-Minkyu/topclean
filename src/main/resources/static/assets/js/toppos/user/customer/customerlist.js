@@ -194,13 +194,13 @@ gridColumnLayout[0] = [
             return value + "대/" + item.bcBirthday.substr(0, 4) + "-" +
                 item.bcBirthday.substr(4, 2) + "-" + item.bcBirthday.substr(6, 2);
         },
-    }, {
+    },/*  {
         dataField: "bcWeddingAnniversary",
         headerText: "결혼기념일",
         width: 100,
         dataType: "date",
         formatString: "yyyy-mm-dd",
-    }, {
+    }, */ {
         dataField: "insertDateTime",
         headerText: "가입일자",
         width: 100,
@@ -291,7 +291,7 @@ function onModifyCustomer(rowIndex) {
     $("#bcBirthMM").val(item.bcBirthday.substr(4, 2));
     $("#bcBirthDD").val(item.bcBirthday.substr(6, 2));
     $("#bcWeddingAnniversaryYYYY").val(item.bcWeddingAnniversary.substr(0, 4));
-    $("bcWeddingAnniversaryhMM").val(item.bcWeddingAnniversary.substr(4, 2));
+    $("#bcWeddingAnniversaryMM").val(item.bcWeddingAnniversary.substr(4, 2));
     $("#bcWeddingAnniversaryDD").val(item.bcWeddingAnniversary.substr(6, 2));
     $("#bcAge").val(item.bcAge);
     $("#bcGrade").val(bcGradeName[item.bcGrade]);

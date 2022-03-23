@@ -24,6 +24,7 @@ class VKeyboard {
         type: "default", // 가상키패드의 형태, "default" 기본, "plusminus" +-버튼으로 양수나 음수구분
         midprocess: "default", // 키 입력마다 페이지를 가공하는 형태, "default" 일반숫자, "none" 없음, "tel" 전화번호, "business" 사업자번호
         maxlength: 9999, // 키패드 필드의 최대 자릿수 제한 (자르기)
+        clrfirst: false,
         callback: function() {
         }, // 가상키패드 동작이 다 끝나고 나서 실행될 기능
     }
@@ -981,6 +982,10 @@ class VKeyboard {
 
     /* 키패드에서 받은 값을 바로 키패드용 필드에 입력한다. */
     pushKeypadBtn(INPUT_NUM, isBackspace = false) {
+        if(this.keypadProp.clrfirst) {
+            this.keypadField.value = "";
+            this.keypadProp.clrfirst = false;
+        }
         let resultValue = (this.keypadField.value + "" + INPUT_NUM).replace(/[^0-9]/g, "").substring(0, this.keypadProp.maxlength);
         resultValue = isBackspace ? resultValue.substring(0, resultValue.length - 1) : resultValue;
         resultValue = this.keypadMidprocess(resultValue);

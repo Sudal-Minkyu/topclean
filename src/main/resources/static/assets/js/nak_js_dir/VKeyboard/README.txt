@@ -47,6 +47,7 @@ vkey.showKeypad("html 대상 텍스트필드나 텍스트에어리어의 id", �
     type: // 가상키패드의 형태, "default" 기본, "plusminus" +-버튼으로 양수나 음수구분
     midprocess: // 키 입력마다 페이지를 가공하는 형태, "default" 일반숫자, "none" 없음, "tel" 전화번호, "business" 사업자번호
     maxlength: // 키패드 필드의 최대 자릿수 제한 (숫자, 뒤의 입력을 자르기로 제한됨)
+    clrfirst: // 키패드가 처음눌릴 때 모든 값을 삭제하고 들어가도록 할지의 여부를 결정
     callback: function() { // 가상키패드 동작이 다 끝나고 나서 실행될 기능
     }, 
 }
@@ -55,6 +56,7 @@ defaultKeypadProp = {
     type: "default",
     midprocess: "default",
     maxlength: 9999,
+    clrfirst: false,
     callback: function() {
     },
 }

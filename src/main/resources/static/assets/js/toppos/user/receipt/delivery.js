@@ -25,6 +25,7 @@ const dtos = {
     },
     receive: {
         customerInfo: { // integrate 의 customerInfo와 같은 구성
+            bcWeddingAnniversary: "d",
             bcAddress: "s",
             bcGrade: "s",
             bcHp: "s",
