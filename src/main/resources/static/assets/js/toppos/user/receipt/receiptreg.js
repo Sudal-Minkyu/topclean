@@ -1638,7 +1638,7 @@ function onKeypad(num) {
     const targetId = ["applySaveMoney", "receiveCash", "receiveCard"];
     keypadNum = num;
     $("#hiddenKeypad").val($("#" + targetId[keypadNum]).html());
-    vkey.showKeypad("hiddenKeypad", {callback: onKeypadConfirm});
+    vkey.showKeypad("hiddenKeypad", {callback: onKeypadConfirm, clrfirst: true});
 }
 
 function onKeypadConfirm() {

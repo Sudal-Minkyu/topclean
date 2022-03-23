@@ -6,11 +6,7 @@ $(function () {
     vkey = new VKeyboard();
     $("#signImage").hide();
 
-    // if(모니터한개의경우) { // API가 도착하면 작업
-    //     $("#bcAgreeType").val("2");
-    //     $("#bcAgreeType option").first().attr("disabled", "");
-    //     $("#reqSign").attr("disabled", "");
-    // }
+    presetDuelMonitor();
 });
 
 /* 가상키보드 입력 대상이 되는 텍스트 필드나 텍스트 에어리어 */
@@ -119,7 +115,7 @@ function saveRegister() {
     formData.append("bcGrade", "01");
 
     if($("#bcAgreeType").val()==="1"){
-        if($("#SignImage").val() && $("#SignImage").val().length){
+        if($("#bcSignImage").val() && $("#bcSignImage").val().length){
             formData.append("bcSignImage", $("#bcSignImage").val());
         }else{
             alertCaution("고객 서명을 해주세요", 1);
@@ -198,6 +194,11 @@ function requestSign() {
         cAPI.approvalCall(protocol + '//' + hostName + ':' + port + '/user/sign');
     }catch (e) {
         CommonUI.toppos.underTaker(e, "customerreg : 서명요청");
+        alertCaution("고객 모니터를 발견하지 못했습니다.<br>서면을 통한 사인 요청을 해주세요", 1);
+        $("#bcAgreeType").val("2");
+        $("#bcAgreeType option").first().attr("disabled", "");
+        $("#reqSign").attr("disabled", "");
+        $("#signImage").hide();
         return;
     }
     // $("#resultmsg").text(": 승인중 메세지- 고객이 서명중입니다. ------전체화면으로 가리기 ");
@@ -219,4 +220,16 @@ function resultFunction(msg){
     document.getElementById('signImage').src = msg;
     document.getElementById('signImage').style.border = "2px solid black";
     $("#signImage").show();
+}
+
+function presetDuelMonitor() {
+    const url = "/api/user/franchiseMultiscreen";
+    CommonUI.ajax(url, "GET", false, function (res) {
+        hasDuelMonitor = res.sendData.frMultiscreenYn;
+        if(hasDuelMonitor === "N") { // API가 도착하면 작업
+            $("#bcAgreeType").val("2");
+            $("#bcAgreeType option").first().attr("disabled", "");
+            $("#reqSign").attr("disabled", "");
+        }
+    });
 }

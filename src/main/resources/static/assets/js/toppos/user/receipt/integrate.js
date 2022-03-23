@@ -234,6 +234,7 @@ const dtos = {
         },
 
         customerInfo: { // 접수 페이지의 고객 정보 가져오는 부분과 동일
+            bcWeddingAnniversary: "d",
             bcAddress: "s",
             bcGrade: "s",
             bcHp: "s",

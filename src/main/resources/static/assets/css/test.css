@@ -252,6 +252,7 @@ textarea {
 .header {
 	display: flex;
 	justify-content: space-between;
+    align-items: center;
 	position: relative;
 	height: 4.375em;
 	padding: 0 2.5rem;
@@ -261,12 +262,20 @@ textarea {
 }
 .header .logo {
 	display: block;
+    display: flex;
+    align-items: center;
 	width: 8.875rem;
 	height: 2.25rem;
-	margin-top: 1.063rem;
+	/* margin-top: 1.063rem; */
+    line-height: 36px;
 }
 .header .logo img {
 	width: 100%;
+}
+.header .logo span {
+    color: #003670;
+    font-size: 24px;
+    font-weight: 700;
 }
 .header .info {
 	display: flex;
@@ -585,8 +594,12 @@ textarea {
 }
 .login__logo {
 	width: 12.5rem;
-	height: 8.75rem;
+	/* height: 8.75rem; */
 	margin: 0 auto;
+    text-align: center;
+    color: #005bab;
+    font-size: 48px;
+    font-weight: 700;
 }
 .login__logo img {
 	width: 100%;
@@ -726,6 +739,38 @@ textarea {
 .login__btn.login__btn--darksolid {
     margin-top: 1.25rem;
     background-color: #003b7a;
+}
+
+/* footer */
+footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100vw;
+    padding: 10px;
+    background-color: #ddd;
+}
+footer > ul {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+}
+footer > ul > li {
+    position: relative;
+}
+footer > ul > li + li {
+    margin-left: 21px;
+}
+footer > ul > li + li:before {
+    content: " ";
+    position: absolute;
+    top: 50%;
+    left: -11px;
+    width: 1px;
+    height: 20px;
+    margin-top: -8px;
+    background-color: #aaa;
 }
 
 /* main */
@@ -1782,7 +1827,7 @@ textarea {
 	width: auto;
 }
 .form__item .form__item .form__input .c-text input[type="text"] {
-	width: 3.125rem;
+	width: 2.5rem;
 	padding: 0 0.313rem;
 }
 
