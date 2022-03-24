@@ -216,14 +216,6 @@
                                             <input type="text" id="bcGrade" readonly />
                                             <input type="hidden" id="bcGradeNo" readonly />
                                         </div>
-
-                                        <!--							<div class="c-select">-->
-                                        <!--								<select id="bcGrade" name="bcGrade">-->
-                                        <!--									<option value="01">일반</option>-->
-                                        <!--									<option value="02">VIP</option>-->
-                                        <!--									<option value="03">VVIP</option>-->
-                                        <!--								</select>-->
-                                        <!--							</div>-->
                                     </div>
                                 </li>
                                 <li class="customer__form-item">
@@ -237,20 +229,6 @@
                                                 <option value="4">☆★★★★</option>
                                                 <option value="5">★★★★★</option>
                                             </select>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="customer__form-item">
-                                    <h4 class="customer__form-title">탈퇴</h4>
-                                    <div class="customer__form-input">
-                                        <div class="c-radio">
-                                            <input id="yes" type="radio" name="bcQuitYn" value="Y">
-                                            <label for="yes">Y</label>
-                                        </div>
-
-                                        <div class="c-radio">
-                                            <input id="no" type="radio" name="bcQuitYn" value="N">
-                                            <label for="no">N</label>
                                         </div>
                                     </div>
                                 </li>
@@ -274,18 +252,22 @@
                                         <div class="c-text">
                                             <input type="text" id="bcAgreeTypeName" readonly />
                                         </div>
-                                        <!--
-                                        <div class="c-select">
-                                            <select id="bcAgreeType" name="bcAgreeType" onchange="onAgreeTypeChange(this.value)">
-                                                <option value="1">온라인</option>
-                                                <option value="2">서면</option>
-                                            </select>
-                                        </div>
-                                        <button id="reqSign" class="c-button c-button&#45;&#45;small c-button&#45;&#45;darksolid" type="button"
-                                                onclick="requestSign()">서명요청</button>
-                                        -->
                                         <input type="hidden" id="bcSignImage" />
                                         <img id="signImage" />
+                                    </div>
+                                </li>
+                                <li class="customer__form-item">
+                                    <h4 class="customer__form-title">탈퇴</h4>
+                                    <div class="customer__form-input">
+                                        <div class="c-radio">
+                                            <input id="yes" type="radio" name="bcQuitYn" value="Y">
+                                            <label for="yes">Y</label>
+                                        </div>
+
+                                        <div class="c-radio">
+                                            <input id="no" type="radio" name="bcQuitYn" value="N">
+                                            <label for="no">N</label>
+                                        </div>
                                     </div>
                                 </li>
                                 <li class="customer__form-item customer__form-item--100">
