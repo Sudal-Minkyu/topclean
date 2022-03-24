@@ -25,7 +25,7 @@ public class FranchiseRepositoryCustomImpl extends QuerydslRepositorySupport imp
     }
 
     @Override
-    public List<FranchiseListDto> findByFranchiseList(String brCode, String brAssignState, String frName, String frCode, String frContractState) {
+    public List<FranchiseListDto> findByFranchiseList(String brCode, String brAssignState, String frName, String frCode, String frRefCode, String frContractState) {
         QFranchise franchise = QFranchise.franchise;
         QBranch branch = QBranch.branch;
 
@@ -76,6 +76,10 @@ public class FranchiseRepositoryCustomImpl extends QuerydslRepositorySupport imp
 
         if (!frCode.equals("")){
             query.where(franchise.frCode.likeIgnoreCase("%"+frCode+"%"));
+        }
+
+        if (!frRefCode.equals("")){
+            query.where(franchise.frRefCode.likeIgnoreCase("%"+frRefCode+"%"));
         }
 
         if (!frContractState.equals("")){

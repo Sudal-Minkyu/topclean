@@ -11,7 +11,7 @@ import java.util.List;
  * Remark :
  */
 public interface FranchiseRepositoryCustom {
-    List<FranchiseListDto> findByFranchiseList(String brCode, String brAssignState, String frName, String frCode, String frContractState);
+    List<FranchiseListDto> findByFranchiseList(String brCode, String brAssignState, String frName, String frCode,String frRefCode, String frContractState);
 
     FranchiseInfoDto findByFranchiseInfo(String frCode);
 

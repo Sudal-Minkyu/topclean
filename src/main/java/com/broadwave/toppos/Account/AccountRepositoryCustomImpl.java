@@ -4,6 +4,7 @@ import com.broadwave.toppos.Head.Branoh.QBranch;
 import com.broadwave.toppos.Head.Franchise.QFranchise;
 import com.broadwave.toppos.User.UserDtos.UserIndexDto;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.JPQLQuery;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
@@ -81,6 +82,29 @@ public class AccountRepositoryCustomImpl extends QuerydslRepositorySupport imple
                         account.usertel,
                         branch.brName,
                         franchise.frName
+                ));
+
+        query.where(account.userid.eq(userid));
+
+        return query.fetchOne();
+    }
+
+    @Override
+    public AccountHeaderDto findByHeaderInfo(String userid, String brCode) {
+
+        QAccount account = QAccount.account;
+        QBranch branch = QBranch.branch;
+
+        JPQLQuery<AccountHeaderDto> query = from(account)
+                .leftJoin(branch).on(branch.brCode.eq(account.brCode))
+                .select(Projections.constructor(AccountHeaderDto.class,
+                        account.username,
+                        new CaseBuilder()
+                                .when(account.brCode.isNull()).then("")
+                                .otherwise(
+                                        new CaseBuilder()
+                                                .when(account.brCode.eq("no")).then("")
+                                                .otherwise(branch.brName))
                 ));
 
         query.where(account.userid.eq(userid));

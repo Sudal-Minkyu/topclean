@@ -25,7 +25,7 @@ public class ItemRepositoryCustomImpl extends QuerydslRepositorySupport implemen
     }
 
     @Override
-    public List<ItemListDto> findByItemList(String bgItemGroupcode, String bsItemGroupcodeS) {
+    public List<ItemListDto> findByItemList(String bgItemGroupcode, String bsItemGroupcodeS, String biItemcode, String biName) {
 
         QItem item = QItem.item;
         QItemGroup itemGroup = QItemGroup.itemGroup;
@@ -47,11 +47,20 @@ public class ItemRepositoryCustomImpl extends QuerydslRepositorySupport implemen
                 ))
                 .distinct(); // 중복제거
 
-        if(!bgItemGroupcode.equals("")){
-            query.where(itemGroup.bgItemGroupcode.eq(bgItemGroupcode));
+        if (!bgItemGroupcode.equals("")){
+            query.where(itemGroup.bgItemGroupcode.likeIgnoreCase("%"+bgItemGroupcode+"%"));
         }
-        if(!bsItemGroupcodeS.equals("")){
-            query.where(itemGroupS.bsItemGroupcodeS.eq(bsItemGroupcodeS).and(itemGroupS.bgItemGroupcode.bgItemGroupcode.eq(bgItemGroupcode)));
+
+        if (!bsItemGroupcodeS.equals("")){
+            query.where(itemGroupS.bsItemGroupcodeS.likeIgnoreCase("%"+bsItemGroupcodeS+"%"));
+        }
+
+        if (!biItemcode.equals("")){
+            query.where(item.biItemcode.likeIgnoreCase("%"+biItemcode+"%"));
+        }
+
+        if (!biName.equals("")){
+            query.where(item.biName.likeIgnoreCase("%"+biName+"%"));
         }
 
         return query.fetch();

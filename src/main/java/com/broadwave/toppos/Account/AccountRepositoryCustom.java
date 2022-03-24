@@ -14,4 +14,6 @@ public interface AccountRepositoryCustom {
     List<AccountListDto> findByAccountList(String s_userid, String s_username, AccountRole s_role, String s_frCode, String s_brCode);
 
     UserIndexDto findByUserInfo(String userid, String frCode);
+
+    AccountHeaderDto findByHeaderInfo(String userid, String brCode);
 }

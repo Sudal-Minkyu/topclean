@@ -63,6 +63,15 @@ public class ManagerRestController {
         this.receiptReleaseService = receiptReleaseService;
     }
 
+    // 현재 로그인한 지사 정보 가져오기
+    @GetMapping("branchHeaderData")
+    @ApiOperation(value = "해더 데이터" , notes = "현재 로그인한 해더 데이터 정보를 가져온다.")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
+    public ResponseEntity<Map<String,Object>> branchHeaderData(HttpServletRequest request){
+        return managerService.branchHeaderData(request);
+    }
+
+
     //@@@@@@@@@@@@@@@@@@@@@ 가맹점 메인화면 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     // 현재 로그인한 지사 정보 가져오기
     @GetMapping("branchInfo")

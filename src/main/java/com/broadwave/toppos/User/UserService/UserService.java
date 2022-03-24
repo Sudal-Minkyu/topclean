@@ -1,6 +1,6 @@
 package com.broadwave.toppos.User.UserService;
 
-import com.broadwave.toppos.Account.AccountRepositoryCustom;
+import com.broadwave.toppos.Account.AccountRepository;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.User.Addprocess.Addprocess;
 import com.broadwave.toppos.User.Addprocess.AddprocessDtos.AddprocessDto;
@@ -49,13 +49,13 @@ public class UserService {
     private final UserLoginLogRepository userLoginLogRepository;
 
     private final CustomerRepositoryCustom customerRepositoryCustom;
-    private final AccountRepositoryCustom accountRepositoryCustom;
+    private final AccountRepository accountRepository;
     private final AddprocessRepositoryCustom addProcessRepositoryCustom;
 
     @Autowired
     public UserService(TokenProvider tokenProvider, SaveMoneyRepository saveMoneyRepository, RequestRepository requestRepository, RequestDetailRepository requestDetailRepository,
                        CustomerRepository customerRepository, UserLoginLogRepository userLoginLogRepository,
-                       CustomerRepositoryCustom customerRepositoryCustom, AccountRepositoryCustom accountRepositoryCustom,
+                       CustomerRepositoryCustom customerRepositoryCustom, AccountRepository accountRepository,
                        AddprocessRepositoryCustom addProcessRepositoryCustom){
         this.tokenProvider = tokenProvider;
         this.requestRepository = requestRepository;
@@ -64,7 +64,7 @@ public class UserService {
         this.customerRepository = customerRepository;
         this.userLoginLogRepository = userLoginLogRepository;
         this.customerRepositoryCustom = customerRepositoryCustom;
-        this.accountRepositoryCustom = accountRepositoryCustom;
+        this.accountRepository = accountRepository;
         this.addProcessRepositoryCustom = addProcessRepositoryCustom;
     }
 
@@ -96,7 +96,7 @@ public class UserService {
 
     // 가맹점 메인페이지 전용 개인정보 호출
     public UserIndexDto findByUserInfo(String userid, String frCode) {
-        return accountRepositoryCustom.findByUserInfo(userid, frCode);
+        return accountRepository.findByUserInfo(userid, frCode);
     }
 
     // 가맹점이 로그인하면 로그인기록을 남기는 서비스 : 하루에 최초 한번만 기록한다.

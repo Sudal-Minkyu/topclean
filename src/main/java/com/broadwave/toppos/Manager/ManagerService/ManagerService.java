@@ -1,5 +1,7 @@
 package com.broadwave.toppos.Manager.ManagerService;
 
+import com.broadwave.toppos.Account.AccountHeaderDto;
+import com.broadwave.toppos.Account.AccountRepository;
 import com.broadwave.toppos.Head.Franchise.FranchiseDtos.FranchiseManagerListDto;
 import com.broadwave.toppos.Head.Franchise.FranchiseRepository;
 import com.broadwave.toppos.Head.HeadService.NoticeService;
@@ -48,20 +50,42 @@ public class ManagerService {
     private final RequestDetailRepository requestDetailRepository;
     private final RequestRepository requestRepository;
     private final InspeotRepositoryCustom inspeotRepositoryCustom;
+    private final AccountRepository accountRepository;
     private final IssueRepository issueRepository;
 
     @Autowired
-    public ManagerService(TokenProvider tokenProvider, NoticeService noticeService, RequestRepository requestRepository,
+    public ManagerService(TokenProvider tokenProvider, NoticeService noticeService, RequestRepository requestRepository, AccountRepository accountRepository,
                           UserLoginLogRepository userLoginLogRepository, FranchiseRepository franchiseRepository, RequestDetailRepository requestDetailRepository,
                           InspeotRepositoryCustom inspeotRepositoryCustom, IssueRepository issueRepository){
         this.tokenProvider = tokenProvider;
         this.noticeService = noticeService;
         this.userLoginLogRepository = userLoginLogRepository;
         this.franchiseRepository = franchiseRepository;
+        this.accountRepository = accountRepository;
         this.requestRepository = requestRepository;
         this.requestDetailRepository = requestDetailRepository;
         this.inspeotRepositoryCustom = inspeotRepositoryCustom;
         this.issueRepository = issueRepository;
+    }
+
+
+    //  현 지사의 소속된 지사명, 이름 호출
+    public ResponseEntity<Map<String, Object>> branchHeaderData(HttpServletRequest request) {
+        log.info("managerBelongList 호출");
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String brCode = (String) claims.get("brCode"); // 현재 지사의 코드(2자리) 가져오기
+        String login_id = claims.getSubject(); // 현재 아이디
+        log.info("현재 접속한 아이디 : "+login_id);
+        log.info("현재 접속한 지사 코드 : "+brCode);
+
+        AccountHeaderDto accountHeaderDto =  accountRepository.findByHeaderInfo(login_id, brCode);
+        data.put("accountHeaderData",accountHeaderDto);
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
     //  현 지사의 소속된 가맹점명 리스트 호출(앞으로 공용으로 쓰일 것)
@@ -119,6 +143,7 @@ public class ManagerService {
         log.info("현재 접속한 지사 코드 : "+brCode);
 
         List<NoticeListDto> noticeListDtos = noticeService.branchMainNoticeList();
+
 
         String nowDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         log.info("금일날짜 : "+nowDate);

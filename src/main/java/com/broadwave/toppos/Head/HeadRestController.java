@@ -263,10 +263,10 @@ public class HeadRestController {
     @GetMapping("franchiseList")
     public ResponseEntity<Map<String,Object>> franchiseList(@RequestParam(value="brAssignState", defaultValue="") String brAssignState,
                                                                                            @RequestParam(value="frName", defaultValue="") String frName,
+                                                                                           @RequestParam(value="frRefCode", defaultValue="") String frRefCode,
                                                                                            @RequestParam(value="frCode", defaultValue="") String frCode,
                                                                                            @RequestParam(value="frContractState", defaultValue="") String frContractState){
         log.info("franohiseList 호출");
-
         AjaxResponse res = new AjaxResponse();
 
         HashMap<String, Object> data = new HashMap<>();
@@ -274,7 +274,7 @@ public class HeadRestController {
         List<HashMap<String,Object>> franohiseListData = new ArrayList<>();
         HashMap<String,Object> franohisetInfo;
 
-        List<FranchiseListDto> franchiseListDtos = headService.findByFranchiseList("",brAssignState, frName, frCode, frContractState);
+        List<FranchiseListDto> franchiseListDtos = headService.findByFranchiseList("",brAssignState, frName, frCode, frRefCode, frContractState);
 //        log.info("franohiseListDtos : "+franohiseListDtos);
 
         for (FranchiseListDto franohise : franchiseListDtos) {
@@ -408,7 +408,7 @@ public class HeadRestController {
         List<HashMap<String,Object>> franohiseListData = new ArrayList<>();
         HashMap<String,Object> franohisetInfo;
 
-        List<FranchiseListDto> franchiseListDtos = headService.findByFranchiseList(brCode,"", "", "", "");
+        List<FranchiseListDto> franchiseListDtos = headService.findByFranchiseList(brCode,"", "", "", "", "");
 //        log.info("franchiseListDtos : "+franchiseListDtos);
 
         for (FranchiseListDto franohise : franchiseListDtos) {
@@ -885,7 +885,9 @@ public class HeadRestController {
     // 상품그룹 상품소재 리스트 호출 API
     @GetMapping("itemGroupCList")
     public ResponseEntity<Map<String,Object>> itemGroupCList(@RequestParam(value="bgItemGroupcode", defaultValue="") String bgItemGroupcode,
-                                                                                               @RequestParam(value="bsItemGroupcodeS", defaultValue="") String bsItemGroupcodeS){
+                                                                                               @RequestParam(value="bsItemGroupcodeS", defaultValue="") String bsItemGroupcodeS,
+                                                                                               @RequestParam(value="biItemcode", defaultValue="") String biItemcode,
+                                                                                               @RequestParam(value="biName", defaultValue="") String biName ){
         log.info("itemGroupCList 호출");
 
 //        log.info("bgItemGroupcode : "+bgItemGroupcode);
@@ -897,7 +899,7 @@ public class HeadRestController {
         List<HashMap<String,Object>> itemListData = new ArrayList<>();
         HashMap<String,Object> itemInfo;
 
-        List<ItemListDto> itemListDtos = headService.findByItemList(bgItemGroupcode, bsItemGroupcodeS);
+        List<ItemListDto> itemListDtos = headService.findByItemList(bgItemGroupcode, bsItemGroupcodeS, biItemcode, biName);
 //        log.info("itemListDtos : "+itemListDtos);
         for (ItemListDto itemListDto : itemListDtos) {
 

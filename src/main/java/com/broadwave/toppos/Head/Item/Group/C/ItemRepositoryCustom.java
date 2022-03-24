@@ -9,5 +9,5 @@ import java.util.List;
  * Remark :
  */
 public interface ItemRepositoryCustom {
-    List<ItemListDto> findByItemList(String bgItemGroupcode, String bsItemGroupcodeS);
+    List<ItemListDto> findByItemList(String bgItemGroupcode, String bsItemGroupcodeS, String biItemcode, String biName);
 }

@@ -739,7 +739,7 @@ public class UserRestController {
         return receiptService.requestDelete(request, frNo);
     }
 
-    // 접수페이지 가맹점 세탁접수 결제 API
+    // 접수페이지 가맹점 세탁접수결제 API
     @PostMapping("requestPayment")
     public ResponseEntity<Map<String,Object>> requestPayment(@RequestBody PaymentSet paymentSet, HttpServletRequest request){
         return receiptService.requestPayment(paymentSet, request);

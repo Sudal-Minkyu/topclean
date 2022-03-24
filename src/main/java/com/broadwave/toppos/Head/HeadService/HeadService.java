@@ -200,8 +200,8 @@ public class HeadService {
     }
 
     // 가맹점 리스트 API
-    public List<FranchiseListDto> findByFranchiseList(String brCode, String brAssignState, String frName, String frCode, String frContractState) {
-        return franchiseRepository.findByFranchiseList(brCode, brAssignState, frName, frCode, frContractState);
+    public List<FranchiseListDto> findByFranchiseList(String brCode, String brAssignState, String frName, String frCode, String frRefCode, String frContractState) {
+        return franchiseRepository.findByFranchiseList(brCode, brAssignState, frName, frCode, frRefCode, frContractState);
     }
 
     // 지사 리스트 API
@@ -300,8 +300,8 @@ public class HeadService {
     }
 
     // 상품그룹 상품소재 리스트 호출
-    public List<ItemListDto> findByItemList(String bgItemGroupcode, String bsItemGroupcodeS) {
-        return itemRepositoryCustom.findByItemList(bgItemGroupcode, bsItemGroupcodeS);
+    public List<ItemListDto> findByItemList(String bgItemGroupcode, String bsItemGroupcodeS, String biItemcode, String biName) {
+        return itemRepositoryCustom.findByItemList(bgItemGroupcode, bsItemGroupcodeS, biItemcode, biName);
     }
 
     // 상품그룹 상품소재 삭제

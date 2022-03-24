@@ -299,6 +299,7 @@ public class InspectService {
         data.put("gridListData",paymentCencelDtoList);
 
         RequestFdTagDto requestDetailFdTagDto = requestRepository.findByRequestDetailFdTag(frCode, frId);
+        log.info("requestDetailFdTagDto : "+requestDetailFdTagDto);
         if(!requestDetailFdTagDto.getFdTag().equals("")) {
             data.put("fdTag",requestDetailFdTagDto.getFdTag());
         }else {
@@ -350,16 +351,9 @@ public class InspectService {
                 }else{
                     if(type.equals("1")){
                         log.info("결제 취소합니다.");
-                        List<Request> requestList = requestRepository.findByRequestPaymentList(fpId);
 
                         log.info("결제 취소 조건에 적합니다.");
 //                        log.info("requestList : "+requestList);
-                        for (Request value : requestList) {
-                            value.setFpId(null);
-                            value.setFrUncollectYn("Y");
-                            value.setModify_date(LocalDateTime.now());
-                            value.setModify_id(login_id);
-                        }
 
                         optionalPayment.get().setFpCancelYn("Y");
 
@@ -371,7 +365,6 @@ public class InspectService {
 
                         paymentRepository.save(optionalPayment.get());
                         requestRepository.save(optionalRequest.get());
-                        requestRepository.saveAll(requestList);
                     }else{
                         log.info("적립금으로 전환합니다.");
                         optionalPayment.get().setFpCancelYn("Y");
@@ -396,6 +389,16 @@ public class InspectService {
                         saveMoney.setInsert_date(LocalDateTime.now());
                         saveMoneyRepository.save(saveMoney);
                     }
+
+                    List<Request> requestList = requestRepository.findByRequestPaymentList(fpId);
+                    for (Request value : requestList) {
+                        value.setFpId(null);
+                        value.setFrUncollectYn("Y");
+                        value.setModify_date(LocalDateTime.now());
+                        value.setModify_id(login_id);
+                    }
+                    requestRepository.saveAll(requestList);
+
                 }
             }
         }

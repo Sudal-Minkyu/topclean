@@ -11,13 +11,11 @@ import java.util.Optional;
 public class AccountService {
 
     AccountRepository accountRepository;
-    AccountRepositoryCustom accountRepositoryCustom;
     PasswordEncoder passwordEncoder;
 
     @Autowired
-    public AccountService(AccountRepository accountRepository, AccountRepositoryCustom accountRepositoryCustom, PasswordEncoder passwordEncoder){
+    public AccountService(AccountRepository accountRepository,  PasswordEncoder passwordEncoder){
         this.accountRepository = accountRepository;
-        this.accountRepositoryCustom = accountRepositoryCustom;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -46,7 +44,7 @@ public class AccountService {
     }
 
     public List<AccountListDto> findByAccountList(String s_userid, String s_username, AccountRole s_role, String s_frCode, String s_brCode) {
-        return accountRepositoryCustom.findByAccountList(s_userid, s_username, s_role, s_frCode, s_brCode);
+        return accountRepository.findByAccountList(s_userid, s_username, s_role, s_frCode, s_brCode);
     }
 
 }
