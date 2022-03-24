@@ -17,6 +17,7 @@ import com.broadwave.toppos.Manager.Calendar.CalendarDtos.BranchCalendarListDto;
 import com.broadwave.toppos.Manager.ManagerService.CalendarService;
 import com.broadwave.toppos.Manager.ManagerService.TagGalleryService;
 import com.broadwave.toppos.Manager.ManagerService.TagNoticeService;
+import com.broadwave.toppos.Manager.TagGallery.TagGalleryDtos.TagGalleryMainListDto;
 import com.broadwave.toppos.User.Addprocess.AddprocessDtos.AddprocessDto;
 import com.broadwave.toppos.User.Addprocess.AddprocessSet;
 import com.broadwave.toppos.User.Customer.Customer;
@@ -147,6 +148,8 @@ public class UserRestController {
             UserIndexDto userIndexDto = userService.findByUserInfo(login_id, frCode);
             List<BranchCalendarListDto> branchCalendarListDtos = calendarService.branchCalendarSlidingDtoList(frbrCode, date);
             List<InspeotMainListDto> inspeotMainListDtos = inspectService.findByInspeotB1(frbrCode, 3, frCode);
+            List<TagGalleryMainListDto> tagGalleryMainListDtos = tagGalleryService.findByTagGalleryMainList(frbrCode);
+            log.info("tagGalleryMainListDtos "+tagGalleryMainListDtos);
 
             List<String> calendar = new ArrayList<>();
             if(branchCalendarListDtos.size()!=0){
@@ -182,6 +185,7 @@ public class UserRestController {
             data.put("userIndexDto",userIndexData);
             data.put("requestHistoryList",requestHistoryListDtos);
             data.put("inspeotList",inspeotMainListDtos);
+            data.put("tagGalleryList",tagGalleryMainListDtos);
 
             return ResponseEntity.ok(res.dataSendSuccess(data));
         }

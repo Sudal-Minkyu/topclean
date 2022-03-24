@@ -2,6 +2,7 @@ package com.broadwave.toppos.Manager.TagGallery;
 
 import com.broadwave.toppos.Manager.TagGallery.TagGalleryDtos.TagGalleryDetailDto;
 import com.broadwave.toppos.Manager.TagGallery.TagGalleryDtos.TagGalleryListDto;
+import com.broadwave.toppos.Manager.TagGallery.TagGalleryDtos.TagGalleryMainListDto;
 import com.broadwave.toppos.Manager.TagGallery.TagGalleryFile.QTagGalleryFile;
 import com.broadwave.toppos.Manager.TagGallery.TagGalleryFile.TagGalleryFileListDto;
 import com.querydsl.core.types.Projections;
@@ -75,6 +76,23 @@ public class TagGalleryRepositoryCustomImpl extends QuerydslRepositorySupport im
                         tagGallery.brCloseYn
                     ));
         return query.fetchOne();
+    }
+
+    // 메인페이지용 택분실 갤러리 리스트 호출
+    public List<TagGalleryMainListDto> findByTagGalleryMainList(String brCode){
+        QTagGallery tagGallery = QTagGallery.tagGallery;
+        JPQLQuery<TagGalleryMainListDto> query = from(tagGallery)
+                .where(tagGallery.brCode.eq(brCode).and(tagGallery.brCloseYn.eq("N")))
+                .select(Projections.constructor(TagGalleryMainListDto.class,
+                        tagGallery.btId,
+                        tagGallery.btBrandName,
+                        tagGallery.btMaterial,
+                        tagGallery.btInputDt
+                ));
+
+        query.orderBy(tagGallery.btId.desc()).limit(3);
+
+        return query.fetch();
     }
 
 }

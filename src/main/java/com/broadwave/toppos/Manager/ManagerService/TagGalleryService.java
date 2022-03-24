@@ -8,6 +8,7 @@ import com.broadwave.toppos.Manager.TagGallery.TagGalleryCheck.TagGalleryCheckLi
 import com.broadwave.toppos.Manager.TagGallery.TagGalleryCheck.TagGalleryCheckRepository;
 import com.broadwave.toppos.Manager.TagGallery.TagGalleryDtos.TagGalleryDetailDto;
 import com.broadwave.toppos.Manager.TagGallery.TagGalleryDtos.TagGalleryListDto;
+import com.broadwave.toppos.Manager.TagGallery.TagGalleryDtos.TagGalleryMainListDto;
 import com.broadwave.toppos.Manager.TagGallery.TagGalleryDtos.TagGalleryMapperDto;
 import com.broadwave.toppos.Manager.TagGallery.TagGalleryFile.TagGalleryFile;
 import com.broadwave.toppos.Manager.TagGallery.TagGalleryFile.TagGalleryFileListDto;
@@ -398,8 +399,9 @@ public class TagGalleryService {
         return ResponseEntity.ok(res.success());
     }
 
-
-
-
+    // 메인페이지용 택분실 갤러리 리스트 호출
+    public List<TagGalleryMainListDto> findByTagGalleryMainList(String frbrCode) {
+        return tagGalleryRepository.findByTagGalleryMainList(frbrCode);
+    }
 
 }

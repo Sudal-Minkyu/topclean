@@ -295,14 +295,13 @@ public class InspectService {
         log.info("현재 접속한 가맹점 코드 : "+frCode);
 
         List<PaymentCencelDto> paymentCencelDtoList = paymentRepositoryCustom.findByRequestDetailCencelDataList(frCode, frId);
-        log.info("paymentCencelDtoList : "+paymentCencelDtoList);
+//        log.info("paymentCencelDtoList : "+paymentCencelDtoList);
         data.put("gridListData",paymentCencelDtoList);
 
-        try {
-            RequestFdTagDto requestDetailFdTagDto = requestRepository.findByRequestDetailFdTag(frCode, frId);
-            log.info("requestDetailFdTagDto : "+requestDetailFdTagDto);
+        RequestFdTagDto requestDetailFdTagDto = requestRepository.findByRequestDetailFdTag(frCode, frId);
+        if(!requestDetailFdTagDto.getFdTag().equals("")) {
             data.put("fdTag",requestDetailFdTagDto.getFdTag());
-        }catch (Exception e){
+        }else {
             data.put("fdTag",null);
         }
 
@@ -331,30 +330,35 @@ public class InspectService {
             return ResponseEntity.ok(res.fail(ResponseErrorCode.TP022.getCode(), "적립금 전환 " + ResponseErrorCode.TP022.getDesc(), null, null));
         }else{
             Optional<Request> optionalRequest = requestRepository.findById(optionalPayment.get().getFrId().getId());
-            if(type.equals("1")){
-                if(!optionalRequest.isPresent()){
+
+            if(!optionalRequest.isPresent()){
+                if(type.equals("1")){
                     return ResponseEntity.ok(res.fail(ResponseErrorCode.TP022.getCode(), "결제 취소 할 " + ResponseErrorCode.TP022.getDesc(), null, null));
                 }else{
-                    log.info("결제 취소합니다.");
-                    List<Request> requestList = requestRepository.findByRequestPaymentList(fpId);
-
-                    try {
+                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP022.getCode(), "적립금 전환 할 " + ResponseErrorCode.TP022.getDesc(), null, null));
+                }
+            }else{
+                if(optionalRequest.get().getFpId() != null){
+                    RequestFdTagDto requestFdTagDto = requestRepository.findByRequestDetailFdTag(frCode, optionalRequest.get().getId());
+                    if(!requestFdTagDto.getFdTag().equals("")) {
                         log.info("결제 취소 조건에 부적합니다.");
-                        RequestFdTagDto requestFdTagDto = requestRepository.findByRequestDetailFdTag(frCode, optionalRequest.get().getId());
                         StringBuilder tagNo = new StringBuilder(requestFdTagDto.getFdTag());
                         tagNo.insert(3,'-');
+                        return ResponseEntity.ok(res.fail("문자", "조회하신 결제 건은 택번호: " + tagNo + " 로 미수완납이 처리되어있습니다.", "문자",
+                                "택번호: " + tagNo + " 로 조회하셔서 먼저 결제취소하신 후 시도해주세요."));
+                    }
+                }else{
+                    if(type.equals("1")){
+                        log.info("결제 취소합니다.");
+                        List<Request> requestList = requestRepository.findByRequestPaymentList(fpId);
 
-                        return ResponseEntity.ok(res.fail("문자", "조회하신 결제 건은 택번호: "+tagNo+" 로 미수완납이 처리되어있습니다.", "문자",
-                                "택번호: "+tagNo+" 로 조회하셔서 먼저 결제취소하신 후 시도해주세요."));
-                    } catch (Exception e){
                         log.info("결제 취소 조건에 적합니다.");
-//                            log.info("requestList : "+requestList);
-                        for(int i=0; i<requestList.size(); i++){
-//                                log.info(i+"번째의 ID : "+requestList.get(i).getId());
-                            requestList.get(i).setFpId(null);
-                            requestList.get(i).setFrUncollectYn("Y");
-                            requestList.get(i).setModify_date(LocalDateTime.now());
-                            requestList.get(i).setModify_id(login_id);
+//                        log.info("requestList : "+requestList);
+                        for (Request value : requestList) {
+                            value.setFpId(null);
+                            value.setFrUncollectYn("Y");
+                            value.setModify_date(LocalDateTime.now());
+                            value.setModify_id(login_id);
                         }
 
                         optionalPayment.get().setFpCancelYn("Y");
@@ -368,34 +372,30 @@ public class InspectService {
                         paymentRepository.save(optionalPayment.get());
                         requestRepository.save(optionalRequest.get());
                         requestRepository.saveAll(requestList);
+                    }else{
+                        log.info("적립금으로 전환합니다.");
+                        optionalPayment.get().setFpCancelYn("Y");
+                        optionalPayment.get().setFpSavedMoneyYn("Y");
+                        paymentRepository.save(optionalPayment.get());
+
+                        // 마스터테이블의 계산가격을 업데이트한다.
+                        optionalRequest.get().setFrPayAmount(optionalRequest.get().getFrPayAmount() - optionalPayment.get().getFpAmt());
+                        optionalRequest.get().setFrUncollectYn("Y");
+                        optionalRequest.get().setModify_id(login_id);
+                        optionalRequest.get().setModify_date(LocalDateTime.now());
+                        requestRepository.save(optionalRequest.get());
+
+                        SaveMoney saveMoney = new SaveMoney();
+                        saveMoney.setBcId(optionalPayment.get().getBcId());
+                        saveMoney.setFpId(optionalPayment.get());
+                        saveMoney.setFsYyyymmdd(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
+                        saveMoney.setFsType("1");
+                        saveMoney.setFsClose("N");
+                        saveMoney.setFsAmt(optionalPayment.get().getFpAmt());
+                        saveMoney.setInsert_id(login_id);
+                        saveMoney.setInsert_date(LocalDateTime.now());
+                        saveMoneyRepository.save(saveMoney);
                     }
-                }
-            }else{
-                if(!optionalRequest.isPresent()){
-                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP022.getCode(), "적립금 전환 할 " + ResponseErrorCode.TP022.getDesc(), null, null));
-                }else{
-                    log.info("적립금으로 전환합니다.");
-                    optionalPayment.get().setFpCancelYn("Y");
-                    optionalPayment.get().setFpSavedMoneyYn("Y");
-                    paymentRepository.save(optionalPayment.get());
-
-                    // 마스터테이블의 계산가격을 업데이트한다.
-                    optionalRequest.get().setFrPayAmount(optionalRequest.get().getFrPayAmount()-optionalPayment.get().getFpAmt());
-                    optionalRequest.get().setFrUncollectYn("Y");
-                    optionalRequest.get().setModify_id(login_id);
-                    optionalRequest.get().setModify_date(LocalDateTime.now());
-                    requestRepository.save(optionalRequest.get());
-
-                    SaveMoney saveMoney = new SaveMoney();
-                    saveMoney.setBcId(optionalPayment.get().getBcId());
-                    saveMoney.setFpId(optionalPayment.get());
-                    saveMoney.setFsYyyymmdd(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
-                    saveMoney.setFsType("1");
-                    saveMoney.setFsClose("N");
-                    saveMoney.setFsAmt(optionalPayment.get().getFpAmt());
-                    saveMoney.setInsert_id(login_id);
-                    saveMoney.setInsert_date(LocalDateTime.now());
-                    saveMoneyRepository.save(saveMoney);
                 }
             }
         }

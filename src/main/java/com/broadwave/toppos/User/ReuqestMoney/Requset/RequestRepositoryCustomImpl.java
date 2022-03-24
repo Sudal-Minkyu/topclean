@@ -518,11 +518,11 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
         EntityManager em = getEntityManager();
         StringBuilder sb = new StringBuilder();
 
-        sb.append("SELECT d.fd_tag FROM fs_request a \n");
-        sb.append("INNER JOIN fs_request_payment b on a.fr_id = b.fr_id \n");
-        sb.append("INNER JOIN fs_request c on c.fr_id = b.fr_id \n");
-        sb.append("INNER JOIN fs_request_dtl d on d.fr_id = c.fr_id \n");
-        sb.append("WHERE a.fr_id = ?1 AND a.fr_code = ?2 AND IFNULL(a.fp_id,'X') != 'X' LIMIT 1; \n");
+        sb.append("SELECT IFNULL(d.fd_tag,'') FROM fs_request a \n");
+        sb.append("LEFT OUTER JOIN fs_request_payment b on a.fr_id = b.fr_id \n");
+        sb.append("LEFT OUTER JOIN fs_request c on c.fr_id = b.fr_id \n");
+        sb.append("LEFT OUTER JOIN fs_request_dtl d on d.fr_id = c.fr_id \n");
+        sb.append("WHERE a.fr_id = ?1 AND a.fr_code = ?2 LIMIT 1; \n");
 
         Query query = em.createNativeQuery(sb.toString());
 
