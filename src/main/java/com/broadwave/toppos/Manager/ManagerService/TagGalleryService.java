@@ -84,34 +84,39 @@ public class TagGalleryService {
         if(tagGalleryMapperDto.getBtId() != null){
             Optional<TagGallery> optionalTagGallery = tagGalleryRepository.findById(tagGalleryMapperDto.getBtId());
             if(optionalTagGallery.isPresent()){
-                log.info("수정입니다.");
-                optionalTagGallery.get().setBtBrandName(tagGalleryMapperDto.getBtBrandName());
-                optionalTagGallery.get().setBtInputDate(tagGalleryMapperDto.getBtInputDate());
-                optionalTagGallery.get().setBtMaterial(tagGalleryMapperDto.getBtMaterial());
-                optionalTagGallery.get().setBtRemark(tagGalleryMapperDto.getBtRemark());
-                optionalTagGallery.get().setModify_id(login_id);
-                optionalTagGallery.get().setModifyDateTime(LocalDateTime.now());
+                List<TagGalleryCheck> tagGalleryCheckList = tagGalleryCheckRepository.findByTagGalleryCheck(tagGalleryMapperDto.getBtId());
+                if(tagGalleryCheckList.size() != 0){
+                    return ResponseEntity.ok(res.fail("문자", "응답데이터가 존재하여 수정할 수 없습니다.", null,null));
+                }else{
+                    log.info("택분실 게시판 글을 수정합니다.");
+                    optionalTagGallery.get().setBtBrandName(tagGalleryMapperDto.getBtBrandName());
+                    optionalTagGallery.get().setBtInputDate(tagGalleryMapperDto.getBtInputDate());
+                    optionalTagGallery.get().setBtMaterial(tagGalleryMapperDto.getBtMaterial());
+                    optionalTagGallery.get().setBtRemark(tagGalleryMapperDto.getBtRemark());
+                    optionalTagGallery.get().setModify_id(login_id);
+                    optionalTagGallery.get().setModifyDateTime(LocalDateTime.now());
 
-                if(tagGalleryMapperDto.getDeletePhotoList() != null) {
-                    // AWS 파일 삭제
-                    List<TagGalleryFile> tagGalleryFileList = tagGalleryFileRepository.findByTagGalleryFileDeleteList(tagGalleryMapperDto.getDeletePhotoList());
-                    for(TagGalleryFile tagGalleryFile : tagGalleryFileList){
-                        String insertDate =tagGalleryFile.getInsertDateTime().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-                        String path = "/toppos-manager-tagGallery/"+insertDate;
+                    if(tagGalleryMapperDto.getDeletePhotoList() != null) {
+                        // AWS 파일 삭제
+                        List<TagGalleryFile> tagGalleryFileList = tagGalleryFileRepository.findByTagGalleryFileDeleteList(tagGalleryMapperDto.getDeletePhotoList());
+                        for(TagGalleryFile tagGalleryFile : tagGalleryFileList){
+                            String insertDate =tagGalleryFile.getInsertDateTime().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+                            String path = "/toppos-manager-tagGallery/"+insertDate;
 //                        log.info("path : "+path);
-                        String filename = tagGalleryFile.getBfFilename();
+                            String filename = tagGalleryFile.getBfFilename();
 //                        log.info("filename : "+filename);
-                        awss3Service.deleteObject(path,filename);
+                            awss3Service.deleteObject(path,filename);
+                        }
+                        tagGalleryFileRepository.tagGalleryFileListDelete(tagGalleryMapperDto.getDeletePhotoList());
                     }
-                    tagGalleryFileRepository.tagGalleryFileListDelete(tagGalleryMapperDto.getDeletePhotoList());
-                }
 
-                saveTagGallery = tagGalleryRepository.save(optionalTagGallery.get());
+                    saveTagGallery = tagGalleryRepository.save(optionalTagGallery.get());
+                }
             }else{
                 return ResponseEntity.ok(res.fail(ResponseErrorCode.TP030.getCode(), "해당 글은 "+ResponseErrorCode.TP030.getDesc(), ResponseErrorCode.TP027.getCode(), ResponseErrorCode.TP027.getDesc()));
             }
         }else{
-            log.info("신규입니다.");
+            log.info("택분실 게시판 글이 신규입니다.");
             tagGallery.setBrCode(brCode);
             tagGallery.setBtBrandName(tagGalleryMapperDto.getBtBrandName());
             tagGallery.setBtInputDt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
@@ -284,7 +289,7 @@ public class TagGalleryService {
     public ResponseEntity<Map<String, Object>> tagGalleryDelete(Long btId, HttpServletRequest request) {
         log.info("tagGalleryDelete 호출");
 
-        log.info("btId : "+btId);
+//        log.info("btId : "+btId);
 
         AjaxResponse res = new AjaxResponse();
 
@@ -295,21 +300,23 @@ public class TagGalleryService {
         log.info("현재 접속한 아이디 : "+login_id);
         log.info("현재 접속한 지사 코드 : "+brCode);
 
-        // AWS 파일 삭제
-        List<TagGalleryFile> tagGalleryFileList = tagGalleryFileRepository.findByTagGalleryFile(btId);
-        for(TagGalleryFile tagGalleryFile : tagGalleryFileList){
-            String insertDate =tagGalleryFile.getInsertDateTime().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-            String path = "/toppos-manager-tagGallery/"+insertDate;
-            String filename = tagGalleryFile.getBfFilename();
-            awss3Service.deleteObject(path,filename);
-        }
-        tagGalleryFileRepository.deleteAll(tagGalleryFileList);
-
         List<TagGalleryCheck> tagGalleryCheckList = tagGalleryCheckRepository.findByTagGalleryCheck(btId);
-        tagGalleryCheckRepository.deleteAll(tagGalleryCheckList);
+        if(tagGalleryCheckList.size() != 0){
+            return ResponseEntity.ok(res.fail("문자", "응답데이터가 존재하여 삭제할 수 없습니다.", null,null));
+        }else{
+            TagGallery tagGallery = tagGalleryRepository.findByTagGallery(btId);
+            tagGalleryRepository.delete(tagGallery);
 
-        TagGallery tagGallery = tagGalleryRepository.findByTagGallery(btId);
-        tagGalleryRepository.delete(tagGallery);
+            // AWS 파일 삭제
+            List<TagGalleryFile> tagGalleryFileList = tagGalleryFileRepository.findByTagGalleryFile(btId);
+            for(TagGalleryFile tagGalleryFile : tagGalleryFileList){
+                String insertDate =tagGalleryFile.getInsertDateTime().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+                String path = "/toppos-manager-tagGallery/"+insertDate;
+                String filename = tagGalleryFile.getBfFilename();
+                awss3Service.deleteObject(path,filename);
+            }
+            tagGalleryFileRepository.deleteAll(tagGalleryFileList);
+        }
 
         return ResponseEntity.ok(res.success());
     }

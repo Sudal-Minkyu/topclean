@@ -23,6 +23,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
@@ -228,6 +229,7 @@ public class UncollectService {
     }
 
     // 미수관리페이지 - 선택한 미수금 접수테이블 결제
+    @Transactional
     public ResponseEntity<Map<String, Object>> franchiseUncollectPay(PaymentUncollectSet paymentUncollectMapperDto, HttpServletRequest request) {
         log.info("franchiseUncollectPay 호출");
 
@@ -236,49 +238,61 @@ public class UncollectService {
         // 클레임데이터 가져오기
         Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
         String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
-//        String frbrCode = (String) claims.get("frbrCode"); // 소속된 지사 코드
         String login_id = claims.getSubject(); // 현재 아이디
         log.info("현재 접속한 아이디 : "+login_id);
         log.info("현재 접속한 가맹점 코드 : "+frCode);
-//        log.info("소속된 지사 코드 : "+frbrCode);
 
         int realAmt = paymentUncollectMapperDto.getData().getFpRealAmt();
-//        log.info("현재 미수금 : "+realAmt);
+        log.info("현재 결제할 전체 미수금 realAmt : "+realAmt);
 
-        List<Payment> paymentList = new ArrayList<>();
         List<Request> requestList = requestRepository.findByRequestList(paymentUncollectMapperDto.getFrIdList());
-        for(Request requestData : requestList){
-            Payment payment = modelMapper.map(paymentUncollectMapperDto.getData(),Payment.class);
+
+        Payment payment = modelMapper.map(paymentUncollectMapperDto.getData(),Payment.class);
+        if(requestList.size() != 0){
+            int fpAmt = requestList.get(0).getFrTotalAmount()-requestList.get(0).getFrPayAmount();
+            log.info("결제금액 FpAmt : "+fpAmt);
+
+            int fpCollectAmt = realAmt - fpAmt;
+            log.info("미수완납금액 fpCollectAmt : "+fpCollectAmt);
+
             // 결제 기본데이터
             payment.setFpInType("02"); // 미수결제이기때문에 인타입 "02"
-            payment.setFpCollectAmt(0);
             payment.setFpCancelYn("N");
             payment.setFpSavedMoneyYn("N");
             payment.setInsert_id(login_id);
             payment.setInsert_date(LocalDateTime.now());
             payment.setFpYyyymmdd(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
-            payment.setFrId(requestData);
-            payment.setBcId(requestData.getBcId());
-            int uncollectMoney = requestData.getFrTotalAmount()-requestData.getFrPayAmount();
-//                log.info("결제금액 FpAmt : "+uncollectMoney);
-            payment.setFpAmt(uncollectMoney); // 미수금 확인후 계산
 
+            payment.setFrId(requestList.get(0));
+            payment.setBcId(requestList.get(0).getBcId());
+            payment.setFpCollectAmt(fpCollectAmt);
+
+            payment.setFpAmt(fpAmt); // 미수금 확인후 계산
+
+            int frPayAmt = fpAmt+requestList.get(0).getFrPayAmount();
+            log.info("첫번째 미수 fr_pay_amount frPayAmt : "+frPayAmt);
             // 마스터테이블 업데이트
-            requestData.setFrPayAmount(uncollectMoney+requestData.getFrPayAmount());
-            requestData.setFrUncollectYn("N");
-            requestData.setModify_id(login_id);
-            requestData.setModify_date(LocalDateTime.now());
+            requestList.get(0).setFrPayAmount(fpAmt+requestList.get(0).getFrPayAmount());
+            if(frPayAmt == requestList.get(0).getFrTotalAmount()){
+                requestList.get(0).setFrUncollectYn("N");
+            }else{
+                requestList.get(0).setFrUncollectYn("Y");
+            }
+            requestList.get(0).setModify_id(login_id);
+            requestList.get(0).setModify_date(LocalDateTime.now());
+//            log.info("payment : "+payment);
 
-            realAmt = realAmt - uncollectMoney;
-
-            paymentList.add(payment);
-        }
-        if(realAmt == 0){
-//            log.info("저장시작");
+            log.info("저장시작");
+            Payment savePayment = paymentRepository.save(payment);
+            if(requestList.size() > 1){
+                for(int i = 1; i<requestList.size(); i++){
+                    requestList.get(i).setFrUncollectYn("N");
+                    requestList.get(i).setFpId(savePayment);
+                    requestList.get(i).setModify_id(login_id);
+                    requestList.get(i).setModify_date(LocalDateTime.now());
+                }
+            }
             requestRepository.saveAll(requestList);
-            paymentRepository.saveAll(paymentList);
-        }else{
-            return ResponseEntity.ok(res.fail("문자", realAmt+"원이 서버상의 미수금액과 일치하지 않습니다.", "문자", "관리자에게 문의해주시길 바랍니다."));
         }
 
         return ResponseEntity.ok(res.success());
