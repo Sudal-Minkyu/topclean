@@ -12,6 +12,12 @@
 
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
+    <script type="module">
+        import { getTaglostDetail, resetTaglostPop, taglostCheck } from "../assets/js/toppos/module/m_taglostDetail.js";
+        window.getTaglostDetail = getTaglostDetail;
+        window.resetTaglostPop = resetTaglostPop;
+        window.taglostCheck = taglostCheck;
+    </script>
     <script src="/assets/js/toppos/user/board/taglost.js"></script>
     <!-- lightbox 추가 -->
     <script src="/assets/js/lightbox2/js/lightbox.js"></script>

@@ -5,7 +5,11 @@
 * */
 const dtos = {
     send: {
-
+        tagGalleryCheck: {
+            btId: "nr",
+            type: "sr", // 체크 혹은 체크해제 1, 최종확인 2
+        },
+        
     },
     receive: {
         franchiseInfo: {
@@ -162,6 +166,28 @@ const trigs = {
             }
             comms.franchiseInfo(condition);
         });
+
+        $("#closeTaglostPop").on("click", function () {
+            closeTaglostPop();
+        });
+
+        $("#frCheck").on("change", function () {
+            $("#frCheck").prop("disabled", true);
+            const answer = {
+                btId: wares.currentRequest.btId,
+                type: "1",
+            }
+            taglostCheck(answer);
+        });
+
+        $("#frComplete").on("click", function () {
+            $("#frComplete").prop("disabled", true);
+            const answer = {
+                btId: wares.currentRequest.btId,
+                type: "2",
+            }
+            taglostCheck(answer);
+        });
     }
 }
 
@@ -179,6 +205,7 @@ const wares = {
         "2": "(수락)",
         "3": "(거부)",
     },
+    currentRequest: {},
 }
 
 $(function() { // 페이지가 로드되고 나서 실행
@@ -247,4 +274,12 @@ function marquee(speed) {
 
 function reformAftTagNo(fdTag) {
     return fdTag.substring(3, 4) + "-" + fdTag.substring(4, 7);
+}
+
+function closeTaglostPop() {
+    $("#taglostPop").removeClass("active");
+}
+
+function openTaglostPop() {
+    $("#taglostPop").addClass("active");
 }

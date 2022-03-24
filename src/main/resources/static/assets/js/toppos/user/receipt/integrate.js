@@ -155,18 +155,21 @@ const dtos = {
         },
 
         franchiseDetailCencelDataList: { // 현 가맹점의 코드와 이름, 그리고 접수결제 테이블의 결제요소들
-            frCode: "",
-            frName: "",
-            fpId: "nr",
-            fpType: "sr",
-            fpAmt: "nr",
-            fpCatIssuername: "s",
-            fpCatApprovalno: "s",
-            fpCatApprovaltime: "s",
-            fpCatTotamount: "s",
-            fpCatVatamount: "s",
-            fpMonth: "",
-            insertDt: "",
+            fdTag: "s",
+            gridListData: {
+                frCode: "",
+                frName: "",
+                fpId: "nr",
+                fpType: "sr",
+                fpAmt: "nr",
+                fpCatIssuername: "s",
+                fpCatApprovalno: "s",
+                fpCatApprovaltime: "s",
+                fpCatTotamount: "s",
+                fpCatVatamount: "s",
+                fpMonth: "",
+                insertDt: "",
+            },
         },
 
         franchiseRequestDetailSearch: { // 접수 세부 테이블의 거의 모든 요소와, 고객이름
@@ -384,10 +387,10 @@ const comms = {
         dv.chk(condition, dtos.send.franchiseDetailCencelDataList, "결제 리스트 받아오기");
         const url = "/api/user/franchiseDetailCencelDataList";
         CommonUI.ajax(url, "GET", condition, function(res) {
-            const data = res.sendData.gridListData;
+            const data = res.sendData;
             dv.chk(data, dtos.receive.franchiseDetailCencelDataList);
-            grids.f.setData(2, data);
-            // collectedCancelPaymentProcess();
+            collectedCancelPaymentProcess(data.fdTag);
+            grids.f.setData(2, data.gridListData);
         });
     },
 
@@ -912,8 +915,8 @@ const grids = {
                 noDataMessage : "출력할 데이터가 없습니다.",
                 showAutoNoDataMessage: true,
                 enableColumnResize : false,
-                showRowAllCheckBox: true,
-                showRowCheckColumn: true,
+                showRowAllCheckBox: false,
+                showRowCheckColumn: false,
                 showRowNumColumn : false,
                 showStateColumn : false,
                 enableFilter : true,
@@ -2081,15 +2084,16 @@ function setPreDefinedKeywords() {
 }
 
 /* 해당 결제건이 미수금 완납과 연관되어 있는 경우 취소를 막기 위함 */
-function collectedCancelPaymentProcess(isCollected, tagNo) {
+function collectedCancelPaymentProcess(tagNo) {
     const $tranferPoint = $("#transferPoint");
     const $refundPayment = $("#refundPayment");
     const $collectedWarning = $("#collectedWarning");
     const $collectedTagNo = $(".collectedTagNo");
-    if(isCollected) {
+    console.log(tagNo);
+    if(tagNo) {
         $tranferPoint.hide();
         $refundPayment.hide();
-        $collectedTagNo.html(tagNo);
+        $collectedTagNo.html(tagNo.substring(0, 3) + "-" + tagNo.substring(3,7));
         $collectedWarning.show();
     } else {
         $tranferPoint.show();
