@@ -1,9 +1,6 @@
 package com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentDtos;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -14,7 +11,7 @@ import java.time.format.DateTimeFormatter;
  * Time :
  * Remark : Toppos 가맹점 접수 결제취소 Dto
  */
-@Setter
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -24,6 +21,7 @@ public class PaymentCencelDto {
     private String frName; // 가맹점명
 
     private Long fpId; // 결제 고유ID값
+
     private String fpType; // 결제타입 (01:현금, 02:카드,03:적립금)
     private Integer fpAmt; // 결제금액( 미수에서 카드결제시 카드결제금액보다작을수있다.)
 
@@ -40,47 +38,4 @@ public class PaymentCencelDto {
         return insertDt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
     }
 
-    public String getFrCode() {
-        return frCode;
-    }
-
-    public String getFrName() {
-        return frName;
-    }
-
-    public Long getFpId() {
-        return fpId;
-    }
-
-    public String getFpType() {
-        return fpType;
-    }
-
-    public Integer getFpAmt() {
-        return fpAmt;
-    }
-
-    public String getFpCatIssuername() {
-        return fpCatIssuername;
-    }
-
-    public String getFpCatApprovalno() {
-        return fpCatApprovalno;
-    }
-
-    public String getFpCatApprovaltime() {
-        return fpCatApprovaltime;
-    }
-
-    public String getFpCatTotamount() {
-        return fpCatTotamount;
-    }
-
-    public String getFpCatVatamount() {
-        return fpCatVatamount;
-    }
-
-    public Integer getFpMonth() {
-        return fpMonth;
-    }
 }

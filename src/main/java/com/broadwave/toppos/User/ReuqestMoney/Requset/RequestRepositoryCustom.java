@@ -46,4 +46,6 @@ public interface RequestRepositoryCustom {
     // 메세지 테이블 Native쿼리 호출
     boolean InsertMessage(String message, String nextmessage, String buttonJson, String templatecode, String tableName, Long tableId, String bcHp, String templatecodeNumber);
 
+    RequestFdTagDto findByRequestDetailFdTag(String frCode, Long frId); // 통합조회 택번호 반환용
+
 }

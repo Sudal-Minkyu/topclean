@@ -1075,9 +1075,10 @@ public class HeadRestController {
         return rtnValue;
     }
 
-    // 상품그룹 가격페이지 리스트 호출 API
+    // 상품그룹가격 페이지 리스트 호출 API
     @GetMapping("itemPriceList")
-    public ResponseEntity<Map<String,Object>> itemPriceList(){
+    public ResponseEntity<Map<String,Object>> itemPriceList(@RequestParam("bgName") String bgName, @RequestParam("biItemcode") String biItemcode,
+                                                            @RequestParam("biName") String biName, @RequestParam("setDt") String setDt){
         log.info("itemPriceList 호출");
 
         AjaxResponse res = new AjaxResponse();
@@ -1086,7 +1087,7 @@ public class HeadRestController {
         List<HashMap<String,Object>> itemPriceListData = new ArrayList<>();
         HashMap<String,Object> itemPriceInfo;
 
-        List<ItemPriceListDto> itemPriceListDtos = headService.findByItemPriceList();
+        List<ItemPriceListDto> itemPriceListDtos = headService.findByItemPriceList(bgName, biItemcode, biName, setDt);
 //        log.info("itemPriceListDtos : "+itemPriceListDtos.size());
         for (ItemPriceListDto itemPriceListDto : itemPriceListDtos) {
 

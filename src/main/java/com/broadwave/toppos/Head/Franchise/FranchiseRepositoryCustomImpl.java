@@ -3,7 +3,6 @@ package com.broadwave.toppos.Head.Franchise;
 import com.broadwave.toppos.Head.Branoh.QBranch;
 import com.broadwave.toppos.Head.Franchise.FranchiseDtos.*;
 import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.JPQLQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
@@ -72,11 +71,11 @@ public class FranchiseRepositoryCustomImpl extends QuerydslRepositorySupport imp
         }
 
         if (!frName.equals("")){
-            query.where(franchise.frName.likeIgnoreCase(frName.concat("%")));
+            query.where(franchise.frName.likeIgnoreCase("%"+frName+"%"));
         }
 
         if (!frCode.equals("")){
-            query.where(franchise.frCode.likeIgnoreCase(frCode.concat("%")));
+            query.where(franchise.frCode.likeIgnoreCase("%"+frCode+"%"));
         }
 
         if (!frContractState.equals("")){
@@ -224,9 +223,7 @@ public class FranchiseRepositoryCustomImpl extends QuerydslRepositorySupport imp
 
         JPQLQuery<FranchiseMultiscreenDto> query = from(franchise)
                 .select(Projections.constructor(FranchiseMultiscreenDto.class,
-                        new CaseBuilder()
-                                .when(franchise.frMultiscreenYn.isNull().or(franchise.frMultiscreenYn.eq(""))).then(franchise.frMultiscreenYn)
-                                .otherwise("N")
+                        franchise.frMultiscreenYn
                 ));
 
         query.where(franchise.frCode.eq(frCode));

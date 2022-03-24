@@ -13,7 +13,7 @@ import java.util.List;
  * Remark :
  */
 public interface ItemPriceRepositoryCustom {
-    List<ItemPriceListDto> findByItemPriceList();
+    List<ItemPriceListDto> findByItemPriceList(String bgName, String biItemcode, String biName, String setDt);
 
     ItemPriceDto findByItemPrice(String biItemcode, String closeDt);
 

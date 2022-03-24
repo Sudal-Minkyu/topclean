@@ -338,8 +338,8 @@ public class HeadService {
     }
 
     // 상품 가격 리스트 호출
-    public List<ItemPriceListDto> findByItemPriceList() {
-        return itemPriceRepositoryCustom.findByItemPriceList();
+    public List<ItemPriceListDto> findByItemPriceList(String bgName, String biItemcode, String biName, String setDt) {
+        return itemPriceRepositoryCustom.findByItemPriceList(bgName, biItemcode, biName, setDt);
     }
 
     // 상품 가격 업데이트 때 사용

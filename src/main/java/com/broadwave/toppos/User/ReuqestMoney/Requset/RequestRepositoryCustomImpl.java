@@ -512,4 +512,24 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
         }
     }
 
+    // 마스터테이블의 fpId가 존재할시 해당 결제 마스터테이블의 임이의 택번호 하나를 반환하는 쿼리
+    public RequestFdTagDto findByRequestDetailFdTag(String frCode, Long frId) {
+
+        EntityManager em = getEntityManager();
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("SELECT d.fd_tag FROM fs_request a \n");
+        sb.append("INNER JOIN fs_request_payment b on a.fr_id = b.fr_id \n");
+        sb.append("INNER JOIN fs_request c on c.fr_id = b.fr_id \n");
+        sb.append("INNER JOIN fs_request_dtl d on d.fr_id = c.fr_id \n");
+        sb.append("WHERE a.fr_id = ?1 AND a.fr_code = ?2 AND IFNULL(a.fp_id,'X') != 'X' LIMIT 1; \n");
+
+        Query query = em.createNativeQuery(sb.toString());
+
+        query.setParameter(1, frId);
+        query.setParameter(2, frCode);
+
+        return jpaResultMapper.uniqueResult(query, RequestFdTagDto.class);
+    }
+
 }

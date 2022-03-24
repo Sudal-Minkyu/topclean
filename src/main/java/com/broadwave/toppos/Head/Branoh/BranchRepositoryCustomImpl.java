@@ -44,11 +44,11 @@ public class BranchRepositoryCustomImpl extends QuerydslRepositorySupport implem
         query.orderBy(branch.id.desc());
 
         if (!brName.equals("")){
-            query.where(branch.brName.likeIgnoreCase(brName.concat("%")));
+            query.where(branch.brName.likeIgnoreCase("%"+brName+"%"));
         }
 
         if (!brCode.equals("")){
-            query.where(branch.brCode.likeIgnoreCase(brCode.concat("%")));
+            query.where(branch.brCode.likeIgnoreCase("%"+brCode+"%"));
         }
 
         if (!brContractState.equals("")){

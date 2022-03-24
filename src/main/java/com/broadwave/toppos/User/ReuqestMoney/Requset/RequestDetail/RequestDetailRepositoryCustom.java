@@ -2,6 +2,7 @@ package com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail;
 
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.manager.*;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.*;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.RequestFdTagDto;
 import org.springframework.data.jpa.repository.Modifying;
 
 import javax.transaction.Transactional;
@@ -69,4 +70,5 @@ public interface RequestDetailRepositoryCustom {
     List<RequestDetailBranchReturnCurrentRightListDto> findByRequestDetailBranchReturnRightCurrentList(String brCode, String frCode, String fdS3Dt); // 가맹반송현황 - 오른쪽 리스트 호출API
 
     RequestDetailBranchInspeotDto findByBranchInspeotDto(Long fdId); // 확인품등록전 받아올 데이터 호출API
+
 }

@@ -33,7 +33,7 @@ public class ItemPriceRepositoryCustomImpl extends QuerydslRepositorySupport imp
     }
 
     @Override
-    public List<ItemPriceListDto> findByItemPriceList() {
+    public List<ItemPriceListDto> findByItemPriceList(String bgName, String biItemcode, String biName, String setDt) {
         QItemPrice itemPrice = QItemPrice.itemPrice;
         QItem item= QItem.item;
         QItemGroup itemGroup = QItemGroup.itemGroup;
@@ -67,6 +67,22 @@ public class ItemPriceRepositoryCustomImpl extends QuerydslRepositorySupport imp
 
                         itemPrice.biRemark
                 ));
+
+        if(!bgName.equals("")){
+            query.where(itemGroup.bgName.likeIgnoreCase("%"+bgName+"%"));
+        }
+
+        if(!biItemcode.equals("")){
+            query.where(itemPrice.biItemcode.likeIgnoreCase("%"+biItemcode+"%"));
+        }
+
+        if(!biName.equals("")){
+            query.where(item.biName.likeIgnoreCase("%"+biName+"%"));
+        }
+
+        if(!setDt.equals("")){
+            query.where(itemPrice.setDt.eq(setDt));
+        }
 
         query.orderBy(itemPrice.biItemcode.asc());
 

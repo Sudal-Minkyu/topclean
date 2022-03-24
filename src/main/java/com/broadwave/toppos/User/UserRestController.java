@@ -207,8 +207,8 @@ public class UserRestController {
 
         // 멀티스크린 사용여부 가져오기
         FranchiseMultiscreenDto franchiseMultiscreenDto = headService.findByFranchiseMultiscreen(frCode);
-        log.info("franchiseMultiscreenDto : "+franchiseMultiscreenDto);
-        if(franchiseMultiscreenDto == null || franchiseMultiscreenDto.getFrMultiscreenYn().equals("")){
+        log.info("franchiseMultiscreenDto : "+franchiseMultiscreenDto.getFrMultiscreenYn());
+        if(franchiseMultiscreenDto.getFrMultiscreenYn() == null || franchiseMultiscreenDto.getFrMultiscreenYn().equals("")){
             data.put("frMultiscreenYn", "N");
         }else{
             data.put("frMultiscreenYn", franchiseMultiscreenDto.getFrMultiscreenYn());

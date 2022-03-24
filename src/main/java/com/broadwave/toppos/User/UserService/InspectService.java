@@ -23,11 +23,9 @@ import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetai
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.manager.RequestDetailBranchInspectListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.manager.RequestDetailBranchInspectionCurrentListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.manager.RequestDetailBranchInspeotDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailInspectDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailSearchDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailSearchDtoSub;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailUpdateDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.*;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepository;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.RequestFdTagDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestRepository;
 import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoney;
 import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoneyRepository;
@@ -282,6 +280,7 @@ public class InspectService {
     }
 
     //  통합조회용 - 결제취소 전 결제내역리스트 요청
+    @Transactional
     public ResponseEntity<Map<String, Object>> franchiseDetailCencelDataList(Long frId, HttpServletRequest request) {
         log.info("franchiseDetailCencelDataList 호출");
 
@@ -296,8 +295,16 @@ public class InspectService {
         log.info("현재 접속한 가맹점 코드 : "+frCode);
 
         List<PaymentCencelDto> paymentCencelDtoList = paymentRepositoryCustom.findByRequestDetailCencelDataList(frCode, frId);
-//        log.info("paymentCencelDtoList : "+paymentCencelDtoList);
+        log.info("paymentCencelDtoList : "+paymentCencelDtoList);
         data.put("gridListData",paymentCencelDtoList);
+
+        try {
+            RequestFdTagDto requestDetailFdTagDto = requestRepository.findByRequestDetailFdTag(frCode, frId);
+            log.info("requestDetailFdTagDto : "+requestDetailFdTagDto);
+            data.put("fdTag",requestDetailFdTagDto.getFdTag());
+        }catch (Exception e){
+            data.put("fdTag",null);
+        }
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
@@ -330,26 +337,38 @@ public class InspectService {
                 }else{
                     log.info("결제 취소합니다.");
                     List<Request> requestList = requestRepository.findByRequestPaymentList(fpId);
-//                    log.info("requestList : "+requestList);
-                    for(int i=0; i<requestList.size(); i++){
-//                        log.info(i+"번째의 ID : "+requestList.get(i).getId());
-                        requestList.get(i).setFpId(null);
-                        requestList.get(i).setFrUncollectYn("Y");
-                        requestList.get(i).setModify_date(LocalDateTime.now());
-                        requestList.get(i).setModify_id(login_id);
+
+                    try {
+                        log.info("결제 취소 조건에 부적합니다.");
+                        RequestFdTagDto requestFdTagDto = requestRepository.findByRequestDetailFdTag(frCode, optionalRequest.get().getId());
+                        StringBuilder tagNo = new StringBuilder(requestFdTagDto.getFdTag());
+                        tagNo.insert(3,'-');
+
+                        return ResponseEntity.ok(res.fail("문자", "조회하신 결제 건은 택번호: "+tagNo+" 로 미수완납이 처리되어있습니다.", "문자",
+                                "택번호: "+tagNo+" 로 조회하셔서 먼저 결제취소하신 후 시도해주세요."));
+                    } catch (Exception e){
+                        log.info("결제 취소 조건에 적합니다.");
+//                            log.info("requestList : "+requestList);
+                        for(int i=0; i<requestList.size(); i++){
+//                                log.info(i+"번째의 ID : "+requestList.get(i).getId());
+                            requestList.get(i).setFpId(null);
+                            requestList.get(i).setFrUncollectYn("Y");
+                            requestList.get(i).setModify_date(LocalDateTime.now());
+                            requestList.get(i).setModify_id(login_id);
+                        }
+
+                        optionalPayment.get().setFpCancelYn("Y");
+
+                        // 마스터테이블의 계산가격을 업데이트한다.
+                        optionalRequest.get().setFrPayAmount(optionalRequest.get().getFrPayAmount()-optionalPayment.get().getFpAmt());
+                        optionalRequest.get().setFrUncollectYn("Y");
+                        optionalRequest.get().setModify_id(login_id);
+                        optionalRequest.get().setModify_date(LocalDateTime.now());
+
+                        paymentRepository.save(optionalPayment.get());
+                        requestRepository.save(optionalRequest.get());
+                        requestRepository.saveAll(requestList);
                     }
-
-                    optionalPayment.get().setFpCancelYn("Y");
-
-                    // 마스터테이블의 계산가격을 업데이트한다.
-                    optionalRequest.get().setFrPayAmount(optionalRequest.get().getFrPayAmount()-optionalPayment.get().getFpAmt());
-                    optionalRequest.get().setFrUncollectYn("Y");
-                    optionalRequest.get().setModify_id(login_id);
-                    optionalRequest.get().setModify_date(LocalDateTime.now());
-
-                    paymentRepository.save(optionalPayment.get());
-                    requestRepository.save(optionalRequest.get());
-                    requestRepository.saveAll(requestList);
                 }
             }else{
                 if(!optionalRequest.isPresent()){
