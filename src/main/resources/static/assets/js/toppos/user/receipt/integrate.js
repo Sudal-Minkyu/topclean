@@ -387,6 +387,7 @@ const comms = {
             const data = res.sendData.gridListData;
             dv.chk(data, dtos.receive.franchiseDetailCencelDataList);
             grids.f.setData(2, data);
+            // collectedCancelPaymentProcess();
         });
     },
 
@@ -2076,5 +2077,23 @@ function setPreDefinedKeywords() {
             </li>
         `);
         if(i === 11) break;
+    }
+}
+
+/* 해당 결제건이 미수금 완납과 연관되어 있는 경우 취소를 막기 위함 */
+function collectedCancelPaymentProcess(isCollected, tagNo) {
+    const $tranferPoint = $("#transferPoint");
+    const $refundPayment = $("#refundPayment");
+    const $collectedWarning = $("#collectedWarning");
+    const $collectedTagNo = $(".collectedTagNo");
+    if(isCollected) {
+        $tranferPoint.hide();
+        $refundPayment.hide();
+        $collectedTagNo.html(tagNo);
+        $collectedWarning.show();
+    } else {
+        $tranferPoint.show();
+        $refundPayment.show();
+        $collectedWarning.hide();
     }
 }

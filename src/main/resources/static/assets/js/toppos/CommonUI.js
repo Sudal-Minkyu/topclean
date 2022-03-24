@@ -10,7 +10,7 @@ class CommonUIClass {
     constructor() {
         /* 숫자만 남긴 후 인트형으로 전환 */
         String.prototype.toInt = function () {
-            return this.toString() ? parseInt(this.replace(/[^0-9]/g, "")) : 0;
+            return this.toString() ? parseInt(this.replace(/[^0-9-]/g, "")) : 0;
         }
 
         /* 0~9까지만 남긴 문자를 반환, 앞자리가 0으로 시작할 수 있음. */
