@@ -24,7 +24,7 @@ import java.util.Map;
  * Remark :
  */
 @Aspect
-//@Component
+@Component
 @Slf4j
 public class ControllerLoggingAspect {
     @Around("execution(* com.broadwave..*RestController.*(..))")
