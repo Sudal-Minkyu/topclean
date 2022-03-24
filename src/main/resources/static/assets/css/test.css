@@ -750,6 +750,10 @@ footer {
     padding: 10px;
     background-color: #ddd;
 }
+footer.footer {
+    padding: 2px;
+    z-index: 10;
+}
 footer > ul {
     display: flex;
     flex-wrap: wrap;
@@ -758,6 +762,9 @@ footer > ul {
 }
 footer > ul > li {
     position: relative;
+}
+footer.footer > ul > li {
+    font-size: 14px;
 }
 footer > ul > li + li {
     margin-left: 21px;
@@ -771,6 +778,10 @@ footer > ul > li + li:before {
     height: 20px;
     margin-top: -8px;
     background-color: #aaa;
+}
+footer.footer > ul > li + li:before {
+    height: 14px;
+    margin-top: -6px;
 }
 
 /* main */
