@@ -12,6 +12,12 @@
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
 	<script src="/assets/js/toppos/index/userIndex.js"></script>
+    <script type="module">
+        import { getTaglostDetail, resetTaglostPop, taglostCheck } from "../assets/js/toppos/module/m_taglostDetail.js";
+        window.getTaglostDetail = getTaglostDetail;
+        window.resetTaglostPop = resetTaglostPop;
+        window.taglostCheck = taglostCheck;
+    </script>
 </th:block>
 
 <div layout:fragment="content" class="content">
@@ -375,7 +381,76 @@
 		</div>
 	</div>
 	
-	
+
+	<!-- 택분실 팝업 -->
+    <div id="taglostPop" class="pop">
+        <div class="pop__box">
+            <div class="pop__article">
+                <div class="tag-pop">
+                    <div class="tag-imgs">
+                        <ul id="photoList" class="tag-imgs__list">
+                        </ul>
+                    </div>
+        
+                    <div class="tag-info">
+                        <ul class="tag-info__list">
+                            <li class="tag-info__item">
+                                <div class="tag-info__title">브랜드</div>
+                                <div class="tag-info__input">
+                                    <div class="c-text">
+                                        <input id="btBrandName" type="text" readonly />
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="tag-info__item">
+                                <div class="tag-info__title">소재</div>
+                                <div class="tag-info__input">
+                                    <div class="c-text">
+                                        <input id="btMaterial" type="text" readonly />
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="tag-info__item">
+                                <div class="tag-info__title">예상지사 입고일</div>
+                                <div class="tag-info__input">
+                                    <div class="c-text">
+                                        <input id="btInputDate" type="text" readonly />
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="tag-info__item">
+                                <div class="tag-info__title">특이사항</div>
+                                <div class="tag-info__input">
+                                    <div class="c-textarea"><textarea id="btRemark" readonly></textarea></div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="pop__article">
+                <div class="tag-info">
+                    <ul class="tag-info__list">
+                        <li class="tag-info__item">
+                            <div class="tag-info__title">가맹점 응답</div>
+                            <div class="tag-info__input">
+                                <div class="c-textarea"><textarea id="frResponse" readonly></textarea></div>
+                            </div>
+                            <div class="tag-info__button">
+                                <input type="checkbox" id="frCheck" />
+                                <label for="frCheck">가맹점<br />확인/해제</label>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <ul class="pop__console">
+                <li><button id="frComplete" class="c-button c-button--dark">최종확인완료</button></li>
+				<li><button id="closeTaglostPop" class="c-button">닫기</button></li>
+			</ul>
+        </div>
+    </div>
 	
 	
 </div>

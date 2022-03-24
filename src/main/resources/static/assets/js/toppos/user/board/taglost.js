@@ -14,11 +14,6 @@ const dtos = {
         tagGalleryDetail: {
             btId: "nr",
         },
-
-        tagGalleryCheck: {
-            btId: "nr",
-            type: "sr", // 체크 혹은 체크해제 1, 최종확인 2
-        }
     },
     receive: {
         tagGalleryList: {
@@ -64,8 +59,6 @@ const dtos = {
 /* 통신에 사용되는 url들 기입 */
 const urls = {
     getMainList: "/api/user/tagGalleryList",
-    getDetail: "/api/user/tagGalleryDetail",
-    check: "/api/user/tagGalleryCheck"
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
@@ -88,94 +81,7 @@ const comms = {
         });
     },
 
-    getDetail(getCondition) {
-        CommonUI.ajax(urls.getDetail, "GET", getCondition, function (res) {
-            const data = res.sendData;
-            console.log(res);
-
-            const refinedData = {
-                frCompleteCheck: data.frCompleteCheck,
-                btId: data.tagGallery.btId,
-                btBrandName: data.tagGallery.btBrandName,
-                btInputDate: data.tagGallery.btInputDate,
-                btMaterial: data.tagGallery.btMaterial,
-                btRemark: data.tagGallery.btRemark,
-                brCloseYn: data.tagGallery.brCloseYn,
-                tagGalleryFileList: data.tagGalleryFileList,
-                tagGalleryCheckList: data.tagGalleryCheckList,
-            }
-
-            wares.currentRequest = refinedData;
-            resetTaglostPop();
-
-            for(photo of wares.currentRequest.tagGalleryFileList) {
-                const photoHtml = `<li class="tag-imgs__item">
-                    <a href="${photo.bfPath + photo.bfFilename}" data-lightbox="images" data-title="이미지 확대">
-                        <img src="${photo.bfPath + "s_" + photo.bfFilename}" class="tag-imgs__img" alt=""/>
-                    </a>
-                </li>`
-                $("#photoList").append(photoHtml);
-            }
-
-            /* 가맹점 응답의 텍스트 구성 */
-            let responseList = ""
-            for(fr of wares.currentRequest.tagGalleryCheckList) {
-                responseList += fr.frName + " ";
-                responseList += fr.brCompleteYn === "Y" ? "(완료)" : "(확인요청)";
-                responseList += " ,"
-            }
-            $("#frResponse").val(responseList.substring(0, responseList.length - 2));
-
-            $("#btBrandName").val(wares.currentRequest.btBrandName);
-            $("#btMaterial").val(wares.currentRequest.btMaterial);
-            $("#btRemark").val(wares.currentRequest.btRemark);
-            $("#btInputDate").val(wares.currentRequest.btInputDate);
-
-
-            $frCheck = $("#frCheck");
-            $frCheckLabel = $("#frCheck").siblings("label");
-            $frComplete = $("#frComplete");
-
-            switch(wares.currentRequest.frCompleteCheck) {
-                case 0 :
-                    $frCheck.prop("checked", false);
-                    $frCheckLabel.show();
-                    $frCheck.prop("disabled", false);
-                    $frComplete.hide();
-                    $frComplete.prop("disabled", false);
-                    break;
-                case 1 :
-                    $frCheck.prop("checked", true);
-                    $frCheckLabel.show();
-                    $frCheck.prop("disabled", false);
-                    $frComplete.show();
-                    $frComplete.prop("disabled", false);
-                    break;
-                case 2 :
-                    $frCheck.prop("checked", true);
-                    $frCheckLabel.hide();
-                    $frComplete.hide();
-                    break;
-            }
-
-            if(wares.currentRequest.brCloseYn === "Y") {
-                $frCheckLabel.hide();
-                $frComplete.hide();
-            }
-
-            openTaglostPop();
-        });
-    },
-
-    check(answer) {
-        dv.chk(answer, dtos.send.tagGalleryCheck, "체크나 최종완료 신호 보내기");
-        CommonUI.ajax(urls.check, "PARAM", answer, function (res) {
-            const getCondition = {
-                btId: wares.currentRequest.btId,
-            }
-            comms.getDetail(getCondition);
-        });
-    },
+    
 };
 
 /* .s : AUI 그리드 관련 설정들
@@ -365,7 +271,7 @@ const trigs = {
                 btId: wares.currentRequest.btId,
                 type: "1",
             }
-            comms.check(answer);
+            taglostCheck(answer);
         });
 
         $("#frComplete").on("click", function () {
@@ -374,7 +280,7 @@ const trigs = {
                 btId: wares.currentRequest.btId,
                 type: "2",
             }
-            comms.check(answer);
+            taglostCheck(answer);
         });
     },
 }
@@ -444,35 +350,14 @@ function closeTaglostPop() {
     comms.getMainList(wares.searchCondition);
 }
 
-function resetTaglostPop() {
-    $("#btBrandName").val("");
-    $("#btMaterial").val("");
-    $("#btRemark").val("");
-    $("#frResponse").val("");
-    $("#photoList").html("");
-}
-
 function showDetail(btId) {
     const getCondition = {
         btId: btId
     };
 
-    comms.getDetail(getCondition);
+    getTaglostDetail(getCondition);
 }
 
 function openTaglostPop() {
     $("#taglostPop").addClass("active");
-}
-
-function lockResponse(responsable) {
-    $frCheckLabel = $("#frCheck").siblings("label");
-    $frComplete = $("#frComplete");
-
-    if(responsable) {
-        $frCheckLabel.hide();
-        $frComplete.hide();
-    } else {
-        $frCheckLabel.show();
-        $frComplete.show();
-    }
 }
