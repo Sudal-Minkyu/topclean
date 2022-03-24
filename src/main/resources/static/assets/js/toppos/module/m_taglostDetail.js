@@ -83,8 +83,6 @@ function resetTaglostPop() {
     $("#photoList").html("");
 }
 
-
-
 function taglostCheck(answer) {
     const tagGalleryCheck = {
         btId: "nr",

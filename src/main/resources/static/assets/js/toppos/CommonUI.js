@@ -151,9 +151,10 @@ class CommonUIClass {
         /* js단 에러메시지를 db에 등록하기 위해 */
         underTaker(erMsg, erTitle) {
             const data = {
-                erMsg: erMsg,
+                erMsg: erMsg.substring(0, 245),
                 erTitle: erTitle,
             };
+            console.log(data);
             const url = "/api/";
             // this.ajax(url, "PARAM", data);
         }
@@ -303,21 +304,8 @@ class CommonUIClass {
                         cache: false,
                         traditional: true,
                         data: data,
-                        error: function (req) {
-                            ajaxErrorMsg(req);
-                        },
-                        success: function (req) {
-                            if (req.status === 200) {
-                                return successFn(req);
-                            }else {
-                                if (req.err_msg2 === null && req.err_msg) {
-                                    alertCancel(req.err_msg);
-                                } else {
-                                    alertCancel(req.err_msg + "<br>" + req.err_msg2);
-                                }
-                                return errorFn(req);
-                            }
-                        }
+                        error: errorResponse,
+                        success: successResponse,
                     });
                     break;
 
@@ -335,21 +323,8 @@ class CommonUIClass {
                         processData: false,
                         contentType: false,
                         enctype: 'multipart/form-data',
-                        error: function (req) {
-                            ajaxErrorMsg(req);
-                        },
-                        success: function (req) {
-                            if (req.status === 200) {
-                                return successFn(req);
-                            }else {
-                                if (req.err_msg2 === null && req.err_msg) {
-                                    alertCancel(req.err_msg);
-                                } else {
-                                    alertCancel(req.err_msg + "<br>" + req.err_msg2);
-                                }
-                                return errorFn(req);
-                            }
-                        }
+                        error: errorResponse,
+                        success: successResponse,
                     });
                     break;
 
@@ -363,21 +338,8 @@ class CommonUIClass {
                         cache: false,
                         data: JSON.stringify(data),
                         contentType: "application/json; charset=utf-8",
-                        error: function (req) {
-                            ajaxErrorMsg(req);
-                        },
-                        success: function (req) {
-                            if (req.status === 200) {
-                                return successFn(req);
-                            } else {
-                                if (req.err_msg2 === null && req.err_msg) {
-                                    alertCancel(req.err_msg);
-                                } else {
-                                    alertCancel(req.err_msg + "<br>" + req.err_msg2);
-                                }
-                                return errorFn(req);
-                            }
-                        }
+                        error: errorResponse,
+                        success: this.successResponse,
                     });
                     break;
 
@@ -391,21 +353,8 @@ class CommonUIClass {
                         type : 'post',
                         cache:false,
                         traditional: true,
-                        error: function (req) {
-                            ajaxErrorMsg(req);
-                        },
-                        success: function (req) {
-                            if (req.status === 200) {
-                                return successFn(req);
-                            } else {
-                                if (req.err_msg2 === null && req.err_msg) {
-                                    alertCancel(req.err_msg);
-                                } else {
-                                    alertCancel(req.err_msg + "<br>" + req.err_msg2);
-                                }
-                                return errorFn(req);
-                            }
-                        }
+                        error: errorResponse,
+                        success: successResponse,
                     });
                     break;
             }
@@ -419,17 +368,34 @@ class CommonUIClass {
                         url: url,
                         type: method,
                         cache: false,
-                        error: function (req) {
-                            ajaxErrorMsg(req);
-                        },
-                        success: function (req) {
-                            return successFn(req);
-                        }
+                        error: errorResponse,
+                        success: successResponse,
                     });
                     break;
             }
         }
+
+        function successResponse(res) {
+            if (res.status === 200) {
+                return successFn(res);
+            } else {
+                if (res.err_msg2 === null && res.err_msg) {
+                    alertCancel(res.err_msg);
+                } else {
+                    alertCancel(res.err_msg + "<br>" + res.err_msg2);
+                }
+                CommonUI.toppos.underTaker(JSON.stringify(res), "통신성공 리턴코드에러");
+                return errorFn(res);
+            }
+        }
+
+        function errorResponse(res) {
+            CommonUI.toppos.underTaker(res.responseText, "통신실패 에러");
+            ajaxErrorMsg(res);
+        }
     }
+
+
 
     /* 규칙 dtos와 같은 구조로 새로운 dto 생성하기 위함 (규칙 dto의 키값을 품은 빈 깡통 만들기) */
     newDto(dto) {

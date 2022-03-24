@@ -37,13 +37,19 @@ const dtos = {
                 username: "s",
                 usertel: "s",
             },
+
+            tagGalleryList: {
+                btBrandName: "s",
+                btId: "n",
+                btInputDt: "s",
+                btMaterial: "s",
+            },
         },
     }
 };
 
 /* 통신에 사용되는 url들 기입 */
 const urls = {
-    taglost: "/api/user/lostNoticeList",
     notice: "/api/user/noticeList",
 }
 
@@ -57,6 +63,7 @@ const comms = {
             const userIndexDto = data.userIndexDto[0];
             const historyList = data.requestHistoryList;
             const inspectList = data.inspeotList;
+            const tagGalleryList = data.tagGalleryList;
 
             if(userIndexDto.brName===null){
                 $("#brName").text("무소속");
@@ -100,7 +107,6 @@ const comms = {
                     $(field[i]).children(".main__board-phone").children("span").html(CommonUI.formatTel(historyList[i].bcHp));
                 }
             }
-            console.log(inspectList);
 
             if(inspectList) {
                 const field = $("#inspectList").children("li").children("a");
@@ -120,6 +126,19 @@ const comms = {
                         .html(wares.fiCustomerConfirmName[inspectList[i].fiCustomerConfirm]);
                 }
             }
+
+            if(tagGalleryList) {
+                const field = $("#taglostList").children("li").children("a");;
+                for(let i = 0; i < tagGalleryList.length; i++) {
+                    $(field[i]).attr("href", `javascript: showTaglost(${tagGalleryList[i].btId})`);
+                    $(field[i]).children(".main__board-title").children("span:nth-child(1)")
+                        .html(tagGalleryList[i].btBrandName);
+                    $(field[i]).children(".main__board-title").children("span:nth-child(2)")
+                        .html("&nbsp;(" + tagGalleryList[i].btMaterial + ")");
+                    $(field[i]).children(".main__board-date").children("span")
+                        .html(tagGalleryList[i].btInputDt);
+                }
+            }
         });
     },
 
@@ -127,28 +146,12 @@ const comms = {
         const conditionSix = wares.boardConditionThree; // 공지사항 길이 확정날 때 까지 임시
         conditionSix.size = 6; // 공지사항 길이 확정날 때 까지 임시
         CommonUI.ajax(urls.notice, "PARAM", conditionSix, function (res) {
-            console.log(res);
             const data = res.datalist;
             if(data) {
                 const field = $("#noticeList").children("li").children("a");
                 for(let i = 0; i < data.length; i++) {
                     $(field[i]).attr("href", `./user/noticeview?id=${data[i].hnId}`);
                     $(field[i]).children(".main__board-title").children("span").html(data[i].subject);
-                    $(field[i]).children(".main__board-date").children("span").html(data[i].insertDateTime);
-                }
-            }
-        });
-    },
-
-    taglost() {
-        CommonUI.ajax(urls.taglost, "PARAM", wares.boardConditionThree, function (res) {
-            const data = res.datalist;
-            if(data) {
-                const field = $("#taglostList").children("li").children("a");;
-                for(let i = 0; i < data.length; i++) {
-                    $(field[i]).attr("href", `./user/taglostview?id=${data[i].htId}`);
-                    $(field[i]).children(".main__board-title").children("span:nth-child(1)").html(data[i].subject);
-                    $(field[i]).children(".main__board-title").children("span:nth-child(2)").html("(" + data[i].numOfComment + ")");
                     $(field[i]).children(".main__board-date").children("span").html(data[i].insertDateTime);
                 }
             }
@@ -181,12 +184,16 @@ const trigs = {
         });
 
         $("#frComplete").on("click", function () {
-            $("#frComplete").prop("disabled", true);
-            const answer = {
-                btId: wares.currentRequest.btId,
-                type: "2",
-            }
-            taglostCheck(answer);
+            alertCheck("고객님 으로부터 최종확인을 받으셨습니까?");
+            $("#checkDelSuccessBtn").on("click", function () {
+                $("#frComplete").prop("disabled", true);
+                const answer = {
+                    btId: wares.currentRequest.btId,
+                    type: "2",
+                }
+                taglostCheck(answer);
+                $('#popupId').remove();
+            });
         });
     }
 }
@@ -227,7 +234,6 @@ function onPageLoad() {
 
     comms.franchiseInfo(condition);
     comms.notice();
-    comms.taglost();
     const datePickerId = ["historyDate"];
     CommonUI.setDatePicker(datePickerId);
 	$("#historyDate").val(today);
@@ -282,4 +288,12 @@ function closeTaglostPop() {
 
 function openTaglostPop() {
     $("#taglostPop").addClass("active");
+}
+
+function showTaglost(btId) {
+    const getCondition = {
+        btId: btId
+    };
+
+    getTaglostDetail(getCondition);
 }
