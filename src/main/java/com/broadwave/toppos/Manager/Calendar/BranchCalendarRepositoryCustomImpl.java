@@ -69,7 +69,7 @@ public class BranchCalendarRepositoryCustomImpl extends QuerydslRepositorySuppor
         log.info(frEstimateDuration+"일 후 출고예정");
 
         JPQLQuery<EtcDataDto> query = from(branchCalendar)
-            .innerJoin(franchise).on(franchise.frCode.eq(frCode))
+            .innerJoin(franchise).on(franchise.frCode.eq(frCode)).on(branchCalendar.brCode.eq(franchise.brCode))
             .where(branchCalendar.bcDate.gt(nowDate).and(branchCalendar.bcDayoffYn.eq("N")))
             .orderBy(branchCalendar.bcDate.asc()).limit(frEstimateDuration)
             .select(Projections.constructor(EtcDataDto.class,

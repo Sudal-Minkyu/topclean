@@ -314,8 +314,8 @@ function createGrid(gridColumnLayout, gridProp) {
 }
 
 /* 해당 그리드와 연관된 그리드의 데이터를 주입한다. */
-function setListData(url, numOfGrid, callback = function (){}) {
-    CommonUI.ajax(url, "GET", false, function(req) {
+function setListData(url, numOfGrid, filterCondition = {}, callback = function (){}) {
+    CommonUI.ajax(url, "GET", filterCondition, function(req) {
         gridData[numOfGrid] = req.sendData.gridListData;
         AUIGrid.setGridData(gridId[numOfGrid], gridData[numOfGrid]);
         return callback();
@@ -678,45 +678,23 @@ function createNewPost(numOfGrid) {
 function filterFranchiseList(type) {
     switch (type) {
         case 1 :
-            AUIGrid.clearFilterAll(gridId[1]);
             const s_frNameFilter = $("#frNameFilter").val();
-            if(s_frNameFilter !== "") {
-                AUIGrid.setFilter(gridId[1], "frName", function (dataField, value, item) {
-                    return new RegExp(s_frNameFilter.toUpperCase()).test(value.toUpperCase());
-                });
-            }
+            setListData(gridCreateUrl[1], 1, {frName: s_frNameFilter});
             createNewPost(1);
             break;
         case 2 :
-            AUIGrid.clearFilterAll(gridId[1]);
+            setListData(gridCreateUrl[1], 1);
             $("#frNameFilter").val("");
             createNewPost(1);
             break;
         case 3 :
-            AUIGrid.clearFilterAll(gridId[3]);
-            AUIGrid.clearGridData(gridId[3]);
-            setListData(gridCreateUrl[3], 3, filterCase3);
+            const s_brAssignState = $("#s_brAssignState").val();
+            const s_frName = $("#s_frName").val();
+            setListData(gridCreateUrl[3], 3, {brAssignState: s_brAssignState, frName: s_frName});
             break;
         case 4 :
-            AUIGrid.clearFilterAll(gridId[3]);
-            AUIGrid.clearGridData(gridId[3]);
             setListData(gridCreateUrl[3], 3);
             break;
-    }
-
-    function filterCase3() {
-        const s_brAssignState = $("#s_brAssignState").val();
-        const s_frName = $("#s_frName").val();
-        if(s_brAssignState !== "") {
-            AUIGrid.setFilter(gridId[3], "brAssignStateValue", function (dataField, value, item) {
-                return s_brAssignState === item.brAssignState;
-            });
-        }
-        if(s_frName !== "") {
-            AUIGrid.setFilter(gridId[3], "frName", function (dataField, value, item) {
-                return new RegExp(s_frName.toUpperCase()).test(value.toUpperCase());
-            });
-        }
     }
 }
 
@@ -724,28 +702,13 @@ function filterFranchiseList(type) {
 function filterBranchList(type) {
     switch (type) {
         case 1 :
-            AUIGrid.clearFilterAll(gridId[4]);
             const s_brName = $("#pop_s_brName").val();
             const s_brCode = $("#pop_s_brCode").val();
             const s_brContractState = $("#pop_s_brContractState").val();
-            if(s_brName !== "") {
-                AUIGrid.setFilter(gridId[4], "brName", function (dataField, value, item) {
-                    return new RegExp(s_brName.toUpperCase()).test(value.toUpperCase());
-                });
-            }
-            if(s_brCode !== "") {
-                AUIGrid.setFilter(gridId[4], "brCode", function (dataField, value, item) {
-                    return s_brCode === value;
-                });
-            }
-            if(s_brContractState !== "") {
-                AUIGrid.setFilter(gridId[4], "brContractStateValue", function (dataField, value, item) {
-                    return s_brContractState === item.brContractState;
-                });
-            }
+            setListData(gridCreateUrl[4], 4, {brName: s_brName, brCode: s_brCode, brContractState: s_brContractState});
             break;
         case 2 :
-            AUIGrid.clearFilterAll(gridId[4]);
+            setListData(gridCreateUrl[4], 4);
             break;
     }
 }

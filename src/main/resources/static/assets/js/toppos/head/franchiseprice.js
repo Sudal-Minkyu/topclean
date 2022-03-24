@@ -241,32 +241,13 @@ function itemListClose() {
 function filterFranchise(type) {
     switch (type) {
         case 1 :
-            AUIGrid.clearFilterAll(gridId[0]);
-
             const s_frCode = $("#s_frCode").val();
             const s_frRefCode = $("#s_frRefCode").val();
             const s_frName = $("#s_frName").val();
-            if(s_frCode !== "") {
-                AUIGrid.setFilter(gridId[0], "frCode", function (dataField, value, item) {
-                    const upValue = value ? value.toUpperCase() : "";
-                    return new RegExp("^" + s_frCode.toUpperCase()).test(upValue);
-                });
-            }
-            if(s_frRefCode !== "") {
-                AUIGrid.setFilter(gridId[0], "frRefCode", function (dataField, value, item) {
-                    const upValue = value ? value.toUpperCase() : "";
-                    return new RegExp("^" + s_frRefCode.toUpperCase()).test(upValue);
-                });
-            }
-            if(s_frName !== "") {
-                AUIGrid.setFilter(gridId[0], "frName", function (dataField, value, item) {
-                    const upValue = value ? value.toUpperCase() : "";
-                    return new RegExp(s_frName.toUpperCase()).test(upValue);
-                });
-            }
+            setDataIntoGrid(0, gridCreateUrl[0], {frCode:s_frCode, frRefCode: s_frRefCode, frName: s_frName});
             break;
         case 2 :
-            AUIGrid.clearFilterAll(gridId[0]);
+            setDataIntoGrid(0, gridCreateUrl[0]);
             break;
     }
 }
@@ -275,22 +256,12 @@ function filterFranchise(type) {
 function filterItemList(type) {
     switch (type) {
         case 1 :
-            AUIGrid.clearFilterAll(gridId[2]);
             const s_biItemcode = $("#s_biItemcode").val();
             const s_biName = $("#s_biName").val();
-            if(s_biItemcode !== "") {
-                AUIGrid.setFilter(gridId[2], "biItemcode", function (dataField, value, item) {
-                    return new RegExp("^" + s_biItemcode.toUpperCase()).test(value.toUpperCase());
-                });
-            }
-            if(s_biName !== "") {
-                AUIGrid.setFilter(gridId[2], "biName", function (dataField, value, item) {
-                    return new RegExp(s_biName.toUpperCase()).test(value.toUpperCase());
-                });
-            }
+            setDataIntoGrid(2, gridCreateUrl[2], {biItemcode: s_biItemcode, biName: s_biName});
             break;
         case 2 :
-            AUIGrid.clearFilterAll(gridId[2]);
+            setDataIntoGrid(2, gridCreateUrl[2]);
             break;
     }
 }

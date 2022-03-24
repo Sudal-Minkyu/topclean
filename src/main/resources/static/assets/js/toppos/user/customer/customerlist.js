@@ -303,12 +303,16 @@ function onModifyCustomer(rowIndex) {
     $("input:radio[name='bcSex']:radio[value='" + item.bcSex + "']")
         .prop('checked', true);
     $("#bcAddress").val(item.bcAddress);
-    $("#bcBirthYYYY").val(item.bcBirthday.substr(0, 4));
-    $("#bcBirthMM").val(item.bcBirthday.substr(4, 2));
-    $("#bcBirthDD").val(item.bcBirthday.substr(6, 2));
-    $("#bcWeddingAnniversaryYYYY").val(item.bcWeddingAnniversary.substr(0, 4));
-    $("#bcWeddingAnniversaryMM").val(item.bcWeddingAnniversary.substr(4, 2));
-    $("#bcWeddingAnniversaryDD").val(item.bcWeddingAnniversary.substr(6, 2));
+    if(item.bcBirthday) {
+        $("#bcBirthYYYY").val(item.bcBirthday.substr(0, 4));
+        $("#bcBirthMM").val(item.bcBirthday.substr(4, 2));
+        $("#bcBirthDD").val(item.bcBirthday.substr(6, 2));
+    }
+    if(item.bcWeddingAnniversary) {
+        $("#bcWeddingAnniversaryYYYY").val(item.bcWeddingAnniversary.substr(0, 4));
+        $("#bcWeddingAnniversaryMM").val(item.bcWeddingAnniversary.substr(4, 2));
+        $("#bcWeddingAnniversaryDD").val(item.bcWeddingAnniversary.substr(6, 2));
+    }
     $("#bcAge").val(item.bcAge);
     $("#bcGrade").val(bcGradeName[item.bcGrade]);
     $("#bcGradeNo").val(item.bcGrade);
@@ -411,9 +415,12 @@ function saveRegister() {
 
     const url = "/api/user/customerSave";
     CommonUI.ajax(url, "POST", formData, function () {
-        alertSuccess("고객 데이터 저장 성공");
+        alertCheck("고객 데이터 저장을 성공하였습니다.<br>해당 고객으로 바로 접수하시겟습니까?");
+        $("#checkDelSuccessBtn").on("click", function () {
+            $('#popupId').remove();
+            location.href = "./receiptreg?bchp=" + formData.get("bcHp").numString();
+        });
         onSearchCustomer();
-        // 완료 후 팝업닫기 추가하기 to.성낙원
     });
 }
 

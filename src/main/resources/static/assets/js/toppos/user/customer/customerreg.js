@@ -118,7 +118,8 @@ function saveRegister() {
         return false;
     }
 
-    formData.set("bcHp", formData.get("bcHp").numString());
+    const tempBcHp = formData.get("bcHp").numString();
+    formData.set("bcHp", tempBcHp);
     formData.append("bcBirthday", birthday);
     formData.append("bcWeddingAnniversary", weddingAnniversary);
     formData.append("bcGrade", "01");
@@ -133,11 +134,14 @@ function saveRegister() {
     }
 
     const url = "/api/user/customerSave";
-    CommonUI.ajax(url, "POST", formData, function (){
+    CommonUI.ajax(url, "POST", formData, function () {
         init();
-        alertSuccess("고객 데이터 저장 성공");
+        alertCheck("고객 데이터 저장을 성공하였습니다.<br>해당 고객으로 바로 접수하시겟습니까?");
+        $("#checkDelSuccessBtn").on("click", function () {
+            $('#popupId').remove();
+            location.href = "./receiptreg?bchp=" + tempBcHp;
+        });
     });
-
 }
 
 // base64를 Blob로 변환하는 함수

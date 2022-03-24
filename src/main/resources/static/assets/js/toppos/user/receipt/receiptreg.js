@@ -123,6 +123,7 @@ $(function() {
         setNextTag(initialData.etcData.fdTag);
         setPreDefinedKeywords();
         frTagNo = initialData.etcData.fdTag.substring(0, 3);
+        getParamsAndAction();
     });
 
     $("#toggleFavorite").on("change", function () {
@@ -1010,54 +1011,6 @@ function onCloseTakePicture() {
             ffRemark: $photoList.eq(i).attr("data-ffRemark"),
         });
     }
-    // const copyObj = {
-    //     _$uid: currentRequest._$uid,
-    //     fdTag: currentRequest.fdTag,
-    //     biItemcode: currentRequest.biItemcode,
-    //     fdColor: currentRequest.fdColor,
-    //     fdPattern: currentRequest.Pattern,
-    //     fdPriceGrade: currentRequest.fdPriceGrade,
-    //     fdOriginAmt: currentRequest.fdOriginAmt,
-    //     fdNormalAmt: currentRequest.fdNormalAmt,
-    //     fdRepairRemark: currentRequest.fdRepairRemark,
-    //     fdRepairAmt: currentRequest.fdRepairAmt,
-    //     fdAdd1Remark: currentRequest.fdAdd1Remark,
-    //     fdSpecialYn: currentRequest.fdSpecialYn,
-    //     fdUrgentYn: currentRequest.fdUrgentYn,
-    //     fdAdd1Amt: currentRequest.fdAdd1Amt,
-    //     fdPressed: currentRequest.fdPressed,
-    //     fdWhitening: currentRequest.fdWhitening,
-    //     fdPollution: currentRequest.fdPollution,
-    //     fdPollutionLevel: currentRequest.fdPollutionLevel,
-    //     fdPollutionLocFcn: currentRequest.fdPollutionLocFcn,
-    //     fdPollutionLocFcs: currentRequest.fdPollutionLocFcs,
-    //     fdPollutionLocFcb: currentRequest.fdPollutionLocFcb,
-    //     fdPollutionLocFlh: currentRequest.fdPollutionLocFlh,
-    //     fdPollutionLocFrh: currentRequest.fdPollutionLocFrh,
-    //     fdPollutionLocFlf: currentRequest.fdPollutionLocFlf,
-    //     fdPollutionLocFrf: currentRequest.fdPollutionLocFrf,
-    //     fdPollutionLocBcn: currentRequest.fdPollutionLocBcn,
-    //     fdPollutionLocBcs: currentRequest.fdPollutionLocBcs,
-    //     fdPollutionLocBcb: currentRequest.fdPollutionLocBcb,
-    //     fdPollutionLocBrh: currentRequest.fdPollutionLocBrh,
-    //     fdPollutionLocBlh: currentRequest.fdPollutionLocBlh,
-    //     fdPollutionLocBrf: currentRequest.fdPollutionLocBrf,
-    //     fdPollutionLocBlf: currentRequest.fdPollutionLocBlf,
-    //     fdStarch: currentRequest.fdStarch,
-    //     fdWaterRepellent: currentRequest.fdWaterRepellent,
-    //     fdDiscountGrade: currentRequest.fdDiscountGrade,
-    //     fdDiscountAmt: currentRequest.fdDiscountAmt,
-    //     fdQty: currentRequest.fdQty,
-    //     fdRequestAmt: currentRequest.fdRequestAmt,
-    //     fdTotAmt: currentRequest.fdTotAmt,
-    //     fdRetryYn: currentRequest.fdRetryYn,
-    //     fdRemark: currentRequest.fdRemark,
-    //     frEstimateDate: currentRequest.frEstimateDate,
-    //     sumName: "",
-    //     photoList: photos,
-    //     fdAgreeType: currentRequest.fdAgreeType,
-    //     fdSignImage: currentRequest.fdSignImage,
-    // }
 
     const copyObj = CommonUI.cloneObj(currentRequest);
 
@@ -1188,54 +1141,6 @@ function putItemIntoGrid() {
     }
 
     if(currentRequest._$uid) {
-        // const copyObj = {
-        //     _$uid: currentRequest._$uid,
-        //     fdTag: currentRequest.fdTag,
-        //     biItemcode: currentRequest.biItemcode,
-        //     fdColor: currentRequest.fdColor,
-        //     fdPattern: currentRequest.Pattern,
-        //     fdPriceGrade: currentRequest.fdPriceGrade,
-        //     fdOriginAmt: currentRequest.fdOriginAmt,
-        //     fdNormalAmt: currentRequest.fdNormalAmt,
-        //     fdRepairRemark: currentRequest.fdRepairRemark,
-        //     fdRepairAmt: currentRequest.fdRepairAmt,
-        //     fdAdd1Remark: currentRequest.fdAdd1Remark,
-        //     fdSpecialYn: currentRequest.fdSpecialYn,
-        //     fdUrgentYn: currentRequest.fdUrgentYn,
-        //     fdAdd1Amt: currentRequest.fdAdd1Amt,
-        //     fdPressed: currentRequest.fdPressed,
-        //     fdWhitening: currentRequest.fdWhitening,
-        //     fdPollution: currentRequest.fdPollution,
-        //     fdPollutionLevel: currentRequest.fdPollutionLevel,
-        //     fdPollutionLocFcn: currentRequest.fdPollutionLocFcn,
-        //     fdPollutionLocFcs: currentRequest.fdPollutionLocFcs,
-        //     fdPollutionLocFcb: currentRequest.fdPollutionLocFcb,
-        //     fdPollutionLocFlh: currentRequest.fdPollutionLocFlh,
-        //     fdPollutionLocFrh: currentRequest.fdPollutionLocFrh,
-        //     fdPollutionLocFlf: currentRequest.fdPollutionLocFlf,
-        //     fdPollutionLocFrf: currentRequest.fdPollutionLocFrf,
-        //     fdPollutionLocBcn: currentRequest.fdPollutionLocBcn,
-        //     fdPollutionLocBcs: currentRequest.fdPollutionLocBcs,
-        //     fdPollutionLocBcb: currentRequest.fdPollutionLocBcb,
-        //     fdPollutionLocBrh: currentRequest.fdPollutionLocBrh,
-        //     fdPollutionLocBlh: currentRequest.fdPollutionLocBlh,
-        //     fdPollutionLocBrf: currentRequest.fdPollutionLocBrf,
-        //     fdPollutionLocBlf: currentRequest.fdPollutionLocBlf,
-        //     fdStarch: currentRequest.fdStarch,
-        //     fdWaterRepellent: currentRequest.fdWaterRepellent,
-        //     fdDiscountGrade: currentRequest.fdDiscountGrade,
-        //     fdDiscountAmt: currentRequest.fdDiscountAmt,
-        //     fdQty: currentRequest.fdQty,
-        //     fdRequestAmt: currentRequest.fdRequestAmt,
-        //     fdTotAmt: currentRequest.fdTotAmt,
-        //     fdRetryYn: currentRequest.fdRetryYn,
-        //     fdRemark: currentRequest.fdRemark,
-        //     frEstimateDate: currentRequest.frEstimateDate,
-        //     sumName: "",
-        //     photoList: currentRequest.photoList,
-        //     fdAgreeType: currentRequest.fdAgreeType,
-        //     fdSignImage: currentRequest.fdSignImage,
-        // }
         const copyObj = CommonUI.cloneObj(currentRequest);
         AUIGrid.updateRowsById(gridId[0], copyObj);
     }else{
@@ -2148,5 +2053,18 @@ function setPreDefinedKeywords() {
             </li>
         `);
         if(i === 11) break;
+    }
+}
+
+/* 브라우저의 get 파라미터들을 가져오고 그에 따른 작업을 반영하기 위해 */
+function getParamsAndAction() {
+    const url = new URL(window.location.href);
+    const params = url.searchParams;
+
+    if(params.has("bchp")) {
+        const bcHp = params.get("bchp");
+        $("#searchCustomerType").val("2");
+        $("#searchCustomerField").val(bcHp);
+        onSearchCustomer();
     }
 }
