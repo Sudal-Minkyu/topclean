@@ -201,8 +201,8 @@ function createGrids() {
 }
 
 /* ajax 통신을 통해 그리드 데이터를 받아와 뿌린다. */
-function setDataIntoGrid(numOfGrid, url) {
-    CommonUI.ajax(url, "GET", false, function (req) {
+function setDataIntoGrid(numOfGrid, url, code = false) {
+    CommonUI.ajax(url, "GET", code, function (req) {
         gridData[numOfGrid] = req.sendData.gridListData;
         AUIGrid.setGridData(gridId[numOfGrid], gridData[numOfGrid]);
 
@@ -287,36 +287,15 @@ function applyPrice() {
 
 /* 상품 그룹 가격 페이지 필터링 */
 function filterItems() {
-    AUIGrid.clearFilterAll(gridId[0]);
-
     const s_bgName = $("#s_bgName").val();
     const s_biItemcode = $("#s_biItemcode").val();
     const s_biName = $("#s_biName").val();
     const s_setDt = $("#s_setDt").val();
-
-    if(s_bgName !== "") {
-        AUIGrid.setFilter(gridId[0], "bgName", function (dataField, value, item) {
-            return s_bgName === value;
-        });
-    }
-    if(s_biItemcode !== "") {
-        AUIGrid.setFilter(gridId[0], "biItemcode", function (dataField, value, item) {
-            return new RegExp("^" + s_biItemcode.toUpperCase()).test(value.toUpperCase());
-        });
-    }
-    if(s_biName !== "") {
-        AUIGrid.setFilter(gridId[0], "biName", function (dataField, value, item) {
-            return new RegExp(s_biName.toUpperCase()).test(value.toUpperCase());
-        });
-    }
-    if(s_setDt !== "") {
-        AUIGrid.setFilter(gridId[0], "setDt", function (dataField, value, item) {
-            return s_setDt.numString() === value;
-        });
-    }
+    setDataIntoGrid(0, gridCreateUrl[0], {bgName: s_bgName, biItemcode: s_biItemcode, biName: s_biName, setDt: s_setDt});
 }
 
 function filterReset() {
+    setDataIntoGrid(0, gridCreateUrl[0]);
     AUIGrid.clearFilterAll(gridId[0]);
     AUIGrid.setFilter(gridId[0], "closeDt", function (dataField, value, item) {
         return "99991231" === value;

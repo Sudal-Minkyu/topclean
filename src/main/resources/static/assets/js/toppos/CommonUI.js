@@ -6,6 +6,7 @@
 * 수정 : 2022-01-27
 * */
 class CommonUIClass {
+    commsErrMsg = true;
 
     constructor() {
         /* 숫자만 남긴 후 인트형으로 전환 */
@@ -157,9 +158,9 @@ class CommonUIClass {
                 erMsg: erMsg.substring(0, 245),
                 erTitle: erTitle,
             };
+            const url = "/api/error/errorSave";
             console.log(data);
-            const url = "/api/";
-            // this.ajax(url, "PARAM", data);
+            CommonUI.ajax(url, "PARAM", data);
         }
     }
 
@@ -387,15 +388,18 @@ class CommonUIClass {
                 } else {
                     alertCancel(res.err_msg + "<br>" + res.err_msg2);
                 }
-                CommonUI.toppos.underTaker(JSON.stringify(res), "통신성공 리턴코드에러");
+                console.log(res);
+                CommonUI.toppos.underTaker("status : " + res.status + " || msg : " 
+                    + res.err_msg + res.err_msg2, "통신성공 리턴코드에러");
                 return errorFn(res);
             }
         }
 
         function errorResponse(res) {
-            if(this.commsErrMsg) {
-                CommonUI.toppos.underTaker(res.responseText, "통신실패 에러");
-                this.commsErrMsg = false;
+            if(CommonUI.commsErrMsg) {
+                console.log(res);
+                CommonUI.toppos.underTaker(res.responseJSON.path + " |||| status : " + res.status, "통신실패 에러"); // res의 다른항목 보내기
+                CommonUI.commsErrMsg = false;
             }
             ajaxErrorMsg(res);
         }
