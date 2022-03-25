@@ -1535,8 +1535,8 @@ function modifyOrder(rowIndex) {
     }
 
     calculateItemPrice();
-
     $('#productPop').addClass('active');
+    $("#biItemList").scrollTop(0);
 }
 
 function setBiItemList(bsCode) {

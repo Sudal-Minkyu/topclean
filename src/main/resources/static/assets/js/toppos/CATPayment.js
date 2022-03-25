@@ -1393,6 +1393,13 @@ function CatPrintCommunication(printData) {
             // }
             //
             // document.getElementById("taResponse").innerText = JSONtoString(data);
+        },
+        error: function (data) {
+            if(data.status === 404) {
+                alertCancel("영수증을 출력할 단말기가 감지되지 않습니다.<br>단말기 연결을 확인해 주세요.");
+            } else {
+                CommonUI.toppos.underTaker(data.status, "인쇄중 404 이외의 에러발생");
+            }
         }
     });
 }

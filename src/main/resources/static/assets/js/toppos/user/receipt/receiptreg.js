@@ -102,13 +102,6 @@ $(function() {
         }
     });
 
-    /* 가격 정보를 받아서 저장해둠 */
-    /*
-    CommonUI.ajax("", "GET", false, function(req) {
-        priceData = req.sendData;
-    });
-    */
-
     // 팝업 닫기
     $('.pop__close').on('click', function(e) {
         $(this).parents('.pop').removeClass('active');
@@ -694,27 +687,6 @@ function createGrids(type = false) {
 
 /* ajax 통신을 통해 그리드 데이터를 받아와 뿌린다. */
 function setDataIntoGrid(numOfGrid, url) {
-    /*
-    if(numOfGrid === 0) {
-        let item = [];
-        for (let i = 1; i <= 20; i++) {
-            item.push({
-                fdTag : "ABC-00"+i,
-                biName : "상품상품"+i,
-                sumProcess : "제다추수",
-                fdNormalAmt : i * 1000,
-                fdRepairAmt : (21-i) * 500,
-                fdAdd1Amt : i * 500,
-                fdDiscountAmt : i * 200,
-                fdQty : 21-i,
-                fdColor : "색상",
-                fdRemark : "특이사항특이사항",
-                frEstimateDt : "18450815",
-            });
-        }
-        AUIGrid.setGridData(gridId[0], item);
-    }
-    */
     CommonUI.ajax(url, "GET", false, function (req) {
         gridData[numOfGrid] = req.sendData.gridListData;
         AUIGrid.setGridData(gridId[numOfGrid], gridData[numOfGrid]);
@@ -868,6 +840,7 @@ function onPopReceiptReg(btnElement) {
 
     calculateItemPrice();
     $('#productPop').addClass('active');
+    $("#biItemList").scrollTop(0);
 }
 
 
@@ -1330,8 +1303,8 @@ function onModifyOrder(rowIndex) {
     /* currentRequest의 각 벨류값에 따라 화면의 라디오 세팅을 구성한다. */
 
     calculateItemPrice();
-
     $('#productPop').addClass('active');
+    $("#biItemList").scrollTop(0);
 }
 
 function onRemoveOrder() {
@@ -1641,9 +1614,12 @@ function onPaymentStageOne() {
                     }
                     // 결제 실패의 경우
                     if (resjson.STATUS === "FAILURE") {
-                        console.log(resjson);
                         $('#payStatus').hide();
-                        alertCancel("단말기 처리 중 에러가 발생하였습니다<br>잠시후 다시 시도해주세요");
+                        if(resjson.ERRORDATA === "erroecode:404, error:error") {
+                            alertCancel("카드결제 단말기 연결이 감지되지 않습니다.<br>연결을 확인해 주세요.");
+                        } else {
+                            alertCancel(resjson.ERRORMESSAGE);
+                        }
                     }
                 });
             } catch (e) {
@@ -1741,7 +1717,6 @@ function onPaymentStageTwo(creditData = {}) {
             $("#receiveCash").html("0");
             $("#changeCash").html("0");
             $("#receiveCard").html("0");
-            //$("#saveMoney").html(req.sendData.saveMoney);
 
             calculatePaymentStage(getPaidAmt());
             if($("#totalAmt").html() === "0" && autoPrintReceipt) {
