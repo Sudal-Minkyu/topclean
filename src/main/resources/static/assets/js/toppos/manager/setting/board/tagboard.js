@@ -445,6 +445,13 @@ function onPageLoad() {
     trigs.basic();
     trigs.grid();
 
+    const searchCondition = {
+        filterFromDt: $("#filterFromDt").val().numString(),
+        filterToDt: $("#filterToDt").val().numString(),
+        type: $("#type").val(), // 1 미완료, 2 전체, 3 내 가맹점
+    };
+    wares.searchCondition = searchCondition;
+
     // lightbox option
     lightbox.option({
         'maxWidth': 1100,
@@ -483,10 +490,6 @@ function searchOrder() {
     wares.searchCondition = searchCondition;
 
     comms.getMainList(searchCondition);
-}
-
-function closeTaglostPop() {
-    $("#taglostPop").removeClass("active");
 }
 
 async function openTaglostPop() {
@@ -585,7 +588,6 @@ function closeTaglostPop() {
             CommonUI.toppos.underTaker(e, "tagboard : 카메라 스트림 찾아서 끄기");
         }
     }
-    comms.getMainList(wares.searchCondition);
 }
 
 function enableDatepicker() {
