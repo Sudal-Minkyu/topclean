@@ -55,7 +55,7 @@ public class FranchiseInfoDto {
     }
 
     public StringBuffer getFrContractDt() {
-        if(frContractDt != null){
+        if(frContractDt != null && !frContractDt.equals("")){
             StringBuffer getFrContractDt = new StringBuffer(frContractDt);
             getFrContractDt.insert(4,'-');
             getFrContractDt.insert(7,'-');
@@ -66,7 +66,7 @@ public class FranchiseInfoDto {
     }
 
     public StringBuffer getFrContractFromDt() {
-        if(brContractFromDt != null){
+        if(brContractFromDt != null && !brContractFromDt.equals("")){
             StringBuffer getFrContractFromDt = new StringBuffer(brContractFromDt);
             getFrContractFromDt.insert(4,'-');
             getFrContractFromDt.insert(7,'-');
@@ -77,7 +77,7 @@ public class FranchiseInfoDto {
     }
 
     public StringBuffer getFrContractToDt() {
-        if(frContractToDt != null){
+        if(frContractToDt != null && !frContractToDt.equals("")){
             StringBuffer getFrContractToDt = new StringBuffer(frContractToDt);
             getFrContractToDt.insert(4,'-');
             getFrContractToDt.insert(7,'-');

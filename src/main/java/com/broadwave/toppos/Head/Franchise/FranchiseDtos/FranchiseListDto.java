@@ -42,7 +42,7 @@ public class FranchiseListDto {
     private Double frRoyaltyRateFr; // 정산비율(가맹점)
 
     public StringBuffer getFrContractDt() {
-        if(!frContractDt.equals("")){
+        if(frContractDt != null && !frContractDt.equals("")){
             StringBuffer getFrContractDt = new StringBuffer(frContractDt);
             getFrContractDt.insert(4,'-');
             getFrContractDt.insert(7,'-');
@@ -53,7 +53,7 @@ public class FranchiseListDto {
     }
 
     public StringBuffer getFrContractFromDt() {
-        if(!brContractFromDt.equals("")){
+        if(brContractFromDt != null && !brContractFromDt.equals("")){
             StringBuffer getFrContractFromDt = new StringBuffer(brContractFromDt);
             getFrContractFromDt.insert(4,'-');
             getFrContractFromDt.insert(7,'-');
@@ -64,7 +64,7 @@ public class FranchiseListDto {
     }
 
     public StringBuffer getFrContractToDt() {
-        if(!frContractToDt.equals("")){
+        if(frContractToDt != null && !frContractToDt.equals("")){
             StringBuffer getFrContractToDtDate = new StringBuffer(frContractToDt);
             getFrContractToDtDate.insert(4,'-');
             getFrContractToDtDate.insert(7,'-');
