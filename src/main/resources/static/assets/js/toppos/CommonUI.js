@@ -339,7 +339,7 @@ class CommonUIClass {
                         data: JSON.stringify(data),
                         contentType: "application/json; charset=utf-8",
                         error: errorResponse,
-                        success: this.successResponse,
+                        success: successResponse,
                     });
                     break;
 
