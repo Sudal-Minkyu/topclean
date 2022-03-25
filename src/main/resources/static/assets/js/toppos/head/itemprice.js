@@ -261,11 +261,7 @@ function filterItems() {
 }
 
 function filterReset() {
-    setDataIntoGrid(0, gridCreateUrl[0]);
-    AUIGrid.clearFilterAll(gridId[0]);
-    AUIGrid.setFilter(gridId[0], "closeDt", function (dataField, value, item) {
-        return "99991231" === value;
-    });
+    AUIGrid.clearGridData(gridId[0]);
 }
 
 /* 체크된 행이 존재할 경우 체크된 행을 삭제하고, 아닐 경우 선택된 행 하나만 삭제 */
