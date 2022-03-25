@@ -384,7 +384,7 @@ public class InspectService {
                         saveMoney.setFsYyyymmdd(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
                         saveMoney.setFsType("1");
                         saveMoney.setFsClose("N");
-                        saveMoney.setFsAmt(optionalPayment.get().getFpAmt());
+                        saveMoney.setFsAmt(optionalPayment.get().getFpRealAmt());
                         saveMoney.setInsert_id(login_id);
                         saveMoney.setInsert_date(LocalDateTime.now());
                         saveMoneyRepository.save(saveMoney);
