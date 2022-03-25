@@ -5,8 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-
 /**
  * @author Minkyu
  * Date : 2021-11-15
@@ -57,24 +55,36 @@ public class FranchiseInfoDto {
     }
 
     public StringBuffer getFrContractDt() {
-        StringBuffer getFrContractDt = new StringBuffer(frContractDt);
-        getFrContractDt.insert(4,'-');
-        getFrContractDt.insert(7,'-');
-        return getFrContractDt;
+        if(frContractDt != null){
+            StringBuffer getFrContractDt = new StringBuffer(frContractDt);
+            getFrContractDt.insert(4,'-');
+            getFrContractDt.insert(7,'-');
+            return getFrContractDt;
+        }else{
+            return null;
+        }
     }
 
     public StringBuffer getFrContractFromDt() {
-        StringBuffer getFrContractFromDt = new StringBuffer(brContractFromDt);
-        getFrContractFromDt.insert(4,'-');
-        getFrContractFromDt.insert(7,'-');
-        return getFrContractFromDt;
+        if(brContractFromDt != null){
+            StringBuffer getFrContractFromDt = new StringBuffer(brContractFromDt);
+            getFrContractFromDt.insert(4,'-');
+            getFrContractFromDt.insert(7,'-');
+            return getFrContractFromDt;
+        }else{
+            return null;
+        }
     }
 
     public StringBuffer getFrContractToDt() {
-        StringBuffer getFrContractToDtDate = new StringBuffer(frContractToDt);
-        getFrContractToDtDate.insert(4,'-');
-        getFrContractToDtDate.insert(7,'-');
-        return getFrContractToDtDate;
+        if(frContractToDt != null){
+            StringBuffer getFrContractToDt = new StringBuffer(frContractToDt);
+            getFrContractToDt.insert(4,'-');
+            getFrContractToDt.insert(7,'-');
+            return getFrContractToDt;
+        }else{
+            return null;
+        }
     }
 
 }
