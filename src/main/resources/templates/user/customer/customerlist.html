@@ -113,11 +113,11 @@
                                     <h4 class="customer__form-title">성별</h4>
                                     <div class="customer__form-input">
                                         <div class="c-radio">
-                                            <input id="female" type="radio" name="bcSex" value="1" checked>
+                                            <input id="female" type="radio" name="bcSex" value="0" checked>
                                             <label for="female">여자</label>
                                         </div>
                                         <div class="c-radio">
-                                            <input id="male" type="radio" name="bcSex" value="0">
+                                            <input id="male" type="radio" name="bcSex" value="1">
                                             <label for="male">남자</label>
                                         </div>
                                     </div>
@@ -181,7 +181,7 @@
                                         <div class="c-select">
                                             <select id="bcWeddingAnniversaryYYYY">
                                                 <option value="">년도</option>
-                                                <option th:each="i : ${#numbers.sequence(2010, 1950, -1)}"
+                                                <option th:each="i : ${#numbers.sequence(#dates.year(#dates.createNow()), 1950, -1)}"
                                                         th:value="${i}"
                                                         th:text="${i}">
                                                 </option>

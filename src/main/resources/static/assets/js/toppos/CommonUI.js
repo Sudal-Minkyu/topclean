@@ -17,6 +17,9 @@ class CommonUIClass {
         String.prototype.numString = function () {
             return this.toString() ? this.replace(/[^0-9]/g, "") : "";
         }
+
+        /* 통신 에러의 경우 최초 단 1회만 보고한다. (무한루프 가능성 때문) */
+        this.commsErrMsg = true;
     }
 
     toppos = {
@@ -390,7 +393,10 @@ class CommonUIClass {
         }
 
         function errorResponse(res) {
-            CommonUI.toppos.underTaker(res.responseText, "통신실패 에러");
+            if(this.commsErrMsg) {
+                CommonUI.toppos.underTaker(res.responseText, "통신실패 에러");
+                this.commsErrMsg = false;
+            }
             ajaxErrorMsg(res);
         }
     }
