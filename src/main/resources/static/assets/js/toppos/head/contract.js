@@ -302,6 +302,10 @@ $(function () {
         $("#frCodeChecked").val("0");
         $("#frCodeChkBtn").prop("disabled", false);
     });
+
+    const initialDate = new Date().toISOString().slice(0, 10);
+    $("#frContractDt").val(initialDate);
+    $("#brContractDt").val(initialDate);
 });
 
 /* 레이아웃, 프로퍼티를 적용하여 그리드 생성 */
