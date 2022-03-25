@@ -239,6 +239,8 @@ function itemListClose() {
 
 /* 가맹점 필터링 type 1 : 필터링  type 2 : 필터링 초기화 */
 function filterFranchise(type) {
+    selectedFrCode = "";
+    AUIGrid.clearGridData(gridId[1]);
     switch (type) {
         case 1 :
             const s_frCode = $("#s_frCode").val();
@@ -267,7 +269,11 @@ function filterItemList(type) {
 }
 
 function addPriceRow() {
-    AUIGrid.addRow(gridId[1], {}, "last");
+    if(selectedFrCode) {
+        AUIGrid.addRow(gridId[1], {}, "last");
+    } else {
+        alertCaution("라인을 추가하실 가맹점을 선택해 주세요.", 1);
+    }
 }
 
 /* 1번 그리드의 선택된 체크박스 항목들이나, 없을 경우 선택된 행 하나를 삭제 */

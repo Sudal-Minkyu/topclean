@@ -56,7 +56,7 @@
 		<div class="info" id="logout_Form">
 			<div class="info__user">
 				<span class="info__icon">user image</span>
-				<span class="info__user-name">고양지사 - 홍길동</span>
+				<span id="headerUserInfo" class="info__user-name">고양지사 - 홍길동</span>
 			</div>
 			<button class="header__btn" onclick="logout()">
 				<img src="/assets/images/icon__logout--g.svg" alt="로그아웃" /><span>로그아웃</span>
@@ -64,6 +64,14 @@
 		</div>
 	</div>
 	<div class="gnb__layer"></div>
+	<script type="text/javascript">
+		$(document).ready(function() {
+			CommonUI.ajax("/api/manager/branchHeaderData", "GET", false, function (res) {
+				const data = res.sendData;
+				$("#headerUserInfo").html(data.accountHeaderData.brName + " - " + data.accountHeaderData.username);
+			});
+		});
+	</script>
 </header>
 
 

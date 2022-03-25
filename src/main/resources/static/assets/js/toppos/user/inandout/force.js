@@ -81,6 +81,8 @@ const comms = {
     searchCustomer(searchCondition) {
         dv.chk(searchCondition, dtos.send.customerInfo, "고객 검색 조건 보내기");
         CommonUI.ajax(urls.searchCustomer, "GET", searchCondition, function (res) {
+            $("#searchType").val(0);
+            $("#searchString").val("");
             const items = res.sendData.gridListData;
             dv.chk(items, dtos.receive.customerInfo, "검색된 고객 리스트 받기");
             if(items.length === 1) {
@@ -369,6 +371,12 @@ const trigs = {
                 closeCustomerPop();
             });
 
+            // 검색 엔터 이벤트
+            $("#searchString").on("keypress", function(e) {
+                if(e.originalEvent.code === "Enter" || e.originalEvent.code === "NumpadEnter") {
+                    mainSearch();
+                }
+            });
             
         }
     },

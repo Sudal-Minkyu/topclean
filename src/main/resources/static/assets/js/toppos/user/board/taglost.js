@@ -275,12 +275,16 @@ const trigs = {
         });
 
         $("#frComplete").on("click", function () {
-            $("#frComplete").prop("disabled", true);
-            const answer = {
-                btId: wares.currentRequest.btId,
-                type: "2",
-            }
-            taglostCheck(answer);
+            alertCheck("고객님 으로부터 최종확인을 받으셨습니까?");
+            $("#checkDelSuccessBtn").on("click", function () {
+                $("#frComplete").prop("disabled", true);
+                const answer = {
+                    btId: wares.currentRequest.btId,
+                    type: "2",
+                }
+                taglostCheck(answer);
+                $('#popupId').remove();
+            });
         });
     },
 }
