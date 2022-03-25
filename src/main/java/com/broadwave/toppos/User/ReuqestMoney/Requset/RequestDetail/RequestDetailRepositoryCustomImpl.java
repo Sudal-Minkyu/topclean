@@ -121,11 +121,13 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         QRequest request = QRequest.request;
         QInspeot inspeot = QInspeot.inspeot;
         QCustomer customer = QCustomer.customer;
+        QPayment payment = QPayment.payment;
 
         JPQLQuery<RequestDetailSearchDto> query = from(requestDetail)
                 .innerJoin(requestDetail.frId, request)
                 .innerJoin(request.bcId, customer)
                 .leftJoin(inspeot).on(inspeot.fdId.eq(requestDetail))
+//                .leftJoin(payment).on(payment.fdId.eq(requestDetail))
                 .where(request.frCode.eq(frCode).and(requestDetail.fdCancel.eq("N")))
                 .where(request.frYyyymmdd.loe(filterFromDt).and(request.frYyyymmdd.goe(filterToDt)).and(request.frConfirmYn.eq("Y")))
                 .select(Projections.constructor(RequestDetailSearchDto.class,

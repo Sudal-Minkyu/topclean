@@ -2,6 +2,8 @@ $(function() {
     /* 배열내의 각 설정만 넣어 빈 그리드 생성 */
     createGrids();
 
+    filterItems();
+
     /* 그리드에 데이터를 집어넣음 반복문은 그리드숫자만큼(혹은 목표그리드 범위만큼) 돌 수 있도록 한다.
     *  첫 호출시 종료일자가 마지막 날인 것을 호출 */
     for(let i=0; i<1; i++) {
@@ -202,7 +204,7 @@ function createGrids() {
 
 /* ajax 통신을 통해 그리드 데이터를 받아와 뿌린다. */
 function setDataIntoGrid(numOfGrid, url, code = false) {
-    CommonUI.ajax(url, "GET", code, function (req) {
+    CommonUI.ajax(url, "PARAM", code, function (req) {
         gridData[numOfGrid] = req.sendData.gridListData;
         AUIGrid.setGridData(gridId[numOfGrid], gridData[numOfGrid]);
 

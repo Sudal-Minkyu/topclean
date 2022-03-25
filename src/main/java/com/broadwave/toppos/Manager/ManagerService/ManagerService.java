@@ -71,7 +71,7 @@ public class ManagerService {
 
     //  현 지사의 소속된 지사명, 이름 호출
     public ResponseEntity<Map<String, Object>> branchHeaderData(HttpServletRequest request) {
-        log.info("managerBelongList 호출");
+        log.info("branchHeaderData 호출");
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
 

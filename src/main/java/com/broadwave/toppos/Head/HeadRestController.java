@@ -1078,7 +1078,7 @@ public class HeadRestController {
     }
 
     // 상품그룹가격 페이지 리스트 호출 API
-    @GetMapping("itemPriceList")
+    @PostMapping("itemPriceList")
     public ResponseEntity<Map<String,Object>> itemPriceList(@RequestParam("bgName") String bgName, @RequestParam("biItemcode") String biItemcode,
                                                             @RequestParam("biName") String biName, @RequestParam("setDt") String setDt){
         log.info("itemPriceList 호출");
