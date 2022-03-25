@@ -585,43 +585,43 @@
             </div>
             <div class="l-popup__content">
                 <div class="l-popup__section">
-                	<div class="search-form search-form--right">
-						<ul class="search-form__list">
-							<li class="search-form__item">
-								<div class="search-form__title">지사명</div>
-								<div class="search-form__input">
-									<input type="text" id="pop_s_brName" />
-								</div>
-							</li>
-							<li class="search-form__item">
-								<div class="search-form__title">지사코드</div>
-								<div class="search-form__input">
-									<input type="text" id="pop_s_brCode" maxlength="2" />
-								</div>
-							</li>
-							<li class="search-form__item">
-								<div class="search-form__title">계약상태</div>
-								<div class="search-form__input">
-									<div class="c-select">
-										<select id="pop_s_brContractState" name="pop_s_brContractState">
-		                                    <option value="">모두</option>
-		                                    <option value="01">진행중</option>
-		                                    <option value="02">계약완료</option>
-		                                </select>
-									</div>
-								</div>
-							</li>
-						</ul>
-						<ul class="seach-form__console">
-							<li class="search-form__btn">
-								<button class="c-button c-button--darksolid" type="button" onclick="filterBranchList(1)">조회</button>
-							</li>
-						</ul>
-					</div>
+                    <div class="inquiry">
+                        <div class="inquiry__condition">
+                            <ul>
+                                <li>
+                                    <div class="inquiry__title">지사명</div>
+                                    <div class="inquiry__input">
+                                        <input type="text" id="pop_s_brName" />
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="inquiry__title">지사코드</div>
+                                    <div class="inquiry__input">
+                                        <input type="text" id="pop_s_brCode" maxlength="2" />
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="inquiry__title">계약상태</div>
+                                    <div class="inquiry__input">
+                                        <div class="c-select">
+                                            <select id="pop_s_brContractState" name="pop_s_brContractState">
+                                                <option value="">모두</option>
+                                                <option value="01">진행중</option>
+                                                <option value="02">계약완료</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="inquiry__button inquiry__button--row">
+                            <button class="c-button c-button--darksolid c-button--small" type="button" onclick="filterBranchList(1)">조회</button>
+                        </div>
+                    </div>
                 </div>
                 
                 <div class="l-popup__section">
-                    <div id="grid_branchList"></div>
+                    <div id="grid_branchList" style="height: 300px;"></div>
                 </div>
             </div>
             <div class="l-popup__console">
