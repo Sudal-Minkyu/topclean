@@ -204,14 +204,14 @@ public class UserRestController {
         // 클레임데이터 가져오기
         Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
         String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
-        log.info("현재 접속한 가맹점 코드 : "+frCode);
 
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
 
         // 멀티스크린 사용여부 가져오기
         FranchiseMultiscreenDto franchiseMultiscreenDto = headService.findByFranchiseMultiscreen(frCode);
-        log.info("franchiseMultiscreenDto : "+franchiseMultiscreenDto.getFrMultiscreenYn());
+        log.info("현재 접속한 가맹점 코드 : "+frCode);
+        log.info("멀티스크린 사용여부 : "+franchiseMultiscreenDto.getFrMultiscreenYn());
         if(franchiseMultiscreenDto.getFrMultiscreenYn() == null || franchiseMultiscreenDto.getFrMultiscreenYn().equals("")){
             data.put("frMultiscreenYn", "N");
         }else{

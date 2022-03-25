@@ -3,6 +3,7 @@ package com.broadwave.toppos.Head.Franchise;
 import com.broadwave.toppos.Head.Branoh.QBranch;
 import com.broadwave.toppos.Head.Franchise.FranchiseDtos.*;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.JPQLQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
@@ -227,7 +228,9 @@ public class FranchiseRepositoryCustomImpl extends QuerydslRepositorySupport imp
 
         JPQLQuery<FranchiseMultiscreenDto> query = from(franchise)
                 .select(Projections.constructor(FranchiseMultiscreenDto.class,
-                        franchise.frMultiscreenYn
+                        new CaseBuilder()
+                                .when(franchise.frMultiscreenYn.isNull()).then("N")
+                                .otherwise(franchise.frMultiscreenYn)
                 ));
 
         query.where(franchise.frCode.eq(frCode));
