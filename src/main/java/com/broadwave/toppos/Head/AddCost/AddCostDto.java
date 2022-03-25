@@ -1,9 +1,6 @@
 package com.broadwave.toppos.Head.AddCost;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 /**
  * @author Minkyu
@@ -11,7 +8,7 @@ import lombok.Setter;
  * Time :
  * Remark : Toppos 상품 가격셋팅 할인율 테이블 Dto
  */
-@Setter
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -32,59 +29,4 @@ public class AddCostDto {
     private Integer bcStarch; // 풀먹임 요금
     private Integer bcWaterRepellent; // 발수가공요금
 
-    public Double getBcVipDcRt() {
-        return bcVipDcRt;
-    }
-
-    public Double getBcVvipDcRt() {
-        return bcVvipDcRt;
-    }
-
-    public Double getBcHighRt() {
-        return bcHighRt;
-    }
-
-    public Double getBcPremiumRt() {
-        return bcPremiumRt;
-    }
-
-    public Double getBcChildRt() {
-        return bcChildRt;
-    }
-
-    public Integer getBcPressed() {
-        return bcPressed;
-    }
-
-    public Integer getBcWhitening() {
-        return bcWhitening;
-    }
-
-    public Integer getBcPollution1() {
-        return bcPollution1;
-    }
-
-    public Integer getBcPollution2() {
-        return bcPollution2;
-    }
-
-    public Integer getBcPollution3() {
-        return bcPollution3;
-    }
-
-    public Integer getBcPollution4() {
-        return bcPollution4;
-    }
-
-    public Integer getBcPollution5() {
-        return bcPollution5;
-    }
-
-    public Integer getBcStarch() {
-        return bcStarch;
-    }
-
-    public Integer getBcWaterRepellent() {
-        return bcWaterRepellent;
-    }
 }

@@ -45,7 +45,7 @@ public class RequestDetailCloseListDto {
     private String fdColor; // 색상코드 (00:미선택 01 흰색 02:검정 03: 회색, 04 빨강 05:주황, 06: 노랑, 07 초록 08 파랑 09:남색 10 보라 11 핑크)
 
     public StringBuffer getFrYyyymmdd() {
-        if(frYyyymmdd != null){
+        if(frYyyymmdd != null && !frYyyymmdd.equals("")){
             StringBuffer getFrYyyymmdd = new StringBuffer(frYyyymmdd);
             getFrYyyymmdd.insert(4,'-');
             getFrYyyymmdd.insert(7,'-');

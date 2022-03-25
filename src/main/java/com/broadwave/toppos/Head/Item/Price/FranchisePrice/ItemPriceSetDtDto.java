@@ -8,7 +8,7 @@ import lombok.*;
  * Time :
  * Remark :  가격시작일(적용일자) 셀렉트박스 테이터 Dto
  */
-@Setter
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -16,12 +16,8 @@ public class ItemPriceSetDtDto {
     private String setDt; // 가격시작일(적용일자)
     private String setDtview; // 가격시작일(적용일자)
 
-    public String getSetDt() {
-        return setDt;
-    }
-
     public StringBuffer getSetDtview() {
-        if(!setDtview.equals("")){
+        if(setDtview != null && !setDtview.equals("")){
             StringBuffer getSetDtview = new StringBuffer(setDtview);
             getSetDtview.insert(4,'-');
             getSetDtview.insert(7,'-');

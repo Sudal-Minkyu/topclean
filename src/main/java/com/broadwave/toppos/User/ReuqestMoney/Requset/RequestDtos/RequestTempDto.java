@@ -16,5 +16,7 @@ import java.time.format.DateTimeFormatter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RequestTempDto {
+
     private String frNo; // 접수코드
+
 }

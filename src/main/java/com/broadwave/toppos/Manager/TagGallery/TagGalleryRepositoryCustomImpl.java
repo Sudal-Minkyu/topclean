@@ -3,8 +3,6 @@ package com.broadwave.toppos.Manager.TagGallery;
 import com.broadwave.toppos.Manager.TagGallery.TagGalleryDtos.TagGalleryDetailDto;
 import com.broadwave.toppos.Manager.TagGallery.TagGalleryDtos.TagGalleryListDto;
 import com.broadwave.toppos.Manager.TagGallery.TagGalleryDtos.TagGalleryMainListDto;
-import com.broadwave.toppos.Manager.TagGallery.TagGalleryFile.QTagGalleryFile;
-import com.broadwave.toppos.Manager.TagGallery.TagGalleryFile.TagGalleryFileListDto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
 import lombok.extern.slf4j.Slf4j;

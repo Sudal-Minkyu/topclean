@@ -1,9 +1,6 @@
 package com.broadwave.toppos.Head.Item.Price.FranchisePrice;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 /**
  * @author Minkyu
@@ -11,7 +8,7 @@ import lombok.Setter;
  * Time :
  * Remark : Toppos 가맹점 특정상품관리  Dto
  */
-@Setter
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -22,19 +19,4 @@ public class FranchisePriceDto {
     private Integer bfPrice; // 가맹점 적용가격
     private String bfRemark; // 특이사항
 
-    public String getFrCode() {
-        return frCode;
-    }
-
-    public String getBiItemcode() {
-        return biItemcode;
-    }
-
-    public Integer getBfPrice() {
-        return bfPrice;
-    }
-
-    public String getBfRemark() {
-        return bfRemark;
-    }
 }

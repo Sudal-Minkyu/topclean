@@ -42,7 +42,7 @@ public class FranchiseUserDto {
     private String frMultiscreenYn; // 멀티스크린 사용여부
 
     public StringBuffer getFrContractDt() {
-        if(!frContractDt.equals("")){
+        if(frContractDt != null && !frContractDt.equals("")){
             StringBuffer getFrContractDt = new StringBuffer(frContractDt);
             getFrContractDt.insert(4,'-');
             getFrContractDt.insert(7,'-');
@@ -53,7 +53,7 @@ public class FranchiseUserDto {
     }
 
     public StringBuffer getFrContractFromDt() {
-        if(!frContractFromDt.equals("")){
+        if(frContractFromDt != null && !frContractFromDt.equals("")){
             StringBuffer getFrContractFromDt = new StringBuffer(frContractFromDt);
             getFrContractFromDt.insert(4,'-');
             getFrContractFromDt.insert(7,'-');
@@ -64,7 +64,7 @@ public class FranchiseUserDto {
     }
 
     public StringBuffer getFrContractToDt() {
-        if(!frContractToDt.equals("")){
+        if(frContractToDt != null && !frContractToDt.equals("")){
             StringBuffer getFrContractToDt = new StringBuffer(frContractToDt);
             getFrContractToDt.insert(4,'-');
             getFrContractToDt.insert(7,'-');

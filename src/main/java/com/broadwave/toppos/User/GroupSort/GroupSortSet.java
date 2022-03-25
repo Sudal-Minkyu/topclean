@@ -1,6 +1,7 @@
 package com.broadwave.toppos.User.GroupSort;
 
 import com.broadwave.toppos.User.GroupSort.GroupSortDtos.GroupSortMapperDto;
+import lombok.Data;
 import lombok.Setter;
 
 import java.util.ArrayList;
@@ -11,14 +12,10 @@ import java.util.ArrayList;
  * Time :
  * Remark : 상품그룹정렬 업데이트 Dto
  */
-@Setter
+@Data
 public class GroupSortSet {
 
     // 상품그룹정렬 업데이트 list
     private ArrayList<GroupSortMapperDto> list;
-
-    public ArrayList<GroupSortMapperDto> getList() {
-        return list;
-    }
 
 }

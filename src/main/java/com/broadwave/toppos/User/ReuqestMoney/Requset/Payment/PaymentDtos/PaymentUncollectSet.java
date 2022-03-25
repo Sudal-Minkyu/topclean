@@ -18,6 +18,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PaymentUncollectSet {
-    private List<Long> frIdList; // frIdList
+
+    private List<Long> frIdList;
     private PaymentUncollectMapperDto data;
+
 }

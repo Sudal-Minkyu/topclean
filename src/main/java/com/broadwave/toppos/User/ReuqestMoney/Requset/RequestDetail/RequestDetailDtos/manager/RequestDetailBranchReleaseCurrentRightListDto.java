@@ -50,7 +50,7 @@ public class RequestDetailBranchReleaseCurrentRightListDto {
     private String miNo; // 바코드
 
     public StringBuffer getFdS2Dt() {
-        if(fdS2Dt != null){
+        if(fdS2Dt != null && !fdS2Dt.equals("")){
             StringBuffer getFdS2Dt = new StringBuffer(fdS2Dt);
             getFdS2Dt.insert(4,'-');
             getFdS2Dt.insert(7,'-');
@@ -61,7 +61,7 @@ public class RequestDetailBranchReleaseCurrentRightListDto {
     }
 
     public StringBuffer getFdS4Dt() {
-        if(fdS4Dt != null){
+        if(fdS4Dt != null && !fdS4Dt.equals("")){
             StringBuffer getFdS4Dt = new StringBuffer(fdS4Dt);
             getFdS4Dt.insert(4,'-');
             getFdS4Dt.insert(7,'-');

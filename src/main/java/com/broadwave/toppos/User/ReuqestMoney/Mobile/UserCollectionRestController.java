@@ -4,27 +4,19 @@ import com.broadwave.toppos.Head.Franchise.FranchiseDtos.FranchiseNameInfoDto;
 import com.broadwave.toppos.Head.HeadService.HeadService;
 import com.broadwave.toppos.User.ReuqestMoney.Mobile.QrClose.QrClose;
 import com.broadwave.toppos.User.ReuqestMoney.Mobile.QrClose.QrCloseRepository;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotYnDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailCloseListDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailMobileListDto;
-import com.broadwave.toppos.User.UserService.ReceiptService;
 import com.broadwave.toppos.User.UserService.ReceiptStateService;
 import com.broadwave.toppos.common.AjaxResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**

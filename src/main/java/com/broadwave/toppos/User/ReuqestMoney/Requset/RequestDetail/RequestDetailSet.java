@@ -2,7 +2,7 @@ package com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail;
 
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.RequestDetailMapperDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.RequestMapperDto;
-import lombok.Setter;
+import lombok.Data;
 
 import java.util.ArrayList;
 
@@ -12,8 +12,9 @@ import java.util.ArrayList;
  * Time :
  * Remark : Toppos 가맹점 접수세부 Set
  */
-@Setter
+@Data
 public class RequestDetailSet {
+
     // etc 데이터
     private RequestMapperDto etc;
 
@@ -25,21 +26,5 @@ public class RequestDetailSet {
 
     // 삭제 행 리스트
     private ArrayList<RequestDetailMapperDto> delete;
-
-    public RequestMapperDto getEtc() {
-        return etc;
-    }
-
-    public ArrayList<RequestDetailMapperDto> getUpdate() {
-        return update;
-    }
-
-    public ArrayList<RequestDetailMapperDto> getAdd() {
-        return add;
-    }
-
-    public ArrayList<RequestDetailMapperDto> getDelete() {
-        return delete;
-    }
 
 }

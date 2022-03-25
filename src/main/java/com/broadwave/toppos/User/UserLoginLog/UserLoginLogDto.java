@@ -1,9 +1,9 @@
 package com.broadwave.toppos.User.UserLoginLog;
 
-import lombok.*;
-
-import javax.persistence.*;
-import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @author Minkyu
@@ -16,5 +16,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserLoginLogDto {
+
     private String frCode; // 가맹점 코드 3자리
+
 }

@@ -1,9 +1,6 @@
 package com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 /**
  * @author Minkyu
@@ -11,7 +8,7 @@ import lombok.Setter;
  * Time :
  * Remark : Toppos 접수세부 검품정보 테이블 Dto
  */
-@Setter
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -22,19 +19,4 @@ public class InspeotDto {
     private String fiSendMsgYn; // 메세지전송여부 Y , N  (기본값N)
     private String fiCustomerConfirm; // 고객 수락여부 ( 1: 미확인(기본값), 2:고객수락, 3:고객거부
 
-    public String getFiSendMsgYn() {
-        return fiSendMsgYn;
-    }
-
-    public String getFiCustomerConfirm() {
-        return fiCustomerConfirm;
-    }
-
-    public Long getFiId() {
-        return fiId;
-    }
-
-    public String getFiPhotoYn() {
-        return fiPhotoYn;
-    }
 }

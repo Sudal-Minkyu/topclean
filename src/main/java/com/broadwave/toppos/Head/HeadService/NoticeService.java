@@ -6,7 +6,6 @@ import com.broadwave.toppos.Head.Notice.NoticeDtos.NoticeViewSubDto;
 import com.broadwave.toppos.Head.Notice.NoticeFile.NoticeFileListDto;
 import com.broadwave.toppos.Head.Notice.NoticeFile.NoticeFileRepository;
 import com.broadwave.toppos.Head.Notice.NoticeRepository;
-import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.common.AjaxResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

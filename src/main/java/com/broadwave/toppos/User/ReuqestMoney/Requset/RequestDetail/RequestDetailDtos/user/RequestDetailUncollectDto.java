@@ -45,7 +45,7 @@ public class RequestDetailUncollectDto {
     private String fdS6Dt; // 고객인도일
 
     public StringBuffer getFrYyyymmdd() {
-        if(!frYyyymmdd.equals("")){
+        if(frYyyymmdd != null && !frYyyymmdd.equals("")){
             StringBuffer getFrYyyymmdd = new StringBuffer(frYyyymmdd);
             getFrYyyymmdd.insert(4,'-');
             getFrYyyymmdd.insert(7,'-');
@@ -56,7 +56,7 @@ public class RequestDetailUncollectDto {
     }
 
     public StringBuffer getFdS6Dt() {
-        if(fdS6Dt != null){
+        if(fdS6Dt != null && !fdS6Dt.equals("")){
             StringBuffer getFdS6Dt = new StringBuffer(fdS6Dt);
             getFdS6Dt.insert(4,'-');
             getFdS6Dt.insert(7,'-');

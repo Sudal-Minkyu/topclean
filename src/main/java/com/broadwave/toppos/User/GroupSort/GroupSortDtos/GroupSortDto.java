@@ -1,9 +1,6 @@
 package com.broadwave.toppos.User.GroupSort.GroupSortDtos;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 /**
  * @author Minkyu
@@ -11,7 +8,7 @@ import lombok.Setter;
  * Time :
  * Remark : Toppos 가맹점별 대분류 정렬 Dto
  */
-@Setter
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -21,15 +18,4 @@ public class GroupSortDto {
     private String bgItemGroupcode; // 대분류 코드
     private Integer bgSort; // 정렬순서
 
-    public String getFrCode() {
-        return frCode;
-    }
-
-    public String getBgItemGroupcode() {
-        return bgItemGroupcode;
-    }
-
-    public Integer getBgSort() {
-        return bgSort;
-    }
 }

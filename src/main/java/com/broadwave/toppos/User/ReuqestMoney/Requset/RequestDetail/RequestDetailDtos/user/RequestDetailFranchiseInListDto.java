@@ -49,7 +49,7 @@ public class RequestDetailFranchiseInListDto {
     private String fdS2Dt; // 지사입고일
 
     public StringBuffer getFrYyyymmdd() {
-        if(!frYyyymmdd.equals("")){
+        if(frYyyymmdd != null && !frYyyymmdd.equals("")){
             StringBuffer getFrYyyymmdd = new StringBuffer(frYyyymmdd);
             getFrYyyymmdd.insert(4,'-');
             getFrYyyymmdd.insert(7,'-');
@@ -60,7 +60,7 @@ public class RequestDetailFranchiseInListDto {
     }
 
     public StringBuffer getFdS4Dt() {
-        if(fdS4Dt != null){
+        if(fdS4Dt != null && !fdS4Dt.equals("")){
             StringBuffer getFdS4Dt = new StringBuffer(fdS4Dt);
             getFdS4Dt.insert(4,'-');
             getFdS4Dt.insert(7,'-');
@@ -71,7 +71,7 @@ public class RequestDetailFranchiseInListDto {
     }
 
     public StringBuffer getFdS2Dt() {
-        if(fdS2Dt != null){
+        if(fdS2Dt != null && !fdS2Dt.equals("")){
             StringBuffer getFdS2Dt = new StringBuffer(fdS2Dt);
             getFdS2Dt.insert(4,'-');
             getFdS2Dt.insert(7,'-');

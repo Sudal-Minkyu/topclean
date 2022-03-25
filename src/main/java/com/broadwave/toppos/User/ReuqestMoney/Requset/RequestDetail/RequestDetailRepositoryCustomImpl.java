@@ -13,7 +13,6 @@ import com.broadwave.toppos.User.ReuqestMoney.Requset.QRequest;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.QInspeot;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.manager.*;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.*;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.RequestFdTagDto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.JPQLQuery;

@@ -1,18 +1,13 @@
 package com.broadwave.toppos.Head.Item.Group.A;
 
 import com.broadwave.toppos.User.GroupSort.QGroupSort;
-import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.CaseBuilder;
-import com.querydsl.core.types.dsl.Coalesce;
-import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPQLQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.concurrent.Callable;
 
 /**
  * @author Minkyu

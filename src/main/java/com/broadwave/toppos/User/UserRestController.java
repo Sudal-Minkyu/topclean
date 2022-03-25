@@ -1182,8 +1182,7 @@ public class UserRestController {
     // 공지사항 게시판 - 리스트 호출
     @PostMapping("noticeList")
     public ResponseEntity<Map<String,Object>> noticeList(@RequestParam("searchString")String searchString, @RequestParam("filterFromDt")String filterFromDt,
-                                                         @RequestParam("filterToDt")String filterToDt,
-                                                         Pageable pageable, HttpServletRequest request) {
+                                                         @RequestParam("filterToDt")String filterToDt, Pageable pageable) {
         return noticeService.noticeList(searchString, filterFromDt.replaceAll("-",""), filterToDt.replaceAll("-",""), pageable, "2");
     }
 

@@ -1,9 +1,6 @@
 package com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 /**
  * @author Minkyu
@@ -11,7 +8,7 @@ import lombok.Setter;
  * Time :
  * Remark : Toppos 사진촬영테이블 Dto
  */
-@Setter
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -21,15 +18,4 @@ public class PhotoDto {
     private String ffFilename; // S3파일명
     private String ffRemark; // 특이사항
 
-    public String getFfPath() {
-        return ffPath;
-    }
-
-    public String getFfFilename() {
-        return ffFilename;
-    }
-
-    public String getFfRemark() {
-        return ffRemark;
-    }
 }

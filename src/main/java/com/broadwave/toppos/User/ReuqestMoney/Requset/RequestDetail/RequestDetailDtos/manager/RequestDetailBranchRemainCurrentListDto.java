@@ -5,9 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-
 /**
  * @author Minkyu
  * Date : 2022-02-17
@@ -52,7 +49,7 @@ public class RequestDetailBranchRemainCurrentListDto {
     private String fdRemark; // 특이사항
 
     public StringBuffer getFdS2Dt() {
-        if(!fdS2Dt.equals("")){
+        if(fdS2Dt != null && !fdS2Dt.equals("")){
             StringBuffer getFdS2Dt = new StringBuffer(fdS2Dt);
             getFdS2Dt.insert(4,'-');
             getFdS2Dt.insert(7,'-');
@@ -61,16 +58,5 @@ public class RequestDetailBranchRemainCurrentListDto {
             return null;
         }
     }
-
-//    public StringBuffer getFdS4Dt() {
-//        if(!fdS4Dt.equals("")){
-//            StringBuffer getFdS4Dt = new StringBuffer(fdS4Dt);
-//            getFdS4Dt.insert(4,'-');
-//            getFdS4Dt.insert(7,'-');
-//            return getFdS4Dt;
-//        }else{
-//            return null;
-//        }
-//    }
 
 }

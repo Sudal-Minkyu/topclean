@@ -37,7 +37,7 @@ public class CustomerListDto {
     private LocalDateTime insertDateTime; // 가입일시
 
     public String getBcQuitDate() {
-        if(bcQuitDate!=null){
+        if(bcQuitDate != null && !bcQuitDate.equals("")){
             return bcQuitDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         }else{
             return null;
@@ -45,7 +45,7 @@ public class CustomerListDto {
     }
 
     public String getInsertDateTime() {
-        if(insertDateTime!=null){
+        if(insertDateTime != null && !insertDateTime.equals("")){
             return insertDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         }else{
             return null;

@@ -27,7 +27,7 @@ public class RequestCustomerUnCollectDto {
     private Integer frPayAmount; // 결제금액
 
     public StringBuffer getFrYyyymmdd() {
-        if(!frYyyymmdd.equals("")){
+        if(frYyyymmdd != null && !frYyyymmdd.equals("")){
             StringBuffer getFrYyyymmdd = new StringBuffer(frYyyymmdd);
             getFrYyyymmdd.insert(4,'-');
             getFrYyyymmdd.insert(7,'-');
@@ -36,4 +36,5 @@ public class RequestCustomerUnCollectDto {
             return null;
         }
     }
+
 }

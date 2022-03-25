@@ -48,7 +48,7 @@ public class RequestDetailBranchReleaseForceCurrentRightListDto {
     private String fdRemark; // 특이사항
 
     public StringBuffer getFdS2Dt() {
-        if(!fdS2Dt.equals("")){
+        if(fdS2Dt != null && !fdS2Dt.equals("")){
             StringBuffer getFdS2Dt = new StringBuffer(fdS2Dt);
             getFdS2Dt.insert(4,'-');
             getFdS2Dt.insert(7,'-');
@@ -59,7 +59,7 @@ public class RequestDetailBranchReleaseForceCurrentRightListDto {
     }
 
     public StringBuffer getFdS7Dt() {
-        if(!fdS7Dt.equals("")){
+        if(fdS7Dt != null && !fdS7Dt.equals("")){
             StringBuffer getFdS7Dt = new StringBuffer(fdS7Dt);
             getFdS7Dt.insert(4,'-');
             getFdS7Dt.insert(7,'-');

@@ -5,7 +5,6 @@ import com.broadwave.toppos.Manager.Calendar.CalendarDtos.BranchCalendarListDto;
 import com.broadwave.toppos.User.UserDtos.EtcDataDto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
@@ -17,7 +16,6 @@ import java.util.List;
  * Time :
  * Remark :
  */
-@Slf4j
 @Repository
 public class BranchCalendarRepositoryCustomImpl extends QuerydslRepositorySupport implements BranchCalendarRepositoryCustom {
 
@@ -65,8 +63,6 @@ public class BranchCalendarRepositoryCustomImpl extends QuerydslRepositorySuppor
 
         QBranchCalendar branchCalendar = QBranchCalendar.branchCalendar;
         QFranchise franchise = QFranchise.franchise;
-
-        log.info(frEstimateDuration+"일 후 출고예정");
 
         JPQLQuery<EtcDataDto> query = from(branchCalendar)
             .innerJoin(franchise).on(franchise.frCode.eq(frCode)).on(branchCalendar.brCode.eq(franchise.brCode))

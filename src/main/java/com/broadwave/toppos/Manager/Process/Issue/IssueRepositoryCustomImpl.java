@@ -1,8 +1,5 @@
 package com.broadwave.toppos.Manager.Process.Issue;
 
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.QRequestDetail;
-import com.querydsl.core.types.Projections;
-import com.querydsl.jpa.JPQLQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.qlrm.mapper.JpaResultMapper;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -54,7 +54,7 @@ public class RequestDetailTagSearchListDto {
     private String fdS8Dt; // 가맹점강제입고일
 
     public StringBuffer getFrYyyymmdd() {
-        if(frYyyymmdd != null){
+        if(frYyyymmdd != null && !frYyyymmdd.equals("")){
             StringBuffer getFrYyyymmdd = new StringBuffer(frYyyymmdd);
             getFrYyyymmdd.insert(4,'-');
             getFrYyyymmdd.insert(7,'-');
@@ -65,7 +65,7 @@ public class RequestDetailTagSearchListDto {
     }
 
     public StringBuffer getFdS4Dt() {
-        if(fdS4Dt != null){
+        if(fdS4Dt != null && !fdS4Dt.equals("")){
             StringBuffer getFdS4Dt = new StringBuffer(fdS4Dt);
             getFdS4Dt.insert(4,'-');
             getFdS4Dt.insert(7,'-');
@@ -76,7 +76,7 @@ public class RequestDetailTagSearchListDto {
     }
 
     public StringBuffer getFdS2Dt() {
-        if(fdS2Dt != null){
+        if(fdS2Dt != null && !fdS2Dt.equals("")){
             StringBuffer getFdS2Dt = new StringBuffer(fdS2Dt);
             getFdS2Dt.insert(4,'-');
             getFdS2Dt.insert(7,'-');
@@ -87,7 +87,7 @@ public class RequestDetailTagSearchListDto {
     }
 
     public StringBuffer getFdS3Dt() {
-        if(fdS3Dt != null){
+        if(fdS3Dt != null && !fdS3Dt.equals("")){
             StringBuffer getFdS3Dt = new StringBuffer(fdS3Dt);
             getFdS3Dt.insert(4,'-');
             getFdS3Dt.insert(7,'-');
@@ -98,7 +98,7 @@ public class RequestDetailTagSearchListDto {
     }
 
     public StringBuffer getFdS7Dt() {
-        if(fdS7Dt != null){
+        if(fdS7Dt != null && !fdS7Dt.equals("")){
             StringBuffer getFdS7Dt = new StringBuffer(fdS7Dt);
             getFdS7Dt.insert(4,'-');
             getFdS7Dt.insert(7,'-');
@@ -109,7 +109,7 @@ public class RequestDetailTagSearchListDto {
     }
 
     public StringBuffer getFdS8Dt() {
-        if(fdS8Dt != null){
+        if(fdS8Dt != null && !fdS8Dt.equals("")){
             StringBuffer getFdS8Dt = new StringBuffer(fdS8Dt);
             getFdS8Dt.insert(4,'-');
             getFdS8Dt.insert(7,'-');

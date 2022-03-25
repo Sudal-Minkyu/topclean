@@ -1,9 +1,6 @@
 package com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 /**
  * @author Minkyu
@@ -11,7 +8,7 @@ import lombok.Setter;
  * Time :
  * Remark : Toppos 접수세부 검품정보 테이블 MapperDto
  */
-@Setter
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -22,19 +19,4 @@ public class InspeotMapperDto {
     private String fiType; // 검품 타입 , F : 가맹검품, B:지사검품(확인품)
     private String fiComment; // 검품 특이사항
 
-    public Long getFdId() {
-        return fdId;
-    }
-
-    public Integer getFiAddAmt() {
-        return fiAddAmt;
-    }
-
-    public String getFiType() {
-        return fiType;
-    }
-
-    public String getFiComment() {
-        return fiComment;
-    }
 }

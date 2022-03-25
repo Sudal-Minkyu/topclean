@@ -1,6 +1,6 @@
 package com.broadwave.toppos.Head.Item.Price.FranchisePrice;
 
-import lombok.Setter;
+import lombok.Data;
 
 import java.util.ArrayList;
 
@@ -10,7 +10,7 @@ import java.util.ArrayList;
  * Time :
  * Remark : 상품그룹관리 페이지의 추가, 업데이트, 삭제 배열 가져오는 클래스
  */
-@Setter
+@Data
 public class FranchisePriceSet {
 
     // 수정 행 리스트
@@ -22,15 +22,4 @@ public class FranchisePriceSet {
     // 삭제 행 리스트
     private ArrayList<FranchisePriceDto> delete;
 
-    public ArrayList<FranchisePriceDto> getUpdate() {
-        return update;
-    }
-
-    public ArrayList<FranchisePriceDto> getAdd() {
-        return add;
-    }
-
-    public ArrayList<FranchisePriceDto> getDelete() {
-        return delete;
-    }
 }

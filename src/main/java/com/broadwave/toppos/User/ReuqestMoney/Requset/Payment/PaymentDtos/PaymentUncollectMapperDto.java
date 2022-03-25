@@ -15,6 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PaymentUncollectMapperDto {
+
     private Integer fpRealAmt; // 위 frIdList의 결제된 총 미수금액
 
     private String fpType; // 결제타입 (01:현금, 02:카드,03:적립금)
@@ -32,4 +33,5 @@ public class PaymentUncollectMapperDto {
     private String fpCatTotamount; // 결제금액 : ex> 000012000
     private String fpCatVatamount; // 부가세금액 : ex> 000001090
     private String fpCatTelegramflagt; // 전문구분 : ex a1
+
 }

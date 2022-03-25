@@ -1,6 +1,7 @@
 package com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot;
 
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotDto;
+import lombok.Data;
 import lombok.Setter;
 
 import java.util.ArrayList;
@@ -11,13 +12,10 @@ import java.util.ArrayList;
  * Time :
  * Remark : Toppos 가맹점 검품 Set
  */
-@Setter
+@Data
 public class InspeotSet {
 
     // 수정 행 리스트
     private ArrayList<InspeotDto> list;
 
-    public ArrayList<InspeotDto> getList() {
-        return list;
-    }
 }

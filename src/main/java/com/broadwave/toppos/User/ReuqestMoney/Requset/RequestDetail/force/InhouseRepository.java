@@ -16,8 +16,4 @@ import java.util.List;
 @Repository
 public interface InhouseRepository extends JpaRepository<InhouceForce,Long> {
 
-////     강제입고 데이터 조회
-//    @Query("select a from IssueForce a where a.fdId = :fdId")
-//    InhouceForce findByFdId(Long fdId);
-
 }

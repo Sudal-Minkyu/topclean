@@ -23,7 +23,7 @@ public class TagGalleryMainListDto {
     private String btInputDt; // 예상 지사입고일
 
     public StringBuffer getBtInputDt() {
-        if(!btInputDt.equals("")){
+        if(btInputDt != null && !btInputDt.equals("")){
             StringBuffer getBtInputDate = new StringBuffer(btInputDt);
             getBtInputDate.insert(4,'-');
             getBtInputDate.insert(7,'-');

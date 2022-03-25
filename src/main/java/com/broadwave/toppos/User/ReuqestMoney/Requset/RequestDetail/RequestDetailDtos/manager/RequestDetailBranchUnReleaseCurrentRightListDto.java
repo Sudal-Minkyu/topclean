@@ -49,7 +49,7 @@ public class RequestDetailBranchUnReleaseCurrentRightListDto {
     private String fdRemark; // 특이사항
 
     public StringBuffer getFdEstimateDt() {
-        if(!fdEstimateDt.equals("")){
+        if(fdEstimateDt != null && !fdEstimateDt.equals("")){
             StringBuffer getFdEstimateDt = new StringBuffer(fdEstimateDt);
             getFdEstimateDt.insert(4,'-');
             getFdEstimateDt.insert(7,'-');
@@ -60,7 +60,7 @@ public class RequestDetailBranchUnReleaseCurrentRightListDto {
     }
 
     public StringBuffer getFdS2Dt() {
-        if(!fdS2Dt.equals("")){
+        if(fdS2Dt != null && !fdS2Dt.equals("")){
             StringBuffer getFdS2Dt = new StringBuffer(fdS2Dt);
             getFdS2Dt.insert(4,'-');
             getFdS2Dt.insert(7,'-');
@@ -71,7 +71,7 @@ public class RequestDetailBranchUnReleaseCurrentRightListDto {
     }
 
     public StringBuffer getFrYyyymmdd() {
-        if(!frYyyymmdd.equals("")){
+        if(frYyyymmdd != null && !frYyyymmdd.equals("")){
             StringBuffer getFrYyyymmdd = new StringBuffer(frYyyymmdd);
             getFrYyyymmdd.insert(4,'-');
             getFrYyyymmdd.insert(7,'-');

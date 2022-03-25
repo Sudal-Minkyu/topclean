@@ -6,10 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
-import java.time.Instant;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.TimeZone;
 
 /**
  * @author Minkyu
@@ -29,7 +26,6 @@ public class RequestHistoryListDto {
     private String bcHp; // 고객번호
 
     public String getRequestTime() {
-//        return requestTime.toLocalDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm"));
         return requestTime.toLocalDateTime().format(DateTimeFormatter.ofPattern("HH:mm"));
     }
 

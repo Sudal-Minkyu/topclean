@@ -45,10 +45,14 @@ public class IssueDispatchDto {
     private BigInteger total; // 총 합계
 
     public StringBuffer getTagNo() {
-        StringBuffer getTagNo = new StringBuffer(tagNo);
-        getTagNo.insert(3,'-');
-        getTagNo.insert(5,'-');
-        return getTagNo;
+        if(tagNo != null && !tagNo.equals("")){
+            StringBuffer getTagNo = new StringBuffer(tagNo);
+            getTagNo.insert(3,'-');
+            getTagNo.insert(5,'-');
+            return getTagNo;
+        }else{
+            return null;
+        }
     }
 
     public String getFrTelNo() {
@@ -76,7 +80,7 @@ public class IssueDispatchDto {
     }
 
     public StringBuffer getMiDt() {
-        if(!miDt.equals("")){
+        if(miDt != null && !miDt.equals("")){
             StringBuffer getMiDt = new StringBuffer(miDt);
             getMiDt.insert(4,'-');
             getMiDt.insert(7,'-');

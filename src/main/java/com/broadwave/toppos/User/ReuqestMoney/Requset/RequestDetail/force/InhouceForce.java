@@ -1,10 +1,11 @@
 package com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.force;
 
-import com.broadwave.toppos.User.ReuqestMoney.Requset.Request;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetail;
 import lombok.*;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.time.LocalDateTime;
 
 /**

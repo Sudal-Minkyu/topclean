@@ -5,10 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigInteger;
-import java.sql.Timestamp;
-import java.time.format.DateTimeFormatter;
-
 /**
  * @author Minkyu
  * Date : 2022-03-18
@@ -29,7 +25,7 @@ public class TagGalleryDetailDto {
     private String brCloseYn; // 종료(게시물내림) 여부 , 기본값 N
 
     public StringBuffer getBtInputDate() {
-        if(!btInputDate.equals("")){
+        if(btInputDate != null && !btInputDate.equals("")){
             StringBuffer getBtInputDate = new StringBuffer(btInputDate);
             getBtInputDate.insert(4,'-');
             getBtInputDate.insert(7,'-');

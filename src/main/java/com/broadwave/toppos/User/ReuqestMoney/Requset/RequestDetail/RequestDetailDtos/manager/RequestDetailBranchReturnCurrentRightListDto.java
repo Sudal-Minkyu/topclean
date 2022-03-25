@@ -48,7 +48,7 @@ public class RequestDetailBranchReturnCurrentRightListDto {
     private String fdRemark; // 특이사항
 
     public StringBuffer getFdS2Dt() {
-        if(!fdS2Dt.equals("")){
+        if(fdS2Dt != null && !fdS2Dt.equals("")){
             StringBuffer getFdS2Dt = new StringBuffer(fdS2Dt);
             getFdS2Dt.insert(4,'-');
             getFdS2Dt.insert(7,'-');
@@ -59,7 +59,7 @@ public class RequestDetailBranchReturnCurrentRightListDto {
     }
 
     public StringBuffer getFdS3Dt() {
-        if(!fdS3Dt.equals("")){
+        if(fdS3Dt != null && !fdS3Dt.equals("")){
             StringBuffer getFdS3Dt = new StringBuffer(fdS3Dt);
             getFdS3Dt.insert(4,'-');
             getFdS3Dt.insert(7,'-');

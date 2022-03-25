@@ -1,9 +1,9 @@
 package com.broadwave.toppos.Head.Item.Price.FranchisePrice;
 
-import com.broadwave.toppos.Head.Item.ItemDtos.ItemPriceDto;
-import lombok.*;
-
-import java.util.ArrayList;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @author Minkyu

@@ -1,9 +1,6 @@
 package com.broadwave.toppos.Head.Item.Group.B;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 /**
  * @author Minkyu
@@ -11,7 +8,7 @@ import lombok.Setter;
  * Time :
  * Remark : Toppos 상품그룹관리 중분류 Dto
  */
-@Setter
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -23,23 +20,4 @@ public class ItemGroupSDto {
     private String bsRemark; // 특이사항
     private String bsUseYn; // 사용여부
 
-    public String getBsUseYn() {
-        return bsUseYn;
-    }
-
-    public String getBsItemGroupcodeS() {
-        return bsItemGroupcodeS;
-    }
-
-    public String getBgItemGroupcode() {
-        return bgItemGroupcode;
-    }
-
-    public String getBsName() {
-        return bsName;
-    }
-
-    public String getBsRemark() {
-        return bsRemark;
-    }
 }

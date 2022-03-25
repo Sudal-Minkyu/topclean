@@ -1,6 +1,5 @@
 package com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user;
 
-import com.broadwave.toppos.User.Customer.Customer;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

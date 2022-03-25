@@ -1,9 +1,6 @@
 package com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 /**
  * @author Minkyu
@@ -11,7 +8,7 @@ import lombok.Setter;
  * Time :
  * Remark : Toppos 가맹점 미수금관련 Dto
  */
-@Setter
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -23,23 +20,4 @@ public class RequestCollectDto {
     private Integer frTotalAmount; // 합계금액
     private Integer frPayAmount; // 결제금액
 
-    public String getFrYyyymmdd() {
-        return frYyyymmdd;
-    }
-
-    public String getFrNo() {
-        return frNo;
-    }
-
-    public String getFrUncollectYn() {
-        return frUncollectYn;
-    }
-
-    public Integer getFrTotalAmount() {
-        return frTotalAmount;
-    }
-
-    public Integer getFrPayAmount() {
-        return frPayAmount;
-    }
 }

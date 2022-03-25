@@ -37,7 +37,7 @@ public class RequestDetailPaymentPaper {
     }
 
     public StringBuffer getFdEstimateDt() {
-        if(!fdEstimateDt.equals("")){
+        if(fdEstimateDt != null && !fdEstimateDt.equals("")){
             StringBuffer getFdEstimateDt = new StringBuffer(fdEstimateDt);
             getFdEstimateDt.insert(4,"-");
             getFdEstimateDt.insert(7,"-");

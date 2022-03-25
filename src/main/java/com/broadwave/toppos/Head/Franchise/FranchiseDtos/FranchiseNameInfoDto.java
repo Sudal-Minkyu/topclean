@@ -13,7 +13,5 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FranchiseNameInfoDto {
-
     private String frName; // 가맹점명
-
 }

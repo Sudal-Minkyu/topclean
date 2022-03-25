@@ -174,8 +174,8 @@ public class InfoService {
 
     // 수선항목,추가항목,상용구 - 저장&수정&삭제
     public ResponseEntity<Map<String, Object>> franchiseAddProcess(AddprocessSet addprocessSet, HttpServletRequest request) {
-
         log.info("franchiseAddProcess 호출");
+
         AjaxResponse res = new AjaxResponse();
 
         // 클레임데이터 가져오기

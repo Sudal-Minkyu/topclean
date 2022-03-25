@@ -1,6 +1,7 @@
 package com.broadwave.toppos.User.ItemSort;
 
 import com.broadwave.toppos.User.ItemSort.ItemSortDtos.ItemSortMapperDto;
+import lombok.Data;
 import lombok.Setter;
 
 import java.util.ArrayList;
@@ -11,14 +12,10 @@ import java.util.ArrayList;
  * Time :
  * Remark : 상품정렬 업데이트 SortSet
  */
-@Setter
+@Data
 public class ItemSortSet {
 
     // 상품정렬 업데이트 list
     private ArrayList<ItemSortMapperDto> list;
-
-    public ArrayList<ItemSortMapperDto> getList() {
-        return list;
-    }
 
 }

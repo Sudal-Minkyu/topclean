@@ -54,7 +54,7 @@ public class RequestDetailInspectDto {
     private String fdRemark; // 특이사항
 
     public StringBuffer getFdS6Dt() {
-        if(fdS6Dt != null){
+        if(fdS6Dt != null && !fdS6Dt.equals("")){
             StringBuffer getFdS6Dt = new StringBuffer(fdS6Dt);
             getFdS6Dt.insert(4,'-');
             getFdS6Dt.insert(7,'-');
@@ -65,7 +65,7 @@ public class RequestDetailInspectDto {
     }
 
     public StringBuffer getFrYyyymmdd() {
-        if(frYyyymmdd != null){
+        if(frYyyymmdd != null && !frYyyymmdd.equals("")){
             StringBuffer getFrYyyymmdd = new StringBuffer(frYyyymmdd);
             getFrYyyymmdd.insert(4,'-');
             getFrYyyymmdd.insert(7,'-');
@@ -76,7 +76,7 @@ public class RequestDetailInspectDto {
     }
 
     public StringBuffer getFdS4Dt() {
-        if(fdS4Dt != null){
+        if(fdS4Dt != null && !fdS4Dt.equals("")){
             StringBuffer getFdS4Dt = new StringBuffer(fdS4Dt);
             getFdS4Dt.insert(4,'-');
             getFdS4Dt.insert(7,'-');
@@ -87,7 +87,7 @@ public class RequestDetailInspectDto {
     }
 
     public StringBuffer getFdS2Dt() {
-        if(fdS2Dt != null){
+        if(fdS2Dt != null && !fdS2Dt.equals("")){
             StringBuffer getFdS2Dt = new StringBuffer(fdS2Dt);
             getFdS2Dt.insert(4,'-');
             getFdS2Dt.insert(7,'-');
@@ -98,7 +98,7 @@ public class RequestDetailInspectDto {
     }
 
     public StringBuffer getFdS5Dt() {
-        if(fdS5Dt != null){
+        if(fdS5Dt != null && !fdS5Dt.equals("")){
             StringBuffer getFdS5Dt = new StringBuffer(fdS5Dt);
             getFdS5Dt.insert(4,'-');
             getFdS5Dt.insert(7,'-');

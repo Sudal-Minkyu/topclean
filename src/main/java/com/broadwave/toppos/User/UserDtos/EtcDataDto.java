@@ -24,7 +24,7 @@ public class EtcDataDto {
     private String frMultiscreenYn; // 멀티스크린 사용여부
 
     public StringBuffer getFrEstimateDate() {
-        if(!frEstimateDate.equals("")){
+        if(frEstimateDate != null && !frEstimateDate.equals("")){
             StringBuffer frEstimateDt = new StringBuffer(frEstimateDate);
             frEstimateDt.insert(4,'-');
             frEstimateDt.insert(7,'-');

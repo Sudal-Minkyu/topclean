@@ -1,10 +1,8 @@
 package com.broadwave.toppos.User.ReuqestMoney.Requset;
 
-import com.broadwave.toppos.Manager.Process.Issue.IssueWeekAmountDto;
 import com.broadwave.toppos.User.Customer.Customer;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 /**

@@ -1,9 +1,6 @@
 package com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -14,7 +11,7 @@ import java.time.format.DateTimeFormatter;
  * Time :
  * Remark : Toppos 접수세부 검품정보 테이블 ListDto
  */
-@Setter
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -32,47 +29,8 @@ public class InspeotListDto {
     private String ffPath; // S3 파일경로
     private String ffFilename; // S3 파일명
 
-    public Long getFiId() {
-        return fiId;
-    }
-
-    public Long getFdId() {
-        return fdId;
-    }
-
-    public String getFiType() {
-        return fiType;
-    }
-
-    public String getFiComment() {
-        return fiComment;
-    }
-
-    public Integer getFiAddAmt() {
-        return fiAddAmt;
-    }
-
-    public String getFiPhotoYn() {
-        return fiPhotoYn;
-    }
-
-    public String getFiSendMsgYn() {
-        return fiSendMsgYn;
-    }
-
-    public String getFiCustomerConfirm() {
-        return fiCustomerConfirm;
-    }
-
     public String getInsertDt() {
         return insertDt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
     }
 
-    public String getFfPath() {
-        return ffPath;
-    }
-
-    public String getFfFilename() {
-        return ffFilename;
-    }
 }

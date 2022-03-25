@@ -1,9 +1,6 @@
 package com.broadwave.toppos.Head.Item.Group.C;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 /**
  * @author Minkyu
@@ -11,7 +8,7 @@ import lombok.Setter;
  * Time :
  * Remark : Toppos 상품그룹관리 소재 상품 ItemDto
  */
-@Setter
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -23,34 +20,6 @@ public class ItemDto {
     private String biItemSequence; // 상품순번
     private String biName; // 상품명
     private String biUseYn; // 사용여부
-    private String biRemark; // 특이사항
-
-    public String getBiUseYn() {
-        return biUseYn;
-    }
-
-    public String getBiItemcode() {
-        return biItemcode;
-    }
-
-    public String getBgItemGroupcode() {
-        return bgItemGroupcode;
-    }
-
-    public String getBsItemGroupcodeS() {
-        return bsItemGroupcodeS;
-    }
-
-    public String getBiItemSequence() {
-        return biItemSequence;
-    }
-
-    public String getBiName() {
-        return biName;
-    }
-
-    public String getBiRemark() {
-        return biRemark;
-    }
+    private String biRemark; // 특이사항\
 
 }

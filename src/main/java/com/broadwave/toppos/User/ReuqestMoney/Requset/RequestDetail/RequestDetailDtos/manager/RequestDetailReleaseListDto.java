@@ -49,7 +49,7 @@ public class RequestDetailReleaseListDto {
     private String fdState; // 현재상태 ( S1 : 접수, S2: 지사입고,S3 강제출고, S4:가맹점입고, S6: 고객인도, S7: 지사강제출고, S8: 가맹점강제입고)
 
     public StringBuffer getFdS2Dt() {
-        if(fdS2Dt != null){
+        if(fdS2Dt != null && !fdS2Dt.equals("")){
             StringBuffer getFdS2Dt = new StringBuffer(fdS2Dt);
             getFdS2Dt.insert(4,'-');
             getFdS2Dt.insert(7,'-');
@@ -60,7 +60,7 @@ public class RequestDetailReleaseListDto {
     }
 
     public StringBuffer getFdEstimateDt() {
-        if(fdEstimateDt != null){
+        if(fdEstimateDt != null && !fdEstimateDt.equals("")){
             StringBuffer getFdEstimateDt = new StringBuffer(fdEstimateDt);
             getFdEstimateDt.insert(4,'-');
             getFdEstimateDt.insert(7,'-');

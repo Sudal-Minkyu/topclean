@@ -76,6 +76,7 @@ public class HeadRestController {
     // 사용자 등록 API
     @PostMapping("accountSave")
     public ResponseEntity<Map<String,Object>> accountSave(@ModelAttribute AccountMapperDto accountMapperDto, HttpServletRequest request){
+        log.info("accountSave 호출");
 
         AjaxResponse res = new AjaxResponse();
 
@@ -116,8 +117,7 @@ public class HeadRestController {
     // 지사 등록 API
     @PostMapping("branchSave")
     public ResponseEntity<Map<String,Object>> branchSave(@ModelAttribute BranchMapperDto branohMapperDto, HttpServletRequest request){
-
-        log.info("지사등록");
+        log.info("branchSave 호출");
 
         AjaxResponse res = new AjaxResponse();
 
@@ -482,8 +482,9 @@ public class HeadRestController {
     // 유저아이디 중복확인 API
     @GetMapping("useridOverlap")
     public ResponseEntity<Map<String,Object>> useridOverlap(@RequestParam(value="userid", defaultValue="") String userid){
+        log.info("useridOverlap 호출");
 
-        log.info("가맹점 코드 중복확인");
+        log.info("유저아이디중복확인");
         AjaxResponse res = new AjaxResponse();
 
         if(userid.equals("")){
@@ -502,6 +503,7 @@ public class HeadRestController {
     // 가맹점코드 중복확인 API
     @GetMapping("franchiseOverlap")
     public ResponseEntity<Map<String,Object>> franchiseOverlap(@RequestParam(value="frCode", defaultValue="") String frCode){
+        log.info("franchiseOverlap 호출");
 
         log.info("가맹점 코드 중복확인");
         AjaxResponse res = new AjaxResponse();
@@ -518,6 +520,7 @@ public class HeadRestController {
     // 지점코드 중복확인 API
     @GetMapping("branchOverlap")
     public ResponseEntity<Map<String,Object>> branchOverlap(@RequestParam(value="brCode", defaultValue="") String brCode){
+        log.info("branchOverlap 호출");
 
         log.info("지점 코드 중복확인");
         AjaxResponse res = new AjaxResponse();

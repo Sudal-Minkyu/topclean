@@ -30,21 +30,33 @@ public class BranchMapperDto {
     private String brRemark; // 특이사항
 
     public String getBrContractDt() {
-        String getBrContractDt = brContractDt;
-        getBrContractDt = getBrContractDt.replaceAll("-","");
-        return getBrContractDt;
+        if(brContractDt != null && !brContractDt.equals("")){
+            String getBrContractDt = brContractDt;
+            getBrContractDt = getBrContractDt.replaceAll("-","");
+            return getBrContractDt;
+        }else{
+            return null;
+        }
     }
 
     public String getBrContractFromDt() {
-        String getBrContractFromDt = brContractFromDt;
-        getBrContractFromDt = getBrContractFromDt.replaceAll("-","");
-        return getBrContractFromDt;
+        if(brContractFromDt != null && !brContractFromDt.equals("")){
+            String getBrContractFromDt = brContractFromDt;
+            getBrContractFromDt = getBrContractFromDt.replaceAll("-","");
+            return getBrContractFromDt;
+        }else{
+            return null;
+        }
     }
 
     public String getBrContractToDt() {
-        String getBrContractToDt = brContractToDt;
-        getBrContractToDt = getBrContractToDt.replaceAll("-","");
-        return getBrContractToDt;
+        if(brContractToDt != null && !brContractToDt.equals("")){
+            String getBrContractToDt = brContractToDt;
+            getBrContractToDt = getBrContractToDt.replaceAll("-","");
+            return getBrContractToDt;
+        }else{
+            return null;
+        }
     }
 
 }

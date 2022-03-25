@@ -39,21 +39,33 @@ public class FranchiseMapperDto {
     private String frAddressDetail; // 가맹점 상세주소
 
     public String getFrContractDt() {
-        String getFrContractDt = frContractDt;
-        getFrContractDt = getFrContractDt.replaceAll("-","");
-        return getFrContractDt;
+        if(frContractDt != null && !frContractDt.equals("")){
+            String getFrContractDt = frContractDt;
+            getFrContractDt = getFrContractDt.replaceAll("-","");
+            return getFrContractDt;
+        }else{
+            return null;
+        }
     }
 
     public String getFrContractFromDt() {
-        String getFrContractFromDt = frContractFromDt;
-        getFrContractFromDt = getFrContractFromDt.replaceAll("-","");
-        return getFrContractFromDt;
+        if(frContractFromDt != null && !frContractFromDt.equals("")){
+            String getFrContractFromDt = frContractFromDt;
+            getFrContractFromDt = getFrContractFromDt.replaceAll("-","");
+            return getFrContractFromDt;
+        }else{
+            return null;
+        }
     }
 
     public String getFrContractToDt() {
-        String getFrContractToDt = frContractToDt;
-        getFrContractToDt = getFrContractToDt.replaceAll("-","");
-        return getFrContractToDt;
+        if(frContractToDt != null && !frContractToDt.equals("")){
+            String getFrContractToDt = frContractToDt;
+            getFrContractToDt = getFrContractToDt.replaceAll("-","");
+            return getFrContractToDt;
+        }else{
+            return null;
+        }
     }
 
 }

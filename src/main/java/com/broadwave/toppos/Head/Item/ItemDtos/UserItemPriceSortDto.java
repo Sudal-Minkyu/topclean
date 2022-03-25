@@ -1,9 +1,6 @@
 package com.broadwave.toppos.Head.Item.ItemDtos;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 /**
  * @author Minkyu
@@ -11,7 +8,7 @@ import lombok.Setter;
  * Time :
  * Remark : Toppos 상품그룹관리 가맹점 전용 PriceSortDto
  */
-@Setter
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -26,27 +23,6 @@ public class UserItemPriceSortDto {
     private String biName; // 상품명
 
     private Integer price; // 최종가격A
-
-
-    public String getBiItemcode() {
-        return biItemcode;
-    }
-
-    public String getBgName() {
-        return bgName;
-    }
-
-    public String getBsName() {
-        return bsName;
-    }
-
-    public String getBiName() {
-        return biName;
-    }
-
-    public Integer getPrice() {
-        return price;
-    }
 
     public Integer getBfSort() {
         if(bfSort==null){

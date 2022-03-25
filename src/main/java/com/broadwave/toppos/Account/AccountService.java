@@ -34,9 +34,9 @@ public class AccountService {
     }
 
     // 고정ID 값으로 찾기
-    public Optional<Account> findById(Long id){
-        return accountRepository.findById(id);
-    }
+//    public Optional<Account> findById(Long id){
+//        return accountRepository.findById(id);
+//    }
 
     // 입력ID 값으로 찾기
     public Optional<Account> findByUserid(String userid){

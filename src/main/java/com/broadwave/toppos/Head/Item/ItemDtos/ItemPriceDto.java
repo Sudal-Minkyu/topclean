@@ -1,9 +1,6 @@
 package com.broadwave.toppos.Head.Item.ItemDtos;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -13,7 +10,7 @@ import java.time.LocalDateTime;
  * Time :
  * Remark : Toppos 상품그룹 가격관리  테이블 Dto
  */
-@Setter
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -37,55 +34,4 @@ public class ItemPriceDto {
     private String insert_id;
     private LocalDateTime insertDateTime;
 
-    public String getCloseDt() {
-        return closeDt;
-    }
-
-    public String getInsert_id() {
-        return insert_id;
-    }
-
-    public LocalDateTime getInsertDateTime() {
-        return insertDateTime;
-    }
-
-    public String getBiItemcode() {
-        return biItemcode;
-    }
-
-    public String getSetDt() {
-        return setDt;
-    }
-
-    public Integer getBpBasePrice() {
-        return bpBasePrice;
-    }
-
-    public Integer getBpAddPrice() {
-        return bpAddPrice;
-    }
-
-    public Integer getBpPriceA() {
-        return bpPriceA;
-    }
-
-    public Integer getBpPriceB() {
-        return bpPriceB;
-    }
-
-    public Integer getBpPriceC() {
-        return bpPriceC;
-    }
-
-    public Integer getBpPriceD() {
-        return bpPriceD;
-    }
-
-    public Integer getBpPriceE() {
-        return bpPriceE;
-    }
-
-    public String getBiRemark() {
-        return biRemark;
-    }
 }

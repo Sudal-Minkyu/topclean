@@ -31,7 +31,7 @@ public class TagGalleryListDto {
     private String brCloseYn; // 종료(게시물내림) 여부 , 기본값 N
 
     public StringBuffer getBtInputDate() {
-        if(!btInputDate.equals("")){
+        if(btInputDate != null && !btInputDate.equals("")){
             StringBuffer getBtInputDate = new StringBuffer(btInputDate);
             getBtInputDate.insert(4,'-');
             getBtInputDate.insert(7,'-');
