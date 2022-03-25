@@ -105,6 +105,7 @@ const comms = {
         dv.chk(testObj, dtos.send.tagGallerySave, "택분실 등록, 수정하기");
         CommonUI.ajax(urls.putNewTaglost, "POST", formData, function (res)  {
             alertSuccess("게시물 저장이 완료되었습니다.");
+            comms.getMainList(wares.searchCondition);
             closeTaglostPop();
         });
     },
@@ -177,6 +178,7 @@ const comms = {
         CommonUI.ajax(urls.removeTaglost, "GET", target, function (res) {
             alertSuccess("게시물 삭제가 완료되었습니다.");
             resetTaglostPop();
+            comms.getMainList(wares.searchCondition);
             closeTaglostPop();
         });
     },
@@ -187,8 +189,8 @@ const comms = {
         CommonUI.ajax(urls.endTaglost, "PARAM", target, function (res) {
             alertSuccess("게시 종료가 완료되었습니다.");
             resetTaglostPop();
+            comms.getMainList(wares.searchCondition);
             closeTaglostPop();
-            console.log(res);
         });
     },
 };
@@ -485,7 +487,6 @@ function searchOrder() {
 
 function closeTaglostPop() {
     $("#taglostPop").removeClass("active");
-    comms.getMainList(wares.searchCondition);
 }
 
 async function openTaglostPop() {
