@@ -1,22 +1,7 @@
 $(function() {
     /* 배열내의 각 설정만 넣어 빈 그리드 생성 */
     createGrids();
-
-    filterItems();
-
-    /* 그리드에 데이터를 집어넣음 반복문은 그리드숫자만큼(혹은 목표그리드 범위만큼) 돌 수 있도록 한다.
-    *  첫 호출시 종료일자가 마지막 날인 것을 호출 */
-    for(let i=0; i<1; i++) {
-        setDataIntoGrid(i, gridCreateUrl[i]);
-    }
-
-    /* 0번그리드 내의 셀 클릭시 이벤트 */
-    AUIGrid.bind(gridId[0], "cellClick", function (e) {
-
-    });
-
     CommonUI.setDatePicker(datePickerTargetIds);
-
 });
 
 /* datepicker를 적용시킬 대상들의 dom id들 */
@@ -207,27 +192,6 @@ function setDataIntoGrid(numOfGrid, url, code = false) {
     CommonUI.ajax(url, "PARAM", code, function (req) {
         gridData[numOfGrid] = req.sendData.gridListData;
         AUIGrid.setGridData(gridId[numOfGrid], gridData[numOfGrid]);
-
-        /* 가격적용일을 그리드의 데이터로부터 가져와서 드롭다운박스의 검색조건에 넣는다.*/
-        if(numOfGrid == 0) {
-            let setDtList = [];
-            const $s_setDt = $("#s_setDt");
-            gridData[0].forEach(element => {
-                const aSetDt = element.setDt;
-                if(!setDtList.includes(aSetDt))
-                    setDtList.push(aSetDt);
-                }
-            )
-            setDtList = setDtList.sort().reverse();
-            $s_setDt.empty();
-            setDtList.forEach(element => {
-                const innerHtml = element.substr(0, 4) + "-" + element.substr(4, 2) + "-" + element.substr(6, 2);
-                $s_setDt.append(`<option value="${element}">${innerHtml}</option>`)
-            });
-        }
-        AUIGrid.setFilter(gridId[0], "closeDt", function (dataField, value, item) {
-            return "99991231" === value;
-        });
     });
 }
 

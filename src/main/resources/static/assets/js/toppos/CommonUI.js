@@ -390,7 +390,7 @@ class CommonUIClass {
                 }
                 console.log(res);
                 CommonUI.toppos.underTaker("status : " + res.status + " || msg : " 
-                    + res.err_msg + res.err_msg2, "통신성공 리턴코드에러");
+                    + res.err_msg + res.err_msg2, "통신성공 에러코드");
                 return errorFn(res);
             }
         }
@@ -398,7 +398,8 @@ class CommonUIClass {
         function errorResponse(res) {
             if(CommonUI.commsErrMsg) {
                 console.log(res);
-                CommonUI.toppos.underTaker(res.responseJSON.path + " |||| status : " + res.status, "통신실패 에러"); // res의 다른항목 보내기
+                CommonUI.toppos.underTaker(res.responseJSON.path + " |||| " + res.status + " |||| "
+                    + res.responseJSON.message, "통신실패 에러");
                 CommonUI.commsErrMsg = false;
             }
             ajaxErrorMsg(res);
