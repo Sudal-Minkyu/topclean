@@ -170,8 +170,23 @@ class CommonUIClass {
     * */
     setDatePicker(targetIdArray, dateFormat = "yy-mm-dd") {
         for (const targetId of targetIdArray) {
-            $("#"+targetId).datepicker({
+            const $target = $("#"+targetId);
+            $target.datepicker({
                 dateFormat: dateFormat,
+            });
+
+            $target.on("keyup", function () {
+                const numValue = $target.val().numString().substring(0, 8);
+                let formattedValue = "";
+                if(numValue.length > 6) {
+                    formattedValue = numValue.substring(0, 4) + "-" + numValue.substring(4, 6)
+                        + "-" + numValue.substring(6, 8);
+                } else if(numValue.length > 4) {
+                    formattedValue = numValue.substring(0, 4) + "-" + numValue.substring(4, 6);
+                } else {
+                    formattedValue = numValue;
+                }
+                $target.val(formattedValue);
             });
         }
     }

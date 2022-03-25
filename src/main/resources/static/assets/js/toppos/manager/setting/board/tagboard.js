@@ -610,7 +610,6 @@ function enableDatepicker() {
 
     CommonUI.setDatePicker(datePickerTargetIds);
     CommonUI.restrictDateAToB(dateAToBTargetIds);
-    CommonUI.restrictDate("btInputDate", "btInputDate", false);
 }
 
 function resetDatePicker() {
@@ -635,6 +634,12 @@ function savePost() {
         return false;
     }
 
+    const btInputDate = $("#btInputDate").val().numString();
+    if(btInputDate.length !== 8) {
+        alertCaution("올바른 8자리 숫자의 날짜를 입력해 주세요.", 1);
+        return false;
+    }
+
     const formData = new FormData();
     if(wares.currentRequest.addPhotoList) {
         for(addPhoto of wares.currentRequest.addPhotoList) { // 새로 촬영된 사진들의 추가
@@ -651,7 +656,7 @@ function savePost() {
     }
     formData.append("btBrandName", $("#btBrandName").val());
     formData.append("btMaterial", $("#btMaterial").val());
-    formData.append("btInputDate", $("#btInputDate").val().numString());
+    formData.append("btInputDate", btInputDate);
     formData.append("btRemark", $("#btRemark").val());
     
     comms.putNewTaglost(formData);
