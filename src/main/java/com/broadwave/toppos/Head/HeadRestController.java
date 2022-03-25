@@ -1083,6 +1083,8 @@ public class HeadRestController {
                                                             @RequestParam("biName") String biName, @RequestParam("setDt") String setDt){
         log.info("itemPriceList 호출");
 
+        log.info("가격적용일 : "+setDt);
+
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
 

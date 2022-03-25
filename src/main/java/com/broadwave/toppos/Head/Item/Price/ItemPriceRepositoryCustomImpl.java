@@ -7,6 +7,7 @@ import com.broadwave.toppos.Head.Item.Group.C.QItem;
 import com.broadwave.toppos.Head.Item.ItemDtos.ItemPriceDto;
 import com.broadwave.toppos.Head.Item.ItemDtos.ItemPriceListDto;
 import com.broadwave.toppos.Head.Item.ItemDtos.UserItemPriceSortDto;
+import com.broadwave.toppos.Head.Item.Price.FranchisePrice.ItemPriceSetDtDto;
 import com.broadwave.toppos.Head.Item.Price.FranchisePrice.QFranchisePrice;
 import com.broadwave.toppos.User.ItemSort.QItemSort;
 import com.querydsl.core.types.Projections;
@@ -166,6 +167,21 @@ public class ItemPriceRepositoryCustomImpl extends QuerydslRepositorySupport imp
                                 .when(franchise.frPriceGrade.eq("E")).then(itemPrice.bpPriceE)
                                 .otherwise(0))
                 ));
+
+        return query.fetch();
+    }
+
+    @Override
+    public List<ItemPriceSetDtDto> findByItemPriceSetDtList() {
+        QItemPrice itemPrice = QItemPrice.itemPrice;
+
+        JPQLQuery<ItemPriceSetDtDto> query = from(itemPrice)
+                .select(Projections.constructor(ItemPriceSetDtDto.class,
+                        itemPrice.setDt,
+                        itemPrice.setDt
+                ));
+
+        query.orderBy(itemPrice.setDt.desc()).distinct();
 
         return query.fetch();
     }

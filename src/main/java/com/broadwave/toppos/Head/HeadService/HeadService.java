@@ -19,10 +19,7 @@ import com.broadwave.toppos.Head.Item.Group.C.ItemRepositoryCustom;
 import com.broadwave.toppos.Head.Item.ItemDtos.ItemPriceDto;
 import com.broadwave.toppos.Head.Item.ItemDtos.ItemPriceListDto;
 import com.broadwave.toppos.Head.Item.ItemDtos.UserItemPriceSortDto;
-import com.broadwave.toppos.Head.Item.Price.FranchisePrice.FranchisePrice;
-import com.broadwave.toppos.Head.Item.Price.FranchisePrice.FranchisePriceListDto;
-import com.broadwave.toppos.Head.Item.Price.FranchisePrice.FranchisePriceRepository;
-import com.broadwave.toppos.Head.Item.Price.FranchisePrice.FranchisePriceRepositoryCustom;
+import com.broadwave.toppos.Head.Item.Price.FranchisePrice.*;
 import com.broadwave.toppos.Head.Item.Price.*;
 import com.broadwave.toppos.common.AjaxResponse;
 import com.broadwave.toppos.common.CommonUtils;
@@ -456,4 +453,7 @@ public class HeadService {
         return franchiseRepository.findByFranchiseMultiscreen(frCode);
     }
 
+    public List<ItemPriceSetDtDto> findByItemPriceSetDtList() {
+        return itemPriceRepositoryCustom.findByItemPriceSetDtList();
+    }
 }

@@ -60,7 +60,11 @@
                                 <div class="inquiry__title">가격적용일</div>
                                 <div class="inquiry__input-tag">
                                     <div class="c-select">
-                                        <select id="s_setDt" name="s_setDt">
+                                        <select id="s_setDt">
+                                            <option th:each ="setDtList : ${setDtLists}"
+                                                    th:value="${setDtList.setDt}"
+                                                    th:text="${setDtList.setDtview}">
+                                            </option>
                                         </select>
                                     </div>
                                 </div>

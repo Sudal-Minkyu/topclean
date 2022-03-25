@@ -3,6 +3,7 @@ package com.broadwave.toppos.Head.Item.Price;
 import com.broadwave.toppos.Head.Item.ItemDtos.ItemPriceDto;
 import com.broadwave.toppos.Head.Item.ItemDtos.ItemPriceListDto;
 import com.broadwave.toppos.Head.Item.ItemDtos.UserItemPriceSortDto;
+import com.broadwave.toppos.Head.Item.Price.FranchisePrice.ItemPriceSetDtDto;
 
 import java.util.List;
 
@@ -18,4 +19,6 @@ public interface ItemPriceRepositoryCustom {
     ItemPriceDto findByItemPrice(String biItemcode, String closeDt);
 
     List<UserItemPriceSortDto> findByUserItemPriceSortList(String frCode, String nowDate);
+
+    List<ItemPriceSetDtDto> findByItemPriceSetDtList();
 }
