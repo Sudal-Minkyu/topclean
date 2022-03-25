@@ -306,7 +306,6 @@ public class TagGalleryService {
             return ResponseEntity.ok(res.fail("문자", "응답데이터가 존재하여 삭제할 수 없습니다.", null,null));
         }else{
             TagGallery tagGallery = tagGalleryRepository.findByTagGallery(btId);
-            tagGalleryRepository.delete(tagGallery);
 
             // AWS 파일 삭제
             List<TagGalleryFile> tagGalleryFileList = tagGalleryFileRepository.findByTagGalleryFile(btId);
@@ -317,6 +316,8 @@ public class TagGalleryService {
                 awss3Service.deleteObject(path,filename);
             }
             tagGalleryFileRepository.deleteAll(tagGalleryFileList);
+            tagGalleryCheckRepository.deleteAll(tagGalleryCheckList);
+            tagGalleryRepository.delete(tagGallery);
         }
 
         return ResponseEntity.ok(res.success());
