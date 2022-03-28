@@ -489,27 +489,16 @@ const grids = {
                 } else {
                     grids.f.setCheckedRow(1, e.item);
                 }
-                const selectedFrId = {
-                    frId: e.item.frId
-                }
-                comms.uncollectedListDetail(selectedFrId);
-                console.log(e);
-                // 체크되도록 변경
+                getUncollectedListDetail(e.item);
             });
 
             AUIGrid.bind(grids.s.id[1], "rowCheckClick", function (e) {
-                const selectedFrId = {
-                    frId: e.item.frId
-                }
-                comms.uncollectedListDetail(selectedFrId);
+                getUncollectedListDetail(e.item);
                 calculateGridRequest();
             });
 
             AUIGrid.bind(grids.s.id[1], "rowAllCheckClick", function (e) {
-                const selectedFrId = {
-                    frId: e.item.frId
-                }
-                comms.uncollectedListDetail(selectedFrId);
+                grids.f.clearData(1);
                 calculateGridRequest();
             });
         }
@@ -767,4 +756,11 @@ function hasBcHp() { // 고객의 전화번호가 주소창을 통해 넘어온 
         }
         comms.filterCustomerList(searchCondition);
     }
+}
+
+function getUncollectedListDetail(item) {
+    const selectedFrId = {
+        frId: item.frId
+    }
+    comms.uncollectedListDetail(selectedFrId);
 }

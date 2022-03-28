@@ -133,7 +133,7 @@ const comms = {
         CommonUI.ajax(urls.deleteInspection, "MAPPER", data, function(res) {
             const searchCondition = {
                 fdId: fdId,
-                type: "3"
+                type: "2"
             };
             comms.getInspectionList(searchCondition);
         });
@@ -149,7 +149,7 @@ const comms = {
         CommonUI.ajax(urls.putNewInspect, "POST", formData, function (res) {
             const searchCondition = {
                 fdId: testObj.fdId,
-                type: "3"
+                type: "2"
             };
             wares.currentRequest.fdState = "B";
             comms.getInspectionList(searchCondition);
@@ -551,7 +551,7 @@ async function openCheckPop(e) {
     grids.f.resize(1);
     const searchCondition = {
         fdId: e.item.fdId,
-        type: "3"
+        type: "2"
     }
     comms.getInspectionList(searchCondition);
     $("#checkPop").addClass("active");

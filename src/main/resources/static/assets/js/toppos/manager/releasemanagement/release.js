@@ -176,7 +176,7 @@ const grids = {
                 }, {
                     dataField: "fdState",
                     headerText: "출고타입",
-                    width: 60,
+                    width: 70,
                     labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
                         const result = value === "S7" ? "강제" : "일반";
                         return result;

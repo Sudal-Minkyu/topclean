@@ -109,6 +109,7 @@ const comms = {
 
     getInspectionList(condition) {
         dv.chk(condition, dtos.send.branchInspectionList, "등록된 검품조회 조건");
+        console.log(condition);
         CommonUI.ajax(urls.getInspectionList, "GET", condition, function(res) {
             const data = res.sendData.gridListData;
             dv.chk(data, dtos.receive.branchInspectionList, "등록된 검품의 조회");
@@ -454,7 +455,7 @@ function openCheckPop(e) {
     $("#confirmInspectPop").addClass("active");
     const searchCondition = {
         fdId: e.item.fdId,
-        type: "3"
+        type: "2"
     }
     comms.getInspectionList(searchCondition);
     $("#checkPop").addClass("active");
