@@ -67,7 +67,7 @@ function receiptMove(){
 function init(){
     const $signImage = $("#signImage");
     $("#bcName").val("");
-    $("#bcHp").val("");
+    $("#bcHp").val("010");
     $("#female").prop("checked",true);
     $("#bcAddress").val("");
     $("#bcBirthYYYY").val("");
@@ -77,7 +77,7 @@ function init(){
     $("#bcWeddingAnniversaryYYYY").val("");
     $("#bcWeddingAnniversaryMM").val("");
     $("#bcWeddingAnniversaryDD").val("");
-    $("#bcValuation").val("3");
+    $("#bcValuation").val("5");
     $("#no2").prop("checked",true);
     $("#bcAgreeType").val("1");
     $("#bcRemark").val("");

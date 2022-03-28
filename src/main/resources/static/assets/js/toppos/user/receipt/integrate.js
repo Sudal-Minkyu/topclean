@@ -1168,6 +1168,11 @@ const trigs = {
         // 접수 세부 우측 하단 각종 처리 버튼의 온오프에 따른 없음버튼 온오프
         const $processInput = $("#processCheck input[type='checkbox'], #processCheck input[type='radio']");
         $processInput.on("change", function(e) {
+            if($("#waterNone").is(":checked")) {
+                $("#waterBtn").removeClass("choice-drop__btn--active");
+            }else{
+                $("#waterBtn").addClass("choice-drop__btn--active");
+            }
             const $isEtcProcessChecked = $(".choice-drop__btn.etcProcess.choice-drop__btn--active").length;
             if(!$("#processCheck input[type='checkbox']:checked").length && !$isEtcProcessChecked) {
                 $processInput.first().prop("checked", true);
@@ -1188,6 +1193,24 @@ const trigs = {
             }
         });
 
+        $("#etcNone").on("click", function () {
+            $processInput.prop("checked", false);
+            $("#waterNone").prop("checked", true);
+            $("#waterBtn").removeClass("choice-drop__btn--active");
+            resetPollutionPop();
+            resetFdRepairInputs();
+            resetFdAddInputs();
+            // 각 내부 항목들의 초기화
+            setTimeout(function () {
+                calculateItemPrice();
+            }, 0);
+        });
+    
+        $("#urgentNone").on("click", function () {
+            $urgentInput.prop("checked", false);
+            calculateItemPrice();
+        });
+
         $("#fdAdd1").on("click", function () {
             $("#fdAddPop").addClass("active");
             enableKeypad();
@@ -1199,11 +1222,7 @@ const trigs = {
         });
 
         $("#fdRepairCancel").on("click", function () {
-            currentRequest.fdRepairAmt = 0;
-            currentRequest.fdRepairRemark = "";
-            $("#fdRepair").prop("checked", false);
-            $("#fdRepairAmt").val(0);
-            $("#fdRepairRemark").val("");
+            resetFdRepairInputs();
             calculateItemPrice();
             disableKeypad();
         });
@@ -1221,11 +1240,6 @@ const trigs = {
         });
 
         $("#fdAddCancel").on("click", function () {
-            currentRequest.fdAdd1Amt = 0;
-            currentRequest.fdAdd1Remark = "";
-            $("#fdAdd1").prop("checked", false);
-            $("#fdAdd1Amt").val(0);
-            $("#fdAdd1Remark").val("");
             calculateItemPrice();
             disableKeypad();
         });
@@ -2100,4 +2114,20 @@ function collectedCancelPaymentProcess(tagNo) {
         $refundPayment.show();
         $collectedWarning.hide();
     }
+}
+
+function resetFdRepairInputs() {
+    currentRequest.fdRepairAmt = 0;
+    currentRequest.fdRepairRemark = "";
+    $("#fdRepair").prop("checked", false);
+    $("#fdRepairAmt").val(0);
+    $("#fdRepairRemark").val("");
+}
+
+function resetFdAddInputs() {
+    currentRequest.fdAdd1Amt = 0;
+    currentRequest.fdAdd1Remark = "";
+    $("#fdAdd1").prop("checked", false);
+    $("#fdAdd1Amt").val(0);
+    $("#fdAdd1Remark").val("");
 }

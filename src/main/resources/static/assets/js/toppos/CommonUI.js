@@ -161,8 +161,23 @@ class CommonUIClass {
             const url = "/api/error/errorSave";
             console.log(data);
             CommonUI.ajax(url, "PARAM", data);
-        }
+        },
     }
+
+    validation = {
+        /* 날짜가 필수값인지 체크하지는 않고, 입력되었을 경우 올바른 8자리인지를 체크한다. */
+        dateEightDigit(dateArray) { // 시간날 때 로직 개선 필요
+            for(const date of dateArray) {
+                const dLength = date.numString();
+                if(dLength !== 0 && dLength !== 8) {
+                    alertCaution("올바른 날짜 8자리를 입력해 주세요.", 1);
+                    return true;
+                }
+            }
+            return false;
+        },
+    }
+
 
     /*
     * 배열에 담긴 DOM ID들에 JqueryUI의 datepicker 를 적용한다.
