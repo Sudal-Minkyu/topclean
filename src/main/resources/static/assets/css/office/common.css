@@ -761,6 +761,9 @@ textarea {
 	padding: 0.875rem 0.625rem;
 	background-color: #f8f8f8;
 }
+.form__title.form__title--200 {
+    width: 12.5rem;
+}
 .form__input {
 	flex: 1;
 	/*width: calc(100% - 8.125rem);*/

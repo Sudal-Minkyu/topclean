@@ -107,26 +107,26 @@
 	</div>
 
 	<!-- 가격 일괄 등록 팝업 -->
-	<div class="l-popup" id="regPrice_popup">
-		<div class="l-popup__container">
-			<div class="l-popup__head">
-				<h3 class="l-popup__heading">가격 일괄 등록</h3>
-			</div>
-			<div class="l-popup__content">
-				<div class="l-popup__section">
-					<div class="form">
+	<div class="pop" id="regPrice_popup">
+		<div class="pop__box">
+            <div class="pop__article">
+                <div class="pop__article-head">
+                    <h3 class="pop__article__header">가격 일괄 등록</h3>
+                </div>
+                <div class="pop__article-content">
+                    <div class="form">
 						<ul class="form__list form__list--wide">
 							<li class="form__item">
-								<div class="form__title">업로드데이터 가격적용일</div>
+								<div class="form__title form__title--200">업로드데이터 가격적용일</div>
 								<div class="form__input">
 									<input type="text" class="c-date" id="setDt" name="setDt" readonly>
 								</div>
 							</li>
 							<li class="form__item">
-								<div class="form__title">업로드파일 선택</div>
+								<div class="form__title form__title--200">업로드파일 선택</div>
 								<div class="form__input">
 									<div class="c-file">
-										<input type="text" class="c-file__input" id="fileName" readonly>
+										<input type="text" class="c-file__input" id="fileName" readonly />
 										<label class="c-file__btn">파일 업로드
 											<input type="file" id="priceUpload" name="priceUpload" accept="application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" onchange="fileSelected()" />
 										</label>
@@ -143,13 +143,18 @@
 					</div>
 								
 					<!-- <button type="button" onclick="$('#priceUpload').trigger('click')">파일선택</button> -->
+                </div>
+            </div>
 
-				</div>
-			</div>
-			<div class="l-popup__console">
-				<button type="button" class="c-button c-button--dark" onclick="applyPrice()">가격적용하기</button>
-				<button type="button" class="c-button" onclick="regPriceClose()">취소</button>
-			</div>
+
+			<ul class="pop__console">
+                <li>
+                    <button type="button" class="c-button c-button--dark" onclick="applyPrice()">가격적용하기</button>
+                </li>
+                <li>
+                    <button type="button" class="c-button" onclick="regPriceClose()">취소</button>
+                </li>
+			</ul>
 		</div>
 	</div>
 </div>

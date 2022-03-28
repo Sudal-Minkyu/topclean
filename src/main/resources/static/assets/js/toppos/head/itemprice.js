@@ -203,10 +203,10 @@ function fileSelected() {
 
 /* 엑셀파일 업로드 팝업 띄우고 닫기 */
 function regPricePop() {
-    $('#regPrice_popup').addClass('open');
+    $('#regPrice_popup').addClass('active');
 }
 function regPriceClose() {
-    $('#regPrice_popup').removeClass('open');
+    $('#regPrice_popup').removeClass('active');
 }
 
 /* 엑셀파일 처리를 통해 업데이트 */

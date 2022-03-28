@@ -310,8 +310,16 @@ select + .c-button {
 
 /* button file */
 .c-file {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    width: 100%;
+}
+label.c-file,
+.c-file__btn {
     display: inline-block;
 	height: 2rem;
+    width: auto;
 	min-width: 5.625rem;
 	padding: 0 0.625rem;
 	background-color: #fff;
@@ -326,8 +334,12 @@ select + .c-button {
 	text-align: center;
 	cursor: pointer;
 }
-.c-file input[type="file"] {
+label.c-file input[type="file"],
+.c-file__btn input[type="file"] {
   display: none;
+}
+.c-file__input {
+    flex: 1;
 }
 
 /* select */
