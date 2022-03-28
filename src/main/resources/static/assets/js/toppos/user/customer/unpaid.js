@@ -297,7 +297,7 @@ const grids = {
 
             grids.s.prop[1] = {
                 editable : false,
-                selectionMode : "singleRow",
+                selectionMode : "none",
                 showAutoNoDataMessage: false,
                 noDataMessage : "출력할 데이터가 없습니다.",
                 showAutoNoDataMessage: false,
@@ -458,7 +458,19 @@ const grids = {
 
         getCheckedItems(numOfGrid) {
             return AUIGrid.getCheckedRowItems(grids.s.id[numOfGrid]);
-        }
+        },
+
+        isCheckedRow(numOfGrid, item) {
+            return AUIGrid.isCheckedRowById(grids.s.id[numOfGrid], item._$uid);
+        },
+
+        setCheckedRow(numOfGrid, item) {
+            AUIGrid.addCheckedRowsByIds(grids.s.id[numOfGrid], [item._$uid]);
+        },
+
+        setUncheckedRow(numOfGrid, item) {
+            AUIGrid.addUncheckedRowsByIds(grids.s.id[numOfGrid], [item._$uid]);
+        },
     },
 
     t: {
@@ -472,17 +484,32 @@ const grids = {
             });
 
             AUIGrid.bind(grids.s.id[1], "cellClick", function (e) {
+                if(grids.f.isCheckedRow(1, e.item)) {
+                    grids.f.setUncheckedRow(1, e.item);
+                } else {
+                    grids.f.setCheckedRow(1, e.item);
+                }
                 const selectedFrId = {
                     frId: e.item.frId
                 }
                 comms.uncollectedListDetail(selectedFrId);
+                console.log(e);
+                // 체크되도록 변경
             });
 
             AUIGrid.bind(grids.s.id[1], "rowCheckClick", function (e) {
+                const selectedFrId = {
+                    frId: e.item.frId
+                }
+                comms.uncollectedListDetail(selectedFrId);
                 calculateGridRequest();
             });
 
-            AUIGrid.bind(grids.s.id[1], "rowAllCheckClick", function (check) {
+            AUIGrid.bind(grids.s.id[1], "rowAllCheckClick", function (e) {
+                const selectedFrId = {
+                    frId: e.item.frId
+                }
+                comms.uncollectedListDetail(selectedFrId);
                 calculateGridRequest();
             });
         }
