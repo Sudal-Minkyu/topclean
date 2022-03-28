@@ -133,7 +133,7 @@ public class ReceiptReleaseService {
 
     //  지사출고 - 세부테이블 지사입고 상태 리스트
     public ResponseEntity<Map<String, Object>> branchReceiptBranchInList(Long frId, String fromDt, String toDt, String isUrgent, HttpServletRequest request) {
-        log.info("franchiseReceiptBranchInList 호출");
+        log.info("branchReceiptBranchInList 호출");
 
         log.info("fromDt : "+fromDt);
         log.info("toDt : "+toDt);
@@ -157,7 +157,7 @@ public class ReceiptReleaseService {
 
     //  지사출고 - 세부테이블 강제출고 리스트
     public ResponseEntity<Map<String, Object>> branchReceiptBranchInForceList(Long frId, String fromDt, String toDt, HttpServletRequest request) {
-        log.info("franchiseReceiptBranchInList 호출");
+        log.info("branchReceiptBranchInForceList 호출");
 
 //        log.info("fromDt : "+fromDt);
 //        log.info("toDt : "+toDt);
@@ -263,7 +263,7 @@ public class ReceiptReleaseService {
 
     //  접수테이블의 상태 변화 API - 지사출고취소, 지사반송, 가맹점입고 실행 함수
     public ResponseEntity<Map<String, Object>> branchRelease(List<Long> fdIdList, String type, HttpServletRequest request) {
-        log.info("branchReceiptBranchInCancelList 호출");
+        log.info("branchRelease 호출");
 
         log.info("fdIdList : "+fdIdList);
         log.info("type : "+type);

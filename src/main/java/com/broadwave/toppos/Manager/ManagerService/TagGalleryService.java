@@ -186,9 +186,9 @@ public class TagGalleryService {
     public ResponseEntity<Map<String, Object>> tagGalleryList(String searchString, String filterFromDt, String filterToDt, HttpServletRequest request, String type) {
         log.info("tagGalleryList 호출");
 
-//        log.info("searchString : "+searchString);
-//        log.info("filterFromDt : "+filterFromDt);
-//        log.info("filterToDt : "+filterToDt);
+        log.info("searchString : "+searchString);
+        log.info("filterFromDt : "+filterFromDt);
+        log.info("filterToDt : "+filterToDt);
 
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();

@@ -281,8 +281,8 @@ const grids = {
                     },
                 }, {
                     dataField: "brCloseYn",
-                    headerText: "종료",
-                    width: 35,
+                    headerText: "종료여부",
+                    width: 70,
                     style: "grid_textalign_left",
                 }, {
                     dataField: "detail",
