@@ -318,7 +318,6 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
 
         JPQLQuery<RequestPaymentPaperDto> query =
                 from(request)
-                        .where(request.frCode.eq(frCode))
                         .innerJoin(customer).on(customer.eq(request.bcId))
                         .innerJoin(franchise).on(franchise.frCode.eq(request.frCode))
                         .select(Projections.constructor(RequestPaymentPaperDto.class,
@@ -338,6 +337,10 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
                                 request.frTotalAmount,
                                 request.frPayAmount
                         ));
+
+        if(frCode != null){
+            query.where(request.frCode.eq(frCode));
+        }
 
         if(!frNo.equals("")){
             query.where(request.frNo.eq(frNo));

@@ -1,47 +1,84 @@
 package com.broadwave.toppos.Jwt.auth;
 
+import com.broadwave.toppos.Account.Account;
+import com.broadwave.toppos.Account.AccountRepository;
 import com.broadwave.toppos.Account.AccountRequestDto;
 import com.broadwave.toppos.Jwt.dto.TokenDto;
 import com.broadwave.toppos.Jwt.dto.TokenRequestDto;
 import com.broadwave.toppos.Jwt.refresh.RefreshToken;
 import com.broadwave.toppos.Jwt.refresh.RefreshTokenRepository;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
+import com.broadwave.toppos.Loginlog.Loginlog;
+import com.broadwave.toppos.Loginlog.LoginlogRepository;
+import com.broadwave.toppos.common.CommonUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
+import java.util.Optional;
+
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthService {
+
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final TokenProvider tokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final AccountRepository accountRepository;
+    private final LoginlogRepository loginlogRepository;
 
     @Transactional
-    public TokenDto login(AccountRequestDto accountRequestDto) {
+    public TokenDto login(HttpServletRequest request, AccountRequestDto accountRequestDto) {
+
         // 1. Login ID/PW 를 기반으로 AuthenticationToken 생성
         UsernamePasswordAuthenticationToken authenticationToken = accountRequestDto.toAuthentication();
 
-        // 2. 실제로 검증 (사용자 비밀번호 체크) 이 이루어지는 부분
-        //    authenticate 메서드가 실행이 될 때 CustomUserDetailsService 에서 만들었던 loadUserByUsername 메서드가 실행됨
-        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        Optional<Account> optionalAccount = accountRepository.findByUserid(accountRequestDto.getUserid());
 
-        // 3. 인증 정보를 기반으로 JWT 토큰 생성
-        TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
-
-        // 4. RefreshToken 저장
-        RefreshToken refreshToken = RefreshToken.builder()
-                .key(authentication.getName())
-                .value(tokenDto.getRefreshToken())
+        Loginlog loginlog = Loginlog.builder()
+                .userid(accountRequestDto.getUserid())
+                .loginIp(CommonUtils.getIp(request))
+                .insertDateTime(LocalDateTime.now())
                 .build();
 
-        refreshTokenRepository.save(refreshToken);
 
-        // 5. 토큰 발급
-        return tokenDto;
+        // 2. 실제로 검증 (사용자 비밀번호 체크) 이 이루어지는 부분
+        //     authenticate 메서드가 실행이 될 때 CustomUserDetailsService 에서 만들었던 loadUserByUsername 메서드가 실행됨
+        try{
+            optionalAccount.ifPresent(loginlog::setAccount);
+            loginlog.setSucccessYn("Y");
+
+            Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+
+            // 3. 인증 정보를 기반으로 JWT 토큰 생성
+            TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
+
+            // 4. RefreshToken 저장
+            RefreshToken refreshToken = RefreshToken.builder()
+                    .key(authentication.getName())
+                    .value(tokenDto.getRefreshToken())
+                    .build();
+
+            refreshTokenRepository.save(refreshToken);
+            loginlogRepository.save(loginlog);
+
+            // 5. 토큰 발급
+            return tokenDto;
+
+        }catch (Exception e){
+            loginlog.setSucccessYn("N");
+            loginlogRepository.save(loginlog);
+
+            log.info("e : "+e);
+            return null;
+        }
     }
 
     @Transactional

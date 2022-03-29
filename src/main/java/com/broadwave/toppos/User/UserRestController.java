@@ -786,7 +786,11 @@ public class UserRestController {
         return receiptService.requestPaymentPaper(request, frNo, frId);
     }
 
-
+    // 접수페이지 모바일 영수증 출력 API 시큐리티 없음
+    @GetMapping("requestPaymentMobilePaper")
+    public ResponseEntity<Map<String,Object>> requestPaymentMobilePaper(@RequestParam(value="frNo", defaultValue="") String frNo, @RequestParam(value="frId", defaultValue="") Long frId){
+        return receiptService.requestPaymentPaper(null, frNo, frId);
+    }
 
     //@@@@@@@@@@@@@@@@@@@@@ 가맹점 대분류, 상품 정렬관련 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     // 현재 가맹점의 대분류 리스트 가져오기

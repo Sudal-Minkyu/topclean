@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,12 +24,12 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    public ResponseEntity<Map<String,Object>> login(@RequestBody AccountRequestDto accountRequestDto) {
+    public ResponseEntity<Map<String,Object>> login(HttpServletRequest request, @RequestBody AccountRequestDto accountRequestDto) {
 
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
 
-        TokenDto tokenDto = authService.login(accountRequestDto);
+        TokenDto tokenDto = authService.login(request, accountRequestDto);
 
         data.put("tokenDto",tokenDto);
 

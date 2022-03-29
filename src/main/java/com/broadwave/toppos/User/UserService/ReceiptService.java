@@ -829,10 +829,13 @@ public class ReceiptService {
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
 
+        String frCode = null;
         // 클레임데이터 가져오기
-        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
-        String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
-        log.info("현재 접속한 가맹점 코드 : "+frCode);
+        if(request != null){
+            Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+            frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
+            log.info("현재 접속한 가맹점 코드 : "+frCode);
+        }
 
         String nowDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         log.info("금일날짜 : "+nowDate);

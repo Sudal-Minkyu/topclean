@@ -827,11 +827,13 @@ public class InspectService {
 
     //  지사검품등록용 - 검품 리스트 요청
     public ResponseEntity<Map<String, Object>> branchInspectionList(Long fdId, String type) {
-        log.info("franchiseInspectionList 호출");
+        log.info("branchInspectionList 호출");
 
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
 
+        log.info("fdId : "+fdId);
+        log.info("type : "+type);
         List<InspeotListDto> inspeotList = inspeotRepositoryCustom.findByInspeotList(fdId, type);
         data.put("gridListData",inspeotList);
 
