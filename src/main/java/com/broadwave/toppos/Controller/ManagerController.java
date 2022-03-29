@@ -38,6 +38,12 @@ public class ManagerController {
         return "manager/releasemanagement/forcerelease";
     }
 
+    // 가맹점반품출고
+    @RequestMapping("returnrelease")
+    public String returnrelease(){
+        return "manager/releasemanagement/returnrelease";
+    }
+
     // 반송/검품
     // 가맹점반송
     @RequestMapping("returnproduct")
