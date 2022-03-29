@@ -498,7 +498,7 @@ const grids = {
             });
 
             AUIGrid.bind(grids.s.id[1], "rowAllCheckClick", function (e) {
-                grids.f.clearData(1);
+                grids.f.clearData(2);
                 calculateGridRequest();
             });
         }
