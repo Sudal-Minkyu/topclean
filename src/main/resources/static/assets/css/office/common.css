@@ -489,6 +489,9 @@ textarea {
 	-moz-box-shadow: 0 .188rem 0.063rem rgba(0, 0, 0, .15);
 	box-shadow: 0 .188rem 0.063rem rgba(0, 0, 0, .15);
 }
+.section.section--small {
+    width: 90rem;
+}
 .section:first-child {
 	margin-top: 0;
 }
