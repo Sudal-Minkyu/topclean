@@ -181,6 +181,7 @@ public class FranchiseRepositoryCustomImpl extends QuerydslRepositorySupport imp
                         franchise.frContractDt,
                         franchise.frContractFromDt,
                         franchise.frContractToDt,
+
                         branch.brName,
 
                         franchise.frCarculateRateBr,

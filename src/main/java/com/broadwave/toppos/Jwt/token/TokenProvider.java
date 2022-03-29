@@ -41,7 +41,8 @@ public class TokenProvider {
     private final Key key;
 
     @Autowired
-    public TokenProvider(@Value("${spring.jwt.secret}") String secretKey, AccountService accountService, HeadService headService) {
+    public TokenProvider(@Value("${spring.jwt.secret}") String secretKey,
+                         AccountService accountService, HeadService headService) {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
         this.accountService = accountService;

@@ -121,6 +121,8 @@ public class InfoService {
             franchise.setFrAddress(franchiseUserDto.getFrAddress());
             franchise.setFrAddressDetail(franchiseUserDto.getFrAddressDetail());
             franchise.setFrMultiscreenYn(franchiseUserDto.getFrMultiscreenYn());
+            franchise.setFrDepositAmount(franchiseUserDto.getFrDepositAmount());
+            franchise.setFrRentalAmount(franchiseUserDto.getFrRentalAmount());
 
             franchise.setModify_id(login_id);
             franchise.setModifyDateTime(LocalDateTime.now());
