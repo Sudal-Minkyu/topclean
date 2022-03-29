@@ -1910,6 +1910,13 @@ function cancelPayment(cancelType) {
                     const jsonRes = JSON.parse(res);
                     if(jsonRes.STATUS === "SUCCESS") {
                         comms.cancelPayment(target);
+                    } else if(jsonRes.ERRORMESSAGE === "TEL)1544-4700        / V 기취소된거래   / 거래내역확인요망") {
+                        alertCheck("해당 거래는 단말기를 통해<br>직접 취소된 거래입니다.<br>"
+                            + "전산상으로도 취소 하시겠습니까?");
+                        $("#checkDelSuccessBtn").on("click", function () {
+                            comms.cancelPayment(target);
+                            $('#popupId').remove();
+                        });
                     }else if(jsonRes.STATUS === "FAILURE") {
                         console.log(res);
                         alertCancel("카드결제 취소중 에러 발생<br>단말기 처리");

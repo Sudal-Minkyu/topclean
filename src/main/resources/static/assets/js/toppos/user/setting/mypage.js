@@ -8,7 +8,6 @@ const dtos = {
 		franchiseMyInfoSave: {
 			frDepositAmount: "n", // 2022.03.29 추가
 			frRentalAmount: "n", // 2022.03.29 추가
-			frBusinessNo: "s",
 			frRpreName: "s",
 			frTelNo: "s",
 			frPostNo: "s",
@@ -114,7 +113,6 @@ const comms = {
 		formData.set("frDepositAmount", jsonData.frDepositAmount);
 		formData.set("frRentalAmount", jsonData.frRentalAmount);
 		formData.set("frTelNo", formData.get("frTelNo").numString());
-		formData.set("frBusinessNo", formData.get("frBusinessNo").numString());
 		formData.set("frMultiscreenYn", $('input[name=frMultiscreenYn]:checked').val());
 
 		dv.chk(jsonData, dtos.send.franchiseMyInfoSave, "가맹점 정보 보내기");
@@ -511,10 +509,10 @@ const trigs = {
 				grids.f.downRows(gridnum);
 			})
 
-			$('#frBusinessNo').on('keyup', function () {
-				const busiNo = $("#frBusinessNo").val();
-				$("#frBusinessNo").val(CommonUI.formatBusinessNo(busiNo));
-			});
+			// $('#frBusinessNo').on('keyup', function () {
+			// 	const busiNo = $("#frBusinessNo").val();
+			// 	$("#frBusinessNo").val(CommonUI.formatBusinessNo(busiNo));
+			// });
 
 			$('#frTelNo').on('keyup', function () {
 				const telNum = $('#frTelNo').val();
@@ -554,7 +552,7 @@ const trigs = {
 const vKeyboard = {
 	targetId: [
 		"frRpreName",
-		"frTagNo",
+		"frTagNo", // 현재 미사용
 		"oldpassword",
 		"newpassword",
 		"passwordconfirm",
@@ -603,9 +601,9 @@ const vKeyboard = {
 
 const vKeypad = {
 	targetId: [
-		"frBusinessNo",
+		"frBusinessNo", // 현재 미사용
 		"frTelNo",
-		"frEstimateDuration",
+		"frEstimateDuration", // 현재 미사용
 		"frDepositAmount",
 		"frRentalAmount",
 	],
