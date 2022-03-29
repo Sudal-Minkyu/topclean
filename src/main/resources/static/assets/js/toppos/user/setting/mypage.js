@@ -683,14 +683,24 @@ function putFrInfoDataInField(myInfoData) {
 	$("input[name='frCarculateRateBr']").val(myInfoData.frCarculateRateBr);
 	$("input[name='frCarculateRateFr']").val(myInfoData.frCarculateRateFr);
 	$("input[name='frRoyaltyRateFr']").val(myInfoData.frRoyaltyRateFr);
-	$("input[name='frBusinessNo']").val(CommonUI.formatBusinessNo(myInfoData.frBusinessNo));
+	$("#frBusinessNo").val(CommonUI.formatBusinessNo(myInfoData.frBusinessNo));
 	$("input[name='frRpreName']").val(myInfoData.frRpreName);
 	$("input[name='frTelNo']").val(CommonUI.formatTel(myInfoData.frTelNo));
-	$("input[name='frTagNo']").val(myInfoData.frTagNo);
-	$("input[name='frEstimateDuration']").val(myInfoData.frEstimateDuration);
+	$("#frTagNo").val(myInfoData.frTagNo);
+	$("#frEstimateDuration").val(myInfoData.frEstimateDuration);
 	$("input[name='frPostNo']").val(myInfoData.frPostNo);
 	$("input[name='frAddress']").val(myInfoData.frAddress);
 	$("input[name='frAddressDetail']").val(myInfoData.frAddressDetail);
+	let frDepositAmount = "";
+	if(myInfoData.frDepositAmount) {
+		frDepositAmount = myInfoData.frDepositAmount.toInt().toLocaleString();
+	}
+	let frRentalAmount = "";
+	if(myInfoData.frRentalAmount) {
+		frRentalAmount = myInfoData.frRentalAmount.toInt().toLocaleString();
+	}
+	$("input[name='frDepositAmount']").val(frDepositAmount);
+	$("input[name='frRentalAmount']").val(frRentalAmount);
 	if(myInfoData.frMultiscreenYn === "Y"){
 		$("#frMultiscreenYn_Y").prop("checked",true)
 	}else{
