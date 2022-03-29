@@ -6,39 +6,6 @@
 
 <th:block layout:fragment="script">
 	<script src="/assets/js/min_js_dir/toppos/login.js"></script>
-	<script type="text/javascript">
-		 // 가상키보드
-		 let vkey;
-		 $(function () {
-		    vkey = new VKeyboard();
-
-			$("#exitProgram").on("click", function () {
-				alertCheck("프로그램을 종료 하시겠습니까?");
-				$("#checkDelSuccessBtn").on("click", function () {
-					cAPI.pExit();
-				});
-			});
-		 });
-		 
-		 let targetFieldID = ["userid", "password"];
-
-		 let vkeyProp = [];
-
-		 vkeyProp[0] = {
-			 title : "ID를 입력해주세요",
-		 }
-
-		 vkeyProp[1] = {
-			title : "비밀번호를 입력해주세요",
-			defaultKeyboard : 2,
-		 }
-		 
-		 function openVKeyboard(num) {
-			 vkey.showKeyboard(targetFieldID[num], vkeyProp[num]);
-		 }
-
-
-	</script>
 </th:block>
 
 <div layout:fragment="content" class="login-wrap">

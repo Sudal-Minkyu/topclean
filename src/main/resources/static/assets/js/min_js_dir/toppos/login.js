@@ -1,3 +1,18 @@
+let vkey;
+
+let targetFieldID = ["userid", "password"];
+
+let vkeyProp = [];
+
+vkeyProp[0] = {
+    title : "ID를 입력해주세요",
+}
+
+vkeyProp[1] = {
+title : "비밀번호를 입력해주세요",
+defaultKeyboard : 2,
+}
+
 $(function() {
 
     // 저장된 쿠키값을 가져와서 ID 칸에 넣어준다. 없으면 공백으로 들어감.
@@ -23,6 +38,22 @@ $(function() {
     $userid.keyup(function(){ // ID 입력 칸에 ID를 입력할 때,
         if($idSaveCheck.is(":checked")){ // ID 저장하기를 체크한 상태라면,
             setCookie("key", $userid.val(), 7); // 7일 동안 쿠키 보관
+        }
+    });
+
+
+    vkey = new VKeyboard();
+
+    $("#exitProgram").on("click", function () {
+        alertCheck("프로그램을 종료 하시겠습니까?");
+        $("#checkDelSuccessBtn").on("click", function () {
+            cAPI.pExit();
+        });
+    });
+
+    $("#password").on("keypress", function (e) {
+        if(e.originalEvent.code === "Enter" || e.originalEvent.code === "NumpadEnter") {
+            loginActive();
         }
     });
 
@@ -128,4 +159,8 @@ function mainPage(){
             // console.log("이동완료");
         }
     });
+}
+
+function openVKeyboard(num) {
+    vkey.showKeyboard(targetFieldID[num], vkeyProp[num]);
 }

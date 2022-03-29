@@ -101,20 +101,20 @@ function setField(data) {
     $("#requestDt").html(data.paymentData.requestDt);
     
     $("#franchiseName").html(data.paymentData.franchiseName);
-    $("#businessNO").html(data.paymentData.businessNO);
+    $("#businessNO").html(CommonUI.formatBusinessNo(data.paymentData.businessNO));
     $("#repreName").html(data.paymentData.repreName);
-    $("#franchiseTel").html(data.paymentData.franchiseTel);
+    $("#franchiseTel").html(CommonUI.formatTel(data.paymentData.franchiseTel));
 
-    $("#normalAmount").html(data.paymentData.normalAmount);
-    $("#changeAmount").html(data.paymentData.changeAmount);
-    $("#totalAmount").html(data.paymentData.totalAmount);
+    $("#normalAmount").html(data.paymentData.normalAmount.toLocaleString());
+    $("#changeAmount").html(data.paymentData.changeAmount.toLocaleString());
+    $("#totalAmount").html(data.paymentData.totalAmount.toLocaleString());
     $("#estimateDt").html(data.paymentData.estimateDt);
 
-    $("#preUncollectAmount").html(data.paymentData.preUncollectAmount);
-    $("#curUncollectAmount").html(data.paymentData.curUncollectAmount);
-    $("#uncollectPayment").html(data.paymentData.uncollectPayment);
-    $("#totalUncollectAmount").html(data.paymentData.totalUncollectAmount);
+    $("#preUncollectAmount").html(data.paymentData.preUncollectAmount.toLocaleString());
+    $("#curUncollectAmount").html(data.paymentData.curUncollectAmount.toLocaleString());
+    $("#uncollectPayAmount").html(data.paymentData.uncollectPayAmount.toLocaleString());
+    $("#totalUncollectAmount").html(data.paymentData.totalUncollectAmount.toLocaleString());
 
-    $("#qty").html(data.items.length);
-    $("#paymentAmount").html(data.paymentData.paymentAmount);
+    $("#qty").html(data.items.length.toLocaleString());
+    $("#paymentAmount").html(data.paymentData.paymentAmount.toLocaleString());
 }

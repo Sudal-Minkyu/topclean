@@ -56,7 +56,7 @@ const dtos = {
 /* 통신에 사용되는 url들 기입 */
 const urls = {
     getFrList: "/api/manager/branchBelongList",
-    getMainGridList: "/api/manager/branchReceiptForceReleaseList", // API 도착시 교체
+    getMainGridList: "/api/manager/branchReceiptReturnReleaseList", // API 도착시 교체
     executeReceipt: "/api/manager/branchRelease", // API 도착시 교체
 }
 
@@ -392,7 +392,7 @@ function executeCheckedReceipts() {
     });
 
     const sendList = {
-        type: "3",
+        type: "2",
         fdIdList: fdIdList
     }
 

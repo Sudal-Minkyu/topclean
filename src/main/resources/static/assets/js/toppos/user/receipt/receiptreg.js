@@ -1082,7 +1082,7 @@ function onAddOrder() {
         alertCaution("소재를 선택해 주세요", 1);
         return false;
     }
-    if(currentRequest.biItemcode.substring(0, 3) === "D03") { // 스크린이 있을 경우(수정필요)
+    if(currentRequest.biItemcode.substring(0, 3) === "D03" && !currentRequest.fdAgreeType) {
         alertThree("운동화는 고객의 동의와 서명이 필요합니다.<br>어떻게 하시겠습니까?", "스크린 동의", "서면 동의", "취소");
         if(initialData.etcData.frMultiscreenYn !== "Y") {
             $("#popFirstBtn").hide();
@@ -1105,7 +1105,8 @@ function onAddOrder() {
         });
         return false;
     }
-    
+    currentRequest.sumName = "";
+
     putItemIntoGrid();
 }
 
@@ -1130,6 +1131,7 @@ function putItemIntoGrid() {
 
     if(currentRequest._$uid) {
         const copyObj = CommonUI.cloneObj(currentRequest);
+        console.log(copyObj);
         AUIGrid.updateRowsById(gridId[0], copyObj);
     }else{
         currentRequest.fdTag = nextFdTag.replace(/[^0-9A-Za-z]/g, "");
@@ -1606,7 +1608,8 @@ function onPaymentStageOne() {
             }
         }
 
-        if(!paymentData.paymentAmount) {
+        const applySaveMoney = $("#applySaveMoney").html().toInt();
+        if(!paymentData.paymentAmount && !applySaveMoney) {
             alertCaution("0원을 결제시도 할 수 없습니다.<br>미수금이 남은채로 창을 닫기를 원하시면<br>"
                 + "닫기 버튼을 눌러주세요.", 1);
             return false;
@@ -1626,6 +1629,7 @@ function onPaymentStageOne() {
                     // 결제 성공일경우 Print
                     if (resjson.STATUS === "SUCCESS") {
                         onPaymentStageTwo(resjson);
+                        alertSuccess("카드 결제가 성공하였습니다.<br>단말기에서 카드를 제거해 주세요.");
                     }
                     // 결제 실패의 경우
                     if (resjson.STATUS === "FAILURE") {
@@ -1664,9 +1668,9 @@ function onPaymentStageTwo(creditData = {}) {
         const applyUncollectAmt = $("#applyUncollectAmt").html().toInt();
 
         const paymentTab = $(".pop__pay-tabs-item.active").attr("data-id");
-        if (paymentTab === "tabCash") {
-            const receiveCash =
-                $("#receiveCash").html().toInt() - $("#changeCash").html().toInt();
+        const receiveCash = $("#receiveCash").html().toInt() - $("#changeCash").html().toInt();
+        const receiveCard = $("#receiveCard").html().toInt();
+        if (paymentTab === "tabCash" && receiveCash) {
             const paymentCash = {
                 fpType: "01",
                 fpRealAmt: receiveCash,
@@ -1674,10 +1678,7 @@ function onPaymentStageTwo(creditData = {}) {
                 fpCollectAmt: applyUncollectAmt,
             }
             data.payment.push(paymentCash);
-        } else if (paymentTab === "tabCard") {
-
-            const receiveCard = $("#receiveCard").html().toInt();
-
+        } else if (paymentTab === "tabCard" && receiveCard) {
             const paymentCard = {
                 fpType: "02",
                 fpMonth: 0,
