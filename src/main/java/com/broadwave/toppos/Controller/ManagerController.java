@@ -95,6 +95,11 @@ public class ManagerController {
     }
 
     // 설정
+    // 마이페이지
+    @RequestMapping("mypage")
+    public String mypage(){
+        return "manager/setting/mypage";
+    }
     // 영업일관리 페이지
     @RequestMapping("businessday")
     public String businessday(){

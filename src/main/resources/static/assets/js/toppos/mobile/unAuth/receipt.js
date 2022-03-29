@@ -55,7 +55,9 @@ const urls = {
 const comms = {
     getReceiptData(target) {
         CommonUI.ajax(urls.getReceiptData, "GET", target, function (res) {
-            console.log(res); // 영수증 데이터 확인해서 뿌리기
+            const data = res.sendData;
+            console.log(data); // 영수증 데이터 확인해서 뿌리기
+            setField(data);
         });
     }
 };
@@ -80,7 +82,7 @@ function onPageLoad() {
 }
 
 function chkParams() {
-    const url = new URL(wares.url);
+    const url = new URL(window.location.href);
     wares.params = url.searchParams;
 
     if(wares.params.has("id")) {
@@ -93,4 +95,26 @@ function chkParams() {
 
         comms.getReceiptData(target);
     }
+}
+
+function setField(data) {
+    $("#requestDt").html(data.paymentData.requestDt);
+    
+    $("#franchiseName").html(data.paymentData.franchiseName);
+    $("#businessNO").html(data.paymentData.businessNO);
+    $("#repreName").html(data.paymentData.repreName);
+    $("#franchiseTel").html(data.paymentData.franchiseTel);
+
+    $("#normalAmount").html(data.paymentData.normalAmount);
+    $("#changeAmount").html(data.paymentData.changeAmount);
+    $("#totalAmount").html(data.paymentData.totalAmount);
+    $("#estimateDt").html(data.paymentData.estimateDt);
+
+    $("#preUncollectAmount").html(data.paymentData.preUncollectAmount);
+    $("#curUncollectAmount").html(data.paymentData.curUncollectAmount);
+    $("#uncollectPayment").html(data.paymentData.uncollectPayment);
+    $("#totalUncollectAmount").html(data.paymentData.totalUncollectAmount);
+
+    $("#qty").html(data.items.length);
+    $("#paymentAmount").html(data.paymentData.paymentAmount);
 }

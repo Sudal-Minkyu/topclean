@@ -725,7 +725,8 @@ input[type="number"]::-webkit-inner-spin-button {
 .c-tabs__content {
 	display: none;
 	flex-direction: column;
-	flex-wrap: wrap;
+	/* flex-wrap: wrap; */
+    overflow-y: auto;
 	position: relative;
 	height: 45.625rem;
 }

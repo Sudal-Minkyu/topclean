@@ -202,7 +202,7 @@ $(function() {
         $(this).next('.choice-drop__content').toggleClass('choice-drop__content--active');
     });
 
-    $('.choice-drop__item').on('change', function(e) {
+    $('.choice-drop__item').on('click', function(e) {
         $(this).parents('.choice-drop__content').removeClass('choice-drop__content--active');
         if(this.className === "choice-drop__item closDrop"){
             $(this).parents('.choice-drop').children('.choice-drop__btn').removeClass('choice-drop__btn--active');
@@ -1154,7 +1154,7 @@ function onCloseAddOrder() {
     $("input[name='cleanDirt']").first().prop("checked", true);
     $("input[name='waterProcess']").first().prop("checked", true);
     $(".choice-drop__btn.etcProcess").removeClass('choice-drop__btn--active');
-
+    $(".choice-drop__content.choice-drop__content--right").removeClass('choice-drop__content--active');
     $(".keypad_remark").val("");
     $(".keypad_field").val(0);
     $("#foreLoc").prop("checked", true);

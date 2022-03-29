@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ko"
+	  xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate ="~{layout/defaultmanager}">
+
+<!-- 사용자 CSS 추가 -->
+<th:block layout:fragment="css">
+    <style>
+        
+    </style>
+</th:block>
+
+<!-- 사용자 스크립트 추가 -->
+<th:block layout:fragment="script">
+    
+</th:block>
+
+<div layout:fragment="content" class="content content--padding">
+    <section class="section section--small">
+        <article class="article">
+            <div class="article__header">
+                <h3 class="article__heading">나의 정보 관리</h3>
+            </div>
+            <div class="article__body">
+                <table class="c-table">
+                    <colgroup>
+                        <col>
+                        <col>
+                        <col>
+                        <col>
+                    </colgroup>
+                    <tbody>
+                        <tr>
+                            <th>아이디</th>
+                            <td colspan="3">
+                                <input type="text" readonly="readonly" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>지사코드</th>
+                            <td>
+                                <input type="text" readonly="readonly" />
+                            </td>
+                            <th>지사명</th>
+                            <td>
+                                <input type="text" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>비밀번호</th>
+                            <td>
+                                <input type="password" />
+                            </td>
+                            <th>비밀번호 확인</th>
+                            <td>
+                                <input type="password" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>전화번호</th>
+                            <td>
+                                <input type="text" />
+                            </td>
+                            <th>이메일</th>
+                            <td>
+                                <input type="text" />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <ul class="article__console article__console--right">
+                <li><button class="c-button c-button--darksolid">저장</button></li>
+            </ul>
+        </article>
+    </section>
+
+    <section class="section section--small">
+        <article class="article">
+            <div class="article__header">
+                <h3 class="article__heading">비밀번호 변경</h3>
+            </div>
+            <div class="article__body">
+                <table class="c-table">
+                    <colgroup>
+                        <col>
+                        <col>
+                        <col>
+                        <col>
+                    </colgroup>
+                    <tbody>
+                        <tr>
+                            <th>비밀번호</th>
+                            <td>
+                                <input type="password" />
+                            </td>
+                            <th>비밀번호 확인</th>
+                            <td>
+                                <input type="password" />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <ul class="article__console article__console--right">
+                <li><button class="c-button c-button--darksolid">저장</button></li>
+            </ul>
+        </article>
+    </section>
+</div>
+</html>
