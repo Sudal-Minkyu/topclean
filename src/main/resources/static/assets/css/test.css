@@ -1809,7 +1809,7 @@ footer.footer > ul > li + li:before {
 	flex-wrap: wrap;
 	align-items: center;
 	width: calc(50% - 1.875rem);
-	padding: 0.625rem 0;
+	padding: 0.5rem 0;
 }
 .form__item.form__item--100 {
 	width: 100%;
@@ -2194,6 +2194,12 @@ footer.footer > ul > li + li:before {
 }
 .pop.active {
 	display: block;
+}
+.pop.password {
+    display: block;;
+    height: calc(100vh - 4.375rem);
+    top: 4.375rem;
+    background-color: #fff;
 }
 /* 기본 팝업 */
 .pop__box {
