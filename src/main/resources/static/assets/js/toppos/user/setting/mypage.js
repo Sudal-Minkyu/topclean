@@ -693,11 +693,11 @@ function putFrInfoDataInField(myInfoData) {
 	$("input[name='frAddressDetail']").val(myInfoData.frAddressDetail);
 	let frDepositAmount = "";
 	if(myInfoData.frDepositAmount) {
-		frDepositAmount = myInfoData.frDepositAmount.toInt().toLocaleString();
+		frDepositAmount = myInfoData.frDepositAmount.toLocaleString();
 	}
 	let frRentalAmount = "";
 	if(myInfoData.frRentalAmount) {
-		frRentalAmount = myInfoData.frRentalAmount.toInt().toLocaleString();
+		frRentalAmount = myInfoData.frRentalAmount.toLocaleString();
 	}
 	$("input[name='frDepositAmount']").val(frDepositAmount);
 	$("input[name='frRentalAmount']").val(frRentalAmount);
