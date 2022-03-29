@@ -146,7 +146,7 @@
 										<div class="form__title">가맹점 택코드(3자리)</div>
 										<div class="form__input">
 											<div class="c-text">
-												<input type="text" name="frTagNo" id="frTagNo" data-keyIndex="1" readonly />
+												<input type="text" id="frTagNo" readonly />
 											</div>
 										</div>
 									</div>
@@ -154,7 +154,7 @@
 										<div class="form__title">출고예정일계산</div>
 										<div class="form__input">
 											<div class="c-text">
-												<input type="text" name="frEstimateDuration" id="frEstimateDuration" data-keyIndex="2" readonly />
+												<input type="text" id="frEstimateDuration" readonly />
 												<span>일 후 출고</span>
 											</div>
 										</div>
@@ -166,8 +166,8 @@
 								<div class="form__title">보증금</div>
 								<div class="form__input">
 									<div class="c-text">
-										<input type="text" />
-										<button type="button" class="keypadBtn">키보드</button>
+										<input type="text" name="frDepositAmount" id="frDepositAmount" />
+										<button type="button" class="keypadBtn" data-keyIndex="3">키보드</button>
 									</div>
 								</div>
 							</div>
@@ -175,8 +175,8 @@
 								<div class="form__title">임대료</div>
 								<div class="form__input">
 									<div class="c-text">
-										<input type="text" />
-										<button type="button" class="keypadBtn">키보드</button>
+										<input type="text" name="frRentalAmount" id="frRentalAmount" />
+										<button type="button" class="keypadBtn" data-keyIndex="4">키보드</button>
 									</div>
 								</div>
 							</div>
@@ -403,15 +403,15 @@
                 <h3 class="pop__article-header">비밀번호 확인</h3>
                 <div class="pop__article-content">
                     <div class="c-text">
-                        <input id="fdTagPassword" type="password" placeholder="비밀번호 입력">
-                        <button class="c-search__key" type="button">키보드</button>
+                        <input id="entryPassword" type="password" placeholder="비밀번호 입력">
+                        <button id="entryPasswordKeyboard" class="c-search__key" type="button">키보드</button>
                     </div>
                 </div>
             </div>
 
             <ul class="pop__console pop__console--center">
                 <li>
-                    <button class="c-button c-button--darksolid">확인</button>
+                    <button id="entryPasswordConfirm" class="c-button c-button--darksolid">확인</button>
                 </li>
             </ul>
         </div>

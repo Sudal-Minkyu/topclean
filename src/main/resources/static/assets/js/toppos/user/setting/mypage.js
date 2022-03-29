@@ -6,15 +6,15 @@ $(function () { // 페이지가 로드되고 나서 실행
 const dtos = {
 	send: {
 		franchiseMyInfoSave: {
+			frDepositAmount: "n", // 2022.03.29 추가
+			frRentalAmount: "n", // 2022.03.29 추가
 			frBusinessNo: "s",
 			frRpreName: "s",
 			frTelNo: "s",
-			frTagNo: "sr",
-			frEstimateDuration: "nr",
 			frPostNo: "s",
 			frAddress: "s",
 			frAddressDetail: "s",
-			frMultiscreenYn : "s"
+			frMultiscreenYn : "s",
 		},
 		franchiseAddProcess: {
 			repairListData: {
@@ -39,6 +39,8 @@ const dtos = {
 	},
 	receive: {
 		myInfo: {
+			frDepositAmount: "n", // 2022.03.29 추가
+			frRentalAmount: "n", // 2022.03.29 추가
 			frCode: "sr",
 			frName: "sr",
 			frContractDt: "sr",
@@ -57,7 +59,7 @@ const dtos = {
 			frPostNo: "s",
 			frAddress: "s",
 			frAddressDetail: "s",
-			frMultiscreenYn : "s"
+			frMultiscreenYn: "s",
 		},
 		franchiseAddProcessList: {
 			repairListData: {
@@ -106,12 +108,15 @@ const comms = {
 	},
 	// 가맹점 정보 저장
 	saveMyInfo(formData) {
+		const jsonData = Object.fromEntries(formData);
+		jsonData.frDepositAmount = jsonData.frDepositAmount.toInt();
+		jsonData.frRentalAmount = jsonData.frRentalAmount.toInt();
+		formData.set("frDepositAmount", jsonData.frDepositAmount);
+		formData.set("frRentalAmount", jsonData.frRentalAmount);
 		formData.set("frTelNo", formData.get("frTelNo").numString());
 		formData.set("frBusinessNo", formData.get("frBusinessNo").numString());
 		formData.set("frMultiscreenYn", $('input[name=frMultiscreenYn]:checked').val());
 
-		const jsonData = Object.fromEntries(formData);
-		jsonData.frEstimateDuration = parseInt(jsonData.frEstimateDuration);
 		dv.chk(jsonData, dtos.send.franchiseMyInfoSave, "가맹점 정보 보내기");
 		console.log(jsonData);
 		const url = "/api/user/franchiseMyInfoSave";
@@ -170,6 +175,14 @@ const comms = {
 			grids.f.clearData(num);
 			comms.getFrFavorite(num);
 		});
+	},
+
+	entryPass(password) {
+		const url = "/api/user/franchiseCheck";
+		CommonUI.ajax(url, "GET", password, function (res) {
+			$(".password").hide();
+		});
+
 	},
 };
 
@@ -508,6 +521,24 @@ const trigs = {
 				$('#frTelNo').val(CommonUI.formatTel(telNum));
 			});
 
+			$("#entryPasswordKeyboard").on("click", function () {
+				vkey.showKeyboard("entryPassword", {title: "계정 비밀번호 입력"});
+			});
+
+			$("#entryPasswordConfirm").on("click", function () {
+				const password = {
+					password: $("#entryPassword").val(),
+				}
+				comms.entryPass(password);
+			});
+
+			$("#frDepositAmount").on("keyup", function () {
+                $(this).val($(this).val().toInt().toLocaleString());
+            });
+
+			$("#frRentalAmount").on("keyup", function () {
+                $(this).val($(this).val().toInt().toLocaleString());
+            });
 		},
 
 		// 상용구, 수선항목, 추가항목 저장 버튼 클릭
@@ -575,6 +606,8 @@ const vKeypad = {
 		"frBusinessNo",
 		"frTelNo",
 		"frEstimateDuration",
+		"frDepositAmount",
+		"frRentalAmount",
 	],
 	targetProp: [
 
@@ -597,6 +630,16 @@ const vKeypad = {
 				midprocess: "tel",
 			};
 			vKeypad.targetProp[2] = {
+			};
+			vKeypad.targetProp[3] = {
+				callback: function () {
+					$("#frDepositAmount").val(parseInt($("#frDepositAmount").val()).toLocaleString());
+				},
+			};
+			vKeypad.targetProp[4] = {
+				callback: function () {
+					$("#frRentalAmount").val(parseInt($("#frRentalAmount").val()).toLocaleString());
+				},
 			};
 		}
 	},
