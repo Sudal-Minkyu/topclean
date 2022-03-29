@@ -188,6 +188,9 @@ public class FranchiseRepositoryCustomImpl extends QuerydslRepositorySupport imp
                         franchise.frRoyaltyRateBr,
                         franchise.frRoyaltyRateFr,
 
+                        franchise.frDepositAmount,
+                        franchise.frRentalAmount,
+
                         franchise.frEstimateDuration,
                         franchise.frTagNo,
 

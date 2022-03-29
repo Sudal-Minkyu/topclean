@@ -4,7 +4,7 @@ $(function() {
     const key = getCookie("key");
     const $userid = $("#userid");
     const $idSaveCheck = $("#idSaveCheck");
-    console.log("")
+    // console.log("")
     $userid.val(key);
     if($userid.val() !== ""){ // 그 전에 ID를 저장해서 처음 페이지 로딩 시, 입력 칸에 저장된 ID가 표시된 상태라면,
         $idSaveCheck.attr("checked", true); // ID 저장하기를 체크 상태로 두기.
@@ -78,7 +78,7 @@ function loginActive() {
 
     const jsonString = JSON.stringify(params);
 
-    console.log("로그인 실행");
+    // console.log("로그인 실행");
     $.ajax({
         url: '/auth/login',
         type: 'post',
@@ -97,8 +97,17 @@ function loginActive() {
         success: function (res) {
             // console.log("로그인 되었습니다.");
             // console.log("AccessToken : "+res.sendData.tokenDto.accessToken);
-            localStorage.setItem("Authorization",res.sendData.tokenDto.accessToken); // 로컬 웹스토리지안에 토큰을 저장한다.
-            mainPage();
+            if(res.status === 500){
+                $("#password").val("");
+                if (res.err_msg2 === null && res.err_msg) {
+                    alertCancel(res.err_msg);
+                } else {
+                    alertCancel(res.err_msg + "<br>" + res.err_msg2);
+                }
+            }else{
+                localStorage.setItem("Authorization",res.sendData.tokenDto.accessToken); // 로컬 웹스토리지안에 토큰을 저장한다.
+                mainPage();
+            }
         }
     });
 }

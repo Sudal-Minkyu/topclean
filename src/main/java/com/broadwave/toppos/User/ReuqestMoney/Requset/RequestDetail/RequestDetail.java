@@ -111,6 +111,9 @@ public class RequestDetail {
     @Column(name="fd_s6_time")
     private LocalDateTime fdS6Time; // 고객인도시간
 
+    @Column(name="fd_s7_type")
+    private String fdS7Type; // 01:강제출고, 02:반품출고
+
     @Column(name="fd_s7_dt")
     private String fdS7Dt; // 지사강제출고일
 

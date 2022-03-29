@@ -83,6 +83,12 @@ public class Franchise {
     @Column(name="fr_remark")
     private String frRemark; // 특이사항
 
+    @Column(name="fr_deposit_amount")
+    private Integer frDepositAmount; // 보증금
+
+    @Column(name="fr_rental_amount")
+    private Integer frRentalAmount; // 임대료
+
     @ManyToOne(targetEntity = Branch.class,fetch = FetchType.EAGER)
     @JoinColumn(name="br_id")
     private Branch brId; // 배정된 지사 ID

@@ -3,7 +3,6 @@ package com.broadwave.toppos.User.UserService;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.User.Customer.Customer;
 import com.broadwave.toppos.User.Customer.CustomerRepository;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotRepositoryCustom;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetail;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.*;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepository;
@@ -39,19 +38,16 @@ public class ReceiptStateService {
     private final InhouseRepository inhouseRepository;
     private final CustomerRepository customerRepository;
     private final RequestMessageRepository requestMessageRepository;
-    private final InspeotRepositoryCustom inspeotRepositoryCustom;
     private final RequestDetailRepository requestDetailRepository;
 
     @Autowired
     public ReceiptStateService(TokenProvider tokenProvider, RequestMessageRepository requestMessageRepository, CustomerRepository customerRepository,
-                               InhouseRepository inhouseRepository, InspeotRepositoryCustom inspeotRepositoryCustom,
-                               RequestDetailRepository requestDetailRepository){
+                               InhouseRepository inhouseRepository, RequestDetailRepository requestDetailRepository){
         this.tokenProvider = tokenProvider;
         this.inhouseRepository = inhouseRepository;
         this.customerRepository = customerRepository;
         this.requestMessageRepository = requestMessageRepository;
         this.requestDetailRepository = requestDetailRepository;
-        this.inspeotRepositoryCustom = inspeotRepositoryCustom;
     }
 
     //  접수테이블의 상태 변화 API - 수기마감페이지, 가맹점입고 페이지, 지사반송건전송 페이지, 세탁인도 페이지 공용함수
@@ -236,9 +232,11 @@ public class ReceiptStateService {
 //            log.info("requestDetailList : "+requestDetailList);
                 for (RequestDetail requestDetail : requestDetailList) {
 //                log.info("가져온 frID 값 : "+requestDetailList.get(i).getFrId());인
-                    if(requestDetail.getFdState().equals("S3")){
+                    if(requestDetail.getFdS4Type().equals("04") || requestDetail.getFdS4Type().equals("06") || requestDetail.getFdS4Type().equals("08")){
+                        // 조건 - 04 : 반품출고 S7 - 02, 06 : 확인품(미확인) - 반품, 08 : 확인품(거부) - 반품
                         requestDetail.setFdS6Type("02");
                     }else{
+                        // 조건 - 01 : 일반출고, 02 : 강제출고 S7 - 01, 03: 가맹점강제입고출고 - 가맹점 강제입고처리시, 05 : 확인품(미확인) - 출고, 07 : 확인품(수락) - 출고
                         requestDetail.setFdS6Type("01");
                     }
                     requestDetail.setFdPreState(requestDetail.getFdState()); // 이전상태 값

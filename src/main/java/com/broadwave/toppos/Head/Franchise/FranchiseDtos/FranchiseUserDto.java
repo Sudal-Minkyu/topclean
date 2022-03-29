@@ -29,6 +29,9 @@ public class FranchiseUserDto {
     private Double frRoyaltyRateBr; // 로얄티율(지사)
     private Double frRoyaltyRateFr; // 정산비율(가맹점)
 
+    private Integer frDepositAmount; // 보증금
+    private Integer frRentalAmount; // 임대료
+
     private Integer frEstimateDuration; // 출고예정일
     private String frTagNo; // 가맹점 택번호(3자리)
 

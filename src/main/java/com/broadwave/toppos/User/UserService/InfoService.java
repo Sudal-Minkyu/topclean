@@ -111,12 +111,12 @@ public class InfoService {
         if(optionalFranohise.isPresent()){
             Franchise franchise = modelMapper.map(optionalFranohise.get(), Franchise.class);
 
-            franchise.setFrBusinessNo(franchiseUserDto.getFrBusinessNo());
+//            franchise.setFrBusinessNo(franchiseUserDto.getFrBusinessNo());
             franchise.setFrRpreName(franchiseUserDto.getFrRpreName());
             franchise.setFrTelNo(franchiseUserDto.getFrTelNo());
-            franchise.setFrTagNo(franchiseUserDto.getFrTagNo());
-            franchise.setFrLastTagno(franchiseUserDto.getFrTagNo() + optionalFranohise.get().getFrLastTagno().substring(3, 7));
-            franchise.setFrEstimateDuration(franchiseUserDto.getFrEstimateDuration());
+//            franchise.setFrTagNo(franchiseUserDto.getFrTagNo());
+//            franchise.setFrLastTagno(franchiseUserDto.getFrTagNo() + optionalFranohise.get().getFrLastTagno().substring(3, 7));
+//            franchise.setFrEstimateDuration(franchiseUserDto.getFrEstimateDuration());
             franchise.setFrPostNo(franchiseUserDto.getFrPostNo());
             franchise.setFrAddress(franchiseUserDto.getFrAddress());
             franchise.setFrAddressDetail(franchiseUserDto.getFrAddressDetail());

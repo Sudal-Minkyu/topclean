@@ -29,6 +29,9 @@ public class FranchiseMapperDto {
     private String frRpreName; // 가맹점주이름
     private String frTelNo; // 가맹점 전화번호
 
+    private Integer frDepositAmount; // 보증금
+    private Integer frRentalAmount; // 임대료
+
     private Double frCarculateRateBr; // 정산비율(지사)
     private Double frCarculateRateFr; // 정산비율(가맹점)
     private Double frRoyaltyRateBr; // 로얄티율(지사)

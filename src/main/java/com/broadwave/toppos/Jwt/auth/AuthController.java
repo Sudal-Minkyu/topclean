@@ -33,7 +33,11 @@ public class AuthController {
 
         data.put("tokenDto",tokenDto);
 
-        return ResponseEntity.ok(res.dataSendSuccess(data));
+        if(tokenDto != null){
+            return ResponseEntity.ok(res.dataSendSuccess(data));
+        }else{
+            return ResponseEntity.ok(res.fail("문자","비밀번호가 틀렸습니다.",null,null));
+        }
     }
 
     @PostMapping("/reissue")
