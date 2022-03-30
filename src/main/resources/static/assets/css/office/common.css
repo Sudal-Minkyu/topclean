@@ -1689,11 +1689,14 @@ textarea {
 	width: 100%;
 	background-color: transparent;
 }
-.pop__console li + li {
+.pop__console > li + li {
 	margin-left: 1.25rem;
 }
 .pop__console-left {
 	margin-right: auto;
+}
+.pop__console-left.pop__console-left--flex {
+    display: flex;
 }
 .pop__console-cost {
 	display: flex;
@@ -1701,6 +1704,10 @@ textarea {
 }
 .pop__console-cost + .pop__console-cost {
 	margin-top: 0.625rem;
+}
+.pop__console-left.pop__console-left--flex .pop__console-cost + .pop__console-cost {
+    margin-top: 0;
+    margin-left: 1.25rem;
 }
 .pop__console-title {
 	width: 7.5rem;
@@ -1805,6 +1812,7 @@ textarea {
     color: #959595;
     font-size: 2rem;
     font-weight: 700;
+    text-align: center;
 }
 .tag-imgs__list {
     display: flex;

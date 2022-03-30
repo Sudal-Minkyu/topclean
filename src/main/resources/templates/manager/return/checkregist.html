@@ -156,5 +156,63 @@
 			</ul>
 		</div>
 	</div>
+
+    <!-- 확인품등록 신규 -->
+    <div id="taglostPop" class="pop active">
+        <div class="pop__box pop__box--large">
+            <div class="pop__article">
+                <div class="tag-pop">
+                    <div id="camInput" class="tag__shoot-area">
+                        <div class="tag__shooting">
+                            <!-- 캠 영상 들어갈 곳 -->
+                            <video id="cameraScreen" playsinline="" autoplay=""></video>
+                            <canvas id="cameraCanvas" style="display: none"></canvas>
+                        </div>
+                        <button id="takePhotoBtn" class="c-button c-button--large c-button--darksolid">사진촬영</button>
+                    </div>
+                    <div class="tag-imgs">
+                        <div id="noImgScreen" class="tag-imgs__empty">사진을 촬영해주세요.<br />최대 6장까지 촬영 가능합니다.</div>
+                        <ul id="photoList" class="tag-imgs__list"></ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pop__article">
+				<div class="pop__article-head">
+					<h3 class="pop__article-header">확인품내용</h3>
+					<div class="pop__article-haedconsole">
+						<div class="c-checkbox">
+							<input type="checkbox" id="checkImg" />
+							<label for="checkImg">사진포함</label>
+						</div>
+					</div>
+				</div>
+				
+				<div class="pop__article-content">
+					<textarea></textarea>
+				</div>
+			</div>
+
+            <ul class="pop__console">
+                <li class="pop__console-left pop__console-left--flex">
+					<div class="pop__console-cost">
+						<div class="pop__console-title">접수금액</div>
+						<div class="pop__console-input">
+							<div class="c-text"><input type="text" readonly="readonly"></div>
+						</div>
+					</div>
+					<div class="pop__console-cost">
+						<div class="pop__console-title">추가비용</div>
+						<div class="pop__console-input">
+							<div class="c-text">
+								<input type="text">
+							</div>
+						</div>
+					</div>
+				</li>
+				<li><button type="button" class="c-button pop__close">닫기</button></li>
+			</ul>
+        </div>
+    </div>
 </div>
 </html>

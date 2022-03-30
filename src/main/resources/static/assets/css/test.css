@@ -3344,8 +3344,8 @@ footer.footer > ul > li + li:before {
 .tag-imgs__item {
     flex: 1;
     min-width: 33.3333%;
-    width: 100%;
-    max-width: 50%;
+    width: 33.3333%;
+    max-width: 33.3333%;
     padding: 0.313rem;
 }
 .tag-imgs__item:only-child {
