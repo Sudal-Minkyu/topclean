@@ -75,7 +75,7 @@ class CommonUIClass {
             return resultArray;
         },
 
-        printReceipt(condition) {
+        printReceipt(condition, cancelYN = "N") {
             try {
                 const url = "/api/user/requestPaymentPaper";
                 
@@ -102,7 +102,7 @@ class CommonUIClass {
 
                     paymentData.estimateDt = paymentData.items[0].estimateDt;
                     paymentData.franchiseTel = CommonUI.formatTel(paymentData.franchiseTel);
-                    paymentData.customerTel = CommonUI.formatTel(paymentData.customerTel);
+                    paymentData.customerTel = CommonUI.formatTel(paymentData.customerTel, true);
                     paymentData.businessNO = CommonUI.formatBusinessNo(paymentData.businessNO);
 
                     const creditData = res.sendData.creditData;
@@ -110,10 +110,47 @@ class CommonUIClass {
                         obj.type = typeTrans[obj.type];
                     });
 
-                    CAT.CatPrint_Multi(paymentData, creditData, "N");
+                    CAT.CatPrint_Multi(paymentData, creditData, cancelYN);
                 });
             } catch (e) {
-                this.toppos.underTaker(e, "CommonUI : 영수증 프린트");
+                this.toppos.underTaker(e, "CommonUI : 접수 영수증 프린트");
+            }
+        },
+
+        printRepaymentReceipt(condition, cancelYN = "N") { // 미수금 상환용 영수증 출력
+            try {
+                const url = "/api/user/requestPaymentPaper";
+                
+                CommonUI.ajax(url, "GET", condition, function (res) {
+                    console.log(res.sendData);
+
+                    const typeTrans = {
+                        "01": "cash",
+                        "02": "card",
+                        "03": "save",
+                        "04": "미수결제",
+                    };
+
+                    const paymentData = res.sendData.paymentData;
+                    paymentData.items = res.sendData.items;
+                    paymentData.items.forEach(obj => {
+                        obj.color = colorName[obj.color];
+                    });
+
+                    paymentData.estimateDt = paymentData.items[0].estimateDt;
+                    paymentData.franchiseTel = CommonUI.formatTel(paymentData.franchiseTel);
+                    paymentData.customerTel = CommonUI.formatTel(paymentData.customerTel, true);
+                    paymentData.businessNO = CommonUI.formatBusinessNo(paymentData.businessNO);
+
+                    const creditData = res.sendData.creditData;
+                    creditData.forEach(obj => {
+                        obj.type = typeTrans[obj.type];
+                    });
+
+                    CAT.CatPrint_Repayment(paymentData, creditData, cancelYN);
+                });
+            } catch (e) {
+                this.toppos.underTaker(e, "CommonUI : 미수금 영수증 프린트");
             }
         },
 
@@ -255,7 +292,7 @@ class CommonUIClass {
     }
 
     /* 국내 전화 번호 양식화, 적절한 위치에 - 추가, 최종 형태 잡을 때도, 입력할 때 마다 쓸 수도 있음 */
-    formatTel(telNumber) {
+    formatTel(telNumber, privacyMode = false) {
         let formatNum = "";
         if(telNumber) {
             telNumber = telNumber.numString();
@@ -281,10 +318,18 @@ class CommonUIClass {
 
         const foreNum = telNumber.substring(0, foreNumType);
         if(telLength < 8 + foreNumType && foreNumType !== 4) {
-            midNum = telNumber.substring(foreNumType, foreNumType + 3);
+            if(privacyMode) {
+                midNum = "***";
+            } else {
+                midNum = telNumber.substring(foreNumType, foreNumType + 3);
+            }
             backNum = telNumber.substring(foreNumType + 3, telLength);
         } else {
-            midNum = telNumber.substring(foreNumType, foreNumType + 4);
+            if(privacyMode) {
+                midNum = "****";
+            } else {
+                midNum = telNumber.substring(foreNumType, foreNumType + 4);
+            }
             backNum = telNumber.substring(foreNumType + 4, telLength);
         }
 
