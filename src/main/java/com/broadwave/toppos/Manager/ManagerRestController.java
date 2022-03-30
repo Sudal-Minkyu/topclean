@@ -266,23 +266,31 @@ public class ManagerRestController {
 //        return receiptReleaseService.branchReceiptReturnList(frId, fromDt, toDt, tagNo, request);
 //    }
 
-    //  가맹점 강제츨고 - 세부테이블 강제출고 처리 할 리스트
+    //  지사 강제츨고 - 세부테이블 강제출고 처리 할 리스트
     @GetMapping("branchReceiptForceReleaseList")
     public ResponseEntity<Map<String,Object>> branchReceiptForceReleaseList(@RequestParam("frId")Long frId, @RequestParam("filterFromDt")String filterFromDt,
                                                                               @RequestParam("filterToDt")String filterToDt, @RequestParam("tagNo")String tagNo, HttpServletRequest request){
         return receiptReleaseService.branchReceiptForceReleaseList(frId, filterFromDt.replaceAll("-",""), filterToDt.replaceAll("-",""), tagNo, request);
     }
 
-    //  접수테이블의 상태 변화 API - 지사출고취소, 지사반송, 가맹점강제출고 실행 함수
+    //  지사 반품출고 - 세부테이블 반품출고 처리 할 리스트
+    @GetMapping("branchReceiptReturnReleaseList")
+    public ResponseEntity<Map<String,Object>> branchReceiptReturnReleaseList(@RequestParam("frId")Long frId, @RequestParam("filterFromDt")String filterFromDt,
+                                                                            @RequestParam("filterToDt")String filterToDt, @RequestParam("tagNo")String tagNo, HttpServletRequest request){
+        return receiptReleaseService.branchReceiptReturnReleaseList(frId, filterFromDt.replaceAll("-",""), filterToDt.replaceAll("-",""), tagNo, request);
+    }
+
+    //  접수테이블의 상태 변화 API - 지사출고취소, 지사반품, 가맹점강제출고 실행 함수
     @PostMapping("branchRelease")
-    @ApiOperation(value = "접수테이블의 상태 변화" , notes = "지사출고취소(type : 1), 지사반송(type : 2), 가맹점강제출고(type : 3)를 요청한다.")
+    @ApiOperation(value = "접수테이블의 상태 변화" , notes = "지사출고취소(type : 1), 지사반품(type : 2), 가맹점강제출고(type : 3)를 요청한다.")
     @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
     public ResponseEntity<Map<String,Object>> branchReleaseCancel(@RequestParam(value="fdIdList", defaultValue="") List<Long> fdIdList,
                                                                   @RequestParam("type")String type, HttpServletRequest request){
         return receiptReleaseService.branchRelease(fdIdList, type, request);
     }
 
-//@@@@@@@@@@@@@@@@@@@@@ 확인품등록, 확인품현황 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+    //@@@@@@@@@@@@@@@@@@@@@ 확인품등록, 확인품현황 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     //  확인품 등록할 리스트 호출API
     @GetMapping("branchInspection")
     public ResponseEntity<Map<String,Object>> branchInspection(@RequestParam("franchiseId")Long franchiseId, @RequestParam("filterFromDt")String filterFromDt,

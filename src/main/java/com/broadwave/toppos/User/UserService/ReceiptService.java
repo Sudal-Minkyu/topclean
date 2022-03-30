@@ -569,7 +569,7 @@ public class ReceiptService {
 
                             // 결제완료시 보낼 Etc 데이터 리스트
                             paymentEtcDto.setFpType(payment.getFpType());
-                            paymentEtcDto.setFpAmt(payment.getFpAmt());
+                            paymentEtcDto.setFpRealAmt(payment.getFpRealAmt());
                             paymentEtcDto.setFpCatIssuername(payment.getFpCatIssuername());
                             paymentEtcDtos.add(paymentEtcDto);
 
@@ -910,10 +910,10 @@ public class ReceiptService {
                     paymentInfo.put("approvalTime", paymentPaperDto.getFpCatApprovaltime());
                     paymentInfo.put("approvalNo", paymentPaperDto.getFpCatApprovalno());
                     paymentInfo.put("month", paymentPaperDto.getFpMonth());
-                    paymentInfo.put("payAmount", paymentPaperDto.getFpAmt());
+                    paymentInfo.put("payAmount", paymentPaperDto.getFpRealAmt());
                 }else{
                     paymentInfo.put("type", paymentPaperDto.getFpType());
-                    paymentInfo.put("payAmount", paymentPaperDto.getFpAmt());
+                    paymentInfo.put("payAmount", paymentPaperDto.getFpRealAmt());
                 }
 
                 fpCollectAmt = fpCollectAmt+ paymentPaperDto.getFpCollectAmt();

@@ -276,4 +276,6 @@ public class RequestDetail {
     @Column(name="modify_date")
     private LocalDateTime modify_date;
 
+
+
 }

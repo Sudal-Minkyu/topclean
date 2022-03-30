@@ -51,6 +51,7 @@ public interface RequestDetailRepositoryCustom {
     List<RequestDetailReleaseCancelListDto> findByRequestDetailReleaseCancelList(String brCode, Long frId, String fromDt, String toDt, String tagNo); // 지사출고취소
 //    List<RequestDetailBranchReturnListDto> findByRequestDetailBranchReturnList(String brCode, Long frId, LocalDateTime fromDt, LocalDateTime toDt, String tagNo); // 지사반송
     List<RequestDetailBranchForceListDto> findByRequestDetailBranchForceList(String brCode, Long frId, String fromDt, String toDt, String tagNo); // 지사 가맹점강제출고
+    List<RequestDetailBranchReturnListDto> findByRequestDetailBranchReturnList(String brCode, Long frId, String fromDt, String toDt, String tagNo); // 지사 가맹점반품출고
     List<RequestDetailBranchInspectListDto> findByRequestDetailBranchInspectList(String brCode, Long franchiseId, String fromDt, String toDt, String tagNo); // 확인품등록
     List<RequestDetailBranchInspectionCurrentListDto> findByRequestDetailBranchInspectionCurrentList(String brCode, Long frId, String fromDt, String toDt, String tagNo); // 확인품현황
     List<RequestDetailTagSearchListDto> findByRequestDetailTagSearchList(String brCode, Long frId, String tagNo); // 택번호조회

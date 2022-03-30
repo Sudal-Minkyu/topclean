@@ -745,7 +745,17 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         sb.append("a.fd_id, d.fr_name, b.fr_code, a.fd_s2_dt, a.fd_tag, a.fd_color, f.bg_name, g.bs_name, e.bi_name, \n");
         sb.append("a.fd_price_grade, a.fd_retry_yn, a.fd_pressed, a.fd_add1_amt, a.fd_add1_remark, a.fd_repair_amt, \n");
         sb.append("a.fd_repair_remark, a.fd_whitening, a.fd_pollution, a.fd_water_repellent, a.fd_starch, a.fd_urgent_yn, \n");
-        sb.append("c.bc_name, a.fd_estimate_dt, a.fd_tot_amt, a.fd_state \n");
+        sb.append("c.bc_name, a.fd_estimate_dt, a.fd_tot_amt, a.fd_state, \n");
+
+        sb.append("CASE \n");
+        sb.append("WHEN h.fi_customer_confirm IS NULL AND fd_s7_type = '01' THEN '02' \n");
+        sb.append("WHEN h.fi_customer_confirm IS NULL AND fd_s7_type = '02' THEN '04' \n");
+        sb.append("WHEN h.fi_customer_confirm = 1 THEN '99' \n");
+        sb.append("WHEN h.fi_customer_confirm = 2 THEN '07' \n");
+        sb.append("WHEN h.fi_customer_confirm = 2 THEN '07' \n");
+        sb.append("WHEN h.fi_customer_confirm = 3 THEN '08' \n");
+        sb.append("ELSE '01' \n");
+        sb.append("END as fdS4Type\n");
 
         sb.append("FROM fs_request_dtl a \n");
         sb.append("INNER JOIN fs_request b on a.fr_id=b.fr_id \n");
@@ -756,6 +766,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         sb.append("INNER JOIN bs_item_group_s g on e.bs_item_groupcode_s=g.bs_item_groupcode_s and e.bg_item_groupcode=g.bg_item_groupcode \n");
 
         sb.append("LEFT OUTER JOIN fs_request_inspect h ON a.fd_id =h.fd_id AND h.fi_type ='B' \n");
+
         sb.append("WHERE b.fr_confirm_yn='Y' \n");
         sb.append("AND b.br_code= ?1 \n");
         sb.append("AND a.fd_cancel='N' \n");
@@ -771,9 +782,9 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                 sb.append("AND a.fd_urgent_yn = ?4 \n");
             }
         }
-        sb.append("AND ( \n");
-        sb.append("(a.fd_state='S2' AND IFNULL(h.fi_customer_confirm,'X') IN ('X','2')) \n");
-        sb.append("OR a.fd_state='S7') \n");
+        sb.append("AND (a.fd_state='S2' OR a.fd_state='S7') \n");
+//        sb.append("(a.fd_state='S2' AND IFNULL(h.fi_customer_confirm,'X') IN ('X','2')) \n");
+//        sb.append("OR a.fd_state='S7') \n");
         sb.append("ORDER BY a.fd_id ASC \n");
 
         Query query = em.createNativeQuery(sb.toString());
@@ -1056,6 +1067,66 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                 .where(request.frConfirmYn.eq("Y"))
                 .where(request.brCode.eq(brCode).and(requestDetail.fdCancel.eq("N")))
                 .select(Projections.constructor(RequestDetailBranchForceListDto.class,
+                        requestDetail.id,
+                        franchise.frName,
+                        requestDetail.insert_date,
+                        requestDetail.fdS2Time,
+                        requestDetail.fdTag,
+                        requestDetail.fdColor,
+                        itemGroup.bgName,
+                        itemGroupS.bsName,
+                        item.biName,
+                        requestDetail.fdPriceGrade,
+                        requestDetail.fdRetryYn,
+                        requestDetail.fdPressed,
+                        requestDetail.fdAdd1Amt,
+                        requestDetail.fdAdd1Remark,
+                        requestDetail.fdRepairAmt,
+                        requestDetail.fdRepairRemark,
+                        requestDetail.fdWhitening,
+                        requestDetail.fdPollution,
+                        requestDetail.fdWaterRepellent,
+                        requestDetail.fdStarch,
+                        requestDetail.fdUrgentYn,
+                        customer.bcName,
+                        requestDetail.fdTotAmt,
+                        requestDetail.fdState,
+                        requestDetail.fdPreState
+                ));
+        query.orderBy(requestDetail.id.asc());
+        query.where(requestDetail.fdState.eq("S2"));
+        query.where(franchise.id.eq(frId));
+        if(!tagNo.equals("")){
+            query.where(requestDetail.fdTag.substring(3,7).likeIgnoreCase("%"+tagNo+"%"));
+        }
+        if(fromDt != null){
+            query.where(requestDetail.fdS2Dt.goe(fromDt));
+        }
+        if(toDt != null){
+            query.where(requestDetail.fdS2Dt.loe(toDt));
+        }
+        return query.fetch();
+    }
+
+    // 가맹점반품출고 querydsl
+    public  List<RequestDetailBranchReturnListDto> findByRequestDetailBranchReturnList(String brCode, Long frId, String fromDt, String toDt, String tagNo){
+        QRequestDetail requestDetail = QRequestDetail.requestDetail;
+        QRequest request = QRequest.request;
+        QFranchise franchise = QFranchise.franchise;
+        QItemGroup itemGroup = QItemGroup.itemGroup;
+        QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
+        QItem item = QItem.item;
+        QCustomer customer = QCustomer.customer;
+        JPQLQuery<RequestDetailBranchReturnListDto> query = from(requestDetail)
+                .innerJoin(requestDetail.frId, request)
+                .innerJoin(request.bcId, customer)
+                .innerJoin(franchise).on(request.frCode.eq(franchise.frCode))
+                .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
+                .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
+                .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
+                .where(request.frConfirmYn.eq("Y"))
+                .where(request.brCode.eq(brCode).and(requestDetail.fdCancel.eq("N")))
+                .select(Projections.constructor(RequestDetailBranchReturnListDto.class,
                         requestDetail.id,
                         franchise.frName,
                         requestDetail.insert_date,

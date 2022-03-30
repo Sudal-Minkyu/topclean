@@ -123,7 +123,7 @@ public class PaymentRepositoryCustomImpl extends QuerydslRepositorySupport imple
                         payment.fpCatApprovaltime,
                         payment.fpCatApprovalno,
                         payment.fpMonth,
-                        payment.fpAmt,
+                        payment.fpRealAmt,
                         payment.fpCollectAmt
                 ));
 

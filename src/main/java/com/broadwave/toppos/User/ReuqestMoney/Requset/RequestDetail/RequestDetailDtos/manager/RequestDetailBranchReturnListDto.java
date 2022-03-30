@@ -10,9 +10,9 @@ import java.time.format.DateTimeFormatter;
 
 /**
  * @author Minkyu
- * Date : 2022-02-11
+ * Date : 2022-03-29
  * Time :
- * Remark : Toppos 지사반송 ListDto
+ * Remark : Toppos 지사 가맹점 반품출고 ListDto
  */
 @Data
 @Builder
