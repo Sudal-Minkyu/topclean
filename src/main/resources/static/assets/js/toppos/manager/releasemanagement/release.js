@@ -125,6 +125,7 @@ const comms = {
             grids.f.clearData(0);
             grids.f.clearData(1);
             wares.receiptList = "";
+            $("#statPanel").html("조회버튼을 통해 상품을 조회하세요.");
             // $("#listStatBar").hide();
             $("#exportXlsx").hide();
         });

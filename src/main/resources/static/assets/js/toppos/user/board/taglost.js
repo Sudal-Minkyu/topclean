@@ -239,12 +239,18 @@ const trigs = {
                 case "thumbnail2" :
                 case "thumbnail3" :
                     if(e.item[e.dataField]) {
-                        $("#gridPhoto").attr("href", e.item.bfPathFilename[e.dataField.substring(9, 10) - 1].bfPath
-                            + e.item.bfPathFilename[e.dataField.substring(9, 10) - 1].bfFilename);
-                        $("#gridPhoto").trigger("click");
+                        $("#gridPhotoList").html("");
+                        for(const photo of e.item.bfPathFilename) {
+                            const photoHtml = `
+                                <a id="${e.dataField}" href="${photo.bfPath + photo.bfFilename}" data-lightbox="images" data-title="이미지 확대"></a>
+                            `;
+                            $("#gridPhotoList").append(photoHtml);
+                        }
+                        $("#" + e.dataField).trigger("click");
                     }
                     break;
                 case "detail" :
+                        $("#gridPhotoList").html("");
                         showDetail(e.item.btId);
                     break;
             }
