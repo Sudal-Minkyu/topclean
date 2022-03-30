@@ -163,7 +163,7 @@ function alertThree(text, btn1 = "예", btn2 = "아니오", btn3 = "취소") { /
 function alertStrongThree(text, btn1 = "예", btn2 = "아니오", btn3 = "취소") { // 삼지선다 물음창 세번째 버튼은 취소용
     let html = '';
 
-    html +='<div id="popupId" class="popup popup--dim"">';
+    html +='<div id="popupId" class="popup popup--warning"">';
     html +='<div class="popup__box popup__box--three">';
     html +='<div class="popup__content">';
     html +='<div class="popup__stat cancel"></div>';

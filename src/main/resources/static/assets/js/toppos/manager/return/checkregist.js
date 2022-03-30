@@ -16,13 +16,22 @@ const dtos = {
             fdId: "nr",
             type: "s",
         },
-
+/* 
         branchInspectionSave: {
             fdId: "nr",
             fiAddAmt: "nr",
             fiComment: "s",
             fiType: "sr",
             source: "", // 검품사진파일
+        },
+ */
+        branchInspectionSaveNeo: {
+            fdId: "nr",
+            fiAddAmt: "nr",
+            fiComment: "s",
+            fiType: "sr",
+            addPhotoList: "",
+            deletePhotoList: "",
         },
 
         branchInspectionDelete: {
@@ -90,6 +99,7 @@ const urls = {
     getMainGridList: "/api/manager/branchInspection",
     getInspectionList: "/api/manager/branchInspectionList",
     putNewInspect: "/api/manager/branchInspectionSave",
+    putNewInspectNeo: "/api/manager/branchInspectionSave",
     deleteInspection: "/api/manager/branchInspectionDelete",
 }
 
@@ -138,7 +148,7 @@ const comms = {
             comms.getInspectionList(searchCondition);
         });
     },
-
+/* 
     putNewInspect(formData) {
         const testObj = Object.fromEntries(formData);
         testObj.fdId = parseInt(testObj.fdId);
@@ -157,6 +167,28 @@ const comms = {
             $("#fiAddAmt").val("0");
             alertSuccess("확인품내역이 저장되었습니다.");
         });
+    },
+ */
+    putNewInspectNeo(formData) {
+        const testObj = Object.fromEntries(formData);
+        testObj.fdId = parseInt(testObj.fdId);
+        testObj.fiAddAmt = parseInt(testObj.fiAddAmt) | 0;
+        if(!testObj.deletePhotoList) testObj.deletePhotoList = []; // btId값이 없는 신규등록건
+        
+        dv.chk(testObj, dtos.send.branchInspectionSaveNeo, "확인품 등록");
+
+        console.log(testObj);
+        // CommonUI.ajax(urls.putNewInspectNeo, "POST", formData, function (res) {
+        //     const searchCondition = {
+        //         fdId: testObj.fdId,
+        //         type: "2"
+        //     };
+        //     wares.currentRequest.fdState = "B";
+        //     comms.getInspectionList(searchCondition);
+        //     $("#fiComment").val("");
+        //     $("#fiAddAmt").val("0");
+        //     alertSuccess("확인품내역이 저장되었습니다.");
+        // });
     },
 };
 
@@ -400,7 +432,8 @@ const trigs = {
             });
 
             $("#commitInspect").on("click", function() {
-                putInspect();
+                // putInspect(); 구버전 확인품 등록
+                saveInspect();
             });
 
             $("#closeCheckPop").on("click", function () {
@@ -592,6 +625,7 @@ function ynStyle(rowIndex, columnIndex, value, headerText, item, dataField) {
     return value === "Y" ? "yesBlue" : "noRed"
 }
 
+/* 
 function putInspect() {
     const $fiComment = $("#fiComment");
     if (!$fiComment.val().length) {
@@ -638,6 +672,7 @@ function putInspect() {
         comms.putNewInspect(formData);
     }
 }
+*/
 
 function b64toBlob(dataURI) { // 파일을 ajax 통신에 쓰기 위해 변환
     const byteString = atob(dataURI.split(',')[1]);
@@ -687,4 +722,24 @@ function takePhoto() {
     } else {
         alertCaution("카메라가 감지되지 않아서<br>촬영을 할 수 없습니다.", 1);
     }
+}
+
+function saveInspect() {
+    const formData = new FormData();
+    if(wares.currentRequest.addPhotoList) {
+        for(addPhoto of wares.currentRequest.addPhotoList) { // 새로 촬영된 사진들의 추가
+            if(addPhoto) formData.append("addPhotoList", addPhoto);
+        }
+    }
+    
+    formData.append("fdId", wares.currentRequest.fdId);
+    if(wares.currentRequest.deletePhotoList) {
+        formData.append("deletePhotoList", wares.currentRequest.deletePhotoList);
+    }
+
+    formData.append("fiComment", $("#fiComment").val());
+    formData.append("fiAddAmt", $("#fiAddAmt").val().toInt());
+    formData.append("fiType", "B");
+    
+    comms.putNewInspectNeo(formData);
 }
