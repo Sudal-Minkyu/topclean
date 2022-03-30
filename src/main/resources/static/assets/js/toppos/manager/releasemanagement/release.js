@@ -14,6 +14,7 @@ const dtos = {
         branchStateChange: {
             miDegree: "n", // 몇차 출고인지에 대한 신호
             fdIdList: "a", // fdId의 목록이 담긴 배열(3차원 배열)
+            fdS4TypeList: "a",
         },
         branchDispatchPrint: {
             miNoList: "a",
@@ -174,17 +175,16 @@ const grids = {
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
                 }, {
-                    dataField: "fdState",
+                    dataField: "fdS4Type",
                     headerText: "출고타입",
-                    width: 70,
+                    width: 75,
                     labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
-                        const result = value === "S7" ? "강제" : "일반";
-                        return result;
+                        return CommonData.name.fdS4Type[value];
                     },
                 }, {
                     dataField: "fdUrgentYn",
                     headerText: "급세탁",
-                    width: 70,
+                    width: 55,
                 }, {
                     dataField: "fdTag",
                     headerText: "택번호",
@@ -566,23 +566,28 @@ function sendOut() {
 
     if(wares.checkedItems.length) {
         let fdIdList = [];
+        let fdS4TypeList = [];
         let codeIndex = [];
         fdIdList.push([0]);
+        fdS4TypeList.push(["0"]);
         codeIndex.push("dummy");
 
         wares.checkedItems.forEach(obj => {
             const i = codeIndex.indexOf(obj.item.frCode);
             if(i + 1) {
                 fdIdList[i].push(obj.item.fdId);
+                fdS4TypeList[i].push(obj.item.fdS4Type);
             } else {
                 codeIndex.push(obj.item.frCode);
                 fdIdList.push([obj.item.fdId]);
+                fdS4TypeList.push([obj.item.fdS4Type]);
             }
         });
 
         const sendList = {
             miDegree: $("#miDegree").val().toInt(),
-            fdIdList: fdIdList
+            fdIdList: fdIdList,
+            fdS4TypeList: fdS4TypeList,
         }
 
         if(!sendList.miDegree) {

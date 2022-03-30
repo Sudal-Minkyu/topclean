@@ -364,6 +364,7 @@ function ajaxUpdateSaveMoney(data) {
         tempSaveMoneyItem.saveMoney = res.sendData.saveMoney;
         AUIGrid.updateRowsById(gridId[0], tempSaveMoneyItem);
         alertSuccess("적립금 조정이 완료되었습니다.");
+        AUIGrid.resetUpdatedItems(gridId[0]);
         $("#modifySaveMoneyPop").removeClass("active");
     });
 }
@@ -395,9 +396,9 @@ function saveRegister() {
         return false;
     }
 
-    if($("#bcAgreeType").val() === "1"){
+    if($("#bcAgreeType").val() === "1") {
         console.log("온라인 입니다.");
-        if($("#bcSignImage").val().length){
+        if($("#bcSignImage").val().length) {
             formData.append("bcSignImage", $("#bcSignImage").val());
         }else{
             alertCaution("사인을 해주세요",1);
