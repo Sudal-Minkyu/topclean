@@ -206,9 +206,11 @@ public class ManagerRestController {
 
     //  접수테이블의 상태 변화 API - 지사출고 실행함수
     @PostMapping("branchStateChange")
-    public ResponseEntity<Map<String,Object>> branchStateChange(@RequestParam(value="fdIdList", defaultValue="") List<List<Long>> fdIdList, @RequestParam(value="miDegree", defaultValue="") Integer miDegree,
+    public ResponseEntity<Map<String,Object>> branchStateChange(@RequestParam(value="fdIdList", defaultValue="") List<List<Long>> fdIdList,
+                                                                @RequestParam(value="fdS4TypeList", defaultValue="") List<List<String>> fdS4TypeList,
+                                                                @RequestParam(value="miDegree", defaultValue="") Integer miDegree,
                                                                    HttpServletRequest request){
-         return receiptReleaseService.branchStateChange(fdIdList, miDegree, request);
+         return receiptReleaseService.branchStateChange(fdIdList, fdS4TypeList, miDegree, request);
     }
 
     // 출고증인쇄 함수
@@ -307,10 +309,10 @@ public class ManagerRestController {
         return inspectService.branchInspectionList(fdId, type);
     }
 
-    //  확인품 등록 API
+    //  확인품 등록/수정 API - 22/03/30 수정추가
     @PostMapping("branchInspectionSave")
-    public ResponseEntity<Map<String,Object>> branchInspectionSave(@ModelAttribute InspeotMapperDto inspeotMapperDto, MultipartHttpServletRequest multi) throws IOException {
-        return inspectService.InspectionSave(inspeotMapperDto, multi, AWSBUCKETURL,"2");
+    public ResponseEntity<Map<String,Object>> branchInspectionSave(@ModelAttribute InspeotMapperDto inspeotMapperDto, HttpServletRequest request) throws IOException {
+        return inspectService.InspectionSave(inspeotMapperDto, request, AWSBUCKETURL,"2");
     }
 
     //  등록 확인품 삭제

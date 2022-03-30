@@ -22,6 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -62,11 +63,13 @@ public class ReceiptReleaseService {
     }
 
     //  접수테이블의 상태 변화 API - 지사출고 실행함수
-    public ResponseEntity<Map<String, Object>> branchStateChange(List<List<Long>> fdIdList, Integer miDegree, HttpServletRequest request) {
+    @Transactional
+    public ResponseEntity<Map<String, Object>> branchStateChange(List<List<Long>> fdIdList, List<List<String>> fdS4TypeList, Integer miDegree, HttpServletRequest request) {
         log.info("branchStateChange 호출");
 
-//        log.info("출고처리할 ID : "+fdIdList);
-//        log.info("출고차수 : "+miDegree);
+        log.info("출고처리할 ID : "+fdIdList);
+        log.info("출고차수 : "+miDegree);
+        log.info("fdS4TypeList : "+fdS4TypeList);
 
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
@@ -84,8 +87,8 @@ public class ReceiptReleaseService {
         // "S2"이면 지사출고 페이지 버튼 "S2" -> "S4"
         log.info("지사출고 처리");
         for (int i = 1; i < fdIdList.size(); i++) {
-            List<RequestDetail> requestDetailList = requestDetailRepository.findByRequestDetailS2List(fdIdList.get(i));
-//                log.info("requestDetailList : " + requestDetailList);
+            List<RequestDetail> requestDetailList = requestDetailRepository.findByRequestDetailS2OrS7List(fdIdList.get(i));
+//            log.info("requestDetailList : " + requestDetailList);
 
             String frCode = requestDetailList.get(0).getFrId().getFrCode();
             String miNo = keyGenerateService.keyGenerate("mr_issue", brCode+frCode+nowDate, login_id); // 지사출고 miNo 채번
@@ -100,39 +103,28 @@ public class ReceiptReleaseService {
             newIssue.setInsert_id(login_id);
             Issue issue = issueRepository.save(newIssue);
 
-            for (RequestDetail requestDetail : requestDetailList) {
-//                log.info("가져온 frID 값 : " + requestDetail.getFrId());
-                requestDetail.setFdPreState(requestDetail.getFdState()); // 이전상태 값
-                requestDetail.setFdPreStateDt(LocalDateTime.now());
+            for (int j=0; j<requestDetailList.size(); j++) {
+//                log.info("가져온 frID 값 : " + requestDetailList.get(j).getFrId());
+                requestDetailList.get(j).setFdPreState(requestDetailList.get(j).getFdState()); // 이전상태 값
+                requestDetailList.get(j).setFdPreStateDt(LocalDateTime.now());
 
-                if(requestDetail.getFdState().equals("S2")){
-                    requestDetail.setFdS4Type("01");
-//                    requestDetail.setFdS4Type("05"); // 확인품(미확인) - 출고
-//                    requestDetail.setFdS4Type("06"); // 확인품(미확인) - 반품
-//                    requestDetail.setFdS4Type("07"); // 확인품(수락) - 출고
-//                    requestDetail.setFdS4Type("08"); // 확인품(거부) - 반품
-                }else {
-                    if(requestDetail.getFdS7Type().equals("01")) {
-                        requestDetail.setFdS4Type("02");
-                    }else{
-                        requestDetail.setFdS4Type("04");
-                    }
-                }
+                requestDetailList.get(j).setFdS4Type(fdS4TypeList.get(i).get(j));
 
-                requestDetail.setFdState("S4");
-                requestDetail.setFdStateDt(LocalDateTime.now());
-                requestDetail.setFdS4Dt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
-                requestDetail.setFdS4Time(LocalDateTime.now());
-                requestDetail.setFdS4Id(login_id);
+                requestDetailList.get(j).setFdState("S4");
+                requestDetailList.get(j).setFdStateDt(LocalDateTime.now());
+                requestDetailList.get(j).setFdS4Dt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
+                requestDetailList.get(j).setFdS4Time(LocalDateTime.now());
+                requestDetailList.get(j).setFdS4Id(login_id);
 
-                requestDetail.setFdBrState("S4");
-                requestDetail.setFdBrStateTime(LocalDateTime.now());
+                requestDetailList.get(j).setFdBrState("S4");
+                requestDetailList.get(j).setFdBrStateTime(LocalDateTime.now());
 
-                requestDetail.setMiId(issue);
+                requestDetailList.get(j).setMiId(issue);
 
-                requestDetail.setModify_id(login_id);
-                requestDetail.setModify_date(LocalDateTime.now());
+                requestDetailList.get(j).setModify_id(login_id);
+                requestDetailList.get(j).setModify_date(LocalDateTime.now());
             }
+
             requestDetailRepository.saveAll(requestDetailList);
         }
 
