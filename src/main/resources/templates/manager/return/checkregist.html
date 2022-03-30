@@ -6,6 +6,8 @@
 
 <!-- 사용자 CSS 추가 -->
 <th:block layout:fragment="css">
+	<!-- lightbox 추가 -->
+    <link rel="stylesheet" href="/assets/js/lightbox2/css/lightbox.min.css" />
     <style>
         .color_and_name {
             text-align: left;
@@ -27,6 +29,8 @@
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
 	<script src="/assets/js/toppos/manager/return/checkregist.js"></script>
+    <!-- lightbox 추가 -->
+    <script src="/assets/js/lightbox2/js/lightbox.js"></script>
 </th:block>
 
 <div layout:fragment="content" class="content content--padding">
@@ -96,13 +100,12 @@
     </section>
 
     <!-- 확인품등록 팝업 -->
-	<div id="checkPop" class="pop">
+	<!-- <div id="checkPop" class="pop">
 		<div class="pop__box">
 			<div class="pop__article pop__article--flex">
 				<div class="pop__article-content photo">
 					<h3 class="pop__article-header">확인품등록</h3>
 					<div class="pop__article-photo" style="background-color: #ddd">
-						<!-- 캠 영상 들어갈 곳 -->
 						<video id="cameraScreen" playsinline autoplay></video>
 						<canvas id="cameraCanvas" style="display: none"></canvas>
 					</div>
@@ -139,7 +142,7 @@
 					<div class="pop__console-cost">
 						<div class="pop__console-title">접수금액</div>
 						<div class="pop__console-input">
-							<div class="c-text"><input type="text" readonly="readonly" id="fdTotAmtInPut" /></div>
+							<div class="c-text"><input type="text" readonly="readonly" id="fdTotAmtInPut"></div>
 						</div>
 					</div>
 					<div class="pop__console-cost">
@@ -155,18 +158,18 @@
 				<li><button class="c-button c-button--dark" id="commitInspect">확인품등록</button></li>
 			</ul>
 		</div>
-	</div>
+	</div> -->
 
     <!-- 확인품등록 신규 -->
-    <div id="taglostPop" class="pop active">
+    <div id="checkPop" class="pop">
         <div class="pop__box pop__box--large">
             <div class="pop__article">
                 <div class="tag-pop">
                     <div id="camInput" class="tag__shoot-area">
                         <div class="tag__shooting">
-                            <!-- 캠 영상 들어갈 곳 -->
-                            <video id="cameraScreen" playsinline="" autoplay=""></video>
-                            <canvas id="cameraCanvas" style="display: none"></canvas>
+							<!-- 캠 영상 들어갈 곳 -->
+							<video id="cameraScreen" playsinline autoplay></video>
+							<canvas id="cameraCanvas" style="display: none"></canvas>
                         </div>
                         <button id="takePhotoBtn" class="c-button c-button--large c-button--darksolid">사진촬영</button>
                     </div>
@@ -182,14 +185,14 @@
 					<h3 class="pop__article-header">확인품내용</h3>
 					<div class="pop__article-haedconsole">
 						<div class="c-checkbox">
-							<input type="checkbox" id="checkImg" />
-							<label for="checkImg">사진포함</label>
+							<input type="checkbox" id="isIncludeImg" />
+							<label for="isIncludeImg">사진포함</label>
 						</div>
 					</div>
 				</div>
 				
 				<div class="pop__article-content">
-					<textarea></textarea>
+					<textarea id="fiComment"></textarea>
 				</div>
 			</div>
 
@@ -198,19 +201,21 @@
 					<div class="pop__console-cost">
 						<div class="pop__console-title">접수금액</div>
 						<div class="pop__console-input">
-							<div class="c-text"><input type="text" readonly="readonly"></div>
+							<div class="c-text"><input type="text" readonly="readonly" id="fdTotAmtInPut"></div>
 						</div>
 					</div>
 					<div class="pop__console-cost">
 						<div class="pop__console-title">추가비용</div>
 						<div class="pop__console-input">
 							<div class="c-text">
-								<input type="text">
+								<input id="fiAddAmt" type="text">
 							</div>
 						</div>
 					</div>
 				</li>
-				<li><button type="button" class="c-button pop__close">닫기</button></li>
+				<li><button class="c-button c-button--solid" id="commitInspect">저장</button></li>
+				<li><button class="c-button c-button--red" id="deleteInspect">삭제</button></li>
+				<li><button type="button" class="c-button" id="closeCheckPop">닫기</button></li>
 			</ul>
         </div>
     </div>

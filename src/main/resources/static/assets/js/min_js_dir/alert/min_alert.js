@@ -160,6 +160,26 @@ function alertThree(text, btn1 = "예", btn2 = "아니오", btn3 = "취소") { /
     $('#alertpop').html(html);
 }
 
+function alertStrongThree(text, btn1 = "예", btn2 = "아니오", btn3 = "취소") { // 삼지선다 물음창 세번째 버튼은 취소용
+    let html = '';
+
+    html +='<div id="popupId" class="popup popup--dim"">';
+    html +='<div class="popup__box popup__box--three">';
+    html +='<div class="popup__content">';
+    html +='<div class="popup__stat cancel"></div>';
+    html +='<div class="popup__text">'+text+'</div>';
+    html +='</div>';
+    html +='<div class="popup__buttons">';
+    html +='<button id="popFirstBtn" class="popup__btn popup__btn--solid">' + btn1 +'</button>';
+    html +='<button id="popSecondBtn" class="popup__btn popup__btn--red">' + btn2 +'</button>';
+    html +='<button id="popThirdBtn" class="popup__btn">' + btn3 +'</button>';
+    html +='</div>';
+    html +='</div>';
+    html +='</div>';
+
+    $('#alertpop').html(html);
+}
+
 function alertDeleteCheck(text) { // 정말작성할껀지 확인하는창
     let html = '';
 

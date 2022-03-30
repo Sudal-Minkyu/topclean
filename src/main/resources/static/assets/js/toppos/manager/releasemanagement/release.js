@@ -252,7 +252,7 @@ const grids = {
                 noDataMessage : "존재하는 데이터가 없습니다.",
                 showAutoNoDataMessage: false,
                 enableColumnResize : true,
-                showRowAllCheckBox: true,
+                showRowAllCheckBox: false,
                 showRowCheckColumn: true,
                 showRowNumColumn : false,
                 showStateColumn : false,
@@ -344,6 +344,10 @@ const grids = {
             AUIGrid.addCheckedRowsByValue(grids.s.id[0], "fdTag", tagNo);
         },
 
+        addUncheckedRowByTagNo(tagNo) {
+            AUIGrid.addUncheckedRowsByValue(grids.s.id[0], "fdTag", tagNo);
+        },
+
         // 엑셀 내보내기(Export)
         exportToXlsx() {
             //FileSaver.js 로 로컬 다운로드가능 여부 확인
@@ -360,22 +364,34 @@ const grids = {
                 progressBar : true,
             });
         },
-    },
 
-    t: {
-        
-    }
+        updateRowsById(numOfGrid, item) {
+            AUIGrid.updateRowsById(grids.s.id[numOfGrid], item);
+        },
+
+        restoreEditedRow(numOfGrid, rowIdx) {
+            AUIGrid.restoreEditedRows(grids.s.id[numOfGrid], rowIdx);
+        },
+
+        focusOn(tagNo) {
+            const rowIndex = AUIGrid.getRowIndexesByValue(grids.s.id[0], "fdTag", tagNo)[0];
+            AUIGrid.setRowPosition(grids.s.id[0], rowIndex - 2 ? rowIndex - 2 : 0);
+            AUIGrid.setSelectionByIndex(grids.s.id[0], rowIndex, 4);
+        },
+    },
 };
 
 /* 이벤트를 s : 설정하거나 r : 해지하는 함수들을 담는다. 그리드 관련 이벤트는 grids.e에 위치 (trigger) */
 const trigs = {
     grid() {
         AUIGrid.bind(grids.s.id[0], "rowCheckClick", function (e) {
+            console.log(e);
             listCheckChanged();
-        });
-
-        AUIGrid.bind(grids.s.id[0], "rowAllCheckClick", function (check) {
-            listCheckChanged();
+            if(e.item.fdS4Type === "99") {
+                decideCheckResponse(e.item);
+            } else if(["05", "06"].includes(e.item.fdS4Type)) {
+                grids.f.restoreEditedRow(0, e.rowIndex);
+            }
         });
     },
 
@@ -447,6 +463,7 @@ const wares = {
         urgent: "",
         frName: "",
     },
+    sayLoop: false,
 }
 
 $(function() { // 페이지가 로드되고 나서 실행
@@ -524,6 +541,7 @@ function inputTag() {
     for(let i = 0; i < checkedItems.length; i++) {
         if(checkedItems[i].item.fdTag  === tagNo) {
             CommonUI.toppos.speak("이미 조회한 택번호 입니다.");
+            grids.f.focusOn(tagNo);
             $("#inputTagNo").val("");
             $("#inputTagNo").focus();
             return false;
@@ -535,9 +553,14 @@ function inputTag() {
     for(let i = 0; i < gridItems.length; i++) {
         if(gridItems[i].fdTag  === tagNo) {
             grids.f.addCheckedRowByTagNo(tagNo);
-            CommonUI.toppos.speak(CommonUI.toppos.makeSimpleProductName(gridItems[i]));
+            grids.f.focusOn(tagNo);
             listCheckChanged();
             $("#inputTagNo").val("");
+            if(gridItems[i].fdS4Type === "99") {
+                decideCheckResponse(gridItems[i]);
+                return false;
+            }
+            CommonUI.toppos.speak(CommonUI.toppos.makeSimpleProductName(gridItems[i]));
             $("#inputTagNo").focus();
             return false;
         }
@@ -549,6 +572,7 @@ function inputTag() {
             CommonUI.toppos.speak(CommonUI.toppos.makeSimpleProductName(obj));
             grids.f.addRow(0, obj);
             grids.f.addCheckedRowByTagNo(tagNo);
+            grids.f.focusOn(tagNo);
             listCheckChanged();
             noExist = false;
         }
@@ -688,4 +712,40 @@ function fn_viewer_open(projectName, formName, datasetObject, paramObject){
 
 function releaseListPrintClose() {
     $("#releaseListPrint").removeClass("active");
+}
+
+function decideCheckResponse(item) {
+    alertStrongThree("해당 택번호는 확인품 입니다.<br>아직 고객의 진행여부가 결정되지 않았습니다.<br>어떻게 하시겠습니까?", "출고", "반품", "취소");
+    wares.sayLoop = true;
+    sayAgain();
+    
+    $("#popFirstBtn").on("click", function () {
+        wares.sayLoop = false;
+        item.fdS4Type = "05";
+        grids.f.updateRowsById(0, item);
+        CommonUI.toppos.speak("출고 처리로 진행합니다.");
+        $('#popupId').remove();
+    });
+
+    $("#popSecondBtn").on("click", function () {
+        wares.sayLoop = false;
+        item.fdS4Type = "06";
+        grids.f.updateRowsById(0, item);
+        CommonUI.toppos.speak("반품 처리로 진행합니다.");
+        $('#popupId').remove();
+    });
+    
+    $("#popThirdBtn").on("click", function () {
+        wares.sayLoop = false;
+        //체크해제
+        grids.f.addUncheckedRowByTagNo(item.fdTag);
+        listCheckChanged();
+        $('#popupId').remove();
+    });
+
+    function sayAgain() {
+        if(wares.sayLoop) {
+            CommonUI.toppos.speak("미확인 확인품 입니다.", sayAgain);
+        }
+    }
 }

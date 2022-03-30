@@ -169,7 +169,7 @@ const comms = {
 const grids = {
     s: { // 그리드 세팅
         targetDiv: [
-            "grid_main", "grid_check"
+            "grid_main"
         ],
         columnLayout: [],
         prop: [],
@@ -447,6 +447,25 @@ const trigs = {
                     grids.f.resetChangedStatus(1);
                 }
             });
+
+            $("#takePhotoBtn").on("click", function () {
+                takePhoto();
+            });
+
+            $("#photoList").on("click", ".deletePhotoBtn", function() {
+                console.log(this);
+                const bfId = $(this).attr("data-bfId");
+                const addIdx = $(this).attr("data-addIdx");
+                if(bfId) {
+                    if(!wares.currentRequest.deletePhotoList) wares.currentRequest.deletePhotoList = [];
+                    wares.currentRequest.deletePhotoList.push(parseInt(bfId));
+                }
+                if(addIdx) {
+                    delete wares.currentRequest.addPhotoList[addIdx];
+                }
+    
+                $(this).parents(".tag-imgs__item").remove();
+            });
         },
     },
     r: { // 이벤트 해제
@@ -457,6 +476,7 @@ const trigs = {
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
 const wares = {
     currentRequest: {},
+    searchCondition: {},
 }
 
 $(function() { // 페이지가 로드되고 나서 실행
@@ -471,6 +491,12 @@ function onPageLoad() {
     enableDatepicker();
     comms.getFrList();
     trigs.s.basic();
+
+    // lightbox option
+    lightbox.option({
+        'maxWidth': 1100,
+        'positionFromTop': 190
+    });
 }
 
 function enableDatepicker() {
@@ -622,4 +648,43 @@ function b64toBlob(dataURI) { // 파일을 ajax 통신에 쓰기 위해 변환
         ia[i] = byteString.charCodeAt(i);
     }
     return new Blob([ab], { type: 'image/jpeg' });
+}
+
+function takePhoto() {
+    if($("#photoList").children().length > 5) {
+        alertCaution("사진은 최대 6장 까지 촬영하실 수 있습니다.", 1);
+        return false;
+    }
+    
+    if(wares.isCameraExist && wares.cameraStream.active) {
+        try {
+            const video = document.getElementById("cameraScreen");
+            const canvas = document.getElementById('cameraCanvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            const takenPic = canvas.toDataURL();
+            const blob = b64toBlob(takenPic);
+
+            if(!wares.currentRequest.addPhotoList) {
+                wares.currentRequest.addPhotoList = [];
+            }
+            const photoHtml = `<li class="tag-imgs__item newPhoto">
+                <a href="${takenPic}" data-lightbox="images" data-title="이미지 확대">
+                    <img src="${takenPic}" class="tag-imgs__img" alt=""/>
+                </a>
+                <button class="tag-imgs__delete deletePhotoBtn" data-addIdx="${wares.currentRequest.addPhotoList.length}">삭제</button>
+            </li>`
+            wares.currentRequest.addPhotoList.push(blob);
+            
+            $("#photoList").append(photoHtml);
+            $("#noImgScreen").hide();
+        } catch (e) {
+            CommonUI.toppos.underTaker(e, "tagboard : 사진 촬영");
+        }
+    } else {
+        alertCaution("카메라가 감지되지 않아서<br>촬영을 할 수 없습니다.", 1);
+    }
 }

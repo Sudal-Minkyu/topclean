@@ -154,7 +154,7 @@ class CommonUIClass {
             }
         },
 
-        speak(text) {
+        speak(text, callback = function() {}) {
             if(typeof speechSynthesis === 'undefined') {
                 return;
             }
@@ -186,6 +186,8 @@ class CommonUIClass {
             }
 
             voiceProp.lang = 'ko-KR';
+            voiceProp.onend = callback;
+
             window.speechSynthesis.speak(voiceProp);
         },
 
