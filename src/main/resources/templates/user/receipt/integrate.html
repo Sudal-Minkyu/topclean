@@ -913,6 +913,178 @@
 		</div>
 	</div>
 
+    <!-- 검품 등록 신규 -->
+    <div class="pop">
+        <div class="pop__box pop__box--flex">
+            <div class="checkreg__camera-area">
+                <div class="checkreg__head">
+                    <h3>카메라</h3>
+                </div>
+                <div class="checkreg__body">
+                    <div class="checkreg__camera" style="background-color: #ddd">
+						<!-- 캠 영상 들어갈 곳 -->
+						<video id="" playsinline="" autoplay=""></video>
+						<canvas id="" style="display: none"></canvas>
+					</div>
+                    <div class="checkreg__comment">
+                        <div class="pop__article-head">
+                            <h3 class="pop__article-header">검품내용</h3>
+                            <div class="pop__article-haedconsole">
+                                <div class="c-checkbox">
+                                    <input type="checkbox" id="addpicture" />
+                                    <label for="addpicture">사진포함</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pop__aricle-content">
+                            <div class="c-text">
+                                <input type="text" placeholder="검품내용 입력" />
+                                <button class="keypadBtn">키보드</button>
+                            </div>
+                            <ul class="checkreg__camera-console">
+                                <li>
+                                    <div class="checkreg__cost">
+                                        <div class="checkreg__title">접수금액</div>
+                                        <div class="checkreg__input">
+                                            <div class="c-text">
+                                                <input type="text" readonly="readonly" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="checkreg__cost">
+                                        <div class="checkreg__title">추가비용</div>
+                                        <div class="checkreg__input">
+                                            <div class="c-text">
+                                                <input type="text" />
+                                                <button id="vkeypad0">키보드</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <button class="c-button c-button--small c-button--solid">촬영</button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="checkreg__picture-area">
+                <div class="checkreg__head">
+                    <h3>촬영된 사진</h3>
+                </div>
+                <div class="checkreg__body checkreg__body--non-padding">
+                    <ul class="checkreg__img-list">
+                        <li>
+                            <div class="checkreg__img-console">
+                                <p>구멍</p>
+                                <button class="checkreg__delete">삭제</button>
+                            </div>
+                            <img src="https://bw-toppos-images.s3.ap-northeast-2.amazonaws.com/toppos-manager-tagGallery/20220325/s_b164267f7f574592b88f3cade0f5595f.png" alt="" class="checkreg__img">
+                        </li>
+                        <li>
+                            <div class="checkreg__img-console">
+                                <p>찢어짐</p>
+                                <button class="checkreg__delete">삭제</button>
+                            </div>
+                            <img src="https://bw-toppos-images.s3.ap-northeast-2.amazonaws.com/toppos-manager-tagGallery/20220325/s_b164267f7f574592b88f3cade0f5595f.png" alt="" class="checkreg__img">
+                        </li>
+                        <li>
+                            <div class="checkreg__img-console">
+                                <p>얼룩</p>
+                                <button class="checkreg__delete">삭제</button>
+                            </div>
+                            <img src="https://bw-toppos-images.s3.ap-northeast-2.amazonaws.com/toppos-manager-tagGallery/20220325/s_b164267f7f574592b88f3cade0f5595f.png" alt="" class="checkreg__img">
+                        </li>
+                        <li>
+                            <div class="checkreg__img-console">
+                                <p>구멍</p>
+                                <button class="checkreg__delete">삭제</button>
+                            </div>
+                            <img src="https://bw-toppos-images.s3.ap-northeast-2.amazonaws.com/toppos-manager-tagGallery/20220325/s_b164267f7f574592b88f3cade0f5595f.png" alt="" class="checkreg__img">
+                        </li>
+                    </ul>
+                </div>
+
+                <ul class="pop__console pop__console--center pop__console--nonbg">
+                    <li><button class="c-button">닫기</button></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- 검품 확인 신규 -->
+    <div class="pop">
+        <div class="pop__box">
+            <div class="pop__article">
+                <div class="tag-imgs">
+                    <ul id="photoList" class="tag-imgs__list">
+                        <li class="tag-imgs__item">
+                            <a href="https://bw-toppos-images.s3.ap-northeast-2.amazonaws.com/toppos-manager-tagGallery/20220325/b164267f7f574592b88f3cade0f5595f.png" data-lightbox="images" data-title="이미지 확대">
+                                <img src="https://bw-toppos-images.s3.ap-northeast-2.amazonaws.com/toppos-manager-tagGallery/20220325/s_b164267f7f574592b88f3cade0f5595f.png" class="tag-imgs__img" alt="">
+                            </a>
+                        </li><li class="tag-imgs__item">
+                            <a href="https://bw-toppos-images.s3.ap-northeast-2.amazonaws.com/toppos-manager-tagGallery/20220325/56bc64c91c6a452fbba71ce3ef3d42d4.png" data-lightbox="images" data-title="이미지 확대">
+                                <img src="https://bw-toppos-images.s3.ap-northeast-2.amazonaws.com/toppos-manager-tagGallery/20220325/s_56bc64c91c6a452fbba71ce3ef3d42d4.png" class="tag-imgs__img" alt="">
+                            </a>
+                        </li>
+                        <li class="tag-imgs__item">
+                            <a href="https://bw-toppos-images.s3.ap-northeast-2.amazonaws.com/toppos-manager-tagGallery/20220325/b164267f7f574592b88f3cade0f5595f.png" data-lightbox="images" data-title="이미지 확대">
+                                <img src="https://bw-toppos-images.s3.ap-northeast-2.amazonaws.com/toppos-manager-tagGallery/20220325/s_b164267f7f574592b88f3cade0f5595f.png" class="tag-imgs__img" alt="">
+                            </a>
+                        </li><li class="tag-imgs__item">
+                            <a href="https://bw-toppos-images.s3.ap-northeast-2.amazonaws.com/toppos-manager-tagGallery/20220325/56bc64c91c6a452fbba71ce3ef3d42d4.png" data-lightbox="images" data-title="이미지 확대">
+                                <img src="https://bw-toppos-images.s3.ap-northeast-2.amazonaws.com/toppos-manager-tagGallery/20220325/s_56bc64c91c6a452fbba71ce3ef3d42d4.png" class="tag-imgs__img" alt="">
+                            </a>
+                        </li>
+                        <li class="tag-imgs__item">
+                            <a href="https://bw-toppos-images.s3.ap-northeast-2.amazonaws.com/toppos-manager-tagGallery/20220325/b164267f7f574592b88f3cade0f5595f.png" data-lightbox="images" data-title="이미지 확대">
+                                <img src="https://bw-toppos-images.s3.ap-northeast-2.amazonaws.com/toppos-manager-tagGallery/20220325/s_b164267f7f574592b88f3cade0f5595f.png" class="tag-imgs__img" alt="">
+                            </a>
+                        </li><li class="tag-imgs__item">
+                            <a href="https://bw-toppos-images.s3.ap-northeast-2.amazonaws.com/toppos-manager-tagGallery/20220325/56bc64c91c6a452fbba71ce3ef3d42d4.png" data-lightbox="images" data-title="이미지 확대">
+                                <img src="https://bw-toppos-images.s3.ap-northeast-2.amazonaws.com/toppos-manager-tagGallery/20220325/s_56bc64c91c6a452fbba71ce3ef3d42d4.png" class="tag-imgs__img" alt="">
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="pop__article">
+                <div class="checkreg__comment">
+                    <div class="pop__article-head">
+                        <h3 class="pop__article-header">검품내용</h3>
+                    </div>
+                    <div class="pop__aricle-content">
+                        <div class="c-text">
+                            <input type="text"  readonly="readonly" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <ul class="pop__console">
+                <li class="pop__console-left">
+					<div class="pop__console-cost">
+						<div class="pop__console-title">현재 접수금액</div>
+						<div class="pop__console-input">
+							<div class="c-text"><input type="text" readonly="readonly" /></div>
+						</div>
+					</div>
+					<div class="pop__console-cost">
+						<div class="pop__console-title">추가 비용발생</div>
+						<div class="pop__console-input">
+							<div class="c-text"><input type="text" readonly="readonly" /></div>
+						</div>
+					</div>
+				</li>
+                <li><button class="c-button">닫기</button></li>
+                <li><button class="c-button c-button--dark">고객반품</button></li>
+                <li><button class="c-button c-button--solid">세탁진행</button></li>
+            </ul>
+        </div>
+    </div>
+
 	<input type="hidden" id="hiddenKeypad" />
 </div>
 </html>

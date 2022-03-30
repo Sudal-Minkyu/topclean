@@ -3241,6 +3241,126 @@ footer.footer > ul > li + li:before {
 	font-size: 1.25rem !important;
 }
 
+/* 검품 등록 팝업 신규 */
+.checkreg__camera-area {
+    overflow: hidden;
+    width: 37.5rem;
+    background-color: #fff;
+    border: 0.063rem solid #bdbdbd;
+    border-radius: 0.313rem;
+}
+.checkreg__picture-area {
+    overflow: hidden;
+    width: 18.75rem;
+    margin-left: auto;
+    background-color: #fff;
+    border: 0.063rem solid #bdbdbd;
+    border-radius: 0.313rem;
+}
+.checkreg__head {
+    background-color: #e8e8e8;
+    border-bottom: 0.063rem solid #bdbdbd;
+}
+.checkreg__head > h3 {
+    color: #333;
+    font-size: 1.25rem;
+    text-align: center;
+    line-height: 3.75rem;
+}
+.checkreg__body {
+    padding: 1.25rem 2.5rem;
+}
+.checkreg__body.checkreg__body--non-padding {
+    overflow-y: auto;
+    height: 24.25rem;
+    padding: 0;
+}
+.checkreg__camera {
+    overflow: hidden;
+	position: relative;
+	width: 100%;
+	height: 0;
+	padding-bottom: 56.25%;
+}
+.checkreg__camera video,
+.checkreg__camera img {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+}
+.checkreg__comment {
+    margin-top: 1.25rem;
+}
+.checkreg__comment:first-child {
+    margin-top: 0;
+}
+.checkreg__camera-console {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 0.625rem;
+}
+.checkreg__cost {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}
+.checkreg__title {
+    margin-right: 0.625rem;
+    color: #333;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 2.5rem;
+}
+.checkreg__input {
+    width: 7rem;
+}
+.checkreg__input > .c-text > input[type="text"]:read-only {
+    padding-right: 0.625rem;
+}
+.checkreg__camera-console > li + li {
+    margin-left: auto;
+}
+.checkreg__camera-console.checkreg__camera-console--left > li + li {
+    margin-left: 1.25rem;
+}
+.checkreg__img-list {
+    padding: 0.625rem 0;
+}
+.checkreg__img-list > li {
+    padding: 0.625rem 2.5rem;
+}
+.checkreg__img-console {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}
+.checkreg__img-console > p {
+    overflow: hidden;
+	display: inline-block;
+    width: 10rem;
+	color: #333;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+    font-size: 1.125rem;
+}
+.checkreg__delete {
+    width: 1.875rem;
+    height: 1.875rem;
+    margin-left: auto;
+    border: 0.125rem solid #f0a7ab;
+    background: url(/assets/images/icon__trash.svg) no-repeat;
+    background-size: 1.125rem 1.125rem;
+    background-position: center center;
+    border-radius: 0.313rem;
+    text-indent: -9999rem;
+}
+.checkreg__img {
+    width: 100%;
+    margin-top: 0.625rem;
+}
+
 /* 미수결제 팝업 */
 .unpaid-pop {
 	display: flex;
