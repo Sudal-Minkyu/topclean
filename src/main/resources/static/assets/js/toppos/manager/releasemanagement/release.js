@@ -570,12 +570,16 @@ function inputTag() {
     let noExist = true;
     wares.receiptList.forEach(obj => {
         if(obj.fdTag === tagNo) {
-            CommonUI.toppos.speak(CommonUI.toppos.makeSimpleProductName(obj));
             grids.f.addRow(0, obj);
             grids.f.addCheckedRowByTagNo(tagNo);
             grids.f.focusOn(tagNo);
             listCheckChanged();
             noExist = false;
+            if(obj.fdS4Type === "99") {
+                decideCheckResponse(obj);
+                return false;
+            }
+            CommonUI.toppos.speak(CommonUI.toppos.makeSimpleProductName(obj));
         }
     });
 
