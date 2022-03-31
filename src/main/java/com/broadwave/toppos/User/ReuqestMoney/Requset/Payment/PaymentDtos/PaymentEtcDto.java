@@ -14,6 +14,7 @@ import lombok.*;
 @AllArgsConstructor
 public class PaymentEtcDto {
     private String fpType; // 결제타입 (01:현금, 02:카드,03:적립금)
+    private Integer fpAmt; // 결제금액( 미수에서 카드결제시 카드결제금액보다작을수있다.)
     private Integer fpRealAmt; // 결제금액( 미수에서 카드결제시 카드결제금액보다작을수있다.)
     private String fpCatIssuername; // 이슈명칭 ex > IBK 비씨카드
 }
