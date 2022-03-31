@@ -569,6 +569,7 @@ public class ReceiptService {
 
                             // 결제완료시 보낼 Etc 데이터 리스트
                             paymentEtcDto.setFpType(payment.getFpType());
+                            paymentEtcDto.setFpAmt(payment.getFpAmt());
                             paymentEtcDto.setFpRealAmt(payment.getFpRealAmt());
                             paymentEtcDto.setFpCatIssuername(payment.getFpCatIssuername());
                             paymentEtcDtos.add(paymentEtcDto);
