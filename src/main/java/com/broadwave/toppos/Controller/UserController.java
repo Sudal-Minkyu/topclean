@@ -153,9 +153,14 @@ public class UserController {
         return "user/board/view";
     }
 
+    // 물건 찾기
+    @RequestMapping("find")
+    public String find() {
+        return "user/board/find";
+    }
+
     @RequestMapping("test")
     public String usertest() {
         return "jstest/test";
     }
-
 }
