@@ -930,7 +930,7 @@ public class UserRestController {
         return inspectService.InspectionSave(inspeotMapperDto, multi, AWSBUCKETURL,"1");
     }
 
-    //  통합조회용 - 등록 검품 삭제
+    // 통합조회용 - 등록 검품 삭제
     @ApiOperation(value = "확인품 삭제" , notes = "가맹점이 가맹검품 글을 삭제한다 ")
     @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
     @PostMapping("franchiseInspectionDelete")

@@ -23,7 +23,7 @@ public interface PhotoRepository extends JpaRepository<Photo,Long>, PhotoReposit
 
     @Transactional
     @Modifying
-    @Query("delete from Photo a where a.fiId.id in :photoDeleteList")
+    @Query("delete from Photo a where a.id in :photoDeleteList")
     void findByInspectPhotoDeleteList(List<Long> photoDeleteList);
 
     // 게시물ID로 삭제할 파일만 골라 찾기
@@ -31,7 +31,7 @@ public interface PhotoRepository extends JpaRepository<Photo,Long>, PhotoReposit
     List<Photo> findByPhotoDeleteList(List<Long> deleteFileList);
 
     @Query("select a from Photo a where a.fiId.id = :fiId")
-    Photo findByPhoto(Long fiId);
+    List<Photo> findByPhotoList(Long fiId);
 
     @Query("select a from Photo a where a.fiId.id = :fdId")
     List<Photo> findByInspectPhotoDeleteListData(Long fdId);

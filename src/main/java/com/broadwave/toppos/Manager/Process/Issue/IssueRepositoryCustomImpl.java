@@ -135,7 +135,9 @@ public class IssueRepositoryCustomImpl extends QuerydslRepositorySupport impleme
         sb.append("(SELECT COUNT(*) from printdata x6 WHERE a.mi_no = x6.mi_no AND x6.type ='T06') AS t06Count, \n");
         sb.append("(SELECT COUNT(*) from printdata x7 WHERE a.mi_no = x7.mi_no AND x7.type ='T07') AS t07Count, \n");
         sb.append("(SELECT COUNT(*) from printdata x8 WHERE a.mi_no = x8.mi_no AND x8.type ='T08') AS t08Count, \n");
-        sb.append("(SELECT COUNT(*) from printdata x9 WHERE a.mi_no = x9.mi_no) AS total \n");
+        sb.append("(SELECT COUNT(*) from printdata x9 WHERE a.mi_no = x9.mi_no AND x9.type ='T09') AS t09Count, \n");
+        sb.append("(SELECT COUNT(*) from printdata x10 WHERE a.mi_no = x10.mi_no AND x10.type ='T10') AS t10Count, \n");
+        sb.append("(SELECT COUNT(*) from printdata x11 WHERE a.mi_no = x11.mi_no) AS total \n");
         sb.append("FROM printdata a \n");
         sb.append("ORDER BY a.mi_no, a.type, a.fd_tag \n");
 

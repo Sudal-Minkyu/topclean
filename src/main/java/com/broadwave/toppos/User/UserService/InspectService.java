@@ -464,11 +464,11 @@ public class InspectService {
 
             if(optionalInspeot.isPresent()){
                 log.info("검품 수정입니다.");
-                inspeot = modelMapper.map(optionalInspeot, Inspeot.class);
+                inspeot = modelMapper.map(optionalInspeot.get(), Inspeot.class);
                 inspeot.setFiAddAmt(inspeotMapperDto.getFiAddAmt());
                 inspeot.setFiComment(inspeotMapperDto.getFiComment());
-                Photo photo = photoRepository.findByPhoto(optionalInspeot.get().getId());
-                if(photo != null || inspeotMapperDto.getAddPhotoList() != null){
+                List<Photo> photo = photoRepository.findByPhotoList(optionalInspeot.get().getId());
+                if(photo.size() != 0 || inspeotMapperDto.getAddPhotoList() != null){
                     inspeot.setFiPhotoYn("Y");
                 }else{
                     inspeot.setFiPhotoYn("N");
@@ -476,7 +476,7 @@ public class InspectService {
                 inspeot.setModify_id(login_id);
                 inspeot.setModify_date(LocalDateTime.now());
 
-                List<String> msg = inspectPhotoSave(inspeot, null, inspeotMapperDto.getAddPhotoList(), inspeotMapperDto.getFiType(), AWSBUCKETURL, login_id);
+                List<String> msg = inspectPhotoSave(inspeot, null, inspeotMapperDto.getAddPhotoList(), inspeotMapperDto.getFiType(), AWSBUCKETURL, login_id, "1");
                 log.info("msg : "+msg);
 
             }else{
@@ -502,7 +502,7 @@ public class InspectService {
                                     "\n검품내용 : " + inspeotMapperDto.getFiComment();
                 }
 
-                List<String> msg = inspectPhotoSave(inspeot, strMessage, inspeotMapperDto.getAddPhotoList(), inspeotMapperDto.getFiType(), AWSBUCKETURL, login_id);
+                List<String> msg = inspectPhotoSave(inspeot, strMessage, inspeotMapperDto.getAddPhotoList(), inspeotMapperDto.getFiType(), AWSBUCKETURL, login_id, "2");
                 log.info("msg : "+msg);
 
                 if(type.equals("2")){
@@ -543,7 +543,7 @@ public class InspectService {
     }
 
     // 검품 사진파일 등록 함수
-    public List<String> inspectPhotoSave(Inspeot inspeot, String strMessage, List<MultipartFile> addPhotoList, String fiType, String AWSBUCKETURL, String login_id) throws IOException {
+    public List<String> inspectPhotoSave(Inspeot inspeot, String strMessage, List<MultipartFile> addPhotoList, String fiType, String AWSBUCKETURL, String login_id, String type) throws IOException {
 
         List<String> objects = new ArrayList<>();
 
@@ -599,7 +599,9 @@ public class InspectService {
 
         }else{
             log.info("첨부파일이 존재하지 않습니다");
-            inspeot.setFiPhotoYn("N");
+            if(type.equals("2")){
+                inspeot.setFiPhotoYn("N");
+            }
             saveInspeot = inspeotRepository.save(inspeot);
             objects.add("");
         }

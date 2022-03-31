@@ -42,6 +42,8 @@ public class IssueDispatchDto {
     private BigInteger t06Count; // 운동화 갯수
     private BigInteger t07Count; // 침구,커튼 갯수
     private BigInteger t08Count; // 오염제거 갯수
+    private BigInteger t09Count; // 확인품 갯수
+    private BigInteger t10Count; // 강제 갯수
     private BigInteger total; // 총 합계
 
     public StringBuffer getTagNo() {
