@@ -286,7 +286,7 @@ public class ManagerRestController {
     @PostMapping("branchRelease")
     @ApiOperation(value = "접수테이블의 상태 변화" , notes = "지사출고취소(type : 1), 지사반품(type : 2), 가맹점강제출고(type : 3)를 요청한다.")
     @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
-    public ResponseEntity<Map<String,Object>> branchReleaseCancel(@RequestParam(value="fdIdList", defaultValue="") List<Long> fdIdList,
+    public ResponseEntity<Map<String,Object>> branchRelease(@RequestParam(value="fdIdList", defaultValue="") List<Long> fdIdList,
                                                                   @RequestParam("type")String type, HttpServletRequest request){
         return receiptReleaseService.branchRelease(fdIdList, type, request);
     }

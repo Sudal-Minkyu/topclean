@@ -910,10 +910,12 @@ public class ReceiptService {
                     paymentInfo.put("approvalTime", paymentPaperDto.getFpCatApprovaltime());
                     paymentInfo.put("approvalNo", paymentPaperDto.getFpCatApprovalno());
                     paymentInfo.put("month", paymentPaperDto.getFpMonth());
-                    paymentInfo.put("payAmount", paymentPaperDto.getFpRealAmt());
+                    paymentInfo.put("fpAmt", paymentPaperDto.getFpAmt());
+                    paymentInfo.put("fpRealAmt", paymentPaperDto.getFpRealAmt());
                 }else{
                     paymentInfo.put("type", paymentPaperDto.getFpType());
-                    paymentInfo.put("payAmount", paymentPaperDto.getFpRealAmt());
+                    paymentInfo.put("fpAmt", paymentPaperDto.getFpAmt());
+                    paymentInfo.put("fpRealAmt", paymentPaperDto.getFpRealAmt());
                 }
 
                 fpCollectAmt = fpCollectAmt+ paymentPaperDto.getFpCollectAmt();

@@ -752,7 +752,6 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         sb.append("WHEN h.fi_customer_confirm IS NULL AND fd_s7_type = '02' THEN '04' \n");
         sb.append("WHEN h.fi_customer_confirm = 1 THEN '99' \n");
         sb.append("WHEN h.fi_customer_confirm = 2 THEN '07' \n");
-        sb.append("WHEN h.fi_customer_confirm = 2 THEN '07' \n");
         sb.append("WHEN h.fi_customer_confirm = 3 THEN '08' \n");
         sb.append("ELSE '01' \n");
         sb.append("END as fdS4Type\n");
@@ -1177,6 +1176,8 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
         QItem item = QItem.item;
         QCustomer customer = QCustomer.customer;
+        QInspeot inspeot = QInspeot.inspeot;
+
         JPQLQuery<RequestDetailBranchInspectListDto> query = from(requestDetail)
                 .innerJoin(requestDetail.frId, request)
                 .innerJoin(request.bcId, customer)
@@ -1184,10 +1185,12 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                 .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
                 .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
                 .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
+                .leftJoin(inspeot).on(inspeot.fdId.eq(requestDetail).and(inspeot.fiType.eq("B")))
                 .where(request.frConfirmYn.eq("Y"))
                 .where(request.brCode.eq(brCode).and(requestDetail.fdCancel.eq("N")))
                 .select(Projections.constructor(RequestDetailBranchInspectListDto.class,
                         requestDetail.id,
+                        inspeot.id,
                         franchise.frName,
                         requestDetail.insert_date,
                         requestDetail.fdS2Time,

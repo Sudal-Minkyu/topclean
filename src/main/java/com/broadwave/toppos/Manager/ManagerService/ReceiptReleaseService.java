@@ -285,6 +285,7 @@ public class ReceiptReleaseService {
     }
 
     //  접수테이블의 상태 변화 API - 지사출고취소, 지사반송, 가맹점입고 실행 함수
+    @Transactional
     public ResponseEntity<Map<String, Object>> branchRelease(List<Long> fdIdList, String type, HttpServletRequest request) {
         log.info("branchRelease 호출");
 
