@@ -1061,7 +1061,14 @@ footer.footer > ul > li + li:before {
 .stamp.blue {
 	color: #2f73ea;
 }
-.main__board-bcname,
+.main__board-bcname {
+    overflow: hidden;
+    display: inline-block;
+    width: 8rem;
+    margin-right: 0.625rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
 .main__board-afttag,
 .main__board-confirm {
     width: 5rem;
