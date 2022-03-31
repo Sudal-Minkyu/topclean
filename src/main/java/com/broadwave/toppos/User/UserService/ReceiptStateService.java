@@ -115,18 +115,10 @@ public class ReceiptStateService {
 //                log.info("가져온 frID 값 : "+requestDetailList.get(i).getFrId());
                     requestDetail.setFdPreState(stateType); // 이전상태 값
                     requestDetail.setFdPreStateDt(LocalDateTime.now());
-
-                    if(requestDetail.getFdS4Type().equals("01")){
-                        requestDetail.setFdState("S5");
-                        requestDetail.setFdS5Dt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
-                        requestDetail.setFdS5Time(LocalDateTime.now());
-                        requestDetail.setFdFrState("S5");
-                    }else{
-                        requestDetail.setFdState("S3");
-                        requestDetail.setFdS3Dt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
-                        requestDetail.setFdS3Time(LocalDateTime.now());
-                        requestDetail.setFdFrState("S3");
-                    }
+                    requestDetail.setFdState("S5");
+                    requestDetail.setFdS5Dt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
+                    requestDetail.setFdS5Time(LocalDateTime.now());
+                    requestDetail.setFdFrState("S5");
                     requestDetail.setFdStateDt(LocalDateTime.now());
 
                     requestDetail.setFdFrStateTime(LocalDateTime.now());
