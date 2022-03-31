@@ -339,7 +339,6 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                 .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
                 .where(request.frConfirmYn.eq("Y"))
                 .where(requestDetail.frId.frCode.eq(frCode).and(requestDetail.fdCancel.eq("N").and(requestDetail.fdState.eq("S4"))))
-                .where(requestDetail.fdS4Type.eq("01").or(requestDetail.fdS4Type.eq("02")))
                 .select(Projections.constructor(RequestDetailFranchiseInListDto.class,
                         requestDetail.id,
                         requestDetail.fdS4Type,
