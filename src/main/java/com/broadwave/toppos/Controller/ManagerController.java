@@ -92,6 +92,11 @@ public class ManagerController {
     public String staystate(){
         return "manager/inandout/staystate";
     }
+    // 실시간접수현황
+    @RequestMapping("receptionstate")
+    public String receptionstate(){
+        return "manager/inandout/receptionstate";
+    }
 
     // 미납 관리
     // 미출고현황
@@ -111,6 +116,12 @@ public class ManagerController {
     public String businessday(){
         return "manager/setting/businessday";
     }
+    // 물건찾기
+    @RequestMapping("find")
+    public String find(){
+        return "manager/setting/find";
+    }
+
     // 게시판
     // Tag분실 게시판 - 리스트
     @RequestMapping("tagboard")
