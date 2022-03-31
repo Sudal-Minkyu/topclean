@@ -1,6 +1,5 @@
 package com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo;
 
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.Inspeot;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -25,7 +24,7 @@ public interface PhotoRepository extends JpaRepository<Photo,Long>, PhotoReposit
     @Transactional
     @Modifying
     @Query("delete from Photo a where a.fiId.id in :photoDeleteList")
-    void findByInspectPhotoDelete(List<Long> photoDeleteList);
+    void findByInspectPhotoDeleteList(List<Long> photoDeleteList);
 
     // 게시물ID로 삭제할 파일만 골라 찾기
     @Query("select a from Photo a where a.id in :deleteFileList")
@@ -33,5 +32,13 @@ public interface PhotoRepository extends JpaRepository<Photo,Long>, PhotoReposit
 
     @Query("select a from Photo a where a.fiId.id = :fiId")
     Photo findByPhoto(Long fiId);
+
+    @Query("select a from Photo a where a.fiId.id = :fdId")
+    List<Photo> findByInspectPhotoDeleteListData(Long fdId);
+
+    @Transactional
+    @Modifying
+    @Query("delete from Photo a where a.fiId.id = :fiId")
+    void findByInspectPhotoDelete(Long fiId);
 
 }

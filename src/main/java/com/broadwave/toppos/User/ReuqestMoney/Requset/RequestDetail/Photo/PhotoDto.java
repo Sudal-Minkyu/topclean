@@ -14,6 +14,7 @@ import lombok.*;
 @AllArgsConstructor
 public class PhotoDto {
 
+    private Long fiId;
     private String ffPath; // S3파일경로
     private String ffFilename; // S3파일명
     private String ffRemark; // 특이사항

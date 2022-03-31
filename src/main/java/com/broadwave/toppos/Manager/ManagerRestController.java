@@ -323,11 +323,19 @@ public class ManagerRestController {
         return inspectService.InspectionSave(inspeotMapperDto, request, AWSBUCKETURL,"2");
     }
 
-    //  등록 확인품 삭제
+    //  NEW 택분실게시판 - 삭제
+    @ApiOperation(value = "확인품 삭제" , notes = "지사가 확인품 글을 삭제한다 ")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
     @PostMapping("branchInspectionDelete")
-    public ResponseEntity<Map<String,Object>> branchInspectionDelete(@RequestBody InspeotSet inspeotSet){
-        return inspectService.InspectionDelete(inspeotSet);
+    public ResponseEntity<Map<String,Object>> branchInspectionDelete(@RequestParam("fiId")Long fiId, HttpServletRequest request) {
+        return inspectService.InspectionDelete(fiId, "2", request);
     }
+
+//    //  등록 확인품 삭제
+//    @PostMapping("branchInspectionDelete")
+//    public ResponseEntity<Map<String,Object>> branchInspectionDelete(@RequestBody InspeotSet inspeotSet){
+//        return inspectService.InspectionDelete(inspeotSet);
+//    }
 
     //  확인품현황 리스트 호출API
     @GetMapping("branchInspectionCurrentList")

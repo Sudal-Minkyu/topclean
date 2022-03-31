@@ -14,7 +14,6 @@ import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.Insp
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.*;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotRepositoryCustom;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotSet;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.MessageHistory.MessageHistory;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.MessageHistory.MessageHistoryRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.Photo;
@@ -451,7 +450,7 @@ public class InspectService {
 //                        log.info("filename : "+filename);
                     awss3Service.deleteObject(path,filename);
                 }
-                photoRepository.findByInspectPhotoDelete(inspeotMapperDto.getDeletePhotoList());
+                photoRepository.findByInspectPhotoDeleteList(inspeotMapperDto.getDeletePhotoList());
             }
 
             Inspeot inspeot;
@@ -609,44 +608,83 @@ public class InspectService {
         return objects;
     }
 
-
     //  통합조회용 - 등록 검품 삭제
-    @Transactional
-    public ResponseEntity<Map<String, Object>> InspectionDelete(InspeotSet inspeotSet) {
-        log.info("franchiseInspectionDelete 호출");
-
+    public ResponseEntity<Map<String, Object>> InspectionDelete(Long fiId, String type, HttpServletRequest request) {
+        log.info("InspectionDelete 호출");
+        log.info("fiId : "+fiId);
         AjaxResponse res = new AjaxResponse();
 
-        ArrayList<InspeotDto> list = inspeotSet.getList();
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String brCode = (String) claims.get("brCode"); // 현재 지사의 코드(2자리) 가져오기
+        String login_id = claims.getSubject(); // 현재 아이디
+        log.info("현재 접속한 아이디 : "+login_id);
+        log.info("현재 접속한 지사 코드 : "+brCode);
 
-        if(list.size() != 0){
-            List<Long> inspeotDeleteList = new ArrayList<>();
-            List<Long> photoDeleteList = new ArrayList<>();
-            for(InspeotDto inspeotDto : list){
-                inspeotDeleteList.add(inspeotDto.getFiId());
+        Optional<Inspeot> inspeot = inspeotRepository.findById(fiId);
+        // AWS 파일 삭제
+        List<Photo> photoList = photoRepository.findByInspectPhotoDeleteListData(fiId);
+        for(Photo photo : photoList){
+            String insertDate =photo.getInsertDateTime().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+            String path;
+            if(type.equals("1")){
+                path = "/toppos-franchise-inspection/"+insertDate;
+            }else{
+                path = "/toppos-manager-inspection/"+insertDate;
             }
+            log.info("path : "+path);
+            String filename = photo.getFfFilename();
+            log.info("filename : "+filename);
+            awss3Service.deleteObject(path,filename);
+        }
 
-            List<InspeotDto> inspeotDtos = inspeotRepositoryCustom.findByInspeotDtoList(inspeotDeleteList);
-            for(InspeotDto inspeotDto : inspeotDtos){
-                if(inspeotDto.getFiPhotoYn().equals("Y")){
-                    photoDeleteList.add(inspeotDto.getFiId());
-                }
-            }
-
-            try {
-                if(inspeotDeleteList.size() != 0){
-                    inspeotRepository.findByInspectDelete(inspeotDeleteList);
-                }
-                if(photoDeleteList.size() != 0){
-                    photoRepository.findByInspectPhotoDelete(photoDeleteList);
-                }
-            }catch (Exception e){
-                log.info("예외 발생 : "+e);
-            }
+        if(inspeot.isPresent()){
+            photoRepository.findByInspectPhotoDelete(inspeot.get().getId());
+            inspeotRepository.delete(inspeot.get());
+        }else{
+            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP030.getCode(), "삭제 할 검품이 "+ResponseErrorCode.TP030.getDesc(), null, null));
         }
 
         return ResponseEntity.ok(res.success());
     }
+
+//    //  통합조회용 - 등록 검품 삭제
+//    @Transactional
+//    public ResponseEntity<Map<String, Object>> InspectionDelete(Long InspectionDelete) {
+//        log.info("franchiseInspectionDelete 호출");
+//
+//        AjaxResponse res = new AjaxResponse();
+//
+//        ArrayList<InspeotDto> list = inspeotSet.getList();
+//
+//        if(list.size() != 0){
+//            List<Long> inspeotDeleteList = new ArrayList<>();
+//            List<Long> photoDeleteList = new ArrayList<>();
+//            for(InspeotDto inspeotDto : list){
+//                inspeotDeleteList.add(inspeotDto.getFiId());
+//            }
+//
+//            List<InspeotDto> inspeotDtos = inspeotRepositoryCustom.findByInspeotDtoList(inspeotDeleteList);
+//            for(InspeotDto inspeotDto : inspeotDtos){
+//                if(inspeotDto.getFiPhotoYn().equals("Y")){
+//                    photoDeleteList.add(inspeotDto.getFiId());
+//                }
+//            }
+//
+//            try {
+//                if(inspeotDeleteList.size() != 0){
+//                    inspeotRepository.findByInspectDelete(inspeotDeleteList);
+//                }
+//                if(photoDeleteList.size() != 0){
+//                    photoRepository.findByInspectPhotoDelete(photoDeleteList);
+//                }
+//            }catch (Exception e){
+//                log.info("예외 발생 : "+e);
+//            }
+//        }
+//
+//        return ResponseEntity.ok(res.success());
+//    }
 
     //  통합조회 - 검품 리스트 요청
     public ResponseEntity<Map<String, Object>> franchiseInspectionList(Long fdId, String type) {

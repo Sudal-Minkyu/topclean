@@ -29,6 +29,7 @@ public class PhotoRepositoryCustomImpl extends QuerydslRepositorySupport impleme
         JPQLQuery<PhotoDto> query = from(photo)
                 .where(photo.fdId.id.eq(fdId))
                 .select(Projections.constructor(PhotoDto.class,
+                        photo.id,
                         photo.ffPath,
                         photo.ffFilename,
                         photo.ffRemark
@@ -43,6 +44,7 @@ public class PhotoRepositoryCustomImpl extends QuerydslRepositorySupport impleme
         JPQLQuery<PhotoDto> query = from(photo)
                 .where(photo.fiId.id.eq(fiId)).limit(6)
                 .select(Projections.constructor(PhotoDto.class,
+                        photo.id,
                         photo.ffPath,
                         photo.ffFilename,
                         photo.ffRemark

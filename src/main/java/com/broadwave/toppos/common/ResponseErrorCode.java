@@ -36,7 +36,7 @@ public enum ResponseErrorCode {
     TP027("TP027", "새로고침이후 다시 시도해주세요."),
     TP028("TP028", "대상이 아닙니다."),
     TP029("TP029", "상품을 선택해주세요."),
-    TP030("TP030", "존재하지 않습니다."),
+    TP030("재", "존재하지 않습니다."),
     ;
 
     private String code;

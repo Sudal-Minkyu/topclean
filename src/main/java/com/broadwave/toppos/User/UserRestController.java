@@ -931,9 +931,11 @@ public class UserRestController {
     }
 
     //  통합조회용 - 등록 검품 삭제
+    @ApiOperation(value = "확인품 삭제" , notes = "가맹점이 가맹검품 글을 삭제한다 ")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
     @PostMapping("franchiseInspectionDelete")
-    public ResponseEntity<Map<String,Object>> franchiseInspectionDelete(@RequestBody InspeotSet inspeotSet){
-        return inspectService.InspectionDelete(inspeotSet);
+    public ResponseEntity<Map<String,Object>> franchiseInspectionDelete(@RequestParam("fiId")Long fiId, HttpServletRequest request) {
+        return inspectService.InspectionDelete(fiId, "1", request);
     }
 
     //  통합조회용 - 검품 리스트 요청

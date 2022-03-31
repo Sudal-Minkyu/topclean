@@ -105,7 +105,10 @@ public class IssueRepositoryCustomImpl extends QuerydslRepositorySupport impleme
 
         sb.append("WITH RECURSIVE printdata AS ( \n");
         sb.append("SELECT b.fd_tag, a.mi_no, \n");
-        sb.append("CASE  WHEN b.fd_s4_type = '06' or b.fd_s4_type = '08' THEN 'T02' \n"); // 반품
+        sb.append("CASE \n"); // 반품
+        sb.append("WHEN b.fd_s4_type = '05' or b.fd_s4_type = '06' or b.fd_s4_type = '07' or b.fd_s4_type = '08' THEN 'T09' \n"); // 확인품
+        sb.append("WHEN b.fd_s4_type = '02' THEN 'T10' \n"); // 강제
+        sb.append("WHEN b.fd_s4_type = '04' THEN 'T02' \n"); // 반품
         sb.append("WHEN IFNULL(b.fd_retry_yn,'') ='Y' THEN 'T03' \n"); // 재세탁
         sb.append("WHEN left(b.bi_itemcode,3) ='D15' THEN 'T04' \n"); // 가죽, 특수세탁
         sb.append("WHEN left(b.bi_itemcode,3) ='D17' THEN 'T05' \n"); // 털,부속품
