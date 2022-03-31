@@ -99,7 +99,7 @@
         </div>
     </section>
 
-    <!-- 확인품확인 팝업 -->
+<!-- 
 	<div id="checkPop" class="pop">
 		<div class="pop__box">
 			<div class="pop__article">
@@ -146,9 +146,10 @@
 			</ul>
 		</div>
 	</div>
+-->
 
     <!-- 확인품 상세보기 -->
-    <div class="pop">
+    <div id="checkPop" class="pop">
         <div class="pop__box">
             <div class="pop__article">
                 <div class="pop__article-head">
@@ -157,27 +158,6 @@
                 <div class="tag-pop">
                     <div class="tag-imgs">
                         <ul id="photoList" class="tag-imgs__list">
-                            <li class="tag-imgs__item">
-                                <a href="https://bw-toppos-images.s3.ap-northeast-2.amazonaws.com/toppos-manager-tagGallery/20220325/b164267f7f574592b88f3cade0f5595f.png" data-lightbox="images" data-title="이미지 확대">
-                                    <img src="https://bw-toppos-images.s3.ap-northeast-2.amazonaws.com/toppos-manager-tagGallery/20220325/s_b164267f7f574592b88f3cade0f5595f.png" class="tag-imgs__img" alt="">
-                                </a>
-                            </li><li class="tag-imgs__item">
-                                <a href="https://bw-toppos-images.s3.ap-northeast-2.amazonaws.com/toppos-manager-tagGallery/20220325/b164267f7f574592b88f3cade0f5595f.png" data-lightbox="images" data-title="이미지 확대">
-                                    <img src="https://bw-toppos-images.s3.ap-northeast-2.amazonaws.com/toppos-manager-tagGallery/20220325/s_b164267f7f574592b88f3cade0f5595f.png" class="tag-imgs__img" alt="">
-                                </a>
-                            </li><li class="tag-imgs__item">
-                                <a href="https://bw-toppos-images.s3.ap-northeast-2.amazonaws.com/toppos-manager-tagGallery/20220325/b164267f7f574592b88f3cade0f5595f.png" data-lightbox="images" data-title="이미지 확대">
-                                    <img src="https://bw-toppos-images.s3.ap-northeast-2.amazonaws.com/toppos-manager-tagGallery/20220325/s_b164267f7f574592b88f3cade0f5595f.png" class="tag-imgs__img" alt="">
-                                </a>
-                            </li><li class="tag-imgs__item">
-                                <a href="https://bw-toppos-images.s3.ap-northeast-2.amazonaws.com/toppos-manager-tagGallery/20220325/b164267f7f574592b88f3cade0f5595f.png" data-lightbox="images" data-title="이미지 확대">
-                                    <img src="https://bw-toppos-images.s3.ap-northeast-2.amazonaws.com/toppos-manager-tagGallery/20220325/s_b164267f7f574592b88f3cade0f5595f.png" class="tag-imgs__img" alt="">
-                                </a>
-                            </li><li class="tag-imgs__item">
-                                <a href="https://bw-toppos-images.s3.ap-northeast-2.amazonaws.com/toppos-manager-tagGallery/20220325/b164267f7f574592b88f3cade0f5595f.png" data-lightbox="images" data-title="이미지 확대">
-                                    <img src="https://bw-toppos-images.s3.ap-northeast-2.amazonaws.com/toppos-manager-tagGallery/20220325/s_b164267f7f574592b88f3cade0f5595f.png" class="tag-imgs__img" alt="">
-                                </a>
-                            </li>
                         </ul>
                     </div>
                 </div>
@@ -189,7 +169,7 @@
 				</div>
 				
 				<div class="pop__article-content">
-					<textarea readonly></textarea>
+					<textarea id="fiComment" readonly></textarea>
 				</div>
 			</div>
 
@@ -198,19 +178,19 @@
 					<div class="pop__console-cost">
 						<div class="pop__console-title">접수금액</div>
 						<div class="pop__console-input">
-							<div class="c-text"><input type="text" readonly="readonly" /></div>
+							<div class="c-text"><input type="text" readonly="readonly" id="fdTotAmtInPut" /></div>
 						</div>
 					</div>
 					<div class="pop__console-cost">
 						<div class="pop__console-title">추가비용</div>
 						<div class="pop__console-input">
 							<div class="c-text">
-								<input type="text" readonly="readonly" />
+								<input id="fiAddAmt" type="text" readonly="readonly" />
 							</div>
 						</div>
 					</div>
 				</li>
-				<li><button id="closeTaglostPop" class="c-button">닫기</button></li>
+				<li><button type="button" class="c-button" id="closeCheckPop">닫기</button></li>
 			</ul>
         </div>
     </div>
