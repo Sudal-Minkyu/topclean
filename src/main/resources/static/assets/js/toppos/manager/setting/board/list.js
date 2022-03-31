@@ -42,6 +42,7 @@ const dtos = {
 const urls = {
     taglost: "/api/manager/lostNoticeList",
     notice: "/api/manager/noticeList",
+    brnotice: "",
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
@@ -58,7 +59,7 @@ const comms = {
         
         CommonUI.ajax(urls[wares.boardType], "PARAM", condition, function (res) {
             dtos.receive.getPostList.datalist[wares[wares.boardType].idKeyName] = "n"; // 검사 조건에 임의로 각 게시판의 아이디 추가
-            if(wares.boardType !== "notice") dtos.receive.getPostList.datalist.numOfComment = "n";
+            if(!["notice", "brnotice"].includes(wares.boardType)) dtos.receive.getPostList.datalist.numOfComment = "n";
             dv.chk(res, dtos.receive.getPostList, "게시글들 받아오기");
             wares.totalPage = res.total_page;
             createPagingNavigator(wares.page);
@@ -210,7 +211,9 @@ const wares = {
         title: "공지사항",
         idKeyName: "hnId",
     },
+    brnotice: {
 
+    },
 }
 
 $(function() { // 페이지가 로드되고 나서 실행

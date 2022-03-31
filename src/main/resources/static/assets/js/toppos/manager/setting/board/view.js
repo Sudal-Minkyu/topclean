@@ -54,9 +54,10 @@ const dtos = {
 const urls = {
     taglost: "/api/manager/lostNoticeView",
     notice: "/api/manager/noticeView",
+    brnotice: "",
     taglostReplyList: "/api/manager/lostNoticeCommentList",
-    putReply: "/api/manager/lostNoticeCommentSave",
-    deletePost: "/api/manager/lostNoticeDelete",
+    taglostPutReply: "/api/manager/lostNoticeCommentSave",
+    taglostDeletePost: "/api/manager/lostNoticeDelete",
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
@@ -91,7 +92,7 @@ const comms = {
         dtos.send.lostNoticeCommentSave[wares[wares.boardType].idKeyName] = "n";
         dtos.send.lostNoticeCommentSave[wares[wares.boardType].commentIdKeyName] = "";
         dv.chk(data, dtos.send.lostNoticeCommentSave, "덧글 달기와 수정 정보 보내기");
-        CommonUI.ajax(urls.putReply, "PARAM", data, function (res) {
+        CommonUI.ajax(urls[wares.boardType + "PutReply"], "PARAM", data, function (res) {
             $("#replyList").children().remove();
             $("#replyField").val("");
             const condition = {};
@@ -102,7 +103,7 @@ const comms = {
 
     deletePost(target) {
         dv.chk(target, dtos.send.lostNoticeDelete, "삭제할 글 아이디 보내기");
-        CommonUI.ajax(urls.deletePost, "PARAM", target, function (res) {
+        CommonUI.ajax(urls[wares.boardType + "DeletePost"], "PARAM", target, function (res) {
             alertSuccess("글을 삭제 하였습니다.");
             $("#successBtn").on("click", function () {
                 location.href = $(".listLink").first().attr("href");
@@ -159,6 +160,9 @@ const wares = {
         idKeyName: "hnId",
         dataKeyName: "noticeViewDto",
     },
+    brnotice: {
+
+    },
 }
 
 $(function() { // 페이지가 로드되고 나서 실행
@@ -176,7 +180,7 @@ function onPageLoad() {
 
     trigs.basic();
 
-    if(wares.boardType !== "notice") {
+    if(!["notice", "brnotice"].includes(wares.boardType)) {
         condition = {};
         condition[wares[wares.boardType].idKeyName] = parseInt(wares.id);
         comms.getReplyList(condition);
@@ -257,7 +261,7 @@ function setFields(data) {
     }
 
     /* 공지사항 게시판이 아닌 경우에만 덧글기능 활성화 */
-    if(wares.boardType !== "notice"){
+    if(!["notice", "brnotice"].includes(wares.boardType)){
         $(".reply").show();
     }
 

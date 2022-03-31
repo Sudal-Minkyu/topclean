@@ -133,9 +133,6 @@ class CommonUIClass {
 
                     const paymentData = res.sendData.paymentData;
                     paymentData.items = res.sendData.items;
-                    paymentData.items.forEach(obj => {
-                        obj.color = colorName[obj.color];
-                    });
 
                     paymentData.estimateDt = paymentData.items[0].estimateDt;
                     paymentData.franchiseTel = CommonUI.formatTel(paymentData.franchiseTel);

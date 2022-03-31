@@ -25,8 +25,8 @@ const dtos = {
 
 /* 통신에 사용되는 url들 기입 */
 const urls = {
-    getReplyList: "/api/user/lostNoticeCommentList",
-    putReply: "/api/user/lostNoticeCommentSave",
+    taglostGetReplyList: "/api/user/lostNoticeCommentList",
+    taglostPutReply: "/api/user/lostNoticeCommentSave",
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
@@ -37,7 +37,7 @@ const comms = {
         dtos.receive.getReply[wares[wares.boardType].commentIdKeyName] = "n";
         dtos.receive.getReply[wares[wares.boardType].commentKeyName] = "s";
 
-        CommonUI.ajax(urls.getReplyList, "GET", condition, function (res) {
+        CommonUI.ajax(urls[wares.boardType + "GetReplyList"], "GET", condition, function (res) {
             const data = res.sendData.commentListDto;
             dv.chk(data, dtos.receive.getReply, "조회한 덧글 가져오기");
             data.forEach(obj => {
@@ -50,7 +50,7 @@ const comms = {
         dtos.send.lostNoticeCommentSave[wares[wares.boardType].idKeyName] = "n";
         dtos.send.lostNoticeCommentSave[wares[wares.boardType].commentIdKeyName] = "";
         dv.chk(data, dtos.send.lostNoticeCommentSave, "덧글 달기와 수정 정보 보내기");
-        CommonUI.ajax(urls.putReply, "PARAM", data, function (res) {
+        CommonUI.ajax(urls[wares.boardType + "PutReply"], "PARAM", data, function (res) {
             $("#replyList").children().remove();
             $("#replyField").val("");
             const condition = {};

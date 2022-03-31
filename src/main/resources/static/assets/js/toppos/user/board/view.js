@@ -44,6 +44,7 @@ const dtos = {
 const urls = {
     taglost: "/api/user/lostNoticeView",
     notice: "/api/user/noticeView",
+    brnotice: "",
     taglostReplyList: "/api/user/lostNoticeCommentList",
 }
 
@@ -108,6 +109,9 @@ const wares = {
         idKeyName: "hnId",
         dataKeyName: "noticeViewDto",
     },
+    brnotice: {
+
+    },
 }
 
 $(function() { // 페이지가 로드되고 나서 실행
@@ -120,7 +124,7 @@ function onPageLoad() {
     let condition = {};
     condition[wares[wares.boardType].idKeyName] = parseInt(wares.id);
     comms.getData(condition);
-    if(wares.boardType !== "notice") {
+    if(!["notice", "brnotice"].includes(wares.boardType)) {
         condition = {};
         condition[wares[wares.boardType].idKeyName] = parseInt(wares.id);
         comms.getReplyList(condition);
@@ -193,7 +197,7 @@ function setFields(data) {
     }
 
     /* 덧글 본문 처리방식 결정되면 수정할 것 */
-    if(wares.boardType !== "notice"){
+    if(!["notice", "brnotice"].includes(wares.boardType)){
         $("#linkReply").show();
         $("#replyList").show();
         $("#replyList").css("height", "300px");

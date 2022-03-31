@@ -43,6 +43,7 @@ const dtos = {
 const urls = {
     taglost: "/api/user/lostNoticeList",
     notice: "/api/user/noticeList",
+    brnotice: "",
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
@@ -216,6 +217,10 @@ const wares = {
         title: "공지사항",
         idKeyName: "hnId",
     },
+    brnotice: {
+        title: "지사 공지사항",
+        idKeyName: "",
+    }
 
 }
 

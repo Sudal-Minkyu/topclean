@@ -43,7 +43,7 @@ const dtos = {
                 approvalTime: "s", // fpCatApprovaltime
                 approvalNo: "s", // fpCatApprovalno
                 month: "n", // fpMonth
-                payAmount: "nr", // 결제금액
+                fpRealAmt: "nr", // 결제금액
             }
         }
     },
