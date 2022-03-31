@@ -120,6 +120,7 @@ const comms = {
     },
 
     getMainGridList(searchCondition) {
+        wares.searchCondition = searchCondition;
         dv.chk(searchCondition, dtos.send.branchReceiptReturnList, "메인 그리드 검색 조건 보내기");
         CommonUI.ajax(urls.getMainGridList, "GET", searchCondition, function (res) {
             const data = CommonUI.toppos.killNullFromArray(res.sendData.gridListData);
@@ -143,7 +144,7 @@ const comms = {
     getInspectionNeo(condition) {
         CommonUI.ajax(urls.getInspectionNeo, "GET", condition, function (res) {
             const data = res.sendData;
-
+            console.log(data);
             const refinedData = {
                 fdId: wares.currentRequest.fdId,
                 fiId: data.inspeotInfoDto.fiId,
@@ -164,7 +165,7 @@ const comms = {
                     <a href="${photo.ffPath + photo.ffFilename}" data-lightbox="images" data-title="이미지 확대">
                         <img src="${photo.ffPath + "s_" + photo.ffFilename}" class="tag-imgs__img" alt=""/>
                     </a>
-                    <button class="tag-imgs__delete deletePhotoBtn" data-ffId="${"1"}">삭제</button>
+                    <button class="tag-imgs__delete deletePhotoBtn" data-ffId="${photo.ffId}">삭제</button>
                 </li>`
                 $("#photoList").append(photoHtml);
                 $("#noImgScreen").hide();
@@ -225,6 +226,10 @@ const comms = {
             $("#fiComment").val("");
             $("#fiAddAmt").val("0");
             alertSuccess("확인품내역이 저장되었습니다.");
+            $("#successBtn").on("click", function () {
+                closeCheckPop();
+            });
+            comms.getMainGridList(wares.searchCondition);
         });
     },
 };
@@ -327,9 +332,13 @@ const grids = {
                         type: "TemplateRenderer",
                     },
                     labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
-                        let template = `
-                                <button type="button" class="c-button c-button--supersmall">등록</button>
-                            `;
+                        let template = "";
+                        if(item.fiId) {
+                            template = `<button type="button" class="c-button c-button--supersmall c-button--green">수정</button>`;
+                        } else {
+                            template = `<button type="button" class="c-button c-button--supersmall c-button--solid">등록</button>`;
+                        }
+                        
                         return template;
                     },
                 }
@@ -474,17 +483,7 @@ const trigs = {
             });
 
             $("#closeCheckPop").on("click", function () {
-                grids.f.updateRowsById(0, wares.currentRequest);
-                $("#checkPop").removeClass("active");
-                if(wares.isCameraExist) {
-                    try {
-                        wares.cameraStream.getTracks().forEach(function (track) {
-                            track.stop();
-                        });
-                    }catch (e) {
-                        CommonUI.toppos.underTaker(e, "checkregist : 카메라 스트림 찾아서 끄기");
-                    }
-                }
+                closeCheckPop();
             });
 
             $("#fiAddAmt").on("keyup", function () {
@@ -524,11 +523,11 @@ const trigs = {
 
             $("#photoList").on("click", ".deletePhotoBtn", function() {
                 console.log(this);
-                const bfId = $(this).attr("data-bfId");
+                const ffId = $(this).attr("data-ffId");
                 const addIdx = $(this).attr("data-addIdx");
-                if(bfId) {
+                if(ffId) {
                     if(!wares.currentRequest.deletePhotoList) wares.currentRequest.deletePhotoList = [];
-                    wares.currentRequest.deletePhotoList.push(parseInt(bfId));
+                    wares.currentRequest.deletePhotoList.push(parseInt(ffId));
                 }
                 if(addIdx) {
                     delete wares.currentRequest.addPhotoList[addIdx];
@@ -652,11 +651,6 @@ async function openCheckPop(e) {
         comms.getInspectionNeo(searchCondition);
     }
     $("#checkPop").addClass("active");
-}
-
-function resetCheckPop() {
-    $("#fiComment").val("");
-    $("#fiAddAmt").val("0");
 }
 
 function ynStyle(rowIndex, columnIndex, value, headerText, item, dataField) {
@@ -785,4 +779,25 @@ function saveInspect() {
     formData.append("fiType", "B");
     
     comms.putNewInspectNeo(formData);
+}
+
+function resetCheckPop() {
+    $("#fdTotAmtInPut").val("");
+    $("#fiAddAmt").val("");
+    $("#fiComment").val("");
+    $("#photoList").html("");
+    $("#noImgScreen").show();
+}
+
+function closeCheckPop() {
+    $("#checkPop").removeClass("active");
+    if(wares.isCameraExist) {
+        try {
+            wares.cameraStream.getTracks().forEach(function (track) {
+                track.stop();
+            });
+        }catch (e) {
+            CommonUI.toppos.underTaker(e, "checkregist : 카메라 스트림 찾아서 끄기");
+        }
+    }
 }
