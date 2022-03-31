@@ -45,6 +45,13 @@ const comms = {
             grids.f.setData(0, data);
         });
     },
+
+    entryPass(password) {
+		const url = "/api/user/franchiseCheck";
+		CommonUI.ajax(url, "GET", password, function (res) {
+			$(".password").hide();
+		});
+	},
 };
 
 /* .s : AUI 그리드 관련 설정들
@@ -229,7 +236,34 @@ const trigs = {
             $("#filterByDate").on("click", function () {
                 getRefinedData();
             });
-        }
+        },
+
+        entryPass() {
+			$("#entryPassword").on("keyup", function (e) {
+                if(e.originalEvent.code === "Enter" || e.originalEvent.code === "NumpadEnter") {
+					const password = {
+						password: $("#entryPassword").val(),
+					}
+					comms.entryPass(password);
+                }
+			});
+
+			$("#entryPasswordKeyboard").on("click", function () {
+				vkey.showKeyboard("entryPassword", {title: "계정 비밀번호 입력", callback: function () {
+                    const password = {
+                        password: $("#entryPassword").val(),
+                    }
+                    comms.entryPass(password);
+                }});
+			});
+
+			$("#entryPasswordConfirm").on("click", function () {
+				const password = {
+					password: $("#entryPassword").val(),
+				}
+				comms.entryPass(password);
+			});
+		},
     },
     r: { // 이벤트 해제
 
@@ -247,13 +281,14 @@ $(function() { // 페이지가 로드되고 나서 실행
 
 /* 페이지가 로드되고 나서 실행 될 코드들을 담는다. */
 function onPageLoad() {
-
     grids.f.initialization();
     grids.f.create();
 
     trigs.s.basic();
+	trigs.s.entryPass();
 
     enableDatepicker();
+    window.vkey = new VKeyboard();
 }
 
 function enableDatepicker() {

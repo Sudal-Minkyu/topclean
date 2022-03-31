@@ -26,7 +26,7 @@ const dtos = {
         },
  */
         branchInspectionSaveNeo: {
-            fdId: "nr",
+            fdId: "nr", // 수정시에는 fiId도
             fiAddAmt: "nr",
             fiComment: "s",
             fiType: "sr",
@@ -101,6 +101,7 @@ const urls = {
     putNewInspect: "/api/manager/branchInspectionSave",
     putNewInspectNeo: "/api/manager/branchInspectionSave",
     deleteInspection: "/api/manager/branchInspectionDelete",
+    getInspectionNeo: "/api/manager/branchInspectionInfo",
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
@@ -126,14 +127,48 @@ const comms = {
             grids.f.setData(0, data);
         });
     },
-
+/* 
     getInspectionList(condition) {
         dv.chk(condition, dtos.send.branchInspectionList, "등록된 검품조회 조건");
         CommonUI.ajax(urls.getInspectionList, "GET", condition, function(res) {
+            console.log(res);
             const data = res.sendData.gridListData;
             dv.chk(data, dtos.receive.branchInspectionList, "등록된 검품의 조회");
             grids.f.clearData(1);
             grids.f.setData(1, data);
+        });
+    },
+*/
+
+    getInspectionNeo(condition) {
+        CommonUI.ajax(urls.getInspectionNeo, "GET", condition, function (res) {
+            const data = res.sendData;
+
+            const refinedData = {
+                fdId: wares.currentRequest.fdId,
+                fiId: data.inspeotInfoDto.fiId,
+                fiComment: data.inspeotInfoDto.fiComment,
+                fiAddAmt: data.inspeotInfoDto.fiAddAmt,
+                fiCustomerConfirm: data.inspeotInfoDto.fiCustomerConfirm,
+                fiPhotoYn: data.inspeotInfoDto.fiPhotoYn,
+                fiSendMsgYn: data.inspeotInfoDto.fiSendMsgYn,
+                photoList: data.photoList,
+            }
+
+            wares.currentRequest = refinedData;
+            
+            $("#fiComment").val(data.inspeotInfoDto.fiComment);
+            $("#fiAddAmt").val(data.inspeotInfoDto.fiAddAmt.toLocaleString());
+            for(const photo of wares.currentRequest.photoList) {
+                const photoHtml = `<li class="tag-imgs__item">
+                    <a href="${photo.ffPath + photo.ffFilename}" data-lightbox="images" data-title="이미지 확대">
+                        <img src="${photo.ffPath + "s_" + photo.ffFilename}" class="tag-imgs__img" alt=""/>
+                    </a>
+                    <button class="tag-imgs__delete deletePhotoBtn" data-ffId="${"1"}">삭제</button>
+                </li>`
+                $("#photoList").append(photoHtml);
+                $("#noImgScreen").hide();
+            }
         });
     },
 
@@ -173,22 +208,24 @@ const comms = {
         const testObj = Object.fromEntries(formData);
         testObj.fdId = parseInt(testObj.fdId);
         testObj.fiAddAmt = parseInt(testObj.fiAddAmt) | 0;
+        if(!testObj.addPhotoList) testObj.addPhotoList = []; // btId값이 없는 신규등록건
         if(!testObj.deletePhotoList) testObj.deletePhotoList = []; // btId값이 없는 신규등록건
         
         dv.chk(testObj, dtos.send.branchInspectionSaveNeo, "확인품 등록");
 
         console.log(testObj);
-        // CommonUI.ajax(urls.putNewInspectNeo, "POST", formData, function (res) {
-        //     const searchCondition = {
-        //         fdId: testObj.fdId,
-        //         type: "2"
-        //     };
-        //     wares.currentRequest.fdState = "B";
-        //     comms.getInspectionList(searchCondition);
-        //     $("#fiComment").val("");
-        //     $("#fiAddAmt").val("0");
-        //     alertSuccess("확인품내역이 저장되었습니다.");
-        // });
+        CommonUI.ajax(urls.putNewInspectNeo, "POST", formData, function (res) {
+
+            // const searchCondition = {
+            //     fdId: testObj.fdId,
+            //     type: "2"
+            // };
+            // wares.currentRequest.fdState = "B";
+            // comms.getInspectionList(searchCondition);
+            $("#fiComment").val("");
+            $("#fiAddAmt").val("0");
+            alertSuccess("확인품내역이 저장되었습니다.");
+        });
     },
 };
 
@@ -600,19 +637,20 @@ async function openCheckPop(e) {
 
     
     $("#fdTotAmtInPut").val(wares.currentRequest.fdTotAmt.toLocaleString());
-    if(wares.isCameraExist) {
-        $("#isIncludeImg").prop("checked", true);
-        $("#isIncludeImg").prop("disabled", false);
-    }else{
-        $("#isIncludeImg").prop("checked", false);
-        $("#isIncludeImg").prop("disabled", true);
+    // if(wares.isCameraExist) {
+    //     $("#isIncludeImg").prop("checked", true);
+    //     $("#isIncludeImg").prop("disabled", false);
+    // }else{
+    //     $("#isIncludeImg").prop("checked", false);
+    //     $("#isIncludeImg").prop("disabled", true);
+    // }
+    // grids.f.resize(1);
+    if(e.item.fiId) {
+        const searchCondition = {
+            fiId: e.item.fiId,
+        }
+        comms.getInspectionNeo(searchCondition);
     }
-    grids.f.resize(1);
-    const searchCondition = {
-        fdId: e.item.fdId,
-        type: "2"
-    }
-    comms.getInspectionList(searchCondition);
     $("#checkPop").addClass("active");
 }
 
@@ -712,6 +750,7 @@ function takePhoto() {
                 </a>
                 <button class="tag-imgs__delete deletePhotoBtn" data-addIdx="${wares.currentRequest.addPhotoList.length}">삭제</button>
             </li>`
+
             wares.currentRequest.addPhotoList.push(blob);
             
             $("#photoList").append(photoHtml);
@@ -733,6 +772,10 @@ function saveInspect() {
     }
     
     formData.append("fdId", wares.currentRequest.fdId);
+    if(wares.currentRequest.fiId) {
+        formData.append("fiId", wares.currentRequest.fiId);
+    }
+
     if(wares.currentRequest.deletePhotoList) {
         formData.append("deletePhotoList", wares.currentRequest.deletePhotoList);
     }

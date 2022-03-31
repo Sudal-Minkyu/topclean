@@ -20,7 +20,7 @@
     <section class="section section--small">
         <article class="article">
             <div class="article__header">
-                <h3 class="article__heading">나의 정보 관리</h3>
+                <h3 class="article__heading">지사 정보 관리</h3>
             </div>
             <div class="article__body">
                 <table class="c-table">
@@ -32,39 +32,19 @@
                     </colgroup>
                     <tbody>
                         <tr>
-                            <th>아이디</th>
-                            <td colspan="3">
-                                <input type="text" readonly="readonly" />
-                            </td>
-                        </tr>
-                        <tr>
                             <th>지사코드</th>
                             <td>
-                                <input type="text" readonly="readonly" />
+                                <input id="brCode" type="text" readonly="readonly" />
                             </td>
                             <th>지사명</th>
                             <td>
-                                <input type="text" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>비밀번호</th>
-                            <td>
-                                <input type="password" />
-                            </td>
-                            <th>비밀번호 확인</th>
-                            <td>
-                                <input type="password" />
+                                <input id="brName" name="brName" type="text" />
                             </td>
                         </tr>
                         <tr>
                             <th>전화번호</th>
                             <td>
-                                <input type="text" />
-                            </td>
-                            <th>이메일</th>
-                            <td>
-                                <input type="text" />
+                                <input id="brTelNo" name="brTelNo" type="text" />
                             </td>
                         </tr>
                     </tbody>
@@ -80,7 +60,7 @@
     <section class="section section--small">
         <article class="article">
             <div class="article__header">
-                <h3 class="article__heading">비밀번호 변경</h3>
+                <h3 class="article__heading">나의 정보 관리</h3>
             </div>
             <div class="article__body">
                 <table class="c-table">
@@ -92,13 +72,33 @@
                     </colgroup>
                     <tbody>
                         <tr>
-                            <th>비밀번호</th>
+                            <th>아이디</th>
                             <td>
-                                <input type="password" />
+                                <input id="userId" type="text" readonly="readonly" />
+                            </td>
+                            <th>이메일</th>
+                            <td>
+                                <input id="userEmail" name="userEmail" type="text" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>전화번호</th>
+                            <td>
+                                <input id="userTel" name="userTel" type="text" />
+                            </td>
+                            <th>이메일</th>
+                            <td>
+                                <input id="userEmail" name="userEmail" type="text" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>비밀번호 변경</th>
+                            <td>
+                                <input id="userPassword" name="userPassword" type="password" />
                             </td>
                             <th>비밀번호 확인</th>
                             <td>
-                                <input type="password" />
+                                <input id="checkPassword" name="checkPassword" type="password" />
                             </td>
                         </tr>
                     </tbody>

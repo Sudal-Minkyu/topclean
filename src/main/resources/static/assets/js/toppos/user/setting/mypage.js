@@ -178,9 +178,9 @@ const comms = {
 	entryPass(password) {
 		const url = "/api/user/franchiseCheck";
 		CommonUI.ajax(url, "GET", password, function (res) {
+			comms.getFrInfo();
 			$(".password").hide();
 		});
-
 	},
 };
 
@@ -519,17 +519,6 @@ const trigs = {
 				$('#frTelNo').val(CommonUI.formatTel(telNum));
 			});
 
-			$("#entryPasswordKeyboard").on("click", function () {
-				vkey.showKeyboard("entryPassword", {title: "계정 비밀번호 입력"});
-			});
-
-			$("#entryPasswordConfirm").on("click", function () {
-				const password = {
-					password: $("#entryPassword").val(),
-				}
-				comms.entryPass(password);
-			});
-
 			$("#frDepositAmount").on("keyup", function () {
                 $(this).val($(this).val().toInt().toLocaleString());
             });
@@ -539,10 +528,32 @@ const trigs = {
             });
 		},
 
-		// 상용구, 수선항목, 추가항목 저장 버튼 클릭
-		saveFrFavorite() {
+		entryPass() {
+			$("#entryPassword").on("keyup", function (e) {
+                if(e.originalEvent.code === "Enter" || e.originalEvent.code === "NumpadEnter") {
+					const password = {
+						password: $("#entryPassword").val(),
+					}
+					comms.entryPass(password);
+                }
+			});
 
-		}
+			$("#entryPasswordKeyboard").on("click", function () {
+				vkey.showKeyboard("entryPassword", {title: "계정 비밀번호 입력", callback: function () {
+                    const password = {
+                        password: $("#entryPassword").val(),
+                    }
+                    comms.entryPass(password);
+                }});
+			});
+
+			$("#entryPasswordConfirm").on("click", function () {
+				const password = {
+					password: $("#entryPassword").val(),
+				}
+				comms.entryPass(password);
+			});
+		},
 	},
 	r: { // 이벤트 해제
 
@@ -661,10 +672,9 @@ function onPageLoad() {
 	vKeypad.f.initialization();
 	vKeypad.e.btnEvent();
 
-	comms.getFrInfo();
-
 	trigs.s.saveFrInfo();
 	trigs.s.basic();
+	trigs.s.entryPass();
 
 	/* grids.s 에 적절한 값을 세팅하였다면, 해당 함수 호출시 해당 배열번호의 그리드에 의도한 데이터들이 주입되어진다. */
 	// grids.f.setInitialData(0);
