@@ -21,6 +21,7 @@ import java.time.format.DateTimeFormatter;
 public class RequestDetailBranchInspectionCurrentListDto {
 
     private Long fdId; // 고유ID값
+    private Long fiId; // 고유ID값
     private String frName; // 가맹점명
     private LocalDateTime insertDt; // 접수일시
     private LocalDateTime fdS2Time; // 지사입고일시

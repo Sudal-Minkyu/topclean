@@ -1253,6 +1253,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                 .where(request.brCode.eq(brCode).and(requestDetail.fdCancel.eq("N")))
                 .select(Projections.constructor(RequestDetailBranchInspectionCurrentListDto.class,
                         requestDetail.id,
+                        inspeot.id,
                         franchise.frName,
                         requestDetail.insert_date,
                         requestDetail.fdS2Time,
