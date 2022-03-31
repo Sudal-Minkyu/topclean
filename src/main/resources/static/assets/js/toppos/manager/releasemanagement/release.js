@@ -104,6 +104,7 @@ const comms = {
                 `[${$("#frList option:selected").html()}] 상품이 ${wares.receiptList.length}건 조회되었습니다.`);
             grids.f.clearData(0);
             grids.f.clearData(1);
+            $("#inputTagNo").focus();
             // $("#listStatBar").show();
             // $("#exportXlsx").show();
         });
@@ -379,6 +380,10 @@ const grids = {
             AUIGrid.setRowPosition(grids.s.id[0], rowIndex - 2 ? rowIndex - 2 : 0);
             AUIGrid.setSelectionByIndex(grids.s.id[0], rowIndex, 4);
         },
+
+        getItemByTagNo(tagNo) {
+            return AUIGrid.getItemsByValue(grids.s.id[0], "fdTag", tagNo)[0];
+        }
     },
 };
 
@@ -436,10 +441,12 @@ const trigs = {
 
         $("#addAll").on("click", function () {
             grids.f.addAllData();
+            $("#inputTagNo").focus();
         });
 
         $("#clearUnchecked").on("click", function () {
             grids.f.removeUncheckedData();
+            $("#inputTagNo").focus();
         });
 
         const $miDegree = $("#miDegree");
@@ -573,13 +580,14 @@ function inputTag() {
             grids.f.addRow(0, obj);
             grids.f.addCheckedRowByTagNo(tagNo);
             grids.f.focusOn(tagNo);
+            const item = grids.f.getItemByTagNo(tagNo);
             listCheckChanged();
             noExist = false;
             if(obj.fdS4Type === "99") {
-                decideCheckResponse(obj);
+                decideCheckResponse(item);
                 return false;
             }
-            CommonUI.toppos.speak(CommonUI.toppos.makeSimpleProductName(obj));
+            CommonUI.toppos.speak(CommonUI.toppos.makeSimpleProductName(item));
         }
     });
 
@@ -730,6 +738,7 @@ function decideCheckResponse(item) {
         grids.f.updateRowsById(0, item);
         CommonUI.toppos.speak("출고 처리로 진행합니다.");
         $('#popupId').remove();
+        $("#inputTagNo").focus();
     });
 
     $("#popSecondBtn").on("click", function () {
@@ -738,6 +747,7 @@ function decideCheckResponse(item) {
         grids.f.updateRowsById(0, item);
         CommonUI.toppos.speak("반품 처리로 진행합니다.");
         $('#popupId').remove();
+        $("#inputTagNo").focus();
     });
     
     $("#popThirdBtn").on("click", function () {
@@ -746,6 +756,7 @@ function decideCheckResponse(item) {
         grids.f.addUncheckedRowByTagNo(item.fdTag);
         listCheckChanged();
         $('#popupId').remove();
+        $("#inputTagNo").focus();
     });
 
     function sayAgain() {
