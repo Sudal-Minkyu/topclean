@@ -1,9 +1,6 @@
 package com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot;
 
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotListDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotMainListDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotYnDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.*;
 
 import java.util.List;
 
@@ -22,5 +19,8 @@ public interface InspeotRepositoryCustom {
     List<InspeotYnDto> findByInspeotYnBAndType1(List<Long> fdIdList);
 
     List<InspeotMainListDto> findByInspeotB1(String brCode, Integer limit, String frCode);  // 메인페이지용 검품 리스트
+
+    //  가맹검품/지사검품 조회 - 확인품 정보 요청
+    InspeotInfoDto findByInspeotInfo(Long fiId, String code, String type);
 
 }

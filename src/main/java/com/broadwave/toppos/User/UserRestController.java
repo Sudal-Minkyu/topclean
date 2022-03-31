@@ -719,7 +719,7 @@ public class UserRestController {
                 requestDetailInfo.put("fdAgreeType", requestDetailDto.getFdAgreeType());
                 requestDetailInfo.put("fdSignImage", requestDetailDto.getFdSignImage());
 
-                List<PhotoDto> photoDtoList = receiptService.findByPhotoDto(requestDetailDto.getId());
+                List<PhotoDto> photoDtoList = receiptService.findByPhotoDtoRequestDtlList(requestDetailDto.getId());
                 requestDetailInfo.put("photoList", photoDtoList);
 
                 requestDetailListData.add(requestDetailInfo);

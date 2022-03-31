@@ -18,12 +18,16 @@ import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.Insp
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.MessageHistory.MessageHistory;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.MessageHistory.MessageHistoryRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.Photo;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.PhotoDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.PhotoRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetail;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.manager.RequestDetailBranchInspectListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.manager.RequestDetailBranchInspectionCurrentListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.manager.RequestDetailBranchInspeotDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.*;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailInspectDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailSearchDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailSearchDtoSub;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailUpdateDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.RequestFdTagDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestRepository;
@@ -39,10 +43,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -408,7 +412,7 @@ public class InspectService {
 
     // 검품등록 API(가맹점, 지사)
     @Transactional
-    public ResponseEntity<Map<String, Object>> InspectionSave(InspeotMapperDto inspeotMapperDto, HttpServletRequest request, String AWSBUCKETURL, String type) throws NoSuchElementException {
+    public ResponseEntity<Map<String, Object>> InspectionSave(InspeotMapperDto inspeotMapperDto, HttpServletRequest request, String AWSBUCKETURL, String type) throws IOException {
         log.info("InspectionSave 호출");
 
         log.info("inspeotMapperDto : "+inspeotMapperDto);
@@ -421,128 +425,190 @@ public class InspectService {
         log.info("현재 접속한 아이디 : "+login_id);
 
         MessageHistory messageHistory = new MessageHistory();
-        Inspeot saveInspeot;
-        Long inspeotId = null;
+
         String strMessage = null;
         String message = null;
         String nextmessage = null;
+
         RequestDetailBranchInspeotDto requestDetailBranchInspeotDto = requestDetailRepository.findByBranchInspeotDto(inspeotMapperDto.getFdId());
         if(requestDetailBranchInspeotDto == null){
             return ResponseEntity.ok(res.fail(ResponseErrorCode.TP024.getCode(),"검풍등록 할 "+ResponseErrorCode.TP024.getDesc(), "문자", "재조회 후 다시 시도해주세요."));
         }else{
 
-//            Inspeot inspeot = new Inspeot();
-//            inspeot.setFdId(requestDetailBranchInspeotDto.getRequestDetail());
-//            inspeot.setFrCode(requestDetailBranchInspeotDto.getRequestDetail().getFrId().getFrCode());
-//            inspeot.setBrCode(requestDetailBranchInspeotDto.getRequestDetail().getFrId().getBrCode());
-//            inspeot.setFiType(inspeotMapperDto.getFiType());
-//            inspeot.setFiComment(inspeotMapperDto.getFiComment());
-//            inspeot.setFiAddAmt(inspeotMapperDto.getFiAddAmt());
-//            inspeot.setFiPhotoYn("N");
-//            inspeot.setFiSendMsgYn("N");
-//            inspeot.setFiCustomerConfirm("1");
+            if(inspeotMapperDto.getDeletePhotoList() != null) {
+                // AWS 파일 삭제
+                List<Photo> photoList = photoRepository.findByPhotoDeleteList(inspeotMapperDto.getDeletePhotoList());
+                for(Photo photo : photoList){
+                    String insertDate =photo.getInsertDateTime().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+                    String path;
+                    if(type.equals("1")){
+                        path = "/toppos-franchise-inspection/"+insertDate;
+                    }else{
+                        path = "/toppos-manager-inspection/"+insertDate;
+                    }
+                    log.info("path : "+path);
+                    String filename = photo.getFfFilename();
+//                        log.info("filename : "+filename);
+                    awss3Service.deleteObject(path,filename);
+                }
+                photoRepository.findByInspectPhotoDelete(inspeotMapperDto.getDeletePhotoList());
+            }
 
-//            if(type.equals("2")) {
-//                message = requestDetailBranchInspeotDto.getRequestDetail().getFrId().getBcId().getBcName() + "님의 확인품이 등록되었습니다.";
-//                nextmessage = "확인품 등록알림";
-//                strMessage =
-//                        "\n\n택번호 : " + requestDetailBranchInspeotDto.getRequestDetail().getFdTag().charAt(3) + "-" + requestDetailBranchInspeotDto.getRequestDetail().getFdTag().substring(4, 7) +
-//                                "\n상품명 : " + requestDetailBranchInspeotDto.getBgName() + " " + requestDetailBranchInspeotDto.getBiName() +
-//                                "\n검품내용 : " + inspeotMapperDto.getFiComment();
-//            }
+            Inspeot inspeot;
+            Long fiId;
+            if(inspeotMapperDto.getFiId() == null){
+                fiId = Long.parseLong("0");
+            }else{
+                fiId = inspeotMapperDto.getFiId();
+            }
+            Optional<Inspeot> optionalInspeot = inspeotRepository.findById(fiId);
 
-            // 밑에 주석 값은 널로 등록한다.
-//            inspeot.setFiProgressStateDt(); -> null;
-//            inspeot.setFiMessage(); -> null;
-//            inspeot.setFiMessageSendDt(); -> null;
-//            inspeot.setInsert_id(login_id);
-//            inspeot.setInsertDateTime(LocalDateTime.now());
+            if(optionalInspeot.isPresent()){
+                log.info("검품 수정입니다.");
+                inspeot = modelMapper.map(optionalInspeot, Inspeot.class);
+                inspeot.setFiAddAmt(inspeotMapperDto.getFiAddAmt());
+                inspeot.setFiComment(inspeotMapperDto.getFiComment());
+                Photo photo = photoRepository.findByPhoto(optionalInspeot.get().getId());
+                if(photo != null || inspeotMapperDto.getAddPhotoList() != null){
+                    inspeot.setFiPhotoYn("Y");
+                }else{
+                    inspeot.setFiPhotoYn("N");
+                }
+                inspeot.setModify_id(login_id);
+                inspeot.setModify_date(LocalDateTime.now());
 
-            //파일저장
-//            try{
-//                if(multi.getFiles("source").get(0).getSize() != 0){
-//                    log.info("사진 포함 등록");
-//
-//                    inspeot.setFiPhotoYn("Y");
-//                    saveInspeot = inspeotRepository.save(inspeot);
-//                    inspeotId = saveInspeot.getId();
-//
-//                    messageHistory.setFiId(saveInspeot);
-//
-//                    Iterator<String> files = multi.getFileNames();
-//                    String uploadFile = files.next();
-//                    MultipartFile mFile = multi.getFile(uploadFile);
-//
-//                    assert mFile != null;
-//                    if(!mFile.isEmpty()) {
-//                        Photo photo = new Photo();
-//
-//                        // 파일 중복명 처리
-//                        String genId = UUID.randomUUID().toString().replace("-", "");
-//
-//                        // S3에 저장 할 파일주소
-//                        SimpleDateFormat date = new SimpleDateFormat("yyyyMMdd");
-//                        String filePath;
-//                        if(inspeotMapperDto.getFiType().equals(("F"))){
-//                            photo.setFfType("02");
-//                            filePath = "/toppos-franchise-inspection/" + date.format(new Date());
-//                        }else{
-//                            photo.setFfType("03");
-//                            filePath = "/toppos-manager-inspection/" + date.format(new Date());
-//                        }
-//
-//                        String storedFileName = genId + ".png";
-//                        String ffFilename = awss3Service.imageFileUpload(mFile, storedFileName, filePath);
-//
-//                        strMessage = strMessage+"\n"+AWSBUCKETURL+filePath+"/"+"s_"+ffFilename; // 메세지 썸네일 이미지넣음
-//
-//                        photo.setFiId(saveInspeot);
-//                        photo.setFfPath(AWSBUCKETURL+filePath+"/");
-//                        photo.setFfFilename(ffFilename);
-//                        photo.setInsert_id(login_id);
-//                        photo.setInsertDateTime(LocalDateTime.now());
-//                        photoRepository.save(photo);
-//                    }else{
-//                        log.info("사진파일을 못불러왔습니다.");
-//                    }
-//
-//                }
-//            }catch (Exception e){
-//                saveInspeot = inspeotRepository.save(inspeot);
-//                inspeotId = saveInspeot.getId();
-//                messageHistory.setFiId(saveInspeot);
-//                log.info(e+" -> 사진 미포함 등록");
-//            }
+                List<String> msg = inspectPhotoSave(inspeot, null, inspeotMapperDto.getAddPhotoList(), inspeotMapperDto.getFiType(), AWSBUCKETURL, login_id);
+                log.info("msg : "+msg);
 
-//            if(type.equals("2")){
-//                message = message+strMessage+"\n통합조회 페이지를 통해 확인해 주세요.";
-//                nextmessage = nextmessage+strMessage+"\n통합조회 페이지를 통해 확인해 주세요.";
-//
-//                // 송신이력 저장
-//                messageHistory.setBcId(requestDetailBranchInspeotDto.getRequestDetail().getFrId().getBcId());
-//                messageHistory.setFmType("01");
-//                messageHistory.setFrCode(requestDetailBranchInspeotDto.getRequestDetail().getFrId().getFrCode());
-//                messageHistory.setBrCode(requestDetailBranchInspeotDto.getRequestDetail().getFrId().getBrCode());
-//                messageHistory.setFmMessage(message);
-//                messageHistory.setInsert_id(login_id);
-//                messageHistory.setInsertDateTime(LocalDateTime.now());
-//                messageHistoryRepository.save(messageHistory);
-//
-//                boolean successBoolean = requestRepository.InsertMessage(message, nextmessage,"", templatecodeCheckt,
-//                        "fs_request_inspect", inspeotId, requestDetailBranchInspeotDto.getFrTelNo(), templatecodeNumber);
-//                log.info("successBoolean : "+successBoolean);
-//                if(successBoolean) {
-//                    log.info("메세지 인서트 성공");
-//                }else{
-//                    log.info("메세지 인서트 실패");
-//                }
-//            }
+            }else{
+                inspeot = new Inspeot();
+                inspeot.setFdId(requestDetailBranchInspeotDto.getRequestDetail());
+                inspeot.setFrCode(requestDetailBranchInspeotDto.getRequestDetail().getFrId().getFrCode());
+                inspeot.setBrCode(requestDetailBranchInspeotDto.getRequestDetail().getFrId().getBrCode());
+                inspeot.setFiType(inspeotMapperDto.getFiType());
+                inspeot.setFiComment(inspeotMapperDto.getFiComment());
+                inspeot.setFiAddAmt(inspeotMapperDto.getFiAddAmt());
+                inspeot.setFiPhotoYn("N");
+                inspeot.setFiSendMsgYn("N");
+                inspeot.setFiCustomerConfirm("1");
+                inspeot.setInsert_id(login_id);
+                inspeot.setInsertDateTime(LocalDateTime.now());
+
+                if(type.equals("2")) {
+                    message = requestDetailBranchInspeotDto.getRequestDetail().getFrId().getBcId().getBcName() + "님의 확인품이 등록되었습니다.";
+                    nextmessage = "확인품 등록알림";
+                    strMessage =
+                            "\n\n택번호 : " + requestDetailBranchInspeotDto.getRequestDetail().getFdTag().charAt(3) + "-" + requestDetailBranchInspeotDto.getRequestDetail().getFdTag().substring(4, 7) +
+                                    "\n상품명 : " + requestDetailBranchInspeotDto.getBgName() + " " + requestDetailBranchInspeotDto.getBiName() +
+                                    "\n검품내용 : " + inspeotMapperDto.getFiComment();
+                }
+
+                List<String> msg = inspectPhotoSave(inspeot, strMessage, inspeotMapperDto.getAddPhotoList(), inspeotMapperDto.getFiType(), AWSBUCKETURL, login_id);
+                log.info("msg : "+msg);
+
+                if(type.equals("2")){
+                    message = message+msg.get(0)+"\n통합조회 페이지를 통해 확인해 주세요.";
+                    nextmessage = nextmessage+msg.get(0)+"\n통합조회 페이지를 통해 확인해 주세요.";
+
+                    Optional<Inspeot> saveInspeot = inspeotRepository.findById(Long.parseLong(msg.get(1)));
+                    saveInspeot.ifPresent(messageHistory::setFiId);
+
+                    // 송신이력 저장
+                    messageHistory.setBcId(requestDetailBranchInspeotDto.getRequestDetail().getFrId().getBcId());
+                    messageHistory.setFmType("01");
+                    messageHistory.setFrCode(requestDetailBranchInspeotDto.getRequestDetail().getFrId().getFrCode());
+                    messageHistory.setBrCode(requestDetailBranchInspeotDto.getRequestDetail().getFrId().getBrCode());
+                    messageHistory.setFmMessage(message);
+                    messageHistory.setInsert_id(login_id);
+                    messageHistory.setInsertDateTime(LocalDateTime.now());
+                    messageHistoryRepository.save(messageHistory);
+
+                    boolean successBoolean = requestRepository.InsertMessage(message, nextmessage,"", templatecodeCheckt,
+                            "fs_request_inspect", Long.parseLong(msg.get(1)), requestDetailBranchInspeotDto.getFrTelNo(), templatecodeNumber);
+                    log.info("successBoolean : "+successBoolean);
+
+                    if(successBoolean) {
+                        log.info("메세지 인서트 성공");
+                    }else{
+                        log.info("메세지 인서트 실패");
+                    }
+
+                }
+
+            }
 
         }
 
         return ResponseEntity.ok(res.success());
 
     }
+
+    // 검품 사진파일 등록 함수
+    public List<String> inspectPhotoSave(Inspeot inspeot, String strMessage, List<MultipartFile> addPhotoList, String fiType, String AWSBUCKETURL, String login_id) throws IOException {
+
+        List<String> objects = new ArrayList<>();
+
+        Inspeot saveInspeot;
+
+        if(addPhotoList != null){
+
+            inspeot.setFiPhotoYn("Y");
+            saveInspeot = inspeotRepository.save(inspeot);
+
+            Photo photo;
+            log.info("addPhotoList.size() : "+addPhotoList.size());
+
+            List<Photo> photoList = new ArrayList<>();
+            for(int i=0; i<addPhotoList.size(); i++){
+                photo = new Photo();
+
+                // 파일 중복명 처리
+                String fileName = UUID.randomUUID().toString().replace("-", "")+".png";
+                log.info("fileName : "+fileName);
+
+                // S3에 저장 할 파일주소
+                SimpleDateFormat date = new SimpleDateFormat("yyyyMMdd");
+                String filePath;
+                if(fiType.equals(("F"))){
+                    photo.setFfType("02");
+                    filePath = "/toppos-franchise-inspection/" + date.format(new Date());
+                }else{
+                    photo.setFfType("03");
+                    filePath = "/toppos-manager-inspection/" + date.format(new Date());
+                }
+
+                log.info("filePath : "+AWSBUCKETURL+filePath+"/");
+
+                if(i == 0){
+                    strMessage = strMessage + "\n"+AWSBUCKETURL+filePath+"/"+"s_"+fileName; // 메세지 썸네일 이미지넣음
+                    log.info("strMessage : "+strMessage);
+                }
+
+                awss3Service.imageFileUpload(addPhotoList.get(i), fileName, filePath);
+
+                photo.setFiId(saveInspeot);
+                photo.setFfPath(AWSBUCKETURL+filePath+"/");
+                photo.setFfFilename(fileName);
+                photo.setInsert_id(login_id);
+                photo.setInsertDateTime(LocalDateTime.now());
+                photoList.add(photo);
+
+            }
+            log.info("photoList : "+photoList);
+            photoRepository.saveAll(photoList);
+            objects.add(strMessage);
+
+        }else{
+            log.info("첨부파일이 존재하지 않습니다");
+            inspeot.setFiPhotoYn("N");
+            saveInspeot = inspeotRepository.save(inspeot);
+            objects.add("");
+        }
+        objects.add(String.valueOf(saveInspeot.getId()));
+
+        return objects;
+    }
+
 
     //  통합조회용 - 등록 검품 삭제
     @Transactional
@@ -828,6 +894,39 @@ public class InspectService {
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
+    //  검품 조회 - 검품 상세보기 정보 요청
+    public ResponseEntity<Map<String, Object>> branchInspectionInfo(Long fiId, String type, HttpServletRequest request) {
+        log.info("branchInspectionInfo 호출");
+
+        log.info("fiId : "+fiId);
+        log.info("type : "+type);
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String code;
+        if(type.equals("1")){
+            code = (String) claims.get("brCode"); // 현재 지사의 코드(2자리) 가져오기
+        }else{
+            code = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
+        }
+
+        log.info("code : "+code);
+        InspeotInfoDto inspeotInfoDto = inspeotRepositoryCustom.findByInspeotInfo(fiId, code, type);
+        data.put("inspeotInfoDto",inspeotInfoDto);
+
+        List<PhotoDto> photoList = new ArrayList<>();
+        if(inspeotInfoDto.getFiPhotoYn().equals("Y")){
+            photoList = photoRepository.findByPhotoDtoInspeotList(inspeotInfoDto.getFiId());
+        }
+        data.put("photoList",photoList);
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
+
     //  지사검품등록용 - 검품 리스트 요청
     public ResponseEntity<Map<String, Object>> branchInspectionList(Long fdId, String type) {
         log.info("branchInspectionList 호출");
@@ -870,5 +969,6 @@ public class InspectService {
     public List<InspeotMainListDto> findByInspeotB1(String frbrCode, int limit, String frCode) {
         return inspeotRepositoryCustom.findByInspeotB1(frbrCode, limit, frCode);
     }
+
 
 }

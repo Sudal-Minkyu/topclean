@@ -300,6 +300,14 @@ public class ManagerRestController {
         return inspectService.branchInspection(franchiseId, filterFromDt.replaceAll("-",""), filterToDt.replaceAll("-",""), tagNo, request);
     }
 
+    //  지사검품 조회 - 확인품 정보 요청
+    @GetMapping("branchInspectionInfo")
+    @ApiOperation(value = "확인품 검품 정보" , notes = "해당 접수의 확인품 정보를 요청한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
+    public ResponseEntity<Map<String,Object>> branchInspectionInfo(@RequestParam(value="fiId", defaultValue="") Long fiId, HttpServletRequest request){
+        return inspectService.branchInspectionInfo(fiId, "1", request);
+    }
+
     // 확인품 검품 리스트 요청
     @GetMapping("branchInspectionList")
     @ApiOperation(value = "확인품 검품 리스트" , notes = "확인품리스트를 요청한다.(type : '1'은 가맹검품만, type : '2'는 확인품만, type : '0'은 모든항목 )")

@@ -1,9 +1,6 @@
 package com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot;
 
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotListDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotMainListDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotYnDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.*;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.QPhoto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
@@ -15,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -155,6 +153,33 @@ public class InspeotRepositoryCustomImpl extends QuerydslRepositorySupport imple
         }
         return jpaResultMapper.list(query, InspeotMainListDto.class);
 
+    }
+
+    //  지사검품 조회 - 확인품 정보 요청
+    @Override
+    public InspeotInfoDto findByInspeotInfo(Long fiId, String code, String type){
+
+        QInspeot inspeot = QInspeot.inspeot;
+
+        JPQLQuery<InspeotInfoDto> query = from(inspeot)
+//                .where(inspeot.id.in(fiId).and(inspeot.fiSendMsgYn.eq("N").and(inspeot.fiCustomerConfirm.eq("1"))))
+                .where(inspeot.id.in(fiId))
+                .select(Projections.constructor(InspeotInfoDto.class,
+                        inspeot.id,
+                        inspeot.fiComment,
+                        inspeot.fiAddAmt,
+                        inspeot.fiPhotoYn,
+                        inspeot.fiSendMsgYn,
+                        inspeot.fiCustomerConfirm
+                ));
+
+        if(type.equals("1")){
+            inspeot.brCode.eq(code);
+        }else{
+            inspeot.frCode.eq(code);
+        }
+
+        return query.fetchOne();
     }
 
 }

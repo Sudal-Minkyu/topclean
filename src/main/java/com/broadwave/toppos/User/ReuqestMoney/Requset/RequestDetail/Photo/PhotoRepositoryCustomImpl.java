@@ -22,17 +22,31 @@ public class PhotoRepositoryCustomImpl extends QuerydslRepositorySupport impleme
         super(PhotoRepository.class);
     }
 
-    public List<PhotoDto> findByPhotoDtoList(Long id){
+    public List<PhotoDto> findByPhotoDtoRequestDtlList(Long fdId){
 
         QPhoto photo = QPhoto.photo;
 
         JPQLQuery<PhotoDto> query = from(photo)
-                .where(photo.fdId.id.eq(id))
+                .where(photo.fdId.id.eq(fdId))
                 .select(Projections.constructor(PhotoDto.class,
                         photo.ffPath,
                         photo.ffFilename,
                         photo.ffRemark
                     ));
+        return query.fetch();
+    }
+
+    public List<PhotoDto> findByPhotoDtoInspeotList(Long fiId){
+
+        QPhoto photo = QPhoto.photo;
+
+        JPQLQuery<PhotoDto> query = from(photo)
+                .where(photo.fiId.id.eq(fiId)).limit(6)
+                .select(Projections.constructor(PhotoDto.class,
+                        photo.ffPath,
+                        photo.ffFilename,
+                        photo.ffRemark
+                ));
         return query.fetch();
     }
 

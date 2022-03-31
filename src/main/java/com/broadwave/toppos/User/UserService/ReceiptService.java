@@ -17,7 +17,6 @@ import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.Mess
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.Photo;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.PhotoDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.PhotoRepository;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.PhotoRepositoryCustom;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetail;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.RequestDetailMapperDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailAmtDto;
@@ -84,7 +83,6 @@ public class ReceiptService {
     private final PhotoRepository photoRepository;
 
     private final SaveMoneyRepositoryCustom saveMoneyRepositoryCustom;
-    private final PhotoRepositoryCustom photoRepositoryCustom;
     private final MessageHistoryRepository messageHistoryRepository;
 
     private final HeadService headService;
@@ -94,7 +92,7 @@ public class ReceiptService {
     @Autowired
     public ReceiptService(UserService userService, KeyGenerateService keyGenerateService, TokenProvider tokenProvider, ModelMapper modelMapper, MessageHistoryRepository messageHistoryRepository,
                           RequestRepository requestRepository, RequestDetailRepository requestDetailRepository, PaymentRepository paymentRepository, SaveMoneyRepository saveMoneyRepository,
-                          PhotoRepository photoRepository, SaveMoneyRepositoryCustom saveMoneyRepositoryCustom, PhotoRepositoryCustom photoRepositoryCustom,
+                          PhotoRepository photoRepository, SaveMoneyRepositoryCustom saveMoneyRepositoryCustom,
                           HeadService headService, CustomerRepository customerRepository, BranchCalendarRepository branchCalendarRepository, PaymentRepositoryCustom paymentRepositoryCustom){
         this.userService = userService;
         this.headService = headService;
@@ -109,7 +107,6 @@ public class ReceiptService {
         this.saveMoneyRepository = saveMoneyRepository;
         this.branchCalendarRepository = branchCalendarRepository;
         this.paymentRepositoryCustom = paymentRepositoryCustom;
-        this.photoRepositoryCustom = photoRepositoryCustom;
         this.keyGenerateService = keyGenerateService;
         this.saveMoneyRepositoryCustom = saveMoneyRepositoryCustom;
     }
@@ -819,8 +816,8 @@ public class ReceiptService {
     }
 
     // 상품세부의 파일리스트 호출
-    public List<PhotoDto> findByPhotoDto(Long id) {
-        return photoRepositoryCustom.findByPhotoDtoList(id);
+    public List<PhotoDto> findByPhotoDtoRequestDtlList(Long fdId) {
+        return photoRepository.findByPhotoDtoRequestDtlList(fdId);
     }
 
     // 접수페이지 영수증 출력 API
