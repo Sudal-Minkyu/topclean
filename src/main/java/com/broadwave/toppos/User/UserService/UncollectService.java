@@ -234,6 +234,7 @@ public class UncollectService {
         log.info("franchiseUncollectPay 호출");
 
         AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
 
         // 클레임데이터 가져오기
         Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
@@ -293,9 +294,10 @@ public class UncollectService {
                 }
             }
             requestRepository.saveAll(requestList);
+            data.put("frId",savePayment.getFrId());
         }
 
-        return ResponseEntity.ok(res.success());
+        return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
 
