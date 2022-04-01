@@ -467,8 +467,8 @@ public class ManagerRestController {
     @ApiOperation(value = "물건찾기 왼쪽 리스트" , notes = "물건찾기 왼쪽 리스트를 호출한다.")
     @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
     public ResponseEntity<Map<String,Object>> branchObjectFind(@RequestParam("franchiseId")Long franchiseId, @RequestParam("filterFromDt")String filterFromDt,
-                                                                 @RequestParam("filterToDt")String filterToDt, HttpServletRequest request){
-        return findService.objectFind(franchiseId, filterFromDt.replaceAll("-",""), filterToDt.replaceAll("-",""), null, request);
+                                                                 @RequestParam("filterToDt")String filterToDt, HttpServletRequest request, @RequestParam("ffState")String ffState){
+        return findService.objectFind(franchiseId, filterFromDt.replaceAll("-",""), filterToDt.replaceAll("-",""), ffState, request);
     }
 
     // 지사 물건찾기 확인 업데이트

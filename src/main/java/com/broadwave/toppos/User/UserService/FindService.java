@@ -97,13 +97,13 @@ public class FindService {
     }
 
     // 가맹점 물건찾기 할 리스트 호출
-    public ResponseEntity<Map<String, Object>> franchiseObjectFind(Long bcId, String filterFromDt, String filterToDt, HttpServletRequest request, String searchString) {
+    public ResponseEntity<Map<String, Object>> franchiseObjectFind(Long bcId, String filterFromDt, String filterToDt, HttpServletRequest request, String searchTag) {
         log.info("franchiseObjectFind 호출");
 
         log.info("bcId : "+bcId);
         log.info("filterFromDt : "+filterFromDt);
         log.info("filterToDt : "+filterToDt);
-        log.info("searchString : "+searchString);
+        log.info("searchTag : "+searchTag);
 
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
@@ -115,7 +115,7 @@ public class FindService {
         log.info("현재 접속한 아이디 : "+login_id);
         log.info("접속한 가맹점 코드 : "+frCode);
 
-        List<RequestFindListDto> requestFindListDtos = requestRepository.findByRequestFindList(bcId, frCode, filterFromDt, filterToDt, searchString);
+        List<RequestFindListDto> requestFindListDtos = requestRepository.findByRequestFindList(bcId, frCode, filterFromDt, filterToDt, searchTag);
         data.put("gridListData",requestFindListDtos);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));

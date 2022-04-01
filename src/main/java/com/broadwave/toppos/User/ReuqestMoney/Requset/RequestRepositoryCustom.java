@@ -49,6 +49,6 @@ public interface RequestRepositoryCustom {
 
     List<RequestRealTimeListDto> findByRequestRealTimeList(Long franchiseId, String brCode, String filterFromDt, String filterToDt); // 실시간접수현황 왼쪽 NativeQuery
 
-    List<RequestFindListDto> findByRequestFindList(Long bcId, String frCode, String filterFromDt, String filterToDt, String searchString); // 물건찾기 등록 리스트 Dto
+    List<RequestFindListDto> findByRequestFindList(Long bcId, String frCode, String filterFromDt, String filterToDt, String searchTag); // 물건찾기 등록 리스트 Dto
 
 }

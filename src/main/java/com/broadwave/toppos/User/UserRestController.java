@@ -1205,10 +1205,10 @@ public class UserRestController {
     @GetMapping("franchiseObjectFind")
     @ApiOperation(value = "물건찾기 할 리스트" , notes = "물건찾기 할 리스트를 호출한다.")
     @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
-    public ResponseEntity<Map<String,Object>> franchiseObjectFind(@RequestParam(value="searchString", defaultValue="") String searchString,
+    public ResponseEntity<Map<String,Object>> franchiseObjectFind(@RequestParam(value="searchTag", defaultValue="") String searchTag,
                                                                   @RequestParam("bcId")Long bcId, @RequestParam("filterFromDt")String filterFromDt,
                                                                   @RequestParam("filterToDt")String filterToDt, HttpServletRequest request){
-        return findService.franchiseObjectFind(bcId, filterFromDt.replaceAll("-",""), filterToDt.replaceAll("-",""), request, searchString);
+        return findService.franchiseObjectFind(bcId, filterFromDt.replaceAll("-",""), filterToDt.replaceAll("-",""), request, searchTag);
     }
 
     // 가맹점 물건찾기 할 항목 저장
