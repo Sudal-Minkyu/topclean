@@ -21,6 +21,10 @@ const dtos = {
             fiId: "nr",
             fiPhotoYn: "sr",
         },
+
+        branchInspectionInfo: {
+            fiId: "nr",
+        },
     },
     
     receive: {
@@ -31,6 +35,7 @@ const dtos = {
         },
 
         branchInspectionCurrentList: {
+            fiId: "n",
             fdId: "n", // 출고 처리를 위함
             frName: "s",
 			insertDt: "s",
@@ -72,6 +77,23 @@ const dtos = {
 
             ffPath: "s",
             ffFilename: "s",
+        },
+
+        branchInspectionInfo: {
+            inspeotInfoDto: {
+                fiAddAmt: "n",
+                fiComment: "s",
+                fiCustomerConfirm: "s",
+                fiId: "", // 오면 수정모드 안오면 신규등록
+                fiPhotoYn: "s",
+                fiSendMsgYn: "s",
+            },
+            photoList: {
+                ffFilename: "s",
+                ffId: "n",
+                ffPath: "s",
+                ffRemark: "d",
+            }
         },
     }
 };
@@ -120,9 +142,11 @@ const comms = {
     },
 
     getInspectionNeo(condition) {
+        dv.chk(condition, dtos.send.branchInspectionInfo, "확인품 디테일 정보받기 위한 아이디 보내기");
         CommonUI.ajax(urls.getInspectionNeo, "GET", condition, function (res) {
             const data = res.sendData;
             console.log(data);
+            dv.chk(data, dtos.receive.branchInspectionInfo, "선택된 확인품의 디테일 정보 받기");
             const refinedData = {
                 fdId: wares.currentRequest.fdId,
                 fiId: data.inspeotInfoDto.fiId,

@@ -1,6 +1,6 @@
 class DtoValidator {
     forceTotalInspection = true;
-    devMode = false;
+    devMode = true;
 
     title;
     totalInspection;
