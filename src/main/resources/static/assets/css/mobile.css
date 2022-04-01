@@ -235,6 +235,7 @@ textarea {
 	/* display: flex;
 	flex-direction: column;
 	flex-wrap: wrap; */
+    overflow-y: auto;
     position: relative;
     width: 100%;
     max-width: 767px;
@@ -245,7 +246,7 @@ textarea {
 .content {
     position: relative;
     width: 100%;
-    height: 100vh;
+    min-height: 100vh;
 }
 .pickup {
     position: absolute;
@@ -294,4 +295,90 @@ textarea {
     min-width: 100px;
     height: 40px;
     padding: 0 10px;
+}
+
+/* 영수증 receipt */
+.receipt {
+    position: relative;
+    width: 90%;
+    min-width: 320px;
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 20px 9px;
+    background-color: #fff;
+    border: 1px solid #bdbdbd;
+    border-radius: 5px;
+}
+.receipt__logo {
+    padding:10px 0;
+    border-bottom: 4px double #959595;
+    color: #333;
+    text-align: center;
+}
+.receipt__logo img {
+    width: 100px;
+}
+.receipt__logo span {
+    display: block;
+    margin-top: 10px;
+}
+.receipt__frinfo {
+    overflow: hidden;
+    padding: 10px 5px;
+    border-bottom: 4px double #959595;
+}
+.receipt__frinfo dt {
+    float: left;
+    width: 90px;
+}
+.receipt__frinfo dd {
+    float: left;
+    width: calc(100% - 90px);
+    margin: 0;
+}
+.receipt__tag {
+    padding: 10px 5px;
+    border-bottom: 4px double #959595;
+}
+.receipt__tag table {
+    table-layout: fixed;
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    color: #333;
+}
+.receipt__tag tr + tr {
+    margin-top: 4px;
+}
+.receipt__tag th {
+    border-bottom: 1px solid #c8c8c8;
+    font-weight: 400;
+    line-height: 30px;
+    text-align: left;
+}
+.receipt__tag td.align-right {
+    text-align: right;
+}
+.receipt__sub {
+    padding: 10px 5px;
+    border-bottom: 4px double #959595;
+}
+.receipt__sub h3 {
+    font-size: 16px;
+    font-weight: 400;
+}
+.receipt__sub dl {
+    overflow: hidden;
+}
+.receipt__sub dt {
+    float: left;
+    width: 90px;
+}
+.receipt__sub dd {
+    float: left;
+    width: calc(100% - 90px);
+    margin: 0;
+    text-align: right;
 }

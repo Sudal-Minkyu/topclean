@@ -15,41 +15,138 @@
 	<script src="/assets/js/toppos/mobile/unAuth/receipt.js"></script>
 </th:block>
 
-<div layout:fragment="content" class="content content--column">
-    접수증 <span id="requestDt"></span>
+<div layout:fragment="content" class="content content--column" style="padding: 20px 0;">
+    <div class="receipt">
+        <h2 class="receipt__logo"><img src="/assets/images/circle-logo.png" alt="TOPPOS"><span>[고객용 영수증]</span></h2>
+        <!-- 가맹점 정보 -->
+        <dl class="receipt__frinfo">
+            <dt>영수증</dt>
+            <dd>접수증 <span id="requestDt"></span></dd>
+            <dt>대리점명</dt>
+            <dd><span id="franchiseName"></span></dd>
+            <dt>영업시간</dt>
+            <dd>평일 : 09:30 ~ 20:00 까지  공휴일(토요일) : 10:30~18:00 까지</dd>
+            <dt>사업자번호</dt>
+            <dd><span id="businessNO"></span></dd>
+            <dt>대표자</dt>
+            <dd><span id="repreName"></span></dd>
+            <dt>전화</dt>
+            <dd><span id="franchiseTel"></span></dd>
+        </dl>
 
-    대리점명 <span id="franchiseName"></span>
-    영업시간 평일 : 09:30 ~ 20:00 까지  공휴일(토요일) : 10:30~18:00 까지
-    사업자번호 <span id="businessNO"></span>
-    대표자 <span id="repreName"></span>
-    전화 <span id="franchiseTel"></span>
+        <!-- 접수물품 정보 -->
+        <div class="receipt__tag">
+            <table>
+                <colgroup>
+                    <col style="width: 50px;">
+                    <col>
+                    <col style="width: 50px;">
+                    <col style="width: 80px;">
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th>택번호</th>
+                        <th>상품</th>
+                        <th>색상</th>
+                        <th>금액</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- tr로 추가 -->
+                    <tr>
+                        <td>0-050</td>
+                        <td>슬리퍼 운동화</td>
+                        <td>빨강</td>
+                        <td class="align-right">0,000,000</td>
+                    </tr>
+                    <tr>
+                        <td>0-127</td>
+                        <td>가운 상의</td>
+                        <td>빨강</td>
+                        <td class="align-right">0,000,000</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
-    <div>
-        택번호 상품 색상 금액이 리스트로 뿌려질 영역
+        <!-- 소계 -->
+        <div class="receipt__sub">
+            <h3>소계</h3>
+            <dl>
+                <dt>기본금액</dt>
+                <dd><span id="normalAmount"></span></dd>
+                <dt>추가금액</dt>
+                <dd><span id="changeAmount"></span></dd>
+                <dt>합계금액</dt>
+                <dd><span id="totalAmount"></span></dd>
+                <dt>완료예정일</dt>
+                <dd><span id="estimateDt">2022-04-04</span></dd>
+            </dl>
+            <p>(완료예정일이 공휴일인 경우 다음날 가져가실 수 있습니다.)</p>
+        </div>
+
+        <!-- 미수금정보 -->
+        <div class="receipt__sub">
+            <h3>&lt;미수금정보&gt;</h3>
+            <dl>
+                <dt>전일미수금</dt>
+                <dd><span id="preUncollectAmount"></span></dd>
+                <dt>당일미수금</dt>
+                <dd><span id="curUncollectAmount"></span></dd>
+                <dt>미수금상환</dt>
+                <dd><span id="uncollectPayment">0</span></dd>
+                <dt>남은총미수금</dt>
+                <dd><span id="totalUncollectAmount"></span></dd>
+            </dl>
+        </div>
+
+        <!--    결제정보    -->
+        <div class="receipt__sub">
+            <h3>&lt;결제정보&gt;</h3>
+            <dl>
+                <dt>총접수항목</dt>
+                <dd><span id="qty"></span></dd>
+                <dt>총접수금액</dt>
+                <dd><span id="paymentAmount"></span></dd>
+            </dl>
+        </div>
+
+        <!-- 현금 & 적립금 & 카드 -->
+        <div class="receipt__sub">
+            <dl>
+                <dt>결제구분</dt>
+                <dd>적립금</dd>
+                <dt>사용금액</dt>
+                <dd>2,000</dd>
+            </dl>
+        </div>
+
+        <div class="receipt__sub">
+            <dl>
+                <dt>결제구분</dt>
+                <dd>현금</dd>
+                <dt>결제금액</dt>
+                <dd>2,000</dd>
+            </dl>
+        </div>
+
+        <div class="receipt__sub">
+            <dl>
+                <dt>결제구분</dt>
+                <dd>카드</dd>
+                <dt>승인일시</dt>
+                <dd>2022-04-01 15:42</dd>
+                <dt>할부</dt>
+                <dd>일시불</dd>
+                <dt>결제금액</dt>
+                <dd>2,000</dd>
+                <dt>(카드회사명)</dt>
+                <dd>409216******9758(카드번호)</dd>
+                <dt>승인번호</dt>
+                <dd>51779112</dd>
+            </dl>
+        </div>
     </div>
-
-    소계
-    기본금액 <span id="normalAmount"></span>
-    추가금액 <span id="changeAmount"></span>
-    합계금액 <span id="totalAmount"></span>
-    완료예정일 <span id="estimateDt"></span>
-    (완료예정일이 공휴일인 경우 다음날 가져가실 수 있습니다.)
-
-    미수금정보
-    전일미수금 <span id="preUncollectAmount"></span>
-    당일미수금 <span id="curUncollectAmount"></span>
-    미수금상환 <span id="uncollectPayment"></span>
-    남은총미수금 <span id="totalUncollectAmount"></span>
-
-    결제정보
-    총접수항목 <span id="qty"></span>
-    총접수금액 <span id="paymentAmount"></span>
-
-    <div>
-        현금일 경우 결제구분과 결제금액,
-        카드일 경우 결제구분, 승인일시, 할부개월, 결제금액, 카드명, 카드번호, 승인번호가 들어갈 리스트
-    </div>
-
 
 </div>
 </html>
