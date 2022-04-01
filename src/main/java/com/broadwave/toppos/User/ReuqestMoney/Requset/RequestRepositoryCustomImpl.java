@@ -645,7 +645,7 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
         }
 
         query.where(request.frCode.eq(frCode).and(requestDetail.fdState.notLike("S6")));
-        query.where(find.ffYyyymmdd.goe(filterFromDt).and(find.ffYyyymmdd.loe(filterToDt)));
+        query.where(request.frYyyymmdd.goe(filterFromDt).and(request.frYyyymmdd.loe(filterToDt)));
 
         return query.fetch();
     }
