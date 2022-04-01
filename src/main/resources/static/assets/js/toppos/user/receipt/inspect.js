@@ -670,6 +670,10 @@ function resetAll() {
     grids.f.clearData(0);
     $("#searchType").val("0");
     $("#searchString").val("");
+
+    const today = new Date().format("yyyy-MM-dd");
+    $("#filterFromDt").val(today);
+    $("#filterToDt").val(today);
 }
 
 function onShowVKeyboard(num) {
