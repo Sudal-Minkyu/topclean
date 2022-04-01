@@ -42,7 +42,7 @@ const dtos = {
 /* 통신에 사용되는 url들 기입 */
 const urls = {
     searchCustomer: "/api/user/customerInfo", // 고객 검색
-    getMainList: "/api/user/franchiseObjectFind",
+    getDetailList: "/api/user/franchiseObjectFind",
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
@@ -70,7 +70,8 @@ const comms = {
         });
     },
 
-    getMainList(filterCondition) {
+    getDetailList(filterCondition) {
+        console.log(filterCondition);
         dv.chk(filterCondition, dtos.send.franchiseObjectFind, "물건찾기 리스트 필터링조건 보내기");
         CommonUI.ajax(urls.getDetailList, "GET", filterCondition, function (res) {
             const data = res.sendData.gridListData;
@@ -90,7 +91,7 @@ const comms = {
 const grids = {
     s: { // 그리드 세팅
         targetDiv: [
-            "grid_main"
+            "grid_main", "grid_customerList"
         ],
         columnLayout: [],
         prop: [],
@@ -104,11 +105,84 @@ const grids = {
             /* 0번 그리드의 레이아웃 */
             grids.s.columnLayout[0] = [
                 {
-                    dataField: "",
-                    headerText: "",
+                    dataField: "bcName",
+                    headerText: "고객명",
+                    style: "grid_textalign_left",
+                    width: 100,
                 }, {
-                    dataField: "",
-                    headerText: "",
+                    dataField: "frYyyymmdd",
+                    headerText: "접수일자",
+                    width: 90,
+                    dataType: "date",
+                    formatString: "yyyy-mm-dd",
+                }, {
+                    dataField: "fdEstimateDt",
+                    headerText: "인도예정일",
+                    width: 90,
+                    dataType: "date",
+                    formatString: "yyyy-mm-dd",
+                }, {
+                    dataField: "fdTag",
+                    headerText: "택번호",
+                    width: 80,
+                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
+                        return CommonData.formatTagNo(value);
+                    },
+                }, {
+                    dataField: "productName",
+                    headerText: "상품명",
+                    style: "grid_textalign_left",
+                    renderer : {
+                        type : "TemplateRenderer",
+                    },
+                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                        const colorSquare =
+                            `<span class="colorSquare" style="background-color: ${CommonData.name.fdColorCode[item.fdColor]}; vertical-align: middle;"></span>`;
+                        const sumName = CommonUI.toppos.makeSimpleProductName(item);
+                        item.productName = sumName;
+                        return colorSquare + ` <span style="vertical-align: middle;">` + sumName + `</span>`;
+                    },
+                }, {
+                    dataField: "processName",
+                    headerText: "처리내역",
+                    style: "grid_textalign_left",
+                    width: 80,
+                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                        item.processName = CommonUI.toppos.processName(item);
+                        return item.processName;
+                    }
+                }, {
+                    dataField: "fdTotAmt",
+                    headerText: "접수금액",
+                    style: "grid_textalign_right",
+                    width: 90,
+                    dataType: "numeric",
+                    autoThousandSeparator: "true",
+                }, {
+                    dataField: "fdState",
+                    headerText: "현재상태",
+                    width: 85,
+                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                        return CommonData.name.fdState[value];
+                    },
+                }, {
+                    dataField: "fdRemark",
+                    headerText: "특이사항",
+                    style: "grid_textalign_left",
+                    width: 100,
+                }, {
+                    dataField: "fdS2Dt",
+                    headerText: "지사입고일",
+                    width: 90,
+                    dataType: "date",
+                    formatString: "yyyy-mm-dd",
+                }, {
+                    dataField: "ffState",
+                    headerText: "찾기상태",
+                    width: 85,
+                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                        return CommonData.name.ffState[value];
+                    },
                 },
             ];
 
@@ -119,13 +193,48 @@ const grids = {
                 editable : false,
                 selectionMode : "singleRow",
                 noDataMessage : "출력할 데이터가 없습니다.",
+                showAutoNoDataMessage: true,
+                enableColumnResize : false,
+                showRowAllCheckBox: true,
+                showRowCheckColumn: true,
+                showRowNumColumn : false,
+                showStateColumn : false,
+                enableFilter : false,
+                rowHeight : 48,
+                headerHeight : 48,
+            };
+
+            grids.s.columnLayout[1] = [
+                {
+                    dataField: "bcName",
+                    headerText: "고객명",
+                }, {
+                    dataField: "bcHp",
+                    headerText: "전화번호",
+                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                        return CommonUI.formatTel(value);
+                    }
+                }, {
+                    dataField: "bcAddress",
+                    headerText: "주소",
+                    style: "grid_textalign_left",
+                },
+            ];
+
+            grids.s.prop[1] = {
+                editable : false,
+                selectionMode : "singleRow",
+                noDataMessage : "출력할 데이터가 없습니다.",
+                rowNumHeaderText : "순번",
                 showAutoNoDataMessage: false,
                 enableColumnResize : false,
                 showRowAllCheckBox: false,
                 showRowCheckColumn: false,
                 showRowNumColumn : false,
                 showStateColumn : false,
-                enableFilter : false,
+                enableFilter : true,
+                width : 830,
+                height : 480,
                 rowHeight : 48,
                 headerHeight : 48,
             };
@@ -156,16 +265,48 @@ const grids = {
 
         getCheckedItems(numOfGrid) { // 해당 배열 번호 그리드의 엑스트라 체크박스 선택된 (아이템 + 행번호) 객체 반환
             return AUIGrid.getCheckedRowItems(grids.s.id[numOfGrid]);
-        }
+        },
+
+        getSelectedCustomer() {
+            return AUIGrid.getSelectedRows(grids.s.id[1])[0];
+        },
     },
 };
 
 /* 이벤트를 설정하거나 해지하는 함수들을 담는다. */
 const trigs = {
     basic() {
-        /* 0번그리드 내의 셀 클릭시 이벤트 */
-        AUIGrid.bind(grids.s.id[0], "cellClick", function (e) {
-            console.log(e.item); // 이밴트 콜백으로 불러와진 객체의, 클릭한 대상 row 키(파라메터)와 값들을 보여준다.
+        $("#searchCustomer").on("click", function () {
+            mainSearch();
+        });
+
+        $("#selectCustomer").on("click", function () {
+            const selectedItem = grids.f.getSelectedCustomer();
+            selectCustomerFromList(selectedItem);
+        });
+
+        $("#resetCustomer").on("click", function () {
+            resetAll();
+        });
+
+        $("#filterDetail").on("click", function () {
+            const filterCondition = {
+                bcId: wares.selectedCustomer.bcId ? wares.selectedCustomer.bcId : 0,
+                searchTag: wares.searchTag,
+                filterFromDt: $("#filterFromDt").val(),
+                filterToDt: $("#filterToDt").val(),
+            }
+            comms.getDetailList(filterCondition);
+        });
+
+        $("#searchString").on("keypress", function(e) {
+            if(e.originalEvent.code === "Enter" || e.originalEvent.code === "NumpadEnter") {
+                mainSearch();
+            }
+        });
+
+        $("#vkeyboard0").on("click", function() {
+            onShowVKeyboard(0);
         });
     },
 }
@@ -184,8 +325,14 @@ $(function() { // 페이지가 로드되고 나서 실행
 /* 페이지가 로드되고 나서 실행 될 코드들을 담는다. */
 function onPageLoad() {
     grids.f.initialization();
+    grids.f.create();
+
+    /* 가상키보드의 사용 선언 */
+    window.vkey = new VKeyboard();
 
     trigs.basic();
+
+    enableDatepicker();
 }
 
 function selectCustomerFromList(selectedItem) {
@@ -297,3 +444,37 @@ function onShowVKeyboard(num) {
     vkey.showKeyboard(vkeyTargetId[num], vkeyProp[num]);
 }
 
+function mainSearch() {
+    const searchType = $("#searchType").val();
+    const searchString = $("#searchString").val();
+    console.log(searchType);
+
+    if(searchString.length) {
+        if(searchType === "4") {
+            wares.selectedCustomer = {
+                bcId: null,
+                beforeUncollectMoney: 0,
+                saveMoney: 0,
+                bcAddress: "",
+                bcRemark: "",
+            };
+            putCustomer();
+            const filterCondition = {
+                bcId: null,
+                searchTag: searchString,
+                filterFromDt: $("#filterFromDt").val(),
+                filterToDt: $("#filterToDt").val(),
+            }
+            wares.searchTag = searchString;
+            comms.getDetailList(filterCondition);
+        } else {
+            const searchCondition = {
+                searchType: searchType,
+                searchString: searchString
+            }
+            comms.searchCustomer(searchCondition);
+        }
+    } else {
+        alertCaution("검색어를 입력해 주세요", 1);
+    }
+}
