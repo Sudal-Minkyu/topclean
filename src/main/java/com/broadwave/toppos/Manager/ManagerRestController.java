@@ -6,8 +6,9 @@ import com.broadwave.toppos.Manager.ManagerService.*;
 import com.broadwave.toppos.Manager.TagGallery.TagGalleryDtos.TagGalleryMapperDto;
 import com.broadwave.toppos.Manager.TagNotice.TagNoticeDtos.TagNoticeMapperDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotMapperDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotSet;
+import com.broadwave.toppos.User.UserService.FindService;
 import com.broadwave.toppos.User.UserService.InspectService;
+import com.broadwave.toppos.User.UserService.ReceiptService;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -17,7 +18,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -49,10 +49,13 @@ public class ManagerRestController {
     private final NoticeService noticeService; // 공지사항페이지 서비스
 
     private final ReceiptReleaseService receiptReleaseService; // 지사출고 전용 서비스
+    private final ReceiptService receiptService; // 접수 서비스
+    private final FindService findService; // 물건찾기 서비스
 
     @Autowired
     public ManagerRestController(ManagerService managerService, CalendarService calendarService, TagNoticeService tagNoticeService, TagGalleryService tagGalleryService,
-                                 ReceiptReleaseService receiptReleaseService, InspectService inspectService, CurrentService currentService, NoticeService noticeService) {
+                                 ReceiptReleaseService receiptReleaseService, InspectService inspectService, CurrentService currentService, NoticeService noticeService, ReceiptService receiptService,
+                                 FindService findService) {
         this.managerService = managerService;
         this.calendarService = calendarService;
         this.tagNoticeService = tagNoticeService;
@@ -61,6 +64,8 @@ public class ManagerRestController {
         this.currentService = currentService;
         this.noticeService = noticeService;
         this.receiptReleaseService = receiptReleaseService;
+        this.receiptService = receiptService;
+        this.findService = findService;
     }
 
     // 현재 로그인한 지사 정보 가져오기
@@ -196,6 +201,8 @@ public class ManagerRestController {
     public ResponseEntity<Map<String,Object>> tagGalleryEnd(@RequestParam("btId")Long btId, HttpServletRequest request) {
         return tagGalleryService.tagGalleryEnd(btId, request);
     }
+
+
 
 //@@@@@@@@@@@@@@@@@@@@@ 지사출고, 지사출고 취소, 가맹점강제출고, 가맹점반송 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     //  현 지사의 소속된 가맹점명 리스트 호출(앞으로 공용으로 쓰일 것)
@@ -338,12 +345,16 @@ public class ManagerRestController {
         return inspectService.branchInspectionCurrentList(franchiseId, filterFromDt, filterToDt, tagNo, request);
     }
 
+
+
 //@@@@@@@@@@@@@@@@@@@@@ TAG번호조회 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     //  TAG번호조회 리스트 호출API
     @GetMapping("branchTagSearchList")
     public ResponseEntity<Map<String,Object>> branchTagSearchList(@RequestParam("franchiseId")Long franchiseId,  @RequestParam("tagNo")String tagNo, HttpServletRequest request){
         return managerService.branchTagSearchList(franchiseId, tagNo, request);
     }
+
+
 
 //@@@@@@@@@@@@@@@@@@@@@ 지사입고현황, 체류세탁물현황, 출고현황, 강제출고현황, 미출고현황, 가맹반송현황 관련 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     //  지사입고현황, 체류세탁물현황 - 왼쪽 리스트 호출API
@@ -419,6 +430,8 @@ public class ManagerRestController {
         return currentService.branchReturnCurrentInputList(frCode,fdS3Dt, request);
     }
 
+
+
 // @@@@@@@@@@@@@@@@@@@ 공지사항 게시판 API @@@@@@@@@@@@@@@@@@@@@@@@@@
     // 공지사항 게시판 - 리스트 호출
     @PostMapping("/noticeList")
@@ -433,6 +446,36 @@ public class ManagerRestController {
     public ResponseEntity<Map<String,Object>> noticeView(@RequestParam("hnId") Long hnId) {
         return noticeService.noticeView(hnId, "2");
     }
+
+
+
+//@@@@@@@@@@@@@@@@@@@@@ 실시간접수현황 관련 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    // 지사 실시간접수현황 왼쪽리스트 호출
+    @GetMapping("branchRealTimeList")
+    @ApiOperation(value = "실시간접수현황 왼쪽 리스트" , notes = "실시간접수현황 왼쪽 리스트를 호출한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
+    public ResponseEntity<Map<String,Object>> branchRealTimeList(@RequestParam("franchiseId")Long franchiseId, @RequestParam("filterFromDt")String filterFromDt,
+                                                                     @RequestParam("filterToDt")String filterToDt, HttpServletRequest request){
+        return receiptService.branchRealTimeList(franchiseId,  filterFromDt.replaceAll("-",""), filterToDt.replaceAll("-",""), request);
+    }
+
+
+
+//@@@@@@@@@@@@@@@@@@@@@ 물건찾기 관련 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    // 지사 물건찾기 리스트 호출
+    @GetMapping("branchObjectFind")
+    @ApiOperation(value = "물건찾기 왼쪽 리스트" , notes = "물건찾기 왼쪽 리스트를 호출한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
+    public ResponseEntity<Map<String,Object>> branchObjectFind(@RequestParam("franchiseId")Long franchiseId, @RequestParam("filterFromDt")String filterFromDt,
+                                                                 @RequestParam("filterToDt")String filterToDt, HttpServletRequest request){
+        return findService.objectFind(franchiseId, filterFromDt.replaceAll("-",""), filterToDt.replaceAll("-",""), null, request);
+    }
+
+
+
+
+
+
 
 
 

@@ -10,6 +10,6 @@ import org.springframework.stereotype.Repository;
  * Remark :
  */
 @Repository
-public interface FindRepository extends JpaRepository<Find,Long> {
+public interface FindRepository extends JpaRepository<Find,Long>, FindRepositoryCustom {
 
 }

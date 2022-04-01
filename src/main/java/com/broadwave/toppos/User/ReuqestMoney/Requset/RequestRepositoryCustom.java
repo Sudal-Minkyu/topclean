@@ -46,4 +46,7 @@ public interface RequestRepositoryCustom {
 
     RequestFdTagDto findByRequestDetailFdTag(String frCode, Long frId); // 통합조회 택번호 반환용
 
+    List<RequestRealTimeListDto> findByRequestRealTimeList(Long franchiseId, String brCode, String filterFromDt, String filterToDt); // 실시간접수현황 왼쪽 NativeQuery
+
+
 }

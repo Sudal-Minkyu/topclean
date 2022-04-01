@@ -535,4 +535,41 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
         return jpaResultMapper.uniqueResult(query, RequestFdTagDto.class);
     }
 
+    // 실시간접수현황 왼쪽 NativeQuery
+    @Override
+    public List<RequestRealTimeListDto> findByRequestRealTimeList(Long franchiseId, String brCode, String filterFromDt, String filterToDt) {
+
+        EntityManager em = getEntityManager();
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("SELECT \n");
+        sb.append("c.fr_name, a.fr_yyyymmdd, COUNT(DISTINCT a.bc_id), COUNT(*), SUM(b.fd_tot_amt) \n");
+        sb.append("FROM  fs_request a \n");
+        sb.append("INNER JOIN fs_request_dtl b on b.fr_id=a.fr_id \n");
+        sb.append("INNER JOIN bs_franchise c on c.fr_code=a.fr_code \n");
+        sb.append("WHERE \n");
+        sb.append("a.br_code= ?1 \n");
+        sb.append("AND a.fr_confirm_yn='Y' \n");
+        sb.append("AND b.fd_cancel='N' \n");
+        sb.append("AND a.fr_yyyymmdd>= ?2 \n");
+        sb.append("AND a.fr_yyyymmdd<= ?3 \n");
+        if(franchiseId != 0){
+            sb.append("AND c.fr_id = ?4 \n");
+        }
+        sb.append("GROUP BY c.fr_name, a.fr_yyyymmdd ORDER BY c.fr_name,a.fr_yyyymmdd ASC; \n");
+
+
+        Query query = em.createNativeQuery(sb.toString());
+
+        query.setParameter(1, brCode);
+        query.setParameter(2, filterFromDt);
+        query.setParameter(3, filterToDt);
+        if(franchiseId != 0){
+            query.setParameter(4, franchiseId);
+        }
+
+        return jpaResultMapper.list(query, RequestRealTimeListDto.class);
+
+    }
+
 }

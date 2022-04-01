@@ -95,6 +95,7 @@ public class UserRestController {
     private final TagGalleryService tagGalleryService; // NEW 택분실게시판 서비스
     private final NoticeService noticeService; // 공지사항 게시판 서비스
     private final CalendarService calendarService; // 휴무일 서비스
+    private final FindService findService; // 휴무일 서비스
 
     private final ModelMapper modelMapper;
     private final TokenProvider tokenProvider;
@@ -103,7 +104,8 @@ public class UserRestController {
     @Autowired
     public UserRestController(AWSS3Service awss3Service, UserService userService, ReceiptService receiptService, SortService sortService, InfoService infoService, InspectService inspectService,
                               TokenProvider tokenProvider, ModelMapper modelMapper, HeadService headService, CalendarService calendarService, ReceiptStateService receiptStateService,
-                              UncollectService uncollectService, BusinessdayService businessdayService, TagNoticeService tagNoticeService, TagGalleryService tagGalleryService, NoticeService noticeService) {
+                              UncollectService uncollectService, BusinessdayService businessdayService, TagNoticeService tagNoticeService, TagGalleryService tagGalleryService, NoticeService noticeService,
+                              FindService findService) {
         this.awss3Service = awss3Service;
         this.userService = userService;
         this.receiptService = receiptService;
@@ -120,6 +122,7 @@ public class UserRestController {
         this.tagNoticeService = tagNoticeService;
         this.tagGalleryService = tagGalleryService;
         this.noticeService = noticeService;
+        this.findService = findService;
     }
 
 //@@@@@@@@@@@@@@@@@@@@@ 가맹점 메인화면 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -1198,6 +1201,15 @@ public class UserRestController {
         return noticeService.noticeView(hnId, "2");
     }
 
+//@@@@@@@@@@@@@@@@@@@@@ 물건찾기 관련 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    // 가맹점 물건찾기 할 리스트 호출
+    @GetMapping("franchiseObjectFind")
+    @ApiOperation(value = "물건찾기 할 리스트" , notes = "물건찾기 할 리스트를 호출한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
+    public ResponseEntity<Map<String,Object>> franchiseObjectFind(@RequestParam("bcId")Long bcId, @RequestParam("filterFromDt")String filterFromDt,
+                                                               @RequestParam("filterToDt")String filterToDt, HttpServletRequest request){
+        return findService.franchiseObjectFind(bcId, filterFromDt.replaceAll("-",""), filterToDt.replaceAll("-",""), request);
+    }
 
 
 
