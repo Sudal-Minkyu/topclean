@@ -21,6 +21,10 @@ const dtos = {
             fiId: "nr",
             fiPhotoYn: "sr",
         },
+
+        branchInspectionInfo: {
+            fiId: "nr",
+        },
     },
     
     receive: {
@@ -31,6 +35,7 @@ const dtos = {
         },
 
         branchInspectionCurrentList: {
+            fiId: "n",
             fdId: "n", // 출고 처리를 위함
             frName: "s",
 			insertDt: "s",
@@ -73,6 +78,23 @@ const dtos = {
             ffPath: "s",
             ffFilename: "s",
         },
+
+        branchInspectionInfo: {
+            inspeotInfoDto: {
+                fiAddAmt: "n",
+                fiComment: "s",
+                fiCustomerConfirm: "s",
+                fiId: "", // 오면 수정모드 안오면 신규등록
+                fiPhotoYn: "s",
+                fiSendMsgYn: "s",
+            },
+            photoList: {
+                ffFilename: "s",
+                ffId: "n",
+                ffPath: "s",
+                ffRemark: "d",
+            }
+        },
     }
 };
 
@@ -81,6 +103,7 @@ const urls = {
     getFrList: "/api/manager/branchBelongList",
     getMainGridList: "/api/manager/branchInspectionCurrentList",
     getInspectionList: "/api/manager/branchInspectionList",
+    getInspectionNeo: "/api/manager/branchInspectionInfo",
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
@@ -117,6 +140,39 @@ const comms = {
             grids.f.setData(1, data);
         });
     },
+
+    getInspectionNeo(condition) {
+        dv.chk(condition, dtos.send.branchInspectionInfo, "확인품 디테일 정보받기 위한 아이디 보내기");
+        CommonUI.ajax(urls.getInspectionNeo, "GET", condition, function (res) {
+            const data = res.sendData;
+            console.log(data);
+            dv.chk(data, dtos.receive.branchInspectionInfo, "선택된 확인품의 디테일 정보 받기");
+            const refinedData = {
+                fdId: wares.currentRequest.fdId,
+                fiId: data.inspeotInfoDto.fiId,
+                fiComment: data.inspeotInfoDto.fiComment,
+                fiAddAmt: data.inspeotInfoDto.fiAddAmt,
+                fiCustomerConfirm: data.inspeotInfoDto.fiCustomerConfirm,
+                fiPhotoYn: data.inspeotInfoDto.fiPhotoYn,
+                fiSendMsgYn: data.inspeotInfoDto.fiSendMsgYn,
+                photoList: data.photoList,
+            }
+
+            wares.currentRequest = refinedData;
+            
+            $("#fiComment").val(wares.currentRequest.fiComment);
+            $("#fiAddAmt").val(wares.currentRequest.fiAddAmt.toLocaleString());
+            for(const photo of wares.currentRequest.photoList) {
+                const photoHtml = `<li class="tag-imgs__item">
+                    <a href="${photo.ffPath + photo.ffFilename}" data-lightbox="images" data-title="이미지 확대">
+                        <img src="${photo.ffPath + "s_" + photo.ffFilename}" class="tag-imgs__img" alt=""/>
+                    </a>
+                </li>`
+                $("#photoList").append(photoHtml);
+                $("#noImgScreen").hide();
+            }
+        });
+    },
 };
 
 /* .s : AUI 그리드 관련 설정들
@@ -128,7 +184,7 @@ const comms = {
 const grids = {
     s: { // 그리드 세팅
         targetDiv: [
-            "grid_main", "grid_check"
+            "grid_main"
         ],
         columnLayout: [],
         prop: [],
@@ -329,7 +385,7 @@ const grids = {
                     openCheckPop(e);
                 }
             });
-
+/* 
             AUIGrid.bind(grids.s.id[1], "cellClick", function (e) {
                 $("#fiAddAmtInConfirm").val(e.item.fiAddAmt.toLocaleString());
                 $("#fiCommentInConfirm").val(e.item.fiComment);
@@ -341,6 +397,7 @@ const grids = {
                     $("#imgFull").hide();
                 }
             });
+*/
         }
     }
 };
@@ -450,22 +507,27 @@ function searchOrder() {
 
 function openCheckPop(e) {
     resetCheckPop();
-
-    $("#fdRequestAmtInConfirm").val(e.item.fdTotAmt.toLocaleString());
-    $("#confirmInspectPop").addClass("active");
+    $("#fdTotAmtInPut").val(wares.currentRequest.fdTotAmt.toLocaleString());
     const searchCondition = {
-        fdId: e.item.fdId,
-        type: "2"
+        fiId: e.item.fiId,
     }
-    comms.getInspectionList(searchCondition);
+    comms.getInspectionNeo(searchCondition);
+        
     $("#checkPop").addClass("active");
-    grids.f.resize(1);
 }
 
+// function resetCheckPop() {
+//     $("#fiCommentInConfirm").val("");
+//     $("#fiAddAmtInConfirm").val("");
+//     $("#imgFull").hide();
+// }
+
 function resetCheckPop() {
-    $("#fiCommentInConfirm").val("");
-    $("#fiAddAmtInConfirm").val("");
-    $("#imgFull").hide();
+    $("#fdTotAmtInPut").val("");
+    $("#fiAddAmt").val("");
+    $("#fiComment").val("");
+    $("#photoList").html("");
+    $("#noImgScreen").show();
 }
 
 function ynStyle(rowIndex, columnIndex, value, headerText, item, dataField) {

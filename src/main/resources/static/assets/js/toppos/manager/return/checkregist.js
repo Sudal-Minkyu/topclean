@@ -5,7 +5,7 @@
 * */
 const dtos = {
     send: {
-        branchReceiptReturnList: {
+        branchInspection: {
             tagNo: "s",
             filterFromDt: "s",
             filterToDt: "s",
@@ -27,6 +27,7 @@ const dtos = {
  */
         branchInspectionSaveNeo: {
             fdId: "nr", // 수정시에는 fiId도
+            fiId: "n",
             fiAddAmt: "nr",
             fiComment: "s",
             fiType: "sr",
@@ -36,7 +37,10 @@ const dtos = {
 
         branchInspectionDelete: {
             fiId: "nr",
-            fiPhotoYn: "sr",
+        },
+
+        branchInspectionInfo: {
+            fiId: "nr",
         },
     },
 
@@ -47,7 +51,8 @@ const dtos = {
             frTagNo: "s",
         },
 
-        branchReceiptReturnList: {
+        branchInspection: {
+            fiId: "n",
             fdId: "n",
             frName: "s",
 			insertDt: "s",
@@ -90,6 +95,23 @@ const dtos = {
             ffPath: "s",
             ffFilename: "s",
         },
+
+        branchInspectionInfo: {
+            inspeotInfoDto: {
+                fiAddAmt: "n",
+                fiComment: "s",
+                fiCustomerConfirm: "s",
+                fiId: "", // 오면 수정모드 안오면 신규등록
+                fiPhotoYn: "s",
+                fiSendMsgYn: "s",
+            },
+            photoList: {
+                ffFilename: "s",
+                ffId: "n",
+                ffPath: "s",
+                ffRemark: "d",
+            }
+        },
     }
 };
 
@@ -121,9 +143,10 @@ const comms = {
 
     getMainGridList(searchCondition) {
         wares.searchCondition = searchCondition;
-        dv.chk(searchCondition, dtos.send.branchReceiptReturnList, "메인 그리드 검색 조건 보내기");
+        dv.chk(searchCondition, dtos.send.branchInspection, "메인 그리드 검색 조건 보내기");
         CommonUI.ajax(urls.getMainGridList, "GET", searchCondition, function (res) {
             const data = CommonUI.toppos.killNullFromArray(res.sendData.gridListData);
+            dv.chk(data, dtos.receive.branchInspection, "메인 그리드 검색 결과 리스트");
             console.log(data);
             grids.f.setData(0, data);
         });
@@ -142,9 +165,12 @@ const comms = {
 */
 
     getInspectionNeo(condition) {
+        dv.chk(condition, dtos.send.branchInspectionInfo, "확인품 디테일 정보받기 위한 아이디 보내기");
         CommonUI.ajax(urls.getInspectionNeo, "GET", condition, function (res) {
+            $("#deleteInspect").parents("li").show();
             const data = res.sendData;
             console.log(data);
+            dv.chk(data, dtos.receive.branchInspectionInfo, "선택된 확인품의 디테일 정보 받기");
             const refinedData = {
                 fdId: wares.currentRequest.fdId,
                 fiId: data.inspeotInfoDto.fiId,
@@ -158,8 +184,8 @@ const comms = {
 
             wares.currentRequest = refinedData;
             
-            $("#fiComment").val(data.inspeotInfoDto.fiComment);
-            $("#fiAddAmt").val(data.inspeotInfoDto.fiAddAmt.toLocaleString());
+            $("#fiComment").val(wares.currentRequest.fiComment);
+            $("#fiAddAmt").val(wares.currentRequest.fiAddAmt.toLocaleString());
             for(const photo of wares.currentRequest.photoList) {
                 const photoHtml = `<li class="tag-imgs__item">
                     <a href="${photo.ffPath + photo.ffFilename}" data-lightbox="images" data-title="이미지 확대">
@@ -172,7 +198,7 @@ const comms = {
             }
         });
     },
-
+/*
     deleteInspection(targets, fdId) {
         dv.chk(targets, dtos.send.branchInspectionDelete, "검품 삭제 목록");
         const data = {list: targets};
@@ -184,7 +210,6 @@ const comms = {
             comms.getInspectionList(searchCondition);
         });
     },
-/* 
     putNewInspect(formData) {
         const testObj = Object.fromEntries(formData);
         testObj.fdId = parseInt(testObj.fdId);
@@ -211,6 +236,7 @@ const comms = {
         testObj.fiAddAmt = parseInt(testObj.fiAddAmt) | 0;
         if(!testObj.addPhotoList) testObj.addPhotoList = []; // btId값이 없는 신규등록건
         if(!testObj.deletePhotoList) testObj.deletePhotoList = []; // btId값이 없는 신규등록건
+        if(!testObj.fiId) testObj.fiId = 0;
         
         dv.chk(testObj, dtos.send.branchInspectionSaveNeo, "확인품 등록");
 
@@ -223,8 +249,6 @@ const comms = {
             // };
             // wares.currentRequest.fdState = "B";
             // comms.getInspectionList(searchCondition);
-            $("#fiComment").val("");
-            $("#fiAddAmt").val("0");
             alertSuccess("확인품내역이 저장되었습니다.");
             $("#successBtn").on("click", function () {
                 closeCheckPop();
@@ -232,6 +256,17 @@ const comms = {
             comms.getMainGridList(wares.searchCondition);
         });
     },
+
+    deleteInspectionNeo(target) {
+        dv.chk(target, dtos.send.branchInspectionDelete, "등록된 확인품 삭제 대상 보내기");
+        CommonUI.ajax(urls.deleteInspection, "PARAM", target, function(res) {
+            alertSuccess("확인품내역이 삭제되었습니다.");
+            $("#successBtn").on("click", function () {
+                closeCheckPop();
+            });
+            comms.getMainGridList(wares.searchCondition);
+        });
+    }
 };
 
 /* .s : AUI 그리드 관련 설정들
@@ -489,7 +524,7 @@ const trigs = {
             $("#fiAddAmt").on("keyup", function () {
                 $(this).val($(this).val().toInt().toLocaleString());
             });
-
+/* 
             $("#deleteInspection").on("click", function () { // 3번테이블(검품등록) 의 삭제될 대상들을 가져와서 삭제 요청
                 const targetRowsItem = grids.f.getRemovedCheckRows(1);
                 let refinedTargetList = [];
@@ -516,7 +551,7 @@ const trigs = {
                     grids.f.resetChangedStatus(1);
                 }
             });
-
+*/
             $("#takePhotoBtn").on("click", function () {
                 takePhoto();
             });
@@ -534,6 +569,18 @@ const trigs = {
                 }
     
                 $(this).parents(".tag-imgs__item").remove();
+            });
+            
+            $("#deleteInspect").on("click", function () {
+                alertCheck("현재 확인품 내역을 삭제하시겠습니까?");
+                $("#checkDelSuccessBtn").on("click", function () {
+                    const target = {
+                    fiId: wares.currentRequest.fiId,
+                    }
+                    comms.deleteInspectionNeo(target);
+                });
+
+                
             });
         },
     },
@@ -649,6 +696,8 @@ async function openCheckPop(e) {
             fiId: e.item.fiId,
         }
         comms.getInspectionNeo(searchCondition);
+    } else {
+        $("#deleteInspect").parents("li").hide();
     }
     $("#checkPop").addClass("active");
 }
