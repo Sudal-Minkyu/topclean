@@ -15,7 +15,4 @@ import java.util.List;
 @Repository
 public interface FindRepository extends JpaRepository<Find,Long>, FindRepositoryCustom {
 
-    @Query("select a from Find a where a.id in :ffIdList")
-    List<Find> findByFindCheckList(List<Long> ffIdList); //  // 지사 물건찾기 확인 업데이트
-
 }

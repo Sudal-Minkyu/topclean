@@ -55,6 +55,7 @@ public class FindRepositoryCustomImpl extends QuerydslRepositorySupport implemen
                 .orderBy(find.id.desc())
                 .select(Projections.constructor(FindListDto.class,
                         find.id,
+
                         franchise.frName,
                         customer.bcName,
                         find.ffYyyymmdd,
@@ -102,7 +103,7 @@ public class FindRepositoryCustomImpl extends QuerydslRepositorySupport implemen
     }
 
 
-    // 모바일 전용 수기마감 querydsl
+    // 지사 물건찾기 지사확인 업데이트
     public int findByFindCheckUpdate(List<Long> ffIdList, String login_id){
 
         EntityManager em = getEntityManager();

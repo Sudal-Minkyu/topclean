@@ -27,7 +27,7 @@ import java.util.Map;
 @AllArgsConstructor
 public class FindListDto {
 
-    private String ffId; // 물건찾기 고정값
+    private Long ffId; // 물건찾기 고정값
     private String frName; // 가맹점명
     private String bcName; // 고객명
 
