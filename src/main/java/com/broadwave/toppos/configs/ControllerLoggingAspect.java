@@ -51,8 +51,10 @@ public class ControllerLoggingAspect {
         stopWatch.start();
         Object result = pjp.proceed();
         stopWatch.stop();
-        params.put("duration(ms)", stopWatch.getTotalTimeMillis());
-        log.info("[AOP logging of RestController] {}",params);
+        long totalTimeMillis = stopWatch.getTotalTimeMillis();
+        params.put("duration(ms)", totalTimeMillis );
+        if ( totalTimeMillis > 1000 ) log.warn("[RestController WARN] {}",params);
+        else log.info("[RestController INFO] {}",params);
         return result;
 
     }
