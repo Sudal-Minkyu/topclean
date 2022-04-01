@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -71,6 +72,28 @@ public class FindService {
         data.put("gridListData",findListDtos);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
+    // 지사 물건찾기 확인 업데이트
+    @Transactional
+    public ResponseEntity<Map<String, Object>> branchObjectFindCheck(List<Long> ffIdList, HttpServletRequest request) {
+        log.info("branchObjectFindCheck 호출");
+
+        log.info("ffIdList : "+ffIdList);
+
+        AjaxResponse res = new AjaxResponse();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String brCode = (String) claims.get("brCode"); // 소속된 지사 코드
+        String login_id = claims.getSubject(); // 현재 아이디
+        log.info("현재 접속한 아이디 : "+login_id);
+        log.info("현재 접속한 지사 코드 : "+brCode);
+
+        int successNum = findRepository.findByFindCheckUpdate(ffIdList,login_id);
+        log.info("성공한 업데이트 수 : "+successNum);
+
+        return ResponseEntity.ok(res.success());
     }
 
     // 가맹점 물건찾기 할 리스트 호출
@@ -138,4 +161,5 @@ public class FindService {
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
+
 }

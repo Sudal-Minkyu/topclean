@@ -13,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import java.util.List;
 
 /**
@@ -98,5 +100,24 @@ public class FindRepositoryCustomImpl extends QuerydslRepositorySupport implemen
         return query.fetch();
     }
 
+
+    // 모바일 전용 수기마감 querydsl
+    public int findByFindCheckUpdate(List<Long> ffIdList, String login_id){
+
+        EntityManager em = getEntityManager();
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("UPDATE fs_request_find a\n");
+        sb.append("SET \n");
+        sb.append("a.ff_state = '02', \n");
+        sb.append("a.modify_id = ?2, a.modify_date= NOW() \n");
+        sb.append("WHERE a.ff_id in ?1  \n");
+
+        Query query = em.createNativeQuery(sb.toString());
+        query.setParameter(1, ffIdList);
+        query.setParameter(2, login_id);
+
+        return query.executeUpdate();
+    }
 
 }

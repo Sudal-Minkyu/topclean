@@ -1,9 +1,19 @@
 package com.broadwave.toppos.User.ReuqestMoney.Requset.Find;
 
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Minkyu
@@ -17,6 +27,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class FindListDto {
 
+    private String ffId; // 물건찾기 고정값
     private String frName; // 가맹점명
     private String bcName; // 고객명
 

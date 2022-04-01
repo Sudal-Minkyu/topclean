@@ -471,6 +471,13 @@ public class ManagerRestController {
         return findService.objectFind(franchiseId, filterFromDt.replaceAll("-",""), filterToDt.replaceAll("-",""), null, request);
     }
 
+    // 지사 물건찾기 확인 업데이트
+    @PostMapping("branchObjectFindCheck")
+    @ApiOperation(value = "물건찾기 지사확인" , notes = "물건찾기 요청(01) 항목을 지사확인(02)으로 업데이트 한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
+    public ResponseEntity<Map<String,Object>> branchObjectFindCheck(@RequestParam(value="ffIdList", defaultValue="") List<Long> ffIdList, HttpServletRequest request){
+        return findService.branchObjectFindCheck(ffIdList, request);
+    }
 
 
 
