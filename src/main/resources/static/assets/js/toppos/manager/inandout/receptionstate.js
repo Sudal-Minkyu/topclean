@@ -40,7 +40,6 @@ const comms = {
     getFrList() {
         CommonUI.ajax(urls.getFrList, "GET", false, function (res) {
             const data = res.sendData.franchiseList;
-            console.log(res);
             dv.chk(data, dtos.receive.managerBelongList, "지점에 속한 가맹점 받아오기");
             const $frList = $("#frList");
             data.forEach(obj => {
@@ -84,7 +83,7 @@ const comms = {
 const grids = {
     s: { // 그리드 세팅
         targetDiv: [
-            "grid_main"
+            "grid_franchise", "grid_detail"
         ],
         columnLayout: [],
         prop: [],

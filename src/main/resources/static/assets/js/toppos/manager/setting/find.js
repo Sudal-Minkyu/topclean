@@ -62,7 +62,6 @@ const comms = {
     getFrList() {
         CommonUI.ajax(urls.getFrList, "GET", false, function (res) {
             const data = res.sendData.franchiseList;
-            console.log(res);
             dv.chk(data, dtos.receive.managerBelongList, "지점에 속한 가맹점 받아오기");
             const $frList = $("#frList");
             data.forEach(obj => {
@@ -200,6 +199,21 @@ const grids = {
                     width: 200,
                 },
             ];
+
+            grids.s.prop[0] = {
+                editable : false,
+                selectionMode : "singleRow",
+                noDataMessage : "존재하는 데이터가 없습니다.",
+                showAutoNoDataMessage: true,
+                enableColumnResize : true,
+                showRowAllCheckBox: true,
+                showRowCheckColumn: true,
+                showRowNumColumn : false,
+                showStateColumn : false,
+                enableFilter : true,
+                rowHeight : 48,
+                headerHeight : 48,
+            };
         },
 
         create() { // 그리드 동작 처음 빈 그리드를 생성
