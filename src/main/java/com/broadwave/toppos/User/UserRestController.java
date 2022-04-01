@@ -31,7 +31,6 @@ import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentSet;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Request;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotMainListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotMapperDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotSet;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.PhotoDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailUpdateDto;
@@ -1206,12 +1205,19 @@ public class UserRestController {
     @GetMapping("franchiseObjectFind")
     @ApiOperation(value = "물건찾기 할 리스트" , notes = "물건찾기 할 리스트를 호출한다.")
     @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
-    public ResponseEntity<Map<String,Object>> franchiseObjectFind(@RequestParam("bcId")Long bcId, @RequestParam("filterFromDt")String filterFromDt,
-                                                               @RequestParam("filterToDt")String filterToDt, HttpServletRequest request){
-        return findService.franchiseObjectFind(bcId, filterFromDt.replaceAll("-",""), filterToDt.replaceAll("-",""), request);
+    public ResponseEntity<Map<String,Object>> franchiseObjectFind(@RequestParam(value="searchString", defaultValue="") String searchString,
+                                                                  @RequestParam("bcId")Long bcId, @RequestParam("filterFromDt")String filterFromDt,
+                                                                  @RequestParam("filterToDt")String filterToDt, HttpServletRequest request){
+        return findService.franchiseObjectFind(bcId, filterFromDt.replaceAll("-",""), filterToDt.replaceAll("-",""), request, searchString);
     }
 
-
+    // 가맹점 물건찾기 할 항목 저장
+    @PostMapping("franchiseObjectFindSave")
+    @ApiOperation(value = "물건찾기 저장" , notes = "물건찾기 할 항목을 저장한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
+    public ResponseEntity<Map<String,Object>> franchiseObjectFindSave(@RequestParam(value="fdIdList", defaultValue="") List<Long> fdIdList, HttpServletRequest request){
+        return findService.franchiseObjectFindSave(fdIdList, request);
+    }
 
 
 

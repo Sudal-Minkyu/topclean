@@ -10,6 +10,10 @@ const dtos = {
             filterToDt: "s",
             franchiseId: "s",
         },
+
+        branchObjectFindCheck: { // 지사에서 확인한 리스트에 대한 보고
+            ffIdList: "a",
+        }
     },
     receive: {
         managerBelongList: { // 가맹점 선택 셀렉트박스에 띄울 가맹점의 리스트
@@ -19,6 +23,7 @@ const dtos = {
         },
 
         branchObjectFind: {
+            ffId: "n",
             frName: "s",
             bcName: "s",
             ffYyyymmdd: "s", // 물건찾기요청일자
@@ -55,6 +60,7 @@ const dtos = {
 const urls = {
     getFrList: "/api/manager/branchBelongList",
     getMainList: "/api/manager/branchObjectFind",
+    sendCheckRespondList: "/api/manager/branchObjectFindCheck",
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
@@ -79,6 +85,14 @@ const comms = {
             dv.chk(data, dtos.receive.branchObjectFind, "메인 그리드 검색 결과 리스트 받기");
             console.log(res);
             grids.f.setData(0, data);
+        });
+    },
+
+    sendCheckRespondList(targets) {
+        dv.chk(targets, dtos.send.branchObjectFindCheck, "지사확인을 표시한 리스트 보내기");
+        CommonUI.ajax(urls.sendCheckRespondList, "PARAM", targets, function (res) {
+            alertSuccess("지사확인을 완료하였습니다.");
+            comms.getMainList(wares.searchCondition);
         });
     },
 };
@@ -190,7 +204,7 @@ const grids = {
                     headerText: "물품찾기<br>상태",
                     width: 90,
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
-                        return value;
+                        return CommonData.name.ffState[value];
                     },
                 }, {
                     dataField: "fdRemark",
@@ -274,6 +288,19 @@ const trigs = {
                 grids.f.exportToXlsx();
             }
         });
+
+        $("#brRespond").on("click", function () {
+            const checkedItems = grids.f.getCheckedItems(0);
+            if(checkedItems.length) {
+                alertCheck("선택하신 물품을 확인처리 하시겠습니까?");
+                $("#checkDelSuccessBtn").on("click", function () {
+                    sendCheckedList(checkedItems);
+                    $('#popupId').remove();
+                });
+            } else {
+                alertCaution("확인할 물품을 먼저 선택해 주세요.", 1 );
+            }
+        });
     },
 }
 
@@ -282,6 +309,7 @@ const wares = {
     title: "물건찾기", // 엑셀 다운로드 파일명 생성에 쓰인다.
     filterFromDt: "",
     filterToDt: "",
+    searchCondition: {},
 }
 
 $(function() { // 페이지가 로드되고 나서 실행
@@ -326,6 +354,7 @@ function searchOrder() {
         filterToDt: $("#filterToDt").val().numString(),
         franchiseId: $("#frList").val(),
     };
+    wares.searchCondition = searchCondition;
     wares.filterFromDt = searchCondition.filterFromDt;
     wares.filterToDt = searchCondition.filterToDt;
 
@@ -336,4 +365,16 @@ function hasGrid0Data() {
     let result = grids.f.getData(0).length ? true : false ;
     if(!result) alertCaution("엑셀 다운로드를 실행할 데이터가 없습니다.<br>먼저 조회를 해주세요.", 1);
     return result;
+}
+
+function sendCheckedList(items) {
+    let ffIdList = [];
+    for(const {item} of items) {
+        ffIdList.push(item.ffId);
+    }
+    const targets = {
+        ffIdList: ffIdList,
+    }
+    comms.sendCheckRespondList(targets);
+
 }

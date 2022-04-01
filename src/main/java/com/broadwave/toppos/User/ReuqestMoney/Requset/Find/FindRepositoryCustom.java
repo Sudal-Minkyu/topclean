@@ -10,4 +10,7 @@ import java.util.List;
  */
 public interface FindRepositoryCustom {
     List<FindListDto> findByFindList(Long franchiseId, String brCode, String filterFromDt, String filterToDt, String ffState);
+
+    int findByFindCheckUpdate(List<Long> ffIdList, String login_id);
+
 }

@@ -1,40 +1,29 @@
-package com.broadwave.toppos.User.ReuqestMoney.Requset.Find;
+package com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user;
 
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author Minkyu
  * Date : 2022-04-01
  * Time :
- * Remark : Toppos 물건찾기 FindListDto
+ * Remark : Toppos 물건찾기 등록할 리스트 호출 Dto
  */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class FindListDto {
+public class RequestFindListDto {
 
-    private Long ffId; // 물건찾기 고정값
-    private String frName; // 가맹점명
+    private Long fdId; // 접수세부 고정값
+
     private String bcName; // 고객명
 
-    private String ffYyyymmdd; // 물건찾기 요청일자
     private String frYyyymmdd; // 접수일자
+    private String fdEstimateDt; // 출고예정일
 
-    private String fdS2Dt; // 입고일
     private String fdTag; // 택번호
 
     private String fdColor; // 색상코드 (00:미선택 01 흰색 02:검정 03: 회색, 04 빨강 05:주황, 06: 노랑, 07 초록 08 파랑 09:남색 10 보라 11 핑크)
@@ -59,21 +48,10 @@ public class FindListDto {
     private Integer fdTotAmt; // 합계금액( (정상 + 수선 + 추가1 + 추가2 -할인) * 수량 )
     private String fdState; // 현재상태 ( S1 : 접수, S2: 지사입고,S3 강제출고, S4:가맹점입고, S6: 고객인도, S7: 지사강제출고, S8: 가맹점강제입고)
 
-    private String ffState; // 물품찾기 상태
-
     private String fdRemark; // 특이사항
 
-
-    public StringBuffer getFfYyyymmdd() {
-        if(ffYyyymmdd != null && !ffYyyymmdd.equals("")){
-            StringBuffer getFfYyyymmdd = new StringBuffer(ffYyyymmdd);
-            getFfYyyymmdd.insert(4,'-');
-            getFfYyyymmdd.insert(7,'-');
-            return getFfYyyymmdd;
-        }else{
-            return null;
-        }
-    }
+    private String fdS2Dt; // 지사입고일
+    private String ffState; // 물품찾기 상태
 
     public StringBuffer getFrYyyymmdd() {
         if(frYyyymmdd != null && !frYyyymmdd.equals("")){

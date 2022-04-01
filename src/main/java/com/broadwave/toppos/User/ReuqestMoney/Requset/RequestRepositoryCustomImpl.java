@@ -6,7 +6,9 @@ import com.broadwave.toppos.Head.Item.Group.B.QItemGroupS;
 import com.broadwave.toppos.Head.Item.Group.C.QItem;
 import com.broadwave.toppos.User.Customer.Customer;
 import com.broadwave.toppos.User.Customer.QCustomer;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.Find.QFind;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.QRequestDetail;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestFindListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.*;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.CaseBuilder;
@@ -571,5 +573,92 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
         return jpaResultMapper.list(query, RequestRealTimeListDto.class);
 
     }
+//    RequestFindListDto
+
+    // 물건찾기 등록 리스트 Dto
+    @Override
+    public List<RequestFindListDto> findByRequestFindList(Long bcId, String frCode, String filterFromDt, String filterToDt, String searchString){
+
+        QRequestDetail requestDetail = QRequestDetail.requestDetail;
+        QRequest request = QRequest.request;
+        QFranchise franchise = QFranchise.franchise;
+        QCustomer customer = QCustomer.customer;
+        QItem item = QItem.item;
+        QItemGroup itemGroup = QItemGroup.itemGroup;
+        QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
+        QFind find = QFind.find;
+
+        JPQLQuery<RequestFindListDto> query = from(requestDetail)
+                .innerJoin(request).on(requestDetail.frId.eq(request))
+                .innerJoin(franchise).on(franchise.frCode.eq(request.frCode))
+                .innerJoin(customer).on(customer.eq(request.bcId))
+                .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
+                .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
+                .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
+                .leftJoin(find).on(find.fdId.eq(requestDetail))
+                .orderBy(requestDetail.id.desc())
+                .select(Projections.constructor(RequestFindListDto.class,
+
+                        requestDetail.id,
+                        customer.bcName,
+
+                        request.frYyyymmdd,
+                        requestDetail.fdEstimateDt,
+
+                        requestDetail.fdTag,
+                        requestDetail.fdColor,
+
+                        itemGroup.bgName,
+                        itemGroupS.bsName,
+                        item.biName,
+
+                        requestDetail.fdPriceGrade,
+                        requestDetail.fdRetryYn,
+                        requestDetail.fdPressed,
+                        requestDetail.fdAdd1Amt,
+                        requestDetail.fdAdd1Remark,
+                        requestDetail.fdRepairAmt,
+                        requestDetail.fdRepairRemark,
+                        requestDetail.fdWhitening,
+                        requestDetail.fdPollution,
+                        requestDetail.fdWaterRepellent,
+                        requestDetail.fdStarch,
+                        requestDetail.fdUrgentYn,
+
+                        requestDetail.fdTotAmt,
+                        requestDetail.fdState,
+
+                        requestDetail.fdRemark,
+
+                        requestDetail.fdS2Dt,
+                        new CaseBuilder()
+                                .when(find.ffState.isNull()).then("미요청")
+                                .otherwise(find.ffState)
+                ));
+
+        switch (searchString) {
+            case "1":
+                query.where(customer.bcHp.likeIgnoreCase("%"+searchString+"%"));
+                break;
+            case "2":
+                query.where(customer.bcName.likeIgnoreCase("%"+searchString+"%"));
+                break;
+            case "3":
+                query.where(requestDetail.fdTag.likeIgnoreCase("%"+searchString+"%"));
+                break;
+            default:
+                break;
+        }
+
+        if(bcId != 0){
+            query.where(customer.bcId.eq(bcId));
+        }
+
+        query.where(request.frCode.eq(frCode).and(requestDetail.fdState.notLike("S6")));
+        query.where(find.ffYyyymmdd.goe(filterFromDt).and(find.ffYyyymmdd.loe(filterToDt)));
+
+        return query.fetch();
+    }
+
 
 }

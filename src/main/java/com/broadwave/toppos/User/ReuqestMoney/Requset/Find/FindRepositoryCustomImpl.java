@@ -13,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import java.util.List;
 
 /**
@@ -52,6 +54,8 @@ public class FindRepositoryCustomImpl extends QuerydslRepositorySupport implemen
                 .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
                 .orderBy(find.id.desc())
                 .select(Projections.constructor(FindListDto.class,
+                        find.id,
+
                         franchise.frName,
                         customer.bcName,
                         find.ffYyyymmdd,
@@ -98,5 +102,24 @@ public class FindRepositoryCustomImpl extends QuerydslRepositorySupport implemen
         return query.fetch();
     }
 
+
+    // 지사 물건찾기 지사확인 업데이트
+    public int findByFindCheckUpdate(List<Long> ffIdList, String login_id){
+
+        EntityManager em = getEntityManager();
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("UPDATE fs_request_find a\n");
+        sb.append("SET \n");
+        sb.append("a.ff_state = '02', \n");
+        sb.append("a.modify_id = ?2, a.modify_date= NOW() \n");
+        sb.append("WHERE a.ff_id in ?1  \n");
+
+        Query query = em.createNativeQuery(sb.toString());
+        query.setParameter(1, ffIdList);
+        query.setParameter(2, login_id);
+
+        return query.executeUpdate();
+    }
 
 }
