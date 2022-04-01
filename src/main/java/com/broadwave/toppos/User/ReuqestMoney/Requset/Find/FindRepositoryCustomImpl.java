@@ -54,6 +54,7 @@ public class FindRepositoryCustomImpl extends QuerydslRepositorySupport implemen
                 .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
                 .orderBy(find.id.desc())
                 .select(Projections.constructor(FindListDto.class,
+                        find.id,
                         franchise.frName,
                         customer.bcName,
                         find.ffYyyymmdd,
