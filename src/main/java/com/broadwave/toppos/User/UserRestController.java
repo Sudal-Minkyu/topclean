@@ -928,8 +928,8 @@ public class UserRestController {
 
     // 검품 등록 API -> 지사도 사용
     @PostMapping("franchiseInspectionSave")
-    public ResponseEntity<Map<String,Object>> franchiseInspectionSave(@ModelAttribute InspeotMapperDto inspeotMapperDto, MultipartHttpServletRequest multi) throws IOException {
-        return inspectService.InspectionSave(inspeotMapperDto, multi, AWSBUCKETURL,"1");
+    public ResponseEntity<Map<String,Object>> franchiseInspectionSave(@ModelAttribute InspeotMapperDto inspeotMapperDto, HttpServletRequest request) throws IOException {
+        return inspectService.InspectionSave(inspeotMapperDto, request, AWSBUCKETURL,"1");
     }
 
     // 통합조회용 - 등록 검품 삭제
