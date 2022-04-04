@@ -22,6 +22,8 @@ const dtos = {
 const urls = {
     taglostget: "/api/manager/lostNoticeView",
     taglostsave: "/api/manager/lostNoticeSave",
+    noticeget: "/api/manager/noticeView",
+    noticesave: "/api/manager/noticeSave",
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
@@ -143,16 +145,25 @@ function getParams() {
     if(wares.params.has("prevSearchString")) {
         wares.searchString = wares.params.get("prevSearchString");
     }
+
+    if(wares.params.has("hnType")) {
+        wares.hnType = wares.params.get("hnType");
+    } else {
+        wares.hnType = "00";
+    }
 }
 
 function setInputs() {
+    let specialCondition = "";
+    if(wares.boardType === "notice") specialCondition = "&hnType=" + wares.hnType;
     if(wares.id) {
         $("#previousLink").attr("href", `./${wares.boardType}view?prevPage=` + wares.page + "&id=" + wares.id
             + "&prevSearchString=" + wares.searchString + "&prevFilterFromDt="
-            + wares.filterFromDt + "&prevFilterToDt=" + wares.filterToDt);
+            + wares.filterFromDt + "&prevFilterToDt=" + wares.filterToDt + specialCondition);
     } else {
-        $("#previousLink").attr("href", `./${wares.boardType}list?page=` + wares.page + "&searchString=" + wares.searchString
-            + "&filterFromDt=" + wares.filterFromDt + "&filterToDt=" + wares.filterToDt);
+        $("#previousLink").attr("href", `./${wares.boardType}list?page=` + wares.page
+            + "&searchString=" + wares.searchString + "&filterFromDt=" + wares.filterFromDt
+            + "&filterToDt=" + wares.filterToDt + specialCondition);
     }
 }
 

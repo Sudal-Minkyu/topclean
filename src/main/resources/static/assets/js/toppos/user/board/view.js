@@ -96,6 +96,7 @@ const wares = {
     searchString: "",
     filterFromDt: "",
     filterToDt: "",
+    hnType: "",
 
     boardType: "", // 아래 게시판 종류의 이름이 담길 곳
     /* 게시판 종류에 따른 데이터들 */
@@ -172,11 +173,17 @@ function getParams() {
     } else {
         wares.filterToDt = today;
     }
+
+    if(wares.params.has("hnType")) {
+        wares.hnType = wares.params.get("hnType");
+    } else {
+        wares.hnType = "00";
+    }
 }
 
 function setFields(data) {
     $("#subject").html(data.subject);
-    $("#name").html(data.name);
+    $("#name").html(wares.boardType === "notice" ? CommonData.name.hnType[data.hnType] : data.name);
     $("#insertDateTime").html(data.insertDateTime);
     $("#content").html(data.content);
     $("#prevSubject").html(data.prevSubject);
@@ -184,16 +191,19 @@ function setFields(data) {
     $("#nextSubject").html(data.nextSubject);
     $("#nextInsertDateTime").html(data.nextvInsertDateTime);
 
+    let specialCondition = "";
+    if(wares.boardType === "notice") specialCondition = "&hnType=" + wares.hnType;
+
     if(data.prevId) {
         $("#linkPrev").attr("href", `./${wares.boardType}view?id=` + data.prevId + "&prevPage=" + wares.page 
         + "&prevSearchString=" + wares.searchString + "&prevFilterFromDt=" + wares.filterFromDt
-        + "&prevFilterToDt=" + wares.filterToDt);
+        + "&prevFilterToDt=" + wares.filterToDt + specialCondition);
     }
 
     if(data.nextId) {
         $("#linkNext").attr("href", `./${wares.boardType}view?id=` + data.nextId + "&prevPage=" + wares.page 
         + "&prevSearchString=" + wares.searchString + "&prevFilterFromDt=" + wares.filterFromDt
-        + "&prevFilterToDt=" + wares.filterToDt);
+        + "&prevFilterToDt=" + wares.filterToDt + specialCondition);
     }
 
     /* 덧글 본문 처리방식 결정되면 수정할 것 */
@@ -204,13 +214,15 @@ function setFields(data) {
         $("#content").css("height", "200px");
     }
 
-    $("#linkReply").attr("href", `./${wares.boardType}reply?id=` + data[wares[wares.boardType].idKeyName] + "&prevPage=" + wares.page 
-    + "&prevSearchString=" + wares.searchString + "&prevFilterFromDt=" + wares.filterFromDt
-    + "&prevFilterToDt=" + wares.filterToDt);
+    $("#linkReply").attr("href", `./${wares.boardType}reply?id=`
+        + data[wares[wares.boardType].idKeyName] + "&prevPage=" + wares.page + "&prevSearchString="
+        + wares.searchString + "&prevFilterFromDt=" + wares.filterFromDt + "&prevFilterToDt=" + wares.filterToDt
+        + specialCondition);
 
     // 페이지 정보 가져와서 해당 페이지로 바로 갈 수 있도록 조치
-    $("#linkPrevPage").attr("href", `./${wares.boardType}list?page=` + wares.page + "&searchString=" + wares.searchString
-        + "&filterFromDt=" + wares.filterFromDt + "&filterToDt=" + wares.filterToDt);
+    $("#linkPrevPage").attr("href", `./${wares.boardType}list?page=` + wares.page
+        + "&searchString=" + wares.searchString + "&filterFromDt=" + wares.filterFromDt + "&filterToDt="
+        + wares.filterToDt + specialCondition);
 }
 
 function createReplyHtml(commentId, name, modifyDt, comment, type, isWriter, preId) {

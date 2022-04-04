@@ -44,6 +44,14 @@ const dtos = {
                 btInputDt: "s",
                 btMaterial: "s",
             },
+
+            noticeListDtos: {
+                hnId: "n",
+                hnType: "s",
+                insertDateTime: "s",
+                insert_id: "s",
+                subject: "s",
+            },
         },
     }
 };
@@ -58,12 +66,14 @@ const comms = {
     franchiseInfo(condition) {
         const url = "/api/user/franchiseInfo";
         CommonUI.ajax(url, "GET", condition, function (res) {
+            console.log(res);
             const data = res.sendData;
             dv.chk(data, dtos.receive.franchiseInfo, "메인페이지 각종 값 받아오기");
             const userIndexDto = data.userIndexDto[0];
             const historyList = data.requestHistoryList;
             const inspectList = data.inspeotList;
             const tagGalleryList = data.tagGalleryList;
+            const noticeList = data.noticeListDtos;
 
             if(userIndexDto.brName===null){
                 $("#brName").text("무소속");
@@ -139,20 +149,15 @@ const comms = {
                         .html(tagGalleryList[i].btInputDt);
                 }
             }
-        });
-    },
 
-    notice() {
-        const conditionSix = wares.boardConditionThree; // 공지사항 길이 확정날 때 까지 임시
-        conditionSix.size = 6; // 공지사항 길이 확정날 때 까지 임시
-        CommonUI.ajax(urls.notice, "PARAM", conditionSix, function (res) {
-            const data = res.datalist;
-            if(data) {
+            if(noticeList) {
                 const field = $("#noticeList").children("li").children("a");
-                for(let i = 0; i < data.length; i++) {
-                    $(field[i]).attr("href", `./user/noticeview?id=${data[i].hnId}`);
-                    $(field[i]).children(".main__board-title").children("span").html(data[i].subject);
-                    $(field[i]).children(".main__board-date").children("span").html(data[i].insertDateTime);
+                for(let i = 0; i < noticeList.length; i++) {
+                    $(field[i]).attr("href", `./user/noticeview?id=${noticeList[i].hnId}`);
+                    $(field[i]).children(".main__board-bcname").children("span")
+                        .html(CommonData.name.hnType[noticeList[i].hnType]);
+                    $(field[i]).children(".main__board-title").children("span").html(noticeList[i].subject);
+                    $(field[i]).children(".main__board-date").children("span").html(noticeList[i].insertDateTime);
                 }
             }
         });
@@ -200,13 +205,6 @@ const trigs = {
 
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
 const wares = {
-    boardConditionThree: {
-        page: 0,
-        size: 3,
-        searchString: "",
-        filterFromDt: "",
-        filterToDt: "",
-    },
     fiCustomerConfirmName: {
         "1": "(미처리)",
         "2": "(수락)",
@@ -225,15 +223,12 @@ function onPageLoad() {
     fromday.setDate(fromday.getDate() - 365);
     fromday = fromday.format("yyyy-MM-dd");
     const today = new Date().format("yyyy-MM-dd");
-    wares.boardConditionThree.filterFromDt = fromday;
-    wares.boardConditionThree.filterToDt = today;
 
     const condition = {
         date: today.numString(),
     }
 
     comms.franchiseInfo(condition);
-    comms.notice();
     const datePickerId = ["historyDate"];
     CommonUI.setDatePicker(datePickerId);
 	$("#historyDate").val(today);

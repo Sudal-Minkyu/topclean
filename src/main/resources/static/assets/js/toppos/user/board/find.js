@@ -5,6 +5,10 @@
 * */
 const dtos = {
     send: {
+        물건찾기요청: {
+            fdIdList: "a",
+        },
+
         franchiseObjectFind: { // 통합조회 페이지와 비슷하지만, fdState에 대한 조건이 빠진 형태
             bcId: "n", // 선택된 고객. 없을 경우 null
             searchTag: "s", // 택번호 검색문자
@@ -19,7 +23,33 @@ const dtos = {
         },
     },
     receive: {
-        franchiseObjectFind: { // 인계페이지와 거의 비슷하지만, estimateDt가 빠지고, fdS6Dt가 들어간 형태
+        franchiseObjectFind: {
+            fdId: "n",
+            bcName: "s",
+            frYyyymmdd: "s",
+            fdEstimateDt: "s",
+            fdTag: "s",
+            fdColor: "s",
+            bgName: "s",
+            bsName: "s",
+            biName: "s",
+            fdPriceGrade: "s",
+            fdRetryYn: "s",
+            fdPressed: "n",
+            fdAdd1Amt: "n",
+            fdAdd1Remark: "s",
+            fdRepairAmt: "n",
+            fdRepairRemark: "s",
+            fdWhitening: "n",
+            fdPollution: "n",
+            fdWaterRepellent: "n",
+            fdStarch: "n",
+            fdUrgentYn: "s",
+            fdTotAmt: "n",
+            fdState: "s",
+            fdRemark: "s",
+            fdS2Dt: "s",
+            ffState: "s",
         },
 
         customerInfo: { // integrate 의 customerInfo와 같은 구성
@@ -43,6 +73,7 @@ const dtos = {
 const urls = {
     searchCustomer: "/api/user/customerInfo", // 고객 검색
     getDetailList: "/api/user/franchiseObjectFind",
+    sendSearchRequest: "",
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
@@ -72,14 +103,23 @@ const comms = {
 
     getDetailList(filterCondition) {
         console.log(filterCondition);
+        wares.filterCondition = filterCondition;
         dv.chk(filterCondition, dtos.send.franchiseObjectFind, "물건찾기 리스트 필터링조건 보내기");
         CommonUI.ajax(urls.getDetailList, "GET", filterCondition, function (res) {
             const data = res.sendData.gridListData;
-            console.log(res);
             dv.chk(data, dtos.receive.franchiseObjectFind, "물건찾기 리스트 받기");
-            // grids.f.setData(0, data);
+            grids.f.setData(0, data);
         });
     },
+
+    sendSearchRequest(target) {
+        dv.chk(target, dtos.send.물건찾기요청, "물건찾기를 요청할 품목들 보내기");
+        console.log(target);
+        CommonUI.ajax(urls.sendSearchRequest, "GET", target, function (res) {
+            alertSuccess("요청하신 품목을 찾을 물건으로 등록하였습니다.");
+            comms.getDetailList(wares.filterCondition);
+        });
+    }
 };
 
 /* .s : AUI 그리드 관련 설정들
@@ -146,7 +186,7 @@ const grids = {
                     dataField: "processName",
                     headerText: "처리내역",
                     style: "grid_textalign_left",
-                    width: 80,
+                    width: 120,
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
                         item.processName = CommonUI.toppos.processName(item);
                         return item.processName;
@@ -169,7 +209,7 @@ const grids = {
                     dataField: "fdRemark",
                     headerText: "특이사항",
                     style: "grid_textalign_left",
-                    width: 100,
+                    width: 120,
                 }, {
                     dataField: "fdS2Dt",
                     headerText: "지사입고일",
@@ -179,7 +219,7 @@ const grids = {
                 }, {
                     dataField: "ffState",
                     headerText: "찾기상태",
-                    width: 85,
+                    width: 65,
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
                         return CommonData.name.ffState[value];
                     },
@@ -308,6 +348,20 @@ const trigs = {
         $("#vkeyboard0").on("click", function() {
             onShowVKeyboard(0);
         });
+
+        $("#requestSearch").on("click", function () {
+            const checkedItems = grids.f.getCheckedItems(0);
+            const target = makeTargetDataset(checkedItems);
+            if (checkedItems.length) {
+                alertCheck("선택된 상품을 찾을 물건으로 등록 하시겠습니까?");
+                $("#checkDelSuccessBtn").on("click", function () {
+                    comms.sendSearchRequest(target);
+                    $('#popupId').remove();
+                });
+            } else {
+                alertCaution("찾을 물건을 선택해주세요", 1);
+            }
+        });
     },
 }
 
@@ -316,6 +370,7 @@ const wares = {
     selectedCustomer: {},
     searchTag: null,
     selectedItem: {},
+    filterCondition: {},
 }
 
 $(function() { // 페이지가 로드되고 나서 실행
@@ -477,4 +532,15 @@ function mainSearch() {
     } else {
         alertCaution("검색어를 입력해 주세요", 1);
     }
+}
+
+function makeTargetDataset(checkedItems) { // 저장 데이터셋 만들기
+    let fdIdList = [];
+    checkedItems.forEach(data => {
+        fdIdList.push(data.item.fdId);
+    });
+    const target = {
+        fdIdList: fdIdList,
+    };
+    return target;
 }

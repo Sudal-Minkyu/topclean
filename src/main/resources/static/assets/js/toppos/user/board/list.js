@@ -17,16 +17,12 @@ const dtos = {
         getPostList: {
             datalist: {
                 subject: "s",
-                numOfComment: "n", // 덧글이 달린 숫자.
                 insertDateTime: "s", // yyyymmdd만
                 insert_id: "s",
             },
             total_page: "n", // 전체 페이지수
 
             total_rows: "n",
-            current_page: "n",
-            current_rows: "n",
-
             current_page: "n",
             current_rows: "n",
             err_code: "s",
@@ -43,7 +39,6 @@ const dtos = {
 const urls = {
     taglost: "/api/user/lostNoticeList",
     notice: "/api/user/noticeList",
-    brnotice: "",
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
@@ -56,10 +51,19 @@ const comms = {
             filterFromDt: wares.filterFromDt,
             filterToDt: wares.filterToDt,
         };
+        if(wares.boardType === "notice") {
+            condition.hnType = wares.hnType
+            dtos.send.getPostList.hnType = "s";
+        }
         dv.chk(condition, dtos.send.getPostList, "게시판 조회 속성과, 검색값 보내기");
 
+        console.log(condition);
         CommonUI.ajax(urls[wares.boardType], "PARAM", condition, function (res) {
+            console.log(res);
             dtos.receive.getPostList.datalist[wares[wares.boardType].idKeyName] = "n"; // 검사 조건에 임의로 각 게시판의 아이디 추가
+            if(!["notice"].includes(wares.boardType)) dtos.receive.getPostList.datalist.numOfComment = "n";
+            if(["notice"].includes(wares.boardType)) dtos.receive.getPostList.datalist.hnType = "s";
+            dv.chk(res, dtos.receive.getPostList, "게시글들 받아오기");
             wares.totalPage = res.total_page;
             createPagingNavigator(wares.page);
             grids.f.setData(0, res.datalist);
@@ -97,7 +101,7 @@ const grids = {
                         type : "TemplateRenderer",
                     },
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
-                        let result = "<div clasee='list_subject'><span>" + value + "</span>";
+                        let result = "<div class='list_subject'><span>" + value + "</span>";
                         if(item.numOfComment) {
                             result += ` <span class="numOfComment">(${item.numOfComment})</span>`
                         }
@@ -157,6 +161,40 @@ const grids = {
             return AUIGrid.getCheckedRowItems(grids.s.id[numOfGrid]);
         },
 
+        noticeSetting() {
+            /* 0번 그리드의 레이아웃 */
+            grids.s.columnLayout[0] = [
+                {
+                    dataField: "hnType",
+                    headerText: "작성자",
+                    width: 150,
+                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                        return CommonData.name.hnType[value];
+                    }
+                },
+                {
+                    dataField: "subject",
+                    headerText: "제목",
+                    style: "grid_textalign_left",
+                    renderer : {
+                        type : "TemplateRenderer",
+                    },
+                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                        let result = "<div clasee='list_subject'><span>" + value + "</span>";
+                        if(item.numOfComment) {
+                            result += ` <span class="numOfComment">(${item.numOfComment})</span>`
+                        }
+                        result += "</div>";
+                        return result;
+                    }
+                }, {
+                    dataField: "insertDateTime",
+                    headerText: "작성일",
+                    width: 150,
+                },
+            ];
+        },
+
         
     },
 
@@ -164,9 +202,11 @@ const grids = {
         basicTrigger() {
             /* 0번그리드 내의 셀 클릭시 이벤트 */
             AUIGrid.bind(grids.s.id[0], "cellClick", function (e) {
+                let specialCondition = "";
+                if(wares.boardType === "notice") specialCondition = "&hnType=" + wares.hnType;
                 location.href = `./${wares.boardType}view?id=` + e.item[wares[wares.boardType].idKeyName] + "&prevPage=" + wares.page 
                     + "&prevSearchString=" + wares.searchString + "&prevFilterFromDt=" + wares.filterFromDt
-                    + "&prevFilterToDt=" + wares.filterToDt;
+                    + "&prevFilterToDt=" + wares.filterToDt + specialCondition;
             });
         }
     }
@@ -207,6 +247,7 @@ const wares = {
     searchString: "",
     filterFromDt: "",
     filterToDt: "",
+    hnType: "",
 
     boardType: "",
     taglost: {
@@ -217,10 +258,6 @@ const wares = {
         title: "공지사항",
         idKeyName: "hnId",
     },
-    brnotice: {
-        title: "지사 공지사항",
-        idKeyName: "",
-    }
 
 }
 
@@ -231,13 +268,16 @@ $(function() { // 페이지가 로드되고 나서 실행
 /* 페이지가 로드되고 나서 실행 될 코드들을 담는다. */
 function onPageLoad() {
     grids.f.initialization();
+    enableDatepicker();
+    getParams();
+    setInputs();
+    if(wares.boardType === "notice") {
+        grids.f.noticeSetting();
+        $("#hnTypeComp").show();
+    }
     grids.f.create();
     grids.t.basicTrigger();
     trigs.s.basicTrigger();
-    enableDatepicker();
-
-    getParams();
-    setInputs();
     comms.getList();
     createPagingNavigator(wares.page);
 
@@ -275,12 +315,19 @@ function getParams() {
     } else {
         wares.searchString = "";
     }
+
+    if(wares.params.has("hnType")) {
+        wares.hnType = wares.params.get("hnType");
+    } else {
+        wares.hnType = "00";
+    }
 }
 
 function setInputs() {
     if(wares.filterFromDt) $("#filterFromDt").val(wares.filterFromDt);
     if(wares.filterToDt) $("#filterToDt").val(wares.filterToDt);
     if(wares.searchString) $("#searchString").val(wares.searchString);
+    if(wares.hnType) $("#hnType").val(wares.hnType);
     $("#boardTitle").html(wares[wares.boardType].title);
     $("#boardLink").attr("href", `./${wares.boardType}list`);
 }
@@ -329,7 +376,10 @@ function createPagingNavigator(goPage) {
 }
 
 function moveToPage(goPage) {
-	var url = `./${wares.boardType}list?page=` + goPage + "&searchString=" + wares.searchString + "&filterFromDt=" + wares.filterFromDt + "&filterToDt=" + wares.filterToDt;
+    let specialCondition = "";
+    if(wares.boardType === "notice") specialCondition = "&hnType=" + wares.hnType;
+	var url = `./${wares.boardType}list?page=` + goPage + "&searchString=" + wares.searchString + "&filterFromDt="
+        + wares.filterFromDt + "&filterToDt=" + wares.filterToDt + specialCondition;
     location.href = url;
 }
 
@@ -350,6 +400,7 @@ function mainSearch() {
     wares.searchString = $("#searchString").val();
     wares.filterFromDt = $("#filterFromDt").val();
     wares.filterToDt = $("#filterToDt").val();
+    wares.hnType = $("#hnType").val();
     moveToPage(1);
 }
 

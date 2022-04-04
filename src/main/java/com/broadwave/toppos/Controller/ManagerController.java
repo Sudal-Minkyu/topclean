@@ -138,4 +138,10 @@ public class ManagerController {
     public String noticeview(){
         return "manager/setting/board/view";
     }
+    // 공지사항 게시판 - 쓰기
+    @RequestMapping("noticewrite")
+    public String noticewrite(){
+        return "manager/setting/board/write";
+    }
+
 }

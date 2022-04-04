@@ -72,9 +72,13 @@ const trigs = {
                 commitReply("1", "#replyField");
             });
 
+            let specialCondition = "";
+            if(wares.boardType === "notice") specialCondition = "&hnType=" + wares.hnType;
+
             // 페이지 정보 가져와서 해당 페이지로 바로 갈 수 있도록 조치
-            $("#linkPrevPage").attr("href", `./${wares.boardType}view?id=${wares.id}&prevPage=` + wares.page + "&prevSearchString=" + wares.searchString
-                + "&prevFilterFromDt=" + wares.filterFromDt + "&prevFilterToDt=" + wares.filterToDt);
+            $("#linkPrevPage").attr("href", `./${wares.boardType}view?id=${wares.id}&prevPage=`
+                + wares.page + "&prevSearchString=" + wares.searchString
+                + "&prevFilterFromDt=" + wares.filterFromDt + "&prevFilterToDt=" + wares.filterToDt + specialCondition);
         }
     },
     r: { // 이벤트 해제
@@ -93,6 +97,7 @@ const wares = {
     searchString: "",
     filterFromDt: "",
     filterToDt: "",
+    hnType: "",
 
     boardType: "",
     taglost: {
@@ -169,6 +174,12 @@ function getParams() {
     wares.searchString = wares.params.get("prevSearchString");
     wares.filterFromDt = wares.params.get("prevFilterFromDt");
     wares.filterToDt = wares.params.get("prevFilterToDt");
+
+    if(wares.params.has("hnType")) {
+        wares.hnType = wares.params.get("hnType");
+    } else {
+        wares.hnType = "00";
+    }
 }
 
 // 덧글내 답글 달기를 클릭했을 때

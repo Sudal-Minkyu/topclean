@@ -11,6 +11,7 @@ const dtos = {
         branchInfo: {
             noticeData: {
                 hnId: "n",
+                hnType: "s",
                 insertDateTime: "s",
                 insert_id: "s",
                 subject: "s",
@@ -71,6 +72,8 @@ const comms = {
                 const field = $("#noticeList").children("li").children("a");
                 for(let i = 0; i < data.noticeData.length; i++) {
                     $(field[i]).attr("href", `./manager/noticeview?id=${data.noticeData[i].hnId}`);
+                    $(field[i]).children(".main__board-frname").children("span")
+                        .html(CommonData.name.hnType[data.noticeData[i].hnType]);
                     $(field[i]).children(".main__board-title").children("span").html(data.noticeData[i].subject);
                     $(field[i]).children(".main__board-date").children("span").html(data.noticeData[i].insertDateTime);
                 }

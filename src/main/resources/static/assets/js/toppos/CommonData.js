@@ -77,7 +77,12 @@ class CommonDataClass {
         this.name.ffState = {
             "01": "요청",
             "02": "확인",
-        }
+        };
+
+        this.name.hnType = {
+            "01": "[지사]",
+            "02": "[본사]",
+        };
     }
 
     formatTagNo(tagNo) {

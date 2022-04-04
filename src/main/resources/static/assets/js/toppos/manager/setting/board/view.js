@@ -145,6 +145,8 @@ const wares = {
     searchString: "",
     filterFromDt: "",
     filterToDt: "",
+    hnType: "",
+
     btnRow: {},
     commentRow: {},
 
@@ -228,19 +230,30 @@ function getParams() {
     } else {
         wares.filterToDt = today;
     }
+
+    if(wares.params.has("hnType")) {
+        wares.hnType = wares.params.get("hnType");
+    } else {
+        wares.hnType = "00";
+    }
 }
 
 function setInputs() {
-    $(".listLink").attr("href", `./${wares.boardType}list?page=` + wares.page + "&searchString=" + wares.searchString
-        + "&filterFromDt=" + wares.filterFromDt + "&filterToDt=" + wares.filterToDt);
+    let specialCondition = "";
+    if(wares.boardType === "notice") specialCondition = "&hnType=" + wares.hnType;
+    $(".listLink").attr("href", `./${wares.boardType}list?page=` + wares.page
+        + "&searchString=" + wares.searchString + "&filterFromDt=" + wares.filterFromDt + "&filterToDt="
+        + wares.filterToDt + specialCondition);
 
-    $(".modifyLink").attr("href", `./${wares.boardType}write?prevPage=` + wares.page + "&id=" + wares.id + "&prevSearchString=" + wares.searchString
-    + "&prevFilterFromDt=" + wares.filterFromDt + "&prevFilterToDt=" + wares.filterToDt);
+    $(".modifyLink").attr("href", `./${wares.boardType}write?prevPage=` + wares.page
+        + "&id=" + wares.id + "&prevSearchString=" + wares.searchString + "&prevFilterFromDt=" + wares.filterFromDt
+        + "&prevFilterToDt=" + wares.filterToDt + specialCondition);
 }
 
 function setFields(data) {
+    console.log(data);
     $("#subject").html(data.subject);
-    $("#name").html(data.name);
+    $("#name").html(wares.boardType === "notice" ? CommonData.name.hnType[data.hnType] : data.name);
     $("#insertDateTime").html(data.insertDateTime);
     $("#content").html(data.content);
     $("#prevSubject").html(data.prevSubject);
@@ -248,16 +261,19 @@ function setFields(data) {
     $("#nextSubject").html(data.nextSubject);
     $("#nextInsertDateTime").html(data.nextvInsertDateTime);
 
+    let specialCondition = "";
+    if(wares.boardType === "notice") specialCondition = "&hnType=" + wares.hnType;
+
     if(data.prevId) {
-        $("#linkPrev").attr("href", `./${wares.boardType}view?id=` + data.prevId + "&prevPage=" + wares.page 
-        + "&prevSearchString=" + wares.searchString + "&prevFilterFromDt=" + wares.filterFromDt
-        + "&prevFilterToDt=" + wares.filterToDt);
+        $("#linkPrev").attr("href", `./${wares.boardType}view?id=` + data.prevId
+            + "&prevPage=" + wares.page + "&prevSearchString=" + wares.searchString + "&prevFilterFromDt="
+            + wares.filterFromDt + "&prevFilterToDt=" + wares.filterToDt + specialCondition);
     }
 
     if(data.nextId) {
-        $("#linkNext").attr("href", `./${wares.boardType}view?id=` + data.nextId + "&prevPage=" + wares.page 
-        + "&prevSearchString=" + wares.searchString + "&prevFilterFromDt=" + wares.filterFromDt
-        + "&prevFilterToDt=" + wares.filterToDt);
+        $("#linkNext").attr("href", `./${wares.boardType}view?id=` + data.nextId
+            + "&prevPage=" + wares.page + "&prevSearchString=" + wares.searchString + "&prevFilterFromDt="
+            + wares.filterFromDt + "&prevFilterToDt=" + wares.filterToDt + specialCondition);
     }
 
     /* 공지사항 게시판이 아닌 경우에만 덧글기능 활성화 */
@@ -265,7 +281,7 @@ function setFields(data) {
         $(".reply").show();
     }
 
-    if(data.isWriter === "1") {
+    if(data.isWritter === "1") {
         $(".modifyLink").show();
         $(".deleteBtn").show();
     }
@@ -293,13 +309,13 @@ function setFields(data) {
     }
 }
 
-function createReplyHtml(commentId, name, modifyDt, comment, type, isWriter, preId) {
+function createReplyHtml(commentId, name, modifyDt, comment, type, isWritter, preId) {
     let btnReply = "";
     let btnModify = "";
     if(type === "1") {
         btnReply = `<button type="button" class="c-button c-button--small c-button--darkline" onclick="reply(${commentId}, this)">답글</button>`;
     }
-    if(isWriter === "1") {
+    if(isWritter === "1") {
         btnModify = `<button type="button" class="c-button c-button--small" onclick="modify(${commentId}, this)">수정</button>`;
     }
 
@@ -353,7 +369,6 @@ function modify(commentId, obj) {
     const $btnRow = $(obj).parents(".reply__console");
     const $commentRow = $btnRow.siblings(".reply__comment");
     const text = $commentRow.html();
-    console.log($btnRow);
 
     wares.btnRow[commentId.toString()] = $btnRow;
     wares.commentRow[commentId.toString()] = $commentRow;
