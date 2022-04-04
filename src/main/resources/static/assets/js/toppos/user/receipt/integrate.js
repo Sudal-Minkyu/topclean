@@ -519,12 +519,12 @@ const comms = {
         dv.chk(testObj, dtos.send.putNewInspectNeo, "확인품 등록");
 
         console.log(testObj);
-        // CommonUI.ajax("", "POST", formData, function (res) {
-        //     alertSuccess("가맹검품 내역이 저장되었습니다.");
-        //     $("#successBtn").on("click", function () {
-        //         closeFrInspectEditPop(true);
-        //     });
-        // });
+        CommonUI.ajax("/api/user/franchiseInspectionSave", "POST", formData, function (res) {
+            alertSuccess("가맹검품 내역이 저장되었습니다.");
+            $("#successBtn").on("click", function () {
+                closeFrInspectEditPop(true);
+            });
+        });
     },
 
     getFrInspectNeo(target) {
