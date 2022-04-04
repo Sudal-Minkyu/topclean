@@ -89,7 +89,7 @@ public class FindRepositoryCustomImpl extends QuerydslRepositorySupport implemen
                         requestDetail.fdRemark
                 ));
 
-        if(!ffState.equals("0")){
+        if(!ffState.equals("00")){
             query.where(find.ffState.eq(ffState));
         }
 
