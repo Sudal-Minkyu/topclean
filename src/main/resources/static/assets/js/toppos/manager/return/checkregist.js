@@ -809,7 +809,7 @@ function takePhoto() {
 function saveInspect() {
     const formData = new FormData();
     if(wares.currentRequest.addPhotoList) {
-        for(addPhoto of wares.currentRequest.addPhotoList) { // 새로 촬영된 사진들의 추가
+        for(const addPhoto of wares.currentRequest.addPhotoList) { // 새로 촬영된 사진들의 추가
             if(addPhoto) formData.append("addPhotoList", addPhoto);
         }
     }

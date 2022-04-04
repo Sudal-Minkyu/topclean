@@ -136,6 +136,16 @@ const dtos = {
             searchType: "sr", // 0 통합검색, 1 고객명, 2 전화번호, 3 주소
             searchString: "sr", // 검색문자
         },
+
+        putNewInspectNeo: {
+            fdId: "nr", // 수정시에는 fiId도
+            fiId: "n",
+            fiAddAmt: "nr",
+            fiComment: "s",
+            fiType: "sr",
+            addPhotoList: "",
+            deletePhotoList: "",
+        }
     },
     receive: {
 
@@ -430,6 +440,8 @@ const comms = {
         });
     },
 
+
+//////////////// 구 검품 관련 항목 /////////////////////
     putNewInspect(formData) {
         const testObj = Object.fromEntries(formData);
         testObj.fdId = parseInt(testObj.fdId);
@@ -494,6 +506,37 @@ const comms = {
             alertSuccess(cautionText[target.type - 2]);
         });
     },
+
+///////////////// 신검품 관련항목 ///////////////////
+    putNewInspectNeo(formData) {
+        const testObj = Object.fromEntries(formData);
+        testObj.fdId = parseInt(testObj.fdId);
+        testObj.fiAddAmt = parseInt(testObj.fiAddAmt) | 0;
+        if(!testObj.addPhotoList) testObj.addPhotoList = []; // btId값이 없는 신규등록건
+        if(!testObj.deletePhotoList) testObj.deletePhotoList = []; // btId값이 없는 신규등록건
+        if(!testObj.fiId) testObj.fiId = 0;
+
+        dv.chk(testObj, dtos.send.putNewInspectNeo, "확인품 등록");
+
+        console.log(testObj);
+        // CommonUI.ajax("", "POST", formData, function (res) {
+        //     alertSuccess("가맹검품 내역이 저장되었습니다.");
+        //     $("#successBtn").on("click", function () {
+        //         closeFrInspectEditPop(true);
+        //     });
+        // });
+    },
+
+    getFrInspectNeo(target) {
+
+    },
+
+    getBrInspectNeo(target) {
+
+    },
+
+
+
 };
 
 /* .s : AUI 그리드 관련 설정들
@@ -504,7 +547,7 @@ const comms = {
 const grids = {
     s: { // 그리드 세팅
         targetDiv: [
-            "grid_main", "grid_customerList", "grid_paymentList", "grid_putInspect", "grid_confirmInspect"
+            "grid_main", "grid_customerList", "grid_paymentList"
         ],
         columnLayout: [],
         prop: [],
@@ -1003,6 +1046,8 @@ const wares = {
     cameraStream: null,
     isCameraExist: false,
     keypadNum: 0,
+    currentFrInspect: {},
+    currentBrInspect: {},
 }
 
 /* 모듈 사용을 위해 data 밖에 선언된 변수들 */
@@ -1020,7 +1065,7 @@ const trigs = {
                 case "blueBtn1":
                     // 가맹점 검품등록창 진입
                     if(e.item.blueBtn1) {
-                        openPutInspectPop(e);
+                        openFrInspectEditPop(e.item);
                     }
                     break;
                 case "blueBtn2":
@@ -1091,13 +1136,15 @@ const trigs = {
         $("#vkeyboard3").on("click", function() {
             onShowVKeyboard(3);
         });
-        $("#vkeyboard4").on("click", function() {
-            onShowVKeyboard(4);
-        });
-        $("#vkeypad0").on("click", function () {
-            wares.keypadNum = 0;
-            vkey.showKeypad("fiAddAmt", {callback: onKeypadConfirm});
-        });
+
+        // 구 검품 이벤트
+        // $("#vkeyboard4").on("click", function() {
+        //     onShowVKeyboard(4);
+        // });
+        // $("#vkeypad0").on("click", function () {
+        //     wares.keypadNum = 0;
+        //     vkey.showKeypad("fiAddAmt", {callback: onKeypadConfirm});
+        // });
     },
     main() {
         $("#searchCustomer").on("click", function() {
@@ -1154,6 +1201,7 @@ const trigs = {
                 alertCaution("영수증을 출력할 상품을 선택해 주세요.", 1);
             }
         });
+
     },
     modify() {
         $("#inReceiptPop input[type='radio']").on("change", function(){
@@ -1271,6 +1319,7 @@ const trigs = {
         });
     },
     subMenu() {
+/* 
         $("#commitInspect").on("click", function() {
             putInspect();
         });
@@ -1288,6 +1337,7 @@ const trigs = {
                 }
             }
         });
+*/
 
         $("#transferPoint").on("click", function () {
             alertCheck("해당 내역을 적립금으로 전환하시겠습니까?");
@@ -1303,10 +1353,11 @@ const trigs = {
             });
         });
 
-        $("#fiAddAmt").on("keyup", function () {
+        $("#frEditFiAddAmt").on("keyup", function () {
             $(this).val($(this).val().toInt().toLocaleString());
         });
         
+/* 
         $("#deleteInspection").on("click", function () { // 3번테이블(검품등록) 의 삭제될 대상들을 가져와서 삭제 요청
             const targetRowsItem = grids.f.getRemovedCheckRows(3);
             let refinedTargetList = [];
@@ -1355,6 +1406,7 @@ const trigs = {
                 alertCaution("검품확인내역을 선택하세요.", 1);
             }
         });
+ */
 
         $("#closePaymentPop").on("click", function () {
             if(!AUIGrid.getGridData(grids.s.id[2]).length) { // 결제내역 전부 사라질 경우 해당 마스터테이블 결제취소 버튼 제거, 접수취소 버튼 일괄 부여
@@ -1371,6 +1423,7 @@ const trigs = {
             $("#paymentListPop").removeClass("active");
         });
 
+/* 
         $("#closeConfirmInspectPop").on("click", function () {
             const items = AUIGrid.getGridData(grids.s.id[4]);
             let isInspectionDone = true;
@@ -1389,6 +1442,7 @@ const trigs = {
             }
             $("#confirmInspectPop").removeClass("active");
         });
+*/
 
         $("#foreLoc").on("click", function() {
             $(".foreLoc").show();
@@ -1400,6 +1454,35 @@ const trigs = {
             $(".backLoc").show();
             $(".pop__pollution-content").addClass("back");
             $(".foreLoc").hide();
+        });
+
+
+        // 가맹검품 팝업 기능
+        $("#takePhotoBtn").on("click", function () {
+            takePhoto();
+        });
+        $("#commitInspect").on("click", function () {
+            saveInspect();
+        });
+        $("#deleteInspect").on("click", function () {
+
+        });
+        $("#closeFrInspectPop").on("click", function () {
+            closeFrInspectEditPop();
+        });
+        $("#frCustomerConfirmed").on("click", function () {
+
+        });
+        $("#frCustomerDenied").on("click", function () {
+
+        });
+
+        // 지사검품 팝업 기능
+        $("#brCustomerConfirmed").on("click", function () {
+
+        });
+        $("#brCustomerDenied").on("click", function () {
+
         });
     },
 }
@@ -1868,6 +1951,7 @@ function removeEventsFromElement(element) {
     element.parentNode.replaceChild(elementClone, element);
 }
 
+/* 
 function confirmInspect(e) {
     $("#fiCommentInConfirm").val("");
     $("#fiAddAmtInConfirm").val("");
@@ -1882,6 +1966,7 @@ function confirmInspect(e) {
     }
     comms.getInspectionList(searchCondition);
 }
+ */
 
 function cancelPaymentPop(frId) {
     comms.getPaymentList(frId);
@@ -1992,6 +2077,7 @@ function ynStyle(rowIndex, columnIndex, value, headerText, item, dataField) {
     return value === "Y" ? "yesBlue" : "noRed"
 }
 
+/* 
 function putInspect() {
     const $fiComment = $("#fiComment");
     if (!$fiComment.val().length) {
@@ -2038,6 +2124,92 @@ function putInspect() {
         comms.putNewInspect(formData);
     }
 }
+ */
+
+async function openFrInspectEditPop(item) {
+    resetFrInspectEditPop();
+    wares.currentFrInspect = item;
+
+    try {
+        wares.isCameraExist = true;
+        wares.cameraStream = await navigator.mediaDevices.getUserMedia({
+            audio: false,
+            video: {
+                width: {ideal: 4096},
+                height: {ideal: 2160}
+            },
+        });
+
+        const screen = document.getElementById("cameraScreen");
+        screen.srcObject = wares.cameraStream;
+    }catch (e) {
+        if(!(e instanceof DOMException)) {
+            CommonUI.toppos.underTaker(e, "checkregist : 카메라 찾기");
+        }
+        wares.isCameraExist = false;
+    }
+
+    $("#frEditFdTotAmtInPut").val(wares.currentFrInspect.fdTotAmt
+        ? wares.currentFrInspect.fdTotAmt.toLocaleString() : "0");
+    $("#frEditFiComment").val(wares.currentFrInspect.fiComment
+        ? wares.currentFrInspect.fiComment : "");
+    $("#frEditFiAddAmt").val(wares.currentFrInspect.fiAddAmt
+        ? wares.currentFrInspect.fiAddAmt.toLocaleString() : "0");
+
+    // if(e.item.fiId) {
+    //     const searchCondition = {
+    //         fiId: e.item.fiId,
+    //     }
+    //     comms.getInspectionNeo(searchCondition);
+    // } else {
+    //     $("#deleteInspect").parents("li").hide();
+    // }
+
+    $("#frInspectEditPop").addClass("active");
+}
+
+function openBrInspectPop() {
+
+}
+
+function takePhoto() {
+    if($("#frPhotoList").children().length > 5) {
+        alertCaution("사진은 최대 6장 까지 촬영하실 수 있습니다.", 1);
+        return false;
+    }
+
+    if(wares.isCameraExist && wares.cameraStream.active) {
+        try {
+            const video = document.getElementById("cameraScreen");
+            const canvas = document.getElementById('cameraCanvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            const takenPic = canvas.toDataURL();
+            const blob = b64toBlob(takenPic);
+
+            if(!wares.currentFrInspect.addPhotoList) {
+                wares.currentFrInspect.addPhotoList = [];
+            }
+            const photoHtml = `<li class="tag-imgs__item newPhoto">
+                <a href="${takenPic}" data-lightbox="images" data-title="이미지 확대">
+                    <img src="${takenPic}" class="tag-imgs__img" alt=""/>
+                </a>
+            </li>`
+            // <button class="tag-imgs__delete deletePhotoBtn" data-addIdx="${wares.currentFrInspect.addPhotoList.length}">삭제</button>
+            wares.currentFrInspect.addPhotoList.push(blob);
+
+            $("#frPhotoList").append(photoHtml);
+        } catch (e) {
+            CommonUI.toppos.underTaker(e, "tagboard : 사진 촬영");
+        }
+    } else {
+        alertCaution("카메라가 감지되지 않아서<br>촬영을 할 수 없습니다.", 1);
+    }
+}
+
 
 function b64toBlob(dataURI) { // 파일을 ajax 통신에 쓰기 위해 변환
     const byteString = atob(dataURI.split(',')[1]);
@@ -2137,4 +2309,42 @@ function resetFdAddInputs() {
     $("#fdAdd1").prop("checked", false);
     $("#fdAdd1Amt").val(0);
     $("#fdAdd1Remark").val("");
+}
+
+function closeFrInspectEditPop(doRefresh = false) {
+    if(doRefresh) {
+        comms.franchiseRequestDetailSearch(wares.currentCondition);
+    }
+    $("#frInspectEditPop").removeClass("active");
+}
+
+function resetFrInspectEditPop() {
+    $("#frEditFdTotAmtInPut").val("");
+    $("#frEditFiAddAmt").val("0");
+    $("#frEditFiComment").val("");
+    $("#frPhotoList").html("");
+}
+
+function saveInspect() {
+    const formData = new FormData();
+    if(wares.currentFrInspect.addPhotoList) {
+        for(const addPhoto of wares.currentFrInspect.addPhotoList) { // 새로 촬영된 사진들의 추가
+            if(addPhoto) formData.append("addPhotoList", addPhoto);
+        }
+    }
+
+    formData.append("fdId", wares.currentFrInspect.fdId);
+    if(wares.currentFrInspect.fiId) {
+        formData.append("fiId", wares.currentFrInspect.fiId);
+    }
+
+    if(wares.currentFrInspect.deletePhotoList) {
+        formData.append("deletePhotoList", wares.currentFrInspect.deletePhotoList);
+    }
+
+    formData.append("fiComment", $("#frEditFiComment").val());
+    formData.append("fiAddAmt", $("#frEditFiAddAmt").val().toInt());
+    formData.append("fiType", "F");
+
+    comms.putNewInspectNeo(formData);
 }
