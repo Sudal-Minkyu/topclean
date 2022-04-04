@@ -32,9 +32,9 @@ public class NoticeService {
     }
 
     // 메인페이지에 필요한 공지사항리스트 가져오기 (limit 3)
-    public List<NoticeListDto> branchMainNoticeList() {
+    public List<NoticeListDto> branchMainNoticeList(String brCode) {
         log.info("branchMainNoticeList 호출");
-        return noticeRepository.findByMainNoticeList();
+        return noticeRepository.findByMainNoticeList(brCode);
     }
 
     // 공지사항 게시판 - 리스트 호출

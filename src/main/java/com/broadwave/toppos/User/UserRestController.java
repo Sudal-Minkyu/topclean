@@ -11,6 +11,7 @@ import com.broadwave.toppos.Head.HeadService.NoticeService;
 import com.broadwave.toppos.Head.Item.Group.A.UserItemGroupSortDto;
 import com.broadwave.toppos.Head.Item.Group.B.UserItemGroupSListDto;
 import com.broadwave.toppos.Head.Item.ItemDtos.UserItemPriceSortDto;
+import com.broadwave.toppos.Head.Notice.NoticeDtos.NoticeListDto;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.Manager.Calendar.BranchCalendar;
 import com.broadwave.toppos.Manager.Calendar.CalendarDtos.BranchCalendarListDto;
@@ -184,7 +185,11 @@ public class UserRestController {
 
             List<RequestHistoryListDto> requestHistoryListDtos = receiptService.findByRequestHistory(frCode, date);
 
+            // 공지사항(본사) + 공지사항(지사) 리스트 limit 5
+            List<NoticeListDto> noticeListDtos = noticeService.branchMainNoticeList(frbrCode);
+
             data.put("userIndexDto",userIndexData);
+            data.put("noticeListDtos",noticeListDtos);
             data.put("requestHistoryList",requestHistoryListDtos);
             data.put("inspeotList",inspeotMainListDtos);
             data.put("tagGalleryList",tagGalleryMainListDtos);

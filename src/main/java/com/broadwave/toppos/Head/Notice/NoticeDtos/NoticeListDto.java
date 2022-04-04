@@ -20,6 +20,7 @@ import java.time.format.DateTimeFormatter;
 @AllArgsConstructor
 public class NoticeListDto {
     private Long hnId;
+    private String hnType; // 본사글 : 01, 지사글 : 02
     private String subject; // 제목
     private String insert_id;
     private LocalDateTime insertDateTime;

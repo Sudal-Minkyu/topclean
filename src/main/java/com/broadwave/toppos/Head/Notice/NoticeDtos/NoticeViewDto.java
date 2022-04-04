@@ -22,7 +22,9 @@ public class NoticeViewDto {
     private Long hnId;
     private String subject; // 헌재 글 제목
     private String content; // 헌재 글 내용
+    private String hnType; // 본사글 : 01, 지사글 : 02
     private String name; // 작성자
+
     private LocalDateTime insertDateTime;
 
     public String getInsertDateTime() {

@@ -26,6 +26,12 @@ public class Notice {
     @Column(name="hn_id")
     private Long hnId;
 
+    @Column(name="br_code")
+    private String brCode; // 본사글일땐 Null, 본사글일땐 지사코드 2자리
+
+    @Column(name="hn_type")
+    private String hnType; // 본사글 : 01, 지사글 : 02
+
     @Column(name="hn_subject")
     private String hnSubject; // 제목
 

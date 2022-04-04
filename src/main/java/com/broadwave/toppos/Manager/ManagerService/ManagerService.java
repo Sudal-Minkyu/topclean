@@ -143,7 +143,7 @@ public class ManagerService {
         log.info("현재 접속한 지사 코드 : "+brCode);
 
         // 공지사항(본사) + 공지사항(지사) 리스트 limit 5
-        List<NoticeListDto> noticeListDtos = noticeService.branchMainNoticeList();
+        List<NoticeListDto> noticeListDtos = noticeService.branchMainNoticeList(brCode);
 
         String nowDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         log.info("금일날짜 : "+nowDate);

@@ -22,6 +22,7 @@ public class NoticeViewSubDto {
 
     private Long subId;
     private String subSubject;
+    private String hnType; // 본사글 : 01, 지사글 : 02
     private LocalDateTime subInsertDateTime;
 
     public String getSubInsertDateTime() {

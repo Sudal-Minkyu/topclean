@@ -30,16 +30,21 @@ public class NoticeRepositoryCustomImpl extends QuerydslRepositorySupport implem
 
     // 공지사항 메인페이지용 리스트 데이터 호출
     @Override
-    public List<NoticeListDto> findByMainNoticeList() {
+    public List<NoticeListDto> findByMainNoticeList(String brCode) {
         QNotice notice  = QNotice.notice;
 
         JPQLQuery<NoticeListDto> query = from(notice)
                 .select(Projections.constructor(NoticeListDto.class,
                         notice.hnId,
+                        notice.hnType,
                         notice.hnSubject,
                         notice.insert_id,
                         notice.insertDateTime
                 ));
+
+        if(brCode != null){
+            notice.brCode.eq(brCode);
+        }
 
         query.orderBy(notice.hnId.desc()).limit(5);
 
@@ -54,6 +59,7 @@ public class NoticeRepositoryCustomImpl extends QuerydslRepositorySupport implem
         JPQLQuery<NoticeListDto> query = from(notice)
                 .select(Projections.constructor(NoticeListDto.class,
                         notice.hnId,
+                        notice.hnType,
                         notice.hnSubject,
                         notice.insert_id,
                         notice.insertDateTime
@@ -92,6 +98,7 @@ public class NoticeRepositoryCustomImpl extends QuerydslRepositorySupport implem
                         notice.hnSubject,
                         notice.hnContent,
                         account.username,
+                        notice.hnType,
                         notice.insertDateTime
                 ));
 
@@ -112,6 +119,7 @@ public class NoticeRepositoryCustomImpl extends QuerydslRepositorySupport implem
                         .select(Projections.constructor(NoticeViewSubDto.class,
                                 notice.hnId,
                                 notice.hnSubject,
+                                notice.hnType,
                                 notice.insertDateTime
                         ));
 
@@ -130,6 +138,7 @@ public class NoticeRepositoryCustomImpl extends QuerydslRepositorySupport implem
                         .select(Projections.constructor(NoticeViewSubDto.class,
                                 notice.hnId,
                                 notice.hnSubject,
+                                notice.hnType,
                                 notice.insertDateTime
                         ));
 

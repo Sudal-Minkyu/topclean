@@ -21,5 +21,5 @@ public interface NoticeRepositoryCustom {
     NoticeViewSubDto findByNoticePreView(Long hnId);
     NoticeViewSubDto findByNoticeNextView(Long hnId);
 
-    List<NoticeListDto> findByMainNoticeList(); // 지사메인페이지용 공지사항리스트
+    List<NoticeListDto> findByMainNoticeList(String brCode); // 지사메인페이지용 공지사항리스트
 }
