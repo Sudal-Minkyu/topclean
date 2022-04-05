@@ -1214,7 +1214,8 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         customer.bcName,
                         requestDetail.fdTotAmt,
                         requestDetail.fdState,
-                        requestDetail.fdPreState
+                        requestDetail.fdPreState,
+                        inspeot.fiCustomerConfirm
                 ));
         query.orderBy(requestDetail.id.asc());
         query.where(requestDetail.fdState.eq("S2"));
