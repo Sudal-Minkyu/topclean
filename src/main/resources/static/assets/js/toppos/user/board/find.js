@@ -220,7 +220,7 @@ const grids = {
                 }, {
                     dataField: "ffState",
                     headerText: "찾기상태",
-                    width: 65,
+                    width: 85,
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
                         return CommonData.name.ffState[value];
                     },
