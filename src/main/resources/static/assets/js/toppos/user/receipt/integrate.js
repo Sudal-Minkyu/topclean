@@ -112,8 +112,8 @@ const dtos = {
             fdStarch: "",
             _$uid: "d",
             sumName: "d",
-            blueBtn1: "d",
-            blueBtn2: "d",
+            frInspectBtn: "d",
+            brInspectBtn: "d",
             greenBtn1: "d",
             redBtn1: "d",
             redBtn2: "d",
@@ -145,7 +145,7 @@ const dtos = {
             fiType: "sr",
             addPhotoList: "",
             deletePhotoList: "",
-        }
+        },
     },
     receive: {
 
@@ -183,6 +183,10 @@ const dtos = {
         },
 
         franchiseRequestDetailSearch: { // 접수 세부 테이블의 거의 모든 요소와, 고객이름
+            frFiId: "n", // 2022.04.05 추가
+            brFiId: "n", // 2022.04.05 추가
+            frFiCustomerConfirm: "s", // 2022.04.05 추가
+            brFiCustomerConfirm: "s", // 2022.04.05 추가
             fdAgreeType: "s", // 2022.03.10 추가
             fdSignImage: "s", // 2022.03.10 추가
             frRefType: "sr",
@@ -528,14 +532,44 @@ const comms = {
     },
 
     getFrInspectNeo(target) {
+        CommonUI.ajax("/api/user/franchiseInspectionInfo", "GET", target, function (res) {
+            console.log(res);
+            const data = res.sendData;
 
+            wares.currentFrInspect.inspeotInfoDto = data.inspeotInfoDto;
+            wares.currentFrInspect.photoList = data.photoList;
+            wares.currentFrInspect.fiAddAmt = data.inspeotInfoDto.fiAddAmt;
+            wares.currentFrInspect.fiComment = data.inspeotInfoDto.fiComment;
+
+            openFrInspectPop();
+        });
     },
 
     getBrInspectNeo(target) {
+        CommonUI.ajax("/api/user/franchiseInspectionInfo", "GET", target, function (res) {
+            console.log(res);
+            const data = res.sendData;
 
+            wares.currentBrInspect.inspeotInfoDto = data.inspeotInfoDto;
+            wares.currentBrInspect.photoList = data.photoList;
+            wares.currentBrInspect.fiAddAmt = data.inspeotInfoDto.fiAddAmt;
+            wares.currentBrInspect.fiComment = data.inspeotInfoDto.fiComment;
+
+            openBrInspectPop();
+        });
     },
 
-
+    inspectionJudgement(answer) {
+        CommonUI.ajax("", "", answer, function (res) {
+            let resultMsg = "";
+            if(answer.type === "1ㅁㅇㄴㄴㅁㄴㅇ") {
+                resultMsg = "세탁진행을 보고 하였습니다.";
+            } else {
+                resultMsg = "고객반품을 보고 하였습니다.";
+            }
+            alertSuccess(resultMsg);
+        });
+    }
 
 };
 
@@ -672,40 +706,42 @@ const grids = {
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
                 }, {
-                    dataField: "blueBtn1",
-                    headerText: "검품등록",
+                    dataField: "frInspectBtn",
+                    headerText: "가맹검품",
                     width: 70,
                     renderer : {
                         type: "TemplateRenderer",
                     },
                     labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
                         let template = "";
-                        if(["S1", "F"].includes(item.fdState)) {
-                            template = `
-                                <button class="c-state">등록</button>
-                            `;
-                            item.blueBtn1 = true;
-                        }else{
-                            item.blueBtn1 = false;
+                        item.frInspectBtn = true;
+                        if(item.fdState === "S1" && !item.frFiId) {
+                            template = `<button class="c-state">등록</button>`;
+                        } else if(item.frFiId && item.frFiCustomerConfirm === "1") {
+                            template = `<button class="c-state c-state--cancel"">확인</button>`;
+                        } else if(item.frFiId) {
+                            template = `<button class="c-state">종료</button>`;
+                        } else {
+                            item.frInspectBtn = false;
                         }
                         return template;
                     },
                 }, {
-                    dataField: "blueBtn2",
-                    headerText: "검품확인",
+                    dataField: "brInspectBtn",
+                    headerText: "확인품",
                     width: 70,
                     renderer : {
                         type: "TemplateRenderer",
                     },
                     labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
                         let template = "";
-                        if(["F", "B"].includes(item.fdState)) {
-                            template = `
-                                <button class="c-state">확인</button>
-                            `;
-                            item.blueBtn2 = true;
-                        }else{
-                            item.blueBtn2 = false;
+                        item.brInspectBtn = true;
+                        if(item.fdState === "B" && item.brFiId && item.brFiCustomerConfirm === "1") {
+                            template = `<button class="c-state">확인</button>`;
+                        } else if(item.brFiId) {
+                            template = `<button class="c-state">종료</button>`;
+                        } else {
+                            item.brInspectBtn = false;
                         }
                         return template;
                     },
@@ -984,7 +1020,7 @@ const grids = {
 
         switchModifyMode(isModifyMode) {
             const modColumn = {
-                modify: ["blueBtn1", "blueBtn2", "greenBtn1", "redBtn1", "redBtn2", "redBtn3"],
+                modify: ["frInspectBtn", "brInspectBtn", "greenBtn1", "redBtn1", "redBtn2", "redBtn3"],
                 normal: ["type", "fdS5Dt", "fdRemark", "fdS2Dt", "fdS3Dt", "fdS4Dt"],
             }
 
@@ -1062,15 +1098,22 @@ const trigs = {
         AUIGrid.bind(grids.s.id[0], "cellClick", function (e) {
             currentRequest = e.item;
             switch (e.dataField) {
-                case "blueBtn1":
+                case "frInspectBtn":
                     // 가맹점 검품등록창 진입
-                    if(e.item.blueBtn1) {
+                    if(e.item.frInspectBtn) {
                         openFrInspectEditPop(e.item);
                     }
                     break;
-                case "blueBtn2":
-                    if(e.item.blueBtn2) {
-                        confirmInspect(e);
+                case "brInspectBtn":
+                    if(e.item.brInspectBtn) {
+
+                        wares.currentBrInspect = e.item;
+                        if(e.item.brFiId) {
+                            const target = {
+                                fiId: e.item.brFiId,
+                            }
+                            comms.getBrInspectNeo(target);
+                        }
                     }
                     // 검품확인창 진입
                     break;
@@ -1471,18 +1514,64 @@ const trigs = {
             closeFrInspectEditPop();
         });
         $("#frCustomerConfirmed").on("click", function () {
-
+            alertCheck("해당 품목을 세탁진행 하시겠습니까?");
+            $("#checkDelSuccessBtn").on("click", function () {
+                const answer = {
+                    fiId: wares.currentFrInspect.frFiId,
+                    type: "",
+                };
+                comms.inspectionJudgement(answer);
+                $('#popupId').remove();
+            });
         });
         $("#frCustomerDenied").on("click", function () {
-
+            alertCheck("해당 품목을 고객반품 하시겠습니까?");
+            $("#checkDelSuccessBtn").on("click", function () {
+                const answer = {
+                    fiId: wares.currentFrInspect.frFiId,
+                    type: "",
+                };
+                comms.inspectionJudgement(answer);
+                $('#popupId').remove();
+            });
+        });
+        $("#frPhotoList").on("click", ".deletePhotoBtn", function() {
+            console.log(this);
+            const ffId = $(this).attr("data-ffId");
+            const addIdx = $(this).attr("data-addIdx");
+            if(ffId) {
+                if(!wares.currentFrInspect.deletePhotoList) wares.currentFrInspect.deletePhotoList = [];
+                wares.currentFrInspect.deletePhotoList.push(parseInt(ffId));
+            }
+            if(addIdx) {
+                delete wares.currentFrInspect.addPhotoList[addIdx];
+            }
+            console.log($(this).parents(".tag-imgs__item"));
+            $(this).parents(".tag-imgs__item").remove();
         });
 
         // 지사검품 팝업 기능
         $("#brCustomerConfirmed").on("click", function () {
-
+            alertCheck("해당 품목을 세탁진행 하시겠습니까?");
+            $("#checkDelSuccessBtn").on("click", function () {
+                const answer = {
+                    fiId: wares.currentBrInspect.brFiId,
+                    type: "",
+                };
+                comms.inspectionJudgement(answer);
+                $('#popupId').remove();
+            });
         });
         $("#brCustomerDenied").on("click", function () {
-
+            alertCheck("해당 품목을 고객반품 하시겠습니까?");
+            $("#checkDelSuccessBtn").on("click", function () {
+                const answer = {
+                    fiId: wares.currentBrInspect.brFiId,
+                    type: "",
+                };
+                comms.inspectionJudgement(answer);
+                $('#popupId').remove();
+            });
         });
     },
 }
@@ -2062,7 +2151,7 @@ async function openPutInspectPop(e) {
     comms.getInspectionList(searchCondition);
 }
 
-/* 고객의 응답 승낙, 거부에 따른 처리 */
+/*
 function customerJudgement(typeAnswer) {
     const selectedItem = grids.f.getSelectedItem(4);
     const target = {
@@ -2072,6 +2161,8 @@ function customerJudgement(typeAnswer) {
     };
     comms.franchiseInspectionYn(target);
 }
+*/
+
 
 function ynStyle(rowIndex, columnIndex, value, headerText, item, dataField) {
     return value === "Y" ? "yesBlue" : "noRed"
@@ -2126,50 +2217,123 @@ function putInspect() {
 }
  */
 
-async function openFrInspectEditPop(item) {
-    resetFrInspectEditPop();
+function openFrInspectEditPop(item) {
     wares.currentFrInspect = item;
-
-    try {
-        wares.isCameraExist = true;
-        wares.cameraStream = await navigator.mediaDevices.getUserMedia({
-            audio: false,
-            video: {
-                width: {ideal: 4096},
-                height: {ideal: 2160}
-            },
-        });
-
-        const screen = document.getElementById("cameraScreen");
-        screen.srcObject = wares.cameraStream;
-    }catch (e) {
-        if(!(e instanceof DOMException)) {
-            CommonUI.toppos.underTaker(e, "checkregist : 카메라 찾기");
+    if(item.frFiId) {
+        const target = {
+            fiId: item.frFiId,
         }
-        wares.isCameraExist = false;
+        comms.getFrInspectNeo(target);
+    } else {
+        openFrInspectPop();
     }
+}
 
-    $("#frEditFdTotAmtInPut").val(wares.currentFrInspect.fdTotAmt
-        ? wares.currentFrInspect.fdTotAmt.toLocaleString() : "0");
-    $("#frEditFiComment").val(wares.currentFrInspect.fiComment
-        ? wares.currentFrInspect.fiComment : "");
-    $("#frEditFiAddAmt").val(wares.currentFrInspect.fiAddAmt
-        ? wares.currentFrInspect.fiAddAmt.toLocaleString() : "0");
+async function openFrInspectPop() {
+    if(wares.currentFrInspect.frFiCustomerConfirm === "1" || !wares.currentFrInspect.frFiCustomerConfirm) {
+        resetFrInspectEditPop();
 
-    // if(e.item.fiId) {
-    //     const searchCondition = {
-    //         fiId: e.item.fiId,
-    //     }
-    //     comms.getInspectionNeo(searchCondition);
-    // } else {
-    //     $("#deleteInspect").parents("li").hide();
-    // }
+        try {
+            wares.isCameraExist = true;
+            wares.cameraStream = await navigator.mediaDevices.getUserMedia({
+                audio: false,
+                video: {
+                    width: {ideal: 4096},
+                    height: {ideal: 2160}
+                },
+            });
 
-    $("#frInspectEditPop").addClass("active");
+            const screen = document.getElementById("cameraScreen");
+            screen.srcObject = wares.cameraStream;
+        } catch (e) {
+            if (!(e instanceof DOMException)) {
+                CommonUI.toppos.underTaker(e, "checkregist : 카메라 찾기");
+            }
+            wares.isCameraExist = false;
+        }
+
+        $("#frEditFdTotAmtInPut").val(wares.currentFrInspect.fdTotAmt
+            ? wares.currentFrInspect.fdTotAmt.toLocaleString() : "0");
+        $("#frEditFiComment").val(wares.currentFrInspect.fiComment
+            ? wares.currentFrInspect.fiComment : "");
+        $("#frEditFiAddAmt").val(wares.currentFrInspect.fiAddAmt
+            ? wares.currentFrInspect.fiAddAmt.toLocaleString() : "0");
+
+        // if(e.item.fiId) {
+        //     const searchCondition = {
+        //         fiId: e.item.fiId,
+        //     }
+        //     comms.getInspectionNeo(searchCondition);
+        // } else {
+        //     $("#deleteInspect").parents("li").hide();
+        // }
+
+        if(wares.currentFrInspect.photoList) {
+            for (const photo of wares.currentFrInspect.photoList) {
+                const photoHtml = `
+                <li class="tag-imgs__item">
+                    <a href="${photo.ffPath + photo.ffFilename}" data-lightbox="images" data-title="이미지 확대">
+                        <img src="${photo.ffPath + "s_" + photo.ffFilename}" class="tag-imgs__img" alt=""/>
+                    </a>
+                    <button class="tag-imgs__delete deletePhotoBtn" data-ffId="${photo.ffId}">삭제</button>
+                </li>
+                `;
+                $("#frPhotoList").append(photoHtml);
+            }
+        }
+
+        $("#frInspectEditPop").addClass("active");
+    } else {
+        resetFrInspectViewPop();
+
+        $("#frViewFdTotAmtInPut").val(wares.currentFrInspect.fdTotAmt
+            ? wares.currentFrInspect.fdTotAmt.toLocaleString() : "0");
+        $("#frViewFiComment").val(wares.currentFrInspect.fiComment
+            ? wares.currentFrInspect.fiComment : "");
+        $("#frViewFiAddAmt").val(wares.currentFrInspect.fiAddAmt
+            ? wares.currentFrInspect.fiAddAmt.toLocaleString() : "0");
+
+        if(wares.currentFrInspect.photoList) {
+            for (const photo of wares.currentFrInspect.photoList) {
+                const photoHtml = `
+                <li class="tag-imgs__item">
+                    <a href="${photo.ffPath + photo.ffFilename}" data-lightbox="images" data-title="이미지 확대">
+                        <img src="${photo.ffPath + "s_" + photo.ffFilename}" class="tag-imgs__img" alt=""/>
+                    </a>
+                </li>
+                `;
+                $("#frViewPhotoList").append(photoHtml);
+            }
+        }
+        // fiCustomerConfirm 에 따른 수락거부 여부 추가?
+        $("#frInspectViewPop").addClass("active");
+    }
 }
 
 function openBrInspectPop() {
+    resetBrInspectPop();
 
+    $("#brFdTotAmtInPut").val(wares.currentBrInspect.fdTotAmt
+        ? wares.currentBrInspect.fdTotAmt.toLocaleString() : "0");
+    $("#brFiComment").val(wares.currentBrInspect.fiComment
+        ? wares.currentBrInspect.fiComment : "");
+    $("#brFiAddAmt").val(wares.currentBrInspect.fiAddAmt
+        ? wares.currentBrInspect.fiAddAmt.toLocaleString() : "0");
+
+    if(wares.currentBrInspect.photoList) {
+        for (const photo of wares.currentBrInspect.photoList) {
+            const photoHtml = `
+                <li class="tag-imgs__item">
+                    <a href="${photo.ffPath + photo.ffFilename}" data-lightbox="images" data-title="이미지 확대">
+                        <img src="${photo.ffPath + "s_" + photo.ffFilename}" class="tag-imgs__img" alt=""/>
+                    </a>
+                </li>
+                `;
+            $("#brPhotoList").append(photoHtml);
+        }
+    }
+    // fiCustomerConfirm 에 따른 수락거부 여부 추가?
+    $("#brInspectPop").addClass("active");
 }
 
 function takePhoto() {
@@ -2193,12 +2357,15 @@ function takePhoto() {
             if(!wares.currentFrInspect.addPhotoList) {
                 wares.currentFrInspect.addPhotoList = [];
             }
-            const photoHtml = `<li class="tag-imgs__item newPhoto">
+            const photoHtml = `
+            <li class="tag-imgs__item newPhoto">
                 <a href="${takenPic}" data-lightbox="images" data-title="이미지 확대">
                     <img src="${takenPic}" class="tag-imgs__img" alt=""/>
                 </a>
-            </li>`
-            // <button class="tag-imgs__delete deletePhotoBtn" data-addIdx="${wares.currentFrInspect.addPhotoList.length}">삭제</button>
+                <button class="tag-imgs__delete deletePhotoBtn" data-addIdx="${wares.currentFrInspect.addPhotoList.length}">삭제</button>
+            </li>
+            `;
+
             wares.currentFrInspect.addPhotoList.push(blob);
 
             $("#frPhotoList").append(photoHtml);
@@ -2323,6 +2490,20 @@ function resetFrInspectEditPop() {
     $("#frEditFiAddAmt").val("0");
     $("#frEditFiComment").val("");
     $("#frPhotoList").html("");
+}
+
+function resetFrInspectViewPop() {
+    $("#frViewFdTotAmtInPut").val("");
+    $("#frViewFiAddAmt").val("0");
+    $("#frViewFiComment").val("");
+    $("#frViewPhotoList").html("");
+}
+
+function resetBrInspectPop() {
+    $("#brFdTotAmtInPut").val("");
+    $("#brFiAddAmt").val("0");
+    $("#brFiComment").val("");
+    $("#brPhotoList").html("");
 }
 
 function saveInspect() {
