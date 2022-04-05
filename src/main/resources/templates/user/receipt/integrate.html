@@ -845,12 +845,6 @@
                                         </div>
                                     </div>
                                 </li>
-                                <li>
-                                    <div class="checkreg__cost">
-										<button id="frCustomerConfirmed" class="c-button c-button--small">세탁진행</button>
-										<button id="frCustomerDenied" class="c-button c-button--small">고객반품</button>
-                                    </div>
-                                </li>
                             </ul>
                         </div>
                     </div>
@@ -867,11 +861,16 @@
 
                 <ul class="pop__console pop__console--center pop__console--nonbg">
                     <li><button id="commitInspect" class="c-button c-button--small">저장</button></li>
-                    <li><button id="deleteInspect" class="c-button c-button--small">삭제</button></li>
-                    <li><button id="closeFrInspectEditPop"class="c-button c-button--small">닫기</button></li>
+					<li><button id="deleteInspect" class="c-button c-button--red c-button--small">삭제</button></li>
                 </ul>
             </div>
-        </div>
+
+			<ul class="pop__console pop__console--100">
+				<li><button id="frCustomerConfirmed" class="c-button c-button--solid">세탁진행</button></li>
+				<li><button id="frCustomerDenied" class="c-button c-button--dark">고객반품</button></li>
+				<li><button id="closeFrInspectEditPop"class="c-button">닫기</button></li>
+			</ul>
+		</div>
     </div>
 
     <!-- 확인품 확인/응답/보기 신규 -->

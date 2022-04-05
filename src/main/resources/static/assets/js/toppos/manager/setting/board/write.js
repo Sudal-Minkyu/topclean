@@ -42,13 +42,14 @@ const comms = {
         // dv.chk(jsonFormData, dtos.send.save, "글쓰기 데이터 보내기");
         console.log(jsonFormData);
         CommonUI.ajax(urls[wares.boardType + "save"], "POST", formData, function (res) {
+            console.log(res);
             alertSuccess("저장이 완료되었습니다.");
             $("#successBtn").on("click", function () {
                 if(wares.id) {
                     location.href = $("#previousLink").attr("href");
                 } else {
-                    location.href = `./${wares.boardType}view?prevPage=` 
-                        + wares.page + "&id=" + res.sendData.noticeId;
+                    location.href = `./${wares.boardType}view?prevPage=`
+                        + wares.page + "&id=" + res.sendData.id;
                 }
             });
         });

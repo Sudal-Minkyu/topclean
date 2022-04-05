@@ -2425,6 +2425,9 @@ footer.footer > ul > li + li:before {
 	width: 100%;
 	background-color: transparent;
 }
+.pop__console.pop__console--100 {
+	width: 100%;
+}
 .pop__console li + li {
 	margin-left: 1.25rem;
 }
@@ -3358,7 +3361,11 @@ footer.footer > ul > li + li:before {
     padding: 0.625rem 0;
 }
 .checkreg__img-list > li {
+	position: relative;
     padding: 0.625rem 2.5rem;
+}
+.checkreg__img-list > li > a {
+	display: block;
 }
 .checkreg__img-console {
     display: flex;
@@ -3375,14 +3382,14 @@ footer.footer > ul > li + li:before {
     font-size: 1.125rem;
 }
 .checkreg__delete {
+	position: absolute;
+	top: 0.625rem;
+	right: 2.5rem;
     width: 1.875rem;
     height: 1.875rem;
-    margin-left: auto;
-    border: 0.125rem solid #f0a7ab;
-    background: url(/assets/images/icon__trash.svg) no-repeat;
+    background: rgba(0, 0, 0, .4) url(/assets/images/icon__X--w.svg) no-repeat;
     background-size: 1.125rem 1.125rem;
     background-position: center center;
-    border-radius: 0.313rem;
     text-indent: -9999rem;
 }
 .checkreg__img {

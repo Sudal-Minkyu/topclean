@@ -2354,9 +2354,9 @@ async function openFrInspectPop() {
             }
             for (const photo of wares.currentFrInspect.photoList) {
                 const photoHtml = `
-                <li class="motherLi">
+                <li class="tag-imgs__item">
                     <a href="${photo.ffPath + photo.ffFilename}" data-lightbox="images" data-title="이미지 확대">
-                        <img src="${photo.ffPath + "s_" + photo.ffFilename}" alt=""/>
+                        <img src="${photo.ffPath + "s_" + photo.ffFilename}" class="tag-imgs__img" alt=""/>
                     </a>
                 </li>
                 `;
@@ -2384,9 +2384,9 @@ function openBrInspectPop() {
         }
         for (const photo of wares.currentBrInspect.photoList) {
             const photoHtml = `
-                <li class="motherLi">
+                <li class="tag-imgs__item">
                     <a href="${photo.ffPath + photo.ffFilename}" data-lightbox="images" data-title="이미지 확대">
-                        <img src="${photo.ffPath + "s_" + photo.ffFilename}" alt=""/>
+                        <img src="${photo.ffPath + "s_" + photo.ffFilename}" class="tag-imgs__img" alt=""/>
                     </a>
                 </li>
                 `;
