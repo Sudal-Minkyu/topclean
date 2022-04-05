@@ -1212,7 +1212,7 @@ public class UserRestController {
     //  공지사항 게시판 - 글보기
     @GetMapping("noticeView")
     public ResponseEntity<Map<String,Object>> noticeView(@RequestParam("hnId") Long hnId) {
-        return noticeService.noticeView(hnId, "2");
+        return noticeService.noticeView(hnId, "3");
     }
 
 //@@@@@@@@@@@@@@@@@@@@@ 물건찾기 관련 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

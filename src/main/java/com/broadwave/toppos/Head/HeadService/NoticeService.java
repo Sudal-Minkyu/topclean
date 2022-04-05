@@ -94,13 +94,14 @@ public class NoticeService {
             // 1이면 본사 or 지사 , 2이면 가맹점
             if(type.equals("1")){
                 noticeViewInfo.put("isWritter", "1");
-            }else{
+            }else if(type.equals("2")){
                 if(noticeViewDto.getHnType().equals("02")){
                     noticeViewInfo.put("isWritter", "1");
                 }else{
                     noticeViewInfo.put("isWritter", "2");
                 }
-                noticeViewInfo.put("isWritter", "2"); // 1이면 본사, 2이면 지사 or 가맹점
+            }else{
+                noticeViewInfo.put("isWritter", "2");
             }
             noticeViewInfo.put("subject", noticeViewDto.getSubject());
             noticeViewInfo.put("content", noticeViewDto.getContent());
@@ -113,7 +114,7 @@ public class NoticeService {
             if(noticeViewPreDto != null){
                 noticeViewInfo.put("prevId", noticeViewPreDto.getSubId());
                 noticeViewInfo.put("prevSubject", noticeViewPreDto.getSubSubject());
-                noticeViewInfo.put("hnType", noticeViewPreDto.getHnType());
+                noticeViewInfo.put("prehnType", noticeViewPreDto.getHnType());
                 noticeViewInfo.put("prevInsertDateTime", noticeViewPreDto.getSubInsertDateTime());
             }else{
                 noticeViewInfo.put("prevId", "");
@@ -123,7 +124,7 @@ public class NoticeService {
             NoticeViewSubDto noticeViewNextDto = noticeRepository.findByNoticeNextView(noticeViewDto.getHnId());
             if(noticeViewNextDto != null){
                 noticeViewInfo.put("nextId", noticeViewNextDto.getSubId());
-                noticeViewInfo.put("hnType", noticeViewNextDto.getHnType());
+                noticeViewInfo.put("nexthnType", noticeViewNextDto.getHnType());
                 noticeViewInfo.put("nextSubject", noticeViewNextDto.getSubSubject());
                 noticeViewInfo.put("nextvInsertDateTime", noticeViewNextDto.getSubInsertDateTime());
             }else{
