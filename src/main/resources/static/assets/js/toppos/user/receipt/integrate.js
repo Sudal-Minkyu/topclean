@@ -742,11 +742,11 @@ const grids = {
                         if(item.fdState === "S1" && !item.frFiId) {
                             template = `<button class="c-state">등록</button>`;
                         } else if(item.frFiId && item.frFiCustomerConfirm === "1") {
-                            template = `<button class="c-state c-state--cancel">확인</button>`;
+                            template = `<button class="c-state c-state--yellow">확인</button>`;
                         } else if(item.frFiId && item.frFiCustomerConfirm === "2") {
                             template = `<button class="c-state c-state--modify">수락</button>`;
                         } else if(item.frFiId && item.frFiCustomerConfirm === "3") {
-                            template = `<button class="c-state c-state--modify">거부</button>`;
+                            template = `<button class="c-state c-state--cancel">거부</button>`;
                         } else {
                             item.frInspectBtn = false;
                         }
@@ -763,11 +763,11 @@ const grids = {
                         let template = "";
                         item.brInspectBtn = true;
                         if(item.fdState === "B" && item.brFiId && item.brFiCustomerConfirm === "1") {
-                            template = `<button class="c-state c-state--cancel">확인</button>`;
+                            template = `<button class="c-state c-state--yellow">확인</button>`;
                         } else if(item.brFiId && item.brFiCustomerConfirm === "2") {
                             template = `<button class="c-state c-state--modify">수락</button>`;
                         } else if(item.brFiId && item.brFiCustomerConfirm === "3") {
-                            template = `<button class="c-state c-state--modify">거부</button>`;
+                            template = `<button class="c-state c-state--cancel">거부</button>`;
                         } else {
                             item.brInspectBtn = false;
                         }
