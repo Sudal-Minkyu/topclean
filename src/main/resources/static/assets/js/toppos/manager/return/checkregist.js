@@ -579,8 +579,6 @@ const trigs = {
                     }
                     comms.deleteInspectionNeo(target);
                 });
-
-                
             });
         },
     },
