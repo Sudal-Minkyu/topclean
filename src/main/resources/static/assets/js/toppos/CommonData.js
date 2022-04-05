@@ -83,6 +83,12 @@ class CommonDataClass {
             "01": "[본사]",
             "02": "[지사]",
         };
+
+        this.name.fiCustomerConfirm = {
+            "1": "미확인",
+            "2": "세탁진행",
+            "3": "반품요청",
+        }
     }
 
     formatTagNo(tagNo) {

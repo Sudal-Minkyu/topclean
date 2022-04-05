@@ -186,6 +186,16 @@ const comms = {
             
             $("#fiComment").val(wares.currentRequest.fiComment);
             $("#fiAddAmt").val(wares.currentRequest.fiAddAmt.toLocaleString());
+            $("#customerResponse").html(CommonData.name.fiCustomerConfirm[wares.currentRequest.fiCustomerConfirm]);
+
+            if(["2", "3"].includes(wares.currentRequest.fiCustomerConfirm)) {
+                $("#commitInspect").parents("li").hide();
+                $("#deleteInspect").parents("li").hide();
+            } else {
+                $("#commitInspect").parents("li").show();
+                $("#deleteInspect").parents("li").show();
+            }
+
             for(const photo of wares.currentRequest.photoList) {
                 const photoHtml = `<li class="tag-imgs__item">
                     <a href="${photo.ffPath + photo.ffFilename}" data-lightbox="images" data-title="이미지 확대">
@@ -368,8 +378,12 @@ const grids = {
                     },
                     labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
                         let template = "";
-                        if(item.fiId) {
+                        if(item.fiId && item.fiCustomerConfirm === "1") {
                             template = `<button type="button" class="c-button c-button--supersmall c-button--green">수정</button>`;
+                        } else if(item.fiId && item.fiCustomerConfirm === "2") {
+                            template = `<button type="button" class="c-button c-button--supersmall c-button--dark">진행</button>`;
+                        } else if(item.fiId && item.fiCustomerConfirm === "3") {
+                            template = `<button type="button" class="c-button c-button--supersmall c-button--red">반품</button>`;
                         } else {
                             template = `<button type="button" class="c-button c-button--supersmall c-button--solid">등록</button>`;
                         }
@@ -696,6 +710,7 @@ async function openCheckPop(e) {
         comms.getInspectionNeo(searchCondition);
     } else {
         $("#deleteInspect").parents("li").hide();
+        $("#commitInspect").parents("li").show();
     }
     $("#checkPop").addClass("active");
 }
