@@ -1586,8 +1586,8 @@ const trigs = {
             if(addIdx) {
                 delete wares.currentFrInspect.addPhotoList[addIdx];
             }
-            console.log($(this).parents(".tag-imgs__item"));
-            $(this).parents(".tag-imgs__item").remove();
+            console.log($(this).parents(".motherLi"));
+            $(this).parents(".motherLi").remove();
         });
 
         // 지사검품 팝업 기능
@@ -2314,11 +2314,11 @@ async function openFrInspectPop() {
         if(wares.currentFrInspect.photoList) {
             for (const photo of wares.currentFrInspect.photoList) {
                 const photoHtml = `
-                <li class="tag-imgs__item">
+                <li class="motherLi">
                     <a href="${photo.ffPath + photo.ffFilename}" data-lightbox="images" data-title="이미지 확대">
-                        <img src="${photo.ffPath + "s_" + photo.ffFilename}" class="tag-imgs__img" alt=""/>
+                        <img src="${photo.ffPath + "s_" + photo.ffFilename}" alt=""/>
                     </a>
-                    <button class="tag-imgs__delete deletePhotoBtn" data-ffId="${photo.ffId}">삭제</button>
+                    <button class="checkreg__delete deletePhotoBtn" data-ffId="${photo.ffId}">삭제</button>
                 </li>
                 `;
                 $("#frPhotoList").append(photoHtml);
@@ -2354,9 +2354,9 @@ async function openFrInspectPop() {
             }
             for (const photo of wares.currentFrInspect.photoList) {
                 const photoHtml = `
-                <li class="tag-imgs__item">
+                <li class="motherLi">
                     <a href="${photo.ffPath + photo.ffFilename}" data-lightbox="images" data-title="이미지 확대">
-                        <img src="${photo.ffPath + "s_" + photo.ffFilename}" class="tag-imgs__img" alt=""/>
+                        <img src="${photo.ffPath + "s_" + photo.ffFilename}" alt=""/>
                     </a>
                 </li>
                 `;
@@ -2384,9 +2384,9 @@ function openBrInspectPop() {
         }
         for (const photo of wares.currentBrInspect.photoList) {
             const photoHtml = `
-                <li class="tag-imgs__item">
+                <li class="motherLi">
                     <a href="${photo.ffPath + photo.ffFilename}" data-lightbox="images" data-title="이미지 확대">
-                        <img src="${photo.ffPath + "s_" + photo.ffFilename}" class="tag-imgs__img" alt=""/>
+                        <img src="${photo.ffPath + "s_" + photo.ffFilename}" alt=""/>
                     </a>
                 </li>
                 `;
@@ -2428,11 +2428,11 @@ function takePhoto() {
                 wares.currentFrInspect.addPhotoList = [];
             }
             const photoHtml = `
-            <li class="tag-imgs__item newPhoto">
+            <li class="motherLi newPhoto">
                 <a href="${takenPic}" data-lightbox="images" data-title="이미지 확대">
-                    <img src="${takenPic}" class="tag-imgs__img" alt=""/>
+                    <img src="${takenPic}" alt=""/>
                 </a>
-                <button class="tag-imgs__delete deletePhotoBtn" data-addIdx="${wares.currentFrInspect.addPhotoList.length}">삭제</button>
+                <button class="checkreg__delete deletePhotoBtn" data-addIdx="${wares.currentFrInspect.addPhotoList.length}">삭제</button>
             </li>
             `;
 
