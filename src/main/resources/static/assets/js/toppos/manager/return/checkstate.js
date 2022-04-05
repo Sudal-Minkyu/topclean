@@ -162,7 +162,13 @@ const comms = {
             
             $("#fiComment").val(wares.currentRequest.fiComment);
             $("#fiAddAmt").val(wares.currentRequest.fiAddAmt.toLocaleString());
+            $("#customerResponse").html(CommonData.name.fiCustomerConfirm[wares.currentRequest.fiCustomerConfirm]);
             for(const photo of wares.currentRequest.photoList) {
+                if(wares.currentRequest.photoList.length) {
+                    $("#frInspectViewPhotoPanel").show();
+                } else {
+                    $("#frInspectViewPhotoPanel").hide();
+                }
                 const photoHtml = `<li class="tag-imgs__item">
                     <a href="${photo.ffPath + photo.ffFilename}" data-lightbox="images" data-title="이미지 확대">
                         <img src="${photo.ffPath + "s_" + photo.ffFilename}" class="tag-imgs__img" alt=""/>
@@ -273,9 +279,14 @@ const grids = {
                         type: "TemplateRenderer",
                     },
                     labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
-                        let template = `
-                                <button type="button" class="c-button c-button--supersmall">보기</button>
-                            `;
+                        let template = "";
+                        if(item.fiCustomerConfirm === "1") {
+                            template = `<button type="button" class="c-button c-button--supersmall c-button--solid">미정</button>`;
+                        } else if(item.fiCustomerConfirm === "2") {
+                            template = `<button type="button" class="c-button c-button--supersmall c-button--dark">진행</button>`;
+                        } else if(item.fiCustomerConfirm === "3") {
+                            template = `<button type="button" class="c-button c-button--supersmall c-button--red">반품</button>`;
+                        }
                         return template;
                     },
                 }
