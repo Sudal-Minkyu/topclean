@@ -6,7 +6,8 @@
 
 <!-- 사용자 CSS 추가 -->
 <th:block layout:fragment="css">
-
+	<!-- lightbox 추가 -->
+	<link rel="stylesheet" href="/assets/js/lightbox2/css/lightbox.min.css" />
 </th:block>
 
 <!-- 사용자 스크립트 추가 -->
@@ -18,6 +19,8 @@
         window.resetTaglostPop = resetTaglostPop;
         window.taglostCheck = taglostCheck;
     </script>
+	<!-- lightbox 추가 -->
+	<script src="/assets/js/lightbox2/js/lightbox.js"></script>
 </th:block>
 
 <div layout:fragment="content" class="content">

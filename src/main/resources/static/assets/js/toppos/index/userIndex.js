@@ -238,6 +238,12 @@ function onPageLoad() {
 
     // 슬라이딩 텍스트 실행
     marquee(1);
+
+    // lightbox option
+    lightbox.option({
+        'maxWidth': 1100,
+        'positionFromTop': 190
+    });
 }
 
 // 메인페이지 슬라이딩 텍스트
