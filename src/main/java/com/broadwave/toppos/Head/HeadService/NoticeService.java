@@ -38,16 +38,17 @@ public class NoticeService {
     }
 
     // 공지사항 게시판 - 리스트 호출
-    public ResponseEntity<Map<String, Object>> noticeList(String searchString, String filterFromDt, String filterToDt, Pageable pageable, String type) {
+    public ResponseEntity<Map<String, Object>> noticeList(String hnType, String searchString, String filterFromDt, String filterToDt, Pageable pageable, String type) {
         log.info("noticeList 호출성공");
 
         AjaxResponse res = new AjaxResponse();
 
         // 검색조건
+        log.info("hnType : "+hnType);
         log.info("searchString : "+searchString);
         log.info("filterFromDt : "+filterFromDt);
         log.info("filterToDt : "+filterToDt);
-        Page<NoticeListDto> noticeListDtoPage = noticeRepository.findByNoticeList(searchString, filterFromDt, filterToDt, pageable);
+        Page<NoticeListDto> noticeListDtoPage = noticeRepository.findByNoticeList(hnType, searchString, filterFromDt, filterToDt, pageable);
 
         return ResponseEntity.ok(res.ResponseEntityPage(noticeListDtoPage,type));
     }
@@ -70,6 +71,7 @@ public class NoticeService {
             noticeViewInfo.put("isWritter", type); // 1이면 본사, 2이면 지사 or 가맹점
             noticeViewInfo.put("subject", noticeViewDto.getSubject());
             noticeViewInfo.put("content", noticeViewDto.getContent());
+            noticeViewInfo.put("hnType", noticeViewDto.getHnType());
             noticeViewInfo.put("name", noticeViewDto.getName());
             noticeViewInfo.put("insertDateTime", noticeViewDto.getInsertDateTime());
             noticeViewInfo.put("fileList", noticeFileListDtos);
@@ -78,6 +80,7 @@ public class NoticeService {
             if(noticeViewPreDto != null){
                 noticeViewInfo.put("prevId", noticeViewPreDto.getSubId());
                 noticeViewInfo.put("prevSubject", noticeViewPreDto.getSubSubject());
+                noticeViewInfo.put("hnType", noticeViewPreDto.getHnType());
                 noticeViewInfo.put("prevInsertDateTime", noticeViewPreDto.getSubInsertDateTime());
             }else{
                 noticeViewInfo.put("prevId", "");
@@ -87,6 +90,7 @@ public class NoticeService {
             NoticeViewSubDto noticeViewNextDto = noticeRepository.findByNoticeNextView(noticeViewDto.getHnId());
             if(noticeViewNextDto != null){
                 noticeViewInfo.put("nextId", noticeViewNextDto.getSubId());
+                noticeViewInfo.put("hnType", noticeViewNextDto.getHnType());
                 noticeViewInfo.put("nextSubject", noticeViewNextDto.getSubSubject());
                 noticeViewInfo.put("nextvInsertDateTime", noticeViewNextDto.getSubInsertDateTime());
             }else{

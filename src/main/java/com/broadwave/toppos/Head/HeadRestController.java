@@ -1371,10 +1371,10 @@ public class HeadRestController {
 // @@@@@@@@@@@@@@@@@@@ 공지사항 게시판 API @@@@@@@@@@@@@@@@@@@@@@@@@@
     // 공지사항 게시판 - 리스트 호출
     @PostMapping("/noticeList")
-    public ResponseEntity<Map<String,Object>> noticeList(@RequestParam("searchString")String searchString, @RequestParam("filterFromDt")String filterFromDt,
+    public ResponseEntity<Map<String,Object>> noticeList(@RequestParam("hnType")String hnType, @RequestParam("searchString")String searchString, @RequestParam("filterFromDt")String filterFromDt,
                                                              @RequestParam("filterToDt")String filterToDt,
                                                              Pageable pageable) {
-        return noticeService.noticeList(searchString, filterFromDt.replaceAll("-",""), filterToDt.replaceAll("-",""), pageable, "1");
+        return noticeService.noticeList(hnType, searchString, filterFromDt.replaceAll("-",""), filterToDt.replaceAll("-",""), pageable, "1");
     }
 
     //  공지사항 게시판 - 글보기

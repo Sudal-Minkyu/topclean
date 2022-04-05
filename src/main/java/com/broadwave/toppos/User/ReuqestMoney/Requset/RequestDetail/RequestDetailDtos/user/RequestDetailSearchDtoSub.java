@@ -103,4 +103,9 @@ public class RequestDetailSearchDtoSub {
     private String fdAgreeType; // 동의타입 (온라인 : 1, 서면 : 2)
     private String fdSignImage; // 운동화 세탁 동의사인이미지 Blob객체사용
 
+    private Long frFiId; // 가맹검품의 fiId가 있을 경우
+    private String frFiCustomerConfirm; // 가맹검품의 고객수락여부
+    private Long brFiId; // 확인품의 fiId가 있을 경우
+    private String brFiCustomerConfirm; //확인품의 고객수락여부
+
 }

@@ -53,7 +53,7 @@ public class NoticeRepositoryCustomImpl extends QuerydslRepositorySupport implem
 
     // 공지사항 리스트 데이터 호출
     @Override
-    public Page<NoticeListDto> findByNoticeList(String searchString, String filterFromDt, String filterToDt, Pageable pageable) {
+    public Page<NoticeListDto> findByNoticeList(String hnType, String searchString, String filterFromDt, String filterToDt, Pageable pageable) {
         QNotice notice  = QNotice.notice;
 
         JPQLQuery<NoticeListDto> query = from(notice)
@@ -66,6 +66,12 @@ public class NoticeRepositoryCustomImpl extends QuerydslRepositorySupport implem
                 ));
 
         query.orderBy(notice.hnId.desc());
+
+        if(hnType.equals("01")){
+            query.where(notice.hnType.eq(hnType));
+        }else if(hnType.equals("02")){
+            query.where(notice.hnType.eq(hnType));
+        }
 
         if(searchString != null){
             query.where(notice.hnSubject.containsIgnoreCase(searchString));

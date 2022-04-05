@@ -8,7 +8,6 @@ import com.broadwave.toppos.Head.Item.Group.C.QItem;
 import com.broadwave.toppos.Manager.Process.Issue.QIssue;
 import com.broadwave.toppos.Manager.Process.IssueForce.QIssueForce;
 import com.broadwave.toppos.User.Customer.QCustomer;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.QPayment;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.QRequest;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.QInspeot;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.manager.*;
@@ -114,114 +113,116 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         query.where(requestDetail.frNo.eq(frNo));
         return query.fetch();
     }
+
+
     // 통합조회 querydsl
     public List<RequestDetailSearchDto> requestDetailSearch(String frCode, Long bcId, String searchTag, String filterCondition, String filterFromDt, String filterToDt){
-        QRequestDetail requestDetail = QRequestDetail.requestDetail;
-        QRequest request = QRequest.request;
-        QInspeot inspeot = QInspeot.inspeot;
-        QCustomer customer = QCustomer.customer;
-        QPayment payment = QPayment.payment;
+        EntityManager em = getEntityManager();
+        StringBuilder sb = new StringBuilder();
 
-        JPQLQuery<RequestDetailSearchDto> query = from(requestDetail)
-                .innerJoin(requestDetail.frId, request)
-                .innerJoin(request.bcId, customer)
-                .leftJoin(inspeot).on(inspeot.fdId.eq(requestDetail))
-//                .leftJoin(payment).on(payment.fdId.eq(requestDetail))
-                .where(request.frCode.eq(frCode).and(requestDetail.fdCancel.eq("N")))
-                .where(request.frYyyymmdd.loe(filterFromDt).and(request.frYyyymmdd.goe(filterToDt)).and(request.frConfirmYn.eq("Y")))
-                .select(Projections.constructor(RequestDetailSearchDto.class,
-                        customer.bcName,
-                        request.frYyyymmdd,
-                        requestDetail.id,
-                        request.id,
-                        request.frNo,
-                        requestDetail.fdTag,
-                        requestDetail.biItemcode,
-                        requestDetail.fdState,
-                        requestDetail.fdPreState,
-                        requestDetail.fdS2Dt,
-                        requestDetail.fdS3Dt,
-                        requestDetail.fdS4Dt,
-                        //완성일자 Case 문
-                        new CaseBuilder()
-                                .when(requestDetail.fdS8Dt.isNull().or(requestDetail.fdS8Dt.isEmpty())).then(
-                                        new CaseBuilder()
-                                            .when(requestDetail.fdS7Dt.isNull().or(requestDetail.fdS7Dt.isEmpty())).then(
-                                                    requestDetail.fdS5Dt
-                                        )
-                                            .otherwise(requestDetail.fdS7Dt)
-                                )
-                                .otherwise(requestDetail.fdS8Dt),
-                        requestDetail.fdS6Dt,
-                        requestDetail.fdCancel,
-                        requestDetail.fdCacelDt,
-                        requestDetail.fdColor,
-                        requestDetail.fdPattern,
-                        requestDetail.fdPriceGrade,
-                        requestDetail.fdOriginAmt,
-                        requestDetail.fdNormalAmt,
-                        requestDetail.fdAdd2Amt,
-                        requestDetail.fdAdd2Remark,
-                        requestDetail.fdPollution,
-                        requestDetail.fdDiscountGrade,
-                        requestDetail.fdDiscountAmt,
-                        requestDetail.fdQty,
-                        requestDetail.fdRequestAmt,
-                        requestDetail.fdSpecialYn,
-                        requestDetail.fdTotAmt,
-                        requestDetail.fdRemark,
-                        requestDetail.fdEstimateDt,
-                        requestDetail.fdRetryYn,
-                        requestDetail.fdUrgentYn,
-                        requestDetail.fdPressed,
-                        requestDetail.fdAdd1Amt,
-                        requestDetail.fdAdd1Remark,
-                        requestDetail.fdRepairAmt,
-                        requestDetail.fdRepairRemark,
-                        requestDetail.fdWhitening,
-                        requestDetail.fdPollutionLevel,
-                        requestDetail.fdWaterRepellent,
-                        requestDetail.fdStarch,
-                        requestDetail.fdPollutionLocFcn,
-                        requestDetail.fdPollutionLocFcs,
-                        requestDetail.fdPollutionLocFcb,
-                        requestDetail.fdPollutionLocFlh,
-                        requestDetail.fdPollutionLocFrh,
-                        requestDetail.fdPollutionLocFlf,
-                        requestDetail.fdPollutionLocFrf,
-                        requestDetail.fdPollutionLocBcn,
-                        requestDetail.fdPollutionLocBcs,
-                        requestDetail.fdPollutionLocBcb,
-                        requestDetail.fdPollutionLocBrh,
-                        requestDetail.fdPollutionLocBlh,
-                        requestDetail.fdPollutionLocBrf,
-                        requestDetail.fdPollutionLocBlf,
+        sb.append("SELECT \n");
+        sb.append("c.bc_name, b.fr_yyyymmdd, a.fd_id, b.fr_id, \n");
+        sb.append("b.fr_no, a.fd_tag, a.bi_itemcode, a.fd_state, a.fd_pre_state, \n");
+        sb.append("a.fd_s2_dt, a.fd_s3_dt, a.fd_s4_dt, \n");
+        sb.append("CASE WHEN a.fd_s8_dt IS NULL THEN \n");
+        sb.append("(CASE WHEN a.fd_s7_dt IS NULL THEN a.fd_s5_dt \n");
+        sb.append("ELSE a.fd_s7_dt end) \n");
+        sb.append("ELSE a.fd_s8_dt \n");
+        sb.append("END as fdS5Dt, \n");
+        sb.append("a.fd_s6_dt, a.fd_cancel, a.fd_cacel_dt, a.fd_color, a.fd_pattern, a.fd_price_grade, \n");
+        sb.append("a.fd_origin_amt, a.fd_normal_amt, a.fd_add2_amt, a.fd_add2_remark, \n");
+        sb.append("a.fd_pollution, a.fd_discount_grade, a.fd_discount_amt, a.fd_qty, a.fd_request_amt, \n");
+        sb.append("a.fd_special_yn, a.fd_tot_amt, a.fd_remark, a.fd_estimate_dt, a.fd_retry_yn, a.fd_urgent_yn, a.fd_pressed, \n");
+        sb.append("a.fd_add1_amt, a.fd_add1_remark, a.fd_repair_amt, a.fd_repair_remark, a.fd_whitening, a.fd_pollution_level, \n");
+        sb.append("a.fd_water_repellent, a.fd_starch, a.fd_pollution_loc_fcn, a.fd_pollution_loc_fcs, a.fd_pollution_loc_fcb, \n");
+        sb.append("a.fd_pollution_loc_flh, a.fd_pollution_loc_frh, a.fd_pollution_loc_flf, a.fd_pollution_loc_frf, \n");
+        sb.append("a.fd_pollution_loc_bcn, a.fd_pollution_loc_bcs, a.fd_pollution_loc_bcb, a.fd_pollution_loc_brh, a.fd_pollution_loc_blh, \n");
+        sb.append("a.fd_pollution_loc_brf, a.fd_pollution_loc_blf, b.fr_ref_type, a.fd_agree_type, a.fd_sign_image, \n");
+        sb.append("IFNULL(d.fi_id,null), IFNULL(d.fi_customer_confirm,null), IFNULL(e.fi_id,null), IFNULL(e.fi_customer_confirm,null), IFNULL(f.fp_cancel_yn,'N') \n");
 
-                        request.frRefType,
+        sb.append("FROM fs_request_dtl a \n");
+        sb.append("INNER JOIN fs_request b ON b.fr_id = a.fr_id \n");
+        sb.append("INNER JOIN bs_customer c ON c.bc_id = b.bc_id \n");
+        sb.append("LEFT OUTER JOIN fs_request_inspect d ON d.fd_id = a.fd_id AND d.fi_type='F' \n");
+        sb.append("LEFT OUTER JOIN fs_request_inspect e ON e.fd_id = a.fd_id AND e.fi_type='B' \n");
+        sb.append("LEFT OUTER JOIN fs_request_payment f ON f.fr_id = b.fr_id AND f.fp_cancel_yn='Y' AND f.fp_id = ( SELECT MAX(fp_id) from fs_request_payment WHERE b.fr_id= fr_id AND fp_cancel_yn='Y' ) \n");
 
-                        requestDetail.fdAgreeType,
-                        requestDetail.fdSignImage
-                ));
-        query.orderBy(requestDetail.id.asc());
-        if(bcId != null){
-            query.where(customer.bcId.eq(bcId));
-        }
-        if(!searchTag.equals("")){
-            query.where(requestDetail.fdTag.likeIgnoreCase("%"+searchTag+"%"));
-        }
-        if(!filterCondition.equals("")){
-            if(filterCondition.equals("B") || filterCondition.equals("F")){
-                query.where(inspeot.fiType.eq(filterCondition));
+        sb.append("WHERE \n");
+        sb.append("b.fr_code= ?1 \n");
+        sb.append("AND a.fd_cancel='N' \n");
+        sb.append("AND b.fr_confirm_yn='Y' \n");
+        sb.append("AND b.fr_yyyymmdd  <= ?2 \n");
+        sb.append("AND b.fr_yyyymmdd  >= ?3 \n");
+
+        if(!filterCondition.equals("")) {
+            if (filterCondition.equals("F")) {
+                sb.append("AND d.fi_type= ?4 \n");
+            } else if(filterCondition.equals("B")) {
+                sb.append("AND e.fi_type= ?4 \n");
+            }else {
+                sb.append("AND a.fd_state= ?4 \n");
+            }
+            if(!searchTag.equals("")) {
+                sb.append("AND a.fd_tag LIKE ?5 \n");
+                if(bcId != null){
+                    sb.append("AND c.bc_id= ?6 \n");
+                }
             }else{
-                query.where(requestDetail.fdState.eq(filterCondition));
+                if(bcId != null){
+                    sb.append("AND c.bc_id= ?5 \n");
+                }
+            }
+        }else{
+            if(!searchTag.equals("")){
+                sb.append("AND a.fd_tag LIKE ?4 \n");
+                if(bcId != null){
+                    sb.append("AND c.bc_id= ?5 \n");
+                }
+            }else{
+                if(bcId != null){
+                    sb.append("AND c.bc_id= ?4 \n");
+                }
             }
         }
-        if(!filterFromDt.equals("") && !filterToDt.equals("")){
-            query.where(request.frYyyymmdd.loe(filterFromDt).and(request.frYyyymmdd.goe(filterToDt)));
+
+        sb.append("ORDER BY a.fd_id DESC; \n");
+
+        Query query = em.createNativeQuery(sb.toString());
+
+        query.setParameter(1, frCode);
+        query.setParameter(2, filterFromDt);
+        query.setParameter(3, filterToDt);
+
+        if(!filterCondition.equals("")) {
+            query.setParameter(4, filterCondition);
+            if(!searchTag.equals("")){
+                query.setParameter(5, "%"+searchTag+"%");
+                if(bcId != null){
+                    query.setParameter(6, bcId);
+                }
+            }else{
+                if(bcId != null){
+                    query.setParameter(5, bcId);
+                }
+            }
+        }else{
+            if(!searchTag.equals("")){
+                query.setParameter(4, "%"+searchTag+"%");
+                if(bcId != null){
+                    query.setParameter(5, bcId);
+                }
+            }else{
+                if(bcId != null){
+                    query.setParameter(4, bcId);
+                }
+            }
         }
-        query.distinct();
-        return query.fetch();
+
+        return jpaResultMapper.list(query, RequestDetailSearchDto.class);
+
     }
+
+
     // 미수관리 페이지의 접수 상세보기 querydsl
     public List<RequestDetailUncollectDto> findByRequestDetailUncollectList(String frCode, Long frId){
         QRequestDetail requestDetail = QRequestDetail.requestDetail;

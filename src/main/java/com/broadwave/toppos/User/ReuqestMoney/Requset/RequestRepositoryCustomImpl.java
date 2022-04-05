@@ -576,7 +576,7 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
         return jpaResultMapper.list(query, RequestRealTimeListDto.class);
 
     }
-//    RequestFindListDto
+
 
     // 물건찾기 등록 리스트 Dto
     @Override

@@ -169,7 +169,7 @@ public class ManagerService {
             chartFranchOpenData.add(chartFranchOpenInfo);
         }
 
-        // 일주일전 LocalDataTime
+        // 일주일전 Local
 //        LocalDateTime weekDays = LocalDateTime.now().minusDays(7);
 //        String formatWeekDays = weekDays.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 //        log.info("weekDays : "+weekDays);

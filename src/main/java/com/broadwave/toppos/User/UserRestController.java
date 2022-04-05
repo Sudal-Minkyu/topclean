@@ -894,6 +894,8 @@ public class UserRestController {
 //@@@@@@@@@@@@@@@@@@@@@ 가맹점 통합조회 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     //  통합조회용 - 접수세부 테이블
     @GetMapping("franchiseRequestDetailSearch")
+    @ApiOperation(value = "통합조회 리스트" , notes = "통합조회 리스트를 호출한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
     public ResponseEntity<Map<String,Object>> franchiseRequestDetailSearch(@RequestParam(value="bcId", defaultValue="") Long bcId,
                                                                                                                    @RequestParam(value="searchTag", defaultValue="") String searchTag,
                                                                                                                    @RequestParam(value="filterCondition", defaultValue="") String filterCondition,
@@ -935,6 +937,14 @@ public class UserRestController {
     @PostMapping("franchiseInspectionSave")
     public ResponseEntity<Map<String,Object>> franchiseInspectionSave(@ModelAttribute InspeotMapperDto inspeotMapperDto, HttpServletRequest request) throws IOException {
         return inspectService.InspectionSave(inspeotMapperDto, request, AWSBUCKETURL,"1");
+    }
+
+    //  가맹검품 조회 - 확인품 정보 요청
+    @GetMapping("franchiseInspectionInfo")
+    @ApiOperation(value = "가맹검품 정보" , notes = "해당 접수의 가맹검품 정보를 요청한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
+    public ResponseEntity<Map<String,Object>> franchiseInspectionInfo(@RequestParam(value="fiId", defaultValue="") Long fiId, HttpServletRequest request){
+        return inspectService.inspectionInfo(fiId, "2", request);
     }
 
     // 통합조회용 - 등록 검품 삭제
@@ -1194,9 +1204,9 @@ public class UserRestController {
 // @@@@@@@@@@@@@@@@@@@ 공지사항 게시판 API @@@@@@@@@@@@@@@@@@@@@@@@@@
     // 공지사항 게시판 - 리스트 호출
     @PostMapping("noticeList")
-    public ResponseEntity<Map<String,Object>> noticeList(@RequestParam("searchString")String searchString, @RequestParam("filterFromDt")String filterFromDt,
+    public ResponseEntity<Map<String,Object>> noticeList(@RequestParam("hnType")String hnType, @RequestParam("searchString")String searchString, @RequestParam("filterFromDt")String filterFromDt,
                                                          @RequestParam("filterToDt")String filterToDt, Pageable pageable) {
-        return noticeService.noticeList(searchString, filterFromDt.replaceAll("-",""), filterToDt.replaceAll("-",""), pageable, "2");
+        return noticeService.noticeList(hnType, searchString, filterFromDt.replaceAll("-",""), filterToDt.replaceAll("-",""), pageable, "2");
     }
 
     //  공지사항 게시판 - 글보기

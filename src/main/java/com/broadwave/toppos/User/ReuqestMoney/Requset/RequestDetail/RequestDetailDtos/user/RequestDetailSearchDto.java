@@ -5,7 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.math.BigInteger;
+import java.sql.Timestamp;
 
 /**
  * @author Minkyu
@@ -18,13 +19,14 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RequestDetailSearchDto {
+
     // 마스터 테이블에서 가져 올 데이터
     private String bcName; // 고객이름
     private String frYyyymmdd; // 접수일자
 
     // 세부 테이블에서 가져 올 데이터
-    private Long fdId; // 접수세부테이블 고유값 ID
-    private Long frId; // 접수마스터테이블 고유값 ID
+    private BigInteger fdId; // 접수세부테이블 고유값 ID
+    private BigInteger frId; // 접수마스터테이블 고유값 ID
     private String frNo; // 접수코드
 
     private String fdTag; // 택번호
@@ -32,18 +34,14 @@ public class RequestDetailSearchDto {
     private String fdState; // 현재상태 ( S1 : 접수, S2: 지사입고,S3 강제출고, S4:가맹점입고, S6: 고객인도, S7: 지사강제출고, S8: 가맹점강제입고)
     private String fdPreState; // 이전상태 ( S1 : 접수, S2: 지사입고,S3 강제출고, S4:가맹점입고, S6: 고객인도, S7: 지사강제출고, S8: 가맹점강제입고)
 
-//    private LocalDateTime fdStateDt; // 현재상태변경시간 = d
-
     private String fdS2Dt; // 지사입고일
     private String fdS3Dt; // 지사반송일
     private String fdS4Dt; // 지사출고일
     private String fdS5Dt; // 가맹점입고일(완성일자)
     private String fdS6Dt; // 고객인도일
 
-//    private LocalDateTime fdPreStateDt; // 이전상태변경시간 = d
-
     private String fdCancel; // 접수취소 Y 기본값 N
-    private LocalDateTime fdCacelDt; // 접수취소 시간
+    private Timestamp fdCacelDt; // 접수취소 시간
 
     private String fdColor; // 색상코드 (00:미선택 01 흰색 02:검정 03: 회색, 04 빨강 05:주황, 06: 노랑, 07 초록 08 파랑 09:남색 10 보라 11 핑크)
     private String fdPattern; // 패턴 (00: 미선택 , 01:체크, 02:혼합, 03: 줄)
@@ -98,5 +96,13 @@ public class RequestDetailSearchDto {
 
     private String fdAgreeType; // 동의타입 (온라인 : 1, 서면 : 2)
     private String fdSignImage; // 운동화 세탁 동의사인이미지 Blob객체사용
+
+    // 2022/04/04 데이터 추가
+    private BigInteger frFiId; // 가맹검품의 fiId가 있을 경우
+    private String frFiCustomerConfirm; // 가맹검품의 고객수락여부
+    private BigInteger brFiId; // 확인품의 fiId가 있을 경우
+    private String brFiCustomerConfirm; //확인품의 고객수락여부
+
+    private String fpCancelYn; // 결제취소 여부 : 기본값 N
 
 }

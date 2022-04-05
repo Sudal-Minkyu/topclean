@@ -312,7 +312,7 @@ public class ManagerRestController {
     @ApiOperation(value = "확인품 검품 정보" , notes = "해당 접수의 확인품 정보를 요청한다.")
     @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
     public ResponseEntity<Map<String,Object>> branchInspectionInfo(@RequestParam(value="fiId", defaultValue="") Long fiId, HttpServletRequest request){
-        return inspectService.branchInspectionInfo(fiId, "1", request);
+        return inspectService.inspectionInfo(fiId, "1", request);
     }
 
     // 확인품 검품 리스트 요청
@@ -435,10 +435,10 @@ public class ManagerRestController {
 // @@@@@@@@@@@@@@@@@@@ 공지사항 게시판 API @@@@@@@@@@@@@@@@@@@@@@@@@@
     // 공지사항 게시판 - 리스트 호출
     @PostMapping("/noticeList")
-    public ResponseEntity<Map<String,Object>> noticeList(@RequestParam("searchString")String searchString, @RequestParam("filterFromDt")String filterFromDt,
+    public ResponseEntity<Map<String,Object>> noticeList(@RequestParam("hnType")String hnType, @RequestParam("searchString")String searchString, @RequestParam("filterFromDt")String filterFromDt,
                                                          @RequestParam("filterToDt")String filterToDt,
                                                          Pageable pageable) {
-        return noticeService.noticeList(searchString, filterFromDt.replaceAll("-",""), filterToDt.replaceAll("-",""), pageable, "2");
+        return noticeService.noticeList(hnType, searchString, filterFromDt.replaceAll("-",""), filterToDt.replaceAll("-",""), pageable, "2");
     }
 
     //  공지사항 게시판 - 글보기

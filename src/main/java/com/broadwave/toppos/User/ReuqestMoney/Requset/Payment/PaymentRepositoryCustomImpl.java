@@ -62,8 +62,7 @@ public class PaymentRepositoryCustomImpl extends QuerydslRepositorySupport imple
         QPayment payment = QPayment.payment;
 
         JPQLQuery<PaymentCencelYnDto> query = from(payment)
-                .where(payment.frId.id.in(frIdList)
-                        .and(payment.fpCancelYn.eq("N")))
+                .where(payment.frId.id.in(frIdList).and(payment.fpCancelYn.eq("N")))
                 .groupBy(payment.frId)
 
                 .select(Projections.constructor(PaymentCencelYnDto.class,

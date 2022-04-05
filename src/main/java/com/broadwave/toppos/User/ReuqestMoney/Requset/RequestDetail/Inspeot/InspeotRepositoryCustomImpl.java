@@ -12,7 +12,6 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -87,8 +86,7 @@ public class InspeotRepositoryCustomImpl extends QuerydslRepositorySupport imple
 
         JPQLQuery<InspeotYnDto> query = from(inspeot)
                 .where(inspeot.fdId.id.in(fdIdList)
-                        .and(inspeot.fiCustomerConfirm.eq("1")
-                                .and(inspeot.fiType.eq("F"))))
+                                .and(inspeot.fiType.eq("F")))
                 .groupBy(inspeot.fdId.id)
 
                 .select(Projections.constructor(InspeotYnDto.class,

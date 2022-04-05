@@ -6,12 +6,14 @@ import com.broadwave.toppos.User.Customer.Customer;
 import com.broadwave.toppos.User.Customer.CustomerRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.Payment;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentDtos.PaymentCencelDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentDtos.PaymentCencelYnDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentRepositoryCustom;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Request;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.Inspeot;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.*;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotInfoDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotListDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotMainListDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotMapperDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotRepositoryCustom;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.MessageHistory.MessageHistory;
@@ -25,7 +27,6 @@ import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetai
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.manager.RequestDetailBranchInspeotDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailInspectDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailSearchDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailSearchDtoSub;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailUpdateDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.RequestFdTagDto;
@@ -108,11 +109,12 @@ public class InspectService {
     //  통합조회용 - 접수세부 테이블
     public ResponseEntity<Map<String, Object>> franchiseRequestDetailSearch(Long bcId, String searchTag, String filterCondition, String filterFromDt, String filterToDt, HttpServletRequest request) {
         log.info("franchiseRequestDetailSearch 호출");
-//        log.info("고객ID bcId : "+bcId);
-//        log.info("택번호 searchTag : "+searchTag);
-//        log.info("조회타입 filterCondition : "+filterCondition);
-//        log.info("시작 접수일자 filterFromDt : "+filterFromDt);
-//        log.info("종료 접수일자 filterToDt : "+filterToDt);
+
+        log.info("고객ID bcId : "+bcId);
+        log.info("택번호 searchTag : "+searchTag);
+        log.info("조회타입 filterCondition : "+filterCondition);
+        log.info("시작 접수일자 filterFromDt : "+filterFromDt);
+        log.info("종료 접수일자 filterToDt : "+filterToDt);
 
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
@@ -122,55 +124,51 @@ public class InspectService {
         String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
         log.info("현재 접속한 가맹점 코드 : "+frCode);
 
-        List<RequestDetailSearchDto> requestDetailSearchDtoList = requestDetailSearch(frCode, bcId, searchTag, filterCondition, filterFromDt, filterToDt); //  통합조회용 - 접수세부 호출
+        List<RequestDetailSearchDto> requestDetailSearchDtoList = requestDetailRepository.requestDetailSearch(frCode, bcId, searchTag, filterCondition, filterFromDt, filterToDt); //  통합조회용 - 접수세부 호출
         log.info("requestDetailSearchDtoList 크기 : "+requestDetailSearchDtoList.size());
+        data.put("gridListData",requestDetailSearchDtoList);
 
-        List<Long> frIdList = new ArrayList<>();
-        List<Long> fdIdList = new ArrayList<>();
-        for (RequestDetailSearchDto detailSearchDto : requestDetailSearchDtoList) {
-            frIdList.add(detailSearchDto.getFrId());
-            fdIdList.add(detailSearchDto.getFdId());
-        }
-
-        // 결제 취소여부 리스트 호출
-        List<PaymentCencelYnDto> paymentCencelYnDtoList = paymentRepositoryCustom.findByPaymentCancelYn(frIdList);
-        List<Long> cencelList = new ArrayList<>();
-        for (PaymentCencelYnDto paymentCencelYnDto : paymentCencelYnDtoList) {
-            cencelList.add(paymentCencelYnDto.getFrId());
-        }
-
-        // 검품 등록여부 리스트 호출
-        List<InspeotYnDto> inspeotYnDtoFList = inspeotRepositoryCustom.findByInspeotYnFAndType1(fdIdList); // 가맹검품 여부
-        List<InspeotYnDto> inspeotYnDtoBList = inspeotRepositoryCustom.findByInspeotYnBAndType1(fdIdList); // 지사검품(확인품) 여부
-        List<Long> inspeotListF = new ArrayList<>();
-        List<Long> inspeotListB = new ArrayList<>();
-        for (InspeotYnDto inspeotYnDto : inspeotYnDtoFList) {
-            inspeotListF.add(inspeotYnDto.getFdId());
-        }
-        for (InspeotYnDto inspeotYnDto : inspeotYnDtoBList) {
-            inspeotListB.add(inspeotYnDto.getFdId());
-        }
-
-        // 조회 리스트
-        List<RequestDetailSearchDtoSub> requestDetailSearchDtoSubList = new ArrayList<>();
-        for(RequestDetailSearchDto requestDetailSearchDto : requestDetailSearchDtoList){
-            RequestDetailSearchDtoSub requestDetailSearchDtoSub = modelMapper.map(requestDetailSearchDto,RequestDetailSearchDtoSub.class);
-            requestDetailSearchDtoSub.setFpCancelYn("Y");
-            requestDetailSearchDtoSubList.add(requestDetailSearchDtoSub);
-        }
-
-        log.info("requestDetailSearchDtoSubList 크기 : "+requestDetailSearchDtoSubList.size());
-
-        data.put("gridListData",requestDetailSearchDtoSubList);
-        data.put("cencelList",cencelList);
-        data.put("inspeotListF",inspeotListF);
-        data.put("inspeotListB",inspeotListB);
+//        List<Long> frIdList = new ArrayList<>();
+//        List<Long> fdIdList = new ArrayList<>();
+//        for (RequestDetailSearchDto detailSearchDto : requestDetailSearchDtoList) {
+//            frIdList.add(detailSearchDto.getFrId());
+//            fdIdList.add(detailSearchDto.getFdId());
+//        }
+//
+//        // 결제 취소여부 리스트 호출
+//        List<PaymentCencelYnDto> paymentCencelYnDtoList = paymentRepositoryCustom.findByPaymentCancelYn(frIdList);
+//        List<Long> cencelList = new ArrayList<>();
+//        for (PaymentCencelYnDto paymentCencelYnDto : paymentCencelYnDtoList) {
+//            cencelList.add(paymentCencelYnDto.getFrId());
+//        }
+//
+//        // 검품 등록여부 리스트 호출
+//        List<InspeotYnDto> inspeotYnDtoFList = inspeotRepositoryCustom.findByInspeotYnFAndType1(fdIdList); // 가맹검품 여부
+//        List<InspeotYnDto> inspeotYnDtoBList = inspeotRepositoryCustom.findByInspeotYnBAndType1(fdIdList); // 지사검품(확인품) 여부
+//        List<Long> inspeotListF = new ArrayList<>();
+//        List<Long> inspeotListB = new ArrayList<>();
+//        for (InspeotYnDto inspeotYnDto : inspeotYnDtoFList) {
+//            inspeotListF.add(inspeotYnDto.getFdId());
+//        }
+//        for (InspeotYnDto inspeotYnDto : inspeotYnDtoBList) {
+//            inspeotListB.add(inspeotYnDto.getFdId());
+//        }
+//
+//        // 조회 리스트
+//        List<RequestDetailSearchDtoSub> requestDetailSearchDtoSubList = new ArrayList<>();
+//        for(RequestDetailSearchDto requestDetailSearchDto : requestDetailSearchDtoList){
+//            RequestDetailSearchDtoSub requestDetailSearchDtoSub = modelMapper.map(requestDetailSearchDto,RequestDetailSearchDtoSub.class);
+//            requestDetailSearchDtoSub.setFpCancelYn("Y");
+//            requestDetailSearchDtoSubList.add(requestDetailSearchDtoSub);
+//        }
+//
+//        log.info("requestDetailSearchDtoSubList 크기 : "+requestDetailSearchDtoSubList.size());
+//
+//        data.put("gridListData",requestDetailSearchDtoSubList);
+//        data.put("cencelList",cencelList);
+//        data.put("inspeotListF",inspeotListF);
+//        data.put("inspeotListB",inspeotListB);
         return ResponseEntity.ok(res.dataSendSuccess(data));
-    }
-
-    //  통합조회용 - 접수세부 호출용 함수
-    private List<RequestDetailSearchDto> requestDetailSearch(String frCode, Long bcId, String searchTag, String filterCondition, String filterFromDt, String filterToDt) {
-        return requestDetailRepository.requestDetailSearch(frCode, bcId, searchTag, filterCondition, filterFromDt, filterToDt);
     }
 
     //  통합조회용 - 접수 세부테이블 수정
@@ -935,8 +933,8 @@ public class InspectService {
     }
 
     //  검품 조회 - 검품 상세보기 정보 요청
-    public ResponseEntity<Map<String, Object>> branchInspectionInfo(Long fiId, String type, HttpServletRequest request) {
-        log.info("branchInspectionInfo 호출");
+    public ResponseEntity<Map<String, Object>> inspectionInfo(Long fiId, String type, HttpServletRequest request) {
+        log.info("inspectionInfo 호출");
 
         log.info("fiId : "+fiId);
         log.info("type : "+type);
