@@ -51,6 +51,8 @@ public class RequestDetailBranchInspectionCurrentListDto {
     private String fdState; // 현재상태 ( S1 : 접수, S2: 지사입고,S3 강제출고, S4:가맹점입고, S6: 고객인도, S7: 지사강제출고, S8: 가맹점강제입고)
     private Integer fiAddAmtSum; // 추가금액
 
+    private String fiCustomerConfirm; // 고객 수락여부 ( 1: 미확인(기본값), 2:고객수락, 3:고객거부
+
     public String getInsertDt() {
         return insertDt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm"));
     }

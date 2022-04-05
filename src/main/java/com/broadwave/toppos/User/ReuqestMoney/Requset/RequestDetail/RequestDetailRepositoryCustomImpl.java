@@ -1279,7 +1279,8 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         customer.bcName,
                         requestDetail.fdTotAmt,
                         requestDetail.fdState,
-                        inspeot.fiAddAmt.sum()
+                        inspeot.fiAddAmt.sum(),
+                        inspeot.fiCustomerConfirm
                 ));
         query.orderBy(requestDetail.id.asc()).groupBy(requestDetail.id);
         query.where(inspeot.fiType.eq("B"));
