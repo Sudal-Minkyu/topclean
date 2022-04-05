@@ -21,6 +21,9 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 /**
@@ -636,15 +639,17 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
                                 .otherwise(find.ffState)
                 ));
 
-        if(searchTag != null){
+        if(searchTag != null && !searchTag.isEmpty() ){
             query.where(requestDetail.fdTag.likeIgnoreCase("%"+searchTag+"%"));
         }
-
         if(bcId != 0){
             query.where(customer.bcId.eq(bcId));
         }
+        query.where(request.frCode.eq(frCode).and(requestDetail.fdState.notEqualsIgnoreCase("S6")));
+        
+        //출고예정일이 오늘일자보다 작은 조건 추가
+        query.where(requestDetail.fdEstimateDt.lt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"))));
 
-        query.where(request.frCode.eq(frCode).and(requestDetail.fdState.notLike("S6")));
         query.where(request.frYyyymmdd.goe(filterFromDt).and(request.frYyyymmdd.loe(filterToDt)));
 
         return query.fetch();
