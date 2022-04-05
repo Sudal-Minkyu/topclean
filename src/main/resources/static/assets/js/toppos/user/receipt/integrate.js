@@ -743,8 +743,10 @@ const grids = {
                             template = `<button class="c-state">등록</button>`;
                         } else if(item.frFiId && item.frFiCustomerConfirm === "1") {
                             template = `<button class="c-state c-state--cancel">확인</button>`;
-                        } else if(item.frFiId) {
-                            template = `<button class="c-state">종료</button>`;
+                        } else if(item.frFiId && item.frFiCustomerConfirm === "2") {
+                            template = `<button class="c-state c-state--modify">수락</button>`;
+                        } else if(item.frFiId && item.frFiCustomerConfirm === "3") {
+                            template = `<button class="c-state c-state--modify">거부</button>`;
                         } else {
                             item.frInspectBtn = false;
                         }
@@ -762,8 +764,10 @@ const grids = {
                         item.brInspectBtn = true;
                         if(item.fdState === "B" && item.brFiId && item.brFiCustomerConfirm === "1") {
                             template = `<button class="c-state c-state--cancel">확인</button>`;
-                        } else if(item.brFiId) {
-                            template = `<button class="c-state">종료</button>`;
+                        } else if(item.brFiId && item.brFiCustomerConfirm === "2") {
+                            template = `<button class="c-state c-state--modify">수락</button>`;
+                        } else if(item.brFiId && item.brFiCustomerConfirm === "3") {
+                            template = `<button class="c-state c-state--modify">거부</button>`;
                         } else {
                             item.brInspectBtn = false;
                         }
@@ -2272,8 +2276,6 @@ function openFrInspectEditPop(item) {
 
 async function openFrInspectPop() {
     if(wares.currentFrInspect.frFiCustomerConfirm === "1" || !wares.currentFrInspect.frFiCustomerConfirm) {
-        resetFrInspectEditPop();
-
         try {
             wares.isCameraExist = true;
             wares.cameraStream = await navigator.mediaDevices.getUserMedia({
@@ -2323,10 +2325,20 @@ async function openFrInspectPop() {
             }
         }
 
+        if(wares.currentFrInspect.frFiCustomerConfirm === "1") {
+            $("#frCustomerDenied").show();
+            $("#frCustomerConfirmed").show();
+            $("#deleteInspect").show();
+        } else {
+            $("#frCustomerDenied").hide();
+            $("#frCustomerConfirmed").hide();
+            $("#deleteInspect").hide();
+        }
+
+
+
         $("#frInspectEditPop").addClass("active");
     } else {
-        resetFrInspectViewPop();
-
         $("#frViewFdTotAmtInPut").val(wares.currentFrInspect.fdTotAmt
             ? wares.currentFrInspect.fdTotAmt.toLocaleString() : "0");
         $("#frViewFiComment").val(wares.currentFrInspect.fiComment
@@ -2335,6 +2347,11 @@ async function openFrInspectPop() {
             ? wares.currentFrInspect.fiAddAmt.toLocaleString() : "0");
 
         if(wares.currentFrInspect.photoList) {
+            if(wares.currentFrInspect.photoList.length) {
+                $("#frInspectViewPhotoPanel").show();
+            } else {
+                $("#frInspectViewPhotoPanel").hide();
+            }
             for (const photo of wares.currentFrInspect.photoList) {
                 const photoHtml = `
                 <li class="tag-imgs__item">
@@ -2352,8 +2369,6 @@ async function openFrInspectPop() {
 }
 
 function openBrInspectPop() {
-    resetBrInspectPop();
-
     $("#brFdTotAmtInPut").val(wares.currentBrInspect.fdTotAmt
         ? wares.currentBrInspect.fdTotAmt.toLocaleString() : "0");
     $("#brFiComment").val(wares.currentBrInspect.fiComment
@@ -2362,6 +2377,11 @@ function openBrInspectPop() {
         ? wares.currentBrInspect.fiAddAmt.toLocaleString() : "0");
 
     if(wares.currentBrInspect.photoList) {
+        if(wares.currentBrInspect.photoList.length) {
+            $("#brInspectPhotoPanel").show();
+        } else {
+            $("#brInspectPhotoPanel").hide();
+        }
         for (const photo of wares.currentBrInspect.photoList) {
             const photoHtml = `
                 <li class="tag-imgs__item">
@@ -2373,6 +2393,15 @@ function openBrInspectPop() {
             $("#brPhotoList").append(photoHtml);
         }
     }
+
+    if(wares.currentBrInspect.brFiCustomerConfirm === "1") {
+        $("#brCustomerDenied").parents("li").show();
+        $("#brCustomerConfirmed").parents("li").show();
+    } else {
+        $("#brCustomerDenied").parents("li").hide();
+        $("#brCustomerConfirmed").parents("li").hide();
+    }
+
     // fiCustomerConfirm 에 따른 수락거부 여부 추가?
     $("#brInspectPop").addClass("active");
 }
@@ -2524,6 +2553,7 @@ function closeFrInspectEditPop(doRefresh = false) {
         comms.franchiseRequestDetailSearch(wares.currentCondition);
     }
     $("#frInspectEditPop").removeClass("active");
+    resetFrInspectEditPop();
 }
 
 function closeFrInspectViewPop(doRefresh = false) {
@@ -2531,6 +2561,7 @@ function closeFrInspectViewPop(doRefresh = false) {
         comms.franchiseRequestDetailSearch(wares.currentCondition);
     }
     $("#frInspectViewPop").removeClass("active");
+    resetFrInspectViewPop();
 }
 
 function closeBrInspectPop(doRefresh = false) {
@@ -2538,6 +2569,7 @@ function closeBrInspectPop(doRefresh = false) {
         comms.franchiseRequestDetailSearch(wares.currentCondition);
     }
     $("#brInspectPop").removeClass("active");
+    resetBrInspectPop();
 }
 
 function resetFrInspectEditPop() {
