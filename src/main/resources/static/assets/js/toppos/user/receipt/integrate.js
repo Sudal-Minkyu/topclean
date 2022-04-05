@@ -2395,11 +2395,11 @@ function openBrInspectPop() {
     }
 
     if(wares.currentBrInspect.brFiCustomerConfirm === "1") {
-        $("#brCustomerDenied").show();
-        $("#brCustomerConfirmed").show();
+        $("#brCustomerDenied").parents("li").show();
+        $("#brCustomerConfirmed").parents("li").show();
     } else {
-        $("#brCustomerDenied").hide();
-        $("#brCustomerConfirmed").hide();
+        $("#brCustomerDenied").parents("li").hide();
+        $("#brCustomerConfirmed").parents("li").hide();
     }
 
     // fiCustomerConfirm 에 따른 수락거부 여부 추가?
