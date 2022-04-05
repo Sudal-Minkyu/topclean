@@ -127,47 +127,7 @@ public class InspectService {
         List<RequestDetailSearchDto> requestDetailSearchDtoList = requestDetailRepository.requestDetailSearch(frCode, bcId, searchTag, filterCondition, filterFromDt, filterToDt); //  통합조회용 - 접수세부 호출
         log.info("requestDetailSearchDtoList 크기 : "+requestDetailSearchDtoList.size());
         data.put("gridListData",requestDetailSearchDtoList);
-
-//        List<Long> frIdList = new ArrayList<>();
-//        List<Long> fdIdList = new ArrayList<>();
-//        for (RequestDetailSearchDto detailSearchDto : requestDetailSearchDtoList) {
-//            frIdList.add(detailSearchDto.getFrId());
-//            fdIdList.add(detailSearchDto.getFdId());
-//        }
-//
-//        // 결제 취소여부 리스트 호출
-//        List<PaymentCencelYnDto> paymentCencelYnDtoList = paymentRepositoryCustom.findByPaymentCancelYn(frIdList);
-//        List<Long> cencelList = new ArrayList<>();
-//        for (PaymentCencelYnDto paymentCencelYnDto : paymentCencelYnDtoList) {
-//            cencelList.add(paymentCencelYnDto.getFrId());
-//        }
-//
-//        // 검품 등록여부 리스트 호출
-//        List<InspeotYnDto> inspeotYnDtoFList = inspeotRepositoryCustom.findByInspeotYnFAndType1(fdIdList); // 가맹검품 여부
-//        List<InspeotYnDto> inspeotYnDtoBList = inspeotRepositoryCustom.findByInspeotYnBAndType1(fdIdList); // 지사검품(확인품) 여부
-//        List<Long> inspeotListF = new ArrayList<>();
-//        List<Long> inspeotListB = new ArrayList<>();
-//        for (InspeotYnDto inspeotYnDto : inspeotYnDtoFList) {
-//            inspeotListF.add(inspeotYnDto.getFdId());
-//        }
-//        for (InspeotYnDto inspeotYnDto : inspeotYnDtoBList) {
-//            inspeotListB.add(inspeotYnDto.getFdId());
-//        }
-//
-//        // 조회 리스트
-//        List<RequestDetailSearchDtoSub> requestDetailSearchDtoSubList = new ArrayList<>();
-//        for(RequestDetailSearchDto requestDetailSearchDto : requestDetailSearchDtoList){
-//            RequestDetailSearchDtoSub requestDetailSearchDtoSub = modelMapper.map(requestDetailSearchDto,RequestDetailSearchDtoSub.class);
-//            requestDetailSearchDtoSub.setFpCancelYn("Y");
-//            requestDetailSearchDtoSubList.add(requestDetailSearchDtoSub);
-//        }
-//
-//        log.info("requestDetailSearchDtoSubList 크기 : "+requestDetailSearchDtoSubList.size());
-//
-//        data.put("gridListData",requestDetailSearchDtoSubList);
-//        data.put("cencelList",cencelList);
-//        data.put("inspeotListF",inspeotListF);
-//        data.put("inspeotListB",inspeotListB);
+        
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 

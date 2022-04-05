@@ -1,6 +1,7 @@
 package com.broadwave.toppos.Manager;
 
 import com.broadwave.toppos.Head.HeadService.NoticeService;
+import com.broadwave.toppos.Head.Notice.NoticeDtos.NoticeMapperDto;
 import com.broadwave.toppos.Manager.Calendar.CalendarDtos.BranchCalendarDto;
 import com.broadwave.toppos.Manager.ManagerService.*;
 import com.broadwave.toppos.Manager.TagGallery.TagGalleryDtos.TagGalleryMapperDto;
@@ -447,6 +448,13 @@ public class ManagerRestController {
         return noticeService.noticeView(hnId, "2");
     }
 
+    //  공지사항 게시판 - 등록&수정
+    @PostMapping("noticeSave")
+    @ApiOperation(value = "공지사항 등록및수정" , notes = "지사에서 공지사항을 등록하거나 수정한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
+    public ResponseEntity<Map<String,Object>> noticeSave(@ModelAttribute NoticeMapperDto noticeMapperDto, HttpServletRequest request) throws IOException {
+        return noticeService.noticeSave(noticeMapperDto, request, "2");
+    }
 
 
 //@@@@@@@@@@@@@@@@@@@@@ 실시간접수현황 관련 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

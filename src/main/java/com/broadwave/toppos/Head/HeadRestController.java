@@ -25,11 +25,15 @@ import com.broadwave.toppos.Head.Item.ItemDtos.ItemPriceDto;
 import com.broadwave.toppos.Head.Item.ItemDtos.ItemPriceListDto;
 import com.broadwave.toppos.Head.Item.Price.FranchisePrice.*;
 import com.broadwave.toppos.Head.Item.Price.ItemPrice;
+import com.broadwave.toppos.Head.Notice.NoticeDtos.NoticeMapperDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.RequestSearchDto;
 import com.broadwave.toppos.User.UserService.ReceiptService;
 import com.broadwave.toppos.common.AjaxResponse;
 import com.broadwave.toppos.common.CommonUtils;
 import com.broadwave.toppos.common.ResponseErrorCode;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -43,6 +47,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -1383,7 +1388,13 @@ public class HeadRestController {
         return noticeService.noticeView(hnId, "1");
     }
 
-
+    //  공지사항 게시판 - 등록&수정
+    @PostMapping("noticeSave")
+    @ApiOperation(value = "공지사항 등록및수정" , notes = "본사에서 공지사항을 등록하거나 수정한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
+    public ResponseEntity<Map<String,Object>> noticeSave(@ModelAttribute NoticeMapperDto noticeMapperDto, HttpServletRequest request) throws IOException {
+        return noticeService.noticeSave(noticeMapperDto, request, "1");
+    }
 
 
 

@@ -92,32 +92,6 @@ public class AWSS3Service {
         s3Client.deleteObject(new DeleteObjectRequest(AWSBUCKET +  bucketPath, fileName));
     }
 
-//    public byte[] getObject(String bucketPath, String fileName) throws IOException {
-//        S3Object o = s3Client.getObject(new GetObjectRequest(AWSBUCKET +  bucketPath, fileName));
-//        S3ObjectInputStream objectInputStream = o.getObjectContent();
-//        byte[] bytes = IOUtils.toByteArray(objectInputStream);
-//        return bytes;
-//        //Resource resource = new ByteArrayResource(bytes);
-//        //return resource;
-//    }
-
-//    private static String makeThumbnail(String uploadPath, String path, String fileName) throws Exception {
-//
-//        BufferedImage sourceImg = ImageIO.read(new File(uploadPath + path, fileName));
-//
-//        BufferedImage destImg = Scalr.resize(sourceImg, Scalr.Method.AUTOMATIC, Scalr.Mode.FIT_TO_HEIGHT, 100);
-//
-//        String thumbnailName = uploadPath + path + File.separator + "s_" + fileName;
-//
-//        File newFile = new File(thumbnailName);
-//        String formatName = fileName.substring(fileName.lastIndexOf(".") + 1);
-//
-//        ImageIO.write(destImg, formatName.toUpperCase(), newFile);
-//
-//        return thumbnailName.substring(uploadPath.length()).replace(File.separatorChar, '/');
-//    }
-
-
     private String getExtension(String fileName) {
         int dotPosition = fileName.lastIndexOf('.');
 
