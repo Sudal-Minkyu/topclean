@@ -91,7 +91,17 @@ public class NoticeService {
         List<NoticeFileListDto> noticeFileListDtos = noticeFileRepository.findByNoticeFileList(hnId);
         if(noticeViewDto != null){
             noticeViewInfo.put("hnId", noticeViewDto.getHnId());
-            noticeViewInfo.put("isWritter", type); // 1이면 본사, 2이면 지사 or 가맹점
+            // 1이면 본사 or 지사 , 2이면 가맹점
+            if(type.equals("1")){
+                noticeViewInfo.put("isWritter", "1");
+            }else{
+                if(noticeViewDto.getHnType().equals("02")){
+                    noticeViewInfo.put("isWritter", "1");
+                }else{
+                    noticeViewInfo.put("isWritter", "2");
+                }
+                noticeViewInfo.put("isWritter", "2"); // 1이면 본사, 2이면 지사 or 가맹점
+            }
             noticeViewInfo.put("subject", noticeViewDto.getSubject());
             noticeViewInfo.put("content", noticeViewDto.getContent());
             noticeViewInfo.put("hnType", noticeViewDto.getHnType());
