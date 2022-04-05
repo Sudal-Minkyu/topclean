@@ -848,6 +848,7 @@ function resetCheckPop() {
     $("#fiAddAmt").val("");
     $("#fiComment").val("");
     $("#photoList").html("");
+    $("#customerResponse").html("");
     $("#noImgScreen").show();
 }
 
