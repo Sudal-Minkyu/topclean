@@ -133,7 +133,9 @@ public class NoticeService {
         log.info("noticeSave 호출");
 
         log.info("noticeMapperDto : "+noticeMapperDto);
+
         AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
 
         // 클레임데이터 가져오기
         Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
@@ -231,6 +233,8 @@ public class NoticeService {
         }else{
             log.info("첨부파일이 존재하지 않습니다");
         }
+
+        data.put("hnId",saveNotice.getHnId());
 
         return ResponseEntity.ok(res.success());
     }
