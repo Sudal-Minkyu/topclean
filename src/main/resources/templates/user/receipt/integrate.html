@@ -107,12 +107,12 @@
 					<label for="filterCondition6">인도완료</label>
 				</div>
 				<div class="c-radio">
-					<input type="radio" name="filterCondition" id="filterCondition7" value="B" />
-					<label for="filterCondition7">확인품</label>
-				</div>
-				<div class="c-radio">
 					<input type="radio" name="filterCondition" id="filterCondition8" value="F" />
 					<label for="filterCondition8">가맹검품</label>
+				</div>
+				<div class="c-radio">
+					<input type="radio" name="filterCondition" id="filterCondition7" value="B" />
+					<label for="filterCondition7">확인품</label>
 				</div>
 				<div class="c-radio">
 				</div>
@@ -890,11 +890,6 @@
                                 <img src="https://bw-toppos-images.s3.ap-northeast-2.amazonaws.com/toppos-manager-tagGallery/20220325/s_56bc64c91c6a452fbba71ce3ef3d42d4.png" class="tag-imgs__img" alt="">
                             </a>
                         </li>
-                        <li class="tag-imgs__item">
-                            <a href="https://bw-toppos-images.s3.ap-northeast-2.amazonaws.com/toppos-manager-tagGallery/20220325/b164267f7f574592b88f3cade0f5595f.png" data-lightbox="images" data-title="이미지 확대">
-                                <img src="https://bw-toppos-images.s3.ap-northeast-2.amazonaws.com/toppos-manager-tagGallery/20220325/s_b164267f7f574592b88f3cade0f5595f.png" class="tag-imgs__img" alt="">
-                            </a>
-                        </li>
                     </ul>
                 </div>
             </div>
@@ -905,7 +900,7 @@
                     </div>
                     <div class="pop__aricle-content">
                         <div class="c-text">
-                            <input type="text"  readonly="readonly" />
+                            <input id="brFiComment" type="text"  readonly="readonly" />
                         </div>
                     </div>
                 </div>
@@ -915,13 +910,13 @@
 					<div class="pop__console-cost">
 						<div class="pop__console-title">현재 접수금액</div>
 						<div class="pop__console-input">
-							<div class="c-text"><input type="text" readonly="readonly" /></div>
+							<div class="c-text"><input id="brFdTotAmtInPut" type="text" readonly="readonly" /></div>
 						</div>
 					</div>
 					<div class="pop__console-cost">
 						<div class="pop__console-title">추가 비용발생</div>
 						<div class="pop__console-input">
-							<div class="c-text"><input type="text" readonly="readonly" /></div>
+							<div class="c-text"><input id="brFiAddAmt" type="text" readonly="readonly" /></div>
 						</div>
 					</div>
 				</li>
@@ -942,28 +937,6 @@
                             <a href="https://bw-toppos-images.s3.ap-northeast-2.amazonaws.com/toppos-manager-tagGallery/20220325/b164267f7f574592b88f3cade0f5595f.png" data-lightbox="images" data-title="이미지 확대">
                                 <img src="https://bw-toppos-images.s3.ap-northeast-2.amazonaws.com/toppos-manager-tagGallery/20220325/s_b164267f7f574592b88f3cade0f5595f.png" class="tag-imgs__img" alt="">
                             </a>
-                        </li><li class="tag-imgs__item">
-                            <a href="https://bw-toppos-images.s3.ap-northeast-2.amazonaws.com/toppos-manager-tagGallery/20220325/56bc64c91c6a452fbba71ce3ef3d42d4.png" data-lightbox="images" data-title="이미지 확대">
-                                <img src="https://bw-toppos-images.s3.ap-northeast-2.amazonaws.com/toppos-manager-tagGallery/20220325/s_56bc64c91c6a452fbba71ce3ef3d42d4.png" class="tag-imgs__img" alt="">
-                            </a>
-                        </li>
-                        <li class="tag-imgs__item">
-                            <a href="https://bw-toppos-images.s3.ap-northeast-2.amazonaws.com/toppos-manager-tagGallery/20220325/b164267f7f574592b88f3cade0f5595f.png" data-lightbox="images" data-title="이미지 확대">
-                                <img src="https://bw-toppos-images.s3.ap-northeast-2.amazonaws.com/toppos-manager-tagGallery/20220325/s_b164267f7f574592b88f3cade0f5595f.png" class="tag-imgs__img" alt="">
-                            </a>
-                        </li><li class="tag-imgs__item">
-                            <a href="https://bw-toppos-images.s3.ap-northeast-2.amazonaws.com/toppos-manager-tagGallery/20220325/56bc64c91c6a452fbba71ce3ef3d42d4.png" data-lightbox="images" data-title="이미지 확대">
-                                <img src="https://bw-toppos-images.s3.ap-northeast-2.amazonaws.com/toppos-manager-tagGallery/20220325/s_56bc64c91c6a452fbba71ce3ef3d42d4.png" class="tag-imgs__img" alt="">
-                            </a>
-                        </li>
-                        <li class="tag-imgs__item">
-                            <a href="https://bw-toppos-images.s3.ap-northeast-2.amazonaws.com/toppos-manager-tagGallery/20220325/b164267f7f574592b88f3cade0f5595f.png" data-lightbox="images" data-title="이미지 확대">
-                                <img src="https://bw-toppos-images.s3.ap-northeast-2.amazonaws.com/toppos-manager-tagGallery/20220325/s_b164267f7f574592b88f3cade0f5595f.png" class="tag-imgs__img" alt="">
-                            </a>
-                        </li><li class="tag-imgs__item">
-                            <a href="https://bw-toppos-images.s3.ap-northeast-2.amazonaws.com/toppos-manager-tagGallery/20220325/56bc64c91c6a452fbba71ce3ef3d42d4.png" data-lightbox="images" data-title="이미지 확대">
-                                <img src="https://bw-toppos-images.s3.ap-northeast-2.amazonaws.com/toppos-manager-tagGallery/20220325/s_56bc64c91c6a452fbba71ce3ef3d42d4.png" class="tag-imgs__img" alt="">
-                            </a>
                         </li>
                     </ul>
                 </div>
@@ -975,7 +948,7 @@
                     </div>
                     <div class="pop__aricle-content">
                         <div class="c-text">
-                            <input type="text"  readonly="readonly" />
+                            <input id="frViewFiComment" type="text"  readonly="readonly" />
                         </div>
                     </div>
                 </div>
@@ -985,19 +958,17 @@
 					<div class="pop__console-cost">
 						<div class="pop__console-title">현재 접수금액</div>
 						<div class="pop__console-input">
-							<div class="c-text"><input type="text" readonly="readonly" /></div>
+							<div class="c-text"><input id="frViewFdTotAmtInPut" type="text" readonly="readonly" /></div>
 						</div>
 					</div>
 					<div class="pop__console-cost">
 						<div class="pop__console-title">추가 비용발생</div>
 						<div class="pop__console-input">
-							<div class="c-text"><input type="text" readonly="readonly" /></div>
+							<div class="c-text"><input id="frViewFiAddAmt" type="text" readonly="readonly" /></div>
 						</div>
 					</div>
 				</li>
                 <li><button class="c-button">닫기</button></li>
-                <li><button class="c-button c-button--dark">고객반품</button></li>
-                <li><button class="c-button c-button--solid">세탁진행</button></li>
             </ul>
         </div>
     </div>

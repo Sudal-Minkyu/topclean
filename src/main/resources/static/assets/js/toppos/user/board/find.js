@@ -447,13 +447,15 @@ function putCustomer() {
 
 function enableDatepicker() {
     const today = new Date().format("yyyy-MM-dd");
+    const tempDate = new Date();
+    let fromday = new Date(new Date(tempDate.setMonth(tempDate.getMonth() - 1)).setDate(1)).format("yyyy-MM-dd");
 
     /* datepicker를 적용시킬 대상들의 dom id들 */
     const datePickerTargetIds = [
         "filterFromDt", "filterToDt"
     ];
 
-    $("#" + datePickerTargetIds[0]).val(today);
+    $("#" + datePickerTargetIds[0]).val(fromday);
     $("#" + datePickerTargetIds[1]).val(today);
 
     /*
@@ -470,7 +472,7 @@ function enableDatepicker() {
 
 function resetAll() {
     wares.selectedCustomer = {
-        bcId: null,
+        bcId: 0,
         beforeUncollectMoney: 0,
         saveMoney: 0,
         bcAddress: "",
@@ -481,10 +483,6 @@ function resetAll() {
     grids.f.clearData(0);
     $("#searchType").val("0");
     $("#searchString").val("");
-
-    const today = new Date().format("yyyy-MM-dd");
-    $("#filterFromDt").val(today);
-    $("#filterToDt").val(today);
 }
 
 function onShowVKeyboard(num) {
@@ -508,7 +506,7 @@ function mainSearch() {
     if(searchString.length) {
         if(searchType === "4") {
             wares.selectedCustomer = {
-                bcId: null,
+                bcId: 0,
                 beforeUncollectMoney: 0,
                 saveMoney: 0,
                 bcAddress: "",
@@ -516,7 +514,7 @@ function mainSearch() {
             };
             putCustomer();
             const filterCondition = {
-                bcId: null,
+                bcId: 0,
                 searchTag: searchString,
                 filterFromDt: $("#filterFromDt").val(),
                 filterToDt: $("#filterToDt").val(),
