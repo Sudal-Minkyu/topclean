@@ -9,6 +9,7 @@ const dtos = {
             filterFromDt: "s",
             filterToDt: "s",
             franchiseId: "s",
+            ffState: "s",
         },
 
         branchObjectFindCheck: { // 지사에서 확인한 리스트에 대한 보고
@@ -353,6 +354,7 @@ function searchOrder() {
         filterFromDt: $("#filterFromDt").val().numString(),
         filterToDt: $("#filterToDt").val().numString(),
         franchiseId: $("#frList").val(),
+        ffState: $("#ffState").val(),
     };
     wares.searchCondition = searchCondition;
     wares.filterFromDt = searchCondition.filterFromDt;

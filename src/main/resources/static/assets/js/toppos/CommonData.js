@@ -80,8 +80,8 @@ class CommonDataClass {
         };
 
         this.name.hnType = {
-            "01": "[지사]",
-            "02": "[본사]",
+            "01": "[본사]",
+            "02": "[지사]",
         };
     }
 

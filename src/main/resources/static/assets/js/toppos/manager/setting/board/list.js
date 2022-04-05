@@ -160,14 +160,6 @@ const grids = {
             /* 0번 그리드의 레이아웃 */
             grids.s.columnLayout[0] = [
                 {
-                    dataField: "hnType",
-                    headerText: "작성자",
-                    width: 150,
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
-                        return CommonData.name.hnType[value];
-                    }
-                },
-                {
                     dataField: "subject",
                     headerText: "제목",
                     style: "grid_textalign_left",
@@ -175,7 +167,8 @@ const grids = {
                         type : "TemplateRenderer",
                     },
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
-                        let result = "<div clasee='list_subject'><span>" + value + "</span>";
+                        let result = " <div class='list_subject'><span>" + CommonData.name.hnType[item.hnType]
+                            + " " + value + "</span>";
                         if(item.numOfComment) {
                             result += ` <span class="numOfComment">(${item.numOfComment})</span>`
                         }
@@ -261,7 +254,7 @@ function onPageLoad() {
     setInputs();
     if(wares.boardType === "notice") {
         grids.f.noticeSetting();
-        $("#hnTypeComp").show();
+        // $("#hnTypeComp").show();
     }
     grids.f.create();
     grids.t.basicTrigger();

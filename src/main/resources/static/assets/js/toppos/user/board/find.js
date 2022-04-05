@@ -73,7 +73,7 @@ const dtos = {
 const urls = {
     searchCustomer: "/api/user/customerInfo", // 고객 검색
     getDetailList: "/api/user/franchiseObjectFind",
-    sendSearchRequest: "",
+    sendSearchRequest: "/api/user/franchiseObjectFindSave",
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
@@ -82,8 +82,8 @@ const comms = {
         dv.chk(searchCondition, dtos.send.customerInfo, "고객 검색 조건 보내기");
         CommonUI.ajax(urls.searchCustomer, "GET", searchCondition, function (req) {
             const items = req.sendData.gridListData;
-            $("#searchCustomerType").val(0);
-            $("#searchCustomerField").val("");
+            $("#searchType").val(0);
+            $("#searchString").val("");
             dv.chk(items, dtos.receive.customerInfo, "검색된 고객에 해당하는 리스트 받기");
             if(items.length === 1) {
                 wares.selectedCustomer = items[0];
@@ -98,6 +98,7 @@ const comms = {
                     location.href="/user/customerreg";
                 });
             }
+
         });
     },
 
@@ -115,7 +116,7 @@ const comms = {
     sendSearchRequest(target) {
         dv.chk(target, dtos.send.물건찾기요청, "물건찾기를 요청할 품목들 보내기");
         console.log(target);
-        CommonUI.ajax(urls.sendSearchRequest, "GET", target, function (res) {
+        CommonUI.ajax(urls.sendSearchRequest, "PARAM", target, function (res) {
             alertSuccess("요청하신 품목을 찾을 물건으로 등록하였습니다.");
             comms.getDetailList(wares.filterCondition);
         });
