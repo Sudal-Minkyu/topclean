@@ -234,9 +234,9 @@ public class NoticeService {
             log.info("첨부파일이 존재하지 않습니다");
         }
 
-        data.put("hnId",saveNotice.getHnId());
+        data.put("id",saveNotice.getHnId());
 
-        return ResponseEntity.ok(res.success());
+        return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
 }
