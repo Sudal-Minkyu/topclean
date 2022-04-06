@@ -103,8 +103,8 @@ public class NoticeRepositoryCustomImpl extends QuerydslRepositorySupport implem
                         notice.hnId,
                         notice.hnSubject,
                         notice.hnContent,
-                        account.username,
                         notice.hnType,
+                        account.username,
                         notice.insertDateTime
                 ));
 

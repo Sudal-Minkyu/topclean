@@ -1143,6 +1143,29 @@ public class ReceiptService {
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
+    // 지사 실시간접수현황 오른쪽 리스트 호출
+    public ResponseEntity<Map<String, Object>> branchRealTimeSubList(String frYyyymmdd, HttpServletRequest request) {
+        log.info("branchRealTimeSubList 호출");
+
+        log.info("접수일자  : "+frYyyymmdd);
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String brCode = (String) claims.get("brCode"); // 소속된 지사 코드
+        String login_id = claims.getSubject(); // 현재 아이디
+        log.info("현재 접속한 아이디 : "+login_id);
+        log.info("현재 접속한 지사 코드 : "+brCode);
+
+        List<RequestRealTimeListSubDto> requestRealTimeListSubDtos = requestRepository.findByRequestRealTimeSubList(frYyyymmdd, brCode);
+        log.info("requestRealTimeListSubDtos : "+requestRealTimeListSubDtos);
+
+        data.put("gridListData",requestRealTimeListSubDtos);
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
 
 }
 

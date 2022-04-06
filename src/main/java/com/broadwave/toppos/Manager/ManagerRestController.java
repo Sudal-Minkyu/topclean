@@ -443,6 +443,8 @@ public class ManagerRestController {
     }
 
     //  공지사항 게시판 - 글보기
+    @ApiOperation(value = "공지사항 글보기" , notes = "지사에서 공지사항 글을 본다.")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
     @GetMapping("/noticeView")
     public ResponseEntity<Map<String,Object>> noticeView(@RequestParam("hnId") Long hnId) {
         return noticeService.noticeView(hnId, "2");
@@ -458,7 +460,7 @@ public class ManagerRestController {
 
 
 //@@@@@@@@@@@@@@@@@@@@@ 실시간접수현황 관련 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    // 지사 실시간접수현황 왼쪽리스트 호출
+    // 지사 실시간접수현황 왼쪽 리스트 호출
     @GetMapping("branchRealTimeList")
     @ApiOperation(value = "실시간접수현황 왼쪽 리스트" , notes = "실시간접수현황 왼쪽 리스트를 호출한다.")
     @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
@@ -467,6 +469,13 @@ public class ManagerRestController {
         return receiptService.branchRealTimeList(franchiseId,  filterFromDt.replaceAll("-",""), filterToDt.replaceAll("-",""), request);
     }
 
+    // 지사 실시간접수현황 오른쪽 리스트 호출
+    @GetMapping("branchRealTimeSubList")
+    @ApiOperation(value = "실시간접수현황 오른쪽 리스트" , notes = "실시간접수현황 오른쪽 리스트를 호출한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
+    public ResponseEntity<Map<String,Object>> branchRealTimeSubList(@RequestParam("frYyyymmdd")String frYyyymmdd, HttpServletRequest request){
+        return receiptService.branchRealTimeSubList(frYyyymmdd, request);
+    }
 
 
 //@@@@@@@@@@@@@@@@@@@@@ 물건찾기 관련 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

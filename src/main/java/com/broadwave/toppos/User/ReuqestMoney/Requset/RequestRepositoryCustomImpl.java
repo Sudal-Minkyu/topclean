@@ -21,7 +21,6 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -577,6 +576,61 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
 
     }
 
+    //  실시간접수현황 오른쪽 - querydsl
+    public List<RequestRealTimeListSubDto> findByRequestRealTimeSubList(String frYyyymmdd, String brCode) {
+        QRequestDetail requestDetail = QRequestDetail.requestDetail;
+        QRequest request = QRequest.request;
+        QItemGroup itemGroup = QItemGroup.itemGroup;
+        QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
+        QItem item = QItem.item;
+        QCustomer customer = QCustomer.customer;
+        QFranchise franchise = QFranchise.franchise;
+
+        JPQLQuery<RequestRealTimeListSubDto> query = from(requestDetail)
+                .innerJoin(requestDetail.frId, request)
+                .innerJoin(request.bcId, customer)
+                .innerJoin(franchise).on(franchise.frCode.eq(request.frCode))
+                .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
+                .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
+                .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
+                .where(request.frConfirmYn.eq("Y"))
+                .where(request.brCode.eq(brCode).and(requestDetail.fdCancel.eq("N")))
+                .select(Projections.constructor(RequestRealTimeListSubDto.class,
+
+                        franchise.frName,
+                        customer.bcName,
+                        request.frYyyymmdd,
+
+                        requestDetail.fdTag,
+                        requestDetail.fdColor,
+
+                        itemGroup.bgName,
+                        itemGroupS.bsName,
+                        item.biName,
+
+                        requestDetail.fdPriceGrade,
+                        requestDetail.fdRetryYn,
+                        requestDetail.fdPressed,
+                        requestDetail.fdAdd1Amt,
+                        requestDetail.fdAdd1Remark,
+                        requestDetail.fdRepairAmt,
+                        requestDetail.fdRepairRemark,
+                        requestDetail.fdWhitening,
+                        requestDetail.fdPollution,
+                        requestDetail.fdWaterRepellent,
+                        requestDetail.fdStarch,
+                        requestDetail.fdUrgentYn,
+
+                        requestDetail.fdTotAmt,
+                        requestDetail.fdState,
+                        requestDetail.fdRemark
+                ));
+
+        query.orderBy(requestDetail.id.asc()).distinct();
+        query.where(request.frYyyymmdd.eq(frYyyymmdd));
+
+        return query.fetch();
+    }
 
     // 물건찾기 등록 리스트 Dto
     @Override

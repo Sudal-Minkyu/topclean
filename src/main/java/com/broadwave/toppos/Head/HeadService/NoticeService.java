@@ -11,9 +11,6 @@ import com.broadwave.toppos.Head.Notice.NoticeFile.NoticeFileListDto;
 import com.broadwave.toppos.Head.Notice.NoticeFile.NoticeFileRepository;
 import com.broadwave.toppos.Head.Notice.NoticeRepository;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
-import com.broadwave.toppos.Manager.TagGallery.TagGallery;
-import com.broadwave.toppos.Manager.TagGallery.TagGalleryCheck.TagGalleryCheck;
-import com.broadwave.toppos.Manager.TagGallery.TagGalleryFile.TagGalleryFile;
 import com.broadwave.toppos.common.AjaxResponse;
 import com.broadwave.toppos.common.ResponseErrorCode;
 import io.jsonwebtoken.Claims;
@@ -84,11 +81,14 @@ public class NoticeService {
         HashMap<String, Object> data = new HashMap<>();
 
         // 검색조건
-//        log.info("htId : "+htId);
+//        log.info("hnId : "+hnId);
+//        log.info("type : "+type);
+
         NoticeViewDto noticeViewDto = noticeRepository.findByNoticeView(hnId);
         HashMap<String,Object> noticeViewInfo = new HashMap<>();
 
         List<NoticeFileListDto> noticeFileListDtos = noticeFileRepository.findByNoticeFileList(hnId);
+        log.info("noticeViewDto : "+noticeViewDto);
         if(noticeViewDto != null){
             noticeViewInfo.put("hnId", noticeViewDto.getHnId());
             // 1이면 본사 or 지사 , 2이면 가맹점
@@ -112,25 +112,27 @@ public class NoticeService {
 
             NoticeViewSubDto noticeViewPreDto = noticeRepository.findByNoticePreView(noticeViewDto.getHnId());
             if(noticeViewPreDto != null){
-                noticeViewInfo.put("prevId", noticeViewPreDto.getSubId());
-                noticeViewInfo.put("prevSubject", noticeViewPreDto.getSubSubject());
-                noticeViewInfo.put("prehnType", noticeViewPreDto.getHnType());
-                noticeViewInfo.put("prevInsertDateTime", noticeViewPreDto.getSubInsertDateTime());
+                noticeViewInfo.put("preId", noticeViewPreDto.getSubId());
+                noticeViewInfo.put("preSubject", noticeViewPreDto.getSubSubject());
+                noticeViewInfo.put("preHnType", noticeViewPreDto.getHnType());
+                noticeViewInfo.put("preInsertDateTime", noticeViewPreDto.getSubInsertDateTime());
             }else{
-                noticeViewInfo.put("prevId", "");
-                noticeViewInfo.put("prevSubject", "이전 글은 존재하지 않습니다.");
-                noticeViewInfo.put("prevInsertDateTime", "");
+                noticeViewInfo.put("preId", "");
+                noticeViewInfo.put("preSubject", "이전 글은 존재하지 않습니다.");
+                noticeViewInfo.put("preHnType", "");
+                noticeViewInfo.put("preInsertDateTime", "");
             }
             NoticeViewSubDto noticeViewNextDto = noticeRepository.findByNoticeNextView(noticeViewDto.getHnId());
             if(noticeViewNextDto != null){
                 noticeViewInfo.put("nextId", noticeViewNextDto.getSubId());
-                noticeViewInfo.put("nexthnType", noticeViewNextDto.getHnType());
                 noticeViewInfo.put("nextSubject", noticeViewNextDto.getSubSubject());
-                noticeViewInfo.put("nextvInsertDateTime", noticeViewNextDto.getSubInsertDateTime());
+                noticeViewInfo.put("nextHnType", noticeViewNextDto.getHnType());
+                noticeViewInfo.put("nextInsertDateTime", noticeViewNextDto.getSubInsertDateTime());
             }else{
                 noticeViewInfo.put("nextId", "");
                 noticeViewInfo.put("nextSubject", "다음 글은 존재하지 않습니다.");
-                noticeViewInfo.put("nextvInsertDateTime", "");
+                noticeViewInfo.put("nextHnType", "");
+                noticeViewInfo.put("nextInsertDateTime", "");
             }
         }
 
