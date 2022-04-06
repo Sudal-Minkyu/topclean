@@ -10,6 +10,10 @@ const dtos = {
             filterToDt: "s",
             franchiseId: "s",
         },
+
+        branchRealTimeSubList: {
+            frYyyymmdd: "s",
+        }
     },
     receive: {
         managerBelongList: { // 가맹점 선택 셀렉트박스에 띄울 가맹점의 리스트
@@ -32,7 +36,7 @@ const dtos = {
 const urls = {
     getFrList: "/api/manager/branchBelongList",
     getMainList: "/api/manager/branchRealTimeList",
-    getDetailList: "",
+    getDetailList: "/api/manager/branchRealTimeSubList",
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
@@ -63,7 +67,7 @@ const comms = {
 
     getDetailList(searchCondition) {
         console.log(searchCondition);
-        dv.chk(searchCondition, dtos.send.AAAAAAAA, "디테일 그리드 검색 조건 보내기");
+        dv.chk(searchCondition, dtos.send.branchRealTimeSubList, "디테일 그리드 검색 조건 보내기");
         CommonUI.ajax(urls.getDetailList, "GET", searchCondition, function (res) {
             const data = res.sendData.gridListData;
             // dv.chk(data, , "디테일 그리드 검색 결과 리스트 받기");
@@ -286,6 +290,7 @@ const trigs = {
         /* 0번그리드 내의 셀 클릭시 이벤트 */
         AUIGrid.bind(grids.s.id[0], "cellClick", function (e) {
             console.log(e.item); // 이밴트 콜백으로 불러와진 객체의, 클릭한 대상 row 키(파라메터)와 값들을 보여준다.
+            showDetail(e.item);
         });
 
         $("#searchListBtn").on("click", function () {
@@ -358,8 +363,7 @@ function searchOrder() {
 
 function showDetail(item) {
     const searchCondition = {
-        frCode: item.frCode,
-        frYyyymmdd: item.frYyyymmdd,
+        frYyyymmdd: item.frYyyymmdd.numString(),
     }
 
     /* 선택된 가맹점과 날짜 항목에 대한 기억 */
@@ -371,7 +375,7 @@ function showDetail(item) {
 }
 
 function hasGrid1Data() {
-    let result = grids.f.getData(1).length ? true : false ;
+    let result = grids.f.getData(1).length;
     if(!result) alertCaution("엑셀 다운로드를 실행할 데이터가 없습니다.<br>조회후 왼쪽 표에서 데이터를 선택해 주세요.", 1);
     return result;
 }

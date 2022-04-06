@@ -58,6 +58,7 @@ const urls = {
     taglostReplyList: "/api/manager/lostNoticeCommentList",
     taglostPutReply: "/api/manager/lostNoticeCommentSave",
     taglostDeletePost: "/api/manager/lostNoticeDelete",
+    noticeDeletePost: "/api/manager/noticeDelete",
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
@@ -129,7 +130,7 @@ const trigs = {
             $("#checkDelSuccessBtn").on("click", function () {
                 const target = {
                 }
-                target.wares[wares.boardType].idKeyName = parseInt(wares.id);
+                target[wares[wares.boardType].idKeyName] = parseInt(wares.id);
                 comms.deletePost(target);
                 $('#popupId').remove();
             });
@@ -420,6 +421,6 @@ function newCancel(commentId, obj) {
     $targetElement.children("div .newItem").remove();
 }
 
-function modifyComp(commentId) {
+function modifyComp(commentId) {정
     commitReply("", "#tarea" + commentId, "", commentId);
 }
