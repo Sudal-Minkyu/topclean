@@ -67,6 +67,7 @@ const comms = {
         dv.chk(condition, dtos.send.getPost, "읽어올 게시물의 아이디 보내기");
         dtos.receive.getPost[wares[wares.boardType].idKeyName] = "n"; // 받는 dtos도 위와 마찬가지
         CommonUI.ajax(urls[wares.boardType], "GET", condition, function (res) {
+            console.log(res);
             const data = res.sendData[wares[wares.boardType].dataKeyName];
             dv.chk(data, dtos.receive.getPost, "받아온 게시물");
             setFields(data);

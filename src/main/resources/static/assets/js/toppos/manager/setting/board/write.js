@@ -95,6 +95,12 @@ const wares = {
         masterKeyName: "htId",
         commentKeyName: "hcId",
     },
+    notice: {
+        idKeyName: "hnId",
+        dataKeyName: "noticeViewDto",
+        masterKeyName: "hnId",
+        commentKeyName: "",
+    },
     deleteFileList: [], // 서버에 올라가 있는 지울 파일들의 id 리스트
 }
 
