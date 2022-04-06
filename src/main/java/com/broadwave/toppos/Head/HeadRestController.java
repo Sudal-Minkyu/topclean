@@ -1396,7 +1396,13 @@ public class HeadRestController {
         return noticeService.noticeSave(noticeMapperDto, request, "1");
     }
 
-
+    //  공지사항 게시판 - 글삭제
+    @PostMapping("noticeDelete")
+    @ApiOperation(value = "공지사항 글삭제" , notes = "본사에서 공지사항 글을 삭제한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
+    public ResponseEntity<Map<String,Object>> noticeDelete(@RequestParam("htId") Long hnId) {
+        return noticeService.noticeDelete(hnId);
+    }
 
 
 

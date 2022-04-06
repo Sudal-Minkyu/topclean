@@ -11,6 +11,9 @@ import com.broadwave.toppos.Head.Notice.NoticeFile.NoticeFileListDto;
 import com.broadwave.toppos.Head.Notice.NoticeFile.NoticeFileRepository;
 import com.broadwave.toppos.Head.Notice.NoticeRepository;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
+import com.broadwave.toppos.Manager.TagNotice.Comment.TagNoticeComment;
+import com.broadwave.toppos.Manager.TagNotice.TagNotice;
+import com.broadwave.toppos.Manager.TagNotice.TagNoticeFile.TagNoticeFile;
 import com.broadwave.toppos.common.AjaxResponse;
 import com.broadwave.toppos.common.ResponseErrorCode;
 import io.jsonwebtoken.Claims;
@@ -251,5 +254,39 @@ public class NoticeService {
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
+
+    //  공지사항 게시판 - 글삭제
+    public ResponseEntity<Map<String, Object>> noticeDelete(Long hnId) {
+        log.info("noticeDelete 호출");
+
+        AjaxResponse res = new AjaxResponse();
+
+        Optional<Notice> optionalNotice = noticeRepository.findById(hnId);
+        if(optionalNotice.isPresent()){
+//            log.info("optionalNotice : "+optionalNotice.get().getHnId());
+
+            List<NoticeFile> noticeFileList = noticeFileRepository.findByNoticeFileDelete(optionalNotice.get().getHnId());
+//            log.info("tagNoticeFileList : "+tagNoticeFileList);
+
+            for(NoticeFile noticeFile : noticeFileList){
+                // AWS 파일 삭제
+                String insertDate =noticeFile.getInsertDateTime().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+                String path = "/toppos-notice-file/"+insertDate;
+//                log.info("path : "+path);
+                String filename = noticeFile.getHfFilename();
+//                log.info("filename : "+filename);
+                awss3Service.deleteObject(path,filename);
+//                log.info("AWS삭제성공");
+            }
+
+            noticeFileRepository.deleteAll(noticeFileList);
+            noticeRepository.delete(optionalNotice.get());
+        }else{
+            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP022.getCode(), "삭제 할 "+ResponseErrorCode.TP022.getDesc(), ResponseErrorCode.TP027.getCode(), ResponseErrorCode.TP027.getDesc()));
+        }
+
+        return ResponseEntity.ok(res.success());
+    }
+
 
 }
