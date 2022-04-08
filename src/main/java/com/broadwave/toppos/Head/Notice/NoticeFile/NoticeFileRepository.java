@@ -1,7 +1,5 @@
 package com.broadwave.toppos.Head.Notice.NoticeFile;
 
-import com.broadwave.toppos.Manager.TagNotice.TagNoticeFile.TagNoticeFile;
-import com.broadwave.toppos.Manager.TagNotice.TagNoticeFile.TagNoticeFileRepositoryCustom;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

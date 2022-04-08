@@ -13,7 +13,7 @@ import java.util.ArrayList;
  */
 @Data
 public class ItemGroupSet {
-
+//
     // 수정 행 리스트
     private ArrayList<ItemGroupDto> update;
 
