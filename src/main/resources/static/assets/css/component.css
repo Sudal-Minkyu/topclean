@@ -744,6 +744,12 @@ input[type="number"]::-webkit-inner-spin-button {
 	padding-bottom: 0.625rem;
 	border-bottom: 0.125rem solid #c8c8c8;
 }
+.c-tabs__content-header.c-tabs__content-header--non-padding {
+	height: auto;
+	margin: 0;
+	padding: 0;
+	border: 0 none;
+}
 .c-tabs__content-heading {
 	color: #000;
 	font-size: 1.5rem;
@@ -790,6 +796,10 @@ input[type="number"]::-webkit-inner-spin-button {
 	height: 3.125rem;
 	margin-top: 1.25rem;
 }
+.c-tabs__content-footer.c-tabs__content-footer--non-margin {
+	margin: 0;
+}
+
 .c-tabs__search {
 	display: flex;
 	flex-wrap: wrap;

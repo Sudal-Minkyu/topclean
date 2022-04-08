@@ -73,6 +73,12 @@ public class UserController {
     public String mypage(){
         return "user/setting/mypage";
     }
+
+    // 나의 정보 관리
+    @RequestMapping("message")
+    public String message(){
+        return "user/setting/message";
+    }
     
     // 외부연계
     @RequestMapping("externallink")

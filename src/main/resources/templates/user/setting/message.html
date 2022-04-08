@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate ="~{layout/defaulttest}">
+
+<!-- 사용자 CSS 추가 -->
+<th:block layout:fragment="css">
+    <style>
+
+    </style>
+</th:block>
+
+<!-- 사용자 스크립트 추가 -->
+<th:block layout:fragment="script">
+    <script src="/assets/js/toppos/user/setting/message.js"></script>
+    <script type="text/javascript">
+    </script>
+</th:block>
+
+<div layout:fragment="content" class="content content--padding">
+    <!-- menu명 -->
+    <h2 class="content__heading content__heading--black"><spans class="content__heading-home">Home</spans>&nbsp;&gt;&nbsp;가맹정 설정&nbsp;&gt;&nbsp;문자 메세지</h2>
+    <div class="c-tabs">
+        <div class="c-tabs__head">
+            <button class="c-tabs__btn active">문자전송</button>
+            <button class="c-tabs__btn">전송내역</button>
+            <button class="c-tabs__btn">설정</button>
+        </div>
+        <div class="c-tabs__body">
+            <div class="c-tabs__content active">
+                <!-- 문자전송 -->
+                <div class="c-tabs__content-body c-tabs__content-body--flex">
+                    <div class="c-tabs__inner">
+                        <div class="c-tabs__search">
+                            <div class="c-tabs__search-item">
+                                <div class="c-tabs__search-input" style="width: 10rem;">
+                                    <div class="c-radio">
+                                        <input type="radio" id="time1" name="time" checked />
+                                        <label for="time1">전체</label>
+                                    </div>
+                                    <div class="c-radio">
+                                        <input type="radio" id="time2" name="time" />
+                                        <label for="time2">최근</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="c-tabs__search-item">
+                                <div class="c-tabs__search-input" style="width: 12rem;">
+                                    <div class="c-select">
+                                        <select>
+                                            <option>1주일</option>
+                                            <option>1개월</option>
+                                            <option>3개월</option>
+                                            <option>6개월</option>
+                                        </select>
+                                    </div>
+                                    이내 방문 고객
+                                </div>
+                            </div>
+                            <div class="c-tabs__search-btn">
+                                <button class="c-button c-button--small c-button--darksolid">조회</button>
+                            </div>
+                        </div>
+                        <div class="recipient">
+                            <div class="recipient__search">
+                                <div class="search">
+                                    <div class="c-select">
+                                        <select>
+                                            <option>통합검색</option>
+                                            <option>고객명</option>
+                                            <option>전화번호</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="c-search">
+                                        <div class="c-search__input">
+                                            <input type="text" placeholder="이름, 전화번호 입력">
+                                            <button class="c-search__key" type="button">키보드</button>
+                                        </div>
+                                        <button class="c-search__bth" type="button">검색</button>
+                                    </div>
+
+                                    <p class="recipient__count">전송대상고객 : 총 <span>000</span>명</p>
+                                </div>
+                            </div>
+                            <div class="recipient__grid-area">
+                                <div class="recipient__grid" style="height: 568px;"></div>
+                                <div class="recipient__grid-btns">
+                                    <button class="recipient__btn recipient__in">넣기</button>
+                                    <button class="recipient__btn recipient__out">빼기</button>
+                                </div>
+                                <div class="recipient__grid" style="height: 568px;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="c-tabs__inner">
+                        <div class="sms">
+                            <div class="sms__write">
+                                <div class="c-textarea">
+                                    <textarea placeholder="sms 내용 입력"></textarea>
+                                    <button>키보드</button>
+                                </div>
+                                <div class="phone__byte">
+                                    <span>0</span>/90byte
+                                </div>
+                            </div>
+                            <div class="sms__console">
+                                <div class="sms__console-item sms__console-item--50">
+                                    <input type="text" class="c-date" />
+                                </div>
+                                <div class="sms__console-item sms__console-item--50">
+                                    <div class="sms__console-time">
+                                        <div class="sms__time-item">
+                                            <div class="c-select">
+                                                <select class="c-select__input">
+                                                    <option>0</option>
+                                                    <option>1</option>
+                                                    <option>2</option>
+                                                    <option>3</option>
+                                                    <option>4</option>
+                                                    <option>5</option>
+                                                    <option>6</option>
+                                                    <option>7</option>
+                                                    <option>8</option>
+                                                    <option>9</option>
+                                                    <option>10</option>
+                                                    <option>11</option>
+                                                    <option>12</option>
+                                                    <option>13</option>
+                                                    <option>14</option>
+                                                    <option>15</option>
+                                                    <option>16</option>
+                                                    <option>17</option>
+                                                    <option>18</option>
+                                                    <option>19</option>
+                                                    <option>20</option>
+                                                    <option>21</option>
+                                                    <option>22</option>
+                                                    <option>23</option>
+                                                </select>
+                                            </div>
+                                            <span>시</span>
+                                        </div>
+
+                                        <div class="sms__time-item">
+                                            <div class="c-select">
+                                                <select class="c-select__input">
+                                                    <option>00</option>
+                                                    <option>01</option>
+                                                    <option>02</option>
+                                                    <option>03</option>
+                                                    <option>04</option>
+                                                    <option>05</option>
+                                                    <option>06</option>
+                                                    <option>07</option>
+                                                    <option>08</option>
+                                                    <option>09</option>
+                                                    <option>10</option>
+                                                    <option>11</option>
+                                                    <option>12</option>
+                                                    <option>13</option>
+                                                    <option>14</option>
+                                                    <option>15</option>
+                                                    <option>16</option>
+                                                    <option>17</option>
+                                                    <option>18</option>
+                                                    <option>19</option>
+                                                    <option>20</option>
+                                                    <option>21</option>
+                                                    <option>22</option>
+                                                    <option>23</option>
+                                                    <option>24</option>
+                                                    <option>25</option>
+                                                    <option>26</option>
+                                                    <option>27</option>
+                                                    <option>28</option>
+                                                    <option>29</option>
+                                                    <option>30</option>
+                                                    <option>31</option>
+                                                    <option>32</option>
+                                                    <option>33</option>
+                                                    <option>34</option>
+                                                    <option>35</option>
+                                                    <option>36</option>
+                                                    <option>37</option>
+                                                    <option>38</option>
+                                                    <option>39</option>
+                                                    <option>40</option>
+                                                    <option>41</option>
+                                                    <option>42</option>
+                                                    <option>43</option>
+                                                    <option>44</option>
+                                                    <option>45</option>
+                                                    <option>46</option>
+                                                    <option>47</option>
+                                                    <option>48</option>
+                                                    <option>49</option>
+                                                    <option>50</option>
+                                                    <option>51</option>
+                                                    <option>52</option>
+                                                    <option>53</option>
+                                                    <option>54</option>
+                                                    <option>55</option>
+                                                    <option>56</option>
+                                                    <option>57</option>
+                                                    <option>58</option>
+                                                    <option>59</option>
+                                                </select>
+                                            </div>
+                                            <span>분</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="sms__console-item">
+                                    <div class="c-checkbox">
+                                        <input type="checkbox" id="booking" />
+                                        <label for="booking">예약 발송</label>
+                                    </div>
+                                </div>
+                                <div class="sms__console-item">
+                                    <button class="c-button c-button--small c-button--solid">발송</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="template">
+                            <h3 class="template__title">문자메세지 유형</h3>
+                            <div class="template__item">
+                                <div class="phone-box">
+                                    <div class="phone">
+                                        <div class="phone__inner">
+                                            <div class="c-text">
+                                                <input type="text" value="" readonly="readonly" />
+                                            </div>
+                                            <div class="c-textarea">
+                                                <textarea value="" readonly="readonly"></textarea>
+                                            </div>
+                                            <div class="phone__byte">
+                                                <span>0</span>/90byte
+                                            </div>
+                                            <div class="phone__check">
+                                                <input type="radio" id="template" name="templates" />
+                                                <label for="template"></label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="template__item">
+                                <div class="phone-box">
+                                    <div class="phone">
+                                        <div class="phone__inner">
+                                            <div class="c-text">
+                                                <input type="text" value="" readonly="readonly" />
+                                            </div>
+                                            <div class="c-textarea">
+                                                <textarea value="" readonly="readonly"></textarea>
+                                            </div>
+                                            <div class="phone__byte">
+                                                <span>0</span>/90byte
+                                            </div>
+                                            <div class="phone__check">
+                                                <input type="radio" id="template2" name="templates" />
+                                                <label for="template2"></label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="template__item">
+                                <div class="phone-box">
+                                    <div class="phone">
+                                        <div class="phone__inner">
+                                            <div class="c-text">
+                                                <input type="text" value="" readonly="readonly" />
+                                            </div>
+                                            <div class="c-textarea">
+                                                <textarea value="" readonly="readonly"></textarea>
+                                            </div>
+                                            <div class="phone__byte">
+                                                <span>0</span>/90byte
+                                            </div>
+                                            <div class="phone__check">
+                                                <input type="radio" id="template3" name="templates" />
+                                                <label for="template3"></label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="template__item">
+                                <div class="phone-box">
+                                    <div class="phone">
+                                        <div class="phone__inner">
+                                            <div class="c-text">
+                                                <input type="text" value="" readonly="readonly" />
+                                            </div>
+                                            <div class="c-textarea">
+                                                <textarea value="" readonly="readonly"></textarea>
+                                            </div>
+                                            <div class="phone__byte">
+                                                <span>0</span>/90byte
+                                            </div>
+                                            <div class="phone__check">
+                                                <input type="radio" id="template4" name="templates" />
+                                                <label for="template4"></label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="template__item">
+                                <div class="phone-box">
+                                    <div class="phone">
+                                        <div class="phone__inner">
+                                            <div class="c-text">
+                                                <input type="text" value="" readonly="readonly" />
+                                            </div>
+                                            <div class="c-textarea">
+                                                <textarea value="" readonly="readonly"></textarea>
+                                            </div>
+                                            <div class="phone__byte">
+                                                <span>0</span>/90byte
+                                            </div>
+                                            <div class="phone__check">
+                                                <input type="radio" id="template5" name="templates" />
+                                                <label for="template5"></label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="template__item">
+                                <div class="phone-box">
+                                    <div class="phone">
+                                        <div class="phone__inner">
+                                            <div class="c-text">
+                                                <input type="text" value="" readonly="readonly" />
+                                            </div>
+                                            <div class="c-textarea">
+                                                <textarea value="" readonly="readonly"></textarea>
+                                            </div>
+                                            <div class="phone__byte">
+                                                <span>0</span>/90byte
+                                            </div>
+                                            <div class="phone__check">
+                                                <input type="radio" id="template6" name="templates">
+                                                <label for="template6"></label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="c-tabs__content">
+                <!-- 전송내역 -->
+                <div class="c-tabs__content-body">
+                    <div class="c-tabs__search">
+                        <div class="c-tabs__search-item">
+                            <div class="c-tabs__search-title">전송일자</div>
+                            <div class="c-tabs__search-input">
+                                <div class="c-period">
+                                    <!-- 시작일 -->
+                                    <input type="text" />
+                                    <span class="c-period__code">-</span>
+                                    <!-- 종료일 -->
+                                    <input type="text" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="c-tabs__search-btn">
+                            <button class="c-button c-button--small c-button--darksolid">전송내역역조회</button>
+                        </div>
+                    </div>
+
+                    <div class="sendlist">
+                        <div class="sendlist__grid" style="height: 628px; border: 1px solid #bdbdbd;"></div>
+                        <div class="sendlist__grid" style="height: 628px; border: 1px solid #bdbdbd;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="c-tabs__content">
+                <!-- 설정 -->
+                <div class="c-tabs__content-header c-tabs__content-header--non-padding">
+                    <h3 class="c-tabs__content-heading" style="width: 570px; margin: 0 auto;">문자메세지 사용자 템플릿 설정</h3>
+                </div>
+                <div class="c-tabs__content-body">
+                    <div class="template-setting">
+                        <div class="template-setting__item">
+                            <div class="phone-box">
+                                <div class="phone">
+                                    <div class="phone__inner">
+                                        <div class="c-text">
+                                            <input type="text" placeholder="제목입력" />
+                                            <button class="keypadBtn">키보드</button>
+                                        </div>
+                                        <div class="c-textarea">
+                                            <textarea placeholder="sms 내용 입력"></textarea>
+                                            <button>키보드</button>
+                                        </div>
+                                        <div class="phone__byte">
+                                            <span>0</span>/90byte
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="template-setting__item">
+                            <div class="phone-box">
+                                <div class="phone">
+                                    <div class="phone__inner">
+                                        <div class="c-text">
+                                            <input type="text" placeholder="제목입력" />
+                                            <button class="keypadBtn">키보드</button>
+                                        </div>
+                                        <div class="c-textarea">
+                                            <textarea placeholder="sms 내용 입력"></textarea>
+                                            <button>키보드</button>
+                                        </div>
+                                        <div class="phone__byte">
+                                            <span>0</span>/90byte
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="template-setting__item">
+                            <div class="phone-box">
+                                <div class="phone">
+                                    <div class="phone__inner">
+                                        <div class="c-text">
+                                            <input type="text" placeholder="제목입력" />
+                                            <button class="keypadBtn">키보드</button>
+                                        </div>
+                                        <div class="c-textarea">
+                                            <textarea placeholder="sms 내용 입력"></textarea>
+                                            <button>키보드</button>
+                                        </div>
+                                        <div class="phone__byte">
+                                            <span>0</span>/90byte
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="template-setting__item">
+                            <div class="phone-box">
+                                <div class="phone">
+                                    <div class="phone__inner">
+                                        <div class="c-text">
+                                            <input type="text" placeholder="제목입력" />
+                                            <button class="keypadBtn">키보드</button>
+                                        </div>
+                                        <div class="c-textarea">
+                                            <textarea placeholder="sms 내용 입력"></textarea>
+                                            <button>키보드</button>
+                                        </div>
+                                        <div class="phone__byte">
+                                            <span>0</span>/90byte
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="template-setting__item">
+                            <div class="phone-box">
+                                <div class="phone">
+                                    <div class="phone__inner">
+                                        <div class="c-text">
+                                            <input type="text" placeholder="제목입력" />
+                                            <button class="keypadBtn">키보드</button>
+                                        </div>
+                                        <div class="c-textarea">
+                                            <textarea placeholder="sms 내용 입력"></textarea>
+                                            <button>키보드</button>
+                                        </div>
+                                        <div class="phone__byte">
+                                            <span>0</span>/90byte
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="template-setting__item">
+                            <div class="phone-box">
+                                <div class="phone">
+                                    <div class="phone__inner">
+                                        <div class="c-text">
+                                            <input type="text" placeholder="제목입력" />
+                                            <button class="keypadBtn">키보드</button>
+                                        </div>
+                                        <div class="c-textarea">
+                                            <textarea placeholder="sms 내용 입력"></textarea>
+                                            <button>키보드</button>
+                                        </div>
+                                        <div class="phone__byte">
+                                            <span>0</span>/90byte
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="c-tabs__content-footer c-tabs__content-footer--non-margin">
+                    <div class="c-tabs__console">
+                        <button class="c-button c-button--solid">저장</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+</html>
