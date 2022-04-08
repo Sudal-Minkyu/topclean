@@ -162,7 +162,10 @@ const comms = {
             
             $("#fiComment").val(wares.currentRequest.fiComment);
             $("#fiAddAmt").val(wares.currentRequest.fiAddAmt.toLocaleString());
-            $("#customerResponse").html(CommonData.name.fiCustomerConfirm[wares.currentRequest.fiCustomerConfirm]);
+            const $customerResponse = $("#customerResponse");
+            $customerResponse.html(CommonData.name.fiCustomerConfirm[wares.currentRequest.fiCustomerConfirm])
+                .removeClass().addClass("customerResponse" + wares.currentRequest.fiCustomerConfirm);
+
             for(const photo of wares.currentRequest.photoList) {
                 if(wares.currentRequest.photoList.length) {
                     $("#frInspectViewPhotoPanel").show();
