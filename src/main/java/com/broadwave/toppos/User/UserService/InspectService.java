@@ -122,9 +122,11 @@ public class InspectService {
         // 클레임데이터 가져오기
         Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
         String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
+        String frTagNo = (String) claims.get("frTagNo"); // 현재 가맹점의 택번호(2자리) 가져오기
         log.info("현재 접속한 가맹점 코드 : "+frCode);
+        log.info("현재 접속한 가맹점 택번호 : "+frTagNo);
 
-        List<RequestDetailSearchDto> requestDetailSearchDtoList = requestDetailRepository.requestDetailSearch(frCode, bcId, searchTag, filterCondition, filterFromDt, filterToDt); //  통합조회용 - 접수세부 호출
+        List<RequestDetailSearchDto> requestDetailSearchDtoList = requestDetailRepository.requestDetailSearch(frCode, bcId, frTagNo+searchTag, filterCondition, filterFromDt, filterToDt); //  통합조회용 - 접수세부 호출
         log.info("requestDetailSearchDtoList 크기 : "+requestDetailSearchDtoList.size());
         data.put("gridListData",requestDetailSearchDtoList);
         
@@ -812,9 +814,11 @@ public class InspectService {
         // 클레임데이터 가져오기
         Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
         String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
+        String frTagNo = (String) claims.get("frTagNo"); // 현재 가맹점의 택번호(2자리) 가져오기
         log.info("현재 접속한 가맹점 코드 : "+frCode);
+        log.info("현재 접속한 가맹점 택번호 : "+frTagNo);
 
-        List<RequestDetailInspectDto> requestDetailInspectDtos = requestDetailRepository.findByRequestDetailInspectList(frCode, bcId, searchTag, filterFromDt, filterToDt);
+        List<RequestDetailInspectDto> requestDetailInspectDtos = requestDetailRepository.findByRequestDetailInspectList(frCode, bcId, frTagNo+searchTag, filterFromDt, filterToDt);
         data.put("gridListData",requestDetailInspectDtos);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));

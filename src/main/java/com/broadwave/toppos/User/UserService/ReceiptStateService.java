@@ -428,23 +428,13 @@ public class ReceiptStateService {
         // 클레임데이터 가져오기
         Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
         String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
+        String frTagNo = (String) claims.get("frTagNo"); // 현재 가맹점의 택번호(2자리) 가져오기
         log.info("현재 접속한 가맹점 코드 : "+frCode);
+        log.info("현재 접속한 가맹점 택번호 : "+frTagNo);
 
         // 가맹점강제입고 페이지에 보여줄 리스트 호출
-        List<RequestDetailForceListDto> requestDetailForceListDtos = requestDetailRepository.findByRequestDetailForceList(bcId, fdTag, frCode);
-//        List<Long> fdIdList = new ArrayList<>();
-//        for(RequestDetailForceListDto requestDetailForceListDto : requestDetailForceListDtos){
-//            fdIdList.add(requestDetailForceListDto.getFdId());
-//        }
-//        log.info("fdIdList : "+fdIdList);
-//        List<InspeotYnDto> inspeotYnDtos = inspeotRepositoryCustom.findByInspeotStateList(fdIdList,"2");
-//        log.info("inspeotYnDtos : "+inspeotYnDtos);
-//        fdIdList.clear();
-//        for(InspeotYnDto inspeotYnDto : inspeotYnDtos){
-//            fdIdList.add(inspeotYnDto.getFdId());
-//        }
+        List<RequestDetailForceListDto> requestDetailForceListDtos = requestDetailRepository.findByRequestDetailForceList(bcId, frTagNo+fdTag, frCode);
         data.put("gridListData",requestDetailForceListDtos);
-//        data.put("checkFdId",fdIdList);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }

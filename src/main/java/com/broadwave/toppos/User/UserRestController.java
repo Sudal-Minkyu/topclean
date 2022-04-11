@@ -557,6 +557,7 @@ public class UserRestController {
             etcData.setFrCode(franchiseInfoDto.getFrCode());
             etcData.setFrName(franchiseInfoDto.getFrName());
             etcData.setFdTag(franchiseInfoDto.getFrLastTagno());
+            etcData.setFrTagNo(franchiseInfoDto.getFrTagNo());
             etcData.setFrEstimateDate(resultDate);
             etcData.setFrBusinessNo(franchiseInfoDto.getFrBusinessNo());
             etcData.setFrRpreName(franchiseInfoDto.getFrBusinessNo());

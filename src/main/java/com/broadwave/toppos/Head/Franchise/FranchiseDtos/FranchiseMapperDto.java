@@ -17,7 +17,7 @@ public class FranchiseMapperDto {
     private String frCode; // 가맹점코드 3자리
     private String frName; // 가맹점명
     private String frRefCode; // 가맹점관리코드
-    private String frTagNo; // 가맹점 택번호 3자리
+    private String frTagNo; // 가맹점 택번호 2자리
     private String frContractDt; // 계약일자
     private String frContractFromDt; // 계약기간 from
     private String frContractToDt; // 계약기간 to

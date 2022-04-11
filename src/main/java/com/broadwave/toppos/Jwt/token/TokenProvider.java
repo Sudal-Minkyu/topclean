@@ -67,8 +67,10 @@ public class TokenProvider {
             if(!optionalAccount.get().getFrCode().equals("not")){
                 franchiseInfoDto = headService.findByFranchiseInfo(optionalAccount.get().getFrCode());
             }
+
             accessToken = Jwts.builder()
                     .claim("frCode", optionalAccount.get().getFrCode())
+                    .claim("frTagNo", franchiseInfoDto.getFrTagNo())
                     .claim("brCode", optionalAccount.get().getBrCode())
                     .claim("frbrCode", franchiseInfoDto.getBrCode())
                     .setSubject(authentication.getName())       // payload "sub": "name"

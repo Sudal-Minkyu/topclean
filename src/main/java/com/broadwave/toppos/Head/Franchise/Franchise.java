@@ -54,7 +54,7 @@ public class Franchise {
     private String frPriceGrade; // 가격등급 A,B,C,D,E
 
     @Column(name="fr_tag_no")
-    private String frTagNo; // 가맹점 택번호 3자리
+    private String frTagNo; // 가맹점 택번호 2자리
 
     @Column(name="fr_estimate_duration")
     private Integer frEstimateDuration; // 출고예정일

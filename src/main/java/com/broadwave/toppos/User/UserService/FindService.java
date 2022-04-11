@@ -112,10 +112,12 @@ public class FindService {
         Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
         String login_id = claims.getSubject(); // 현재 아이디
         String frCode = (String) claims.get("frCode"); // 현재 가맹점 코드
+        String frTagNo = (String) claims.get("frTagNo"); // 현재 가맹점의 택번호(2자리) 가져오기
         log.info("현재 접속한 아이디 : "+login_id);
         log.info("접속한 가맹점 코드 : "+frCode);
+        log.info("현재 접속한 가맹점 택번호 : "+frTagNo);
 
-        List<RequestFindListDto> requestFindListDtos = requestRepository.findByRequestFindList(bcId, frCode, filterFromDt, filterToDt, searchTag);
+        List<RequestFindListDto> requestFindListDtos = requestRepository.findByRequestFindList(bcId, frCode, filterFromDt, filterToDt, frTagNo+searchTag);
         data.put("gridListData",requestFindListDtos);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));

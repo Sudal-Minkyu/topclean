@@ -17,6 +17,7 @@ public class EtcDataDto {
     private String frCode; // 가맹점코드 3자리
     private String frName; // 가맹점명
     private String fdTag; // 태그번호
+    private String frTagNo; // 가맹점 택번호 3자리
     private String frEstimateDate; // 출고예정일
     private String frBusinessNo; // 사업자번호(10자리)
     private String frRpreName; // 가맹점주이름
