@@ -126,12 +126,12 @@ const comms = {
                 field.children(".main__board-confirm").children("span").html("");
 
                 for(let i = 0; i < inspectList.length; i++) {
-                    $(field[i]).attr("href", `./user/integrate?fdTag=${inspectList[i].fdTag}&frYyyymmdd=${
+                    $(field[i]).attr("href", `./user/integrate?fdTag=${inspectList[i].fdTag.substring(2, 7)}&frYyyymmdd=${
                         inspectList[i].frYyyymmdd}`);
                     $(field[i]).children(".main__board-bcname").children("span").html(inspectList[i].bcName);
                     $(field[i]).children(".main__board-bgname").children("span").html(inspectList[i].bgName);
                     $(field[i]).children(".main__board-afttag").children("span")
-                        .html(reformAftTagNo(inspectList[i].fdTag));
+                        .html(CommonData.formatFrTagNo(inspectList[i].fdTag));
                     $(field[i]).children(".main__board-confirm").children("span")
                         .html(wares.fiCustomerConfirmName[inspectList[i].fiCustomerConfirm]);
                 }
@@ -277,10 +277,6 @@ function marquee(speed) {
     }
 
     setInterval(marqueeRight, 10);
-}
-
-function reformAftTagNo(fdTag) {
-    return fdTag.substring(3, 4) + "-" + fdTag.substring(4, 7);
 }
 
 function closeTaglostPop() {

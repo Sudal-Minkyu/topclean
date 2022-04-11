@@ -190,9 +190,10 @@ const grids = {
                 }, {
                     dataField: "fdTag",
                     headerText: "택번호",
+                    style: "datafield_tag",
                     width: 80,
                     labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
-                        return CommonData.formatTagNo(value);
+                        return CommonData.formatBrTagNo(value);
                     },
                 }, {
                     dataField: "productName",
@@ -728,7 +729,7 @@ function releaseListPrintClose() {
 }
 
 function decideCheckResponse(item) {
-    alertStrongThree(`해당 택번호(${CommonData.formatTagNo(item.fdTag)})는 확인품 입니다.<br>아직 고객의 진행여부가 결정되지 않았습니다.<br>어떻게 하시겠습니까?`, "출고", "반품", "취소");
+    alertStrongThree(`해당 택번호(${CommonData.formatBrTagNo(item.fdTag)})는 확인품 입니다.<br>아직 고객의 진행여부가 결정되지 않았습니다.<br>어떻게 하시겠습니까?`, "출고", "반품", "취소");
     wares.sayLoop = true;
     sayAgain();
     

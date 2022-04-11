@@ -228,9 +228,10 @@ const grids = {
                 }, {
                     dataField: "fdTag",
                     headerText: "택번호",
+                    style: "datafield_tag",
                     width: 90,
                     labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
-                        return CommonData.formatTagNo(value);
+                        return CommonData.formatBrTagNo(value);
                     },
                 }, {
                     dataField: "",
@@ -559,9 +560,9 @@ function chkParams() {
         const fdTag = wares.params.get("fdTag");
         const dateNum = wares.params.get("fdS2Dt");
         const date = dateNum.substring(0, 4) + "-" + dateNum.substring(4, 6) + "-" + dateNum.substring(6, 8);
-        $("#frList option[data-tagno=" + fdTag.substring(0, 3) + "]").prop("selected", true);
-        $("#foreTag").val(fdTag.substring(0, 3));
-        $("#aftTag").val(fdTag.substring(3, 7));
+        $("#frList option[data-tagno=" + fdTag.substring(0, 2) + "]").prop("selected", true);
+        $("#foreTag").val(fdTag.substring(0, 2));
+        $("#aftTag").val(fdTag.substring(2, 7));
         $("#filterFromDt").val(date);
         $("#filterToDt").val(date);
         $("#searchListBtn").trigger("click");

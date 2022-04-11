@@ -95,7 +95,7 @@ const comms = {
                     $(field[i]).children(".main__board-bcname").children("span").html(inspectList[i].bcName);
                     $(field[i]).children(".main__board-bgname").children("span").html(inspectList[i].bgName);
                     $(field[i]).children(".main__board-afttag").children("span")
-                        .html(reformAftTagNo(inspectList[i].fdTag));
+                        .html(CommonData.formatFrTagNo(inspectList[i].fdTag));
                     $(field[i]).children(".main__board-confirm").children("span")
                         .html(wares.fiCustomerConfirmName[inspectList[i].fiCustomerConfirm]);
                 }
@@ -143,10 +143,6 @@ $(function() { // 페이지가 로드되고 나서 실행
 function onPageLoad() {
     comms.branchInfo();
     trigs.basic();
-}
-
-function reformAftTagNo(fdTag) {
-    return fdTag.substring(3, 4) + "-" + fdTag.substring(4, 7);
 }
 
 function pieGraph(data) {

@@ -56,6 +56,10 @@ $(function() {
 
     setDataIntoGrid(2, gridCreateUrl[2]);
 
+    /* 하단 패널과 그리드의 너비 버그 수정용 코드 */
+    AUIGrid.resize(gridId[0]);
+    $("#grid_requestList").addClass("active");
+
     /* 가상키보드의 사용 선언 */
     vkey = new VKeyboard();
 
@@ -136,9 +140,9 @@ $(function() {
         console.log(initialData);
 
         setBgMenu(false);
-        setNextTag(initialData.etcData.fdTag);
         setPreDefinedKeywords();
-        frTagNo = initialData.etcData.fdTag.substring(0, 3);
+        frTagNo = initialData.etcData.fdTag.substring(0, 2);
+        setNextTag(initialData.etcData.fdTag);
         getParamsAndAction();
     });
 
@@ -384,9 +388,10 @@ gridColumnLayout[0] = [
     {
         dataField: "fdTag",
         headerText: "택번호",
+        style: "datafield_tag",
         width: 80,
         labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
-            return CommonData.formatTagNo(value);
+            return CommonData.formatFrTagNo(value);
         },
         style: "aui-grid-tagno-column",
     }, {
@@ -1064,8 +1069,8 @@ function dataURLtoFile(dataurl, filename) {
 }
 
 function toggleBottom() {
-    let element = document.getElementsByClassName("regist__bottom");
-    element[0].classList.toggle("active");
+    let element = document.getElementById("registBottom");
+    element.classList.toggle("active");
 
     let grid = document.getElementById("grid_requestList");
     grid.classList.toggle("active");
@@ -1134,7 +1139,7 @@ function putItemIntoGrid() {
         console.log(copyObj);
         AUIGrid.updateRowsById(gridId[0], copyObj);
     }else{
-        currentRequest.fdTag = nextFdTag.replace(/[^0-9A-Za-z]/g, "");
+        currentRequest.fdTag = nextFdTag.numString();
         AUIGrid.addRow(gridId[0], currentRequest, "last");
         setNextTag(currentRequest.fdTag);
     }
@@ -1334,13 +1339,15 @@ function onRemoveOrder() {
 }
 
 function setNextTag(tag) {
-    let nextNo = tag.substr(0,3) + "-" + (parseInt(tag.substr(-4)) + 1).toString().padStart(4, '0');
-    if(tag.substring(tag.length - 4, tag.length) === "9999") {
-        nextNo = tag.substr(0,3) + "-0001";
-        alertCaution("택번호 뒷자리가 9999번에 도달했습니다.<br>다음 택번호 뒷자리를 0001로 설정합니다.", 1);
+    let nextNo = tag.substring(2, 3) + "-" + (parseInt(tag.substring(3, 7)) + 1).toString().padStart(4, '0');
+    if(tag.substring(3, 7) === "9999") {
+        let midNum = (parseInt(tag.substring(2, 3)) + 1).toString();
+        midNum = midNum === "10" ? "0" : midNum;
+        nextNo = midNum + "-" + "0001";
+        alertCaution("택번호 뒷자리가 9999번에 도달했습니다.<br>다음 택번호 뒷자리는 0001로 설정합니다.", 1);
     }
     $("#fdTag").val(nextNo);
-    nextFdTag = nextNo;
+    nextFdTag = frTagNo + nextNo;
 }
 
 /* 임시저장을 두단계로 분리하기 위해 데이터를 임시로 전역변수화 */
@@ -1476,7 +1483,7 @@ function onRepeatRequest() {
     let items = AUIGrid.getSelectedItems(gridId[0]);
     if(items.length) {
         delete items[0].item["_$uid"];
-        items[0].item["fdTag"] = nextFdTag.replace(/[^0-9a-zA-Z]/g, "");
+        items[0].item["fdTag"] = nextFdTag.numString();
         AUIGrid.addRow(gridId[0], items[0].item, "last");
         setNextTag(items[0].item.fdTag);
         calculateMainPrice(AUIGrid.getGridData(gridId[0]), AUIGrid.getRemovedItems(gridId[0]));
@@ -1867,24 +1874,19 @@ function onPrintReceipt() {
 }
 
 function onSaveFdTag() {
-    const tag = $("#fdTag").val().replace(/[^0-9A-Za-z]/g, "");
+    const tag = $("#fdTag").val().numString();
 
-    if(tag.substring(0, 3) !== frTagNo) {
-        alertCaution("현 가맹점의 택번호 앞 3자리는<br>" + frTagNo + "로 시작해야 합니다. ", 1);
-        return false;
-    }
-
-    if(tag.length < 7) {
-        alertCaution("택번호는 7자리의 숫자여야 합니다.", 1);
+    if(tag.length !== 5) {
+        alertCaution("택번호는 5자리의 숫자여야 합니다.", 1);
         return false;
     }
     
     if(tag.substr(-4) === "0000") {
-        alertCaution("다음 택번호는 최소 0001 부터 시작해 주세요.", 1);
+        alertCaution("택번호 뒷자리는 최소 0001 부터 시작해 주세요.", 1);
         return false;
     }
 
-    alertCheck(`다음 택번호는 ${nextFdTag} 입니다.<br>${$("#fdTag").val()}(으)로 변경 하시겠습니까?`);
+    alertCheck(`다음 택번호는 ${CommonData.formatFrTagNo(nextFdTag)} 입니다.<br>${$("#fdTag").val()}(으)로 변경 하시겠습니까?`);
     $("#checkDelSuccessBtn").on("click", function () {
         $("#fdTagChange").addClass("active");
         $('#popupId').remove();
@@ -1892,15 +1894,14 @@ function onSaveFdTag() {
 }
 
 function onConfirmFdTag() {
-    const tag = $("#fdTag").val().replace(/[^0-9A-Za-z]/g, "");
+    const tag = frTagNo + $("#fdTag").val().numString();
     const data = {
         password: $("#fdTagPassword").val(),
         frLastTagno: tag.substr(0,3) + (parseInt(tag.substr(-4)) - 1).toString().padStart(4, '0'),
     }
-    
     const url = "/api/user/franchiseCheck";
     CommonUI.ajax(url, "GET", data, function (res) {
-        nextFdTag = tag.substr(0,3) + "-" + tag.substr(-4);
+        nextFdTag = tag.substring(0,3) + "-" + tag.substring(3, 7);
         onCloseFdTag();
         alertSuccess("다음 택번호가 변경되었습니다.");
         $("#fdTagPassword").val("");
@@ -1930,7 +1931,7 @@ function setBgMenu(isFavorite) {
 }
 
 function tempSaveExistWarning() {
-    alertThree("해당 고객의 임시저장 내역이 존재합니다.<br>어떻게 하시겠습니까?",
+    alertThree("임시저장 내역이 존재합니다.<br>어떻게 하시겠습니까?",
         "이어서 접수", "삭제후 접수", "취소");
 
     $("#popFirstBtn").on("click", function() {

@@ -142,13 +142,10 @@ const grids = {
                 }, {
                     dataField: "fdTag",
                     headerText: "택번호",
+                    style: "datafield_tag",
                     width: 90,
                     labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
-                        let result = "";
-                        if(value) {
-                            result = value.substr(0, 3) + "-" + value.substr(-4);
-                        }
-                        return result;
+                        return CommonData.formatBrTagNo(value);
                     },
                 }, {
                     dataField: "productName",
