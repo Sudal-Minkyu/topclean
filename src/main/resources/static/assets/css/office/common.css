@@ -1921,6 +1921,31 @@ textarea {
     margin-left: 1.25rem;
 }
 
+.customerResponse2 {
+	display: inline-block;
+	height: 1.5rem;
+	padding: 0 0.625rem;
+	background-color: #e5f7e8;
+	border-radius: 0.75rem;
+	color: #00b835;
+	font-size: 0.875rem;
+	font-weight: 700;
+	text-align: center;
+	line-height: 1.5rem;
+}
+.customerResponse3 {
+	display: inline-block;
+	height: 1.5rem;
+	padding: 0 0.625rem;
+	background-color: #fce9eb;
+	border-radius: 0.75rem;
+	color: #ff7163;
+	font-size: 0.875rem;
+	font-weight: 700;
+	text-align: center;
+	line-height: 1.5rem;
+}
+
 /* mastercode */
 .code {
     position: relative;
