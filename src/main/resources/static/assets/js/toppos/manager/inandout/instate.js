@@ -223,9 +223,10 @@ const grids = {
                 }, {
                     dataField: "fdTag",
                     headerText: "택번호",
+                    style: "datafield_tag",
                     width: 90,
                     labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
-                        return CommonData.formatTagNo(value);
+                        return CommonData.formatBrTagNo(value);
                     },
                 }, {
                     dataField: "productName",

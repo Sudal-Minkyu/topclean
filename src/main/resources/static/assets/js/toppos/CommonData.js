@@ -91,10 +91,20 @@ class CommonDataClass {
         }
     }
 
-    formatTagNo(tagNo) {
+    formatFrTagNo(tagNo) {
         let result = "";
+        tagNo = tagNo.numString();
         if(tagNo) {
-            result = tagNo.substr(0, 3) + "-" + tagNo.substr(-4);
+            result = tagNo.substring(2, 3) + "-" + tagNo.substring(3, 7);
+        }
+        return result;
+    }
+
+    formatBrTagNo(tagNo) {
+        let result = "";
+        tagNo = tagNo.numString();
+        if(tagNo) {
+            result = tagNo.substring(0, 2) + "-" + tagNo.substring(2, 7);
         }
         return result;
     }

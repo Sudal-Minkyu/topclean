@@ -128,7 +128,7 @@ const grids = {
                 }, {
                     dataField: "fdS2Dt",
                     headerText: "입고일자",
-                    width: 80,
+                    width: 100,
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
                 }, {
@@ -140,9 +140,10 @@ const grids = {
                 }, {
                     dataField: "fdTag",
                     headerText: "택번호",
+                    style: "datafield_tag",
                     width: 90,
                     labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
-                        return CommonData.formatTagNo(value);
+                        return CommonData.formatBrTagNo(value);
                     },
                 }, {
                     dataField: "productName",
@@ -306,8 +307,8 @@ const trigs = {
             const $fullTag = $("#fullTag");
             $fullTag.on("keyup", function (e) {
                 let refinedValue = $fullTag.val().numString();
-                if(refinedValue.length > 3) {
-                    refinedValue = refinedValue.substring(0, 3) + "-" + refinedValue.substring(3, 7);
+                if(refinedValue.length > 2) {
+                    refinedValue = refinedValue.substring(0, 2) + "-" + refinedValue.substring(2, 7);
                 }
                 $fullTag.val(refinedValue);
 

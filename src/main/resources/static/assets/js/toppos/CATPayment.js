@@ -180,8 +180,8 @@ function CatCreate_PrintTest(){
     //     message += String.fromCharCode(27);
     //     message += String.fromCharCode(33);
     //     message += String.fromCharCode(8);
-    //     message += item.tagno.substr(3,1);
-    //     message += "-" + item.tagno.substr(4,3);
+    //     message += item.tagno.substr(2,1);
+    //     message += "-" + item.tagno.substr(3,4);
     //     message += String.fromCharCode(27);
     //     message += String.fromCharCode(33);
     //     message += String.fromCharCode(0);
@@ -432,8 +432,8 @@ function CatCreate_Print(params,creditResult,cancelYN){
         message += String.fromCharCode(27);
         message += String.fromCharCode(33);
         message += String.fromCharCode(8);
-        message += item.tagno.substr(3,1);
-        message += "-" + item.tagno.substr(4,3);
+        message += item.tagno.substr(2,1);
+        message += "-" + item.tagno.substr(3,4);
         message += String.fromCharCode(27);
         message += String.fromCharCode(33);
         message += String.fromCharCode(0);
@@ -601,8 +601,8 @@ function CatCreate_Print(params,creditResult,cancelYN){
         message += String.fromCharCode(27);
         message += String.fromCharCode(33);
         message += String.fromCharCode(8);
-        message += item.tagno.substr(3,1);
-        message += "-" + item.tagno.substr(4,3);
+        message += item.tagno.substr(2,1);
+        message += "-" + item.tagno.substr(3,4);
         message += String.fromCharCode(27);
         message += String.fromCharCode(33);
         message += String.fromCharCode(0);
@@ -890,8 +890,8 @@ function CatCreate_MultiPrint(params,creditResults,cancelYN) {
         message += String.fromCharCode(27);
         message += String.fromCharCode(33);
         message += String.fromCharCode(8);
-        message += item.tagno.substr(3,1);
-        message += "-" + item.tagno.substr(4,3);
+        message += item.tagno.substr(2,1);
+        message += "-" + item.tagno.substr(3,4);
         message += String.fromCharCode(27);
         message += String.fromCharCode(33);
         message += String.fromCharCode(0);
@@ -1087,8 +1087,8 @@ function CatCreate_MultiPrint(params,creditResults,cancelYN) {
         message += String.fromCharCode(27);
         message += String.fromCharCode(33);
         message += String.fromCharCode(8);
-        message += item.tagno.substr(3,1);
-        message += "-" + item.tagno.substr(4,3);
+        message += item.tagno.substr(2,1);
+        message += "-" + item.tagno.substr(3,4);
         message += String.fromCharCode(27);
         message += String.fromCharCode(33);
         message += String.fromCharCode(0);
