@@ -72,6 +72,7 @@ public class BranchCalendarRepositoryCustomImpl extends QuerydslRepositorySuppor
                     franchise.frCode,
                     franchise.frName,
                     franchise.frLastTagno,
+                    franchise.frTagNo,
                     branchCalendar.bcDate,
                     franchise.frBusinessNo,
                     franchise.frRpreName,

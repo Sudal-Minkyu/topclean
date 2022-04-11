@@ -141,7 +141,7 @@ $(function() {
 
         setBgMenu(false);
         setPreDefinedKeywords();
-        frTagNo = initialData.etcData.fdTag.substring(0, 2);
+        frTagNo = initialData.etcData.frTagNo.substring(0, 2);
         setNextTag(initialData.etcData.fdTag);
         getParamsAndAction();
     });
@@ -674,7 +674,7 @@ function checkYesOrNo(booleanValue) {
 }
 
 /* 실제 임시저장 삭제 동작 */
-function ajaxRemoveTempSave(frNo) {
+function ajaxRemoveTempSave(frNo, setAfterDelete = false) {
     const params = {
         frNo: frNo
     };
@@ -684,6 +684,9 @@ function ajaxRemoveTempSave(frNo) {
         // 성공하면 임시저장 마스터테이블 조회
         setDataIntoGrid(2, gridCreateUrl[2]);
         alertSuccess("임시저장이 삭제되었습니다.");
+        if(setAfterDelete) {
+            onPutCustomer();
+        }
     });
 }
 
@@ -1353,8 +1356,15 @@ function setNextTag(tag) {
 /* 임시저장을 두단계로 분리하기 위해 데이터를 임시로 전역변수화 */
 let saveData = {};
 
+function onTempSave() {
+    alertCheck("임시저장 하시겠습니까?");
+    $("#checkDelSuccessBtn").on("click", function () {
+        onSave(true);
+    });
+}
+
 /* 전역변수 cehckNum이 1일 경우에는 임시저장, 2일 경우에는 접수완료처리 */
-function onSave() {
+function onSave(turnOnSuccessMsg = false, paymentMode = false, creditData = {}) {
 
     // 추가된 행 아이템들(배열)
     const addedRowItems = AUIGrid.getAddedRowItems(gridId[0]);
@@ -1367,9 +1377,6 @@ function onSave() {
 
     if(selectedCustomer === undefined) {
         alertCaution("먼저 고객을 선택해 주세요", 1);
-        return false;
-    }else if(addedRowItems.length === 0 && updatedRowItems.length === 0 && deletedRowItems.length === 0 && checkNum === "1") {
-        alertCaution("추가/변경/삭제 사항이 없습니다", 1);
         return false;
     }
 
@@ -1391,42 +1398,37 @@ function onSave() {
     };
     saveData = data;
 
-
-    if(checkNum === "1") {
-        alertCheck("임시저장 하시겠습니까?");
-        $("#checkDelSuccessBtn").on("click", function () {
-            onSaveAjax();
-        });
-    }else {
-        onSaveAjax();
-    }
+    onSaveAjax(turnOnSuccessMsg, paymentMode, creditData);
 }
 
-function onSaveAjax() {
+function onSaveAjax(turnOnSuccessMsg, paymentMode, creditData) {
     CommonUI.ajax(gridSaveUrl[0], "MAPPER", saveData, function (req) {
         AUIGrid.removeSoftRows(gridId[0]);
         AUIGrid.resetUpdatedItems(gridId[0]);
         AUIGrid.clearGridData(gridId[2]);
         if(checkNum === "1") {
-            alertSuccess("임시저장이 되었습니다");
-            initialData.etcData.frNo = req.sendData.frNo;
             setDataIntoGrid(2, gridCreateUrl[2]);
+            if(turnOnSuccessMsg) {
+                alertSuccess("임시저장이 되었습니다");
+            }
         }
+        initialData.etcData.frNo = req.sendData.frNo;
+
         if(checkNum === "2") {
-            console.log(req);
             initialData.etcData.beforeUncollectMoney = req.sendData.beforeUncollectMoney;
             initialData.etcData.saveMoney = req.sendData.saveMoney;
             initialData.etcData.todayUncollectMoney = req.sendData.todayUncollectMoney;
             selectedCustomer.beforeUncollectMoney = req.sendData.beforeUncollectMoney;
             selectedCustomer.saveMoney = req.sendData.saveMoney;
-
-            $("#beforeUncollectMoney").html(selectedCustomer.beforeUncollectMoney.toLocaleString());
-            $("#saveMoney").html(selectedCustomer.saveMoney.toLocaleString());
-            $("#beforeUncollectMoneyMain").html(selectedCustomer.beforeUncollectMoney.toLocaleString());
-            $("#saveMoneyMain").html(selectedCustomer.saveMoney.toLocaleString());
-            initialData.etcData.frNo = req.sendData.frNo;
         }
-    })
+        $("#beforeUncollectMoney").html(selectedCustomer.beforeUncollectMoney.toLocaleString());
+        $("#saveMoney").html(selectedCustomer.saveMoney.toLocaleString());
+        $("#beforeUncollectMoneyMain").html(selectedCustomer.beforeUncollectMoney.toLocaleString());
+        $("#saveMoneyMain").html(selectedCustomer.saveMoney.toLocaleString());
+        if(paymentMode) {
+            onPaymentStageThree(creditData);
+        }
+    });
 }
 
 function enableKeypad() {
@@ -1506,7 +1508,6 @@ function onApply() {
         alertCaution("접수완료할 품목이 없습니다.", 1);
         return false;
     }
-    checkNum = "2";
     onSave();
 
     const totRequestAmt = $("#totFdRequestAmount").html().toInt();
@@ -1522,8 +1523,13 @@ function onApply() {
     setReceiveAmtToTotalAmt();
     calculatePaymentStage(getPaidAmt());
 
+    $("#btnPayLater").show();
+    $("#btnPayment").show();
+    $("#btnClosePayment").show();
+    $("#btnPrintReceipt").hide();
     $("#paymentPop").addClass("active");
 }
+
 
 function getPaidAmt() {
     const paidData =  AUIGrid.getGridData(gridId[3]);
@@ -1663,6 +1669,15 @@ function onPaymentStageOne() {
 
 /* 결재할 때 */
 function onPaymentStageTwo(creditData = {}) {
+    if (checkNum === "1") {
+        checkNum = "2";
+        onSave(false, true, creditData);
+    } else {
+        onPaymentStageThree(creditData);
+    }
+}
+
+function onPaymentStageThree(creditData) {
     try {
         const url = "/api/user/requestPayment";
         let data = {
@@ -1742,9 +1757,16 @@ function onPaymentStageTwo(creditData = {}) {
             $("#receiveCard").html("0");
 
             calculatePaymentStage(getPaidAmt());
+
+            $("#btnPrintReceipt").show();
+            $("#btnClosePayment").hide();
             if($("#totalAmt").html() === "0" && autoPrintReceipt) {
                 onPrintReceipt();
                 onClosePayment();
+            } else if($("#totalAmt").html() === "0"){
+                $("#btnPayLater").hide();
+                $("#btnPayment").hide();
+                $("#btnClosePayment").show();
             }
         });
     }catch (e) {
@@ -1766,10 +1788,17 @@ function cancelPayUncollectMoney() {
 }
 
 function onClosePayment() {
+    /* 결제를 하되 완료되지 않으면 사라져 사라져 있는 닫기버튼을 누를 때 미수금이 남아있다는 것은 아직 결제를 하지 않았다는 것을 의미*/
+    const hasUncollectAmtCash = !!($("#totalAmt").html().toInt() + $("#applySaveMoney").html().toInt()
+        - $("#applyUncollectAmt").html().toInt());
+    closePaymentPop(hasUncollectAmtCash);
+}
+
+function onPaymentLater() {
     const uncollectAmtCash = $("#totalAmt").html().toInt() + $("#applySaveMoney").html().toInt()
         - $("#applyUncollectAmt").html().toInt();
     if(uncollectAmtCash) {
-        alertCheck("미수금이 " + uncollectAmtCash.toLocaleString() + "원 발생합니다<br> 이대로 닫으시겠습니까?");
+        alertCheck(uncollectAmtCash.toLocaleString() + "원의 미수금(후불)이 발생합니다<br> 이대로 닫으시겠습니까?");
         $("#checkDelSuccessBtn").on("click", function () {
             $('#popupId').remove();
             closePaymentPop();
@@ -1779,11 +1808,15 @@ function onClosePayment() {
     }
 }
 
-function closePaymentPop() {
+function closePaymentPop(isSimpleClose = false) {
+    $("#paymentPop").removeClass("active");
+
+    if(isSimpleClose) return false;
+    console.log("act");
+
     AUIGrid.clearGridData(gridId[0]);
     AUIGrid.clearGridData(gridId[3]);
     calculateMainPrice(AUIGrid.getGridData(gridId[0]), AUIGrid.getRemovedItems(gridId[0]));
-    $("#paymentPop").removeClass("active");
 
     const url = "/api/user/requestReceiptMessage";
     const sendData = {
@@ -1940,7 +1973,7 @@ function tempSaveExistWarning() {
     });
 
     $("#popSecondBtn").on("click", function() {
-        ajaxRemoveTempSave(selectedCustomer.tempSaveFrNo);
+        ajaxRemoveTempSave(selectedCustomer.tempSaveFrNo, true);
         $('#popupId').remove();
     });
 

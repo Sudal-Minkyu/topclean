@@ -195,7 +195,7 @@
 
                 <div class="regist__console">
                     <ul>
-                        <li><button class="c-button c-button--darksolid c-button--small" type="button" onclick="onSave()">임시저장</button></li>
+                        <li><button class="c-button c-button--darksolid c-button--small" type="button" onclick="onTempSave()">임시저장</button></li>
                         <li><button class="c-button c-button--small" type="button" onclick="onReadTempSave()">임시저장내역</button></li>
                     </ul>
                     <ul>
@@ -1052,9 +1052,10 @@
                         <input type="checkbox" id="autoPrintReceipt" checked="" />
                         <label for="autoPrintReceipt">완료시 영수증 자동인쇄 후 닫기</label></div>
                 </li>
-                <li><button class="c-button" onclick="onClosePayment()">닫기</button></li>
-                <li><button class="c-button c-button--darksolid" onclick="onPrintReceipt()">영수증 출력</button></li>
-                <li><button class="c-button c-button--dark" onclick="onPaymentStageOne()">결제하기</button></li>
+                <li><button id="btnClosePayment" class="c-button" onclick="onClosePayment()">닫기</button></li>
+                <li><button id="btnPayLater" class="c-button c-button--solid" onclick="onPaymentLater()">후불</button></li>
+                <li><button id="btnPrintReceipt" class="c-button c-button--darksolid" onclick="onPrintReceipt()">영수증 출력</button></li>
+                <li><button id="btnPayment" class="c-button c-button--dark" onclick="onPaymentStageOne()">결제하기</button></li>
             </ul>
         </div>
     </div>
