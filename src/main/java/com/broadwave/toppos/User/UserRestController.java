@@ -339,7 +339,7 @@ public class UserRestController {
             customerListInfo.put("bcAddress", customerInfoDto.getBcAddress());
             customerListInfo.put("bcLastRequestDt", customerInfoDto.getBcLastRequestDt());
             customerListInfo.put("bcWeddingAnniversary", customerInfoDto.getBcWeddingAnniversary());
-            customerListInfo.put("beforeUncollectMoney", 0);
+            customerListInfo.put("uncollectMoney", 0);
             customerListInfo.put("saveMoney", 0);
             if(requestTemp != null){
                 customerListInfo.put("tempSaveFrNo", requestTemp.getFrNo());
@@ -350,7 +350,7 @@ public class UserRestController {
         }
 
         if(customerListData.size() != 0) {
-            List<HashMap<String,Object>> customerListDataGet = receiptService.findByUnCollectAndSaveMoney(customerListData, customerIdList, "2");
+            List<HashMap<String,Object>> customerListDataGet = receiptService.findByUnCollectAndSaveMoney(customerListData, customerIdList, "1");
             data.put("gridListData",customerListDataGet);
         }else{
             data.put("gridListData",customerListData);
@@ -407,7 +407,7 @@ public class UserRestController {
             customerListInfo.put("bcQuitYn", customerListDto.getBcQuitYn());
             customerListInfo.put("bcQuitDate", customerListDto.getBcQuitDate());
             customerListInfo.put("bcWeddingAnniversary", customerListDto.getBcWeddingAnniversary());
-            customerListInfo.put("beforeUncollectMoney", 0);
+            customerListInfo.put("uncollectMoney", 0);
             customerListInfo.put("saveMoney", 0);
             customerListInfo.put("insertDateTime", customerListDto.getInsertDateTime());
 
@@ -415,7 +415,7 @@ public class UserRestController {
         }
 
         if(customerListData.size() != 0) {
-            List<HashMap<String,Object>> customerListDataGet = receiptService.findByUnCollectAndSaveMoney(customerListData, customerIdList,"2");
+            List<HashMap<String,Object>> customerListDataGet = receiptService.findByUnCollectAndSaveMoney(customerListData, customerIdList,"1");
             data.put("gridListData",customerListDataGet);
         }else{
             data.put("gridListData",customerListData);
