@@ -122,9 +122,11 @@ const comms = {
             };
             comms.getCustomersRequest(customerId);
             if(goToUnpaid) { // 미수금 메뉴로 넘어가기 상태일 경우 인도완료후 2초 뒤 이동
-                setTimeout(function () {
-                    location.href = "./unpaid?bcHp=" + wares.selectedCustomer.bcHp;
-                }, 2000);
+                if(wares.selectedCustomer.bcHp) {
+                    setTimeout(function () {
+                        location.href = "./unpaid?bchp=" + wares.selectedCustomer.bcHp;
+                    }, 2000);
+                }
             }
         });
     },
@@ -446,6 +448,8 @@ function onPageLoad() {
 
     trigs.s.basic();
     trigs.s.vkeys();
+
+    getParamsAndAction();
 }
 
 function putCustomer() {
@@ -579,5 +583,18 @@ function giveLaundry(goToUnpaid = false) {
         comms.deliverLaundry(selectedLaundry, goToUnpaid);
     }else{
         alertCaution("현재 구분:일반 외의 항목은 세탁물 인도가 불가능합니다.", 1);
+    }
+}
+
+/* 브라우저의 get 파라미터들을 가져오고 그에 따른 작업을 반영하기 위해 */
+function getParamsAndAction() {
+    const url = new URL(window.location.href);
+    const params = url.searchParams;
+
+    if(params.has("bchp")) {
+        const bcHp = params.get("bchp");
+        $("#searchType").val("2");
+        $("#searchString").val(bcHp);
+        mainSearch();
     }
 }

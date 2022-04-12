@@ -234,6 +234,15 @@ $(function() {
         }
     });
 
+    $("#beforeUncollectMoneyMain").parents("li").on("click", function () {
+        if(selectedCustomer && selectedCustomer.bcHp) {
+            location.href = "/user/unpaid?bchp=" + selectedCustomer.bcHp;
+        } else {
+            location.href = "/user/unpaid";
+        }
+    });
+
+
     // 결제팝업 탭
     const $payTabsBtn = $('.pop__pay-tabs-item');
     const $payTabsContent = $('.pop__tabs-content');
@@ -1007,8 +1016,10 @@ function onCloseTakePicture() {
             ffRemark: $photoList.eq(i).attr("data-ffRemark"),
         });
     }
+    currentRequest.photoList = photos;
 
     const copyObj = CommonUI.cloneObj(currentRequest);
+    copyObj["dummy" + parseInt(Math.random() * 100000).toString()] = "dummy";
 
     AUIGrid.updateRowsById(gridId[0], copyObj);
 
@@ -1024,6 +1035,8 @@ function onCloseTakePicture() {
     $("#cameraPop").removeClass("active");
     $photoList.remove();
     currentRequest = JSON.parse(JSON.stringify(fsRequestDtl));
+
+    AUIGrid.refresh(gridId[0]);
 }
 
 function putTakenPictureOnTheRightSide(picJson) {
@@ -1139,7 +1152,7 @@ function putItemIntoGrid() {
 
     if(currentRequest._$uid) {
         const copyObj = CommonUI.cloneObj(currentRequest);
-        console.log(copyObj);
+        copyObj["dummy" + parseInt(Math.random() * 100000).toString()] = "dummy";
         AUIGrid.updateRowsById(gridId[0], copyObj);
     }else{
         currentRequest.fdTag = nextFdTag.numString();
@@ -1823,9 +1836,10 @@ function closePaymentPop(isSimpleClose = false) {
         frNo: initialData.etcData.frNo,
         locationHost: location.host,
     }
-    console.log(sendData);
     CommonUI.ajax(url, "PARAM", sendData, function (res) {
-        console.log(res);
+        if (selectedCustomer.bcHp) {
+            location.href = "/user/delivery?bchp=" + selectedCustomer.bcHp;
+        }
     });
 
     delete initialData.etcData["frNo"];
