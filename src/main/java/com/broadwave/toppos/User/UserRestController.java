@@ -657,11 +657,11 @@ public class UserRestController {
             customerListInfo.put("bcValuation", optionalRequest.get().getBcId().getBcValuation());
             customerListInfo.put("bcRemark", optionalRequest.get().getBcId().getBcRemark());
             customerListInfo.put("bcLastRequestDt", optionalRequest.get().getBcId().getBcLastRequestDt());
-            customerListInfo.put("beforeUncollectMoney", 0);
+            customerListInfo.put("uncollectMoney", 0);
             customerListInfo.put("saveMoney", 0);
             customerListData.add(customerListInfo);
 
-            List<HashMap<String,Object>> customerListDataGet = receiptService.findByUnCollectAndSaveMoney(customerListData, customerIdList,"2");
+            List<HashMap<String,Object>> customerListDataGet = receiptService.findByUnCollectAndSaveMoney(customerListData, customerIdList,"1");
             data.put("gridListData",customerListDataGet);
 
             // 임시저장의 접수 세무테이블 리스트 호출

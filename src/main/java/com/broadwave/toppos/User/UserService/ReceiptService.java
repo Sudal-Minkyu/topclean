@@ -244,22 +244,17 @@ public class ReceiptService {
                 // 결제일 경우, 현재 고객의 적립금과 미수금액을 보내준다.
                 // 미수금액 리스트를 호출한다. 조건 : 미수여부는 Y, 임시저장확정여부는 N, 고객아이디 eq, 가맹점코드 = frCode eq, 현재날짜의 전날들만 인것들만 조회하기
                 List<RequestCollectDto>  requestCollectDtoList = findByRequestCollectList(optionalCustomer.get(), null); // nowDate 현재날짜
-                List<Integer> uncollectMoneyList = findByBeforeAndTodayUnCollect(requestCollectDtoList, nowDate);
-                int beforeUncollectMoney = 0;
-                int todayUncollectMoney = 0;
+                List<Integer> uncollectMoneyList = findByBeforeAndTodayUnCollect(requestCollectDtoList, nowDate, "1");
+                int uncollectMoney = 0;
                 if(requestCollectDtoList.size() != 0){
-                    beforeUncollectMoney = uncollectMoneyList.get(0);
-                    todayUncollectMoney = uncollectMoneyList.get(1);
-                    data.put("beforeUncollectMoney",beforeUncollectMoney);
-                    data.put("todayUncollectMoney",todayUncollectMoney);
+                    uncollectMoney = uncollectMoneyList.get(0);
+                    data.put("uncollectMoney",uncollectMoney);
                 }else{
-                    data.put("beforeUncollectMoney",0);
-                    data.put("todayUncollectMoney",0);
+                    data.put("uncollectMoney",0);
                 }
 //                log.info("합계금액 : "+totalAmount);
 //                log.info("결제금액 : "+payAmount);
-                log.info("전일 미수금액 : "+ beforeUncollectMoney);
-                log.info("당일 미수금액 : "+ todayUncollectMoney);
+                log.info("미수금액 : "+ uncollectMoney);
 
                 // 적립금 리스트를 호출한다. 조건 : 고객 ID, 적립유형 1 or 2, 마감여부 : N,
                 Integer saveMoney = findBySaveMoney(optionalCustomer.get());
@@ -644,21 +639,15 @@ public class ReceiptService {
 
                         // 전일미수금을 보낸다. 전일미수금에서 미수상환금액을 뺀 금액
                         List<RequestCollectDto>  requestCollectDtoList = findByRequestCollectList(optionalCustomer.get(), null); // nowDate 현재날짜
-                        List<Integer> uncollectMoneyList = findByBeforeAndTodayUnCollect(requestCollectDtoList, nowDate);
-                        log.info("uncollectMoneyList : "+ uncollectMoneyList);
-                        int beforeUncollectMoney = 0;
-                        int todayUncollectMoney = 0;
+                        List<Integer> uncollectMoneyList = findByBeforeAndTodayUnCollect(requestCollectDtoList, nowDate, "1");
+                        int uncollectMoney = 0;
                         if(requestCollectDtoList.size() != 0){
-                            beforeUncollectMoney = uncollectMoneyList.get(0);
-                            todayUncollectMoney = uncollectMoneyList.get(1);
-                            data.put("beforeUncollectMoney",beforeUncollectMoney);
-                            data.put("todayUncollectMoney",todayUncollectMoney);
+                            uncollectMoney = uncollectMoneyList.get(0);
+                            data.put("uncollectMoney",uncollectMoney);
                         }else{
-                            data.put("beforeUncollectMoney",0);
-                            data.put("todayUncollectMoney",0);
+                            data.put("uncollectMoney",0);
                         }
-                        log.info("전일미수금액 : "+ beforeUncollectMoney);
-                        log.info("당일미수금액 : "+ todayUncollectMoney);
+                        log.info("미수금액 : "+ uncollectMoney);
 
                         // 적립금을 보낸다. 만약 적립금을 사용하면 사용금액의 따른 적립금을 뺀 가격을 보낸다.
                         Integer resultSaveMoney = findBySaveMoney(optionalCustomer.get());
@@ -781,7 +770,7 @@ public class ReceiptService {
     }
 
     // 접속완료 또는 결제완료 후 전일미수금과, 당일 미수금 호출
-    public List<Integer> findByBeforeAndTodayUnCollect(List<RequestCollectDto> requestCollectDtoList, String nowDate){
+    public List<Integer> findByBeforeAndTodayUnCollect(List<RequestCollectDto> requestCollectDtoList, String nowDate, String type){
         List<Integer> uncollectMoneyList = new ArrayList<>();
         int todayTotalAmount = 0;
         int todayPayAmount = 0;
@@ -791,12 +780,17 @@ public class ReceiptService {
         int todayUncollectMoney = 0;
         if(requestCollectDtoList.size() != 0) {
             for (RequestCollectDto requestCollectDto : requestCollectDtoList) {
-                if (!requestCollectDto.getFrYyyymmdd().equals(nowDate)) {
+                if(type.equals("1")){
                     beforeTotalAmount = beforeTotalAmount + requestCollectDto.getFrTotalAmount();
                     beforePayAmount = beforePayAmount + requestCollectDto.getFrPayAmount();
-                } else {
-                    todayTotalAmount = todayTotalAmount + requestCollectDto.getFrTotalAmount();
-                    todayPayAmount = todayPayAmount + requestCollectDto.getFrPayAmount();
+                }else{
+                    if (!requestCollectDto.getFrYyyymmdd().equals(nowDate)) {
+                        beforeTotalAmount = beforeTotalAmount + requestCollectDto.getFrTotalAmount();
+                        beforePayAmount = beforePayAmount + requestCollectDto.getFrPayAmount();
+                    } else {
+                        todayTotalAmount = todayTotalAmount + requestCollectDto.getFrTotalAmount();
+                        todayPayAmount = todayPayAmount + requestCollectDto.getFrPayAmount();
+                    }
                 }
             }
             beforeUncollectMoney = beforeTotalAmount - beforePayAmount;
@@ -868,7 +862,7 @@ public class ReceiptService {
 //         uncollectPayAmount: "n", // 미수금 상환액
 //         totalUncollectAmount: "n", // 총미수금
             List<RequestCollectDto>  requestCollectDtoList = findByRequestCollectList(requestPaymentPaperDto.getCustomer(), null);
-            List<Integer> uncollectMoneyList = findByBeforeAndTodayUnCollect(requestCollectDtoList, nowDate);
+            List<Integer> uncollectMoneyList = findByBeforeAndTodayUnCollect(requestCollectDtoList, nowDate,"2");
             int preUncollectAmount;
             int curUncollectAmount;
             if(requestCollectDtoList.size() != 0){
@@ -980,7 +974,7 @@ public class ReceiptService {
         if(requestDetailMessageDto != null){
             messageHistory.setBcId(requestDetailMessageDto.getCustomer());
             List<RequestCollectDto>  requestCollectDtoList = findByRequestCollectList(requestDetailMessageDto.getCustomer(), null);
-            List<Integer> uncollectMoneyList = findByBeforeAndTodayUnCollect(requestCollectDtoList, LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
+            List<Integer> uncollectMoneyList = findByBeforeAndTodayUnCollect(requestCollectDtoList, LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")), "2");
             int preUncollectAmount; // 전일 미수금액
             int curUncollectAmount; // 당일 미수금액
             if(requestCollectDtoList.size() != 0){
