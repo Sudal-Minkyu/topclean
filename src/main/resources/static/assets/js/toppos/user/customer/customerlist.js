@@ -419,7 +419,10 @@ function saveRegister() {
         alertCheck("고객 데이터 저장을 성공하였습니다.<br>해당 고객으로 바로 접수하시겟습니까?");
         $("#checkDelSuccessBtn").on("click", function () {
             $('#popupId').remove();
-            location.href = "./receiptreg?bchp=" + formData.get("bcHp").numString();
+            const bcHp = formData.get("bcHp").numString();
+            if(bcHp) {
+                location.href = "./receiptreg?bchp=" + bcHp;
+            }
         });
         onSearchCustomer();
     });

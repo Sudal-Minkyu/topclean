@@ -746,11 +746,10 @@ function mainSearch() {
 
 function hasBcHp() { // 고객의 전화번호가 주소창을 통해 넘어온 경우 (미수금 바로 조회하기 위함)
     const url = new URL(wares.url);
-    const tokenedPath = url.pathname.split("/");
     wares.params = url.searchParams;
 
-    if(wares.params.has("bcHp")) {
-        const bcHp = wares.params.get("bcHp");
+    if(wares.params.has("bchp")) {
+        const bcHp = wares.params.get("bchp");
         const searchCondition = {
             searchType: "2",
             searchText: bcHp,
