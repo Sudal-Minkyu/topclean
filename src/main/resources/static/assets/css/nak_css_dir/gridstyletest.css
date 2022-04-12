@@ -103,6 +103,7 @@
 	width: 20px;
 	border-radius: 5px;
 	display: inline-block;
+	vertical-align: middle;
 }
 .color_and_name {
 	text-align: left;
@@ -197,9 +198,16 @@
 /* 고정 로우와 일반 로우 경계선 */
 .aui-grid-fixed-row-rule {
 	background:transparent;
-	height:1.5px;
+	height: 2px;
 }
 
 .aui-grid-body-panel .aui-grid-table tr:hover td {
     background-color: #f1f8fe;
+}
+
+/* tag 번호 */
+.datafield_tag {
+	background-color: #F1F8FE;
+	font-size: 16px !important;
+	font-weight: 700 !important;;
 }
