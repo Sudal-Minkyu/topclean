@@ -76,4 +76,12 @@ public class RequestDetailDto {
 
     private String fdAgreeType; // 동의타입 (온라인 : 1, 서면 : 2)
     private String fdSignImage; // 운동화 세탁 동의사인이미지 Blob객체사용
+
+    private Integer fdPollutionType;
+    private Integer fdPollutionBack;
+
+    public Integer getFdPollutionType() {
+        return fdPollutionType + fdPollutionBack;
+    }
+
 }

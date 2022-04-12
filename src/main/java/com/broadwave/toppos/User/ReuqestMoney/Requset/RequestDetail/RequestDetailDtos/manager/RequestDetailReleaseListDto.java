@@ -50,6 +50,13 @@ public class RequestDetailReleaseListDto {
 
     private String fdS4Type;
 
+    private Integer fdPollutionType;
+    private Integer fdPollutionBack;
+
+    public Integer getFdPollutionType() {
+        return fdPollutionType + fdPollutionBack;
+    }
+
     public StringBuffer getFdS2Dt() {
         if(fdS2Dt != null && !fdS2Dt.equals("")){
             StringBuffer getFdS2Dt = new StringBuffer(fdS2Dt);

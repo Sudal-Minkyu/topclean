@@ -53,6 +53,13 @@ public class RequestFindListDto {
     private String fdS2Dt; // 지사입고일
     private String ffState; // 물품찾기 상태
 
+    private Integer fdPollutionType;
+    private Integer fdPollutionBack;
+
+    public Integer getFdPollutionType() {
+        return fdPollutionType + fdPollutionBack;
+    }
+
     public StringBuffer getFrYyyymmdd() {
         if(frYyyymmdd != null && !frYyyymmdd.equals("")){
             StringBuffer getFrYyyymmdd = new StringBuffer(frYyyymmdd);

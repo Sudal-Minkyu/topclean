@@ -47,6 +47,13 @@ public class RequestDetailFranchiseInCancelListDto {
     private String frYyyymmdd; // 접수일자
     private String fdS4Dt; // 지사출고일
 
+    private Integer fdPollutionType;
+    private Integer fdPollutionBack;
+
+    public Integer getFdPollutionType() {
+        return fdPollutionType + fdPollutionBack;
+    }
+
     public StringBuffer getFrYyyymmdd() {
         if(frYyyymmdd != null && !frYyyymmdd.equals("")){
             StringBuffer getFrYyyymmdd = new StringBuffer(frYyyymmdd);

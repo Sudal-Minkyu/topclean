@@ -53,6 +53,13 @@ public class RequestDetailTagSearchListDto {
     private String fdS7Dt; // 지사강제출고일
     private String fdS8Dt; // 가맹점강제입고일
 
+    private Integer fdPollutionType;
+    private Integer fdPollutionBack;
+
+    public Integer getFdPollutionType() {
+        return fdPollutionType + fdPollutionBack;
+    }
+
     public StringBuffer getFrYyyymmdd() {
         if(frYyyymmdd != null && !frYyyymmdd.equals("")){
             StringBuffer getFrYyyymmdd = new StringBuffer(frYyyymmdd);

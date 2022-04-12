@@ -53,6 +53,13 @@ public class RequestDetailBranchInspectListDto {
 
     private String fiCustomerConfirm; // 고객 수락여부 ( 1: 미확인(기본값), 2:고객수락, 3:고객거부
 
+    private Integer fdPollutionType;
+    private Integer fdPollutionBack;
+
+    public Integer getFdPollutionType() {
+        return fdPollutionType + fdPollutionBack;
+    }
+
     public String getInsertDt() {
         return insertDt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm"));
     }

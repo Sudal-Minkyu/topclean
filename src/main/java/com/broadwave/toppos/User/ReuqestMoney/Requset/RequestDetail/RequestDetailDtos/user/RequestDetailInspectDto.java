@@ -53,6 +53,13 @@ public class RequestDetailInspectDto {
     private Integer fdTotAmt; // 합계금액( (정상 + 수선 + 추가1 + 추가2 -할인) * 수량 )
     private String fdRemark; // 특이사항
 
+    private Integer fdPollutionType;
+    private Integer fdPollutionBack;
+
+    public Integer getFdPollutionType() {
+        return fdPollutionType + fdPollutionBack;
+    }
+
     public StringBuffer getFdS6Dt() {
         if(fdS6Dt != null && !fdS6Dt.equals("")){
             StringBuffer getFdS6Dt = new StringBuffer(fdS6Dt);

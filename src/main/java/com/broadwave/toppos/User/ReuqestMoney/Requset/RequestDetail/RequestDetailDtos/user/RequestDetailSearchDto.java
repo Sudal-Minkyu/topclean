@@ -105,4 +105,11 @@ public class RequestDetailSearchDto {
 
     private String fpCancelYn; // 결제취소 여부 : 기본값 N
 
+    private Integer fdPollutionType;
+    private Integer fdPollutionBack;
+
+    public Integer getFdPollutionType() {
+        return fdPollutionType + fdPollutionBack;
+    }
+
 }

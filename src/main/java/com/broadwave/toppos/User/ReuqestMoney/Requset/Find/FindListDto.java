@@ -63,6 +63,12 @@ public class FindListDto {
 
     private String fdRemark; // 특이사항
 
+    private Integer fdPollutionType;
+    private Integer fdPollutionBack;
+
+    public Integer getFdPollutionType() {
+        return fdPollutionType + fdPollutionBack;
+    }
 
     public StringBuffer getFfYyyymmdd() {
         if(ffYyyymmdd != null && !ffYyyymmdd.equals("")){

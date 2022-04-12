@@ -97,7 +97,26 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         itemGroupS.bsName,
                         item.biName,
                         requestDetail.fdAgreeType,
-                        requestDetail.fdSignImage
+                        requestDetail.fdSignImage,
+
+                        new CaseBuilder()
+                                .when(requestDetail.fdPollutionLocFcn.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFcs.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFcb.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFlh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFrh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFlf.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFrf.eq("Y")).then(1)
+                                .otherwise(0),
+                        new CaseBuilder()
+                                .when(requestDetail.fdPollutionLocBcn.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBcs.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBcb.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBlh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBrh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBlf.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBrf.eq("Y")).then(1)
+                                .otherwise(0)
 
                 ));
         query.where(requestDetail.frNo.eq(frNo));
@@ -138,7 +157,26 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         sb.append("a.fd_pollution_loc_flh, a.fd_pollution_loc_frh, a.fd_pollution_loc_flf, a.fd_pollution_loc_frf, \n");
         sb.append("a.fd_pollution_loc_bcn, a.fd_pollution_loc_bcs, a.fd_pollution_loc_bcb, a.fd_pollution_loc_brh, a.fd_pollution_loc_blh, \n");
         sb.append("a.fd_pollution_loc_brf, a.fd_pollution_loc_blf, b.fr_ref_type, a.fd_agree_type, a.fd_sign_image, \n");
-        sb.append("IFNULL(d.fi_id,null), IFNULL(d.fi_customer_confirm,null), IFNULL(e.fi_id,null), IFNULL(e.fi_customer_confirm,null), IFNULL(f.fp_cancel_yn,'N') \n");
+        sb.append("IFNULL(d.fi_id,null), IFNULL(d.fi_customer_confirm,null), IFNULL(e.fi_id,null), IFNULL(e.fi_customer_confirm,null), IFNULL(f.fp_cancel_yn,'N'), \n");
+
+        sb.append("CASE \n"); // 반품
+        sb.append("WHEN a.fd_pollution_loc_fcn = 'Y' THEN 1 \n");
+        sb.append("WHEN a.fd_pollution_loc_fcs = 'Y' THEN 1 \n");
+        sb.append("WHEN a.fd_pollution_loc_fcb = 'Y' THEN 1 \n");
+        sb.append("WHEN a.fd_pollution_loc_flh = 'Y' THEN 1 \n");
+        sb.append("WHEN a.fd_pollution_loc_frh = 'Y' THEN 1 \n");
+        sb.append("WHEN a.fd_pollution_loc_flf = 'Y' THEN 1 \n");
+        sb.append("WHEN a.fd_pollution_loc_frf = 'Y' THEN 1 \n");
+        sb.append("ELSE 0 END fdPollutionType, \n");
+        sb.append("CASE \n"); // 반품
+        sb.append("WHEN a.fd_pollution_loc_bcn = 'Y' THEN 1 \n");
+        sb.append("WHEN a.fd_pollution_loc_bcs = 'Y' THEN 1 \n");
+        sb.append("WHEN a.fd_pollution_loc_bcb = 'Y' THEN 1 \n");
+        sb.append("WHEN a.fd_pollution_loc_blh = 'Y' THEN 1 \n");
+        sb.append("WHEN a.fd_pollution_loc_brh = 'Y' THEN 1 \n");
+        sb.append("WHEN a.fd_pollution_loc_blf = 'Y' THEN 1 \n");
+        sb.append("WHEN a.fd_pollution_loc_brf = 'Y' THEN 1 \n");
+        sb.append("ELSE 0 END fdPollutionBack \n");
 
         sb.append("FROM fs_request_dtl a \n");
         sb.append("INNER JOIN fs_request b ON b.fr_id = a.fr_id \n");
@@ -257,7 +295,27 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdUrgentYn,
                         requestDetail.fdTotAmt,
                         requestDetail.fdState,
-                        requestDetail.fdS6Dt
+                        requestDetail.fdS6Dt,
+
+                        new CaseBuilder()
+                                .when(requestDetail.fdPollutionLocFcn.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFcs.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFcb.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFlh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFrh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFlf.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFrf.eq("Y")).then(1)
+                                .otherwise(0),
+                        new CaseBuilder()
+                                .when(requestDetail.fdPollutionLocBcn.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBcs.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBcb.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBlh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBrh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBlf.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBrf.eq("Y")).then(1)
+                                .otherwise(0)
+
                 ));
         query.orderBy(requestDetail.id.desc());
         return query.fetch();
@@ -269,12 +327,32 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         EntityManager em = getEntityManager();
         StringBuilder sb = new StringBuilder();
 
-        sb.append("SELECT  DISTINCT \n");
+        sb.append("SELECT DISTINCT \n");
 
         sb.append("a.fd_id, b.fr_yyyymmdd, c.bc_name, a.fd_tag, f.bg_name, g.bs_name, e.bi_name, \n");
         sb.append("a.fd_price_grade, a.fd_retry_yn, a.fd_pressed, a.fd_add1_amt, a.fd_add1_remark, a.fd_repair_amt, \n");
         sb.append("a.fd_repair_remark, a.fd_whitening, a.fd_pollution, a.fd_starch, a.fd_water_repellent, a.fd_urgent_yn, \n");
-        sb.append("a.fd_tot_amt, a.fd_remark, a.fd_color \n");
+        sb.append("a.fd_tot_amt, a.fd_remark, a.fd_color, \n");
+
+        sb.append("CASE \n"); // 반품
+        sb.append("WHEN a.fd_pollution_loc_fcn = 'Y' THEN 1 \n");
+        sb.append("WHEN a.fd_pollution_loc_fcs = 'Y' THEN 1 \n");
+        sb.append("WHEN a.fd_pollution_loc_fcb = 'Y' THEN 1 \n");
+        sb.append("WHEN a.fd_pollution_loc_flh = 'Y' THEN 1 \n");
+        sb.append("WHEN a.fd_pollution_loc_frh = 'Y' THEN 1 \n");
+        sb.append("WHEN a.fd_pollution_loc_flf = 'Y' THEN 1 \n");
+        sb.append("WHEN a.fd_pollution_loc_frf = 'Y' THEN 1 \n");
+        sb.append("ELSE 0 END fdPollutionType, \n");
+
+        sb.append("CASE \n"); // 반품
+        sb.append("WHEN a.fd_pollution_loc_bcn = 'Y' THEN 1 \n");
+        sb.append("WHEN a.fd_pollution_loc_bcs = 'Y' THEN 1 \n");
+        sb.append("WHEN a.fd_pollution_loc_bcb = 'Y' THEN 1 \n");
+        sb.append("WHEN a.fd_pollution_loc_blh = 'Y' THEN 1 \n");
+        sb.append("WHEN a.fd_pollution_loc_brh = 'Y' THEN 1 \n");
+        sb.append("WHEN a.fd_pollution_loc_blf = 'Y' THEN 1 \n");
+        sb.append("WHEN a.fd_pollution_loc_brf = 'Y' THEN 1 \n");
+        sb.append("ELSE 0 END fdPollutionBack \n");
 
         sb.append("FROM fs_request_dtl a \n");
 
@@ -366,7 +444,25 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdTotAmt,
                         requestDetail.fdRemark,
                         request.frYyyymmdd,
-                        requestDetail.fdS2Dt
+                        requestDetail.fdS2Dt,
+                        new CaseBuilder()
+                                .when(requestDetail.fdPollutionLocFcn.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFcs.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFcb.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFlh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFrh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFlf.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFrf.eq("Y")).then(1)
+                                .otherwise(0),
+                        new CaseBuilder()
+                                .when(requestDetail.fdPollutionLocBcn.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBcs.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBcb.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBlh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBrh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBlf.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBrf.eq("Y")).then(1)
+                                .otherwise(0)
                 ));
         query.orderBy(requestDetail.id.asc());
         return query.fetch();
@@ -414,7 +510,25 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdTotAmt,
                         requestDetail.fdRemark,
                         request.frYyyymmdd,
-                        requestDetail.fdS4Dt
+                        requestDetail.fdS4Dt,
+                        new CaseBuilder()
+                                .when(requestDetail.fdPollutionLocFcn.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFcs.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFcb.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFlh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFrh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFlf.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFrf.eq("Y")).then(1)
+                                .otherwise(0),
+                        new CaseBuilder()
+                                .when(requestDetail.fdPollutionLocBcn.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBcs.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBcb.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBlh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBrh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBlf.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBrf.eq("Y")).then(1)
+                                .otherwise(0)
                 ));
         query.orderBy(requestDetail.id.asc());
 
@@ -514,7 +628,26 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdTotAmt,
                         requestDetail.fdRemark,
                         request.frYyyymmdd,
-                        requestDetail.fdS2Dt
+                        requestDetail.fdS2Dt,
+
+                        new CaseBuilder()
+                                .when(requestDetail.fdPollutionLocFcn.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFcs.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFcb.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFlh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFrh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFlf.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFrf.eq("Y")).then(1)
+                                .otherwise(0),
+                        new CaseBuilder()
+                                .when(requestDetail.fdPollutionLocBcn.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBcs.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBcb.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBlh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBrh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBlf.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBrf.eq("Y")).then(1)
+                                .otherwise(0)
                 ));
 //        query.groupBy(requestDetail.fdTag).orderBy(requestDetail.id.asc());
 
@@ -583,7 +716,25 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdUrgentYn,
                         requestDetail.fdTotAmt,
                         requestDetail.fdRemark,
-                        requestDetail.fdEstimateDt
+                        requestDetail.fdEstimateDt,
+                        new CaseBuilder()
+                                .when(requestDetail.fdPollutionLocFcn.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFcs.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFcb.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFlh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFrh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFlf.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFrf.eq("Y")).then(1)
+                                .otherwise(0),
+                        new CaseBuilder()
+                                .when(requestDetail.fdPollutionLocBcn.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBcs.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBcb.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBlh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBrh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBlf.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBrf.eq("Y")).then(1)
+                                .otherwise(0)
                 ));
         query.orderBy(requestDetail.id.asc());
         query.where(requestDetail.fdState.eq("S5").or(requestDetail.fdState.eq("S8").or(requestDetail.fdState.eq("S3"))));
@@ -654,7 +805,25 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdWaterRepellent,
                         requestDetail.fdUrgentYn,
                         requestDetail.fdTotAmt,
-                        requestDetail.fdRemark
+                        requestDetail.fdRemark,
+                        new CaseBuilder()
+                                .when(requestDetail.fdPollutionLocFcn.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFcs.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFcb.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFlh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFrh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFlf.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFrf.eq("Y")).then(1)
+                                .otherwise(0),
+                        new CaseBuilder()
+                                .when(requestDetail.fdPollutionLocBcn.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBcs.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBcb.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBlh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBrh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBlf.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBrf.eq("Y")).then(1)
+                                .otherwise(0)
                 ));
         query.orderBy(requestDetail.id.asc()).groupBy(requestDetail, inspeot.fdId);
         if(!searchTag.equals("")){
@@ -754,7 +923,27 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         sb.append("WHEN h.fi_customer_confirm = 2 THEN '07' \n");
         sb.append("WHEN h.fi_customer_confirm = 3 THEN '08' \n");
         sb.append("ELSE '01' \n");
-        sb.append("END as fdS4Type\n");
+        sb.append("END as fdS4Type, \n");
+
+        sb.append("CASE \n"); // 반품
+        sb.append("WHEN a.fd_pollution_loc_fcn = 'Y' THEN 1 \n");
+        sb.append("WHEN a.fd_pollution_loc_fcs = 'Y' THEN 1 \n");
+        sb.append("WHEN a.fd_pollution_loc_fcb = 'Y' THEN 1 \n");
+        sb.append("WHEN a.fd_pollution_loc_flh = 'Y' THEN 1 \n");
+        sb.append("WHEN a.fd_pollution_loc_frh = 'Y' THEN 1 \n");
+        sb.append("WHEN a.fd_pollution_loc_flf = 'Y' THEN 1 \n");
+        sb.append("WHEN a.fd_pollution_loc_frf = 'Y' THEN 1 \n");
+        sb.append("ELSE 0 END fdPollutionType, \n");
+
+        sb.append("CASE \n"); // 반품
+        sb.append("WHEN a.fd_pollution_loc_bcn = 'Y' THEN 1 \n");
+        sb.append("WHEN a.fd_pollution_loc_bcs = 'Y' THEN 1 \n");
+        sb.append("WHEN a.fd_pollution_loc_bcb = 'Y' THEN 1 \n");
+        sb.append("WHEN a.fd_pollution_loc_blh = 'Y' THEN 1 \n");
+        sb.append("WHEN a.fd_pollution_loc_brh = 'Y' THEN 1 \n");
+        sb.append("WHEN a.fd_pollution_loc_blf = 'Y' THEN 1 \n");
+        sb.append("WHEN a.fd_pollution_loc_brf = 'Y' THEN 1 \n");
+        sb.append("ELSE 0 END fdPollutionBack \n");
 
         sb.append("FROM fs_request_dtl a \n");
         sb.append("INNER JOIN fs_request b on a.fr_id=b.fr_id \n");
@@ -969,7 +1158,25 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         customer.bcName,
                         requestDetail.fdTotAmt,
                         requestDetail.fdState,
-                        requestDetail.fdPreState
+                        requestDetail.fdPreState,
+                        new CaseBuilder()
+                                .when(requestDetail.fdPollutionLocFcn.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFcs.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFcb.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFlh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFrh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFlf.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFrf.eq("Y")).then(1)
+                                .otherwise(0),
+                        new CaseBuilder()
+                                .when(requestDetail.fdPollutionLocBcn.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBcs.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBcb.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBlh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBrh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBlf.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBrf.eq("Y")).then(1)
+                                .otherwise(0)
                 ));
         query.orderBy(requestDetail.id.asc());
         query.where(requestDetail.fdState.eq("S4"));
@@ -1090,7 +1297,26 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         customer.bcName,
                         requestDetail.fdTotAmt,
                         requestDetail.fdState,
-                        requestDetail.fdPreState
+                        requestDetail.fdPreState,
+
+                        new CaseBuilder()
+                                .when(requestDetail.fdPollutionLocFcn.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFcs.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFcb.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFlh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFrh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFlf.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFrf.eq("Y")).then(1)
+                                .otherwise(0),
+                        new CaseBuilder()
+                                .when(requestDetail.fdPollutionLocBcn.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBcs.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBcb.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBlh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBrh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBlf.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBrf.eq("Y")).then(1)
+                                .otherwise(0)
                 ));
         query.orderBy(requestDetail.id.asc());
         query.where(requestDetail.fdState.eq("S2"));
@@ -1150,7 +1376,26 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         customer.bcName,
                         requestDetail.fdTotAmt,
                         requestDetail.fdState,
-                        requestDetail.fdPreState
+                        requestDetail.fdPreState,
+
+                        new CaseBuilder()
+                                .when(requestDetail.fdPollutionLocFcn.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFcs.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFcb.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFlh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFrh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFlf.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFrf.eq("Y")).then(1)
+                                .otherwise(0),
+                        new CaseBuilder()
+                                .when(requestDetail.fdPollutionLocBcn.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBcs.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBcb.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBlh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBrh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBlf.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBrf.eq("Y")).then(1)
+                                .otherwise(0)
                 ));
         query.orderBy(requestDetail.id.asc());
         query.where(requestDetail.fdState.eq("S2"));
@@ -1215,7 +1460,26 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdTotAmt,
                         requestDetail.fdState,
                         requestDetail.fdPreState,
-                        inspeot.fiCustomerConfirm
+                        inspeot.fiCustomerConfirm,
+
+                        new CaseBuilder()
+                                .when(requestDetail.fdPollutionLocFcn.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFcs.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFcb.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFlh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFrh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFlf.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFrf.eq("Y")).then(1)
+                                .otherwise(0),
+                        new CaseBuilder()
+                                .when(requestDetail.fdPollutionLocBcn.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBcs.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBcb.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBlh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBrh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBlf.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBrf.eq("Y")).then(1)
+                                .otherwise(0)
                 ));
         query.orderBy(requestDetail.id.asc());
         query.where(requestDetail.fdState.eq("S2"));
@@ -1280,7 +1544,27 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdTotAmt,
                         requestDetail.fdState,
                         inspeot.fiAddAmt.sum(),
-                        inspeot.fiCustomerConfirm
+                        inspeot.fiCustomerConfirm,
+
+                        new CaseBuilder()
+                                .when(requestDetail.fdPollutionLocFcn.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFcs.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFcb.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFlh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFrh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFlf.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFrf.eq("Y")).then(1)
+                                .otherwise(0),
+                        new CaseBuilder()
+                                .when(requestDetail.fdPollutionLocBcn.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBcs.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBcb.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBlh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBrh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBlf.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBrf.eq("Y")).then(1)
+                                .otherwise(0)
+
                 ));
         query.orderBy(requestDetail.id.asc()).groupBy(requestDetail.id);
         query.where(inspeot.fiType.eq("B"));
@@ -1345,7 +1629,26 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdRemark,
                         requestDetail.fdS3Dt,
                         requestDetail.fdS7Dt,
-                        requestDetail.fdS8Dt
+                        requestDetail.fdS8Dt,
+
+                        new CaseBuilder()
+                                .when(requestDetail.fdPollutionLocFcn.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFcs.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFcb.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFlh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFrh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFlf.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFrf.eq("Y")).then(1)
+                                .otherwise(0),
+                        new CaseBuilder()
+                                .when(requestDetail.fdPollutionLocBcn.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBcs.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBcb.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBlh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBrh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBlf.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBrf.eq("Y")).then(1)
+                                .otherwise(0)
                 ));
         query.orderBy(requestDetail.id.asc());
         if(frId != 0) {
@@ -1442,7 +1745,26 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         customer.bcName,
                         requestDetail.fdTotAmt,
                         requestDetail.fdState,
-                        requestDetail.fdRemark
+                        requestDetail.fdRemark,
+
+                        new CaseBuilder()
+                                .when(requestDetail.fdPollutionLocFcn.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFcs.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFcb.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFlh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFrh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFlf.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFrf.eq("Y")).then(1)
+                                .otherwise(0),
+                        new CaseBuilder()
+                                .when(requestDetail.fdPollutionLocBcn.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBcs.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBcb.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBlh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBrh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBlf.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBrf.eq("Y")).then(1)
+                                .otherwise(0)
                 ));
 
         query.orderBy(requestDetail.id.asc());
@@ -1500,7 +1822,27 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         customer.bcName,
                         requestDetail.fdTotAmt,
                         requestDetail.fdState,
-                        requestDetail.fdRemark
+                        requestDetail.fdRemark,
+
+                        new CaseBuilder()
+                                .when(requestDetail.fdPollutionLocFcn.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFcs.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFcb.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFlh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFrh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFlf.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFrf.eq("Y")).then(1)
+                                .otherwise(0),
+                        new CaseBuilder()
+                                .when(requestDetail.fdPollutionLocBcn.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBcs.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBcb.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBlh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBrh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBlf.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBrf.eq("Y")).then(1)
+                                .otherwise(0)
+
                 ));
 
         query.orderBy(requestDetail.id.asc());
@@ -1615,7 +1957,26 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdState,
                         requestDetail.fdRemark,
 
-                        issue.miNo
+                        issue.miNo,
+
+                        new CaseBuilder()
+                                .when(requestDetail.fdPollutionLocFcn.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFcs.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFcb.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFlh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFrh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFlf.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFrf.eq("Y")).then(1)
+                                .otherwise(0),
+                        new CaseBuilder()
+                                .when(requestDetail.fdPollutionLocBcn.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBcs.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBcb.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBlh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBrh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBlf.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBrf.eq("Y")).then(1)
+                                .otherwise(0)
                 ));
 
         query.orderBy(requestDetail.id.asc());
@@ -1675,7 +2036,28 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         customer.bcName,
                         requestDetail.fdTotAmt,
                         requestDetail.fdState,
-                        requestDetail.fdRemark
+                        requestDetail.fdRemark,
+
+                        new CaseBuilder()
+                                .when(requestDetail.fdPollutionLocFcn.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFcs.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFcb.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFlh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFrh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFlf.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFrf.eq("Y")).then(1)
+                                .otherwise(0),
+
+                        new CaseBuilder()
+                                .when(requestDetail.fdPollutionLocBcn.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBcs.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBcb.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBlh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBrh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBlf.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBrf.eq("Y")).then(1)
+                                .otherwise(0)
+
                 ));
 
         query.orderBy(requestDetail.id.asc());
@@ -1767,7 +2149,26 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         customer.bcName,
                         requestDetail.fdTotAmt,
                         requestDetail.fdState,
-                        requestDetail.fdRemark
+                        requestDetail.fdRemark,
+
+                        new CaseBuilder()
+                                .when(requestDetail.fdPollutionLocFcn.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFcs.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFcb.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFlh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFrh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFlf.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFrf.eq("Y")).then(1)
+                                .otherwise(0),
+                        new CaseBuilder()
+                                .when(requestDetail.fdPollutionLocBcn.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBcs.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBcb.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBlh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBrh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBlf.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBrf.eq("Y")).then(1)
+                                .otherwise(0)
                 ));
 
         query.orderBy(requestDetail.id.asc());
@@ -1865,7 +2266,27 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         customer.bcName,
                         requestDetail.fdTotAmt,
                         requestDetail.fdState,
-                        requestDetail.fdRemark
+                        requestDetail.fdRemark,
+
+                        new CaseBuilder()
+                                .when(requestDetail.fdPollutionLocFcn.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFcs.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFcb.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFlh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFrh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFlf.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFrf.eq("Y")).then(1)
+                                .otherwise(0),
+                        new CaseBuilder()
+                                .when(requestDetail.fdPollutionLocBcn.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBcs.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBcb.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBlh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBrh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBlf.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBrf.eq("Y")).then(1)
+                                .otherwise(0)
+
                 ));
 
         query.orderBy(requestDetail.id.asc());

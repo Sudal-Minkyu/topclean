@@ -308,14 +308,8 @@ public class ReceiptStateService {
 
         // 수기마감 페이지에 보여줄 리스트 호출
         List<RequestDetailCloseListDto> requestDetailCloseListDtos = requestDetailRepository.findByRequestDetailCloseList(frCode);
-//        List<Long> fdIdList = new ArrayList<>();
-//        for(RequestDetailCloseListDto requestDetailCloseListDto : requestDetailCloseListDtos){
-//            fdIdList.add(requestDetailCloseListDto.getFdId());
-//        }
-//        List<InspeotYnDto> inspeotYnDtos = inspeotRepositoryCustom.findByInspeotStateList(fdIdList,"1");
         log.info("requestDetailCloseListDtos : "+requestDetailCloseListDtos);
         data.put("gridListData",requestDetailCloseListDtos);
-//        data.put("removeFrId",inspeotYnDtos);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }

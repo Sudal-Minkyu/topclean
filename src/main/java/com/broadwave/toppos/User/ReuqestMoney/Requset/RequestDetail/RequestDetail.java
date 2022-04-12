@@ -181,7 +181,7 @@ public class RequestDetail {
     private Integer fdPollution; // 오염 추가요금
 
     @Column(name="fd_pollution_level")
-    private Integer fdPollutionLevel; // 오염 선택레벨( 1~5)
+    private Integer fdPollutionLevel; // 오염 선택레벨(1~5)
 
     @Column(name="fd_pollution_loc_fcn")
     private String fdPollutionLocFcn; // 오염위치 앞 - 목  체크면 Y 아니면 N

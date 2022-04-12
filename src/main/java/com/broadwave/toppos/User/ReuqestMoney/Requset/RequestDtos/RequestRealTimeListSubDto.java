@@ -45,6 +45,12 @@ public class RequestRealTimeListSubDto {
     private String fdState; // 현재상태 ( S1 : 접수, S2: 지사입고,S3 강제출고, S4:가맹점입고, S6: 고객인도, S7: 지사강제출고, S8: 가맹점강제입고)
     private String fdRemark;
 
+    private Integer fdPollutionType;
+    private Integer fdPollutionBack;
+    public Integer getFdPollutionType() {
+        return fdPollutionType + fdPollutionBack;
+    }
+
     public StringBuffer getFrYyyymmdd() {
         if(frYyyymmdd != null && !frYyyymmdd.equals("")){
             StringBuffer getFrYyyymmdd = new StringBuffer(frYyyymmdd);

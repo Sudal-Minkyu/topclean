@@ -48,6 +48,13 @@ public class RequestDetailBranchUnReleaseCurrentRightListDto {
     private String fdState; // 현재상태 ( S1 : 접수, S2: 지사입고,S3 강제출고, S4:가맹점입고, S6: 고객인도, S7: 지사강제출고, S8: 가맹점강제입고)
     private String fdRemark; // 특이사항
 
+    private Integer fdPollutionType;
+    private Integer fdPollutionBack;
+
+    public Integer getFdPollutionType() {
+        return fdPollutionType + fdPollutionBack;
+    }
+
     public StringBuffer getFdEstimateDt() {
         if(fdEstimateDt != null && !fdEstimateDt.equals("")){
             StringBuffer getFdEstimateDt = new StringBuffer(fdEstimateDt);

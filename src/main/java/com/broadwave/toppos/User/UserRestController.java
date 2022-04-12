@@ -727,6 +727,8 @@ public class UserRestController {
                 requestDetailInfo.put("fdAgreeType", requestDetailDto.getFdAgreeType());
                 requestDetailInfo.put("fdSignImage", requestDetailDto.getFdSignImage());
 
+                requestDetailInfo.put("fdPollutionType", requestDetailDto.getFdPollutionType());
+
                 List<PhotoDto> photoDtoList = receiptService.findByPhotoDtoRequestDtlList(requestDetailDto.getId());
                 requestDetailInfo.put("photoList", photoDtoList);
 
@@ -1029,6 +1031,8 @@ public class UserRestController {
 
     //  수기마감 - 세부테이블 접수상태 리스트 + 검품이 존재할시 상태가 고객수락일 경우에만 호출
     @GetMapping("franchiseReceiptCloseList")
+    @ApiOperation(value = "수기마감 리스트" , notes = "수기마감할 리스트를 호출한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
     public ResponseEntity<Map<String,Object>> franchiseReceiptCloseList(HttpServletRequest request){
         return receiptStateService.franchiseReceiptCloseList(request);
     }

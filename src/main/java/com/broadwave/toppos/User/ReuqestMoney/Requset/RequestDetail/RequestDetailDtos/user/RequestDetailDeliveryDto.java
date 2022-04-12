@@ -53,6 +53,13 @@ public class RequestDetailDeliveryDto {
 
     private String fdEstimateDt; // 출고예정일
 
+    private Integer fdPollutionType;
+    private Integer fdPollutionBack;
+
+    public Integer getFdPollutionType() {
+        return fdPollutionType + fdPollutionBack;
+    }
+
     public StringBuffer getFdEstimateDt() {
         if(fdEstimateDt != null && !fdEstimateDt.equals("")){
             StringBuffer getFdEstimateDt = new StringBuffer(fdEstimateDt);
