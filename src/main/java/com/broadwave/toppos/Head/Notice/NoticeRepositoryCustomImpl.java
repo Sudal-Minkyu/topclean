@@ -46,7 +46,7 @@ public class NoticeRepositoryCustomImpl extends QuerydslRepositorySupport implem
             notice.brCode.eq(brCode);
         }
 
-        query.orderBy(notice.hnId.desc()).limit(5);
+        query.orderBy(notice.hnId.desc()).limit(4);
 
         return query.fetch();
     }
