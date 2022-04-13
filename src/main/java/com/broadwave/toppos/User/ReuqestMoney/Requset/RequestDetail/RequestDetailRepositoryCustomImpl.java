@@ -140,7 +140,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         StringBuilder sb = new StringBuilder();
 
         sb.append("SELECT \n");
-        sb.append("c.bc_name, b.fr_yyyymmdd, a.fd_id, b.fr_id, \n");
+        sb.append("c.bc_name, b.fr_yyyymmdd, b.fr_insert_date, a.fd_id, b.fr_id, \n");
         sb.append("b.fr_no, a.fd_tag, a.bi_itemcode, a.fd_state, a.fd_pre_state, \n");
         sb.append("a.fd_s2_dt, a.fd_s3_dt, a.fd_s4_dt, \n");
         sb.append("CASE WHEN a.fd_s8_dt IS NULL THEN \n");
@@ -148,7 +148,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         sb.append("ELSE a.fd_s7_dt end) \n");
         sb.append("ELSE a.fd_s8_dt \n");
         sb.append("END as fdS5Dt, \n");
-        sb.append("a.fd_s6_dt, a.fd_cancel, a.fd_cacel_dt, a.fd_color, a.fd_pattern, a.fd_price_grade, \n");
+        sb.append("a.fd_s6_dt, a.fd_s6_time, a.fd_cancel, a.fd_cacel_dt, a.fd_color, a.fd_pattern, a.fd_price_grade, \n");
         sb.append("a.fd_origin_amt, a.fd_normal_amt, a.fd_add2_amt, a.fd_add2_remark, \n");
         sb.append("a.fd_pollution, a.fd_discount_grade, a.fd_discount_amt, a.fd_qty, a.fd_request_amt, \n");
         sb.append("a.fd_special_yn, a.fd_tot_amt, a.fd_remark, a.fd_estimate_dt, a.fd_retry_yn, a.fd_urgent_yn, a.fd_pressed, \n");

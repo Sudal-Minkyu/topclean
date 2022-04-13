@@ -23,6 +23,7 @@ public class RequestDetailSearchDto {
     // 마스터 테이블에서 가져 올 데이터
     private String bcName; // 고객이름
     private String frYyyymmdd; // 접수일자
+    private Timestamp frInsertDt; // 접수시간
 
     // 세부 테이블에서 가져 올 데이터
     private BigInteger fdId; // 접수세부테이블 고유값 ID
@@ -39,6 +40,7 @@ public class RequestDetailSearchDto {
     private String fdS4Dt; // 지사출고일
     private String fdS5Dt; // 가맹점입고일(완성일자)
     private String fdS6Dt; // 고객인도일
+    private Timestamp fdS6Time; // 고객인도일
 
     private String fdCancel; // 접수취소 Y 기본값 N
     private Timestamp fdCacelDt; // 접수취소 시간

@@ -126,9 +126,24 @@ public class InspectService {
         log.info("현재 접속한 가맹점 코드 : "+frCode);
         log.info("현재 접속한 가맹점 택번호 : "+frTagNo);
 
+        List<HashMap<String,Object>> requestDetailSearchDtoData = new ArrayList<>();
+        HashMap<String,Object> requestDetailSearchDtoInfo;
+
         List<RequestDetailSearchDto> requestDetailSearchDtoList = requestDetailRepository.requestDetailSearch(frCode, bcId, frTagNo+searchTag, filterCondition, filterFromDt, filterToDt); //  통합조회용 - 접수세부 호출
         log.info("requestDetailSearchDtoList 크기 : "+requestDetailSearchDtoList.size());
-        data.put("gridListData",requestDetailSearchDtoList);
+
+
+        for(RequestDetailSearchDto requestDetailSearchDto : requestDetailSearchDtoList){
+            requestDetailSearchDtoInfo = new HashMap<>();
+
+            List<PhotoDto> photoDtoList = photoRepository.findByPhotoDtoRequestDtlList(Long.parseLong(String.valueOf(requestDetailSearchDto.getFdId())));
+            requestDetailSearchDtoInfo.put("requestDetail", requestDetailSearchDto);
+            requestDetailSearchDtoInfo.put("photoList", photoDtoList);
+
+            requestDetailSearchDtoData.add(requestDetailSearchDtoInfo);
+        }
+
+        data.put("gridListData",requestDetailSearchDtoData);
         
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
