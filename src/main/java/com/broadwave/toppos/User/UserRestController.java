@@ -33,6 +33,7 @@ import com.broadwave.toppos.User.ReuqestMoney.Requset.Request;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotMainListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotMapperDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.PhotoDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailDeliveryDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailUpdateDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailSet;
@@ -341,6 +342,11 @@ public class UserRestController {
             customerListInfo.put("bcWeddingAnniversary", customerInfoDto.getBcWeddingAnniversary());
             customerListInfo.put("uncollectMoney", 0);
             customerListInfo.put("saveMoney", 0);
+
+            // 세탁인도할 품목 리스트 호출
+            List<RequestDetailDeliveryDto> requestDetailDeliveryDtos = receiptStateService.requestDetailDelivery(frCode, customerInfoDto.getBcId());
+            customerListInfo.put("deliverySize",requestDetailDeliveryDtos.size());
+
             if(requestTemp != null){
                 customerListInfo.put("tempSaveFrNo", requestTemp.getFrNo());
             }else{
@@ -728,6 +734,7 @@ public class UserRestController {
                 requestDetailInfo.put("fdSignImage", requestDetailDto.getFdSignImage());
 
                 requestDetailInfo.put("fdPollutionType", requestDetailDto.getFdPollutionType());
+                requestDetailInfo.put("fdPollutionBack", requestDetailDto.getFdPollutionBack());
 
                 List<PhotoDto> photoDtoList = receiptService.findByPhotoDtoRequestDtlList(requestDetailDto.getId());
                 requestDetailInfo.put("photoList", photoDtoList);

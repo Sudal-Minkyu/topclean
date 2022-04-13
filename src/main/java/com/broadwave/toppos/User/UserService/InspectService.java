@@ -186,6 +186,7 @@ public class InspectService {
             requestDetailInfo.put("fdAdd1Amt", requestDetailDto.getFdAdd1Amt());
             requestDetailInfo.put("fdAdd1Remark", requestDetailDto.getFdAdd1Remark());
             requestDetailInfo.put("fdRepairAmt", requestDetailDto.getFdRepairAmt());
+            requestDetailInfo.put("fdRepairRemark", requestDetailDto.getFdRepairRemark());
             requestDetailInfo.put("fdWhitening", requestDetailDto.getFdWhitening());
             requestDetailInfo.put("fdPollutionLevel", requestDetailDto.getFdPollutionLevel());
             requestDetailInfo.put("fdWaterRepellent", requestDetailDto.getFdWaterRepellent());
@@ -220,6 +221,7 @@ public class InspectService {
             requestDetailInfo.put("fpCancelYn", requestDetailDto.getFpCancelYn());
 
             requestDetailInfo.put("fdPollutionType", requestDetailDto.getFdPollutionType());
+            requestDetailInfo.put("fdPollutionBack", requestDetailDto.getFdPollutionBack());
 
             List<PhotoDto> photoDtoList = photoRepository.findByPhotoDtoRequestDtlList(Long.parseLong(String.valueOf(requestDetailDto.getFdId())));
             requestDetailInfo.put("photoList", photoDtoList);

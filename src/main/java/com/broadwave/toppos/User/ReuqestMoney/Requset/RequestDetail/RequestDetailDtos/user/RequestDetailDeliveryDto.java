@@ -5,6 +5,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+
 /**
  * @author Minkyu
  * Date : 2021-01-05
@@ -22,6 +25,7 @@ public class RequestDetailDeliveryDto {
     private Long fdId; // 접수세부테이블 고유값 ID
 
     private String frYyyymmdd; // 접수일자
+    private LocalDateTime frInsertDt; // 접수시간
     private String fdTag; // 택번호
 
     private String fdColor; // 색상코드 (00:미선택 01 흰색 02:검정 03: 회색, 04 빨강 05:주황, 06: 노랑, 07 초록 08 파랑 09:남색 10 보라 11 핑크)

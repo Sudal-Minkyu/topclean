@@ -446,10 +446,16 @@ public class ReceiptStateService {
         log.info("현재 접속한 가맹점 코드 : "+frCode);
 
         // 세탁인도 페이지에 보여줄 리스트 호출
-        List<RequestDetailDeliveryDto> requestDetailDeliveryDtos = requestDetailRepository.findByRequestDetailDeliveryList(frCode, bcId);
+        List<RequestDetailDeliveryDto> requestDetailDeliveryDtos = requestDetailDelivery(frCode, bcId);
         data.put("gridListData",requestDetailDeliveryDtos);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
+
+    // 세탁인도 리스트 리턴 함수
+    public List<RequestDetailDeliveryDto> requestDetailDelivery(String frCode, Long bcId){
+        return requestDetailRepository.findByRequestDetailDeliveryList(frCode, bcId);
+    }
+
 
 }

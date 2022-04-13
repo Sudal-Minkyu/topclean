@@ -685,6 +685,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         customer.bcName,
                         requestDetail.id,
                         request.frYyyymmdd,
+                        request.fr_insert_date,
                         requestDetail.fdTag,
                         requestDetail.fdColor,
                         itemGroup.bgName,
