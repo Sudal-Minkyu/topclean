@@ -192,6 +192,14 @@ const dtos = {
         },
 
         franchiseRequestDetailSearch: { // 접수 세부 테이블의 거의 모든 요소와, 고객이름
+            photoList: { // 2022.04.13 추가
+                ffId: "n",
+                ffPath: "s",
+                ffFilename: "s",
+            },
+            fdPollutionType: "s",
+            frInsertDt: "s", // 2022.04.13 추가
+            fdS6Time: "s", // 2022.04.13 추가
             frFiId: "n", // 2022.04.05 추가
             brFiId: "n", // 2022.04.05 추가
             frFiCustomerConfirm: "s", // 2022.04.05 추가
@@ -373,6 +381,7 @@ const comms = {
         wares.currentCondition = condition;
         dv.chk(condition, dtos.send.franchiseRequestDetailSearch, "메인그리드 필터링 조건 보내기");
         CommonUI.ajax(grids.s.url.read[0], "GET", condition, function(res) {
+            console.log(res);
             const gridData = res.sendData.gridListData;
             gridData.forEach(item => {
                 if(item.fdState === "S1" && item.frFiId && item.frFiCustomerConfirm === "1") {
@@ -662,17 +671,33 @@ const grids = {
                     style: "grid_textalign_left",
                     width: 70,
                 }, {
-                    dataField: "frYyyymmdd",
+                    dataField: "frInsertDt",
                     headerText: "접수일자",
                     width: 90,
-                    dataType: "date",
-                    formatString: "yyyy-mm-dd",
+                    renderer : {
+                        type : "TemplateRenderer",
+                    },
+                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
+                        let result = "";
+                        if(typeof value === "number") {
+                            result = new Date(value).format("yyyy-MM-dd<br>hh:mm");
+                        }
+                        return result;
+                    },
                 }, {
-                    dataField: "fdS6Dt",
+                    dataField: "fdS6Time",
                     headerText: "인도일자",
                     width: 90,
-                    dataType: "date",
-                    formatString: "yyyy-mm-dd",
+                    renderer : {
+                        type : "TemplateRenderer",
+                    },
+                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
+                        let result = "";
+                        if(typeof value === "number") {
+                            result = new Date(value).format("yyyy-MM-dd<br>hh:mm");
+                        }
+                        return result;
+                    },
                 }, {
                     dataField: "fdTag",
                     headerText: "택번호",
@@ -834,7 +859,7 @@ const grids = {
                     },
                     labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
                         let template = "";
-                        if(item.fpCancelYn === "N") {
+                        if(item.fpCancelYn === "N" && ["S1", "F"].includes(item.fdState)) {
                             template = `
                                 <button class="c-state c-state--cancel">취소</button>
                             `;
@@ -1677,6 +1702,8 @@ function onPageLoad() {
     $('.pop__close').on('click', function(e) {
         $(this).parents('.pop').removeClass('active');
     })
+
+    getParamsAndAction();
 }
 
 function modifyOrder(rowIndex) {
@@ -2053,6 +2080,22 @@ function putCustomer() {
     // $("#class02, #class03").parents("li").css("display", "none");
     // $("#class" + wares.selectedCustomer.bcGrade).parents("li").css("display", "block");
     grids.f.clearGrid(0);
+
+
+    let fromday = new Date();
+    fromday.setDate(fromday.getDate() - 30);
+    fromday = fromday.format("yyyy-MM-dd");
+    const today = new Date().format("yyyy-MM-dd");
+
+    /* datepicker를 적용시킬 대상들의 dom id들 */
+    const datePickerTargetIds = [
+        "filterFromDt", "filterToDt"
+    ];
+
+    $("#filterFromDt").val(fromday);
+    $("#filterToDt").val(today);
+
+    setTopMenuHref();
 }
 
 function onSelectBiItem(biCode, price) {
@@ -2659,4 +2702,29 @@ function addDistinguishableCellColor() {
 
     AUIGrid.updateRowsById(grids.s.id[0], items);
     AUIGrid.refresh(grids.s.id[0]);
+}
+
+/* 브라우저의 get 파라미터들을 가져오고 그에 따른 작업을 반영하기 위해 */
+function getParamsAndAction() {
+    const url = new URL(window.location.href);
+    const params = url.searchParams;
+
+    if(params.has("bchp")) {
+        const bcHp = params.get("bchp");
+        $("#searchType").val("2");
+        $("#searchString").val(bcHp);
+        searchCustomer();
+    }
+}
+
+function setTopMenuHref() {
+    if(wares.selectedCustomer.bcHp) {
+        $("#menuReceiptreg").attr("href", `/user/receiptreg?bchp=${wares.selectedCustomer.bcHp}`);
+        $("#menuDelivery").attr("href", `/user/delivery?bchp=${wares.selectedCustomer.bcHp}`);
+        $("#menuIntegrate").attr("href", `/user/integrate?bchp=${wares.selectedCustomer.bcHp}`);
+    } else {
+        $("#menuReceiptreg").attr("href", `/user/receiptreg`);
+        $("#menuDelivery").attr("href", `/user/delivery`);
+        $("#menuIntegrate").attr("href", `/user/integrate`);
+    }
 }

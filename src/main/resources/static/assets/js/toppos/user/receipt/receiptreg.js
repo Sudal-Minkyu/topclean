@@ -54,7 +54,7 @@ $(function() {
     /* 배열내의 각 설정만 넣어 빈 그리드 생성 */
     createGrids(true);
 
-    setDataIntoGrid(2, gridCreateUrl[2]);
+    setDataIntoGrid(2, "/api/user/tempRequestList");
 
     /* 하단 패널과 그리드의 너비 버그 수정용 코드 */
     AUIGrid.resize(gridId[0]);
@@ -374,22 +374,10 @@ let gridTargetDiv = [];
 let gridData = [];
 let gridColumnLayout = [];
 let gridProp = [];
-let gridCreateUrl = [];
-let gridSaveUrl = [];
 
 /* 그리드를 뿌릴 대상 div의 id들 */
 gridTargetDiv = [
     "grid_requestList", "grid_customerList", "grid_tempSaveList", "grid_payment"
-];
-
-/* 그리드를 받아올 때 쓰이는 api, 이번엔 예외적으로 배열 2번째 값은 첫번째 그리드에서 쓰인다.*/
-gridCreateUrl = [
-    "/api/user/tempRequestDetailList", "/api/user/tempRequestDetailDelete", "/api/user/tempRequestList", "/api/user/"
-];
-
-/* 그리드를 저장할 때 쓰이는 api 배열 */
-gridSaveUrl = [
-    "/api/user/requestSave", "/api/b"
 ];
 
 /* 0번 그리드의 레이아웃 */
@@ -688,10 +676,10 @@ function ajaxRemoveTempSave(frNo, setAfterDelete = false) {
         frNo: frNo
     };
     console.log(params);
-    CommonUI.ajax(gridCreateUrl[1], "PARAM", params, function (res) {
+    CommonUI.ajax("/api/user/tempRequestDetailDelete", "PARAM", params, function (res) {
         console.log(res);
         // 성공하면 임시저장 마스터테이블 조회
-        setDataIntoGrid(2, gridCreateUrl[2]);
+        setDataIntoGrid(2, "/api/user/tempRequestList");
         alertSuccess("임시저장이 삭제되었습니다.");
         if(setAfterDelete) {
             onPutCustomer();
@@ -786,7 +774,7 @@ function onSelectTempSave() {
 }
 
 function loadTempSave(frNo) {
-    CommonUI.ajax(gridCreateUrl[0], "GET", {frNo: frNo}, function (req) {
+    CommonUI.ajax("/api/user/tempRequestDetailList", "GET", {frNo: frNo}, function (req) {
         initialData.etcData.frNo = frNo;
         selectedCustomer = req.sendData.gridListData[0];
         checkCustomer();
@@ -846,6 +834,8 @@ function onPutCustomer() {
     $("#class" + selectedCustomer.bcGrade).parents("li").css("display", "block");
     AUIGrid.clearGridData(gridId[0]);
     calculateMainPrice(AUIGrid.getGridData(gridId[0]), AUIGrid.getRemovedItems(gridId[0]));
+
+    setTopMenuHref();
 }
 
 /* 하단의 세탁물 종류 버튼 클릭시 해당 세탁물 대분류 코드를 가져와 팝업을 띄운다. */
@@ -1150,6 +1140,32 @@ function putItemIntoGrid() {
         }
     }
 
+    let forePollutionChecked = false;
+    let backPollutionChecked = false;
+
+    if(currentRequest.fdPollutionLocFcn === "Y" || currentRequest.fdPollutionLocFcs === "Y" ||
+        currentRequest.fdPollutionLocFcb === "Y" ||
+        currentRequest.fdPollutionLocFrh === "Y" || currentRequest.fdPollutionLocFlh === "Y" ||
+        currentRequest.fdPollutionLocFrf === "Y" || currentRequest.fdPollutionLocFlf === "Y") {
+        forePollutionChecked = true;
+    }
+
+    if(currentRequest.fdPollutionLocBcn === "Y" || currentRequest.fdPollutionLocBcs === "Y" ||
+        currentRequest.fdPollutionLocBcb === "Y" ||
+        currentRequest.fdPollutionLocBrh === "Y" || currentRequest.fdPollutionLocBlh === "Y" ||
+        currentRequest.fdPollutionLocBrf === "Y" || currentRequest.fdPollutionLocBlf === "Y") {
+        backPollutionChecked = true;
+    }
+
+    currentRequest.fdPollutionBack = backPollutionChecked ? 1 : 0;
+    if(forePollutionChecked && backPollutionChecked) {
+        currentRequest.fdPollutionType = 2;
+    } else if (forePollutionChecked || backPollutionChecked) {
+        currentRequest.fdPollutionType = 1;
+    } else {
+        currentRequest.fdPollutionType = 0;
+    }
+
     if(currentRequest._$uid) {
         const copyObj = CommonUI.cloneObj(currentRequest);
         copyObj["dummy" + parseInt(Math.random() * 100000).toString()] = "dummy";
@@ -1377,7 +1393,7 @@ function onTempSave() {
 }
 
 /* 전역변수 cehckNum이 1일 경우에는 임시저장, 2일 경우에는 접수완료처리 */
-function onSave(turnOnSuccessMsg = false, paymentMode = false, creditData = {}) {
+function onSave(turnOnSuccessMsg = false, callback = function () {}, tossData = {}) {
 
     // 추가된 행 아이템들(배열)
     const addedRowItems = AUIGrid.getAddedRowItems(gridId[0]);
@@ -1411,16 +1427,16 @@ function onSave(turnOnSuccessMsg = false, paymentMode = false, creditData = {}) 
     };
     saveData = data;
 
-    onSaveAjax(turnOnSuccessMsg, paymentMode, creditData);
+    onSaveAjax(turnOnSuccessMsg, callback, tossData);
 }
 
-function onSaveAjax(turnOnSuccessMsg, paymentMode, creditData) {
-    CommonUI.ajax(gridSaveUrl[0], "MAPPER", saveData, function (req) {
+function onSaveAjax(turnOnSuccessMsg, callback, tossData) {
+    CommonUI.ajax("/api/user/requestSave", "MAPPER", saveData, function (req) {
         AUIGrid.removeSoftRows(gridId[0]);
         AUIGrid.resetUpdatedItems(gridId[0]);
         AUIGrid.clearGridData(gridId[2]);
         if(checkNum === "1") {
-            setDataIntoGrid(2, gridCreateUrl[2]);
+            setDataIntoGrid(2, "/api/user/tempRequestList");
             if(turnOnSuccessMsg) {
                 alertSuccess("임시저장이 되었습니다");
             }
@@ -1439,9 +1455,7 @@ function onSaveAjax(turnOnSuccessMsg, paymentMode, creditData) {
         $("#saveMoney").html(selectedCustomer.saveMoney.toLocaleString());
         $("#uncollectMoneyMain").html(selectedCustomer.uncollectMoney.toLocaleString());
         $("#saveMoneyMain").html(selectedCustomer.saveMoney.toLocaleString());
-        if(paymentMode) {
-            onPaymentStageThree(creditData);
-        }
+        callback(tossData);
     });
 }
 
@@ -1683,7 +1697,7 @@ function onPaymentStageOne() {
 function onPaymentStageTwo(creditData = {}) {
     if (checkNum === "1") {
         checkNum = "2";
-        onSave(false, true, creditData);
+        onSave(false, onPaymentStageThree, creditData);
     } else {
         onPaymentStageThree(creditData);
     }
@@ -1808,13 +1822,19 @@ function onClosePayment() {
 function onPaymentLater() {
     const uncollectAmtCash = $("#totalAmt").html().toInt() + $("#applySaveMoney").html().toInt()
         - $("#applyUncollectAmt").html().toInt();
+    const paidAmt = getPaidAmt();
     if(uncollectAmtCash) {
         alertCheck(uncollectAmtCash.toLocaleString() + "원의 미수금(후불)이 발생합니다<br> 이대로 닫으시겠습니까?");
         $("#checkDelSuccessBtn").on("click", function () {
             $('#popupId').remove();
-            closePaymentPop();
+            if (paidAmt) {
+                closePaymentPop();
+            } else {
+                checkNum = "2";
+                onSave(false, closePaymentPop, false);
+            }
         });
-    }else{
+    } else {
         closePaymentPop();
     }
 }
@@ -1834,6 +1854,7 @@ function closePaymentPop(isSimpleClose = false) {
         frNo: initialData.etcData.frNo,
         locationHost: location.host,
     }
+
     CommonUI.ajax(url, "PARAM", sendData, function (res) {
         if (selectedCustomer.bcHp) {
             location.href = "/user/delivery?bchp=" + selectedCustomer.bcHp;
@@ -2120,4 +2141,16 @@ function resetFdAddInputs() {
     $("#fdAdd1").prop("checked", false);
     $("#fdAdd1Amt").val(0);
     $("#fdAdd1Remark").val("");
+}
+
+function setTopMenuHref() {
+    if(selectedCustomer.bcHp) {
+        $("#menuReceiptreg").attr("href", `/user/receiptreg?bchp=${selectedCustomer.bcHp}`);
+        $("#menuDelivery").attr("href", `/user/delivery?bchp=${selectedCustomer.bcHp}`);
+        $("#menuIntegrate").attr("href", `/user/integrate?bchp=${selectedCustomer.bcHp}`);
+    } else {
+        $("#menuReceiptreg").attr("href", `/user/receiptreg`);
+        $("#menuDelivery").attr("href", `/user/delivery`);
+        $("#menuIntegrate").attr("href", `/user/integrate`);
+    }
 }

@@ -13,7 +13,7 @@
 
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
-    
+    <script src="/assets/js/toppos/manager/setting/mypage.js"></script>
 </th:block>
 
 <div layout:fragment="content" class="content content--padding">
@@ -52,7 +52,7 @@
             </div>
 
             <ul class="article__console article__console--right">
-                <li><button class="c-button c-button--darksolid">저장</button></li>
+                <li><button type="button" id="saveBrBtn" class="c-button c-button--darksolid">저장</button></li>
             </ul>
         </article>
     </section>
@@ -86,9 +86,8 @@
                             <td>
                                 <input id="userTel" name="userTel" type="text" />
                             </td>
-                            <th>이메일</th>
+                            <th></th>
                             <td>
-                                <input id="userEmail" name="userEmail" type="text" />
                             </td>
                         </tr>
                         <tr>
@@ -106,7 +105,7 @@
             </div>
 
             <ul class="article__console article__console--right">
-                <li><button class="c-button c-button--darksolid">저장</button></li>
+                <li><button type="button" id="saveUserBtn" class="c-button c-button--darksolid">저장</button></li>
             </ul>
         </article>
     </section>

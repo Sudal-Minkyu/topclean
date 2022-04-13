@@ -53,6 +53,19 @@ class CommonUIClass {
         processName(item) {
             try {
                 let statusText = "";
+                let pollution = "";
+                if (item.fdPollution) {
+                    if (item.fdPollutionType === 1 && !item.fdPollutionBack) {
+                        pollution = "오(앞)";
+                    } else if (item.fdPollutionType === 1 && item.fdPollutionBack) {
+                        pollution = "오(뒤)";
+                    } else if (item.fdPollutionType === 2) {
+                        pollution = "오(앞뒤)";
+                    } else {
+                        pollution = "오";
+                    }
+                }
+
                 statusText += item.fdUrgentYn === "Y" ? "급" : ""; 
                 statusText += item.fdPriceGrade === "3" ? "명" : "";
                 statusText += item.fdRetryYn === "Y" ? "재" : "";
@@ -60,8 +73,8 @@ class CommonUIClass {
                 statusText += item.fdAdd1Amt || item.fdAdd1Remark.length ? "추" : "";
                 statusText += item.fdRepairAmt || item.fdRepairRemark.length ? "수" : "";
                 statusText += item.fdWhitening ? "표" : "";
-                statusText += item.fdPollution ? "오" : "";
                 statusText += item.fdWaterRepellent || item.fdStarch ? "발" : "";
+                statusText += pollution;
                 return statusText;
             } catch (e) {
                 this.toppos.underTaker(e, "CommonUI : 처리내역 문자조합");

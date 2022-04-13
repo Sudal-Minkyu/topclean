@@ -169,23 +169,6 @@ const grids = {
                         return CommonData.name.frRefType[value];
                     },
                 }, {
-                    dataField: "bcName",
-                    headerText: "고객명",
-                    style: "grid_textalign_left",
-                    width: 70,
-                }, {
-                    dataField: "frYyyymmdd",
-                    headerText: "접수일자",
-                    width: 90,
-                    dataType: "date",
-                    formatString: "yyyy-mm-dd",
-                }, {
-                    dataField: "fdEstimateDt",
-                    headerText: "출고예정",
-                    width: 90,
-                    dataType: "date",
-                    formatString: "yyyy-mm-dd",
-                }, {
                     dataField: "sumName",
                     headerText: "상품명",
                     style: "color_and_name",
@@ -198,6 +181,20 @@ const grids = {
                             const sumName = CommonUI.toppos.makeSimpleProductName(item);
                             return colorSquare + ` <span style="vertical-align: middle;">` + sumName + `</span>`;
                     }
+                }, {
+                    dataField: "frInsertDt",
+                    headerText: "접수일자",
+                    width: 90,
+                    renderer : {
+                        type : "TemplateRenderer",
+                    },
+                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
+                        let result = "";
+                        if(typeof value === "number") {
+                            result = new Date(value).format("yyyy-MM-dd<br>hh:mm");
+                        }
+                        return result;
+                    },
                 }, {
                     dataField: "",
                     headerText: "처리내역",
@@ -229,12 +226,6 @@ const grids = {
                     headerText: "특이사항",
                     style: "grid_textalign_left",
                     width: 100,
-                }, {
-                    dataField: "fdS2Dt",
-                    headerText: "지사입고",
-                    width: 90,
-                    dataType: "date",
-                    formatString: "yyyy-mm-dd",
                 }, {
                     dataField: "fdS4Dt",
                     headerText: "지사출고",
@@ -508,6 +499,8 @@ function putCustomer() {
         };
         comms.getCustomersRequest(customerId);
     }
+
+    setTopMenuHref();
 }
 
 function selectCustomerFromList(selectedItem) {
@@ -604,5 +597,17 @@ function getParamsAndAction() {
         $("#searchType").val("2");
         $("#searchString").val(bcHp);
         mainSearch();
+    }
+}
+
+function setTopMenuHref() {
+    if(wares.selectedCustomer.bcHp) {
+        $("#menuReceiptreg").attr("href", `/user/receiptreg?bchp=${wares.selectedCustomer.bcHp}`);
+        $("#menuDelivery").attr("href", `/user/delivery?bchp=${wares.selectedCustomer.bcHp}`);
+        $("#menuIntegrate").attr("href", `/user/integrate?bchp=${wares.selectedCustomer.bcHp}`);
+    } else {
+        $("#menuReceiptreg").attr("href", `/user/receiptreg`);
+        $("#menuDelivery").attr("href", `/user/delivery`);
+        $("#menuIntegrate").attr("href", `/user/integrate`);
     }
 }
