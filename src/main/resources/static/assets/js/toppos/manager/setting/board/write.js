@@ -200,11 +200,13 @@ function addFile() {
 function saveProgress() {
     if(wares.totVolume > 52428800) {
         alertCaution("첨부파일 총용량은 50MB를 넘을 수 없습니다.", 1);
+        return false;
     }
     
     const subject = $("#subject").val();
     if(!subject) {
         alertCaution("제목을 입력해 주세요.", 1);
+        return false;
     }
 
     const formData = new FormData();

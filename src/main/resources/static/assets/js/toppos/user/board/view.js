@@ -79,12 +79,11 @@ const comms = {
 
 /* 이벤트를 s : 설정하거나 r : 해지하는 함수들을 담는다. 그리드 관련 이벤트는 grids.e에 위치 (trigger) */
 const trigs = {
-    s: { // 이벤트 설정
-
+    basic() {
+        $("#attachSwitch").on("click", function () {
+            $("#fileListPanel").toggleClass("active");
+        });
     },
-    r: { // 이벤트 해제
-
-    }
 }
 
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
@@ -122,6 +121,7 @@ $(function() { // 페이지가 로드되고 나서 실행
 /* 페이지가 로드되고 나서 실행 될 코드들을 담는다. */
 function onPageLoad() {
     getParams();
+    trigs.basic();
     let condition = {};
     condition[wares[wares.boardType].idKeyName] = parseInt(wares.id);
     comms.getData(condition);
@@ -223,6 +223,30 @@ function setFields(data) {
     $("#linkPrevPage").attr("href", `./${wares.boardType}list?page=` + wares.page
         + "&searchString=" + wares.searchString + "&filterFromDt=" + wares.filterFromDt + "&filterToDt="
         + wares.filterToDt + specialCondition);
+
+    $("#fileCnt").html(data.fileList.length);
+
+    for(let file of data.fileList) {
+        let volume = 0;
+        if(file.fileVolume > 1000000) {
+            volume = (file.fileVolume / 1048576).toFixed(1).toLocaleString() + "MB"
+        } else {
+            volume = Math.ceil(file.fileVolume / 1024).toLocaleString() + "KB";
+        }
+
+        const element = `
+            <li>
+                <a href="${file.filePath + file.fileFileName}" class="board-view__file">
+                    <span class="board-view__filename">${file.fileOriginalFilename}</span>
+                    <span class="board-view__filesize">${volume}</span>
+                </a>
+            </li>
+        `;
+
+        $("#fileList").append(element);
+    }
+
+    console.log(data);
 }
 
 function createReplyHtml(commentId, name, modifyDt, comment, type, isWriter, preId) {

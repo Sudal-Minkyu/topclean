@@ -16,16 +16,16 @@
 </th:block>
 
 <div layout:fragment="content" class="content content--column" style="padding: 20px 0;">
-    <div class="receipt">
+    <div id="receiptList" class="receipt">
         <h2 class="receipt__logo"><img src="/assets/images/circle-logo.png" alt="TOPPOS"><span>[고객용 영수증]</span></h2>
         <!-- 가맹점 정보 -->
         <dl class="receipt__frinfo">
-            <dt>영수증</dt>
+            <dt>구분</dt>
             <dd>접수증 <span id="requestDt"></span></dd>
             <dt>대리점명</dt>
             <dd><span id="franchiseName"></span></dd>
             <dt>영업시간</dt>
-            <dd>평일 : 09:30 ~ 20:00 까지  공휴일(토요일) : 10:30~18:00 까지</dd>
+            <dd>평일 : 09:30 ~ 20:00 까지<br>공휴일(토요일) : 10:30~18:00 까지</dd>
             <dt>사업자번호</dt>
             <dd><span id="businessNO"></span></dd>
             <dt>대표자</dt>
@@ -51,20 +51,7 @@
                         <th>금액</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <!-- tr로 추가 -->
-                    <tr>
-                        <td>0-050</td>
-                        <td>슬리퍼 운동화</td>
-                        <td>빨강</td>
-                        <td class="align-right">0,000,000</td>
-                    </tr>
-                    <tr>
-                        <td>0-127</td>
-                        <td>가운 상의</td>
-                        <td>빨강</td>
-                        <td class="align-right">0,000,000</td>
-                    </tr>
+                <tbody id="itemList">
                 </tbody>
             </table>
         </div>
@@ -89,14 +76,10 @@
         <div class="receipt__sub">
             <h3>&lt;미수금정보&gt;</h3>
             <dl>
-                <dt>전일미수금</dt>
-                <dd><span id="preUncollectAmount"></span></dd>
-                <dt>당일미수금</dt>
-                <dd><span id="curUncollectAmount"></span></dd>
+                <dt>미수금전체</dt>
+                <dd><span id="totalUncollectAmount"></span></dd>
                 <dt>미수금상환</dt>
                 <dd><span id="uncollectPayment">0</span></dd>
-                <dt>남은총미수금</dt>
-                <dd><span id="totalUncollectAmount"></span></dd>
             </dl>
         </div>
 
@@ -112,40 +95,6 @@
         </div>
 
         <!-- 현금 & 적립금 & 카드 -->
-        <div class="receipt__sub">
-            <dl>
-                <dt>결제구분</dt>
-                <dd>적립금</dd>
-                <dt>사용금액</dt>
-                <dd>2,000</dd>
-            </dl>
-        </div>
-
-        <div class="receipt__sub">
-            <dl>
-                <dt>결제구분</dt>
-                <dd>현금</dd>
-                <dt>결제금액</dt>
-                <dd>2,000</dd>
-            </dl>
-        </div>
-
-        <div class="receipt__sub">
-            <dl>
-                <dt>결제구분</dt>
-                <dd>카드</dd>
-                <dt>승인일시</dt>
-                <dd>2022-04-01 15:42</dd>
-                <dt>할부</dt>
-                <dd>일시불</dd>
-                <dt>결제금액</dt>
-                <dd>2,000</dd>
-                <dt>(카드회사명)</dt>
-                <dd>409216******9758(카드번호)</dd>
-                <dt>승인번호</dt>
-                <dd>51779112</dd>
-            </dl>
-        </div>
     </div>
 
 </div>

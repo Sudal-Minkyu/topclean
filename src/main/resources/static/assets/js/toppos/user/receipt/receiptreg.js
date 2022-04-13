@@ -234,7 +234,7 @@ $(function() {
         }
     });
 
-    $("#beforeUncollectMoneyMain").parents("li").on("click", function () {
+    $("#uncollectMoneyMain").parents("li").on("click", function () {
         if(selectedCustomer && selectedCustomer.bcHp) {
             location.href = "/user/unpaid?bchp=" + selectedCustomer.bcHp;
         } else {
@@ -829,7 +829,7 @@ function onPutCustomer() {
         "propensity__star propensity__star--" + selectedCustomer.bcValuation).css('display','block');
     $("#bcAddress").html(selectedCustomer.bcAddress);
     $("#bcHp").html(CommonUI.formatTel(selectedCustomer.bcHp));
-    $("#beforeUncollectMoneyMain").html(selectedCustomer.beforeUncollectMoney.toLocaleString());
+    $("#uncollectMoneyMain").html(selectedCustomer.uncollectMoney.toLocaleString());
     $("#saveMoneyMain").html(selectedCustomer.saveMoney.toLocaleString());
     $("#bcRemark").html(selectedCustomer.bcRemark);
     if(selectedCustomer.bcLastRequestDt) {
@@ -1427,16 +1427,17 @@ function onSaveAjax(turnOnSuccessMsg, paymentMode, creditData) {
         }
         initialData.etcData.frNo = req.sendData.frNo;
 
+        console.log(req);
+
         if(checkNum === "2") {
-            initialData.etcData.beforeUncollectMoney = req.sendData.beforeUncollectMoney;
+            initialData.etcData.uncollectMoney = req.sendData.uncollectMoney;
             initialData.etcData.saveMoney = req.sendData.saveMoney;
-            initialData.etcData.todayUncollectMoney = req.sendData.todayUncollectMoney;
-            selectedCustomer.beforeUncollectMoney = req.sendData.beforeUncollectMoney;
+            selectedCustomer.uncollectMoney = req.sendData.uncollectMoney;
             selectedCustomer.saveMoney = req.sendData.saveMoney;
         }
-        $("#beforeUncollectMoney").html(selectedCustomer.beforeUncollectMoney.toLocaleString());
+        $("#uncollectMoney").html(selectedCustomer.uncollectMoney.toLocaleString());
         $("#saveMoney").html(selectedCustomer.saveMoney.toLocaleString());
-        $("#beforeUncollectMoneyMain").html(selectedCustomer.beforeUncollectMoney.toLocaleString());
+        $("#uncollectMoneyMain").html(selectedCustomer.uncollectMoney.toLocaleString());
         $("#saveMoneyMain").html(selectedCustomer.saveMoney.toLocaleString());
         if(paymentMode) {
             onPaymentStageThree(creditData);
@@ -1536,10 +1537,10 @@ function onApply() {
     setReceiveAmtToTotalAmt();
     calculatePaymentStage(getPaidAmt());
 
-    $("#btnPayLater").show();
-    $("#btnPayment").show();
-    $("#btnClosePayment").show();
-    $("#btnPrintReceipt").hide();
+    $("#btnPayLater").parents("li").show();
+    $("#btnPayment").parents("li").show();
+    $("#btnClosePayment").parents("li").show();
+    $("#btnPrintReceipt").parents("li").hide();
     $("#paymentPop").addClass("active");
 }
 
@@ -1602,10 +1603,8 @@ function onPaymentStageOne() {
                 normalAmount: $("#payNormalAmt").html().toInt(),
                 changeAmount: $("#payChangeAmt").html().toInt(),
                 estimateDt: initialData.etcData.frEstimateDate,
-                preUncollectAmount: initialData.etcData.beforeUncollectMoney - applyUncollectAmt,
-                curUncollectAmount: initialData.etcData.todayUncollectMoney,
                 uncollectPayAmount: applyUncollectAmt,
-                totalUncollectAmount: initialData.etcData.beforeUncollectMoney - applyUncollectAmt + initialData.etcData.todayUncollectMoney,
+                totalUncollectAmount: initialData.etcData.uncollectMoney - applyUncollectAmt + initialData.etcData.uncollectMoney,
                 month: $("#installmentMonth").val().toInt(),
                 items: items,
             };
@@ -1754,14 +1753,13 @@ function onPaymentStageThree(creditData) {
             console.log(req);
 
             AUIGrid.addRow(gridId[3], req.sendData.paymentEtcDtos, "last");
-            initialData.etcData.beforeUncollectMoney = req.sendData.beforeUncollectMoney;
+            initialData.etcData.uncollectMoney = req.sendData.uncollectMoney;
             initialData.etcData.saveMoney = req.sendData.saveMoney;
-            initialData.etcData.todayUncollectMoney = req.sendData.todayUncollectMoney;
-            selectedCustomer.beforeUncollectMoney = req.sendData.beforeUncollectMoney;
+            selectedCustomer.uncollectMoney = req.sendData.uncollectMoney;
             selectedCustomer.saveMoney = req.sendData.saveMoney;
-            $("#beforeUncollectMoney").html(selectedCustomer.beforeUncollectMoney.toLocaleString());
+            $("#uncollectMoney").html(selectedCustomer.uncollectMoney.toLocaleString());
             $("#saveMoney").html(selectedCustomer.saveMoney.toLocaleString());
-            $("#beforeUncollectMoneyMain").html(selectedCustomer.beforeUncollectMoney.toLocaleString());
+            $("#uncollectMoneyMain").html(selectedCustomer.uncollectMoney.toLocaleString());
             $("#saveMoneyMain").html(selectedCustomer.saveMoney.toLocaleString());
             $("#applySaveMoney").html("0");
             $("#applyUncollectAmt").html("0");
@@ -1771,15 +1769,15 @@ function onPaymentStageThree(creditData) {
 
             calculatePaymentStage(getPaidAmt());
 
-            $("#btnPrintReceipt").show();
-            $("#btnClosePayment").hide();
+            $("#btnPrintReceipt").parents("li").show();
+            $("#btnClosePayment").parents("li").hide();
             if($("#totalAmt").html() === "0" && autoPrintReceipt) {
                 onPrintReceipt();
                 onClosePayment();
             } else if($("#totalAmt").html() === "0"){
-                $("#btnPayLater").hide();
-                $("#btnPayment").hide();
-                $("#btnClosePayment").show();
+                $("#btnPayLater").parents("li").hide();
+                $("#btnPayment").parents("li").hide();
+                $("#btnClosePayment").parents("li").show();
             }
         });
     }catch (e) {
@@ -1789,7 +1787,7 @@ function onPaymentStageThree(creditData) {
 }
 
 function onPayUncollectMoney() {
-    $("#applyUncollectAmt").html($("#beforeUncollectMoney").html());
+    $("#applyUncollectAmt").html($("#uncollectMoney").html());
     alertCaution("미수전액완납시, 적립금은 사용하지<br> 못하며 한 가지 결제수단 으로 <br>전액 결제하셔야 합니다.", 1);
     payAmtLimitation();
 }
