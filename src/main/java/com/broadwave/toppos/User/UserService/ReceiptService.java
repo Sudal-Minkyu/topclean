@@ -987,7 +987,7 @@ public class ReceiptService {
 //            log.info("전일 미수금액 : "+ preUncollectAmount);
 //            log.info("당일 미수금액 : "+ curUncollectAmount);
 
-            int totalUncollectAmount; // 전체미수금
+            int totalUncollectAmount; // 미수금전체
             int fpCollectAmt = 0; // 미수상환액
             StringBuilder payDetail = new StringBuilder(); // 결제 상세정보
             int money = 0; // 현금
@@ -1010,7 +1010,7 @@ public class ReceiptService {
             totalUncollectAmount = preUncollectAmount+curUncollectAmount-fpCollectAmt;
 
 //            log.info("미수상환액 : "+ fpCollectAmt);
-//            log.info("전체미수금 : "+ totalUncollectAmount);
+//            log.info("미수금전체 : "+ totalUncollectAmount);
 
             if(money != 0){
                 payDetail.append("현금 : ").append(decimalFormat.format(money)).append("원\n");

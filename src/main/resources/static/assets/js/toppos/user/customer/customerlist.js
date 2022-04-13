@@ -172,8 +172,8 @@ gridColumnLayout[0] = [
             return bcGradeName[value];
         },
     }, {
-        dataField: "beforeUncollectMoney",
-        headerText: "전일미수금",
+        dataField: "uncollectMoney",
+        headerText: "미수금",
         style: "grid_textalign_right",
         dataType: "numeric",
         autoThousandSeparator: "true",

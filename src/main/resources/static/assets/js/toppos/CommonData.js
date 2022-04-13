@@ -1,5 +1,6 @@
 class CommonDataClass {
     name = {};
+    distinguishableColors = [];
 
     constructor() {
         this.nameList();
@@ -89,6 +90,11 @@ class CommonDataClass {
             "2": "세탁진행",
             "3": "반품요청",
         }
+
+        this.distinguishableColors = [
+            "#ff0000", "#ffaa00", "#aaff00", "#00ff00", "#00ffaa"
+            , "#00aaff", "#0000ff", "#aa00ff", "#ff00aa"
+        ]
     }
 
     formatFrTagNo(tagNo) {

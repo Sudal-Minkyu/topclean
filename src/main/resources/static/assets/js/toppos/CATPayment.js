@@ -492,9 +492,7 @@ function CatCreate_Print(params,creditResult,cancelYN){
     message += String.fromCharCode(10);
     message += "<미수금정보>";
     message += String.fromCharCode(10);
-    message += "전일미수금:" + ("" + numberWithCommasCat(params.preUncollectAmount)).padStart(8) + "    당일미수금:" + (" " + numberWithCommasCat(params.curUncollectAmount)).padStart(8);
-    message += String.fromCharCode(10);
-    message += "미수금상환:" + ("" + numberWithCommasCat(params.uncollectPayAmount)).padStart(8) + "      총미수금:" + (" " + numberWithCommasCat(params.totalUncollectAmount)).padStart(8);
+    message += "미수금전체:" + ("" + numberWithCommasCat(params.totalUncollectAmount)).padStart(8) + "    미수금상환:" + ("" + numberWithCommasCat(params.uncollectPayAmount)).padStart(8);
     message += String.fromCharCode(10);
     if (type ==='card') {
         message += "==========================================";
@@ -660,9 +658,7 @@ function CatCreate_Print(params,creditResult,cancelYN){
     message += String.fromCharCode(10);
     message += "<미수금정보>";
     message += String.fromCharCode(10);
-    message += "전일미수금:" + ("" + numberWithCommasCat(params.preUncollectAmount)).padStart(8) + "    당일미수금:" + (" " + numberWithCommasCat(params.curUncollectAmount)).padStart(8);
-    message += String.fromCharCode(10);
-    message += "미수금상환:" + ("" + numberWithCommasCat(params.uncollectPayAmount)).padStart(8) + "      총미수금:" + (" " + numberWithCommasCat(params.totalUncollectAmount)).padStart(8);
+    message += "미수금전체:" + ("" + numberWithCommasCat(params.totalUncollectAmount)).padStart(8) + "    미수금상환:" + ("" + numberWithCommasCat(params.uncollectPayAmount)).padStart(8);
     message += String.fromCharCode(10);
     if (type ==='card') {
         message += "==========================================";
@@ -950,9 +946,7 @@ function CatCreate_MultiPrint(params,creditResults,cancelYN) {
     message += String.fromCharCode(10);
     message += "<미수금정보>";
     message += String.fromCharCode(10);
-    message += "전일미수금:" + ("" + numberWithCommasCat(params.preUncollectAmount)).padStart(8) + "    당일미수금:" + (" " + numberWithCommasCat(params.curUncollectAmount)).padStart(8);
-    message += String.fromCharCode(10);
-    message += "미수금상환:" + ("" + numberWithCommasCat(params.uncollectPayAmount)).padStart(8) + "      총미수금:" + (" " + numberWithCommasCat(params.totalUncollectAmount)).padStart(8);
+    message += "미수금전체:" + ("" + numberWithCommasCat(params.totalUncollectAmount)).padStart(8) + "    미수금상환:" + ("" + numberWithCommasCat(params.uncollectPayAmount)).padStart(8);
     message += String.fromCharCode(10);
     creditResults.forEach((creditResult,idx)=>{
         if (creditResult.type ==='card') {
@@ -1146,9 +1140,7 @@ function CatCreate_MultiPrint(params,creditResults,cancelYN) {
     message += String.fromCharCode(10);
     message += "<미수금정보>";
     message += String.fromCharCode(10);
-    message += "전일미수금:" + ("" + numberWithCommasCat(params.preUncollectAmount)).padStart(8) + "    당일미수금:" + (" " + numberWithCommasCat(params.curUncollectAmount)).padStart(8);
-    message += String.fromCharCode(10);
-    message += "미수금상환:" + ("" + numberWithCommasCat(params.uncollectPayAmount)).padStart(8) + "      총미수금:" + (" " + numberWithCommasCat(params.totalUncollectAmount)).padStart(8);
+    message += "미수금전체:" + ("" + numberWithCommasCat(params.totalUncollectAmount)).padStart(8) + "    미수금상환:" + ("" + numberWithCommasCat(params.uncollectPayAmount)).padStart(8);
     message += String.fromCharCode(10);
     
     creditResults.forEach((creditResult,idx)=>{
@@ -1335,7 +1327,7 @@ function CatCreate_RepaymentPrint(params,creditResults,cancelYN) {
     message += "<미수금정보>";
     message += String.fromCharCode(10);
     creditResults.forEach((creditResult,idx)=>{
-        message += "미수금:".fillSpaceUnicode(33) + (" " + numberWithCommasCat(params.totalUncollectAmount + creditResult.fpRealAmt)).padStart(9);
+        message += "미수금전체:".fillSpaceUnicode(33) + (" " + numberWithCommasCat(params.totalUncollectAmount + creditResult.fpRealAmt)).padStart(9);
         message += String.fromCharCode(10);
         message += "미수금상환:".fillSpaceUnicode(33) + (" " + numberWithCommasCat(creditResult.fpRealAmt)).padStart(9);
         message += String.fromCharCode(10);
@@ -1468,7 +1460,7 @@ function CatCreate_RepaymentPrint(params,creditResults,cancelYN) {
     message += String.fromCharCode(10);
     
     creditResults.forEach((creditResult,idx)=>{
-        message += "미수금:".fillSpaceUnicode(33) + (numberWithCommasCat(params.totalUncollectAmount + creditResult.fpRealAmt)).padStart(9);
+        message += "미수금전체:".fillSpaceUnicode(33) + (numberWithCommasCat(params.totalUncollectAmount + creditResult.fpRealAmt)).padStart(9);
         message += String.fromCharCode(10);
         message += "미수금상환:".fillSpaceUnicode(33) + (numberWithCommasCat(creditResult.fpRealAmt)).padStart(9);
         message += String.fromCharCode(10);

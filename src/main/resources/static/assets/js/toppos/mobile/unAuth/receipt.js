@@ -68,7 +68,10 @@ const trigs = {
 }
 
 const wares = {
-
+    colorName: {
+        "00": "없음", "01": "흰색", "02": "검정", "03": "회색", "04": "빨강", "05": "주황",
+        "06": "노랑", "07": "초록", "08": "파랑", "09": "남색", "10": "보라", "11": "핑크",
+    },
 }
 
 $(function() {
@@ -108,7 +111,6 @@ function setField(data) {
     $("#normalAmount").html(data.paymentData.normalAmount.toLocaleString());
     $("#changeAmount").html(data.paymentData.changeAmount.toLocaleString());
     $("#totalAmount").html(data.paymentData.totalAmount.toLocaleString());
-    $("#estimateDt").html(data.paymentData.estimateDt);
 
     $("#preUncollectAmount").html(data.paymentData.preUncollectAmount.toLocaleString());
     $("#curUncollectAmount").html(data.paymentData.curUncollectAmount.toLocaleString());
@@ -117,4 +119,54 @@ function setField(data) {
 
     $("#qty").html(data.items.length.toLocaleString());
     $("#paymentAmount").html(data.paymentData.paymentAmount.toLocaleString());
+
+    if (data.items.length) {
+        $("#estimateDt").html(data.items[0].estimateDt);
+    }
+
+    for (const {color, itemname, price, tagno} of data.items) {
+        $("#itemList").append(`
+            <tr>
+                <td>${CommonData.formatFrTagNo(tagno)}</td>
+                <td>${itemname}</td>
+                <td>${wares.colorName[color]}</td>
+                <td class="align-right">${price.toLocaleString()}</td>
+            </tr>
+        `);
+    }
+
+    for (const obj of data.creditData) {
+        if (obj.type === "02") { // 카드 결제 목록보고 결정
+            const approvalTime = `20${obj.approvalTime.substring(0, 2)}-${obj.approvalTime.substring(2, 4)}-${obj.approvalTime.substring(4, 6)} ${obj.approvalTime.substring(6, 8)}:${obj.approvalTime.substring(8, 10)}`;
+            $("#receiptList").append(`
+                <div class="receipt__sub">
+                    <dl>
+                        <dt>결제구분</dt>
+                        <dd>${obj.cardName}</dd>
+                        <dt>승인일시</dt>
+                        <dd>${approvalTime}</dd>
+                        <dt>할부</dt>
+                        <dd>${obj.month ? obj.month + " 개월" : "일시불"}</dd>
+                        <dt>결제금액</dt>
+                        <dd>${obj.fpRealAmt.toLocaleString()}</dd>
+                        <dt>카드번호</dt>
+                        <dd>${obj.cardNo}</dd>
+                        <dt>승인번호</dt>
+                        <dd>${obj.approvalNo}</dd>
+                    </dl>
+                </div>
+            `);
+        } else {
+            $("#receiptList").append(`
+                <div class="receipt__sub">
+                    <dl>
+                        <dt>결제구분</dt>
+                        <dd>${CommonData.name.fpType[obj.type]}</dd>
+                        <dt>결제금액</dt>
+                        <dd>${obj.fpRealAmt.toLocaleString()}</dd>
+                    </dl>
+                </div>
+            `);
+        }
+    }
 }

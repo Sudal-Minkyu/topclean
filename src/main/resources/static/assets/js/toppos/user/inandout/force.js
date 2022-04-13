@@ -32,7 +32,7 @@ const dtos = {
             bcName: "s",
             bcRemark: "s",
             bcValuation: "s",
-            beforeUncollectMoney: "nr",
+            uncollectMoney: "nr",
             saveMoney: "nr",
             tempSaveFrNo: "n",
         },
@@ -378,7 +378,14 @@ const trigs = {
                     mainSearch();
                 }
             });
-            
+
+            $("#uncollectMoneyMain").parents("li").on("click", function () {
+                if(wares.selectedCustomer && wares.selectedCustomer.bcHp) {
+                    location.href = "/user/unpaid?bchp=" + wares.selectedCustomer.bcHp;
+                } else {
+                    location.href = "/user/unpaid";
+                }
+            });
         }
     },
     r: { // 이벤트 해제
@@ -477,7 +484,7 @@ function putCustomer() {
     
     $("#bcAddress").html(wares.selectedCustomer.bcAddress);
     $("#bcHp").html(CommonUI.formatTel(wares.selectedCustomer.bcHp));
-    $("#beforeUncollectMoneyMain").html(wares.selectedCustomer.beforeUncollectMoney.toLocaleString());
+    $("#uncollectMoneyMain").html(wares.selectedCustomer.uncollectMoney.toLocaleString());
     $("#saveMoneyMain").html(wares.selectedCustomer.saveMoney.toLocaleString());
     $("#bcRemark").html(wares.selectedCustomer.bcRemark);
     if(wares.selectedCustomer.bcLastRequestDt) {
@@ -521,7 +528,7 @@ function closeCustomerPop() {
 function resetCustomer() {
     wares.selectedCustomer = {
         bcId: null,
-        beforeUncollectMoney: 0,
+        uncollectMoney: 0,
         saveMoney: 0,
         bcAddress: "",
         bcRemark: "",

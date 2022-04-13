@@ -34,7 +34,7 @@ const dtos = {
             bcName: "s",
             bcRemark: "s",
             bcValuation: "s",
-            beforeUncollectMoney: "nr",
+            uncollectMoney: "nr",
             saveMoney: "nr",
             tempSaveFrNo: "n",
         },
@@ -154,6 +154,14 @@ const grids = {
         initialization() { // 가시성을 위해 grids.s 의 일부 요소를 여기서 선언한다.
             grids.s.columnLayout[0] = [
                 {
+                    dataField: "fdTag",
+                    headerText: "택번호",
+                    style: "datafield_tag",
+                    width: 80,
+                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
+                        return CommonData.formatFrTagNo(value);
+                    },
+                }, {
                     dataField: "frRefType",
                     headerText: "구분",
                     width: 40,
@@ -177,14 +185,6 @@ const grids = {
                     width: 90,
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
-                }, {
-                    dataField: "fdTag",
-                    headerText: "택번호",
-                    style: "datafield_tag",
-                    width: 80,
-                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
-                        return CommonData.formatFrTagNo(value);
-                    },
                 }, {
                     dataField: "sumName",
                     headerText: "상품명",
@@ -363,7 +363,7 @@ const trigs = {
             $("#resetCustomer").on("click", function () {
                 wares.selectedCustomer = {
                     bcId: null,
-                    beforeUncollectMoney: 0,
+                    uncollectMoney: 0,
                     saveMoney: 0,
                     bcAddress: "",
                     bcRemark: "",
@@ -374,8 +374,8 @@ const trigs = {
             $("#deliverLaundry").on("click", function () {
                 wares.checkedItems = grids.f.getCheckedItems(0);
                 if(wares.checkedItems.length) {
-                    if(wares.selectedCustomer.beforeUncollectMoney) {
-                        alertCheck(`미수금이 ${wares.selectedCustomer.beforeUncollectMoney.toLocaleString()}원` 
+                    if(wares.selectedCustomer.uncollectMoney) {
+                        alertCheck(`미수금이 ${wares.selectedCustomer.uncollectMoney.toLocaleString()}원`
                             + ` 존재합니다.<br>인도완료 후 미수금 결제를 하시겠습니까?`);
                         $("#checkDelSuccessBtn").on("click", function () { // 인도완료후 미수금결제
                             $('#popupId').remove();
@@ -413,6 +413,14 @@ const trigs = {
             $("#searchString").on("keypress", function(e) {
                 if(e.originalEvent.code === "Enter" || e.originalEvent.code === "NumpadEnter") {
                     mainSearch();
+                }
+            });
+
+            $("#uncollectMoneyMain").parents("li").on("click", function () {
+                if(wares.selectedCustomer && wares.selectedCustomer.bcHp) {
+                    location.href = "/user/unpaid?bchp=" + wares.selectedCustomer.bcHp;
+                } else {
+                    location.href = "/user/unpaid";
                 }
             });
         },
@@ -477,7 +485,7 @@ function putCustomer() {
     
     $("#bcAddress").html(wares.selectedCustomer.bcAddress);
     $("#bcHp").html(CommonUI.formatTel(wares.selectedCustomer.bcHp));
-    $("#beforeUncollectMoneyMain").html(wares.selectedCustomer.beforeUncollectMoney.toLocaleString());
+    $("#uncollectMoneyMain").html(wares.selectedCustomer.uncollectMoney.toLocaleString());
     $("#saveMoneyMain").html(wares.selectedCustomer.saveMoney.toLocaleString());
     $("#bcRemark").html(wares.selectedCustomer.bcRemark);
     if(wares.selectedCustomer.bcLastRequestDt) {

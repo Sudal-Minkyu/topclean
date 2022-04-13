@@ -269,7 +269,7 @@ const dtos = {
             bcName: "s",
             bcRemark: "s",
             bcValuation: "s",
-            beforeUncollectMoney: "nr",
+            uncollectMoney: "nr",
             saveMoney: "nr",
             tempSaveFrNo: "n",
         },
@@ -386,6 +386,7 @@ const comms = {
 
             dv.chk(gridData, dtos.receive.franchiseRequestDetailSearch, "메인그리드 조회 결과 리스트");
             grids.f.setData(0, gridData);
+            addDistinguishableCellColor();
         });
     },
 
@@ -637,10 +638,22 @@ const grids = {
             /* 0번 그리드의 레이아웃 */
             grids.s.columnLayout[0] = [
                 {
+                    dataField: "cellColor",
+                    headerText: "",
+                    style: "grid_grouper",
+                    width: 4,
+                    cellMerge: true,
+                    renderer: {
+                        type: "TemplateRenderer"
+                    },
+                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                        return `<span class="bgcolor${value}" style="display: none">${value}</span>`;
+                    },
+                }, {
                     dataField: "frRefType",
                     headerText: "구분",
                     width: 40,
-                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
                         return CommonData.name.frRefType[value];
                     },
                 }, {
@@ -866,9 +879,13 @@ const grids = {
                 showRowCheckColumn: false,
                 showRowNumColumn : false,
                 showStateColumn : false,
-                enableFilter : true,
+                enableFilter : false,
+                enableCellMerge : true,
                 rowHeight : 48,
                 headerHeight : 48,
+                rowStyleFunction : function(rowIndex, item) {
+                    return "grid_cellcolor" + item.cellColor;
+                },
             };
 
             grids.s.columnLayout[1] = [
@@ -1193,6 +1210,14 @@ const trigs = {
                 $("#imgFull").hide();
             }
         });
+
+        $("#uncollectMoneyMain").parents("li").on("click", function () {
+            if (wares.selectedCustomer && wares.selectedCustomer.bcHp) {
+                location.href = "/user/unpaid?bchp=" + wares.selectedCustomer.bcHp;
+            } else {
+                location.href = "/user/unpaid";
+            }
+        });
     },
 
     vkeys() {
@@ -1231,7 +1256,7 @@ const trigs = {
         $("#resetCustomer").on("click", function() {
             wares.selectedCustomer = {
                 bcId: null,
-                beforeUncollectMoney: 0,
+                uncollectMoney: 0,
                 saveMoney: 0,
                 bcAddress: "",
                 bcRemark: "",
@@ -2009,7 +2034,7 @@ function putCustomer() {
 
     $("#bcAddress").html(wares.selectedCustomer.bcAddress);
     $("#bcHp").html(CommonUI.formatTel(wares.selectedCustomer.bcHp));
-    $("#beforeUncollectMoneyMain").html(wares.selectedCustomer.beforeUncollectMoney.toLocaleString());
+    $("#uncollectMoneyMain").html(wares.selectedCustomer.uncollectMoney.toLocaleString());
     $("#saveMoneyMain").html(wares.selectedCustomer.saveMoney.toLocaleString());
     $("#bcRemark").html(wares.selectedCustomer.bcRemark);
     if(wares.selectedCustomer.bcLastRequestDt) {
@@ -2616,4 +2641,22 @@ function saveInspect() {
     formData.append("fiType", "F");
 
     comms.putNewInspectNeo(formData);
+}
+
+function addDistinguishableCellColor() {
+    const items = AUIGrid.getGridData(grids.s.id[0]);
+    let nowId = 0;
+    let colorIdx = 0;
+
+    for (let i = 0; i < items.length; i++) {
+        if(items[i].frId !== nowId) {
+            colorIdx++;
+            if(colorIdx === 2) colorIdx = 0;
+            nowId = items[i].frId;
+        }
+        items[i].cellColor = colorIdx;
+    }
+
+    AUIGrid.updateRowsById(grids.s.id[0], items);
+    AUIGrid.refresh(grids.s.id[0]);
 }

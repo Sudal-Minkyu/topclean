@@ -47,7 +47,7 @@ const dtos = {
             bcHp: "",
             bcAddress: "",
             saveMoney: "", // 적립금
-            uncollectMoney: "", // 전체미수금
+            uncollectMoney: "", // 미수금전체
         },
         franchiseUncollectRequestList: {
             frId: "nr",
