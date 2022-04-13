@@ -86,6 +86,7 @@ public class RequestDetailSearchDto {
     private String fdPollutionLocFrh; // 오염위치 앞 - 오른손  체크면 Y 아니면 N
     private String fdPollutionLocFlf; // 오염위치 앞 - 왼발  체크면 Y 아니면 N
     private String fdPollutionLocFrf; // 오염위치 앞 - 오른발  체크면 Y 아니면 N
+
     private String fdPollutionLocBcn; // 오염위치 뒤 - 목  체크면 Y 아니면 N
     private String fdPollutionLocBcs; // 오염위치 뒤 - 배  체크면 Y 아니면 N
     private String fdPollutionLocBcb; // 오염위치 뒤 - 하의  체크면 Y 아니면 N

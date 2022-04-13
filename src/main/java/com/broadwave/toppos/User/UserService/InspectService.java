@@ -127,20 +127,104 @@ public class InspectService {
         log.info("현재 접속한 가맹점 택번호 : "+frTagNo);
 
         List<HashMap<String,Object>> requestDetailSearchDtoData = new ArrayList<>();
-        HashMap<String,Object> requestDetailSearchDtoInfo;
+        HashMap<String,Object> requestDetailInfo;
 
         List<RequestDetailSearchDto> requestDetailSearchDtoList = requestDetailRepository.requestDetailSearch(frCode, bcId, frTagNo+searchTag, filterCondition, filterFromDt, filterToDt); //  통합조회용 - 접수세부 호출
         log.info("requestDetailSearchDtoList 크기 : "+requestDetailSearchDtoList.size());
 
+        for(RequestDetailSearchDto requestDetailDto : requestDetailSearchDtoList){
+            requestDetailInfo = new HashMap<>();
 
-        for(RequestDetailSearchDto requestDetailSearchDto : requestDetailSearchDtoList){
-            requestDetailSearchDtoInfo = new HashMap<>();
+            requestDetailInfo.put("bcName", requestDetailDto.getBcName());
+            requestDetailInfo.put("frYyyymmdd", requestDetailDto.getFrYyyymmdd());
+            requestDetailInfo.put("frInsertDt", requestDetailDto.getFrInsertDt());
 
-            List<PhotoDto> photoDtoList = photoRepository.findByPhotoDtoRequestDtlList(Long.parseLong(String.valueOf(requestDetailSearchDto.getFdId())));
-            requestDetailSearchDtoInfo.put("requestDetail", requestDetailSearchDto);
-            requestDetailSearchDtoInfo.put("photoList", photoDtoList);
+            requestDetailInfo.put("fdId", requestDetailDto.getFdId());
+            requestDetailInfo.put("frId", requestDetailDto.getFrId());
+            requestDetailInfo.put("frNo", requestDetailDto.getFrNo());
 
-            requestDetailSearchDtoData.add(requestDetailSearchDtoInfo);
+            requestDetailInfo.put("fdTag", requestDetailDto.getFdTag());
+            requestDetailInfo.put("biItemcode", requestDetailDto.getBiItemcode());
+            requestDetailInfo.put("fdState", requestDetailDto.getFdState());
+            requestDetailInfo.put("fdPreState", requestDetailDto.getFdPreState());
+
+            requestDetailInfo.put("fdS2Dt", requestDetailDto.getFdS2Dt());
+            requestDetailInfo.put("fdS3Dt", requestDetailDto.getFdS3Dt());
+            requestDetailInfo.put("fdS4Dt", requestDetailDto.getFdS4Dt());
+            requestDetailInfo.put("fdS5Dt", requestDetailDto.getFdS5Dt());
+            requestDetailInfo.put("fdS6Dt", requestDetailDto.getFdS6Dt());
+            requestDetailInfo.put("fdS6Time", requestDetailDto.getFdS6Time());
+
+            requestDetailInfo.put("fdCancel", requestDetailDto.getFdCancel());
+            requestDetailInfo.put("fdCacelDt", requestDetailDto.getFdCacelDt());
+
+            requestDetailInfo.put("fdColor", requestDetailDto.getFdColor());
+            requestDetailInfo.put("fdPattern", requestDetailDto.getFdPattern());
+            requestDetailInfo.put("fdPriceGrade", requestDetailDto.getFdPriceGrade());
+
+            requestDetailInfo.put("fdOriginAmt", requestDetailDto.getFdOriginAmt());
+            requestDetailInfo.put("fdNormalAmt", requestDetailDto.getFdNormalAmt());
+
+            requestDetailInfo.put("fdAdd2Amt", requestDetailDto.getFdAdd2Amt());
+            requestDetailInfo.put("fdAdd2Remark", requestDetailDto.getFdAdd2Remark());
+
+            requestDetailInfo.put("fdPollution", requestDetailDto.getFdPollution());
+            requestDetailInfo.put("fdDiscountGrade", requestDetailDto.getFdDiscountGrade());
+            requestDetailInfo.put("fdDiscountAmt", requestDetailDto.getFdDiscountAmt());
+            requestDetailInfo.put("fdQty", requestDetailDto.getFdQty());
+
+            requestDetailInfo.put("fdRequestAmt", requestDetailDto.getFdRequestAmt());
+            requestDetailInfo.put("fdSpecialYn", requestDetailDto.getFdSpecialYn());
+            requestDetailInfo.put("fdTotAmt", requestDetailDto.getFdTotAmt());
+            requestDetailInfo.put("fdRemark", requestDetailDto.getFdRemark());
+            requestDetailInfo.put("fdEstimateDt", requestDetailDto.getFdEstimateDt());
+
+            requestDetailInfo.put("fdRetryYn", requestDetailDto.getFdRetryYn());
+            requestDetailInfo.put("fdUrgentYn", requestDetailDto.getFdUrgentYn());
+
+            requestDetailInfo.put("fdPressed", requestDetailDto.getFdPressed());
+            requestDetailInfo.put("fdAdd1Amt", requestDetailDto.getFdAdd1Amt());
+            requestDetailInfo.put("fdAdd1Remark", requestDetailDto.getFdAdd1Remark());
+            requestDetailInfo.put("fdRepairAmt", requestDetailDto.getFdRepairAmt());
+            requestDetailInfo.put("fdWhitening", requestDetailDto.getFdWhitening());
+            requestDetailInfo.put("fdPollutionLevel", requestDetailDto.getFdPollutionLevel());
+            requestDetailInfo.put("fdWaterRepellent", requestDetailDto.getFdWaterRepellent());
+            requestDetailInfo.put("fdStarch", requestDetailDto.getFdStarch());
+
+            requestDetailInfo.put("fdPollutionLocFcn", requestDetailDto.getFdPollutionLocFcn());
+            requestDetailInfo.put("fdPollutionLocFcs", requestDetailDto.getFdPollutionLocFcs());
+            requestDetailInfo.put("fdPollutionLocFcb", requestDetailDto.getFdPollutionLocFcb());
+            requestDetailInfo.put("fdPollutionLocFlh", requestDetailDto.getFdPollutionLocFlh());
+            requestDetailInfo.put("fdPollutionLocFrh", requestDetailDto.getFdPollutionLocFrh());
+            requestDetailInfo.put("fdPollutionLocFlf", requestDetailDto.getFdPollutionLocFlf());
+            requestDetailInfo.put("fdPollutionLocFrf", requestDetailDto.getFdPollutionLocFrf());
+
+            requestDetailInfo.put("fdPollutionLocBcn", requestDetailDto.getFdPollutionLocBcn());
+            requestDetailInfo.put("fdPollutionLocBcs", requestDetailDto.getFdPollutionLocBcs());
+            requestDetailInfo.put("fdPollutionLocBcb", requestDetailDto.getFdPollutionLocBcb());
+            requestDetailInfo.put("fdPollutionLocBrh", requestDetailDto.getFdPollutionLocBrh());
+            requestDetailInfo.put("fdPollutionLocBlh", requestDetailDto.getFdPollutionLocBlh());
+            requestDetailInfo.put("fdPollutionLocBrf", requestDetailDto.getFdPollutionLocBrf());
+            requestDetailInfo.put("fdPollutionLocBlf", requestDetailDto.getFdPollutionLocBlf());
+
+            requestDetailInfo.put("frRefType", requestDetailDto.getFrRefType());
+
+            requestDetailInfo.put("fdAgreeType", requestDetailDto.getFdAgreeType());
+            requestDetailInfo.put("fdSignImage", requestDetailDto.getFdSignImage());
+
+            requestDetailInfo.put("frFiId", requestDetailDto.getFrFiId());
+            requestDetailInfo.put("frFiCustomerConfirm", requestDetailDto.getFrFiCustomerConfirm());
+            requestDetailInfo.put("brFiId", requestDetailDto.getBrFiId());
+            requestDetailInfo.put("brFiCustomerConfirm", requestDetailDto.getBrFiCustomerConfirm());
+
+            requestDetailInfo.put("fpCancelYn", requestDetailDto.getFpCancelYn());
+
+            requestDetailInfo.put("fdPollutionType", requestDetailDto.getFdPollutionType());
+
+            List<PhotoDto> photoDtoList = photoRepository.findByPhotoDtoRequestDtlList(Long.parseLong(String.valueOf(requestDetailDto.getFdId())));
+            requestDetailInfo.put("photoList", photoDtoList);
+
+            requestDetailSearchDtoData.add(requestDetailInfo);
         }
 
         data.put("gridListData",requestDetailSearchDtoData);
