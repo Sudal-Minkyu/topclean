@@ -1683,8 +1683,13 @@ function onPaymentStageOne() {
                         $('#payStatus').hide();
                         if(resjson.ERRORDATA === "erroecode:404, error:error") {
                             alertCancel("카드결제 단말기 연결이 감지되지 않습니다.<br>연결을 확인해 주세요.");
+                        } else if (resjson.ERRORDATA === "erroecode:0, error:timeout") {
+                            alertCancel("유효 결제 시간이 지났습니다.<br>다시 결제창 버튼을 이용하여<br>원하시는 기능을 선택 해주세요.");
+                        } else if(resjson.ERRORMESSAGE === "단말기에서종료키누름 /                  /                 ") {
+                            alertCancel("단말기 종료키를 통해 결제가 중지되었습니다.");
                         } else {
                             alertCancel(resjson.ERRORMESSAGE);
+                            console.log(resjson);
                         }
                     }
                 });
