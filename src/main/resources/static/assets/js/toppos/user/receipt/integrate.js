@@ -671,34 +671,6 @@ const grids = {
                     style: "grid_textalign_left",
                     width: 70,
                 }, {
-                    dataField: "frInsertDt",
-                    headerText: "접수일자",
-                    width: 90,
-                    renderer : {
-                        type : "TemplateRenderer",
-                    },
-                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
-                        let result = "";
-                        if(typeof value === "number") {
-                            result = new Date(value).format("yyyy-MM-dd<br>hh:mm");
-                        }
-                        return result;
-                    },
-                }, {
-                    dataField: "fdS6Time",
-                    headerText: "인도일자",
-                    width: 90,
-                    renderer : {
-                        type : "TemplateRenderer",
-                    },
-                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
-                        let result = "";
-                        if(typeof value === "number") {
-                            result = new Date(value).format("yyyy-MM-dd<br>hh:mm");
-                        }
-                        return result;
-                    },
-                }, {
                     dataField: "fdTag",
                     headerText: "택번호",
                     style: "datafield_tag",
@@ -750,6 +722,34 @@ const grids = {
                     headerText: "특이사항",
                     style: "grid_textalign_left",
                     width: 100,
+                }, {
+                    dataField: "frInsertDt",
+                    headerText: "접수일자",
+                    width: 90,
+                    renderer : {
+                        type : "TemplateRenderer",
+                    },
+                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
+                        let result = "";
+                        if(typeof value === "number") {
+                            result = new Date(value).format("yyyy-MM-dd<br>hh:mm");
+                        }
+                        return result;
+                    },
+                }, {
+                    dataField: "fdS6Time",
+                    headerText: "인도일자",
+                    width: 90,
+                    renderer : {
+                        type : "TemplateRenderer",
+                    },
+                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
+                        let result = "";
+                        if(typeof value === "number") {
+                            result = new Date(value).format("yyyy-MM-dd<br>hh:mm");
+                        }
+                        return result;
+                    },
                 }, {
                     dataField: "fdS2Dt",
                     headerText: "지사입고",
@@ -1322,6 +1322,16 @@ const trigs = {
             } else {
                 alertCaution("영수증을 출력할 상품을 선택해 주세요.", 1);
             }
+        });
+
+        $("#changeDateRange").on("change", function () {
+            let fromday = new Date();
+            fromday.setDate(fromday.getDate() - $(this).val());
+            fromday = fromday.format("yyyy-MM-dd");
+            const today = new Date().format("yyyy-MM-dd");
+
+            $("#filterFromDt").val(fromday);
+            $("#filterToDt").val(today);
         });
 
     },
