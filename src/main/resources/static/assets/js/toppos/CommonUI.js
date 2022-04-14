@@ -75,6 +75,7 @@ class CommonUIClass {
                 statusText += item.fdWhitening ? "표" : "";
                 statusText += item.fdWaterRepellent || item.fdStarch ? "발" : "";
                 statusText += pollution;
+                statusText += item.fdS6CancelYn === "Y" ? "인도취소" : "";
                 return statusText;
             } catch (e) {
                 this.toppos.underTaker(e, "CommonUI : 처리내역 문자조합");

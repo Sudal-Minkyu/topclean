@@ -835,6 +835,14 @@ function onPutCustomer() {
     AUIGrid.clearGridData(gridId[0]);
     calculateMainPrice(AUIGrid.getGridData(gridId[0]), AUIGrid.getRemovedItems(gridId[0]));
 
+    if (selectedCustomer.deliverySize) {
+        $("#numOfDeliverablePop").attr("style", "visibility: show;");
+        $("#numOfDeliverableBcName").html(selectedCustomer.bcName);
+        $("#numOfDeliverable").html(selectedCustomer.deliverySize);
+    } else {
+        $("#numOfDeliverablePop").attr("style", "visibility: hidden;");
+    }
+
     setTopMenuHref();
 }
 
@@ -1856,9 +1864,7 @@ function closePaymentPop(isSimpleClose = false) {
     }
 
     CommonUI.ajax(url, "PARAM", sendData, function (res) {
-        if (selectedCustomer.bcHp) {
-            location.href = "/user/delivery?bchp=" + selectedCustomer.bcHp;
-        }
+        goToDeliver();
     });
 
     delete initialData.etcData["frNo"];
@@ -2152,5 +2158,11 @@ function setTopMenuHref() {
         $("#menuReceiptreg").attr("href", `/user/receiptreg`);
         $("#menuDelivery").attr("href", `/user/delivery`);
         $("#menuIntegrate").attr("href", `/user/integrate`);
+    }
+}
+
+function goToDeliver() {
+    if (selectedCustomer.bcHp) {
+        location.href = "/user/delivery?bchp=" + selectedCustomer.bcHp;
     }
 }

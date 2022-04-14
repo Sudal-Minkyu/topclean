@@ -381,8 +381,8 @@ const comms = {
         wares.currentCondition = condition;
         dv.chk(condition, dtos.send.franchiseRequestDetailSearch, "메인그리드 필터링 조건 보내기");
         CommonUI.ajax(grids.s.url.read[0], "GET", condition, function(res) {
-            console.log(res);
             const gridData = res.sendData.gridListData;
+            console.log(gridData);
             gridData.forEach(item => {
                 if(item.fdState === "S1" && item.frFiId && item.frFiCustomerConfirm === "1") {
                     item.fdState = "F";
@@ -853,7 +853,7 @@ const grids = {
                 }, {
                     dataField: "redBtn2",
                     headerText: "결제취소",
-                    width: 70,
+                    width: 65,
                     renderer : {
                         type: "TemplateRenderer",
                     },
@@ -2091,19 +2091,13 @@ function putCustomer() {
     // $("#class" + wares.selectedCustomer.bcGrade).parents("li").css("display", "block");
     grids.f.clearGrid(0);
 
-
     let fromday = new Date();
     fromday.setDate(fromday.getDate() - 30);
     fromday = fromday.format("yyyy-MM-dd");
     const today = new Date().format("yyyy-MM-dd");
-
-    /* datepicker를 적용시킬 대상들의 dom id들 */
-    const datePickerTargetIds = [
-        "filterFromDt", "filterToDt"
-    ];
-
     $("#filterFromDt").val(fromday);
     $("#filterToDt").val(today);
+    $("#changeDateRange").val("30");
 
     setTopMenuHref();
 }
