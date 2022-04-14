@@ -229,10 +229,13 @@ function onPageLoad() {
     }
 
     comms.franchiseInfo(condition);
-    const datePickerId = ["historyDate"];
-    CommonUI.setDatePicker(datePickerId);
-	$("#historyDate").val(today);
-    $("#historyDate").datepicker("option", "maxDate", today);
+    CommonUI.setDatePicker(["historyDate"]);
+
+    const $historyDate = $("#historyDate");
+	$historyDate.val(today);
+    $historyDate.datepicker("option", "maxDate", today);
+    $historyDate.datepicker("option", "changeYear", false);
+    $historyDate.datepicker("option", "changeMonth", false);
     $("#ui-datepicker-div").hide();
     trigs.basic();
 
