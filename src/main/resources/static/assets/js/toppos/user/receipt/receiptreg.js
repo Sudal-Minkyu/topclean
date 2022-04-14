@@ -63,11 +63,6 @@ $(function() {
     /* 가상키보드의 사용 선언 */
     vkey = new VKeyboard();
 
-    /* 새로 추가되는 행은 체크된 상태로 시작하도록 */
-    AUIGrid.bind(gridId[0], "addRow", function (e) {
-        AUIGrid.addCheckedRowsByIds(gridId[0], e.items[0]._$uid);
-    });
-
     AUIGrid.bind(gridId[0], "cellClick", function (e) {
         if(e.dataField === "fdQty") {
             tempItem = e.item;
