@@ -1,5 +1,5 @@
 const CAT_URL = "http://127.0.0.1:27098";
-const CAT_TIMEOUT_DURATION = 15000
+const CAT_TIMEOUT_DURATION = 31000
 
 class CATPayment {
     

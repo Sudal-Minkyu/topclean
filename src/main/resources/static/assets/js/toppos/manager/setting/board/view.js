@@ -189,6 +189,12 @@ function onPageLoad() {
         condition[wares[wares.boardType].idKeyName] = parseInt(wares.id);
         comms.getReplyList(condition);
     }
+
+    // lightbox option
+    lightbox.option({
+        'maxWidth': 1100,
+        'positionFromTop': 190
+    });
 }
 
 function getParams() {
@@ -298,9 +304,14 @@ function setFields(data) {
             volume = Math.ceil(file.fileVolume / 1024).toLocaleString() + "KB";
         }
 
+        /* 파일 확장자가 라이트박스 라이브러리를 지원하는 확장자인지 판단 */
+        const isImage = ["PNG", "BMP", "JPG", "JPEG", "GIF", "WEBP", "SVG"]
+            .includes(file.fileFileName.split(".").pop().toUpperCase());
+        const addProp = isImage ? `data-lightbox="images" data-title="${file.fileFileName}"` : ``;
+
         const element = `
             <li>
-                <a href="${file.filePath + file.fileFileName}" class="board-view__file">
+                <a href="${file.filePath + file.fileFileName}" ${addProp} class="board-view__file" download>
                     <span class="board-view__filename">${file.fileOriginalFilename}</span>
                     <span class="board-view__filesize">${volume}</span>
                 </a>
