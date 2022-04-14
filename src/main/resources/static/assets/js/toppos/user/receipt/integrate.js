@@ -364,7 +364,6 @@ const comms = {
             if(items.length === 1) {
                 wares.selectedCustomer = items[0];
                 putCustomer(wares.selectedCustomer);
-                delete initialData.etcData["frNo"];
             }else if(items.length > 1) {
                 grids.f.setData(1, items);
                 $("#customerListPop").addClass("active");
@@ -2027,7 +2026,6 @@ function searchCustomer() {
 function selectCustomerFromList() {
     if(wares.selectedCustomer) {
         putCustomer();
-        delete initialData.etcData["frNo"];
         $("#customerListPop").removeClass("active");
     }else{
         alertCaution("고객을 선택해 주세요", 1);
