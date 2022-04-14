@@ -665,6 +665,11 @@ public class UserRestController {
             customerListInfo.put("bcLastRequestDt", optionalRequest.get().getBcId().getBcLastRequestDt());
             customerListInfo.put("uncollectMoney", 0);
             customerListInfo.put("saveMoney", 0);
+
+            // 세탁인도할 품목 리스트 호출
+            List<RequestDetailDeliveryDto> requestDetailDeliveryDtos = receiptStateService.requestDetailDelivery(frCode, optionalRequest.get().getBcId().getBcId());
+            customerListInfo.put("deliverySize",requestDetailDeliveryDtos.size());
+
             customerListData.add(customerListInfo);
 
             List<HashMap<String,Object>> customerListDataGet = receiptService.findByUnCollectAndSaveMoney(customerListData, customerIdList,"1");
