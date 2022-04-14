@@ -119,4 +119,8 @@ public class RequestDetailDeliveryDto {
         }
     }
 
+    public Timestamp getFrInsertDt() {
+        return Timestamp.valueOf(frInsertDt);
+    }
+
 }
