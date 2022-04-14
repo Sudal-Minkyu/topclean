@@ -111,6 +111,12 @@ public class RequestDetail {
     @Column(name="fd_s6_time")
     private LocalDateTime fdS6Time; // 고객인도시간
 
+    @Column(name="fd_s6_cancel_yn")
+    private String fdS6CancelYn; // 고객인도취소이력 (취소할경우 'Y'로 표기, 기본값 N)
+
+    @Column(name="fd_s6_cancel_time")
+    private LocalDateTime fdS6CancelTime; // 고객인도시간 취소시 시간기록
+
     @Column(name="fd_s7_type")
     private String fdS7Type; // 01:강제출고, 02:반품출고
 

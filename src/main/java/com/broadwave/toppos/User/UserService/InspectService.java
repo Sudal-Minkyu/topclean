@@ -154,6 +154,8 @@ public class InspectService {
             requestDetailInfo.put("fdS5Dt", requestDetailDto.getFdS5Dt());
             requestDetailInfo.put("fdS6Dt", requestDetailDto.getFdS6Dt());
             requestDetailInfo.put("fdS6Time", requestDetailDto.getFdS6Time());
+            requestDetailInfo.put("fdS6CancelYn", requestDetailDto.getFdS6CancelYn());
+            requestDetailInfo.put("fdS6CancelTime", requestDetailDto.getFdS6CancelTime());
 
             requestDetailInfo.put("fdCancel", requestDetailDto.getFdCancel());
             requestDetailInfo.put("fdCacelDt", requestDetailDto.getFdCacelDt());
@@ -831,6 +833,8 @@ public class InspectService {
                 optionalRequestDetail.get().setFdPreState(fdState);
                 optionalRequestDetail.get().setFdPreStateDt(LocalDateTime.now());
                 optionalRequestDetail.get().setFdS6Type(null);
+                optionalRequestDetail.get().setFdS6CancelYn("Y");
+                optionalRequestDetail.get().setFdS6CancelTime(LocalDateTime.now());
                 optionalRequestDetail.get().setModify_id(login_id);
                 optionalRequestDetail.get().setModify_date(LocalDateTime.now());
                 requestDetailRepository.save(optionalRequestDetail.get());

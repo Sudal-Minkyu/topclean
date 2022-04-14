@@ -5,8 +5,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Column;
 import java.math.BigInteger;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 /**
  * @author Minkyu
@@ -41,6 +43,8 @@ public class RequestDetailSearchDto {
     private String fdS5Dt; // 가맹점입고일(완성일자)
     private String fdS6Dt; // 고객인도일
     private Timestamp fdS6Time; // 고객인도일
+    private String fdS6CancelYn; // 고객인도취소이력 (취소할경우 'Y'로 표기, 기본값 N)
+    private Timestamp fdS6CancelTime; // 고객인도시간 취소시 시간기록
 
     private String fdCancel; // 접수취소 Y 기본값 N
     private Timestamp fdCacelDt; // 접수취소 시간
