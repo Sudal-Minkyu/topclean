@@ -201,6 +201,7 @@
 	height: 2px;
 }
 
+/* hover시 */
 .aui-grid-body-panel .aui-grid-table tr:hover td {
     background-color: #f1f8fe;
 }
