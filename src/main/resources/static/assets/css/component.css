@@ -1009,6 +1009,24 @@ input[type="number"]::-webkit-inner-spin-button {
     color: #eee;
 }
 
+.ui-datepicker-year,
+.ui-datepicker-month {
+	border: 0 none;
+	height: 74px;
+	background: none;
+	padding: 0;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+}
+.ui-datepicker-year::-ms-expand,
+.ui-datepicker-month::-ms-expand {
+	display: none;
+}
+.ui-datepicker-month {
+	margin-left: 20px;
+}
+
 
 /*****************************************************/
 
