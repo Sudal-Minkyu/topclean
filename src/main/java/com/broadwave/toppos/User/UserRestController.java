@@ -41,6 +41,7 @@ import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.RequestHistory
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.RequestListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.RequestTempDto;
 import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoney;
+import com.broadwave.toppos.User.Template.TemplateDto;
 import com.broadwave.toppos.User.UserDtos.EtcDataDto;
 import com.broadwave.toppos.User.UserDtos.UserIndexDto;
 import com.broadwave.toppos.User.UserService.*;
@@ -62,6 +63,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -97,6 +99,7 @@ public class UserRestController {
     private final NoticeService noticeService; // 공지사항 게시판 서비스
     private final CalendarService calendarService; // 휴무일 서비스
     private final FindService findService; // 휴무일 서비스
+    private final TemplateService templateService; // 문자메세지보내기 서비스
 
     private final ModelMapper modelMapper;
     private final TokenProvider tokenProvider;
@@ -106,7 +109,7 @@ public class UserRestController {
     public UserRestController(AWSS3Service awss3Service, UserService userService, ReceiptService receiptService, SortService sortService, InfoService infoService, InspectService inspectService,
                               TokenProvider tokenProvider, ModelMapper modelMapper, HeadService headService, CalendarService calendarService, ReceiptStateService receiptStateService,
                               UncollectService uncollectService, BusinessdayService businessdayService, TagNoticeService tagNoticeService, TagGalleryService tagGalleryService, NoticeService noticeService,
-                              FindService findService) {
+                              FindService findService, TemplateService templateService) {
         this.awss3Service = awss3Service;
         this.userService = userService;
         this.receiptService = receiptService;
@@ -124,6 +127,7 @@ public class UserRestController {
         this.tagGalleryService = tagGalleryService;
         this.noticeService = noticeService;
         this.findService = findService;
+        this.templateService = templateService;
     }
 
 //@@@@@@@@@@@@@@@@@@@@@ 가맹점 메인화면 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -1232,6 +1236,7 @@ public class UserRestController {
         return noticeService.noticeView(hnId, "3");
     }
 
+
 //@@@@@@@@@@@@@@@@@@@@@ 물건찾기 관련 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     // 가맹점 물건찾기 할 리스트 호출
     @GetMapping("franchiseObjectFind")
@@ -1252,8 +1257,44 @@ public class UserRestController {
     }
 
 
+//@@@@@@@@@@@@@@@@@@@@@ 문자메세지 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    // 메세지 보낼 고객 리스트 호출
+    @GetMapping("messageCustomerList")
+    @ApiOperation(value = "문자 메시지 고객리스트" , notes = "문자를 메시지 보낼 고객리스트를 호출한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
+    public ResponseEntity<Map<String,Object>> customerList(
+            @RequestParam(value="visitDayRange", defaultValue="") String visitDayRange,
+            HttpServletRequest request){
+        return templateService.messageCustomerList(visitDayRange, request);
+    }
 
+    // 문자 메시지 보내기
+    @PostMapping("messageSendCustomer")
+    @ApiOperation(value = "문자 메시지 보내기" , notes = "선택한 고객들에게 문자메세지를 보낸다.")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
+    public ResponseEntity<Map<String,Object>> messageSendCustomer(
+            @RequestParam(value="bcIdList", defaultValue="") List<Long> bcIdList,
+            @RequestParam(value="fmMessage", defaultValue="") String fmMessage,
+            @RequestParam(value="fmSendreqtimeDt", defaultValue="") Timestamp fmSendreqtimeDt,
+            HttpServletRequest request){
+        return templateService.messageSendCustomer(bcIdList, fmMessage,fmSendreqtimeDt, request);
+    }
 
+    // 메세지 템플릿 6개 저장
+    @PostMapping("templateSave")
+    @ApiOperation(value = "메세지 템플릿 6개 저장" , notes = "문자 메세지 템플릿을 저장한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
+    public ResponseEntity<Map<String,Object>> templateSave(@RequestBody List<TemplateDto> templateDtos, HttpServletRequest request){
+        return templateService.templateSave(templateDtos, request);
+    }
+
+    // 메세지 템플릿 6개 호출
+    @GetMapping("templateList")
+    @ApiOperation(value = "메세지 템플릿 호출" , notes = "문자 메세지 템플릿을 호출한다")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
+    public ResponseEntity<Map<String,Object>> templateList(HttpServletRequest request){
+        return templateService.templateList(request);
+    }
 
 
 

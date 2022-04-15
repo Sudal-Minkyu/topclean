@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface CustomerRepository extends JpaRepository<Customer,Long> {
+public interface CustomerRepository extends JpaRepository<Customer,Long>, CustomerRepositoryCustom {
     @Query("select a from Customer a where a.bcHp = :bcHp and a.frCode = :frCode group by a.bcHp")
     Optional<Customer> findByBcHp(String bcHp, String frCode);
 

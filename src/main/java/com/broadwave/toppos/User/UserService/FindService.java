@@ -130,7 +130,6 @@ public class FindService {
         log.info("fdIdList : "+fdIdList);
 
         AjaxResponse res = new AjaxResponse();
-        HashMap<String, Object> data = new HashMap<>();
 
         // 클레임데이터 가져오기
         Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
@@ -161,7 +160,7 @@ public class FindService {
 
         findRepository.saveAll(findList);
 
-        return ResponseEntity.ok(res.dataSendSuccess(data));
+        return ResponseEntity.ok(res.success());
     }
 
 }

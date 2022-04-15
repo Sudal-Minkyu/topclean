@@ -8,8 +8,8 @@ import com.broadwave.toppos.User.Addprocess.AddprocessRepositoryCustom;
 import com.broadwave.toppos.User.Customer.Customer;
 import com.broadwave.toppos.User.Customer.CustomerDtos.CustomerInfoDto;
 import com.broadwave.toppos.User.Customer.CustomerDtos.CustomerListDto;
+import com.broadwave.toppos.User.Customer.CustomerDtos.CustomerMessageListDto;
 import com.broadwave.toppos.User.Customer.CustomerRepository;
-import com.broadwave.toppos.User.Customer.CustomerRepositoryCustom;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Request;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailAmtDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepository;
@@ -19,16 +19,17 @@ import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoneyRepository;
 import com.broadwave.toppos.User.UserDtos.UserIndexDto;
 import com.broadwave.toppos.User.UserLoginLog.UserLoginLog;
 import com.broadwave.toppos.User.UserLoginLog.UserLoginLogRepository;
+import com.broadwave.toppos.common.AjaxResponse;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * @author Minkyu
@@ -48,14 +49,13 @@ public class UserService {
     private final CustomerRepository customerRepository;
     private final UserLoginLogRepository userLoginLogRepository;
 
-    private final CustomerRepositoryCustom customerRepositoryCustom;
     private final AccountRepository accountRepository;
     private final AddprocessRepositoryCustom addProcessRepositoryCustom;
 
     @Autowired
     public UserService(TokenProvider tokenProvider, SaveMoneyRepository saveMoneyRepository, RequestRepository requestRepository, RequestDetailRepository requestDetailRepository,
                        CustomerRepository customerRepository, UserLoginLogRepository userLoginLogRepository,
-                       CustomerRepositoryCustom customerRepositoryCustom, AccountRepository accountRepository,
+                       AccountRepository accountRepository,
                        AddprocessRepositoryCustom addProcessRepositoryCustom){
         this.tokenProvider = tokenProvider;
         this.requestRepository = requestRepository;
@@ -63,7 +63,6 @@ public class UserService {
         this.requestDetailRepository = requestDetailRepository;
         this.customerRepository = customerRepository;
         this.userLoginLogRepository = userLoginLogRepository;
-        this.customerRepositoryCustom = customerRepositoryCustom;
         this.accountRepository = accountRepository;
         this.addProcessRepositoryCustom = addProcessRepositoryCustom;
     }
@@ -86,12 +85,12 @@ public class UserService {
 
     // 로그인한 가맹점의 대한 고객정보 조회
     public List<CustomerInfoDto> findByCustomerInfo(String frCode, String searchType, String searchString) {
-        return customerRepositoryCustom.findByCustomerInfo(frCode, searchType, searchString);
+        return customerRepository.findByCustomerInfo(frCode, searchType, searchString);
     }
 
     // 로그인한 가맹점의 고객리스트 호출
     public List<CustomerListDto> findByCustomerList(String frCode, String searchType, String searchString) {
-        return customerRepositoryCustom.findByCustomerList(frCode, searchType, searchString);
+        return customerRepository.findByCustomerList(frCode, searchType, searchString);
     }
 
     // 가맹점 메인페이지 전용 개인정보 호출
@@ -165,8 +164,5 @@ public class UserService {
     public void saveMoneySave(SaveMoney saveMoney) {
         saveMoneyRepository.save(saveMoney);
     }
-
-
-
 
 }
