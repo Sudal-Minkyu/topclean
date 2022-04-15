@@ -2,6 +2,7 @@ package com.broadwave.toppos.User.Customer;
 
 import com.broadwave.toppos.User.Customer.CustomerDtos.CustomerInfoDto;
 import com.broadwave.toppos.User.Customer.CustomerDtos.CustomerListDto;
+import com.broadwave.toppos.User.Customer.CustomerDtos.CustomerMessageListDto;
 import com.broadwave.toppos.User.Customer.CustomerDtos.CustomerUncollectListDto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
@@ -55,11 +56,11 @@ public class CustomerRepositoryCustomImpl extends QuerydslRepositorySupport impl
 
         if(!searchString.equals("")){
             if(searchType.equals("0")){
-                query.where(customer.bcName.containsIgnoreCase(searchString).or(customer.bcHp.containsIgnoreCase(searchString)));
+                query.where(customer.bcName.likeIgnoreCase("%"+searchString+"%").or(customer.bcHp.likeIgnoreCase("%"+searchString+"%")));
             }else if(searchType.equals("1")){
-                query.where(customer.bcName.containsIgnoreCase(searchString));
+                query.where(customer.bcName.likeIgnoreCase("%"+searchString+"%"));
             }else {
-                query.where(customer.bcHp.containsIgnoreCase(searchString));
+                query.where(customer.bcHp.likeIgnoreCase("%"+searchString+"%"));
             }
         }
 
@@ -89,16 +90,16 @@ public class CustomerRepositoryCustomImpl extends QuerydslRepositorySupport impl
         if(searchString != null){
             switch (searchType) {
                 case "0":
-                    query.where(customer.bcName.containsIgnoreCase(searchString).or(customer.bcHp.containsIgnoreCase(searchString).or(customer.bcAddress.containsIgnoreCase(searchString))));
+                    query.where(customer.bcName.likeIgnoreCase("%"+searchString+"%").or(customer.bcHp.likeIgnoreCase("%"+searchString+"%").or(customer.bcAddress.likeIgnoreCase("%"+searchString+"%"))));
                     break;
                 case "1":
-                    query.where(customer.bcName.containsIgnoreCase(searchString));
+                    query.where(customer.bcName.likeIgnoreCase("%"+searchString+"%"));
                     break;
                 case "2":
-                    query.where(customer.bcHp.containsIgnoreCase(searchString));
+                    query.where(customer.bcHp.likeIgnoreCase("%"+searchString+"%"));
                     break;
                 default:
-                    query.where(customer.bcAddress.containsIgnoreCase(searchString));
+                    query.where(customer.bcAddress.likeIgnoreCase("%"+searchString+"%"));
                     break;
             }
         }
@@ -124,18 +125,40 @@ public class CustomerRepositoryCustomImpl extends QuerydslRepositorySupport impl
         if(searchString != null){
             switch (searchType) {
                 case "0":
-                    query.where(customer.bcName.containsIgnoreCase(searchString).or(customer.bcHp.containsIgnoreCase(searchString).or(customer.bcAddress.containsIgnoreCase(searchString))));
+                    query.where(customer.bcName.likeIgnoreCase("%"+searchString+"%").or(customer.bcHp.likeIgnoreCase("%"+searchString+"%").or(customer.bcAddress.likeIgnoreCase("%"+searchString+"%"))));
                     break;
                 case "1":
-                    query.where(customer.bcName.containsIgnoreCase(searchString));
+                    query.where(customer.bcName.likeIgnoreCase("%"+searchString+"%"));
                     break;
                 case "2":
-                    query.where(customer.bcHp.containsIgnoreCase(searchString));
+                    query.where(customer.bcHp.likeIgnoreCase("%"+searchString+"%"));
                     break;
                 default:
-                    query.where(customer.bcAddress.containsIgnoreCase(searchString));
+                    query.where(customer.bcAddress.likeIgnoreCase("%"+searchString+"%"));
                     break;
             }
+        }
+
+        return query.fetch();
+    }
+
+    @Override
+    public List<CustomerMessageListDto> findByMessageCustomerList(String visitDayRange, String bcLastRequestDt, String frCode) {
+
+        QCustomer customer = QCustomer.customer;
+
+        JPQLQuery<CustomerMessageListDto> query = from(customer)
+                .select(Projections.constructor(CustomerMessageListDto.class,
+                        customer.bcId,
+                        customer.bcName,
+                        customer.bcHp
+                ));
+
+        query.orderBy(customer.bcName.asc());
+        query.where(customer.frCode.eq(frCode));
+
+        if(!visitDayRange.equals("0")){
+            customer.bcLastRequestDt.goe(bcLastRequestDt);
         }
 
         return query.fetch();

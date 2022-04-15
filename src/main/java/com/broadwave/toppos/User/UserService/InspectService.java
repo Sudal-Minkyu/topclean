@@ -132,6 +132,7 @@ public class InspectService {
         List<RequestDetailSearchDto> requestDetailSearchDtoList = requestDetailRepository.requestDetailSearch(frCode, bcId, frTagNo+searchTag, filterCondition, filterFromDt, filterToDt); //  통합조회용 - 접수세부 호출
         log.info("requestDetailSearchDtoList 크기 : "+requestDetailSearchDtoList.size());
 
+
         for(RequestDetailSearchDto requestDetailDto : requestDetailSearchDtoList){
             requestDetailInfo = new HashMap<>();
 

@@ -6,7 +6,6 @@ import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.User.Customer.Customer;
 import com.broadwave.toppos.User.Customer.CustomerDtos.CustomerUncollectListDto;
 import com.broadwave.toppos.User.Customer.CustomerRepository;
-import com.broadwave.toppos.User.Customer.CustomerRepositoryCustom;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.Payment;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentDtos.PaymentUncollectSet;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentRepository;
@@ -51,13 +50,11 @@ public class UncollectService {
     private final RequestDetailRepository requestDetailRepository;
 
     private final CustomerRepository customerRepository;
-    private final CustomerRepositoryCustom customerRepositoryCustom;
 
     @Autowired
     public UncollectService(ModelMapper modelMapper, TokenProvider tokenProvider, ReceiptService receiptService,
                             RequestRepository requestRepository, FranchiseRepository franchiseRepository, CustomerRepository customerRepository,
-                            PaymentRepository paymentRepository, RequestDetailRepository requestDetailRepository,
-                            CustomerRepositoryCustom customerRepositoryCustom){
+                            PaymentRepository paymentRepository, RequestDetailRepository requestDetailRepository){
         this.modelMapper = modelMapper;
         this.requestRepository = requestRepository;
         this.customerRepository = customerRepository;
@@ -66,7 +63,6 @@ public class UncollectService {
         this.tokenProvider = tokenProvider;
         this.paymentRepository = paymentRepository;
         this.requestDetailRepository = requestDetailRepository;
-        this.customerRepositoryCustom = customerRepositoryCustom;
     }
 
     // 미수관리페이지 - 고객검색 리스트 호출
@@ -89,7 +85,7 @@ public class UncollectService {
         List<Long> customerIdList = new ArrayList<>();
         List<HashMap<String,Object>> customerListData = new ArrayList<>();
         HashMap<String,Object> customerListInfo;
-        List<CustomerUncollectListDto> customerListDtos = customerRepositoryCustom.findByCustomerUncollectList(frCode, searchType, searchText);
+        List<CustomerUncollectListDto> customerListDtos = customerRepository.findByCustomerUncollectList(frCode, searchType, searchText);
 //        log.info("customerListDtos : "+customerListDtos);
         for (CustomerUncollectListDto customerUncollectListDto: customerListDtos) {
             customerListInfo = new HashMap<>();
