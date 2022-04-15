@@ -5,15 +5,16 @@
 * */
 const dtos = {
     send: {
-        템플릿6개저장: { // 6칸짜리 배열에 아래의 내용들이 세팅되어 API로 전송됩니다.
-            fmNum: "n", // 각 가맹점의 템플릿 번호. 1~6번까지 있음
-            fmSubject: "s",
-            fmMessage: "s",
+        templateSave: { // 6칸짜리 배열에 아래의 내용들이 세팅되어 API로 전송됩니다.
+            id: "n",
+            num: "n", // 각 가맹점의 템플릿 번호. 1~6번까지 있음
+            subject: "s",
+            message: "s",
         },
-        고객리스트조회: {
+        messageCustomerList: {
             visitDayRange: "n", // 예를들어 7이 들어가면 일주일안에 이용했던 고객, 30이 들어가면 30일 안에 이용했던 고객, 단 0일경우 전체검색
         },
-        문자보내기: {
+        messageSendCustomer: {
             bcIdList: "a", // 문자 발송의 대상이 되는 고객들의 bcId들이 담긴 리스트
             fmMessage: "s",
             fmSendreqtimeDt: "n", // 예약발송인 경우에는 타임스탬프 숫자 형태로 전달 예정입니다. 아닐 경우 0을 넣어서 보낼 예정입니다.
@@ -27,12 +28,12 @@ const dtos = {
         },
     },
     receive: {
-        템플릿6개가져오기: { // 템플릿 저장 API와 동일한 구조로 배열에 아래의 파라메터들이 옵니다. 해당 대리점에 등록된 데이터가 없다면 오류가 아닌 빈값이 오면 됩니다.
+        templateList: { // 템플릿 저장 API와 동일한 구조로 배열에 아래의 파라메터들이 옵니다. 해당 대리점에 등록된 데이터가 없다면 오류가 아닌 빈값이 오면 됩니다.
             fmNum: "n",
             fmSubject: "s",
             fmMessage: "s",
         },
-        고객리스트조회: {
+        messageCustomerList: {
             bcId: "n",
             bcName: "s",
             bcHp: "s",
@@ -58,8 +59,9 @@ const dtos = {
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
     getTemplate() {
-        CommonUI.ajax("", "GET", false, function (res) {
-            const templateList = res.sendData;
+        CommonUI.ajax("/api/user/templateList", "GET", false, function (res) {
+            console.log(res);
+            const templateList = res.sendData.gridListData;
             console.log(templateList);
 
             const $tmpFmSubject = $(".tmpFmSubject");
@@ -74,6 +76,8 @@ const comms = {
                 $tmpFmMessage.eq(parseInt(templateList[i].fmNum) - 1).val(templateList[i].fmMessage);
                 $tmpByte.eq(parseInt(templateList[i].fmNum) - 1).html(byte);
                 $tmpInputFmSubject.eq(parseInt(templateList[i].fmNum) - 1).val(templateList[i].fmSubject);
+                $tmpInputFmSubject.eq(parseInt(templateList[i].fmNum) - 1).attr("data-id"
+                    , templateList[i].ftId ? templateList[i].ftId : 0);
                 $tmpInputFmMessage.eq(parseInt(templateList[i].fmNum) - 1).val(templateList[i].fmMessage);
                 $tmpInputByte.eq(parseInt(templateList[i].fmNum) - 1).html(byte);
             }
@@ -82,20 +86,27 @@ const comms = {
     },
     saveTemplate(saveDataList) {
         console.log(saveDataList);
-        // CommonUI.ajax("", "", saveDataList, function (res) {
-        //     alertSuccess("템플릿 저장에 성공하였습니다.");
-        //     comms.getTemplate();
-        // });
+        CommonUI.ajax("/api/user/templateSave", "MAPPER", saveDataList, function (res) {
+            console.log(res);
+            alertSuccess("템플릿 저장에 성공하였습니다.");
+            comms.getTemplate();
+        });
     },
 
     sendMessage(sendMessage) {
         console.log(sendMessage);
+        comms.ajax("/api/user/messageSendCustomer", "MAPPER", sendMessage, function (res) {
+            console.log(res);
+
+        });
     },
 
     getCustomers(getCondition) {
         console.log(getCondition);
         CommonUI.ajax("/api/user/messageCustomerList", "GET", getCondition, function (res) {
+            console.log(res);
             const data = res.sendData.gridListData;
+            grids.f.set(0, data);
         });
     },
 };
@@ -123,6 +134,7 @@ const grids = {
                 }, {
                     dataField: "bcHp",
                     headerText: "전화번호",
+                    width: 120,
                     labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
                         return CommonUI.formatTel(value);
                     }
@@ -152,6 +164,7 @@ const grids = {
                 }, {
                     dataField: "bcHp",
                     headerText: "전화번호",
+                    width: 120,
                     labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
                         return CommonUI.formatTel(value);
                     }
@@ -280,6 +293,7 @@ function onPageLoad() {
 
     trigs.basic();
     enableDatepicker();
+    comms.getTemplate();
 }
 
 function enableDatepicker() {
@@ -342,6 +356,7 @@ function saveTemplate() {
 
     for(let i = 0; i < $tmpInputFmSubject.length; i++) {
         saveDataList.push({
+            ftId: parseInt($tmpInputFmSubject.eq(i).attr("data-id")),
             fmNum: i + 1,
             fmSubject: $tmpInputFmSubject.eq(i).val(),
             fmMessage: $tmpInputFmMessage.eq(i).val(),
