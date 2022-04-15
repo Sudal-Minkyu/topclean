@@ -9,9 +9,8 @@ import javax.annotation.PostConstruct;
 @Configuration
 public class P6spyConfig {
 
-
     @PostConstruct
     public void setLogMessageFormat() {
-        P6SpyOptions.getActiveInstance().setLogMessageFormat(P6spyPrettySqlFormatterProd.class.getName());
+        P6SpyOptions.getActiveInstance().setLogMessageFormat(P6spyPrettySqlFormatterDev.class.getName());
     }
 }
