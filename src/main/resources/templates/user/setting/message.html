@@ -65,30 +65,31 @@
                         <div class="recipient">
                             <div class="recipient__search">
                                 <div class="search">
-                                    <div class="c-select">
-                                        <select>
-                                            <option>통합검색</option>
-                                            <option>고객명</option>
-                                            <option>전화번호</option>
+                                    <div class="c-select" style="display: none">
+                                        <select id="filterType">
+                                            <option value="0">통합검색</option>
+                                            <option value="1">고객명</option>
+                                            <option value="2">전화번호</option>
                                         </select>
                                     </div>
 
                                     <div class="c-search">
                                         <div class="c-search__input">
-                                            <input type="text" placeholder="이름, 전화번호 입력">
+                                            <input id="filterString" type="text" placeholder="이름, 전화번호 입력">
                                             <button class="c-search__key" type="button">키보드</button>
                                         </div>
-                                        <button class="c-search__bth" type="button">검색</button>
+                                        <button id="setCustomerFilterBtn" class="c-search__bth" type="button">검색</button>
+                                        <!--<button id="resetCustomerFilterBtn" class="c-button c-button--small" type="button">초기화</button>-->
                                     </div>
 
-                                    <p class="recipient__count">전송대상고객 : 총 <span id="numberOfTargetCustomers">000</span>명</p>
+                                    <p class="recipient__count">전송대상고객 : <span id="numberOfTargetCustomers">0000</span>명</p>
                                 </div>
                             </div>
                             <div class="recipient__grid-area">
                                 <div id="grid_customersList" class="recipient__grid" style="height: 568px;"></div>
                                 <div class="recipient__grid-btns">
-                                    <button class="recipient__btn recipient__in">넣기</button>
-                                    <button class="recipient__btn recipient__out">빼기</button>
+                                    <button id="insertCustomer" class="recipient__btn recipient__in">넣기</button>
+                                    <button id="removeCustomer" class="recipient__btn recipient__out">빼기</button>
                                 </div>
                                 <div id="grid_selectedCustomer" class="recipient__grid" style="height: 568px;"></div>
                             </div>

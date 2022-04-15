@@ -16,6 +16,7 @@ const dtos = {
         },
         messageSendCustomer: {
             bcIdList: "a", // 문자 발송의 대상이 되는 고객들의 bcId들이 담긴 리스트
+            msgType: "s", // s는 일반 sms L은 lms (SMSQ_SEND 테이블의 msg_type에 넣어야 할 문자)
             fmMessage: "s",
             fmSendreqtimeDt: "n", // 예약발송인 경우에는 타임스탬프 숫자 형태로 전달 예정입니다. 아닐 경우 0을 넣어서 보낼 예정입니다.
         },
@@ -96,8 +97,8 @@ const comms = {
     sendMessage(sendMessage) {
         console.log(sendMessage);
         comms.ajax("/api/user/messageSendCustomer", "MAPPER", sendMessage, function (res) {
+            alertSuccess("문자메시지 발송이 완료되었습니다.");
             console.log(res);
-
         });
     },
 
@@ -147,11 +148,11 @@ const grids = {
                 noDataMessage : "출력할 데이터가 없습니다.",
                 showAutoNoDataMessage: false,
                 enableColumnResize : false,
-                showRowAllCheckBox: false,
-                showRowCheckColumn: false,
+                showRowAllCheckBox: true,
+                showRowCheckColumn: true,
                 showRowNumColumn : false,
                 showStateColumn : false,
-                enableFilter : false,
+                enableFilter : true,
                 rowHeight : 48,
                 headerHeight : 48,
             };
@@ -177,8 +178,8 @@ const grids = {
                 noDataMessage : "출력할 데이터가 없습니다.",
                 showAutoNoDataMessage: false,
                 enableColumnResize : false,
-                showRowAllCheckBox: false,
-                showRowCheckColumn: false,
+                showRowAllCheckBox: true,
+                showRowCheckColumn: true,
                 showRowNumColumn : false,
                 showStateColumn : false,
                 enableFilter : false,
@@ -207,6 +208,53 @@ const grids = {
 
         resize(num) { // 해당 배열 번호 그리드의 크기를 현제 그리드를 감싼 엘리먼트에 맞춰 조절
             AUIGrid.resize(grids.s.id[num]);
+        },
+
+        addRow(num, data) {
+            AUIGrid.addRow(grids.s.id[num], data, "last");
+        },
+
+        getCheckedItems(num) {
+            if(AUIGrid.getCheckedRowItems(grids.s.id[num]).length) {
+                return AUIGrid.getCheckedRowItemsAll(grids.s.id[num]);
+            }else{
+                return AUIGrid.getSelectedRows(grids.s.id[num]);
+            }
+        },
+
+        removeCheckedRow(num) {
+            if(AUIGrid.getCheckedRowItems(grids.s.id[num]).length) {
+                AUIGrid.removeCheckedRows(grids.s.id[num]);
+            }else{
+                AUIGrid.removeRow(grids.s.id[num], "selectedIndex");
+            }
+            AUIGrid.removeSoftRows(grids.s.id[num]);
+        },
+
+        clearFilter(num) {
+            AUIGrid.clearFilterAll(grids.s.id[num]);
+        },
+
+        setFilter(num, type, string) {
+            AUIGrid.setFilter(grids.s.id[num], "bcName", function(dataField, value, item) {
+                let result = false;
+                switch (type) {
+                    case "0" :
+                        result = item.bcName.includes(string) || item.bcHp.includes(string.replace(/-/g, ""));
+                        break;
+                    case "1" :
+                        result = item.bcName.includes(string);
+                        break;
+                    case "2" :
+                        result = item.bcHp.includes(string.replace(/-/g, ""));
+                        break;
+                }
+                return result;
+            });
+        },
+
+        getRowCount(num) {
+            return AUIGrid.getRowCount(grids.s.id[num]);
         },
     },
 };
@@ -263,16 +311,50 @@ const trigs = {
 
         $("#sendMessageBtn").on("click", function () {
             const isLms = parseInt($("#byte").html()) > 90;
-            const msg = isLms ? "문자 길이가 90byte를 초과하므로<br>LMS로 문자를 전송하시겠습니까?" : "SMS 문자 메시지를 발송하시겠습니까?";
-            alertCheck(msg);
-            $("#checkDelSuccessBtn").on("click", function () {
-                sendMessage();
-                $('#popupId').remove();
-            });
+            const numCustomer = $("#numberOfTargetCustomers").html().toInt();
+            if (numCustomer) {
+                const msg = isLms ? `${numCustomer.toLocaleString()}명의 고객께 문자를 전송합니다.<br>문자 길이가 90byte를 초과하므로<br>LMS로 문자를 전송하시겠습니까?`
+                    : `${numCustomer.toLocaleString()}명의 고객께 문자를 전송합니다.<br>SMS 문자 메시지를 발송하시겠습니까?`;
+                alertCheck(msg);
+                $("#checkDelSuccessBtn").on("click", function () {
+                    sendMessage();
+                    $('#popupId').remove();
+                });
+            } else {
+                alertCaution("문자를 보낼 고객을 선택해 주세요.", 1);
+            }
         });
 
         $("#getCustomersBtn").on("click", function () {
             getCustomers();
+        });
+
+        $("#setCustomerFilterBtn").on("click", function () {
+            setCustomerFilter();
+        });
+
+        $("#resetCustomerFilterBtn").on("click", function () {
+            grids.f.clearFilter(0);
+        });
+
+        $("#filterString").on("keypress", function (e) {
+            if(e.originalEvent.code === "Enter" || e.originalEvent.code === "NumpadEnter") {
+                setCustomerFilter();
+            }
+        });
+
+        $("#insertCustomer").on("click", function () {
+            const customerList = grids.f.getCheckedItems(0);
+            grids.f.addRow(1, customerList);
+            grids.f.removeCheckedRow(0);
+            $("#numberOfTargetCustomers").html(grids.f.getRowCount(1).toString().padStart(4, "0"));
+        });
+
+        $("#removeCustomer").on("click", function () {
+            const customerList = grids.f.getCheckedItems(1);
+            grids.f.addRow(0, customerList);
+            grids.f.removeCheckedRow(1);
+            $("#numberOfTargetCustomers").html(grids.f.getRowCount(1).toString().padStart(4, "0"));
         });
     },
 }
@@ -370,7 +452,14 @@ function sendMessage() {
     const fmSendreqtimeDt = new Date($("#fmSendreqtimeDate").val() + " " + $("#fmSendreqtimeHour").val() + ":"
         + $("#fmSendreqtimeMinute").val()).getTime();
     const isBookSend = $("#isBookSend").is(":checked");
+    const bcIdList = [];
+    const gridData = grids.f.get(1);
+    for(const {bcHp} of gridData) {
+        bcIdList.push(bcHp.numString());
+    }
+
     const sendData = {
+        bcIdList: bcIdList,
         fmMessage: $("#fmMessage").val(),
         fmSendreqtimeDt: isBookSend ? fmSendreqtimeDt : 0,
     }
@@ -384,4 +473,13 @@ function getCustomers() {
         visitDayRange: isRangeSearch ? $("#visitDayRange").val() : "0",
     }
     comms.getCustomers(getCondition);
+}
+
+function setCustomerFilter() {
+    const $filterString = $("#filterString");
+    const type = $("#filterType").val();
+    const string = $filterString.val();
+    grids.f.setFilter(0, type, string);
+    $filterString.val("");
+    $filterString.trigger("focus");
 }
