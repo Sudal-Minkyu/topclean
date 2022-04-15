@@ -2392,7 +2392,7 @@ footer.footer > ul > li + li:before {
 	margin-top: 1.25rem;
 }
 .recipient__grid {
-	flex: 1;
+	width: 14.75rem;
 	position: relative;
 	border: 1px solid #bdbdbd;
 }
