@@ -179,6 +179,13 @@
             <artifactId>poi-ooxml</artifactId>
             <version>4.1.0</version>
         </dependency>
+        <!-- SQL 로그 com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.5.8 -->
+        <dependency>
+            <groupId>com.github.gavlyukovskiy</groupId>
+            <artifactId>p6spy-spring-boot-starter</artifactId>
+            <version>1.5.8</version>
+        </dependency>
+
         <!--  AOP적용  -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

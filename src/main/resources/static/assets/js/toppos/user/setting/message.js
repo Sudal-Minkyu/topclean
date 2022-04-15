@@ -27,7 +27,7 @@ const dtos = {
         },
     },
     receive: {
-        템플릿6개가져오기: { // 템플릿 저장 API와 동일한 구조로 배열에 아래의 파라메터들이 옵니다.
+        템플릿6개가져오기: { // 템플릿 저장 API와 동일한 구조로 배열에 아래의 파라메터들이 옵니다. 해당 대리점에 등록된 데이터가 없다면 오류가 아닌 빈값이 오면 됩니다.
             fmNum: "n",
             fmSubject: "s",
             fmMessage: "s",
@@ -57,7 +57,47 @@ const dtos = {
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
+    getTemplate() {
+        CommonUI.ajax("", "GET", false, function (res) {
+            const templateList = res.sendData;
+            console.log(templateList);
 
+            const $tmpFmSubject = $(".tmpFmSubject");
+            const $tmpFmMessage = $(".tmpFmMessage");
+            const $tmpByte = $(".tmpByte");
+            const $tmpInputFmSubject = $(".tmpInputFmSubject");
+            const $tmpInputFmMessage = $(".tmpInputFmMessage");
+            const $tmpInputByte = $(".tmpInputByte");
+            for(let i = 0; i < templateList.length; i++) {
+                const byte = getByteInfo(templateList[i].fmMessage).byte;
+                $tmpFmSubject.eq(parseInt(templateList[i].fmNum) - 1).val(templateList[i].fmSubject);
+                $tmpFmMessage.eq(parseInt(templateList[i].fmNum) - 1).val(templateList[i].fmMessage);
+                $tmpByte.eq(parseInt(templateList[i].fmNum) - 1).html(byte);
+                $tmpInputFmSubject.eq(parseInt(templateList[i].fmNum) - 1).val(templateList[i].fmSubject);
+                $tmpInputFmMessage.eq(parseInt(templateList[i].fmNum) - 1).val(templateList[i].fmMessage);
+                $tmpInputByte.eq(parseInt(templateList[i].fmNum) - 1).html(byte);
+            }
+
+        });
+    },
+    saveTemplate(saveDataList) {
+        console.log(saveDataList);
+        // CommonUI.ajax("", "", saveDataList, function (res) {
+        //     alertSuccess("템플릿 저장에 성공하였습니다.");
+        //     comms.getTemplate();
+        // });
+    },
+
+    sendMessage(sendMessage) {
+        console.log(sendMessage);
+    },
+
+    getCustomers(getCondition) {
+        console.log(getCondition);
+        CommonUI.ajax("/api/user/messageCustomerList", "GET", getCondition, function (res) {
+            const data = res.sendData.gridListData;
+        });
+    },
 };
 
 /*
@@ -67,29 +107,28 @@ const comms = {
 const grids = {
     s: { // 그리드 세팅
         id: [
-            "grid_main"
+            "grid_customersList", "grid_selectedCustomer"
         ],
         columnLayout: [],
         prop: [],
     },
 
     f: { // 그리드 펑션
-        initialization() { // 가시성을 위해 grids.s 의 일부 요소를 여기서 선언한다.
-
-            /* 0번 그리드의 레이아웃 */
+        initialization() {
             grids.s.columnLayout[0] = [
                 {
-                    dataField: "",
-                    headerText: "",
+                    dataField: "bcName",
+                    headerText: "고객명",
+                    style: "grid_textalign_left",
                 }, {
-                    dataField: "",
-                    headerText: "",
+                    dataField: "bcHp",
+                    headerText: "전화번호",
+                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
+                        return CommonUI.formatTel(value);
+                    }
                 },
             ];
 
-            /* 0번 그리드의 프로퍼티(옵션) 아래의 링크를 참조
-            * https://www.auisoft.net/documentation/auigrid/DataGrid/Properties.html
-            * */
             grids.s.prop[0] = {
                 editable : false,
                 selectionMode : "singleRow",
@@ -105,6 +144,34 @@ const grids = {
                 headerHeight : 48,
             };
 
+            grids.s.columnLayout[1] = [
+                {
+                    dataField: "bcName",
+                    headerText: "고객명",
+                    style: "grid_textalign_left",
+                }, {
+                    dataField: "bcHp",
+                    headerText: "전화번호",
+                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
+                        return CommonUI.formatTel(value);
+                    }
+                },
+            ];
+
+            grids.s.prop[1] = {
+                editable : false,
+                selectionMode : "singleRow",
+                noDataMessage : "출력할 데이터가 없습니다.",
+                showAutoNoDataMessage: false,
+                enableColumnResize : false,
+                showRowAllCheckBox: false,
+                showRowCheckColumn: false,
+                showRowNumColumn : false,
+                showStateColumn : false,
+                enableFilter : false,
+                rowHeight : 48,
+                headerHeight : 48,
+            };
         },
 
         create() { // 그리드 동작 처음 빈 그리드를 생성
@@ -148,6 +215,52 @@ const trigs = {
             $tabsContent.removeClass('active');
             $tabsContent.eq(idx).addClass('active');
         });
+
+        const $tmpInputFmMessage = $(".tmpInputFmMessage");
+        const $tmpInputByte = $(".tmpInputByte");
+        const $tmpFmMessage = $(".tmpFmMessage");
+        const $tmpByte = $(".tmpByte");
+        const $tmpRadio = $(".tmpRadio");
+        for (let i = 0; i < $tmpInputFmMessage.length; i++) {
+            $tmpInputFmMessage.eq(i).on("keyup", function () {
+                let byteInfo = getByteInfo(this.value);
+                if(byteInfo.cutLength) {
+                    this.value = this.value.substring(0, byteInfo.cutLength);
+                    byteInfo.byte = byteInfo.cutByte;
+                }
+                $tmpInputByte.eq(i).html(byteInfo.byte.toLocaleString());
+            });
+
+            $tmpRadio.eq(i).on("click", function () {
+                $("#fmMessage").val($tmpFmMessage.eq(i).val());
+                $("#byte").html($tmpByte.eq(i).html());
+            });
+        }
+
+        $("#fmMessage").on("keyup", function () {
+            let byteInfo = getByteInfo(this.value);
+            if(byteInfo.cutLength) {
+                this.value = this.value.substring(0, byteInfo.cutLength);
+                byteInfo.byte = byteInfo.cutByte;
+            }
+            $("#byte").html(byteInfo.byte.toLocaleString());
+        });
+
+        $("#saveTemplateBtn").on("click", saveTemplate);
+
+        $("#sendMessageBtn").on("click", function () {
+            const isLms = parseInt($("#byte").html()) > 90;
+            const msg = isLms ? "문자 길이가 90byte를 초과하므로<br>LMS로 문자를 전송하시겠습니까?" : "SMS 문자 메시지를 발송하시겠습니까?";
+            alertCheck(msg);
+            $("#checkDelSuccessBtn").on("click", function () {
+                sendMessage();
+                $('#popupId').remove();
+            });
+        });
+
+        $("#getCustomersBtn").on("click", function () {
+            getCustomers();
+        });
     },
 }
 
@@ -163,6 +276,97 @@ $(function() {
 /* 페이지가 로드되고 나서 실행 될 코드들을 담는다. */
 function onPageLoad() {
     grids.f.initialization();
+    grids.f.create();
 
     trigs.basic();
+    enableDatepicker();
+}
+
+function enableDatepicker() {
+    let fromday = new Date();
+    fromday.setDate(fromday.getDate() - 6);
+    fromday = fromday.format("yyyy-MM-dd");
+    const today = new Date().format("yyyy-MM-dd");
+
+    /* datepicker를 적용시킬 대상들의 dom id들 */
+    const datePickerTargetIds = [
+        "filterFromDt", "filterToDt", "fmSendreqtimeDate"
+    ];
+
+    $("#" + datePickerTargetIds[0]).val(fromday);
+    $("#" + datePickerTargetIds[1]).val(today);
+    $("#" + datePickerTargetIds[2]).val(today);
+
+    const dateAToBTargetIds = [
+        ["filterFromDt", "filterToDt"]
+    ];
+
+    CommonUI.setDatePicker(datePickerTargetIds);
+    CommonUI.restrictDateAToB(dateAToBTargetIds);
+}
+
+/* SMS 기준 문자열의 byte 용량을 리턴 */
+function getByteInfo(text) {
+    let byte = 0;
+    let testChar = "";
+    let cutLength = 0;
+    let cutByte = 0;
+
+    for (let i=0; i < text.length; i++) {
+        testChar = text.charAt(i);
+        if (escape(testChar).length > 4) {
+            byte += 2;
+        } else {
+            byte++;
+        }
+        if (byte === 1999 || byte === 2000) {
+            cutLength = i + 1;
+            cutByte = byte;
+        }
+    }
+
+    const result = {
+        byte: byte,
+        cutLength: cutLength,
+        cutByte: cutByte,
+    }
+
+    return result;
+}
+
+function saveTemplate() {
+    const $tmpInputFmSubject = $(".tmpInputFmSubject");
+    const $tmpInputFmMessage = $(".tmpInputFmMessage");
+
+    const saveDataList = [];
+
+    for(let i = 0; i < $tmpInputFmSubject.length; i++) {
+        saveDataList.push({
+            fmNum: i + 1,
+            fmSubject: $tmpInputFmSubject.eq(i).val(),
+            fmMessage: $tmpInputFmMessage.eq(i).val(),
+        });
+    }
+
+    comms.saveTemplate(saveDataList);
+}
+
+function sendMessage() {
+    const fmSendreqtimeDt = new Date($("#fmSendreqtimeDate").val() + " " + $("#fmSendreqtimeHour").val() + ":"
+        + $("#fmSendreqtimeMinute").val()).getTime();
+    const isBookSend = $("#isBookSend").is(":checked");
+    const sendData = {
+        fmMessage: $("#fmMessage").val(),
+        fmSendreqtimeDt: isBookSend ? fmSendreqtimeDt : 0,
+    }
+
+    comms.sendMessage(sendData);
+}
+
+function getCustomers() {
+    const isRangeSearch = $("input[name=isRangeSearch]:checked").val() === "1";
+    const getCondition = {
+        visitDayRange: isRangeSearch ? $("#visitDayRange").val() : "0",
+    }
+    comms.getCustomers(getCondition);
 }
