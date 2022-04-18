@@ -110,6 +110,24 @@ const comms = {
             grids.f.set(0, data);
         });
     },
+
+    getSendRecordSummary(searchCondition) {
+        console.log(searchCondition);
+        // CommonUI.ajax("", "GET", searchCondition, function (res) {
+        //     const data = res.sendData.gridListData;
+        //     console.log(data);
+        //     grids.f.set(2, data);
+        // });
+    },
+
+    getSendRecordDetail(searchCondition) {
+        console.log(searchCondition);
+        // CommonUI.ajax("", "GET", searchCondition, function (res) {
+        //     const data = res.sendData.gridListData;
+        //     console.log(data);
+        //     grids.f.set(3, data);
+        // });
+    },
 };
 
 /*
@@ -192,21 +210,26 @@ const grids = {
                 {
                     dataField: "",
                     headerText: "전송일자",
+                    width: 90,
                 }, {
                     dataField: "",
                     headerText: "총건수",
                 }, {
                     dataField: "",
-                    headerText: "수동건수",
+                    headerText: "수동<br>건수",
+                    width: 55,
                 }, {
                     dataField: "",
-                    headerText: "검품확인",
+                    headerText: "검품<br>확인",
+                    width: 55,
                 }, {
                     dataField: "",
                     headerText: "완성품<br>메시지",
+                    width: 55,
                 }, {
                     dataField: "",
                     headerText: "영수증",
+                    width: 55,
                 },
             ];
 
@@ -227,19 +250,36 @@ const grids = {
 
             grids.s.columnLayout[3] = [
                 {
-                    dataField: "",
+                    dataField: "fmType",
                     headerText: "전송유형",
+                    width: 90,
                 }, {
-                    dataField: "",
+                    dataField: "fmSendregtimeDt",
                     headerText: "전송일시",
+                    width: 90,
+                    renderer : {
+                        type : "TemplateRenderer",
+                    },
+                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
+                        let result = "";
+                        if(typeof value === "number") {
+                            result = new Date(value).format("yyyy-MM-dd<br>hh:mm");
+                        }
+                        return result;
+                    },
                 }, {
-                    dataField: "",
+                    dataField: "bcName",
                     headerText: "고객명",
+                    width: 90,
                 }, {
-                    dataField: "",
+                    dataField: "bcHp",
                     headerText: "수신번호",
+                    width: 120,
+                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                        return CommonUI.formatTel(value);
+                    },
                 }, {
-                    dataField: "",
+                    dataField: "fmMessages",
                     headerText: "내용",
                 },
             ];
@@ -333,8 +373,12 @@ const grids = {
 
 const trigs = {
     basic() {
-        AUIGrid.bind(grids.s.id[0], "cellClick", function (e) {
+        AUIGrid.bind(grids.s.id[2], "cellClick", function (e) {
             console.log(e.item);
+            const searchCondition = {
+                전송일자: e.item.전송일자,
+            }
+            comms.getSendRecordDetail(searchCondition);
         });
 
         const $tabsBtn = $('.c-tabs__btn');
@@ -347,6 +391,11 @@ const trigs = {
             $tabsBtn.eq(idx).addClass('active');
             $tabsContent.removeClass('active');
             $tabsContent.eq(idx).addClass('active');
+
+            if(idx === 1) {
+                grids.f.resize(2);
+                grids.f.resize(3);
+            }
         });
 
         const $tmpInputFmMessage = $(".tmpInputFmMessage");
@@ -427,6 +476,10 @@ const trigs = {
             grids.f.addRow(0, customerList);
             grids.f.removeCheckedRow(1);
             $("#numberOfTargetCustomers").html(grids.f.getRowCount(1).toString().padStart(4, "0"));
+        });
+
+        $("#getSendRecordSummaryBtn").on("click", function () {
+            getSendRecordSummary();
         });
     },
 }
@@ -526,12 +579,13 @@ function sendMessage() {
     const isBookSend = $("#isBookSend").is(":checked");
     const bcIdList = [];
     const gridData = grids.f.get(1);
-    for(const {bcHp} of gridData) {
-        bcIdList.push(bcHp.numString());
+    for(const {bcId} of gridData) {
+        bcIdList.push(bcId);
     }
 
     const sendData = {
         bcIdList: bcIdList,
+        msgType: parseInt($("#byte").html()) < 90 ? "S" : "L",
         fmMessage: $("#fmMessage").val(),
         fmSendreqtimeDt: isBookSend ? fmSendreqtimeDt : 0,
     }
@@ -554,4 +608,13 @@ function setCustomerFilter() {
     grids.f.setFilter(0, type, string);
     $filterString.val("");
     $filterString.trigger("focus");
+}
+
+function getSendRecordSummary() {
+    const searchCondition = {
+        filterFromDt: $("#filterFromDt").val().numString(),
+        filterToDt: $("#filterToDt").val().numString(),
+    }
+
+    comms.getSendRecordSummary(searchCondition);
 }
