@@ -218,6 +218,13 @@ const grids = {
                         return CommonData.name.fdState[value];
                     },
                 }, {
+                    dataField: "fdS4Type",
+                    headerText: "출고타입",
+                    width: 85,
+                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                        return CommonData.name.fdS4Type[value];
+                    },
+                }, {
                     dataField: "fdUrgentYn", // 급세탁이면 Y
                     headerText: "급",
                     width: 35,

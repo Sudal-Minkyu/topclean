@@ -81,7 +81,7 @@ $(function() { // 페이지가 로드되고 나서 실행
 function onPageLoad() {
     trigs.basic();
 
-    comms.getMyInfo();
+    // comms.getMyInfo();
 }
 
 function saveBr() {
