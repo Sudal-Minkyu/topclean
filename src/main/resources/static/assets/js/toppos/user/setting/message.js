@@ -119,7 +119,7 @@ const comms = {
 const grids = {
     s: { // 그리드 세팅
         id: [
-            "grid_customersList", "grid_selectedCustomer"
+            "grid_customersList", "grid_selectedCustomer", "grid_sendStatus", "grid_sendDetail"
         ],
         columnLayout: [],
         prop: [],
@@ -180,6 +180,78 @@ const grids = {
                 enableColumnResize : false,
                 showRowAllCheckBox: true,
                 showRowCheckColumn: true,
+                showRowNumColumn : false,
+                showStateColumn : false,
+                enableFilter : false,
+                rowHeight : 48,
+                headerHeight : 48,
+            };
+
+
+            grids.s.columnLayout[2] = [
+                {
+                    dataField: "",
+                    headerText: "전송일자",
+                }, {
+                    dataField: "",
+                    headerText: "총건수",
+                }, {
+                    dataField: "",
+                    headerText: "수동건수",
+                }, {
+                    dataField: "",
+                    headerText: "검품확인",
+                }, {
+                    dataField: "",
+                    headerText: "완성품<br>메시지",
+                }, {
+                    dataField: "",
+                    headerText: "영수증",
+                },
+            ];
+
+            grids.s.prop[2] = {
+                editable : false,
+                selectionMode : "singleRow",
+                noDataMessage : "출력할 데이터가 없습니다.",
+                showAutoNoDataMessage: false,
+                enableColumnResize : false,
+                showRowAllCheckBox: false,
+                showRowCheckColumn: false,
+                showRowNumColumn : false,
+                showStateColumn : false,
+                enableFilter : false,
+                rowHeight : 48,
+                headerHeight : 48,
+            };
+
+            grids.s.columnLayout[3] = [
+                {
+                    dataField: "",
+                    headerText: "전송유형",
+                }, {
+                    dataField: "",
+                    headerText: "전송일시",
+                }, {
+                    dataField: "",
+                    headerText: "고객명",
+                }, {
+                    dataField: "",
+                    headerText: "수신번호",
+                }, {
+                    dataField: "",
+                    headerText: "내용",
+                },
+            ];
+
+            grids.s.prop[3] = {
+                editable : false,
+                selectionMode : "singleRow",
+                noDataMessage : "출력할 데이터가 없습니다.",
+                showAutoNoDataMessage: false,
+                enableColumnResize : false,
+                showRowAllCheckBox: false,
+                showRowCheckColumn: false,
                 showRowNumColumn : false,
                 showStateColumn : false,
                 enableFilter : false,
