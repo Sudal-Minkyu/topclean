@@ -12,7 +12,7 @@ const dtos = {
         유저정보저장하기: {
             userEmail: "s",
             userTel: "s",
-            userPassword: "s",
+            userPassword: "s", // 값이 갈 경우 암호 변경, 빈값이 갈 경우 필드값의 변경 X
         },
     },
     receive: {
