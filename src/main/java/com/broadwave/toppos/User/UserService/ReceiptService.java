@@ -1101,7 +1101,7 @@ public class ReceiptService {
         messageHistory.setInsertDateTime(LocalDateTime.now());
         messageHistoryRepository.save(messageHistory);
 
-        boolean successBoolean = requestRepository.InsertMessage(message, nextmessage, buttonJson, templatecodeReceipt, "fs_request", frId, bcHp, templatecodeNumber);
+        boolean successBoolean = requestRepository.kakaoMessage(message, nextmessage, buttonJson, templatecodeReceipt, "fs_request", frId, bcHp, templatecodeNumber, "K");
         log.info("successBoolean : "+successBoolean);
         if(successBoolean) {
             log.info("메세지 인서트 성공");

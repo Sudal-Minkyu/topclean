@@ -157,7 +157,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         sb.append("a.fd_pollution_loc_flh, a.fd_pollution_loc_frh, a.fd_pollution_loc_flf, a.fd_pollution_loc_frf, \n");
         sb.append("a.fd_pollution_loc_bcn, a.fd_pollution_loc_bcs, a.fd_pollution_loc_bcb, a.fd_pollution_loc_brh, a.fd_pollution_loc_blh, \n");
         sb.append("a.fd_pollution_loc_brf, a.fd_pollution_loc_blf, b.fr_ref_type, a.fd_agree_type, a.fd_sign_image, \n");
-        sb.append("IFNULL(d.fi_id,null), IFNULL(d.fi_customer_confirm,null), IFNULL(e.fi_id,null), IFNULL(e.fi_customer_confirm,null), IFNULL(f.fp_cancel_yn,'N'), \n");
+        sb.append("IFNULL(d.fi_id,null), IFNULL(d.fi_customer_confirm,null), IFNULL(e.fi_id,null), IFNULL(e.fi_customer_confirm,null), IFNULL(f.fp_cancel_yn,'Y'), \n");
 
         sb.append("CASE \n"); // 반품
         sb.append("WHEN a.fd_pollution_loc_fcn = 'Y' THEN 1 \n");

@@ -63,7 +63,6 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -1275,9 +1274,10 @@ public class UserRestController {
     public ResponseEntity<Map<String,Object>> messageSendCustomer(
             @RequestParam(value="bcIdList", defaultValue="") List<Long> bcIdList,
             @RequestParam(value="fmMessage", defaultValue="") String fmMessage,
-            @RequestParam(value="fmSendreqtimeDt", defaultValue="") Timestamp fmSendreqtimeDt,
+            @RequestParam(value="msgType", defaultValue="") String msgType,
+            @RequestParam(value="fmSendreqtimeDt", defaultValue="") String fmSendreqtimeDt,
             HttpServletRequest request){
-        return templateService.messageSendCustomer(bcIdList, fmMessage,fmSendreqtimeDt, request);
+        return templateService.messageSendCustomer(bcIdList, fmMessage,fmSendreqtimeDt, msgType, request);
     }
 
     // 메세지 템플릿 6개 저장

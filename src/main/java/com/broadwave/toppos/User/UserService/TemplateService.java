@@ -1,8 +1,12 @@
 package com.broadwave.toppos.User.UserService;
 
 import com.broadwave.toppos.Jwt.token.TokenProvider;
+import com.broadwave.toppos.User.Customer.Customer;
 import com.broadwave.toppos.User.Customer.CustomerDtos.CustomerMessageListDto;
 import com.broadwave.toppos.User.Customer.CustomerRepository;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.MessageHistory.MessageHistory;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.MessageHistory.MessageHistoryRepository;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestRepository;
 import com.broadwave.toppos.User.Template.Template;
 import com.broadwave.toppos.User.Template.TemplateDto;
 import com.broadwave.toppos.User.Template.TemplateRepository;
@@ -11,11 +15,13 @@ import com.broadwave.toppos.common.ResponseErrorCode;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
-import java.sql.Timestamp;
+import javax.transaction.Transactional;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -29,16 +35,24 @@ import java.util.*;
 @Service
 public class TemplateService {
 
+    @Value("${toppos.templatecode.number}")
+    private String templatecodeNumber;
+
     private final TokenProvider tokenProvider;
 
     private final CustomerRepository customerRepository;
     private final TemplateRepository templateRepository;
+    private final RequestRepository requestRepository;
+    private final MessageHistoryRepository messageHistoryRepository;
 
     @Autowired
-    public TemplateService(TokenProvider tokenProvider, CustomerRepository customerRepository, TemplateRepository templateRepository){
+    public TemplateService(TokenProvider tokenProvider, CustomerRepository customerRepository, TemplateRepository templateRepository,
+                           RequestRepository requestRepository, MessageHistoryRepository messageHistoryRepository){
         this.tokenProvider = tokenProvider;
         this.customerRepository = customerRepository;
         this.templateRepository = templateRepository;
+        this.requestRepository = requestRepository;
+        this.messageHistoryRepository = messageHistoryRepository;
     }
 
     // 메세지 보낼 고객 리스트 호출
@@ -91,7 +105,8 @@ public class TemplateService {
     }
 
     // 문자 메시지 보내기
-    public ResponseEntity<Map<String, Object>> messageSendCustomer(List<Long> bcIdList, String fmMessage, Timestamp fmSendreqtimeDt, HttpServletRequest request) {
+    @Transactional
+    public ResponseEntity<Map<String, Object>> messageSendCustomer(List<Long> bcIdList, String fmMessage, String fmSendreqtimeDt, String msgType, HttpServletRequest request) {
         log.info("messageSendCustomer 호출");
 
         AjaxResponse res = new AjaxResponse();
@@ -99,14 +114,58 @@ public class TemplateService {
         log.info("bcIdList : "+bcIdList);
         log.info("fmMessage : "+fmMessage);
         log.info("fmSendreqtimeDt : "+fmSendreqtimeDt);
+        log.info("msgType : "+msgType);
 
         // 클레임데이터 가져오기
         Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
         String login_id = claims.getSubject(); // 현재 아이디
         String frCode = (String) claims.get("frCode"); // 현재 가맹점 코드
+        String frbrCode = (String) claims.get("frbrCode"); // 현재 소속된 지사코드
         log.info("현재 접속한 아이디 : "+login_id);
         log.info("접속한 가맹점 코드 : "+frCode);
+        log.info("현재 소속된 지사코드 : "+frbrCode);
 
+        LocalDateTime sendreqTime; // 예약발송시간;
+        if(!fmSendreqtimeDt.equals("0")){
+//            Timestamp sendreqStr = Timestamp.valueOf(String.valueOf(fmSendreqtimeDt));
+//            long systemTimeMills = System.currentTimeMillis();
+            sendreqTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(Long.parseLong(fmSendreqtimeDt)), TimeZone.getDefault().toZoneId());
+        }else{
+            sendreqTime = null;
+        }
+        log.info("sendreqTime : "+sendreqTime);
+
+        List<MessageHistory> messageHistorieList = new ArrayList<>();
+        MessageHistory messageHistory;
+        List<String> bcHpList = new ArrayList<>();
+        for(Long bcId : bcIdList){
+            Optional<Customer> optionalCustomer = customerRepository.findByBcId(bcId);
+            messageHistory = new MessageHistory();
+            if(optionalCustomer.isPresent()){
+                messageHistory.setBcId(optionalCustomer.get());
+                messageHistory.setFmType("04");
+                messageHistory.setFrCode(frCode);
+                messageHistory.setBrCode(frbrCode);
+                messageHistory.setFmMessage(fmMessage);
+                messageHistory.setInsert_id(login_id);
+                messageHistory.setInsertDateTime(LocalDateTime.now());
+
+                bcHpList.add(optionalCustomer.get().getBcHp());
+                messageHistorieList.add(messageHistory);
+            }
+        }
+
+        List<MessageHistory> saveMessageHistorieList = messageHistoryRepository.saveAll(messageHistorieList);
+        for(int i=0; i<saveMessageHistorieList.size(); i++){
+            boolean successBoolean = requestRepository.smsMessage(fmMessage, bcHpList.get(i), "fs_message_history", saveMessageHistorieList.get(i).getFmId(), templatecodeNumber, msgType, sendreqTime);
+            log.info("successBoolean : "+successBoolean);
+            if(successBoolean) {
+                log.info("현재 고객명 : "+""+"메세지 인서트 성공");
+            }else{
+                log.info("메세지 인서트 실패");
+            }
+        }
+        
         return ResponseEntity.ok(res.success());
     }
 

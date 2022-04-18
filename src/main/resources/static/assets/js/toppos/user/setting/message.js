@@ -96,7 +96,7 @@ const comms = {
 
     sendMessage(sendMessage) {
         console.log(sendMessage);
-        comms.ajax("/api/user/messageSendCustomer", "MAPPER", sendMessage, function (res) {
+        CommonUI.ajax("/api/user/messageSendCustomer", "PARAM", sendMessage, function (res) {
             alertSuccess("문자메시지 발송이 완료되었습니다.");
             console.log(res);
         });

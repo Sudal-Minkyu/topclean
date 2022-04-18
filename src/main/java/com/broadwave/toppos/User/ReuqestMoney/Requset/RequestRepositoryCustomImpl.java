@@ -485,9 +485,9 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
         return jpaResultMapper.list(query, RequestWeekAmountDto.class);
     }
 
-    // 메세지 테이블 Native쿼리
+    // 카카오 메세지 테이블 Native쿼리 -> messageType : "K" 카카오, "L" LMS(유료문자), "S"(90문자)
     @Override
-    public boolean InsertMessage(String message, String nextmessage, String buttonJson, String templatecode, String tableName, Long tableId, String TelNumber, String templatecodeNumber) {
+    public boolean kakaoMessage(String message, String nextmessage, String buttonJson, String templatecode, String tableName, Long tableId, String TelNumber, String templatecodeNumber, String messageType) {
         EntityManager em = getEntityManager();
         StringBuilder sb = new StringBuilder();
 
@@ -496,19 +496,20 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
             sb.append("(dest_no, call_back, msg_contents, sendreq_time, msg_instm, msg_type, \n");
             sb.append("k_next_type, k_next_contents, k_resyes, k_template_code, k_button_json, app_etc1, app_etc2) \n");
 
-            sb.append("VALUES( ?1, ?2, ?3, NOW(), NOW(), 'K', \n");
-            sb.append("'A', ?4, 'Y', ?5, ?6, \n");
-            sb.append("?7, CONCAT(?8) ); \n");
+            sb.append("VALUES( ?1, ?2, ?3, NOW(), NOW(), ?4, \n");
+            sb.append("'A', ?5, 'Y', ?6, ?7, \n");
+            sb.append("?8, CONCAT(?9) ); \n");
 
             Query query = em.createNativeQuery(sb.toString());
             query.setParameter(1, TelNumber);
             query.setParameter(2, templatecodeNumber);
             query.setParameter(3, message);
-            query.setParameter(4, nextmessage);
-            query.setParameter(5, templatecode);
-            query.setParameter(6, buttonJson);
-            query.setParameter(7, tableName);
-            query.setParameter(8, tableId);
+            query.setParameter(4, messageType);
+            query.setParameter(5, nextmessage);
+            query.setParameter(6, templatecode);
+            query.setParameter(7, buttonJson);
+            query.setParameter(8, tableName);
+            query.setParameter(9, tableId);
 
             query.executeUpdate();
 
@@ -518,6 +519,53 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
             return false;
         }
     }
+
+    // 문자 메세지 테이블 Native쿼리 -> messageType : "L" LMS(유료문자), "S"(90문자이하)
+    @Override
+    public boolean smsMessage(String message, String TelNumber, String tableName, Long tableId, String templatecodeNumber, String messageType, LocalDateTime sendreqTime) {
+        EntityManager em = getEntityManager();
+        StringBuilder sb = new StringBuilder();
+//        System.out.println("");
+//        System.out.println("TelNumber : "+TelNumber);
+//        System.out.println("templatecodeNumber : "+templatecodeNumber);
+//        System.out.println("message : "+message);
+//        System.out.println("messageType : "+messageType);
+//        System.out.println("tableName : "+tableName);
+//        System.out.println("tableId : "+tableId);
+//        System.out.println("sendreqTime : "+sendreqTime);
+//        System.out.println("");
+        try{
+            sb.append("insert into SMSQ_SEND \n");
+            sb.append("(dest_no, call_back, msg_contents, msg_type, app_etc1, app_etc2, msg_instm, sendreq_time) \n");
+            sb.append("VALUES( ?1, ?2, ?3, ?4, ?5, CONCAT(?6), NOW(), \n");
+
+            if(sendreqTime != null){
+                sb.append("?7); \n");
+            }else{
+                sb.append("NOW()); \n");
+            }
+
+            Query query = em.createNativeQuery(sb.toString());
+            query.setParameter(1, TelNumber);
+            query.setParameter(2, templatecodeNumber);
+            query.setParameter(3, message);
+            query.setParameter(4, messageType);
+            query.setParameter(5, tableName);
+            query.setParameter(6, tableId);
+            if(sendreqTime != null){
+                query.setParameter(7, sendreqTime);
+            }
+
+            query.executeUpdate();
+
+            return true;
+
+        }catch (Exception e){
+            System.out.println("e : "+e);
+            return false;
+        }
+    }
+
 
     // 마스터테이블의 fpId가 존재할시 해당 결제 마스터테이블의 임이의 택번호 하나를 반환하는 쿼리
     public RequestFdTagDto findByRequestDetailFdTag(String frCode, Long frId) {

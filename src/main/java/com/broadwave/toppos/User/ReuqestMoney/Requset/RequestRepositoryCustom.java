@@ -4,6 +4,7 @@ import com.broadwave.toppos.User.Customer.Customer;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestFindListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -42,8 +43,11 @@ public interface RequestRepositoryCustom {
     // 1주일간의 일자별 가맹점 접수금액
     List<RequestWeekAmountDto> findByRequestWeekDaysAmount(String brCode);
 
-    // 메세지 테이블 Native쿼리 호출
-    boolean InsertMessage(String message, String nextmessage, String buttonJson, String templatecode, String tableName, Long tableId, String bcHp, String templatecodeNumber);
+    // 카카오 메세지 테이블 Native쿼리 호출
+    boolean kakaoMessage(String message, String nextmessage, String buttonJson, String templatecode, String tableName, Long tableId, String TelNumber, String templatecodeNumber, String messageType);
+
+    // 문자 메세지 테이블 Native쿼리 호출
+    boolean smsMessage(String message, String TelNumber, String tableName, Long tableId, String templatecodeNumber, String messageType, LocalDateTime sendreqTime);
 
     RequestFdTagDto findByRequestDetailFdTag(String frCode, Long frId); // 통합조회 택번호 반환용
 

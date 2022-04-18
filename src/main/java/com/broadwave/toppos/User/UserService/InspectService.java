@@ -66,7 +66,7 @@ public class InspectService {
     private String templatecodeNumber;
 
     @Value("${toppos.templatecode.check}")
-    private String templatecodeCheckt;
+    private String templatecodeCheck;
 
     private final ModelMapper modelMapper;
     private final UserService userService;
@@ -586,8 +586,8 @@ public class InspectService {
                     messageHistory.setInsertDateTime(LocalDateTime.now());
                     messageHistoryRepository.save(messageHistory);
 
-                    boolean successBoolean = requestRepository.InsertMessage(message, nextmessage,"", templatecodeCheckt,
-                            "fs_request_inspect", Long.parseLong(msg.get(1)), requestDetailBranchInspeotDto.getFrTelNo(), templatecodeNumber);
+                    boolean successBoolean = requestRepository.kakaoMessage(message, nextmessage,"", templatecodeCheck,
+                            "fs_request_inspect", Long.parseLong(msg.get(1)), requestDetailBranchInspeotDto.getFrTelNo(), templatecodeNumber, "K");
                     log.info("successBoolean : "+successBoolean);
 
                     if(successBoolean) {
