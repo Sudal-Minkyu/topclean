@@ -577,7 +577,7 @@ const comms = {
         const url = "/api/user/franchiseInspectionYn";
         CommonUI.ajax(url, "PARAM", answer, function (res) {
             let resultMsg = "";
-            if(answer.type === "1ㅁㅇㄴㄴㅁㄴㅇ") {
+            if(answer.type === "1") {
                 resultMsg = "세탁진행을 보고 하였습니다.";
             } else {
                 resultMsg = "고객반품을 보고 하였습니다.";
@@ -668,12 +668,12 @@ const grids = {
                     dataField: "bcName",
                     headerText: "고객명",
                     style: "grid_textalign_left",
-                    width: 70,
+                    width: 80,
                 }, {
                     dataField: "fdTag",
                     headerText: "택번호",
                     style: "datafield_tag",
-                    width: 80,
+                    width: 65,
                     labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
                         return CommonData.formatFrTagNo(value);
                     },
@@ -694,9 +694,29 @@ const grids = {
                     dataField: "",
                     headerText: "처리내역",
                     style: "grid_textalign_left",
-                    width: 80,
+                    width: 100,
+                    renderer : {
+                        type: "TemplateRenderer",
+                    },
+                    labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
+                        let template = "";
+                        if(["S1", "F"].includes(item.fdState)) {
+                            template = `
+                                <button class="c-state c-state--modify">수정</button>
+                            `;
+                            item.greenBtn1 = true;
+                        }else{
+                            item.greenBtn1 = false;
+                        }
+                        return template;
+                    },
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
-                        return CommonUI.toppos.processName(item);
+                        let template = "";
+                        if(item.photoList.length) {
+                            template = `<img src="/assets/images/icon__picture.svg" onclick="openReceiptPhotoPop(${rowIndex})">`;
+                        }
+
+                        return template + CommonUI.toppos.processName(item);
                     },
                 }, {
                     dataField: "fdTotAmt",
@@ -720,57 +740,86 @@ const grids = {
                     dataField: "fdRemark",
                     headerText: "특이사항",
                     style: "grid_textalign_left",
-                    width: 100,
+                    width: 174,
+                    renderer : {
+                        type : "TemplateRenderer",
+                    },
+                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
+                        let template = "";
+                        if(item.frFiId && item.frFiCustomerConfirm === "1") {
+                            template = `<button class="c-state c-state--yellow" `
+                                + `onclick="openFrInspectPopFromRemark(${rowIndex})">검품</button>`;
+                        } else if(item.frFiId && item.frFiCustomerConfirm === "2") {
+                            template = `<button class="c-state c-state--modify" `
+                                + `onclick="openFrInspectPopFromRemark(${rowIndex})">검품</button>`;
+                        } else if(item.frFiId && item.frFiCustomerConfirm === "3") {
+                            template = `<button class="c-state c-state--cancel" `
+                                + `onclick="openFrInspectPopFromRemark(${rowIndex})">검품</button>`;
+                        }
+
+                        if (item.fdState === "B" && item.brFiId && item.brFiCustomerConfirm === "1") {
+                            template += `<button class="c-state c-state--yellow" `
+                                + `onclick="openBrInspectPopFromRemark(${rowIndex})">확인품</button>`;
+                        } else if (item.brFiId && item.brFiCustomerConfirm === "2") {
+                            template += `<button class="c-state c-state--modify" `
+                                + `onclick="openBrInspectPopFromRemark(${rowIndex})">확인품</button>`;
+                        } else if (item.brFiId && item.brFiCustomerConfirm === "3") {
+                            template += `<button class="c-state c-state--cancel" `
+                                + `onclick="openBrInspectPopFromRemark(${rowIndex})">확인품</button>`;
+                        }
+
+                        return template + value;
+                    },
                 }, {
                     dataField: "frInsertDt",
                     headerText: "접수일자",
-                    width: 90,
+                    width: 68,
                     renderer : {
                         type : "TemplateRenderer",
                     },
                     labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
                         let result = "";
                         if(typeof value === "number") {
-                            result = new Date(value).format("yyyy-MM-dd<br>hh:mm");
+                            result = new Date(value).format("yy.MM.dd<br>hh:mm");
                         }
                         return result;
                     },
                 }, {
                     dataField: "fdS6Time",
                     headerText: "인도일자",
-                    width: 90,
+                    width: 68,
                     renderer : {
                         type : "TemplateRenderer",
                     },
                     labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
                         let result = "";
                         if(typeof value === "number") {
-                            result = new Date(value).format("yyyy-MM-dd<br>hh:mm");
+                            result = new Date(value).format("yy.MM.dd<br>hh:mm");
                         }
                         return result;
                     },
                 }, {
                     dataField: "fdS2Dt",
                     headerText: "지사입고",
-                    width: 90,
+                    width: 68,
                     dataType: "date",
-                    formatString: "yyyy-mm-dd",
+                    formatString: "yy.mm.dd",
                 }, {
                     dataField: "fdS4Dt",
                     headerText: "지사출고",
-                    width: 90,
+                    width: 68,
                     dataType: "date",
-                    formatString: "yyyy-mm-dd",
+                    formatString: "yy.mm.dd",
                 }, {
                     dataField: "fdS5Dt",
                     headerText: "완성일자",
-                    width: 90,
+                    width: 68,
                     dataType: "date",
-                    formatString: "yyyy-mm-dd",
+                    formatString: "yy.mm.dd",
                 }, {
                     dataField: "frInspectBtn",
-                    headerText: "가맹검품",
-                    width: 70,
+                    headerText: "가맹<br>검품",
+                    width: 63,
                     renderer : {
                         type: "TemplateRenderer",
                     },
@@ -793,7 +842,7 @@ const grids = {
                 }, {
                     dataField: "brInspectBtn",
                     headerText: "확인품",
-                    width: 70,
+                    width: 63,
                     renderer : {
                         type: "TemplateRenderer",
                     },
@@ -813,8 +862,8 @@ const grids = {
                     },
                 }, {
                     dataField: "greenBtn1",
-                    headerText: "상품수정",
-                    width: 70,
+                    headerText: "상품<br>수정",
+                    width: 63,
                     renderer : {
                         type: "TemplateRenderer",
                     },
@@ -832,8 +881,8 @@ const grids = {
                     },
                 }, {
                     dataField: "redBtn1",
-                    headerText: "접수취소",
-                    width: 70,
+                    headerText: "접수<br>취소",
+                    width: 63,
                     renderer : {
                         type: "TemplateRenderer",
                     },
@@ -851,8 +900,8 @@ const grids = {
                     },
                 }, {
                     dataField: "redBtn2",
-                    headerText: "결제취소",
-                    width: 65,
+                    headerText: "결제<br>취소",
+                    width: 63,
                     renderer : {
                         type: "TemplateRenderer",
                     },
@@ -870,8 +919,8 @@ const grids = {
                     },
                 }, {
                     dataField: "redBtn3",
-                    headerText: "인도취소",
-                    width: 70,
+                    headerText: "인도<br>취소",
+                    width: 63,
                     renderer : {
                         type: "TemplateRenderer",
                     },
@@ -1136,6 +1185,10 @@ const grids = {
             comms.franchiseRequestDetailSearch(wares.currentCondition);
         },
 
+        getItemByRowIndex(rowId) {
+            return AUIGrid.getItemByRowIndex(grids.s.id[0], rowId);
+        }
+
     },
 };
 
@@ -1176,7 +1229,6 @@ const trigs = {
                     break;
                 case "brInspectBtn":
                     if(e.item.brInspectBtn) {
-
                         wares.currentBrInspect = e.item;
                         if(e.item.brFiId) {
                             const target = {
@@ -1331,6 +1383,11 @@ const trigs = {
 
             $("#filterFromDt").val(fromday);
             $("#filterToDt").val(today);
+        });
+
+        $("#closePhotoListPop").on("click", function () {
+            $("#receiptPhotoList").html("");
+            $("#receiptPhotoPop").removeClass("active");
         });
 
     },
@@ -2333,6 +2390,22 @@ function putInspect() {
 }
  */
 
+function openFrInspectPopFromRemark(rowIndex) {
+    const item = grids.f.getItemByRowIndex(rowIndex);
+    openFrInspectEditPop(item);
+}
+
+function openBrInspectPopFromRemark(rowIndex) {
+    const item = grids.f.getItemByRowIndex(rowIndex);
+    wares.currentBrInspect = item;
+    if(item.brFiId) {
+        const target = {
+            fiId: item.brFiId,
+        }
+        comms.getBrInspectNeo(target);
+    }
+}
+
 function openFrInspectEditPop(item) {
     wares.currentFrInspect = item;
     if(item.frFiId) {
@@ -2729,4 +2802,20 @@ function setTopMenuHref() {
         $("#menuDelivery").attr("href", `/user/delivery`);
         $("#menuIntegrate").attr("href", `/user/integrate`);
     }
+}
+
+function openReceiptPhotoPop(rowId) {
+    const photoList = grids.f.getItemByRowIndex(rowId).photoList;
+    for(const {ffPath, ffFilename, ffRemark} of photoList) {
+        const htmlCast = `
+            <li class="tag-imgs__item">
+                <a href="${ffPath + ffFilename}" data-lightbox="images" data-title="이미지 확대">
+                    <img src="${ffPath + "s_" + ffFilename}" alt="" class="tag-imgs__img"/>
+                    <span class="tag-imgs__title">${ffRemark}</span>
+                </a>
+            </li>
+        `;
+        $("#receiptPhotoList").append(htmlCast);
+    }
+    $("#receiptPhotoPop").addClass("active");
 }
