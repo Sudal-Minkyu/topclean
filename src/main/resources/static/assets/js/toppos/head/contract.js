@@ -303,9 +303,19 @@ $(function () {
         $("#frCodeChkBtn").prop("disabled", false);
     });
 
+    $("input[name='frTagType']").on("change", function (e) {
+        const numOfTag =  $(e.currentTarget).val();
+        onChangeNumOfTag(numOfTag);
+    });
+
     const initialDate = new Date().toISOString().slice(0, 10);
     $("#frContractDt").val(initialDate);
     $("#brContractDt").val(initialDate);
+
+    const $frTagNo = $("#frTagNo");
+    $frTagNo.on("keyup", function () {
+        $frTagNo.val($frTagNo.val().numString());
+    });
 });
 
 /* 레이아웃, 프로퍼티를 적용하여 그리드 생성 */
@@ -450,8 +460,8 @@ function franchiseSave() {
         return false;
     }
 
-    if($("#frTagNo").val().length !== 3) {
-        alertCaution("가맹점택코드 3자리를 입력해 주세요", 1);
+    if($("#frTagNo").val().length !== parseInt($("input[name='frTagType']:checked").val())) {
+        alertCaution(`가맹점택코드 ${$("input[name='frTagType']:checked").val()}자리를 입력해 주세요`, 1);
         return false;
     }
 
@@ -796,4 +806,10 @@ function execDaumPostcode() {
             document.getElementById("frAddressDetail").focus();
         }
     }).open();
+}
+
+function onChangeNumOfTag(num) {
+    const $frTagNo = $("#frTagNo");
+    $frTagNo.attr("maxlength", num);
+    $frTagNo.val($frTagNo.val().numString().substring(0, num));
 }

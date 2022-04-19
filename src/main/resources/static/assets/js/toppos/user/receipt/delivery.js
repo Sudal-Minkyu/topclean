@@ -106,6 +106,7 @@ const comms = {
         dv.chk(customerId, dtos.send.franchiseReceiptDeliveryList, "선택된 고객 아이디 보내기");
         CommonUI.ajax(urls.getCustomersRequest, "GET", customerId, function (res) {
             const data = res.sendData.gridListData;
+            console.log(data);
             dv.chk(data, dtos.receive.franchiseReceiptDeliveryList, "고객의 인도대상 세탁물 리스트 받아오기");
             grids.f.setData(0, data);
             calculateTotStatus();
@@ -153,6 +154,34 @@ const comms = {
             $("#paymentPop").removeClass("active");
             $("#payMonth").val("0");
             $("#payType1").prop("checked", true);
+        });
+    },
+
+    getFrInspectNeo(target) {
+        CommonUI.ajax("/api/user/franchiseInspectionInfo", "GET", target, function (res) {
+            console.log(res);
+            const data = res.sendData;
+
+            wares.currentFrInspect.inspeotInfoDto = data.inspeotInfoDto;
+            wares.currentFrInspect.photoList = data.photoList;
+            wares.currentFrInspect.fiAddAmt = data.inspeotInfoDto.fiAddAmt;
+            wares.currentFrInspect.fiComment = data.inspeotInfoDto.fiComment;
+
+            openFrInspectPop();
+        });
+    },
+
+    getBrInspectNeo(target) {
+        CommonUI.ajax("/api/user/franchiseInspectionInfo", "GET", target, function (res) {
+            console.log(res);
+            const data = res.sendData;
+
+            wares.currentBrInspect.inspeotInfoDto = data.inspeotInfoDto;
+            wares.currentBrInspect.photoList = data.photoList;
+            wares.currentBrInspect.fiAddAmt = data.inspeotInfoDto.fiAddAmt;
+            wares.currentBrInspect.fiComment = data.inspeotInfoDto.fiComment;
+
+            openBrInspectPop();
         });
     },
 };
@@ -224,8 +253,16 @@ const grids = {
                     headerText: "처리내역",
                     style: "grid_textalign_left",
                     width: 80,
+                    renderer : {
+                        type: "TemplateRenderer",
+                    },
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
-                        return CommonUI.toppos.processName(item);
+                        let template = "";
+                        if(item.photoList && item.photoList.length) {
+                            template = `<img src="/assets/images/icon__picture.svg" onclick="openReceiptPhotoPop(${rowIndex})">`;
+                        }
+
+                        return template + CommonUI.toppos.processName(item);
                     },
                 }, {
                     dataField: "fdTotAmt",
@@ -257,6 +294,35 @@ const grids = {
                     headerText: "특이사항",
                     style: "grid_textalign_left",
                     width: 100,
+                    renderer : {
+                        type : "TemplateRenderer",
+                    },
+                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
+                        let template = "";
+                        if(item.frFiId && item.frFiCustomerConfirm === "1") {
+                            template = `<button class="c-state c-state--yellow" `
+                                + `onclick="openFrInspectPopFromRemark(${rowIndex})">검품</button>`;
+                        } else if(item.frFiId && item.frFiCustomerConfirm === "2") {
+                            template = `<button class="c-state c-state--modify" `
+                                + `onclick="openFrInspectPopFromRemark(${rowIndex})">검품</button>`;
+                        } else if(item.frFiId && item.frFiCustomerConfirm === "3") {
+                            template = `<button class="c-state c-state--cancel" `
+                                + `onclick="openFrInspectPopFromRemark(${rowIndex})">검품</button>`;
+                        }
+
+                        if (item.fdState === "B" && item.brFiId && item.brFiCustomerConfirm === "1") {
+                            template += `<button class="c-state c-state--yellow" `
+                                + `onclick="openBrInspectPopFromRemark(${rowIndex})">확인품</button>`;
+                        } else if (item.brFiId && item.brFiCustomerConfirm === "2") {
+                            template += `<button class="c-state c-state--modify" `
+                                + `onclick="openBrInspectPopFromRemark(${rowIndex})">확인품</button>`;
+                        } else if (item.brFiId && item.brFiCustomerConfirm === "3") {
+                            template += `<button class="c-state c-state--cancel" `
+                                + `onclick="openBrInspectPopFromRemark(${rowIndex})">확인품</button>`;
+                        }
+
+                        return template + value;
+                    },
                 }, {
                     dataField: "fdS4Dt",
                     headerText: "지사출고",
@@ -366,6 +432,10 @@ const grids = {
 
         getSelectedCustomer() {
             return AUIGrid.getSelectedRows(grids.s.id[1])[0];
+        },
+
+        getItemByRowIndex(rowId) {
+            return AUIGrid.getItemByRowIndex(grids.s.id[0], rowId);
         },
     },
 
@@ -536,6 +606,12 @@ function onPageLoad() {
     trigs.s.vkeys();
 
     getParamsAndAction();
+
+    // lightbox option
+    lightbox.option({
+        'maxWidth': 1100,
+        'positionFromTop': 190
+    });
 }
 
 function putCustomer() {
@@ -792,4 +868,113 @@ function uncollectPaymentStageTwo(paymentData, creditData = {}) {
         }
     }
     comms.sendPaidInfo(paidInfo);
+}
+
+function openReceiptPhotoPop(rowId) {
+    const photoList = grids.f.getItemByRowIndex(rowId).photoList;
+    for(const {ffPath, ffFilename, ffRemark} of photoList) {
+        const htmlCast = `
+            <li class="tag-imgs__item">
+                <a href="${ffPath + ffFilename}" data-lightbox="images" data-title="이미지 확대">
+                    <img src="${ffPath + "s_" + ffFilename}" alt="" class="tag-imgs__img"/>
+                    <span class="tag-imgs__title">${ffRemark}</span>
+                </a>
+            </li>
+        `;
+        $("#receiptPhotoList").append(htmlCast);
+    }
+    $("#receiptPhotoPop").addClass("active");
+}
+
+function openFrInspectPopFromRemark(rowIndex) {
+    const item = grids.f.getItemByRowIndex(rowIndex);
+    openFrInspectEditPop(item);
+}
+
+function openBrInspectPopFromRemark(rowIndex) {
+    const item = grids.f.getItemByRowIndex(rowIndex);
+    wares.currentBrInspect = item;
+    if(item.brFiId) {
+        const target = {
+            fiId: item.brFiId,
+        }
+        comms.getBrInspectNeo(target);
+    }
+}
+
+function openFrInspectEditPop(item) {
+    wares.currentFrInspect = item;
+    if(item.frFiId) {
+        const target = {
+            fiId: item.frFiId,
+        }
+        comms.getFrInspectNeo(target);
+    }
+}
+
+async function openFrInspectPop() {
+    $("#frViewFdTotAmtInPut").val(wares.currentFrInspect.fdTotAmt
+        ? wares.currentFrInspect.fdTotAmt.toLocaleString() : "0");
+    $("#frViewFiComment").val(wares.currentFrInspect.fiComment
+        ? wares.currentFrInspect.fiComment : "");
+    $("#frViewFiAddAmt").val(wares.currentFrInspect.fiAddAmt
+        ? wares.currentFrInspect.fiAddAmt.toLocaleString() : "0");
+
+    if(wares.currentFrInspect.photoList) {
+        if(wares.currentFrInspect.photoList.length) {
+            $("#frInspectViewPhotoPanel").show();
+        } else {
+            $("#frInspectViewPhotoPanel").hide();
+        }
+        for (const photo of wares.currentFrInspect.photoList) {
+            const photoHtml = `
+            <li class="tag-imgs__item">
+                <a href="${photo.ffPath + photo.ffFilename}" data-lightbox="images" data-title="이미지 확대">
+                    <img src="${photo.ffPath + "s_" + photo.ffFilename}" class="tag-imgs__img" alt=""/>
+                </a>
+            </li>
+            `;
+            $("#frViewPhotoList").append(photoHtml);
+        }
+    }
+
+    $("#frInspectViewPop").addClass("active");
+}
+
+function openBrInspectPop() {
+    $("#brFdTotAmtInPut").val(wares.currentBrInspect.fdTotAmt
+        ? wares.currentBrInspect.fdTotAmt.toLocaleString() : "0");
+    $("#brFiComment").val(wares.currentBrInspect.fiComment
+        ? wares.currentBrInspect.fiComment : "");
+    $("#brFiAddAmt").val(wares.currentBrInspect.fiAddAmt
+        ? wares.currentBrInspect.fiAddAmt.toLocaleString() : "0");
+
+    if(wares.currentBrInspect.photoList) {
+        if(wares.currentBrInspect.photoList.length) {
+            $("#brInspectPhotoPanel").show();
+        } else {
+            $("#brInspectPhotoPanel").hide();
+        }
+        for (const photo of wares.currentBrInspect.photoList) {
+            const photoHtml = `
+                <li class="tag-imgs__item">
+                    <a href="${photo.ffPath + photo.ffFilename}" data-lightbox="images" data-title="이미지 확대">
+                        <img src="${photo.ffPath + "s_" + photo.ffFilename}" class="tag-imgs__img" alt=""/>
+                    </a>
+                </li>
+                `;
+            $("#brPhotoList").append(photoHtml);
+        }
+    }
+
+    if(wares.currentBrInspect.brFiCustomerConfirm === "1") {
+        $("#brCustomerDenied").parents("li").show();
+        $("#brCustomerConfirmed").parents("li").show();
+    } else {
+        $("#brCustomerDenied").parents("li").hide();
+        $("#brCustomerConfirmed").parents("li").hide();
+    }
+
+    // fiCustomerConfirm 에 따른 수락거부 여부 추가?
+    $("#brInspectPop").addClass("active");
 }

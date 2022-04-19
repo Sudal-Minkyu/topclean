@@ -353,7 +353,7 @@ const grids = {
                 }, {
                     dataField: "fiType",
                     headerText: "유형",
-                    width: 55,
+                    width: 60,
                     labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
                         return CommonData.name.fiType[value];
                     },
