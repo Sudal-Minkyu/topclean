@@ -698,21 +698,9 @@ const grids = {
                     renderer : {
                         type: "TemplateRenderer",
                     },
-                    labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
-                        let template = "";
-                        if(["S1", "F"].includes(item.fdState)) {
-                            template = `
-                                <button class="c-state c-state--modify">수정</button>
-                            `;
-                            item.greenBtn1 = true;
-                        }else{
-                            item.greenBtn1 = false;
-                        }
-                        return template;
-                    },
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
                         let template = "";
-                        if(item.photoList.length) {
+                        if(item.photoList && item.photoList.length) {
                             template = `<img src="/assets/images/icon__picture.svg" onclick="openReceiptPhotoPop(${rowIndex})">`;
                         }
 
@@ -1187,7 +1175,7 @@ const grids = {
 
         getItemByRowIndex(rowId) {
             return AUIGrid.getItemByRowIndex(grids.s.id[0], rowId);
-        }
+        },
 
     },
 };
