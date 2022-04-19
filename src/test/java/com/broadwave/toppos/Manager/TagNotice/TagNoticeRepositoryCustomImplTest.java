@@ -34,7 +34,6 @@ public class TagNoticeRepositoryCustomImplTest {
         for (TagNoticeTestDto v: results) {
             System.out.println(v);
 
-
         }
     }
 
