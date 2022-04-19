@@ -136,6 +136,7 @@ const comms = {
         dv.chk(selctedInfo, dtos.send.franchiseUncollectPayRequestList, "선택한 미수금 마스터 항목 보내기");
         CommonUI.ajax("/api/user/franchiseUncollectPayRequestList", "GET", selctedInfo, function(res) {
             const data = res.sendData;
+            console.log(data);
             dv.chk(data, dtos.receive.franchiseUncollectPayRequestList, "미수 결제창 뜰 때 받아오는 항목");
             grids.f.setData(2, data.gridListData);
             calculateGridPayment();
@@ -195,7 +196,7 @@ const comms = {
 const grids = {
     s: { // 그리드 세팅
         targetDiv: [
-            "grid_laundryList", "grid_customerList"
+            "grid_laundryList", "grid_customerList", "grid_payment"
         ],
         columnLayout: [],
         prop: [],
@@ -402,6 +403,53 @@ const grids = {
                 rowHeight : 48,
                 headerHeight : 48,
             };
+
+            grids.s.columnLayout[2] = [
+                {
+                    dataField: "frYyyymmdd",
+                    headerText: "접수일",
+                    dataType: "date",
+                    formatString: "yyyy-mm-dd",
+                }, {
+                    dataField: "requestDetailCount",
+                    headerText: "상품내역",
+                    style: "grid_textalign_left",
+                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                        let rearText = "";
+                        if(value > 1) {
+                            rearText = " 외 " + (value - 1) + "건";
+                        }
+                        return CommonUI.toppos.makeSimpleProductName(item) + rearText;
+                    },
+                }, {
+                    dataField: "frTotalAmount",
+                    headerText: "접수금액",
+                    style: "grid_textalign_right",
+                    dataType: "numeric",
+                    autoThousandSeparator: "true",
+                }, {
+                    dataField: "uncollectMoney",
+                    headerText: "미수금액",
+                    style: "grid_textalign_right",
+                    dataType: "numeric",
+                    autoThousandSeparator: "true",
+                },
+            ];
+
+            grids.s.prop[2] = {
+                editable : false,
+                selectionMode : "singleRow",
+                noDataMessage : "출력할 데이터가 없습니다.",
+                showAutoNoDataMessage: false,
+                enableColumnResize : false,
+                showRowAllCheckBox: false,
+                showRowCheckColumn: false,
+                showRowNumColumn : false,
+                showStateColumn : false,
+                enableFilter : true,
+                rowHeight : 48,
+                headerHeight : 48,
+            };
         },
 
         create() { // 그리드 동작 처음 빈 그리드를 생성
@@ -570,6 +618,19 @@ const trigs = {
                         $('#popupId').remove();
                     });
                 }
+            });
+
+            $("#closeFrInspectViewPop").on("click", function () {
+                closeFrInspectViewPop();
+            });
+
+            $("#closeBrInspectPop").on("click", function () {
+                closeBrInspectPop();
+            });
+
+            $("#closePhotoListPop").on("click", function () {
+                $("#receiptPhotoList").html("");
+                $("#receiptPhotoPop").removeClass("active");
             });
         },
         vkeys() {
@@ -977,4 +1038,20 @@ function openBrInspectPop() {
 
     // fiCustomerConfirm 에 따른 수락거부 여부 추가?
     $("#brInspectPop").addClass("active");
+}
+
+function closeFrInspectViewPop(doRefresh = false) {
+    if(doRefresh) {
+        comms.franchiseRequestDetailSearch(wares.currentCondition);
+    }
+    $("#frInspectViewPop").removeClass("active");
+    resetFrInspectViewPop();
+}
+
+function closeBrInspectPop(doRefresh = false) {
+    if(doRefresh) {
+        comms.franchiseRequestDetailSearch(wares.currentCondition);
+    }
+    $("#brInspectPop").removeClass("active");
+    resetBrInspectPop();
 }
