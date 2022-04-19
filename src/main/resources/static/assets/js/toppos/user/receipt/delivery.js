@@ -131,6 +131,30 @@ const comms = {
         });
     },
 
+    setupPaymentPop(selctedInfo) {
+        dv.chk(selctedInfo, dtos.send.franchiseUncollectPayRequestList, "선택한 미수금 마스터 항목 보내기");
+        CommonUI.ajax("/api/user/franchiseUncollectPayRequestList", "GET", selctedInfo, function(res) {
+            const data = res.sendData;
+            dv.chk(data, dtos.receive.franchiseUncollectPayRequestList, "미수 결제창 뜰 때 받아오는 항목");
+            grids.f.setData(2, data.gridListData);
+            calculateGridPayment();
+            wares.frPaymentInfo = data.payInfoData[0];
+        });
+        $("#paymentPop").addClass("active");
+        grids.f.resize(2);
+    },
+
+    sendPaidInfo(paidInfo) {
+        dv.chk(paidInfo, dtos.send.franchiseUncollectPay, "미수 결제 성공 후 정보 보내기");
+        CommonUI.ajax("/api/user/franchiseUncollectPay", "MAPPER", paidInfo, function(res) {
+            alertSuccess("미수 결제 완료 되었습니다.");
+            wares.selectedCustomer.uncollectMoney = 0;
+            putCustomer();
+            $("#paymentPop").removeClass("active");
+            $("#payMonth").val("0");
+            $("#payType1").prop("checked", true);
+        });
+    },
 };
 
 /* .s : AUI 그리드 관련 설정들
@@ -261,6 +285,21 @@ const grids = {
                 enableFilter : true,
                 rowHeight : 48,
                 headerHeight : 48,
+                independentAllCheckBox: true,
+                rowStyleFunction : function(rowIndex, item) {
+                    let returnClass = "";
+                    if(["S5", "S8"].includes(item.fdState)) {
+                        returnClass = "grid_checkable_row";
+                    }
+                    return returnClass;
+                },
+                rowCheckVisibleFunction : function(rowIndex, isChecked, item) {
+                    let isVisible = false;
+                    if(["S5", "S8"].includes(item.fdState)) {
+                        isVisible = true;
+                    }
+                    return isVisible;
+                },
             };
 
             grids.s.columnLayout[1] = [
@@ -337,9 +376,13 @@ const grids = {
             });
 
             AUIGrid.bind(grids.s.id[0], "rowAllCheckClick", function (checked) {
+                if (checked) {
+                    AUIGrid.addCheckedRowsByValue(grids.s.id[0], "fdState", ["S5", "S8"]);
+                } else {
+                    AUIGrid.addUncheckedRowsByValue(grids.s.id[0], "fdState", ["S5", "S8"]);
+                }
                 calculateCheckedStatus();
             });
-
         }
     }
 };
@@ -419,6 +462,43 @@ const trigs = {
                     location.href = "/user/unpaid?bchp=" + wares.selectedCustomer.bcHp;
                 } else {
                     location.href = "/user/unpaid";
+                }
+            });
+
+            $("#repay").on("click", function () {
+                if(wares.selectedCustomer.bcId) {
+                    if(wares.selectedCustomer.uncollectMoney) {
+                        const target = {
+                            bcId: wares.selectedCustomer.bcId,
+                            frIdList: [],
+                        }
+                        comms.setupPaymentPop(target);
+                    } else {
+                        alertCaution("결제하실 미수금이 없습니다.", 1);
+                    }
+                } else {
+                    alertCaution("먼저 고객을 선택해 주세요.", 1);
+                }
+            });
+
+            $("#cancelPayment").on("click", function () {
+                $("#paymentPop").removeClass("active");
+            });
+
+            $("#confirmPayment").on("click", function () {
+                if ($("#payType1").is(":checked")) {
+                    alertCheck(`미수금 ${$("#totalUncollectAmount").html()}원을 결제 처리 완료합니다.`
+                        + `<br>현금 수령 완료하셨습니까?`);
+                    $("#checkDelSuccessBtn").on("click", function () {
+                        uncollectPaymentStageOne();
+                        $('#popupId').remove();
+                    });
+                } else if ($("#payType2").is(":checked")) {
+                    alertCheck(`미수금 ${$("#totalUncollectAmount").html()}원을 결제 처리 완료합니다.`);
+                    $("#checkDelSuccessBtn").on("click", function () {
+                        uncollectPaymentStageOne();
+                        $('#popupId').remove();
+                    });
                 }
             });
         },
@@ -617,4 +697,99 @@ function setTopMenuHref() {
         $("#menuDelivery").attr("href", `/user/delivery`);
         $("#menuIntegrate").attr("href", `/user/integrate`);
     }
+}
+
+function calculateGridPayment() {
+    const items = grids.f.getData(2);
+    let totalUncollectAmount = 0;
+    items.forEach(item => {
+        totalUncollectAmount += item.uncollectMoney;
+    });
+    $("#totalUncollectAmount").html(totalUncollectAmount.toLocaleString());
+}
+
+function uncollectPaymentStageOne() {
+    try {
+        let paymentData =
+            {
+                franchiseNo: wares.frPaymentInfo.frCode,
+                franchiseName: wares.frPaymentInfo.frName,
+                businessNO: wares.frPaymentInfo.frBusinessNo,
+                repreName: wares.frPaymentInfo.frRpreName,
+                franchiseTel: wares.frPaymentInfo.frTelNo,
+                customerName: wares.frPaymentInfo.bcName,
+                customerTel: CommonUI.formatTel(wares.frPaymentInfo.bcHp),
+                requestDt: new Date().format("yyyy-MM-dd HH:mm"),
+                totalAmount: $("#totalUncollectAmount").html().toInt(),
+                paymentAmount: $("#totalUncollectAmount").html().toInt(),
+                month: $("#payMonth").val().toInt(),
+            };
+
+        const payType = $("input[name=payType]:checked").val();
+        paymentData.fpType = payType;
+        if (payType === "01") {
+            paymentData.type = "cash";
+        } else if (payType === "02") {
+            paymentData.type = "card";
+        }
+
+        if (paymentData.type ==="card") {
+            $('#payStatus').show();
+            try {
+                CAT.CatCredit(paymentData, function (res) {
+                    $('#payStatus').hide();
+                    let resjson = JSON.parse(res);
+
+                    // 결제 성공일경우
+                    if (resjson.STATUS === "SUCCESS") {
+                        uncollectPaymentStageTwo(paymentData, resjson);
+                    }
+                    // 결제 실패의 경우
+                    if (resjson.STATUS === "FAILURE") {
+                        console.log(resjson);
+                        $('#payStatus').hide();
+                        alertCancel("단말기 처리 중 에러가 발생하였습니다<br>잠시후 다시 시도해주세요");
+                    }
+                });
+            }catch (e) {
+                CommonUI.toppos.underTaker(e, "unpaid : 카드 단말 결제");
+            }
+        }else if (paymentData.type ==="cash") {
+            uncollectPaymentStageTwo(paymentData);
+        }
+    }catch (e) {
+        CommonUI.toppos.underTaker(e, "unpaid : 미수금 결제 1단계");
+        return false;
+    }
+}
+
+function uncollectPaymentStageTwo(paymentData, creditData = {}) {
+
+    const frIdList = [];
+    const frItems = grids.f.getData(2);
+    frItems.forEach(item => {
+        frIdList.push(item.frId);
+    });
+
+    const paidInfo = {
+        frIdList: frIdList,
+        data : {
+            fpRealAmt: paymentData.totalAmount,
+            fpType: paymentData.fpType,
+            fpMonth: paymentData.month,
+            fpCatApprovalno: creditData.APPROVALNO ? creditData.APPROVALNO : "",
+            fpCatApprovaltime: creditData.APPROVALTIME ? creditData.APPROVALTIME : "",
+            fpCatCardno: creditData.CARDNO ? creditData.CARDNO : "",
+            fpCatIssuercode: creditData.ISSUERCODE ? creditData.ISSUERCODE : "",
+            fpCatIssuername: creditData.ISSUERNAME ? creditData.ISSUERNAME : "",
+            fpCatMuechantnumber: creditData.MERCHANTNUMBER ? creditData.MERCHANTNUMBER : "",
+            fpCatMessage1: creditData.MESSAGE1 ? creditData.MESSAGE1 : "",
+            fpCatMessage2: creditData.MESSAGE2 ? creditData.MESSAGE2 : "",
+            fpCatNotice1: creditData.NOTICE1 ? creditData.NOTICE1 : "",
+            fpCatTotamount: creditData.TOTAMOUNT ? creditData.TOTAMOUNT : "",
+            fpCatVatamount: creditData.VATAMOUNT ? creditData.VATAMOUNT : "",
+            fpCatTelegramflagt: creditData.TELEGRAMFLAG ? creditData.TELEGRAMFLAG : "",
+        }
+    }
+    comms.sendPaidInfo(paidInfo);
 }

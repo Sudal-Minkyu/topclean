@@ -175,6 +175,7 @@ const comms = {
             comms.filterCustomerList(wares.searchCondition);
             comms.customersUncollectedList({bcId: wares.customerBcId});
             $("#payMonth").val("0");
+            $("#payType1").prop("checked", true);
         });
     },
 };
@@ -532,8 +533,20 @@ const trigs = {
             });
 
             $("#confirmPayment").on("click", function () {
-                // 차후 할부셀렉트박스에 대한 기능도 추가
-                uncollectPaymentStageOne();
+                if ($("#payType1").is(":checked")) {
+                    alertCheck(`미수금 ${$("#totalUncollectAmount").html()}원을 결제 처리 완료합니다.`
+                        + `<br>현금 수령 완료하셨습니까?`);
+                    $("#checkDelSuccessBtn").on("click", function () {
+                        uncollectPaymentStageOne();
+                        $('#popupId').remove();
+                    });
+                } else if ($("#payType2").is(":checked")) {
+                    alertCheck(`미수금 ${$("#totalUncollectAmount").html()}원을 결제 처리 완료합니다.`);
+                    $("#checkDelSuccessBtn").on("click", function () {
+                        uncollectPaymentStageOne();
+                        $('#popupId').remove();
+                    });
+                }
             });
 
             $("#cancelPayment").on("click", function () {

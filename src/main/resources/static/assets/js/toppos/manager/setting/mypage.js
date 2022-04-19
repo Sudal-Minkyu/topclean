@@ -12,7 +12,9 @@ const dtos = {
         유저정보저장하기: {
             userEmail: "s",
             userTel: "s",
-            userPassword: "s", // 값이 갈 경우 암호 변경, 빈값이 갈 경우 필드값의 변경 X
+            nowPassword: "s",
+            newPassword: "s",
+            checkPassword: "s", // 값이 갈 경우 암호 변경, 빈값이 갈 경우 필드값의 변경 X
         },
     },
     receive: {
@@ -101,11 +103,9 @@ function saveUser() {
     const userData = {
         userEmail: $("#userEmail").val(),
         userTel: $("#userTel").val(),
-        userPassword: $("#userPassword").val(),
-    }
-    if(userData.userPassword !== $("#checkPassword").val()) {
-        alertCaution("변경하실 비밀번호와 비밀번호 확인이 일치하지 않습니다.", 1);
-        return false;
+        nowPassword: $("#nowPassword").val(),
+        newPassword: $("#newPassword").val(),
+        checkPassword: $("#checkPassword").val(),
     }
 
     comms.setUserInfo(userData);

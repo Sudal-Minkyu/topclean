@@ -67,13 +67,14 @@ const comms = {
                 // 접수총액
                 totalAmount += data.gridListData[i].fdTotAmt;
                 // 급세탁건수
-                if (data.gridListData[i].fdUrgentYn == "Y") {
+                if (data.gridListData[i].fdUrgentYn === "Y") {
                     fastItemCount = fastItemCount + 1;
                 }
                 // 재세탁건수
-                if (data.gridListData[i].fdRetryYn == "Y") {
+                if (data.gridListData[i].fdRetryYn === "Y") {
                     retryItemCount = retryItemCount + 1;
                 }
+                data.gridListData[i].SMS = true;
             }
 
             dv.chk(data.gridListData, dtos.receive.franchiseReceiptFranchiseInList, '입고 리스트 항목 받아오기');
@@ -147,7 +148,7 @@ const grids = {
                     dataField: "fdTag",
                     headerText: "택번호",
                     style: "datafield_tag",
-                    width: 90,
+                    width: 70,
                     labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
                         return CommonData.formatFrTagNo(value);
                     },
@@ -198,7 +199,7 @@ const grids = {
                     dataField: "fdTotAmt",
                     headerText: "접수금액",
                     style: "grid_textalign_right",
-                    width: 100,
+                    width: 80,
                     dataType: "numeric",
                     autoThousandSeparator: "true",
                 }, 
@@ -211,18 +212,37 @@ const grids = {
                     dataField: "fdRemark",
                     headerText: "특이사항",
                     style: "grid_textalign_left",
-                }, 
+                },
+                {
+                    dataField: "SMS",
+                    headerText: "알림문자",
+                    width: 70,
+                    headerRenderer : {
+                        type : "CheckBoxHeaderRenderer",
+                        dependentMode : true,
+                        position : "bottom",
+                        onClick: function (e) {
+                            grids.f.resetUpdatedItems();
+                        },
+                    },
+                    renderer : {
+                        type : "CheckBoxEditRenderer",
+                        editable : true,
+                        checkValue: true,
+                        unCheckValue : false,
+                    }
+                },
                 {
                     dataField: "frYyyymmdd",
                     headerText: "고객접수일",
-                    width: 100,
+                    width: 90,
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
                 }, 
                 {
                     dataField: "fdS2Dt",
                     headerText: "지사입고일",
-                    width: 100,
+                    width: 90,
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
                 },
@@ -272,13 +292,22 @@ const grids = {
         clearData(numOfGrid) {
 			AUIGrid.clearGridData(grids.s.id[numOfGrid]);
 		},
+
+        resetUpdatedItems() {
+            AUIGrid.resetUpdatedItems(grids.s.id[0]);
+        },
     },
 
     t: {
         basicTrigger() {
             /* 0번그리드 내의 셀 클릭시 이벤트 */
-            AUIGrid.bind(grids.s.id[0], "cellClick", function (e) {
-                console.log(e.item); // 이밴트 콜백으로 불러와진 객체의, 클릭한 대상 row 키(파라메터)와 값들을 보여준다.
+            AUIGrid.bind(grids.s.id[0], "cellEditEnd", function (e) {
+                const targetItems = AUIGrid.getItemsByValue(grids.s.id[0], "bcId", e.item.bcId);
+                for (let i = 0; i < targetItems.length; i++) {
+                    targetItems[i].SMS = e.value;
+                }
+                AUIGrid.updateRowsById(grids.s.id[0], targetItems);
+                grids.f.resetUpdatedItems();
             });
         }
     }
@@ -319,6 +348,7 @@ const trigs = {
                 grids.f.clearData(0);
                 comms.getGridList();
             });
+
         }
     },
     r: { // 이벤트 해제
@@ -339,6 +369,7 @@ $(function() { // 페이지가 로드되고 나서 실행
 function onPageLoad() {
     grids.f.initialization();
     grids.f.create();
+    grids.t.basicTrigger();
 
     trigs.s.basicTrigger();
     comms.getGridList();
@@ -349,12 +380,17 @@ function onPageLoad() {
 
 function makeSaveDataset(checkedItems) { // 저장 데이터셋 만들기
     let fdIdList = [];
+    let smsBcIdList = [];
     checkedItems.forEach(data => {
         fdIdList.push(data.item.fdId);
+        if(data.item.SMS && !smsBcIdList.includes(data.item.bcId)) {
+            smsBcIdList.push(data.item.bcId)
+        }
     });
     const changeData = {
         stateType: "S4",
         fdIdList: fdIdList,
+        smsBcIdList: smsBcIdList,
     };
     return changeData;
 }

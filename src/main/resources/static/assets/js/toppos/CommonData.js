@@ -89,12 +89,19 @@ class CommonDataClass {
             "1": "미확인",
             "2": "세탁진행",
             "3": "반품요청",
-        }
+        };
 
         this.distinguishableColors = [
             "#ff0000", "#ffaa00", "#aaff00", "#00ff00", "#00ffaa"
             , "#00aaff", "#0000ff", "#aa00ff", "#ff00aa"
-        ]
+        ];
+
+        this.name.fmType = {
+            "01": "검품",
+            "02": "영수증",
+            "04": "수동",
+            "xx": "완성품",
+        };
     }
 
     formatFrTagNo(tagNo) {

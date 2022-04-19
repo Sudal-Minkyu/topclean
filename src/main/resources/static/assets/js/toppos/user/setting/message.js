@@ -25,7 +25,7 @@ const dtos = {
             filterToDt: "s",
         },
         전송내역우측세부정보조회: {
-            전송일자: "s", // 8자리의 년월일까지만 나온 정보
+            insertYyyymmdd: "s", // 8자리의 년월일까지만 나온 정보
         },
     },
     receive: {
@@ -112,21 +112,19 @@ const comms = {
     },
 
     getSendRecordSummary(searchCondition) {
-        console.log(searchCondition);
-        // CommonUI.ajax("", "GET", searchCondition, function (res) {
-        //     const data = res.sendData.gridListData;
-        //     console.log(data);
-        //     grids.f.set(2, data);
-        // });
+        CommonUI.ajax("/api/user/messageHistoryList", "GET", searchCondition, function (res) {
+            const data = res.sendData.gridListData;
+            console.log(data);
+            grids.f.set(2, data);
+        });
     },
 
     getSendRecordDetail(searchCondition) {
-        console.log(searchCondition);
-        // CommonUI.ajax("", "GET", searchCondition, function (res) {
-        //     const data = res.sendData.gridListData;
-        //     console.log(data);
-        //     grids.f.set(3, data);
-        // });
+        CommonUI.ajax("/api/user/messageHistorySubList", "GET", searchCondition, function (res) {
+            const data = res.sendData.gridListData;
+            console.log(data);
+            grids.f.set(3, data);
+        });
     },
 };
 
@@ -208,26 +206,26 @@ const grids = {
 
             grids.s.columnLayout[2] = [
                 {
-                    dataField: "",
+                    dataField: "insertYyyymmdd",
                     headerText: "전송일자",
                     width: 90,
                 }, {
-                    dataField: "",
+                    dataField: "total",
                     headerText: "총건수",
                 }, {
-                    dataField: "",
+                    dataField: "fmType04_cnt",
                     headerText: "수동<br>건수",
                     width: 55,
                 }, {
-                    dataField: "",
+                    dataField: "fmType01_cnt",
                     headerText: "검품<br>확인",
                     width: 55,
                 }, {
-                    dataField: "",
+                    dataField: "fmTypeXX_cnt",
                     headerText: "완성품<br>메시지",
                     width: 55,
                 }, {
-                    dataField: "",
+                    dataField: "fmType02_cnt",
                     headerText: "영수증",
                     width: 55,
                 },
@@ -252,9 +250,12 @@ const grids = {
                 {
                     dataField: "fmType",
                     headerText: "전송유형",
-                    width: 90,
+                    width: 70,
+                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                        return CommonData.name.fmType[value];
+                    },
                 }, {
-                    dataField: "fmSendregtimeDt",
+                    dataField: "insertDateTime",
                     headerText: "전송일시",
                     width: 90,
                     renderer : {
@@ -270,17 +271,20 @@ const grids = {
                 }, {
                     dataField: "bcName",
                     headerText: "고객명",
+                    style: "grid_textalign_left",
                     width: 90,
                 }, {
                     dataField: "bcHp",
                     headerText: "수신번호",
+                    style: "grid_textalign_left",
                     width: 120,
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
                         return CommonUI.formatTel(value);
                     },
                 }, {
-                    dataField: "fmMessages",
+                    dataField: "fmMessage",
                     headerText: "내용",
+                    style: "grid_textalign_left",
                 },
             ];
 
@@ -376,7 +380,7 @@ const trigs = {
         AUIGrid.bind(grids.s.id[2], "cellClick", function (e) {
             console.log(e.item);
             const searchCondition = {
-                전송일자: e.item.전송일자,
+                insertYyyymmdd: e.item.insertYyyymmdd.numString(),
             }
             comms.getSendRecordDetail(searchCondition);
         });
