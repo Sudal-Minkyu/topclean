@@ -1086,7 +1086,10 @@ public class UserRestController {
     }
 
     //  세탁인도 - 세부테이블 S5-가맹점입고, S8- 강제입고 상태 리스트, S3 - 강제출고입고 상태(22/03/07 추가)
+    // 2022/04/19 수정 ->  fdState = "S6"를 제외한 나머지 모두 조회
     @GetMapping("franchiseReceiptDeliveryList")
+    @ApiOperation(value = "세탁인도 리스트 조회" , notes = "세탁인도페이지에 보여줄 리스트를 조회한다 ")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
     public ResponseEntity<Map<String,Object>> franchiseReceiptDeliveryList(@RequestParam(value="bcId", defaultValue="") Long bcId, HttpServletRequest request){
         return receiptStateService.franchiseReceiptDeliveryList(bcId, request);
     }
@@ -1219,8 +1222,8 @@ public class UserRestController {
     @ApiOperation(value = "택분실 가맹점 체크" , notes = "가맹점이 택분실 체크 요청한다 ")
     @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
     @PostMapping("tagGalleryCheck")
-    public ResponseEntity<Map<String,Object>> tagGalleryCheck(@RequestParam("btId")Long btId, HttpServletRequest request, @RequestParam("type")String type) {
-        return tagGalleryService.tagGalleryCheck(btId, type, request);
+    public ResponseEntity<Map<String,Object>> tagGalleryCheck(@RequestParam("brTag")String brTag, @RequestParam("btId")Long btId, HttpServletRequest request, @RequestParam("type")String type) {
+        return tagGalleryService.tagGalleryCheck(brTag, btId, type, request);
     }
 
 // @@@@@@@@@@@@@@@@@@@ 공지사항 게시판 API @@@@@@@@@@@@@@@@@@@@@@@@@@

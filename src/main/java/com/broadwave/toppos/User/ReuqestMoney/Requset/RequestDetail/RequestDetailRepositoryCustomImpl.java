@@ -665,87 +665,73 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
 
     // 세탁인도 querydsl
     public List<RequestDetailDeliveryDto> findByRequestDetailDeliveryList(String frCode, Long bcId){
-        QRequestDetail requestDetail = QRequestDetail.requestDetail;
-        QRequest request = QRequest.request;
-        QItemGroup itemGroup = QItemGroup.itemGroup;
-        QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
-        QItem item = QItem.item;
-        QCustomer customer = QCustomer.customer;
+        EntityManager em = getEntityManager();
+        StringBuilder sb = new StringBuilder();
 
-        JPQLQuery<RequestDetailDeliveryDto> query = from(requestDetail)
-                .innerJoin(requestDetail.frId, request)
-                .innerJoin(request.bcId, customer)
-                .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
-                .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
-                .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
-                .where(request.frConfirmYn.eq("Y"))
-                .where(requestDetail.frId.frCode.eq(frCode).and(requestDetail.fdCancel.eq("N")))
-                .select(Projections.constructor(RequestDetailDeliveryDto.class,
-                        request.frRefType,
-                        customer.bcName,
-                        requestDetail.id,
-                        request.frYyyymmdd,
-                        request.fr_insert_date,
-                        requestDetail.fdTag,
-                        requestDetail.fdColor,
-                        itemGroup.bgName,
-                        itemGroupS.bsName,
-                        item.biName,
-                        requestDetail.fdState,
+        sb.append("SELECT \n");
+        sb.append("b.fr_ref_type, c.bc_name, a.fd_id, b.fr_yyyymmdd, b.fr_insert_date, a.fd_tag, \n");
+        sb.append("a.fd_color, g.bg_name, h.bs_name, f.bi_name, a.fd_state, \n");
 
-                        requestDetail.fdS2Dt,
-                        requestDetail.fdS4Dt,
-                        new CaseBuilder()
-                                .when(requestDetail.fdS8Dt.isNull().or(requestDetail.fdS8Dt.isEmpty())).then(
-                                new CaseBuilder()
-                                        .when(requestDetail.fdS7Dt.isNull().or(requestDetail.fdS7Dt.isEmpty())).then(
-                                        requestDetail.fdS5Dt
-                                )
-                                        .otherwise(requestDetail.fdS7Dt)
-                        )
-                                .otherwise(requestDetail.fdS8Dt),
+        sb.append("a.fd_s2_dt, a.fd_s4_dt, \n");
+        sb.append("CASE WHEN a.fd_s8_dt IS NULL THEN \n");
+        sb.append("(CASE WHEN a.fd_s7_dt IS NULL THEN a.fd_s5_dt \n");
+        sb.append("ELSE a.fd_s7_dt end) \n");
+        sb.append("ELSE a.fd_s8_dt \n");
+        sb.append("END as fdS5Dt, \n");
 
-                        requestDetail.fdS4Type,
-                        requestDetail.fdPriceGrade,
-                        requestDetail.fdRetryYn,
-                        requestDetail.fdPressed,
-                        requestDetail.fdAdd1Amt,
-                        requestDetail.fdAdd1Remark,
-                        requestDetail.fdRepairAmt,
-                        requestDetail.fdRepairRemark,
-                        requestDetail.fdWhitening,
-                        requestDetail.fdPollution,
-                        requestDetail.fdStarch,
-                        requestDetail.fdWaterRepellent,
-                        requestDetail.fdUrgentYn,
-                        requestDetail.fdTotAmt,
-                        requestDetail.fdRemark,
-                        requestDetail.fdEstimateDt,
-                        new CaseBuilder()
-                                .when(requestDetail.fdPollutionLocFcn.eq("Y")).then(1)
-                                .when(requestDetail.fdPollutionLocFcs.eq("Y")).then(1)
-                                .when(requestDetail.fdPollutionLocFcb.eq("Y")).then(1)
-                                .when(requestDetail.fdPollutionLocFlh.eq("Y")).then(1)
-                                .when(requestDetail.fdPollutionLocFrh.eq("Y")).then(1)
-                                .when(requestDetail.fdPollutionLocFlf.eq("Y")).then(1)
-                                .when(requestDetail.fdPollutionLocFrf.eq("Y")).then(1)
-                                .otherwise(0),
-                        new CaseBuilder()
-                                .when(requestDetail.fdPollutionLocBcn.eq("Y")).then(1)
-                                .when(requestDetail.fdPollutionLocBcs.eq("Y")).then(1)
-                                .when(requestDetail.fdPollutionLocBcb.eq("Y")).then(1)
-                                .when(requestDetail.fdPollutionLocBlh.eq("Y")).then(1)
-                                .when(requestDetail.fdPollutionLocBrh.eq("Y")).then(1)
-                                .when(requestDetail.fdPollutionLocBlf.eq("Y")).then(1)
-                                .when(requestDetail.fdPollutionLocBrf.eq("Y")).then(1)
-                                .otherwise(0)
-                ));
-        query.orderBy(requestDetail.id.asc());
-        query.where(requestDetail.fdState.eq("S5").or(requestDetail.fdState.eq("S8").or(requestDetail.fdState.eq("S3"))));
+        sb.append("a.fd_s4_type, \n");
+
+        sb.append("a.fd_price_grade, a.fd_retry_yn, a.fd_pressed, \n");
+
+        sb.append("a.fd_add1_amt, a.fd_add1_remark, a.fd_repair_amt, a.fd_repair_remark, a.fd_whitening, a.fd_pollution, \n");
+        sb.append("a.fd_starch, a.fd_water_repellent,  a.fd_urgent_yn, \n");
+        sb.append("a.fd_tot_amt, a.fd_remark, a.fd_estimate_dt, \n");
+
+        sb.append("IFNULL(d.fi_id,null), IFNULL(d.fi_customer_confirm,null), \n");
+        sb.append("IFNULL(e.fi_id,null), IFNULL(e.fi_customer_confirm,null), \n");
+
+        sb.append("CASE \n"); // 반품
+        sb.append("WHEN a.fd_pollution_loc_fcn = 'Y' THEN 1 \n");
+        sb.append("WHEN a.fd_pollution_loc_fcs = 'Y' THEN 1 \n");
+        sb.append("WHEN a.fd_pollution_loc_fcb = 'Y' THEN 1 \n");
+        sb.append("WHEN a.fd_pollution_loc_flh = 'Y' THEN 1 \n");
+        sb.append("WHEN a.fd_pollution_loc_frh = 'Y' THEN 1 \n");
+        sb.append("WHEN a.fd_pollution_loc_flf = 'Y' THEN 1 \n");
+        sb.append("WHEN a.fd_pollution_loc_frf = 'Y' THEN 1 \n");
+        sb.append("ELSE 0 END fdPollutionType, \n");
+
+        sb.append("CASE \n"); // 반품
+        sb.append("WHEN a.fd_pollution_loc_bcn = 'Y' THEN 1 \n");
+        sb.append("WHEN a.fd_pollution_loc_bcs = 'Y' THEN 1 \n");
+        sb.append("WHEN a.fd_pollution_loc_bcb = 'Y' THEN 1 \n");
+        sb.append("WHEN a.fd_pollution_loc_blh = 'Y' THEN 1 \n");
+        sb.append("WHEN a.fd_pollution_loc_brh = 'Y' THEN 1 \n");
+        sb.append("WHEN a.fd_pollution_loc_blf = 'Y' THEN 1 \n");
+        sb.append("WHEN a.fd_pollution_loc_brf = 'Y' THEN 1 \n");
+        sb.append("ELSE 0 END fdPollutionBack \n");
+
+        sb.append("FROM fs_request_dtl a \n");
+        sb.append("INNER JOIN fs_request b ON b.fr_id = a.fr_id \n");
+        sb.append("INNER JOIN bs_customer c ON c.bc_id = b.bc_id \n");
+        sb.append("INNER JOIN bs_item f ON a.bi_itemcode=f.bi_itemcode \n");
+        sb.append("INNER JOIN bs_item_group g ON f.bg_item_groupcode= g.bg_item_groupcode \n");
+        sb.append("INNER JOIN bs_item_group_s h ON f.bs_item_groupcode_s=h.bs_item_groupcode_s and f.bg_item_groupcode=h.bg_item_groupcode \n");
+        sb.append("LEFT OUTER JOIN fs_request_inspect d ON d.fd_id = a.fd_id AND d.fi_type='F' \n");
+        sb.append("LEFT OUTER JOIN fs_request_inspect e ON e.fd_id = a.fd_id AND e.fi_type='B' \n");
+        sb.append("WHERE b.fr_code = ?1 AND a.fd_state != 'S6' \n");
         if(bcId != null){
-            query.where(request.bcId.bcId.eq(bcId));
+            sb.append("AND c.bc_id= ?2 \n");
         }
-        return query.fetch();
+        sb.append("ORDER BY a.fd_id ASC; \n");
+
+        Query query = em.createNativeQuery(sb.toString());
+
+        query.setParameter(1, frCode);
+        if(bcId != null){
+            query.setParameter(2, bcId);
+        }
+
+        return jpaResultMapper.list(query, RequestDetailDeliveryDto.class);
     }
 
     // 검품이력 조회 및 메세지 querydsl

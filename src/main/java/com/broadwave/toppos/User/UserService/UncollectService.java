@@ -200,7 +200,14 @@ public class UncollectService {
             payInfo.put("bcHp", optionalCustomer.get().getBcHp());
             payInfoData.add(payInfo);
 
-            List<RequestCustomerUnCollectDto> requestCustomerUnCollectDtos = requestRepository.findByRequestUnCollectPayList(frIdList, frCode);
+
+            List<RequestCustomerUnCollectDto> requestCustomerUnCollectDtos;
+            if(frIdList.size() == 0){
+                requestCustomerUnCollectDtos = requestRepository.findByRequestCustomerUnCollectList(bcId, frCode);
+            }else{
+                requestCustomerUnCollectDtos = requestRepository.findByRequestUnCollectPayList(frIdList, frCode);
+            }
+
             List<HashMap<String,Object>> uncollectListData = new ArrayList<>();
             HashMap<String,Object> uncollectListInfo;
             for (RequestCustomerUnCollectDto requestCustomerUnCollectDto: requestCustomerUnCollectDtos) {
@@ -212,6 +219,7 @@ public class UncollectService {
                 uncollectListInfo.put("bsName", requestCustomerUnCollectDto.getBsName());
                 uncollectListInfo.put("biName", requestCustomerUnCollectDto.getBiName());
                 uncollectListInfo.put("frTotalAmount", requestCustomerUnCollectDto.getFrTotalAmount());
+                uncollectListInfo.put("frPayAmount", requestCustomerUnCollectDto.getFrPayAmount());
                 uncollectListInfo.put("uncollectMoney", requestCustomerUnCollectDto.getFrTotalAmount()-requestCustomerUnCollectDto.getFrPayAmount());
                 uncollectListData.add(uncollectListInfo);
             }

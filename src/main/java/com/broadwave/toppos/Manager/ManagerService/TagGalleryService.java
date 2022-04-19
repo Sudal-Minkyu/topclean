@@ -349,11 +349,12 @@ public class TagGalleryService {
     }
 
     //  NEW 택분실게시판 - 가맹점 체크 and 완료 호출
-    public ResponseEntity<Map<String, Object>> tagGalleryCheck(Long btId, String type, HttpServletRequest request) {
+    public ResponseEntity<Map<String, Object>> tagGalleryCheck(String brTag, Long btId, String type, HttpServletRequest request) {
         log.info("tagGalleryCheck 호출");
 
         log.info("btId : "+btId);
         log.info("type : "+type);
+        log.info("brTag : "+brTag);
 
         AjaxResponse res = new AjaxResponse();
 
@@ -361,9 +362,11 @@ public class TagGalleryService {
         Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
         String frCode = (String) claims.get("frCode"); // 현재 소속된 지사의 코드(2자리) 가져오기
         String frbrCode = (String) claims.get("frbrCode"); // 현재 소속된 지사의 코드(2자리) 가져오기
+        String frTagNo = (String) claims.get("frTagNo"); // 현재 가맹점의 택번호 가져오기
         String login_id = claims.getSubject(); // 현재 아이디
         log.info("현재 접속한 아이디 : "+login_id);
         log.info("현재 소속된 지사 코드 : "+frbrCode);
+        log.info("현재 가맹점의 택번호 : "+frTagNo);
 
         TagGalleryCheck tagGalleryCheck = tagGalleryCheckRepository.findByTagGalleryFrCode(btId, frCode);
         TagGallery tagGallery = tagGalleryRepository.findByTagGallery(btId);
@@ -373,7 +376,6 @@ public class TagGalleryService {
         if(tagGalleryCheck != null){
             if(type.equals("1")){
                 tagGalleryCheckRepository.delete(tagGalleryCheck);
-
                 return ResponseEntity.ok(res.success());
             }else{
                 tagGalleryCheck.setBrCompleteYn("Y");
@@ -386,6 +388,8 @@ public class TagGalleryService {
 
             tagGalleryCheck.setBtId(tagGallery);
             tagGalleryCheck.setFrCode(frCode);
+            tagGalleryCheck.setBrTag(frTagNo+brTag);
+
             if(type.equals("1")){
                 tagGalleryCheck.setBrCompleteYn("N");
             }else{

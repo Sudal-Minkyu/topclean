@@ -191,7 +191,7 @@ public class TemplateService {
         log.info("접속한 가맹점 코드 : "+frCode);
 
         List<MessageHistoryListDto> messageHistoryListDtos = messageHistoryRepository.findByMessageHistoryList(frCode, filterFromDt, filterToDt);
-        log.info("messageHistoryListDtos : "+messageHistoryListDtos);
+//        log.info("messageHistoryListDtos : "+messageHistoryListDtos);
         data.put("gridListData",messageHistoryListDtos);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
@@ -214,7 +214,7 @@ public class TemplateService {
         log.info("접속한 가맹점 코드 : "+frCode);
 
         List<MessageHistorySubListDto> messageHistoryListSubDtos = messageHistoryRepository.findByMessageHistorySubList(frCode, insertYyyymmdd);
-        log.info("messageHistoryListSubDtos : "+messageHistoryListSubDtos);
+//        log.info("messageHistoryListSubDtos : "+messageHistoryListSubDtos);
         data.put("gridListData",messageHistoryListSubDtos);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
@@ -280,7 +280,7 @@ public class TemplateService {
         log.info("접속한 가맹점 코드 : "+frCode);
 
         List<TemplateDto> templateDtos = templateRepository.findByTemplateDtos(frCode);
-        log.info("templateDtos : "+templateDtos);
+//        log.info("templateDtos : "+templateDtos);
         data.put("gridListData",templateDtos);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));

@@ -3,6 +3,8 @@ package com.broadwave.toppos.User.UserService;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.User.Customer.Customer;
 import com.broadwave.toppos.User.Customer.CustomerRepository;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.PhotoDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.PhotoRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetail;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.*;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepository;
@@ -39,15 +41,17 @@ public class ReceiptStateService {
     private final CustomerRepository customerRepository;
     private final RequestMessageRepository requestMessageRepository;
     private final RequestDetailRepository requestDetailRepository;
+    private final PhotoRepository photoRepository;
 
     @Autowired
     public ReceiptStateService(TokenProvider tokenProvider, RequestMessageRepository requestMessageRepository, CustomerRepository customerRepository,
-                               InhouseRepository inhouseRepository, RequestDetailRepository requestDetailRepository){
+                               InhouseRepository inhouseRepository, RequestDetailRepository requestDetailRepository, PhotoRepository photoRepository){
         this.tokenProvider = tokenProvider;
         this.inhouseRepository = inhouseRepository;
         this.customerRepository = customerRepository;
         this.requestMessageRepository = requestMessageRepository;
         this.requestDetailRepository = requestDetailRepository;
+        this.photoRepository = photoRepository;
     }
 
     //  접수테이블의 상태 변화 API - 수기마감페이지, 가맹점입고 페이지, 지사반송건전송 페이지, 세탁인도 페이지 공용함수
@@ -449,9 +453,71 @@ public class ReceiptStateService {
         String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
         log.info("현재 접속한 가맹점 코드 : "+frCode);
 
+        List<HashMap<String,Object>> requestDetailDeliveryDtoData = new ArrayList<>();
+        HashMap<String,Object> requestDetailInfo;
+
         // 세탁인도 페이지에 보여줄 리스트 호출
         List<RequestDetailDeliveryDto> requestDetailDeliveryDtos = requestDetailDelivery(frCode, bcId);
-        data.put("gridListData",requestDetailDeliveryDtos);
+
+        for(RequestDetailDeliveryDto requestDetailDto : requestDetailDeliveryDtos){
+            requestDetailInfo = new HashMap<>();
+
+            requestDetailInfo.put("frRefType", requestDetailDto.getFrRefType());
+            requestDetailInfo.put("bcName", requestDetailDto.getBcName());
+
+            requestDetailInfo.put("fdId", requestDetailDto.getFdId());
+
+            requestDetailInfo.put("frYyyymmdd", requestDetailDto.getFrYyyymmdd());
+            requestDetailInfo.put("frInsertDt", requestDetailDto.getFrInsertDt());
+            requestDetailInfo.put("fdTag", requestDetailDto.getFdTag());
+
+            requestDetailInfo.put("fdColor", requestDetailDto.getFdColor());
+            requestDetailInfo.put("bgName", requestDetailDto.getBgName());
+            requestDetailInfo.put("bsName", requestDetailDto.getBsName());
+            requestDetailInfo.put("biName", requestDetailDto.getBiName());
+
+            requestDetailInfo.put("fdState", requestDetailDto.getFdState());
+
+            requestDetailInfo.put("fdS2Dt", requestDetailDto.getFdS2Dt());
+            requestDetailInfo.put("fdS4Dt", requestDetailDto.getFdS4Dt());
+            requestDetailInfo.put("fdS5Dt", requestDetailDto.getFdS5Dt());
+
+            requestDetailInfo.put("fdS4Type", requestDetailDto.getFdS4Type());
+
+            requestDetailInfo.put("fdPriceGrade", requestDetailDto.getFdPriceGrade());
+            requestDetailInfo.put("fdRetryYn", requestDetailDto.getFdRetryYn());
+            requestDetailInfo.put("fdPressed", requestDetailDto.getFdPressed());
+
+            requestDetailInfo.put("fdAdd1Amt", requestDetailDto.getFdAdd1Amt());
+            requestDetailInfo.put("fdAdd1Remark", requestDetailDto.getFdAdd1Remark());
+            requestDetailInfo.put("fdRepairAmt", requestDetailDto.getFdRepairAmt());
+            requestDetailInfo.put("fdRepairRemark", requestDetailDto.getFdRepairRemark());
+            requestDetailInfo.put("fdWhitening", requestDetailDto.getFdWhitening());
+            requestDetailInfo.put("fdPollution", requestDetailDto.getFdPollution());
+            requestDetailInfo.put("fdStarch", requestDetailDto.getFdStarch());
+            requestDetailInfo.put("fdWaterRepellent", requestDetailDto.getFdWaterRepellent());
+            requestDetailInfo.put("fdUrgentYn", requestDetailDto.getFdUrgentYn());
+
+            requestDetailInfo.put("fdTotAmt", requestDetailDto.getFdTotAmt());
+            requestDetailInfo.put("fdRemark", requestDetailDto.getFdRemark());
+
+            requestDetailInfo.put("fdEstimateDt", requestDetailDto.getFdEstimateDt());
+
+            requestDetailInfo.put("frFiId", requestDetailDto.getFrFiId());
+            requestDetailInfo.put("frFiCustomerConfirm", requestDetailDto.getFrFiCustomerConfirm());
+            requestDetailInfo.put("brFiId", requestDetailDto.getBrFiId());
+            requestDetailInfo.put("brFiCustomerConfirm", requestDetailDto.getBrFiCustomerConfirm());
+
+            requestDetailInfo.put("fdPollutionType", requestDetailDto.getFdPollutionType());
+            requestDetailInfo.put("fdPollutionBack", requestDetailDto.getFdPollutionBack());
+
+            List<PhotoDto> photoDtoList = photoRepository.findByPhotoDtoRequestDtlList(Long.parseLong(String.valueOf(requestDetailDto.getFdId())));
+            requestDetailInfo.put("photoList", photoDtoList);
+
+            requestDetailDeliveryDtoData.add(requestDetailInfo);
+        }
+
+        data.put("gridListData",requestDetailDeliveryDtoData);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }

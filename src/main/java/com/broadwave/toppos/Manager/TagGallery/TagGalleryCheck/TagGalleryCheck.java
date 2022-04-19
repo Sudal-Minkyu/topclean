@@ -34,6 +34,9 @@ public class TagGalleryCheck {
     @Column(name="fr_code")
     private String frCode; // 가맹점 3자리
 
+    @Column(name="br_tag")
+    private String brTag; // 분실택번호 7자리
+
     @Column(name="br_complete_yn")
     private String brCompleteYn; // 기본값 N, 해당 분실 세탁물을 고객에게 인수완료했을 경우 Y로 변경
 
