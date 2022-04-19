@@ -134,7 +134,7 @@ public class ReceiptStateService {
                 requestDetailRepository.saveAll(requestDetailList);
 
                 log.info("frNoList : "+frNoList);
-//                InputCheckMessage(frNoList, smsBcIdList);
+                InputCheckMessage(frNoList, smsBcIdList);
                 break;
             }
 //            case "S3": {
@@ -217,7 +217,7 @@ public class ReceiptStateService {
                 requestDetailRepository.saveAll(requestDetailList);
                 inhouseRepository.saveAll(inhouceForceList);
                 log.info("frNoList : "+frNoList);
-                InputCheckMessage(frNoList, smsBcIdList);
+//                InputCheckMessage(frNoList, smsBcIdList);
                 break;
             }
             // 수정완료 - 2022/03/03
