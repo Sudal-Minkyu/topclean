@@ -221,36 +221,37 @@ public class ReceiptStateService {
                 break;
             }
             // 수정완료 - 2022/03/03
-            case "S3":
             case "S5":
             case "S8": {
                 log.info("세탁인도 처리");
                 List<RequestDetail> requestDetailList = requestDetailRepository.findByRequestDetailS5OrS8OrS3List(fdIdList);
 //            log.info("requestDetailList : "+requestDetailList);
                 for (RequestDetail requestDetail : requestDetailList) {
-//                log.info("가져온 frID 값 : "+requestDetailList.get(i).getFrId());인
-                    if(requestDetail.getFdS4Type().equals("04") || requestDetail.getFdS4Type().equals("06") || requestDetail.getFdS4Type().equals("08")){
-                        // 조건 - 04 : 반품출고 S7 - 02, 06 : 확인품(미확인) - 반품, 08 : 확인품(거부) - 반품
-                        requestDetail.setFdS6Type("02");
-                    }else{
-                        // 조건 - 01 : 일반출고, 02 : 강제출고 S7 - 01, 03: 가맹점강제입고출고 - 가맹점 강제입고처리시, 05 : 확인품(미확인) - 출고, 07 : 확인품(수락) - 출고
-                        requestDetail.setFdS6Type("01");
+                    if(requestDetail.getFdState().equals("S5") || requestDetail.getFdState().equals("S8")) {
+//                     log.info("가져온 frID 값 : "+requestDetailList.get(i).getFrId());
+                        if (requestDetail.getFdS4Type().equals("04") || requestDetail.getFdS4Type().equals("06") || requestDetail.getFdS4Type().equals("08")) {
+                            // 조건 - 04 : 반품출고 S7 - 02, 06 : 확인품(미확인) - 반품, 08 : 확인품(거부) - 반품
+                            requestDetail.setFdS6Type("02");
+                        } else {
+                            // 조건 - 01 : 일반출고, 02 : 강제출고 S7 - 01, 03: 가맹점강제입고출고 - 가맹점 강제입고처리시, 05 : 확인품(미확인) - 출고, 07 : 확인품(수락) - 출고
+                            requestDetail.setFdS6Type("01");
+                        }
+                        requestDetail.setFdPreState(requestDetail.getFdState()); // 이전상태 값
+                        requestDetail.setFdPreStateDt(LocalDateTime.now());
+                        requestDetail.setFdState("S6");
+                        requestDetail.setFdStateDt(LocalDateTime.now());
+
+                        requestDetail.setFdS6Dt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
+                        requestDetail.setFdS6Time(LocalDateTime.now());
+
+                        requestDetail.setFdFrState("S6");
+                        requestDetail.setFdFrStateTime(LocalDateTime.now());
+
+                        requestDetail.setModify_id(login_id);
+                        requestDetail.setModify_date(LocalDateTime.now());
                     }
-                    requestDetail.setFdPreState(requestDetail.getFdState()); // 이전상태 값
-                    requestDetail.setFdPreStateDt(LocalDateTime.now());
-                    requestDetail.setFdState("S6");
-                    requestDetail.setFdStateDt(LocalDateTime.now());
-
-                    requestDetail.setFdS6Dt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
-                    requestDetail.setFdS6Time(LocalDateTime.now());
-
-                    requestDetail.setFdFrState("S6");
-                    requestDetail.setFdFrStateTime(LocalDateTime.now());
-
-                    requestDetail.setModify_id(login_id);
-                    requestDetail.setModify_date(LocalDateTime.now());
+                    requestDetailRepository.saveAll(requestDetailList);
                 }
-                requestDetailRepository.saveAll(requestDetailList);
                 break;
             }
             default:
