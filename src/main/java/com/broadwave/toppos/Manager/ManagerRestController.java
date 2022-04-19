@@ -1,5 +1,7 @@
 package com.broadwave.toppos.Manager;
 
+import com.broadwave.toppos.Account.AccountPasswordDto;
+import com.broadwave.toppos.Head.Franchise.FranchiseDtos.FranchiseUserDto;
 import com.broadwave.toppos.Head.HeadService.NoticeService;
 import com.broadwave.toppos.Head.Notice.NoticeDtos.NoticeMapperDto;
 import com.broadwave.toppos.Manager.Calendar.CalendarDtos.BranchCalendarDto;
@@ -503,13 +505,31 @@ public class ManagerRestController {
         return findService.branchObjectFindCheck(ffIdList, request);
     }
 
+//@@@@@@@@@@@@@@@@@@@@@ 나의 정보관리 페이지 관련 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-
-
-
-
-
-
+//    // 현재 지사의 정보 호출하기
+//    @GetMapping("myInfo")
+//    public ResponseEntity<Map<String,Object>> myInfo(HttpServletRequest request){
+//        return managerService.myInfo(request);
+//    }
+//
+//    // 지사정보관리 수정 API
+//    @PostMapping("branchMyInfoSave")
+//    public ResponseEntity<Map<String,Object>> branchMyInfoSave(@RequestParam(value="brName", defaultValue="") String brName,
+//            @RequestParam(value="brTelNo", defaultValue="") String brTelNo, HttpServletRequest request){
+//        return managerService.branchMyInfoSave(brName, brTelNo, request);
+//    }
+//
+//    // 지사 나의정보관리 수정 API
+//    @PostMapping("branchPassword")
+//    public ResponseEntity<Map<String,Object>> branchPassword(@RequestParam(value="userEmail", defaultValue="") String userEmail,
+//                                                                @RequestParam(value="userTel", defaultValue="") String userTel,
+//                                                                @RequestParam(value="nowPassword", defaultValue="") String nowPassword,
+//                                                                @RequestParam(value="newPassword", defaultValue="") String newPassword,
+//                                                                @RequestParam(value="checkPassword", defaultValue="") String checkPassword,
+//                                                                HttpServletRequest request){
+//        return managerService.branchPassword(userEmail, userTel, nowPassword, newPassword, checkPassword, request);
+//    }
 
 
 }

@@ -582,6 +582,7 @@ public class InspectService {
                     messageHistory.setFrCode(requestDetailBranchInspeotDto.getRequestDetail().getFrId().getFrCode());
                     messageHistory.setBrCode(requestDetailBranchInspeotDto.getRequestDetail().getFrId().getBrCode());
                     messageHistory.setFmMessage(message);
+                    messageHistory.setInsertYyyymmdd(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
                     messageHistory.setInsert_id(login_id);
                     messageHistory.setInsertDateTime(LocalDateTime.now());
                     messageHistoryRepository.save(messageHistory);

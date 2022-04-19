@@ -419,6 +419,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                 .where(request.frConfirmYn.eq("Y"))
                 .where(requestDetail.frId.frCode.eq(frCode).and(requestDetail.fdCancel.eq("N").and(requestDetail.fdState.eq("S4"))))
                 .select(Projections.constructor(RequestDetailFranchiseInListDto.class,
+                        customer.bcId,
                         requestDetail.id,
                         requestDetail.fdS4Type,
                         requestDetail.fdS4Dt,
@@ -671,7 +672,6 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         QItem item = QItem.item;
         QCustomer customer = QCustomer.customer;
 
-        QFranchise franchise;
         JPQLQuery<RequestDetailDeliveryDto> query = from(requestDetail)
                 .innerJoin(requestDetail.frId, request)
                 .innerJoin(request.bcId, customer)
@@ -692,6 +692,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         itemGroupS.bsName,
                         item.biName,
                         requestDetail.fdState,
+
                         requestDetail.fdS2Dt,
                         requestDetail.fdS4Dt,
                         new CaseBuilder()
@@ -703,6 +704,8 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                                         .otherwise(requestDetail.fdS7Dt)
                         )
                                 .otherwise(requestDetail.fdS8Dt),
+
+                        requestDetail.fdS4Type,
                         requestDetail.fdPriceGrade,
                         requestDetail.fdRetryYn,
                         requestDetail.fdPressed,

@@ -38,6 +38,7 @@ public class RequestDetailDeliveryDto {
     private String fdS2Dt; // 지사입고일
     private String fdS4Dt; // 지사출고일
     private String fdS5Dt; // 가맹점입고일
+    private String fdS4Type; // 지사출고타입(01:일반출고, 02:강제출고, 03:가맹점강제입고출고)
 
     private String fdPriceGrade; // 가격등급  1:일반, 2:고급: 3명품 4:아동
     private String fdRetryYn; // 재세탁 여부 (Y  / N) Y 이면 합계금액이 0이다

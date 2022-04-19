@@ -10,6 +10,6 @@ import org.springframework.stereotype.Repository;
  * Remark : Toppos 가맹점 메세지 송신이력 Repository
  */
 @Repository
-public interface MessageHistoryRepository extends JpaRepository<MessageHistory,Long> {
+public interface MessageHistoryRepository extends JpaRepository<MessageHistory,Long>, MessageHistoryRepositoryCustom {
 
 }

@@ -5,7 +5,9 @@ import com.broadwave.toppos.User.Customer.Customer;
 import com.broadwave.toppos.User.Customer.CustomerDtos.CustomerMessageListDto;
 import com.broadwave.toppos.User.Customer.CustomerRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.MessageHistory.MessageHistory;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.MessageHistory.MessageHistoryListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.MessageHistory.MessageHistoryRepository;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.MessageHistory.MessageHistorySubListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestRepository;
 import com.broadwave.toppos.User.Template.Template;
 import com.broadwave.toppos.User.Template.TemplateDto;
@@ -23,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**
@@ -147,6 +150,7 @@ public class TemplateService {
                 messageHistory.setFrCode(frCode);
                 messageHistory.setBrCode(frbrCode);
                 messageHistory.setFmMessage(fmMessage);
+                messageHistory.setInsertYyyymmdd(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
                 messageHistory.setInsert_id(login_id);
                 messageHistory.setInsertDateTime(LocalDateTime.now());
 
@@ -167,6 +171,53 @@ public class TemplateService {
         }
         
         return ResponseEntity.ok(res.success());
+    }
+
+    // 문자메세지 전송내역 왼쪽 리스트 호출
+    public ResponseEntity<Map<String, Object>> messageHistoryList(String filterFromDt, String filterToDt, HttpServletRequest request) {
+        log.info("messageHistoryList 호출");
+
+        log.info("filterFromDt : "+filterFromDt);
+        log.info("filterToDt : "+filterToDt);
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String login_id = claims.getSubject(); // 현재 아이디
+        String frCode = (String) claims.get("frCode"); // 현재 가맹점 코드
+        log.info("현재 접속한 아이디 : "+login_id);
+        log.info("접속한 가맹점 코드 : "+frCode);
+
+        List<MessageHistoryListDto> messageHistoryListDtos = messageHistoryRepository.findByMessageHistoryList(frCode, filterFromDt, filterToDt);
+        log.info("messageHistoryListDtos : "+messageHistoryListDtos);
+        data.put("gridListData",messageHistoryListDtos);
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
+    // 문자메세지 전송내역 오른쪽 리스트 호출
+    public ResponseEntity<Map<String, Object>> messageHistorySubList(String insertYyyymmdd, HttpServletRequest request) {
+        log.info("messageHistorySubList 호출");
+
+        log.info("insertYyyymmdd : "+insertYyyymmdd);
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String login_id = claims.getSubject(); // 현재 아이디
+        String frCode = (String) claims.get("frCode"); // 현재 가맹점 코드
+        log.info("현재 접속한 아이디 : "+login_id);
+        log.info("접속한 가맹점 코드 : "+frCode);
+
+        List<MessageHistorySubListDto> messageHistoryListSubDtos = messageHistoryRepository.findByMessageHistorySubList(frCode, insertYyyymmdd);
+        log.info("messageHistoryListSubDtos : "+messageHistoryListSubDtos);
+        data.put("gridListData",messageHistoryListSubDtos);
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
     // 메세지 템플릿 6개 저장
@@ -234,4 +285,5 @@ public class TemplateService {
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
+
 }

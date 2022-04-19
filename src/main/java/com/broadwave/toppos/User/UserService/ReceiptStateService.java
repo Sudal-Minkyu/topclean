@@ -52,11 +52,12 @@ public class ReceiptStateService {
 
     //  접수테이블의 상태 변화 API - 수기마감페이지, 가맹점입고 페이지, 지사반송건전송 페이지, 세탁인도 페이지 공용함수
     @Transactional
-    public ResponseEntity<Map<String, Object>> franchiseStateChange(List<Long> fdIdList, String stateType, HttpServletRequest request) {
+    public ResponseEntity<Map<String, Object>> franchiseStateChange(List<Long> fdIdList, String stateType, List<Long> smsBcIdList, HttpServletRequest request) {
         log.info("franchiseStateChange 호출");
 
 //        log.info("fdIdList : "+fdIdList);
 //        log.info("stateType : "+stateType);
+        log.info("smsBcIdList : "+smsBcIdList);
 
         AjaxResponse res = new AjaxResponse();
 
@@ -100,7 +101,7 @@ public class ReceiptStateService {
                 requestDetailRepository.saveAll(requestDetailList);
                 break;
             }
-            // 수정완료 - 2022/03/03
+            // 수정완료 - 2022/03/03, 2022/04/18 : 문자보내기 고객선택 추가
             case "S4": {
                 log.info("가맹점입고 처리");
                 List<RequestDetail> requestDetailList = requestDetailRepository.findByRequestDetailS4List(fdIdList);
@@ -129,7 +130,7 @@ public class ReceiptStateService {
                 requestDetailRepository.saveAll(requestDetailList);
 
                 log.info("frNoList : "+frNoList);
-                InputCheckMessage(frNoList);
+//                InputCheckMessage(frNoList, smsBcIdList);
                 break;
             }
 //            case "S3": {
@@ -212,7 +213,7 @@ public class ReceiptStateService {
                 requestDetailRepository.saveAll(requestDetailList);
                 inhouseRepository.saveAll(inhouceForceList);
                 log.info("frNoList : "+frNoList);
-                InputCheckMessage(frNoList);
+                InputCheckMessage(frNoList, smsBcIdList);
                 break;
             }
             // 수정완료 - 2022/03/03
@@ -256,7 +257,7 @@ public class ReceiptStateService {
     }
 
     // 가맹점 입고시 메세지테이블 insert 함수
-    public void InputCheckMessage(List<String> frNoList){
+    public void InputCheckMessage(List<String> frNoList, List<Long> smsBcIdList){
         log.info("frNoList : "+frNoList);
         List<RequestDetailInputMessageDto> requestDetailInputMessageDtos = requestDetailRepository.findByRequestDetailInputMessage(frNoList);
         log.info("requestDetailInputMessageDtos : "+requestDetailInputMessageDtos);
@@ -277,19 +278,22 @@ public class ReceiptStateService {
                 bcName = "";
             }
 
-            fmMessage = "안녕하세요 "+bcName+"\n"+"맡겨주신 "+requestDetailInputMessageDto.getBgName()+" "+requestDetailInputMessageDto.getBiName();
-            if(requestDetailInputMessageDto.getFrQty() > 1){
-                int qty = requestDetailInputMessageDto.getFrQty()-1;
-                fmMessage = fmMessage +"외 "+qty+"건의 물품이 세탁완료 되었습니다.";
-            }else{
-                fmMessage = fmMessage +"물품이 세탁완료 되었습니다.";
+            if (smsBcIdList.contains(requestDetailInputMessageDto.getBcId()) ){
+                fmMessage = "안녕하세요 " + bcName + "\n" + "맡겨주신 " + requestDetailInputMessageDto.getBgName() + " " + requestDetailInputMessageDto.getBiName();
+                if (requestDetailInputMessageDto.getFrQty() > 1) {
+                    int qty = requestDetailInputMessageDto.getFrQty() - 1;
+                    fmMessage = fmMessage + "외 " + qty + "건의 물품이 세탁완료 되었습니다.";
+                } else {
+                    fmMessage = fmMessage + "물품이 세탁완료 되었습니다.";
+                }
+
+                requestMessage.setFmMessage(fmMessage);
+                requestMessage.setFmMessageYn("N");
+                requestMessage.setInsertYyyymmdd(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
+                requestMessage.setInsertDateTime(LocalDateTime.now());
+                requestMessageList.add(requestMessage);
             }
 
-            requestMessage.setFmMessage(fmMessage);
-            requestMessage.setFmMessageYn("N");
-            requestMessage.setInsertYyyymmdd(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
-            requestMessage.setInsertDateTime(LocalDateTime.now());
-            requestMessageList.add(requestMessage);
         }
         requestMessageRepository.saveAll(requestMessageList);
     }

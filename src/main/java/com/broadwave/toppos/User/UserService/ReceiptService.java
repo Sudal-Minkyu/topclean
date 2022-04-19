@@ -1097,6 +1097,7 @@ public class ReceiptService {
         messageHistory.setFrCode(frCode);
         messageHistory.setBrCode(frbrCode);
         messageHistory.setFmMessage(message);
+        messageHistory.setInsertYyyymmdd(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
         messageHistory.setInsert_id(login_id);
         messageHistory.setInsertDateTime(LocalDateTime.now());
         messageHistoryRepository.save(messageHistory);

@@ -1040,8 +1040,10 @@ public class UserRestController {
     //  접수테이블의 상태 변화 API - 수기마감페이지, 가맹점입고 페이지, 지사반송건전송 페이지, 세탁인도 페이지 공용함수
     @PostMapping("franchiseStateChange")
     public ResponseEntity<Map<String,Object>> franchiseStateChange(@RequestParam(value="fdIdList", defaultValue="") List<Long> fdIdList,
-                                                                   @RequestParam(value="stateType", defaultValue="") String stateType, HttpServletRequest request){
-        return receiptStateService.franchiseStateChange(fdIdList, stateType, request);
+                                                                   @RequestParam(value="stateType", defaultValue="") String stateType,
+                                                                   @RequestParam(value="smsBcIdList", defaultValue="") List<Long> smsBcIdList,
+                                                                   HttpServletRequest request){
+        return receiptStateService.franchiseStateChange(fdIdList, stateType, smsBcIdList, request);
     }
 
     //  수기마감 - 세부테이블 접수상태 리스트 + 검품이 존재할시 상태가 고객수락일 경우에만 호출
@@ -1280,6 +1282,24 @@ public class UserRestController {
         return templateService.messageSendCustomer(bcIdList, fmMessage,fmSendreqtimeDt, msgType, request);
     }
 
+    // 문자메세지 전송내역 왼쪽 리스트 호출
+    @GetMapping("messageHistoryList")
+    @ApiOperation(value = "문자메세지 전송내역 왼쪽 리스트" , notes = "문자메세지 왼쪽 리스트를 호출한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
+    public ResponseEntity<Map<String,Object>> messageHistoryList(@RequestParam("filterFromDt")String filterFromDt,
+                                                                 @RequestParam("filterToDt")String filterToDt, HttpServletRequest request){
+        // filterToDt.replaceAll("-","")
+        return templateService.messageHistoryList(filterFromDt, filterToDt, request);
+    }
+
+    // 문자메세지 전송내역 오른쪽 리스트 호출
+    @GetMapping("messageHistorySubList")
+    @ApiOperation(value = "문자메세지 전송내역 오른쪽 리스트" , notes = "문자메세지 오른쪽 리스트를 호출한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
+    public ResponseEntity<Map<String,Object>> messageHistorySubList(@RequestParam("insertYyyymmdd")String insertYyyymmdd, HttpServletRequest request){
+        return templateService.messageHistorySubList(insertYyyymmdd, request);
+    }
+
     // 메세지 템플릿 6개 저장
     @PostMapping("templateSave")
     @ApiOperation(value = "메세지 템플릿 6개 저장" , notes = "문자 메세지 템플릿을 저장한다.")
@@ -1295,9 +1315,6 @@ public class UserRestController {
     public ResponseEntity<Map<String,Object>> templateList(HttpServletRequest request){
         return templateService.templateList(request);
     }
-
-
-
 
 
 }

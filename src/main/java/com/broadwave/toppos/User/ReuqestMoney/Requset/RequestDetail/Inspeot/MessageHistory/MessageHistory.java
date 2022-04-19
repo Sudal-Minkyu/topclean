@@ -47,6 +47,9 @@ public class MessageHistory {
     @Column(length = 100000, name="fm_message")
     private String fmMessage; // 메세지 내용
 
+    @Column(name="insert_yyyymmdd")
+    private String insertYyyymmdd;
+
     @Column(name="insert_id")
     private String insert_id;
 
