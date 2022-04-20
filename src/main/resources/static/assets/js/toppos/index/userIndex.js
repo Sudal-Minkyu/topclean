@@ -131,7 +131,7 @@ const comms = {
                     $(field[i]).children(".main__board-bcname").children("span").html(inspectList[i].bcName);
                     $(field[i]).children(".main__board-bgname").children("span").html(inspectList[i].bgName);
                     $(field[i]).children(".main__board-afttag").children("span")
-                        .html(CommonData.formatFrTagNo(inspectList[i].fdTag));
+                        .html(CommonData.formatFrTagNo(inspectList[i].fdTag, frTagInfo.frTagType));
                     $(field[i]).children(".main__board-confirm").children("span")
                         .html(wares.fiCustomerConfirmName[inspectList[i].fiCustomerConfirm]);
                 }

@@ -136,7 +136,6 @@ $(function() {
 
         setBgMenu(false);
         setPreDefinedKeywords();
-        frTagNo = initialData.etcData.frTagNo.substring(0, 2);
         setNextTag(initialData.etcData.fdTag);
         getParamsAndAction();
     });
@@ -261,9 +260,6 @@ $(function() {
 /* 다음 택번호가 기억된다. */
 let nextFdTag = false;
 
-/* 가맹점 고유 택번호 3자리가 기억된다. */
-let frTagNo = false;
-
 /* 결제창 영수증 자동인쇄 체크박스 체크 여부를 기억해 두었다가, 해당 동작 수행  */
 let autoPrintReceipt = false;
 
@@ -383,7 +379,7 @@ gridColumnLayout[0] = [
         style: "datafield_tag",
         width: 80,
         labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
-            return CommonData.formatFrTagNo(value);
+            return CommonData.formatFrTagNo(value, frTagInfo.frTagType);
         },
         style: "aui-grid-tagno-column",
     }, {
@@ -1374,15 +1370,21 @@ function onRemoveOrder() {
 }
 
 function setNextTag(tag) {
-    let nextNo = tag.substring(2, 3) + "-" + (parseInt(tag.substring(3, 7)) + 1).toString().padStart(4, '0');
-    if(tag.substring(3, 7) === "9999") {
-        let midNum = (parseInt(tag.substring(2, 3)) + 1).toString();
+    let nextNo = tag.substring(frTagInfo.frTagType, frTagInfo.frTagType + 1) + "-"
+        + (parseInt(tag.substring(frTagInfo.frTagType + 1, 7)) + 1).toString().padStart(6 - frTagInfo.frTagType, '0');
+
+    const endOfTagBundle = frTagInfo.frTagType === 2 ? "9999" : "999";
+    if(tag.substring(frTagInfo.frTagType + 1, 7) === endOfTagBundle) {
+        let midNum = (parseInt(tag.substring(frTagInfo.frTagType, frTagInfo.frTagType + 1)) + 1).toString();
         midNum = midNum === "10" ? "0" : midNum;
-        nextNo = midNum + "-" + "0001";
-        alertCaution("택번호 뒷자리가 9999번에 도달했습니다.<br>다음 택번호 뒷자리는 0001로 설정합니다.", 1);
+        nextNo = midNum + "-" + (frTagInfo.frTagType === 2 ? "0001" : "001");
+
+        alertCaution(`택번호 뒷자리가 ${frTagInfo.frTagType === 2 ? "9" : ""}999번에 도달했습니다.`
+            + `<br>다음 택번호 뒷자리는 ${frTagInfo.frTagType === 2 ? "0" : ""}001로 설정합니다.`, 1);
     }
+
     $("#fdTag").val(nextNo);
-    nextFdTag = frTagNo + nextNo;
+    nextFdTag = frTagInfo.frTagNo + nextNo.numString();
 }
 
 /* 임시저장을 두단계로 분리하기 위해 데이터를 임시로 전역변수화 */
@@ -1933,7 +1935,6 @@ function setReceiveAmtToTotalAmt() {
     $("#receiveCash").html(totalAmt.toLocaleString());
     $("#receiveCard").html(totalAmt.toLocaleString());
     calculatePaymentStage(getPaidAmt());
-
 }
 
 function onPrintReceipt() {
@@ -1947,18 +1948,25 @@ function onPrintReceipt() {
 
 function onSaveFdTag() {
     const tag = $("#fdTag").val().numString();
+    const backTagLength = 7 - frTagInfo.frTagType;
 
-    if(tag.length !== 5) {
-        alertCaution("택번호는 5자리의 숫자여야 합니다.", 1);
-        return false;
-    }
-    
-    if(tag.substr(-4) === "0000") {
-        alertCaution("택번호 뒷자리는 최소 0001 부터 시작해 주세요.", 1);
+    if(tag.length !== backTagLength) {
+        alertCaution(`택번호는 ${backTagLength}자리의 숫자여야 합니다.`, 1);
         return false;
     }
 
-    alertCheck(`다음 택번호는 ${CommonData.formatFrTagNo(nextFdTag)} 입니다.<br>${$("#fdTag").val()}(으)로 변경 하시겠습니까?`);
+    let prohibitedStartNum = "";
+    for(let i = 0; i < backTagLength; i++) {
+        prohibitedStartNum += "0";
+    }
+
+    if(tag === prohibitedStartNum) {
+        alertCaution(`택번호 뒷자리는 최소 ${prohibitedStartNum.substring(0, prohibitedStartNum.length - 1)}1 부터 시작해 주세요.`, 1);
+        return false;
+    }
+
+    alertCheck(`다음 택번호는 ${CommonData.formatFrTagNo(nextFdTag, frTagInfo.frTagType)} 입니다.<br>`
+        + `${CommonData.formatFrTagNo(frTagInfo.frTagNo + $("#fdTag").val(), frTagInfo.frTagType)}(으)로 변경 하시겠습니까?`);
     $("#checkDelSuccessBtn").on("click", function () {
         $("#fdTagChange").addClass("active");
         $('#popupId').remove();
@@ -1966,14 +1974,15 @@ function onSaveFdTag() {
 }
 
 function onConfirmFdTag() {
-    const tag = frTagNo + $("#fdTag").val().numString();
+    const tag = frTagInfo.frTagNo + $("#fdTag").val().numString();
     const data = {
         password: $("#fdTagPassword").val(),
-        frLastTagno: tag.substr(0,3) + (parseInt(tag.substr(-4)) - 1).toString().padStart(4, '0'),
+        frLastTagno: tag.substr(0, frTagInfo.frTagType + 1)
+            + (parseInt(tag.substring(frTagInfo.frTagType + 1, 7)) - 1).toString().padStart(6 - frTagInfo.frTagType, '0'),
     }
     const url = "/api/user/franchiseCheck";
     CommonUI.ajax(url, "GET", data, function (res) {
-        nextFdTag = tag.substring(0,3) + "-" + tag.substring(3, 7);
+        nextFdTag = tag;
         onCloseFdTag();
         alertSuccess("다음 택번호가 변경되었습니다.");
         $("#fdTagPassword").val("");

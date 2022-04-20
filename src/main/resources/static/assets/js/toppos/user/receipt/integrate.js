@@ -675,7 +675,7 @@ const grids = {
                     style: "datafield_tag",
                     width: 65,
                     labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
-                        return CommonData.formatFrTagNo(value);
+                        return CommonData.formatFrTagNo(value, frTagInfo.frTagType);
                     },
                 }, {
                     dataField: "sumName",
@@ -2651,11 +2651,10 @@ function collectedCancelPaymentProcess(tagNo) {
     const $refundPayment = $("#refundPayment");
     const $collectedWarning = $("#collectedWarning");
     const $collectedTagNo = $(".collectedTagNo");
-    console.log(tagNo);
     if(tagNo) {
         $tranferPoint.hide();
         $refundPayment.hide();
-        $collectedTagNo.html(CommonData.formatFrTagNo(tagNo));
+        $collectedTagNo.html(CommonData.formatFrTagNo(tagNo, frTagInfo.frTagType));
         $collectedWarning.show();
     } else {
         $tranferPoint.show();

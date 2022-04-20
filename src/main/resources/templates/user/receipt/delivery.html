@@ -6,6 +6,11 @@
 
 <!-- 사용자 CSS 추가 -->
 <th:block layout:fragment="css">
+	<style>
+		#payMonth {
+			display: none;
+		}
+	</style>
 	<!-- lightbox 추가 -->
 	<link rel="stylesheet" href="/assets/js/lightbox2/css/lightbox.min.css" />
 </th:block>
@@ -85,7 +90,7 @@
 			<div class="delivery__comment">구분 : 무 - 무인택배함, 배 - 배송 App</div>
 			<div class="delivery__console">
 				<button class="c-button c-button--small c-button--solid" id="deliverLaundry">세탁물 인도</button>
-				<button class="c-button c-button--small c-button--solid" id="repay">미수 결제</button>
+				<!--<button class="c-button c-button&#45;&#45;small c-button&#45;&#45;solid" id="repay">미수 결제</button>-->
 			</div>
 		</div>
 
