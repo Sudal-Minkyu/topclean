@@ -48,6 +48,7 @@ const dtos = {
                 bfFilename: "s",
             },
             tagGalleryCheckList: { // 가맹점 체크시 인서트, 해제시 딜리트가 된다.
+                brTag: "s",
                 frCode: "s",
                 frName: "s",
                 brCompleteYn: "s", // 확인완료시 Y가 된다.
@@ -272,9 +273,12 @@ const trigs = {
         });
 
         $("#frCheck").on("change", function () {
+            const tagNum = $("#brTag").val();
             $("#frCheck").prop("disabled", true);
             const answer = {
                 btId: wares.currentRequest.btId,
+                // 여기에 택번호
+                brTag: tagNum,
                 type: "1",
             }
             taglostCheck(answer);
@@ -287,12 +291,19 @@ const trigs = {
                 const answer = {
                     btId: wares.currentRequest.btId,
                     type: "2",
+                    brTag: "",
                 }
                 taglostCheck(answer);
                 $('#popupId').remove();
             });
         });
     },
+
+    vkeys() {
+        $("#vkey").on("click", function() {
+            openVKeypad();
+        })
+    }
 }
 
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
@@ -311,6 +322,10 @@ function onPageLoad() {
     enableDatepicker();
     trigs.basic();
     trigs.grid();
+
+    /* 가상키보드의 사용 선언 */
+    window.vkey = new VKeyboard();
+    trigs.vkeys();
 
     //$("#taglostPop").addClass("active");
 
@@ -370,4 +385,12 @@ function showDetail(btId) {
 
 function openTaglostPop() {
     $("#taglostPop").addClass("active");
+}
+
+function openVKeypad() {
+    const keypadProp = { // 키패드로 변경 필요
+        title : "택번호를 입력해주세요",
+        midprocess: "none",
+    }
+    vkey.showKeypad("brTag", keypadProp);
 }
