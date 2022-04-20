@@ -30,11 +30,10 @@ public class TagNoticeRepositoryCustomImplTest {
     @Ignore
     @DisplayName("QueryDSL Group by 테스트")
     public void querydsl_Group_by_Test(){
+
         List<TagNoticeTestDto> results = tagNoticeRepositoryCustom.findByGroupByTest();
         for (TagNoticeTestDto v: results) {
             System.out.println(v);
-
-
         }
     }
 
