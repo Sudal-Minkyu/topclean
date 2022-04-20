@@ -90,15 +90,13 @@
 	</nav>
 	
 	<script type="text/javascript">
-		window.frTagInfo = {
-			frTagNo: "22",
-			frTagType: 2,
-		}
+		window.frTagInfo = {}
 		$(document).ready(function() {
-			// CommonUI.ajax("", "GET", false, function (res) {
-			// 	const frTagInfo = res.sendData;
-			// 	console.log(frTagInfo);
-			// });
+			CommonUI.ajax("/api/user/franchiseTagData", "GET", false, function (res) {
+				const data = res.sendData.franchiseTagDataDto;
+				frTagInfo.frTagNo = data.frTagNo;
+				frTagInfo.frTagType = data.frTagType.toInt();
+			});
 
 			$('#openNav').on('click', function() {
 				$('.nav').addClass('active');

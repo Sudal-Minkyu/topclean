@@ -127,7 +127,7 @@ function setField(data) {
     for (const {color, itemname, price, tagno} of data.items) {
         $("#itemList").append(`
             <tr>
-                <td>${CommonData.formatFrTagNo(tagno)}</td>
+                <td>${CommonData.formatFrTagNo(tagno, frTagInfo.frTagType)}</td>
                 <td>${itemname}</td>
                 <td>${wares.colorName[color]}</td>
                 <td class="align-right">${price.toLocaleString()}</td>

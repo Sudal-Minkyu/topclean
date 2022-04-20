@@ -164,7 +164,7 @@ const grids = {
                     style: "datafield_tag",
                     width: 90,
                     labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
-                        return CommonData.formatFrTagNo(value);
+                        return CommonData.formatFrTagNo(value, frTagInfo.frTagType);
                     },
                 }, 
                 {

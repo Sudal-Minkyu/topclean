@@ -1,6 +1,7 @@
 function getTaglostDetail(getCondition) {
     CommonUI.ajax("/api/user/tagGalleryDetail", "GET", getCondition, function (res) {
         const data = res.sendData;
+        console.log(data);
 
         const refinedData = {
             frCompleteCheck: data.frCompleteCheck,
@@ -26,11 +27,16 @@ function getTaglostDetail(getCondition) {
             $("#photoList").append(photoHtml);
         }
 
+
+
         /* 가맹점 응답의 텍스트 구성 */
         let responseList = ""
         for(const fr of wares.currentRequest.tagGalleryCheckList) {
+            // tag번호 포맷 변환
+            console.log(frTagInfo);
+            const resultTagNo = CommonData.formatFrTagNo(fr.brTag, frTagInfo.frTagType);
             responseList += fr.frName + " ";
-            responseList += fr.brCompleteYn === "Y" ? "(완료)" : "(확인요청)";
+            responseList += fr.brCompleteYn === "Y" ? `(완료, ${resultTagNo})` : `(확인요청, ${resultTagNo})`;
             responseList += " ,"
         }
         $("#frResponse").val(responseList.substring(0, responseList.length - 2));
@@ -44,6 +50,7 @@ function getTaglostDetail(getCondition) {
         const $frCheck = $("#frCheck");
         const $frCheckLabel = $("#frCheck").siblings("label");
         const $frComplete = $("#frComplete");
+        const $brTag = $("#brTag");
 
         switch(wares.currentRequest.frCompleteCheck) {
             case 0 :
@@ -52,6 +59,8 @@ function getTaglostDetail(getCondition) {
                 $frCheck.prop("disabled", false);
                 $frComplete.hide();
                 $frComplete.prop("disabled", false);
+                $brTag.val('');
+                $brTag.prop("readonly", false);
                 break;
             case 1 :
                 $frCheck.prop("checked", true);
@@ -59,11 +68,15 @@ function getTaglostDetail(getCondition) {
                 $frCheck.prop("disabled", false);
                 $frComplete.show();
                 $frComplete.prop("disabled", false);
+                $brTag.val('');
+                $brTag.prop("readonly", true);
                 break;
             case 2 :
                 $frCheck.prop("checked", true);
                 $frCheckLabel.hide();
                 $frComplete.hide();
+                $brTag.val('');
+                $brTag.prop("readonly", true);
                 break;
         }
 
@@ -84,6 +97,19 @@ function resetTaglostPop() {
 }
 
 function taglostCheck(answer) {
+    const isChecked = $("#frCheck").is(":checked");
+    if(answer.type === "1" && isChecked) {
+        const tagLength = answer.brTag.length;
+        const requiredTagLength = 7 - frTagInfo.frTagType;
+        if (tagLength !== requiredTagLength) {
+            alertCaution(`택번호 ${requiredTagLength}자리를 입력해주세요`, 1);
+            $("#frCheck").prop('checked', false);
+            $("#frCheck").prop("disabled", false);
+            return false;
+        }
+    }
+
+
     const tagGalleryCheck = {
         btId: "nr",
         type: "sr", // 체크 혹은 체크해제 1, 최종확인 2

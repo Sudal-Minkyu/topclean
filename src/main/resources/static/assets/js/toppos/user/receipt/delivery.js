@@ -122,11 +122,20 @@ const comms = {
                 bcId: wares.selectedCustomer.bcId
             };
             comms.getCustomersRequest(customerId);
-            if(goToUnpaid) { // 미수금 메뉴로 넘어가기 상태일 경우 인도완료후 2초 뒤 이동
+            if(goToUnpaid) { // 미수금 결제팝업 인도완료후 1초 뒤 띄운다.
                 if(wares.selectedCustomer.bcHp) {
                     setTimeout(function () {
-                        location.href = "./unpaid?bchp=" + wares.selectedCustomer.bcHp;
-                    }, 2000);
+                        if(wares.selectedCustomer.bcId) {
+                            if(wares.selectedCustomer.uncollectMoney) {
+                                const target = {
+                                    bcId: wares.selectedCustomer.bcId,
+                                    frIdList: [],
+                                }
+                                comms.setupPaymentPop(target);
+                            }
+                        }
+                        $('#popupId').remove();
+                    }, 1000);
                 }
             }
         });
@@ -213,7 +222,7 @@ const grids = {
                     style: "datafield_tag",
                     width: 80,
                     labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
-                        return CommonData.formatFrTagNo(value);
+                        return CommonData.formatFrTagNo(value, frTagInfo.frTagType);
                     },
                 }, {
                     dataField: "frRefType",
@@ -583,21 +592,21 @@ const trigs = {
                 }
             });
 
-            $("#repay").on("click", function () {
-                if(wares.selectedCustomer.bcId) {
-                    if(wares.selectedCustomer.uncollectMoney) {
-                        const target = {
-                            bcId: wares.selectedCustomer.bcId,
-                            frIdList: [],
-                        }
-                        comms.setupPaymentPop(target);
-                    } else {
-                        alertCaution("결제하실 미수금이 없습니다.", 1);
-                    }
-                } else {
-                    alertCaution("먼저 고객을 선택해 주세요.", 1);
-                }
-            });
+            // $("#repay").on("click", function () {
+            //     if(wares.selectedCustomer.bcId) {
+            //         if(wares.selectedCustomer.uncollectMoney) {
+            //             const target = {
+            //                 bcId: wares.selectedCustomer.bcId,
+            //                 frIdList: [],
+            //             }
+            //             comms.setupPaymentPop(target);
+            //         } else {
+            //             alertCaution("결제하실 미수금이 없습니다.", 1);
+            //         }
+            //     } else {
+            //         alertCaution("먼저 고객을 선택해 주세요.", 1);
+            //     }
+            // });
 
             $("#cancelPayment").on("click", function () {
                 $("#paymentPop").removeClass("active");
@@ -631,6 +640,16 @@ const trigs = {
             $("#closePhotoListPop").on("click", function () {
                 $("#receiptPhotoList").html("");
                 $("#receiptPhotoPop").removeClass("active");
+            });
+
+            $("input[name='payType']").on("click", function () {
+                const payType = $("input[name=payType]:checked").val();
+                if(payType === "02") {
+                    $("#payMonth").show();
+                } else {
+                    $("#payMonth").hide();
+                    $("#payMonth").val("0");
+                }
             });
         },
         vkeys() {

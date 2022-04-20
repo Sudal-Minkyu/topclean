@@ -212,3 +212,7 @@
 	font-size: 16px !important;
 	font-weight: 700 !important;;
 }
+
+.grid_checkable_row td {
+	background-color: rgba(33, 163, 101, .2);
+}
