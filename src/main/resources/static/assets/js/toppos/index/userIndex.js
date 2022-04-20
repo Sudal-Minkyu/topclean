@@ -180,9 +180,11 @@ const trigs = {
         });
 
         $("#frCheck").on("change", function () {
+            const tagNum = $("#brTag").val()
             $("#frCheck").prop("disabled", true);
             const answer = {
                 btId: wares.currentRequest.btId,
+                brTag: tagNum,
                 type: "1",
             }
             taglostCheck(answer);
