@@ -25,4 +25,8 @@ public interface FranchiseRepositoryCustom {
 
     // 멀티스크린 사용여부 가져오기
     FranchiseMultiscreenDto findByFranchiseMultiscreen(String frCode);
+
+    // 택번호, 택번호타입 가져오기
+    FranchiseTagDataDto findByFranchiseTag(String frCode);
+
 }

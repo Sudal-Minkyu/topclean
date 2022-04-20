@@ -1,4 +1,4 @@
-package com.broadwave.toppos.Account;
+package com.broadwave.toppos.Account.AcountDtos;
 
 /**
  * @author Minkyu

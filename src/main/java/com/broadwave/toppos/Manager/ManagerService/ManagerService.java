@@ -1,7 +1,12 @@
 package com.broadwave.toppos.Manager.ManagerService;
 
-import com.broadwave.toppos.Account.AccountHeaderDto;
+import com.broadwave.toppos.Account.Account;
+import com.broadwave.toppos.Account.AccountService;
+import com.broadwave.toppos.Account.AcountDtos.AccountHeaderDto;
 import com.broadwave.toppos.Account.AccountRepository;
+import com.broadwave.toppos.Head.Branoh.Branch;
+import com.broadwave.toppos.Head.Branoh.BranchDtos.BranchInfoDto;
+import com.broadwave.toppos.Head.Branoh.BranchRepository;
 import com.broadwave.toppos.Head.Franchise.FranchiseDtos.FranchiseManagerListDto;
 import com.broadwave.toppos.Head.Franchise.FranchiseRepository;
 import com.broadwave.toppos.Head.HeadService.NoticeService;
@@ -18,19 +23,18 @@ import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestRepository;
 import com.broadwave.toppos.User.UserLoginLog.UserLoginLogDto;
 import com.broadwave.toppos.User.UserLoginLog.UserLoginLogRepository;
 import com.broadwave.toppos.common.AjaxResponse;
+import com.broadwave.toppos.common.ResponseErrorCode;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Minkyu
@@ -50,22 +54,28 @@ public class ManagerService {
     private final RequestDetailRepository requestDetailRepository;
     private final RequestRepository requestRepository;
     private final InspeotRepositoryCustom inspeotRepositoryCustom;
+    private final AccountService accountService;
     private final AccountRepository accountRepository;
     private final IssueRepository issueRepository;
+    private final BranchRepository branchRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public ManagerService(TokenProvider tokenProvider, NoticeService noticeService, RequestRepository requestRepository, AccountRepository accountRepository,
+    public ManagerService(TokenProvider tokenProvider, NoticeService noticeService, RequestRepository requestRepository, AccountService accountService, AccountRepository accountRepository,
                           UserLoginLogRepository userLoginLogRepository, FranchiseRepository franchiseRepository, RequestDetailRepository requestDetailRepository,
-                          InspeotRepositoryCustom inspeotRepositoryCustom, IssueRepository issueRepository){
+                          InspeotRepositoryCustom inspeotRepositoryCustom, IssueRepository issueRepository, BranchRepository branchRepository, PasswordEncoder passwordEncoder){
         this.tokenProvider = tokenProvider;
         this.noticeService = noticeService;
         this.userLoginLogRepository = userLoginLogRepository;
         this.franchiseRepository = franchiseRepository;
+        this.accountService = accountService;
         this.accountRepository = accountRepository;
         this.requestRepository = requestRepository;
         this.requestDetailRepository = requestDetailRepository;
         this.inspeotRepositoryCustom = inspeotRepositoryCustom;
         this.issueRepository = issueRepository;
+        this.branchRepository = branchRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
 
@@ -197,6 +207,111 @@ public class ManagerService {
         data.put("issueWeekAmountDtos",issueWeekAmountDtos); // 1주일간의 지사 출고금액
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
+    // 현재 지사의 정보 호출하기
+    public ResponseEntity<Map<String, Object>> myInfo(HttpServletRequest request) {
+        log.info("branchTagSearchList 호출");
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String login_id = claims.getSubject(); // 현재 아이디
+        log.info("현재 접속한 아이디 : "+login_id);
+
+        BranchInfoDto branchInfoDto =  accountRepository.findByBranchInfo(login_id);
+        data.put("branchInfoDto",branchInfoDto);
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
+    // 지사정보관리 수정 API
+    public ResponseEntity<Map<String, Object>> branchInfoSave(String brName, String brTelNo, HttpServletRequest request) {
+        log.info("branchInfoSave 호출");
+
+        log.info("brName : "+brName);
+        log.info("brTelNo : "+brTelNo);
+
+        AjaxResponse res = new AjaxResponse();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String brCode = (String) claims.get("brCode"); // 현재 지사의 코드(2자리) 가져오기
+        String login_id = claims.getSubject(); // 현재 아이디
+        log.info("현재 접속한 아이디 : "+login_id);
+        log.info("현재 접속한 지사 코드 : "+brCode);
+
+        Optional<Branch> branchOptional = branchRepository.findByBrCode(brCode);
+        if(branchOptional.isPresent()){
+            if(!brName.equals("")) {
+                branchOptional.get().setBrName(brName);
+            }
+            if(!brTelNo.equals("")){
+                branchOptional.get().setBrTelNo(brTelNo);
+            }
+            branchRepository.save(branchOptional.get());
+        }else{
+            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP005.getCode(), "수정 할 지사의 "+ResponseErrorCode.TP005.getDesc(), null, null));
+        }
+
+        return ResponseEntity.ok(res.success());
+    }
+
+    // 지사 나의정보관리 수정 API
+    public ResponseEntity<Map<String, Object>> branchMyInfoSave(String userEmail, String userTel, String nowPassword, String newPassword, String checkPassword, HttpServletRequest request) {
+        log.info("branchPassword 호출");
+
+        log.info("userEmail : "+userEmail);
+        log.info("userTel : "+userTel);
+        log.info("nowPassword : "+nowPassword);
+        log.info("newPassword : "+newPassword);
+        log.info("checkPassword : "+checkPassword);
+
+        AjaxResponse res = new AjaxResponse();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String brCode = (String) claims.get("brCode"); // 현재 지사의 코드(2자리) 가져오기
+        String login_id = claims.getSubject(); // 현재 아이디
+        log.info("현재 접속한 아이디 : "+login_id);
+        log.info("현재 접속한 지사 코드 : "+brCode);
+
+        Optional<Account> optionalAccount = accountRepository.findByUserid(login_id);
+
+        //수정일때
+        if(!optionalAccount.isPresent()){
+            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP005.getCode(), "나의 "+ResponseErrorCode.TP005.getDesc(), "문자", "고객센터에 문의해주세요."));
+        }else{
+            if(!userEmail.equals("")) {
+                optionalAccount.get().setUseremail(userEmail);
+            }
+            if(!userTel.equals("")){
+                optionalAccount.get().setUsertel(userTel);
+            }
+
+            if(!nowPassword.equals("")){
+                //현재암호비교
+                if (!passwordEncoder.matches(nowPassword,optionalAccount.get().getPassword())){
+                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP020.getCode(), "현재 "+ResponseErrorCode.TP020.getDesc(), null, null));
+                }
+                if(!newPassword.equals(checkPassword)){
+                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP021.getCode(), ResponseErrorCode.TP021.getDesc(), null, null));
+                }
+                optionalAccount.get().setPassword(checkPassword);
+            }
+
+            optionalAccount.get().setModify_id(login_id);
+            optionalAccount.get().setModifyDateTime(LocalDateTime.now());
+
+            Account accountSave =  accountService.save(optionalAccount.get());
+
+            log.info("사용자정보(패스워드)수정 성공 아이디 : " + accountSave.getUserid() +"'" );
+        }
+
+
+        return ResponseEntity.ok(res.success());
     }
 
 }

@@ -21,7 +21,7 @@ import java.time.format.DateTimeFormatter;
 public class RequestDetailBranchInspectListDto {
 
     private Long fdId; // 고유ID값
-    private Long fiId; // 검품 고유ID값
+
     private String frName; // 가맹점명
     private LocalDateTime insertDt; // 접수일시
     private LocalDateTime fdS2Time; // 지사입고일시
@@ -36,10 +36,12 @@ public class RequestDetailBranchInspectListDto {
     private String fdPriceGrade; // 가격등급  1:일반, 2:고급: 3명품 4:아동
     private String fdRetryYn; // 재세탁 여부 (Y  / N) Y 이면 합계금액이 0이다
     private Integer fdPressed; // 다림질 요금
+
     private Integer fdAdd1Amt; // 추가비용1(접수시점)
     private String fdAdd1Remark; // 추가내용1(접수시점)
     private Integer fdRepairAmt; // 수선금액
     private String fdRepairRemark; // 수선내용
+
     private Integer fdWhitening; // 표백 요금
     private Integer fdPollution; // 오염 추가요금
     private Integer fdWaterRepellent; // 발수가공요금
@@ -51,7 +53,10 @@ public class RequestDetailBranchInspectListDto {
     private String fdState; // 현재상태 ( S1 : 접수, S2: 지사입고,S3 강제출고, S4:가맹점입고, S6: 고객인도, S7: 지사강제출고, S8: 가맹점강제입고)
     private String fdPreState; // 이전상태 ( S1 : 접수, S2: 지사입고,S3 강제출고, S4:가맹점입고, S6: 고객인도, S7: 지사강제출고, S8: 가맹점강제입고)
 
-    private String fiCustomerConfirm; // 고객 수락여부 ( 1: 미확인(기본값), 2:고객수락, 3:고객거부
+    private Long frFiId; // 가맹검품의 fiId가 있을 경우
+    private String frFiCustomerConfirm; // 가맹검품의 고객수락여부
+    private Long brFiId; // 확인품의 fiId가 있을 경우
+    private String brFiCustomerConfirm; //확인품의 고객수락여부
 
     private Integer fdPollutionType;
     private Integer fdPollutionBack;

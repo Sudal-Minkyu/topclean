@@ -1,5 +1,6 @@
 package com.broadwave.toppos.Account;
 
+import com.broadwave.toppos.Account.AcountDtos.AccountRole;
 import lombok.*;
 
 import javax.persistence.*;

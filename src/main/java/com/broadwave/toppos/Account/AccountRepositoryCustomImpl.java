@@ -1,5 +1,9 @@
 package com.broadwave.toppos.Account;
 
+import com.broadwave.toppos.Account.AcountDtos.AccountHeaderDto;
+import com.broadwave.toppos.Account.AcountDtos.AccountListDto;
+import com.broadwave.toppos.Account.AcountDtos.AccountRole;
+import com.broadwave.toppos.Head.Branoh.BranchDtos.BranchInfoDto;
 import com.broadwave.toppos.Head.Branoh.QBranch;
 import com.broadwave.toppos.Head.Franchise.QFranchise;
 import com.broadwave.toppos.User.UserDtos.UserIndexDto;
@@ -42,23 +46,23 @@ public class AccountRepositoryCustomImpl extends QuerydslRepositorySupport imple
 
         query.orderBy(account.id.desc());
 
-        if (s_role != null){
+        if (s_role != null) {
             query.where(account.role.eq(s_role));
         }
 
-        if (!s_userid.equals("")){
+        if (!s_userid.equals("")) {
             query.where(account.userid.contains(s_userid));
         }
 
-        if (!s_username.equals("")){
+        if (!s_username.equals("")) {
             query.where(account.username.contains(s_username));
         }
 
-        if (!s_frCode.equals("")){
+        if (!s_frCode.equals("")) {
             query.where(account.frCode.likeIgnoreCase(s_frCode.concat("%")));
         }
 
-        if (!s_brCode.equals("")){
+        if (!s_brCode.equals("")) {
             query.where(account.brCode.likeIgnoreCase(s_brCode.concat("%")));
         }
 
@@ -75,8 +79,8 @@ public class AccountRepositoryCustomImpl extends QuerydslRepositorySupport imple
         QBranch branch = QBranch.branch;
 
         JPQLQuery<UserIndexDto> query = from(account)
-                .join(franchise).on(franchise.frCode.eq(frCode))
-                .leftJoin(franchise.brId,branch)
+                .innerJoin(franchise).on(franchise.frCode.eq(frCode))
+                .leftJoin(franchise.brId, branch)
                 .select(Projections.constructor(UserIndexDto.class,
                         account.username,
                         account.usertel,
@@ -111,5 +115,30 @@ public class AccountRepositoryCustomImpl extends QuerydslRepositorySupport imple
 
         return query.fetchOne();
     }
+
+    //  지사의 정보 가져오는 쿼리
+    @Override
+    public BranchInfoDto findByBranchInfo(String login_id) {
+
+        QAccount account = QAccount.account;
+        QBranch branch = QBranch.branch;
+
+        JPQLQuery<BranchInfoDto> query = from(account)
+                .innerJoin(branch).on(account.brCode.eq(branch.brCode))
+                .select(Projections.constructor(BranchInfoDto.class,
+                        branch.brCode,
+                        branch.brName,
+                        branch.brTelNo,
+
+                        account.userid,
+                        account.useremail,
+                        account.usertel
+                ));
+
+        query.where(account.userid.eq(login_id));
+
+        return query.fetchOne();
+    }
+
 
 }

@@ -1,7 +1,7 @@
 package com.broadwave.toppos.configs;
 
 import com.broadwave.toppos.Account.Account;
-import com.broadwave.toppos.Account.AccountRole;
+import com.broadwave.toppos.Account.AcountDtos.AccountRole;
 import com.broadwave.toppos.Account.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;

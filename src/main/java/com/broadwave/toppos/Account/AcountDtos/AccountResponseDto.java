@@ -1,5 +1,6 @@
-package com.broadwave.toppos.Account;
+package com.broadwave.toppos.Account.AcountDtos;
 
+import com.broadwave.toppos.Account.Account;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -1,6 +1,8 @@
 package com.broadwave.toppos.User.UserService;
 
 import com.broadwave.toppos.Account.AccountRepository;
+import com.broadwave.toppos.Head.Franchise.FranchiseDtos.FranchiseTagDataDto;
+import com.broadwave.toppos.Head.Franchise.FranchiseRepository;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.User.Addprocess.Addprocess;
 import com.broadwave.toppos.User.Addprocess.AddprocessDtos.AddprocessDto;
@@ -51,12 +53,12 @@ public class UserService {
 
     private final AccountRepository accountRepository;
     private final AddprocessRepositoryCustom addProcessRepositoryCustom;
+    private final FranchiseRepository franchiseRepository;
 
     @Autowired
     public UserService(TokenProvider tokenProvider, SaveMoneyRepository saveMoneyRepository, RequestRepository requestRepository, RequestDetailRepository requestDetailRepository,
-                       CustomerRepository customerRepository, UserLoginLogRepository userLoginLogRepository,
-                       AccountRepository accountRepository,
-                       AddprocessRepositoryCustom addProcessRepositoryCustom){
+                       CustomerRepository customerRepository, UserLoginLogRepository userLoginLogRepository, AccountRepository accountRepository,
+                       AddprocessRepositoryCustom addProcessRepositoryCustom, FranchiseRepository franchiseRepository){
         this.tokenProvider = tokenProvider;
         this.requestRepository = requestRepository;
         this.saveMoneyRepository = saveMoneyRepository;
@@ -65,6 +67,7 @@ public class UserService {
         this.userLoginLogRepository = userLoginLogRepository;
         this.accountRepository = accountRepository;
         this.addProcessRepositoryCustom = addProcessRepositoryCustom;
+        this.franchiseRepository = franchiseRepository;
     }
 
     // 고객등록
@@ -163,6 +166,26 @@ public class UserService {
     // 적립금 저장
     public void saveMoneySave(SaveMoney saveMoney) {
         saveMoneyRepository.save(saveMoney);
+    }
+
+    // 가맹점의 탭번호와 탭번호타입 호출 API
+    public ResponseEntity<Map<String, Object>> franchiseTagData(HttpServletRequest request) {
+        log.info("franchiseTagData 호출");
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
+        log.info("현재 접속한 가맹점 코드 : "+frCode);
+
+        FranchiseTagDataDto franchiseTagDataDto = franchiseRepository.findByFranchiseTag(frCode);
+        log.info("franchiseTagDataDto : "+franchiseTagDataDto);
+
+        data.put("franchiseTagDataDto", franchiseTagDataDto);
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
 }

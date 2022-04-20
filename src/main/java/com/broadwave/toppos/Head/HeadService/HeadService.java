@@ -5,11 +5,11 @@ import com.broadwave.toppos.Head.AddCost.AddCostDto;
 import com.broadwave.toppos.Head.AddCost.AddCostRepository;
 import com.broadwave.toppos.Head.AddCost.AddCostRepositoryCustom;
 import com.broadwave.toppos.Head.Branoh.Branch;
-import com.broadwave.toppos.Head.Branoh.BranchListDto;
+import com.broadwave.toppos.Head.Branoh.BranchDtos.BranchListDto;
 import com.broadwave.toppos.Head.Branoh.BranchRepository;
-import com.broadwave.toppos.Head.Branoh.BranchRepositoryCustomImpl;
-import com.broadwave.toppos.Head.Franchise.*;
+import com.broadwave.toppos.Head.Franchise.Franchise;
 import com.broadwave.toppos.Head.Franchise.FranchiseDtos.*;
+import com.broadwave.toppos.Head.Franchise.FranchiseRepository;
 import com.broadwave.toppos.Head.Item.Group.A.*;
 import com.broadwave.toppos.Head.Item.Group.B.*;
 import com.broadwave.toppos.Head.Item.Group.C.Item;
@@ -20,7 +20,9 @@ import com.broadwave.toppos.Head.Item.ItemDtos.ItemPriceDto;
 import com.broadwave.toppos.Head.Item.ItemDtos.ItemPriceListDto;
 import com.broadwave.toppos.Head.Item.ItemDtos.UserItemPriceSortDto;
 import com.broadwave.toppos.Head.Item.Price.FranchisePrice.*;
-import com.broadwave.toppos.Head.Item.Price.*;
+import com.broadwave.toppos.Head.Item.Price.ItemPrice;
+import com.broadwave.toppos.Head.Item.Price.ItemPriceRepository;
+import com.broadwave.toppos.Head.Item.Price.ItemPriceRepositoryCustom;
 import com.broadwave.toppos.common.AjaxResponse;
 import com.broadwave.toppos.common.CommonUtils;
 import com.broadwave.toppos.common.ResponseErrorCode;
@@ -55,7 +57,6 @@ public class HeadService {
     private final FranchisePriceRepository franchisePriceRepository;
     private final AddCostRepository addCostRepository;
 
-    private final BranchRepositoryCustomImpl branohRepositoryCustom;
     private final ItemGroupRepositoryCustom itemGroupRepositoryCustom;
     private final ItemGroupSRepositoryCustom itemGroupSRepositoryCustom;
     private final ItemRepositoryCustom itemRepositoryCustom;
@@ -65,7 +66,7 @@ public class HeadService {
 
     @Autowired
     public HeadService(ModelMapper modelMapper, AddCostRepository addCostRepository,
-                       BranchRepository branchRepository, FranchiseRepository franchiseRepository, BranchRepositoryCustomImpl branohRepositoryCustom,
+                       BranchRepository branchRepository, FranchiseRepository franchiseRepository,
                        ItemGroupRepository ItemGroupRepository, ItemGroupRepositoryCustom itemGroupRepositoryCustom, ItemGroupSRepository ItemGroupSRepository, ItemGroupSRepositoryCustom itemGroupSRepositoryCustom,
                        ItemRepository ItemRepository, ItemRepositoryCustom itemRepositoryCustom, ItemPriceRepository itemPriceRepository, ItemPriceRepositoryCustom itemPriceRepositoryCustom,
                        FranchisePriceRepository franchisePriceRepository, FranchisePriceRepositoryCustom franchisePriceRepositoryCustom,
@@ -74,7 +75,6 @@ public class HeadService {
         this.addCostRepository = addCostRepository;
         this.branchRepository = branchRepository;
         this.franchiseRepository = franchiseRepository;
-        this.branohRepositoryCustom = branohRepositoryCustom;
         this.ItemGroupRepository = ItemGroupRepository;
         this.itemGroupRepositoryCustom = itemGroupRepositoryCustom;
         this.ItemGroupSRepository = ItemGroupSRepository;
@@ -198,7 +198,7 @@ public class HeadService {
 
     // 지사 리스트 API
     public List<BranchListDto> findByBranchList(String brName, String brCode, String brContractState) {
-        return branohRepositoryCustom.findByBranchList(brName, brCode, brContractState);
+        return branchRepository.findByBranchList(brName, brCode, brContractState);
     }
 
     // 가맹점코드 중복확인 API

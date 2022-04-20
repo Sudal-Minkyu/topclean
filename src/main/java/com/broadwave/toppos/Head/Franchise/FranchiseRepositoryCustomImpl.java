@@ -242,4 +242,19 @@ public class FranchiseRepositoryCustomImpl extends QuerydslRepositorySupport imp
         return query.fetchOne();
     }
 
+    @Override
+    public FranchiseTagDataDto findByFranchiseTag(String frCode) {
+
+        QFranchise franchise = QFranchise.franchise;
+
+        JPQLQuery<FranchiseTagDataDto> query = from(franchise)
+                .select(Projections.constructor(FranchiseTagDataDto.class,
+                        franchise.frTagNo,
+                        franchise.frTagType
+                ));
+
+        query.where(franchise.frCode.eq(frCode));
+        return query.fetchOne();
+    }
+
 }

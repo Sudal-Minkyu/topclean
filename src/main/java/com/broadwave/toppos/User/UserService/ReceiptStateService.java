@@ -269,6 +269,7 @@ public class ReceiptStateService {
         List<RequestMessage> requestMessageList = new ArrayList<>();
         String fmMessage;
         String bcName;
+
         for(RequestDetailInputMessageDto requestDetailInputMessageDto : requestDetailInputMessageDtos){
             // 모든 상품 가맹점입고시 메세지 테이블 insert
             Optional<Customer> optionalCustomer = customerRepository.findByBcId(requestDetailInputMessageDto.getBcId());
@@ -284,6 +285,7 @@ public class ReceiptStateService {
             }
 
             if (smsBcIdList.contains(requestDetailInputMessageDto.getBcId()) ){
+                log.info(bcName+"고객님의 건수 : "+requestDetailInputMessageDto.getFrQty());
                 fmMessage = "안녕하세요 " + bcName + "\n" + "맡겨주신 " + requestDetailInputMessageDto.getBgName() + " " + requestDetailInputMessageDto.getBiName();
                 if (requestDetailInputMessageDto.getFrQty() > 1) {
                     int qty = requestDetailInputMessageDto.getFrQty() - 1;

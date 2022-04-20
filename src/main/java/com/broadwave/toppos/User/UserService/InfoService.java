@@ -1,7 +1,7 @@
 package com.broadwave.toppos.User.UserService;
 
 import com.broadwave.toppos.Account.Account;
-import com.broadwave.toppos.Account.AccountPasswordDto;
+import com.broadwave.toppos.Account.AcountDtos.AccountPasswordDto;
 import com.broadwave.toppos.Account.AccountService;
 import com.broadwave.toppos.Head.Franchise.FranchiseDtos.FranchiseUserDto;
 import com.broadwave.toppos.Head.Franchise.Franchise;

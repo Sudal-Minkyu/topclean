@@ -1,7 +1,5 @@
 package com.broadwave.toppos.Manager;
 
-import com.broadwave.toppos.Account.AccountPasswordDto;
-import com.broadwave.toppos.Head.Franchise.FranchiseDtos.FranchiseUserDto;
 import com.broadwave.toppos.Head.HeadService.NoticeService;
 import com.broadwave.toppos.Head.Notice.NoticeDtos.NoticeMapperDto;
 import com.broadwave.toppos.Manager.Calendar.CalendarDtos.BranchCalendarDto;
@@ -305,6 +303,8 @@ public class ManagerRestController {
     //@@@@@@@@@@@@@@@@@@@@@ 확인품등록, 확인품현황 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     //  확인품 등록할 리스트 호출API
     @GetMapping("branchInspection")
+    @ApiOperation(value = "확인품 등록할 리스트" , notes = "확인품 등록할 리스트를 호출한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
     public ResponseEntity<Map<String,Object>> branchInspection(@RequestParam("franchiseId")Long franchiseId, @RequestParam("filterFromDt")String filterFromDt,
                                                                             @RequestParam("filterToDt")String filterToDt, @RequestParam("tagNo")String tagNo, HttpServletRequest request){
         return inspectService.branchInspection(franchiseId, filterFromDt.replaceAll("-",""), filterToDt.replaceAll("-",""), tagNo, request);
@@ -505,31 +505,32 @@ public class ManagerRestController {
         return findService.branchObjectFindCheck(ffIdList, request);
     }
 
-//@@@@@@@@@@@@@@@@@@@@@ 나의 정보관리 페이지 관련 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-//    // 현재 지사의 정보 호출하기
-//    @GetMapping("myInfo")
-//    public ResponseEntity<Map<String,Object>> myInfo(HttpServletRequest request){
-//        return managerService.myInfo(request);
-//    }
-//
-//    // 지사정보관리 수정 API
-//    @PostMapping("branchMyInfoSave")
-//    public ResponseEntity<Map<String,Object>> branchMyInfoSave(@RequestParam(value="brName", defaultValue="") String brName,
-//            @RequestParam(value="brTelNo", defaultValue="") String brTelNo, HttpServletRequest request){
-//        return managerService.branchMyInfoSave(brName, brTelNo, request);
-//    }
-//
-//    // 지사 나의정보관리 수정 API
-//    @PostMapping("branchPassword")
-//    public ResponseEntity<Map<String,Object>> branchPassword(@RequestParam(value="userEmail", defaultValue="") String userEmail,
-//                                                                @RequestParam(value="userTel", defaultValue="") String userTel,
-//                                                                @RequestParam(value="nowPassword", defaultValue="") String nowPassword,
-//                                                                @RequestParam(value="newPassword", defaultValue="") String newPassword,
-//                                                                @RequestParam(value="checkPassword", defaultValue="") String checkPassword,
-//                                                                HttpServletRequest request){
-//        return managerService.branchPassword(userEmail, userTel, nowPassword, newPassword, checkPassword, request);
-//    }
+
+//@@@@@@@@@@@@@@@@@@@@@ 나의 정보관리 페이지 관련 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    // 현재 지사의 정보 호출하기
+    @GetMapping("myInfo")
+    public ResponseEntity<Map<String,Object>> myInfo(HttpServletRequest request){
+        return managerService.myInfo(request);
+    }
+
+    // 지사정보관리 수정 API
+    @PostMapping("branchInfoSave")
+    public ResponseEntity<Map<String,Object>> branchInfoSave(@RequestParam(value="brName", defaultValue="") String brName,
+            @RequestParam(value="brTelNo", defaultValue="") String brTelNo, HttpServletRequest request){
+        return managerService.branchInfoSave(brName, brTelNo, request);
+    }
+
+    // 지사 나의정보관리 수정 API
+    @PostMapping("branchMyInfoSave")
+    public ResponseEntity<Map<String,Object>> branchMyInfoSave(@RequestParam(value="userEmail", defaultValue="") String userEmail,
+                                                                @RequestParam(value="userTel", defaultValue="") String userTel,
+                                                                @RequestParam(value="nowPassword", defaultValue="") String nowPassword,
+                                                                @RequestParam(value="newPassword", defaultValue="") String newPassword,
+                                                                @RequestParam(value="checkPassword", defaultValue="") String checkPassword,
+                                                                HttpServletRequest request){
+        return managerService.branchMyInfoSave(userEmail, userTel, nowPassword, newPassword, checkPassword, request);
+    }
 
 
 }

@@ -1411,7 +1411,9 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
         QItem item = QItem.item;
         QCustomer customer = QCustomer.customer;
-        QInspeot inspeot = QInspeot.inspeot;
+
+        QInspeot inspeot1 = new QInspeot("inspeot1");
+        QInspeot inspeot2 = new QInspeot("inspeot2");
 
         JPQLQuery<RequestDetailBranchInspectListDto> query = from(requestDetail)
                 .innerJoin(requestDetail.frId, request)
@@ -1420,37 +1422,47 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                 .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
                 .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
                 .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
-                .leftJoin(inspeot).on(inspeot.fdId.eq(requestDetail).and(inspeot.fiType.eq("B")))
+                .leftJoin(inspeot1).on(inspeot1.fdId.eq(requestDetail).and(inspeot1.fiType.eq("B")))
+                .leftJoin(inspeot2).on(inspeot2.fdId.eq(requestDetail).and(inspeot2.fiType.eq("F")))
                 .where(request.frConfirmYn.eq("Y"))
                 .where(request.brCode.eq(brCode).and(requestDetail.fdCancel.eq("N")))
                 .select(Projections.constructor(RequestDetailBranchInspectListDto.class,
                         requestDetail.id,
-                        inspeot.id,
                         franchise.frName,
                         requestDetail.insert_date,
                         requestDetail.fdS2Time,
+
                         requestDetail.fdTag,
                         requestDetail.fdColor,
+
                         itemGroup.bgName,
                         itemGroupS.bsName,
                         item.biName,
+
                         requestDetail.fdPriceGrade,
                         requestDetail.fdRetryYn,
                         requestDetail.fdPressed,
+
                         requestDetail.fdAdd1Amt,
                         requestDetail.fdAdd1Remark,
                         requestDetail.fdRepairAmt,
                         requestDetail.fdRepairRemark,
+
                         requestDetail.fdWhitening,
                         requestDetail.fdPollution,
                         requestDetail.fdWaterRepellent,
                         requestDetail.fdStarch,
                         requestDetail.fdUrgentYn,
+
                         customer.bcName,
                         requestDetail.fdTotAmt,
                         requestDetail.fdState,
                         requestDetail.fdPreState,
-                        inspeot.fiCustomerConfirm,
+
+                        inspeot1.id,
+                        inspeot1.fiCustomerConfirm,
+                        inspeot2.id,
+                        inspeot2.fiCustomerConfirm,
 
                         new CaseBuilder()
                                 .when(requestDetail.fdPollutionLocFcn.eq("Y")).then(1)
@@ -2307,7 +2319,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         sb.append("SELECT a.fr_code, a.fr_no, a.bc_id, a.fr_qty, a.bg_name, a.bi_name \n");
         sb.append("FROM checkdata a \n");
         sb.append("WHERE (SELECT COUNT(*) FROM checkdata x1 WHERE x1.fr_no = a.fr_no) = \n");
-        sb.append("(SELECT COUNT(*) FROM checkdata x1 WHERE x1.fr_no = a.fr_no AND (x1.fd_state = 'S5' OR x1.fd_state = 'S8' OR x1.fd_state = 'S3')) \n");
+        sb.append("(SELECT COUNT(*) FROM checkdata x1 WHERE x1.fr_no = a.fr_no AND (x1.fd_state = 'S5' OR x1.fd_state = 'S8')) \n");
         sb.append("GROUP BY a.fr_no, a.bc_id \n");
 
         Query query = em.createNativeQuery(sb.toString());

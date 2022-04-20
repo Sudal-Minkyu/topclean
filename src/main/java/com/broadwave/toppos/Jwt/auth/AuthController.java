@@ -1,6 +1,6 @@
 package com.broadwave.toppos.Jwt.auth;
 
-import com.broadwave.toppos.Account.AccountRequestDto;
+import com.broadwave.toppos.Account.AcountDtos.AccountRequestDto;
 import com.broadwave.toppos.Jwt.dto.TokenDto;
 import com.broadwave.toppos.Jwt.dto.TokenRequestDto;
 import com.broadwave.toppos.common.AjaxResponse;

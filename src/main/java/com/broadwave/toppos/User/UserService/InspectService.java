@@ -996,9 +996,63 @@ public class InspectService {
         String brCode = (String) claims.get("brCode"); // 현재 지사의 코드(2자리) 가져오기
         log.info("현재 접속한 지사 코드 : "+brCode);
 
+        List<HashMap<String,Object>> RequestDetailBranchInspectListDtoData = new ArrayList<>();
+        HashMap<String,Object> requestDetailInfo;
+
         // 확인품 등록 할 리스트 호출
         List<RequestDetailBranchInspectListDto> requestDetailBranchForceListDtos = requestDetailRepository.findByRequestDetailBranchInspectList(brCode, franchiseId, fromDt, toDt, tagNo);
-        data.put("gridListData",requestDetailBranchForceListDtos);
+
+        for(RequestDetailBranchInspectListDto requestDetailDto : requestDetailBranchForceListDtos){
+            requestDetailInfo = new HashMap<>();
+
+            requestDetailInfo.put("fdId", requestDetailDto.getFdId());
+
+            requestDetailInfo.put("frName", requestDetailDto.getFrName());
+            requestDetailInfo.put("insertDt", requestDetailDto.getInsertDt());
+            requestDetailInfo.put("fdS2Time", requestDetailDto.getFdS2Time());
+
+            requestDetailInfo.put("fdTag", requestDetailDto.getFdTag());
+            requestDetailInfo.put("fdColor", requestDetailDto.getFdColor());
+
+            requestDetailInfo.put("bgName", requestDetailDto.getBgName());
+            requestDetailInfo.put("bsName", requestDetailDto.getBsName());
+            requestDetailInfo.put("biName", requestDetailDto.getBiName());
+
+            requestDetailInfo.put("fdPriceGrade", requestDetailDto.getFdPriceGrade());
+            requestDetailInfo.put("fdRetryYn", requestDetailDto.getFdRetryYn());
+            requestDetailInfo.put("fdPressed", requestDetailDto.getFdPressed());
+
+            requestDetailInfo.put("fdAdd1Amt", requestDetailDto.getFdAdd1Amt());
+            requestDetailInfo.put("fdAdd1Remark", requestDetailDto.getFdAdd1Remark());
+            requestDetailInfo.put("fdRepairAmt", requestDetailDto.getFdRepairAmt());
+            requestDetailInfo.put("fdRepairRemark", requestDetailDto.getFdRepairRemark());
+
+            requestDetailInfo.put("fdWhitening", requestDetailDto.getFdWhitening());
+            requestDetailInfo.put("fdPollution", requestDetailDto.getFdPollution());
+            requestDetailInfo.put("fdWaterRepellent", requestDetailDto.getFdWaterRepellent());
+            requestDetailInfo.put("fdStarch", requestDetailDto.getFdStarch());
+            requestDetailInfo.put("fdUrgentYn", requestDetailDto.getFdUrgentYn());
+
+            requestDetailInfo.put("bcName", requestDetailDto.getBcName());
+            requestDetailInfo.put("fdTotAmt", requestDetailDto.getFdTotAmt());
+            requestDetailInfo.put("fdState", requestDetailDto.getFdState());
+            requestDetailInfo.put("fdPreState", requestDetailDto.getFdPreState());
+
+            requestDetailInfo.put("frFiId", requestDetailDto.getFrFiId());
+            requestDetailInfo.put("frFiCustomerConfirm", requestDetailDto.getFrFiCustomerConfirm());
+            requestDetailInfo.put("brFiId", requestDetailDto.getBrFiId());
+            requestDetailInfo.put("brFiCustomerConfirm", requestDetailDto.getBrFiCustomerConfirm());
+
+            requestDetailInfo.put("fdPollutionType", requestDetailDto.getFdPollutionType());
+            requestDetailInfo.put("fdPollutionBack", requestDetailDto.getFdPollutionBack());
+
+            List<PhotoDto> photoDtoList = photoRepository.findByPhotoDtoRequestDtlList(Long.parseLong(String.valueOf(requestDetailDto.getFdId())));
+            requestDetailInfo.put("photoList", photoDtoList);
+
+            RequestDetailBranchInspectListDtoData.add(requestDetailInfo);
+        }
+
+        data.put("gridListData",RequestDetailBranchInspectListDtoData);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }

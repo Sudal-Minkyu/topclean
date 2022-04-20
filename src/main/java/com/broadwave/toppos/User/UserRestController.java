@@ -1,6 +1,6 @@
 package com.broadwave.toppos.User;
 
-import com.broadwave.toppos.Account.AccountPasswordDto;
+import com.broadwave.toppos.Account.AcountDtos.AccountPasswordDto;
 import com.broadwave.toppos.Aws.AWSS3Service;
 import com.broadwave.toppos.Head.AddCost.AddCostDto;
 import com.broadwave.toppos.Head.Franchise.FranchiseDtos.FranchiseInfoDto;
@@ -127,6 +127,14 @@ public class UserRestController {
         this.noticeService = noticeService;
         this.findService = findService;
         this.templateService = templateService;
+    }
+
+    // 가맹점의 탭번호와 탭번호타입 호출 API
+    @GetMapping("franchiseTagData")
+    @ApiOperation(value = "가맹점의 탭번호와 탭번호타입 호출" , notes = "현재 가맹점의 탭번호와 탭번호타입 정보를 가져온다.")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
+    public ResponseEntity<Map<String,Object>> franchiseTagData(HttpServletRequest request){
+        return userService.franchiseTagData(request);
     }
 
 //@@@@@@@@@@@@@@@@@@@@@ 가맹점 메인화면 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

@@ -1,5 +1,6 @@
 package com.broadwave.toppos.Head.Branoh;
 
+import com.broadwave.toppos.Head.Branoh.BranchDtos.BranchListDto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;

@@ -1,6 +1,6 @@
 package com.broadwave.toppos.Controller;
 
-import com.broadwave.toppos.Account.AccountRole;
+import com.broadwave.toppos.Account.AcountDtos.AccountRole;
 import com.broadwave.toppos.Head.HeadService.HeadService;
 import com.broadwave.toppos.Head.Item.Group.A.ItemGroupNameListDto;
 import com.broadwave.toppos.Head.Item.Price.FranchisePrice.ItemPriceSetDtDto;
