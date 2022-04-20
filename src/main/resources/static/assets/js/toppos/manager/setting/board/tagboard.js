@@ -381,6 +381,7 @@ const trigs = {
             wares.currentRequest = {};
             resetTaglostPop();
             tagLostPopCreateMode();
+            lockEdit(false);
             openTaglostPop();
         });
 
