@@ -117,12 +117,24 @@ public class HeadService {
             franchise.setBrAssignState(optionalFranohise.get().getBrAssignState());
             if(franchiseMapperDto.getFrTagNo() == null || franchiseMapperDto.getFrTagNo().equals("")) {
                 franchise.setFrTagNo(franchiseMapperDto.getFrCode());
-                franchise.setFrLastTagno(franchiseMapperDto.getFrCode()+"0000");
-            }else{
-                if(optionalFranohise.get().getFrLastTagno() != null){
-                    franchise.setFrLastTagno(franchiseMapperDto.getFrTagNo() + optionalFranohise.get().getFrLastTagno().substring(3, 7));
+                if(franchise.getFrTagType().equals("2")) {
+                    franchise.setFrLastTagno(franchiseMapperDto.getFrCode() + "0000");
                 }else{
-                    franchise.setFrLastTagno(franchiseMapperDto.getFrTagNo() + "0000");
+                    franchise.setFrLastTagno(franchiseMapperDto.getFrCode() + "000");
+                }
+            }else{
+                if(franchise.getFrLastTagno() != null){
+                    if(franchise.getFrTagType().equals("2")){
+                        franchise.setFrLastTagno(franchise.getFrTagNo() + optionalFranohise.get().getFrLastTagno().substring(2, 6));
+                    }else{
+                        franchise.setFrLastTagno(franchise.getFrTagNo() + optionalFranohise.get().getFrLastTagno().substring(3, 7));
+                    }
+                }else{
+                    if(franchise.getFrTagType().equals("2")){
+                        franchise.setFrLastTagno(franchise.getFrTagNo() + "0000");
+                    }else{
+                        franchise.setFrLastTagno(franchise.getFrTagNo() + "000");
+                    }
                 }
             }
 

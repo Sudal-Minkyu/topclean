@@ -372,10 +372,15 @@ function onPageLoad() {
     grids.t.basicTrigger();
 
     trigs.s.basicTrigger();
-    comms.getGridList();
 
+    grids.f.clearData(0);
+    comms.getGridList();
     /* 생성된 그리드에 기본적으로 필요한 이벤트들을 적용한다. */
     // grids.e.basicEvent();
+}
+
+function afterTagInfoLoaded() {
+    comms.getGridList();
 }
 
 function makeSaveDataset(checkedItems) { // 저장 데이터셋 만들기

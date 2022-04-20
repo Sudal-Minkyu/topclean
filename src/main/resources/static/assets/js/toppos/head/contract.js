@@ -475,6 +475,7 @@ function franchiseSave() {
     formData.set("frBusinessNo", formData.get("frBusinessNo").numString());
     formData.set("frTelNo", formData.get("frTelNo").numString());
 
+    console.log(Object.fromEntries(formData));
     CommonUI.ajax(url, "POST", formData, function (req){
         const sentData = Object.fromEntries(formData);
         console.log(sentData);
@@ -608,7 +609,7 @@ function setFieldData(numOfGrid, item) {
             $("#frBusinessNo").val(CommonUI.formatBusinessNo(item.frBusinessNo));
             $("#frRpreName").val(item.frRpreName);
             $("#frTelNo").val(CommonUI.formatTel(item.frTelNo));
-            $(`input[name='frTagType']:input[value='${item.frTagType}']`).prop("checked", true);
+            $(`input[name='frTagType']:input[value='${item.frTagType}']`).trigger("click");
             $("#frTagNo").val(item.frTagNo);
             $("#frEstimateDuration").val(item.frEstimateDuration);
             $("#frRemark").val(item.frRemark);
