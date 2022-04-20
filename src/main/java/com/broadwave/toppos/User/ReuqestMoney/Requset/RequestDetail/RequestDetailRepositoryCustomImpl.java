@@ -183,7 +183,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         sb.append("INNER JOIN bs_customer c ON c.bc_id = b.bc_id \n");
         sb.append("LEFT OUTER JOIN fs_request_inspect d ON d.fd_id = a.fd_id AND d.fi_type='F' \n");
         sb.append("LEFT OUTER JOIN fs_request_inspect e ON e.fd_id = a.fd_id AND e.fi_type='B' \n");
-        sb.append("LEFT OUTER JOIN fs_request_payment f ON f.fr_id = b.fr_id AND f.fp_cancel_yn='Y' AND f.fp_id = ( SELECT MAX(fp_id) from fs_request_payment WHERE b.fr_id= fr_id AND fp_cancel_yn='Y' ) \n");
+        sb.append("LEFT OUTER JOIN fs_request_payment f ON f.fr_id = b.fr_id AND f.fp_cancel_yn='N' AND f.fp_id = ( SELECT MAX(fp_id) from fs_request_payment WHERE b.fr_id= fr_id AND fp_cancel_yn='N' ) \n");
 
         sb.append("WHERE \n");
         sb.append("b.fr_code= ?1 \n");
