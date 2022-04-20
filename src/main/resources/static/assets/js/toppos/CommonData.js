@@ -104,11 +104,11 @@ class CommonDataClass {
         };
     }
 
-    formatFrTagNo(tagNo) {
+    formatFrTagNo(tagNo, foreDigits) {
         let result = "";
         tagNo = tagNo.numString();
         if(tagNo) {
-            result = tagNo.substring(2, 3) + "-" + tagNo.substring(3, 7);
+            result = tagNo.substring(foreDigits, foreDigits + 1) + "-" + tagNo.substring(foreDigits + 1, 7);
         }
         return result;
     }
