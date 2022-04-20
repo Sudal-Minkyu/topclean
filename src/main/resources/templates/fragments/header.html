@@ -90,7 +90,16 @@
 	</nav>
 	
 	<script type="text/javascript">
+		window.frTagInfo = {
+			frTagNo: "22",
+			frTagType: 2,
+		}
 		$(document).ready(function() {
+			// CommonUI.ajax("", "GET", false, function (res) {
+			// 	const frTagInfo = res.sendData;
+			// 	console.log(frTagInfo);
+			// });
+
 			$('#openNav').on('click', function() {
 				$('.nav').addClass('active');
 			});
@@ -99,6 +108,7 @@
 				$('.nav').removeClass('active');
 			});
 		});
+
 		function drawerOpen() {
 			CAT.CatCashdrawer();
 		}
