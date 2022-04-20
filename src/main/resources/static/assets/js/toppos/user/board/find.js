@@ -244,6 +244,13 @@ const grids = {
                 enableFilter : false,
                 rowHeight : 48,
                 headerHeight : 48,
+                rowStyleFunction : function(rowIndex, item) {
+                    let returnClass = "";
+                    if(["01", "02"].includes(item.ffState)) {
+                        returnClass = "grid_checkable_row"
+                    }
+                    return returnClass;
+                }
             };
 
             grids.s.columnLayout[1] = [
