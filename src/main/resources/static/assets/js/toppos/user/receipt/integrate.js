@@ -125,7 +125,7 @@ const dtos = {
             totAddCost: "d",
             frRefType: "sr",
             frEstimateDate: "d",
-            fpCancelYn: "s",
+            fpCancelYn: "s", // 해당 값이 N인 경우 결제취소가 가능하여야 한다.
         },
 
         franchiseRequestDetailSearch: {
