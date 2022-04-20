@@ -115,6 +115,7 @@ const comms = {
         CommonUI.ajax(urls.getDetail, "GET", getCondition, function (res) {
             console.log(res);
             const data = res.sendData;
+            console.log(data);
 
             const refinedData = {
                 btId: data.tagGallery.btId,
@@ -145,8 +146,12 @@ const comms = {
             /* 가맹점 응답의 텍스트 구성 */
             let responseList = ""
             for(fr of wares.currentRequest.tagGalleryCheckList) {
+                if(!fr.brTag) {
+                    fr.brTag = "";
+                }
+                const resultTagNo = CommonData.formatBrTagNo(fr.brTag);
                 responseList += fr.frName + " ";
-                responseList += fr.brCompleteYn === "Y" ? "(완료)" : "(확인요청)";
+                responseList += fr.brCompleteYn === "Y" ? `(완료, ${resultTagNo})` : `(확인요청, ${resultTagNo})`;
                 responseList += " ,"
             }
             $("#frResponse").val(responseList.substring(0, responseList.length - 2));
@@ -683,10 +688,12 @@ function lockEdit(editable) {
         $("#camInput").hide();
         $("#editBtns").hide();
         $(".deletePhotoBtn").hide();
+        $("#taglostPop .pop__box").removeClass("pop__box--large");
     } else {
         $("#camInput").show();
         $("#editBtns").show();
         $(".deletePhotoBtn").show();
+        $("#taglostPop .pop__box").addClass("pop__box--large");
     }
     $("#popInputs input, #popInputs textarea").prop("disabled", editable);
 }
