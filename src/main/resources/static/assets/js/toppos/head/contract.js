@@ -303,8 +303,8 @@ $(function () {
         $("#frCodeChkBtn").prop("disabled", false);
     });
 
-    $("input[name='frTagType']").on("change", function (e) {
-        const numOfTag =  $(e.currentTarget).val();
+    $("input[name='frTagType']").on("click", function (e) {
+        const numOfTag =  $("input[name='frTagType']:checked").val();
         onChangeNumOfTag(numOfTag);
     });
 
@@ -608,7 +608,7 @@ function setFieldData(numOfGrid, item) {
             $("#frBusinessNo").val(CommonUI.formatBusinessNo(item.frBusinessNo));
             $("#frRpreName").val(item.frRpreName);
             $("#frTelNo").val(CommonUI.formatTel(item.frTelNo));
-            $("input[name='frTagType']").val(item.frTagType);
+            $(`input[name='frTagType']:input[value='${item.frTagType}']`).prop("checked", true);
             $("#frTagNo").val(item.frTagNo);
             $("#frEstimateDuration").val(item.frEstimateDuration);
             $("#frRemark").val(item.frRemark);
@@ -811,6 +811,7 @@ function execDaumPostcode() {
 
 function onChangeNumOfTag(num) {
     const $frTagNo = $("#frTagNo");
+    console.log(num);
     $frTagNo.attr("maxlength", num);
     $frTagNo.val($frTagNo.val().numString().substring(0, num));
 }
