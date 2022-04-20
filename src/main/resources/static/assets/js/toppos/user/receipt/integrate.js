@@ -895,7 +895,7 @@ const grids = {
                     },
                     labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
                         let template = "";
-                        if(item.fpCancelYn === "N" && ["S1", "F"].includes(item.fdState)) {
+                        if(item.fpCancelYn === "N" && item.fdState !== "S2") {
                             template = `
                                 <button class="c-state c-state--cancel">취소</button>
                             `;
