@@ -6,6 +6,8 @@ import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.RequestFdTagDt
 import org.springframework.data.jpa.repository.Modifying;
 
 import javax.transaction.Transactional;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
 
 /**
@@ -31,6 +33,9 @@ public interface RequestDetailRepositoryCustom {
     List<RequestDetailForceListDto> findByRequestDetailForceList(Long bcId, String fdTag, String frCode); // 가맹점강제입고
     List<RequestDetailDeliveryDto> findByRequestDetailDeliveryList(String frCode, Long bcId); // 세탁인도
     List<RequestDetailFranchiseInCancelListDto> findByRequestDetailFranchiseInCancelList(String frCode, String fromDt, String toDt); // 가맹점입고취소
+
+    RequestDetailFdStateCountDto findByRequestDetailFdStateS5Count(String frCode, Long bcId); // 세탁접수에 보여줄 가맹입고(S5) 갯수 NativeQuery
+    RequestDetailFdStateCountDto findByRequestDetailFdStateS8Count(String frCode, Long bcId); // 세탁접수에 보여줄 강제입고(S8) 갯수 NativeQuery
 
     List<RequestDetailUncollectDto> findByRequestDetailUncollectList(String frCode, Long frId);
     List<RequestDetailInspectDto> findByRequestDetailInspectList(String frCode, Long bcId, String searchTag, String filterFromDt, String filterToDt); // 검품이력 및 메세지

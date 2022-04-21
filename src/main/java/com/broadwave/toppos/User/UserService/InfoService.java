@@ -119,6 +119,7 @@ public class InfoService {
 //            franchise.setFrEstimateDuration(franchiseUserDto.getFrEstimateDuration());
             franchise.setFrPostNo(franchiseUserDto.getFrPostNo());
             franchise.setFrAddress(franchiseUserDto.getFrAddress());
+            franchise.setFrRemark(franchiseUserDto.getFrRemark());
             franchise.setFrAddressDetail(franchiseUserDto.getFrAddressDetail());
             franchise.setFrMultiscreenYn(franchiseUserDto.getFrMultiscreenYn());
             franchise.setFrDepositAmount(franchiseUserDto.getFrDepositAmount());

@@ -23,6 +23,8 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
 /**
  * @author Minkyu
@@ -732,6 +734,57 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         }
 
         return jpaResultMapper.list(query, RequestDetailDeliveryDto.class);
+    }
+
+    // 세탁접수에 보여줄 가맹입고(S5) 갯수 NativeQuery
+    public RequestDetailFdStateCountDto findByRequestDetailFdStateS5Count(String frCode, Long bcId){
+        EntityManager em = getEntityManager();
+        StringBuilder sb = new StringBuilder();
+
+        System.out.println("뭐냐 : "+frCode);
+        System.out.println("이거 : "+bcId);
+
+        sb.append("SELECT COUNT(*) as count FROM fs_request_dtl a \n");
+        sb.append("INNER JOIN fs_request b ON b.fr_id = a.fr_id \n");
+        sb.append("INNER JOIN bs_customer c ON c.bc_id = b.bc_id \n");
+        sb.append("WHERE a.fd_state = 'S5' AND b.fr_code = ?1 \n");
+        if(bcId != null){
+            sb.append("AND c.bc_id= ?2 \n");
+        }
+        sb.append("; \n");
+
+        Query query = em.createNativeQuery(sb.toString());
+
+        query.setParameter(1, frCode);
+        if(bcId != null){
+            query.setParameter(2, bcId);
+        }
+
+        return jpaResultMapper.uniqueResult(query, RequestDetailFdStateCountDto.class);
+    }
+
+    // 세탁접수에 보여줄 강제입고(S8) 갯수 NativeQuery
+    public RequestDetailFdStateCountDto findByRequestDetailFdStateS8Count(String frCode, Long bcId){
+        EntityManager em = getEntityManager();
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("SELECT COUNT(*) as count FROM fs_request_dtl a \n");
+        sb.append("INNER JOIN fs_request b ON b.fr_id = a.fr_id \n");
+        sb.append("INNER JOIN bs_customer c ON c.bc_id = b.bc_id \n");
+        sb.append("WHERE a.fd_state = 'S8' AND b.fr_code = ?1 \n");
+        if(bcId != null){
+            sb.append("AND c.bc_id= ?2 \n");
+        }
+        sb.append("; \n");
+
+        Query query = em.createNativeQuery(sb.toString());
+
+        query.setParameter(1, frCode);
+        if(bcId != null){
+            query.setParameter(2, bcId);
+        }
+
+        return jpaResultMapper.uniqueResult(query, RequestDetailFdStateCountDto.class);
     }
 
     // 검품이력 조회 및 메세지 querydsl

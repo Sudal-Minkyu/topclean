@@ -76,10 +76,11 @@ public class FindService {
 
     // 지사 물건찾기 확인 업데이트
     @Transactional
-    public ResponseEntity<Map<String, Object>> branchObjectFindCheck(List<Long> ffIdList, HttpServletRequest request) {
+    public ResponseEntity<Map<String, Object>> branchObjectFindCheck(List<Long> ffIdList, String ffState, HttpServletRequest request) {
         log.info("branchObjectFindCheck 호출");
 
         log.info("ffIdList : "+ffIdList);
+        log.info("ffState : "+ffState);
 
         AjaxResponse res = new AjaxResponse();
 
@@ -90,7 +91,7 @@ public class FindService {
         log.info("현재 접속한 아이디 : "+login_id);
         log.info("현재 접속한 지사 코드 : "+brCode);
 
-        int successNum = findRepository.findByFindCheckUpdate(ffIdList,login_id);
+        int successNum = findRepository.findByFindCheckUpdate(ffIdList, ffState, login_id);
         log.info("성공한 업데이트 수 : "+successNum);
 
         return ResponseEntity.ok(res.success());

@@ -124,20 +124,21 @@ public class FindRepositoryCustomImpl extends QuerydslRepositorySupport implemen
 
 
     // 지사 물건찾기 지사확인 업데이트
-    public int findByFindCheckUpdate(List<Long> ffIdList, String login_id){
+    public int findByFindCheckUpdate(List<Long> ffIdList, String ffState, String login_id){
 
         EntityManager em = getEntityManager();
         StringBuilder sb = new StringBuilder();
 
         sb.append("UPDATE fs_request_find a\n");
         sb.append("SET \n");
-        sb.append("a.ff_state = '02', \n");
+        sb.append("a.ff_state = ?3, \n");
         sb.append("a.modify_id = ?2, a.modify_date= NOW() \n");
         sb.append("WHERE a.ff_id in ?1  \n");
 
         Query query = em.createNativeQuery(sb.toString());
         query.setParameter(1, ffIdList);
         query.setParameter(2, login_id);
+        query.setParameter(3, ffState);
 
         return query.executeUpdate();
     }

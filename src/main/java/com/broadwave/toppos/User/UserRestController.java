@@ -35,6 +35,7 @@ import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.Insp
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.PhotoDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailDeliveryDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailFdStateCountDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailUpdateDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailSet;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.RequestHistoryListDto;
@@ -63,6 +64,8 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -317,8 +320,8 @@ public class UserRestController {
                                                            @RequestParam(value="searchType", defaultValue="") String searchType,
                                                            @RequestParam(value="searchString", defaultValue="") String searchString){
         log.info("customerInfo 호출");
-//        log.info("searchType :"+searchType);
-//        log.info("searchString :"+searchString);
+        log.info("searchType :"+searchType);
+        log.info("searchString :"+searchString);
 
         // 클레임데이터 가져오기
         Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
@@ -355,8 +358,11 @@ public class UserRestController {
             customerListInfo.put("saveMoney", 0);
 
             // 세탁인도할 품목 리스트 호출
-            List<RequestDetailDeliveryDto> requestDetailDeliveryDtos = receiptStateService.requestDetailDelivery(frCode, customerInfoDto.getBcId());
-            customerListInfo.put("deliverySize",requestDetailDeliveryDtos.size());
+            RequestDetailFdStateCountDto deliveryS5 = receiptStateService.findByRequestDetailFdStateS5Count(frCode, customerInfoDto.getBcId());
+            RequestDetailFdStateCountDto deliveryS8 = receiptStateService.findByRequestDetailFdStateS8Count(frCode, customerInfoDto.getBcId());
+
+            customerListInfo.put("deliveryS5",deliveryS5.getCount());
+            customerListInfo.put("deliveryS8",deliveryS8.getCount());
 
             if(requestTemp != null){
                 customerListInfo.put("tempSaveFrNo", requestTemp.getFrNo());

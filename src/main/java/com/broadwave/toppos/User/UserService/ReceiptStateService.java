@@ -21,6 +21,8 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -529,6 +531,17 @@ public class ReceiptStateService {
     public List<RequestDetailDeliveryDto> requestDetailDelivery(String frCode, Long bcId){
         return requestDetailRepository.findByRequestDetailDeliveryList(frCode, bcId);
     }
+
+    // 세탁접수에 보여줄 가맹입고(S5) 갯수 NativeQuery
+    public RequestDetailFdStateCountDto findByRequestDetailFdStateS5Count(String frCode, Long bcId){
+        return requestDetailRepository.findByRequestDetailFdStateS5Count(frCode, bcId);
+    }
+
+    // 세탁접수에 보여줄 강제입고(S8) 갯수 NativeQuery
+    public RequestDetailFdStateCountDto findByRequestDetailFdStateS8Count(String frCode, Long bcId){
+        return requestDetailRepository.findByRequestDetailFdStateS8Count(frCode, bcId);
+    }
+
 
 
 }
