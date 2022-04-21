@@ -2,12 +2,9 @@ package com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail;
 
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.manager.*;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.*;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.RequestFdTagDto;
 import org.springframework.data.jpa.repository.Modifying;
 
 import javax.transaction.Transactional;
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.List;
 
 /**

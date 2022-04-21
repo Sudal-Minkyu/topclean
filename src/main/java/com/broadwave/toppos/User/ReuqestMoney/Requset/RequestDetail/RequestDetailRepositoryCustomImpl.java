@@ -23,8 +23,6 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.List;
 /**
  * @author Minkyu
@@ -1225,7 +1223,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         query.where(requestDetail.fdState.eq("S4"));
         query.where(franchise.id.eq(frId));
         if(!tagNo.equals("")){
-            query.where(requestDetail.fdTag.substring(3,7).likeIgnoreCase("%"+tagNo+"%"));
+            query.where(requestDetail.fdTag.eq(tagNo));
         }
         if(fromDt != null){
             query.where(requestDetail.fdS4Dt.goe(fromDt));
@@ -1365,7 +1363,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         query.where(requestDetail.fdState.eq("S2"));
         query.where(franchise.id.eq(frId));
         if(!tagNo.equals("")){
-            query.where(requestDetail.fdTag.substring(3,7).likeIgnoreCase("%"+tagNo+"%"));
+            query.where(requestDetail.fdTag.eq(tagNo));
         }
         if(fromDt != null){
             query.where(requestDetail.fdS2Dt.goe(fromDt));
@@ -1444,7 +1442,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         query.where(requestDetail.fdState.eq("S2"));
         query.where(franchise.id.eq(frId));
         if(!tagNo.equals("")){
-            query.where(requestDetail.fdTag.substring(3,7).likeIgnoreCase("%"+tagNo+"%"));
+            query.where(requestDetail.fdTag.eq(tagNo));
         }
         if(fromDt != null){
             query.where(requestDetail.fdS2Dt.goe(fromDt));
@@ -1540,7 +1538,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         query.where(requestDetail.fdState.eq("S2"));
         query.where(franchise.id.eq(frId));
         if(!tagNo.equals("")){
-            query.where(requestDetail.fdTag.substring(3,7).likeIgnoreCase("%"+tagNo+"%"));
+            query.where(requestDetail.fdTag.eq(tagNo));
         }
         if(fromDt != null){
             query.where(requestDetail.fdS2Dt.goe(fromDt));
@@ -1626,7 +1624,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
 
         if(frId != 0 || !tagNo.equals("")){
             query.where(franchise.id.eq(frId));
-            query.where(requestDetail.fdTag.substring(3,7).likeIgnoreCase("%"+tagNo+"%"));
+            query.where(requestDetail.fdTag.eq(tagNo));
         }
         if(fromDt != null){
             query.where(requestDetail.fdS2Dt.goe(fromDt));
@@ -1710,7 +1708,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
             query.where(franchise.id.eq(frId));
         }
         if(!tagNo.equals("")){
-            query.where(requestDetail.fdTag.likeIgnoreCase("%"+tagNo+"%"));
+            query.where(requestDetail.fdTag.eq(tagNo));
         }
         return query.fetch();
     }
