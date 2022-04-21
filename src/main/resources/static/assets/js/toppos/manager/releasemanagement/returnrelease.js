@@ -56,8 +56,8 @@ const dtos = {
 /* 통신에 사용되는 url들 기입 */
 const urls = {
     getFrList: "/api/manager/branchBelongList",
-    getMainGridList: "/api/manager/branchReceiptReturnReleaseList", // API 도착시 교체
-    executeReceipt: "/api/manager/branchRelease", // API 도착시 교체
+    getMainGridList: "/api/manager/branchReceiptReturnReleaseList",
+    executeReceipt: "/api/manager/branchRelease",
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
@@ -356,9 +356,10 @@ function searchOrder() {
         alertCaution("가맹점을 선택해 주세요.", 1);
         return false;
     }
+    const fullTag = $("#foreTag").val() + $("#aftTag").val().numString();
 
     const searchCondition = {
-        tagNo: $("#aftTag").val().numString(),
+        tagNo: fullTag.length === 7 ? fullTag : "",
         filterFromDt: $("#filterFromDt").val(),
         filterToDt: $("#filterToDt").val(),
         frId: parseInt(frId),
@@ -369,9 +370,7 @@ function searchOrder() {
     wares.currentDetail.filterToDt = searchCondition.filterToDt;
     wares.currentDetail.frName = $("#frList option:selected").html();
 
-    const fullTag = $("#foreTag").val() + searchCondition.tagNo;
-
-    if(searchCondition.tagNo.length !== 0 && fullTag.length !==7) {
+    if(searchCondition.tagNo.length !== 0 && searchCondition.tagNo.length !==7) {
         alertCaution("택번호(뒤)는 완전히 입력하거나,<br>입력하지 말아주세요.(전체검색)<br>", 1);
         return false;
     }

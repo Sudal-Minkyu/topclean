@@ -663,16 +663,16 @@ function searchOrder() {
         return false;
     }
 
+    const fullTag = $("#foreTag").val() + $("#aftTag").val().numString();
+
     const searchCondition = {
-        tagNo: $("#aftTag").val().numString(),
+        tagNo: fullTag.length === 7 ? fullTag : "",
         filterFromDt: $("#filterFromDt").val(),
         filterToDt: $("#filterToDt").val(),
         franchiseId: parseInt(frId),
     };
 
-    const fullTag = $("#foreTag").val() + searchCondition.tagNo;
-
-    if(searchCondition.tagNo.length !== 0 && fullTag.length !==7) {
+    if(searchCondition.tagNo.length !== 0 && searchCondition.tagNo.length !==7) {
         alertCaution("택번호(뒤)는 완전히 입력하거나,<br>입력하지 말아주세요.(전체검색)<br>", 1);
         return false;
     }

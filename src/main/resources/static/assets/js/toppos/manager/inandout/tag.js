@@ -358,19 +358,16 @@ function searchOrder() {
         franchiseId: frId,
     };
 
-    let fullTag;
     if(parseInt(frId)) {
-        searchCondition.tagNo = $("#aftTag").val().numString();
-        fullTag = $("#foreTag").val() + searchCondition.tagNo;
+        searchCondition.tagNo = $("#foreTag").val() + $("#aftTag").val().numString();
     } else {
         searchCondition.tagNo = $("#fullTag").val().numString();
-        fullTag = searchCondition.tagNo;
     }
 
     console.log(searchCondition);
 
 
-    if(fullTag.length !==7) {
+    if(searchCondition.tagNo.length !==7) {
         alertCaution("택번호를 완전히 입력해 주세요.", 1);
         return false;
     }
