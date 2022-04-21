@@ -281,6 +281,9 @@ const trigs = {
         basic() {
             $("#frList").on("change", function () {
                 $("#foreTag").val($("#frList option:selected").attr("data-tagno"));
+                const aftLength = 7 - $("#foreTag").val().length;
+                $("#aftTag").attr("maxlength", aftLength);
+                $("#aftTag").val("");
             });
 
             $("#searchListBtn").on("click", function () {
@@ -363,8 +366,10 @@ function searchOrder() {
         return false;
     }
 
+    const fullTag = $("#foreTag").val() + $("#aftTag").val().numString();
+
     const searchCondition = {
-        tagNo: $("#aftTag").val().numString(),
+        tagNo: fullTag.length === 7 ? fullTag : "",
         filterFromDt: $("#filterFromDt").val(),
         filterToDt: $("#filterToDt").val(),
         frId: parseInt(frId),
@@ -375,8 +380,8 @@ function searchOrder() {
     wares.currentDetail.filterToDt = searchCondition.filterToDt;
     wares.currentDetail.frName = $("#frList option:selected").html();
 
-    if(searchCondition.tagNo.length !== 0 && searchCondition.tagNo.length !==4) {
-        alertCaution("택번호는 완전히 입력하거나,<br>입력하지 말아주세요.(전체검색)", 1);
+    if(searchCondition.tagNo.length !== 0 && searchCondition.tagNo.length !==7) {
+        alertCaution("택번호(뒤)는 완전히 입력하거나,<br>입력하지 말아주세요.(전체검색)<br>", 1);
         return false;
     }
 

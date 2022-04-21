@@ -1850,6 +1850,12 @@ footer.footer > ul > li + li:before {
 .form__item:nth-child(2n - 1) {
 	margin-left: 0;
 }
+.form__item.form__item--no-margin {
+	margin-left: 0;
+}
+.form__item.form__item--no-margin + .form__item {
+	margin-left: auto;
+}
 .form__title {
 	width: 7.5rem;
 	padding-right: 0.625rem;

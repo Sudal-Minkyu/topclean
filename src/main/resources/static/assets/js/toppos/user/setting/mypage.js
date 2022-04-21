@@ -14,6 +14,7 @@ const dtos = {
 			frAddress: "s",
 			frAddressDetail: "s",
 			frMultiscreenYn : "s",
+			frRemark : "s",
 		},
 		franchiseAddProcess: {
 			repairListData: {
@@ -59,6 +60,7 @@ const dtos = {
 			frAddress: "s",
 			frAddressDetail: "s",
 			frMultiscreenYn: "s",
+			frRemark : "s",
 		},
 		franchiseAddProcessList: {
 			repairListData: {
@@ -114,6 +116,7 @@ const comms = {
 		formData.set("frRentalAmount", jsonData.frRentalAmount);
 		formData.set("frTelNo", formData.get("frTelNo").numString());
 		formData.set("frMultiscreenYn", $('input[name=frMultiscreenYn]:checked').val());
+		// formData.set("frRemark", formData.get("frRemark"));
 
 		dv.chk(jsonData, dtos.send.franchiseMyInfoSave, "가맹점 정보 보내기");
 		console.log(jsonData);
@@ -569,6 +572,8 @@ const vKeyboard = {
 		"passwordconfirm",
 		"baName",
 		"baRemark",
+		"frAddressDetail",
+		"frRemark"
 	],
 	targetProp: [
 
@@ -594,6 +599,12 @@ const vKeyboard = {
 				title: "항목"
 			};
 			vKeyboard.targetProp[6] = {
+				title: "비고"
+			};
+			vKeyboard.targetProp[7] = {
+				title: "상세주소"
+			};
+			vKeyboard.targetProp[8] = {
 				title: "비고"
 			};
 			window.vkey = new VKeyboard();
@@ -701,6 +712,8 @@ function putFrInfoDataInField(myInfoData) {
 	$("input[name='frPostNo']").val(myInfoData.frPostNo);
 	$("input[name='frAddress']").val(myInfoData.frAddress);
 	$("input[name='frAddressDetail']").val(myInfoData.frAddressDetail);
+	$("textarea[name='frRemark']").val(myInfoData.frRemark);
+
 	let frDepositAmount = "";
 	if(myInfoData.frDepositAmount) {
 		frDepositAmount = myInfoData.frDepositAmount.toLocaleString();
