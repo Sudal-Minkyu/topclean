@@ -14,6 +14,7 @@ const dtos = {
 
         branchObjectFindCheck: { // 지사에서 확인한 리스트에 대한 보고
             ffIdList: "a",
+            ffState: "s",
         }
     },
     receive: {
@@ -90,9 +91,9 @@ const comms = {
     },
 
     sendCheckRespondList(targets) {
-        dv.chk(targets, dtos.send.branchObjectFindCheck, "지사확인을 표시한 리스트 보내기");
+        dv.chk(targets, dtos.send.branchObjectFindCheck, "확인중, 찾기완료를 표시한 리스트 보내기");
         CommonUI.ajax(urls.sendCheckRespondList, "PARAM", targets, function (res) {
-            alertSuccess("지사확인을 완료하였습니다.");
+            alertSuccess((targets.ffState === "02" ? "확인중" : "찾기완료") + " 상태 전달을 완료하였습니다.");
             comms.getMainList(wares.searchCondition);
         });
     },
@@ -294,13 +295,26 @@ const trigs = {
         $("#brRespond").on("click", function () {
             const checkedItems = grids.f.getCheckedItems(0);
             if(checkedItems.length) {
-                alertCheck("선택하신 물품을 확인처리 하시겠습니까?");
+                alertCheck("선택물품을 확인중으로 변경 하시겠습니까?");
                 $("#checkDelSuccessBtn").on("click", function () {
-                    sendCheckedList(checkedItems);
+                    sendCheckedList(checkedItems, "02");
                     $('#popupId').remove();
                 });
             } else {
-                alertCaution("확인할 물품을 먼저 선택해 주세요.", 1 );
+                alertCaution("상태변경할 물품을 먼저 선택해 주세요.", 1 );
+            }
+        });
+
+        $("#brComplete").on("click", function () {
+            const checkedItems = grids.f.getCheckedItems(0);
+            if(checkedItems.length) {
+                alertCheck("선택물품을 찾기완료로 변경 하시겠습니까?");
+                $("#checkDelSuccessBtn").on("click", function () {
+                    sendCheckedList(checkedItems, "03");
+                    $('#popupId').remove();
+                });
+            } else {
+                alertCaution("상태변경할 물품을 먼저 선택해 주세요.", 1 );
             }
         });
     },
@@ -370,13 +384,14 @@ function hasGrid0Data() {
     return result;
 }
 
-function sendCheckedList(items) {
+function sendCheckedList(items, ffState) {
     let ffIdList = [];
     for(const {item} of items) {
         ffIdList.push(item.ffId);
     }
     const targets = {
         ffIdList: ffIdList,
+        ffState: ffState,
     }
     comms.sendCheckRespondList(targets);
 
