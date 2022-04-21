@@ -262,7 +262,7 @@ const grids = {
                     dataField: "",
                     headerText: "처리내역",
                     style: "grid_textalign_left",
-                    width: 80,
+                    width: 120,
                     renderer : {
                         type: "TemplateRenderer",
                     },
@@ -278,7 +278,7 @@ const grids = {
                     dataField: "fdTotAmt",
                     headerText: "접수금액",
                     style: "grid_textalign_right",
-                    width: 90,
+                    width: 80,
                     dataType: "numeric",
                     autoThousandSeparator: "true",
                 }, {
@@ -303,7 +303,7 @@ const grids = {
                     dataField: "fdRemark",
                     headerText: "특이사항",
                     style: "grid_textalign_left",
-                    width: 100,
+                    width: 180,
                     renderer : {
                         type : "TemplateRenderer",
                     },

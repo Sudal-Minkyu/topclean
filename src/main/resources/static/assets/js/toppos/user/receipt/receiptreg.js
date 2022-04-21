@@ -826,6 +826,7 @@ function onPutCustomer() {
     AUIGrid.clearGridData(gridId[0]);
     calculateMainPrice(AUIGrid.getGridData(gridId[0]), AUIGrid.getRemovedItems(gridId[0]));
 
+    selectedCustomer.deliverySize = selectedCustomer.deliveryS5 + selectedCustomer.deliveryS8;
     if (selectedCustomer.deliverySize) {
         $("#numOfDeliverablePop").attr("style", "visibility: show;");
         $("#numOfDeliverableBcName").html(selectedCustomer.bcName);
