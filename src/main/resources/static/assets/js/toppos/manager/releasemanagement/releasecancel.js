@@ -380,7 +380,7 @@ function searchOrder() {
     wares.currentDetail.filterToDt = searchCondition.filterToDt;
     wares.currentDetail.frName = $("#frList option:selected").html();
 
-    if(searchCondition.tagNo.length !== 0 && searchCondition.tagNo.length !==7) {
+    if($("#aftTag").val().numString().length !== 0 && searchCondition.tagNo.length !==7) {
         alertCaution("택번호(뒤)는 완전히 입력하거나,<br>입력하지 말아주세요.(전체검색)<br>", 1);
         return false;
     }
