@@ -116,7 +116,6 @@ const comms = {
 		formData.set("frRentalAmount", jsonData.frRentalAmount);
 		formData.set("frTelNo", formData.get("frTelNo").numString());
 		formData.set("frMultiscreenYn", $('input[name=frMultiscreenYn]:checked').val());
-		// formData.set("frRemark", formData.get("frRemark"));
 
 		dv.chk(jsonData, dtos.send.franchiseMyInfoSave, "가맹점 정보 보내기");
 		console.log(jsonData);
