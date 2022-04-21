@@ -1622,10 +1622,14 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         query.orderBy(requestDetail.id.asc()).groupBy(requestDetail.id);
         query.where(inspeot.fiType.eq("B"));
 
-        if(frId != 0 || !tagNo.equals("")){
+        if(frId != 0){
             query.where(franchise.id.eq(frId));
+        }
+
+        if(!tagNo.equals("")){
             query.where(requestDetail.fdTag.eq(tagNo));
         }
+
         if(fromDt != null){
             query.where(requestDetail.fdS2Dt.goe(fromDt));
         }
