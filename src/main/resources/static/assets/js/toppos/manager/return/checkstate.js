@@ -429,6 +429,9 @@ const trigs = {
                     $aftTag.prop("disabled", true);
                 } else {
                     $aftTag.prop("disabled", false);
+                    const aftLength = 7 - $("#foreTag").val().length;
+                    $("#aftTag").attr("maxlength", aftLength);
+                    $("#aftTag").val("");
                 }
             });
 
@@ -512,8 +515,10 @@ function searchOrder() {
         franchiseId: parseInt(frId),
     };
 
-    if(searchCondition.tagNo.length !== 0 && searchCondition.tagNo.length !== 4) {
-        alertCaution("택번호는 완전히 입력하거나,<br>입력하지 말아주세요.(전체검색)", 1);
+    const fullTag = $("#foreTag").val() + searchCondition.tagNo;
+
+    if(searchCondition.tagNo.length !== 0 && fullTag.length !==7) {
+        alertCaution("택번호(뒤)는 완전히 입력하거나,<br>입력하지 말아주세요.(전체검색)<br>", 1);
         return false;
     }
 
@@ -561,8 +566,8 @@ function chkParams() {
         const dateNum = wares.params.get("fdS2Dt");
         const date = dateNum.substring(0, 4) + "-" + dateNum.substring(4, 6) + "-" + dateNum.substring(6, 8);
         $("#frList option[data-tagno=" + fdTag.substring(0, 2) + "]").prop("selected", true);
-        $("#foreTag").val(fdTag.substring(0, 2));
-        $("#aftTag").val(fdTag.substring(2, 7));
+        $("#foreTag").val(fdTag.substring(0, 3));
+        $("#aftTag").val(fdTag.substring(3, 7));
         $("#filterFromDt").val(date);
         $("#filterToDt").val(date);
         $("#searchListBtn").trigger("click");

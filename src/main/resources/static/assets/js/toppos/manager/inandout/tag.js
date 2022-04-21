@@ -289,6 +289,9 @@ const trigs = {
                     $("#fullTag").val("");
                     $(".doubleTag").css("display", "flex");
                     $(".singleTag").css("display", "none");
+                    const aftLength = 7 - $("#foreTag").val().length;
+                    $("#aftTag").attr("maxlength", aftLength);
+                    $("#aftTag").val("");
                 }
             });
 
@@ -308,7 +311,7 @@ const trigs = {
             $fullTag.on("keyup", function (e) {
                 let refinedValue = $fullTag.val().numString();
                 if(refinedValue.length > 2) {
-                    refinedValue = refinedValue.substring(0, 2) + "-" + refinedValue.substring(2, 7);
+                    refinedValue = CommonData.formatBrTagNo(refinedValue);
                 }
                 $fullTag.val(refinedValue);
 
@@ -355,14 +358,19 @@ function searchOrder() {
         franchiseId: frId,
     };
 
+    let fullTag;
     if(parseInt(frId)) {
         searchCondition.tagNo = $("#aftTag").val().numString();
+        fullTag = $("#foreTag").val() + searchCondition.tagNo;
     } else {
         searchCondition.tagNo = $("#fullTag").val().numString();
+        fullTag = searchCondition.tagNo;
     }
 
     console.log(searchCondition);
-    if((searchCondition.tagNo.length !==4 && frId) || (searchCondition.tagNo.length !==7 && !frId)) {
+
+
+    if(fullTag.length !==7) {
         alertCaution("택번호를 완전히 입력해 주세요.", 1);
         return false;
     }

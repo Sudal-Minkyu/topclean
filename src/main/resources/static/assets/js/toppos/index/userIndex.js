@@ -126,7 +126,7 @@ const comms = {
                 field.children(".main__board-confirm").children("span").html("");
 
                 for(let i = 0; i < inspectList.length; i++) {
-                    $(field[i]).attr("href", `./user/integrate?fdTag=${inspectList[i].fdTag.substring(2, 7)}&frYyyymmdd=${
+                    $(field[i]).attr("href", `./user/integrate?fdTag=${inspectList[i].fdTag.substring(frTagInfo.frTagType, 7)}&frYyyymmdd=${
                         inspectList[i].frYyyymmdd}`);
                     $(field[i]).children(".main__board-bcname").children("span").html(inspectList[i].bcName);
                     $(field[i]).children(".main__board-bgname").children("span").html(inspectList[i].bgName);
