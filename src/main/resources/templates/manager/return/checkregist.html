@@ -215,6 +215,63 @@
         </div>
     </div>
 
+    <!-- 접수 사진 촬영내역 -->
+    <div id="receiptPhotoPop" class="pop">
+        <div class="pop__box">
+            <div class="pop__article">
+                <div class="tag-imgs">
+                    <ul id="receiptPhotoList" class="tag-imgs__list">
+                    </ul>
+                </div>
+            </div>
+            <ul class="pop__console">
+                <li>
+                    <button id="closePhotoListPop" class="c-button">닫기</button>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- 가맹검품 보기(응답완료된) 신규 -->
+    <div id="frInspectViewPop" class="pop">
+        <div class="pop__box">
+            <div id="frInspectViewPhotoPanel" class="pop__article">
+                <div class="tag-imgs">
+                    <ul id="frViewPhotoList" class="tag-imgs__list">
+                    </ul>
+                </div>
+            </div>
+            <div class="pop__article">
+                <div class="checkreg__comment">
+                    <div class="pop__article-head">
+                        <h3 class="pop__article-header">검품내용</h3>
+                    </div>
+                    <div class="pop__aricle-content">
+                        <div class="c-text">
+                            <input id="frViewFiComment" type="text"  readonly="readonly" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <ul class="pop__console">
+                <li class="pop__console-left">
+                    <div class="pop__console-cost">
+                        <div class="pop__console-title">현재 접수금액</div>
+                        <div class="pop__console-input">
+                            <div class="c-text"><input id="frViewFdTotAmtInPut" type="text" readonly="readonly" /></div>
+                        </div>
+                    </div>
+                    <div class="pop__console-cost">
+                        <div class="pop__console-title">추가 비용발생</div>
+                        <div class="pop__console-input">
+                            <div class="c-text"><input id="frViewFiAddAmt" type="text" readonly="readonly" /></div>
+                        </div>
+                    </div>
+                </li>
+                <li><button id="closeFrInspectViewPop" class="c-button">닫기</button></li>
+            </ul>
+        </div>
+    </div>
 
 </div>
 </html>
