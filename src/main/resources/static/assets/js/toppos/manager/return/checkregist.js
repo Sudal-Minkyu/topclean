@@ -247,15 +247,15 @@ const comms = {
  */
     putNewInspectNeo(formData) {
         const testObj = Object.fromEntries(formData);
-        testObj.fdId = parseInt(testObj.fdId);
-        testObj.fiAddAmt = parseInt(testObj.fiAddAmt) | 0;
-        if(!testObj.addPhotoList) testObj.addPhotoList = []; // btId값이 없는 신규등록건
-        if(!testObj.deletePhotoList) testObj.deletePhotoList = []; // btId값이 없는 신규등록건
-        if(!testObj.brFiId) testObj.brFiId = 0;
+        console.log(testObj);
+        // testObj.fdId = parseInt(testObj.fdId);
+        // testObj.fiAddAmt = parseInt(testObj.fiAddAmt) | 0;
+        // if(!testObj.addPhotoList) testObj.addPhotoList = []; // btId값이 없는 신규등록건
+        // if(!testObj.deletePhotoList) testObj.deletePhotoList = []; // btId값이 없는 신규등록건
+        // if(!testObj.fiId) testObj.fiId = 0;
         
         dv.chk(testObj, dtos.send.branchInspectionSaveNeo, "확인품 등록");
 
-        console.log(testObj);
         CommonUI.ajax(urls.putNewInspectNeo, "POST", formData, function (res) {
 
             // const searchCondition = {
@@ -283,19 +283,19 @@ const comms = {
         });
     },
 
-    // getFrInspectNeo(target) {
-    //     CommonUI.ajax("/api/manager/franchiseInspectionInfo", "GET", target, function (res) {
-    //         console.log(res);
-    //         const data = res.sendData;
-    //
-    //         wares.currentFrInspect.inspeotInfoDto = data.inspeotInfoDto;
-    //         wares.currentFrInspect.photoList = data.photoList;
-    //         wares.currentFrInspect.fiAddAmt = data.inspeotInfoDto.fiAddAmt;
-    //         wares.currentFrInspect.fiComment = data.inspeotInfoDto.fiComment;
-    //
-    //         openFrInspectPop();
-    //     });
-    // },
+    getFrInspectNeo(target) {
+        CommonUI.ajax("/api/manager/branchInspectionInfo", "GET", target, function (res) {
+            console.log(res);
+            const data = res.sendData;
+
+            wares.currentFrInspect.inspeotInfoDto = data.inspeotInfoDto;
+            wares.currentFrInspect.photoList = data.photoList;
+            wares.currentFrInspect.fiAddAmt = data.inspeotInfoDto.fiAddAmt;
+            wares.currentFrInspect.fiComment = data.inspeotInfoDto.fiComment;
+
+            openFrInspectPop();
+        });
+    },
 };
 
 /* .s : AUI 그리드 관련 설정들
@@ -646,6 +646,10 @@ const trigs = {
                 $("#receiptPhotoList").html("");
                 $("#receiptPhotoPop").removeClass("active");
             });
+
+            $("#closeFrInspectViewPop").on("click", function () {
+                closeFrInspectViewPop();
+            });
         },
     },
     r: { // 이벤트 해제
@@ -985,4 +989,19 @@ function openFrInspectEditPop(item) {
         }
         comms.getFrInspectNeo(target);
     }
+}
+
+function closeFrInspectViewPop(doRefresh = false) {
+    if(doRefresh) {
+        comms.franchiseRequestDetailSearch(wares.currentCondition);
+    }
+    $("#frInspectViewPop").removeClass("active");
+    resetFrInspectViewPop();
+}
+
+function resetFrInspectViewPop() {
+    $("#frViewFdTotAmtInPut").val("");
+    $("#frViewFiAddAmt").val("0");
+    $("#frViewFiComment").val("");
+    $("#frViewPhotoList").html("");
 }
