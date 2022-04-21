@@ -56,7 +56,7 @@ public class MessageHistoryRepositoryCustomImpl extends QuerydslRepositorySuppor
 
         sb.append("SELECT b.insert_yyyymmdd, 'xx' as fm_type, COUNT(*) cnt FROM fs_request_input_message b \n");
         sb.append("WHERE b.insert_yyyymmdd <= ?1 AND b.insert_yyyymmdd >= ?2 AND b.fr_code = ?3 \n");
-        sb.append(") \n");
+        sb.append("GROUP BY b.insert_yyyymmdd) \n");
 
         sb.append("SELECT DISTINCT a.insert_yyyymmdd, \n");
         sb.append("IFNULL((SELECT cnt from messageHistory x1 WHERE a.insert_yyyymmdd = x1.insert_yyyymmdd AND x1.fm_type = '01'),0) + \n");

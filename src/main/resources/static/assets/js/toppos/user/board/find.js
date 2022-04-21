@@ -246,7 +246,7 @@ const grids = {
                 headerHeight : 48,
                 rowStyleFunction : function(rowIndex, item) {
                     let returnClass = "";
-                    if(["01", "02"].includes(item.ffState)) {
+                    if(["01", "02", "03"].includes(item.ffState)) {
                         returnClass = "grid_checkable_row"
                     }
                     return returnClass;
