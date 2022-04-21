@@ -356,11 +356,12 @@ public class UserRestController {
             customerListInfo.put("saveMoney", 0);
 
             // 세탁인도할 품목 리스트 호출
-            RequestDetailFdStateCountDto deliveryS5 = receiptStateService.findByRequestDetailFdStateS5Count(frCode, customerInfoDto.getBcId());
-            RequestDetailFdStateCountDto deliveryS8 = receiptStateService.findByRequestDetailFdStateS8Count(frCode, customerInfoDto.getBcId());
-
-            customerListInfo.put("deliveryS5",deliveryS5.getCount());
-            customerListInfo.put("deliveryS8",deliveryS8.getCount());
+            if(customerInfoDto.getBcId() != null){
+                RequestDetailFdStateCountDto deliveryS5 = receiptStateService.findByRequestDetailFdStateS5Count(frCode, customerInfoDto.getBcId());
+                RequestDetailFdStateCountDto deliveryS8 = receiptStateService.findByRequestDetailFdStateS8Count(frCode, customerInfoDto.getBcId());
+                customerListInfo.put("deliveryS5",deliveryS5.getCount());
+                customerListInfo.put("deliveryS8",deliveryS8.getCount());
+            }
 
             if(requestTemp != null){
                 customerListInfo.put("tempSaveFrNo", requestTemp.getFrNo());
