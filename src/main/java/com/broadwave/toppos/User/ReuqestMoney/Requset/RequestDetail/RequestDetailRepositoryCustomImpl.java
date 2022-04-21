@@ -1473,8 +1473,8 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                 .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
                 .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
                 .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
-                .leftJoin(inspeot1).on(inspeot1.fdId.eq(requestDetail).and(inspeot1.fiType.eq("B")))
-                .leftJoin(inspeot2).on(inspeot2.fdId.eq(requestDetail).and(inspeot2.fiType.eq("F")))
+                .leftJoin(inspeot1).on(inspeot1.fdId.eq(requestDetail).and(inspeot1.fiType.eq("F")))
+                .leftJoin(inspeot2).on(inspeot2.fdId.eq(requestDetail).and(inspeot2.fiType.eq("B")))
                 .where(request.frConfirmYn.eq("Y"))
                 .where(request.brCode.eq(brCode).and(requestDetail.fdCancel.eq("N")))
                 .select(Projections.constructor(RequestDetailBranchInspectListDto.class,
