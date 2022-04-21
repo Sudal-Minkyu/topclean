@@ -96,6 +96,12 @@
 				const data = res.sendData.franchiseTagDataDto;
 				frTagInfo.frTagNo = data.frTagNo;
 				frTagInfo.frTagType = data.frTagType.toInt();
+				try {
+					if (afterTagInfoLoaded) {
+						afterTagInfoLoaded();
+					}
+				} catch (e) {
+				}
 			});
 
 			$('#openNav').on('click', function() {

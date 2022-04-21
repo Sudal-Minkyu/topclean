@@ -373,8 +373,6 @@ function onPageLoad() {
 
     trigs.s.basicTrigger();
 
-    grids.f.clearData(0);
-    comms.getGridList();
     /* 생성된 그리드에 기본적으로 필요한 이벤트들을 적용한다. */
     // grids.e.basicEvent();
 }
