@@ -572,6 +572,8 @@ const vKeyboard = {
 		"passwordconfirm",
 		"baName",
 		"baRemark",
+		"frAddressDetail",
+		"frRemark"
 	],
 	targetProp: [
 
@@ -597,6 +599,12 @@ const vKeyboard = {
 				title: "항목"
 			};
 			vKeyboard.targetProp[6] = {
+				title: "비고"
+			};
+			vKeyboard.targetProp[7] = {
+				title: "상세주소"
+			};
+			vKeyboard.targetProp[8] = {
 				title: "비고"
 			};
 			window.vkey = new VKeyboard();
@@ -704,7 +712,8 @@ function putFrInfoDataInField(myInfoData) {
 	$("input[name='frPostNo']").val(myInfoData.frPostNo);
 	$("input[name='frAddress']").val(myInfoData.frAddress);
 	$("input[name='frAddressDetail']").val(myInfoData.frAddressDetail);
-	$("input[name='frRemark']").val(myInfoData.frRemark);
+	$("textarea[name='frRemark']").val(myInfoData.frRemark);
+
 	let frDepositAmount = "";
 	if(myInfoData.frDepositAmount) {
 		frDepositAmount = myInfoData.frDepositAmount.toLocaleString();
