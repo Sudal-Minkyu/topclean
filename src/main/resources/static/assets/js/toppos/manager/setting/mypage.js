@@ -5,11 +5,11 @@
 * */
 const dtos = {
     send: {
-        지사정보저장하기: {
+        branchInfoSave: {
             brName: "s",
             brTelNo: "s",
         },
-        유저정보저장하기: {
+        branchMyInfoSave: {
             userEmail: "s",
             userTel: "s",
             nowPassword: "s",
@@ -18,7 +18,7 @@ const dtos = {
         },
     },
     receive: {
-        유저와지사정보받아오기: {
+        myInfo: {
             brCode: "s",
             brName: "s",
             brTelNo: "s",
@@ -33,20 +33,22 @@ const dtos = {
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
     getMyInfo() { // 지사와 로그인한 유저의 정보를 가져온다.
-        CommonUI.ajax("/api/", "GET", false, function (res) {
-
+        CommonUI.ajax("/api/manager/myInfo", "GET", false, function (res) {
+            const data = res.sendData.branchInfoDto;
+            console.log(data);
+            dv.chk(data, dtos.receive.myInfo, "지사, 유저 정보 받아오기");
+            putInData(data);
         });
     },
     setBrInfo(brData) {
-        console.log(brData);
-        CommonUI.ajax("/api/", "GET", brData, function (res) {
-
+        CommonUI.ajax("/api/manager/branchInfoSave", "PARAM", brData, function (res) {
+            alertSuccess("지사 정보 변경 완료");
         });
     },
     setUserInfo(userData) {
         console.log(userData);
-        CommonUI.ajax("/api/", "GET", userData, function (res) {
-
+        CommonUI.ajax("/api/manager/branchMyInfoSave", "PARAM", userData, function (res) {
+            alertSuccess("나의 정보 변경 완료");
         });
     },
 };
@@ -55,6 +57,10 @@ const comms = {
 const trigs = {
     basic() {
         $("#saveBrBtn").on("click", function () {
+            if($("#brName").val() === "") {
+                alertCaution("지사명을 입력해 주세요.", 1);
+                return false;
+            }
             alertCheck("지사 정보를 저장하시겠습니까?");
             $("#checkDelSuccessBtn").on("click", function () {
                 saveBr();
@@ -62,6 +68,21 @@ const trigs = {
         });
 
         $("#saveUserBtn").on("click", function () {
+            if($("#userTel").val() === "") {
+                alertCaution("전화번호를 입력해 주세요.", 1);
+                return false;
+            }
+            // 현재 비밀번호 길이
+            const $nowPwLength = $("#nowPassword").val().length;
+            // 변결할 비밀번호 길이
+            const $newPwLength = $("#newPassword").val().length;
+            // 변경할 비밀번호 체크 길이
+            const $checkPwLength = $("#checkPassword").val().length;
+            if(($nowPwLength > 0 || $newPwLength > 0 || $checkPwLength > 0)
+                && ($nowPwLength === 0 || $newPwLength === 0 || $checkPwLength === 0)) {
+                alertCaution("비밀번호 변경 시 현재 비밀번호, 비밀번호 변경, 비밀번호 확인란 모두 입력해 주세요", 1);
+                return false;
+            }
             alertCheck("내 정보를 저장하시겠습니까?");
             $("#checkDelSuccessBtn").on("click", function () {
                 saveUser();
@@ -83,17 +104,23 @@ $(function() { // 페이지가 로드되고 나서 실행
 function onPageLoad() {
     trigs.basic();
 
-    // comms.getMyInfo();
+    comms.getMyInfo();
+}
+
+// 지사, 유저 정보 넣기
+function putInData(myInfoData) {
+    $("input[name='brCode']").val(myInfoData.brCode);
+    $("input[name='brName']").val(myInfoData.brName);
+    $("input[name='brTelNo']").val(CommonUI.formatTel(myInfoData.brTelNo));
+    $("input[name='userId']").val(myInfoData.userId);
+    $("input[name='userEmail']").val(myInfoData.userEmail);
+    $("input[name='userTel']").val(CommonUI.formatTel(myInfoData.userTel));
 }
 
 function saveBr() {
     const brData = {
         brName: $("#brName").val(),
-        brTelNo: $("#brTelNo").val(),
-    }
-    if(!brData.brName) {
-        alertCaution("지사명을 입력해 주세요.", 1);
-        return false;
+        brTelNo: $("#brTelNo").val().numString(),
     }
 
     comms.setBrInfo(brData);
@@ -102,11 +129,14 @@ function saveBr() {
 function saveUser() {
     const userData = {
         userEmail: $("#userEmail").val(),
-        userTel: $("#userTel").val(),
+        userTel: $("#userTel").val().numString(),
         nowPassword: $("#nowPassword").val(),
         newPassword: $("#newPassword").val(),
         checkPassword: $("#checkPassword").val(),
     }
-
+    if(userData.newPassword != userData.checkPassword) {
+        alertCaution("변경할 비밀번호와 확인이 일치하지 않습니다.", 1);
+        return false;
+    }
     comms.setUserInfo(userData);
 }

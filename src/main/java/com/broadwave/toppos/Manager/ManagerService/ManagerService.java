@@ -32,6 +32,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -260,6 +261,7 @@ public class ManagerService {
     }
 
     // 지사 나의정보관리 수정 API
+    @Transactional
     public ResponseEntity<Map<String, Object>> branchMyInfoSave(String userEmail, String userTel, String nowPassword, String newPassword, String checkPassword, HttpServletRequest request) {
         log.info("branchPassword 호출");
 
@@ -292,10 +294,14 @@ public class ManagerService {
             }
 
             if(!nowPassword.equals("")){
+
+                log.info("nowPassword : "+nowPassword);
+
                 //현재암호비교
                 if (!passwordEncoder.matches(nowPassword,optionalAccount.get().getPassword())){
                     return ResponseEntity.ok(res.fail(ResponseErrorCode.TP020.getCode(), "현재 "+ResponseErrorCode.TP020.getDesc(), null, null));
                 }
+
                 if(!newPassword.equals(checkPassword)){
                     return ResponseEntity.ok(res.fail(ResponseErrorCode.TP021.getCode(), ResponseErrorCode.TP021.getDesc(), null, null));
                 }
@@ -305,9 +311,9 @@ public class ManagerService {
             optionalAccount.get().setModify_id(login_id);
             optionalAccount.get().setModifyDateTime(LocalDateTime.now());
 
-            Account accountSave =  accountService.save(optionalAccount.get());
+//            Account accountSave =  accountService.save(optionalAccount.get());
 
-            log.info("사용자정보(패스워드)수정 성공 아이디 : " + accountSave.getUserid() +"'" );
+//            log.info("사용자정보(패스워드)수정 성공 아이디 : " + accountSave.getUserid() +"'" );
         }
 
 
