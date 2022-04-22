@@ -119,6 +119,7 @@ public class FranchiseRepositoryCustomImpl extends QuerydslRepositorySupport imp
                     franchise.frEstimateDuration,
                     franchise.frLastTagno,
                     franchise.frTagNo,
+                    franchise.frTagType,
 
                     franchise.frBusinessNo,
                     franchise.frRpreName,

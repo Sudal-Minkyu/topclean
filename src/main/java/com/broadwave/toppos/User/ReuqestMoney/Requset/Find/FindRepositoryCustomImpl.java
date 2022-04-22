@@ -143,4 +143,20 @@ public class FindRepositoryCustomImpl extends QuerydslRepositorySupport implemen
         return query.executeUpdate();
     }
 
+    public FindDto findByFind(Long fdId){
+
+        QFind find = QFind.find;
+        QRequestDetail requestDetail = QRequestDetail.requestDetail;
+
+        JPQLQuery<FindDto> query = from(find)
+                .innerJoin(requestDetail).on(requestDetail.eq(find.fdId))
+                .select(Projections.constructor(FindDto.class,
+                        requestDetail.id
+                ));
+
+        query.where(requestDetail.id.eq(fdId));
+
+        return query.fetchOne();
+    }
+
 }

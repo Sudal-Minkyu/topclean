@@ -33,7 +33,6 @@ import com.broadwave.toppos.User.ReuqestMoney.Requset.Request;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotMainListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotMapperDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.PhotoDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailDeliveryDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailFdStateCountDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailUpdateDto;
@@ -130,13 +129,13 @@ public class UserRestController {
         this.templateService = templateService;
     }
 
-    // 가맹점의 탭번호와 탭번호타입 호출 API
-    @GetMapping("franchiseTagData")
-    @ApiOperation(value = "가맹점의 탭번호와 탭번호타입 호출" , notes = "현재 가맹점의 탭번호와 탭번호타입 정보를 가져온다.")
-    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
-    public ResponseEntity<Map<String,Object>> franchiseTagData(HttpServletRequest request){
-        return userService.franchiseTagData(request);
-    }
+//    // 가맹점의 탭번호와 탭번호타입 호출 API -> 사용안함 22.04.22
+//    @GetMapping("franchiseTagData")
+//    @ApiOperation(value = "가맹점의 탭번호와 탭번호타입 호출" , notes = "현재 가맹점의 탭번호와 탭번호타입 정보를 가져온다.")
+//    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
+//    public ResponseEntity<Map<String,Object>> franchiseTagData(HttpServletRequest request){
+//        return userService.franchiseTagData(request);
+//    }
 
 //@@@@@@@@@@@@@@@@@@@@@ 가맹점 메인화면 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
         // 현재 로그인한 가맹점 정보 가져오기
@@ -683,8 +682,12 @@ public class UserRestController {
             customerListInfo.put("saveMoney", 0);
 
             // 세탁인도할 품목 리스트 호출
-            List<RequestDetailDeliveryDto> requestDetailDeliveryDtos = receiptStateService.requestDetailDelivery(frCode, optionalRequest.get().getBcId().getBcId());
-            customerListInfo.put("deliverySize",requestDetailDeliveryDtos.size());
+            if(optionalRequest.get().getBcId().getBcId() != null){
+                RequestDetailFdStateCountDto deliveryS5 = receiptStateService.findByRequestDetailFdStateS5Count(frCode, optionalRequest.get().getBcId().getBcId());
+                RequestDetailFdStateCountDto deliveryS8 = receiptStateService.findByRequestDetailFdStateS8Count(frCode, optionalRequest.get().getBcId().getBcId());
+                customerListInfo.put("deliveryS5",deliveryS5.getCount());
+                customerListInfo.put("deliveryS8",deliveryS8.getCount());
+            }
 
             customerListData.add(customerListInfo);
 
@@ -1261,8 +1264,8 @@ public class UserRestController {
     @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
     public ResponseEntity<Map<String,Object>> franchiseObjectFind(@RequestParam(value="searchTag", defaultValue="") String searchTag,
                                                                   @RequestParam("bcId")Long bcId, @RequestParam("filterFromDt")String filterFromDt,
-                                                                  @RequestParam("filterToDt")String filterToDt, HttpServletRequest request){
-        return findService.franchiseObjectFind(bcId, filterFromDt.replaceAll("-",""), filterToDt.replaceAll("-",""), request, searchTag);
+                                                                  @RequestParam("filterToDt")String filterToDt,  @RequestParam("ffStateType")String ffStateType ,HttpServletRequest request){
+        return findService.franchiseObjectFind(bcId, filterFromDt.replaceAll("-",""), filterToDt.replaceAll("-",""), request, searchTag, ffStateType);
     }
 
     // 가맹점 물건찾기 할 항목 저장

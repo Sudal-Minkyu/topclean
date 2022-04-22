@@ -49,6 +49,9 @@ const comms = {
         console.log(userData);
         CommonUI.ajax("/api/manager/branchMyInfoSave", "PARAM", userData, function (res) {
             alertSuccess("나의 정보 변경 완료");
+            $("#nowPassword").val("");
+            $("#newPassword").val("");
+            $("#checkPassword").val("");
         });
     },
 };

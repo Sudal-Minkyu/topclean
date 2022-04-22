@@ -13,4 +13,5 @@ public interface FindRepositoryCustom {
 
     int findByFindCheckUpdate(List<Long> ffIdList, String ffState, String login_id);
 
+    FindDto findByFind(Long id);
 }

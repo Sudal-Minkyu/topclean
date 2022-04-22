@@ -311,9 +311,9 @@ public class ManagerService {
             optionalAccount.get().setModify_id(login_id);
             optionalAccount.get().setModifyDateTime(LocalDateTime.now());
 
-//            Account accountSave =  accountService.save(optionalAccount.get());
+            Account accountSave =  accountService.save(optionalAccount.get());
 
-//            log.info("사용자정보(패스워드)수정 성공 아이디 : " + accountSave.getUserid() +"'" );
+            log.info("사용자정보(패스워드)수정 성공 아이디 : " + accountSave.getUserid() +"'" );
         }
 
 

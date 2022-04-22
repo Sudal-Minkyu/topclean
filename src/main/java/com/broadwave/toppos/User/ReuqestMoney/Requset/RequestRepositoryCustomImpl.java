@@ -702,7 +702,7 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
 
     // 물건찾기 등록 리스트 Dto
     @Override
-    public List<RequestFindListDto> findByRequestFindList(Long bcId, String frCode, String filterFromDt, String filterToDt, String searchTag){
+    public List<RequestFindListDto> findByRequestFindList(Long bcId, String frCode, String filterFromDt, String filterToDt, String searchTag, String ffStateType){
 
         QRequestDetail requestDetail = QRequestDetail.requestDetail;
         QRequest request = QRequest.request;
@@ -780,6 +780,10 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
                                 .when(requestDetail.fdPollutionLocBrf.eq("Y")).then(1)
                                 .otherwise(0)
                 ));
+
+        if(ffStateType.equals("02")){
+            query.where(find.ffState.isNotNull());
+        }
 
         if(searchTag != null && !searchTag.isEmpty() ){
             query.where(requestDetail.fdTag.likeIgnoreCase("%"+searchTag+"%"));

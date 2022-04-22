@@ -36,6 +36,7 @@ public class FranchiseInfoDto {
     private Integer frEstimateDuration; // 출고예정일
     private String frLastTagno; // 가맹점 태그번호
     private String frTagNo; // 가맹점 택번호 3자리
+    private String frTagType; // 2: 2자리, 3: 3자리
 
     private String frBusinessNo; // 사업자번호(10자리)
     private String frRpreName; // 가맹점주이름

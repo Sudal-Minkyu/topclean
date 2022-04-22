@@ -41,8 +41,6 @@ public class AppRunner implements ApplicationRunner {
             accountService.save(account1);
         }
 
-
-
     }
 
 }

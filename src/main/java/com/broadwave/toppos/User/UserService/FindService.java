@@ -2,6 +2,7 @@ package com.broadwave.toppos.User.UserService;
 
 import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Find.Find;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.Find.FindDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Find.FindListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Find.FindRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetail;
@@ -98,7 +99,7 @@ public class FindService {
     }
 
     // 가맹점 물건찾기 할 리스트 호출
-    public ResponseEntity<Map<String, Object>> franchiseObjectFind(Long bcId, String filterFromDt, String filterToDt, HttpServletRequest request, String searchTag) {
+    public ResponseEntity<Map<String, Object>> franchiseObjectFind(Long bcId, String filterFromDt, String filterToDt, HttpServletRequest request, String searchTag, String ffStateType) {
         log.info("franchiseObjectFind 호출");
 
         log.info("bcId : "+bcId);
@@ -118,7 +119,7 @@ public class FindService {
         log.info("접속한 가맹점 코드 : "+frCode);
         log.info("현재 접속한 가맹점 택번호 : "+frTagNo);
 
-        List<RequestFindListDto> requestFindListDtos = requestRepository.findByRequestFindList(bcId, frCode, filterFromDt, filterToDt, frTagNo+searchTag);
+        List<RequestFindListDto> requestFindListDtos = requestRepository.findByRequestFindList(bcId, frCode, filterFromDt, filterToDt, frTagNo+searchTag, ffStateType);
         data.put("gridListData",requestFindListDtos);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
@@ -148,15 +149,18 @@ public class FindService {
         List<RequestDetail> requestDetailList = requestDetailRepository.findByRequestDetailList(fdIdList);
         Find find;
         for (RequestDetail requestDetail : requestDetailList) {
-            find = new Find();
-            find.setFdId(requestDetail);
-            find.setFrCode(frCode);
-            find.setBrCode(frbrCode);
-            find.setFfYyyymmdd(nowDate);
-            find.setFfState("01");
-            find.setInsert_id(login_id);
-            find.setInsert_date(LocalDateTime.now());
-            findList.add(find);
+            FindDto findDto = findRepository.findByFind(requestDetail.getId());
+            if(findDto != null){
+                find = new Find();
+                find.setFdId(requestDetail);
+                find.setFrCode(frCode);
+                find.setBrCode(frbrCode);
+                find.setFfYyyymmdd(nowDate);
+                find.setFfState("01");
+                find.setInsert_id(login_id);
+                find.setInsert_date(LocalDateTime.now());
+                findList.add(find);
+            }
         }
 
         findRepository.saveAll(findList);

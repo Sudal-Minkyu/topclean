@@ -71,6 +71,7 @@ public class TokenProvider {
             accessToken = Jwts.builder()
                     .claim("frCode", optionalAccount.get().getFrCode())
                     .claim("frTagNo", franchiseInfoDto.getFrTagNo())
+                    .claim("frTagType", franchiseInfoDto.getFrTagType())
                     .claim("brCode", optionalAccount.get().getBrCode())
                     .claim("frbrCode", franchiseInfoDto.getBrCode())
                     .setSubject(authentication.getName())       // payload "sub": "name"

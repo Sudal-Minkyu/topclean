@@ -55,6 +55,6 @@ public interface RequestRepositoryCustom {
 
     List<RequestRealTimeListSubDto> findByRequestRealTimeSubList(String frYyyymmdd, String brCode); // 실시간접수현황 오른쪽
 
-    List<RequestFindListDto> findByRequestFindList(Long bcId, String frCode, String filterFromDt, String filterToDt, String searchTag); // 물건찾기 등록 리스트 Dto
+    List<RequestFindListDto> findByRequestFindList(Long bcId, String frCode, String filterFromDt, String filterToDt, String searchTag, String ffStateType); // 물건찾기 등록 리스트 Dto
 
 }
