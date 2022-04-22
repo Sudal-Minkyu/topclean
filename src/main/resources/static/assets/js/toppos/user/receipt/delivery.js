@@ -697,6 +697,10 @@ function onPageLoad() {
     });
 }
 
+function afterTagInfoLoaded() {
+    getParamsAndAction();
+}
+
 function putCustomer() {
     let bcGradeName = "";
     $(".client__badge").removeClass("active");

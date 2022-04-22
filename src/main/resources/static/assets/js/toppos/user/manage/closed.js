@@ -12,6 +12,8 @@ const dtos = {
     },
     receive: {
         franchiseReceiptCloseList: {
+            fdPollutionType: "n",
+            fdPollutionBack: "n",
             fdId: "nr",
             frYyyymmdd: "sr",
             bcName: "sr",

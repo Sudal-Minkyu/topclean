@@ -6,11 +6,6 @@ $(function() {
     /* 배열내의 각 설정만 넣어 빈 그리드 생성 */
     createGrids();
 
-    /* 그리드에 데이터를 집어넣음 반복문은 그리드숫자만큼(혹은 목표그리드 범위만큼) 돌 수 있도록 한다. */
-    for(let i=0; i<0; i++) {
-        setDataIntoGrid(i, gridCreateUrl[i]);
-    }
-
     /* 0번그리드 내의 셀 클릭시 이벤트 */
     AUIGrid.bind(gridId[0], "cellClick", function (e) {
         console.log(e.item); // 이밴트 콜백으로 불러와진 객체의, 클릭한 대상 row 키(파라메터)와 값들을 보여준다.

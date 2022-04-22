@@ -23,6 +23,8 @@ const dtos = {
     receive: {
 
         customerInfo: { // integrate 의 customerInfo와 같은 구성
+            deliveryS5: "n",
+            deliveryS8: "n",
             bcWeddingAnniversary: "d",
             bcAddress: "s",
             bcGrade: "s",
@@ -38,6 +40,8 @@ const dtos = {
         },
 
         franchiseReceiptForceList: {
+            fdPollutionType: "n",
+            fdPollutionBack: "n",
             fdId: "nr",
             fdState: "s",
             bcName: "sr",

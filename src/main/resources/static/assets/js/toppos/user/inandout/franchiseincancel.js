@@ -11,6 +11,8 @@ const dtos = {
     },
     receive: {
         franchiseReceiptFranchiseInList: {
+            fdPollutionType: "n",
+            fdPollutionBack: "n",
             fdId: "nr",
             fdS5Dt: "s",
             bcName: "sr",

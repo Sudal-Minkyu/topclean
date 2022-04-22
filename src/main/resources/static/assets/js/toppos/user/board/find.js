@@ -24,6 +24,8 @@ const dtos = {
     },
     receive: {
         franchiseObjectFind: {
+            fdPollutionType: "n",
+            fdPollutionBack: "n",
             fdId: "n",
             bcName: "s",
             frYyyymmdd: "s",
@@ -53,6 +55,8 @@ const dtos = {
         },
 
         customerInfo: { // integrate 의 customerInfo와 같은 구성
+            deliveryS5: "n",
+            deliveryS8: "n",
             bcWeddingAnniversary: "d",
             bcAddress: "s",
             bcGrade: "s",
@@ -98,7 +102,6 @@ const comms = {
                     location.href="/user/customerreg";
                 });
             }
-
         });
     },
 

@@ -39,6 +39,7 @@ const dtos = {
 	},
 	receive: {
 		myInfo: {
+			frRemark: "s",
 			frDepositAmount: "n", // 2022.03.29 추가
 			frRentalAmount: "n", // 2022.03.29 추가
 			frCode: "sr",

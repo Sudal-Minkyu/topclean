@@ -268,6 +268,8 @@ const dtos = {
         },
 
         customerInfo: { // 접수 페이지의 고객 정보 가져오는 부분과 동일
+            deliveryS5: "n",
+            deliveryS8: "n",
             bcWeddingAnniversary: "d",
             bcAddress: "s",
             bcGrade: "s",
@@ -305,6 +307,7 @@ const dtos = {
                 bcWhitening: "nr",
             },
             etcData: {
+                frTagNo: "s",
                 frMultiscreenYn: "s", // 2022.03.10 추가
                 fdTag: "s",
                 frBusinessNo: "s",
@@ -1750,9 +1753,6 @@ function onPageLoad() {
     trigs.modify();
     trigs.subMenu();
 
-    chkParams();
-
-
     // lightbox option
     lightbox.option({
         'maxWidth': 1100,
@@ -1761,8 +1761,10 @@ function onPageLoad() {
 
     $('.pop__close').on('click', function(e) {
         $(this).parents('.pop').removeClass('active');
-    })
+    });
+}
 
+function afterTagInfoLoaded() {
     getParamsAndAction();
 }
 
@@ -2629,6 +2631,14 @@ function chkParams() {
     const url = new URL(wares.url);
     wares.params = url.searchParams;
 
+
+}
+
+/* 브라우저의 get 파라미터들을 가져오고 그에 따른 작업을 반영하기 위해 */
+function getParamsAndAction() {
+    const url = new URL(window.location.href);
+    const params = url.searchParams;
+
     if(wares.params.has("fdTag") && wares.params.has("frYyyymmdd")) {
         const dateNum = wares.params.get("frYyyymmdd");
         const date = dateNum.substring(0, 4) + "-" + dateNum.substring(4, 6) + "-" + dateNum.substring(6, 8);
@@ -2637,6 +2647,11 @@ function chkParams() {
         $("#filterFromDt").val(date);
         $("#filterToDt").val(date);
         $("#searchCustomer").trigger("click");
+    } else if (params.has("bchp")) {
+        const bcHp = params.get("bchp");
+        $("#searchType").val("2");
+        $("#searchString").val(bcHp);
+        searchCustomer();
     }
 }
 
@@ -2794,18 +2809,7 @@ function addDistinguishableCellColor() {
     AUIGrid.refresh(grids.s.id[0]);
 }
 
-/* 브라우저의 get 파라미터들을 가져오고 그에 따른 작업을 반영하기 위해 */
-function getParamsAndAction() {
-    const url = new URL(window.location.href);
-    const params = url.searchParams;
 
-    if(params.has("bchp")) {
-        const bcHp = params.get("bchp");
-        $("#searchType").val("2");
-        $("#searchString").val(bcHp);
-        searchCustomer();
-    }
-}
 
 function setTopMenuHref() {
     if(wares.selectedCustomer.bcHp) {
