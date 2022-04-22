@@ -12,6 +12,10 @@ const dtos = {
     },
     receive: {
         franchiseReceiptFranchiseInList: {
+            bcId: "n",
+            fdPollutionType: "n",
+            fdPollutionBack: "n",
+            SMS: "",
             fdId: "nr",
             fdS4Dt: "s",
             fdS4Type: "s", // 2022.03.03 추가

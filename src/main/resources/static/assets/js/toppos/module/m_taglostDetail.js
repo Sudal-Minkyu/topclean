@@ -33,11 +33,12 @@ function getTaglostDetail(getCondition) {
         let responseList = ""
         for(const fr of wares.currentRequest.tagGalleryCheckList) {
             // tag번호 포맷 변환
-            console.log(frTagInfo);
-            const resultTagNo = CommonData.formatFrTagNo(fr.brTag, frTagInfo.frTagType);
-            responseList += fr.frName + " ";
-            responseList += fr.brCompleteYn === "Y" ? `(완료, ${resultTagNo})` : `(확인요청, ${resultTagNo})`;
-            responseList += " ,"
+            if(fr.brTag && frTagInfo.frTagType) {
+                const resultTagNo = CommonData.formatFrTagNo(fr.brTag, frTagInfo.frTagType);
+                responseList += fr.frName + " ";
+                responseList += fr.brCompleteYn === "Y" ? `(완료, ${resultTagNo})` : `(확인요청, ${resultTagNo})`;
+                responseList += " ,"
+            }
         }
         $("#frResponse").val(responseList.substring(0, responseList.length - 2));
 

@@ -25,6 +25,8 @@ const dtos = {
     },
     receive: {
         customerInfo: { // integrate 의 customerInfo와 같은 구성
+            deliveryS5: "n",
+            deliveryS8: "n",
             bcWeddingAnniversary: "d",
             bcAddress: "s",
             bcGrade: "s",
@@ -36,7 +38,7 @@ const dtos = {
             bcValuation: "s",
             uncollectMoney: "nr",
             saveMoney: "nr",
-            tempSaveFrNo: "n",
+            tempSaveFrNo: "s",
         },
 
         franchiseReceiptDeliveryList: {
@@ -269,7 +271,7 @@ const grids = {
                     labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
                         let template = "";
                         if(item.photoList && item.photoList.length) {
-                            template = `<img src="/assets/images/icon__picture.svg" onclick="openReceiptPhotoPop(${rowIndex})">`;
+                            template = `<img src="/assets/images/icon__picture.svg" onclick="openReceiptPhotoPop(${rowIndex})"> `;
                         }
 
                         return template + CommonUI.toppos.processName(item);
@@ -537,6 +539,7 @@ const trigs = {
                     bcRemark: "",
                 };
                 putCustomer();
+                calculateTotStatus();
             });
 
             $("#deliverLaundry").on("click", function () {
@@ -692,6 +695,10 @@ function onPageLoad() {
         'maxWidth': 1100,
         'positionFromTop': 190
     });
+}
+
+function afterTagInfoLoaded() {
+    getParamsAndAction();
 }
 
 function putCustomer() {
@@ -902,9 +909,17 @@ function uncollectPaymentStageOne() {
                     }
                     // 결제 실패의 경우
                     if (resjson.STATUS === "FAILURE") {
-                        console.log(resjson);
                         $('#payStatus').hide();
-                        alertCancel("단말기 처리 중 에러가 발생하였습니다<br>잠시후 다시 시도해주세요");
+                        if(resjson.ERRORDATA === "erroecode:404, error:error") {
+                            alertCancel("카드결제 단말기 연결이 감지되지 않습니다.<br>연결을 확인해 주세요.");
+                        } else if (resjson.ERRORDATA === "erroecode:0, error:timeout") {
+                            alertCancel("유효 결제 시간이 지났습니다.<br>다시 결제창 버튼을 이용하여<br>원하시는 기능을 선택 해주세요.");
+                        } else if(resjson.ERRORMESSAGE === "단말기에서종료키누름 /                  /                 ") {
+                            alertCancel("단말기 종료키를 통해 결제가 중지되었습니다.");
+                        } else {
+                            alertCancel(resjson.ERRORMESSAGE);
+                            console.log(resjson);
+                        }
                     }
                 });
             }catch (e) {
@@ -1073,4 +1088,11 @@ function closeBrInspectPop(doRefresh = false) {
     }
     $("#brInspectPop").removeClass("active");
     resetBrInspectPop();
+}
+
+function resetFrInspectViewPop() {
+    $("#frViewFdTotAmtInPut").val("");
+    $("#frViewFiAddAmt").val("0");
+    $("#frViewFiComment").val("");
+    $("#frViewPhotoList").html("");
 }

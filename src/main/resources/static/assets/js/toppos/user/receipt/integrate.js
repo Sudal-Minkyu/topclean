@@ -268,6 +268,8 @@ const dtos = {
         },
 
         customerInfo: { // 접수 페이지의 고객 정보 가져오는 부분과 동일
+            deliveryS5: "n",
+            deliveryS8: "n",
             bcWeddingAnniversary: "d",
             bcAddress: "s",
             bcGrade: "s",
@@ -305,6 +307,7 @@ const dtos = {
                 bcWhitening: "nr",
             },
             etcData: {
+                frTagNo: "s",
                 frMultiscreenYn: "s", // 2022.03.10 추가
                 fdTag: "s",
                 frBusinessNo: "s",
@@ -1297,6 +1300,12 @@ const trigs = {
         $("#vkeyboard3").on("click", function() {
             onShowVKeyboard(3);
         });
+        $("#vkeyboard4").on("click", function() {
+            onShowVKeyboard(4);
+        });
+        $("#vkeypad0").on("click", function() {
+            onShowVKeypad(0);
+        });
 
         // 구 검품 이벤트
         // $("#vkeyboard4").on("click", function() {
@@ -1744,9 +1753,6 @@ function onPageLoad() {
     trigs.modify();
     trigs.subMenu();
 
-    chkParams();
-
-
     // lightbox option
     lightbox.option({
         'maxWidth': 1100,
@@ -1755,8 +1761,10 @@ function onPageLoad() {
 
     $('.pop__close').on('click', function(e) {
         $(this).parents('.pop').removeClass('active');
-    })
+    });
+}
 
+function afterTagInfoLoaded() {
     getParamsAndAction();
 }
 
@@ -2019,8 +2027,8 @@ function enableDatepicker() {
 
 function onShowVKeyboard(num) {
     /* 가상키보드 사용을 위해 */
-    let vkeyProp = [];
-    const vkeyTargetId = ["searchString", "fdRemark", "fdRepairRemark", "fdAdd1Remark", "fiComment"];
+    const vkeyProp = [];
+    const vkeyTargetId = ["searchString", "fdRemark", "fdRepairRemark", "fdAdd1Remark", "frEditFiComment"];
 
     vkeyProp[0] = {
         title: $("#searchType option:selected").html() + " (검색)",
@@ -2044,6 +2052,19 @@ function onShowVKeyboard(num) {
     };
 
     vkey.showKeyboard(vkeyTargetId[num], vkeyProp[num]);
+}
+
+function onShowVKeypad(num) {
+    const vkeypadProp = [];
+    const vkeypadTargetId = ["frEditFiAddAmt"];
+
+    vkeypadProp[0] = {
+        title : "추가비용 입력",
+        callback : function () {
+            return $("#" + vkeypadTargetId).val(parseInt($("#" + vkeypadTargetId).val()).toLocaleString());
+        }
+    }
+    vkey.showKeypad(vkeypadTargetId[num], vkeypadProp[0]);
 }
 
 function mainSearch() {
@@ -2610,6 +2631,14 @@ function chkParams() {
     const url = new URL(wares.url);
     wares.params = url.searchParams;
 
+
+}
+
+/* 브라우저의 get 파라미터들을 가져오고 그에 따른 작업을 반영하기 위해 */
+function getParamsAndAction() {
+    const url = new URL(window.location.href);
+    const params = url.searchParams;
+
     if(wares.params.has("fdTag") && wares.params.has("frYyyymmdd")) {
         const dateNum = wares.params.get("frYyyymmdd");
         const date = dateNum.substring(0, 4) + "-" + dateNum.substring(4, 6) + "-" + dateNum.substring(6, 8);
@@ -2618,6 +2647,11 @@ function chkParams() {
         $("#filterFromDt").val(date);
         $("#filterToDt").val(date);
         $("#searchCustomer").trigger("click");
+    } else if (params.has("bchp")) {
+        const bcHp = params.get("bchp");
+        $("#searchType").val("2");
+        $("#searchString").val(bcHp);
+        searchCustomer();
     }
 }
 
@@ -2680,6 +2714,15 @@ function resetFdAddInputs() {
 }
 
 function closeFrInspectEditPop(doRefresh = false) {
+    if(wares.isCameraExist) {
+        try {
+            wares.cameraStream.getTracks().forEach(function (track) {
+                track.stop();
+            });
+        }catch (e) {
+            CommonUI.toppos.underTaker(e, "integrate : 카메라 스트림 트랙 감지하여 취소");
+        }
+    }
     if(doRefresh) {
         comms.franchiseRequestDetailSearch(wares.currentCondition);
     }
@@ -2766,18 +2809,7 @@ function addDistinguishableCellColor() {
     AUIGrid.refresh(grids.s.id[0]);
 }
 
-/* 브라우저의 get 파라미터들을 가져오고 그에 따른 작업을 반영하기 위해 */
-function getParamsAndAction() {
-    const url = new URL(window.location.href);
-    const params = url.searchParams;
 
-    if(params.has("bchp")) {
-        const bcHp = params.get("bchp");
-        $("#searchType").val("2");
-        $("#searchString").val(bcHp);
-        searchCustomer();
-    }
-}
 
 function setTopMenuHref() {
     if(wares.selectedCustomer.bcHp) {

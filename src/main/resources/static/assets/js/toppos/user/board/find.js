@@ -24,6 +24,8 @@ const dtos = {
     },
     receive: {
         franchiseObjectFind: {
+            fdPollutionType: "n",
+            fdPollutionBack: "n",
             fdId: "n",
             bcName: "s",
             frYyyymmdd: "s",
@@ -53,6 +55,8 @@ const dtos = {
         },
 
         customerInfo: { // integrate 의 customerInfo와 같은 구성
+            deliveryS5: "n",
+            deliveryS8: "n",
             bcWeddingAnniversary: "d",
             bcAddress: "s",
             bcGrade: "s",
@@ -98,7 +102,6 @@ const comms = {
                     location.href="/user/customerreg";
                 });
             }
-
         });
     },
 
@@ -361,6 +364,7 @@ const trigs = {
         $("#requestSearch").on("click", function () {
             const checkedItems = grids.f.getCheckedItems(0);
             const target = makeTargetDataset(checkedItems);
+            if(!target) return false;
             if (checkedItems.length) {
                 alertCheck("선택된 상품을 찾을 물건으로 등록 하시겠습니까?");
                 $("#checkDelSuccessBtn").on("click", function () {
@@ -378,6 +382,12 @@ const trigs = {
             } else {
                 location.href = "/user/unpaid";
             }
+        });
+
+        // 팝업 닫기
+        $('.pop__close').on('click', function(e) {
+            $(this).parents('.pop').removeClass('active');
+            e.preventDefault()
         });
     },
 }
@@ -551,9 +561,14 @@ function mainSearch() {
 
 function makeTargetDataset(checkedItems) { // 저장 데이터셋 만들기
     let fdIdList = [];
-    checkedItems.forEach(data => {
+
+    for(const data of checkedItems) {
         fdIdList.push(data.item.fdId);
-    });
+        if(["01", "02", "03"].includes(data.item.ffState)) {
+            alertCaution("이미 찾기를 요청하신 품목이 있습니다.", 1);
+            return false;
+        }
+    }
     const target = {
         fdIdList: fdIdList,
     };

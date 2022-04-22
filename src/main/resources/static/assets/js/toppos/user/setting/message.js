@@ -98,12 +98,15 @@ const comms = {
         console.log(sendMessage);
         CommonUI.ajax("/api/user/messageSendCustomer", "PARAM", sendMessage, function (res) {
             alertSuccess("문자메시지 발송이 완료되었습니다.");
-            console.log(res);
+            grids.f.clear(0);
+            grids.f.clear(1);
+            $("#numberOfTargetCustomers").html("0000");
+            comms.getCustomers(wares.getCondition);
         });
     },
 
     getCustomers(getCondition) {
-        console.log(getCondition);
+        wares.getCondition = getCondition;
         CommonUI.ajax("/api/user/messageCustomerList", "GET", getCondition, function (res) {
             console.log(res);
             const data = res.sendData.gridListData;
@@ -486,11 +489,19 @@ const trigs = {
             getSendRecordSummary();
         });
     },
+
+    vkeys() {
+        for(let i = 0; i < 14; i++) {
+            $("#vkeyboard" + i).on("click", function() {
+                onShowVKeyboard(i);
+            });
+        }
+    },
 }
 
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
 const wares = {
-
+    getCondition: {},
 }
 
 $(function() {
@@ -502,7 +513,11 @@ function onPageLoad() {
     grids.f.initialization();
     grids.f.create();
 
+    /* 가상키보드의 사용 선언 */
+    window.vkey = new VKeyboard();
+
     trigs.basic();
+    trigs.vkeys();
     enableDatepicker();
     comms.getTemplate();
 }
@@ -621,4 +636,21 @@ function getSendRecordSummary() {
     }
 
     comms.getSendRecordSummary(searchCondition);
+}
+
+function onShowVKeyboard(num) {
+    /* 가상키보드 사용을 위해 */
+    const vkeyProp = [];
+    const vkeyTargetId = ["filterString", "fmMessage", "vtarget2", "vtarget3", "vtarget4", "vtarget5", "vtarget6"
+        , "vtarget7", "vtarget8", "vtarget9", "vtarget10", "vtarget11", "vtarget12", "vtarget13"];
+
+    vkeyProp[num] = {
+        title: $("#" + vkeyTargetId[num]).attr("placeholder"),
+    };
+
+    if(num === 0) {
+        vkeyProp[num].callback = setCustomerFilter;
+    }
+
+    vkey.showKeyboard(vkeyTargetId[num], vkeyProp[num]);
 }
