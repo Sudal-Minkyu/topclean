@@ -1297,6 +1297,12 @@ const trigs = {
         $("#vkeyboard3").on("click", function() {
             onShowVKeyboard(3);
         });
+        $("#vkeyboard4").on("click", function() {
+            onShowVKeyboard(4);
+        });
+        $("#vkeypad0").on("click", function() {
+            onShowVKeypad(0);
+        });
 
         // 구 검품 이벤트
         // $("#vkeyboard4").on("click", function() {
@@ -2019,8 +2025,8 @@ function enableDatepicker() {
 
 function onShowVKeyboard(num) {
     /* 가상키보드 사용을 위해 */
-    let vkeyProp = [];
-    const vkeyTargetId = ["searchString", "fdRemark", "fdRepairRemark", "fdAdd1Remark", "fiComment"];
+    const vkeyProp = [];
+    const vkeyTargetId = ["searchString", "fdRemark", "fdRepairRemark", "fdAdd1Remark", "frEditFiComment"];
 
     vkeyProp[0] = {
         title: $("#searchType option:selected").html() + " (검색)",
@@ -2044,6 +2050,19 @@ function onShowVKeyboard(num) {
     };
 
     vkey.showKeyboard(vkeyTargetId[num], vkeyProp[num]);
+}
+
+function onShowVKeypad(num) {
+    const vkeypadProp = [];
+    const vkeypadTargetId = ["frEditFiAddAmt"];
+
+    vkeypadProp[0] = {
+        title : "추가비용 입력",
+        callback : function () {
+            return $("#" + vkeypadTargetId).val(parseInt($("#" + vkeypadTargetId).val()).toLocaleString());
+        }
+    }
+    vkey.showKeypad(vkeypadTargetId[num], vkeypadProp[0]);
 }
 
 function mainSearch() {
@@ -2680,6 +2699,15 @@ function resetFdAddInputs() {
 }
 
 function closeFrInspectEditPop(doRefresh = false) {
+    if(wares.isCameraExist) {
+        try {
+            wares.cameraStream.getTracks().forEach(function (track) {
+                track.stop();
+            });
+        }catch (e) {
+            CommonUI.toppos.underTaker(e, "integrate : 카메라 스트림 트랙 감지하여 취소");
+        }
+    }
     if(doRefresh) {
         comms.franchiseRequestDetailSearch(wares.currentCondition);
     }

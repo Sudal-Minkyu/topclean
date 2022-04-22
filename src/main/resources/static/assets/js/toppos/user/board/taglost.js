@@ -110,9 +110,12 @@ const grids = {
                 {
                     dataField: "insertDateTime",
                     headerText: "등록일시",
-                    width: 150,
+                    width: 90,
                     dataType: "date",
-                    formatString: "yyyy-mm-dd hh:mm",
+                    renderer : {
+                        type: "TemplateRenderer",
+                    },
+                    formatString: "yyyy-mm-dd<br>hh:mm",
                 }, {
                     dataField: "btBrandName",
                     headerText: "추정브랜드",
@@ -120,7 +123,7 @@ const grids = {
                 }, {
                     dataField: "btInputDate",
                     headerText: "예상지사<br>입고일",
-                    width: 100,
+                    width: 90,
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
                 }, {
@@ -168,8 +171,7 @@ const grids = {
                 }, {
                     dataField: "brCloseYn",
                     headerText: "종료",
-                    width: 35,
-                    style: "grid_textalign_left",
+                    width: 40,
                 }, {
                     dataField: "detail",
                     headerText: "상세보기",

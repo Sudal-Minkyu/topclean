@@ -92,17 +92,21 @@
 	<script type="text/javascript">
 		window.frTagInfo = {}
 		$(document).ready(function() {
-			CommonUI.ajax("/api/user/franchiseTagData", "GET", false, function (res) {
-				const data = res.sendData.franchiseTagDataDto;
-				frTagInfo.frTagNo = data.frTagNo;
-				frTagInfo.frTagType = data.frTagType.toInt();
-				try {
-					if (afterTagInfoLoaded) {
-						afterTagInfoLoaded();
+			const href = window.location.href;
+			const hlength = href.length;
+			if(href.substring(hlength - 9, hlength) !== "error/403") {
+				CommonUI.ajax("/api/user/franchiseTagData", "GET", false, function (res) {
+					const data = res.sendData.franchiseTagDataDto;
+					frTagInfo.frTagNo = data.frTagNo;
+					frTagInfo.frTagType = data.frTagType.toInt();
+					try {
+						if (afterTagInfoLoaded) {
+							afterTagInfoLoaded();
+						}
+					} catch (e) {
 					}
-				} catch (e) {
-				}
-			});
+				});
+			}
 
 			$('#openNav').on('click', function() {
 				$('.nav').addClass('active');
