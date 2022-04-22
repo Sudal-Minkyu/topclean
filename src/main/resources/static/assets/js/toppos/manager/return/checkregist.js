@@ -248,11 +248,11 @@ const comms = {
     putNewInspectNeo(formData) {
         const testObj = Object.fromEntries(formData);
         console.log(testObj);
-        // testObj.fdId = parseInt(testObj.fdId);
-        // testObj.fiAddAmt = parseInt(testObj.fiAddAmt) | 0;
-        // if(!testObj.addPhotoList) testObj.addPhotoList = []; // btId값이 없는 신규등록건
-        // if(!testObj.deletePhotoList) testObj.deletePhotoList = []; // btId값이 없는 신규등록건
-        // if(!testObj.fiId) testObj.fiId = 0;
+        testObj.fdId = parseInt(testObj.fdId);
+        testObj.fiAddAmt = parseInt(testObj.fiAddAmt) | 0;
+        if(!testObj.addPhotoList) testObj.addPhotoList = []; // btId값이 없는 신규등록건
+        if(!testObj.deletePhotoList) testObj.deletePhotoList = []; // btId값이 없는 신규등록건
+        if(!testObj.fiId) testObj.fiId = 0;
         
         dv.chk(testObj, dtos.send.branchInspectionSaveNeo, "확인품 등록");
 

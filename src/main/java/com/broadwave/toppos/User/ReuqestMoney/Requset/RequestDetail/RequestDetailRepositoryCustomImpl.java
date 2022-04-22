@@ -739,22 +739,21 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         EntityManager em = getEntityManager();
         StringBuilder sb = new StringBuilder();
 
-        System.out.println("뭐냐 : "+frCode);
-        System.out.println("이거 : "+bcId);
-
+        // bcId를 if문을 쓰지않고 입력하게되면 에러가 남 -> 이유를 모르겠음. bcId가 널값으로 가져올수도 있어서 그런지 확인해봤지만 그렇지않음
+        // 에러 내용 : org.hibernate.QueryException: JPA-style positional param was not an integral ordinal
         sb.append("SELECT COUNT(*) as count FROM fs_request_dtl a \n");
         sb.append("INNER JOIN fs_request b ON b.fr_id = a.fr_id \n");
         sb.append("INNER JOIN bs_customer c ON c.bc_id = b.bc_id \n");
+//        sb.append("WHERE a.fd_state = 'S5' AND b.fr_code = ?1 AND c.bc_id= ?2; \n");
         sb.append("WHERE a.fd_state = 'S5' AND b.fr_code = ?1 \n");
         if(bcId != null){
             sb.append("AND c.bc_id= ?2 \n");
         }
         sb.append("; \n");
-
         Query query = em.createNativeQuery(sb.toString());
 
         query.setParameter(1, frCode);
-        if(bcId != null){
+        if(bcId != null) {
             query.setParameter(2, bcId);
         }
 
