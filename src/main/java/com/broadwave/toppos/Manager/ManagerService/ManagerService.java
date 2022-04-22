@@ -293,9 +293,7 @@ public class ManagerService {
                 optionalAccount.get().setUsertel(userTel);
             }
 
-            if(!nowPassword.equals("")){
-
-                log.info("nowPassword : "+nowPassword);
+            if(!nowPassword.equals("") && !newPassword.equals("") && !checkPassword.equals("") ) {
 
                 //현재암호비교
                 if (!passwordEncoder.matches(nowPassword,optionalAccount.get().getPassword())){
@@ -308,11 +306,7 @@ public class ManagerService {
                 optionalAccount.get().setPassword(checkPassword);
             }
 
-            optionalAccount.get().setModify_id(login_id);
-            optionalAccount.get().setModifyDateTime(LocalDateTime.now());
-
-            Account accountSave =  accountService.save(optionalAccount.get());
-
+            Account accountSave =  accountService.saveUpdate(optionalAccount.get());
             log.info("사용자정보(패스워드)수정 성공 아이디 : " + accountSave.getUserid() +"'" );
         }
 
