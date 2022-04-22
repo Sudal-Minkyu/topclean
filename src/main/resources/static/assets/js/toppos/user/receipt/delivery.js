@@ -25,6 +25,8 @@ const dtos = {
     },
     receive: {
         customerInfo: { // integrate 의 customerInfo와 같은 구성
+            deliveryS5: "n",
+            deliveryS8: "n",
             bcWeddingAnniversary: "d",
             bcAddress: "s",
             bcGrade: "s",
@@ -36,7 +38,7 @@ const dtos = {
             bcValuation: "s",
             uncollectMoney: "nr",
             saveMoney: "nr",
-            tempSaveFrNo: "n",
+            tempSaveFrNo: "s",
         },
 
         franchiseReceiptDeliveryList: {
@@ -900,7 +902,6 @@ function uncollectPaymentStageOne() {
                     // 결제 성공일경우
                     if (resjson.STATUS === "SUCCESS") {
                         uncollectPaymentStageTwo(paymentData, resjson);
-                        alertSuccess("카드 결제가 성공하였습니다.<br>단말기에서 카드를 제거해 주세요.");
                     }
                     // 결제 실패의 경우
                     if (resjson.STATUS === "FAILURE") {

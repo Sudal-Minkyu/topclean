@@ -226,11 +226,8 @@ function onPageLoad() {
     fromday = fromday.format("yyyy-MM-dd");
     const today = new Date().format("yyyy-MM-dd");
 
-    const condition = {
-        date: today.numString(),
-    }
 
-    comms.franchiseInfo(condition);
+
     CommonUI.setDatePicker(["historyDate"]);
 
     const $historyDate = $("#historyDate");
@@ -249,6 +246,14 @@ function onPageLoad() {
         'maxWidth': 1100,
         'positionFromTop': 190
     });
+}
+
+function afterTagInfoLoaded() {
+    const today = new Date().format("yyyy-MM-dd");
+    const condition = {
+        date: today.numString(),
+    }
+    comms.franchiseInfo(condition);
 }
 
 // 메인페이지 슬라이딩 텍스트
