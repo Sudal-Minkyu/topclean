@@ -40,7 +40,7 @@ public class AppRunner implements ApplicationRunner {
         if(!accountService.findByUserid(account1.getUserid()).isPresent()){
             accountService.save(account1);
         }
-
+        
     }
 
 }

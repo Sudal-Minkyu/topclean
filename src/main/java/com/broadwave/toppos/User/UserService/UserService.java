@@ -10,7 +10,6 @@ import com.broadwave.toppos.User.Addprocess.AddprocessRepositoryCustom;
 import com.broadwave.toppos.User.Customer.Customer;
 import com.broadwave.toppos.User.Customer.CustomerDtos.CustomerInfoDto;
 import com.broadwave.toppos.User.Customer.CustomerDtos.CustomerListDto;
-import com.broadwave.toppos.User.Customer.CustomerDtos.CustomerMessageListDto;
 import com.broadwave.toppos.User.Customer.CustomerRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Request;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailAmtDto;
@@ -31,7 +30,10 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * @author Minkyu
@@ -168,24 +170,24 @@ public class UserService {
         saveMoneyRepository.save(saveMoney);
     }
 
-//    // 가맹점의 탭번호와 탭번호타입 호출 API
-//    public ResponseEntity<Map<String, Object>> franchiseTagData(HttpServletRequest request) {
-//        log.info("franchiseTagData 호출");
-//
-//        AjaxResponse res = new AjaxResponse();
-//        HashMap<String, Object> data = new HashMap<>();
-//
-//        // 클레임데이터 가져오기
-//        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
-//        String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
-//        log.info("현재 접속한 가맹점 코드 : "+frCode);
-//
-//        FranchiseTagDataDto franchiseTagDataDto = franchiseRepository.findByFranchiseTag(frCode);
-//        log.info("franchiseTagDataDto : "+franchiseTagDataDto);
-//
-//        data.put("franchiseTagDataDto", franchiseTagDataDto);
-//
-//        return ResponseEntity.ok(res.dataSendSuccess(data));
-//    }
+    // 가맹점의 탭번호와 탭번호타입 호출 API
+    public ResponseEntity<Map<String, Object>> franchiseTagData(HttpServletRequest request) {
+        log.info("franchiseTagData 호출");
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
+        log.info("현재 접속한 가맹점 코드 : "+frCode);
+
+        FranchiseTagDataDto franchiseTagDataDto = franchiseRepository.findByFranchiseTag(frCode);
+        log.info("franchiseTagDataDto : "+franchiseTagDataDto);
+
+        data.put("franchiseTagDataDto", franchiseTagDataDto);
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
 
 }

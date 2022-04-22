@@ -129,13 +129,13 @@ public class UserRestController {
         this.templateService = templateService;
     }
 
-//    // 가맹점의 탭번호와 탭번호타입 호출 API -> 사용안함 22.04.22
-//    @GetMapping("franchiseTagData")
-//    @ApiOperation(value = "가맹점의 탭번호와 탭번호타입 호출" , notes = "현재 가맹점의 탭번호와 탭번호타입 정보를 가져온다.")
-//    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
-//    public ResponseEntity<Map<String,Object>> franchiseTagData(HttpServletRequest request){
-//        return userService.franchiseTagData(request);
-//    }
+    // 가맹점의 탭번호와 탭번호타입 호출 API -> 사용안함 22.04.22
+    @GetMapping("franchiseTagData")
+    @ApiOperation(value = "가맹점의 탭번호와 탭번호타입 호출" , notes = "현재 가맹점의 탭번호와 탭번호타입 정보를 가져온다.")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
+    public ResponseEntity<Map<String,Object>> franchiseTagData(HttpServletRequest request){
+        return userService.franchiseTagData(request);
+    }
 
 //@@@@@@@@@@@@@@@@@@@@@ 가맹점 메인화면 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
         // 현재 로그인한 가맹점 정보 가져오기
