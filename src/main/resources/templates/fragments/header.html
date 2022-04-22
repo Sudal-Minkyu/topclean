@@ -108,6 +108,10 @@
 				});
 			}
 
+			const token = window.localStorage.getItem('Authorization');
+			const parsedToken = readToken(token);
+			console.log(parsedToken);
+
 			$('#openNav').on('click', function() {
 				$('.nav').addClass('active');
 			});
@@ -119,6 +123,13 @@
 
 		function drawerOpen() {
 			CAT.CatCashdrawer();
+		}
+
+		function readToken (token) {
+			let base64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+			return JSON.parse(decodeURIComponent(atob(base64).split('').map(function(c) {
+				return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+			}).join('')));
 		}
 	</script>
 	
