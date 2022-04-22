@@ -303,7 +303,7 @@ public class ManagerService {
                 if(!newPassword.equals(checkPassword)){
                     return ResponseEntity.ok(res.fail(ResponseErrorCode.TP021.getCode(), ResponseErrorCode.TP021.getDesc(), null, null));
                 }
-                optionalAccount.get().setPassword(checkPassword);
+                optionalAccount.get().setPassword(passwordEncoder.encode(checkPassword));
             }
 
             Account accountSave =  accountService.saveUpdate(optionalAccount.get());
