@@ -81,6 +81,7 @@ const trigs = {
             const $newPwLength = $("#newPassword").val().length;
             // 변경할 비밀번호 체크 길이
             const $checkPwLength = $("#checkPassword").val().length;
+            // 비밀번호 3개 중 하나 이상이 입력 되었을 때, 나머지
             if(($nowPwLength > 0 || $newPwLength > 0 || $checkPwLength > 0)
                 && ($nowPwLength === 0 || $newPwLength === 0 || $checkPwLength === 0)) {
                 alertCaution("비밀번호 변경 시 현재 비밀번호, 비밀번호 변경, 비밀번호 확인란 모두 입력해 주세요", 1);

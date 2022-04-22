@@ -1480,6 +1480,13 @@ footer.footer > ul > li + li:before {
 	/* margin-right: 0.25rem; */
 	margin-left: 0;
 }
+.condition__radio.condition__radio--find {
+	align-items: center;
+	width: 8rem;
+}
+.condition__radio.condition__radio--find .c-radio {
+	width: auto;
+}
 /* .condition__radio .c-radio:last-child {
 	margin-right: 0;
 } */

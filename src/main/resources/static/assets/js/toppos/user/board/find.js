@@ -347,6 +347,7 @@ const trigs = {
                 searchTag: wares.searchTag,
                 filterFromDt: $("#filterFromDt").val(),
                 filterToDt: $("#filterToDt").val(),
+                ffStateType: $("input[name='request']:checked").val(),
             }
             comms.getDetailList(filterCondition);
         });
