@@ -489,8 +489,47 @@ textarea:disabled {
 .c-tabs__content {
 	display: none;
 }
+.c-tabs__content.c-tabs__content--padding {
+	padding: 20px;
+}
 .c-tabs__content.active {
 	display: block;
+}
+.c-tabs__content.c-tabs__content--flex.active {
+	display: flex;
+	flex-wrap: wrap;
+}
+.c-tabs__content.c-tabs__content--flex .c-tabs__inner {
+	flex: 1;
+	padding: 20px;
+}
+.c-tabs__content-header {
+	width: 100%;
+	height: 3rem;
+	margin-bottom: 1.25rem;
+	padding-bottom: 0.625rem;
+	border-bottom: 0.125rem solid #c8c8c8;
+}
+.c-tabs__content-header.c-tabs__content-header--non-padding {
+	height: auto;
+	margin: 0;
+	padding: 0;
+	border: 0 none;
+}
+.c-tabs__content-heading {
+	color: #000;
+	font-size: 1.5rem;
+}
+.c-tabs__content-body {
+	width: 100%;
+	flex: 1;
+}
+.c-tabs__console {
+	display: flex;
+	justify-content: center;
+}
+.c-tabs__console button + button {
+	margin-left: 1.25rem;
 }
 
 

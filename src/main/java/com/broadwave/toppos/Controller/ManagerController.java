@@ -144,4 +144,9 @@ public class ManagerController {
         return "manager/setting/board/write";
     }
 
+    // 문자메세지
+    @RequestMapping("message")
+    public String message(){
+        return "manager/setting/message";
+    }
 }

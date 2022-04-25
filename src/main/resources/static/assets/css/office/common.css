@@ -2017,6 +2017,243 @@ textarea {
     border-radius: 5px;
 }
 
+/* recipient */
+.recipient {
+	position: relative;
+	width: 100%;
+	margin-top: 20px;
+}
+.recipient__search {
+	width: 100%;
+}
+.recipient__search .search {
+	display: flex;
+	align-items: center;
+	width: 100%;
+}
+.recipient__search .c-search__input {
+	width: 13rem;
+}
+.recipient__count {
+	flex: 1;
+	font-size: 1rem;
+	text-align: right;
+}
+.recipient__count span {
+	color: #004a98;
+	font-weight: 700;
+}
+.recipient__grid-area {
+	display: flex;
+	flex-wrap: wrap;
+	margin-top: 1.25rem;
+}
+.recipient__grid {
+	width: 21.75rem;
+	position: relative;
+}
+.recipient__grid-btns {
+	display: flex;
+	flex-wrap: wrap;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	width: 3.75rem;
+}
+.recipient__btn {
+	display: block;
+	width: 2.5rem;
+	height: 2.5rem;
+	border: 0.063rem solid #004a98;
+	border-radius: 0.313rem;
+	text-indent: -9999rem;
+}
+.recipient__btn + .recipient__btn {
+	margin-top: 1.25rem;
+}
+.recipient__in {
+	background: #fff url(/assets/images/icon__arrow--right2-b.svg) no-repeat;
+	background-position: center center;
+	background-size: 2.5rem 2.5rem;
+}
+.recipient__out {
+	background: #fff url(/assets/images/icon__arrow--left2-b.svg) no-repeat;
+	background-position: center center;
+	background-size: 2.5rem 2.5rem;
+}
+
+/* sms */
+.sms {
+	display: flex;
+	flex-wrap: wrap;
+}
+.sms__write {
+	width: 12rem;
+}
+.sms__write .c-textarea textarea {
+	height: 5.125rem;
+}
+.sms__write .phone__byte {
+	margin: 0;
+}
+.sms__console {
+	flex: 1;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	margin-left: 1.25rem;
+}
+.sms__console-time {
+	display: flex;
+	flex-wrap: wrap;
+}
+.sms__time-item + .sms__time-item {
+	margin-left: 0.625rem;
+}
+.sms__time-item .c-select {
+	width: 4.125rem;
+}
+
+/* template */
+.template {
+	display: flex;
+	flex-wrap: wrap;
+	width: 100%;
+	margin-top: 15px;
+	padding: 0.625rem;
+	border: 0.063rem solid #bdbdbd;
+	border-radius: 0.313rem;
+}
+.template__title {
+	width: 100%;
+	padding: 0 0.625rem;
+}
+.template__item {
+	width: 33.3333%;
+	padding: 0.625rem;
+}
+
+/* template setting */
+.template-setting {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	align-items: center;
+	width: 570px;
+	margin: 0 auto;
+}
+.template-setting__item {
+	width: 33.3333%;
+	padding: 0.313rem;
+}
+
+/* phone dummy*/
+.phone-box {
+	position:relative;
+	width: 100%;
+	max-width: 180px;
+}
+.phone {
+	position: relative;
+	width: 100%;
+	height: 0;
+	padding-bottom: 170%;
+	background-color: #424242;
+	border-radius: 0.625rem;
+}
+.phone__inner {
+	position: absolute;
+	top: 1.25rem;
+	left: 0.625rem;
+	width: calc(100% - 1.25rem);
+	height: calc(100% - 2.5rem);
+	padding: 0.625rem;
+	background-color: #fff;
+	border-radius: 0.313rem;
+}
+.phone__inner .c-text + .c-textarea {
+	margin-top: 0.625rem;
+	height: calc(100% - 4.875rem);
+}
+.phone__inner .c-textarea textarea {
+	height: 100%;
+}
+.phone__inner .c-text input[type="text"]:read-only,
+.phone__inner .c-textarea textarea:read-only {
+	background-color: #fff;
+}
+.phone__byte {
+	margin-top: 0.313rem;
+	font-size: 0.875rem;
+	text-align: right;
+	line-height: 1.25rem;
+}
+.phone__check {
+	position: absolute;
+	top: -1.25rem;
+	left: -0.625rem;
+	width: calc(100% + 1.25rem);
+	height: calc(100% + 2.5rem);
+	background-color: transparent;
+}
+.phone__check input[type="radio"] {
+	overflow: hidden;
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	margin: -1px;
+	padding: 0;
+	clip: rect(0, 0, 0, 0);
+}
+.phone__check label {
+	display: block;
+	width: 100%;
+	height: 100%;
+	background-color: transparent;
+}
+.phone__check label:before {
+	content: " ";
+	display: block;
+	position: absolute;
+	bottom: 1.875rem;
+	left: 1.25rem;
+	width: 2.5rem;
+	height: 1rem;
+	background-color: #999;
+	-webkit-border-radius: 0.625rem;
+	-moz-border-radius: 0.625rem;
+	border-radius: 0.625rem;
+}
+.phone__check label:after {
+	content: " ";
+	display: block;
+	position: absolute;
+	bottom: 1.563rem;
+	left: 1.25rem;
+	width: 1.625rem;
+	height: 1.625rem;
+	background-color: #fff;
+	border: 0.063rem solid #999;
+	-webkit-border-radius: 50%;
+	-moz-border-radius: 50%;
+	border-radius: 50%;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	-webkit-transition: all .4s;
+	-moz-transition: all .4s;
+	-ms-transition: all .4s;
+	-o-transition: all .4s;
+	transition: all .4s;;
+}
+.phone__check input[type="radio"]:checked + label:before {
+	background-color: #0082F0;
+}
+.phone__check input[type="radio"]:checked + label:after {
+	left: 2.125rem;
+}
+
 
 /* grid 컬러박스 */
 .colorSquare {
