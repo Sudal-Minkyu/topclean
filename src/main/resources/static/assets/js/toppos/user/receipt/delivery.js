@@ -42,6 +42,16 @@ const dtos = {
         },
 
         franchiseReceiptDeliveryList: {
+            fdPollutionBack: "n",
+            photoList: "a",
+            brFiId: "n",
+            fdS4Type: "s",
+            frFiId: "n",
+            frFiCustomerConfirm: "s",
+            frInsertDt: "n",
+            brFiCustomerConfirm: "s",
+            fdPollutionType: "n",
+
             fdEstimateDt: "s",
             frRefType: "sr", // 1월 19일 추가
             bcName: "s", // 고객의 이름
@@ -695,10 +705,6 @@ function onPageLoad() {
         'maxWidth': 1100,
         'positionFromTop': 190
     });
-}
-
-function afterTagInfoLoaded() {
-    getParamsAndAction();
 }
 
 function putCustomer() {

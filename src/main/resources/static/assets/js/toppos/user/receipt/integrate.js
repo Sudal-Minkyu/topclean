@@ -192,13 +192,16 @@ const dtos = {
         },
 
         franchiseRequestDetailSearch: { // 접수 세부 테이블의 거의 모든 요소와, 고객이름
+            fdS6CancelYn: "s",
+            fdS6CancelTime: "s",
+            fdPollutionBack: "n",
             photoList: { // 2022.04.13 추가
                 ffId: "n",
                 ffPath: "s",
                 ffFilename: "s",
             },
-            fdPollutionType: "s",
-            frInsertDt: "s", // 2022.04.13 추가
+            fdPollutionType: "n",
+            frInsertDt: "n", // 2022.04.13 추가
             fdS6Time: "s", // 2022.04.13 추가
             frFiId: "n", // 2022.04.05 추가
             brFiId: "n", // 2022.04.05 추가
@@ -1748,6 +1751,8 @@ function onPageLoad() {
     grids.f.switchModifyMode(false);
     trigs.gridEvent();
 
+    getParamsAndAction();
+
     trigs.main();
     trigs.vkeys();
     trigs.modify();
@@ -1762,10 +1767,6 @@ function onPageLoad() {
     $('.pop__close').on('click', function(e) {
         $(this).parents('.pop').removeClass('active');
     });
-}
-
-function afterTagInfoLoaded() {
-    getParamsAndAction();
 }
 
 function modifyOrder(rowIndex) {
@@ -2626,18 +2627,10 @@ function printReceipt(frNo) {
     CommonUI.toppos.printReceipt(condition);
 }
 
-/* 넘어온 fdTag값이 있다면 해당 정보를 통해 검색한다. */
-function chkParams() {
-    const url = new URL(wares.url);
-    wares.params = url.searchParams;
-
-
-}
-
 /* 브라우저의 get 파라미터들을 가져오고 그에 따른 작업을 반영하기 위해 */
 function getParamsAndAction() {
     const url = new URL(window.location.href);
-    const params = url.searchParams;
+    wares.params = url.searchParams;
 
     if(wares.params.has("fdTag") && wares.params.has("frYyyymmdd")) {
         const dateNum = wares.params.get("frYyyymmdd");
@@ -2647,8 +2640,8 @@ function getParamsAndAction() {
         $("#filterFromDt").val(date);
         $("#filterToDt").val(date);
         $("#searchCustomer").trigger("click");
-    } else if (params.has("bchp")) {
-        const bcHp = params.get("bchp");
+    } else if (wares.params.has("bchp")) {
+        const bcHp = wares.params.get("bchp");
         $("#searchType").val("2");
         $("#searchString").val(bcHp);
         searchCustomer();

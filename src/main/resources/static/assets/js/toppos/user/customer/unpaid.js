@@ -61,6 +61,8 @@ const dtos = {
             uncollectMoney: "nr", // 미수금액
         },
         franchiseUncollectRequestDetailList: {
+            fdPollutionType: "n",
+            fdPollutionBack: "n",
             frYyyymmdd: "s",
             fdTag: "s",
             

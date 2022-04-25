@@ -286,11 +286,6 @@ function onPageLoad() {
 
     trigs.s.basicTrigger();
 
-    /* 생성된 그리드에 기본적으로 필요한 이벤트들을 적용한다. */
-    // grids.e.basicEvent();
-}
-
-function afterTagInfoLoaded() {
     comms.getClosedList();
 }
 
