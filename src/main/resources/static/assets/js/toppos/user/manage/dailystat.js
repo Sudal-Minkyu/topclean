@@ -165,7 +165,7 @@ const grids = {
                     },]
                 }, {
                     dataField: "averageReceiptMoney",
-                    headerText: "고객평균<br>접수단가",
+                    headerText: "객단가",
                     style: "grid_textalign_right",
                     dataType: "numeric",
                     autoThousandSeparator: "true",

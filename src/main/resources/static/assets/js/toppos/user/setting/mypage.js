@@ -708,6 +708,8 @@ function putFrInfoDataInField(myInfoData) {
 	$("input[name='frRpreName']").val(myInfoData.frRpreName);
 	$("input[name='frTelNo']").val(CommonUI.formatTel(myInfoData.frTelNo));
 	$("#frTagNo").val(myInfoData.frTagNo);
+	$("#frEstimateDurationMinus1").val(myInfoData.frEstimateDuration < 2
+		? "" : myInfoData.frEstimateDuration - 1);
 	$("#frEstimateDuration").val(myInfoData.frEstimateDuration);
 	$("input[name='frPostNo']").val(myInfoData.frPostNo);
 	$("input[name='frAddress']").val(myInfoData.frAddress);

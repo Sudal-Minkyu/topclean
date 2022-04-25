@@ -611,6 +611,8 @@ function setFieldData(numOfGrid, item) {
             $("#frTelNo").val(CommonUI.formatTel(item.frTelNo));
             $(`input[name='frTagType']:input[value='${item.frTagType}']`).trigger("click");
             $("#frTagNo").val(item.frTagNo);
+            $("#frEstimateDurationMinus1").val(item.frEstimateDuration < 2
+                ? "" : item.frEstimateDuration - 1);
             $("#frEstimateDuration").val(item.frEstimateDuration);
             $("#frRemark").val(item.frRemark);
             $("#frPostNo").val(item.frPostNo);
@@ -776,6 +778,11 @@ function validateNumber(element, type) {
             break;
         case 2 :
                 element.value = element.value.numString();
+                if (element.id === "frEstimateDuration") {
+                    const minus1Value = parseInt(element.value) < 2 || isNaN(parseInt(element.value))
+                        ? "" : parseInt(element.value) - 1;
+                    $("#frEstimateDurationMinus1").val(minus1Value);
+                }
             break;
     }
 }
