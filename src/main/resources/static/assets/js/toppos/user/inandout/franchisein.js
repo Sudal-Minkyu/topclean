@@ -6,6 +6,7 @@
 const dtos = {
     send: {
         franchiseStateChange: {
+            smsBcIdList: "a",
             fdIdList: "a",
             stateType: "sr",
         }

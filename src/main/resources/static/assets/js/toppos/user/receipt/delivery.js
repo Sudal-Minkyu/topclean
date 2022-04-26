@@ -169,19 +169,28 @@ const comms = {
 
     sendPaidInfo(paidInfo) {
         dv.chk(paidInfo, dtos.send.franchiseUncollectPay, "미수 결제 성공 후 정보 보내기");
+        console.log(paidInfo);
         CommonUI.ajax("/api/user/franchiseUncollectPay", "MAPPER", paidInfo, function(res) {
-            alertSuccess("미수 결제 완료 되었습니다.");
+            const frNo = res.sendData.frId.frNo;
             wares.selectedCustomer.uncollectMoney = 0;
             putCustomer();
             $("#paymentPop").removeClass("active");
             $("#payMonth").val("0");
             $("#payType1").prop("checked", true);
+
+            alertCheck("미수 결제 완료 되었습니다.<br>고객용 영수증을 인쇄 하시겠습니까?");
+            $("#checkDelSuccessBtn").on("click", function () {
+                CommonUI.toppos.printReceipt(frNo, "", true, "N");
+                $('#popupId').remove();
+            });
+            $("#checkDelCancelBtn").on("click", function () {
+                CommonUI.toppos.printReceipt(frNo, "", false, "N");
+            });
         });
     },
 
     getFrInspectNeo(target) {
         CommonUI.ajax("/api/user/franchiseInspectionInfo", "GET", target, function (res) {
-            console.log(res);
             const data = res.sendData;
 
             wares.currentFrInspect.inspeotInfoDto = data.inspeotInfoDto;

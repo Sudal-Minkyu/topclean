@@ -193,7 +193,7 @@ const dtos = {
 
         franchiseRequestDetailSearch: { // 접수 세부 테이블의 거의 모든 요소와, 고객이름
             fdS6CancelYn: "s",
-            fdS6CancelTime: "s",
+            fdS6CancelTime: "n",
             fdPollutionBack: "n",
             photoList: { // 2022.04.13 추가
                 ffId: "n",
@@ -202,7 +202,7 @@ const dtos = {
             },
             fdPollutionType: "n",
             frInsertDt: "n", // 2022.04.13 추가
-            fdS6Time: "s", // 2022.04.13 추가
+            fdS6Time: "n", // 2022.04.13 추가
             frFiId: "n", // 2022.04.05 추가
             brFiId: "n", // 2022.04.05 추가
             frFiCustomerConfirm: "s", // 2022.04.05 추가
@@ -1367,7 +1367,7 @@ const trigs = {
             if(selectedItem) {
                 alertCheck("영수증을 인쇄 하시겠습니까?");
                 $("#checkDelSuccessBtn").on("click", function () {
-                    printReceipt(selectedItem.frNo);
+                    CommonUI.toppos.printReceipt(selectedItem.frNo, "", true, "N");
                     $('#popupId').remove();
                 });
             } else {
@@ -2616,15 +2616,6 @@ function b64toBlob(dataURI) { // 파일을 ajax 통신에 쓰기 위해 변환
 function onKeypadConfirm() {
     const targetId = ["fiAddAmt"];
     $("#" + targetId[wares.keypadNum]).val(parseInt($("#" + targetId[wares.keypadNum]).val()).toLocaleString());
-}
-
-function printReceipt(frNo) {
-    const condition = {
-        frNo: frNo,
-        frId: "",
-    }
-
-    CommonUI.toppos.printReceipt(condition);
 }
 
 /* 브라우저의 get 파라미터들을 가져오고 그에 따른 작업을 반영하기 위해 */

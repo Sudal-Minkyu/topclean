@@ -1797,9 +1797,9 @@ function onPaymentStageThree(creditData) {
             $("#btnPrintReceipt").parents("li").show();
             $("#btnClosePayment").parents("li").hide();
             if($("#totalAmt").html() === "0" && autoPrintReceipt) {
-                onPrintReceipt();
+                printReceipt();
                 onClosePayment();
-            } else if($("#totalAmt").html() === "0"){
+            } else if($("#totalAmt").html() === "0") {
                 $("#btnPayLater").parents("li").hide();
                 $("#btnPayment").parents("li").hide();
                 $("#btnClosePayment").parents("li").show();
@@ -1834,6 +1834,7 @@ function onPaymentLater() {
     const uncollectAmtCash = $("#totalAmt").html().toInt() + $("#applySaveMoney").html().toInt()
         - $("#applyUncollectAmt").html().toInt();
     const paidAmt = getPaidAmt();
+    autoPrintReceipt = $("#autoPrintReceipt").is(":checked");
     if(uncollectAmtCash) {
         alertCheck(uncollectAmtCash.toLocaleString() + "원의 미수금(후불)이 발생합니다<br> 이대로 닫으시겠습니까?");
         $("#checkDelSuccessBtn").on("click", function () {
@@ -1844,9 +1845,15 @@ function onPaymentLater() {
                 checkNum = "2";
                 onSave(false, closePaymentPop, false);
             }
+            if (autoPrintReceipt) {
+                printReceipt();
+            }
         });
     } else {
         closePaymentPop();
+        if (autoPrintReceipt) {
+            printReceipt();
+        }
     }
 }
 
@@ -1936,15 +1943,6 @@ function setReceiveAmtToTotalAmt() {
     $("#receiveCash").html(totalAmt.toLocaleString());
     $("#receiveCard").html(totalAmt.toLocaleString());
     calculatePaymentStage(getPaidAmt());
-}
-
-function onPrintReceipt() {
-    const condition = {
-        frNo: initialData.etcData.frNo,
-        frId: "",
-    }
-
-    CommonUI.toppos.printReceipt(condition);
 }
 
 function onSaveFdTag() {
@@ -2174,5 +2172,13 @@ function setTopMenuHref() {
 function goToDeliver() {
     if (selectedCustomer.bcHp) {
         location.href = "/user/delivery?bchp=" + selectedCustomer.bcHp;
+    }
+}
+
+function printReceipt() {
+    if ($("#isPrintCustomersChk").is(":checked")) {
+        CommonUI.toppos.printReceipt(initialData.etcData.frNo, "", true, "N");
+    } else {
+        CommonUI.toppos.printReceipt(initialData.etcData.frNo, "", false, "N");
     }
 }

@@ -90,12 +90,16 @@ class CommonUIClass {
             return resultArray;
         },
 
-        printReceipt(condition, cancelYN = "N") {
+        printReceipt(frNo = "", frId = "", printCustomers = false, cancelYN = "N") {
+            const condition = {
+                frNo: frNo,
+                frId: frId,
+            }
             try {
                 const url = "/api/user/requestPaymentPaper";
                 
                 CommonUI.ajax(url, "GET", condition, function (res) {
-                    console.log(res.sendData);
+                    console.log(res);
 
                     const typeTrans = {
                         "01": "cash",
@@ -125,7 +129,7 @@ class CommonUIClass {
                         obj.type = typeTrans[obj.type];
                     });
 
-                    CAT.CatPrint_Multi(paymentData, creditData, cancelYN);
+                    CAT.CatPrint_Multi(paymentData, creditData, cancelYN, printCustomers);
                 });
             } catch (e) {
                 this.toppos.underTaker(e, "CommonUI : 접수 영수증 프린트");

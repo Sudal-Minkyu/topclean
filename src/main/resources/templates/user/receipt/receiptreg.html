@@ -1048,10 +1048,17 @@
             <ul class="pop__console">
                 <li class="pop__console-left">
                     <div class="c-checkbox">
-                        <input type="checkbox" id="autoPrintReceipt" checked="" />
-                        <label for="autoPrintReceipt">완료시 영수증 자동인쇄</label></div>
+                        <input type="checkbox" id="isPrintCustomersChk" checked="" />
+                        <label for="isPrintCustomersChk">고객 영수증 인쇄</label>
+                    </div>
                 </li>
-                <li><button class="c-button c-button--darksolid" onclick="onPrintReceipt()" id="btnPrintReceipt">영수증 출력</button></li>
+                <li class="pop__console-left">
+                    <div class="c-checkbox">
+                        <input type="checkbox" id="autoPrintReceipt" checked="" />
+                        <label for="autoPrintReceipt">완료시 자동인쇄</label>
+                    </div>
+                </li>
+                <li><button class="c-button c-button--darksolid" onclick="printReceipt()" id="btnPrintReceipt">영수증 출력</button></li>
                 <li><button class="c-button c-button--dark" onclick="onPaymentStageOne()" id="btnPayment">결제하기</button></li>
                 <li><button class="c-button c-button--red" id="btnPayLater" onclick="onPaymentLater()">후불결제</button></li>
                 <li><button class="c-button" onclick="onClosePayment()" id="btnClosePayment">닫기</button></li>
