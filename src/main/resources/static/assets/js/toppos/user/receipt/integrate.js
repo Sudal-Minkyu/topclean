@@ -1740,6 +1740,10 @@ const trigs = {
 
 /* 페이지가 로드되고 나서 실행 될 코드들을 담는다. */
 function onPageLoad() {
+    /* 헤더의 상단 해당메뉴 큰 버튼의 아이콘 및 색 활성화 */
+    $("#menuIntegrate").addClass("active")
+        .children("img").attr("src", "/assets/images/icon__totalsearch--active.svg");
+
     comms.getInitialData();
     enableDatepicker();
 

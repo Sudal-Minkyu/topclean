@@ -51,6 +51,10 @@ const dtos = {
 
 
 $(function() {
+    /* 헤더의 상단 해당메뉴 큰 버튼의 아이콘 및 색 활성화 */
+    $("#menuReceiptreg").addClass("active")
+        .children("img").attr("src", "/assets/images/icon__reg--active.svg");
+
     /* 배열내의 각 설정만 넣어 빈 그리드 생성 */
     createGrids(true);
 
@@ -1629,7 +1633,6 @@ function onPaymentStageOne() {
                 items: items,
             };
 
-
         const paymentTab = $(".pop__pay-tabs-item.active").attr("data-id");
         if (paymentTab === "tabCash") {
             const receiveCash = $("#receiveCash").html().toInt();
@@ -1679,7 +1682,7 @@ function onPaymentStageOne() {
                     // 결제 실패의 경우
                     if (resjson.STATUS === "FAILURE") {
                         $('#payStatus').hide();
-                        if(resjson.ERRORDATA === "erroecode:404, error:error") {
+                        if (resjson.ERRORDATA === "erroecode:404, error:error") {
                             alertCancel("카드결제 단말기 연결이 감지되지 않습니다.<br>연결을 확인해 주세요.");
                         } else if (resjson.ERRORDATA === "erroecode:0, error:timeout") {
                             alertCancel("유효 결제 시간이 지났습니다.<br>다시 결제창 버튼을 이용하여<br>원하시는 기능을 선택 해주세요.");
@@ -1687,7 +1690,6 @@ function onPaymentStageOne() {
                             alertCancel("단말기 종료키를 통해 결제가 중지되었습니다.");
                         } else {
                             alertCancel(resjson.ERRORMESSAGE);
-                            console.log(resjson);
                         }
                     }
                 });
@@ -1716,7 +1718,6 @@ function onPaymentStageTwo(creditData = {}) {
 
 function onPaymentStageThree(creditData) {
     try {
-        const url = "/api/user/requestPayment";
         let data = {
             payment: [],
             etc: {
@@ -1773,7 +1774,7 @@ function onPaymentStageThree(creditData) {
         console.log("결제데이터 : ");
         console.log(data);
 
-        CommonUI.ajax(url, "MAPPER", data, function (req){
+        CommonUI.ajax("/api/user/requestPayment", "MAPPER", data, function (req){
             console.log("결제후 :");
             console.log(req);
 
@@ -1803,6 +1804,69 @@ function onPaymentStageThree(creditData) {
                 $("#btnPayLater").parents("li").hide();
                 $("#btnPayment").parents("li").hide();
                 $("#btnClosePayment").parents("li").show();
+            }
+
+            for (const {fpType, fpRealAmt} of data.payment) {
+                if (fpType === "01") {
+                    const paymentData = {
+                        paymentAmount: fpRealAmt,
+                        franchiseNo: initialData.etcData.frCode,
+                    }
+                    alertThree("현금 영수증을 발행 하시겠습니까?", "개인용", "사업자용", "아니오");
+                    $("#popFirstBtn").on("click", function () {
+                        $('#payStatus').show();
+                        paymentData.frNo = initialData.etcData.frNo;
+                        paymentData.fcType = "1";
+                        paymentData.fcInType = "01";
+                        paymentData.fcRealAmt = paymentData.paymentAmount;
+                        CAT.CatSetCashReceipt(paymentData, function (res) {
+                            paymentData.fcCatApprovaltime = res.APPROVALTIME;
+                            paymentData.fcCatApprovalno = res.APPROVALNO;
+                            paymentData.fcCatCardno = res.CARDNO;
+                            paymentData.fcCatMessage1 = res.MESSAGE1;
+                            paymentData.fcCatMessage2 = res.MESSAGE2;
+                            paymentData.fcCatNotice1 = res.NOTICE1;
+                            paymentData.fcCatTotamount = res.TOTAMOUNT;
+                            paymentData.fcCatVatamount = res.VATAMOUNT;
+                            paymentData.fcCatTelegramflagt = res.TELEGRAMFLAG;
+
+                            paymentData.fcCatIssuercode = res.ISSUERCODE;
+                            paymentData.fcCatIssuername = res.ISSUERNAME;
+                            paymentData.fcMuechantnumber = res.MERCHANTNUMBER;
+                            console.log(paymentData);
+                        });
+                        $('#popupId').remove();
+                    });
+
+                    $("#popSecondBtn").on("click", function () {
+                        $('#payStatus').show();
+                        paymentData.frNo = initialData.etcData.frNo;
+                        paymentData.fcType = "2";
+                        paymentData.fcInType = "01";
+                        paymentData.fcRealAmt = paymentData.paymentAmount;
+                        CAT.CatSetCashReceipt(paymentData, function (res) {
+                            paymentData.fcCatApprovaltime = res.APPROVALTIME;
+                            paymentData.fcCatApprovalno = res.APPROVALNO;
+                            paymentData.fcCatCardno = res.CARDNO;
+                            paymentData.fcCatMessage1 = res.MESSAGE1;
+                            paymentData.fcCatMessage2 = res.MESSAGE2;
+                            paymentData.fcCatNotice1 = res.NOTICE1;
+                            paymentData.fcCatTotamount = res.TOTAMOUNT;
+                            paymentData.fcCatVatamount = res.VATAMOUNT;
+                            paymentData.fcCatTelegramflagt = res.TELEGRAMFLAG;
+
+                            paymentData.fcCatIssuercode = res.ISSUERCODE;
+                            paymentData.fcCatIssuername = res.ISSUERNAME;
+                            paymentData.fcMuechantnumber = res.MERCHANTNUMBER;
+                            console.log(paymentData);
+                        });
+                        $('#popupId').remove();
+                    });
+
+                    $("#popThirdBtn").on("click", function () {
+                        $('#popupId').remove();
+                    });
+                }
             }
         });
     }catch (e) {
