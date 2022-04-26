@@ -1,5 +1,7 @@
 package com.broadwave.toppos.User.Customer;
 
+import com.broadwave.toppos.Head.Branoh.QBranch;
+import com.broadwave.toppos.Head.Franchise.QFranchise;
 import com.broadwave.toppos.User.Customer.CustomerDtos.CustomerInfoDto;
 import com.broadwave.toppos.User.Customer.CustomerDtos.CustomerListDto;
 import com.broadwave.toppos.User.Customer.CustomerDtos.CustomerMessageListDto;
@@ -142,6 +144,7 @@ public class CustomerRepositoryCustomImpl extends QuerydslRepositorySupport impl
         return query.fetch();
     }
 
+    // 가맹점 문자메세지 보낼 고객 리스트
     @Override
     public List<CustomerMessageListDto> findByMessageCustomerList(String visitDayRange, String bcLastRequestDt, String frCode) {
 
@@ -156,6 +159,38 @@ public class CustomerRepositoryCustomImpl extends QuerydslRepositorySupport impl
 
         query.orderBy(customer.bcName.asc());
         query.where(customer.frCode.eq(frCode));
+
+        if(!visitDayRange.equals("0")){
+            customer.bcLastRequestDt.goe(bcLastRequestDt);
+        }
+
+        return query.fetch();
+    }
+
+    // 지사가 문자메세지 보낼 고객 리스트
+    @Override
+    public List<CustomerMessageListDto> findByBrMessageCustomerList(String visitDayRange, String bcLastRequestDt, Long franchiseId, String brCode) {
+
+        QCustomer customer = QCustomer.customer;
+        QFranchise franchise = QFranchise.franchise;
+        QBranch branch = QBranch.branch;
+
+        JPQLQuery<CustomerMessageListDto> query = from(customer)
+                .innerJoin(franchise).on(franchise.frCode.eq(customer.frCode))
+                .innerJoin(branch).on(branch.brCode.eq(franchise.brCode))
+                .select(Projections.constructor(CustomerMessageListDto.class,
+                        customer.bcId,
+                        customer.bcName,
+                        customer.bcHp
+                ));
+
+        query.orderBy(customer.bcName.asc());
+
+        if(franchiseId != 0){
+            query.where(franchise.id.eq(franchiseId));
+        }
+
+        query.where(branch.brCode.eq(brCode));
 
         if(!visitDayRange.equals("0")){
             customer.bcLastRequestDt.goe(bcLastRequestDt);

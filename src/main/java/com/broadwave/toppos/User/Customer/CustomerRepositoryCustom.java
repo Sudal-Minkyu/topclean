@@ -24,4 +24,6 @@ public interface CustomerRepositoryCustom {
     // 메세지 보낼 고객 리스트 호출
     List<CustomerMessageListDto> findByMessageCustomerList(String visitDayRange, String bcLastRequestDt, String frCode);
 
+    // 지사가 문자메세지 보낼 고객 리스트
+    List<CustomerMessageListDto> findByBrMessageCustomerList(String visitDayRange, String bcLastRequestDt, Long franchiseId, String brCode);
 }

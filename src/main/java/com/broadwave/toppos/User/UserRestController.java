@@ -1282,7 +1282,7 @@ public class UserRestController {
     @GetMapping("messageCustomerList")
     @ApiOperation(value = "문자 메시지 고객리스트" , notes = "문자를 메시지 보낼 고객리스트를 호출한다.")
     @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
-    public ResponseEntity<Map<String,Object>> customerList(
+    public ResponseEntity<Map<String,Object>> messageCustomerList(
             @RequestParam(value="visitDayRange", defaultValue="") String visitDayRange,
             HttpServletRequest request){
         return templateService.messageCustomerList(visitDayRange, request);

@@ -1,17 +1,15 @@
-package com.broadwave.toppos.User.UserService;
+package com.broadwave.toppos.Manager.ManagerService;
 
 import com.broadwave.toppos.Jwt.token.TokenProvider;
+import com.broadwave.toppos.Manager.HmTemplate.HmTemplate;
+import com.broadwave.toppos.Manager.HmTemplate.HmTemplateDto;
+import com.broadwave.toppos.Manager.HmTemplate.HmTemplateRepository;
 import com.broadwave.toppos.User.Customer.Customer;
 import com.broadwave.toppos.User.Customer.CustomerDtos.CustomerMessageListDto;
 import com.broadwave.toppos.User.Customer.CustomerRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.MessageHistory.MessageHistory;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.MessageHistory.MessageHistoryListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.MessageHistory.MessageHistoryRepository;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.MessageHistory.MessageHistorySubListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestRepository;
-import com.broadwave.toppos.User.Template.Template;
-import com.broadwave.toppos.User.Template.TemplateDto;
-import com.broadwave.toppos.User.Template.TemplateRepository;
 import com.broadwave.toppos.common.AjaxResponse;
 import com.broadwave.toppos.common.ResponseErrorCode;
 import io.jsonwebtoken.Claims;
@@ -30,13 +28,13 @@ import java.util.*;
 
 /**
  * @author Minkyu
- * Date : 2022-04-15
+ * Date : 2022-04-26
  * Time :
- * Remark : Toppos 가맹점 문자메세지 보내기 서비스
+ * Remark : Toppos 지사 문자메세지 보내기 서비스
  */
 @Slf4j
 @Service
-public class TemplateService {
+public class HmTemplateService {
 
     @Value("${toppos.templatecode.number}")
     private String templatecodeNumber;
@@ -44,25 +42,26 @@ public class TemplateService {
     private final TokenProvider tokenProvider;
 
     private final CustomerRepository customerRepository;
-    private final TemplateRepository templateRepository;
+    private final HmTemplateRepository hmTemplateRepository;
     private final RequestRepository requestRepository;
     private final MessageHistoryRepository messageHistoryRepository;
 
     @Autowired
-    public TemplateService(TokenProvider tokenProvider, CustomerRepository customerRepository, TemplateRepository templateRepository,
-                           RequestRepository requestRepository, MessageHistoryRepository messageHistoryRepository){
+    public HmTemplateService(TokenProvider tokenProvider, CustomerRepository customerRepository, HmTemplateRepository hmTemplateRepository,
+                             RequestRepository requestRepository, MessageHistoryRepository messageHistoryRepository){
         this.tokenProvider = tokenProvider;
         this.customerRepository = customerRepository;
-        this.templateRepository = templateRepository;
+        this.hmTemplateRepository = hmTemplateRepository;
         this.requestRepository = requestRepository;
         this.messageHistoryRepository = messageHistoryRepository;
     }
 
     // 메세지 보낼 고객 리스트 호출
-    public ResponseEntity<Map<String, Object>> messageCustomerList(String visitDayRange, HttpServletRequest request) {
-        log.info("가맹점용 messageCustomerList 호출");
+    public ResponseEntity<Map<String, Object>> messageCustomerList(String visitDayRange, Long franchiseId, HttpServletRequest request) {
+        log.info("지사용 messageCustomerList 호출");
 
         log.info("visitDayRange : "+visitDayRange);
+        log.info("franchiseId : "+franchiseId);
 
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
@@ -96,11 +95,11 @@ public class TemplateService {
         // 클레임데이터 가져오기
         Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
         String login_id = claims.getSubject(); // 현재 아이디
-        String frCode = (String) claims.get("frCode"); // 현재 가맹점 코드
+        String brCode = (String) claims.get("brCode"); // 현재 지사 코드
         log.info("현재 접속한 아이디 : "+login_id);
-        log.info("접속한 가맹점 코드 : "+frCode);
+        log.info("접속한 지사 코드 : "+brCode);
 
-        List<CustomerMessageListDto> customerMessageListDtos = customerRepository.findByMessageCustomerList(visitDayRange, bcLastRequestDt, frCode);
+        List<CustomerMessageListDto> customerMessageListDtos = customerRepository.findByBrMessageCustomerList(visitDayRange, bcLastRequestDt, franchiseId, brCode);
         log.info("customerMessageListDtos : "+customerMessageListDtos);
         data.put("gridListData",customerMessageListDtos);
 
@@ -122,11 +121,9 @@ public class TemplateService {
         // 클레임데이터 가져오기
         Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
         String login_id = claims.getSubject(); // 현재 아이디
-        String frCode = (String) claims.get("frCode"); // 현재 가맹점 코드
-        String frbrCode = (String) claims.get("frbrCode"); // 현재 소속된 지사코드
+        String brCode = (String) claims.get("brCode"); // 현재 지사 코드
         log.info("현재 접속한 아이디 : "+login_id);
-        log.info("접속한 가맹점 코드 : "+frCode);
-        log.info("현재 소속된 지사코드 : "+frbrCode);
+        log.info("접속한 지사 코드 : "+brCode);
 
         LocalDateTime sendreqTime; // 예약발송시간;
         if(!fmSendreqtimeDt.equals("0")){
@@ -146,9 +143,9 @@ public class TemplateService {
             messageHistory = new MessageHistory();
             if(optionalCustomer.isPresent()){
                 messageHistory.setBcId(optionalCustomer.get());
-                messageHistory.setFmType("04");
-                messageHistory.setFrCode(frCode);
-                messageHistory.setBrCode(frbrCode);
+                messageHistory.setFmType("05");
+                messageHistory.setFrCode(null);
+                messageHistory.setBrCode(brCode);
                 messageHistory.setFmMessage(fmMessage);
                 if(sendreqTime == null){
                     messageHistory.setFmSendreqtimeDt(LocalDateTime.now());
@@ -178,101 +175,54 @@ public class TemplateService {
         return ResponseEntity.ok(res.success());
     }
 
-    // 문자메세지 전송내역 왼쪽 리스트 호출
-    public ResponseEntity<Map<String, Object>> messageHistoryList(String filterFromDt, String filterToDt, HttpServletRequest request) {
-        log.info("messageHistoryList 호출");
-
-        log.info("filterFromDt : "+filterFromDt);
-        log.info("filterToDt : "+filterToDt);
-
-        AjaxResponse res = new AjaxResponse();
-        HashMap<String, Object> data = new HashMap<>();
-
-        // 클레임데이터 가져오기
-        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
-        String login_id = claims.getSubject(); // 현재 아이디
-        String frCode = (String) claims.get("frCode"); // 현재 가맹점 코드
-        log.info("현재 접속한 아이디 : "+login_id);
-        log.info("접속한 가맹점 코드 : "+frCode);
-
-        List<MessageHistoryListDto> messageHistoryListDtos = messageHistoryRepository.findByMessageHistoryList(frCode, filterFromDt, filterToDt);
-//        log.info("messageHistoryListDtos : "+messageHistoryListDtos);
-        data.put("gridListData",messageHistoryListDtos);
-
-        return ResponseEntity.ok(res.dataSendSuccess(data));
-    }
-
-    // 문자메세지 전송내역 오른쪽 리스트 호출
-    public ResponseEntity<Map<String, Object>> messageHistorySubList(String insertYyyymmdd, HttpServletRequest request) {
-        log.info("messageHistorySubList 호출");
-
-        log.info("insertYyyymmdd : "+insertYyyymmdd);
-
-        AjaxResponse res = new AjaxResponse();
-        HashMap<String, Object> data = new HashMap<>();
-
-        // 클레임데이터 가져오기
-        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
-        String login_id = claims.getSubject(); // 현재 아이디
-        String frCode = (String) claims.get("frCode"); // 현재 가맹점 코드
-        log.info("현재 접속한 아이디 : "+login_id);
-        log.info("접속한 가맹점 코드 : "+frCode);
-
-        List<MessageHistorySubListDto> messageHistoryListSubDtos = messageHistoryRepository.findByMessageHistorySubList(frCode, insertYyyymmdd);
-//        log.info("messageHistoryListSubDtos : "+messageHistoryListSubDtos);
-        data.put("gridListData",messageHistoryListSubDtos);
-
-        return ResponseEntity.ok(res.dataSendSuccess(data));
-    }
-
     // 메세지 템플릿 6개 저장
-    public ResponseEntity<Map<String, Object>> templateSave(List<TemplateDto> templateDtos, HttpServletRequest request) {
-        log.info("templateSave 호출");
+    public ResponseEntity<Map<String, Object>> hmTemplateSave(List<HmTemplateDto> hmTemplateDtos, HttpServletRequest request) {
+        log.info("hmTemplateSave 호출");
 
         AjaxResponse res = new AjaxResponse();
 
-        log.info("templateDtos : "+templateDtos);
+        log.info("hmTemplateDtos : "+hmTemplateDtos);
 
         // 클레임데이터 가져오기
         Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
         String login_id = claims.getSubject(); // 현재 아이디
-        String frCode = (String) claims.get("frCode"); // 현재 가맹점 코드
+        String brCode = (String) claims.get("brCode"); // 현재 가맹점 코드
         log.info("현재 접속한 아이디 : "+login_id);
-        log.info("접속한 가맹점 코드 : "+frCode);
+        log.info("접속한 지사 코드 : "+brCode);
 
-        List<Template> templateList = new ArrayList<>();
-        Template template;
-        for(TemplateDto templateDto : templateDtos){
-            template = new Template();
-            if(templateDto.getFtId() != 0){
-                Optional<Template> optionalTemplate = templateRepository.findById(templateDto.getFtId());
-                if(optionalTemplate.isPresent()){
-                    optionalTemplate.get().setFmMessage(templateDto.getFmMessage());
-                    optionalTemplate.get().setFmSubject(templateDto.getFmSubject());
-                    template = optionalTemplate.get();
+        List<HmTemplate> hmTemplateList = new ArrayList<>();
+        HmTemplate hmTmplate;
+        for(HmTemplateDto hmTemplateDto : hmTemplateDtos){
+            hmTmplate = new HmTemplate();
+            if(hmTemplateDto.getHmId() != 0){
+                Optional<HmTemplate> optionalHmTemplate = hmTemplateRepository.findById(hmTemplateDto.getHmId());
+                if(optionalHmTemplate.isPresent()){
+                    optionalHmTemplate.get().setHmMessage(hmTemplateDto.getHmMessage());
+                    optionalHmTemplate.get().setHmSubject(hmTemplateDto.getHmSubject());
+                    hmTmplate = optionalHmTemplate.get();
                 }else{
                     return ResponseEntity.ok(res.fail(ResponseErrorCode.TP022.getCode(), "수정 할 "+ ResponseErrorCode.TP022.getDesc(), "다시 ", "다시 수정 할 템플릿을 확인해주세요"));
                 }
             }else{
-                template.setFmNum(templateDto.getFmNum());
-                template.setFmSubject(templateDto.getFmSubject());
-                template.setFmMessage(templateDto.getFmMessage());
-                template.setFrCode(frCode);
-                template.setInsert_id(login_id);
-                template.setInsertDateTime(LocalDateTime.now());
+                hmTmplate.setHmNum(hmTemplateDto.getHmNum());
+                hmTmplate.setHmSubject(hmTemplateDto.getHmSubject());
+                hmTmplate.setHmMessage(hmTemplateDto.getHmMessage());
+                hmTmplate.setBrCode(brCode);
+                hmTmplate.setInsert_id(login_id);
+                hmTmplate.setInsertDateTime(LocalDateTime.now());
             }
 
-            templateList.add(template);
+            hmTemplateList.add(hmTmplate);
         }
 
-        templateRepository.saveAll(templateList);
+        hmTemplateRepository.saveAll(hmTemplateList);
 
         return ResponseEntity.ok(res.success());
     }
 
     // 메세지 템플릿 6개 호출
-    public ResponseEntity<Map<String, Object>> templateList(HttpServletRequest request) {
-        log.info("templateList 호출");
+    public ResponseEntity<Map<String, Object>> hmTemplateList(HttpServletRequest request) {
+        log.info("hmTemplateList 호출");
 
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
@@ -280,13 +230,13 @@ public class TemplateService {
         // 클레임데이터 가져오기
         Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
         String login_id = claims.getSubject(); // 현재 아이디
-        String frCode = (String) claims.get("frCode"); // 현재 가맹점 코드
+        String brCode = (String) claims.get("brCode"); // 현재 가맹점 코드
         log.info("현재 접속한 아이디 : "+login_id);
-        log.info("접속한 가맹점 코드 : "+frCode);
+        log.info("접속한 지사 코드 : "+brCode);
 
-        List<TemplateDto> templateDtos = templateRepository.findByTemplateDtos(frCode);
-//        log.info("templateDtos : "+templateDtos);
-        data.put("gridListData",templateDtos);
+        List<HmTemplateDto> hmTemplateDtos = hmTemplateRepository.findByHmTemplateDtos(brCode);
+//        log.info("hmTemplateDtos : "+hmTemplateDtos);
+        data.put("gridListData",hmTemplateDtos);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }

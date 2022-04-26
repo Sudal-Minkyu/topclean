@@ -3,10 +3,12 @@ package com.broadwave.toppos.Manager;
 import com.broadwave.toppos.Head.HeadService.NoticeService;
 import com.broadwave.toppos.Head.Notice.NoticeDtos.NoticeMapperDto;
 import com.broadwave.toppos.Manager.Calendar.CalendarDtos.BranchCalendarDto;
+import com.broadwave.toppos.Manager.HmTemplate.HmTemplateDto;
 import com.broadwave.toppos.Manager.ManagerService.*;
 import com.broadwave.toppos.Manager.TagGallery.TagGalleryDtos.TagGalleryMapperDto;
 import com.broadwave.toppos.Manager.TagNotice.TagNoticeDtos.TagNoticeMapperDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotMapperDto;
+import com.broadwave.toppos.User.Template.TemplateDto;
 import com.broadwave.toppos.User.UserService.FindService;
 import com.broadwave.toppos.User.UserService.InspectService;
 import com.broadwave.toppos.User.UserService.ReceiptService;
@@ -48,6 +50,7 @@ public class ManagerRestController {
     private final InspectService inspectService; // 검품등록게시판 서비스
     private final CurrentService currentService; // 현황페이지 서비스
     private final NoticeService noticeService; // 공지사항페이지 서비스
+    private final HmTemplateService hmTemplateService; // 지사 문자메세지 서비스
 
     private final ReceiptReleaseService receiptReleaseService; // 지사출고 전용 서비스
     private final ReceiptService receiptService; // 접수 서비스
@@ -56,7 +59,7 @@ public class ManagerRestController {
     @Autowired
     public ManagerRestController(ManagerService managerService, CalendarService calendarService, TagNoticeService tagNoticeService, TagGalleryService tagGalleryService,
                                  ReceiptReleaseService receiptReleaseService, InspectService inspectService, CurrentService currentService, NoticeService noticeService, ReceiptService receiptService,
-                                 FindService findService) {
+                                 FindService findService, HmTemplateService hmTemplateService) {
         this.managerService = managerService;
         this.calendarService = calendarService;
         this.tagNoticeService = tagNoticeService;
@@ -67,6 +70,7 @@ public class ManagerRestController {
         this.receiptReleaseService = receiptReleaseService;
         this.receiptService = receiptService;
         this.findService = findService;
+        this.hmTemplateService = hmTemplateService;
     }
 
     // 현재 로그인한 지사 정보 가져오기
@@ -532,6 +536,50 @@ public class ManagerRestController {
                                                                 HttpServletRequest request){
         return managerService.branchMyInfoSave(userEmail, userTel, nowPassword, newPassword, checkPassword, request);
     }
+
+
+
+//@@@@@@@@@@@@@@@@@@@@@ 문자메세지 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    // 메세지 보낼 고객 리스트 호출
+    @GetMapping("messageCustomerList")
+    @ApiOperation(value = "지사의 문자 메시지 고객리스트" , notes = "문자를 메시지 보낼 가맹점의 고객리스트를 호출한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
+    public ResponseEntity<Map<String,Object>> messageCustomerList(
+            @RequestParam(value="visitDayRange", defaultValue="") String visitDayRange,
+            @RequestParam(value="franchiseId", defaultValue="") Long franchiseId,
+            HttpServletRequest request){
+        return hmTemplateService.messageCustomerList(visitDayRange, franchiseId, request);
+    }
+
+    // 문자 메시지 보내기
+    @PostMapping("messageSendCustomer")
+    @ApiOperation(value = "문자 메시지 보내기" , notes = "선택한 고객들에게 문자메세지를 보낸다.")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
+    public ResponseEntity<Map<String,Object>> messageSendCustomer(
+            @RequestParam(value="bcIdList", defaultValue="") List<Long> bcIdList,
+            @RequestParam(value="fmMessage", defaultValue="") String fmMessage,
+            @RequestParam(value="msgType", defaultValue="") String msgType,
+            @RequestParam(value="fmSendreqtimeDt", defaultValue="") String fmSendreqtimeDt,
+            HttpServletRequest request){
+        return hmTemplateService.messageSendCustomer(bcIdList, fmMessage,fmSendreqtimeDt, msgType, request);
+    }
+
+    // 메세지 템플릿 6개 저장
+    @PostMapping("templateSave")
+    @ApiOperation(value = "지사 or 본사 메세지 템플릿 6개 저장" , notes = "문자 메세지 템플릿을 저장한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
+    public ResponseEntity<Map<String,Object>> templateSave(@RequestBody List<HmTemplateDto> hmTemplateDtos, HttpServletRequest request){
+        return hmTemplateService.hmTemplateSave(hmTemplateDtos, request);
+    }
+
+    // 메세지 템플릿 6개 호출
+    @GetMapping("templateList")
+    @ApiOperation(value = "지사 or 본사  메세지 템플릿 호출" , notes = "문자 메세지 템플릿을 호출한다")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
+    public ResponseEntity<Map<String,Object>> templateList(HttpServletRequest request){
+        return hmTemplateService.hmTemplateList(request);
+    }
+
 
 
 }
