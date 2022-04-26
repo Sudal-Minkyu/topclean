@@ -300,6 +300,10 @@ textarea {
 }
 .header__link.active span,
 .header__btn.active span {
+	color: #004a98;
+}
+.header__link.home span,
+.header__btn.home span {
 	color: #2f73ea;
 }
 
@@ -1877,8 +1881,15 @@ footer.footer > ul > li + li:before {
 .form__item .form__item {
 	flex: 1;
 }
+.form__item.form__item--tag {
+	flex: 0 1 auto;
+	width: 13.75rem;
+}
 .form__item .form__item .form__title {
 	width: auto;
+}
+.form__item.form__item--tag .form__title {
+	width: 7.5rem;
 }
 .form__item .form__item .form__input .c-text input[type="text"] {
 	width: 2.5rem;
