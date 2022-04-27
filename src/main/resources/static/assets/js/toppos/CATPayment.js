@@ -7,18 +7,30 @@ class CATPayment {
         
         
     }
-    
+
+    CatPrint_Multi(params, creditData, cancelYN, doPrintCustomers) {
+        let message="";
+        message = CatCreate_MultiPrint(params, creditData, cancelYN, doPrintCustomers)
+
+        CatPrintCommunication(message);
+    }
+
+
+
     
     CatCredit(params, func) {
-        
         let reqmsg = CatCredit_vPOSV1(params);
         Communication(reqmsg,func);
-        
     }
+
     CatCreditCancel(params, func) {
         let reqmsg = CatCreditCancel_vPOSV1(params);
         Communication(reqmsg,func);
-        
+    }
+
+    CatSetCashReceipt(params, func) {
+        let reqmsg = CatCash_vPOSV1(params);
+        Communication(reqmsg,func);
     }
     
     
@@ -30,13 +42,6 @@ class CATPayment {
         
         CatPrintCommunication(message);
         
-    }
-    
-    CatPrint_Multi(params, creditData, cancelYN, doPrintCustomers) {
-        let message="";
-        message = CatCreate_MultiPrint(params, creditData, cancelYN, doPrintCustomers)
-        
-        CatPrintCommunication(message);
     }
     
     CatPrint_Repayment(params, creditData, cancelYN) {
@@ -1237,6 +1242,9 @@ function CatCreate_MultiPrint(params, creditResults, cancelYN, doPrintCustomers)
     return "CC" + message;
 }
 
+function CatCreate_CashPrint() {
+
+}
 
 function CatCreate_RepaymentPrint(params,creditResults,cancelYN) {
     let message = "";
@@ -1616,6 +1624,35 @@ function CatCreditCancel_vPOSV1(params) {
     
     request_msg = String.fromCharCode(2) + telegramLen + request_msg;	// STX 추가 + 전문 길이 + 전송 전문
     
+    return "CC" + request_msg;
+}
+
+// 현금영수증 등록
+function CatCash_vPOSV1(params) {
+    let totalAmount = ("" + params.paymentAmount).fillZero(9);
+    let vatAmount = ("" + Math.floor(params.paymentAmount / 11)).fillZero(9); //부가세 계산 내림으로 처리
+    let franchiseNo = ("" + params.franchiseNo).fillZero(4);
+    let fcType = ("" + params.fcType);
+    var request_msg = "";
+
+    // 전문길이 마지막에 입력
+    request_msg += "c1";                                       // 전문구분코드
+    request_msg += "00";                                       // 할부개월
+    request_msg += fcType;                                     	 // 현금영수증 소비자 구분 (1: 소비자 소득공제, 2: 사업자 지출증빙, 3: 자진발급)
+    request_msg += " ";                                        // 현금영수증 취소 사유
+    request_msg += totalAmount;                                // 총금액
+    request_msg += vatAmount;                                // 세금
+    request_msg += "000000000";                                // 면세금액
+    request_msg += "000000000";                                // 봉사료
+    request_msg += "      ";                		 		   // 원거래 일시
+    request_msg += "         ";                   		   // 원거래 승인번호
+    request_msg += franchiseNo;                                     // 거래일련번호
+    request_msg += String.fromCharCode( 3);                    // ETX
+
+    var telegramLen = ("" + request_msg.length).fillZero(4);   // 길이
+
+    request_msg = String.fromCharCode(2) + telegramLen + request_msg;	// STX 추가 + 전문 길이 + 전송 전문
+
     return "CC" + request_msg;
 }
 

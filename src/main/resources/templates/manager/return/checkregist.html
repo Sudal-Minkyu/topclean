@@ -180,15 +180,30 @@
                 </div>
             </div>
 
-            <div class="pop__article">
-				<div class="pop__article-head">
-					<h3 class="pop__article-header">확인품내용</h3>
-                    <span id="customerResponse"></span>
-				</div>
-				
-				<div class="pop__article-content">
-					<textarea id="fiComment"></textarea>
-				</div>
+
+
+            <div class="pop__article pop__article--flex">
+                <div id="receiptPhotoListAreaInPop" class="pop__article-content flex1">
+                    <div class="pop__article-head">
+                        <h3 class="pop__article-header">접수 시 사진</h3>
+                    </div>
+                    <div class="pop__article-content">
+                        <!-- 접수 시 사진 영역 -->
+                        <ul id="receiptPhotoListInPop" class="horizon-scroll">
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="pop__article-content flex1">
+                    <div class="pop__article-head">
+                        <h3 class="pop__article-header">확인품내용</h3>
+                        <span id="customerResponse"></span>
+                    </div>
+
+                    <div class="pop__article-content">
+                        <textarea id="fiComment" class="c-textarea"></textarea>
+                    </div>
+                </div>
 			</div>
 
             <ul class="pop__console">

@@ -52,6 +52,10 @@ const dtos = {
         },
 
         branchInspection: {
+            fdPollutionBack: "n",
+            fdPollutionType: "n",
+            photoList: "a",
+
             brFiId: "n",
             brFiCustomerConfirm: "s",
             frFiId: "n",
@@ -744,8 +748,8 @@ async function openCheckPop(e) {
 
         const screen = document.getElementById("cameraScreen");
         screen.srcObject = wares.cameraStream;
-    }catch (e) {
-        if(!(e instanceof DOMException)) {
+    }catch (err) {
+        if(!(err instanceof DOMException)) {
             CommonUI.toppos.underTaker(e, "checkregist : 카메라 찾기");
         }
         wares.isCameraExist = false;
@@ -761,6 +765,21 @@ async function openCheckPop(e) {
     //     $("#isIncludeImg").prop("disabled", true);
     // }
     // grids.f.resize(1);
+
+    /* 접수메뉴에서 찍은 사진 붙히기 */
+    for (const photo of e.item.photoList) {
+        const photoHtml = `
+            <li>
+                <a href="${photo.ffPath + photo.ffFilename}" data-lightbox="images" data-title="이미지 확대" class="horizon-scroll__link">
+                    <img src="${photo.ffPath + "s_" + photo.ffFilename}" class="horizon-scroll__img" alt=""/>
+                </a>
+            </li>
+            `;
+        $("#receiptPhotoListInPop").append(photoHtml);
+        $("#receiptPhotoListAreaInPop").show();
+    }
+
+    // 사진 붙히기
     if(e.item.brFiId) {
         const searchCondition = {
             fiId: e.item.brFiId,
@@ -906,8 +925,10 @@ function resetCheckPop() {
     $("#fiAddAmt").val("");
     $("#fiComment").val("");
     $("#photoList").html("");
+    $("#receiptPhotoListInPop").html("");
     $("#customerResponse").html("");
     $("#noImgScreen").show();
+    $("#receiptPhotoListAreaInPop").hide();
 }
 
 function closeCheckPop() {

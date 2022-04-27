@@ -381,7 +381,8 @@ label.c-file input[type="file"],
 }
 
 /* textarea */
-textarea {
+textarea,
+textarea.c-textarea{
     overflow: auto;
     width: 100%;
     height: 6.25rem;
