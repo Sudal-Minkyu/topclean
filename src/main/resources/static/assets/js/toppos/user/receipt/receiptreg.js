@@ -1774,10 +1774,12 @@ function onPaymentStageThree(creditData) {
         console.log("결제데이터 : ");
         console.log(data);
 
-        CommonUI.ajax("/api/user/requestPayment", "MAPPER", data, function (req){
+        /* 결제 정보를 서버에 전송하여 저장 */
+        CommonUI.ajax("/api/user/requestPayment", "MAPPER", data, function (req) {
             console.log("결제후 :");
             console.log(req);
 
+            /* 결제 정보에 따라 계산과 데이터의 재배치 */
             AUIGrid.addRow(gridId[3], req.sendData.paymentEtcDtos, "last");
             initialData.etcData.uncollectMoney = req.sendData.uncollectMoney;
             initialData.etcData.saveMoney = req.sendData.saveMoney;
@@ -1797,17 +1799,11 @@ function onPaymentStageThree(creditData) {
 
             $("#btnPrintReceipt").parents("li").show();
             $("#btnClosePayment").parents("li").hide();
-            if($("#totalAmt").html() === "0" && autoPrintReceipt) {
-                printReceipt();
-                onClosePayment();
-            } else if($("#totalAmt").html() === "0") {
-                $("#btnPayLater").parents("li").hide();
-                $("#btnPayment").parents("li").hide();
-                $("#btnClosePayment").parents("li").show();
-            }
 
+            let noCashPaid = true;
             for (const {fpType, fpRealAmt} of data.payment) {
                 if (fpType === "01") {
+                    noCashPaid = false;
                     const paymentData = {
                         paymentAmount: fpRealAmt,
                         franchiseNo: initialData.etcData.frCode,
@@ -1820,21 +1816,47 @@ function onPaymentStageThree(creditData) {
                         paymentData.fcInType = "01";
                         paymentData.fcRealAmt = paymentData.paymentAmount;
                         CAT.CatSetCashReceipt(paymentData, function (res) {
-                            paymentData.fcCatApprovaltime = res.APPROVALTIME;
-                            paymentData.fcCatApprovalno = res.APPROVALNO;
-                            paymentData.fcCatCardno = res.CARDNO;
-                            paymentData.fcCatMessage1 = res.MESSAGE1;
-                            paymentData.fcCatMessage2 = res.MESSAGE2;
-                            paymentData.fcCatNotice1 = res.NOTICE1;
-                            paymentData.fcCatTotamount = res.TOTAMOUNT;
-                            paymentData.fcCatVatamount = res.VATAMOUNT;
-                            paymentData.fcCatTelegramflagt = res.TELEGRAMFLAG;
+                            $('#payStatus').hide();
+                            res = JSON.parse(res);
+                            if(res.STATUS === "SUCCESS") {
+                                paymentData.fcCatApprovaltime = res.APPROVALTIME;
+                                paymentData.fcCatApprovalno = res.APPROVALNO;
+                                paymentData.fcCatCardno = res.CARDNO;
+                                paymentData.fcCatMessage1 = res.MESSAGE1;
+                                paymentData.fcCatMessage2 = res.MESSAGE2;
+                                paymentData.fcCatNotice1 = res.NOTICE1;
+                                paymentData.fcCatTotamount = res.TOTAMOUNT;
+                                paymentData.fcCatVatamount = res.VATAMOUNT;
+                                paymentData.fcCatTelegramflagt = res.TELEGRAMFLAG;
 
-                            paymentData.fcCatIssuercode = res.ISSUERCODE;
-                            paymentData.fcCatIssuername = res.ISSUERNAME;
-                            paymentData.fcMuechantnumber = res.MERCHANTNUMBER;
+                                paymentData.fcCatIssuercode = res.ISSUERCODE;
+                                paymentData.fcCatIssuername = res.ISSUERNAME;
+                                paymentData.fcMuechantnumber = res.MERCHANTNUMBER;
+                            } else if (res.STATUS === "FAILURE") {
+                                if (res.ERRORDATA === "erroecode:404, error:error") {
+                                    alertCancel("카드결제 단말기 연결이 감지되지 않습니다.<br>연결을 확인해 주세요.");
+                                } else if (res.ERRORDATA === "erroecode:0, error:timeout") {
+                                    alertCancel("유효 결제 시간이 지났습니다.<br>다시 결제창 버튼을 이용하여<br>원하시는 기능을 선택 해주세요.");
+                                } else if(res.ERRORMESSAGE === "단말기에서종료키누름 /                  /                 ") {
+                                    alertCancel("단말기 종료키를 통해 결제가 중지되었습니다.");
+                                } else {
+                                    alertCancel(res.ERRORMESSAGE);
+                                }
+                            }
                             console.log(paymentData);
                         });
+
+                        if ($("#totalAmt").html() === "0" && autoPrintReceipt) {
+                            $("#btnPayLater").parents("li").hide();
+                            $("#btnPayment").parents("li").hide();
+                            $("#btnClosePayment").parents("li").show();
+                            printReceipt();
+                        } else if($("#totalAmt").html() === "0") {
+                            $("#btnPayLater").parents("li").hide();
+                            $("#btnPayment").parents("li").hide();
+                            $("#btnClosePayment").parents("li").show();
+                        }
+
                         $('#popupId').remove();
                     });
 
@@ -1844,7 +1866,10 @@ function onPaymentStageThree(creditData) {
                         paymentData.fcType = "2";
                         paymentData.fcInType = "01";
                         paymentData.fcRealAmt = paymentData.paymentAmount;
+                        console.log(paymentData);
                         CAT.CatSetCashReceipt(paymentData, function (res) {
+                            $('#payStatus').hide();
+                            res = JSON.parse(res);
                             paymentData.fcCatApprovaltime = res.APPROVALTIME;
                             paymentData.fcCatApprovalno = res.APPROVALNO;
                             paymentData.fcCatCardno = res.CARDNO;
@@ -1858,8 +1883,20 @@ function onPaymentStageThree(creditData) {
                             paymentData.fcCatIssuercode = res.ISSUERCODE;
                             paymentData.fcCatIssuername = res.ISSUERNAME;
                             paymentData.fcMuechantnumber = res.MERCHANTNUMBER;
-                            console.log(paymentData);
+                            console.log(res);
                         });
+
+                        if ($("#totalAmt").html() === "0" && autoPrintReceipt) {
+                            $("#btnPayLater").parents("li").hide();
+                            $("#btnPayment").parents("li").hide();
+                            $("#btnClosePayment").parents("li").show();
+                            printReceipt();
+                        } else if($("#totalAmt").html() === "0") {
+                            $("#btnPayLater").parents("li").hide();
+                            $("#btnPayment").parents("li").hide();
+                            $("#btnClosePayment").parents("li").show();
+                        }
+
                         $('#popupId').remove();
                     });
 
@@ -1867,6 +1904,17 @@ function onPaymentStageThree(creditData) {
                         $('#popupId').remove();
                     });
                 }
+            }
+
+            if ($("#totalAmt").html() === "0" && autoPrintReceipt && noCashPaid) {
+                $("#btnPayLater").parents("li").hide();
+                $("#btnPayment").parents("li").hide();
+                $("#btnClosePayment").parents("li").show();
+                printReceipt();
+            } else if($("#totalAmt").html() === "0" && noCashPaid) {
+                $("#btnPayLater").parents("li").hide();
+                $("#btnPayment").parents("li").hide();
+                $("#btnClosePayment").parents("li").show();
             }
         });
     }catch (e) {
