@@ -21,6 +21,7 @@ import com.broadwave.toppos.Manager.ManagerService.TagNoticeService;
 import com.broadwave.toppos.Manager.TagGallery.TagGalleryDtos.TagGalleryMainListDto;
 import com.broadwave.toppos.User.Addprocess.AddprocessDtos.AddprocessDto;
 import com.broadwave.toppos.User.Addprocess.AddprocessSet;
+import com.broadwave.toppos.User.CashReceipt.CashReceiptMapperDto;
 import com.broadwave.toppos.User.Customer.Customer;
 import com.broadwave.toppos.User.Customer.CustomerDtos.CustomerInfoDto;
 import com.broadwave.toppos.User.Customer.CustomerDtos.CustomerListDto;
@@ -784,6 +785,12 @@ public class UserRestController {
     @PostMapping("requestPayment")
     public ResponseEntity<Map<String,Object>> requestPayment(@RequestBody PaymentSet paymentSet, HttpServletRequest request){
         return receiptService.requestPayment(paymentSet, request);
+    }
+
+    // 접수페이지 현금영수증발행 API
+    @PostMapping("requestPaymentCashPaper")
+    public ResponseEntity<Map<String,Object>> requestPaymentCashReceipt(@ModelAttribute CashReceiptMapperDto cashReceiptMapperDto, HttpServletRequest request){
+        return receiptService.requestPaymentCashReceipt(cashReceiptMapperDto, request);
     }
 
     // 접수 사진촬영 API

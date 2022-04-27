@@ -4,6 +4,9 @@ import com.broadwave.toppos.Head.Franchise.Franchise;
 import com.broadwave.toppos.Head.HeadService.HeadService;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.Manager.Calendar.BranchCalendarRepository;
+import com.broadwave.toppos.User.CashReceipt.CashReceipt;
+import com.broadwave.toppos.User.CashReceipt.CashReceiptMapperDto;
+import com.broadwave.toppos.User.CashReceipt.CashReceiptRepository;
 import com.broadwave.toppos.User.Customer.Customer;
 import com.broadwave.toppos.User.Customer.CustomerRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.Payment;
@@ -81,6 +84,7 @@ public class ReceiptService {
     private final PaymentRepositoryCustom paymentRepositoryCustom;
     private final SaveMoneyRepository saveMoneyRepository;
     private final PhotoRepository photoRepository;
+    private final CashReceiptRepository cashReceiptRepository;
 
     private final SaveMoneyRepositoryCustom saveMoneyRepositoryCustom;
     private final MessageHistoryRepository messageHistoryRepository;
@@ -92,7 +96,7 @@ public class ReceiptService {
     @Autowired
     public ReceiptService(UserService userService, KeyGenerateService keyGenerateService, TokenProvider tokenProvider, ModelMapper modelMapper, MessageHistoryRepository messageHistoryRepository,
                           RequestRepository requestRepository, RequestDetailRepository requestDetailRepository, PaymentRepository paymentRepository, SaveMoneyRepository saveMoneyRepository,
-                          PhotoRepository photoRepository, SaveMoneyRepositoryCustom saveMoneyRepositoryCustom,
+                          PhotoRepository photoRepository, SaveMoneyRepositoryCustom saveMoneyRepositoryCustom, CashReceiptRepository cashReceiptRepository,
                           HeadService headService, CustomerRepository customerRepository, BranchCalendarRepository branchCalendarRepository, PaymentRepositoryCustom paymentRepositoryCustom){
         this.userService = userService;
         this.headService = headService;
@@ -105,6 +109,7 @@ public class ReceiptService {
         this.requestDetailRepository = requestDetailRepository;
         this.customerRepository = customerRepository;
         this.saveMoneyRepository = saveMoneyRepository;
+        this.cashReceiptRepository = cashReceiptRepository;
         this.branchCalendarRepository = branchCalendarRepository;
         this.paymentRepositoryCustom = paymentRepositoryCustom;
         this.keyGenerateService = keyGenerateService;
@@ -656,7 +661,6 @@ public class ReceiptService {
 
                         // 옆에 결제내역에서 보여줄 데이터 전송
                         data.put("paymentEtcDtos",paymentEtcDtos);
-
                     }else{
                         return ResponseEntity.ok(res.fail(ResponseErrorCode.TP019.getCode(), ResponseErrorCode.TP019.getDesc(), "문자", "다시 시도해주세요."));
                     }
@@ -1166,6 +1170,40 @@ public class ReceiptService {
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
+    // 접수페이지 현금영수증발행 API
+    public ResponseEntity<Map<String, Object>> requestPaymentCashReceipt(CashReceiptMapperDto cashReceiptMapperDto, HttpServletRequest request) {
+        log.info("requestPaymentCashReceipt 호출");
+
+        log.info("cashReceiptMapperDto  : "+cashReceiptMapperDto);
+
+        AjaxResponse res = new AjaxResponse();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String frCode = (String) claims.get("frCode"); // 현재 가맹점 코드
+        String login_id = claims.getSubject(); // 현재 아이디
+        log.info("현재 접속한 아이디 : "+login_id);
+        log.info("현재 접속한 가맹점 코드 : "+frCode);
+
+        Optional<Request> optionalRequest = requestRepository.request(cashReceiptMapperDto.getFrNo(), frCode);
+        if(optionalRequest.isPresent()){
+            CashReceipt cashReceipt = modelMapper.map(cashReceiptMapperDto, CashReceipt.class);
+            cashReceipt.setFrId(optionalRequest.get());
+            cashReceipt.setBcId(optionalRequest.get().getBcId());
+            cashReceipt.setFcYyyymmdd(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
+            cashReceipt.setFcCancelYn("N");
+
+            cashReceipt.setInsert_id(login_id);
+            cashReceipt.setInsert_date(LocalDateTime.now());
+
+            cashReceiptRepository.save(cashReceipt);
+        } else {
+            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "결제 할 접수"+ResponseErrorCode.TP009.getDesc(), "문자", "접수코드 : "+cashReceiptMapperDto.getFrNo()));
+        }
+
+
+        return ResponseEntity.ok(res.success());
+    }
 
 }
 
