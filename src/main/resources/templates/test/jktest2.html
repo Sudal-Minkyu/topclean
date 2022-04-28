@@ -125,5 +125,50 @@
 		</div>
 	</div>
 
+	<!-- 메시지 팝업 -->
+	<div class="pop active" id="messagePop">
+		<div class="pop__box">
+			<div class="pop__article">
+				<h3 class="pop__article-header">메시지 보내기</h3>
+				<div class="pop__aricle-content">
+					<!-- 그리드 -->
+					<div id="grid_msgPop" style="height: 150px;"></div>
+				</div>
+			</div>
+
+			<div class="pop__article">
+				<div class="pop__aricle-content">
+					<div class="pop__message">
+						<div class="pop__message-text">
+							<div class="pop__article-head">
+								<h3 class="pop__article-header">고객 메시지 편집</h3>
+								<div class="pop__article-haedconsole">
+									<div class="c-checkbox">
+										<input type="checkbox" id="isIncludeImg" />
+										<label id="isIncludeImgLabel" for="isIncludeImg">하단에 사진 링크 포함</label>
+									</div>
+								</div>
+							</div>
+							<div class="c-textarea">
+								<textarea id="messageField"></textarea>
+								<button id="vkeyboard1">키보드</button>
+							</div>
+						</div>
+						<div class="pop__message-img">
+							<a href="" id="imgFull" class="photo__img" data-lightbox="images" data-title="임의테스트"
+							   style="display: none;">
+								<img id="imgThumb" src="" alt="" />
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<ul class="pop__console">
+				<li><button class="c-button pop__close">닫기</button></li>
+				<li><button class="c-button c-button--dark" id="sendKakaoMsg">카카오톡 메시지 보내기</button></li>
+			</ul>
+		</div>
+	</div>
 </div>
 </html>

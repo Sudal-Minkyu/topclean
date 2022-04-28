@@ -2656,16 +2656,47 @@ footer.footer > ul > li + li:before {
 .pop__message-img {
 	overflow: hidden;
 	position: relative;
-	width: 20rem;
-	height: 11.25rem;
+	width: 29rem;
+	/*height: 11.25rem;*/
 	margin-left: 1.25rem;
 }
+.pop__message-img > ul {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	align-items: center;
+}
+.pop__message-img > ul:before {
+	content: " ";
+	display: table;
+}
+.pop__message-img > ul:after {
+	content: " ";
+	display: table;
+	clear: both;
+}
+.pop__message-img > ul > li {
+	/*float: left;*/
+	width: 33.3333%;
+	padding: 0.313rem;
+}
+.pop__message-img > ul > li:only-child {
+	width: 70%;
+	text-align: center;
+}
 .pop__message-img img {
-	position: absolute;
-	top: 0;
-	left: 0;
+	/*position: absolute;*/
+	/*top: 0;*/
+	/*left: 0;*/
 	width: 100%;
-	height: 100%;
+	/*height: 100%;*/
+}
+.pop__message-img > ul > li > .photo__img {
+	position: relative;
+	top: auto;
+	left: auto;
+	width: 100%;
+	height: auto;
 }
 .pop__comment {
 	display: block;
