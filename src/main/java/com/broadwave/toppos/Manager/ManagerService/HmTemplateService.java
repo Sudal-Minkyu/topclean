@@ -108,14 +108,14 @@ public class HmTemplateService {
 
     // 문자 메시지 보내기
     @Transactional
-    public ResponseEntity<Map<String, Object>> messageSendCustomer(List<Long> bcIdList, String fmMessage, String fmSendreqtimeDt, String msgType, HttpServletRequest request) {
+    public ResponseEntity<Map<String, Object>> messageSendCustomer(List<Long> bcIdList, String hmMessage, String hmSendreqtimeDt, String msgType, HttpServletRequest request) {
         log.info("messageSendCustomer 호출");
 
         AjaxResponse res = new AjaxResponse();
 
         log.info("bcIdList : "+bcIdList);
-        log.info("fmMessage : "+fmMessage);
-        log.info("fmSendreqtimeDt : "+fmSendreqtimeDt);
+        log.info("hmMessage : "+hmMessage);
+        log.info("hmSendreqtimeDt : "+hmSendreqtimeDt);
         log.info("msgType : "+msgType);
 
         // 클레임데이터 가져오기
@@ -126,10 +126,10 @@ public class HmTemplateService {
         log.info("접속한 지사 코드 : "+brCode);
 
         LocalDateTime sendreqTime; // 예약발송시간;
-        if(!fmSendreqtimeDt.equals("0")){
+        if(!hmSendreqtimeDt.equals("0")){
 //            Timestamp sendreqStr = Timestamp.valueOf(String.valueOf(fmSendreqtimeDt));
 //            long systemTimeMills = System.currentTimeMillis();
-            sendreqTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(Long.parseLong(fmSendreqtimeDt)), TimeZone.getDefault().toZoneId());
+            sendreqTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(Long.parseLong(hmSendreqtimeDt)), TimeZone.getDefault().toZoneId());
         }else{
             sendreqTime = null;
         }
@@ -146,7 +146,7 @@ public class HmTemplateService {
                 messageHistory.setFmType("05");
                 messageHistory.setFrCode(null);
                 messageHistory.setBrCode(brCode);
-                messageHistory.setFmMessage(fmMessage);
+                messageHistory.setFmMessage(hmMessage);
                 if(sendreqTime == null){
                     messageHistory.setFmSendreqtimeDt(LocalDateTime.now());
                 }else{
@@ -163,7 +163,7 @@ public class HmTemplateService {
 
         List<MessageHistory> saveMessageHistorieList = messageHistoryRepository.saveAll(messageHistorieList);
         for(int i=0; i<saveMessageHistorieList.size(); i++){
-            boolean successBoolean = requestRepository.smsMessage(fmMessage, bcHpList.get(i), "fs_message_history", saveMessageHistorieList.get(i).getFmId(), templatecodeNumber, msgType, sendreqTime);
+            boolean successBoolean = requestRepository.smsMessage(hmMessage, bcHpList.get(i), "fs_message_history", saveMessageHistorieList.get(i).getFmId(), templatecodeNumber, msgType, sendreqTime);
             log.info("successBoolean : "+successBoolean);
             if(successBoolean) {
                 log.info("현재 고객명 : "+""+"메세지 인서트 성공");

@@ -754,16 +754,35 @@ public class InspectService {
 //    }
 
     //  통합조회 - 검품 리스트 요청
-    public ResponseEntity<Map<String, Object>> franchiseInspectionList(Long fdId, String type) {
+    public ResponseEntity<Map<String, Object>> franchiseInspectionList(Long fdId) {
         log.info("franchiseInspectionList 호출");
 
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
 
         log.info("fdId : "+fdId);
-        log.info("type : "+type);
-        List<InspeotListDto> inspeotList = inspeotRepositoryCustom.findByInspeotList(fdId, type);
-        data.put("gridListData",inspeotList);
+
+        List<HashMap<String,Object>> inspeotListData = new ArrayList<>();
+        HashMap<String,Object> inspeotListInfo;
+
+        List<InspeotListDto> inspeotList = inspeotRepositoryCustom.findByInspeotList(fdId);
+        for(InspeotListDto inspeotListDto : inspeotList){
+            inspeotListInfo = new HashMap<>();
+
+            inspeotListInfo.put("fiId", inspeotListDto.getFiId());
+            inspeotListInfo.put("fiType", inspeotListDto.getFiType());
+            inspeotListInfo.put("fiComment", inspeotListDto.getFiComment());
+            inspeotListInfo.put("fiAddAmt", inspeotListDto.getFiAddAmt());
+            inspeotListInfo.put("fiPhotoYn", inspeotListDto.getFiPhotoYn());
+            inspeotListInfo.put("fiSendMsgYn", inspeotListDto.getFiSendMsgYn());
+            inspeotListInfo.put("fiCustomerConfirm", inspeotListDto.getFiCustomerConfirm());
+
+            List<PhotoDto> photoDtoList = photoRepository.findByPhotoDtoInspeotList(inspeotListDto.getFiId());
+            inspeotListInfo.put("photoList", photoDtoList);
+            inspeotListData.add(inspeotListInfo);
+        }
+        data.put("gridListData",inspeotListData);
+
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
@@ -1090,20 +1109,20 @@ public class InspectService {
     }
 
 
-    //  지사검품등록용 - 검품 리스트 요청
-    public ResponseEntity<Map<String, Object>> branchInspectionList(Long fdId, String type) {
-        log.info("branchInspectionList 호출");
-
-        AjaxResponse res = new AjaxResponse();
-        HashMap<String, Object> data = new HashMap<>();
-
-        log.info("fdId : "+fdId);
-        log.info("type : "+type);
-        List<InspeotListDto> inspeotList = inspeotRepositoryCustom.findByInspeotList(fdId, type);
-        data.put("gridListData",inspeotList);
-
-        return ResponseEntity.ok(res.dataSendSuccess(data));
-    }
+//    //  지사검품등록용 - 검품 리스트 요청
+//    public ResponseEntity<Map<String, Object>> branchInspectionList(Long fdId, String type) {
+//        log.info("branchInspectionList 호출");
+//
+//        AjaxResponse res = new AjaxResponse();
+//        HashMap<String, Object> data = new HashMap<>();
+//
+//        log.info("fdId : "+fdId);
+//        log.info("type : "+type);
+//        List<InspeotListDto> inspeotList = inspeotRepositoryCustom.findByInspeotList(fdId, type);
+//        data.put("gridListData",inspeotList);
+//
+//        return ResponseEntity.ok(res.dataSendSuccess(data));
+//    }
 
     //  확인품현황 리스트 호출 API
     public ResponseEntity<Map<String, Object>> branchInspectionCurrentList(Long franchiseId, String fromDt, String toDt, String tagNo, HttpServletRequest request) {

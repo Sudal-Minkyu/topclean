@@ -12,11 +12,7 @@ import java.util.List;
  */
 public interface InspeotRepositoryCustom {
 
-    List<InspeotListDto> findByInspeotList(Long fdId, String type);
-    List<InspeotDto> findByInspeotDtoList(List<Long> fiId);
-
-    List<InspeotYnDto> findByInspeotYnFAndType1(List<Long> fdIdList);
-    List<InspeotYnDto> findByInspeotYnBAndType1(List<Long> fdIdList);
+    List<InspeotListDto> findByInspeotList(Long fdId);
 
     List<InspeotMainListDto> findByInspeotB1(String brCode, Integer limit, String frCode);  // 메인페이지용 검품 리스트
 

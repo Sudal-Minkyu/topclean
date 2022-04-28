@@ -322,14 +322,14 @@ public class ManagerRestController {
         return inspectService.inspectionInfo(fiId, "1", request);
     }
 
-    // 확인품 검품 리스트 요청
-    @GetMapping("branchInspectionList")
-    @ApiOperation(value = "확인품 검품 리스트" , notes = "확인품리스트를 요청한다.(type : '1'은 가맹검품만, type : '2'는 확인품만, type : '0'은 모든항목 )")
-    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
-    public ResponseEntity<Map<String,Object>> branchInspectionList(@RequestParam(value="fdId", defaultValue="") Long fdId,
-                                                                      @RequestParam(value="type", defaultValue="") String type){
-        return inspectService.branchInspectionList(fdId, type);
-    }
+//    // 확인품 검품 리스트 요청
+//    @GetMapping("branchInspectionList")
+//    @ApiOperation(value = "확인품 검품 리스트" , notes = "확인품리스트를 요청한다.(type : '1'은 가맹검품만, type : '2'는 확인품만, type : '0'은 모든항목 )")
+//    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
+//    public ResponseEntity<Map<String,Object>> branchInspectionList(@RequestParam(value="fdId", defaultValue="") Long fdId,
+//                                                                      @RequestParam(value="type", defaultValue="") String type){
+//        return inspectService.branchInspectionList(fdId, type);
+//    }
 
     //  확인품 등록/수정 API - 22/03/30 수정추가
     @PostMapping("branchInspectionSave")
@@ -557,11 +557,11 @@ public class ManagerRestController {
     @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
     public ResponseEntity<Map<String,Object>> messageSendCustomer(
             @RequestParam(value="bcIdList", defaultValue="") List<Long> bcIdList,
-            @RequestParam(value="fmMessage", defaultValue="") String fmMessage,
+            @RequestParam(value="hmMessage", defaultValue="") String hmMessage,
             @RequestParam(value="msgType", defaultValue="") String msgType,
-            @RequestParam(value="fmSendreqtimeDt", defaultValue="") String fmSendreqtimeDt,
+            @RequestParam(value="hmSendreqtimeDt", defaultValue="") String hmSendreqtimeDt,
             HttpServletRequest request){
-        return hmTemplateService.messageSendCustomer(bcIdList, fmMessage,fmSendreqtimeDt, msgType, request);
+        return hmTemplateService.messageSendCustomer(bcIdList, hmMessage, hmSendreqtimeDt, msgType, request);
     }
 
     // 메세지 템플릿 6개 저장

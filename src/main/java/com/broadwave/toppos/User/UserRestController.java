@@ -1000,9 +1000,8 @@ public class UserRestController {
     @GetMapping("franchiseInspectionList")
     @ApiOperation(value = "통합조회용" , notes = "검품 리스트 요청한다 ")
     @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
-    public ResponseEntity<Map<String,Object>> franchiseInspectionList(@RequestParam(value="fdId", defaultValue="") Long fdId,
-                                                                           @RequestParam(value="type", defaultValue="") String type){
-        return inspectService.franchiseInspectionList(fdId, type);
+    public ResponseEntity<Map<String,Object>> franchiseInspectionList(@RequestParam(value="fdId", defaultValue="") Long fdId){
+        return inspectService.franchiseInspectionList(fdId);
     }
 
     //  통합조회용 - 접수 취소
