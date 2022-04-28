@@ -17,77 +17,69 @@ const dtos = {
         messageSendCustomer: {
             bcIdList: "a", // 문자 발송의 대상이 되는 고객들의 bcId들이 담긴 리스트
             msgType: "s", // s는 일반 sms L은 lms (SMSQ_SEND 테이블의 msg_type에 넣어야 할 문자)
-            fmMessage: "s",
-            fmSendreqtimeDt: "n", // 예약발송인 경우에는 타임스탬프 숫자 형태로 전달 예정입니다. 아닐 경우 0을 넣어서 보낼 예정입니다.
-        },
-        전송내역좌측요약정보조회: {
-            filterFromDt: "s",
-            filterToDt: "s",
-        },
-        전송내역우측세부정보조회: {
-            insertYyyymmdd: "s", // 8자리의 년월일까지만 나온 정보
+            hmMessage: "s",
+            hmSendreqtimeDt: "n", // 예약발송인 경우에는 타임스탬프 숫자 형태로 전달 예정입니다. 아닐 경우 0을 넣어서 보낼 예정입니다.
         },
     },
     receive: {
+        managerBelongList: { // 가맹점 선택 셀렉트박스에 띄울 가맹점의 리스트
+            frId: "nr", // 가맹점 id
+            frName: "s",
+            frTagNo: "s",
+        },
         templateList: { // 템플릿 저장 API와 동일한 구조로 배열에 아래의 파라메터들이 옵니다. 해당 대리점에 등록된 데이터가 없다면 오류가 아닌 빈값이 오면 됩니다.
-            fmNum: "n",
-            fmSubject: "s",
-            fmMessage: "s",
+            hmNum: "n",
+            hmSubject: "s",
+            hmMessage: "s",
         },
         messageCustomerList: {
             bcId: "n",
             bcName: "s",
             bcHp: "s",
         },
-        전송내역좌측요약정보조회: {
-            전송일자: "s", // 8자리의 년월일까지만 나온 정보
-            총건수: "n",
-            수동건수: "n",
-            검품확인: "n",
-            완성품메시지: "n",
-            영수중: "n",
-        },
-        전송내역우측세부정보조회: {
-            fmType: "s",
-            fmSendreqtimeDt: "n", // 타임스템프 형태로 전달 요청드립니다.
-            bcName: "s",
-            bcHp: "s",
-            fmMessage: "s",
-        },
     }
 };
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
-    getTemplate() {
-        CommonUI.ajax("/api/user/templateList", "GET", false, function (res) {
-            console.log(res);
-            const templateList = res.sendData.gridListData;
-            console.log(templateList);
+    getFrList() {
+        CommonUI.ajax("/api/manager/branchBelongList", "GET", false, function (res) {
+            const data = res.sendData.franchiseList;
+            dv.chk(data, dtos.receive.managerBelongList, "지점에 속한 가맹점 받아오기");
+            const $frList = $("#frList");
+            data.forEach(obj => {
+                const htmlText = `<option value="${obj.frId}">${obj.frName}</option>`
+                $frList.append(htmlText);
+            });
+        });
+    },
 
-            const $tmpFmSubject = $(".tmpFmSubject");
-            const $tmpFmMessage = $(".tmpFmMessage");
+    getTemplate() {
+        CommonUI.ajax("/api/manager/templateList", "GET", false, function (res) {
+            const templateList = res.sendData.gridListData;
+
+            const $tmpHmSubject = $(".tmpHmSubject");
+            const $tmpHmMessage = $(".tmpHmMessage");
             const $tmpByte = $(".tmpByte");
-            const $tmpInputFmSubject = $(".tmpInputFmSubject");
-            const $tmpInputFmMessage = $(".tmpInputFmMessage");
+            const $tmpInputHmSubject = $(".tmpInputHmSubject");
+            const $tmpInputHmMessage = $(".tmpInputHmMessage");
             const $tmpInputByte = $(".tmpInputByte");
             for(let i = 0; i < templateList.length; i++) {
-                const byte = getByteInfo(templateList[i].fmMessage).byte;
-                $tmpFmSubject.eq(parseInt(templateList[i].fmNum) - 1).val(templateList[i].fmSubject);
-                $tmpFmMessage.eq(parseInt(templateList[i].fmNum) - 1).val(templateList[i].fmMessage);
-                $tmpByte.eq(parseInt(templateList[i].fmNum) - 1).html(byte);
-                $tmpInputFmSubject.eq(parseInt(templateList[i].fmNum) - 1).val(templateList[i].fmSubject);
-                $tmpInputFmSubject.eq(parseInt(templateList[i].fmNum) - 1).attr("data-id"
-                    , templateList[i].ftId ? templateList[i].ftId : 0);
-                $tmpInputFmMessage.eq(parseInt(templateList[i].fmNum) - 1).val(templateList[i].fmMessage);
-                $tmpInputByte.eq(parseInt(templateList[i].fmNum) - 1).html(byte);
+                const byte = getByteInfo(templateList[i].hmMessage).byte;
+                $tmpHmSubject.eq(parseInt(templateList[i].hmNum) - 1).val(templateList[i].hmSubject);
+                $tmpHmMessage.eq(parseInt(templateList[i].hmNum) - 1).val(templateList[i].hmMessage);
+                $tmpByte.eq(parseInt(templateList[i].hmNum) - 1).html(byte);
+                $tmpInputHmSubject.eq(parseInt(templateList[i].hmNum) - 1).val(templateList[i].hmSubject);
+                $tmpInputHmSubject.eq(parseInt(templateList[i].hmNum) - 1).attr("data-id"
+                    , templateList[i].hmId ? templateList[i].hmId : 0);
+                $tmpInputHmMessage.eq(parseInt(templateList[i].hmNum) - 1).val(templateList[i].hmMessage);
+                $tmpInputByte.eq(parseInt(templateList[i].hmNum) - 1).html(byte);
             }
-
         });
     },
     saveTemplate(saveDataList) {
         console.log(saveDataList);
-        CommonUI.ajax("/api/user/templateSave", "MAPPER", saveDataList, function (res) {
+        CommonUI.ajax("/api/manager/templateSave", "MAPPER", saveDataList, function (res) {
             console.log(res);
             alertSuccess("템플릿 저장에 성공하였습니다.");
             comms.getTemplate();
@@ -96,7 +88,7 @@ const comms = {
 
     sendMessage(sendMessage) {
         console.log(sendMessage);
-        CommonUI.ajax("/api/user/messageSendCustomer", "PARAM", sendMessage, function (res) {
+        CommonUI.ajax("/api/manager/messageSendCustomer", "PARAM", sendMessage, function (res) {
             alertSuccess("문자메시지 발송이 완료되었습니다.");
             grids.f.clear(0);
             grids.f.clear(1);
@@ -107,26 +99,11 @@ const comms = {
 
     getCustomers(getCondition) {
         wares.getCondition = getCondition;
-        CommonUI.ajax("/api/user/messageCustomerList", "GET", getCondition, function (res) {
+        console.log(getCondition);
+        CommonUI.ajax("/api/manager/messageCustomerList", "GET", getCondition, function (res) {
             console.log(res);
             const data = res.sendData.gridListData;
             grids.f.set(0, data);
-        });
-    },
-
-    getSendRecordSummary(searchCondition) {
-        CommonUI.ajax("/api/user/messageHistoryList", "GET", searchCondition, function (res) {
-            const data = res.sendData.gridListData;
-            console.log(data);
-            grids.f.set(2, data);
-        });
-    },
-
-    getSendRecordDetail(searchCondition) {
-        CommonUI.ajax("/api/user/messageHistorySubList", "GET", searchCondition, function (res) {
-            const data = res.sendData.gridListData;
-            console.log(data);
-            grids.f.set(3, data);
         });
     },
 };
@@ -138,7 +115,7 @@ const comms = {
 const grids = {
     s: { // 그리드 세팅
         id: [
-            "grid_customersList", "grid_selectedCustomer", "grid_sendStatus", "grid_sendDetail"
+            "grid_customersList", "grid_selectedCustomer"
         ],
         columnLayout: [],
         prop: [],
@@ -199,106 +176,6 @@ const grids = {
                 enableColumnResize : false,
                 showRowAllCheckBox: true,
                 showRowCheckColumn: true,
-                showRowNumColumn : false,
-                showStateColumn : false,
-                enableFilter : false,
-                rowHeight : 48,
-                headerHeight : 48,
-            };
-
-
-            grids.s.columnLayout[2] = [
-                {
-                    dataField: "insertYyyymmdd",
-                    headerText: "전송일자",
-                    width: 90,
-                }, {
-                    dataField: "total",
-                    headerText: "총건수",
-                }, {
-                    dataField: "fmType04_cnt",
-                    headerText: "수동<br>건수",
-                    width: 55,
-                }, {
-                    dataField: "fmType01_cnt",
-                    headerText: "검품<br>확인",
-                    width: 55,
-                }, {
-                    dataField: "fmTypeXX_cnt",
-                    headerText: "완성품<br>메시지",
-                    width: 55,
-                }, {
-                    dataField: "fmType02_cnt",
-                    headerText: "영수증",
-                    width: 55,
-                },
-            ];
-
-            grids.s.prop[2] = {
-                editable : false,
-                selectionMode : "singleRow",
-                noDataMessage : "출력할 데이터가 없습니다.",
-                showAutoNoDataMessage: false,
-                enableColumnResize : false,
-                showRowAllCheckBox: false,
-                showRowCheckColumn: false,
-                showRowNumColumn : false,
-                showStateColumn : false,
-                enableFilter : false,
-                rowHeight : 48,
-                headerHeight : 48,
-            };
-
-            grids.s.columnLayout[3] = [
-                {
-                    dataField: "fmType",
-                    headerText: "전송유형",
-                    width: 70,
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
-                        return CommonData.name.fmType[value];
-                    },
-                }, {
-                    dataField: "insertDateTime",
-                    headerText: "전송일시",
-                    width: 90,
-                    renderer : {
-                        type : "TemplateRenderer",
-                    },
-                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
-                        let result = "";
-                        if(typeof value === "number") {
-                            result = new Date(value).format("yyyy-MM-dd<br>hh:mm");
-                        }
-                        return result;
-                    },
-                }, {
-                    dataField: "bcName",
-                    headerText: "고객명",
-                    style: "grid_textalign_left",
-                    width: 90,
-                }, {
-                    dataField: "bcHp",
-                    headerText: "수신번호",
-                    style: "grid_textalign_left",
-                    width: 120,
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
-                        return CommonUI.formatTel(value);
-                    },
-                }, {
-                    dataField: "fmMessage",
-                    headerText: "내용",
-                    style: "grid_textalign_left",
-                },
-            ];
-
-            grids.s.prop[3] = {
-                editable : false,
-                selectionMode : "singleRow",
-                noDataMessage : "출력할 데이터가 없습니다.",
-                showAutoNoDataMessage: false,
-                enableColumnResize : false,
-                showRowAllCheckBox: false,
-                showRowCheckColumn: false,
                 showRowNumColumn : false,
                 showStateColumn : false,
                 enableFilter : false,
@@ -388,30 +265,26 @@ const trigs = {
             comms.getSendRecordDetail(searchCondition);
         });
 
+        // 탭
         const $tabsBtn = $('.c-tabs__btn');
         const $tabsContent = $('.c-tabs__content');
 
-        $tabsBtn.on('click', function () {
+        $tabsBtn.on('click', function() {
             const idx = $(this).index();
 
             $tabsBtn.removeClass('active');
             $tabsBtn.eq(idx).addClass('active');
             $tabsContent.removeClass('active');
             $tabsContent.eq(idx).addClass('active');
-
-            if(idx === 1) {
-                grids.f.resize(2);
-                grids.f.resize(3);
-            }
         });
 
-        const $tmpInputFmMessage = $(".tmpInputFmMessage");
+        const $tmpInputHmMessage = $(".tmpInputHmMessage");
         const $tmpInputByte = $(".tmpInputByte");
-        const $tmpFmMessage = $(".tmpFmMessage");
+        const $tmpHmMessage = $(".tmpHmMessage");
         const $tmpByte = $(".tmpByte");
         const $tmpRadio = $(".tmpRadio");
-        for (let i = 0; i < $tmpInputFmMessage.length; i++) {
-            $tmpInputFmMessage.eq(i).on("keyup", function () {
+        for (let i = 0; i < $tmpInputHmMessage.length; i++) {
+            $tmpInputHmMessage.eq(i).on("keyup", function () {
                 let byteInfo = getByteInfo(this.value);
                 if(byteInfo.cutLength) {
                     this.value = this.value.substring(0, byteInfo.cutLength);
@@ -421,12 +294,12 @@ const trigs = {
             });
 
             $tmpRadio.eq(i).on("click", function () {
-                $("#fmMessage").val($tmpFmMessage.eq(i).val());
+                $("#hmMessage").val($tmpHmMessage.eq(i).val());
                 $("#byte").html($tmpByte.eq(i).html());
             });
         }
 
-        $("#fmMessage").on("keyup", function () {
+        $("#hmMessage").on("keyup", function () {
             let byteInfo = getByteInfo(this.value);
             if(byteInfo.cutLength) {
                 this.value = this.value.substring(0, byteInfo.cutLength);
@@ -497,14 +370,6 @@ const trigs = {
             }
         });
     },
-
-    vkeys() {
-        for(let i = 0; i < 14; i++) {
-            $("#vkeyboard" + i).on("click", function() {
-                onShowVKeyboard(i);
-            });
-        }
-    },
 }
 
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
@@ -521,12 +386,9 @@ function onPageLoad() {
     grids.f.initialization();
     grids.f.create();
 
-    /* 가상키보드의 사용 선언 */
-    window.vkey = new VKeyboard();
-
     trigs.basic();
-    trigs.vkeys();
     enableDatepicker();
+    comms.getFrList();
     comms.getTemplate();
 }
 
@@ -538,7 +400,7 @@ function enableDatepicker() {
 
     /* datepicker를 적용시킬 대상들의 dom id들 */
     const datePickerTargetIds = [
-        "filterFromDt", "filterToDt", "fmSendreqtimeDate"
+        "filterFromDt", "filterToDt", "hmSendreqtimeDate"
     ];
 
     $("#" + datePickerTargetIds[0]).val(fromday);
@@ -583,17 +445,17 @@ function getByteInfo(text) {
 }
 
 function saveTemplate() {
-    const $tmpInputFmSubject = $(".tmpInputFmSubject");
-    const $tmpInputFmMessage = $(".tmpInputFmMessage");
+    const $tmpInputHmSubject = $(".tmpInputHmSubject");
+    const $tmpInputHmMessage = $(".tmpInputHmMessage");
 
     const saveDataList = [];
 
-    for(let i = 0; i < $tmpInputFmSubject.length; i++) {
+    for(let i = 0; i < $tmpInputHmSubject.length; i++) {
         saveDataList.push({
-            ftId: parseInt($tmpInputFmSubject.eq(i).attr("data-id")),
-            fmNum: i + 1,
-            fmSubject: $tmpInputFmSubject.eq(i).val(),
-            fmMessage: $tmpInputFmMessage.eq(i).val(),
+            hmId: parseInt($tmpInputHmSubject.eq(i).attr("data-id")),
+            hmNum: i + 1,
+            hmSubject: $tmpInputHmSubject.eq(i).val(),
+            hmMessage: $tmpInputHmMessage.eq(i).val(),
         });
     }
 
@@ -601,8 +463,8 @@ function saveTemplate() {
 }
 
 function sendMessage() {
-    const fmSendreqtimeDt = new Date($("#fmSendreqtimeDate").val() + " " + $("#fmSendreqtimeHour").val() + ":"
-        + $("#fmSendreqtimeMinute").val()).getTime();
+    const hmSendreqtimeDt = new Date($("#hmSendreqtimeDate").val() + " " + $("#hmSendreqtimeHour").val() + ":"
+        + $("#hmSendreqtimeMinute").val()).getTime();
     const isBookSend = $("#isBookSend").is(":checked");
     const bcIdList = [];
     const gridData = grids.f.get(1);
@@ -613,8 +475,8 @@ function sendMessage() {
     const sendData = {
         bcIdList: bcIdList,
         msgType: parseInt($("#byte").html()) < 90 ? "S" : "L",
-        fmMessage: $("#fmMessage").val(),
-        fmSendreqtimeDt: isBookSend ? fmSendreqtimeDt : 0,
+        hmMessage: $("#hmMessage").val(),
+        hmSendreqtimeDt: isBookSend ? hmSendreqtimeDt : 0,
     }
 
     comms.sendMessage(sendData);
@@ -623,6 +485,7 @@ function sendMessage() {
 function getCustomers() {
     const isRangeSearch = $("input[name=isRangeSearch]:checked").val() === "1";
     const getCondition = {
+        franchiseId: $("#frList").val(),
         visitDayRange: isRangeSearch ? $("#visitDayRange").val() : "0",
     }
     comms.getCustomers(getCondition);
@@ -644,21 +507,4 @@ function getSendRecordSummary() {
     }
 
     comms.getSendRecordSummary(searchCondition);
-}
-
-function onShowVKeyboard(num) {
-    /* 가상키보드 사용을 위해 */
-    const vkeyProp = [];
-    const vkeyTargetId = ["filterString", "fmMessage", "vtarget2", "vtarget3", "vtarget4", "vtarget5", "vtarget6"
-        , "vtarget7", "vtarget8", "vtarget9", "vtarget10", "vtarget11", "vtarget12", "vtarget13"];
-
-    vkeyProp[num] = {
-        title: $("#" + vkeyTargetId[num]).attr("placeholder"),
-    };
-
-    if(num === 0) {
-        vkeyProp[num].callback = setCustomerFilter;
-    }
-
-    vkey.showKeyboard(vkeyTargetId[num], vkeyProp[num]);
 }
