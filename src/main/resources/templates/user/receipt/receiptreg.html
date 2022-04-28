@@ -417,8 +417,20 @@
                             </li>
                             <li>
                                 <div class="choice">
-                                    <input type="checkbox" name="fdUrgent" id="fdUrgentYn" />
-                                    <label for="fdUrgentYn">급세탁</label>
+                                    <input type="checkbox" name="fdUrgent" id="fdUrgentYn" value="1" />
+                                    <label for="fdUrgentYn">당일</label>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="choice">
+                                    <input type="checkbox" name="fdUrgent" id="temp1" value="2" />
+                                    <label for="temp1">특급(1박2일)</label>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="choice">
+                                    <input type="checkbox" name="fdUrgent" id="temp2" value="3" />
+                                    <label for="temp2">급(2박3일)</label>
                                 </div>
                             </li>
                             <li>
@@ -978,6 +990,8 @@
                     </div>
 
                     <div class="pop__pay-tabs">
+                        <button class="pop__pay-tabs-item c-button c-button--darksolid" id="publishCashReceipt"
+                            style="display: none;" onclick="publishCashReceipt()">현금 영수증</button>
                         <button class="pop__pay-tabs-item active" data-id="tabCash">현금결제</button>
                         <button class="pop__pay-tabs-item" data-id="tabCard">카드결제</button>
                     </div>
@@ -994,10 +1008,6 @@
                     </div>
                     <div class="pop__pay-article half">
                         <div class="pop__tabs-content pop__cash active" id="tabCash">
-                            <!-- <div class="pop__pay-cash">
-                                <input type="checkbox" id="cash" />
-                                <label for="cash">현금영수증발행</label>
-                            </div> -->
                             <div class="pop__pay-list pop__pay-list--cash">
                                 <dl>
                                     <dt>받은돈</dt>

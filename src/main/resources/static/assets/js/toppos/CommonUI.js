@@ -170,6 +170,47 @@ class CommonUIClass {
             }
         },
 
+        publishCashRceipt(paymentData, callback = function () {}) {
+            CAT.CatSetCashReceipt(paymentData, function (res) {
+                $('#payStatus').hide();
+                res = JSON.parse(res);
+                if(res.STATUS === "SUCCESS") {
+                    paymentData.fcCatApprovaltime = res.APPROVALTIME;
+                    paymentData.fcCatApprovalno = res.APPROVALNO;
+                    paymentData.fcCatCardno = res.CARDNO;
+                    paymentData.fcCatMessage1 = res.MESSAGE1;
+                    paymentData.fcCatMessage2 = res.MESSAGE2;
+                    paymentData.fcCatNotice1 = res.NOTICE1;
+                    paymentData.fcCatTotamount = res.TOTAMOUNT;
+                    paymentData.fcCatVatamount = res.VATAMOUNT;
+                    paymentData.fcCatTelegramflagt = res.TELEGRAMFLAG;
+
+                    paymentData.fcCatIssuercode = res.ISSUERCODE;
+                    paymentData.fcCatIssuername = res.ISSUERNAME;
+                    paymentData.fcMuechantnumber = res.MERCHANTNUMBER;
+
+                    console.log(paymentData);
+                    CommonUI.ajax("/api/user/requestPaymentCashPaper", "PARAM", paymentData, function (res) {
+                        alertSuccess("현금영수증이 정상 발행 되었습니다.");
+                    });
+                    return callback();
+                } else if (res.STATUS === "FAILURE") {
+                    console.log(res);
+                    if (res.ERRORDATA === "erroecode:404, error:error") {
+                        alertCancel("카드결제 단말기 연결이 감지되지 않습니다.<br>연결을 확인해 주세요.");
+                    } else if (res.ERRORDATA === "erroecode:0, error:timeout") {
+                        alertCancel("유효 등록 시간이 지났습니다.<br>다시 결제창 버튼을 이용하여<br>원하시는 기능을 선택 해주세요.");
+                    } else if (res.ERRORMESSAGE === "단말기에서종료키누름 /                  /                 ") {
+                        alertCancel("단말기 종료키를 통해 결제가 중지되었습니다.");
+                    } else if (res.ERRORMESSAGE === " /  / ") {
+                        alertCancel("단말기가 사용중입니다.<br>확인 후 다시 시도해 주세요.");
+                    } else {
+                        alertCancel(res.ERRORMESSAGE);
+                    }
+                }
+            });
+        },
+
         speak(text, callback = function() {}) {
             if(typeof speechSynthesis === 'undefined') {
                 return;
