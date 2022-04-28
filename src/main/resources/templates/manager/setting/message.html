@@ -10,22 +10,7 @@
 
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
-    <script>
-        $(function() {
-            // 탭
-            const $tabsBtn = $('.c-tabs__btn');
-            const $tabsContent = $('.c-tabs__content');
-
-            $tabsBtn.on('click', function() {
-                const idx = $(this).index();
-
-                $tabsBtn.removeClass('active');
-                $tabsBtn.eq(idx).addClass('active');
-                $tabsContent.removeClass('active');
-                $tabsContent.eq(idx).addClass('active');
-            });
-        })
-    </script>
+    <script src="/assets/js/toppos/manager/setting/message.js"></script>
 </th:block>
 
 <div layout:fragment="content" class="content content--padding">
@@ -46,8 +31,8 @@
                                     <div class="inquiry__title">지사선택</div>
                                     <div class="inquiry__input">
                                         <div class="c-select">
-                                            <select>
-                                                <option>전체</option>
+                                            <select id="frList">
+                                                <option value="0">전체</option>
                                             </select>
                                         </div>
                                     </div>
@@ -65,7 +50,7 @@
                                         </div>
                                     </div>
                                 </li>
-                                <li>
+                                <li id="dateRangeSet" style="display: none;">
                                     <div class="inquiry__input">
                                         <div class="c-select">
                                             <select id="visitDayRange">
@@ -76,6 +61,11 @@
                                             </select>
                                         </div>
                                         이내 방문 고객
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="c-tabs__search-btn">
+                                        <button id="getCustomersBtn" class="c-button c-button--small c-button--darksolid">조회</button>
                                     </div>
                                 </li>
                             </ul>
@@ -118,7 +108,7 @@
                     <div class="sms">
                         <div class="sms__write">
                             <div class="c-textarea">
-                                <textarea id="fmMessage" placeholder="sms 내용 입력"></textarea>
+                                <textarea id="hmMessage" placeholder="sms 내용 입력"></textarea>
                             </div>
                             <div class="phone__byte">
                                 <span id="byte">0</span>/90byte
@@ -126,13 +116,13 @@
                         </div>
                         <div class="sms__console">
                             <div class="sms__console-item sms__console-item--50">
-                                <input id="fmSendreqtimeDate" type="text" class="c-date" />
+                                <input id="hmSendreqtimeDate" type="text" class="c-date" />
                             </div>
                             <div class="sms__console-item sms__console-item--50">
                                 <div class="sms__console-time">
                                     <div class="sms__time-item">
                                         <div class="c-select">
-                                            <select id="fmSendreqtimeHour" class="c-select__input">
+                                            <select id="hmSendreqtimeHour" class="c-select__input">
                                                 <option>0</option>
                                                 <option>1</option>
                                                 <option>2</option>
@@ -164,7 +154,7 @@
 
                                     <div class="sms__time-item">
                                         <div class="c-select">
-                                            <select id="fmSendreqtimeMinute" class="c-select__input">
+                                            <select id="hmSendreqtimeMinute" class="c-select__input">
                                                 <option>00</option>
                                                 <option>01</option>
                                                 <option>02</option>
@@ -249,10 +239,10 @@
                                 <div class="phone">
                                     <div class="phone__inner">
                                         <div class="c-text">
-                                            <input type="text" class="tmpFmSubject" value="" readonly="readonly" />
+                                            <input type="text" class="tmpHmSubject" value="" readonly="readonly" />
                                         </div>
                                         <div class="c-textarea">
-                                            <textarea class="tmpFmMessage" value="" readonly="readonly"></textarea>
+                                            <textarea class="tmpHmMessage" value="" readonly="readonly"></textarea>
                                         </div>
                                         <div class="phone__byte">
                                             <span class="tmpByte">0</span>/90byte
@@ -270,10 +260,10 @@
                                 <div class="phone">
                                     <div class="phone__inner">
                                         <div class="c-text">
-                                            <input type="text" class="tmpFmSubject" value="" readonly="readonly" />
+                                            <input type="text" class="tmpHmSubject" value="" readonly="readonly" />
                                         </div>
                                         <div class="c-textarea">
-                                            <textarea class="tmpFmMessage" value="" readonly="readonly"></textarea>
+                                            <textarea class="tmpHmMessage" value="" readonly="readonly"></textarea>
                                         </div>
                                         <div class="phone__byte">
                                             <span class="tmpByte">0</span>/90byte
@@ -291,10 +281,10 @@
                                 <div class="phone">
                                     <div class="phone__inner">
                                         <div class="c-text">
-                                            <input type="text" class="tmpFmSubject" value="" readonly="readonly" />
+                                            <input type="text" class="tmpHmSubject" value="" readonly="readonly" />
                                         </div>
                                         <div class="c-textarea">
-                                            <textarea class="tmpFmMessage" value="" readonly="readonly"></textarea>
+                                            <textarea class="tmpHmMessage" value="" readonly="readonly"></textarea>
                                         </div>
                                         <div class="phone__byte">
                                             <span class="tmpByte">0</span>/90byte
@@ -312,10 +302,10 @@
                                 <div class="phone">
                                     <div class="phone__inner">
                                         <div class="c-text">
-                                            <input type="text" class="tmpFmSubject" value="" readonly="readonly" />
+                                            <input type="text" class="tmpHmSubject" value="" readonly="readonly" />
                                         </div>
                                         <div class="c-textarea">
-                                            <textarea class="tmpFmMessage" value="" readonly="readonly"></textarea>
+                                            <textarea class="tmpHmMessage" value="" readonly="readonly"></textarea>
                                         </div>
                                         <div class="phone__byte">
                                             <span class="tmpByte">0</span>/90byte
@@ -333,10 +323,10 @@
                                 <div class="phone">
                                     <div class="phone__inner">
                                         <div class="c-text">
-                                            <input type="text" class="tmpFmSubject" value="" readonly="readonly" />
+                                            <input type="text" class="tmpHmSubject" value="" readonly="readonly" />
                                         </div>
                                         <div class="c-textarea">
-                                            <textarea class="tmpFmMessage" value="" readonly="readonly"></textarea>
+                                            <textarea class="tmpHmMessage" value="" readonly="readonly"></textarea>
                                         </div>
                                         <div class="phone__byte">
                                             <span class="tmpByte">0</span>/90byte
@@ -354,10 +344,10 @@
                                 <div class="phone">
                                     <div class="phone__inner">
                                         <div class="c-text">
-                                            <input type="text" class="tmpFmSubject" value="" readonly="readonly" />
+                                            <input type="text" class="tmpHmSubject" value="" readonly="readonly" />
                                         </div>
                                         <div class="c-textarea">
-                                            <textarea class="tmpFmMessage" value="" readonly="readonly"></textarea>
+                                            <textarea class="tmpHmMessage" value="" readonly="readonly"></textarea>
                                         </div>
                                         <div class="phone__byte">
                                             <span class="tmpByte">0</span>/90byte
@@ -386,10 +376,10 @@
                                 <div class="phone">
                                     <div class="phone__inner">
                                         <div class="c-text">
-                                            <input id="vtarget2" type="text" class="tmpInputFmSubject" data-id="0" placeholder="제목입력" />
+                                            <input id="vtarget2" type="text" class="tmpInputHmSubject" data-id="0" placeholder="제목입력" />
                                         </div>
                                         <div class="c-textarea">
-                                            <textarea id="vtarget3" class="tmpInputFmMessage" placeholder="sms 내용 입력"></textarea>
+                                            <textarea id="vtarget3" class="tmpInputHmMessage" placeholder="sms 내용 입력"></textarea>
                                         </div>
                                         <div class="phone__byte">
                                             <span class="tmpInputByte">0</span>/90byte
@@ -403,10 +393,10 @@
                                 <div class="phone">
                                     <div class="phone__inner">
                                         <div class="c-text">
-                                            <input id="vtarget4" type="text" class="tmpInputFmSubject" data-id="0" placeholder="제목입력" />
+                                            <input id="vtarget4" type="text" class="tmpInputHmSubject" data-id="0" placeholder="제목입력" />
                                         </div>
                                         <div class="c-textarea">
-                                            <textarea id="vtarget5" class="tmpInputFmMessage" placeholder="sms 내용 입력"></textarea>
+                                            <textarea id="vtarget5" class="tmpInputHmMessage" placeholder="sms 내용 입력"></textarea>
                                         </div>
                                         <div class="phone__byte">
                                             <span class="tmpInputByte">0</span>/90byte
@@ -420,10 +410,10 @@
                                 <div class="phone">
                                     <div class="phone__inner">
                                         <div class="c-text">
-                                            <input id="vtarget6" type="text" class="tmpInputFmSubject" data-id="0" placeholder="제목입력" />
+                                            <input id="vtarget6" type="text" class="tmpInputHmSubject" data-id="0" placeholder="제목입력" />
                                         </div>
                                         <div class="c-textarea">
-                                            <textarea id="vtarget7" class="tmpInputFmMessage" placeholder="sms 내용 입력"></textarea>
+                                            <textarea id="vtarget7" class="tmpInputHmMessage" placeholder="sms 내용 입력"></textarea>
                                         </div>
                                         <div class="phone__byte">
                                             <span class="tmpInputByte">0</span>/90byte
@@ -437,10 +427,10 @@
                                 <div class="phone">
                                     <div class="phone__inner">
                                         <div class="c-text">
-                                            <input id="vtarget8" type="text" class="tmpInputFmSubject" data-id="0" placeholder="제목입력" />
+                                            <input id="vtarget8" type="text" class="tmpInputHmSubject" data-id="0" placeholder="제목입력" />
                                         </div>
                                         <div class="c-textarea">
-                                            <textarea id="vtarget9" class="tmpInputFmMessage" placeholder="sms 내용 입력"></textarea>
+                                            <textarea id="vtarget9" class="tmpInputHmMessage" placeholder="sms 내용 입력"></textarea>
                                         </div>
                                         <div class="phone__byte">
                                             <span class="tmpInputByte">0</span>/90byte
@@ -454,10 +444,10 @@
                                 <div class="phone">
                                     <div class="phone__inner">
                                         <div class="c-text">
-                                            <input id="vtarget10" type="text" class="tmpInputFmSubject" data-id="0" placeholder="제목입력" />
+                                            <input id="vtarget10" type="text" class="tmpInputHmSubject" data-id="0" placeholder="제목입력" />
                                         </div>
                                         <div class="c-textarea">
-                                            <textarea id="vtarget11" class="tmpInputFmMessage" placeholder="sms 내용 입력"></textarea>
+                                            <textarea id="vtarget11" class="tmpInputHmMessage" placeholder="sms 내용 입력"></textarea>
                                         </div>
                                         <div class="phone__byte">
                                             <span class="tmpInputByte">0</span>/90byte
@@ -471,10 +461,10 @@
                                 <div class="phone">
                                     <div class="phone__inner">
                                         <div class="c-text">
-                                            <input id="vtarget12" type="text" class="tmpInputFmSubject" data-id="0" placeholder="제목입력" />
+                                            <input id="vtarget12" type="text" class="tmpInputHmSubject" data-id="0" placeholder="제목입력" />
                                         </div>
                                         <div class="c-textarea">
-                                            <textarea id="vtarget13" class="tmpInputFmMessage" placeholder="sms 내용 입력"></textarea>
+                                            <textarea id="vtarget13" class="tmpInputHmMessage" placeholder="sms 내용 입력"></textarea>
                                         </div>
                                         <div class="phone__byte">
                                             <span class="tmpInputByte">0</span>/90byte
