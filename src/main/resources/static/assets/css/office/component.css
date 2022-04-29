@@ -150,7 +150,7 @@ select + .c-button {
 .c-radio {
 	display: inline-block;
 	position: relative;
-	line-height: 1.25rem;
+	line-height: 2rem;
 }
 .c-radio + .c-radio {
 	margin-left: 1.25rem;

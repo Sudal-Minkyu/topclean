@@ -139,50 +139,50 @@ public class TagNoticeRepositoryCustomImpl extends QuerydslRepositorySupport imp
         return query.fetchOne();
     }
 
-    @Override
-    public List<TagNoticeTestDto> findByGroupByTest() {
-
-
-        QTagNotice tagNotice  = QTagNotice.tagNotice;
-
-
-        JPQLQuery<TagNoticeTestDto> query = from(tagNotice)
-                .select(Projections.constructor(TagNoticeTestDto.class,
-                        tagNotice.htSubject,
-                        tagNotice.insert_id,
-                        tagNotice.count()
-                ));
-
-        query.groupBy(tagNotice.htSubject,tagNotice.insert_id);
-
-        return query.fetch();
-
-    }
-
-    @Override
-    public List<TagNoticeTestDto> findByGroupByNativeTest() {
-
-        EntityManager em = getEntityManager();
-
-        StringBuilder sb = new StringBuilder();
-
-        sb.append("SELECT ht_subject as subject ,insert_id, \n");
-        sb.append("  sum(case WHEN LENGTH(ht_subject) > 5 THEN 2 ELSE 0 END )  numOfCount  \n");
-        sb.append("   FROM hb_tag_notice where insert_id = ?1  GROUP BY insert_id,ht_subject  \n");
-
-
-        Query query = em.createNativeQuery(sb.toString());
-
-
-        query.setParameter(1, "admin1");
-
-
-        List<TagNoticeTestDto> result = jpaResultMapper.list(query, TagNoticeTestDto.class);
-
-
-        return result;
-
-    }
+//    @Override
+//    public List<TagNoticeTestDto> findByGroupByTest() {
+//
+//
+//        QTagNotice tagNotice  = QTagNotice.tagNotice;
+//
+//
+//        JPQLQuery<TagNoticeTestDto> query = from(tagNotice)
+//                .select(Projections.constructor(TagNoticeTestDto.class,
+//                        tagNotice.htSubject,
+//                        tagNotice.insert_id,
+//                        tagNotice.count()
+//                ));
+//
+//        query.groupBy(tagNotice.htSubject,tagNotice.insert_id);
+//
+//        return query.fetch();
+//
+//    }
+//
+//    @Override
+//    public List<TagNoticeTestDto> findByGroupByNativeTest() {
+//
+//        EntityManager em = getEntityManager();
+//
+//        StringBuilder sb = new StringBuilder();
+//
+//        sb.append("SELECT ht_subject as subject ,insert_id, \n");
+//        sb.append("  sum(case WHEN LENGTH(ht_subject) > 5 THEN 2 ELSE 0 END )  numOfCount  \n");
+//        sb.append("   FROM hb_tag_notice where insert_id = ?1  GROUP BY insert_id,ht_subject  \n");
+//
+//
+//        Query query = em.createNativeQuery(sb.toString());
+//
+//
+//        query.setParameter(1, "admin1");
+//
+//
+//        List<TagNoticeTestDto> result = jpaResultMapper.list(query, TagNoticeTestDto.class);
+//
+//
+//        return result;
+//
+//    }
 
 
 }

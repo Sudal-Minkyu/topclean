@@ -43,7 +43,7 @@
                                         <li>
                                             <div class="percent__title">고급 : </div>
                                             <div class="percent__input">
-                                                <input type="text" id="bcHighRt" name="bcHighRt" />
+                                                <input type="number" id="bcHighRt" name="bcHighRt" />
                                                 <span>%</span>
                                             </div>
 
@@ -51,7 +51,7 @@
                                         <li>
                                             <div class="percent__title">명품 : </div>
                                             <div class="percent__input">
-                                                <input type="text" id="bcPremiumRt" name="bcPremiumRt" />
+                                                <input type="number" id="bcPremiumRt" name="bcPremiumRt" />
                                                 <span>%</span>
                                             </div>
 
@@ -59,8 +59,38 @@
                                         <li>
                                             <div class="percent__title">아동 : </div>
                                             <div class="percent__input">
-                                                <input type="text" id="bcChildRt" name="bcChildRt" />
+                                                <input type="number" id="bcChildRt" name="bcChildRt" />
                                                 <span>%</span>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>급세탁 가격</th>
+                                <td colspan="4">
+                                    <ul class="percent">
+                                        <li>
+                                            <div class="percent__title">당일세탁 : </div>
+                                            <div class="percent__input">
+                                                <input type="number" id="bcUrgentRate1" name="bcUrgentRate1" />
+                                                <span>%</span>
+                                            </div>
+
+                                        </li>
+                                        <li>
+                                            <div class="percent__title">특급세탁(1박2일) : </div>
+                                            <div class="percent__input">
+                                                <input type="number" id="bcUrgentRate2" name="bcUrgentRate2" />
+                                                <span>%</span>
+                                            </div>
+
+                                        </li>
+                                        <li>
+                                            <div class="percent__title">급세탁(2박3일) : </div>
+                                            <div class="percent__input">
+                                                <input type="text" id="bcUrgentAmt1" name="bcUrgentAmt1" />
+                                                <span>원</span>
                                             </div>
                                         </li>
                                     </ul>
@@ -70,7 +100,7 @@
                                 <th>VIP 고객 할인율</th>
                                 <td>
                                     <div class="percent__input">
-                                        <input type="text" id="bcVipDcRt" name="bcVipDcRt" />
+                                        <input type="number" class="discountRate" id="bcVipDcRt" name="bcVipDcRt" min="0" max="100" />
                                         <span>%</span>
                                     </div>
                                 </td>
@@ -87,7 +117,7 @@
                                 <th>VVIP 고객 할인율</th>
                                 <td>
                                     <div class="percent__input">
-                                        <input type="text" id="bcVvipDcRt" name="bcVvipDcRt" />
+                                        <input type="number" class="discountRate" id="bcVvipDcRt" name="bcVvipDcRt" min="0" max="100" />
                                         <span>%</span>
                                     </div>
                                 </td>
