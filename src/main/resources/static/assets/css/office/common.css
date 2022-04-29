@@ -792,6 +792,9 @@ textarea {
 .form__input .c-select {
 	width: 100%;
 }
+.form__input .c-radio + .c-radio {
+	margin-left: 0.625rem;
+}
 .text-color--red {
 	color: #dd5257;
 }
