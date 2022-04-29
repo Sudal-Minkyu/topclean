@@ -23,6 +23,7 @@ public class EtcDataDto {
     private String frRpreName; // 가맹점주이름
     private String frTelNo; // 가맹점 전화번호
     private String frMultiscreenYn; // 멀티스크린 사용여부
+    private String frUrgentDayYn; // 가맹점 당일세탁 사용여부
 
     public StringBuffer getFrEstimateDate() {
         if(frEstimateDate != null && !frEstimateDate.equals("")){

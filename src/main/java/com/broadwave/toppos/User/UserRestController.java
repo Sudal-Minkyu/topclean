@@ -586,7 +586,8 @@ public class UserRestController {
             etcData.setFrTelNo(franchiseInfoDto.getFrBusinessNo());
             etcData.setFdTag(franchiseInfoDto.getFrLastTagno());
             etcData.setFrMultiscreenYn(franchiseInfoDto.getFrMultiscreenYn());
-
+            etcData.setFrUrgentDayYn(franchiseInfoDto.getFrUrgentDayYn());
+            
             log.info("etcData : "+etcData);
             data.put("etcData",etcData);
         }
