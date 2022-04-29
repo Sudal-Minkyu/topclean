@@ -17,7 +17,6 @@
 </th:block>
 
 <div layout:fragment="content" class="content content--padding">
-	<!-- <h2 class="content__heading">계약관리</h2> -->
 	
 	<div class="c-tabs">
 		<div class="c-tabs__head">
@@ -240,9 +239,16 @@
 										</div>
 									</li>
 									<li class="form__item">
-										<div class="form__title"></div>
+										<div class="form__title">당일세탁사용</div>
 										<div class="form__input">
-											
+											<div class="c-radio">
+												<input type="radio" name="frUrgentDayYn" id="use" value="Y" />
+												<label for="use">사용</label>
+											</div>
+											<div class="c-radio">
+												<input type="radio" name="frUrgentDayYn" id="notuse" value="N" />
+												<label for="notuse">미사용</label>
+											</div>
 										</div>
 									</li>
 									<li class="form__item">
@@ -293,10 +299,14 @@
 									<li class="form__item">
 										<div class="form__title">가맹점택코드 자릿수</div>
 										<div class="form__input">
-											<input type="radio" id="frTagType2" name="frTagType" value="2" checked/>
-											<label for="frTagType2">2 자리</label>
-											<input type="radio" id="frTagType3" name="frTagType" value="3" />
-											<label for="frTagType3">3 자리</label>
+											<div class="c-radio">
+												<input type="radio" id="frTagType2" name="frTagType" value="2" checked/>
+												<label for="frTagType2">2 자리</label>
+											</div>
+											<div class="c-radio">
+												<input type="radio" id="frTagType3" name="frTagType" value="3" />
+												<label for="frTagType3">3 자리</label>
+											</div>
 										</div>
 									</li>
 								</ul>
