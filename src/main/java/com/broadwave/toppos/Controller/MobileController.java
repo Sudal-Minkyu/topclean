@@ -29,7 +29,13 @@ public class MobileController {
 
     // 모바일 고객용 접수증(영수증)
     @RequestMapping("/unAuth/receipt")
-    public String receipt(){
+    public String receipt() {
         return "mobile/unAuth/receipt";
+    }
+
+    // 모바일 고객용 검품응답
+    @RequestMapping("/unAuth/inspectresponse")
+    public String inspectresponse() {
+        return "mobile/unAuth/inspectresponse";
     }
 }
