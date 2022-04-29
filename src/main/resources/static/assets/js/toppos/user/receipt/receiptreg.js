@@ -240,6 +240,12 @@ $(function() {
         }
     });
 
+    const urgentTypeElement = $("input[name='fdUrgentType']");
+    urgentTypeElement.on("click", function (e) {
+        urgentTypeElement.prop("checked", false);
+        $(e.currentTarget).prop("checked", true);
+    });
+
 
     // 결제팝업 탭
     const $payTabsBtn = $('.pop__pay-tabs-item');
@@ -307,6 +313,8 @@ const fsRequestDtl = {
     fdAdd1Remark: "",
     fdSpecialYn: "N",
     fdUrgentYn: "N",
+    fdUrgentType: "0",
+    fdUrgentAmt: 0,
     fdAdd1Amt: 0,
     fdAdd2Remark: "",
     fdAdd2Amt: 0,
@@ -1139,7 +1147,9 @@ function putItemIntoGrid() {
     currentRequest.fdRemark = $("#fdRemark").val();
     currentRequest.frEstimateDate = initialData.etcData.frEstimateDate.numString();
     currentRequest.fdSpecialYn = $("#fdSpecialYn").is(":checked") ? "Y" : "N";
-    currentRequest.fdUrgentYn = $("#fdUrgentYn").is(":checked") ? "Y" : "N";
+    currentRequest.fdUrgentType = $("input[name='fdUrgentType']:checked").val() ?
+        $("input[name='fdUrgentType']:checked").val() : "0";
+    // currentRequest.fdUrgentYn = $("#fdUrgentYn").is(":checked") ? "Y" : "N";
     
     const pollutionLoc = $("input[name='pollutionLoc']");
     for(let i = 0; i < pollutionLoc.length; i++) {
@@ -1300,17 +1310,22 @@ function onModifyOrder(rowIndex) {
         $("#fdAdd1Remark").val(currentRequest.fdAdd1Remark);
     }
 
+    if (["1", "2", "3"].includes(currentRequest.fdUrgentType)) {
+        $("#fdUrgent" + currentRequest.fdUrgentType).prop("checked", true);
+    }
+
     if(currentRequest.fdSpecialYn === "Y") {
         $("#fdSpecialYn").prop("checked", true);
     }else{
         $("#fdSpecialYn").prop("checked", false);
     }
 
-    if(currentRequest.fdUrgentYn === "Y") {
-        $("#fdUrgentYn").prop("checked", true);
-    }else{
-        $("#fdUrgentYn").prop("checked", false);
-    }
+
+    // if(currentRequest.fdUrgentYn === "Y") {
+    //     $("#fdUrgentYn").prop("checked", true);
+    // }else{
+    //     $("#fdUrgentYn").prop("checked", false);
+    // }
 
     if(currentRequest.fdWhitening) {
         $("#fdWhitening").prop("checked", true);

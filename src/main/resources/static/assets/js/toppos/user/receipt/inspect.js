@@ -32,21 +32,24 @@ const dtos = {
     },
     receive: {
         franchiseInspectionList: {
+            photoList: {
+                ffId: "n",
+                ffPath: "s",
+                ffFilename: "s",
+                ffRemark: "s",
+            },
             fiId: "nr",
-            fdId: "nr",
             fiType: "s",
             fiComment: "s",
             fiAddAmt: "n",
             fiPhotoYn: "s",
             fiSendMsgYn: "s",
             fiCustomerConfirm: "s",
-            insertDt: "s",
-
-            ffPath: "s",
-            ffFilename: "s",
         },
 
         inspectList: { // 인계페이지와 거의 비슷하지만, estimateDt가 빠지고, fdS6Dt가 들어간 형태
+            fdPollutionType: "n",
+            fdPollutionBack: "n",
             frRefType: "sr",
             bcId: "n",
             bcName: "s",
@@ -456,13 +459,21 @@ const grids = {
             AUIGrid.bind(grids.s.id[2], "cellClick", function (e) {
                 wares.selectedInspect = e.item;
                 $("#messageField").val(e.item.fiComment);
-                if(e.item.fiPhotoYn === "Y") {
-                    $("#imgThumb").attr("src", e.item.ffPath + "s_" + e.item.ffFilename);
-                    $("#imgFull").attr("href", e.item.ffPath + e.item.ffFilename);
-                    $("#imgFull").show();
+                $("#inspectPhotoList").html("");
+                if (e.item.photoList.length) {
+                    for(const photo of e.item.photoList) {
+                        $("#inspectPhotoList").append(`
+                            <li>
+                                <a href="${photo.ffPath + photo.ffFilename}" class="photo__img" data-lightbox="images" data-title="이미지 확대" style="display: block;">
+                                    <img src="${photo.ffPath + "s_" + photo.ffFilename}" alt="" />
+                                </a>
+                            </li>
+                        `);
+                    }
+                    $("#inspectPhotoArea").show();
                     $("#isIncludeImgLabel").show();
                 } else {
-                    $("#imgFull").hide();
+                    $("#inspectPhotoArea").hide();
                     $("#isIncludeImgLabel").hide();
                 }
             });
@@ -752,7 +763,8 @@ function setupMsgPop(e) {
 function resetMsgPop() {
     $("#isIncludeImg").prop("checked", true);
     $("#messageField").val("");
-    $("#imgFull").attr("src", "");
-    $("#imgFull").hide();
+    $("#inspectPhotoList").html("");
+    $("#inspectPhotoArea").hide();
+    $("#isIncludeImgLabel").hide();
 }
 
