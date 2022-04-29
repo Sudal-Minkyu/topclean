@@ -69,6 +69,15 @@ public class AddCost {
     @Column(name="bc_water_repellent")
     private Integer bcWaterRepellent; // 발수가공요금
 
+    @Column(name="bc_urgent_rate_1")
+    private Double bcUrgentRate1; // 당일세탁 요금인상율(%)
+
+    @Column(name="bc_urgent_rate_2")
+    private Double bcUrgentRate2; // 특급세탁(1박2일) 요금인상율(%)
+
+    @Column(name="bc_urgent_amt_1")
+    private Integer bcUrgentAmt1; // 급세탁 추가요금
+
     @Column(name="insert_id")
     private String insert_id;
 

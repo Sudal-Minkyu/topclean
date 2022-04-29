@@ -42,6 +42,8 @@ public class FranchiseListDto {
     private Double frRoyaltyRateBr; // 로얄티율(지사)
     private Double frRoyaltyRateFr; // 정산비율(가맹점)
 
+    private String frUrgentDayYn; // 가맹점 당일세탁 사용여부
+
     public StringBuffer getFrContractDt() {
         if(frContractDt != null && !frContractDt.equals("")){
             StringBuffer getFrContractDt = new StringBuffer(frContractDt);

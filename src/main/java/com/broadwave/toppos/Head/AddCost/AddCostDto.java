@@ -1,6 +1,9 @@
 package com.broadwave.toppos.Head.AddCost;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @author Minkyu
@@ -28,5 +31,8 @@ public class AddCostDto {
     private Integer bcPollution5; // 오염레벨5  추가요금
     private Integer bcStarch; // 풀먹임 요금
     private Integer bcWaterRepellent; // 발수가공요금
+    private Double bcUrgentRate1; // 당일세탁 요금인상율(%)
+    private Double bcUrgentRate2; // 특급세탁(1박2일) 요금인상율(%)
+    private Integer bcUrgentAmt1; // 급세탁 추가요금
 
 }

@@ -317,15 +317,16 @@ public class HeadRestController {
             franohisetInfo.put("frRpreName", franohise.getFrRpreName());
             franohisetInfo.put("frTelNo", franohise.getFrTelNo());
 
+            franohisetInfo.put("frPostNo", franohise.getFrPostNo());
+            franohisetInfo.put("frAddress", franohise.getFrAddress());
+            franohisetInfo.put("frAddressDetail", franohise.getFrAddressDetail());
+
             franohisetInfo.put("frCarculateRateBr", franohise.getFrCarculateRateBr());
             franohisetInfo.put("frCarculateRateFr", franohise.getFrCarculateRateFr());
             franohisetInfo.put("frRoyaltyRateBr", franohise.getFrRoyaltyRateBr());
             franohisetInfo.put("frRoyaltyRateFr", franohise.getFrRoyaltyRateFr());
 
-            franohisetInfo.put("frPostNo", franohise.getFrPostNo());
-            franohisetInfo.put("frAddress", franohise.getFrAddress());
-            franohisetInfo.put("frAddressDetail", franohise.getFrAddressDetail());
-
+            franohisetInfo.put("frUrgentDayYn", franohise.getFrUrgentDayYn());
 
             franohiseListData.add(franohisetInfo);
 

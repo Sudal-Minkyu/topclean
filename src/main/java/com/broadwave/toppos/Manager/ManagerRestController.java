@@ -8,7 +8,6 @@ import com.broadwave.toppos.Manager.ManagerService.*;
 import com.broadwave.toppos.Manager.TagGallery.TagGalleryDtos.TagGalleryMapperDto;
 import com.broadwave.toppos.Manager.TagNotice.TagNoticeDtos.TagNoticeMapperDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotMapperDto;
-import com.broadwave.toppos.User.Template.TemplateDto;
 import com.broadwave.toppos.User.UserService.FindService;
 import com.broadwave.toppos.User.UserService.InspectService;
 import com.broadwave.toppos.User.UserService.ReceiptService;

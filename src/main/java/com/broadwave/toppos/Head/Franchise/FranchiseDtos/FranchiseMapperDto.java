@@ -38,6 +38,8 @@ public class FranchiseMapperDto {
     private Double frRoyaltyRateBr; // 로얄티율(지사)
     private Double frRoyaltyRateFr; // 정산비율(가맹점)
 
+    private String frUrgentDayYn; // 가맹점 당일세탁 사용여부
+
     private String frPostNo; // 가맹점 우편번호
     private String frAddress; // 가맹점 주소
     private String frAddressDetail; // 가맹점 상세주소

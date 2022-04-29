@@ -497,7 +497,7 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
             sb.append("k_next_type, k_next_contents, k_resyes, k_template_code, k_button_json, app_etc1, app_etc2) \n");
 
             sb.append("VALUES( ?1, ?2, ?3, NOW(), NOW(), ?4, \n");
-            sb.append("'A', ?5, 'Y', ?6, ?7, \n");
+            sb.append("'L', ?5, 'Y', ?6, ?7, \n");
             sb.append("?8, CONCAT(?9) ); \n");
 
             Query query = em.createNativeQuery(sb.toString());

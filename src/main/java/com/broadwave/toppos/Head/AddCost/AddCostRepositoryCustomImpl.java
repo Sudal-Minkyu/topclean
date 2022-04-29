@@ -42,7 +42,12 @@ public class AddCostRepositoryCustomImpl extends QuerydslRepositorySupport imple
                         addCost.bcPollution5,
 
                         addCost.bcStarch,
-                        addCost.bcWaterRepellent
+                        addCost.bcWaterRepellent,
+
+                        addCost.bcUrgentRate1,
+                        addCost.bcUrgentRate2,
+                        addCost.bcUrgentAmt1
+
                 ));
 
         query.where(addCost.bcId.eq("000"));

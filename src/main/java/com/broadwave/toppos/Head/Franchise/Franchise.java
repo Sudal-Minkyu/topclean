@@ -117,6 +117,9 @@ public class Franchise {
     @Column(name="fr_last_tagno")
     private String frLastTagno; // 가맹점 태그번호
 
+    @Column(name="fr_urgent_day_yn")
+    private String frUrgentDayYn; // 가맹점 당일세탁 사용여부
+    
     @Column(name="insert_id")
     private String insert_id;
 
