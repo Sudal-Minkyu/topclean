@@ -4,9 +4,9 @@ import com.broadwave.toppos.Head.AddCost.AddCost;
 import com.broadwave.toppos.Head.AddCost.AddCostDto;
 import com.broadwave.toppos.Head.AddCost.AddCostRepository;
 import com.broadwave.toppos.Head.AddCost.AddCostRepositoryCustom;
-import com.broadwave.toppos.Head.Branoh.Branch;
+import com.broadwave.toppos.Head.Branch.Branch;
+import com.broadwave.toppos.Head.Branch.BranchRepository;
 import com.broadwave.toppos.Head.Branoh.BranchDtos.BranchListDto;
-import com.broadwave.toppos.Head.Branoh.BranchRepository;
 import com.broadwave.toppos.Head.Franchise.Franchise;
 import com.broadwave.toppos.Head.Franchise.FranchiseDtos.*;
 import com.broadwave.toppos.Head.Franchise.FranchiseRepository;
@@ -198,9 +198,9 @@ public class HeadService {
     }
 
     // 지사 저장
-    public Branch branchSave(Branch branoh){
-        branchRepository.save(branoh);
-        return branoh;
+    public Branch branchSave(Branch Branoh){
+        branchRepository.save(Branoh);
+        return Branoh;
     }
 
     // 가맹점 리스트 API

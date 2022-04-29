@@ -1,4 +1,4 @@
-package com.broadwave.toppos.Head.Branoh;
+package com.broadwave.toppos.Head.Branch;
 
 import com.broadwave.toppos.Head.Branoh.BranchDtos.BranchListDto;
 

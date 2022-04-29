@@ -1,6 +1,6 @@
 package com.broadwave.toppos.Head.Franchise;
 
-import com.broadwave.toppos.Head.Branoh.Branch;
+import com.broadwave.toppos.Head.Branch.Branch;
 import lombok.*;
 import org.springframework.transaction.annotation.Transactional;
 

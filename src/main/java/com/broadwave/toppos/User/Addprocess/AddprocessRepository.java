@@ -10,6 +10,6 @@ import org.springframework.stereotype.Repository;
  * Remark :
  */
 @Repository
-public interface AddprocessRepository extends JpaRepository<Addprocess,Long> {
+public interface AddprocessRepository extends JpaRepository<Addprocess,Long>, AddprocessRepositoryCustom {
 
 }

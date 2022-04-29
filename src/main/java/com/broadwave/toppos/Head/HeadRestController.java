@@ -5,7 +5,7 @@ import com.broadwave.toppos.Account.AcountDtos.AccountListDto;
 import com.broadwave.toppos.Account.AcountDtos.AccountMapperDto;
 import com.broadwave.toppos.Account.AcountDtos.AccountRole;
 import com.broadwave.toppos.Head.AddCost.AddCostDto;
-import com.broadwave.toppos.Head.Branoh.Branch;
+import com.broadwave.toppos.Head.Branch.Branch;
 import com.broadwave.toppos.Head.Branoh.BranchDtos.BranchListDto;
 import com.broadwave.toppos.Head.Branoh.BranchDtos.BranchMapperDto;
 import com.broadwave.toppos.Head.Franchise.Franchise;
@@ -124,33 +124,33 @@ public class HeadRestController {
 
     // 지사 등록 API
     @PostMapping("branchSave")
-    public ResponseEntity<Map<String,Object>> branchSave(@ModelAttribute BranchMapperDto branohMapperDto, HttpServletRequest request){
+    public ResponseEntity<Map<String,Object>> branchSave(@ModelAttribute BranchMapperDto BranohMapperDto, HttpServletRequest request){
         log.info("branchSave 호출");
 
         AjaxResponse res = new AjaxResponse();
 
-        Branch branoh = modelMapper.map(branohMapperDto, Branch.class);
+        Branch Branoh = modelMapper.map(BranohMapperDto, Branch.class);
 
         String login_id = CommonUtils.getCurrentuser(request);
 //        log.info("현재 사용자 아이디 : "+login_id);
 
-        Optional<Branch> optionalBranoh  =  headService.findByBrCode(branohMapperDto.getBrCode());
+        Optional<Branch> optionalBranoh  =  headService.findByBrCode(BranohMapperDto.getBrCode());
         if( optionalBranoh.isPresent()){
 //            log.info("널이 아닙니다 : 업데이트");
-            branoh.setId(optionalBranoh.get().getId());
+            Branoh.setId(optionalBranoh.get().getId());
 
-            branoh.setModify_id(login_id);
-            branoh.setModifyDateTime(LocalDateTime.now());
-            branoh.setInsert_id(optionalBranoh.get().getInsert_id());
-            branoh.setInsertDateTime(optionalBranoh.get().getInsertDateTime());
+            Branoh.setModify_id(login_id);
+            Branoh.setModifyDateTime(LocalDateTime.now());
+            Branoh.setInsert_id(optionalBranoh.get().getInsert_id());
+            Branoh.setInsertDateTime(optionalBranoh.get().getInsertDateTime());
         }else{
 //            log.info("널입니다. : 신규생성");
-            branoh.setInsert_id(login_id);
-            branoh.setInsertDateTime(LocalDateTime.now());
+            Branoh.setInsert_id(login_id);
+            Branoh.setInsertDateTime(LocalDateTime.now());
         }
 
-        Branch branohSave =  headService.branchSave(branoh);
-        log.info("지사 저장 성공 : id '" + branohSave.getBrCode() + "'");
+        Branch BranohSave =  headService.branchSave(Branoh);
+        log.info("지사 저장 성공 : id '" + BranohSave.getBrCode() + "'");
         return ResponseEntity.ok(res.success());
 
     }
@@ -223,7 +223,7 @@ public class HeadRestController {
     public ResponseEntity<Map<String,Object>> branchList(@RequestParam(value="brName", defaultValue="") String brName,
                                                          @RequestParam(value="brCode", defaultValue="") String brCode,
                                                          @RequestParam(value="brContractState", defaultValue="") String brContractState){
-        log.info("branohList 호출");
+        log.info("BranohList 호출");
 
         AjaxResponse res = new AjaxResponse();
 
@@ -535,8 +535,8 @@ public class HeadRestController {
         log.info("지점 코드 중복확인");
         AjaxResponse res = new AjaxResponse();
 
-        Optional<Branch> branohOptional =  headService.findByBrCode(brCode);
-        if(branohOptional.isPresent()){
+        Optional<Branch> BranohOptional =  headService.findByBrCode(brCode);
+        if(BranohOptional.isPresent()){
             return ResponseEntity.ok(res.fail(ResponseErrorCode.TP003.getCode(), ResponseErrorCode.TP003.getDesc(),null,null));
         }else{
             log.info("중복확인 완료");

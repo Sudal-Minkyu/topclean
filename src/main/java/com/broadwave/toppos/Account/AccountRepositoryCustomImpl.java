@@ -4,7 +4,7 @@ import com.broadwave.toppos.Account.AcountDtos.AccountHeaderDto;
 import com.broadwave.toppos.Account.AcountDtos.AccountListDto;
 import com.broadwave.toppos.Account.AcountDtos.AccountRole;
 import com.broadwave.toppos.Head.Branoh.BranchDtos.BranchInfoDto;
-import com.broadwave.toppos.Head.Branoh.QBranch;
+import com.broadwave.toppos.Head.Branch.QBranch;
 import com.broadwave.toppos.Head.Franchise.QFranchise;
 import com.broadwave.toppos.User.UserDtos.UserIndexDto;
 import com.querydsl.core.types.Projections;

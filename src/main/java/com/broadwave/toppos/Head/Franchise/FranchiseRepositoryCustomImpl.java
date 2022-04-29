@@ -1,6 +1,6 @@
 package com.broadwave.toppos.Head.Franchise;
 
-import com.broadwave.toppos.Head.Branoh.QBranch;
+import com.broadwave.toppos.Head.Branch.QBranch;
 import com.broadwave.toppos.Head.Franchise.FranchiseDtos.*;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.CaseBuilder;

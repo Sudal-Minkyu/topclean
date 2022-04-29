@@ -6,7 +6,7 @@ import com.broadwave.toppos.Head.Franchise.FranchiseRepository;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.User.Addprocess.Addprocess;
 import com.broadwave.toppos.User.Addprocess.AddprocessDtos.AddprocessDto;
-import com.broadwave.toppos.User.Addprocess.AddprocessRepositoryCustom;
+import com.broadwave.toppos.User.Addprocess.AddprocessRepository;
 import com.broadwave.toppos.User.Customer.Customer;
 import com.broadwave.toppos.User.Customer.CustomerDtos.CustomerInfoDto;
 import com.broadwave.toppos.User.Customer.CustomerDtos.CustomerListDto;
@@ -54,13 +54,13 @@ public class UserService {
     private final UserLoginLogRepository userLoginLogRepository;
 
     private final AccountRepository accountRepository;
-    private final AddprocessRepositoryCustom addProcessRepositoryCustom;
+    private final AddprocessRepository addProcessRepository;
     private final FranchiseRepository franchiseRepository;
 
     @Autowired
     public UserService(TokenProvider tokenProvider, SaveMoneyRepository saveMoneyRepository, RequestRepository requestRepository, RequestDetailRepository requestDetailRepository,
                        CustomerRepository customerRepository, UserLoginLogRepository userLoginLogRepository, AccountRepository accountRepository,
-                       AddprocessRepositoryCustom addProcessRepositoryCustom, FranchiseRepository franchiseRepository){
+                       AddprocessRepository addProcessRepository, FranchiseRepository franchiseRepository){
         this.tokenProvider = tokenProvider;
         this.requestRepository = requestRepository;
         this.saveMoneyRepository = saveMoneyRepository;
@@ -68,7 +68,7 @@ public class UserService {
         this.customerRepository = customerRepository;
         this.userLoginLogRepository = userLoginLogRepository;
         this.accountRepository = accountRepository;
-        this.addProcessRepositoryCustom = addProcessRepositoryCustom;
+        this.addProcessRepository = addProcessRepository;
         this.franchiseRepository = franchiseRepository;
     }
 
@@ -128,12 +128,12 @@ public class UserService {
 
     // 수선, 추가요금, 상용구 항목 리스트 데이터 호출
     public List<AddprocessDto> findByAddProcessDtoList(String frCode, String baType) {
-        return addProcessRepositoryCustom.findByAddProcessDtoList(frCode, baType);
+        return addProcessRepository.findByAddProcessDtoList(frCode, baType);
     }
 
     // 수선, 추가요금, 상용구 항목 리스트 데이터 호출
     public List<Addprocess> findByAddProcessList(String frCode, String baType) {
-        return addProcessRepositoryCustom.findByAddProcessList(frCode, baType);
+        return addProcessRepository.findByAddProcessList(frCode, baType);
     }
 
     // 세부테이블 업데이트 후 마스터테이블 업데이트하는 공용함수 - 미수금 비교하여 처리 => frTotalAmount 와 frPayAmount 비교하여 frTotalAmount가 더 클 경우 frUncollectYn은 "Y"로 업데이트 쳐준다.
@@ -162,7 +162,7 @@ public class UserService {
 
     // 수선, 추가요금, 상용구 항목 리스트 데이터 호출
     public List<Addprocess> save(String frCode, String baType) {
-        return addProcessRepositoryCustom.findByAddProcessList(frCode, baType);
+        return addProcessRepository.findByAddProcessList(frCode, baType);
     }
 
     // 적립금 저장

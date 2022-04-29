@@ -1,6 +1,6 @@
 package com.broadwave.toppos.User.UserLoginLog;
 
-import com.broadwave.toppos.Head.Branoh.QBranch;
+import com.broadwave.toppos.Head.Branch.QBranch;
 import com.broadwave.toppos.Head.Franchise.QFranchise;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;

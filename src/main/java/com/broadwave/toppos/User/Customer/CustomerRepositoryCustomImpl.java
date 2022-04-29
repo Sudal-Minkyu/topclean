@@ -1,6 +1,6 @@
 package com.broadwave.toppos.User.Customer;
 
-import com.broadwave.toppos.Head.Branoh.QBranch;
+import com.broadwave.toppos.Head.Branch.QBranch;
 import com.broadwave.toppos.Head.Franchise.QFranchise;
 import com.broadwave.toppos.User.Customer.CustomerDtos.CustomerInfoDto;
 import com.broadwave.toppos.User.Customer.CustomerDtos.CustomerListDto;

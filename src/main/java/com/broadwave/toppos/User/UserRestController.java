@@ -1253,7 +1253,7 @@ public class UserRestController {
     @PostMapping("noticeList")
     public ResponseEntity<Map<String,Object>> noticeList(@RequestParam("hnType")String hnType, @RequestParam("searchString")String searchString, @RequestParam("filterFromDt")String filterFromDt,
                                                          @RequestParam("filterToDt")String filterToDt, Pageable pageable) {
-        return noticeService.noticeList(hnType, searchString, filterFromDt.replaceAll("-",""), filterToDt.replaceAll("-",""), pageable, "2");
+        return noticeService.noticeList(hnType, searchString, filterFromDt, filterToDt, pageable, "2");
     }
 
     //  공지사항 게시판 - 글보기
@@ -1261,7 +1261,6 @@ public class UserRestController {
     public ResponseEntity<Map<String,Object>> noticeView(@RequestParam("hnId") Long hnId) {
         return noticeService.noticeView(hnId, "3");
     }
-
 
 //@@@@@@@@@@@@@@@@@@@@@ 물건찾기 관련 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     // 가맹점 물건찾기 할 리스트 호출
@@ -1271,7 +1270,7 @@ public class UserRestController {
     public ResponseEntity<Map<String,Object>> franchiseObjectFind(@RequestParam(value="searchTag", defaultValue="") String searchTag,
                                                                   @RequestParam("bcId")Long bcId, @RequestParam("filterFromDt")String filterFromDt,
                                                                   @RequestParam("filterToDt")String filterToDt,  @RequestParam("ffStateType")String ffStateType ,HttpServletRequest request){
-        return findService.franchiseObjectFind(bcId, filterFromDt.replaceAll("-",""), filterToDt.replaceAll("-",""), request, searchTag, ffStateType);
+        return findService.franchiseObjectFind(bcId, filterFromDt, filterToDt, request, searchTag, ffStateType);
     }
 
     // 가맹점 물건찾기 할 항목 저장

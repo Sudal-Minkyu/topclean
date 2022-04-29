@@ -1,12 +1,12 @@
 package com.broadwave.toppos.Manager.ManagerService;
 
 import com.broadwave.toppos.Account.Account;
+import com.broadwave.toppos.Account.AccountRepository;
 import com.broadwave.toppos.Account.AccountService;
 import com.broadwave.toppos.Account.AcountDtos.AccountHeaderDto;
-import com.broadwave.toppos.Account.AccountRepository;
-import com.broadwave.toppos.Head.Branoh.Branch;
+import com.broadwave.toppos.Head.Branch.Branch;
+import com.broadwave.toppos.Head.Branch.BranchRepository;
 import com.broadwave.toppos.Head.Branoh.BranchDtos.BranchInfoDto;
-import com.broadwave.toppos.Head.Branoh.BranchRepository;
 import com.broadwave.toppos.Head.Franchise.FranchiseDtos.FranchiseManagerListDto;
 import com.broadwave.toppos.Head.Franchise.FranchiseRepository;
 import com.broadwave.toppos.Head.HeadService.NoticeService;
