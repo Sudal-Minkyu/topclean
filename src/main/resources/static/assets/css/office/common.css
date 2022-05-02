@@ -1993,6 +1993,40 @@ textarea {
 	width: 180px;
 }
 
+/* word-list */
+.word-list {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	margin-bottom: 10px;
+}
+.word-list li {
+	padding: 3px;
+}
+.word-btn {
+	display: inline-block;
+	height: 2rem;
+	padding: 0 0.625rem;
+	border: 0 none;
+	border-radius: 0.313rem;
+	background-color: #e7f4ff;
+	color: #0082f0;
+	font-size: 1rem;
+	font-weight: 700;
+	cursor: pointer;
+}
+.word-btn:hover {
+	background-color: #004a98;
+	color: #fff;
+}
+.word-btn:active {
+	background-color: #0082f0;
+	color: #fff;
+}
+.word-list + .c-textarea {
+	height: 4.125rem;
+}
+
 /* mastercode */
 .code {
     position: relative;

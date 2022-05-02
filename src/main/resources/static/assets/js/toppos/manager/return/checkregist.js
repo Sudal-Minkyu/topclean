@@ -654,6 +654,18 @@ const trigs = {
             $("#closeFrInspectViewPop").on("click", function () {
                 closeFrInspectViewPop();
             });
+
+            // 버튼 클릭시 문구 추가
+            $(".word-btn").on("click", function () {
+                const currentHtml = $("#fiComment").val();
+                let htmlText;
+                if(currentHtml !== "") {
+                    htmlText = ", " + this.innerHTML;
+                }else{
+                    htmlText = this.innerHTML;
+                }
+                $("#fiComment").val(currentHtml + htmlText);
+            })
         },
     },
     r: { // 이벤트 해제
