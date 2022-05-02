@@ -1707,6 +1707,19 @@ const trigs = {
             $(this).parents(".motherLi").remove();
         });
 
+        // 버튼 클릭시 문구 추가
+        $(".word-btn").on("click", function () {
+            const currentHtml = $("#frEditFiComment").val();
+            let htmlText;
+            if(currentHtml !== "") {
+                htmlText = ", " + this.innerHTML;
+            }else{
+                htmlText = this.innerHTML;
+            }
+            console.log(htmlText);
+            $("#frEditFiComment").val(currentHtml + htmlText);
+        })
+
         // 지사검품 팝업 기능
         $("#brCustomerConfirmed").on("click", function () {
             alertCheck("고객께서 진행수락 하셨습니까?");
@@ -2826,3 +2839,4 @@ function openReceiptPhotoPop(rowId) {
     }
     $("#receiptPhotoPop").addClass("active");
 }
+

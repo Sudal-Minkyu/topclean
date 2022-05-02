@@ -13,15 +13,59 @@
     <script src="/assets/js/toppos/mobile/unAuth/inspectresponse.js"></script>
 </th:block>
 
-<div layout:fragment="content" class="content content--column" style="padding: 20px 0;">
-    [검수 내역]
-    검수과정 중 <span id="fiMessage">오염, 탈색, 찍힘</span>이 발견되었습니다. 확인 요청 드리며 아래의 진행여부를 체크 부탁드립니다.
+<div layout:fragment="content" class="content">
+    <div class="inspect">
+        <h2 class="inspect__logo">
+            <img src="/assets/images/circle-logo.png" alt="TOPPOS" />
+            <span>[검수 내역]</span>
+        </h2>
 
-    (이미지 최대 6장 영역)
+        <p class="inspect__text">검수과정 중 <span id="fiMessage">오염, 탈색, 찍힘</span>이 발견되었습니다. 확인 요청 드리며 아래의 진행여부를 체크 부탁드립니다.</p>
 
-    <button id="btnCustomerConfirm" type="button">세탁진행</button>
-    <button id="btnCustomerDeny" type="button">반품요청</button>
-    <button id="btnCallFranchise" type="button">가맹점 전화하기<br>(02-457-5576)</button>
+        <ul class="inspect__img-list">
+            <li>
+                <a href="#" class="inspect__img-link">
+                    <img src="https://bw-toppos-images.s3.ap-northeast-2.amazonaws.com/toppos-franchise-inspection/20220406/s_5eced370c0c0481bb3b16c837192e425.png" alt="" />
+                </a>
+            </li>
+            <li>
+                <a href="#" class="inspect__img-link">
+                    <img src="https://bw-toppos-images.s3.ap-northeast-2.amazonaws.com/toppos-franchise-inspection/20220406/s_5eced370c0c0481bb3b16c837192e425.png" alt="" />
+                </a>
+            </li>
+            <li>
+                <a href="#" class="inspect__img-link">
+                    <img src="https://bw-toppos-images.s3.ap-northeast-2.amazonaws.com/toppos-franchise-inspection/20220406/s_5eced370c0c0481bb3b16c837192e425.png" alt="" />
+                </a>
+            </li>
+            <li>
+                <a href="#" class="inspect__img-link">
+                    <img src="https://bw-toppos-images.s3.ap-northeast-2.amazonaws.com/toppos-franchise-inspection/20220406/s_5eced370c0c0481bb3b16c837192e425.png" alt="" />
+                </a>
+            </li>
+            <li>
+                <a href="#" class="inspect__img-link">
+                    <img src="https://bw-toppos-images.s3.ap-northeast-2.amazonaws.com/toppos-franchise-inspection/20220406/s_5eced370c0c0481bb3b16c837192e425.png" alt="" />
+                </a>
+            </li>
+            <li>
+                <a href="#" class="inspect__img-link">
+                    <img src="https://bw-toppos-images.s3.ap-northeast-2.amazonaws.com/toppos-franchise-inspection/20220406/s_5eced370c0c0481bb3b16c837192e425.png" alt="" />
+                </a>
+            </li>
+        </ul>
+        <p class="inspect__comment">사진을 터치하면 크게 보실 수 있습니다.</p>
+    </div>
+
+    <ul class="inspect__btn-list">
+        <li><button class="c-button c-button--solid" id="btnCustomerConfirm" type="button">세탁진행</button></li>
+        <li><button class="c-button c-button--red" id="btnCustomerDeny" type="button">반품요청</button></li>
+        <li><button class="c-button" id="btnCallFranchise" type="button">가맹점 전화하기<br>(02-457-5576)</button></li>
+    </ul>
+
+
+
+
 
 </div>
 </html>
