@@ -38,6 +38,8 @@ public class RequestDetailUpdateDto {
 
     private String fdRetryYn; // 재세탁 여부 (Y  / N) Y 이면 합계금액이 0이다
     private String fdUrgentYn; // 급세탁 여부 (Y  / N) 기본값 : N
+    private String fdUrgentType; // 급세탁 타입(1: 당일세탁, 2: 특급세탁(1박2일), 3급세탁(2박3일))
+    private Integer fdUrgentAmt; // 급세탁 추가비용
 
     private Integer fdPressed; // 다림질 요금
     private Integer fdAdd1Amt; // 추가비용1(접수시점)

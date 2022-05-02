@@ -36,6 +36,7 @@ import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.Insp
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.PhotoDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailFdStateCountDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailFranchiseInCountDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailUpdateDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailSet;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.RequestHistoryListDto;
@@ -159,16 +160,19 @@ public class UserRestController {
             HashMap<String, Object> data = new HashMap<>();
 
 //        String nowDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-            log.info("조회날짜 "+date);
+//            log.info("조회날짜 "+date);
 
             UserIndexDto userIndexDto = userService.findByUserInfo(login_id, frCode);
             List<BranchCalendarListDto> branchCalendarListDtos = calendarService.branchCalendarSlidingDtoList(frbrCode, date);
             List<InspeotMainListDto> inspeotMainListDtos = inspectService.findByInspeotB1(frbrCode, 3, frCode);
             List<TagGalleryMainListDto> tagGalleryMainListDtos = tagGalleryService.findByTagGalleryMainList(frbrCode);
-            log.info("tagGalleryMainListDtos "+tagGalleryMainListDtos);
+//            log.info("tagGalleryMainListDtos "+tagGalleryMainListDtos);
+
+            RequestDetailFranchiseInCountDto requestDetailFranchiseInCountDto = receiptStateService.franchiseReceiptFranchiseInCount(frCode);
+//            log.info("가맹점입고 갯수 "+requestDetailFranchiseInCountDto);
 
             List<String> calendar = new ArrayList<>();
-            if(branchCalendarListDtos.size()!=0){
+            if(!branchCalendarListDtos.isEmpty()){
                 for(BranchCalendarListDto branchCalendarListDto : branchCalendarListDtos){
                     if(branchCalendarListDto.getBcDayoffYn().equals("Y")){
                         int year = Integer.parseInt(branchCalendarListDto.getBcDate().substring(0,4));
@@ -193,6 +197,7 @@ public class UserRestController {
                 userIndexInfo.put("brName", userIndexDto.getBrName());
                 userIndexInfo.put("frName", userIndexDto.getFrName());
                 userIndexInfo.put("slidingText", calendar);
+                userIndexInfo.put("inCountText", requestDetailFranchiseInCountDto.getCount());
                 userIndexData.add(userIndexInfo);
             }
 
@@ -748,6 +753,8 @@ public class UserRestController {
 
                 requestDetailInfo.put("fdRetryYn", requestDetailDto.getFdRetryYn());
                 requestDetailInfo.put("fdUrgentYn", requestDetailDto.getFdUrgentYn());
+                requestDetailInfo.put("fdUrgentType", requestDetailDto.getFdUrgentType());
+                requestDetailInfo.put("fdUrgentAmt", requestDetailDto.getFdUrgentAmt());
 
                 requestDetailInfo.put("fdRemark", requestDetailDto.getFdRemark());
                 requestDetailInfo.put("frEstimateDate", requestDetailDto.getFrEstimateDate());
@@ -934,7 +941,7 @@ public class UserRestController {
 
 
 //@@@@@@@@@@@@@@@@@@@@@ 가맹점 통합조회 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    //  통합조회용 - 접수세부 테이블
+    // 통합조회용 - 접수세부 테이블
     @GetMapping("franchiseRequestDetailSearch")
     @ApiOperation(value = "통합조회 리스트" , notes = "통합조회 리스트를 호출한다.")
     @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
@@ -954,7 +961,7 @@ public class UserRestController {
         return inspectService.franchiseRequestDetailSearch(bcId, searchTag, filterCondition, filterFromDt, filterToDt, request);
     }
 
-    //  통합조회용 - 접수 세부테이블 수정
+    // 통합조회용 - 접수 세부테이블 수정
     @PostMapping("franchiseRequestDetailUpdate")
     public ResponseEntity<Map<String,Object>> franchiseRequestDetailUpdate(@RequestBody RequestDetailUpdateDto requestDetailUpdateDto, HttpServletRequest request){
         return inspectService.franchiseRequestDetailUpdate(requestDetailUpdateDto, request);
@@ -966,7 +973,7 @@ public class UserRestController {
         return inspectService.franchiseDetailCencelDataList(frId, request);
     }
 
-    //  통합조회용 - 결제취소/적립금전환 요청
+    // 통합조회용 - 결제취소/적립금전환 요청
     @PostMapping("franchiseRequestDetailCencel")
     @ApiOperation(value = "통합조회용" , notes = "결제취소/적립금전환 요청")
     @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
@@ -981,7 +988,7 @@ public class UserRestController {
         return inspectService.InspectionSave(inspeotMapperDto, request, AWSBUCKETURL,"1");
     }
 
-    //  가맹검품 조회 - 확인품 정보 요청
+    // 가맹검품 조회 - 확인품 정보 요청
     @GetMapping("franchiseInspectionInfo")
     @ApiOperation(value = "가맹검품 정보" , notes = "해당 접수의 가맹검품 정보를 요청한다.")
     @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
@@ -997,7 +1004,7 @@ public class UserRestController {
         return inspectService.InspectionDelete(fiId, "1", request);
     }
 
-    //  통합조회용 - 검품 리스트 요청
+    // 통합조회용 - 검품 리스트 요청
     @GetMapping("franchiseInspectionList")
     @ApiOperation(value = "통합조회용" , notes = "검품 리스트 요청한다 ")
     @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
@@ -1005,19 +1012,19 @@ public class UserRestController {
         return inspectService.franchiseInspectionList(fdId);
     }
 
-    //  통합조회용 - 접수 취소
+    // 통합조회용 - 접수 취소
     @PostMapping("franchiseReceiptCancel")
     public ResponseEntity<Map<String,Object>> franchiseReceiptCancel(@RequestParam(value="fdId", defaultValue="") Long fdId, HttpServletRequest request){
         return inspectService.franchiseReceiptCancel(fdId, request);
     }
 
-    //  통합조회용 - 인도 취소
+    // 통합조회용 - 인도 취소
     @PostMapping("franchiseLeadCancel")
     public ResponseEntity<Map<String,Object>> franchiseLeadCancel(@RequestParam(value="fdId", defaultValue="") Long fdId, HttpServletRequest request){
         return inspectService.franchiseLeadCancel(fdId, request);
     }
 
-    //  통합조회용 - 검품 고객 수락/거부
+    // 통합조회용 - 검품 고객 수락/거부
     @PostMapping("franchiseInspectionYn")
     @ApiOperation(value = "통합조회용" , notes = "검품 고객 수락/거부를 요청한다 ")
     @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})

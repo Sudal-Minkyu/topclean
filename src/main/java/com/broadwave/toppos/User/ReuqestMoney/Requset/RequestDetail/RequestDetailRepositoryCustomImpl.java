@@ -91,6 +91,8 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdRequestAmt,
                         requestDetail.fdRetryYn,
                         requestDetail.fdUrgentYn,
+                        requestDetail.fdUrgentType,
+                        requestDetail.fdUrgentAmt,
                         requestDetail.fdRemark,
                         requestDetail.fdEstimateDt,
                         itemGroup.bgName,
@@ -151,7 +153,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         sb.append("a.fd_s6_dt, a.fd_s6_time, a.fd_s6_cancel_yn, a.fd_s6_cancel_time, a.fd_cancel, a.fd_cacel_dt, a.fd_color, a.fd_pattern, a.fd_price_grade, \n");
         sb.append("a.fd_origin_amt, a.fd_normal_amt, a.fd_add2_amt, a.fd_add2_remark, \n");
         sb.append("a.fd_pollution, a.fd_discount_grade, a.fd_discount_amt, a.fd_qty, a.fd_request_amt, \n");
-        sb.append("a.fd_special_yn, a.fd_tot_amt, a.fd_remark, a.fd_estimate_dt, a.fd_retry_yn, a.fd_urgent_yn, a.fd_pressed, \n");
+        sb.append("a.fd_special_yn, a.fd_tot_amt, a.fd_remark, a.fd_estimate_dt, a.fd_retry_yn, a.fd_urgent_yn, a.fd_urgent_type, a.fd_urgent_amt, a.fd_pressed, \n");
         sb.append("a.fd_add1_amt, a.fd_add1_remark, a.fd_repair_amt, a.fd_repair_remark, a.fd_whitening, a.fd_pollution_level, \n");
         sb.append("a.fd_water_repellent, a.fd_starch, a.fd_pollution_loc_fcn, a.fd_pollution_loc_fcs, a.fd_pollution_loc_fcb, \n");
         sb.append("a.fd_pollution_loc_flh, a.fd_pollution_loc_frh, a.fd_pollution_loc_flf, a.fd_pollution_loc_frf, \n");
@@ -467,6 +469,28 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                 ));
         query.orderBy(requestDetail.id.asc());
         return query.fetch();
+    }
+
+    // 가맹접입고 카운트 querydsl
+    public RequestDetailFranchiseInCountDto findByRequestDetailFranchiseInCount(String frCode){
+        QRequestDetail requestDetail = QRequestDetail.requestDetail;
+        QRequest request = QRequest.request;
+        QItemGroup itemGroup = QItemGroup.itemGroup;
+        QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
+        QItem item = QItem.item;
+        QCustomer customer = QCustomer.customer;
+        JPQLQuery<RequestDetailFranchiseInCountDto> query = from(requestDetail)
+                .innerJoin(requestDetail.frId, request)
+                .innerJoin(request.bcId, customer)
+                .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
+                .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
+                .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
+                .where(request.frConfirmYn.eq("Y"))
+                .where(requestDetail.frId.frCode.eq(frCode).and(requestDetail.fdCancel.eq("N").and(requestDetail.fdState.eq("S4"))))
+                .select(Projections.constructor(RequestDetailFranchiseInCountDto.class,
+                        requestDetail.count()
+                ));
+        return query.fetchOne();
     }
 
     // 가맹접입고취소 querydsl

@@ -349,6 +349,11 @@ public class ReceiptStateService {
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
+    public RequestDetailFranchiseInCountDto franchiseReceiptFranchiseInCount(String frCode){
+        RequestDetailFranchiseInCountDto requestDetailFranchiseInCountDto = requestDetailRepository.findByRequestDetailFranchiseInCount(frCode);
+        return requestDetailFranchiseInCountDto;
+    }
+
     //  가맹점입고취소 상태 변화 API
     public ResponseEntity<Map<String, Object>> franchiseInCancelChange(List<Long> fdIdList, HttpServletRequest request) {
         log.info("franchiseInCancelChange 호출");

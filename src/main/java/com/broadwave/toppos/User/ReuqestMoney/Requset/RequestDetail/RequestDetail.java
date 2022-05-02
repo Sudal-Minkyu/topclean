@@ -261,6 +261,12 @@ public class RequestDetail {
     @Column(name="fd_urgent_yn")
     private String fdUrgentYn; // 급세탁 여부 (Y  / N) 기본값 : N
 
+    @Column(name="fd_urgent_type")
+    private String fdUrgentType; // 급세탁 타입(1: 당일세탁, 2: 특급세탁(1박2일), 3급세탁(2박3일))
+
+    @Column(name="fd_urgent_amt")
+    private Integer fdUrgentAmt; // 급세탁 추가비용
+
     @Column(name="fd_tot_amt")
     private Integer fdTotAmt; // 합계금액( (정상 + 수선 + 추가1 + 추가2 -할인) * 수량 )
 

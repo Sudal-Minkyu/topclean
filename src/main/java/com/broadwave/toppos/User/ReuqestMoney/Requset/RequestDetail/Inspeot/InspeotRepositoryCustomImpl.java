@@ -1,5 +1,6 @@
 package com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot;
 
+import com.broadwave.toppos.Head.Franchise.QFranchise;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.*;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.QPhoto;
 import com.querydsl.core.types.Projections;
@@ -93,9 +94,11 @@ public class InspeotRepositoryCustomImpl extends QuerydslRepositorySupport imple
     public InspeotInfoDto findByInspeotInfo(Long fiId, String code, String type){
 
         QInspeot inspeot = QInspeot.inspeot;
+        QFranchise franchise = QFranchise.franchise;
 
         JPQLQuery<InspeotInfoDto> query = from(inspeot)
 //                .where(inspeot.id.in(fiId).and(inspeot.fiSendMsgYn.eq("N").and(inspeot.fiCustomerConfirm.eq("1"))))
+                .innerJoin(franchise).on(franchise.frCode.eq(inspeot.frCode))
                 .where(inspeot.id.in(fiId))
                 .select(Projections.constructor(InspeotInfoDto.class,
                         inspeot.id,
@@ -103,12 +106,13 @@ public class InspeotRepositoryCustomImpl extends QuerydslRepositorySupport imple
                         inspeot.fiAddAmt,
                         inspeot.fiPhotoYn,
                         inspeot.fiSendMsgYn,
-                        inspeot.fiCustomerConfirm
+                        inspeot.fiCustomerConfirm,
+                        franchise.frTelNo
                 ));
 
         if(type.equals("1")){
             inspeot.brCode.eq(code);
-        }else{
+        }else if(type.equals("2")){
             inspeot.frCode.eq(code);
         }
 

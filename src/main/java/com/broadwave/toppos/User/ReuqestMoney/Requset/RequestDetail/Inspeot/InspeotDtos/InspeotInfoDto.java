@@ -28,6 +28,8 @@ public class InspeotInfoDto {
     private String fiSendMsgYn; // 메세지전송여부 Y , N  (기본값N)
     private String fiCustomerConfirm; // 고객 수락여부 ( 1: 미확인(기본값), 2:고객수락, 3:고객거부
 
+    private String frTelNo; // 가맹점 전화번호
+
 //    private LocalDateTime insertDt; // 등록날짜
 
 //    public String getInsertDt() {

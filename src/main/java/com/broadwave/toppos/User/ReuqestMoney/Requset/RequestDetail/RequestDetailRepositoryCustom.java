@@ -26,6 +26,8 @@ public interface RequestDetailRepositoryCustom {
     int findByRequestDetailMobileCloseList(String frCode); // 모바일 수기마감
 
     List<RequestDetailFranchiseInListDto> findByRequestDetailFranchiseInList(String frCode); // 가맹점입고
+    RequestDetailFranchiseInCountDto findByRequestDetailFranchiseInCount(String frCode); // 가맹점입고 Count
+
 //    List<RequestDetailReturnListDto> findByRequestDetailReturnList(String frCode); // 지사반송
     List<RequestDetailForceListDto> findByRequestDetailForceList(Long bcId, String fdTag, String frCode); // 가맹점강제입고
     List<RequestDetailDeliveryDto> findByRequestDetailDeliveryList(String frCode, Long bcId); // 세탁인도

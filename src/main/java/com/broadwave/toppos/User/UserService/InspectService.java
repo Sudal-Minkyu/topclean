@@ -37,6 +37,8 @@ import com.broadwave.toppos.common.AjaxResponse;
 import com.broadwave.toppos.common.ResponseErrorCode;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -67,6 +69,9 @@ public class InspectService {
 
     @Value("${toppos.templatecode.check}")
     private String templatecodeCheck;
+
+    @Value("${toppos.templatecode.pollution}")
+    private String templatecodePollution;
 
     private final ModelMapper modelMapper;
     private final UserService userService;
@@ -184,6 +189,8 @@ public class InspectService {
 
             requestDetailInfo.put("fdRetryYn", requestDetailDto.getFdRetryYn());
             requestDetailInfo.put("fdUrgentYn", requestDetailDto.getFdUrgentYn());
+            requestDetailInfo.put("fdUrgentType", requestDetailDto.getFdUrgentType());
+            requestDetailInfo.put("fdUrgentAmt", requestDetailDto.getFdUrgentAmt());
 
             requestDetailInfo.put("fdPressed", requestDetailDto.getFdPressed());
             requestDetailInfo.put("fdAdd1Amt", requestDetailDto.getFdAdd1Amt());
@@ -308,6 +315,9 @@ public class InspectService {
             optionalRequestDetail.get().setFdRequestAmt(requestDetailUpdateDto.getFdRequestAmt());
             optionalRequestDetail.get().setFdRetryYn(requestDetailUpdateDto.getFdRetryYn());
             optionalRequestDetail.get().setFdUrgentYn(requestDetailUpdateDto.getFdUrgentYn());
+            optionalRequestDetail.get().setFdUrgentType(requestDetailUpdateDto.getFdUrgentType());
+            optionalRequestDetail.get().setFdUrgentAmt(requestDetailUpdateDto.getFdUrgentAmt());
+
             optionalRequestDetail.get().setFdRemark(requestDetailUpdateDto.getFdRemark());
 
             optionalRequestDetail.get().setFdAgreeType(requestDetailUpdateDto.getFdAgreeType());
@@ -875,16 +885,24 @@ public class InspectService {
         AjaxResponse res = new AjaxResponse();
 
         // 클레임데이터 가져오기
-        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
-        String login_id = claims.getSubject(); // 현재 아이디
-        String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
-        log.info("현재 접속한 아이디 : "+login_id);
-        log.info("현재 접속한 가맹점 코드 : "+frCode);
+        String login_id;
+        String frCode;
 
         Optional<Inspeot> optionalInspeot = inspeotRepository.findById(fiId);
         if(!optionalInspeot.isPresent()){
             return ResponseEntity.ok(res.fail(ResponseErrorCode.TP022.getCode(),"검품 수락및거부 할"+ResponseErrorCode.TP022.getDesc(), "문자", "재조회 후 다시 시도해주세요."));
         }else{
+            if(request != null){
+                Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+                login_id = claims.getSubject(); // 현재 아이디
+                frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
+                log.info("현재 접속한 아이디 : "+login_id);
+                log.info("현재 접속한 가맹점 코드 : "+frCode);
+            }else{
+                login_id = "모바일";
+                frCode = optionalInspeot.get().getFrCode();
+            }
+
             optionalInspeot.get().setFiProgressStateDt(LocalDateTime.now());
             optionalInspeot.get().setModify_id(login_id);
             optionalInspeot.get().setModify_date(LocalDateTime.now());
@@ -951,6 +969,7 @@ public class InspectService {
     }
 
     //  통합조회용 - 카카오톡 메세지 보내기
+    @Transactional
     public ResponseEntity<Map<String, Object>> franchiseInspectionMessageSend(Long bcId, Long fiId, String fmMessage, String isIncludeImg, HttpServletRequest request) {
         log.info("franchiseInspectionMessageSend 호출");
 
@@ -969,6 +988,9 @@ public class InspectService {
         MessageHistory messageHistory = new MessageHistory();
         messageHistory.setFmType("01");
 
+        String message;
+        String nextmessage;
+
         if(fiId != null){
             Optional<Inspeot> optionalInspeot = inspeotRepository.findById(fiId);
             if(optionalInspeot.isPresent()){
@@ -979,21 +1001,55 @@ public class InspectService {
                 optionalInspeot.get().setModify_date(LocalDateTime.now());
                 optionalInspeot.ifPresent(messageHistory::setFiId);
                 inspeotRepository.save(optionalInspeot.get());
+
+                Optional<Customer> optionalCustomer = customerRepository.findByBcId(bcId);
+                String bcName = "";
+                String bcHp = "";
+                if (optionalCustomer.isPresent()) {
+                    messageHistory.setBcId(optionalCustomer.get());
+                    bcName = optionalCustomer.get().getBcName();
+                    bcHp = optionalCustomer.get().getBcHp();
+                } else {
+                    messageHistory.setBcId(null);
+                }
+                messageHistory.setFrCode(frCode);
+                messageHistory.setBrCode(frbrCode);
+                messageHistory.setFmMessage(fmMessage);
+                messageHistory.setInsert_id(login_id);
+                messageHistory.setInsertDateTime(LocalDateTime.now());
+                messageHistoryRepository.save(messageHistory);
+
+
+                String greet = "언제나 정성을 다하는 탑 크리닝업 메가샵 입니다.\n안녕하세요. ";
+                String locationHost = "pos.topcleaners.kr";
+
+                message = greet+bcName+" 고객님\n"+fmMessage+"\n아래 상세보기 버튼을 누르셔서 세탁 진행에 대한 결정을 부탁드립니다.";
+                nextmessage = greet+bcName+" 고객님\n"+fmMessage+"\n아래 상세보기 주소를 누르셔서 세탁 진행에 대한 결정을 부탁드립니다.\n"+
+                       "https"+"://"+locationHost+"/mobile/unAuth/inspectresponse?fiid="+fiId;
+
+                JSONObject resultObj = new JSONObject();
+                try {
+                    resultObj.put("name1","상세내역");
+                    resultObj.put("url1_1","https"+"://"+locationHost+"/mobile/unAuth/inspectresponse?fiid="+fiId);
+                    resultObj.put("type1","2");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                String buttonJson =  resultObj.toString().replaceAll("\"\\[" ,"\\[").replaceAll("\\]\"" ,"\\]").replaceAll("\\\\" ,"");
+
+                // 고객에게 확인품 카톡메세지 전송
+                boolean successBoolean = requestRepository.kakaoMessage(message, nextmessage,buttonJson, templatecodePollution,
+                        "fs_request_inspect", optionalInspeot.get().getId(),bcHp, templatecodeNumber, "K");
+                log.info("successBoolean : "+successBoolean);
+
+                if(successBoolean) {
+                    log.info("메세지 인서트 성공");
+                }else{
+                    log.info("메세지 인서트 실패");
+                }
+
             }
         }
-
-        Optional<Customer> optionalCustomer = customerRepository.findByBcId(bcId);
-        if (optionalCustomer.isPresent()) {
-            messageHistory.setBcId(optionalCustomer.get());
-        } else {
-            messageHistory.setBcId(null);
-        }
-        messageHistory.setFrCode(frCode);
-        messageHistory.setBrCode(frbrCode);
-        messageHistory.setFmMessage(fmMessage);
-        messageHistory.setInsert_id(login_id);
-        messageHistory.setInsertDateTime(LocalDateTime.now());
-        messageHistoryRepository.save(messageHistory);
 
         return ResponseEntity.ok(res.success());
     }
@@ -1086,13 +1142,16 @@ public class InspectService {
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
 
+        String code = null;
+
         // 클레임데이터 가져오기
-        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
-        String code;
-        if(type.equals("1")){
-            code = (String) claims.get("brCode"); // 현재 지사의 코드(2자리) 가져오기
-        }else{
-            code = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
+        if(request != null){
+            Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+            if(type.equals("1")){
+                code = (String) claims.get("brCode"); // 현재 지사의 코드(2자리) 가져오기
+            }else if(type.equals("2")){
+                code = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
+            }
         }
 
         log.info("code : "+code);

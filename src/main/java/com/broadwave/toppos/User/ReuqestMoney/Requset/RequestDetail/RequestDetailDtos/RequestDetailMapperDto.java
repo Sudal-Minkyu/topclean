@@ -64,6 +64,8 @@ public class RequestDetailMapperDto {
 
     private String fdRetryYn; // 재세탁 여부 (Y  / N) Y 이면 합계금액이 0이다
     private String fdUrgentYn; // 급세탁 여부 (Y  / N) 기본값 : N
+    private String fdUrgentType; // 급세탁 타입(1: 당일세탁, 2: 특급세탁(1박2일), 3급세탁(2박3일))
+    private Integer fdUrgentAmt; // 급세탁 추가비용
 
     private String fdRemark; // 특이사항
     private String frEstimateDate; // 출고예정일

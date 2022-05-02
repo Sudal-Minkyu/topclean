@@ -346,6 +346,8 @@ public class ReceiptService {
                         optionalRequestDetail.get().setFdRequestAmt(requestDetailMapperDto.getFdRequestAmt());
                         optionalRequestDetail.get().setFdRetryYn(requestDetailMapperDto.getFdRetryYn());
                         optionalRequestDetail.get().setFdUrgentYn(requestDetailMapperDto.getFdUrgentYn());
+                        optionalRequestDetail.get().setFdUrgentType(requestDetailMapperDto.getFdUrgentType());
+                        optionalRequestDetail.get().setFdUrgentAmt(requestDetailMapperDto.getFdUrgentAmt());
 
                         optionalRequestDetail.get().setFdRemark(requestDetailMapperDto.getFdRemark());
                         optionalRequestDetail.get().setFdEstimateDt(requestDetailMapperDto.getFrEstimateDate());
@@ -1073,11 +1075,13 @@ public class ReceiptService {
             message = message+"결제정보\n"+"총 접수금액 : "+decimalFormat.format(+requestDetailMessageDto.getFrTotalAmount())+"원\n"+uncollect_message+"\n총 결제금액 : "+decimalFormat.format(requestDetailMessageDto.getFrPayAmount())+"원\n\n"
                     +"결제 상세정보\n"+payDetail;
 
-            if(locationHost.startsWith("loc") || locationHost.startsWith("top") || locationHost.startsWith("192")){
-                locationHost = "toppos.broadwave.co.kr";
-            }else{
-                locationHost = "pos.topcleaners.kr";
-            }
+//            if(locationHost.startsWith("loc") || locationHost.startsWith("top") || locationHost.startsWith("192")){
+//                locationHost = "toppos.broadwave.co.kr";
+//            }else{
+//                locationHost = "pos.topcleaners.kr";
+//            }
+
+            locationHost = "pos.topcleaners.kr";
 
             nextmessage = greet+requestDetailMessageDto.getCustomer().getBcName()+"고객님\n"+"맡기신 세탁물의 접수를 완료하였습니다.\n"+
                     "상세내역\n"+"https"+"://"+locationHost+"/mobile/unAuth/receipt?id="+frNo;
