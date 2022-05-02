@@ -36,6 +36,7 @@ const dtos = {
                 frName: "s",
                 username: "s",
                 usertel: "s",
+                inCountText: "n"
             },
 
             tagGalleryList: {
@@ -84,15 +85,20 @@ const comms = {
             $("#userName").text(userIndexDto.username);
             $("#userTel").text(CommonUI.formatTel(userIndexDto.usertel));
 
+            let slidingText = "";
             if(userIndexDto.slidingText.length) {
-                let slidingText = $("#brName").html() + " 의 휴무일은 ";
+                slidingText = $("#brName").html() + " 의 휴무일은 ";
                 userIndexDto.slidingText.forEach(date => {
                     slidingText += date.substring(0, 4) + "년 " + date.substring(4, 6) + "월 "
                         + date.substring(6, 8) + "일, ";
                 });
-                slidingText = slidingText.substring(0, slidingText.length - 2) + " 입니다.";
-                $("#slidingText").html(slidingText);
+                slidingText = slidingText.substring(0, slidingText.length - 2) + " 입니다. ";
             }
+            if(userIndexDto.inCountText !== 0) {
+                slidingText = slidingText + "현재 입고대기수량이 " + userIndexDto.inCountText + "건 존재합니다."
+            }
+            $("#slidingText").html(slidingText);
+
 
             if(historyList) {
                 const field = $("#historyList").children("li").children("a");
