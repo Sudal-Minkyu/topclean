@@ -639,7 +639,7 @@ const comms = {
         console.log(data);
         dv.chk(data, dtos.send.franchiseInspectionMessageSend, "검품 카카오 메시지 보내기");
         CommonUI.ajax("/api/user/franchiseInspectionMessageSend", "PARAM", data, function (res) {
-            comms.getInspectionList(wares.inspectCondition);
+            alertSuccess("메시지 전송이 완료되었습니다.");
         });
     }
 };
@@ -2916,14 +2916,14 @@ function sendInspectMessage(sender) {
             isIncludeImg: "Y",
             fmMessage: "",
             fiId: wares.currentFrInspect.frFiId,
-            bcId: wares.currentFrInspect.bcId,
+            bcId: wares.currentFrInspect.inspeotInfoDto.bcId,
         }
     } else if (sender === "brSendKakaoMsg") {
         data = {
             isIncludeImg: "Y",
             fmMessage: "",
             fiId: wares.currentBrInspect.brFiId,
-            bcId: wares.currentBrInspect.bcId,
+            bcId: wares.currentBrInspect.inspeotInfoDto.bcId,
         }
     }
     comms.sendKakaoMessage(data);
