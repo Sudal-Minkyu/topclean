@@ -9,6 +9,13 @@ $(function() { // 페이지가 로드되고 나서 실행
 * */
 const dtos = {
     send: {
+        franchiseInspectionMessageSend: {
+            fiId: "nr",
+            isIncludeImg: "s",
+            fmMessage: "s",
+            bcId: "n",
+        },
+
         franchiseInspectionSave: {
             fdId: "nr",
             fiAddAmt: "nr",
@@ -628,7 +635,13 @@ const comms = {
         });
     },
 
-
+    sendKakaoMessage(data) {
+        console.log(data);
+        dv.chk(data, dtos.send.franchiseInspectionMessageSend, "검품 카카오 메시지 보내기");
+        CommonUI.ajax("/api/user/franchiseInspectionMessageSend", "PARAM", data, function (res) {
+            comms.getInspectionList(wares.inspectCondition);
+        });
+    }
 };
 
 /* .s : AUI 그리드 관련 설정들

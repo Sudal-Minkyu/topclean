@@ -231,6 +231,10 @@ function barGraph(data, num) {
             })
         }));
 
+        // series.columns.template.events.on("click", function(e) {
+        //     console.log(e.target);
+        // });
+
         series.columns.template.setAll({ cornerRadiusTL: 5, cornerRadiusTR: 5 });
         series.columns.template.adapters.add("fill", function(fill, target) {
             return chart.get("colors").getIndex(series.columns.indexOf(target));

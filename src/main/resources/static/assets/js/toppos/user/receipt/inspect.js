@@ -160,6 +160,7 @@ const comms = {
         dv.chk(data, dtos.send.franchiseInspectionMessageSend, "검품 카카오 메시지 보내기");
         CommonUI.ajax(urls.sendKakaoMessage, "PARAM", data, function (res) {
             comms.getInspectionList(wares.inspectCondition);
+            alertSuccess("카카오톡 메시지 보내기를 완료하였습니다.");
         });
     }
 };
@@ -526,6 +527,7 @@ const trigs = {
                             bcId: wares.selectedItem.bcId,
                         }
                         comms.sendKakaoMessage(data);
+                        $('#popupId').remove();
                     });
                 } else {
                     alertCaution("메시지를 보낼 검품내역을 선택해 주세요.", 1);

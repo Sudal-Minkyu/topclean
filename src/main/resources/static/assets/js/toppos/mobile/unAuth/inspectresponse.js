@@ -13,22 +13,23 @@ const dtos = {
 
 const comms = {
     getInspect(target) {
+        wares.pageLoadCondition = target;
         CommonUI.ajax("/api/mobile/unAuth/franchiseInspectionMobileInfo", "GET", target, function (res) {
             console.log(res);
             const data = res.sendData;
             wares.currentInspect = data.inspeotInfoDto;
             wares.currentInspect.photoList = data.photoList;
 
-            if(data.fiCustomerConfirm === "2") { // 고객 응답상태일 때 응답을 할 수 없도록 한다.
+            if(wares.currentInspect.fiCustomerConfirm === "2") { // 고객 응답상태일 때 응답을 할 수 없도록 한다.
                 $("#btnCustomerConfirm, #btnCustomerDeny").remove();
                 $("#introduce").html(`
-                    검수과정 중 <span id="fiComment">오염, 탈색, 찍힘</span>이 발견되었습니다.<br>
+                    검수과정 중 <span id="fiComment"></span>이 발견되었습니다.<br>
                     고객님 께서는 세탁 진행을 요청 하셨습니다.
                 `);
-            } else if(data.fiCustomerConfirm === "3") {
+            } else if(wares.currentInspect.fiCustomerConfirm === "3") {
                 $("#btnCustomerConfirm, #btnCustomerDeny").remove();
                 $("#introduce").html(`
-                    검수과정 중 <span id="fiComment">오염, 탈색, 찍힘</span>이 발견되었습니다.<br>
+                    검수과정 중 <span id="fiComment"></span>이 발견되었습니다.<br>
                     고객님 께서는 반품을 요청 하셨습니다.
                 `);
             }
@@ -62,6 +63,10 @@ const comms = {
                 resultMsg = "반품을 요청 하였습니다.";
             }
             alertSuccess(resultMsg);
+            $("#successBtn").on("click", function () {
+                $("#photoList").html("");
+                comms.getInspect(wares.pageLoadCondition);
+            });
         });
     },
 };
@@ -101,6 +106,7 @@ const trigs = {
 }
 
 const wares = {
+    pageLoadCondition: {},
     currentInspect: {},
 }
 
