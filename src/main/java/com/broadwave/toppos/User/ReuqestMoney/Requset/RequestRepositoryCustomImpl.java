@@ -485,7 +485,7 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
         return jpaResultMapper.list(query, RequestWeekAmountDto.class);
     }
 
-    // 카카오 메세지 테이블 Native쿼리 -> messageType : "K" 카카오, "L" LMS(유료문자), "S"(90문자)
+    // 카카오 메세지 테이블 Native쿼리 -> messageType : "K" 카카오, "L" LMS(유료문자), "S"(90문자), "B" -> nextmessage+LMS
     @Override
     public boolean kakaoMessage(String message, String nextmessage, String buttonJson, String templatecode, String tableName, Long tableId, String TelNumber, String templatecodeNumber, String messageType) {
         EntityManager em = getEntityManager();
@@ -497,7 +497,7 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
             sb.append("k_next_type, k_next_contents, k_resyes, k_template_code, k_button_json, app_etc1, app_etc2) \n");
 
             sb.append("VALUES( ?1, ?2, ?3, NOW(), NOW(), ?4, \n");
-            sb.append("'L', ?5, 'Y', ?6, ?7, \n");
+            sb.append("'B', ?5, 'Y', ?6, ?7, \n");
             sb.append("?8, CONCAT(?9) ); \n");
 
             Query query = em.createNativeQuery(sb.toString());

@@ -975,6 +975,7 @@ public class InspectService {
 
         AjaxResponse res = new AjaxResponse();
 
+
         // 클레임데이터 가져오기
         Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
         String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
@@ -994,17 +995,11 @@ public class InspectService {
         if(fiId != null){
             Optional<Inspeot> optionalInspeot = inspeotRepository.findById(fiId);
             if(optionalInspeot.isPresent()){
-                optionalInspeot.get().setFiSendMsgYn("Y");
-                optionalInspeot.get().setFiMessage(fmMessage);
-                optionalInspeot.get().setFiMessageSendDt(LocalDateTime.now());
-                optionalInspeot.get().setModify_id(login_id);
-                optionalInspeot.get().setModify_date(LocalDateTime.now());
-                optionalInspeot.ifPresent(messageHistory::setFiId);
-                inspeotRepository.save(optionalInspeot.get());
 
                 Optional<Customer> optionalCustomer = customerRepository.findByBcId(bcId);
                 String bcName = "";
                 String bcHp = "";
+
                 if (optionalCustomer.isPresent()) {
                     messageHistory.setBcId(optionalCustomer.get());
                     bcName = optionalCustomer.get().getBcName();
@@ -1017,15 +1012,26 @@ public class InspectService {
                 messageHistory.setFmMessage(fmMessage);
                 messageHistory.setInsert_id(login_id);
                 messageHistory.setInsertDateTime(LocalDateTime.now());
-                messageHistoryRepository.save(messageHistory);
-
 
                 String greet = "언제나 정성을 다하는 탑 크리닝업 메가샵 입니다.\n안녕하세요. ";
+                String messageContents = "맡기신 옷의 검품 중 오점이 발견되어 알려드립니다. ";
                 String locationHost = "pos.topcleaners.kr";
 
-                message = greet+bcName+" 고객님\n"+fmMessage+"\n아래 상세보기 버튼을 누르셔서 세탁 진행에 대한 결정을 부탁드립니다.";
-                nextmessage = greet+bcName+" 고객님\n"+fmMessage+"\n아래 상세보기 주소를 누르셔서 세탁 진행에 대한 결정을 부탁드립니다.\n"+
-                       "https"+"://"+locationHost+"/mobile/unAuth/inspectresponse?fiid="+fiId;
+                log.info("메세지 보낸 고객명 : "+bcName);
+                message = greet+bcName+" 고객님\n"+messageContents+"\n아래 상세보기 버튼을 누르셔서 세탁 진행에 대한 결정을 부탁드립니다.";
+                nextmessage = greet+bcName+" 고객님\n"+messageContents+"\n아래 상세보기 주소를 누르셔서 세탁 진행에 대한 결정을 부탁드립니다.\n"+
+                        "https"+"://"+locationHost+"/mobile/unAuth/inspectresponse?fiid="+fiId;
+
+                messageHistory.setFmMessage(message);
+                messageHistoryRepository.save(messageHistory);
+
+                optionalInspeot.get().setFiSendMsgYn("Y");
+                optionalInspeot.get().setFiMessage(message);
+                optionalInspeot.get().setFiMessageSendDt(LocalDateTime.now());
+                optionalInspeot.get().setModify_id(login_id);
+                optionalInspeot.get().setModify_date(LocalDateTime.now());
+                optionalInspeot.ifPresent(messageHistory::setFiId);
+                inspeotRepository.save(optionalInspeot.get());
 
                 JSONObject resultObj = new JSONObject();
                 try {
