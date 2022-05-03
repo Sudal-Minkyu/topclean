@@ -34,6 +34,18 @@ const comms = {
             }
 
             $("#fiComment").html(wares.currentInspect.fiComment);
+
+            for(const photo of wares.currentInspect.photoList) {
+                const photoHtml = `
+                    <li>
+                        <a href="${photo.ffPath + photo.ffFilename}" class="inspect__img-link">
+                            <img src="${photo.ffPath + "s_" + photo.ffFilename}" alt="" />
+                        </a>
+                    </li>
+                `;
+                $("#photoList").append(photoHtml);
+            }
+
             $("#btnCallFranchise").html(
                 `가맹점 전화하기<br>(${CommonUI.formatTel(wares.currentInspect.frTelNo)})`);
         });
@@ -41,9 +53,10 @@ const comms = {
 
     inspectionJudgement(answer) {
         dv.chk(answer, dtos.send.franchiseInspectionYn, "고객 수락 거부 응답 보내기");
+        console.log(answer);
         CommonUI.ajax("/api/mobile/unAuth/franchiseInspectionYn", "PARAM", answer, function (res) {
             let resultMsg = "";
-            if(answer.type === "1") {
+            if(answer.type === "2") {
                 resultMsg = "세탁진행을 요청 하였습니다.";
             } else {
                 resultMsg = "반품을 요청 하였습니다.";
@@ -63,7 +76,7 @@ const trigs = {
                     fiAddAmt: wares.currentInspect.fiAddAmt,
                     type: "2",
                 };
-                comms.inspectionJudgement(answer, false);
+                comms.inspectionJudgement(answer);
                 $('#popupId').remove();
             });
         });
@@ -76,7 +89,7 @@ const trigs = {
                     fiAddAmt: wares.currentInspect.fiAddAmt,
                     type: "3",
                 };
-                comms.inspectionJudgement(answer, false);
+                comms.inspectionJudgement(answer);
                 $('#popupId').remove();
             });
         });

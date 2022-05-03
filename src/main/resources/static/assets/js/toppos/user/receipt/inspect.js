@@ -517,13 +517,16 @@ const trigs = {
                 const selectedInspect = grids.f.getSelectedInspection();
                 wares.selectedInspect = selectedInspect;
                 if(wares.selectedInspect) {
-                    const data = {
-                        isIncludeImg: "Y",
-                        fmMessage: "",
-                        fiId: wares.selectedInspect.fiId,
-                        bcId: wares.selectedItem.bcId,
-                    }
-                    comms.sendKakaoMessage(data);
+                    alertCheck("고객님께 해당 내용을 알리고,<br>세탁진행과 반품 여부를 묻는<br>메시지를 발송하시겠습니까?");
+                    $("#checkDelSuccessBtn").on("click", function () {
+                        const data = {
+                            isIncludeImg: "Y",
+                            fmMessage: "",
+                            fiId: wares.selectedInspect.fiId,
+                            bcId: wares.selectedItem.bcId,
+                        }
+                        comms.sendKakaoMessage(data);
+                    });
                 } else {
                     alertCaution("메시지를 보낼 검품내역을 선택해 주세요.", 1);
                 }

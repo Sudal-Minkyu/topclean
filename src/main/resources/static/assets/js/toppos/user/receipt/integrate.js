@@ -1417,6 +1417,14 @@ const trigs = {
             calculateItemPrice();
         });
 
+        $("#frSendKakaoMsg, #brSendKakaoMsg").on("click", function(e) {
+            alertCheck("고객님께 해당 내용을 알리고,<br>세탁진행과 반품 여부를 묻는<br>메시지를 발송하시겠습니까?");
+            $("#checkDelSuccessBtn").on("click", function () {
+                sendInspectMessage(e.target.id);
+                $('#popupId').remove();
+            });
+        });
+
     },
     modify() {
         $("#inReceiptPop input[type='radio']").on("change", function(){
@@ -2543,10 +2551,12 @@ async function openFrInspectPop() {
         if(wares.currentFrInspect.frFiCustomerConfirm === "1") {
             $("#frCustomerDenied").show();
             $("#frCustomerConfirmed").show();
+            $("#frSendKakaoMsg").parents("li").show();
             $("#deleteInspect").show();
         } else {
             $("#frCustomerDenied").hide();
             $("#frCustomerConfirmed").hide();
+            $("#frSendKakaoMsg").parents("li").hide();
             $("#deleteInspect").hide();
         }
 
@@ -2612,9 +2622,11 @@ function openBrInspectPop() {
     if(wares.currentBrInspect.brFiCustomerConfirm === "1") {
         $("#brCustomerDenied").parents("li").show();
         $("#brCustomerConfirmed").parents("li").show();
+        $("#brSendKakaoMsg").parents("li").show();
     } else {
         $("#brCustomerDenied").parents("li").hide();
         $("#brCustomerConfirmed").parents("li").hide();
+        $("#brSendKakaoMsg").parents("li").hide();
     }
 
     // fiCustomerConfirm 에 따른 수락거부 여부 추가?
@@ -2884,3 +2896,22 @@ function openReceiptPhotoPop(rowId) {
     $("#receiptPhotoPop").addClass("active");
 }
 
+function sendInspectMessage(sender) {
+    let data = {};
+    if (sender === "frSendKakaoMsg") {
+        data = {
+            isIncludeImg: "Y",
+            fmMessage: "",
+            fiId: wares.currentFrInspect.frFiId,
+            bcId: wares.currentFrInspect.bcId,
+        }
+    } else if (sender === "brSendKakaoMsg") {
+        data = {
+            isIncludeImg: "Y",
+            fmMessage: "",
+            fiId: wares.currentBrInspect.brFiId,
+            bcId: wares.currentBrInspect.bcId,
+        }
+    }
+    comms.sendKakaoMessage(data);
+}
