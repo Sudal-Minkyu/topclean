@@ -2842,7 +2842,7 @@ footer.footer > ul > li + li:before {
 }
 .product-pop__choice.product-pop__choice--material > ul {
 	overflow-y: auto;
-	max-height: 34.375rem;
+	max-height: 38rem;
 }
 .product-pop__choice.product-pop__choice--material > ul > li {
 	width: 100%;
@@ -3016,6 +3016,9 @@ footer.footer > ul > li + li:before {
 }
 .choice-color__input:checked + .choice-color__label:after {
 	display: block;
+}
+.choice-color + .product-pop__choice {
+	margin-top: 5.125rem;
 }
 .product-pop__price-list {
 	display: flex;
@@ -3952,9 +3955,6 @@ footer.footer > ul > li + li:before {
     background-color: #0082f0;
     color: #fff;
 }
-
-
-
 
 
 

@@ -12,7 +12,7 @@
 
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
-	<script src="/assets/js/toppos/user/receipt/receiptreg.js"></script>
+<!--	<script src="/assets/js/toppos/user/receipt/receiptreg.js"></script>-->
 	
 	<!-- lightbox 추가 -->
 	<script src="/assets/js/lightbox2/js/lightbox.js"></script>
@@ -20,15 +20,15 @@
 	<script type="text/javascript">
 	
 		// 하단 팝업 토글
-		function toggleBottom() {
-		   var element = document.getElementsByClassName("regist__bottom");
-		   element[0].classList.toggle("active");
-		   
-		   var grid = document.getElementById("grid_requestList");
-		   grid.classList.toggle("active");
-		   
-		   AUIGrid.resize(gridId[0]);
-		}
+		// function toggleBottom() {
+		//    var element = document.getElementsByClassName("regist__bottom");
+		//    element[0].classList.toggle("active");
+		//
+		//    var grid = document.getElementById("grid_requestList");
+		//    grid.classList.toggle("active");
+		//
+		//    AUIGrid.resize(gridId[0]);
+		// }
 
 	
 		
@@ -1162,7 +1162,7 @@
 	</div>
 
 	<!-- 접수 사진 촬영내역 -->
-	<div class="pop active">
+	<div class="pop">
 		<div class="pop__box">
 			<div class="pop__article">
 				<div class="tag-imgs">
@@ -1219,6 +1219,18 @@
 			</ul>
 		</div>
 	</div>
-	
+
+	<!-- loading -->
+	<div class="loader-wrap">
+		<div class="loader">
+			<div class="loader__dot"></div>
+			<div class="loader__dot"></div>
+			<div class="loader__dot"></div>
+			<div class="loader__dot"></div>
+			<div class="loader__dot"></div>
+			<div class="loader__dot"></div>
+			<div class="loader__text"></div>
+		</div>
+	</div>
 </div>
 </html>
