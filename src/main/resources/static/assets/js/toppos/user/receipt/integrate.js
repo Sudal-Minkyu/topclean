@@ -51,6 +51,16 @@ const dtos = {
         },
 
         franchiseRequestDetailUpdate: {
+            photoList: {
+
+            },
+            fdS6Time: "s",
+            fdS6CancelYn: "s",
+            fdS6CancelTime: "s",
+            fdPollutionType: "n",
+            fdPollutionBack: "n",
+            frInsertDt: "n",
+            cellColor: "n",
             frFiId: "n",
             brFiId: "n",
             frFiCustomerConfirm: "s",
@@ -89,6 +99,8 @@ const dtos = {
             fdEstimateDt: "d",
             fdRetryYn: "",
             fdUrgentYn: "",
+            fdUrgentAmt: "",
+            fdUrgentType: "",
             fdPressed: "",
             fdAdd1Amt: "",
             fdAdd1Remark: "",
@@ -192,6 +204,8 @@ const dtos = {
         },
 
         franchiseRequestDetailSearch: { // 접수 세부 테이블의 거의 모든 요소와, 고객이름
+            fdUrgentType: "s",
+            fdUrgentAmt: "n",
             fdS6CancelYn: "s",
             fdS6CancelTime: "n",
             fdPollutionBack: "n",
@@ -199,6 +213,7 @@ const dtos = {
                 ffId: "n",
                 ffPath: "s",
                 ffFilename: "s",
+                ffRemark: "s",
             },
             fdPollutionType: "n",
             frInsertDt: "n", // 2022.04.13 추가
@@ -284,7 +299,7 @@ const dtos = {
             bcValuation: "s",
             uncollectMoney: "nr",
             saveMoney: "nr",
-            tempSaveFrNo: "n",
+            tempSaveFrNo: "s",
         },
 
         itemGroupAndPriceList: { // 접수페이지 시작때 호출되는 API와 같은 API, 이건 dto검증기를 다차원 검증 가능하도록 개량후 검증.
@@ -294,6 +309,9 @@ const dtos = {
                 baRemark: "",
             },
             addCostData: {
+                bcUrgentRate1: "n",
+                bcUrgentRate2: "n",
+                bcUrgentAmt1: "n",
                 bcChildRt: "nr",
                 bcHighRt: "nr",
                 bcPollution1: "nr",
@@ -310,6 +328,7 @@ const dtos = {
                 bcWhitening: "nr",
             },
             etcData: {
+                frUrgentDayYn: "s",
                 frTagNo: "s",
                 frMultiscreenYn: "s", // 2022.03.10 추가
                 fdTag: "s",
@@ -1221,6 +1240,7 @@ const trigs = {
                         openFrInspectEditPop(e.item);
                     }
                     break;
+                    /* 지사 확인품 확인창 진입 */
                 case "brInspectBtn":
                     if(e.item.brInspectBtn) {
                         wares.currentBrInspect = e.item;
@@ -1388,6 +1408,13 @@ const trigs = {
         $("#closePhotoListPop").on("click", function () {
             $("#receiptPhotoList").html("");
             $("#receiptPhotoPop").removeClass("active");
+        });
+
+        const urgentTypeElement = $("input[name='fdUrgentType']");
+        urgentTypeElement.on("click", function (e) {
+            urgentTypeElement.prop("checked", false);
+            $(e.currentTarget).prop("checked", true);
+            calculateItemPrice();
         });
 
     },
@@ -1836,17 +1863,21 @@ function modifyOrder(rowIndex) {
         $("#fdAdd1Remark").val(currentRequest.fdAdd1Remark);
     }
 
+    if (currentRequest.fdUrgentYn === "Y") {
+        $("#fdUrgent" + currentRequest.fdUrgentType).prop("checked", true);
+    }
+
     if(currentRequest.fdSpecialYn === "Y") {
         $("#fdSpecialYn").prop("checked", true);
     }else{
         $("#fdSpecialYn").prop("checked", false);
     }
 
-    if(currentRequest.fdUrgentYn === "Y") {
-        $("#fdUrgentYn").prop("checked", true);
-    }else{
-        $("#fdUrgentYn").prop("checked", false);
-    }
+    // if(currentRequest.fdUrgentYn === "Y") {
+    //     $("#fdUrgentYn").prop("checked", true);
+    // }else{
+    //     $("#fdUrgentYn").prop("checked", false);
+    // }
 
     if(currentRequest.fdWhitening) {
         $("#fdWhitening").prop("checked", true);
@@ -1971,7 +2002,9 @@ function onAddOrder() {
     currentRequest.fdRemark = $("#fdRemark").val();
     currentRequest.frEstimateDate = initialData.etcData.frEstimateDate.numString();
     currentRequest.fdSpecialYn = $("#fdSpecialYn").is(":checked") ? "Y" : "N";
-    currentRequest.fdUrgentYn = $("#fdUrgentYn").is(":checked") ? "Y" : "N";
+    currentRequest.fdUrgentType = $("input[name='fdUrgentType']:checked").val() ?
+        $("input[name='fdUrgentType']:checked").val() : "";
+    currentRequest.fdUrgentYn = currentRequest.fdUrgentType !== "" ? "Y" : "N";
 
     const pollutionLoc = $("input[name='pollutionLoc']");
     for(let i = 0; i < pollutionLoc.length; i++) {
@@ -2292,8 +2325,19 @@ function cancelPayment(cancelType) {
                             $('#popupId').remove();
                         });
                     }else if(jsonRes.STATUS === "FAILURE") {
-                        console.log(res);
-                        alertCancel("카드결제 취소중 에러 발생<br>단말기 처리");
+                        $('#payStatus').hide();
+                        if (jsonRes.ERRORDATA === "erroecode:404, error:error") {
+                            alertCancel("카드결제 단말기 연결이 감지되지 않습니다.<br>연결을 확인해 주세요.");
+                        } else if (jsonRes.ERRORDATA === "erroecode:0, error:timeout") {
+                            alertCancel("유효 시간이 지났습니다.<br>다시 결제취소 버튼을 이용하여<br>취소를 시도해 주세요.");
+                        } else if(jsonRes.ERRORMESSAGE === "단말기에서종료키누름 /                  /                 ") {
+                            alertCancel("단말기 종료키를 통해 결제가 중지되었습니다.");
+                        } else if (jsonRes.ERRORMESSAGE === " /  / ") {
+                            alertCancel("단말기가 사용중입니다.<br>확인 후 다시 시도해 주세요.");
+                        } else {
+                            alertCancel("카드결제 취소중 에러 발생<br>" + jsonRes.ERRORMESSAGE);
+                        }
+
                         return false;
                     }
                 });

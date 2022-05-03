@@ -430,7 +430,7 @@ class CommonUIClass {
     /* ajax 통신의 자주 쓰는 패턴을 간단하게 쓰기 위함
     * (apiUrl, 통신방식(혹은 컨트롤러에서 받는 방식), 보낼데이터, 성공시 콜백, 실패시 콜백)
     * */
-    ajax(url, method, data, successFn = function () {}, errorFn = function () {}) {
+    ajax(url, method, data, successFn = function () {}, errorFn = function () {}, netFailFn = function () {}) {
 
         if(data) {
             switch (method) {
@@ -539,6 +539,7 @@ class CommonUIClass {
                 CommonUI.commsErrMsg = false;
             }
             ajaxErrorMsg(res);
+            return netFailFn(res);
         }
     }
 

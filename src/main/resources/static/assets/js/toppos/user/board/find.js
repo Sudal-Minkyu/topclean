@@ -119,7 +119,7 @@ const comms = {
     sendSearchRequest(target) {
         dv.chk(target, dtos.send.물건찾기요청, "물건찾기를 요청할 품목들 보내기");
         console.log(target);
-        CommonUI.ajax(urls.sendSearchRequest, "PARAM", target, function (res) {
+        CommonUI.ajax(urls.sendSearchRequest, "PARAM", target, function () {
             alertSuccess("요청하신 품목을 찾을 물건으로 등록하였습니다.");
             comms.getDetailList(wares.filterCondition);
         });
@@ -345,8 +345,8 @@ const trigs = {
             const filterCondition = {
                 bcId: wares.selectedCustomer.bcId ? wares.selectedCustomer.bcId : 0,
                 searchTag: wares.searchTag,
-                filterFromDt: $("#filterFromDt").val(),
-                filterToDt: $("#filterToDt").val(),
+                filterFromDt: $("#filterFromDt").val().numString(),
+                filterToDt: $("#filterToDt").val().numString(),
                 ffStateType: $("input[name='request']:checked").val(),
             }
             comms.getDetailList(filterCondition);
@@ -570,8 +570,8 @@ function makeTargetDataset(checkedItems) { // 저장 데이터셋 만들기
             return false;
         }
     }
-    const target = {
+
+    return {
         fdIdList: fdIdList,
     };
-    return target;
 }

@@ -240,12 +240,6 @@ $(function() {
         }
     });
 
-    const urgentTypeElement = $("input[name='fdUrgentType']");
-    urgentTypeElement.on("click", function (e) {
-        urgentTypeElement.prop("checked", false);
-        $(e.currentTarget).prop("checked", true);
-    });
-
 
     // 결제팝업 탭
     const $payTabsBtn = $('.pop__pay-tabs-item');
@@ -464,7 +458,7 @@ gridColumnLayout[0] = [
         autoThousandSeparator: "true",
         labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
             const addAmount = item.fdPressed + item.fdWhitening + item.fdWaterRepellent + item.fdStarch
-                + item.fdPollution + item.fdAdd1Amt;
+                + item.fdPollution + item.fdAdd1Amt + item.fdUrgentAmt;
             return item.fdRetryYn === "Y" ? 0 : addAmount.toLocaleString();
         },
     }, {
@@ -1148,8 +1142,8 @@ function putItemIntoGrid() {
     currentRequest.frEstimateDate = initialData.etcData.frEstimateDate.numString();
     currentRequest.fdSpecialYn = $("#fdSpecialYn").is(":checked") ? "Y" : "N";
     currentRequest.fdUrgentType = $("input[name='fdUrgentType']:checked").val() ?
-        $("input[name='fdUrgentType']:checked").val() : "0";
-    // currentRequest.fdUrgentYn = $("#fdUrgentYn").is(":checked") ? "Y" : "N";
+        $("input[name='fdUrgentType']:checked").val() : "";
+    currentRequest.fdUrgentYn = currentRequest.fdUrgentType !== "" ? "Y" : "N";
     
     const pollutionLoc = $("input[name='pollutionLoc']");
     for(let i = 0; i < pollutionLoc.length; i++) {
@@ -1310,7 +1304,7 @@ function onModifyOrder(rowIndex) {
         $("#fdAdd1Remark").val(currentRequest.fdAdd1Remark);
     }
 
-    if (["1", "2", "3"].includes(currentRequest.fdUrgentType)) {
+    if (currentRequest.fdUrgentYn === "Y") {
         $("#fdUrgent" + currentRequest.fdUrgentType).prop("checked", true);
     }
 
@@ -1555,7 +1549,7 @@ function changeQty() {
     tempItem.fdQty = $("#hiddenKeypad").val().toInt();
     tempItem.fdRequestAmt = (tempItem.fdNormalAmt + tempItem.fdPressed + tempItem.fdWhitening
         + tempItem.fdWaterRepellent + tempItem.fdStarch + tempItem.fdPollution + tempItem.fdRepairAmt
-        + tempItem.fdAdd1Amt - tempItem.fdDiscountAmt) * tempItem.fdQty;
+        + tempItem.fdAdd1Amt + tempItem.fdUrgentAmt - tempItem.fdDiscountAmt) * tempItem.fdQty;
     tempItem.fdTotAmt = tempItem.fdRequestAmt;
     AUIGrid.updateRowsById(gridId[0], tempItem);
     calculateMainPrice(AUIGrid.getGridData(gridId[0]), AUIGrid.getRemovedItems(gridId[0]));

@@ -35,6 +35,9 @@ const dtos = {
         },
 
         branchInspectionCurrentList: {
+            fiCustomerConfirm: "s",
+            fdPollutionType: "n",
+            fdPollutionBack: "n",
             fiId: "n",
             fdId: "n", // 출고 처리를 위함
             frName: "s",
@@ -400,19 +403,6 @@ const grids = {
                     openCheckPop(e);
                 }
             });
-/* 
-            AUIGrid.bind(grids.s.id[1], "cellClick", function (e) {
-                $("#fiAddAmtInConfirm").val(e.item.fiAddAmt.toLocaleString());
-                $("#fiCommentInConfirm").val(e.item.fiComment);
-                if(e.item.fiPhotoYn === "Y") {
-                    $("#imgThumb").attr("src", e.item.ffPath + "s_" + e.item.ffFilename);
-                    $("#imgFull").attr("href", e.item.ffPath + e.item.ffFilename);
-                    $("#imgFull").show();
-                }else{
-                    $("#imgFull").hide();
-                }
-            });
-*/
         }
     }
 };
@@ -421,9 +411,9 @@ const grids = {
 const trigs = {
     s: { // 이벤트 설정
         basic() {
+            const $aftTag = $("#aftTag");
             $("#frList").on("change", function () {
                 $("#foreTag").val($("#frList option:selected").attr("data-tagno"));
-                const $aftTag = $("#aftTag");
                 if($("#frList").val() === "") {
                     $aftTag.val("");
                     $aftTag.prop("disabled", true);
@@ -439,7 +429,6 @@ const trigs = {
                 searchOrder();
             });
 
-            const $aftTag = $("#aftTag");
             $aftTag.on("keyup", function (e) {
                 $aftTag.val($aftTag.val().numString());
                 if(e.originalEvent.code === "Enter" || e.originalEvent.code === "NumpadEnter") {
@@ -523,8 +512,6 @@ function searchOrder() {
         return false;
     }
 
-    console.log(searchCondition);
-
     comms.getMainGridList(searchCondition);
 }
 
@@ -538,12 +525,6 @@ function openCheckPop(e) {
         
     $("#checkPop").addClass("active");
 }
-
-// function resetCheckPop() {
-//     $("#fiCommentInConfirm").val("");
-//     $("#fiAddAmtInConfirm").val("");
-//     $("#imgFull").hide();
-// }
 
 function resetCheckPop() {
     $("#fdTotAmtInPut").val("");

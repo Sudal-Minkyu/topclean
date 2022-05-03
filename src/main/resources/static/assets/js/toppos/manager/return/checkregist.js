@@ -732,8 +732,8 @@ function searchOrder() {
 
     const searchCondition = {
         tagNo: fullTag.length === 7 ? fullTag : "",
-        filterFromDt: $("#filterFromDt").val(),
-        filterToDt: $("#filterToDt").val(),
+        filterFromDt: $("#filterFromDt").val().numString(),
+        filterToDt: $("#filterToDt").val().numString(),
         franchiseId: parseInt(frId),
     };
 

@@ -54,13 +54,37 @@ function calculateItemPrice() {
     if(!currentRequest.fdAdd2Amt) currentRequest.fdAdd2Amt = 0;
     currentRequest.fdAdd2Amt = ceil100(currentRequest.fdAdd2Amt);
 
-    currentRequest.totAddCost = currentRequest.fdPressed + currentRequest.fdWhitening + currentRequest.fdWaterRepellent
-            + currentRequest.fdStarch + currentRequest.fdPollution + currentRequest.fdAdd1Amt 
-            + currentRequest.fdAdd2Amt + currentRequest.fdRepairAmt;
+
 
     currentRequest.fdNormalAmt = ceil100(currentRequest.fdOriginAmt * gradePrice[currentRequest.fdPriceGrade] / 100);
+
+    currentRequest.fdUrgentType = $("input[name='fdUrgentType']:checked").length ?
+        $("input[name='fdUrgentType']:checked").val() : "0";
+    switch (currentRequest.fdUrgentType) {
+        case "0" :
+            currentRequest.fdUrgentAmt = 0;
+
+            break;
+        case "1" :
+            currentRequest.fdUrgentAmt =
+                (currentRequest.fdNormalAmt * (initialData.addCostData.bcUrgentRate1 - 100) / 100);
+            break;
+        case "2" :
+            currentRequest.fdUrgentAmt =
+                (currentRequest.fdNormalAmt * (initialData.addCostData.bcUrgentRate2 - 100) / 100);
+            break;
+        case "3" :
+            currentRequest.fdUrgentAmt = initialData.addCostData.bcUrgentAmt1;
+            break;
+    }
+
+    currentRequest.totAddCost = currentRequest.fdPressed + currentRequest.fdWhitening + currentRequest.fdWaterRepellent
+        + currentRequest.fdStarch + currentRequest.fdPollution + currentRequest.fdAdd1Amt
+        + currentRequest.fdAdd2Amt + currentRequest.fdRepairAmt + currentRequest.fdUrgentAmt;
+
     let sumAmt = ceil100((currentRequest.fdNormalAmt + currentRequest.totAddCost)
         * (100 - gradeDiscount[currentRequest.fdDiscountGrade]) / 100);
+
     currentRequest.fdRequestAmt = sumAmt * currentRequest.fdQty;
     currentRequest.fdTotAmt = currentRequest.fdRequestAmt;
     currentRequest.fdDiscountAmt = currentRequest.fdNormalAmt + currentRequest.totAddCost - sumAmt;
