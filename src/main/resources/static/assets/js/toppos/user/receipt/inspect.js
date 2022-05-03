@@ -145,6 +145,7 @@ const comms = {
     },
 
     getInspectionList(condition) {
+        wares.inspectCondition = condition;
         dv.chk(condition, dtos.send.franchiseInspectionList, "등록된 검품조회 조건");
         CommonUI.ajax(urls.getInspectionList, "GET", condition, function(res) {
             const data = res.sendData.gridListData;
@@ -155,13 +156,10 @@ const comms = {
     },
 
     sendKakaoMessage(data) {
+        console.log(data);
         dv.chk(data, dtos.send.franchiseInspectionMessageSend, "검품 카카오 메시지 보내기");
         CommonUI.ajax(urls.sendKakaoMessage, "PARAM", data, function (res) {
-            const searchCondition = {
-                fdId: wares.selectedInspect.fdId,
-                type: "0"
-            }
-            comms.getInspectionList(searchCondition);
+            comms.getInspectionList(wares.inspectCondition);
         });
     }
 };
@@ -458,7 +456,6 @@ const grids = {
 
             AUIGrid.bind(grids.s.id[2], "cellClick", function (e) {
                 wares.selectedInspect = e.item;
-                $("#messageField").val(e.item.fiComment);
                 $("#inspectPhotoList").html("");
                 if (e.item.photoList.length) {
                     for(const photo of e.item.photoList) {
@@ -470,11 +467,6 @@ const grids = {
                             </li>
                         `);
                     }
-                    $("#inspectPhotoArea").show();
-                    $("#isIncludeImgLabel").show();
-                } else {
-                    $("#inspectPhotoArea").hide();
-                    $("#isIncludeImgLabel").hide();
                 }
             });
         },
@@ -526,15 +518,11 @@ const trigs = {
                 wares.selectedInspect = selectedInspect;
                 if(wares.selectedInspect) {
                     const data = {
-                        isIncludeImg: "N",
-                        fmMessage: $("#messageField").val(),
+                        isIncludeImg: "Y",
+                        fmMessage: "",
                         fiId: wares.selectedInspect.fiId,
                         bcId: wares.selectedItem.bcId,
                     }
-                    if(wares.selectedInspect.fiPhotoYn === "Y") {
-                        data.isIncludeImg = $("#isIncludeImg").is(":checked") ? "Y" : "N";
-                    }
-                    $("#messageField").val("");
                     comms.sendKakaoMessage(data);
                 } else {
                     alertCaution("메시지를 보낼 검품내역을 선택해 주세요.", 1);
@@ -570,6 +558,7 @@ const wares = {
     searchTag: null,
     selectedItem: {},
     selectedInspect: {},
+    inspectCondition: {},
 }
 
 $(function() { // 페이지가 로드되고 나서 실행
@@ -700,7 +689,7 @@ function resetAll() {
 function onShowVKeyboard(num) {
     /* 가상키보드 사용을 위해 */
     let vkeyProp = [];
-    const vkeyTargetId = ["searchString", "messageField"];
+    const vkeyTargetId = ["searchString"];
 
     vkeyProp[0] = {
         title: $("#searchType option:selected").html() + " (검색)",
@@ -761,10 +750,6 @@ function setupMsgPop(e) {
 }
 
 function resetMsgPop() {
-    $("#isIncludeImg").prop("checked", true);
-    $("#messageField").val("");
     $("#inspectPhotoList").html("");
-    $("#inspectPhotoArea").hide();
-    $("#isIncludeImgLabel").hide();
 }
 
