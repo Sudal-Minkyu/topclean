@@ -22,6 +22,7 @@ import java.time.format.DateTimeFormatter;
 public class InspeotInfoDto {
 
     private Long fiId; // 검품 테이블 ID
+    private Long bcId; // 고객 테이블 ID
     private String fiComment; // 검품 특이사항
     private Integer fiAddAmt; // 세탁 추가발생 비용
     private String fiPhotoYn; // 검품 사진등록여부 (Y : 사진있음 , fs_photo_file 테이블에존재, N : 없음)

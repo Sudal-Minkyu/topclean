@@ -1,8 +1,12 @@
 package com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot;
 
 import com.broadwave.toppos.Head.Franchise.QFranchise;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.*;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.QPhoto;
+import com.broadwave.toppos.User.Customer.QCustomer;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.QRequest;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotInfoDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotListDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotMainListDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.QRequestDetail;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
 import lombok.extern.slf4j.Slf4j;
@@ -95,13 +99,20 @@ public class InspeotRepositoryCustomImpl extends QuerydslRepositorySupport imple
 
         QInspeot inspeot = QInspeot.inspeot;
         QFranchise franchise = QFranchise.franchise;
+        QRequestDetail requestDetail = QRequestDetail.requestDetail;
+        QRequest request = QRequest.request;
+        QCustomer customer = QCustomer.customer;
 
         JPQLQuery<InspeotInfoDto> query = from(inspeot)
 //                .where(inspeot.id.in(fiId).and(inspeot.fiSendMsgYn.eq("N").and(inspeot.fiCustomerConfirm.eq("1"))))
                 .innerJoin(franchise).on(franchise.frCode.eq(inspeot.frCode))
+                .innerJoin(requestDetail).on(requestDetail.eq(inspeot.fdId))
+                .innerJoin(request).on(request.eq(requestDetail.frId))
+                .innerJoin(customer).on(customer.eq(request.bcId))
                 .where(inspeot.id.in(fiId))
                 .select(Projections.constructor(InspeotInfoDto.class,
                         inspeot.id,
+                        customer.bcId,
                         inspeot.fiComment,
                         inspeot.fiAddAmt,
                         inspeot.fiPhotoYn,
