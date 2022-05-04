@@ -491,7 +491,7 @@ textarea {
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: #fff;
+    background-color: rgba(255, 255, 255, .4);
     z-index: 100;
 }
 .loader {
@@ -544,7 +544,7 @@ textarea {
     height: 1.25rem;
 }
 .loader__text:after {
-    content: "Loading";
+    content: "응답중입니다";
     position: absolute;
     bottom: 0;
     left: 90px;
@@ -570,15 +570,15 @@ textarea {
 
 @keyframes loading-text {
     0% {
-        content: "Loading";
+        content: "응답중입니다";
     }
     25% {
-        content: "Loading.";
+        content: "응답중입니다.";
     }
     50% {
-        content: "Loading..";
+        content: "응답중입니다..";
     }
     75% {
-        content: "Loading..."
+        content: "응답중입니다...";
     }
 }
