@@ -851,6 +851,7 @@ public class ReceiptService {
 
             paymentData = new HashMap<>();
             paymentData.put("franchiseNo", requestPaymentPaperDto.getFrCode());
+            paymentData.put("franchiseTagType", requestPaymentPaperDto.getFrTagType());
             paymentData.put("franchiseName", requestPaymentPaperDto.getFrName());
             paymentData.put("businessNO", requestPaymentPaperDto.getFrBusinessNo());
             paymentData.put("repreName", requestPaymentPaperDto.getFrRpreName());

@@ -124,10 +124,11 @@ function setField(data) {
         $("#estimateDt").html(data.items[0].estimateDt);
     }
 
+    const frTagType = data.paymentData.franchiseTagType.length ? parseInt(data.paymentData.franchiseTagType) : 2;
     for (const {color, itemname, price, tagno} of data.items) {
         $("#itemList").append(`
             <tr>
-                <td>${tagno.substr(3, 7)}</td>
+                <td>${CommonData.formatFrTagNo(tagno, frTagType)}</td>
                 <td>${itemname}</td>
                 <td>${wares.colorName[color]}</td>
                 <td class="align-right">${price.toLocaleString()}</td>
