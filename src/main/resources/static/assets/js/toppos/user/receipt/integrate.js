@@ -169,11 +169,6 @@ const dtos = {
             addPhotoList: "",
             deletePhotoList: "",
         },
-
-        franchiseInspectionDelete: {
-            fiId: "nr",
-            fiPhotoYn: "sr",
-        },
     },
     receive: {
 
@@ -385,6 +380,7 @@ const comms = {
 
             setAddMenu();
             setPreDefinedKeywords();
+            getParamsAndAction();
         });
     },
 
@@ -397,7 +393,7 @@ const comms = {
             $("#searchString").val("");
             if(items.length === 1) {
                 wares.selectedCustomer = items[0];
-                putCustomer(wares.selectedCustomer);
+                putCustomer();
             }else if(items.length > 1) {
                 grids.f.setData(1, items);
                 $("#customerListPop").addClass("active");
@@ -1557,26 +1553,6 @@ const trigs = {
         });
     },
     subMenu() {
-/* 
-        $("#commitInspect").on("click", function() {
-            putInspect();
-        });
-
-        $("#closePutInspectPop").on("click", function () {
-            AUIGrid.updateRowsById(grids.s.id[0], currentRequest);
-            $("#putInspectPop").removeClass("active");
-            if(wares.isCameraExist) {
-                try {
-                    wares.cameraStream.getTracks().forEach(function (track) {
-                        track.stop();
-                    });
-                }catch (e) {
-                    CommonUI.toppos.underTaker(e, "integrate : 카메라 스트림 트랙 감지하여 취소");
-                }
-            }
-        });
-*/
-
         $("#transferPoint").on("click", function () {
             alertCheck("해당 내역을 적립금으로 전환하시겠습니까?");
             $("#checkDelSuccessBtn").on("click", function () {
@@ -1594,57 +1570,6 @@ const trigs = {
         $("#frEditFiAddAmt").on("keyup", function () {
             $(this).val($(this).val().toInt().toLocaleString());
         });
-        
-/* 
-        $("#deleteInspection").on("click", function () { // 3번테이블(검품등록) 의 삭제될 대상들을 가져와서 삭제 요청
-            const targetRowsItem = grids.f.getRemovedCheckRows(3);
-            let refinedTargetList = [];
-            let isAlreadyDone = false;
-            targetRowsItem.forEach(item => {
-                if(item.fiSendMsgYn === "Y" || item.fiCustomerConfirm !== "1") {
-                    isAlreadyDone = item.fiComment;
-
-                }
-                refinedTargetList.push({
-                    fiId: item.fiId,
-                    fiPhotoYn: item.fiPhotoYn,
-                });
-            });
-            if(isAlreadyDone) {
-                alertCaution("고객에게 정보가 전해진 검품내역은<br>삭제할 수 없습니다.<br>( 검품내용 : " 
-                + isAlreadyDone + " )", 1);
-                grids.f.resetChangedStatus(3);
-                return false;
-            }
-
-            if(targetRowsItem.length) {
-                comms.deleteInspection(refinedTargetList, targetRowsItem[0].fdId);
-                grids.f.resetChangedStatus(3);
-            }
-        });
-
-        $("#customerConfirmed").on("click", function () {
-            if(grids.f.getSelectedItem(4)) {
-                alertCheck("고객께서 진행 수락 하셨습니까?");
-                $("#checkDelSuccessBtn").on("click", function () {
-                    customerJudgement("2");
-                });
-            }else{
-                alertCaution("검품확인내역을 선택하세요.", 1);
-            }
-        });
-
-        $("#customerDenied").on("click", function () {
-            if(grids.f.getSelectedItem(4)) {
-                alertCheck("고객께서 진행 거부 하셨습니까?");
-                $("#checkDelSuccessBtn").on("click", function () {
-                    customerJudgement("3");
-                });
-            }else{
-                alertCaution("검품확인내역을 선택하세요.", 1);
-            }
-        });
- */
 
         $("#closePaymentPop").on("click", function () {
             if(!AUIGrid.getGridData(grids.s.id[2]).length) { // 결제내역 전부 사라질 경우 해당 마스터테이블 결제취소 버튼 제거, 접수취소 버튼 일괄 부여
@@ -1656,31 +1581,9 @@ const trigs = {
                         AUIGrid.updateRowsById(grids.s.id[0], item);
                     }
                 });
-                //AUIGrid.refresh(grids.s.id[0]);
             }
             $("#paymentListPop").removeClass("active");
         });
-
-/* 
-        $("#closeConfirmInspectPop").on("click", function () {
-            const items = AUIGrid.getGridData(grids.s.id[4]);
-            let isInspectionDone = true;
-            let lastFdState = "S1"; 
-            items.forEach(item => {
-                if(item.fiType === "B") {
-                    lastFdState = "S2";
-                }
-                if(item.fiCustomerConfirm === "1") {
-                    isInspectionDone = false;
-                }
-            });
-            if(isInspectionDone) {
-                currentRequest.fdState = lastFdState;
-                AUIGrid.updateRowsById(grids.s.id[0], currentRequest);
-            }
-            $("#confirmInspectPop").removeClass("active");
-        });
-*/
 
         $("#foreLoc").on("click", function() {
             $(".foreLoc").show();
@@ -1818,8 +1721,6 @@ function onPageLoad() {
     grids.f.switchModifyMode(false);
     trigs.gridEvent();
 
-    getParamsAndAction();
-
     trigs.main();
     trigs.vkeys();
     trigs.modify();
@@ -1895,12 +1796,6 @@ function modifyOrder(rowIndex) {
     }else{
         $("#fdSpecialYn").prop("checked", false);
     }
-
-    // if(currentRequest.fdUrgentYn === "Y") {
-    //     $("#fdUrgentYn").prop("checked", true);
-    // }else{
-    //     $("#fdUrgentYn").prop("checked", false);
-    // }
 
     if(currentRequest.fdWhitening) {
         $("#fdWhitening").prop("checked", true);
@@ -2055,9 +1950,10 @@ function confirmPollutionPop() {
         return false;
     }
 
-    if($("#pollution00").is(":checked") && $("#fdPollution").is(":checked")) {
-        $("#fdPollution").trigger("click");
-    }else if(!$("#pollution00").is(":checked") && !$("#fdPollution").is(":checked")){
+    if (($("#pollution00").is(":checked")
+            && $("#fdPollution").is(":checked"))
+        || (!$("#pollution00").is(":checked")
+            && !$("#fdPollution").is(":checked"))) {
         $("#fdPollution").trigger("click");
     }
     $("#fdPollutionPop").removeClass("active");
@@ -2300,23 +2196,6 @@ function removeEventsFromElement(element) {
     element.parentNode.replaceChild(elementClone, element);
 }
 
-/* 
-function confirmInspect(e) {
-    $("#fiCommentInConfirm").val("");
-    $("#fiAddAmtInConfirm").val("");
-    $("#imgFull").hide();
-    $("#fdRequestAmtInConfirm").val(currentRequest.fdRequestAmt.toLocaleString());
-
-    $("#confirmInspectPop").addClass("active");
-    grids.f.resize(4);
-    const searchCondition = {
-        fdId: e.item.fdId,
-        type: "0"
-    }
-    comms.getInspectionList(searchCondition);
-}
- */
-
 function cancelPaymentPop(frId) {
     comms.getPaymentList(frId);
     $("#paymentListPop").addClass("active");
@@ -2396,9 +2275,9 @@ async function openPutInspectPop(e) {
 
         const screen = document.getElementById("cameraScreen");
         screen.srcObject = wares.cameraStream;
-    }catch (e) {
-        if(!(e instanceof DOMException)) {
-            CommonUI.toppos.underTaker(e, "integrate : 카메라 감지");
+    } catch (err) {
+        if(!(err instanceof DOMException)) {
+            CommonUI.toppos.underTaker(err, "integrate : 카메라 감지");
         }
         wares.isCameraExist = false;
     }
@@ -2422,71 +2301,9 @@ async function openPutInspectPop(e) {
     comms.getInspectionList(searchCondition);
 }
 
-/*
-function customerJudgement(typeAnswer) {
-    const selectedItem = grids.f.getSelectedItem(4);
-    const target = {
-        fiId: selectedItem.fiId,
-        fiAddAmt: selectedItem.fiAddAmt,
-        type: typeAnswer,
-    };
-    comms.franchiseInspectionYn(target);
-}
-*/
-
-
 function ynStyle(rowIndex, columnIndex, value, headerText, item, dataField) {
     return value === "Y" ? "yesBlue" : "noRed"
 }
-
-/* 
-function putInspect() {
-    const $fiComment = $("#fiComment");
-    if (!$fiComment.val().length) {
-        alertCaution("검품내용을 입력해 주세요", 1);
-        return false;
-    }
-    if(wares.isCameraExist && wares.cameraStream.active) {
-        try {
-            const formData = new FormData();
-            formData.append("fdId", currentRequest.fdId);
-
-            if($("#isIncludeImg").is(":checked")) {
-                const video = document.getElementById("cameraScreen");
-                const canvas = document.getElementById('cameraCanvas');
-                canvas.width = video.videoWidth;
-                canvas.height = video.videoHeight;
-                const context = canvas.getContext('2d');
-                context.drawImage(video, 0, 0, canvas.width, canvas.height);
-    
-                const takenPic = canvas.toDataURL();
-    
-                const blob = b64toBlob(takenPic);
-                formData.append("source", blob);
-            }else{
-                formData.append("source", null);
-            }
-
-            formData.append("fiComment", $fiComment.val());
-            formData.append("fiType", "F");
-            formData.append("fiAddAmt", $("#fiAddAmt").val().numString());
-
-            comms.putNewInspect(formData);
-
-        } catch (e) {
-            CommonUI.toppos.underTaker(e, "integrate : 검품등록");
-        }
-    }else{
-        const formData = new FormData();
-        formData.append("fdId", currentRequest.fdId);
-        formData.append("fiComment", $fiComment.val());
-        formData.append("fiType", "F");
-        formData.append("fiAddAmt", $("#fiAddAmt").val().numString());
-        formData.append("source", null);
-        comms.putNewInspect(formData);
-    }
-}
- */
 
 function openFrInspectPopFromRemark(rowIndex) {
     const item = grids.f.getItemByRowIndex(rowIndex);
@@ -2543,15 +2360,6 @@ async function openFrInspectPop() {
             ? wares.currentFrInspect.fiComment : "");
         $("#frEditFiAddAmt").val(wares.currentFrInspect.fiAddAmt
             ? wares.currentFrInspect.fiAddAmt.toLocaleString() : "0");
-
-        // if(e.item.fiId) {
-        //     const searchCondition = {
-        //         fiId: e.item.fiId,
-        //     }
-        //     comms.getInspectionNeo(searchCondition);
-        // } else {
-        //     $("#deleteInspect").parents("li").hide();
-        // }
 
         if(wares.currentFrInspect.frPhotoList) {
             for (const photo of wares.currentFrInspect.frPhotoList) {
