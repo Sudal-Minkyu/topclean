@@ -584,7 +584,7 @@ const comms = {
             const data = res.sendData;
 
             wares.currentFrInspect.inspeotInfoDto = data.inspeotInfoDto;
-            wares.currentFrInspect.photoList = data.photoList;
+            wares.currentFrInspect.frPhotoList = data.photoList;
             wares.currentFrInspect.fiAddAmt = data.inspeotInfoDto.fiAddAmt;
             wares.currentFrInspect.fiComment = data.inspeotInfoDto.fiComment;
 
@@ -598,7 +598,7 @@ const comms = {
             const data = res.sendData;
 
             wares.currentBrInspect.inspeotInfoDto = data.inspeotInfoDto;
-            wares.currentBrInspect.photoList = data.photoList;
+            wares.currentBrInspect.brPhotoList = data.photoList;
             wares.currentBrInspect.fiAddAmt = data.inspeotInfoDto.fiAddAmt;
             wares.currentBrInspect.fiComment = data.inspeotInfoDto.fiComment;
 
@@ -2553,8 +2553,8 @@ async function openFrInspectPop() {
         //     $("#deleteInspect").parents("li").hide();
         // }
 
-        if(wares.currentFrInspect.photoList) {
-            for (const photo of wares.currentFrInspect.photoList) {
+        if(wares.currentFrInspect.frPhotoList) {
+            for (const photo of wares.currentFrInspect.frPhotoList) {
                 const photoHtml = `
                 <li class="motherLi">
                     <a href="${photo.ffPath + photo.ffFilename}" data-lightbox="images" data-title="이미지 확대">
@@ -2590,13 +2590,13 @@ async function openFrInspectPop() {
         $("#frViewFiAddAmt").val(wares.currentFrInspect.fiAddAmt
             ? wares.currentFrInspect.fiAddAmt.toLocaleString() : "0");
 
-        if(wares.currentFrInspect.photoList) {
-            if(wares.currentFrInspect.photoList.length) {
+        if(wares.currentFrInspect.frPhotoList) {
+            if(wares.currentFrInspect.frPhotoList.length) {
                 $("#frInspectViewPhotoPanel").show();
             } else {
                 $("#frInspectViewPhotoPanel").hide();
             }
-            for (const photo of wares.currentFrInspect.photoList) {
+            for (const photo of wares.currentFrInspect.frPhotoList) {
                 const photoHtml = `
                 <li class="tag-imgs__item">
                     <a href="${photo.ffPath + photo.ffFilename}" data-lightbox="images" data-title="이미지 확대">
@@ -2620,13 +2620,13 @@ function openBrInspectPop() {
     $("#brFiAddAmt").val(wares.currentBrInspect.fiAddAmt
         ? wares.currentBrInspect.fiAddAmt.toLocaleString() : "0");
 
-    if(wares.currentBrInspect.photoList) {
-        if(wares.currentBrInspect.photoList.length) {
+    if(wares.currentBrInspect.brPhotoList) {
+        if(wares.currentBrInspect.brPhotoList.length) {
             $("#brInspectPhotoPanel").show();
         } else {
             $("#brInspectPhotoPanel").hide();
         }
-        for (const photo of wares.currentBrInspect.photoList) {
+        for (const photo of wares.currentBrInspect.brPhotoList) {
             const photoHtml = `
                 <li class="tag-imgs__item">
                     <a href="${photo.ffPath + photo.ffFilename}" data-lightbox="images" data-title="이미지 확대">
