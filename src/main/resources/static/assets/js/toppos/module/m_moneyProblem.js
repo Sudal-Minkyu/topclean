@@ -10,7 +10,7 @@ function calculateMainPrice(items, softDeletedItems) {
         if(el.fdRetryYn === "N") {
             fdNormalAmt += el.fdNormalAmt * el.fdQty;
             changeAmt += (el.fdPressed + el.fdWhitening + el.fdWaterRepellent + el.fdStarch
-                + el.fdPollution + el.fdAdd1Amt + el.fdAdd2Amt + el.fdRepairAmt + el.fdUrgentAmt - el.fdDiscountAmt) * el.fdQty;
+                + el.fdPollution + el.fdAdd1Amt + el.fdRepairAmt + el.fdUrgentAmt - el.fdDiscountAmt) * el.fdQty;
             fdRequestAmt += el.fdRequestAmt;
         }
     });
@@ -20,7 +20,7 @@ function calculateMainPrice(items, softDeletedItems) {
         if(el.fdRetryYn === "N") {
             fdNormalAmt -= el.fdNormalAmt * el.fdQty;
             changeAmt -= (el.fdPressed + el.fdWhitening + el.fdWaterRepellent + el.fdStarch
-                + el.fdPollution + el.fdAdd1Amt + el.fdAdd2Amt + el.fdRepairAmt + el.fdUrgentAmt - el.fdDiscountAmt) * el.fdQty;
+                + el.fdPollution + el.fdAdd1Amt + el.fdRepairAmt + el.fdUrgentAmt - el.fdDiscountAmt) * el.fdQty;
             fdRequestAmt -= el.fdRequestAmt;
         }
     });
