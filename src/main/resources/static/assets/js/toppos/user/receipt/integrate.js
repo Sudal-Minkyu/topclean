@@ -382,6 +382,8 @@ const comms = {
             initialData = req.sendData;
             dv.chk(initialData, dtos.receive.itemGroupAndPriceList, "initialData 받아오기");
             console.log(initialData);
+
+            setAddMenu();
             setPreDefinedKeywords();
         });
     },
@@ -2180,6 +2182,10 @@ function filterMain() {
         condition.searchTag = $("#searchString").val();
     }
     comms.franchiseRequestDetailSearch(condition);
+}
+
+function setAddMenu() {
+    if (initialData.etcData.frUrgentDayYn === "N") $("#fdUrgent1").parents("#urgentCheck li").remove();
 }
 
 function putCustomer() {

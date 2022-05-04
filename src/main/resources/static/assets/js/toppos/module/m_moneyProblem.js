@@ -39,15 +39,15 @@ function calculateItemPrice() {
     currentRequest.fdDiscountGrade = $("input[name='fdDiscountGrade']:checked").val();
 
     currentRequest.fdPressed = $("#fdPress").is(":checked") ?
-            parseInt(initialData.addCostData.bcPressed) : 0;
+        ceil100(parseInt(initialData.addCostData.bcPressed)) : 0;
     currentRequest.fdWhitening = $("#fdWhitening").is(":checked") ?
-        parseInt(initialData.addCostData.bcWhitening) : 0;
+        ceil100(parseInt(initialData.addCostData.bcWhitening)) : 0;
     currentRequest.fdWaterRepellent = $("#fdWaterRepellent").is(":checked") ?
-        parseInt(initialData.addCostData.bcWaterRepellent) : 0;
+        ceil100(parseInt(initialData.addCostData.bcWaterRepellent)) : 0;
     currentRequest.fdStarch = $("#fdStarch").is(":checked") ?
-        parseInt(initialData.addCostData.bcStarch) : 0;
+        ceil100(parseInt(initialData.addCostData.bcStarch)) : 0;
     currentRequest.fdPollutionLevel = $("input[name='cleanDirt']:checked").first().val() | 0;
-    currentRequest.fdPollution = parseInt(initialData.addCostData["bcPollution" + currentRequest.fdPollutionLevel]) | 0;
+    currentRequest.fdPollution = ceil100(parseInt(initialData.addCostData["bcPollution" + currentRequest.fdPollutionLevel])) | 0;
 
     currentRequest.fdRepairAmt = ceil100(currentRequest.fdRepairAmt);
     currentRequest.fdAdd1Amt = ceil100(currentRequest.fdAdd1Amt);
@@ -63,18 +63,17 @@ function calculateItemPrice() {
     switch (currentRequest.fdUrgentType) {
         case "0" :
             currentRequest.fdUrgentAmt = 0;
-
             break;
         case "1" :
-            currentRequest.fdUrgentAmt =
-                (currentRequest.fdNormalAmt * (initialData.addCostData.bcUrgentRate1 - 100) / 100);
+            currentRequest.fdUrgentAmt = ceil100(
+                (currentRequest.fdNormalAmt * (initialData.addCostData.bcUrgentRate1 - 100) / 100));
             break;
         case "2" :
-            currentRequest.fdUrgentAmt =
-                (currentRequest.fdNormalAmt * (initialData.addCostData.bcUrgentRate2 - 100) / 100);
+            currentRequest.fdUrgentAmt = ceil100(
+                (currentRequest.fdNormalAmt * (initialData.addCostData.bcUrgentRate2 - 100) / 100));
             break;
         case "3" :
-            currentRequest.fdUrgentAmt = initialData.addCostData.bcUrgentAmt1;
+            currentRequest.fdUrgentAmt = ceil100(initialData.addCostData.bcUrgentAmt1);
             break;
     }
 

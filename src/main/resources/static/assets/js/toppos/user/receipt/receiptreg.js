@@ -138,6 +138,7 @@ $(function() {
         initialData = req.sendData;
         console.log(initialData);
 
+        setAddMenu();
         setBgMenu(false);
         setPreDefinedKeywords();
         setNextTag(initialData.etcData.fdTag);
@@ -2022,6 +2023,10 @@ function onConfirmFdTag() {
 
 function onCloseFdTag() {
     $("#fdTagChange").removeClass("active");
+}
+
+function setAddMenu() {
+    if (initialData.etcData.frUrgentDayYn === "N") $("#fdUrgent1").parents("#urgentCheck li").remove();
 }
 
 function setBgMenu(isFavorite) {
