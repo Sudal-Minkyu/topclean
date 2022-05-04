@@ -855,15 +855,9 @@ input[type="text"].c-date {
 .loader__text {
 	position: relative;
 	height: 1.25rem;
-}
-.loader__text:after {
-	content: "응답중입니다";
-	position: absolute;
-	bottom: 0;
-	left: 90px;
-	animation-name: loading-text;
-	animation-duration: 3s;
-	animation-iteration-count: infinite;
+	color: #333;
+	font-size: 1rem;
+	text-align: center;
 }
 
 @keyframes loader {
@@ -878,21 +872,6 @@ input[type="text"].c-date {
 	}
 	95% {
 		transform: translateX(0);
-	}
-}
-
-@keyframes loading-text {
-	0% {
-		content: "응답중입니다";
-	}
-	25% {
-		content: "응답중입니다.";
-	}
-	50% {
-		content: "응답중입니다..";
-	}
-	75% {
-		content: "응답중입니다...";
 	}
 }
 

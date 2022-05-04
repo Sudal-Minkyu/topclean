@@ -431,7 +431,7 @@ class CommonUIClass {
     * (apiUrl, 통신방식(혹은 컨트롤러에서 받는 방식), 보낼데이터, 성공시 콜백, 실패시 콜백)
     * */
     ajax(url, method, data, successFn = function () {}, errorFn = function () {}, netFailFn = function () {}) {
-
+        $("#loadingScreen").show();
         if(data) {
             switch (method) {
                 case "GET" :
@@ -516,6 +516,7 @@ class CommonUIClass {
         }
 
         function successResponse(res) {
+            $("#loadingScreen").hide();
             if (res.status === 200) {
                 return successFn(res);
             } else {
@@ -532,6 +533,7 @@ class CommonUIClass {
         }
 
         function errorResponse(res) {
+            $("#loadingScreen").hide();
             if(CommonUI.commsErrMsg) {
                 console.log(res);
                 CommonUI.toppos.underTaker(res.responseJSON.path + " |||| " + res.status + " |||| "
