@@ -25,6 +25,7 @@ public class RequestPaymentPaperDto {
     private String frBusinessNo;
     private String frRpreName;
     private String frTelNo;
+    private String frTagType;
 
     private Customer customer;
 

@@ -332,6 +332,7 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
                                 franchise.frBusinessNo,
                                 franchise.frRpreName,
                                 franchise.frTelNo,
+                                franchise.frTagType,
 
                                 customer,
 
