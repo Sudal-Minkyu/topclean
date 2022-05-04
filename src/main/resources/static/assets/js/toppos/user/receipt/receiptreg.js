@@ -257,6 +257,13 @@ $(function() {
         setReceiveAmtToTotalAmt();
     });
 
+    const urgentTypeElement = $("input[name='fdUrgentType']");
+    urgentTypeElement.on("click", function (e) {
+        urgentTypeElement.prop("checked", false);
+        $(e.currentTarget).prop("checked", true);
+        calculateItemPrice();
+    });
+
     // lightbox option
     lightbox.option({
         'maxWidth': 1100,
