@@ -65,7 +65,7 @@ public class InspeotRepositoryCustomImpl extends QuerydslRepositorySupport imple
         EntityManager em = getEntityManager();
         StringBuilder sb = new StringBuilder();
 
-        sb.append("SELECT g.fr_name, d.bc_name, f.bg_name, b.fd_tag, c.fi_customer_confirm, a.fr_yyyymmdd, IFNULL(b.fd_s2_dt,'x') \n");
+        sb.append("SELECT g.fr_name, d.bc_name, f.bg_name, b.fd_tag, c.fi_id, c.fi_customer_confirm, a.fr_yyyymmdd, IFNULL(b.fd_s2_dt,'x') \n");
         sb.append("FROM fs_request a \n");
         sb.append("INNER JOIN fs_request_dtl b ON a.fr_id = b.fr_id \n");
         sb.append("LEFT OUTER JOIN fs_request_inspect c ON c.fd_id = b.fd_id \n");
@@ -118,6 +118,7 @@ public class InspeotRepositoryCustomImpl extends QuerydslRepositorySupport imple
                         inspeot.fiPhotoYn,
                         inspeot.fiSendMsgYn,
                         inspeot.fiCustomerConfirm,
+                        requestDetail.fdTotAmt,
                         franchise.frTelNo
                 ));
 
