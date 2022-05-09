@@ -1,9 +1,11 @@
 package com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.math.BigInteger;
 
 /**
  * @author Minkyu
@@ -21,7 +23,7 @@ public class InspeotMainListDto {
     private String bcName; // 고객명
     private String bgName; // 대분류명
     private String fdTag; // 택번호
-    private Long fiId; // 검품 고유ID
+    private BigInteger fiId; // 검품 고유ID
     private String fiCustomerConfirm; // 검품 상태
     private String frYyyymmdd; // 접수날짜
     private String fdS2Dt; // 지사입고일
