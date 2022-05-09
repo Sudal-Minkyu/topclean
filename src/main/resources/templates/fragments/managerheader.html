@@ -11,34 +11,34 @@
 				<li class="gnb__item">
 					<div class="gnb__depth1"><a href="#">출고 관리</a></div>
 					<ul class="gnb__depth2">
-						<li><a href="/manager/release">지사 출고</a></li>
-						<li><a href="/manager/releasecancel">지사 출고 취소</a></li>
+						<li class="btnSubmenu"><a href="/manager/release">지사 출고</a></li>
+						<li class="btnSubmenu"><a href="/manager/releasecancel">지사 출고 취소</a></li>
 					</ul>
 				</li>
 				<li class="gnb__item">
 					<div class="gnb__depth1"><a href="#">반송 / 검품</a></div>
 					<ul class="gnb__depth2">
-						<li><a href="/manager/forcerelease">강제 출고</a></li>
-						<li><a href="/manager/returnrelease">반품 출고</a></li>
-						<li><a href="/manager/checkregist">확인품 등록</a></li>
-						<li><a href="/manager/checkstate">확인품 현황</a></li>
+						<li class="btnSubmenu"><a href="/manager/forcerelease">강제 출고</a></li>
+						<li class="btnSubmenu"><a href="/manager/returnrelease">반품 출고</a></li>
+						<li class="btnSubmenu"><a href="/manager/checkregist">확인품 등록</a></li>
+						<li class="btnSubmenu"><a href="/manager/checkstate">확인품 현황</a></li>
 					</ul>
 				</li>
 				<li class="gnb__item">
 					<div class="gnb__depth1"><a href="#">입출고 현황</a></div>
 					<ul class="gnb__depth2">
-                        <li><a href="/manager/receptionstate">실시간 접수 현황</a></li>
-						<li><a href="/manager/tag">TAG 번호 조회</a></li>
-						<li><a href="/manager/instate">지사 입고 현황</a></li>
-						<li><a href="/manager/outstate">지사 출고 현황</a></li>
-						<li><a href="/manager/forceoutstate">강제 출고 현황</a></li>
-						<li><a href="/manager/staystate">체류 세탁물 현황</a></li>
+                        <li class="btnSubmenu"><a href="/manager/receptionstate">실시간 접수 현황</a></li>
+						<li class="btnSubmenu"><a href="/manager/tag">TAG 번호 조회</a></li>
+						<li class="btnSubmenu"><a href="/manager/instate">지사 입고 현황</a></li>
+						<li class="btnSubmenu"><a href="/manager/outstate">지사 출고 현황</a></li>
+						<li class="btnSubmenu"><a href="/manager/forceoutstate">강제 출고 현황</a></li>
+						<li class="btnSubmenu"><a href="/manager/staystate">체류 세탁물 현황</a></li>
 					</ul>
 				</li>
 				<li class="gnb__item">
 					<div class="gnb__depth1"><a href="#">미납 관리</a></div>
 					<ul class="gnb__depth2">
-						<li><a href="/manager/notrelease">미출고현황</a></li>
+						<li class="btnSubmenu"><a href="/manager/notrelease">미출고현황</a></li>
 					</ul>
 				</li>
 				<li class="gnb__item">
@@ -47,12 +47,12 @@
 				<li class="gnb__item">
 					<div class="gnb__depth1"><a href="#">설정</a></div>
 					<ul class="gnb__depth2">
-                        <li><a href="/manager/mypage">나의 정보 관리</a></li>
-						<li><a href="/manager/businessday">영업일 관리</a></li>
-						<li><a href="/manager/noticelist">공지사항 게시판</a></li>
-						<li><a href="/manager/tagboard">TAG 분실 게시판</a></li>
-                        <li><a href="/manager/find">물건찾기</a></li>
-						<li><a href="/manager/message">문자메세지</a></li>
+                        <li class="btnSubmenu"><a href="/manager/mypage">나의 정보 관리</a></li>
+						<li class="btnSubmenu"><a href="/manager/businessday">영업일 관리</a></li>
+						<li class="btnSubmenu"><a href="/manager/noticelist">공지사항 게시판</a></li>
+						<li class="btnSubmenu"><a href="/manager/tagboard">TAG 분실 게시판</a></li>
+                        <li class="btnSubmenu"><a href="/manager/find">물건찾기</a></li>
+						<li class="btnSubmenu"><a href="/manager/message">문자메세지</a></li>
 					</ul>
 				</li>
 			</ul>
@@ -70,12 +70,49 @@
 	</div>
 	<div class="gnb__layer"></div>
 	<script type="text/javascript">
+
+
 		$(document).ready(function() {
 			CommonUI.ajax("/api/manager/branchHeaderData", "GET", false, function (res) {
 				const data = res.sendData;
 				$("#headerUserInfo").html(data.accountHeaderData.brName + " - " + data.accountHeaderData.username);
 			});
+
+			try {
+				const token = window.localStorage.getItem('Authorization');
+				const parsedToken = readToken(token);
+				const authorization = parsedToken.auth;
+				console.log(parsedToken);
+
+				manageSubmenuOnOff(authorization);
+			} catch (e) {
+				console.log(e);
+			}
 		});
+
+		function readToken (token) {
+			let base64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+			return JSON.parse(decodeURIComponent(atob(base64).split('').map(function(c) {
+				return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+			}).join('')));
+		}
+
+		/* 관리자 권한을 바탕으로 메뉴 show hide */
+		function manageSubmenuOnOff(authorization) {
+			/* ROLE_NORMAL가 접근 불가능한 페이지의 리스트, "find", "message" 하는 방식으로 기술할 것 */
+			const normalRestrictPage = [
+
+			]
+			if (authorization === "ROLE_MANAGER") {
+				$(".btnSubmenu").show();
+			} else if (authorization === "ROLE_NORMAL") {
+				for(const pageName of normalRestrictPage) {
+					$(`a[href="/manager/${pageName}"]`).hide();
+				}
+			} else {
+				$(".btnSubmenu").hide();
+			}
+		}
 	</script>
 </header>
 

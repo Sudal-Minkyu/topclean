@@ -1409,13 +1409,7 @@ const trigs = {
         });
 
         $("#changeDateRange").on("change", function () {
-            let fromday = new Date();
-            fromday.setDate(fromday.getDate() - $(this).val());
-            fromday = fromday.format("yyyy-MM-dd");
-            const today = new Date().format("yyyy-MM-dd");
-
-            $("#filterFromDt").val(fromday);
-            $("#filterToDt").val(today);
+            changeSearchPeriod($(this).val());
         });
 
         $("#closePhotoListPop").on("click", function () {
@@ -2545,6 +2539,10 @@ function getParamsAndAction() {
         $("#searchType").val("2");
         $("#searchString").val(bcHp);
         searchCustomer();
+    } else if (wares.params.has("week")) {
+        $("#changeDateRange").val("6");
+        changeSearchPeriod("6");
+        // filterMain(); // 바로 검색 되도록
     }
 }
 
@@ -2750,4 +2748,16 @@ function sendInspectMessage(sender) {
         }
     }
     comms.sendKakaoMessage(data);
+}
+
+function changeSearchPeriod(period) {
+    if(period !== "0") {
+        let fromday = new Date();
+        fromday.setDate(fromday.getDate() - period);
+        fromday = fromday.format("yyyy-MM-dd");
+        const today = new Date().format("yyyy-MM-dd");
+
+        $("#filterFromDt").val(fromday);
+        $("#filterToDt").val(today);
+    }
 }
