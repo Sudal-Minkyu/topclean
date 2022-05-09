@@ -36,10 +36,6 @@ public class AccountService {
         accountRepository.delete(account);
     }
 
-    public Account updateAccount(Account account){
-        return this.accountRepository.save(account);
-    }
-
     // 고정ID 값으로 찾기
 //    public Optional<Account> findById(Long id){
 //        return accountRepository.findById(id);

@@ -107,7 +107,7 @@ public class HeadRestController {
             account.setModify_id(login_id);
             account.setModifyDateTime(LocalDateTime.now());
 
-            Account accountSave =  accountService.updateAccount(account);
+            Account accountSave =  accountService.saveUpdate(account);
             log.info("사용자 업데이트 저장 성공 : id '" + accountSave.getUserid() + "'");
         }else{
             log.info("신규입니다.");
