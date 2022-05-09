@@ -581,6 +581,7 @@ const comms = {
 
             wares.currentFrInspect.inspeotInfoDto = data.inspeotInfoDto;
             wares.currentFrInspect.frPhotoList = data.photoList;
+            wares.currentFrInspect.fdTotAmt = data.inspeotInfoDto.fdTotAmt;
             wares.currentFrInspect.fiAddAmt = data.inspeotInfoDto.fiAddAmt;
             wares.currentFrInspect.fiComment = data.inspeotInfoDto.fiComment;
 
@@ -595,6 +596,7 @@ const comms = {
 
             wares.currentBrInspect.inspeotInfoDto = data.inspeotInfoDto;
             wares.currentBrInspect.brPhotoList = data.photoList;
+            wares.currentBrInspect.fdTotAmt = data.inspeotInfoDto.fdTotAmt;
             wares.currentBrInspect.fiAddAmt = data.inspeotInfoDto.fiAddAmt;
             wares.currentBrInspect.fiComment = data.inspeotInfoDto.fiComment;
 
@@ -607,9 +609,9 @@ const comms = {
         const url = "/api/user/franchiseInspectionYn";
         CommonUI.ajax(url, "PARAM", answer, function (res) {
             let resultMsg = "";
-            if(answer.type === "1") {
+            if (answer.type === "2") {
                 resultMsg = "세탁진행을 보고 하였습니다.";
-            } else {
+            } else if (answer.type === "3") {
                 resultMsg = "고객반품을 보고 하였습니다.";
             }
             alertSuccess(resultMsg);
@@ -1673,7 +1675,7 @@ const trigs = {
             $("#frEditFiComment").val(currentHtml + htmlText);
         })
 
-        // 지사검품 팝업 기능
+        // 확인품 팝업 기능
         $("#brCustomerConfirmed").on("click", function () {
             alertCheck("고객께서 진행수락 하셨습니까?");
             $("#checkDelSuccessBtn").on("click", function () {
@@ -2354,8 +2356,9 @@ async function openFrInspectPop() {
             wares.isCameraExist = false;
         }
 
-        $("#frEditFdTotAmtInPut").val(wares.currentFrInspect.fdTotAmt
-            ? wares.currentFrInspect.fdTotAmt.toLocaleString() : "0");
+        let totAmt = wares.currentFrInspect.fdTotAmt ? wares.currentFrInspect.fdTotAmt : 0 ;
+        $("#frEditFdTotAmtInPut").val(totAmt.toLocaleString());
+
         $("#frEditFiComment").val(wares.currentFrInspect.fiComment
             ? wares.currentFrInspect.fiComment : "");
         $("#frEditFiAddAmt").val(wares.currentFrInspect.fiAddAmt
@@ -2387,12 +2390,14 @@ async function openFrInspectPop() {
             $("#deleteInspect").hide();
         }
 
-
-
         $("#frInspectEditPop").addClass("active");
     } else {
-        $("#frViewFdTotAmtInPut").val(wares.currentFrInspect.fdTotAmt
-            ? wares.currentFrInspect.fdTotAmt.toLocaleString() : "0");
+        let totAmt = wares.currentFrInspect.fdTotAmt ? wares.currentFrInspect.fdTotAmt : 0 ;
+        if(wares.currentFrInspect.frFiCustomerConfirm === "2") {
+            totAmt -= wares.currentFrInspect.fiAddAmt;
+        }
+        $("#frViewFdTotAmtInPut").val(totAmt.toLocaleString());
+
         $("#frViewFiComment").val(wares.currentFrInspect.fiComment
             ? wares.currentFrInspect.fiComment : "");
         $("#frViewFiAddAmt").val(wares.currentFrInspect.fiAddAmt
@@ -2421,8 +2426,12 @@ async function openFrInspectPop() {
 }
 
 function openBrInspectPop() {
-    $("#brFdTotAmtInPut").val(wares.currentBrInspect.fdTotAmt
-        ? wares.currentBrInspect.fdTotAmt.toLocaleString() : "0");
+    let totAmt = wares.currentBrInspect.fdTotAmt ? wares.currentBrInspect.fdTotAmt : 0 ;
+    if(wares.currentBrInspect.brFiCustomerConfirm === "2") {
+        totAmt -= wares.currentBrInspect.fiAddAmt;
+    }
+    $("#brFdTotAmtInPut").val(totAmt.toLocaleString());
+
     $("#brFiComment").val(wares.currentBrInspect.fiComment
         ? wares.currentBrInspect.fiComment : "");
     $("#brFiAddAmt").val(wares.currentBrInspect.fiAddAmt

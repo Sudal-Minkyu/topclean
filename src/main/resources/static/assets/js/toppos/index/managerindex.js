@@ -17,6 +17,7 @@ const dtos = {
                 subject: "s",
             },
             inspeotList: {
+                fiId: "n",
                 frName: "s", // 2022.03.08 추가
                 bcName: "s",
                 bgName: "s",

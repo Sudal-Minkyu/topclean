@@ -452,7 +452,50 @@
 			</ul>
         </div>
     </div>
-	
-	
+
+	<!-- 확인품 확인/응답/보기 신규 -->
+	<div id="brInspectPop" class="pop">
+		<div class="pop__box">
+			<div id="brInspectPhotoPanel" class="pop__article">
+				<div class="tag-imgs">
+					<ul id="brPhotoList" class="tag-imgs__list">
+					</ul>
+				</div>
+			</div>
+			<div class="pop__article">
+				<div class="checkreg__comment">
+					<div class="pop__article-head">
+						<h3 class="pop__article-header">검품내용</h3>
+					</div>
+					<div class="pop__aricle-content">
+						<div class="c-text">
+							<input id="brFiComment" type="text"  readonly="readonly" />
+						</div>
+					</div>
+				</div>
+			</div>
+			<ul class="pop__console">
+				<li class="pop__console-left">
+					<div class="pop__console-cost">
+						<div class="pop__console-title">현재 접수금액</div>
+						<div class="pop__console-input">
+							<div class="c-text"><input id="brFdTotAmtInPut" type="text" readonly="readonly" /></div>
+						</div>
+					</div>
+					<div class="pop__console-cost">
+						<div class="pop__console-title">추가 비용발생</div>
+						<div class="pop__console-input">
+							<div class="c-text"><input id="brFiAddAmt" type="text" readonly="readonly" /></div>
+						</div>
+					</div>
+				</li>
+				<li><button id="brCustomerConfirmed" class="c-button c-button--darksolid">세탁진행</button></li>
+				<li><button id="brCustomerDenied" class="c-button c-button--red">고객반품</button></li>
+				<li><button id="brSendKakaoMsg" class="c-button c-button--solid">메시지 전송</button></li>
+				<li><button id="closeBrInspectPop" class="c-button">닫기</button></li>
+			</ul>
+		</div>
+	</div>
+
 </div>
 </html>

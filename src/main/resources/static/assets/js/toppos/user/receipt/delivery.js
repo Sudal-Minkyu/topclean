@@ -1027,8 +1027,12 @@ function openFrInspectEditPop(item) {
 }
 
 async function openFrInspectPop() {
-    $("#frViewFdTotAmtInPut").val(wares.currentFrInspect.fdTotAmt
-        ? wares.currentFrInspect.fdTotAmt.toLocaleString() : "0");
+    let totAmt = wares.currentFrInspect.fdTotAmt ? wares.currentFrInspect.fdTotAmt : 0 ;
+    if(wares.currentFrInspect.frFiCustomerConfirm === "2") {
+        totAmt -= wares.currentFrInspect.fiAddAmt;
+    }
+    $("#frViewFdTotAmtInPut").val(totAmt.toLocaleString());
+
     $("#frViewFiComment").val(wares.currentFrInspect.fiComment
         ? wares.currentFrInspect.fiComment : "");
     $("#frViewFiAddAmt").val(wares.currentFrInspect.fiAddAmt
@@ -1056,8 +1060,12 @@ async function openFrInspectPop() {
 }
 
 function openBrInspectPop() {
-    $("#brFdTotAmtInPut").val(wares.currentBrInspect.fdTotAmt
-        ? wares.currentBrInspect.fdTotAmt.toLocaleString() : "0");
+    let totAmt = wares.currentBrInspect.fdTotAmt ? wares.currentBrInspect.fdTotAmt : 0 ;
+    if(wares.currentBrInspect.brFiCustomerConfirm === "2") {
+        totAmt -= wares.currentBrInspect.fiAddAmt;
+    }
+    $("#brFdTotAmtInPut").val(totAmt.toLocaleString());
+
     $("#brFiComment").val(wares.currentBrInspect.fiComment
         ? wares.currentBrInspect.fiComment : "");
     $("#brFiAddAmt").val(wares.currentBrInspect.fiAddAmt
@@ -1114,4 +1122,11 @@ function resetFrInspectViewPop() {
     $("#frViewFiAddAmt").val("0");
     $("#frViewFiComment").val("");
     $("#frViewPhotoList").html("");
+}
+
+function resetBrInspectPop() {
+    $("#brFdTotAmtInPut").val("");
+    $("#brFiAddAmt").val("0");
+    $("#brFiComment").val("");
+    $("#brPhotoList").html("");
 }

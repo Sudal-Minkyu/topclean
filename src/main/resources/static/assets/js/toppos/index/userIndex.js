@@ -9,11 +9,24 @@ const dtos = {
             btId: "nr",
             type: "sr", // 체크 혹은 체크해제 1, 최종확인 2
         },
-        
+
+        franchiseInspectionMessageSend: {
+            fiId: "nr",
+            isIncludeImg: "s",
+            fmMessage: "s",
+            bcId: "n",
+        },
+
+        franchiseInspectionYn: {
+            fiId: "nr",
+            fiAddAmt: "n",
+            type: "sr",
+        },
     },
     receive: {
         franchiseInfo: {
             inspeotList: {
+                fiId: "n",
                 frName: "s", // 2022.03.08 추가
                 bcName: "s",
                 bgName: "s",
@@ -65,9 +78,10 @@ const urls = {
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
     franchiseInfo(condition) {
+        wares.currentCondition = condition;
         const url = "/api/user/franchiseInfo";
         CommonUI.ajax(url, "GET", condition, function (res) {
-            console.log(res);
+            console.log("인포", res);
             const data = res.sendData;
             dv.chk(data, dtos.receive.franchiseInfo, "메인페이지 각종 값 받아오기");
             const userIndexDto = data.userIndexDto[0];
@@ -132,8 +146,10 @@ const comms = {
                 field.children(".main__board-confirm").children("span").html("");
 
                 for(let i = 0; i < inspectList.length; i++) {
-                    $(field[i]).attr("href", `./user/integrate?fdTag=${inspectList[i].fdTag.substring(frTagInfo.frTagType, 7)}&frYyyymmdd=${
-                        inspectList[i].frYyyymmdd}`);
+                    // $(field[i]).attr("href", `./user/integrate?fdTag=${inspectList[i].fdTag.substring(frTagInfo.frTagType, 7)}&frYyyymmdd=${
+                    //     inspectList[i].frYyyymmdd}`);
+                    $(field[i]).attr("href", `javascript:getBrInspectInfo(${inspectList[i].fiId})`);
+
                     $(field[i]).children(".main__board-bcname").children("span").html(inspectList[i].bcName);
                     $(field[i]).children(".main__board-bgname").children("span").html(inspectList[i].bgName);
                     $(field[i]).children(".main__board-afttag").children("span")
@@ -166,6 +182,41 @@ const comms = {
                     $(field[i]).children(".main__board-date").children("span").html(noticeList[i].insertDateTime);
                 }
             }
+        });
+    },
+
+    getBrInspectNeo(target) {
+        CommonUI.ajax("/api/user/franchiseInspectionInfo", "GET", target, function (res) {
+            console.log(res);
+            const data = res.sendData;
+            wares.currentBrInspect = data.inspeotInfoDto;
+            wares.currentBrInspect.brFiId = data.inspeotInfoDto.fiId;
+            wares.currentBrInspect.brPhotoList = data.photoList;
+
+            openBrInspectPop();
+        });
+    },
+
+    inspectionJudgement(answer) {
+        dv.chk(answer, dtos.send.franchiseInspectionYn, "고객 수락 거부 응답 보내기");
+        const url = "/api/user/franchiseInspectionYn";
+        CommonUI.ajax(url, "PARAM", answer, function (res) {
+            let resultMsg = "";
+            if(answer.type === "1") {
+                resultMsg = "세탁진행을 보고 하였습니다.";
+            } else {
+                resultMsg = "고객반품을 보고 하였습니다.";
+            }
+            alertSuccess(resultMsg);
+            closeBrInspectPop(true);
+        });
+    },
+
+    sendKakaoMessage(data) {
+        console.log(data);
+        dv.chk(data, dtos.send.franchiseInspectionMessageSend, "검품 카카오 메시지 보내기");
+        CommonUI.ajax("/api/user/franchiseInspectionMessageSend", "PARAM", data, function (res) {
+            alertSuccess("메시지 전송이 완료되었습니다.");
         });
     },
 };
@@ -208,6 +259,43 @@ const trigs = {
                 $('#popupId').remove();
             });
         });
+
+        // 확인품 팝업 기능
+        $("#brCustomerConfirmed").on("click", function () {
+            alertCheck("고객께서 진행수락 하셨습니까?");
+            $("#checkDelSuccessBtn").on("click", function () {
+                const answer = {
+                    fiId: wares.currentBrInspect.brFiId,
+                    fiAddAmt: wares.currentBrInspect.fiAddAmt,
+                    type: "2",
+                };
+                comms.inspectionJudgement(answer);
+                $('#popupId').remove();
+            });
+        });
+        $("#brCustomerDenied").on("click", function () {
+            alertCheck("고객께서 진행거부 하셨습니까?");
+            $("#checkDelSuccessBtn").on("click", function () {
+                const answer = {
+                    fiId: wares.currentBrInspect.brFiId,
+                    fiAddAmt: wares.currentBrInspect.fiAddAmt,
+                    type: "3",
+                };
+                comms.inspectionJudgement(answer);
+                $('#popupId').remove();
+            });
+        });
+        $("#closeBrInspectPop").on("click", function () {
+            closeBrInspectPop(false);
+        });
+
+        $("#brSendKakaoMsg").on("click", function(e) {
+            alertCheck("고객님께 해당 내용을 알리고,<br>세탁진행과 반품 여부를 묻는<br>메시지를 발송하시겠습니까?");
+            $("#checkDelSuccessBtn").on("click", function () {
+                sendInspectMessage(e.target.id);
+                $('#popupId').remove();
+            });
+        });
     }
 }
 
@@ -219,6 +307,8 @@ const wares = {
         "3": "(거부)",
     },
     currentRequest: {},
+    currentBrInspect: {},
+    currentCondition: {},
 }
 
 $(function() { // 페이지가 로드되고 나서 실행
@@ -300,4 +390,85 @@ function showTaglost(btId) {
     };
 
     getTaglostDetail(getCondition);
+}
+
+function getBrInspectInfo(fiId) {
+    wares.currentBrInspect = {}
+
+    const target = {
+        fiId: fiId,
+    }
+    comms.getBrInspectNeo(target);
+}
+
+function openBrInspectPop() {
+    let totAmt = wares.currentBrInspect.fdTotAmt ? wares.currentBrInspect.fdTotAmt : 0 ;
+    if(wares.currentBrInspect.brFiCustomerConfirm === "2") {
+        totAmt -= wares.currentBrInspect.fiAddAmt;
+    }
+    $("#brFdTotAmtInPut").val(totAmt.toLocaleString());
+
+    $("#brFiComment").val(wares.currentBrInspect.fiComment
+        ? wares.currentBrInspect.fiComment : "");
+    $("#brFiAddAmt").val(wares.currentBrInspect.fiAddAmt
+        ? wares.currentBrInspect.fiAddAmt.toLocaleString() : "0");
+
+    if(wares.currentBrInspect.brPhotoList) {
+        if(wares.currentBrInspect.brPhotoList.length) {
+            $("#brInspectPhotoPanel").show();
+        } else {
+            $("#brInspectPhotoPanel").hide();
+        }
+        for (const photo of wares.currentBrInspect.brPhotoList) {
+            const photoHtml = `
+                <li class="tag-imgs__item">
+                    <a href="${photo.ffPath + photo.ffFilename}" data-lightbox="images" data-title="이미지 확대">
+                        <img src="${photo.ffPath + "s_" + photo.ffFilename}" class="tag-imgs__img" alt=""/>
+                    </a>
+                </li>
+                `;
+            $("#brPhotoList").append(photoHtml);
+        }
+    }
+
+    if(wares.currentBrInspect.fiCustomerConfirm === "1") {
+        $("#brCustomerDenied").parents("li").show();
+        $("#brCustomerConfirmed").parents("li").show();
+        $("#brSendKakaoMsg").parents("li").show();
+    } else {
+        $("#brCustomerDenied").parents("li").hide();
+        $("#brCustomerConfirmed").parents("li").hide();
+        $("#brSendKakaoMsg").parents("li").hide();
+    }
+
+    // fiCustomerConfirm 에 따른 수락거부 여부 추가?
+    $("#brInspectPop").addClass("active");
+}
+
+function closeBrInspectPop(doRefresh = false) {
+    if(doRefresh) {
+        comms.franchiseInfo(wares.currentCondition);
+    }
+    $("#brInspectPop").removeClass("active");
+    resetBrInspectPop();
+}
+
+function resetBrInspectPop() {
+    $("#brFdTotAmtInPut").val("");
+    $("#brFiAddAmt").val("0");
+    $("#brFiComment").val("");
+    $("#brPhotoList").html("");
+}
+
+function sendInspectMessage(sender) {
+    let data = {};
+    if (sender === "brSendKakaoMsg") {
+        data = {
+            isIncludeImg: "Y",
+            fmMessage: "",
+            fiId: wares.currentBrInspect.brFiId,
+            bcId: wares.currentBrInspect.bcId,
+        }
+    }
+    comms.sendKakaoMessage(data);
 }
