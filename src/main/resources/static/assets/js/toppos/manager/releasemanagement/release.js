@@ -90,23 +90,11 @@ const comms = {
             console.log(res);
             wares.receiptList = CommonUI.toppos.killNullFromArray(res.sendData.gridListData);
 
-            /* 확인품 삭제해야 할 목록 삭제 */
-            // const removeFrId = res.sendData.removeFrId;
-            // for (let i = 0; i < wares.receiptList.length; i++) {
-            //     if (removeFrId.includes(wares.receiptList[i].fdId)) {
-            //         console.log(wares.receiptList[i].fdId);
-            //         wares.receiptList.splice(i, 1);
-            //         i--;
-            //     }
-            // }
-
             $("#statPanel").html(
                 `[${$("#frList option:selected").html()}] 상품이 ${wares.receiptList.length}건 조회되었습니다.`);
             grids.f.clearData(0);
             grids.f.clearData(1);
             $("#inputTagNo").focus();
-            // $("#listStatBar").show();
-            // $("#exportXlsx").show();
         });
     },
 
@@ -127,7 +115,6 @@ const comms = {
             grids.f.clearData(1);
             wares.receiptList = "";
             $("#statPanel").html("조회버튼을 통해 상품을 조회하세요.");
-            // $("#listStatBar").hide();
             $("#exportXlsx").hide();
         });
     },
@@ -316,7 +303,7 @@ const grids = {
             if(wares.receiptList !== "") {
                 grids.f.setData(0, wares.receiptList);
             }
-            for({item} of checkedRows) {
+            for(const {item} of checkedRows) {
                 grids.f.addCheckedRowByTagNo(item.fdTag);
             }
         },
@@ -705,7 +692,7 @@ function fn_viewer_open(projectName, formName, datasetObject, paramObject){
     var form = document.createElement("form");
     form.setAttribute("method", "post");
     form.setAttribute("action", _url);
-    params = _params ;
+    const params = _params ;
     for (var i in params)
     {
         if (params.hasOwnProperty(i))

@@ -262,12 +262,6 @@ const comms = {
 
         CommonUI.ajax(urls.putNewInspectNeo, "POST", formData, function (res) {
 
-            // const searchCondition = {
-            //     fdId: testObj.fdId,
-            //     type: "2"
-            // };
-            // wares.currentRequest.fdState = "B";
-            // comms.getInspectionList(searchCondition);
             alertSuccess("확인품내역이 저장되었습니다.");
             $("#successBtn").on("click", function () {
                 closeCheckPop();
@@ -589,34 +583,7 @@ const trigs = {
             $("#fiAddAmt").on("keyup", function () {
                 $(this).val($(this).val().toInt().toLocaleString());
             });
-/* 
-            $("#deleteInspection").on("click", function () { // 3번테이블(검품등록) 의 삭제될 대상들을 가져와서 삭제 요청
-                const targetRowsItem = grids.f.getRemovedCheckRows(1);
-                let refinedTargetList = [];
-                let isAlreadyDone = false;
-                targetRowsItem.forEach(item => {
-                    if(item.fiSendMsgYn === "Y" || item.brFiCustomerConfirm !== "1") {
-                        isAlreadyDone = item.fiComment;
 
-                    }
-                    refinedTargetList.push({
-                        fiId: item.brFiId,
-                        fiPhotoYn: item.fiPhotoYn,
-                    });
-                });
-                if(isAlreadyDone) {
-                    alertCaution("고객에게 정보가 전해진 검품내역은<br>삭제할 수 없습니다.<br>( 검품내용 : " 
-                    + isAlreadyDone + " )", 1);
-                    grids.f.resetChangedStatus(1);
-                    return false;
-                }
-
-                if(targetRowsItem.length) {
-                    comms.deleteInspection(refinedTargetList, targetRowsItem[0].fdId);
-                    grids.f.resetChangedStatus(1);
-                }
-            });
-*/
             $("#takePhotoBtn").on("click", function () {
                 takePhoto();
             });
@@ -769,14 +736,6 @@ async function openCheckPop(e) {
 
     
     $("#fdTotAmtInPut").val(wares.currentRequest.fdTotAmt.toLocaleString());
-    // if(wares.isCameraExist) {
-    //     $("#isIncludeImg").prop("checked", true);
-    //     $("#isIncludeImg").prop("disabled", false);
-    // }else{
-    //     $("#isIncludeImg").prop("checked", false);
-    //     $("#isIncludeImg").prop("disabled", true);
-    // }
-    // grids.f.resize(1);
 
     /* 접수메뉴에서 찍은 사진 붙히기 */
     for (const photo of e.item.photoList) {
@@ -807,55 +766,6 @@ async function openCheckPop(e) {
 function ynStyle(rowIndex, columnIndex, value, headerText, item, dataField) {
     return value === "Y" ? "yesBlue" : "noRed"
 }
-
-/* 
-function putInspect() {
-    const $fiComment = $("#fiComment");
-    if (!$fiComment.val().length) {
-        alertCaution("검품내용을 입력해 주세요", 1);
-        return false;
-    }
-    if(wares.isCameraExist && wares.cameraStream.active) {
-        try {
-            const formData = new FormData();
-            formData.append("fdId", wares.currentRequest.fdId);
-
-            if($("#isIncludeImg").is(":checked")) {
-                const video = document.getElementById("cameraScreen");
-                const canvas = document.getElementById('cameraCanvas');
-                canvas.width = video.videoWidth;
-                canvas.height = video.videoHeight;
-                const context = canvas.getContext('2d');
-                context.drawImage(video, 0, 0, canvas.width, canvas.height);
-    
-                const takenPic = canvas.toDataURL();
-    
-                const blob = b64toBlob(takenPic);
-                formData.append("source", blob);
-            }else{
-                formData.append("source", null);
-            }
-
-            formData.append("fiComment", $fiComment.val());
-            formData.append("fiType", "B");
-            formData.append("fiAddAmt", $("#fiAddAmt").val().numString());
-
-            comms.putNewInspect(formData);
-
-        } catch (e) {
-            CommonUI.toppos.underTaker(e, "checkregist : 카메라 촬영하려 검품등록");
-        }
-    }else{
-        const formData = new FormData();
-        formData.append("fdId", wares.currentRequest.fdId);
-        formData.append("fiComment", $fiComment.val());
-        formData.append("fiType", "B");
-        formData.append("fiAddAmt", $("#fiAddAmt").val().numString());
-        formData.append("source", null);
-        comms.putNewInspect(formData);
-    }
-}
-*/
 
 function b64toBlob(dataURI) { // 파일을 ajax 통신에 쓰기 위해 변환
     const byteString = atob(dataURI.split(',')[1]);
@@ -983,14 +893,6 @@ async function openFrInspectPop() {
     }
 
     $("#frInspectViewPop").addClass("active");
-}
-
-function closeFrInspectViewPop(doRefresh = false) {
-    if(doRefresh) {
-        comms.franchiseRequestDetailSearch(wares.currentCondition);
-    }
-    $("#frInspectViewPop").removeClass("active");
-    resetFrInspectViewPop();
 }
 
 function openReceiptPhotoPop(rowId) {

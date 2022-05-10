@@ -39,7 +39,7 @@ const comms = {
 
     save(formData) {
         const jsonFormData = Object.fromEntries(formData);
-        // dv.chk(jsonFormData, dtos.send.save, "글쓰기 데이터 보내기");
+        dv.chk(jsonFormData, dtos.send.save, "글쓰기 데이터 보내기");
         console.log(jsonFormData);
         CommonUI.ajax(urls[wares.boardType + "save"], "POST", formData, function (res) {
             console.log(res);
@@ -119,8 +119,6 @@ function onPageLoad() {
         let condition = {};
         condition[wares[wares.boardType].idKeyName] = wares.id;
         comms.getData(condition);
-    } else {
-
     }
 }
 
@@ -172,10 +170,6 @@ function setInputs() {
             + "&searchString=" + wares.searchString + "&filterFromDt=" + wares.filterFromDt
             + "&filterToDt=" + wares.filterToDt + specialCondition);
     }
-}
-
-function getData() {
-
 }
 
 function summernoteInit() {

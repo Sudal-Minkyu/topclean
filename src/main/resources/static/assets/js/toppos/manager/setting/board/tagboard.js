@@ -85,7 +85,7 @@ const comms = {
             const dataList = res.sendData.tagGalleryList;
             dv.chk(dataList, dtos.receive.tagGalleryList, "조회된 택분실 리스트 받기");
 
-            for(data of dataList) {
+            for(const data of dataList) {
                 for(const [i, obj] of data.bfPathFilename.entries()) {
                     data["thumbnail" + (i + 1)] = obj.bfPath + "s_" + obj.bfFilename;
                     if(i === 3) break;
@@ -132,7 +132,7 @@ const comms = {
             resetTaglostPop();
             tagLostPopUpdateMode();
 
-            for(photo of wares.currentRequest.tagGalleryFileList) {
+            for(const photo of wares.currentRequest.tagGalleryFileList) {
                 const photoHtml = `<li class="tag-imgs__item">
                     <a href="${photo.bfPath + photo.bfFilename}" data-lightbox="images" data-title="이미지 확대">
                         <img src="${photo.bfPath + "s_" + photo.bfFilename}" class="tag-imgs__img" alt=""/>
@@ -145,7 +145,7 @@ const comms = {
 
             /* 가맹점 응답의 텍스트 구성 */
             let responseList = ""
-            for(fr of wares.currentRequest.tagGalleryCheckList) {
+            for(const fr of wares.currentRequest.tagGalleryCheckList) {
                 if(!fr.brTag) {
                     fr.brTag = "";
                 }
@@ -476,14 +476,14 @@ function enableDatepicker() {
     fromday.setDate(fromday.getDate() - 6);
     fromday = fromday.format("yyyy-MM-dd");
     const today = new Date().format("yyyy-MM-dd");
-
     /* datepicker를 적용시킬 대상들의 dom id들 */
     const datePickerTargetIds = [
-        "filterFromDt", "filterToDt"
+        "btInputDate", "filterFromDt", "filterToDt"
     ];
 
-    $("#" + datePickerTargetIds[0]).val(fromday);
-    $("#" + datePickerTargetIds[1]).val(today);
+    $("#" + datePickerTargetIds[0]).val(today);
+    $("#" + datePickerTargetIds[1]).val(fromday);
+    $("#" + datePickerTargetIds[2]).val(today);
 
     const dateAToBTargetIds = [
         ["filterFromDt", "filterToDt"]
@@ -602,28 +602,6 @@ function closeTaglostPop() {
     }
 }
 
-function enableDatepicker() {
-    let fromday = new Date();
-    fromday.setDate(fromday.getDate() - 6);
-    fromday = fromday.format("yyyy-MM-dd");
-    const today = new Date().format("yyyy-MM-dd");
-    /* datepicker를 적용시킬 대상들의 dom id들 */
-    const datePickerTargetIds = [
-        "btInputDate", "filterFromDt", "filterToDt"
-    ];
-
-    $("#" + datePickerTargetIds[0]).val(today);
-    $("#" + datePickerTargetIds[1]).val(fromday);
-    $("#" + datePickerTargetIds[2]).val(today);
-
-    const dateAToBTargetIds = [
-        ["filterFromDt", "filterToDt"]
-    ];
-
-    CommonUI.setDatePicker(datePickerTargetIds);
-    CommonUI.restrictDateAToB(dateAToBTargetIds);
-}
-
 function resetDatePicker() {
     const today = new Date().format("yyyy-MM-dd");
     $("#btInputDate").val(today);
@@ -654,7 +632,7 @@ function savePost() {
 
     const formData = new FormData();
     if(wares.currentRequest.addPhotoList) {
-        for(addPhoto of wares.currentRequest.addPhotoList) { // 새로 촬영된 사진들의 추가
+        for(const addPhoto of wares.currentRequest.addPhotoList) { // 새로 촬영된 사진들의 추가
             if(addPhoto) formData.append("addPhotoList", addPhoto);
         }
     }
