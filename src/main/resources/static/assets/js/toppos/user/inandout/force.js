@@ -36,7 +36,7 @@ const dtos = {
             bcValuation: "s",
             uncollectMoney: "nr",
             saveMoney: "nr",
-            tempSaveFrNo: "n",
+            tempSaveFrNo: "s",
         },
 
         franchiseReceiptForceList: {

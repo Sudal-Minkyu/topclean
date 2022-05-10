@@ -48,8 +48,8 @@ const comms = {
             page: wares.page - 1,
             size: 13,
             searchString: wares.searchString,
-            filterFromDt: wares.filterFromDt,
-            filterToDt: wares.filterToDt,
+            filterFromDt: wares.filterFromDt.numString(),
+            filterToDt: wares.filterToDt.numString(),
         };
         if(wares.boardType === "notice") {
             condition.hnType = wares.hnType

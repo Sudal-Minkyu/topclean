@@ -414,8 +414,8 @@ function showDetail(item) {
     const searchCondition = {
         frCode: item.frCode,
         type: wares.currentDetail.type,
-        filterFromDt: wares.currentDetail.filterFromDt,
-        filterToDt: wares.currentDetail.filterToDt,
+        filterFromDt: wares.currentDetail.filterFromDt.numString(),
+        filterToDt: wares.currentDetail.filterToDt.numString(),
     }
 
     /* 선택된 가맹점과 날짜 항목에 대한 기억 */
