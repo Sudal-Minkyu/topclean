@@ -68,18 +68,18 @@ const comms = {
             let totalAmount = 0;
             console.log(data);
 
-            for (let i = 0; i < data.gridListData.length; i++) {
+            for (const obj of data.gridListData) {
                 // 접수총액
-                totalAmount += data.gridListData[i].fdTotAmt;
+                totalAmount += obj.fdTotAmt;
                 // 급세탁건수
-                if (data.gridListData[i].fdUrgentYn === "Y") {
+                if (obj.fdUrgentYn === "Y") {
                     fastItemCount = fastItemCount + 1;
                 }
                 // 재세탁건수
-                if (data.gridListData[i].fdRetryYn === "Y") {
+                if (obj.fdRetryYn === "Y") {
                     retryItemCount = retryItemCount + 1;
                 }
-                data.gridListData[i].SMS = true;
+                obj.SMS = true;
             }
 
             dv.chk(data.gridListData, dtos.receive.franchiseReceiptFranchiseInList, '입고 리스트 항목 받아오기');
@@ -187,7 +187,7 @@ const grids = {
                             type = "운동화";
                         } else {
                             type = "일반";
-                        };
+                        }
                         return type;
                     },
                 }, 
@@ -308,8 +308,8 @@ const grids = {
             /* 0번그리드 내의 셀 클릭시 이벤트 */
             AUIGrid.bind(grids.s.id[0], "cellEditEnd", function (e) {
                 const targetItems = AUIGrid.getItemsByValue(grids.s.id[0], "bcId", e.item.bcId);
-                for (let i = 0; i < targetItems.length; i++) {
-                    targetItems[i].SMS = e.value;
+                for (const obj of targetItems) {
+                    obj.SMS = e.value;
                 }
                 AUIGrid.updateRowsById(grids.s.id[0], targetItems);
                 grids.f.resetUpdatedItems();
@@ -390,10 +390,9 @@ function makeSaveDataset(checkedItems) { // 저장 데이터셋 만들기
             smsBcIdList.push(data.item.bcId)
         }
     });
-    const changeData = {
+    return {
         stateType: "S4",
         fdIdList: fdIdList,
         smsBcIdList: smsBcIdList,
     };
-    return changeData;
 }

@@ -243,9 +243,8 @@ const grids = {
             grids.s.prop[0] = {
                 editable : false,
                 selectionMode : "singleRow",
-                showAutoNoDataMessage: false,
-                noDataMessage : "출력할 데이터가 없습니다.",
                 showAutoNoDataMessage: true,
+                noDataMessage : "출력할 데이터가 없습니다.",
                 enableColumnResize : false,
                 showRowAllCheckBox: false,
                 showRowCheckColumn: false,
@@ -303,7 +302,6 @@ const grids = {
                 selectionMode : "none",
                 showAutoNoDataMessage: false,
                 noDataMessage : "출력할 데이터가 없습니다.",
-                showAutoNoDataMessage: false,
                 enableColumnResize : false,
                 showRowAllCheckBox: true,
                 showRowCheckColumn: true,
@@ -378,7 +376,6 @@ const grids = {
                 selectionMode : "singleRow",
                 showAutoNoDataMessage: false,
                 noDataMessage : "출력할 데이터가 없습니다.",
-                showAutoNoDataMessage: false,
                 enableColumnResize : false,
                 showRowAllCheckBox: false,
                 showRowCheckColumn: false,
@@ -669,14 +666,6 @@ function uncollectPaymentStageOne() {
 
                     // 결제 성공일경우 Print
                     if (resjson.STATUS === "SUCCESS") {
-                        // let creditData =
-                        //     {
-                        //         cardNo: resjson.CARDNO,
-                        //         cardName: resjson.ISSUERNAME,
-                        //         approvalTime: resjson.APPROVALTIME,
-                        //         approvalNo: resjson.APPROVALNO
-                        //     };
-                        // CAT.CatPrint(paymentData, creditData, "N");
                         uncollectPaymentStageTwo(paymentData, resjson);
                         alertSuccess("카드 결제가 성공하였습니다.<br>단말기에서 카드를 제거해 주세요.");
                     }
@@ -699,13 +688,6 @@ function uncollectPaymentStageOne() {
                 CommonUI.toppos.underTaker(e, "unpaid : 카드 단말 결제");
             }
         }else if (paymentData.type ==="cash") {
-            // $('#payStatus').show();
-            // try {
-            //     CAT.CatPrint(paymentData, "", "N");
-            // }catch (e) {
-            //     console.log(e);
-            // }
-            // $('#payStatus').hide();
             uncollectPaymentStageTwo(paymentData);
         }
     }catch (e) {

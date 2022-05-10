@@ -71,7 +71,7 @@ const comms = {
             const dataList = res.sendData.tagGalleryList;
             dv.chk(dataList, dtos.receive.tagGalleryList, "조회된 택분실 리스트 받기");
 
-            for(data of dataList) {
+            for(const data of dataList) {
                 for(const [i, obj] of data.bfPathFilename.entries()) {
                     data["thumbnail" + (i + 1)] = obj.bfPath + "s_" + obj.bfFilename;
                     if(i === 3) break;
@@ -328,9 +328,6 @@ function onPageLoad() {
     /* 가상키보드의 사용 선언 */
     window.vkey = new VKeyboard();
     trigs.vkeys();
-
-    //$("#taglostPop").addClass("active");
-
 
     // lightbox option
     lightbox.option({

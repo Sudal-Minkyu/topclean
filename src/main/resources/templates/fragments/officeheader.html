@@ -35,7 +35,7 @@
 		<div class="info" id="logout_Form">
 			<div class="info__user">
 				<span class="info__icon">user image</span>
-				<span class="info__user-name">홍길동(이름)</span>
+				<span id="headerUserName" class="info__user-name"></span>
 			</div>
 			<button class="header__btn" onclick="logout()">
 				<img src="/assets/images/icon__logout--g.svg" alt="로그아웃" /><span>로그아웃</span>
@@ -52,7 +52,17 @@
 			} catch (e) {
 				console.log(e);
 			}
+
+			getHeaderData();
 		});
+
+		function getHeaderData() {
+			CommonUI.ajax("/api/head/headHeaderData", "GET", false, function (res) {
+				const data = res.sendData;
+				console.log(data);
+				$("#headerUserName").html(data.accountHeaderData.username);
+			});
+		}
 
 		function readToken (token) {
 			let base64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');

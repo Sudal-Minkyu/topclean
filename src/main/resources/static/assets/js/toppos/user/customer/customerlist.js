@@ -64,7 +64,7 @@ function getBoilerPlate() {
     CommonUI.ajax(url, "GET", {baType: "0"}, function (res) {
         let boilerPlate = [];
         const data = res.sendData.keyWordData;
-        for({baName} of data) {
+        for(const {baName} of data) {
             boilerPlate.push(baName);
         }
         vkeyProp[1].boilerplate = boilerPlate;
@@ -123,7 +123,6 @@ let gridData = [];
 let gridColumnLayout = [];
 let gridProp = [];
 let gridCreateUrl = [];
-let gridSaveUrl = [];
 
 /* 그리드를 뿌릴 대상 div의 id들 */
 gridTargetDiv = [
@@ -133,11 +132,6 @@ gridTargetDiv = [
 /* 그리드를 받아올 때 쓰이는 api 배열 */
 gridCreateUrl = [
     "/api/user/customerList"
-]
-
-/* 그리드를 저장할 때 쓰이는 api 배열 */
-gridSaveUrl = [
-    "/api/user/"
 ]
 
 /* 0번 그리드의 레이아웃 */
@@ -187,11 +181,10 @@ gridColumnLayout[0] = [
             type: "TemplateRenderer",
         },
         labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
-            const template = `
+            return `
                 <button class="c-button c-button--supersmall" 
                     onclick="onModifySaveMoney(${rowIndex})">조정</button>
             `;
-            return template;
         },
     }, {
         dataField: "bcMessageAgree",
@@ -227,11 +220,10 @@ gridColumnLayout[0] = [
             type: "TemplateRenderer",
         },
         labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
-            const template = `
+            return `
                 <button class="c-button c-button--solid  c-button--supersmall" 
                     onclick="onModifyCustomer(${rowIndex})">수정</button>
             `;
-            return template;
         },
     },
 ];
@@ -317,7 +309,6 @@ function onModifyCustomer(rowIndex) {
             .prop('checked', true);
     $("input:radio[name='bcMessageAgree']:radio[value='" + item.bcMessageAgree + "']")
         .prop('checked', true);
-    /*$("#bcAgreeType").val(item.bcAgreeType);*/
     $("#bcAgreeTypeName").val(
         item.bcAgreeType === "1" ? "온라인" : "서면"
     );
@@ -476,7 +467,6 @@ function requestSign() {
         CommonUI.toppos.underTaker(e, "customerlist : 서명요청");
         return false;
     }
-    // $("#resultmsg").text(": 승인중 메세지- 고객이 서명중입니다. ------전체화면으로 가리기 ");
 
     const maskHeight = $(document).height();
     const maskWidth = $(window).width();

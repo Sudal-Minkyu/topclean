@@ -35,9 +35,9 @@ const dtos = {
                 price: "n",
 				estimateDt: "s", // fdEstimateDt
             },
-            
+
             creditData: { // 결제한 내역들의 배열, 적립금이나 현금은 금액과 타입만 오면 됨
-                type: "sr", // fpType 기준 01: cash, 02: card, 03: save 
+                type: "sr", // fpType 기준 01: cash, 02: card, 03: save
                 cardNo: "s", // fpCatCardNo
                 cardName: "s", // fpCatIssuername
                 approvalTime: "s", // fpCatApprovaltime
@@ -524,11 +524,10 @@ gridColumnLayout[0] = [
             type: "TemplateRenderer",
         },
         labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
-            const template = `
+            return `
                 <button class="c-button c-button--solid  c-button--supersmall" 
                     onclick="onModifyOrder(${rowIndex})">수정</button>
             `;
-            return template;
         },
         style: "btn-modify",
     }
@@ -860,20 +859,7 @@ function onPutCustomer() {
 /* 하단의 세탁물 종류 버튼 클릭시 해당 세탁물 대분류 코드를 가져와 팝업을 띄운다. */
 function onPopReceiptReg(btnElement) {
     selectedLaundry.bgCode = btnElement.value;
-    let bsType = ["N", "L", "S"];
-    initialData.userItemGroupSListData.forEach(el => {
-        for(let i = 0; i < bsType.length; i++) {
-            if(el.bgItemGroupcode === selectedLaundry.bgCode && el.bsItemGroupcodeS === bsType[i]) {
-                $("#size" + bsType[i]).css("display", "block");
-                $("#size" + bsType[i] +" label").html(el.bsName);
-                delete bsType[i];
-                break;
-            }
-        }
-    });
-    bsType.forEach(type => {
-        $("#size" + type).css("display", "none");
-    });
+    formMidItemcodeOnPop();
 
     // 처음 표시 중분류 기본상태 N, 만일 중분류에 N이 없는 예외상황시 수정해줘야함.
     setBiItemList("N");
@@ -1034,8 +1020,8 @@ function onCloseTakePicture() {
 
     const $camBoiler = $(".camBoiler");
     if($camBoiler.length) {
-        for(let i = 0; i < $camBoiler.length; i++) {
-            removeEventsFromElement($camBoiler[i]);
+        for(const element of $camBoiler) {
+            removeEventsFromElement(element);
         }
     }
 
@@ -1122,13 +1108,7 @@ function onAddOrder() {
             $('#popupId').remove();
         });
         $("#popSecondBtn").on("click", function () {
-            alertSuccess("접수의뢰를 리스트에 추가합니다.<br>고객으로부터 서류를 통해 동의를 받아주세요.");
-            $("#successBtn").on("click", function () {
-                currentRequest.fdAgreeType = "2";
-                currentRequest.fdSignImage = "";
-                putItemIntoGrid();
-                $('#popupId').remove();
-            });
+            askSignPaper();
         });
         $("#popThirdBtn").on("click", function () {
             $('#popupId').remove();
@@ -1151,41 +1131,17 @@ function putItemIntoGrid() {
     currentRequest.fdUrgentType = $("input[name='fdUrgentType']:checked").val() ?
         $("input[name='fdUrgentType']:checked").val() : "";
     currentRequest.fdUrgentYn = currentRequest.fdUrgentType !== "" ? "Y" : "N";
-    
+
     const pollutionLoc = $("input[name='pollutionLoc']");
-    for(let i = 0; i < pollutionLoc.length; i++) {
-        if($(pollutionLoc[i]).is(":checked")) {
-            currentRequest[pollutionLoc[i].id] = "Y";
-        }else {
-            currentRequest[pollutionLoc[i].id] = "N";
+    for(const element of pollutionLoc) {
+        if ($(element).is(":checked")) {
+            currentRequest[element.id] = "Y";
+        } else {
+            currentRequest[element.id] = "N";
         }
     }
 
-    let forePollutionChecked = false;
-    let backPollutionChecked = false;
-
-    if(currentRequest.fdPollutionLocFcn === "Y" || currentRequest.fdPollutionLocFcs === "Y" ||
-        currentRequest.fdPollutionLocFcb === "Y" ||
-        currentRequest.fdPollutionLocFrh === "Y" || currentRequest.fdPollutionLocFlh === "Y" ||
-        currentRequest.fdPollutionLocFrf === "Y" || currentRequest.fdPollutionLocFlf === "Y") {
-        forePollutionChecked = true;
-    }
-
-    if(currentRequest.fdPollutionLocBcn === "Y" || currentRequest.fdPollutionLocBcs === "Y" ||
-        currentRequest.fdPollutionLocBcb === "Y" ||
-        currentRequest.fdPollutionLocBrh === "Y" || currentRequest.fdPollutionLocBlh === "Y" ||
-        currentRequest.fdPollutionLocBrf === "Y" || currentRequest.fdPollutionLocBlf === "Y") {
-        backPollutionChecked = true;
-    }
-
-    currentRequest.fdPollutionBack = backPollutionChecked ? 1 : 0;
-    if(forePollutionChecked && backPollutionChecked) {
-        currentRequest.fdPollutionType = 2;
-    } else if (forePollutionChecked || backPollutionChecked) {
-        currentRequest.fdPollutionType = 1;
-    } else {
-        currentRequest.fdPollutionType = 0;
-    }
+    decidePollutionType();
 
     if(currentRequest._$uid) {
         const copyObj = CommonUI.cloneObj(currentRequest);
@@ -1266,21 +1222,7 @@ function onModifyOrder(rowIndex) {
 
     currentRequest = AUIGrid.getItemByRowIndex(gridId[0], rowIndex);
     selectedLaundry.bgCode = currentRequest.biItemcode.substr(0, 3);
-
-    let bsType = ["N", "L", "S"];
-    initialData.userItemGroupSListData.forEach(el => {
-        for(let i = 0; i < bsType.length; i++) {
-            if(el.bgItemGroupcode === selectedLaundry.bgCode && el.bsItemGroupcodeS === bsType[i]) {
-                $("#size" + bsType[i]).css("display", "block");
-                $("#size" + bsType[i] +" label").html(el.bsName);
-                delete bsType[i];
-                break;
-            }
-        }
-    });
-    bsType.forEach(type => {
-        $("#size" + type).css("display", "none");
-    });
+    formMidItemcodeOnPop();
 
     setBiItemList(currentRequest.biItemcode.substr(3, 1));
 
@@ -1358,8 +1300,6 @@ function onModifyOrder(rowIndex) {
         $("#waterBtn").addClass("choice-drop__btn--active");
     }
 
-
-
     if(currentRequest.fdRemark.length) {
         $("#fdRemark").val(currentRequest.fdRemark);
     }
@@ -1371,10 +1311,6 @@ function onModifyOrder(rowIndex) {
     if($("#urgentCheck input:checked").length > 1) {
         $("#urgentNone").prop("checked", false);
     }
-
-
-
-    /* currentRequest의 각 벨류값에 따라 화면의 라디오 세팅을 구성한다. */
 
     calculateItemPrice();
     $('#productPop').addClass('active');
@@ -1419,7 +1355,7 @@ function onTempSave() {
 }
 
 /* 전역변수 cehckNum이 1일 경우에는 임시저장, 2일 경우에는 접수완료처리 */
-function onSave(turnOnSuccessMsg = false, callback = function () {}, tossData = {}) {
+function onSave(turnOnSuccessMsg = false, callback = function () {/* intentional */}, tossData = {/* intentional */}) {
 
     // 추가된 행 아이템들(배열)
     const addedRowItems = AUIGrid.getAddedRowItems(gridId[0]);
@@ -1517,16 +1453,16 @@ function disableKeypad() {
     const $keypadBackspace = $(".add-cost .keypad_btn_backspace");
     const $keypadBoilerplate = $(".add-cost .add-cost__example-btn");
 
-    for(let i = 0; i < $keypadBtn.length; i++) {
-        removeEventsFromElement($keypadBtn[i]);
+    for(const element of $keypadBtn) {
+        removeEventsFromElement(element);
     }
 
-    for(let i = 0; i < $keypadBackspace.length; i++) {
-        removeEventsFromElement($keypadBackspace[i]);
+    for(const element of $keypadBackspace) {
+        removeEventsFromElement(element);
     }
 
-    for(let i = 0; i < $keypadBoilerplate.length; i++) {
-        removeEventsFromElement($keypadBoilerplate[i]);
+    for(const element of $keypadBoilerplate) {
+        removeEventsFromElement(element);
     }
 }
 
@@ -2109,13 +2045,7 @@ function askConfirmShoes() {
 function noScreenWarning() {
     alertCheck("고객용 스크린이 감지되지 않습니다.<br>서면으로 동의를 받고 진행하시겠습니까?");
     $("#checkDelSuccessBtn").on("click", function () {
-        alertSuccess("접수의뢰를 리스트에 추가합니다.<br>고객으로부터 서류를 통해 동의를 받아주세요.");
-        $("#successBtn").on("click", function () {
-            currentRequest.fdAgreeType = "2";
-            currentRequest.fdSignImage = "";
-            putItemIntoGrid();
-            $('#popupId').remove();
-        });
+        askSignPaper();
     });
 }
 
@@ -2233,29 +2163,87 @@ function publishCashReceipt() {
         alertThree("현금 영수증을 발행 하시겠습니까?", "개인용", "사업자용", "아니오");
 
         $("#popFirstBtn").on("click", function () {
-            $('#popupId').remove();
-            $('#payStatus').show();
-            paymentData.fcType = "1";
-            CommonUI.toppos.publishCashRceipt(paymentData, function () {
-                isCashReceiptPublished = true;
-                $("#publishCashReceipt").hide();
-                $('.pop__pay-tabs-item').eq(1).trigger("click");
-            });
+            preparePublishCashReceipt(paymentData, "1");
         });
 
         $("#popSecondBtn").on("click", function () {
-            $('#popupId').remove();
-            $('#payStatus').show();
-            paymentData.fcType = "2";
-            CommonUI.toppos.publishCashRceipt(paymentData, function () {
-                isCashReceiptPublished = true;
-                $("#publishCashReceipt").hide();
-                $('.pop__pay-tabs-item').eq(1).trigger("click");
-            });
+            preparePublishCashReceipt(paymentData, "2");
         });
 
         $("#popThirdBtn").on("click", function () {
             $('#popupId').remove();
         });
+    }
+}
+
+/* userItemGroupSListData를 기반으로 상품 접수창에 진입할 때, 중간상품코드에 정해진 명칭을 넣고 선택버튼의 표시 유무를 결정한다. */
+function formMidItemcodeOnPop() {
+    let bsType = ["N", "L", "S"];
+
+    initialData.userItemGroupSListData.forEach(el => {
+        for(let i = 0; i < bsType.length; i++) {
+            if(el.bgItemGroupcode === selectedLaundry.bgCode && el.bsItemGroupcodeS === bsType[i]) {
+                $("#size" + bsType[i]).css("display", "block");
+                $("#size" + bsType[i] +" label").html(el.bsName);
+                delete bsType[i];
+                break;
+            }
+        }
+    });
+
+    bsType.forEach(type => {
+        $("#size" + type).css("display", "none");
+    });
+}
+
+/* 고객용 스크린이 없고, 운동화일 경우(22.05.10 시점에서는 운동화만) 서류 사인 요청 */
+function askSignPaper() {
+    alertSuccess("접수의뢰를 리스트에 추가합니다.<br>고객으로부터 서류를 통해 동의를 받아주세요.");
+    $("#successBtn").on("click", function () {
+        currentRequest.fdAgreeType = "2";
+        currentRequest.fdSignImage = "";
+        putItemIntoGrid();
+        $('#popupId').remove();
+    });
+}
+
+/* 결제데이터와 발행할 현금영수증 종류에 맞추어 현금영수증 발행 */
+function preparePublishCashReceipt(paymentData, fcType) {
+    $('#popupId').remove();
+    $('#payStatus').show();
+    paymentData.fcType = fcType;
+    CommonUI.toppos.publishCashRceipt(paymentData, function () {
+        isCashReceiptPublished = true;
+        $("#publishCashReceipt").hide();
+        $('.pop__pay-tabs-item').eq(1).trigger("click");
+    });
+}
+
+/* 체크된 오염지점을 근거로 fdPollutionType을 판단한다. */
+function decidePollutionType() {
+    let forePollutionChecked = false;
+    let backPollutionChecked = false;
+
+    if(currentRequest.fdPollutionLocFcn === "Y" || currentRequest.fdPollutionLocFcs === "Y" ||
+        currentRequest.fdPollutionLocFcb === "Y" ||
+        currentRequest.fdPollutionLocFrh === "Y" || currentRequest.fdPollutionLocFlh === "Y" ||
+        currentRequest.fdPollutionLocFrf === "Y" || currentRequest.fdPollutionLocFlf === "Y") {
+        forePollutionChecked = true;
+    }
+
+    if(currentRequest.fdPollutionLocBcn === "Y" || currentRequest.fdPollutionLocBcs === "Y" ||
+        currentRequest.fdPollutionLocBcb === "Y" ||
+        currentRequest.fdPollutionLocBrh === "Y" || currentRequest.fdPollutionLocBlh === "Y" ||
+        currentRequest.fdPollutionLocBrf === "Y" || currentRequest.fdPollutionLocBlf === "Y") {
+        backPollutionChecked = true;
+    }
+
+    currentRequest.fdPollutionBack = backPollutionChecked ? 1 : 0;
+    if(forePollutionChecked && backPollutionChecked) {
+        currentRequest.fdPollutionType = 2;
+    } else if (forePollutionChecked || backPollutionChecked) {
+        currentRequest.fdPollutionType = 1;
+    } else {
+        currentRequest.fdPollutionType = 0;
     }
 }

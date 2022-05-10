@@ -28,14 +28,14 @@ class CommonUIClass {
         /* 아이템 코드와 이름 데이터 조합에 쓰이는 배열을 사용하여 최종 이름을 산출 */
         makeProductName(item, nameArray) {
             if(!item.sumName) {
-                const isNotSizeNormal = !(item.biItemcode.substr(3, 1) === "N");
+                const isNotSizeNormal = (item.biItemcode.substr(3, 1) !== "N");
                 let sumName = "";
-                for(let i = 0; i < nameArray.length; i++) {
-                    if(nameArray[i].biItemcode === item.biItemcode) {
-                        if(isNotSizeNormal) {
-                            sumName += nameArray[i].bsName + " ";
+                for(const obj of nameArray) {
+                    if (obj.biItemcode === item.biItemcode) {
+                        if (isNotSizeNormal) {
+                            sumName += obj.bsName + " ";
                         }
-                        sumName += nameArray[i].biName + " " + nameArray[i].bgName;
+                        sumName += obj.biName + " " + obj.bgName;
                         break;
                     }
                 }
@@ -190,7 +190,7 @@ class CommonUIClass {
                     paymentData.fcMuechantnumber = res.MERCHANTNUMBER;
 
                     console.log(paymentData);
-                    CommonUI.ajax("/api/user/requestPaymentCashPaper", "PARAM", paymentData, function (res) {
+                    CommonUI.ajax("/api/user/requestPaymentCashPaper", "PARAM", paymentData, function () {
                         alertSuccess("현금영수증이 정상 발행 되었습니다.");
                     });
                     return callback();
@@ -221,9 +221,9 @@ class CommonUIClass {
             const voiceProp = new SpeechSynthesisUtterance(text);
 
             let recommendNotExist = true;
-            for(var i = 0; i < voices.length ; i++) {
-                if(voices[i].name === "Google 한국의") {
-                    voiceProp.voice = voices[i];
+            for(const voice of voices) {
+                if (voice.name === "Google 한국의") {
+                    voiceProp.voice = voice;
                     voiceProp.pitch = 1;
                     voiceProp.rate = 1.1;
                     recommendNotExist = false;
@@ -232,9 +232,9 @@ class CommonUIClass {
             }
 
             if(recommendNotExist) {
-                for(var i = 0; i < voices.length ; i++) {
-                    if(voices[i].lang.indexOf('ko-KR') >= 0 || voices[i].lang.indexOf('ko_KR') >= 0) {
-                        voiceProp.voice = voices[i];
+                for(const voice of voices) {
+                    if (voice.lang.indexOf('ko-KR') >= 0 || voice.lang.indexOf('ko_KR') >= 0) {
+                        voiceProp.voice = voice;
                         voiceProp.pitch = 1;
                         voiceProp.rate = 1;
                         break;
@@ -309,12 +309,12 @@ class CommonUIClass {
     * targetIdArray = [ ['from대상id1', 'to대상id2'], ['from대상id1', 'to대상id2'], .... ]
     * */
     restrictDateAToB(targetIdArray) {
-        for(let i = 0; i < targetIdArray.length; i++) {
-            for(let j = 0; j < targetIdArray[i].length; j++) {
-                $("#"+targetIdArray[i][j]).on("change", function() {
-                    CommonUI.restrictDate(targetIdArray[i][0], targetIdArray[i][1], j);
+        for(const targetFromAndTo of targetIdArray) {
+            for (let i = 0; i < targetFromAndTo.length; i++) {
+                $("#" + targetFromAndTo[i]).on("change", function () {
+                    CommonUI.restrictDate(targetFromAndTo[0], targetFromAndTo[1], i);
                 });
-                this.restrictDate(targetIdArray[i][0], targetIdArray[i][1], j);
+                this.restrictDate(targetFromAndTo[0], targetFromAndTo[1], i);
             }
         }
     }
@@ -343,10 +343,8 @@ class CommonUIClass {
         switch (testMethod) {
             case "email" : // 이메일 형식이 맞는지 검사.
                 return email.test(testValue);
-                break;
             case "dateExist" : // 존재하는 날짜인지 검사.
                 return dateExist.test(testValue);
-                break;
             default :
                 break;
         }
@@ -498,21 +496,17 @@ class CommonUIClass {
                     });
                     break;
             }
-        }else{
-            switch (method) {
-                case "GET" :
-                    $(document).ajaxSend(function (e, xhr) {
-                        xhr.setRequestHeader("Authorization", localStorage.getItem('Authorization'));
-                    });
-                    $.ajax({
-                        url: url,
-                        type: method,
-                        cache: false,
-                        error: errorResponse,
-                        success: successResponse,
-                    });
-                    break;
-            }
+        }else if(method === "GET") {
+            $(document).ajaxSend(function (e, xhr) {
+                xhr.setRequestHeader("Authorization", localStorage.getItem('Authorization'));
+            });
+            $.ajax({
+                url: url,
+                type: method,
+                cache: false,
+                error: errorResponse,
+                success: successResponse,
+            });
         }
 
         function successResponse(res) {

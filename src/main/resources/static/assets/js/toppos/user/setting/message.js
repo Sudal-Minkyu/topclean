@@ -71,16 +71,16 @@ const comms = {
             const $tmpInputFmSubject = $(".tmpInputFmSubject");
             const $tmpInputFmMessage = $(".tmpInputFmMessage");
             const $tmpInputByte = $(".tmpInputByte");
-            for(let i = 0; i < templateList.length; i++) {
-                const byte = getByteInfo(templateList[i].fmMessage).byte;
-                $tmpFmSubject.eq(parseInt(templateList[i].fmNum) - 1).val(templateList[i].fmSubject);
-                $tmpFmMessage.eq(parseInt(templateList[i].fmNum) - 1).val(templateList[i].fmMessage);
-                $tmpByte.eq(parseInt(templateList[i].fmNum) - 1).html(byte);
-                $tmpInputFmSubject.eq(parseInt(templateList[i].fmNum) - 1).val(templateList[i].fmSubject);
-                $tmpInputFmSubject.eq(parseInt(templateList[i].fmNum) - 1).attr("data-id"
-                    , templateList[i].ftId ? templateList[i].ftId : 0);
-                $tmpInputFmMessage.eq(parseInt(templateList[i].fmNum) - 1).val(templateList[i].fmMessage);
-                $tmpInputByte.eq(parseInt(templateList[i].fmNum) - 1).html(byte);
+            for(const obj of templateList) {
+                const byte = getByteInfo(obj.fmMessage).byte;
+                $tmpFmSubject.eq(parseInt(obj.fmNum) - 1).val(obj.fmSubject);
+                $tmpFmMessage.eq(parseInt(obj.fmNum) - 1).val(obj.fmMessage);
+                $tmpByte.eq(parseInt(obj.fmNum) - 1).html(byte);
+                $tmpInputFmSubject.eq(parseInt(obj.fmNum) - 1).val(obj.fmSubject);
+                $tmpInputFmSubject.eq(parseInt(obj.fmNum) - 1).attr("data-id"
+                    , obj.ftId ? obj.ftId : 0);
+                $tmpInputFmMessage.eq(parseInt(obj.fmNum) - 1).val(obj.fmMessage);
+                $tmpInputByte.eq(parseInt(obj.fmNum) - 1).html(byte);
             }
 
         });
@@ -94,9 +94,9 @@ const comms = {
         });
     },
 
-    sendMessage(sendMessage) {
-        console.log(sendMessage);
-        CommonUI.ajax("/api/user/messageSendCustomer", "PARAM", sendMessage, function (res) {
+    sendMessage(message) {
+        console.log(message);
+        CommonUI.ajax("/api/user/messageSendCustomer", "PARAM", message, function (res) {
             alertSuccess("문자메시지 발송이 완료되었습니다.");
             grids.f.clear(0);
             grids.f.clear(1);
@@ -573,13 +573,11 @@ function getByteInfo(text) {
         }
     }
 
-    const result = {
+    return {
         byte: byte,
         cutLength: cutLength,
         cutByte: cutByte,
-    }
-
-    return result;
+    };
 }
 
 function saveTemplate() {

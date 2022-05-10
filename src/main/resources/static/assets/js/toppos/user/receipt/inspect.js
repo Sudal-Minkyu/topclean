@@ -289,10 +289,7 @@ const grids = {
                         type: "TemplateRenderer",
                     },
                     labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
-                        let template = `
-                                <button type="button" class="c-button c-button--supersmall">메시지</button>
-                            `;
-                        return template;
+                        return `<button type="button" class="c-button c-button--supersmall">메시지</button>`;
                     },
                 },
             ];

@@ -245,7 +245,6 @@ function modifyCancel(commentId, obj) {
     console.log(this);
     const $btnRow = $(obj).parents(".reply__console");
     const $commentRow = $btnRow.siblings(".reply__comment");
-    const text = $commentRow.html();
     $btnRow.replaceWith(wares.btnRow[commentId.toString()]);
     $commentRow.replaceWith(wares.commentRow[commentId.toString()]);
 }
@@ -273,7 +272,7 @@ function openVKeyboard(commentId, type) { // 0 더덧글 달기의 textarea id, 
     vkey.showKeyboard(typeName[type] + commentId, {title: "덧글 입력"});
 }
 
-function commitReply(type = "", fieldId, preId = "", commentId = "") {
+function commitReply(type, fieldId, preId = "", commentId = "") {
     const data = {
         type: type,
         comment: $(fieldId).val(),

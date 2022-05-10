@@ -803,13 +803,7 @@ const grids = {
                     renderer : {
                         type : "TemplateRenderer",
                     },
-                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
-                        let result = "";
-                        if(typeof value === "number") {
-                            result = new Date(value).format("yy.MM.dd<br>hh:mm");
-                        }
-                        return result;
-                    },
+                    labelFunction: formatDateTime,
                 }, {
                     dataField: "fdS6Time",
                     headerText: "인도일자",
@@ -817,13 +811,7 @@ const grids = {
                     renderer : {
                         type : "TemplateRenderer",
                     },
-                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
-                        let result = "";
-                        if(typeof value === "number") {
-                            result = new Date(value).format("yy.MM.dd<br>hh:mm");
-                        }
-                        return result;
-                    },
+                    labelFunction: formatDateTime,
                 }, {
                     dataField: "fdS2Dt",
                     headerText: "지사입고",
@@ -1921,11 +1909,11 @@ function onAddOrder() {
     currentRequest.fdUrgentYn = currentRequest.fdUrgentType !== "" ? "Y" : "N";
 
     const pollutionLoc = $("input[name='pollutionLoc']");
-    for(let i = 0; i < pollutionLoc.length; i++) {
-        if($(pollutionLoc[i]).is(":checked")) {
-            currentRequest[pollutionLoc[i].id] = "Y";
-        }else {
-            currentRequest[pollutionLoc[i].id] = "N";
+    for(const element of pollutionLoc) {
+        if ($(element).is(":checked")) {
+            currentRequest[element.id] = "Y";
+        } else {
+            currentRequest[element.id] = "N";
         }
     }
     
@@ -2174,16 +2162,16 @@ function disableKeypad() {
     const $keypadBackspace = $(".add-cost .keypad_btn_backspace");
     const $keypadBoilerplate = $(".add-cost .add-cost__example-btn");
 
-    for(let i = 0; i < $keypadBtn.length; i++) {
-        removeEventsFromElement($keypadBtn[i]);
+    for(const element of $keypadBtn) {
+        removeEventsFromElement(element);
     }
 
-    for(let i = 0; i < $keypadBackspace.length; i++) {
-        removeEventsFromElement($keypadBackspace[i]);
+    for(const element of $keypadBackspace) {
+        removeEventsFromElement(element);
     }
 
-    for(let i = 0; i < $keypadBoilerplate.length; i++) {
-        removeEventsFromElement($keypadBoilerplate[i]);
+    for(const element of $keypadBoilerplate) {
+        removeEventsFromElement(element);
     }
 }
 
@@ -2687,13 +2675,13 @@ function addDistinguishableCellColor() {
     let nowId = 0;
     let colorIdx = 0;
 
-    for (let i = 0; i < items.length; i++) {
-        if(items[i].frId !== nowId) {
+    for (const item of items) {
+        if (item.frId !== nowId) {
             colorIdx++;
-            if(colorIdx === 2) colorIdx = 0;
-            nowId = items[i].frId;
+            if (colorIdx === 2) colorIdx = 0;
+            nowId = item.frId;
         }
-        items[i].cellColor = colorIdx;
+        item.cellColor = colorIdx;
     }
 
     AUIGrid.updateRowsById(grids.s.id[0], items);
@@ -2760,4 +2748,12 @@ function changeSearchPeriod(period) {
         $("#filterFromDt").val(fromday);
         $("#filterToDt").val(today);
     }
+}
+
+function formatDateTime(rowIndex, columnIndex, value, headerText, item) {
+    let result = "";
+    if(typeof value === "number") {
+        result = new Date(value).format("yy.MM.dd<br>hh:mm");
+    }
+    return result;
 }

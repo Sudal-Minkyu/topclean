@@ -147,7 +147,7 @@ const grids = {
                             type = "운동화";
                         } else {
                             type = "일반";
-                        };
+                        }
                         return type;
                     },
                 }, 
@@ -293,9 +293,6 @@ function onPageLoad() {
     grids.f.create();
     enableDatepicker();
     trigs.s.basicTrigger();
-
-    /* 생성된 그리드에 기본적으로 필요한 이벤트들을 적용한다. */
-    // grids.e.basicEvent();
 }
 
 function makeSaveDataset(checkedItems) { // 저장 데이터셋 만들기
@@ -303,10 +300,9 @@ function makeSaveDataset(checkedItems) { // 저장 데이터셋 만들기
     checkedItems.forEach(data => {
         fdIdList.push(data.item.fdId);
     });
-    const changeData = {
+    return {
         fdIdList: fdIdList,
     };
-    return changeData;
 }
 
 function enableDatepicker() {

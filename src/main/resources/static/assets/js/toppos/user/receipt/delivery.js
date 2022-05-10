@@ -614,22 +614,6 @@ const trigs = {
                 }
             });
 
-            // $("#repay").on("click", function () {
-            //     if(wares.selectedCustomer.bcId) {
-            //         if(wares.selectedCustomer.uncollectMoney) {
-            //             const target = {
-            //                 bcId: wares.selectedCustomer.bcId,
-            //                 frIdList: [],
-            //             }
-            //             comms.setupPaymentPop(target);
-            //         } else {
-            //             alertCaution("결제하실 미수금이 없습니다.", 1);
-            //         }
-            //     } else {
-            //         alertCaution("먼저 고객을 선택해 주세요.", 1);
-            //     }
-            // });
-
             $("#cancelPayment").on("click", function () {
                 $("#paymentPop").removeClass("active");
             });
