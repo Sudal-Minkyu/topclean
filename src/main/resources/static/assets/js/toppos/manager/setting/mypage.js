@@ -35,7 +35,6 @@ const comms = {
     getMyInfo() { // 지사와 로그인한 유저의 정보를 가져온다.
         CommonUI.ajax("/api/manager/myInfo", "GET", false, function (res) {
             const data = res.sendData.branchInfoDto;
-            console.log(data);
             dv.chk(data, dtos.receive.myInfo, "지사, 유저 정보 받아오기");
             putInData(data);
         });

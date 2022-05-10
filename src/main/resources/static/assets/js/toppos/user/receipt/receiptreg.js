@@ -401,7 +401,6 @@ gridColumnLayout[0] = [
         labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
             return CommonData.formatFrTagNo(value, frTagInfo.frTagType);
         },
-        style: "aui-grid-tagno-column",
     }, {
         dataField: "sumName",
         headerText: "상품명",
@@ -1033,7 +1032,7 @@ function onCloseTakePicture() {
 
     AUIGrid.updateRowsById(gridId[0], copyObj);
 
-    $camBoiler = $(".camBoiler");
+    const $camBoiler = $(".camBoiler");
     if($camBoiler.length) {
         for(let i = 0; i < $camBoiler.length; i++) {
             removeEventsFromElement($camBoiler[i]);
@@ -1241,9 +1240,10 @@ function confirmPollutionPop() {
         return false;
     }
 
-    if($("#pollution00").is(":checked") && $("#fdPollution").is(":checked")) {
-        $("#fdPollution").trigger("click");
-    }else if(!$("#pollution00").is(":checked") && !$("#fdPollution").is(":checked")){
+    if (($("#pollution00").is(":checked")
+            && $("#fdPollution").is(":checked"))
+        || (!$("#pollution00").is(":checked")
+            && !$("#fdPollution").is(":checked"))) {
         $("#fdPollution").trigger("click");
     }
     $("#fdPollutionPop").removeClass("active");
@@ -1321,13 +1321,6 @@ function onModifyOrder(rowIndex) {
     }else{
         $("#fdSpecialYn").prop("checked", false);
     }
-
-
-    // if(currentRequest.fdUrgentYn === "Y") {
-    //     $("#fdUrgentYn").prop("checked", true);
-    // }else{
-    //     $("#fdUrgentYn").prop("checked", false);
-    // }
 
     if(currentRequest.fdWhitening) {
         $("#fdWhitening").prop("checked", true);
@@ -2079,7 +2072,6 @@ function requestSign() {
         CommonUI.toppos.underTaker(e, "receiptreg : 사인 요청단계");
         return;
     }
-    // $("#resultmsg").text(": 승인중 메세지- 고객이 서명중입니다. ------전체화면으로 가리기 ");
 
     const maskHeight = $(document).height();
     const maskWidth = $(window).width();

@@ -51,9 +51,9 @@ $(function() {
             let item = event.item;
             let value = item[event.columnIndex];
             if(value !== undefined) {
-                let isSelected = value[8];
-                if(isSelected !== undefined) {
-                    if (isSelected === "Y") {
+                let isChoosen = value[8];
+                if(isChoosen !== undefined) {
+                    if (isChoosen === "Y") {
                         item[event.columnIndex] = value.substr(0, 8) + "N";
                     } else {
                         item[event.columnIndex] = value.substr(0, 8) + "Y";
@@ -132,7 +132,7 @@ let gridColumnLayout = [
 /* 0번 그리드의 프로퍼티(옵션) 아래의 링크를 참조
 * https://www.auisoft.net/documentation/auigrid/DataGrid/Properties.html
 * */
-gridProp = {
+const gridProp = {
     editable : false,
     selectionMode : "none",
     noDataMessage : "데이터가 없습니다.",
@@ -175,8 +175,7 @@ function showDay(rowIndex, columnIndex, value, headerText, item) {
 
 /* 컬럼의 스타일을 값의 상태에 따라 변경하기 위한 함수. 컬럼 속성(gridProp)내의 요소와 연동된다. */
 function selectedStyle(rowIndex, columnIndex, value, headerText, item, dataField) {
-    const setStyle = isSelected ? "cellSelected" : "cellNoSelected";
-    return setStyle;
+    return isSelected ? "cellSelected" : "cellNoSelected";
 }
 
 /* 선택 되어있는 날짜만 담아서 서버에 전달한다. */
@@ -192,18 +191,18 @@ function gridSave() {
     for(let m = 0; m < 12; m++) { // 선택된 날짜만 json 형태로 담는다.
         const rawData = AUIGrid.getGridData(gridId[m]);
 
-        for(let w = 0; w < rawData.length; w++) {
-            for(let d = 0; d < 7; d++) {
-                if(rawData[w][d] !== undefined && rawData[w][d].substr(8, 1) === "Y") {
-                    const aJson = {};
-                    aJson.bcDate = rawData[w][d].substr(0, 8);
-                    aJson.bcDayoffYn = "Y";
-                    aJsonArray.push(aJson);
+        for(const element of rawData) {
+            for (let d = 0; d < 7; d++) {
+                if (element[d] !== undefined && element[d].substr(8, 1) === "Y") {
+                    const newJson = {
+                        bcDate: element[d].substr(0, 8),
+                        bcDayoffYn: "Y",
+                    };
+                    aJsonArray.push(newJson);
                 }
             }
         }
     }
-
 
     const url = "/api/manager/calendarSave";
     CommonUI.ajax(url, "MAPPER", aJsonArray,function (){
@@ -214,21 +213,6 @@ function gridSave() {
     for(let m = 0; m < 12; m++) {
         AUIGrid.resetUpdatedItems(gridId[m]);
     }
-
-    /*
-    for(let m = 0; m < 12; m++) { // 업데이트 된 데이터만 호출하여 통신하는 방식
-        const updatedItems = AUIGrid.getEditedRowColumnItems(gridId[m]);
-        for(let i = 0; i < updatedItems.length; i++) {
-            for(let j = 0; j < 7; j++) {
-                const rawData = updatedItems[i][j];
-                if(rawData !== undefined) {
-                    data.push({date : rawData.substr(0,8), selected : rawData[8]});
-                }
-            }
-        }
-        AUIGrid.resetUpdatedItems(gridId[m]);
-    }
-    */
 }
 
 /* 년도에 맞춰서 달력의 제목부분을 뿌려주고, 이어서 데이터를 받아오는 함수를 호출한다. */

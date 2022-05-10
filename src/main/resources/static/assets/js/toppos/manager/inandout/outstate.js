@@ -114,9 +114,9 @@ const comms = {
     dispatchPrint(miNoList) {
         dv.chk(miNoList, dtos.send.branchDispatchPrint, "출고증 인쇄를 위한 miNoList 보내기");
         CommonUI.ajax(urls.dispatchPrint, "GET", miNoList, function (res) {
-            for(let i=0; i < res.sendData.issueDispatchDtos.length; i++){
-                const frCode = res.sendData.issueDispatchDtos[i]["qrcode"];
-                res.sendData.issueDispatchDtos[i]["qrcode"] = location.protocol+"//"+location.host+"/mobile/unAuth/qrpickup?frcode="+frCode;
+            for(const element of res.sendData.issueDispatchDtos) {
+                const frCode = element["qrcode"];
+                element["qrcode"] = location.protocol+"//"+location.host+"/mobile/unAuth/qrpickup?frcode="+frCode;
             }
             dispatchPrintData(res.sendData.issueDispatchDtos);
         });
@@ -484,14 +484,12 @@ function fn_viewer_open(projectName, formName, datasetObject, paramObject){
     //팝업 오픈 Option 해당 설정은 window.open 설정을 참조
     //var windowoption = 'location=0, directories=0,resizable=0,status=0,toolbar=0,menubar=0, width=1280px,height=650px,left=0, top=0,scrollbars=0';  //팝업사이즈 window.open참고
     var windowoption = 'width=1280px,height=650px';
-    var d = new Date();
-    var n = d.getTime();
     var name = "printArea";// "UBF_" + n;
     //팝업사이즈 window.open참고
     var form = document.createElement("form");
     form.setAttribute("method", "post");
     form.setAttribute("action", _url);
-    params = _params ;
+    const params = _params ;
     for (var i in params)
     {
         if (params.hasOwnProperty(i))

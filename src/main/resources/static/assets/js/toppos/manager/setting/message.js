@@ -64,16 +64,16 @@ const comms = {
             const $tmpInputHmSubject = $(".tmpInputHmSubject");
             const $tmpInputHmMessage = $(".tmpInputHmMessage");
             const $tmpInputByte = $(".tmpInputByte");
-            for(let i = 0; i < templateList.length; i++) {
-                const byte = getByteInfo(templateList[i].hmMessage).byte;
-                $tmpHmSubject.eq(parseInt(templateList[i].hmNum) - 1).val(templateList[i].hmSubject);
-                $tmpHmMessage.eq(parseInt(templateList[i].hmNum) - 1).val(templateList[i].hmMessage);
-                $tmpByte.eq(parseInt(templateList[i].hmNum) - 1).html(byte);
-                $tmpInputHmSubject.eq(parseInt(templateList[i].hmNum) - 1).val(templateList[i].hmSubject);
-                $tmpInputHmSubject.eq(parseInt(templateList[i].hmNum) - 1).attr("data-id"
-                    , templateList[i].hmId ? templateList[i].hmId : 0);
-                $tmpInputHmMessage.eq(parseInt(templateList[i].hmNum) - 1).val(templateList[i].hmMessage);
-                $tmpInputByte.eq(parseInt(templateList[i].hmNum) - 1).html(byte);
+            for(const obj of templateList) {
+                const byte = getByteInfo(obj.hmMessage).byte;
+                $tmpHmSubject.eq(parseInt(obj.hmNum) - 1).val(obj.hmSubject);
+                $tmpHmMessage.eq(parseInt(obj.hmNum) - 1).val(obj.hmMessage);
+                $tmpByte.eq(parseInt(obj.hmNum) - 1).html(byte);
+                $tmpInputHmSubject.eq(parseInt(obj.hmNum) - 1).val(obj.hmSubject);
+                $tmpInputHmSubject.eq(parseInt(obj.hmNum) - 1).attr("data-id"
+                    , obj.hmId ? obj.hmId : 0);
+                $tmpInputHmMessage.eq(parseInt(obj.hmNum) - 1).val(obj.hmMessage);
+                $tmpInputByte.eq(parseInt(obj.hmNum) - 1).html(byte);
             }
         });
     },
@@ -86,9 +86,9 @@ const comms = {
         });
     },
 
-    sendMessage(sendMessage) {
-        console.log(sendMessage);
-        CommonUI.ajax("/api/manager/messageSendCustomer", "PARAM", sendMessage, function (res) {
+    sendMessage(message) {
+        console.log(message);
+        CommonUI.ajax("/api/manager/messageSendCustomer", "PARAM", message, function (res) {
             alertSuccess("문자메시지 발송이 완료되었습니다.");
             grids.f.clear(0);
             grids.f.clear(1);
@@ -258,7 +258,6 @@ const grids = {
 const trigs = {
     basic() {
         AUIGrid.bind(grids.s.id[2], "cellClick", function (e) {
-            console.log(e.item);
             const searchCondition = {
                 insertYyyymmdd: e.item.insertYyyymmdd.numString(),
             }
@@ -278,6 +277,7 @@ const trigs = {
             $tabsContent.eq(idx).addClass('active');
         });
 
+        /* 메시지를 입력할 때 SMS문자 바이트 계산 및, 넘칠 때 자르기 */
         const $tmpInputHmMessage = $(".tmpInputHmMessage");
         const $tmpInputByte = $(".tmpInputByte");
         const $tmpHmMessage = $(".tmpHmMessage");
@@ -311,19 +311,7 @@ const trigs = {
         $("#saveTemplateBtn").on("click", saveTemplate);
 
         $("#sendMessageBtn").on("click", function () {
-            const isLms = parseInt($("#byte").html()) > 90;
-            const numCustomer = $("#numberOfTargetCustomers").html().toInt();
-            if (numCustomer) {
-                const msg = isLms ? `${numCustomer.toLocaleString()}명의 고객께 문자를 전송합니다.<br>문자 길이가 90byte를 초과하므로<br>LMS로 문자를 전송하시겠습니까?`
-                    : `${numCustomer.toLocaleString()}명의 고객께 문자를 전송합니다.<br>SMS 문자 메시지를 발송하시겠습니까?`;
-                alertCheck(msg);
-                $("#checkDelSuccessBtn").on("click", function () {
-                    sendMessage();
-                    $('#popupId').remove();
-                });
-            } else {
-                alertCaution("문자를 보낼 고객을 선택해 주세요.", 1);
-            }
+            askSend();
         });
 
         $("#getCustomersBtn").on("click", function () {
@@ -435,13 +423,11 @@ function getByteInfo(text) {
         }
     }
 
-    const result = {
+    return {
         byte: byte,
         cutLength: cutLength,
         cutByte: cutByte,
-    }
-
-    return result;
+    };
 }
 
 function saveTemplate() {
@@ -460,6 +446,22 @@ function saveTemplate() {
     }
 
     comms.saveTemplate(saveDataList);
+}
+
+function askSend() {
+    const isLms = parseInt($("#byte").html()) > 90;
+    const numCustomer = $("#numberOfTargetCustomers").html().toInt();
+    if (numCustomer) {
+        const msg = isLms ? `${numCustomer.toLocaleString()}명의 고객께 문자를 전송합니다.<br>문자 길이가 90byte를 초과하므로<br>LMS로 문자를 전송하시겠습니까?`
+            : `${numCustomer.toLocaleString()}명의 고객께 문자를 전송합니다.<br>SMS 문자 메시지를 발송하시겠습니까?`;
+        alertCheck(msg);
+        $("#checkDelSuccessBtn").on("click", function () {
+            sendMessage();
+            $('#popupId').remove();
+        });
+    } else {
+        alertCaution("문자를 보낼 고객을 선택해 주세요.", 1);
+    }
 }
 
 function sendMessage() {

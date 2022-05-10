@@ -254,7 +254,6 @@ function onPageLoad() {
     setInputs();
     if(wares.boardType === "notice") {
         grids.f.noticeSetting();
-        // $("#hnTypeComp").show();
     }
     grids.f.create();
     grids.t.basicTrigger();

@@ -981,6 +981,12 @@ footer.footer > ul > li + li:before {
 	font-size: 1.5rem;
 	font-weight: 700;
 }
+.main__board-plus {
+	color: #636c75;
+}
+.main__board-plus:after {
+	content: " +";
+}
 .main__board-contents {
 	margin-top: 0.625rem;
 }

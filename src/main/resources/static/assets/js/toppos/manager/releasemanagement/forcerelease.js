@@ -82,7 +82,6 @@ const comms = {
             const data = CommonUI.toppos.killNullFromArray(res.sendData.gridListData);
             dv.chk(data, dtos.receive.branchReceiptForceReleaseList, "메인 그리드 검색 결과 받기");
             grids.f.setData(0, data);
-            // $("#exportXlsx").show();
         });
     },
 
@@ -91,7 +90,6 @@ const comms = {
         CommonUI.ajax(urls.executeReceipt, "PARAM", sendList, function (res) {
             alertSuccess("강제출고처리가 완료 되었습니다.");
             comms.getMainGridList(wares.searchCondition);
-            // $("#exportXlsx").hide();
         });
     },
 };
@@ -246,6 +244,11 @@ const grids = {
             //FileSaver.js 로 로컬 다운로드가능 여부 확인
             if(!AUIGrid.isAvailableLocalDownload(grids.s.id[1])) {
                 alertCaution("파일 다운로드가 불가능한 브라우저 입니다.", 1);
+                return;
+            }
+
+            if(!wares.searchCondition.frId) {
+                alertCaution("출력할 대상을 조회해 주세요.", 1);
                 return;
             }
             
