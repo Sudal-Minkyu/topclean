@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface ItemRepository extends JpaRepository<Item,Long> {
+public interface ItemRepository extends JpaRepository<Item,Long>, ItemRepositoryCustom {
     @Query("select a from Item a where a.biItemcode = :biItemcode")
     Optional<Item> findByBiItemcode(String biItemcode);
 

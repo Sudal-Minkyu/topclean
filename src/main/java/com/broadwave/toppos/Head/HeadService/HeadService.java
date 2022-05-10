@@ -1,5 +1,9 @@
 package com.broadwave.toppos.Head.HeadService;
 
+import com.broadwave.toppos.Account.Account;
+import com.broadwave.toppos.Account.AccountRepository;
+import com.broadwave.toppos.Account.AcountDtos.AccountHeadHeaderDto;
+import com.broadwave.toppos.Account.AcountDtos.AccountHeadInfoDto;
 import com.broadwave.toppos.Head.AddCost.AddCost;
 import com.broadwave.toppos.Head.AddCost.AddCostDto;
 import com.broadwave.toppos.Head.AddCost.AddCostRepository;
@@ -15,7 +19,6 @@ import com.broadwave.toppos.Head.Item.Group.B.*;
 import com.broadwave.toppos.Head.Item.Group.C.Item;
 import com.broadwave.toppos.Head.Item.Group.C.ItemListDto;
 import com.broadwave.toppos.Head.Item.Group.C.ItemRepository;
-import com.broadwave.toppos.Head.Item.Group.C.ItemRepositoryCustom;
 import com.broadwave.toppos.Head.Item.ItemDtos.ItemPriceDto;
 import com.broadwave.toppos.Head.Item.ItemDtos.ItemPriceListDto;
 import com.broadwave.toppos.Head.Item.ItemDtos.UserItemPriceSortDto;
@@ -23,13 +26,16 @@ import com.broadwave.toppos.Head.Item.Price.FranchisePrice.*;
 import com.broadwave.toppos.Head.Item.Price.ItemPrice;
 import com.broadwave.toppos.Head.Item.Price.ItemPriceRepository;
 import com.broadwave.toppos.Head.Item.Price.ItemPriceRepositoryCustom;
+import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.common.AjaxResponse;
 import com.broadwave.toppos.common.CommonUtils;
 import com.broadwave.toppos.common.ResponseErrorCode;
+import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,41 +52,40 @@ import java.util.Optional;
 public class HeadService {
 
     private final ModelMapper modelMapper;
-//    private final TokenProvider tokenProvider;
+    private final TokenProvider tokenProvider;
+    private final PasswordEncoder passwordEncoder;
 
+    private final AccountRepository accountRepository;
     private final FranchiseRepository franchiseRepository;
     private final BranchRepository branchRepository;
-    private final ItemGroupRepository ItemGroupRepository;
-    private final ItemGroupSRepository ItemGroupSRepository;
-    private final ItemRepository ItemRepository;
+    private final ItemGroupRepository itemGroupRepository;
+    private final ItemGroupSRepository itemGroupSRepository;
+    private final ItemRepository itemRepository;
     private final ItemPriceRepository itemPriceRepository;
     private final FranchisePriceRepository franchisePriceRepository;
     private final AddCostRepository addCostRepository;
 
-    private final ItemGroupRepositoryCustom itemGroupRepositoryCustom;
-    private final ItemGroupSRepositoryCustom itemGroupSRepositoryCustom;
-    private final ItemRepositoryCustom itemRepositoryCustom;
     private final ItemPriceRepositoryCustom itemPriceRepositoryCustom;
     private final FranchisePriceRepositoryCustom franchisePriceRepositoryCustom;
     private final AddCostRepositoryCustom addCostRepositoryCustom;
 
     @Autowired
-    public HeadService(ModelMapper modelMapper, AddCostRepository addCostRepository,
-                       BranchRepository branchRepository, FranchiseRepository franchiseRepository,
-                       ItemGroupRepository ItemGroupRepository, ItemGroupRepositoryCustom itemGroupRepositoryCustom, ItemGroupSRepository ItemGroupSRepository, ItemGroupSRepositoryCustom itemGroupSRepositoryCustom,
-                       ItemRepository ItemRepository, ItemRepositoryCustom itemRepositoryCustom, ItemPriceRepository itemPriceRepository, ItemPriceRepositoryCustom itemPriceRepositoryCustom,
+    public HeadService(ModelMapper modelMapper, AddCostRepository addCostRepository, TokenProvider tokenProvider, PasswordEncoder passwordEncoder,
+                       BranchRepository branchRepository, FranchiseRepository franchiseRepository, AccountRepository accountRepository,
+                       ItemGroupRepository itemGroupRepository, ItemGroupSRepository itemGroupSRepository,
+                       ItemRepository itemRepository, ItemPriceRepository itemPriceRepository, ItemPriceRepositoryCustom itemPriceRepositoryCustom,
                        FranchisePriceRepository franchisePriceRepository, FranchisePriceRepositoryCustom franchisePriceRepositoryCustom,
                        AddCostRepositoryCustom addCostRepositoryCustom){
         this.modelMapper = modelMapper;
         this.addCostRepository = addCostRepository;
+        this.tokenProvider = tokenProvider;
         this.branchRepository = branchRepository;
         this.franchiseRepository = franchiseRepository;
-        this.ItemGroupRepository = ItemGroupRepository;
-        this.itemGroupRepositoryCustom = itemGroupRepositoryCustom;
-        this.ItemGroupSRepository = ItemGroupSRepository;
-        this.itemGroupSRepositoryCustom = itemGroupSRepositoryCustom;
-        this.ItemRepository = ItemRepository;
-        this.itemRepositoryCustom = itemRepositoryCustom;
+        this.accountRepository = accountRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.itemGroupRepository = itemGroupRepository;
+        this.itemGroupSRepository = itemGroupSRepository;
+        this.itemRepository = itemRepository;
         this.itemPriceRepository = itemPriceRepository;
         this.itemPriceRepositoryCustom = itemPriceRepositoryCustom;
         this.franchisePriceRepository = franchisePriceRepository;
@@ -232,81 +237,81 @@ public class HeadService {
     // @@@@@@@@@@@@@@@@@@@@    상품 그룹관리 페이지  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     // 상품그룹 대분류  저장
     public void itemGroupSave(ItemGroup itemGroup){
-        ItemGroupRepository.save(itemGroup);
+        itemGroupRepository.save(itemGroup);
     }
 
     // 상품그룹 대분류 객체 가져오기
     public Optional<ItemGroup> findByBgItemGroupcode(String bgItemGroupcode) {
-        return ItemGroupRepository.findByBgItemGroupcode(bgItemGroupcode);
+        return itemGroupRepository.findByBgItemGroupcode(bgItemGroupcode);
     }
 
     // 상품그룹 대분류 리스트 호출
     public List<ItemGroupDto> findByItemGroupList() {
-        return itemGroupRepositoryCustom.findByItemGroupList();
+        return itemGroupRepository.findByItemGroupList();
     }
 
     // 상품그룹 대분류 명칭 리스트 호출
     public List<ItemGroupNameListDto> findByItemGroupName() {
-        return itemGroupRepositoryCustom.findByItemGroupName();
+        return itemGroupRepository.findByItemGroupName();
     }
 
     // 상품그룹 대분류 삭제
     public void findByItemGroupDelete(ItemGroup itemGroup){
-        ItemGroupRepository.delete(itemGroup);
+        itemGroupRepository.delete(itemGroup);
     }
 
     // 상품그룹 중분류 저장
     public void itemGroupSSave(ItemGroupS itemGroupS){
-        ItemGroupSRepository.save(itemGroupS);
+        itemGroupSRepository.save(itemGroupS);
     }
 
     // 상품그룹 중분류 객체 가져오기
     public ItemGroupS findByItemGroupcodeS(String bgItemGroupcode, String bsItemGroupcodeS) {
-        return itemGroupSRepositoryCustom.findByItemGroupcodeS(bgItemGroupcode, bsItemGroupcodeS);
+        return itemGroupSRepository.findByItemGroupcodeS(bgItemGroupcode, bsItemGroupcodeS);
     }
 
     // 상품그룹 중분류 정보
     public ItemGroupSInfo findByBsItemGroupcodeS(String bgItemGroupcode, String bsItemGroupcodeS) {
-        return itemGroupSRepositoryCustom.findByBsItemGroupcodeS(bgItemGroupcode, bsItemGroupcodeS);
+        return itemGroupSRepository.findByBsItemGroupcodeS(bgItemGroupcode, bsItemGroupcodeS);
     }
 
     // 상품그룹 중분류 리스트 호출
     public List<ItemGroupSListDto> findByItemGroupSList(ItemGroup bgItemGroupcode) {
-        return itemGroupSRepositoryCustom.findByItemGroupSList(bgItemGroupcode);
+        return itemGroupSRepository.findByItemGroupSList(bgItemGroupcode);
     }
 
     // 상품그룹 상품순서 리스트 가져오기 - 가맹점 검색
     public List<ItemGroupSUserListDto> findByItemGroupSUserList(String filterCode, String filterName) {
-        return itemGroupSRepositoryCustom.findByItemGroupSUserList(filterCode, filterName);
+        return itemGroupSRepository.findByItemGroupSUserList(filterCode, filterName);
     }
 
     // 상품그룹 중분류 삭제
     public void findByItemGroupSDelete(ItemGroupS itemGroupS) {
-        ItemGroupSRepository.delete(itemGroupS);
+        itemGroupSRepository.delete(itemGroupS);
     }
 
     // 상품그룹 상품소재 저장
     public void itemSave(Item item){
-        ItemRepository.save(item);
+        itemRepository.save(item);
     }
 
     // 상품그룹 상품소재 객체 가져오기
     public Optional<Item> findByBiItemcode(String biItemcode) {
-        return ItemRepository.findByBiItemcode(biItemcode);
+        return itemRepository.findByBiItemcode(biItemcode);
     }
 
     public Optional<Item> findByBiItem(String bgItemGroupcode, String bsItemGroupcodeS) {
-        return ItemRepository.findByBiItem(bgItemGroupcode, bsItemGroupcodeS);
+        return itemRepository.findByBiItem(bgItemGroupcode, bsItemGroupcodeS);
     }
 
     // 상품그룹 상품소재 리스트 호출
     public List<ItemListDto> findByItemList(String bgItemGroupcode, String bsItemGroupcodeS, String biItemcode, String biName) {
-        return itemRepositoryCustom.findByItemList(bgItemGroupcode, bsItemGroupcodeS, biItemcode, biName);
+        return itemRepository.findByItemList(bgItemGroupcode, bsItemGroupcodeS, biItemcode, biName);
     }
 
     // 상품그룹 상품소재 삭제
     public void findByItemDelete(Item itemOptional) {
-        ItemRepository.delete(itemOptional);
+        itemRepository.delete(itemOptional);
     }
 
 
@@ -376,7 +381,7 @@ public class HeadService {
     // @@@@@@@@@@@@@@@@@@@@  가맹점 접수 페이지  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     // 가맹점 대분류 전용 순번적용
     public List<UserItemGroupSortDto> findByUserItemGroupSortDtoList(String frCode) {
-        return itemGroupRepositoryCustom.findByUserItemGroupSortDtoList(frCode);
+        return itemGroupRepository.findByUserItemGroupSortDtoList(frCode);
     }
 
     // 가맹점 가격 전용 순번적용
@@ -386,7 +391,7 @@ public class HeadService {
 
     // 가맹점 접수페이지 중분류 리스트 Dto
     public List<UserItemGroupSListDto> findByUserItemGroupSList(){
-        return itemGroupSRepositoryCustom.findByUserItemGroupSList();
+        return itemGroupSRepository.findByUserItemGroupSList();
     }
 
     // 가맹점 가격셋팅 테이블 호출
@@ -459,4 +464,94 @@ public class HeadService {
     public List<ItemPriceSetDtDto> findByItemPriceSetDtList() {
         return itemPriceRepositoryCustom.findByItemPriceSetDtList();
     }
+
+    // 현재 로그인한 본사 정보 가져오기
+    public ResponseEntity<Map<String, Object>> headHeaderData(HttpServletRequest request) {
+
+        log.info("headHeaderData 호출");
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String login_id = claims.getSubject(); // 현재 아이디
+        log.info("현재 접속한 아이디 : "+login_id);
+
+        AccountHeadHeaderDto accountHeadHeaderDto =  accountRepository.findByHeadHeaderInfo(login_id);
+        data.put("accountHeaderData", accountHeadHeaderDto);
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
+    // 지사 나의정보관리 수정 API
+    @javax.transaction.Transactional
+    public ResponseEntity<Map<String, Object>> headMyInfoSave(String userEmail, String userTel, String nowPassword, String newPassword, String checkPassword, HttpServletRequest request) {
+        log.info("headMyInfoSave 호출");
+
+        log.info("userEmail : "+userEmail);
+        log.info("userTel : "+userTel);
+        log.info("nowPassword : "+nowPassword);
+        log.info("newPassword : "+newPassword);
+        log.info("checkPassword : "+checkPassword);
+
+        AjaxResponse res = new AjaxResponse();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String login_id = claims.getSubject(); // 현재 아이디
+        log.info("현재 접속한 아이디 : "+login_id);
+
+        Optional<Account> optionalAccount = accountRepository.findByUserid(login_id);
+
+        //수정일때
+        if(!optionalAccount.isPresent()){
+            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP005.getCode(), "나의 "+ResponseErrorCode.TP005.getDesc(), "문자", "고객센터에 문의해주세요."));
+        }else{
+            if(!userEmail.equals("")) {
+                optionalAccount.get().setUseremail(userEmail);
+            }
+            if(!userTel.equals("")){
+                optionalAccount.get().setUsertel(userTel);
+            }
+
+            if(!nowPassword.equals("") && !newPassword.equals("") && !checkPassword.equals("") ) {
+
+                //현재암호비교
+                if (!passwordEncoder.matches(nowPassword,optionalAccount.get().getPassword())){
+                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP020.getCode(), "현재 "+ResponseErrorCode.TP020.getDesc(), null, null));
+                }
+
+                if(!newPassword.equals(checkPassword)){
+                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP021.getCode(), ResponseErrorCode.TP021.getDesc(), null, null));
+                }
+                optionalAccount.get().setPassword(passwordEncoder.encode(checkPassword));
+            }
+
+            Account accountSave =  accountRepository.save(optionalAccount.get());
+            log.info("사용자정보(패스워드)수정 성공 아이디 : " + accountSave.getUserid() +"'" );
+        }
+
+
+        return ResponseEntity.ok(res.success());
+    }
+
+    // 현재 본사의 정보 호출하기
+    public ResponseEntity<Map<String, Object>> headMyInfo(HttpServletRequest request) {
+        log.info("headMyInfo 호출");
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String login_id = claims.getSubject(); // 현재 아이디
+        log.info("현재 접속한 아이디 : "+login_id);
+
+        AccountHeadInfoDto headInfoDto =  accountRepository.findByHeadInfo(login_id);
+        data.put("headInfoDto",headInfoDto);
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
 }

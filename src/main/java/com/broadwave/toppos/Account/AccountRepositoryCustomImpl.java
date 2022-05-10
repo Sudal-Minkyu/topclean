@@ -1,9 +1,7 @@
 package com.broadwave.toppos.Account;
 
-import com.broadwave.toppos.Account.AcountDtos.AccountHeaderDto;
-import com.broadwave.toppos.Account.AcountDtos.AccountListDto;
-import com.broadwave.toppos.Account.AcountDtos.AccountRole;
-import com.broadwave.toppos.Head.Branoh.BranchDtos.BranchInfoDto;
+import com.broadwave.toppos.Account.AcountDtos.*;
+import com.broadwave.toppos.Head.Branch.BranchDtos.BranchInfoDto;
 import com.broadwave.toppos.Head.Branch.QBranch;
 import com.broadwave.toppos.Head.Franchise.QFranchise;
 import com.broadwave.toppos.User.UserDtos.UserIndexDto;
@@ -94,14 +92,14 @@ public class AccountRepositoryCustomImpl extends QuerydslRepositorySupport imple
     }
 
     @Override
-    public AccountHeaderDto findByHeaderInfo(String userid, String brCode) {
+    public AccountBranchHeaderDto findByBranchHeaderInfo(String userid) {
 
         QAccount account = QAccount.account;
         QBranch branch = QBranch.branch;
 
-        JPQLQuery<AccountHeaderDto> query = from(account)
+        JPQLQuery<AccountBranchHeaderDto> query = from(account)
                 .leftJoin(branch).on(branch.brCode.eq(account.brCode))
-                .select(Projections.constructor(AccountHeaderDto.class,
+                .select(Projections.constructor(AccountBranchHeaderDto.class,
                         account.username,
                         new CaseBuilder()
                                 .when(account.brCode.isNull()).then("")
@@ -116,7 +114,22 @@ public class AccountRepositoryCustomImpl extends QuerydslRepositorySupport imple
         return query.fetchOne();
     }
 
-    //  지사의 정보 가져오는 쿼리
+    @Override
+    public AccountHeadHeaderDto findByHeadHeaderInfo(String userid) {
+
+        QAccount account = QAccount.account;
+
+        JPQLQuery<AccountHeadHeaderDto> query = from(account)
+                .select(Projections.constructor(AccountHeadHeaderDto.class,
+                        account.username
+                ));
+
+        query.where(account.userid.eq(userid));
+
+        return query.fetchOne();
+    }
+
+    //  지사의 나의 정보 가져오는 쿼리
     @Override
     public BranchInfoDto findByBranchInfo(String login_id) {
 
@@ -140,5 +153,22 @@ public class AccountRepositoryCustomImpl extends QuerydslRepositorySupport imple
         return query.fetchOne();
     }
 
+    //  본사의 나의 정보 가져오는 쿼리
+    @Override
+    public AccountHeadInfoDto findByHeadInfo(String login_id) {
+
+        QAccount account = QAccount.account;
+
+        JPQLQuery<AccountHeadInfoDto> query = from(account)
+                .select(Projections.constructor(AccountHeadInfoDto.class,
+                        account.userid,
+                        account.useremail,
+                        account.usertel
+                ));
+
+        query.where(account.userid.eq(login_id));
+
+        return query.fetchOne();
+    }
 
 }

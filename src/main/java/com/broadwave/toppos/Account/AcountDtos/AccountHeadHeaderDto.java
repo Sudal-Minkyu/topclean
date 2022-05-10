@@ -2,16 +2,13 @@ package com.broadwave.toppos.Account.AcountDtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AccountHeaderDto {
+public class AccountHeadHeaderDto {
 
     private String username;
-    private String brName;
 
 }

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface ItemGroupRepository extends JpaRepository<ItemGroup,Long> {
+public interface ItemGroupRepository extends JpaRepository<ItemGroup,Long>, ItemGroupRepositoryCustom {
     @Query("select a from ItemGroup a where a.bgItemGroupcode = :bgItemGroupcode")
     Optional<ItemGroup> findByBgItemGroupcode(String bgItemGroupcode);
 }

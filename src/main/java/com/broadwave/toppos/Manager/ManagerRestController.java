@@ -515,7 +515,7 @@ public class ManagerRestController {
     // 현재 지사의 정보 호출하기
     @GetMapping("myInfo")
     public ResponseEntity<Map<String,Object>> myInfo(HttpServletRequest request){
-        return managerService.myInfo(request);
+        return managerService.branchMyInfo(request);
     }
 
     // 지사정보관리 수정 API

@@ -1,9 +1,7 @@
 package com.broadwave.toppos.Account;
 
-import com.broadwave.toppos.Account.AcountDtos.AccountHeaderDto;
-import com.broadwave.toppos.Account.AcountDtos.AccountListDto;
-import com.broadwave.toppos.Account.AcountDtos.AccountRole;
-import com.broadwave.toppos.Head.Branoh.BranchDtos.BranchInfoDto;
+import com.broadwave.toppos.Account.AcountDtos.*;
+import com.broadwave.toppos.Head.Branch.BranchDtos.BranchInfoDto;
 import com.broadwave.toppos.User.UserDtos.UserIndexDto;
 
 import java.util.List;
@@ -19,7 +17,12 @@ public interface AccountRepositoryCustom {
 
     UserIndexDto findByUserInfo(String userid, String frCode);
 
-    AccountHeaderDto findByHeaderInfo(String userid, String brCode);
+    AccountBranchHeaderDto findByBranchHeaderInfo(String userid);
+
+    AccountHeadHeaderDto findByHeadHeaderInfo(String userid);
 
     BranchInfoDto findByBranchInfo(String login_id);
+
+    AccountHeadInfoDto findByHeadInfo(String login_id);
+
 }

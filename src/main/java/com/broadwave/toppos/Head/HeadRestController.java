@@ -81,6 +81,15 @@ public class HeadRestController {
         this.receiptService = receiptService;
     }
 
+//@@@@@@@@@@@@@@@@@@@@@ 본사 메인화면 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    // 현재 로그인한 본사 정보 가져오기
+    @GetMapping("headHeaderData")
+    @ApiOperation(value = "현재 로그인한 본사 점보조회" , notes = "현재 로그인한 본사의 정보를 가져온다.")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
+    public ResponseEntity<Map<String,Object>> headHeaderData(HttpServletRequest request){
+        return headService.headHeaderData(request);
+    }
+
     // 사용자 등록 API
     @PostMapping("accountSave")
     public ResponseEntity<Map<String,Object>> accountSave(@ModelAttribute AccountMapperDto accountMapperDto, HttpServletRequest request){
@@ -1407,6 +1416,24 @@ public class HeadRestController {
     @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
     public ResponseEntity<Map<String,Object>> noticeDelete(@RequestParam("htId") Long hnId) {
         return noticeService.noticeDelete(hnId);
+    }
+
+//@@@@@@@@@@@@@@@@@@@@@ 나의 정보관리 페이지 관련 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    // 현재 본사의 정보 호출하기
+    @GetMapping("myInfo")
+    public ResponseEntity<Map<String,Object>> headMyInfo(HttpServletRequest request){
+        return headService.headMyInfo(request);
+    }
+
+    // 본사 나의정보관리 수정 API
+    @PostMapping("headMyInfoSave")
+    public ResponseEntity<Map<String,Object>> branchMyInfoSave(@RequestParam(value="userEmail", defaultValue="") String userEmail,
+                                                               @RequestParam(value="userTel", defaultValue="") String userTel,
+                                                               @RequestParam(value="nowPassword", defaultValue="") String nowPassword,
+                                                               @RequestParam(value="newPassword", defaultValue="") String newPassword,
+                                                               @RequestParam(value="checkPassword", defaultValue="") String checkPassword,
+                                                               HttpServletRequest request){
+        return headService.headMyInfoSave(userEmail, userTel, nowPassword, newPassword, checkPassword, request);
     }
 
 

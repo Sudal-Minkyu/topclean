@@ -3,10 +3,10 @@ package com.broadwave.toppos.Manager.ManagerService;
 import com.broadwave.toppos.Account.Account;
 import com.broadwave.toppos.Account.AccountRepository;
 import com.broadwave.toppos.Account.AccountService;
-import com.broadwave.toppos.Account.AcountDtos.AccountHeaderDto;
+import com.broadwave.toppos.Account.AcountDtos.AccountBranchHeaderDto;
 import com.broadwave.toppos.Head.Branch.Branch;
+import com.broadwave.toppos.Head.Branch.BranchDtos.BranchInfoDto;
 import com.broadwave.toppos.Head.Branch.BranchRepository;
-import com.broadwave.toppos.Head.Branoh.BranchDtos.BranchInfoDto;
 import com.broadwave.toppos.Head.Franchise.FranchiseDtos.FranchiseManagerListDto;
 import com.broadwave.toppos.Head.Franchise.FranchiseRepository;
 import com.broadwave.toppos.Head.HeadService.NoticeService;
@@ -93,8 +93,8 @@ public class ManagerService {
         log.info("현재 접속한 아이디 : "+login_id);
         log.info("현재 접속한 지사 코드 : "+brCode);
 
-        AccountHeaderDto accountHeaderDto =  accountRepository.findByHeaderInfo(login_id, brCode);
-        data.put("accountHeaderData",accountHeaderDto);
+        AccountBranchHeaderDto accountBranchHeaderDto =  accountRepository.findByBranchHeaderInfo(login_id);
+        data.put("accountHeaderData", accountBranchHeaderDto);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
@@ -211,8 +211,8 @@ public class ManagerService {
     }
 
     // 현재 지사의 정보 호출하기
-    public ResponseEntity<Map<String, Object>> myInfo(HttpServletRequest request) {
-        log.info("branchTagSearchList 호출");
+    public ResponseEntity<Map<String, Object>> branchMyInfo(HttpServletRequest request) {
+        log.info("branchMyInfo 호출");
 
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
@@ -263,7 +263,7 @@ public class ManagerService {
     // 지사 나의정보관리 수정 API
     @Transactional
     public ResponseEntity<Map<String, Object>> branchMyInfoSave(String userEmail, String userTel, String nowPassword, String newPassword, String checkPassword, HttpServletRequest request) {
-        log.info("branchPassword 호출");
+        log.info("branchMyInfoSave 호출");
 
         log.info("userEmail : "+userEmail);
         log.info("userTel : "+userTel);

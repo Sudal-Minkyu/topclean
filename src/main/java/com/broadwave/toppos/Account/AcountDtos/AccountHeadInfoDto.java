@@ -1,4 +1,4 @@
-package com.broadwave.toppos.Head.Branch.BranchDtos;
+package com.broadwave.toppos.Account.AcountDtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,19 +7,15 @@ import lombok.NoArgsConstructor;
 
 /**
  * @author Minkyu
- * Date : 2022-04-20
+ * Date : 2022-05-10
  * Time :
- * Remark : Toppos 지사 정보가져오는 Dto
+ * Remark : Toppos  본사 정보가져오는 Dto
  */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class BranchInfoDto {
-
-    private String brCode; // 지사코드
-    private String brName; // 지사명
-    private String brTelNo; // 지사 전화번호
+public class AccountHeadInfoDto {
 
     private String userId; // 계정 아이디
     private String userEmail; // 계정 이메일
