@@ -13,6 +13,7 @@ import com.broadwave.toppos.Head.Franchise.FranchiseDtos.FranchiseInfoDto;
 import com.broadwave.toppos.Head.Franchise.FranchiseDtos.FranchiseListDto;
 import com.broadwave.toppos.Head.Franchise.FranchiseDtos.FranchiseMapperDto;
 import com.broadwave.toppos.Head.Franchise.FranchiseDtos.FranchiseSearchDto;
+import com.broadwave.toppos.Head.HeadService.HeadInfoService;
 import com.broadwave.toppos.Head.HeadService.HeadService;
 import com.broadwave.toppos.Head.HeadService.NoticeService;
 import com.broadwave.toppos.Head.Item.Group.A.ItemGroup;
@@ -68,16 +69,19 @@ public class HeadRestController {
 
     private final AccountService accountService;
     private final HeadService headService; // 본사 공용서비스
+    private final HeadInfoService headInfoService; // 본사 정보호출 서비스
     private final NoticeService noticeService; // 공지사항 서비스
     private final ModelMapper modelMapper;
     private final ReceiptService receiptService;
 
     @Autowired
-    public HeadRestController(AccountService accountService, NoticeService noticeService, ModelMapper modelMapper, HeadService headService, ReceiptService receiptService) {
+    public HeadRestController(AccountService accountService, NoticeService noticeService, ModelMapper modelMapper,
+                              HeadService headService, HeadInfoService headInfoService, ReceiptService receiptService) {
         this.accountService = accountService;
         this.modelMapper = modelMapper;
         this.noticeService = noticeService;
         this.headService = headService;
+        this.headInfoService = headInfoService;
         this.receiptService = receiptService;
     }
 
@@ -87,7 +91,7 @@ public class HeadRestController {
     @ApiOperation(value = "현재 로그인한 본사 점보조회" , notes = "현재 로그인한 본사의 정보를 가져온다.")
     @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
     public ResponseEntity<Map<String,Object>> headHeaderData(HttpServletRequest request){
-        return headService.headHeaderData(request);
+        return headInfoService.headHeaderData(request);
     }
 
     // 사용자 등록 API
@@ -1422,7 +1426,7 @@ public class HeadRestController {
     // 현재 본사의 정보 호출하기
     @GetMapping("myInfo")
     public ResponseEntity<Map<String,Object>> headMyInfo(HttpServletRequest request){
-        return headService.headMyInfo(request);
+        return headInfoService.headMyInfo(request);
     }
 
     // 본사 나의정보관리 수정 API
@@ -1433,7 +1437,7 @@ public class HeadRestController {
                                                                @RequestParam(value="newPassword", defaultValue="") String newPassword,
                                                                @RequestParam(value="checkPassword", defaultValue="") String checkPassword,
                                                                HttpServletRequest request){
-        return headService.headMyInfoSave(userEmail, userTel, nowPassword, newPassword, checkPassword, request);
+        return headInfoService.headMyInfoSave(userEmail, userTel, nowPassword, newPassword, checkPassword, request);
     }
 
 
