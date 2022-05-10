@@ -7,25 +7,27 @@
 		<nav class="gnb">
 			<ul class="gnb__list">
 				<li class="gnb__item">
-					<div class="gnb__depth1"><a href="/head/accountreg">사용자등록</a></div>
+					<div class="gnb__depth1"><a href="#">시스템 관리</a></div>
+					<ul class="gnb__depth2">
+						<li class="btnSubmenu"><a href="/head/contract">계약관리</a></li>
+						<li class="btnSubmenu"><a href="/head/accountreg">사용자등록</a></li>
+					</ul>
 				</li>
 				<li class="gnb__item">
-					<div class="gnb__depth1"><a href="/head/contract">계약관리</a></div>
+					<div class="gnb__depth1"><a href="#">상품 관리</a></div>
+					<ul class="gnb__depth2">
+						<li class="btnSubmenu"><a href="/head/itemgroup">상품그룹관리</a></li>
+						<li class="btnSubmenu"><a href="/head/itemprice">상품가격관리</a></li>
+						<li class="btnSubmenu"><a href="/head/franchiseprice">특정품목가격관리</a></li>
+						<li class="btnSubmenu"><a href="/head/pricemanagement">가격기본정보</a></li>
+					</ul>
 				</li>
 				<li class="gnb__item">
-					<div class="gnb__depth1"><a href="/head/itemgroup">상품그룹관리</a></div>
-				</li>
-				<li class="gnb__item">
-					<div class="gnb__depth1"><a href="/head/itemprice">상품가격관리</a></div>
-				</li>
-				<li class="gnb__item">
-					<div class="gnb__depth1"><a href="/head/franchiseprice">특정품목가격</a></div>
-				</li>
-				<li class="gnb__item">
-					<div class="gnb__depth1"><a href="/head/pricemanagement">가격기본정보</a></div>
-				</li>
-                <li class="gnb__item">
-					<div class="gnb__depth1"><a href="/head/mastercode">마스터코드 등록</a></div>
+					<div class="gnb__depth1"><a href="#">설정</a></div>
+					<ul class="gnb__depth2">
+						<li class="btnSubmenu"><a href="/head/">나의정보관리</a></li>
+						<li class="btnSubmenu"><a href="/head/mastercode">마스터코드 등록</a></li>
+					</ul>
 				</li>
 			</ul>
 		</nav>
@@ -40,6 +42,7 @@
 			</button>
 		</div>
 	</div>
+	<div class="gnb__layer"></div>
 	<script type="text/javascript">
 		$(function () {
 			try {
