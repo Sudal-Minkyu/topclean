@@ -23,6 +23,8 @@ const dtos = {
             frTagNo: "s",
         },
         branchReceiptReturnReleaseList: {
+            fdPollutionType: "n",
+            fdPollutionBack: "n",
             fdId: "n",
             frName: "s",
 			insertDt: "s",
@@ -362,8 +364,8 @@ function searchOrder() {
 
     const searchCondition = {
         tagNo: fullTag.length === 7 ? fullTag : "",
-        filterFromDt: $("#filterFromDt").val(),
-        filterToDt: $("#filterToDt").val(),
+        filterFromDt: $("#filterFromDt").val().numString(),
+        filterToDt: $("#filterToDt").val().numString(),
         frId: parseInt(frId),
     };
     wares.searchCondition = searchCondition;

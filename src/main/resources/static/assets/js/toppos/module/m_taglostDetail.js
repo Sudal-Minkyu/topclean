@@ -110,7 +110,6 @@ function taglostCheck(answer) {
         }
     }
 
-
     const tagGalleryCheck = {
         btId: "nr",
         type: "sr", // 체크 혹은 체크해제 1, 최종확인 2

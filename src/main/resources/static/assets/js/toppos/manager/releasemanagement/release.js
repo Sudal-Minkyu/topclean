@@ -515,8 +515,8 @@ function enableDatepicker() {
 
 function getReceiptList() {
     const searchCondition = {
-        filterFromDt: $("#filterFromDt").val(),
-        filterToDt: $("#filterToDt").val(),
+        filterFromDt: $("#filterFromDt").val().numString(),
+        filterToDt: $("#filterToDt").val().numString(),
         isUrgent: $("#isUrgent").is(":checked") ? "Y" : "N",
         frId: 0,
     }

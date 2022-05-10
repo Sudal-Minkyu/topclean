@@ -81,7 +81,6 @@ const comms = {
         wares.currentCondition = condition;
         const url = "/api/user/franchiseInfo";
         CommonUI.ajax(url, "GET", condition, function (res) {
-            console.log("인포", res);
             const data = res.sendData;
             dv.chk(data, dtos.receive.franchiseInfo, "메인페이지 각종 값 받아오기");
             const userIndexDto = data.userIndexDto[0];
@@ -352,9 +351,6 @@ function marquee(speed) {
     $(".marquee__text").css('margin-left', function() {
         return($(".marquee").width() - initWidth) / 2;
     });
-
-    // marquee text width
-    var initWidth = $(".marquee__text").width();
 
     // resetting
     function resMarqueeRight () {

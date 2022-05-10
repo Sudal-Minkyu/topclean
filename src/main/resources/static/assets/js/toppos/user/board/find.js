@@ -5,11 +5,12 @@
 * */
 const dtos = {
     send: {
-        물건찾기요청: {
+        franchiseObjectFindSave: {
             fdIdList: "a",
         },
 
         franchiseObjectFind: { // 통합조회 페이지와 비슷하지만, fdState에 대한 조건이 빠진 형태
+            ffStateType: "s",
             bcId: "n", // 선택된 고객. 없을 경우 null
             searchTag: "s", // 택번호 검색문자
             filterFromDt: "sr", // 시작 조회기간
@@ -106,7 +107,6 @@ const comms = {
     },
 
     getDetailList(filterCondition) {
-        console.log(filterCondition);
         wares.filterCondition = filterCondition;
         dv.chk(filterCondition, dtos.send.franchiseObjectFind, "물건찾기 리스트 필터링조건 보내기");
         CommonUI.ajax(urls.getDetailList, "GET", filterCondition, function (res) {
@@ -117,8 +117,7 @@ const comms = {
     },
 
     sendSearchRequest(target) {
-        dv.chk(target, dtos.send.물건찾기요청, "물건찾기를 요청할 품목들 보내기");
-        console.log(target);
+        dv.chk(target, dtos.send.franchiseObjectFindSave, "물건찾기를 요청할 품목들 보내기");
         CommonUI.ajax(urls.sendSearchRequest, "PARAM", target, function () {
             alertSuccess("요청하신 품목을 찾을 물건으로 등록하였습니다.");
             comms.getDetailList(wares.filterCondition);
@@ -543,8 +542,8 @@ function mainSearch() {
             const filterCondition = {
                 bcId: 0,
                 searchTag: searchString,
-                filterFromDt: $("#filterFromDt").val(),
-                filterToDt: $("#filterToDt").val(),
+                filterFromDt: $("#filterFromDt").val().numString(),
+                filterToDt: $("#filterToDt").val().numString(),
             }
             wares.searchTag = searchString;
             comms.getDetailList(filterCondition);
