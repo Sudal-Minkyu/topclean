@@ -68,7 +68,7 @@ const urls = {
     getReceiptList: "/api/manager/branchReceiptBranchInList",
     sendOutReceipt: "/api/manager/branchStateChange",
     dispatchPrint: "/api/manager/branchDispatchPrint",
-}
+};
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
@@ -78,16 +78,15 @@ const comms = {
             dv.chk(data, dtos.receive.managerBelongList, "가맹점 선택출고에 필요한 지점에 속한 가맹점 받아오기");
             const $frList = $("#frList");
             data.forEach(obj => {
-                const htmlText = `<option value="${obj.frId}">${obj.frName}</option>`
+                const htmlText = `<option value="${obj.frId}">${obj.frName}</option>`;
                 $frList.append(htmlText);
             });
         });
     },
-    
+
     getReceiptList(searchCondition) {
         dv.chk(searchCondition, dtos.send.branchReceiptBranchInList, "출고 품목 조회 조건 보내기");
         CommonUI.ajax(urls.getReceiptList, "GET", searchCondition, function (res) {
-            console.log(res);
             wares.receiptList = CommonUI.toppos.killNullFromArray(res.sendData.gridListData);
 
             $("#statPanel").html(
@@ -99,7 +98,6 @@ const comms = {
     },
 
     sendOutReceipt(sendList) {
-        console.log(sendList);
         wares.sl = sendList;
         dv.chk(sendList, dtos.send.branchStateChange, "출고처리 항목 보내기");
         CommonUI.ajax(urls.sendOutReceipt, "PARAM", sendList, function (res) {
@@ -122,9 +120,9 @@ const comms = {
     dispatchPrint(miNoList) {
         dv.chk(miNoList, dtos.send.branchDispatchPrint, "출고증 인쇄를 위한 miNoList 보내기");
         CommonUI.ajax(urls.dispatchPrint, "GET", miNoList, function (res) {
-            for(let i=0; i < res.sendData.issueDispatchDtos.length; i++){
-                const frCode = res.sendData.issueDispatchDtos[i]["qrcode"];
-                res.sendData.issueDispatchDtos[i]["qrcode"] = location.protocol+"//"+location.host+"/mobile/unAuth/qrpickup?frcode="+frCode;
+            for(const obj of res.sendData.issueDispatchDtos) {
+                const frCode = obj["qrcode"];
+                obj["qrcode"] = location.protocol+"//"+location.host+"/mobile/unAuth/qrpickup?frcode="+frCode;
             }
             dispatchPrintData(res.sendData.issueDispatchDtos);
         });
@@ -167,7 +165,7 @@ const grids = {
                     dataField: "fdS4Type",
                     headerText: "출고타입",
                     width: 75,
-                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(_rowIndex, _columnIndex, value, _headerText, _item) {
                         return CommonData.name.fdS4Type[value];
                     },
                 }, {
@@ -179,7 +177,7 @@ const grids = {
                     headerText: "택번호",
                     style: "datafield_tag",
                     width: 80,
-                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(_rowIndex, _columnIndex, value, _headerText, _item) {
                         return CommonData.formatBrTagNo(value);
                     },
                 }, {
@@ -190,7 +188,7 @@ const grids = {
                     renderer : {
                         type : "TemplateRenderer",
                     },
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(_rowIndex, _columnIndex, _value, _headerText, item) {
                         const colorSquare =
                             `<span class="colorSquare" style="background-color: ${CommonData.name.fdColorCode[item.fdColor]}; vertical-align: middle;"></span>`;
                         const sumName = CommonUI.toppos.makeSimpleProductName(item);
@@ -202,7 +200,7 @@ const grids = {
                     headerText: "처리내역",
                     style: "grid_textalign_left",
                     width: 130,
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(_rowIndex, _columnIndex, _value, _headerText, item) {
                         item.processName = CommonUI.toppos.processName(item);
                         return item.processName;
                     }
@@ -227,7 +225,7 @@ const grids = {
                     dataField: "fdState",
                     headerText: "현재상태",
                     width: 90,
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(_rowIndex, _columnIndex, value, _headerText, _item) {
                         return CommonData.name.fdState[value];
                     },
                 },
@@ -263,7 +261,7 @@ const grids = {
                     autoThousandSeparator: "true",
                 },
             ];
-    
+
             grids.s.prop[1] = {
                 editable : false,
                 selectionMode : "singleRow",
@@ -319,8 +317,8 @@ const grids = {
         },
 
         resize(num) { // 해당 배열 번호 그리드의 크기를 현제 그리드를 감싼 엘리먼트에 맞춰 조절
-			AUIGrid.resize(grids.s.id[num]);
-		},
+            AUIGrid.resize(grids.s.id[num]);
+        },
 
         getCheckedItems(numOfGrid) { // 해당 배열 번호 그리드의 엑스트라 체크박스 선택된 (아이템 + 행번호) 객체 반환
             return AUIGrid.getCheckedRowItems(grids.s.id[numOfGrid]);
@@ -348,7 +346,7 @@ const grids = {
 
             const frName = wares.currentDetail.frName ? wares.currentDetail.frName + "_" : "";
             const urgent = wares.currentDetail.urgent ? wares.currentDetail.urgent + "_" : "";
-            
+
             AUIGrid.exportToXlsx(grids.s.id[0], {
                 fileName : `${wares.title}_${frName}${urgent}${wares.currentDetail.filterFromDt}_${wares.currentDetail.filterToDt}`,
                 progressBar : true,
@@ -379,7 +377,6 @@ const grids = {
 const trigs = {
     grid() {
         AUIGrid.bind(grids.s.id[0], "rowCheckClick", function (e) {
-            console.log(e);
             listCheckChanged();
             if(e.item.fdS4Type === "99") {
                 decideCheckResponse(e.item);
@@ -393,7 +390,7 @@ const trigs = {
         $("#type01").on("click", function () {
             $("#frSelectUI").hide();
             $("#frList option").first().prop("selected", true);
-        })
+        });
 
         $("#type02").on("click", function () {
             $("#frSelectUI").show();
@@ -424,7 +421,6 @@ const trigs = {
             } else {
                 alertCaution("출고처리할 상품을 선택해 주세요.", 1);
             }
-            
         });
 
         $("#addAll").on("click", function () {
@@ -446,7 +442,7 @@ const trigs = {
             grids.f.exportToXlsx();
         });
     },
-}
+};
 
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
 const wares = {
@@ -460,7 +456,7 @@ const wares = {
         frName: "",
     },
     sayLoop: false,
-}
+};
 
 $(function() { // 페이지가 로드되고 나서 실행
     onPageLoad();
@@ -478,7 +474,6 @@ function onPageLoad() {
 }
 
 function enableDatepicker() {
-    
     let fromday = new Date();
     fromday.setDate(fromday.getDate() - 6);
     fromday = fromday.format("yyyy-MM-dd");
@@ -506,13 +501,13 @@ function getReceiptList() {
         filterToDt: $("#filterToDt").val().numString(),
         isUrgent: $("#isUrgent").is(":checked") ? "Y" : "N",
         frId: 0,
-    }
+    };
     wares.currentDetail.filterFromDt = searchCondition.filterFromDt;
     wares.currentDetail.filterToDt = searchCondition.filterToDt;
     wares.currentDetail.urgent = searchCondition.isUrgent === "Y" ? "급세탁" : "";
 
     if($("#type02").is(":checked")) {
-        searchCondition.frId = parseInt($("#frList").val());
+        searchCondition.frId = parseInt($("#frList").val(), 10);
     }
     wares.currentDetail.frName = searchCondition.frId ? $("#frList option:selected").html() : "";
 
@@ -522,43 +517,41 @@ function getReceiptList() {
 function inputTag() {
     if(wares.receiptList === "") {
         CommonUI.toppos.speak("입고된 품목을 먼저 조회해 주세요.");
-        return false;
+        return;
     }
-    
+
     const tagNo = $("#inputTagNo").val().replace(/-/g, "");
     if(tagNo.length < 7) {
         CommonUI.toppos.speak("택번호 7자리를 입력해 주세요.");
         $("#inputTagNo").focus();
-        return false;
+        return;
     }
 
-
     const checkedItems = grids.f.getCheckedItems(0);
-    for(let i = 0; i < checkedItems.length; i++) {
-        if(checkedItems[i].item.fdTag  === tagNo) {
+    for(const item of checkedItems) {
+        if (item.item.fdTag  === tagNo) {
             CommonUI.toppos.speak("이미 조회한 택번호 입니다.");
             grids.f.focusOn(tagNo);
             $("#inputTagNo").val("");
             $("#inputTagNo").focus();
-            return false;
+            return;
         }
     }
-    
 
     const gridItems = grids.f.getData(0);
-    for(let i = 0; i < gridItems.length; i++) {
-        if(gridItems[i].fdTag  === tagNo) {
+    for(const item of gridItems) {
+        if (item.fdTag === tagNo) {
             grids.f.addCheckedRowByTagNo(tagNo);
             grids.f.focusOn(tagNo);
             listCheckChanged();
             $("#inputTagNo").val("");
-            if(gridItems[i].fdS4Type === "99") {
-                decideCheckResponse(gridItems[i]);
-                return false;
+            if (item.fdS4Type === "99") {
+                decideCheckResponse(item);
+                return;
             }
-            CommonUI.toppos.speak(CommonUI.toppos.makeSimpleProductName(gridItems[i]));
+            CommonUI.toppos.speak(CommonUI.toppos.makeSimpleProductName(item));
             $("#inputTagNo").focus();
-            return false;
+            return;
         }
     }
 
@@ -573,7 +566,7 @@ function inputTag() {
             noExist = false;
             if(obj.fdS4Type === "99") {
                 decideCheckResponse(item);
-                return false;
+                return;
             }
             CommonUI.toppos.speak(CommonUI.toppos.makeSimpleProductName(item));
         }
@@ -590,9 +583,9 @@ function inputTag() {
 function sendOut() {
 
     if(wares.checkedItems.length) {
-        let fdIdList = [];
-        let fdS4TypeList = [];
-        let codeIndex = [];
+        const fdIdList = [];
+        const fdS4TypeList = [];
+        const codeIndex = [];
         fdIdList.push([0]);
         fdS4TypeList.push(["0"]);
         codeIndex.push("dummy");
@@ -611,9 +604,9 @@ function sendOut() {
 
         const sendList = {
             miDegree: $("#miDegree").val().toInt(),
-            fdIdList: fdIdList,
-            fdS4TypeList: fdS4TypeList,
-        }
+            fdIdList,
+            fdS4TypeList,
+        };
 
         if(!sendList.miDegree) {
             alertCaution("올바른 출고 차수를 입력해 주세요.", 1);
@@ -631,9 +624,9 @@ function listCheckChanged() {
 
     items.forEach(obj => {
         let isNoMatchName = true;
-        for(let i = 0; i < refinedData.length; i++) {
-            if(refinedData[i].frCode === obj.item.frCode) {
-                refinedData[i].qty++;
+        for(const refObj of refinedData) {
+            if (refObj.frCode === obj.item.frCode) {
+                refObj.qty++;
                 isNoMatchName = false;
             }
         }
@@ -656,9 +649,10 @@ function dispatchPrintData(jsonData){
     const formName = "dispatchPrint02";
 
     //데이터셋 Object
-    const datasetObject = {};
     //데이터셋 Object에 생성된 DataSet 추가
-    datasetObject.dataset_0 = JSON.stringify(jsonData);
+    const datasetObject = {
+        dataset_0: JSON.stringify(jsonData)
+    };
     //파라미터 Object
     const paramObject = {};
     //파라미터
@@ -668,36 +662,31 @@ function dispatchPrintData(jsonData){
     fn_viewer_open(projectName, formName, datasetObject, paramObject);
 }
 
-
 function fn_viewer_open(projectName, formName, datasetObject, paramObject){
-    var _params = {
-        "projectName":projectName, 			//프로젝트명
-        "formName":formName             //서식명
+    const _params = {
+        projectName,
+        formName,
     };
-    for (var datasetValue in datasetObject) {
+    for (const datasetValue in datasetObject) {
         _params[datasetValue] = encodeURIComponent(datasetObject[datasetValue]);
     }
-    for (var paramValue in paramObject) {
+    for (const paramValue in paramObject) {
         _params[paramValue] = paramObject[paramValue];
     }
 
-    var _url = "https://report.topcleaners.kr:443" + "/UBIFORM/UView5/index.jsp"; //UBIFORM Viewer URL
+    const _url = "https://report.topcleaners.kr:443" + "/UBIFORM/UView5/index.jsp"; //UBIFORM Viewer URL
     //팝업 오픈 Option 해당 설정은 window.open 설정을 참조
-    //var windowoption = 'location=0, directories=0,resizable=0,status=0,toolbar=0,menubar=0, width=1280px,height=650px,left=0, top=0,scrollbars=0';  //팝업사이즈 window.open참고
-    var windowoption = 'width=1280px,height=650px';
-    var d = new Date();
-    var n = d.getTime();
-    var name = "printArea";// "UBF_" + n;
+    //let windowoption = 'location=0, directories=0,resizable=0,status=0,toolbar=0,menubar=0, width=1280px,height=650px,left=0, top=0,scrollbars=0';  //팝업사이즈 window.open참고
+    const windowoption = 'width=1280px,height=650px';
+    const name = "printArea";// "UBF_" + n;
     //팝업사이즈 window.open참고
-    var form = document.createElement("form");
+    const form = document.createElement("form");
     form.setAttribute("method", "post");
     form.setAttribute("action", _url);
     const params = _params ;
-    for (var i in params)
-    {
-        if (params.hasOwnProperty(i))
-        {
-            var param = document.createElement('input');
+    for (const i in params) {
+        if (params.hasOwnProperty(i)) {
+            const param = document.createElement('input');
             param.type = 'hidden';
             param.name = i;
             param.value = encodeURI( params[i] );
@@ -719,7 +708,7 @@ function decideCheckResponse(item) {
     alertStrongThree(`해당 택번호(${CommonData.formatBrTagNo(item.fdTag)})는 확인품 입니다.<br>아직 고객의 진행여부가 결정되지 않았습니다.<br>어떻게 하시겠습니까?`, "출고", "반품", "취소");
     wares.sayLoop = true;
     sayAgain();
-    
+
     $("#popFirstBtn").on("click", function () {
         wares.sayLoop = false;
         item.fdS4Type = "05";
@@ -737,7 +726,7 @@ function decideCheckResponse(item) {
         $('#popupId').remove();
         $("#inputTagNo").focus();
     });
-    
+
     $("#popThirdBtn").on("click", function () {
         wares.sayLoop = false;
         //체크해제

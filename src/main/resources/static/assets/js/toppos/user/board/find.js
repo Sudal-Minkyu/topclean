@@ -169,7 +169,7 @@ const grids = {
                     headerText: "택번호",
                     style: "datafield_tag",
                     width: 80,
-                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         return CommonData.formatFrTagNo(value, frTagInfo.frTagType);
                     },
                 }, {
@@ -179,7 +179,7 @@ const grids = {
                     renderer : {
                         type : "TemplateRenderer",
                     },
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         const colorSquare =
                             `<span class="colorSquare" style="background-color: ${CommonData.name.fdColorCode[item.fdColor]}; vertical-align: middle;"></span>`;
                         const sumName = CommonUI.toppos.makeSimpleProductName(item);
@@ -191,7 +191,7 @@ const grids = {
                     headerText: "처리내역",
                     style: "grid_textalign_left",
                     width: 120,
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         item.processName = CommonUI.toppos.processName(item);
                         return item.processName;
                     }
@@ -206,7 +206,7 @@ const grids = {
                     dataField: "fdState",
                     headerText: "현재상태",
                     width: 85,
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         return CommonData.name.fdState[value];
                     },
                 }, {
@@ -224,7 +224,7 @@ const grids = {
                     dataField: "ffState",
                     headerText: "찾기상태",
                     width: 85,
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         return CommonData.name.ffState[value];
                     },
                 },
@@ -246,7 +246,7 @@ const grids = {
                 enableFilter : false,
                 rowHeight : 48,
                 headerHeight : 48,
-                rowStyleFunction : function(rowIndex, item) {
+                rowStyleFunction(rowIndex, item) {
                     let returnClass = "";
                     if(["01", "02", "03"].includes(item.ffState)) {
                         returnClass = "grid_checkable_row"
@@ -262,7 +262,7 @@ const grids = {
                 }, {
                     dataField: "bcHp",
                     headerText: "전화번호",
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         return CommonUI.formatTel(value);
                     }
                 }, {

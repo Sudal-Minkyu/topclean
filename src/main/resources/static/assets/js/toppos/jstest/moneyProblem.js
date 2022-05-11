@@ -1,4 +1,4 @@
-import * as moneyProblem from "../module/m_moneyProblem.js";
+import {calculateMainPrice, calculateItemPrice, ceil100, calculatePaymentStage} from "../module/m_moneyProblem.js";
 
 function runMoneyProblem() {
     QUnit.module('moneyProblem 돈계산', function () {
@@ -182,7 +182,7 @@ function runMoneyProblem() {
                 }
             ];
 
-            moneyProblem.calculateMainPrice(existItem, []);
+            calculateMainPrice(existItem, []);
             assert.equal($("#totFdQty").html(), "3", "수량 검사");
             assert.equal($("#totFdNormalAmount").html(), "19,000", "기본금액 검사");
             assert.equal($("#totChangeAmount").html(), "11,000", "추가/할인금액 검사");
@@ -577,7 +577,7 @@ function runMoneyProblem() {
                 }
             ];
 
-            moneyProblem.calculateMainPrice(existItem, removedItem);
+            calculateMainPrice(existItem, removedItem);
             assert.equal($("#totFdQty").html(), "3", "수량 검사");
             assert.equal($("#totFdNormalAmount").html(), "8,700", "기본금액 검사");
             assert.equal($("#totChangeAmount").html(), "0", "추가/할인금액 검사");
@@ -586,7 +586,7 @@ function runMoneyProblem() {
         });
 
         QUnit.test('접수페이지 접수물품 가격 계산', function (assert) {
-            window.ceil100 = moneyProblem.ceil100;
+            window.ceil100 = ceil100;
 
             window.initialData = {};
 
@@ -681,9 +681,7 @@ function runMoneyProblem() {
             $(playGround).html(testDOM);
             $("body").append(playGround);
 
-            moneyProblem.calculateItemPrice();
-
-            console.log(currentRequest);
+            calculateItemPrice();
 
             assert.equal(currentRequest.fdPriceGrade, "3", "가격 등급");
             assert.equal(currentRequest.fdNormalAmt, 9000, "가격 등급 반영 가격");
@@ -710,7 +708,7 @@ function runMoneyProblem() {
         });
 
         QUnit.test('접수페이지 접수물품 가격 계산_220509', function (assert) {
-            window.ceil100 = moneyProblem.ceil100;
+            window.ceil100 = ceil100;
 
             window.initialData = {};
 
@@ -732,7 +730,7 @@ function runMoneyProblem() {
                 "bcUrgentRate1": 200,
                 "bcUrgentRate2": 150,
                 "bcUrgentAmt1": 500
-            }
+            };
 
             window.currentRequest = {
                 "fdTag": "2220007",
@@ -785,7 +783,7 @@ function runMoneyProblem() {
                 "fdPollutionLocBcb": "N",
                 "fdPollutionBack": 0,
                 "fdPollutionType": 1,
-            }
+            };
 
             const testDOM = `
             <div id="testDiv">
@@ -828,7 +826,7 @@ function runMoneyProblem() {
             $(playGround).html(testDOM);
             $("body").append(playGround);
 
-            moneyProblem.calculateItemPrice();
+            calculateItemPrice();
 
             assert.equal(currentRequest.fdPriceGrade, "3", "가격 등급");
             assert.equal(currentRequest.fdNormalAmt, 9000, "가격 등급 반영 가격");
@@ -876,7 +874,7 @@ function runMoneyProblem() {
             $("body").append(playGround);
 
             /* 미리 한 결제 총 금액이 3000원이라 상정하고 구동  */
-            moneyProblem.calculatePaymentStage(3000);
+            calculatePaymentStage(3000);
 
             assert.equal($("#totalAmt").html(), "8,500", "총 결제할(현금, 카드) 금액");
             assert.equal($("#changeCash").html(), "4,000", "현금 거스름돈");

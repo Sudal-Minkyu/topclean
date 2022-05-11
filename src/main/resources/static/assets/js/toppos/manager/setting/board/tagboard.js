@@ -75,7 +75,7 @@ const urls = {
     getDetail: "/api/manager/tagGalleryDetail",
     removeTaglost: "/api/manager/tagGalleryDelete",
     endTaglost: "/api/manager/tagGalleryEnd",
-}
+};
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
@@ -88,7 +88,9 @@ const comms = {
             for(const data of dataList) {
                 for(const [i, obj] of data.bfPathFilename.entries()) {
                     data["thumbnail" + (i + 1)] = obj.bfPath + "s_" + obj.bfFilename;
-                    if(i === 3) break;
+                    if(i === 3) {
+                        break;
+                    }
                 }
             }
 
@@ -98,12 +100,17 @@ const comms = {
 
     putNewTaglost(formData) {
         const testObj = Object.fromEntries(formData);
-        console.log(testObj);
-        if(!testObj.btId) testObj.btId = ""; // btId값이 없는 신규등록건
-        if(!testObj.addPhotoList) testObj.addPhotoList = []; // btId값이 없는 신규등록건
-        if(!testObj.deletePhotoList) testObj.deletePhotoList = []; // btId값이 없는 신규등록건
+        if(!testObj.btId) {
+            testObj.btId = "";
+        } // btId값이 없는 신규등록건
+        if(!testObj.addPhotoList) {
+            testObj.addPhotoList = [];
+        } // btId값이 없는 신규등록건
+        if(!testObj.deletePhotoList) {
+            testObj.deletePhotoList = [];
+        } // btId값이 없는 신규등록건
         dv.chk(testObj, dtos.send.tagGallerySave, "택분실 등록, 수정하기");
-        CommonUI.ajax(urls.putNewTaglost, "POST", formData, function (res)  {
+        CommonUI.ajax(urls.putNewTaglost, "POST", formData, function ()  {
             alertSuccess("게시물 저장이 완료되었습니다.");
             comms.getMainList(wares.searchCondition);
             closeTaglostPop();
@@ -111,11 +118,9 @@ const comms = {
     },
 
     getDetail(getCondition) {
-        
+
         CommonUI.ajax(urls.getDetail, "GET", getCondition, function (res) {
-            console.log(res);
             const data = res.sendData;
-            console.log(data);
 
             const refinedData = {
                 btId: data.tagGallery.btId,
@@ -126,7 +131,7 @@ const comms = {
                 brCloseYn: data.tagGallery.brCloseYn,
                 tagGalleryFileList: data.tagGalleryFileList,
                 tagGalleryCheckList: data.tagGalleryCheckList,
-            }
+            };
 
             wares.currentRequest = refinedData;
             resetTaglostPop();
@@ -138,13 +143,13 @@ const comms = {
                         <img src="${photo.bfPath + "s_" + photo.bfFilename}" class="tag-imgs__img" alt=""/>
                     </a>
                     <button class="tag-imgs__delete deletePhotoBtn" data-bfId="${photo.bfId}">삭제</button>
-                </li>`
+                </li>`;
                 $("#photoList").append(photoHtml);
                 $("#noImgScreen").hide();
             }
 
             /* 가맹점 응답의 텍스트 구성 */
-            let responseList = ""
+            let responseList = "";
             for(const fr of wares.currentRequest.tagGalleryCheckList) {
                 if(!fr.brTag) {
                     fr.brTag = "";
@@ -152,7 +157,7 @@ const comms = {
                 const resultTagNo = CommonData.formatBrTagNo(fr.brTag);
                 responseList += fr.frName + " ";
                 responseList += fr.brCompleteYn === "Y" ? `(완료, ${resultTagNo})` : `(확인요청, ${resultTagNo})`;
-                responseList += " ,"
+                responseList += " ,";
             }
             $("#frResponse").val(responseList.substring(0, responseList.length - 2));
 
@@ -178,9 +183,8 @@ const comms = {
     },
 
     removeTaglost(target) {
-        console.log(target);
         dv.chk(target, dtos.send.tagGalleryDelete, "택분실 게시물 삭제 아이디 보내기");
-        CommonUI.ajax(urls.removeTaglost, "GET", target, function (res) {
+        CommonUI.ajax(urls.removeTaglost, "GET", target, function () {
             alertSuccess("게시물 삭제가 완료되었습니다.");
             resetTaglostPop();
             comms.getMainList(wares.searchCondition);
@@ -189,9 +193,8 @@ const comms = {
     },
 
     endTaglost(target) {
-        console.log(target);
         // dv.chk(target, dtos.send., "택분실 게시종료 아이디 보내기");
-        CommonUI.ajax(urls.endTaglost, "PARAM", target, function (res) {
+        CommonUI.ajax(urls.endTaglost, "PARAM", target, function () {
             alertSuccess("게시 종료가 완료되었습니다.");
             resetTaglostPop();
             comms.getMainList(wares.searchCondition);
@@ -252,7 +255,7 @@ const grids = {
                     renderer : {
                         type : "ImageRenderer",
                         imgHeight : 100, // 이미지 높이, 지정하지 않으면 rowHeight에 맞게 자동 조절되지만 빠른 렌더링을 위해 설정을 추천합니다.
-                        srcFunction : function(rowIndex, columnIndex, value, item) {
+                        srcFunction(_rowIndex, _columnIndex, value, _item) {
                             return value ? value : ""; // 값이 없으면 기본 빈 이미지를 리턴
                         }
                     }
@@ -262,7 +265,7 @@ const grids = {
                     renderer : {
                         type : "ImageRenderer",
                         imgHeight : 100, // 이미지 높이, 지정하지 않으면 rowHeight에 맞게 자동 조절되지만 빠른 렌더링을 위해 설정을 추천합니다.
-                        srcFunction : function(rowIndex, columnIndex, value, item) {
+                        srcFunction(_rowIndex, _columnIndex, value, _item) {
                             return value ? value : ""; // 값이 없으면 기본 빈 이미지를 리턴
                         }
                     }
@@ -272,7 +275,7 @@ const grids = {
                     renderer : {
                         type : "ImageRenderer",
                         imgHeight : 100, // 이미지 높이, 지정하지 않으면 rowHeight에 맞게 자동 조절되지만 빠른 렌더링을 위해 설정을 추천합니다.
-                        srcFunction : function(rowIndex, columnIndex, value, item) {
+                        srcFunction(_rowIndex, _columnIndex, value, _item) {
                             return value ? value : ""; // 값이 없으면 기본 빈 이미지를 리턴
                         }
                     }
@@ -280,7 +283,7 @@ const grids = {
                     dataField: "tagGalleryCheckFranchise",
                     headerText: "가맹응답상태",
                     style: "grid_textalign_left",
-                    labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
+                    labelFunction(_rowIndex, _columnIndex, value, _headerText, _item ) {
                         // 온 데이터 확인하여 가공필요
                         return value;
                     },
@@ -296,7 +299,7 @@ const grids = {
                     renderer : {
                         type: "TemplateRenderer",
                     },
-                    labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
+                    labelFunction(_rowIndex, _columnIndex, _value, _headerText, _item ) {
                         return `<button class="c-state">보기</button>`;
                     },
                 },
@@ -340,8 +343,8 @@ const grids = {
         },
 
         resize(num) { // 해당 배열 번호 그리드의 크기를 현제 그리드를 감싼 엘리먼트에 맞춰 조절
-			AUIGrid.resize(grids.s.id[num]);
-		},
+            AUIGrid.resize(grids.s.id[num]);
+        },
 
         getCheckedItems(numOfGrid) { // 해당 배열 번호 그리드의 엑스트라 체크박스 선택된 (아이템 + 행번호) 객체 반환
             return AUIGrid.getCheckedRowItems(grids.s.id[numOfGrid]);
@@ -353,7 +356,6 @@ const grids = {
 const trigs = {
     grid() {
         AUIGrid.bind(grids.s.id[0], "cellClick", function (e) {
-            console.log(e);
             switch(e.dataField) { // 썸네일 클릭시 이미지가 뜨고 디테일 클릭시 상세보기가 작동한다.
                 case "thumbnail1" :
                 case "thumbnail2" :
@@ -403,7 +405,7 @@ const trigs = {
             $("#checkDelSuccessBtn").on("click", function () {
                 const target = {
                     btId: wares.currentRequest.btId,
-                }
+                };
                 comms.endTaglost(target);
             });
         });
@@ -413,12 +415,13 @@ const trigs = {
         });
 
         $("#photoList").on("click", ".deletePhotoBtn", function() {
-            console.log(this);
             const bfId = $(this).attr("data-bfId");
             const addIdx = $(this).attr("data-addIdx");
             if(bfId) {
-                if(!wares.currentRequest.deletePhotoList) wares.currentRequest.deletePhotoList = [];
-                wares.currentRequest.deletePhotoList.push(parseInt(bfId));
+                if(!wares.currentRequest.deletePhotoList) {
+                    wares.currentRequest.deletePhotoList = [];
+                }
+                wares.currentRequest.deletePhotoList.push(parseInt(bfId, 10));
             }
             if(addIdx) {
                 delete wares.currentRequest.addPhotoList[addIdx];
@@ -432,18 +435,18 @@ const trigs = {
             $("#checkDelSuccessBtn").on("click", function () {
                 const target = {
                     btId: wares.currentRequest.btId,
-                }
+                };
                 comms.removeTaglost(target);
             });
         });
     },
-}
+};
 
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
 const wares = {
     currentRequest: {},
     searchCondition: {},
-}
+};
 
 $(function() { // 페이지가 로드되고 나서 실행
     onPageLoad();
@@ -531,9 +534,9 @@ async function openTaglostPop() {
 function takePhoto() {
     if($("#photoList").children().length > 5) {
         alertCaution("사진은 최대 6장 까지 촬영하실 수 있습니다.", 1);
-        return false;
+        return;
     }
-    
+
     if(wares.isCameraExist && wares.cameraStream.active) {
         try {
             const video = document.getElementById("cameraScreen");
@@ -554,9 +557,9 @@ function takePhoto() {
                     <img src="${takenPic}" class="tag-imgs__img" alt=""/>
                 </a>
                 <button class="tag-imgs__delete deletePhotoBtn" data-addIdx="${wares.currentRequest.addPhotoList.length}">삭제</button>
-            </li>`
+            </li>`;
             wares.currentRequest.addPhotoList.push(blob);
-            
+
             $("#photoList").append(photoHtml);
             $("#noImgScreen").hide();
         } catch (e) {
@@ -621,22 +624,24 @@ function b64toBlob(dataURI) { // 파일을 ajax 통신에 쓰기 위해 변환
 function savePost() {
     if(!$("#photoList").children().length) {
         alertCaution("최소한 한장의 사진을 촬영해 주세요.", 1);
-        return false;
+        return;
     }
 
     const btInputDate = $("#btInputDate").val().numString();
     if(btInputDate.length !== 8) {
         alertCaution("올바른 8자리 숫자의 날짜를 입력해 주세요.", 1);
-        return false;
+        return;
     }
 
     const formData = new FormData();
     if(wares.currentRequest.addPhotoList) {
         for(const addPhoto of wares.currentRequest.addPhotoList) { // 새로 촬영된 사진들의 추가
-            if(addPhoto) formData.append("addPhotoList", addPhoto);
+            if(addPhoto) {
+                formData.append("addPhotoList", addPhoto);
+            }
         }
     }
-    
+
     if(wares.currentRequest.btId) {
         formData.append("btId", wares.currentRequest.btId);
     }
@@ -648,13 +653,13 @@ function savePost() {
     formData.append("btMaterial", $("#btMaterial").val());
     formData.append("btInputDate", btInputDate);
     formData.append("btRemark", $("#btRemark").val());
-    
+
     comms.putNewTaglost(formData);
 }
 
 function showDetail(btId) {
     const getCondition = {
-        btId: btId
+        btId,
     };
 
     comms.getDetail(getCondition);

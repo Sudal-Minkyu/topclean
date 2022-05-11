@@ -1,3 +1,3 @@
-import * as moneyProblem from "./moneyProblem.js";
+import {runMoneyProblem} from "./moneyProblem.js";
 
-moneyProblem.runMoneyProblem();
+runMoneyProblem();

@@ -40,13 +40,12 @@ const comms = {
         });
     },
     setBrInfo(brData) {
-        CommonUI.ajax("/api/manager/branchInfoSave", "PARAM", brData, function (res) {
+        CommonUI.ajax("/api/manager/branchInfoSave", "PARAM", brData, function () {
             alertSuccess("지사 정보 변경 완료");
         });
     },
     setUserInfo(userData) {
-        console.log(userData);
-        CommonUI.ajax("/api/manager/branchMyInfoSave", "PARAM", userData, function (res) {
+        CommonUI.ajax("/api/manager/branchMyInfoSave", "PARAM", userData, function () {
             alertSuccess("나의 정보 변경 완료");
             $("#nowPassword").val("");
             $("#newPassword").val("");
@@ -61,7 +60,7 @@ const trigs = {
         $("#saveBrBtn").on("click", function () {
             if($("#brName").val() === "") {
                 alertCaution("지사명을 입력해 주세요.", 1);
-                return false;
+                return;
             }
             alertCheck("지사 정보를 저장하시겠습니까?");
             $("#checkDelSuccessBtn").on("click", function () {
@@ -72,7 +71,7 @@ const trigs = {
         $("#saveUserBtn").on("click", function () {
             if($("#userTel").val() === "") {
                 alertCaution("전화번호를 입력해 주세요.", 1);
-                return false;
+                return;
             }
             // 현재 비밀번호 길이
             const $nowPwLength = $("#nowPassword").val().length;
@@ -84,7 +83,7 @@ const trigs = {
             if(($nowPwLength > 0 || $newPwLength > 0 || $checkPwLength > 0)
                 && ($nowPwLength === 0 || $newPwLength === 0 || $checkPwLength === 0)) {
                 alertCaution("비밀번호 변경 시 현재 비밀번호, 비밀번호 변경, 비밀번호 확인란 모두 입력해 주세요", 1);
-                return false;
+                return;
             }
             alertCheck("내 정보를 저장하시겠습니까?");
             $("#checkDelSuccessBtn").on("click", function () {
@@ -92,12 +91,12 @@ const trigs = {
             });
         });
     },
-}
+};
 
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
 const wares = {
 
-}
+};
 
 $(function() { // 페이지가 로드되고 나서 실행
     onPageLoad();
@@ -124,7 +123,7 @@ function saveBr() {
     const brData = {
         brName: $("#brName").val(),
         brTelNo: $("#brTelNo").val().numString(),
-    }
+    };
 
     comms.setBrInfo(brData);
 }
@@ -136,10 +135,10 @@ function saveUser() {
         nowPassword: $("#nowPassword").val(),
         newPassword: $("#newPassword").val(),
         checkPassword: $("#checkPassword").val(),
-    }
-    if(userData.newPassword != userData.checkPassword) {
+    };
+    if(userData.newPassword !== userData.checkPassword) {
         alertCaution("변경할 비밀번호와 확인이 일치하지 않습니다.", 1);
-        return false;
+        return;
     }
     comms.setUserInfo(userData);
 }

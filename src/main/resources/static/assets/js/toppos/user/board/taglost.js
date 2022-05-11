@@ -140,7 +140,7 @@ const grids = {
                     renderer : {
                         type : "ImageRenderer",
                         imgHeight : 100,
-                        srcFunction : function(rowIndex, columnIndex, value, item) {
+                        srcFunction(rowIndex, columnIndex, value, item) {
                             return value ? value : ""; // 값이 없으면 기본 빈 이미지를 리턴
                         }
                     }
@@ -150,7 +150,7 @@ const grids = {
                     renderer : {
                         type : "ImageRenderer",
                         imgHeight : 100,
-                        srcFunction : function(rowIndex, columnIndex, value, item) {
+                        srcFunction(rowIndex, columnIndex, value, item) {
                             return value ? value : ""; // 값이 없으면 기본 빈 이미지를 리턴
                         }
                     }
@@ -160,7 +160,7 @@ const grids = {
                     renderer : {
                         type : "ImageRenderer",
                         imgHeight : 100,
-                        srcFunction : function(rowIndex, columnIndex, value, item) {
+                        srcFunction(rowIndex, columnIndex, value, item) {
                             return value ? value : ""; // 값이 없으면 기본 빈 이미지를 리턴
                         }
                     }
@@ -179,7 +179,7 @@ const grids = {
                     renderer : {
                         type: "TemplateRenderer",
                     },
-                    labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item ) {
                         return `<button class="c-state">보기</button>`;
                     },
                 },

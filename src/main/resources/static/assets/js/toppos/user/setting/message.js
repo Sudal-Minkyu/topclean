@@ -155,7 +155,7 @@ const grids = {
                     dataField: "bcHp",
                     headerText: "전화번호",
                     width: 120,
-                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         return CommonUI.formatTel(value);
                     }
                 },
@@ -185,7 +185,7 @@ const grids = {
                     dataField: "bcHp",
                     headerText: "전화번호",
                     width: 120,
-                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         return CommonUI.formatTel(value);
                     }
                 },
@@ -254,7 +254,7 @@ const grids = {
                     dataField: "fmType",
                     headerText: "전송유형",
                     width: 70,
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         return CommonData.name.fmType[value];
                     },
                 }, {
@@ -264,7 +264,7 @@ const grids = {
                     renderer : {
                         type : "TemplateRenderer",
                     },
-                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         let result = "";
                         if(typeof value === "number") {
                             result = new Date(value).format("yyyy-MM-dd<br>hh:mm");
@@ -281,7 +281,7 @@ const grids = {
                     headerText: "수신번호",
                     style: "grid_textalign_left",
                     width: 120,
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         return CommonUI.formatTel(value);
                     },
                 }, {

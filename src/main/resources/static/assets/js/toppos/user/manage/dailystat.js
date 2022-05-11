@@ -249,7 +249,7 @@ const trigs = {
 			});
 
 			$("#entryPasswordKeyboard").on("click", function () {
-				vkey.showKeyboard("entryPassword", {title: "계정 비밀번호 입력", callback: function () {
+				vkey.showKeyboard("entryPassword", {title: "계정 비밀번호 입력", callback() {
                     const password = {
                         password: $("#entryPassword").val(),
                     }

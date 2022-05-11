@@ -33,7 +33,6 @@ $(function() {
             setTimeout(function (){
                 AUIGrid.showToastMessage(gridId[0], e.rowIndex, e.columnIndex, "입력된 코드는 수정할 수 없습니다.");
             }, 0);
-            return false;
         }
     });
 
@@ -42,7 +41,6 @@ $(function() {
             setTimeout(function (){
                 AUIGrid.showToastMessage(gridId[1], e.rowIndex, e.columnIndex, "입력된 중분류 코드는 수정할 수 없습니다.");
             }, 0);
-            return false;
         }
     });
 
@@ -51,7 +49,6 @@ $(function() {
             setTimeout(function (){
                 AUIGrid.showToastMessage(gridId[2], e.rowIndex, e.columnIndex, "입력된 상품순번은 수정할 수 없습니다.");
             }, 0);
-            return false;
         }
     });
 
@@ -114,11 +111,11 @@ let currentBig;
 let currentMedium;
 
 /* 그리드 생성과 운영에 관한 중요 변수들. grid라는 이름으로 시작하도록 통일했다. */
-let gridId = [];
+const gridId = [];
 let gridTargetDiv = [];
-let gridData = [];
-let gridColumnLayout = [];
-let gridProp = [];
+const gridData = [];
+const gridColumnLayout = [];
+const gridProp = [];
 let gridCreateUrl = [];
 let gridSaveUrl = [];
 
@@ -329,7 +326,6 @@ function addRow(numOfGrid) {
             if(item.length && !AUIGrid.isAddedById(gridId[0], item[0]._$uid)) {
                 delete item[0]['_$uid'];
                 item[0]['bsUseYn'] = "Y";
-                console.log(item);
                 AUIGrid.addRow(gridId[numOfGrid], item, "last");
             }else{
                 alertCaution("저장되어 있는 대분류 항목을 선택해 주세요", 1);
@@ -472,7 +468,7 @@ function gridSave(numOfGrid) {
 }
 
 /* 입력된 각 코드들의 형식과 길이를 유효성 검증함 */
-function codeValidator(oldValue, newValue, item, dataField, fromClipboard) {
+function codeValidator(_oldValue, newValue, _item, _dataField, _fromClipboard) {
     let isValid = false;
     let failMessage = "";
     if(newValue.length < 3) {
@@ -485,7 +481,7 @@ function codeValidator(oldValue, newValue, item, dataField, fromClipboard) {
     return {"validate": isValid, "message": failMessage};
 }
 
-function codeValidatorTwo(oldValue, newValue, item, dataField, fromClipboard) {
+function codeValidatorTwo(_oldValue, newValue, _item, _dataField, _fromClipboard) {
     let isValid = false;
     let failMessage = "";
     if(newValue.length < 1) {
@@ -498,7 +494,7 @@ function codeValidatorTwo(oldValue, newValue, item, dataField, fromClipboard) {
     return {"validate": isValid, "message": failMessage};
 }
 
-function defaultColumn(rowIndex, columnIndex, value, headerText, item, dataField) {
+function defaultColumn(_rowIndex, _columnIndex, value, _headerText, item, _dataField) {
     let returnStyle = "aui-grid-editable-column";
     if(value !== "" && !AUIGrid.isAddedById(gridId[1], item._$uid)) {
         returnStyle = "";

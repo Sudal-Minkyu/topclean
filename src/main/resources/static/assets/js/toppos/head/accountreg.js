@@ -39,11 +39,11 @@ let $password;
 
 // 그리드 관련 시작
 // +++++++++++++++++++++++++++++++++++++//
-let gridId = [];
+const gridId = [];
 let gridTargetDiv = [];
-let gridData = [];
-let gridColumnLayout = [];
-let gridProp = [];
+const gridData = [];
+const gridColumnLayout = [];
+const gridProp = [];
 
 /* 그리드를 뿌릴 대상 id */
 gridTargetDiv = [
@@ -72,7 +72,7 @@ gridColumnLayout[0] = [
     }, {
         dataField: "usertel",
         headerText: "전화번호",
-        labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+        labelFunction(_rowIndex, _columnIndex, value, _headerText, _item) {
             return CommonUI.formatTel(value);
         },
     }, {
@@ -179,16 +179,10 @@ gridProp[2] = {
     height : 400,
 };
 
-function createAccountGrid(gridColumnLayout, gridProp) {
-    for (const i in gridColumnLayout) {
-        gridId[i] = AUIGrid.create(gridTargetDiv[i], gridColumnLayout[i], gridProp[i]);
+function createAccountGrid(columnLayout, prop) {
+    for (const i in columnLayout) {
+        gridId[i] = AUIGrid.create(gridTargetDiv[i], columnLayout[i], prop[i]);
     }
-
-    /* <=========================> */
-    /* 각 그리드의 url */
-    // const gridUrl = [
-    //     "/api/head/branchList", "/api/head/franchiseList"
-    // ]
 
     for (let i=1; i<3; i++) {
         if(i===1){
@@ -220,7 +214,7 @@ function frPopList(numOfGrid){
     popupListAjax(url,numOfGrid,params);
 }
 
-function popupListAjax(url,numOfGrid,params){
+function popupListAjax(url,numOfGrid,params) {
     CommonUI.ajax(url, "GET", params, function(req){
         gridData[numOfGrid] = req.sendData.gridListData;
         AUIGrid.setGridData(gridId[numOfGrid], gridData[numOfGrid]);
@@ -232,31 +226,27 @@ function popupListAjax(url,numOfGrid,params){
 
 // 지사선택 함수
 function brListPop(){
-    // console.log("지사선택 팝업열기");
     AUIGrid.clearFilterAll(gridId[1]);
     $('#branch_popup').addClass('active');
-    
+
     AUIGrid.resize(gridId[1]);
 }
 
 // 가맹점선택 함수
 function frListPop(){
-    // console.log("가맹점선택 팝업열기");
     AUIGrid.clearFilterAll(gridId[2]);
     $('#franchise_popup').addClass('active');
-    
+
     AUIGrid.resize(gridId[2]);
 }
 
 // 지사 점 팝업닫기
 function branchClose(){
-    // console.log("지사선택 팝업닫기");
     $('#branch_popup').removeClass('active');
 }
 
 // 가맹점 선택 팝업닫기
 function franchiseClose(){
-    // console.log("가맹점선택 팝업닫기");
     $('#franchise_popup').removeClass('active');
 }
 
@@ -267,15 +257,15 @@ function useridOverlap(){
     const $userid = $("#userid").val();
     if($userid==="" || $userid===undefined){
         alertCaution("아이디를 입력해주세요.",1);
-        return false;
+        return;
     }
 
-    let url = "/api/head/useridOverlap";
-    let params = {
-        userid: $userid
+    const url = "/api/head/useridOverlap";
+    const params = {
+        userid: $userid,
     };
 
-    CommonUI.ajax(url, "GET", params, function (req){
+    CommonUI.ajax(url, "GET", params, function (){
         $useridChecked.val("1");
         $useridCheckedBtn.attr("disabled", true);
         alertSuccess("사용할 수 있는  아이디입니다.");
@@ -295,47 +285,40 @@ function accountSave(){
 
     if($useridChecked.val() === "0"){
         alertCaution("유저아이디 중복확인을 해주세요.",1);
-        return false;
+        return;
     }
 
-    /* //이메일 유효성 검사. 제거요청이 있어 주석화
-    if(!CommonUI.regularValidator($("#useremail").val(), "email")) {
-        alertCaution("이메일을 잘 입력 해주세요.",1);
-        $("#useremail").trigger("focus");
-        return false;
-    }
-    */
     if($("#username").val() === "") {
         alertCaution("이름을 입력 해주세요.",1);
-        return false;
+        return;
     }
 
     if($("#usertel").val() === "") {
         alertCaution("전화번호를 입력 해주세요.",1);
-        return false;
+        return;
     }
 
 
     const userRole = $("#role").val();
     if(userRole === "") {
         alertCaution("권한을 선택 해주세요.",1);
-        return false;
+        return;
     }
     /* 권한에 따라 지사나 가맹점 선택을 했는지 검사 */
     if((userRole === "ROLE_MANAGER" || userRole === "ROLE_NORMAL") && $("#brCode").val() === "" ) {
         alertCaution("지사를 선택 해주세요.",1);
-        return false;
-    }else if(userRole === "ROLE_USER" && $("#frCode").val() === "" ) {
+        return;
+    } else if(userRole === "ROLE_USER" && $("#frCode").val() === "" ) {
         alertCaution("가맹점을 선택 해주세요",1);
-        return false;
+        return;
     }
 
     const formData = new FormData(document.getElementById('accountFormData'));
     formData.set("usertel", formData.get("usertel").numString());
 
-    let url = "/api/head/accountSave";
+    const url = "/api/head/accountSave";
 
-    CommonUI.ajax(url, "POST", formData, function (req){
+    CommonUI.ajax(url, "POST", formData, function (){
         /* 저장작업을 하면 사용자 리스트를 리로드 한다. */
         accountList();
         createNewPost(0);
@@ -349,8 +332,8 @@ function accountRemove() {
         let targetUser = {};
         if(AUIGrid.getSelectedItems(gridId[0])) {
             targetUser = {
-                userid : AUIGrid.getSelectedItems(gridId[0])[0].item.userid
-            }
+                userid : AUIGrid.getSelectedItems(gridId[0])[0].item.userid,
+            };
         }
         CommonUI.ajax("/api/head/accountDelete", "PARAM", targetUser, function() {
             createNewPost(0);
@@ -364,13 +347,13 @@ function accountRemove() {
 
 // 사용자 조회 함수호출
 function accountList(){
-    let url = "/api/head/accountList";
-    let params = {
+    const url = "/api/head/accountList";
+    const params = {
         s_userid: $("#s_userid").val(),
         s_username: $("#s_username").val(),
         s_role: $("#s_role").val(),
         s_frCode: $("#s_frCode").val(),
-        s_brCode: $("#s_brCode").val()
+        s_brCode: $("#s_brCode").val(),
     };
     CommonUI.ajax(url, "GET", params, function(req){
         AUIGrid.setGridData("grid_accountList", req.sendData.gridListData);
@@ -403,13 +386,11 @@ function setFieldData(numOfGrid, item) {
 /* 사용자 신규 등록을 위해 필드를 비우고 입력 절차를 위한 상태를 초기화 시킨다. */
 function createNewPost(numOfGrid) {
     setFieldData(numOfGrid, {userremark : "", useridChecked : "0", role : ""});
-    switch (numOfGrid) {
-        case 0 :
-            restrictCodeSelection("");
-            changeUseridStatus(false);
-            $("#userid").trigger("focus");
-            $password.attr("disabled", false);
-            break;
+    if (numOfGrid === 0) {
+        restrictCodeSelection("");
+        changeUseridStatus(false);
+        $("#userid").trigger("focus");
+        $password.attr("disabled", false);
     }
 }
 
@@ -477,7 +458,7 @@ function filterAccountList(type) {
 
 /* 전화번호 입력을 위한 유효성 검사 */
 function formatTel(element) {
-    let phoneNumber = element.value;
+    const phoneNumber = element.value;
     element.value = CommonUI.formatTel(phoneNumber);
 }
 

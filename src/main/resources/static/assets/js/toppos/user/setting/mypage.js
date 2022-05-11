@@ -241,7 +241,7 @@ const grids = {
 					renderer: {
 						type: "TemplateRenderer",
 					},
-					labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+					labelFunction(rowIndex, columnIndex, value, headerText, item) {
 						return `
 							<button class="c-button c-button--solid  c-button--supersmall" 
 								onclick="onModifyOrder(0, ${rowIndex})">수정</button>
@@ -266,7 +266,7 @@ const grids = {
 					renderer: {
 						type: "TemplateRenderer",
 					},
-					labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+					labelFunction(rowIndex, columnIndex, value, headerText, item) {
 						return `
 							<button class="c-button c-button--solid  c-button--supersmall" 
 								onclick="onModifyOrder(1, ${rowIndex})">수정</button>
@@ -291,7 +291,7 @@ const grids = {
 					renderer: {
 						type: "TemplateRenderer",
 					},
-					labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+					labelFunction(rowIndex, columnIndex, value, headerText, item) {
 						return `
 							<button class="c-button c-button--solid  c-button--supersmall" 
 								onclick="onModifyOrder(2, ${rowIndex})">수정</button>

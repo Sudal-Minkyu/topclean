@@ -145,7 +145,7 @@ gridColumnLayout[0] = [
         dataField: "bcHp",
         headerText: "휴대폰",
         width: 120,
-        labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
+        labelFunction(rowIndex, columnIndex, value, headerText, item) {
             return CommonUI.formatTel(value);
         }
     }, {
@@ -157,7 +157,7 @@ gridColumnLayout[0] = [
         dataField: "bcGrade",
         headerText: "등급",
         width: 60,
-        labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
+        labelFunction(rowIndex, columnIndex, value, headerText, item) {
             return bcGradeName[value];
         },
     }, {
@@ -180,7 +180,7 @@ gridColumnLayout[0] = [
         renderer : {
             type: "TemplateRenderer",
         },
-        labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
+        labelFunction(rowIndex, columnIndex, value, headerText, item ) {
             return `
                 <button class="c-button c-button--supersmall" 
                     onclick="onModifySaveMoney(${rowIndex})">조정</button>
@@ -194,7 +194,7 @@ gridColumnLayout[0] = [
         dataField: "bcAge",
         headerText: "연령/생일",
         width: 140,
-        labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
+        labelFunction(rowIndex, columnIndex, value, headerText, item) {
             return value + "대/" + item.bcBirthday.substr(0, 4) + "-" +
                 item.bcBirthday.substr(4, 2) + "-" + item.bcBirthday.substr(6, 2);
         },
@@ -219,7 +219,7 @@ gridColumnLayout[0] = [
         renderer : {
             type: "TemplateRenderer",
         },
-        labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
+        labelFunction(rowIndex, columnIndex, value, headerText, item ) {
             return `
                 <button class="c-button c-button--solid  c-button--supersmall" 
                     onclick="onModifyCustomer(${rowIndex})">수정</button>

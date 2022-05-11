@@ -32,11 +32,11 @@ const dtos = {
                 itemname: "s", // 롱 오리털 코트
                 specialyn: "s", // Y
                 price: "n",
-				estimateDt: "s", // fdEstimateDt
+                estimateDt: "s", // fdEstimateDt
             },
-            
+
             creditData: { // 결제한 내역들의 배열, 적립금이나 현금은 금액과 타입만 오면 됨
-                type: "sr", // fpType 기준 01: cash, 02: card, 03: save 
+                type: "sr", // fpType 기준 01: cash, 02: card, 03: save
                 cardNo: "s", // fpCatCardNo
                 cardName: "s", // fpCatIssuername
                 approvalTime: "s", // fpCatApprovaltime
@@ -50,29 +50,26 @@ const dtos = {
 
 const urls = {
     getReceiptData: "/api/mobile/unAuth/requestPaymentMobilePaper",
-}
+};
 
 const comms = {
     getReceiptData(target) {
         CommonUI.ajax(urls.getReceiptData, "GET", target, function (res) {
             const data = res.sendData;
-            console.log(data); // 영수증 데이터 확인해서 뿌리기
             setField(data);
         });
     }
 };
 
 const trigs = {
-    basic() {
-    },
-}
+};
 
 const wares = {
     colorName: {
         "00": "없음", "01": "흰색", "02": "검정", "03": "회색", "04": "빨강", "05": "주황",
         "06": "노랑", "07": "초록", "08": "파랑", "09": "남색", "10": "보라", "11": "핑크",
     },
-}
+};
 
 $(function() {
     onPageLoad();
@@ -81,7 +78,7 @@ $(function() {
 function onPageLoad() {
     trigs.basic();
 
-    chkParams();    
+    chkParams();
 }
 
 function chkParams() {
@@ -92,9 +89,9 @@ function chkParams() {
         const frNo = wares.params.get("id"); // 어떤종류의 id인지 파악해서 변수명 바꿀것
 
         const target = {
-            frNo: frNo,
+            frNo,
             frId: "",
-        }
+        };
 
         comms.getReceiptData(target);
     }
@@ -102,7 +99,7 @@ function chkParams() {
 
 function setField(data) {
     $("#requestDt").html(data.paymentData.requestDt);
-    
+
     $("#franchiseName").html(data.paymentData.franchiseName);
     $("#businessNO").html(CommonUI.formatBusinessNo(data.paymentData.businessNO));
     $("#repreName").html(data.paymentData.repreName);
@@ -124,7 +121,7 @@ function setField(data) {
         $("#estimateDt").html(data.items[0].estimateDt);
     }
 
-    const frTagType = data.paymentData.franchiseTagType.length ? parseInt(data.paymentData.franchiseTagType) : 2;
+    const frTagType = data.paymentData.franchiseTagType.length ? parseInt(data.paymentData.franchiseTagType, 10) : 2;
     for (const {color, itemname, price, tagno} of data.items) {
         $("#itemList").append(`
             <tr>
@@ -138,7 +135,8 @@ function setField(data) {
 
     for (const obj of data.creditData) {
         if (obj.type === "02") { // 카드 결제 목록보고 결정
-            const approvalTime = `20${obj.approvalTime.substring(0, 2)}-${obj.approvalTime.substring(2, 4)}-${obj.approvalTime.substring(4, 6)} ${obj.approvalTime.substring(6, 8)}:${obj.approvalTime.substring(8, 10)}`;
+            const approvalTime = `20${obj.approvalTime.substring(0, 2)}-${obj.approvalTime.substring(2, 4)}`
+                + `-${obj.approvalTime.substring(4, 6)} ${obj.approvalTime.substring(6, 8)}:${obj.approvalTime.substring(8, 10)}`;
             $("#receiptList").append(`
                 <div class="receipt__sub">
                     <dl>

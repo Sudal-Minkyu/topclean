@@ -48,7 +48,6 @@
 			try {
 				const token = window.localStorage.getItem('Authorization');
 				const parsedToken = readToken(token);
-				console.log(parsedToken);
 			} catch (e) {
 				console.log(e);
 			}
@@ -59,7 +58,6 @@
 		function getHeaderData() {
 			CommonUI.ajax("/api/head/headHeaderData", "GET", false, function (res) {
 				const data = res.sendData;
-				console.log(data);
 				$("#headerUserName").html(data.accountHeaderData.username);
 			});
 		}

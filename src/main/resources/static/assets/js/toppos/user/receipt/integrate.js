@@ -692,14 +692,14 @@ const grids = {
                     renderer: {
                         type: "TemplateRenderer"
                     },
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         return `<span class="bgcolor${value}" style="display: none">${value}</span>`;
                     },
                 }, {
                     dataField: "frRefType",
                     headerText: "구분",
                     width: 40,
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         return CommonData.name.frRefType[value];
                     },
                 }, {
@@ -712,7 +712,7 @@ const grids = {
                     headerText: "택번호",
                     style: "datafield_tag",
                     width: 65,
-                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         return CommonData.formatFrTagNo(value, frTagInfo.frTagType);
                     },
                 }, {
@@ -722,7 +722,7 @@ const grids = {
                     renderer : {
                         type : "TemplateRenderer",
                     },
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         const colorSquare =
                             `<span class="colorSquare" style="background-color: ${CommonData.name.fdColorCode[item.fdColor]}"></span>`;
                         CommonUI.toppos.makeProductName(item, initialData.userItemPriceSortData);
@@ -736,7 +736,7 @@ const grids = {
                     renderer : {
                         type: "TemplateRenderer",
                     },
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         let template = "";
                         if(item.photoList && item.photoList.length) {
                             template = `<img src="/assets/images/icon__picture.svg" onclick="openReceiptPhotoPop(${rowIndex})">`;
@@ -755,7 +755,7 @@ const grids = {
                     dataField: "fdState",
                     headerText: "현재상태",
                     width: 85,
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         return CommonData.name.fdState[value];
                     },
                 }, {
@@ -770,7 +770,7 @@ const grids = {
                     renderer : {
                         type : "TemplateRenderer",
                     },
-                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         let template = "";
                         if(item.frFiId && item.frFiCustomerConfirm === "1") {
                             template = `<button class="c-state c-state--yellow" `
@@ -837,7 +837,7 @@ const grids = {
                     renderer : {
                         type: "TemplateRenderer",
                     },
-                    labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item ) {
                         let template = "";
                         item.frInspectBtn = true;
                         if(item.fdState === "S1" && !item.frFiId) {
@@ -860,7 +860,7 @@ const grids = {
                     renderer : {
                         type: "TemplateRenderer",
                     },
-                    labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item ) {
                         let template = "";
                         item.brInspectBtn = true;
                         if(item.fdState === "B" && item.brFiId && item.brFiCustomerConfirm === "1") {
@@ -881,7 +881,7 @@ const grids = {
                     renderer : {
                         type: "TemplateRenderer",
                     },
-                    labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item ) {
                         let template = "";
                         if(["S1", "F"].includes(item.fdState)) {
                             template = `
@@ -900,7 +900,7 @@ const grids = {
                     renderer : {
                         type: "TemplateRenderer",
                     },
-                    labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item ) {
                         let template = "";
                         if(item.fpCancelYn === "Y" && ["S1", "F", "B"].includes(item.fdState)) {
                             template = `
@@ -919,7 +919,7 @@ const grids = {
                     renderer : {
                         type: "TemplateRenderer",
                     },
-                    labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item ) {
                         let template = "";
                         if(item.fpCancelYn === "N" && item.fdState !== "S2") {
                             template = `
@@ -938,7 +938,7 @@ const grids = {
                     renderer : {
                         type: "TemplateRenderer",
                     },
-                    labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item ) {
                         let template = "";
                         if(item.fdState === "S6") {
                             template = `
@@ -970,7 +970,7 @@ const grids = {
                 enableCellMerge : true,
                 rowHeight : 48,
                 headerHeight : 48,
-                rowStyleFunction : function(rowIndex, item) {
+                rowStyleFunction(rowIndex, item) {
                     return "grid_cellcolor" + item.cellColor;
                 },
             };
@@ -982,7 +982,7 @@ const grids = {
                 }, {
                     dataField: "bcHp",
                     headerText: "전화번호",
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         return CommonUI.formatTel(value);
                     }
                 }, {
@@ -1025,7 +1025,7 @@ const grids = {
                 }, {
                     dataField: "fpType",
                     headerText: "결제방식",
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         let resultText = "";
                         if(item.fpCatIssuername) {
                             resultText = item.fpCatIssuername;
@@ -1097,7 +1097,7 @@ const grids = {
                 }, {
                     dataField: "fiType",
                     headerText: "유형",
-                    labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item ) {
                         return CommonData.name.fiType[value];
                     },
                 }, {
@@ -1115,7 +1115,7 @@ const grids = {
                 }, {
                     dataField: "fiCustomerConfirm",
                     headerText: "고객수락",
-                    labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item ) {
                         return CommonData.name.fiCustomerConfirm[value];
                     },
                 },
@@ -2014,7 +2014,7 @@ function onShowVKeypad(num) {
 
     vkeypadProp[0] = {
         title : "추가비용 입력",
-        callback : function () {
+        callback() {
             return $("#" + vkeypadTargetId).val(parseInt($("#" + vkeypadTargetId).val()).toLocaleString());
         }
     }

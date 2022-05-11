@@ -31,7 +31,6 @@ $(function() {
             setTimeout(function (){
                 AUIGrid.showToastMessage(gridId[1], e.rowIndex, e.columnIndex, "입력된 중분류 코드는 수정할 수 없습니다.");
             }, 0);
-            return false;
         }
     });
 });
@@ -42,11 +41,11 @@ let idIndex = "";
 let selectedFrCode = "";
 
 /* 그리드 생성과 운영에 관한 중요 변수들. grid라는 이름으로 시작하도록 통일했다. */
-let gridId = [];
+const gridId = [];
 let gridTargetDiv = [];
-let gridData = [];
-let gridColumnLayout = [];
-let gridProp = [];
+const gridData = [];
+const gridColumnLayout = [];
+const gridProp = [];
 let gridCreateUrl = [];
 let gridSaveUrl = [];
 
@@ -58,12 +57,12 @@ gridTargetDiv = [
 /* 그리드를 받아올 때 쓰이는 api 배열 */
 gridCreateUrl = [
     "/api/head/franchiseList", "/api/head/franchisePriceList", "/api/head/itemGroupCList"
-]
+];
 
 /* 그리드를 저장할 때 쓰이는 api 배열 */
 gridSaveUrl = [
     "/api/head/franchisePrice"
-]
+];
 
 /* 0번 그리드의 레이아웃 */
 gridColumnLayout[0] = [
@@ -294,11 +293,9 @@ function savePriceList() {
         if(element["biItemcode"] === undefined) {
             alertCaution("상품을 선택해 주세요.", 1);
             proceed = false;
-            return false;
         }else if(element["bfPrice"] === undefined) {
             alertCaution("적용금액을 입력해 주세요.", 1);
             proceed = false;
-            return false;
         }
     });
 

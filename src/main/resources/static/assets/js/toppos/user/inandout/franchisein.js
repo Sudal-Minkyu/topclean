@@ -140,7 +140,7 @@ const grids = {
                     dataField: "fdS4Type",
                     headerText: "출고타입",
                     width: 80,
-                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         return CommonData.name.fdS4Type[value];
                     },
                 }, {
@@ -154,7 +154,7 @@ const grids = {
                     headerText: "택번호",
                     style: "datafield_tag",
                     width: 70,
-                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         return CommonData.formatFrTagNo(value, frTagInfo.frTagType);
                     },
                 }, 
@@ -166,7 +166,7 @@ const grids = {
                     renderer : {
                         type : "TemplateRenderer",
                     },
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         const colorSquare =
                             `<span class="colorSquare" style="background-color: ${CommonData.name.fdColorCode[item.fdColor]}; vertical-align: middle;"></span>`;
                         const sumName = CommonUI.toppos.makeSimpleProductName(item);
@@ -177,7 +177,7 @@ const grids = {
                     dataField: "",
                     headerText: "입고유형",
                     width: 80,
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         let type = "";
                         if (item.fdRetryYn === "Y") {
                             type = "재세탁";
@@ -196,7 +196,7 @@ const grids = {
                     headerText: "처리내역",
                     style: "grid_textalign_left",
                     width: 120,
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         return CommonUI.toppos.processName(item);
                     },
                 },
@@ -226,7 +226,7 @@ const grids = {
                         type : "CheckBoxHeaderRenderer",
                         dependentMode : true,
                         position : "bottom",
-                        onClick: function (e) {
+                        onClick() {
                             grids.f.resetUpdatedItems();
                         },
                     },

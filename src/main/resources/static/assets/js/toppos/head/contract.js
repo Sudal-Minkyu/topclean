@@ -5,11 +5,11 @@
 * 현재 페이지의 경우 Grid 화면은 4개인데, 2개의 데이터 셋을 불러오고 공유하므로, 차후 나올 코드를 감안해야 한다.
 * */
 
-let gridId = [];
+const gridId = [];
 let gridTargetDiv = [];
-let gridData = [];
-let gridColumnLayout = [];
-let gridProp = [];
+const gridData = [];
+const gridColumnLayout = [];
+const gridProp = [];
 
 /* 그리드를 뿌릴 대상 id */
 gridTargetDiv = [
@@ -202,7 +202,7 @@ gridProp[4] = {
     enableFilter : true,
     width : 660,
     height : 480,
-}
+};
 
 /* datepicker를 적용시킬 대상들의 dom id들 */
 const datePickerTargetIds = [
@@ -218,25 +218,21 @@ const dateAToBTargetIds = [
     ["brContractFromDt", "brContractToDt"], ["frContractFromDt", "frContractToDt"]
 ];
 
-/* 1번 그리드의 필터조건 첫번째, 두번째가 임시 저장된다. */
-let filterCondition1A = "";
-let filterCondition1B = "";
-
 /* 실행부 */
 $(function () {
 
     // 탭
     const $tabsBtn = $('.c-tabs__btn');
     const $tabsContent = $('.c-tabs__content');
-    
+
     $tabsBtn.on('click', function() {
         const idx = $(this).index();
-        
+
         $tabsBtn.removeClass('active');
         $tabsBtn.eq(idx).addClass('active');
         $tabsContent.removeClass('active');
         $tabsContent.eq(idx).addClass('active');
-        
+
         AUIGrid.resize(gridId[0]);
         AUIGrid.resize(gridId[1]);
         AUIGrid.resize(gridId[2]);
@@ -265,7 +261,6 @@ $(function () {
     /* 2번그리드 내의 아이템 클릭시 필드에 적용 */
     AUIGrid.bind(gridId[2], "cellClick", function (e) {
         CommonUI.ajax("/api/head/branchAssignList", "GET", {brCode : e.item.brCode}, function (req) {
-            console.log(req);
             const resultData = req.sendData.gridListData;
             AUIGrid.clearGridData(gridId[3]);
             AUIGrid.setGridData(gridId[3], resultData);
@@ -289,7 +284,6 @@ $(function () {
     });
 
     AUIGrid.bind(gridId[4], "cellDoubleClick", function (e) {
-        console.log(e);
         putBranchInfo(e.item);
     });
 
@@ -303,7 +297,7 @@ $(function () {
         $("#frCodeChkBtn").prop("disabled", false);
     });
 
-    $("input[name='frTagType']").on("click", function (e) {
+    $("input[name='frTagType']").on("click", function () {
         const numOfTag =  $("input[name='frTagType']:checked").val();
         onChangeNumOfTag(numOfTag);
     });
@@ -319,24 +313,24 @@ $(function () {
 });
 
 /* 레이아웃, 프로퍼티를 적용하여 그리드 생성 */
-function createGrid(gridColumnLayout, gridProp) {
-    for (const i in gridColumnLayout) {
-        gridId[i] = AUIGrid.create(gridTargetDiv[i], gridColumnLayout[i], gridProp[i]);
+function createGrid(columnLayout, prop) {
+    for (const i in columnLayout) {
+        gridId[i] = AUIGrid.create(gridTargetDiv[i], columnLayout[i], prop[i]);
     }
 
     /* 그리드들에 초기 데이터 주입 */
     for (let i=0; i<5; i++) {
-    	setListData(gridCreateUrl[i], i);
+        setListData(gridCreateUrl[i], i);
     }
 }
 
 /* 해당 그리드와 연관된 그리드의 데이터를 주입한다. */
-function setListData(url, numOfGrid, filterCondition = {}, callback = function (){}) {
+function setListData(url, numOfGrid, filterCondition = {}, callback = function (){/* intentional */}) {
     CommonUI.ajax(url, "GET", filterCondition, function(req) {
         gridData[numOfGrid] = req.sendData.gridListData;
         AUIGrid.setGridData(gridId[numOfGrid], gridData[numOfGrid]);
         return callback();
-    })
+    });
 }
 
 // 지사, 가맹점 코드 중복확인 체크함수
@@ -352,7 +346,7 @@ function codeOverlap(num){
         };
         if(params.brCode.length !== 2) {
             alertCaution("지사코드는 2자리로 입력해 주세요.", 1);
-            return false;
+            return;
         }
     }else{
         url = "/api/head/franchiseOverlap";
@@ -361,11 +355,11 @@ function codeOverlap(num){
         };
         if(params.frCode.length !== 3) {
             alertCaution("가맹점코드는 3자리로 입력해 주세요.", 1);
-            return false;
+            return;
         }
     }
 
-    CommonUI.ajax(url,"GET",params, function (req){
+    CommonUI.ajax(url,"GET",params, function (){
         if(num===1){
             $("#brCodeChecked").val("1");
             $("#brCodeChkBtn").prop("disabled", true);
@@ -383,11 +377,11 @@ function branchSave(){
     const $brCodeChecked = $("#brCodeChecked").val();
     if($brCodeChecked==="0"){
         alertCaution("지사코드 중복확인을 해주세요.",1);
-        return false;
+        return;
     }
     if($("#brName").val() === "") {
         alertCaution("지사명을 입력해 주세요", 1);
-        return false;
+        return;
     }
 
     const valCalRateBr = $("#brCarculateRateBr").val() ? $("#brCarculateRateBr").val() : 0;
@@ -397,12 +391,12 @@ function branchSave(){
         alertCaution("정산비율의 합은 100 이어야 합니다." +
             "<br>현재값 :" + parseFloat(sumCalRate.toFixed(2))
             +" &nbsp 차이 :" + parseFloat((sumCalRate - 100).toFixed(2)), 1);
-        return false;
+        return;
     }
 
     if($("#brRoyaltyRateBr").val() === "" || $("#brRoyaltyRateFr").val() === "") {
         alertCaution("로열티율을 입력해 주세요.", 1);
-        return false;
+        return;
     }
 
 
@@ -411,7 +405,7 @@ function branchSave(){
     formData.set("brTelNo", formData.get("brTelNo").numString());
     const url = "/api/head/branchSave";
 
-    CommonUI.ajax(url, "POST", formData, function (req){
+    CommonUI.ajax(url, "POST", formData, function (){
         const sentData = Object.fromEntries(formData);
         const isUpdated = AUIGrid.rowIdToIndex(gridId[0], sentData.brCode) > -1;
         if(isUpdated) {
@@ -435,7 +429,7 @@ function branchDelete() {
             const url = "/api/head/branchDelete";
             const data = {
                 brCode: selectedItems[0].item.brCode
-            }
+            };
             CommonUI.ajax(url, "PARAM", data, function () {
                 AUIGrid.clearGridData(gridId[0]);
                 setListData(gridCreateUrl[0], 0);
@@ -453,32 +447,30 @@ function franchiseSave() {
     const $frCodeChecked = $("#frCodeChecked").val();
     if($frCodeChecked==="0"){
         alertCaution("가맹점코드 중복확인을 해주세요.",1);
-        return false;
+        return;
     }
     if($("#frName").val() === "") {
         alertCaution("가맹점명을 입력해 주세요", 1);
-        return false;
+        return;
     }
 
-    if($("#frTagNo").val().length !== parseInt($("input[name='frTagType']:checked").val())) {
+    if($("#frTagNo").val().length !== parseInt($("input[name='frTagType']:checked").val(), 10)) {
         alertCaution(`가맹점택코드 ${$("input[name='frTagType']:checked").val()}자리를 입력해 주세요`, 1);
-        return false;
+        return;
     }
 
     if(!$("#frEstimateDuration").val()) {
         alertCaution("출고예정일계산을 입력해 주세요",1);
-        return false;
+        return;
     }
 
     const formData = new FormData(document.getElementById('frFormData'));
-    let url = "/api/head/franchiseSave";
+    const url = "/api/head/franchiseSave";
     formData.set("frBusinessNo", formData.get("frBusinessNo").numString());
     formData.set("frTelNo", formData.get("frTelNo").numString());
 
-    console.log(Object.fromEntries(formData));
-    CommonUI.ajax(url, "POST", formData, function (req){
+    CommonUI.ajax(url, "POST", formData, function (){
         const sentData = Object.fromEntries(formData);
-        console.log(sentData);
         const isUpdated = AUIGrid.rowIdToIndex(gridId[1], sentData.frCode) > -1;
 
         if(isUpdated) {
@@ -504,7 +496,7 @@ function franchiseDelete() {
             const url = "/api/head/franchiseDelete";
             const data = {
                 frCode: selectedItems[0].item.frCode
-            }
+            };
             CommonUI.ajax(url, "PARAM", data, function () {
                 AUIGrid.clearGridData(gridId[1]);
                 setListData(gridCreateUrl[1], 1);
@@ -524,11 +516,11 @@ function assignmentSave() {
 
     if(frCode === ""){
         alertCaution("가맹점을 선택 해주세요.",1);
-        return false;
+        return;
     }
     if(brCode === ""){
         alertCaution("지사를 선택 해주세요.",1);
-        return false;
+        return;
     }
 
     const valCalRateBr = $("#bot_frCarculateRateBr").val() ? $("#bot_frCarculateRateBr").val() : 0;
@@ -538,7 +530,7 @@ function assignmentSave() {
         alertCaution("정산비율의 합은 100 이어야 합니다." +
             "<br>현재값 :" + parseFloat(sumCalRate.toFixed(2))
             +"<br>차이 :" + parseFloat((sumCalRate - 100).toFixed(2)), 1);
-        return false;
+        return;
     }
 
     const valRoyalRateBr =  $("#bot_frRoyaltyRateBr").val() ? $("#bot_frRoyaltyRateBr").val() : 0;
@@ -546,7 +538,7 @@ function assignmentSave() {
 
     if($("#bot_frRoyaltyRateBr").val() === "" || $("#bot_frRoyaltyRateFr").val() === "") {
         alertCaution("로열티율을 입력해 주세요.", 1);
-        return false;
+        return;
     }
 
     const formData = new FormData();
@@ -560,13 +552,12 @@ function assignmentSave() {
 
     const url = "/api/head/franchiseAssignment";
 
-    CommonUI.ajax(url, "POST", formData, function(req) {
+    CommonUI.ajax(url, "POST", formData, function() {
         formData.append("brAssignState", brAssignState);
         formData.append("brName", $("#bot_brName").val());
         const jsonData = Object.fromEntries(formData);
         AUIGrid.updateRowsById(gridId[3], jsonData);
         setListData(gridCreateUrl[1], 1);
-        //filterGrid3();
         alertSuccess("가맹점 배정정보 저장 완료");
     });
 
@@ -574,7 +565,7 @@ function assignmentSave() {
 
 /* 클릭, 신규에 따른 필드의 값을 대입하거나, 비우고 적합한 상태를 세팅한다. */
 function setFieldData(numOfGrid, item) {
-    let isLockField = item.brCode !== undefined || item.frCode !== undefined;
+    const isLockField = item.brCode !== undefined || item.frCode !== undefined;
     switch (numOfGrid) {
         case 0 :
             $("#brCode").val(item.brCode).attr("readonly", isLockField);
@@ -670,7 +661,7 @@ function resetFieldData3() {
         frCarculateRateFr: "",
         frRoyaltyRateBr: "",
         frRoyaltyRateFr: "",
-    }
+    };
     setFieldData(3, item);
 }
 
@@ -679,7 +670,7 @@ function createNewPost(numOfGrid) {
     /* 기본적으로 undefined 로 되어있을시 데이터 배치에 문제가 생기는 값이나
     * 초기값 지정한 값들은 기본값을 지정하여 문제가 생기지 않도록 한다. */
     setFieldData(numOfGrid, {brRemark : "", frRemark : "",
-                brCodeChecked : "0", frCodeChecked : "0", brContractState : "01", 
+                brCodeChecked : "0", frCodeChecked : "0", brContractState : "01",
                 frContractState : "01", frBusinessNo: ""});
     /* 신규 row를 추가하고 나서 편집이 용이하도록 포커스를 준다. */
     switch (numOfGrid) {
@@ -740,7 +731,7 @@ function filterBranchList(type) {
 function brListPop(){
     filterBranchList(2);
     $('#branch_popup').addClass('open');
-    
+
     AUIGrid.resize(gridId[4]);
 }
 
@@ -781,8 +772,8 @@ function validateNumber(element, type) {
         case 2 :
                 element.value = element.value.numString();
                 if (element.id === "frEstimateDuration") {
-                    const minus1Value = parseInt(element.value) < 2 || isNaN(parseInt(element.value))
-                        ? "" : parseInt(element.value) - 1;
+                    const minus1Value = parseInt(element.value, 10) < 2 || isNaN(parseInt(element.value, 10))
+                        ? "" : parseInt(element.value, 10) - 1;
                     $("#frEstimateDurationMinus1").val(minus1Value);
                 }
             break;
@@ -800,7 +791,7 @@ function onKeyupFrBusinessNo(el) {
 // 우편번호 검색
 function execDaumPostcode() {
     new daum.Postcode({
-        oncomplete: function(data) {
+        oncomplete(data) {
             let addr = ''; // 주소 변수
 
             //사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져온다.
@@ -821,7 +812,6 @@ function execDaumPostcode() {
 
 function onChangeNumOfTag(num) {
     const $frTagNo = $("#frTagNo");
-    console.log(num);
     $frTagNo.attr("maxlength", num);
     $frTagNo.val($frTagNo.val().numString().substring(0, num));
 }

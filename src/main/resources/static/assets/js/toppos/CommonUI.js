@@ -11,13 +11,13 @@ class CommonUIClass {
     constructor() {
         /* 숫자만 남긴 후 인트형으로 전환 */
         String.prototype.toInt = function () {
-            return this.toString() ? parseInt(this.replace(/[^0-9-]/g, "")) : 0;
-        }
+            return this.toString() ? parseInt(this.replace(/[^0-9-]/g, ""), 10) : 0;
+        };
 
         /* 0~9까지만 남긴 문자를 반환, 앞자리가 0으로 시작할 수 있음. */
         String.prototype.numString = function () {
-            return this.toString() ? this.replace(/[^0-9]/g, "") : "";
-        }
+            return this.toString() ? this.replace(/[\D]/g, "") : "";
+        };
 
         /* 통신 에러의 경우 최초 단 1회만 보고한다. (무한루프 가능성 때문) */
         this.commsErrMsg = true;
@@ -66,7 +66,7 @@ class CommonUIClass {
                     }
                 }
 
-                statusText += item.fdUrgentYn === "Y" ? "급" : ""; 
+                statusText += item.fdUrgentYn === "Y" ? "급" : "";
                 statusText += item.fdPriceGrade === "3" ? "명" : "";
                 statusText += item.fdRetryYn === "Y" ? "재" : "";
                 statusText += item.fdPressed ? "다" : "";
@@ -80,26 +80,28 @@ class CommonUIClass {
             } catch (e) {
                 this.toppos.underTaker(e, "CommonUI : 처리내역 문자조합");
             }
+            return '';
         },
 
         killNullFromArray(array) {
-            let resultArray = [];
+            const resultArray = [];
             for(const obj of array) {
-                if(obj !== null) resultArray.push(obj);
+                if(obj !== null) {
+                    resultArray.push(obj);
+                }
             }
             return resultArray;
         },
 
         printReceipt(frNo = "", frId = "", printCustomers = false, cancelYN = "N") {
             const condition = {
-                frNo: frNo,
-                frId: frId,
-            }
+                frNo,
+                frId,
+            };
             try {
                 const url = "/api/user/requestPaymentPaper";
-                
+
                 CommonUI.ajax(url, "GET", condition, function (res) {
-                    console.log(res);
 
                     const typeTrans = {
                         "01": "cash",
@@ -139,10 +141,8 @@ class CommonUIClass {
         printRepaymentReceipt(condition, cancelYN = "N") { // 미수금 상환용 영수증 출력
             try {
                 const url = "/api/user/requestPaymentPaper";
-                
-                CommonUI.ajax(url, "GET", condition, function (res) {
-                    console.log(res.sendData);
 
+                CommonUI.ajax(url, "GET", condition, function (res) {
                     const typeTrans = {
                         "01": "cash",
                         "02": "card",
@@ -170,7 +170,7 @@ class CommonUIClass {
             }
         },
 
-        publishCashRceipt(paymentData, callback = function () {}) {
+        publishCashRceipt(paymentData, callback = function () {/* 빈기능 */}) {
             CAT.CatSetCashReceipt(paymentData, function (res) {
                 $('#payStatus').hide();
                 res = JSON.parse(res);
@@ -189,13 +189,11 @@ class CommonUIClass {
                     paymentData.fcCatIssuername = res.ISSUERNAME;
                     paymentData.fcMuechantnumber = res.MERCHANTNUMBER;
 
-                    console.log(paymentData);
                     CommonUI.ajax("/api/user/requestPaymentCashPaper", "PARAM", paymentData, function () {
                         alertSuccess("현금영수증이 정상 발행 되었습니다.");
                     });
                     return callback();
                 } else if (res.STATUS === "FAILURE") {
-                    console.log(res);
                     if (res.ERRORDATA === "erroecode:404, error:error") {
                         alertCancel("카드결제 단말기 연결이 감지되지 않습니다.<br>연결을 확인해 주세요.");
                     } else if (res.ERRORDATA === "erroecode:0, error:timeout") {
@@ -208,14 +206,15 @@ class CommonUIClass {
                         alertCancel(res.ERRORMESSAGE);
                     }
                 }
+                return function () {/* 빈기능 */};
             });
         },
 
-        speak(text, callback = function() {}) {
+        speak(text, callback = function() {/* 빈기능 */}) {
             if(typeof speechSynthesis === 'undefined') {
                 return;
             }
-            
+
             const voices = speechSynthesis.getVoices();
 
             const voiceProp = new SpeechSynthesisUtterance(text);
@@ -252,13 +251,12 @@ class CommonUIClass {
         underTaker(erMsg, erTitle) {
             const data = {
                 erMsg: erMsg.substring(0, 245),
-                erTitle: erTitle,
+                erTitle,
             };
             const url = "/api/error/errorSave";
-            console.log(data);
             CommonUI.ajax(url, "PARAM", data);
         },
-    }
+    };
 
     validation = {
         /* 날짜가 필수값인지 체크하지는 않고, 입력되었을 경우 올바른 8자리인지를 체크한다. */
@@ -272,7 +270,7 @@ class CommonUIClass {
             }
             return false;
         },
-    }
+    };
 
 
     /*
@@ -283,7 +281,7 @@ class CommonUIClass {
         for (const targetId of targetIdArray) {
             const $target = $("#"+targetId);
             $target.datepicker({
-                dateFormat: dateFormat,
+                dateFormat,
                 changeMonth: true,
                 changeYear: true,
             });
@@ -338,7 +336,7 @@ class CommonUIClass {
     regularValidator(testValue, testMethod) {
         const email = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/;
         /* 8자리 숫자를 통해 검사 */
-        const dateExist = /^(?:(?:(?:(?:(?:[13579][26]|[2468][048])00)|(?:[0-9]{2}(?:(?:[13579][26])|(?:[2468][048]|0[48]))))(?:(?:(?:09|04|06|11)(?:0[1-9]|1[0-9]|2[0-9]|30))|(?:(?:01|03|05|07|08|10|12)(?:0[1-9]|1[0-9]|2[0-9]|3[01]))|(?:02(?:0[1-9]|1[0-9]|2[0-9]))))|(?:[0-9]{4}(?:(?:(?:09|04|06|11)(?:0[1-9]|1[0-9]|2[0-9]|30))|(?:(?:01|03|05|07|08|10|12)(?:0[1-9]|1[0-9]|2[0-9]|3[01]))|(?:02(?:[01][0-9]|2[0-8])))))$/
+        const dateExist = /^(?:(?:(?:(?:(?:[13579][26]|[2468][048])00)|(?:[0-9]{2}(?:(?:[13579][26])|(?:[2468][048]|0[48]))))(?:(?:(?:09|04|06|11)(?:0[1-9]|1[0-9]|2[0-9]|30))|(?:(?:01|03|05|07|08|10|12)(?:0[1-9]|1[0-9]|2[0-9]|3[01]))|(?:02(?:0[1-9]|1[0-9]|2[0-9]))))|(?:[0-9]{4}(?:(?:(?:09|04|06|11)(?:0[1-9]|1[0-9]|2[0-9]|30))|(?:(?:01|03|05|07|08|10|12)(?:0[1-9]|1[0-9]|2[0-9]|3[01]))|(?:02(?:[01][0-9]|2[0-8])))))$/;
 
         switch (testMethod) {
             case "email" : // 이메일 형식이 맞는지 검사.
@@ -348,6 +346,7 @@ class CommonUIClass {
             default :
                 break;
         }
+        return '';
     }
 
     /* 국내 전화 번호 양식화, 적절한 위치에 - 추가, 최종 형태 잡을 때도, 입력할 때 마다 쓸 수도 있음 */
@@ -359,12 +358,12 @@ class CommonUIClass {
             telNumber = "";
         }
         const telLength = telNumber.length;
-        
+
         let foreNumType;
         const testForeCode = telNumber.substring(0, 3);
         if(testForeCode.substring(0, 2) === "02") {
             foreNumType = 2;
-        } else if(parseInt(testForeCode) > 129 && parseInt(testForeCode) < 200) {
+        } else if(parseInt(testForeCode, 10) > 129 && parseInt(testForeCode, 10) < 200) {
             foreNumType = 4;
         } else if(testForeCode === "014") {
             foreNumType = 5;
@@ -428,20 +427,21 @@ class CommonUIClass {
     /* ajax 통신의 자주 쓰는 패턴을 간단하게 쓰기 위함
     * (apiUrl, 통신방식(혹은 컨트롤러에서 받는 방식), 보낼데이터, 성공시 콜백, 실패시 콜백)
     * */
-    ajax(url, method, data, successFn = function () {}, errorFn = function () {}, netFailFn = function () {}) {
+    ajax(url, method, data, successFn = function () {/* 빈기능 */}, errorFn = function () {/* 빈기능 */}
+         , netFailFn = function () {/* 빈기능 */}) {
         $("#loadingScreen").show();
         if(data) {
             switch (method) {
                 case "GET" :
-                    $(document).ajaxSend(function (e, xhr) {
+                    $(document).ajaxSend(function (_e, xhr) {
                         xhr.setRequestHeader("Authorization", localStorage.getItem('Authorization'));
                     });
                     $.ajax({
-                        url: url,
+                        url,
+                        data,
                         type: 'GET',
                         cache: false,
                         traditional: true,
-                        data: data,
                         error: errorResponse,
                         success: successResponse,
                     });
@@ -450,14 +450,14 @@ class CommonUIClass {
                 case "POST" :
                 case "PUT" :
                 case "DELETE" :
-                    $(document).ajaxSend(function (e, xhr) {
+                    $(document).ajaxSend(function (_e, xhr) {
                         xhr.setRequestHeader("Authorization", localStorage.getItem('Authorization'));
                     });
                     $.ajax({
-                        url: url,
+                        url,
+                        data,
                         type: method,
                         cache: false,
-                        data: data,
                         processData: false,
                         contentType: false,
                         enctype: 'multipart/form-data',
@@ -467,11 +467,11 @@ class CommonUIClass {
                     break;
 
                 case "MAPPER" :
-                    $(document).ajaxSend(function (e, xhr) {
+                    $(document).ajaxSend(function (_e, xhr) {
                         xhr.setRequestHeader("Authorization", localStorage.getItem('Authorization'));
                     });
                     $.ajax({
-                        url: url,
+                        url,
                         type: "POST",
                         cache: false,
                         data: JSON.stringify(data),
@@ -482,12 +482,12 @@ class CommonUIClass {
                     break;
 
                 case "PARAM" :
-                    $(document).ajaxSend(function (e, xhr) {
+                    $(document).ajaxSend(function (_e, xhr) {
                         xhr.setRequestHeader("Authorization", localStorage.getItem('Authorization'));
                     });
                     $.ajax({
-                        url: url,
-                        data : data,
+                        url,
+                        data,
                         type : 'post',
                         cache:false,
                         traditional: true,
@@ -497,12 +497,12 @@ class CommonUIClass {
                     break;
             }
         }else if(method === "GET") {
-            $(document).ajaxSend(function (e, xhr) {
+            $(document).ajaxSend(function (_e, xhr) {
                 xhr.setRequestHeader("Authorization", localStorage.getItem('Authorization'));
             });
             $.ajax({
-                url: url,
-                type: method,
+                url,
+                method,
                 cache: false,
                 error: errorResponse,
                 success: successResponse,
@@ -519,8 +519,7 @@ class CommonUIClass {
                 } else {
                     alertCancel(res.err_msg + "<br>" + res.err_msg2);
                 }
-                console.log(res);
-                CommonUI.toppos.underTaker("status : " + res.status + " || msg : " 
+                CommonUI.toppos.underTaker("status : " + res.status + " || msg : "
                     + res.err_msg + res.err_msg2, "통신성공 에러코드");
                 return errorFn(res);
             }
@@ -529,7 +528,6 @@ class CommonUIClass {
         function errorResponse(res) {
             $("#loadingScreen").hide();
             if(CommonUI.commsErrMsg) {
-                console.log(res);
                 CommonUI.toppos.underTaker(res.responseJSON.path + " |||| " + res.status + " |||| "
                     + res.responseJSON.message, "통신실패 에러");
                 CommonUI.commsErrMsg = false;
@@ -544,8 +542,8 @@ class CommonUIClass {
     /* 규칙 dtos와 같은 구조로 새로운 dto 생성하기 위함 (규칙 dto의 키값을 품은 빈 깡통 만들기) */
     newDto(dto) {
         const keys = Object.keys(dto);
-        let babyDto = {};
-        for(let key in keys) {
+        const babyDto = {};
+        for(const key in keys) {
             babyDto[keys[key]] = null;
         }
         return babyDto;
@@ -553,8 +551,8 @@ class CommonUIClass {
 
     cloneObj(dto) {
         const keys = Object.keys(dto);
-        let babyDto = {};
-        for(let key in keys) {
+        const babyDto = {};
+        for(const key in keys) {
             babyDto[keys[key]] = dto[keys[key]];
         }
         return babyDto;
@@ -584,4 +582,4 @@ class CommonUIClass {
     }
 }
 
-let CommonUI = new CommonUIClass();
+const CommonUI = new CommonUIClass();

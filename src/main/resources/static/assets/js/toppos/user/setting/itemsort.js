@@ -153,7 +153,7 @@ const grids = {
                         type : "DropDownListRenderer",
                         list : ["Y", "N"],
                     },
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         if(value !== "Y") {
                             item.bgFavoriteYn = "N";
                         }
@@ -185,14 +185,14 @@ const grids = {
                 {
                     dataField: "",
                     headerText: "분류코드",
-                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         return item.bgItemGroupcode + item.bsItemGroupcodeS;
                     }
                 }, {
                     dataField: "",
                     headerText: "분류명칭",
                     style: "grid_textalign_left",
-                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         return item.bgName + " " + item.bsName;
                     }
                 },
@@ -217,14 +217,14 @@ const grids = {
                 {
                     dataField: "",
                     headerText: "상품코드",
-                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         return item.biItemcode;
                     }
                 }, {
                     dataField: "",
                     headerText: "상품명",
                     style: "grid_textalign_left",
-                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         return item.biName;
                     }
                 },

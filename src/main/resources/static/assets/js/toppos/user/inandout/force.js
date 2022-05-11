@@ -167,7 +167,7 @@ const grids = {
                     headerText: "택번호",
                     style: "datafield_tag",
                     width: 90,
-                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         return CommonData.formatFrTagNo(value, frTagInfo.frTagType);
                     },
                 }, 
@@ -179,7 +179,7 @@ const grids = {
                     renderer : {
                         type : "TemplateRenderer",
                     },
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         const colorSquare =
                             `<span class="colorSquare" style="background-color: ${CommonData.name.fdColorCode[item.fdColor]}; vertical-align: middle;"></span>`;
                         const sumName = CommonUI.toppos.makeSimpleProductName(item);
@@ -190,7 +190,7 @@ const grids = {
                     dataField: "fdState",
                     headerText: "현재상태",
                     width: 90,
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         return CommonData.name.fdState[value];
                     },
                 }, 
@@ -199,7 +199,7 @@ const grids = {
                     headerText: "처리내역",
                     style: "grid_textalign_left",
                     width: 100,
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         return CommonUI.toppos.processName(item);
                     },
                 },
@@ -260,7 +260,7 @@ const grids = {
                 }, {
                     dataField: "bcHp",
                     headerText: "전화번호",
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         return CommonUI.formatTel(value);
                     }
                 }, {

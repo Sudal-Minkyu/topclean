@@ -318,61 +318,42 @@ const temp = {
 
 
 
-        function fn_viewer_open(projectName, formName, datasetObject, paramObject)
-        {
-
-            var _params = {"projectName":projectName 			//프로젝트명
-                ,"formName":formName             //서식명
+        function fn_viewer_open(projectName, formName, datasetObject, paramObject){
+            const _params = {
+                projectName,
+                formName,
             };
-
-
-            for (var datasetValue in datasetObject) {
+            for (const datasetValue in datasetObject) {
                 _params[datasetValue] = encodeURIComponent(datasetObject[datasetValue]);
             }
-
-            for (var paramValue in paramObject) {
+            for (const paramValue in paramObject) {
                 _params[paramValue] = paramObject[paramValue];
             }
 
-            //var _url = window.location.protocol + "//" + window.location.hostname + ( window.location.port ? ':'+window.location.port : '' )+ "/UBIFORM/UView5/index.jsp"; //UBIFORM Viewer URL
-            var _url = "https://report.topcleaners.kr:443" + "/UBIFORM/UView5/index.jsp"; //UBIFORM Viewer URL
-
+            const _url = "https://report.topcleaners.kr:443" + "/UBIFORM/UView5/index.jsp"; //UBIFORM Viewer URL
             //팝업 오픈 Option 해당 설정은 window.open 설정을 참조
-            //var windowoption = 'location=0, directories=0,resizable=0,status=0,toolbar=0,menubar=0, width=1280px,height=650px,left=0, top=0,scrollbars=0';  //팝업사이즈 window.open참고
-            var windowoption = 'width=1280px,height=650px';
-            var d = new Date();
-            var n = d.getTime();
-
-            var name = "printArea";// "UBF_" + n;
+            //let windowoption = 'location=0, directories=0,resizable=0,status=0,toolbar=0,menubar=0, width=1280px,height=650px,left=0, top=0,scrollbars=0';  //팝업사이즈 window.open참고
+            const windowoption = 'width=1280px,height=650px';
+            const name = "printArea";// "UBF_" + n;
             //팝업사이즈 window.open참고
-
-            var form = document.createElement("form");
-
+            const form = document.createElement("form");
             form.setAttribute("method", "post");
             form.setAttribute("action", _url);
-            params = _params ;
-
-            for (var i in params)
-            {
-                if (params.hasOwnProperty(i))
-                {
-                    var param = document.createElement('input');
+            const params = _params ;
+            for (const i in params) {
+                if (params.hasOwnProperty(i)) {
+                    const param = document.createElement('input');
                     param.type = 'hidden';
                     param.name = i;
                     param.value = encodeURI( params[i] );
                     form.appendChild(param);
                 }
             }
-
-
-
-
             document.body.appendChild(form);
             form.setAttribute("target", name);
             window.open("", name, windowoption);
             form.submit();
             document.body.removeChild(form);
-
         }
     </script>
 </th:block>

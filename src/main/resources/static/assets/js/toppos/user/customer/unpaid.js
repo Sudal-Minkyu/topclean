@@ -213,7 +213,7 @@ const grids = {
                     dataField: "bcHp",
                     headerText: "전화번호",
                     width: 120,
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         return CommonUI.formatTel(value);
                     },
                 }, {
@@ -266,7 +266,7 @@ const grids = {
                     dataField: "requestDetailCount",
                     headerText: "상품내역",
                     style: "grid_textalign_left",
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         let rearText = "";
                         if(value > 1) {
                             rearText = " 외 " + (value - 1) + "건";
@@ -324,7 +324,7 @@ const grids = {
                     headerText: "택번호",
                     style: "datafield_tag",
                     width: 80,
-                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         return CommonData.formatFrTagNo(value, frTagInfo.frTagType);
                     },
                 }, {
@@ -334,7 +334,7 @@ const grids = {
                     renderer : {
                         type : "TemplateRenderer",
                     },
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         const colorSquare =
                             `<span class="colorSquare" style="background-color: ${CommonData.name.fdColorCode[item.fdColor]}; vertical-align: middle;"></span>`;
                         const sumName = CommonUI.toppos.makeSimpleProductName(item);
@@ -345,7 +345,7 @@ const grids = {
                     headerText: "처리내역",
                     style: "grid_textalign_left",
                     width: 90,
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         return CommonUI.toppos.processName(item);
                     }
                 }, {
@@ -359,7 +359,7 @@ const grids = {
                     dataField: "fdState",
                     headerText: "상태",
                     width: 60,
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         return CommonData.name.fdState[value];
                     },
                 }, {
@@ -396,7 +396,7 @@ const grids = {
                     dataField: "requestDetailCount",
                     headerText: "상품내역",
                     style: "grid_textalign_left",
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         let rearText = "";
                         if(value > 1) {
                             rearText = " 외 " + (value - 1) + "건";

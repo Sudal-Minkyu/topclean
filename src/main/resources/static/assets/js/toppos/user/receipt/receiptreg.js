@@ -398,7 +398,7 @@ gridColumnLayout[0] = [
         headerText: "택번호",
         style: "datafield_tag",
         width: 80,
-        labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
+        labelFunction(rowIndex, columnIndex, value, headerText, item) {
             return CommonData.formatFrTagNo(value, frTagInfo.frTagType);
         },
     }, {
@@ -406,7 +406,7 @@ gridColumnLayout[0] = [
         headerText: "상품명",
         style: "receiptreg-product-name",
         width: 200,
-        labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+        labelFunction(rowIndex, columnIndex, value, headerText, item) {
             CommonUI.toppos.makeProductName(item, initialData.userItemPriceSortData);
             return item.sumName;
         },
@@ -415,7 +415,7 @@ gridColumnLayout[0] = [
             iconPosition: "left",
             iconWidth : 30,
             iconHeight : 30,
-            iconFunction: function(rowIndex, columnIndex, value, item) {
+            iconFunction(rowIndex, columnIndex, value, item) {
                 let icon = "";
                 if(item.photoList.length) {
                     icon = "/assets/images/icon__picture.svg";
@@ -425,7 +425,7 @@ gridColumnLayout[0] = [
                 return icon;
             }
             ,
-            onClick: function(event) {
+            onClick(event) {
                 onPopTakePicture(event);
             },
         }
@@ -433,7 +433,7 @@ gridColumnLayout[0] = [
         dataField: "sumProcess",
         headerText: "처리내역",
         style: "grid_textalign_left",
-        labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+        labelFunction(rowIndex, columnIndex, value, headerText, item) {
             return CommonUI.toppos.processName(item);
         }
     }, {
@@ -443,7 +443,7 @@ gridColumnLayout[0] = [
         width: 70,
         dataType: "numeric",
         autoThousandSeparator: "true",
-        labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+        labelFunction(rowIndex, columnIndex, value, headerText, item) {
             return item.fdRetryYn==="Y" ? 0 : value.toLocaleString();
         },
     }, {
@@ -453,7 +453,7 @@ gridColumnLayout[0] = [
         width: 70,
         dataType: "numeric",
         autoThousandSeparator: "true",
-        labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+        labelFunction(rowIndex, columnIndex, value, headerText, item) {
             return item.fdRetryYn === "Y" ? 0 : value.toLocaleString();
         },
     }, {
@@ -463,7 +463,7 @@ gridColumnLayout[0] = [
         width: 70,
         dataType: "numeric",
         autoThousandSeparator: "true",
-        labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+        labelFunction(rowIndex, columnIndex, value, headerText, item) {
             const addAmount = item.fdPressed + item.fdWhitening + item.fdWaterRepellent + item.fdStarch
                 + item.fdPollution + item.fdAdd1Amt + item.fdUrgentAmt;
             return item.fdRetryYn === "Y" ? 0 : addAmount.toLocaleString();
@@ -475,7 +475,7 @@ gridColumnLayout[0] = [
         width: 70,
         dataType: "numeric",
         autoThousandSeparator: "true",
-        labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+        labelFunction(rowIndex, columnIndex, value, headerText, item) {
             return item.fdRetryYn === "Y" ? 0 : value.toLocaleString();
         },
     }, {
@@ -492,7 +492,7 @@ gridColumnLayout[0] = [
         width: 90,
         dataType: "numeric",
         autoThousandSeparator: "true",
-        labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+        labelFunction(rowIndex, columnIndex, value, headerText, item) {
             return value.toLocaleString();
         }
     }, {
@@ -503,7 +503,7 @@ gridColumnLayout[0] = [
         renderer : {
             type : "TemplateRenderer",
         },
-        labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+        labelFunction(rowIndex, columnIndex, value, headerText, item) {
             return `<div class="colorSquare" style="background-color: ${CommonData.name.fdColorCode[item.fdColor]}"></div>`;
         }
     }, {
@@ -523,7 +523,7 @@ gridColumnLayout[0] = [
         renderer : {
             type: "TemplateRenderer",
         },
-        labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
+        labelFunction(rowIndex, columnIndex, value, headerText, item ) {
             return `
                 <button class="c-button c-button--solid  c-button--supersmall" 
                     onclick="onModifyOrder(${rowIndex})">수정</button>
@@ -559,7 +559,7 @@ gridColumnLayout[1] = [
     }, {
         dataField: "bcHp",
         headerText: "전화번호",
-        labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+        labelFunction(rowIndex, columnIndex, value, headerText, item) {
             return CommonUI.formatTel(value);
         }
     }, {
@@ -597,7 +597,7 @@ gridColumnLayout[2] = [
     }, {
         dataField: "bcHp",
         headerText: "전화번호",
-        labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+        labelFunction(rowIndex, columnIndex, value, headerText, item) {
             return CommonUI.formatTel(value);
         }
     }, {
@@ -631,7 +631,7 @@ gridColumnLayout[3] = [
     {
         dataField: "fpType",
         headerText: "결제수단",
-        labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+        labelFunction(rowIndex, columnIndex, value, headerText, item) {
             return item.fpCatIssuername ? item.fpCatIssuername : CommonData.name.fpType[value];
         },
     }, {
