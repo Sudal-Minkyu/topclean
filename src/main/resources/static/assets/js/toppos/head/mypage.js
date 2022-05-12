@@ -34,7 +34,7 @@ const comms = {
     },
     setUserInfo(userData) {
         console.log(userData);
-        CommonUI.ajax("/api/head/headMyInfoSave", "POST", userData, function (res) {
+        CommonUI.ajax("/api/head/headMyInfoSave", "PARAM", userData, function (res) {
             alertSuccess("나의 정보 변경 완료");
             $("#nowPassword").val("");
             $("#newPassword").val("");
@@ -67,6 +67,11 @@ const trigs = {
             $("#checkDelSuccessBtn").on("click", function () {
                 saveUser();
             });
+        });
+
+        $('#userTel').on('keyup', function () {
+            const telNum = $('#userTel').val();
+            $('#userTel').val(CommonUI.formatTel(telNum));
         });
     },
 }

@@ -90,6 +90,11 @@ const trigs = {
                 saveUser();
             });
         });
+
+        $('#userTel').on('keyup', function () {
+            const telNum = $('#userTel').val();
+            $('#userTel').val(CommonUI.formatTel(telNum));
+        });
     },
 };
 
