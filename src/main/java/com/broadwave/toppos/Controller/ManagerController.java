@@ -149,4 +149,25 @@ public class ManagerController {
     public String message(){
         return "manager/setting/message";
     }
+
+    // 외주관리가격설정
+    @RequestMapping("oempricemanage")
+    public String oempricemanage() {
+        return "manager/outsource/oempricemanage";
+    }
+    // 외주출고처리
+    @RequestMapping("oemsend")
+    public String oemsend() {
+        return "manager/outsource/oemsend";
+    }
+    // 외주입고처리
+    @RequestMapping("oemreceive")
+    public String oemreceive() {
+        return "manager/outsource/oemreceive";
+    }
+    // 외주입출고현황
+    @RequestMapping("oemstatus")
+    public String oemstatus() {
+        return "manager/outsource/oemstatus";
+    }
 }
