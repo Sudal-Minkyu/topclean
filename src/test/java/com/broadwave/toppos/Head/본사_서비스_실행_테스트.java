@@ -9,16 +9,16 @@ import com.broadwave.toppos.Head.Branch.BranchRepository;
 import com.broadwave.toppos.Head.Franchise.Franchise;
 import com.broadwave.toppos.Head.Franchise.FranchiseRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -34,13 +34,15 @@ import static org.junit.Assert.assertThat;
  * Remark : 본사 서비스 테스트코드
  */
 @Slf4j
-@DisplayName("╯°□°）╯본사 서비스 실행")
+@DisplayName("╯°□°）╯본사 서비스 테스트 실행")
 @SpringBootTest
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@RunWith(SpringJUnit4ClassRunner.class)
-public class HeadServiceUnitTest {
+@ActiveProfiles("test")
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@RunWith(SpringRunner.class)
+public class 본사_서비스_실행_테스트 {
 
     // 지사코드 : tc, 가맹점코드 : tct
+    // 지사계정 : test_manager, 가맹점코드 : test_user
 
     @Autowired
     private AccountRepository accountRepository;
@@ -54,10 +56,8 @@ public class HeadServiceUnitTest {
     @Autowired
     private FranchiseRepository franchRepository;
 
-    @DisplayName("1. 테스트 지사 생성")
-    @Order(1)
     @Test
-    public void branchSetUpA() {
+    public void Test1_테스트_지사_생성_테스트() {
 
         String brCode = "tc"; // 지사코드
         String brName = "테스트코드_지사"; // 지사명
@@ -82,7 +82,7 @@ public class HeadServiceUnitTest {
             branch.setBrCarculateRateFr(80.0);
             branch.setBrRoyaltyRateBr(60.0);
             branch.setBrRoyaltyRateFr(60.0);
-            branch.setInsert_id("system");
+            branch.setInsert_id("testcode_system");
             branch.setInsertDateTime(LocalDateTime.now());
             Branch branchSave = branchRepository.save(branch);
 
@@ -93,10 +93,8 @@ public class HeadServiceUnitTest {
         }
     }
 
-    @DisplayName("2. 테스트 가맹점 생성")
-    @Order(2)
     @Test
-    public void franchSetUpB(){
+    public void Test2_테스트_가맹점_생성_테스트(){
 
         String frCode = "tct"; // 가맹점코드
         String frName = "테스트코드_가맹점"; // 가맹점명
@@ -124,9 +122,11 @@ public class HeadServiceUnitTest {
             franchise.setFrBusinessNo("123456789");
             franchise.setFrRpreName("시스템_테스트가맹점");
             franchise.setFrTelNo("01020450716");
+            franchise.setBrAssignState("01");
+            franchise.setFrMultiscreenYn("N");
             franchise.setFrEstimateDuration(2);
             franchise.setFrUrgentDayYn("Y");
-            franchise.setInsert_id("system");
+            franchise.setInsert_id("testcode_system");
             franchise.setInsertDateTime(LocalDateTime.now());
             Franchise franchiseSave = franchRepository.save(franchise);
 
@@ -137,10 +137,8 @@ public class HeadServiceUnitTest {
         }
     }
 
-    @DisplayName("3. 테스트 지사계정 생성")
-    @Order(3)
     @Test
-    public void managerAccountSetUpC(){
+    public void Test3_테스트_지사계정_생성_테스트(){
 
         String testManager = "test_manager";
         Optional<Account> optionalManagerAccount = accountRepository.findByUserid(testManager);
@@ -157,10 +155,12 @@ public class HeadServiceUnitTest {
             managerAccount.setFrCode("not");
             managerAccount.setBrCode("tc");
             managerAccount.setUserremark("테스트코드용 지사계정 입니다.");
-            managerAccount.setInsert_id("system");
+            managerAccount.setInsert_id("testcode_system");
             managerAccount.setInsertDateTime(LocalDateTime.now());
+
             // when
             Account accountSave = accountRepository.save(managerAccount);
+
             // then
             assertThat("test_manager", is(accountSave.getUserid()));
         }else{
@@ -168,10 +168,8 @@ public class HeadServiceUnitTest {
         }
     }
 
-    @DisplayName("4. 테스트 가맹점계정 생성")
-    @Order(4)
     @Test
-    public void userAccountSetUpD(){
+    public void Test4_테스트_가맹점계정_생성_테스트(){
 
         String testUser = "test_user";
         Optional<Account> optionalUserAccount = accountRepository.findByUserid(testUser);
@@ -188,10 +186,12 @@ public class HeadServiceUnitTest {
             userAccount.setFrCode("tct");
             userAccount.setBrCode("no");
             userAccount.setUserremark("테스트코드용 가맹점계정 입니다.");
-            userAccount.setInsert_id("system");
+            userAccount.setInsert_id("testcode_system");
             userAccount.setInsertDateTime(LocalDateTime.now());
+
             // when
             Account accountSave = accountRepository.save(userAccount);
+
             // then
             assertThat("test_user", is(accountSave.getUserid()));
         }else{
@@ -199,10 +199,8 @@ public class HeadServiceUnitTest {
         }
     }
 
-    @DisplayName("5. 테스트계정 리스트 조회 테스트")
-    @Order(5)
     @Test
-    public void accountListTestE(){
+    public void Test5_테스트계정_리스트_조회_테스트(){
 
         // 생성된 테스트 계정 리스트 조회
         // when
@@ -214,35 +212,34 @@ public class HeadServiceUnitTest {
 
     }
 
-    @DisplayName("6. 테스트계정 삭제 테스트")
-    @Order(6)
-    @Test
-    public void accountDeleteTestF(){
-
-        String testManager = "test_manager";
-        String testUser = "test_user";
-
-        // 삭제할 테스트 계정 조회
-        // given
-        Optional<Account> optionalManagerAccount = accountRepository.findByUserid(testManager);
-        Optional<Account> optionalUserAccount = accountRepository.findByUserid(testUser);
-
-        // when
-        optionalManagerAccount.ifPresent(account -> accountRepository.delete(account));
-        optionalUserAccount.ifPresent(account -> accountRepository.delete(account));
-
-        // 삭제된 테스트 계정 조회
-        Optional<Account> optionalDeleteManagerAccount = accountRepository.findByUserid(testManager);
-        Optional<Account> optionalDeleteUserAccount = accountRepository.findByUserid(testUser);
-
-        // then
-        if(!optionalDeleteManagerAccount.isPresent()){
-            log.info("지사 계정 삭제완료");
-        }
-        if(!optionalDeleteUserAccount.isPresent()){
-            log.info("가맹점 계정 삭제완료");
-        }
-
-    }
+//    @Test
+//    @DisplayName("6. 테스트계정 삭제 테스트")
+//    public void 테스트계정_삭제_테스트(){
+//
+//        String testManager = "test_manager";
+//        String testUser = "test_user";
+//
+//        // 삭제할 테스트 계정 조회
+//        // given
+//        Optional<Account> optionalManagerAccount = accountRepository.findByUserid(testManager);
+//        Optional<Account> optionalUserAccount = accountRepository.findByUserid(testUser);
+//
+//        // when
+//        optionalManagerAccount.ifPresent(account -> accountRepository.delete(account));
+//        optionalUserAccount.ifPresent(account -> accountRepository.delete(account));
+//
+//        // 삭제된 테스트 계정 조회
+//        Optional<Account> optionalDeleteManagerAccount = accountRepository.findByUserid(testManager);
+//        Optional<Account> optionalDeleteUserAccount = accountRepository.findByUserid(testUser);
+//
+//        // then
+//        if(!optionalDeleteManagerAccount.isPresent()){
+//            log.info("지사 계정 삭제완료");
+//        }
+//        if(!optionalDeleteUserAccount.isPresent()){
+//            log.info("가맹점 계정 삭제완료");
+//        }
+//
+//    }
 
 }

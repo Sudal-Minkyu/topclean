@@ -20,6 +20,8 @@ import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoneyRepository;
 import com.broadwave.toppos.User.UserDtos.UserIndexDto;
 import com.broadwave.toppos.User.UserLoginLog.UserLoginLog;
 import com.broadwave.toppos.User.UserLoginLog.UserLoginLogRepository;
+import com.broadwave.toppos.User.UserLogoutLog.UserLogoutLog;
+import com.broadwave.toppos.User.UserLogoutLog.UserLogoutLogRepository;
 import com.broadwave.toppos.common.AjaxResponse;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
@@ -51,7 +53,9 @@ public class UserService {
     private final SaveMoneyRepository saveMoneyRepository;
     private final RequestRepository requestRepository;
     private final CustomerRepository customerRepository;
+
     private final UserLoginLogRepository userLoginLogRepository;
+    private final UserLogoutLogRepository userLogoutLogRepository;
 
     private final AccountRepository accountRepository;
     private final AddprocessRepository addProcessRepository;
@@ -59,7 +63,7 @@ public class UserService {
 
     @Autowired
     public UserService(TokenProvider tokenProvider, SaveMoneyRepository saveMoneyRepository, RequestRepository requestRepository, RequestDetailRepository requestDetailRepository,
-                       CustomerRepository customerRepository, UserLoginLogRepository userLoginLogRepository, AccountRepository accountRepository,
+                       CustomerRepository customerRepository, UserLoginLogRepository userLoginLogRepository, UserLogoutLogRepository userLogoutLogRepository, AccountRepository accountRepository,
                        AddprocessRepository addProcessRepository, FranchiseRepository franchiseRepository){
         this.tokenProvider = tokenProvider;
         this.requestRepository = requestRepository;
@@ -67,6 +71,7 @@ public class UserService {
         this.requestDetailRepository = requestDetailRepository;
         this.customerRepository = customerRepository;
         this.userLoginLogRepository = userLoginLogRepository;
+        this.userLogoutLogRepository = userLogoutLogRepository;
         this.accountRepository = accountRepository;
         this.addProcessRepository = addProcessRepository;
         this.franchiseRepository = franchiseRepository;
@@ -116,13 +121,40 @@ public class UserService {
         Optional<UserLoginLog> optionalUserLoginLog = userLoginLogRepository.findByUserLoginLog(frCode,blLoginDt);
 //        log.info("userLoginLog 함수실행 : 현재 로그인한 가맹점 : "+frCode+", 현재 날짜(yyyymmdd) : "+blLoginDt);
         if(!optionalUserLoginLog.isPresent()){
-//            log.info("로그기록 합니다.");
+//            log.info("로그인 기록 합니다.");
             UserLoginLog userLoginLog = new UserLoginLog();
             userLoginLog.setFrCode(frCode);
             userLoginLog.setBlLoginDt(blLoginDt);
             userLoginLog.setInsert_id(login_id);
             userLoginLog.setInsertDateTime(localDateTime);
             userLoginLogRepository.save(userLoginLog);
+        }
+    }
+
+    // 가맹점이 로그아웃하면 로그아웃 기록을 남기는 서비스 : 하루에 여러번 기록한다.
+    public void userLogoutLog(HttpServletRequest request){
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String login_id = claims.getSubject(); // 현재 아이디
+        String frCode = (String) claims.get("frCode"); // 소속된 가맹점 코드
+
+        // 현재 날짜 받아오기
+        LocalDateTime localDateTime = LocalDateTime.now();
+        String blLogoutDt = localDateTime.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+
+        Optional<UserLogoutLog> optionalUserLogoutLog = userLogoutLogRepository.findByUserLogoutLog(frCode,blLogoutDt);
+        log.info("userLogoutLog 함수실행 : 현재 로그아웃한 가맹점 : "+frCode+", 현재 날짜(yyyymmdd) : "+blLogoutDt);
+        if(!optionalUserLogoutLog.isPresent()){
+//            log.info("로그아웃 기록 합니다.");
+            UserLogoutLog userLogoutLog = new UserLogoutLog();
+            userLogoutLog.setFrCode(frCode);
+            userLogoutLog.setBlLogoutDt(blLogoutDt);
+            userLogoutLog.setModify_id(login_id);
+            userLogoutLog.setModifyDateTime(localDateTime);
+            userLogoutLogRepository.save(userLogoutLog);
+        }else{
+            optionalUserLogoutLog.get().setModify_id(login_id);
+            optionalUserLogoutLog.get().setModifyDateTime(localDateTime);
+            userLogoutLogRepository.save(optionalUserLogoutLog.get());
         }
     }
 

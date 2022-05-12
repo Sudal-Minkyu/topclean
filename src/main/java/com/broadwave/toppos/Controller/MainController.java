@@ -87,6 +87,27 @@ public class MainController {
         return "login";
     }
 
+    // 로그아웃 실행
+    @GetMapping("/logoutActive")
+    public Object logoutActive(HttpServletRequest request){
+
+        log.info("로그아웃 시도");
+        AjaxResponse res = new AjaxResponse();
+
+        Authentication authentication = tokenProvider.getAuthentication(request.getHeader("Authorization"));
+        String role = authentication.getAuthorities().toString();
+        log.info("권한 : "+role);
+
+        if ("[ROLE_USER]".equals(role)) {
+            log.info("가맹점주 로그아웃");
+            userService.userLogoutLog(request);
+        }else{
+            log.info("일반 로그아웃");
+        }
+
+        return ResponseEntity.ok(res.success());
+    }
+
     // 광고화면(보조화면)
     @RequestMapping("/assistant")
     public String assistant(){
