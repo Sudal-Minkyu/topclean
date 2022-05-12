@@ -12,11 +12,11 @@ const dtos = {
             franchiseId: "n", // 가맹점 Id
         },
 
-        branchInspectionList: { // fdId가 일치하는 모든 검품 리스트 type 1: 검품등록시, 2: 검품확인시 
+        branchInspectionList: { // fdId가 일치하는 모든 검품 리스트 type 1: 검품등록시, 2: 검품확인시
             fdId: "nr",
             type: "s",
         },
-/* 
+/*
         branchInspectionSave: {
             fdId: "nr",
             fiAddAmt: "nr",
@@ -62,9 +62,9 @@ const dtos = {
             frFiCustomerConfirm: "s",
             fdId: "n",
             frName: "s",
-			insertDt: "s",
+            insertDt: "s",
             fdS2Time: "s",
-          
+
             fdTag: "s",
             fdColor: "s",
             bgName: "s",
@@ -131,18 +131,17 @@ const urls = {
     putNewInspectNeo: "/api/manager/branchInspectionSave",
     deleteInspection: "/api/manager/branchInspectionDelete",
     getInspectionNeo: "/api/manager/branchInspectionInfo",
-}
+};
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
     getFrList() {
         CommonUI.ajax(urls.getFrList, "GET", false, function (res) {
             const data = res.sendData.franchiseList;
-            console.log(res);
             dv.chk(data, dtos.receive.managerBelongList, "지점에 속한 가맹점 받아오기");
             const $frList = $("#frList");
             data.forEach(obj => {
-                const htmlText = `<option value="${obj.frId}" data-tagno="${obj.frTagNo}">${obj.frName}</option>`
+                const htmlText = `<option value="${obj.frId}" data-tagno="${obj.frTagNo}">${obj.frName}</option>`;
                 $frList.append(htmlText);
             });
         });
@@ -154,29 +153,15 @@ const comms = {
         CommonUI.ajax(urls.getMainGridList, "GET", searchCondition, function (res) {
             const data = CommonUI.toppos.killNullFromArray(res.sendData.gridListData);
             dv.chk(data, dtos.receive.branchInspection, "메인 그리드 검색 결과 리스트");
-            console.log(data);
             grids.f.setData(0, data);
         });
     },
-/* 
-    getInspectionList(condition) {
-        dv.chk(condition, dtos.send.branchInspectionList, "등록된 검품조회 조건");
-        CommonUI.ajax(urls.getInspectionList, "GET", condition, function(res) {
-            console.log(res);
-            const data = res.sendData.gridListData;
-            dv.chk(data, dtos.receive.branchInspectionList, "등록된 검품의 조회");
-            grids.f.clearData(1);
-            grids.f.setData(1, data);
-        });
-    },
-*/
 
     getInspectionNeo(condition) {
         dv.chk(condition, dtos.send.branchInspectionInfo, "확인품 디테일 정보받기 위한 아이디 보내기");
         CommonUI.ajax(urls.getInspectionNeo, "GET", condition, function (res) {
             $("#deleteInspect").parents("li").show();
             const data = res.sendData;
-            console.log(data);
             dv.chk(data, dtos.receive.branchInspectionInfo, "선택된 확인품의 디테일 정보 받기");
             const refinedData = {
                 fdId: wares.currentRequest.fdId,
@@ -187,10 +172,10 @@ const comms = {
                 fiPhotoYn: data.inspeotInfoDto.fiPhotoYn,
                 fiSendMsgYn: data.inspeotInfoDto.fiSendMsgYn,
                 photoList: data.photoList,
-            }
+            };
 
             wares.currentRequest = refinedData;
-            
+
             $("#fiComment").val(wares.currentRequest.fiComment);
             $("#fiAddAmt").val(wares.currentRequest.fiAddAmt.toLocaleString());
             const $customerResponse = $("#customerResponse");
@@ -211,56 +196,30 @@ const comms = {
                         <img src="${photo.ffPath + "s_" + photo.ffFilename}" class="tag-imgs__img" alt=""/>
                     </a>
                     <button class="tag-imgs__delete deletePhotoBtn" data-ffId="${photo.ffId}">삭제</button>
-                </li>`
+                </li>`;
                 $("#photoList").append(photoHtml);
                 $("#noImgScreen").hide();
             }
         });
     },
-/*
-    deleteInspection(targets, fdId) {
-        dv.chk(targets, dtos.send.branchInspectionDelete, "검품 삭제 목록");
-        const data = {list: targets};
-        CommonUI.ajax(urls.deleteInspection, "MAPPER", data, function(res) {
-            const searchCondition = {
-                fdId: fdId,
-                type: "2"
-            };
-            comms.getInspectionList(searchCondition);
-        });
-    },
-    putNewInspect(formData) {
-        const testObj = Object.fromEntries(formData);
-        testObj.fdId = parseInt(testObj.fdId);
-        testObj.fiAddAmt = parseInt(testObj.fiAddAmt) | 0;
-        
-        dv.chk(testObj, dtos.send.branchInspectionSave, "확인품 등록");
 
-        CommonUI.ajax(urls.putNewInspect, "POST", formData, function (res) {
-            const searchCondition = {
-                fdId: testObj.fdId,
-                type: "2"
-            };
-            wares.currentRequest.fdState = "B";
-            comms.getInspectionList(searchCondition);
-            $("#fiComment").val("");
-            $("#fiAddAmt").val("0");
-            alertSuccess("확인품내역이 저장되었습니다.");
-        });
-    },
- */
     putNewInspectNeo(formData) {
         const testObj = Object.fromEntries(formData);
-        console.log(testObj);
-        testObj.fdId = parseInt(testObj.fdId);
-        testObj.fiAddAmt = parseInt(testObj.fiAddAmt) | 0;
-        if(!testObj.addPhotoList) testObj.addPhotoList = []; // btId값이 없는 신규등록건
-        if(!testObj.deletePhotoList) testObj.deletePhotoList = []; // btId값이 없는 신규등록건
-        if(!testObj.fiId) testObj.fiId = 0;
-        
+        testObj.fdId = parseInt(testObj.fdId, 10);
+        testObj.fiAddAmt = parseInt(testObj.fiAddAmt, 10) | 0;
+        if(!testObj.addPhotoList) {
+            testObj.addPhotoList = [];
+        } // btId값이 없는 신규등록건
+        if(!testObj.deletePhotoList) {
+            testObj.deletePhotoList = [];
+        } // btId값이 없는 신규등록건
+        if(!testObj.fiId) {
+            testObj.fiId = 0;
+        }
+
         dv.chk(testObj, dtos.send.branchInspectionSaveNeo, "확인품 등록");
 
-        CommonUI.ajax(urls.putNewInspectNeo, "POST", formData, function (res) {
+        CommonUI.ajax(urls.putNewInspectNeo, "POST", formData, function () {
 
             alertSuccess("확인품내역이 저장되었습니다.");
             $("#successBtn").on("click", function () {
@@ -272,7 +231,7 @@ const comms = {
 
     deleteInspectionNeo(target) {
         dv.chk(target, dtos.send.branchInspectionDelete, "등록된 확인품 삭제 대상 보내기");
-        CommonUI.ajax(urls.deleteInspection, "PARAM", target, function(res) {
+        CommonUI.ajax(urls.deleteInspection, "PARAM", target, function() {
             alertSuccess("확인품내역이 삭제되었습니다.");
             $("#successBtn").on("click", function () {
                 closeCheckPop();
@@ -283,7 +242,6 @@ const comms = {
 
     getFrInspectNeo(target) {
         CommonUI.ajax("/api/manager/branchInspectionInfo", "GET", target, function (res) {
-            console.log(res);
             const data = res.sendData;
 
             wares.currentFrInspect.inspeotInfoDto = data.inspeotInfoDto;
@@ -342,7 +300,7 @@ const grids = {
                     headerText: "택번호",
                     style: "datafield_tag",
                     width: 90,
-                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(_rowIndex, _columnIndex, value, _headerText, _item) {
                         return CommonData.formatBrTagNo(value);
                     },
                 }, {
@@ -352,7 +310,7 @@ const grids = {
                     renderer : {
                         type : "TemplateRenderer",
                     },
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, _columnIndex, _value, _headerText, item) {
                         let template = "";
                         if(item.photoList && item.photoList.length) {
                             template = `<img src="/assets/images/icon__picture.svg" onclick="openReceiptPhotoPop(${rowIndex})"> `;
@@ -370,7 +328,7 @@ const grids = {
                     renderer : {
                         type : "TemplateRenderer",
                     },
-                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, _columnIndex, _value, _headerText, item) {
                         let template = "";
                         if(item.frFiId && item.frFiCustomerConfirm === "1") {
                             template = `<button class="c-state c-state--yellow" `
@@ -396,14 +354,14 @@ const grids = {
                     dataField: "fdState",
                     headerText: "현재상태",
                     width: 90,
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(_rowIndex, _columnIndex, value, _headerText, _item) {
                         return CommonData.name.fdState[value];
                     },
                 }, {
                     dataField: "fdPreState",
                     headerText: "이전상태",
                     width: 90,
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(_rowIndex, _columnIndex, value, _headerText, _item) {
                         return CommonData.name.fdState[value];
                     },
                 }, {
@@ -413,7 +371,7 @@ const grids = {
                     renderer : {
                         type: "TemplateRenderer",
                     },
-                    labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
+                    labelFunction(_rowIndex, _columnIndex, _value, _headerText, item ) {
                         let template = "";
                         if(item.brFiId && item.brFiCustomerConfirm === "1") {
                             template = `<button type="button" class="c-button c-button--supersmall c-button--green">수정</button>`;
@@ -424,7 +382,7 @@ const grids = {
                         } else {
                             template = `<button type="button" class="c-button c-button--supersmall c-button--solid">등록</button>`;
                         }
-                        
+
                         return template;
                     },
                 }
@@ -505,8 +463,8 @@ const grids = {
         },
 
         resize(num) { // 해당 배열 번호 그리드의 크기를 현제 그리드를 감싼 엘리먼트에 맞춰 조절
-			AUIGrid.resize(grids.s.id[num]);
-		},
+            AUIGrid.resize(grids.s.id[num]);
+        },
 
         getCheckedItems(numOfGrid) { // 해당 배열 번호 그리드의 엑스트라 체크박스 선택된 (아이템 + 행번호) 객체 반환
             return AUIGrid.getCheckedRowItems(grids.s.id[numOfGrid]);
@@ -589,26 +547,26 @@ const trigs = {
             });
 
             $("#photoList").on("click", ".deletePhotoBtn", function() {
-                console.log(this);
                 const ffId = $(this).attr("data-ffId");
                 const addIdx = $(this).attr("data-addIdx");
                 if(ffId) {
-                    if(!wares.currentRequest.deletePhotoList) wares.currentRequest.deletePhotoList = [];
-                    wares.currentRequest.deletePhotoList.push(parseInt(ffId));
+                    if(!wares.currentRequest.deletePhotoList) {
+                        wares.currentRequest.deletePhotoList = [];
+                    }
+                    wares.currentRequest.deletePhotoList.push(parseInt(ffId, 10));
                 }
                 if(addIdx) {
                     delete wares.currentRequest.addPhotoList[addIdx];
                 }
-    
                 $(this).parents(".tag-imgs__item").remove();
             });
-            
+
             $("#deleteInspect").on("click", function () {
                 alertCheck("현재 확인품 내역을 삭제하시겠습니까?");
                 $("#checkDelSuccessBtn").on("click", function () {
                     const target = {
                         fiId: wares.currentRequest.brFiId,
-                    }
+                    };
                     comms.deleteInspectionNeo(target);
                 });
             });
@@ -632,19 +590,19 @@ const trigs = {
                     htmlText = this.innerHTML;
                 }
                 $("#fiComment").val(currentHtml + htmlText);
-            })
+            });
         },
     },
     r: { // 이벤트 해제
 
     }
-}
+};
 
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
 const wares = {
     currentRequest: {},
     searchCondition: {},
-}
+};
 
 $(function() { // 페이지가 로드되고 나서 실행
     onPageLoad();
@@ -686,13 +644,13 @@ function enableDatepicker() {
 
     CommonUI.setDatePicker(datePickerTargetIds);
     CommonUI.restrictDateAToB(dateAToBTargetIds);
-} 
+}
 
 function searchOrder() {
     const frId = $("#frList").val();
     if(frId === "") {
         alertCaution("가맹점을 선택해 주세요.", 1);
-        return false;
+        return;
     }
 
     const fullTag = $("#foreTag").val() + $("#aftTag").val().numString();
@@ -701,12 +659,12 @@ function searchOrder() {
         tagNo: fullTag.length === 7 ? fullTag : "",
         filterFromDt: $("#filterFromDt").val().numString(),
         filterToDt: $("#filterToDt").val().numString(),
-        franchiseId: parseInt(frId),
+        franchiseId: parseInt(frId, 10),
     };
 
     if($("#aftTag").val().numString().length !== 0 && searchCondition.tagNo.length !==7) {
         alertCaution("택번호(뒤)는 완전히 입력하거나,<br>입력하지 말아주세요.(전체검색)<br>", 1);
-        return false;
+        return;
     }
 
     comms.getMainGridList(searchCondition);
@@ -734,7 +692,7 @@ async function openCheckPop(e) {
         wares.isCameraExist = false;
     }
 
-    
+
     $("#fdTotAmtInPut").val(wares.currentRequest.fdTotAmt.toLocaleString());
 
     /* 접수메뉴에서 찍은 사진 붙히기 */
@@ -754,7 +712,7 @@ async function openCheckPop(e) {
     if(e.item.brFiId) {
         const searchCondition = {
             fiId: e.item.brFiId,
-        }
+        };
         comms.getInspectionNeo(searchCondition);
     } else {
         $("#deleteInspect").parents("li").hide();
@@ -763,8 +721,8 @@ async function openCheckPop(e) {
     $("#checkPop").addClass("active");
 }
 
-function ynStyle(rowIndex, columnIndex, value, headerText, item, dataField) {
-    return value === "Y" ? "yesBlue" : "noRed"
+function ynStyle(_rowIndex, _columnIndex, value, _headerText, _item, _dataField) {
+    return value === "Y" ? "yesBlue" : "noRed";
 }
 
 function b64toBlob(dataURI) { // 파일을 ajax 통신에 쓰기 위해 변환
@@ -781,9 +739,9 @@ function b64toBlob(dataURI) { // 파일을 ajax 통신에 쓰기 위해 변환
 function takePhoto() {
     if($("#photoList").children().length > 5) {
         alertCaution("사진은 최대 6장 까지 촬영하실 수 있습니다.", 1);
-        return false;
+        return;
     }
-    
+
     if(wares.isCameraExist && wares.cameraStream.active) {
         try {
             const video = document.getElementById("cameraScreen");
@@ -804,10 +762,10 @@ function takePhoto() {
                     <img src="${takenPic}" class="tag-imgs__img" alt=""/>
                 </a>
                 <button class="tag-imgs__delete deletePhotoBtn" data-addIdx="${wares.currentRequest.addPhotoList.length}">삭제</button>
-            </li>`
+            </li>`;
 
             wares.currentRequest.addPhotoList.push(blob);
-            
+
             $("#photoList").append(photoHtml);
             $("#noImgScreen").hide();
         } catch (e) {
@@ -822,10 +780,12 @@ function saveInspect() {
     const formData = new FormData();
     if(wares.currentRequest.addPhotoList) {
         for(const addPhoto of wares.currentRequest.addPhotoList) { // 새로 촬영된 사진들의 추가
-            if(addPhoto) formData.append("addPhotoList", addPhoto);
+            if(addPhoto) {
+                formData.append("addPhotoList", addPhoto);
+            }
         }
     }
-    
+
     formData.append("fdId", wares.currentRequest.fdId);
     if(wares.currentRequest.brFiId) {
         formData.append("fiId", wares.currentRequest.brFiId);
@@ -838,7 +798,7 @@ function saveInspect() {
     formData.append("fiComment", $("#fiComment").val());
     formData.append("fiAddAmt", $("#fiAddAmt").val().toInt());
     formData.append("fiType", "B");
-    
+
     comms.putNewInspectNeo(formData);
 }
 
@@ -921,7 +881,7 @@ function openFrInspectEditPop(item) {
     if(item.frFiId) {
         const target = {
             fiId: item.frFiId,
-        }
+        };
         comms.getFrInspectNeo(target);
     }
 }

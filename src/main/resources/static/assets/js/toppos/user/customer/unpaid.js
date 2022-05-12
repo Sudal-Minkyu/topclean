@@ -213,7 +213,7 @@ const grids = {
                     dataField: "bcHp",
                     headerText: "전화번호",
                     width: 120,
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         return CommonUI.formatTel(value);
                     },
                 }, {
@@ -243,9 +243,8 @@ const grids = {
             grids.s.prop[0] = {
                 editable : false,
                 selectionMode : "singleRow",
-                showAutoNoDataMessage: false,
-                noDataMessage : "출력할 데이터가 없습니다.",
                 showAutoNoDataMessage: true,
+                noDataMessage : "출력할 데이터가 없습니다.",
                 enableColumnResize : false,
                 showRowAllCheckBox: false,
                 showRowCheckColumn: false,
@@ -267,7 +266,7 @@ const grids = {
                     dataField: "requestDetailCount",
                     headerText: "상품내역",
                     style: "grid_textalign_left",
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         let rearText = "";
                         if(value > 1) {
                             rearText = " 외 " + (value - 1) + "건";
@@ -303,7 +302,6 @@ const grids = {
                 selectionMode : "none",
                 showAutoNoDataMessage: false,
                 noDataMessage : "출력할 데이터가 없습니다.",
-                showAutoNoDataMessage: false,
                 enableColumnResize : false,
                 showRowAllCheckBox: true,
                 showRowCheckColumn: true,
@@ -326,7 +324,7 @@ const grids = {
                     headerText: "택번호",
                     style: "datafield_tag",
                     width: 80,
-                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         return CommonData.formatFrTagNo(value, frTagInfo.frTagType);
                     },
                 }, {
@@ -336,7 +334,7 @@ const grids = {
                     renderer : {
                         type : "TemplateRenderer",
                     },
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         const colorSquare =
                             `<span class="colorSquare" style="background-color: ${CommonData.name.fdColorCode[item.fdColor]}; vertical-align: middle;"></span>`;
                         const sumName = CommonUI.toppos.makeSimpleProductName(item);
@@ -347,7 +345,7 @@ const grids = {
                     headerText: "처리내역",
                     style: "grid_textalign_left",
                     width: 90,
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         return CommonUI.toppos.processName(item);
                     }
                 }, {
@@ -361,7 +359,7 @@ const grids = {
                     dataField: "fdState",
                     headerText: "상태",
                     width: 60,
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         return CommonData.name.fdState[value];
                     },
                 }, {
@@ -378,7 +376,6 @@ const grids = {
                 selectionMode : "singleRow",
                 showAutoNoDataMessage: false,
                 noDataMessage : "출력할 데이터가 없습니다.",
-                showAutoNoDataMessage: false,
                 enableColumnResize : false,
                 showRowAllCheckBox: false,
                 showRowCheckColumn: false,
@@ -399,7 +396,7 @@ const grids = {
                     dataField: "requestDetailCount",
                     headerText: "상품내역",
                     style: "grid_textalign_left",
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         let rearText = "";
                         if(value > 1) {
                             rearText = " 외 " + (value - 1) + "건";
@@ -669,14 +666,6 @@ function uncollectPaymentStageOne() {
 
                     // 결제 성공일경우 Print
                     if (resjson.STATUS === "SUCCESS") {
-                        // let creditData =
-                        //     {
-                        //         cardNo: resjson.CARDNO,
-                        //         cardName: resjson.ISSUERNAME,
-                        //         approvalTime: resjson.APPROVALTIME,
-                        //         approvalNo: resjson.APPROVALNO
-                        //     };
-                        // CAT.CatPrint(paymentData, creditData, "N");
                         uncollectPaymentStageTwo(paymentData, resjson);
                         alertSuccess("카드 결제가 성공하였습니다.<br>단말기에서 카드를 제거해 주세요.");
                     }
@@ -699,13 +688,6 @@ function uncollectPaymentStageOne() {
                 CommonUI.toppos.underTaker(e, "unpaid : 카드 단말 결제");
             }
         }else if (paymentData.type ==="cash") {
-            // $('#payStatus').show();
-            // try {
-            //     CAT.CatPrint(paymentData, "", "N");
-            // }catch (e) {
-            //     console.log(e);
-            // }
-            // $('#payStatus').hide();
             uncollectPaymentStageTwo(paymentData);
         }
     }catch (e) {

@@ -96,12 +96,12 @@ const trigs = {
             console.log(e.item);
         });
     },
-}
+};
 
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
 const wares = {
 
-}
+};
 
 $(function() { // 페이지가 로드되고 나서 실행
     onPageLoad();

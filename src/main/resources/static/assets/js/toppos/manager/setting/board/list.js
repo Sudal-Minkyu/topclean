@@ -7,7 +7,7 @@ const dtos = {
     send: {
         getPostList: {
             page: "nr",
-            size: "n", // 한 페이지에 띄울 글의 숫자 
+            size: "n", // 한 페이지에 띄울 글의 숫자
             searchString: "s", // 빈 문자일 경우 일반적인 조회
             filterFromDt: "s", // 검색조건 from 오지 않을경우 시작기간은 전체기간
             filterToDt: "s", // 검색조건 to 오지 않을 경우 끝기간은 전체기간
@@ -39,7 +39,7 @@ const dtos = {
 const urls = {
     taglost: "/api/manager/lostNoticeList",
     notice: "/api/manager/noticeList",
-}
+};
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
@@ -52,15 +52,19 @@ const comms = {
             filterToDt: wares.filterToDt.numString(),
         };
         if(wares.boardType === "notice") {
-            condition.hnType = wares.hnType
+            condition.hnType = wares.hnType;
             dtos.send.getPostList.hnType = "s";
         }
         dv.chk(condition, dtos.send.getPostList, "게시판 조회 속성과, 검색값 보내기");
-        
+
         CommonUI.ajax(urls[wares.boardType], "PARAM", condition, function (res) {
             dtos.receive.getPostList.datalist[wares[wares.boardType].idKeyName] = "n"; // 검사 조건에 임의로 각 게시판의 아이디 추가
-            if(!["notice"].includes(wares.boardType)) dtos.receive.getPostList.datalist.numOfComment = "n";
-            if(["notice"].includes(wares.boardType)) dtos.receive.getPostList.datalist.hnType = "s";
+            if(!["notice"].includes(wares.boardType)) {
+                dtos.receive.getPostList.datalist.numOfComment = "n";
+            }
+            if(["notice"].includes(wares.boardType)) {
+                dtos.receive.getPostList.datalist.hnType = "s";
+            }
             dv.chk(res, dtos.receive.getPostList, "게시글들 받아오기");
             wares.totalPage = res.total_page;
             createPagingNavigator(wares.page);
@@ -97,10 +101,10 @@ const grids = {
                     renderer: {
                         type : "TemplateRenderer",
                     },
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(_rowIndex, _columnIndex, value, _headerText, item) {
                         let result = "<div class='list_subject'><span>" + value + "</span>";
                         if(item.numOfComment) {
-                            result += ` <span class="numOfComment">(${item.numOfComment})</span>`
+                            result += ` <span class="numOfComment">(${item.numOfComment})</span>`;
                         }
                         result += "</div>";
                         return result;
@@ -149,8 +153,8 @@ const grids = {
         },
 
         resize(num) { // 해당 배열 번호 그리드의 크기를 현제 그리드를 감싼 엘리먼트에 맞춰 조절
-			AUIGrid.resize(grids.s.id[num]);
-		},
+            AUIGrid.resize(grids.s.id[num]);
+        },
 
         getCheckedItems(numOfGrid) { // 해당 배열 번호 그리드의 엑스트라 체크박스 선택된 (아이템 + 행번호) 객체 반환
             return AUIGrid.getCheckedRowItems(grids.s.id[numOfGrid]);
@@ -166,11 +170,11 @@ const grids = {
                     renderer : {
                         type : "TemplateRenderer",
                     },
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(_rowIndex, _columnIndex, value, _headerText, item) {
                         let result = " <div class='list_subject'><span>" + CommonData.name.hnType[item.hnType]
                             + " " + value + "</span>";
                         if(item.numOfComment) {
-                            result += ` <span class="numOfComment">(${item.numOfComment})</span>`
+                            result += ` <span class="numOfComment">(${item.numOfComment})</span>`;
                         }
                         result += "</div>";
                         return result;
@@ -189,8 +193,10 @@ const grids = {
             /* 0번그리드 내의 셀 클릭시 이벤트 */
             AUIGrid.bind(grids.s.id[0], "cellClick", function (e) {
                 let specialCondition = "";
-                if(wares.boardType === "notice") specialCondition = "&hnType=" + wares.hnType;
-                location.href = `./${wares.boardType}view?id=` + e.item[wares[wares.boardType].idKeyName] + "&prevPage=" + wares.page 
+                if(wares.boardType === "notice") {
+                    specialCondition = "&hnType=" + wares.hnType;
+                }
+                location.href = `./${wares.boardType}view?id=` + e.item[wares[wares.boardType].idKeyName] + "&prevPage=" + wares.page
                     + "&prevSearchString=" + wares.searchString + "&prevFilterFromDt=" + wares.filterFromDt
                     + "&prevFilterToDt=" + wares.filterToDt + specialCondition;
             });
@@ -216,7 +222,7 @@ const trigs = {
     r: { // 이벤트 해제
 
     }
-}
+};
 
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
 const wares = {
@@ -240,7 +246,7 @@ const wares = {
         title: "공지사항",
         idKeyName: "hnId",
     },
-}
+};
 
 $(function() { // 페이지가 로드되고 나서 실행
     onPageLoad();
@@ -303,11 +309,21 @@ function getParams() {
 
 function setInputs() {
     let specialCondition = "";
-    if(wares.boardType === "notice") specialCondition = "&hnType=" + wares.hnType;
-    if(wares.filterFromDt) $("#filterFromDt").val(wares.filterFromDt);
-    if(wares.filterToDt) $("#filterToDt").val(wares.filterToDt);
-    if(wares.searchString) $("#searchString").val(wares.searchString);
-    if(wares.hnType) $("#hnType").val(wares.hnType);
+    if(wares.boardType === "notice") {
+        specialCondition = "&hnType=" + wares.hnType;
+    }
+    if(wares.filterFromDt) {
+        $("#filterFromDt").val(wares.filterFromDt);
+    }
+    if(wares.filterToDt) {
+        $("#filterToDt").val(wares.filterToDt);
+    }
+    if(wares.searchString) {
+        $("#searchString").val(wares.searchString);
+    }
+    if(wares.hnType) {
+        $("#hnType").val(wares.hnType);
+    }
     $("#boardTitle").html(wares[wares.boardType].title);
     $("#boardLink").attr("href", `./${wares.boardType}list`);
     $("#writeLink").attr("href", `./${wares.boardType}write?prevPage=` + wares.page
@@ -316,52 +332,54 @@ function setInputs() {
 }
 
 /* 페이지내이션 적절한 값 완성후 wares의 데이터를 이용하도록 수정 */
-var pageButtonCount = 10;		// 페이지 네비게이션에서 보여줄 페이지의 수
-var page = 1;	// 현재 페이지
+const pageButtonCount = 10; // 페이지 네비게이션에서 보여줄 페이지의 수
+const page = 1; // 현재 페이지
 
 // 페이징 네비게이터를 동적 생성합니다.
 function createPagingNavigator(goPage) {
-	var retStr = "";
-	var prevPage = parseInt((goPage - 1)/pageButtonCount) * pageButtonCount;
-	var nextPage = ((parseInt((goPage - 1)/pageButtonCount)) * pageButtonCount) + pageButtonCount + 1;
+    let retStr = "";
+    let prevPage = parseInt((goPage - 1)/pageButtonCount, 10) * pageButtonCount;
+    let nextPage = ((parseInt((goPage - 1)/pageButtonCount, 10)) * pageButtonCount) + pageButtonCount + 1;
 
-	prevPage = Math.max(0, prevPage);
-	nextPage = Math.min(nextPage, wares.totalPage);
-	
-	// 처음
-	retStr += "<a href='javascript:moveToPage(1)'><span class='aui-grid-paging-number aui-grid-paging-first'>first</span></a>";
+    prevPage = Math.max(0, prevPage);
+    nextPage = Math.min(nextPage, wares.totalPage);
 
-	// 이전
-	retStr += "<a href='javascript:moveToPage(" + Math.max(1, prevPage) + ")'><span class='aui-grid-paging-number aui-grid-paging-prev'>prev</span></a>";
+    // 처음
+    retStr += "<a href='javascript:moveToPage(1)'><span class='aui-grid-paging-number aui-grid-paging-first'>first</span></a>";
 
-	for (var i=(prevPage+1), len=(pageButtonCount+prevPage); i<=len; i++) {
-		if (goPage == i) {
-			retStr += "<span class='aui-grid-paging-number aui-grid-paging-number-selected'>" + i + "</span>";
-		} else {
-			retStr += "<a href='javascript:moveToPage(" + i + ")'><span class='aui-grid-paging-number'>";
-			retStr += i;
-			retStr += "</span></a>";
-		}
-		
-		if (i >= wares.totalPage) {
-			break;
-		}
+    // 이전
+    retStr += "<a href='javascript:moveToPage(" + Math.max(1, prevPage) + ")'><span class='aui-grid-paging-number aui-grid-paging-prev'>prev</span></a>";
 
-	}
+    for (let i=(prevPage+1), len=(pageButtonCount+prevPage); i<=len; i++) {
+        if (goPage === i) {
+            retStr += "<span class='aui-grid-paging-number aui-grid-paging-number-selected'>" + i + "</span>";
+        } else {
+            retStr += "<a href='javascript:moveToPage(" + i + ")'><span class='aui-grid-paging-number'>";
+            retStr += i;
+            retStr += "</span></a>";
+        }
 
-	// 다음
-	retStr += "<a href='javascript:moveToPage(" + nextPage + ")'><span class='aui-grid-paging-number aui-grid-paging-next'>next</span></a>";
+        if (i >= wares.totalPage) {
+            break;
+        }
 
-	// 마지막
-	retStr += "<a href='javascript:moveToPage(" + wares.totalPage + ")'><span class='aui-grid-paging-number aui-grid-paging-last'>last</span></a>";
+    }
 
-	document.getElementById("grid_paging").innerHTML = retStr;
+    // 다음
+    retStr += "<a href='javascript:moveToPage(" + nextPage + ")'><span class='aui-grid-paging-number aui-grid-paging-next'>next</span></a>";
+
+    // 마지막
+    retStr += "<a href='javascript:moveToPage(" + wares.totalPage + ")'><span class='aui-grid-paging-number aui-grid-paging-last'>last</span></a>";
+
+    document.getElementById("grid_paging").innerHTML = retStr;
 }
 
 function moveToPage(goPage) {
     let specialCondition = "";
-    if(wares.boardType === "notice") specialCondition = "&hnType=" + wares.hnType;
-	var url = `./${wares.boardType}list?page=` + goPage + "&searchString=" + wares.searchString + "&filterFromDt="
+    if(wares.boardType === "notice") {
+        specialCondition = "&hnType=" + wares.hnType;
+    }
+    const url = `./${wares.boardType}list?page=` + goPage + "&searchString=" + wares.searchString + "&filterFromDt="
         + wares.filterFromDt + "&filterToDt=" + wares.filterToDt + specialCondition;
     location.href = url;
 }
@@ -375,7 +393,7 @@ function mainSearch() {
 }
 
 function enableDatepicker() {
-    
+
     let fromday = new Date();
     fromday.setDate(fromday.getDate() - 90);
     fromday = fromday.format("yyyy-MM-dd");

@@ -100,7 +100,7 @@ const grids = {
                     renderer : {
                         type : "TemplateRenderer",
                     },
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         let result = "<div class='list_subject'><span>" + value + "</span>";
                         if(item.numOfComment) {
                             result += ` <span class="numOfComment">(${item.numOfComment})</span>`
@@ -171,7 +171,7 @@ const grids = {
                     renderer : {
                         type : "TemplateRenderer",
                     },
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         let result = " <div class='list_subject'><span>" + CommonData.name.hnType[item.hnType]
                             + " " + value + "</span>";
                         if(item.numOfComment) {

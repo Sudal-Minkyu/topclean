@@ -48,7 +48,7 @@ const comms = {
             dv.chk(data, dtos.receive.managerBelongList, "지점에 속한 가맹점 받아오기");
             const $frList = $("#frList");
             data.forEach(obj => {
-                const htmlText = `<option value="${obj.frId}">${obj.frName}</option>`
+                const htmlText = `<option value="${obj.frId}">${obj.frName}</option>`;
                 $frList.append(htmlText);
             });
         });
@@ -66,29 +66,26 @@ const comms = {
             const $tmpInputByte = $(".tmpInputByte");
             for(const obj of templateList) {
                 const byte = getByteInfo(obj.hmMessage).byte;
-                $tmpHmSubject.eq(parseInt(obj.hmNum) - 1).val(obj.hmSubject);
-                $tmpHmMessage.eq(parseInt(obj.hmNum) - 1).val(obj.hmMessage);
-                $tmpByte.eq(parseInt(obj.hmNum) - 1).html(byte);
-                $tmpInputHmSubject.eq(parseInt(obj.hmNum) - 1).val(obj.hmSubject);
-                $tmpInputHmSubject.eq(parseInt(obj.hmNum) - 1).attr("data-id"
+                $tmpHmSubject.eq(parseInt(obj.hmNum, 10) - 1).val(obj.hmSubject);
+                $tmpHmMessage.eq(parseInt(obj.hmNum, 10) - 1).val(obj.hmMessage);
+                $tmpByte.eq(parseInt(obj.hmNum, 10) - 1).html(byte);
+                $tmpInputHmSubject.eq(parseInt(obj.hmNum, 10) - 1).val(obj.hmSubject);
+                $tmpInputHmSubject.eq(parseInt(obj.hmNum, 10) - 1).attr("data-id"
                     , obj.hmId ? obj.hmId : 0);
-                $tmpInputHmMessage.eq(parseInt(obj.hmNum) - 1).val(obj.hmMessage);
-                $tmpInputByte.eq(parseInt(obj.hmNum) - 1).html(byte);
+                $tmpInputHmMessage.eq(parseInt(obj.hmNum, 10) - 1).val(obj.hmMessage);
+                $tmpInputByte.eq(parseInt(obj.hmNum, 10) - 1).html(byte);
             }
         });
     },
     saveTemplate(saveDataList) {
-        console.log(saveDataList);
-        CommonUI.ajax("/api/manager/templateSave", "MAPPER", saveDataList, function (res) {
-            console.log(res);
+        CommonUI.ajax("/api/manager/templateSave", "MAPPER", saveDataList, function () {
             alertSuccess("템플릿 저장에 성공하였습니다.");
             comms.getTemplate();
         });
     },
 
     sendMessage(message) {
-        console.log(message);
-        CommonUI.ajax("/api/manager/messageSendCustomer", "PARAM", message, function (res) {
+        CommonUI.ajax("/api/manager/messageSendCustomer", "PARAM", message, function () {
             alertSuccess("문자메시지 발송이 완료되었습니다.");
             grids.f.clear(0);
             grids.f.clear(1);
@@ -99,9 +96,7 @@ const comms = {
 
     getCustomers(getCondition) {
         wares.getCondition = getCondition;
-        console.log(getCondition);
         CommonUI.ajax("/api/manager/messageCustomerList", "GET", getCondition, function (res) {
-            console.log(res);
             const data = res.sendData.gridListData;
             grids.f.set(0, data);
         });
@@ -132,7 +127,7 @@ const grids = {
                     dataField: "bcHp",
                     headerText: "전화번호",
                     width: 120,
-                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(_rowIndex, _columnIndex, value, _headerText, _item) {
                         return CommonUI.formatTel(value);
                     }
                 },
@@ -162,7 +157,7 @@ const grids = {
                     dataField: "bcHp",
                     headerText: "전화번호",
                     width: 120,
-                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(_rowIndex, _columnIndex, value, _headerText, _item) {
                         return CommonUI.formatTel(value);
                     }
                 },
@@ -232,7 +227,7 @@ const grids = {
         },
 
         setFilter(num, type, string) {
-            AUIGrid.setFilter(grids.s.id[num], "bcName", function(dataField, value, item) {
+            AUIGrid.setFilter(grids.s.id[num], "bcName", function(_dataField, _value, item) {
                 let result = false;
                 switch (type) {
                     case "0" :
@@ -260,7 +255,7 @@ const trigs = {
         AUIGrid.bind(grids.s.id[2], "cellClick", function (e) {
             const searchCondition = {
                 insertYyyymmdd: e.item.insertYyyymmdd.numString(),
-            }
+            };
             comms.getSendRecordDetail(searchCondition);
         });
 
@@ -285,7 +280,7 @@ const trigs = {
         const $tmpRadio = $(".tmpRadio");
         for (let i = 0; i < $tmpInputHmMessage.length; i++) {
             $tmpInputHmMessage.eq(i).on("keyup", function () {
-                let byteInfo = getByteInfo(this.value);
+                const byteInfo = getByteInfo(this.value);
                 if(byteInfo.cutLength) {
                     this.value = this.value.substring(0, byteInfo.cutLength);
                     byteInfo.byte = byteInfo.cutByte;
@@ -300,7 +295,7 @@ const trigs = {
         }
 
         $("#hmMessage").on("keyup", function () {
-            let byteInfo = getByteInfo(this.value);
+            const byteInfo = getByteInfo(this.value);
             if(byteInfo.cutLength) {
                 this.value = this.value.substring(0, byteInfo.cutLength);
                 byteInfo.byte = byteInfo.cutByte;
@@ -358,12 +353,12 @@ const trigs = {
             }
         });
     },
-}
+};
 
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
 const wares = {
     getCondition: {},
-}
+};
 
 $(function() {
     onPageLoad();
@@ -424,9 +419,9 @@ function getByteInfo(text) {
     }
 
     return {
-        byte: byte,
-        cutLength: cutLength,
-        cutByte: cutByte,
+        byte,
+        cutLength,
+        cutByte,
     };
 }
 
@@ -438,7 +433,7 @@ function saveTemplate() {
 
     for(let i = 0; i < $tmpInputHmSubject.length; i++) {
         saveDataList.push({
-            hmId: parseInt($tmpInputHmSubject.eq(i).attr("data-id")),
+            hmId: parseInt($tmpInputHmSubject.eq(i).attr("data-id"), 10),
             hmNum: i + 1,
             hmSubject: $tmpInputHmSubject.eq(i).val(),
             hmMessage: $tmpInputHmMessage.eq(i).val(),
@@ -449,7 +444,7 @@ function saveTemplate() {
 }
 
 function askSend() {
-    const isLms = parseInt($("#byte").html()) > 90;
+    const isLms = parseInt($("#byte").html(), 10) > 90;
     const numCustomer = $("#numberOfTargetCustomers").html().toInt();
     if (numCustomer) {
         const msg = isLms ? `${numCustomer.toLocaleString()}명의 고객께 문자를 전송합니다.<br>문자 길이가 90byte를 초과하므로<br>LMS로 문자를 전송하시겠습니까?`
@@ -475,11 +470,11 @@ function sendMessage() {
     }
 
     const sendData = {
-        bcIdList: bcIdList,
-        msgType: parseInt($("#byte").html()) < 90 ? "S" : "L",
+        bcIdList,
+        msgType: parseInt($("#byte").html(), 10) < 90 ? "S" : "L",
         hmMessage: $("#hmMessage").val(),
         hmSendreqtimeDt: isBookSend ? hmSendreqtimeDt : 0,
-    }
+    };
 
     comms.sendMessage(sendData);
 }
@@ -489,7 +484,7 @@ function getCustomers() {
     const getCondition = {
         franchiseId: $("#frList").val(),
         visitDayRange: isRangeSearch ? $("#visitDayRange").val() : "0",
-    }
+    };
     comms.getCustomers(getCondition);
 }
 
@@ -506,7 +501,7 @@ function getSendRecordSummary() {
     const searchCondition = {
         filterFromDt: $("#filterFromDt").val().numString(),
         filterToDt: $("#filterToDt").val().numString(),
-    }
+    };
 
     comms.getSendRecordSummary(searchCondition);
 }

@@ -1,7 +1,6 @@
 function getTaglostDetail(getCondition) {
     CommonUI.ajax("/api/user/tagGalleryDetail", "GET", getCondition, function (res) {
         const data = res.sendData;
-        console.log(data);
 
         const refinedData = {
             frCompleteCheck: data.frCompleteCheck,
@@ -13,7 +12,7 @@ function getTaglostDetail(getCondition) {
             brCloseYn: data.tagGallery.brCloseYn,
             tagGalleryFileList: data.tagGalleryFileList,
             tagGalleryCheckList: data.tagGalleryCheckList,
-        }
+        };
 
         wares.currentRequest = refinedData;
         resetTaglostPop();
@@ -23,21 +22,21 @@ function getTaglostDetail(getCondition) {
                 <a href="${photo.bfPath + photo.bfFilename}" data-lightbox="images" data-title="이미지 확대">
                     <img src="${photo.bfPath + "s_" + photo.bfFilename}" class="tag-imgs__img" alt=""/>
                 </a>
-            </li>`
+            </li>`;
             $("#photoList").append(photoHtml);
         }
 
 
 
         /* 가맹점 응답의 텍스트 구성 */
-        let responseList = ""
+        let responseList = "";
         for(const fr of wares.currentRequest.tagGalleryCheckList) {
             // tag번호 포맷 변환
             if(fr.brTag && frTagInfo.frTagType) {
                 const resultTagNo = CommonData.formatFrTagNo(fr.brTag, frTagInfo.frTagType);
                 responseList += fr.frName + " ";
                 responseList += fr.brCompleteYn === "Y" ? `(완료, ${resultTagNo})` : `(확인요청, ${resultTagNo})`;
-                responseList += " ,"
+                responseList += " ,";
             }
         }
         $("#frResponse").val(responseList.substring(0, responseList.length - 2));
@@ -106,19 +105,19 @@ function taglostCheck(answer) {
             alertCaution(`택번호 ${requiredTagLength}자리를 입력해주세요`, 1);
             $("#frCheck").prop('checked', false);
             $("#frCheck").prop("disabled", false);
-            return false;
+            return;
         }
     }
 
     const tagGalleryCheck = {
         btId: "nr",
         type: "sr", // 체크 혹은 체크해제 1, 최종확인 2
-    }
+    };
     dv.chk(answer, tagGalleryCheck, "체크나 최종완료 신호 보내기");
-    CommonUI.ajax("/api/user/tagGalleryCheck", "PARAM", answer, function (res) {
+    CommonUI.ajax("/api/user/tagGalleryCheck", "PARAM", answer, function () {
         const getCondition = {
             btId: wares.currentRequest.btId,
-        }
+        };
         getTaglostDetail(getCondition);
     });
 }

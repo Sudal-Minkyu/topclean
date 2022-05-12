@@ -116,7 +116,7 @@ function loginActive() {
         data: jsonString,
         contentType: 'application/json',
         cache: false,
-        error: function (req) {
+        error(req) {
             if(req.status === 401){
                 $('.l-popup').removeClass('open');
                 alertCancel("비밀번호가 틀렸습니다.");
@@ -125,7 +125,7 @@ function loginActive() {
                 ajaxErrorMsg(req);
             }
         },
-        success: function (res) {
+        success(res) {
             // console.log("로그인 되었습니다.");
             // console.log("AccessToken : "+res.sendData.tokenDto.accessToken);
             if(res.status === 500){
@@ -151,10 +151,8 @@ function mainPage(){
         type: 'get',
         contentType: 'application/json',
         cache: false,
-        error: function (req) {
-            ajaxErrorMsg(req);
-        },
-        success: function (res) {
+        error: ajaxErrorMsg,
+        success(res) {
             location.href= res.sendData.link;
             // console.log("이동완료");
         }

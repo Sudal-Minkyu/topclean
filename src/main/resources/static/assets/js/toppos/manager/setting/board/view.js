@@ -59,7 +59,7 @@ const urls = {
     taglostPutReply: "/api/manager/lostNoticeCommentSave",
     taglostDeletePost: "/api/manager/lostNoticeDelete",
     noticeDeletePost: "/api/manager/noticeDelete",
-}
+};
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
@@ -68,7 +68,6 @@ const comms = {
         dv.chk(condition, dtos.send.getPost, "읽어올 게시물의 아이디 보내기");
         dtos.receive.getPost[wares[wares.boardType].idKeyName] = "n"; // 받는 dtos도 위와 마찬가지
         CommonUI.ajax(urls[wares.boardType], "GET", condition, function (res) {
-            console.log(res);
             const data = res.sendData[wares[wares.boardType].dataKeyName];
             dv.chk(data, dtos.receive.getPost, "받아온 게시물");
             setFields(data);
@@ -94,18 +93,18 @@ const comms = {
         dtos.send.lostNoticeCommentSave[wares[wares.boardType].idKeyName] = "n";
         dtos.send.lostNoticeCommentSave[wares[wares.boardType].commentIdKeyName] = "";
         dv.chk(data, dtos.send.lostNoticeCommentSave, "덧글 달기와 수정 정보 보내기");
-        CommonUI.ajax(urls[wares.boardType + "PutReply"], "PARAM", data, function (res) {
+        CommonUI.ajax(urls[wares.boardType + "PutReply"], "PARAM", data, function () {
             $("#replyList").children().remove();
             $("#replyField").val("");
             const condition = {};
-            condition[wares[wares.boardType].idKeyName] = parseInt(wares.id);
+            condition[wares[wares.boardType].idKeyName] = parseInt(wares.id, 10);
             comms.getReplyList(condition);
         });
     },
 
     deletePost(target) {
         dv.chk(target, dtos.send.lostNoticeDelete, "삭제할 글 아이디 보내기");
-        CommonUI.ajax(urls[wares.boardType + "DeletePost"], "PARAM", target, function (res) {
+        CommonUI.ajax(urls[wares.boardType + "DeletePost"], "PARAM", target, function () {
             alertSuccess("글을 삭제 하였습니다.");
             $("#successBtn").on("click", function () {
                 location.href = $(".listLink").first().attr("href");
@@ -129,14 +128,14 @@ const trigs = {
             alertCheck("정말 삭제하시겠습니까?");
             $("#checkDelSuccessBtn").on("click", function () {
                 const target = {
-                }
-                target[wares[wares.boardType].idKeyName] = parseInt(wares.id);
+                };
+                target[wares[wares.boardType].idKeyName] = parseInt(wares.id, 10);
                 comms.deletePost(target);
                 $('#popupId').remove();
             });
         });
     }
-}
+};
 
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
 const wares = {
@@ -167,7 +166,7 @@ const wares = {
     brnotice: {
 
     },
-}
+};
 
 $(function() { // 페이지가 로드되고 나서 실행
     onPageLoad();
@@ -179,14 +178,14 @@ function onPageLoad() {
     setInputs();
 
     let condition = {};
-    condition[wares[wares.boardType].idKeyName] = parseInt(wares.id);
+    condition[wares[wares.boardType].idKeyName] = parseInt(wares.id, 10);
     comms.getData(condition);
 
     trigs.basic();
 
     if(!["notice", "brnotice"].includes(wares.boardType)) {
         condition = {};
-        condition[wares[wares.boardType].idKeyName] = parseInt(wares.id);
+        condition[wares[wares.boardType].idKeyName] = parseInt(wares.id, 10);
         comms.getReplyList(condition);
     }
 
@@ -210,7 +209,7 @@ function getParams() {
     wares.params = url.searchParams;
 
     if(wares.params.has("id")) {
-        wares.id = parseInt(wares.params.get("id"));
+        wares.id = parseInt(wares.params.get("id"), 10);
     } else {
         wares.id = 0;
     }
@@ -248,7 +247,9 @@ function getParams() {
 
 function setInputs() {
     let specialCondition = "";
-    if(wares.boardType === "notice") specialCondition = "&hnType=" + wares.hnType;
+    if(wares.boardType === "notice") {
+        specialCondition = "&hnType=" + wares.hnType;
+    }
     $(".listLink").attr("href", `./${wares.boardType}list?page=` + wares.page
         + "&searchString=" + wares.searchString + "&filterFromDt=" + wares.filterFromDt + "&filterToDt="
         + wares.filterToDt + specialCondition);
@@ -259,7 +260,6 @@ function setInputs() {
 }
 
 function setFields(data) {
-    console.log(data);
     $("#subject").html(data.subject);
     $("#name").html(wares.boardType === "notice" ? CommonData.name.hnType[data.hnType] : data.name);
     $("#insertDateTime").html(data.insertDateTime);
@@ -270,7 +270,9 @@ function setFields(data) {
     $("#nextInsertDateTime").html(data.nextvInsertDateTime);
 
     let specialCondition = "";
-    if(wares.boardType === "notice") specialCondition = "&hnType=" + wares.hnType;
+    if(wares.boardType === "notice") {
+        specialCondition = "&hnType=" + wares.hnType;
+    }
 
     if(data.prevId) {
         $("#linkPrev").attr("href", `./${wares.boardType}view?id=` + data.prevId
@@ -296,10 +298,10 @@ function setFields(data) {
 
     $("#fileCnt").html(data.fileList.length);
 
-    for(let file of data.fileList) {
+    for(const file of data.fileList) {
         let volume = 0;
         if(file.fileVolume > 1000000) {
-            volume = (file.fileVolume / 1048576).toFixed(1).toLocaleString() + "MB"
+            volume = (file.fileVolume / 1048576).toFixed(1).toLocaleString() + "MB";
         } else {
             volume = Math.ceil(file.fileVolume / 1024).toLocaleString() + "KB";
         }
@@ -373,7 +375,7 @@ function reply(commentId, obj) {
                 <button onclick="commitReply('2', '#newarea${commentId}', ${commentId}, '')" class="c-button c-button--small reply__console-right">덧글 달기</button>
             </div>
         </div>
-    `
+    `;
 
     $targetReply.append(newTextarea);
 }
@@ -385,7 +387,7 @@ function modify(commentId, obj) {
 
     wares.btnRow[commentId.toString()] = $btnRow;
     wares.commentRow[commentId.toString()] = $commentRow;
-    
+
     const modBtns = `
         <div class="reply__console">
             <button onclick="modifyCancel(${commentId}, this)" class="c-button c-button--small reply__console-right">수정 취소</button>
@@ -407,18 +409,17 @@ function modify(commentId, obj) {
 
 function commitReply(type, fieldId, preId = "", commentId = "") {
     const data = {
-        type: type,
+        type,
+        preId,
         comment: $(fieldId).val(),
-        preId: preId,
     };
-    data[wares[wares.boardType].idKeyName] = parseInt(wares.id);
+    data[wares[wares.boardType].idKeyName] = parseInt(wares.id, 10);
     data[wares[wares.boardType].commentIdKeyName] = commentId;
 
     comms.putReply(data);
 }
 
 function modifyCancel(commentId, obj) {
-    console.log(this);
     const $btnRow = $(obj).parents(".reply__console");
     const $commentRow = $btnRow.siblings(".reply__comment");
     $btnRow.replaceWith(wares.btnRow[commentId.toString()]);

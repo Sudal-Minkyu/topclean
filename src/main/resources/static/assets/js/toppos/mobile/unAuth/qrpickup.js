@@ -18,7 +18,7 @@ const dtos = {
 const urls = {
     getFrName: "/api/collection/info",
     confirmPickUp: "/api/collection/process",
-}
+};
 
 const comms = {
     /* 가맹점 코드를 통해서 가맹점명을 받아온다. */
@@ -34,12 +34,12 @@ const comms = {
     /* 가맹점 세탁물 수거완료신호 보내기 */
     confirmPickUp(condition) {
         dv.chk(condition, dtos.send.process, "세탁물 수거완료 처리를 위한 가맹점 코드 보내기");
-        CommonUI.ajax(urls.confirmPickUp, "GET", condition, function (res) {
+        CommonUI.ajax(urls.confirmPickUp, "GET", condition, function () {
             alertSuccess("세탁물 수거완료 처리 하였습니다.");
             $("#pickUpBtn").hide();
             $("#pickStatus").html("세탁물을 수거 완료 하였습니다.");
             /* 완료이후 get주소에 완료했음을 알리는 신호 추가하여 히스토리 바꿔치기 */
-            history.replaceState({}, "", `qrpickup?frcode=${wares.frCode}&isdone=1`); 
+            history.replaceState({}, "", `qrpickup?frcode=${wares.frCode}&isdone=1`);
         });
     },
 };
@@ -53,7 +53,7 @@ const trigs = {
             });
         });
     },
-}
+};
 
 
 const wares = {
@@ -62,7 +62,7 @@ const wares = {
     frCode: "",
     frName: "",
     isDone: 0,
-}
+};
 
 $(function() {
     onPageLoad();

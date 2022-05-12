@@ -10,11 +10,11 @@ const datePickerTargetIds = [
 ];
 
 /* 그리드 생성과 운영에 관한 중요 변수들. grid라는 이름으로 시작하도록 통일했다. */
-let gridId = [];
+const gridId = [];
 let gridTargetDiv = [];
-let gridData = [];
-let gridColumnLayout = [];
-let gridProp = [];
+const gridData = [];
+const gridColumnLayout = [];
+const gridProp = [];
 let gridCreateUrl = [];
 let gridSaveUrl = [];
 
@@ -26,12 +26,12 @@ gridTargetDiv = [
 /* 그리드를 받아올 때 쓰이는 api 배열 */
 gridCreateUrl = [
     "/api/head/itemPriceList"
-]
+];
 
 /* 그리드를 저장할 때 쓰이는 api 배열 */
 gridSaveUrl = [
     "/api/head/itemPriceUpdate"
-]
+];
 
 /* 0번 그리드의 레이아웃 */
 gridColumnLayout[0] = [
@@ -216,16 +216,16 @@ function applyPrice() {
 
     if($setDt.val() === "") {
         alertCaution("가격적용일을 선택해 주세요", 1);
-        return false;
+        return;
     }else if($priceUpload[0].files.length === 0) {
         alertCaution("파일을 첨부해 주세요", 1);
-        return false;
+        return;
     }else if(
         $priceUpload[0].files[0].type !== "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" &&
         $priceUpload[0].files[0].type !== "application/vnd.ms-excel"
     ) {
         alertCaution("올바른 확장자의 파일을 첨부해 주세요", 1);
-        return false;
+        return;
     }
 
     const url = "/api/head/itemPrice";
@@ -235,7 +235,6 @@ function applyPrice() {
 
     CommonUI.ajax(url, "POST", formData, function (req) {
         if(req.sendData.errorListData !== null){
-            console.log("req : "+req.sendData.errorListData);
             // 에러 내용이 많을경우 대비 얼터화면 확장할 것. to.성낙원
             alertCancel(req.sendData.errorListData);
         }else{
@@ -302,7 +301,7 @@ function saveRegPrice() {
 /* 상품코드 텍스트필드 입력시 유효성에 맞추기 */
 function itemCodeValidator() {
     const $sBiIteamcode = $("#s_biItemcode");
-    let targetString = $sBiIteamcode.val();
+    const targetString = $sBiIteamcode.val();
     $sBiIteamcode.val(targetString.replace(/[^a-zA-Z0-9]/g, ""));
 }
 

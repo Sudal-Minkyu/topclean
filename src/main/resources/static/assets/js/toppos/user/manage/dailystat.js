@@ -249,7 +249,7 @@ const trigs = {
 			});
 
 			$("#entryPasswordKeyboard").on("click", function () {
-				vkey.showKeyboard("entryPassword", {title: "계정 비밀번호 입력", callback: function () {
+				vkey.showKeyboard("entryPassword", {title: "계정 비밀번호 입력", callback() {
                     const password = {
                         password: $("#entryPassword").val(),
                     }
@@ -338,8 +338,8 @@ function mergeData(sendData) {
             data.forEach(dataObj => {
                 if(obj.yyyymmdd === dataObj.yyyymmdd) {
                     isNewYyyymmdd = false;
-                    for(let i = 0; i < keys.length; i++) {
-                        dataObj[keys[i]] = obj[keys[i]];
+                    for(const key of keys) {
+                        dataObj[key] = obj[key];
                     }
                 }
             });
@@ -348,8 +348,8 @@ function mergeData(sendData) {
                 Object.keys(babyDto).forEach(key => {
                     babyDto[key] = 0;
                 });
-                for(let i = 0; i < keys.length; i++) {
-                    babyDto[keys[i]] = obj[keys[i]];
+                for(const key of keys) {
+                    babyDto[key] = obj[key];
                 }
                 data.push(babyDto);
             }

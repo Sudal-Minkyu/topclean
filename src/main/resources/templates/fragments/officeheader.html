@@ -25,7 +25,7 @@
 				<li class="gnb__item">
 					<div class="gnb__depth1"><a href="#">설정</a></div>
 					<ul class="gnb__depth2">
-						<li class="btnSubmenu"><a href="/head/">나의정보관리</a></li>
+						<li class="btnSubmenu"><a href="/head/mypage">나의 정보 관리</a></li>
 						<li class="btnSubmenu"><a href="/head/mastercode">마스터코드 등록</a></li>
 					</ul>
 				</li>
@@ -35,7 +35,7 @@
 		<div class="info" id="logout_Form">
 			<div class="info__user">
 				<span class="info__icon">user image</span>
-				<span class="info__user-name">홍길동(이름)</span>
+				<span id="headerUserName" class="info__user-name"></span>
 			</div>
 			<button class="header__btn" onclick="logout()">
 				<img src="/assets/images/icon__logout--g.svg" alt="로그아웃" /><span>로그아웃</span>
@@ -48,11 +48,19 @@
 			try {
 				const token = window.localStorage.getItem('Authorization');
 				const parsedToken = readToken(token);
-				console.log(parsedToken);
 			} catch (e) {
 				console.log(e);
 			}
+
+			getHeaderData();
 		});
+
+		function getHeaderData() {
+			CommonUI.ajax("/api/head/headHeaderData", "GET", false, function (res) {
+				const data = res.sendData;
+				$("#headerUserName").html(data.accountHeaderData.username);
+			});
+		}
 
 		function readToken (token) {
 			let base64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');

@@ -39,19 +39,21 @@ function calculateItemPrice() {
     currentRequest.fdDiscountGrade = $("input[name='fdDiscountGrade']:checked").val();
 
     currentRequest.fdPressed = $("#fdPress").is(":checked") ?
-        ceil100(parseInt(initialData.addCostData.bcPressed)) : 0;
+        ceil100(parseInt(initialData.addCostData.bcPressed, 10)) : 0;
     currentRequest.fdWhitening = $("#fdWhitening").is(":checked") ?
-        ceil100(parseInt(initialData.addCostData.bcWhitening)) : 0;
+        ceil100(parseInt(initialData.addCostData.bcWhitening, 10)) : 0;
     currentRequest.fdWaterRepellent = $("#fdWaterRepellent").is(":checked") ?
-        ceil100(parseInt(initialData.addCostData.bcWaterRepellent)) : 0;
+        ceil100(parseInt(initialData.addCostData.bcWaterRepellent, 10)) : 0;
     currentRequest.fdStarch = $("#fdStarch").is(":checked") ?
-        ceil100(parseInt(initialData.addCostData.bcStarch)) : 0;
+        ceil100(parseInt(initialData.addCostData.bcStarch, 10)) : 0;
     currentRequest.fdPollutionLevel = $("input[name='cleanDirt']:checked").first().val() | 0;
-    currentRequest.fdPollution = ceil100(parseInt(initialData.addCostData["bcPollution" + currentRequest.fdPollutionLevel])) | 0;
+    currentRequest.fdPollution = ceil100(parseInt(initialData.addCostData["bcPollution" + currentRequest.fdPollutionLevel], 10)) | 0;
 
     currentRequest.fdRepairAmt = ceil100(currentRequest.fdRepairAmt);
     currentRequest.fdAdd1Amt = ceil100(currentRequest.fdAdd1Amt);
-    if(!currentRequest.fdAdd2Amt) currentRequest.fdAdd2Amt = 0;
+    if(!currentRequest.fdAdd2Amt) {
+        currentRequest.fdAdd2Amt = 0;
+    }
     currentRequest.fdAdd2Amt = ceil100(currentRequest.fdAdd2Amt);
 
 
@@ -114,7 +116,7 @@ function ceil100(num) {
         num = num.substr(0, num.length - 2) + "00";
         ceilAmount = 100;
     }
-    return parseInt(num) + ceilAmount;
+    return parseInt(num, 10) + ceilAmount;
 }
 
 /* 결제 단계의 조작가능한 항목의 동작마다 이루어질 거스름돈(현금)과 미수발생금액 계산 */

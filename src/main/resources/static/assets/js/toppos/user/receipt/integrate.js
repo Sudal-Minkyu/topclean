@@ -692,14 +692,14 @@ const grids = {
                     renderer: {
                         type: "TemplateRenderer"
                     },
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         return `<span class="bgcolor${value}" style="display: none">${value}</span>`;
                     },
                 }, {
                     dataField: "frRefType",
                     headerText: "구분",
                     width: 40,
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         return CommonData.name.frRefType[value];
                     },
                 }, {
@@ -712,7 +712,7 @@ const grids = {
                     headerText: "택번호",
                     style: "datafield_tag",
                     width: 65,
-                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         return CommonData.formatFrTagNo(value, frTagInfo.frTagType);
                     },
                 }, {
@@ -722,7 +722,7 @@ const grids = {
                     renderer : {
                         type : "TemplateRenderer",
                     },
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         const colorSquare =
                             `<span class="colorSquare" style="background-color: ${CommonData.name.fdColorCode[item.fdColor]}"></span>`;
                         CommonUI.toppos.makeProductName(item, initialData.userItemPriceSortData);
@@ -736,7 +736,7 @@ const grids = {
                     renderer : {
                         type: "TemplateRenderer",
                     },
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         let template = "";
                         if(item.photoList && item.photoList.length) {
                             template = `<img src="/assets/images/icon__picture.svg" onclick="openReceiptPhotoPop(${rowIndex})">`;
@@ -755,7 +755,7 @@ const grids = {
                     dataField: "fdState",
                     headerText: "현재상태",
                     width: 85,
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         return CommonData.name.fdState[value];
                     },
                 }, {
@@ -770,7 +770,7 @@ const grids = {
                     renderer : {
                         type : "TemplateRenderer",
                     },
-                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         let template = "";
                         if(item.frFiId && item.frFiCustomerConfirm === "1") {
                             template = `<button class="c-state c-state--yellow" `
@@ -803,13 +803,7 @@ const grids = {
                     renderer : {
                         type : "TemplateRenderer",
                     },
-                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
-                        let result = "";
-                        if(typeof value === "number") {
-                            result = new Date(value).format("yy.MM.dd<br>hh:mm");
-                        }
-                        return result;
-                    },
+                    labelFunction: formatDateTime,
                 }, {
                     dataField: "fdS6Time",
                     headerText: "인도일자",
@@ -817,13 +811,7 @@ const grids = {
                     renderer : {
                         type : "TemplateRenderer",
                     },
-                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
-                        let result = "";
-                        if(typeof value === "number") {
-                            result = new Date(value).format("yy.MM.dd<br>hh:mm");
-                        }
-                        return result;
-                    },
+                    labelFunction: formatDateTime,
                 }, {
                     dataField: "fdS2Dt",
                     headerText: "지사입고",
@@ -849,7 +837,7 @@ const grids = {
                     renderer : {
                         type: "TemplateRenderer",
                     },
-                    labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item ) {
                         let template = "";
                         item.frInspectBtn = true;
                         if(item.fdState === "S1" && !item.frFiId) {
@@ -872,7 +860,7 @@ const grids = {
                     renderer : {
                         type: "TemplateRenderer",
                     },
-                    labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item ) {
                         let template = "";
                         item.brInspectBtn = true;
                         if(item.fdState === "B" && item.brFiId && item.brFiCustomerConfirm === "1") {
@@ -893,7 +881,7 @@ const grids = {
                     renderer : {
                         type: "TemplateRenderer",
                     },
-                    labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item ) {
                         let template = "";
                         if(["S1", "F"].includes(item.fdState)) {
                             template = `
@@ -912,7 +900,7 @@ const grids = {
                     renderer : {
                         type: "TemplateRenderer",
                     },
-                    labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item ) {
                         let template = "";
                         if(item.fpCancelYn === "Y" && ["S1", "F", "B"].includes(item.fdState)) {
                             template = `
@@ -931,7 +919,7 @@ const grids = {
                     renderer : {
                         type: "TemplateRenderer",
                     },
-                    labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item ) {
                         let template = "";
                         if(item.fpCancelYn === "N" && item.fdState !== "S2") {
                             template = `
@@ -950,7 +938,7 @@ const grids = {
                     renderer : {
                         type: "TemplateRenderer",
                     },
-                    labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item ) {
                         let template = "";
                         if(item.fdState === "S6") {
                             template = `
@@ -982,7 +970,7 @@ const grids = {
                 enableCellMerge : true,
                 rowHeight : 48,
                 headerHeight : 48,
-                rowStyleFunction : function(rowIndex, item) {
+                rowStyleFunction(rowIndex, item) {
                     return "grid_cellcolor" + item.cellColor;
                 },
             };
@@ -994,7 +982,7 @@ const grids = {
                 }, {
                     dataField: "bcHp",
                     headerText: "전화번호",
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         return CommonUI.formatTel(value);
                     }
                 }, {
@@ -1037,7 +1025,7 @@ const grids = {
                 }, {
                     dataField: "fpType",
                     headerText: "결제방식",
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         let resultText = "";
                         if(item.fpCatIssuername) {
                             resultText = item.fpCatIssuername;
@@ -1109,7 +1097,7 @@ const grids = {
                 }, {
                     dataField: "fiType",
                     headerText: "유형",
-                    labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item ) {
                         return CommonData.name.fiType[value];
                     },
                 }, {
@@ -1127,7 +1115,7 @@ const grids = {
                 }, {
                     dataField: "fiCustomerConfirm",
                     headerText: "고객수락",
-                    labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item ) {
                         return CommonData.name.fiCustomerConfirm[value];
                     },
                 },
@@ -1921,11 +1909,11 @@ function onAddOrder() {
     currentRequest.fdUrgentYn = currentRequest.fdUrgentType !== "" ? "Y" : "N";
 
     const pollutionLoc = $("input[name='pollutionLoc']");
-    for(let i = 0; i < pollutionLoc.length; i++) {
-        if($(pollutionLoc[i]).is(":checked")) {
-            currentRequest[pollutionLoc[i].id] = "Y";
-        }else {
-            currentRequest[pollutionLoc[i].id] = "N";
+    for(const element of pollutionLoc) {
+        if ($(element).is(":checked")) {
+            currentRequest[element.id] = "Y";
+        } else {
+            currentRequest[element.id] = "N";
         }
     }
     
@@ -2026,7 +2014,7 @@ function onShowVKeypad(num) {
 
     vkeypadProp[0] = {
         title : "추가비용 입력",
-        callback : function () {
+        callback() {
             return $("#" + vkeypadTargetId).val(parseInt($("#" + vkeypadTargetId).val()).toLocaleString());
         }
     }
@@ -2174,16 +2162,16 @@ function disableKeypad() {
     const $keypadBackspace = $(".add-cost .keypad_btn_backspace");
     const $keypadBoilerplate = $(".add-cost .add-cost__example-btn");
 
-    for(let i = 0; i < $keypadBtn.length; i++) {
-        removeEventsFromElement($keypadBtn[i]);
+    for(const element of $keypadBtn) {
+        removeEventsFromElement(element);
     }
 
-    for(let i = 0; i < $keypadBackspace.length; i++) {
-        removeEventsFromElement($keypadBackspace[i]);
+    for(const element of $keypadBackspace) {
+        removeEventsFromElement(element);
     }
 
-    for(let i = 0; i < $keypadBoilerplate.length; i++) {
-        removeEventsFromElement($keypadBoilerplate[i]);
+    for(const element of $keypadBoilerplate) {
+        removeEventsFromElement(element);
     }
 }
 
@@ -2687,13 +2675,13 @@ function addDistinguishableCellColor() {
     let nowId = 0;
     let colorIdx = 0;
 
-    for (let i = 0; i < items.length; i++) {
-        if(items[i].frId !== nowId) {
+    for (const item of items) {
+        if (item.frId !== nowId) {
             colorIdx++;
-            if(colorIdx === 2) colorIdx = 0;
-            nowId = items[i].frId;
+            if (colorIdx === 2) colorIdx = 0;
+            nowId = item.frId;
         }
-        items[i].cellColor = colorIdx;
+        item.cellColor = colorIdx;
     }
 
     AUIGrid.updateRowsById(grids.s.id[0], items);
@@ -2760,4 +2748,12 @@ function changeSearchPeriod(period) {
         $("#filterFromDt").val(fromday);
         $("#filterToDt").val(today);
     }
+}
+
+function formatDateTime(rowIndex, columnIndex, value, headerText, item) {
+    let result = "";
+    if(typeof value === "number") {
+        result = new Date(value).format("yy.MM.dd<br>hh:mm");
+    }
+    return result;
 }

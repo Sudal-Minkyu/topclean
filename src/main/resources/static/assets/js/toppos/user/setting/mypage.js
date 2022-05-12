@@ -39,7 +39,6 @@ const dtos = {
 	},
 	receive: {
 		myInfo: {
-			frRemark: "s",
 			frDepositAmount: "n", // 2022.03.29 추가
 			frRentalAmount: "n", // 2022.03.29 추가
 			frCode: "sr",
@@ -165,7 +164,8 @@ const comms = {
 			case "2":
 				dv.chk(frFavoriteData, dtos.send.franchiseAddProcess.addAmountData, "추가항목 저장");
 				break;
-		};
+		}
+
 		const data = {
 			list: frFavoriteData
 		};
@@ -241,12 +241,11 @@ const grids = {
 					renderer: {
 						type: "TemplateRenderer",
 					},
-					labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
-						const template = `
+					labelFunction(rowIndex, columnIndex, value, headerText, item) {
+						return `
 							<button class="c-button c-button--solid  c-button--supersmall" 
 								onclick="onModifyOrder(0, ${rowIndex})">수정</button>
 						`;
-						return template;
 					},
 				}
 			];
@@ -267,12 +266,11 @@ const grids = {
 					renderer: {
 						type: "TemplateRenderer",
 					},
-					labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
-						const template = `
+					labelFunction(rowIndex, columnIndex, value, headerText, item) {
+						return `
 							<button class="c-button c-button--solid  c-button--supersmall" 
 								onclick="onModifyOrder(1, ${rowIndex})">수정</button>
 						`;
-						return template;
 					},
 				}
 			];
@@ -293,12 +291,11 @@ const grids = {
 					renderer: {
 						type: "TemplateRenderer",
 					},
-					labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
-						const template = `
+					labelFunction(rowIndex, columnIndex, value, headerText, item) {
+						return `
 							<button class="c-button c-button--solid  c-button--supersmall" 
 								onclick="onModifyOrder(2, ${rowIndex})">수정</button>
 						`;
-						return template;
 					},
 				}
 			];
@@ -375,7 +372,6 @@ const grids = {
 		},
 
 		createRow(num, item) {
-			// let item = {"항목": "", "비고": ""};
 			AUIGrid.addRow(grids.s.id[num], item, "last");
 		},
 
@@ -405,7 +401,7 @@ const grids = {
 			const updateGridData = AUIGrid.getGridData(grids.s.id[num]);
 			for (let i = 0; updateGridData.length > i; i++) {
 				updateGridData[i].baSort = i;
-			};
+			}
 			comms.saveFrFavorite(num, updateGridData);
 		},
 
@@ -455,7 +451,7 @@ const trigs = {
 				if (dataNum) {
 					grids.f.resize(num);
 					comms.getFrFavorite(dataNum);
-				};
+				}
 			});
 
 
@@ -510,12 +506,7 @@ const trigs = {
 			$('.downRows').on('click', function () {
 				const gridnum = $(this).attr('data-index');
 				grids.f.downRows(gridnum);
-			})
-
-			// $('#frBusinessNo').on('keyup', function () {
-			// 	const busiNo = $("#frBusinessNo").val();
-			// 	$("#frBusinessNo").val(CommonUI.formatBusinessNo(busiNo));
-			// });
+			});
 
 			$('#frTelNo').on('keyup', function () {
 				const telNum = $('#frTelNo').val();
@@ -542,19 +533,11 @@ const trigs = {
 			});
 
 			$("#entryPasswordKeyboard").on("click", function () {
-				vkey.showKeyboard("entryPassword", {title: "계정 비밀번호 입력", callback: function () {
-                    const password = {
-                        password: $("#entryPassword").val(),
-                    }
-                    comms.entryPass(password);
-                }});
+				vkey.showKeyboard("entryPassword", {title: "계정 비밀번호 입력", callback: sendPassword});
 			});
 
 			$("#entryPasswordConfirm").on("click", function () {
-				const password = {
-					password: $("#entryPassword").val(),
-				}
-				comms.entryPass(password);
+				sendPassword();
 			});
 		},
 	},
@@ -687,11 +670,6 @@ function onPageLoad() {
 	trigs.s.basic();
 	trigs.s.entryPass();
 
-	/* grids.s 에 적절한 값을 세팅하였다면, 해당 함수 호출시 해당 배열번호의 그리드에 의도한 데이터들이 주입되어진다. */
-	// grids.f.setInitialData(0);
-
-	/* 생성된 그리드에 기본적으로 필요한 이벤트들을 적용한다. */
-	// grids.e.basicEvent();
 }
 
 function putFrInfoDataInField(myInfoData) {
@@ -821,4 +799,12 @@ function printingReport() {
 	console.log(_params);
 	$("#qrcode").attr("src", fullURL);
 	$("#qrPop").addClass("active");
+}
+
+/* 진입시 입력한 암호를 전달한다. */
+function sendPassword() {
+	const password = {
+		password: $("#entryPassword").val(),
+	}
+	comms.entryPass(password);
 }

@@ -73,7 +73,7 @@ const dtos = {
 /* 통신에 사용되는 url들 기입 */
 const urls = {
     notice: "/api/user/noticeList",
-}
+};
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
@@ -108,85 +108,20 @@ const comms = {
                 slidingText = slidingText.substring(0, slidingText.length - 2) + " 입니다. ";
             }
             if(userIndexDto.inCountText !== 0) {
-                slidingText = slidingText + "현재 입고대기수량이 " + userIndexDto.inCountText + "건 존재합니다."
+                slidingText = slidingText + "현재 입고대기수량이 " + userIndexDto.inCountText + "건 존재합니다.";
             }
             $("#slidingText").html(slidingText);
 
-
-            if(historyList) {
-                const field = $("#historyList").children("li").children("a");
-                field.children(".main__board-badge").children("span").html("");
-                field.children(".main__board-time").children("span").html("");
-                field.children(".main__board-title").children("span").html("");
-                field.children(".main__board-phone").children("span").html("");
-                $(field).children(".main__board-badge").children("span").removeClass();
-
-                for(let i = 0; i < historyList.length; i++) {
-                    $(field[i]).children(".main__board-badge").children("span").html(historyList[i].typename);
-                    switch(historyList[i].typename) {
-                        case "접수" :
-                            $(field[i]).children(".main__board-badge").children("span").addClass("badge green");
-                            break;
-                        case "인도" :
-                            $(field[i]).children(".main__board-badge").children("span").addClass("badge red");
-                            break;
-                    }
-                    $(field[i]).children(".main__board-time").children("span").html(historyList[i].requestTime);
-                    $(field[i]).children(".main__board-title").children("span").html(historyList[i].bcName);
-                    $(field[i]).children(".main__board-phone").children("span").html(CommonUI.formatTel(historyList[i].bcHp));
-                }
-            }
-
-            if(inspectList) {
-                const field = $("#inspectList").children("li").children("a");
-                field.children(".main__board-bcname").children("span").html("");
-                field.children(".main__board-bgname").children("span").html("");
-                field.children(".main__board-afttag").children("span").html("");
-                field.children(".main__board-confirm").children("span").html("");
-
-                for(let i = 0; i < inspectList.length; i++) {
-                    // $(field[i]).attr("href", `./user/integrate?fdTag=${inspectList[i].fdTag.substring(frTagInfo.frTagType, 7)}&frYyyymmdd=${
-                    //     inspectList[i].frYyyymmdd}`);
-                    $(field[i]).attr("href", `javascript:getBrInspectInfo(${inspectList[i].fiId})`);
-
-                    $(field[i]).children(".main__board-bcname").children("span").html(inspectList[i].bcName);
-                    $(field[i]).children(".main__board-bgname").children("span").html(inspectList[i].bgName);
-                    $(field[i]).children(".main__board-afttag").children("span")
-                        .html(CommonData.formatFrTagNo(inspectList[i].fdTag, frTagInfo.frTagType));
-                    $(field[i]).children(".main__board-confirm").children("span")
-                        .html(wares.fiCustomerConfirmName[inspectList[i].fiCustomerConfirm]);
-                }
-            }
-
-            if(tagGalleryList) {
-                const field = $("#taglostList").children("li").children("a");;
-                for(let i = 0; i < tagGalleryList.length; i++) {
-                    $(field[i]).attr("href", `javascript: showTaglost(${tagGalleryList[i].btId})`);
-                    $(field[i]).children(".main__board-title").children("span:nth-child(1)")
-                        .html(tagGalleryList[i].btBrandName);
-                    $(field[i]).children(".main__board-title").children("span:nth-child(2)")
-                        .html("&nbsp;(" + tagGalleryList[i].btMaterial + ")");
-                    $(field[i]).children(".main__board-date").children("span")
-                        .html(tagGalleryList[i].btInputDt);
-                }
-            }
-
-            if(noticeList) {
-                const field = $("#noticeList").children("li").children("a");
-                for(let i = 0; i < noticeList.length; i++) {
-                    $(field[i]).attr("href", `./user/noticeview?id=${noticeList[i].hnId}`);
-                    $(field[i]).children(".main__board-bcname").children("span")
-                        .html(CommonData.name.hnType[noticeList[i].hnType]);
-                    $(field[i]).children(".main__board-title").children("span").html(noticeList[i].subject);
-                    $(field[i]).children(".main__board-date").children("span").html(noticeList[i].insertDateTime);
-                }
-            }
+            /* 메인페이지에 나열되는 항목들의 나열 */
+            setHistory(historyList);
+            setInspect(inspectList);
+            setTagGallery(tagGalleryList);
+            setNotice(noticeList);
         });
     },
 
     getBrInspectNeo(target) {
         CommonUI.ajax("/api/user/franchiseInspectionInfo", "GET", target, function (res) {
-            console.log(res);
             const data = res.sendData;
             wares.currentBrInspect = data.inspeotInfoDto;
             wares.currentBrInspect.brFiId = data.inspeotInfoDto.fiId;
@@ -199,7 +134,7 @@ const comms = {
     inspectionJudgement(answer) {
         dv.chk(answer, dtos.send.franchiseInspectionYn, "고객 수락 거부 응답 보내기");
         const url = "/api/user/franchiseInspectionYn";
-        CommonUI.ajax(url, "PARAM", answer, function (res) {
+        CommonUI.ajax(url, "PARAM", answer, function () {
             let resultMsg = "";
             if(answer.type === "1") {
                 resultMsg = "세탁진행을 보고 하였습니다.";
@@ -212,9 +147,8 @@ const comms = {
     },
 
     sendKakaoMessage(data) {
-        console.log(data);
         dv.chk(data, dtos.send.franchiseInspectionMessageSend, "검품 카카오 메시지 보내기");
-        CommonUI.ajax("/api/user/franchiseInspectionMessageSend", "PARAM", data, function (res) {
+        CommonUI.ajax("/api/user/franchiseInspectionMessageSend", "PARAM", data, function () {
             alertSuccess("메시지 전송이 완료되었습니다.");
         });
     },
@@ -227,7 +161,7 @@ const trigs = {
         $historyDate.on("change", function () {
             const condition = {
                 date: $historyDate.val().numString(),
-            }
+            };
             comms.franchiseInfo(condition);
         });
 
@@ -236,13 +170,13 @@ const trigs = {
         });
 
         $("#frCheck").on("change", function () {
-            const tagNum = $("#brTag").val()
+            const tagNum = $("#brTag").val();
             $("#frCheck").prop("disabled", true);
             const answer = {
                 btId: wares.currentRequest.btId,
                 brTag: tagNum,
                 type: "1",
-            }
+            };
             taglostCheck(answer);
         });
 
@@ -253,7 +187,7 @@ const trigs = {
                 const answer = {
                     btId: wares.currentRequest.btId,
                     type: "2",
-                }
+                };
                 taglostCheck(answer);
                 $('#popupId').remove();
             });
@@ -296,7 +230,7 @@ const trigs = {
             });
         });
     }
-}
+};
 
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
 const wares = {
@@ -308,7 +242,7 @@ const wares = {
     currentRequest: {},
     currentBrInspect: {},
     currentCondition: {},
-}
+};
 
 $(function() { // 페이지가 로드되고 나서 실행
     onPageLoad();
@@ -319,13 +253,13 @@ function onPageLoad() {
     const today = new Date().format("yyyy-MM-dd");
     const condition = {
         date: today.numString(),
-    }
+    };
     comms.franchiseInfo(condition);
 
     CommonUI.setDatePicker(["historyDate"]);
 
     const $historyDate = $("#historyDate");
-	$historyDate.val(today);
+    $historyDate.val(today);
     $historyDate.datepicker("option", "maxDate", today);
     $historyDate.datepicker("option", "changeYear", false);
     $historyDate.datepicker("option", "changeMonth", false);
@@ -345,7 +279,7 @@ function onPageLoad() {
 // 메인페이지 슬라이딩 텍스트
 function marquee(speed) {
     // text width
-    var initWidth = $(".marquee__text").width();
+    const initWidth = $(".marquee__text").width();
 
     // position
     $(".marquee__text").css('margin-left', function() {
@@ -359,12 +293,12 @@ function marquee(speed) {
 
     //marquee function
     function marqueeRight () {
-        $(".marquee__text").css('margin-left', function(index, val) {
+        $(".marquee__text").css('margin-left', function(_index, val) {
             return parseInt(val, 10) - speed + 'px';
         });
 
         //reset the element if it's out of it's container
-        if (parseInt($(".marquee__text").css('margin-left')) < -1 * $(".marquee__text").width()) {
+        if (parseInt($(".marquee__text").css('margin-left'), 10) < -1 * $(".marquee__text").width()) {
             resMarqueeRight();
         }
     }
@@ -382,18 +316,18 @@ function openTaglostPop() {
 
 function showTaglost(btId) {
     const getCondition = {
-        btId: btId
+        btId,
     };
 
     getTaglostDetail(getCondition);
 }
 
 function getBrInspectInfo(fiId) {
-    wares.currentBrInspect = {}
+    wares.currentBrInspect = {};
 
     const target = {
-        fiId: fiId,
-    }
+        fiId,
+    };
     comms.getBrInspectNeo(target);
 }
 
@@ -464,7 +398,82 @@ function sendInspectMessage(sender) {
             fmMessage: "",
             fiId: wares.currentBrInspect.brFiId,
             bcId: wares.currentBrInspect.bcId,
-        }
+        };
     }
     comms.sendKakaoMessage(data);
+}
+
+function setHistory(historyList) {
+    if(historyList) {
+        const field = $("#historyList").children("li").children("a");
+        field.children(".main__board-badge").children("span").html("");
+        field.children(".main__board-time").children("span").html("");
+        field.children(".main__board-title").children("span").html("");
+        field.children(".main__board-phone").children("span").html("");
+        $(field).children(".main__board-badge").children("span").removeClass();
+
+        for(let i = 0; i < historyList.length; i++) {
+            $(field[i]).children(".main__board-badge").children("span").html(historyList[i].typename);
+            switch(historyList[i].typename) {
+                case "접수" :
+                    $(field[i]).children(".main__board-badge").children("span").addClass("badge green");
+                    break;
+                case "인도" :
+                    $(field[i]).children(".main__board-badge").children("span").addClass("badge red");
+                    break;
+            }
+            $(field[i]).children(".main__board-time").children("span").html(historyList[i].requestTime);
+            $(field[i]).children(".main__board-title").children("span").html(historyList[i].bcName);
+            $(field[i]).children(".main__board-phone").children("span").html(CommonUI.formatTel(historyList[i].bcHp));
+        }
+    }
+}
+
+function setInspect(inspectList) {
+    if(inspectList) {
+        const field = $("#inspectList").children("li").children("a");
+        field.children(".main__board-bcname").children("span").html("");
+        field.children(".main__board-bgname").children("span").html("");
+        field.children(".main__board-afttag").children("span").html("");
+        field.children(".main__board-confirm").children("span").html("");
+
+        for(let i = 0; i < inspectList.length; i++) {
+            $(field[i]).attr("href", `javascript:getBrInspectInfo(${inspectList[i].fiId})`);
+
+            $(field[i]).children(".main__board-bcname").children("span").html(inspectList[i].bcName);
+            $(field[i]).children(".main__board-bgname").children("span").html(inspectList[i].bgName);
+            $(field[i]).children(".main__board-afttag").children("span")
+                .html(CommonData.formatFrTagNo(inspectList[i].fdTag, frTagInfo.frTagType));
+            $(field[i]).children(".main__board-confirm").children("span")
+                .html(wares.fiCustomerConfirmName[inspectList[i].fiCustomerConfirm]);
+        }
+    }
+}
+
+function setTagGallery(tagGalleryList) {
+    if(tagGalleryList) {
+        const field = $("#taglostList").children("li").children("a");
+        for(let i = 0; i < tagGalleryList.length; i++) {
+            $(field[i]).attr("href", `javascript: showTaglost(${tagGalleryList[i].btId})`);
+            $(field[i]).children(".main__board-title").children("span:nth-child(1)")
+                .html(tagGalleryList[i].btBrandName);
+            $(field[i]).children(".main__board-title").children("span:nth-child(2)")
+                .html("&nbsp;(" + tagGalleryList[i].btMaterial + ")");
+            $(field[i]).children(".main__board-date").children("span")
+                .html(tagGalleryList[i].btInputDt);
+        }
+    }
+}
+
+function setNotice(noticeList) {
+    if(noticeList) {
+        const field = $("#noticeList").children("li").children("a");
+        for(let i = 0; i < noticeList.length; i++) {
+            $(field[i]).attr("href", `./user/noticeview?id=${noticeList[i].hnId}`);
+            $(field[i]).children(".main__board-bcname").children("span")
+                .html(CommonData.name.hnType[noticeList[i].hnType]);
+            $(field[i]).children(".main__board-title").children("span").html(noticeList[i].subject);
+            $(field[i]).children(".main__board-date").children("span").html(noticeList[i].insertDateTime);
+        }
+    }
 }

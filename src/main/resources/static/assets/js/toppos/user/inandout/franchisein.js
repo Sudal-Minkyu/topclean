@@ -68,18 +68,18 @@ const comms = {
             let totalAmount = 0;
             console.log(data);
 
-            for (let i = 0; i < data.gridListData.length; i++) {
+            for (const obj of data.gridListData) {
                 // 접수총액
-                totalAmount += data.gridListData[i].fdTotAmt;
+                totalAmount += obj.fdTotAmt;
                 // 급세탁건수
-                if (data.gridListData[i].fdUrgentYn === "Y") {
+                if (obj.fdUrgentYn === "Y") {
                     fastItemCount = fastItemCount + 1;
                 }
                 // 재세탁건수
-                if (data.gridListData[i].fdRetryYn === "Y") {
+                if (obj.fdRetryYn === "Y") {
                     retryItemCount = retryItemCount + 1;
                 }
-                data.gridListData[i].SMS = true;
+                obj.SMS = true;
             }
 
             dv.chk(data.gridListData, dtos.receive.franchiseReceiptFranchiseInList, '입고 리스트 항목 받아오기');
@@ -140,7 +140,7 @@ const grids = {
                     dataField: "fdS4Type",
                     headerText: "출고타입",
                     width: 80,
-                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         return CommonData.name.fdS4Type[value];
                     },
                 }, {
@@ -154,7 +154,7 @@ const grids = {
                     headerText: "택번호",
                     style: "datafield_tag",
                     width: 70,
-                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         return CommonData.formatFrTagNo(value, frTagInfo.frTagType);
                     },
                 }, 
@@ -166,7 +166,7 @@ const grids = {
                     renderer : {
                         type : "TemplateRenderer",
                     },
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         const colorSquare =
                             `<span class="colorSquare" style="background-color: ${CommonData.name.fdColorCode[item.fdColor]}; vertical-align: middle;"></span>`;
                         const sumName = CommonUI.toppos.makeSimpleProductName(item);
@@ -177,7 +177,7 @@ const grids = {
                     dataField: "",
                     headerText: "입고유형",
                     width: 80,
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         let type = "";
                         if (item.fdRetryYn === "Y") {
                             type = "재세탁";
@@ -187,7 +187,7 @@ const grids = {
                             type = "운동화";
                         } else {
                             type = "일반";
-                        };
+                        }
                         return type;
                     },
                 }, 
@@ -196,7 +196,7 @@ const grids = {
                     headerText: "처리내역",
                     style: "grid_textalign_left",
                     width: 120,
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         return CommonUI.toppos.processName(item);
                     },
                 },
@@ -226,7 +226,7 @@ const grids = {
                         type : "CheckBoxHeaderRenderer",
                         dependentMode : true,
                         position : "bottom",
-                        onClick: function (e) {
+                        onClick() {
                             grids.f.resetUpdatedItems();
                         },
                     },
@@ -308,8 +308,8 @@ const grids = {
             /* 0번그리드 내의 셀 클릭시 이벤트 */
             AUIGrid.bind(grids.s.id[0], "cellEditEnd", function (e) {
                 const targetItems = AUIGrid.getItemsByValue(grids.s.id[0], "bcId", e.item.bcId);
-                for (let i = 0; i < targetItems.length; i++) {
-                    targetItems[i].SMS = e.value;
+                for (const obj of targetItems) {
+                    obj.SMS = e.value;
                 }
                 AUIGrid.updateRowsById(grids.s.id[0], targetItems);
                 grids.f.resetUpdatedItems();
@@ -390,10 +390,9 @@ function makeSaveDataset(checkedItems) { // 저장 데이터셋 만들기
             smsBcIdList.push(data.item.bcId)
         }
     });
-    const changeData = {
+    return {
         stateType: "S4",
         fdIdList: fdIdList,
         smsBcIdList: smsBcIdList,
     };
-    return changeData;
 }

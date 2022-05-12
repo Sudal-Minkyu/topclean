@@ -77,6 +77,12 @@ public class HeadController {
         return "head/pricemanagement";
     }
 
+    // 나의정보관리
+    @RequestMapping("mypage")
+    public String mypage(){
+        return "head/mypage";
+    }
+
     // 마스터코드
     @RequestMapping("mastercode")
     public String mastercode(){

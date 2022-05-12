@@ -35,7 +35,7 @@ function getBoilerPlate() {
     CommonUI.ajax(url, "GET", {baType: "0"}, function (res) {
         let boilerPlate = [];
         const data = res.sendData.keyWordData;
-        for({baName} of data) {
+        for(const {baName} of data) {
             boilerPlate.push(baName);
         }
         vkeyProp[1].boilerplate = boilerPlate;
@@ -216,7 +216,6 @@ function requestSign() {
         $("#signImage").hide();
         return;
     }
-    // $("#resultmsg").text(": 승인중 메세지- 고객이 서명중입니다. ------전체화면으로 가리기 ");
 
     const maskHeight = $(document).height();
     const maskWidth = $(window).width();

@@ -46,12 +46,12 @@ $(function() {
     for(let i = 0; i <12; i++) {
         AUIGrid.bind(gridId[i], "cellClick", function( event ) {
             if(isClick) {
-                return false;
+                return;
             }
-            let item = event.item;
-            let value = item[event.columnIndex];
+            const item = event.item;
+            const value = item[event.columnIndex];
             if(value !== undefined) {
-                let isChoosen = value[8];
+                const isChoosen = value[8];
                 if(isChoosen !== undefined) {
                     if (isChoosen === "Y") {
                         item[event.columnIndex] = value.substr(0, 8) + "N";
@@ -77,20 +77,17 @@ let isClick = false;
 let isSelected = false;
 
 /* 그리드 생성과 운영에 관한 중요 변수들. grid라는 이름으로 시작하도록 통일했다. */
-let gridId = [];
+const gridId = [];
 let gridTargetDiv = [];
-let gridData = [];
+const gridData = [];
 /* 그리드를 뿌릴 대상 div의 id들 */
 gridTargetDiv = [
     "grid_calendar_0", "grid_calendar_1", "grid_calendar_2", "grid_calendar_3", "grid_calendar_4", "grid_calendar_5",
     "grid_calendar_6", "grid_calendar_7", "grid_calendar_8", "grid_calendar_9", "grid_calendar_10", "grid_calendar_11"
 ];
 
-/* 그리드를 받아올 때 쓰이는 api 배열 */
-let gridCreateUrl = "";
-
 /* 그리드의 레이아웃 */
-let gridColumnLayout = [
+const gridColumnLayout = [
     {
         dataField: "0",
         headerText: "일",
@@ -162,7 +159,7 @@ function pad2(number) {
 
 /* 각 필드에 19991231Y 같은 형식으로 담기는 데이터를 날짜만 남기기 위한 컬럼 속성(gridProp)내의 필터링 함수
 *  여기서 isSelected 변수는 아래의 selectedStyle 함수에서 선택여부를 판별하기 위해 쓰인다. */
-function showDay(rowIndex, columnIndex, value, headerText, item) {
+function showDay(_rowIndex, _columnIndex, value, _headerText, _item) {
     let resultValue = "";
     if(value !== undefined) {
         resultValue = parseInt(value.substr(6, 2), 10) + "";
@@ -174,7 +171,7 @@ function showDay(rowIndex, columnIndex, value, headerText, item) {
 }
 
 /* 컬럼의 스타일을 값의 상태에 따라 변경하기 위한 함수. 컬럼 속성(gridProp)내의 요소와 연동된다. */
-function selectedStyle(rowIndex, columnIndex, value, headerText, item, dataField) {
+function selectedStyle(_rowIndex, _columnIndex, _value, _headerText, _item, _dataField) {
     return isSelected ? "cellSelected" : "cellNoSelected";
 }
 
@@ -182,10 +179,11 @@ function selectedStyle(rowIndex, columnIndex, value, headerText, item, dataField
 function gridSave() {
 
     const aJsonArray = [];
-    const aJson = {};
-    aJson.year = $("#target_year").val();
-    aJson.bcDate = "";
-    aJson.bcDayoffYn = "";
+    const aJson = {
+        year: $("#target_year").val(),
+        bcDate: "",
+        bcDayoffYn: "",
+    };
     aJsonArray.push(aJson);
 
     for(let m = 0; m < 12; m++) { // 선택된 날짜만 json 형태로 담는다.
@@ -218,19 +216,18 @@ function gridSave() {
 /* 년도에 맞춰서 달력의 제목부분을 뿌려주고, 이어서 데이터를 받아오는 함수를 호출한다. */
 function setGridByYear() {
     targetYear = $("#target_year").val();
-    let calendarLabels = $(".calendar_label");
+    const calendarLabels = $(".calendar_label");
     for(let m = 0; m < 12; m++) {
         calendarLabels.eq(m).html(targetYear + "년 " + (m + 1) + "월");
     }
 
     // 서버로 보낼 데이터 작성
     const params = {
-        "targetYear" : targetYear,
+        targetYear,
     };
     const url = "/api/manager/calendarInfo";
     CommonUI.ajax(url, "GET", params, function (req) {
         const daysData = req.sendData.gridListData;
-        console.log(daysData);
         if(daysData.length) {
             setDataIntoGrid(daysData);
         }else{
@@ -249,13 +246,13 @@ function setGridByYear() {
 
 function setDataIntoGrid(daysData) {
     /* 아래의 변수와 반복 문 내 작업으로 기본적인 달력 데이터들을 생성해 준다. */
-    let firstDayOfWeek = [];
-    let lastDayOfMonth = [];
+    const firstDayOfWeek = [];
+    const lastDayOfMonth = [];
     let processDayOfWeek;
     let processData = {};
     let processDataOfMonth = [];
 
-    let isSaveExists = daysData.length > 0;
+    const isSaveExists = daysData.length > 0;
     let dayOfYear = 0;
 
     /* 해당 년도의 각 월마다 며칠부터 며칠까지 존재하는지를 판별하여 달력을 만든다. */
@@ -271,7 +268,8 @@ function setDataIntoGrid(daysData) {
 
             /* 기존 데이터가 존재하면 기존 데이터를 기반으로 설정하고, 아닐 경우 날짜를 생성하여 담는다. */
             if(isSaveExists) {
-                processData[processDayOfWeek+""] = daysData[dayOfYear].bcDate + daysData[dayOfYear++].bcDayoffYn;
+                processData[processDayOfWeek+""] = daysData[dayOfYear].bcDate + daysData[dayOfYear].bcDayoffYn;
+                dayOfYear++;
             }else{
                 processData[processDayOfWeek+""] = targetYear + pad2(m + 1) + pad2(d) + (processDayOfWeek === 0 ? "Y" : "N");
             }

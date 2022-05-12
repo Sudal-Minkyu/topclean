@@ -190,7 +190,7 @@ const grids = {
                     dataField: "frRefType",
                     headerText: "구분",
                     width: 40,
-                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         return CommonData.name.frRefType[value];
                     },
                 }, {
@@ -215,7 +215,7 @@ const grids = {
                     headerText: "택번호",
                     style: "datafield_tag",
                     width: 80,
-                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         return CommonData.formatFrTagNo(value, frTagInfo.frTagType);
                     },
                 }, {
@@ -225,7 +225,7 @@ const grids = {
                     renderer : {
                         type : "TemplateRenderer",
                     },
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         const colorSquare =
                         `<span class="colorSquare" style="background-color: ${CommonData.name.fdColorCode[item.fdColor]}; vertical-align: middle;"></span>`;
                             const sumName = CommonUI.toppos.makeSimpleProductName(item);
@@ -236,7 +236,7 @@ const grids = {
                     headerText: "처리내역",
                     style: "grid_textalign_left",
                     width: 80,
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         return CommonUI.toppos.processName(item);
                     },
                 }, {
@@ -250,7 +250,7 @@ const grids = {
                     dataField: "fdState",
                     headerText: "현재상태",
                     width: 85,
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         return CommonData.name.fdState[value];
                     },
                 }, {
@@ -288,11 +288,8 @@ const grids = {
                     renderer : {
                         type: "TemplateRenderer",
                     },
-                    labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
-                        let template = `
-                                <button type="button" class="c-button c-button--supersmall">메시지</button>
-                            `;
-                        return template;
+                    labelFunction(rowIndex, columnIndex, value, headerText, item ) {
+                        return `<button type="button" class="c-button c-button--supersmall">메시지</button>`;
                     },
                 },
             ];
@@ -319,7 +316,7 @@ const grids = {
                 }, {
                     dataField: "bcHp",
                     headerText: "전화번호",
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         return CommonUI.formatTel(value);
                     }
                 }, {
@@ -358,7 +355,7 @@ const grids = {
                     dataField: "fiType",
                     headerText: "유형",
                     width: 60,
-                    labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item ) {
                         return CommonData.name.fiType[value];
                     },
                 }, {
@@ -387,7 +384,7 @@ const grids = {
                     dataField: "fiCustomerConfirm",
                     headerText: "고객수락",
                     width: 65,
-                    labelFunction : function (rowIndex, columnIndex, value, headerText, item ) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item ) {
                         return CommonData.name.fiCustomerConfirm[value];
                     },
                 },

@@ -1669,7 +1669,7 @@ function Communication(reqmsg, func){
             jsonp: "callback",
             timeout: CAT_TIMEOUT_DURATION,
             data: {"REQ": reqmsg},
-            success: function (data) {
+            success(data) {
                 let resultData = '{"STATUS":"FAILURE","ERRORMESSAGE":"'+ errorDefaultMessage +'"}';
                 var trans = reqmsg.substr(0, 2);
                 
@@ -1715,7 +1715,7 @@ function Communication(reqmsg, func){
                 
                 //document.getElementById("taResponse").innerText = JSONtoString(data);
             },
-            error: function (request, status, error) {
+            error(request, status, error) {
                 //alert("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
                 let errMessage = "erroecode:" + request.status + ", " + "error:" + error;
                 return func('{"STATUS":"FAILURE", "ERRORMESSAGE":"'+ errorDefaultMessage +'", "ERRORDATA":"'+ errMessage+'"}');
@@ -1737,7 +1737,7 @@ function CatPrintCommunication(printData) {
         dataType: "jsonp",
         jsonp: "callback",
         data: {"REQ": printData},
-        success: function (data) {
+        success(data) {
             
             // var trans = document.getElementById("taRequest").value.substr(0, 2);
             //
@@ -1749,7 +1749,7 @@ function CatPrintCommunication(printData) {
             //
             // document.getElementById("taResponse").innerText = JSONtoString(data);
         },
-        error: function (data) {
+        error(data) {
             if(data.status === 404) {
                 alertCancel("영수증을 출력할 단말기가 감지되지 않습니다.<br>단말기 연결을 확인해 주세요.");
             } else {

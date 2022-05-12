@@ -242,14 +242,14 @@ const grids = {
                     headerText: "택번호",
                     style: "datafield_tag",
                     width: 80,
-                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         return CommonData.formatFrTagNo(value, frTagInfo.frTagType);
                     },
                 }, {
                     dataField: "frRefType",
                     headerText: "구분",
                     width: 40,
-                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         return CommonData.name.frRefType[value];
                     },
                 }, {
@@ -259,7 +259,7 @@ const grids = {
                     renderer : {
                         type : "TemplateRenderer",
                     },
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         const colorSquare =
                         `<span class="colorSquare" style="background-color: ${CommonData.name.fdColorCode[item.fdColor]}; vertical-align: middle;"></span>`;
                             const sumName = CommonUI.toppos.makeSimpleProductName(item);
@@ -272,7 +272,7 @@ const grids = {
                     renderer : {
                         type : "TemplateRenderer",
                     },
-                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         let result = "";
                         if(typeof value === "number") {
                             result = new Date(value).format("yyyy-MM-dd<br>hh:mm");
@@ -287,7 +287,7 @@ const grids = {
                     renderer : {
                         type: "TemplateRenderer",
                     },
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         let template = "";
                         if(item.photoList && item.photoList.length) {
                             template = `<img src="/assets/images/icon__picture.svg" onclick="openReceiptPhotoPop(${rowIndex})"> `;
@@ -306,14 +306,14 @@ const grids = {
                     dataField: "fdState",
                     headerText: "현재상태",
                     width: 85,
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         return CommonData.name.fdState[value];
                     },
                 }, {
                     dataField: "fdS4Type",
                     headerText: "출고타입",
                     width: 85,
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         return CommonData.name.fdS4Type[value];
                     },
                 }, {
@@ -328,7 +328,7 @@ const grids = {
                     renderer : {
                         type : "TemplateRenderer",
                     },
-                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         let template = "";
                         if(item.frFiId && item.frFiCustomerConfirm === "1") {
                             template = `<button class="c-state c-state--yellow" `
@@ -383,14 +383,14 @@ const grids = {
                 rowHeight : 48,
                 headerHeight : 48,
                 independentAllCheckBox: true,
-                rowStyleFunction : function(rowIndex, item) {
+                rowStyleFunction(rowIndex, item) {
                     let returnClass = "";
                     if(["S5", "S8"].includes(item.fdState)) {
                         returnClass = "grid_checkable_row";
                     }
                     return returnClass;
                 },
-                rowCheckVisibleFunction : function(rowIndex, isChecked, item) {
+                rowCheckVisibleFunction(rowIndex, isChecked, item) {
                     let isVisible = false;
                     if(["S5", "S8"].includes(item.fdState)) {
                         isVisible = true;
@@ -406,7 +406,7 @@ const grids = {
                 }, {
                     dataField: "bcHp",
                     headerText: "전화번호",
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         return CommonUI.formatTel(value);
                     }
                 }, {
@@ -444,7 +444,7 @@ const grids = {
                     dataField: "requestDetailCount",
                     headerText: "상품내역",
                     style: "grid_textalign_left",
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         let rearText = "";
                         if(value > 1) {
                             rearText = " 외 " + (value - 1) + "건";
@@ -613,22 +613,6 @@ const trigs = {
                     location.href = "/user/unpaid";
                 }
             });
-
-            // $("#repay").on("click", function () {
-            //     if(wares.selectedCustomer.bcId) {
-            //         if(wares.selectedCustomer.uncollectMoney) {
-            //             const target = {
-            //                 bcId: wares.selectedCustomer.bcId,
-            //                 frIdList: [],
-            //             }
-            //             comms.setupPaymentPop(target);
-            //         } else {
-            //             alertCaution("결제하실 미수금이 없습니다.", 1);
-            //         }
-            //     } else {
-            //         alertCaution("먼저 고객을 선택해 주세요.", 1);
-            //     }
-            // });
 
             $("#cancelPayment").on("click", function () {
                 $("#paymentPop").removeClass("active");

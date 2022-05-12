@@ -26,7 +26,7 @@ const dtos = {
             frName: "s",
             frTagNo: "s",
         },
-        
+
         branchUnReleaseCurrentList: {
             frCode: "s", // 가맹점 id
             frName: "s",
@@ -71,18 +71,17 @@ const urls = {
     getFrList: "/api/manager/branchBelongList",
     getMainList: "/api/manager/branchUnReleaseCurrentList",
     getDetailList: "/api/manager/branchUnReleaseCurrentInputList",
-}
+};
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
     getFrList() {
         CommonUI.ajax(urls.getFrList, "GET", false, function (res) {
             const data = res.sendData.franchiseList;
-            console.log(res);
             dv.chk(data, dtos.receive.managerBelongList, "지점에 속한 가맹점 받아오기");
             const $frList = $("#frList");
             data.forEach(obj => {
-                const htmlText = `<option value="${obj.frId}">${obj.frName}</option>`
+                const htmlText = `<option value="${obj.frId}">${obj.frName}</option>`;
                 $frList.append(htmlText);
             });
         });
@@ -90,10 +89,8 @@ const comms = {
 
     getMainList(searchCondition) {
         dv.chk(searchCondition, dtos.send.branchUnReleaseCurrentList, "프랜차이즈 그리드 검색 조건 보내기");
-        console.log(searchCondition);
         CommonUI.ajax(urls.getMainList, "GET", searchCondition, function (res) {
             const data = res.sendData.gridListData;
-            console.log(res);
             grids.f.clearData(1);
             grids.f.setData(0, data);
         });
@@ -173,7 +170,7 @@ const grids = {
                     dataField: "frRefType",
                     headerText: "구분",
                     width: 50,
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(_rowIndex, _columnIndex, value, _headerText, _item) {
                         return CommonData.name.frRefType[value];
                     },
                 }, {
@@ -204,7 +201,7 @@ const grids = {
                     headerText: "택번호",
                     style: "datafield_tag",
                     width: 90,
-                    labelFunction: function(rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(_rowIndex, _columnIndex, value, _headerText, _item) {
                         return CommonData.formatBrTagNo(value);
                     },
                 }, {
@@ -215,7 +212,7 @@ const grids = {
                     renderer : {
                         type : "TemplateRenderer",
                     },
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(_rowIndex, _columnIndex, _value, _headerText, item) {
                         const colorSquare =
                             `<span class="colorSquare" style="background-color: ${CommonData.name.fdColorCode[item.fdColor]}; vertical-align: middle;"></span>`;
                         const sumName = CommonUI.toppos.makeSimpleProductName(item);
@@ -227,7 +224,7 @@ const grids = {
                     headerText: "처리내역",
                     style: "grid_textalign_left",
                     width: 130,
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(_rowIndex, _columnIndex, _value, _headerText, item) {
                         item.processName = CommonUI.toppos.processName(item);
                         return item.processName;
                     }
@@ -242,7 +239,7 @@ const grids = {
                     dataField: "fdState",
                     headerText: "현재상태",
                     width: 90,
-                    labelFunction: function (rowIndex, columnIndex, value, headerText, item) {
+                    labelFunction(_rowIndex, _columnIndex, value, _headerText, _item) {
                         return CommonData.name.fdState[value];
                     },
                 }, {
@@ -296,8 +293,8 @@ const grids = {
         },
 
         resize(num) { // 해당 배열 번호 그리드의 크기를 현제 그리드를 감싼 엘리먼트에 맞춰 조절
-			AUIGrid.resize(grids.s.id[num]);
-		},
+            AUIGrid.resize(grids.s.id[num]);
+        },
 
         getCheckedItems(numOfGrid) { // 해당 배열 번호 그리드의 엑스트라 체크박스 선택된 (아이템 + 행번호) 객체 반환
             return AUIGrid.getCheckedRowItems(grids.s.id[numOfGrid]);
@@ -345,7 +342,7 @@ const trigs = {
     r: { // 이벤트 해제
 
     }
-}
+};
 
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
 const wares = {
@@ -357,7 +354,7 @@ const wares = {
         filterFromDt: "",
         filterToDt: "",
     },
-}
+};
 
 $(function() { // 페이지가 로드되고 나서 실행
     onPageLoad();
@@ -416,7 +413,7 @@ function showDetail(item) {
         type: wares.currentDetail.type,
         filterFromDt: wares.currentDetail.filterFromDt.numString(),
         filterToDt: wares.currentDetail.filterToDt.numString(),
-    }
+    };
 
     /* 선택된 가맹점과 날짜 항목에 대한 기억 */
     wares.currentDetail.frCode = searchCondition.frCode;
@@ -426,7 +423,9 @@ function showDetail(item) {
 }
 
 function hasGrid1Data() {
-    let result = grids.f.getData(1).length ? true : false ;
-    if(!result) alertCaution("엑셀 다운로드를 실행할 데이터가 없습니다.<br>조회후 왼쪽 표에서 데이터를 선택해 주세요.", 1);
+    const result = grids.f.getData(1).length ? true : false;
+    if(!result) {
+        alertCaution("엑셀 다운로드를 실행할 데이터가 없습니다.<br>조회후 왼쪽 표에서 데이터를 선택해 주세요.", 1);
+    }
     return result;
 }
