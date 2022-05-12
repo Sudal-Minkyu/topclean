@@ -1,5 +1,6 @@
 package com.broadwave.toppos.Head.Branch;
 
+import com.broadwave.toppos.Head.Branch.BranchDtos.head.BranchSearchInfoDto;
 import com.broadwave.toppos.Head.Branoh.BranchDtos.BranchListDto;
 import com.broadwave.toppos.Head.Branch.QBranch;
 import com.querydsl.core.types.Projections;
@@ -59,5 +60,19 @@ public class BranchRepositoryCustomImpl extends QuerydslRepositorySupport implem
 
         return query.fetch();
     }
+
+    @Override
+    public List<BranchSearchInfoDto> findByBranchSearchInfo() {
+        QBranch branch = QBranch.branch;
+
+        JPQLQuery<BranchSearchInfoDto> query = from(branch)
+                .select(Projections.constructor(BranchSearchInfoDto.class,
+                        branch.id,
+                        branch.brName
+                ));
+
+        return query.fetch();
+    }
+
 
 }

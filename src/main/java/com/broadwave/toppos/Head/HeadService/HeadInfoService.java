@@ -4,6 +4,10 @@ import com.broadwave.toppos.Account.Account;
 import com.broadwave.toppos.Account.AccountRepository;
 import com.broadwave.toppos.Account.AcountDtos.AccountHeadHeaderDto;
 import com.broadwave.toppos.Account.AcountDtos.AccountHeadInfoDto;
+import com.broadwave.toppos.Head.Branch.BranchDtos.head.BranchSearchInfoDto;
+import com.broadwave.toppos.Head.Branch.BranchRepository;
+import com.broadwave.toppos.Head.Franchise.FranchiseDtos.head.FranchiseSearchInfoDto;
+import com.broadwave.toppos.Head.Franchise.FranchiseRepository;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.common.AjaxResponse;
 import com.broadwave.toppos.common.ResponseErrorCode;
@@ -17,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -35,14 +40,18 @@ public class HeadInfoService {
     private final PasswordEncoder passwordEncoder;
 
     private final AccountRepository accountRepository;
+    private final BranchRepository branchRepository;
+    private final FranchiseRepository franchiseRepository;
 
     @Autowired
     public HeadInfoService(ModelMapper modelMapper, TokenProvider tokenProvider, PasswordEncoder passwordEncoder,
-                           AccountRepository accountRepository){
+                           AccountRepository accountRepository, BranchRepository branchRepository, FranchiseRepository franchiseRepository){
         this.modelMapper = modelMapper;
         this.tokenProvider = tokenProvider;
         this.accountRepository = accountRepository;
         this.passwordEncoder = passwordEncoder;
+        this.branchRepository = branchRepository;
+        this.franchiseRepository = franchiseRepository;
     }
 
     // 현재 로그인한 본사 정보 가져오기
@@ -130,6 +139,22 @@ public class HeadInfoService {
 
         AccountHeadInfoDto headInfoDto =  accountRepository.findByHeadInfo(login_id);
         data.put("headInfoDto",headInfoDto);
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
+    // 지사리스트, 지사소속된 가맹점 리스트 호출 API
+    public ResponseEntity<Map<String, Object>> headBrFrInfoList() {
+        log.info("headBrFrInfoList 호출");
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        List<BranchSearchInfoDto> branchListDto = branchRepository.findByBranchSearchInfo();
+        List<FranchiseSearchInfoDto> franchiseListDto = franchiseRepository.findByFranchiseSearchInfo();
+
+        data.put("branchList",branchListDto);
+        data.put("franchiseList",franchiseListDto);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }

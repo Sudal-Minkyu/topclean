@@ -1440,7 +1440,14 @@ public class HeadRestController {
         return headInfoService.headMyInfoSave(userEmail, userTel, nowPassword, newPassword, checkPassword, request);
     }
 
-
+//@@@@@@@@@@@@@@@@@@@@@ 나의 정보관리 페이지 관련 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    // 지사리스트, 지사소속된 가맹점 리스트 호출 API
+    @GetMapping("headBrFrInfoList")
+    @ApiOperation(value = "지사와 가맹점 정보호출" , notes = "지사와 가맹점 정보를 호출한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
+    public ResponseEntity<Map<String,Object>> headBrFrInfoList(){
+        return headInfoService.headBrFrInfoList();
+    }
 
 
 

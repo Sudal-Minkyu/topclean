@@ -1,6 +1,7 @@
 package com.broadwave.toppos.Head.Franchise;
 
 import com.broadwave.toppos.Head.Franchise.FranchiseDtos.*;
+import com.broadwave.toppos.Head.Franchise.FranchiseDtos.head.FranchiseSearchInfoDto;
 
 import java.util.List;
 
@@ -28,5 +29,7 @@ public interface FranchiseRepositoryCustom {
 
     // 택번호, 택번호타입 가져오기
     FranchiseTagDataDto findByFranchiseTag(String frCode);
+
+    List<FranchiseSearchInfoDto> findByFranchiseSearchInfo();
 
 }
