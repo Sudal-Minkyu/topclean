@@ -153,21 +153,21 @@ public class ManagerController {
     // 외주관리가격설정
     @RequestMapping("ospricemanage")
     public String ospricemanage() {
-        return "ospricemanage";
+        return "manager/outsource/ospricemanage";
     }
     // 외주출고처리
     @RequestMapping("ossend")
     public String ossend() {
-        return "ossend";
+        return "manager/outsource/ossend";
     }
     // 외주입고처리
     @RequestMapping("osreceive")
     public String osreceive() {
-        return "osreceive";
+        return "manager/outsource/osreceive";
     }
     // 외주입출고현황
     @RequestMapping("osstatus")
     public String osstatus() {
-        return "osstatus";
+        return "manager/outsource/osstatus";
     }
 }
