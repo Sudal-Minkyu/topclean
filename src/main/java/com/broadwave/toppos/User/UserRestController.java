@@ -39,9 +39,9 @@ import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetai
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailFranchiseInCountDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailUpdateDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailSet;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.RequestHistoryListDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.RequestListDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.RequestTempDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.user.RequestHistoryListDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.user.RequestListDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.user.RequestTempDto;
 import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoney;
 import com.broadwave.toppos.User.Template.TemplateDto;
 import com.broadwave.toppos.User.UserDtos.EtcDataDto;

@@ -2,7 +2,12 @@ package com.broadwave.toppos.User.ReuqestMoney.Requset;
 
 import com.broadwave.toppos.User.Customer.Customer;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestFindListDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.*;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.head.RequestReceiptListDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.head.RequestReceiptListSubDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.manager.RequestRealTimeListDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.manager.RequestRealTimeListSubDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.manager.RequestWeekAmountDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.user.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -56,5 +61,8 @@ public interface RequestRepositoryCustom {
     List<RequestRealTimeListSubDto> findByRequestRealTimeSubList(String frYyyymmdd, String brCode); // 실시간접수현황 오른쪽
 
     List<RequestFindListDto> findByRequestFindList(Long bcId, String frCode, String filterFromDt, String filterToDt, String searchTag, String ffStateType); // 물건찾기 등록 리스트 Dto
+
+    List<RequestReceiptListDto> findByHeadReceiptList(Long branchId, Long franchiseId, String filterFromDt, String filterToDt);  // 본사 접수현황 왼쪽 NativeQuery
+    List<RequestReceiptListSubDto> findByHeadReceiptSubList(Long branchId, Long franchiseId, String frYyyymmdd); //  본사 접수현황 오른쪽 - querydsl
 
 }

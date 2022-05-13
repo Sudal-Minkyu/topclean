@@ -1,4 +1,4 @@
-package com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos;
+package com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.head;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,20 +10,23 @@ import java.math.BigInteger;
 
 /**
  * @author Minkyu
- * Date : 2022-04-01
+ * Date : 2022-05-13
  * Time :
- * Remark : Toppos 실시간접수현황 오른쪽 ListDto
+ * Remark : Toppos 본사 접수현황 왼쪽 ListDto
  */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RequestRealTimeListDto {
+public class RequestReceiptListDto {
 
+    private BigInteger branchId; // 지사 고정값 ID
+    private String brName; // 지사명
+    private BigInteger franchiseId; // 가맹점 고정값 ID
     private String frName; // 가맹점명
+
     private String frYyyymmdd; // 접수일자
-    private BigInteger customerCount; // 고객수
-    private BigInteger requestCount; // 상품수
+    private BigInteger requestCount; // 건수
     private BigDecimal fdTotAmt; // 접수총액
 
     public StringBuffer getFrYyyymmdd() {

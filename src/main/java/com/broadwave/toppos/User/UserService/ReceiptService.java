@@ -28,7 +28,11 @@ import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetai
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailPaymentPaper;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailSet;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.*;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.head.RequestReceiptListDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.head.RequestReceiptListSubDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.manager.RequestRealTimeListDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.manager.RequestRealTimeListSubDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.user.*;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestRepository;
 import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoney;
 import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoneyDtos.SaveMoneyDto;
@@ -1206,8 +1210,43 @@ public class ReceiptService {
             return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "결제 할 접수"+ResponseErrorCode.TP009.getDesc(), "문자", "접수코드 : "+cashReceiptMapperDto.getFrNo()));
         }
 
-
         return ResponseEntity.ok(res.success());
+    }
+
+    // 본사 접수현황 왼쪽 리스트 호출 API
+    public ResponseEntity<Map<String, Object>> headReceiptList(Long branchId, Long franchiseId, String filterFromDt, String filterToDt) {
+        log.info("headReceiptList 호출");
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+//        log.info("branchId : "+branchId);
+//        log.info("franchiseId : "+franchiseId);
+//        log.info("filterFromDt : "+filterFromDt);
+//        log.info("filterToDt : "+filterToDt);
+
+        List<RequestReceiptListDto> requestReceiptListDtos = requestRepository.findByHeadReceiptList(branchId, franchiseId, filterFromDt, filterToDt);
+        log.info("requestReceiptListDtos : "+requestReceiptListDtos);
+
+        data.put("gridListData",requestReceiptListDtos);
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
+    // 본사 접수현황 오른쪽 리스트 호출 API
+    public ResponseEntity<Map<String, Object>> headReceiptSubList(Long branchId, Long franchiseId, String frYyyymmdd) {
+        log.info("headReceiptSubList 호출");
+
+        log.info("접수일자  : "+frYyyymmdd);
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        List<RequestReceiptListSubDto> requestReceiptListSubDtos = requestRepository.findByHeadReceiptSubList(branchId, franchiseId, frYyyymmdd);
+        log.info("requestReceiptListSubDtos : "+requestReceiptListSubDtos);
+
+        data.put("gridListData",requestReceiptListSubDtos);
+        return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
 }

@@ -1034,7 +1034,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                 sb.append("AND a.fd_urgent_yn = ?4 \n");
             }
         }
-        sb.append("AND (a.fd_state='S2' OR a.fd_state='S7') \n");
+        sb.append("AND (a.fd_state='S2' OR a.fd_state='S7' OR a.fd_state='O2') \n");
 //        sb.append("(a.fd_state='S2' AND IFNULL(h.fi_customer_confirm,'X') IN ('X','2')) \n");
 //        sb.append("OR a.fd_state='S7') \n");
         sb.append("ORDER BY a.fd_id ASC \n");

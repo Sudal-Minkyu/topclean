@@ -13,11 +13,11 @@ import com.broadwave.toppos.common.AjaxResponse;
 import com.broadwave.toppos.common.ResponseErrorCode;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -35,7 +35,6 @@ import java.util.Optional;
 @Service
 public class HeadInfoService {
 
-    private final ModelMapper modelMapper;
     private final TokenProvider tokenProvider;
     private final PasswordEncoder passwordEncoder;
 
@@ -44,9 +43,8 @@ public class HeadInfoService {
     private final FranchiseRepository franchiseRepository;
 
     @Autowired
-    public HeadInfoService(ModelMapper modelMapper, TokenProvider tokenProvider, PasswordEncoder passwordEncoder,
+    public HeadInfoService(TokenProvider tokenProvider, PasswordEncoder passwordEncoder,
                            AccountRepository accountRepository, BranchRepository branchRepository, FranchiseRepository franchiseRepository){
-        this.modelMapper = modelMapper;
         this.tokenProvider = tokenProvider;
         this.accountRepository = accountRepository;
         this.passwordEncoder = passwordEncoder;
@@ -74,7 +72,7 @@ public class HeadInfoService {
     }
 
     // 지사 나의정보관리 수정 API
-    @javax.transaction.Transactional
+    @Transactional
     public ResponseEntity<Map<String, Object>> headMyInfoSave(String userEmail, String userTel, String nowPassword, String newPassword, String checkPassword, HttpServletRequest request) {
         log.info("headMyInfoSave 호출");
 

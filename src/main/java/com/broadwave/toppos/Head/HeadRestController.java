@@ -30,7 +30,7 @@ import com.broadwave.toppos.Head.Item.ItemDtos.ItemPriceListDto;
 import com.broadwave.toppos.Head.Item.Price.FranchisePrice.*;
 import com.broadwave.toppos.Head.Item.Price.ItemPrice;
 import com.broadwave.toppos.Head.Notice.NoticeDtos.NoticeMapperDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.RequestSearchDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.user.RequestSearchDto;
 import com.broadwave.toppos.User.UserService.ReceiptService;
 import com.broadwave.toppos.common.AjaxResponse;
 import com.broadwave.toppos.common.CommonUtils;
@@ -1449,8 +1449,23 @@ public class HeadRestController {
         return headInfoService.headBrFrInfoList();
     }
 
+//@@@@@@@@@@@@@@@@@@@@@ 접수현황 페이지 관련 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    // 본사 접수현황 왼쪽 리스트 호출 API
+    @GetMapping("headReceiptList")
+    @ApiOperation(value = "접수현황 왼쪽 호출" , notes = "접수날짜의 따라 왼쪽 접수현황 리스트를 호출한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
+    public ResponseEntity<Map<String,Object>> headReceiptList(@RequestParam("branchId") Long branchId, @RequestParam("franchiseId") Long franchiseId,
+                                                              @RequestParam("filterFromDt") String filterFromDt, @RequestParam("filterToDt") String filterToDt){
+        return receiptService.headReceiptList(branchId, franchiseId, filterFromDt, filterToDt);
+    }
 
-
-
+    // 본사 접수현황 오른쪽 리스트 호출 API
+    @GetMapping("headReceiptSubList")
+    @ApiOperation(value = "접수현황 오른쪽 호출" , notes = "선택한 접수날짜의 따라 오른쪽 리스트를 호출한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
+    public ResponseEntity<Map<String,Object>> headReceiptSubList(@RequestParam("branchId") Long branchId, @RequestParam("franchiseId") Long franchiseId,
+                                                                 @RequestParam("frYyyymmdd") String frYyyymmdd){
+        return receiptService.headReceiptSubList(branchId, franchiseId, frYyyymmdd);
+    }
 
 }

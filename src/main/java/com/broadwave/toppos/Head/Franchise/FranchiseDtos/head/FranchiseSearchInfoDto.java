@@ -17,8 +17,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class FranchiseSearchInfoDto {
 
-    private Long frId; // 가맹점 ID
-    private Long brId; // 소속된지사 ID
+    private Long franchiseId; // 가맹점 ID
+    private Long branchId; // 소속된지사 ID
     private String frName; // 가맹점명
 
 }

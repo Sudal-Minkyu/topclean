@@ -1,7 +1,7 @@
 package com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail;
 
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.RequestDetailMapperDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.RequestMapperDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.user.RequestMapperDto;
 import lombok.Data;
 
 import java.util.ArrayList;

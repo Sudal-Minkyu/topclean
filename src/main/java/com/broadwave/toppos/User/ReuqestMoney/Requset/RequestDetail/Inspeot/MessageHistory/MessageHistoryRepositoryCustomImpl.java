@@ -1,16 +1,5 @@
 package com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.MessageHistory;
 
-import com.broadwave.toppos.Head.Franchise.QFranchise;
-import com.broadwave.toppos.Head.Item.Group.A.QItemGroup;
-import com.broadwave.toppos.Head.Item.Group.B.QItemGroupS;
-import com.broadwave.toppos.Head.Item.Group.C.QItem;
-import com.broadwave.toppos.User.Customer.QCustomer;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.QRequest;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.QRequestDetail;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.RequestRealTimeListSubDto;
-import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.CaseBuilder;
-import com.querydsl.jpa.JPQLQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.qlrm.mapper.JpaResultMapper;
 import org.springframework.beans.factory.annotation.Autowired;

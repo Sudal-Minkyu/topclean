@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class BranchSearchInfoDto {
 
-    private Long brId; // 지사 ID
+    private Long branchId; // 지사 ID
     private String brName; // 지사명
 
 }
