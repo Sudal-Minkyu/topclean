@@ -151,23 +151,23 @@ public class ManagerController {
     }
 
     // 외주관리가격설정
-    @RequestMapping("oempricemanage")
-    public String oempricemanage() {
-        return "manager/outsource/oempricemanage";
+    @RequestMapping("ospricemanage")
+    public String ospricemanage() {
+        return "ospricemanage";
     }
     // 외주출고처리
-    @RequestMapping("oemsend")
-    public String oemsend() {
-        return "manager/outsource/oemsend";
+    @RequestMapping("ossend")
+    public String ossend() {
+        return "ossend";
     }
     // 외주입고처리
-    @RequestMapping("oemreceive")
-    public String oemreceive() {
-        return "manager/outsource/oemreceive";
+    @RequestMapping("osreceive")
+    public String osreceive() {
+        return "osreceive";
     }
     // 외주입출고현황
-    @RequestMapping("oemstatus")
-    public String oemstatus() {
-        return "manager/outsource/oemstatus";
+    @RequestMapping("osstatus")
+    public String osstatus() {
+        return "osstatus";
     }
 }
