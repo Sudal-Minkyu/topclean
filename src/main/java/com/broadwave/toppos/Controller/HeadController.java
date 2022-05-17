@@ -88,4 +88,10 @@ public class HeadController {
     public String mastercode(){
         return "head/admin/mastercode";
     }
+
+    // 접수 현황
+    @RequestMapping("receiptstat")
+    public String receiptstat(){
+        return "head/process/receiptstat";
+    }
 }

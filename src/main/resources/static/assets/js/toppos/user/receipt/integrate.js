@@ -1916,6 +1916,7 @@ function onAddOrder() {
             currentRequest[element.id] = "N";
         }
     }
+
     
     comms.saveModifiedOrder(currentRequest);
 }
@@ -2756,4 +2757,12 @@ function formatDateTime(rowIndex, columnIndex, value, headerText, item) {
         result = new Date(value).format("yy.MM.dd<br>hh:mm");
     }
     return result;
+}
+
+/* 수정 전 총 금액 보다 수정 후 총 금액이 커졌을 경우 기록하기 위함. */
+function checkIncreaseAmt() {
+    if (currentRequest.fdTotAmt > wares.startPrice) {
+        currentRequest.fdModifyAmtYn = 'Y';
+        currentRequest.fdModifyOriginalAmt = wares.startPrice;
+    }
 }

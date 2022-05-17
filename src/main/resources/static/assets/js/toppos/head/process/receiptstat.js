@@ -1,4 +1,8 @@
-import {grids, runOnlyOnce} from '../../module/m_headstat.js';
+import {grids, runOnlyOnce, setBrFrList} from '../../module/m_headstat.js';
+
+window.wares = {
+    brFrList: {},
+}
 
 $(function() {
     onPageLoad();
@@ -13,6 +17,17 @@ const onPageLoad = function () {
         targetQty: {
             dataField: '',
             headerText: '접수수량',
-        }
+        },
     });
+
+    runOnlyOnce.makeDetailGrid();
+
+    runOnlyOnce.enableDatepicker();
+
+    runOnlyOnce.getBrFrList(function (brFrList) {
+        wares.brFrList = brFrList;
+        setBrFrList(wares.brFrList, 0, true);
+    });
+
+    runOnlyOnce.setCommonEvents();
 };

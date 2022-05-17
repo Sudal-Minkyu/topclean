@@ -70,20 +70,20 @@ class DtoValidator {
 
     isTypeWrong(partObj, partRule, partRuleKeys, objName) {
 
-        for(let i = 0; i < partRuleKeys.length; i++) {
-            const chkRule = partRule[partRuleKeys[i]];
+        for(const key of partRuleKeys) {
+            const chkRule = partRule[key];
             const chkLength = chkRule.length;
-            const chkValue = partObj[partRuleKeys[i]];
+            const chkValue = partObj[key];
 
-            if(typeof chkRule === "object") {
-                this.chkAnObj(chkValue, chkRule, objName + "." + partRuleKeys[i]);
-            }else {
+            if (typeof chkRule === "object") {
+                this.chkAnObj(chkValue, chkRule, objName + "." + key);
+            } else {
                 for (let j = 0; j < chkLength; j++) {
                     switch (chkRule[j]) {
                         case "s":
                             if (typeof chkValue !== "string" && chkValue !== null && chkValue !== undefined) {
                                 console.log("=== 해당 검사값은 문자형이어야 한다 ===");
-                                console.log(objName + "." + partRuleKeys[i]);
+                                console.log(objName + "." + key);
                                 console.log(chkValue);
                                 if (this.devMode) alert(this.title + " 의 검사값이 규칙(문자)에 부합하지 않습니다. 콘솔참조 ");
                                 return true;
@@ -91,18 +91,18 @@ class DtoValidator {
                             break;
                         case "n":
                             if ((typeof chkValue !== "number" && chkValue !== null && chkValue !== undefined)
-                                    || isNaN(chkValue)) {
+                                || isNaN(chkValue)) {
                                 console.log("=== 해당 검사값은 유효한 숫자형이어야 한다 ===");
-                                console.log(objName + "." + partRuleKeys[i]);
+                                console.log(objName + "." + key);
                                 console.log(chkValue);
                                 if (this.devMode) alert(this.title + " 의 검사값이 규칙(숫자)에 부합하지 않습니다. 콘솔참조 ");
                                 return true;
                             }
                             break;
                         case "a":
-                            if(!Array.isArray(chkValue)) {
+                            if (!Array.isArray(chkValue)) {
                                 console.log("=== 해당 검사객체는 배열형이어야 한다 ===");
-                                console.log(objName + "." + partRuleKeys[i]);
+                                console.log(objName + "." + key);
                                 console.log(chkValue);
                                 if (this.devMode) alert(this.title + " 의 검사객체가 규칙(배열)에 부합하지 않습니다. 콘솔참조 ");
                             }
@@ -110,14 +110,14 @@ class DtoValidator {
                         case "r":
                             if (!chkValue && chkValue !== 0) {
                                 console.log("=== 해당 검사값은 필수 항목이다 ===");
-                                console.log(objName + "." + partRuleKeys[i]);
+                                console.log(objName + "." + key);
                                 if (this.devMode) alert(this.title + " 의 검사값이 규칙(필수)에 부합하지 않습니다. 콘솔참조 ");
                                 return true;
                             }
                             break;
                         case "d":
-                            delete partObj[partRuleKeys[i]];
-                            j = chkLength;
+                            delete partObj[key];
+                            j = chkLength; // for j 루프 탈출을 위함
                             break;
                     }
                 }
@@ -174,15 +174,15 @@ class DtoValidator {
 
     removeRemainTrashKeyValue(partObj, partRule, partRuleKeys) {
         let targetKeys = [];
-        for(let i = 0; i < partRuleKeys.length; i++) {
-            const chkRule = partRule[partRuleKeys[i]];
-            if(Array.isArray(chkRule) && chkRule.includes("d")) {
-                targetKeys.push(partRuleKeys[i]);
+        for(const key of partRuleKeys) {
+            const chkRule = partRule[key];
+            if (Array.isArray(chkRule) && chkRule.includes("d")) {
+                targetKeys.push(key);
             }
         }
         for(let i = 1; i < partObj.length; i++) {
-            for(let j = 0; j < targetKeys.length; j++) {
-                delete partObj[i][targetKeys[j]];
+            for(const key of targetKeys) {
+                delete partObj[i][key];
             }
         }
     }
