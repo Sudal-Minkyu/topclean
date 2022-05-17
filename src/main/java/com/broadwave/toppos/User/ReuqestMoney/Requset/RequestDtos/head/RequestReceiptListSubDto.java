@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  * @author Minkyu
@@ -75,4 +76,27 @@ public class RequestReceiptListSubDto {
         return fdPollutionType + fdPollutionBack;
     }
 
+    public String getFr_insert_date() {
+        if(fr_insert_date != null) {
+             return fr_insert_date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm"));
+        }else{
+            return null;
+        }
+    }
+
+    public String getFdS6Time() {
+        if(fdS6Time != null) {
+            return fdS6Time.format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm"));
+        }else{
+            return null;
+        }
+    }
+
+    public String getFiProgressStatet() {
+        if(fiProgressStatet != null){
+            return fiProgressStatet.format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm"));
+        }else{
+            return null;
+        }
+    }
 }

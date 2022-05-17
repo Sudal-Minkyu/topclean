@@ -1220,15 +1220,39 @@ public class ReceiptService {
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
 
-//        log.info("branchId : "+branchId);
-//        log.info("franchiseId : "+franchiseId);
-//        log.info("filterFromDt : "+filterFromDt);
-//        log.info("filterToDt : "+filterToDt);
+        log.info("branchId : "+branchId);
+        log.info("franchiseId : "+franchiseId);
+        log.info("filterFromDt : "+filterFromDt);
+        log.info("filterToDt : "+filterToDt);
 
         List<RequestReceiptListDto> requestReceiptListDtos = requestRepository.findByHeadReceiptList(branchId, franchiseId, filterFromDt, filterToDt);
         log.info("requestReceiptListDtos : "+requestReceiptListDtos);
+        List<HashMap<String,Object>> requestReceiptListData = new ArrayList<>();
+        HashMap<String,Object> requestReceiptListInfo;
+        for(RequestReceiptListDto requestReceiptListDto : requestReceiptListDtos){
+            requestReceiptListInfo = new HashMap<>();
+            requestReceiptListInfo.put("brName", requestReceiptListDto.getBrName());
+            if(branchId == 0){
+                requestReceiptListInfo.put("branchId", 0);
+                requestReceiptListInfo.put("franchiseId", 0);
+                requestReceiptListInfo.put("frName", "");
+            }else{
+                requestReceiptListInfo.put("branchId", requestReceiptListDto.getBranchId());
+                if(franchiseId == 0){
+                    requestReceiptListInfo.put("franchiseId", 0);
+                    requestReceiptListInfo.put("frName", "");
+                }else{
+                    requestReceiptListInfo.put("franchiseId", requestReceiptListDto.getFranchiseId());
+                    requestReceiptListInfo.put("frName", requestReceiptListDto.getFrName());
+                }
+            }
+            requestReceiptListInfo.put("frYyyymmdd", requestReceiptListDto.getFrYyyymmdd());
+            requestReceiptListInfo.put("requestCount", requestReceiptListDto.getRequestCount());
+            requestReceiptListInfo.put("fdTotAmt", requestReceiptListDto.getFdTotAmt());
+            requestReceiptListData.add(requestReceiptListInfo);
+        }
 
-        data.put("gridListData",requestReceiptListDtos);
+        data.put("gridListData",requestReceiptListData);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
@@ -1237,7 +1261,9 @@ public class ReceiptService {
     public ResponseEntity<Map<String, Object>> headReceiptSubList(Long branchId, Long franchiseId, String frYyyymmdd) {
         log.info("headReceiptSubList 호출");
 
-        log.info("접수일자  : "+frYyyymmdd);
+        log.info("branchId  : "+branchId);
+        log.info("franchiseId  : "+franchiseId);
+        log.info("frYyyymmdd  : "+frYyyymmdd);
 
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
