@@ -103,6 +103,12 @@ class CommonDataClass {
             "04": "수동",
             "xx": "완성품",
         };
+
+        this.name.fdUrgentType = {
+            "1": "당일",
+            "2": "1/2",
+            "3": "2/3",
+        }
     }
 
     formatFrTagNo(tagNo, foreDigits) {

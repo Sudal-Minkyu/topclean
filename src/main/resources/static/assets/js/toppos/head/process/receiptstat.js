@@ -11,11 +11,11 @@ $(function() {
 const onPageLoad = function () {
     runOnlyOnce.makeSummaryGrid({
         targetDate: {
-            dataField: '',
+            dataField: 'frYyyymmdd',
             headerText: '접수일자',
         },
         targetQty: {
-            dataField: '',
+            dataField: 'requestCount',
             headerText: '접수수량',
         },
     });
@@ -30,4 +30,6 @@ const onPageLoad = function () {
     });
 
     runOnlyOnce.setCommonEvents();
+
+    runOnlyOnce.setGridEvents({targetDateName: 'frYyyymmdd'});
 };
