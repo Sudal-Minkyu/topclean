@@ -846,6 +846,12 @@ textarea {
 	font-weight: 700;
 	text-align: center;
 }
+.process__btn:only-child {
+	flex: 1;
+}
+.process__btn:only-child .c-button {
+	width: 100%;
+}
 
 
 .form {
