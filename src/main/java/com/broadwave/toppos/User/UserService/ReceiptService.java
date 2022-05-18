@@ -1232,12 +1232,11 @@ public class ReceiptService {
         for(RequestReceiptListDto requestReceiptListDto : requestReceiptListDtos){
             requestReceiptListInfo = new HashMap<>();
             requestReceiptListInfo.put("brName", requestReceiptListDto.getBrName());
+            requestReceiptListInfo.put("branchId", requestReceiptListDto.getBranchId());
             if(branchId == 0){
-                requestReceiptListInfo.put("branchId", 0);
                 requestReceiptListInfo.put("franchiseId", 0);
                 requestReceiptListInfo.put("frName", "");
             }else{
-                requestReceiptListInfo.put("branchId", requestReceiptListDto.getBranchId());
                 if(franchiseId == 0){
                     requestReceiptListInfo.put("franchiseId", 0);
                     requestReceiptListInfo.put("frName", "");

@@ -28,7 +28,6 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -703,7 +702,7 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
 
                 ));
 
-        query.orderBy(requestDetail.id.asc()).distinct();
+        query.groupBy(requestDetail.id).distinct().orderBy(requestDetail.id.asc());
         query.where(request.frYyyymmdd.eq(frYyyymmdd));
 
         return query.fetch();
@@ -836,7 +835,7 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
                 sb.append("GROUP BY d.br_name, a.fr_yyyymmdd ORDER BY d.br_name, a.fr_yyyymmdd ASC; \n");
             }
         }else{
-            sb.append("GROUP BY a.fr_yyyymmdd ORDER BY a.fr_yyyymmdd ASC; \n");
+            sb.append("GROUP BY d.br_name, a.fr_yyyymmdd ORDER BY d.br_name, a.fr_yyyymmdd ASC; \n");
         }
 
         Query query = em.createNativeQuery(sb.toString());
@@ -960,7 +959,7 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
 
                 ));
 
-        query.orderBy(requestDetail.id.asc()).distinct();
+        query.groupBy(requestDetail.id).distinct().orderBy(requestDetail.id.asc());
 
         if(branchId != 0){
             query.where(branch.id.eq(branchId));
