@@ -10,7 +10,7 @@
 
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
-
+    <script type="module" src="/assets/js/toppos/manager/outsource/ossend.js"></script>
 </th:block>
 
 <div layout:fragment="content" class="content content--padding">
@@ -61,8 +61,8 @@
                             <li>
                                 <div class="inquiry__input">
                                     <div class="c-checkbox">
-                                        <input type="checkbox" id="outsource" />
-                                        <label for="outsource">외주대상품목만</label>
+                                        <input type="checkbox" id="isOutsourceable" />
+                                        <label for="isOutsourceable">외주대상품목만</label>
                                     </div>
                                 </div>
                             </li>
