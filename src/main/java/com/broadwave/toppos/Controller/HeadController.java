@@ -36,6 +36,39 @@ public class HeadController {
         return "index/headindex";
     }
 
+    // dashboard
+    // 매출 및 접수현황
+    // 월간 매출 현황
+    @RequestMapping("monthlysales")
+    public String monthlysales(){
+        return "head/dashboard/monthlysales";
+    }
+
+    // 품목별 매출 현황
+    @RequestMapping("itemsales")
+    public String itemsales(){
+        return "head/dashboard/itemsales";
+    }
+
+    // 월간 접수 현황
+    @RequestMapping("monthlyreg")
+    public String monthlyreg(){
+        return "head/dashboard/monthlyreg";
+    }
+
+    // 품목별 접수 현황
+    @RequestMapping("itemreg")
+    public String itemreg(){
+        return "head/dashboard/itemreg";
+    }
+
+    // 객단가 현황
+    @RequestMapping("unitprice")
+    public String unitprice(){
+        return "head/dashboard/unitprice";
+    }
+
+
     // 본사일반 사용자등록 페이지
     @RequestMapping("accountreg")
     public String accountreg(Model model){

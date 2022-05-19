@@ -56,6 +56,35 @@ input[type="number"]:active {
 	margin-left: 0.625rem;
 }
 
+/* text input flex */
+.c-text--flex {
+	display: flex;
+	align-items: center;
+}
+.c-text--flex input[type=text],
+.c-text--flex input[type=password],
+.c-text--flex input[type=number] {
+	border-radius: 0;
+}
+.c-text--flex input[type=text]:first-child,
+.c-text--flex input[type=password]:first-child,
+.c-text--flex input[type=number]:first-child {
+	border-top-left-radius: 0.313rem;
+	border-bottom-left-radius: 0.313rem;
+}
+.c-text--flex input[type=text]:last-child,
+.c-text--flex input[type=password]:last-child,
+.c-text--flex input[type=number]:last-child {
+	border-top-right-radius: 0.313rem;
+	border-bottom-right-radius: 0.313rem;
+}
+.c-text--flex input + input {
+	margin-left: -0.063rem;
+}
+.c-text--flex.c-text--code input {
+	width: 4rem;
+}
+
 
 /* button */
 .c-button {
