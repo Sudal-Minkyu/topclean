@@ -8,13 +8,18 @@ const dtos = {
 
 };
 
+const wares = {
+    searchCondition: {},
+};
+
 const comms = {
     /* 그리드 좌측, 일별 누계 데이터 조회값을 가져옴 */
     searchSummaryData(searchCondition) {
+        wares.searchCondition = searchCondition;
         console.log(searchCondition);
         CommonUI.ajax('/api/head/headReceiptList', 'GET', searchCondition, function (res) {
             const data = res.sendData.gridListData;
-            grids.setData('grid_summary', data);
+            grids.setData(grids.id[0], data);
         });
     },
 
@@ -22,13 +27,18 @@ const comms = {
         CommonUI.ajax('/api/head/headReceiptSubList', 'GET', condition, function (res) {
             const data = res.sendData.gridListData;
             console.log(data);
-            grids.setData('grid_detail', data);
+            grids.setData(grids.id[1], data);
         });
     },
 };
 
 /* 그리드 관련한 공통함수 */
 const grids = {
+    id: [
+        'grid_summary',
+        'grid_detail',
+    ],
+
     create(id, layout, property) {
         AUIGrid.create(id, layout, property);
     },
@@ -87,7 +97,7 @@ const runOnlyOnce = {
             rowHeight : 48,
             headerHeight : 48,
         };
-        grids.create('grid_summary', layout, property);
+        grids.create(grids.id[0], layout, property);
     },
 
     /* grid_detail 그리드의 기본 생성을 담당한다. */
@@ -146,6 +156,11 @@ const runOnlyOnce = {
                 dataField: 'frInsertDt',
                 headerText: '최초<br>접수일시',
                 width: 90,
+                dataType: 'date',
+                renderer : {
+                    type: 'TemplateRenderer',
+                },
+                formatString: dateTimeFormat,
             }, {
                 dataField: 'fdEstimateDt',
                 headerText: '인도<br>예정일',
@@ -158,9 +173,9 @@ const runOnlyOnce = {
                     {
                         dataField: '',
                         headerText: '품목',
-                        labelFunction: function (_rowIndex, _columnIndex, _value, _headerText, item) {
+                        labelFunction(_rowIndex, _columnIndex, _value, _headerText, item) {
                             return item.bsName === '일반' ? item.bgName : item.bsName + item.bgName;
-                        }
+                        },
                     }, {
                         dataField: 'biName',
                         headerText: '소재',
@@ -174,9 +189,15 @@ const runOnlyOnce = {
                     }, {
                         dataField: 'fdColor',
                         headerText: '색상',
+                        labelFunction(_rowIndex, _columnIndex, value, _headerText, _item) {
+                            return CommonData.name.fdColor[value];
+                        },
                     }, {
                         dataField: 'fdPattern',
                         headerText: '무늬',
+                        labelFunction(_rowIndex, _columnIndex, value, _headerText, _item) {
+                            return CommonData.name.fdPattern[value];
+                        },
                     },
                 ],
             }, {
@@ -212,9 +233,25 @@ const runOnlyOnce = {
                     }, {
                         dataField: '',
                         headerText: '발수가공',
-                        labelFunction: processChkChar,
+                        labelFunction(_rowIndex, _columnIndex, _value, _headerText, item) {
+                            let result = '';
+                            if (item.fdWaterRepellent) {
+                                result += '발수 ';
+                            }
+                            if (item.fdStarch) {
+                                result += '풀먹임';
+                            }
+                            return result;
+                        },
                     },
                 ],
+            }, {
+                dataField: 'fdNormalAmt',
+                headerText: '기본가격',
+                style: 'grid_textalign_right',
+                width: 80,
+                dataType: 'numeric',
+                autoThousandSeparator: 'true',
             }, {
                 dataField: '',
                 headerText: '추가금액',
@@ -222,6 +259,14 @@ const runOnlyOnce = {
                 width: 80,
                 dataType: 'numeric',
                 autoThousandSeparator: 'true',
+                labelFunction(_rowIndex, _columnIndex, _value, _headerText, item) {
+                    let result = 0;
+                    if (item.fdRetryYn === 'N') {
+                        result = item.fdPressed + item.fdWhitening + item.fdWaterRepellent + item.fdStarch
+                            + item.fdPollution + item.fdAdd1Amt + item.fdRepairAmt + item.fdUrgentAmt;
+                    }
+                    return result;
+                },
             }, {
                 dataField: 'fdDiscountAmt',
                 headerText: '할인금액',
@@ -239,6 +284,10 @@ const runOnlyOnce = {
             }, {
                 dataField: 'fdState',
                 headerText: '현재상태',
+                width: 90,
+                labelFunction(_rowIndex, _columnIndex, value, _headerText, _item) {
+                    return value ? CommonData.name.fdState[value] : '';
+                },
             }, {
                 headerText: '단계별 일자',
                 children: [
@@ -287,13 +336,6 @@ const runOnlyOnce = {
                     type: 'TemplateRenderer',
                 },
                 formatString: dateTimeFormat,
-            }, {
-                dataField: 'fdNormalAmt',
-                headerText: '기본가격',
-                style: 'grid_textalign_right',
-                width: 80,
-                dataType: 'numeric',
-                autoThousandSeparator: 'true',
             },
         ];
         const property = {
@@ -310,7 +352,7 @@ const runOnlyOnce = {
             rowHeight : 30,
             headerHeight : 30,
         };
-        grids.create('grid_detail', layout, property);
+        grids.create(grids.id[1], layout, property);
     },
 
     /* 데이트 피커의 가동과 날짜 선택의 제한 */
@@ -352,7 +394,7 @@ const runOnlyOnce = {
     },
 
     setGridEvents(prop) {
-        AUIGrid.bind('grid_summary', 'cellClick', function (e) {
+        AUIGrid.bind(grids.id[0], 'cellClick', function (e) {
             const item = e.item;
             getDetailData(item, prop.targetDateName);
         });
