@@ -1237,13 +1237,8 @@ public class ReceiptService {
                 requestReceiptListInfo.put("franchiseId", 0);
                 requestReceiptListInfo.put("frName", "");
             }else{
-                if(franchiseId == 0){
-                    requestReceiptListInfo.put("franchiseId", 0);
-                    requestReceiptListInfo.put("frName", "");
-                }else{
-                    requestReceiptListInfo.put("franchiseId", requestReceiptListDto.getFranchiseId());
-                    requestReceiptListInfo.put("frName", requestReceiptListDto.getFrName());
-                }
+                requestReceiptListInfo.put("franchiseId", requestReceiptListDto.getFranchiseId());
+                requestReceiptListInfo.put("frName", requestReceiptListDto.getFrName());
             }
             requestReceiptListInfo.put("frYyyymmdd", requestReceiptListDto.getFrYyyymmdd());
             requestReceiptListInfo.put("requestCount", requestReceiptListDto.getRequestCount());

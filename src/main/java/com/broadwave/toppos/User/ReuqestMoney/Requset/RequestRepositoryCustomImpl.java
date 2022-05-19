@@ -830,10 +830,8 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
             sb.append("AND d.br_id = ?3 \n");
             if(franchiseId != 0){
                 sb.append("AND c.fr_id = ?4 \n");
-                sb.append("GROUP BY d.br_name, c.fr_name, a.fr_yyyymmdd ORDER BY d.br_name, c.fr_name, a.fr_yyyymmdd ASC; \n");
-            }else{
-                sb.append("GROUP BY d.br_name, a.fr_yyyymmdd ORDER BY d.br_name, a.fr_yyyymmdd ASC; \n");
             }
+            sb.append("GROUP BY d.br_name, c.fr_name, a.fr_yyyymmdd ORDER BY d.br_name, c.fr_name, a.fr_yyyymmdd ASC; \n");
         }else{
             sb.append("GROUP BY d.br_name, a.fr_yyyymmdd ORDER BY d.br_name, a.fr_yyyymmdd ASC; \n");
         }
