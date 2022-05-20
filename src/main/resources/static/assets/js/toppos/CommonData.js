@@ -26,6 +26,8 @@ class CommonDataClass {
             S8: "강제입고",
             F: "가맹검품",
             B: "확인품",
+            O1: "외주출고",
+            O2: "외주입고",
         };
 
         this.name.fdColorCode = { // 컬러코드에 따른 실제 색상
