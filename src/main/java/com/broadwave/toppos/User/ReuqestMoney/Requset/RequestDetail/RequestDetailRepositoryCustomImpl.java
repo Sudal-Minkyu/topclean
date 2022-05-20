@@ -2601,8 +2601,8 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         sb.append("WHERE b.fr_confirm_yn='Y' \n");
         sb.append("AND b.br_code= ?1 \n");
         sb.append("AND a.fd_cancel='N' \n");
-        sb.append("AND a.fd_s2_dt>= ?2 \n");
-        sb.append("AND a.fd_s2_dt<= ?3 \n");
+        sb.append("AND j.mo_dt>= ?2 \n");
+        sb.append("AND j.mo_dt<= ?3 \n");
         if(frId != 0){
             sb.append("AND d.fr_id = ?4 \n");
         }
