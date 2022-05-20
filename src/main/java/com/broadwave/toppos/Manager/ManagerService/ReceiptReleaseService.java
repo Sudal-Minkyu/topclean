@@ -9,7 +9,6 @@ import com.broadwave.toppos.Manager.Process.IssueForce.IssueForceRepository;
 import com.broadwave.toppos.Manager.Process.IssueOutsourcing.IssueOutsourcing;
 import com.broadwave.toppos.Manager.Process.IssueOutsourcing.IssueOutsourcingRepository;
 import com.broadwave.toppos.Manager.outsourcingPrice.OutsourcingPriceRepository;
-import com.broadwave.toppos.Manager.outsourcingPrice.outsourcingPriceDtos.OutsourcingPriceDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetail;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.manager.*;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepository;
@@ -93,7 +92,7 @@ public class ReceiptReleaseService {
         // "S2"이면 지사출고 페이지 버튼 "S2" -> "S4"
         log.info("지사출고 처리");
         for (int i = 1; i < fdIdList.size(); i++) {
-            List<RequestDetail> requestDetailList = requestDetailRepository.findByRequestDetailS2OrS7List(fdIdList.get(i));
+            List<RequestDetail> requestDetailList = requestDetailRepository.findByRequestDetailS2OrS7OrO2List(fdIdList.get(i));
 //            log.info("requestDetailList : " + requestDetailList);
 
             String frCode = requestDetailList.get(0).getFrId().getFrCode();
@@ -546,6 +545,71 @@ public class ReceiptReleaseService {
         }
         requestDetailRepository.saveAll(requestDetailList);
         issueOutsourcingRepository.saveAll(issueOutsourcingList);
+
+        return ResponseEntity.ok(res.success());
+    }
+
+    //  지사 외주출고  - 세부테이블 외주 입고처리 할 리스트 호출
+    public ResponseEntity<Map<String, Object>> branchReceiptBranchOutOutsouringList(Long frId, String filterFromDt, String filterToDt, HttpServletRequest request) {
+        log.info("branchReceiptBranchOutOutsouringList 호출");
+
+        log.info("filterFromDt : "+filterFromDt);
+        log.info("filterToDt : "+filterToDt);
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String brCode = (String) claims.get("brCode"); // 현재 지사의 코드(2자리) 가져오기
+        log.info("현재 접속한 지사 코드 : "+brCode);
+
+        log.info("frId : "+frId);
+
+        List<RequestDetailOutsourcingReceiptListDto> requestDetailOutsourcingReceiptListDtos = requestDetailRepository.findByRequestDetailOutsourcingReceiptList(brCode, frId, filterFromDt, filterToDt);
+        data.put("gridListData",requestDetailOutsourcingReceiptListDtos);
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
+    @Transactional
+    //  지사 외주출고  - 세부테이블 외주 입고처리 실행 호출
+    public ResponseEntity<Map<String, Object>> branchStateOutsouringOutChange(List<Long> fdIdList, HttpServletRequest request) {
+        log.info("branchStateOutsouringOutChange 호출");
+
+        log.info("외주 입고처리할 ID : "+fdIdList);
+
+        AjaxResponse res = new AjaxResponse();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String brCode = (String) claims.get("brCode"); // 현재 지사의 코드(2자리) 가져오기
+        String login_id = claims.getSubject(); // 현재 아이디
+        log.info("현재 접속한 아이디 : "+login_id);
+        log.info("현재 접속한 지사 코드 : "+brCode);
+
+        List<RequestDetail> requestDetailList = requestDetailRepository.findByRequestDetailO1List(fdIdList);
+        log.info("requestDetailList : "+requestDetailList);
+
+        for (RequestDetail requestDetail : requestDetailList) {
+            if(requestDetail.getFdState().equals("O1")) {
+                log.info("가져온 frID 값 : "+requestDetail.getFrId());
+                requestDetail.setFdPreState(requestDetail.getFdState()); // 이전상태 값
+                requestDetail.setFdPreStateDt(LocalDateTime.now());
+
+                requestDetail.setFdState("O2");
+                requestDetail.setFdStateDt(LocalDateTime.now());
+
+                requestDetail.setFdO2Dt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
+                requestDetail.setFdO2Time(LocalDateTime.now());
+
+                requestDetail.setModify_id(login_id);
+                requestDetail.setModify_date(LocalDateTime.now());
+            }else{
+                return ResponseEntity.ok(res.fail(ResponseErrorCode.TP028.getCode(), "외주입고 "+ResponseErrorCode.TP028.getDesc(), "문자", "새로고침이후 다시 시도해주세요."));
+            }
+        }
+        requestDetailRepository.saveAll(requestDetailList);
 
         return ResponseEntity.ok(res.success());
     }
