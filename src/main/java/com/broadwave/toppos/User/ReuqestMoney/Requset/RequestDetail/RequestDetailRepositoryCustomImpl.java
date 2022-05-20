@@ -2517,10 +2517,12 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         sb.append("INNER JOIN bs_item_group f ON e.bg_item_groupcode=f.bg_item_groupcode \n");
         sb.append("INNER JOIN bs_item_group_s g on e.bs_item_groupcode_s=g.bs_item_groupcode_s and e.bg_item_groupcode=g.bg_item_groupcode \n");
 
-        sb.append("LEFT OUTER JOIN fs_request_inspect h ON a.fd_id =h.fd_id AND h.fi_type ='B' AND h.fi_customer_confirm='3' \n");
+        sb.append("LEFT OUTER JOIN fs_request_inspect h ON a.fd_id =h.fd_id AND h.fi_type ='B' \n");
         sb.append("LEFT OUTER JOIN br_item_outsourcing_price i ON a.bi_itemcode = i.bi_itemcode \n");
 
         sb.append("WHERE b.fr_confirm_yn='Y' \n");
+        sb.append("AND IFNULL(h.fi_customer_confirm,'X') IN('X','2') \n");
+
         sb.append("AND b.br_code= ?1 \n");
         sb.append("AND a.fd_cancel='N' \n");
         sb.append("AND a.fd_s2_dt>= ?2 \n");
@@ -2529,11 +2531,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
             sb.append("AND d.fr_id = ?4 \n");
         }
         if(isOutsourceable.equals("Y")){
-            if(frId != 0) {
-                sb.append("AND i.bp_outsourcing_yn = ?5 \n");
-            }else{
-                sb.append("AND i.bp_outsourcing_yn = ?4 \n");
-            }
+            sb.append("AND IFNULL(i.bp_outsourcing_yn,'X') IN('Y')\n");
         }
         sb.append("AND (a.fd_state='S2' OR a.fd_state='O2') \n");
         sb.append("ORDER BY a.fd_id ASC \n");
@@ -2547,15 +2545,79 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         if(frId != 0){
             query.setParameter(4, frId);
         }
-        if(isOutsourceable.equals("Y")){
-            if(frId != 0) {
-                query.setParameter(5, isOutsourceable);
-            }else{
-                query.setParameter(4, isOutsourceable);
-            }
-        }
+
 
         return jpaResultMapper.list(query, RequestDetailOutsourcingDeliveryListDto.class);
+    }
+
+    // 지사 외주입고 querydsl
+    public List<RequestDetailOutsourcingReceiptListDto> findByRequestDetailOutsourcingReceiptList(String brCode, Long frId, String filterFromDt, String filterToDt){
+
+        EntityManager em = getEntityManager();
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("SELECT  DISTINCT \n");
+
+        sb.append("a.fd_id, d.fr_name, b.fr_code, j.mo_dt, a.fd_tag, a.fd_color, f.bg_name, g.bs_name, e.bi_name, \n");
+        sb.append("a.fd_price_grade, a.fd_retry_yn, a.fd_pressed, a.fd_add1_amt, a.fd_add1_remark, a.fd_repair_amt, \n");
+        sb.append("a.fd_repair_remark, a.fd_whitening, a.fd_pollution, a.fd_water_repellent, a.fd_starch, a.fd_urgent_yn, \n");
+        sb.append("c.bc_name, a.fd_tot_amt, a.fd_state, IFNULL(i.bp_outsourcing_price,0), \n");
+
+        sb.append("CASE \n"); // 반품
+        sb.append("WHEN a.fd_pollution_loc_fcn = 'Y' THEN 1 \n");
+        sb.append("WHEN a.fd_pollution_loc_fcs = 'Y' THEN 1 \n");
+        sb.append("WHEN a.fd_pollution_loc_fcb = 'Y' THEN 1 \n");
+        sb.append("WHEN a.fd_pollution_loc_flh = 'Y' THEN 1 \n");
+        sb.append("WHEN a.fd_pollution_loc_frh = 'Y' THEN 1 \n");
+        sb.append("WHEN a.fd_pollution_loc_flf = 'Y' THEN 1 \n");
+        sb.append("WHEN a.fd_pollution_loc_frf = 'Y' THEN 1 \n");
+        sb.append("ELSE 0 END fdPollutionType, \n");
+
+        sb.append("CASE \n"); // 반품
+        sb.append("WHEN a.fd_pollution_loc_bcn = 'Y' THEN 1 \n");
+        sb.append("WHEN a.fd_pollution_loc_bcs = 'Y' THEN 1 \n");
+        sb.append("WHEN a.fd_pollution_loc_bcb = 'Y' THEN 1 \n");
+        sb.append("WHEN a.fd_pollution_loc_blh = 'Y' THEN 1 \n");
+        sb.append("WHEN a.fd_pollution_loc_brh = 'Y' THEN 1 \n");
+        sb.append("WHEN a.fd_pollution_loc_blf = 'Y' THEN 1 \n");
+        sb.append("WHEN a.fd_pollution_loc_brf = 'Y' THEN 1 \n");
+        sb.append("ELSE 0 END fdPollutionBack \n");
+
+        sb.append("FROM mr_issue_outsourcing j \n");
+
+        sb.append("INNER JOIN fs_request_dtl a on j.fd_id=a.fd_id \n");
+        sb.append("INNER JOIN fs_request b on a.fr_id=b.fr_id \n");
+        sb.append("INNER JOIN bs_customer c on b.bc_id=c.bc_id \n");
+        sb.append("INNER JOIN bs_franchise d on b.fr_code=d.fr_code \n");
+        sb.append("INNER JOIN bs_item e on a.bi_itemcode=e.bi_itemcode \n");
+        sb.append("INNER JOIN bs_item_group f ON e.bg_item_groupcode=f.bg_item_groupcode \n");
+        sb.append("INNER JOIN bs_item_group_s g on e.bs_item_groupcode_s=g.bs_item_groupcode_s and e.bg_item_groupcode=g.bg_item_groupcode \n");
+
+        sb.append("LEFT OUTER JOIN br_item_outsourcing_price i ON a.bi_itemcode = i.bi_itemcode \n");
+
+        sb.append("WHERE b.fr_confirm_yn='Y' \n");
+        sb.append("AND b.br_code= ?1 \n");
+        sb.append("AND a.fd_cancel='N' \n");
+        sb.append("AND a.fd_s2_dt>= ?2 \n");
+        sb.append("AND a.fd_s2_dt<= ?3 \n");
+        if(frId != 0){
+            sb.append("AND d.fr_id = ?4 \n");
+        }
+
+        sb.append("AND a.fd_state='O1' \n");
+        sb.append("ORDER BY a.fd_id ASC \n");
+
+        Query query = em.createNativeQuery(sb.toString());
+
+        query.setParameter(1, brCode);
+        query.setParameter(2, filterFromDt);
+        query.setParameter(3, filterToDt);
+
+        if(frId != 0){
+            query.setParameter(4, frId);
+        }
+
+        return jpaResultMapper.list(query, RequestDetailOutsourcingReceiptListDto.class);
     }
 
 }

@@ -52,5 +52,8 @@ public interface RequestDetailRepository extends JpaRepository<RequestDetail,Lon
     @Query("select a from RequestDetail a where a.id in :fdIdList and (a.fdState = 'S2' or a.fdState = 'O2') and a.fdCancel = 'N' order by a.id asc")
     List<RequestDetail> findByRequestDetailS2OrO2List(List<Long> fdIdList);
 
+    // 지사 외주입고 할 접수테이블 리스트 호출
+    @Query("select a from RequestDetail a where a.id in :fdIdList and a.fdState = 'O1' and a.fdCancel = 'N' order by a.id asc")
+    List<RequestDetail> findByRequestDetailO1List(List<Long> fdIdList);
 
 }

@@ -77,4 +77,6 @@ public interface RequestDetailRepositoryCustom {
     RequestDetailBranchInspeotDto findByBranchInspeotDto(Long fdId); // 확인품등록전 받아올 데이터 호출API
 
     List<RequestDetailOutsourcingDeliveryListDto> findByRequestDetailOutsourcingDeliveryList(String brCode, Long frId, String filterFromDt, String filterToDt, String isOutsourceable); // 지사 외주출고 querydsl
+    List<RequestDetailOutsourcingReceiptListDto> findByRequestDetailOutsourcingReceiptList(String brCode, Long frId, String filterFromDt, String filterToDt); // 지사 외주입고 querydsl
+
 }
