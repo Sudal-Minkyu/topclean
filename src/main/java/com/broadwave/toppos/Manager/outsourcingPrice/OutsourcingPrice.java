@@ -25,7 +25,7 @@ public class OutsourcingPrice {
 
     @Id
     @Column(name = "bi_itemcode")
-    private String blItemcode; // 상품코드 7자리
+    private String biItemcode; // 상품코드 7자리
 
     @Id
     @Column(name = "br_code")

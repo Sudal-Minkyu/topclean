@@ -5,6 +5,8 @@ import com.broadwave.toppos.Head.Item.Group.A.ItemGroupCodeAndNameListDto;
 import com.broadwave.toppos.Head.Item.Group.A.ItemGroupRepository;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.Manager.outsourcingPrice.OutsourcingPriceRepository;
+import com.broadwave.toppos.Manager.outsourcingPrice.outsourcingPriceDtos.OutsourcingPriceListDto;
+import com.broadwave.toppos.Manager.outsourcingPrice.outsourcingPriceDtos.OutsourcingPriceListInputDto;
 import com.broadwave.toppos.common.AjaxResponse;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
@@ -58,7 +60,7 @@ public class OutsourcingPriceService {
     }
 
     // 외주가격 리스트 호출
-    public ResponseEntity<Map<String, Object>> outsourcingPriceList(HttpServletRequest request) {
+    public ResponseEntity<Map<String, Object>> outsourcingPriceList(OutsourcingPriceListInputDto outsourcingPriceListInputDto, HttpServletRequest request) {
         log.info("outsourcingPriceList 호출");
 
         AjaxResponse res = new AjaxResponse();
@@ -68,9 +70,15 @@ public class OutsourcingPriceService {
         Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
         String brCode = (String) claims.get("brCode");
 
-        outsourcingPriceRepository.findByOutsourcingPriceList(null, null, null, brCode);
+        // DB에서 리스트 가져오기
+        List<OutsourcingPriceListDto> byOutsourcingPriceList = outsourcingPriceRepository.findByOutsourcingPriceList(
+                outsourcingPriceListInputDto.getBiItemcode(),
+                outsourcingPriceListInputDto.getBiName(),
+                outsourcingPriceListInputDto.getBpOutsourcingYn(),
+                brCode
+        );
 
-        data.put("gridListData", "dtd");
+        data.put("gridListData", byOutsourcingPriceList);
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
