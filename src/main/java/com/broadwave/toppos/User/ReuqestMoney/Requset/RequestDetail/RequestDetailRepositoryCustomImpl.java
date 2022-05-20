@@ -2490,7 +2490,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         sb.append("a.fd_id, d.fr_name, b.fr_code, a.fd_s2_dt, a.fd_tag, a.fd_color, f.bg_name, g.bs_name, e.bi_name, \n");
         sb.append("a.fd_price_grade, a.fd_retry_yn, a.fd_pressed, a.fd_add1_amt, a.fd_add1_remark, a.fd_repair_amt, \n");
         sb.append("a.fd_repair_remark, a.fd_whitening, a.fd_pollution, a.fd_water_repellent, a.fd_starch, a.fd_urgent_yn, \n");
-        sb.append("c.bc_name, a.fd_tot_amt, a.fd_state, IFNULL(i.bp_outsourcing_price,0), \n");
+        sb.append("c.bc_name, a.fd_tot_amt, a.fd_state, IFNULL(i.bp_outsourcing_yn,'N'), IFNULL(i.bp_outsourcing_price,0), \n");
 
         sb.append("CASE \n"); // 반품
         sb.append("WHEN a.fd_pollution_loc_fcn = 'Y' THEN 1 \n");
