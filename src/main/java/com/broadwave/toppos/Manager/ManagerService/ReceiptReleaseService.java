@@ -92,7 +92,7 @@ public class ReceiptReleaseService {
         // "S2"이면 지사출고 페이지 버튼 "S2" -> "S4"
         log.info("지사출고 처리");
         for (int i = 1; i < fdIdList.size(); i++) {
-            List<RequestDetail> requestDetailList = requestDetailRepository.findByRequestDetailS2OrS7List(fdIdList.get(i));
+            List<RequestDetail> requestDetailList = requestDetailRepository.findByRequestDetailS2OrS7OrO2List(fdIdList.get(i));
 //            log.info("requestDetailList : " + requestDetailList);
 
             String frCode = requestDetailList.get(0).getFrId().getFrCode();
