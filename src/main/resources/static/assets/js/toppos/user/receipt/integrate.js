@@ -1778,12 +1778,6 @@ function modifyOrder(rowIndex) {
         $("#fdUrgent" + currentRequest.fdUrgentType).prop("checked", true);
     }
 
-    if(currentRequest.fdSpecialYn === "Y") {
-        $("#fdSpecialYn").prop("checked", true);
-    }else{
-        $("#fdSpecialYn").prop("checked", false);
-    }
-
     if(currentRequest.fdWhitening) {
         $("#fdWhitening").prop("checked", true);
     }
@@ -1906,7 +1900,6 @@ function onAddOrder() {
     currentRequest.fdDiscountGrade = $("input[name='fdDiscountGrade']:checked").val();
     currentRequest.fdRemark = $("#fdRemark").val();
     currentRequest.frEstimateDate = initialData.etcData.frEstimateDate.numString();
-    currentRequest.fdSpecialYn = $("#fdSpecialYn").is(":checked") ? "Y" : "N";
     currentRequest.fdUrgentType = $("input[name='fdUrgentType']:checked").val() ?
         $("input[name='fdUrgentType']:checked").val() : "";
     currentRequest.fdUrgentYn = currentRequest.fdUrgentType !== "" ? "Y" : "N";
