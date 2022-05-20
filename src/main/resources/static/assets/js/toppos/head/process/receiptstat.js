@@ -9,6 +9,8 @@ $(function() {
 });
 
 const onPageLoad = function () {
+    runOnlyOnce.setXlsxTitleName('실시간 접수 현황');
+
     runOnlyOnce.makeSummaryGrid({
         targetDate: {
             dataField: 'frYyyymmdd',

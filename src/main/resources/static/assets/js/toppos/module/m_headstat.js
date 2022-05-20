@@ -4,20 +4,27 @@
  */
 
 
-const dtos = {
-
-};
-
 const wares = {
     searchCondition: {},
+    xlsxNaming: {
+        title: '',
+        brName: '',
+        frName: '',
+        date: '',
+    },
+
 };
 
 const comms = {
     /* 그리드 좌측, 일별 누계 데이터 조회값을 가져옴 */
     searchSummaryData(searchCondition) {
         wares.searchCondition = searchCondition;
-        console.log(searchCondition);
         CommonUI.ajax('/api/head/headReceiptList', 'GET', searchCondition, function (res) {
+            if (searchCondition.branchId) {
+                grids.setFrNameVisibility(true);
+            } else {
+                grids.setFrNameVisibility(false);
+            }
             const data = res.sendData.gridListData;
             grids.setData(grids.id[0], data);
         });
@@ -26,7 +33,6 @@ const comms = {
     getDetailData(condition) {
         CommonUI.ajax('/api/head/headReceiptSubList', 'GET', condition, function (res) {
             const data = res.sendData.gridListData;
-            console.log(data);
             grids.setData(grids.id[1], data);
         });
     },
@@ -46,6 +52,29 @@ const grids = {
     setData(id, data) {
         AUIGrid.setGridData(id, data);
     },
+
+    setFrNameVisibility(boolean) {
+        if (boolean) {
+            AUIGrid.showColumnByDataField(grids.id[0], 'frName');
+        } else {
+            AUIGrid.hideColumnByDataField(grids.id[0], 'frName');
+        }
+    },
+
+    // 엑셀 내보내기(Export)
+    exportToXlsx() {
+        //FileSaver.js 로 로컬 다운로드가능 여부 확인
+        if(!AUIGrid.isAvailableLocalDownload(grids.id[1])) {
+            alertCaution('파일 다운로드가 불가능한 브라우저 입니다.', 1);
+            return;
+        }
+        AUIGrid.exportToXlsx(grids.id[1], {
+            fileName : wares.xlsxNaming.title + '_' + wares.xlsxNaming.brName
+                + (wares.xlsxNaming.frName ? '_' : '') + wares.xlsxNaming.frName
+                + '_' + wares.xlsxNaming.date,
+            progressBar : true,
+        });
+    },
 };
 
 /* 페이지에 진입하여 단 한번 실행되는 함수 */
@@ -56,11 +85,9 @@ const runOnlyOnce = {
             {
                 dataField: 'brName',
                 headerText: '지사명',
-                visible: true,
             }, {
                 dataField: 'frName',
                 headerText: '가맹점명',
-                visible: true,
             }, {
                 dataField: prop.targetDate.dataField,
                 headerText: prop.targetDate.headerText,
@@ -115,11 +142,11 @@ const runOnlyOnce = {
                     {
                         dataField: 'brName',
                         headerText: '지사명',
-                        width: 100,
+                        width: 120,
                     }, {
                         dataField: 'frName',
                         headerText: '가맹점명',
-                        width: 100,
+                        width: 120,
                     },
                 ],
             }, {
@@ -128,6 +155,7 @@ const runOnlyOnce = {
                     {
                         dataField: 'bcName',
                         headerText: '고객명',
+                        width: 100,
                         style: 'grid_textalign_left',
                     }, {
                         dataField: 'bcHp',
@@ -139,6 +167,7 @@ const runOnlyOnce = {
                     }, {
                         dataField: 'bcGrade',
                         headerText: '할인등급',
+                        width: 70,
                         labelFunction(_rowIndex, _columnIndex, value, _headerText, _item) {
                             return value === '01' ? '' : CommonData.name.bcGradeName[value];
                         },
@@ -153,18 +182,13 @@ const runOnlyOnce = {
                     return CommonData.formatBrTagNo(value);
                 },
             }, {
-                dataField: 'frInsertDt',
+                dataField: 'fr_insert_date',
                 headerText: '최초<br>접수일시',
-                width: 90,
-                dataType: 'date',
-                renderer : {
-                    type: 'TemplateRenderer',
-                },
-                formatString: dateTimeFormat,
+                width: 140,
             }, {
                 dataField: 'fdEstimateDt',
                 headerText: '인도<br>예정일',
-                width: 100,
+                width: 90,
                 dataType: 'date',
                 formatString: dateFormat,
             }, {
@@ -173,28 +197,32 @@ const runOnlyOnce = {
                     {
                         dataField: '',
                         headerText: '품목',
+                        width: 100,
                         labelFunction(_rowIndex, _columnIndex, _value, _headerText, item) {
                             return item.bsName === '일반' ? item.bgName : item.bsName + item.bgName;
                         },
                     }, {
                         dataField: 'biName',
                         headerText: '소재',
+                        width: 70,
                     }, {
                         dataField: 'fdQty',
                         headerText: '수량',
                         style: 'grid_textalign_right',
-                        width: 80,
+                        width: 50,
                         dataType: 'numeric',
                         autoThousandSeparator: 'true',
                     }, {
                         dataField: 'fdColor',
                         headerText: '색상',
+                        width: 50,
                         labelFunction(_rowIndex, _columnIndex, value, _headerText, _item) {
                             return CommonData.name.fdColor[value];
                         },
                     }, {
                         dataField: 'fdPattern',
                         headerText: '무늬',
+                        width: 50,
                         labelFunction(_rowIndex, _columnIndex, value, _headerText, _item) {
                             return CommonData.name.fdPattern[value];
                         },
@@ -203,6 +231,7 @@ const runOnlyOnce = {
             }, {
                 dataField: 'fdUrgentType',
                 headerText: '긴급',
+                width: 50,
                 labelFunction(_rowIndex, _columnIndex, value, _headerText, _item) {
                     return value ? CommonData.name.fdUrgentType[value] : '';
                 },
@@ -213,26 +242,32 @@ const runOnlyOnce = {
                     {
                         dataField: 'fdPressed',
                         headerText: '다림질',
+                        width: 70,
                         labelFunction: processChkChar,
                     }, {
                         dataField: 'fdAdd1Amt',
                         headerText: '추가요금',
+                        width: 70,
                         labelFunction: processChkChar,
                     }, {
                         dataField: 'fdRepairAmt',
                         headerText: '수선',
+                        width: 70,
                         labelFunction: processChkChar,
                     }, {
                         dataField: 'fdWhitening',
                         headerText: '표백',
+                        width: 70,
                         labelFunction: processChkChar,
                     }, {
                         dataField: 'fdPollution',
                         headerText: '오염',
+                        width: 70,
                         labelFunction: processChkChar,
                     }, {
                         dataField: '',
                         headerText: '발수가공',
+                        width: 70,
                         labelFunction(_rowIndex, _columnIndex, _value, _headerText, item) {
                             let result = '';
                             if (item.fdWaterRepellent) {
@@ -294,25 +329,25 @@ const runOnlyOnce = {
                     {
                         dataField: 'fdS2Dt',
                         headerText: '지사입고',
-                        width: 100,
+                        width: 90,
                         dataType: 'date',
                         formatString: dateFormat,
                     }, {
                         dataField: 'fdS4Dt',
                         headerText: '지사출고',
-                        width: 100,
+                        width: 90,
                         dataType: 'date',
                         formatString: dateFormat,
                     }, {
                         dataField: 'fdS5Dt',
                         headerText: '완성',
-                        width: 100,
+                        width: 90,
                         dataType: 'date',
                         formatString: dateFormat,
                     }, {
                         dataField: 'fdS6Dt',
                         headerText: '고객인도',
-                        width: 100,
+                        width: 90,
                         dataType: 'date',
                         formatString: dateFormat,
                     },
@@ -330,12 +365,7 @@ const runOnlyOnce = {
             }, {
                 dataField: 'fdS6Time',
                 headerText: '실인도<br>일시',
-                width: 90,
-                dataType: 'date',
-                renderer : {
-                    type: 'TemplateRenderer',
-                },
-                formatString: dateTimeFormat,
+                width: 140,
             },
         ];
         const property = {
@@ -391,6 +421,14 @@ const runOnlyOnce = {
         $('#searchListBtn').on('click', function () {
             searchSummaryData();
         });
+
+        $('#exportXlsx').on('click', function () {
+            if (wares.xlsxNaming.date) {
+                grids.exportToXlsx();
+            } else {
+                alertCaution('먼저 상세항목 정보를 조회해 주세요.', 1);
+            }
+        });
     },
 
     setGridEvents(prop) {
@@ -398,6 +436,10 @@ const runOnlyOnce = {
             const item = e.item;
             getDetailData(item, prop.targetDateName);
         });
+    },
+
+    setXlsxTitleName(titleName) {
+        wares.xlsxNaming.title = titleName;
     },
 };
 
@@ -449,14 +491,17 @@ const searchSummaryData = function () {
     comms.searchSummaryData(searchCondition);
 };
 
-/* 클릭으로 선택되어 그리드에서 넘겨받은 item을 기준으로 우측 그리 */
-const getDetailData = function (item, tragetDateName) {
-    console.log(item);
+/* 클릭으로 선택되어 그리드에서 넘겨받은 item을 기준으로 우측 그리드를 띄운다. */
+const getDetailData = function (item, targetDateName) {
+    wares.xlsxNaming.frName = item.frName;
+    wares.xlsxNaming.brName = item.brName;
+    wares.xlsxNaming.date = item[targetDateName];
+
     const condition = {
         branchId: item.branchId,
         franchiseId: item.franchiseId,
     };
-    condition[tragetDateName] = item[tragetDateName].numString();
+    condition[targetDateName] = item[targetDateName].numString();
 
     comms.getDetailData(condition);
 };
