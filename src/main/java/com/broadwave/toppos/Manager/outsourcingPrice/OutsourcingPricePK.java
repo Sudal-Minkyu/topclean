@@ -14,7 +14,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OutsourcingPricePK implements Serializable {
-    private String blItemcode;
+    private String biItemcode;
 
     private String brCode;
 

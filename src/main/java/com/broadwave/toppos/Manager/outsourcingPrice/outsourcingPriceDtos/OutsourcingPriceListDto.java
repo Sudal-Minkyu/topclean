@@ -23,13 +23,14 @@ public class OutsourcingPriceListDto {
     private String biItemcode; // 대분류 상품코드
     private String bgName; // 대분류 이름
     private String bsName; // 중분류 이름
-    private String biName; // 삼품명
-    private LocalDateTime setDate; // 적용일자
-    private String bpBasePrice; // 기본금액
-    private String bpAddPrice; // 추가금액
-    private String bpPriceA; // 최종금액(A)
+    private String biName; // 상품명
+    private String setDt; // 적용일자
+    private Integer bpBasePrice; // 기본금액
+    private Integer bpAddPrice; // 추가금액
+    private Integer bpPriceA; // 최종금액(A)
     private String bpOutsourcingYn; // 외주처리대상(Y/N)
-    private String bpOutsourcingPrice; // 외주금액
+    private Integer bpOutsourcingPrice; // 외주금액
     private String bpRemark; // 특이사항
+
 
 }

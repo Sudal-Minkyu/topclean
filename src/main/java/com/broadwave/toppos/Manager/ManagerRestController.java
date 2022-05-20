@@ -7,6 +7,7 @@ import com.broadwave.toppos.Manager.HmTemplate.HmTemplateDto;
 import com.broadwave.toppos.Manager.ManagerService.*;
 import com.broadwave.toppos.Manager.TagGallery.TagGalleryDtos.TagGalleryMapperDto;
 import com.broadwave.toppos.Manager.TagNotice.TagNoticeDtos.TagNoticeMapperDto;
+import com.broadwave.toppos.Manager.outsourcingPrice.outsourcingPriceDtos.OutsourcingPriceListInputDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotMapperDto;
 import com.broadwave.toppos.User.UserService.FindService;
 import com.broadwave.toppos.User.UserService.InspectService;
@@ -575,7 +576,7 @@ public class ManagerRestController {
     }
 
     //@@@@@@@@@@@@@@@@@@@@@ 외주가격 리스트 페이지 관련 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    // 외주가격 리스트 호출
+    // 외주가격에 쓰일 대분류 이름과 코드 호출
     @GetMapping("itemGroupcodeAndNameList")
     @ApiOperation(value = "대분류 코드와 이름 리스트", notes = "사용여부가 Y인 대분류 코드와 이름을 호출한다.")
     @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", value = "JWT Token", required = true, dataType = "string", paramType = "header")})
@@ -583,11 +584,13 @@ public class ManagerRestController {
         return outsourcingPriceService.groupcodeAndNameList(request);
     }
 
-    @GetMapping("priceTest")
+    // 외주가격 리스트 호출
+    @GetMapping("outsourcingPriceList")
     @ApiOperation(value = "외주가격 리스트", notes = "외주가격 리스트를 호출한다")
     @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", value = "JWT Token", required = true, dataType = "string", paramType = "header")})
-    public ResponseEntity<Map<String, Object>> outsourcingPriceList(HttpServletRequest request) {
-        return outsourcingPriceService.outsourcingPriceList(request);
+    public ResponseEntity<Map<String, Object>> outsourcingPriceList(@RequestBody OutsourcingPriceListInputDto outsourcingPriceListInputDto, HttpServletRequest request) {
+
+        return outsourcingPriceService.outsourcingPriceList(outsourcingPriceListInputDto, request);
     }
 
     //@@@@@@@@@@@@@@@@@@@@@ 외주출고처리 페이지 관련 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
