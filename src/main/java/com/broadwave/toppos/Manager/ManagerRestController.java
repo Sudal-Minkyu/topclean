@@ -585,7 +585,7 @@ public class ManagerRestController {
     }
 
     // 외주가격 리스트 호출
-    @GetMapping("outsourcingPriceList")
+    @PostMapping("outsourcingPriceList")
     @ApiOperation(value = "외주가격 리스트", notes = "외주가격 리스트를 호출한다")
     @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", value = "JWT Token", required = true, dataType = "string", paramType = "header")})
     public ResponseEntity<Map<String, Object>> outsourcingPriceList(@RequestBody OutsourcingPriceListInputDto outsourcingPriceListInputDto, HttpServletRequest request) {
