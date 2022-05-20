@@ -233,6 +233,9 @@ public class InspectService {
             requestDetailInfo.put("fdPollutionType", requestDetailDto.getFdPollutionType());
             requestDetailInfo.put("fdPollutionBack", requestDetailDto.getFdPollutionBack());
 
+            requestDetailInfo.put("fdModifyAmtYn", requestDetailDto.getFdModifyAmtYn());
+            requestDetailInfo.put("fdModifyOriginalAmt", requestDetailDto.getFdModifyOriginalAmt());
+
             List<PhotoDto> photoDtoList = photoRepository.findByPhotoDtoRequestDtlList(Long.parseLong(String.valueOf(requestDetailDto.getFdId())));
             requestDetailInfo.put("photoList", photoDtoList);
 
@@ -322,6 +325,12 @@ public class InspectService {
 
             optionalRequestDetail.get().setFdAgreeType(requestDetailUpdateDto.getFdAgreeType());
             optionalRequestDetail.get().setFdSignImage(requestDetailUpdateDto.getFdSignImage());
+
+            optionalRequestDetail.get().setFdModifyAmtYn(requestDetailUpdateDto.getFdModifyAmtYn());
+            if(requestDetailUpdateDto.getFdModifyAmtYn().equals("Y")){
+                optionalRequestDetail.get().setFdModifyOriginalAmt(requestDetailUpdateDto.getFdModifyOriginalAmt());
+                optionalRequestDetail.get().setFdModifyAmtDt(LocalDateTime.now());
+            }
 
             optionalRequestDetail.get().setModify_id(login_id);
             optionalRequestDetail.get().setModify_date(LocalDateTime.now());

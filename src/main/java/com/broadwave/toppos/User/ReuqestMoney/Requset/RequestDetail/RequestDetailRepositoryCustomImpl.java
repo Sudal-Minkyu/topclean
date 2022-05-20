@@ -170,6 +170,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         sb.append("WHEN a.fd_pollution_loc_flf = 'Y' THEN 1 \n");
         sb.append("WHEN a.fd_pollution_loc_frf = 'Y' THEN 1 \n");
         sb.append("ELSE 0 END fdPollutionType, \n");
+
         sb.append("CASE \n"); // 반품
         sb.append("WHEN a.fd_pollution_loc_bcn = 'Y' THEN 1 \n");
         sb.append("WHEN a.fd_pollution_loc_bcs = 'Y' THEN 1 \n");
@@ -178,7 +179,9 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         sb.append("WHEN a.fd_pollution_loc_brh = 'Y' THEN 1 \n");
         sb.append("WHEN a.fd_pollution_loc_blf = 'Y' THEN 1 \n");
         sb.append("WHEN a.fd_pollution_loc_brf = 'Y' THEN 1 \n");
-        sb.append("ELSE 0 END fdPollutionBack \n");
+        sb.append("ELSE 0 END fdPollutionBack, \n");
+
+        sb.append("a.fd_modify_amt_yn, a.fd_modify_original_amt \n");
 
         sb.append("FROM fs_request_dtl a \n");
         sb.append("INNER JOIN fs_request b ON b.fr_id = a.fr_id \n");

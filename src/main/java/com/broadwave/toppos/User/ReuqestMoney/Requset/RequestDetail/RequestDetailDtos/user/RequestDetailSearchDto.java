@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Column;
 import java.math.BigInteger;
 import java.sql.Timestamp;
 
@@ -114,6 +115,9 @@ public class RequestDetailSearchDto {
 
     private Integer fdPollutionType;
     private Integer fdPollutionBack;
+
+    private String fdModifyAmtYn; // 금액수정 여부(기본값N) ex>통합조회에서품목변경 또는 처리항목변경시 금액이 변경될경우
+    private Integer fdModifyOriginalAmt; // 금액수정될경우 수정전 접수금액(fd_tot_amt) ex>통합조회에서품목변경 또는 처리항목변경시 금액이 변경될경우
 
     public Integer getFdPollutionType() {
         return fdPollutionType + fdPollutionBack;

@@ -291,6 +291,15 @@ public class RequestDetail {
     @Column(name="fd_estimate_dt")
     private String fdEstimateDt; // 출고예정일
 
+    @Column(name="fd_modify_amt_yn")
+    private String fdModifyAmtYn; // 금액수정 여부(기본값N) ex>통합조회에서품목변경 또는 처리항목변경시 금액이 변경될경우
+
+    @Column(name="fd_modify_original_amt")
+    private Integer fdModifyOriginalAmt; // 금액수정될경우 수정전 접수금액(fd_tot_amt) ex>통합조회에서품목변경 또는 처리항목변경시 금액이 변경될경우
+
+    @Column(name="fd_modify_amt_dt")
+    private LocalDateTime fdModifyAmtDt; // 금액수정시간
+
     @Column(name="insert_id")
     private String insert_id;
 
