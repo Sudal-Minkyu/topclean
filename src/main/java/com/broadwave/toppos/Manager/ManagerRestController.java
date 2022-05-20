@@ -600,6 +600,12 @@ public class ManagerRestController {
         return receiptReleaseService.branchReceiptBranchInOutsouringList(frId, filterFromDt, filterToDt, isOutsourceable, request);
     }
 
+    //  지사 외주출고  - 세부테이블 외주 출고처리 실행 호출
+    @PostMapping("branchStateOutsouringChange")
+    public ResponseEntity<Map<String, Object>> branchStateOutsouringChange(@RequestParam(value = "fdIdList", defaultValue = "") List<Long> fdIdList,
+                                                                 HttpServletRequest request) {
+        return receiptReleaseService.branchStateOutsouringChange(fdIdList, request);
+    }
 
 
 

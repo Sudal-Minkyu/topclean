@@ -6,6 +6,10 @@ import com.broadwave.toppos.Manager.Process.Issue.IssueDispatchDto;
 import com.broadwave.toppos.Manager.Process.Issue.IssueRepository;
 import com.broadwave.toppos.Manager.Process.IssueForce.IssueForce;
 import com.broadwave.toppos.Manager.Process.IssueForce.IssueForceRepository;
+import com.broadwave.toppos.Manager.Process.IssueOutsourcing.IssueOutsourcing;
+import com.broadwave.toppos.Manager.Process.IssueOutsourcing.IssueOutsourcingRepository;
+import com.broadwave.toppos.Manager.outsourcingPrice.OutsourcingPriceRepository;
+import com.broadwave.toppos.Manager.outsourcingPrice.outsourcingPriceDtos.OutsourcingPriceDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetail;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.manager.*;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepository;
@@ -45,18 +49,23 @@ public class ReceiptReleaseService {
     private final KeyGenerateService keyGenerateService;
 
     private final RequestDetailRepository requestDetailRepository;
+    private final OutsourcingPriceRepository outsourcingPriceRepository;
 
     private final IssueRepository issueRepository;
     private final IssueForceRepository issueForceRepository;
+    private final IssueOutsourcingRepository issueOutsourcingRepository;
 
     @Autowired
-    public ReceiptReleaseService(TokenProvider tokenProvider, KeyGenerateService keyGenerateService, IssueRepository issueRepository, IssueForceRepository issueForceRepository,
-                                 RequestDetailRepository requestDetailRepository){
+    public ReceiptReleaseService(TokenProvider tokenProvider, KeyGenerateService keyGenerateService,
+                                 IssueRepository issueRepository, IssueForceRepository issueForceRepository, IssueOutsourcingRepository issueOutsourcingRepository,
+                                 RequestDetailRepository requestDetailRepository, OutsourcingPriceRepository outsourcingPriceRepository){
         this.keyGenerateService = keyGenerateService;
         this.tokenProvider = tokenProvider;
         this.requestDetailRepository = requestDetailRepository;
         this.issueRepository = issueRepository;
         this.issueForceRepository = issueForceRepository;
+        this.issueOutsourcingRepository = issueOutsourcingRepository;
+        this.outsourcingPriceRepository = outsourcingPriceRepository;
     }
 
     //  접수테이블의 상태 변화 API - 지사출고 실행함수
@@ -471,6 +480,74 @@ public class ReceiptReleaseService {
         data.put("gridListData",requestDetailOutsourcingDeliveryListDtos);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
+    //  지사 외주출고  - 세부테이블 외주 출고처리 실행 호출
+    @Transactional
+    public ResponseEntity<Map<String, Object>> branchStateOutsouringChange(List<Long> fdIdList, HttpServletRequest request) {
+        log.info("branchStateOutsouringChange 호출");
+
+        log.info("출고처리할 ID : "+fdIdList);
+
+        AjaxResponse res = new AjaxResponse();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String brCode = (String) claims.get("brCode"); // 현재 지사의 코드(2자리) 가져오기
+        String login_id = claims.getSubject(); // 현재 아이디
+        log.info("현재 접속한 아이디 : "+login_id);
+        log.info("현재 접속한 지사 코드 : "+brCode);
+
+        log.info("지사 외주출고 처리");
+        IssueOutsourcing issueOutsourcing;
+        List<IssueOutsourcing> issueOutsourcingList = new ArrayList<>();
+
+        List<RequestDetail> requestDetailList = requestDetailRepository.findByRequestDetailS2OrO2List(fdIdList);
+        log.info("requestDetailList : "+requestDetailList);
+
+        for (RequestDetail requestDetail : requestDetailList) {
+            if(requestDetail.getFdState().equals("S2") || requestDetail.getFdState().equals("O2")) {
+                log.info("가져온 frID 값 : "+requestDetail.getFrId());
+                requestDetail.setFdPreState(requestDetail.getFdState()); // 이전상태 값
+                requestDetail.setFdPreStateDt(LocalDateTime.now());
+
+                requestDetail.setFdState("O1");
+                requestDetail.setFdStateDt(LocalDateTime.now());
+
+                requestDetail.setFdO1Dt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
+                requestDetail.setFdO1Time(LocalDateTime.now());
+
+//                OutsourcingPriceDto outsourcingPriceDto = outsourcingPriceRepository.findByOutsourcingPrice(requestDetail.getBiItemcode(),brCode);
+//                if(outsourcingPriceDto == null || outsourcingPriceDto.getBpOutsourcingYn().equals("N")){
+//                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP030.getCode(), "외주가격 "+ResponseErrorCode.TP030.getDesc(), "문자", "외주가격 등록후 다시 시도해주세요."));
+//                }else{
+//                    requestDetail.setFdOutsourcingAmt(outsourcingPriceDto.getBpOutsourcingPrice());
+//                }
+
+                requestDetail.setModify_id(login_id);
+                requestDetail.setModify_date(LocalDateTime.now());
+
+                issueOutsourcing = issueOutsourcingRepository.findByFdId(requestDetail.getId());
+
+                // 지사 외주 출고처리
+                if (issueOutsourcing == null) {
+                    issueOutsourcing = new IssueOutsourcing();
+                    issueOutsourcing.setFdId(requestDetail.getId());
+                    issueOutsourcing.setBrCode(requestDetail.getFrId().getBrCode());
+                }
+                issueOutsourcing.setMoDt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
+                issueOutsourcing.setMoTime(LocalDateTime.now());
+                issueOutsourcing.setInsert_id(login_id);
+                issueOutsourcingList.add(issueOutsourcing);
+
+            }else{
+                return ResponseEntity.ok(res.fail(ResponseErrorCode.TP028.getCode(), "외주출고 "+ResponseErrorCode.TP028.getDesc(), "문자", "새로고침이후 다시 시도해주세요."));
+            }
+        }
+        requestDetailRepository.saveAll(requestDetailList);
+        issueOutsourcingRepository.saveAll(issueOutsourcingList);
+
+        return ResponseEntity.ok(res.success());
     }
 
 }

@@ -135,6 +135,21 @@ public class RequestDetail {
     @Column(name="fd_s8_time")
     private LocalDateTime fdS8Time; // 가맹점강제입고시간
 
+    @Column(name="fd_o1_dt")
+    private String fdO1Dt; // 지사외주 입고일
+
+    @Column(name="fd_o1_time")
+    private LocalDateTime fdO1Time; // 지사외주 입고시간
+
+    @Column(name="fd_o2_dt")
+    private String fdO2Dt; // 지사외주 출고일
+
+    @Column(name="fd_o2_time")
+    private LocalDateTime fdO2Time; // 지사외주 출고시간
+
+    @Column(name="fd_outsourcing_amt")
+    private Integer fdOutsourcingAmt; // 외주처리비용
+
     @Column(name="fd_cancel")
     private String fdCancel; // 접수취소 Y 기본값 N
 
