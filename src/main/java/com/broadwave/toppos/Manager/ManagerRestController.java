@@ -574,6 +574,7 @@ public class ManagerRestController {
         return hmTemplateService.hmTemplateList(request);
     }
 
+    //@@@@@@@@@@@@@@@@@@@@@ 외주가격 리스트 페이지 관련 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     // 외주가격 리스트 호출
     @GetMapping("itemGroupcodeAndNameList")
     @ApiOperation(value = "대분류 코드와 이름 리스트", notes = "사용여부가 Y인 대분류 코드와 이름을 호출한다.")
@@ -588,5 +589,18 @@ public class ManagerRestController {
     public ResponseEntity<Map<String, Object>> outsourcingPriceList(HttpServletRequest request) {
         return outsourcingPriceService.outsourcingPriceList(request);
     }
+
+    //@@@@@@@@@@@@@@@@@@@@@ 외주출고처리 페이지 관련 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    //  지사 외주출고  - 세부테이블 외주 출고처리 할 리스트 호출
+    @GetMapping("branchReceiptBranchInOutsouringList")
+    @ApiOperation(value = "지사 외주 출고처리 리스트", notes = "지사 외주 출고처리 할 리스트를 호출한다. ")
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", value = "JWT Token", required = true, dataType = "string", paramType = "header")})
+    public ResponseEntity<Map<String, Object>> branchReceiptBranchInOutsouringList(@RequestParam("frId") Long frId, @RequestParam("filterFromDt") String filterFromDt,
+                                                                         @RequestParam("filterToDt") String filterToDt, @RequestParam("isOutsourceable") String isOutsourceable, HttpServletRequest request) {
+        return receiptReleaseService.branchReceiptBranchInOutsouringList(frId, filterFromDt, filterToDt, isOutsourceable, request);
+    }
+
+
+
 
 }
