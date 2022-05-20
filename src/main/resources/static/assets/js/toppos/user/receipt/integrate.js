@@ -58,6 +58,8 @@ const dtos = {
         },
 
         franchiseRequestDetailUpdate: {
+            fdModifyAmtYn: "s", // 2022.05.20 추가
+            fdModifyOriginalAmt: "n", // 2022.05.20 추가
             photoList: {
 
             },
@@ -206,6 +208,8 @@ const dtos = {
         },
 
         franchiseRequestDetailSearch: { // 접수 세부 테이블의 거의 모든 요소와, 고객이름
+            fdModifyAmtYn: "s", // 2022.05.20 추가
+            fdModifyOriginalAmt: "n", // 2022.05.20 추가
             fdUrgentType: "s",
             fdUrgentAmt: "n",
             fdS6CancelYn: "s",
@@ -429,7 +433,6 @@ const comms = {
     },
 
     saveModifiedOrder(data) {
-        console.log(data);
         dv.chk(data, dtos.send.franchiseRequestDetailUpdate, "상품 수정내용 저장");
         CommonUI.ajax(grids.s.url.update[0], "MAPPER", data, function(res) {
             onCloseAddOrder();
@@ -1775,12 +1778,6 @@ function modifyOrder(rowIndex) {
         $("#fdUrgent" + currentRequest.fdUrgentType).prop("checked", true);
     }
 
-    if(currentRequest.fdSpecialYn === "Y") {
-        $("#fdSpecialYn").prop("checked", true);
-    }else{
-        $("#fdSpecialYn").prop("checked", false);
-    }
-
     if(currentRequest.fdWhitening) {
         $("#fdWhitening").prop("checked", true);
     }
@@ -1903,7 +1900,6 @@ function onAddOrder() {
     currentRequest.fdDiscountGrade = $("input[name='fdDiscountGrade']:checked").val();
     currentRequest.fdRemark = $("#fdRemark").val();
     currentRequest.frEstimateDate = initialData.etcData.frEstimateDate.numString();
-    currentRequest.fdSpecialYn = $("#fdSpecialYn").is(":checked") ? "Y" : "N";
     currentRequest.fdUrgentType = $("input[name='fdUrgentType']:checked").val() ?
         $("input[name='fdUrgentType']:checked").val() : "";
     currentRequest.fdUrgentYn = currentRequest.fdUrgentType !== "" ? "Y" : "N";
@@ -1917,6 +1913,7 @@ function onAddOrder() {
         }
     }
 
+    checkIncreaseAmt();
     
     comms.saveModifiedOrder(currentRequest);
 }
@@ -2762,6 +2759,7 @@ function formatDateTime(rowIndex, columnIndex, value, headerText, item) {
 /* 수정 전 총 금액 보다 수정 후 총 금액이 커졌을 경우 기록하기 위함. */
 function checkIncreaseAmt() {
     if (currentRequest.fdTotAmt > wares.startPrice) {
+        console.log('act');
         currentRequest.fdModifyAmtYn = 'Y';
         currentRequest.fdModifyOriginalAmt = wares.startPrice;
     }

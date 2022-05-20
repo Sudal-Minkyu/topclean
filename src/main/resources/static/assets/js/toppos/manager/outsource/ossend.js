@@ -23,11 +23,6 @@ const dtos = {
         }
     },
     receive: {
-        managerBelongList: { // 가맹점 선택 셀렉트박스에 띄울 가맹점의 리스트
-            frId: "nr",
-            frName: "s",
-            frTagNo: "s",
-        },
         branchReceiptBranchInList: {
             fdId: "n", // 출고 처리를 위함
             frName: "s",
@@ -66,17 +61,6 @@ const dtos = {
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
-    getFrList() {
-        CommonUI.ajax('/api/manager/branchBelongList', 'GET', false, function (res) {
-            const data = res.sendData.franchiseList;
-            dv.chk(data, dtos.receive.managerBelongList, '가맹점 선택출고에 필요한 지점에 속한 가맹점 받아오기');
-            const $frList = $('#frList');
-            data.forEach(obj => {
-                const htmlText = `<option value=${obj.frId}>${obj.frName}</option>`;
-                $frList.append(htmlText);
-            });
-        });
-    },
 
     getReceiptList(searchCondition) {
         dv.chk(searchCondition, dtos.send.branchReceiptBranchInList, '출고 품목 조회 조건 보내기');
@@ -200,7 +184,7 @@ const gridElemets = {
     columnLayout: [],
     prop: [],
 
-    initialization() { // 가시성을 위해 grids.s 의 일부 요소를 여기서 선언한다.
+    initialization() {
         /* 0번 그리드의 레이아웃 */
         gridElemets.columnLayout[0] = [
             {
@@ -372,5 +356,5 @@ const onPageLoad = function () {
     trigs.grid();
     trigs.basic();
 
-    comms.getFrList();
+    runOnlyOnce.getFrList();
 };
