@@ -6,10 +6,11 @@ const dtos = {
     send: {
     },
     receive: {
-        managerBelongList: { // 가맹점 선택 셀렉트박스에 띄울 가맹점의 리스트
-            frId: "nr",
-            frName: "s",
-            frTagNo: "s",
+        /* 가맹점 선택 셀렉트박스에 띄울 가맹점의 리스트 */
+        managerBelongList: {
+            frId: 'nr',
+            frName: 's',
+            frTagNo: 's',
         },
     },
 };
@@ -70,7 +71,6 @@ const runOnlyOnce = {
             return value ? '√' : '';
         };
         const dateFormat = 'yyyy-mm-dd';
-        const dateTimeFormat = 'yyyy-mm-dd<br>hh:mm';
         const layout = [
             {
                 headerText: '지사/가맹점 정보',
