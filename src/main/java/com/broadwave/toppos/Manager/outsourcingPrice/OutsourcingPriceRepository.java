@@ -1,6 +1,10 @@
 package com.broadwave.toppos.Manager.outsourcingPrice;
 
+import com.broadwave.toppos.Manager.outsourcingPrice.outsourcingPriceDtos.OutsourcingPriceSearchDto;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+
+import java.util.List;
 
 /**
  * @author : DongA
@@ -9,4 +13,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * Remark : 지사 외주가격 JPA Data
  */
 public interface OutsourcingPriceRepository extends JpaRepository<OutsourcingPrice, OutsourcingPricePK>, OutsourcingPriceRepositoryCustom {
+
+    @Query("select o from OutsourcingPrice o")
+    List<OutsourcingPrice> findAllItemcodeAndBrCode();
 }

@@ -5,6 +5,7 @@ import com.broadwave.toppos.Manager.outsourcingPrice.outsourcingPriceDtos.Outsou
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import javax.persistence.EntityManager;
@@ -46,9 +47,9 @@ public class OutsourcingPriceRepositoryCustomImpl implements OutsourcingPriceRep
                                 itemPrice.bpBasePrice,
                                 itemPrice.bpAddPrice,
                                 itemPrice.bpPriceA,
-                                outsourcingPrice.bpOutsourcingYn,
-                                outsourcingPrice.bpOutsourcingPrice,
-                                outsourcingPrice.bpRemark
+                                outsourcingPrice.bpOutsourcingYn.coalesce("N"),
+                                outsourcingPrice.bpOutsourcingPrice.coalesce(0),
+                                outsourcingPrice.bpRemark.coalesce("")
                         )
                 )
                 .from(item)
@@ -64,15 +65,16 @@ public class OutsourcingPriceRepositoryCustomImpl implements OutsourcingPriceRep
                 )
                 .fetch();
     }
-    private BooleanExpression biItemcodeEq(String biItemcode){
+
+    private BooleanExpression biItemcodeEq(String biItemcode) {
         return biItemcode == "" ? null : item.biItemcode.startsWith(biItemcode);
     }
 
-    private BooleanExpression biNameEq(String biName){
+    private BooleanExpression biNameEq(String biName) {
         return biName == "" ? null : item.biName.contains(biName);
     }
 
-    private BooleanExpression bpOutsourcingYnEq(String bpOutsourcingYn){
+    private BooleanExpression bpOutsourcingYnEq(String bpOutsourcingYn) {
         return bpOutsourcingYn == "" ? null : outsourcingPrice.bpOutsourcingYn.eq(bpOutsourcingYn);
     }
 

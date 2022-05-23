@@ -7,6 +7,7 @@ import com.broadwave.toppos.Manager.HmTemplate.HmTemplateDto;
 import com.broadwave.toppos.Manager.ManagerService.*;
 import com.broadwave.toppos.Manager.TagGallery.TagGalleryDtos.TagGalleryMapperDto;
 import com.broadwave.toppos.Manager.TagNotice.TagNoticeDtos.TagNoticeMapperDto;
+import com.broadwave.toppos.Manager.outsourcingPrice.outsourcingPriceDtos.OutsourcingPriceListDto;
 import com.broadwave.toppos.Manager.outsourcingPrice.outsourcingPriceDtos.OutsourcingPriceListInputDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotMapperDto;
 import com.broadwave.toppos.User.UserService.FindService;
@@ -591,6 +592,15 @@ public class ManagerRestController {
     public ResponseEntity<Map<String, Object>> outsourcingPriceList(@RequestBody OutsourcingPriceListInputDto outsourcingPriceListInputDto, HttpServletRequest request) {
 
         return outsourcingPriceService.outsourcingPriceList(outsourcingPriceListInputDto, request);
+    }
+
+    // 외주가격 리스트 저장
+    @PostMapping("outsourcingPriceSave")
+    @ApiOperation(value = "외주가격 저장", notes = "입력한 외주가격 리스트들을 저장한다")
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", value = "JWT Token", required = true, dataType = "string", paramType = "header")})
+    public ResponseEntity<Map<String, Object>> outsourcingPriceSave(@RequestBody List<OutsourcingPriceListDto> outsourcingPriceListDtos, HttpServletRequest request) {
+
+        return outsourcingPriceService.outsourcingPriceSave(outsourcingPriceListDtos, request);
     }
 
     //@@@@@@@@@@@@@@@@@@@@@ 외주출고처리 페이지 관련 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
