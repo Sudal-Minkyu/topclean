@@ -339,10 +339,6 @@ const grids = {
             AUIGrid.updateRowsById(grids.s.id[numOfGrid], item);
         },
 
-        restoreEditedRow(numOfGrid, rowIdx) {
-            AUIGrid.restoreEditedRows(grids.s.id[numOfGrid], rowIdx);
-        },
-
         focusOn(tagNo) {
             const rowIndex = AUIGrid.getRowIndexesByValue(grids.s.id[0], "fdTag", tagNo)[0];
             AUIGrid.setRowPosition(grids.s.id[0], rowIndex - 2 ? rowIndex - 2 : 0);
@@ -362,8 +358,6 @@ const trigs = {
             listCheckChanged();
             if(e.item.bpOutsourcingYn !== "Y") {
                 notAvailableWarn(e.item);
-            } else if(["05", "06"].includes(e.item.fdS4Type)) {
-                grids.f.restoreEditedRow(0, e.rowIndex);
             }
         });
     },
