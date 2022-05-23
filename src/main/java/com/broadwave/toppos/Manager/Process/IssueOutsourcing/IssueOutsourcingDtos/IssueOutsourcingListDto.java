@@ -1,4 +1,4 @@
-package com.broadwave.toppos.Manager.Process.IssueOutsourcing;
+package com.broadwave.toppos.Manager.Process.IssueOutsourcing.IssueOutsourcingDtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,7 +12,7 @@ import java.math.BigInteger;
  * @author Minkyu
  * Date : 2022-05-23
  * Time :
- * Remark : Toppos 지사 외주/출고 현황 ListDto
+ * Remark : Toppos 지사 외주/출고 현황 왼쪽 ListDto
  */
 @Data
 @Builder

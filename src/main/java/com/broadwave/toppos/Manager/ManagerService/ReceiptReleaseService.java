@@ -7,7 +7,8 @@ import com.broadwave.toppos.Manager.Process.Issue.IssueRepository;
 import com.broadwave.toppos.Manager.Process.IssueForce.IssueForce;
 import com.broadwave.toppos.Manager.Process.IssueForce.IssueForceRepository;
 import com.broadwave.toppos.Manager.Process.IssueOutsourcing.IssueOutsourcing;
-import com.broadwave.toppos.Manager.Process.IssueOutsourcing.IssueOutsourcingListDto;
+import com.broadwave.toppos.Manager.Process.IssueOutsourcing.IssueOutsourcingDtos.IssueOutsourcingListDto;
+import com.broadwave.toppos.Manager.Process.IssueOutsourcing.IssueOutsourcingDtos.IssueOutsourcingSubListDto;
 import com.broadwave.toppos.Manager.Process.IssueOutsourcing.IssueOutsourcingRepository;
 import com.broadwave.toppos.Manager.outsourcingPrice.OutsourcingPriceRepository;
 import com.broadwave.toppos.Manager.outsourcingPrice.outsourcingPriceDtos.OutsourcingPriceDto;
@@ -568,7 +569,7 @@ public class ReceiptReleaseService {
 
         log.info("frId : "+frId);
 
-        List<RequestDetailOutsourcingReceiptListDto> requestDetailOutsourcingReceiptListDtos = requestDetailRepository.findByRequestDetailOutsourcingReceiptList(brCode, frId, filterFromDt, filterToDt);
+        List<RequestDetailOutsourcingReceiptListDto> requestDetailOutsourcingReceiptListDtos = issueOutsourcingRepository.findByRequestDetailOutsourcingReceiptList(brCode, frId, filterFromDt, filterToDt);
         data.put("gridListData",requestDetailOutsourcingReceiptListDtos);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
@@ -638,6 +639,25 @@ public class ReceiptReleaseService {
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
+    //  지사 외주 입출고 현황 리스트 오른쪽 호출
+    public ResponseEntity<Map<String, Object>> branchReceiptOutsouringSubList(String fdO1Dt, HttpServletRequest request) {
+        log.info("branchReceiptOutsouringSubList 호출");
+
+        log.info("fdO1Dt  : "+fdO1Dt);
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String brCode = (String) claims.get("brCode"); // 현재 지사의 코드(2자리) 가져오기
+        log.info("현재 접속한 지사 코드 : "+brCode);
+
+        List<IssueOutsourcingSubListDto> issueOutsourcingSubListDtos = issueOutsourcingRepository.findByIssueOutsourcingSubList(brCode, fdO1Dt);
+        data.put("gridListData",issueOutsourcingSubListDtos);
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
 }
 
 
