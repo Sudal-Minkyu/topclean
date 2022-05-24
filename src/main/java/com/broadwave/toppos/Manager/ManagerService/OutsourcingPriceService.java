@@ -8,7 +8,6 @@ import com.broadwave.toppos.Manager.outsourcingPrice.OutsourcingPrice;
 import com.broadwave.toppos.Manager.outsourcingPrice.OutsourcingPriceRepository;
 import com.broadwave.toppos.Manager.outsourcingPrice.outsourcingPriceDtos.OutsourcingPriceListDto;
 import com.broadwave.toppos.Manager.outsourcingPrice.outsourcingPriceDtos.OutsourcingPriceListInputDto;
-import com.broadwave.toppos.Manager.outsourcingPrice.outsourcingPriceDtos.OutsourcingPriceSearchDto;
 import com.broadwave.toppos.common.AjaxResponse;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
@@ -18,10 +17,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -33,7 +30,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 public class OutsourcingPriceService {
 
     private final OutsourcingPriceRepository outsourcingPriceRepository;
@@ -41,10 +38,6 @@ public class OutsourcingPriceService {
     private final ItemGroupRepository itemGroupRepository;
 
     private final TokenProvider tokenProvider;
-
-//    public void outsourcingInsert(){
-//        outsourcingPriceRepository.save();
-//    }
 
     // 외주가격에 쓰일 대분류 이름과 코드 호출
     @Transactional(readOnly = true)
@@ -98,44 +91,39 @@ public class OutsourcingPriceService {
 
         // 토큰에서 지사코드 추출
         Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
-        String brCode = (String) claims.get("brCode");
+        String brCode = (String) claims.get("brCode"); // brCode 추출
+        String loginId = claims.getSubject(); // 로그인 아이디 추출
 
+        List<OutsourcingPrice> outsourcingPrices = new ArrayList<>();
 
-        List<OutsourcingPrice> itemcodesAndBrCodes = outsourcingPriceRepository.findAllItemcodeAndBrCode();
-        List<OutsourcingPrice> allOutsourcingPrice = new ArrayList<>();
+        for (OutsourcingPriceListDto outsourcingPriceListDto : outsourcingPriceListDtos) {
+            OutsourcingPrice findOutsourcingPrice = outsourcingPriceRepository.findByOutsourcingPriceAll(outsourcingPriceListDto.getBiItemcode(), brCode);
 
-        System.out.println(itemcodesAndBrCodes);
-        System.out.println(outsourcingPriceListDtos);
-
-
-        System.out.println("4444444444");
-        for (OutsourcingPrice itemcodeAndBrCode : itemcodesAndBrCodes) {
-            System.out.println("33333333");
-            for (OutsourcingPriceListDto outsourcingPriceListDto : outsourcingPriceListDtos) {
-                System.out.println("222222222");
-                if (outsourcingPriceListDto.getBiItemcode().equals(itemcodeAndBrCode.getBiItemcode()) && brCode.equals(itemcodeAndBrCode.getBrCode())) {
-                    System.out.println("1111111111");
-                    itemcodeAndBrCode.setBpOutsourcingPrice(outsourcingPriceListDto.getBpOutsourcingPrice());
-                    itemcodeAndBrCode.setBpOutsourcingYn(outsourcingPriceListDto.getBpOutsourcingYn());
-                    itemcodeAndBrCode.setBpRemark(outsourcingPriceListDto.getBpRemark());
-                } else {
-                    System.out.println("0000000000");
-                    OutsourcingPrice outsourcingPrice = new OutsourcingPrice();
-                    outsourcingPrice
-                            .builder()
-                            .biItemcode(outsourcingPriceListDto.getBiItemcode())
-                            .brCode(brCode)
-                            .bpOutsourcingPrice(outsourcingPriceListDto.getBpOutsourcingPrice())
-                            .bpOutsourcingYn(outsourcingPriceListDto.getBpOutsourcingYn())
-                            .bpRemark(outsourcingPriceListDto.getBpRemark())
-                            .build();
-                    allOutsourcingPrice.add(outsourcingPrice);
-                }
+            if (findOutsourcingPrice != null) {
+                // update
+                findOutsourcingPrice.setBpOutsourcingPrice(outsourcingPriceListDto.getBpOutsourcingPrice());
+                findOutsourcingPrice.setBpOutsourcingYn(outsourcingPriceListDto.getBpOutsourcingYn());
+                findOutsourcingPrice.setBpRemark(outsourcingPriceListDto.getBpRemark());
+                findOutsourcingPrice.setModify_id(loginId);
+                findOutsourcingPrice.setModifyDate(LocalDateTime.now());
+            } else {
+                // insert
+                OutsourcingPrice saveOutsourcingPrice = new OutsourcingPrice();
+                saveOutsourcingPrice.setBiItemcode(outsourcingPriceListDto.getBiItemcode());
+                saveOutsourcingPrice.setBrCode(brCode);
+                saveOutsourcingPrice.setBpOutsourcingPrice(outsourcingPriceListDto.getBpOutsourcingPrice());
+                saveOutsourcingPrice.setBpOutsourcingYn(outsourcingPriceListDto.getBpOutsourcingYn());
+                saveOutsourcingPrice.setBpRemark(outsourcingPriceListDto.getBpRemark());
+                saveOutsourcingPrice.setInsert_id(loginId);
+                saveOutsourcingPrice.setModify_id(loginId);
+                saveOutsourcingPrice.setInsertDate(LocalDateTime.now());
+                saveOutsourcingPrice.setModifyDate(LocalDateTime.now());
+                outsourcingPrices.add(saveOutsourcingPrice);
             }
         }
-        List<OutsourcingPrice> outsourcingPrices = outsourcingPriceRepository.saveAll(allOutsourcingPrice);
+        outsourcingPriceRepository.saveAll(outsourcingPrices); // 한번에 저장
 
-        data.put("gridListData", outsourcingPrices);
+        data.put("gridListData", "Success");
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 

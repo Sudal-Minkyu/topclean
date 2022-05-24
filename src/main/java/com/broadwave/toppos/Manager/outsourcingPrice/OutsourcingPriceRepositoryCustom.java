@@ -2,7 +2,6 @@ package com.broadwave.toppos.Manager.outsourcingPrice;
 
 import com.broadwave.toppos.Manager.outsourcingPrice.outsourcingPriceDtos.OutsourcingPriceDto;
 import com.broadwave.toppos.Manager.outsourcingPrice.outsourcingPriceDtos.OutsourcingPriceListDto;
-import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
@@ -17,5 +16,7 @@ public interface OutsourcingPriceRepositoryCustom {
     List<OutsourcingPriceListDto> findByOutsourcingPriceList(String biItemcode, String biName, String bpOutsourcingYn, String brCode);
 
     OutsourcingPriceDto findByOutsourcingPrice(String biItemcode, String brCode);
+
+    OutsourcingPrice findByOutsourcingPriceAll(String biItemcodes, String brCode);
 
 }

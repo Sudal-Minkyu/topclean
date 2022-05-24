@@ -5,7 +5,6 @@ import com.broadwave.toppos.Manager.outsourcingPrice.outsourcingPriceDtos.Outsou
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import javax.persistence.EntityManager;
@@ -93,4 +92,13 @@ public class OutsourcingPriceRepositoryCustomImpl implements OutsourcingPriceRep
                 .where(outsourcingPrice.biItemcode.eq(biItemcode).and(outsourcingPrice.brCode.eq(brCode)))
                 .fetchOne();
     }
+
+    @Override
+    public OutsourcingPrice findByOutsourcingPriceAll(String biItemcodes, String brCode) {
+        return jpaQueryFactory
+                .selectFrom(outsourcingPrice)
+                .where(outsourcingPrice.brCode.eq(brCode).and(outsourcingPrice.biItemcode.eq(biItemcodes)))
+                .fetchOne();
+    }
+
 }
