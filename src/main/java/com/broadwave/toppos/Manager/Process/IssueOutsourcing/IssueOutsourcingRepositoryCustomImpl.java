@@ -84,7 +84,7 @@ public class IssueOutsourcingRepositoryCustomImpl extends QuerydslRepositorySupp
         sb.append("INNER JOIN bs_item_group f ON e.bg_item_groupcode=f.bg_item_groupcode \n");
         sb.append("INNER JOIN bs_item_group_s g on e.bs_item_groupcode_s=g.bs_item_groupcode_s and e.bg_item_groupcode=g.bg_item_groupcode \n");
 
-        sb.append("LEFT OUTER JOIN br_item_outsourcing_price i ON a.bi_itemcode = i.bi_itemcode \n");
+        sb.append("LEFT OUTER JOIN br_item_outsourcing_price i ON a.bi_itemcode = i.bi_itemcode AND i.br_code=?1 \n");
 
         sb.append("WHERE b.fr_confirm_yn='Y' \n");
         sb.append("AND b.br_code= ?1 \n");

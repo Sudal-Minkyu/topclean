@@ -509,7 +509,15 @@ public class ReceiptReleaseService {
 
         for (RequestDetail requestDetail : requestDetailList) {
             if(requestDetail.getFdState().equals("S2") || requestDetail.getFdState().equals("O2")) {
+                OutsourcingPriceDto outsourcingPriceDto = outsourcingPriceRepository.findByOutsourcingPrice(requestDetail.getBiItemcode(),brCode);
+                if(outsourcingPriceDto == null || outsourcingPriceDto.getBpOutsourcingYn().equals("N")){
+                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP030.getCode(), "외주가격 "+ResponseErrorCode.TP030.getDesc(), "문자", "외주가격 등록후 다시 시도해주세요."));
+                }else{
+                    requestDetail.setFdOutsourcingAmt(outsourcingPriceDto.getBpOutsourcingPrice());
+                }
+
                 log.info("가져온 frID 값 : "+requestDetail.getFrId());
+
                 requestDetail.setFdPreState(requestDetail.getFdState()); // 이전상태 값
                 requestDetail.setFdPreStateDt(LocalDateTime.now());
 
@@ -518,13 +526,6 @@ public class ReceiptReleaseService {
 
                 requestDetail.setFdO1Dt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
                 requestDetail.setFdO1Time(LocalDateTime.now());
-
-                OutsourcingPriceDto outsourcingPriceDto = outsourcingPriceRepository.findByOutsourcingPrice(requestDetail.getBiItemcode(),brCode);
-                if(outsourcingPriceDto == null || outsourcingPriceDto.getBpOutsourcingYn().equals("N")){
-                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP030.getCode(), "외주가격 "+ResponseErrorCode.TP030.getDesc(), "문자", "외주가격 등록후 다시 시도해주세요."));
-                }else{
-                    requestDetail.setFdOutsourcingAmt(outsourcingPriceDto.getBpOutsourcingPrice());
-                }
 
                 requestDetail.setModify_id(login_id);
                 requestDetail.setModify_date(LocalDateTime.now());
@@ -575,8 +576,8 @@ public class ReceiptReleaseService {
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
-    @Transactional
     //  지사 외주출고  - 세부테이블 외주 입고처리 실행 호출
+    @Transactional
     public ResponseEntity<Map<String, Object>> branchStateOutsouringOutChange(List<Long> fdIdList, HttpServletRequest request) {
         log.info("branchStateOutsouringOutChange 호출");
 
