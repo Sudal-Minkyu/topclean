@@ -10,7 +10,7 @@ const dtos = {
 };
 
 const wares = {
-    searchCondition: {},
+    condition: {},
 };
 
 const comms = {
@@ -18,6 +18,7 @@ const comms = {
         CommonUI.ajax('/api/manager/branchReceiptOutsouringList', 'GET', searchCondition, function (res) {
             const data = res.sendData.gridListData;
             grids.setData(gridElemets.id[0], data);
+            grids.clear(grids.id[0]);
         });
     },
 
@@ -117,7 +118,7 @@ const trigs = {
         $('#searchListBtn').on('click', searchSummaryList);
 
         $('#exportXlsx').on('click', function () {
-            if (wares.searchCondition.filterFromDt) {
+            if (wares.condition.fdO1Dt) {
                 gridElemets.exportToXlsx();
             } else {
                 alertCaution('다운로드할 정보가 없습니다.<br>먼저 상세 항목을 조회해 주세요.', 1);

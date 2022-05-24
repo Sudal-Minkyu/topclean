@@ -127,4 +127,11 @@ public class HeadController {
     public String receiptstat(){
         return "head/process/receiptstat";
     }
+
+    // 문자메시지
+    @RequestMapping("message")
+    public String message(){
+        return "head/setting/message";
+    }
+
 }
