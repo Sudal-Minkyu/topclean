@@ -244,21 +244,6 @@ const wares = {
 
 };
 
-/* 페이지가 로드되고 나서 실행 */
-$(function() {
-    onPageLoad();
-});
-
-/* 페이지가 로드되고 나서 실행 될 코드들을 담는다. */
-const onPageLoad = function() {
-    getYear();
-    getFilterYear();
-
-    grids.f.initialization();
-
-    trigs.basic();
-};
-
 // 년도 보내기
 function getFilterYear() {
     const filterYear = {
@@ -306,3 +291,216 @@ function exportToXlsx(i, filename) {
     });
     console.log(filename + "_" + getDate(year));
 }
+
+function makeChart() {
+    am5.ready(function() {
+
+        // Create root element
+        var root = am5.Root.new('summaryChart');
+
+
+        // Set themes
+        root.setThemes([
+            am5themes_Animated.new(root)
+        ]);
+
+
+        // Create chart
+        var chart = root.container.children.push(am5xy.XYChart.new(root, {
+            panX: false,
+            panY: false,
+            wheelX: "panX",
+            wheelY: "zoomX",
+            layout: root.verticalLayout
+        }));
+
+        var cursor = chart.set("cursor", am5xy.XYCursor.new(root, {
+            behavior: "zoomX"
+        }));
+        cursor.lineY.set("visible", false);
+
+        var colors = chart.get("colors");
+
+        var data = [
+            {
+                "yyyymm": "202201",
+                "amt": 0,
+                "sum_amt": 0,
+                "month": "1월",
+            },
+            {
+                "yyyymm": "202202",
+                "amt": 478000,
+                "sum_amt": 478000,
+                "month": "2월",
+            },
+            {
+                "yyyymm": "202203",
+                "amt": 0,
+                "sum_amt": 478000,
+                "month": "3월",
+            },
+            {
+                "yyyymm": "202204",
+                "amt": 975722,
+                "sum_amt": 1453722,
+                "month": "4월",
+            },
+            {
+                "yyyymm": "202205",
+                "amt": 161455,
+                "sum_amt": 1615177,
+                "month": "5월",
+            },
+            {
+                "yyyymm": "202206",
+                "amt": 0,
+                "sum_amt": 1615177,
+                "month": "6월",
+            },
+            {
+                "yyyymm": "202207",
+                "amt": 0,
+                "sum_amt": 1615177,
+                "month": "7월",
+            },
+            {
+                "yyyymm": "202208",
+                "amt": 0,
+                "sum_amt": 1615177,
+                "month": "8월",
+            },
+            {
+                "yyyymm": "202209",
+                "amt": 0,
+                "sum_amt": 1615177,
+                "month": "9월",
+            },
+            {
+                "yyyymm": "202210",
+                "amt": 0,
+                "sum_amt": 1615177,
+                "month": "10월",
+            },
+            {
+                "yyyymm": "202211",
+                "amt": 0,
+                "sum_amt": 1615177,
+                "month": "11월",
+            },
+            {
+                "yyyymm": "202212",
+                "amt": 0,
+                "sum_amt": 1615177,
+                "month": "12월",
+            },
+        ];
+
+
+        // Create axes
+        var xAxis = chart.xAxes.push(am5xy.CategoryAxis.new(root, {
+            categoryField: "month",
+            renderer: am5xy.AxisRendererX.new(root, {
+                minGridDistance: 30,
+            }),
+        }));
+
+        xAxis.get("renderer").labels.template.setAll({
+            paddingTop: 20
+        });
+
+        xAxis.data.setAll(data);
+
+        var yAxis = chart.yAxes.push(am5xy.ValueAxis.new(root, {
+            min:0,
+            renderer: am5xy.AxisRendererY.new(root, {})
+        }));
+
+        var yAxisRightsideRenderer = am5xy.AxisRendererY.new(root, {opposite:true});
+        var yAxisRightside = chart.yAxes.push(am5xy.ValueAxis.new(root, {
+            min:0,
+            renderer: yAxisRightsideRenderer,
+        }));
+
+        yAxisRightsideRenderer.grid.template.set("forceHidden", true);
+
+
+        // Add series
+        var series = chart.series.push(am5xy.ColumnSeries.new(root, {
+            xAxis: xAxis,
+            yAxis: yAxis,
+            valueYField: "amt",
+            categoryXField: "month",
+            tooltip: am5.Tooltip.new(root, {
+                labelText: "{valueY}"
+            }),
+        }));
+
+        series.columns.template.setAll({
+            strokeOpacity: 0,
+            cornerRadiusTL: 6,
+            cornerRadiusTR: 6
+        });
+
+        series.columns.template.adapters.add("fill", function(fill, target) {
+            return colors.getIndex(series.dataItems.indexOf(target.dataItem));
+        })
+
+
+        let seriesRightsideTooltip = am5.Tooltip.new(root, {
+            getFillFromSprite: false,
+            labelText: "{valueY}",
+        });
+
+        seriesRightsideTooltip.get("background").setAll({
+            fill: am5.color(0x9999cc),
+            fillOpacity: 0.7
+        });
+
+        // pareto series
+        var seriesRightside = chart.series.push(am5xy.LineSeries.new(root, {
+            xAxis: xAxis,
+            yAxis: yAxisRightside,
+            valueYField: "sum_amt",
+            categoryXField: "month",
+            stroke: root.interfaceColors.get("alternativeBackground"),
+            maskBullets:false,
+            tooltip: seriesRightsideTooltip,
+        }));
+
+        seriesRightside.bullets.push(function() {
+            return am5.Bullet.new(root, {
+                locationY: 1,
+                sprite: am5.Circle.new(root, {
+                    radius: 5,
+                    fill: series.get("fill"),
+                    stroke:root.interfaceColors.get("alternativeBackground")
+                })
+            })
+        });
+
+        series.data.setAll(data);
+        seriesRightside.data.setAll(data);
+
+        // Make stuff animate on load
+        series.appear(1000);
+        chart.appear(1000, 100);
+
+    });
+}
+
+/* 페이지가 로드되고 나서 실행 */
+$(function() {
+    onPageLoad();
+});
+
+/* 페이지가 로드되고 나서 실행 될 코드들을 담는다. */
+const onPageLoad = function() {
+    getYear();
+    getFilterYear();
+
+    grids.f.initialization();
+
+    trigs.basic();
+    makeChart();
+};
