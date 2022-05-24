@@ -620,7 +620,8 @@ public class ManagerRestController {
         return receiptReleaseService.branchStateOutsouringChange(fdIdList, request);
     }
 
-    //  지사 외주출고  - 세부테이블 외주 입고처리 할 리스트 호출
+    //@@@@@@@@@@@@@@@@@@@@@ 외주입고처리 페이지 관련 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    //  지사 외주입고  - 세부테이블 외주 입고처리 할 리스트 호출
     @GetMapping("branchReceiptBranchOutOutsouringList")
     @ApiOperation(value = "지사 외주 입고처리 리스트", notes = "지사 외주 입고처리 할 리스트를 호출한다. ")
     @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", value = "JWT Token", required = true, dataType = "string", paramType = "header")})
@@ -629,13 +630,29 @@ public class ManagerRestController {
         return receiptReleaseService.branchReceiptBranchOutOutsouringList(frId, filterFromDt, filterToDt, request);
     }
 
-    //  지사 외주출고  - 세부테이블 외주 입고처리 실행 호출
+    //  지사 외주입고  - 세부테이블 외주 입고처리 실행 호출
     @PostMapping("branchStateOutsouringOutChange")
     public ResponseEntity<Map<String, Object>> branchStateOutsouringOutChange(@RequestParam(value = "fdIdList", defaultValue = "") List<Long> fdIdList,
                                                                            HttpServletRequest request) {
         return receiptReleaseService.branchStateOutsouringOutChange(fdIdList, request);
     }
 
+    //@@@@@@@@@@@@@@@@@@@@@ 외주입출고 현황 페이지 관련 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    //  지사 외주 입출고 현황 리스트 왼쪽 호출
+    @GetMapping("branchReceiptOutsouringList")
+    @ApiOperation(value = "지사 외주 입출고 현황 왼쪽 리스트", notes = "지사 외주 입출고 현황 왼쪽 리스트를 호출한다. ")
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", value = "JWT Token", required = true, dataType = "string", paramType = "header")})
+    public ResponseEntity<Map<String, Object>> branchReceiptOutsouringList(@RequestParam("franchiseId") Long franchiseId, @RequestParam("filterFromDt") String filterFromDt,
+                                                                                    @RequestParam("filterToDt") String filterToDt, HttpServletRequest request) {
+        return receiptReleaseService.branchReceiptOutsouringList(franchiseId, filterFromDt, filterToDt, request);
+    }
 
+    //  지사 외주 입출고 현황 리스트 오른쪽 호출
+    @GetMapping("branchReceiptOutsouringSubList")
+    @ApiOperation(value = "지사 외주 입출고 현황 오른쪽 리스트", notes = "지사 외주 입출고 현황 오른쪽 리스트를 호출한다. ")
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", value = "JWT Token", required = true, dataType = "string", paramType = "header")})
+    public ResponseEntity<Map<String, Object>> branchReceiptOutsouringSubList(@RequestParam("fdO1Dt") String fdO1Dt, HttpServletRequest request) {
+        return receiptReleaseService.branchReceiptOutsouringSubList(fdO1Dt, request);
+    }
 
 }

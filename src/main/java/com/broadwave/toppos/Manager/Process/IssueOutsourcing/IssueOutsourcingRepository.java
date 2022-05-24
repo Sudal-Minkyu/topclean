@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
  * Remark :
  */
 @Repository
-public interface IssueOutsourcingRepository extends JpaRepository<IssueOutsourcing,String> {
+public interface IssueOutsourcingRepository extends JpaRepository<IssueOutsourcing,String>, IssueOutsourcingRepositoryCustom {
 
     // 외주출고 데이터 조회
     @Query("select a from IssueOutsourcing a where a.fdId = :fdId")

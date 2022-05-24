@@ -7,8 +7,11 @@ import com.broadwave.toppos.Manager.Process.Issue.IssueRepository;
 import com.broadwave.toppos.Manager.Process.IssueForce.IssueForce;
 import com.broadwave.toppos.Manager.Process.IssueForce.IssueForceRepository;
 import com.broadwave.toppos.Manager.Process.IssueOutsourcing.IssueOutsourcing;
+import com.broadwave.toppos.Manager.Process.IssueOutsourcing.IssueOutsourcingDtos.IssueOutsourcingListDto;
+import com.broadwave.toppos.Manager.Process.IssueOutsourcing.IssueOutsourcingDtos.IssueOutsourcingSubListDto;
 import com.broadwave.toppos.Manager.Process.IssueOutsourcing.IssueOutsourcingRepository;
 import com.broadwave.toppos.Manager.outsourcingPrice.OutsourcingPriceRepository;
+import com.broadwave.toppos.Manager.outsourcingPrice.outsourcingPriceDtos.OutsourcingPriceDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetail;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.manager.*;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepository;
@@ -516,12 +519,12 @@ public class ReceiptReleaseService {
                 requestDetail.setFdO1Dt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
                 requestDetail.setFdO1Time(LocalDateTime.now());
 
-//                OutsourcingPriceDto outsourcingPriceDto = outsourcingPriceRepository.findByOutsourcingPrice(requestDetail.getBiItemcode(),brCode);
-//                if(outsourcingPriceDto == null || outsourcingPriceDto.getBpOutsourcingYn().equals("N")){
-//                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP030.getCode(), "외주가격 "+ResponseErrorCode.TP030.getDesc(), "문자", "외주가격 등록후 다시 시도해주세요."));
-//                }else{
-//                    requestDetail.setFdOutsourcingAmt(outsourcingPriceDto.getBpOutsourcingPrice());
-//                }
+                OutsourcingPriceDto outsourcingPriceDto = outsourcingPriceRepository.findByOutsourcingPrice(requestDetail.getBiItemcode(),brCode);
+                if(outsourcingPriceDto == null || outsourcingPriceDto.getBpOutsourcingYn().equals("N")){
+                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP030.getCode(), "외주가격 "+ResponseErrorCode.TP030.getDesc(), "문자", "외주가격 등록후 다시 시도해주세요."));
+                }else{
+                    requestDetail.setFdOutsourcingAmt(outsourcingPriceDto.getBpOutsourcingPrice());
+                }
 
                 requestDetail.setModify_id(login_id);
                 requestDetail.setModify_date(LocalDateTime.now());
@@ -566,7 +569,7 @@ public class ReceiptReleaseService {
 
         log.info("frId : "+frId);
 
-        List<RequestDetailOutsourcingReceiptListDto> requestDetailOutsourcingReceiptListDtos = requestDetailRepository.findByRequestDetailOutsourcingReceiptList(brCode, frId, filterFromDt, filterToDt);
+        List<RequestDetailOutsourcingReceiptListDto> requestDetailOutsourcingReceiptListDtos = issueOutsourcingRepository.findByRequestDetailOutsourcingReceiptList(brCode, frId, filterFromDt, filterToDt);
         data.put("gridListData",requestDetailOutsourcingReceiptListDtos);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
@@ -614,6 +617,47 @@ public class ReceiptReleaseService {
         return ResponseEntity.ok(res.success());
     }
 
+    //  지사 외주 입출고 현황 리스트 왼쪽 호출
+    public ResponseEntity<Map<String, Object>> branchReceiptOutsouringList(Long franchiseId, String filterFromDt, String filterToDt, HttpServletRequest request) {
+        log.info("branchReceiptOutsouringList 호출");
+
+        log.info("franchiseId : "+franchiseId);
+        log.info("filterFromDt : "+filterFromDt);
+        log.info("filterToDt : "+filterToDt);
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String brCode = (String) claims.get("brCode"); // 현재 지사의 코드(2자리) 가져오기
+        log.info("현재 접속한 지사 코드 : "+brCode);
+
+        List<IssueOutsourcingListDto> issueOutsourcingListDtos = issueOutsourcingRepository.findByIssueOutsourcingList(brCode, franchiseId, filterFromDt, filterToDt);
+        data.put("gridListData",issueOutsourcingListDtos);
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
+    //  지사 외주 입출고 현황 리스트 오른쪽 호출
+    public ResponseEntity<Map<String, Object>> branchReceiptOutsouringSubList(String fdO1Dt, HttpServletRequest request) {
+        log.info("branchReceiptOutsouringSubList 호출");
+
+        log.info("fdO1Dt  : "+fdO1Dt);
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String brCode = (String) claims.get("brCode"); // 현재 지사의 코드(2자리) 가져오기
+        log.info("현재 접속한 지사 코드 : "+brCode);
+
+        List<IssueOutsourcingSubListDto> issueOutsourcingSubListDtos = issueOutsourcingRepository.findByIssueOutsourcingSubList(brCode, fdO1Dt);
+        data.put("gridListData",issueOutsourcingSubListDtos);
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
 }
 
 

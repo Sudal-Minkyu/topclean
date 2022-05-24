@@ -12,6 +12,7 @@
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
     <script src="/assets/js/toppos/head/dashboard/monthlysales.js"></script>
+    <script src="/assets/js/filesaver/FileSaver.min.js"></script>
 </th:block>
 
 <div layout:fragment="content" class="content content--main">
@@ -22,9 +23,7 @@
                 <li>
                     <h3>조회년도</h3>
                     <div class="c-select">
-                        <select>
-                            <option value="">20**년</option>
-                        </select>
+                        <select id="filterYear"></select>
                     </div>
                 </li>
             </ul>
@@ -47,11 +46,11 @@
                     <div class="dashboard__article-header">
                         <h4 class="dashboard__article-title">지사 매출 순위</h4>
                         <div class="dashboard__article-header-console">
-                            <button class="c-button c-button--green c-button--icon c-button--icon-excel">엑셀 다운로드</button>
+                            <button class="c-button c-button--green c-button--icon c-button--icon-excel" onclick="exportToXlsx(0, '지사매출순위')">엑셀 다운로드</button>
                         </div>
                     </div>
                     <div class="dashboard__article-body">
-                        <div id="main_grid"></div>
+                        <div id="grid_main" style="height: 400px;"></div>
                     </div>
                 </article>
             </section>
@@ -62,11 +61,11 @@
         <div class="pop__box pop__box--large">
             <div class="pop__article">
                 <div class="pop__article-header">
-                    <h3><span>***</span>지사 가맹점별 월 매출</h3>
-                    <button class="c-button c-button--green c-button--icon c-button--icon-excel">엑셀 다운로드</button>
+                    <h3><span id="brName">***</span>지사 가맹점별 월 매출</h3>
+                    <button class="c-button c-button--green c-button--icon c-button--icon-excel" onclick="exportToXlsx(1, '가맹점별매출순위')">엑셀 다운로드</button>
                 </div>
                 <div class="pop__article-content">
-                    <div id="pop_grid"></div>
+                    <div id="grid_pop"></div>
                 </div>
             </div>
             <ul class="pop__console">

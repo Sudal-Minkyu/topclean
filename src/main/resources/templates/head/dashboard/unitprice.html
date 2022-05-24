@@ -12,6 +12,7 @@
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
     <script src="/assets/js/toppos/head/dashboard/unitprice.js"></script>
+    <script src="/assets/js/filesaver/FileSaver.min.js"></script>
 </th:block>
 
 <div layout:fragment="content" class="content content--main">
@@ -71,7 +72,7 @@
                         </div>
                     </div>
                     <div class="dashboard__article-body">
-                        <div id="main_grid"></div>
+                        <div id="main_grid" style="height: 400px;"></div>
                     </div>
                 </article>
             </section>
@@ -86,7 +87,7 @@
                     <button class="c-button c-button--green c-button--icon c-button--icon-excel">엑셀 다운로드</button>
                 </div>
                 <div class="pop__article-content">
-                    <div id="pop_grid"></div>
+                    <div id="grid_pop"></div>
                 </div>
             </div>
             <ul class="pop__console">
