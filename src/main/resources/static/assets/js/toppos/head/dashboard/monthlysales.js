@@ -35,6 +35,14 @@ const comms = {
         //     // grids.f.clear(0);
         //     // grids.f.set(0, data);
         // })
+    },
+
+    // 지정년도의 월별 매출 그래프 데이터 가져오기
+    getSalesChartData(condition) {
+        CommonUI.ajax('/api/head/headBranchMonthlySale', 'GET', condition, function (res) {
+            const data = chartDataRefinary(res.sendData.gridListData);
+            makeChart(data);
+        });
     }
 };
 
@@ -236,6 +244,10 @@ const trigs = {
         AUIGrid.bind(grids.s.id[0], 'cellClick', function (e) {
             console.log(e.item);
         });
+
+        $('#filterYear').on('change', function () {
+            setDataByYear();
+        });
     },
 };
 
@@ -292,7 +304,7 @@ function exportToXlsx(i, filename) {
     console.log(filename + "_" + getDate(year));
 }
 
-function makeChart() {
+function makeChart(data) {
     am5.ready(function() {
 
         // Create root element
@@ -321,80 +333,14 @@ function makeChart() {
 
         var colors = chart.get("colors");
 
-        var data = [
-            {
-                "yyyymm": "202201",
-                "amt": 0,
-                "sum_amt": 0,
-                "month": "1월",
-            },
-            {
-                "yyyymm": "202202",
-                "amt": 478000,
-                "sum_amt": 478000,
-                "month": "2월",
-            },
-            {
-                "yyyymm": "202203",
-                "amt": 0,
-                "sum_amt": 478000,
-                "month": "3월",
-            },
-            {
-                "yyyymm": "202204",
-                "amt": 975722,
-                "sum_amt": 1453722,
-                "month": "4월",
-            },
-            {
-                "yyyymm": "202205",
-                "amt": 161455,
-                "sum_amt": 1615177,
-                "month": "5월",
-            },
-            {
-                "yyyymm": "202206",
-                "amt": 0,
-                "sum_amt": 1615177,
-                "month": "6월",
-            },
-            {
-                "yyyymm": "202207",
-                "amt": 0,
-                "sum_amt": 1615177,
-                "month": "7월",
-            },
-            {
-                "yyyymm": "202208",
-                "amt": 0,
-                "sum_amt": 1615177,
-                "month": "8월",
-            },
-            {
-                "yyyymm": "202209",
-                "amt": 0,
-                "sum_amt": 1615177,
-                "month": "9월",
-            },
-            {
-                "yyyymm": "202210",
-                "amt": 0,
-                "sum_amt": 1615177,
-                "month": "10월",
-            },
-            {
-                "yyyymm": "202211",
-                "amt": 0,
-                "sum_amt": 1615177,
-                "month": "11월",
-            },
-            {
-                "yyyymm": "202212",
-                "amt": 0,
-                "sum_amt": 1615177,
-                "month": "12월",
-            },
-        ];
+        // var data = [
+        //     {
+        //         "yyyymm": "202201",
+        //         "amt": 0,
+        //         "sum_amt": 0,
+        //         "month": "1월",
+        //     },
+        // ];
 
 
         // Create axes
@@ -429,7 +375,7 @@ function makeChart() {
         var series = chart.series.push(am5xy.ColumnSeries.new(root, {
             xAxis: xAxis,
             yAxis: yAxis,
-            valueYField: "amt",
+            valueYField: "cumulationAmt",
             categoryXField: "month",
             tooltip: am5.Tooltip.new(root, {
                 labelText: "{valueY}"
@@ -461,7 +407,7 @@ function makeChart() {
         var seriesRightside = chart.series.push(am5xy.LineSeries.new(root, {
             xAxis: xAxis,
             yAxis: yAxisRightside,
-            valueYField: "sum_amt",
+            valueYField: "monthAmt",
             categoryXField: "month",
             stroke: root.interfaceColors.get("alternativeBackground"),
             maskBullets:false,
@@ -489,6 +435,20 @@ function makeChart() {
     });
 }
 
+const chartDataRefinary = function (listData) {
+    for(let i = 0; i < listData.length; i++) {
+        listData[i].month = listData[i].yyyymm.substring(4, 6).toInt() + '월';
+    }
+    return listData;
+}
+
+/* 년도에 맞춰 상태를 설정하고 각 데이터를 가져와서 배치하기 위한 함수 */
+const setDataByYear = function () {
+    comms.getSalesChartData({
+        filterYear: parseInt($('#filterYear').val()),
+    });
+}
+
 /* 페이지가 로드되고 나서 실행 */
 $(function() {
     onPageLoad();
@@ -502,5 +462,5 @@ const onPageLoad = function() {
     grids.f.initialization();
 
     trigs.basic();
-    makeChart();
+    setDataByYear();
 };
