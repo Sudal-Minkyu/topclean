@@ -5,7 +5,6 @@ import com.broadwave.toppos.Manager.outsourcingPrice.outsourcingPriceDtos.Outsou
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import javax.persistence.EntityManager;
@@ -56,12 +55,11 @@ public class OutsourcingPriceRepositoryCustomImpl implements OutsourcingPriceRep
                 .join(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
                 .join(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
                 .join(itemPrice).on(item.biItemcode.eq(itemPrice.biItemcode))
-                .leftJoin(outsourcingPrice).on(item.biItemcode.eq(outsourcingPrice.biItemcode))
+                .leftJoin(outsourcingPrice).on(item.biItemcode.eq(outsourcingPrice.biItemcode).and(outsourcingPrice.brCode.eq(brCode)))
                 .where(itemPrice.closeDt.eq("99991231")
                         .and(biItemcodeEq(biItemcode))
                         .and(biNameEq(biName))
                         .and(bpOutsourcingYnEq(bpOutsourcingYn))
-                        .and(outsourcingPrice.brCode.eq(brCode))
                 )
                 .fetch();
     }
@@ -93,4 +91,13 @@ public class OutsourcingPriceRepositoryCustomImpl implements OutsourcingPriceRep
                 .where(outsourcingPrice.biItemcode.eq(biItemcode).and(outsourcingPrice.brCode.eq(brCode)))
                 .fetchOne();
     }
+
+    @Override
+    public OutsourcingPrice findByOutsourcingPriceAll(String biItemcodes, String brCode) {
+        return jpaQueryFactory
+                .selectFrom(outsourcingPrice)
+                .where(outsourcingPrice.brCode.eq(brCode).and(outsourcingPrice.biItemcode.eq(biItemcodes)))
+                .fetchOne();
+    }
+
 }

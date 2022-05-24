@@ -6,11 +6,13 @@
  */
 const dtos = {
     send: {
-        조회조건: {
-
+        outsourcingPriceList: {
+            biItemcode: "s",
+            biName: "s",
+            bpOutsourcingYn: "s",
         },
-        조회리스트: {
-            bsItemcode: "s",
+        outsourcingPriceSave: {
+            biItemcode: "s",
             bgName: "s",
             bsName: "s",
             biName: "s",
@@ -20,18 +22,19 @@ const dtos = {
             bpAddPrice: "n",
             bpPriceA: "n",
 
-            bpOutsourcingYn: "n",
-            bpOutsourcingPrice: "s",
-            bpRemark: "n",
+            bpOutsourcingYn: "s",
+            bpOutsourcingPrice: "n",
+            bpRemark: "s",
+            _$uid: "d",
         },
     },
     receive: {
         itemGroupcodeAndNameList: {
-            bgItemGroupCode: "sr",
+            bgItemGroupcode: "sr",
             bgName: "s",
         },
 
-        조회리스트변경내역: {
+        outsourcingPriceList: {
             bsItemcode: "s",
             bgName: "s",
             bsName: "s",
@@ -42,9 +45,9 @@ const dtos = {
             bpAddPrice: "n",
             bpPriceA: "n",
 
-            bpOutsourcingYn: "n",
-            bpOutsourcingPrice: "s",
-            bpRemark: "n",
+            bpOutsourcingYn: "s",
+            bpOutsourcingPrice: "n",
+            bpRemark: "s",
         },
     },
 };
@@ -55,7 +58,6 @@ const comms = {
     getBsItemGroupCode() {
         CommonUI.ajax("/api/manager/itemGroupcodeAndNameList", "GET", false, function (res) {
             const data = res.sendData.bgItemListData;
-            console.log(data);
             dv.chk(data, dtos.receive.itemGroupcodeAndNameList, "대분류 리스트 받아오기");
             const $bsItemGroup = $("#bsItemGroup");
             data.forEach(obj => {
@@ -63,25 +65,34 @@ const comms = {
                 $bsItemGroup.append(htmlText);
             })
         })
-    }
+    },
 
     // 조회 조건 보내고 리스트 받기
-    // getOsPriceList(searchCondition) {
-    //     dv.chk(searchCondition, dtos.send.조회조건, "외주가격 리스트 조회 조건 보내기");
-    //     CommonUI.ajax("외주가격리스트api주소", "GET", searchCondition, function(res) {
-    //         const data = res.sendData.외주가격리스트;
-    //         grids.f.clearData(0);
-    //         grids.f.setData(0, data);
-    //     })
-    // }
+    getOsPriceList(searchCondition) {
+        wares.searchCondition = searchCondition;
+        dv.chk(searchCondition, dtos.send.outsourcingPriceList, "외주가격 리스트 조회 조건 보내기");
+        CommonUI.ajax("/api/manager/outsourcingPriceList", "MAPPER", searchCondition, function(res) {
+            const data = res.sendData.gridListData;
+            for (const obj of data) {
+                if(obj.bpOutsourcingPrice == null || obj.bpOutsourcingPrice.length === 0) {
+                    obj.bpOutsourcingPrice = 0;
+                } else {
+                   obj.bpOutsourcingPrice = obj.bpOutsourcingPrice;
+                }
+            }
+            grids.f.clear(0);
+            grids.f.set(0, data);
+        })
+    },
 
     // 변경한 값 저장
-    // setOsPriceList(changeData) {
-    //     dv.chk(changeData, dtos.send.조회리스트, "외주가격 리스트 변경 데이터 보내기");
-    //     CommonUI.ajax("외주가격리스트저장api주소", "POST", changeData, function() {
-    //         alertSuccess("저장 완료");
-    //     })
-    // }
+    setOsPriceList(changeData) {
+        dv.chk(changeData, dtos.send.outsourcingPriceSave, "외주가격 리스트 변경 데이터 보내기");
+        CommonUI.ajax("/api/manager/outsourcingPriceSave", "MAPPER", changeData, function() {
+            alertSuccess("저장 완료");
+            comms.getOsPriceList(wares.searchCondition);
+        })
+    }
 };
 
 /*
@@ -108,48 +119,71 @@ const grids = {
                 {
                     dataField: 'biItemcode',
                     headerText: '상품코드',
+                    width: 80,
                     editable: false,
                 }, {
-                    dataField: '',
+                    dataField: 'bgName',
                     headerText: '대분류',
+                    width: 80,
                     editable: false,
                 }, {
-                    dataField: '',
+                    dataField: 'bsName',
                     headerText: '중분류',
+                    width: 80,
                     editable: false,
                 }, {
-                    dataField: '',
+                    dataField: 'biName',
                     headerText: '상품명',
+                    width: 80,
                     editable: false,
                 }, {
-                    dataField: '',
+                    dataField: 'setDt',
                     headerText: '적용일자',
+                    width: 100,
                     editable: false,
                 }, {
-                    dataField: '',
+                    dataField: 'bpBasePrice',
                     headerText: '기본금액',
+                    style: "grid_textalign_right",
+                    width: 100,
+                    dataType: "numeric",
+                    autoThousandSeparator: "true",
                     editable: false,
                 }, {
-                    dataField: '',
+                    dataField: 'bpAddPrice',
                     headerText: '추가금액',
+                    style: "grid_textalign_right",
+                    width: 100,
+                    dataType: "numeric",
+                    autoThousandSeparator: "true",
                     editable: false,
                 }, {
-                    dataField: '',
+                    dataField: 'bpPriceA',
                     headerText: '최종금액(A)',
+                    style: "grid_textalign_right",
+                    width: 100,
+                    dataType: "numeric",
+                    autoThousandSeparator: "true",
                     editable: false,
                 }, {
-                    dataField: '',
+                    dataField: 'bpOutsourcingYn',
                     headerText: '외주처리대상',
+                    width: 110,
                     renderer: {
                         type: "DropDownListRenderer",
                         list: ["Y", "N"]
                     }
                 }, {
-                    dataField: '',
+                    dataField: 'bpOutsourcingPrice',
                     headerText: '외주금액',
+                    style: "grid_textalign_right",
+                    width: 100,
+                    dataType: "numeric",
+                    autoThousandSeparator: "true",
                 }, {
-                    dataField: '',
+                    dataField: 'bpRemark',
                     headerText: '특이사항',
+                    style: "grid_textalign_left",
                 },
             ];
 
@@ -157,7 +191,7 @@ const grids = {
             * https://www.auisoft.net/documentation/auigrid/DataGrid/Properties.html
             * */
             grids.s.prop[0] = {
-                editable : false,
+                editable : true,
                 selectionMode : 'singleRow',
                 noDataMessage : '출력할 데이터가 없습니다.',
                 showAutoNoDataMessage: false,
@@ -188,6 +222,11 @@ const grids = {
         /* 해당 배열 번호 그리드의 url.read 를 참조하여 데이터를 그리드에 뿌린다. */
         set(numOfGrid, data) {
             AUIGrid.setGridData(grids.s.id[numOfGrid], data);
+        },
+
+        // 그리드 체크된 로우
+        getCheckedItems(numOfGrid) {
+            return AUIGrid.getCheckedRowItemsAll(grids.s.id[numOfGrid]);
         },
 
         /* 해당 배열 번호 그리드의 데이터 비우기 */
@@ -228,14 +267,16 @@ const trigs = {
 
         /* 0번그리드 내의 셀 클릭시 이벤트 */
         AUIGrid.bind(grids.s.id[0], 'cellClick', function (e) {
-            console.log(e.item);
+            // console.log(e.item);
         });
     },
 };
 
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
 const wares = {
+    searchCondition: {
 
+    },
 };
 
 /* 페이지가 로드되고 나서 실행 */
@@ -260,13 +301,14 @@ function searchOsPriceList() {
         bpOutsourcingYn: $("#bpOutsourcingYn").val(),
     };
 
-    // comms.getOsPriceList(searchCondition);
+    comms.getOsPriceList(searchCondition);
 }
 
 function saveOsPriceList() {
-    const changeData = {
-
+    const changeData = grids.f.getCheckedItems(0);
+    if (changeData.length) {
+        comms.setOsPriceList(changeData);
+    } else {
+        alertCaution("저장할 데이터가 없습니다. 저장할 내용을 체크해주세요.", 1);
     }
-
-    // comms.setOsPriceList(changeData);
 }
