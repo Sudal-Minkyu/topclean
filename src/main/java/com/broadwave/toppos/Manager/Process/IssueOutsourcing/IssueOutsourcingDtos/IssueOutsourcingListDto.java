@@ -23,8 +23,8 @@ public class IssueOutsourcingListDto {
     private String frName; // 가맹점명
     private String fdO1Dt; // 지사외주 출고일
 
-    private BigInteger deliveryCount; // 출고건수
-    private BigInteger receiptCount; // 입고건수
+    private BigDecimal deliveryCount; // 출고건수
+    private BigDecimal receiptCount; // 입고건수
 
     private BigDecimal fdTotAmt; // 접수총액
     private BigDecimal fdOutsourcingAmt; // 외주총액
