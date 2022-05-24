@@ -22,10 +22,16 @@ const dtos = {
         },
     },
     receive: {
-        managerBelongList: { // 가맹점 선택 셀렉트박스에 띄울 가맹점의 리스트
-            frId: "nr", // 가맹점 id
-            frName: "s",
-            frTagNo: "s",
+        headBrFrInfoList: { // 가맹점 선택 셀렉트박스에 띄울 가맹점의 리스트
+            branchList: {
+                branchId: "nr",
+                brName: "s",
+            },
+            franchiseList: {
+                branchId: "n",
+                franchiseId: "nr", // 가맹점 id
+                frName: "s",
+            },
         },
         templateList: { // 템플릿 저장 API와 동일한 구조로 배열에 아래의 파라메터들이 옵니다. 해당 대리점에 등록된 데이터가 없다면 오류가 아닌 빈값이 오면 됩니다.
             hmNum: "n",
@@ -42,15 +48,11 @@ const dtos = {
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
-    getBrList() {
-        CommonUI.ajax("/api/head/branchBelongList", "GET", false, function (res) {
-            const data = res.sendData.franchiseList;
-            dv.chk(data, dtos.receive.managerBelongList, "지점에 속한 가맹점 받아오기");
-            const $brList = $("#brList");
-            data.forEach(obj => {
-                const htmlText = `<option value="${obj.frId}">${obj.frName}</option>`;
-                $brList.append(htmlText);
-            });
+    getBrFrList() {
+        CommonUI.ajax("/api/head/headBrFrInfoList", "GET", false, function (res) {
+            wares.brFrList = res.sendData;
+            dv.chk(wares.brFrList, dtos.receive.headBrFrInfoList, "지점에 속한 지사, 가맹점 받아오기");
+            setBrFrList(wares.brFrList, 0, true);
         });
     },
 
@@ -252,6 +254,10 @@ const grids = {
 
 const trigs = {
     basic() {
+        $('#brList').on('change', function () {
+            setBrFrList(wares.brFrList, parseInt($('#brList').val(), 10));
+        });
+
         AUIGrid.bind(grids.s.id[2], "cellClick", function (e) {
             const searchCondition = {
                 insertYyyymmdd: e.item.insertYyyymmdd.numString(),
@@ -358,22 +364,8 @@ const trigs = {
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
 const wares = {
     getCondition: {},
+    brFrList: {},
 };
-
-$(function() {
-    onPageLoad();
-});
-
-/* 페이지가 로드되고 나서 실행 될 코드들을 담는다. */
-function onPageLoad() {
-    grids.f.initialization();
-    grids.f.create();
-
-    trigs.basic();
-    enableDatepicker();
-    // comms.getBrList();
-    // comms.getTemplate();
-}
 
 function enableDatepicker() {
     let fromday = new Date();
@@ -482,7 +474,8 @@ function sendMessage() {
 function getCustomers() {
     const isRangeSearch = $("input[name=isRangeSearch]:checked").val() === "1";
     const getCondition = {
-        franchiseId: $("#brList").val(),
+        branchId: parseInt($('#brList').val()),
+        franchiseId: parseInt($("#frList").val()),
         visitDayRange: isRangeSearch ? $("#visitDayRange").val() : "0",
     };
     comms.getCustomers(getCondition);
@@ -504,4 +497,45 @@ function getSendRecordSummary() {
     };
 
     comms.getSendRecordSummary(searchCondition);
+}
+
+/* 처음 시작시 지사 리스트를 셀렉트박스에 세팅하고, 지사 선택시 가맹점 리스트를 세팅 */
+const setBrFrList = function (brFrList, selectedBranchId, isInitialization = false) {
+    if (isInitialization) {
+        for (const {branchId, brName} of brFrList.branchList) {
+            $('#brList').append(`
+                <option value='${branchId}'>${brName}</option>
+            `);
+        }
+    } else {
+        const $frList = $('#frList');
+        $frList.html(`<option value='0'>전체선택</option>`);
+        if (selectedBranchId) {
+            for (const {franchiseId, branchId, frName} of brFrList.franchiseList) {
+                if (branchId === selectedBranchId) {
+                    $frList.append(`
+                        <option value='${franchiseId}'>${frName}</option>
+                    `);
+                }
+            }
+            $frList.prop('disabled', false);
+        } else {
+            $frList.val('0').prop('disabled', true);
+        }
+    }
+};
+
+$(function() {
+    onPageLoad();
+});
+
+/* 페이지가 로드되고 나서 실행 될 코드들을 담는다. */
+function onPageLoad() {
+    grids.f.initialization();
+    grids.f.create();
+
+    trigs.basic();
+    enableDatepicker();
+    comms.getBrFrList();
+    // comms.getTemplate();
 }
