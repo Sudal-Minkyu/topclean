@@ -30,6 +30,7 @@ import com.broadwave.toppos.Head.Item.ItemDtos.ItemPriceListDto;
 import com.broadwave.toppos.Head.Item.Price.FranchisePrice.*;
 import com.broadwave.toppos.Head.Item.Price.ItemPrice;
 import com.broadwave.toppos.Head.Notice.NoticeDtos.NoticeMapperDto;
+import com.broadwave.toppos.Head.HeadService.SalesService;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.user.RequestSearchDto;
 import com.broadwave.toppos.User.UserService.ReceiptService;
 import com.broadwave.toppos.common.AjaxResponse;
@@ -73,16 +74,18 @@ public class HeadRestController {
     private final NoticeService noticeService; // 공지사항 서비스
     private final ModelMapper modelMapper;
     private final ReceiptService receiptService;
+    private final SalesService salesService; // 지사의 매출현황 관련 서비스
 
     @Autowired
     public HeadRestController(AccountService accountService, NoticeService noticeService, ModelMapper modelMapper,
-                              HeadService headService, HeadInfoService headInfoService, ReceiptService receiptService) {
+                              HeadService headService, HeadInfoService headInfoService, ReceiptService receiptService, SalesService salesService) {
         this.accountService = accountService;
         this.modelMapper = modelMapper;
         this.noticeService = noticeService;
         this.headService = headService;
         this.headInfoService = headInfoService;
         this.receiptService = receiptService;
+        this.salesService = salesService;
     }
 
 //@@@@@@@@@@@@@@@@@@@@@ 본사 메인화면 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -1466,6 +1469,31 @@ public class HeadRestController {
     public ResponseEntity<Map<String,Object>> headReceiptSubList(@RequestParam("branchId") Long branchId, @RequestParam("franchiseId") Long franchiseId,
                                                                  @RequestParam("frYyyymmdd") String frYyyymmdd){
         return receiptService.headReceiptSubList(branchId, franchiseId, frYyyymmdd);
+    }
+
+//@@@@@@@@@@@@@@@@@@@@@ 대시보드 관련 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    // 본사 - 지사 월간매출, 누적매출 그래프 데이터 NativeQuery
+    @GetMapping("headBranchMonthlySale")
+    @ApiOperation(value = "지사별 월간매출, 누적매출" , notes = "지사별 월간매출, 누적매출 그래프 데이터를 호출한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
+    public ResponseEntity<Map<String,Object>> headBranchMonthlySale(@RequestParam("filterYear") String filterYear){
+        return salesService.headBranchMonthlySale(filterYear);
+    }
+
+    // 본사 - 지사 매출순위 데이터 호출 API
+    @GetMapping("headBranchRankSale")
+    @ApiOperation(value = "지사별 매출 순위" , notes = "지사별 매출 순위 데이터를 호출한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
+    public ResponseEntity<Map<String,Object>> headBranchRankSale(@RequestParam("filterYear") String filterYear){
+        return salesService.headBranchRankSale(filterYear);
+    }
+
+    // 본사 - 가맹점 매출순위 데이터 호출 API
+    @GetMapping("headFranchiseRankSale")
+    @ApiOperation(value = "가맹점별 매출 순위" , notes = "가맹점별 매출 순위 데이터를 호출한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
+    public ResponseEntity<Map<String,Object>> headFranchiseRankSale(@RequestParam("brCode") String brCode, @RequestParam("filterYear") String filterYear){
+        return salesService.headFranchiseRankSale(brCode, filterYear);
     }
 
 }
