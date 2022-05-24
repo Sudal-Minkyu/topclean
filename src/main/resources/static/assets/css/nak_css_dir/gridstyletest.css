@@ -88,6 +88,12 @@
     border-bottom: 1px solid #c8c8c8;
     border-left: none;
 }
+.grid--header-border .aui-grid-header-panel .aui-grid-table tr td {
+	border-top: none;
+	border-right: 1px solid #c8c8c8;
+	border-bottom: 1px solid #c8c8c8;
+	border-left: none;
+}
 
 .aui-grid-default-header:hover {
     background: #778da7;
