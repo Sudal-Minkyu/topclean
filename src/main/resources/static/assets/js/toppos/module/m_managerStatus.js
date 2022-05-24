@@ -29,6 +29,10 @@ const grids = {
     setData(id, data) {
         AUIGrid.setGridData(id, data);
     },
+
+    clear(id) {
+        AUIGrid.clearGridData(id);
+    }
 };
 
 const runOnlyOnce = {
