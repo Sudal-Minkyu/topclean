@@ -31,6 +31,8 @@ import com.broadwave.toppos.Head.Item.Price.FranchisePrice.*;
 import com.broadwave.toppos.Head.Item.Price.ItemPrice;
 import com.broadwave.toppos.Head.Notice.NoticeDtos.NoticeMapperDto;
 import com.broadwave.toppos.Head.HeadService.SalesService;
+import com.broadwave.toppos.Manager.HmTemplate.HmTemplateDto;
+import com.broadwave.toppos.Manager.ManagerService.HmTemplateService;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.user.RequestSearchDto;
 import com.broadwave.toppos.User.UserService.ReceiptService;
 import com.broadwave.toppos.common.AjaxResponse;
@@ -75,10 +77,12 @@ public class HeadRestController {
     private final ModelMapper modelMapper;
     private final ReceiptService receiptService;
     private final SalesService salesService; // 지사의 매출현황 관련 서비스
+    private final HmTemplateService hmTemplateService; // 문자메세지 서비스
 
     @Autowired
     public HeadRestController(AccountService accountService, NoticeService noticeService, ModelMapper modelMapper,
-                              HeadService headService, HeadInfoService headInfoService, ReceiptService receiptService, SalesService salesService) {
+                              HeadService headService, HeadInfoService headInfoService, ReceiptService receiptService, SalesService salesService,
+                              HmTemplateService hmTemplateService) {
         this.accountService = accountService;
         this.modelMapper = modelMapper;
         this.noticeService = noticeService;
@@ -86,6 +90,7 @@ public class HeadRestController {
         this.headInfoService = headInfoService;
         this.receiptService = receiptService;
         this.salesService = salesService;
+        this.hmTemplateService = hmTemplateService;
     }
 
 //@@@@@@@@@@@@@@@@@@@@@ 본사 메인화면 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -140,17 +145,17 @@ public class HeadRestController {
 
     // 지사 등록 API
     @PostMapping("branchSave")
-    public ResponseEntity<Map<String,Object>> branchSave(@ModelAttribute BranchMapperDto BranohMapperDto, HttpServletRequest request){
+    public ResponseEntity<Map<String,Object>> branchSave(@ModelAttribute BranchMapperDto branohMapperDto, HttpServletRequest request){
         log.info("branchSave 호출");
 
         AjaxResponse res = new AjaxResponse();
 
-        Branch Branoh = modelMapper.map(BranohMapperDto, Branch.class);
+        Branch Branoh = modelMapper.map(branohMapperDto, Branch.class);
 
         String login_id = CommonUtils.getCurrentuser(request);
 //        log.info("현재 사용자 아이디 : "+login_id);
 
-        Optional<Branch> optionalBranoh  =  headService.findByBrCode(BranohMapperDto.getBrCode());
+        Optional<Branch> optionalBranoh  =  headService.findByBrCode(branohMapperDto.getBrCode());
         if( optionalBranoh.isPresent()){
 //            log.info("널이 아닙니다 : 업데이트");
             Branoh.setId(optionalBranoh.get().getId());
@@ -550,6 +555,10 @@ public class HeadRestController {
 
         log.info("지점 코드 중복확인");
         AjaxResponse res = new AjaxResponse();
+
+        if(brCode.equals("hr")){
+            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP003.getCode(), ResponseErrorCode.TP003.getDesc(), "문자", "해당 코드는 본사전용 코드입니다."));
+        }
 
         Optional<Branch> BranohOptional =  headService.findByBrCode(brCode);
         if(BranohOptional.isPresent()){
@@ -1494,6 +1503,48 @@ public class HeadRestController {
     @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
     public ResponseEntity<Map<String,Object>> headFranchiseRankSale(@RequestParam("brCode") String brCode, @RequestParam("filterYear") String filterYear){
         return salesService.headFranchiseRankSale(brCode, filterYear);
+    }
+
+//@@@@@@@@@@@@@@@@@@@@@ 문자메세지 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    // 메세지 보낼 고객 리스트 호출
+    @GetMapping("messageCustomerList")
+    @ApiOperation(value = "본사의 문자 메시지 고객리스트", notes = "문자를 메시지 보낼 고객리스트를 호출한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", value = "JWT Token", required = true, dataType = "string", paramType = "header")})
+    public ResponseEntity<Map<String, Object>> messageCustomerList(
+            @RequestParam(value = "visitDayRange", defaultValue = "") String visitDayRange,
+            @RequestParam(value = "franchiseId", defaultValue = "") Long franchiseId,
+            @RequestParam(value = "branchId", defaultValue = "") Long branchId,
+            HttpServletRequest request) {
+        return hmTemplateService.messageCustomerList(visitDayRange, franchiseId, branchId, request);
+    }
+
+    // 문자 메시지 보내기
+    @PostMapping("messageSendCustomer")
+    @ApiOperation(value = "문자 메시지 보내기", notes = "선택한 고객들에게 문자메세지를 보낸다.")
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", value = "JWT Token", required = true, dataType = "string", paramType = "header")})
+    public ResponseEntity<Map<String, Object>> messageSendCustomer(
+            @RequestParam(value = "bcIdList", defaultValue = "") List<Long> bcIdList,
+            @RequestParam(value = "hmMessage", defaultValue = "") String hmMessage,
+            @RequestParam(value = "msgType", defaultValue = "") String msgType,
+            @RequestParam(value = "hmSendreqtimeDt", defaultValue = "") String hmSendreqtimeDt,
+            HttpServletRequest request) {
+        return hmTemplateService.messageSendCustomer("1", bcIdList, hmMessage, hmSendreqtimeDt, msgType, request);
+    }
+
+    // 메세지 템플릿 6개 저장
+    @PostMapping("templateSave")
+    @ApiOperation(value = "본사 메세지 템플릿 6개 저장", notes = "문자 메세지 템플릿을 저장한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", value = "JWT Token", required = true, dataType = "string", paramType = "header")})
+    public ResponseEntity<Map<String, Object>> templateSave(@RequestBody List<HmTemplateDto> hmTemplateDtos, HttpServletRequest request) {
+        return hmTemplateService.hmTemplateSave("1", hmTemplateDtos, request);
+    }
+
+    // 메세지 템플릿 6개 호출
+    @GetMapping("templateList")
+    @ApiOperation(value = "본사  메세지 템플릿 호출", notes = "문자 메세지 템플릿을 호출한다")
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", value = "JWT Token", required = true, dataType = "string", paramType = "header")})
+    public ResponseEntity<Map<String, Object>> templateList(HttpServletRequest request) {
+        return hmTemplateService.hmTemplateList("1",request);
     }
 
 }

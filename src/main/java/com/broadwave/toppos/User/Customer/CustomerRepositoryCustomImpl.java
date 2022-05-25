@@ -169,7 +169,7 @@ public class CustomerRepositoryCustomImpl extends QuerydslRepositorySupport impl
 
     // 지사가 문자메세지 보낼 고객 리스트
     @Override
-    public List<CustomerMessageListDto> findByBrMessageCustomerList(String visitDayRange, String bcLastRequestDt, Long franchiseId, String brCode) {
+    public List<CustomerMessageListDto> findByBrMessageCustomerList(String visitDayRange, String bcLastRequestDt, Long franchiseId, Long branchId, String brCode) {
 
         QCustomer customer = QCustomer.customer;
         QFranchise franchise = QFranchise.franchise;
@@ -190,7 +190,13 @@ public class CustomerRepositoryCustomImpl extends QuerydslRepositorySupport impl
             query.where(franchise.id.eq(franchiseId));
         }
 
-        query.where(branch.brCode.eq(brCode));
+        if(brCode.equals("hr")){
+            if(branchId != 0){
+                query.where(branch.id.eq(branchId));
+            }
+        }else{
+            query.where(branch.brCode.eq(brCode));
+        }
 
         if(!visitDayRange.equals("0")){
             customer.bcLastRequestDt.goe(bcLastRequestDt);

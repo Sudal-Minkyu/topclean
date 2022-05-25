@@ -51,7 +51,7 @@ public class ManagerRestController {
     private final InspectService inspectService; // 검품등록게시판 서비스
     private final CurrentService currentService; // 현황페이지 서비스
     private final NoticeService noticeService; // 공지사항페이지 서비스
-    private final HmTemplateService hmTemplateService; // 지사 문자메세지 서비스
+    private final HmTemplateService hmTemplateService; // 문자메세지 서비스
 
     private final ReceiptReleaseService receiptReleaseService; // 지사출고 전용 서비스
     private final ReceiptService receiptService; // 접수 서비스
@@ -544,7 +544,7 @@ public class ManagerRestController {
             @RequestParam(value = "visitDayRange", defaultValue = "") String visitDayRange,
             @RequestParam(value = "franchiseId", defaultValue = "") Long franchiseId,
             HttpServletRequest request) {
-        return hmTemplateService.messageCustomerList(visitDayRange, franchiseId, request);
+        return hmTemplateService.messageCustomerList(visitDayRange, franchiseId, null, request);
     }
 
     // 문자 메시지 보내기
@@ -557,23 +557,23 @@ public class ManagerRestController {
             @RequestParam(value = "msgType", defaultValue = "") String msgType,
             @RequestParam(value = "hmSendreqtimeDt", defaultValue = "") String hmSendreqtimeDt,
             HttpServletRequest request) {
-        return hmTemplateService.messageSendCustomer(bcIdList, hmMessage, hmSendreqtimeDt, msgType, request);
+        return hmTemplateService.messageSendCustomer("2", bcIdList, hmMessage, hmSendreqtimeDt, msgType, request);
     }
 
     // 메세지 템플릿 6개 저장
     @PostMapping("templateSave")
-    @ApiOperation(value = "지사 or 본사 메세지 템플릿 6개 저장", notes = "문자 메세지 템플릿을 저장한다.")
+    @ApiOperation(value = "지사 메세지 템플릿 6개 저장", notes = "문자 메세지 템플릿을 저장한다.")
     @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", value = "JWT Token", required = true, dataType = "string", paramType = "header")})
     public ResponseEntity<Map<String, Object>> templateSave(@RequestBody List<HmTemplateDto> hmTemplateDtos, HttpServletRequest request) {
-        return hmTemplateService.hmTemplateSave(hmTemplateDtos, request);
+        return hmTemplateService.hmTemplateSave("2", hmTemplateDtos, request);
     }
 
     // 메세지 템플릿 6개 호출
     @GetMapping("templateList")
-    @ApiOperation(value = "지사 or 본사  메세지 템플릿 호출", notes = "문자 메세지 템플릿을 호출한다")
+    @ApiOperation(value = "지사  메세지 템플릿 호출", notes = "문자 메세지 템플릿을 호출한다")
     @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", value = "JWT Token", required = true, dataType = "string", paramType = "header")})
     public ResponseEntity<Map<String, Object>> templateList(HttpServletRequest request) {
-        return hmTemplateService.hmTemplateList(request);
+        return hmTemplateService.hmTemplateList("2",request);
     }
 
     //@@@@@@@@@@@@@@@@@@@@@ 외주가격 리스트 페이지 관련 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

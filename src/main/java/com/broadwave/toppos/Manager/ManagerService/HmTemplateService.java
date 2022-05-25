@@ -57,7 +57,7 @@ public class HmTemplateService {
     }
 
     // 메세지 보낼 고객 리스트 호출
-    public ResponseEntity<Map<String, Object>> messageCustomerList(String visitDayRange, Long franchiseId, HttpServletRequest request) {
+    public ResponseEntity<Map<String, Object>> messageCustomerList(String visitDayRange, Long franchiseId, Long branchId, HttpServletRequest request) {
         log.info("지사용 messageCustomerList 호출");
 
         log.info("visitDayRange : "+visitDayRange);
@@ -68,6 +68,7 @@ public class HmTemplateService {
 
         String bcLastRequestDt = null;
 
+        // visitDayRange : 0 (전체), 1 (1주일전 방문), 2 (1개월전 방문), 3 (3개월전 방문), 4 (6개월전 방문)
         Calendar calendar = Calendar.getInstance();
         if(!visitDayRange.equals("0")){
             switch (visitDayRange) {
@@ -95,11 +96,16 @@ public class HmTemplateService {
         // 클레임데이터 가져오기
         Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
         String login_id = claims.getSubject(); // 현재 아이디
-        String brCode = (String) claims.get("brCode"); // 현재 지사 코드
+        String brCode;
+        if(branchId != null){
+            brCode = "hr";
+        }else{
+            brCode = (String) claims.get("brCode");
+        }
         log.info("현재 접속한 아이디 : "+login_id);
         log.info("접속한 지사 코드 : "+brCode);
 
-        List<CustomerMessageListDto> customerMessageListDtos = customerRepository.findByBrMessageCustomerList(visitDayRange, bcLastRequestDt, franchiseId, brCode);
+        List<CustomerMessageListDto> customerMessageListDtos = customerRepository.findByBrMessageCustomerList(visitDayRange, bcLastRequestDt, franchiseId, branchId, brCode);
         log.info("customerMessageListDtos : "+customerMessageListDtos);
         data.put("gridListData",customerMessageListDtos);
 
@@ -108,7 +114,7 @@ public class HmTemplateService {
 
     // 문자 메시지 보내기
     @Transactional
-    public ResponseEntity<Map<String, Object>> messageSendCustomer(List<Long> bcIdList, String hmMessage, String hmSendreqtimeDt, String msgType, HttpServletRequest request) {
+    public ResponseEntity<Map<String, Object>> messageSendCustomer(String type, List<Long> bcIdList, String hmMessage, String hmSendreqtimeDt, String msgType, HttpServletRequest request) {
         log.info("messageSendCustomer 호출");
 
         AjaxResponse res = new AjaxResponse();
@@ -121,9 +127,14 @@ public class HmTemplateService {
         // 클레임데이터 가져오기
         Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
         String login_id = claims.getSubject(); // 현재 아이디
-        String brCode = (String) claims.get("brCode"); // 현재 지사 코드
+        String brCode;
         log.info("현재 접속한 아이디 : "+login_id);
-        log.info("접속한 지사 코드 : "+brCode);
+        if(type.equals("2")){
+            brCode = (String) claims.get("brCode"); // 현재 지사 코드
+            log.info("접속한 지사 코드 : "+brCode);
+        }else{
+            brCode = "hr";
+        }
 
         LocalDateTime sendreqTime; // 예약발송시간;
         if(!hmSendreqtimeDt.equals("0")){
@@ -176,7 +187,7 @@ public class HmTemplateService {
     }
 
     // 메세지 템플릿 6개 저장
-    public ResponseEntity<Map<String, Object>> hmTemplateSave(List<HmTemplateDto> hmTemplateDtos, HttpServletRequest request) {
+    public ResponseEntity<Map<String, Object>> hmTemplateSave(String type, List<HmTemplateDto> hmTemplateDtos, HttpServletRequest request) {
         log.info("hmTemplateSave 호출");
 
         AjaxResponse res = new AjaxResponse();
@@ -186,7 +197,12 @@ public class HmTemplateService {
         // 클레임데이터 가져오기
         Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
         String login_id = claims.getSubject(); // 현재 아이디
-        String brCode = (String) claims.get("brCode"); // 현재 가맹점 코드
+        String brCode;
+        if(type.equals("1")){
+            brCode = "hr";
+        }else{
+            brCode = (String) claims.get("brCode"); // 현재 지사 코드
+        }
         log.info("현재 접속한 아이디 : "+login_id);
         log.info("접속한 지사 코드 : "+brCode);
 
@@ -221,18 +237,25 @@ public class HmTemplateService {
     }
 
     // 메세지 템플릿 6개 호출
-    public ResponseEntity<Map<String, Object>> hmTemplateList(HttpServletRequest request) {
+    public ResponseEntity<Map<String, Object>> hmTemplateList(String type, HttpServletRequest request) {
         log.info("hmTemplateList 호출");
 
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
 
-        // 클레임데이터 가져오기
-        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
-        String login_id = claims.getSubject(); // 현재 아이디
-        String brCode = (String) claims.get("brCode"); // 현재 가맹점 코드
-        log.info("현재 접속한 아이디 : "+login_id);
-        log.info("접속한 지사 코드 : "+brCode);
+        String brCode;
+        if(type.equals("1")){
+            log.info("본사 템플릿 호출");
+            brCode = "hr";
+        }else{
+            log.info("지사 템플릿 호출");
+            // 클레임데이터 가져오기
+            Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+            String login_id = claims.getSubject(); // 현재 아이디
+            brCode = (String) claims.get("brCode"); // 현재 가맹점 코드
+            log.info("현재 접속한 아이디 : "+login_id);
+            log.info("접속한 지사 코드 : "+brCode);
+        }
 
         List<HmTemplateDto> hmTemplateDtos = hmTemplateRepository.findByHmTemplateDtos(brCode);
 //        log.info("hmTemplateDtos : "+hmTemplateDtos);
