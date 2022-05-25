@@ -3,6 +3,8 @@
 * 조합하여 "sr", "nr" 같은 형식도 가능
 * 추가로 필요한 검사항목이 생긴다면 문의 바랍니다.
 * */
+import {activateBrFrListInputs} from '../../module/m_setBrFrList.js'
+
 const dtos = {
     send: {
         templateSave: { // 6칸짜리 배열에 아래의 내용들이 세팅되어 API로 전송됩니다.
@@ -22,17 +24,6 @@ const dtos = {
         },
     },
     receive: {
-        headBrFrInfoList: { // 가맹점 선택 셀렉트박스에 띄울 가맹점의 리스트
-            branchList: {
-                branchId: "nr",
-                brName: "s",
-            },
-            franchiseList: {
-                branchId: "n",
-                franchiseId: "nr", // 가맹점 id
-                frName: "s",
-            },
-        },
         templateList: { // 템플릿 저장 API와 동일한 구조로 배열에 아래의 파라메터들이 옵니다. 해당 대리점에 등록된 데이터가 없다면 오류가 아닌 빈값이 오면 됩니다.
             hmNum: "n",
             hmSubject: "s",
@@ -48,13 +39,6 @@ const dtos = {
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
-    getBrFrList() {
-        CommonUI.ajax("/api/head/headBrFrInfoList", "GET", false, function (res) {
-            wares.brFrList = res.sendData;
-            dv.chk(wares.brFrList, dtos.receive.headBrFrInfoList, "지점에 속한 지사, 가맹점 받아오기");
-            setBrFrList(wares.brFrList, 0, true);
-        });
-    },
 
     getTemplate() {
         CommonUI.ajax("/api/head/templateList", "GET", false, function (res) {
@@ -91,7 +75,7 @@ const comms = {
             alertSuccess("문자메시지 발송이 완료되었습니다.");
             grids.f.clear(0);
             grids.f.clear(1);
-            $("#numberOfTargetCustomers").html("0000");
+            $("#numberOfTargetCustomers").html("00000");
             comms.getCustomers(wares.getCondition);
         });
     },
@@ -254,10 +238,6 @@ const grids = {
 
 const trigs = {
     basic() {
-        $('#brList').on('change', function () {
-            setBrFrList(wares.brFrList, parseInt($('#brList').val(), 10));
-        });
-
         AUIGrid.bind(grids.s.id[2], "cellClick", function (e) {
             const searchCondition = {
                 insertYyyymmdd: e.item.insertYyyymmdd.numString(),
@@ -337,14 +317,14 @@ const trigs = {
             const customerList = grids.f.getCheckedItems(0);
             grids.f.addRow(1, customerList);
             grids.f.removeCheckedRow(0);
-            $("#numberOfTargetCustomers").html(grids.f.getRowCount(1).toString().padStart(4, "0"));
+            $("#numberOfTargetCustomers").html(grids.f.getRowCount(1).toString().padStart(5, "0"));
         });
 
         $("#removeCustomer").on("click", function () {
             const customerList = grids.f.getCheckedItems(1);
             grids.f.addRow(0, customerList);
             grids.f.removeCheckedRow(1);
-            $("#numberOfTargetCustomers").html(grids.f.getRowCount(1).toString().padStart(4, "0"));
+            $("#numberOfTargetCustomers").html(grids.f.getRowCount(1).toString().padStart(5, "0"));
         });
 
         $("#getSendRecordSummaryBtn").on("click", function () {
@@ -364,7 +344,6 @@ const trigs = {
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
 const wares = {
     getCondition: {},
-    brFrList: {},
 };
 
 function enableDatepicker() {
@@ -499,32 +478,6 @@ function getSendRecordSummary() {
     comms.getSendRecordSummary(searchCondition);
 }
 
-/* 처음 시작시 지사 리스트를 셀렉트박스에 세팅하고, 지사 선택시 가맹점 리스트를 세팅 */
-const setBrFrList = function (brFrList, selectedBranchId, isInitialization = false) {
-    if (isInitialization) {
-        for (const {branchId, brName} of brFrList.branchList) {
-            $('#brList').append(`
-                <option value='${branchId}'>${brName}</option>
-            `);
-        }
-    } else {
-        const $frList = $('#frList');
-        $frList.html(`<option value='0'>전체선택</option>`);
-        if (selectedBranchId) {
-            for (const {franchiseId, branchId, frName} of brFrList.franchiseList) {
-                if (branchId === selectedBranchId) {
-                    $frList.append(`
-                        <option value='${franchiseId}'>${frName}</option>
-                    `);
-                }
-            }
-            $frList.prop('disabled', false);
-        } else {
-            $frList.val('0').prop('disabled', true);
-        }
-    }
-};
-
 $(function() {
     onPageLoad();
 });
@@ -536,6 +489,6 @@ function onPageLoad() {
 
     trigs.basic();
     enableDatepicker();
-    comms.getBrFrList();
+    activateBrFrListInputs();
     // comms.getTemplate();
 }

@@ -3,6 +3,7 @@
  *
  */
 
+import {activateBrFrListInputs} from './m_setBrFrList.js'
 
 const wares = {
     searchCondition: {},
@@ -405,19 +406,8 @@ const runOnlyOnce = {
         CommonUI.restrictDateAToB(dateAToBTargetIds);
     },
 
-    /* 지사와 가맹점의 이름과 id들을 콜백으로 반환한다. */
-    getBrFrList(callback) {
-        CommonUI.ajax('/api/head/headBrFrInfoList', 'GET', false, function (res) {
-            callback(res.sendData);
-        });
-    },
-
     /* 현황페이지에 공통적으로 적용되는 이벤트들을 적용 */
     setCommonEvents() {
-        $('#brList').on('change', function () {
-            setBrFrList(window.wares.brFrList, parseInt($('#brList').val(), 10));
-        });
-
         $('#searchListBtn').on('click', function () {
             searchSummaryData();
         });
@@ -441,32 +431,8 @@ const runOnlyOnce = {
     setXlsxTitleName(titleName) {
         wares.xlsxNaming.title = titleName;
     },
-};
 
-/* 처음 시작시 지사 리스트를 셀렉트박스에 세팅하고, 지사 선택시 가맹점 리스트를 세팅 */
-const setBrFrList = function (brFrList, selectedBranchId, isInitialization = false) {
-    if (isInitialization) {
-        for (const {branchId, brName} of brFrList.branchList) {
-            $('#brList').append(`
-                <option value='${branchId}'>${brName}</option>
-            `);
-        }
-    } else {
-        const $frList = $('#frList');
-        $frList.html(`<option value='0'>전체선택</option>`);
-        if (selectedBranchId) {
-            for (const {franchiseId, branchId, frName} of brFrList.franchiseList) {
-                if (branchId === selectedBranchId) {
-                    $frList.append(`
-                        <option value='${franchiseId}'>${frName}</option>
-                    `);
-                }
-            }
-            $frList.prop('disabled', false);
-        } else {
-            $frList.val('0').prop('disabled', true);
-        }
-    }
+    activateBrFrListInputs: activateBrFrListInputs,
 };
 
 /* 조회 조건에 따라 조회가 되도록 한다 */
@@ -506,4 +472,4 @@ const getDetailData = function (item, targetDateName) {
     comms.getDetailData(condition);
 };
 
-export {grids, runOnlyOnce, setBrFrList};
+export {grids, runOnlyOnce};

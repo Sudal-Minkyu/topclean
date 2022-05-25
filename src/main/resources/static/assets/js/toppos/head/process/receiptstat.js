@@ -1,4 +1,4 @@
-import {grids, runOnlyOnce, setBrFrList} from '../../module/m_headstat.js';
+import {grids, runOnlyOnce} from '../../module/m_headstat.js';
 
 window.wares = {
     brFrList: {},
@@ -26,10 +26,7 @@ const onPageLoad = function () {
 
     runOnlyOnce.enableDatepicker();
 
-    runOnlyOnce.getBrFrList(function (brFrList) {
-        wares.brFrList = brFrList;
-        setBrFrList(wares.brFrList, 0, true);
-    });
+    runOnlyOnce.activateBrFrListInputs();
 
     runOnlyOnce.setCommonEvents();
 
