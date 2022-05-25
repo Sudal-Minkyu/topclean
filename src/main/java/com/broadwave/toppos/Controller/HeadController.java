@@ -134,4 +134,16 @@ public class HeadController {
         return "head/setting/message";
     }
 
+    // 본사 공지사항 리스트
+    @RequestMapping("noticelist")
+    public String noticelist(){ return "head/setting/board/list"; }
+
+    // 본사 공지사항 보기
+    @RequestMapping("noticeview")
+    public String noticeview(){ return "head/setting/board/view"; }
+
+    // 본사 공지사항 쓰기
+    @RequestMapping("noticewrite")
+    public String noticewrite(){ return "head/setting/board/write"; }
+
 }

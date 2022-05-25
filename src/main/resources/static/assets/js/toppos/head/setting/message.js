@@ -490,5 +490,5 @@ function onPageLoad() {
     trigs.basic();
     enableDatepicker();
     activateBrFrListInputs();
-    // comms.getTemplate();
+    comms.getTemplate();
 }
