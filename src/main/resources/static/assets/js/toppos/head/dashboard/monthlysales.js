@@ -58,6 +58,7 @@ const comms = {
             dv.chk(data, dtos.receive.headBranchMonthlySale, "지사매출순위 받아오기");
             grids.f.clear(0);
             grids.f.set(0, data);
+            grids.f.setSorting(0, 'amtTotal', -1);
         })
     },
 
@@ -77,6 +78,7 @@ const comms = {
             grids.f.resize(1);
             grids.f.clear(1);
             grids.f.set(1, data);
+            grids.f.setSorting(1, 'amtTotal', -1);
         })
     }
 };
@@ -374,6 +376,16 @@ const grids = {
         resize(num) {
             AUIGrid.resize(grids.s.id[num]);
         },
+
+        // 그리드 소팅
+        setSorting(numOfgrid, dataField, type) {
+            // dataField = 데이터 필드명, type = 오름차순 : 1, 내림차순 : -1
+            const sortingInfo = {
+                dataField: dataField,
+                sortType: type,
+            };
+            AUIGrid.setSorting(grids.s.id[numOfgrid], sortingInfo);
+        }
     },
 };
 
