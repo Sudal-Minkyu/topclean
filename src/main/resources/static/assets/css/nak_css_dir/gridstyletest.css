@@ -222,3 +222,6 @@
 .grid_checkable_row td {
 	background-color: rgba(33, 163, 101, .2);
 }
+.aui-grid .aui-grid-table td.grid_notedit {
+	color: #aaa;
+}

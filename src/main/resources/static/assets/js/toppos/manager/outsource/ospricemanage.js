@@ -119,32 +119,39 @@ const grids = {
                 {
                     dataField: 'biItemcode',
                     headerText: '상품코드',
+                    style: "grid_textalign_left grid_notedit",
                     width: 80,
                     editable: false,
                 }, {
                     dataField: 'bgName',
                     headerText: '대분류',
-                    width: 80,
+                    style: "grid_textalign_left grid_notedit",
+                    width: 130,
                     editable: false,
                 }, {
                     dataField: 'bsName',
                     headerText: '중분류',
+                    style: "grid_textalign_left grid_notedit",
                     width: 80,
                     editable: false,
                 }, {
                     dataField: 'biName',
                     headerText: '상품명',
-                    width: 80,
+                    style: "grid_textalign_left grid_notedit",
+                    width: 190,
                     editable: false,
                 }, {
                     dataField: 'setDt',
                     headerText: '적용일자',
+                    style: " grid_notedit",
                     width: 100,
                     editable: false,
+                    dataType: 'date',
+                    formatString: 'yyyy-mm-dd',
                 }, {
                     dataField: 'bpBasePrice',
                     headerText: '기본금액',
-                    style: "grid_textalign_right",
+                    style: "grid_textalign_right grid_notedit",
                     width: 100,
                     dataType: "numeric",
                     autoThousandSeparator: "true",
@@ -152,7 +159,7 @@ const grids = {
                 }, {
                     dataField: 'bpAddPrice',
                     headerText: '추가금액',
-                    style: "grid_textalign_right",
+                    style: "grid_textalign_right grid_notedit",
                     width: 100,
                     dataType: "numeric",
                     autoThousandSeparator: "true",
@@ -160,7 +167,7 @@ const grids = {
                 }, {
                     dataField: 'bpPriceA',
                     headerText: '최종금액(A)',
-                    style: "grid_textalign_right",
+                    style: "grid_textalign_right grid_notedit",
                     width: 100,
                     dataType: "numeric",
                     autoThousandSeparator: "true",
@@ -250,8 +257,7 @@ const trigs = {
             if(this.value !== "") {
                 $("#bsCode").attr("readonly", false);
             } else {
-                $("#bsCode").attr("readonly", true);
-                $("#bsCode").val("");
+                $("#bsCode").attr("readonly", true).val("");
             }
         });
 
@@ -300,7 +306,6 @@ function searchOsPriceList() {
         biName: $("#biName").val(),
         bpOutsourcingYn: $("#bpOutsourcingYn").val(),
     };
-
     comms.getOsPriceList(searchCondition);
 }
 

@@ -7,10 +7,6 @@
 <!-- 사용자 CSS 추가 -->
 <th:block layout:fragment="css">
     <style>
-        #summaryChart {
-            width: 100%;
-            height: 500px;
-        }
     </style>
 </th:block>
 
@@ -56,7 +52,7 @@
                     <div class="dashboard__article-header">
                         <h4 class="dashboard__article-title">지사 매출 순위</h4>
                         <div class="dashboard__article-header-console">
-                            <button class="c-button c-button--green c-button--icon c-button--icon-excel" onclick="exportToXlsx(0, '지사매출순위')">엑셀 다운로드</button>
+                            <button class="c-button c-button--green c-button--icon c-button--icon-excel" id="brSalesDown">엑셀 다운로드</button>
                         </div>
                     </div>
                     <div class="dashboard__article-body">
@@ -67,12 +63,12 @@
         </div>
     </div>
 
-    <div class="pop">
-        <div class="pop__box pop__box--large">
+    <div class="pop" id="popFrSales">
+        <div class="pop__box pop__box--xlarge">
             <div class="pop__article">
                 <div class="pop__article-header">
-                    <h3><span id="brName">***</span>지사 가맹점별 월 매출</h3>
-                    <button class="c-button c-button--green c-button--icon c-button--icon-excel" onclick="exportToXlsx(1, '가맹점별매출순위')">엑셀 다운로드</button>
+                    <h3><span id="brName"></span> 가맹점별 월 매출</h3>
+                    <button class="c-button c-button--green c-button--icon c-button--icon-excel" id="frSalesDown">엑셀 다운로드</button>
                 </div>
                 <div class="pop__article-content">
                     <div id="grid_pop"></div>
@@ -80,7 +76,7 @@
             </div>
             <ul class="pop__console">
                 <li>
-                    <button class="c-button c-button--darksolid">닫기</button>
+                    <button class="c-button c-button--darksolid pop__close">닫기</button>
                 </li>
             </ul>
         </div>

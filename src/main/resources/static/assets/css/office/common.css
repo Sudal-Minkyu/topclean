@@ -1802,6 +1802,9 @@ textarea {
 .pop__box.pop__box--large {
     width: 85rem;
 }
+.pop__box.pop__box--xlarge {
+	width: 100rem;
+}
 .pop__article {
 	width: 100%;
 	padding: 1.25rem 2.5rem 1.25rem 2.5rem;
