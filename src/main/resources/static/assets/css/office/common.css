@@ -805,6 +805,10 @@ textarea {
 	border: 0.063rem solid #d9e5ff;
 	border-radius: 0.313rem;
 }
+.inquiry.inquiry--large {
+	width: 1560px;
+	margin: 0 auto;
+}
 .inquiry__condition {
 	flex: 1;
 }

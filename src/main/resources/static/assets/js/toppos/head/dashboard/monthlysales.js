@@ -215,7 +215,7 @@ const grids = {
                 selectionMode : 'singleRow',
                 noDataMessage : '출력할 데이터가 없습니다.',
                 showAutoNoDataMessage: false,
-                enableColumnResize : false,
+                enableColumnResize : true,
                 showRowAllCheckBox: false,
                 showRowCheckColumn: false,
                 showRowNumColumn : false,
@@ -338,7 +338,7 @@ const grids = {
                 selectionMode : 'singleRow',
                 noDataMessage : '출력할 데이터가 없습니다.',
                 showAutoNoDataMessage: false,
-                enableColumnResize : false,
+                enableColumnResize : true,
                 showRowAllCheckBox: false,
                 showRowCheckColumn: false,
                 showRowNumColumn : false,
@@ -422,12 +422,12 @@ const trigs = {
         // 지사 매출 순위 다운로드
         $("#brSalesDown").on('click', function() {
             exportToXlsx(0, '지사매출순위');
-        })
+        });
 
         $("#frSalesDown").on('click', function() {
             const brName = wares.brName + "_가맹점매출순위";
             exportToXlsx(1, brName);
-        })
+        });
     },
 };
 

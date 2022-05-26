@@ -21,7 +21,7 @@
         </div>
 
         <div class="dashboard__body">
-            <div class="inquiry">
+            <div class="inquiry inquiry--large">
                 <div class="inquiry__condition">
                     <ul>
                         <li>
@@ -48,16 +48,14 @@
                             <div class="inquiry__title">조회년도</div>
                             <div class="inquiry__input-tag">
                                 <div class="c-select">
-                                    <select>
-                                        <option value="">20**년</option>
-                                    </select>
+                                    <select id="filterYear"></select>
                                 </div>
                             </div>
                         </li>
                     </ul>
                 </div>
                 <div class="inquiry__button">
-                    <button class="c-button c-button--darksolid">조회</button>
+                    <button class="c-button c-button--darksolid" id="getItemList">조회</button>
                 </div>
             </div>
 
@@ -66,11 +64,11 @@
                     <div class="dashboard__article-header">
                         <h4 class="dashboard__article-title">품목별 매출액</h4>
                         <div class="dashboard__article-header-console">
-                            <button class="c-button c-button--green c-button--icon c-button--icon-excel">엑셀 다운로드</button>
+                            <button class="c-button c-button--green c-button--icon c-button--icon-excel" id="itemSales">엑셀 다운로드</button>
                         </div>
                     </div>
                     <div class="dashboard__article-body">
-                        <div id="main_grid"></div>
+                        <div id="grid_main" class="grid--header-border" style="height: 540px;"></div>
                     </div>
                 </article>
             </section>
@@ -82,10 +80,10 @@
             <div class="pop__article">
                 <div class="pop__article-header">
                     <h3>세부 품목별 매출액</h3>
-                    <button class="c-button c-button--green c-button--icon c-button--icon-excel">엑셀 다운로드</button>
+                    <button class="c-button c-button--green c-button--icon c-button--icon-excel" id="detailItemSales">엑셀 다운로드</button>
                 </div>
                 <div class="pop__article-content">
-                    <div id="pop_grid"></div>
+                    <div id="grid_pop"></div>
                 </div>
             </div>
             <ul class="pop__console">
