@@ -55,12 +55,7 @@ const dtos = {
 
 /* 통신에 사용되는 url들 기입 */
 const urls = {
-    taglost: '/api/manager/lostNoticeView',
     notice: '/api/manager/noticeView',
-    brnotice: '',
-    taglostReplyList: '/api/manager/lostNoticeCommentList',
-    taglostPutReply: '/api/manager/lostNoticeCommentSave',
-    taglostDeletePost: '/api/manager/lostNoticeDelete',
     noticeDeletePost: '/api/manager/noticeDelete',
 };
 
@@ -267,9 +262,11 @@ function setFields(data) {
     $('#name').html(wares.boardType === 'notice' ? CommonData.name.hnType[data.hnType] : data.name);
     $('#insertDateTime').html(data.insertDateTime);
     $('#content').html(data.content);
-    $('#preSubject').html(CommonData.name.hnType[data.preHnType] + ' ' + data.preSubject);
+    const preHnType = data.preHnType ? CommonData.name.hnType[data.preHnType] : '';
+    $('#preSubject').html(preHnType + ' ' + data.preSubject);
     $('#preInsertDateTime').html(data.preInsertDateTime);
-    $('#nextSubject').html(CommonData.name.hnType[data.nextHnType] + ' ' + data.nextSubject);
+    const nextHnType = data.nextHnType ? CommonData.name.hnType[data.nextHnType] : '';
+    $('#nextSubject').html(nextHnType + ' ' + data.nextSubject);
     $('#nextInsertDateTime').html(data.nextInsertDateTime);
 
     let specialCondition = '';
