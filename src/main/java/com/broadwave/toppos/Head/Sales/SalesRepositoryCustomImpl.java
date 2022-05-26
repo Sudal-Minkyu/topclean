@@ -444,4 +444,160 @@ public class SalesRepositoryCustomImpl extends QuerydslRepositorySupport impleme
         return jpaResultMapper.list(query, ItemSaleDetailStatusDto.class);
     }
 
+    // 월간 접수 현황 데이터 NativeQuery
+    @Override
+    public List<ReceiptMonthlyStatusDto> findByMonthlyReceiptList(String filterYear) {
+        EntityManager em = getEntityManager();
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("WITH gData AS ( \n");
+        sb.append("        SELECT x.cs_yyyymm yyyymm, SUM(cnt) cnt \n");
+        sb.append("        FROM ( \n");
+        sb.append("                SELECT a.cs_yyyymm, SUM(a.cs_count) cnt \n");
+        sb.append("                FROM cl_sales_count_month a \n");
+        sb.append("                WHERE LEFT(a.cs_yyyymm, 4) =?1 \n");
+        sb.append("                GROUP BY a.cs_yyyymm \n");
+        sb.append("                UNION all \n");
+        sb.append("                SELECT a.by_yyyymm, 0 cnt \n");
+        sb.append("                FROM bs_yyyymm a \n");
+        sb.append("                WHERE LEFT(a.by_yyyymm, 4)=?1 \n");
+        sb.append("        ) x \n");
+        sb.append("        GROUP BY x.cs_yyyymm \n");
+        sb.append(") \n");
+        sb.append("SELECT a.yyyymm, a.cnt monthly_cnt, sum(b.cnt) accumulation_cnt \n");
+        sb.append("FROM gData a \n");
+        sb.append("INNER JOIN gData b ON a.yyyymm >= b.yyyymm \n");
+        sb.append("GROUP BY a.yyyymm \n");
+
+        Query query = em.createNativeQuery(sb.toString());
+        query.setParameter(1, filterYear);
+        return jpaResultMapper.list(query, ReceiptMonthlyStatusDto.class);
+    }
+
+    // 지사 접수 순위 데이터 NativeQuery
+    @Override
+    public List<ReceiptBranchRankDto> findByBranchReceiptRank(String filterYear) {
+        EntityManager em = getEntityManager();
+        StringBuilder sb = new StringBuilder();
+        sb.append("WITH gData AS ( \n");
+        sb.append("        SELECT x.yyyymm, x.br_code, x.br_name, SUM(cnt) cnt \n");
+        sb.append("        FROM( \n");
+        sb.append("                SELECT a.cs_yyyymm yyyymm, b.br_code, b.br_name, SUM(a.cs_count) cnt \n");
+        sb.append("                FROM cl_sales_count_month a \n");
+        sb.append("                INNER JOIN bs_branch b ON a.br_code = b.br_code \n");
+        sb.append("                WHERE LEFT(a.cs_yyyymm, 4) =?1 \n");
+        sb.append("                GROUP BY a.cs_yyyymm, b.br_code ,b.br_name \n");
+        sb.append("                UNION ALL \n");
+        sb.append("                SELECT a.by_yyyymm yyyymm,b.br_code, b.br_name, 0 cnt \n");
+        sb.append("                FROM bs_yyyymm a \n");
+        sb.append("                JOIN bs_branch b \n");
+        sb.append("                WHERE LEFT(a.by_yyyymm, 4)=?1 \n");
+        sb.append("        ) x \n");
+        sb.append("        GROUP BY x.yyyymm, x.br_code \n");
+        sb.append(") \n");
+        sb.append("SELECT a.br_code, a.br_name \n");
+        sb.append("        , x1.cnt cnt01, x2.cnt cnt02 \n");
+        sb.append("        , x3.cnt cnt03, x4.cnt cnt04 \n");
+        sb.append("        , x5.cnt cnt05, x6.cnt cnt06 \n");
+        sb.append("        , x7.cnt cnt07, x8.cnt cnt08 \n");
+        sb.append("        , x9.cnt cnt09, x10.cnt cnt10 \n");
+        sb.append("        , x11.cnt cnt11, x12.cnt cnt12 \n");
+        sb.append("        , xt.cnt total_cnt \n");
+        sb.append("FROM (SELECT DISTINCT br_code, br_name FROM gData) a \n");
+        sb.append("INNER JOIN ( \n");
+        sb.append("     SELECT a.yyyymm, a.br_code, SUM(cnt) cnt \n");
+        sb.append("     FROM gData a \n");
+        sb.append("     WHERE RIGHT(a.yyyymm,2)='01' \n");
+        sb.append("     GROUP BY a.yyyymm, a.br_code \n");
+        sb.append("     ) x1 on a.br_code = x1.br_code \n");
+        sb.append("INNER JOIN ( \n");
+        sb.append("     SELECT a.yyyymm, a.br_code, SUM(cnt) cnt \n");
+        sb.append("     FROM gData a \n");
+        sb.append("     WHERE RIGHT(a.yyyymm,2)='02' \n");
+        sb.append("     GROUP BY a.yyyymm, a.br_code \n");
+        sb.append("     ) x2 on a.br_code = x2.br_code \n");
+        sb.append("INNER JOIN ( \n");
+        sb.append("     SELECT a.yyyymm, a.br_code, SUM(cnt) cnt \n");
+        sb.append("     FROM gData a \n");
+        sb.append("     WHERE RIGHT(a.yyyymm,2)='03' \n");
+        sb.append("     GROUP BY a.yyyymm, a.br_code \n");
+        sb.append("     ) x3 on a.br_code = x3.br_code \n");
+        sb.append("INNER JOIN ( \n");
+        sb.append("     SELECT a.yyyymm, a.br_code, SUM(cnt) cnt \n");
+        sb.append("     FROM gData a \n");
+        sb.append("     WHERE RIGHT(a.yyyymm,2)='04' \n");
+        sb.append("     GROUP BY a.yyyymm, a.br_code \n");
+        sb.append("     ) x4 on a.br_code = x4.br_code \n");
+        sb.append("INNER JOIN ( \n");
+        sb.append("     SELECT a.yyyymm, a.br_code, SUM(cnt) cnt \n");
+        sb.append("     FROM gData a \n");
+        sb.append("     WHERE RIGHT(a.yyyymm,2)='05' \n");
+        sb.append("     GROUP BY a.yyyymm, a.br_code \n");
+        sb.append("     ) x5 on a.br_code = x5.br_code \n");
+        sb.append("INNER JOIN ( \n");
+        sb.append("     SELECT a.yyyymm, a.br_code, SUM(cnt) cnt \n");
+        sb.append("     FROM gData a \n");
+        sb.append("     WHERE RIGHT(a.yyyymm,2)='06' \n");
+        sb.append("     GROUP BY a.yyyymm, a.br_code \n");
+        sb.append("     ) x6 on a.br_code = x6.br_code \n");
+        sb.append("INNER JOIN ( \n");
+        sb.append("     SELECT a.yyyymm, a.br_code, SUM(cnt) cnt \n");
+        sb.append("     FROM gData a \n");
+        sb.append("     WHERE RIGHT(a.yyyymm,2)='07' \n");
+        sb.append("     GROUP BY a.yyyymm, a.br_code \n");
+        sb.append("     ) x7 on a.br_code = x7.br_code \n");
+        sb.append("INNER JOIN ( \n");
+        sb.append("     SELECT a.yyyymm, a.br_code, SUM(cnt) cnt \n");
+        sb.append("     FROM gData a \n");
+        sb.append("     WHERE RIGHT(a.yyyymm,2)='08' \n");
+        sb.append("     GROUP BY a.yyyymm, a.br_code \n");
+        sb.append("     ) x8 on a.br_code = x8.br_code \n");
+        sb.append("INNER JOIN ( \n");
+        sb.append("     SELECT a.yyyymm, a.br_code, SUM(cnt) cnt \n");
+        sb.append("     FROM gData a \n");
+        sb.append("     WHERE RIGHT(a.yyyymm,2)='09' \n");
+        sb.append("     GROUP BY a.yyyymm, a.br_code \n");
+        sb.append("     ) x9 on a.br_code = x9.br_code \n");
+        sb.append("INNER JOIN ( \n");
+        sb.append("     SELECT a.yyyymm, a.br_code, SUM(cnt) cnt \n");
+        sb.append("     FROM gData a \n");
+        sb.append("     WHERE RIGHT(a.yyyymm,2)='10' \n");
+        sb.append("     GROUP BY a.yyyymm, a.br_code \n");
+        sb.append("     ) x10 on a.br_code = x10.br_code \n");
+        sb.append("INNER JOIN ( \n");
+        sb.append("     SELECT a.yyyymm, a.br_code, SUM(cnt) cnt \n");
+        sb.append("     FROM gData a \n");
+        sb.append("     WHERE RIGHT(a.yyyymm,2)='11' \n");
+        sb.append("     GROUP BY a.yyyymm, a.br_code \n");
+        sb.append("     ) x11 on a.br_code = x11.br_code \n");
+        sb.append("INNER JOIN ( \n");
+        sb.append("     SELECT a.yyyymm, a.br_code, SUM(cnt) cnt \n");
+        sb.append("     FROM gData a \n");
+        sb.append("     WHERE RIGHT(a.yyyymm,2)='12' \n");
+        sb.append("     GROUP BY a.yyyymm, a.br_code \n");
+        sb.append("     ) x12 on a.br_code = x12.br_code \n");
+        sb.append("INNER JOIN ( \n");
+        sb.append("     SELECT a.br_code, SUM(cnt) cnt \n");
+        sb.append("     FROM gData a \n");
+        sb.append("     GROUP BY a.br_code \n");
+        sb.append("     ) xt on a.br_code = xt.br_code \n");
+        sb.append("ORDER BY xt.cnt DESC \n");
+
+        Query query = em.createNativeQuery(sb.toString());
+        query.setParameter(1, filterYear);
+        return jpaResultMapper.list(query, ReceiptBranchRankDto.class);
+    }
+
+    // 가맹점 접수 순위 데이터 NativeQuery
+    @Override
+    public List<ReceiptFranchiseRankDto> findByFranchiseReceiptRank(String brId, String filterYear) {
+        EntityManager em = getEntityManager();
+        StringBuilder sb = new StringBuilder();
+
+
+        Query query = em.createNativeQuery(sb.toString());
+        query.setParameter(1, filterYear);
+        return jpaResultMapper.list(query, ReceiptFranchiseRankDto.class);
+    }
+
 }

@@ -22,4 +22,10 @@ public interface SalesRepositoryCustom {
 
     List<ItemSaleDetailStatusDto> findByItemSaleDetailStatus(String bgCode, String brId, String frId, String filterYear); // 지사,가맹점 세부품목별 매출현황 데이터
 
+    List<ReceiptMonthlyStatusDto> findByMonthlyReceiptList(String filterYear); // 월간 접수 현황 데이터
+
+    List<ReceiptBranchRankDto> findByBranchReceiptRank(String filterYear); // 지사별 접수 순위 데이터
+
+    List<ReceiptFranchiseRankDto> findByFranchiseReceiptRank(String brId, String filterYear); // 가맹점별 접수 순위 데이터
+
 }

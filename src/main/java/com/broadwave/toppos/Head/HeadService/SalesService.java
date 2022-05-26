@@ -104,9 +104,55 @@ public class SalesService {
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
 
-        List<ItemSaleDetailStatusDto> ItemSaleDetailStatus = salesRepositoryCustom.findByItemSaleDetailStatus(bgCode, brId, frId, filterYear);
+        List<ItemSaleDetailStatusDto> itemSaleDetailStatus = salesRepositoryCustom.findByItemSaleDetailStatus(bgCode, brId, frId, filterYear);
 
-        data.put("gridListData", ItemSaleDetailStatus);
+        data.put("gridListData", itemSaleDetailStatus);
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
+    // 본사 - 월간 접수 현황 데이터 호출 API
+    public ResponseEntity<Map<String, Object>> headMonthlyReceiptList(String filterYear) {
+        log.info("headMonthlyReceiptList 호출");
+
+        log.info("filterYear  : " + filterYear);
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        List<ReceiptMonthlyStatusDto> monthlyReceiptStatus = salesRepositoryCustom.findByMonthlyReceiptList(filterYear);
+
+        data.put("gridListData", monthlyReceiptStatus);
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
+    // 본사 - 지사 접수 순위 데이터 호출 API
+    public ResponseEntity<Map<String, Object>> headBranchReceiptList(String filterYear) {
+        log.info("headBranchReceiptList 호출");
+
+        log.info("filterYear  : " + filterYear);
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        List<ReceiptBranchRankDto> branchReceiptList = salesRepositoryCustom.findByBranchReceiptRank(filterYear);
+
+        data.put("gridListData", branchReceiptList);
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
+    // 본사 - 가맹점 접수 순위 데이터 호출 API
+    public ResponseEntity<Map<String, Object>> headFranchiseReceiptList(String brId, String filterYear) {
+        log.info("headFranchiseReceiptList 호출");
+
+        log.info("brId  : " + brId);
+        log.info("filterYear  : " + filterYear);
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        List<ReceiptFranchiseRankDto> franchiseReceiptList = salesRepositoryCustom.findByFranchiseReceiptRank(brId, filterYear);
+
+        data.put("gridListData", franchiseReceiptList);
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 }
