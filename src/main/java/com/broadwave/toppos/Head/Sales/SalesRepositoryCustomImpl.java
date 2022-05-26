@@ -210,7 +210,7 @@ public class SalesRepositoryCustomImpl extends QuerydslRepositorySupport impleme
         sb.append("     ,x10.amt amt10,x10.amt_rate rate10 \n");
         sb.append("     ,x11.amt amt11,x11.amt_rate rate11 \n");
         sb.append("     ,x12.amt amt12,x12.amt_rate rate12 \n");
-        sb.append("     ,xt.amt amttot,xt.amt_rate ratetot \n");
+        sb.append("     ,xt.amt amtTotal,xt.amt_rate rateTotal \n");
         sb.append("FROM (select distinct bg_code,bg_name from saleData) a \n");
         sb.append("INNER JOIN ( \n");
         sb.append("     SELECT a.yyyymm,a.bg_code,SUM(amt) amt,IF(b.total_amt =0,0,sum(a.amt)/b.total_amt * 100.0) amt_rate \n");
@@ -348,7 +348,7 @@ public class SalesRepositoryCustomImpl extends QuerydslRepositorySupport impleme
         sb.append(",x10.amt amt10,x10.amt_rate rate10 \n");
         sb.append(",x11.amt amt11,x11.amt_rate rate11 \n");
         sb.append(",x12.amt amt12,x12.amt_rate rate12 \n");
-        sb.append(",xt.amt amttot,xt.amt_rate ratetot \n");
+        sb.append(",xt.amt amtTotal,xt.amt_rate rateTotal \n");
         sb.append("FROM (select distinct bi_itemcode,bi_name from saleData) a \n");
         sb.append("INNER JOIN ( \n");
         sb.append("     SELECT a.yyyymm,a.bi_itemcode,SUM(amt) amt,IF(b.total_amt =0,0,sum(a.amt)/b.total_amt * 100.0) amt_rate \n");

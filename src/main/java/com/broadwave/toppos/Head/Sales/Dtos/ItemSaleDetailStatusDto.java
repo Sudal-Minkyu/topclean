@@ -44,6 +44,6 @@ public class ItemSaleDetailStatusDto {
     private BigDecimal amt12;  // 12월 매출액
     private BigDecimal rate12; // 12월 매출비중
 
-    private BigDecimal amttot; // 전체 매출액
-    private BigDecimal rateot; // 전체 매출비중
+    private BigDecimal amtTotal; // 전체 매출액
+    private BigDecimal rateTotal; // 전체 매출비중
 }
