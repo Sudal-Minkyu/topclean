@@ -56,7 +56,7 @@ const grids = {
                 selectionMode : 'singleRow',
                 noDataMessage : '출력할 데이터가 없습니다.',
                 showAutoNoDataMessage: false,
-                enableColumnResize : false,
+                enableColumnResize : true,
                 showRowAllCheckBox: false,
                 showRowCheckColumn: false,
                 showRowNumColumn : false,
