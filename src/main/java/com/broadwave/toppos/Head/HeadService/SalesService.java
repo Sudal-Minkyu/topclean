@@ -1,9 +1,6 @@
 package com.broadwave.toppos.Head.HeadService;
 
-import com.broadwave.toppos.Head.Sales.Dtos.BranchMonthlySaleDto;
-import com.broadwave.toppos.Head.Sales.Dtos.BranchRankSaleDto;
-import com.broadwave.toppos.Head.Sales.Dtos.FranchiseRankSaleDto;
-import com.broadwave.toppos.Head.Sales.Dtos.ItemSaleStatusDto;
+import com.broadwave.toppos.Head.Sales.Dtos.*;
 import com.broadwave.toppos.Head.Sales.SalesRepositoryCustom;
 import com.broadwave.toppos.common.AjaxResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -78,7 +75,7 @@ public class SalesService {
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
-    // 본사 - 가맹점 매출순위 데이터 호출 API
+    // 본사 - 지사,가맹점 품목별 매출 현황 데이터 호출 API
     public ResponseEntity<Map<String, Object>> headItemSaleStatus(String brId, String frId, String filterYear) {
         log.info("headItemSaleStatus 호출");
 
@@ -95,5 +92,21 @@ public class SalesService {
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
+    // 본사 - 지사,가맹점 세부품목별 매출 현황 데이터 호출 API
+    public ResponseEntity<Map<String, Object>> headItemSaleDetailStatus(String bgCode, String brId, String frId, String filterYear) {
+        log.info("headItemSaleDetailStatus 호출");
 
+        log.info("bgCode  : " + bgCode);
+        log.info("brId  : " + brId);
+        log.info("frId  : " + frId);
+        log.info("filterYear  : " + filterYear);
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        List<ItemSaleDetailStatusDto> ItemSaleDetailStatus = salesRepositoryCustom.findByItemSaleDetailStatus(bgCode, brId, frId, filterYear);
+
+        data.put("gridListData", ItemSaleDetailStatus);
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
 }

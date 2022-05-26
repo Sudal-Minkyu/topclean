@@ -1512,6 +1512,14 @@ public class HeadRestController {
         return salesService.headItemSaleStatus(brId, frId, filterYear);
     }
 
+    // 본사 - 지사,가맹점 세부품목별 매출 현황 데이터 호출 API
+    @GetMapping("headItemSaleDetailStatus")
+    @ApiOperation(value = "세부품목별 매출 현황", notes = "세부품목별 매출 현황 데이터를 호출한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", value = "JWT Token", required = true, dataType = "string", paramType = "header")})
+    public ResponseEntity<Map<String, Object>> headItemSaleDetailStatus(@RequestParam("bgCode") String bgCode, @RequestParam("branchId") String brId, @RequestParam("franchiseId") String frId, @RequestParam("filterYear") String filterYear) {
+        return salesService.headItemSaleDetailStatus(bgCode, brId, frId, filterYear);
+    }
+
 
     //@@@@@@@@@@@@@@@@@@@@@ 문자메세지 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     // 메세지 보낼 고객 리스트 호출

@@ -1,9 +1,6 @@
 package com.broadwave.toppos.Head.Sales;
 
-import com.broadwave.toppos.Head.Sales.Dtos.BranchMonthlySaleDto;
-import com.broadwave.toppos.Head.Sales.Dtos.BranchRankSaleDto;
-import com.broadwave.toppos.Head.Sales.Dtos.FranchiseRankSaleDto;
-import com.broadwave.toppos.Head.Sales.Dtos.ItemSaleStatusDto;
+import com.broadwave.toppos.Head.Sales.Dtos.*;
 
 import java.util.List;
 
@@ -21,6 +18,8 @@ public interface SalesRepositoryCustom {
 
     List<FranchiseRankSaleDto> findByFranchiseRankSale(String brCode, String filterYear); // 가맹점 매출순위 데이터
 
-    List<ItemSaleStatusDto> findByItemSaleStatus(String brId, String frId, String filterYear);
+    List<ItemSaleStatusDto> findByItemSaleStatus(String brId, String frId, String filterYear); // 지사,가맹점 품목별 매출현황 데이터
+
+    List<ItemSaleDetailStatusDto> findByItemSaleDetailStatus(String bgCode, String brId, String frId, String filterYear); // 지사,가맹점 세부품목별 매출현황 데이터
 
 }
