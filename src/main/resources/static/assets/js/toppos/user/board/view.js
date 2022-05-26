@@ -45,10 +45,7 @@ const dtos = {
 
 /* 통신에 사용되는 url들 기입 */
 const urls = {
-    taglost: '/api/user/lostNoticeView',
     notice: '/api/user/noticeView',
-    brnotice: '',
-    taglostReplyList: '/api/user/lostNoticeCommentList',
 };
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
@@ -195,9 +192,11 @@ function setFields(data) {
     $('#name').html(wares.boardType === 'notice' ? CommonData.name.hnType[data.hnType] : data.name);
     $('#insertDateTime').html(data.insertDateTime);
     $('#content').html(data.content);
-    $('#preSubject').html(CommonData.name.hnType[data.preHnType] + ' ' + data.preSubject);
+    const preHnType = data.preHnType ? CommonData.name.hnType[data.preHnType] : '';
+    $('#preSubject').html(preHnType + ' ' + data.preSubject);
     $('#preInsertDateTime').html(data.preInsertDateTime);
-    $('#nextSubject').html(CommonData.name.hnType[data.nextHnType] + ' ' + data.nextSubject);
+    const nextHnType = data.nextHnType ? CommonData.name.hnType[data.nextHnType] : '';
+    $('#nextSubject').html(nextHnType + ' ' + data.nextSubject);
     $('#nextInsertDateTime').html(data.nextInsertDateTime);
 
     let specialCondition = '';
