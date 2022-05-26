@@ -348,6 +348,11 @@ function codeOverlap(num){
             alertCaution("지사코드는 2자리로 입력해 주세요.", 1);
             return;
         }
+        if(params.brCode.toUpperCase() === 'HR') {
+            alertCaution('사용할 수 없는 지사코드 입니다.', 1);
+            $('#brCode').val('');
+            return;
+        }
     }else{
         url = "/api/head/franchiseOverlap";
         params = {

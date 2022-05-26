@@ -3,6 +3,9 @@
 * 조합하여 "sr", "nr" 같은 형식도 가능
 * 추가로 필요한 검사항목이 생긴다면 문의 바랍니다.
 * */
+
+import { getTaglostDetail, taglostCheck } from "../module/m_taglostDetail.js";
+
 const dtos = {
     send: {
         tagGalleryCheck: {
@@ -233,7 +236,7 @@ const trigs = {
 };
 
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
-const wares = {
+window.wares = {
     fiCustomerConfirmName: {
         "1": "(미처리)",
         "2": "(수락)",
@@ -243,38 +246,6 @@ const wares = {
     currentBrInspect: {},
     currentCondition: {},
 };
-
-$(function() { // 페이지가 로드되고 나서 실행
-    onPageLoad();
-});
-
-/* 페이지가 로드되고 나서 실행 될 코드들을 담는다. */
-function onPageLoad() {
-    const today = new Date().format("yyyy-MM-dd");
-    const condition = {
-        date: today.numString(),
-    };
-    comms.franchiseInfo(condition);
-
-    CommonUI.setDatePicker(["historyDate"]);
-
-    const $historyDate = $("#historyDate");
-    $historyDate.val(today);
-    $historyDate.datepicker("option", "maxDate", today);
-    $historyDate.datepicker("option", "changeYear", false);
-    $historyDate.datepicker("option", "changeMonth", false);
-    $("#ui-datepicker-div").hide();
-    trigs.basic();
-
-    // 슬라이딩 텍스트 실행
-    marquee(1);
-
-    // lightbox option
-    lightbox.option({
-        'maxWidth': 1100,
-        'positionFromTop': 190
-    });
-}
 
 // 메인페이지 슬라이딩 텍스트
 function marquee(speed) {
@@ -310,11 +281,7 @@ function closeTaglostPop() {
     $("#taglostPop").removeClass("active");
 }
 
-function openTaglostPop() {
-    $("#taglostPop").addClass("active");
-}
-
-function showTaglost(btId) {
+const showTaglost = function (btId) {
     const getCondition = {
         btId,
     };
@@ -454,13 +421,16 @@ function setTagGallery(tagGalleryList) {
     if(tagGalleryList) {
         const field = $("#taglostList").children("li").children("a");
         for(let i = 0; i < tagGalleryList.length; i++) {
-            $(field[i]).attr("href", `javascript: showTaglost(${tagGalleryList[i].btId})`);
+            // $(field[i]).attr("href", `javascript: showTaglost(${tagGalleryList[i].btId})`);
             $(field[i]).children(".main__board-title").children("span:nth-child(1)")
                 .html(tagGalleryList[i].btBrandName);
             $(field[i]).children(".main__board-title").children("span:nth-child(2)")
                 .html("&nbsp;(" + tagGalleryList[i].btMaterial + ")");
             $(field[i]).children(".main__board-date").children("span")
                 .html(tagGalleryList[i].btInputDt);
+            $(field[i]).on('click', function () {
+                showTaglost(tagGalleryList[i].btId);
+            });
         }
     }
 }
@@ -476,4 +446,36 @@ function setNotice(noticeList) {
             $(field[i]).children(".main__board-date").children("span").html(noticeList[i].insertDateTime);
         }
     }
+}
+
+$(function() { // 페이지가 로드되고 나서 실행
+    onPageLoad();
+});
+
+/* 페이지가 로드되고 나서 실행 될 코드들을 담는다. */
+function onPageLoad() {
+    const today = new Date().format("yyyy-MM-dd");
+    const condition = {
+        date: today.numString(),
+    };
+    comms.franchiseInfo(condition);
+
+    CommonUI.setDatePicker(["historyDate"]);
+
+    const $historyDate = $("#historyDate");
+    $historyDate.val(today);
+    $historyDate.datepicker("option", "maxDate", today);
+    $historyDate.datepicker("option", "changeYear", false);
+    $historyDate.datepicker("option", "changeMonth", false);
+    $("#ui-datepicker-div").hide();
+    trigs.basic();
+
+    // 슬라이딩 텍스트 실행
+    marquee(1);
+
+    // lightbox option
+    lightbox.option({
+        'maxWidth': 1100,
+        'positionFromTop': 190
+    });
 }

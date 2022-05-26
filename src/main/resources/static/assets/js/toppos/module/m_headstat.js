@@ -3,7 +3,76 @@
  *
  */
 
-import {activateBrFrListInputs} from './m_setBrFrList.js'
+import {activateBrFrListInputs} from './m_setBrFrList.js';
+
+const dtos = {
+    send: {
+        headReceiptList: {
+            branchId: 'n',
+            franchiseId: 'n',
+            filterFromDt: 's',
+            filterToDt: 's',
+        },
+        headReceiptSubList: {
+            branchId: 'n',
+            franchiseId: 'n',
+            frYyyymmdd: 's',
+        },
+    },
+    receive: {
+        headReceiptList: {
+            branchId: 'n',
+            brName: 's',
+            franchiseId: 'n',
+            frName: 's',
+            frYyyymmdd: 's',
+            requestCount: 'n',
+            fdTotAmt: 'n',
+        },
+        headReceiptSubList: {
+            brName: 's',
+            frName: 's',
+            bcName: 's',
+            bcHp: 's',
+            bcGrade: 's',
+            fdTag: 's',
+            fr_insert_date: 's',
+            fdEstimateDt: 's',
+            bgName: 's',
+            bsName: 's',
+            biName: 's',
+            fdQty: 'n',
+            fdColor: 's',
+            fdPattern: 's',
+            fdUrgentType: 's',
+            fdUrgentYn: 's',
+            fdPriceGrade: 's',
+            fdRetryYn: 's',
+            fdPressed: 'n',
+            fdAdd1Amt: 'n',
+            fdRepairAmt: 'n',
+            fdWhitening: 'n',
+            fdPollution: 'n',
+            fdWaterRepellent: 'n',
+            fdStarch: 'n',
+            fdAdd2Amt: 'n',
+            fdUrgentAmt: 'n',
+            fdNormalAmt: 'n',
+            fdTotAmt: 'n',
+            fdDiscountAmt: 'n',
+            fdState: 's',
+            fdPollutionType: 'n',
+            fdPollutionBack: 'n',
+            fdS2Dt: 's',
+            fdS5Dt: 's',
+            fdS4Dt: 's',
+            fdS3Dt: 's',
+            fdS6Dt: 's',
+            fdS6Time: 's',
+            fiProgressStatet: 's',
+        },
+    },
+};
 
 const wares = {
     searchCondition: {},
@@ -19,6 +88,7 @@ const wares = {
 const comms = {
     /* 그리드 좌측, 일별 누계 데이터 조회값을 가져옴 */
     searchSummaryData(searchCondition) {
+        dv.chk(searchCondition, dtos.send.headReceiptList, '누계 데이터 조회를 위한 조건 보내기');
         wares.searchCondition = searchCondition;
         CommonUI.ajax('/api/head/headReceiptList', 'GET', searchCondition, function (res) {
             if (searchCondition.branchId) {
@@ -27,13 +97,17 @@ const comms = {
                 grids.setFrNameVisibility(false);
             }
             const data = res.sendData.gridListData;
+            dv.chk(data, dtos.receive.headReceiptList, '일별 누계 데이터 받아오기');
             grids.setData(grids.id[0], data);
         });
     },
 
+    /* 누게리스트의 지사,가맹점정보,날짜를 보내 해당 일자에 속한 모든 접수데이터 가져오기 */
     getDetailData(condition) {
+        dv.chk(condition, dtos.send.headReceiptSubList, '상세 품목을 받아오기 위한 조건 보내기');
         CommonUI.ajax('/api/head/headReceiptSubList', 'GET', condition, function (res) {
             const data = res.sendData.gridListData;
+            dv.chk(data, dtos.receive.headReceiptSubList, '받아온 상세 품목들의 정보');
             grids.setData(grids.id[1], data);
         });
     },

@@ -32,7 +32,7 @@ const grids = {
 
     clear(id) {
         AUIGrid.clearGridData(id);
-    }
+    },
 };
 
 const runOnlyOnce = {
@@ -263,6 +263,13 @@ const runOnlyOnce = {
             }, {
                 dataField: 'fdTotAmt',
                 headerText: '최종가격',
+                style: 'grid_textalign_right',
+                width: 80,
+                dataType: 'numeric',
+                autoThousandSeparator: 'true',
+            }, {
+                dataField: 'fdOutsourcingAmt',
+                headerText: '외주금액',
                 style: 'grid_textalign_right',
                 width: 80,
                 dataType: 'numeric',

@@ -3,6 +3,9 @@
 * 조합하여 "sr", "nr" 같은 형식도 가능
 * 추가로 필요한 검사항목이 생긴다면 문의 바랍니다.
 * */
+
+import { getTaglostDetail, taglostCheck } from "../../module/m_taglostDetail.js";
+
 const dtos = {
     send: {
         tagGalleryList: {
@@ -67,7 +70,6 @@ const comms = {
     getMainList(searchCondition) {
         dv.chk(searchCondition, dtos.send.tagGalleryList);
         CommonUI.ajax(urls.getMainList, "GET", searchCondition, function (res) {
-            console.log(res);
             const dataList = res.sendData.tagGalleryList;
             dv.chk(dataList, dtos.receive.tagGalleryList, "조회된 택분실 리스트 받기");
 
@@ -236,7 +238,6 @@ const grids = {
 const trigs = {
     grid() {
         AUIGrid.bind(grids.s.id[0], "cellClick", function (e) {
-            console.log(e);
             switch(e.dataField) { // 썸네일 클릭시 이미지가 뜨고 디테일 클릭시 상세보기가 작동한다.
                 case "thumbnail1" :
                 case "thumbnail2" :
@@ -261,11 +262,6 @@ const trigs = {
     },
 
     basic() {
-        /* 0번그리드 내의 셀 클릭시 이벤트 */
-        AUIGrid.bind(grids.s.id[0], "cellClick", function (e) {
-            console.log(e);
-        });
-
         $("#searchBtn").on("click", function () {
             searchOrder();
         });
@@ -309,31 +305,8 @@ const trigs = {
 }
 
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
-const wares = {
+window.wares = {
     currentRequest: {},
-}
-
-$(function() { // 페이지가 로드되고 나서 실행
-    onPageLoad();
-});
-
-/* 페이지가 로드되고 나서 실행 될 코드들을 담는다. */
-function onPageLoad() {
-    grids.f.initialization();
-    grids.f.create();
-    enableDatepicker();
-    trigs.basic();
-    trigs.grid();
-
-    /* 가상키보드의 사용 선언 */
-    window.vkey = new VKeyboard();
-    trigs.vkeys();
-
-    // lightbox option
-    lightbox.option({
-        'maxWidth': 1100,
-        'positionFromTop': 190
-    });
 }
 
 function enableDatepicker() {
@@ -382,14 +355,34 @@ function showDetail(btId) {
     getTaglostDetail(getCondition);
 }
 
-function openTaglostPop() {
-    $("#taglostPop").addClass("active");
-}
-
 function openVKeypad() {
     const keypadProp = { // 키패드로 변경 필요
         title : "택번호를 입력해주세요",
         midprocess: "none",
     }
     vkey.showKeypad("brTag", keypadProp);
+}
+
+
+$(function() { // 페이지가 로드되고 나서 실행
+    onPageLoad();
+});
+
+/* 페이지가 로드되고 나서 실행 될 코드들을 담는다. */
+function onPageLoad() {
+    grids.f.initialization();
+    grids.f.create();
+    enableDatepicker();
+    trigs.basic();
+    trigs.grid();
+
+    /* 가상키보드의 사용 선언 */
+    window.vkey = new VKeyboard();
+    trigs.vkeys();
+
+    // lightbox option
+    lightbox.option({
+        'maxWidth': 1100,
+        'positionFromTop': 190
+    });
 }

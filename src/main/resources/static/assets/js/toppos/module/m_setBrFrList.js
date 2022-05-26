@@ -4,12 +4,29 @@
  * #brList의 내용이 바뀔 때 의도된 동작을 할 수 있도록 해준다.
  * */
 
+const dtos = {
+    receive: {
+        headBrFrInfoList: {
+            branchList: {
+                branchId: 'n',
+                brName: 's',
+            },
+            franchiseList: {
+                franchiseId: 'n',
+                branchId: 'n',
+                frName: 's',
+            },
+        },
+    },
+};
+
 let brFrListData = {};
 
 /* 지사와 가맹점의 이름과 id들을 콜백으로 반환한다. */
 const getBrFrList = function () {
     CommonUI.ajax('/api/head/headBrFrInfoList', 'GET', false, function (res) {
         brFrListData = res.sendData;
+        dv.chk(brFrListData, dtos.receive.headBrFrInfoList, '지사와 가맹점의 이름, id, 소속지사(가맹점의 경우) 받아오기');
         setBrFrList(brFrListData, 0, true);
     });
 };
