@@ -223,6 +223,7 @@ public class IssueOutsourcingRepositoryCustomImpl extends QuerydslRepositorySupp
                         requestDetail.fdAdd2Amt,
                         requestDetail.fdUrgentAmt,
                         requestDetail.fdNormalAmt,
+                        requestDetail.fdOutsourcingAmt,
 
                         requestDetail.fdTotAmt,
                         requestDetail.fdDiscountAmt,

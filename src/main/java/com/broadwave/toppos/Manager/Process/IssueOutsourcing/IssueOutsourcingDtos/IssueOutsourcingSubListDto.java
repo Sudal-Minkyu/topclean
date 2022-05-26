@@ -60,6 +60,7 @@ public class IssueOutsourcingSubListDto {
     private Integer fdAdd2Amt; // 추가비용2(검품후 추가비용 발생)
     private Integer fdUrgentAmt; // 급세탁 추가비용
     private Integer fdNormalAmt; // 정상금액
+    private Integer fdOutsourcingAmt; // 외주처리비용
 
     private Integer fdTotAmt; // 합계금액( (정상 + 수선 + 추가1 + 추가2 -할인) * 수량 )
     private Integer fdDiscountAmt; // 할인금액
