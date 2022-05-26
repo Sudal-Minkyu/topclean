@@ -17,7 +17,7 @@ const dtos = {
             branchId: "s",
             franchiseId: "s",
             filterYear: "s",
-            bgCode: "",
+            bgCode: "s",
         }
     },
     receive: {
@@ -51,19 +51,62 @@ const dtos = {
             rate12: "n",
             rateTotal: "n",
         },
+        headItemSaleDetailStatus: {
+            biItemcode: "s",
+            biName: "s",
+            amt01: "n",
+            amt02: "n",
+            amt03: "n",
+            amt04: "n",
+            amt05: "n",
+            amt06: "n",
+            amt07: "n",
+            amt08: "n",
+            amt09: "n",
+            amt10: "n",
+            amt11: "n",
+            amt12: "n",
+            amtTotal: "n",
+            rate01: "n",
+            rate02: "n",
+            rate03: "n",
+            rate04: "n",
+            rate05: "n",
+            rate06: "n",
+            rate07: "n",
+            rate08: "n",
+            rate09: "n",
+            rate10: "n",
+            rate11: "n",
+            rate12: "n",
+            rateTotal: "n",
+        },
     },
 };
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
-    getheadItemSaleStatus(condition) {
+    // 품목 매출리스트 조회
+    getHeadItemSaleStatus(condition) {
         CommonUI.ajax("/api/head/headItemSaleStatus", "GET", condition, function(res) {
             const data = res.sendData.gridListData;
-            console.log(data);
             dv.chk(data, dtos.receive.headItemSaleStatus, "품목매출리스트 받아오기");
+            wares.searchCondition = condition;
             grids.f.clear(0);
             grids.f.set(0, data);
             grids.f.setSorting(0, 'amtTotal', -1);
+        })
+    },
+
+    // 세부 품목 매출리스트 조회
+    getHeadItemSaleDetailStatus(condition) {
+        CommonUI.ajax("/api/head/headItemSaleDetailStatus", "GET", condition, function(res) {
+            const data = res.sendData.gridListData;
+            dv.chk(data, dtos.receive.headItemSaleDetailStatus, "세부품목 매출 리스트 받아오기");
+            grids.f.resize(1);
+            grids.f.clear(1);
+            grids.f.set(1, data);
+            grids.f.setSorting(1, 'amtTotal', -1);
         })
     }
 };
@@ -379,162 +422,268 @@ const grids = {
             /* 1번 그리드의 레이아웃 */
             grids.s.columnLayout[1] = [
                 {
-                    dataField: '',
+                    dataField: 'biName',
                     headerText: '세부품목명',
+                    style: "grid_textalign_left",
+                    width: 150,
                 }, {
-                    dataField: '',
                     headerText: '1월',
                     children: [
                         {
-                            dataField: '',
-                            headerText: '매출액'
+                            dataField: 'amt01',
+                            headerText: '매출액',
+                            style: "grid_textalign_right",
+                            width: 90,
+                            dataType: "numeric",
+                            autoThousandSeparator: "true",
                         }, {
-                            dataField: '',
-                            headerText: '매출비중'
+                            dataField: 'rate01',
+                            headerText: '매출비중',
+                            width: 70,
+                            style: "grid_textalign_right",
+                            labelFunction(_rowIndex, _columnIndex, value, _headerText, _item) {
+                                return roundPercent(value);
+                            },
                         },
                     ]
                 }, {
-                    dataField: '',
                     headerText: '2월',
                     children: [
                         {
-                            dataField: '',
-                            headerText: '매출액'
+                            dataField: 'amt02',
+                            headerText: '매출액',
+                            style: "grid_textalign_right",
+                            width: 90,
+                            dataType: "numeric",
+                            autoThousandSeparator: "true",
                         }, {
-                            dataField: '',
-                            headerText: '매출비중'
+                            dataField: 'rate02',
+                            headerText: '매출비중',
+                            width: 70,
+                            style: "grid_textalign_right",
+                            labelFunction(_rowIndex, _columnIndex, value, _headerText, _item) {
+                                return roundPercent(value);
+                            },
                         },
                     ]
                 }, {
-                    dataField: '',
                     headerText: '3월',
                     children: [
                         {
-                            dataField: '',
-                            headerText: '매출액'
+                            dataField: 'amt03',
+                            headerText: '매출액',
+                            style: "grid_textalign_right",
+                            width: 90,
+                            dataType: "numeric",
+                            autoThousandSeparator: "true",
                         }, {
-                            dataField: '',
-                            headerText: '매출비중'
+                            dataField: 'rate03',
+                            headerText: '매출비중',
+                            width: 70,
+                            style: "grid_textalign_right",
+                            labelFunction(_rowIndex, _columnIndex, value, _headerText, _item) {
+                                return roundPercent(value);
+                            },
                         },
                     ]
                 }, {
-                    dataField: '',
                     headerText: '4월',
                     children: [
                         {
-                            dataField: '',
-                            headerText: '매출액'
+                            dataField: 'amt04',
+                            headerText: '매출액',
+                            style: "grid_textalign_right",
+                            width: 90,
+                            dataType: "numeric",
+                            autoThousandSeparator: "true",
                         }, {
-                            dataField: '',
-                            headerText: '매출비중'
+                            dataField: 'rate04',
+                            headerText: '매출비중',
+                            width: 70,
+                            style: "grid_textalign_right",
+                            labelFunction(_rowIndex, _columnIndex, value, _headerText, _item) {
+                                return roundPercent(value);
+                            },
                         },
                     ]
                 }, {
-                    dataField: '',
                     headerText: '5월',
                     children: [
                         {
-                            dataField: '',
-                            headerText: '매출액'
+                            dataField: 'amt05',
+                            headerText: '매출액',
+                            style: "grid_textalign_right",
+                            width: 90,
+                            dataType: "numeric",
+                            autoThousandSeparator: "true",
                         }, {
-                            dataField: '',
-                            headerText: '매출비중'
+                            dataField: 'rate05',
+                            headerText: '매출비중',
+                            width: 70,
+                            style: "grid_textalign_right",
+                            labelFunction(_rowIndex, _columnIndex, value, _headerText, _item) {
+                                return roundPercent(value);
+                            },
                         },
                     ]
                 }, {
-                    dataField: '',
                     headerText: '6월',
                     children: [
                         {
-                            dataField: '',
-                            headerText: '매출액'
+                            dataField: 'amt06',
+                            headerText: '매출액',
+                            style: "grid_textalign_right",
+                            width: 90,
+                            dataType: "numeric",
+                            autoThousandSeparator: "true",
                         }, {
-                            dataField: '',
-                            headerText: '매출비중'
+                            dataField: 'rate06',
+                            headerText: '매출비중',
+                            width: 70,
+                            style: "grid_textalign_right",
+                            labelFunction(_rowIndex, _columnIndex, value, _headerText, _item) {
+                                return roundPercent(value);
+                            },
                         },
                     ]
                 }, {
-                    dataField: '',
                     headerText: '7월',
                     children: [
                         {
-                            dataField: '',
-                            headerText: '매출액'
+                            dataField: 'amt07',
+                            headerText: '매출액',
+                            style: "grid_textalign_right",
+                            width: 90,
+                            dataType: "numeric",
+                            autoThousandSeparator: "true",
                         }, {
-                            dataField: '',
-                            headerText: '매출비중'
+                            dataField: 'rate07',
+                            headerText: '매출비중',
+                            width: 70,
+                            style: "grid_textalign_right",
+                            labelFunction(_rowIndex, _columnIndex, value, _headerText, _item) {
+                                return roundPercent(value);
+                            },
                         },
                     ]
                 }, {
-                    dataField: '',
                     headerText: '8월',
                     children: [
                         {
-                            dataField: '',
-                            headerText: '매출액'
+                            dataField: 'amt08',
+                            headerText: '매출액',
+                            style: "grid_textalign_right",
+                            width: 90,
+                            dataType: "numeric",
+                            autoThousandSeparator: "true",
                         }, {
-                            dataField: '',
-                            headerText: '매출비중'
+                            dataField: 'rate08',
+                            headerText: '매출비중',
+                            width: 70,
+                            style: "grid_textalign_right",
+                            labelFunction(_rowIndex, _columnIndex, value, _headerText, _item) {
+                                return roundPercent(value);
+                            },
                         },
                     ]
                 }, {
-                    dataField: '',
                     headerText: '9월',
                     children: [
                         {
-                            dataField: '',
-                            headerText: '매출액'
+                            dataField: 'amt09',
+                            headerText: '매출액',
+                            style: "grid_textalign_right",
+                            width: 90,
+                            dataType: "numeric",
+                            autoThousandSeparator: "true",
                         }, {
-                            dataField: '',
-                            headerText: '매출비중'
+                            dataField: 'rate09',
+                            headerText: '매출비중',
+                            width: 70,
+                            style: "grid_textalign_right",
+                            labelFunction(_rowIndex, _columnIndex, value, _headerText, _item) {
+                                return roundPercent(value);
+                            },
                         },
                     ]
                 }, {
-                    dataField: '',
                     headerText: '10월',
                     children: [
                         {
-                            dataField: '',
-                            headerText: '매출액'
+                            dataField: 'amt10',
+                            headerText: '매출액',
+                            style: "grid_textalign_right",
+                            width: 90,
+                            dataType: "numeric",
+                            autoThousandSeparator: "true",
                         }, {
-                            dataField: '',
-                            headerText: '매출비중'
+                            dataField: 'rate10',
+                            headerText: '매출비중',
+                            width: 70,
+                            style: "grid_textalign_right",
+                            labelFunction(_rowIndex, _columnIndex, value, _headerText, _item) {
+                                return roundPercent(value);
+                            },
                         },
                     ]
                 }, {
-                    dataField: '',
                     headerText: '11월',
                     children: [
                         {
-                            dataField: '',
-                            headerText: '매출액'
+                            dataField: 'amt11',
+                            headerText: '매출액',
+                            style: "grid_textalign_right",
+                            width: 90,
+                            dataType: "numeric",
+                            autoThousandSeparator: "true",
                         }, {
-                            dataField: '',
-                            headerText: '매출비중'
+                            dataField: 'rate11',
+                            headerText: '매출비중',
+                            width: 70,
+                            style: "grid_textalign_right",
+                            labelFunction(_rowIndex, _columnIndex, value, _headerText, _item) {
+                                return roundPercent(value);
+                            },
                         },
                     ]
                 }, {
-                    dataField: '',
                     headerText: '12월',
                     children: [
                         {
-                            dataField: '',
-                            headerText: '매출액'
+                            dataField: 'amt12',
+                            headerText: '매출액',
+                            style: "grid_textalign_right",
+                            width: 90,
+                            dataType: "numeric",
+                            autoThousandSeparator: "true",
                         }, {
-                            dataField: '',
-                            headerText: '매출비중'
+                            dataField: 'rate12',
+                            headerText: '매출비중',
+                            width: 70,
+                            style: "grid_textalign_right",
+                            labelFunction(_rowIndex, _columnIndex, value, _headerText, _item) {
+                                return roundPercent(value);
+                            },
                         },
                     ]
                 }, {
-                    dataField: '',
                     headerText: '전체',
                     children: [
                         {
-                            dataField: '',
-                            headerText: '매출액'
+                            dataField: 'amtTotal',
+                            headerText: '매출액',
+                            style: "grid_textalign_right",
+                            width: 90,
+                            dataType: "numeric",
+                            autoThousandSeparator: "true",
                         }, {
-                            dataField: '',
-                            headerText: '매출비중'
+                            dataField: 'rateTotal',
+                            headerText: '매출비중',
+                            width: 70,
+                            style: "grid_textalign_right",
+                            labelFunction(_rowIndex, _columnIndex, value, _headerText, _item) {
+                                return roundPercent(value);
+                            },
                         },
                     ]
                 },
@@ -614,13 +763,26 @@ const trigs = {
 
         // 세부 품목 매출 현황 조회
         AUIGrid.bind(grids.s.id[0], 'cellClick', function (e) {
-            if (e.dataField == '품목명') {
-                const 품목명 = e.item.품목명;
+            if (e.dataField == 'bgName') {
+                const bgName = e.item.bgName;
                 const condition = {
-                    branchId: wares.조회시저장.branchId,
-                }
+                    branchId: wares.searchCondition.branchId,
+                    franchiseId: wares.searchCondition.franchiseId,
+                    filterYear: wares.searchCondition.filterYear,
+                    bgCode: e.item.bgCode,
+                };
+                wares.bgName = bgName;
+                $('#detailItemSales').addClass('active');
+                $('#bgName').text(bgName);
+                comms.getHeadItemSaleDetailStatus(condition);
+            } else {
+                return;
             }
-            console.log(e.item);
+        });
+
+        // 팝업닫기
+        $(".pop__close").on('click', function() {
+            $(this).parents(".pop").removeClass('active');
         });
 
         // 품목별 매출액 다운로드
@@ -629,18 +791,18 @@ const trigs = {
         });
 
         // 세부 품목별 매출액 다운로드
-        $("#detailItemSales").on('click', function() {
-            const 품목명 = wares.품목명 + "_세부품목별매출액";
-            exportToXlsx(1, 품목명);
+        $("#detailItemSalesDown").on('click', function() {
+            const fileName = wares.bgName + "_세부품목별매출액";
+            exportToXlsx(1, fileName);
         })
     },};
 
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
 const wares = {
-    품목명: {
+    bgName: {
 
     },
-    조회시저장: {
+    searchCondition: {
 
     },
 };
@@ -663,8 +825,7 @@ function getItemListCondition() {
         franchiseId: parseInt($('#frList').val()),
         filterYear: parseInt($('#filterYear').val()),
     };
-    console.log(condition);
-    comms.getheadItemSaleStatus(condition);
+    comms.getHeadItemSaleStatus(condition);
 };
 
 // 파일 다운로드에 사용 할 날짜형식 yyyymmdd

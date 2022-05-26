@@ -12,6 +12,7 @@
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
     <script type="module" src="/assets/js/toppos/head/dashboard/itemsales.js"></script>
+    <script src="/assets/js/filesaver/FileSaver.min.js"></script>
 </th:block>
 
 <div layout:fragment="content" class="content content--main">
@@ -75,20 +76,20 @@
         </div>
     </div>
 
-    <div class="pop">
+    <div class="pop" id="detailItemSales">
         <div class="pop__box pop__box--large">
             <div class="pop__article">
                 <div class="pop__article-header">
-                    <h3>세부 품목별 매출액</h3>
-                    <button class="c-button c-button--green c-button--icon c-button--icon-excel" id="detailItemSales">엑셀 다운로드</button>
+                    <h3><span id="bgName"></span> 세부 품목별 매출액</h3>
+                    <button class="c-button c-button--green c-button--icon c-button--icon-excel" id="detailItemSalesDown">엑셀 다운로드</button>
                 </div>
                 <div class="pop__article-content">
-                    <div id="grid_pop"></div>
+                    <div id="grid_pop" class="grid--header-border"></div>
                 </div>
             </div>
             <ul class="pop__console">
                 <li>
-                    <button class="c-button c-button--darksolid">닫기</button>
+                    <button class="c-button c-button--darksolid pop__close">닫기</button>
                 </li>
             </ul>
         </div>
