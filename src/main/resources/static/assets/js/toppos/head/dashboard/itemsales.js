@@ -13,7 +13,7 @@ const dtos = {
             franchiseId: "s",
             filterYear: "s",
         },
-        팝업그리드: {
+        headItemSaleDetailStatus: {
             branchId: "s",
             franchiseId: "s",
             filterYear: "s",

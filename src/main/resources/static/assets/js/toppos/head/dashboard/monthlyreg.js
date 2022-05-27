@@ -6,20 +6,45 @@
  */
 const dtos = {
     send: {
-        조회년도: {
-            filterYear: "s",
-        },
-        지사별접수조회: {
+        getBrSalesList: {
             filterYear: "s",
             brId: "s"
         }
     },
     receive: {
-        지사매출순위: {
-
+        getBrSalesList: {
+            brCode: "s",
+            brName: "s",
+            cnt01: "n",
+            cnt02: "n",
+            cnt03: "n",
+            cnt04: "n",
+            cnt05: "n",
+            cnt06: "n",
+            cnt07: "n",
+            cnt08: "n",
+            cnt09: "n",
+            cnt10: "n",
+            cnt11: "n",
+            cnt12: "n",
+            totalCnt: "n",
         },
-        가맹점별매출: {
-
+        headFranchiseReceiptRank: {
+            frCode: "s",
+            brName: "s",
+            cnt01: "n",
+            cnt02: "n",
+            cnt03: "n",
+            cnt04: "n",
+            cnt05: "n",
+            cnt06: "n",
+            cnt07: "n",
+            cnt08: "n",
+            cnt09: "n",
+            cnt10: "n",
+            cnt11: "n",
+            cnt12: "n",
+            totalCnt: "n",
         }
     },
 };
@@ -27,14 +52,25 @@ const dtos = {
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
     // 년도별 지사접수 가져오기
-    getBrSalesList() {
-        // CommonUI.ajax("지사접수api", "GET", filterYear, function(res) {
-        //     const data = res;
-        //     console.log(data);
-        //     // dv.chk(data, dtos.receive.지사접수건순위, "지사접수건순위 받아오기");
-        //     // grids.f.clear(0);
-        //     // grids.f.set(0, data);
-        // })
+    getBrSalesList(filterYear) {
+        CommonUI.ajax("/api/head/headBranchReceiptRank", "GET", filterYear, function(res) {
+            const data = res.sendData.gridListData;
+            dv.chk(data, dtos.receive.getBrSalesList, "지사접수건순위 받아오기");
+            grids.f.clear(0);
+            grids.f.set(0, data);
+            grids.f.setSorting(0, 'totalCnt', -1);
+        });
+    },
+
+    // 가맹점 접수 가져오기
+    getFrSalesList(condition) {
+        CommonUI.ajax("/api/head/headFranchiseReceiptRank", "GET", condition, function(res) {
+            const data = res.sendData.gridListData;
+            grids.f.resize(1);
+            grids.f.clear(1);
+            grids.f.set(1, data);
+            grids.f.setSorting(1, 'totalCnt', -1);
+        });
     }
 };
 
@@ -61,52 +97,105 @@ const grids = {
             /* 0번 그리드의 레이아웃 */
             grids.s.columnLayout[0] = [
                 {
-                    dataField: '',
+                    dataField: 'brName',
                     headerText: '지사명',
+                    style: "grid_textalign_left",
                 },{
-                    dataField: '',
+                    dataField: 'cnt01',
                     headerText: '1월',
+                    style: "grid_textalign_right",
+                    width: 90,
+                    dataType: "numeric",
+                    autoThousandSeparator: "true",
                 }, {
-                    dataField: '',
+                    dataField: 'cnt02',
                     headerText: '2월',
+                    style: "grid_textalign_right",
+                    width: 90,
+                    dataType: "numeric",
+                    autoThousandSeparator: "true",
                 },
                 {
-                    dataField: '',
+                    dataField: 'cnt03',
                     headerText: '3월',
+                    style: "grid_textalign_right",
+                    width: 90,
+                    dataType: "numeric",
+                    autoThousandSeparator: "true",
                 }, {
-                    dataField: '',
+                    dataField: 'cnt04',
                     headerText: '4월',
+                    style: "grid_textalign_right",
+                    width: 90,
+                    dataType: "numeric",
+                    autoThousandSeparator: "true",
                 },
                 {
-                    dataField: '',
+                    dataField: 'cnt05',
                     headerText: '5월',
+                    style: "grid_textalign_right",
+                    width: 90,
+                    dataType: "numeric",
+                    autoThousandSeparator: "true",
                 }, {
-                    dataField: '',
+                    dataField: 'cnt06',
                     headerText: '6월',
+                    style: "grid_textalign_right",
+                    width: 90,
+                    dataType: "numeric",
+                    autoThousandSeparator: "true",
                 },
                 {
-                    dataField: '',
+                    dataField: 'cnt07',
                     headerText: '7월',
+                    style: "grid_textalign_right",
+                    width: 90,
+                    dataType: "numeric",
+                    autoThousandSeparator: "true",
                 }, {
-                    dataField: '',
+                    dataField: 'cnt08',
                     headerText: '8월',
+                    style: "grid_textalign_right",
+                    width: 90,
+                    dataType: "numeric",
+                    autoThousandSeparator: "true",
                 },
                 {
-                    dataField: '',
+                    dataField: 'cnt09',
                     headerText: '9월',
+                    style: "grid_textalign_right",
+                    width: 90,
+                    dataType: "numeric",
+                    autoThousandSeparator: "true",
                 }, {
-                    dataField: '',
+                    dataField: 'cnt10',
                     headerText: '10월',
+                    style: "grid_textalign_right",
+                    width: 90,
+                    dataType: "numeric",
+                    autoThousandSeparator: "true",
                 },
                 {
-                    dataField: '',
+                    dataField: 'cnt11',
                     headerText: '11월',
+                    style: "grid_textalign_right",
+                    width: 90,
+                    dataType: "numeric",
+                    autoThousandSeparator: "true",
                 }, {
-                    dataField: '',
+                    dataField: 'cnt12',
                     headerText: '12월',
+                    style: "grid_textalign_right",
+                    width: 90,
+                    dataType: "numeric",
+                    autoThousandSeparator: "true",
                 }, {
-                    dataField: '',
+                    dataField: 'totalCnt',
                     headerText: '전체',
+                    style: "grid_textalign_right",
+                    width: 100,
+                    dataType: "numeric",
+                    autoThousandSeparator: "true",
                 },
             ];
 
@@ -131,52 +220,105 @@ const grids = {
             /* 1번 그리드의 레이아웃 */
             grids.s.columnLayout[1] = [
                 {
-                    dataField: '',
-                    headerText: '지사명',
+                    dataField: 'frName',
+                    headerText: '가맹점명',
+                    style: "grid_textalign_left",
                 },{
-                    dataField: '',
+                    dataField: 'cnt01',
                     headerText: '1월',
+                    style: "grid_textalign_right",
+                    width: 90,
+                    dataType: "numeric",
+                    autoThousandSeparator: "true",
                 }, {
-                    dataField: '',
+                    dataField: 'cnt02',
                     headerText: '2월',
+                    style: "grid_textalign_right",
+                    width: 90,
+                    dataType: "numeric",
+                    autoThousandSeparator: "true",
                 },
                 {
-                    dataField: '',
+                    dataField: 'cnt03',
                     headerText: '3월',
+                    style: "grid_textalign_right",
+                    width: 90,
+                    dataType: "numeric",
+                    autoThousandSeparator: "true",
                 }, {
-                    dataField: '',
+                    dataField: 'cnt04',
                     headerText: '4월',
+                    style: "grid_textalign_right",
+                    width: 90,
+                    dataType: "numeric",
+                    autoThousandSeparator: "true",
                 },
                 {
-                    dataField: '',
+                    dataField: 'cnt05',
                     headerText: '5월',
+                    style: "grid_textalign_right",
+                    width: 90,
+                    dataType: "numeric",
+                    autoThousandSeparator: "true",
                 }, {
-                    dataField: '',
+                    dataField: 'cnt06',
                     headerText: '6월',
+                    style: "grid_textalign_right",
+                    width: 90,
+                    dataType: "numeric",
+                    autoThousandSeparator: "true",
                 },
                 {
-                    dataField: '',
+                    dataField: 'cnt07',
                     headerText: '7월',
+                    style: "grid_textalign_right",
+                    width: 90,
+                    dataType: "numeric",
+                    autoThousandSeparator: "true",
                 }, {
-                    dataField: '',
+                    dataField: 'cnt08',
                     headerText: '8월',
+                    style: "grid_textalign_right",
+                    width: 90,
+                    dataType: "numeric",
+                    autoThousandSeparator: "true",
                 },
                 {
-                    dataField: '',
+                    dataField: 'cnt09',
                     headerText: '9월',
+                    style: "grid_textalign_right",
+                    width: 90,
+                    dataType: "numeric",
+                    autoThousandSeparator: "true",
                 }, {
-                    dataField: '',
+                    dataField: 'cnt10',
                     headerText: '10월',
+                    style: "grid_textalign_right",
+                    width: 90,
+                    dataType: "numeric",
+                    autoThousandSeparator: "true",
                 },
                 {
-                    dataField: '',
+                    dataField: 'cnt11',
                     headerText: '11월',
+                    style: "grid_textalign_right",
+                    width: 90,
+                    dataType: "numeric",
+                    autoThousandSeparator: "true",
                 }, {
-                    dataField: '',
+                    dataField: 'cnt12',
                     headerText: '12월',
+                    style: "grid_textalign_right",
+                    width: 90,
+                    dataType: "numeric",
+                    autoThousandSeparator: "true",
                 }, {
-                    dataField: '',
+                    dataField: 'totalCnt',
                     headerText: '전체',
+                    style: "grid_textalign_right",
+                    width: 100,
+                    dataType: "numeric",
+                    autoThousandSeparator: "true",
                 },
             ];
 
@@ -226,6 +368,16 @@ const grids = {
         resize(num) {
             AUIGrid.resize(grids.s.id[num]);
         },
+
+        // 그리드 소팅
+        setSorting(numOfgrid, dataField, type) {
+            // dataField = 데이터 필드명, type = 오름차순 : 1, 내림차순 : -1
+            const sortingInfo = {
+                dataField: dataField,
+                sortType: type,
+            };
+            AUIGrid.setSorting(grids.s.id[numOfgrid], sortingInfo);
+        }
     },
 };
 
@@ -234,14 +386,44 @@ const trigs = {
     basic() {
         /* 0번그리드 내의 셀 클릭시 이벤트 */
         AUIGrid.bind(grids.s.id[0], 'cellClick', function (e) {
-            console.log(e.item);
+            if (e.dataField == "brName") {
+                const brName = e.item.brName;
+                const condition = {
+                    filterYear: $("#filterYear").val(),
+                    brCode: e.item.brCode,
+                };
+                $('#popFrReg').addClass('active');
+                wares.brName = brName;
+                $("#brName").text(brName);
+                comms.getFrSalesList(condition);
+            } else {
+                return;
+            }
+        });
+
+        // 팝업닫기
+        $(".pop__close").on('click', function() {
+            $(this).parents(".pop").removeClass('active');
+        });
+
+        // 월 접수 현황 다운로드
+        $('#brRegDown').on('click', function() {
+            exportToXlsx(0, '지사접수순위');
+        });
+
+        // 가맹점 월 접수 현황 다운로드
+        $("#frRegDown").on('click', function() {
+            const frName = wares.brName + "_가맹점접수순위";
+            exportToXlsx(1, frName);
         });
     },
 };
 
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
 const wares = {
+    brName: {
 
+    },
 };
 
 // 년도 보내기
@@ -500,6 +682,7 @@ const onPageLoad = function() {
     getFilterYear();
 
     grids.f.initialization();
+    grids.f.create();
 
     trigs.basic();
     makeChart();

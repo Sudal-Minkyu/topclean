@@ -11,7 +11,8 @@
 
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
-    <script src="/assets/js/toppos/head/dashboard/itemreg.js"></script>
+    <script type="module" src="/assets/js/toppos/head/dashboard/itemreg.js"></script>
+    <script src="/assets/js/filesaver/FileSaver.min.js"></script>
 </th:block>
 
 <div layout:fragment="content" class="content content--main">
@@ -25,33 +26,21 @@
                 <div class="inquiry__condition">
                     <ul>
                         <li>
-                            <div class="inquiry__title">집계 단위</div>
-                            <div class="inquiry__input-tag">
-                                <div class="c-select">
-                                    <select>
-                                        <option value="">전체</option>
-                                        <option value="">지사별</option>
-                                        <option value="">가맹점별</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </li>
-                        <li>
                             <div class="inquiry__title">지사</div>
                             <div class="inquiry__input-tag">
                                 <div class="c-select">
-                                    <select>
-                                        <option value="">**지사</option>
+                                    <select id="brList">
+                                        <option value="0">전체선택</option>
                                     </select>
                                 </div>
                             </div>
                         </li>
                         <li>
-                            <div class="inquiry__title">대리점</div>
+                            <div class="inquiry__title">가맹점</div>
                             <div class="inquiry__input-tag">
                                 <div class="c-select">
-                                    <select>
-                                        <option value="">** 가맹점</option>
+                                    <select id="frList" disabled="">
+                                        <option value="0">전체선택</option>
                                     </select>
                                 </div>
                             </div>
@@ -60,16 +49,14 @@
                             <div class="inquiry__title">조회 년도</div>
                             <div class="inquiry__input-tag">
                                 <div class="c-select">
-                                    <select>
-                                        <option value="">20**년</option>
-                                    </select>
+                                    <select id="filterYear"></select>
                                 </div>
                             </div>
                         </li>
                     </ul>
                 </div>
                 <div class="inquiry__button">
-                    <button class="c-button c-button--darksolid">조회</button>
+                    <button class="c-button c-button--darksolid" id="getItemList">조회</button>
                 </div>
             </div>
 
@@ -78,31 +65,31 @@
                     <div class="dashboard__article-header">
                         <h4 class="dashboard__article-title">품목별 접수건</h4>
                         <div class="dashboard__article-header-console">
-                            <button class="c-button c-button--green c-button--icon c-button--icon-excel">엑셀 다운로드</button>
+                            <button class="c-button c-button--green c-button--icon c-button--icon-excel" id="downloadItemReg">엑셀 다운로드</button>
                         </div>
                     </div>
                     <div class="dashboard__article-body">
-                        <div id="main_grid"></div>
+                        <div id="grid_main" class="grid--header-border" style="height: 540px;"></div>
                     </div>
                 </article>
             </section>
         </div>
     </div>
 
-    <div class="pop">
-        <div class="pop__box pop__box--large">
+    <div class="pop" id="popDetailItemReg">
+        <div class="pop__box pop__box--xlarge">
             <div class="pop__article">
                 <div class="pop__article-header">
                     <h3>세부 품목별 접수</h3>
-                    <button class="c-button c-button--green c-button--icon c-button--icon-excel">엑셀 다운로드</button>
+                    <button class="c-button c-button--green c-button--icon c-button--icon-excel" id="downloadDetailItemReg">엑셀 다운로드</button>
                 </div>
                 <div class="pop__article-content">
-                    <div id="pop_grid"></div>
+                    <div id="grid_pop" class="grid--header-border"></div>
                 </div>
             </div>
             <ul class="pop__console">
                 <li>
-                    <button class="c-button c-button--darksolid">닫기</button>
+                    <button class="c-button c-button--darksolid pop__close">닫기</button>
                 </li>
             </ul>
         </div>

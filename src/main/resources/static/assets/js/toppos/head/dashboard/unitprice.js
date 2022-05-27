@@ -1,0 +1,822 @@
+/*
+ * 서버 API와 주고 받게 될 데이터 정의
+ * 's' 문자형, 'n' 숫자형, 'a' 배열형, 'r' 필수값, 'd' 불필요한 데이터 삭제(receive에 있을 경우 앞으로도 불필요할 경우에는 API에서 삭제요청할것)
+ * 조합하여 'sr', 'nr' 같은 형식도 가능
+ * 추가로 필요한 검사항목이 생긴다면 문의 바랍니다.
+ */
+const dtos = {
+    send: {
+        년도아이디보내기: {
+            filterYear: "s",
+            brId: "s"
+        },
+    },
+    receive: {
+        차트가져오기: {
+
+        },
+        지사별단가리스트: {
+            brCode: "s",
+            brName: "s",
+            객단가01: "n",
+            객단가02: "n",
+            객단가03: "n",
+            객단가04: "n",
+            객단가05: "n",
+            객단가06: "n",
+            객단가07: "n",
+            객단가08: "n",
+            객단가09: "n",
+            객단가10: "n",
+            객단가11: "n",
+            객단가12: "n",
+            객단가전체: "n",
+            PCS단가01: "n",
+            PCS단가02: "n",
+            PCS단가03: "n",
+            PCS단가04: "n",
+            PCS단가05: "n",
+            PCS단가06: "n",
+            PCS단가07: "n",
+            PCS단가08: "n",
+            PCS단가09: "n",
+            PCS단가10: "n",
+            PCS단가11: "n",
+            PCS단가12: "n",
+            PCS단가전체: "n",
+        },
+        가맹점별단가리스트: {
+            frCode: "s",
+            frName: "s",
+            객단가01: "n",
+            객단가02: "n",
+            객단가03: "n",
+            객단가04: "n",
+            객단가05: "n",
+            객단가06: "n",
+            객단가07: "n",
+            객단가08: "n",
+            객단가09: "n",
+            객단가10: "n",
+            객단가11: "n",
+            객단가12: "n",
+            객단가전체: "n",
+            PCS단가01: "n",
+            PCS단가02: "n",
+            PCS단가03: "n",
+            PCS단가04: "n",
+            PCS단가05: "n",
+            PCS단가06: "n",
+            PCS단가07: "n",
+            PCS단가08: "n",
+            PCS단가09: "n",
+            PCS단가10: "n",
+            PCS단가11: "n",
+            PCS단가12: "n",
+            PCS단가전체: "n",
+        }
+    },
+};
+
+/* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
+const comms = {
+    // 지사별단가리스트
+    지사별단가리스트(filterYear) {
+        // CommonUI.ajax('api주소', 'GET', filterYear, function(res) {
+        //    const data = res.sendData.gridListData;
+        //    dv.chk(data, dtos.지사별단가리스트, "지사별 단가 리스트 받아오기");
+        //    grids.f.clear(0);
+        //    grids.f.set(0, data);
+        //    grids.f.setSorting(0, '객단가전체', -1);
+        // });
+    },
+
+    // 가맹점별단가리스트
+    가맹점별단가리스트(condition) {
+        // CommonUI.ajax('api주소', 'GET', condition, function(res) {
+        //     const data = res.sendData.gridListData;
+        //     dv.chk(data, dtos.가맹점별단가리스트, '가맹정별 단가 리스트 받아오기');
+        //     grids.f.resize(1);
+        //     grids.f.clear(1);
+        //     grids.f.set(1, data);
+        //     grids.f.setSorting(1, 'PCS단가전체', -1);
+        // });
+    }
+};
+
+/*
+*  .s : AUI 그리드 관련 설정들, 같은 번호의 배열에 있는 요소들 끼리 철저하게 연동한다는 원칙을 따른다.
+*  .f : 그리드 관련 함수들 배치
+* */
+const grids = {
+    /* 그리드 세팅 */
+    s: {
+        id: [
+            'grid_main',
+            'grid_pop',
+
+        ],
+        columnLayout: [],
+        prop: [],
+    },
+
+    /* 그리드 펑션 */
+    f: {
+        /* 가시성을 위해 grids.s 의 일부 요소를 여기서 선언한다. */
+        initialization() {
+
+            /* 0번 그리드의 레이아웃 */
+            grids.s.columnLayout[0] = [
+                {
+                    dataField: 'brName',
+                    headerText: '지사명',
+                    style: "grid_textalign_left",
+                    width: 150,
+                }, {
+                    headerText: '1월',
+                    children: [
+                        {
+                            dataField: '객단가01',
+                            headerText: '객단가',
+                            style: "grid_textalign_right",
+                            width: 90,
+                            dataType: "numeric",
+                            autoThousandSeparator: "true",
+                        }, {
+                            dataField: 'PCS단가01',
+                            headerText: 'PCS단가',
+                            width: 90,
+                            style: "grid_textalign_right",
+                            dataType: "numeric",
+                            autoThousandSeparator: "true",
+                        },
+                    ]
+                }, {
+                    headerText: '2월',
+                    children: [
+                        {
+                            dataField: '객단가02',
+                            headerText: '객단가',
+                            style: "grid_textalign_right",
+                            width: 90,
+                            dataType: "numeric",
+                            autoThousandSeparator: "true",
+                        }, {
+                            dataField: 'PCS단가02',
+                            headerText: 'PCS단가',
+                            width: 90,
+                            style: "grid_textalign_right",
+                            dataType: "numeric",
+                            autoThousandSeparator: "true",
+                        },
+                    ]
+                }, {
+                    headerText: '3월',
+                    children: [
+                        {
+                            dataField: '객단가03',
+                            headerText: '객단가',
+                            style: "grid_textalign_right",
+                            width: 90,
+                            dataType: "numeric",
+                            autoThousandSeparator: "true",
+                        }, {
+                            dataField: 'PCS단가03',
+                            headerText: 'PCS단가',
+                            width: 90,
+                            style: "grid_textalign_right",
+                            dataType: "numeric",
+                            autoThousandSeparator: "true",
+                        },
+                    ]
+                }, {
+                    headerText: '4월',
+                    children: [
+                        {
+                            dataField: '객단가04',
+                            headerText: '객단가',
+                            style: "grid_textalign_right",
+                            width: 90,
+                            dataType: "numeric",
+                            autoThousandSeparator: "true",
+                        }, {
+                            dataField: 'PCS단가04',
+                            headerText: 'PCS단가',
+                            width: 90,
+                            style: "grid_textalign_right",
+                            dataType: "numeric",
+                            autoThousandSeparator: "true",
+                        },
+                    ]
+                }, {
+                    headerText: '5월',
+                    children: [
+                        {
+                            dataField: '객단가05',
+                            headerText: '객단가',
+                            style: "grid_textalign_right",
+                            width: 90,
+                            dataType: "numeric",
+                            autoThousandSeparator: "true",
+                        }, {
+                            dataField: 'PCS단가05',
+                            headerText: 'PCS단가',
+                            width: 90,
+                            style: "grid_textalign_right",
+                            dataType: "numeric",
+                            autoThousandSeparator: "true",
+                        },
+                    ]
+                }, {
+                    headerText: '6월',
+                    children: [
+                        {
+                            dataField: '객단가06',
+                            headerText: '객단가',
+                            style: "grid_textalign_right",
+                            width: 90,
+                            dataType: "numeric",
+                            autoThousandSeparator: "true",
+                        }, {
+                            dataField: 'PCS단가06',
+                            headerText: 'PCS단가',
+                            width: 90,
+                            style: "grid_textalign_right",
+                            dataType: "numeric",
+                            autoThousandSeparator: "true",
+                        },
+                    ]
+                }, {
+                    headerText: '7월',
+                    children: [
+                        {
+                            dataField: '객단가07',
+                            headerText: '객단가',
+                            style: "grid_textalign_right",
+                            width: 90,
+                            dataType: "numeric",
+                            autoThousandSeparator: "true",
+                        }, {
+                            dataField: 'PCS단가07',
+                            headerText: 'PCS단가',
+                            width: 90,
+                            style: "grid_textalign_right",
+                            dataType: "numeric",
+                            autoThousandSeparator: "true",
+                        },
+                    ]
+                }, {
+                    headerText: '8월',
+                    children: [
+                        {
+                            dataField: '객단가08',
+                            headerText: '객단가',
+                            style: "grid_textalign_right",
+                            width: 90,
+                            dataType: "numeric",
+                            autoThousandSeparator: "true",
+                        }, {
+                            dataField: 'PCS단가08',
+                            headerText: 'PCS단가',
+                            width: 90,
+                            style: "grid_textalign_right",
+                            dataType: "numeric",
+                            autoThousandSeparator: "true",
+                        },
+                    ]
+                }, {
+                    headerText: '9월',
+                    children: [
+                        {
+                            dataField: '객단가09',
+                            headerText: '객단가',
+                            style: "grid_textalign_right",
+                            width: 90,
+                            dataType: "numeric",
+                            autoThousandSeparator: "true",
+                        }, {
+                            dataField: 'PCS단가09',
+                            headerText: 'PCS단가',
+                            width: 90,
+                            style: "grid_textalign_right",
+                            dataType: "numeric",
+                            autoThousandSeparator: "true",
+                        },
+                    ]
+                }, {
+                    headerText: '10월',
+                    children: [
+                        {
+                            dataField: '객단가10',
+                            headerText: '객단가',
+                            style: "grid_textalign_right",
+                            width: 90,
+                            dataType: "numeric",
+                            autoThousandSeparator: "true",
+                        }, {
+                            dataField: 'PCS단가10',
+                            headerText: 'PCS단가',
+                            width: 90,
+                            style: "grid_textalign_right",
+                            dataType: "numeric",
+                            autoThousandSeparator: "true",
+                        },
+                    ]
+                }, {
+                    headerText: '11월',
+                    children: [
+                        {
+                            dataField: '객단가11',
+                            headerText: '객단가',
+                            style: "grid_textalign_right",
+                            width: 90,
+                            dataType: "numeric",
+                            autoThousandSeparator: "true",
+                        }, {
+                            dataField: 'PCS단가11',
+                            headerText: 'PCS단가',
+                            width: 90,
+                            style: "grid_textalign_right",
+                            dataType: "numeric",
+                            autoThousandSeparator: "true",
+                        },
+                    ]
+                }, {
+                    headerText: '12월',
+                    children: [
+                        {
+                            dataField: '객단가12',
+                            headerText: '객단가',
+                            style: "grid_textalign_right",
+                            width: 90,
+                            dataType: "numeric",
+                            autoThousandSeparator: "true",
+                        }, {
+                            dataField: 'PCS단가12',
+                            headerText: 'PCS단가',
+                            width: 90,
+                            style: "grid_textalign_right",
+                            dataType: "numeric",
+                            autoThousandSeparator: "true",
+                        },
+                    ]
+                }, {
+                    headerText: '전체',
+                    children: [
+                        {
+                            dataField: '객단가전체',
+                            headerText: '객단가',
+                            style: "grid_textalign_right",
+                            width: 90,
+                            dataType: "numeric",
+                            autoThousandSeparator: "true",
+                        }, {
+                            dataField: 'PCS단가전체',
+                            headerText: 'PCS단가',
+                            width: 90,
+                            style: "grid_textalign_right",
+                            dataType: "numeric",
+                            autoThousandSeparator: "true",
+                        },
+                    ]
+                },
+            ];
+
+            /* 0번 그리드의 프로퍼티(옵션) 아래의 링크를 참조
+            * https://www.auisoft.net/documentation/auigrid/DataGrid/Properties.html
+            * */
+            grids.s.prop[0] = {
+                editable : false,
+                selectionMode : 'singleRow',
+                noDataMessage : '출력할 데이터가 없습니다.',
+                showAutoNoDataMessage: false,
+                enableColumnResize : true,
+                showRowAllCheckBox: false,
+                showRowCheckColumn: false,
+                showRowNumColumn : false,
+                showStateColumn : false,
+                enableFilter : false,
+                rowHeight : 48,
+                headerHeight : 48,
+            };
+
+            /* 1번 그리드의 레이아웃 */
+            grids.s.columnLayout[1] = [
+                {
+                    dataField: 'frName',
+                    headerText: '가맹점명',
+                    style: "grid_textalign_left",
+                    width: 150,
+                }, {
+                    headerText: '1월',
+                    children: [
+                        {
+                            dataField: '객단가01',
+                            headerText: '객단가',
+                            style: "grid_textalign_right",
+                            width: 90,
+                            dataType: "numeric",
+                            autoThousandSeparator: "true",
+                        }, {
+                            dataField: 'PCS단가01',
+                            headerText: 'PCS단가',
+                            width: 90,
+                            style: "grid_textalign_right",
+                            dataType: "numeric",
+                            autoThousandSeparator: "true",
+                        },
+                    ]
+                }, {
+                    headerText: '2월',
+                    children: [
+                        {
+                            dataField: '객단가02',
+                            headerText: '객단가',
+                            style: "grid_textalign_right",
+                            width: 90,
+                            dataType: "numeric",
+                            autoThousandSeparator: "true",
+                        }, {
+                            dataField: 'PCS단가02',
+                            headerText: 'PCS단가',
+                            width: 90,
+                            style: "grid_textalign_right",
+                            dataType: "numeric",
+                            autoThousandSeparator: "true",
+                        },
+                    ]
+                }, {
+                    headerText: '3월',
+                    children: [
+                        {
+                            dataField: '객단가03',
+                            headerText: '객단가',
+                            style: "grid_textalign_right",
+                            width: 90,
+                            dataType: "numeric",
+                            autoThousandSeparator: "true",
+                        }, {
+                            dataField: 'PCS단가03',
+                            headerText: 'PCS단가',
+                            width: 90,
+                            style: "grid_textalign_right",
+                            dataType: "numeric",
+                            autoThousandSeparator: "true",
+                        },
+                    ]
+                }, {
+                    headerText: '4월',
+                    children: [
+                        {
+                            dataField: '객단가04',
+                            headerText: '객단가',
+                            style: "grid_textalign_right",
+                            width: 90,
+                            dataType: "numeric",
+                            autoThousandSeparator: "true",
+                        }, {
+                            dataField: 'PCS단가04',
+                            headerText: 'PCS단가',
+                            width: 90,
+                            style: "grid_textalign_right",
+                            dataType: "numeric",
+                            autoThousandSeparator: "true",
+                        },
+                    ]
+                }, {
+                    headerText: '5월',
+                    children: [
+                        {
+                            dataField: '객단가05',
+                            headerText: '객단가',
+                            style: "grid_textalign_right",
+                            width: 90,
+                            dataType: "numeric",
+                            autoThousandSeparator: "true",
+                        }, {
+                            dataField: 'PCS단가05',
+                            headerText: 'PCS단가',
+                            width: 90,
+                            style: "grid_textalign_right",
+                            dataType: "numeric",
+                            autoThousandSeparator: "true",
+                        },
+                    ]
+                }, {
+                    headerText: '6월',
+                    children: [
+                        {
+                            dataField: '객단가06',
+                            headerText: '객단가',
+                            style: "grid_textalign_right",
+                            width: 90,
+                            dataType: "numeric",
+                            autoThousandSeparator: "true",
+                        }, {
+                            dataField: 'PCS단가06',
+                            headerText: 'PCS단가',
+                            width: 90,
+                            style: "grid_textalign_right",
+                            dataType: "numeric",
+                            autoThousandSeparator: "true",
+                        },
+                    ]
+                }, {
+                    headerText: '7월',
+                    children: [
+                        {
+                            dataField: '객단가07',
+                            headerText: '객단가',
+                            style: "grid_textalign_right",
+                            width: 90,
+                            dataType: "numeric",
+                            autoThousandSeparator: "true",
+                        }, {
+                            dataField: 'PCS단가07',
+                            headerText: 'PCS단가',
+                            width: 90,
+                            style: "grid_textalign_right",
+                            dataType: "numeric",
+                            autoThousandSeparator: "true",
+                        },
+                    ]
+                }, {
+                    headerText: '8월',
+                    children: [
+                        {
+                            dataField: '객단가08',
+                            headerText: '객단가',
+                            style: "grid_textalign_right",
+                            width: 90,
+                            dataType: "numeric",
+                            autoThousandSeparator: "true",
+                        }, {
+                            dataField: 'PCS단가08',
+                            headerText: 'PCS단가',
+                            width: 90,
+                            style: "grid_textalign_right",
+                            dataType: "numeric",
+                            autoThousandSeparator: "true",
+                        },
+                    ]
+                }, {
+                    headerText: '9월',
+                    children: [
+                        {
+                            dataField: '객단가09',
+                            headerText: '객단가',
+                            style: "grid_textalign_right",
+                            width: 90,
+                            dataType: "numeric",
+                            autoThousandSeparator: "true",
+                        }, {
+                            dataField: 'PCS단가09',
+                            headerText: 'PCS단가',
+                            width: 90,
+                            style: "grid_textalign_right",
+                            dataType: "numeric",
+                            autoThousandSeparator: "true",
+                        },
+                    ]
+                }, {
+                    headerText: '10월',
+                    children: [
+                        {
+                            dataField: '객단가10',
+                            headerText: '객단가',
+                            style: "grid_textalign_right",
+                            width: 90,
+                            dataType: "numeric",
+                            autoThousandSeparator: "true",
+                        }, {
+                            dataField: 'PCS단가10',
+                            headerText: 'PCS단가',
+                            width: 90,
+                            style: "grid_textalign_right",
+                            dataType: "numeric",
+                            autoThousandSeparator: "true",
+                        },
+                    ]
+                }, {
+                    headerText: '11월',
+                    children: [
+                        {
+                            dataField: '객단가11',
+                            headerText: '객단가',
+                            style: "grid_textalign_right",
+                            width: 90,
+                            dataType: "numeric",
+                            autoThousandSeparator: "true",
+                        }, {
+                            dataField: 'PCS단가11',
+                            headerText: 'PCS단가',
+                            width: 90,
+                            style: "grid_textalign_right",
+                            dataType: "numeric",
+                            autoThousandSeparator: "true",
+                        },
+                    ]
+                }, {
+                    headerText: '12월',
+                    children: [
+                        {
+                            dataField: '객단가12',
+                            headerText: '객단가',
+                            style: "grid_textalign_right",
+                            width: 90,
+                            dataType: "numeric",
+                            autoThousandSeparator: "true",
+                        }, {
+                            dataField: 'PCS단가12',
+                            headerText: 'PCS단가',
+                            width: 90,
+                            style: "grid_textalign_right",
+                            dataType: "numeric",
+                            autoThousandSeparator: "true",
+                        },
+                    ]
+                }, {
+                    headerText: '전체',
+                    children: [
+                        {
+                            dataField: '객단가전체',
+                            headerText: '객단가',
+                            style: "grid_textalign_right",
+                            width: 90,
+                            dataType: "numeric",
+                            autoThousandSeparator: "true",
+                        }, {
+                            dataField: 'PCS단가전체',
+                            headerText: 'PCS단가',
+                            width: 90,
+                            style: "grid_textalign_right",
+                            dataType: "numeric",
+                            autoThousandSeparator: "true",
+                        },
+                    ]
+                },
+            ];
+
+            /* 1번 그리드의 프로퍼티(옵션) */
+            grids.s.prop[1] = {
+                editable : false,
+                selectionMode : 'singleRow',
+                noDataMessage : '출력할 데이터가 없습니다.',
+                showAutoNoDataMessage: false,
+                enableColumnResize : true,
+                showRowAllCheckBox: false,
+                showRowCheckColumn: false,
+                showRowNumColumn : false,
+                showStateColumn : false,
+                enableFilter : false,
+                rowHeight : 48,
+                headerHeight : 48,
+            };
+        },
+
+        /* 그리드 동작 처음 빈 그리드를 생성 */
+        create() {
+            for (const i in grids.s.columnLayout) {
+                AUIGrid.create(grids.s.id[i], grids.s.columnLayout[i], grids.s.prop[i]);
+            }
+        },
+
+        /* 해당 배열 번호 그리드의 url.read 를 참조하여 데이터를 그리드에 뿌린다. */
+        get(numOfGrid) {
+            return AUIGrid.getGridData(grids.s.id[numOfGrid]);
+        },
+
+        /* 해당 배열 번호 그리드의 url.read 를 참조하여 데이터를 그리드에 뿌린다. */
+        set(numOfGrid, data) {
+            AUIGrid.setGridData(grids.s.id[numOfGrid], data);
+        },
+
+        /* 해당 배열 번호 그리드의 데이터 비우기 */
+        clear(numOfGrid) {
+            AUIGrid.clearGridData(grids.s.id[numOfGrid]);
+        },
+
+        /* 해당 배열 번호 그리드의 크기를 현제 그리드를 감싼 엘리먼트에 맞춰 조절 */
+        resize(num) {
+            AUIGrid.resize(grids.s.id[num]);
+        },
+
+        // 그리드 소팅
+        setSorting(numOfgrid, dataField, type) {
+            // dataField = 데이터 필드명, type = 오름차순 : 1, 내림차순 : -1
+            const sortingInfo = {
+                dataField: dataField,
+                sortType: type,
+            };
+            AUIGrid.setSorting(grids.s.id[numOfgrid], sortingInfo);
+        }
+    },
+};
+
+/* 이벤트를 설정하거나 해지하는 함수들을 담는다. */
+const trigs = {
+    basic() {
+        /* 0번그리드 내의 셀 클릭시 이벤트 */
+        AUIGrid.bind(grids.s.id[0], 'cellClick', function (e) {
+            if(e.dataField == "brName") {
+                const brName = e.item.brName;
+                const condition = {
+                    filterYear: $("#filterYear").val(),
+                    brCode: e.item.brCode,
+                };
+                $('#popFrUnitPrice').addClass('active');
+                wares.brName = brName;
+                $("#brName").text(brName);
+                comms.가맹점별단가리스트(condition);
+            } else {
+                return;
+            }
+        });
+
+        // 팝업닫기
+        $(".pop__close").on('click', function() {
+            $(this).parents(".pop").removeClass('active');
+        });
+
+        // 지사별 단가 현황 다운로드
+        $('#downloadBrUnitPrice').on('click', function() {
+            exportToXlsx(0, '지사별단가순위');
+        });
+
+        // 가맹점별 단가 현황 다운로드
+        $("#downloadFrUnitPrice").on('click', function() {
+            const frName = wares.brName + "_가맹점별단가순위";
+            exportToXlsx(1, frName);
+        });
+    },
+};
+
+/* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
+const wares = {
+    brName: {
+
+    }
+};
+
+// 년도 보내기
+function getFilterYear() {
+    const filterYear = {
+        filterYear: $("#filterYear").val(),
+    }
+    comms.지사별단가리스트(filterYear)
+}
+
+// 조회년도
+function getYear() {
+    const startYear = 2022;
+    const currentYear = new Date().getFullYear()
+    const $filterYear = $("#filterYear");
+    for (let i = currentYear; i >= startYear; i--) {
+        const htmlText = `<option value="${i}">${i}</option>`;
+        $filterYear.append(htmlText);
+    }
+}
+
+// 파일 다운로드에 사용 할 날짜형식 yyyymmdd
+function getDate(selectYear) {
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = ("0" + (1 + date.getMonth())).slice(-2);
+    const day = ("0" + date.getDate()).slice(-2);
+    if(selectYear == year) {
+        return year + month + day;
+    } else {
+        return selectYear;
+    }
+}
+
+// 엑셀 내보내기(Export)
+function exportToXlsx(i, filename) {
+    const year = $("#filterYear").val();
+    //FileSaver.js 로 로컬 다운로드가능 여부 확인
+    if(!AUIGrid.isAvailableLocalDownload(grids.s.id[i])) {
+        alertCaution("파일 다운로드가 불가능한 브라우저 입니다.", 1);
+        return;
+    }
+    AUIGrid.exportToXlsx(grids.s.id[i], {
+        fileName : filename + "_" + getDate(year),
+        progressBar : true,
+    });
+    console.log(filename + "_" + getDate(year));
+}
+
+/* 페이지가 로드되고 나서 실행 */
+$(function() {
+    onPageLoad();
+});
+
+/* 페이지가 로드되고 나서 실행 될 코드들을 담는다. */
+const onPageLoad = function() {
+    getYear();
+    getFilterYear();
+
+    grids.f.initialization();
+    grids.f.create();
+
+    trigs.basic();
+};

@@ -51,31 +51,31 @@
                     <div class="dashboard__article-header">
                         <h4 class="dashboard__article-title">지사 접수건 순위</h4>
                         <div class="dashboard__article-header-console">
-                            <button class="c-button c-button--green c-button--icon c-button--icon-excel" onclick="exportToXlsx(0, '지사접수순위')">엑셀 다운로드</button>
+                            <button class="c-button c-button--green c-button--icon c-button--icon-excel" id="brRegDown">엑셀 다운로드</button>
                         </div>
                     </div>
                     <div class="dashboard__article-body">
-                        <div id="main_grid"></div>
+                        <div id="grid_main"></div>
                     </div>
                 </article>
             </section>
         </div>
     </div>
 
-    <div class="pop">
-        <div class="pop__box pop__box--large">
+    <div class="pop" id="popFrReg">
+        <div class="pop__box pop__box--xlarge">
             <div class="pop__article">
                 <div class="pop__article-header">
-                    <h3><span>***</span>지사 가맹점별 월 접수건</h3>
-                    <button class="c-button c-button--green c-button--icon c-button--icon-excel" onclick="exportToXlsx(1, '가맹점별접수순위')">엑셀 다운로드</button>
+                    <h3><span id="brName"></span>지사 가맹점별 월 접수건</h3>
+                    <button class="c-button c-button--green c-button--icon c-button--icon-excel" id="frRegDown" onclick="exportToXlsx(1, '가맹점별접수순위')">엑셀 다운로드</button>
                 </div>
                 <div class="pop__article-content">
-                    <div id="pop_grid"></div>
+                    <div id="grid_pop"></div>
                 </div>
             </div>
             <ul class="pop__console">
                 <li>
-                    <button class="c-button c-button--darksolid">닫기</button>
+                    <button class="c-button c-button--darksolid pop__close">닫기</button>
                 </li>
             </ul>
         </div>

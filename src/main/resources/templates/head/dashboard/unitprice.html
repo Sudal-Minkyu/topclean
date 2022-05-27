@@ -23,9 +23,7 @@
                 <li>
                     <h3>조회년도</h3>
                     <div class="c-select">
-                        <select>
-                            <option value="">20**년</option>
-                        </select>
+                        <select id="filterYear"></select>
                     </div>
                 </li>
             </ul>
@@ -68,31 +66,31 @@
                     <div class="dashboard__article-header">
                         <h4 class="dashboard__article-title">지사별 단가</h4>
                         <div class="dashboard__article-header-console">
-                            <button class="c-button c-button--green c-button--icon c-button--icon-excel">엑셀 다운로드</button>
+                            <button class="c-button c-button--green c-button--icon c-button--icon-excel" id="downloadBrUnitPrice">엑셀 다운로드</button>
                         </div>
                     </div>
                     <div class="dashboard__article-body">
-                        <div id="main_grid" style="height: 400px;"></div>
+                        <div id="grid_main" class="grid--header-border" style="height: 400px;"></div>
                     </div>
                 </article>
             </section>
         </div>
     </div>
 
-    <div class="pop">
-        <div class="pop__box pop__box--large">
+    <div class="pop" id="popFrUnitPrice">
+        <div class="pop__box pop__box--xlarge">
             <div class="pop__article">
                 <div class="pop__article-header">
-                    <h3><span>***</span>지사 가맹점별 객단가</h3>
-                    <button class="c-button c-button--green c-button--icon c-button--icon-excel">엑셀 다운로드</button>
+                    <h3><span id="brName"></span>지사 가맹점별 객단가</h3>
+                    <button class="c-button c-button--green c-button--icon c-button--icon-excel" id="downloadFrUnitPrice">엑셀 다운로드</button>
                 </div>
                 <div class="pop__article-content">
-                    <div id="grid_pop"></div>
+                    <div id="grid_pop" class="grid--header-border"></div>
                 </div>
             </div>
             <ul class="pop__console">
                 <li>
-                    <button class="c-button c-button--darksolid">닫기</button>
+                    <button class="c-button c-button--darksolid pop__close">닫기</button>
                 </li>
             </ul>
         </div>

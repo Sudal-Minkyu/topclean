@@ -59,7 +59,7 @@ const comms = {
             grids.f.clear(0);
             grids.f.set(0, data);
             grids.f.setSorting(0, 'amtTotal', -1);
-        })
+        });
     },
 
     // 지정년도의 월별 매출 그래프 데이터 가져오기
