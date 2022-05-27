@@ -413,8 +413,9 @@ const trigs = {
 
         // 가맹점 월 접수 현황 다운로드
         $("#frRegDown").on('click', function() {
-            const frName = wares.brName + "_가맹점접수순위";
-            exportToXlsx(1, frName);
+            const fileName = wares.brName + "_가맹점접수순위";
+            console.log(fileName);
+            exportToXlsx(1, fileName);
         });
     },
 };
