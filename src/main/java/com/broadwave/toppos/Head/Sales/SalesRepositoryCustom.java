@@ -26,6 +26,6 @@ public interface SalesRepositoryCustom {
 
     List<ReceiptBranchRankDto> findByBranchReceiptRank(String filterYear); // 지사별 접수 순위 데이터
 
-    List<ReceiptFranchiseRankDto> findByFranchiseReceiptRank(String brId, String filterYear); // 가맹점별 접수 순위 데이터
+    List<ReceiptFranchiseRankDto> findByFranchiseReceiptRank(String brCode, String filterYear); // 가맹점별 접수 순위 데이터
 
 }

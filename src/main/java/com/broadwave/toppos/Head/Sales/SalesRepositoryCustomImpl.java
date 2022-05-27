@@ -590,7 +590,7 @@ public class SalesRepositoryCustomImpl extends QuerydslRepositorySupport impleme
 
     // 가맹점 접수 순위 데이터 NativeQuery
     @Override
-    public List<ReceiptFranchiseRankDto> findByFranchiseReceiptRank(String brId, String filterYear) {
+    public List<ReceiptFranchiseRankDto> findByFranchiseReceiptRank(String brCode, String filterYear) {
         EntityManager em = getEntityManager();
         StringBuilder sb = new StringBuilder();
 
@@ -601,14 +601,14 @@ public class SalesRepositoryCustomImpl extends QuerydslRepositorySupport impleme
         sb.append("             FROM cl_sales_count_month a \n");
         sb.append("             INNER JOIN bs_franchise b ON a.fr_code = b.fr_code \n");
         sb.append("             WHERE LEFT(a.cs_yyyymm, 4) =?1 \n");
-        sb.append("             AND a.br_code = (SELECT br_code FROM bs_branch WHERE br_id =?2) \n");
+        sb.append("             AND a.br_code =?2 \n");
         sb.append("             GROUP BY a.cs_yyyymm, b.fr_code ,b.fr_name \n");
         sb.append("             UNION ALL \n");
         sb.append("             SELECT a.by_yyyymm yyyymm,b.fr_code, b.fr_name, 0 cnt \n");
         sb.append("             FROM bs_yyyymm a \n");
         sb.append("             JOIN bs_franchise b \n");
         sb.append("             WHERE LEFT(a.by_yyyymm, 4)=?1 \n");
-        sb.append("             AND b.br_code = (SELECT br_code FROM bs_branch WHERE br_id =?2) \n");
+        sb.append("             AND b.br_code =?2 \n");
         sb.append("        ) x \n");
         sb.append("        GROUP BY x.yyyymm, x.fr_code \n");
         sb.append(") \n");
@@ -703,7 +703,7 @@ public class SalesRepositoryCustomImpl extends QuerydslRepositorySupport impleme
 
         Query query = em.createNativeQuery(sb.toString());
         query.setParameter(1, filterYear);
-        query.setParameter(2, brId);
+        query.setParameter(2, brCode);
         return jpaResultMapper.list(query, ReceiptFranchiseRankDto.class);
     }
 

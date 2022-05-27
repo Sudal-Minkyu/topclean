@@ -141,16 +141,16 @@ public class SalesService {
     }
 
     // 본사 - 가맹점 접수 순위 데이터 호출 API
-    public ResponseEntity<Map<String, Object>> headFranchiseReceiptList(String brId, String filterYear) {
+    public ResponseEntity<Map<String, Object>> headFranchiseReceiptList(String brCode, String filterYear) {
         log.info("headFranchiseReceiptList 호출");
 
-        log.info("brId  : " + brId);
+        log.info("brCode  : " + brCode);
         log.info("filterYear  : " + filterYear);
 
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
 
-        List<ReceiptFranchiseRankDto> franchiseReceiptList = salesRepositoryCustom.findByFranchiseReceiptRank(brId, filterYear);
+        List<ReceiptFranchiseRankDto> franchiseReceiptList = salesRepositoryCustom.findByFranchiseReceiptRank(brCode, filterYear);
 
         data.put("gridListData", franchiseReceiptList);
         return ResponseEntity.ok(res.dataSendSuccess(data));

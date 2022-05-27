@@ -1540,8 +1540,8 @@ public class HeadRestController {
     @GetMapping("headFranchiseReceiptRank")
     @ApiOperation(value = "가맹점별 접수 순위", notes = "가맹점별 접수 순위 데이터를 호출한다.")
     @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", value = "JWT Token", required = true, dataType = "string", paramType = "header")})
-    public ResponseEntity<Map<String, Object>> headBranchReceiptList(@RequestParam("branchId") String brId, @RequestParam("filterYear") String filterYear) {
-        return salesService.headFranchiseReceiptList(brId, filterYear);
+    public ResponseEntity<Map<String, Object>> headBranchReceiptList(@RequestParam("brCode") String brCode, @RequestParam("filterYear") String filterYear) {
+        return salesService.headFranchiseReceiptList(brCode, filterYear);
     }
 
     //@@@@@@@@@@@@@@@@@@@@@ 문자메세지 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
