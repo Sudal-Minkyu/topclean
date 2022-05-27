@@ -1544,6 +1544,22 @@ public class HeadRestController {
         return salesService.headFranchiseReceiptList(brCode, filterYear);
     }
 
+    // 본사 - 지사,가맹점 품목별 접수 현황 데이터 호출 API
+    @GetMapping("headItemReceiptStatus")
+    @ApiOperation(value = "품목별 접수 현황", notes = "품목별 접수 현황 데이터를 호출한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", value = "JWT Token", required = true, dataType = "string", paramType = "header")})
+    public ResponseEntity<Map<String, Object>> headItemReceiptStatus(@RequestParam("branchId") String brId, @RequestParam("franchiseId") String frId, @RequestParam("filterYear") String filterYear) {
+        return salesService.headItemReceiptStatus(brId, frId, filterYear);
+    }
+
+    // 본사 - 지사,가맹점 세부품목별 접수 현황 데이터 호출 API
+    @GetMapping("headItemReceiptDetailStatus")
+    @ApiOperation(value = "세부품목별 접수 현황", notes = "세부품목별 접수 현황 데이터를 호출한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", value = "JWT Token", required = true, dataType = "string", paramType = "header")})
+    public ResponseEntity<Map<String, Object>> headItemReceiptDetailStatus(@RequestParam("bgCode") String bgCode, @RequestParam("branchId") String brId, @RequestParam("franchiseId") String frId, @RequestParam("filterYear") String filterYear) {
+        return salesService.headItemReceiptDetailStatus(bgCode, brId, frId, filterYear);
+    }
+
     //@@@@@@@@@@@@@@@@@@@@@ 문자메세지 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     // 메세지 보낼 고객 리스트 호출
     @GetMapping("messageCustomerList")

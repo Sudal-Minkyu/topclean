@@ -28,4 +28,8 @@ public interface SalesRepositoryCustom {
 
     List<ReceiptFranchiseRankDto> findByFranchiseReceiptRank(String brCode, String filterYear); // 가맹점별 접수 순위 데이터
 
+    List<ItemReceiptStatusDto> findByItemReceiptStatus(String brId, String frId, String filterYear); // 지사,가맹점 품목별 접수현황 데이터
+
+    List<ItemReceiptDetailStatusDto> findByItemReceiptDetailStatus(String bgCode, String brId, String frId, String filterYear); // 지사,가맹점 세부품목별 접수현황 데이터
+
 }

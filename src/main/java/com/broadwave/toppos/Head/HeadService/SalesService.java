@@ -155,4 +155,39 @@ public class SalesService {
         data.put("gridListData", franchiseReceiptList);
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
+
+    // 본사 - 지사,가맹점 품목별 접수 현황 데이터 호출 API
+    public ResponseEntity<Map<String, Object>> headItemReceiptStatus(String brId, String frId, String filterYear) {
+        log.info("headItemReceiptStatus 호출");
+
+        log.info("brId  : " + brId);
+        log.info("frId  : " + frId);
+        log.info("filterYear  : " + filterYear);
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        List<ItemReceiptStatusDto> itemReceiptStatus = salesRepositoryCustom.findByItemReceiptStatus(brId, frId, filterYear);
+
+        data.put("gridListData", itemReceiptStatus);
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
+    // 본사 - 지사,가맹점 세부품목별 접수 현황 데이터 호출 API
+    public ResponseEntity<Map<String, Object>> headItemReceiptDetailStatus(String bgCode, String brId, String frId, String filterYear) {
+        log.info("headItemReceiptDetailStatus 호출");
+
+        log.info("bgCode  : " + bgCode);
+        log.info("brId  : " + brId);
+        log.info("frId  : " + frId);
+        log.info("filterYear  : " + filterYear);
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        List<ItemReceiptDetailStatusDto> itemReceiptDetailStatus = salesRepositoryCustom.findByItemReceiptDetailStatus(bgCode, brId, frId, filterYear);
+
+        data.put("gridListData", itemReceiptDetailStatus);
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
 }

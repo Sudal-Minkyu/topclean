@@ -10,15 +10,15 @@ import java.math.BigDecimal;
  * @author : DongA
  * Date : 2022-05-25
  * Time :
- * Remark : 품목별 매출현황 출력 dto
+ * Remark : 세부품목별 매출현황 출력 dto
  */
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 public class ItemSaleDetailStatusDto {
-    private String biItemcode; // 대분류 코드
-    private String biName; // 대분류 이름
+    private String biItemcode; // 상품 코드
+    private String biName; // 상품 이름
     private BigDecimal amt01;  // 1월 매출액
     private BigDecimal rate01; // 1월 매출비중
     private BigDecimal amt02;  // 2월 매출액

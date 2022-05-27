@@ -707,4 +707,277 @@ public class SalesRepositoryCustomImpl extends QuerydslRepositorySupport impleme
         return jpaResultMapper.list(query, ReceiptFranchiseRankDto.class);
     }
 
+    // 품목별 접수현황 데이터 NativeQuery
+    @Override
+    public List<ItemReceiptStatusDto> findByItemReceiptStatus(String brId, String frId, String filterYear) {
+
+        EntityManager em = getEntityManager();
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("with receiptData as ( \n");
+        sb.append("                SELECT x.yyyymm,x.bg_code,x.bg_name,SUM(cnt) cnt \n");
+        sb.append("                FROM ( \n");
+        sb.append("                        SELECT a.cs_yyyymm yyyymm,b.bg_item_groupcode bg_code,b.bg_name,sum(a.cs_count) cnt \n");
+        sb.append("                        FROM cl_sales_data_month a \n");
+        sb.append("                        INNER JOIN bs_item_group b ON left(a.bi_itemcode,3) = b.bg_item_groupcode \n");
+        if (!brId.equals("0") && frId.equals("0")) { // 지사 정보 입력시
+            sb.append("                    AND a.br_code = ( SELECT br_code FROM bs_branch WHERE br_id =?2) \n");
+        } else if (!brId.equals("0") && !frId.equals("0")) { // 가맹점 정보 입력시
+            sb.append("                    AND a.fr_code = ( SELECT fr_code FROM bs_franchise WHERE fr_id =?2 ) \n");
+        }
+        sb.append("                        WHERE left(a.cs_yyyymm ,4) =?1 \n");
+        sb.append("                        AND a.cs_type = '03' \n");
+        sb.append("                        GROUP BY a.cs_yyyymm,b.bg_item_groupcode,b.bg_name \n");
+        sb.append("                        UNION all \n");
+        sb.append("                        SELECT a.by_yyyymm,b.bg_item_groupcode bg_code ,b.bg_name,0 cnt \n");
+        sb.append("                        from bs_yyyymm a \n");
+        sb.append("                        INNER JOIN bs_item_group b ON b.bg_use_yn ='Y' \n");
+        sb.append("                        WHERE left(a.by_yyyymm,4)=?1 \n");
+        sb.append("                ) x \n");
+        sb.append("                GROUP BY x.yyyymm,x.bg_code \n");
+        sb.append(") \n");
+        sb.append("SELECT a.bg_code,a.bg_name \n");
+        sb.append(",x1.cnt cnt01,x1.cnt_rate rate01 \n");
+        sb.append(",x2.cnt cnt02,x2.cnt_rate rate02 \n");
+        sb.append(",x3.cnt cnt03,x3.cnt_rate rate03 \n");
+        sb.append(",x4.cnt cnt04,x4.cnt_rate rate04 \n");
+        sb.append(",x5.cnt cnt05,x5.cnt_rate rate05 \n");
+        sb.append(",x6.cnt cnt06,x6.cnt_rate rate06 \n");
+        sb.append(",x7.cnt cnt07,x7.cnt_rate rate07 \n");
+        sb.append(",x8.cnt cnt08,x8.cnt_rate rate08 \n");
+        sb.append(",x9.cnt cnt09,x9.cnt_rate rate09 \n");
+        sb.append(",x10.cnt cnt10,x10.cnt_rate rate10 \n");
+        sb.append(",x11.cnt cnt11,x11.cnt_rate rate11 \n");
+        sb.append(",x12.cnt cnt12,x12.cnt_rate rate12 \n");
+        sb.append(",xt.cnt cnttot,xt.cnt_rate ratetot \n");
+        sb.append("FROM (select distinct bg_code,bg_name from receiptData) a \n");
+        sb.append("INNER JOIN ( \n");
+        sb.append("        SELECT a.yyyymm,a.bg_code,SUM(cnt) cnt,IF(b.total_cnt =0,0,sum(a.cnt)/b.total_cnt * 100.0) cnt_rate \n");
+        sb.append("        FROM receiptData a \n");
+        sb.append("        INNER JOIN (SELECT yyyymm,SUM(cnt) total_cnt FROM receiptData WHERE right(yyyymm,2) ='01'  GROUP BY yyyymm) b ON a.yyyymm = b.yyyymm \n");
+        sb.append("        WHERE RIGHT(a.yyyymm,2) ='01' \n");
+        sb.append("        GROUP BY a.yyyymm,a.bg_code ) x1 ON a.bg_code = x1.bg_code \n");
+        sb.append("INNER JOIN ( \n");
+        sb.append("        SELECT a.yyyymm,a.bg_code,SUM(cnt) cnt,IF(b.total_cnt =0,0,sum(a.cnt)/b.total_cnt * 100.0) cnt_rate \n");
+        sb.append("        FROM receiptData a \n");
+        sb.append("        INNER JOIN (SELECT yyyymm,SUM(cnt) total_cnt FROM receiptData WHERE right(yyyymm,2) ='02'  GROUP BY yyyymm) b ON a.yyyymm = b.yyyymm \n");
+        sb.append("        WHERE RIGHT(a.yyyymm,2) ='02' \n");
+        sb.append("        GROUP BY a.yyyymm,a.bg_code ) x2 ON a.bg_code = x2.bg_code \n");
+        sb.append("INNER JOIN ( \n");
+        sb.append("        SELECT a.yyyymm,a.bg_code,SUM(cnt) cnt,IF(b.total_cnt =0,0,sum(a.cnt)/b.total_cnt * 100.0) cnt_rate \n");
+        sb.append("        FROM receiptData a \n");
+        sb.append("        INNER JOIN (SELECT yyyymm,SUM(cnt) total_cnt FROM receiptData WHERE right(yyyymm,2) ='03'  GROUP BY yyyymm) b ON a.yyyymm = b.yyyymm \n");
+        sb.append("        WHERE RIGHT(a.yyyymm,2) ='03' \n");
+        sb.append("        GROUP BY a.yyyymm,a.bg_code ) x3 ON a.bg_code = x3.bg_code \n");
+        sb.append("INNER JOIN ( \n");
+        sb.append("        SELECT a.yyyymm,a.bg_code,SUM(cnt) cnt,IF(b.total_cnt =0,0,sum(a.cnt)/b.total_cnt * 100.0) cnt_rate \n");
+        sb.append("        FROM receiptData a \n");
+        sb.append("        INNER JOIN (SELECT yyyymm,SUM(cnt) total_cnt FROM receiptData WHERE right(yyyymm,2) ='04'  GROUP BY yyyymm) b ON a.yyyymm = b.yyyymm \n");
+        sb.append("        WHERE RIGHT(a.yyyymm,2) ='04' \n");
+        sb.append("        GROUP BY a.yyyymm,a.bg_code ) x4 ON a.bg_code = x4.bg_code \n");
+        sb.append("INNER JOIN ( \n");
+        sb.append("        SELECT a.yyyymm,a.bg_code,SUM(cnt) cnt,IF(b.total_cnt =0,0,sum(a.cnt)/b.total_cnt * 100.0) cnt_rate \n");
+        sb.append("        FROM receiptData a \n");
+        sb.append("        INNER JOIN (SELECT yyyymm,SUM(cnt) total_cnt FROM receiptData WHERE right(yyyymm,2) ='05'  GROUP BY yyyymm) b ON a.yyyymm = b.yyyymm \n");
+        sb.append("        WHERE RIGHT(a.yyyymm,2) ='05' \n");
+        sb.append("        GROUP BY a.yyyymm,a.bg_code ) x5 ON a.bg_code = x5.bg_code \n");
+        sb.append("INNER JOIN ( \n");
+        sb.append("        SELECT a.yyyymm,a.bg_code,SUM(cnt) cnt,IF(b.total_cnt =0,0,sum(a.cnt)/b.total_cnt * 100.0) cnt_rate \n");
+        sb.append("        FROM receiptData a \n");
+        sb.append("        INNER JOIN (SELECT yyyymm,SUM(cnt) total_cnt FROM receiptData WHERE right(yyyymm,2) ='06'  GROUP BY yyyymm) b ON a.yyyymm = b.yyyymm \n");
+        sb.append("        WHERE RIGHT(a.yyyymm,2) ='06' \n");
+        sb.append("        GROUP BY a.yyyymm,a.bg_code ) x6 ON a.bg_code = x6.bg_code \n");
+        sb.append("INNER JOIN ( \n");
+        sb.append("        SELECT a.yyyymm,a.bg_code,SUM(cnt) cnt,IF(b.total_cnt =0,0,sum(a.cnt)/b.total_cnt * 100.0) cnt_rate \n");
+        sb.append("        FROM receiptData a \n");
+        sb.append("        INNER JOIN (SELECT yyyymm,SUM(cnt) total_cnt FROM receiptData WHERE right(yyyymm,2) ='07'  GROUP BY yyyymm) b ON a.yyyymm = b.yyyymm \n");
+        sb.append("        WHERE RIGHT(a.yyyymm,2) ='07' \n");
+        sb.append("        GROUP BY a.yyyymm,a.bg_code ) x7 ON a.bg_code = x7.bg_code \n");
+        sb.append("INNER JOIN ( \n");
+        sb.append("        SELECT a.yyyymm,a.bg_code,SUM(cnt) cnt,IF(b.total_cnt =0,0,sum(a.cnt)/b.total_cnt * 100.0) cnt_rate \n");
+        sb.append("        FROM receiptData a \n");
+        sb.append("        INNER JOIN (SELECT yyyymm,SUM(cnt) total_cnt FROM receiptData WHERE right(yyyymm,2) ='08'  GROUP BY yyyymm) b ON a.yyyymm = b.yyyymm \n");
+        sb.append("        WHERE RIGHT(a.yyyymm,2) ='08' \n");
+        sb.append("        GROUP BY a.yyyymm,a.bg_code ) x8 ON a.bg_code = x8.bg_code \n");
+        sb.append("INNER JOIN ( \n");
+        sb.append("        SELECT a.yyyymm,a.bg_code,SUM(cnt) cnt,IF(b.total_cnt =0,0,sum(a.cnt)/b.total_cnt * 100.0) cnt_rate \n");
+        sb.append("        FROM receiptData a \n");
+        sb.append("        INNER JOIN (SELECT yyyymm,SUM(cnt) total_cnt FROM receiptData WHERE right(yyyymm,2) ='09'  GROUP BY yyyymm) b ON a.yyyymm = b.yyyymm \n");
+        sb.append("        WHERE RIGHT(a.yyyymm,2) ='09' \n");
+        sb.append("        GROUP BY a.yyyymm,a.bg_code ) x9 ON a.bg_code = x9.bg_code \n");
+        sb.append("INNER JOIN ( \n");
+        sb.append("        SELECT a.yyyymm,a.bg_code,SUM(cnt) cnt,IF(b.total_cnt =0,0,sum(a.cnt)/b.total_cnt * 100.0) cnt_rate \n");
+        sb.append("        FROM receiptData a \n");
+        sb.append("        INNER JOIN (SELECT yyyymm,SUM(cnt) total_cnt FROM receiptData WHERE right(yyyymm,2) ='10'  GROUP BY yyyymm) b ON a.yyyymm = b.yyyymm \n");
+        sb.append("        WHERE RIGHT(a.yyyymm,2) ='10' \n");
+        sb.append("        GROUP BY a.yyyymm,a.bg_code ) x10 ON a.bg_code = x10.bg_code \n");
+        sb.append("INNER JOIN ( \n");
+        sb.append("        SELECT a.yyyymm,a.bg_code,SUM(cnt) cnt,IF(b.total_cnt =0,0,sum(a.cnt)/b.total_cnt * 100.0) cnt_rate \n");
+        sb.append("        FROM receiptData a \n");
+        sb.append("        INNER JOIN (SELECT yyyymm,SUM(cnt) total_cnt FROM receiptData WHERE right(yyyymm,2) ='11'  GROUP BY yyyymm) b ON a.yyyymm = b.yyyymm \n");
+        sb.append("        WHERE RIGHT(a.yyyymm,2) ='11' \n");
+        sb.append("        GROUP BY a.yyyymm,a.bg_code ) x11 ON a.bg_code = x11.bg_code \n");
+        sb.append("INNER JOIN ( \n");
+        sb.append("        SELECT a.yyyymm,a.bg_code,SUM(cnt) cnt,IF(b.total_cnt =0,0,sum(a.cnt)/b.total_cnt * 100.0) cnt_rate \n");
+        sb.append("        FROM receiptData a \n");
+        sb.append("        INNER JOIN (SELECT yyyymm,SUM(cnt) total_cnt FROM receiptData WHERE right(yyyymm,2) ='12'  GROUP BY yyyymm) b ON a.yyyymm = b.yyyymm \n");
+        sb.append("        WHERE RIGHT(a.yyyymm,2) ='12' \n");
+        sb.append("        GROUP BY a.yyyymm,a.bg_code ) x12 ON a.bg_code = x12.bg_code \n");
+        sb.append("INNER JOIN ( \n");
+        sb.append("        SELECT a.bg_code,SUM(cnt) cnt,IF(b.total_cnt =0,0,sum(a.cnt)/b.total_cnt * 100.0) cnt_rate \n");
+        sb.append("        FROM receiptData a \n");
+        sb.append("        INNER JOIN (SELECT left(yyyymm,4) yyyy, SUM(cnt) total_cnt FROM receiptData GROUP BY left(yyyymm,4) ) b ON left(a.yyyymm,4) = b.yyyy \n");
+        sb.append("        GROUP BY a.bg_code ) xt ON a.bg_code = xt.bg_code \n");
+        sb.append("ORDER BY a.bg_code \n");
+
+        Query query = em.createNativeQuery(sb.toString());
+
+        query.setParameter(1, filterYear);
+        // 파라미터 설정과 네이티브 쿼리의 입력인자와 맞춰야함
+        if (!brId.equals("0") && frId.equals("0")) { // 지사 정보 입력시
+            query.setParameter(2, brId);
+        } else if (!brId.equals("0") && !frId.equals("0")) { // 가맹점 정보 입력시
+            query.setParameter(2, frId);
+        }
+
+        return jpaResultMapper.list(query, ItemReceiptStatusDto.class);
+    }
+
+    // 세부품목별 접수현황 데이터 NativeQuery
+    @Override
+    public List<ItemReceiptDetailStatusDto> findByItemReceiptDetailStatus(String bgCode, String brId, String frId, String filterYear) {
+        EntityManager em = getEntityManager();
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("with saleData as ( \n");
+        sb.append("        SELECT x.yyyymm,x.bi_itemcode,x.bi_name,SUM(cnt) cnt \n");
+        sb.append("        FROM ( \n");
+        sb.append("                SELECT a.cs_yyyymm yyyymm,b.bi_itemcode,b.bi_name,sum(a.cs_count) cnt \n");
+        sb.append("                FROM cl_sales_data_month a \n");
+        sb.append("                INNER JOIN bs_item b ON a.bi_itemcode = b.bi_itemcode \n");
+        sb.append("                WHERE left(a.cs_yyyymm ,4) =?1 \n");
+        sb.append("                AND left(a.bi_itemcode,3)=?2 \n");
+        if (!brId.equals("0") && frId.equals("0")) { // 지사 정보 입력시
+            sb.append("            AND a.br_code = ( SELECT br_code FROM bs_branch WHERE br_id =?3) \n");
+        } else if (!brId.equals("0") && !frId.equals("0")) { // 가맹점 정보 입력시
+            sb.append("            AND a.fr_code = ( SELECT fr_code FROM bs_franchise WHERE fr_id = ?3) \n");
+        }
+        sb.append("                AND a.cs_type = '03' \n");
+        sb.append("                GROUP BY a.cs_yyyymm,b.bi_itemcode,b.bi_name \n");
+        sb.append("                UNION all \n");
+        sb.append("                SELECT a.by_yyyymm,b.bi_itemcode ,b.bi_name,0 cnt \n");
+        sb.append("                from bs_yyyymm a \n");
+        sb.append("                INNER JOIN bs_item b ON b.bi_use_yn='Y' and LEFT(b.bi_itemcode,3)='D01' \n");
+        sb.append("                WHERE left(a.by_yyyymm,4)='2022'            \n");
+        sb.append("        ) x \n");
+        sb.append("        GROUP BY x.yyyymm,x.bi_itemcode \n");
+        sb.append(") \n");
+        sb.append("SELECT a.bi_itemcode,a.bi_name \n");
+        sb.append(",x1.cnt cnt01,x1.cnt_rate rate01 \n");
+        sb.append(",x2.cnt cnt02,x2.cnt_rate rate02 \n");
+        sb.append(",x3.cnt cnt03,x3.cnt_rate rate03 \n");
+        sb.append(",x4.cnt cnt04,x4.cnt_rate rate04 \n");
+        sb.append(",x5.cnt cnt05,x5.cnt_rate rate05 \n");
+        sb.append(",x6.cnt cnt06,x6.cnt_rate rate06 \n");
+        sb.append(",x7.cnt cnt07,x7.cnt_rate rate07 \n");
+        sb.append(",x8.cnt cnt08,x8.cnt_rate rate08 \n");
+        sb.append(",x9.cnt cnt09,x9.cnt_rate rate09 \n");
+        sb.append(",x10.cnt cnt10,x10.cnt_rate rate10 \n");
+        sb.append(",x11.cnt cnt11,x11.cnt_rate rate11 \n");
+        sb.append(",x12.cnt cnt12,x12.cnt_rate rate12 \n");
+        sb.append(",xt.cnt cntTotal,xt.cnt_rate rateTotal \n");
+        sb.append("FROM (select distinct bi_itemcode,bi_name from saleData) a \n");
+        sb.append("INNER JOIN ( \n");
+        sb.append("        SELECT a.yyyymm,a.bi_itemcode,SUM(cnt) cnt,IF(b.total_cnt =0,0,sum(a.cnt)/b.total_cnt * 100.0) cnt_rate \n");
+        sb.append("        FROM saleData a \n");
+        sb.append("        INNER JOIN (SELECT yyyymm,SUM(cnt) total_cnt FROM saleData WHERE right(yyyymm,2) ='01'  GROUP BY yyyymm) b ON a.yyyymm = b.yyyymm \n");
+        sb.append("        WHERE RIGHT(a.yyyymm,2) ='01' \n");
+        sb.append("        GROUP BY a.yyyymm,a.bi_itemcode ) x1 ON a.bi_itemcode = x1.bi_itemcode \n");
+        sb.append("INNER JOIN ( \n");
+        sb.append("        SELECT a.yyyymm,a.bi_itemcode,SUM(cnt) cnt,IF(b.total_cnt =0,0,sum(a.cnt)/b.total_cnt * 100.0) cnt_rate \n");
+        sb.append("        FROM saleData a \n");
+        sb.append("        INNER JOIN (SELECT yyyymm,SUM(cnt) total_cnt FROM saleData WHERE right(yyyymm,2) ='02'  GROUP BY yyyymm) b ON a.yyyymm = b.yyyymm \n");
+        sb.append("        WHERE RIGHT(a.yyyymm,2) ='02' \n");
+        sb.append("        GROUP BY a.yyyymm,a.bi_itemcode ) x2 ON a.bi_itemcode = x2.bi_itemcode \n");
+        sb.append("INNER JOIN ( \n");
+        sb.append("        SELECT a.yyyymm,a.bi_itemcode,SUM(cnt) cnt,IF(b.total_cnt =0,0,sum(a.cnt)/b.total_cnt * 100.0) cnt_rate \n");
+        sb.append("        FROM saleData a \n");
+        sb.append("        INNER JOIN (SELECT yyyymm,SUM(cnt) total_cnt FROM saleData WHERE right(yyyymm,2) ='03'  GROUP BY yyyymm) b ON a.yyyymm = b.yyyymm \n");
+        sb.append("        WHERE RIGHT(a.yyyymm,2) ='03' \n");
+        sb.append("        GROUP BY a.yyyymm,a.bi_itemcode ) x3 ON a.bi_itemcode = x3.bi_itemcode \n");
+        sb.append("INNER JOIN ( \n");
+        sb.append("        SELECT a.yyyymm,a.bi_itemcode,SUM(cnt) cnt,IF(b.total_cnt =0,0,sum(a.cnt)/b.total_cnt * 100.0) cnt_rate \n");
+        sb.append("        FROM saleData a \n");
+        sb.append("        INNER JOIN (SELECT yyyymm,SUM(cnt) total_cnt FROM saleData WHERE right(yyyymm,2) ='04'  GROUP BY yyyymm) b ON a.yyyymm = b.yyyymm \n");
+        sb.append("        WHERE RIGHT(a.yyyymm,2) ='04' \n");
+        sb.append("        GROUP BY a.yyyymm,a.bi_itemcode ) x4 ON a.bi_itemcode = x4.bi_itemcode \n");
+        sb.append("INNER JOIN ( \n");
+        sb.append("        SELECT a.yyyymm,a.bi_itemcode,SUM(cnt) cnt,IF(b.total_cnt =0,0,sum(a.cnt)/b.total_cnt * 100.0) cnt_rate \n");
+        sb.append("        FROM saleData a \n");
+        sb.append("        INNER JOIN (SELECT yyyymm,SUM(cnt) total_cnt FROM saleData WHERE right(yyyymm,2) ='05'  GROUP BY yyyymm) b ON a.yyyymm = b.yyyymm \n");
+        sb.append("        WHERE RIGHT(a.yyyymm,2) ='05' \n");
+        sb.append("        GROUP BY a.yyyymm,a.bi_itemcode ) x5 ON a.bi_itemcode = x5.bi_itemcode \n");
+        sb.append("INNER JOIN ( \n");
+        sb.append("        SELECT a.yyyymm,a.bi_itemcode,SUM(cnt) cnt,IF(b.total_cnt =0,0,sum(a.cnt)/b.total_cnt * 100.0) cnt_rate \n");
+        sb.append("        FROM saleData a \n");
+        sb.append("        INNER JOIN (SELECT yyyymm,SUM(cnt) total_cnt FROM saleData WHERE right(yyyymm,2) ='06'  GROUP BY yyyymm) b ON a.yyyymm = b.yyyymm \n");
+        sb.append("        WHERE RIGHT(a.yyyymm,2) ='06' \n");
+        sb.append("        GROUP BY a.yyyymm,a.bi_itemcode ) x6 ON a.bi_itemcode = x6.bi_itemcode \n");
+        sb.append("INNER JOIN ( \n");
+        sb.append("        SELECT a.yyyymm,a.bi_itemcode,SUM(cnt) cnt,IF(b.total_cnt =0,0,sum(a.cnt)/b.total_cnt * 100.0) cnt_rate \n");
+        sb.append("        FROM saleData a \n");
+        sb.append("        INNER JOIN (SELECT yyyymm,SUM(cnt) total_cnt FROM saleData WHERE right(yyyymm,2) ='07'  GROUP BY yyyymm) b ON a.yyyymm = b.yyyymm \n");
+        sb.append("        WHERE RIGHT(a.yyyymm,2) ='07' \n");
+        sb.append("        GROUP BY a.yyyymm,a.bi_itemcode ) x7 ON a.bi_itemcode = x7.bi_itemcode \n");
+        sb.append("INNER JOIN ( \n");
+        sb.append("        SELECT a.yyyymm,a.bi_itemcode,SUM(cnt) cnt,IF(b.total_cnt =0,0,sum(a.cnt)/b.total_cnt * 100.0) cnt_rate \n");
+        sb.append("        FROM saleData a \n");
+        sb.append("        INNER JOIN (SELECT yyyymm,SUM(cnt) total_cnt FROM saleData WHERE right(yyyymm,2) ='08'  GROUP BY yyyymm) b ON a.yyyymm = b.yyyymm \n");
+        sb.append("        WHERE RIGHT(a.yyyymm,2) ='08' \n");
+        sb.append("        GROUP BY a.yyyymm,a.bi_itemcode ) x8 ON a.bi_itemcode = x8.bi_itemcode \n");
+        sb.append("INNER JOIN ( \n");
+        sb.append("        SELECT a.yyyymm,a.bi_itemcode,SUM(cnt) cnt,IF(b.total_cnt =0,0,sum(a.cnt)/b.total_cnt * 100.0) cnt_rate \n");
+        sb.append("        FROM saleData a \n");
+        sb.append("        INNER JOIN (SELECT yyyymm,SUM(cnt) total_cnt FROM saleData WHERE right(yyyymm,2) ='09'  GROUP BY yyyymm) b ON a.yyyymm = b.yyyymm \n");
+        sb.append("        WHERE RIGHT(a.yyyymm,2) ='09' \n");
+        sb.append("        GROUP BY a.yyyymm,a.bi_itemcode ) x9 ON a.bi_itemcode = x9.bi_itemcode \n");
+        sb.append("INNER JOIN ( \n");
+        sb.append("        SELECT a.yyyymm,a.bi_itemcode,SUM(cnt) cnt,IF(b.total_cnt =0,0,sum(a.cnt)/b.total_cnt * 100.0) cnt_rate \n");
+        sb.append("        FROM saleData a \n");
+        sb.append("        INNER JOIN (SELECT yyyymm,SUM(cnt) total_cnt FROM saleData WHERE right(yyyymm,2) ='10'  GROUP BY yyyymm) b ON a.yyyymm = b.yyyymm \n");
+        sb.append("        WHERE RIGHT(a.yyyymm,2) ='10' \n");
+        sb.append("        GROUP BY a.yyyymm,a.bi_itemcode ) x10 ON a.bi_itemcode = x10.bi_itemcode \n");
+        sb.append("INNER JOIN ( \n");
+        sb.append("        SELECT a.yyyymm,a.bi_itemcode,SUM(cnt) cnt,IF(b.total_cnt =0,0,sum(a.cnt)/b.total_cnt * 100.0) cnt_rate \n");
+        sb.append("        FROM saleData a \n");
+        sb.append("        INNER JOIN (SELECT yyyymm,SUM(cnt) total_cnt FROM saleData WHERE right(yyyymm,2) ='11'  GROUP BY yyyymm) b ON a.yyyymm = b.yyyymm \n");
+        sb.append("        WHERE RIGHT(a.yyyymm,2) ='11' \n");
+        sb.append("        GROUP BY a.yyyymm,a.bi_itemcode ) x11 ON a.bi_itemcode = x11.bi_itemcode \n");
+        sb.append("INNER JOIN ( \n");
+        sb.append("        SELECT a.yyyymm,a.bi_itemcode,SUM(cnt) cnt,IF(b.total_cnt =0,0,sum(a.cnt)/b.total_cnt * 100.0) cnt_rate \n");
+        sb.append("        FROM saleData a \n");
+        sb.append("        INNER JOIN (SELECT yyyymm,SUM(cnt) total_cnt FROM saleData WHERE right(yyyymm,2) ='12'  GROUP BY yyyymm) b ON a.yyyymm = b.yyyymm \n");
+        sb.append("        WHERE RIGHT(a.yyyymm,2) ='12' \n");
+        sb.append("        GROUP BY a.yyyymm,a.bi_itemcode ) x12 ON a.bi_itemcode = x12.bi_itemcode \n");
+        sb.append("INNER JOIN ( \n");
+        sb.append("        SELECT a.bi_itemcode,SUM(cnt) cnt,IF(b.total_cnt =0,0,sum(a.cnt)/b.total_cnt * 100.0) cnt_rate \n");
+        sb.append("        FROM saleData a \n");
+        sb.append("        INNER JOIN (SELECT left(yyyymm,4) yyyy, SUM(cnt) total_cnt FROM saleData GROUP BY left(yyyymm,4) ) b ON left(a.yyyymm,4) = b.yyyy \n");
+        sb.append("        GROUP BY a.bi_itemcode ) xt ON a.bi_itemcode = xt.bi_itemcode \n");
+        sb.append("ORDER BY a.bi_itemcode \n");
+
+        Query query = em.createNativeQuery(sb.toString());
+
+        query.setParameter(1, filterYear);
+        query.setParameter(2, bgCode);
+        // 파라미터 설정과 네이티브 쿼리의 입력인자와 맞춰야함
+        if (!brId.equals("0") && frId.equals("0")) { // 지사 정보 입력시
+            query.setParameter(3, brId);
+        } else if (!brId.equals("0") && !frId.equals("0")) { // 가맹점 정보 입력시
+            query.setParameter(3, frId);
+        }
+
+        return jpaResultMapper.list(query, ItemReceiptDetailStatusDto.class);
+    }
+
 }
