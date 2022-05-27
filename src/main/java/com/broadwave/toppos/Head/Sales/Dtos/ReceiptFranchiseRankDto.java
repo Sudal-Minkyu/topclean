@@ -10,15 +10,15 @@ import java.math.BigDecimal;
  * @author : DongA
  * Date : 2022-05-26
  * Time :
- * Remark : 지사별 접수 순위 출력 dto
+ * Remark : 가맹점별 접수 순위 출력 dto
  */
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 public class ReceiptFranchiseRankDto {
-    private String brCode; // 지사 코드
-    private String brName; // 지사 이름
+    private String frCode; // 가맹점 코드
+    private String frName; // 가맹점 이름
     private BigDecimal cnt01; // 1월 접속건수
     private BigDecimal cnt02; // 2월 접속건수
     private BigDecimal cnt03; // 3월 접속건수
