@@ -8,7 +8,7 @@ import {activateBrFrListInputs} from '../../module/m_setBrFrList.js'
  */
 const dtos = {
     send: {
-        품목별접수건: {
+        headItemReceiptStatus: {
             branchId: "s",
             franchiseId: "s",
             filterYear: "s",
@@ -21,22 +21,22 @@ const dtos = {
         }
     },
     receive: {
-        품목별접수건리스트: {
+        headItemReceiptStatus: {
             bgCode: "s",
             bgName: "s",
-            amt01: "n",
-            amt02: "n",
-            amt03: "n",
-            amt04: "n",
-            amt05: "n",
-            amt06: "n",
-            amt07: "n",
-            amt08: "n",
-            amt09: "n",
-            amt10: "n",
-            amt11: "n",
-            amt12: "n",
-            amtTotal: "n",
+            cnt01: "n",
+            cnt02: "n",
+            cnt03: "n",
+            cnt04: "n",
+            cnt05: "n",
+            cnt06: "n",
+            cnt07: "n",
+            cnt08: "n",
+            cnt09: "n",
+            cnt10: "n",
+            cnt11: "n",
+            cnt12: "n",
+            cntTotal: "n",
             rate01: "n",
             rate02: "n",
             rate03: "n",
@@ -54,19 +54,19 @@ const dtos = {
         세부품목별접수건리스트: {
             biItemcode: "s",
             biName: "s",
-            amt01: "n",
-            amt02: "n",
-            amt03: "n",
-            amt04: "n",
-            amt05: "n",
-            amt06: "n",
-            amt07: "n",
-            amt08: "n",
-            amt09: "n",
-            amt10: "n",
-            amt11: "n",
-            amt12: "n",
-            amtTotal: "n",
+            cnt01: "n",
+            cnt02: "n",
+            cnt03: "n",
+            cnt04: "n",
+            cnt05: "n",
+            cnt06: "n",
+            cnt07: "n",
+            cnt08: "n",
+            cnt09: "n",
+            cnt10: "n",
+            cnt11: "n",
+            cnt12: "n",
+            cntTotal: "n",
             rate01: "n",
             rate02: "n",
             rate03: "n",
@@ -87,27 +87,27 @@ const dtos = {
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
     // 품목 접수리스트 조회
-    품목리스트(condition) {
-        // CommonUI.ajax("api주소", "GET", condition, function(res) {
-        //     const data = res.sendData.gridListData;
-        //     dv.chk(data, dtos.receive.품목별접수건리스트, "품목접수리스트 받아오기");
-        //     wares.searchCondition = condition;
-        //     grids.f.clear(0);
-        //     grids.f.set(0, data);
-        //     grids.f.setSorting(0, '전체접수건', -1);
-        // })
+    getHeadItemReceiptStatus(condition) {
+        CommonUI.ajax("/api/head/headItemReceiptStatus", "GET", condition, function(res) {
+            const data = res.sendData.gridListData;
+            dv.chk(data, dtos.receive.headItemReceiptStatus, "품목접수리스트 받아오기");
+            wares.searchCondition = condition;
+            grids.f.clear(0);
+            grids.f.set(0, data);
+            grids.f.setSorting(0, 'cntTotal', -1);
+        })
     },
 
     // 세부 품목 매출리스트 조회
-    세부품목리스트(condition) {
-        // CommonUI.ajax("api주소", "GET", condition, function(res) {
-        //     const data = res.sendData.gridListData;
-        //     dv.chk(data, dtos.receive.headItemSaleDetailStatus, "세부품목 접수 리스트 받아오기");
-        //     grids.f.resize(1);
-        //     grids.f.clear(1);
-        //     grids.f.set(1, data);
-        //     grids.f.setSorting(1, '전체접수건', -1);
-        // })
+    getHeadItemReceiptDetailStatus(condition) {
+        CommonUI.ajax("/api/head/headItemReceiptDetailStatus", "GET", condition, function(res) {
+            const data = res.sendData.gridListData;
+            dv.chk(data, dtos.receive.headItemSaleDetailStatus, "세부품목 접수 리스트 받아오기");
+            grids.f.resize(1);
+            grids.f.clear(1);
+            grids.f.set(1, data);
+            grids.f.setSorting(1, 'cntTotal', -1);
+        })
     }
 };
 
@@ -142,14 +142,14 @@ const grids = {
                     headerText: '1월',
                     children: [
                         {
-                            dataField: '',
+                            dataField: 'cnt01',
                             headerText: '접수건',
                             style: "grid_textalign_right",
                             width: 90,
                             dataType: "numeric",
                             autoThousandSeparator: "true",
                         }, {
-                            dataField: '',
+                            dataField: 'rate01',
                             headerText: '접수건<br>비중',
                             width: 70,
                             style: "grid_textalign_right",
@@ -162,7 +162,7 @@ const grids = {
                     headerText: '2월',
                     children: [
                         {
-                            dataField: 'amt02',
+                            dataField: 'cnt02',
                             headerText: '접수건',
                             style: "grid_textalign_right",
                             width: 90,
@@ -182,7 +182,7 @@ const grids = {
                     headerText: '3월',
                     children: [
                         {
-                            dataField: 'amt03',
+                            dataField: 'cnt03',
                             headerText: '접수건',
                             style: "grid_textalign_right",
                             width: 90,
@@ -202,7 +202,7 @@ const grids = {
                     headerText: '4월',
                     children: [
                         {
-                            dataField: 'amt04',
+                            dataField: 'cnt04',
                             headerText: '접수건',
                             style: "grid_textalign_right",
                             width: 90,
@@ -222,7 +222,7 @@ const grids = {
                     headerText: '5월',
                     children: [
                         {
-                            dataField: 'amt05',
+                            dataField: 'cnt05',
                             headerText: '접수건',
                             style: "grid_textalign_right",
                             width: 90,
@@ -242,7 +242,7 @@ const grids = {
                     headerText: '6월',
                     children: [
                         {
-                            dataField: 'amt06',
+                            dataField: 'cnt06',
                             headerText: '접수건',
                             style: "grid_textalign_right",
                             width: 90,
@@ -262,7 +262,7 @@ const grids = {
                     headerText: '7월',
                     children: [
                         {
-                            dataField: 'amt07',
+                            dataField: 'cnt07',
                             headerText: '접수건',
                             style: "grid_textalign_right",
                             width: 90,
@@ -282,7 +282,7 @@ const grids = {
                     headerText: '8월',
                     children: [
                         {
-                            dataField: 'amt08',
+                            dataField: 'cnt08',
                             headerText: '접수건',
                             style: "grid_textalign_right",
                             width: 90,
@@ -302,7 +302,7 @@ const grids = {
                     headerText: '9월',
                     children: [
                         {
-                            dataField: 'amt09',
+                            dataField: 'cnt09',
                             headerText: '접수건',
                             style: "grid_textalign_right",
                             width: 90,
@@ -322,7 +322,7 @@ const grids = {
                     headerText: '10월',
                     children: [
                         {
-                            dataField: 'amt10',
+                            dataField: 'cnt10',
                             headerText: '접수건',
                             style: "grid_textalign_right",
                             width: 90,
@@ -342,7 +342,7 @@ const grids = {
                     headerText: '11월',
                     children: [
                         {
-                            dataField: 'amt11',
+                            dataField: 'cnt11',
                             headerText: '접수건',
                             style: "grid_textalign_right",
                             width: 90,
@@ -362,7 +362,7 @@ const grids = {
                     headerText: '12월',
                     children: [
                         {
-                            dataField: 'amt12',
+                            dataField: 'cnt12',
                             headerText: '접수건',
                             style: "grid_textalign_right",
                             width: 90,
@@ -382,7 +382,7 @@ const grids = {
                     headerText: '전체',
                     children: [
                         {
-                            dataField: 'amtTotal',
+                            dataField: 'cntTotal',
                             headerText: '접수건',
                             style: "grid_textalign_right",
                             width: 90,
@@ -430,7 +430,7 @@ const grids = {
                     headerText: '1월',
                     children: [
                         {
-                            dataField: 'amt01',
+                            dataField: 'cnt01',
                             headerText: '접수건',
                             style: "grid_textalign_right",
                             width: 90,
@@ -450,7 +450,7 @@ const grids = {
                     headerText: '2월',
                     children: [
                         {
-                            dataField: 'amt02',
+                            dataField: 'cnt02',
                             headerText: '접수건',
                             style: "grid_textalign_right",
                             width: 90,
@@ -470,7 +470,7 @@ const grids = {
                     headerText: '3월',
                     children: [
                         {
-                            dataField: 'amt03',
+                            dataField: 'cnt03',
                             headerText: '접수건',
                             style: "grid_textalign_right",
                             width: 90,
@@ -490,7 +490,7 @@ const grids = {
                     headerText: '4월',
                     children: [
                         {
-                            dataField: 'amt04',
+                            dataField: 'cnt04',
                             headerText: '접수건',
                             style: "grid_textalign_right",
                             width: 90,
@@ -510,7 +510,7 @@ const grids = {
                     headerText: '5월',
                     children: [
                         {
-                            dataField: 'amt05',
+                            dataField: 'cnt05',
                             headerText: '접수건',
                             style: "grid_textalign_right",
                             width: 90,
@@ -530,7 +530,7 @@ const grids = {
                     headerText: '6월',
                     children: [
                         {
-                            dataField: 'amt06',
+                            dataField: 'cnt06',
                             headerText: '접수건',
                             style: "grid_textalign_right",
                             width: 90,
@@ -550,7 +550,7 @@ const grids = {
                     headerText: '7월',
                     children: [
                         {
-                            dataField: 'amt07',
+                            dataField: 'cnt07',
                             headerText: '접수건',
                             style: "grid_textalign_right",
                             width: 90,
@@ -570,7 +570,7 @@ const grids = {
                     headerText: '8월',
                     children: [
                         {
-                            dataField: 'amt08',
+                            dataField: 'cnt08',
                             headerText: '접수건',
                             style: "grid_textalign_right",
                             width: 90,
@@ -590,7 +590,7 @@ const grids = {
                     headerText: '9월',
                     children: [
                         {
-                            dataField: 'amt09',
+                            dataField: 'cnt09',
                             headerText: '접수건',
                             style: "grid_textalign_right",
                             width: 90,
@@ -610,7 +610,7 @@ const grids = {
                     headerText: '10월',
                     children: [
                         {
-                            dataField: 'amt10',
+                            dataField: 'cnt10',
                             headerText: '접수건',
                             style: "grid_textalign_right",
                             width: 90,
@@ -630,7 +630,7 @@ const grids = {
                     headerText: '11월',
                     children: [
                         {
-                            dataField: 'amt11',
+                            dataField: 'cnt11',
                             headerText: '접수건',
                             style: "grid_textalign_right",
                             width: 90,
@@ -650,7 +650,7 @@ const grids = {
                     headerText: '12월',
                     children: [
                         {
-                            dataField: 'amt12',
+                            dataField: 'cnt12',
                             headerText: '접수건',
                             style: "grid_textalign_right",
                             width: 90,
@@ -670,7 +670,7 @@ const grids = {
                     headerText: '전체',
                     children: [
                         {
-                            dataField: 'amtTotal',
+                            dataField: 'cntTotal',
                             headerText: '접수건',
                             style: "grid_textalign_right",
                             width: 90,
@@ -774,7 +774,7 @@ const trigs = {
                 wares.bgName = bgName;
                 $('#popDetailItemReg').addClass('active');
                 $('#bgName').text(bgName);
-                comms.세부품목리스트(condition);
+                comms.getHeadItemReceiptDetailStatus(condition);
             } else {
                 return;
             }
@@ -786,12 +786,12 @@ const trigs = {
         });
 
         // 품목별 접수건 다운로드
-        $('#itemSales').on('click', function() {
+        $('#downloadItemReg').on('click', function() {
             exportToXlsx(0, '품목별접수건');
         });
 
         // 세부 품목별 접수건 다운로드
-        $("#detailItemSalesDown").on('click', function() {
+        $("#downloadDetailItemReg").on('click', function() {
             const fileName = wares.bgName + "_세부품목별접수건";
             exportToXlsx(1, fileName);
         })
@@ -825,7 +825,7 @@ function getItemListCondition() {
         franchiseId: parseInt($('#frList').val()),
         filterYear: parseInt($('#filterYear').val()),
     };
-    comms.품목리스트(condition);
+    comms.getHeadItemReceiptStatus(condition);
 };
 
 // 파일 다운로드에 사용 할 날짜형식 yyyymmdd

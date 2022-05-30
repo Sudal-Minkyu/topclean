@@ -12,9 +12,9 @@
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
     <!-- 암차트 5 구현용 -->
-    <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
-    <script src="https://cdn.amcharts.com/lib/5/xy.js"></script>
-    <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+    <script src="/assets/js/amcharts5/index.js"></script>
+    <script src="/assets/js/amcharts5/xy.js"></script>
+    <script src="/assets/js/amcharts5/themes/Animated.js"></script>
 
     <script src="/assets/js/toppos/head/dashboard/monthlyreg.js"></script>
     <script src="/assets/js/filesaver/FileSaver.min.js"></script>
@@ -66,8 +66,8 @@
         <div class="pop__box pop__box--xlarge">
             <div class="pop__article">
                 <div class="pop__article-header">
-                    <h3><span id="brName"></span>지사 가맹점별 월 접수건</h3>
-                    <button class="c-button c-button--green c-button--icon c-button--icon-excel" id="frRegDown" onclick="exportToXlsx(1, '가맹점별접수순위')">엑셀 다운로드</button>
+                    <h3><span id="brName"></span> 가맹점별 월 접수건</h3>
+                    <button class="c-button c-button--green c-button--icon c-button--icon-excel" id="frRegDown">엑셀 다운로드</button>
                 </div>
                 <div class="pop__article-content">
                     <div id="grid_pop"></div>

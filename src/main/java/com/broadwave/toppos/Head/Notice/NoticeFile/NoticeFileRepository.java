@@ -16,7 +16,7 @@ public interface NoticeFileRepository extends JpaRepository<NoticeFile,Long>, No
     List<NoticeFile> findByNoticeFileDelete(Long hnId);
 
     // 게시물ID로 삭제할 파일만 골라 찾기
-    @Query("select a from NoticeFile a where a.hnId in :deleteFileList")
+    @Query("select a from NoticeFile a where a.hfId in :deleteFileList")
     List<NoticeFile> findByNoticeFileDeleteList(List<Long> deleteFileList);
 
     // 게시물 파일 일괄삭제

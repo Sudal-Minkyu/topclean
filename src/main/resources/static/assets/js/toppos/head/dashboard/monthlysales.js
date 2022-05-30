@@ -425,8 +425,8 @@ const trigs = {
         });
 
         $("#frSalesDown").on('click', function() {
-            const brName = wares.brName + "_가맹점매출순위";
-            exportToXlsx(1, brName);
+            const fileName = wares.brName + "_가맹점매출순위";
+            exportToXlsx(1, fileName);
         });
     },
 };
