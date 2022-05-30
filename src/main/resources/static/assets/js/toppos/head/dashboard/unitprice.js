@@ -6,7 +6,7 @@
  */
 const dtos = {
     send: {
-        년도아이디보내기: {
+        sendYear: {
             filterYear: "s",
             brId: "s"
         },
@@ -15,65 +15,65 @@ const dtos = {
         차트가져오기: {
 
         },
-        지사별단가리스트: {
+        headCustomTransactionStatus: {
             brCode: "s",
             brName: "s",
-            객단가01: "n",
-            객단가02: "n",
-            객단가03: "n",
-            객단가04: "n",
-            객단가05: "n",
-            객단가06: "n",
-            객단가07: "n",
-            객단가08: "n",
-            객단가09: "n",
-            객단가10: "n",
-            객단가11: "n",
-            객단가12: "n",
-            객단가전체: "n",
-            PCS단가01: "n",
-            PCS단가02: "n",
-            PCS단가03: "n",
-            PCS단가04: "n",
-            PCS단가05: "n",
-            PCS단가06: "n",
-            PCS단가07: "n",
-            PCS단가08: "n",
-            PCS단가09: "n",
-            PCS단가10: "n",
-            PCS단가11: "n",
-            PCS단가12: "n",
-            PCS단가전체: "n",
+            avgPrice01: "n",
+            avgPrice02: "n",
+            avgPrice03: "n",
+            avgPrice04: "n",
+            avgPrice05: "n",
+            avgPrice06: "n",
+            avgPrice07: "n",
+            avgPrice08: "n",
+            avgPrice09: "n",
+            avgPrice10: "n",
+            avgPrice11: "n",
+            avgPrice12: "n",
+            avgPriceTotal: "n",
+            pcsPrice01: "n",
+            pcsPrice02: "n",
+            pcsPrice03: "n",
+            pcsPrice04: "n",
+            pcsPrice05: "n",
+            pcsPrice06: "n",
+            pcsPrice07: "n",
+            pcsPrice08: "n",
+            pcsPrice09: "n",
+            pcsPrice10: "n",
+            pcsPrice11: "n",
+            pcsPrice12: "n",
+            pcsPriceTotal: "n",
         },
-        가맹점별단가리스트: {
+        headCustomTransactionDetailStatus: {
             frCode: "s",
             frName: "s",
-            객단가01: "n",
-            객단가02: "n",
-            객단가03: "n",
-            객단가04: "n",
-            객단가05: "n",
-            객단가06: "n",
-            객단가07: "n",
-            객단가08: "n",
-            객단가09: "n",
-            객단가10: "n",
-            객단가11: "n",
-            객단가12: "n",
-            객단가전체: "n",
-            PCS단가01: "n",
-            PCS단가02: "n",
-            PCS단가03: "n",
-            PCS단가04: "n",
-            PCS단가05: "n",
-            PCS단가06: "n",
-            PCS단가07: "n",
-            PCS단가08: "n",
-            PCS단가09: "n",
-            PCS단가10: "n",
-            PCS단가11: "n",
-            PCS단가12: "n",
-            PCS단가전체: "n",
+            avgPrice01: "n",
+            avgPrice02: "n",
+            avgPrice03: "n",
+            avgPrice04: "n",
+            avgPrice05: "n",
+            avgPrice06: "n",
+            avgPrice07: "n",
+            avgPrice08: "n",
+            avgPrice09: "n",
+            avgPrice10: "n",
+            avgPrice11: "n",
+            avgPrice12: "n",
+            avgPriceTotal: "n",
+            pcsPrice01: "n",
+            pcsPrice02: "n",
+            pcsPrice03: "n",
+            pcsPrice04: "n",
+            pcsPrice05: "n",
+            pcsPrice06: "n",
+            pcsPrice07: "n",
+            pcsPrice08: "n",
+            pcsPrice09: "n",
+            pcsPrice10: "n",
+            pcsPrice11: "n",
+            pcsPrice12: "n",
+            pcsPriceTotal: "n",
         }
     },
 };
@@ -81,26 +81,32 @@ const dtos = {
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
     // 지사별단가리스트
-    지사별단가리스트(filterYear) {
-        // CommonUI.ajax('api주소', 'GET', filterYear, function(res) {
-        //    const data = res.sendData.gridListData;
-        //    dv.chk(data, dtos.지사별단가리스트, "지사별 단가 리스트 받아오기");
-        //    grids.f.clear(0);
-        //    grids.f.set(0, data);
-        //    grids.f.setSorting(0, '객단가전체', -1);
-        // });
+    getHeadCustomTransactionStatus(filterYear) {
+        CommonUI.ajax('/api/head/headCustomTransactionStatus', 'GET', filterYear, function(res) {
+           const data = res.sendData.gridListData;
+           dv.chk(data, dtos.headCustomTransactionStatus, "지사별 단가 리스트 받아오기");
+           for (const i of data) {
+               avgPriceTotal.push(i.avgPriceTotal);
+               pcsPriceTotal.push(i.pcsPriceTotal);
+           }
+           getAvgPriceAverage(avgPriceTotal);
+           getPcsPriceAverage(pcsPriceTotal);
+           grids.f.clear(0);
+           grids.f.set(0, data);
+           grids.f.setSorting(0, 'avgPriceTotal', -1);
+        });
     },
 
     // 가맹점별단가리스트
-    가맹점별단가리스트(condition) {
-        // CommonUI.ajax('api주소', 'GET', condition, function(res) {
-        //     const data = res.sendData.gridListData;
-        //     dv.chk(data, dtos.가맹점별단가리스트, '가맹정별 단가 리스트 받아오기');
-        //     grids.f.resize(1);
-        //     grids.f.clear(1);
-        //     grids.f.set(1, data);
-        //     grids.f.setSorting(1, 'PCS단가전체', -1);
-        // });
+    getHeadCustomTransactionDetailStatus(condition) {
+        CommonUI.ajax('/api/head/headCustomTransactionDetailStatus', 'GET', condition, function(res) {
+            const data = res.sendData.gridListData;
+            dv.chk(data, dtos.headCustomTransactionDetailStatus, '가맹정별 단가 리스트 받아오기');
+            grids.f.resize(1);
+            grids.f.clear(1);
+            grids.f.set(1, data);
+            grids.f.setSorting(1, 'pcsPriceTotal', -1);
+        });
     }
 };
 
@@ -136,18 +142,20 @@ const grids = {
                     headerText: '1월',
                     children: [
                         {
-                            dataField: '객단가01',
+                            dataField: 'avgPrice01',
                             headerText: '객단가',
                             style: "grid_textalign_right",
                             width: 90,
                             dataType: "numeric",
+                            formatString: "#,##0",
                             autoThousandSeparator: "true",
                         }, {
-                            dataField: 'PCS단가01',
+                            dataField: 'pcsPrice01',
                             headerText: 'PCS단가',
                             width: 90,
                             style: "grid_textalign_right",
                             dataType: "numeric",
+                            formatString: "#,##0",
                             autoThousandSeparator: "true",
                         },
                     ]
@@ -155,18 +163,20 @@ const grids = {
                     headerText: '2월',
                     children: [
                         {
-                            dataField: '객단가02',
+                            dataField: 'avgPrice02',
                             headerText: '객단가',
                             style: "grid_textalign_right",
                             width: 90,
                             dataType: "numeric",
+                            formatString: "#,##0",
                             autoThousandSeparator: "true",
                         }, {
-                            dataField: 'PCS단가02',
+                            dataField: 'pcsPrice02',
                             headerText: 'PCS단가',
                             width: 90,
                             style: "grid_textalign_right",
                             dataType: "numeric",
+                            formatString: "#,##0",
                             autoThousandSeparator: "true",
                         },
                     ]
@@ -174,18 +184,20 @@ const grids = {
                     headerText: '3월',
                     children: [
                         {
-                            dataField: '객단가03',
+                            dataField: 'avgPrice03',
                             headerText: '객단가',
                             style: "grid_textalign_right",
                             width: 90,
                             dataType: "numeric",
+                            formatString: "#,##0",
                             autoThousandSeparator: "true",
                         }, {
-                            dataField: 'PCS단가03',
+                            dataField: 'pcsPrice03',
                             headerText: 'PCS단가',
                             width: 90,
                             style: "grid_textalign_right",
                             dataType: "numeric",
+                            formatString: "#,##0",
                             autoThousandSeparator: "true",
                         },
                     ]
@@ -193,18 +205,20 @@ const grids = {
                     headerText: '4월',
                     children: [
                         {
-                            dataField: '객단가04',
+                            dataField: 'avgPrice04',
                             headerText: '객단가',
                             style: "grid_textalign_right",
                             width: 90,
                             dataType: "numeric",
+                            formatString: "#,##0",
                             autoThousandSeparator: "true",
                         }, {
-                            dataField: 'PCS단가04',
+                            dataField: 'pcsPrice04',
                             headerText: 'PCS단가',
                             width: 90,
                             style: "grid_textalign_right",
                             dataType: "numeric",
+                            formatString: "#,##0",
                             autoThousandSeparator: "true",
                         },
                     ]
@@ -212,18 +226,20 @@ const grids = {
                     headerText: '5월',
                     children: [
                         {
-                            dataField: '객단가05',
+                            dataField: 'avgPrice05',
                             headerText: '객단가',
                             style: "grid_textalign_right",
                             width: 90,
                             dataType: "numeric",
+                            formatString: "#,##0",
                             autoThousandSeparator: "true",
                         }, {
-                            dataField: 'PCS단가05',
+                            dataField: 'pcsPrice05',
                             headerText: 'PCS단가',
                             width: 90,
                             style: "grid_textalign_right",
                             dataType: "numeric",
+                            formatString: "#,##0",
                             autoThousandSeparator: "true",
                         },
                     ]
@@ -231,18 +247,20 @@ const grids = {
                     headerText: '6월',
                     children: [
                         {
-                            dataField: '객단가06',
+                            dataField: 'avgPrice06',
                             headerText: '객단가',
                             style: "grid_textalign_right",
                             width: 90,
                             dataType: "numeric",
+                            formatString: "#,##0",
                             autoThousandSeparator: "true",
                         }, {
-                            dataField: 'PCS단가06',
+                            dataField: 'pcsPrice06',
                             headerText: 'PCS단가',
                             width: 90,
                             style: "grid_textalign_right",
                             dataType: "numeric",
+                            formatString: "#,##0",
                             autoThousandSeparator: "true",
                         },
                     ]
@@ -250,18 +268,20 @@ const grids = {
                     headerText: '7월',
                     children: [
                         {
-                            dataField: '객단가07',
+                            dataField: 'avgPrice07',
                             headerText: '객단가',
                             style: "grid_textalign_right",
                             width: 90,
                             dataType: "numeric",
+                            formatString: "#,##0",
                             autoThousandSeparator: "true",
                         }, {
-                            dataField: 'PCS단가07',
+                            dataField: 'pcsPrice07',
                             headerText: 'PCS단가',
                             width: 90,
                             style: "grid_textalign_right",
                             dataType: "numeric",
+                            formatString: "#,##0",
                             autoThousandSeparator: "true",
                         },
                     ]
@@ -269,18 +289,20 @@ const grids = {
                     headerText: '8월',
                     children: [
                         {
-                            dataField: '객단가08',
+                            dataField: 'avgPrice08',
                             headerText: '객단가',
                             style: "grid_textalign_right",
                             width: 90,
                             dataType: "numeric",
+                            formatString: "#,##0",
                             autoThousandSeparator: "true",
                         }, {
-                            dataField: 'PCS단가08',
+                            dataField: 'pcsPrice08',
                             headerText: 'PCS단가',
                             width: 90,
                             style: "grid_textalign_right",
                             dataType: "numeric",
+                            formatString: "#,##0",
                             autoThousandSeparator: "true",
                         },
                     ]
@@ -288,18 +310,20 @@ const grids = {
                     headerText: '9월',
                     children: [
                         {
-                            dataField: '객단가09',
+                            dataField: 'avgPrice09',
                             headerText: '객단가',
                             style: "grid_textalign_right",
                             width: 90,
                             dataType: "numeric",
+                            formatString: "#,##0",
                             autoThousandSeparator: "true",
                         }, {
-                            dataField: 'PCS단가09',
+                            dataField: 'pcsPrice09',
                             headerText: 'PCS단가',
                             width: 90,
                             style: "grid_textalign_right",
                             dataType: "numeric",
+                            formatString: "#,##0",
                             autoThousandSeparator: "true",
                         },
                     ]
@@ -307,18 +331,20 @@ const grids = {
                     headerText: '10월',
                     children: [
                         {
-                            dataField: '객단가10',
+                            dataField: 'avgPrice10',
                             headerText: '객단가',
                             style: "grid_textalign_right",
                             width: 90,
                             dataType: "numeric",
+                            formatString: "#,##0",
                             autoThousandSeparator: "true",
                         }, {
-                            dataField: 'PCS단가10',
+                            dataField: 'pcsPrice10',
                             headerText: 'PCS단가',
                             width: 90,
                             style: "grid_textalign_right",
                             dataType: "numeric",
+                            formatString: "#,##0",
                             autoThousandSeparator: "true",
                         },
                     ]
@@ -326,18 +352,20 @@ const grids = {
                     headerText: '11월',
                     children: [
                         {
-                            dataField: '객단가11',
+                            dataField: 'avgPrice11',
                             headerText: '객단가',
                             style: "grid_textalign_right",
                             width: 90,
                             dataType: "numeric",
+                            formatString: "#,##0",
                             autoThousandSeparator: "true",
                         }, {
-                            dataField: 'PCS단가11',
+                            dataField: 'pcsPrice11',
                             headerText: 'PCS단가',
                             width: 90,
                             style: "grid_textalign_right",
                             dataType: "numeric",
+                            formatString: "#,##0",
                             autoThousandSeparator: "true",
                         },
                     ]
@@ -345,18 +373,20 @@ const grids = {
                     headerText: '12월',
                     children: [
                         {
-                            dataField: '객단가12',
+                            dataField: 'avgPrice12',
                             headerText: '객단가',
                             style: "grid_textalign_right",
                             width: 90,
                             dataType: "numeric",
+                            formatString: "#,##0",
                             autoThousandSeparator: "true",
                         }, {
-                            dataField: 'PCS단가12',
+                            dataField: 'pcsPrice12',
                             headerText: 'PCS단가',
                             width: 90,
                             style: "grid_textalign_right",
                             dataType: "numeric",
+                            formatString: "#,##0",
                             autoThousandSeparator: "true",
                         },
                     ]
@@ -364,18 +394,20 @@ const grids = {
                     headerText: '전체',
                     children: [
                         {
-                            dataField: '객단가전체',
+                            dataField: 'avgPriceTotal',
                             headerText: '객단가',
                             style: "grid_textalign_right",
                             width: 90,
                             dataType: "numeric",
+                            formatString: "#,##0",
                             autoThousandSeparator: "true",
                         }, {
-                            dataField: 'PCS단가전체',
+                            dataField: 'pcsPriceTotal',
                             headerText: 'PCS단가',
                             width: 90,
                             style: "grid_textalign_right",
                             dataType: "numeric",
+                            formatString: "#,##0",
                             autoThousandSeparator: "true",
                         },
                     ]
@@ -411,18 +443,20 @@ const grids = {
                     headerText: '1월',
                     children: [
                         {
-                            dataField: '객단가01',
+                            dataField: 'avgPrice01',
                             headerText: '객단가',
                             style: "grid_textalign_right",
                             width: 90,
                             dataType: "numeric",
+                            formatString: "#,##0",
                             autoThousandSeparator: "true",
                         }, {
-                            dataField: 'PCS단가01',
+                            dataField: 'pcsPrice01',
                             headerText: 'PCS단가',
                             width: 90,
                             style: "grid_textalign_right",
                             dataType: "numeric",
+                            formatString: "#,##0",
                             autoThousandSeparator: "true",
                         },
                     ]
@@ -430,18 +464,20 @@ const grids = {
                     headerText: '2월',
                     children: [
                         {
-                            dataField: '객단가02',
+                            dataField: 'avgPrice02',
                             headerText: '객단가',
                             style: "grid_textalign_right",
                             width: 90,
                             dataType: "numeric",
+                            formatString: "#,##0",
                             autoThousandSeparator: "true",
                         }, {
-                            dataField: 'PCS단가02',
+                            dataField: 'pcsPrice02',
                             headerText: 'PCS단가',
                             width: 90,
                             style: "grid_textalign_right",
                             dataType: "numeric",
+                            formatString: "#,##0",
                             autoThousandSeparator: "true",
                         },
                     ]
@@ -449,18 +485,20 @@ const grids = {
                     headerText: '3월',
                     children: [
                         {
-                            dataField: '객단가03',
+                            dataField: 'avgPrice03',
                             headerText: '객단가',
                             style: "grid_textalign_right",
                             width: 90,
                             dataType: "numeric",
+                            formatString: "#,##0",
                             autoThousandSeparator: "true",
                         }, {
-                            dataField: 'PCS단가03',
+                            dataField: 'pcsPrice03',
                             headerText: 'PCS단가',
                             width: 90,
                             style: "grid_textalign_right",
                             dataType: "numeric",
+                            formatString: "#,##0",
                             autoThousandSeparator: "true",
                         },
                     ]
@@ -468,18 +506,20 @@ const grids = {
                     headerText: '4월',
                     children: [
                         {
-                            dataField: '객단가04',
+                            dataField: 'avgPrice04',
                             headerText: '객단가',
                             style: "grid_textalign_right",
                             width: 90,
                             dataType: "numeric",
+                            formatString: "#,##0",
                             autoThousandSeparator: "true",
                         }, {
-                            dataField: 'PCS단가04',
+                            dataField: 'pcsPrice04',
                             headerText: 'PCS단가',
                             width: 90,
                             style: "grid_textalign_right",
                             dataType: "numeric",
+                            formatString: "#,##0",
                             autoThousandSeparator: "true",
                         },
                     ]
@@ -487,18 +527,20 @@ const grids = {
                     headerText: '5월',
                     children: [
                         {
-                            dataField: '객단가05',
+                            dataField: 'avgPrice05',
                             headerText: '객단가',
                             style: "grid_textalign_right",
                             width: 90,
                             dataType: "numeric",
+                            formatString: "#,##0",
                             autoThousandSeparator: "true",
                         }, {
-                            dataField: 'PCS단가05',
+                            dataField: 'pcsPrice05',
                             headerText: 'PCS단가',
                             width: 90,
                             style: "grid_textalign_right",
                             dataType: "numeric",
+                            formatString: "#,##0",
                             autoThousandSeparator: "true",
                         },
                     ]
@@ -506,18 +548,20 @@ const grids = {
                     headerText: '6월',
                     children: [
                         {
-                            dataField: '객단가06',
+                            dataField: 'avgPrice06',
                             headerText: '객단가',
                             style: "grid_textalign_right",
                             width: 90,
                             dataType: "numeric",
+                            formatString: "#,##0",
                             autoThousandSeparator: "true",
                         }, {
-                            dataField: 'PCS단가06',
+                            dataField: 'pcsPrice06',
                             headerText: 'PCS단가',
                             width: 90,
                             style: "grid_textalign_right",
                             dataType: "numeric",
+                            formatString: "#,##0",
                             autoThousandSeparator: "true",
                         },
                     ]
@@ -525,18 +569,20 @@ const grids = {
                     headerText: '7월',
                     children: [
                         {
-                            dataField: '객단가07',
+                            dataField: 'avgPrice07',
                             headerText: '객단가',
                             style: "grid_textalign_right",
                             width: 90,
                             dataType: "numeric",
+                            formatString: "#,##0",
                             autoThousandSeparator: "true",
                         }, {
-                            dataField: 'PCS단가07',
+                            dataField: 'pcsPrice07',
                             headerText: 'PCS단가',
                             width: 90,
                             style: "grid_textalign_right",
                             dataType: "numeric",
+                            formatString: "#,##0",
                             autoThousandSeparator: "true",
                         },
                     ]
@@ -544,18 +590,20 @@ const grids = {
                     headerText: '8월',
                     children: [
                         {
-                            dataField: '객단가08',
+                            dataField: 'avgPrice08',
                             headerText: '객단가',
                             style: "grid_textalign_right",
                             width: 90,
                             dataType: "numeric",
+                            formatString: "#,##0",
                             autoThousandSeparator: "true",
                         }, {
-                            dataField: 'PCS단가08',
+                            dataField: 'pcsPrice08',
                             headerText: 'PCS단가',
                             width: 90,
                             style: "grid_textalign_right",
                             dataType: "numeric",
+                            formatString: "#,##0",
                             autoThousandSeparator: "true",
                         },
                     ]
@@ -563,18 +611,20 @@ const grids = {
                     headerText: '9월',
                     children: [
                         {
-                            dataField: '객단가09',
+                            dataField: 'avgPrice09',
                             headerText: '객단가',
                             style: "grid_textalign_right",
                             width: 90,
                             dataType: "numeric",
+                            formatString: "#,##0",
                             autoThousandSeparator: "true",
                         }, {
-                            dataField: 'PCS단가09',
+                            dataField: 'pcsPrice09',
                             headerText: 'PCS단가',
                             width: 90,
                             style: "grid_textalign_right",
                             dataType: "numeric",
+                            formatString: "#,##0",
                             autoThousandSeparator: "true",
                         },
                     ]
@@ -582,18 +632,20 @@ const grids = {
                     headerText: '10월',
                     children: [
                         {
-                            dataField: '객단가10',
+                            dataField: 'avgPrice10',
                             headerText: '객단가',
                             style: "grid_textalign_right",
                             width: 90,
                             dataType: "numeric",
+                            formatString: "#,##0",
                             autoThousandSeparator: "true",
                         }, {
-                            dataField: 'PCS단가10',
+                            dataField: 'pcsPrice10',
                             headerText: 'PCS단가',
                             width: 90,
                             style: "grid_textalign_right",
                             dataType: "numeric",
+                            formatString: "#,##0",
                             autoThousandSeparator: "true",
                         },
                     ]
@@ -601,18 +653,20 @@ const grids = {
                     headerText: '11월',
                     children: [
                         {
-                            dataField: '객단가11',
+                            dataField: 'avgPrice11',
                             headerText: '객단가',
                             style: "grid_textalign_right",
                             width: 90,
                             dataType: "numeric",
+                            formatString: "#,##0",
                             autoThousandSeparator: "true",
                         }, {
-                            dataField: 'PCS단가11',
+                            dataField: 'pcsPrice11',
                             headerText: 'PCS단가',
                             width: 90,
                             style: "grid_textalign_right",
                             dataType: "numeric",
+                            formatString: "#,##0",
                             autoThousandSeparator: "true",
                         },
                     ]
@@ -620,18 +674,20 @@ const grids = {
                     headerText: '12월',
                     children: [
                         {
-                            dataField: '객단가12',
+                            dataField: 'avgPrice12',
                             headerText: '객단가',
                             style: "grid_textalign_right",
                             width: 90,
                             dataType: "numeric",
+                            formatString: "#,##0",
                             autoThousandSeparator: "true",
                         }, {
-                            dataField: 'PCS단가12',
+                            dataField: 'pcsPrice12',
                             headerText: 'PCS단가',
                             width: 90,
                             style: "grid_textalign_right",
                             dataType: "numeric",
+                            formatString: "#,##0",
                             autoThousandSeparator: "true",
                         },
                     ]
@@ -639,18 +695,20 @@ const grids = {
                     headerText: '전체',
                     children: [
                         {
-                            dataField: '객단가전체',
+                            dataField: 'avgPriceTotal',
                             headerText: '객단가',
                             style: "grid_textalign_right",
                             width: 90,
                             dataType: "numeric",
+                            formatString: "#,##0",
                             autoThousandSeparator: "true",
                         }, {
-                            dataField: 'PCS단가전체',
+                            dataField: 'pcsPriceTotal',
                             headerText: 'PCS단가',
                             width: 90,
                             style: "grid_textalign_right",
                             dataType: "numeric",
+                            formatString: "#,##0",
                             autoThousandSeparator: "true",
                         },
                     ]
@@ -727,7 +785,7 @@ const trigs = {
                 $('#popFrUnitPrice').addClass('active');
                 wares.brName = brName;
                 $("#brName").text(brName);
-                comms.가맹점별단가리스트(condition);
+                comms.getHeadCustomTransactionDetailStatus(condition);
             } else {
                 return;
             }
@@ -763,7 +821,7 @@ function getFilterYear() {
     const filterYear = {
         filterYear: $("#filterYear").val(),
     }
-    comms.지사별단가리스트(filterYear)
+    comms.getHeadCustomTransactionStatus(filterYear)
 }
 
 // 조회년도
@@ -804,6 +862,59 @@ function exportToXlsx(i, filename) {
     });
     console.log(filename + "_" + getDate(year));
 }
+
+// 전체 객단가 array
+let avgPriceTotal = [];
+// 전체 PCS 단가 array
+let pcsPriceTotal = [];
+
+// 전체 객단가 평균
+function getAvgPriceAverage(avgPriceTotal) {
+    let sum = 0;
+    let length = avgPriceTotal.length;
+    for (const price of avgPriceTotal) {
+        sum += price;
+        if (!price) {
+            length--;
+        }
+    }
+    const result = length ? Math.round(sum / length) : 0;
+    const $avgPrice = $('#avgPrice');
+    countUp($avgPrice[0], result);
+};
+// 전체 PCS 단가 평균
+function getPcsPriceAverage(pcsPriceTotal) {
+    let sum = 0;
+    let length = pcsPriceTotal.length;
+    for (const price of pcsPriceTotal) {
+        sum += price;
+        if (!price) {
+            length--;
+        }
+    }
+    const $pcsPrice = $('#pcsPrice');
+    const result = length ? Math.round(sum / length) : 0;
+    countUp($pcsPrice[0], result);
+};
+
+function countUp(id, count) {
+    let current = 0;
+    const total = count;
+    const increment = Math.ceil(total / 100);
+
+    function step() {
+        current += increment;
+        if(current > total) {
+            current = total;
+        }
+        id.textContent = current.toLocaleString();
+        if(current !== total) {
+            requestAnimationFrame(step);
+        }
+    }
+    step();
+}
+
 
 /* 차트 생성 */
 function makeChart(data) {

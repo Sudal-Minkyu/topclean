@@ -95,6 +95,7 @@ const grids = {
             'grid_pop'
         ],
         columnLayout: [],
+        footerLayout: [],
         prop: [],
     },
 
@@ -207,6 +208,93 @@ const grids = {
                 },
             ];
 
+            // 0번 그리드 footer
+            grids.s.footerLayout[0] = [
+                {
+                    labelText: "합계",
+                    positionField: "brName",
+                    style: "grid_textalign_left",
+                }, {
+                    dataField: "amt01",
+                    operation: "SUM",
+                    positionField: "amt01",
+                    style: "grid_textalign_right",
+                    formatString: "#,##0",
+                }, {
+                    dataField: "amt02",
+                    operation: "SUM",
+                    positionField: "amt02",
+                    style: "grid_textalign_right",
+                    formatString: "#,##0",
+                }, {
+                    dataField: "amt03",
+                    operation: "SUM",
+                    positionField: "amt03",
+                    style: "grid_textalign_right",
+                    formatString: "#,##0",
+                }, {
+                    dataField: "amt04",
+                    operation: "SUM",
+                    positionField: "amt04",
+                    style: "grid_textalign_right",
+                    formatString: "#,##0",
+                }, {
+                    dataField: "amt05",
+                    operation: "SUM",
+                    positionField: "amt05",
+                    style: "grid_textalign_right",
+                    formatString: "#,##0",
+                }, {
+                    dataField: "amt06",
+                    operation: "SUM",
+                    positionField: "amt06",
+                    style: "grid_textalign_right",
+                    formatString: "#,##0",
+                }, {
+                    dataField: "amt07",
+                    operation: "SUM",
+                    positionField: "amt07",
+                    style: "grid_textalign_right",
+                    formatString: "#,##0",
+                }, {
+                    dataField: "amt08",
+                    operation: "SUM",
+                    positionField: "amt08",
+                    style: "grid_textalign_right",
+                    formatString: "#,##0",
+                }, {
+                    dataField: "amt09",
+                    operation: "SUM",
+                    positionField: "amt09",
+                    style: "grid_textalign_right",
+                    formatString: "#,##0",
+                }, {
+                    dataField: "amt10",
+                    operation: "SUM",
+                    positionField: "amt10",
+                    style: "grid_textalign_right",
+                    formatString: "#,##0",
+                }, {
+                    dataField: "amt11",
+                    operation: "SUM",
+                    positionField: "amt11",
+                    style: "grid_textalign_right",
+                    formatString: "#,##0",
+                }, {
+                    dataField: "amt12",
+                    operation: "SUM",
+                    positionField: "amt12",
+                    style: "grid_textalign_right",
+                    formatString: "#,##0",
+                }, {
+                    dataField: "amtTotal",
+                    operation: "SUM",
+                    positionField: "amtTotal",
+                    style: "grid_textalign_right",
+                    formatString: "#,##0",
+                },
+            ];
+
             /* 0번 그리드의 프로퍼티(옵션) 아래의 링크를 참조
             * https://www.auisoft.net/documentation/auigrid/DataGrid/Properties.html
             * */
@@ -223,6 +311,8 @@ const grids = {
                 enableFilter : false,
                 rowHeight : 48,
                 headerHeight : 48,
+                showFooter : true,
+                footerHeight: 48,
             };
 
             /* 1번 그리드의 레이아웃 */
@@ -330,6 +420,93 @@ const grids = {
                 },
             ];
 
+            // 1번 그리드 footer
+            grids.s.footerLayout[1] = [
+                {
+                    labelText: "합계",
+                    positionField: "frName",
+                    style: "grid_textalign_left",
+                }, {
+                    dataField: "amt01",
+                    operation: "SUM",
+                    positionField: "amt01",
+                    style: "grid_textalign_right",
+                    formatString: "#,##0",
+                }, {
+                    dataField: "amt02",
+                    operation: "SUM",
+                    positionField: "amt02",
+                    style: "grid_textalign_right",
+                    formatString: "#,##0",
+                }, {
+                    dataField: "amt03",
+                    operation: "SUM",
+                    positionField: "amt03",
+                    style: "grid_textalign_right",
+                    formatString: "#,##0",
+                }, {
+                    dataField: "amt04",
+                    operation: "SUM",
+                    positionField: "amt04",
+                    style: "grid_textalign_right",
+                    formatString: "#,##0",
+                }, {
+                    dataField: "amt05",
+                    operation: "SUM",
+                    positionField: "amt05",
+                    style: "grid_textalign_right",
+                    formatString: "#,##0",
+                }, {
+                    dataField: "amt06",
+                    operation: "SUM",
+                    positionField: "amt06",
+                    style: "grid_textalign_right",
+                    formatString: "#,##0",
+                }, {
+                    dataField: "amt07",
+                    operation: "SUM",
+                    positionField: "amt07",
+                    style: "grid_textalign_right",
+                    formatString: "#,##0",
+                }, {
+                    dataField: "amt08",
+                    operation: "SUM",
+                    positionField: "amt08",
+                    style: "grid_textalign_right",
+                    formatString: "#,##0",
+                }, {
+                    dataField: "amt09",
+                    operation: "SUM",
+                    positionField: "amt09",
+                    style: "grid_textalign_right",
+                    formatString: "#,##0",
+                }, {
+                    dataField: "amt10",
+                    operation: "SUM",
+                    positionField: "amt10",
+                    style: "grid_textalign_right",
+                    formatString: "#,##0",
+                }, {
+                    dataField: "amt11",
+                    operation: "SUM",
+                    positionField: "amt11",
+                    style: "grid_textalign_right",
+                    formatString: "#,##0",
+                }, {
+                    dataField: "amt12",
+                    operation: "SUM",
+                    positionField: "amt12",
+                    style: "grid_textalign_right",
+                    formatString: "#,##0",
+                }, {
+                    dataField: "amtTotal",
+                    operation: "SUM",
+                    positionField: "amtTotal",
+                    style: "grid_textalign_right",
+                    formatString: "#,##0",
+                },
+            ];
+
             /* 1번 그리드의 프로퍼티(옵션) 아래의 링크를 참조
             * https://www.auisoft.net/documentation/auigrid/DataGrid/Properties.html
             * */
@@ -346,6 +523,8 @@ const grids = {
                 enableFilter : false,
                 rowHeight : 48,
                 headerHeight : 48,
+                showFooter : true,
+                footerHeight: 48,
             };
 
         },
@@ -354,6 +533,7 @@ const grids = {
         create() {
             for (const i in grids.s.columnLayout) {
                 AUIGrid.create(grids.s.id[i], grids.s.columnLayout[i], grids.s.prop[i]);
+                AUIGrid.setFooter(grids.s.id[i], grids.s.footerLayout[i]);
             }
         },
 

@@ -225,3 +225,15 @@
 .aui-grid .aui-grid-table td.grid_notedit {
 	color: #aaa;
 }
+
+/* footer */
+.aui-grid-default-footer {
+	background-color: #fff;
+}
+.aui-grid-footer-panel .aui-grid-table tr td {
+	border-top: 1px solid #c8c8c8;
+	border-right: 0 none;
+}
+.aui-grid-footer-division-line {
+	border-top: 1px solid #c8c8c8 !important;
+}
