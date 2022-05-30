@@ -190,4 +190,35 @@ public class SalesService {
         data.put("gridListData", itemReceiptDetailStatus);
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
+
+    // 본사 - 지사별 객단가 현황 데이터 호출 API
+    public ResponseEntity<Map<String, Object>> headCustomTransactionStatus(String filterYear) {
+        log.info("headCustomTransactionStatus 호출");
+
+        log.info("filterYear  : " + filterYear);
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        List<CustomTransactionStatusDto> customTransactionStatus = salesRepositoryCustom.findByCustomTransactionStatus(filterYear);
+
+        data.put("gridListData", customTransactionStatus);
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
+    // 본사 - 가맹점별 객단가 현황 데이터 호출 API
+    public ResponseEntity<Map<String, Object>> headCustomTransactionDetailStatus(String brCode, String filterYear) {
+        log.info("headCustomTransactionDetailStatus 호출");
+
+        log.info("brCode  : " + brCode);
+        log.info("filterYear  : " + filterYear);
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        List<CustomTransactionDetailStatusDto> customTransactionDetailStatus = salesRepositoryCustom.findByCustomTransactionDetailStatus(brCode, filterYear);
+
+        data.put("gridListData", customTransactionDetailStatus);
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
 }

@@ -1560,6 +1560,22 @@ public class HeadRestController {
         return salesService.headItemReceiptDetailStatus(bgCode, brId, frId, filterYear);
     }
 
+    // 본사 - 지사별 객단가 현황 데이터 호출 API
+    @GetMapping("headCustomTransactionStatus")
+    @ApiOperation(value = "지사별 객단가 현황", notes = "지사별 객단가 데이터를 호출한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", value = "JWT Token", required = true, dataType = "string", paramType = "header")})
+    public ResponseEntity<Map<String, Object>> headCustomTransactionStatus(@RequestParam("filterYear") String filterYear) {
+        return salesService.headCustomTransactionStatus(filterYear);
+    }
+
+    // 본사 - 가맹점별 객단점 현황 데이터 호출 API
+    @GetMapping("headCustomTransactionDetailStatus")
+    @ApiOperation(value = "가맹점별 객단가 현황", notes = "가맹점별 객단가 데이터를 호출한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", value = "JWT Token", required = true, dataType = "string", paramType = "header")})
+    public ResponseEntity<Map<String, Object>> headCustomTransactionDetailStatus(@RequestParam("brCode") String brCode, @RequestParam("filterYear") String filterYear) {
+        return salesService.headCustomTransactionDetailStatus(brCode, filterYear);
+    }
+
     //@@@@@@@@@@@@@@@@@@@@@ 문자메세지 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     // 메세지 보낼 고객 리스트 호출
     @GetMapping("messageCustomerList")

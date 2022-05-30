@@ -32,4 +32,8 @@ public interface SalesRepositoryCustom {
 
     List<ItemReceiptDetailStatusDto> findByItemReceiptDetailStatus(String bgCode, String brId, String frId, String filterYear); // 지사,가맹점 세부품목별 접수현황 데이터
 
+    List<CustomTransactionStatusDto> findByCustomTransactionStatus(String filterYear); // 지사별 객단가 현황 데이터
+
+    List<CustomTransactionDetailStatusDto> findByCustomTransactionDetailStatus(String brCode, String filterYear); // 가맹점별 객단가 현황 데이터
+
 }
