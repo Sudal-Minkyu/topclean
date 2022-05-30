@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.text.Normalizer;
 import java.text.SimpleDateFormat;
@@ -169,7 +170,12 @@ public class NoticeService {
         Notice saveNotice;
         if(noticeMapperDto.getId() != null){
             Optional<Notice> optionalNotice = noticeRepository.findById(noticeMapperDto.getId());
+
             if(optionalNotice.isPresent()){
+                if(type.equals("2") && optionalNotice.get().getHnType().equals("01")){
+                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP007.getCode(), "해당 글을 수정할 "+ResponseErrorCode.TP007.getDesc(), null, null));
+                }
+
                 log.info("공지사항 게시판 글을 수정합니다.");
                 optionalNotice.get().setHnSubject(noticeMapperDto.getSubject());
                 optionalNotice.get().setHnContent(noticeMapperDto.getContent());
@@ -182,9 +188,9 @@ public class NoticeService {
                     for(NoticeFile noticeFile : noticeFileList){
                         String insertDate =noticeFile.getInsertDateTime().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
                         String path = "/toppos-notice-file/"+insertDate;
-//                        log.info("path : "+path);
+                        log.info("path : "+path);
                         String filename = noticeFile.getHfFilename();
-//                        log.info("filename : "+filename);
+                        log.info("filename : "+filename);
                         awss3Service.deleteObject(path,filename);
                     }
                     noticeFileRepository.noticeFileListDelete(noticeMapperDto.getDeleteFileList());
@@ -214,7 +220,7 @@ public class NoticeService {
         // AWS 파일저장
         if(noticeMapperDto.getMultipartFileList() != null){
             NoticeFile noticeFile;
-//            log.info("multipartFileList.size() : "+tagNoticeMapperDto.getMultipartFileList().size());
+//            log.info("multipartFileList.size() : "+noticeMapperDto.getMultipartFileList().size());
             for(MultipartFile multipartFile : noticeMapperDto.getMultipartFileList()){
                 noticeFile = new NoticeFile();
                 noticeFile.setHnId(saveNotice);
@@ -256,6 +262,7 @@ public class NoticeService {
     }
 
     //  공지사항 게시판 - 글삭제
+    @Transactional
     public ResponseEntity<Map<String, Object>> noticeDelete(Long hnId) {
         log.info("noticeDelete 호출");
 

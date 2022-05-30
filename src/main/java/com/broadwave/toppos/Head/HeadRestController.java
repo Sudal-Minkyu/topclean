@@ -1429,7 +1429,7 @@ public class HeadRestController {
     @PostMapping("noticeDelete")
     @ApiOperation(value = "공지사항 글삭제", notes = "본사에서 공지사항 글을 삭제한다.")
     @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", value = "JWT Token", required = true, dataType = "string", paramType = "header")})
-    public ResponseEntity<Map<String, Object>> noticeDelete(@RequestParam("htId") Long hnId) {
+    public ResponseEntity<Map<String, Object>> noticeDelete(@RequestParam("hnId") Long hnId) {
         return noticeService.noticeDelete(hnId);
     }
 
