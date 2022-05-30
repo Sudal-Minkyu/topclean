@@ -11,6 +11,10 @@
 
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
+    <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/xy.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+
     <script src="/assets/js/toppos/head/dashboard/unitprice.js"></script>
     <script src="/assets/js/filesaver/FileSaver.min.js"></script>
 </th:block>
@@ -42,7 +46,7 @@
 
                 <article class="dashboard__summary">
                     <div class="dashboard__summary-item">
-                        <h4 class="dashboard__summary-title">전체 PCS단가가</h4>
+                        <h4 class="dashboard__summary-title">전체 PCS단가</h4>
                        <p class="dashboard__summary-value">
                             <span>0000</span><span class="dashboard__summary-unit">원</span>
                         </p>
@@ -56,7 +60,7 @@
                         <h4 class="dashboard__article-title">월별 단가 추이</h4>
                     </div>
                     <div class="dashboard__article-body">
-                        <div class="chart-area"></div>
+                        <div id="summaryChart" class="chart-area"></div>
                     </div>
                 </article>
             </section>

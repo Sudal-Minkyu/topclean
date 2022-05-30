@@ -427,6 +427,11 @@ const trigs = {
             console.log(fileName);
             exportToXlsx(1, fileName);
         });
+
+        // 조회년도 변경
+        $('#filterYear').on('change', function () {
+            getFilterYear();
+        });
     },
 };
 
