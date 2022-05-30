@@ -85,12 +85,17 @@ const wares = {
 
 };
 
+const urls = {
+    searchSummaryData: '',
+    getDetailData: '',
+};
+
 const comms = {
     /* 그리드 좌측, 일별 누계 데이터 조회값을 가져옴 */
     searchSummaryData(searchCondition) {
         dv.chk(searchCondition, dtos.send.headReceiptList, '누계 데이터 조회를 위한 조건 보내기');
         wares.searchCondition = searchCondition;
-        CommonUI.ajax('/api/head/headReceiptList', 'GET', searchCondition, function (res) {
+        CommonUI.ajax(urls.searchSummaryData, 'GET', searchCondition, function (res) {
             if (searchCondition.branchId) {
                 grids.setFrNameVisibility(true);
             } else {
@@ -105,7 +110,7 @@ const comms = {
     /* 누게리스트의 지사,가맹점정보,날짜를 보내 해당 일자에 속한 모든 접수데이터 가져오기 */
     getDetailData(condition) {
         dv.chk(condition, dtos.send.headReceiptSubList, '상세 품목을 받아오기 위한 조건 보내기');
-        CommonUI.ajax('/api/head/headReceiptSubList', 'GET', condition, function (res) {
+        CommonUI.ajax(urls.getDetailData, 'GET', condition, function (res) {
             const data = res.sendData.gridListData;
             dv.chk(data, dtos.receive.headReceiptSubList, '받아온 상세 품목들의 정보');
             grids.setData(grids.id[1], data);
@@ -156,6 +161,7 @@ const grids = {
 const runOnlyOnce = {
     /* grid_summary 그리드의 기본 생성을 담당한다. */
     makeSummaryGrid(prop) {
+        urls.searchSummaryData = prop.url;
         const layout = [
             {
                 dataField: 'brName',
@@ -203,8 +209,8 @@ const runOnlyOnce = {
     },
 
     /* grid_detail 그리드의 기본 생성을 담당한다. */
-    makeDetailGrid(prop
-                       = {fdUrgentTypeVisible: true , fiProgressStateDtVisible: false}) {
+    makeDetailGrid(prop) {
+        urls.getDetailData = prop.url;
         const processChkChar = function (_rowIndex, _columnIndex, value, _headerText, _item) {
             return value ? '√' : '';
         };
