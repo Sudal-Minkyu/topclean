@@ -36,4 +36,6 @@ public interface SalesRepositoryCustom {
 
     List<CustomTransactionDetailStatusDto> findByCustomTransactionDetailStatus(String brCode, String filterYear); // 가맹점별 객단가 현황 데이터
 
+    CustomTransactionTotalDto findByCustomTransactionTotalStatus(String filterYear); // // 객단가, pcs단가 전체 평균 데이터
+
 }

@@ -209,8 +209,10 @@ public class SalesService {
         HashMap<String, Object> data = new HashMap<>();
 
         List<CustomTransactionStatusDto> customTransactionStatus = salesRepositoryCustom.findByCustomTransactionStatus(filterYear);
+        CustomTransactionTotalDto customTransactionTotalStatus = salesRepositoryCustom.findByCustomTransactionTotalStatus(filterYear);
 
         data.put("gridListData", customTransactionStatus);
+        data.put("TotalData", customTransactionTotalStatus);
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
