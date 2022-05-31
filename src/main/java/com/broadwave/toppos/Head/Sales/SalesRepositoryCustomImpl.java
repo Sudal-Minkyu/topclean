@@ -1,6 +1,7 @@
 package com.broadwave.toppos.Head.Sales;
 
 import com.broadwave.toppos.Head.Sales.Dtos.*;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.qlrm.mapper.JpaResultMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
@@ -18,7 +19,6 @@ import java.util.List;
  */
 @Repository
 public class SalesRepositoryCustomImpl extends QuerydslRepositorySupport implements SalesRepositoryCustom {
-
 
     @Autowired
     JpaResultMapper jpaResultMapper;

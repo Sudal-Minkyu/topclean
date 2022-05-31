@@ -2,17 +2,20 @@ package com.broadwave.toppos.User.Customer;
 
 import com.broadwave.toppos.Head.Branch.QBranch;
 import com.broadwave.toppos.Head.Franchise.QFranchise;
-import com.broadwave.toppos.User.Customer.CustomerDtos.CustomerInfoDto;
-import com.broadwave.toppos.User.Customer.CustomerDtos.CustomerListDto;
-import com.broadwave.toppos.User.Customer.CustomerDtos.CustomerMessageListDto;
-import com.broadwave.toppos.User.Customer.CustomerDtos.CustomerUncollectListDto;
+import com.broadwave.toppos.User.Customer.CustomerDtos.*;
 import com.querydsl.core.types.Projections;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.JPQLQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
+import java.sql.SQLData;
 import java.util.List;
+
+import static com.broadwave.toppos.Head.Branch.QBranch.branch;
+import static com.broadwave.toppos.Head.Franchise.QFranchise.franchise;
+import static com.broadwave.toppos.User.Customer.QCustomer.customer;
 
 /**
  * @author Minkyu
@@ -56,13 +59,13 @@ public class CustomerRepositoryCustomImpl extends QuerydslRepositorySupport impl
         query.orderBy(customer.bcId.desc());
         query.where(customer.frCode.eq(frCode));
 
-        if(!searchString.equals("")){
-            if(searchType.equals("0")){
-                query.where(customer.bcName.likeIgnoreCase("%"+searchString+"%").or(customer.bcHp.likeIgnoreCase("%"+searchString+"%")));
-            }else if(searchType.equals("1")){
-                query.where(customer.bcName.likeIgnoreCase("%"+searchString+"%"));
-            }else {
-                query.where(customer.bcHp.likeIgnoreCase("%"+searchString+"%"));
+        if (!searchString.equals("")) {
+            if (searchType.equals("0")) {
+                query.where(customer.bcName.likeIgnoreCase("%" + searchString + "%").or(customer.bcHp.likeIgnoreCase("%" + searchString + "%")));
+            } else if (searchType.equals("1")) {
+                query.where(customer.bcName.likeIgnoreCase("%" + searchString + "%"));
+            } else {
+                query.where(customer.bcHp.likeIgnoreCase("%" + searchString + "%"));
             }
         }
 
@@ -89,19 +92,19 @@ public class CustomerRepositoryCustomImpl extends QuerydslRepositorySupport impl
 
         query.where(customer.frCode.eq(frCode));
 
-        if(searchString != null){
+        if (searchString != null) {
             switch (searchType) {
                 case "0":
-                    query.where(customer.bcName.likeIgnoreCase("%"+searchString+"%").or(customer.bcHp.likeIgnoreCase("%"+searchString+"%").or(customer.bcAddress.likeIgnoreCase("%"+searchString+"%"))));
+                    query.where(customer.bcName.likeIgnoreCase("%" + searchString + "%").or(customer.bcHp.likeIgnoreCase("%" + searchString + "%").or(customer.bcAddress.likeIgnoreCase("%" + searchString + "%"))));
                     break;
                 case "1":
-                    query.where(customer.bcName.likeIgnoreCase("%"+searchString+"%"));
+                    query.where(customer.bcName.likeIgnoreCase("%" + searchString + "%"));
                     break;
                 case "2":
-                    query.where(customer.bcHp.likeIgnoreCase("%"+searchString+"%"));
+                    query.where(customer.bcHp.likeIgnoreCase("%" + searchString + "%"));
                     break;
                 default:
-                    query.where(customer.bcAddress.likeIgnoreCase("%"+searchString+"%"));
+                    query.where(customer.bcAddress.likeIgnoreCase("%" + searchString + "%"));
                     break;
             }
         }
@@ -124,19 +127,19 @@ public class CustomerRepositoryCustomImpl extends QuerydslRepositorySupport impl
         query.orderBy(customer.bcId.desc());
         query.where(customer.frCode.eq(frCode));
 
-        if(searchString != null){
+        if (searchString != null) {
             switch (searchType) {
                 case "0":
-                    query.where(customer.bcName.likeIgnoreCase("%"+searchString+"%").or(customer.bcHp.likeIgnoreCase("%"+searchString+"%").or(customer.bcAddress.likeIgnoreCase("%"+searchString+"%"))));
+                    query.where(customer.bcName.likeIgnoreCase("%" + searchString + "%").or(customer.bcHp.likeIgnoreCase("%" + searchString + "%").or(customer.bcAddress.likeIgnoreCase("%" + searchString + "%"))));
                     break;
                 case "1":
-                    query.where(customer.bcName.likeIgnoreCase("%"+searchString+"%"));
+                    query.where(customer.bcName.likeIgnoreCase("%" + searchString + "%"));
                     break;
                 case "2":
-                    query.where(customer.bcHp.likeIgnoreCase("%"+searchString+"%"));
+                    query.where(customer.bcHp.likeIgnoreCase("%" + searchString + "%"));
                     break;
                 default:
-                    query.where(customer.bcAddress.likeIgnoreCase("%"+searchString+"%"));
+                    query.where(customer.bcAddress.likeIgnoreCase("%" + searchString + "%"));
                     break;
             }
         }
@@ -160,7 +163,7 @@ public class CustomerRepositoryCustomImpl extends QuerydslRepositorySupport impl
         query.orderBy(customer.bcName.asc());
         query.where(customer.frCode.eq(frCode));
 
-        if(!visitDayRange.equals("0")){
+        if (!visitDayRange.equals("0")) {
             customer.bcLastRequestDt.goe(bcLastRequestDt);
         }
 
@@ -186,20 +189,65 @@ public class CustomerRepositoryCustomImpl extends QuerydslRepositorySupport impl
 
         query.orderBy(customer.bcName.asc());
 
-        if(franchiseId != 0){
+        if (franchiseId != 0) {
             query.where(franchise.id.eq(franchiseId));
         }
 
-        if(brCode.equals("hr")){
-            if(branchId != 0){
+        if (brCode.equals("hr")) {
+            if (branchId != 0) {
                 query.where(branch.id.eq(branchId));
             }
-        }else{
+        } else {
             query.where(branch.brCode.eq(brCode));
         }
 
-        if(!visitDayRange.equals("0")){
+        if (!visitDayRange.equals("0")) {
             customer.bcLastRequestDt.goe(bcLastRequestDt);
+        }
+
+        return query.fetch();
+    }
+
+    // 고객 현황 지사,가맹점별 성별 비중
+    @Override
+    public List<CustomerGenderRateDto> findByCustomerGenderRate(Long brId, Long frId) {
+
+        JPQLQuery<CustomerGenderRateDto> query = from(customer)
+                .groupBy(customer.bcSex)
+                .select(Projections.constructor(CustomerGenderRateDto.class,
+                        customer.bcSex,
+                        customer.bcSex.count().as("rate")
+                ));
+
+        if (brId != 0 && frId == 0) {
+            query.innerJoin(franchise).on(franchise.frCode.eq(customer.frCode))
+                    .innerJoin(branch).on(branch.brCode.eq(franchise.brCode))
+                    .where(branch.id.eq(brId));
+        } else if (brId != 0 && frId != 0) {
+            query.innerJoin(franchise).on(franchise.frCode.eq(customer.frCode))
+                    .where(franchise.id.eq(frId));
+        }
+
+        return query.fetch();
+    }
+
+    // 고객 현황 지사,가맹점별 나이 비중
+    @Override
+    public List<CustomerAgeRateDto> findByCustomerAgeRate(Long brId, Long frId) {
+        JPQLQuery<CustomerAgeRateDto> query = from(customer)
+                .groupBy(customer.bcAge)
+                .select(Projections.constructor(CustomerAgeRateDto.class,
+                        customer.bcAge,
+                        customer.bcAge.count().as("rate")
+                ));
+
+        if (brId != 0 && frId == 0) {
+            query.innerJoin(franchise).on(franchise.frCode.eq(customer.frCode))
+                    .innerJoin(branch).on(branch.brCode.eq(franchise.brCode))
+                    .where(branch.id.eq(brId));
+        } else if (brId != 0 && frId != 0) {
+            query.innerJoin(franchise).on(franchise.frCode.eq(customer.frCode))
+                    .where(franchise.id.eq(frId));
         }
 
         return query.fetch();

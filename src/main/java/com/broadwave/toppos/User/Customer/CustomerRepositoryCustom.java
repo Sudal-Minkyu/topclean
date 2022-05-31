@@ -1,9 +1,6 @@
 package com.broadwave.toppos.User.Customer;
 
-import com.broadwave.toppos.User.Customer.CustomerDtos.CustomerInfoDto;
-import com.broadwave.toppos.User.Customer.CustomerDtos.CustomerListDto;
-import com.broadwave.toppos.User.Customer.CustomerDtos.CustomerMessageListDto;
-import com.broadwave.toppos.User.Customer.CustomerDtos.CustomerUncollectListDto;
+import com.broadwave.toppos.User.Customer.CustomerDtos.*;
 
 import java.util.List;
 
@@ -26,4 +23,10 @@ public interface CustomerRepositoryCustom {
 
     // 지사가 문자메세지 보낼 고객 리스트
     List<CustomerMessageListDto> findByBrMessageCustomerList(String visitDayRange, String bcLastRequestDt, Long franchiseId, Long branchId, String brCode);
+
+    // 고객 현황 지사,가맹점별 성별 비중
+    List<CustomerGenderRateDto> findByCustomerGenderRate(Long brId, Long frId);
+
+    // 고객 현황 지사,가맹점별 나이 비중
+    List<CustomerAgeRateDto> findByCustomerAgeRate(Long brId, Long frId);
 }

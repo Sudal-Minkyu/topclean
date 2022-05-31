@@ -2,15 +2,21 @@ package com.broadwave.toppos.Head.HeadService;
 
 import com.broadwave.toppos.Head.Sales.Dtos.*;
 import com.broadwave.toppos.Head.Sales.SalesRepositoryCustom;
+import com.broadwave.toppos.User.Customer.CustomerDtos.CustomerAgeRateDto;
+import com.broadwave.toppos.User.Customer.CustomerDtos.CustomerGenderRateDto;
+import com.broadwave.toppos.User.Customer.CustomerRepository;
+import com.broadwave.toppos.User.Customer.CustomerRepositoryCustom;
 import com.broadwave.toppos.common.AjaxResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author Minkyu
@@ -23,10 +29,12 @@ import java.util.Map;
 public class SalesService {
 
     private final SalesRepositoryCustom salesRepositoryCustom;
+    private final CustomerRepository customerRepository;
 
     @Autowired
-    public SalesService(SalesRepositoryCustom salesRepositoryCustom) {
+    public SalesService(SalesRepositoryCustom salesRepositoryCustom, CustomerRepository customerRepository) {
         this.salesRepositoryCustom = salesRepositoryCustom;
+        this.customerRepository = customerRepository;
     }
 
     // 본사 - 지사 월간매출, 누적매출 그래프 데이터 호출 API
@@ -219,6 +227,79 @@ public class SalesService {
         List<CustomTransactionDetailStatusDto> customTransactionDetailStatus = salesRepositoryCustom.findByCustomTransactionDetailStatus(brCode, filterYear);
 
         data.put("gridListData", customTransactionDetailStatus);
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
+    // 본사 - 지사,가맹점별 성별 비중 현황 데이터 호출 API
+    public ResponseEntity<Map<String, Object>> headCustomerGenderRateStatus(Long brId, Long frId) {
+        log.info("headCustomerGenderRateStatus 호출");
+
+        log.info("brId  : " + brId);
+        log.info("frId  : " + frId);
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        List<CustomerGenderRateDto> customerGenderRate = customerRepository.findByCustomerGenderRate(brId, frId);
+        customerGenderRate.stream()
+                .map(g -> {
+                    if (g.getGender().equals("0")) {
+                        g.setGender("여자");
+                    } else {
+                        g.setGender("남자");
+                    }
+                    return g;
+                }).collect(Collectors.toList());
+
+        data.put("listData", customerGenderRate);
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
+    // 본사 - 지사,가맹점별 나이 비중 현황 데이터 호출 API
+    public ResponseEntity<Map<String, Object>> headCustomerAgeRateStatus(Long brId, Long frId) {
+        log.info("headCustomerAgeRateStatus 호출");
+
+        log.info("brId  : " + brId);
+        log.info("frId  : " + frId);
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        List<CustomerAgeRateDto> customerAgeRate = customerRepository.findByCustomerAgeRate(brId, frId);
+
+        ArrayList<CustomerAgeRateDto> customerAgeRateDtos = new ArrayList<>(); // 출력할 DTO 생성
+        CustomerAgeRateDto customerAgeOver60 = new CustomerAgeRateDto(); // 60대 이상 인스턴스 생성
+
+        long rate = 0;
+        for (CustomerAgeRateDto a : customerAgeRate) {
+            if (!a.getAge().equals("")) {
+                int i = Integer.parseInt(a.getAge());
+                if (i >= 60) {
+                    rate += a.getRate(); // 60대 이상부터는 더하기
+                    customerAgeOver60.setAge("60대 이상");
+                    customerAgeOver60.setRate(rate);
+
+                } else {
+                    // 10 ~ 50대
+                    CustomerAgeRateDto customerAgeRateDto = new CustomerAgeRateDto();
+                    customerAgeRateDto.setAge(a.getAge() + "대");
+                    customerAgeRateDto.setRate(a.getRate());
+                    customerAgeRateDtos.add(customerAgeRateDto);
+                }
+            } else {
+                // 연령 미선택자
+                CustomerAgeRateDto customerAgeRateDto = new CustomerAgeRateDto();
+                customerAgeRateDto.setAge("미선택");
+                customerAgeRateDto.setRate(a.getRate());
+                customerAgeRateDtos.add(customerAgeRateDto);
+            }
+        }
+        if (customerAgeOver60.getAge() != null) {
+            customerAgeRateDtos.add(customerAgeOver60);
+        }
+
+
+        data.put("listData", customerAgeRateDtos);
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 }
