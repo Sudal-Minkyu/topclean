@@ -11,13 +11,13 @@ $(function() {
 });
 
 const onPageLoad = function () {
-    runOnlyOnce.setXlsxTitleName('실시간 접수 현황');
+    runOnlyOnce.setXlsxTitleName('강제 입고 현황 (가맹점)');
 
     runOnlyOnce.makeSummaryGrid({
-        url: '/api/head/headReceiptList',
+        url: '/api/head/headForceStoreInputList',
         targetDate: {
-            dataField: 'frYyyymmdd',
-            headerText: '접수일자',
+            dataField: 'fdS8Dt',
+            headerText: '강제입고일',
         },
     });
 
@@ -33,5 +33,5 @@ const onPageLoad = function () {
 
     runOnlyOnce.setCommonEvents();
 
-    runOnlyOnce.setGridEvents({targetDateName: 'frYyyymmdd'});
+    runOnlyOnce.setGridEvents({targetDateName: 'fdS8Dt'});
 };

@@ -11,13 +11,13 @@ $(function() {
 });
 
 const onPageLoad = function () {
-    runOnlyOnce.setXlsxTitleName('실시간 접수 현황');
+    runOnlyOnce.setXlsxTitleName('강제 출고 현황 (지사)');
 
     runOnlyOnce.makeSummaryGrid({
-        url: '/api/head/headReceiptList',
+        url: '/api/head/headForceReleaseInputList',
         targetDate: {
-            dataField: 'frYyyymmdd',
-            headerText: '접수일자',
+            dataField: 'fdS7Dt',
+            headerText: '강제출고일',
         },
     });
 
@@ -33,5 +33,5 @@ const onPageLoad = function () {
 
     runOnlyOnce.setCommonEvents();
 
-    runOnlyOnce.setGridEvents({targetDateName: 'frYyyymmdd'});
+    runOnlyOnce.setGridEvents({targetDateName: 'fdS7Dt'});
 };

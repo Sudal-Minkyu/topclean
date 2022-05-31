@@ -11,13 +11,13 @@ $(function() {
 });
 
 const onPageLoad = function () {
-    runOnlyOnce.setXlsxTitleName('실시간 접수 현황');
+    runOnlyOnce.setXlsxTitleName('미출고 현황');
 
     runOnlyOnce.makeSummaryGrid({
-        url: '/api/head/headReceiptList',
+        url: '/api/head/headNoReleaseInputList',
         targetDate: {
-            dataField: 'frYyyymmdd',
-            headerText: '접수일자',
+            dataField: 'fdEstimateDt',
+            headerText: '출고예정일자',
         },
     });
 
@@ -33,5 +33,5 @@ const onPageLoad = function () {
 
     runOnlyOnce.setCommonEvents();
 
-    runOnlyOnce.setGridEvents({targetDateName: 'frYyyymmdd'});
+    runOnlyOnce.setGridEvents({targetDateName: 'fdEstimateDt'});
 };

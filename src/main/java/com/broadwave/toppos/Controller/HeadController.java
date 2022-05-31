@@ -122,12 +122,6 @@ public class HeadController {
         return "head/admin/mastercode";
     }
 
-    // 접수 현황
-    @RequestMapping("receiptstat")
-    public String receiptstat(){
-        return "head/process/receiptstat";
-    }
-
     // 문자메시지
     @RequestMapping("message")
     public String message(){
@@ -146,4 +140,47 @@ public class HeadController {
     @RequestMapping("noticewrite")
     public String noticewrite(){ return "head/setting/board/write"; }
 
+
+    // 입출고 현황
+    // 접수 현황
+    @RequestMapping("receiptstat")
+    public String receiptstat(){
+        return "head/process/receiptstat";
+    }
+
+    // 지사 입고 현황
+    @RequestMapping("storestat")
+    public String storestat(){
+        return "head/process/storestat";
+    }
+
+    // 지사 출고 현황
+    @RequestMapping("releasestat")
+    public String releasestat(){
+        return "head/process/releasestat";
+    }
+
+    // 강제 출고 현황(지사)
+    @RequestMapping("forcereleasestat")
+    public String forcereleasestat(){
+        return "head/process/forcereleasestat";
+    }
+
+    // 강제 입고 현황(가맹점)
+    @RequestMapping("forcestorestat")
+    public String forcestorestat(){
+        return "head/process/forcestorestat";
+    }
+
+    // 미출고 현황
+    @RequestMapping("releaseyetstat")
+    public String releaseyetstat(){
+        return "head/process/releaseyetstat";
+    }
+
+    // 재세탁 입고 현황
+    @RequestMapping("retrystat")
+    public String retrystat(){
+        return "head/process/retrystat";
+    }
 }

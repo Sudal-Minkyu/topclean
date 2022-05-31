@@ -11,13 +11,13 @@ $(function() {
 });
 
 const onPageLoad = function () {
-    runOnlyOnce.setXlsxTitleName('실시간 접수 현황');
+    runOnlyOnce.setXlsxTitleName('지사 입고 현황');
 
     runOnlyOnce.makeSummaryGrid({
-        url: '/api/head/headReceiptList',
+        url: '/api/head/headStoreInputList',
         targetDate: {
-            dataField: 'frYyyymmdd',
-            headerText: '접수일자',
+            dataField: 'fdS2Dt',
+            headerText: '입고일자',
         },
     });
 
@@ -33,5 +33,5 @@ const onPageLoad = function () {
 
     runOnlyOnce.setCommonEvents();
 
-    runOnlyOnce.setGridEvents({targetDateName: 'frYyyymmdd'});
+    runOnlyOnce.setGridEvents({targetDateName: 'fdS2Dt'});
 };

@@ -7,29 +7,28 @@ import {activateBrFrListInputs} from './m_setBrFrList.js';
 
 const dtos = {
     send: {
-        headReceiptList: {
+        summaryAPI: {
             branchId: 'n',
             franchiseId: 'n',
             filterFromDt: 's',
             filterToDt: 's',
         },
-        headReceiptSubList: {
+        detailAPI: {
             branchId: 'n',
             franchiseId: 'n',
             frYyyymmdd: 's',
         },
     },
     receive: {
-        headReceiptList: {
+        summaryAPI: {
             branchId: 'n',
             brName: 's',
             franchiseId: 'n',
             frName: 's',
-            frYyyymmdd: 's',
             requestCount: 'n',
             fdTotAmt: 'n',
         },
-        headReceiptSubList: {
+        detailAPI: {
             brName: 's',
             frName: 's',
             bcName: 's',
@@ -93,7 +92,7 @@ const urls = {
 const comms = {
     /* 그리드 좌측, 일별 누계 데이터 조회값을 가져옴 */
     searchSummaryData(searchCondition) {
-        dv.chk(searchCondition, dtos.send.headReceiptList, '누계 데이터 조회를 위한 조건 보내기');
+        dv.chk(searchCondition, dtos.send.summaryAPI, '누계 데이터 조회를 위한 조건 보내기');
         wares.searchCondition = searchCondition;
         CommonUI.ajax(urls.searchSummaryData, 'GET', searchCondition, function (res) {
             if (searchCondition.branchId) {
@@ -102,17 +101,18 @@ const comms = {
                 grids.setFrNameVisibility(false);
             }
             const data = res.sendData.gridListData;
-            dv.chk(data, dtos.receive.headReceiptList, '일별 누계 데이터 받아오기');
+            console.log('누계조회결과', data);
+            dv.chk(data, dtos.receive.summaryAPI, '일별 누계 데이터 받아오기');
             grids.setData(grids.id[0], data);
         });
     },
 
     /* 누게리스트의 지사,가맹점정보,날짜를 보내 해당 일자에 속한 모든 접수데이터 가져오기 */
     getDetailData(condition) {
-        dv.chk(condition, dtos.send.headReceiptSubList, '상세 품목을 받아오기 위한 조건 보내기');
+        dv.chk(condition, dtos.send.detailAPI, '상세 품목을 받아오기 위한 조건 보내기');
         CommonUI.ajax(urls.getDetailData, 'GET', condition, function (res) {
             const data = res.sendData.gridListData;
-            dv.chk(data, dtos.receive.headReceiptSubList, '받아온 상세 품목들의 정보');
+            dv.chk(data, dtos.receive.detailAPI, '받아온 상세 품목들의 정보');
             grids.setData(grids.id[1], data);
         });
     },
@@ -162,6 +162,9 @@ const runOnlyOnce = {
     /* grid_summary 그리드의 기본 생성을 담당한다. */
     makeSummaryGrid(prop) {
         urls.searchSummaryData = prop.url;
+        /* 동적으로 dtos에 검사대상 부여 */
+        dtos.receive.summaryAPI[prop.targetDate.dataField] = "s";
+
         const layout = [
             {
                 dataField: 'brName',
@@ -176,8 +179,8 @@ const runOnlyOnce = {
                 dataType: 'date',
                 formatString: 'yyyy-mm-dd',
             }, {
-                dataField: prop.targetQty.dataField,
-                headerText: prop.targetQty.headerText,
+                dataField: 'requestCount',
+                headerText: '건수',
                 style: 'grid_textalign_right',
                 width: 80,
                 dataType: 'numeric',
