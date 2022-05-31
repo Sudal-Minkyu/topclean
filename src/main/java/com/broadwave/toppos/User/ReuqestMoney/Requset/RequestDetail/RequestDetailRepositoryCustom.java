@@ -2,6 +2,7 @@ package com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail;
 
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.manager.*;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.*;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.head.*;
 import org.springframework.data.jpa.repository.Modifying;
 
 import javax.transaction.Transactional;
@@ -78,5 +79,17 @@ public interface RequestDetailRepositoryCustom {
 
     List<RequestDetailOutsourcingDeliveryListDto> findByRequestDetailOutsourcingDeliveryList(String brCode, Long frId, String filterFromDt, String filterToDt, String isOutsourceable); // 지사 외주출고 querydsl
 //    List<RequestDetailOutsourcingReceiptListDto> findByRequestDetailOutsourcingReceiptList(String brCode, Long frId, String filterFromDt, String filterToDt); // 지사 외주입고 querydsl -> IssueOutsourcingRepositoryCustom
+
+    List<RequestIncomeListDto> findByHeadIncomeList(Long branchId, Long franchiseId, String filterFromDt, String filterToDt); // 본사 지사입고현황 왼쪽 NativeQuery
+
+    List<RequestOutgoListDto> findByHeadOutgoList(Long branchId, Long franchiseId, String filterFromDt, String filterToDt); // 본사 지사출고현황 왼쪽 NativeQuery
+
+    List<RequestForceOutgoListDto> findByHeadForceOutgoList(Long branchId, Long franchiseId, String filterFromDt, String filterToDt); // 본사 강제출고현황 왼쪽 NativeQuery
+
+    List<RequestForceIncomeListDto> findByHeadForceIncomeList(Long branchId, Long franchiseId, String filterFromDt, String filterToDt); // 본사 강제입고현황 왼쪽 NativeQuery
+
+    List<RequestNoOutgoListDto> findByHeadNoOutgoList(Long branchId, Long franchiseId, String filterFromDt, String filterToDt); // 본사 미출고현황 왼쪽 NativeQuery
+
+    List<RequestRetryListDto> findByHeadRetryList(Long branchId, Long franchiseId, String filterFromDt, String filterToDt); // 본사 재새탁입고현황 왼쪽 NativeQuery
 
 }

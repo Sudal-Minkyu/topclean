@@ -32,6 +32,7 @@ import com.broadwave.toppos.Head.Item.Price.ItemPrice;
 import com.broadwave.toppos.Head.Notice.NoticeDtos.NoticeMapperDto;
 import com.broadwave.toppos.Head.HeadService.SalesService;
 import com.broadwave.toppos.Manager.HmTemplate.HmTemplateDto;
+import com.broadwave.toppos.Manager.ManagerService.CurrentService;
 import com.broadwave.toppos.Manager.ManagerService.HmTemplateService;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.user.RequestSearchDto;
 import com.broadwave.toppos.User.UserService.ReceiptService;
@@ -78,11 +79,12 @@ public class HeadRestController {
     private final ReceiptService receiptService;
     private final SalesService salesService; // 지사의 매출현황 관련 서비스
     private final HmTemplateService hmTemplateService; // 문자메세지 서비스
+    private final CurrentService currentService; // 현황페이지 서비스
 
     @Autowired
     public HeadRestController(AccountService accountService, NoticeService noticeService, ModelMapper modelMapper,
                               HeadService headService, HeadInfoService headInfoService, ReceiptService receiptService, SalesService salesService,
-                              HmTemplateService hmTemplateService) {
+                              HmTemplateService hmTemplateService, CurrentService currentService) {
         this.accountService = accountService;
         this.modelMapper = modelMapper;
         this.noticeService = noticeService;
@@ -91,6 +93,7 @@ public class HeadRestController {
         this.receiptService = receiptService;
         this.salesService = salesService;
         this.hmTemplateService = hmTemplateService;
+        this.currentService = currentService;
     }
 
     //@@@@@@@@@@@@@@@@@@@@@ 본사 메인화면 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -1617,5 +1620,63 @@ public class HeadRestController {
     public ResponseEntity<Map<String, Object>> templateList(HttpServletRequest request) {
         return hmTemplateService.hmTemplateList("1", request);
     }
+
+    //@@@@@@@@@@@@@@@@@@@@@ 본사 현황 관련 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    // 본사 지사입고현황 - 왼쪽 리스트 호출API
+    @GetMapping("headStoreInputList")
+    @ApiOperation(value = "본사 지사입고현황 리스트", notes = "본사가 지사입고현황 리스트를 요청한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", value = "JWT Token", required = true, dataType = "string", paramType = "header")})
+    public ResponseEntity<Map<String, Object>> headStoreInputList(@RequestParam("branchId") Long branchId, @RequestParam("franchiseId") Long franchiseId,
+                                                                      @RequestParam("filterFromDt") String filterFromDt, @RequestParam("filterToDt") String filterToDt, HttpServletRequest request) {
+        return currentService.headStoreInputList(branchId, franchiseId, filterFromDt, filterToDt, request);
+    }
+
+    // 본사 지사출고현황 - 왼쪽 리스트 호출API
+    @GetMapping("headReleaseInputList")
+    @ApiOperation(value = "본사 지사출고현황 리스트", notes = "본사가 지사출고현황 리스트를 요청한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", value = "JWT Token", required = true, dataType = "string", paramType = "header")})
+    public ResponseEntity<Map<String, Object>> headReleaseInputList(@RequestParam("branchId") Long branchId, @RequestParam("franchiseId") Long franchiseId,
+                                                                      @RequestParam("filterFromDt") String filterFromDt, @RequestParam("filterToDt") String filterToDt, HttpServletRequest request) {
+        return currentService.headReleaseInputList(branchId, franchiseId, filterFromDt, filterToDt, request);
+    }
+
+    // 본사 강제출고현황 - 왼쪽 리스트 호출API
+    @GetMapping("headForceReleaseInputList")
+    @ApiOperation(value = "본사 강제출고현황 리스트", notes = "본사가 강제출고현황 리스트를 요청한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", value = "JWT Token", required = true, dataType = "string", paramType = "header")})
+    public ResponseEntity<Map<String, Object>> headForceReleaseInputList(@RequestParam("branchId") Long branchId, @RequestParam("franchiseId") Long franchiseId,
+                                                                      @RequestParam("filterFromDt") String filterFromDt, @RequestParam("filterToDt") String filterToDt, HttpServletRequest request) {
+        return currentService.headForceReleaseInputList(branchId, franchiseId, filterFromDt, filterToDt, request);
+    }
+
+    // 본사 강제입고현황 - 왼쪽 리스트 호출API
+    @GetMapping("headForceStoreInputList")
+    @ApiOperation(value = "본사 강제입고현황 리스트", notes = "본사가 강제입고현황 리스트를 요청한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", value = "JWT Token", required = true, dataType = "string", paramType = "header")})
+    public ResponseEntity<Map<String, Object>> headForceStoreInputList(@RequestParam("branchId") Long branchId, @RequestParam("franchiseId") Long franchiseId,
+                                                                      @RequestParam("filterFromDt") String filterFromDt, @RequestParam("filterToDt") String filterToDt, HttpServletRequest request) {
+        return currentService.headForceStoreInputList(branchId, franchiseId, filterFromDt, filterToDt, request);
+    }
+
+    // 본사 미출고 현황 - 왼쪽 리스트 호출API
+    @GetMapping("headNoReleaseInputList")
+    @ApiOperation(value = "본사 미출고 현황 리스트", notes = "본사가 미출고 현황 리스트를 요청한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", value = "JWT Token", required = true, dataType = "string", paramType = "header")})
+    public ResponseEntity<Map<String, Object>> headNoReleaseInputList(@RequestParam("branchId") Long branchId, @RequestParam("franchiseId") Long franchiseId,
+                                                                      @RequestParam("filterFromDt") String filterFromDt, @RequestParam("filterToDt") String filterToDt, HttpServletRequest request) {
+        return currentService.headNoReleaseInputList(branchId, franchiseId, filterFromDt, filterToDt, request);
+    }
+
+    // 본사 재세탁입고 현황 - 왼쪽 리스트 호출API
+    @GetMapping("headRetryList")
+    @ApiOperation(value = "본사 재세탁입고 현황 리스트", notes = "본사가 재세탁입고 현황 리스트를 요청한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", value = "JWT Token", required = true, dataType = "string", paramType = "header")})
+    public ResponseEntity<Map<String, Object>> headRetryList(@RequestParam("branchId") Long branchId, @RequestParam("franchiseId") Long franchiseId,
+                                                                      @RequestParam("filterFromDt") String filterFromDt, @RequestParam("filterToDt") String filterToDt, HttpServletRequest request) {
+        return currentService.headRetryList(branchId, franchiseId, filterFromDt, filterToDt, request);
+    }
+
+
+
 
 }

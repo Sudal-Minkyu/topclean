@@ -11,8 +11,7 @@ import com.broadwave.toppos.User.ReuqestMoney.Requset.Find.QFind;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.QInspeot;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.QRequestDetail;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestFindListDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.head.RequestReceiptListDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.head.RequestReceiptListSubDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.head.*;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.manager.RequestRealTimeListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.manager.RequestRealTimeListSubDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.manager.RequestWeekAmountDto;
@@ -970,6 +969,5 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
 
         return query.fetch();
     }
-
 
 }

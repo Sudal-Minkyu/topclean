@@ -12,6 +12,7 @@ import com.broadwave.toppos.User.ReuqestMoney.Requset.QRequest;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.QInspeot;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.manager.*;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.*;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.head.*;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.JPQLQuery;
@@ -2553,5 +2554,984 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
 
         return jpaResultMapper.list(query, RequestDetailOutsourcingDeliveryListDto.class);
     }
+
+    // 본사 지사입고현황 왼쪽 NativeQuery
+    @Override
+    public List<RequestIncomeListDto> findByHeadIncomeList(Long branchId, Long franchiseId, String filterFromDt, String filterToDt) {
+        EntityManager em = getEntityManager();
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("SELECT \n");
+        sb.append("d.br_id, d.br_name, c.fr_id, c.fr_name, b.fd_s2_dt, COUNT(*), SUM(b.fd_tot_amt) \n");
+        sb.append("FROM  fs_request a \n");
+        sb.append("INNER JOIN fs_request_dtl b on b.fr_id=a.fr_id \n");
+        sb.append("INNER JOIN bs_franchise c on c.fr_code=a.fr_code \n");
+        sb.append("INNER JOIN bs_branch d on d.br_code = c.br_code \n");
+        sb.append("WHERE \n");
+        sb.append("a.fr_confirm_yn='Y' \n");
+        sb.append("AND b.fd_cancel='N' \n");
+        sb.append("AND b.fd_s2_dt>= ?1 \n");
+        sb.append("AND b.fd_s2_dt<= ?2 \n");
+        if(branchId != 0){
+            sb.append("AND d.br_id = ?3 \n");
+            if(franchiseId != 0){
+                sb.append("AND c.fr_id = ?4 \n");
+            }
+            sb.append("GROUP BY d.br_name, c.fr_name, b.fd_s2_dt ORDER BY d.br_name, c.fr_name, b.fd_s2_dt ASC; \n");
+        }else{
+            sb.append("GROUP BY d.br_name, b.fd_s2_dt ORDER BY d.br_name, b.fd_s2_dt ASC; \n");
+        }
+
+        Query query = em.createNativeQuery(sb.toString());
+
+        query.setParameter(1, filterFromDt);
+        query.setParameter(2, filterToDt);
+        if(branchId != 0){
+            query.setParameter(3, branchId);
+            if(franchiseId != 0){
+                query.setParameter(4, franchiseId);
+            }
+        }
+
+        return jpaResultMapper.list(query, RequestIncomeListDto.class);
+    }
+
+//    //  본사 지사입고현황 오른쪽 - querydsl
+//    public List<RequestReceiptListSubDto> findByHeadReceiptSubList(Long branchId, Long franchiseId, String frYyyymmdd) {
+//
+//        QRequestDetail requestDetail = QRequestDetail.requestDetail;
+//        QRequest request = QRequest.request;
+//        QItemGroup itemGroup = QItemGroup.itemGroup;
+//        QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
+//        QItem item = QItem.item;
+//        QCustomer customer = QCustomer.customer;
+//        QFranchise franchise = QFranchise.franchise;
+//        QBranch branch = QBranch.branch;
+//
+//        QInspeot inspeot1 = new QInspeot("inspeot1");
+//        QInspeot inspeot2 = new QInspeot("inspeot2");
+//
+//        JPQLQuery<RequestReceiptListSubDto> query = from(requestDetail)
+//                .innerJoin(requestDetail.frId, request)
+//                .innerJoin(request.bcId, customer)
+//                .innerJoin(franchise).on(franchise.frCode.eq(request.frCode))
+//                .innerJoin(branch).on(branch.brCode.eq(franchise.brCode))
+//                .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
+//                .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
+//                .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
+//
+//                // 검품여부 leftJoin
+//                .leftJoin(inspeot1).on(inspeot1.fdId.eq(requestDetail).and(inspeot1.fiType.eq("F").and(inspeot1.fiCustomerConfirm.eq("3")))) // 가맹점
+//                .leftJoin(inspeot2).on(inspeot2.fdId.eq(requestDetail).and(inspeot2.fiType.eq("B").and(inspeot2.fiCustomerConfirm.eq("3")))) // 지사
+//
+//                .where(request.frConfirmYn.eq("Y"))
+//                .where(requestDetail.fdCancel.eq("N"))
+//
+//                .select(Projections.constructor(RequestReceiptListSubDto.class,
+//
+//                        branch.brName,
+//                        franchise.frName,
+//
+//                        customer.bcName,
+//                        customer.bcHp,
+//                        customer.bcGrade,
+//
+//                        requestDetail.fdTag,
+//                        request.fr_insert_date,
+//                        requestDetail.fdEstimateDt,
+//
+//                        itemGroup.bgName,
+//                        itemGroupS.bsName,
+//                        item.biName,
+//
+//                        requestDetail.fdQty,
+//                        requestDetail.fdColor,
+//                        requestDetail.fdPattern,
+//
+//                        requestDetail.fdUrgentType,
+//                        requestDetail.fdUrgentYn,
+//
+//                        requestDetail.fdPriceGrade,
+//                        requestDetail.fdRetryYn,
+//                        requestDetail.fdPressed,
+//                        requestDetail.fdAdd1Amt,
+//                        requestDetail.fdRepairAmt,
+//                        requestDetail.fdWhitening,
+//                        requestDetail.fdPollution,
+//                        requestDetail.fdWaterRepellent,
+//                        requestDetail.fdStarch,
+//
+//                        requestDetail.fdAdd2Amt,
+//                        requestDetail.fdUrgentAmt,
+//                        requestDetail.fdNormalAmt,
+//
+//                        requestDetail.fdTotAmt,
+//                        requestDetail.fdDiscountAmt,
+//                        requestDetail.fdState,
+//
+//                        new CaseBuilder()
+//                                .when(requestDetail.fdPollutionLocFcn.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocFcs.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocFcb.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocFlh.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocFrh.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocFlf.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocFrf.eq("Y")).then(1)
+//                                .otherwise(0),
+//                        new CaseBuilder()
+//                                .when(requestDetail.fdPollutionLocBcn.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocBcs.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocBcb.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocBlh.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocBrh.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocBlf.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocBrf.eq("Y")).then(1)
+//                                .otherwise(0),
+//
+//                        requestDetail.fdS2Dt,
+//                        requestDetail.fdS5Dt,
+//                        requestDetail.fdS4Dt,
+//                        requestDetail.fdS3Dt,
+//                        requestDetail.fdS6Dt,
+//                        requestDetail.fdS6Time,
+//
+//                        new CaseBuilder()
+//                                .when(inspeot1.isNotNull().and(inspeot2.isNotNull())).then(inspeot1.fiProgressStateDt)
+//                                .otherwise(
+//                                        new CaseBuilder().when(inspeot1.isNotNull()).then(inspeot1.fiProgressStateDt)
+//                                                .otherwise(inspeot2.fiProgressStateDt))
+//
+//                ));
+//
+//        query.groupBy(requestDetail.id).distinct().orderBy(requestDetail.id.asc());
+//
+//        if(branchId != 0){
+//            query.where(branch.id.eq(branchId));
+//        }
+//        if(franchiseId != 0){
+//            query.where(franchise.id.eq(franchiseId));
+//        }
+//
+//        query.where(request.frYyyymmdd.eq(frYyyymmdd));
+//
+//        return query.fetch();
+//    }
+
+    // 본사 지사출고현황 왼쪽 NativeQuery
+    @Override
+    public List<RequestOutgoListDto> findByHeadOutgoList(Long branchId, Long franchiseId, String filterFromDt, String filterToDt) {
+        EntityManager em = getEntityManager();
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("SELECT \n");
+        sb.append("e.br_id, e.br_name, d.fr_id, d.fr_name, a.mi_dt, COUNT(*), SUM(b.fd_tot_amt) \n");
+        sb.append("FROM mr_issue a \n");
+        sb.append("INNER JOIN fs_request_dtl b ON a.mi_id = b.mi_id  \n");
+        sb.append("INNER JOIN fs_request c ON c.fr_id = b.fr_id  \n");
+        sb.append("INNER JOIN bs_franchise d on d.fr_code = c.fr_code \n");
+        sb.append("INNER JOIN bs_branch e on e.br_code = c.br_code \n");
+
+        sb.append("WHERE \n");
+        sb.append("c.fr_confirm_yn='Y' \n");
+        sb.append("AND b.fd_cancel='N' \n");
+        sb.append("AND a.mi_dt>= ?1 \n");
+        sb.append("AND a.mi_dt<= ?2 \n");
+        if(branchId != 0){
+            sb.append("AND e.br_id = ?3 \n");
+            if(franchiseId != 0){
+                sb.append("AND d.fr_id = ?4 \n");
+            }
+            sb.append("GROUP BY e.br_name, d.fr_name, a.mi_dt ORDER BY e.br_name, d.fr_name, a.mi_dt ASC; \n");
+        }else{
+            sb.append("GROUP BY e.br_name, a.mi_dt ORDER BY e.br_name, a.mi_dt ASC; \n");
+        }
+
+        Query query = em.createNativeQuery(sb.toString());
+
+        query.setParameter(1, filterFromDt);
+        query.setParameter(2, filterToDt);
+        if(branchId != 0){
+            query.setParameter(3, branchId);
+            if(franchiseId != 0){
+                query.setParameter(4, franchiseId);
+            }
+        }
+
+        return jpaResultMapper.list(query, RequestOutgoListDto.class);
+    }
+
+//    //  본사 지사출고현황 오른쪽 - querydsl
+//    public List<RequestReceiptListSubDto> findByHeadReceiptSubList(Long branchId, Long franchiseId, String frYyyymmdd) {
+//
+//        QRequestDetail requestDetail = QRequestDetail.requestDetail;
+//        QRequest request = QRequest.request;
+//        QItemGroup itemGroup = QItemGroup.itemGroup;
+//        QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
+//        QItem item = QItem.item;
+//        QCustomer customer = QCustomer.customer;
+//        QFranchise franchise = QFranchise.franchise;
+//        QBranch branch = QBranch.branch;
+//
+//        QInspeot inspeot1 = new QInspeot("inspeot1");
+//        QInspeot inspeot2 = new QInspeot("inspeot2");
+//
+//        JPQLQuery<RequestReceiptListSubDto> query = from(requestDetail)
+//                .innerJoin(requestDetail.frId, request)
+//                .innerJoin(request.bcId, customer)
+//                .innerJoin(franchise).on(franchise.frCode.eq(request.frCode))
+//                .innerJoin(branch).on(branch.brCode.eq(franchise.brCode))
+//                .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
+//                .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
+//                .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
+//
+//                // 검품여부 leftJoin
+//                .leftJoin(inspeot1).on(inspeot1.fdId.eq(requestDetail).and(inspeot1.fiType.eq("F").and(inspeot1.fiCustomerConfirm.eq("3")))) // 가맹점
+//                .leftJoin(inspeot2).on(inspeot2.fdId.eq(requestDetail).and(inspeot2.fiType.eq("B").and(inspeot2.fiCustomerConfirm.eq("3")))) // 지사
+//
+//                .where(request.frConfirmYn.eq("Y"))
+//                .where(requestDetail.fdCancel.eq("N"))
+//
+//                .select(Projections.constructor(RequestReceiptListSubDto.class,
+//
+//                        branch.brName,
+//                        franchise.frName,
+//
+//                        customer.bcName,
+//                        customer.bcHp,
+//                        customer.bcGrade,
+//
+//                        requestDetail.fdTag,
+//                        request.fr_insert_date,
+//                        requestDetail.fdEstimateDt,
+//
+//                        itemGroup.bgName,
+//                        itemGroupS.bsName,
+//                        item.biName,
+//
+//                        requestDetail.fdQty,
+//                        requestDetail.fdColor,
+//                        requestDetail.fdPattern,
+//
+//                        requestDetail.fdUrgentType,
+//                        requestDetail.fdUrgentYn,
+//
+//                        requestDetail.fdPriceGrade,
+//                        requestDetail.fdRetryYn,
+//                        requestDetail.fdPressed,
+//                        requestDetail.fdAdd1Amt,
+//                        requestDetail.fdRepairAmt,
+//                        requestDetail.fdWhitening,
+//                        requestDetail.fdPollution,
+//                        requestDetail.fdWaterRepellent,
+//                        requestDetail.fdStarch,
+//
+//                        requestDetail.fdAdd2Amt,
+//                        requestDetail.fdUrgentAmt,
+//                        requestDetail.fdNormalAmt,
+//
+//                        requestDetail.fdTotAmt,
+//                        requestDetail.fdDiscountAmt,
+//                        requestDetail.fdState,
+//
+//                        new CaseBuilder()
+//                                .when(requestDetail.fdPollutionLocFcn.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocFcs.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocFcb.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocFlh.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocFrh.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocFlf.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocFrf.eq("Y")).then(1)
+//                                .otherwise(0),
+//                        new CaseBuilder()
+//                                .when(requestDetail.fdPollutionLocBcn.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocBcs.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocBcb.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocBlh.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocBrh.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocBlf.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocBrf.eq("Y")).then(1)
+//                                .otherwise(0),
+//
+//                        requestDetail.fdS2Dt,
+//                        requestDetail.fdS5Dt,
+//                        requestDetail.fdS4Dt,
+//                        requestDetail.fdS3Dt,
+//                        requestDetail.fdS6Dt,
+//                        requestDetail.fdS6Time,
+//
+//                        new CaseBuilder()
+//                                .when(inspeot1.isNotNull().and(inspeot2.isNotNull())).then(inspeot1.fiProgressStateDt)
+//                                .otherwise(
+//                                        new CaseBuilder().when(inspeot1.isNotNull()).then(inspeot1.fiProgressStateDt)
+//                                                .otherwise(inspeot2.fiProgressStateDt))
+//
+//                ));
+//
+//        query.groupBy(requestDetail.id).distinct().orderBy(requestDetail.id.asc());
+//
+//        if(branchId != 0){
+//            query.where(branch.id.eq(branchId));
+//        }
+//        if(franchiseId != 0){
+//            query.where(franchise.id.eq(franchiseId));
+//        }
+//
+//        query.where(request.frYyyymmdd.eq(frYyyymmdd));
+//
+//        return query.fetch();
+//    }
+
+    // 본사 강제출고현황 왼쪽 NativeQuery
+    @Override
+    public List<RequestForceOutgoListDto> findByHeadForceOutgoList(Long branchId, Long franchiseId, String filterFromDt, String filterToDt) {
+        EntityManager em = getEntityManager();
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("SELECT \n");
+        sb.append("e.br_id, e.br_name, d.fr_id, d.fr_name, a.mr_dt, COUNT(*), SUM(b.fd_tot_amt) \n");
+        sb.append("FROM mr_issue_force a \n");
+        sb.append("INNER JOIN fs_request_dtl b ON a.mi_id = b.mi_id  \n");
+        sb.append("INNER JOIN fs_request c ON c.fr_id = b.fr_id  \n");
+        sb.append("INNER JOIN bs_franchise d on d.fr_code = c.fr_code \n");
+        sb.append("INNER JOIN bs_branch e on e.br_code = c.br_code \n");
+        sb.append("WHERE \n");
+        sb.append("c.fr_confirm_yn='Y' \n");
+        sb.append("AND b.fd_s7_type='01' \n");
+        sb.append("AND b.fd_cancel='N' \n");
+        sb.append("AND a.mr_dt>= ?1 \n");
+        sb.append("AND a.mr_dt<= ?2 \n");
+        if(branchId != 0){
+            sb.append("AND e.br_id = ?3 \n");
+            if(franchiseId != 0){
+                sb.append("AND d.fr_id = ?4 \n");
+            }
+            sb.append("GROUP BY e.br_name, d.fr_name, a.mr_dt ORDER BY d.br_name, d.fr_name, a.mr_dt ASC; \n");
+        }else{
+            sb.append("GROUP BY e.br_name, a.mr_dt ORDER BY e.br_name, a.mr_dt ASC; \n");
+        }
+
+        Query query = em.createNativeQuery(sb.toString());
+
+        query.setParameter(1, filterFromDt);
+        query.setParameter(2, filterToDt);
+        if(branchId != 0){
+            query.setParameter(3, branchId);
+            if(franchiseId != 0){
+                query.setParameter(4, franchiseId);
+            }
+        }
+
+        return jpaResultMapper.list(query, RequestForceOutgoListDto.class);
+    }
+
+//    //  본사 강제출고현황 오른쪽 - querydsl
+//    public List<RequestReceiptListSubDto> findByHeadReceiptSubList(Long branchId, Long franchiseId, String frYyyymmdd) {
+//
+//        QRequestDetail requestDetail = QRequestDetail.requestDetail;
+//        QRequest request = QRequest.request;
+//        QItemGroup itemGroup = QItemGroup.itemGroup;
+//        QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
+//        QItem item = QItem.item;
+//        QCustomer customer = QCustomer.customer;
+//        QFranchise franchise = QFranchise.franchise;
+//        QBranch branch = QBranch.branch;
+//
+//        QInspeot inspeot1 = new QInspeot("inspeot1");
+//        QInspeot inspeot2 = new QInspeot("inspeot2");
+//
+//        JPQLQuery<RequestReceiptListSubDto> query = from(requestDetail)
+//                .innerJoin(requestDetail.frId, request)
+//                .innerJoin(request.bcId, customer)
+//                .innerJoin(franchise).on(franchise.frCode.eq(request.frCode))
+//                .innerJoin(branch).on(branch.brCode.eq(franchise.brCode))
+//                .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
+//                .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
+//                .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
+//
+//                // 검품여부 leftJoin
+//                .leftJoin(inspeot1).on(inspeot1.fdId.eq(requestDetail).and(inspeot1.fiType.eq("F").and(inspeot1.fiCustomerConfirm.eq("3")))) // 가맹점
+//                .leftJoin(inspeot2).on(inspeot2.fdId.eq(requestDetail).and(inspeot2.fiType.eq("B").and(inspeot2.fiCustomerConfirm.eq("3")))) // 지사
+//
+//                .where(request.frConfirmYn.eq("Y"))
+//                .where(requestDetail.fdCancel.eq("N"))
+//
+//                .select(Projections.constructor(RequestReceiptListSubDto.class,
+//
+//                        branch.brName,
+//                        franchise.frName,
+//
+//                        customer.bcName,
+//                        customer.bcHp,
+//                        customer.bcGrade,
+//
+//                        requestDetail.fdTag,
+//                        request.fr_insert_date,
+//                        requestDetail.fdEstimateDt,
+//
+//                        itemGroup.bgName,
+//                        itemGroupS.bsName,
+//                        item.biName,
+//
+//                        requestDetail.fdQty,
+//                        requestDetail.fdColor,
+//                        requestDetail.fdPattern,
+//
+//                        requestDetail.fdUrgentType,
+//                        requestDetail.fdUrgentYn,
+//
+//                        requestDetail.fdPriceGrade,
+//                        requestDetail.fdRetryYn,
+//                        requestDetail.fdPressed,
+//                        requestDetail.fdAdd1Amt,
+//                        requestDetail.fdRepairAmt,
+//                        requestDetail.fdWhitening,
+//                        requestDetail.fdPollution,
+//                        requestDetail.fdWaterRepellent,
+//                        requestDetail.fdStarch,
+//
+//                        requestDetail.fdAdd2Amt,
+//                        requestDetail.fdUrgentAmt,
+//                        requestDetail.fdNormalAmt,
+//
+//                        requestDetail.fdTotAmt,
+//                        requestDetail.fdDiscountAmt,
+//                        requestDetail.fdState,
+//
+//                        new CaseBuilder()
+//                                .when(requestDetail.fdPollutionLocFcn.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocFcs.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocFcb.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocFlh.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocFrh.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocFlf.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocFrf.eq("Y")).then(1)
+//                                .otherwise(0),
+//                        new CaseBuilder()
+//                                .when(requestDetail.fdPollutionLocBcn.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocBcs.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocBcb.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocBlh.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocBrh.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocBlf.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocBrf.eq("Y")).then(1)
+//                                .otherwise(0),
+//
+//                        requestDetail.fdS2Dt,
+//                        requestDetail.fdS5Dt,
+//                        requestDetail.fdS4Dt,
+//                        requestDetail.fdS3Dt,
+//                        requestDetail.fdS6Dt,
+//                        requestDetail.fdS6Time,
+//
+//                        new CaseBuilder()
+//                                .when(inspeot1.isNotNull().and(inspeot2.isNotNull())).then(inspeot1.fiProgressStateDt)
+//                                .otherwise(
+//                                        new CaseBuilder().when(inspeot1.isNotNull()).then(inspeot1.fiProgressStateDt)
+//                                                .otherwise(inspeot2.fiProgressStateDt))
+//
+//                ));
+//
+//        query.groupBy(requestDetail.id).distinct().orderBy(requestDetail.id.asc());
+//
+//        if(branchId != 0){
+//            query.where(branch.id.eq(branchId));
+//        }
+//        if(franchiseId != 0){
+//            query.where(franchise.id.eq(franchiseId));
+//        }
+//
+//        query.where(request.frYyyymmdd.eq(frYyyymmdd));
+//
+//        return query.fetch();
+//    }
+
+    // 본사 강제입고현황 왼쪽 NativeQuery
+    @Override
+    public List<RequestForceIncomeListDto> findByHeadForceIncomeList(Long branchId, Long franchiseId, String filterFromDt, String filterToDt) {
+        EntityManager em = getEntityManager();
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("SELECT \n");
+        sb.append("d.br_id, d.br_name, c.fr_id, c.fr_name, b.fd_s8_dt, COUNT(*), SUM(b.fd_tot_amt) \n");
+        sb.append("FROM  fs_request a \n");
+        sb.append("INNER JOIN fs_request_dtl b on b.fr_id=a.fr_id \n");
+        sb.append("INNER JOIN bs_franchise c on c.fr_code=a.fr_code \n");
+        sb.append("INNER JOIN bs_branch d on d.br_code = c.br_code \n");
+        sb.append("WHERE \n");
+        sb.append("a.fr_confirm_yn='Y' \n");
+        sb.append("AND b.fd_cancel='N' \n");
+        sb.append("AND b.fd_s8_dt>= ?1 \n");
+        sb.append("AND b.fd_s8_dt<= ?2 \n");
+        if(branchId != 0){
+            sb.append("AND d.br_id = ?3 \n");
+            if(franchiseId != 0){
+                sb.append("AND c.fr_id = ?4 \n");
+            }
+            sb.append("GROUP BY d.br_name, c.fr_name, b.fd_s8_dt ORDER BY d.br_name, c.fr_name, b.fd_s8_dt ASC; \n");
+        }else{
+            sb.append("GROUP BY d.br_name, b.fd_s8_dt ORDER BY d.br_name, b.fd_s8_dt ASC; \n");
+        }
+
+        Query query = em.createNativeQuery(sb.toString());
+
+        query.setParameter(1, filterFromDt);
+        query.setParameter(2, filterToDt);
+        if(branchId != 0){
+            query.setParameter(3, branchId);
+            if(franchiseId != 0){
+                query.setParameter(4, franchiseId);
+            }
+        }
+
+        return jpaResultMapper.list(query, RequestForceIncomeListDto.class);
+    }
+
+//    //  본사 강제입고현황 오른쪽 - querydsl
+//    public List<RequestReceiptListSubDto> findByHeadReceiptSubList(Long branchId, Long franchiseId, String frYyyymmdd) {
+//
+//        QRequestDetail requestDetail = QRequestDetail.requestDetail;
+//        QRequest request = QRequest.request;
+//        QItemGroup itemGroup = QItemGroup.itemGroup;
+//        QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
+//        QItem item = QItem.item;
+//        QCustomer customer = QCustomer.customer;
+//        QFranchise franchise = QFranchise.franchise;
+//        QBranch branch = QBranch.branch;
+//
+//        QInspeot inspeot1 = new QInspeot("inspeot1");
+//        QInspeot inspeot2 = new QInspeot("inspeot2");
+//
+//        JPQLQuery<RequestReceiptListSubDto> query = from(requestDetail)
+//                .innerJoin(requestDetail.frId, request)
+//                .innerJoin(request.bcId, customer)
+//                .innerJoin(franchise).on(franchise.frCode.eq(request.frCode))
+//                .innerJoin(branch).on(branch.brCode.eq(franchise.brCode))
+//                .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
+//                .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
+//                .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
+//
+//                // 검품여부 leftJoin
+//                .leftJoin(inspeot1).on(inspeot1.fdId.eq(requestDetail).and(inspeot1.fiType.eq("F").and(inspeot1.fiCustomerConfirm.eq("3")))) // 가맹점
+//                .leftJoin(inspeot2).on(inspeot2.fdId.eq(requestDetail).and(inspeot2.fiType.eq("B").and(inspeot2.fiCustomerConfirm.eq("3")))) // 지사
+//
+//                .where(request.frConfirmYn.eq("Y"))
+//                .where(requestDetail.fdCancel.eq("N"))
+//
+//                .select(Projections.constructor(RequestReceiptListSubDto.class,
+//
+//                        branch.brName,
+//                        franchise.frName,
+//
+//                        customer.bcName,
+//                        customer.bcHp,
+//                        customer.bcGrade,
+//
+//                        requestDetail.fdTag,
+//                        request.fr_insert_date,
+//                        requestDetail.fdEstimateDt,
+//
+//                        itemGroup.bgName,
+//                        itemGroupS.bsName,
+//                        item.biName,
+//
+//                        requestDetail.fdQty,
+//                        requestDetail.fdColor,
+//                        requestDetail.fdPattern,
+//
+//                        requestDetail.fdUrgentType,
+//                        requestDetail.fdUrgentYn,
+//
+//                        requestDetail.fdPriceGrade,
+//                        requestDetail.fdRetryYn,
+//                        requestDetail.fdPressed,
+//                        requestDetail.fdAdd1Amt,
+//                        requestDetail.fdRepairAmt,
+//                        requestDetail.fdWhitening,
+//                        requestDetail.fdPollution,
+//                        requestDetail.fdWaterRepellent,
+//                        requestDetail.fdStarch,
+//
+//                        requestDetail.fdAdd2Amt,
+//                        requestDetail.fdUrgentAmt,
+//                        requestDetail.fdNormalAmt,
+//
+//                        requestDetail.fdTotAmt,
+//                        requestDetail.fdDiscountAmt,
+//                        requestDetail.fdState,
+//
+//                        new CaseBuilder()
+//                                .when(requestDetail.fdPollutionLocFcn.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocFcs.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocFcb.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocFlh.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocFrh.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocFlf.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocFrf.eq("Y")).then(1)
+//                                .otherwise(0),
+//                        new CaseBuilder()
+//                                .when(requestDetail.fdPollutionLocBcn.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocBcs.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocBcb.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocBlh.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocBrh.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocBlf.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocBrf.eq("Y")).then(1)
+//                                .otherwise(0),
+//
+//                        requestDetail.fdS2Dt,
+//                        requestDetail.fdS5Dt,
+//                        requestDetail.fdS4Dt,
+//                        requestDetail.fdS3Dt,
+//                        requestDetail.fdS6Dt,
+//                        requestDetail.fdS6Time,
+//
+//                        new CaseBuilder()
+//                                .when(inspeot1.isNotNull().and(inspeot2.isNotNull())).then(inspeot1.fiProgressStateDt)
+//                                .otherwise(
+//                                        new CaseBuilder().when(inspeot1.isNotNull()).then(inspeot1.fiProgressStateDt)
+//                                                .otherwise(inspeot2.fiProgressStateDt))
+//
+//                ));
+//
+//        query.groupBy(requestDetail.id).distinct().orderBy(requestDetail.id.asc());
+//
+//        if(branchId != 0){
+//            query.where(branch.id.eq(branchId));
+//        }
+//        if(franchiseId != 0){
+//            query.where(franchise.id.eq(franchiseId));
+//        }
+//
+//        query.where(request.frYyyymmdd.eq(frYyyymmdd));
+//
+//        return query.fetch();
+//    }
+
+    // 본사 미출고현황 왼쪽 NativeQuery
+    @Override
+    public List<RequestNoOutgoListDto> findByHeadNoOutgoList(Long branchId, Long franchiseId, String filterFromDt, String filterToDt) {
+        EntityManager em = getEntityManager();
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("SELECT \n");
+        sb.append("d.br_id, d.br_name, c.fr_id, c.fr_name, b.fd_estimate_dt, COUNT(*), SUM(b.fd_tot_amt) \n");
+        sb.append("FROM  fs_request a \n");
+        sb.append("INNER JOIN fs_request_dtl b on b.fr_id=a.fr_id \n");
+        sb.append("INNER JOIN bs_franchise c on c.fr_code=a.fr_code \n");
+        sb.append("INNER JOIN bs_branch d on d.br_code = c.br_code \n");
+        sb.append("WHERE \n");
+        sb.append("a.fr_confirm_yn='Y' \n");
+        sb.append("AND b.fd_state='S2' \n");
+        sb.append("AND b.fd_cancel='N' \n");
+        sb.append("AND b.fd_estimate_dt>= ?1 \n");
+        sb.append("AND b.fd_estimate_dt<= ?2 \n");
+        if(branchId != 0){
+            sb.append("AND d.br_id = ?3 \n");
+            if(franchiseId != 0){
+                sb.append("AND c.fr_id = ?4 \n");
+            }
+            sb.append("GROUP BY d.br_name, c.fr_name, b.fd_estimate_dt ORDER BY d.br_name, c.fr_name, b.fd_estimate_dt ASC; \n");
+        }else{
+            sb.append("GROUP BY d.br_name, b.fd_estimate_dt ORDER BY d.br_name, b.fd_estimate_dt ASC; \n");
+        }
+
+        Query query = em.createNativeQuery(sb.toString());
+
+        query.setParameter(1, filterFromDt);
+        query.setParameter(2, filterToDt);
+        if(branchId != 0){
+            query.setParameter(3, branchId);
+            if(franchiseId != 0){
+                query.setParameter(4, franchiseId);
+            }
+        }
+
+        return jpaResultMapper.list(query, RequestNoOutgoListDto.class);
+    }
+
+//    //  본사 미출고현황 오른쪽 - querydsl
+//    public List<RequestReceiptListSubDto> findByHeadReceiptSubList(Long branchId, Long franchiseId, String frYyyymmdd) {
+//
+//        QRequestDetail requestDetail = QRequestDetail.requestDetail;
+//        QRequest request = QRequest.request;
+//        QItemGroup itemGroup = QItemGroup.itemGroup;
+//        QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
+//        QItem item = QItem.item;
+//        QCustomer customer = QCustomer.customer;
+//        QFranchise franchise = QFranchise.franchise;
+//        QBranch branch = QBranch.branch;
+//
+//        QInspeot inspeot1 = new QInspeot("inspeot1");
+//        QInspeot inspeot2 = new QInspeot("inspeot2");
+//
+//        JPQLQuery<RequestReceiptListSubDto> query = from(requestDetail)
+//                .innerJoin(requestDetail.frId, request)
+//                .innerJoin(request.bcId, customer)
+//                .innerJoin(franchise).on(franchise.frCode.eq(request.frCode))
+//                .innerJoin(branch).on(branch.brCode.eq(franchise.brCode))
+//                .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
+//                .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
+//                .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
+//
+//                // 검품여부 leftJoin
+//                .leftJoin(inspeot1).on(inspeot1.fdId.eq(requestDetail).and(inspeot1.fiType.eq("F").and(inspeot1.fiCustomerConfirm.eq("3")))) // 가맹점
+//                .leftJoin(inspeot2).on(inspeot2.fdId.eq(requestDetail).and(inspeot2.fiType.eq("B").and(inspeot2.fiCustomerConfirm.eq("3")))) // 지사
+//
+//                .where(request.frConfirmYn.eq("Y"))
+//                .where(requestDetail.fdCancel.eq("N"))
+//
+//                .select(Projections.constructor(RequestReceiptListSubDto.class,
+//
+//                        branch.brName,
+//                        franchise.frName,
+//
+//                        customer.bcName,
+//                        customer.bcHp,
+//                        customer.bcGrade,
+//
+//                        requestDetail.fdTag,
+//                        request.fr_insert_date,
+//                        requestDetail.fdEstimateDt,
+//
+//                        itemGroup.bgName,
+//                        itemGroupS.bsName,
+//                        item.biName,
+//
+//                        requestDetail.fdQty,
+//                        requestDetail.fdColor,
+//                        requestDetail.fdPattern,
+//
+//                        requestDetail.fdUrgentType,
+//                        requestDetail.fdUrgentYn,
+//
+//                        requestDetail.fdPriceGrade,
+//                        requestDetail.fdRetryYn,
+//                        requestDetail.fdPressed,
+//                        requestDetail.fdAdd1Amt,
+//                        requestDetail.fdRepairAmt,
+//                        requestDetail.fdWhitening,
+//                        requestDetail.fdPollution,
+//                        requestDetail.fdWaterRepellent,
+//                        requestDetail.fdStarch,
+//
+//                        requestDetail.fdAdd2Amt,
+//                        requestDetail.fdUrgentAmt,
+//                        requestDetail.fdNormalAmt,
+//
+//                        requestDetail.fdTotAmt,
+//                        requestDetail.fdDiscountAmt,
+//                        requestDetail.fdState,
+//
+//                        new CaseBuilder()
+//                                .when(requestDetail.fdPollutionLocFcn.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocFcs.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocFcb.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocFlh.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocFrh.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocFlf.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocFrf.eq("Y")).then(1)
+//                                .otherwise(0),
+//                        new CaseBuilder()
+//                                .when(requestDetail.fdPollutionLocBcn.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocBcs.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocBcb.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocBlh.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocBrh.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocBlf.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocBrf.eq("Y")).then(1)
+//                                .otherwise(0),
+//
+//                        requestDetail.fdS2Dt,
+//                        requestDetail.fdS5Dt,
+//                        requestDetail.fdS4Dt,
+//                        requestDetail.fdS3Dt,
+//                        requestDetail.fdS6Dt,
+//                        requestDetail.fdS6Time,
+//
+//                        new CaseBuilder()
+//                                .when(inspeot1.isNotNull().and(inspeot2.isNotNull())).then(inspeot1.fiProgressStateDt)
+//                                .otherwise(
+//                                        new CaseBuilder().when(inspeot1.isNotNull()).then(inspeot1.fiProgressStateDt)
+//                                                .otherwise(inspeot2.fiProgressStateDt))
+//
+//                ));
+//
+//        query.groupBy(requestDetail.id).distinct().orderBy(requestDetail.id.asc());
+//
+//        if(branchId != 0){
+//            query.where(branch.id.eq(branchId));
+//        }
+//        if(franchiseId != 0){
+//            query.where(franchise.id.eq(franchiseId));
+//        }
+//
+//        query.where(request.frYyyymmdd.eq(frYyyymmdd));
+//
+//        return query.fetch();
+//    }
+
+    // 본사 재새탁입고현황 왼쪽 NativeQuery
+    @Override
+    public List<RequestRetryListDto> findByHeadRetryList(Long branchId, Long franchiseId, String filterFromDt, String filterToDt) {
+        EntityManager em = getEntityManager();
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("SELECT \n");
+        sb.append("d.br_id, d.br_name, c.fr_id, c.fr_name, a.fr_yyyymmdd, COUNT(*), SUM(b.fd_tot_amt) \n");
+        sb.append("FROM  fs_request a \n");
+        sb.append("INNER JOIN fs_request_dtl b on b.fr_id=a.fr_id \n");
+        sb.append("INNER JOIN bs_franchise c on c.fr_code=a.fr_code \n");
+        sb.append("INNER JOIN bs_branch d on d.br_code = c.br_code \n");
+        sb.append("WHERE \n");
+        sb.append("a.fr_confirm_yn='Y' \n");
+        sb.append("AND b.fd_retry_yn='Y' \n");
+        sb.append("AND b.fd_cancel='N' \n");
+        sb.append("AND a.fr_yyyymmdd>= ?1 \n");
+        sb.append("AND a.fr_yyyymmdd<= ?2 \n");
+        if(branchId != 0){
+            sb.append("AND d.br_id = ?3 \n");
+            if(franchiseId != 0){
+                sb.append("AND c.fr_id = ?4 \n");
+            }
+            sb.append("GROUP BY d.br_name, c.fr_name, a.fr_yyyymmdd ORDER BY d.br_name, c.fr_name, a.fr_yyyymmdd ASC; \n");
+        }else{
+            sb.append("GROUP BY d.br_name, a.fr_yyyymmdd ORDER BY d.br_name, a.fr_yyyymmdd ASC; \n");
+        }
+
+        Query query = em.createNativeQuery(sb.toString());
+
+        query.setParameter(1, filterFromDt);
+        query.setParameter(2, filterToDt);
+        if(branchId != 0){
+            query.setParameter(3, branchId);
+            if(franchiseId != 0){
+                query.setParameter(4, franchiseId);
+            }
+        }
+
+        return jpaResultMapper.list(query, RequestRetryListDto.class);
+    }
+
+//    //  본사 재새탁입고현황 오른쪽 - querydsl
+//    public List<RequestReceiptListSubDto> findByHeadReceiptSubList(Long branchId, Long franchiseId, String frYyyymmdd) {
+//
+//        QRequestDetail requestDetail = QRequestDetail.requestDetail;
+//        QRequest request = QRequest.request;
+//        QItemGroup itemGroup = QItemGroup.itemGroup;
+//        QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
+//        QItem item = QItem.item;
+//        QCustomer customer = QCustomer.customer;
+//        QFranchise franchise = QFranchise.franchise;
+//        QBranch branch = QBranch.branch;
+//
+//        QInspeot inspeot1 = new QInspeot("inspeot1");
+//        QInspeot inspeot2 = new QInspeot("inspeot2");
+//
+//        JPQLQuery<RequestReceiptListSubDto> query = from(requestDetail)
+//                .innerJoin(requestDetail.frId, request)
+//                .innerJoin(request.bcId, customer)
+//                .innerJoin(franchise).on(franchise.frCode.eq(request.frCode))
+//                .innerJoin(branch).on(branch.brCode.eq(franchise.brCode))
+//                .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
+//                .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
+//                .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
+//
+//                // 검품여부 leftJoin
+//                .leftJoin(inspeot1).on(inspeot1.fdId.eq(requestDetail).and(inspeot1.fiType.eq("F").and(inspeot1.fiCustomerConfirm.eq("3")))) // 가맹점
+//                .leftJoin(inspeot2).on(inspeot2.fdId.eq(requestDetail).and(inspeot2.fiType.eq("B").and(inspeot2.fiCustomerConfirm.eq("3")))) // 지사
+//
+//                .where(request.frConfirmYn.eq("Y"))
+//                .where(requestDetail.fdCancel.eq("N"))
+//
+//                .select(Projections.constructor(RequestReceiptListSubDto.class,
+//
+//                        branch.brName,
+//                        franchise.frName,
+//
+//                        customer.bcName,
+//                        customer.bcHp,
+//                        customer.bcGrade,
+//
+//                        requestDetail.fdTag,
+//                        request.fr_insert_date,
+//                        requestDetail.fdEstimateDt,
+//
+//                        itemGroup.bgName,
+//                        itemGroupS.bsName,
+//                        item.biName,
+//
+//                        requestDetail.fdQty,
+//                        requestDetail.fdColor,
+//                        requestDetail.fdPattern,
+//
+//                        requestDetail.fdUrgentType,
+//                        requestDetail.fdUrgentYn,
+//
+//                        requestDetail.fdPriceGrade,
+//                        requestDetail.fdRetryYn,
+//                        requestDetail.fdPressed,
+//                        requestDetail.fdAdd1Amt,
+//                        requestDetail.fdRepairAmt,
+//                        requestDetail.fdWhitening,
+//                        requestDetail.fdPollution,
+//                        requestDetail.fdWaterRepellent,
+//                        requestDetail.fdStarch,
+//
+//                        requestDetail.fdAdd2Amt,
+//                        requestDetail.fdUrgentAmt,
+//                        requestDetail.fdNormalAmt,
+//
+//                        requestDetail.fdTotAmt,
+//                        requestDetail.fdDiscountAmt,
+//                        requestDetail.fdState,
+//
+//                        new CaseBuilder()
+//                                .when(requestDetail.fdPollutionLocFcn.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocFcs.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocFcb.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocFlh.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocFrh.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocFlf.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocFrf.eq("Y")).then(1)
+//                                .otherwise(0),
+//                        new CaseBuilder()
+//                                .when(requestDetail.fdPollutionLocBcn.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocBcs.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocBcb.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocBlh.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocBrh.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocBlf.eq("Y")).then(1)
+//                                .when(requestDetail.fdPollutionLocBrf.eq("Y")).then(1)
+//                                .otherwise(0),
+//
+//                        requestDetail.fdS2Dt,
+//                        requestDetail.fdS5Dt,
+//                        requestDetail.fdS4Dt,
+//                        requestDetail.fdS3Dt,
+//                        requestDetail.fdS6Dt,
+//                        requestDetail.fdS6Time,
+//
+//                        new CaseBuilder()
+//                                .when(inspeot1.isNotNull().and(inspeot2.isNotNull())).then(inspeot1.fiProgressStateDt)
+//                                .otherwise(
+//                                        new CaseBuilder().when(inspeot1.isNotNull()).then(inspeot1.fiProgressStateDt)
+//                                                .otherwise(inspeot2.fiProgressStateDt))
+//
+//                ));
+//
+//        query.groupBy(requestDetail.id).distinct().orderBy(requestDetail.id.asc());
+//
+//        if(branchId != 0){
+//            query.where(branch.id.eq(branchId));
+//        }
+//        if(franchiseId != 0){
+//            query.where(franchise.id.eq(franchiseId));
+//        }
+//
+//        query.where(request.frYyyymmdd.eq(frYyyymmdd));
+//
+//        return query.fetch();
+//    }
+
 
 }

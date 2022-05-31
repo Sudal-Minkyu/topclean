@@ -3,6 +3,7 @@ package com.broadwave.toppos.Manager.ManagerService;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.manager.*;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepository;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.head.*;
 import com.broadwave.toppos.common.AjaxResponse;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
@@ -19,8 +20,9 @@ import java.util.Map;
 /**
  * @author Minkyu
  * Date : 2022-02-15
- * Time :
+ * UpDate : 2022-05-31
  * Remark : Toppos 지사 지사입고현황, 체류세탁물현황, 출고현황, 강제출고현황, 미출고현황, 가맹반송현황 페이지조회 - 서비스
+ *               Toppos 본사 지사입고현황, 지사출고현황, 강제출고현황, 강제입고현황, 미출고현황, 재세탁 입고현황 페이지조회 - 서비스
  */
 @Slf4j
 @Service
@@ -39,6 +41,7 @@ public class CurrentService {
     //  지사 입고현황, 체류세탁물현황 - 왼쪽 리스트 호출API
     public ResponseEntity<Map<String, Object>> branchStoreCurrentList(Long franchiseId, String filterFromDt, String filterToDt, String type, HttpServletRequest request) {
         log.info("branchStoreCurrentList 호출");
+
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
 
@@ -63,6 +66,7 @@ public class CurrentService {
     //  지사입고현황 - 오른쪽 리스트 호출API
     public ResponseEntity<Map<String, Object>> branchStoreInputList(String frCode, String fdS2Dt, HttpServletRequest request) {
         log.info("branchStoreInputList 호출");
+
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
 
@@ -82,6 +86,7 @@ public class CurrentService {
     //  체류세탁물현황 - 오른쪽 리스트 호출API
     public ResponseEntity<Map<String, Object>> branchStoreRemainList(String frCode, String fdS2Dt, HttpServletRequest request) {
         log.info("branchStoreRemainList 호출");
+
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
 
@@ -101,6 +106,7 @@ public class CurrentService {
     // 지사출고현황, 지사강제출고현황 - 왼쪽 리스트 호출API
     public ResponseEntity<Map<String, Object>> branchReleaseCurrentList(Long franchiseId, String filterFromDt, String filterToDt, String type, HttpServletRequest request) {
         log.info("branchReleaseCurrentList 호출");
+
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
 
@@ -142,6 +148,7 @@ public class CurrentService {
     //  지사출고현황 - 오른쪽 리스트 호출API
     public ResponseEntity<Map<String, Object>> branchReleaseInputList(String frCode, String fdS4Dt, HttpServletRequest request) {
         log.info("branchReleaseInputList 호출");
+
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
 
@@ -163,6 +170,7 @@ public class CurrentService {
     //  지사강제출고현황 - 오른쪽 리스트 호출API
     public ResponseEntity<Map<String, Object>> branchReleaseForceList(String frCode, String fdS7Dt, HttpServletRequest request) {
         log.info("branchReleaseForceList 호출");
+
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
 
@@ -202,6 +210,7 @@ public class CurrentService {
     // 미출고현황 - 오른쪽 리스트 호출API
     public ResponseEntity<Map<String, Object>> branchUnReleaseCurrentInputList(String frCode, String filterFromDt, String filterToDt, String type, HttpServletRequest request) {
         log.info("branchUnReleaseCurrentInputList 호출");
+
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
 
@@ -241,6 +250,7 @@ public class CurrentService {
     // 가맹반송현황 - 오른쪽 리스트 호출API
     public ResponseEntity<Map<String, Object>> branchReturnCurrentInputList(String frCode, String fdS3Dt, HttpServletRequest request) {
         log.info("branchReturnCurrentInputList 호출");
+
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
 
@@ -253,6 +263,114 @@ public class CurrentService {
 
         List<RequestDetailBranchReturnCurrentRightListDto> requestDetailBranchReturnCurrentRightListDtos =  requestDetailRepository.findByRequestDetailBranchReturnRightCurrentList(brCode, frCode, fdS3Dt);
         data.put("gridListData",requestDetailBranchReturnCurrentRightListDtos);
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
+    // 본사 지사입고현황 - 왼쪽 리스트 호출API
+    public ResponseEntity<Map<String, Object>> headStoreInputList(Long branchId, Long franchiseId, String filterFromDt, String filterToDt, HttpServletRequest request) {
+        log.info("headStoreInputList 호출");
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String login_id = claims.getSubject(); // 현재 아이디
+        log.info("현재 접속한 아이디 : "+login_id);
+
+        List<RequestIncomeListDto> requestIncomeListDtos =  requestDetailRepository.findByHeadIncomeList(branchId, franchiseId, filterFromDt, filterToDt);
+        data.put("gridListData",requestIncomeListDtos);
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
+    // 본사 지사출고현황 - 왼쪽 리스트 호출API
+    public ResponseEntity<Map<String, Object>> headReleaseInputList(Long branchId, Long franchiseId, String filterFromDt, String filterToDt, HttpServletRequest request) {
+        log.info("headReleaseInputList 호출");
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String login_id = claims.getSubject(); // 현재 아이디
+        log.info("현재 접속한 아이디 : "+login_id);
+
+        List<RequestOutgoListDto> requestOutgoListDtos =  requestDetailRepository.findByHeadOutgoList(branchId, franchiseId, filterFromDt, filterToDt);
+        data.put("gridListData",requestOutgoListDtos);
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
+    // 본사 강제출고현황 - 왼쪽 리스트 호출API
+    public ResponseEntity<Map<String, Object>> headForceReleaseInputList(Long branchId, Long franchiseId, String filterFromDt, String filterToDt, HttpServletRequest request) {
+        log.info("headForceReleaseInputList 호출");
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String login_id = claims.getSubject(); // 현재 아이디
+        log.info("현재 접속한 아이디 : "+login_id);
+
+        List<RequestForceOutgoListDto> requestForceOutgoListDtos =  requestDetailRepository.findByHeadForceOutgoList(branchId, franchiseId, filterFromDt, filterToDt);
+        data.put("gridListData",requestForceOutgoListDtos);
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
+    // 본사 강제입고현황 - 왼쪽 리스트 호출API
+    public ResponseEntity<Map<String, Object>> headForceStoreInputList(Long branchId, Long franchiseId, String filterFromDt, String filterToDt, HttpServletRequest request) {
+        log.info("headForceStoreInputList 호출");
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String login_id = claims.getSubject(); // 현재 아이디
+        log.info("현재 접속한 아이디 : "+login_id);
+
+        List<RequestForceIncomeListDto> requestForceIncomeListDtos =  requestDetailRepository.findByHeadForceIncomeList(branchId, franchiseId, filterFromDt, filterToDt);
+        data.put("gridListData",requestForceIncomeListDtos);
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
+    // 본사 미출고 현황 - 왼쪽 리스트 호출API
+    public ResponseEntity<Map<String, Object>> headNoReleaseInputList(Long branchId, Long franchiseId, String filterFromDt, String filterToDt, HttpServletRequest request) {
+        log.info("headNoReleaseInputList 호출");
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String login_id = claims.getSubject(); // 현재 아이디
+        log.info("현재 접속한 아이디 : "+login_id);
+
+        List<RequestNoOutgoListDto> requestNoOutgoListDtos =  requestDetailRepository.findByHeadNoOutgoList(branchId, franchiseId, filterFromDt, filterToDt);
+        data.put("gridListData",requestNoOutgoListDtos);
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
+    // 본사 재세탁입고 현황 - 왼쪽 리스트 호출API
+    public ResponseEntity<Map<String, Object>> headRetryList(Long branchId, Long franchiseId, String filterFromDt, String filterToDt, HttpServletRequest request) {
+        log.info("headRetryList 호출");
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String login_id = claims.getSubject(); // 현재 아이디
+        log.info("현재 접속한 아이디 : "+login_id);
+
+        List<RequestRetryListDto> requestRetryListDtos =  requestDetailRepository.findByHeadRetryList(branchId, franchiseId, filterFromDt, filterToDt);
+        data.put("gridListData",requestRetryListDtos);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
