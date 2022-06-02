@@ -956,17 +956,53 @@ function makeChart(data) {
 
         var data = [{
             "month": "1월",
-            "europe": 2.5,
-            "lamerica": 1,
+            "personAmt": 5100,
+            "pcsAmt": 4800,
         }, {
             "month": "2월",
-            "europe": 2.6,
-            "lamerica": 0.5,
+            "personAmt": 9478,
+            "pcsAmt": 5879,
         }, {
             "month": "3월",
-            "europe": 2.8,
-            "lamerica": 0.3,
-        }];
+            "personAmt": 16879,
+            "pcsAmt": 5692,
+        }, {
+            "month": "4월",
+            "personAmt": 11615,
+            "pcsAmt": 6829,
+        }, {
+            "month": "5월",
+            "personAmt": 7038,
+            "pcsAmt": 4692,
+        }, {
+            "month": "6월",
+            "personAmt": 4579,
+            "pcsAmt": 4061,
+        }, {
+            "month": "7월",
+            "personAmt": 5100,
+            "pcsAmt": 4800,
+        }, {
+            "month": "8월",
+            "personAmt": 9478,
+            "pcsAmt": 5879,
+        }, {
+            "month": "9월",
+            "personAmt": 16879,
+            "pcsAmt": 5692,
+        }, {
+            "month": "10월",
+            "personAmt": 11615,
+            "pcsAmt": 6829,
+        }, {
+            "month": "11월",
+            "personAmt": 7038,
+            "pcsAmt": 4692,
+        }, {
+            "month": "12월",
+            "personAmt": 4579,
+            "pcsAmt": 4061,
+        },];
 
 
         // Create axes
@@ -1026,8 +1062,8 @@ function makeChart(data) {
             legend.data.push(series);
         }
 
-        makeSeries("객단가", "europe");
-        makeSeries("PCS단가", "lamerica");
+        makeSeries("객단가", "personAmt");
+        makeSeries("PCS단가", "pcsAmt");
 
 
     // Make stuff animate on load
