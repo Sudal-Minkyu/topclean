@@ -193,7 +193,7 @@ public class NoticeService {
                         log.info("filename : "+filename);
                         awss3Service.deleteObject(path,filename);
                     }
-                    noticeFileRepository.noticeFileListDelete(noticeMapperDto.getDeleteFileList());
+                    noticeFileRepository.deleteAll(noticeFileList);
                 }
 
                 saveNotice = noticeRepository.save(optionalNotice.get());

@@ -2890,7 +2890,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         sb.append("SELECT \n");
         sb.append("e.br_id, e.br_name, d.fr_id, d.fr_name, a.mr_dt, COUNT(*), SUM(b.fd_tot_amt) \n");
         sb.append("FROM mr_issue_force a \n");
-        sb.append("INNER JOIN fs_request_dtl b ON a.mi_id = b.mi_id  \n");
+        sb.append("INNER JOIN fs_request_dtl b ON a.fd_id = b.fd_id  \n");
         sb.append("INNER JOIN fs_request c ON c.fr_id = b.fr_id  \n");
         sb.append("INNER JOIN bs_franchise d on d.fr_code = c.fr_code \n");
         sb.append("INNER JOIN bs_branch e on e.br_code = c.br_code \n");
@@ -2905,7 +2905,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
             if(franchiseId != 0){
                 sb.append("AND d.fr_id = ?4 \n");
             }
-            sb.append("GROUP BY e.br_name, d.fr_name, a.mr_dt ORDER BY d.br_name, d.fr_name, a.mr_dt ASC; \n");
+            sb.append("GROUP BY e.br_name, d.fr_name, a.mr_dt ORDER BY e.br_name, d.fr_name, a.mr_dt ASC; \n");
         }else{
             sb.append("GROUP BY e.br_name, a.mr_dt ORDER BY e.br_name, a.mr_dt ASC; \n");
         }
