@@ -45,8 +45,6 @@ const dtos = {
 
 /* 통신에 사용되는 url들 기입 */
 const urls = {
-    taglostget: '/api/head/lostNoticeView',
-    taglostsave: '/api/head/lostNoticeSave',
     noticeget: '/api/head/noticeView',
     noticesave: '/api/head/noticeSave',
 };

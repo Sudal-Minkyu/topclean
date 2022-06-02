@@ -16,34 +16,40 @@ const dtos = {
 
         },
         headCustomTransactionStatus: {
-            brCode: "s",
-            brName: "s",
-            avgPrice01: "n",
-            avgPrice02: "n",
-            avgPrice03: "n",
-            avgPrice04: "n",
-            avgPrice05: "n",
-            avgPrice06: "n",
-            avgPrice07: "n",
-            avgPrice08: "n",
-            avgPrice09: "n",
-            avgPrice10: "n",
-            avgPrice11: "n",
-            avgPrice12: "n",
-            avgPriceTotal: "n",
-            pcsPrice01: "n",
-            pcsPrice02: "n",
-            pcsPrice03: "n",
-            pcsPrice04: "n",
-            pcsPrice05: "n",
-            pcsPrice06: "n",
-            pcsPrice07: "n",
-            pcsPrice08: "n",
-            pcsPrice09: "n",
-            pcsPrice10: "n",
-            pcsPrice11: "n",
-            pcsPrice12: "n",
-            pcsPriceTotal: "n",
+            TotalData: {
+                avgPriceTotal: "n",
+                pcsPriceTotal: "n",
+            },
+            gridListData : {
+                brCode: "s",
+                brName: "s",
+                avgPrice01: "n",
+                avgPrice02: "n",
+                avgPrice03: "n",
+                avgPrice04: "n",
+                avgPrice05: "n",
+                avgPrice06: "n",
+                avgPrice07: "n",
+                avgPrice08: "n",
+                avgPrice09: "n",
+                avgPrice10: "n",
+                avgPrice11: "n",
+                avgPrice12: "n",
+                avgPriceTotal: "n",
+                pcsPrice01: "n",
+                pcsPrice02: "n",
+                pcsPrice03: "n",
+                pcsPrice04: "n",
+                pcsPrice05: "n",
+                pcsPrice06: "n",
+                pcsPrice07: "n",
+                pcsPrice08: "n",
+                pcsPrice09: "n",
+                pcsPrice10: "n",
+                pcsPrice11: "n",
+                pcsPrice12: "n",
+                pcsPriceTotal: "n",
+            },
         },
         headCustomTransactionDetailStatus: {
             frCode: "s",
@@ -83,17 +89,18 @@ const comms = {
     // 지사별단가리스트
     getHeadCustomTransactionStatus(filterYear) {
         CommonUI.ajax('/api/head/headCustomTransactionStatus', 'GET', filterYear, function(res) {
-           const data = res.sendData.gridListData;
-           dv.chk(data, dtos.headCustomTransactionStatus, "지사별 단가 리스트 받아오기");
-           for (const i of data) {
-               avgPriceTotal.push(i.avgPriceTotal);
-               pcsPriceTotal.push(i.pcsPriceTotal);
-           }
-           getAvgPriceAverage(avgPriceTotal);
-           getPcsPriceAverage(pcsPriceTotal);
-           grids.f.clear(0);
-           grids.f.set(0, data);
-           grids.f.setSorting(0, 'avgPriceTotal', -1);
+            const data = res.sendData;
+            dv.chk(data, dtos.receive.headCustomTransactionStatus, "지사별 단가 리스트 받아오기");
+
+            const $avgPrice = $('#avgPrice');
+            countUp($avgPrice[0], Math.round(data.TotalData.avgPriceTotal));
+
+            const $pcsPrice = $('#pcsPrice');
+            countUp($pcsPrice[0], Math.round(data.TotalData.pcsPriceTotal));
+
+            grids.f.clear(0);
+            grids.f.set(0, data.gridListData);
+            grids.f.setSorting(0, 'avgPriceTotal', -1);
         });
     },
 
@@ -862,11 +869,6 @@ function exportToXlsx(i, filename) {
     });
     console.log(filename + "_" + getDate(year));
 }
-
-// 전체 객단가 array
-let avgPriceTotal = [];
-// 전체 PCS 단가 array
-let pcsPriceTotal = [];
 
 // 전체 객단가 평균
 function getAvgPriceAverage(avgPriceTotal) {

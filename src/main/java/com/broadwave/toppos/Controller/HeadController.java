@@ -68,6 +68,12 @@ public class HeadController {
         return "head/dashboard/unitprice";
     }
 
+    // 고객 비중
+    @RequestMapping("memberratio")
+    public String memberratio(){
+        return "head/dashboard/memberratio";
+    }
+
 
     // 본사일반 사용자등록 페이지
     @RequestMapping("accountreg")
@@ -147,37 +153,31 @@ public class HeadController {
     public String receiptstat(){
         return "head/process/receiptstat";
     }
-
     // 지사 입고 현황
     @RequestMapping("storestat")
     public String storestat(){
         return "head/process/storestat";
     }
-
     // 지사 출고 현황
     @RequestMapping("releasestat")
     public String releasestat(){
         return "head/process/releasestat";
     }
-
     // 강제 출고 현황(지사)
     @RequestMapping("forcereleasestat")
     public String forcereleasestat(){
         return "head/process/forcereleasestat";
     }
-
     // 강제 입고 현황(가맹점)
     @RequestMapping("forcestorestat")
     public String forcestorestat(){
         return "head/process/forcestorestat";
     }
-
     // 미출고 현황
     @RequestMapping("releaseyetstat")
     public String releaseyetstat(){
         return "head/process/releaseyetstat";
     }
-
     // 재세탁 입고 현황
     @RequestMapping("retrystat")
     public String retrystat(){
