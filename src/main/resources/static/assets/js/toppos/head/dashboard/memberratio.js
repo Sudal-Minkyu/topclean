@@ -41,8 +41,6 @@ const trigs = {
 
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
 const wares = {
-    genderChart: {},
-    ageChart: {},
 };
 
 const makeDonut = function (chartDivId, data, categoryName, valueName) {
@@ -50,11 +48,14 @@ const makeDonut = function (chartDivId, data, categoryName, valueName) {
         if (wares[chartDivId]) {
             wares[chartDivId].root.dispose();
         }
+
         wares[chartDivId] = {};
 
         // Create root element
         // https://www.amcharts.com/docs/v5/getting-started/#Root_element
-        var root = am5.Root.new(chartDivId);
+        wares[chartDivId].root = am5.Root.new(chartDivId);
+
+        const root = wares[chartDivId].root;
 
         // Set themes
         // https://www.amcharts.com/docs/v5/concepts/themes/
@@ -85,23 +86,22 @@ const makeDonut = function (chartDivId, data, categoryName, valueName) {
             endAngle: -90
         });
 
+        /* 성별차트의 색 조합과 연령대차트의 색 조합 리스트를 설정하고 할당 */
+        const pieChartColorSet = {
+            genderChart: [
+                am5.color(0x289fac),
+                am5.color(0xdbbf26),
+            ],
+        }
+        if (pieChartColorSet[chartDivId]) {
+            series.get("colors").set("colors", pieChartColorSet[chartDivId]);
+        }
+
         // Set data
         // https://www.amcharts.com/docs/v5/charts/percent-charts/pie-chart/#Setting_data
         series.data.setAll(data);
 
-        // Create legend
-        // https://www.amcharts.com/docs/v5/charts/percent-charts/legend-percent-series/
-        // var legend = chart.children.push(am5.Legend.new(root, {
-        //     centerX: am5.percent(50),
-        //     x: am5.percent(50),
-        //     marginTop: 15,
-        //     marginBottom: 15,
-        // }));
-        //
-        // legend.data.setAll(series.dataItems);
-
         series.appear(1000, 100);
-
     });
 };
 
