@@ -127,7 +127,7 @@ const comms = {
 
 	// 상용구, 수선항목, 추가항목 받기
 	getFrFavorite(num) {
-		CommonUI.ajax(grids.s.url.create[num], "GET", { baType: num }, (res) => {
+		CommonUI.ajax('/api/user/franchiseAddProcessList', "GET", { baType: num }, (res) => {
 			console.log(res);
 			let data;
 			switch (num) {
@@ -171,7 +171,7 @@ const comms = {
 		};
 		data.baType = num;
 
-		CommonUI.ajax(grids.s.url.update[num], "MAPPER", data, function (res) {
+		CommonUI.ajax('/api/user/franchiseAddProcess', "MAPPER", data, function (res) {
 			alertSuccess('저장되었습니다.');
 			grids.f.clearData(num);
 			comms.getFrFavorite(num);
@@ -185,6 +185,34 @@ const comms = {
 			$(".password").hide();
 		});
 	},
+
+	getReadyCashList(searchCondition) {
+		wares.searchCondition = searchCondition;
+		console.log('준비금검색', searchCondition);
+		// CommonUI.ajax("/api/user/", "GET", searchCondition, function (res) {
+		// 	const data = res.sendData.gridListData;
+		// 	AUIGrid.setGridData(grids.id[3], data);
+		// });
+	},
+
+	/* 영업준비금을 저장하고 영업준비금 그리드를 다시 로딩하기 */
+	saveReadyCash(saveData) {
+		// CommonUI.ajax("/api/user/", "MAPPER", saveData, function () {
+		// 	$("#bcYyyymmdd").val(new Date().format("yyyy-MM-dd"));
+		// 	$("#bcReadyAmt").val("");
+		// 	let searchCondition;
+		// 	if (wares.searchCondition) {
+		// 		searchCondition = wares.searchCondition
+		// 	} else {
+		// 		searchCondition = {
+		// 			filterFromDt: saveData.bcYyyymmdd,
+		// 			filterToDt: saveData.bcYyyymmdd,
+		// 		}
+		// 	}
+		// 	comms.getReadyCashList(searchCondition);
+		// 	alertSuccess("영업준비금이 저장 되었습니다.");
+		// });
+	}
 };
 
 /* .s : AUI 그리드 관련 설정들
@@ -196,30 +224,12 @@ const comms = {
 const grids = {
 	s: { // 그리드 세팅
 		targetDiv: [
-			"grid_keyWord", "grid_repair", "grid_addAmount"
+			"grid_keyWord", "grid_repair", "grid_addAmount", "grid_readyCash"
 		],
 		columnLayout: [],
 		prop: [],
 		id: [],
 		data: [],
-		url: {
-			create: [
-				"/api/user/franchiseAddProcessList",
-				"/api/user/franchiseAddProcessList",
-				"/api/user/franchiseAddProcessList"
-			],
-			read: [
-				"/api/"
-			],
-			update: [
-				"/api/user/franchiseAddProcess",
-				"/api/user/franchiseAddProcess",
-				"/api/user/franchiseAddProcess"
-			],
-			delete: [
-				"/api/"
-			]
-		}
 	},
 
 	f: { // 그리드 펑션
@@ -300,6 +310,22 @@ const grids = {
 				}
 			];
 
+			// 3번 그리드, 준비금 일자와 준비금액
+			grids.s.columnLayout[3] = [
+				{
+					dataField: "bcYyyymmdd",
+					headerText: "등록일자",
+					dataType: "date",
+					formatString: "yyyy-mm-dd",
+				}, {
+					dataField: "bcReadyAmt",
+					headerText: "준비금",
+					style: "grid_textalign_right",
+					dataType: "numeric",
+					autoThousandSeparator: "true",
+				},
+			];
+
 			/* 0번 그리드의 프로퍼티(옵션) 아래의 링크를 참조
 			* https://www.auisoft.net/documentation/auigrid/DataGrid/Properties.html
 			* */
@@ -347,6 +373,22 @@ const grids = {
                 showRowNumColumn : true,
                 showStateColumn : false,
                 enableFilter : false,
+				rowHeight: 48,
+				headerHeight: 48,
+			};
+
+			grids.s.prop[3] = {
+				editable: true,
+				selectionMode: "singleRow",
+				noDataMessage: "출력할 데이터가 없습니다.",
+				rowNumHeaderText : "순번",
+				showAutoNoDataMessage: false,
+				enableColumnResize : false,
+				showRowAllCheckBox: false,
+				showRowCheckColumn: false,
+				showRowNumColumn : false,
+				showStateColumn : false,
+				enableFilter : false,
 				rowHeight: 48,
 				headerHeight: 48,
 			};
@@ -413,15 +455,6 @@ const grids = {
 			return AUIGrid.getItemByRowIndex(grids.s.id[num], rowIndex);
 		}
 	},
-
-	e: {
-		basicEvent() {
-			/* 0번그리드 내의 셀 클릭시 이벤트 */
-			AUIGrid.bind(gridId[0], "cellClick", function (e) {
-				console.log(e.item); // 이밴트 콜백으로 불러와진 객체의, 클릭한 대상 row 키(파라메터)와 값들을 보여준다.
-			});
-		}
-	}
 };
 
 /* 이벤트를 s : 설정하거나 r : 해지하는 함수들을 담는다. 그리드 관련 이벤트는 grids.e에 위치 (trigger) */
@@ -520,6 +553,26 @@ const trigs = {
 			$("#frRentalAmount").on("keyup", function () {
                 $(this).val($(this).val().toInt().toLocaleString());
             });
+
+			$("#searchListBtn").on("click", function () {
+				searchReadyCashList();
+			});
+
+			$("#newReadyAmt").on("click", function () {
+				setInputsForNewReadyCash();
+			});
+
+			$("#saveReadyAmt").on("click", function () {
+				saveReadyCash();
+			});
+
+			$("#bcReadyAmt").on("keyup", function () {
+				$(this).val($(this).val().toInt().toLocaleString());
+			});
+
+			AUIGrid.bind(grids.s.id[3], "cellClick", function (e) {
+				setReadyCashInputs(e.item);
+			});
 		},
 
 		entryPass() {
@@ -556,7 +609,7 @@ const vKeyboard = {
 		"baName",
 		"baRemark",
 		"frAddressDetail",
-		"frRemark"
+		"frRemark",
 	],
 	targetProp: [
 
@@ -611,6 +664,7 @@ const vKeypad = {
 		"frEstimateDuration", // 현재 미사용
 		"frDepositAmount",
 		"frRentalAmount",
+		"bcReadyAmt",
 	],
 	targetProp: [
 
@@ -644,6 +698,11 @@ const vKeypad = {
 					$("#frRentalAmount").val(parseInt($("#frRentalAmount").val()).toLocaleString());
 				},
 			};
+			vKeypad.targetProp[5] = {
+				callback: function () {
+					$("#bcReadyAmt").val(parseInt($("#bcReadyAmt").val()).toLocaleString());
+				},
+			};
 		}
 	},
 	e: {
@@ -670,6 +729,7 @@ function onPageLoad() {
 	trigs.s.basic();
 	trigs.s.entryPass();
 
+	enableDatepicker();
 }
 
 function putFrInfoDataInField(myInfoData) {
@@ -807,4 +867,67 @@ function sendPassword() {
 		password: $("#entryPassword").val(),
 	}
 	comms.entryPass(password);
+}
+
+function enableDatepicker() {
+	let fromday = new Date();
+	fromday.setDate(fromday.getDate() - 6);
+	fromday = fromday.format("yyyy-MM-dd");
+	const today = new Date().format("yyyy-MM-dd");
+
+	/* datepicker를 적용시킬 대상들의 dom id들 */
+	const datePickerTargetIds = [
+		"filterFromDt", "filterToDt", "bcYyyymmdd"
+	];
+
+	$("#" + datePickerTargetIds[0]).val(fromday);
+	$("#" + datePickerTargetIds[1]).val(today);
+	$("#" + datePickerTargetIds[2]).val(today);
+
+	const dateAToBTargetIds = [
+		["filterFromDt", "filterToDt"]
+	];
+
+	CommonUI.setDatePicker(datePickerTargetIds);
+	CommonUI.restrictDateAToB(dateAToBTargetIds);
+}
+
+function searchReadyCashList() {
+	const searchCondition = {
+		filterFromDt: $("#filterFromDt").val().numString(),
+		filterToDt: $("#filterToDt").val().numString(),
+	};
+
+	comms.getReadyCashList(searchCondition);
+}
+
+function setReadyCashInputs(item) {
+	$("#bcYyyymmdd").val(item.bcYyyymmdd);
+	$("#bcReadyAmt").val(item.bcReadyAmt.toLocaleString());
+}
+
+function setInputsForNewReadyCash() {
+	$("#bcYyyymmdd").val(new Date().format("yyyy-MM-dd"));
+	$("#bcReadyAmt").val("");
+}
+
+function saveReadyCash() {
+	const bcYyyymmdd = $("#bcYyyymmdd").val().numString();
+	const bcReadyAmt = $("#bcReadyAmt").val().toInt();
+
+	if (!CommonUI.regularValidator(bcYyyymmdd, "dateExist")) {
+		alertCaution("올바른 날짜를 입력하여 주세요.", 1);
+		return;
+	}
+
+	if(isNaN(bcReadyAmt)) {
+		alertCaution("올바른 영업준비금액을 입력해 주세요.", 1);
+		return;
+	}
+
+	const saveData = {
+		bcYyyymmdd: bcYyyymmdd,
+		bcReadyAmt: bcReadyAmt,
+	}
+	comms.saveReadyCash(saveData);
 }
