@@ -183,4 +183,41 @@ public class HeadController {
     public String retrystat(){
         return "head/process/retrystat";
     }
+
+    // TAG 번호 조회
+    @RequestMapping("searchtag")
+    public String searchtag(){
+        return "head/process/searchtag";
+    }
+
+    // 초특급세탁 처리 현황
+    @RequestMapping("highspeedsuperspecialstat")
+    public String highspeedsuperspecialstat(){
+        return "head/process/highspeedsuperspecialstat";
+    }
+
+    // 특급세탁 처리 현황
+    @RequestMapping("highspeedspecialstat")
+    public String highspeedspecialstat(){
+        return "head/process/highspeedspecialstat";
+    }
+
+    // 급세탁 처리 현황
+    @RequestMapping("highspeedstat")
+    public String highspeedstat(){
+        return "head/process/highspeedstat";
+    }
+
+    // 일반 처리 현황
+    @RequestMapping("normalspeedstat")
+    public String normalspeedstat(){
+        return "head/process/normalspeedstat";
+    }
+
+    // 반품 현황
+    @RequestMapping("refundstat")
+    public String refundstat(){
+        return "head/process/refundstat";
+    }
+
 }
