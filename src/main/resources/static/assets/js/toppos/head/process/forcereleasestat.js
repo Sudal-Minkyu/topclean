@@ -22,7 +22,7 @@ const onPageLoad = function () {
     });
 
     runOnlyOnce.makeDetailGrid({
-        url: '/api/head/headReleaseInputSubList',
+        url: '/api/head/headForceReleaseInputSubList',
         fdUrgentTypeVisible: true,
         fiProgressStateDtVisible: false,
     });

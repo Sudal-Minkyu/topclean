@@ -110,6 +110,7 @@ const comms = {
 
     /* 누게리스트의 지사,가맹점정보,날짜를 보내 해당 일자에 속한 모든 접수데이터 가져오기 */
     getDetailData(condition) {
+        console.log(condition);
         dv.chk(condition, dtos.send.detailAPI, '상세 품목을 받아오기 위한 조건 보내기');
         CommonUI.ajax(urls.getDetailData, 'GET', condition, function (res) {
             const data = res.sendData.gridListData;
