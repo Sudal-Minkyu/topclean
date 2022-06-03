@@ -81,15 +81,22 @@ public interface RequestDetailRepositoryCustom {
 //    List<RequestDetailOutsourcingReceiptListDto> findByRequestDetailOutsourcingReceiptList(String brCode, Long frId, String filterFromDt, String filterToDt); // 지사 외주입고 querydsl -> IssueOutsourcingRepositoryCustom
 
     List<RequestIncomeListDto> findByHeadIncomeList(Long branchId, Long franchiseId, String filterFromDt, String filterToDt); // 본사 지사입고현황 왼쪽 NativeQuery
+    List<RequestIncomeListSubDto> findByHeadIncomeSubList(Long branchId, Long franchiseId, String fdS2Dt); // 본사 지사입고현황 오른쪽 Querydsl
 
     List<RequestOutgoListDto> findByHeadOutgoList(Long branchId, Long franchiseId, String filterFromDt, String filterToDt); // 본사 지사출고현황 왼쪽 NativeQuery
+    List<RequestOutgoListSubDto> findByHeadOutgoSubList(Long branchId, Long franchiseId, String fdS4Dt); // 본사 지사출고현황 오른쪽 Querydsl
 
     List<RequestForceOutgoListDto> findByHeadForceOutgoList(Long branchId, Long franchiseId, String filterFromDt, String filterToDt); // 본사 강제출고현황 왼쪽 NativeQuery
+    List<RequestForceOutgoListSubDto> findByHeadForceOutgoSubList(Long branchId, Long franchiseId, String fdS7Dt); // 본사 강제출고현황 오른쪽 Querydsl
 
     List<RequestForceIncomeListDto> findByHeadForceIncomeList(Long branchId, Long franchiseId, String filterFromDt, String filterToDt); // 본사 강제입고현황 왼쪽 NativeQuery
+    List<RequestForceIncomeListSubDto> findByHeadForceIncomeSubList(Long branchId, Long franchiseId, String fdS8Dt); // 본사 강제입고현황 오른쪽 Querydsl
 
     List<RequestNoOutgoListDto> findByHeadNoOutgoList(Long branchId, Long franchiseId, String filterFromDt, String filterToDt); // 본사 미출고현황 왼쪽 NativeQuery
+    List<RequestNoOutgoListSubDto> findByHeadNoOutgoSubList(Long branchId, Long franchiseId, String fdEstimateDt); // 본사 미출고현황 오른쪽 Querydsl
 
     List<RequestRetryListDto> findByHeadRetryList(Long branchId, Long franchiseId, String filterFromDt, String filterToDt); // 본사 재새탁입고현황 왼쪽 NativeQuery
+    List<RequestRetryListSubDto> findByHeadRetrySubList(Long branchId, Long franchiseId, String frYyyymmdd); // 본사 재새탁입고현황 오른쪽 Querydsl
+
 
 }

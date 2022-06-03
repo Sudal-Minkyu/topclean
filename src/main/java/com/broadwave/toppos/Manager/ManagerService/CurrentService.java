@@ -285,6 +285,24 @@ public class CurrentService {
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
+    // 본사 지사입고현황 - 오른쪽 리스트 호출API
+    public ResponseEntity<Map<String, Object>> headStoreInputSubList(Long branchId, Long franchiseId, String fdS2Dt) {
+        log.info("headStoreInputSubList 호출");
+
+        log.info("branchId  : "+branchId);
+        log.info("franchiseId  : "+franchiseId);
+        log.info("fdS2Dt  : "+fdS2Dt);
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        List<RequestIncomeListSubDto> requestIncomeListSubDtos = requestDetailRepository.findByHeadIncomeSubList(branchId, franchiseId, fdS2Dt);
+        log.info("requestIncomeListSubDtos : "+requestIncomeListSubDtos);
+
+        data.put("gridListData",requestIncomeListSubDtos);
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
     // 본사 지사출고현황 - 왼쪽 리스트 호출API
     public ResponseEntity<Map<String, Object>> headReleaseInputList(Long branchId, Long franchiseId, String filterFromDt, String filterToDt, HttpServletRequest request) {
         log.info("headReleaseInputList 호출");
@@ -300,6 +318,24 @@ public class CurrentService {
         List<RequestOutgoListDto> requestOutgoListDtos =  requestDetailRepository.findByHeadOutgoList(branchId, franchiseId, filterFromDt, filterToDt);
         data.put("gridListData",requestOutgoListDtos);
 
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
+    // 본사 지사출고현황 - 오른쪽 리스트 호출API
+    public ResponseEntity<Map<String, Object>> headReleaseInputSubList(Long branchId, Long franchiseId, String fdS4Dt) {
+        log.info("headReleaseInputSubList 호출");
+
+        log.info("branchId  : "+branchId);
+        log.info("franchiseId  : "+franchiseId);
+        log.info("fdS4Dt  : "+fdS4Dt);
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        List<RequestOutgoListSubDto> requestOutgoListSubDtos = requestDetailRepository.findByHeadOutgoSubList(branchId, franchiseId, fdS4Dt);
+        log.info("requestOutgoListSubDtos : "+requestOutgoListSubDtos);
+
+        data.put("gridListData",requestOutgoListSubDtos);
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
@@ -321,6 +357,24 @@ public class CurrentService {
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
+    // 본사 강제출고현황 - 오른쪽 리스트 호출API
+    public ResponseEntity<Map<String, Object>> headForceReleaseInputSubList(Long branchId, Long franchiseId, String fdS7Dt) {
+        log.info("headForceReleaseInputSubList 호출");
+
+        log.info("branchId  : "+branchId);
+        log.info("franchiseId  : "+franchiseId);
+        log.info("fdS7Dt  : "+fdS7Dt);
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        List<RequestForceOutgoListSubDto> requestForceOutgoListSubDtos = requestDetailRepository.findByHeadForceOutgoSubList(branchId, franchiseId, fdS7Dt);
+        log.info("requestForceOutgoListSubDtos : "+requestForceOutgoListSubDtos);
+
+        data.put("gridListData",requestForceOutgoListSubDtos);
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
     // 본사 강제입고현황 - 왼쪽 리스트 호출API
     public ResponseEntity<Map<String, Object>> headForceStoreInputList(Long branchId, Long franchiseId, String filterFromDt, String filterToDt, HttpServletRequest request) {
         log.info("headForceStoreInputList 호출");
@@ -336,6 +390,24 @@ public class CurrentService {
         List<RequestForceIncomeListDto> requestForceIncomeListDtos =  requestDetailRepository.findByHeadForceIncomeList(branchId, franchiseId, filterFromDt, filterToDt);
         data.put("gridListData",requestForceIncomeListDtos);
 
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
+    // 본사 강제입고현황 - 오른쪽 리스트 호출API
+    public ResponseEntity<Map<String, Object>> headForceStoreInputSubList(Long branchId, Long franchiseId, String fdS8Dt) {
+        log.info("headForceStoreInputSubList 호출");
+
+        log.info("branchId  : "+branchId);
+        log.info("franchiseId  : "+franchiseId);
+        log.info("fdS8Dt  : "+fdS8Dt);
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        List<RequestForceIncomeListSubDto> requestForceIncomeListSubDtos = requestDetailRepository.findByHeadForceIncomeSubList(branchId, franchiseId, fdS8Dt);
+        log.info("requestForceIncomeListSubDtos : "+requestForceIncomeListSubDtos);
+
+        data.put("gridListData",requestForceIncomeListSubDtos);
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
@@ -357,6 +429,24 @@ public class CurrentService {
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
+    // 본사 미출고 현황 - 오른쪽 리스트 호출API
+    public ResponseEntity<Map<String, Object>> headNoReleaseInputSubList(Long branchId, Long franchiseId, String fdEstimateDt) {
+        log.info("headNoReleaseInputSubList 호출");
+
+        log.info("branchId  : "+branchId);
+        log.info("franchiseId  : "+franchiseId);
+        log.info("fdEstimateDt  : "+fdEstimateDt);
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        List<RequestNoOutgoListSubDto> requestNoOutgoListSubDtos = requestDetailRepository.findByHeadNoOutgoSubList(branchId, franchiseId, fdEstimateDt);
+        log.info("requestNoOutgoListSubDtos : "+requestNoOutgoListSubDtos);
+
+        data.put("gridListData",requestNoOutgoListSubDtos);
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
     // 본사 재세탁입고 현황 - 왼쪽 리스트 호출API
     public ResponseEntity<Map<String, Object>> headRetryList(Long branchId, Long franchiseId, String filterFromDt, String filterToDt, HttpServletRequest request) {
         log.info("headRetryList 호출");
@@ -372,6 +462,24 @@ public class CurrentService {
         List<RequestRetryListDto> requestRetryListDtos =  requestDetailRepository.findByHeadRetryList(branchId, franchiseId, filterFromDt, filterToDt);
         data.put("gridListData",requestRetryListDtos);
 
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
+    // 본사 재세탁입고 현황 - 오른쪽 리스트 호출API
+    public ResponseEntity<Map<String, Object>> headRetrySubList(Long branchId, Long franchiseId, String frYyyymmdd) {
+        log.info("headRetrySubList 호출");
+
+        log.info("branchId  : "+branchId);
+        log.info("franchiseId  : "+franchiseId);
+        log.info("frYyyymmdd  : "+frYyyymmdd);
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        List<RequestRetryListSubDto> requestRetryListSubDtos = requestDetailRepository.findByHeadRetrySubList(branchId, franchiseId, frYyyymmdd);
+        log.info("requestRetryListSubDtos : "+requestRetryListSubDtos);
+
+        data.put("gridListData",requestRetryListSubDtos);
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 

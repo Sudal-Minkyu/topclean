@@ -2596,126 +2596,112 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         return jpaResultMapper.list(query, RequestIncomeListDto.class);
     }
 
-//    //  본사 지사입고현황 오른쪽 - querydsl
-//    public List<RequestReceiptListSubDto> findByHeadReceiptSubList(Long branchId, Long franchiseId, String frYyyymmdd) {
-//
-//        QRequestDetail requestDetail = QRequestDetail.requestDetail;
-//        QRequest request = QRequest.request;
-//        QItemGroup itemGroup = QItemGroup.itemGroup;
-//        QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
-//        QItem item = QItem.item;
-//        QCustomer customer = QCustomer.customer;
-//        QFranchise franchise = QFranchise.franchise;
-//        QBranch branch = QBranch.branch;
-//
-//        QInspeot inspeot1 = new QInspeot("inspeot1");
-//        QInspeot inspeot2 = new QInspeot("inspeot2");
-//
-//        JPQLQuery<RequestReceiptListSubDto> query = from(requestDetail)
-//                .innerJoin(requestDetail.frId, request)
-//                .innerJoin(request.bcId, customer)
-//                .innerJoin(franchise).on(franchise.frCode.eq(request.frCode))
-//                .innerJoin(branch).on(branch.brCode.eq(franchise.brCode))
-//                .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
-//                .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
-//                .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
-//
-//                // 검품여부 leftJoin
-//                .leftJoin(inspeot1).on(inspeot1.fdId.eq(requestDetail).and(inspeot1.fiType.eq("F").and(inspeot1.fiCustomerConfirm.eq("3")))) // 가맹점
-//                .leftJoin(inspeot2).on(inspeot2.fdId.eq(requestDetail).and(inspeot2.fiType.eq("B").and(inspeot2.fiCustomerConfirm.eq("3")))) // 지사
-//
-//                .where(request.frConfirmYn.eq("Y"))
-//                .where(requestDetail.fdCancel.eq("N"))
-//
-//                .select(Projections.constructor(RequestReceiptListSubDto.class,
-//
-//                        branch.brName,
-//                        franchise.frName,
-//
-//                        customer.bcName,
-//                        customer.bcHp,
-//                        customer.bcGrade,
-//
-//                        requestDetail.fdTag,
-//                        request.fr_insert_date,
-//                        requestDetail.fdEstimateDt,
-//
-//                        itemGroup.bgName,
-//                        itemGroupS.bsName,
-//                        item.biName,
-//
-//                        requestDetail.fdQty,
-//                        requestDetail.fdColor,
-//                        requestDetail.fdPattern,
-//
-//                        requestDetail.fdUrgentType,
-//                        requestDetail.fdUrgentYn,
-//
-//                        requestDetail.fdPriceGrade,
-//                        requestDetail.fdRetryYn,
-//                        requestDetail.fdPressed,
-//                        requestDetail.fdAdd1Amt,
-//                        requestDetail.fdRepairAmt,
-//                        requestDetail.fdWhitening,
-//                        requestDetail.fdPollution,
-//                        requestDetail.fdWaterRepellent,
-//                        requestDetail.fdStarch,
-//
-//                        requestDetail.fdAdd2Amt,
-//                        requestDetail.fdUrgentAmt,
-//                        requestDetail.fdNormalAmt,
-//
-//                        requestDetail.fdTotAmt,
-//                        requestDetail.fdDiscountAmt,
-//                        requestDetail.fdState,
-//
-//                        new CaseBuilder()
-//                                .when(requestDetail.fdPollutionLocFcn.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocFcs.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocFcb.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocFlh.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocFrh.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocFlf.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocFrf.eq("Y")).then(1)
-//                                .otherwise(0),
-//                        new CaseBuilder()
-//                                .when(requestDetail.fdPollutionLocBcn.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocBcs.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocBcb.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocBlh.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocBrh.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocBlf.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocBrf.eq("Y")).then(1)
-//                                .otherwise(0),
-//
-//                        requestDetail.fdS2Dt,
-//                        requestDetail.fdS5Dt,
-//                        requestDetail.fdS4Dt,
-//                        requestDetail.fdS3Dt,
-//                        requestDetail.fdS6Dt,
-//                        requestDetail.fdS6Time,
-//
-//                        new CaseBuilder()
-//                                .when(inspeot1.isNotNull().and(inspeot2.isNotNull())).then(inspeot1.fiProgressStateDt)
-//                                .otherwise(
-//                                        new CaseBuilder().when(inspeot1.isNotNull()).then(inspeot1.fiProgressStateDt)
-//                                                .otherwise(inspeot2.fiProgressStateDt))
-//
-//                ));
-//
-//        query.groupBy(requestDetail.id).distinct().orderBy(requestDetail.id.asc());
-//
-//        if(branchId != 0){
-//            query.where(branch.id.eq(branchId));
-//        }
-//        if(franchiseId != 0){
-//            query.where(franchise.id.eq(franchiseId));
-//        }
-//
-//        query.where(request.frYyyymmdd.eq(frYyyymmdd));
-//
-//        return query.fetch();
-//    }
+    //  본사 지사입고현황 오른쪽 - querydsl
+    public List<RequestIncomeListSubDto> findByHeadIncomeSubList(Long branchId, Long franchiseId, String fdS2Dt) {
+
+        QRequestDetail requestDetail = QRequestDetail.requestDetail;
+        QRequest request = QRequest.request;
+        QItemGroup itemGroup = QItemGroup.itemGroup;
+        QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
+        QItem item = QItem.item;
+        QCustomer customer = QCustomer.customer;
+        QFranchise franchise = QFranchise.franchise;
+        QBranch branch = QBranch.branch;
+
+        JPQLQuery<RequestIncomeListSubDto> query = from(requestDetail)
+                .innerJoin(requestDetail.frId, request)
+                .innerJoin(request.bcId, customer)
+                .innerJoin(franchise).on(franchise.frCode.eq(request.frCode))
+                .innerJoin(branch).on(branch.brCode.eq(franchise.brCode))
+                .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
+                .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
+                .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
+
+                .where(request.frConfirmYn.eq("Y"))
+                .where(requestDetail.fdCancel.eq("N"))
+
+                .select(Projections.constructor(RequestIncomeListSubDto.class,
+
+                        branch.brName,
+                        franchise.frName,
+
+                        customer.bcName,
+                        customer.bcHp,
+                        customer.bcGrade,
+
+                        requestDetail.fdTag,
+                        request.fr_insert_date,
+                        requestDetail.fdEstimateDt,
+
+                        itemGroup.bgName,
+                        itemGroupS.bsName,
+                        item.biName,
+
+                        requestDetail.fdQty,
+                        requestDetail.fdColor,
+                        requestDetail.fdPattern,
+
+                        requestDetail.fdUrgentYn,
+                        requestDetail.fdUrgentType,
+
+                        requestDetail.fdPressed,
+                        requestDetail.fdRepairAmt,
+                        requestDetail.fdAdd1Amt,
+                        requestDetail.fdWhitening,
+
+                        requestDetail.fdPollution,
+                        new CaseBuilder()
+                                .when(requestDetail.fdPollutionLocFcn.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFcs.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFcb.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFlh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFrh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFlf.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFrf.eq("Y")).then(1)
+                                .otherwise(0),
+                        new CaseBuilder()
+                                .when(requestDetail.fdPollutionLocBcn.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBcs.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBcb.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBlh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBrh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBlf.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBrf.eq("Y")).then(1)
+                                .otherwise(0),
+
+                        requestDetail.fdWaterRepellent,
+                        requestDetail.fdStarch,
+                        requestDetail.fdAdd2Amt,
+                        requestDetail.fdUrgentAmt,
+                        requestDetail.fdNormalAmt,
+
+                        requestDetail.fdTotAmt,
+                        requestDetail.fdDiscountAmt,
+
+                        requestDetail.fdState,
+
+                        requestDetail.fdS2Dt,
+                        requestDetail.fdS5Dt,
+                        requestDetail.fdS4Dt,
+                        requestDetail.fdS3Dt,
+                        requestDetail.fdS6Dt,
+                        requestDetail.fdS6Time
+
+                ));
+
+        query.groupBy(requestDetail.id).distinct().orderBy(requestDetail.id.asc());
+
+        if(branchId != 0){
+            query.where(branch.id.eq(branchId));
+        }
+        if(franchiseId != 0){
+            query.where(franchise.id.eq(franchiseId));
+        }
+
+        query.where(requestDetail.fdS2Dt.eq(fdS2Dt));
+
+        return query.fetch();
+    }
 
     // 본사 지사출고현황 왼쪽 NativeQuery
     @Override
@@ -2760,126 +2746,111 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         return jpaResultMapper.list(query, RequestOutgoListDto.class);
     }
 
-//    //  본사 지사출고현황 오른쪽 - querydsl
-//    public List<RequestReceiptListSubDto> findByHeadReceiptSubList(Long branchId, Long franchiseId, String frYyyymmdd) {
-//
-//        QRequestDetail requestDetail = QRequestDetail.requestDetail;
-//        QRequest request = QRequest.request;
-//        QItemGroup itemGroup = QItemGroup.itemGroup;
-//        QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
-//        QItem item = QItem.item;
-//        QCustomer customer = QCustomer.customer;
-//        QFranchise franchise = QFranchise.franchise;
-//        QBranch branch = QBranch.branch;
-//
-//        QInspeot inspeot1 = new QInspeot("inspeot1");
-//        QInspeot inspeot2 = new QInspeot("inspeot2");
-//
-//        JPQLQuery<RequestReceiptListSubDto> query = from(requestDetail)
-//                .innerJoin(requestDetail.frId, request)
-//                .innerJoin(request.bcId, customer)
-//                .innerJoin(franchise).on(franchise.frCode.eq(request.frCode))
-//                .innerJoin(branch).on(branch.brCode.eq(franchise.brCode))
-//                .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
-//                .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
-//                .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
-//
-//                // 검품여부 leftJoin
-//                .leftJoin(inspeot1).on(inspeot1.fdId.eq(requestDetail).and(inspeot1.fiType.eq("F").and(inspeot1.fiCustomerConfirm.eq("3")))) // 가맹점
-//                .leftJoin(inspeot2).on(inspeot2.fdId.eq(requestDetail).and(inspeot2.fiType.eq("B").and(inspeot2.fiCustomerConfirm.eq("3")))) // 지사
-//
-//                .where(request.frConfirmYn.eq("Y"))
-//                .where(requestDetail.fdCancel.eq("N"))
-//
-//                .select(Projections.constructor(RequestReceiptListSubDto.class,
-//
-//                        branch.brName,
-//                        franchise.frName,
-//
-//                        customer.bcName,
-//                        customer.bcHp,
-//                        customer.bcGrade,
-//
-//                        requestDetail.fdTag,
-//                        request.fr_insert_date,
-//                        requestDetail.fdEstimateDt,
-//
-//                        itemGroup.bgName,
-//                        itemGroupS.bsName,
-//                        item.biName,
-//
-//                        requestDetail.fdQty,
-//                        requestDetail.fdColor,
-//                        requestDetail.fdPattern,
-//
-//                        requestDetail.fdUrgentType,
-//                        requestDetail.fdUrgentYn,
-//
-//                        requestDetail.fdPriceGrade,
-//                        requestDetail.fdRetryYn,
-//                        requestDetail.fdPressed,
-//                        requestDetail.fdAdd1Amt,
-//                        requestDetail.fdRepairAmt,
-//                        requestDetail.fdWhitening,
-//                        requestDetail.fdPollution,
-//                        requestDetail.fdWaterRepellent,
-//                        requestDetail.fdStarch,
-//
-//                        requestDetail.fdAdd2Amt,
-//                        requestDetail.fdUrgentAmt,
-//                        requestDetail.fdNormalAmt,
-//
-//                        requestDetail.fdTotAmt,
-//                        requestDetail.fdDiscountAmt,
-//                        requestDetail.fdState,
-//
-//                        new CaseBuilder()
-//                                .when(requestDetail.fdPollutionLocFcn.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocFcs.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocFcb.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocFlh.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocFrh.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocFlf.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocFrf.eq("Y")).then(1)
-//                                .otherwise(0),
-//                        new CaseBuilder()
-//                                .when(requestDetail.fdPollutionLocBcn.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocBcs.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocBcb.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocBlh.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocBrh.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocBlf.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocBrf.eq("Y")).then(1)
-//                                .otherwise(0),
-//
-//                        requestDetail.fdS2Dt,
-//                        requestDetail.fdS5Dt,
-//                        requestDetail.fdS4Dt,
-//                        requestDetail.fdS3Dt,
-//                        requestDetail.fdS6Dt,
-//                        requestDetail.fdS6Time,
-//
-//                        new CaseBuilder()
-//                                .when(inspeot1.isNotNull().and(inspeot2.isNotNull())).then(inspeot1.fiProgressStateDt)
-//                                .otherwise(
-//                                        new CaseBuilder().when(inspeot1.isNotNull()).then(inspeot1.fiProgressStateDt)
-//                                                .otherwise(inspeot2.fiProgressStateDt))
-//
-//                ));
-//
-//        query.groupBy(requestDetail.id).distinct().orderBy(requestDetail.id.asc());
-//
-//        if(branchId != 0){
-//            query.where(branch.id.eq(branchId));
-//        }
-//        if(franchiseId != 0){
-//            query.where(franchise.id.eq(franchiseId));
-//        }
-//
-//        query.where(request.frYyyymmdd.eq(frYyyymmdd));
-//
-//        return query.fetch();
-//    }
+    //  본사 지사출고현황 오른쪽 - querydsl
+    public List<RequestOutgoListSubDto> findByHeadOutgoSubList(Long branchId, Long franchiseId, String fdS4Dt) {
+
+        QIssue issue = QIssue.issue;
+        QRequest request = QRequest.request;
+        QRequestDetail requestDetail = QRequestDetail.requestDetail;
+        QItemGroup itemGroup = QItemGroup.itemGroup;
+        QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
+        QItem item = QItem.item;
+        QCustomer customer = QCustomer.customer;
+        QFranchise franchise = QFranchise.franchise;
+        QBranch branch = QBranch.branch;
+
+        JPQLQuery<RequestOutgoListSubDto> query = from(issue)
+                .innerJoin(requestDetail).on(issue.eq(requestDetail.miId))
+                .innerJoin(requestDetail.frId, request)
+                .innerJoin(request.bcId, customer)
+                .innerJoin(franchise).on(franchise.frCode.eq(request.frCode))
+                .innerJoin(branch).on(branch.brCode.eq(franchise.brCode))
+                .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
+                .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
+                .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
+                .where(request.frConfirmYn.eq("Y"))
+                .where(requestDetail.fdCancel.eq("N"))
+                .select(Projections.constructor(RequestOutgoListSubDto.class,
+
+                        branch.brName,
+                        franchise.frName,
+
+                        customer.bcName,
+                        customer.bcHp,
+                        customer.bcGrade,
+
+                        requestDetail.fdTag,
+                        request.fr_insert_date,
+                        requestDetail.fdEstimateDt,
+
+                        itemGroup.bgName,
+                        itemGroupS.bsName,
+                        item.biName,
+
+                        requestDetail.fdQty,
+                        requestDetail.fdColor,
+                        requestDetail.fdPattern,
+
+                        requestDetail.fdUrgentYn,
+                        requestDetail.fdUrgentType,
+
+                        requestDetail.fdPressed,
+                        requestDetail.fdRepairAmt,
+                        requestDetail.fdAdd1Amt,
+                        requestDetail.fdWhitening,
+
+                        requestDetail.fdPollution,
+                        new CaseBuilder()
+                                .when(requestDetail.fdPollutionLocFcn.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFcs.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFcb.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFlh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFrh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFlf.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFrf.eq("Y")).then(1)
+                                .otherwise(0),
+                        new CaseBuilder()
+                                .when(requestDetail.fdPollutionLocBcn.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBcs.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBcb.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBlh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBrh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBlf.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBrf.eq("Y")).then(1)
+                                .otherwise(0),
+
+                        requestDetail.fdWaterRepellent,
+                        requestDetail.fdStarch,
+                        requestDetail.fdAdd2Amt,
+                        requestDetail.fdUrgentAmt,
+                        requestDetail.fdNormalAmt,
+
+                        requestDetail.fdTotAmt,
+                        requestDetail.fdDiscountAmt,
+
+                        requestDetail.fdState,
+
+                        requestDetail.fdS2Dt,
+                        requestDetail.fdS5Dt,
+                        requestDetail.fdS4Dt,
+                        requestDetail.fdS3Dt,
+                        requestDetail.fdS6Dt,
+                        requestDetail.fdS6Time
+                ));
+
+        query.groupBy(requestDetail.id).distinct().orderBy(requestDetail.id.asc());
+
+        if(branchId != 0){
+            query.where(branch.id.eq(branchId));
+        }
+        if(franchiseId != 0){
+            query.where(franchise.id.eq(franchiseId));
+        }
+
+        query.where(requestDetail.fdS4Dt.eq(fdS4Dt));
+
+        return query.fetch();
+    }
 
     // 본사 강제출고현황 왼쪽 NativeQuery
     @Override
@@ -2924,126 +2895,112 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         return jpaResultMapper.list(query, RequestForceOutgoListDto.class);
     }
 
-//    //  본사 강제출고현황 오른쪽 - querydsl
-//    public List<RequestReceiptListSubDto> findByHeadReceiptSubList(Long branchId, Long franchiseId, String frYyyymmdd) {
-//
-//        QRequestDetail requestDetail = QRequestDetail.requestDetail;
-//        QRequest request = QRequest.request;
-//        QItemGroup itemGroup = QItemGroup.itemGroup;
-//        QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
-//        QItem item = QItem.item;
-//        QCustomer customer = QCustomer.customer;
-//        QFranchise franchise = QFranchise.franchise;
-//        QBranch branch = QBranch.branch;
-//
-//        QInspeot inspeot1 = new QInspeot("inspeot1");
-//        QInspeot inspeot2 = new QInspeot("inspeot2");
-//
-//        JPQLQuery<RequestReceiptListSubDto> query = from(requestDetail)
-//                .innerJoin(requestDetail.frId, request)
-//                .innerJoin(request.bcId, customer)
-//                .innerJoin(franchise).on(franchise.frCode.eq(request.frCode))
-//                .innerJoin(branch).on(branch.brCode.eq(franchise.brCode))
-//                .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
-//                .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
-//                .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
-//
-//                // 검품여부 leftJoin
-//                .leftJoin(inspeot1).on(inspeot1.fdId.eq(requestDetail).and(inspeot1.fiType.eq("F").and(inspeot1.fiCustomerConfirm.eq("3")))) // 가맹점
-//                .leftJoin(inspeot2).on(inspeot2.fdId.eq(requestDetail).and(inspeot2.fiType.eq("B").and(inspeot2.fiCustomerConfirm.eq("3")))) // 지사
-//
-//                .where(request.frConfirmYn.eq("Y"))
-//                .where(requestDetail.fdCancel.eq("N"))
-//
-//                .select(Projections.constructor(RequestReceiptListSubDto.class,
-//
-//                        branch.brName,
-//                        franchise.frName,
-//
-//                        customer.bcName,
-//                        customer.bcHp,
-//                        customer.bcGrade,
-//
-//                        requestDetail.fdTag,
-//                        request.fr_insert_date,
-//                        requestDetail.fdEstimateDt,
-//
-//                        itemGroup.bgName,
-//                        itemGroupS.bsName,
-//                        item.biName,
-//
-//                        requestDetail.fdQty,
-//                        requestDetail.fdColor,
-//                        requestDetail.fdPattern,
-//
-//                        requestDetail.fdUrgentType,
-//                        requestDetail.fdUrgentYn,
-//
-//                        requestDetail.fdPriceGrade,
-//                        requestDetail.fdRetryYn,
-//                        requestDetail.fdPressed,
-//                        requestDetail.fdAdd1Amt,
-//                        requestDetail.fdRepairAmt,
-//                        requestDetail.fdWhitening,
-//                        requestDetail.fdPollution,
-//                        requestDetail.fdWaterRepellent,
-//                        requestDetail.fdStarch,
-//
-//                        requestDetail.fdAdd2Amt,
-//                        requestDetail.fdUrgentAmt,
-//                        requestDetail.fdNormalAmt,
-//
-//                        requestDetail.fdTotAmt,
-//                        requestDetail.fdDiscountAmt,
-//                        requestDetail.fdState,
-//
-//                        new CaseBuilder()
-//                                .when(requestDetail.fdPollutionLocFcn.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocFcs.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocFcb.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocFlh.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocFrh.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocFlf.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocFrf.eq("Y")).then(1)
-//                                .otherwise(0),
-//                        new CaseBuilder()
-//                                .when(requestDetail.fdPollutionLocBcn.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocBcs.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocBcb.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocBlh.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocBrh.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocBlf.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocBrf.eq("Y")).then(1)
-//                                .otherwise(0),
-//
-//                        requestDetail.fdS2Dt,
-//                        requestDetail.fdS5Dt,
-//                        requestDetail.fdS4Dt,
-//                        requestDetail.fdS3Dt,
-//                        requestDetail.fdS6Dt,
-//                        requestDetail.fdS6Time,
-//
-//                        new CaseBuilder()
-//                                .when(inspeot1.isNotNull().and(inspeot2.isNotNull())).then(inspeot1.fiProgressStateDt)
-//                                .otherwise(
-//                                        new CaseBuilder().when(inspeot1.isNotNull()).then(inspeot1.fiProgressStateDt)
-//                                                .otherwise(inspeot2.fiProgressStateDt))
-//
-//                ));
-//
-//        query.groupBy(requestDetail.id).distinct().orderBy(requestDetail.id.asc());
-//
-//        if(branchId != 0){
-//            query.where(branch.id.eq(branchId));
-//        }
-//        if(franchiseId != 0){
-//            query.where(franchise.id.eq(franchiseId));
-//        }
-//
-//        query.where(request.frYyyymmdd.eq(frYyyymmdd));
-//
-//        return query.fetch();
-//    }
+    //  본사 강제출고현황 오른쪽 - querydsl
+    public List<RequestForceOutgoListSubDto> findByHeadForceOutgoSubList(Long branchId, Long franchiseId, String fdS7Dt) {
+        QIssueForce issueForce = QIssueForce.issueForce;
+
+        QRequestDetail requestDetail = QRequestDetail.requestDetail;
+        QRequest request = QRequest.request;
+        QItemGroup itemGroup = QItemGroup.itemGroup;
+        QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
+        QItem item = QItem.item;
+        QCustomer customer = QCustomer.customer;
+        QFranchise franchise = QFranchise.franchise;
+        QBranch branch = QBranch.branch;
+
+        JPQLQuery<RequestForceOutgoListSubDto> query = from(issueForce)
+                .innerJoin(requestDetail).on(issueForce.fdId.eq(requestDetail.id))
+                .innerJoin(requestDetail.frId, request)
+                .innerJoin(request.bcId, customer)
+                .innerJoin(franchise).on(franchise.frCode.eq(request.frCode))
+                .innerJoin(branch).on(branch.brCode.eq(franchise.brCode))
+                .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
+                .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
+                .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
+                .where(request.frConfirmYn.eq("Y"))
+                .where(requestDetail.fdCancel.eq("N"))
+                .select(Projections.constructor(RequestForceOutgoListSubDto.class,
+
+                        branch.brName,
+                        franchise.frName,
+
+                        customer.bcName,
+                        customer.bcHp,
+                        customer.bcGrade,
+
+                        requestDetail.fdTag,
+                        request.fr_insert_date,
+                        requestDetail.fdEstimateDt,
+
+                        itemGroup.bgName,
+                        itemGroupS.bsName,
+                        item.biName,
+
+                        requestDetail.fdQty,
+                        requestDetail.fdColor,
+                        requestDetail.fdPattern,
+
+                        requestDetail.fdUrgentYn,
+                        requestDetail.fdUrgentType,
+
+                        requestDetail.fdPressed,
+                        requestDetail.fdRepairAmt,
+                        requestDetail.fdAdd1Amt,
+                        requestDetail.fdWhitening,
+
+                        requestDetail.fdPollution,
+                        new CaseBuilder()
+                                .when(requestDetail.fdPollutionLocFcn.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFcs.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFcb.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFlh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFrh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFlf.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFrf.eq("Y")).then(1)
+                                .otherwise(0),
+                        new CaseBuilder()
+                                .when(requestDetail.fdPollutionLocBcn.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBcs.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBcb.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBlh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBrh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBlf.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBrf.eq("Y")).then(1)
+                                .otherwise(0),
+
+                        requestDetail.fdWaterRepellent,
+                        requestDetail.fdStarch,
+                        requestDetail.fdAdd2Amt,
+                        requestDetail.fdUrgentAmt,
+                        requestDetail.fdNormalAmt,
+
+                        requestDetail.fdTotAmt,
+                        requestDetail.fdDiscountAmt,
+
+                        requestDetail.fdState,
+
+                        requestDetail.fdS2Dt,
+                        requestDetail.fdS5Dt,
+                        requestDetail.fdS4Dt,
+                        requestDetail.fdS3Dt,
+                        requestDetail.fdS6Dt,
+                        requestDetail.fdS6Time
+
+                ));
+
+        query.groupBy(requestDetail.id).distinct().orderBy(requestDetail.id.asc());
+
+        if(branchId != 0){
+            query.where(branch.id.eq(branchId));
+        }
+        if(franchiseId != 0){
+            query.where(franchise.id.eq(franchiseId));
+        }
+
+        query.where(requestDetail.fdS7Dt.eq(fdS7Dt).and(requestDetail.fdS7Type.eq("01")));
+
+        return query.fetch();
+    }
 
     // 본사 강제입고현황 왼쪽 NativeQuery
     @Override
@@ -3086,126 +3043,112 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         return jpaResultMapper.list(query, RequestForceIncomeListDto.class);
     }
 
-//    //  본사 강제입고현황 오른쪽 - querydsl
-//    public List<RequestReceiptListSubDto> findByHeadReceiptSubList(Long branchId, Long franchiseId, String frYyyymmdd) {
-//
-//        QRequestDetail requestDetail = QRequestDetail.requestDetail;
-//        QRequest request = QRequest.request;
-//        QItemGroup itemGroup = QItemGroup.itemGroup;
-//        QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
-//        QItem item = QItem.item;
-//        QCustomer customer = QCustomer.customer;
-//        QFranchise franchise = QFranchise.franchise;
-//        QBranch branch = QBranch.branch;
-//
-//        QInspeot inspeot1 = new QInspeot("inspeot1");
-//        QInspeot inspeot2 = new QInspeot("inspeot2");
-//
-//        JPQLQuery<RequestReceiptListSubDto> query = from(requestDetail)
-//                .innerJoin(requestDetail.frId, request)
-//                .innerJoin(request.bcId, customer)
-//                .innerJoin(franchise).on(franchise.frCode.eq(request.frCode))
-//                .innerJoin(branch).on(branch.brCode.eq(franchise.brCode))
-//                .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
-//                .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
-//                .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
-//
-//                // 검품여부 leftJoin
-//                .leftJoin(inspeot1).on(inspeot1.fdId.eq(requestDetail).and(inspeot1.fiType.eq("F").and(inspeot1.fiCustomerConfirm.eq("3")))) // 가맹점
-//                .leftJoin(inspeot2).on(inspeot2.fdId.eq(requestDetail).and(inspeot2.fiType.eq("B").and(inspeot2.fiCustomerConfirm.eq("3")))) // 지사
-//
-//                .where(request.frConfirmYn.eq("Y"))
-//                .where(requestDetail.fdCancel.eq("N"))
-//
-//                .select(Projections.constructor(RequestReceiptListSubDto.class,
-//
-//                        branch.brName,
-//                        franchise.frName,
-//
-//                        customer.bcName,
-//                        customer.bcHp,
-//                        customer.bcGrade,
-//
-//                        requestDetail.fdTag,
-//                        request.fr_insert_date,
-//                        requestDetail.fdEstimateDt,
-//
-//                        itemGroup.bgName,
-//                        itemGroupS.bsName,
-//                        item.biName,
-//
-//                        requestDetail.fdQty,
-//                        requestDetail.fdColor,
-//                        requestDetail.fdPattern,
-//
-//                        requestDetail.fdUrgentType,
-//                        requestDetail.fdUrgentYn,
-//
-//                        requestDetail.fdPriceGrade,
-//                        requestDetail.fdRetryYn,
-//                        requestDetail.fdPressed,
-//                        requestDetail.fdAdd1Amt,
-//                        requestDetail.fdRepairAmt,
-//                        requestDetail.fdWhitening,
-//                        requestDetail.fdPollution,
-//                        requestDetail.fdWaterRepellent,
-//                        requestDetail.fdStarch,
-//
-//                        requestDetail.fdAdd2Amt,
-//                        requestDetail.fdUrgentAmt,
-//                        requestDetail.fdNormalAmt,
-//
-//                        requestDetail.fdTotAmt,
-//                        requestDetail.fdDiscountAmt,
-//                        requestDetail.fdState,
-//
-//                        new CaseBuilder()
-//                                .when(requestDetail.fdPollutionLocFcn.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocFcs.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocFcb.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocFlh.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocFrh.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocFlf.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocFrf.eq("Y")).then(1)
-//                                .otherwise(0),
-//                        new CaseBuilder()
-//                                .when(requestDetail.fdPollutionLocBcn.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocBcs.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocBcb.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocBlh.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocBrh.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocBlf.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocBrf.eq("Y")).then(1)
-//                                .otherwise(0),
-//
-//                        requestDetail.fdS2Dt,
-//                        requestDetail.fdS5Dt,
-//                        requestDetail.fdS4Dt,
-//                        requestDetail.fdS3Dt,
-//                        requestDetail.fdS6Dt,
-//                        requestDetail.fdS6Time,
-//
-//                        new CaseBuilder()
-//                                .when(inspeot1.isNotNull().and(inspeot2.isNotNull())).then(inspeot1.fiProgressStateDt)
-//                                .otherwise(
-//                                        new CaseBuilder().when(inspeot1.isNotNull()).then(inspeot1.fiProgressStateDt)
-//                                                .otherwise(inspeot2.fiProgressStateDt))
-//
-//                ));
-//
-//        query.groupBy(requestDetail.id).distinct().orderBy(requestDetail.id.asc());
-//
-//        if(branchId != 0){
-//            query.where(branch.id.eq(branchId));
-//        }
-//        if(franchiseId != 0){
-//            query.where(franchise.id.eq(franchiseId));
-//        }
-//
-//        query.where(request.frYyyymmdd.eq(frYyyymmdd));
-//
-//        return query.fetch();
-//    }
+    //  본사 강제입고현황 오른쪽 - querydsl
+    public List<RequestForceIncomeListSubDto> findByHeadForceIncomeSubList(Long branchId, Long franchiseId, String fdS8Dt) {
+
+        QRequestDetail requestDetail = QRequestDetail.requestDetail;
+        QRequest request = QRequest.request;
+        QItemGroup itemGroup = QItemGroup.itemGroup;
+        QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
+        QItem item = QItem.item;
+        QCustomer customer = QCustomer.customer;
+        QFranchise franchise = QFranchise.franchise;
+        QBranch branch = QBranch.branch;
+
+        JPQLQuery<RequestForceIncomeListSubDto> query = from(requestDetail)
+                .innerJoin(requestDetail.frId, request)
+                .innerJoin(request.bcId, customer)
+                .innerJoin(franchise).on(franchise.frCode.eq(request.frCode))
+                .innerJoin(branch).on(branch.brCode.eq(franchise.brCode))
+                .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
+                .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
+                .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
+
+                .where(request.frConfirmYn.eq("Y"))
+                .where(requestDetail.fdCancel.eq("N"))
+
+                .select(Projections.constructor(RequestForceIncomeListSubDto.class,
+
+                        branch.brName,
+                        franchise.frName,
+
+                        customer.bcName,
+                        customer.bcHp,
+                        customer.bcGrade,
+
+                        requestDetail.fdTag,
+                        request.fr_insert_date,
+                        requestDetail.fdEstimateDt,
+
+                        itemGroup.bgName,
+                        itemGroupS.bsName,
+                        item.biName,
+
+                        requestDetail.fdQty,
+                        requestDetail.fdColor,
+                        requestDetail.fdPattern,
+
+                        requestDetail.fdUrgentYn,
+                        requestDetail.fdUrgentType,
+
+                        requestDetail.fdPressed,
+                        requestDetail.fdRepairAmt,
+                        requestDetail.fdAdd1Amt,
+                        requestDetail.fdWhitening,
+
+                        requestDetail.fdPollution,
+                        new CaseBuilder()
+                                .when(requestDetail.fdPollutionLocFcn.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFcs.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFcb.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFlh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFrh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFlf.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFrf.eq("Y")).then(1)
+                                .otherwise(0),
+                        new CaseBuilder()
+                                .when(requestDetail.fdPollutionLocBcn.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBcs.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBcb.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBlh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBrh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBlf.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBrf.eq("Y")).then(1)
+                                .otherwise(0),
+
+                        requestDetail.fdWaterRepellent,
+                        requestDetail.fdStarch,
+                        requestDetail.fdAdd2Amt,
+                        requestDetail.fdUrgentAmt,
+                        requestDetail.fdNormalAmt,
+
+                        requestDetail.fdTotAmt,
+                        requestDetail.fdDiscountAmt,
+
+                        requestDetail.fdState,
+
+                        requestDetail.fdS2Dt,
+                        requestDetail.fdS5Dt,
+                        requestDetail.fdS4Dt,
+                        requestDetail.fdS3Dt,
+                        requestDetail.fdS6Dt,
+                        requestDetail.fdS6Time
+
+                ));
+
+        query.groupBy(requestDetail.id).distinct().orderBy(requestDetail.id.asc());
+
+        if(branchId != 0){
+            query.where(branch.id.eq(branchId));
+        }
+        if(franchiseId != 0){
+            query.where(franchise.id.eq(franchiseId));
+        }
+
+        query.where(requestDetail.fdS8Dt.eq(fdS8Dt));
+
+        return query.fetch();
+    }
 
     // 본사 미출고현황 왼쪽 NativeQuery
     @Override
@@ -3249,126 +3192,112 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         return jpaResultMapper.list(query, RequestNoOutgoListDto.class);
     }
 
-//    //  본사 미출고현황 오른쪽 - querydsl
-//    public List<RequestReceiptListSubDto> findByHeadReceiptSubList(Long branchId, Long franchiseId, String frYyyymmdd) {
-//
-//        QRequestDetail requestDetail = QRequestDetail.requestDetail;
-//        QRequest request = QRequest.request;
-//        QItemGroup itemGroup = QItemGroup.itemGroup;
-//        QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
-//        QItem item = QItem.item;
-//        QCustomer customer = QCustomer.customer;
-//        QFranchise franchise = QFranchise.franchise;
-//        QBranch branch = QBranch.branch;
-//
-//        QInspeot inspeot1 = new QInspeot("inspeot1");
-//        QInspeot inspeot2 = new QInspeot("inspeot2");
-//
-//        JPQLQuery<RequestReceiptListSubDto> query = from(requestDetail)
-//                .innerJoin(requestDetail.frId, request)
-//                .innerJoin(request.bcId, customer)
-//                .innerJoin(franchise).on(franchise.frCode.eq(request.frCode))
-//                .innerJoin(branch).on(branch.brCode.eq(franchise.brCode))
-//                .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
-//                .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
-//                .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
-//
-//                // 검품여부 leftJoin
-//                .leftJoin(inspeot1).on(inspeot1.fdId.eq(requestDetail).and(inspeot1.fiType.eq("F").and(inspeot1.fiCustomerConfirm.eq("3")))) // 가맹점
-//                .leftJoin(inspeot2).on(inspeot2.fdId.eq(requestDetail).and(inspeot2.fiType.eq("B").and(inspeot2.fiCustomerConfirm.eq("3")))) // 지사
-//
-//                .where(request.frConfirmYn.eq("Y"))
-//                .where(requestDetail.fdCancel.eq("N"))
-//
-//                .select(Projections.constructor(RequestReceiptListSubDto.class,
-//
-//                        branch.brName,
-//                        franchise.frName,
-//
-//                        customer.bcName,
-//                        customer.bcHp,
-//                        customer.bcGrade,
-//
-//                        requestDetail.fdTag,
-//                        request.fr_insert_date,
-//                        requestDetail.fdEstimateDt,
-//
-//                        itemGroup.bgName,
-//                        itemGroupS.bsName,
-//                        item.biName,
-//
-//                        requestDetail.fdQty,
-//                        requestDetail.fdColor,
-//                        requestDetail.fdPattern,
-//
-//                        requestDetail.fdUrgentType,
-//                        requestDetail.fdUrgentYn,
-//
-//                        requestDetail.fdPriceGrade,
-//                        requestDetail.fdRetryYn,
-//                        requestDetail.fdPressed,
-//                        requestDetail.fdAdd1Amt,
-//                        requestDetail.fdRepairAmt,
-//                        requestDetail.fdWhitening,
-//                        requestDetail.fdPollution,
-//                        requestDetail.fdWaterRepellent,
-//                        requestDetail.fdStarch,
-//
-//                        requestDetail.fdAdd2Amt,
-//                        requestDetail.fdUrgentAmt,
-//                        requestDetail.fdNormalAmt,
-//
-//                        requestDetail.fdTotAmt,
-//                        requestDetail.fdDiscountAmt,
-//                        requestDetail.fdState,
-//
-//                        new CaseBuilder()
-//                                .when(requestDetail.fdPollutionLocFcn.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocFcs.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocFcb.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocFlh.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocFrh.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocFlf.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocFrf.eq("Y")).then(1)
-//                                .otherwise(0),
-//                        new CaseBuilder()
-//                                .when(requestDetail.fdPollutionLocBcn.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocBcs.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocBcb.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocBlh.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocBrh.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocBlf.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocBrf.eq("Y")).then(1)
-//                                .otherwise(0),
-//
-//                        requestDetail.fdS2Dt,
-//                        requestDetail.fdS5Dt,
-//                        requestDetail.fdS4Dt,
-//                        requestDetail.fdS3Dt,
-//                        requestDetail.fdS6Dt,
-//                        requestDetail.fdS6Time,
-//
-//                        new CaseBuilder()
-//                                .when(inspeot1.isNotNull().and(inspeot2.isNotNull())).then(inspeot1.fiProgressStateDt)
-//                                .otherwise(
-//                                        new CaseBuilder().when(inspeot1.isNotNull()).then(inspeot1.fiProgressStateDt)
-//                                                .otherwise(inspeot2.fiProgressStateDt))
-//
-//                ));
-//
-//        query.groupBy(requestDetail.id).distinct().orderBy(requestDetail.id.asc());
-//
-//        if(branchId != 0){
-//            query.where(branch.id.eq(branchId));
-//        }
-//        if(franchiseId != 0){
-//            query.where(franchise.id.eq(franchiseId));
-//        }
-//
-//        query.where(request.frYyyymmdd.eq(frYyyymmdd));
-//
-//        return query.fetch();
-//    }
+    //  본사 미출고현황 오른쪽 - querydsl
+    public List<RequestNoOutgoListSubDto> findByHeadNoOutgoSubList(Long branchId, Long franchiseId, String fdEstimateDt) {
+
+        QRequestDetail requestDetail = QRequestDetail.requestDetail;
+        QRequest request = QRequest.request;
+        QItemGroup itemGroup = QItemGroup.itemGroup;
+        QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
+        QItem item = QItem.item;
+        QCustomer customer = QCustomer.customer;
+        QFranchise franchise = QFranchise.franchise;
+        QBranch branch = QBranch.branch;
+
+        JPQLQuery<RequestNoOutgoListSubDto> query = from(requestDetail)
+                .innerJoin(requestDetail.frId, request)
+                .innerJoin(request.bcId, customer)
+                .innerJoin(franchise).on(franchise.frCode.eq(request.frCode))
+                .innerJoin(branch).on(branch.brCode.eq(franchise.brCode))
+                .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
+                .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
+                .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
+
+                .where(request.frConfirmYn.eq("Y"))
+                .where(requestDetail.fdCancel.eq("N"))
+
+                .select(Projections.constructor(RequestNoOutgoListSubDto.class,
+
+                        branch.brName,
+                        franchise.frName,
+
+                        customer.bcName,
+                        customer.bcHp,
+                        customer.bcGrade,
+
+                        requestDetail.fdTag,
+                        request.fr_insert_date,
+                        requestDetail.fdEstimateDt,
+
+                        itemGroup.bgName,
+                        itemGroupS.bsName,
+                        item.biName,
+
+                        requestDetail.fdQty,
+                        requestDetail.fdColor,
+                        requestDetail.fdPattern,
+
+                        requestDetail.fdUrgentYn,
+                        requestDetail.fdUrgentType,
+
+                        requestDetail.fdPressed,
+                        requestDetail.fdRepairAmt,
+                        requestDetail.fdAdd1Amt,
+                        requestDetail.fdWhitening,
+
+                        requestDetail.fdPollution,
+                        new CaseBuilder()
+                                .when(requestDetail.fdPollutionLocFcn.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFcs.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFcb.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFlh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFrh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFlf.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFrf.eq("Y")).then(1)
+                                .otherwise(0),
+                        new CaseBuilder()
+                                .when(requestDetail.fdPollutionLocBcn.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBcs.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBcb.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBlh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBrh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBlf.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBrf.eq("Y")).then(1)
+                                .otherwise(0),
+
+                        requestDetail.fdWaterRepellent,
+                        requestDetail.fdStarch,
+                        requestDetail.fdAdd2Amt,
+                        requestDetail.fdUrgentAmt,
+                        requestDetail.fdNormalAmt,
+
+                        requestDetail.fdTotAmt,
+                        requestDetail.fdDiscountAmt,
+
+                        requestDetail.fdState,
+
+                        requestDetail.fdS2Dt,
+                        requestDetail.fdS5Dt,
+                        requestDetail.fdS4Dt,
+                        requestDetail.fdS3Dt,
+                        requestDetail.fdS6Dt,
+                        requestDetail.fdS6Time
+
+                ));
+
+        query.groupBy(requestDetail.id).distinct().orderBy(requestDetail.id.asc());
+
+        if(branchId != 0){
+            query.where(branch.id.eq(branchId));
+        }
+        if(franchiseId != 0){
+            query.where(franchise.id.eq(franchiseId));
+        }
+
+        query.where(requestDetail.fdEstimateDt.eq(fdEstimateDt));
+
+        return query.fetch();
+    }
 
     // 본사 재새탁입고현황 왼쪽 NativeQuery
     @Override
@@ -3412,126 +3341,112 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         return jpaResultMapper.list(query, RequestRetryListDto.class);
     }
 
-//    //  본사 재새탁입고현황 오른쪽 - querydsl
-//    public List<RequestReceiptListSubDto> findByHeadReceiptSubList(Long branchId, Long franchiseId, String frYyyymmdd) {
-//
-//        QRequestDetail requestDetail = QRequestDetail.requestDetail;
-//        QRequest request = QRequest.request;
-//        QItemGroup itemGroup = QItemGroup.itemGroup;
-//        QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
-//        QItem item = QItem.item;
-//        QCustomer customer = QCustomer.customer;
-//        QFranchise franchise = QFranchise.franchise;
-//        QBranch branch = QBranch.branch;
-//
-//        QInspeot inspeot1 = new QInspeot("inspeot1");
-//        QInspeot inspeot2 = new QInspeot("inspeot2");
-//
-//        JPQLQuery<RequestReceiptListSubDto> query = from(requestDetail)
-//                .innerJoin(requestDetail.frId, request)
-//                .innerJoin(request.bcId, customer)
-//                .innerJoin(franchise).on(franchise.frCode.eq(request.frCode))
-//                .innerJoin(branch).on(branch.brCode.eq(franchise.brCode))
-//                .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
-//                .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
-//                .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
-//
-//                // 검품여부 leftJoin
-//                .leftJoin(inspeot1).on(inspeot1.fdId.eq(requestDetail).and(inspeot1.fiType.eq("F").and(inspeot1.fiCustomerConfirm.eq("3")))) // 가맹점
-//                .leftJoin(inspeot2).on(inspeot2.fdId.eq(requestDetail).and(inspeot2.fiType.eq("B").and(inspeot2.fiCustomerConfirm.eq("3")))) // 지사
-//
-//                .where(request.frConfirmYn.eq("Y"))
-//                .where(requestDetail.fdCancel.eq("N"))
-//
-//                .select(Projections.constructor(RequestReceiptListSubDto.class,
-//
-//                        branch.brName,
-//                        franchise.frName,
-//
-//                        customer.bcName,
-//                        customer.bcHp,
-//                        customer.bcGrade,
-//
-//                        requestDetail.fdTag,
-//                        request.fr_insert_date,
-//                        requestDetail.fdEstimateDt,
-//
-//                        itemGroup.bgName,
-//                        itemGroupS.bsName,
-//                        item.biName,
-//
-//                        requestDetail.fdQty,
-//                        requestDetail.fdColor,
-//                        requestDetail.fdPattern,
-//
-//                        requestDetail.fdUrgentType,
-//                        requestDetail.fdUrgentYn,
-//
-//                        requestDetail.fdPriceGrade,
-//                        requestDetail.fdRetryYn,
-//                        requestDetail.fdPressed,
-//                        requestDetail.fdAdd1Amt,
-//                        requestDetail.fdRepairAmt,
-//                        requestDetail.fdWhitening,
-//                        requestDetail.fdPollution,
-//                        requestDetail.fdWaterRepellent,
-//                        requestDetail.fdStarch,
-//
-//                        requestDetail.fdAdd2Amt,
-//                        requestDetail.fdUrgentAmt,
-//                        requestDetail.fdNormalAmt,
-//
-//                        requestDetail.fdTotAmt,
-//                        requestDetail.fdDiscountAmt,
-//                        requestDetail.fdState,
-//
-//                        new CaseBuilder()
-//                                .when(requestDetail.fdPollutionLocFcn.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocFcs.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocFcb.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocFlh.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocFrh.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocFlf.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocFrf.eq("Y")).then(1)
-//                                .otherwise(0),
-//                        new CaseBuilder()
-//                                .when(requestDetail.fdPollutionLocBcn.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocBcs.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocBcb.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocBlh.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocBrh.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocBlf.eq("Y")).then(1)
-//                                .when(requestDetail.fdPollutionLocBrf.eq("Y")).then(1)
-//                                .otherwise(0),
-//
-//                        requestDetail.fdS2Dt,
-//                        requestDetail.fdS5Dt,
-//                        requestDetail.fdS4Dt,
-//                        requestDetail.fdS3Dt,
-//                        requestDetail.fdS6Dt,
-//                        requestDetail.fdS6Time,
-//
-//                        new CaseBuilder()
-//                                .when(inspeot1.isNotNull().and(inspeot2.isNotNull())).then(inspeot1.fiProgressStateDt)
-//                                .otherwise(
-//                                        new CaseBuilder().when(inspeot1.isNotNull()).then(inspeot1.fiProgressStateDt)
-//                                                .otherwise(inspeot2.fiProgressStateDt))
-//
-//                ));
-//
-//        query.groupBy(requestDetail.id).distinct().orderBy(requestDetail.id.asc());
-//
-//        if(branchId != 0){
-//            query.where(branch.id.eq(branchId));
-//        }
-//        if(franchiseId != 0){
-//            query.where(franchise.id.eq(franchiseId));
-//        }
-//
-//        query.where(request.frYyyymmdd.eq(frYyyymmdd));
-//
-//        return query.fetch();
-//    }
+    //  본사 재새탁입고현황 오른쪽 - querydsl
+    public List<RequestRetryListSubDto> findByHeadRetrySubList(Long branchId, Long franchiseId, String frYyyymmdd) {
+
+        QRequestDetail requestDetail = QRequestDetail.requestDetail;
+        QRequest request = QRequest.request;
+        QItemGroup itemGroup = QItemGroup.itemGroup;
+        QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
+        QItem item = QItem.item;
+        QCustomer customer = QCustomer.customer;
+        QFranchise franchise = QFranchise.franchise;
+        QBranch branch = QBranch.branch;
+
+        JPQLQuery<RequestRetryListSubDto> query = from(requestDetail)
+                .innerJoin(requestDetail.frId, request)
+                .innerJoin(request.bcId, customer)
+                .innerJoin(franchise).on(franchise.frCode.eq(request.frCode))
+                .innerJoin(branch).on(branch.brCode.eq(franchise.brCode))
+                .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
+                .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
+                .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
+
+                .where(request.frConfirmYn.eq("Y"))
+                .where(requestDetail.fdCancel.eq("N"))
+
+                .select(Projections.constructor(RequestRetryListSubDto.class,
+
+                        branch.brName,
+                        franchise.frName,
+
+                        customer.bcName,
+                        customer.bcHp,
+                        customer.bcGrade,
+
+                        requestDetail.fdTag,
+                        request.fr_insert_date,
+                        requestDetail.fdEstimateDt,
+
+                        itemGroup.bgName,
+                        itemGroupS.bsName,
+                        item.biName,
+
+                        requestDetail.fdQty,
+                        requestDetail.fdColor,
+                        requestDetail.fdPattern,
+
+                        requestDetail.fdUrgentYn,
+                        requestDetail.fdUrgentType,
+
+                        requestDetail.fdPressed,
+                        requestDetail.fdRepairAmt,
+                        requestDetail.fdAdd1Amt,
+                        requestDetail.fdWhitening,
+
+                        requestDetail.fdPollution,
+                        new CaseBuilder()
+                                .when(requestDetail.fdPollutionLocFcn.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFcs.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFcb.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFlh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFrh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFlf.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFrf.eq("Y")).then(1)
+                                .otherwise(0),
+                        new CaseBuilder()
+                                .when(requestDetail.fdPollutionLocBcn.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBcs.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBcb.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBlh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBrh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBlf.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBrf.eq("Y")).then(1)
+                                .otherwise(0),
+
+                        requestDetail.fdWaterRepellent,
+                        requestDetail.fdStarch,
+                        requestDetail.fdAdd2Amt,
+                        requestDetail.fdUrgentAmt,
+                        requestDetail.fdNormalAmt,
+
+                        requestDetail.fdTotAmt,
+                        requestDetail.fdDiscountAmt,
+
+                        requestDetail.fdState,
+
+                        requestDetail.fdS2Dt,
+                        requestDetail.fdS5Dt,
+                        requestDetail.fdS4Dt,
+                        requestDetail.fdS3Dt,
+                        requestDetail.fdS6Dt,
+                        requestDetail.fdS6Time
+
+                ));
+
+        query.groupBy(requestDetail.id).distinct().orderBy(requestDetail.id.asc());
+
+        if(branchId != 0){
+            query.where(branch.id.eq(branchId));
+        }
+        if(franchiseId != 0){
+            query.where(franchise.id.eq(franchiseId));
+        }
+
+        query.where(request.frYyyymmdd.eq(frYyyymmdd));
+
+        return query.fetch();
+    }
 
 
 }
