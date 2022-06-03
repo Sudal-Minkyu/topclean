@@ -2714,8 +2714,8 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         sb.append("FROM mr_issue a \n");
         sb.append("INNER JOIN fs_request_dtl b ON a.mi_id = b.mi_id  \n");
         sb.append("INNER JOIN fs_request c ON c.fr_id = b.fr_id  \n");
-        sb.append("INNER JOIN bs_franchise d on d.fr_code = c.fr_code \n");
-        sb.append("INNER JOIN bs_branch e on e.br_code = c.br_code \n");
+        sb.append("INNER JOIN bs_franchise d on d.fr_code = a.fr_code \n");
+        sb.append("INNER JOIN bs_branch e on e.br_code = a.br_code \n");
 
         sb.append("WHERE \n");
         sb.append("c.fr_confirm_yn='Y' \n");
@@ -2760,11 +2760,11 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         QBranch branch = QBranch.branch;
 
         JPQLQuery<RequestOutgoListSubDto> query = from(issue)
-                .innerJoin(requestDetail).on(issue.eq(requestDetail.miId))
-                .innerJoin(requestDetail.frId, request)
-                .innerJoin(request.bcId, customer)
-                .innerJoin(franchise).on(franchise.frCode.eq(request.frCode))
-                .innerJoin(branch).on(branch.brCode.eq(franchise.brCode))
+                .innerJoin(requestDetail).on(requestDetail.miId.eq(issue))
+                .innerJoin(request).on(request.eq(requestDetail.frId))
+                .innerJoin(customer).on(request.bcId.eq(customer))
+                .innerJoin(franchise).on(franchise.frCode.eq(issue.frCode))
+                .innerJoin(branch).on(branch.brCode.eq(issue.brCode))
                 .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
                 .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
                 .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
@@ -2838,7 +2838,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdS6Time
                 ));
 
-        query.groupBy(requestDetail.id).distinct().orderBy(requestDetail.id.asc());
+        query.groupBy(requestDetail.id).orderBy(requestDetail.id.asc());
 
         if(branchId != 0){
             query.where(branch.id.eq(branchId));
@@ -2847,7 +2847,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
             query.where(franchise.id.eq(franchiseId));
         }
 
-        query.where(requestDetail.fdS4Dt.eq(fdS4Dt));
+        query.where(issue.miDt.eq(fdS4Dt));
 
         return query.fetch();
     }
@@ -2988,7 +2988,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
 
                 ));
 
-        query.groupBy(requestDetail.id).distinct().orderBy(requestDetail.id.asc());
+        query.groupBy(requestDetail.id).orderBy(issueForce.fdId.asc());
 
         if(branchId != 0){
             query.where(branch.id.eq(branchId));
@@ -2997,7 +2997,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
             query.where(franchise.id.eq(franchiseId));
         }
 
-        query.where(requestDetail.fdS7Dt.eq(fdS7Dt).and(requestDetail.fdS7Type.eq("01")));
+        query.where(issueForce.mrDt.eq(fdS7Dt).and(requestDetail.fdS7Type.eq("01")));
 
         return query.fetch();
     }
