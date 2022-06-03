@@ -103,6 +103,7 @@ const comms = {
             const data = res.sendData.gridListData;
             console.log('누계조회결과', data);
             dv.chk(data, dtos.receive.summaryAPI, '일별 누계 데이터 받아오기');
+            grids.clear(grids.id[1]);
             grids.setData(grids.id[0], data);
         });
     },
@@ -131,6 +132,10 @@ const grids = {
 
     setData(id, data) {
         AUIGrid.setGridData(id, data);
+    },
+
+    clear(id) {
+        AUIGrid.clearGridData(id);
     },
 
     setFrNameVisibility(boolean) {
