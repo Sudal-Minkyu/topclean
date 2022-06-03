@@ -553,7 +553,7 @@ const getDetailData = function (item, targetDateName) {
 
     const condition = {
         branchId: item.branchId,
-        franchiseId: $("#brList").val() !== "0" ? item.franchiseId : 0,
+        franchiseId: $("#frList").val() !== "0" ? item.franchiseId : 0,
     };
     condition[targetDateName] = item[targetDateName].numString();
 
