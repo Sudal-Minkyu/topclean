@@ -310,6 +310,11 @@ public class CurrentService {
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
 
+        log.info("branchId : "+branchId);
+        log.info("franchiseId : "+franchiseId);
+        log.info("filterFromDt : "+filterFromDt);
+        log.info("filterToDt : "+filterToDt);
+
         // 클레임데이터 가져오기
         Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
         String login_id = claims.getSubject(); // 현재 아이디
