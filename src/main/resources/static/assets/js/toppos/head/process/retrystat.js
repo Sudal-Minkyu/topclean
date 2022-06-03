@@ -22,7 +22,7 @@ const onPageLoad = function () {
     });
 
     runOnlyOnce.makeDetailGrid({
-        url: '/api/head/headReceiptSubList',
+        url: '/api/head/headRetrySubList',
         fdUrgentTypeVisible: true,
         fiProgressStateDtVisible: false,
     });
