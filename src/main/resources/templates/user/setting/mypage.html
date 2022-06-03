@@ -29,6 +29,7 @@
 			<button class="c-tabs__btn" data-index="0">상용구 수정</button>
 			<button class="c-tabs__btn" data-index="1">수선항목 수정</button>
 			<button class="c-tabs__btn" data-index="2">추가항목 수정</button>
+			<button class="c-tabs__btn">영업준비금</button>
 		</div>
 		<div class="c-tabs__body">
 			<div class="c-tabs__content active">
@@ -357,6 +358,37 @@
 					<div class="c-tabs__console">
 						<button class="c-button c-button--solid gridSave" data-gridnum="2">저장</button>
 					</div>
+				</div>
+			</div>
+
+			<!-- 영업준비금 임시 작업, 붙어있는 클래스는 마음대로 조정하셔도 됩니다. -->
+			<div class="c-tabs__content">
+				<div class="c-tabs__content-header">
+					<h3 class="c-tabs__content-heading">영업준비금</h3>
+				</div>
+				<div class="c-tabs__content-body">
+					<div class="inquiry__input">
+						<div class="c-period">
+							<!-- 시작일 -->
+							<input type="text" id="filterFromDt">
+							<span class="c-period__code">-</span>
+							<!-- 종료일 -->
+							<input type="text" id="filterToDt">
+						</div>
+						<div class="inquiry__button">
+							<button id="searchListBtn" class="c-button c-button--small c-button--darksolid">조회</button>
+						</div>
+					</div>
+
+					<!-- grid -->
+					<div id="grid_readyCash"></div>
+					<input type="text" id="bcYyyymmdd">
+					<input type="text" id="bcReadyAmt">
+					<button type="button" class="keypadBtn" data-keyIndex="5">키보드</button>
+					<button id="newReadyAmt" class="c-button c-button--small c-button--darksolid">초기화</button>
+					<button id="saveReadyAmt" class="c-button c-button--small c-button--darksolid">저장</button>
+
+
 				</div>
 			</div>
 		</div>

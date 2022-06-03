@@ -155,6 +155,25 @@ const comms = {
             alertSuccess("메시지 전송이 완료되었습니다.");
         });
     },
+
+    /* 영업준비금을 저장하고 영업준비금 그리드를 다시 로딩하기 */
+    saveReadyCash(saveData) {
+        // CommonUI.ajax("/api/user/", "MAPPER", saveData, function () {
+        // 	$("#bcYyyymmdd").val(new Date().format("yyyy-MM-dd"));
+        // 	$("#bcReadyAmt").val("");
+        // 	let searchCondition;
+        // 	if (wares.searchCondition) {
+        // 		searchCondition = wares.searchCondition
+        // 	} else {
+        // 		searchCondition = {
+        // 			filterFromDt: saveData.bcYyyymmdd,
+        // 			filterToDt: saveData.bcYyyymmdd,
+        // 		}
+        // 	}
+        // 	comms.getReadyCashList(searchCondition);
+        // 	alertSuccess("영업준비금이 저장 되었습니다.");
+        // });
+    }
 };
 
 /* 이벤트를 s : 설정하거나 r : 해지하는 함수들을 담는다. 그리드 관련 이벤트는 grids.e에 위치 (trigger) */
@@ -231,6 +250,27 @@ const trigs = {
                 sendInspectMessage(e.target.id);
                 $('#popupId').remove();
             });
+        });
+
+        $("#readyCashConfirm").on("click", function () {
+            saveReadyCash();
+        });
+
+        $("#readyCashLater").on("click", function () {
+            $("#readyCashPop").hide();
+        });
+
+        $("#bcReadyAmt").on("keyup", function () {
+            $(this).val($(this).val().toInt().toLocaleString());
+        });
+
+        const bcReadyAmtKeyboardProp = {
+            callback: function () {
+                $("#bcReadyAmt").val(parseInt($("#bcReadyAmt").val()).toLocaleString());
+            },
+        };
+        $("#bcReadyAmtKeyboard").on("click", function () {
+            vkey.showKeypad("bcReadyAmt", bcReadyAmtKeyboardProp);
         });
     }
 };
@@ -448,6 +488,22 @@ function setNotice(noticeList) {
     }
 }
 
+function saveReadyCash() {
+    const bcYyyymmdd = new Date().format("yyyyMMdd");
+    const bcReadyAmt = $("#bcReadyAmt").val().toInt();
+
+    if(isNaN(bcReadyAmt)) {
+        alertCaution("올바른 영업준비금액을 입력해 주세요.", 1);
+        return;
+    }
+
+    const saveData = {
+        bcYyyymmdd: bcYyyymmdd,
+        bcReadyAmt: bcReadyAmt,
+    }
+    comms.saveReadyCash(saveData);
+}
+
 $(function() { // 페이지가 로드되고 나서 실행
     onPageLoad();
 });
@@ -468,6 +524,8 @@ function onPageLoad() {
     $historyDate.datepicker("option", "changeYear", false);
     $historyDate.datepicker("option", "changeMonth", false);
     $("#ui-datepicker-div").hide();
+
+    window.vkey = new VKeyboard();
     trigs.basic();
 
     // 슬라이딩 텍스트 실행
