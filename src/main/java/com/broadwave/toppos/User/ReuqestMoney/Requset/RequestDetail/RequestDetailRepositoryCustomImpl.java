@@ -139,6 +139,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
 
 
     // 통합조회 querydsl
+    @Override
     public List<RequestDetailSearchDto> requestDetailSearch(String frCode, Long bcId, String searchTag, String filterCondition, String filterFromDt, String filterToDt){
         EntityManager em = getEntityManager();
         StringBuilder sb = new StringBuilder();
@@ -269,6 +270,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
 
 
     // 미수관리 페이지의 접수 상세보기 querydsl
+    @Override
     public List<RequestDetailUncollectDto> findByRequestDetailUncollectList(String frCode, Long frId){
         QRequestDetail requestDetail = QRequestDetail.requestDetail;
         QRequest request = QRequest.request;
@@ -329,6 +331,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
     }
 
     // 수기마감 querydsl
+    @Override
     public List<RequestDetailCloseListDto> findByRequestDetailCloseList(String frCode){
 
         EntityManager em = getEntityManager();
@@ -385,6 +388,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
     }
 
     // 모바일 전용 수기마감 querydsl
+    @Override
     public int findByRequestDetailMobileCloseList(String frCode){
 
         EntityManager em = getEntityManager();
@@ -410,6 +414,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
     }
 
     // 가맹접입고 querydsl
+    @Override
     public List<RequestDetailFranchiseInListDto> findByRequestDetailFranchiseInList(String frCode){
         QRequestDetail requestDetail = QRequestDetail.requestDetail;
         QRequest request = QRequest.request;
@@ -477,6 +482,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
     }
 
     // 가맹접입고 카운트 querydsl
+    @Override
     public RequestDetailFranchiseInCountDto findByRequestDetailFranchiseInCount(String frCode){
         QRequestDetail requestDetail = QRequestDetail.requestDetail;
         QRequest request = QRequest.request;
@@ -499,6 +505,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
     }
 
     // 가맹접입고취소 querydsl
+    @Override
     public List<RequestDetailFranchiseInCancelListDto> findByRequestDetailFranchiseInCancelList(String frCode, String fromDt, String toDt){
         QRequestDetail requestDetail = QRequestDetail.requestDetail;
         QRequest request = QRequest.request;
@@ -617,6 +624,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
 //    }
 
     // 가맹접강제입고 querydsl
+    @Override
     public List<RequestDetailForceListDto> findByRequestDetailForceList(Long bcId, String fdTag, String frCode){
         QRequestDetail requestDetail = QRequestDetail.requestDetail;
         QRequest request = QRequest.request;
@@ -693,6 +701,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
     }
 
     // 세탁인도 querydsl
+    @Override
     public List<RequestDetailDeliveryDto> findByRequestDetailDeliveryList(String frCode, Long bcId){
         EntityManager em = getEntityManager();
         StringBuilder sb = new StringBuilder();
@@ -764,6 +773,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
     }
 
     // 세탁접수에 보여줄 가맹입고(S5) 갯수 NativeQuery
+    @Override
     public RequestDetailFdStateCountDto findByRequestDetailFdStateS5Count(String frCode, Long bcId){
         EntityManager em = getEntityManager();
         StringBuilder sb = new StringBuilder();
@@ -790,6 +800,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
     }
 
     // 세탁접수에 보여줄 강제입고(S8) 갯수 NativeQuery
+    @Override
     public RequestDetailFdStateCountDto findByRequestDetailFdStateS8Count(String frCode, Long bcId){
         EntityManager em = getEntityManager();
         StringBuilder sb = new StringBuilder();
@@ -814,6 +825,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
     }
 
     // 검품이력 조회 및 메세지 querydsl
+    @Override
     public List<RequestDetailInspectDto> findByRequestDetailInspectList(String frCode, Long bcId, String searchTag, String filterFromDt, String filterToDt){
         QRequestDetail requestDetail = QRequestDetail.requestDetail;
         QRequest request = QRequest.request;
@@ -927,6 +939,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         query.where(request.frCode.eq(frCode).and(request.frConfirmYn.eq("Y")));
         return query.fetch();
     }
+
     // 영업일보 통계 총 출고 sum querydsl - 6
     @Override
     public List<RequestDetailBusinessdayDeliveryDto> findByRequestDetailBusinessdayDeliveryList(String frCode, String filterFromDt, String filterToDt){
@@ -949,6 +962,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
     }
 
     // 영수증출력
+    @Override
     public List<RequestDetailPaymentPaper> findByRequestDetailPaymentPaper(String frNo){
         QRequestDetail requestDetail = QRequestDetail.requestDetail;
         QItemGroup itemGroup = QItemGroup.itemGroup;
@@ -973,6 +987,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
     }
 
     // 지사출고 querydsl
+    @Override
     public List<RequestDetailReleaseListDto> findByRequestDetailReleaseList(String brCode, Long frId, String fromDt, String toDt, String isUrgent){
 
         EntityManager em = getEntityManager();
@@ -1125,6 +1140,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
     }
 
     // 지사강제출고 querydsl
+    @Override
     public List<RequestDetailReleaseListDto> findByRequestDetailReleaseForceList(String brCode, Long frId, String fromDt, String toDt){
         QRequestDetail requestDetail = QRequestDetail.requestDetail;
         QRequest request = QRequest.request;
@@ -1184,6 +1200,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
     }
 
     // 지사출고취소 querydsl
+    @Override
     public  List<RequestDetailReleaseCancelListDto> findByRequestDetailReleaseCancelList(String brCode, Long frId, String fromDt, String toDt, String tagNo){
         QRequestDetail requestDetail = QRequestDetail.requestDetail;
         QRequest request = QRequest.request;
@@ -1324,6 +1341,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
 //    }
 
     // 가맹점강제출고 querydsl
+    @Override
     public  List<RequestDetailBranchForceListDto> findByRequestDetailBranchForceList(String brCode, Long frId, String fromDt, String toDt, String tagNo){
         QRequestDetail requestDetail = QRequestDetail.requestDetail;
         QRequest request = QRequest.request;
@@ -1403,6 +1421,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
     }
 
     // 가맹점반품출고 querydsl
+    @Override
     public  List<RequestDetailBranchReturnListDto> findByRequestDetailBranchReturnList(String brCode, Long frId, String fromDt, String toDt, String tagNo){
         QRequestDetail requestDetail = QRequestDetail.requestDetail;
         QRequest request = QRequest.request;
@@ -1482,6 +1501,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
     }
 
     // 확인품등록 querydsl
+    @Override
     public  List<RequestDetailBranchInspectListDto> findByRequestDetailBranchInspectList(String brCode, Long frId, String fromDt, String toDt, String tagNo){
         QRequestDetail requestDetail = QRequestDetail.requestDetail;
         QRequest request = QRequest.request;
@@ -1578,6 +1598,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
     }
 
     // 확인품현황 querydsl
+    @Override
     public  List<RequestDetailBranchInspectionCurrentListDto> findByRequestDetailBranchInspectionCurrentList(String brCode, Long frId, String fromDt, String toDt, String tagNo){
 
         QRequestDetail requestDetail = QRequestDetail.requestDetail;
@@ -1668,6 +1689,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
     }
 
     // 택번호조회 querydsl
+    @Override
     public List<RequestDetailTagSearchListDto> findByRequestDetailTagSearchList(String brCode, Long frId, String tagNo){
         QRequestDetail requestDetail = QRequestDetail.requestDetail;
         QRequest request = QRequest.request;
@@ -1784,6 +1806,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
     }
 
     // 지사입고현황 - querydsl
+    @Override
     public  List<RequestDetailBranchInputCurrentListDto> findByRequestDetailBranchInputCurrentList(String brCode, String frCode, String fdS2Dt){
         QRequestDetail requestDetail = QRequestDetail.requestDetail;
         QRequest request = QRequest.request;
@@ -1860,6 +1883,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
     }
 
     // 체류세탁물현황 - querydsl
+    @Override
     public  List<RequestDetailBranchRemainCurrentListDto> findByRequestDetailBranchRemainCurrentList(String brCode, String frCode, String fdS2Dt){
         QRequestDetail requestDetail = QRequestDetail.requestDetail;
         QRequest request = QRequest.request;
@@ -1992,6 +2016,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
     }
 
     //  지사출고현황 - querydsl
+    @Override
     public List<RequestDetailBranchReleaseCurrentRightListDto> findByRequestDetailBranchReleaseCurrentRightList(String brCode, String frCode, String fdS4Dt){
         QIssue issue = QIssue.issue;
         QRequest request = QRequest.request;
@@ -2071,6 +2096,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
     }
 
     // 지사강제출고현황 - querydsl
+    @Override
     public  List<RequestDetailBranchReleaseForceCurrentRightListDto> findByRequestDetailBranchReleaseForceCurrentRightList(String brCode, String frCode, String fdS7Dt){
 
         QIssueForce issueForce = QIssueForce.issueForce;
@@ -2152,6 +2178,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
     }
 
     // 미출고현황 - querydsl
+    @Override
     public List<RequestDetailBranchUnReleaseCurrentListDto> findByRequestDetailBranchUnReleaseList(String brCode, Long franchiseId, String filterFromDt, String filterToDt, String type){
         QRequestDetail requestDetail = QRequestDetail.requestDetail;
         QRequest request = QRequest.request;
@@ -2187,6 +2214,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
     }
 
     // 미출고현황 오른쪽리스트 - querydsl
+    @Override
     public List<RequestDetailBranchUnReleaseCurrentRightListDto> findByRequestDetailBranchUnReleaseCurrentRightList(String brCode, String frCode, String filterFromDt, String filterToDt, String type) {
         QRequestDetail requestDetail = QRequestDetail.requestDetail;
         QRequest request = QRequest.request;
@@ -2271,6 +2299,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
     }
 
     // 가맹반송현황 - querydsl
+    @Override
     public List<RequestDetailBranchReturnCurrentListDto> findByRequestDetailBranchReturnCurrentList(String brCode, Long franchiseId, String filterFromDt, String filterToDt) {
 
         EntityManager em = getEntityManager();
@@ -2305,6 +2334,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
     }
 
     // 가맹반송현황 오른쪽리스트 - querydsl
+    @Override
     public List<RequestDetailBranchReturnCurrentRightListDto> findByRequestDetailBranchReturnRightCurrentList(String brCode, String frCode, String fdS3Dt) {
         QRequestDetail requestDetail = QRequestDetail.requestDetail;
         QRequest request = QRequest.request;
@@ -2411,6 +2441,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         return jpaResultMapper.list(query, RequestDetailInputMessageDto.class);
     }
 
+    @Override
     public RequestDetailMessageDto findByRequestDetailReceiptMessage(String frNo, String frCode) {
         QRequestDetail requestDetail = QRequestDetail.requestDetail;
         QRequest request = QRequest.request;
@@ -2451,6 +2482,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
     }
 
     // 확인품등록전 받아올 데이터 호출API
+    @Override
     public RequestDetailBranchInspeotDto findByBranchInspeotDto(Long fdId) {
         QRequestDetail requestDetail = QRequestDetail.requestDetail;
         QRequest request = QRequest.request;
@@ -2480,8 +2512,8 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         return query.fetchOne();
     }
 
-
     // 지사 외주출고 querydsl
+    @Override
     public List<RequestDetailOutsourcingDeliveryListDto> findByRequestDetailOutsourcingDeliveryList(String brCode, Long frId, String filterFromDt, String filterToDt, String isOutsourceable){
 
         EntityManager em = getEntityManager();
@@ -2597,6 +2629,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
     }
 
     //  본사 지사입고현황 오른쪽 - querydsl
+    @Override
     public List<RequestIncomeListSubDto> findByHeadIncomeSubList(Long branchId, Long franchiseId, String fdS2Dt) {
 
         QRequestDetail requestDetail = QRequestDetail.requestDetail;
@@ -2609,16 +2642,18 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         QBranch branch = QBranch.branch;
 
         JPQLQuery<RequestIncomeListSubDto> query = from(requestDetail)
-                .innerJoin(requestDetail.frId, request)
-                .innerJoin(request.bcId, customer)
+
+                .innerJoin(request).on(requestDetail.frId.eq(request))
+
+                .innerJoin(customer).on(request.bcId.eq(customer))
                 .innerJoin(franchise).on(franchise.frCode.eq(request.frCode))
-                .innerJoin(branch).on(branch.brCode.eq(franchise.brCode))
+                .innerJoin(branch).on(branch.brCode.eq(request.brCode))
+
                 .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
                 .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
                 .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
 
-                .where(request.frConfirmYn.eq("Y"))
-                .where(requestDetail.fdCancel.eq("N"))
+                .where(request.frConfirmYn.eq("Y").and(requestDetail.fdCancel.eq("N")))
 
                 .select(Projections.constructor(RequestIncomeListSubDto.class,
 
@@ -2689,11 +2724,12 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
 
                 ));
 
-        query.groupBy(requestDetail.id).distinct().orderBy(requestDetail.id.asc());
+        query.groupBy(requestDetail.id).orderBy(requestDetail.id.asc());
 
         if(branchId != 0){
             query.where(branch.id.eq(branchId));
         }
+
         if(franchiseId != 0){
             query.where(franchise.id.eq(franchiseId));
         }
@@ -2747,6 +2783,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
     }
 
     //  본사 지사출고현황 오른쪽 - querydsl
+    @Override
     public List<RequestOutgoListSubDto> findByHeadOutgoSubList(Long branchId, Long franchiseId, String fdS4Dt) {
 
         QIssue issue = QIssue.issue;
@@ -2896,6 +2933,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
     }
 
     //  본사 강제출고현황 오른쪽 - querydsl
+    @Override
     public List<RequestForceOutgoListSubDto> findByHeadForceOutgoSubList(Long branchId, Long franchiseId, String fdS7Dt) {
         QIssueForce issueForce = QIssueForce.issueForce;
 
@@ -3044,6 +3082,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
     }
 
     //  본사 강제입고현황 오른쪽 - querydsl
+    @Override
     public List<RequestForceIncomeListSubDto> findByHeadForceIncomeSubList(Long branchId, Long franchiseId, String fdS8Dt) {
 
         QRequestDetail requestDetail = QRequestDetail.requestDetail;
@@ -3193,6 +3232,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
     }
 
     //  본사 미출고현황 오른쪽 - querydsl
+    @Override
     public List<RequestNoOutgoListSubDto> findByHeadNoOutgoSubList(Long branchId, Long franchiseId, String fdEstimateDt) {
 
         QRequestDetail requestDetail = QRequestDetail.requestDetail;
@@ -3294,7 +3334,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
             query.where(franchise.id.eq(franchiseId));
         }
 
-        query.where(requestDetail.fdEstimateDt.eq(fdEstimateDt));
+        query.where(requestDetail.fdEstimateDt.eq(fdEstimateDt).and(requestDetail.fdState.eq("S2")));
 
         return query.fetch();
     }
@@ -3342,6 +3382,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
     }
 
     //  본사 재새탁입고현황 오른쪽 - querydsl
+    @Override
     public List<RequestRetryListSubDto> findByHeadRetrySubList(Long branchId, Long franchiseId, String frYyyymmdd) {
 
         QRequestDetail requestDetail = QRequestDetail.requestDetail;
@@ -3443,7 +3484,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
             query.where(franchise.id.eq(franchiseId));
         }
 
-        query.where(request.frYyyymmdd.eq(frYyyymmdd));
+        query.where(request.frYyyymmdd.eq(frYyyymmdd).and(requestDetail.fdRetryYn.eq("Y")));
 
         return query.fetch();
     }

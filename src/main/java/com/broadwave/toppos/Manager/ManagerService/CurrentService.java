@@ -297,7 +297,8 @@ public class CurrentService {
         HashMap<String, Object> data = new HashMap<>();
 
         List<RequestIncomeListSubDto> requestIncomeListSubDtos = requestDetailRepository.findByHeadIncomeSubList(branchId, franchiseId, fdS2Dt);
-        log.info("requestIncomeListSubDtos : "+requestIncomeListSubDtos);
+//        log.info("requestIncomeListSubDtos : "+requestIncomeListSubDtos);
+        log.info("requestIncomeListSubDtos.size() : "+requestIncomeListSubDtos.size());
 
         data.put("gridListData",requestIncomeListSubDtos);
         return ResponseEntity.ok(res.dataSendSuccess(data));
