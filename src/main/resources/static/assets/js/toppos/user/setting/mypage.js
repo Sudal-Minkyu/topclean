@@ -189,29 +189,29 @@ const comms = {
 	getReadyCashList(searchCondition) {
 		wares.searchCondition = searchCondition;
 		console.log('준비금검색', searchCondition);
-		// CommonUI.ajax("/api/user/", "GET", searchCondition, function (res) {
-		// 	const data = res.sendData.gridListData;
-		// 	AUIGrid.setGridData(grids.id[3], data);
-		// });
+		CommonUI.ajax("/api/user/franchiseReadyCashList", "GET", searchCondition, function (res) {
+			const data = res.sendData.gridListData;
+			AUIGrid.setGridData(grids.s.id[3], data);
+		});
 	},
 
 	/* 영업준비금을 저장하고 영업준비금 그리드를 다시 로딩하기 */
 	saveReadyCash(saveData) {
-		// CommonUI.ajax("/api/user/", "MAPPER", saveData, function () {
-		// 	$("#bcYyyymmdd").val(new Date().format("yyyy-MM-dd"));
-		// 	$("#bcReadyAmt").val("");
-		// 	let searchCondition;
-		// 	if (wares.searchCondition) {
-		// 		searchCondition = wares.searchCondition
-		// 	} else {
-		// 		searchCondition = {
-		// 			filterFromDt: saveData.bcYyyymmdd,
-		// 			filterToDt: saveData.bcYyyymmdd,
-		// 		}
-		// 	}
-		// 	comms.getReadyCashList(searchCondition);
-		// 	alertSuccess("영업준비금이 저장 되었습니다.");
-		// });
+		CommonUI.ajax("/api/user/franchiseReadyCashSave", "PARAM", saveData, function () {
+			$("#bcYyyymmdd").val(new Date().format("yyyy-MM-dd"));
+			$("#bcReadyAmt").val("");
+			let searchCondition;
+			if (wares.searchCondition) {
+				searchCondition = wares.searchCondition
+			} else {
+				searchCondition = {
+					filterFromDt: saveData.bcYyyymmdd,
+					filterToDt: saveData.bcYyyymmdd,
+				}
+			}
+			comms.getReadyCashList(searchCondition);
+			alertSuccess("영업준비금이 저장 되었습니다.");
+		});
 	}
 };
 
@@ -547,11 +547,11 @@ const trigs = {
 			});
 
 			$("#frDepositAmount").on("keyup", function () {
-                $(this).val($(this).val().toInt().toLocaleString());
+                $(this).val($(this).val().numString().toInt().toLocaleString());
             });
 
 			$("#frRentalAmount").on("keyup", function () {
-                $(this).val($(this).val().toInt().toLocaleString());
+                $(this).val($(this).val().numString().toInt().toLocaleString());
             });
 
 			$("#searchListBtn").on("click", function () {
@@ -567,7 +567,7 @@ const trigs = {
 			});
 
 			$("#bcReadyAmt").on("keyup", function () {
-				$(this).val($(this).val().toInt().toLocaleString());
+				$(this).val($(this).val().numString().toInt().toLocaleString());
 			});
 
 			AUIGrid.bind(grids.s.id[3], "cellClick", function (e) {
@@ -920,7 +920,7 @@ function saveReadyCash() {
 		return;
 	}
 
-	if(isNaN(bcReadyAmt)) {
+	if($("#bcReadyAmt").val() === "" || isNaN(bcReadyAmt)) {
 		alertCaution("올바른 영업준비금액을 입력해 주세요.", 1);
 		return;
 	}

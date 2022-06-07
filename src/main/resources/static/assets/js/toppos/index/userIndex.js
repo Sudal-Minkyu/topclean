@@ -47,6 +47,7 @@ const dtos = {
             },
 
             userIndexDto: {
+                frReadyCashYn: "s", // 2022.06.07 추가
                 slidingText: "a", // 2022.03.02 추가
                 brName: "s",
                 frName: "s",
@@ -114,6 +115,9 @@ const comms = {
                 slidingText = slidingText + "현재 입고대기수량이 " + userIndexDto.inCountText + "건 존재합니다.";
             }
             $("#slidingText").html(slidingText);
+            if(userIndexDto.frReadyCashYn === "N") {
+                $('#readyCashPop').show();
+            }
 
             /* 메인페이지에 나열되는 항목들의 나열 */
             setHistory(historyList);
@@ -158,21 +162,10 @@ const comms = {
 
     /* 영업준비금을 저장하고 영업준비금 그리드를 다시 로딩하기 */
     saveReadyCash(saveData) {
-        // CommonUI.ajax("/api/user/", "MAPPER", saveData, function () {
-        // 	$("#bcYyyymmdd").val(new Date().format("yyyy-MM-dd"));
-        // 	$("#bcReadyAmt").val("");
-        // 	let searchCondition;
-        // 	if (wares.searchCondition) {
-        // 		searchCondition = wares.searchCondition
-        // 	} else {
-        // 		searchCondition = {
-        // 			filterFromDt: saveData.bcYyyymmdd,
-        // 			filterToDt: saveData.bcYyyymmdd,
-        // 		}
-        // 	}
-        // 	comms.getReadyCashList(searchCondition);
-        // 	alertSuccess("영업준비금이 저장 되었습니다.");
-        // });
+        CommonUI.ajax("/api/user/franchiseReadyCashSave", "PARAM", saveData, function () {
+        	alertSuccess("영업준비금이 저장 되었습니다.");
+        });
+        $('#readyCashPop').hide();
     }
 };
 
@@ -261,7 +254,7 @@ const trigs = {
         });
 
         $("#bcReadyAmt").on("keyup", function () {
-            $(this).val($(this).val().toInt().toLocaleString());
+            $(this).val($(this).val().numString().toInt().toLocaleString());
         });
 
         const bcReadyAmtKeyboardProp = {
