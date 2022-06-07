@@ -114,6 +114,14 @@ const comms = {
             grids.f.set(1, data);
             grids.f.setSorting(1, 'pcsPriceTotal', -1);
         });
+    },
+
+    // 월별 단가 추이 그래프 데이터
+    getMonthlyChartStatus(filterYear) {
+        CommonUI.ajax('/api/head/headMonthlyPriceStatus', 'GET', filterYear, function (res) {
+            const data = res.sendData.ListData;
+            makeChart(data);
+        });
     }
 };
 
@@ -829,6 +837,7 @@ function getFilterYear() {
         filterYear: $("#filterYear").val(),
     }
     comms.getHeadCustomTransactionStatus(filterYear)
+    comms.getMonthlyChartStatus(filterYear);
 }
 
 // 조회년도
@@ -933,6 +942,10 @@ function makeChart(data) {
             am5themes_Animated.new(root)
         ]);
 
+        root.numberFormatter.setAll({
+            numberFormat: "#,###.",
+            numericFields: ["valueY"]
+        });
 
         // Create chart
         // https://www.amcharts.com/docs/v5/charts/xy-chart/
@@ -953,57 +966,6 @@ function makeChart(data) {
                 x: am5.p50
             })
         );
-
-        var data = [{
-            "month": "1월",
-            "personAmt": 5100,
-            "pcsAmt": 4800,
-        }, {
-            "month": "2월",
-            "personAmt": 9478,
-            "pcsAmt": 5879,
-        }, {
-            "month": "3월",
-            "personAmt": 16879,
-            "pcsAmt": 5692,
-        }, {
-            "month": "4월",
-            "personAmt": 11615,
-            "pcsAmt": 6829,
-        }, {
-            "month": "5월",
-            "personAmt": 7038,
-            "pcsAmt": 4692,
-        }, {
-            "month": "6월",
-            "personAmt": 4579,
-            "pcsAmt": 4061,
-        }, {
-            "month": "7월",
-            "personAmt": 5100,
-            "pcsAmt": 4800,
-        }, {
-            "month": "8월",
-            "personAmt": 9478,
-            "pcsAmt": 5879,
-        }, {
-            "month": "9월",
-            "personAmt": 16879,
-            "pcsAmt": 5692,
-        }, {
-            "month": "10월",
-            "personAmt": 11615,
-            "pcsAmt": 6829,
-        }, {
-            "month": "11월",
-            "personAmt": 7038,
-            "pcsAmt": 4692,
-        }, {
-            "month": "12월",
-            "personAmt": 4579,
-            "pcsAmt": 4061,
-        },];
-
 
         // Create axes
         // https://www.amcharts.com/docs/v5/charts/xy-chart/axes/
@@ -1035,7 +997,7 @@ function makeChart(data) {
             }));
 
             series.columns.template.setAll({
-                tooltipText: "{valueY}",
+                tooltipText: "{valueY.formatNumber()}",
                 width: am5.percent(90),
                 tooltipY: 0
             });
@@ -1050,7 +1012,7 @@ function makeChart(data) {
                 return am5.Bullet.new(root, {
                     locationY: 0,
                     sprite: am5.Label.new(root, {
-                        text: "{valueY}",
+                        text: "{valueY.formatNumber()}",
                         fill: root.interfaceColors.get("alternativeText"),
                         centerY: 0,
                         centerX: am5.p50,
@@ -1062,8 +1024,8 @@ function makeChart(data) {
             legend.data.push(series);
         }
 
-        makeSeries("객단가", "personAmt");
-        makeSeries("PCS단가", "pcsAmt");
+        makeSeries("객단가", "avgPrice");
+        makeSeries("PCS단가", "pcsPrice");
 
 
     // Make stuff animate on load
@@ -1087,5 +1049,4 @@ const onPageLoad = function() {
     grids.f.create();
 
     trigs.basic();
-    makeChart();
 };

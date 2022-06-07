@@ -265,6 +265,12 @@ $(function() {
         calculateItemPrice();
     });
 
+    // 상품 사진 촬영 상용구
+    $(".camBoiler").on("click", function () {
+        const $ffRemark = $("#ffRemark");
+        $ffRemark.val($ffRemark.val() + " " + this.innerHTML);
+    });
+
     // lightbox option
     lightbox.option({
         'maxWidth': 1100,
@@ -921,11 +927,6 @@ async function onPopTakePicture(event) {
             },
         });
 
-        $(".camBoiler").on("click", function () {
-            const $ffRemark = $("#ffRemark");
-            $ffRemark.val($ffRemark.val() + " " + this.innerHTML);
-        });
-
         const screen = document.getElementById("cameraScreen");
         screen.srcObject = cameraStream;
     }catch (e) {
@@ -1017,13 +1018,6 @@ function onCloseTakePicture() {
     copyObj["dummy" + parseInt(Math.random() * 100000).toString()] = "dummy";
 
     AUIGrid.updateRowsById(gridId[0], copyObj);
-
-    const $camBoiler = $(".camBoiler");
-    if($camBoiler.length) {
-        for(const element of $camBoiler) {
-            removeEventsFromElement(element);
-        }
-    }
 
     $("#ffRemark").val("");
     cameraStream = 0;

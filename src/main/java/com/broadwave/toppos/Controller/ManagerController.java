@@ -170,4 +170,39 @@ public class ManagerController {
     public String osstatus() {
         return "manager/outsource/osstatus";
     }
+
+    // 입출고 현황 1 추가된 것
+    // 강제 입고 현황(가맹)
+    @RequestMapping("forcestorestat")
+    public String forcestorestat(){
+        return "manager/inandout/forcestorestat";
+    }
+
+    // 입출고 현황 2
+    // 재세탁 입고 현황
+    @RequestMapping("retrystat")
+    public String retrystat(){
+        return "manager/inandout2/retrystat";
+    }
+
+    // 반품 현황
+    @RequestMapping("refundstat")
+    public String refundstat(){ return "manager/inandout2/refundstat"; }
+
+    // 초특급세탁 처리 현황
+    @RequestMapping("highspeedsuperspecialstat")
+    public String highspeedsuperspecialstat(){ return "manager/inandout2/highspeedsuperspecialstat"; }
+
+    // 특급세탁 처리 현황
+    @RequestMapping("highspeedspecialstat")
+    public String highspeedspecialstat(){ return "manager/inandout2/highspeedspecialstat"; }
+
+    // 급세탁 처리 현황
+    @RequestMapping("highspeedstat")
+    public String highspeedstat(){ return "manager/inandout2/highspeedstat"; }
+
+    // 일반 처리 현황
+    @RequestMapping("normalspeedstat")
+    public String normalspeedstat(){ return "manager/inandout2/normalspeedstat"; }
+
 }

@@ -24,7 +24,7 @@ const onPageLoad = function () {
     runOnlyOnce.makeDetailGrid({
         url: '/api/head/headReleaseInputSubList',
         fdUrgentTypeVisible: true,
-        fiProgressStateDtVisible: false,
+        fdS6TypeVisible: false,
     });
 
     runOnlyOnce.enableDatepicker();

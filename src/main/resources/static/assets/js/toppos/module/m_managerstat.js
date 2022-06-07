@@ -8,28 +8,23 @@ import {activateBrFrListInputs} from './m_setBrFrList.js';
 const dtos = {
     send: {
         summaryAPI: {
-            branchId: 'n',
             franchiseId: 'n',
             filterFromDt: 's',
             filterToDt: 's',
         },
         detailAPI: {
-            branchId: 'n',
             franchiseId: 'n',
             frYyyymmdd: 's',
         },
     },
     receive: {
         summaryAPI: {
-            branchId: 'n',
-            brName: 's',
             franchiseId: 'n',
             frName: 's',
-            receiptCount: 'n',
+            requestCount: 'n',
             fdTotAmt: 'n',
         },
         detailAPI: {
-            brName: 's',
             frName: 's',
             bcName: 's',
             bcHp: 's',
@@ -185,7 +180,7 @@ const runOnlyOnce = {
                 dataType: 'date',
                 formatString: 'yyyy-mm-dd',
             }, {
-                dataField: 'receiptCount',
+                dataField: 'requestCount',
                 headerText: '건수',
                 style: 'grid_textalign_right',
                 width: 80,
@@ -228,18 +223,9 @@ const runOnlyOnce = {
         const dateTimeFormat = 'yyyy-mm-dd<br>hh:mm';
         const layout = [
             {
-                headerText: '지사/가맹점 정보',
-                children: [
-                    {
-                        dataField: 'brName',
-                        headerText: '지사명',
-                        width: 120,
-                    }, {
-                        dataField: 'frName',
-                        headerText: '가맹점명',
-                        width: 120,
-                    },
-                ],
+                dataField: 'frName',
+                headerText: '가맹점명',
+                width: 120,
             }, {
                 headerText: '고객 정보',
                 children: [

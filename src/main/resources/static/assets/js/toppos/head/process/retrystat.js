@@ -19,12 +19,13 @@ const onPageLoad = function () {
             dataField: 'frYyyymmdd',
             headerText: '접수일자',
         },
+        isRetry: true,
     });
 
     runOnlyOnce.makeDetailGrid({
         url: '/api/head/headRetrySubList',
         fdUrgentTypeVisible: true,
-        fiProgressStateDtVisible: false,
+        fdS6TypeVisible: false,
     });
 
     runOnlyOnce.enableDatepicker();
