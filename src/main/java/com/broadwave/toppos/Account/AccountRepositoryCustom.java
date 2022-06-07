@@ -15,7 +15,7 @@ import java.util.List;
 public interface AccountRepositoryCustom {
     List<AccountListDto> findByAccountList(String s_userid, String s_username, AccountRole s_role, String s_frCode, String s_brCode);
 
-    UserIndexDto findByUserInfo(String userid, String frCode);
+    UserIndexDto findByUserInfo(String userid, String frCode, String nowDate);
 
     AccountBranchHeaderDto findByBranchHeaderInfo(String userid);
 

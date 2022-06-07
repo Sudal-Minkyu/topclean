@@ -1,10 +1,10 @@
 package com.broadwave.toppos.User.UserService;
 
 import com.broadwave.toppos.Account.Account;
-import com.broadwave.toppos.Account.AcountDtos.AccountPasswordDto;
 import com.broadwave.toppos.Account.AccountService;
-import com.broadwave.toppos.Head.Franchise.FranchiseDtos.FranchiseUserDto;
+import com.broadwave.toppos.Account.AcountDtos.AccountPasswordDto;
 import com.broadwave.toppos.Head.Franchise.Franchise;
+import com.broadwave.toppos.Head.Franchise.FranchiseDtos.FranchiseUserDto;
 import com.broadwave.toppos.Head.HeadService.HeadService;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.User.Addprocess.Addprocess;
@@ -12,6 +12,9 @@ import com.broadwave.toppos.User.Addprocess.AddprocessDtos.AddprocessDto;
 import com.broadwave.toppos.User.Addprocess.AddprocessDtos.AddprocessMapperDto;
 import com.broadwave.toppos.User.Addprocess.AddprocessRepository;
 import com.broadwave.toppos.User.Addprocess.AddprocessSet;
+import com.broadwave.toppos.User.UserReadyCash.UserReadyCash;
+import com.broadwave.toppos.User.UserReadyCash.UserReadyCashListDto;
+import com.broadwave.toppos.User.UserReadyCash.UserReadyCashRepository;
 import com.broadwave.toppos.common.AjaxResponse;
 import com.broadwave.toppos.common.ResponseErrorCode;
 import io.jsonwebtoken.Claims;
@@ -45,10 +48,11 @@ public class InfoService {
     private final PasswordEncoder passwordEncoder;
 
     private final AddprocessRepository addprocessRepository;
+    private final UserReadyCashRepository userReadyCashRepository;
 
     @Autowired
     public InfoService(ModelMapper modelMapper, TokenProvider tokenProvider, AccountService accountService, HeadService headService, UserService userService,
-                       PasswordEncoder passwordEncoder, AddprocessRepository addprocessRepository){
+                       PasswordEncoder passwordEncoder, AddprocessRepository addprocessRepository, UserReadyCashRepository userReadyCashRepository){
         this.modelMapper = modelMapper;
         this.tokenProvider = tokenProvider;
         this.accountService = accountService;
@@ -56,6 +60,7 @@ public class InfoService {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
         this.addprocessRepository = addprocessRepository;
+        this.userReadyCashRepository = userReadyCashRepository;
     }
 
     // 현재 가맹점의 정보 호출하기
@@ -254,5 +259,67 @@ public class InfoService {
         return ResponseEntity.ok(res.success());
     }
 
+    // 일자별 현금 준비금 - 저장 API
+    public ResponseEntity<Map<String, Object>> franchiseReadyCashSave(String bcYyyymmdd, Integer bcReadyAmt, HttpServletRequest request) {
+        log.info("franchiseReadyCashSave 호출");
+
+        log.info("bcYyyymmdd : "+bcYyyymmdd);
+        log.info("bcReadyAmt : "+bcReadyAmt);
+
+        AjaxResponse res = new AjaxResponse();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
+        String login_id = claims.getSubject(); // 현재 아이디
+        log.info("현재 접속한 아이디 : "+login_id);
+        log.info("현재 접속한 가맹점 코드 : "+frCode);
+
+        Optional<Franchise> optionalFranchise = headService.findByFrCode(frCode);
+
+        if(!optionalFranchise.isPresent()){
+            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP005.getCode(), "가맹점 "+ResponseErrorCode.TP005.getDesc(), null, null));
+        }else{
+            Optional<UserReadyCash> userReadyCashOptional = userReadyCashRepository.findByUserReadyCash(optionalFranchise.get().getId(), bcYyyymmdd);
+            if(!userReadyCashOptional.isPresent()){
+                // 신규
+                UserReadyCash userReadyCash = new UserReadyCash();
+                userReadyCash.setFrId(optionalFranchise.get().getId());
+                userReadyCash.setBcYyyymmdd(bcYyyymmdd);
+                userReadyCash.setBcReadyAmt(bcReadyAmt);
+                userReadyCash.setInsert_id(login_id);
+                userReadyCash.setInsertDateTime(LocalDateTime.now());
+                userReadyCashRepository.save(userReadyCash);
+            }else{
+                // 수정
+                userReadyCashOptional.get().setBcReadyAmt(bcReadyAmt);
+                userReadyCashOptional.get().setModify_id(login_id);
+                userReadyCashOptional.get().setModifyDateTime(LocalDateTime.now());
+                userReadyCashRepository.save(userReadyCashOptional.get());
+            }
+        }
+
+        return ResponseEntity.ok(res.success());
+    }
+
+    // 일자별 현금 준비금 - 조회 API
+    public ResponseEntity<Map<String, Object>> franchiseReadyCashList(String filterFromDt, String filterToDt, HttpServletRequest request) {
+        log.info("franchiseReadyCashList 호출");
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
+        String login_id = claims.getSubject(); // 현재 아이디
+        log.info("현재 접속한 아이디 : "+login_id);
+        log.info("현재 접속한 가맹점 코드 : "+frCode);
+
+        List<UserReadyCashListDto> userReadyCashListDtoList = userReadyCashRepository.findByReadyCashList(frCode, filterFromDt, filterToDt);
+        data.put("gridListData",userReadyCashListDtoList);
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
 
 }
