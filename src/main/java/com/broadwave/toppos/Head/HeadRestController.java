@@ -1579,6 +1579,14 @@ public class HeadRestController {
         return salesService.headCustomTransactionDetailStatus(brCode, filterYear);
     }
 
+    // 본사 - 월별 단가 추이 데이터 호출 API
+    @GetMapping("headMonthlyPriceStatus")
+    @ApiOperation(value = "월별 단가 추이", notes = "월별 단가 데이터를 호출한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", value = "JWT Token", required = true, dataType = "string", paramType = "header")})
+    public ResponseEntity<Map<String, Object>> headMonthlyPriceStatus(@RequestParam("filterYear") String filterYear) {
+        return salesService.headMonthlyPriceStatus(filterYear);
+    }
+
     // 본사 - 지사,가맹점별 성별 비중 현황 데이터 호출 API
     @GetMapping("headCustomerGenderRateStatus")
     @ApiOperation(value = "지사,가맹점별 성별 비중 현황", notes = "지사,가맹점별 성별 비중 데이터를 호출한다.")
@@ -1586,6 +1594,7 @@ public class HeadRestController {
     public ResponseEntity<Map<String, Object>> headCustomerGenderRateStatus(@RequestParam("branchId") Long brId, @RequestParam("franchiseId") Long frId) {
         return salesService.headCustomerGenderRateStatus(brId, frId);
     }
+
     // 본사 - 지사,가맹점별 나이 비중 현황 데이터 호출 API
     @GetMapping("headCustomerAgeRateStatus")
     @ApiOperation(value = "지사,가맹점별 나이 비중 현황", notes = "지사,가맹점별 나이 비중 데이터를 호출한다.")

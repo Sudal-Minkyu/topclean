@@ -1464,4 +1464,62 @@ public class SalesRepositoryCustomImpl extends QuerydslRepositorySupport impleme
 
         return jpaResultMapper.uniqueResult(query, CustomTransactionTotalDto.class);
     }
+
+    // 월별 단가 추이 데이터 NativeQuery
+    @Override
+    public List<CustomTransactionMonthlyDto> findByCustomTransactionMonthlyStatus(String filterYear) {
+        EntityManager em = getEntityManager();
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("WITH aPrice as( \n");
+        sb.append("        SELECT x.yyyymm, avg_price, price_cnt \n");
+        sb.append("        FROM( \n");
+        sb.append("                SELECT a.cs_yyyymm yyyymm, SUM(a.unit_price) avg_price, COUNT(a.unit_price) price_cnt \n");
+        sb.append("                FROM cl_sales_unit_price_month a \n");
+        sb.append("                INNER JOIN bs_branch b ON a.br_code = b.br_code \n");
+        sb.append("               WHERE LEFT(a.cs_yyyymm, 4) =?1 AND a.price_type = '01' \n");
+        sb.append("                GROUP BY a.cs_yyyymm \n");
+        sb.append("                UNION ALL \n");
+        sb.append("                SELECT a.by_yyyymm yyyymm, 0 avg_price, 0 price_cnt \n");
+        sb.append("                FROM bs_yyyymm a \n");
+        sb.append("                JOIN bs_branch b \n");
+        sb.append("               WHERE LEFT(a.by_yyyymm, 4)=?1 \n");
+        sb.append("        ) x \n");
+        sb.append("        GROUP BY x.yyyymm \n");
+        sb.append("), \n");
+        sb.append("        pPrice as( \n");
+        sb.append("        SELECT x.yyyymm, pcs_price, price_cnt \n");
+        sb.append("        FROM( \n");
+        sb.append("                SELECT a.cs_yyyymm yyyymm, SUM(a.unit_price) pcs_price, COUNT(a.unit_price) price_cnt \n");
+        sb.append("                FROM cl_sales_unit_price_month a \n");
+        sb.append("                INNER JOIN bs_branch b ON a.br_code = b.br_code \n");
+        sb.append("               WHERE LEFT(a.cs_yyyymm, 4) =?1 AND a.price_type = '02' \n");
+        sb.append("                GROUP BY a.cs_yyyymm \n");
+        sb.append("                UNION ALL \n");
+        sb.append("                SELECT a.by_yyyymm yyyymm, 0 pcs_price, 0 price_cnt \n");
+        sb.append("                FROM bs_yyyymm a \n");
+        sb.append("                JOIN bs_branch b \n");
+        sb.append("               WHERE LEFT(a.by_yyyymm, 4)=?1 \n");
+        sb.append("        ) x \n");
+        sb.append("        GROUP BY x.yyyymm \n");
+        sb.append(") \n");
+        sb.append("SELECT RIGHT(a.yyyymm,2) mm, \n");
+        sb.append("atot.avg_price, ptot.pcs_price \n");
+        sb.append("FROM (SELECT yyyymm FROM aPrice) a \n");
+        sb.append("INNER JOIN ( \n");
+        sb.append("         SELECT a.yyyymm, avg_price/if(price_cnt=0,1,price_cnt) avg_price \n");
+        sb.append("         FROM aPrice a \n");
+        sb.append("         GROUP BY a.yyyymm \n");
+        sb.append("         ) atot on a.yyyymm = atot.yyyymm \n");
+        sb.append("INNER JOIN ( \n");
+        sb.append("         SELECT p.yyyymm, pcs_price/if(price_cnt=0,1,price_cnt) pcs_price \n");
+        sb.append("         FROM pPrice p \n");
+        sb.append("         GROUP BY p.yyyymm \n");
+        sb.append("	        ) ptot on a.yyyymm = ptot.yyyymm \n");
+
+        Query query = em.createNativeQuery(sb.toString());
+        query.setParameter(1, filterYear);
+
+        return jpaResultMapper.list(query, CustomTransactionMonthlyDto.class);
+    }
 }
