@@ -2,6 +2,7 @@ package com.broadwave.toppos.Head.Franchise;
 
 import com.broadwave.toppos.Head.Franchise.FranchiseDtos.*;
 import com.broadwave.toppos.Head.Franchise.FranchiseDtos.head.FranchiseSearchInfoDto;
+import com.broadwave.toppos.Head.Franchise.FranchiseDtos.head.FranchiseTagNoSearchInfoDto;
 
 import java.util.List;
 
@@ -31,5 +32,5 @@ public interface FranchiseRepositoryCustom {
     FranchiseTagDataDto findByFranchiseTag(String frCode);
 
     List<FranchiseSearchInfoDto> findByFranchiseSearchInfo();
-
+    List<FranchiseTagNoSearchInfoDto> findByFranchiseTagNoSearchInfo();
 }

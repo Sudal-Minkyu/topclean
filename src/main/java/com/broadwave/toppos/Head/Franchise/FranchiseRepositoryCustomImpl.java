@@ -3,6 +3,7 @@ package com.broadwave.toppos.Head.Franchise;
 import com.broadwave.toppos.Head.Branch.QBranch;
 import com.broadwave.toppos.Head.Franchise.FranchiseDtos.*;
 import com.broadwave.toppos.Head.Franchise.FranchiseDtos.head.FranchiseSearchInfoDto;
+import com.broadwave.toppos.Head.Franchise.FranchiseDtos.head.FranchiseTagNoSearchInfoDto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.JPQLQuery;
@@ -283,5 +284,25 @@ public class FranchiseRepositoryCustomImpl extends QuerydslRepositorySupport imp
 
         return query.fetch();
     }
+
+    @Override
+    public List<FranchiseTagNoSearchInfoDto> findByFranchiseTagNoSearchInfo() {
+        QFranchise franchise = QFranchise.franchise;
+        QBranch branch = QBranch.branch;
+
+        JPQLQuery<FranchiseTagNoSearchInfoDto> query = from(franchise)
+                .innerJoin(branch).on(branch.eq(franchise.brId))
+                .select(Projections.constructor(FranchiseTagNoSearchInfoDto.class,
+                        franchise.id,
+                        branch.id,
+                        franchise.frName,
+                        franchise.frTagNo
+                ));
+
+        query.where(franchise.brId.isNotNull());
+
+        return query.fetch();
+    }
+
 
 }

@@ -1745,6 +1745,15 @@ public class HeadRestController {
         return currentService.headRetrySubList(branchId, franchiseId, frYyyymmdd);
     }
 
+    //@@@@@@@@@@@@@@@@@@@@@ 택번호조회 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    // TAG번호 지사리스트, 가맹점 리스트 호출 API
+    @GetMapping("headTagNoSearch")
+    @ApiOperation(value = "TAG번호 조회 지사,가맹점 리스트 호출", notes = "TAG번호 조회 페이지의 지사,가맹점 리스트를 호출한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", value = "JWT Token", required = true, dataType = "string", paramType = "header")})
+    public ResponseEntity<Map<String, Object>> headTagNoSearch() {
+        return headInfoService.headTagNoSearch();
+    }
+
     //@@@@@@@@@@@@@@@@@@@@@ 본사 세탁/급세탁/특수세탁 관련 현황 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 }

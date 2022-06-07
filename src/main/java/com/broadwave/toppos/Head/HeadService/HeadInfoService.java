@@ -7,6 +7,7 @@ import com.broadwave.toppos.Account.AcountDtos.AccountHeadInfoDto;
 import com.broadwave.toppos.Head.Branch.BranchDtos.head.BranchSearchInfoDto;
 import com.broadwave.toppos.Head.Branch.BranchRepository;
 import com.broadwave.toppos.Head.Franchise.FranchiseDtos.head.FranchiseSearchInfoDto;
+import com.broadwave.toppos.Head.Franchise.FranchiseDtos.head.FranchiseTagNoSearchInfoDto;
 import com.broadwave.toppos.Head.Franchise.FranchiseRepository;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.common.AjaxResponse;
@@ -157,4 +158,19 @@ public class HeadInfoService {
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
+    // TAG번호 지사리스트, 가맹점 리스트 호출 API
+    public ResponseEntity<Map<String, Object>> headTagNoSearch() {
+        log.info("headBrFrInfoList 호출");
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        List<BranchSearchInfoDto> branchListDto = branchRepository.findByBranchSearchInfo();
+        List<FranchiseTagNoSearchInfoDto> franchiseListDto = franchiseRepository.findByFranchiseTagNoSearchInfo();
+
+        data.put("branchList",branchListDto);
+        data.put("franchiseList",franchiseListDto);
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
 }
