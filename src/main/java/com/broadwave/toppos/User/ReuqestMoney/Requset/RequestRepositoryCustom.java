@@ -67,5 +67,7 @@ public interface RequestRepositoryCustom {
     List<RequestUrgentReceiptListDto> findByHeadUrgentReceiptList(Long branchId, Long franchiseId, String filterFromDt, String filterToDt, String fdUrgentYn, String fdUrgentType); // 본사 세탁상태 접수 왼쪽 NativeQuery
     List<RequestUrgentReceiptListSubDto> findByHeadUrgentReceiptSubList(Long branchId, Long franchiseId, String frYyyymmdd, String fdUrgentYn, String fdUrgentType); // 본사 세탁상태 접수 오른쪽 - querydsl
 
+    List<RequestReturnReceiptListDto> findByHeadReturnReceiptList(Long branchId, Long franchiseId, String filterFromDt, String filterToDt); // 본사 반품현황 왼쪽 NativeQuery
+    List<RequestReturnReceiptListSubDto> findByHeadReturnReceiptSubList(Long branchId, Long franchiseId, String fdS6Dt); // 본사 접수현황 오른쪽 - querydsl
 
 }

@@ -28,10 +28,7 @@ import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetai
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailPaymentPaper;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailSet;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.head.RequestReceiptListDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.head.RequestReceiptListSubDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.head.RequestUrgentReceiptListDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.head.RequestUrgentReceiptListSubDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.head.*;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.manager.RequestRealTimeListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.manager.RequestRealTimeListSubDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.user.*;
@@ -1243,7 +1240,7 @@ public class ReceiptService {
                 requestReceiptListInfo.put("frName", requestReceiptListDto.getFrName());
             }
             requestReceiptListInfo.put("frYyyymmdd", requestReceiptListDto.getFrYyyymmdd());
-            requestReceiptListInfo.put("requestCount", requestReceiptListDto.getRequestCount());
+            requestReceiptListInfo.put("receiptCount", requestReceiptListDto.getReceiptCount());
             requestReceiptListInfo.put("fdTotAmt", requestReceiptListDto.getFdTotAmt());
             requestReceiptListData.add(requestReceiptListInfo);
         }
@@ -1310,7 +1307,7 @@ public class ReceiptService {
                 requestUrgentReceiptListInfo.put("frName", requestUrgentReceiptListDto.getFrName());
             }
             requestUrgentReceiptListInfo.put("frYyyymmdd", requestUrgentReceiptListDto.getFrYyyymmdd());
-            requestUrgentReceiptListInfo.put("requestCount", requestUrgentReceiptListDto.getReceiptCount());
+            requestUrgentReceiptListInfo.put("receiptCount", requestUrgentReceiptListDto.getReceiptCount());
             requestUrgentReceiptListInfo.put("fdTotAmt", requestUrgentReceiptListDto.getFdTotAmt());
             requestUrgentReceiptListData.add(requestUrgentReceiptListInfo);
         }
@@ -1349,6 +1346,61 @@ public class ReceiptService {
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
+    // 본사 일반세탁 입고현황 - 왼쪽 리스트 호출API
+    public ResponseEntity<Map<String, Object>> headReturnReceiptList(Long branchId, Long franchiseId, String filterFromDt, String filterToDt) {
+        log.info("headReturnReceiptList 호출");
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        log.info("branchId : "+branchId);
+        log.info("franchiseId : "+franchiseId);
+        log.info("filterFromDt : "+filterFromDt);
+        log.info("filterToDt : "+filterToDt);
+
+        List<RequestReturnReceiptListDto> requestReceiptListDtos = requestRepository.findByHeadReturnReceiptList(branchId, franchiseId, filterFromDt, filterToDt);
+        log.info("requestReceiptListDtos : "+requestReceiptListDtos);
+        List<HashMap<String,Object>> requestReceiptListData = new ArrayList<>();
+        HashMap<String,Object> requestReceiptListInfo;
+        for(RequestReturnReceiptListDto requestReceiptListDto : requestReceiptListDtos){
+            requestReceiptListInfo = new HashMap<>();
+            requestReceiptListInfo.put("brName", requestReceiptListDto.getBrName());
+            requestReceiptListInfo.put("branchId", requestReceiptListDto.getBranchId());
+            if(branchId == 0){
+                requestReceiptListInfo.put("franchiseId", 0);
+                requestReceiptListInfo.put("frName", "");
+            }else{
+                requestReceiptListInfo.put("franchiseId", requestReceiptListDto.getFranchiseId());
+                requestReceiptListInfo.put("frName", requestReceiptListDto.getFrName());
+            }
+            requestReceiptListInfo.put("frYyyymmdd", requestReceiptListDto.getFdS6Dt());
+            requestReceiptListInfo.put("receiptCount", requestReceiptListDto.getReceiptCount());
+            requestReceiptListInfo.put("fdTotAmt", requestReceiptListDto.getFdTotAmt());
+            requestReceiptListData.add(requestReceiptListInfo);
+        }
+
+        data.put("gridListData",requestReceiptListData);
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
+    // 본사 일반세탁 입고현황 - 오른쪽 리스트 호출API
+    public ResponseEntity<Map<String, Object>> headReturnReceiptSubList(Long branchId, Long franchiseId, String fdS6Dt) {
+        log.info("headReturnReceiptSubList 호출");
+
+        log.info("branchId  : "+branchId);
+        log.info("franchiseId  : "+franchiseId);
+        log.info("fdS6Dt  : "+fdS6Dt);
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        List<RequestReturnReceiptListSubDto> requestReturnReceiptListSubDtos = requestRepository.findByHeadReturnReceiptSubList(branchId, franchiseId, fdS6Dt);
+        log.info("requestReturnReceiptListSubDtos : "+requestReturnReceiptListSubDtos);
+
+        data.put("gridListData",requestReturnReceiptListSubDtos);
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
 }
 
 
