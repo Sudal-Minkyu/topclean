@@ -5,7 +5,6 @@ import com.broadwave.toppos.Head.Sales.SalesRepositoryCustom;
 import com.broadwave.toppos.User.Customer.CustomerDtos.CustomerAgeRateDto;
 import com.broadwave.toppos.User.Customer.CustomerDtos.CustomerGenderRateDto;
 import com.broadwave.toppos.User.Customer.CustomerRepository;
-import com.broadwave.toppos.User.Customer.CustomerRepositoryCustom;
 import com.broadwave.toppos.common.AjaxResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -232,6 +231,32 @@ public class SalesService {
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
+    // 본사 - 월별 단가 추이 데이터 호출 API
+    public ResponseEntity<Map<String, Object>> headMonthlyPriceStatus(String filterYear) {
+        log.info("headMonthlyPriceStatus 호출");
+
+        log.info("filterYear  : " + filterYear);
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        List<CustomTransactionMonthlyDto> customTransactionMonthlyStatus = salesRepositoryCustom.findByCustomTransactionMonthlyStatus(filterYear);
+
+        // 출력데이터 월별명 변경
+        customTransactionMonthlyStatus.stream()
+                .map(m -> {
+                    if (m.getMonth().startsWith("0")) {
+                        m.setMonth(m.getMonth().substring(1) + "월");
+                    } else {
+                        m.setMonth(m.getMonth() + "월");
+                    }
+                    return m;
+                }).collect(Collectors.toList());
+
+        data.put("ListData", customTransactionMonthlyStatus);
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
     // 본사 - 지사,가맹점별 성별 비중 현황 데이터 호출 API
     public ResponseEntity<Map<String, Object>> headCustomerGenderRateStatus(Long brId, Long frId) {
         log.info("headCustomerGenderRateStatus 호출");
@@ -243,6 +268,8 @@ public class SalesService {
         HashMap<String, Object> data = new HashMap<>();
 
         List<CustomerGenderRateDto> customerGenderRate = customerRepository.findByCustomerGenderRate(brId, frId);
+
+        // 0 -> 여자, 1 -> 남자로 변경
         customerGenderRate.stream()
                 .map(g -> {
                     if (g.getGender().equals("0")) {
