@@ -1555,7 +1555,7 @@ const trigs = {
         });
 
         $("#frEditFiAddAmt").on("keyup", function () {
-            $(this).val($(this).val().toInt().toLocaleString());
+            $(this).val($(this).val().numString().toInt().toLocaleString());
         });
 
         $("#closePaymentPop").on("click", function () {
