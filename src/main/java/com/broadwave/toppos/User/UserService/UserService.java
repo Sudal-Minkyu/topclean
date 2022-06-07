@@ -104,8 +104,8 @@ public class UserService {
     }
 
     // 가맹점 메인페이지 전용 개인정보 호출
-    public UserIndexDto findByUserInfo(String userid, String frCode) {
-        return accountRepository.findByUserInfo(userid, frCode);
+    public UserIndexDto findByUserInfo(String userid, String frCode, String nowDate) {
+        return accountRepository.findByUserInfo(userid, frCode, nowDate);
     }
 
     // 가맹점이 로그인하면 로그인기록을 남기는 서비스 : 하루에 최초 한번만 기록한다.

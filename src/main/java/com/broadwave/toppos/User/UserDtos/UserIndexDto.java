@@ -18,5 +18,6 @@ public class UserIndexDto {
     private String usertel; // 휴대전화 번호
     private String brName; // 소속지사 명
     private String frName; // 가맹점 명
+    private Integer bcReadyAmt; // 준비금
 
 }

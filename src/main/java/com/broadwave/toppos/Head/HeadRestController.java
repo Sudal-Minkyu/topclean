@@ -1277,7 +1277,7 @@ public class HeadRestController {
                         Optional<FranchisePrice> optionalFranchisePrice = headService.findByFranchisePrice(franchisePriceDto.getBiItemcode(), franchisePriceDto.getFrCode());
                         if (optionalFranchisePrice.isPresent()) {
                             log.info("이미 존재하는 특정가격 적용품목");
-                            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP017.getCode(), ResponseErrorCode.TP017.getDesc(), "문자", "상품코드 : " + franchisePriceDto.getBiItemcode()));
+                            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP014.getCode(), ResponseErrorCode.TP014.getDesc()+" 상품코드입니다.", "문자", "상품코드 : " + franchisePriceDto.getBiItemcode()));
                         } else {
                             log.info("특정가격 적용품목 신규생성");
                             FranchisePrice franchisePrice = new FranchisePrice();

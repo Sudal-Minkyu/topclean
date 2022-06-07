@@ -5,6 +5,7 @@ import com.broadwave.toppos.Head.Branch.BranchDtos.BranchInfoDto;
 import com.broadwave.toppos.Head.Branch.QBranch;
 import com.broadwave.toppos.Head.Franchise.QFranchise;
 import com.broadwave.toppos.User.UserDtos.UserIndexDto;
+import com.broadwave.toppos.User.UserReadyCash.QUserReadyCash;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.JPQLQuery;
@@ -70,20 +71,23 @@ public class AccountRepositoryCustomImpl extends QuerydslRepositorySupport imple
 
     //  가맹점의 정보 가져오는 쿼리
     @Override
-    public UserIndexDto findByUserInfo(String userid, String frCode) {
+    public UserIndexDto findByUserInfo(String userid, String frCode, String nowDate) {
 
         QAccount account = QAccount.account;
         QFranchise franchise = QFranchise.franchise;
         QBranch branch = QBranch.branch;
+        QUserReadyCash userReadyCash = QUserReadyCash.userReadyCash;
 
         JPQLQuery<UserIndexDto> query = from(account)
                 .innerJoin(franchise).on(franchise.frCode.eq(frCode))
                 .leftJoin(franchise.brId, branch)
+                .leftJoin(userReadyCash).on(userReadyCash.frId.eq(franchise.id).and(userReadyCash.bcYyyymmdd.eq(nowDate)))
                 .select(Projections.constructor(UserIndexDto.class,
                         account.username,
                         account.usertel,
                         branch.brName,
-                        franchise.frName
+                        franchise.frName,
+                        userReadyCash.bcReadyAmt
                 ));
 
         query.where(account.userid.eq(userid));

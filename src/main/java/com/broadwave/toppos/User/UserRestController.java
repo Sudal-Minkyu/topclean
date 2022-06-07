@@ -162,7 +162,7 @@ public class UserRestController {
 //        String nowDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 //            log.info("조회날짜 "+date);
 
-            UserIndexDto userIndexDto = userService.findByUserInfo(login_id, frCode);
+            UserIndexDto userIndexDto = userService.findByUserInfo(login_id, frCode, date);
             List<BranchCalendarListDto> branchCalendarListDtos = calendarService.branchCalendarSlidingDtoList(frbrCode, date);
             List<InspeotMainListDto> inspeotMainListDtos = inspectService.findByInspeotB1(frbrCode, 3, frCode);
             List<TagGalleryMainListDto> tagGalleryMainListDtos = tagGalleryService.findByTagGalleryMainList(frbrCode);
@@ -196,6 +196,13 @@ public class UserRestController {
                 userIndexInfo.put("usertel", userIndexDto.getUsertel());
                 userIndexInfo.put("brName", userIndexDto.getBrName());
                 userIndexInfo.put("frName", userIndexDto.getFrName());
+
+                if(userIndexDto.getBcReadyAmt() == null){
+                    userIndexInfo.put("frReadyCashYn", "N");
+                }else{
+                    userIndexInfo.put("frReadyCashYn", "Y");
+                }
+
                 userIndexInfo.put("slidingText", calendar);
                 userIndexInfo.put("inCountText", requestDetailFranchiseInCountDto.getCount());
                 userIndexData.add(userIndexInfo);
@@ -297,7 +304,7 @@ public class UserRestController {
             log.info("신규 고객 입니다.");
             Optional<Customer> optionalCustomerByHp= userService.findByBcHp(customer.getBcHp(),frCode);
             if(optionalCustomerByHp.isPresent()){
-                return ResponseEntity.ok(res.fail(ResponseErrorCode.TP014.getCode(), ResponseErrorCode.TP014.getDesc(), null, null));
+                return ResponseEntity.ok(res.fail(ResponseErrorCode.TP014.getCode(), ResponseErrorCode.TP014.getDesc()+" 번호입니다.", null, null));
             }else{
                 // 신규일때
                 customer.setFrCode(frCode);
@@ -939,6 +946,23 @@ public class UserRestController {
         return infoService.franchiseAddProcess(addprocessSet, request);
     }
 
+    // 일자별 현금 준비금 - 저장 API
+    @PostMapping("franchiseReadyCashSave")
+    @ApiOperation(value = "일자별 현금 준비금 저장" , notes = "일자별 현금 준비금을 저장한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
+    public ResponseEntity<Map<String,Object>> franchiseReadyCashSave(@RequestParam(value="bcYyyymmdd", defaultValue="") String bcYyyymmdd,
+                                                                     @RequestParam(value="bcReadyAmt", defaultValue="") Integer bcReadyAmt, HttpServletRequest request){
+        return infoService.franchiseReadyCashSave(bcYyyymmdd, bcReadyAmt, request);
+    }
+
+    // 일자별 현금 준비금 - 조회 API
+    @GetMapping("franchiseReadyCashList")
+    @ApiOperation(value = "일자별 현금 준비금 조회" , notes = "일자별 현금 준비금 리스트를 조회한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
+    public ResponseEntity<Map<String,Object>> franchiseReadyCashList(@RequestParam(value="filterFromDt", defaultValue="") String filterFromDt,
+                                                                     @RequestParam(value="filterToDt", defaultValue="") String filterToDt, HttpServletRequest request){
+        return infoService.franchiseReadyCashList(filterFromDt, filterToDt, request);
+    }
 
 //@@@@@@@@@@@@@@@@@@@@@ 가맹점 통합조회 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     // 통합조회용 - 접수세부 테이블
