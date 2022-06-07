@@ -277,7 +277,7 @@ public class RequestDetail {
     private String fdUrgentYn; // 급세탁 여부 (Y  / N) 기본값 : N
 
     @Column(name="fd_urgent_type")
-    private String fdUrgentType; // 급세탁 타입(1: 당일세탁, 2: 특급세탁(1박2일), 3급세탁(2박3일))
+    private String fdUrgentType; // 급세탁 타입(1: 당일세탁, 2: 특급세탁(1박2일), 3: 급세탁(2박3일))
 
     @Column(name="fd_urgent_amt")
     private Integer fdUrgentAmt; // 급세탁 추가비용

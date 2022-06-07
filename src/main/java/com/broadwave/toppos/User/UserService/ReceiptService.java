@@ -30,6 +30,8 @@ import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetai
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailSet;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.head.RequestReceiptListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.head.RequestReceiptListSubDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.head.RequestUrgentReceiptListDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.head.RequestUrgentReceiptListSubDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.manager.RequestRealTimeListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.manager.RequestRealTimeListSubDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.user.*;
@@ -1266,6 +1268,84 @@ public class ReceiptService {
         log.info("requestReceiptListSubDtos : "+requestReceiptListSubDtos);
 
         data.put("gridListData",requestReceiptListSubDtos);
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
+    // 본사 세탁 입고현황 - 왼쪽 리스트 호출API
+    public ResponseEntity<Map<String, Object>> headUrgentReceiptList(Long branchId, Long franchiseId, String filterFromDt, String filterToDt,
+                                                                           String type, String fdUrgentYn, String fdUrgentType) {
+        log.info("headUrgentReceiptList 호출");
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        log.info("branchId : "+branchId);
+        log.info("franchiseId : "+franchiseId);
+        log.info("filterFromDt : "+filterFromDt);
+        log.info("filterToDt : "+filterToDt);
+
+        if(type.equals("1")){
+            log.info("당일세탁 왼쪽 조회");
+        }else if(type.equals("2")){
+            log.info("특수세탁 왼쪽 조회");
+        }else if(type.equals("3")){
+            log.info("급세탁 왼쪽 조회");
+        }else if(type.equals("4")){
+            log.info("일반세탁 왼쪽 조회");
+        }
+
+        List<RequestUrgentReceiptListDto> requestUrgentReceiptListDtos = requestRepository.findByHeadUrgentReceiptList(branchId, franchiseId, filterFromDt, filterToDt, fdUrgentYn, fdUrgentType);
+        log.info("requestUrgentReceiptListDtos : "+requestUrgentReceiptListDtos);
+        List<HashMap<String,Object>> requestUrgentReceiptListData = new ArrayList<>();
+        HashMap<String,Object> requestUrgentReceiptListInfo;
+        for(RequestUrgentReceiptListDto requestUrgentReceiptListDto : requestUrgentReceiptListDtos){
+            requestUrgentReceiptListInfo = new HashMap<>();
+            requestUrgentReceiptListInfo.put("brName", requestUrgentReceiptListDto.getBrName());
+            requestUrgentReceiptListInfo.put("branchId", requestUrgentReceiptListDto.getBranchId());
+            if(branchId == 0){
+                requestUrgentReceiptListInfo.put("franchiseId", 0);
+                requestUrgentReceiptListInfo.put("frName", "");
+            }else{
+                requestUrgentReceiptListInfo.put("franchiseId", requestUrgentReceiptListDto.getFranchiseId());
+                requestUrgentReceiptListInfo.put("frName", requestUrgentReceiptListDto.getFrName());
+            }
+            requestUrgentReceiptListInfo.put("frYyyymmdd", requestUrgentReceiptListDto.getFrYyyymmdd());
+            requestUrgentReceiptListInfo.put("requestCount", requestUrgentReceiptListDto.getReceiptCount());
+            requestUrgentReceiptListInfo.put("fdTotAmt", requestUrgentReceiptListDto.getFdTotAmt());
+            requestUrgentReceiptListData.add(requestUrgentReceiptListInfo);
+        }
+
+        data.put("gridListData",requestUrgentReceiptListData);
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
+    // 본사 세탁 입고현황 - 오른쪽 리스트 호출API
+    public ResponseEntity<Map<String, Object>> headUrgentReceiptSubList(Long branchId, Long franchiseId, String frYyyymmdd,
+                                                                     String type, String fdUrgentYn, String fdUrgentType) {
+        log.info("headUrgentReceiptSubList 호출");
+
+        log.info("branchId  : "+branchId);
+        log.info("franchiseId  : "+franchiseId);
+        log.info("frYyyymmdd  : "+frYyyymmdd);
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        if(type.equals("1")){
+            log.info("당일세탁 오른쪽 조회");
+        }else if(type.equals("2")){
+            log.info("특수세탁 오른쪽 조회");
+        }else if(type.equals("3")){
+            log.info("급세탁 오른쪽 조회");
+        }else if(type.equals("4")){
+            log.info("일반세탁 오른쪽 조회");
+        }
+
+        List<RequestUrgentReceiptListSubDto> requestUrgentReceiptListSubDtos = requestRepository.findByHeadUrgentReceiptSubList(branchId, franchiseId, frYyyymmdd, fdUrgentYn, fdUrgentType);
+        log.info("requestUrgentReceiptListSubDtos : "+requestUrgentReceiptListSubDtos);
+
+        data.put("gridListData",requestUrgentReceiptListSubDtos);
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 

@@ -64,4 +64,8 @@ public interface RequestRepositoryCustom {
     List<RequestReceiptListDto> findByHeadReceiptList(Long branchId, Long franchiseId, String filterFromDt, String filterToDt); // 본사 접수현황 왼쪽 NativeQuery
     List<RequestReceiptListSubDto> findByHeadReceiptSubList(Long branchId, Long franchiseId, String frYyyymmdd); // 본사 접수현황 오른쪽 - querydsl
 
+    List<RequestUrgentReceiptListDto> findByHeadUrgentReceiptList(Long branchId, Long franchiseId, String filterFromDt, String filterToDt, String fdUrgentYn, String fdUrgentType); // 본사 세탁상태 접수 왼쪽 NativeQuery
+    List<RequestUrgentReceiptListSubDto> findByHeadUrgentReceiptSubList(Long branchId, Long franchiseId, String frYyyymmdd, String fdUrgentYn, String fdUrgentType); // 본사 세탁상태 접수 오른쪽 - querydsl
+
+
 }
