@@ -1282,7 +1282,7 @@ public class ReceiptService {
         log.info("filterToDt : "+filterToDt);
 
         if(type.equals("1")){
-            log.info("당일세탁 왼쪽 조회");
+            log.info("초특급세탁 왼쪽 조회");
         }else if(type.equals("2")){
             log.info("특수세탁 왼쪽 조회");
         }else if(type.equals("3")){
@@ -1330,7 +1330,7 @@ public class ReceiptService {
         HashMap<String, Object> data = new HashMap<>();
 
         if(type.equals("1")){
-            log.info("당일세탁 오른쪽 조회");
+            log.info("초특급세탁 오른쪽 조회");
         }else if(type.equals("2")){
             log.info("특수세탁 오른쪽 조회");
         }else if(type.equals("3")){
