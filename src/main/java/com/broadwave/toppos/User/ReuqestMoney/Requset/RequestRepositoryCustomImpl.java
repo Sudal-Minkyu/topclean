@@ -1269,4 +1269,109 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
         return query.fetch();
     }
 
+    //  본사 택번호조회 - querydsl
+    public List<RequestTagNoReceiptListDto> findByHeadTagNoReceiptSubList(Long branchId, Long franchiseId, String tagNo) {
+
+        QRequestDetail requestDetail = QRequestDetail.requestDetail;
+        QRequest request = QRequest.request;
+        QItemGroup itemGroup = QItemGroup.itemGroup;
+        QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
+        QItem item = QItem.item;
+        QCustomer customer = QCustomer.customer;
+        QFranchise franchise = QFranchise.franchise;
+        QBranch branch = QBranch.branch;
+
+        JPQLQuery<RequestTagNoReceiptListDto> query = from(requestDetail)
+                .innerJoin(requestDetail.frId, request)
+                .innerJoin(request.bcId, customer)
+                .innerJoin(franchise).on(franchise.frCode.eq(request.frCode))
+                .innerJoin(branch).on(branch.brCode.eq(franchise.brCode))
+                .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
+                .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
+                .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
+
+                .where(request.frConfirmYn.eq("Y"))
+                .where(requestDetail.fdCancel.eq("N"))
+
+                .select(Projections.constructor(RequestTagNoReceiptListDto.class,
+
+                        branch.brName,
+                        franchise.frName,
+
+                        customer.bcName,
+                        customer.bcHp,
+                        customer.bcGrade,
+
+                        requestDetail.fdTag,
+                        request.fr_insert_date,
+                        requestDetail.fdEstimateDt,
+
+                        itemGroup.bgName,
+                        itemGroupS.bsName,
+                        item.biName,
+
+                        requestDetail.fdQty,
+                        requestDetail.fdColor,
+                        requestDetail.fdPattern,
+
+                        requestDetail.fdUrgentType,
+                        requestDetail.fdUrgentYn,
+
+                        requestDetail.fdPressed,
+                        requestDetail.fdAdd1Amt,
+                        requestDetail.fdRepairAmt,
+                        requestDetail.fdWhitening,
+                        requestDetail.fdPollution,
+                        requestDetail.fdWaterRepellent,
+                        requestDetail.fdStarch,
+
+                        requestDetail.fdAdd2Amt,
+                        requestDetail.fdUrgentAmt,
+                        requestDetail.fdNormalAmt,
+
+                        requestDetail.fdTotAmt,
+                        requestDetail.fdDiscountAmt,
+                        requestDetail.fdState,
+
+                        new CaseBuilder()
+                                .when(requestDetail.fdPollutionLocFcn.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFcs.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFcb.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFlh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFrh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFlf.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocFrf.eq("Y")).then(1)
+                                .otherwise(0),
+                        new CaseBuilder()
+                                .when(requestDetail.fdPollutionLocBcn.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBcs.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBcb.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBlh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBrh.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBlf.eq("Y")).then(1)
+                                .when(requestDetail.fdPollutionLocBrf.eq("Y")).then(1)
+                                .otherwise(0),
+
+                        requestDetail.fdS2Dt,
+                        requestDetail.fdS5Dt,
+                        requestDetail.fdS4Dt,
+                        requestDetail.fdS3Dt,
+                        requestDetail.fdS6Dt,
+                        requestDetail.fdS6Time
+
+                ));
+
+        query.groupBy(requestDetail.id).distinct().orderBy(requestDetail.id.asc());
+
+        if(branchId != 0){
+            query.where(branch.id.eq(branchId));
+        }
+        if(franchiseId != 0){
+            query.where(franchise.id.eq(franchiseId));
+        }
+
+        query.where(requestDetail.fdTag.eq(tagNo));
+
+        return query.fetch();
+    }
 }

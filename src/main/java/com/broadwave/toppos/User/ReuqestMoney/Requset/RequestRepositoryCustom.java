@@ -70,4 +70,6 @@ public interface RequestRepositoryCustom {
     List<RequestReturnReceiptListDto> findByHeadReturnReceiptList(Long branchId, Long franchiseId, String filterFromDt, String filterToDt); // 본사 반품현황 왼쪽 NativeQuery
     List<RequestReturnReceiptListSubDto> findByHeadReturnReceiptSubList(Long branchId, Long franchiseId, String fdS6Dt); // 본사 접수현황 오른쪽 - querydsl
 
+    List<RequestTagNoReceiptListDto> findByHeadTagNoReceiptSubList(Long branchId, Long franchiseId, String tagNo); // 본사 택번호조회 - querydsl
+
 }

@@ -173,4 +173,5 @@ public class HeadInfoService {
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
+
 }

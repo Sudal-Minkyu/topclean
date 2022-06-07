@@ -1401,6 +1401,25 @@ public class ReceiptService {
         data.put("gridListData",requestReturnReceiptListSubDtos);
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
+
+    // 본사 TAG번호 접수리스트 호출 API
+    public ResponseEntity<Map<String, Object>> headTagNoReceiptSearch(Long branchId, Long franchiseId, String tagNo) {
+        log.info("headTagNoReceiptSearch 호출");
+
+        log.info("branchId  : "+branchId);
+        log.info("franchiseId  : "+franchiseId);
+        log.info("tagNo  : "+tagNo);
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        List<RequestTagNoReceiptListDto> requestTagNoReceiptListDtos = requestRepository.findByHeadTagNoReceiptSubList(branchId, franchiseId, tagNo);
+        log.info("requestTagNoReceiptListDtos : "+requestTagNoReceiptListDtos);
+
+        data.put("gridListData",requestTagNoReceiptListDtos);
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
 }
 
 
