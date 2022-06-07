@@ -14,7 +14,7 @@ const onPageLoad = function () {
     runOnlyOnce.setXlsxTitleName('초특급세탁 처리 현황');
 
     runOnlyOnce.makeSummaryGrid({
-        url: '/api/head/headReceiptList',
+        url: '/api/head/headSpecialQuickReceiptList',
         targetDate: {
             dataField: 'frYyyymmdd',
             headerText: '접수일자',
@@ -22,8 +22,8 @@ const onPageLoad = function () {
     });
 
     runOnlyOnce.makeDetailGrid({
-        url: '/api/head/headReceiptSubList',
-        fdUrgentTypeVisible: true,
+        url: '/api/head/headSpecialQuickReceiptSubList',
+        fdUrgentTypeVisible: false,
         fdS6TypeVisible: false,
     });
 

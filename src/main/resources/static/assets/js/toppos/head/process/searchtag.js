@@ -35,7 +35,13 @@ const comms = {
 
     searchTagData(searchCondition) {
         console.log(searchCondition);
-
+        CommonUI.ajax('/api/head/headTagNoReceiptSearch', 'GET', searchCondition, function (res) {
+            const data = res.sendData.gridListData;
+            grids.f.set(0, data);
+            $("#aftTag").val("");
+            $("#foreTag").val("");
+            $("#fullTag").val("");
+        });
     }
 };
 
@@ -47,7 +53,7 @@ const grids = {
     /* 그리드 세팅 */
     s: {
         id: [
-            'grid_detail',
+            'grid_main',
         ],
         columnLayout: [],
         prop: [],
@@ -335,6 +341,7 @@ const trigs = {
             setBrFrList(wares.brFrListData, parseInt($('#brList').val(), 10));
             $("#aftTag").val("");
             $("#foreTag").val("");
+            $("#fullTag").val("");
             $('.doubleTag').hide();
             $('.singleTag').show();
         });

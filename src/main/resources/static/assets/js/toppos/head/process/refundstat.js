@@ -14,7 +14,7 @@ const onPageLoad = function () {
     runOnlyOnce.setXlsxTitleName('반품 현황');
 
     runOnlyOnce.makeSummaryGrid({
-        url: '/api/head/headReceiptList',
+        url: '/api/head/headReturnReceiptList',
         targetDate: {
             dataField: 'fdS7Dt',
             headerText: '반품출고일',
@@ -22,9 +22,9 @@ const onPageLoad = function () {
     });
 
     runOnlyOnce.makeDetailGrid({
-        url: '/api/head/headReceiptSubList',
+        url: '/api/head/headReturnReceiptSubList',
         fdUrgentTypeVisible: true,
-        fdS6TypeVisible: false,
+        fdS6TypeVisible: true,
     });
 
     runOnlyOnce.enableDatepicker();
