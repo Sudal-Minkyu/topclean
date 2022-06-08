@@ -14,7 +14,7 @@ const onPageLoad = function () {
     runOnlyOnce.setXlsxTitleName('일반처리현황');
 
     runOnlyOnce.makeSummaryGrid({
-        url: '/api/manager/headNormalReceiptList',
+        url: '/api/manager/managerNormalReceiptList',
         targetDate: {
             dataField: 'frYyyymmdd',
             headerText: '접수일자',
@@ -22,7 +22,7 @@ const onPageLoad = function () {
     });
 
     runOnlyOnce.makeDetailGrid({
-        url: '/api/manager/headNormalReceiptSubList',
+        url: '/api/manager/managerNormalReceiptSubList',
         fdUrgentTypeVisible: false,
         fdS6TypeVisible: false,
     });

@@ -14,7 +14,7 @@ $(function () {
 
     const separator = function(i) {
         inputs.eq(i).on("keyup", function () {
-            this.value = this.value.toInt().toLocaleString();
+            this.value = this.value.numString().toInt().toLocaleString();
         });
     };
     for(let i = 9; i < inputs.length; i++) {
@@ -49,13 +49,14 @@ function onSave() {
 
     const url = "/api/head/addCostUpdate";
 
+    console.log(Object.fromEntries(formData));
     CommonUI.ajax(url, "POST", formData, function (){
         alertSuccess("가격 기초정보 저장 완료");
     });
     // 금액에 쉽표 표시
     for(let i = 9; i < inputs.length; i++) {
-        inputs[i].value = inputs[i].value.toInt().toLocaleString();
+        inputs[i].value = inputs[i].value.numString().toInt().toLocaleString();
     }
-    inputs[5].value = inputs[5].value.toInt().toLocaleString();
-    inputs[7].value = inputs[7].value.toInt().toLocaleString();
+    inputs[5].value = inputs[5].value.numString().toInt().toLocaleString();
+    inputs[7].value = inputs[7].value.numString().toInt().toLocaleString();
 }

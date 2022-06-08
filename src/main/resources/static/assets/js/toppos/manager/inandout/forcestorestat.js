@@ -14,7 +14,7 @@ const onPageLoad = function () {
     runOnlyOnce.setXlsxTitleName('강제입고현황(가맹점)');
 
     runOnlyOnce.makeSummaryGrid({
-        url: '/api/manager/headForceStoreInputList',
+        url: '/api/manager/managerForceStoreInputList',
         targetDate: {
             dataField: 'fdS8Dt',
             headerText: '강제입고일',
@@ -22,7 +22,7 @@ const onPageLoad = function () {
     });
 
     runOnlyOnce.makeDetailGrid({
-        url: '/api/manager/headForceStoreInputSubList',
+        url: '/api/manager/managerForceStoreInputSubList',
         fdUrgentTypeVisible: true,
         fdS6TypeVisible: false,
     });

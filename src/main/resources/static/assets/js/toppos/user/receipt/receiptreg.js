@@ -1489,8 +1489,8 @@ function onApply() {
     onSave();
 
     const totRequestAmt = $("#totFdRequestAmount").html().toInt();
-    $("#payNormalAmt").html($("#totFdNormalAmount").html().toInt().toLocaleString());
-    $("#payChangeAmt").html($("#totChangeAmount").html().toInt().toLocaleString());
+    $("#payNormalAmt").html($("#totFdNormalAmount").html().numString().toInt().toLocaleString());
+    $("#payChangeAmt").html($("#totChangeAmount").html().numString().toInt().toLocaleString());
 
     const applySaveMoney = selectedCustomer.saveMoney > totRequestAmt ? totRequestAmt : selectedCustomer.saveMoney;
     $("#applySaveMoney").html(applySaveMoney.toLocaleString());
