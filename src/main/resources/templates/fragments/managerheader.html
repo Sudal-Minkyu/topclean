@@ -6,75 +6,97 @@
 			<a href="/manager"><img src="/assets/images/logo.svg" alt="TopPos Cleaning Up Megashop" /></a>
 		</div>
 
-		<nav class="gnb">
-			<ul class="gnb__list">
-				<li class="gnb__item">
-					<div class="gnb__depth1"><a href="#">출고 관리</a></div>
-					<ul class="gnb__depth2">
-						<li class="btnSubmenu"><a href="/manager/release">지사 출고</a></li>
-						<li class="btnSubmenu"><a href="/manager/releasecancel">지사 출고 취소</a></li>
-					</ul>
+		<nav class="n-gnb">
+			<ul class="n-gnb__list">
+				<li class="n-gnb__item">
+					<a href="#" class="n-gnb__depth1">출고 관리</a>
+					<div class="n-gnb__dim">
+						<div class="n-gnb__group">
+							<h4 class="n-gnb__title">출고 관리</h4>
+							<ul class="n-gnb__depth2">
+								<li><a href="/manager/release" class="n-gnb__link">지사 출고</a></li>
+								<li><a href="/manager/releasecancel" class="n-gnb__link">지사 출고 취소</a></li>
+							</ul>
+						</div>
+					</div>
 				</li>
-				<li class="gnb__item">
-					<div class="gnb__depth1"><a href="#">반송 / 검품</a></div>
-					<ul class="gnb__depth2">
-						<li class="btnSubmenu"><a href="/manager/forcerelease">강제 출고</a></li>
-						<li class="btnSubmenu"><a href="/manager/returnrelease">반품 출고</a></li>
-						<li class="btnSubmenu"><a href="/manager/checkregist">확인품 등록</a></li>
-						<li class="btnSubmenu"><a href="/manager/checkstate">확인품 현황</a></li>
-					</ul>
+				<li class="n-gnb__item">
+					<a href="#" class="n-gnb__depth1">반송 / 검품</a>
+					<div class="n-gnb__dim">
+						<div class="n-gnb__group">
+							<h4 class="n-gnb__title">반송 / 검품</h4>
+							<ul class="n-gnb__depth2">
+								<li><a href="/manager/forcerelease" class="n-gnb__link">강제 출고</a></li>
+								<li><a href="/manager/returnrelease" class="n-gnb__link">반품 출고</a></li>
+								<li><a href="/manager/checkregist" class="n-gnb__link">확인품 등록</a></li>
+								<li><a href="/manager/checkstate" class="n-gnb__link">확인품 현황</a></li>
+							</ul>
+						</div>
+					</div>
 				</li>
-				<li class="gnb__item">
-					<div class="gnb__depth1"><a href="#">입출고 현황1</a></div>
-					<ul class="gnb__depth2">
-                        <li class="btnSubmenu"><a href="/manager/receptionstate">실시간 접수 현황</a></li>
-						<li class="btnSubmenu"><a href="/manager/tag">TAG 번호 조회</a></li>
-						<li class="btnSubmenu"><a href="/manager/instate">지사 입고 현황</a></li>
-						<li class="btnSubmenu"><a href="/manager/outstate">지사 출고 현황</a></li>
-						<li class="btnSubmenu"><a href="/manager/forceoutstate">강제 출고 현황(지사)</a></li>
-						<li class="btnSubmenu"><a href="/manager/forcestorestat">강제 입고 현황(가맹)</a></li>
-						<li class="btnSubmenu"><a href="/manager/staystate">체류 세탁물 현황</a></li>
-					</ul>
+				<li class="n-gnb__item">
+					<a href="#" class="n-gnb__depth1">입출고현황</a>
+					<div class="n-gnb__dim">
+						<div class="n-gnb__group">
+							<h4 class="n-gnb__title">입출고현황</h4>
+							<ul class="n-gnb__depth2">
+								<li><a href="/manager/receptionstate" class="n-gnb__link">실시간 접수 현황</a></li>
+								<li><a href="/manager/tag" class="n-gnb__link">TAG 번호 조회</a></li>
+								<li><a href="/manager/instate" class="n-gnb__link">지사 입고 현황</a></li>
+								<li><a href="/manager/outstate" class="n-gnb__link">지사 출고 현황</a></li>
+								<li><a href="/manager/forceoutstate" class="n-gnb__link">강제 출고 현황(지사)</a></li>
+								<li><a href="/manager/forcestorestat" class="n-gnb__link">강제 입고 현황(가맹)</a></li>
+								<li><a href="/manager/staystate" class="n-gnb__link">체류 세탁물 현황</a></li>
+								<li><a href="/manager/retrystat" class="n-gnb__link">재세탁 입고 현황</a></li>
+								<li><a href="/manager/refundstat" class="n-gnb__link">반품 현황</a></li>
+								<li><a href="/manager/highspeedsuperspecialstat" class="n-gnb__link">초특급세탁 처리 현황</a></li>
+								<li><a href="/manager/highspeedspecialstat" class="n-gnb__link">특급세탁 처리 현황</a></li>
+								<li><a href="/manager/highspeedstat" class="n-gnb__link">급세탁 처리 현황</a></li>
+								<li><a href="/manager/normalspeedstat" class="n-gnb__link">일반 처리 현황</a></li>
+							</ul>
+						</div>
+					</div>
 				</li>
-				<li class="gnb__item">
-					<div class="gnb__depth1"><a href="#">입출고 현황2</a></div>
-					<ul class="gnb__depth2">
-						<li class="btnSubmenu"><a href="/manager/retrystat">재세탁 입고 현황</a></li>
-						<li class="btnSubmenu"><a href="/manager/refundstat">반품 현황</a></li>
-						<li class="btnSubmenu"><a href="/manager/highspeedsuperspecialstat">초특급세탁 처리 현황</a></li>
-						<li class="btnSubmenu"><a href="/manager/highspeedspecialstat">특급세탁 처리 현황</a></li>
-						<li class="btnSubmenu"><a href="/manager/highspeedstat">급세탁 처리 현황</a></li>
-						<li class="btnSubmenu"><a href="/manager/normalspeedstat">일반 처리 현황</a></li>
-					</ul>
+				<li class="n-gnb__item">
+					<a href="#" class="n-gnb__depth1">미납 관리</a>
+					<div class="n-gnb__dim">
+						<div class="n-gnb__group">
+							<h4 class="n-gnb__title">미납 관리</h4>
+							<ul class="n-gnb__depth2">
+								<li><a href="/manager/notrelease" class="n-gnb__link">미출고현황</a></li>
+							</ul>
+						</div>
+					</div>
 				</li>
-				<li class="gnb__item">
-					<div class="gnb__depth1"><a href="#">미납 관리</a></div>
-					<ul class="gnb__depth2">
-						<li class="btnSubmenu"><a href="/manager/notrelease">미출고현황</a></li>
-					</ul>
+				<li class="n-gnb__item">
+					<a href="#" class="n-gnb__depth1">외주관리</a>
+					<div class="n-gnb__dim">
+						<div class="n-gnb__group">
+							<h4 class="n-gnb__title">외주관리</h4>
+							<ul class="n-gnb__depth2">
+								<li><a href="/manager/ospricemanage" class="n-gnb__link">외주관리가격설정</a></li>
+								<li><a href="/manager/ossend" class="n-gnb__link">외주출고처리</a></li>
+								<li><a href="/manager/osreceive" class="n-gnb__link">외주입고처리</a></li>
+								<li><a href="/manager/osstatus" class="n-gnb__link">외주입출고현황</a></li>
+							</ul>
+						</div>
+					</div>
 				</li>
-				<li class="gnb__item">
-					<div class="gnb__depth1"><a href="#">외주관리</a></div>
-					<ul class="gnb__depth2">
-						<li class="btnSubmenu"><a href="/manager/ospricemanage">외주관리가격설정</a></li>
-						<li class="btnSubmenu"><a href="/manager/ossend">외주출고처리</a></li>
-						<li class="btnSubmenu"><a href="/manager/osreceive">외주입고처리</a></li>
-						<li class="btnSubmenu"><a href="/manager/osstatus">외주입출고현황</a></li>
-					</ul>
-				</li>
-<!--				<li class="gnb__item">-->
-<!--					<div class="gnb__depth1"><a href="#">매출 현황</a></div>-->
-<!--				</li>-->
-				<li class="gnb__item">
-					<div class="gnb__depth1"><a href="#">설정</a></div>
-					<ul class="gnb__depth2">
-                        <li class="btnSubmenu"><a href="/manager/mypage">나의 정보 관리</a></li>
-						<li class="btnSubmenu"><a href="/manager/businessday">영업일 관리</a></li>
-						<li class="btnSubmenu"><a href="/manager/noticelist">공지사항 게시판</a></li>
-						<li class="btnSubmenu"><a href="/manager/tagboard">TAG 분실 게시판</a></li>
-                        <li class="btnSubmenu"><a href="/manager/find">물건찾기</a></li>
-						<li class="btnSubmenu"><a href="/manager/message">문자메세지</a></li>
-					</ul>
+				<li class="n-gnb__item">
+					<a href="#" class="n-gnb__depth1">설정</a>
+					<div class="n-gnb__dim">
+						<div class="n-gnb__group">
+							<h4 class="n-gnb__title">설정</h4>
+							<ul class="n-gnb__depth2">
+								<li><a href="/manager/mypage" class="n-gnb__link">나의 정보 관리</a></li>
+								<li><a href="/manager/businessday" class="n-gnb__link">영업일 관리</a></li>
+								<li><a href="/manager/noticelist" class="n-gnb__link">공지사항 게시판</a></li>
+								<li><a href="/manager/tagboard" class="n-gnb__link">TAG 분실 게시판</a></li>
+								<li><a href="/manager/find" class="n-gnb__link">물건찾기</a></li>
+								<li><a href="/manager/message" class="n-gnb__link">문자메세지</a></li>
+							</ul>
+						</div>
+					</div>
 				</li>
 			</ul>
 		</nav>
