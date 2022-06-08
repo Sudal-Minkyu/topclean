@@ -1373,7 +1373,7 @@ public class ReceiptService {
                 requestReceiptListInfo.put("franchiseId", requestReceiptListDto.getFranchiseId());
                 requestReceiptListInfo.put("frName", requestReceiptListDto.getFrName());
             }
-            requestReceiptListInfo.put("frYyyymmdd", requestReceiptListDto.getFdS6Dt());
+            requestReceiptListInfo.put("fdS6Dt", requestReceiptListDto.getFdS6Dt());
             requestReceiptListInfo.put("receiptCount", requestReceiptListDto.getReceiptCount());
             requestReceiptListInfo.put("fdTotAmt", requestReceiptListDto.getFdTotAmt());
             requestReceiptListData.add(requestReceiptListInfo);

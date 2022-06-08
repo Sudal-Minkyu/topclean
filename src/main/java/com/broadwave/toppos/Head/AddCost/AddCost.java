@@ -78,6 +78,9 @@ public class AddCost {
     @Column(name="bc_urgent_amt_1")
     private Integer bcUrgentAmt1; // 급세탁 추가요금
 
+    @Column(name="bc_sms_unit_price")
+    private Integer bcSmsUnitPrice; // SMS건당 비용
+
     @Column(name="insert_id")
     private String insert_id;
 

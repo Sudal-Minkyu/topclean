@@ -26,7 +26,7 @@ public class RequestForceOutgoListDto {
     private String frName; // 가맹점명
 
     private String fdS7Dt; // 지사강제출고일
-    private BigInteger requestCount; // 건수
+    private BigInteger receiptCount; // 건수
     private BigDecimal fdTotAmt; // 접수총액
 
     public StringBuffer getFdS7Dt() {

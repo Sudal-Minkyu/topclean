@@ -8,7 +8,6 @@ import com.broadwave.toppos.Head.Item.Group.C.QItem;
 import com.broadwave.toppos.User.Customer.Customer;
 import com.broadwave.toppos.User.Customer.QCustomer;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Find.QFind;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.QInspeot;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.QRequestDetail;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestFindListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.head.*;
@@ -861,8 +860,8 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
         QFranchise franchise = QFranchise.franchise;
         QBranch branch = QBranch.branch;
 
-        QInspeot inspeot1 = new QInspeot("inspeot1");
-        QInspeot inspeot2 = new QInspeot("inspeot2");
+//        QInspeot inspeot1 = new QInspeot("inspeot1");
+//        QInspeot inspeot2 = new QInspeot("inspeot2");
 
         JPQLQuery<RequestReceiptListSubDto> query = from(requestDetail)
                 .innerJoin(requestDetail.frId, request)
@@ -873,9 +872,9 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
                 .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
                 .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
 
-                // 검품여부 leftJoin
-                .leftJoin(inspeot1).on(inspeot1.fdId.eq(requestDetail).and(inspeot1.fiType.eq("F").and(inspeot1.fiCustomerConfirm.eq("3")))) // 가맹점
-                .leftJoin(inspeot2).on(inspeot2.fdId.eq(requestDetail).and(inspeot2.fiType.eq("B").and(inspeot2.fiCustomerConfirm.eq("3")))) // 지사
+//                // 검품여부 leftJoin
+//                .leftJoin(inspeot1).on(inspeot1.fdId.eq(requestDetail).and(inspeot1.fiType.eq("F").and(inspeot1.fiCustomerConfirm.eq("3")))) // 가맹점
+//                .leftJoin(inspeot2).on(inspeot2.fdId.eq(requestDetail).and(inspeot2.fiType.eq("B").and(inspeot2.fiCustomerConfirm.eq("3")))) // 지사
 
                 .where(request.frConfirmYn.eq("Y"))
                 .where(requestDetail.fdCancel.eq("N"))
@@ -904,7 +903,7 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
                         requestDetail.fdUrgentType,
                         requestDetail.fdUrgentYn,
 
-                        requestDetail.fdPriceGrade,
+//                        requestDetail.fdPriceGrade,
                         requestDetail.fdRetryYn,
                         requestDetail.fdPressed,
                         requestDetail.fdAdd1Amt,
@@ -946,13 +945,13 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
                         requestDetail.fdS4Dt,
                         requestDetail.fdS3Dt,
                         requestDetail.fdS6Dt,
-                        requestDetail.fdS6Time,
+                        requestDetail.fdS6Time
 
-                        new CaseBuilder()
-                                .when(inspeot1.isNotNull().and(inspeot2.isNotNull())).then(inspeot1.fiProgressStateDt)
-                                .otherwise(
-                                        new CaseBuilder().when(inspeot1.isNotNull()).then(inspeot1.fiProgressStateDt)
-                                                .otherwise(inspeot2.fiProgressStateDt))
+//                        new CaseBuilder()
+//                                .when(inspeot1.isNotNull().and(inspeot2.isNotNull())).then(inspeot1.fiProgressStateDt)
+//                                .otherwise(
+//                                        new CaseBuilder().when(inspeot1.isNotNull()).then(inspeot1.fiProgressStateDt)
+//                                                .otherwise(inspeot2.fiProgressStateDt))
 
                 ));
 
@@ -1078,6 +1077,7 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
                         requestDetail.fdTotAmt,
                         requestDetail.fdDiscountAmt,
                         requestDetail.fdState,
+                        requestDetail.fdRetryYn,
 
                         new CaseBuilder()
                                 .when(requestDetail.fdPollutionLocFcn.eq("Y")).then(1)
@@ -1138,7 +1138,7 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
         sb.append("AND b.fd_cancel='N' \n");
         sb.append("AND b.fd_s6_dt>= ?1 \n");
         sb.append("AND b.fd_s6_dt<= ?2 \n");
-        sb.append("AND b.fd_s6_type = '2' \n");
+        sb.append("AND b.fd_s6_type = '02' \n");
         if(branchId != 0){
             sb.append("AND d.br_id = ?3 \n");
             if(franchiseId != 0){
@@ -1226,6 +1226,7 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
                         requestDetail.fdTotAmt,
                         requestDetail.fdDiscountAmt,
                         requestDetail.fdState,
+                        requestDetail.fdRetryYn,
 
                         new CaseBuilder()
                                 .when(requestDetail.fdPollutionLocFcn.eq("Y")).then(1)
@@ -1264,7 +1265,7 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
             query.where(franchise.id.eq(franchiseId));
         }
 
-        query.where(requestDetail.fdS6Dt.eq(fdS6Dt).and(requestDetail.fdS6Type.eq("2")));
+        query.where(requestDetail.fdS6Dt.eq(fdS6Dt).and(requestDetail.fdS6Type.eq("02")));
 
         return query.fetch();
     }
@@ -1332,6 +1333,7 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
                         requestDetail.fdTotAmt,
                         requestDetail.fdDiscountAmt,
                         requestDetail.fdState,
+                        requestDetail.fdRetryYn,
 
                         new CaseBuilder()
                                 .when(requestDetail.fdPollutionLocFcn.eq("Y")).then(1)

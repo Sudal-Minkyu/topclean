@@ -23,7 +23,7 @@ public class RequestRealTimeListDto {
     private String frName; // 가맹점명
     private String frYyyymmdd; // 접수일자
     private BigInteger customerCount; // 고객수
-    private BigInteger requestCount; // 상품수
+    private BigInteger receiptCount; // 상품수
     private BigDecimal fdTotAmt; // 접수총액
 
     public StringBuffer getFrYyyymmdd() {

@@ -26,7 +26,7 @@ public class RequestRetryListDto {
     private String frName; // 가맹점명
 
     private String frYyyymmdd; // 접수일자
-    private BigInteger requestCount; // 건수
+    private BigInteger receiptCount; // 건수
     private BigDecimal fdTotAmt; // 접수총액
 
     public StringBuffer getFrYyyymmdd() {

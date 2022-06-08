@@ -26,7 +26,7 @@ public class RequestIncomeListDto {
     private String frName; // 가맹점명
 
     private String fdS2Dt; // 지사입고일
-    private BigInteger requestCount; // 건수
+    private BigInteger receiptCount; // 건수
     private BigDecimal fdTotAmt; // 접수총액
 
     public StringBuffer getFdS2Dt() {

@@ -42,7 +42,6 @@ public class RequestReceiptListSubDto {
     private String fdUrgentType; // 급세탁 타입(1: 당일세탁, 2: 특급세탁(1박2일), 3급세탁(2박3일))
     private String fdUrgentYn; // 급세탁 여부 (Y  / N) 기본값 : N
 
-    private String fdPriceGrade; // 가격등급  1:일반, 2:고급: 3명품 4:아동
     private String fdRetryYn; // 재세탁 여부 (Y  / N) Y 이면 합계금액이 0이다
     private Integer fdPressed; // 다림질 요금
     private Integer fdAdd1Amt; // 추가비용1(접수시점)
@@ -70,7 +69,7 @@ public class RequestReceiptListSubDto {
     private String fdS6Dt; // 고객인도일
     private LocalDateTime fdS6Time; // 고객인도시간
 
-    private LocalDateTime fiProgressStatet; // 고객진행여부 변경상태 -> fiCustomerConfirm 상태가 "3"(반품)일 경우에만 시간전송 아니면 null
+//    private LocalDateTime fiProgressStatet; // 고객진행여부 변경상태 -> fiCustomerConfirm 상태가 "3"(반품)일 경우에만 시간전송 아니면 null
 
     public Integer getFdPollutionType() {
         return fdPollutionType + fdPollutionBack;
@@ -92,11 +91,11 @@ public class RequestReceiptListSubDto {
         }
     }
 
-    public String getFiProgressStatet() {
-        if(fiProgressStatet != null){
-            return fiProgressStatet.format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm"));
-        }else{
-            return null;
-        }
-    }
+//    public String getFiProgressStatet() {
+//        if(fiProgressStatet != null){
+//            return fiProgressStatet.format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm"));
+//        }else{
+//            return null;
+//        }
+//    }
 }

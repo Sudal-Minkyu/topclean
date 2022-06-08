@@ -2714,6 +2714,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdDiscountAmt,
 
                         requestDetail.fdState,
+                        requestDetail.fdRetryYn,
 
                         requestDetail.fdS2Dt,
                         requestDetail.fdS5Dt,
@@ -2866,6 +2867,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdDiscountAmt,
 
                         requestDetail.fdState,
+                        requestDetail.fdRetryYn,
 
                         requestDetail.fdS2Dt,
                         requestDetail.fdS5Dt,
@@ -3016,6 +3018,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdDiscountAmt,
 
                         requestDetail.fdState,
+                        requestDetail.fdRetryYn,
 
                         requestDetail.fdS2Dt,
                         requestDetail.fdS5Dt,
@@ -3165,6 +3168,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdDiscountAmt,
 
                         requestDetail.fdState,
+                        requestDetail.fdRetryYn,
 
                         requestDetail.fdS2Dt,
                         requestDetail.fdS5Dt,
@@ -3315,6 +3319,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdDiscountAmt,
 
                         requestDetail.fdState,
+                        requestDetail.fdRetryYn,
 
                         requestDetail.fdS2Dt,
                         requestDetail.fdS5Dt,
@@ -3465,6 +3470,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdDiscountAmt,
 
                         requestDetail.fdState,
+                        requestDetail.fdRetryYn,
 
                         requestDetail.fdS2Dt,
                         requestDetail.fdS5Dt,
