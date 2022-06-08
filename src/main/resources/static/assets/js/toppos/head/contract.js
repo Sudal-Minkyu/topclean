@@ -310,6 +310,20 @@ $(function () {
     $frTagNo.on("keyup", function () {
         $frTagNo.val($frTagNo.val().numString());
     });
+
+    $("#frNameFilter").on("keypress", function (e) {
+        if(e.originalEvent.code === "Enter" || e.originalEvent.code === "NumpadEnter") {
+            console.log("action");
+            filterFranchiseList(1);
+        }
+    });
+
+    $("#s_frName").on("keypress", function (e) {
+        if(e.originalEvent.code === "Enter" || e.originalEvent.code === "NumpadEnter") {
+            filterFranchiseList(3);
+        }
+    });
+
 });
 
 /* 레이아웃, 프로퍼티를 적용하여 그리드 생성 */

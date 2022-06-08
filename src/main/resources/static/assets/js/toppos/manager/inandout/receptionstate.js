@@ -26,7 +26,7 @@ const dtos = {
             frName: "s",
             frYyyymmdd: "s",
             customerCount: "n",
-            requestCount: "n",
+            receiptCount: "n",
             fdTotAmt: "n",
         },
     }
@@ -112,7 +112,7 @@ const grids = {
                     dataType: "numeric",
                     autoThousandSeparator: "true",
                 }, {
-                    dataField: "requestCount",
+                    dataField: "receiptCount",
                     headerText: "상품수",
                     width: 70,
                     dataType: "numeric",

@@ -117,6 +117,7 @@ const comms = {
             $("#slidingText").html(slidingText);
             if(userIndexDto.frReadyCashYn === "N") {
                 $('#readyCashPop').show();
+                $("#bcReadyAmt").trigger("focus");
             }
 
             /* 메인페이지에 나열되는 항목들의 나열 */
@@ -262,8 +263,15 @@ const trigs = {
                 $("#bcReadyAmt").val(parseInt($("#bcReadyAmt").val()).toLocaleString());
             },
         };
+
         $("#bcReadyAmtKeyboard").on("click", function () {
             vkey.showKeypad("bcReadyAmt", bcReadyAmtKeyboardProp);
+        });
+
+        $("#bcReadyAmt").on("keypress", function (e) {
+            if(e.originalEvent.code === "Enter" || e.originalEvent.code === "NumpadEnter") {
+                saveReadyCash();
+            }
         });
     }
 };
