@@ -109,7 +109,6 @@ const taglostCheck = function (answer) {
         }
     }
 
-    /* 체크 혹은 체크해제 1, 최종확인 2 */
     const tagGalleryCheck = {
         btId: 'nr',
         type: 'sr',

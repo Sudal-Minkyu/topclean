@@ -48,20 +48,20 @@ class DtoValidator {
         if(partObj === null || partObj === undefined || partObj.constructor !== ({}).constructor) {
             console.log("=== 검사 객체 ===");
             console.log(partObj);
-            console.log("=== " + this.title + " ===");
+            console.log("<<< " + this.title + " >>>");
             if(this.devMode) alert(this.title + " " + objName + " 대상 형태가 json 이 아닙니다. 콘솔참조");
             return true;
         }
 
 
         if(this.compareKeys(Object.keys(partObj), partRuleKeys, objName)){
-            console.log("=== " + this.title + " ===");
+            console.log("<<< " + this.title + " >>>");
             if(this.devMode) alert(this.title + " " + objName + " 규칙간의 키가 일치하지 않습니다. 콘솔참조");
             return true;
         }
 
         if(this.isTypeWrong(partObj, partRule, partRuleKeys, objName)) {
-            console.log("=== " + this.title + " ===");
+            console.log("<<< " + this.title + " >>>");
             return true;
         }
 
@@ -130,7 +130,7 @@ class DtoValidator {
         if(ruleObj === null || ruleObj === undefined || ruleObj.constructor !== ({}).constructor) {
             console.log("=== 규칙 객체 ===");
             console.log(ruleObj);
-            console.log("=== " + this.title + " ===");
+            console.log("<<< " + this.title + " >>>");
             if(this.devMode) alert(this.title + " 의 검사 규칙을 정하는 dto 인자가 json 형태가 아닙니다. 콘솔참조");
             return true;
         }

@@ -16,7 +16,6 @@ const dtos = {
         detailAPI: {
             branchId: 'n',
             franchiseId: 'n',
-            frYyyymmdd: 's',
         },
     },
     receive: {
@@ -45,7 +44,6 @@ const dtos = {
             fdPattern: 's',
             fdUrgentType: 's',
             fdUrgentYn: 's',
-            fdPriceGrade: 's',
             fdRetryYn: 's',
             fdPressed: 'n',
             fdAdd1Amt: 'n',
@@ -68,7 +66,6 @@ const dtos = {
             fdS3Dt: 's',
             fdS6Dt: 's',
             fdS6Time: 's',
-            fiProgressStatet: 's',
         },
     },
 };
@@ -101,7 +98,6 @@ const comms = {
                 grids.setFrNameVisibility(false);
             }
             const data = res.sendData.gridListData;
-            console.log('누계조회결과', data);
             dv.chk(data, dtos.receive.summaryAPI, '일별 누계 데이터 받아오기');
             grids.clear(grids.id[1]);
             grids.setData(grids.id[0], data);
@@ -110,7 +106,6 @@ const comms = {
 
     /* 누게리스트의 지사,가맹점정보,날짜를 보내 해당 일자에 속한 모든 접수데이터 가져오기 */
     getDetailData(condition) {
-        console.log(condition);
         dv.chk(condition, dtos.send.detailAPI, '상세 품목을 받아오기 위한 조건 보내기');
         CommonUI.ajax(urls.getDetailData, 'GET', condition, function (res) {
             const data = res.sendData.gridListData;
@@ -169,7 +164,8 @@ const runOnlyOnce = {
     makeSummaryGrid(prop) {
         urls.searchSummaryData = prop.url;
         /* 동적으로 dtos에 검사대상 부여 */
-        dtos.receive.summaryAPI[prop.targetDate.dataField] = "s";
+        dtos.receive.summaryAPI[prop.targetDate.dataField] = 's';
+        dtos.send.detailAPI[prop.targetDate.dataField] = 's';
 
         const layout = [
             {
@@ -557,7 +553,7 @@ const getDetailData = function (item, targetDateName) {
 
     const condition = {
         branchId: item.branchId,
-        franchiseId: $("#brList").val() !== "0" ? item.franchiseId : 0,
+        franchiseId: $('#brList').val() !== '0' ? item.franchiseId : 0,
     };
     condition[targetDateName] = item[targetDateName].numString();
 
