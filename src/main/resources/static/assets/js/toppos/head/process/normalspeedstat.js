@@ -11,7 +11,7 @@ $(function() {
 });
 
 const onPageLoad = function () {
-    runOnlyOnce.setXlsxTitleName('일반 처리 현황');
+    runOnlyOnce.setXlsxTitleName('일반처리현황');
 
     runOnlyOnce.makeSummaryGrid({
         url: '/api/head/headNormalReceiptList',

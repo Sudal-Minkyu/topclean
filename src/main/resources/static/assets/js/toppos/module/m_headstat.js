@@ -527,8 +527,10 @@ const runOnlyOnce = {
 
 /* 조회 조건에 따라 조회가 되도록 한다 */
 const searchSummaryData = function () {
-    const filterFromDate = new Date($('#filterFromDt').val());
-    const filterToDate = new Date($('#filterToDt').val());
+    const filterFromDt = $('#filterFromDt').val();
+    const filterToDt = $('#filterToDt').val();
+    const filterFromDate = new Date(filterFromDt);
+    const filterToDate = new Date(filterToDt);
     const millisecondsOfADay = 86400000;
     const durationDays = (filterToDate - filterFromDate) / millisecondsOfADay;
     const limitDurationDays = 180;
@@ -540,8 +542,8 @@ const searchSummaryData = function () {
     const searchCondition = {
         branchId: parseInt($('#brList').val(), 10),
         franchiseId: parseInt($('#frList').val(), 10),
-        filterFromDt: $('#filterFromDt').val().numString(),
-        filterToDt: $('#filterToDt').val().numString(),
+        filterFromDt: filterFromDt.numString(),
+        filterToDt: filterToDt.numString(),
     };
 
     comms.searchSummaryData(searchCondition);

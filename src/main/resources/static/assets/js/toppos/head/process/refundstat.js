@@ -11,12 +11,12 @@ $(function() {
 });
 
 const onPageLoad = function () {
-    runOnlyOnce.setXlsxTitleName('반품 현황');
+    runOnlyOnce.setXlsxTitleName('고객반품인도현황');
 
     runOnlyOnce.makeSummaryGrid({
         url: '/api/head/headReturnReceiptList',
         targetDate: {
-            dataField: 'fdS7Dt',
+            dataField: 'fdS6Dt',
             headerText: '반품출고일',
         },
     });
@@ -33,5 +33,5 @@ const onPageLoad = function () {
 
     runOnlyOnce.setCommonEvents();
 
-    runOnlyOnce.setGridEvents({targetDateName: 'fdS7Dt'});
+    runOnlyOnce.setGridEvents({targetDateName: 'fdS6Dt'});
 };

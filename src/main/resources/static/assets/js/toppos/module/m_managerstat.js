@@ -1,9 +1,7 @@
 /*
- * 본사 현황 페이지들 관련하여 공통적인 함수를 관리한다.
+ * 지사 현황 페이지들 관련하여 공통적인 함수를 관리한다.
  *
  */
-
-import {activateBrFrListInputs} from './m_setBrFrList.js';
 
 const dtos = {
     send: {
@@ -21,7 +19,7 @@ const dtos = {
         summaryAPI: {
             franchiseId: 'n',
             frName: 's',
-            requestCount: 'n',
+            receiptCount: 'n',
             fdTotAmt: 'n',
         },
         detailAPI: {
@@ -72,7 +70,6 @@ const wares = {
     searchCondition: {},
     xlsxNaming: {
         title: '',
-        brName: '',
         frName: '',
         date: '',
     },
@@ -82,19 +79,16 @@ const wares = {
 const urls = {
     searchSummaryData: '',
     getDetailData: '',
+    getFrList: '/api/manager/branchBelongList',
 };
 
 const comms = {
     /* 그리드 좌측, 일별 누계 데이터 조회값을 가져옴 */
     searchSummaryData(searchCondition) {
+        console.log(searchCondition);
         dv.chk(searchCondition, dtos.send.summaryAPI, '누계 데이터 조회를 위한 조건 보내기');
         wares.searchCondition = searchCondition;
         CommonUI.ajax(urls.searchSummaryData, 'GET', searchCondition, function (res) {
-            if (searchCondition.branchId) {
-                grids.setFrNameVisibility(true);
-            } else {
-                grids.setFrNameVisibility(false);
-            }
             const data = res.sendData.gridListData;
             console.log('누계조회결과', data);
             dv.chk(data, dtos.receive.summaryAPI, '일별 누계 데이터 받아오기');
@@ -111,6 +105,19 @@ const comms = {
             const data = res.sendData.gridListData;
             dv.chk(data, dtos.receive.detailAPI, '받아온 상세 품목들의 정보');
             grids.setData(grids.id[1], data);
+        });
+    },
+
+    /* 현황의 조회바 가맹점 셀랙트 박스의 리스트를 받아와 세팅한다. */
+    getFrList() {
+        CommonUI.ajax(urls.getFrList, 'GET', false, function (res) {
+            const data = res.sendData.franchiseList;
+            dv.chk(data, dtos.receive.managerBelongList, '지점에 속한 가맹점 받아오기');
+            const $frList = $('#frList');
+            data.forEach(obj => {
+                const htmlText = `<option value='${obj.frId}'>${obj.frName}</option>`;
+                $frList.append(htmlText);
+            });
         });
     },
 };
@@ -134,14 +141,6 @@ const grids = {
         AUIGrid.clearGridData(id);
     },
 
-    setFrNameVisibility(boolean) {
-        if (boolean) {
-            AUIGrid.showColumnByDataField(grids.id[0], 'frName');
-        } else {
-            AUIGrid.hideColumnByDataField(grids.id[0], 'frName');
-        }
-    },
-
     // 엑셀 내보내기(Export)
     exportToXlsx() {
         //FileSaver.js 로 로컬 다운로드가능 여부 확인
@@ -150,8 +149,7 @@ const grids = {
             return;
         }
         AUIGrid.exportToXlsx(grids.id[1], {
-            fileName : wares.xlsxNaming.title + '_' + wares.xlsxNaming.brName
-                + (wares.xlsxNaming.frName ? '_' : '') + wares.xlsxNaming.frName
+            fileName : wares.xlsxNaming.title + '_' + wares.xlsxNaming.frName
                 + '_' + wares.xlsxNaming.date,
             progressBar : true,
         });
@@ -168,9 +166,6 @@ const runOnlyOnce = {
 
         const layout = [
             {
-                dataField: 'brName',
-                headerText: '지사명',
-            }, {
                 dataField: 'frName',
                 headerText: '가맹점명',
             }, {
@@ -180,7 +175,7 @@ const runOnlyOnce = {
                 dataType: 'date',
                 formatString: 'yyyy-mm-dd',
             }, {
-                dataField: 'requestCount',
+                dataField: 'receiptCount',
                 headerText: '건수',
                 style: 'grid_textalign_right',
                 width: 80,
@@ -508,13 +503,15 @@ const runOnlyOnce = {
         wares.xlsxNaming.title = titleName;
     },
 
-    activateBrFrListInputs: activateBrFrListInputs,
+    getFrList: comms.getFrList,
 };
 
 /* 조회 조건에 따라 조회가 되도록 한다 */
 const searchSummaryData = function () {
-    const filterFromDate = new Date($('#filterFromDt').val());
-    const filterToDate = new Date($('#filterToDt').val());
+    const filterFromDt = $('#filterFromDt').val();
+    const filterToDt = $('#filterToDt').val();
+    const filterFromDate = new Date(filterFromDt);
+    const filterToDate = new Date(filterToDt);
     const millisecondsOfADay = 86400000;
     const durationDays = (filterToDate - filterFromDate) / millisecondsOfADay;
     const limitDurationDays = 180;
@@ -524,10 +521,9 @@ const searchSummaryData = function () {
     }
 
     const searchCondition = {
-        branchId: parseInt($('#brList').val(), 10),
         franchiseId: parseInt($('#frList').val(), 10),
-        filterFromDt: $('#filterFromDt').val().numString(),
-        filterToDt: $('#filterToDt').val().numString(),
+        filterFromDt: filterFromDt.numString(),
+        filterToDt: filterToDt.numString(),
     };
 
     comms.searchSummaryData(searchCondition);
@@ -536,12 +532,10 @@ const searchSummaryData = function () {
 /* 클릭으로 선택되어 그리드에서 넘겨받은 item을 기준으로 우측 그리드를 띄운다. */
 const getDetailData = function (item, targetDateName) {
     wares.xlsxNaming.frName = item.frName;
-    wares.xlsxNaming.brName = item.brName;
     wares.xlsxNaming.date = item[targetDateName];
 
     const condition = {
-        branchId: item.branchId,
-        franchiseId: $("#brList").val() !== "0" ? item.franchiseId : 0,
+        franchiseId: item.franchiseId,
     };
     condition[targetDateName] = item[targetDateName].numString();
 

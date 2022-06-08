@@ -6,10 +6,14 @@
  */
 const dtos = {
     send: {
-
+        headTagNoReceiptSearch: {
+            branchId: 'n',
+            franchiseId: 'n',
+            tagNo: 's',
+        },
     },
     receive: {
-        headBrFrInfoList: {
+        headTagNoSearch: {
             branchList: {
                 branchId: 'n',
                 brName: 's',
@@ -18,7 +22,49 @@ const dtos = {
                 franchiseId: 'n',
                 branchId: 'n',
                 frName: 's',
+                frTagNo: 's',
             },
+        },
+
+        headTagNoReceiptSearch: {
+            brName: 's',
+            frName: 's',
+            bcName: 's',
+            bcHp: 's',
+            bcGrade: 's',
+            fdTag: 's',
+            fr_insert_date: 's',
+            fdEstimateDt: 's',
+            bgName: 's',
+            bsName: 's',
+            biName: 's',
+            fdQty: 'n',
+            fdColor: 's',
+            fdPattern: 's',
+            fdUrgentType: 's',
+            fdUrgentYn: 's',
+            fdRetryYn: 's',
+            fdPressed: 'n',
+            fdAdd1Amt: 'n',
+            fdRepairAmt: 'n',
+            fdWhitening: 'n',
+            fdPollution: 'n',
+            fdWaterRepellent: 'n',
+            fdStarch: 'n',
+            fdAdd2Amt: 'n',
+            fdUrgentAmt: 'n',
+            fdNormalAmt: 'n',
+            fdTotAmt: 'n',
+            fdDiscountAmt: 'n',
+            fdState: 's',
+            fdPollutionType: 'n',
+            fdPollutionBack: 'n',
+            fdS2Dt: 's',
+            fdS5Dt: 's',
+            fdS4Dt: 's',
+            fdS3Dt: 's',
+            fdS6Dt: 's',
+            fdS6Time: 's',
         },
     },
 };
@@ -28,15 +74,16 @@ const comms = {
     getBrFrList() {
         CommonUI.ajax('/api/head/headTagNoSearch', 'GET', false, function (res) {
             wares.brFrListData = res.sendData;
-            dv.chk(wares.brFrListData, dtos.receive.headBrFrInfoList, '지사와 가맹점의 이름, id, 소속지사(가맹점의 경우) 받아오기');
+            dv.chk(wares.brFrListData, dtos.receive.headTagNoSearch, '지사와 가맹점의 이름, id, 소속지사(가맹점의 경우) 받아오기');
             setBrFrList(wares.brFrListData, 0, true);
         });
     },
 
     searchTagData(searchCondition) {
-        console.log(searchCondition);
+        dv.chk(searchCondition, dtos.send.headTagNoReceiptSearch, '택번호 검색 조건 보내기');
         CommonUI.ajax('/api/head/headTagNoReceiptSearch', 'GET', searchCondition, function (res) {
             const data = res.sendData.gridListData;
+            dv.chk(data, dtos.receive.headTagNoReceiptSearch, '택번호 검색 결과 리스트 받기');
             grids.f.set(0, data);
             $("#aftTag").val("");
             $("#foreTag").val("");
@@ -366,6 +413,12 @@ const trigs = {
         $("#searchListBtn").on("click", function () {
             searchTagData();
         });
+
+        $('#fullTag, #aftTag').on("keypress", function (e) {
+            if(e.originalEvent.code === "Enter" || e.originalEvent.code === "NumpadEnter") {
+                searchTagData();
+            }
+        });
     },
 };
 
@@ -401,7 +454,6 @@ const searchTagData = function () {
 
 /* 처음 시작시 지사 리스트를 셀렉트박스에 세팅하고, 지사 선택시 가맹점 리스트를 세팅 */
 const setBrFrList = function (brFrList, selectedBranchId, isInitialization = false) {
-    console.log(brFrList);
     if (isInitialization) {
         for (const {branchId, brName} of brFrList.branchList) {
             $('#brList').append(`

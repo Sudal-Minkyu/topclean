@@ -11,7 +11,7 @@ $(function() {
 });
 
 const onPageLoad = function () {
-    runOnlyOnce.setXlsxTitleName('미출고 현황');
+    runOnlyOnce.setXlsxTitleName('미출고현황');
 
     runOnlyOnce.makeSummaryGrid({
         url: '/api/head/headNoReleaseInputList',

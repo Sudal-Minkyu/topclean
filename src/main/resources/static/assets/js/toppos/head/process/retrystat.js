@@ -11,7 +11,7 @@ $(function() {
 });
 
 const onPageLoad = function () {
-    runOnlyOnce.setXlsxTitleName('재세탁 입고 현황');
+    runOnlyOnce.setXlsxTitleName('재세탁입고현황');
 
     runOnlyOnce.makeSummaryGrid({
         url: '/api/head/headRetryList',

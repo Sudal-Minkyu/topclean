@@ -11,7 +11,7 @@ $(function() {
 });
 
 const onPageLoad = function () {
-    runOnlyOnce.setXlsxTitleName('강제 입고 현황 (가맹점)');
+    runOnlyOnce.setXlsxTitleName('강제입고현황(가맹점)');
 
     runOnlyOnce.makeSummaryGrid({
         url: '/api/head/headForceStoreInputList',

@@ -11,7 +11,7 @@ $(function() {
 });
 
 const onPageLoad = function () {
-    runOnlyOnce.setXlsxTitleName('강제 출고 현황 (지사)');
+    runOnlyOnce.setXlsxTitleName('강제출고현황(지사)');
 
     runOnlyOnce.makeSummaryGrid({
         url: '/api/head/headForceReleaseInputList',

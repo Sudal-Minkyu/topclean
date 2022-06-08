@@ -11,7 +11,7 @@ $(function() {
 });
 
 const onPageLoad = function () {
-    runOnlyOnce.setXlsxTitleName('지사 입고 현황');
+    runOnlyOnce.setXlsxTitleName('지사입고현황');
 
     runOnlyOnce.makeSummaryGrid({
         url: '/api/head/headStoreInputList',

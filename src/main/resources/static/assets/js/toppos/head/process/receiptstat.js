@@ -11,7 +11,7 @@ $(function() {
 });
 
 const onPageLoad = function () {
-    runOnlyOnce.setXlsxTitleName('실시간 접수 현황');
+    runOnlyOnce.setXlsxTitleName('실시간접수현황');
 
     runOnlyOnce.makeSummaryGrid({
         url: '/api/head/headReceiptList',

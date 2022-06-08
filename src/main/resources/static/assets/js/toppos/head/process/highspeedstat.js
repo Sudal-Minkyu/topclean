@@ -11,7 +11,7 @@ $(function() {
 });
 
 const onPageLoad = function () {
-    runOnlyOnce.setXlsxTitleName('급세탁 처리 현황');
+    runOnlyOnce.setXlsxTitleName('급세탁처리현황');
 
     runOnlyOnce.makeSummaryGrid({
         url: '/api/head/headQuickReceiptList',
