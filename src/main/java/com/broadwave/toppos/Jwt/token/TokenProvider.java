@@ -63,9 +63,15 @@ public class TokenProvider {
         // Access Token 생성
         Date accessTokenExpiresIn = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
         String accessToken = null;
+        String frbrCode = "";
         if(optionalAccount.isPresent()) {
             if(!optionalAccount.get().getFrCode().equals("not")){
                 franchiseInfoDto = headService.findByFranchiseInfo(optionalAccount.get().getFrCode());
+                if(franchiseInfoDto.getBrCode() == null){
+                    frbrCode = "소속지사없음";
+                }else{
+                    frbrCode = franchiseInfoDto.getBrCode();
+                }
             }
 
             accessToken = Jwts.builder()
@@ -73,7 +79,7 @@ public class TokenProvider {
                     .claim("frTagNo", franchiseInfoDto.getFrTagNo())
                     .claim("frTagType", franchiseInfoDto.getFrTagType())
                     .claim("brCode", optionalAccount.get().getBrCode())
-                    .claim("frbrCode", franchiseInfoDto.getBrCode())
+                    .claim("frbrCode", frbrCode)
                     .setSubject(authentication.getName())       // payload "sub": "name"
                     .claim(AUTHORITIES_KEY, authorities)        // payload "auth": "ROLE_USER"
                     .setExpiration(accessTokenExpiresIn)        // payload "exp": 1516239022 (예시)
@@ -89,6 +95,7 @@ public class TokenProvider {
 
         return TokenDto.builder()
                 .grantType(BEARER_TYPE)
+                .frbrCode(frbrCode)
                 .accessToken(accessToken)
                 .accessTokenExpiresIn(accessTokenExpiresIn.getTime())
                 .refreshToken(refreshToken)

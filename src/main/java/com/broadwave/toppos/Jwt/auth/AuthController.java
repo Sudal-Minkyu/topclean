@@ -4,6 +4,7 @@ import com.broadwave.toppos.Account.AcountDtos.AccountRequestDto;
 import com.broadwave.toppos.Jwt.dto.TokenDto;
 import com.broadwave.toppos.Jwt.dto.TokenRequestDto;
 import com.broadwave.toppos.common.AjaxResponse;
+import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +34,9 @@ public class AuthController {
 
         data.put("tokenDto",tokenDto);
 
-        if(tokenDto != null){
+        if(tokenDto.getFrbrCode().equals("소속지사없음")){
+            return ResponseEntity.ok(res.fail("문자","해당 가맹점은 소속된 지사가 없습니다.","문자","관리자에게 문의하시길 바랍니다."));
+        }else if(tokenDto.getAccessToken() != null) {
             return ResponseEntity.ok(res.dataSendSuccess(data));
         }else{
             return ResponseEntity.ok(res.fail("문자","비밀번호가 틀렸습니다.",null,null));
