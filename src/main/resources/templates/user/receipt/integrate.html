@@ -208,12 +208,17 @@
 				<h3 class="pop__article-header">결제내역</h3>
 				<div class="pop__aricle-content">
 					<!-- 이 안에 넣어주기 -->
-		        	<div id="grid_paymentList" style="height: 400px;"></div>
+		        	<div id="grid_paymentList" style="height: 300px;"></div>
 		        	<span class="pop__comment">*취소 또는 취소 후 적립금 전환 하고자 하는 결제 내역을 선택하세요.</span>
+				</div>
+				<h3 class="pop__article-header">현금영수증 내역</h3>
+				<div class="pop__aricle-content">
+					<div id="grid_cashReceipt" style="height: 100px;"></div>
 				</div>
 			</div>
 			
 			<ul class="pop__console">
+				<li><button class="c-button c-button--red" id="cancelCashReceipt">현금영수증 취소</button></li>
 				<li><button class="c-button" id="closePaymentPop">닫기</button></li>
 				<li><button class="c-button c-button--dark" id="transferPoint">적립금전환</button></li>
 				<li><button class="c-button c-button--red" id="refundPayment">결제취소</button></li>

@@ -380,7 +380,6 @@ const comms = {
         CommonUI.ajax("/api/user/itemGroupAndPriceList", "GET", false, function (req){
             initialData = req.sendData;
             dv.chk(initialData, dtos.receive.itemGroupAndPriceList, "initialData 받아오기");
-            console.log(initialData);
 
             setAddMenu();
             setPreDefinedKeywords();
@@ -415,7 +414,6 @@ const comms = {
         dv.chk(condition, dtos.send.franchiseRequestDetailSearch, "메인그리드 필터링 조건 보내기");
         CommonUI.ajax(grids.s.url.read[0], "GET", condition, function(res) {
             const gridData = res.sendData.gridListData;
-            console.log(gridData);
             gridData.forEach(item => {
                 if(item.fdState === "S1" && item.frFiId && item.frFiCustomerConfirm === "1") {
                     item.fdState = "F";
@@ -544,7 +542,6 @@ const comms = {
     franchiseInspectionYn(target) {
         dv.chk(target, dtos.send.franchiseInspectionYn, "고객 수락 거부 응답 보내기");
         const url = "/api/user/franchiseInspectionYn";
-        console.log(target);
         CommonUI.ajax(url, "PARAM", target, function(res) {
             const searchCondition = {
                 fdId: currentRequest.fdId,
@@ -568,7 +565,6 @@ const comms = {
 
         dv.chk(testObj, dtos.send.putNewInspectNeo, "확인품 등록");
 
-        console.log(testObj);
         CommonUI.ajax("/api/user/franchiseInspectionSave", "POST", formData, function (res) {
             alertSuccess("가맹검품 내역이 저장되었습니다.");
             $("#successBtn").on("click", function () {
@@ -579,7 +575,6 @@ const comms = {
 
     getFrInspectNeo(target) {
         CommonUI.ajax("/api/user/franchiseInspectionInfo", "GET", target, function (res) {
-            console.log(res);
             const data = res.sendData;
 
             wares.currentFrInspect.inspeotInfoDto = data.inspeotInfoDto;
@@ -594,7 +589,6 @@ const comms = {
 
     getBrInspectNeo(target) {
         CommonUI.ajax("/api/user/franchiseInspectionInfo", "GET", target, function (res) {
-            console.log(res);
             const data = res.sendData;
 
             wares.currentBrInspect.inspeotInfoDto = data.inspeotInfoDto;
@@ -639,7 +633,6 @@ const comms = {
     },
 
     sendKakaoMessage(data) {
-        console.log(data);
         dv.chk(data, dtos.send.franchiseInspectionMessageSend, "검품 카카오 메시지 보내기");
         CommonUI.ajax("/api/user/franchiseInspectionMessageSend", "PARAM", data, function (res) {
             alertSuccess("메시지 전송이 완료되었습니다.");
@@ -655,7 +648,7 @@ const comms = {
 const grids = {
     s: { // 그리드 세팅
         targetDiv: [
-            "grid_main", "grid_customerList", "grid_paymentList"
+            "grid_main", "grid_customerList", "grid_paymentList", "grid_cashReceipt"
         ],
         columnLayout: [],
         prop: [],
@@ -669,7 +662,7 @@ const grids = {
                 "/api/user/franchiseRequestDetailSearch",
                 "/api/user/customerInfo",
                 "/api/user/",
-                "/api/user/franchiseInspectionList",
+                "/api/user/",
                 "/api/user/franchiseInspectionList"
             ],
             update: [
@@ -1058,6 +1051,48 @@ const grids = {
             grids.s.columnLayout[3] = [
                 {
                     dataField: "insertDt",
+                    headerText: "승인일자",
+                    dataType: "date",
+                    formatString: "yyyy-mm-dd",
+                }, {
+                    dataField: "fpAmt",
+                    headerText: "승인금액",
+                    style: "grid_textalign_right",
+                    dataType: "numeric",
+                    autoThousandSeparator: "true",
+                }, {
+                    dataField: "fpType",
+                    headerText: "결제방식",
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
+                        let resultText = "";
+                        if(item.fpCatIssuername) {
+                            resultText = item.fpCatIssuername;
+                        }else{
+                            resultText = CommonData.name.fpType[value];
+                        }
+                        return resultText;
+                    }
+                },
+            ];
+
+            grids.s.prop[3] = {
+                editable : false,
+                selectionMode : "singleRow",
+                noDataMessage : "출력할 데이터가 없습니다.",
+                showAutoNoDataMessage: false,
+                enableColumnResize : false,
+                showRowAllCheckBox: false,
+                showRowCheckColumn: false,
+                showRowNumColumn : false,
+                showStateColumn : false,
+                enableFilter : true,
+                rowHeight : 48,
+                headerHeight : 48,
+            };
+
+            grids.s.columnLayout[4] = [
+                {
+                    dataField: "insertDt",
                     headerText: "등록일시",
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
@@ -1076,7 +1111,7 @@ const grids = {
                 },
             ];
 
-            grids.s.prop[3] = {
+            grids.s.prop[4] = {
                 editable : false,
                 selectionMode : "singleRow",
                 noDataMessage : "출력할 데이터가 없습니다.",
@@ -1091,7 +1126,7 @@ const grids = {
                 headerHeight : 48,
             };
 
-            grids.s.columnLayout[4] = [
+            grids.s.columnLayout[5] = [
                 {
                     dataField: "insertDt",
                     headerText: "등록일시",
@@ -1124,7 +1159,7 @@ const grids = {
                 },
             ];
 
-            grids.s.prop[4] = {
+            grids.s.prop[5] = {
                 editable : false,
                 selectionMode : "singleRow",
                 noDataMessage : "출력할 데이터가 없습니다.",
@@ -1633,7 +1668,6 @@ const trigs = {
             });
         });
         $("#frPhotoList").on("click", ".deletePhotoBtn", function() {
-            console.log(this);
             const ffId = $(this).attr("data-ffId");
             const addIdx = $(this).attr("data-addIdx");
             if(ffId) {
@@ -1643,7 +1677,6 @@ const trigs = {
             if(addIdx) {
                 delete wares.currentFrInspect.addPhotoList[addIdx];
             }
-            console.log($(this).parents(".motherLi"));
             $(this).parents(".motherLi").remove();
         });
 
@@ -1656,7 +1689,6 @@ const trigs = {
             }else{
                 htmlText = this.innerHTML;
             }
-            console.log(htmlText);
             $("#frEditFiComment").val(currentHtml + htmlText);
         })
 
@@ -2182,6 +2214,7 @@ function cancelPaymentPop(frId) {
     comms.getPaymentList(frId);
     $("#paymentListPop").addClass("active");
     grids.f.resize(2);
+    grids.f.resize(3);
 }
 
 function cancelPayment(cancelType) {
