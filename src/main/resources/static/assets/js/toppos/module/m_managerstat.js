@@ -427,13 +427,9 @@ const runOnlyOnce = {
             }, {
                 dataField: 'fdS6Type',
                 headerText: '반품인도<br>여부',
+                labelFunction: processChkChar,
                 visible: prop.fdS6TypeVisible,
-                width: 90,
-                dataType: 'date',
-                renderer : {
-                    type: 'TemplateRenderer',
-                },
-                formatString: dateTimeFormat,
+                width: 70,
             }, {
                 dataField: 'fdS6Time',
                 headerText: '실인도<br>일시',

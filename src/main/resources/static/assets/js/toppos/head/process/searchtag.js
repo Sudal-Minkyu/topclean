@@ -27,6 +27,7 @@ const dtos = {
         },
 
         headTagNoReceiptSearch: {
+            fdS6Type: 's',
             brName: 's',
             frName: 's',
             bcName: 's',
@@ -83,6 +84,7 @@ const comms = {
         dv.chk(searchCondition, dtos.send.headTagNoReceiptSearch, '택번호 검색 조건 보내기');
         CommonUI.ajax('/api/head/headTagNoReceiptSearch', 'GET', searchCondition, function (res) {
             const data = res.sendData.gridListData;
+            console.log(data);
             dv.chk(data, dtos.receive.headTagNoReceiptSearch, '택번호 검색 결과 리스트 받기');
             grids.f.set(0, data);
             $("#aftTag").val("");
@@ -331,6 +333,11 @@ const grids = {
                             formatString: dateFormat,
                         },
                     ],
+                }, {
+                    dataField: 'fdS6Type',
+                    headerText: '반품인도<br>여부',
+                    labelFunction: processChkChar,
+                    width: 70,
                 }, {
                     dataField: 'fdS6Time',
                     headerText: '실인도<br>일시',

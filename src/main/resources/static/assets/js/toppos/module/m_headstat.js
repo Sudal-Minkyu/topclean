@@ -217,6 +217,9 @@ const runOnlyOnce = {
     /* grid_detail 그리드의 기본 생성을 담당한다. */
     makeDetailGrid(prop) {
         urls.getDetailData = prop.url;
+        if(prop.fdS6TypeVisible) {
+            dtos.receive.detailAPI.fdS6Type = 's';
+        }
         const processChkChar = function (_rowIndex, _columnIndex, value, _headerText, _item) {
             return value ? '√' : '';
         };
@@ -442,13 +445,9 @@ const runOnlyOnce = {
             }, {
                 dataField: 'fdS6Type',
                 headerText: '반품인도<br>여부',
+                labelFunction: processChkChar,
                 visible: prop.fdS6TypeVisible,
-                width: 90,
-                dataType: 'date',
-                renderer : {
-                    type: 'TemplateRenderer',
-                },
-                formatString: dateTimeFormat,
+                width: 70,
             }, {
                 dataField: 'fdS6Time',
                 headerText: '실인도<br>일시',
