@@ -68,6 +68,7 @@ public class RequestReturnReceiptListSubDto {
     private String fdS3Dt; // 지사반송일
     private String fdS6Dt; // 고객인도일
     private LocalDateTime fdS6Time; // 고객인도시간
+    private String fdS6Type; // 고객인도타입(01:일반인도, 02:반품인도(강제출고건))
 
     public Integer getFdPollutionType() {
         return fdPollutionType + fdPollutionBack;

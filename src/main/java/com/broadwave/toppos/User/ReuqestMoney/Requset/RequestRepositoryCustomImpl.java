@@ -1252,7 +1252,8 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
                         requestDetail.fdS4Dt,
                         requestDetail.fdS3Dt,
                         requestDetail.fdS6Dt,
-                        requestDetail.fdS6Time
+                        requestDetail.fdS6Time,
+                        requestDetail.fdS6Type
 
                 ));
 
@@ -1359,7 +1360,8 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
                         requestDetail.fdS4Dt,
                         requestDetail.fdS3Dt,
                         requestDetail.fdS6Dt,
-                        requestDetail.fdS6Time
+                        requestDetail.fdS6Time,
+                        requestDetail.fdS6Type
 
                 ));
 
