@@ -208,4 +208,15 @@ public class HeadController {
     @RequestMapping("refundstat")
     public String refundstat(){ return "head/process/refundstat"; }
 
+
+    // 정산 현황
+    // 본사/지사간 정산현황
+    // 지사 월 정산 내역
+    @RequestMapping("hqbrmonthly")
+    public String hqbrmonthly(){ return "head/calculate/hqbr/brmonthly"; }
+
+    // 지사/가맹점간 정산현황
+    // 가맹점 일 정산 현황
+    @RequestMapping("brfrdaily")
+    public String brfrdaily(){ return "head/calculate/brfr/daily"; }
 }
