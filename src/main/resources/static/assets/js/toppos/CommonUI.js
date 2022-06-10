@@ -217,8 +217,11 @@ class CommonUIClass {
                 res = JSON.parse(res);
                 console.log(res);
                 if(res.STATUS === "SUCCESS") {
+                    // const targetReceipt = {
+                    //     fcId: paymentData.fcId,
+                    // }
                     /* 현금영수증 취소 여부를 알리는 API */
-                    // CommonUI.ajax("/api/user/", "PARAM", paymentData, function () {
+                    // CommonUI.ajax("/api/user/", "PARAM", targetReceipt, function () {
                     //     alertSuccess("현금영수증을 취소 하였습니다.");
                     // });
                     return callback();
