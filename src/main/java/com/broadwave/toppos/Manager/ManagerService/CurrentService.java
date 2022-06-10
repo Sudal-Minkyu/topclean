@@ -327,7 +327,7 @@ public class CurrentService {
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
-    // 본사 지사출고현황 - 오른쪽 리스트 호출API
+    // 지사출고현황 - 오른쪽 리스트 호출API
     public ResponseEntity<Map<String, Object>> headReleaseInputSubList(Long branchId, Long franchiseId, String fdS4Dt) {
         log.info("headReleaseInputSubList 호출");
 
@@ -364,7 +364,7 @@ public class CurrentService {
     }
 
     // 본사 강제출고현황 - 오른쪽 리스트 호출API
-    public ResponseEntity<Map<String, Object>> headForceReleaseInputSubList(Long branchId, Long franchiseId, String fdS7Dt) {
+    public ResponseEntity<Map<String, Object>> forceReleaseInputSubList(Long branchId, Long franchiseId, String fdS7Dt) {
         log.info("headForceReleaseInputSubList 호출");
 
         log.info("branchId  : "+branchId);
@@ -381,9 +381,9 @@ public class CurrentService {
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
-    // 본사 강제입고현황 - 왼쪽 리스트 호출API
-    public ResponseEntity<Map<String, Object>> headForceStoreInputList(Long branchId, Long franchiseId, String filterFromDt, String filterToDt, HttpServletRequest request) {
-        log.info("headForceStoreInputList 호출");
+    // 강제입고현황 - 왼쪽 리스트 호출API
+    public ResponseEntity<Map<String, Object>> forceStoreInputList(Long branchId, Long franchiseId, String filterFromDt, String filterToDt, HttpServletRequest request) {
+        log.info("forceStoreInputList 호출");
 
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
@@ -399,9 +399,9 @@ public class CurrentService {
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
-    // 본사 강제입고현황 - 오른쪽 리스트 호출API
-    public ResponseEntity<Map<String, Object>> headForceStoreInputSubList(Long branchId, Long franchiseId, String fdS8Dt) {
-        log.info("headForceStoreInputSubList 호출");
+    // 강제입고현황 - 오른쪽 리스트 호출API
+    public ResponseEntity<Map<String, Object>> forceStoreInputSubList(Long branchId, Long franchiseId, String fdS8Dt) {
+        log.info("forceStoreInputSubList 호출");
 
         log.info("branchId  : "+branchId);
         log.info("franchiseId  : "+franchiseId);
@@ -453,9 +453,9 @@ public class CurrentService {
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
-    // 본사 재세탁입고 현황 - 왼쪽 리스트 호출API
-    public ResponseEntity<Map<String, Object>> headRetryList(Long branchId, Long franchiseId, String filterFromDt, String filterToDt, HttpServletRequest request) {
-        log.info("headRetryList 호출");
+    // 재세탁입고 현황 - 왼쪽 리스트 호출API
+    public ResponseEntity<Map<String, Object>> retryList(Long branchId, Long franchiseId, String filterFromDt, String filterToDt, HttpServletRequest request) {
+        log.info("retryList 호출");
 
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
@@ -471,9 +471,9 @@ public class CurrentService {
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
-    // 본사 재세탁입고 현황 - 오른쪽 리스트 호출API
-    public ResponseEntity<Map<String, Object>> headRetrySubList(Long branchId, Long franchiseId, String frYyyymmdd) {
-        log.info("headRetrySubList 호출");
+    // 재세탁입고 현황 - 오른쪽 리스트 호출API
+    public ResponseEntity<Map<String, Object>> retrySubList(Long branchId, Long franchiseId, String frYyyymmdd) {
+        log.info("retrySubList 호출");
 
         log.info("branchId  : "+branchId);
         log.info("franchiseId  : "+franchiseId);

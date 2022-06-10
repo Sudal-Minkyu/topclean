@@ -163,9 +163,12 @@ public class FranchiseRepositoryCustomImpl extends QuerydslRepositorySupport imp
     public List<FranchiseManagerListDto> findByManagerInFranchise(String brCode) {
 
         QFranchise franchise = QFranchise.franchise;
+        QBranch branch = QBranch.branch;
 
         JPQLQuery<FranchiseManagerListDto> query = from(franchise)
+                .innerJoin(branch).on(branch.eq(franchise.brId))
                 .select(Projections.constructor(FranchiseManagerListDto.class,
+                        branch.id,
                         franchise.id,
                         franchise.frName,
                         franchise.frTagNo

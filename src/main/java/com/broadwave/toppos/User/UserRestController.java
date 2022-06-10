@@ -21,7 +21,7 @@ import com.broadwave.toppos.Manager.ManagerService.TagNoticeService;
 import com.broadwave.toppos.Manager.TagGallery.TagGalleryDtos.TagGalleryMainListDto;
 import com.broadwave.toppos.User.Addprocess.AddprocessDtos.AddprocessDto;
 import com.broadwave.toppos.User.Addprocess.AddprocessSet;
-import com.broadwave.toppos.User.CashReceipt.CashReceiptMapperDto;
+import com.broadwave.toppos.User.CashReceipt.CashReceiptDtos.CashReceiptMapperDto;
 import com.broadwave.toppos.User.Customer.Customer;
 import com.broadwave.toppos.User.Customer.CustomerDtos.CustomerInfoDto;
 import com.broadwave.toppos.User.Customer.CustomerDtos.CustomerListDto;
@@ -808,6 +808,20 @@ public class UserRestController {
         return receiptService.requestPaymentCashReceipt(cashReceiptMapperDto, request);
     }
 
+    // 현금영수증 기본데이터 출력 API
+    @GetMapping("requestCashReceiptData")
+    @ApiOperation(value = "현금영수증 기본데이터" , notes = "현금영수증 기본데이터를 요청한다 ")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
+    public ResponseEntity<Map<String,Object>> requestCashReceiptData(HttpServletRequest request, @RequestParam(value="frId", defaultValue="") Long frId){
+        return receiptService.requestCashReceiptData(request, frId);
+    }
+
+    // 현금영수증 취소 API
+    @PostMapping("requestCashReceiptCencel")
+    public ResponseEntity<Map<String,Object>> requestCashReceiptCencel(HttpServletRequest request, @RequestParam(value="fcId", defaultValue="") Long fcId){
+        return receiptService.requestCashReceiptCencel(request, fcId);
+    }
+    
     // 접수 사진촬영 API
     @PostMapping("takePicture")
     public ResponseEntity<Map<String,Object>> takePicture(MultipartHttpServletRequest multi) throws IOException {

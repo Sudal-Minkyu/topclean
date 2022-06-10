@@ -19,6 +19,7 @@ import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.Insp
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.manager.RequestDetailTagSearchListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.manager.RequestWeekAmountDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.user.RequestCustomerUnCollectDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestRepository;
 import com.broadwave.toppos.User.UserLoginLog.UserLoginLogDto;
 import com.broadwave.toppos.User.UserLoginLog.UserLoginLogRepository;
@@ -102,7 +103,8 @@ public class ManagerService {
 
     //  현 지사의 소속된 가맹점명 리스트 호출(앞으로 공용으로 쓰일 것)
     public ResponseEntity<Map<String, Object>> branchBelongList(HttpServletRequest request) {
-        log.info("managerBelongList 호출");
+        log.info("branchBelongList 호출");
+
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
 
@@ -114,7 +116,19 @@ public class ManagerService {
         log.info("현재 접속한 지사 코드 : "+brCode);
 
         List<FranchiseManagerListDto> franchiseManagerListDtos =  franchiseRepository.findByManagerInFranchise(brCode);
-        data.put("franchiseList",franchiseManagerListDtos);
+        List<HashMap<String,Object>> franchiseManagerData = new ArrayList<>();
+        HashMap<String,Object> franchiseManagerListInfo;
+        for (FranchiseManagerListDto franchiseManagerListDto: franchiseManagerListDtos) {
+            franchiseManagerListInfo = new HashMap<>();
+            franchiseManagerListInfo.put("frId", franchiseManagerListDto.getFrId());
+            franchiseManagerListInfo.put("frName", franchiseManagerListDto.getFrName());
+            franchiseManagerListInfo.put("frTagNo", franchiseManagerListDto.getFrTagNo());
+            franchiseManagerData.add(franchiseManagerListInfo);
+        }
+        if(franchiseManagerListDtos.size() != 0){
+            data.put("branchId",franchiseManagerListDtos.get(0).getBranchId());
+        }
+        data.put("franchiseList",franchiseManagerData);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }

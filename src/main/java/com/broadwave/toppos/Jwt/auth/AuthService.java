@@ -70,7 +70,12 @@ public class AuthService {
                     .value(tokenDto.getRefreshToken())
                     .build();
 
-            refreshTokenRepository.save(refreshToken);
+            if(tokenDto.getFrbrCode().equals("소속지사없음")){
+                loginlog.setSucccessYn("N");
+            }else{
+                refreshTokenRepository.save(refreshToken);
+            }
+
             loginlogRepository.save(loginlog);
 
             // 5. 토큰 발급

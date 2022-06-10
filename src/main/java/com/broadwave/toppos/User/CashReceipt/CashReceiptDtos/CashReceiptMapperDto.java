@@ -1,4 +1,4 @@
-package com.broadwave.toppos.User.CashReceipt;
+package com.broadwave.toppos.User.CashReceipt.CashReceiptDtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -5,7 +5,8 @@ import com.broadwave.toppos.Head.HeadService.HeadService;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.Manager.Calendar.BranchCalendarRepository;
 import com.broadwave.toppos.User.CashReceipt.CashReceipt;
-import com.broadwave.toppos.User.CashReceipt.CashReceiptMapperDto;
+import com.broadwave.toppos.User.CashReceipt.CashReceiptDtos.CashReceiptDto;
+import com.broadwave.toppos.User.CashReceipt.CashReceiptDtos.CashReceiptMapperDto;
 import com.broadwave.toppos.User.CashReceipt.CashReceiptRepository;
 import com.broadwave.toppos.User.Customer.Customer;
 import com.broadwave.toppos.User.Customer.CustomerRepository;
@@ -1178,6 +1179,7 @@ public class ReceiptService {
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
+//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ 현금영수증 관련 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     // 접수페이지 현금영수증발행 API
     public ResponseEntity<Map<String, Object>> requestPaymentCashReceipt(CashReceiptMapperDto cashReceiptMapperDto, HttpServletRequest request) {
         log.info("requestPaymentCashReceipt 호출");
@@ -1207,6 +1209,53 @@ public class ReceiptService {
             cashReceiptRepository.save(cashReceipt);
         } else {
             return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "결제 할 접수"+ResponseErrorCode.TP009.getDesc(), "문자", "접수코드 : "+cashReceiptMapperDto.getFrNo()));
+        }
+
+        return ResponseEntity.ok(res.success());
+    }
+
+    // 현금영수증 기본데이터 출력 API
+    public ResponseEntity<Map<String, Object>> requestCashReceiptData(HttpServletRequest request, Long frId) {
+        log.info("requestCashReceiptData 호출");
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
+        String frbrCode = (String) claims.get("frbrCode"); // 소속된 지사 코드
+        String login_id = claims.getSubject(); // 현재 아이디
+        log.info("현재 접속한 아이디 : "+login_id);
+        log.info("현재 접속한 가맹점 코드 : "+frCode);
+        log.info("소속된 지사 코드 : "+frbrCode);
+
+        CashReceiptDto cashReceiptDto = cashReceiptRepository.findByCashReceipt(frId, frCode);
+        data.put("gridListData",cashReceiptDto);
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
+    // 현금영수증 취소 API
+    public ResponseEntity<Map<String, Object>> requestCashReceiptCencel(HttpServletRequest request, Long fcId) {
+        log.info("requestCashReceiptCencel 호출");
+
+        AjaxResponse res = new AjaxResponse();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
+        String frbrCode = (String) claims.get("frbrCode"); // 소속된 지사 코드
+        String login_id = claims.getSubject(); // 현재 아이디
+        log.info("현재 접속한 아이디 : "+login_id);
+        log.info("현재 접속한 가맹점 코드 : "+frCode);
+        log.info("소속된 지사 코드 : "+frbrCode);
+
+        Optional<CashReceipt> optionalCashReceipt = cashReceiptRepository.findById(fcId);
+        if(optionalCashReceipt.isPresent()){
+            optionalCashReceipt.get().setFcCancelYn("Y");
+        }else{
+            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP030.getCode(), "결제 정보가 "+ResponseErrorCode.TP030.getDesc(), "문자", "새로고침 이후 다시 시도해주세요."));
         }
 
         return ResponseEntity.ok(res.success());
@@ -1268,10 +1317,10 @@ public class ReceiptService {
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
-    // 본사 세탁 입고현황 - 왼쪽 리스트 호출API
-    public ResponseEntity<Map<String, Object>> headUrgentReceiptList(Long branchId, Long franchiseId, String filterFromDt, String filterToDt,
+    // 세탁 입고현황 - 왼쪽 리스트 호출API
+    public ResponseEntity<Map<String, Object>> urgentReceiptList(Long branchId, Long franchiseId, String filterFromDt, String filterToDt,
                                                                            String type, String fdUrgentYn, String fdUrgentType) {
-        log.info("headUrgentReceiptList 호출");
+        log.info("urgentReceiptList 호출");
 
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
@@ -1317,10 +1366,10 @@ public class ReceiptService {
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
-    // 본사 세탁 입고현황 - 오른쪽 리스트 호출API
-    public ResponseEntity<Map<String, Object>> headUrgentReceiptSubList(Long branchId, Long franchiseId, String frYyyymmdd,
+    // 세탁 입고현황 - 오른쪽 리스트 호출API
+    public ResponseEntity<Map<String, Object>> urgentReceiptSubList(Long branchId, Long franchiseId, String frYyyymmdd,
                                                                      String type, String fdUrgentYn, String fdUrgentType) {
-        log.info("headUrgentReceiptSubList 호출");
+        log.info("urgentReceiptSubList 호출");
 
         log.info("branchId  : "+branchId);
         log.info("franchiseId  : "+franchiseId);
@@ -1346,8 +1395,8 @@ public class ReceiptService {
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
-    // 본사 일반세탁 입고현황 - 왼쪽 리스트 호출API
-    public ResponseEntity<Map<String, Object>> headReturnReceiptList(Long branchId, Long franchiseId, String filterFromDt, String filterToDt) {
+    // 일반세탁 반품현황 - 왼쪽 리스트 호출API
+    public ResponseEntity<Map<String, Object>> returnReceiptList(Long branchId, Long franchiseId, String filterFromDt, String filterToDt) {
         log.info("headReturnReceiptList 호출");
 
         AjaxResponse res = new AjaxResponse();
@@ -1384,8 +1433,8 @@ public class ReceiptService {
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
-    // 본사 일반세탁 입고현황 - 오른쪽 리스트 호출API
-    public ResponseEntity<Map<String, Object>> headReturnReceiptSubList(Long branchId, Long franchiseId, String fdS6Dt) {
+    // 일반세탁 반품현황 - 오른쪽 리스트 호출API
+    public ResponseEntity<Map<String, Object>> returnReceiptSubList(Long branchId, Long franchiseId, String fdS6Dt) {
         log.info("headReturnReceiptSubList 호출");
 
         log.info("branchId  : "+branchId);
