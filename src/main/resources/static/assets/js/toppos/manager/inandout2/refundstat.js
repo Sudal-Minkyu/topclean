@@ -14,7 +14,7 @@ const onPageLoad = function () {
     runOnlyOnce.setXlsxTitleName('고객반품인도현황');
 
     runOnlyOnce.makeSummaryGrid({
-        url: '/api/manager/managerReturnReceiptList',
+        url: '/api/manager/branchReturnReceiptList',
         targetDate: {
             dataField: 'fdS6Dt',
             headerText: '반품출고일',
@@ -22,7 +22,7 @@ const onPageLoad = function () {
     });
 
     runOnlyOnce.makeDetailGrid({
-        url: '/api/manager/managerReturnReceiptSubList',
+        url: '/api/manager/branchReturnReceiptSubList',
         fdUrgentTypeVisible: true,
         fdS6TypeVisible: true,
     });

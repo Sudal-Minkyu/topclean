@@ -442,13 +442,23 @@ const comms = {
     getPaymentList(frId) {
         const condition = {frId: frId};
         dv.chk(condition, dtos.send.franchiseDetailCencelDataList, "결제 리스트 받아오기");
-        const url = "/api/user/franchiseDetailCencelDataList";
-        CommonUI.ajax(url, "GET", condition, function(res) {
+        CommonUI.ajax("/api/user/franchiseDetailCencelDataList", "GET", condition, function(res) {
             const data = res.sendData;
             dv.chk(data, dtos.receive.franchiseDetailCencelDataList);
             collectedCancelPaymentProcess(data.fdTag);
             grids.f.setData(2, data.gridListData);
         });
+
+        // CommonUI.ajax("/api/user/", "GET", condition, function(res) {
+        //     const data = res.sendData;
+        //     console.log("현금영수증 리스트 데이터");
+        //     if (data.gridListData.length) {
+        //         $(".cashReceiptPanel").show();
+        //     }
+        //     dv.chk(data, dtos.receive.franchiseDetailCencelDataList);
+        //     collectedCancelPaymentProcess(data.fdTag);
+        //     grids.f.setData(3, data.gridListData);
+        // });
     },
 
     cancelPayment(target) {
@@ -461,6 +471,12 @@ const comms = {
                 alertSuccess("적립금 전환을 완료하였습니다.");
             }
             comms.getPaymentList(currentRequest.frId);
+        });
+    },
+
+    cancelCashReceipt(paymentData) {
+        CommonUI.toppos.cancelCashReceipt(paymentData, function () {
+            grids.f.clearData(3);
         });
     },
 
@@ -637,7 +653,7 @@ const comms = {
         CommonUI.ajax("/api/user/franchiseInspectionMessageSend", "PARAM", data, function (res) {
             alertSuccess("메시지 전송이 완료되었습니다.");
         });
-    }
+    },
 };
 
 /* .s : AUI 그리드 관련 설정들
@@ -1458,6 +1474,10 @@ const trigs = {
             });
         });
 
+        $("#cancelCashReceipt").on("click", function () {
+            cancelCashReceipt();
+        });
+
     },
     modify() {
         $("#inReceiptPop input[type='radio']").on("change", function(){
@@ -1604,6 +1624,8 @@ const trigs = {
                     }
                 });
             }
+            $(".cashReceiptPanel").hide();
+
             $("#paymentListPop").removeClass("active");
         });
 
@@ -2212,6 +2234,7 @@ function removeEventsFromElement(element) {
 
 function cancelPaymentPop(frId) {
     comms.getPaymentList(frId);
+    $(".cashReceiptPanel").hide();
     $("#paymentListPop").addClass("active");
     grids.f.resize(2);
     grids.f.resize(3);
@@ -2797,4 +2820,17 @@ function checkIncreaseAmt() {
     } else {
         currentRequest.fdModifyAmtYn = 'N';
     }
+}
+
+function cancelCashReceipt() {
+    const item = grids.f.getSelectedItem(3);
+    console.log(item);
+    // if (item.length) {
+    //     const paymentData = {
+    //
+    //     };
+    //     comms.cancelCashReceipt(paymentData);
+    // } else {
+    //     alertCaution("취소하실 현금영수증을 선택해 주세요.", 1);
+    // }
 }

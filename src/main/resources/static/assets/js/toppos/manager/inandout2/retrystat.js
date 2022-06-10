@@ -14,7 +14,7 @@ const onPageLoad = function () {
     runOnlyOnce.setXlsxTitleName('재세탁입고현황');
 
     runOnlyOnce.makeSummaryGrid({
-        url: '/api/manager/managerRetryList',
+        url: '/api/manager/branchRetryList',
         targetDate: {
             dataField: 'frYyyymmdd',
             headerText: '접수일자',
@@ -23,7 +23,7 @@ const onPageLoad = function () {
     });
 
     runOnlyOnce.makeDetailGrid({
-        url: '/api/manager/managerRetrySubList',
+        url: '/api/manager/branchRetrySubList',
         fdUrgentTypeVisible: true,
         fdS6TypeVisible: false,
     });

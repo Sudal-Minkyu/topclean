@@ -14,7 +14,7 @@ const onPageLoad = function () {
     runOnlyOnce.setXlsxTitleName('급세탁처리현황');
 
     runOnlyOnce.makeSummaryGrid({
-        url: '/api/manager/managerQuickReceiptList',
+        url: '/api/manager/branchQuickReceiptList',
         targetDate: {
             dataField: 'frYyyymmdd',
             headerText: '접수일자',
@@ -22,7 +22,7 @@ const onPageLoad = function () {
     });
 
     runOnlyOnce.makeDetailGrid({
-        url: '/api/manager/managerQuickReceiptSubList',
+        url: '/api/manager/branchQuickReceiptSubList',
         fdUrgentTypeVisible: false,
         fdS6TypeVisible: false,
     });
