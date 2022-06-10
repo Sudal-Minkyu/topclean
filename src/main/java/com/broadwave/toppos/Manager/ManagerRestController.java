@@ -776,13 +776,13 @@ public class ManagerRestController {
         return currentService.forceStoreInputList(branchId, franchiseId, filterFromDt, filterToDt, request);
     }
 
-    // 지사 강제출고현황 - 오른쪽 리스트 호출API
+    // 지사 강제입고현황 - 오른쪽 리스트 호출API
     @GetMapping("branchForceStoreInputSubList")
     @ApiOperation(value = "지사 강제출고현황 리스트", notes = "지사가 강제출고현황 오른쪽 리스트를 요청한다.")
     @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", value = "JWT Token", required = true, dataType = "string", paramType = "header")})
     public ResponseEntity<Map<String, Object>> branchForceStoreInputSubList(@RequestParam("branchId") Long branchId, @RequestParam("franchiseId") Long franchiseId,
-                                                                            @RequestParam("fdS7Dt") String fdS7Dt) {
-        return currentService.forceStoreInputSubList(branchId, franchiseId, fdS7Dt);
+                                                                            @RequestParam("fdS8Dt") String fdS8Dt) {
+        return currentService.forceStoreInputSubList(branchId, franchiseId, fdS8Dt);
     }
 
 }
