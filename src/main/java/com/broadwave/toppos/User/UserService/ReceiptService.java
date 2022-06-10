@@ -1254,6 +1254,7 @@ public class ReceiptService {
         Optional<CashReceipt> optionalCashReceipt = cashReceiptRepository.findById(fcId);
         if(optionalCashReceipt.isPresent()){
             optionalCashReceipt.get().setFcCancelYn("Y");
+            cashReceiptRepository.save(optionalCashReceipt.get());
         }else{
             return ResponseEntity.ok(res.fail(ResponseErrorCode.TP030.getCode(), "결제 정보가 "+ResponseErrorCode.TP030.getDesc(), "문자", "새로고침 이후 다시 시도해주세요."));
         }
