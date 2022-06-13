@@ -2,7 +2,6 @@ package com.broadwave.toppos.Head.Branch;
 
 import com.broadwave.toppos.Head.Branch.BranchDtos.head.BranchSearchInfoDto;
 import com.broadwave.toppos.Head.Branoh.BranchDtos.BranchListDto;
-import com.broadwave.toppos.Head.Branch.QBranch;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;

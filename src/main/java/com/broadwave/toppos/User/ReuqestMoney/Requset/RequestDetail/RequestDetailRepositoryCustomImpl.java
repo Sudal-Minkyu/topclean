@@ -2189,6 +2189,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                 .innerJoin(franchise).on(request.frCode.eq(franchise.frCode))
                 .where(request.frConfirmYn.eq("Y"))
                 .where(request.brCode.eq(brCode).and(requestDetail.fdCancel.eq("N")))
+                .where(requestDetail.fdState.in("S2","S7","O1","O2"))
                 .select(Projections.constructor(RequestDetailBranchUnReleaseCurrentListDto.class,
                         request.frCode,
                         franchise.frName,
@@ -2207,8 +2208,6 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         }else{
             query.where(requestDetail.fdEstimateDt.goe(filterFromDt).and(requestDetail.fdEstimateDt.loe(filterToDt)));
         }
-
-        query.where(requestDetail.fdState.eq("S2"));
 
         return query.fetch();
     }
@@ -2231,6 +2230,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                 .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
                 .where(request.frConfirmYn.eq("Y"))
                 .where(request.brCode.eq(brCode).and(requestDetail.fdCancel.eq("N")))
+                .where(requestDetail.fdState.in("S2","S7","O1","O2"))
                 .select(Projections.constructor(RequestDetailBranchUnReleaseCurrentRightListDto.class,
 
                         request.frRefType,
@@ -2292,8 +2292,6 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         }else{
             query.where(requestDetail.fdEstimateDt.goe(filterFromDt).and(requestDetail.fdEstimateDt.loe(filterToDt)));
         }
-
-        query.where(requestDetail.fdState.eq("S2"));
 
         return query.fetch();
     }
@@ -3207,7 +3205,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         sb.append("INNER JOIN bs_branch d on d.br_code = c.br_code \n");
         sb.append("WHERE \n");
         sb.append("a.fr_confirm_yn='Y' \n");
-        sb.append("AND b.fd_state='S2' \n");
+        sb.append("AND b.fd_state IN('S2','S7','O1','O2') \n");
         sb.append("AND b.fd_cancel='N' \n");
         sb.append("AND b.fd_estimate_dt>= ?1 \n");
         sb.append("AND b.fd_estimate_dt<= ?2 \n");
@@ -3339,7 +3337,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
             query.where(franchise.id.eq(franchiseId));
         }
 
-        query.where(requestDetail.fdEstimateDt.eq(fdEstimateDt).and(requestDetail.fdState.eq("S2")));
+        query.where(requestDetail.fdEstimateDt.eq(fdEstimateDt).and(requestDetail.fdState.in("S2","S7","O1","O2")));
 
         return query.fetch();
     }
