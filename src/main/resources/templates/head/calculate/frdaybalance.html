@@ -10,7 +10,7 @@
 
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
-    <script type="module" src="/assets/js/toppos/head/calculate/brfr/daily.js"></script>
+    <script type="module" src="/assets/js/toppos/head/calculate/frdaybalance.js"></script>
     <!-- 엑셀 다운로드 기능을 사용하기 위함 -->
     <script src="/assets/js/filesaver/FileSaver.min.js"></script>
 </th:block>
@@ -52,7 +52,7 @@
                                 <div class="inquiry__input">
                                     <div class="c-select">
                                         <select id="brList">
-                                            <option value="0">전체선택</option>
+                                            <option value="0">필수선택</option>
                                         </select>
                                     </div>
                                 </div>
@@ -62,7 +62,7 @@
                                 <div class="inquiry__input">
                                     <div class="c-select">
                                         <select id="frList" disabled="">
-                                            <option value="0">전체선택</option>
+                                            <option value="0">필수선택</option>
                                         </select>
                                     </div>
                                 </div>
@@ -70,7 +70,7 @@
                         </ul>
                     </div>
                     <div class="inquiry__button">
-                        <button class="c-button c-button--small c-button--darksolid">조회</button>
+                        <button id="searchListBtn" class="c-button c-button--small c-button--darksolid">조회</button>
                     </div>
                 </div>
             </div>
@@ -79,7 +79,7 @@
         <div class="article">
             <div class="article__body">
                 <div style="height: 570px; margin-top: 20px; border: 1px solid #ddd">
-                    <div id="grid_main" style="height: 570px;"></div>
+                    <div id="grid_main" class="grid--header-border" style="height: 570px;"></div>
                 </div>
             </div>
         </div>

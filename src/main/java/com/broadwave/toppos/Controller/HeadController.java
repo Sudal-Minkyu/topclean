@@ -212,11 +212,11 @@ public class HeadController {
     // 정산 현황
     // 본사/지사간 정산현황
     // 지사 월 정산 내역
-    @RequestMapping("hqbrmonthly")
-    public String hqbrmonthly(){ return "head/calculate/hqbr/brmonthly"; }
+    @RequestMapping("brmonthbalance")
+    public String brmonthbalance(){ return "head/calculate/brmonthbalance"; }
 
     // 지사/가맹점간 정산현황
     // 가맹점 일 정산 현황
-    @RequestMapping("brfrdaily")
-    public String brfrdaily(){ return "head/calculate/brfr/daily"; }
+    @RequestMapping("frdaybalance")
+    public String frdaybalance(){ return "head/calculate/frdaybalance"; }
 }

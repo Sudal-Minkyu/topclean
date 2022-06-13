@@ -17,7 +17,7 @@ const comms = {
     searchSummaryData(searchCondition) {
         CommonUI.ajax('/api/manager/branchReceiptOutsouringList', 'GET', searchCondition, function (res) {
             const data = res.sendData.gridListData;
-            grids.setData(gridElemets.id[0], data);
+            grids.setData(gridElements.id[0], data);
             grids.clear(grids.id[0]);
         });
     },
@@ -31,7 +31,7 @@ const comms = {
     },
 };
 
-const gridElemets = {
+const gridElements = {
     id: ['grid_summary'],
     columnLayout: [],
     prop: [],
@@ -91,7 +91,7 @@ const gridElemets = {
     },
 
     setEvenets() {
-        AUIGrid.bind(gridElemets.id[0], 'cellClick', function (e) {
+        AUIGrid.bind(gridElements.id[0], 'cellClick', function (e) {
             const condition = {
                 fdO1Dt: e.item.fdO1Dt.numString(),
             };
@@ -119,7 +119,7 @@ const trigs = {
 
         $('#exportXlsx').on('click', function () {
             if (wares.condition.fdO1Dt) {
-                gridElemets.exportToXlsx();
+                gridElements.exportToXlsx();
             } else {
                 alertCaution('다운로드할 정보가 없습니다.<br>먼저 상세 항목을 조회해 주세요.', 1);
             }
@@ -141,8 +141,8 @@ $(function() {
 });
 
 const onPageLoad = function () {
-    gridElemets.initialization();
-    grids.create(gridElemets.id[0], gridElemets.columnLayout[0], gridElemets.prop[0]);
+    gridElements.initialization();
+    grids.create(gridElements.id[0], gridElements.columnLayout[0], gridElements.prop[0]);
     /* 세부 내역 그리드는 재사용 가능성이 높아 공통모듈을 사용해 그린다. */
     runOnlyOnce.makeDetailGrid();
 
@@ -150,5 +150,5 @@ const onPageLoad = function () {
     runOnlyOnce.getFrList();
 
     trigs.basic();
-    gridElemets.setEvenets();
+    gridElements.setEvenets();
 };
