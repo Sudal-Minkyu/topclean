@@ -6,22 +6,27 @@
 const dtos = {
     send: {
         summaryAPI: {
+            branchId: 'n',
             franchiseId: 'n',
             filterFromDt: 's',
             filterToDt: 's',
         },
         detailAPI: {
+            branchId: 'n',
             franchiseId: 'n',
         },
     },
     receive: {
         summaryAPI: {
+            branchId: 'n',
             franchiseId: 'n',
+            brName: 's',
             frName: 's',
             receiptCount: 'n',
             fdTotAmt: 'n',
         },
         detailAPI: {
+            brName: 's',
             frName: 's',
             bcName: 's',
             bcHp: 's',
@@ -75,7 +80,7 @@ const wares = {
         frName: '',
         date: '',
     },
-
+    branchId: 0,
 };
 
 const urls = {
@@ -110,10 +115,11 @@ const comms = {
     /* 현황의 조회바 가맹점 셀랙트 박스의 리스트를 받아와 세팅한다. */
     getFrList() {
         CommonUI.ajax(urls.getFrList, 'GET', false, function (res) {
-            const data = res.sendData.franchiseList;
-            dv.chk(data, dtos.receive.managerBelongList, '지점에 속한 가맹점 받아오기');
+            const data = res.sendData;
+            wares.branchId = data.branchId;
+            dv.chk(data.franchiseList, dtos.receive.managerBelongList, '지점에 속한 가맹점 받아오기');
             const $frList = $('#frList');
-            data.forEach(obj => {
+            data.franchiseList.forEach(obj => {
                 const htmlText = `<option value='${obj.frId}'>${obj.frName}</option>`;
                 $frList.append(htmlText);
             });
@@ -517,6 +523,7 @@ const searchSummaryData = function () {
     }
 
     const searchCondition = {
+        branchId: wares.branchId,
         franchiseId: parseInt($('#frList').val(), 10),
         filterFromDt: filterFromDt.numString(),
         filterToDt: filterToDt.numString(),
@@ -531,6 +538,7 @@ const getDetailData = function (item, targetDateName) {
     wares.xlsxNaming.date = item[targetDateName];
 
     const condition = {
+        branchId: wares.branchId,
         franchiseId: item.franchiseId,
     };
     condition[targetDateName] = item[targetDateName].numString();

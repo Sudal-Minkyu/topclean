@@ -173,6 +173,15 @@ const dtos = {
         },
     },
     receive: {
+        requestCashReceiptData: {
+            frCode: "s",
+            fcId: "n",
+            fcYyyymmdd: "s",
+            fcType: "s",
+            fcCatApprovalno: "s",
+            fcCatApprovaltime: "s",
+            fcCatTotamount: "s",
+        },
 
         franchiseInspectionList: {
             fiId: "nr",
@@ -414,6 +423,7 @@ const comms = {
         dv.chk(condition, dtos.send.franchiseRequestDetailSearch, "메인그리드 필터링 조건 보내기");
         CommonUI.ajax(grids.s.url.read[0], "GET", condition, function(res) {
             const gridData = res.sendData.gridListData;
+            console.log(res);
             gridData.forEach(item => {
                 if(item.fdState === "S1" && item.frFiId && item.frFiCustomerConfirm === "1") {
                     item.fdState = "F";
@@ -449,16 +459,15 @@ const comms = {
             grids.f.setData(2, data.gridListData);
         });
 
-        // CommonUI.ajax("/api/user/", "GET", condition, function(res) {
-        //     const data = res.sendData;
-        //     console.log("현금영수증 리스트 데이터");
-        //     if (data.gridListData.length) {
-        //         $(".cashReceiptPanel").show();
-        //     }
-        //     dv.chk(data, dtos.receive.franchiseDetailCencelDataList);
-        //     collectedCancelPaymentProcess(data.fdTag);
-        //     grids.f.setData(3, data.gridListData);
-        // });
+        CommonUI.ajax("/api/user/requestCashReceiptData", "GET", condition, function(res) {
+            const data = res.sendData.gridListData;
+            if (data) {
+                dv.chk(data, dtos.receive.requestCashReceiptData);
+                $(".cashReceiptPanel").show();
+                grids.f.resize(3);
+                grids.f.setData(3, data);
+            }
+        });
     },
 
     cancelPayment(target) {
@@ -471,12 +480,6 @@ const comms = {
                 alertSuccess("적립금 전환을 완료하였습니다.");
             }
             comms.getPaymentList(currentRequest.frId);
-        });
-    },
-
-    cancelCashReceipt(paymentData) {
-        CommonUI.toppos.cancelCashReceipt(paymentData, function () {
-            grids.f.clearData(3);
         });
     },
 
@@ -1066,27 +1069,22 @@ const grids = {
 
             grids.s.columnLayout[3] = [
                 {
-                    dataField: "insertDt",
+                    dataField: "fcCatApprovaltime",
                     headerText: "승인일자",
-                    dataType: "date",
-                    formatString: "yyyy-mm-dd",
+                    labelFunction(rowIndex, columnIndex, value, headerText, item) {
+                        return "20" + value.substring(0,2) + "-" + value.substring(2, 4) + "-" + value.substring(4, 6);
+                    }
                 }, {
-                    dataField: "fpAmt",
+                    dataField: "fcCatTotamount",
                     headerText: "승인금액",
                     style: "grid_textalign_right",
                     dataType: "numeric",
                     autoThousandSeparator: "true",
                 }, {
-                    dataField: "fpType",
-                    headerText: "결제방식",
+                    dataField: "fcType",
+                    headerText: "영수증구분",
                     labelFunction(rowIndex, columnIndex, value, headerText, item) {
-                        let resultText = "";
-                        if(item.fpCatIssuername) {
-                            resultText = item.fpCatIssuername;
-                        }else{
-                            resultText = CommonData.name.fpType[value];
-                        }
-                        return resultText;
+                        return wares.fcTypeName[value];
                     }
                 },
             ];
@@ -1275,6 +1273,11 @@ const wares = {
     keypadNum: 0,
     currentFrInspect: {},
     currentBrInspect: {},
+    fcTypeName: {
+        "1": "소비자소득공제",
+        "2": "사업자지출증빙",
+        "3": "자진발급",
+    }
 }
 
 /* 모듈 사용을 위해 data 밖에 선언된 변수들 */
@@ -2237,7 +2240,6 @@ function cancelPaymentPop(frId) {
     $(".cashReceiptPanel").hide();
     $("#paymentListPop").addClass("active");
     grids.f.resize(2);
-    grids.f.resize(3);
 }
 
 function cancelPayment(cancelType) {
@@ -2331,7 +2333,6 @@ async function openPutInspectPop(e) {
         $("#isIncludeImg").prop("disabled", true);
     }
     $("#putInspectPop").addClass("active");
-    grids.f.resize(3);
     const searchCondition = {
         fdId: e.item.fdId,
         type: "1"
@@ -2823,14 +2824,20 @@ function checkIncreaseAmt() {
 }
 
 function cancelCashReceipt() {
-    const item = grids.f.getSelectedItem(3);
-    console.log(item);
-    // if (item.length) {
-    //     const paymentData = {
-    //
-    //     };
-    //     comms.cancelCashReceipt(paymentData);
-    // } else {
-    //     alertCaution("취소하실 현금영수증을 선택해 주세요.", 1);
-    // }
+    const paymentData = grids.f.getSelectedItem(3);
+    if (paymentData) {
+        delete paymentData["_$uid"];
+        paymentData.fcCatApprovalno = paymentData.fcCatApprovalno.substring(0, 9);
+        console.log(paymentData);
+        alertCheck("선택하신 현금 영수증을 취소 하시겠습니까?");
+        $('#checkDelSuccessBtn').on('click', function () {
+            CommonUI.toppos.cancelCashReceipt(paymentData, function () {
+                grids.f.clearGrid(3);
+                $("#cancelCashReceipt").hide();
+            });
+            $('#popupId').remove();
+        });
+    } else {
+        alertCaution("취소하실 현금영수증을 선택해 주세요.", 1);
+    }
 }

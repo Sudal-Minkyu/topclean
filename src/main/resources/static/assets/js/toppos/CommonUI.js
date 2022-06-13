@@ -211,20 +211,24 @@ class CommonUIClass {
         },
 
         /* 현금영수증 취소 */
-        cancelCashReceipt(paymentData, callback = function () {/* 빈기능 */}) {
+        cancelCashReceipt(paymentData, successCall = function () {/* 빈기능 */}) {
             CAT.CatCancelCashReceipt(paymentData, function (res) {
                 $('#payStatus').hide();
                 res = JSON.parse(res);
                 console.log(res);
-                if(res.STATUS === "SUCCESS") {
-                    // const targetReceipt = {
-                    //     fcId: paymentData.fcId,
-                    // }
+                if(res.STATUS === "SUCCESS"
+                    || res.ERRORMESSAGE === "                     / 기취소자료       / 취소불가        ") {
+                    const targetReceipt = {
+                        fcId: paymentData.fcId,
+                    }
+                    console.log(targetReceipt);
                     /* 현금영수증 취소 여부를 알리는 API */
-                    // CommonUI.ajax("/api/user/", "PARAM", targetReceipt, function () {
-                    //     alertSuccess("현금영수증을 취소 하였습니다.");
-                    // });
-                    return callback();
+                    CommonUI.ajax("/api/user/requestCashReceiptCencel",
+                        "PARAM", targetReceipt, function (res) {
+                        console.log(res);
+                        alertSuccess("현금영수증을 취소 하였습니다.");
+                    });
+                    return successCall();
                 } else if (res.STATUS === "FAILURE") {
                     if (res.ERRORDATA === "erroecode:404, error:error") {
                         alertCancel("카드결제 단말기 연결이 감지되지 않습니다.<br>연결을 확인해 주세요.");

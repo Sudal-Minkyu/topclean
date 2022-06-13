@@ -1663,11 +1663,11 @@ function CatCash_vPOSV1(params) {
 
 // 현금영수증 취소
 function CatCashCancel_vPOSV1(params) {
-    let approvalTime = ("" + params.approvalTime).fillSpace(6).substr(0, 6);
-    let approvalNo = ("" + params.approvalNo).fillSpace(9).substr(0, 9);
-    let totalAmount = ("" + params.paymentAmount).fillZero(9);
-    let vatAmount = ("" + Math.floor(params.paymentAmount / 11)).fillZero(9); //부가세 계산 내림으로 처리
-    let franchiseNo = ("" + params.franchiseNo).fillZero(4);
+    let approvalTime = ("" + params.fcCatApprovaltime).fillSpace(6).substr(0, 6);
+    let approvalNo = ("" + params.fcCatApprovalno).fillSpace(9).substr(0, 9);
+    let totalAmount = ("" + params.fcCatTotamount).fillZero(9);
+    let vatAmount = ("" + Math.floor(params.fcCatTotamount / 11)).fillZero(9); //부가세 계산 내림으로 처리
+    let franchiseNo = ("" + params.frCode).fillZero(4);
     let fcType = ("" + params.fcType);
     var request_msg = "";
 
