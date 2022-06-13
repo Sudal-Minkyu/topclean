@@ -1082,10 +1082,20 @@ const grids = {
                     autoThousandSeparator: "true",
                 }, {
                     dataField: "fcType",
-                    headerText: "영수증구분",
+                    headerText: "영수증 구분",
                     labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         return wares.fcTypeName[value];
                     }
+                }, {
+                    dataField: "cancelBtn",
+                    headerText: "영수증 취소",
+                    width: 150,
+                    renderer : {
+                        type: "TemplateRenderer",
+                    },
+                    labelFunction(rowIndex, columnIndex, value, headerText, item ) {
+                        return '<button class="c-state c-state--cancel">취소</button>';
+                    },
                 },
             ];
 
@@ -1347,15 +1357,9 @@ const trigs = {
             }
         });
 
-        AUIGrid.bind(grids.s.id[4], "cellClick", function (e) {
-            $("#fiAddAmtInConfirm").val(e.item.fiAddAmt.toLocaleString());
-            $("#fiCommentInConfirm").val(e.item.fiComment);
-            if(e.item.fiPhotoYn === "Y") {
-                $("#imgThumb").attr("src", e.item.ffPath + "s_" + e.item.ffFilename);
-                $("#imgFull").attr("href", e.item.ffPath + e.item.ffFilename);
-                $("#imgFull").show();
-            }else{
-                $("#imgFull").hide();
+        AUIGrid.bind(grids.s.id[3], "cellClick", function (e) {
+            if (e.dataField === "cancelBtn") {
+                cancelCashReceipt();
             }
         });
 
@@ -1476,11 +1480,6 @@ const trigs = {
                 $('#popupId').remove();
             });
         });
-
-        $("#cancelCashReceipt").on("click", function () {
-            cancelCashReceipt();
-        });
-
     },
     modify() {
         $("#inReceiptPop input[type='radio']").on("change", function(){

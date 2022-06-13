@@ -1,3 +1,5 @@
+import {runOnlyOnce} from "../../../module/m_headbalance.js";
+
 /*
  * 서버 API와 주고 받게 될 데이터 정의
  * 's' 문자형, 'n' 숫자형, 'a' 배열형, 'r' 필수값, 'd' 불필요한 데이터 삭제(receive에 있을 경우 앞으로도 불필요할 경우에는 API에서 삭제요청할것)
@@ -123,10 +125,6 @@ const grids = {
 /* 이벤트를 설정하거나 해지하는 함수들을 담는다. */
 const trigs = {
     basic() {
-        /* 0번그리드 내의 셀 클릭시 이벤트 */
-        AUIGrid.bind(grids.s.id[0], 'cellClick', function (e) {
-            console.log(e.item);
-        });
     },
 };
 
@@ -142,6 +140,9 @@ $(function() {
 
 /* 페이지가 로드되고 나서 실행 될 코드들을 담는다. */
 const onPageLoad = function() {
+    runOnlyOnce.initializeDateSelectBox();
+    runOnlyOnce.activateBrFrListInputs();
+
     grids.f.initialization();
 
     trigs.basic();
