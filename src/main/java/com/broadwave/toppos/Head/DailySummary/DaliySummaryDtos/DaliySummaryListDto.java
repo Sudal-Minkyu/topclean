@@ -42,6 +42,6 @@ public class DaliySummaryListDto {
     private Integer hsSettleAmtFr; // 일정산 - 가맹 매출액
 
     private Integer hsSmsAmt; // SMS발송 금액
-    private Double royaltyRateFr; // 로얄티율(가맹점)
+    private Integer hsRolayltyAmtFr; // 일정산 - 가맹점 로열티 금액
 
 }
