@@ -38,32 +38,34 @@ public class MonthlySummaryRepositoryCustomImpl extends QuerydslRepositorySuppor
                         
                         monthlySummary.hsYyyymm,
 
-                        monthlySummary.hsNormalAmt,
-                        monthlySummary.hsPressed,
-                        monthlySummary.hsWaterRepellent,
-                        monthlySummary.hsStarch,
+                        monthlySummary.hsNormalAmt.sum(),
+                        monthlySummary.hsPressed.sum(),
+                        monthlySummary.hsWaterRepellent.sum(),
+                        monthlySummary.hsStarch.sum(),
 
-                        monthlySummary.hsAdd1Amt,
-                        monthlySummary.hsAdd2Amt,
-                        monthlySummary.hsRepairAmt,
-                        monthlySummary.hsWhitening,
-                        monthlySummary.hsPollution,
+                        monthlySummary.hsAdd1Amt.sum(),
+                        monthlySummary.hsAdd2Amt.sum(),
+                        monthlySummary.hsRepairAmt.sum(),
+                        monthlySummary.hsWhitening.sum(),
+                        monthlySummary.hsPollution.sum(),
 
-                        monthlySummary.hsUrgentAmt,
-                        monthlySummary.hsDiscountAmt,
-                        monthlySummary.hsTotAmt,
-                        monthlySummary.hsExceptAmt,
+                        monthlySummary.hsUrgentAmt.sum(),
+                        monthlySummary.hsDiscountAmt.sum(),
+                        monthlySummary.hsTotAmt.sum(),
+                        monthlySummary.hsExceptAmt.sum(),
 
-                        monthlySummary.hsSettleTotAmt,
-                        monthlySummary.hsSettleReturnAmt,
+                        monthlySummary.hsSettleTotAmt.sum(),
+                        monthlySummary.hsSettleReturnAmt.sum(),
 
-                        monthlySummary.hsSettleAmt,
-                        monthlySummary.hsSettleAmtBr,
-                        monthlySummary.hsSettleAmtFr,
+                        monthlySummary.hsSettleAmt.sum(),
+                        monthlySummary.hsSettleAmtBr.sum(),
+                        monthlySummary.hsSettleAmtFr.sum(),
 
-                        monthlySummary.hsRolayltyAmtBr
+                        monthlySummary.hsRolayltyAmtBr.sum()
 
                 ));
+
+        query.groupBy(branch.brCode);
 
         return query.fetch();
     }
