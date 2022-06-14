@@ -76,6 +76,8 @@ const grids = {
             {
                 dataField: 'hsYyyymmdd',
                 headerText: '기준일',
+                dataType: 'date',
+                formatString: 'yyyy-mm-dd',
             }, {
                 dataField: 'hsNormalAmt',
                 headerText: '기본 매출<br>(일반세탁)',

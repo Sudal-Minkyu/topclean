@@ -10,6 +10,7 @@
 
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
+    <script type="module" src="/assets/js/toppos/head/calculate/brmonthdeposit.js"></script>
     <!-- 엑셀 다운로드 기능을 사용하기 위함 -->
     <script src="/assets/js/filesaver/FileSaver.min.js"></script>
 </th:block>
@@ -25,7 +26,7 @@
                     <div class="inquiry__condition">
                         <ul>
                             <li>
-                                <div class="inquiry__title">정산 시작 년/월</div>
+                                <div class="inquiry__title">시작 년/월</div>
                                 <div class="c-select">
                                     <select id="filterFromYear"></select>
                                 </div>
@@ -69,6 +70,26 @@
                                     </select>
                                 </div>
                             </li>
+                            <li>
+                                <div class="inquiry__title">지사</div>
+                                <div class="inquiry__input">
+                                    <div class="c-select">
+                                        <select id="brList">
+                                            <option value="0">필수선택</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </li>
+                            <li style="display: none">
+                                <div class="inquiry__title">가맹점</div>
+                                <div class="inquiry__input">
+                                    <div class="c-select">
+                                        <select id="frList" disabled="">
+                                            <option value="0">전체선택</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </li>
                         </ul>
                     </div>
                     <div class="inquiry__button">
@@ -95,19 +116,19 @@
                         <tr>
                             <th>정산월</th>
                             <td>
-                                <input type="text" class="c-date" readonly="" />
+                                <input id="hsYyyymm" type="text" class="c-date" readonly="" />
                             </td>
                         </tr>
                         <tr>
                             <th>지사 로열티금액</th>
                             <td>
-                                <input type="text" readonly="" />
+                                <input id="hsRolayltyAmtBr" type="text" readonly="" />
                             </td>
                         </tr>
                         <tr>
                             <th>가맹점 본사로열티</th>
                             <td>
-                                <input type="text" readonly="" />
+                                <input id="hsRolayltyAmtFr" type="text" readonly="" />
                             </td>
                         </tr>
                     </tbody>
@@ -122,19 +143,19 @@
                         <tr>
                             <th>입금일자</th>
                             <td>
-                                <input type="text" class="c-date" />
+                                <input id="hrReceiptYyyymmdd" type="text" class="c-date" />
                             </td>
                         </tr>
                         <tr>
-                            <th>본사입금액</th>
+                            <th>본사 입금액</th>
                             <td>
-                                <input type="text" />
+                                <input id="hrReceiptSaleAmt" type="text" />
                             </td>
                         </tr>
                         <tr>
-                            <th>로열티입금액</th>
+                            <th>로열티 입금액</th>
                             <td>
-                                <input type="text" />
+                                <input id="hrReceiptRoyaltyAmt" type="text" />
                             </td>
                         </tr>
                     </tbody>

@@ -1,3 +1,5 @@
+import {runOnlyOnce} from '../../module/m_headbalance.js';
+
 /*
  * 서버 API와 주고 받게 될 데이터 정의
  * 's' 문자형, 'n' 숫자형, 'a' 배열형, 'r' 필수값, 'd' 불필요한 데이터 삭제(receive에 있을 경우 앞으로도 불필요할 경우에는 API에서 삭제요청할것)
@@ -6,10 +8,30 @@
  */
 const dtos = {
     send: {
-
+        메인그리드조회: {
+            filterFromYearMonth: 's',    // 조회기간 시작
+            filterToYearMonth: 's',    // 조회기간 끝
+            branchId: 's',    // 선택된 지사
+        },
+        입금액저장수정: {
+            hsYyyymm: 's',    // 정산월
+            brCode: 's',    // 지사코드
+            hrReceiptYyyymmdd: 's',    // 입금등록일자
+            hrReceiptSaleAmt: 'n',    // 입금액(본사입금액)
+            hrReceiptRoyaltyAmt: 'n',    // 입금액(가맹점로열티)
+        },
     },
     receive: {
-
+        메인그리드조회: {
+            brName: 's',    // 지사명
+            brCode: 's',    // 지사코드
+            hsYyyymm: 's',    // 정산월
+            hsRolayltyAmtBr: 'n',    // 지사 로열티 정산액
+            hsRolayltyAmtFr: 'n',    // 가맹점 로열티 정산액
+            hrReceiptYyyymmdd: 's',    // 입금등록일자
+            hrReceiptSaleAmt: 'n',    // 입금액(본사입금액)
+            hrReceiptRoyaltyAmt: 'n',    // 입금액(가맹점로열티)
+        }
     },
 };
 
@@ -32,11 +54,23 @@ const grids = {
         /* 0번 그리드의 레이아웃 */
         grids.columnLayout[0] = [
             {
-                dataField: '',
-                headerText: '',
+                dataField: 'brName',
+                headerText: '지사명',
             }, {
-                dataField: '',
-                headerText: '',
+                dataField: 'hsYyyymm',
+                headerText: '정산월',
+            }, {
+                dataField: 'hsRolayltyAmtBr',
+                headerText: '지사 로열티',
+            }, {
+                dataField: 'hrReceiptSaleAmt',
+                headerText: '본사 입금액',
+            }, {
+                dataField: 'hsRolayltyAmtFr',
+                headerText: '가맹점 로열티',
+            }, {
+                dataField: 'hrReceiptRoyaltyAmt',
+                headerText: '로열티 입금액',
             },
         ];
 
@@ -103,6 +137,24 @@ const wares = {
 
 };
 
+/* 입금일자쪽 데이트피커 활성화 */
+const setDatePicker = function () {
+    CommonUI.setDatePicker(['hrReceiptYyyymmdd']);
+}
+
+function enableDatepicker() {
+    const today = new Date().format("yyyy-MM-dd");
+
+    /* datepicker를 적용시킬 대상들의 dom id들 */
+    const datePickerTargetIds = [
+        "hrReceiptYyyymmdd"
+    ];
+
+    $("#" + datePickerTargetIds[0]).val(today);
+
+    CommonUI.setDatePicker(datePickerTargetIds);
+}
+
 /* 페이지가 로드되고 나서 실행 */
 $(function() {
     onPageLoad();
@@ -110,7 +162,11 @@ $(function() {
 
 /* 페이지가 로드되고 나서 실행 될 코드들을 담는다. */
 const onPageLoad = function() {
+    runOnlyOnce.initializeDateSelectBox(true);
+    runOnlyOnce.activateBrFrListInputs();
     grids.initialization();
+    grids.create();
+    enableDatepicker();
 
     trigs.basic();
 };
