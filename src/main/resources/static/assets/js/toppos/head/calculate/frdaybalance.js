@@ -44,12 +44,12 @@ const dtos = {
 const comms = {
     getMainData(searchCondition) {
         dv.chk(searchCondition, dtos.send.getMainData, '메인 그리드 데이터 검색조건 보내기');
-        // CommonUI.ajax('/api/head/', 'GET', searchCondition, function (res) {
-        //     const data = res.sendData.gridListData;
-        //     dv.chk(data, dtos.receive.getMainData, '메인 그리드 데이터 검색 결과 받아오기');
-        //     console.log(data);
-        //     grids.f.set(0, data);
-        // });
+        CommonUI.ajax('/api/head/headDaliySummaryList', 'GET', searchCondition, function (res) {
+            const data = res.sendData.gridListData;
+            dv.chk(data, dtos.receive.getMainData, '메인 그리드 데이터 검색 결과 받아오기');
+            console.log(data);
+            grids.f.set(0, data);
+        });
     },
 };
 
@@ -64,6 +64,7 @@ const grids = {
             'grid_main',
         ],
         columnLayout: [],
+        footerLayout: [],
         prop: [],
     },
 
@@ -73,7 +74,7 @@ const grids = {
             /* 0번 그리드의 레이아웃 */
             grids.s.columnLayout[0] = [
                 {
-                    dataField: '',
+                    dataField: 'hsYyyymmdd',
                     headerText: '기준일',
                 }, {
                     dataField: 'hsNormalAmt',
@@ -85,7 +86,7 @@ const grids = {
                     headerText: '추가매출',
                     children: [
                         {
-                            dataField: '',
+                            dataField: 'addAmt',
                             headerText: '추가요금',
                             style: 'grid_textalign_right',
                             width: 80,
@@ -108,7 +109,7 @@ const grids = {
                             dataType: 'numeric',
                             autoThousandSeparator: 'true',
                         }, {
-                            dataField: '',
+                            dataField: 'whiteningPollution',
                             headerText: '표백/오염',
                             style: 'grid_textalign_right',
                             width: 80,
@@ -136,7 +137,7 @@ const grids = {
                         },
                     ],
                 }, {
-                    dataField: '',
+                    dataField: 'totAddSale',
                     headerText: '추가 매출<br>전체',
                     style: 'grid_textalign_right',
                     width: 80,
@@ -221,7 +222,7 @@ const grids = {
                     dataType: 'numeric',
                     autoThousandSeparator: 'true',
                 }, {
-                    dataField: '',
+                    dataField: 'frProfit',
                     headerText: '가맹점 마진',
                     style: 'grid_textalign_right',
                     width: 80,
@@ -232,6 +233,115 @@ const grids = {
                         item.hsRoyaltyAmtFr = item.hsRoyaltyAmtFr ? item.hsRoyaltyAmtFr : 0;
                         return item.hsSettleAmtFr - item.hsRoyaltyAmtFr;
                     },
+                },
+            ];
+
+            grids.s.footerLayout[0] = [
+                {
+                    labelText: "합계",
+                    positionField: "hsYyyymmdd",
+                }, {
+                    dataField: "hsNormalAmt",
+                    operation: "SUM",
+                    positionField: "hsNormalAmt",
+                    style: "grid_textalign_right",
+                    formatString: "#,##0",
+                }, {
+                    dataField: "addAmt",
+                    operation: "SUM",
+                    positionField: "addAmt",
+                    style: "grid_textalign_right",
+                    formatString: "#,##0",
+                }, {
+                    dataField: "hsRepairAmt",
+                    operation: "SUM",
+                    positionField: "hsRepairAmt",
+                    style: "grid_textalign_right",
+                    formatString: "#,##0",
+                }, {
+                    dataField: "whiteningPollution",
+                    operation: "SUM",
+                    positionField: "whiteningPollution",
+                    style: "grid_textalign_right",
+                    formatString: "#,##0",
+                }, {
+                    dataField: "hsUrgentAmt",
+                    operation: "SUM",
+                    positionField: "hsUrgentAmt",
+                    style: "grid_textalign_right",
+                    formatString: "#,##0",
+                }, {
+                    dataField: "hsDiscountAmt",
+                    operation: "SUM",
+                    positionField: "hsDiscountAmt",
+                    style: "grid_textalign_right",
+                    formatString: "#,##0",
+                }, {
+                    dataField: "totAddSale",
+                    operation: "SUM",
+                    positionField: "totAddSale",
+                    style: "grid_textalign_right",
+                    formatString: "#,##0",
+                }, {
+                    dataField: "hsTotAmt",
+                    operation: "SUM",
+                    positionField: "hsTotAmt",
+                    style: "grid_textalign_right",
+                    formatString: "#,##0",
+                }, {
+                    dataField: "hsExceptAmt",
+                    operation: "SUM",
+                    positionField: "hsExceptAmt",
+                    style: "grid_textalign_right",
+                    formatString: "#,##0",
+                }, {
+                    dataField: "hsSettleTotAmt",
+                    operation: "SUM",
+                    positionField: "hsSettleTotAmt",
+                    style: "grid_textalign_right",
+                    formatString: "#,##0",
+                }, {
+                    dataField: "hsSettleReturnAmt",
+                    operation: "SUM",
+                    positionField: "hsSettleReturnAmt",
+                    style: "grid_textalign_right",
+                    formatString: "#,##0",
+                }, {
+                    dataField: "hsSettleAmt",
+                    operation: "SUM",
+                    positionField: "hsSettleAmt",
+                    style: "grid_textalign_right",
+                    formatString: "#,##0",
+                }, {
+                    dataField: "hsSettleAmtBr",
+                    operation: "SUM",
+                    positionField: "hsSettleAmtBr",
+                    style: "grid_textalign_right",
+                    formatString: "#,##0",
+                }, {
+                    dataField: "hsSettleAmtFr",
+                    operation: "SUM",
+                    positionField: "hsSettleAmtFr",
+                    style: "grid_textalign_right",
+                    formatString: "#,##0",
+                }, {
+                    dataField: "hsSmsAmt",
+                    operation: "SUM",
+                    positionField: "hsSmsAmt",
+                    style: "grid_textalign_right",
+                    formatString: "#,##0",
+                }, {
+                    dataField: "hsRoyaltyAmtFr",
+                    operation: "SUM",
+                    positionField: "hsRoyaltyAmtFr",
+                    style: "grid_textalign_right",
+                    formatString: "#,##0",
+                }, {
+                    dataField: "frProfit",
+                    operation: "SUM",
+                    positionField: "frProfit",
+                    style: "grid_textalign_right",
+                    formatString: "#,##0",
                 },
             ];
 
@@ -251,6 +361,8 @@ const grids = {
                 enableFilter : false,
                 rowHeight : 30,
                 headerHeight : 30,
+                showFooter : true,
+                footerHeight: 30,
             };
         },
 
@@ -258,6 +370,7 @@ const grids = {
         create() {
             for (const i in grids.s.columnLayout) {
                 AUIGrid.create(grids.s.id[i], grids.s.columnLayout[i], grids.s.prop[i]);
+                AUIGrid.setFooter(grids.s.id[i], grids.s.footerLayout[i]);
             }
         },
 
