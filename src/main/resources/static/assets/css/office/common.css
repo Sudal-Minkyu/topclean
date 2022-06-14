@@ -761,6 +761,12 @@ textarea {
 .article.article--flex .article__body.flex-auto {
 	flex: 0 1 auto;
 }
+.article.article--flex .article__body.flex2 {
+	flex: 2;
+}
+.article.article--flex .article__body.flex3 {
+	flex: 3;
+}
 .article__content {
 	position: relative;
 }
