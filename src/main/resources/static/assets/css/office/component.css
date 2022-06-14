@@ -584,7 +584,9 @@ input[type="text"].c-date {
 	color: #444;
 }
 .c-date:read-only,
-.c-date:disabled {
+.c-date:disabled,
+input[type="text"].c-date:read-only,
+input[type="text"].c-date:disabled {
 	background-color: #f2f2f6;
 	background-image: url(/assets/images/icon__calendar--g.svg);
 }
@@ -657,6 +659,13 @@ input[type="text"].c-date {
 .c-table th {
     background-color: #f8f8f8;
     text-align: left;
+}
+.c-table.align-right,
+.c-table th.align-right,
+.c-table tbody.align-right td,
+.c-table tr.align-right td,
+.c-table td.align-right {
+	text-align: right;
 }
 
 /* state */
