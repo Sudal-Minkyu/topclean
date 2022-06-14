@@ -17,6 +17,7 @@ const runOnlyOnce = {
         $('#filterMonth option').eq(currentMonth).prop('selected', true);
     },
 
+    /* 조회쪽의 지사와 가맹점의 셀렉트 박스의 내용물들을 구성하고 동작을 통제하는 함수 */
     activateBrFrListInputs: activateBrFrListInputs,
 };
 
