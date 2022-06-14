@@ -13,9 +13,7 @@ import com.broadwave.toppos.Head.Franchise.FranchiseDtos.FranchiseInfoDto;
 import com.broadwave.toppos.Head.Franchise.FranchiseDtos.FranchiseListDto;
 import com.broadwave.toppos.Head.Franchise.FranchiseDtos.FranchiseMapperDto;
 import com.broadwave.toppos.Head.Franchise.FranchiseDtos.FranchiseSearchDto;
-import com.broadwave.toppos.Head.HeadService.HeadInfoService;
-import com.broadwave.toppos.Head.HeadService.HeadService;
-import com.broadwave.toppos.Head.HeadService.NoticeService;
+import com.broadwave.toppos.Head.HeadService.*;
 import com.broadwave.toppos.Head.Item.Group.A.ItemGroup;
 import com.broadwave.toppos.Head.Item.Group.A.ItemGroupDto;
 import com.broadwave.toppos.Head.Item.Group.A.ItemGroupNameListDto;
@@ -30,7 +28,6 @@ import com.broadwave.toppos.Head.Item.ItemDtos.ItemPriceListDto;
 import com.broadwave.toppos.Head.Item.Price.FranchisePrice.*;
 import com.broadwave.toppos.Head.Item.Price.ItemPrice;
 import com.broadwave.toppos.Head.Notice.NoticeDtos.NoticeMapperDto;
-import com.broadwave.toppos.Head.HeadService.SalesService;
 import com.broadwave.toppos.Manager.HmTemplate.HmTemplateDto;
 import com.broadwave.toppos.Manager.ManagerService.CurrentService;
 import com.broadwave.toppos.Manager.ManagerService.HmTemplateService;
@@ -80,11 +77,12 @@ public class HeadRestController {
     private final SalesService salesService; // 지사의 매출현황 관련 서비스
     private final HmTemplateService hmTemplateService; // 문자메세지 서비스
     private final CurrentService currentService; // 현황페이지 서비스
+    private final SummaryService summaryService; // 정산페이지 서비스
 
     @Autowired
     public HeadRestController(AccountService accountService, NoticeService noticeService, ModelMapper modelMapper,
                               HeadService headService, HeadInfoService headInfoService, ReceiptService receiptService, SalesService salesService,
-                              HmTemplateService hmTemplateService, CurrentService currentService) {
+                              HmTemplateService hmTemplateService, CurrentService currentService, SummaryService summaryService) {
         this.accountService = accountService;
         this.modelMapper = modelMapper;
         this.noticeService = noticeService;
@@ -94,6 +92,7 @@ public class HeadRestController {
         this.salesService = salesService;
         this.hmTemplateService = hmTemplateService;
         this.currentService = currentService;
+        this.summaryService = summaryService;
     }
 
     //@@@@@@@@@@@@@@@@@@@@@ 본사 메인화면 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -1862,6 +1861,16 @@ public class HeadRestController {
     public ResponseEntity<Map<String, Object>> headReturnReceiptSubList(@RequestParam("branchId") Long branchId, @RequestParam("franchiseId") Long franchiseId,
                                                                      @RequestParam("fdS6Dt") String fdS6Dt) {
         return receiptService.returnReceiptSubList(branchId, franchiseId, fdS6Dt);
+    }
+
+
+//@@@@@@@@@@@@@@@@@@@@@ 정산 페이지 관련 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    // 본사 일정산 요역 리스트 호출API
+    @GetMapping("headDaliySummaryList")
+    @ApiOperation(value = "본사 일정산 리스트", notes = "본사가 가맹점 일일정산 요약 리스트를 요청한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", value = "JWT Token", required = true, dataType = "string", paramType = "header")})
+    public ResponseEntity<Map<String, Object>> headDaliySummaryList(@RequestParam("franchiseId") Long franchiseId, @RequestParam("filterYearMonth") String filterYearMonth) {
+        return summaryService.headDaliySummaryList(franchiseId, filterYearMonth);
     }
 
 }
