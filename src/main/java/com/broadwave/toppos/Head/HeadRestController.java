@@ -1865,12 +1865,20 @@ public class HeadRestController {
 
 
 //@@@@@@@@@@@@@@@@@@@@@ 정산 페이지 관련 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    // 본사 일정산 요역 리스트 호출API
-    @GetMapping("headDaliySummaryList")
-    @ApiOperation(value = "본사 일정산 리스트", notes = "본사가 가맹점 일일정산 요약 리스트를 요청한다.")
+    // 본사 가맹점 일정산 요역 리스트 호출API
+    @GetMapping("headFranchiseDaliySummaryList")
+    @ApiOperation(value = "본사 가맹점 일정산 리스트", notes = "본사가 가맹점 일일정산 요약 리스트를 요청한다.")
     @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", value = "JWT Token", required = true, dataType = "string", paramType = "header")})
-    public ResponseEntity<Map<String, Object>> headDaliySummaryList(@RequestParam("franchiseId") Long franchiseId, @RequestParam("filterYearMonth") String filterYearMonth) {
-        return summaryService.headDaliySummaryList(franchiseId, filterYearMonth);
+    public ResponseEntity<Map<String, Object>> headFranchiseDaliySummaryList(@RequestParam("franchiseId") Long franchiseId, @RequestParam("filterYearMonth") String filterYearMonth) {
+        return summaryService.headFranchiseDaliySummaryList(franchiseId, filterYearMonth);
+    }
+
+    // 본사 지사 월정산 요역 리스트 호출API
+    @GetMapping("headBranchMonthlySummaryList")
+    @ApiOperation(value = "본사 지사 월정산 리스트", notes = "본사가 지사 월정산 요약 리스트를 요청한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", value = "JWT Token", required = true, dataType = "string", paramType = "header")})
+    public ResponseEntity<Map<String, Object>> headBranchMonthlySummaryList(@RequestParam("filterYearMonth") String filterYearMonth) {
+        return summaryService.headBranchMonthlySummaryList(filterYearMonth);
     }
 
 }

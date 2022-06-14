@@ -59,7 +59,7 @@ public class DaliySummaryRepositoryCustomImpl extends QuerydslRepositorySupport 
                         daliySummary.hsSettleAmtFr,
 
                         daliySummary.hsSmsAmt,
-                        daliySummary.royaltyRateFr
+                        daliySummary.hsRolayltyAmtFr
 
                 ));
 
