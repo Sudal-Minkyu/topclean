@@ -9,12 +9,12 @@ import {runOnlyOnce} from '../../module/m_headbalance.js';
 const dtos = {
     send: {
         getMainData: {
-            filterYearMonth: 's',
+            filterYearMonth: 's',   // 조회조건 년월
         },
     },
     receive: {
         getMainData: {
-            brName: 's',
+            brName: 's',    // 지사명
             hsYyyymm: 's',
             hsNormalAmt: 'n',
             hsPressed: 'n',
@@ -34,7 +34,7 @@ const dtos = {
             hsSettleAmt: 'n',
             hsSettleAmtBr: 'n',
             hsSettleAmtFr: 'n',
-            hsRoyaltyAmtBr: 'n',
+            hsRolayltyAmtBr: 'n',
         },
     },
 };
@@ -43,12 +43,12 @@ const dtos = {
 const comms = {
     getMainData(searchCondition) {
         dv.chk(searchCondition, dtos.send.getMainData, '메인 그리드 데이터 검색조건 보내기');
-        // CommonUI.ajax('/api/head/', 'GET', searchCondition, function (res) {
-        //     const data = res.sendData.gridListData;
-        //     dv.chk(data, dtos.receive.getMainData, '메인 그리드 데이터 검색 결과 받아오기');
-        //     console.log(data);
-        //     grids.f.set(0, data);
-        // });
+        CommonUI.ajax('/api/head/headBranchMonthlySummaryList', 'GET', searchCondition, function (res) {
+            dv.chk(res.sendData.gridListData, dtos.receive.getMainData, '메인 그리드 데이터 검색 결과 받아오기');
+            const data = summaryDataRefinery(res.sendData.gridListData);
+            console.log(data);
+            grids.f.set(0, data);
+        });
     },
 };
 
@@ -91,15 +91,6 @@ const grids = {
                             width: 80,
                             dataType: 'numeric',
                             autoThousandSeparator: 'true',
-                            labelFunction(_rowIndex, _columnIndex, _value, _headerText, item) {
-                                item.hsPressed = item.hsPressed ? item.hsPressed : 0;
-                                item.hsWaterRepellent = item.hsWaterRepellent ? item.hsWaterRepellent : 0;
-                                item.hsStarch = item.hsStarch ? item.hsStarch : 0;
-                                item.hsAdd1Amt = item.hsAdd1Amt ? item.hsAdd1Amt : 0;
-                                item.hsAdd2Amt = item.hsAdd2Amt ? item.hsAdd2Amt : 0;
-                                return item.hsPressed + item.hsWaterRepellent + item.hsStarch
-                                    + item.hsAdd1Amt + item.hsAdd2Amt;
-                            },
                         }, {
                             dataField: 'hsRepairAmt',
                             headerText: '수선',
@@ -114,11 +105,6 @@ const grids = {
                             width: 80,
                             dataType: 'numeric',
                             autoThousandSeparator: 'true',
-                            labelFunction(_rowIndex, _columnIndex, _value, _headerText, item) {
-                                item.hsWhitening = item.hsWhitening ? item.hsWhitening : 0;
-                                item.hsPollution = item.hsPollution ? item.hsPollution : 0;
-                                return item.hsWhitening + item.hsPollution;
-                            },
                         }, {
                             dataField: 'hsUrgentAmt',
                             headerText: '긴급',
@@ -142,21 +128,6 @@ const grids = {
                     width: 80,
                     dataType: 'numeric',
                     autoThousandSeparator: 'true',
-                    labelFunction(_rowIndex, _columnIndex, _value, _headerText, item) {
-                        item.hsPressed = item.hsPressed ? item.hsPressed : 0;
-                        item.hsWaterRepellent = item.hsWaterRepellent ? item.hsWaterRepellent : 0;
-                        item.hsStarch = item.hsStarch ? item.hsStarch : 0;
-                        item.hsAdd1Amt = item.hsAdd1Amt ? item.hsAdd1Amt : 0;
-                        item.hsAdd2Amt = item.hsAdd2Amt ? item.hsAdd2Amt : 0;
-                        item.hsRepairAmt = item.hsRepairAmt ? item.hsRepairAmt : 0;
-                        item.hsWhitening = item.hsWhitening ? item.hsWhitening : 0;
-                        item.hsPollution = item.hsPollution ? item.hsPollution : 0;
-                        item.hsUrgentAmt = item.hsUrgentAmt ? item.hsUrgentAmt : 0;
-                        item.hsDiscountAmt = item.hsDiscountAmt ? item.hsDiscountAmt : 0;
-                        return item.hsPressed + item.hsWaterRepellent + item.hsStarch + item.hsAdd1Amt
-                            + item.hsAdd2Amt + item.hsRepairAmt + item.hsWhitening + item.hsPollution
-                            + item.hsUrgentAmt + item.hsDiscountAmt;
-                    },
                 }, {
                     dataField: 'hsTotAmt',
                     headerText: '총 매출',
@@ -207,7 +178,7 @@ const grids = {
                     dataType: 'numeric',
                     autoThousandSeparator: 'true',
                 }, {
-                    dataField: 'hsRoyaltyAmtBr',
+                    dataField: 'hsRolayltyAmtBr',
                     headerText: '본사 입금액',
                     style: 'grid_textalign_right',
                     width: 80,
@@ -220,114 +191,109 @@ const grids = {
                     width: 80,
                     dataType: 'numeric',
                     autoThousandSeparator: 'true',
-                    labelFunction(_rowIndex, _columnIndex, _value, _headerText, item) {
-                        item.hsSettleAmtBr = item.hsSettleAmtBr ? item.hsSettleAmtBr : 0;
-                        item.hsRoyaltyAmtBr = item.hsRoyaltyAmtBr ? item.hsRoyaltyAmtBr : 0;
-                        return item.hsSettleAmtBr - item.hsRoyaltyAmtBr;
-                    },
                 },
             ];
 
             grids.s.footerLayout[0] = [
                 {
-                    labelText: "합계",
-                    positionField: "brName",
+                    labelText: '합계',
+                    positionField: 'brName',
                 }, {
-                    dataField: "hsNormalAmt",
-                    operation: "SUM",
-                    positionField: "hsNormalAmt",
-                    style: "grid_textalign_right",
-                    formatString: "#,##0",
+                    dataField: 'hsNormalAmt',
+                    operation: 'SUM',
+                    positionField: 'hsNormalAmt',
+                    style: 'grid_textalign_right',
+                    formatString: '#,##0',
                 }, {
-                    dataField: "addAmt",
-                    operation: "SUM",
-                    positionField: "addAmt",
-                    style: "grid_textalign_right",
-                    formatString: "#,##0",
+                    dataField: 'addAmt',
+                    operation: 'SUM',
+                    positionField: 'addAmt',
+                    style: 'grid_textalign_right',
+                    formatString: '#,##0',
                 }, {
-                    dataField: "hsRepairAmt",
-                    operation: "SUM",
-                    positionField: "hsRepairAmt",
-                    style: "grid_textalign_right",
-                    formatString: "#,##0",
+                    dataField: 'hsRepairAmt',
+                    operation: 'SUM',
+                    positionField: 'hsRepairAmt',
+                    style: 'grid_textalign_right',
+                    formatString: '#,##0',
                 }, {
-                    dataField: "whiteningPollution",
-                    operation: "SUM",
-                    positionField: "whiteningPollution",
-                    style: "grid_textalign_right",
-                    formatString: "#,##0",
+                    dataField: 'whiteningPollution',
+                    operation: 'SUM',
+                    positionField: 'whiteningPollution',
+                    style: 'grid_textalign_right',
+                    formatString: '#,##0',
                 }, {
-                    dataField: "hsUrgentAmt",
-                    operation: "SUM",
-                    positionField: "hsUrgentAmt",
-                    style: "grid_textalign_right",
-                    formatString: "#,##0",
+                    dataField: 'hsUrgentAmt',
+                    operation: 'SUM',
+                    positionField: 'hsUrgentAmt',
+                    style: 'grid_textalign_right',
+                    formatString: '#,##0',
                 }, {
-                    dataField: "hsDiscountAmt",
-                    operation: "SUM",
-                    positionField: "hsDiscountAmt",
-                    style: "grid_textalign_right",
-                    formatString: "#,##0",
+                    dataField: 'hsDiscountAmt',
+                    operation: 'SUM',
+                    positionField: 'hsDiscountAmt',
+                    style: 'grid_textalign_right',
+                    formatString: '#,##0',
                 }, {
-                    dataField: "totAddSale",
-                    operation: "SUM",
-                    positionField: "totAddSale",
-                    style: "grid_textalign_right",
-                    formatString: "#,##0",
+                    dataField: 'totAddSale',
+                    operation: 'SUM',
+                    positionField: 'totAddSale',
+                    style: 'grid_textalign_right',
+                    formatString: '#,##0',
                 }, {
-                    dataField: "hsTotAmt",
-                    operation: "SUM",
-                    positionField: "hsTotAmt",
-                    style: "grid_textalign_right",
-                    formatString: "#,##0",
+                    dataField: 'hsTotAmt',
+                    operation: 'SUM',
+                    positionField: 'hsTotAmt',
+                    style: 'grid_textalign_right',
+                    formatString: '#,##0',
                 }, {
-                    dataField: "hsExceptAmt",
-                    operation: "SUM",
-                    positionField: "hsExceptAmt",
-                    style: "grid_textalign_right",
-                    formatString: "#,##0",
+                    dataField: 'hsExceptAmt',
+                    operation: 'SUM',
+                    positionField: 'hsExceptAmt',
+                    style: 'grid_textalign_right',
+                    formatString: '#,##0',
                 }, {
-                    dataField: "hsSettleTotAmt",
-                    operation: "SUM",
-                    positionField: "hsSettleTotAmt",
-                    style: "grid_textalign_right",
-                    formatString: "#,##0",
+                    dataField: 'hsSettleTotAmt',
+                    operation: 'SUM',
+                    positionField: 'hsSettleTotAmt',
+                    style: 'grid_textalign_right',
+                    formatString: '#,##0',
                 }, {
-                    dataField: "hsSettleReturnAmt",
-                    operation: "SUM",
-                    positionField: "hsSettleReturnAmt",
-                    style: "grid_textalign_right",
-                    formatString: "#,##0",
+                    dataField: 'hsSettleReturnAmt',
+                    operation: 'SUM',
+                    positionField: 'hsSettleReturnAmt',
+                    style: 'grid_textalign_right',
+                    formatString: '#,##0',
                 }, {
-                    dataField: "hsSettleAmt",
-                    operation: "SUM",
-                    positionField: "hsSettleAmt",
-                    style: "grid_textalign_right",
-                    formatString: "#,##0",
+                    dataField: 'hsSettleAmt',
+                    operation: 'SUM',
+                    positionField: 'hsSettleAmt',
+                    style: 'grid_textalign_right',
+                    formatString: '#,##0',
                 }, {
-                    dataField: "hsSettleAmtBr",
-                    operation: "SUM",
-                    positionField: "hsSettleAmtBr",
-                    style: "grid_textalign_right",
-                    formatString: "#,##0",
+                    dataField: 'hsSettleAmtBr',
+                    operation: 'SUM',
+                    positionField: 'hsSettleAmtBr',
+                    style: 'grid_textalign_right',
+                    formatString: '#,##0',
                 }, {
-                    dataField: "hsSettleAmtFr",
-                    operation: "SUM",
-                    positionField: "hsSettleAmtFr",
-                    style: "grid_textalign_right",
-                    formatString: "#,##0",
+                    dataField: 'hsSettleAmtFr',
+                    operation: 'SUM',
+                    positionField: 'hsSettleAmtFr',
+                    style: 'grid_textalign_right',
+                    formatString: '#,##0',
                 }, {
-                    dataField: "hsRoyaltyAmtBr",
-                    operation: "SUM",
-                    positionField: "hsRoyaltyAmtFr",
-                    style: "grid_textalign_right",
-                    formatString: "#,##0",
+                    dataField: 'hsRolayltyAmtBr',
+                    operation: 'SUM',
+                    positionField: 'hsRolayltyAmtBr',
+                    style: 'grid_textalign_right',
+                    formatString: '#,##0',
                 }, {
-                    dataField: "brProfit",
-                    operation: "SUM",
-                    positionField: "brProfit",
-                    style: "grid_textalign_right",
-                    formatString: "#,##0",
+                    dataField: 'brProfit',
+                    operation: 'SUM',
+                    positionField: 'brProfit',
+                    style: 'grid_textalign_right',
+                    formatString: '#,##0',
                 },
             ];
 
@@ -403,6 +369,34 @@ const searchList = function () {
 
     comms.getMainData(searchCondition);
 };
+
+const summaryDataRefinery = function (items) {
+    for(let i = 0; i < items.length; i++) {
+        items[i].hsPressed = items[i].hsPressed ? items[i].hsPressed : 0;
+        items[i].hsWaterRepellent = items[i].hsWaterRepellent ? items[i].hsWaterRepellent : 0;
+        items[i].hsStarch = items[i].hsStarch ? items[i].hsStarch : 0;
+        items[i].hsAdd1Amt = items[i].hsAdd1Amt ? items[i].hsAdd1Amt : 0;
+        items[i].hsAdd2Amt = items[i].hsAdd2Amt ? items[i].hsAdd2Amt : 0;
+        items[i].addAmt = items[i].hsPressed + items[i].hsWaterRepellent + items[i].hsStarch
+            + items[i].hsAdd1Amt + items[i].hsAdd2Amt;
+
+        items[i].hsWhitening = items[i].hsWhitening ? items[i].hsWhitening : 0;
+        items[i].hsPollution = items[i].hsPollution ? items[i].hsPollution : 0;
+        items[i].whiteningPollution = items[i].hsWhitening + items[i].hsPollution;
+
+        items[i].hsRepairAmt = items[i].hsRepairAmt ? items[i].hsRepairAmt : 0;
+        items[i].hsUrgentAmt = items[i].hsUrgentAmt ? items[i].hsUrgentAmt : 0;
+        items[i].hsDiscountAmt = items[i].hsDiscountAmt ? items[i].hsDiscountAmt : 0;
+        items[i].totAddSale = items[i].hsPressed + items[i].hsWaterRepellent + items[i].hsStarch + items[i].hsAdd1Amt
+            + items[i].hsAdd2Amt + items[i].hsRepairAmt + items[i].hsWhitening + items[i].hsPollution
+            + items[i].hsUrgentAmt - items[i].hsDiscountAmt;
+
+        items[i].hsSettleAmtBr = items[i].hsSettleAmtBr ? items[i].hsSettleAmtBr : 0;
+        items[i].hsRolayltyAmtBr = items[i].hsRolayltyAmtBr ? items[i].hsRolayltyAmtBr : 0;
+        items[i].brProfit = items[i].hsSettleAmtBr + items[i].hsRolayltyAmtBr;
+    }
+    return items;
+}
 
 /* 페이지가 로드되고 나서 실행 */
 $(function() {

@@ -14,7 +14,7 @@ const runOnlyOnce = {
         }
 
         const currentMonth = today.getMonth();
-        $('#filterMonth option').eq(currentMonth - 1).prop('selected', true);
+        $('#filterMonth option').eq(currentMonth).prop('selected', true);
     },
 
     activateBrFrListInputs: activateBrFrListInputs,
