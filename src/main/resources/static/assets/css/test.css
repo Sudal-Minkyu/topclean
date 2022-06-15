@@ -346,7 +346,7 @@ textarea {
 	display: block;
 	position: relative;
 	width: 100%;
-	height: 3.75rem;
+	height: 3.375rem;
 	padding: 0 5rem 0 2.5rem;
 	background-color: #fafafa;
 	color: #000;
@@ -2532,6 +2532,46 @@ footer.footer > ul > li + li:before {
 .template-setting__item {
 	width: 33.3333%;
 	padding: 0.313rem;
+}
+
+/* account */
+.account {
+	position: relative;
+}
+.account__head {
+	width: 100%;
+	margin-bottom: 0.625rem;
+	padding-bottom: 0.625rem;
+	border-bottom: 1px solid #d3d3d3;
+}
+.account__title {
+	text-align: left;
+}
+.account__print {
+	position: absolute;
+	top: -0.625rem;
+	right: 0;
+}
+.account__section {
+	position: relative;
+}
+.account__section + .account__section {
+	margin-top: 1.25rem;
+}
+.account__section.account__section--flex {
+	display: flex;
+}
+.account__section.account__section--flex > .account__article {
+	flex: 1;
+}
+.account__section.account__section--flex > .account__article.account__article--flex3 {
+	flex: 3;
+}
+.account__section.account__section--flex > .account__article + .account__article {
+	margin-left: 20px;
+}
+.account__article > h4 {
+	margin-bottom: 0.625rem;
 }
 
 /* popup */

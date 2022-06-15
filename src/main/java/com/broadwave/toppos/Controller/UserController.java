@@ -115,6 +115,12 @@ public class UserController {
     public String closed(){
         return "user/manage/closed";
     }
+
+    // 일일정산서서
+   @RequestMapping("dailyaccount")
+    public String dailyaccount(){
+        return "user/manage/dailyaccount";
+    }
     
     // 입출고
     // 가맹점 입고

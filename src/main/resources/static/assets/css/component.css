@@ -908,6 +908,89 @@ input[type="number"]::-webkit-inner-spin-button {
 	line-height: 2.375rem;
 }
 
+/* table */
+/* table */
+.c-table {
+	table-layout: fixed;
+	width: 100%;
+	border-collapse: collapse;
+	border-spacing: 0;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+	color: #333;
+}
+.c-table tbody > tr:first-child > th,
+.c-table tbody > tr:first-child > td {
+	border-top: 1px solid #c8c8c8;
+}
+.c-table th,
+.c-table td {
+	position: relative;
+	height: 40px;
+	padding: 0 10px;
+	border: 1px solid #d6d6d6;
+	font-size: 14px;
+	line-height: 1.5;
+	vertical-align: middle;
+	word-break: break-all;
+	word-wrap: break-word;
+}
+.c-table th {
+	background-color: #f8f8f8;
+	text-align: left;
+}
+.c-table thead th {
+	text-align: center;
+}
+.c-table.align--center,
+.c-table th.align--center,
+.c-table tbody.align--center td,
+.c-table tr.align--center td,
+.c-table td.align--center {
+	text-align: center;
+}
+.c-table.align--right,
+.c-table th.align--right,
+.c-table tbody.align--right td,
+.c-table tr.align--right td,
+.c-table td.align--right {
+	text-align: right;
+}
+.c-table tfoot th,
+.c-table tfoot td {
+	background-color: #004a98;
+	color: #fff;
+}
+.c-table th.c-table__x:before,
+.c-table td.c-table__x:before {
+	content: " ";
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg"><line x1="0" y1="100%" x2="100%" y2="0" stroke="lightgray" /></svg>');
+}
+.c-table th.c-table__x:after,
+.c-table td.c-table__x:after {
+	content: " ";
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg"><line x1="0" y1="0" x2="100%" y2="100%" stroke="lightgray" /></svg>');
+}
+.c-table tfoot th.c-table__x:before,
+.c-table tfoot td.c-table__x:before {
+	background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg"><line x1="0" y1="100%" x2="100%" y2="0" stroke="white" /></svg>');
+}
+.c-table tfoot th.c-table__x:after,
+.c-table tfoot td.c-table__x:after {
+	background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg"><line x1="0" y1="0" x2="100%" y2="100%" stroke="white" /></svg>');
+}
+
+
 /* datepicker */
 .ui-datepicker {
     overflow: hidden;

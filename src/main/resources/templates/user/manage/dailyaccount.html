@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate ="~{layout/defaulttest}">
+
+<!-- 사용자 CSS 추가 -->
+<th:block layout:fragment="css">
+</th:block>
+
+<!-- 사용자 스크립트 추가 -->
+<th:block layout:fragment="script">
+    <script src="/assets/js/toppos/user/manage/dailyaccount.js"></script>
+    <script type="text/javascript">
+
+        $(function() {
+
+        });
+
+    </script>
+</th:block>
+
+<div layout:fragment="content" class="content content--column">
+    <div class="content__header">
+        <!-- menu명 -->
+        <h2 class="content__heading"><spans class="content__heading-home">Home</spans>&nbsp;&gt;&nbsp;영업관리&nbsp;&gt;&nbsp;일일정산서</h2>
+
+        <div class="search">
+            <div class="search__period">
+                <div class="search__period-title">기준일자</div>
+                <input type="text" class="c-date" />
+            </div>
+        </div>
+
+        <div class="content__header-btns">
+            <button class="c-button c-button--small c-button--darksolid">조회</button>
+        </div>
+    </div>
+
+    <div class="content__body">
+        <div class="account">
+            <div class="account__head">
+                <h3 class="account__title">일일 정산서</h3>
+                <div class="account__print">
+                    <button class="c-button c-button--small c-button--solid">인쇄</button>
+                </div>
+            </div>
+            <div class="account__body">
+                <div class="account__section account__section--flex">
+                    <div class="account__article account__article--flex3">
+                        <h4>1. 시재 관리</h4>
+                        <table class="c-table">
+                            <colgroup>
+                                <col style="width: 100px;">
+                                <col>
+                                <col>
+                                <col>
+                                <col>
+                            </colgroup>
+                            <thead>
+                                <tr>
+                                    <th>구분</th>
+                                    <th>준비금</th>
+                                    <th>매출</th>
+                                    <th>미수금입금</th>
+                                    <th>총합계</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>현금</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>카드</td>
+                                    <td rowspan="2" class="c-table__x"></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>후불</td>
+                                    <td></td>
+                                    <td class="c-table__x"></td>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th>합계</th>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                    <div class="account__article">
+                        <h4>포스 접속 시간</h4>
+                        <table class="c-table">
+                            <colgroup>
+                                <col>
+                                <col>
+                            </colgroup>
+                            <tbody>
+                                <tr>
+                                    <th>로그인</th>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <th>로그아웃</th>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="account__section">
+                    <div class="account__article">
+                        <h4>2. 당일 매출</h4>
+                        <table class="c-table">
+                            <colgroup>
+                                <col style="width: 60px;">
+                                <col style="width: 60px;">
+                                <col>
+                                <col>
+                                <col>
+                                <col>
+                                <col>
+                                <col>
+                                <col>
+                                <col>
+                                <col>
+                                <col>
+                                <col>
+                            </colgroup>
+                            <thead>
+                                <tr>
+                                    <th rowspan="2" colspan="2">구분</th>
+                                    <th rowspan="2">기본매출<br>(일반세탁)</th>
+                                    <th colspan="5">추가매출</th>
+                                    <th rowspan="2">추가매출<br>전체</th>
+                                    <th rowspan="2">반품</th>
+                                    <th rowspan="2">종합매출</th>
+                                    <th rowspan="2">SMS발송</th>
+                                    <th rowspan="3">최종매출</th>
+                                </tr>
+                                <tr>
+                                    <th>추가요금</th>
+                                    <th>수선</th>
+                                    <th>표백/오염</th>
+                                    <th>긴급</th>
+                                    <th>할인</th>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">수량</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td class="c-table__x"></td>
+                                    <td></td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td rowspan="3">일매출</td>
+                                    <td>지사</td>
+                                    <td rowspan="2"></td>
+                                    <td rowspan="2"></td>
+                                    <td rowspan="2"></td>
+                                    <td rowspan="2"></td>
+                                    <td rowspan="2"></td>
+                                    <td rowspan="2"></td>
+                                    <td rowspan="2"></td>
+                                    <td rowspan="2"></td>
+                                    <td></td>
+                                    <td class="c-table__x"></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>매장</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th></th>
+                                    <th>합계</th>
+                                    <td colspan="7" class="c-table__x"></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td class="c-table__x"></td>
+                                    <td class="c-table__x"></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="account__section">
+                    <div class="account__article">
+                        <h4>3. 기타 내역</h4>
+                        <table class="c-table">
+                            <colgroup>
+                                <col style="width: 60px;">
+                                <col>
+                                <col style="width: 60px;">
+                                <col>
+                                <col style="width: 60px;">
+                                <col>
+                                <col style="width: 60px;">
+                                <col>
+                                <col>
+                                <col>
+                                <col>
+                                <col>
+                                <col>
+                            </colgroup>
+                            <thead>
+                                <tr>
+                                    <th colspan="2">접수취소</th>
+                                    <th colspan="2">접수수정</th>
+                                    <th colspan="2">고객인도(매출)</th>
+                                    <th colspan="2">반품인도</th>
+                                    <th rowspan="2">총 미수금</th>
+                                    <th rowspan="2">신규<br>고객건수</th>
+                                    <th colspan="3">고객포인트</th>
+                                </tr>
+                                <tr>
+                                    <th>수량</th>
+                                    <th>금액</th>
+                                    <th>수량</th>
+                                    <th>금액</th>
+                                    <th>수량</th>
+                                    <th>금액</th>
+                                    <th>수량</th>
+                                    <th>금액</th>
+                                    <th>적립액</th>
+                                    <th>사용건수</th>
+                                    <th>사용금액</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+</div>
+</html>
