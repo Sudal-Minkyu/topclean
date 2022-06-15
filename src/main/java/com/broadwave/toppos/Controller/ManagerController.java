@@ -205,4 +205,7 @@ public class ManagerController {
     @RequestMapping("normalspeedstat")
     public String normalspeedstat(){ return "manager/inandout2/normalspeedstat"; }
 
+    // 가맹점 일 정산 입금 등록
+    @RequestMapping("frdaydeposit")
+    public String frdaydeposit(){ return "manager/calculate/frdaydeposit"; }
 }

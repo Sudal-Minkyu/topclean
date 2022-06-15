@@ -17,8 +17,8 @@ const dtos = {
             hsYyyymm: 's',    // 정산월
             brCode: 's',    // 지사코드
             hrReceiptYyyymmdd: 's',    // 입금등록일자
-            hrReceiptSaleAmt: 'n',    // 입금액(본사입금액)
-            hrReceiptRoyaltyAmt: 'n',    // 입금액(가맹점로열티)
+            hrReceiptBrRoyaltyAmt: 'n',    // 입금액(지사로열티)
+            hrReceiptFrRoyaltyAmt: 'n',    // 입금액(가맹점로열티)
         },
     },
     receive: {
@@ -29,15 +29,27 @@ const dtos = {
             hsRolayltyAmtBr: 'n',    // 지사 로열티 정산액
             hsRolayltyAmtFr: 'n',    // 가맹점 로열티 정산액
             hrReceiptYyyymmdd: 's',    // 입금등록일자
-            hrReceiptSaleAmt: 'n',    // 입금액(본사입금액)
-            hrReceiptRoyaltyAmt: 'n',    // 입금액(가맹점로열티)
+            hrReceiptBrRoyaltyAmt: 'n',    // 입금액(지사로열티)
+            hrReceiptFrRoyaltyAmt: 'n',    // 입금액(가맹점로열티)
         }
     },
 };
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
+    saveDepositState(saveData) {
+        console.log(saveData);
+        // CommonUI.ajax('/api/head/', 'PARAM', saveData, function (res) {
+        //     console.log(res);
+        // });
+    },
 
+    getDepositList(searchCondition) {
+        console.log(searchCondition);
+        // CommonUI.ajax('/api/head/', 'GET', searchCondition, function (res) {
+        //     console.log(res);
+        // });
+    },
 };
 
 /* AUI 그리드 관련 설정과 함수들 */
@@ -59,18 +71,33 @@ const grids = {
             }, {
                 dataField: 'hsYyyymm',
                 headerText: '정산월',
+                labelFunction(_rowIndex, _columnIndex, value, _headerText, _item) {
+                    return value.substring(0, 4) + '-' + value.substring(4, 6);
+                },
             }, {
                 dataField: 'hsRolayltyAmtBr',
                 headerText: '지사 로열티',
+                style: 'grid_textalign_right',
+                dataType: 'numeric',
+                autoThousandSeparator: 'true',
             }, {
-                dataField: 'hrReceiptSaleAmt',
-                headerText: '본사 입금액',
+                dataField: 'hrReceiptBrRoyaltyAmt',
+                headerText: '지사 로열티 입금액',
+                style: 'grid_textalign_right',
+                dataType: 'numeric',
+                autoThousandSeparator: 'true',
             }, {
                 dataField: 'hsRolayltyAmtFr',
                 headerText: '가맹점 로열티',
+                style: 'grid_textalign_right',
+                dataType: 'numeric',
+                autoThousandSeparator: 'true',
             }, {
-                dataField: 'hrReceiptRoyaltyAmt',
-                headerText: '로열티 입금액',
+                dataField: 'hrReceiptFrRoyaltyAmt',
+                headerText: '가맹점 로열티 입금액',
+                style: 'grid_textalign_right',
+                dataType: 'numeric',
+                autoThousandSeparator: 'true',
             },
         ];
 
@@ -129,19 +156,27 @@ const trigs = {
         AUIGrid.bind(grids.id[0], 'cellClick', function (e) {
             console.log(e.item);
         });
+
+        $('#hrReceiptBrRoyaltyAmt, #hrReceiptFrRoyaltyAmt').on("keyup", function () {
+            this.value = this.value.numString().toInt().toLocaleString();
+        });
+
+        $('#saveDepositState').on('click', function () {
+            saveDepositState();
+        });
+
+        $('#searchListBtn').on('click', function () {
+            getDepositList();
+        });
     },
 };
 
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
 const wares = {
-
+    selectedItem: {},
 };
 
-/* 입금일자쪽 데이트피커 활성화 */
-const setDatePicker = function () {
-    CommonUI.setDatePicker(['hrReceiptYyyymmdd']);
-}
-
+/* 날짜 입력관련 인풋 초기값 할당 및 데이트피커 활성화 */
 function enableDatepicker() {
     const today = new Date().format("yyyy-MM-dd");
 
@@ -153,6 +188,38 @@ function enableDatepicker() {
     $("#" + datePickerTargetIds[0]).val(today);
 
     CommonUI.setDatePicker(datePickerTargetIds);
+}
+
+/* 입력받은 입금내역을 저장 */
+function saveDepositState() {
+    if (!wares.selectedItem.hsYyyymm) {
+        alertCaution('먼저, 입력을 원하는 항목을 선택해 주세요.', 1);
+        return;
+    }
+
+    const saveData = {
+        hsYyyymm: wares.selectedItem.hsYyyymm,
+        brCode: wares.selectedItem.brCode,
+        hrReceiptYyyymmdd: $('#hrReceiptYyyymmdd').val().numString(),
+        hrReceiptBrRoyaltyAmt: $('hrReceiptBrRoyaltyAmt').val().numString().toInt(),
+        hrReceiptFrRoyaltyAmt: $('hrReceiptFrRoyaltyAmt').val().numString().toInt(),
+    }
+
+    comms.saveDepositState(saveData);
+}
+
+/* 조회 */
+function getDepositList() {
+    const searchCondition = {
+        filterFromYearMonth: $('#filterFromYear').val() + $('#filterFromMonth').val(),
+        filterToYearMonth: $('#filterToYear').val() + $('#filterToMonth').val(),
+        branchId: parseInt($('#brList').val()),
+    }
+    if (!searchCondition.branchId) {
+        alertCaution('조회하실 지사를 선택해 주세요', 1);
+        return;
+    }
+    comms.getDepositList(searchCondition);
 }
 
 /* 페이지가 로드되고 나서 실행 */
