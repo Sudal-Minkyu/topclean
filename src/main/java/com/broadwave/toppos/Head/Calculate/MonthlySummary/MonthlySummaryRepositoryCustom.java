@@ -18,6 +18,6 @@ public interface MonthlySummaryRepositoryCustom {
 
     List<ReceiptMonthlyListDto> findByReceiptMonthlyList(Long branchId, String filterFromYearMonth, String filterToYearMonth); // 본사 지사 월정산입금 리스트
 
-    MonthlySummaryDaysDto findByReceiptMonthlyDays(String hsYyyymmdd, String frbrCode, String frCode); // 본사 일일정산서 리스트
+    List<MonthlySummaryDaysDto> findByReceiptMonthlyDays(String hsYyyymmdd, String frbrCode, String frCode); // 본사 일일정산서 리스트
 
 }

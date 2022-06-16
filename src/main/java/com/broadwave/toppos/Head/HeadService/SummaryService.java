@@ -157,7 +157,7 @@ public class SummaryService {
         log.info("현재 접속한 가맹점 코드 : "+frCode);
         log.info("현재 소속된 지사 코드 : "+frbrCode);
 
-        MonthlySummaryDaysDto monthlySummaryDaysDtos = monthlySummaryRepository.findByReceiptMonthlyDays(hsYyyymmdd, frbrCode, frCode);
+        List<MonthlySummaryDaysDto> monthlySummaryDaysDtos = monthlySummaryRepository.findByReceiptMonthlyDays(hsYyyymmdd, frbrCode, frCode);
         data.put("monthlySummaryDaysDtos", monthlySummaryDaysDtos);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));

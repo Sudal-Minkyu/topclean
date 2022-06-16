@@ -124,11 +124,11 @@ public class MonthlySummaryRepositoryCustomImpl extends QuerydslRepositorySuppor
 
     // 본사 일일정산서 리스트
     @Override
-    public MonthlySummaryDaysDto findByReceiptMonthlyDays(String hsYyyymmdd, String frbrCode, String frCode) {
+    public List<MonthlySummaryDaysDto> findByReceiptMonthlyDays(String hsYyyymmdd, String frbrCode, String frCode) {
         EntityManager em = getEntityManager();
         StringBuilder sb = new StringBuilder();
 
-        sb.append("SELECT  a.hs_fr_ready_amt a1 , a.hs_cash_sale_amt a2,a.hs_uncollect_cash_amt a3,a.hs_card_sale_amt a4,a.hs_uncollect_card_amt a5 \n");
+        sb.append("SELECT  a.hs_fr_ready_amt a1 , a.hs_cash_sale_amt a2, a.hs_uncollect_cash_amt a3,a.hs_card_sale_amt a4, a.hs_uncollect_card_amt a5 \n");
         sb.append(",a.hs_deferred_sale_amt a6 \n");
         sb.append(",a.hs_normal_cnt b0, a.hs_add1_cnt b1, a.hs_add2_cnt b2, a.hs_add3_cnt b3, a.hs_add4_cnt b4 , a.hs_add5_cnt b5,a.hs_return_cnt b6 ,a.hs_sms_cnt b7 \n");
         sb.append(",a.hs_normal_amt b8, a.hs_pressed +a.hs_starch + a.hs_water_repellent + a.hs_add1_amt +a.hs_add2_amt b9 \n");
@@ -141,7 +141,7 @@ public class MonthlySummaryRepositoryCustomImpl extends QuerydslRepositorySuppor
         sb.append("FROM hc_daily_summary a \n");
         sb.append("LEFT OUTER JOIN bs_franchise_login_log  b ON a.fr_code =b.fr_code AND a.hs_yyyymmdd = b.bl_login_dt \n");
         sb.append("LEFT OUTER JOIN bs_franchise_logout_log  c ON a.fr_code =c.fr_code AND a.hs_yyyymmdd = c.bl_logout_dt \n");
-        sb.append("WHERE hs_yyyymmdd = ?1 \n");
+        sb.append("WHERE a.hs_yyyymmdd = ?1 \n");
         sb.append("AND a.br_code= ?2 AND a.fr_code= ?3 \n");
 
         Query query = em.createNativeQuery(sb.toString());
@@ -150,7 +150,7 @@ public class MonthlySummaryRepositoryCustomImpl extends QuerydslRepositorySuppor
         query.setParameter(2, frbrCode);
         query.setParameter(3, frCode);
 
-        return jpaResultMapper.uniqueResult(query, MonthlySummaryDaysDto.class);
+        return jpaResultMapper.list(query, MonthlySummaryDaysDto.class);
     }
 
 }
