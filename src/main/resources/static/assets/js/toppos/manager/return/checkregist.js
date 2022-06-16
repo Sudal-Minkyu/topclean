@@ -539,7 +539,7 @@ const trigs = {
             });
 
             $("#fiAddAmt").on("keyup", function () {
-                $(this).val($(this).val().numString().toInt().toLocaleString());
+                $(this).val($(this).val().positiveNumberInput());
             });
 
             $("#takePhotoBtn").on("click", function () {

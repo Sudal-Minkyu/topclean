@@ -28,7 +28,6 @@ const dtos = {
             hsYyyymm: 's',    // 정산월
             hsRolayltyAmtBr: 'n',    // 지사 로열티 정산액
             hsRolayltyAmtFr: 'n',    // 가맹점 로열티 정산액
-            hrReceiptYyyymmdd: 's',    // 입금등록일자
             hrReceiptBrRoyaltyAmt: 'n',    // 입금액(지사로열티)
             hrReceiptFrRoyaltyAmt: 'n',    // 입금액(가맹점로열티)
         }
@@ -82,7 +81,7 @@ const grids = {
                 autoThousandSeparator: 'true',
             }, {
                 dataField: 'hrReceiptBrRoyaltyAmt',
-                headerText: '지사 로열티 입금액',
+                headerText: '지사 로열티 입금',
                 style: 'grid_textalign_right',
                 dataType: 'numeric',
                 autoThousandSeparator: 'true',
@@ -94,7 +93,7 @@ const grids = {
                 autoThousandSeparator: 'true',
             }, {
                 dataField: 'hrReceiptFrRoyaltyAmt',
-                headerText: '가맹점 로열티 입금액',
+                headerText: '가맹점 로열티 입금',
                 style: 'grid_textalign_right',
                 dataType: 'numeric',
                 autoThousandSeparator: 'true',
@@ -158,7 +157,7 @@ const trigs = {
         });
 
         $('#hrReceiptBrRoyaltyAmt, #hrReceiptFrRoyaltyAmt').on("keyup", function () {
-            this.value = this.value.numString().toInt().toLocaleString();
+            this.value = this.value.numberInput();
         });
 
         $('#saveDepositState').on('click', function () {
@@ -201,8 +200,8 @@ function saveDepositState() {
         hsYyyymm: wares.selectedItem.hsYyyymm,
         brCode: wares.selectedItem.brCode,
         hrReceiptYyyymmdd: $('#hrReceiptYyyymmdd').val().numString(),
-        hrReceiptBrRoyaltyAmt: $('hrReceiptBrRoyaltyAmt').val().numString().toInt(),
-        hrReceiptFrRoyaltyAmt: $('hrReceiptFrRoyaltyAmt').val().numString().toInt(),
+        hrReceiptBrRoyaltyAmt: $('hrReceiptBrRoyaltyAmt').val().toInt(),
+        hrReceiptFrRoyaltyAmt: $('hrReceiptFrRoyaltyAmt').val().toInt(),
     }
 
     comms.saveDepositState(saveData);

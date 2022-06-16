@@ -19,6 +19,24 @@ class CommonUIClass {
             return this.toString() ? this.replace(/[\D]/g, "") : "";
         };
 
+        /* 입력창 숫자 입력 검증용 : -를 포함한 숫자 입력, 천단위 쉼표, 빈문자일 때 유지 */
+        String.prototype.numberInput = function () {
+            const filteredValue = this.replace(/[^0-9-]/g, "");
+            if (["", "-"].includes(filteredValue)) {
+                return filteredValue;
+            }
+            return parseInt(filteredValue, 10).toLocaleString();
+        }
+
+        /* 입력창 숫자 입력 검증용 : -를 포함한 숫자 입력, 천단위 쉼표, 빈문자일 때 유지, 양수 입력 전용 */
+        String.prototype.positiveNumberInput = function () {
+            const filteredValue = this.replace(/[^0-9]/g, "");
+            if (filteredValue === "") {
+                return "";
+            }
+            return parseInt(filteredValue, 10).toLocaleString();
+        }
+
         /* 통신 에러의 경우 최초 단 1회만 보고한다. (무한루프 가능성 때문) */
         this.commsErrMsg = true;
         this.setKrDatepicker();
