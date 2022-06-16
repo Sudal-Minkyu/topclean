@@ -1,6 +1,6 @@
-package com.broadwave.toppos.Head.DailySummary;
+package com.broadwave.toppos.Head.Calculate.DailySummary;
 
-import com.broadwave.toppos.Head.DailySummary.DaliySummaryDtos.DaliySummaryListDto;
+import com.broadwave.toppos.Head.Calculate.DailySummary.DaliySummaryDtos.DaliySummaryListDto;
 import com.broadwave.toppos.Head.Franchise.QFranchise;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;

@@ -1881,4 +1881,31 @@ public class HeadRestController {
         return summaryService.headBranchMonthlySummaryList(filterYearMonth);
     }
 
+    // 본사 지사 월정산 입금 리스트 호출API
+    @GetMapping("headBranchReceiptMonthlyList")
+    @ApiOperation(value = "본사 지사의 월정산입금 리스트", notes = "본사가 지사의 월정산입금 리스트를 요청한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", value = "JWT Token", required = true, dataType = "string", paramType = "header")})
+    public ResponseEntity<Map<String, Object>> headBranchReceiptMonthlyList(@RequestParam("branchId") Long branchId, @RequestParam("filterFromYearMonth") String filterFromYearMonth,
+                                                                            @RequestParam("filterToYearMonth") String filterToYearMonth) {
+        return summaryService.headBranchReceiptMonthlyList(branchId, filterFromYearMonth, filterToYearMonth);
+    }
+
+    // 본사 지사 월정산 입금 저장 호출API
+    @PostMapping("headBranchMonthlySummarySave")
+    @ApiOperation(value = "본사 지사 월정산 저장", notes = "본사가 지사 월정산 요약 저장합니다.")
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", value = "JWT Token", required = true, dataType = "string", paramType = "header")})
+    public ResponseEntity<Map<String, Object>> headBranchMonthlySummarySave(@RequestParam("hsYyyymm") String hsYyyymm, @RequestParam("brCode") String brCode,
+                                                                            @RequestParam("hrReceiptYyyymmdd") String hrReceiptYyyymmdd, @RequestParam("hrReceiptBrRoyaltyAmt") Integer hrReceiptBrRoyaltyAmt,
+                                                                            @RequestParam("hrReceiptFrRoyaltyAmt") Integer hrReceiptFrRoyaltyAmt) {
+        return summaryService.headBranchMonthlySummarySave(hsYyyymm, brCode, hrReceiptYyyymmdd, hrReceiptBrRoyaltyAmt, hrReceiptFrRoyaltyAmt);
+    }
+
+    // 본사 지사 월정산 입금현황 호출API
+    @GetMapping("headBranchMonthlyStatusList")
+    @ApiOperation(value = "본사 지사의 월정산입금 리스트", notes = "본사가 지사의 월정산입금 리스트를 요청한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", value = "JWT Token", required = true, dataType = "string", paramType = "header")})
+    public ResponseEntity<Map<String, Object>> headBranchMonthlyStatusList(@RequestParam("filterYear") String filterYear) {
+        return summaryService.headBranchMonthlyStatusList(filterYear);
+    }
+
 }

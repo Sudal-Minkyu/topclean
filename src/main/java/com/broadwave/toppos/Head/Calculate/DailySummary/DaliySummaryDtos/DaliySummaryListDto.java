@@ -1,4 +1,4 @@
-package com.broadwave.toppos.Head.MonthlySummary.MonthlySummaryDtos;
+package com.broadwave.toppos.Head.Calculate.DailySummary.DaliySummaryDtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,11 +15,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MonthlySummaryListDto {
+public class DaliySummaryListDto {
 
-    private String brName; // 지사명
-
-    private String hsYyyymm; // 정산월
+    private String hsYyyymmdd; // 일정산일자
 
     private Integer hsNormalAmt; // 정상금액
     private Integer hsPressed; // 다림질 요금
@@ -34,16 +32,16 @@ public class MonthlySummaryListDto {
 
     private Integer hsUrgentAmt; // 급세탁 추가비용
     private Integer hsDiscountAmt; // 할인금액
-    private Integer hsTotAmt; // 정산 - 총매출액( (정상 + 수선 + 추가1 + 추가2 -할인) * 수량 )
-    private Integer hsExceptAmt; // 정산- 정산대상 제외 총매출액
+    private Integer hsTotAmt; // 일정산 - 총매출액( (정상 + 수선 + 추가1 + 추가2 -할인) * 수량 )
+    private Integer hsExceptAmt; // 일정산- 정산대상 제외 총매출액
+    private Integer hsSettleTotAmt; // 일정산 - 정산대상 총매출액(A)
+    private Integer hsSettleReturnAmt; // 일정산 - 정산대상  총반품액(B)
+    private Integer hsSettleAmt; // 일정산 - 총매출액(A - B)
 
-    private Integer hsSettleTotAmt; // 정산 - 정산대상 총매출액(A)
-    private Integer hsSettleReturnAmt; // 정산 - 정산대상  총반품액(B)
+    private Integer hsSettleAmtBr; // 일정산 - 지사 매출액
+    private Integer hsSettleAmtFr; // 일정산 - 가맹 매출액
 
-    private Integer hsSettleAmt; // 정산 - 총매출액(A - B)
-    private Integer hsSettleAmtBr; // 정산 - 지사 매출액
-    private Integer hsSettleAmtFr; // 정산 - 가맹 매출액
-
-    private Integer hsRolayltyAmtBr; // 정산 - 가맹점 로열티 금액
+    private Integer hsSmsAmt; // SMS발송 금액
+    private Integer hsRolayltyAmtFr; // 일정산 - 가맹점 로열티 금액
 
 }

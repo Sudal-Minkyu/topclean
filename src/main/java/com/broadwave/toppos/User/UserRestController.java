@@ -8,6 +8,7 @@ import com.broadwave.toppos.Head.Franchise.FranchiseDtos.FranchiseMultiscreenDto
 import com.broadwave.toppos.Head.Franchise.FranchiseDtos.FranchiseUserDto;
 import com.broadwave.toppos.Head.HeadService.HeadService;
 import com.broadwave.toppos.Head.HeadService.NoticeService;
+import com.broadwave.toppos.Head.HeadService.SummaryService;
 import com.broadwave.toppos.Head.Item.Group.A.UserItemGroupSortDto;
 import com.broadwave.toppos.Head.Item.Group.B.UserItemGroupSListDto;
 import com.broadwave.toppos.Head.Item.ItemDtos.UserItemPriceSortDto;
@@ -101,6 +102,7 @@ public class UserRestController {
     private final CalendarService calendarService; // 휴무일 서비스
     private final FindService findService; // 휴무일 서비스
     private final TemplateService templateService; // 문자메세지보내기 서비스
+    private final SummaryService summaryService; // 정산페이지 서비스
 
     private final ModelMapper modelMapper;
     private final TokenProvider tokenProvider;
@@ -110,7 +112,7 @@ public class UserRestController {
     public UserRestController(AWSS3Service awss3Service, UserService userService, ReceiptService receiptService, SortService sortService, InfoService infoService, InspectService inspectService,
                               TokenProvider tokenProvider, ModelMapper modelMapper, HeadService headService, CalendarService calendarService, ReceiptStateService receiptStateService,
                               UncollectService uncollectService, BusinessdayService businessdayService, TagNoticeService tagNoticeService, TagGalleryService tagGalleryService, NoticeService noticeService,
-                              FindService findService, TemplateService templateService) {
+                              FindService findService, TemplateService templateService, SummaryService summaryService) {
         this.awss3Service = awss3Service;
         this.userService = userService;
         this.receiptService = receiptService;
@@ -129,6 +131,7 @@ public class UserRestController {
         this.noticeService = noticeService;
         this.findService = findService;
         this.templateService = templateService;
+        this.summaryService = summaryService;
     }
 
     // 가맹점의 탭번호와 탭번호타입 호출 API -> 사용안함 22.04.22
@@ -1386,5 +1389,13 @@ public class UserRestController {
         return templateService.templateList(request);
     }
 
+//@@@@@@@@@@@@@@@@@@@@@ 정산 페이지 관련 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    // 일일정산서 API 호출
+    @GetMapping("franchiseReceiptDaysList")
+    @ApiOperation(value = "가맹점 일일정산서 호출" , notes = "가맹점 일일정산서 데이터를 호출한다")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
+    public ResponseEntity<Map<String,Object>> franchiseReceiptDaysList(@RequestParam("hsYyyymmdd")String hsYyyymmdd, HttpServletRequest request){
+        return summaryService.franchiseReceiptDaysList(hsYyyymmdd, request);
+    }
 
 }

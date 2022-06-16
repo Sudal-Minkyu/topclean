@@ -1,4 +1,4 @@
-package com.broadwave.toppos.Head.DailySummary;
+package com.broadwave.toppos.Head.Calculate.DailySummary;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

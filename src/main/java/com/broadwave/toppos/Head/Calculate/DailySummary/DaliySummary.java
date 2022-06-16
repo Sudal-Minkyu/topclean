@@ -1,4 +1,4 @@
-package com.broadwave.toppos.Head.DailySummary;
+package com.broadwave.toppos.Head.Calculate.DailySummary;
 
 import lombok.*;
 
