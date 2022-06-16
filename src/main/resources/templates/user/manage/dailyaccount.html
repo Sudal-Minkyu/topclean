@@ -11,13 +11,6 @@
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
     <script src="/assets/js/toppos/user/manage/dailyaccount.js"></script>
-    <script type="text/javascript">
-
-        $(function() {
-
-        });
-
-    </script>
 </th:block>
 
 <div layout:fragment="content" class="content content--column">
@@ -28,12 +21,12 @@
         <div class="search">
             <div class="search__period">
                 <div class="search__period-title">기준일자</div>
-                <input type="text" class="c-date" />
+                <input id="hsYyyymmdd" type="text" class="c-date" />
             </div>
         </div>
 
         <div class="content__header-btns">
-            <button class="c-button c-button--small c-button--darksolid">조회</button>
+            <button id="searchBtn" class="c-button c-button--small c-button--darksolid">조회</button>
         </div>
     </div>
 
@@ -42,7 +35,7 @@
             <div class="account__head">
                 <h3 class="account__title">일일 정산서</h3>
                 <div class="account__print">
-                    <button class="c-button c-button--small c-button--solid">인쇄</button>
+                    <button id="printBtn" class="c-button c-button--small c-button--solid">인쇄</button>
                 </div>
             </div>
             <div class="account__body">
@@ -69,32 +62,32 @@
                             <tbody>
                                 <tr>
                                     <td>현금</td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
+                                    <td id="a1"></td>
+                                    <td id="a2"></td>
+                                    <td id="a3"></td>
+                                    <td id="suma14">suma14</td>
                                 </tr>
                                 <tr>
                                     <td>카드</td>
                                     <td rowspan="2" class="c-table__x"></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
+                                    <td id="a4"></td>
+                                    <td id="a5"></td>
+                                    <td id="suma24">suma24</td>
                                 </tr>
                                 <tr>
                                     <td>후불</td>
-                                    <td></td>
+                                    <td id="a6"></td>
                                     <td class="c-table__x"></td>
-                                    <td></td>
+                                    <td id="suma34">suma34</td>
                                 </tr>
                             </tbody>
                             <tfoot>
                                 <tr>
                                     <th>합계</th>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
+                                    <td id="suma41">suma41</td>
+                                    <td id="suma42">suma42</td>
+                                    <td id="suma43">suma43</td>
+                                    <td id="suma44">suma44</td>
                                 </tr>
                             </tfoot>
                         </table>
@@ -109,11 +102,11 @@
                             <tbody>
                                 <tr>
                                     <th>로그인</th>
-                                    <td></td>
+                                    <td id="d1"></td>
                                 </tr>
                                 <tr>
                                     <th>로그아웃</th>
-                                    <td></td>
+                                    <td id="d2"></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -159,50 +152,48 @@
                                 </tr>
                                 <tr>
                                     <td colspan="2">수량</td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
+                                    <td id="b0"></td>
+                                    <td id="b1"></td>
+                                    <td id="b20"></td>
+                                    <td id="b3"></td>
+                                    <td id="b4"></td>
+                                    <td id="b5"></td>
+                                    <td id="sumb17">sumb17</td>
+                                    <td id="b6"></td>
                                     <td class="c-table__x"></td>
-                                    <td></td>
+                                    <td id="b7"></td>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
                                     <td rowspan="3">일매출</td>
                                     <td>지사</td>
-                                    <td rowspan="2"></td>
-                                    <td rowspan="2"></td>
-                                    <td rowspan="2"></td>
-                                    <td rowspan="2"></td>
-                                    <td rowspan="2"></td>
-                                    <td rowspan="2"></td>
-                                    <td rowspan="2"></td>
-                                    <td rowspan="2"></td>
-                                    <td></td>
+                                    <td id="b8" rowspan="2"></td>
+                                    <td id="b9" rowspan="2"></td>
+                                    <td id="b10" rowspan="2"></td>
+                                    <td id="b11" rowspan="2"></td>
+                                    <td id="b12" rowspan="2"></td>
+                                    <td id="b13" rowspan="2"></td>
+                                    <td id="sumb27" rowspan="2">sumb27</td>
+                                    <td id="b14" rowspan="2"></td>
+                                    <td id="b15"></td>
                                     <td class="c-table__x"></td>
-                                    <td></td>
+                                    <td id="sumb211">sumb211</td>
                                 </tr>
                                 <tr>
                                     <td>매장</td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
+                                    <td id="b16"></td>
+                                    <td id="b17"></td>
+                                    <td id="sumb311">sumb311</td>
                                 </tr>
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <th></th>
-                                    <th>합계</th>
-                                    <td colspan="7" class="c-table__x"></td>
-                                    <td></td>
-                                    <td></td>
+                                    <th colspan="2">합계</th>
+                                    <td colspan="8" class="c-table__x"></td>
+                                    <td id="sumb49">sumb49</td>
                                     <td class="c-table__x"></td>
-                                    <td class="c-table__x"></td>
+                                    <td id="sumb411">sumb411</td>
                                 </tr>
                             </tfoot>
                         </table>
@@ -254,19 +245,19 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
+                                    <td id="c1"></td>
+                                    <td id="c2"></td>
+                                    <td id="c3"></td>
+                                    <td id="c4"></td>
+                                    <td id="c5"></td>
+                                    <td id="c6"></td>
+                                    <td id="c7"></td>
+                                    <td id="c8"></td>
+                                    <td id="c9"></td>
+                                    <td id="c10"></td>
+                                    <td id="c11"></td>
+                                    <td id="c12"></td>
+                                    <td id="c13"></td>
                                 </tr>
                             </tbody>
                         </table>
