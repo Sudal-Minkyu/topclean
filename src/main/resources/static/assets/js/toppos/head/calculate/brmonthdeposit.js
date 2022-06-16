@@ -38,16 +38,17 @@ const dtos = {
 const comms = {
     saveDepositState(saveData) {
         console.log(saveData);
-        // CommonUI.ajax('/api/head/', 'PARAM', saveData, function (res) {
-        //     console.log(res);
-        // });
+        CommonUI.ajax('/api/head/headBranchReceiptMonthlySave', 'PARAM', saveData, function (res) {
+            console.log(res);
+        });
     },
 
     getDepositList(searchCondition) {
         console.log(searchCondition);
-        // CommonUI.ajax('/api/head/', 'GET', searchCondition, function (res) {
-        //     console.log(res);
-        // });
+        CommonUI.ajax('/api/head/headBranchReceiptMonthlyList', 'GET', searchCondition, function (res) {
+            const data = res.sendData.gridListData;
+            grids.set(0, data);
+        });
     },
 };
 
@@ -153,7 +154,7 @@ const trigs = {
     basic() {
         /* 0번그리드 내의 셀 클릭시 이벤트 */
         AUIGrid.bind(grids.id[0], 'cellClick', function (e) {
-            console.log(e.item);
+            onSelectItem(e.item);
         });
 
         $('#hrReceiptBrRoyaltyAmt, #hrReceiptFrRoyaltyAmt').on("keyup", function () {
@@ -220,6 +221,18 @@ function getDepositList() {
     }
     comms.getDepositList(searchCondition);
 }
+
+const onSelectItem = function (item) {
+    wares.selectedItem = item;
+    $('#hsYyyymm').val(item.hsYyyymm.substring(0, 4) + '-' + item.hsYyyymm.substring(4, 6));
+    $('#hsRolayltyAmtBr').val(item.hsRolayltyAmtBr.toLocaleString());
+    $('#hsRolayltyAmtFr').val(item.hsRolayltyAmtFr.toLocaleString());
+
+    const today = new Date().format("yyyy-MM-dd");
+    $("#hrReceiptYyyymmdd").val(today);
+    $('#hrReceiptBrRoyaltyAmt').val('');
+    $('#hrReceiptFrRoyaltyAmt').val('');
+};
 
 /* 페이지가 로드되고 나서 실행 */
 $(function() {

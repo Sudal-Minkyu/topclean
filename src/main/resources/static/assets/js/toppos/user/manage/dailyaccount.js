@@ -16,8 +16,14 @@ const dtos = {
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
     getDailyAcoountData(targetDate) {
+        /* 우선 값이 들어갈 필드들을 초기화 시킨다. */
+        setFieldsByEachJsonKey(wares.fieldResetJson);
         CommonUI.ajax('/api/user/franchiseReceiptDaysList', 'GET', targetDate, function (res) {
-            console.log(res);
+            const data = res.sendData.monthlySummaryDaysDtos[0];
+            if (data) {
+                setFieldsByEachJsonKey(data);
+                calculateFields(data);
+            }
         });
     }
 };
@@ -28,12 +34,25 @@ const trigs = {
         $('#searchBtn').on('click', function () {
             getDailyAcoountData();
         });
+
+        $('#printBtn').on('click', function () {
+            openReportTool();
+        });
     },
 };
 
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
 const wares = {
-
+    fieldResetJson: {
+        a1: '', a2: '', a3: '', a4: '', a5: '', a6: '',
+        b0: '', b1: '', b2: '', b3: '', b4: '', b5: '', b6: '', b7: '', b8: '', b9: '',
+        b10: '', b11: '', b12: '', b13: '', b14: '', b15: '', b16: '', b17: '',
+        c1: '', c2: '', c3: '', c4: '', c5: '', c6: '', c7: '', c8: '', c9: '',
+        c10: '', c11: '', c12: '', c13: '',
+        d1: '', d2: '',
+        suma14: '', suma24: '', suma34: '', suma41: '', suma42: '', suma43: '', suma44: '',
+        sumb17: '', sumb27: '', sumb211: '', sumb311: '', sumb49: '', sumb411: '',
+    }
 };
 
 const enableDatepicker = function () {
@@ -57,11 +76,6 @@ const getDailyAcoountData = function () {
     comms.getDailyAcoountData(targetDate);
 }
 
-/* 서버에서 온 데이터로 표 안의 값들을 채워넣기 */
-const setUpFields = function (data) {
-
-}
-
 /* 서버에서 가져온 값들을 활용하여 표안의 계산 요소들의 값을 채워넣기 */
 const calculateFields = function (data) {
     const calculatedData = {
@@ -81,25 +95,26 @@ const calculateFields = function (data) {
         sumb411: data.b15 + data.b16 - data.b17,
     }
 
-    setFieldsByEachJsonKey(calculatedData, true);
+    setFieldsByEachJsonKey(calculatedData);
 };
 
 /* 키값에 맞춰 해당하는 id에 값 넣기 */
-const setFieldsByEachJsonKey = function (jsonObj, isNumbers) {
-    const setNumber = function (key) {
-        $('#' + key).html(jsonObj[key].toInt().toLocaleString());
-    };
-    const setData = function (key) {
-        $('#' + key).html(jsonObj[key]);
-    };
-    const setFunction = isNumbers ? setNumber : setData;
-
+const setFieldsByEachJsonKey = function (jsonObj) {
     const keys = Object.keys(jsonObj);
     for(const key of keys) {
-        setFunction(key);
+        if (Number.isInteger(jsonObj[key])) {
+            $('#' + key).html(jsonObj[key].toLocaleString());
+        } else if (jsonObj[key].length === 19) {
+            $('#' + key).html(jsonObj[key].substring(11, 19));
+        } else {
+            $('#' + key).html(jsonObj[key]);
+        }
     }
 };
 
+const openReportTool = function () {
+
+}
 
 /* 페이지가 로드되고 나서 실행 */
 $(function() {
