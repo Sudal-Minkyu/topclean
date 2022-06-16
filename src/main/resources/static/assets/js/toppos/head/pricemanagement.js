@@ -14,7 +14,7 @@ $(function () {
 
     const separator = function(i) {
         inputs.eq(i).on("keyup", function () {
-            this.value = this.value.numString().toInt().toLocaleString();
+            this.value = this.value.positiveNumberInput();
         });
     };
     for(let i = 9; i < inputs.length; i++) {
@@ -55,8 +55,8 @@ function onSave() {
     });
     // 금액에 쉽표 표시
     for(let i = 9; i < inputs.length; i++) {
-        inputs[i].value = inputs[i].value.numString().toInt().toLocaleString();
+        inputs[i].value = inputs[i].value.positiveNumberInput();
     }
-    inputs[5].value = inputs[5].value.numString().toInt().toLocaleString();
-    inputs[7].value = inputs[7].value.numString().toInt().toLocaleString();
+    inputs[5].value = inputs[5].value.positiveNumberInput();
+    inputs[7].value = inputs[7].value.positiveNumberInput();
 }

@@ -547,11 +547,11 @@ const trigs = {
 			});
 
 			$("#frDepositAmount").on("keyup", function () {
-                $(this).val($(this).val().numString().toInt().toLocaleString());
+                $(this).val($(this).val().positiveNumberInput());
             });
 
 			$("#frRentalAmount").on("keyup", function () {
-                $(this).val($(this).val().numString().toInt().toLocaleString());
+                $(this).val($(this).val().positiveNumberInput());
             });
 
 			$("#searchListBtn").on("click", function () {
@@ -567,7 +567,7 @@ const trigs = {
 			});
 
 			$("#bcReadyAmt").on("keyup", function () {
-				$(this).val($(this).val().numString().toInt().toLocaleString());
+				$(this).val($(this).val().positiveNumberInput());
 			});
 
 			AUIGrid.bind(grids.s.id[3], "cellClick", function (e) {
