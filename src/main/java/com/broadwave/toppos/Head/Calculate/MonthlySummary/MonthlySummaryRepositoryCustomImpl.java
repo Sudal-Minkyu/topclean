@@ -3,10 +3,8 @@ package com.broadwave.toppos.Head.Calculate.MonthlySummary;
 import com.broadwave.toppos.Head.Branch.QBranch;
 import com.broadwave.toppos.Head.Calculate.MonthlySummary.MonthlySummaryDtos.MonthlySummaryDaysDto;
 import com.broadwave.toppos.Head.Calculate.MonthlySummary.MonthlySummaryDtos.MonthlySummaryListDto;
-import com.broadwave.toppos.Head.Calculate.ReceiptMonthly.QReceiptMonthly;
-import com.broadwave.toppos.Head.Calculate.ReceiptMonthly.ReceiptMonthlyDtos.ReceiptMonthlyListDto;
+import com.broadwave.toppos.Head.Calculate.MonthlySummary.MonthlySummaryDtos.ReceiptMonthlyListDto;
 import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.JPQLQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.qlrm.mapper.JpaResultMapper;
@@ -84,42 +82,46 @@ public class MonthlySummaryRepositoryCustomImpl extends QuerydslRepositorySuppor
 
     // 본사 지사 월정산입금 리스트
     public List<ReceiptMonthlyListDto> findByReceiptMonthlyList(Long branchId, String filterFromYearMonth, String filterToYearMonth) {
+        EntityManager em = getEntityManager();
+        StringBuilder sb = new StringBuilder();
 
-        QMonthlySummary monthlySummary = QMonthlySummary.monthlySummary;
-        QReceiptMonthly receiptMonthly = QReceiptMonthly.receiptMonthly;
-        QBranch branch = QBranch.branch;
+        sb.append("SELECT x.hs_yyyymm, x.br_code, x.br_name,  \n");
+        sb.append("SUM(hsRolayltyAmtBr), SUM(hsRolayltyAmtFr), \n");
+        sb.append("SUM(hrReceiptBrRoyaltyAmt), SUM(hrReceiptFrRoyaltyAmt) \n");
 
-        JPQLQuery<ReceiptMonthlyListDto> query = from(monthlySummary)
-                .leftJoin(receiptMonthly).on(receiptMonthly.hsYyyymm.eq(monthlySummary.hsYyyymm))
-                .innerJoin(branch).on(branch.id.eq(branchId).and(branch.brCode.eq(monthlySummary.brCode)))
-                .where(monthlySummary.hsYyyymm.goe(filterFromYearMonth).and(monthlySummary.hsYyyymm.loe(filterToYearMonth)))
-                .select(Projections.constructor(ReceiptMonthlyListDto.class,
+        sb.append("FROM ( \n");
 
-                        branch.brName,
-                        branch.brCode,
-                        monthlySummary.hsYyyymm,
+        sb.append("SELECT a.hs_yyyymm, b.br_code, b.br_name, \n");
+        sb.append("SUM(a.hs_rolaylty_amt_br) AS hsRolayltyAmtBr, \n");
+        sb.append("SUM(a.hs_rolaylty_amt_fr) AS hsRolayltyAmtFr, \n");
+        sb.append("0 AS hrReceiptBrRoyaltyAmt, 0 AS hrReceiptFrRoyaltyAmt \n");
+        sb.append("FROM hc_monthly_summary a  \n");
+        sb.append("INNER JOIN bs_branch b ON b.br_code = a.br_code \n");
+        sb.append("WHERE a.hs_yyyymm >= ?2 AND a.hs_yyyymm <= ?3 AND b.br_id = ?1 \n");
+        sb.append("GROUP BY a.hs_yyyymm \n");
 
-                        new CaseBuilder()
-                                .when(monthlySummary.hsRolayltyAmtBr.isNull()).then(0)
-                                .otherwise(monthlySummary.hsRolayltyAmtBr.sum()),
+        sb.append("UNION ALL \n");
 
-                        new CaseBuilder()
-                                .when(monthlySummary.hsRolayltyAmtFr.isNull()).then(0)
-                                .otherwise(monthlySummary.hsRolayltyAmtFr.sum()),
+        sb.append("SELECT a.hs_yyyymm, b.br_code, b.br_name, \n");
+        sb.append("0 AS hsRolayltyAmtBr, \n");
+        sb.append("0 AS hsRolayltyAmtFr, \n");
+        sb.append("SUM(a.hr_receipt_br_royalty_amt) AS hrReceiptBrRoyaltyAmt, \n");
+        sb.append("SUM(a.hr_receipt_fr_royalty_amt) AS hrReceiptFrRoyaltyAmt \n");
+        sb.append("FROM hc_receipt_monthly a  \n");
+        sb.append("INNER JOIN bs_branch b ON b.br_code = a.br_code \n");
+        sb.append("WHERE a.hs_yyyymm >= ?2 AND a.hs_yyyymm <= ?3 AND b.br_id = ?1 \n");
+        sb.append("GROUP BY a.hs_yyyymm \n");
 
-                        new CaseBuilder()
-                                .when(receiptMonthly.hrReceiptBrRoyaltyAmt.isNull()).then(0)
-                                .otherwise(receiptMonthly.hrReceiptBrRoyaltyAmt.sum()),
+        sb.append(") x \n");
+        sb.append("GROUP BY x.hs_yyyymm,x.br_name \n");
 
-                        new CaseBuilder()
-                                .when(receiptMonthly.hrReceiptFrRoyaltyAmt.isNull()).then(0)
-                                .otherwise(receiptMonthly.hrReceiptFrRoyaltyAmt.sum())
+        Query query = em.createNativeQuery(sb.toString());
 
-                ));
+        query.setParameter(1, branchId);
+        query.setParameter(2, filterFromYearMonth);
+        query.setParameter(3, filterToYearMonth);
 
-        query.groupBy(branch.brCode);
-
-        return query.fetch();
+        return jpaResultMapper.list(query, ReceiptMonthlyListDto.class);
     }
 
     // 본사 일일정산서 리스트

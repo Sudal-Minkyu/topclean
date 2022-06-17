@@ -6,7 +6,8 @@ import com.broadwave.toppos.Head.Calculate.MonthlySummary.MonthlySummaryDtos.Mon
 import com.broadwave.toppos.Head.Calculate.MonthlySummary.MonthlySummaryDtos.MonthlySummaryListDto;
 import com.broadwave.toppos.Head.Calculate.MonthlySummary.MonthlySummaryRepository;
 import com.broadwave.toppos.Head.Calculate.ReceiptMonthly.ReceiptMonthly;
-import com.broadwave.toppos.Head.Calculate.ReceiptMonthly.ReceiptMonthlyDtos.ReceiptMonthlyListDto;
+import com.broadwave.toppos.Head.Calculate.MonthlySummary.MonthlySummaryDtos.ReceiptMonthlyListDto;
+import com.broadwave.toppos.Head.Calculate.ReceiptMonthly.ReceiptMonthlyDtos.ReceiptMonthlyBranchListDto;
 import com.broadwave.toppos.Head.Calculate.ReceiptMonthly.ReceiptMonthlyRepository;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.common.AjaxResponse;
@@ -90,7 +91,7 @@ public class SummaryService {
         HashMap<String, Object> data = new HashMap<>();
 
         List<ReceiptMonthlyListDto> receiptMonthlyListDtos = monthlySummaryRepository.findByReceiptMonthlyList(branchId, filterFromYearMonth, filterToYearMonth);
-
+//        log.info("receiptMonthlyListDtos  : " + receiptMonthlyListDtos);
         data.put("gridListData", receiptMonthlyListDtos);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
@@ -127,16 +128,15 @@ public class SummaryService {
 
     // 본사 지사 월정산 입금현황 호출API
     public ResponseEntity<Map<String, Object>> headBranchMonthlyStatusList(String filterYear) {
-        log.info("headBranchReceiptMonthlyList 호출");
+        log.info("headBranchMonthlyStatusList 호출");
 
         log.info("filterYear  : " + filterYear);
 
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
 
-//        List<ReceiptMonthlyListDto> receiptMonthlyListDtos = monthlySummaryRepository.findByReceiptMonthlyList();
-
-//        data.put("gridListData", receiptMonthlyListDtos);
+        List<ReceiptMonthlyBranchListDto> receiptMonthlyBranchListDtos = receiptMonthlyRepository.findByReceiptMonthlyBranchList(filterYear);
+        data.put("gridListData", receiptMonthlyBranchListDtos);
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
