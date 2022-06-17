@@ -10,7 +10,7 @@
 
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
-    <script type="module" src="/assets/js/toppos/head/calculate/frdaybalance.js"></script>
+    <script type="module" src="/assets/js/toppos/head/calculate/frmonthbalance.js"></script>
     <!-- 엑셀 다운로드 기능을 사용하기 위함 -->
     <script src="/assets/js/filesaver/FileSaver.min.js"></script>
 </th:block>
@@ -19,7 +19,7 @@
     <section class="section">
         <article class="article">
             <div class="article__header">
-                <h3 class="article__heading">가맹점 일정산 내역</h3>
+                <h3 class="article__heading">가맹점 월정산 내역</h3>
             </div>
             <div class="article__body">
                 <div class="inquiry">
@@ -45,26 +45,6 @@
                                         <option value="11">11월</option>
                                         <option value="12">12월</option>
                                     </select>
-                                </div>
-                            </li>
-                            <li>
-                                <div class="inquiry__title">지사</div>
-                                <div class="inquiry__input">
-                                    <div class="c-select">
-                                        <select id="brList">
-                                            <option value="0">필수선택</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </li>
-                            <li>
-                                <div class="inquiry__title">가맹점</div>
-                                <div class="inquiry__input">
-                                    <div class="c-select">
-                                        <select id="frList" disabled="">
-                                            <option value="0">필수선택</option>
-                                        </select>
-                                    </div>
                                 </div>
                             </li>
                         </ul>

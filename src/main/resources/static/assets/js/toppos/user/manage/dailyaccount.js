@@ -21,7 +21,6 @@ const comms = {
         wares.currentData = {};
         CommonUI.ajax('/api/user/franchiseReceiptDaysList', 'GET', targetDate, function (res) {
             const data = res.sendData.monthlySummaryDaysDtos[0];
-            console.log(data);
             if (data) {
                 wares.currentData = data;
                 setFieldsByEachJsonKey(data);
@@ -144,7 +143,6 @@ const setFieldsByEachJsonKey = function (jsonObj) {
     // jsonObj.d2 = jsonObj.d2 === "" ? "접속정보없음" : jsonObj.d2;
     const keys = Object.keys(jsonObj);
     for(const key of keys) {
-        console.log("key", key);
         if (Number.isInteger(jsonObj[key])) {
             $('#' + key).html(jsonObj[key].toLocaleString());
         } else if (jsonObj[key].length === 19) {
