@@ -215,16 +215,29 @@ public class HeadController {
     @RequestMapping("brmonthbalance")
     public String brmonthbalance(){ return "head/calculate/brmonthbalance"; }
 
-    // 지사 월 정산 입금 등록 내역
+    // 지사 월 정산 입금 등록
     @RequestMapping("brmonthdeposit")
     public String brmonthdeposit(){ return "head/calculate/brmonthdeposit"; }
 
-    // 지사 월 정산 입금 등록 내역
+    // 지사 월 정산 입금 현황
     @RequestMapping("brmonthdepositstatus")
     public String brmonthdepositstatus(){ return "head/calculate/brmonthdepositstatus"; }
 
+    // 본사/가맹점간 정산현황
+    // 가맹점 월 정산 내역
+    @RequestMapping("frmonthbalance")
+    public String frmonthbalance(){ return "head/calculate/frmonthbalance"; }
+
     // 지사/가맹점간 정산현황
-    // 가맹점 일 정산 현황
+    // 가맹점 일 정산 내역
     @RequestMapping("frdaybalance")
     public String frdaybalance(){ return "head/calculate/frdaybalance"; }
+
+    // 가맹점 일 정산 입금 등록
+    @RequestMapping("frdaydeposit")
+    public String frdaydeposit(){ return "head/calculate/frdaydeposit"; }
+
+    // 가맹점 일 정산 입금 현황
+    @RequestMapping("frdaydepositstatus")
+    public String frdaydepositstatus(){ return "head/calculate/frdaydepositstatus"; }
 }
