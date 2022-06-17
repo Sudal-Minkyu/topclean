@@ -134,8 +134,14 @@ function openDayBalancePop() {
 
 /* 키값에 맞춰 해당하는 id에 값 넣기 */
 const setFieldsByEachJsonKey = function (jsonObj) {
-    jsonObj.d1 = jsonObj.d1 === "" ? "접속정보없음" : jsonObj.d1;
-    jsonObj.d2 = jsonObj.d2 === "" ? "접속정보없음" : jsonObj.d2;
+    if(jsonObj.d1 === "") {
+        jsonObj.d1 = "접속정보없음";
+    }
+    if(jsonObj.d2 === "") {
+        jsonObj.d2 = "접속정보없음";
+    }
+    // jsonObj.d1 = jsonObj.d1 === "" ? "접속정보없음" : jsonObj.d1;
+    // jsonObj.d2 = jsonObj.d2 === "" ? "접속정보없음" : jsonObj.d2;
     const keys = Object.keys(jsonObj);
     for(const key of keys) {
         console.log("key", key);
