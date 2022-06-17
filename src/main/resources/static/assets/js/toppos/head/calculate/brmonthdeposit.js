@@ -37,14 +37,14 @@ const dtos = {
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
     saveDepositState(saveData) {
-        console.log(saveData);
-        CommonUI.ajax('/api/head/headBranchReceiptMonthlySave', 'PARAM', saveData, function (res) {
-            console.log(res);
+        console.log('조건', saveData);
+        CommonUI.ajax('/api/head/headBranchMonthlySummarySave', 'PARAM', saveData, function (res) {
+            console.log('받은데이터', res);
         });
     },
 
     getDepositList(searchCondition) {
-        console.log(searchCondition);
+        wares.searchCondition = searchCondition;
         CommonUI.ajax('/api/head/headBranchReceiptMonthlyList', 'GET', searchCondition, function (res) {
             const data = res.sendData.gridListData;
             grids.set(0, data);
@@ -201,8 +201,8 @@ function saveDepositState() {
         hsYyyymm: wares.selectedItem.hsYyyymm,
         brCode: wares.selectedItem.brCode,
         hrReceiptYyyymmdd: $('#hrReceiptYyyymmdd').val().numString(),
-        hrReceiptBrRoyaltyAmt: $('hrReceiptBrRoyaltyAmt').val().toInt(),
-        hrReceiptFrRoyaltyAmt: $('hrReceiptFrRoyaltyAmt').val().toInt(),
+        hrReceiptBrRoyaltyAmt: $('#hrReceiptBrRoyaltyAmt').val().toInt(),
+        hrReceiptFrRoyaltyAmt: $('#hrReceiptFrRoyaltyAmt').val().toInt(),
     }
 
     comms.saveDepositState(saveData);

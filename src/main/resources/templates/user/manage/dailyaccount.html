@@ -65,29 +65,29 @@
                                     <td id="a1"></td>
                                     <td id="a2"></td>
                                     <td id="a3"></td>
-                                    <td id="suma14">suma14</td>
+                                    <td id="add1"></td>
                                 </tr>
                                 <tr>
                                     <td>카드</td>
                                     <td rowspan="2" class="c-table__x"></td>
                                     <td id="a4"></td>
                                     <td id="a5"></td>
-                                    <td id="suma24">suma24</td>
+                                    <td id="add2"></td>
                                 </tr>
                                 <tr>
                                     <td>후불</td>
                                     <td id="a6"></td>
                                     <td class="c-table__x"></td>
-                                    <td id="suma34">suma34</td>
+                                    <td id="add3"></td>
                                 </tr>
                             </tbody>
                             <tfoot>
                                 <tr>
                                     <th>합계</th>
-                                    <td id="suma41">suma41</td>
-                                    <td id="suma42">suma42</td>
-                                    <td id="suma43">suma43</td>
-                                    <td id="suma44">suma44</td>
+                                    <td id="add4"></td>
+                                    <td id="add5"></td>
+                                    <td id="add6"></td>
+                                    <td id="add7"></td>
                                 </tr>
                             </tfoot>
                         </table>
@@ -154,11 +154,11 @@
                                     <td colspan="2">수량</td>
                                     <td id="b0"></td>
                                     <td id="b1"></td>
-                                    <td id="b20"></td>
+                                    <td id="b2"></td>
                                     <td id="b3"></td>
                                     <td id="b4"></td>
                                     <td id="b5"></td>
-                                    <td id="sumb17">sumb17</td>
+                                    <td id="add8"></td>
                                     <td id="b6"></td>
                                     <td class="c-table__x"></td>
                                     <td id="b7"></td>
@@ -174,26 +174,26 @@
                                     <td id="b11" rowspan="2"></td>
                                     <td id="b12" rowspan="2"></td>
                                     <td id="b13" rowspan="2"></td>
-                                    <td id="sumb27" rowspan="2">sumb27</td>
+                                    <td id="add9" rowspan="2"></td>
                                     <td id="b14" rowspan="2"></td>
                                     <td id="b15"></td>
                                     <td class="c-table__x"></td>
-                                    <td id="sumb211">sumb211</td>
+                                    <td id="add11"></td>
                                 </tr>
                                 <tr>
                                     <td>매장</td>
                                     <td id="b16"></td>
                                     <td id="b17"></td>
-                                    <td id="sumb311">sumb311</td>
+                                    <td id="add12"></td>
                                 </tr>
                             </tbody>
                             <tfoot>
                                 <tr>
                                     <th colspan="2">합계</th>
                                     <td colspan="8" class="c-table__x"></td>
-                                    <td id="sumb49">sumb49</td>
+                                    <td id="add10"></td>
                                     <td class="c-table__x"></td>
-                                    <td id="sumb411">sumb411</td>
+                                    <td id="add13"></td>
                                 </tr>
                             </tfoot>
                         </table>
@@ -267,7 +267,16 @@
         </div>
     </div>
 
-
+    <!-- 인쇄 팝업 -->
+    <div id="balancePop" class="pop">
+        <div class="pop__box">
+            <!-- iframe src에 주소 넣어주세요 -->
+            <iframe id="dayBalance" src="" frameborder="0" cellspacing="0" style="width: 100%; height: 770px; border: 0 none;"></iframe>
+            <ul class="pop__console">
+                <li><button class="c-button pop__close">닫기</button></li>
+            </ul>
+        </div>
+    </div>
 
 </div>
 </html>
