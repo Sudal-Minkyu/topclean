@@ -207,7 +207,7 @@ const wares = {
         filterFromYearMonth: '',
         filterToYearMonth: '',
         branchName: '',
-    }
+    },
 };
 
 /* 날짜 입력관련 인풋 초기값 할당 및 데이트피커 활성화 */

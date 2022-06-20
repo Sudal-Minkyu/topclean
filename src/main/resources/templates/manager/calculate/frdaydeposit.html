@@ -19,7 +19,7 @@
     <section class="section">
         <article class="article">
             <div class="article__header">
-                <h3 class="article__heading">가맹점 일정산 입금 등록</h3>
+                <h3 class="article__heading">가맹점 일 정산 입금 등록</h3>
             </div>
             <div class="article__body">
                 <div class="inquiry">
@@ -56,6 +56,9 @@
 
         <div class="article article--flex">
             <div class="article__body flex3">
+                <button type="button" id="exportXlsx"
+                        class="c-button c-button--green c-button--icon c-button--icon-excel">
+                    엑셀 다운로드</button>
                 <div style="height: 570px; border: 1px solid #ddd">
                     <div id="grid_main" class="grid--header-border" style="height: 570px;"></div>
                 </div>
@@ -69,19 +72,19 @@
                     </colgroup>
                     <tbody class="align-right">
                     <tr>
-                        <th>정산월</th>
+                        <th>정산 일자</th>
                         <td>
-                            <input id="hsYyyymm" type="text" class="c-date" readonly="" />
+                            <input id="hsYyyymmdd" type="text" class="c-date" readonly="" />
                         </td>
                     </tr>
                     <tr>
-                        <th>지사 로열티</th>
+                        <th>정산 대상 금액</th>
                         <td>
-                            <input id="hsRolayltyAmtBr" type="text" readonly="" />
+                            <input id="hsSettleAmtBr" type="text" readonly="" />
                         </td>
                     </tr>
                     <tr>
-                        <th>가맹점 로열티</th>
+                        <th>본사 로열티</th>
                         <td>
                             <input id="hsRolayltyAmtFr" type="text" readonly="" />
                         </td>
@@ -96,21 +99,21 @@
                     </colgroup>
                     <tbody class="align-right">
                     <tr>
-                        <th>입금일자</th>
+                        <th>입금 일자</th>
                         <td>
                             <input id="hrReceiptYyyymmdd" type="text" class="c-date" />
                         </td>
                     </tr>
                     <tr>
-                        <th>지사 로열티 입금</th>
+                        <th>정산액 지사 입금</th>
                         <td>
-                            <input id="hrReceiptBrRoyaltyAmt" type="text" />
+                            <input id="hrReceiptSaleAmt" type="text" />
                         </td>
                     </tr>
                     <tr>
-                        <th>가맹점 로열티 입금</th>
+                        <th>본사 로열티 입금</th>
                         <td>
-                            <input id="hrReceiptFrRoyaltyAmt" type="text" />
+                            <input id="hrReceiptRoyaltyAmt" type="text" />
                         </td>
                     </tr>
                     </tbody>
