@@ -1908,7 +1908,7 @@ public class HeadRestController {
         return summaryService.headBranchMonthlySummarySave(hsYyyymm, brCode, hrReceiptYyyymmdd, hrReceiptBrRoyaltyAmt, hrReceiptFrRoyaltyAmt);
     }
 
-    // 본사 지사 월정산 입금현황 호출API
+    // 본사 지사 월정산 입금현황 호출API test
     @GetMapping("headBranchMonthlyStatusList")
     @ApiOperation(value = "본사 지사의 월정산입금 리스트", notes = "본사가 지사의 월정산입금 리스트를 요청한다.")
     @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", value = "JWT Token", required = true, dataType = "string", paramType = "header")})
