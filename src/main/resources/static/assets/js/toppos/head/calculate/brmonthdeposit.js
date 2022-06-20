@@ -37,9 +37,9 @@ const dtos = {
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
     saveDepositState(saveData) {
-        console.log('조건', saveData);
         CommonUI.ajax('/api/head/headBranchMonthlySummarySave', 'PARAM', saveData, function (res) {
-            console.log('받은데이터', res);
+            alertSuccess('입력 금액을 저장 완료하였습니다.');
+            comms.getDepositList(wares.searchCondition);
         });
     },
 

@@ -21,10 +21,14 @@ const comms = {
         wares.currentData = {};
         CommonUI.ajax('/api/user/franchiseReceiptDaysList', 'GET', targetDate, function (res) {
             const data = res.sendData.monthlySummaryDaysDtos[0];
+            // console.log(data);
             if (data) {
                 wares.currentData = data;
                 setFieldsByEachJsonKey(data);
                 calculateFields(data);
+            } else {
+                alertCaution('조회하신 날짜의 정산 내역이 없습니다.', 1);
+                return false;
             }
         });
     }
@@ -40,6 +44,10 @@ const trigs = {
         $('#printBtn').on('click', function () {
             openDayBalancePop();
         });
+
+        $('.pop__close').on('click', function () {
+            $(this).parents('.pop').removeClass('active');
+        })
     },
 };
 
@@ -126,8 +134,17 @@ function openDayBalancePop() {
 
 /* 키값에 맞춰 해당하는 id에 값 넣기 */
 const setFieldsByEachJsonKey = function (jsonObj) {
+    if(jsonObj.d1 === "") {
+        jsonObj.d1 = "접속정보없음";
+    }
+    if(jsonObj.d2 === "") {
+        jsonObj.d2 = "접속정보없음";
+    }
+    // jsonObj.d1 = jsonObj.d1 === "" ? "접속정보없음" : jsonObj.d1;
+    // jsonObj.d2 = jsonObj.d2 === "" ? "접속정보없음" : jsonObj.d2;
     const keys = Object.keys(jsonObj);
     for(const key of keys) {
+        // console.log("key", key);
         if (Number.isInteger(jsonObj[key])) {
             $('#' + key).html(jsonObj[key].toLocaleString());
         } else if (jsonObj[key].length === 19) {
