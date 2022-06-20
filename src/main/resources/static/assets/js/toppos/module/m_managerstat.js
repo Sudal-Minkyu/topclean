@@ -86,7 +86,6 @@ const wares = {
 const urls = {
     searchSummaryData: '',
     getDetailData: '',
-    getFrList: '/api/manager/branchBelongList',
 };
 
 const comms = {
@@ -114,7 +113,7 @@ const comms = {
 
     /* 현황의 조회바 가맹점 셀랙트 박스의 리스트를 받아와 세팅한다. */
     getFrList() {
-        CommonUI.ajax(urls.getFrList, 'GET', false, function (res) {
+        CommonUI.ajax('/api/manager/branchBelongList', 'GET', false, function (res) {
             const data = res.sendData;
             wares.branchId = data.branchId;
             dv.chk(data.franchiseList, dtos.receive.managerBelongList, '지점에 속한 가맹점 받아오기');

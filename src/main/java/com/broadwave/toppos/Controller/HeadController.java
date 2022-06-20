@@ -233,10 +233,6 @@ public class HeadController {
     @RequestMapping("frdaybalance")
     public String frdaybalance(){ return "head/calculate/frdaybalance"; }
 
-    // 가맹점 일 정산 입금 등록
-    @RequestMapping("frdaydeposit")
-    public String frdaydeposit(){ return "head/calculate/frdaydeposit"; }
-
     // 가맹점 일 정산 입금 현황
     @RequestMapping("frdaydepositstatus")
     public String frdaydepositstatus(){ return "head/calculate/frdaydepositstatus"; }

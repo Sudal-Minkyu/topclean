@@ -19,6 +19,11 @@ const dtos = {
 const comms = {
     searchDepositListData(searchCondition) {
         console.log(searchCondition);
+        // CommonUI.ajax('/api/head', 'GET', searchCondition, function (res) {
+        //     wares.xlsxNaming.filterYear = searchCondition.filterYear;
+        //     const data = res.sendData.girdListData;
+        //     console.log(data);
+        // });
     },
 };
 
@@ -36,7 +41,7 @@ const grids = {
         /* 0번 그리드의 레이아웃 */
         grids.columnLayout[0] = [
             {
-                dataField: '',
+                dataField: 'brName',
                 headerText: '지사명',
             }, {
                 headerText: '1월',
@@ -170,6 +175,9 @@ const grids = {
                         headerText: '미입금액',
                     },
                 ],
+            }, {
+                dataField: '',
+                headerText: '총 미입금액',
             },
         ];
 
@@ -219,6 +227,19 @@ const grids = {
     resize(gridNum) {
         AUIGrid.resize(grids.id[gridNum]);
     },
+
+    // 엑셀 내보내기(Export)
+    exportToXlsx() {
+        //FileSaver.js 로 로컬 다운로드가능 여부 확인
+        if(!AUIGrid.isAvailableLocalDownload(grids.id[0])) {
+            alertCaution('파일 다운로드가 불가능한 브라우저 입니다.', 1);
+            return;
+        }
+        AUIGrid.exportToXlsx(grids.id[0], {
+            fileName : wares.xlsxNaming.title + '_' + wares.xlsxNaming.filterYear,
+            progressBar : true,
+        });
+    },
 };
 
 /* 이벤트를 설정하거나 해지하는 함수들을 담는다. */
@@ -232,7 +253,10 @@ const trigs = {
 
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
 const wares = {
-
+    xlsxNaming: {
+        title: '지사월정산액입금현황',
+        filterYear: '',
+    }
 };
 
 const searchDepositListData = function () {

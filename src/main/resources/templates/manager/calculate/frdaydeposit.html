@@ -26,66 +26,21 @@
                     <div class="inquiry__condition">
                         <ul>
                             <li>
-                                <div class="inquiry__title">시작 년/월</div>
-                                <div class="c-select">
-                                    <select id="filterFromYear"></select>
-                                </div>
-                                <div class="c-select">
-                                    <select id="filterFromMonth">
-                                        <option value="01">1월</option>
-                                        <option value="02">2월</option>
-                                        <option value="03">3월</option>
-                                        <option value="04">4월</option>
-                                        <option value="05">5월</option>
-                                        <option value="06">6월</option>
-                                        <option value="07">7월</option>
-                                        <option value="08">8월</option>
-                                        <option value="09">9월</option>
-                                        <option value="10">10월</option>
-                                        <option value="11">11월</option>
-                                        <option value="12">12월</option>
-                                    </select>
-                                </div>
-                            </li>
-
-                            <li>
-                                <div class="inquiry__title">종료 년/월</div>
-                                <div class="c-select">
-                                    <select id="filterToYear"></select>
-                                </div>
-                                <div class="c-select">
-                                    <select id="filterToMonth">
-                                        <option value="01">1월</option>
-                                        <option value="02">2월</option>
-                                        <option value="03">3월</option>
-                                        <option value="04">4월</option>
-                                        <option value="05">5월</option>
-                                        <option value="06">6월</option>
-                                        <option value="07">7월</option>
-                                        <option value="08">8월</option>
-                                        <option value="09">9월</option>
-                                        <option value="10">10월</option>
-                                        <option value="11">11월</option>
-                                        <option value="12">12월</option>
-                                    </select>
+                                <div class="search__period-title">정산일자</div>
+                                <div class="c-period">
+                                    <!-- 시작일 -->
+                                    <input type="text" id="filterFromDt">
+                                    <span class="c-period__code">-</span>
+                                    <!-- 종료일 -->
+                                    <input type="text" id="filterToDt">
                                 </div>
                             </li>
                             <li>
-                                <div class="inquiry__title">지사</div>
-                                <div class="inquiry__input">
-                                    <div class="c-select">
-                                        <select id="brList">
-                                            <option value="0">필수선택</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </li>
-                            <li style="display: none">
                                 <div class="inquiry__title">가맹점</div>
                                 <div class="inquiry__input">
                                     <div class="c-select">
-                                        <select id="frList" disabled="">
-                                            <option value="0">전체선택</option>
+                                        <select id="frList">
+                                            <option value="0">필수선택</option>
                                         </select>
                                     </div>
                                 </div>
@@ -120,13 +75,13 @@
                         </td>
                     </tr>
                     <tr>
-                        <th>지사 로열티금액</th>
+                        <th>지사 로열티</th>
                         <td>
                             <input id="hsRolayltyAmtBr" type="text" readonly="" />
                         </td>
                     </tr>
                     <tr>
-                        <th>가맹점 본사로열티</th>
+                        <th>가맹점 로열티</th>
                         <td>
                             <input id="hsRolayltyAmtFr" type="text" readonly="" />
                         </td>
@@ -147,15 +102,15 @@
                         </td>
                     </tr>
                     <tr>
-                        <th>본사 입금액</th>
+                        <th>지사 로열티 입금</th>
                         <td>
-                            <input id="hrReceiptSaleAmt" type="text" />
+                            <input id="hrReceiptBrRoyaltyAmt" type="text" />
                         </td>
                     </tr>
                     <tr>
-                        <th>로열티 입금액</th>
+                        <th>가맹점 로열티 입금</th>
                         <td>
-                            <input id="hrReceiptRoyaltyAmt" type="text" />
+                            <input id="hrReceiptFrRoyaltyAmt" type="text" />
                         </td>
                     </tr>
                     </tbody>
@@ -163,7 +118,7 @@
 
                 <ul class="article__console">
                     <li>
-                        <button class="c-button c-button--darksolid">저장</button>
+                        <button id="saveDepositState" class="c-button c-button--darksolid">저장</button>
                     </li>
                 </ul>
             </div>
