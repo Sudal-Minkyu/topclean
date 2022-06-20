@@ -1,9 +1,11 @@
 package com.broadwave.toppos.Head.Calculate.MonthlySummary;
 
 import com.broadwave.toppos.Head.Branch.QBranch;
+import com.broadwave.toppos.Head.Calculate.MonthlySummary.MonthlySummaryDtos.MonthlyBranchSummaryListDto;
+import com.broadwave.toppos.Head.Calculate.MonthlySummary.MonthlySummaryDtos.MonthlyFranchiseSummaryListDto;
 import com.broadwave.toppos.Head.Calculate.MonthlySummary.MonthlySummaryDtos.MonthlySummaryDaysDto;
-import com.broadwave.toppos.Head.Calculate.MonthlySummary.MonthlySummaryDtos.MonthlySummaryListDto;
 import com.broadwave.toppos.Head.Calculate.MonthlySummary.MonthlySummaryDtos.ReceiptMonthlyListDto;
+import com.broadwave.toppos.Head.Franchise.QFranchise;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
 import lombok.extern.slf4j.Slf4j;
@@ -33,16 +35,16 @@ public class MonthlySummaryRepositoryCustomImpl extends QuerydslRepositorySuppor
         super(MonthlySummary.class);
     }
 
-    // 본사 월정산 요역 리스트
-    public List<MonthlySummaryListDto> findByMonthlySummaryList(String filterYearMonth) {
+    // 본사 지사별 월정산 요역 리스트
+    public List<MonthlyBranchSummaryListDto> findByBranchMonthlySummaryList(String filterYearMonth) {
 
         QMonthlySummary monthlySummary = QMonthlySummary.monthlySummary;
         QBranch branch = QBranch.branch;
 
-        JPQLQuery<MonthlySummaryListDto> query = from(monthlySummary)
+        JPQLQuery<MonthlyBranchSummaryListDto> query = from(monthlySummary)
                 .innerJoin(branch).on(branch.brCode.eq(monthlySummary.brCode))
                 .where(monthlySummary.hsYyyymm.eq(filterYearMonth))
-                .select(Projections.constructor(MonthlySummaryListDto.class,
+                .select(Projections.constructor(MonthlyBranchSummaryListDto.class,
 
                         branch.brName,
                         
@@ -76,6 +78,58 @@ public class MonthlySummaryRepositoryCustomImpl extends QuerydslRepositorySuppor
                 ));
 
         query.groupBy(branch.brCode);
+
+        return query.fetch();
+    }
+
+    // 본사 가맹점멸 월정산 요역 리스트
+    public List<MonthlyFranchiseSummaryListDto> findByFranchiseMonthlySummaryList(String filterYearMonth) {
+
+        QMonthlySummary monthlySummary = QMonthlySummary.monthlySummary;
+        QBranch branch = QBranch.branch;
+        QFranchise franchise = QFranchise.franchise;
+
+        JPQLQuery<MonthlyFranchiseSummaryListDto> query = from(monthlySummary)
+                .innerJoin(branch).on(branch.brCode.eq(monthlySummary.brCode))
+                .innerJoin(franchise).on(franchise.frCode.eq(monthlySummary.frCode))
+                .where(monthlySummary.hsYyyymm.eq(filterYearMonth))
+                .select(Projections.constructor(MonthlyFranchiseSummaryListDto.class,
+
+                        branch.brName,
+                        franchise.frName,
+
+                        monthlySummary.hsYyyymm,
+
+                        monthlySummary.hsNormalAmt,
+                        monthlySummary.hsPressed,
+                        monthlySummary.hsWaterRepellent,
+                        monthlySummary.hsStarch,
+
+                        monthlySummary.hsSmsAmt,
+
+                        monthlySummary.hsAdd1Amt,
+                        monthlySummary.hsAdd2Amt,
+                        monthlySummary.hsRepairAmt,
+                        monthlySummary.hsWhitening,
+                        monthlySummary.hsPollution,
+
+                        monthlySummary.hsUrgentAmt,
+                        monthlySummary.hsDiscountAmt,
+                        monthlySummary.hsTotAmt,
+                        monthlySummary.hsExceptAmt,
+
+                        monthlySummary.hsSettleTotAmt,
+                        monthlySummary.hsSettleReturnAmt,
+
+                        monthlySummary.hsSettleAmt,
+                        monthlySummary.hsSettleAmtBr,
+                        monthlySummary.hsSettleAmtFr,
+
+                        monthlySummary.hsRolayltyAmtBr
+
+                ));
+
+        query.orderBy(branch.brCode.asc());
 
         return query.fetch();
     }

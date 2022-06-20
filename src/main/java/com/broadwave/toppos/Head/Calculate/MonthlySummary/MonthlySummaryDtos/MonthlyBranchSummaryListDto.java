@@ -9,13 +9,13 @@ import lombok.NoArgsConstructor;
  * @author Minkyu
  * Date : 2022-06-14
  * Time :
- * Remark : Toppos  본사 일정산요약 ListDto
+ * Remark : Toppos  본사 지사별 일정산요약 ListDto
  */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MonthlySummaryListDto {
+public class MonthlyBranchSummaryListDto {
 
     private String brName; // 지사명
 

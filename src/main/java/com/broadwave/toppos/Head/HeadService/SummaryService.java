@@ -2,11 +2,12 @@ package com.broadwave.toppos.Head.HeadService;
 
 import com.broadwave.toppos.Head.Calculate.DailySummary.DaliySummaryDtos.DaliySummaryListDto;
 import com.broadwave.toppos.Head.Calculate.DailySummary.DaliySummaryRepository;
+import com.broadwave.toppos.Head.Calculate.MonthlySummary.MonthlySummaryDtos.MonthlyBranchSummaryListDto;
+import com.broadwave.toppos.Head.Calculate.MonthlySummary.MonthlySummaryDtos.MonthlyFranchiseSummaryListDto;
 import com.broadwave.toppos.Head.Calculate.MonthlySummary.MonthlySummaryDtos.MonthlySummaryDaysDto;
-import com.broadwave.toppos.Head.Calculate.MonthlySummary.MonthlySummaryDtos.MonthlySummaryListDto;
+import com.broadwave.toppos.Head.Calculate.MonthlySummary.MonthlySummaryDtos.ReceiptMonthlyListDto;
 import com.broadwave.toppos.Head.Calculate.MonthlySummary.MonthlySummaryRepository;
 import com.broadwave.toppos.Head.Calculate.ReceiptMonthly.ReceiptMonthly;
-import com.broadwave.toppos.Head.Calculate.MonthlySummary.MonthlySummaryDtos.ReceiptMonthlyListDto;
 import com.broadwave.toppos.Head.Calculate.ReceiptMonthly.ReceiptMonthlyDtos.ReceiptMonthlyBranchListDto;
 import com.broadwave.toppos.Head.Calculate.ReceiptMonthly.ReceiptMonthlyRepository;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
@@ -64,7 +65,7 @@ public class SummaryService {
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
-    // 본사 월정산 요역 리스트 호출API
+    // 본사 지사별 월정산 요역 리스트 호출API
     public ResponseEntity<Map<String, Object>> headBranchMonthlySummaryList(String filterYearMonth) {
         log.info("headBranchMonthlySummaryList 호출");
 
@@ -73,9 +74,24 @@ public class SummaryService {
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
 
-        List<MonthlySummaryListDto> monthlySummaryListDtos = monthlySummaryRepository.findByMonthlySummaryList(filterYearMonth);
+        List<MonthlyBranchSummaryListDto> monthlyBranchSummaryListDtos = monthlySummaryRepository.findByBranchMonthlySummaryList(filterYearMonth);
 
-        data.put("gridListData", monthlySummaryListDtos);
+        data.put("gridListData", monthlyBranchSummaryListDtos);
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
+    // 본사 가맹점별 월정산 요역 리스트 호출API
+    public ResponseEntity<Map<String, Object>> headFranchiseMonthlySummaryList(String filterYearMonth) {
+        log.info("headFranchiseMonthlySummaryList 호출");
+
+        log.info("filterYearMonth  : " + filterYearMonth);
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        List<MonthlyFranchiseSummaryListDto> monthlyFranchiseSummaryListDtos = monthlySummaryRepository.findByFranchiseMonthlySummaryList(filterYearMonth);
+
+        data.put("gridListData", monthlyFranchiseSummaryListDtos);
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
@@ -126,7 +142,7 @@ public class SummaryService {
         return ResponseEntity.ok(res.success());
     }
 
-    // 본사 지사 월정산 입금현황 호출API
+    // 본사 지사별 월정산 입금현황 호출API
     public ResponseEntity<Map<String, Object>> headBranchMonthlyStatusList(String filterYear) {
         log.info("headBranchMonthlyStatusList 호출");
 

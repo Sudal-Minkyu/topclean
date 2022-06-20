@@ -1873,12 +1873,20 @@ public class HeadRestController {
         return summaryService.headFranchiseDaliySummaryList(franchiseId, filterYearMonth);
     }
 
-    // 본사 지사 월정산 요역 리스트 호출API
+    // 본사 지사별 월정산 요역 리스트 호출API
     @GetMapping("headBranchMonthlySummaryList")
     @ApiOperation(value = "본사 지사 월정산 리스트", notes = "본사가 지사 월정산 요약 리스트를 요청한다.")
     @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", value = "JWT Token", required = true, dataType = "string", paramType = "header")})
     public ResponseEntity<Map<String, Object>> headBranchMonthlySummaryList(@RequestParam("filterYearMonth") String filterYearMonth) {
         return summaryService.headBranchMonthlySummaryList(filterYearMonth);
+    }
+
+    // 본사 가맹점별 월정산 요역 리스트 호출API
+    @GetMapping("headFranchiseMonthlySummaryList")
+    @ApiOperation(value = "본사 가맹점 월정산 리스트", notes = "본사가 가맹점 월정산 요약 리스트를 요청한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", value = "JWT Token", required = true, dataType = "string", paramType = "header")})
+    public ResponseEntity<Map<String, Object>> headFranchiseMonthlySummaryList(@RequestParam("filterYearMonth") String filterYearMonth) {
+        return summaryService.headFranchiseMonthlySummaryList(filterYearMonth);
     }
 
     // 본사 지사 월정산 입금 리스트 호출API
