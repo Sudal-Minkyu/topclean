@@ -179,16 +179,26 @@ const wares = {
 
 /* 날짜 입력관련 인풋 초기값 할당 및 데이트피커 활성화 */
 function enableDatepicker() {
+    let fromday = new Date();
+    fromday.setDate(fromday.getDate() - 90);
+    fromday = fromday.format("yyyy-MM-dd");
     const today = new Date().format("yyyy-MM-dd");
 
     /* datepicker를 적용시킬 대상들의 dom id들 */
     const datePickerTargetIds = [
-        "hrReceiptYyyymmdd"
+        "filterFromDt", "filterToDt", "hrReceiptYyyymmdd"
     ];
 
-    $("#" + datePickerTargetIds[0]).val(today);
+
+    $("#" + datePickerTargetIds[0]).val(fromday);
+    $("#" + datePickerTargetIds[1]).val(today);
+
+    const dateAToBTargetIds = [
+        ["filterFromDt", "filterToDt"]
+    ];
 
     CommonUI.setDatePicker(datePickerTargetIds);
+    CommonUI.restrictDateAToB(dateAToBTargetIds);
 }
 
 /* 입력받은 입금내역을 저장 */

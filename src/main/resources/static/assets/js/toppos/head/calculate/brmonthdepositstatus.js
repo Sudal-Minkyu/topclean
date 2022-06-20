@@ -8,22 +8,52 @@ import {runOnlyOnce} from '../../module/m_headbalance.js';
  */
 const dtos = {
     send: {
-
+        headBranchMonthlyStatusList: {
+            filterYear: 's',
+        }
     },
     receive: {
-
+        headBranchMonthlyStatusList: {
+            brName: "s",
+            amt01: "s",
+            inamt01: "n",
+            amt02: "s",
+            inamt02: "n",
+            amt03: "s",
+            inamt03: "n",
+            amt04: "s",
+            inamt04: "n",
+            amt05: "s",
+            inamt05: "n",
+            amt06: "s",
+            inamt06: "n",
+            amt07: "s",
+            inamt07: "n",
+            amt08: "s",
+            inamt08: "n",
+            amt09: "s",
+            inamt09: "n",
+            amt10: "s",
+            inamt10: "n",
+            amt11: "s",
+            inamt11: "n",
+            amt12: "s",
+            inamt12: "n",
+            total: "n",
+        }
     },
 };
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
     searchDepositListData(searchCondition) {
-        console.log(searchCondition);
-        // CommonUI.ajax('/api/head', 'GET', searchCondition, function (res) {
-        //     wares.xlsxNaming.filterYear = searchCondition.filterYear;
-        //     const data = res.sendData.girdListData;
-        //     console.log(data);
-        // });
+        dv.chk(searchCondition, dtos.send.headBranchMonthlyStatusList, '조회 조건 보내기');
+        CommonUI.ajax('/api/head/headBranchMonthlyStatusList', 'GET', searchCondition, function (res) {
+            wares.xlsxNaming.filterYear = searchCondition.filterYear;
+            const data = res.sendData.gridListData;
+            dv.chk(data, dtos.receive.headBranchMonthlyStatusList, '받은 그리드 데이터')
+            grids.set(0, data);
+        });
     },
 };
 
@@ -37,147 +67,173 @@ const grids = {
 
     /* 가시성을 위해 grids.s 의 일부 요소를 여기서 선언한다. */
     initialization() {
-
         /* 0번 그리드의 레이아웃 */
         grids.columnLayout[0] = [
             {
                 dataField: 'brName',
                 headerText: '지사명',
+                width: 120,
             }, {
                 headerText: '1월',
                 children: [
                     {
-                        dataField: '',
+                        dataField: 'amt01',
                         headerText: '입금여부',
                     }, {
-                        dataField: '',
+                        dataField: 'inamt01',
                         headerText: '미입금액',
+                        dataType: "numeric",
+                        autoThousandSeparator: "true",
                     },
                 ],
             }, {
                 headerText: '2월',
                 children: [
                     {
-                        dataField: '',
+                        dataField: 'amt02',
                         headerText: '입금여부',
                     }, {
-                        dataField: '',
+                        dataField: 'inamt02',
                         headerText: '미입금액',
+                        dataType: "numeric",
+                        autoThousandSeparator: "true",
                     },
                 ],
             }, {
                 headerText: '3월',
                 children: [
                     {
-                        dataField: '',
+                        dataField: 'amt03',
                         headerText: '입금여부',
                     }, {
-                        dataField: '',
+                        dataField: 'inamt03',
                         headerText: '미입금액',
+                        dataType: "numeric",
+                        autoThousandSeparator: "true",
                     },
                 ],
             }, {
                 headerText: '4월',
                 children: [
                     {
-                        dataField: '',
+                        dataField: 'amt04',
                         headerText: '입금여부',
                     }, {
-                        dataField: '',
+                        dataField: 'inamt04',
                         headerText: '미입금액',
+                        dataType: "numeric",
+                        autoThousandSeparator: "true",
                     },
                 ],
             }, {
                 headerText: '5월',
                 children: [
                     {
-                        dataField: '',
+                        dataField: 'amt05',
                         headerText: '입금여부',
                     }, {
-                        dataField: '',
+                        dataField: 'inamt05',
                         headerText: '미입금액',
+                        dataType: "numeric",
+                        autoThousandSeparator: "true",
                     },
                 ],
             }, {
                 headerText: '6월',
                 children: [
                     {
-                        dataField: '',
+                        dataField: 'amt06',
                         headerText: '입금여부',
                     }, {
-                        dataField: '',
+                        dataField: 'amt06',
                         headerText: '미입금액',
+                        dataType: "numeric",
+                        autoThousandSeparator: "true",
                     },
                 ],
             }, {
                 headerText: '7월',
                 children: [
                     {
-                        dataField: '',
+                        dataField: 'amt07',
                         headerText: '입금여부',
                     }, {
-                        dataField: '',
+                        dataField: 'inamt07',
                         headerText: '미입금액',
+                        dataType: "numeric",
+                        autoThousandSeparator: "true",
                     },
                 ],
             }, {
                 headerText: '8월',
                 children: [
                     {
-                        dataField: '',
+                        dataField: 'amt08',
                         headerText: '입금여부',
                     }, {
-                        dataField: '',
+                        dataField: 'inamt08',
                         headerText: '미입금액',
+                        dataType: "numeric",
+                        autoThousandSeparator: "true",
                     },
                 ],
             }, {
                 headerText: '9월',
                 children: [
                     {
-                        dataField: '',
+                        dataField: 'amt09',
                         headerText: '입금여부',
                     }, {
-                        dataField: '',
+                        dataField: 'inamt09',
                         headerText: '미입금액',
+                        dataType: "numeric",
+                        autoThousandSeparator: "true",
                     },
                 ],
             }, {
                 headerText: '10월',
                 children: [
                     {
-                        dataField: '',
+                        dataField: 'amt10',
                         headerText: '입금여부',
                     }, {
-                        dataField: '',
+                        dataField: 'inamt10',
                         headerText: '미입금액',
+                        dataType: "numeric",
+                        autoThousandSeparator: "true",
                     },
                 ],
             }, {
                 headerText: '11월',
                 children: [
                     {
-                        dataField: '',
+                        dataField: 'amt11',
                         headerText: '입금여부',
                     }, {
-                        dataField: '',
+                        dataField: 'inamt11',
                         headerText: '미입금액',
+                        dataType: "numeric",
+                        autoThousandSeparator: "true",
                     },
                 ],
             }, {
                 headerText: '12월',
                 children: [
                     {
-                        dataField: '',
+                        dataField: 'amt12',
                         headerText: '입금여부',
                     }, {
-                        dataField: '',
+                        dataField: 'inamt12',
                         headerText: '미입금액',
+                        dataType: "numeric",
+                        autoThousandSeparator: "true",
                     },
                 ],
             }, {
-                dataField: '',
+                dataField: 'total',
                 headerText: '총 미입금액',
+                dataType: "numeric",
+                autoThousandSeparator: "true",
             },
         ];
 
@@ -247,6 +303,14 @@ const trigs = {
     basic() {
         $('#searchListBtn').on('click', function () {
             searchDepositListData();
+        });
+
+        $("#exportXlsx").on("click", function () {
+            if(grids.get(0).length) {
+                grids.exportToXlsx();
+            } else {
+                alertCaution("엑셀 다운로드를 실행할 데이터가 없습니다.<br>먼저 조회를 해주세요.", 1);
+            }
         });
     },
 };

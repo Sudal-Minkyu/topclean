@@ -27,31 +27,6 @@ const comms = {
 };
 
 const runOnlyOnce = {
-    /* 일자 선택 데이트 피커 활성화 */
-    enableDatepicker() {
-
-        let fromday = new Date();
-        fromday.setDate(fromday.getDate() - 90);
-        fromday = fromday.format("yyyy-MM-dd");
-        const today = new Date().format("yyyy-MM-dd");
-
-        /* datepicker를 적용시킬 대상들의 dom id들 */
-        const datePickerTargetIds = [
-            "filterFromDt", "filterToDt", "hrReceiptYyyymmdd"
-        ];
-
-
-        $("#" + datePickerTargetIds[0]).val(fromday);
-        $("#" + datePickerTargetIds[1]).val(today);
-
-        const dateAToBTargetIds = [
-            ["filterFromDt", "filterToDt"]
-        ];
-
-        CommonUI.setDatePicker(datePickerTargetIds);
-        CommonUI.restrictDateAToB(dateAToBTargetIds);
-    },
-
     getFrList: comms.getFrList,
 };
 
