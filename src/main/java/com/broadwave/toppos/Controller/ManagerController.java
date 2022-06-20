@@ -210,8 +210,11 @@ public class ManagerController {
     @RequestMapping("frdaydeposit")
     public String frdaydeposit(){ return "manager/calculate/frdaydeposit"; }
 
-    // 정산현황
-    // 가맹점 일 정산 입금 등록
+    // 지사 월 정산 입금 등록
     @RequestMapping("brmonthbalance")
     public String brmonthbalance(){ return "manager/calculate/brmonthbalance"; }
+
+    // 지사 월 정산 입금 등록
+    @RequestMapping("brmonthdepositstatus")
+    public String brmonthdepositstatus(){ return "manager/calculate/brmonthdepositstatus"; }
 }

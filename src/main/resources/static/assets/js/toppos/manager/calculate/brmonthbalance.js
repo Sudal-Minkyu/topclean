@@ -14,7 +14,7 @@ const dtos = {
     },
     receive: {
         getMainData: {
-            brName: 's',    // 지사명
+            frName: 's',    // 지사명
             hsYyyymm: 's',    // 정산월
             hsNormalAmt: 'n',    // 정상금액
             hsPressed: 'n',    // 다림질 요금
@@ -196,7 +196,7 @@ const grids = {
         grids.footerLayout[0] = [
             {
                 labelText: '합계',
-                positionField: 'brName',
+                positionField: 'frName',
             }, {
                 dataField: 'hsNormalAmt',
                 operation: 'SUM',
