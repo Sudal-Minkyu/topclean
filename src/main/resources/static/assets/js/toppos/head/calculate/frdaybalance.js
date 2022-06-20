@@ -398,7 +398,7 @@ const trigs = {
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
 const wares = {
     xlsxNaming: {
-        title: '가맹점일정산현황',
+        title: '가맹점일정산내역',
         filterYearMonth: '',
         frName: '',
     },

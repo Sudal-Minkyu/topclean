@@ -74,9 +74,11 @@ const grids = {
             {
                 dataField: 'brName',
                 headerText: '지사명',
+                width: 120,
             }, {
                 dataField: 'frName',
                 headerText: '가맹점명',
+                width: 120,
             }, {
                 dataField: 'hsNormalAmt',
                 headerText: '기본 매출<br>(일반세탁)',
@@ -206,7 +208,7 @@ const grids = {
         grids.footerLayout[0] = [
             {
                 labelText: '합계',
-                positionField: 'brName',
+                positionField: 'frName',
             }, {
                 dataField: 'hsNormalAmt',
                 operation: 'SUM',
@@ -395,7 +397,7 @@ const trigs = {
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
 const wares = {
     xlsxNaming: {
-        title: '지사월정산현황',
+        title: '가맹점월정산내역',
         filterYearMonth: '',
     },
 };
