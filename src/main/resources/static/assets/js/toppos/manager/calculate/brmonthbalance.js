@@ -1,4 +1,4 @@
-import {runOnlyOnce} from '../../module/m_headbalance.js';
+import {runOnlyOnce} from '../../module/m_managerbalance.js';
 
 /*
  * 서버 API와 주고 받게 될 데이터 정의
@@ -10,12 +10,12 @@ const dtos = {
     send: {
         getMainData: {
             filterYearMonth: 's',    // 조회조건 년월
-            franchiseId: 'n',    // 가맹점 아이디
         },
     },
     receive: {
         getMainData: {
-            hsYyyymmdd: 's',    // 정산일자
+            brName: 's',    // 지사명
+            hsYyyymm: 's',    // 정산월
             hsNormalAmt: 'n',    // 정상금액
             hsPressed: 'n',    // 다림질 요금
             hsWaterRepellent: 'n',    // 발수가공요금
@@ -34,8 +34,7 @@ const dtos = {
             hsSettleAmt: 'n',    // 정산 - 총매출액(A - B)
             hsSettleAmtBr: 'n',    // 정산 - 지사 매출액
             hsSettleAmtFr: 'n',    // 정산 - 가맹 매출액
-            hsSmsAmt: 'n',    // 정산 - SMS 요금
-            hsRolayltyAmtFr: 'n',    // 정산 - 지사 로열티 금액
+            hsRolayltyAmtBr: 'n',    // 정산 - 지사 로열티 금액
         },
     },
 };
@@ -44,14 +43,13 @@ const dtos = {
 const comms = {
     getMainData(searchCondition) {
         dv.chk(searchCondition, dtos.send.getMainData, '메인 그리드 데이터 검색조건 보내기');
-        CommonUI.ajax('/api/head/headFranchiseDaliySummaryList', 'GET', searchCondition, function (res) {
+        CommonUI.ajax('/api/manager/managerBranchMonthlySummaryList', 'GET', searchCondition, function (res) {
             dv.chk(res.sendData.gridListData, dtos.receive.getMainData, '메인 그리드 데이터 검색 결과 받아오기');
             const data = summaryDataRefinery(res.sendData.gridListData);
             grids.set(0, data);
 
             /* 엑셀 제목 구성용 */
             wares.xlsxNaming.filterYearMonth = searchCondition.filterYearMonth;
-            wares.xlsxNaming.frName = $('#frList option:selected').html();
         });
     },
 };
@@ -74,11 +72,8 @@ const grids = {
         /* 0번 그리드의 레이아웃 */
         grids.columnLayout[0] = [
             {
-                dataField: 'hsYyyymmdd',
-                headerText: '기준일',
-                width: 90,
-                dataType: 'date',
-                formatString: 'yyyy-mm-dd',
+                dataField: 'frName',
+                headerText: '가맹점명',
             }, {
                 dataField: 'hsNormalAmt',
                 headerText: '기본 매출<br>(일반세탁)',
@@ -182,22 +177,15 @@ const grids = {
                 dataType: 'numeric',
                 autoThousandSeparator: 'true',
             }, {
-                dataField: 'hsSmsAmt',
-                headerText: 'SMS<br>발송비용',
-                style: 'grid_textalign_right',
-                width: 80,
-                dataType: 'numeric',
-                autoThousandSeparator: 'true',
-            }, {
-                dataField: 'hsRolayltyAmtFr',
+                dataField: 'hsRolayltyAmtBr',
                 headerText: '본사 입금액',
                 style: 'grid_textalign_right',
                 width: 80,
                 dataType: 'numeric',
                 autoThousandSeparator: 'true',
             }, {
-                dataField: 'frProfit',
-                headerText: '가맹점 마진',
+                dataField: 'brProfit',
+                headerText: '지사 마진',
                 style: 'grid_textalign_right',
                 width: 80,
                 dataType: 'numeric',
@@ -208,7 +196,7 @@ const grids = {
         grids.footerLayout[0] = [
             {
                 labelText: '합계',
-                positionField: 'hsYyyymmdd',
+                positionField: 'brName',
             }, {
                 dataField: 'hsNormalAmt',
                 operation: 'SUM',
@@ -294,21 +282,15 @@ const grids = {
                 style: 'grid_textalign_right',
                 formatString: '#,##0',
             }, {
-                dataField: 'hsSmsAmt',
+                dataField: 'hsRolayltyAmtBr',
                 operation: 'SUM',
-                positionField: 'hsSmsAmt',
+                positionField: 'hsRolayltyAmtBr',
                 style: 'grid_textalign_right',
                 formatString: '#,##0',
             }, {
-                dataField: 'hsRolayltyAmtFr',
+                dataField: 'brProfit',
                 operation: 'SUM',
-                positionField: 'hsRolayltyAmtFr',
-                style: 'grid_textalign_right',
-                formatString: '#,##0',
-            }, {
-                dataField: 'frProfit',
-                operation: 'SUM',
-                positionField: 'frProfit',
+                positionField: 'brProfit',
                 style: 'grid_textalign_right',
                 formatString: '#,##0',
             },
@@ -371,8 +353,7 @@ const grids = {
             return;
         }
         AUIGrid.exportToXlsx(grids.id[0], {
-            fileName : wares.xlsxNaming.title + '_' + wares.xlsxNaming.filterYearMonth
-                + '_' + wares.xlsxNaming.frName,
+            fileName : wares.xlsxNaming.title + '_' + wares.xlsxNaming.filterYearMonth,
             progressBar : true,
         });
     },
@@ -398,9 +379,8 @@ const trigs = {
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
 const wares = {
     xlsxNaming: {
-        title: '가맹점일정산내역',
+        title: '지사월정산내역',
         filterYearMonth: '',
-        frName: '',
     },
 };
 
@@ -408,12 +388,7 @@ const wares = {
 const searchList = function () {
     const searchCondition = {
         filterYearMonth: $('#filterYear').val() + $('#filterMonth').val(),
-        franchiseId: parseInt($('#frList').val(), 10),
     };
-
-    if (!searchCondition.franchiseId) {
-        alertCaution('조회하실 가맹점을 선택해 주세요.', 1);
-    }
 
     comms.getMainData(searchCondition);
 };
@@ -443,10 +418,10 @@ const summaryDataRefinery = function (items) {
             + items[i].hsAdd2Amt + items[i].hsRepairAmt + items[i].hsWhitening + items[i].hsPollution
             + items[i].hsUrgentAmt - items[i].hsDiscountAmt;
 
-        items[i].hsSettleAmtFr = items[i].hsSettleAmtFr ? items[i].hsSettleAmtFr : 0;
-        items[i].hsRolayltyAmtFr = items[i].hsRolayltyAmtFr ? items[i].hsRolayltyAmtFr : 0;
-        /* 가맹점 마진 */
-        items[i].frProfit = items[i].hsSettleAmtFr + items[i].hsRolayltyAmtFr;
+        items[i].hsSettleAmtBr = items[i].hsSettleAmtBr ? items[i].hsSettleAmtBr : 0;
+        items[i].hsRolayltyAmtBr = items[i].hsRolayltyAmtBr ? items[i].hsRolayltyAmtBr : 0;
+        /* 지사 마진 */
+        items[i].brProfit = items[i].hsSettleAmtBr + items[i].hsRolayltyAmtBr;
     }
     return items;
 }
@@ -459,7 +434,6 @@ $(function() {
 /* 페이지가 로드되고 나서 실행 될 코드들을 담는다. */
 const onPageLoad = function() {
     runOnlyOnce.initializeDateSelectBox();
-    runOnlyOnce.activateBrFrListInputs(true);
 
     grids.initialization();
     grids.create();

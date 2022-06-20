@@ -23,7 +23,7 @@ const dtos = {
 let brFrListData = {};
 
 /* 지사와 가맹점의 이름과 id들을 콜백으로 반환한다. */
-const getBrFrList = function () {
+const getBrFrList = function (isRequiredFrSelect = false) {
     CommonUI.ajax('/api/head/headBrFrInfoList', 'GET', false, function (res) {
         brFrListData = res.sendData;
         dv.chk(brFrListData, dtos.receive.headBrFrInfoList, '지사와 가맹점의 이름, id, 소속지사(가맹점의 경우) 받아오기');
@@ -32,7 +32,7 @@ const getBrFrList = function () {
 };
 
 /* 처음 시작시 지사 리스트를 셀렉트박스에 세팅하고, 지사 선택시 가맹점 리스트를 세팅 */
-const setBrFrList = function (brFrList, selectedBranchId, isInitialization = false) {
+const setBrFrList = function (brFrList, selectedBranchId, isInitialization = false, isRequiredFrSelect = false) {
     if (isInitialization) {
         for (const {branchId, brName} of brFrList.branchList) {
             $('#brList').append(`
@@ -41,7 +41,8 @@ const setBrFrList = function (brFrList, selectedBranchId, isInitialization = fal
         }
     } else {
         const $frList = $('#frList');
-        $frList.html(`<option value='0'>전체선택</option>`);
+        const option0Text = isRequiredFrSelect ? '필수선택' : '전체선택';
+        $frList.html(`<option value='0'>${option0Text}</option>`);
         if (selectedBranchId) {
             for (const {franchiseId, branchId, frName} of brFrList.franchiseList) {
                 if (branchId === selectedBranchId) {
@@ -57,11 +58,11 @@ const setBrFrList = function (brFrList, selectedBranchId, isInitialization = fal
     }
 };
 
-const activateBrFrListInputs = function () {
+const activateBrFrListInputs = function (isRequiredFrSelect) {
     getBrFrList();
 
     $('#brList').on('change', function () {
-        setBrFrList(brFrListData, parseInt($('#brList').val(), 10));
+        setBrFrList(brFrListData, parseInt($('#brList').val(), 10), false, isRequiredFrSelect);
     });
 };
 
