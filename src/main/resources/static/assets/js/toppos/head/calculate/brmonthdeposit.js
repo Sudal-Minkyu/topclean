@@ -8,12 +8,12 @@ import {runOnlyOnce} from '../../module/m_headbalance.js';
  */
 const dtos = {
     send: {
-        메인그리드조회: {
+        headBranchReceiptMonthlyList: {
             filterFromYearMonth: 's',    // 조회기간 시작
             filterToYearMonth: 's',    // 조회기간 끝
-            branchId: 's',    // 선택된 지사
+            branchId: 'n',    // 선택된 지사
         },
-        입금액저장수정: {
+        headBranchMonthlySummarySave: {
             hsYyyymm: 's',    // 정산월
             brCode: 's',    // 지사코드
             hrReceiptYyyymmdd: 's',    // 입금등록일자
@@ -22,7 +22,7 @@ const dtos = {
         },
     },
     receive: {
-        메인그리드조회: {
+        headBranchReceiptMonthlyList: {
             brName: 's',    // 지사명
             brCode: 's',    // 지사코드
             hsYyyymm: 's',    // 정산월
@@ -37,6 +37,7 @@ const dtos = {
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
     saveDepositState(saveData) {
+        dv.chk(saveData, dtos.send.headBranchMonthlySummarySave, '입금액 등록');
         CommonUI.ajax('/api/head/headBranchMonthlySummarySave', 'PARAM', saveData, function (res) {
             alertSuccess('입력 금액을 저장 완료하였습니다.');
             comms.getDepositList(wares.searchCondition);
@@ -45,8 +46,13 @@ const comms = {
 
     getDepositList(searchCondition) {
         wares.searchCondition = searchCondition;
+        dv.chk(searchCondition, dtos.send.headBranchReceiptMonthlyList, '입금 등록 내역 조회조건 보내기');
         CommonUI.ajax('/api/head/headBranchReceiptMonthlyList', 'GET', searchCondition, function (res) {
+            wares.xlsxNaming.filterFromYearMonth = searchCondition.filterFromYearMonth;
+            wares.xlsxNaming.filterToYearMonth = searchCondition.filterToYearMonth;
+            wares.xlsxNaming.branchName = $('#brList option:selected').html();
             const data = res.sendData.gridListData;
+            dv.chk(data, dtos.receive.headBranchReceiptMonthlyList, '입금 등록 내역 리스트 받아오기');
             grids.set(0, data);
         });
     },
@@ -147,6 +153,20 @@ const grids = {
     resize(gridNum) {
         AUIGrid.resize(grids.id[gridNum]);
     },
+
+    // 엑셀 내보내기(Export)
+    exportToXlsx() {
+        //FileSaver.js 로 로컬 다운로드가능 여부 확인
+        if(!AUIGrid.isAvailableLocalDownload(grids.id[0])) {
+            alertCaution('파일 다운로드가 불가능한 브라우저 입니다.', 1);
+            return;
+        }
+        AUIGrid.exportToXlsx(grids.id[0], {
+            fileName : wares.xlsxNaming.title + '_' + wares.xlsxNaming.filterFromYearMonth + '_'
+                + wares.xlsxNaming.filterToYearMonth + '_' + wares.xlsxNaming.branchName,
+            progressBar : true,
+        });
+    },
 };
 
 /* 이벤트를 설정하거나 해지하는 함수들을 담는다. */
@@ -168,12 +188,26 @@ const trigs = {
         $('#searchListBtn').on('click', function () {
             getDepositList();
         });
+
+        $("#exportXlsx").on("click", function () {
+            if(grids.get(0).length) {
+                grids.exportToXlsx();
+            } else {
+                alertCaution("엑셀 다운로드를 실행할 데이터가 없습니다.<br>먼저 조회를 해주세요.", 1);
+            }
+        });
     },
 };
 
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
 const wares = {
     selectedItem: {},
+    xlsxNaming: {
+        title: '지사월정산입금등록',
+        filterFromYearMonth: '',
+        filterToYearMonth: '',
+        branchName: '',
+    }
 };
 
 /* 날짜 입력관련 인풋 초기값 할당 및 데이트피커 활성화 */
