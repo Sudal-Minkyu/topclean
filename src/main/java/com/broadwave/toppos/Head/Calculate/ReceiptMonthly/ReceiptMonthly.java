@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
  * @author Minkyu
  * Date : 2022-06-15
  * Time :
- * Remark : Toppos 본사 월정사 입금등록
+ * Remark : Toppos 본사 월정산 입금등록
  */
 @Entity
 @Data
@@ -23,7 +23,7 @@ public class ReceiptMonthly {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="hr_id")
-    private Long hrId; // 일정산일자
+    private Long hrId; // 월정산일자
 
     @Column(name="hs_yyyymm")
     private String hsYyyymm; // 월정산일자 (hc_monthly_summary)

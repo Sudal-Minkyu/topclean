@@ -867,7 +867,7 @@ public class SalesRepositoryCustomImpl extends QuerydslRepositorySupport impleme
         sb.append("                UNION all \n");
         sb.append("                SELECT a.by_yyyymm,b.bi_itemcode ,b.bi_name,0 cnt \n");
         sb.append("                from bs_yyyymm a \n");
-        sb.append("                INNER JOIN bs_item b ON b.bi_use_yn='Y' and LEFT(b.bi_itemcode,3)='D01' \n");
+        sb.append("                INNER JOIN bs_item b ON b.bi_use_yn='Y' and LEFT(b.bi_itemcode,3)=?2 \n");
         sb.append("                WHERE left(a.by_yyyymm,4)='2022'            \n");
         sb.append("        ) x \n");
         sb.append("        GROUP BY x.yyyymm,x.bi_itemcode \n");

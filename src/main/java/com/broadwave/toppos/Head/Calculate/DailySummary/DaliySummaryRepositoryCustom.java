@@ -2,7 +2,7 @@ package com.broadwave.toppos.Head.Calculate.DailySummary;
 
 import com.broadwave.toppos.Head.Calculate.DailySummary.DaliySummaryDtos.DaliySummaryListDto;
 import com.broadwave.toppos.Head.Calculate.DailySummary.DaliySummaryDtos.ReceiptDailySummaryListDto;
-import com.broadwave.toppos.Head.Calculate.ReceiptMonthly.ReceiptMonthlyDtos.ReceiptMonthlyBranchListDto;
+import com.broadwave.toppos.Head.Calculate.ReceiptDaily.ReceiptDailyListDto;
 
 import java.util.List;
 
@@ -13,8 +13,11 @@ import java.util.List;
  * Remark :
  */
 public interface DaliySummaryRepositoryCustom {
+
     List<DaliySummaryListDto> findByDaliySummaryList(Long franchiseId, String filterYearMonth);
 
-    List<ReceiptDailySummaryListDto> findByReceiptDailySummaryList(String filterYearMonth); // 본사 가맹점별 일정산 입금현황
+    List<ReceiptDailySummaryListDto> findByHeadReceiptDailySummaryList(String filterYearMonth); // 본사 가맹점별 일정산 입금현황
+
+    List<ReceiptDailyListDto> findByBranchReceiptDailySummaryList(Long franchiseId, String filterFromDt, String filterToDt); // 지사 가맹점 일정산 입금 리스트
 
 }

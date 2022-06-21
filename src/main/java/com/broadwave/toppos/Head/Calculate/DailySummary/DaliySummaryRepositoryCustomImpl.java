@@ -2,11 +2,10 @@ package com.broadwave.toppos.Head.Calculate.DailySummary;
 
 import com.broadwave.toppos.Head.Calculate.DailySummary.DaliySummaryDtos.DaliySummaryListDto;
 import com.broadwave.toppos.Head.Calculate.DailySummary.DaliySummaryDtos.ReceiptDailySummaryListDto;
-import com.broadwave.toppos.Head.Calculate.ReceiptMonthly.ReceiptMonthlyDtos.ReceiptMonthlyBranchListDto;
+import com.broadwave.toppos.Head.Calculate.ReceiptDaily.ReceiptDailyListDto;
 import com.broadwave.toppos.Head.Franchise.QFranchise;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
-import lombok.extern.slf4j.Slf4j;
 import org.qlrm.mapper.JpaResultMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
@@ -76,7 +75,7 @@ public class DaliySummaryRepositoryCustomImpl extends QuerydslRepositorySupport 
 
     // 본사 가맹점별 일정산 입금현황
     @Override
-    public List<ReceiptDailySummaryListDto> findByReceiptDailySummaryList(String filterYearMonth) {
+    public List<ReceiptDailySummaryListDto> findByHeadReceiptDailySummaryList(String filterYearMonth) {
         EntityManager em = getEntityManager();
         StringBuilder sb = new StringBuilder();
 
@@ -307,5 +306,48 @@ public class DaliySummaryRepositoryCustomImpl extends QuerydslRepositorySupport 
         return jpaResultMapper.list(query, ReceiptDailySummaryListDto.class);
     }
 
+    // 지사 가맹점 일정산 입금 리스트
+    public List<ReceiptDailyListDto> findByBranchReceiptDailySummaryList(Long franchiseId, String filterFromDt, String filterToDt) {
+        EntityManager em = getEntityManager();
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("SELECT x.hs_yyyymmdd, x.fr_code, x.fr_name,  \n");
+        sb.append("SUM(hsSettleAmtBr), SUM(hsRolayltyAmtFr), \n");
+        sb.append("SUM(hrReceiptSaleAmt), SUM(hrReceiptRoyaltyAmt) \n");
+
+        sb.append("FROM ( \n");
+
+        sb.append("SELECT a.hs_yyyymmdd, b.fr_code, b.fr_name, \n");
+        sb.append("SUM(a.hs_settle_amt_br) AS hsSettleAmtBr, \n");
+        sb.append("SUM(a.hs_rolaylty_amt_fr) AS hsRolayltyAmtFr, \n");
+        sb.append("0 AS hrReceiptSaleAmt, 0 AS hrReceiptRoyaltyAmt \n");
+        sb.append("FROM hc_daily_summary a  \n");
+        sb.append("INNER JOIN bs_franchise b ON b.fr_code = a.fr_code \n");
+        sb.append("WHERE a.hs_yyyymmdd >= ?2 AND a.hs_yyyymmdd <= ?3 AND b.fr_id = ?1 \n");
+        sb.append("GROUP BY a.hs_yyyymmdd \n");
+
+        sb.append("UNION ALL \n");
+
+        sb.append("SELECT a.hs_yyyymmdd, b.fr_code, b.fr_name, \n");
+        sb.append("0 AS hsSettleAmtBr, \n");
+        sb.append("0 AS hsRolayltyAmtFr, \n");
+        sb.append("SUM(a.hr_receipt_sale_amt) AS hrReceiptSaleAmt, \n");
+        sb.append("SUM(a.hr_receipt_royalty_amt) AS hrReceiptRoyaltyAmt \n");
+        sb.append("FROM hc_receipt_daily a  \n");
+        sb.append("INNER JOIN bs_franchise b ON b.fr_code = a.fr_code \n");
+        sb.append("WHERE a.hs_yyyymmdd >= ?2 AND a.hs_yyyymmdd <= ?3 AND b.fr_id = ?1 \n");
+        sb.append("GROUP BY a.hs_yyyymmdd \n");
+
+        sb.append(") x \n");
+        sb.append("GROUP BY x.hs_yyyymmdd, x.fr_name \n");
+
+        Query query = em.createNativeQuery(sb.toString());
+
+        query.setParameter(1, franchiseId);
+        query.setParameter(2, filterFromDt);
+        query.setParameter(3, filterToDt);
+
+        return jpaResultMapper.list(query, ReceiptDailyListDto.class);
+    }
 
 }

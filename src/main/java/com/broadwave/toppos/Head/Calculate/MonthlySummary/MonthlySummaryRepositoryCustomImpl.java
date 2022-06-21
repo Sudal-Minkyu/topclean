@@ -1,15 +1,10 @@
 package com.broadwave.toppos.Head.Calculate.MonthlySummary;
 
 import com.broadwave.toppos.Head.Branch.QBranch;
-import com.broadwave.toppos.Head.Calculate.MonthlySummary.MonthlySummaryDtos.MonthlyBranchSummaryListDto;
-import com.broadwave.toppos.Head.Calculate.MonthlySummary.MonthlySummaryDtos.MonthlyFranchiseSummaryListDto;
-import com.broadwave.toppos.Head.Calculate.MonthlySummary.MonthlySummaryDtos.MonthlyHeadSummaryListDto;
-import com.broadwave.toppos.Head.Calculate.MonthlySummary.MonthlySummaryDtos.MonthlySummaryDaysDto;
-import com.broadwave.toppos.Head.Calculate.MonthlySummary.MonthlySummaryDtos.ReceiptMonthlyListDto;
+import com.broadwave.toppos.Head.Calculate.MonthlySummary.MonthlySummaryDtos.*;
 import com.broadwave.toppos.Head.Franchise.QFranchise;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
-import lombok.extern.slf4j.Slf4j;
 import org.qlrm.mapper.JpaResultMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
@@ -35,7 +30,7 @@ public class MonthlySummaryRepositoryCustomImpl extends QuerydslRepositorySuppor
         super(MonthlySummary.class);
     }
 
-    // 본사 지사별 월정산 요역 리스트
+    // 본사 지사별 월정산 요약 리스트
     public List<MonthlyHeadSummaryListDto> findByHeadMonthlySummaryList(String filterYearMonth) {
 
         QMonthlySummary monthlySummary = QMonthlySummary.monthlySummary;
@@ -82,7 +77,7 @@ public class MonthlySummaryRepositoryCustomImpl extends QuerydslRepositorySuppor
         return query.fetch();
     }
 
-    // 지사 월정산 요역 리스트
+    // 지사 월정산 요약 리스트
     public List<MonthlyBranchSummaryListDto> findByBranchMonthlySummaryList(String filterYearMonth, String brCode) {
 
         QMonthlySummary monthlySummary = QMonthlySummary.monthlySummary;
@@ -129,7 +124,7 @@ public class MonthlySummaryRepositoryCustomImpl extends QuerydslRepositorySuppor
         return query.fetch();
     }
 
-    // 본사 가맹점멸 월정산 요역 리스트
+    // 본사 가맹점멸 월정산 요약 리스트
     public List<MonthlyFranchiseSummaryListDto> findByFranchiseMonthlySummaryList(String filterYearMonth) {
 
         QMonthlySummary monthlySummary = QMonthlySummary.monthlySummary;

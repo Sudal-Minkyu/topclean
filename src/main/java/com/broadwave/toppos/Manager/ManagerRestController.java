@@ -806,4 +806,32 @@ public class ManagerRestController {
         return summaryService.branchMonthlySummaryList(filterYearMonth, request);
     }
 
+    // 지사 가맹점 일정산 요약 리스트 호출API
+    @GetMapping("branchFranchiseDaliySummaryList")
+    @ApiOperation(value = "지사 가맹점 일정산 리스트", notes = "지사가 가맹점 일일정산 요약 리스트를 요청한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", value = "JWT Token", required = true, dataType = "string", paramType = "header")})
+    public ResponseEntity<Map<String, Object>> branchFranchiseDaliySummaryList(@RequestParam("franchiseId") Long franchiseId, @RequestParam("filterYearMonth") String filterYearMonth) {
+        return summaryService.daliySummaryList(franchiseId, filterYearMonth);
+    }
+
+//@@@@@@@@@@@@@@@@@@@@@ 가맹점 일정산 내역 페이지 관련 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    // 일정산 입금 리스트 호출API
+    @GetMapping("branchReceiptDailyList")
+    @ApiOperation(value = "지사의 일정산 입금 리스트", notes = "지사의 일정산 입금 리스트를 요청한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", value = "JWT Token", required = true, dataType = "string", paramType = "header")})
+    public ResponseEntity<Map<String, Object>> branchReceiptDailyList(@RequestParam("franchiseId") Long franchiseId, @RequestParam("filterFromDt") String filterFromDt,
+                                                                            @RequestParam("filterToDt") String filterToDt) {
+        return summaryService.branchReceiptDailyList(franchiseId, filterFromDt, filterToDt);
+    }
+
+    // 지사 일정산 입금 저장 호출API
+    @PostMapping("branchDailySummarySave")
+    @ApiOperation(value = "지사 일정산 저장", notes = "지사 일정산을 저장합니다.")
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", value = "JWT Token", required = true, dataType = "string", paramType = "header")})
+    public ResponseEntity<Map<String, Object>> branchDailySummarySave(HttpServletRequest request, @RequestParam("hsYyyymmdd") String hsYyyymmdd, @RequestParam("frCode") String frCode,
+                                                                            @RequestParam("hrReceiptYyyymmdd") String hrReceiptYyyymmdd, @RequestParam("hrReceiptSaleAmt") Integer hrReceiptSaleAmt,
+                                                                            @RequestParam("hrReceiptRoyaltyAmt") Integer hrReceiptRoyaltyAmt) {
+        return summaryService.branchDailySummarySave(request, hsYyyymmdd, frCode, hrReceiptYyyymmdd, hrReceiptSaleAmt, hrReceiptRoyaltyAmt);
+    }
+
 }

@@ -9,6 +9,9 @@ import com.broadwave.toppos.Head.Calculate.MonthlySummary.MonthlySummaryDtos.Mon
 import com.broadwave.toppos.Head.Calculate.MonthlySummary.MonthlySummaryDtos.MonthlySummaryDaysDto;
 import com.broadwave.toppos.Head.Calculate.MonthlySummary.MonthlySummaryDtos.ReceiptMonthlyListDto;
 import com.broadwave.toppos.Head.Calculate.MonthlySummary.MonthlySummaryRepository;
+import com.broadwave.toppos.Head.Calculate.ReceiptDaily.ReceiptDaily;
+import com.broadwave.toppos.Head.Calculate.ReceiptDaily.ReceiptDailyListDto;
+import com.broadwave.toppos.Head.Calculate.ReceiptDaily.ReceiptDailyRepository;
 import com.broadwave.toppos.Head.Calculate.ReceiptMonthly.ReceiptMonthly;
 import com.broadwave.toppos.Head.Calculate.ReceiptMonthly.ReceiptMonthlyDtos.ReceiptMonthlyBranchListDto;
 import com.broadwave.toppos.Head.Calculate.ReceiptMonthly.ReceiptMonthlyRepository;
@@ -41,18 +44,20 @@ public class SummaryService {
     private final DaliySummaryRepository daliySummaryRepository;
     private final MonthlySummaryRepository monthlySummaryRepository;
     private final ReceiptMonthlyRepository receiptMonthlyRepository;
+    private final ReceiptDailyRepository receiptDailyRepository;
 
     @Autowired
     public SummaryService(TokenProvider tokenProvider, DaliySummaryRepository daliySummaryRepository, MonthlySummaryRepository monthlySummaryRepository,
-                          ReceiptMonthlyRepository receiptMonthlyRepository) {
+                          ReceiptMonthlyRepository receiptMonthlyRepository, ReceiptDailyRepository receiptDailyRepository) {
         this.tokenProvider = tokenProvider;
         this.daliySummaryRepository = daliySummaryRepository;
         this.monthlySummaryRepository = monthlySummaryRepository;
         this.receiptMonthlyRepository = receiptMonthlyRepository;
+        this.receiptDailyRepository = receiptDailyRepository;
     }
 
     // 본사 일정산 요역 리스트 호출API
-    public ResponseEntity<Map<String, Object>> headFranchiseDaliySummaryList(Long franchiseId, String filterYearMonth) {
+    public ResponseEntity<Map<String, Object>> daliySummaryList(Long franchiseId, String filterYearMonth) {
         log.info("headFranchiseDaliySummaryList 호출");
 
         log.info("franchiseId  : " + franchiseId);
@@ -213,7 +218,7 @@ public class SummaryService {
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
 
-        List<ReceiptDailySummaryListDto> receiptDailySummaryListDtos = daliySummaryRepository.findByReceiptDailySummaryList(filterYearMonth);
+        List<ReceiptDailySummaryListDto> receiptDailySummaryListDtos = daliySummaryRepository.findByHeadReceiptDailySummaryList(filterYearMonth);
 
         int inamtcnt; // 미입금 카운트
         for(ReceiptDailySummaryListDto receiptDailySummaryListDto : receiptDailySummaryListDtos){
@@ -320,4 +325,57 @@ public class SummaryService {
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
+
+    // 일정산 입금 리스트 호출API
+    public ResponseEntity<Map<String, Object>> branchReceiptDailyList(Long franchiseId, String filterFromDt, String filterToDt) {
+        log.info("branchReceiptDailyList 호출");
+
+        log.info("franchiseId  : " + franchiseId);
+        log.info("filterFromDt  : " + filterFromDt);
+        log.info("filterToDt  : " + filterToDt);
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        List<ReceiptDailyListDto> receiptDailyListDtos = daliySummaryRepository.findByBranchReceiptDailySummaryList(franchiseId, filterFromDt, filterToDt);
+        data.put("gridListData", receiptDailyListDtos);
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
+    // 지사 일정산 입금 저장 호출API
+    public ResponseEntity<Map<String, Object>> branchDailySummarySave(HttpServletRequest request, String hsYyyymmdd, String frCode, String hrReceiptYyyymmdd, Integer hrReceiptSaleAmt, Integer hrReceiptRoyaltyAmt) {
+        log.info("branchDailySummarySave 호출");
+
+        log.info("hsYyyymmdd  : " + hsYyyymmdd);
+        log.info("frCode  : " + frCode);
+        log.info("hrReceiptYyyymmdd  : " + hrReceiptYyyymmdd);
+        log.info("hrReceiptSaleAmt  : " + hrReceiptSaleAmt);
+        log.info("hrReceiptRoyaltyAmt  : " + hrReceiptRoyaltyAmt);
+
+        AjaxResponse res = new AjaxResponse();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String brCode = (String) claims.get("brCode"); // 현재 지사의 코드(2자리) 가져오기
+        log.info("현재 접속한 지사 코드 : "+brCode);
+
+        ReceiptDaily receiptDaily = new ReceiptDaily();
+        if(!hsYyyymmdd.equals("") && !frCode.equals("")){
+            receiptDaily.setHsYyyymmdd(hsYyyymmdd);
+            receiptDaily.setFrCode(frCode);
+            receiptDaily.setBrCode(brCode);
+            receiptDaily.setHrReceiptYyyymmdd(hrReceiptYyyymmdd);
+            receiptDaily.setHrReceiptSaleAmt(hrReceiptSaleAmt);
+            receiptDaily.setHrReceiptRoyaltyAmt(hrReceiptRoyaltyAmt);
+            receiptDaily.setInsertDateTime(LocalDateTime.now());
+
+            receiptDailyRepository.save(receiptDaily);
+        }else{
+            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP030.getCode(), "일정산일자가 "+ResponseErrorCode.TP030.getDesc(), ResponseErrorCode.TP027.getCode(), ResponseErrorCode.TP027.getDesc()));
+        }
+
+        return ResponseEntity.ok(res.success());
+    }
+
 }
