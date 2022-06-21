@@ -1,4 +1,4 @@
-import {runOnlyOnce} from '../../module/m_headbalance.js';
+import {runOnlyOnce} from '../../module/m_managerbalance.js';
 
 /*
  * 서버 API와 주고 받게 될 데이터 정의
@@ -12,13 +12,6 @@ const dtos = {
             filterFromYearMonth: 's',    // 조회기간 시작
             filterToYearMonth: 's',    // 조회기간 끝
             branchId: 'n',    // 선택된 지사
-        },
-        headBranchMonthlySummarySave: {
-            hsYyyymm: 's',    // 정산월
-            brCode: 's',    // 지사코드
-            hrReceiptYyyymmdd: 's',    // 입금등록일자
-            hrReceiptBrRoyaltyAmt: 'n',    // 입금액(지사로열티)
-            hrReceiptFrRoyaltyAmt: 'n',    // 입금액(가맹점로열티)
         },
     },
     receive: {
@@ -36,21 +29,12 @@ const dtos = {
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
-    saveDepositState(saveData) {
-        dv.chk(saveData, dtos.send.headBranchMonthlySummarySave, '입금액 등록');
-        CommonUI.ajax('/api/head/headBranchMonthlySummarySave', 'PARAM', saveData, function (res) {
-            alertSuccess('입력 금액을 저장 완료하였습니다.');
-            comms.getDepositList(wares.searchCondition);
-        });
-    },
-
     getDepositList(searchCondition) {
         wares.searchCondition = searchCondition;
         dv.chk(searchCondition, dtos.send.headBranchReceiptMonthlyList, '입금 등록 내역 조회조건 보내기');
         CommonUI.ajax('/api/head/headBranchReceiptMonthlyList', 'GET', searchCondition, function (res) {
             wares.xlsxNaming.filterFromYearMonth = searchCondition.filterFromYearMonth;
             wares.xlsxNaming.filterToYearMonth = searchCondition.filterToYearMonth;
-            wares.xlsxNaming.branchName = $('#brList option:selected').html();
             const data = res.sendData.gridListData;
             dv.chk(data, dtos.receive.headBranchReceiptMonthlyList, '입금 등록 내역 리스트 받아오기');
             grids.set(0, data);
@@ -160,7 +144,7 @@ const grids = {
         }
         AUIGrid.exportToXlsx(grids.id[0], {
             fileName : wares.xlsxNaming.title + '_' + wares.xlsxNaming.filterFromYearMonth + '_'
-                + wares.xlsxNaming.filterToYearMonth + '_' + wares.xlsxNaming.branchName,
+                + wares.xlsxNaming.filterToYearMonth,
             progressBar : true,
         });
     },
@@ -169,19 +153,6 @@ const grids = {
 /* 이벤트를 설정하거나 해지하는 함수들을 담는다. */
 const trigs = {
     basic() {
-        /* 0번그리드 내의 셀 클릭시 이벤트 */
-        AUIGrid.bind(grids.id[0], 'cellClick', function (e) {
-            onSelectItem(e.item);
-        });
-
-        $('#hrReceiptBrRoyaltyAmt, #hrReceiptFrRoyaltyAmt').on("keyup", function () {
-            this.value = this.value.numberInput();
-        });
-
-        $('#saveDepositState').on('click', function () {
-            saveDepositState();
-        });
-
         $('#searchListBtn').on('click', function () {
             getDepositList();
         });
@@ -200,70 +171,22 @@ const trigs = {
 const wares = {
     selectedItem: {},
     xlsxNaming: {
-        title: '지사월정산입금등록',
+        title: '지사월정산입금현황',
         filterFromYearMonth: '',
         filterToYearMonth: '',
-        branchName: '',
     },
 };
-
-/* 날짜 입력관련 인풋 초기값 할당 및 데이트피커 활성화 */
-function enableDatepicker() {
-    const today = new Date().format("yyyy-MM-dd");
-
-    /* datepicker를 적용시킬 대상들의 dom id들 */
-    const datePickerTargetIds = [
-        "hrReceiptYyyymmdd"
-    ];
-
-    $("#" + datePickerTargetIds[0]).val(today);
-
-    CommonUI.setDatePicker(datePickerTargetIds);
-}
-
-/* 입력받은 입금내역을 저장 */
-function saveDepositState() {
-    if (!wares.selectedItem.hsYyyymm) {
-        alertCaution('먼저, 입력을 원하는 항목을 선택해 주세요.', 1);
-        return;
-    }
-
-    const saveData = {
-        hsYyyymm: wares.selectedItem.hsYyyymm,
-        brCode: wares.selectedItem.brCode,
-        hrReceiptYyyymmdd: $('#hrReceiptYyyymmdd').val().numString(),
-        hrReceiptBrRoyaltyAmt: $('#hrReceiptBrRoyaltyAmt').val().toInt(),
-        hrReceiptFrRoyaltyAmt: $('#hrReceiptFrRoyaltyAmt').val().toInt(),
-    }
-
-    comms.saveDepositState(saveData);
-}
 
 /* 조회 */
 function getDepositList() {
     const searchCondition = {
         filterFromYearMonth: $('#filterFromYear').val() + $('#filterFromMonth').val(),
         filterToYearMonth: $('#filterToYear').val() + $('#filterToMonth').val(),
-        branchId: parseInt($('#brList').val()),
+        branchId: window.branchId,
     }
-    if (!searchCondition.branchId) {
-        alertCaution('조회하실 지사를 선택해 주세요', 1);
-        return;
-    }
+
     comms.getDepositList(searchCondition);
 }
-
-const onSelectItem = function (item) {
-    wares.selectedItem = item;
-    $('#hsYyyymm').val(item.hsYyyymm.substring(0, 4) + '-' + item.hsYyyymm.substring(4, 6));
-    $('#hsRolayltyAmtBr').val(item.hsRolayltyAmtBr.toLocaleString());
-    $('#hsRolayltyAmtFr').val(item.hsRolayltyAmtFr.toLocaleString());
-
-    const today = new Date().format("yyyy-MM-dd");
-    $("#hrReceiptYyyymmdd").val(today);
-    $('#hrReceiptBrRoyaltyAmt').val('');
-    $('#hrReceiptFrRoyaltyAmt').val('');
-};
 
 /* 페이지가 로드되고 나서 실행 */
 $(function() {
@@ -272,10 +195,12 @@ $(function() {
 
 /* 페이지가 로드되고 나서 실행 될 코드들을 담는다. */
 const onPageLoad = function() {
+    /* runOnlyOnce.getFrList() 를 통해 현재 로그인한 지사 id에 접근하기 위한 수단 */
+    window.branchId = 0;
     runOnlyOnce.initializeDateSelectBox(true);
+    runOnlyOnce.getFrList();
     grids.initialization();
     grids.create();
-    enableDatepicker();
 
     trigs.basic();
 };
