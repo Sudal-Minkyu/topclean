@@ -18,13 +18,13 @@ const dtos = {
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
     searchDepositListData(searchCondition) {
-        console.log(searchCondition);
-        // CommonUI.ajax('/api/head', 'GET', searchCondition, function (res) {
-        //     wares.xlsxNaming.filterYear = searchCondition.filterYear;
-        //     wares.xlsxNaming.filterMonth = searchCondition.filterMonth;
-        //     const data = res.sendData.girdListData;
-        //     console.log(data);
-        // });
+        CommonUI.ajax('/api/head/headFranchiseDailyStatusList', 'GET', searchCondition, function (res) {
+            const data = res.sendData.gridListData;
+            grids.clear(0);
+            grids.set(0, data);
+
+            console.log(data);
+        });
     },
 };
 
@@ -56,28 +56,35 @@ const grids = {
                     }
                 ],
             },{
-                dataField: '',
+                dataField: 'total',
                 headerText: '미입금액',
                 width: 120,
                 dataType: 'numeric',
                 autoThousandSeparator: 'true',
                 style: 'grid_textalign_right',
             },{
-                dataField: '',
+                dataField: 'inamtcnt',
                 headerText: '3회 이상<br />미입금액',
                 width: 80,
                 dataType: 'numeric',
                 autoThousandSeparator: 'true',
                 style: 'grid_textalign_right',
+                labelFunction(_rowIndex, _columnIndex, value, _headerText, _item) {
+                    if (3 > value) {
+                        return '';
+                    } else {
+                        return value + '회';
+                    }
+                },
             },  {
                 dataField: 'day1',
                 headerText: '1일',
                 children: [
                     {
-                        dataField: '',
+                        dataField: 'amt01',
                         headerText: '입금여부',
                     }, {
-                        dataField: '',
+                        dataField: 'inamt01',
                         headerText: '미입금액',
                         dataType: 'numeric',
                         autoThousandSeparator: 'true',
@@ -89,10 +96,10 @@ const grids = {
                 headerText: '2일',
                 children: [
                     {
-                        dataField: '',
+                        dataField: 'amt02',
                         headerText: '입금여부',
                     }, {
-                        dataField: '',
+                        dataField: 'inamt02',
                         headerText: '미입금액',
                         dataType: 'numeric',
                         autoThousandSeparator: 'true',
@@ -104,10 +111,10 @@ const grids = {
                 headerText: '3일',
                 children: [
                     {
-                        dataField: '',
+                        dataField: 'amt03',
                         headerText: '입금여부',
                     }, {
-                        dataField: '',
+                        dataField: 'inamt03',
                         headerText: '미입금액',
                         dataType: 'numeric',
                         autoThousandSeparator: 'true',
@@ -119,10 +126,10 @@ const grids = {
                 headerText: '4일',
                 children: [
                     {
-                        dataField: '',
+                        dataField: 'amt04',
                         headerText: '입금여부',
                     }, {
-                        dataField: '',
+                        dataField: 'inamt04',
                         headerText: '미입금액',
                         dataType: 'numeric',
                         autoThousandSeparator: 'true',
@@ -134,10 +141,10 @@ const grids = {
                 headerText: '5일',
                 children: [
                     {
-                        dataField: '',
+                        dataField: 'amt05',
                         headerText: '입금여부',
                     }, {
-                        dataField: '',
+                        dataField: 'inamt05',
                         headerText: '미입금액',
                         dataType: 'numeric',
                         autoThousandSeparator: 'true',
@@ -149,10 +156,10 @@ const grids = {
                 headerText: '6일',
                 children: [
                     {
-                        dataField: '',
+                        dataField: 'amt06',
                         headerText: '입금여부',
                     }, {
-                        dataField: '',
+                        dataField: 'inamt06',
                         headerText: '미입금액',
                         dataType: 'numeric',
                         autoThousandSeparator: 'true',
@@ -164,10 +171,10 @@ const grids = {
                 headerText: '7일',
                 children: [
                     {
-                        dataField: '',
+                        dataField: 'amt07',
                         headerText: '입금여부',
                     }, {
-                        dataField: '',
+                        dataField: 'inamt07',
                         headerText: '미입금액',
                         dataType: 'numeric',
                         autoThousandSeparator: 'true',
@@ -179,10 +186,10 @@ const grids = {
                 headerText: '8일',
                 children: [
                     {
-                        dataField: '',
+                        dataField: 'amt08',
                         headerText: '입금여부',
                     }, {
-                        dataField: '',
+                        dataField: 'inamt08',
                         headerText: '미입금액',
                         dataType: 'numeric',
                         autoThousandSeparator: 'true',
@@ -194,10 +201,10 @@ const grids = {
                 headerText: '9일',
                 children: [
                     {
-                        dataField: '',
+                        dataField: 'amt09',
                         headerText: '입금여부',
                     }, {
-                        dataField: '',
+                        dataField: 'inamt09',
                         headerText: '미입금액',
                         dataType: 'numeric',
                         autoThousandSeparator: 'true',
@@ -209,10 +216,10 @@ const grids = {
                 headerText: '10일',
                 children: [
                     {
-                        dataField: '',
+                        dataField: 'amt10',
                         headerText: '입금여부',
                     }, {
-                        dataField: '',
+                        dataField: 'inamt10',
                         headerText: '미입금액',
                         dataType: 'numeric',
                         autoThousandSeparator: 'true',
@@ -224,10 +231,10 @@ const grids = {
                 headerText: '11일',
                 children: [
                     {
-                        dataField: '',
+                        dataField: 'amt11',
                         headerText: '입금여부',
                     }, {
-                        dataField: '',
+                        dataField: 'inamt11',
                         headerText: '미입금액',
                         dataType: 'numeric',
                         autoThousandSeparator: 'true',
@@ -239,10 +246,10 @@ const grids = {
                 headerText: '12일',
                 children: [
                     {
-                        dataField: '',
+                        dataField: 'amt12',
                         headerText: '입금여부',
                     }, {
-                        dataField: '',
+                        dataField: 'inamt12',
                         headerText: '미입금액',
                         dataType: 'numeric',
                         autoThousandSeparator: 'true',
@@ -254,14 +261,14 @@ const grids = {
                 headerText: '13일',
                 children: [
                     {
-                        dataField: '',
+                        dataField: 'amt13',
                         headerText: '입금여부',
                     }, {
-                        dataField: '',
+                        dataField: 'inamt13',
                         headerText: '미입금액',
                         dataType: 'numeric',
                         autoThousandSeparator: 'true',
-                style: 'grid_textalign_right',
+                        style: 'grid_textalign_right',
                     },
                 ],
             }, {
@@ -269,14 +276,14 @@ const grids = {
                 headerText: '14일',
                 children: [
                     {
-                        dataField: '',
+                        dataField: 'amt14',
                         headerText: '입금여부',
                     }, {
-                        dataField: '',
+                        dataField: 'inamt14',
                         headerText: '미입금액',
                         dataType: 'numeric',
                         autoThousandSeparator: 'true',
-                style: 'grid_textalign_right',
+                        style: 'grid_textalign_right',
                     },
                 ],
             }, {
@@ -284,14 +291,14 @@ const grids = {
                 headerText: '15일',
                 children: [
                     {
-                        dataField: '',
+                        dataField: 'amt15',
                         headerText: '입금여부',
                     }, {
-                        dataField: '',
+                        dataField: 'inamt15',
                         headerText: '미입금액',
                         dataType: 'numeric',
                         autoThousandSeparator: 'true',
-                style: 'grid_textalign_right',
+                        style: 'grid_textalign_right',
                     },
                 ],
             }, {
@@ -299,14 +306,14 @@ const grids = {
                 headerText: '16일',
                 children: [
                     {
-                        dataField: '',
+                        dataField: 'amt16',
                         headerText: '입금여부',
                     }, {
-                        dataField: '',
+                        dataField: 'inamt16',
                         headerText: '미입금액',
                         dataType: 'numeric',
                         autoThousandSeparator: 'true',
-                style: 'grid_textalign_right',
+                        style: 'grid_textalign_right',
                     },
                 ],
             }, {
@@ -314,14 +321,14 @@ const grids = {
                 headerText: '17일',
                 children: [
                     {
-                        dataField: '',
+                        dataField: 'amt17',
                         headerText: '입금여부',
                     }, {
-                        dataField: '',
+                        dataField: 'inamt17',
                         headerText: '미입금액',
                         dataType: 'numeric',
                         autoThousandSeparator: 'true',
-                style: 'grid_textalign_right',
+                        style: 'grid_textalign_right',
                     },
                 ],
             }, {
@@ -329,14 +336,14 @@ const grids = {
                 headerText: '18일',
                 children: [
                     {
-                        dataField: '',
+                        dataField: 'amt18',
                         headerText: '입금여부',
                     }, {
-                        dataField: '',
+                        dataField: 'inamt18',
                         headerText: '미입금액',
                         dataType: 'numeric',
                         autoThousandSeparator: 'true',
-                style: 'grid_textalign_right',
+                        style: 'grid_textalign_right',
                     },
                 ],
             }, {
@@ -344,14 +351,14 @@ const grids = {
                 headerText: '19일',
                 children: [
                     {
-                        dataField: '',
+                        dataField: 'amt19',
                         headerText: '입금여부',
                     }, {
-                        dataField: '',
+                        dataField: 'inamt19',
                         headerText: '미입금액',
                         dataType: 'numeric',
                         autoThousandSeparator: 'true',
-                style: 'grid_textalign_right',
+                        style: 'grid_textalign_right',
                     },
                 ],
             }, {
@@ -359,14 +366,14 @@ const grids = {
                 headerText: '20일',
                 children: [
                     {
-                        dataField: '',
+                        dataField: 'amt20',
                         headerText: '입금여부',
                     }, {
-                        dataField: '',
+                        dataField: 'inamt20',
                         headerText: '미입금액',
                         dataType: 'numeric',
                         autoThousandSeparator: 'true',
-                style: 'grid_textalign_right',
+                        style: 'grid_textalign_right',
                     },
                 ],
             }, {
@@ -374,14 +381,14 @@ const grids = {
                 headerText: '21일',
                 children: [
                     {
-                        dataField: '',
+                        dataField: 'amt21',
                         headerText: '입금여부',
                     }, {
-                        dataField: '',
+                        dataField: 'inamt21',
                         headerText: '미입금액',
                         dataType: 'numeric',
                         autoThousandSeparator: 'true',
-                style: 'grid_textalign_right',
+                        style: 'grid_textalign_right',
                     },
                 ],
             }, {
@@ -389,14 +396,14 @@ const grids = {
                 headerText: '22일',
                 children: [
                     {
-                        dataField: '',
+                        dataField: 'amt22',
                         headerText: '입금여부',
                     }, {
-                        dataField: '',
+                        dataField: 'inamt22',
                         headerText: '미입금액',
                         dataType: 'numeric',
                         autoThousandSeparator: 'true',
-                style: 'grid_textalign_right',
+                        style: 'grid_textalign_right',
                     },
                 ],
             }, {
@@ -404,14 +411,14 @@ const grids = {
                 headerText: '23일',
                 children: [
                     {
-                        dataField: '',
+                        dataField: 'amt23',
                         headerText: '입금여부',
                     }, {
-                        dataField: '',
+                        dataField: 'inamt23',
                         headerText: '미입금액',
                         dataType: 'numeric',
                         autoThousandSeparator: 'true',
-                style: 'grid_textalign_right',
+                        style: 'grid_textalign_right',
                     },
                 ],
             }, {
@@ -419,14 +426,14 @@ const grids = {
                 headerText: '24일',
                 children: [
                     {
-                        dataField: '',
+                        dataField: 'amt24',
                         headerText: '입금여부',
                     }, {
-                        dataField: '',
+                        dataField: 'inamt24',
                         headerText: '미입금액',
                         dataType: 'numeric',
                         autoThousandSeparator: 'true',
-                style: 'grid_textalign_right',
+                        style: 'grid_textalign_right',
                     },
                 ],
             }, {
@@ -434,14 +441,14 @@ const grids = {
                 headerText: '25일',
                 children: [
                     {
-                        dataField: '',
+                        dataField: 'amt25',
                         headerText: '입금여부',
                     }, {
-                        dataField: '',
+                        dataField: 'inamt25',
                         headerText: '미입금액',
                         dataType: 'numeric',
                         autoThousandSeparator: 'true',
-                style: 'grid_textalign_right',
+                        style: 'grid_textalign_right',
                     },
                 ],
             }, {
@@ -449,14 +456,14 @@ const grids = {
                 headerText: '26일',
                 children: [
                     {
-                        dataField: '',
+                        dataField: 'amt26',
                         headerText: '입금여부',
                     }, {
-                        dataField: '',
+                        dataField: 'inamt26',
                         headerText: '미입금액',
                         dataType: 'numeric',
                         autoThousandSeparator: 'true',
-                style: 'grid_textalign_right',
+                        style: 'grid_textalign_right',
                     },
                 ],
             }, {
@@ -464,14 +471,14 @@ const grids = {
                 headerText: '27일',
                 children: [
                     {
-                        dataField: '',
+                        dataField: 'amt27',
                         headerText: '입금여부',
                     }, {
-                        dataField: '',
+                        dataField: 'inamt27',
                         headerText: '미입금액',
                         dataType: 'numeric',
                         autoThousandSeparator: 'true',
-                style: 'grid_textalign_right',
+                        style: 'grid_textalign_right',
                     },
                 ],
             }, {
@@ -479,14 +486,14 @@ const grids = {
                 headerText: '28일',
                 children: [
                     {
-                        dataField: '',
+                        dataField: 'amt28',
                         headerText: '입금여부',
                     }, {
-                        dataField: '',
+                        dataField: 'inamt28',
                         headerText: '미입금액',
                         dataType: 'numeric',
                         autoThousandSeparator: 'true',
-                style: 'grid_textalign_right',
+                        style: 'grid_textalign_right',
                     },
                 ],
             }, {
@@ -494,14 +501,14 @@ const grids = {
                 headerText: '29일',
                 children: [
                     {
-                        dataField: '',
+                        dataField: 'amt29',
                         headerText: '입금여부',
                     }, {
-                        dataField: '',
+                        dataField: 'inamt29',
                         headerText: '미입금액',
                         dataType: 'numeric',
                         autoThousandSeparator: 'true',
-                style: 'grid_textalign_right',
+                        style: 'grid_textalign_right',
                     },
                 ],
             }, {
@@ -509,14 +516,14 @@ const grids = {
                 headerText: '30일',
                 children: [
                     {
-                        dataField: '',
+                        dataField: 'amt30',
                         headerText: '입금여부',
                     }, {
-                        dataField: '',
+                        dataField: 'inamt30',
                         headerText: '미입금액',
                         dataType: 'numeric',
                         autoThousandSeparator: 'true',
-                style: 'grid_textalign_right',
+                        style: 'grid_textalign_right',
                     },
                 ],
             }, {
@@ -524,14 +531,14 @@ const grids = {
                 headerText: '31일',
                 children: [
                     {
-                        dataField: '',
+                        dataField: 'amt31',
                         headerText: '입금여부',
                     }, {
-                        dataField: '',
+                        dataField: 'inamt31',
                         headerText: '미입금액',
                         dataType: 'numeric',
                         autoThousandSeparator: 'true',
-                style: 'grid_textalign_right',
+                        style: 'grid_textalign_right',
                     },
                 ],
             },
@@ -608,6 +615,10 @@ const trigs = {
         $('#searchListBtn').on('click', function () {
             searchDepositListData();
         });
+
+        $('#exportXlsx').on('click', function () {
+            grids.exportToXlsx();
+        })
     },
 };
 
@@ -621,21 +632,39 @@ const wares = {
 };
 
 const searchDepositListData = function () {
+    const year = $('#filterYear').val();
+    const month = $('#filterMonth').val()
     const searchCondition = {
-        filterYear: $('#filterYear').val(),
-        filterMonth: $('#filterMonth').val(),
-    }
+        filterYearMonth: year + month,
+    };
+    const getDays = (getYear, getMonth) => {
+        return new Date(getYear, getMonth, 0).getDate();
+    };
+    wares.xlsxNaming.filterYear = year;
+    wares.xlsxNaming.filterMonth = month;
+    $('#year').text(year);
+    $('#month').text(month);
     comms.searchDepositListData(searchCondition);
-}
+};
+
+function setYearMonth() {
+    const year = $('#filterYear').val();
+    const month = $('#filterMonth').val()
+    $('#year').text(year);
+    $('#month').text(month);
+};
 
 /* 페이지가 로드되고 나서 실행 */
 $(function() {
     onPageLoad();
 });
 
+
+
 /* 페이지가 로드되고 나서 실행 될 코드들을 담는다. */
 const onPageLoad = function() {
     runOnlyOnce.initializeDateSelectBox(false);
+    setYearMonth();
     grids.initialization();
     grids.create();
 
