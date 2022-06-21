@@ -22,8 +22,7 @@ const comms = {
             const data = res.sendData.gridListData;
             grids.clear(0);
             grids.set(0, data);
-
-            console.log(data);
+            hideDayColumn(wares.xlsxNaming.filterYear, wares.xlsxNaming.filterMonth);
         });
     },
 };
@@ -595,6 +594,10 @@ const grids = {
         AUIGrid.hideColumnGroup(grids.id[gridNum], dataField);
     },
 
+    showColumnGroup(gridNum, dataField) {
+        AUIGrid.showColumnGroup(grids.id[gridNum], dataField);
+    },
+
     // 엑셀 내보내기(Export)
     exportToXlsx() {
         //FileSaver.js 로 로컬 다운로드가능 여부 확인
@@ -628,7 +631,7 @@ const wares = {
         title: '가맹점일정산액입금현황',
         filterYear: '',
         filterMonth: '',
-    }
+    },
 };
 
 const searchDepositListData = function () {
@@ -637,15 +640,31 @@ const searchDepositListData = function () {
     const searchCondition = {
         filterYearMonth: year + month,
     };
-    const getDays = (getYear, getMonth) => {
-        return new Date(getYear, getMonth, 0).getDate();
-    };
     wares.xlsxNaming.filterYear = year;
     wares.xlsxNaming.filterMonth = month;
     $('#year').text(year);
     $('#month').text(month);
     comms.searchDepositListData(searchCondition);
 };
+
+// 조회 년/월의 날짜 구하기
+function getDays(year, month) {
+    return new Date(year, month, 0).getDate();
+};
+
+// 조회 날짜의 그리드 숨기기
+function hideDayColumn(year, month) {
+    const day = getDays(year, month) + 1;
+    for (let showDay = 29; showDay < 32; showDay++) {
+        const ShowDataField = 'day' + showDay
+        grids.showColumnGroup(0, ShowDataField);
+    }
+    for (let hideDay = day; hideDay < 32; hideDay++) {
+        const hideDataField = 'day' + hideDay;
+        grids.hideColumnGroup(0, hideDataField)
+    }
+}
+
 
 function setYearMonth() {
     const year = $('#filterYear').val();
