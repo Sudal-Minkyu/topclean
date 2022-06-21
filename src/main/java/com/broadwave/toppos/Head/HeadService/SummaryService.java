@@ -1,9 +1,11 @@
 package com.broadwave.toppos.Head.HeadService;
 
 import com.broadwave.toppos.Head.Calculate.DailySummary.DaliySummaryDtos.DaliySummaryListDto;
+import com.broadwave.toppos.Head.Calculate.DailySummary.DaliySummaryDtos.ReceiptDailySummaryListDto;
 import com.broadwave.toppos.Head.Calculate.DailySummary.DaliySummaryRepository;
 import com.broadwave.toppos.Head.Calculate.MonthlySummary.MonthlySummaryDtos.MonthlyBranchSummaryListDto;
 import com.broadwave.toppos.Head.Calculate.MonthlySummary.MonthlySummaryDtos.MonthlyFranchiseSummaryListDto;
+import com.broadwave.toppos.Head.Calculate.MonthlySummary.MonthlySummaryDtos.MonthlyHeadSummaryListDto;
 import com.broadwave.toppos.Head.Calculate.MonthlySummary.MonthlySummaryDtos.MonthlySummaryDaysDto;
 import com.broadwave.toppos.Head.Calculate.MonthlySummary.MonthlySummaryDtos.ReceiptMonthlyListDto;
 import com.broadwave.toppos.Head.Calculate.MonthlySummary.MonthlySummaryRepository;
@@ -66,19 +68,42 @@ public class SummaryService {
     }
 
     // 본사 지사별 월정산 요역 리스트 호출API
-    public ResponseEntity<Map<String, Object>> headBranchMonthlySummaryList(String filterYearMonth) {
-        log.info("headBranchMonthlySummaryList 호출");
+    public ResponseEntity<Map<String, Object>> headMonthlySummaryList(String filterYearMonth) {
+        log.info("headMonthlySummaryList 호출");
 
         log.info("filterYearMonth  : " + filterYearMonth);
 
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
 
-        List<MonthlyBranchSummaryListDto> monthlyBranchSummaryListDtos = monthlySummaryRepository.findByBranchMonthlySummaryList(filterYearMonth);
+        List<MonthlyHeadSummaryListDto> monthlyHeadSummaryListDtos = monthlySummaryRepository.findByHeadMonthlySummaryList(filterYearMonth);
+
+        data.put("gridListData", monthlyHeadSummaryListDtos);
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
+    // 지사 월정산 요역 리스트 호출API
+    public ResponseEntity<Map<String, Object>> branchMonthlySummaryList(String filterYearMonth, HttpServletRequest request) {
+        log.info("branchMonthlySummaryList 호출");
+
+        log.info("filterYearMonth  : " + filterYearMonth);
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String brCode = (String) claims.get("brCode"); // 현재 지사의 코드(2자리) 가져오기
+        String login_id = claims.getSubject(); // 현재 아이디
+        log.info("현재 접속한 아이디 : "+login_id);
+        log.info("현재 접속한 지사 코드 : "+brCode);
+
+        List<MonthlyBranchSummaryListDto> monthlyBranchSummaryListDtos = monthlySummaryRepository.findByBranchMonthlySummaryList(filterYearMonth, brCode);
 
         data.put("gridListData", monthlyBranchSummaryListDtos);
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
+
 
     // 본사 가맹점별 월정산 요역 리스트 호출API
     public ResponseEntity<Map<String, Object>> headFranchiseMonthlySummaryList(String filterYearMonth) {
@@ -96,7 +121,7 @@ public class SummaryService {
     }
 
     // 본사 지사 월정산입금 리스트 호출API
-    public ResponseEntity<Map<String, Object>> headBranchReceiptMonthlyList(Long branchId, String filterFromYearMonth, String filterToYearMonth) {
+    public ResponseEntity<Map<String, Object>> receiptMonthlyList(Long branchId, String filterFromYearMonth, String filterToYearMonth) {
         log.info("headBranchReceiptMonthlyList 호출");
 
         log.info("branchId  : " + branchId);
@@ -179,4 +204,120 @@ public class SummaryService {
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
+    // 본사 가맹점별 일정산 입금현황 호출API
+    public ResponseEntity<Map<String, Object>> headFranchiseDailyStatusList(String filterYearMonth) {
+        log.info("headFranchiseDailyStatusList 호출");
+
+        log.info("filterYearMonth  : " + filterYearMonth);
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        List<ReceiptDailySummaryListDto> receiptDailySummaryListDtos = daliySummaryRepository.findByReceiptDailySummaryList(filterYearMonth);
+
+        int inamtcnt; // 미입금 카운트
+        for(ReceiptDailySummaryListDto receiptDailySummaryListDto : receiptDailySummaryListDtos){
+            inamtcnt = 0;
+            if(receiptDailySummaryListDto.getAmt01().equals("미입금")){
+                inamtcnt++;
+            }
+            if(receiptDailySummaryListDto.getAmt02().equals("미입금")){
+                inamtcnt++;
+            }
+            if(receiptDailySummaryListDto.getAmt03().equals("미입금")){
+                inamtcnt++;
+            }
+            if(receiptDailySummaryListDto.getAmt04().equals("미입금")){
+                inamtcnt++;
+            }
+            if(receiptDailySummaryListDto.getAmt05().equals("미입금")){
+                inamtcnt++;
+            }
+            if(receiptDailySummaryListDto.getAmt06().equals("미입금")){
+                inamtcnt++;
+            }
+            if(receiptDailySummaryListDto.getAmt07().equals("미입금")){
+                inamtcnt++;
+            }
+            if(receiptDailySummaryListDto.getAmt08().equals("미입금")){
+                inamtcnt++;
+            }
+            if(receiptDailySummaryListDto.getAmt09().equals("미입금")){
+                inamtcnt++;
+            }
+            if(receiptDailySummaryListDto.getAmt10().equals("미입금")){
+                inamtcnt++;
+            }
+            if(receiptDailySummaryListDto.getAmt11().equals("미입금")){
+                inamtcnt++;
+            }
+            if(receiptDailySummaryListDto.getAmt12().equals("미입금")){
+                inamtcnt++;
+            }
+            if(receiptDailySummaryListDto.getAmt13().equals("미입금")){
+                inamtcnt++;
+            }
+            if(receiptDailySummaryListDto.getAmt14().equals("미입금")){
+                inamtcnt++;
+            }
+            if(receiptDailySummaryListDto.getAmt15().equals("미입금")){
+                inamtcnt++;
+            }
+            if(receiptDailySummaryListDto.getAmt16().equals("미입금")){
+                inamtcnt++;
+            }
+            if(receiptDailySummaryListDto.getAmt17().equals("미입금")){
+                inamtcnt++;
+            }
+            if(receiptDailySummaryListDto.getAmt18().equals("미입금")){
+                inamtcnt++;
+            }
+            if(receiptDailySummaryListDto.getAmt19().equals("미입금")){
+                inamtcnt++;
+            }
+            if(receiptDailySummaryListDto.getAmt20().equals("미입금")){
+                inamtcnt++;
+            }
+            if(receiptDailySummaryListDto.getAmt21().equals("미입금")){
+                inamtcnt++;
+            }
+            if(receiptDailySummaryListDto.getAmt22().equals("미입금")){
+                inamtcnt++;
+            }
+            if(receiptDailySummaryListDto.getAmt23().equals("미입금")){
+                inamtcnt++;
+            }
+            if(receiptDailySummaryListDto.getAmt24().equals("미입금")){
+                inamtcnt++;
+            }
+            if(receiptDailySummaryListDto.getAmt25().equals("미입금")){
+                inamtcnt++;
+            }
+            if(receiptDailySummaryListDto.getAmt26().equals("미입금")){
+                inamtcnt++;
+            }
+            if(receiptDailySummaryListDto.getAmt27().equals("미입금")){
+                inamtcnt++;
+            }
+            if(receiptDailySummaryListDto.getAmt28().equals("미입금")){
+                inamtcnt++;
+            }
+            if(receiptDailySummaryListDto.getAmt29().equals("미입금")){
+                inamtcnt++;
+            }
+            if(receiptDailySummaryListDto.getAmt30().equals("미입금")){
+                inamtcnt++;
+            }
+            if(receiptDailySummaryListDto.getAmt31().equals("미입금")){
+                inamtcnt++;
+            }
+            if(inamtcnt >= 3){
+                receiptDailySummaryListDto.setInamtcnt(String.valueOf(inamtcnt));
+            }
+        }
+
+        data.put("gridListData", receiptDailySummaryListDtos);
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
 }

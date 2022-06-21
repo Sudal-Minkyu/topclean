@@ -43,7 +43,7 @@ const dtos = {
 const comms = {
     getMainData(searchCondition) {
         dv.chk(searchCondition, dtos.send.getMainData, '메인 그리드 데이터 검색조건 보내기');
-        CommonUI.ajax('/api/manager/managerBranchMonthlySummaryList', 'GET', searchCondition, function (res) {
+        CommonUI.ajax('/api/manager/branchMonthlySummaryList', 'GET', searchCondition, function (res) {
             dv.chk(res.sendData.gridListData, dtos.receive.getMainData, '메인 그리드 데이터 검색 결과 받아오기');
             const data = summaryDataRefinery(res.sendData.gridListData);
             grids.set(0, data);

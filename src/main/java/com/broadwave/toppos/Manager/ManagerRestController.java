@@ -1,6 +1,7 @@
 package com.broadwave.toppos.Manager;
 
 import com.broadwave.toppos.Head.HeadService.NoticeService;
+import com.broadwave.toppos.Head.HeadService.SummaryService;
 import com.broadwave.toppos.Head.Notice.NoticeDtos.NoticeMapperDto;
 import com.broadwave.toppos.Manager.Calendar.CalendarDtos.BranchCalendarDto;
 import com.broadwave.toppos.Manager.HmTemplate.HmTemplateDto;
@@ -58,11 +59,12 @@ public class ManagerRestController {
     private final FindService findService; // 물건찾기 서비스
 
     private final OutsourcingPriceService outsourcingPriceService; // 외주가격 서비스
+    private final SummaryService summaryService; // 정산페이지 서비스
 
     @Autowired
     public ManagerRestController(ManagerService managerService, CalendarService calendarService, TagNoticeService tagNoticeService, TagGalleryService tagGalleryService,
                                  ReceiptReleaseService receiptReleaseService, InspectService inspectService, CurrentService currentService, NoticeService noticeService, ReceiptService receiptService,
-                                 FindService findService, HmTemplateService hmTemplateService, OutsourcingPriceService outsourcingPriceService) {
+                                 FindService findService, HmTemplateService hmTemplateService, OutsourcingPriceService outsourcingPriceService, SummaryService summaryService) {
         this.managerService = managerService;
         this.calendarService = calendarService;
         this.tagNoticeService = tagNoticeService;
@@ -75,6 +77,7 @@ public class ManagerRestController {
         this.findService = findService;
         this.hmTemplateService = hmTemplateService;
         this.outsourcingPriceService = outsourcingPriceService;
+        this.summaryService = summaryService;
     }
 
     // 현재 로그인한 지사 정보 가져오기
@@ -783,6 +786,24 @@ public class ManagerRestController {
     public ResponseEntity<Map<String, Object>> branchForceStoreInputSubList(@RequestParam("branchId") Long branchId, @RequestParam("franchiseId") Long franchiseId,
                                                                             @RequestParam("fdS8Dt") String fdS8Dt) {
         return currentService.forceStoreInputSubList(branchId, franchiseId, fdS8Dt);
+    }
+
+//@@@@@@@@@@@@@@@@@@@@@ 정산 페이지 관련 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    // 지사 월정산 입금 리스트 호출API
+    @GetMapping("branchReceiptMonthlyList")
+    @ApiOperation(value = "지사의 월정산입금 리스트", notes = "지사의 월정산입금 리스트를 요청한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", value = "JWT Token", required = true, dataType = "string", paramType = "header")})
+    public ResponseEntity<Map<String, Object>> branchReceiptMonthlyList(@RequestParam("branchId") Long branchId, @RequestParam("filterFromYearMonth") String filterFromYearMonth,
+                                                                            @RequestParam("filterToYearMonth") String filterToYearMonth) {
+        return summaryService.receiptMonthlyList(branchId, filterFromYearMonth, filterToYearMonth);
+    }
+
+    // 본사 지사별 월정산 요역 리스트 호출API
+    @GetMapping("branchMonthlySummaryList")
+    @ApiOperation(value = "지사 월정산 리스트", notes = "지사 월정산 요약 리스트를 요청한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", value = "JWT Token", required = true, dataType = "string", paramType = "header")})
+    public ResponseEntity<Map<String, Object>> branchMonthlySummaryList(@RequestParam("filterYearMonth") String filterYearMonth, HttpServletRequest request) {
+        return summaryService.branchMonthlySummaryList(filterYearMonth, request);
     }
 
 }

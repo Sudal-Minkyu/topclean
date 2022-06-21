@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
  * @author Minkyu
  * Date : 2022-06-14
  * Time :
- * Remark : Toppos  본사 지사별 일정산요약 ListDto
+ * Remark : Toppos  지사 월정산요약 ListDto
  */
 @Data
 @Builder
@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class MonthlyBranchSummaryListDto {
 
-    private String brName; // 지사명
+    private String frName; // 가맹점명
 
     private String hsYyyymm; // 정산월
 

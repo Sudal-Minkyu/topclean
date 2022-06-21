@@ -9,16 +9,15 @@ import lombok.NoArgsConstructor;
  * @author Minkyu
  * Date : 2022-06-14
  * Time :
- * Remark : Toppos  본사 가맹점별 월정산요약 ListDto
+ * Remark : Toppos  본사 지사별 월정산요약 ListDto
  */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MonthlyFranchiseSummaryListDto {
+public class MonthlyHeadSummaryListDto {
 
     private String brName; // 지사명
-    private String frName; // 가맹점명
 
     private String hsYyyymm; // 정산월
 
@@ -26,8 +25,6 @@ public class MonthlyFranchiseSummaryListDto {
     private Integer hsPressed; // 다림질 요금
     private Integer hsWaterRepellent; // 발수가공요금
     private Integer hsStarch; // 풀먹임 요금
-
-    private Integer hsSmsAmt; // SMS발송 금액
 
     private Integer hsAdd1Amt; // 추가비용1(접수시점)
     private Integer hsAdd2Amt; // 추가비용2(검품후 추가비용 발생)
