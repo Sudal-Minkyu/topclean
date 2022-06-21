@@ -74,6 +74,7 @@ const grids = {
                 headerText: '지사명',
                 width: 120,
             }, {
+                dataField: 'month1',
                 headerText: '1월',
                 children: [
                     {

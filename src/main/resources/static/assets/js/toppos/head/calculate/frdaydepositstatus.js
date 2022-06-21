@@ -8,18 +8,89 @@ import {runOnlyOnce} from '../../module/m_headbalance.js';
  */
 const dtos = {
     send: {
-
+        headFranchiseDailyStatusList: {
+            filterYearMonth: 's',
+        },
     },
     receive: {
-
+        headFranchiseDailyStatusList: {
+            brName: 's',
+            frName: 's',
+            total: 'n',
+            inamtcnt: 's',
+            amt01: 's',
+            inamt01: 'n',
+            amt02: 's',
+            inamt02: 'n',
+            amt03: 's',
+            inamt03: 'n',
+            amt04: 's',
+            inamt04: 'n',
+            amt05: 's',
+            inamt05: 'n',
+            amt06: 's',
+            inamt06: 'n',
+            amt07: 's',
+            inamt07: 'n',
+            amt08: 's',
+            inamt08: 'n',
+            amt09: 's',
+            inamt09: 'n',
+            amt10: 's',
+            inamt10: 'n',
+            amt11: 's',
+            inamt11: 'n',
+            amt12: 's',
+            inamt12: 'n',
+            amt13: 's',
+            inamt13: 'n',
+            amt14: 's',
+            inamt14: 'n',
+            amt15: 's',
+            inamt15: 'n',
+            amt16: 's',
+            inamt16: 'n',
+            amt17: 's',
+            inamt17: 'n',
+            amt18: 's',
+            inamt18: 'n',
+            amt19: 's',
+            inamt19: 'n',
+            amt20: 's',
+            inamt20: 'n',
+            amt21: 's',
+            inamt21: 'n',
+            amt22: 's',
+            inamt22: 'n',
+            amt23: 's',
+            inamt23: 'n',
+            amt24: 's',
+            inamt24: 'n',
+            amt25: 's',
+            inamt25: 'n',
+            amt26: 's',
+            inamt26: 'n',
+            amt27: 's',
+            inamt27: 'n',
+            amt28: 's',
+            inamt28: 'n',
+            amt29: 's',
+            inamt29: 'n',
+            amt30: 's',
+            inamt30: 'n',
+            amt31: 's',
+            inamt31: 'n',
+        },
     },
 };
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
     searchDepositListData(searchCondition) {
+        dv.chk(searchCondition, dtos.send.headFranchiseDailyStatusList, '조회 조건 보내기');
         CommonUI.ajax('/api/head/headFranchiseDailyStatusList', 'GET', searchCondition, function (res) {
             const data = res.sendData.gridListData;
+            dv.chk(data, dtos.receive.headFranchiseDailyStatusList, '조회 결과 받아오기');
             grids.clear(0);
             grids.set(0, data);
             hideDayColumn(wares.xlsxNaming.filterYear, wares.xlsxNaming.filterMonth);
@@ -54,16 +125,16 @@ const grids = {
                         width: 150,
                     }
                 ],
-            },{
+            }, {
                 dataField: 'total',
                 headerText: '미입금액',
                 width: 120,
                 dataType: 'numeric',
                 autoThousandSeparator: 'true',
                 style: 'grid_textalign_right',
-            },{
+            }, {
                 dataField: 'inamtcnt',
-                headerText: '3회 이상<br />미입금액',
+                headerText: '3회 이상<br />미입금',
                 width: 80,
                 dataType: 'numeric',
                 autoThousandSeparator: 'true',
@@ -75,7 +146,7 @@ const grids = {
                         return value + '회';
                     }
                 },
-            },  {
+            }, {
                 dataField: 'day1',
                 headerText: '1일',
                 children: [
@@ -620,7 +691,11 @@ const trigs = {
         });
 
         $('#exportXlsx').on('click', function () {
-            grids.exportToXlsx();
+            if(grids.get(0).length) {
+                grids.exportToXlsx();
+            } else {
+                alertCaution("엑셀 다운로드를 실행할 데이터가 없습니다.<br>먼저 조회를 해주세요.", 1);
+            }
         })
     },
 };
@@ -628,7 +703,7 @@ const trigs = {
 /* 통신 객체로 쓰이지 않는 일반적인 데이터들 정의 (warehouse) */
 const wares = {
     xlsxNaming: {
-        title: '가맹점일정산액입금현황',
+        title: '가맹점일정산입금현황',
         filterYear: '',
         filterMonth: '',
     },
@@ -650,7 +725,7 @@ const searchDepositListData = function () {
 // 조회 년/월의 날짜 구하기
 function getDays(year, month) {
     return new Date(year, month, 0).getDate();
-};
+}
 
 // 조회 날짜의 그리드 숨기기
 function hideDayColumn(year, month) {
@@ -665,20 +740,17 @@ function hideDayColumn(year, month) {
     }
 }
 
-
 function setYearMonth() {
     const year = $('#filterYear').val();
     const month = $('#filterMonth').val()
     $('#year').text(year);
     $('#month').text(month);
-};
+}
 
 /* 페이지가 로드되고 나서 실행 */
 $(function() {
     onPageLoad();
 });
-
-
 
 /* 페이지가 로드되고 나서 실행 될 코드들을 담는다. */
 const onPageLoad = function() {
@@ -688,6 +760,4 @@ const onPageLoad = function() {
     grids.create();
 
     trigs.basic();
-
-    window.grids = grids;
 };
