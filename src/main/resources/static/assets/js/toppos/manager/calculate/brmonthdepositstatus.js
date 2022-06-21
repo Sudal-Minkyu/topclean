@@ -32,7 +32,7 @@ const comms = {
     getDepositList(searchCondition) {
         wares.searchCondition = searchCondition;
         dv.chk(searchCondition, dtos.send.headBranchReceiptMonthlyList, '입금 등록 내역 조회조건 보내기');
-        CommonUI.ajax('/api/head/headBranchReceiptMonthlyList', 'GET', searchCondition, function (res) {
+        CommonUI.ajax('/api/manager/branchReceiptMonthlyList', 'GET', searchCondition, function (res) {
             wares.xlsxNaming.filterFromYearMonth = searchCondition.filterFromYearMonth;
             wares.xlsxNaming.filterToYearMonth = searchCondition.filterToYearMonth;
             const data = res.sendData.gridListData;
