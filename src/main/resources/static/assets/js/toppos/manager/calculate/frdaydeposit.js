@@ -37,7 +37,7 @@ const dtos = {
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
     saveDepositState(saveData) {
-        CommonUI.ajax('/api/manager/managerFranchiseMonthlySummarySave', 'PARAM', saveData, function () {
+        CommonUI.ajax('/api/manager/branchDailySummarySave', 'PARAM', saveData, function () {
             alertSuccess('입력 금액을 저장 완료하였습니다.');
             comms.getDepositList(wares.searchCondition);
         });
@@ -46,10 +46,10 @@ const comms = {
     getDepositList(searchCondition) {
         wares.searchCondition = searchCondition;
         dv.chk(searchCondition, dtos.send.managerFranchiseReceiptMonthlyList, '입금 등록 내역 조회조건 보내기');
-        CommonUI.ajax('/api/head/managerFranchiseReceiptMonthlyList', 'GET', searchCondition, function (res) {
+        CommonUI.ajax('/api/manager/branchReceiptDailyList', 'GET', searchCondition, function (res) {
             wares.xlsxNaming.filterFromDt = searchCondition.filterFromDt;
             wares.xlsxNaming.filterToDt = searchCondition.filterToDt;
-            wares.xlsxNaming.franchiseName = $('#brList option:selected').html();
+            wares.xlsxNaming.franchiseName = $('#frList option:selected').html();
             const data = res.sendData.gridListData;
             dv.chk(data, dtos.receive.managerFranchiseReceiptMonthlyList, '입금 등록 내역 리스트 받아오기');
             grids.set(0, data);
@@ -242,7 +242,7 @@ function saveDepositState() {
 
     const saveData = {
         hsYyyymmdd: wares.selectedItem.hsYyyymmdd,
-        brCode: wares.selectedItem.brCode,
+        frCode: wares.selectedItem.frCode,
         hrReceiptYyyymmdd: $('#hrReceiptYyyymmdd').val().numString(),
         hrReceiptSaleAmt: $('#hrReceiptSaleAmt').val().toInt(),
         hrReceiptRoyaltyAmt: $('#hrReceiptRoyaltyAmt').val().toInt(),
@@ -259,7 +259,7 @@ function getDepositList() {
         franchiseId: parseInt($('#frList').val()),
     }
     if (!searchCondition.franchiseId) {
-        alertCaution('조회하실 지사를 선택해 주세요', 1);
+        alertCaution('조회하실 가맹점을 선택해 주세요', 1);
         return;
     }
     comms.getDepositList(searchCondition);
@@ -269,7 +269,7 @@ const onSelectItem = function (item) {
     wares.selectedItem = item;
     $('#hsYyyymmdd').val(item.hsYyyymmdd.substring(0, 4) + '-' + item.hsYyyymmdd.substring(4, 6)
         + '-' + item.hsYyyymmdd.substring(6, 8));
-    $('#hsRolayltyAmtBr').val(item.hsRolayltyAmtBr.toLocaleString());
+    $('#hsSettleAmtBr').val(item.hsSettleAmtBr.toLocaleString());
     $('#hsRolayltyAmtFr').val(item.hsRolayltyAmtFr.toLocaleString());
 
     const today = new Date().format("yyyy-MM-dd");
