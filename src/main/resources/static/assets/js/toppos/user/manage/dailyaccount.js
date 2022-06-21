@@ -24,6 +24,7 @@ const comms = {
             // console.log(data);
             if (data) {
                 wares.currentData = data;
+                wares.currentData.hsYyyymmdd = targetDate.hsYyyymmdd;
                 setFieldsByEachJsonKey(data);
                 calculateFields(data);
             } else {
