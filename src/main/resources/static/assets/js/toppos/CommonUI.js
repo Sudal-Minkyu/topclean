@@ -304,7 +304,7 @@ class CommonUIClass {
         /* js단 에러메시지를 db에 등록하기 위해 */
         underTaker(erMsg, erTitle) {
             const data = {
-                erMsg: erMsg.substring(0, 245),
+                erMsg: erMsg.toString().substring(0, 245),
                 erTitle,
             };
             const url = "/api/error/errorSave";

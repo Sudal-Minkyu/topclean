@@ -1538,6 +1538,16 @@ function onKeypadConfirm() {
 /* 임시 카드 결제용 함수 */
 function onPaymentStageOne() {
     try {
+        /* 미수 발생 금액 */
+        const uncollectAmt = $("#totalAmt").html().toInt() + $("#applySaveMoney").html().toInt()
+            - $("#applyUncollectAmt").html().toInt();
+        console.log(uncollectAmt)
+        /* 미수 발생 금액이 0원이라는 것은 해당 상품은 0원 결제건이라는 뜻이므로 결제없이 완료처리를 할 수 있도록 기능을 연결한다. */
+        if (!uncollectAmt) {
+            completePaymentProcessForFreeReceipt();
+            return;
+        }
+
         const applyUncollectAmt = $("#applyUncollectAmt").html().toInt();
         autoPrintReceipt = $("#autoPrintReceipt").is(":checked");
 
@@ -1799,12 +1809,33 @@ function onPaymentLater() {
                 onSave(false, closePaymentPop, false);
             }
         });
+    } else if (!paidAmt) { // 결제금액이 남지 않았는데, 미수발생금액도 없다면 0원짜리 상품(재세탁이거나)을 결제중이므로 여기서 처리
+        completePaymentProcessForFreeReceipt();
     } else {
         closePaymentPop();
         if (autoPrintReceipt) {
             printReceipt();
         }
     }
+}
+
+/* 결제금액이 0원인 접수건의 최종처리 */
+function completePaymentProcessForFreeReceipt() {
+    autoPrintReceipt = $("#autoPrintReceipt").is(":checked");
+    alertCheck("결제금액이 0원인 접수건의 처리를 완료 하시겠습니까?");
+    $("#checkDelSuccessBtn").on("click", function () {
+        if (autoPrintReceipt) {
+            printReceipt();
+        }
+        checkNum = "2";
+        onSave(false, function () {
+            $("#btnPayLater").parents("li").hide();
+            $("#btnPayment").parents("li").hide();
+            $("#btnClosePayment").parents("li").show();
+            $("#btnPrintReceipt").parents("li").show();
+        }, false);
+        $('#popupId').remove();
+    });
 }
 
 function closePaymentPop(isSimpleClose = false) {
