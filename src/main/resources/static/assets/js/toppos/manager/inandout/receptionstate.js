@@ -149,6 +149,7 @@ const grids = {
                 {
                     dataField: "frName",
                     headerText: "가맹점",
+                    width: 120,
                     style: "grid_textalign_left",
                 }, {
                     dataField: "bcName",
