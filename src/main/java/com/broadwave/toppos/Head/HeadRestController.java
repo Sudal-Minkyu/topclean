@@ -1902,7 +1902,7 @@ public class HeadRestController {
     @ApiOperation(value = "본사 가맹점별 일정산입금 리스트", notes = "본사가 가맹점별 일정산입금 리스트를 요청한다.")
     @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", value = "JWT Token", required = true, dataType = "string", paramType = "header")})
     public ResponseEntity<Map<String, Object>> headFranchiseDailyStatusList(@RequestParam("filterYearMonth") String filterYearMonth) {
-        return summaryService.headFranchiseDailyStatusList(filterYearMonth);
+        return summaryService.franchiseDailyStatusList(filterYearMonth, null);
     }
 
 //@@@@@@@@@@@@@@@@@@@@@ 월정산 입금 페이지 관련 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

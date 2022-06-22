@@ -16,7 +16,7 @@ public interface DaliySummaryRepositoryCustom {
 
     List<DaliySummaryListDto> findByDaliySummaryList(Long franchiseId, String filterYearMonth);
 
-    List<ReceiptDailySummaryListDto> findByHeadReceiptDailySummaryList(String filterYearMonth); // 본사 가맹점별 일정산 입금현황
+    List<ReceiptDailySummaryListDto> findByReceiptDailySummaryList(String filterYearMonth, String brCode); // 본사,지사 가맹점별 일정산 입금현황
 
     List<ReceiptDailyListDto> findByBranchReceiptDailySummaryList(Long franchiseId, String filterFromDt, String filterToDt); // 지사 가맹점 일정산 입금 리스트
 

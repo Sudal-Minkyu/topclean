@@ -788,6 +788,8 @@ public class ManagerRestController {
         return currentService.forceStoreInputSubList(branchId, franchiseId, fdS8Dt);
     }
 
+
+
 //@@@@@@@@@@@@@@@@@@@@@ 정산 페이지 관련 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     // 지사 월정산 입금 리스트 호출API
     @GetMapping("branchReceiptMonthlyList")
@@ -813,6 +815,16 @@ public class ManagerRestController {
     public ResponseEntity<Map<String, Object>> branchFranchiseDaliySummaryList(@RequestParam("franchiseId") Long franchiseId, @RequestParam("filterYearMonth") String filterYearMonth) {
         return summaryService.daliySummaryList(franchiseId, filterYearMonth);
     }
+
+    // 지사 가맹점별 일정산 입금현황 호출API
+    @GetMapping("branchFranchiseDailyStatusList")
+    @ApiOperation(value = "본사 가맹점별 일정산입금 리스트", notes = "지사가 가맹점별 일정산입금 리스트를 요청한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", value = "JWT Token", required = true, dataType = "string", paramType = "header")})
+    public ResponseEntity<Map<String, Object>> branchFranchiseDailyStatusList(@RequestParam("filterYearMonth") String filterYearMonth, HttpServletRequest request) {
+        return summaryService.franchiseDailyStatusList(filterYearMonth, request);
+    }
+
+
 
 //@@@@@@@@@@@@@@@@@@@@@ 가맹점 일정산 내역 페이지 관련 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     // 일정산 입금 리스트 호출API

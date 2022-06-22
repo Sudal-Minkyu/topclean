@@ -75,7 +75,7 @@ public class DaliySummaryRepositoryCustomImpl extends QuerydslRepositorySupport 
 
     // 본사 가맹점별 일정산 입금현황
     @Override
-    public List<ReceiptDailySummaryListDto> findByHeadReceiptDailySummaryList(String filterYearMonth) {
+    public List<ReceiptDailySummaryListDto> findByReceiptDailySummaryList(String filterYearMonth, String brCode) {
         EntityManager em = getEntityManager();
         StringBuilder sb = new StringBuilder();
 
@@ -85,6 +85,9 @@ public class DaliySummaryRepositoryCustomImpl extends QuerydslRepositorySupport 
         sb.append("SELECT a.hs_yyyymmdd , a.br_code, a.fr_code ,SUM(a.hs_settle_amt_br) amt,0 inamt \n");
         sb.append("FROM hc_daily_summary a \n");
         sb.append("WHERE LEFT(a.hs_yyyymmdd,6) = ?1 \n");
+        if(!brCode.equals("")){
+            sb.append("AND a.br_code=?2 \n");
+        }
         sb.append("GROUP BY a.hs_yyyymmdd,a.fr_code \n");
 
         sb.append("UNION all \n");
@@ -92,6 +95,9 @@ public class DaliySummaryRepositoryCustomImpl extends QuerydslRepositorySupport 
         sb.append("SELECT a.hs_yyyymmdd , a.br_code, a.fr_code,0, SUM(a.hr_receipt_sale_amt) inamt \n");
         sb.append("FROM hc_receipt_daily a \n");
         sb.append("WHERE left(a.hs_yyyymmdd,6) = ?1 \n");
+        if(!brCode.equals("")){
+            sb.append("AND a.br_code=?2 \n");
+        }
         sb.append("GROUP BY a.hs_yyyymmdd,a.fr_code \n");
 
         sb.append("UNION all \n");
@@ -99,7 +105,11 @@ public class DaliySummaryRepositoryCustomImpl extends QuerydslRepositorySupport 
         sb.append("SELECT CONCAT(?1,a.dd) hs_yyyymmdd, b.br_code ,b.fr_code, 0 amt,0 inamt \n");
         sb.append("FROM bs_day a \n");
         sb.append("INNER JOIN (SELECT DISTINCT br_code, fr_code FROM hc_daily_summary \n");
-        sb.append("WHERE LEFT(hs_yyyymmdd,6) = ?1) b GROUP BY hs_yyyymmdd,fr_code \n");
+        sb.append("WHERE LEFT(hs_yyyymmdd,6) = ?1 \n");
+        if(!brCode.equals("")){
+            sb.append("AND br_code=?2 \n");
+        }
+        sb.append(") b GROUP BY hs_yyyymmdd,fr_code \n");
         sb.append(") x \n");
         sb.append("GROUP BY x.hs_yyyymmdd, x.br_code, x.fr_code \n");
         sb.append(") \n");
@@ -302,6 +312,10 @@ public class DaliySummaryRepositoryCustomImpl extends QuerydslRepositorySupport 
         Query query = em.createNativeQuery(sb.toString());
 
         query.setParameter(1, filterYearMonth);
+
+        if(!brCode.equals("")){
+            query.setParameter(2, brCode);
+        }
 
         return jpaResultMapper.list(query, ReceiptDailySummaryListDto.class);
     }
