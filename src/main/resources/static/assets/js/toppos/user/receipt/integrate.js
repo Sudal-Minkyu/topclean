@@ -2681,7 +2681,7 @@ function closeBrInspectPop(doRefresh = false) {
 
 function resetFrInspectEditPop() {
     $("#frEditFdTotAmtInPut").val("");
-    $("#frEditFiAddAmt").val("0");
+    $("#frEditFiAddAmt").val("");
     $("#frEditFiComment").val("");
     $("#frPhotoList").html("");
 }

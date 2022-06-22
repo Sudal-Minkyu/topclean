@@ -87,7 +87,7 @@ const dtos = {
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
 const comms = {
     searchDepositListData(searchCondition) {
-        CommonUI.ajax('/api/manager/managerFranchiseDailyStatusList', 'GET', searchCondition, function (res) {
+        CommonUI.ajax('/api/manager/branchFranchiseDailyStatusList', 'GET', searchCondition, function (res) {
             const data = res.sendData.gridListData;
             grids.clear(0);
             grids.set(0, data);
