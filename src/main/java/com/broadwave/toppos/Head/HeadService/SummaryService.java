@@ -15,6 +15,8 @@ import com.broadwave.toppos.Head.Calculate.ReceiptDaily.ReceiptDailyRepository;
 import com.broadwave.toppos.Head.Calculate.ReceiptMonthly.ReceiptMonthly;
 import com.broadwave.toppos.Head.Calculate.ReceiptMonthly.ReceiptMonthlyDtos.ReceiptMonthlyBranchListDto;
 import com.broadwave.toppos.Head.Calculate.ReceiptMonthly.ReceiptMonthlyRepository;
+import com.broadwave.toppos.Head.Franchise.Franchise;
+import com.broadwave.toppos.Head.Franchise.FranchiseRepository;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.common.AjaxResponse;
 import com.broadwave.toppos.common.ResponseErrorCode;
@@ -29,6 +31,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * @author Minkyu
@@ -45,23 +48,35 @@ public class SummaryService {
     private final MonthlySummaryRepository monthlySummaryRepository;
     private final ReceiptMonthlyRepository receiptMonthlyRepository;
     private final ReceiptDailyRepository receiptDailyRepository;
+    private final FranchiseRepository franchiseRepository;
 
     @Autowired
     public SummaryService(TokenProvider tokenProvider, DaliySummaryRepository daliySummaryRepository, MonthlySummaryRepository monthlySummaryRepository,
-                          ReceiptMonthlyRepository receiptMonthlyRepository, ReceiptDailyRepository receiptDailyRepository) {
+                          ReceiptMonthlyRepository receiptMonthlyRepository, ReceiptDailyRepository receiptDailyRepository, FranchiseRepository franchiseRepository) {
         this.tokenProvider = tokenProvider;
         this.daliySummaryRepository = daliySummaryRepository;
         this.monthlySummaryRepository = monthlySummaryRepository;
         this.receiptMonthlyRepository = receiptMonthlyRepository;
         this.receiptDailyRepository = receiptDailyRepository;
+        this.franchiseRepository = franchiseRepository;
     }
 
     // 본사 지사 일정산 요역 리스트 호출API
-    public ResponseEntity<Map<String, Object>> daliySummaryList(Long franchiseId, String filterYearMonth) {
+    public ResponseEntity<Map<String, Object>> daliySummaryList(Long franchiseId, String filterYearMonth, HttpServletRequest request) {
         log.info("headFranchiseDaliySummaryList 호출");
 
         log.info("franchiseId  : " + franchiseId);
         log.info("filterYearMonth  : " + filterYearMonth);
+
+        if(request != null){
+            // 클레임데이터 가져오기
+            Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+            String frCode = (String) claims.get("frCode");
+            Optional<Franchise> optionalFranchise = franchiseRepository.findByFrCode(frCode);
+            if(optionalFranchise.isPresent()){
+                franchiseId = optionalFranchise.get().getId();
+            }
+        }
 
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
@@ -111,7 +126,7 @@ public class SummaryService {
 
 
     // 본사 가맹점별 월정산 요역 리스트 호출API
-    public ResponseEntity<Map<String, Object>> headFranchiseMonthlySummaryList(String filterYearMonth) {
+    public ResponseEntity<Map<String, Object>> monthlySummaryList(String filterYearMonth, HttpServletRequest request) {
         log.info("headFranchiseMonthlySummaryList 호출");
 
         log.info("filterYearMonth  : " + filterYearMonth);
@@ -119,7 +134,14 @@ public class SummaryService {
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
 
-        List<MonthlyFranchiseSummaryListDto> monthlyFranchiseSummaryListDtos = monthlySummaryRepository.findByFranchiseMonthlySummaryList(filterYearMonth);
+        String frCode = "";
+        if(request != null){
+            // 클레임데이터 가져오기
+            Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+            frCode = (String) claims.get("frCode");
+        }
+
+        List<MonthlyFranchiseSummaryListDto> monthlyFranchiseSummaryListDtos = monthlySummaryRepository.findByFranchiseMonthlySummaryList(filterYearMonth, frCode);
 
         data.put("gridListData", monthlyFranchiseSummaryListDtos);
         return ResponseEntity.ok(res.dataSendSuccess(data));

@@ -17,7 +17,7 @@ public interface MonthlySummaryRepositoryCustom {
 
     List<MonthlyBranchSummaryListDto> findByBranchMonthlySummaryList(String filterYearMonth, String brCode); // 지사 월정산 요약 리스트
 
-    List<MonthlyFranchiseSummaryListDto> findByFranchiseMonthlySummaryList(String filterYearMonth); // 본사 가맹점별 월정산 요약 리스트
+    List<MonthlyFranchiseSummaryListDto> findByFranchiseMonthlySummaryList(String filterYearMonth, String frCode); // 본사 가맹점별 월정산 요약 리스트
 
     List<ReceiptMonthlyListDto> findByReceiptMonthlyList(Long branchId, String filterFromYearMonth, String filterToYearMonth); // 본사 월정산입금 리스트
 

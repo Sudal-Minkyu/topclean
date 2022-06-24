@@ -1398,4 +1398,22 @@ public class UserRestController {
         return summaryService.franchiseReceiptDaysList(hsYyyymmdd, request);
     }
 
+    // 가맹점 일정산 요약 리스트 호출API
+    @GetMapping("franchiseDaliySummaryList")
+    @ApiOperation(value = "가맹점 일정산 리스트", notes = "가맹점 일일정산 요약 리스트를 요청한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", value = "JWT Token", required = true, dataType = "string", paramType = "header")})
+    public ResponseEntity<Map<String, Object>> franchiseDaliySummaryList(@RequestParam("filterYearMonth") String filterYearMonth, HttpServletRequest request) {
+        return summaryService.daliySummaryList(0L, filterYearMonth, request);
+    }
+
+    // 가맹점 월정산 요약 리스트 호출API
+    @GetMapping("franchiseMonthlySummaryList")
+    @ApiOperation(value = "가맹점 월정산 리스트", notes = "가맹점 월정산 요약 리스트를 요청한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", value = "JWT Token", required = true, dataType = "string", paramType = "header")})
+    public ResponseEntity<Map<String, Object>> franchiseMonthlySummaryList(@RequestParam("filterYearMonth") String filterYearMonth, HttpServletRequest request) {
+        return summaryService.monthlySummaryList(filterYearMonth, request);
+    }
+
+
+
 }

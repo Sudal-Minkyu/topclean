@@ -813,7 +813,7 @@ public class ManagerRestController {
     @ApiOperation(value = "지사 가맹점 일정산 리스트", notes = "지사가 가맹점 일일정산 요약 리스트를 요청한다.")
     @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", value = "JWT Token", required = true, dataType = "string", paramType = "header")})
     public ResponseEntity<Map<String, Object>> branchFranchiseDaliySummaryList(@RequestParam("franchiseId") Long franchiseId, @RequestParam("filterYearMonth") String filterYearMonth) {
-        return summaryService.daliySummaryList(franchiseId, filterYearMonth);
+        return summaryService.daliySummaryList(franchiseId, filterYearMonth,null);
     }
 
     // 지사 가맹점별 일정산 입금현황 호출API

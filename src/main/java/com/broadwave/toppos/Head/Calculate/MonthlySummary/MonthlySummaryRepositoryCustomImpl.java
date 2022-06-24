@@ -125,7 +125,7 @@ public class MonthlySummaryRepositoryCustomImpl extends QuerydslRepositorySuppor
     }
 
     // 본사 가맹점멸 월정산 요약 리스트
-    public List<MonthlyFranchiseSummaryListDto> findByFranchiseMonthlySummaryList(String filterYearMonth) {
+    public List<MonthlyFranchiseSummaryListDto> findByFranchiseMonthlySummaryList(String filterYearMonth, String frCode) {
 
         QMonthlySummary monthlySummary = QMonthlySummary.monthlySummary;
         QBranch branch = QBranch.branch;
@@ -171,7 +171,11 @@ public class MonthlySummaryRepositoryCustomImpl extends QuerydslRepositorySuppor
 
                 ));
 
-        query.orderBy(branch.brCode.asc());
+        if(!frCode.equals("")){
+            query.where(monthlySummary.frCode.eq(frCode));
+        }else{
+            query.orderBy(branch.brCode.asc());
+        }
 
         return query.fetch();
     }
