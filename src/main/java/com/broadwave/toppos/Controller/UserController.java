@@ -171,6 +171,23 @@ public class UserController {
         return "user/board/find";
     }
 
+
+    // 정산
+    // 가맹점 일 정산 내역
+    @RequestMapping("frdaybalance")
+    public String frdaybalance() {
+        return "user/calculate/frdaybalance";
+    }
+
+    // 가맹점 월 정산 내역
+    @RequestMapping("frmonthbalance")
+    public String frmonthbalance() {
+        return "user/calculate/frmonthbalance";
+    }
+
+
+
+    /* 테스트 코드 구동 */
     @RequestMapping("test")
     public String usertest() {
         return "jstest/test";
