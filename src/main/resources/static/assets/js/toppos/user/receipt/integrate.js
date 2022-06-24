@@ -2315,8 +2315,8 @@ async function openPutInspectPop(e) {
         const screen = document.getElementById("cameraScreen");
         screen.srcObject = wares.cameraStream;
     } catch (err) {
-        if(!(err instanceof DOMException)) {
-            CommonUI.toppos.underTaker(err, "integrate : 카메라 감지");
+        if (!(err instanceof DOMException)) {
+            CommonUI.toppos.underTaker("카메라가 없음", "checkregist : 카메라 찾기");
         }
         wares.isCameraExist = false;
     }
@@ -2385,9 +2385,9 @@ async function openFrInspectPop() {
 
             const screen = document.getElementById("cameraScreen");
             screen.srcObject = wares.cameraStream;
-        } catch (e) {
-            if (!(e instanceof DOMException)) {
-                CommonUI.toppos.underTaker(e, "checkregist : 카메라 찾기");
+        } catch (err) {
+            if (!(err instanceof DOMException)) {
+                CommonUI.toppos.underTaker("카메라가 없음", "checkregist : 카메라 찾기");
             }
             wares.isCameraExist = false;
         }
@@ -2681,7 +2681,7 @@ function closeBrInspectPop(doRefresh = false) {
 
 function resetFrInspectEditPop() {
     $("#frEditFdTotAmtInPut").val("");
-    $("#frEditFiAddAmt").val("0");
+    $("#frEditFiAddAmt").val("");
     $("#frEditFiComment").val("");
     $("#frPhotoList").html("");
 }

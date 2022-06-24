@@ -446,7 +446,9 @@ function setInspect(inspectList) {
         field.children(".main__board-confirm").children("span").html("");
 
         for(let i = 0; i < inspectList.length; i++) {
-            $(field[i]).attr("href", `javascript:getBrInspectInfo(${inspectList[i].fiId})`);
+            $(field[i]).on('click', function () {
+                getBrInspectInfo(inspectList[i].fiId);
+            });
 
             $(field[i]).children(".main__board-bcname").children("span").html(inspectList[i].bcName);
             $(field[i]).children(".main__board-bgname").children("span").html(inspectList[i].bgName);
@@ -462,7 +464,6 @@ function setTagGallery(tagGalleryList) {
     if(tagGalleryList) {
         const field = $("#taglostList").children("li").children("a");
         for(let i = 0; i < tagGalleryList.length; i++) {
-            // $(field[i]).attr("href", `javascript: showTaglost(${tagGalleryList[i].btId})`);
             $(field[i]).children(".main__board-title").children("span:nth-child(1)")
                 .html(tagGalleryList[i].btBrandName);
             $(field[i]).children(".main__board-title").children("span:nth-child(2)")

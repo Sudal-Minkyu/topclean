@@ -83,6 +83,8 @@ const grids = {
                     }, {
                         dataField: 'inamt01',
                         headerText: '미입금액',
+                        width: 95,
+                        style: 'grid_textalign_right',
                         dataType: "numeric",
                         autoThousandSeparator: "true",
                     },
@@ -96,6 +98,8 @@ const grids = {
                     }, {
                         dataField: 'inamt02',
                         headerText: '미입금액',
+                        width: 95,
+                        style: 'grid_textalign_right',
                         dataType: "numeric",
                         autoThousandSeparator: "true",
                     },
@@ -109,6 +113,8 @@ const grids = {
                     }, {
                         dataField: 'inamt03',
                         headerText: '미입금액',
+                        width: 95,
+                        style: 'grid_textalign_right',
                         dataType: "numeric",
                         autoThousandSeparator: "true",
                     },
@@ -122,6 +128,8 @@ const grids = {
                     }, {
                         dataField: 'inamt04',
                         headerText: '미입금액',
+                        width: 95,
+                        style: 'grid_textalign_right',
                         dataType: "numeric",
                         autoThousandSeparator: "true",
                     },
@@ -135,6 +143,8 @@ const grids = {
                     }, {
                         dataField: 'inamt05',
                         headerText: '미입금액',
+                        width: 95,
+                        style: 'grid_textalign_right',
                         dataType: "numeric",
                         autoThousandSeparator: "true",
                     },
@@ -148,6 +158,8 @@ const grids = {
                     }, {
                         dataField: 'amt06',
                         headerText: '미입금액',
+                        width: 95,
+                        style: 'grid_textalign_right',
                         dataType: "numeric",
                         autoThousandSeparator: "true",
                     },
@@ -161,6 +173,8 @@ const grids = {
                     }, {
                         dataField: 'inamt07',
                         headerText: '미입금액',
+                        width: 95,
+                        style: 'grid_textalign_right',
                         dataType: "numeric",
                         autoThousandSeparator: "true",
                     },
@@ -174,6 +188,8 @@ const grids = {
                     }, {
                         dataField: 'inamt08',
                         headerText: '미입금액',
+                        width: 95,
+                        style: 'grid_textalign_right',
                         dataType: "numeric",
                         autoThousandSeparator: "true",
                     },
@@ -187,6 +203,8 @@ const grids = {
                     }, {
                         dataField: 'inamt09',
                         headerText: '미입금액',
+                        width: 95,
+                        style: 'grid_textalign_right',
                         dataType: "numeric",
                         autoThousandSeparator: "true",
                     },
@@ -200,6 +218,8 @@ const grids = {
                     }, {
                         dataField: 'inamt10',
                         headerText: '미입금액',
+                        width: 95,
+                        style: 'grid_textalign_right',
                         dataType: "numeric",
                         autoThousandSeparator: "true",
                     },
@@ -213,6 +233,8 @@ const grids = {
                     }, {
                         dataField: 'inamt11',
                         headerText: '미입금액',
+                        width: 95,
+                        style: 'grid_textalign_right',
                         dataType: "numeric",
                         autoThousandSeparator: "true",
                     },
@@ -226,6 +248,8 @@ const grids = {
                     }, {
                         dataField: 'inamt12',
                         headerText: '미입금액',
+                        width: 95,
+                        style: 'grid_textalign_right',
                         dataType: "numeric",
                         autoThousandSeparator: "true",
                     },
@@ -233,6 +257,8 @@ const grids = {
             }, {
                 dataField: 'total',
                 headerText: '총 미입금액',
+                width: 95,
+                style: 'grid_textalign_right',
                 dataType: "numeric",
                 autoThousandSeparator: "true",
             },

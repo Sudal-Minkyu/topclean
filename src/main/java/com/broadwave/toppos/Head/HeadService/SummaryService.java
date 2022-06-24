@@ -56,7 +56,7 @@ public class SummaryService {
         this.receiptDailyRepository = receiptDailyRepository;
     }
 
-    // 본사 일정산 요역 리스트 호출API
+    // 본사 지사 일정산 요역 리스트 호출API
     public ResponseEntity<Map<String, Object>> daliySummaryList(Long franchiseId, String filterYearMonth) {
         log.info("headFranchiseDaliySummaryList 호출");
 
@@ -209,16 +209,23 @@ public class SummaryService {
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
-    // 본사 가맹점별 일정산 입금현황 호출API
-    public ResponseEntity<Map<String, Object>> headFranchiseDailyStatusList(String filterYearMonth) {
-        log.info("headFranchiseDailyStatusList 호출");
+    // 본사, 지사 가맹점별 일정산 입금현황 호출API
+    public ResponseEntity<Map<String, Object>> franchiseDailyStatusList(String filterYearMonth, HttpServletRequest request) {
+        log.info("franchiseDailyStatusList 호출");
 
         log.info("filterYearMonth  : " + filterYearMonth);
 
         AjaxResponse res = new AjaxResponse();
         HashMap<String, Object> data = new HashMap<>();
 
-        List<ReceiptDailySummaryListDto> receiptDailySummaryListDtos = daliySummaryRepository.findByHeadReceiptDailySummaryList(filterYearMonth);
+        String brCode = "";
+        if(request != null){
+            // 클레임데이터 가져오기
+            Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+            brCode = (String) claims.get("brCode"); // 현재 지사의 코드(2자리) 가져오기
+            log.info("현재 접속한 지사 코드 : "+brCode);
+        }
+        List<ReceiptDailySummaryListDto> receiptDailySummaryListDtos = daliySummaryRepository.findByReceiptDailySummaryList(filterYearMonth, brCode);
 
         int inamtcnt; // 미입금 카운트
         for(ReceiptDailySummaryListDto receiptDailySummaryListDto : receiptDailySummaryListDtos){
