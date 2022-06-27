@@ -417,7 +417,7 @@ const trigs = {
         /* 발판패드 촬영용. 카메라 스트림이 활성화되어 있고, ctrl shift t 를 감지할 경우 촬영 동작 */
         $(window).on("keypress", function (e) {
             if (wares.cameraStream && wares.cameraStream.active
-                && e.originalEvent.code === "KeyT" && e.originalEvent.ctrlKey && e.originalEvent.shiftKey) {
+                && e.originalEvent.code === "KeyX" && e.originalEvent.ctrlKey && e.originalEvent.shiftKey) {
                 takePhoto();
             }
         });
