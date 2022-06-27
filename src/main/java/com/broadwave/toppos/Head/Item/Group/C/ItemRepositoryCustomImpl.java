@@ -33,7 +33,7 @@ public class ItemRepositoryCustomImpl extends QuerydslRepositorySupport implemen
 
         JPQLQuery<ItemListDto> query = from(item)
                 .join(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
-                .join(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS))
+                .join(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
                 .select(Projections.constructor(ItemListDto.class,
                         item.bgItemGroupcode,
                         itemGroup.bgName,
@@ -48,15 +48,15 @@ public class ItemRepositoryCustomImpl extends QuerydslRepositorySupport implemen
                 .distinct(); // 중복제거
 
         if (!bgItemGroupcode.equals("")){
-            query.where(itemGroup.bgItemGroupcode.likeIgnoreCase("%"+bgItemGroupcode+"%"));
+            query.where(itemGroup.bgItemGroupcode.eq(bgItemGroupcode));
         }
 
         if (!bsItemGroupcodeS.equals("")){
-            query.where(itemGroupS.bsItemGroupcodeS.likeIgnoreCase("%"+bsItemGroupcodeS+"%"));
+            query.where(itemGroupS.bsItemGroupcodeS.eq(bsItemGroupcodeS));
         }
 
         if (!biItemcode.equals("")){
-            query.where(item.biItemcode.likeIgnoreCase("%"+biItemcode+"%"));
+            query.where(item.biItemcode.likeIgnoreCase(biItemcode+"%"));
         }
 
         if (!biName.equals("")){
