@@ -414,6 +414,14 @@ const trigs = {
             takePhoto();
         });
 
+        /* 발판패드 촬영용. 카메라 스트림이 활성화되어 있고, ctrl shift t 를 감지할 경우 촬영 동작 */
+        $(window).on("keypress", function (e) {
+            if (wares.cameraStream && wares.cameraStream.active
+                && e.originalEvent.code === "KeyT" && e.originalEvent.ctrlKey && e.originalEvent.shiftKey) {
+                takePhoto();
+            }
+        });
+
         $("#photoList").on("click", ".deletePhotoBtn", function() {
             const bfId = $(this).attr("data-bfId");
             const addIdx = $(this).attr("data-addIdx");
@@ -529,6 +537,7 @@ async function openTaglostPop() {
     }
 
     $("#taglostPop").addClass("active");
+    $("#btBrandName").trigger("focus");
 }
 
 function takePhoto() {
@@ -548,6 +557,10 @@ function takePhoto() {
 
             const takenPic = canvas.toDataURL();
             const blob = b64toBlob(takenPic);
+
+            if (!blob.size) {
+                return;
+            }
 
             if(!wares.currentRequest.addPhotoList) {
                 wares.currentRequest.addPhotoList = [];

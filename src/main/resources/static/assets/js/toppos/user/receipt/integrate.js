@@ -2523,6 +2523,10 @@ function takePhoto() {
             const takenPic = canvas.toDataURL();
             const blob = b64toBlob(takenPic);
 
+            if (!blob.size) {
+                return;
+            }
+
             if(!wares.currentFrInspect.addPhotoList) {
                 wares.currentFrInspect.addPhotoList = [];
             }

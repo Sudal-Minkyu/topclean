@@ -966,6 +966,10 @@ function onTakePicture() {
 
             const blob = b64toBlob(takenPic);
 
+            if (!blob.size) {
+                return;
+            }
+
             const formData = new FormData();
             formData.append("source", blob);
             formData.append("ffRemark", $ffRemark.val());
