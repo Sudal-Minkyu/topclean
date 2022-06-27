@@ -628,6 +628,7 @@ function setFieldData(numOfGrid, item) {
             $("#frPostNo").val(item.frPostNo);
             $("#frAddress").val(item.frAddress);
             $("#frAddressDetail").val(item.frAddressDetail);
+            $("#frCardTid").val(item.frCardTid);
 
             $("input[name='frUrgentDayYn'][value='" + item.frUrgentDayYn + "']").prop('checked', true);
             CommonUI.restrictDate(dateAToBTargetIds[1][0], dateAToBTargetIds[1][1], false);
