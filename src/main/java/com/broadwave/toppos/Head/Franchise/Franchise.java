@@ -119,7 +119,10 @@ public class Franchise {
 
     @Column(name="fr_urgent_day_yn")
     private String frUrgentDayYn; // 가맹점 당일세탁 사용여부
-    
+
+    @Column(name="fr_card_tid")
+    private String frCardTid; // 카드단말기 Tid
+
     @Column(name="insert_id")
     private String insert_id;
 

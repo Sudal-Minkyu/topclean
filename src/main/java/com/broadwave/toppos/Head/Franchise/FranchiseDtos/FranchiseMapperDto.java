@@ -44,6 +44,8 @@ public class FranchiseMapperDto {
     private String frAddress; // 가맹점 주소
     private String frAddressDetail; // 가맹점 상세주소
 
+    private String frCardTid; // 카드단말기 Tid
+
     public String getFrContractDt() {
         if(frContractDt != null && !frContractDt.equals("")){
             String getFrContractDt = frContractDt;

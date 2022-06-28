@@ -292,6 +292,8 @@ public class HeadRestController {
 
     // 가맹점 리스트 API
     @GetMapping("franchiseList")
+    @ApiOperation(value = "본사 가맹점 리스트 호출", notes = "본사가 가맹점 리스트를 요청한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", value = "JWT Token", required = true, dataType = "string", paramType = "header")})
     public ResponseEntity<Map<String, Object>> franchiseList(@RequestParam(value = "brAssignState", defaultValue = "") String brAssignState,
                                                              @RequestParam(value = "frName", defaultValue = "") String frName,
                                                              @RequestParam(value = "frRefCode", defaultValue = "") String frRefCode,
@@ -350,6 +352,8 @@ public class HeadRestController {
             franohisetInfo.put("frRoyaltyRateFr", franohise.getFrRoyaltyRateFr());
 
             franohisetInfo.put("frUrgentDayYn", franohise.getFrUrgentDayYn());
+
+            franohisetInfo.put("frCardTid", franohise.getFrCardTid());
 
             franohiseListData.add(franohisetInfo);
 

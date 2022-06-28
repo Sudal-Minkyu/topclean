@@ -50,6 +50,8 @@ public class FranchiseInfoDto {
 
     private String frUrgentDayYn; // 가맹점 당일세탁 사용여부
 
+    private String frCardTid; // 카드단말기 Tid
+
     public String getFrContractStateValue() {
         if(frContractStateValue.equals("01")){
             return "미배정";

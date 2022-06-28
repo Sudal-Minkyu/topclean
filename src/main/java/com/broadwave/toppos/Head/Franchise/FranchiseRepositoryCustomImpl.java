@@ -63,7 +63,9 @@ public class FranchiseRepositoryCustomImpl extends QuerydslRepositorySupport imp
                     franchise.frRoyaltyRateBr,
                     franchise.frRoyaltyRateFr,
 
-                    franchise.frUrgentDayYn
+                    franchise.frUrgentDayYn,
+
+                    franchise.frCardTid
             ));
 
         query.orderBy(franchise.id.desc());
@@ -135,7 +137,9 @@ public class FranchiseRepositoryCustomImpl extends QuerydslRepositorySupport imp
 
                     franchise.frMultiscreenYn,
 
-                    franchise.frUrgentDayYn
+                    franchise.frUrgentDayYn,
+
+                    franchise.frCardTid
             ));
 
         query.where(franchise.frCode.eq(frCode));

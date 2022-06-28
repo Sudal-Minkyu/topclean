@@ -134,7 +134,6 @@ public class MonthlySummaryRepositoryCustomImpl extends QuerydslRepositorySuppor
         JPQLQuery<MonthlyFranchiseSummaryListDto> query = from(monthlySummary)
                 .innerJoin(branch).on(branch.brCode.eq(monthlySummary.brCode))
                 .innerJoin(franchise).on(franchise.frCode.eq(monthlySummary.frCode))
-                .where(monthlySummary.hsYyyymm.eq(filterYearMonth))
                 .select(Projections.constructor(MonthlyFranchiseSummaryListDto.class,
 
                         branch.brName,
@@ -172,9 +171,9 @@ public class MonthlySummaryRepositoryCustomImpl extends QuerydslRepositorySuppor
                 ));
 
         if(!frCode.equals("")){
-            query.where(monthlySummary.frCode.eq(frCode));
+            query.where(monthlySummary.frCode.eq(frCode).and(monthlySummary.hsYyyymm.likeIgnoreCase(filterYearMonth+"%"))).orderBy(monthlySummary.hsYyyymm.asc());
         }else{
-            query.orderBy(branch.brCode.asc());
+            query.where(monthlySummary.hsYyyymm.eq(filterYearMonth)).orderBy(branch.brCode.asc());
         }
 
         return query.fetch();

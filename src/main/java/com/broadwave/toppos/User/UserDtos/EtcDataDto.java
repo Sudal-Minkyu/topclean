@@ -25,6 +25,8 @@ public class EtcDataDto {
     private String frMultiscreenYn; // 멀티스크린 사용여부
     private String frUrgentDayYn; // 가맹점 당일세탁 사용여부
 
+    private String frCardTid; // 카드단말기 Tid
+
     public StringBuffer getFrEstimateDate() {
         if(frEstimateDate != null && !frEstimateDate.equals("")){
             StringBuffer frEstimateDt = new StringBuffer(frEstimateDate);
