@@ -15,6 +15,8 @@ const dtos = {
     receive: {
         getMainData: {
             brName: 's',    // 지사명
+            frName: 's',    // 가맹점명
+            hsSmsAmt: 'n',    // SMS 발송비용
             hsYyyymm: 's',    // 정산월
             hsNormalAmt: 'n',    // 정상금액
             hsPressed: 'n',    // 다림질 요금
@@ -69,11 +71,12 @@ const grids = {
         /* 0번 그리드의 레이아웃 */
         grids.columnLayout[0] = [
             {
-                dataField: '',
+                dataField: 'hsYyyymm',
                 headerText: '기준월',
                 width: 90,
-                dataType: 'date',
-                formatString: 'yyyy-mm-dd',
+                labelFunction(_rowIndex, _columnIndex, value, _headerText, _item) {
+                    return value.substring(0, 4) + '-' + value.substring(4, 6);
+                },
             }, {
                 dataField: 'hsNormalAmt',
                 headerText: '기본 매출<br>(일반세탁)',
