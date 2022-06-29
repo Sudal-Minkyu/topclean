@@ -1032,14 +1032,16 @@ public class HeadRestController {
             for (int j = 0; j < 12; j++) {
                 Row row = worksheet.getRow(i);
                 Cell cellData = row.getCell(j);
-                CellType ct = cellData.getCellType();
-
-                if (ct == CellType.BLANK) {
+                if(cellData != null){
+                    CellType ct = cellData.getCellType();
+                    if (ct == CellType.BLANK) {
+                        excelList.add("");
+                    } else {
+                        excelList.add(getStringValue(cellData));
+                    }
+                }else{
                     excelList.add("");
-                } else {
-                    excelList.add(getStringValue(cellData));
                 }
-
             }
 
             log.info(i + "번째 excelList : " + excelList);
@@ -1049,6 +1051,7 @@ public class HeadRestController {
                 errorList.add(i + "번째 행의 코드가 존재하지 않습니다.");
 //                return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), i+"번쨰 상품"+ResponseErrorCode.TP009.getDesc(), "문자", "상품코드 : "+excelList.get(0).toString()));
             } else {
+                log.info(i + "번째 준비");
                 ItemPriceDto priceDto = headService.findByItemPrice(excelList.get(0).toString(), setDtReplace);
                 if (priceDto != null) {
                     errorList.add(i + "번째 행의 중복되는 적용일자가 존재합니다.");
@@ -1096,8 +1099,8 @@ public class HeadRestController {
             }
         }
 
-//        log.info("수정 데이터리스트 itemPriceUpdateArrayList : "+itemPriceUpdateArrayList);
-//        log.info("신규 데이터리스트 itemPriceSaveArrayList : "+itemPriceSaveArrayList);
+        log.info("수정 데이터리스트 itemPriceUpdateArrayList : "+itemPriceUpdateArrayList);
+        log.info("신규 데이터리스트 itemPriceSaveArrayList : "+itemPriceSaveArrayList);
 
         HashMap<String, Object> data = new HashMap<>();
         if (errorList.size() == 0) {
@@ -1106,6 +1109,7 @@ public class HeadRestController {
         } else {
             data.put("errorListData", errorList);
         }
+
         return ResponseEntity.ok(res.dataSendSuccess(data));
 
     }
