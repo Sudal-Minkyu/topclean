@@ -324,6 +324,7 @@ const dtos = {
                 baRemark: "",
             },
             addCostData: {
+                bcSmsUnitPrice: "n",
                 bcUrgentRate1: "n",
                 bcUrgentRate2: "n",
                 bcUrgentAmt1: "n",
@@ -343,6 +344,7 @@ const dtos = {
                 bcWhitening: "nr",
             },
             etcData: {
+                frCardTid: 's',
                 frUrgentDayYn: "s",
                 frTagNo: "s",
                 frMultiscreenYn: "s", // 2022.03.10 추가
