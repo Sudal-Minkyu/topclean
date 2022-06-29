@@ -212,9 +212,10 @@ function regPriceClose() {
 /* 엑셀파일 처리를 통해 업데이트 */
 function applyPrice() {
     const $setDt = $("#setDt");
+    const setDtValue = $setDt.val();
     const $priceUpload = $("#priceUpload");
 
-    if($setDt.val() === "") {
+    if(setDtValue === "") {
         alertCaution("가격적용일을 선택해 주세요", 1);
         return;
     }else if($priceUpload[0].files.length === 0) {
@@ -230,16 +231,22 @@ function applyPrice() {
 
     const url = "/api/head/itemPrice";
     const formData = new FormData();
-    formData.append("setDt", $setDt.val());
+    formData.append("setDt", setDtValue);
     formData.append("priceUpload", $priceUpload[0].files[0]);
 
-    CommonUI.ajax(url, "POST", formData, function (req) {
-        if(req.sendData.errorListData !== null){
-            // 에러 내용이 많을경우 대비 얼터화면 확장할 것. to.성낙원
-            alertCancel(req.sendData.errorListData);
-        }else{
-            AUIGrid.clearGridData(gridId[0]);
-            setDataIntoGrid(0, gridCreateUrl[0]);
+    CommonUI.ajax(url, "POST", formData, function (res) {
+        if (res.sendData.errorListData !== null) {
+            alertCancel(res.sendData.errorListData);
+        } else {
+            /* 입력창을 엑셀입력 성공한 값의 날짜로 초기화하고, 해당 날짜를 기준으로 검색시킨다. */
+            $("#s_setDt").append(`
+                <option value="${setDtValue.numString()}">${setDtValue}</option>
+            `);
+            $(`#s_setDt option[value='${setDtValue.numString()}']`).prop("selected", true);
+            $("#s_bgName option").eq(0).prop("selected", true);
+            $("#s_biItemcode").val("")
+            $("#s_biName").val("")
+            filterItems();
             alertSuccess("가격 업로드 성공");
         }
     });
