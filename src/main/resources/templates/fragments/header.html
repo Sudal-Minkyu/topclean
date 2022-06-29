@@ -33,68 +33,94 @@
 	
 	<!-- nav -->
 	<nav class="nav">
-		<div class="nav__group">
-			<h2 class="nav__group-title">세탁관리</h2>
-			<ul class="nav__list">
-				<li class="nav__item"><a href="/user/receiptreg" class="nav__link">세탁 접수</a></li>
-				<li class="nav__item"><a href="/user/delivery" class="nav__link">세탁 인도</a></li>
-				<li class="nav__item"><a href="/user/integrate" class="nav__link">통합 조회</a></li>
-				<li class="nav__item"><a href="/user/externallink" class="nav__link">외부 연계 접수</a></li>
-				<li class="nav__item"><a href="/user/inspect" class="nav__link">검품이력 및 메세지 관리</a></li>
-			</ul>
-		</div>
-		<div class="nav__group">
-			<h2 class="nav__group-title">고객관리</h2>
-			<ul class="nav__list">
-				<li class="nav__item"><a href="/user/customerlist" class="nav__link">고객 조회</a></li>
-				<li class="nav__item"><a href="/user/customerreg" class="nav__link">고객 등록</a></li>
-				<li class="nav__item"><a href="/user/unpaid" class="nav__link">미수 조회</a></li>
-			</ul>
-		</div>
-		<div class="nav__group">
-			<h2 class="nav__group-title">영업관리</h2>
-			<ul class="nav__list">
-				<li class="nav__item"><a href="/user/dailystat" class="nav__link">일일 영업일보</a></li>
-				<li class="nav__item"><a href="/user/closed" class="nav__link">가맹점 수기마감</a></li>
-			</ul>
-		</div>
-		<div class="nav__group">
-			<h2 class="nav__group-title">정산</h2>
-			<ul class="nav__list">
-				<li class="nav__item"><a href="/user/salesstate" class="nav__link">매출 현황</a></li>
-				<li class="nav__item"><a href="/user/dailyaccount" class="nav__link">일일 정산서</a></li>
-				<li class="nav__item"><a href="/user/frdaybalance" class="nav__link">가맹점 일 정산 내역</a></li>
-				<li class="nav__item"><a href="/user/frmonthbalance" class="nav__link">가맹점 월 정산 내역</a></li>
-			</ul>
+		<div class="nav__all">
+			<div class="nav__group active">
+				<h2 class="nav__group-title">세탁관리</h2>
+				<ul class="nav__list">
+					<li class="nav__item"><a href="/user/receiptreg" class="nav__link">세탁 접수</a></li>
+					<li class="nav__item"><a href="/user/delivery" class="nav__link">세탁 인도</a></li>
+					<li class="nav__item"><a href="/user/integrate" class="nav__link">통합 조회</a></li>
+					<li class="nav__item"><a href="/user/externallink" class="nav__link">외부 연계 접수</a></li>
+					<li class="nav__item"><a href="/user/inspect" class="nav__link">검품이력 및 메세지 관리</a></li>
+				</ul>
+			</div>
+			<div class="nav__group">
+				<h2 class="nav__group-title">고객관리</h2>
+				<ul class="nav__list">
+					<li class="nav__item"><a href="/user/customerlist" class="nav__link">고객 조회</a></li>
+					<li class="nav__item"><a href="/user/customerreg" class="nav__link">고객 등록</a></li>
+					<li class="nav__item"><a href="/user/unpaid" class="nav__link">미수 조회</a></li>
+				</ul>
+			</div>
+			<div class="nav__group">
+				<h2 class="nav__group-title">영업관리</h2>
+				<ul class="nav__list">
+					<li class="nav__item"><a href="/user/dailystat" class="nav__link">일일 영업일보</a></li>
+					<li class="nav__item"><a href="/user/closed" class="nav__link">가맹점 수기마감</a></li>
+				</ul>
+			</div>
+			<div class="nav__group">
+				<h2 class="nav__group-title">정산</h2>
+				<ul class="nav__list">
+					<li class="nav__item"><a href="/user/salesstate" class="nav__link">매출 현황</a></li>
+					<li class="nav__item"><a href="/user/dailyaccount" class="nav__link">일일 정산서</a></li>
+					<li class="nav__item"><a href="/user/frdaybalance" class="nav__link">가맹점 일 정산 내역</a></li>
+					<li class="nav__item"><a href="/user/frmonthbalance" class="nav__link">가맹점 월 정산 내역</a></li>
+				</ul>
+			</div>
+
+			<div class="nav__group">
+				<h2 class="nav__group-title">입출고관리</h2>
+				<ul class="nav__list">
+					<li class="nav__item"><a href="/user/franchisein" class="nav__link">가맹점 입고</a></li>
+					<li class="nav__item"><a href="/user/franchiseincancel" class="nav__link">가맹점 입고 취소</a></li>
+					<li class="nav__item"><a href="/user/force" class="nav__link">가맹점 강제 입고</a></li>
+				</ul>
+			</div>
+			<div class="nav__group">
+				<h2 class="nav__group-title">게시판</h2>
+				<ul class="nav__list">
+					<li class="nav__item"><a href="/user/noticelist" class="nav__link">공지사항</a></li>
+					<li class="nav__item"><a href="/user/taglost" class="nav__link">택 분실 게시판</a></li>
+					<li class="nav__item"><a href="/user/find" class="nav__link">물건찾기</a></li>
+				</ul>
+			</div>
+			<div class="nav__group">
+				<h2 class="nav__group-title">가맹점 설정</h2>
+				<ul class="nav__list">
+					<li class="nav__item"><a href="/user/mypage" class="nav__link">나의 정보 관리</a></li>
+					<li class="nav__item"><a href="/user/itemsort" class="nav__link">상품 순서 관리</a></li>
+					<li class="nav__item"><a href="/user/message" class="nav__link">문자 메세지</a></li>
+					<li class="nav__item"><a href="/user/test1" class="nav__link">임시 테스트1</a></li>
+				</ul>
+			</div>
 		</div>
 
-		<div class="nav__group">
-			<h2 class="nav__group-title">입출고관리</h2>
-			<ul class="nav__list">
-				<li class="nav__item"><a href="/user/franchisein" class="nav__link">가맹점 입고</a></li>
-				<li class="nav__item"><a href="/user/franchiseincancel" class="nav__link">가맹점 입고 취소</a></li>
-				<li class="nav__item"><a href="/user/force" class="nav__link">가맹점 강제 입고</a></li>
-			</ul>
+		<div class="nav__selection">
+			<div class="nav__group">
+				<h2 class="nav__group-title">자주쓰는 메뉴</h2>
+				<ul class="nav__list">
+					<li class="nav__item"><a href="/user/receiptreg" class="nav__link">세탁 접수</a></li>
+					<li class="nav__item"><a href="/user/delivery" class="nav__link">세탁 인도</a></li>
+					<li class="nav__item"><a href="/user/integrate" class="nav__link">통합 조회</a></li>
+					<li class="nav__item"><a href="/user/customerlist" class="nav__link">고객 조회</a></li>
+					<li class="nav__item"><a href="/user/unpaid" class="nav__link">미수 조회</a></li>
+					<li class="nav__item"><a href="/user/closed" class="nav__link">가맹점 수기마감</a></li>
+				</ul>
+			</div>
+<!--			<div class="nav__group">-->
+<!--				<h2 class="nav__group-title">최근 사용 메뉴</h2>-->
+<!--				<ul class="nav__list">-->
+<!--					<li class="nav__item"><a href="/user/receiptreg" class="nav__link">세탁 접수</a></li>-->
+<!--					<li class="nav__item"><a href="/user/delivery" class="nav__link">세탁 인도</a></li>-->
+<!--					<li class="nav__item"><a href="/user/integrate" class="nav__link">통합 조회</a></li>-->
+<!--					<li class="nav__item"><a href="/user/customerreg" class="nav__link">고객 등록</a></li>-->
+<!--					<li class="nav__item"><a href="/user/mypage" class="nav__link">나의 정보 관리</a></li>-->
+<!--					<li class="nav__item"><a href="/user/inspect" class="nav__link">검품이력 및 메세지 관리</a></li>-->
+<!--				</ul>-->
+<!--			</div>-->
 		</div>
 
-		<div class="nav__group">
-			<h2 class="nav__group-title">게시판</h2>
-			<ul class="nav__list">
-				<li class="nav__item"><a href="/user/noticelist" class="nav__link">공지사항</a></li>
-				<li class="nav__item"><a href="/user/taglost" class="nav__link">택 분실 게시판</a></li>
-                <li class="nav__item"><a href="/user/find" class="nav__link">물건찾기</a></li>
-			</ul>
-		</div>
-
-		<div class="nav__group">
-			<h2 class="nav__group-title">가맹점 설정</h2>
-			<ul class="nav__list">
-				<li class="nav__item"><a href="/user/mypage" class="nav__link">나의 정보 관리</a></li>
-				<li class="nav__item"><a href="/user/itemsort" class="nav__link">상품 순서 관리</a></li>
-				<li class="nav__item"><a href="/user/message" class="nav__link">문자 메세지</a></li>
-				<li class="nav__item"><a href="/user/temp1" class="nav__link">임시 메뉴1</a></li>
-			</ul>
-		</div>
 		<div class="nav__console">
 			<button class="nav__close" id="closeNav">메뉴 닫기</button>
 		</div>
@@ -115,6 +141,11 @@
 			$('#closeNav').on('click', function() {
 				$('.nav').removeClass('active');
 			});
+
+			$('.nav__all .nav__group-title').on('click', function() {
+				$('.nav__all .nav__group').removeClass('active');
+				$(this).parents('.nav__group').addClass('active');
+			})
 		});
 
 		function drawerOpen() {
