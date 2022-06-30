@@ -37,6 +37,11 @@ class CATPayment {
         let reqmsg = CatCashCancel_vPOSV1(params);
         Communication(reqmsg,func);
     }
+
+    CatGetCurrentTID(func) {
+        let reqmsg = CatGetTermid_vPOSV1();
+        Communication(reqmsg, func);
+    }
     
     
     
@@ -1692,6 +1697,30 @@ function CatCashCancel_vPOSV1(params) {
     return "CC" + request_msg;
 }
 
+// 단말기 터미널 ID 확인
+function CatGetTermid_vPOSV1() {
+    var request_msg = "";
+
+    // 전문길이 마지막에 입력
+    request_msg += "Z1";                                       // 전문구분코드
+    request_msg += "  ";                                       // 할부개월
+    request_msg += " ";                                     	 // 현금영수증 소비자 구분 (1: 소비자 소득공제, 2: 사업자 지출증빙, 3: 자진발급)
+    request_msg += " ";                                        // 현금영수증 취소 사유 (1: 거래 취소)
+    request_msg += "         ";                                // 총금액
+    request_msg += "         ";                                // 세금
+    request_msg += "         ";                             	 // 면세금액
+    request_msg += "         ";                                // 봉사료
+    request_msg += "      ";    															 // 원거래 일시
+    request_msg += "         ";    												 // 원거래 승인번호
+    request_msg += "    ";                                     // 거래일련번호
+    request_msg += String.fromCharCode( 3);                    // ETX
+
+    var telegramLen = ("" + request_msg.length).fillZero(4);   // 길이
+
+    request_msg = String.fromCharCode(2) + telegramLen + request_msg;	// STX 추가 + 전문 길이 + 전송 전문
+
+    return "CC" + request_msg;
+}
 
 //Ajax 호출
 function Communication(reqmsg, func){

@@ -264,6 +264,14 @@ class CommonUIClass {
             });
         },
 
+        /* 등록된 단말기 고유 터미널 번호 정보를 가져와 콜백 함수의 인자에 넣어 반환한다. */
+        getTID(callback = function () {/* 빈함수 */}) {
+            CAT.CatGetCurrentTID(function (res) {
+                res = JSON.parse(res);
+                return callback(res);
+            });
+        },
+
         speak(text, callback = function() {/* 빈기능 */}) {
             if(typeof speechSynthesis === 'undefined') {
                 return;

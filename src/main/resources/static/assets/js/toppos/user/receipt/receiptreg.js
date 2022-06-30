@@ -241,7 +241,6 @@ $(function() {
         }
     });
 
-
     // 결제팝업 탭
     const $payTabsBtn = $('.pop__pay-tabs-item');
     const $payTabsContent = $('.pop__tabs-content');
@@ -1539,8 +1538,10 @@ function onKeypadConfirm() {
     payAmtLimitation();
 }
 
-/* 임시 카드 결제용 함수 */
+/* 결제 1단계 */
 function onPaymentStageOne() {
+
+
     try {
         /* 미수 발생 금액 */
         const uncollectAmt = $("#totalAmt").html().toInt() + $("#applySaveMoney").html().toInt()
@@ -1623,35 +1624,37 @@ function onPaymentStageOne() {
         // month : 할부 (0-일시불, 2-2개월)
 
         if (paymentData.type ==="card") {
-            $('#payStatus').show();
-            try {
-                CAT.CatCredit(paymentData, function (res) {
-                    $('#payStatus').hide();
-                    let resjson = JSON.parse(res);
-                    // 결제 성공일경우 Print
-                    if (resjson.STATUS === "SUCCESS") {
-                        onPaymentStageTwo(resjson);
-                        alertSuccess("카드 결제가 성공하였습니다.<br>단말기에서 카드를 제거해 주세요.");
-                    }
-                    // 결제 실패의 경우
-                    if (resjson.STATUS === "FAILURE") {
+            validateCurrentCATMachine(function () {
+                $('#payStatus').show();
+                try {
+                    CAT.CatCredit(paymentData, function (res) {
                         $('#payStatus').hide();
-                        if (resjson.ERRORDATA === "erroecode:404, error:error") {
-                            alertCancel("카드결제 단말기 연결이 감지되지 않습니다.<br>연결을 확인해 주세요.");
-                        } else if (resjson.ERRORDATA === "erroecode:0, error:timeout") {
-                            alertCancel("유효 결제 시간이 지났습니다.<br>다시 결제창 버튼을 이용하여<br>원하시는 기능을 선택 해주세요.");
-                        } else if(resjson.ERRORMESSAGE === "단말기에서종료키누름 /                  /                 ") {
-                            alertCancel("단말기 종료키를 통해 결제가 중지되었습니다.");
-                        } else if (resjson.ERRORMESSAGE === " /  / ") {
-                            alertCancel("단말기가 사용중입니다.<br>확인 후 다시 시도해 주세요.");
-                        } else {
-                            alertCancel(resjson.ERRORMESSAGE);
+                        let resjson = JSON.parse(res);
+                        // 결제 성공일경우 Print
+                        if (resjson.STATUS === "SUCCESS") {
+                            onPaymentStageTwo(resjson);
+                            alertSuccess("카드 결제가 성공하였습니다.<br>단말기에서 카드를 제거해 주세요.");
                         }
-                    }
-                });
-            } catch (e) {
-                CommonUI.toppos.underTaker(e, "receiptreg : 카드 단말기 결제");
-            }
+                        // 결제 실패의 경우
+                        if (resjson.STATUS === "FAILURE") {
+                            $('#payStatus').hide();
+                            if (resjson.ERRORDATA === "erroecode:404, error:error") {
+                                alertCancel("카드결제 단말기 연결이 감지되지 않습니다.<br>연결을 확인해 주세요.");
+                            } else if (resjson.ERRORDATA === "erroecode:0, error:timeout") {
+                                alertCancel("유효 결제 시간이 지났습니다.<br>다시 결제창 버튼을 이용하여<br>원하시는 기능을 선택 해주세요.");
+                            } else if(resjson.ERRORMESSAGE === "단말기에서종료키누름 /                  /                 ") {
+                                alertCancel("단말기 종료키를 통해 결제가 중지되었습니다.");
+                            } else if (resjson.ERRORMESSAGE === " /  / ") {
+                                alertCancel("단말기가 사용중입니다.<br>확인 후 다시 시도해 주세요.");
+                            } else {
+                                alertCancel(resjson.ERRORMESSAGE);
+                            }
+                        }
+                    });
+                } catch (e) {
+                    CommonUI.toppos.underTaker(e, "receiptreg : 카드 단말기 결제");
+                }
+            });
         } else {
             onPaymentStageTwo();
         }
@@ -2269,4 +2272,26 @@ function decidePollutionType() {
     } else {
         currentRequest.fdPollutionType = 0;
     }
+}
+
+/* 현재 연결된 CAT 단말기가 본사에 등록된 단말기인지를 검증하고 일치하지 않을 경우 카드결제를 막는다. */
+function validateCurrentCATMachine(onSuccess) {
+    CommonUI.toppos.getTID(function (res) {
+        if(res.STATUS === "SUCCESS") {
+            const currentTID = res.CARDNO;
+            if (initialData.etcData.frCardTid === currentTID) {
+                return onSuccess();
+            } else {
+                alertCancel(`카드 단말기의 고유 TID가 다릅니다.<br>현재 단말기 번호는 ${currentTID} 입니다.<br>본사에 전화 문의를 해 주세요.`);
+            }
+        } else if (res.STATUS === "FAILURE") {
+            if (res.ERRORDATA === "erroecode:404, error:error") {
+                alertCancel("카드결제 단말기 연결이 감지되지 않습니다.<br>정상적으로 연결 하신다음, 다시 시도해 주세요.");
+            } else if (res.ERRORMESSAGE === " /  / ") {
+                alertCancel("카드 단말기를 조작중이지 않을 때,<br>다시 세탁접수 메뉴로 들어와 주시면<br>카드결제 기능이 활성화 됩니다.");
+            } else {
+                alertCancel(res.ERRORMESSAGE);
+            }
+        }
+    });
 }
