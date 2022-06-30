@@ -77,7 +77,14 @@ const comms = {
             $('#fastItems').val(0);
             $('#retryItems').val(0);
         });
-    }
+    },
+
+    // 금일 영업 마감
+    dailyClosingProcess(targetDate) {
+        CommonUI.ajax("/api/user/franchiseDue", "PARAM", targetDate, function () {
+            alertSuccess("금일 영업 마감을 완료하였습니다.<br>일일 정산서를 통해 내역을 확인 가능합니다.<br>일단위로 언제든지 영업 재마감은 가능합니다.<br>수고하셨습니다.");
+        });
+    },
 };
 
 /* .s : AUI 그리드 관련 설정들
@@ -264,6 +271,10 @@ const trigs = {
                 grids.f.clearData(0);
                 comms.getClosedList();
             });
+
+            $("#dailyClosing").on("click", function () {
+                dailyClosingProcess();
+            });
         }
     },
     r: { // 이벤트 해제
@@ -300,4 +311,18 @@ function makeSaveDataset(checkedItems) { // 저장 데이터셋 만들기
     };
     changeData.fdIdList = fdIdList;
     return changeData;
+}
+
+function dailyClosingProcess() {
+    const today = new Date().format("yyyy-MM-dd");
+
+    alertCheck("현재날짜 : " + today + "<br>영업을 마감 하시겠습니까?");
+    $("#checkDelSuccessBtn").on("click", function () {
+        const targetDate = {
+            franchiseDue: today.numString(),
+        }
+        comms.dailyClosingProcess(targetDate);
+
+        $('#popupId').remove();
+    });
 }
