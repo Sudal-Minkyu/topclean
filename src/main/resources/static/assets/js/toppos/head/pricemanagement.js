@@ -1,5 +1,6 @@
 $(function () {
     CommonUI.ajax("/api/head/addCostInfo", "GET", {}, function (req) {
+        console.log(req.sendData.addCostDto);
         Object.keys(req.sendData.addCostDto).forEach(id => {
             if($("#" + id).attr('type') === "number") {
                 $("#" + id).val(req.sendData.addCostDto[id]);
