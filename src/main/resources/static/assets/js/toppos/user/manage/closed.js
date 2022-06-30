@@ -319,7 +319,7 @@ function dailyClosingProcess() {
     alertCheck("현재날짜 : " + today + "<br>영업을 마감 하시겠습니까?");
     $("#checkDelSuccessBtn").on("click", function () {
         const targetDate = {
-            franchiseDue: today.numString(),
+            yyyymmdd: today.numString(),
         }
         comms.dailyClosingProcess(targetDate);
 
