@@ -47,7 +47,9 @@ public class AddCostRepositoryCustomImpl extends QuerydslRepositorySupport imple
                         addCost.bcUrgentRate1,
                         addCost.bcUrgentRate2,
                         addCost.bcUrgentAmt1,
-                        addCost.bcSmsUnitPrice
+                        addCost.bcSmsUnitPrice,
+                        addCost.bcProgramFeeBr,
+                        addCost.bcProgramFeeFr
 
                 ));
 

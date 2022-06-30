@@ -81,6 +81,12 @@ public class AddCost {
     @Column(name="bc_sms_unit_price")
     private Integer bcSmsUnitPrice; // SMS건당 비용
 
+    @Column(name="bc_program_fee_br")
+    private Integer bcProgramFeeBr; // 전산사용료(지사)
+
+    @Column(name="bc_program_fee_fr")
+    private Integer bcProgramFeeFr; // 전산사용료(가맹점)
+
     @Column(name="insert_id")
     private String insert_id;
 
