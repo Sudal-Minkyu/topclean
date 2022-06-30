@@ -35,5 +35,6 @@ public class AddCostDto {
     private Double bcUrgentRate2; // 특급세탁(1박2일) 요금인상율(%)
     private Integer bcUrgentAmt1; // 급세탁 추가요금
     private Integer bcSmsUnitPrice; // SMS건당 비용
-
+    private Integer bcProgramFeeBr; // 전산사용료(지사)
+    private Integer bcProgramFeeFr; // 전산사용료(가맹점)
 }
