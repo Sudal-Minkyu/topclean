@@ -33,4 +33,6 @@ public interface FranchiseRepositoryCustom {
 
     List<FranchiseSearchInfoDto> findByFranchiseSearchInfo();
     List<FranchiseTagNoSearchInfoDto> findByFranchiseTagNoSearchInfo();
+
+    void findByFranchiseDue(String yyyymmdd, String frCode); // proc_hc_daily_fr 프로시저 호출
 }

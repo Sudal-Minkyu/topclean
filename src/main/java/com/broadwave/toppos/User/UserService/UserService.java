@@ -222,4 +222,20 @@ public class UserService {
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
+    // 영업 마감 기능 API
+    public ResponseEntity<Map<String, Object>> franchiseDue(String yyyymmdd, HttpServletRequest request) {
+        log.info("franchiseDue 호출");
+
+        AjaxResponse res = new AjaxResponse();
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
+        log.info("현재 접속한 가맹점 코드 : "+frCode);
+
+        franchiseRepository.findByFranchiseDue(yyyymmdd, frCode); // proc_hc_daily_fr 프로시저 호출
+
+        return ResponseEntity.ok(res.success());
+    }
+
 }

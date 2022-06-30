@@ -143,11 +143,11 @@ public class UserRestController {
     }
 
 //@@@@@@@@@@@@@@@@@@@@@ 가맹점 메인화면 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-        // 현재 로그인한 가맹점 정보 가져오기
-        @GetMapping("franchiseInfo")
-        @ApiOperation(value = "가맹정 점보조회" , notes = "현재 로그인한 가맹점정보를 가져온다.")
-        @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
-        public ResponseEntity<Map<String,Object>> franchiseInfo(@RequestParam(value="date", defaultValue="") String date, HttpServletRequest request){
+    // 현재 로그인한 가맹점 정보 가져오기
+    @GetMapping("franchiseInfo")
+    @ApiOperation(value = "가맹정 점보조회" , notes = "현재 로그인한 가맹점정보를 가져온다.")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
+    public ResponseEntity<Map<String,Object>> franchiseInfo(@RequestParam(value="date", defaultValue="") String date, HttpServletRequest request){
             log.info("franchiseInfo 호출");
 
             // 클레임데이터 가져오기
@@ -225,7 +225,13 @@ public class UserRestController {
             return ResponseEntity.ok(res.dataSendSuccess(data));
         }
 
-
+    // 영업 마감 기능 API
+    @PostMapping("franchiseDue")
+    @ApiOperation(value = "영업마감 API" , notes = "현재 로그인한 가맹점의 영업을 마감한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
+    public ResponseEntity<Map<String,Object>> customerSave(@RequestParam(value="yyyymmdd", defaultValue="") String yyyymmdd, HttpServletRequest request){
+        return userService.franchiseDue(yyyymmdd, request);
+    }
 
 //@@@@@@@@@@@@@@@@@@@@@ 가맹점 고객조회 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

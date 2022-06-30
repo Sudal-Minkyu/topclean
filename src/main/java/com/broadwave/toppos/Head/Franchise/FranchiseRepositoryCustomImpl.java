@@ -11,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import java.util.List;
 
 /**
@@ -309,6 +311,21 @@ public class FranchiseRepositoryCustomImpl extends QuerydslRepositorySupport imp
         query.where(franchise.brId.isNotNull());
 
         return query.fetch();
+    }
+
+    @Override
+    public void findByFranchiseDue(String yyyymmdd, String frCode) {
+        EntityManager em = getEntityManager();
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("CALL proc_hc_daily_fr(?1,?2)");
+
+        Query query = em.createNativeQuery(sb.toString());
+
+        query.setParameter(1, yyyymmdd);
+        query.setParameter(2, frCode);
+
+        query.getSingleResult();
     }
 
 
