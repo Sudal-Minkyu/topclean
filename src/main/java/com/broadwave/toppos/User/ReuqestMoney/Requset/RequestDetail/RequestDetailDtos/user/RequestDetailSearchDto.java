@@ -23,8 +23,10 @@ public class RequestDetailSearchDto {
 
     // 마스터 테이블에서 가져 올 데이터
     private String bcName; // 고객이름
+    private String bcGrade; // 고객등급( 일반-기본값 : 01, vip: 02, vvip: 03)
     private String frYyyymmdd; // 접수일자
     private Timestamp frInsertDt; // 접수시간
+    private BigInteger fpId; // 현재 세탁물의 미수금을 결제해준 다른 세탁물의 결제 id
 
     // 세부 테이블에서 가져 올 데이터
     private BigInteger fdId; // 접수세부테이블 고유값 ID
@@ -41,6 +43,7 @@ public class RequestDetailSearchDto {
     private String fdS4Dt; // 지사출고일
     private String fdS5Dt; // 가맹점입고일(완성일자)
     private String fdS6Dt; // 고객인도일
+    private String fdS6Type; // 고객인도타입(01:일반인도, 02:반품인도(강제출고건))
     private Timestamp fdS6Time; // 고객인도일
     private String fdS6CancelYn; // 고객인도취소이력 (취소할경우 'Y'로 표기, 기본값 N)
     private Timestamp fdS6CancelTime; // 고객인도시간 취소시 시간기록
@@ -62,6 +65,11 @@ public class RequestDetailSearchDto {
     private String fdDiscountGrade; // 할인등급 1:일반(할인0%), 2: vip, 3.vvip
     private Integer fdDiscountAmt; // 할인금액
     private Integer fdQty; // 수량
+
+    private BigInteger hpId; // 행사마스터 PK
+    private String fdPromotionType; // 행사타입(H1 : 본사직영 수기행사 할인- 기본금액대비할인)
+    private Double fdPromotionDiscountRate; // 행사할인율
+    private Integer fdPromotionDiscountAmt; // 행사할인금액
 
     private Integer fdRequestAmt; // 접수금액( (정상 + 수선 + 추가1 -할인) * 수량 )
     private String fdSpecialYn; // 특수여부(접수시점)

@@ -34,6 +34,7 @@ import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.manager.Reques
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.manager.RequestRealTimeListSubDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.user.*;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestRepository;
+import com.broadwave.toppos.Head.Franchise.FranchiseRepository;
 import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoney;
 import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoneyDtos.SaveMoneyDto;
 import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoneyDtos.SaveMoneyListDto;
@@ -82,6 +83,7 @@ public class ReceiptService {
     private final KeyGenerateService keyGenerateService;
     private final ModelMapper modelMapper;
 
+    private final FranchiseRepository franchiseRepository;
     private final RequestRepository requestRepository;
     private final RequestDetailRepository requestDetailRepository;
     private final PaymentRepository paymentRepository;
@@ -98,11 +100,12 @@ public class ReceiptService {
     private final BranchCalendarRepository branchCalendarRepository;
 
     @Autowired
-    public ReceiptService(UserService userService, KeyGenerateService keyGenerateService, TokenProvider tokenProvider, ModelMapper modelMapper, MessageHistoryRepository messageHistoryRepository,
+    public ReceiptService(UserService userService, KeyGenerateService keyGenerateService, TokenProvider tokenProvider, ModelMapper modelMapper, FranchiseRepository franchiseRepository, MessageHistoryRepository messageHistoryRepository,
                           RequestRepository requestRepository, RequestDetailRepository requestDetailRepository, PaymentRepository paymentRepository, SaveMoneyRepository saveMoneyRepository,
                           PhotoRepository photoRepository, SaveMoneyRepositoryCustom saveMoneyRepositoryCustom, CashReceiptRepository cashReceiptRepository,
                           HeadService headService, CustomerRepository customerRepository, BranchCalendarRepository branchCalendarRepository, PaymentRepositoryCustom paymentRepositoryCustom){
         this.userService = userService;
+        this.franchiseRepository = franchiseRepository;
         this.headService = headService;
         this.requestRepository = requestRepository;
         this.messageHistoryRepository = messageHistoryRepository;
@@ -136,8 +139,8 @@ public class ReceiptService {
     }
 
     // 접수코드와 태그번호를 통한 접수세부 테이블 조회
-    public Optional<RequestDetail> findByRequestDetail(String frNo, String fdTag){
-        return requestDetailRepository.findByRequestDetail(frNo, fdTag);
+    public Optional<RequestDetail> findByRequestDetail(String frNo, Long fdId){
+        return requestDetailRepository.findByRequestDetail(frNo, fdId);
     }
 
     // 접수 세부테이블 삭제, 해당세부의 대한 Photo 삭제
@@ -205,16 +208,22 @@ public class ReceiptService {
         Optional<Customer> optionalCustomer = userService.findByBcId(etcData.getBcId());
         if(!optionalCustomer.isPresent()){
             return ResponseEntity.ok(res.fail(ResponseErrorCode.TP018.getCode(), ResponseErrorCode.TP018.getDesc(),null, null));
-        }else{
+        }
+        else{
 
-            Request requestSave;
+            Request requestSave = new Request();
             log.info("etcData.getFrNo() : "+etcData.getFrNo());
             if(etcData.getFrNo() != null){
                 log.info("접수마스터 테이블 수정합니다. 접수코드 : "+etcData.getFrNo());
                 Optional<Request> optionalRequest = findByRequest(etcData.getFrNo(), "N", frCode);
                 if(!optionalRequest.isPresent()){
                     return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "접수 할 "+ResponseErrorCode.TP009.getDesc(), "문자", "접수코드 : "+etcData.getFrNo()));
-                }else{
+                } else{
+                    if(etcData.getFrTotalAmount() <= 0 ){
+                        optionalRequest.get().setFrUncollectYn("N");
+                    }else{
+                        optionalRequest.get().setFrUncollectYn("Y");
+                    }
                     optionalRequest.get().setFrTotalAmount(etcData.getFrTotalAmount());
                     optionalRequest.get().setFrDiscountAmount(etcData.getFrDiscountAmount());
                     optionalRequest.get().setFrNormalAmount(etcData.getFrNormalAmount());
@@ -224,10 +233,19 @@ public class ReceiptService {
                     optionalRequest.get().setModify_date(LocalDateTime.now());
                     requestSave = optionalRequest.get();
                 }
-            }else{
+            }
+            else{
                 log.info("접수마스터 테이블 신규 저장합니다.");
 
-                requestSave = modelMapper.map(etcData, Request.class);
+                //버그픽스 2022.07.15 해당 modelMapper를 사용할 경우 bcId가 먼저 등록되있는 접수마스터테이블의 Id를 매핑시켜버림
+                // 그래서 엄한걸 업데이트쳐버림 -> 참고로 신규저장 로직인데 업데이트를 함
+//                requestSave = modelMapper.map(etcData, Request.class);
+
+                requestSave.setFrNo(etcData.getFrNo());
+                requestSave.setFrNormalAmount(etcData.getFrNormalAmount());
+                requestSave.setFrDiscountAmount(etcData.getFrDiscountAmount());
+                requestSave.setFrTotalAmount(etcData.getFrTotalAmount());
+                requestSave.setFrQty(etcData.getFrQty());
 
                 requestSave.setBcId(optionalCustomer.get());
                 requestSave.setBrCode(frbrCode);
@@ -238,8 +256,11 @@ public class ReceiptService {
                 requestSave.setFrRefBoxCode(null); // 무인보관함 연계시 무인보관함 접수번호 : 일단 무조건 NULL
                 requestSave.setFr_insert_id(login_id);
                 requestSave.setFr_insert_date(LocalDateTime.now());
-                requestSave.setFrUncollectYn("Y");
-
+                if(etcData.getFrTotalAmount() <= 0 ){
+                    requestSave.setFrUncollectYn("N");
+                }else{
+                    requestSave.setFrUncollectYn("Y");
+                }
                 log.info("접수마스터 테이블 저장 or 수정 : "+requestSave);
             }
 
@@ -247,33 +268,17 @@ public class ReceiptService {
             // 임시저장인지, 결제하기저장인지 여부 : 임시저장이면 Y, 아니면 N로 저장
             if(etcData.getCheckNum().equals("1")){
                 requestSave.setFrConfirmYn("N");
-            }else{
+            }
+            else{
                 requestSave.setFrConfirmYn("Y");
-
-                // 결제일 경우, 현재 고객의 적립금과 미수금액을 보내준다.
-                // 미수금액 리스트를 호출한다. 조건 : 미수여부는 Y, 임시저장확정여부는 N, 고객아이디 eq, 가맹점코드 = frCode eq, 현재날짜의 전날들만 인것들만 조회하기
-                List<RequestCollectDto>  requestCollectDtoList = findByRequestCollectList(optionalCustomer.get(), null); // nowDate 현재날짜
-                List<Integer> uncollectMoneyList = findByBeforeAndTodayUnCollect(requestCollectDtoList, nowDate, "1");
-                int uncollectMoney = 0;
-                if(requestCollectDtoList.size() != 0){
-                    uncollectMoney = uncollectMoneyList.get(0);
-                    data.put("uncollectMoney",uncollectMoney);
-                }else{
-                    data.put("uncollectMoney",0);
-                }
-//                log.info("합계금액 : "+totalAmount);
-//                log.info("결제금액 : "+payAmount);
-                log.info("미수금액 : "+ uncollectMoney);
-
-                // 적립금 리스트를 호출한다. 조건 : 고객 ID, 적립유형 1 or 2, 마감여부 : N,
-                Integer saveMoney = findBySaveMoney(optionalCustomer.get());
-                data.put("saveMoney",saveMoney);
-                log.info("적립금액 : "+ (saveMoney));
             }
 
+            Long bcId = requestSave.getBcId().getBcId();
             List<List<Photo>> photoLists = new ArrayList<>();
             List<Photo> photos;
-            String lastTagNo = null; // 마지막 태그번호
+
+            String lastTagNo; // 마지막 태그번호
+
             List<RequestDetail> requestDetailList = new ArrayList<>(); // 세부테이블 객체 리스트
             // 접수 세부 테이블 저장
             if(addList.size()!=0){
@@ -291,7 +296,8 @@ public class ReceiptService {
                     requestDetail.setFdEstimateDt(requestDetailMapperDto.getFrEstimateDate());
                     requestDetail.setInsert_id(login_id);
                     requestDetail.setInsert_date(LocalDateTime.now());
-                    lastTagNo = requestDetailMapperDto.getFdTag();
+                    requestDetail.setBcId(bcId);
+//                    lastTagNo = requestDetailMapperDto.getFdTag();
                     requestDetailList.add(requestDetail);
 
                     for(PhotoDto photoDto : requestDetailMapperDto.getPhotoList()){
@@ -316,11 +322,14 @@ public class ReceiptService {
 
                     log.info("수정로직 FrNo : "+etcData.getFrNo());
                     log.info("수정로직 FdTag : "+requestDetailMapperDto.getFdTag());
-                    Optional<RequestDetail> optionalRequestDetail = findByRequestDetail(etcData.getFrNo(), requestDetailMapperDto.getFdTag());
+                    Optional<RequestDetail> optionalRequestDetail = findByRequestDetail(etcData.getFrNo(), requestDetailMapperDto.getFdId());
                     if(!optionalRequestDetail.isPresent()){
                         return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "수정 할 "+ResponseErrorCode.TP009.getDesc(), "문자", "택번호 : "+requestDetailMapperDto.getFdTag()));
                     }else{
                         photoRepository.findByRequestDetailPhotoDelete(optionalRequestDetail.get().getId()); // 기존 세부상품의 사진 삭제
+
+                        optionalRequestDetail.get().setFdTag(requestDetailMapperDto.getFdTag());
+//                        lastTagNo = requestDetailMapperDto.getFdTag();
 
                         optionalRequestDetail.get().setBiItemcode(requestDetailMapperDto.getBiItemcode());
                         optionalRequestDetail.get().setFdColor(requestDetailMapperDto.getFdColor());
@@ -347,17 +356,24 @@ public class ReceiptService {
                         optionalRequestDetail.get().setFdDiscountAmt(requestDetailMapperDto.getFdDiscountAmt());
                         optionalRequestDetail.get().setFdQty(requestDetailMapperDto.getFdQty());
 
+                        optionalRequestDetail.get().setFdTotAmt(requestDetailMapperDto.getFdTotAmt());
+
                         optionalRequestDetail.get().setFdRequestAmt(requestDetailMapperDto.getFdRequestAmt());
                         optionalRequestDetail.get().setFdRetryYn(requestDetailMapperDto.getFdRetryYn());
                         optionalRequestDetail.get().setFdUrgentYn(requestDetailMapperDto.getFdUrgentYn());
                         optionalRequestDetail.get().setFdUrgentType(requestDetailMapperDto.getFdUrgentType());
                         optionalRequestDetail.get().setFdUrgentAmt(requestDetailMapperDto.getFdUrgentAmt());
 
+                        optionalRequestDetail.get().setFdPromotionType(requestDetailMapperDto.getFdPromotionType());
+                        optionalRequestDetail.get().setFdPromotionDiscountRate(requestDetailMapperDto.getFdPromotionDiscountRate());
+                        optionalRequestDetail.get().setFdPromotionDiscountAmt(requestDetailMapperDto.getFdPromotionDiscountAmt());
+
                         optionalRequestDetail.get().setFdRemark(requestDetailMapperDto.getFdRemark());
                         optionalRequestDetail.get().setFdEstimateDt(requestDetailMapperDto.getFrEstimateDate());
 
                         optionalRequestDetail.get().setModify_id(login_id);
                         optionalRequestDetail.get().setModify_date(LocalDateTime.now());
+
                         RequestDetail requestDetail = optionalRequestDetail.get();
                         requestDetailList.add(requestDetail);
 
@@ -382,7 +398,7 @@ public class ReceiptService {
                 for (RequestDetailMapperDto requestDetailMapperDto : deleteList) {
                     log.info("삭제로직 FrNo : "+etcData.getFrNo());
                     log.info("삭제로직 FdTag : "+requestDetailMapperDto.getFdTag());
-                    Optional<RequestDetail> optionalRequestDetail = findByRequestDetail(etcData.getFrNo(), requestDetailMapperDto.getFdTag());
+                    Optional<RequestDetail> optionalRequestDetail = findByRequestDetail(etcData.getFrNo(), requestDetailMapperDto.getFdId());
                     if(!optionalRequestDetail.isPresent()){
                         return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "삭제 할 "+ResponseErrorCode.TP009.getDesc(), "문자", "택번호 : "+requestDetailMapperDto.getFdTag()));
                     }else{
@@ -398,20 +414,46 @@ public class ReceiptService {
 
             Request requestSaveO = requestAndDetailSave(requestSave, requestDetailList, customer, photoLists);
 
+            // 2022/07/22 변경 -> 프론트에서 마지막 태그번호 주는걸로 변경 -> 조건 : checkNum이 "2"일 경우
+            lastTagNo = etcData.getFrLastTagno();
             // 모두 저장되면 최종 택번호 업데이트
-            Optional<Franchise> optionalFranchise = headService.findByFrCode(frCode); // 가맹점
-            if(optionalFranchise.isPresent()){
-                if(addList.size()==0){
-                    lastTagNo = optionalFranchise.get().getFrLastTagno();
-                }
-                log.info("마지막 택번호 : "+lastTagNo);
-                optionalFranchise.get().setFrLastTagno(lastTagNo);
+            if(etcData.getCheckNum().equals("2")){
+                Optional<Franchise> optionalFranchise = franchiseRepository.findByFrCode(frCode); // 가맹점
+                if(optionalFranchise.isPresent()){
+//                    if(addList.size()==0){
+//                        lastTagNo = optionalFranchise.get().getFrLastTagno();
+//                    }
+                    log.info("마지막 택번호 : "+lastTagNo);
+                    optionalFranchise.get().setFrLastTagno(lastTagNo);
 
-                headService.franchise(optionalFranchise.get());
-                log.info(optionalFranchise.get().getFrName()+" 가맹점 택번호 업데이트 완료 : "+lastTagNo);
+                    headService.franchise(optionalFranchise.get());
+                    log.info(optionalFranchise.get().getFrName()+" 가맹점 택번호 업데이트 완료 : "+lastTagNo);
+                }
             }
 
             data.put("frNo",requestSaveO.getFrNo());
+
+            if(etcData.getCheckNum().equals("2")){
+                // 결제일 경우, 현재 고객의 적립금과 미수금액을 보내준다.
+                // 미수금액 리스트를 호출한다. 조건 : 미수여부는 Y, 임시저장확정여부는 N, 고객아이디 eq, 가맹점코드 = frCode eq, 현재날짜의 전날들만 인것들만 조회하기
+                List<RequestCollectDto>  requestCollectDtoList = findByRequestCollectList(optionalCustomer.get(), null); // nowDate 현재날짜
+                List<Integer> uncollectMoneyList = findByBeforeAndTodayUnCollect(requestCollectDtoList, nowDate, "1");
+                int uncollectMoney = 0;
+                if(requestCollectDtoList.size() != 0){
+                    uncollectMoney = uncollectMoneyList.get(0);
+                    data.put("uncollectMoney",uncollectMoney);
+                }else{
+                    data.put("uncollectMoney",0);
+                }
+//                log.info("합계금액 : "+totalAmount);
+//                log.info("결제금액 : "+payAmount);
+                log.info("미수금액 : "+ uncollectMoney);
+
+                // 적립금 리스트를 호출한다. 조건 : 고객 ID, 적립유형 1 or 2, 마감여부 : N,
+                Integer saveMoney = findBySaveMoney(optionalCustomer.get());
+                data.put("saveMoney",saveMoney);
+                log.info("적립금액 : "+ (saveMoney));
+            }
 
             return ResponseEntity.ok(res.dataSendSuccess(data));
 
@@ -419,7 +461,7 @@ public class ReceiptService {
     }
 
     // 문의 접수 API : 임시저장 또는 결제할시 저장한다. 마스터테이블, 세부테이블 저장
-    @Transactional(rollbackFor = SQLException.class)
+    @Transactional
     public Request requestAndDetailSave(Request request, List<RequestDetail> requestDetailList, Customer customer, List<List<Photo>> photoLists){
         try{
             String frNo;
@@ -700,7 +742,7 @@ public class ReceiptService {
     }
 
 //@@@@@@@@@@@@@@@@@@@@@ 적립금 미수금 관련 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    // 한명의 고객의 적립금 호출
+    // 한명의 고객의 적립금호출
     public Integer findBySaveMoney(Customer customer) {
         List<SaveMoneyDto> saveMoneyDtoList = saveMoneyRepositoryCustom.findBySaveMoney(customer);
         int plusSaveMoney = 0;
@@ -717,6 +759,16 @@ public class ReceiptService {
         }else{
             return 0;
         }
+    }
+
+    // 한명의 고객의 미수금 호출
+    public Integer findByUnCollect(Customer customer) {
+        List<RequestUnCollectDto> requestUnCollectDtoList = requestRepository.findByUnCollect(customer);
+        int uncollectMoney = 0;
+        for (RequestUnCollectDto requestUnCollectDto : requestUnCollectDtoList) {
+            uncollectMoney = uncollectMoney+requestUnCollectDto.getUnCollect();
+        }
+        return uncollectMoney;
     }
 
     // 여러사람의 고객정보 조회용 적립금, 미수금 호출 함수
@@ -863,9 +915,7 @@ public class ReceiptService {
             paymentData.put("customerName", requestPaymentPaperDto.getCustomer().getBcName());
             paymentData.put("customerTel", requestPaymentPaperDto.getCustomer().getBcHp());
             paymentData.put("requestDt", requestPaymentPaperDto.getFrYyyymmdd());
-            paymentData.put("normalAmount", requestPaymentPaperDto.getFrNormalAmount());
-            paymentData.put("changeAmount", requestPaymentPaperDto.getFrDiscountAmount());
-            paymentData.put("totalAmount", requestPaymentPaperDto.getFrNormalAmount() + requestPaymentPaperDto.getFrDiscountAmount());
+
             paymentData.put("paymentAmount", requestPaymentPaperDto.getFrPayAmount());
 
 //         preUncollectAmount: "n", // 고객 전일미수금
@@ -890,17 +940,33 @@ public class ReceiptService {
             log.info("전일 미수금액 : "+ preUncollectAmount);
             log.info("당일 미수금액 : "+ curUncollectAmount);
 
+//            Integer normal = 0;
+//            Integer discount = 0;
             List<RequestDetailPaymentPaper> requestDetailPaymentPapers = requestDetailRepository.findByRequestDetailPaymentPaper(requestPaymentPaperDto.getFrNo());
             for(RequestDetailPaymentPaper requestDetailPaymentPaper : requestDetailPaymentPapers){
-                requestDetailPaymentInfo = new HashMap<>();
-                requestDetailPaymentInfo.put("tagno", requestDetailPaymentPaper.getFdTag());
-                requestDetailPaymentInfo.put("color", requestDetailPaymentPaper.getFdColor());
-                requestDetailPaymentInfo.put("itemname", requestDetailPaymentPaper.getItemName());
-                requestDetailPaymentInfo.put("specialyn", requestDetailPaymentPaper.getFdSpecialYn());
-                requestDetailPaymentInfo.put("price", requestDetailPaymentPaper.getFdTotAmt());
-                requestDetailPaymentInfo.put("estimateDt", requestDetailPaymentPaper.getFdEstimateDt());
-                requestDetailPaymentListData.add(requestDetailPaymentInfo);
+//                if(requestDetailPaymentPaper.getFdCancel().equals("N")){
+                    requestDetailPaymentInfo = new HashMap<>();
+                    requestDetailPaymentInfo.put("tagno", requestDetailPaymentPaper.getFdTag());
+
+
+                    requestDetailPaymentInfo.put("color", requestDetailPaymentPaper.getFdColor());
+                    requestDetailPaymentInfo.put("itemname", requestDetailPaymentPaper.getItemName());
+                    requestDetailPaymentInfo.put("priceGrade", requestDetailPaymentPaper.getFdPriceGrade());
+                    requestDetailPaymentInfo.put("specialyn", requestDetailPaymentPaper.getFdSpecialYn());
+                    requestDetailPaymentInfo.put("price", requestDetailPaymentPaper.getFdTotAmt());
+                    requestDetailPaymentInfo.put("estimateDt", requestDetailPaymentPaper.getFdEstimateDt());
+                    requestDetailPaymentInfo.put("fdRemark", requestDetailPaymentPaper.getFdRemark());
+                    requestDetailPaymentListData.add(requestDetailPaymentInfo);
+//                }else {
+//                    normal = normal+requestDetailPaymentPaper.getFdNormalAmt();
+//                    discount = discount+requestDetailPaymentPaper.getFdTotAmt()-requestDetailPaymentPaper.getFdNormalAmt();
+//                }
             }
+
+            // 22/07/22 최종가격 입력 -> 취소된 상품은 총 가격에서 빠짐
+            paymentData.put("normalAmount", requestPaymentPaperDto.getFrNormalAmount());
+            paymentData.put("changeAmount", requestPaymentPaperDto.getFrDiscountAmount());
+            paymentData.put("totalAmount", requestPaymentPaperDto.getFrNormalAmount() + requestPaymentPaperDto.getFrDiscountAmount());
 
             int fpCollectAmt = 0;
             List<PaymentPaperDto> paymentPaperDtos = paymentRepositoryCustom.findByPaymentPaper(requestPaymentPaperDto.getFrNo());
@@ -987,7 +1053,9 @@ public class ReceiptService {
         DecimalFormat decimalFormat = new DecimalFormat("###,###");
         String uncollect_message; // 미수금메세지
         RequestDetailMessageDto requestDetailMessageDto = requestDetailRepository.findByRequestDetailReceiptMessage(frNo,frCode);
+
         if(requestDetailMessageDto != null){
+
             messageHistory.setBcId(requestDetailMessageDto.getCustomer());
             List<RequestCollectDto>  requestCollectDtoList = findByRequestCollectList(requestDetailMessageDto.getCustomer(), null);
             List<Integer> uncollectMoneyList = findByBeforeAndTodayUnCollect(requestCollectDtoList, LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")), "2");
@@ -1107,25 +1175,24 @@ public class ReceiptService {
 //            log.info("문자메세지 : "+ nextmessage);
 //            log.info("버튼_json : "+ resultObj);
 //            log.info("버튼_string : "+ buttonJson);
-        }else{
-            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP005.getCode(), "접수 "+ResponseErrorCode.TP005.getDesc(), null, null));
-        }
 
-        messageHistory.setFmType("02");
-        messageHistory.setFrCode(frCode);
-        messageHistory.setBrCode(frbrCode);
-        messageHistory.setFmMessage(message);
-        messageHistory.setInsertYyyymmdd(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
-        messageHistory.setInsert_id(login_id);
-        messageHistory.setInsertDateTime(LocalDateTime.now());
-        messageHistoryRepository.save(messageHistory);
+            messageHistory.setFmType("02");
+            messageHistory.setFrCode(frCode);
+            messageHistory.setBrCode(frbrCode);
+            messageHistory.setFmMessage(message);
+            messageHistory.setInsertYyyymmdd(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
+            messageHistory.setInsert_id(login_id);
+            messageHistory.setInsertDateTime(LocalDateTime.now());
+            messageHistoryRepository.save(messageHistory);
 
-        boolean successBoolean = requestRepository.kakaoMessage(message, nextmessage, buttonJson, templatecodeReceipt, "fs_request", frId, bcHp, templatecodeNumber, "K");
-        log.info("successBoolean : "+successBoolean);
-        if(successBoolean) {
-            log.info("메세지 인서트 성공");
-        }else{
-            log.info("메세지 인서트 실패");
+            boolean successBoolean = requestRepository.kakaoMessage(message, nextmessage, buttonJson, templatecodeReceipt, "fs_request", frId, bcHp, templatecodeNumber, "K");
+            log.info("successBoolean : "+successBoolean);
+            if(successBoolean) {
+                log.info("메세지 인서트 성공");
+            }else{
+                log.info("메세지 인서트 실패");
+            }
+
         }
 
         return ResponseEntity.ok(res.success());

@@ -83,8 +83,6 @@ const dtos = {
         },
 
         customerInfo: { // integrate 의 customerInfo와 같은 구성
-            deliveryS5: "n",
-            deliveryS8: "n",
             bcWeddingAnniversary: "d",
             bcAddress: "s",
             bcGrade: "s",
@@ -117,6 +115,7 @@ const comms = {
         CommonUI.ajax(urls.getDetailList, "GET", filterCondition, function (res) {
             const data = res.sendData.gridListData;
             dv.chk(data, dtos.receive.inspectList, "검품리스트 받기");
+            CommonUI.toppos.makeSimpleProductNameList(data);
             grids.f.setData(0, data);
         });
     },
@@ -137,8 +136,14 @@ const comms = {
                 $("#customerListPop").addClass("active");
             }else{
                 alertCheck("일치하는 고객 정보가 없습니다.<br>신규고객으로 등록 하시겠습니까?");
+                let additionalCondition = params.searchString;
+                if (additionalCondition.numString().length) {
+                    additionalCondition = "?bchp=" + additionalCondition.numString();
+                } else {
+                    additionalCondition = "?bcname=" + additionalCondition;
+                }
                 $("#checkDelSuccessBtn").on("click", function () {
-                    location.href="/user/customerreg";
+                    location.href="/user/customerreg" + additionalCondition;
                 });
             }
         });
@@ -206,7 +211,7 @@ const grids = {
                     formatString: "yyyy-mm-dd",
                 }, {
                     dataField: "fd6Dt",
-                    headerText: "인도일자",
+                    headerText: "고객출고일",
                     width: 90,
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
@@ -219,7 +224,7 @@ const grids = {
                         return CommonData.formatFrTagNo(value, frTagInfo.frTagType);
                     },
                 }, {
-                    dataField: "sumName",
+                    dataField: "productName",
                     headerText: "상품명",
                     style: "color_and_name",
                     renderer : {
@@ -228,8 +233,8 @@ const grids = {
                     labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         const colorSquare =
                         `<span class="colorSquare" style="background-color: ${CommonData.name.fdColorCode[item.fdColor]}; vertical-align: middle;"></span>`;
-                            const sumName = CommonUI.toppos.makeSimpleProductName(item);
-                            return colorSquare + ` <span style="vertical-align: middle;">` + sumName + `</span>`;
+                            const productName = CommonUI.toppos.makeSimpleProductName(item);
+                            return colorSquare + ` <span style="vertical-align: middle;">` + productName + `</span>`;
                     }
                 }, {
                     dataField: "",
@@ -257,6 +262,9 @@ const grids = {
                     dataField: "fdUrgentYn", // 급세탁이면 Y
                     headerText: "급",
                     width: 35,
+                    labelFunction(_rowIndex, _columnIndex, value, _headerText, _item) {
+                        return value === "Y" ? "√" : "";
+                    },
                 }, {
                     dataField: "fdRemark",
                     headerText: "특이사항",

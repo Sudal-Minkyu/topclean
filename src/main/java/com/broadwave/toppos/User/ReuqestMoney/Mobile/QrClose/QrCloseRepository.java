@@ -10,6 +10,6 @@ import org.springframework.stereotype.Repository;
  * Remark : Toppos 가맹점 QR 마감 Repository
  */
 @Repository
-public interface QrCloseRepository extends JpaRepository<QrClose,Long> {
+public interface QrCloseRepository extends JpaRepository<QrClose,Long>, QrClostRepositoryCustom {
 
 }

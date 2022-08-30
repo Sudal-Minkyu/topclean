@@ -3,6 +3,8 @@ package com.broadwave.toppos.User.UserService;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.User.Customer.Customer;
 import com.broadwave.toppos.User.Customer.CustomerRepository;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.Request;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.PhotoDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.PhotoRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetail;
@@ -40,16 +42,18 @@ public class ReceiptStateService {
     private final InhouseRepository inhouseRepository;
     private final CustomerRepository customerRepository;
     private final RequestMessageRepository requestMessageRepository;
+    private final RequestRepository requestRepository;
     private final RequestDetailRepository requestDetailRepository;
     private final PhotoRepository photoRepository;
 
     @Autowired
     public ReceiptStateService(TokenProvider tokenProvider, RequestMessageRepository requestMessageRepository, CustomerRepository customerRepository,
-                               InhouseRepository inhouseRepository, RequestDetailRepository requestDetailRepository, PhotoRepository photoRepository){
+                               InhouseRepository inhouseRepository, RequestRepository requestRepository, RequestDetailRepository requestDetailRepository, PhotoRepository photoRepository){
         this.tokenProvider = tokenProvider;
         this.inhouseRepository = inhouseRepository;
         this.customerRepository = customerRepository;
         this.requestMessageRepository = requestMessageRepository;
+        this.requestRepository = requestRepository;
         this.requestDetailRepository = requestDetailRepository;
         this.photoRepository = photoRepository;
     }
@@ -232,6 +236,28 @@ public class ReceiptStateService {
                         if (requestDetail.getFdS4Type().equals("04") || requestDetail.getFdS4Type().equals("06") || requestDetail.getFdS4Type().equals("08")) {
                             // 조건 - 04 : 반품출고 S7 - 02, 06 : 확인품(미확인) - 반품, 08 : 확인품(거부) - 반품
                             requestDetail.setFdS6Type("02");
+
+                            // 22/08/01 fd_s6_type 이 02로 처리될때 마스터테이블에 세가지 가격이 접수취소때처럼 반영하게 변경(일감번호 : #1549)
+                            Optional<Request> optionalRequest = requestRepository.findById(requestDetail.getFrId().getId());
+                            Integer fdTotAmt =  requestDetail.getFdTotAmt(); // 세부테이블의 총 금액
+                            Integer fdNormalAmt =  requestDetail.getFdNormalAmt(); // 세부테이블의 노말금액
+                            Integer fdDisAmt =  requestDetail.getFdTotAmt()-requestDetail.getFdNormalAmt(); // 세부테이블의 추가금액
+                            if(optionalRequest.isPresent()){
+                                Integer frTotalAmount =  optionalRequest.get().getFrTotalAmount()-fdTotAmt; // 마스터테이블의 총 금액
+                                Integer frNormalAmount =  optionalRequest.get().getFrNormalAmount()-fdNormalAmt; // 마스터테이블의 추가금액
+                                Integer frDiscountAmount =  optionalRequest.get().getFrDiscountAmount()-fdDisAmt; // 마스터테이블의 추가금액
+
+                                optionalRequest.get().setFrTotalAmount(frTotalAmount);
+                                optionalRequest.get().setFrNormalAmount(frNormalAmount);
+                                optionalRequest.get().setFrDiscountAmount(frDiscountAmount);
+
+                                optionalRequest.get().setFrQty(optionalRequest.get().getFrQty()-1);
+
+                                optionalRequest.get().setModify_id(login_id);
+                                optionalRequest.get().setModify_date(LocalDateTime.now());
+                                requestRepository.save(optionalRequest.get());
+                            }
+
                         } else {
                             // 조건 - 01 : 일반출고, 02 : 강제출고 S7 - 01, 03: 가맹점강제입고출고 - 가맹점 강제입고처리시, 05 : 확인품(미확인) - 출고, 07 : 확인품(수락) - 출고
                             requestDetail.setFdS6Type("01");
@@ -379,6 +405,9 @@ public class ReceiptStateService {
             requestDetail.setFdFrState("S4");
             requestDetail.setFdFrStateTime(LocalDateTime.now());
 
+            requestDetail.setFdS5Dt(null);
+            requestDetail.setFdS5Time(null);
+
             requestDetail.setModify_id(login_id);
             requestDetail.setModify_date(LocalDateTime.now());
         }
@@ -473,6 +502,8 @@ public class ReceiptStateService {
             requestDetailInfo.put("frRefType", requestDetailDto.getFrRefType());
             requestDetailInfo.put("bcName", requestDetailDto.getBcName());
 
+            requestDetailInfo.put("frNo", requestDetailDto.getFrNo());
+
             requestDetailInfo.put("fdId", requestDetailDto.getFdId());
 
             requestDetailInfo.put("frYyyymmdd", requestDetailDto.getFrYyyymmdd());
@@ -518,6 +549,9 @@ public class ReceiptStateService {
 
             requestDetailInfo.put("fdPollutionType", requestDetailDto.getFdPollutionType());
             requestDetailInfo.put("fdPollutionBack", requestDetailDto.getFdPollutionBack());
+
+            requestDetailInfo.put("fdPromotionType", requestDetailDto.getFdPromotionType());
+            requestDetailInfo.put("fdPromotionDiscountRate", requestDetailDto.getFdPromotionDiscountRate());
 
             List<PhotoDto> photoDtoList = photoRepository.findByPhotoDtoRequestDtlList(Long.parseLong(String.valueOf(requestDetailDto.getFdId())));
             requestDetailInfo.put("photoList", photoDtoList);

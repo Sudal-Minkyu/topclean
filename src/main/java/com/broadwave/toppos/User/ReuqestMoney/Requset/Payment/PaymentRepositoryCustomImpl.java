@@ -27,20 +27,21 @@ public class PaymentRepositoryCustomImpl extends QuerydslRepositorySupport imple
     }
 
     @Override
-    public List<PaymentCencelDto> findByRequestDetailCencelDataList(String frCode, Long frId){
+    public List<PaymentCencelDto> findByRequestDetailCencelDataList(String frCode, Long frId, String type){
         QPayment payment = QPayment.payment;
         QFranchise franchise = QFranchise.franchise;
 
         JPQLQuery<PaymentCencelDto> query = from(payment)
                 .innerJoin(franchise).on(franchise.frCode.eq(frCode))
-                .where(payment.frId.id.eq(frId).and(payment.fpCancelYn.eq("N").and(payment.fpSavedMoneyYn.eq("N"))))
                 .select(Projections.constructor(PaymentCencelDto.class,
                         franchise.frCode,
                         franchise.frName,
 
                         payment.id,
+
                         payment.fpType,
-                        payment.fpRealAmt, // 2022/3/23 MK -> fpAmt(결제금액)에서 fpRealAmt(실제결제금액)으로 변경
+                        payment.fpRealAmt, // 2022/03/23 MK -> fpAmt(결제금액)에서 fpRealAmt(실제결제금액)으로 변경
+                        payment.fpCancelYn,
 
                         payment.fpCatIssuername,
                         payment.fpCatApprovalno,
@@ -51,6 +52,14 @@ public class PaymentRepositoryCustomImpl extends QuerydslRepositorySupport imple
 
                         payment.insert_date
                 ));
+
+        // findByRequestDetailCencelDataList -> type : "1"일땐 취소여부상관없이 모두 호출, "2"일땐 취소되지 않은 것들만 호출
+        // 2022/07/22 MK -> 결제가 취소된 내역을 필터링하지 마시고 전부 주시고(from.낙원)
+        if(type.equals("2")){
+            query.where(payment.frId.id.eq(frId).and(payment.fpCancelYn.eq("N").and(payment.fpSavedMoneyYn.eq("N"))));
+        }else {
+            query.where(payment.frId.id.eq(frId));
+        }
 
         query.orderBy(payment.id.desc());
 

@@ -10,6 +10,8 @@ $(function () {
     $("#signImage").hide();
 
     presetDuelMonitor();
+
+    getParamsAndAction();
 });
 
 /* 가상키보드 입력 대상이 되는 텍스트 필드나 텍스트 에어리어 */
@@ -246,4 +248,18 @@ function presetDuelMonitor() {
             $("#reqSign").attr("disabled", "");
         }
     });
+}
+
+/* 브라우저의 get 파라미터들을 가져오고 그에 따른 작업을 반영하기 위해 */
+function getParamsAndAction() {
+    const url = new URL(window.location.href);
+    const params = url.searchParams;
+
+    if(params.has("bchp")) {
+        const bcHp = params.get("bchp");
+        $("#bcHp").val(bcHp);
+    } else if (params.has("bcname")) {
+        const bcName = params.get("bcname");
+        $("#bcName").val(bcName);
+    }
 }

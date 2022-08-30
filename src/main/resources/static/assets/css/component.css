@@ -209,6 +209,21 @@ input[type="number"]::-webkit-inner-spin-button {
 .c-button.c-button--red:active {
 	background-color: #b82c31;
 }
+.c-button.c-button--green {
+	border: 0 none;
+	background-color: #21A365;
+	color: #fff
+}
+.c-button.c-button--icon {
+	padding-left: 2.25rem;
+	-webkit-background-size: 1.25rem 1.25rem;
+	background-size: 1.25rem 1.25rem;
+	background-position: 0.625rem center;
+	background-repeat: no-repeat;
+}
+.c-button.c-button--icon-excel {
+	background-image: url(/assets/images/icon__excel.svg);
+}
 .c-button:disabled,
 .c-button.c-button--darksolid:disabled,
 .c-button.c-button--dark:disabled,

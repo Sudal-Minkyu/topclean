@@ -1,5 +1,9 @@
 package com.broadwave.toppos.Head.Item.Group.A;
 
+import com.broadwave.toppos.Head.Item.Group.A.ItemGroupDtos.ItemGroupDto;
+import com.broadwave.toppos.Head.Item.Group.A.ItemGroupDtos.ItemGroupEventListDto;
+import com.broadwave.toppos.Head.Item.Group.A.ItemGroupDtos.ItemGroupNameListDto;
+import com.broadwave.toppos.Head.Item.Group.A.ItemGroupDtos.UserItemGroupSortDto;
 import com.broadwave.toppos.User.GroupSort.QGroupSort;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
@@ -70,5 +74,16 @@ public class ItemGroupRepositoryCustomImpl extends QuerydslRepositorySupport imp
         return query.fetch();
     }
 
+    @Override
+    public List<ItemGroupEventListDto> findByItemGroupEventList() {
+        QItemGroup itemGroup = QItemGroup.itemGroup;
+
+        JPQLQuery<ItemGroupEventListDto> query = from(itemGroup)
+                .select(Projections.constructor(ItemGroupEventListDto.class,
+                        itemGroup.bgItemGroupcode,
+                        itemGroup.bgName
+                ));
+        return query.fetch();
+    }
 
 }

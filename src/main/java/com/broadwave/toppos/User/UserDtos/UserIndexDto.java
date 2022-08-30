@@ -14,8 +14,8 @@ import lombok.*;
 @AllArgsConstructor
 public class UserIndexDto {
 
-    private String username; // 가맹점주 명
-    private String usertel; // 휴대전화 번호
+    private String frRpreName; // 가맹점주 명
+    private String frTelNo; // 가맹점 번호
     private String brName; // 소속지사 명
     private String frName; // 가맹점 명
     private Integer bcReadyAmt; // 준비금

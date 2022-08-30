@@ -62,7 +62,7 @@ $(function() {
 
     /* 하단 패널과 그리드의 너비 버그 수정용 코드 */
     AUIGrid.resize(gridId[0]);
-    $("#grid_requestList").addClass("active");
+    $("#grid_main").addClass("active");
 
     /* 가상키보드의 사용 선언 */
     vkey = new VKeyboard();
@@ -90,13 +90,18 @@ $(function() {
         }else{
             $("#waterBtn").addClass("choice-drop__btn--active");
         }
+        judgeEtcNoneOnOff();
         const $isEtcProcessChecked = $(".choice-drop__btn.etcProcess.choice-drop__btn--active").length;
-        if(!$("#processCheck input[type='checkbox']:checked").length && !$isEtcProcessChecked) {
-            $processInput.first().prop("checked", true);
-        }else if($processInput.first().is(":checked") || $isEtcProcessChecked) {
-            $processInput.first().prop("checked", false);
+        if($("#fdRetry").is(":checked") &&
+            ($("#processCheck input[type='checkbox']:checked").length > 1 || $isEtcProcessChecked)) {
+            $("#fdRetry").prop("checked", false);
         }
 
+        calculateItemPrice();
+    });
+
+    /* 수기 할인 적용, 해제시 가격 계산 */
+    $("#manualDiscountChk").on("change", function(e) {
         calculateItemPrice();
     });
 
@@ -110,13 +115,16 @@ $(function() {
         }
     });
 
-    $("#etcNone").on("click", function () {
+    $("#etcNone, #fdRetry").on("click", function (e) {
         $processInput.prop("checked", false);
         $("#waterNone").prop("checked", true);
         $("#waterBtn").removeClass("choice-drop__btn--active");
         resetPollutionPop();
         resetFdRepairInputs();
         resetFdAddInputs();
+        if (e.target.id === "fdRetry") {
+            $("#fdRetry").prop("checked", true);
+        }
         // 각 내부 항목들의 초기화
         setTimeout(function () {
             calculateItemPrice();
@@ -128,21 +136,35 @@ $(function() {
         calculateItemPrice();
     });
 
+    $("#manualDiscountPercent").on("keyup", function () {
+        validateManualDiscountPercent();
+    });
+
     // 팝업 닫기
     $('.pop__close').on('click', function(e) {
         $(this).parents('.pop').removeClass('active');
     })
 
 
-    CommonUI.ajax("/api/user/itemGroupAndPriceList", "GET", false, function (req){
+    CommonUI.ajax("/api/user/itemGroupAndPriceList", "GET", false, function (req) {
         initialData = req.sendData;
-        console.log(initialData);
+        refinePromotionData();
+
+        const rearStartTag = CommonData.formatFrTagNo(initialData.etcData.fdTag, frTagInfo.frTagType);
+        if (initialData.etcData.frManualPromotionYn !== "Y") {
+            $("#manualDiscountChk").parents("li").hide();
+        }
 
         setAddMenu();
         setBgMenu(false);
         setPreDefinedKeywords();
-        setNextTag(initialData.etcData.fdTag);
+
+        $("#fdTag").val(rearStartTag);
         getParamsAndAction();
+    }, function () {
+        $("#successBtn").on("click", function () {
+            mainPage();
+        });
     });
 
     $("#toggleFavorite").on("change", function () {
@@ -241,13 +263,32 @@ $(function() {
         }
     });
 
+    $("#isPrintCustomersChk, #autoPrintReceipt, #goToDeliverChk, #manualDiscountChk").on("click", function (e) {
+        setCookie(e.target.id, e.target.checked, 3);
+    });
+
+    /* 고객 초기화 */
+    $("#resetCustomer").on("click", function() {
+        selectedCustomer = {
+            bcId: null,
+            uncollectMoney: 0,
+            saveMoney: 0,
+            bcAddress: "",
+            bcRemark: "",
+            deliveryS5 : 0,
+            deliveryS8 : 0,
+        };
+        onPutCustomer();
+    });
+
     // 결제팝업 탭
     const $payTabsBtn = $('.pop__pay-tabs-item');
     const $payTabsContent = $('.pop__tabs-content');
 
     $payTabsBtn.on('click', function() {
-        const idx = $(this).index();
+        let idx = $(this).index() - 1;
         if (idx) {
+            setCookie('payMethodIdx', idx);
             $payTabsBtn.removeClass('active');
             $payTabsBtn.eq(idx).addClass('active');
         }
@@ -270,6 +311,20 @@ $(function() {
         $ffRemark.val($ffRemark.val() + " " + this.innerHTML);
     });
 
+    $("#btnPayment").on("click", function () {
+        const paymentTab = $(".pop__pay-tabs-item.active").attr("data-id");
+        if (paymentTab === "tabCard" && $("#receiveCard").html().toInt() >= 50000) {
+            const selectedMonthText = $("#installmentMonth option:selected").html();
+            alertCheck(`현재 카드 할부는 ${selectedMonthText} 입니다.<br>계속 진행하시겠습니까?`);
+            $("#checkDelSuccessBtn").on("click", function () {
+                $('#popupId').remove();
+                onPaymentStageOne();
+            });
+        } else {
+            onPaymentStageOne();
+        }
+    });
+
     // lightbox option
     lightbox.option({
         'maxWidth': 1100,
@@ -278,10 +333,12 @@ $(function() {
 });
 
 
+let deletedRowItems = [];
+
 let isCashReceiptPublished = false;
 
-/* 다음 택번호가 기억된다. */
-let nextFdTag = false;
+/* 마지막 택번호가 기억된다. 시작 택번호는 initialData.etcData.fdTag 에 */
+let lastFdTag;
 
 /* 결제창 영수증 자동인쇄 체크박스 체크 여부를 기억해 두었다가, 해당 동작 수행  */
 let autoPrintReceipt = false;
@@ -393,7 +450,7 @@ let gridProp = [];
 
 /* 그리드를 뿌릴 대상 div의 id들 */
 gridTargetDiv = [
-    "grid_requestList", "grid_customerList", "grid_tempSaveList", "grid_payment"
+    "grid_main", "grid_customerList", "grid_tempSaveList", "grid_payment"
 ];
 
 /* 0번 그리드의 레이아웃 */
@@ -407,13 +464,13 @@ gridColumnLayout[0] = [
             return CommonData.formatFrTagNo(value, frTagInfo.frTagType);
         },
     }, {
-        dataField: "sumName",
+        dataField: "productName",
         headerText: "상품명",
         style: "receiptreg-product-name",
         width: 200,
         labelFunction(rowIndex, columnIndex, value, headerText, item) {
             CommonUI.toppos.makeProductName(item, initialData.userItemPriceSortData);
-            return item.sumName;
+            return item.productName;
         },
         renderer : {
             type: "IconRenderer",
@@ -449,7 +506,7 @@ gridColumnLayout[0] = [
         dataType: "numeric",
         autoThousandSeparator: "true",
         labelFunction(rowIndex, columnIndex, value, headerText, item) {
-            return item.fdRetryYn==="Y" ? 0 : value.toLocaleString();
+            return value.toLocaleString();
         },
     }, {
         dataField: "fdRepairAmt",
@@ -459,7 +516,7 @@ gridColumnLayout[0] = [
         dataType: "numeric",
         autoThousandSeparator: "true",
         labelFunction(rowIndex, columnIndex, value, headerText, item) {
-            return item.fdRetryYn === "Y" ? 0 : value.toLocaleString();
+            return value.toLocaleString();
         },
     }, {
         dataField: "",
@@ -471,7 +528,7 @@ gridColumnLayout[0] = [
         labelFunction(rowIndex, columnIndex, value, headerText, item) {
             const addAmount = item.fdPressed + item.fdWhitening + item.fdWaterRepellent + item.fdStarch
                 + item.fdPollution + item.fdAdd1Amt + item.fdUrgentAmt;
-            return item.fdRetryYn === "Y" ? 0 : addAmount.toLocaleString();
+            return addAmount.toLocaleString();
         },
     }, {
         dataField: "fdDiscountAmt",
@@ -481,7 +538,7 @@ gridColumnLayout[0] = [
         dataType: "numeric",
         autoThousandSeparator: "true",
         labelFunction(rowIndex, columnIndex, value, headerText, item) {
-            return item.fdRetryYn === "Y" ? 0 : value.toLocaleString();
+            return (value + item.fdPromotionDiscountAmt).toLocaleString();
         },
     }, {
         dataField: "fdQty",
@@ -548,11 +605,13 @@ gridProp[0] = {
     rowNumHeaderText : "순번",
     showAutoNoDataMessage: true,
     enableColumnResize : false,
+    showEditedCellMarker: false,
     showRowAllCheckBox: true,
     showRowCheckColumn: true,
     showRowNumColumn : false,
     showStateColumn : false,
     enableFilter : false,
+    enableSorting : false,
     rowHeight : 48,
     headerHeight : 48,
 };
@@ -689,14 +748,13 @@ function ajaxRemoveTempSave(frNo, setAfterDelete = false) {
     const params = {
         frNo: frNo
     };
-    console.log(params);
+
     CommonUI.ajax("/api/user/tempRequestDetailDelete", "PARAM", params, function (res) {
-        console.log(res);
         // 성공하면 임시저장 마스터테이블 조회
         setDataIntoGrid(2, "/api/user/tempRequestList");
         alertSuccess("임시저장이 삭제되었습니다.");
         if(setAfterDelete) {
-            onPutCustomer();
+            getCustomerDetail();
         }
     });
 }
@@ -740,19 +798,23 @@ function onSearchCustomer() {
         const items = req.sendData.gridListData;
         $("#searchCustomerType").val(0);
         $("#searchCustomerField").val("");
-        console.log(items);
         if(items.length === 1) {
             selectedCustomer = items[0];
             checkCustomer();
             delete initialData.etcData["frNo"];
-            checkNum = "1";
         }else if(items.length > 1) {
             AUIGrid.setGridData(gridId[1], items);
             $("#customerListPop").addClass("active");
         }else{
             alertCheck("일치하는 고객 정보가 없습니다.<br>신규고객으로 등록 하시겠습니까?");
+            let additionalCondition = params.searchString;
+            if (additionalCondition.numString().length) {
+                additionalCondition = "?bchp=" + additionalCondition.numString();
+            } else {
+                additionalCondition = "?bcname=" + additionalCondition;
+            }
             $("#checkDelSuccessBtn").on("click", function () {
-                location.href="/user/customerreg"
+                location.href="/user/customerreg" + additionalCondition;
             });
         }
     });
@@ -763,7 +825,6 @@ function onSelectCustomer() {
     if(selectedCustomer) {
         checkCustomer();
         delete initialData.etcData["frNo"];
-        checkNum = "1";
         $("#customerListPop").removeClass("active");
     }else{
         alertCaution("고객을 선택해 주세요", 1);
@@ -792,11 +853,15 @@ function loadTempSave(frNo) {
         initialData.etcData.frNo = frNo;
         selectedCustomer = req.sendData.gridListData[0];
         checkCustomer();
-        AUIGrid.clearGridData(gridId[0]);
         AUIGrid.setGridData(gridId[0], req.sendData.requestDetailList);
         $("#tempSaveListPop").removeClass("active");
-        calculateMainPrice(AUIGrid.getGridData(gridId[0]), AUIGrid.getRemovedItems(gridId[0]));
+        calculateMainPrice(AUIGrid.getGridData(gridId[0]));
         checkNum = "1";
+        sortTag();
+    }, function () {
+        $("#successBtn").on("click", function () {
+            mainPage();
+        });
     });
 }
 
@@ -804,12 +869,34 @@ function checkCustomer() {
     if(selectedCustomer.tempSaveFrNo) {
         tempSaveExistWarning();
     } else {
+        getCustomerDetail();
+    }
+}
+
+function getCustomerDetail() {
+    if (!selectedCustomer.bcId) {
+        return;
+    }
+
+    /* deliveryS5,S8이 아직 오지 않았다는 것은 세탁접수 고객검색을 통해서 들어왔기 때문에 고객출고품목 두가지를 추가로 요청해야 한다. */
+    if (selectedCustomer.deliveryS5 || selectedCustomer.deliveryS5 === 0) {
         onPutCustomer();
+    } else {
+        CommonUI.ajax("/api/user/deliveryInfo", "GET", {bcId: selectedCustomer.bcId}, function (res) {
+            const data = res.sendData;
+            selectedCustomer.deliveryS5 = data.deliveryS5;
+            selectedCustomer.deliveryS8 = data.deliveryS8;
+            onPutCustomer();
+        }, function () {
+            $("#successBtn").on("click", function () {
+                mainPage();
+            });
+        });
     }
 }
 
 function onPutCustomer() {
-    let bcGradeName;
+    let bcGradeName = "";
     $(".client__badge").removeClass("active");
     switch (selectedCustomer.bcGrade) {
         case "01" :
@@ -826,28 +913,35 @@ function onPutCustomer() {
             break;
     }
     $("#bcGrade").html(bcGradeName);
-    $("#bcName").html(selectedCustomer.bcName + "님");
-    $("#bcValuation").attr("class",
-        "propensity__star propensity__star--" + selectedCustomer.bcValuation).css('display','block');
+    $("#bcName").html(selectedCustomer.bcName ? selectedCustomer.bcName + "님" : "");
+    if (selectedCustomer.bcValuation) {
+        $("#bcValuation").attr("class",
+            "propensity__star propensity__star--" + selectedCustomer.bcValuation).css('display', 'block');
+    } else {
+        $("#bcValuation").css('display', 'none');
+    }
     $("#bcAddress").html(selectedCustomer.bcAddress);
     $("#bcHp").html(CommonUI.formatTel(selectedCustomer.bcHp));
     $("#uncollectMoneyMain").html(selectedCustomer.uncollectMoney.toLocaleString());
     $("#saveMoneyMain").html(selectedCustomer.saveMoney.toLocaleString());
     $("#bcRemark").html(selectedCustomer.bcRemark);
-    if(selectedCustomer.bcLastRequestDt) {
+    if (selectedCustomer.bcLastRequestDt) {
         $("#bcLastRequestDt").html(
             selectedCustomer.bcLastRequestDt.substr(0, 4) + "-"
             + selectedCustomer.bcLastRequestDt.substr(4, 2) + "-"
             + selectedCustomer.bcLastRequestDt.substr(6, 2)
         );
-    }else{
+    } else if (selectedCustomer.bcId) {
         $("#bcLastRequestDt").html("없음");
+    } else {
+        $("#bcLastRequestDt").html("");
     }
 
     $("#class02, #class03").parents("li").css("display", "none");
     $("#class" + selectedCustomer.bcGrade).parents("li").css("display", "block");
     AUIGrid.clearGridData(gridId[0]);
-    calculateMainPrice(AUIGrid.getGridData(gridId[0]), AUIGrid.getRemovedItems(gridId[0]));
+    deletedRowItems = [];
+    calculateMainPrice(AUIGrid.getGridData(gridId[0]));
 
     selectedCustomer.deliverySize = selectedCustomer.deliveryS5 + selectedCustomer.deliveryS8;
     if (selectedCustomer.deliverySize) {
@@ -869,6 +963,10 @@ function onPopReceiptReg(btnElement) {
     // 처음 표시 중분류 기본상태 N, 만일 중분류에 N이 없는 예외상황시 수정해줘야함.
     setBiItemList("N");
     $("input[name='bsItemGroupcodeS']").first().prop("checked", true);
+    const {manualDiscountPercent} = getCookie();
+    if (manualDiscountPercent) {
+        $("#manualDiscountPercent").val(manualDiscountPercent);
+    }
 
     calculateItemPrice();
     $('#productPop').addClass('active');
@@ -876,7 +974,10 @@ function onPopReceiptReg(btnElement) {
 }
 
 
-function setBiItemList(bsCode) {
+function setBiItemList(bsCode, resetBiItemcode = true) {
+    if (resetBiItemcode) {
+        onSelectBiItem("", 0);
+    }
     selectedLaundry.bsCode = bsCode;
 
     const $biItemList = $("#biItemList");
@@ -905,7 +1006,6 @@ function onSelectBiItem(biCode, price) {
     currentRequest.fdOriginAmt = price;
     calculateItemPrice();
 }
-
 
 
 /* 웹 카메라 촬영 스트림이 담긴다. */
@@ -972,7 +1072,6 @@ function onTakePicture() {
             const formData = new FormData();
             formData.append("source", blob);
             formData.append("ffRemark", $ffRemark.val());
-            console.log(Object.fromEntries(formData));
 
             CommonUI.ajax("/api/user/takePicture", "POST", formData, function (req) {
                 let picJson = {
@@ -1080,14 +1179,14 @@ function toggleBottom() {
     let element = document.getElementById("registBottom");
     element.classList.toggle("active");
 
-    let grid = document.getElementById("grid_requestList");
+    let grid = document.getElementById("grid_main");
     grid.classList.toggle("active");
 
     AUIGrid.resize(gridId[0]);
 }
 
 function onAddOrder() {
-    if(selectedCustomer === undefined) {
+    if(selectedCustomer === undefined || !selectedCustomer.bcId) {
         alertCaution("먼저 고객을 선택해 주세요", 1);
         return false;
     }
@@ -1112,12 +1211,13 @@ function onAddOrder() {
         });
         return false;
     }
-    currentRequest.sumName = "";
+    currentRequest.productName = "";
 
     putItemIntoGrid();
 }
 
 function putItemIntoGrid() {
+
     currentRequest.fdColor = $("input[name='fdColor']:checked").val();
     currentRequest.fdPattern = $("input[name='fdPattern']:checked").val();
     currentRequest.fdPriceGrade = $("input[name='fdPriceGrade']:checked").val();
@@ -1145,12 +1245,12 @@ function putItemIntoGrid() {
         copyObj["dummy" + parseInt(Math.random() * 100000).toString()] = "dummy";
         AUIGrid.updateRowsById(gridId[0], copyObj);
     }else{
-        currentRequest.fdTag = nextFdTag.numString();
         AUIGrid.addRow(gridId[0], currentRequest, "last");
-        setNextTag(currentRequest.fdTag);
+        sortTag();
     }
 
-    calculateMainPrice(AUIGrid.getGridData(gridId[0]), AUIGrid.getRemovedItems(gridId[0]));
+    applyPromotionDiscount();
+    calculateMainPrice(AUIGrid.getGridData(gridId[0]));
     onCloseAddOrder();
 }
 
@@ -1221,7 +1321,7 @@ function onModifyOrder(rowIndex) {
     selectedLaundry.bgCode = currentRequest.biItemcode.substr(0, 3);
     formMidItemcodeOnPop();
 
-    setBiItemList(currentRequest.biItemcode.substr(3, 1));
+    setBiItemList(currentRequest.biItemcode.substr(3, 1), false);
 
     selectedLaundry.bgCode = currentRequest.biItemcode.substr(0, 3);
     selectedLaundry.bsCode = currentRequest.biItemcode.substr(3, 1);
@@ -1230,7 +1330,15 @@ function onModifyOrder(rowIndex) {
     $(".choice-color__input[value='" + currentRequest.fdColor + "']").prop("checked", true);
     $("input[name='fdPattern']:input[value='" + currentRequest.fdPattern +"']").prop("checked", true);
     $("input[name='fdPriceGrade']:input[value='" + currentRequest.fdPriceGrade +"']").prop("checked", true);
-    $("input[name='fdDiscountGrade']:input[value='" + currentRequest.fdDiscountGrade +"']").prop("checked", true);
+    $("input[name='fdDiscountGrade']:input[value='" + currentRequest.fdDiscountGrade +"']").first().prop("checked", true);
+
+    const {manualDiscountPercent} = getCookie();
+    $("#manualDiscountPercent").val(currentRequest.fdPromotionType === "H1"
+        ? currentRequest.fdPromotionDiscountRate : manualDiscountPercent ? manualDiscountPercent : "0" );
+    /* 할인이 본사직영의 수기행사할인인 경우 해당 체크박스를 체크 */
+    if (currentRequest.fdPromotionType === "H1") {
+        $("#manualDiscountChk").prop("checked", true);
+    }
 
     if(currentRequest.fdPressed) {
         $("#fdPress").prop("checked", true);
@@ -1314,7 +1422,14 @@ function onRemoveOrder() {
     }else{
         AUIGrid.removeRow(gridId[0], "selectedIndex");
     }
-    calculateMainPrice(AUIGrid.getGridData(gridId[0]), AUIGrid.getRemovedItems(gridId[0]));
+    const removedItems = AUIGrid.getRemovedItems(gridId[0]);
+    for (const item of removedItems) {
+        deletedRowItems.push(item);
+    }
+    AUIGrid.removeSoftRows(gridId[0]);
+    sortTag();
+    applyPromotionDiscount();
+    calculateMainPrice(AUIGrid.getGridData(gridId[0]));
 }
 
 function setNextTag(tag) {
@@ -1326,13 +1441,22 @@ function setNextTag(tag) {
         let midNum = (parseInt(tag.substring(frTagInfo.frTagType, frTagInfo.frTagType + 1)) + 1).toString();
         midNum = midNum === "10" ? "0" : midNum;
         nextNo = midNum + "-" + (frTagInfo.frTagType === 2 ? "0001" : "001");
-
-        alertCaution(`택번호 뒷자리가 ${frTagInfo.frTagType === 2 ? "9" : ""}999번에 도달했습니다.`
-            + `<br>다음 택번호 뒷자리는 ${frTagInfo.frTagType === 2 ? "0" : ""}001로 설정합니다.`, 1);
     }
 
-    $("#fdTag").val(nextNo);
-    nextFdTag = frTagInfo.frTagNo + nextNo.numString();
+    return nextNo;
+}
+
+function sortTag() {
+    let fdTag = initialData.etcData.fdTag;
+    const gridItems = AUIGrid.getGridData(gridId[0]);
+
+    for (let i = 0; i < gridItems.length; i++) {
+        gridItems[i].fdTag = fdTag;
+        lastFdTag = fdTag;
+        fdTag = frTagInfo.frTagNo + setNextTag(fdTag).numString();
+    }
+
+    AUIGrid.updateRowsById(gridId[0], gridItems);
 }
 
 /* 임시저장을 두단계로 분리하기 위해 데이터를 임시로 전역변수화 */
@@ -1341,7 +1465,9 @@ let saveData = {};
 function onTempSave() {
     alertCheck("임시저장 하시겠습니까?");
     $("#checkDelSuccessBtn").on("click", function () {
+        checkNum = "1";
         onSave(true);
+        $('#popupId').remove();
     });
 }
 
@@ -1349,13 +1475,13 @@ function onTempSave() {
 function onSave(turnOnSuccessMsg = false, callback = function () {/* intentional */}, tossData = {/* intentional */}) {
 
     // 추가된 행 아이템들(배열)
-    const addedRowItems = AUIGrid.getAddedRowItems(gridId[0]);
+    let addedRowItems = AUIGrid.getAddedRowItems(gridId[0]);
 
     // 수정된 행 아이템들(배열)
-    const updatedRowItems = AUIGrid.getEditedRowItems(gridId[0]);
+    let updatedRowItems = AUIGrid.getEditedRowItems(gridId[0]);
 
     // 삭제된 행 아이템들(배열)
-    const deletedRowItems = AUIGrid.getRemovedItems(gridId[0]);
+    deletedRowItems = AUIGrid.getRemovedItems(gridId[0]);
 
     if(selectedCustomer === undefined) {
         alertCaution("먼저 고객을 선택해 주세요", 1);
@@ -1370,6 +1496,7 @@ function onSave(turnOnSuccessMsg = false, callback = function () {/* intentional
         frDiscountAmount: $("#totChangeAmount").html().toInt(),
         frTotalAmount: $("#totFdRequestAmount").html().toInt(),
         frQty: $("#totFdQty").html().toInt(),
+        frLastTagno: frTagInfo.frTagNo + setNextTag(lastFdTag).numString(),
     }
 
     const data = {
@@ -1384,8 +1511,8 @@ function onSave(turnOnSuccessMsg = false, callback = function () {/* intentional
 }
 
 function onSaveAjax(turnOnSuccessMsg, callback, tossData) {
-    CommonUI.ajax("/api/user/requestSave", "MAPPER", saveData, function (req) {
-        AUIGrid.removeSoftRows(gridId[0]);
+    CommonUI.ajax("/api/user/requestSave", "MAPPER", saveData, function (res) {
+        deletedRowItems = [];
         AUIGrid.resetUpdatedItems(gridId[0]);
         AUIGrid.clearGridData(gridId[2]);
         if(checkNum === "1") {
@@ -1393,22 +1520,30 @@ function onSaveAjax(turnOnSuccessMsg, callback, tossData) {
             if(turnOnSuccessMsg) {
                 alertSuccess("임시저장이 되었습니다");
             }
+            loadTempSave(res.sendData.frNo);
         }
-        initialData.etcData.frNo = req.sendData.frNo;
-
-        console.log(req);
+        initialData.etcData.frNo = res.sendData.frNo;
 
         if(checkNum === "2") {
-            initialData.etcData.uncollectMoney = req.sendData.uncollectMoney;
-            initialData.etcData.saveMoney = req.sendData.saveMoney;
-            selectedCustomer.uncollectMoney = req.sendData.uncollectMoney;
-            selectedCustomer.saveMoney = req.sendData.saveMoney;
+            /* 접수완료 후 접수화면을 나가지 않고 계속 접수할 경우를 위해 시작 택번호를 다시 세팅*/
+            const rearStartTag = setNextTag(lastFdTag);
+            $("#fdTag").val(rearStartTag);
+            initialData.etcData.fdTag = frTagInfo.frTagNo + rearStartTag.numString();
+
+            initialData.etcData.uncollectMoney = res.sendData.uncollectMoney;
+            initialData.etcData.saveMoney = res.sendData.saveMoney;
+            selectedCustomer.uncollectMoney = res.sendData.uncollectMoney;
+            selectedCustomer.saveMoney = res.sendData.saveMoney;
         }
         $("#uncollectMoney").html(selectedCustomer.uncollectMoney.toLocaleString());
         $("#saveMoney").html(selectedCustomer.saveMoney.toLocaleString());
         $("#uncollectMoneyMain").html(selectedCustomer.uncollectMoney.toLocaleString());
         $("#saveMoneyMain").html(selectedCustomer.saveMoney.toLocaleString());
         callback(tossData);
+    }, function () {
+        $("#successBtn").on("click", function () {
+            mainPage();
+        });
     });
 }
 
@@ -1466,21 +1601,27 @@ function onRepeatRequest() {
     let items = AUIGrid.getSelectedItems(gridId[0]);
     if(items.length) {
         delete items[0].item["_$uid"];
-        items[0].item["fdTag"] = nextFdTag.numString();
+        delete items[0].item["fdId"];
         AUIGrid.addRow(gridId[0], items[0].item, "last");
-        setNextTag(items[0].item.fdTag);
-        calculateMainPrice(AUIGrid.getGridData(gridId[0]), AUIGrid.getRemovedItems(gridId[0]));
+        sortTag();
+        applyPromotionDiscount();
+        calculateMainPrice(AUIGrid.getGridData(gridId[0]));
     }
 }
 
+/* 수량변경 */
 function changeQty() {
     tempItem.fdQty = $("#hiddenKeypad").val().toInt();
+    if (["02", "03"].includes(tempItem.fdPromotionType)) {
+        tempItem.fdPromotionDiscountAmt = 0;
+    }
     tempItem.fdRequestAmt = (tempItem.fdNormalAmt + tempItem.fdPressed + tempItem.fdWhitening
         + tempItem.fdWaterRepellent + tempItem.fdStarch + tempItem.fdPollution + tempItem.fdRepairAmt
-        + tempItem.fdAdd1Amt + tempItem.fdUrgentAmt - tempItem.fdDiscountAmt) * tempItem.fdQty;
-    tempItem.fdTotAmt = tempItem.fdRequestAmt;
+        + tempItem.fdAdd1Amt + tempItem.fdUrgentAmt - tempItem.fdDiscountAmt - tempItem.fdPromotionDiscountAmt) * tempItem.fdQty;
+    tempItem.fdTotAmt = tempItem.fdRequestAmt + tempItem.fdAdd2Amt;
     AUIGrid.updateRowsById(gridId[0], tempItem);
-    calculateMainPrice(AUIGrid.getGridData(gridId[0]), AUIGrid.getRemovedItems(gridId[0]));
+    applyPromotionDiscount();
+    calculateMainPrice(AUIGrid.getGridData(gridId[0]));
 }
 
 /* 접수완료시 호출 API */
@@ -1489,6 +1630,7 @@ function onApply() {
         alertCaution("접수완료할 품목이 없습니다.", 1);
         return false;
     }
+    checkNum = "1";
     onSave();
 
     const totRequestAmt = $("#totFdRequestAmount").html().toInt();
@@ -1508,6 +1650,14 @@ function onApply() {
     $("#btnPayment").parents("li").show();
     $("#btnClosePayment").parents("li").show();
     $("#btnPrintReceipt").parents("li").hide();
+
+    /* 쿠기에 저장된 결제팝업의 각종 인풋 활성화, 선택 상태를 가져와서 결제팝업을 띄우기 전에 적용 */
+    const {isPrintCustomersChk, autoPrintReceipt, goToDeliverChk, payMethodIdx} = getCookie();
+    $("#isPrintCustomersChk").prop("checked", isPrintCustomersChk);
+    $("#autoPrintReceipt").prop("checked", autoPrintReceipt);
+    $("#goToDeliverChk").prop("checked", goToDeliverChk);
+    $('.pop__pay-tabs-item').eq(parseInt(payMethodIdx)).trigger("click");
+
     $("#paymentPop").addClass("active");
 }
 
@@ -1519,6 +1669,27 @@ function getPaidAmt() {
        paidAmt += el.fpAmt;
     });
     return paidAmt;
+}
+
+/* 수기할인 적용동작시 키패드 동작 정의*/
+function onClickManualDiscountPercentPad() {
+    const props = {
+        callback: validateManualDiscountPercent,
+        maxlength: 3,
+        clrfirst: true,
+    }
+    vkey.showKeypad("manualDiscountPercent", props);
+}
+
+/* 시작택번호 키패드 입력 */
+function onShowTagKeypad() {
+    const props = {
+        midprocess: "none",
+        callback: onSaveFdTag,
+        maxlength: 7 - frTagInfo.frTagType,
+        clrfirst: true,
+    }
+    vkey.showKeypad("fdTag", props);
 }
 
 /* 키패드 작동용 */
@@ -1546,7 +1717,6 @@ function onPaymentStageOne() {
         /* 미수 발생 금액 */
         const uncollectAmt = $("#totalAmt").html().toInt() + $("#applySaveMoney").html().toInt()
             - $("#applyUncollectAmt").html().toInt();
-        console.log(uncollectAmt)
         /* 미수 발생 금액이 0원이라는 것은 해당 상품은 0원 결제건이라는 뜻이므로 결제없이 완료처리를 할 수 있도록 기능을 연결한다. */
         if (!uncollectAmt) {
             completePaymentProcessForFreeReceipt();
@@ -1562,7 +1732,7 @@ function onPaymentStageOne() {
             items.push({
                 tagno: el.fdTag,
                 color: el.fdColor,
-                itemname: el.sumName,
+                itemname: el.productName,
                 specialyn: el.fdSpecialYn,
                 price: el.fdRequestAmt,
             });
@@ -1632,6 +1802,7 @@ function onPaymentStageOne() {
                         let resjson = JSON.parse(res);
                         // 결제 성공일경우 Print
                         if (resjson.STATUS === "SUCCESS") {
+                            resjson.month = paymentData.month;
                             onPaymentStageTwo(resjson);
                             alertSuccess("카드 결제가 성공하였습니다.<br>단말기에서 카드를 제거해 주세요.");
                         }
@@ -1700,7 +1871,7 @@ function onPaymentStageThree(creditData) {
         } else if (paymentTab === "tabCard" && receiveCard) {
             const paymentCard = {
                 fpType: "02",
-                fpMonth: 0,
+                fpMonth: creditData.month,
                 fpRealAmt: receiveCard,
                 fpAmt: receiveCard - applyUncollectAmt,
                 fpCollectAmt: applyUncollectAmt,
@@ -1730,13 +1901,8 @@ function onPaymentStageThree(creditData) {
             data.payment.push(paymentSaved);
         }
 
-        console.log("결제데이터 : ");
-        console.log(data);
-
         /* 결제 정보를 서버에 전송하여 저장 */
         CommonUI.ajax("/api/user/requestPayment", "MAPPER", data, function (req) {
-            console.log("결제후 :");
-            console.log(req);
 
             /* 결제 정보에 따라 계산과 데이터의 재배치 */
             AUIGrid.addRow(gridId[3], req.sendData.paymentEtcDtos, "last");
@@ -1806,14 +1972,17 @@ function onPaymentLater() {
         alertCheck(uncollectAmtCash.toLocaleString() + "원의 미수금(후불)이 발생합니다<br> 이대로 닫으시겠습니까?");
         $("#checkDelSuccessBtn").on("click", function () {
             $('#popupId').remove();
-            if (autoPrintReceipt) {
-                printReceipt();
-            }
             if (paidAmt) {
                 closePaymentPop();
             } else {
                 checkNum = "2";
-                onSave(false, closePaymentPop, false);
+                const frNo = initialData.etcData.frNo;
+                onSave(false,function () {
+                    closePaymentPop();
+                    if (autoPrintReceipt) {
+                        printReceipt(frNo);
+                    }
+                }, false);
             }
         });
     } else if (!paidAmt) { // 결제금액이 남지 않았는데, 미수발생금액도 없다면 0원짜리 상품(재세탁이거나)을 결제중이므로 여기서 처리
@@ -1849,20 +2018,22 @@ function closePaymentPop(isSimpleClose = false) {
     $("#paymentPop").removeClass("active");
 
     if(isSimpleClose) return false;
-    console.log("act");
 
     AUIGrid.clearGridData(gridId[0]);
     AUIGrid.clearGridData(gridId[3]);
-    calculateMainPrice(AUIGrid.getGridData(gridId[0]), AUIGrid.getRemovedItems(gridId[0]));
+    calculateMainPrice(AUIGrid.getGridData(gridId[0]));
 
+    /* 접수가 정상적으로 완료되고 창이 닫힐 때 고객에게 문자가 간다. */
     const url = "/api/user/requestReceiptMessage";
     const sendData = {
         frNo: initialData.etcData.frNo,
         locationHost: location.host,
     }
-
     CommonUI.ajax(url, "PARAM", sendData, function (res) {
-        goToDeliver();
+        /* 창 닫힐 때 고객출고 자동이동 */
+        if ($("#goToDeliverChk").is(":checked")) {
+            goToDeliver();
+        }
     });
 
     delete initialData.etcData["frNo"];
@@ -1943,19 +2114,21 @@ function onSaveFdTag() {
     }
 
     let prohibitedStartNum = "";
-    for(let i = 0; i < backTagLength; i++) {
+    for(let i = 0; i < backTagLength - 2; i++) {
         prohibitedStartNum += "0";
     }
 
-    if(tag === prohibitedStartNum) {
-        alertCaution(`택번호 뒷자리는 최소 ${prohibitedStartNum.substring(0, prohibitedStartNum.length - 1)}1 부터 시작해 주세요.`, 1);
-        return false;
+    if (!parseInt(tag.substring(1))) {
+        alertCaution(`택번호는 X-${prohibitedStartNum}1 부터 시작해 주세요.`, 1);
+        return;
     }
 
-    alertCheck(`다음 택번호는 ${CommonData.formatFrTagNo(nextFdTag, frTagInfo.frTagType)} 입니다.<br>`
-        + `${CommonData.formatFrTagNo(frTagInfo.frTagNo + $("#fdTag").val(), frTagInfo.frTagType)}(으)로 변경 하시겠습니까?`);
+    const beforeTagNo = CommonData.formatFrTagNo(initialData.etcData.fdTag, frTagInfo.frTagType);
+    const changedTagNo = CommonData.formatFrTagNo(frTagInfo.frTagNo + $("#fdTag").val(), frTagInfo.frTagType);
+    alertCheck(`시작 택번호는 ${beforeTagNo} 입니다.<br>` + `${changedTagNo}(으)로 변경 하시겠습니까?`);
     $("#checkDelSuccessBtn").on("click", function () {
         $("#fdTagChange").addClass("active");
+        $("#fdTag").val(changedTagNo);
         $('#popupId').remove();
     });
 }
@@ -1964,15 +2137,19 @@ function onConfirmFdTag() {
     const tag = frTagInfo.frTagNo + $("#fdTag").val().numString();
     const data = {
         password: $("#fdTagPassword").val(),
-        frLastTagno: tag.substr(0, frTagInfo.frTagType + 1)
-            + (parseInt(tag.substring(frTagInfo.frTagType + 1, 7)) - 1).toString().padStart(6 - frTagInfo.frTagType, '0'),
+        frLastTagno: tag,
     }
     const url = "/api/user/franchiseCheck";
     CommonUI.ajax(url, "GET", data, function (res) {
-        nextFdTag = tag;
+        initialData.etcData.fdTag = tag;
         onCloseFdTag();
-        alertSuccess("다음 택번호가 변경되었습니다.");
+        alertSuccess("시작 택번호가 변경되었습니다.");
+        sortTag();
         $("#fdTagPassword").val("");
+    }, function () {
+        $("#successBtn").on("click", function () {
+            mainPage();
+        });
     });
 }
 
@@ -2003,7 +2180,7 @@ function setBgMenu(isFavorite) {
 }
 
 function tempSaveExistWarning() {
-    alertThree("임시저장 내역이 존재합니다.<br>어떻게 하시겠습니까?",
+    alertThree(`${selectedCustomer.tempSaveBcName} 고객님의<br> 임시저장 내역이 존재합니다.<br>어떻게 하시겠습니까?`,
         "이어서 접수", "삭제후 접수", "취소");
 
     $("#popFirstBtn").on("click", function() {
@@ -2130,6 +2307,7 @@ function resetFdRepairInputs() {
     currentRequest.fdRepairAmt = 0;
     currentRequest.fdRepairRemark = "";
     $("#fdRepair").prop("checked", false);
+    judgeEtcNoneOnOff();
     $("#fdRepairAmt").val(0);
     $("#fdRepairRemark").val("");
 }
@@ -2138,6 +2316,7 @@ function resetFdAddInputs() {
     currentRequest.fdAdd1Amt = 0;
     currentRequest.fdAdd1Remark = "";
     $("#fdAdd1").prop("checked", false);
+    judgeEtcNoneOnOff();
     $("#fdAdd1Amt").val(0);
     $("#fdAdd1Remark").val("");
 }
@@ -2161,11 +2340,11 @@ function goToDeliver() {
     }
 }
 
-function printReceipt() {
+function printReceipt(frNo = initialData.etcData.frNo) {
     if ($("#isPrintCustomersChk").is(":checked")) {
-        CommonUI.toppos.printReceipt(initialData.etcData.frNo, "", true, "N");
+        CommonUI.toppos.printReceipt(frNo, "", true, true, "N");
     } else {
-        CommonUI.toppos.printReceipt(initialData.etcData.frNo, "", false, "N");
+        CommonUI.toppos.printReceipt(frNo, "", false, true, "N");
     }
 }
 
@@ -2276,6 +2455,7 @@ function decidePollutionType() {
 
 /* 현재 연결된 CAT 단말기가 본사에 등록된 단말기인지를 검증하고 일치하지 않을 경우 카드결제를 막는다. */
 function validateCurrentCATMachine(onSuccess) {
+
     CommonUI.toppos.getTID(function (res) {
         if(res.STATUS === "SUCCESS") {
             const currentTID = res.CARDNO;
@@ -2295,3 +2475,91 @@ function validateCurrentCATMachine(onSuccess) {
         }
     });
 }
+
+function setCookie(key, value, exdays = 7) {
+    let cookieValue = getCookie();
+    cookieValue[key] = value;
+    const today = new Date();
+    today.setTime(today.getTime() + (exdays * 24 * 60 * 60 * 1000));
+    let expires = "expires="+today.toUTCString();
+    document.cookie = "receiptreg=" + JSON.stringify(cookieValue) + ";" + expires + ";path=/user/receiptreg";
+}
+
+function getCookie() {
+    const name = "receiptreg=";
+    let ca = document.cookie.split(';');
+    for(let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            let cookieValue = c.substring(name.length, c.length);
+            try {
+                cookieValue = JSON.parse(cookieValue ? cookieValue : "{}");
+            } catch (e) {
+                document.cookie = name + ";  expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                return {};
+            }
+            return cookieValue;
+        }
+    }
+    return {};
+}
+
+/* 수기행사 할인 퍼센트 유효성 검사동작 */
+function validateManualDiscountPercent() {
+    const $manualDiscountPercent = $("#manualDiscountPercent");
+    let value = $manualDiscountPercent.val().positiveNumberInput();
+    if (value && value > 100) {
+        value = 100;
+    }
+    $manualDiscountPercent.val(value);
+
+    setCookie("manualDiscountPercent", value, 3);
+    calculateItemPrice();
+}
+
+/* 처리내역 버튼 동작에 따라 없음 버튼에 불이 들어올지 꺼져야 할지를 판단하여 조치한다. */
+function judgeEtcNoneOnOff() {
+    const $isEtcProcessChecked = $(".choice-drop__btn.etcProcess.choice-drop__btn--active").length;
+    if(!$("#processCheck input[type='checkbox']:checked").length && !$isEtcProcessChecked) {
+        $("#etcNone").prop("checked", true);
+    }else if($("#etcNone").is(":checked") || $isEtcProcessChecked) {
+        $("#etcNone").prop("checked", false);
+    }
+}
+
+/* 서버에서 건네준 행사 정보를 우선순위에 따라 biItemcode 당 1개의 행사만으로 정제한다. */
+function refinePromotionData() {
+    const rawData = initialData.promotionData;
+    const refinedPromotionData = {
+    }
+
+    for (const data of rawData) {
+        /* 해당 biItemcode로 먼저 기억해둔 행사가 없거나, 루프로 확인중인 데이터가 우선순위가 더 높을 때 해당 biItemcode의 데이터를 등록, 교체한다. */
+        if (!refinedPromotionData[data.biItemcode]
+            || hasDataPriority(refinedPromotionData[data.biItemcode], data)) {
+            refinedPromotionData[data.biItemcode] = data;
+        }
+    }
+
+    initialData.activePromotionData = refinedPromotionData;
+
+    /* 행사타입과 할인율의 우선순위를 검사하여 해당 biItemcode의 기억될 값을 교체해야 할 경우 true를 반환한다. */
+    function hasDataPriority(expData, ctrlData) {
+        /* 행사 타입의 우선순위 번호를 매기기 위해 순위대로 배열에 할당한 hpType값 */
+        const hpTypePriority = ["02", "03", "01"];
+        const expPriority = hpTypePriority.indexOf(expData.hpType);
+        const ctrlPriority = hpTypePriority.indexOf(ctrlData.hpType);
+
+        if (expPriority > ctrlPriority) {
+            return true;
+        } else if (expPriority === 2 && ctrlPriority === 2) {
+            return expData.hiDiscountRt < ctrlData.hiDiscountRt;
+        } else {
+            return false;
+        }
+    }
+}
+

@@ -1,4 +1,4 @@
-import {grids, runOnlyOnce} from '../../module/m_headstat.js';
+import {grids, runOnlyOnce} from '../../module/m_headstat.js?22081117';
 
 window.grids = grids;
 

@@ -10,8 +10,8 @@ import java.util.Optional;
 @Repository
 public interface RequestDetailRepository extends JpaRepository<RequestDetail,Long>, RequestDetailRepositoryCustom {
 
-    @Query("select a from RequestDetail a where a.frNo = :frNo and a.fdTag = :fdTag")
-    Optional<RequestDetail> findByRequestDetail(String frNo, String fdTag);
+    @Query("select a from RequestDetail a where a.frNo = :frNo and a.id = :fdId")
+    Optional<RequestDetail> findByRequestDetail(String frNo, Long fdId);
 
     @Query("select a from RequestDetail a where a.frNo = :frNo")
     List<RequestDetail> findByRequestTempDetail(String frNo);

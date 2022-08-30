@@ -18,10 +18,10 @@
 		}
 
 		.grid_cellcolor0.grid_grouper {
-			background-color: #eeeeee!important;
+			background-color: #dbd397!important;
 		}
 		.grid_cellcolor1.grid_grouper {
-			background-color: #ccdddd!important;
+			background-color: #93cccc!important;
 		}
 	</style>
 	<!-- lightbox 추가 -->
@@ -31,13 +31,15 @@
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
 	<script type="module">
-		import {calculateItemPrice, ceil100} from "../assets/js/toppos/module/m_moneyProblem.js";
+		import {calculateItemPrice, ceil10} from "../assets/js/toppos/module/m_moneyProblem.js?22081115";
 		window.calculateItemPrice = calculateItemPrice;
-		window.ceil100 = ceil100;
+		window.ceil10 = ceil10;
 	</script>
-	<script src="/assets/js/toppos/user/receipt/integrate.js"></script>
+	<script src="/assets/js/toppos/user/receipt/integrate.js?22082518"></script>
     <!-- lightbox 추가 -->
     <script src="/assets/js/lightbox2/js/lightbox.js"></script>
+	<!-- 엑셀 다운로드 기능을 사용하기 위함 -->
+	<script src="/assets/js/filesaver/FileSaver.min.js"></script>
 </th:block>
 
 <div layout:fragment="content" class="content content--column">
@@ -58,7 +60,7 @@
 			
 			<div class="c-search">
 				<div class="c-search__input">
-					<input id="searchString" type="text" placeholder="검색어를 입력하세요" />
+					<input id="searchString" type="text" placeholder="검색어를 입력하세요" autocomplete="off" />
                		<button class="c-search__key" type="button" id="vkeyboard0">키보드</button>
 				</div>
 				<button id="searchCustomer" class="c-search__bth" type="button">검색</button>
@@ -111,7 +113,7 @@
 				</div>
 				<div class="c-radio">
 					<input type="radio" name="filterCondition" id="filterCondition6" value="S6" />
-					<label for="filterCondition6">인도완료</label>
+					<label for="filterCondition6">고객출고</label>
 				</div>
 				<div class="c-radio">
 					<input type="radio" name="filterCondition" id="filterCondition8" value="F" />
@@ -122,23 +124,26 @@
 					<label for="filterCondition7">확인품</label>
 				</div>
 				<div class="c-radio">
+					<input type="radio" name="filterCondition" id="filterCondition9" value="C" />
+					<label for="filterCondition9">접수취소</label>
 				</div>
 			</div>
 			
 			<div class="condition__date">
 				<div class="c-period">
 					<!-- 시작일 -->
-					<input type="text" id="filterFromDt" />
+					<input type="text" id="filterFromDt" autocomplete="off" />
 					<span class="c-period__code">-</span>
 					<!-- 종료일 -->
-					<input type="text" id="filterToDt" />
+					<input type="text" id="filterToDt" autocomplete="off" />
 				</div>
 			</div>
 			
 			<div class="condition__console">
 				<div class="c-select" style="margin-right: auto;">
 					<select id="changeDateRange">
-						<option value="0">기간</option>
+						<option value="">기간</option>
+						<option value="0">당일</option>
 						<option value="6">일주일</option>
 						<option value="14">보름</option>
 						<option value="30">한달</option>
@@ -172,7 +177,10 @@
 	<div class="content__body">
 		<div class="content__body-console">
 			<div class="delivery__comment">구분 : 무 - 무인택배함, 배 - 배송 App</div>
-			<button id="printReceipt" class="c-button c-button--small content__console-btn--left">영수증인쇄</button>
+			<button type="button" id="exportXlsx"
+					class="c-button c-button--small c-button--green c-button--icon c-button--icon-excel content__console-btn--left">
+				엑셀 다운로드</button>
+			<button id="printReceipt" class="c-button c-button--small">영수증인쇄</button>
 			<button id="modifyOn" class="c-button c-button--small c-button--darksolid">수정모드</button>
 			<button id="modifyOff" class="c-button c-button--small c-button--red" style="display: none">수정모드종료</button>
 		</div>
@@ -363,7 +371,7 @@
 			<div class="product-pop__article">
 				<div id="inReceiptPop" class="product-pop__article-content">
 					<div class="c-text">
-						<input id="fdRemark" type="text" placeholder="브랜드, 특이사항 입력" />
+						<input id="fdRemark" type="text" placeholder="브랜드, 특이사항 입력" autocomplete="off" />
 						<button id="vkeyboard1">키보드</button>
 					</div>
 
@@ -418,6 +426,16 @@
 									<label for="class03">VVIP</label>
 								</div>
 							</li>
+							<li>
+								<div class="choice choice--addtext">
+									<input type="radio" name="fdDiscountGrade" value="1" id="manualDiscountChk" />
+									<label for="manualDiscountChk">수기할인(%)</label>
+									<div class="c-text">
+										<input type="text" id="manualDiscountPercent" maxlength="3" value="0" autocomplete="off" />
+										<button id="vkeypad1">키보드</button>
+									</div>
+								</div>
+							</li>
 						</ul>
 					</div>
 
@@ -462,14 +480,14 @@
 							</li>
 							<li>
 								<div class="choice">
-									<input type="checkbox" name="fdPress" value="다림질" id="fdPress" />
-									<label for="fdPress">다림질</label>
+									<input type="checkbox" name="fdRetry" value="재세탁" id="fdRetry" />
+									<label for="fdRetry">재세탁</label>
 								</div>
 							</li>
 							<li>
 								<div class="choice">
-									<input type="checkbox" name="fdRetry" value="재세탁" id="fdRetry" />
-									<label for="fdRetry">재세탁</label>
+									<input type="checkbox" name="fdPress" value="다림질" id="fdPress" />
+									<label for="fdPress">다림질</label>
 								</div>
 							</li>
 							<li>
@@ -536,7 +554,7 @@
 						</li>
 						<li class="product-pop__price-sum">
 							<h4>최종가격</h4>
-							<span id="sumAmt">0</span>
+							<span id="cleanRequestAmt">0</span>
 							<span class="won">원</span>
 						</li>
 					</ul>
@@ -544,7 +562,7 @@
 
 				<ul class="pop__console pop__console--center">
 					<li><button class="c-button" onclick="onCloseAddOrder()">취소</button></li>
-					<li><button class="c-button c-button--dark" onclick="onAddOrder()">수정완료</button></li>
+					<li><button id="modifyBtn" class="c-button c-button--dark" onclick="onAddOrder()">수정완료</button></li>
 				</ul>
 			</div>
 		</div>
@@ -568,7 +586,7 @@
 					<div class="add-cost__input">
 						<!-- 상용구 들어갈 인풋 -->
 						<div class="c-text">
-							<input type="text" id="fdRepairRemark" class="keypad_remark" placeholder="수선 리스트 입력" />
+							<input type="text" id="fdRepairRemark" class="keypad_remark" placeholder="수선 리스트 입력" autocomplete="off" />
 							<button id="vkeyboard2">키보드</button>
 						</div>
 					</div>
@@ -577,7 +595,7 @@
 						<!-- 숫자패드 -->
 						<div class="vkey-num active">
 							<div class="vkey-num__input">
-								<input type="text" id="fdRepairAmt" value="0" class="keypad_field" />
+								<input type="text" id="fdRepairAmt" value="0" class="keypad_field" autocomplete="off" />
 							</div>
 							<div class="vkey-num__pad">
 								<button type="button" class="keypad_btn" value="1">1</button>
@@ -624,7 +642,7 @@
 					<div class="add-cost__input">
 						<!-- 상용구 들어갈 인풋 -->
 						<div class="c-text">
-							<input type="text" id="fdAdd1Remark" class="keypad_remark" placeholder="추가요금 리스트 입력" />
+							<input type="text" id="fdAdd1Remark" class="keypad_remark" placeholder="추가요금 리스트 입력" autocomplete="off" />
 							<button id="vkeyboard3">키보드</button>
 						</div>
 					</div>
@@ -633,7 +651,7 @@
 						<!-- 숫자패드 -->
 						<div class="vkey-num active">
 							<div class="vkey-num__input">
-								<input type="text" id="fdAdd1Amt" class="keypad_field" value="0" />
+								<input type="text" id="fdAdd1Amt" class="keypad_field" value="0" autocomplete="off" />
 							</div>
 							<div class="vkey-num__pad">
 								<button type="button" class="keypad_btn" value="1">1</button>
@@ -869,7 +887,7 @@
 								</li>
 							</ul>
                             <div class="c-text">
-                                <input id="frEditFiComment" type="text" placeholder="검품내용 입력" />
+                                <input id="frEditFiComment" type="text" placeholder="검품내용 입력" autocomplete="off" />
                                 <button id="vkeyboard4">키보드</button>
                             </div>
                             <ul class="checkreg__camera-console">
@@ -878,7 +896,7 @@
                                         <div class="checkreg__title">접수금액</div>
                                         <div class="checkreg__input">
                                             <div class="c-text">
-                                                <input id="frEditFdTotAmtInPut" type="text" readonly="readonly" />
+                                                <input id="frEditFdTotAmtInPut" type="text" readonly="readonly" autocomplete="off" />
                                             </div>
                                         </div>
                                     </div>
@@ -888,7 +906,7 @@
                                         <div class="checkreg__title">추가비용</div>
                                         <div class="checkreg__input">
                                             <div class="c-text">
-                                                <input id="frEditFiAddAmt" type="text" />
+                                                <input id="frEditFiAddAmt" type="text" autocomplete="off" />
                                                 <button id="vkeypad0">키보드</button>
                                             </div>
                                         </div>
@@ -939,7 +957,7 @@
                     </div>
                     <div class="pop__aricle-content">
                         <div class="c-text">
-                            <input id="brFiComment" type="text"  readonly="readonly" />
+                            <input id="brFiComment" type="text"  readonly="readonly" autocomplete="off" />
                         </div>
                     </div>
                 </div>
@@ -949,13 +967,13 @@
 					<div class="pop__console-cost">
 						<div class="pop__console-title">현재 접수금액</div>
 						<div class="pop__console-input">
-							<div class="c-text"><input id="brFdTotAmtInPut" type="text" readonly="readonly" /></div>
+							<div class="c-text"><input id="brFdTotAmtInPut" type="text" readonly="readonly" autocomplete="off" /></div>
 						</div>
 					</div>
 					<div class="pop__console-cost">
 						<div class="pop__console-title">추가 비용발생</div>
 						<div class="pop__console-input">
-							<div class="c-text"><input id="brFiAddAmt" type="text" readonly="readonly" /></div>
+							<div class="c-text"><input id="brFiAddAmt" type="text" readonly="readonly" autocomplete="off" /></div>
 						</div>
 					</div>
 				</li>
@@ -983,7 +1001,7 @@
                     </div>
                     <div class="pop__aricle-content">
                         <div class="c-text">
-                            <input id="frViewFiComment" type="text"  readonly="readonly" />
+                            <input id="frViewFiComment" type="text"  readonly="readonly" autocomplete="off" />
                         </div>
                     </div>
                 </div>
@@ -993,13 +1011,13 @@
 					<div class="pop__console-cost">
 						<div class="pop__console-title">현재 접수금액</div>
 						<div class="pop__console-input">
-							<div class="c-text"><input id="frViewFdTotAmtInPut" type="text" readonly="readonly" /></div>
+							<div class="c-text"><input id="frViewFdTotAmtInPut" type="text" readonly="readonly" autocomplete="off" /></div>
 						</div>
 					</div>
 					<div class="pop__console-cost">
 						<div class="pop__console-title">추가 비용발생</div>
 						<div class="pop__console-input">
-							<div class="c-text"><input id="frViewFiAddAmt" type="text" readonly="readonly" /></div>
+							<div class="c-text"><input id="frViewFiAddAmt" type="text" readonly="readonly" autocomplete="off" /></div>
 						</div>
 					</div>
 				</li>
@@ -1025,120 +1043,6 @@
 		</div>
 	</div>
 	
-<!-- 
-	<div class="pop" id="putInspectPop">
-		<div class="pop__box">
-			<div class="pop__article pop__article--flex">
-				<div class="pop__aricle-content photo">
-					<h3 class="pop__article-header">검품등록</h3>
-					<div class="pop__article-photo" style="background-color: #ddd">
-						<video id="cameraScreen" playsinline autoplay></video>
-						<canvas id="cameraCanvas" style="display: none"></canvas>
-					</div>
-				</div>
-				
-				<div class="pop__aricle-content flex1">
-					<div class="pop__article-haedconsole">
-						<button class="c-button c-button--darksolid c-button--small" id="deleteInspection">삭제</button>
-					</div>
-					<div id="grid_putInspect" style="height: 208px;"></div>
-				</div>
-			</div>
-			
-			<div class="pop__article">
-				<div class="pop__article-head">
-					<h3 class="pop__article-header">검품내용</h3>
-					<div class="pop__article-haedconsole">
-						<div class="c-checkbox">
-							<input type="checkbox" id="isIncludeImg" />
-							<label for="isIncludeImg">사진포함</label>
-						</div>
-					</div>
-				</div>
-				
-				<div class="pop__aricle-content">
-					<div class="c-textarea">
-						<textarea id="fiComment"></textarea>
-						<button id="vkeyboard4"></button>
-					</div>
-				</div>
-			</div>
-			
-			<ul class="pop__console">
-				<li class="pop__console-left">
-					<div class="pop__console-cost">
-						<div class="pop__console-title">접수금액</div>
-						<div class="pop__console-input">
-							<div class="c-text"><input type="text" readonly="readonly" id="fdRequestAmtInPut" /></div>
-						</div>
-					</div>
-					<div class="pop__console-cost">
-						<div class="pop__console-title">추가비용</div>
-						<div class="pop__console-input">
-							<div class="c-text">
-								<input id="fiAddAmt" type="text" />
-								<button id="vkeypad0">키보드</button>
-							</div>
-						</div>
-					</div>
-				</li>
-				<li><button class="c-button" id="closePutInspectPop">닫기</button></li> 
-				<li><button class="c-button c-button--dark" id="commitInspect">검품내역등록</button></li>
-			</ul>
-		</div>
-	</div>
-	
-	<div class="pop" id="confirmInspectPop">
-		<div class="pop__box">
-			<div class="pop__article">
-				<h3 class="pop__article-header">검품확인</h3>
-				
-				<div class="pop__aricle-content">
-					<div id="grid_confirmInspect" style="height: 240px;"></div>
-				</div>
-			</div>
-			
-			<div class="pop__article">
-				<div class="pop__aricle-content">
-					<div class="pop__message">
-						<div class="pop__message-text">
-							<div class="pop__message-textbox">
-								<textarea readonly="readonly" id="fiCommentInConfirm"></textarea>
-							</div>
-						</div>
-						<div class="pop__message-img">
-							<a href="" id="imgFull" class="photo__img" data-lightbox="images" data-title="이미지 확대"
-								style="display: none;">
-								<img id="imgThumb" src="" alt="" />
-							</a>
-						</div>
-					</div>
-				</div>
-			</div>
-			
-			<ul class="pop__console">
-				<li class="pop__console-left">
-					<div class="pop__console-cost">
-						<div class="pop__console-title">현재 접수금액</div>
-						<div class="pop__console-input">
-							<div class="c-text"><input type="text" readonly="readonly" id="fdRequestAmtInConfirm" /></div>
-						</div>
-					</div>
-					<div class="pop__console-cost">
-						<div class="pop__console-title">추가 비용발생</div>
-						<div class="pop__console-input">
-							<div class="c-text"><input type="text" id="fiAddAmtInConfirm" readonly="readonly" /></div>
-						</div>
-					</div>
-				</li>
-				<li><button class="c-button" id="closeConfirmInspectPop">닫기</button></li> 
-				<li><button class="c-button c-button--dark" id="customerDenied">고객반품</button></li>
-				<li><button class="c-button c-button--solid" id="customerConfirmed">세탁진행</button></li>
-			</ul>
-		</div>
-	</div>
--->
-
 	<input type="hidden" id="hiddenKeypad" />
 </div>
 </html>

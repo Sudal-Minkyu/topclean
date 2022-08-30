@@ -5,6 +5,11 @@
 * */
 const dtos = {
     send: {
+        franchiseUncollectPayRequestList: {
+            bcId: "",
+            frIdList: "" // frId들이 담긴 배열형태
+        },
+
         /* 해당 검색은 기존 customerInfo API를 사용해 고객을 선택할 예정이며,
          * 고객에 따른 디테일 S5, S8 리스트가 고객 선택과 동시에 떠야한다.
          * 고객선택즉시 -> 디테일리스트 함수를 연계하여 호출하여 활용할 예정 */
@@ -24,9 +29,30 @@ const dtos = {
         },
     },
     receive: {
+        franchiseUncollectPayRequestList: {
+            gridListData: {
+                frPayAmount: "n", // 결제된 금액
+                frId: "nr",
+                frYyyymmdd: "sr",
+                requestDetailCount: "n", // 외 건수 requestDetailCount가 2일경우 -> 외 1건, 1일경우 그냥 상품이름만 표기하면될듯. 0일경우는 없음.
+                bgName: "s",
+                bsName: "s",
+                biName: "s",
+                frTotalAmount: "nr", // 접수금액
+                uncollectMoney: "nr", // 미수금액
+            },
+            payInfoData: {
+                saveMoney: "n", // 해당 고객 적립금
+                frCode: "",
+                frName: "",
+                frBusinessNo: "",
+                frRpreName: "",
+                frTelNo: "",
+                bcName: "",
+                bcHp: "",
+            },
+        },
         customerInfo: { // integrate 의 customerInfo와 같은 구성
-            deliveryS5: "n",
-            deliveryS8: "n",
             bcWeddingAnniversary: "d",
             bcAddress: "s",
             bcGrade: "s",
@@ -39,9 +65,13 @@ const dtos = {
             uncollectMoney: "nr",
             saveMoney: "nr",
             tempSaveFrNo: "s",
+            tempSaveBcName: "s",
         },
 
         franchiseReceiptDeliveryList: {
+            frNo: "s",
+            fdPromotionType: "s",
+            fdPromotionDiscountRate: "n",
             fdPollutionBack: "n",
             photoList: "a",
             brFiId: "n",
@@ -88,8 +118,8 @@ const dtos = {
 /* 통신에 사용되는 url들 기입 */
 const urls = {
     searchCustomer: "/api/user/customerInfo", // 고객 검색
-    getCustomersRequest: "/api/user/franchiseReceiptDeliveryList", // 고객에게 인도할 수 있는 세탁리스트 가져오기
-    deliverLaundry: "/api/user/franchiseStateChange", // 인도된 고객의 세탁물 리스트 보내기
+    getCustomersRequest: "/api/user/franchiseReceiptDeliveryList", // 고객에게 출고할 수 있는 세탁리스트 가져오기
+    deliverLaundry: "/api/user/franchiseStateChange", // 출고된 고객의 세탁물 리스트 보내기
 }
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
@@ -107,8 +137,14 @@ const comms = {
                 $("#customerListPop").addClass("active");
             }else{
                 alertCheck("일치하는 고객 정보가 없습니다.<br>신규고객으로 등록 하시겠습니까?");
+                let additionalCondition = params.searchString;
+                if (additionalCondition.numString().length) {
+                    additionalCondition = "?bchp=" + additionalCondition.numString();
+                } else {
+                    additionalCondition = "?bcname=" + additionalCondition;
+                }
                 $("#checkDelSuccessBtn").on("click", function () {
-                    location.href="/user/customerreg";
+                    location.href="/user/customerreg" + additionalCondition;
                 });
             }
         });
@@ -118,8 +154,8 @@ const comms = {
         dv.chk(customerId, dtos.send.franchiseReceiptDeliveryList, "선택된 고객 아이디 보내기");
         CommonUI.ajax(urls.getCustomersRequest, "GET", customerId, function (res) {
             const data = res.sendData.gridListData;
-            console.log(data);
-            dv.chk(data, dtos.receive.franchiseReceiptDeliveryList, "고객의 인도대상 세탁물 리스트 받아오기");
+            dv.chk(data, dtos.receive.franchiseReceiptDeliveryList, "고객의 출고대상 세탁물 리스트 받아오기");
+            CommonUI.toppos.makeSimpleProductNameList(data);
             grids.f.setData(0, data);
             calculateTotStatus();
             calculateCheckedStatus();
@@ -127,14 +163,14 @@ const comms = {
     },
 
     deliverLaundry(selectedLaundry, goToUnpaid) {
-        dv.chk(selectedLaundry, dtos.send.franchiseStateChange, "인도된 고객의 세탁물 리스트 보내기");
+        dv.chk(selectedLaundry, dtos.send.franchiseStateChange, "출고된 고객의 세탁물 리스트 보내기");
         CommonUI.ajax(urls.deliverLaundry, "PARAM", selectedLaundry, function(res) {
-            alertSuccess("세탁물 인도 완료");
+            alertSuccess("세탁물 고객출고 완료");
             const customerId = {
                 bcId: wares.selectedCustomer.bcId
             };
             comms.getCustomersRequest(customerId);
-            if(goToUnpaid) { // 미수금 결제팝업 인도완료후 1초 뒤 띄운다.
+            if(goToUnpaid) { // 미수금 결제팝업 출고완료후 1초 뒤 띄운다.
                 if(wares.selectedCustomer.bcHp) {
                     setTimeout(function () {
                         if(wares.selectedCustomer.bcId) {
@@ -157,34 +193,26 @@ const comms = {
         dv.chk(selctedInfo, dtos.send.franchiseUncollectPayRequestList, "선택한 미수금 마스터 항목 보내기");
         CommonUI.ajax("/api/user/franchiseUncollectPayRequestList", "GET", selctedInfo, function(res) {
             const data = res.sendData;
-            console.log(data);
             dv.chk(data, dtos.receive.franchiseUncollectPayRequestList, "미수 결제창 뜰 때 받아오는 항목");
-            grids.f.setData(2, data.gridListData);
-            calculateGridPayment();
-            wares.frPaymentInfo = data.payInfoData[0];
+            openPaymentPop(data);
         });
-        $("#paymentPop").addClass("active");
-        grids.f.resize(2);
     },
 
     sendPaidInfo(paidInfo) {
         dv.chk(paidInfo, dtos.send.franchiseUncollectPay, "미수 결제 성공 후 정보 보내기");
-        console.log(paidInfo);
         CommonUI.ajax("/api/user/franchiseUncollectPay", "MAPPER", paidInfo, function(res) {
             const frNo = res.sendData.frId.frNo;
             wares.selectedCustomer.uncollectMoney = 0;
             putCustomer();
             $("#paymentPop").removeClass("active");
-            $("#payMonth").val("0");
-            $("#payType1").prop("checked", true);
 
             alertCheck("미수 결제 완료 되었습니다.<br>고객용 영수증을 인쇄 하시겠습니까?");
             $("#checkDelSuccessBtn").on("click", function () {
-                CommonUI.toppos.printReceipt(frNo, "", true, "N");
+                CommonUI.toppos.printReceipt(frNo, "", true, true, "N");
                 $('#popupId').remove();
             });
             $("#checkDelCancelBtn").on("click", function () {
-                CommonUI.toppos.printReceipt(frNo, "", false, "N");
+                CommonUI.toppos.printReceipt(frNo, "", false, true, "N");
             });
         });
     },
@@ -204,7 +232,6 @@ const comms = {
 
     getBrInspectNeo(target) {
         CommonUI.ajax("/api/user/franchiseInspectionInfo", "GET", target, function (res) {
-            console.log(res);
             const data = res.sendData;
 
             wares.currentBrInspect.inspeotInfoDto = data.inspeotInfoDto;
@@ -253,7 +280,7 @@ const grids = {
                         return CommonData.name.frRefType[value];
                     },
                 }, {
-                    dataField: "sumName",
+                    dataField: "productName",
                     headerText: "상품명",
                     style: "color_and_name",
                     renderer : {
@@ -262,8 +289,8 @@ const grids = {
                     labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         const colorSquare =
                         `<span class="colorSquare" style="background-color: ${CommonData.name.fdColorCode[item.fdColor]}; vertical-align: middle;"></span>`;
-                            const sumName = CommonUI.toppos.makeSimpleProductName(item);
-                            return colorSquare + ` <span style="vertical-align: middle;">` + sumName + `</span>`;
+                            const productName = CommonUI.toppos.makeSimpleProductName(item);
+                            return colorSquare + ` <span style="vertical-align: middle;">` + productName + `</span>`;
                     }
                 }, {
                     dataField: "frInsertDt",
@@ -312,14 +339,17 @@ const grids = {
                 }, {
                     dataField: "fdS4Type",
                     headerText: "출고타입",
-                    width: 85,
+                    width: 95,
                     labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         return CommonData.name.fdS4Type[value];
                     },
                 }, {
                     dataField: "fdUrgentYn", // 급세탁이면 Y
                     headerText: "급",
-                    width: 35,
+                    width: 30,
+                    labelFunction(_rowIndex, _columnIndex, value, _headerText, _item) {
+                        return value === "Y" ? "√" : "";
+                    },
                 }, {
                     dataField: "fdRemark",
                     headerText: "특이사항",
@@ -347,7 +377,7 @@ const grids = {
                         } else if (item.brFiId && item.brFiCustomerConfirm === "2") {
                             template += `<button class="c-state c-state--modify" `
                                 + `onclick="openBrInspectPopFromRemark(${rowIndex})">확인품</button>`;
-                        } else if (item.brFiId && item.brFiCustomerConfirm === "3") {
+                        } else if (item.brFiId) {
                             template += `<button class="c-state c-state--cancel" `
                                 + `onclick="openBrInspectPopFromRemark(${rowIndex})">확인품</button>`;
                         }
@@ -372,9 +402,9 @@ const grids = {
             grids.s.prop[0] = {
                 editable : false,
                 selectionMode : "singleRow",
-                noDataMessage : "인도할 세탁물이 존재하지 않습니다.",
+                noDataMessage : "고객출고할 세탁물이 존재하지 않습니다.",
                 showAutoNoDataMessage: true,
-                enableColumnResize : false,
+                enableColumnResize : true,
                 showRowAllCheckBox: true,
                 showRowCheckColumn: true,
                 showRowNumColumn : false,
@@ -422,7 +452,7 @@ const grids = {
                 noDataMessage : "출력할 데이터가 없습니다.",
                 rowNumHeaderText : "순번",
                 showAutoNoDataMessage: false,
-                enableColumnResize : false,
+                enableColumnResize : true,
                 showRowAllCheckBox: false,
                 showRowCheckColumn: false,
                 showRowNumColumn : false,
@@ -471,7 +501,7 @@ const grids = {
                 selectionMode : "singleRow",
                 noDataMessage : "출력할 데이터가 없습니다.",
                 showAutoNoDataMessage: false,
-                enableColumnResize : false,
+                enableColumnResize : true,
                 showRowAllCheckBox: false,
                 showRowCheckColumn: false,
                 showRowNumColumn : false,
@@ -488,24 +518,24 @@ const grids = {
             }
         },
 
-        getData(numOfGrid) { // 해당 배열 번호 그리드의 url.read 를 참조하여 데이터를 그리드에 뿌린다.
-            return AUIGrid.getGridData(grids.s.id[numOfGrid]);
+        getData(gridNum) { // 해당 배열 번호 그리드의 url.read 를 참조하여 데이터를 그리드에 뿌린다.
+            return AUIGrid.getGridData(grids.s.id[gridNum]);
         },
 
-        setData(numOfGrid, data) { // 해당 배열 번호 그리드의 url.read 를 참조하여 데이터를 그리드에 뿌린다.
-            AUIGrid.setGridData(grids.s.id[numOfGrid], data);
+        setData(gridNum, data) { // 해당 배열 번호 그리드의 url.read 를 참조하여 데이터를 그리드에 뿌린다.
+            AUIGrid.setGridData(grids.s.id[gridNum], data);
         },
 
-        clearData(numOfGrid) {
-            AUIGrid.clearGridData(grids.s.id[numOfGrid]);
+        clearData(gridNum) {
+            AUIGrid.clearGridData(grids.s.id[gridNum]);
         },
 
         resize(num) {
 			AUIGrid.resize(grids.s.id[num]);
 		},
 
-        getCheckedItems(numOfGrid) {
-            return AUIGrid.getCheckedRowItems(grids.s.id[numOfGrid]);
+        getCheckedItems(gridNum) {
+            return AUIGrid.getCheckedRowItems(grids.s.id[gridNum]);
         },
 
         getSelectedCustomer() {
@@ -566,15 +596,15 @@ const trigs = {
                 if(wares.checkedItems.length) {
                     if(wares.selectedCustomer.uncollectMoney) {
                         alertCheck(`미수금이 ${wares.selectedCustomer.uncollectMoney.toLocaleString()}원`
-                            + ` 존재합니다.<br>인도완료 후 미수금 결제를 하시겠습니까?`);
-                        $("#checkDelSuccessBtn").on("click", function () { // 인도완료후 미수금결제
+                            + ` 존재합니다.<br>고객출고 후 미수금 결제를 하시겠습니까?`);
+                        $("#checkDelSuccessBtn").on("click", function () { // 고객출후 미수금결제
                             $('#popupId').remove();
                             giveLaundry(true);
                         });
                         $("#checkDelCancelBtn").on("click", function () {
                             setTimeout(function () {
-                                alertCheck("선택된 세탈물을 인도 하고<br>미수금 결제는 하지 않으시겠습니까?");
-                                $("#checkDelSuccessBtn").on("click", function () { // 인도완료후 미수금결제
+                                alertCheck("선택된 세탁물을 고객출고 하고<br>미수금 결제는 하지 않으시겠습니까?");
+                                $("#checkDelSuccessBtn").on("click", function () { // 출고완료후 미수금결제
                                     $('#popupId').remove();
                                     giveLaundry();
                                 });
@@ -582,14 +612,14 @@ const trigs = {
                         });
 
                     } else {
-                        alertCheck("선택된 세탁물들을 인도 하시겠습니까?");
+                        alertCheck("선택된 세탁물들을 고객출고 하시겠습니까?");
                         $("#checkDelSuccessBtn").on("click", function () {
                             $('#popupId').remove();
                             giveLaundry();
                         });
                     }
                 } else {
-                    alertCaution("인도할 세탁물을 선택해 주세요.", 1);
+                    alertCaution("고객출고할 세탁물을 선택해 주세요.", 1);
                 }
             });
 
@@ -627,7 +657,13 @@ const trigs = {
                         $('#popupId').remove();
                     });
                 } else if ($("#payType2").is(":checked")) {
-                    alertCheck(`미수금 ${$("#totalUncollectAmount").html()}원을 결제 처리 완료합니다.`);
+                    alertCheck(`미수금 ${$("#totalUncollectAmount").html()}원을 결제 처리 하시겠습니까?`);
+                    $("#checkDelSuccessBtn").on("click", function () {
+                        uncollectPaymentStageOne();
+                        $('#popupId').remove();
+                    });
+                } else if ($("#payType3").is(":checked")) {
+                    alertCheck(`미수금 ${$("#totalUncollectAmount").html()}원을 적립금으로<br>결제 처리 하시겠습니까?`);
                     $("#checkDelSuccessBtn").on("click", function () {
                         uncollectPaymentStageOne();
                         $('#popupId').remove();
@@ -655,6 +691,26 @@ const trigs = {
                 } else {
                     $("#payMonth").hide();
                     $("#payMonth").val("0");
+                }
+            });
+
+            $("#printReceipt").on("click", function() {
+                wares.checkedItems = grids.f.getCheckedItems(0);
+                if(wares.checkedItems.length) {
+                    alertThree("영수증을 인쇄 하시겠습니까?", "고객용", "매장용", "취소");
+                    $("#popFirstBtn").on("click", function () {
+                        printReceiptAll(wares.checkedItems, true, false);
+                        $('#popupId').remove();
+                    });
+                    $("#popSecondBtn").on("click", function () {
+                        printReceiptAll(wares.checkedItems, false, true);
+                        $('#popupId').remove();
+                    });
+                    $("#popThirdBtn").on("click", function () {
+                        $('#popupId').remove();
+                    });
+                } else {
+                    alertCaution("영수증을 출력할 상품을 선택해 주세요.", 1);
                 }
             });
         },
@@ -836,7 +892,7 @@ function giveLaundry(goToUnpaid = false) {
         }
         comms.deliverLaundry(selectedLaundry, goToUnpaid);
     }else{
-        alertCaution("현재 구분:일반 외의 항목은 세탁물 인도가 불가능합니다.", 1);
+        alertCaution("현재 구분:일반 외의 항목은 고객출고가 불가능합니다.", 1);
     }
 }
 
@@ -897,6 +953,8 @@ function uncollectPaymentStageOne() {
             paymentData.type = "cash";
         } else if (payType === "02") {
             paymentData.type = "card";
+        } else if (payType === "03") {
+            paymentData.type = "save";
         }
 
         if (paymentData.type ==="card") {
@@ -921,14 +979,16 @@ function uncollectPaymentStageOne() {
                             alertCancel("단말기 종료키를 통해 결제가 중지되었습니다.");
                         } else {
                             alertCancel(resjson.ERRORMESSAGE);
-                            console.log(resjson);
+                            console.log("결제 실패 분석:", resjson);
                         }
                     }
                 });
             }catch (e) {
                 CommonUI.toppos.underTaker(e, "unpaid : 카드 단말 결제");
             }
-        }else if (paymentData.type ==="cash") {
+        } else if (paymentData.type ==="cash") {
+            uncollectPaymentStageTwo(paymentData);
+        } else if (paymentData.type === "save") {
             uncollectPaymentStageTwo(paymentData);
         }
     }catch (e) {
@@ -1113,4 +1173,46 @@ function resetBrInspectPop() {
     $("#brFiAddAmt").val("0");
     $("#brFiComment").val("");
     $("#brPhotoList").html("");
+}
+
+function printReceiptAll(items, doPrintCustomers, doPrintOwners) {
+    const frNoList = [];
+    for (const {item} of items) {
+        if (!frNoList.includes(item.frNo)) {
+            frNoList.push(item.frNo);
+        }
+    }
+
+    let i = 0;
+    const interval = setInterval(function () {
+        CommonUI.toppos.printReceipt(frNoList[i++], "", doPrintCustomers, doPrintOwners, "N");
+        if (i === frNoList.length) {
+            clearInterval(interval);
+        }
+    }, 1000);
+}
+
+/* 결제창의 상태를 초기화하고 데이터를 계산하여 배치 */
+function openPaymentPop(data) {
+    const items = data.gridListData;
+    grids.f.setData(2, items);
+    wares.frPaymentInfo = data.payInfoData[0];
+
+    let totalUncollectAmount = 0;
+    items.forEach(item => {
+        totalUncollectAmount += item.uncollectMoney;
+    });
+    $("#totalUncollectAmount").html(totalUncollectAmount.toLocaleString());
+
+    $("#saveMoney").html(wares.frPaymentInfo.saveMoney.toLocaleString());
+    if (totalUncollectAmount > wares.frPaymentInfo.saveMoney) {
+        $("#payType3").parents("div .unpaid-pop__payment-select").hide();
+    } else {
+        $("#payType3").parents("div .unpaid-pop__payment-select").show();
+    }
+
+    $("#payType1").prop("checked", true);
+    $("#payMonth").val("0");
+    $("#paymentPop").addClass("active");
+    grids.f.resize(2);
 }

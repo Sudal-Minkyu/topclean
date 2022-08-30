@@ -1,4 +1,4 @@
-import {grids, runOnlyOnce} from '../../module/m_managerStatus.js';
+import {grids, runOnlyOnce} from '../../module/m_managerStatus.js?22081117';
 
 /* 서버 API와 주고 받게 될 데이터 정의
 * "s" 문자형, "n" 숫자형, "a" 배열형, "r" 필수값, "d" 불필요한 데이터 삭제(receive에 있을 경우 앞으로도 불필요할 경우에는 API에서 삭제요청할것)

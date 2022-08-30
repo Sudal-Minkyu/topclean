@@ -16,16 +16,8 @@ const dtos = {
             fdId: "nr",
             type: "s",
         },
-/*
+
         branchInspectionSave: {
-            fdId: "nr",
-            fiAddAmt: "nr",
-            fiComment: "s",
-            fiType: "sr",
-            source: "", // 검품사진파일
-        },
- */
-        branchInspectionSaveNeo: {
             fdId: "nr", // 수정시에는 fiId도
             fiId: "n",
             fiAddAmt: "nr",
@@ -52,6 +44,8 @@ const dtos = {
         },
 
         branchInspection: {
+            fdPromotionType: "s",
+            fdPromotionDiscountRate: "n",
             fdPollutionBack: "n",
             fdPollutionType: "n",
             photoList: "a",
@@ -126,11 +120,9 @@ const dtos = {
 const urls = {
     getFrList: "/api/manager/branchBelongList",
     getMainGridList: "/api/manager/branchInspection",
-    getInspectionList: "/api/manager/branchInspectionList",
     putNewInspect: "/api/manager/branchInspectionSave",
-    putNewInspectNeo: "/api/manager/branchInspectionSave",
     deleteInspection: "/api/manager/branchInspectionDelete",
-    getInspectionNeo: "/api/manager/branchInspectionInfo",
+    getInspection: "/api/manager/branchInspectionInfo",
 };
 
 /* 서버 API를 AJAX 통신으로 호출하며 커뮤니케이션 하는 함수들 (communications) */
@@ -153,13 +145,16 @@ const comms = {
         CommonUI.ajax(urls.getMainGridList, "GET", searchCondition, function (res) {
             const data = CommonUI.toppos.killNullFromArray(res.sendData.gridListData);
             dv.chk(data, dtos.receive.branchInspection, "메인 그리드 검색 결과 리스트");
+            CommonUI.toppos.makeSimpleProductNameList(data);
             grids.f.setData(0, data);
+            /* 바코드 기기 사용을 염두한 초기화 */
+            $("#frTagNo").val("");
         });
     },
 
-    getInspectionNeo(condition) {
+    getInspection(condition) {
         dv.chk(condition, dtos.send.branchInspectionInfo, "확인품 디테일 정보받기 위한 아이디 보내기");
-        CommonUI.ajax(urls.getInspectionNeo, "GET", condition, function (res) {
+        CommonUI.ajax(urls.getInspection, "GET", condition, function (res) {
             $("#deleteInspect").parents("li").show();
             const data = res.sendData;
             dv.chk(data, dtos.receive.branchInspectionInfo, "선택된 확인품의 디테일 정보 받기");
@@ -203,7 +198,7 @@ const comms = {
         });
     },
 
-    putNewInspectNeo(formData) {
+    putNewInspect(formData) {
         const testObj = Object.fromEntries(formData);
         testObj.fdId = parseInt(testObj.fdId, 10);
         testObj.fiAddAmt = parseInt(testObj.fiAddAmt, 10) | 0;
@@ -217,9 +212,9 @@ const comms = {
             testObj.fiId = 0;
         }
 
-        dv.chk(testObj, dtos.send.branchInspectionSaveNeo, "확인품 등록");
+        dv.chk(testObj, dtos.send.branchInspectionSave, "확인품 등록");
 
-        CommonUI.ajax(urls.putNewInspectNeo, "POST", formData, function () {
+        CommonUI.ajax(urls.putNewInspect, "POST", formData, function () {
 
             alertSuccess("확인품내역이 저장되었습니다.");
             $("#successBtn").on("click", function () {
@@ -304,7 +299,7 @@ const grids = {
                         return CommonData.formatBrTagNo(value);
                     },
                 }, {
-                    dataField: "",
+                    dataField: "productName",
                     headerText: "상품명",
                     style: "grid_textalign_left",
                     renderer : {
@@ -317,8 +312,8 @@ const grids = {
                         }
                         const colorSquare =
                             `<span class="colorSquare" style="background-color: ${CommonData.name.fdColorCode[item.fdColor]}; vertical-align: middle;"></span>`;
-                        const sumName = CommonUI.toppos.makeSimpleProductName(item);
-                        return template + colorSquare + ` <span style="vertical-align: middle;">` + sumName + `</span>`;
+                        const productName = CommonUI.toppos.makeSimpleProductName(item);
+                        return template + colorSquare + ` <span style="vertical-align: middle;">` + productName + `</span>`;
                     },
                 }, {
                     dataField: "",
@@ -377,7 +372,7 @@ const grids = {
                             template = `<button type="button" class="c-button c-button--supersmall c-button--green">수정</button>`;
                         } else if(item.brFiId && item.brFiCustomerConfirm === "2") {
                             template = `<button type="button" class="c-button c-button--supersmall c-button--dark">진행</button>`;
-                        } else if(item.brFiId && item.brFiCustomerConfirm === "3") {
+                        } else if(item.brFiId) {
                             template = `<button type="button" class="c-button c-button--supersmall c-button--red">반품</button>`;
                         } else {
                             template = `<button type="button" class="c-button c-button--supersmall c-button--solid">등록</button>`;
@@ -529,6 +524,14 @@ const trigs = {
                 }
             });
 
+            const $frTagNo = $("#frTagNo");
+            $frTagNo.on("keyup", function (e) {
+                $frTagNo.val($frTagNo.val().numString());
+                if(e.originalEvent.code === "Enter" || e.originalEvent.code === "NumpadEnter") {
+                    searchOrder();
+                }
+            });
+
             $("#commitInspect").on("click", function() {
                 // putInspect(); 구버전 확인품 등록
                 saveInspect();
@@ -599,6 +602,21 @@ const trigs = {
                     takePhoto();
                 }
             });
+
+            $(".searchMethod").on("click", function (e) {
+                if (e.currentTarget.id === "searchByTagNo") {
+                    $(".searchByTagNo").show();
+                    $(".searchByFranchise").hide();
+                    $("#foreTag").val("");
+                    $("#aftTag").val("");
+                    $("#frList option").eq(0).prop("selected", true);
+                } else if (e.currentTarget.id === "searchByFranchise") {
+                    $(".searchByFranchise").show();
+                    $(".searchByTagNo").hide();
+                    $("#frTagNo").val("");
+
+                }
+            });
         },
     },
     r: { // 이벤트 해제
@@ -655,26 +673,37 @@ function enableDatepicker() {
 }
 
 function searchOrder() {
-    const frId = $("#frList").val();
-    if(frId === "") {
-        alertCaution("가맹점을 선택해 주세요.", 1);
-        return;
-    }
-
-    const fullTag = $("#foreTag").val() + $("#aftTag").val().numString();
-
+    const searchType = $(".searchMethod:checked").attr("id");
     const searchCondition = {
-        tagNo: fullTag.length === 7 ? fullTag : "",
         filterFromDt: $("#filterFromDt").val().numString(),
         filterToDt: $("#filterToDt").val().numString(),
-        franchiseId: parseInt(frId, 10),
     };
+    let fullTag;
 
-    if($("#aftTag").val().numString().length !== 0 && searchCondition.tagNo.length !==7) {
-        alertCaution("택번호(뒤)는 완전히 입력하거나,<br>입력하지 말아주세요.(전체검색)<br>", 1);
-        return;
+    if (searchType === "searchByTagNo") {
+        fullTag = $("#frTagNo").val().numString();
+        if(fullTag.length !== 7) {
+            alertCaution("택번호 7자리를 완전히 입력해 주세요.", 1);
+            return;
+        }
+        searchCondition.franchiseId = 0;
+    } else if (searchType === "searchByFranchise") {
+        const frId = $("#frList").val();
+        if(frId === "") {
+            alertCaution("가맹점을 선택해 주세요.", 1);
+            return;
+        }
+        searchCondition.franchiseId = parseInt(frId, 10);
+        fullTag = $("#foreTag").val() + $("#aftTag").val().numString();
+
+        if($("#aftTag").val().numString().length !== 0 && searchCondition.tagNo.length !==7) {
+            alertCaution("택번호(뒤)는 완전히 입력하거나,<br>입력하지 말아주세요.(전체검색)<br>", 1);
+            return;
+        }
     }
 
+    fullTag = fullTag.substring(0, 7);
+    searchCondition.tagNo = fullTag.length === 7 ? fullTag : "";
     comms.getMainGridList(searchCondition);
 }
 
@@ -721,7 +750,7 @@ async function openCheckPop(e) {
         const searchCondition = {
             fiId: e.item.brFiId,
         };
-        comms.getInspectionNeo(searchCondition);
+        comms.getInspection(searchCondition);
     } else {
         $("#deleteInspect").parents("li").hide();
         $("#commitInspect").parents("li").show();
@@ -812,7 +841,7 @@ function saveInspect() {
     formData.append("fiAddAmt", $("#fiAddAmt").val().toInt());
     formData.append("fiType", "B");
 
-    comms.putNewInspectNeo(formData);
+    comms.putNewInspect(formData);
 }
 
 function resetCheckPop() {

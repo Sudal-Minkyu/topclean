@@ -9,11 +9,8 @@ import lombok.*;
  * Remark : Toppos 가맹점 접수 검품 등록여부 Dto
  */
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class InspeotYnDto {
-
-    private Long fdId; // 세부테이블 고유ID값
-
+    private Long id; // 세부테이블 고유ID값
 }

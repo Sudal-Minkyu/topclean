@@ -1,5 +1,6 @@
 package com.broadwave.toppos.Head.Item.Price.FranchisePrice;
 
+import com.broadwave.toppos.Head.Item.Price.FranchisePrice.FranchisePriceDtos.FranchisePricePK;
 import lombok.*;
 
 import javax.persistence.*;

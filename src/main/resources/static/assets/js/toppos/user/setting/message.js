@@ -61,9 +61,7 @@ const dtos = {
 const comms = {
     getTemplate() {
         CommonUI.ajax("/api/user/templateList", "GET", false, function (res) {
-            console.log(res);
             const templateList = res.sendData.gridListData;
-            console.log(templateList);
 
             const $tmpFmSubject = $(".tmpFmSubject");
             const $tmpFmMessage = $(".tmpFmMessage");
@@ -86,16 +84,13 @@ const comms = {
         });
     },
     saveTemplate(saveDataList) {
-        console.log(saveDataList);
         CommonUI.ajax("/api/user/templateSave", "MAPPER", saveDataList, function (res) {
-            console.log(res);
             alertSuccess("템플릿 저장에 성공하였습니다.");
             comms.getTemplate();
         });
     },
 
     sendMessage(message) {
-        console.log(message);
         CommonUI.ajax("/api/user/messageSendCustomer", "PARAM", message, function (res) {
             alertSuccess("문자메시지 발송이 완료되었습니다.");
             grids.f.clear(0);
@@ -108,7 +103,6 @@ const comms = {
     getCustomers(getCondition) {
         wares.getCondition = getCondition;
         CommonUI.ajax("/api/user/messageCustomerList", "GET", getCondition, function (res) {
-            console.log(res);
             const data = res.sendData.gridListData;
             grids.f.set(0, data);
         });
@@ -117,7 +111,6 @@ const comms = {
     getSendRecordSummary(searchCondition) {
         CommonUI.ajax("/api/user/messageHistoryList", "GET", searchCondition, function (res) {
             const data = res.sendData.gridListData;
-            console.log(data);
             grids.f.set(2, data);
         });
     },
@@ -125,7 +118,6 @@ const comms = {
     getSendRecordDetail(searchCondition) {
         CommonUI.ajax("/api/user/messageHistorySubList", "GET", searchCondition, function (res) {
             const data = res.sendData.gridListData;
-            console.log(data);
             grids.f.set(3, data);
         });
     },
@@ -267,7 +259,7 @@ const grids = {
                     labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         let result = "";
                         if(typeof value === "number") {
-                            result = new Date(value).format("yyyy-MM-dd<br>hh:mm");
+                            result = new Date(value).format("yyyy-MM-dd<br>HH:mm");
                         }
                         return result;
                     },
@@ -381,7 +373,6 @@ const grids = {
 const trigs = {
     basic() {
         AUIGrid.bind(grids.s.id[2], "cellClick", function (e) {
-            console.log(e.item);
             const searchCondition = {
                 insertYyyymmdd: e.item.insertYyyymmdd.numString(),
             }
@@ -599,8 +590,14 @@ function saveTemplate() {
 }
 
 function sendMessage() {
-    const fmSendreqtimeDt = new Date($("#fmSendreqtimeDate").val() + " " + $("#fmSendreqtimeHour").val() + ":"
-        + $("#fmSendreqtimeMinute").val()).getTime();
+    const dateString = $("#fmSendreqtimeDate").val().numString();
+    const year = dateString.substring(0, 4).toInt();
+    const month = dateString.substring(4, 6).toInt() - 1;
+    const day = dateString.substring(6, 8).toInt();
+    const hour = $("#fmSendreqtimeHour").val().toInt();
+    const minute = $("#fmSendreqtimeMinute").val().toInt();
+    const fmSendreqtimeDt = new Date(year, month, day, hour, minute).getTime();
+
     const isBookSend = $("#isBookSend").is(":checked");
     const bcIdList = [];
     const gridData = grids.f.get(1);

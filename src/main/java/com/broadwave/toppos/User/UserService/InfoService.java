@@ -5,7 +5,7 @@ import com.broadwave.toppos.Account.AccountService;
 import com.broadwave.toppos.Account.AcountDtos.AccountPasswordDto;
 import com.broadwave.toppos.Head.Franchise.Franchise;
 import com.broadwave.toppos.Head.Franchise.FranchiseDtos.FranchiseUserDto;
-import com.broadwave.toppos.Head.HeadService.HeadService;
+import com.broadwave.toppos.Head.Franchise.FranchiseRepository;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.User.Addprocess.Addprocess;
 import com.broadwave.toppos.User.Addprocess.AddprocessDtos.AddprocessDto;
@@ -42,7 +42,7 @@ public class InfoService {
 
     private final ModelMapper modelMapper;
     private final AccountService accountService;
-    private final HeadService headService;
+    private final FranchiseRepository franchiseRepository;
     private final UserService userService;
     private final TokenProvider tokenProvider;
     private final PasswordEncoder passwordEncoder;
@@ -51,12 +51,12 @@ public class InfoService {
     private final UserReadyCashRepository userReadyCashRepository;
 
     @Autowired
-    public InfoService(ModelMapper modelMapper, TokenProvider tokenProvider, AccountService accountService, HeadService headService, UserService userService,
+    public InfoService(ModelMapper modelMapper, TokenProvider tokenProvider, AccountService accountService, FranchiseRepository franchiseRepository, UserService userService,
                        PasswordEncoder passwordEncoder, AddprocessRepository addprocessRepository, UserReadyCashRepository userReadyCashRepository){
         this.modelMapper = modelMapper;
         this.tokenProvider = tokenProvider;
         this.accountService = accountService;
-        this.headService = headService;
+        this.franchiseRepository = franchiseRepository;
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
         this.addprocessRepository = addprocessRepository;
@@ -77,7 +77,7 @@ public class InfoService {
         log.info("현재 접속한 아이디 : "+login_id);
         log.info("현재 접속한 가맹점 코드 : "+frCode);
 
-        FranchiseUserDto franchisInfoDto = headService.findByFranchiseUserInfo(frCode);
+        FranchiseUserDto franchisInfoDto = franchiseRepository.findByFranchiseUserInfo(frCode);
         data.put("franchisInfoDto",franchisInfoDto);
 
         // 수선 항목 리스트 데이터 가져오기
@@ -114,7 +114,7 @@ public class InfoService {
         log.info("현재 접속한 아이디 : "+login_id);
         log.info("현재 접속한 가맹점 코드 : "+frCode);
 
-        Optional<Franchise> optionalFranohise = headService.findByFrCode(frCode);
+        Optional<Franchise> optionalFranohise = franchiseRepository.findByFrCode(frCode);
         if(optionalFranohise.isPresent()){
             Franchise franchise = modelMapper.map(optionalFranohise.get(), Franchise.class);
 
@@ -135,7 +135,7 @@ public class InfoService {
             franchise.setModify_id(login_id);
             franchise.setModifyDateTime(LocalDateTime.now());
 
-            Franchise franchiseSave =  headService.franchise(franchise);
+            Franchise franchiseSave =  franchiseRepository.save(franchise);
             log.info("가맹점 마이페이지 수정 성공 Frcode : '" + franchiseSave.getFrCode() + "'");
         }else{
             return ResponseEntity.ok(res.fail(ResponseErrorCode.TP005.getCode(), "나의 "+ResponseErrorCode.TP005.getDesc(), "문자", "고객센터에 문의해주세요."));
@@ -195,7 +195,7 @@ public class InfoService {
         log.info("현재 접속한 아이디 : "+login_id);
         log.info("현재 접속한 가맹점 코드 : "+frCode);
 
-        Optional<Franchise> optionalFranchise = headService.findByFrCode(frCode);
+        Optional<Franchise> optionalFranchise = franchiseRepository.findByFrCode(frCode);
 
         List<Addprocess> saveAddProcessList = new ArrayList<>();
         if(!optionalFranchise.isPresent()){
@@ -236,14 +236,16 @@ public class InfoService {
     }
 
     // 택번호 변경시 비밀번호 입력후 확인 API
-    public ResponseEntity<Map<String, Object>> franchiseCheck(String password, HttpServletRequest request) {
+    public ResponseEntity<Map<String, Object>> franchiseCheck(String password, String frLastTagno, HttpServletRequest request) {
         log.info("franchiseCheck 호출");
 
         AjaxResponse res = new AjaxResponse();
 
         Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
         String login_id = claims.getSubject(); // 현재 아이디
+        String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
         log.info("현재 접속한 아이디 : "+login_id);
+        log.info("현재 접속한 가맹점 코드 : "+frCode);
 
         Optional<Account> optionalAccount = accountService.findByUserid(login_id);
 
@@ -256,6 +258,20 @@ public class InfoService {
                 return ResponseEntity.ok(res.fail(ResponseErrorCode.TP020.getCode(), ResponseErrorCode.TP020.getDesc(), null, null));
             }
         }
+
+        if(!frLastTagno.equals("")){
+            Optional<Franchise> optionalFranchise = franchiseRepository.findByFrCode(frCode);
+            if(!optionalFranchise.isPresent()){
+                return ResponseEntity.ok(res.fail(ResponseErrorCode.TP005.getCode(), "가맹점 "+ResponseErrorCode.TP005.getDesc(), null, null));
+            }else{
+                optionalFranchise.get().setFrLastTagno(frLastTagno);
+                optionalFranchise.get().setFtLastTagnoModifyNo(frLastTagno);
+                optionalFranchise.get().setFtLastTagnoModify_id(login_id);
+                optionalFranchise.get().setFtLastTagnoModifyDt(LocalDateTime.now());
+                franchiseRepository.save(optionalFranchise.get());
+            }
+        }
+
         return ResponseEntity.ok(res.success());
     }
 
@@ -275,7 +291,7 @@ public class InfoService {
         log.info("현재 접속한 아이디 : "+login_id);
         log.info("현재 접속한 가맹점 코드 : "+frCode);
 
-        Optional<Franchise> optionalFranchise = headService.findByFrCode(frCode);
+        Optional<Franchise> optionalFranchise = franchiseRepository.findByFrCode(frCode);
 
         if(!optionalFranchise.isPresent()){
             return ResponseEntity.ok(res.fail(ResponseErrorCode.TP005.getCode(), "가맹점 "+ResponseErrorCode.TP005.getDesc(), null, null));

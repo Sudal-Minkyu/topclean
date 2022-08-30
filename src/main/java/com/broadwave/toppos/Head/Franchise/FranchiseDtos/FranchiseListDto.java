@@ -44,6 +44,7 @@ public class FranchiseListDto {
 
     private String frUrgentDayYn; // 가맹점 당일세탁 사용여부
 
+    private String frManualPromotionYn; // 본사용 수동 프로모션 할인기능 사용여부
     private String frCardTid; // 카드단말기 Tid
 
     public StringBuffer getFrContractDt() {

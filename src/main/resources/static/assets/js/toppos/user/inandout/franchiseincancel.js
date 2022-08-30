@@ -60,6 +60,7 @@ const comms = {
             const data = res.sendData.gridListData;
 
             dv.chk(data, dtos.receive.franchiseReceiptFranchiseInList, '입고 리스트 항목 받아오기');
+            CommonUI.toppos.makeSimpleProductNameList(data);
             grids.f.setData(0, data);
         });
     },
@@ -119,7 +120,7 @@ const grids = {
                     },
                 }, 
                 {
-                    dataField: "",
+                    dataField: "productName",
                     headerText: "상품명",
                     width: 150,
                     style: "color_and_name",
@@ -129,8 +130,8 @@ const grids = {
                     labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         const colorSquare =
                             `<span class="colorSquare" style="background-color: ${CommonData.name.fdColorCode[item.fdColor]}; vertical-align: middle;"></span>`;
-                        const sumName = CommonUI.toppos.makeSimpleProductName(item);
-                        return colorSquare + ` <span style="vertical-align: middle;">` + sumName + `</span>`;
+                        const productName = CommonUI.toppos.makeSimpleProductName(item);
+                        return colorSquare + ` <span style="vertical-align: middle;">` + productName + `</span>`;
                     },
                 },
                 {

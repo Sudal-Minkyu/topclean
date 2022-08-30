@@ -1,5 +1,6 @@
 package com.broadwave.toppos.Head.Branch;
 
+import com.broadwave.toppos.Head.Branch.BranchDtos.head.BranchEventListDto;
 import com.broadwave.toppos.Head.Branch.BranchDtos.head.BranchSearchInfoDto;
 import com.broadwave.toppos.Head.Branoh.BranchDtos.BranchListDto;
 
@@ -15,5 +16,7 @@ public interface BranchRepositoryCustom {
     List<BranchListDto> findByBranchList(String brName, String brCode, String brContractState);
 
     List<BranchSearchInfoDto> findByBranchSearchInfo();
+
+    List<BranchEventListDto> findByEventList(String nowDate);
 
 }

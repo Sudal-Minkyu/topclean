@@ -51,8 +51,8 @@ const dtos = {
                 slidingText: "a", // 2022.03.02 추가
                 brName: "s",
                 frName: "s",
-                username: "s",
-                usertel: "s",
+                frRpreName: "s",
+                frTelNo: "s",
                 inCountText: "n"
             },
 
@@ -87,6 +87,7 @@ const comms = {
         CommonUI.ajax(url, "GET", condition, function (res) {
             const data = res.sendData;
             dv.chk(data, dtos.receive.franchiseInfo, "메인페이지 각종 값 받아오기");
+            console.log(data);
             const userIndexDto = data.userIndexDto[0];
             const historyList = data.requestHistoryList;
             const inspectList = data.inspeotList;
@@ -99,8 +100,8 @@ const comms = {
                 $("#brName").text(userIndexDto.brName);
             }
             $("#frName").text(userIndexDto.frName+" 점");
-            $("#userName").text(userIndexDto.username);
-            $("#userTel").text(CommonUI.formatTel(userIndexDto.usertel));
+            $("#frRpreName").text(userIndexDto.frRpreName);
+            $("#frTelNo").text(CommonUI.formatTel(userIndexDto.frTelNo));
 
             let slidingText = "";
             if(userIndexDto.slidingText.length) {
@@ -426,7 +427,7 @@ function setHistory(historyList) {
                 case "접수" :
                     $(field[i]).children(".main__board-badge").children("span").addClass("badge green");
                     break;
-                case "인도" :
+                case "출고" :
                     $(field[i]).children(".main__board-badge").children("span").addClass("badge red");
                     break;
             }

@@ -2,8 +2,8 @@ package com.broadwave.toppos.Controller;
 
 import com.broadwave.toppos.Account.AcountDtos.AccountRole;
 import com.broadwave.toppos.Head.HeadService.HeadService;
-import com.broadwave.toppos.Head.Item.Group.A.ItemGroupNameListDto;
-import com.broadwave.toppos.Head.Item.Price.FranchisePrice.ItemPriceSetDtDto;
+import com.broadwave.toppos.Head.Item.Group.A.ItemGroupDtos.ItemGroupNameListDto;
+import com.broadwave.toppos.Head.Item.Price.FranchisePrice.FranchisePriceDtos.ItemPriceSetDtDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -91,7 +91,7 @@ public class HeadController {
     // 상품그룹관리 페이지
     @RequestMapping("itemgroup")
     public String itemgroup(){
-        return "head/itemgroup";
+        return "head/itemcontrol/itemgroup";
     }
 
     // 상품가격관리 페이지
@@ -101,20 +101,27 @@ public class HeadController {
         List<ItemPriceSetDtDto> itemPriceSetDtDtos = headService.findByItemPriceSetDtList();
         model.addAttribute("groupNames", itemGroupNameListDtos);
         model.addAttribute("setDtLists", itemPriceSetDtDtos);
-        return "head/itemprice";
+        return "head/itemcontrol/itemprice";
     }
 
     // 특정품목가격관리 페이지
     @RequestMapping("franchiseprice")
     public String franchiseprice(){
-        return "head/franchiseprice";
+        return "head/itemcontrol/franchiseprice";
     }
 
     // 가격기초정보 세팅
     @RequestMapping("pricemanagement")
     public String pricemanagement(){
-        return "head/pricemanagement";
+        return "head/itemcontrol/pricemanagement";
     }
+
+    // 가격기초정보 세팅
+    @RequestMapping("promomanagement")
+    public String promomanagement(){
+        return "head/itemcontrol/promomanagement";
+    }
+
 
     // 나의정보관리
     @RequestMapping("mypage")

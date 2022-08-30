@@ -18,5 +18,6 @@ import java.time.format.DateTimeFormatter;
 public class RequestTempDto {
 
     private String frNo; // 접수코드
+    private String bcName; // 임시저장한 고객명
 
 }

@@ -45,26 +45,33 @@ class CommonUIClass {
     toppos = {
         /* 아이템 코드와 이름 데이터 조합에 쓰이는 배열을 사용하여 최종 이름을 산출 */
         makeProductName(item, nameArray) {
-            if(!item.sumName) {
+            if(!item.productName) {
                 const isNotSizeNormal = (item.biItemcode.substr(3, 1) !== "N");
-                let sumName = "";
+                let productName = "";
                 for(const obj of nameArray) {
                     if (obj.biItemcode === item.biItemcode) {
                         if (isNotSizeNormal) {
-                            sumName += obj.bsName + " ";
+                            productName += obj.bsName + " ";
                         }
-                        sumName += obj.biName + " " + obj.bgName;
+                        productName += obj.biName + " " + obj.bgName;
                         break;
                     }
                 }
-                item.sumName = sumName;
+                item.productName = productName;
             }
         },
 
         /* 대중소분류 이름을 가져다가 최종 이름을 조합하는 방식 */
         makeSimpleProductName(item) {
             const finalBsName = item.bsName === "일반" ? "" : item.bsName;
-            return finalBsName + " " + item.biName + " " + item.bgName;
+            return finalBsName + (finalBsName ? " " : "") + item.biName + " " + item.bgName;
+        },
+
+        /* 조합되는 이름을 그리드에 뿌려지기 전 단계에 완성하여 데이터에 포함시킨다. */
+        makeSimpleProductNameList(items) {
+            items.forEach(item => {
+                item.productName = this.makeSimpleProductName(item);
+            });
         },
 
         /* 처리내역의 표시를 결정하는 공통함수 */
@@ -72,6 +79,18 @@ class CommonUIClass {
             try {
                 let statusText = "";
                 let pollution = "";
+                let promotion = "";
+
+                const promotionTypeName = {
+                    "H1": "행(수기)",
+                    "01": `행(${item.fdPromotionDiscountRate}%)`,
+                    "02": `행(1+1${item.fdPromotionDiscountRate === 100 ? "*" : ""})`,
+                    "03": `행(2+1${item.fdPromotionDiscountRate === 100 ? "*" : ""})`,
+                }
+                if (item.fdPromotionType) {
+                    promotion = promotionTypeName[item.fdPromotionType];
+                }
+
                 if (item.fdPollution) {
                     if (item.fdPollutionType === 1 && !item.fdPollutionBack) {
                         pollution = "오(앞)";
@@ -84,16 +103,17 @@ class CommonUIClass {
                     }
                 }
 
-                statusText += item.fdUrgentYn === "Y" ? "급" : "";
-                statusText += item.fdPriceGrade === "3" ? "명" : "";
-                statusText += item.fdRetryYn === "Y" ? "재" : "";
-                statusText += item.fdPressed ? "다" : "";
-                statusText += item.fdAdd1Amt || item.fdAdd1Remark.length ? "추" : "";
-                statusText += item.fdRepairAmt || item.fdRepairRemark.length ? "수" : "";
-                statusText += item.fdWhitening ? "표" : "";
-                statusText += item.fdWaterRepellent || item.fdStarch ? "발" : "";
-                statusText += pollution;
-                statusText += item.fdS6CancelYn === "Y" ? "인도취소" : "";
+                statusText += promotion;
+                statusText += item.fdUrgentYn === "Y" ? (statusText ? "," : "") + "급" : "";
+                statusText += item.fdPriceGrade === "3" ? (statusText ? "," : "") + "명" : "";
+                statusText += item.fdRetryYn === "Y" ? (statusText ? "," : "") + "재" : "";
+                statusText += item.fdPressed ? (statusText ? "," : "") + "다" : "";
+                statusText += item.fdAdd1Amt || item.fdAdd1Remark.length ? (statusText ? "," : "") + "추" : "";
+                statusText += item.fdRepairAmt || item.fdRepairRemark.length ? (statusText ? "," : "") + "수" : "";
+                statusText += item.fdWhitening ? (statusText ? "," : "") + "표" : "";
+                statusText += item.fdWaterRepellent || item.fdStarch ? (statusText ? "," : "") + "발" : "";
+                statusText += pollution ? (statusText ? "," : "") + pollution : "";
+                statusText += item.fdS6CancelYn === "Y" ? (statusText ? "," : "") + "고객출고취소" : "";
                 return statusText;
             } catch (e) {
                 this.toppos.underTaker(e, "CommonUI : 처리내역 문자조합");
@@ -111,7 +131,7 @@ class CommonUIClass {
             return resultArray;
         },
 
-        printReceipt(frNo = "", frId = "", printCustomers = false, cancelYN = "N") {
+        printReceipt(frNo = "", frId = "", printCustomers = false, printOwners = false, cancelYN = "N") {
             const condition = {
                 frNo,
                 frId,
@@ -121,6 +141,7 @@ class CommonUIClass {
 
                 CommonUI.ajax(url, "GET", condition, function (res) {
 
+                    console.log(res);
                     const typeTrans = {
                         "01": "cash",
                         "02": "card",
@@ -129,7 +150,7 @@ class CommonUIClass {
                     };
 
                     const colorName = { // 컬러코드에 따른 실제 색상
-                        "00": "없음", "01": "흰색", "02": "검정", "03": "회색", "04": "빨강", "05": "주황",
+                        "00": "", "01": "흰색", "02": "검정", "03": "회색", "04": "빨강", "05": "주황",
                         "06": "노랑", "07": "초록", "08": "파랑", "09": "남색", "10": "보라", "11": "핑크",
                     };
 
@@ -137,9 +158,12 @@ class CommonUIClass {
                     paymentData.items = res.sendData.items;
                     paymentData.items.forEach(obj => {
                         obj.color = colorName[obj.color];
+                        if (obj.priceGrade === "3") {
+                            obj.fdRemark = "명품 " + obj.fdRemark;
+                        }
                     });
 
-                    paymentData.estimateDt = paymentData.items[0].estimateDt;
+                    paymentData.estimateDt = paymentData.items.length ? paymentData.items[0].estimateDt : "";
                     paymentData.franchiseTel = CommonUI.formatTel(paymentData.franchiseTel);
                     paymentData.customerTel = CommonUI.formatTel(paymentData.customerTel, true);
                     paymentData.businessNO = CommonUI.formatBusinessNo(paymentData.businessNO);
@@ -149,7 +173,7 @@ class CommonUIClass {
                         obj.type = typeTrans[obj.type];
                     });
 
-                    CAT.CatPrint_Multi(paymentData, creditData, cancelYN, printCustomers);
+                    CAT.CatPrint_Multi(paymentData, creditData, cancelYN, printCustomers, printOwners);
                 });
             } catch (e) {
                 this.toppos.underTaker(e, "CommonUI : 접수 영수증 프린트");

@@ -23,8 +23,6 @@ const dtos = {
     receive: {
 
         customerInfo: { // integrate 의 customerInfo와 같은 구성
-            deliveryS5: "n",
-            deliveryS8: "n",
             bcWeddingAnniversary: "d",
             bcAddress: "s",
             bcGrade: "s",
@@ -97,8 +95,14 @@ const comms = {
                 $("#customerListPop").addClass("active");
             }else{
                 alertCheck("일치하는 고객 정보가 없습니다.<br>신규고객으로 등록 하시겠습니까?");
+                let additionalCondition = params.searchString;
+                if (additionalCondition.numString().length) {
+                    additionalCondition = "?bchp=" + additionalCondition.numString();
+                } else {
+                    additionalCondition = "?bcname=" + additionalCondition;
+                }
                 $("#checkDelSuccessBtn").on("click", function () {
-                    location.href="/user/customerreg";
+                    location.href="/user/customerreg" + additionalCondition;
                 });
             }
         });
@@ -110,6 +114,8 @@ const comms = {
         CommonUI.ajax(urls.getForceList, "GET", condition, function (res) {
             const data = res.sendData;
             dv.chk(data.gridListData, dtos.receive.franchiseReceiptForceList, '강제입고 항목 받아오기');
+            console.log(data);
+            CommonUI.toppos.makeSimpleProductNameList(data.gridListData);
             grids.f.setData(0, data.gridListData);
         });
     },
@@ -172,7 +178,7 @@ const grids = {
                     },
                 }, 
                 {
-                    dataField: "",
+                    dataField: "productName",
                     headerText: "상품명",
                     width: 150,
                     style: "color_and_name",
@@ -182,8 +188,8 @@ const grids = {
                     labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         const colorSquare =
                             `<span class="colorSquare" style="background-color: ${CommonData.name.fdColorCode[item.fdColor]}; vertical-align: middle;"></span>`;
-                        const sumName = CommonUI.toppos.makeSimpleProductName(item);
-                        return colorSquare + ` <span style="vertical-align: middle;">` + sumName + `</span>`;
+                        const productName = CommonUI.toppos.makeSimpleProductName(item);
+                        return colorSquare + ` <span style="vertical-align: middle;">` + productName + `</span>`;
                     },
                 },
                 {

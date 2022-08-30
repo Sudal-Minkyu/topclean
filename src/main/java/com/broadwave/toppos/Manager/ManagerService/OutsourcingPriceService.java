@@ -1,7 +1,7 @@
 package com.broadwave.toppos.Manager.ManagerService;
 
 import com.broadwave.toppos.Head.Item.Group.A.ItemGroup;
-import com.broadwave.toppos.Head.Item.Group.A.ItemGroupCodeAndNameListDto;
+import com.broadwave.toppos.Head.Item.Group.A.ItemGroupDtos.ItemGroupCodeAndNameListDto;
 import com.broadwave.toppos.Head.Item.Group.A.ItemGroupRepository;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.Manager.outsourcingPrice.OutsourcingPrice;

@@ -21,7 +21,7 @@ class CommonDataClass {
             S3: "반품입고",
             S4: "지사출고",
             S5: "가맹입고",
-            S6: "고객인도",
+            S6: "고객출고",
             S7: "강제출고",
             S8: "강제입고",
             F: "가맹검품",
@@ -123,6 +123,25 @@ class CommonDataClass {
             "02": "혼합",
             "03": "줄",
         };
+
+        this.name.hpStatus = {
+            "01": "진행",
+            "02": "종료",
+        };
+
+        this.name.hpType = {
+            "01": "일반",
+            "02": "1+1",
+            "03": "2+1",
+
+        };
+
+        this.name.fdPromotionType = {
+            "01": "일반",
+            "02": "1+1",
+            "03": "2+1",
+            "H1": "수기",
+        };
     }
 
     formatFrTagNo(tagNo, foreDigits) {
@@ -141,6 +160,14 @@ class CommonDataClass {
             result = tagNo.substring(0, 3) + "-" + tagNo.substring(3, 7);
         }
         return result;
+    }
+
+    getFdStateName(fdState, fdS6Type = "") {
+        let name = this.name.fdState[fdState];
+        if (fdS6Type === "02") {
+            name += "<br>(반품)";
+        }
+        return name;
     }
 }
 

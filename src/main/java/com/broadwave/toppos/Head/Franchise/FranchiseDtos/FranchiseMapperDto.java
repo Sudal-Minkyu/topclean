@@ -44,6 +44,7 @@ public class FranchiseMapperDto {
     private String frAddress; // 가맹점 주소
     private String frAddressDetail; // 가맹점 상세주소
 
+    private String frManualPromotionYn; // 본사용 수동 프로모션 할인기능 사용여부
     private String frCardTid; // 카드단말기 Tid
 
     public String getFrContractDt() {

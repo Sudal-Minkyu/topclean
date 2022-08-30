@@ -66,7 +66,12 @@ public class DaliySummaryRepositoryCustomImpl extends QuerydslRepositorySupport 
                         daliySummary.hsSettleAmtFr,
 
                         daliySummary.hsSmsAmt,
-                        daliySummary.hsRolayltyAmtFr
+                        daliySummary.hsRolayltyAmtFr,
+
+                        daliySummary.hsCashSaleAmt,
+                        daliySummary.hsCardSaleAmt,
+                        daliySummary.hsPointSaleAmt,
+                        daliySummary.hsDeferredSaleAmt
 
                 ));
 

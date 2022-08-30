@@ -6,6 +6,7 @@ import com.broadwave.toppos.User.ReuqestMoney.Requset.QRequest;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotInfoDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotMainListDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotYnDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.QRequestDetail;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
@@ -127,6 +128,21 @@ public class InspeotRepositoryCustomImpl extends QuerydslRepositorySupport imple
         }else if(type.equals("2")){
             inspeot.frCode.eq(code);
         }
+
+        return query.fetchOne();
+    }
+
+    @Override
+    public InspeotYnDto findByInspectYn(Long fdId, String fiType) {
+        QInspeot inspeot = QInspeot.inspeot;
+        QRequestDetail requestDetail = QRequestDetail.requestDetail;
+
+        JPQLQuery<InspeotYnDto> query = from(inspeot)
+                .innerJoin(requestDetail).on(inspeot.fdId.eq(requestDetail))
+                .where(requestDetail.id.eq(fdId).and(inspeot.fiType.eq(fiType)))
+                .select(Projections.constructor(InspeotYnDto.class,
+                        requestDetail.id
+                ));
 
         return query.fetchOne();
     }

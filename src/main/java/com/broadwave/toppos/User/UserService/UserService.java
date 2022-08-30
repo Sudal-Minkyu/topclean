@@ -186,8 +186,15 @@ public class UserService {
         Optional<Request> optionalRequest = requestRepository.request(frNo,frCode);
         if(optionalRequest.isPresent()){
             optionalRequest.get().setFrNormalAmount(normalAmt);
+            optionalRequest.get().setFrDiscountAmount(totalAmt-normalAmt);
             optionalRequest.get().setFrTotalAmount(totalAmt);
-            optionalRequest.get().setFrUncollectYn("Y");
+            if(optionalRequest.get().getFpId() == null){
+                if( optionalRequest.get().getFrTotalAmount() < optionalRequest.get().getFrPayAmount()){
+                    optionalRequest.get().setFrUncollectYn("N");
+                }else{
+                    optionalRequest.get().setFrUncollectYn("Y");
+                }
+            }
             requestRepository.save(optionalRequest.get());
         }
     }

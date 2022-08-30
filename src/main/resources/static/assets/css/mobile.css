@@ -368,6 +368,10 @@ textarea {
 .receipt__sub h3 {
     font-size: 16px;
     font-weight: 400;
+    text-align: center;
+}
+.receipt__sub p {
+    text-align: center;
 }
 .receipt__sub dl {
     overflow: hidden;

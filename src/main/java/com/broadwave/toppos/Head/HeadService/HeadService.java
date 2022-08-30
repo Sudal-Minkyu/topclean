@@ -10,18 +10,27 @@ import com.broadwave.toppos.Head.Branoh.BranchDtos.BranchListDto;
 import com.broadwave.toppos.Head.Franchise.Franchise;
 import com.broadwave.toppos.Head.Franchise.FranchiseDtos.*;
 import com.broadwave.toppos.Head.Franchise.FranchiseRepository;
-import com.broadwave.toppos.Head.Item.Group.A.*;
-import com.broadwave.toppos.Head.Item.Group.B.*;
+import com.broadwave.toppos.Head.Item.Group.A.ItemGroup;
+import com.broadwave.toppos.Head.Item.Group.A.ItemGroupDtos.ItemGroupDto;
+import com.broadwave.toppos.Head.Item.Group.A.ItemGroupDtos.ItemGroupNameListDto;
+import com.broadwave.toppos.Head.Item.Group.A.ItemGroupDtos.UserItemGroupSortDto;
+import com.broadwave.toppos.Head.Item.Group.A.ItemGroupRepository;
+import com.broadwave.toppos.Head.Item.Group.B.ItemGroupS;
+import com.broadwave.toppos.Head.Item.Group.B.ItemGroupSDtos.ItemGroupSInfo;
+import com.broadwave.toppos.Head.Item.Group.B.ItemGroupSDtos.ItemGroupSListDto;
+import com.broadwave.toppos.Head.Item.Group.B.ItemGroupSDtos.ItemGroupSUserListDto;
+import com.broadwave.toppos.Head.Item.Group.B.ItemGroupSDtos.UserItemGroupSListDto;
+import com.broadwave.toppos.Head.Item.Group.B.ItemGroupSRepository;
 import com.broadwave.toppos.Head.Item.Group.C.Item;
-import com.broadwave.toppos.Head.Item.Group.C.ItemListDto;
+import com.broadwave.toppos.Head.Item.Group.C.ItemDtos.ItemListDto;
 import com.broadwave.toppos.Head.Item.Group.C.ItemRepository;
-import com.broadwave.toppos.Head.Item.ItemDtos.ItemPriceDto;
-import com.broadwave.toppos.Head.Item.ItemDtos.ItemPriceListDto;
 import com.broadwave.toppos.Head.Item.ItemDtos.UserItemPriceSortDto;
-import com.broadwave.toppos.Head.Item.Price.FranchisePrice.*;
+import com.broadwave.toppos.Head.Item.Price.FranchisePrice.FranchisePrice;
+import com.broadwave.toppos.Head.Item.Price.FranchisePrice.FranchisePriceRepository;
+import com.broadwave.toppos.Head.Item.Price.FranchisePrice.FranchisePriceDtos.ItemPriceSetDtDto;
 import com.broadwave.toppos.Head.Item.Price.ItemPrice;
 import com.broadwave.toppos.Head.Item.Price.ItemPriceRepository;
-import com.broadwave.toppos.Head.Item.Price.ItemPriceRepositoryCustom;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.user.RequestSearchDto;
 import com.broadwave.toppos.common.AjaxResponse;
 import com.broadwave.toppos.common.CommonUtils;
 import com.broadwave.toppos.common.ResponseErrorCode;
@@ -31,6 +40,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestRepository;
+import com.broadwave.toppos.Head.Branoh.BranchDtos.BranchMapperDto;
 
 import javax.servlet.http.HttpServletRequest;
 import java.sql.SQLException;
@@ -54,18 +65,15 @@ public class HeadService {
     private final ItemPriceRepository itemPriceRepository;
     private final FranchisePriceRepository franchisePriceRepository;
     private final AddCostRepository addCostRepository;
-
-    private final ItemPriceRepositoryCustom itemPriceRepositoryCustom;
-    private final FranchisePriceRepositoryCustom franchisePriceRepositoryCustom;
+    private final RequestRepository requestRepository;
     private final AddCostRepositoryCustom addCostRepositoryCustom;
 
     @Autowired
     public HeadService(ModelMapper modelMapper, AddCostRepository addCostRepository,
                        BranchRepository branchRepository, FranchiseRepository franchiseRepository,
                        ItemGroupRepository itemGroupRepository, ItemGroupSRepository itemGroupSRepository,
-                       ItemRepository itemRepository, ItemPriceRepository itemPriceRepository, ItemPriceRepositoryCustom itemPriceRepositoryCustom,
-                       FranchisePriceRepository franchisePriceRepository, FranchisePriceRepositoryCustom franchisePriceRepositoryCustom,
-                       AddCostRepositoryCustom addCostRepositoryCustom){
+                       ItemRepository itemRepository, ItemPriceRepository itemPriceRepository,
+                       FranchisePriceRepository franchisePriceRepository, RequestRepository requestRepository, AddCostRepositoryCustom addCostRepositoryCustom){
         this.modelMapper = modelMapper;
         this.addCostRepository = addCostRepository;
         this.branchRepository = branchRepository;
@@ -74,9 +82,8 @@ public class HeadService {
         this.itemGroupSRepository = itemGroupSRepository;
         this.itemRepository = itemRepository;
         this.itemPriceRepository = itemPriceRepository;
-        this.itemPriceRepositoryCustom = itemPriceRepositoryCustom;
         this.franchisePriceRepository = franchisePriceRepository;
-        this.franchisePriceRepositoryCustom = franchisePriceRepositoryCustom;
+        this.requestRepository = requestRepository;
         this.addCostRepositoryCustom = addCostRepositoryCustom;
     }
 
@@ -99,7 +106,25 @@ public class HeadService {
         String login_id = CommonUtils.getCurrentuser(request);
 //        log.info("현재 사용자 아이디 : "+login_id);
 
-        Optional<Franchise> optionalFranohise = findByFrCode(franchiseMapperDto.getFrCode());
+        Optional<Franchise> optionalFranohise = franchiseRepository.findByFrCode(franchiseMapperDto.getFrCode());
+
+        // 가맹점 택코드, 마지막번호 set
+        if(franchiseMapperDto.getFrTagNo() == null || franchiseMapperDto.getFrTagNo().equals("")) {
+            if(franchise.getFrTagType().equals("2")) {
+                franchise.setFrTagNo("99");
+                franchise.setFrLastTagno("9900001");
+            }else{
+                franchise.setFrTagNo("999");
+                franchise.setFrLastTagno("9990001");
+            }
+        }else{
+            if(franchise.getFrTagType().equals("2")){
+                franchise.setFrLastTagno(franchise.getFrTagNo() + "00001");
+            }else{
+                franchise.setFrLastTagno(franchise.getFrTagNo() + "0001");
+            }
+        }
+
         if( optionalFranohise.isPresent()){
             log.info("널이 아닙니다 : 업데이트");
             franchise.setId(optionalFranohise.get().getId());
@@ -107,24 +132,6 @@ public class HeadService {
             franchise.setBrId(optionalFranohise.get().getBrId());
             franchise.setBrCode(optionalFranohise.get().getBrCode());
             franchise.setBrAssignState(optionalFranohise.get().getBrAssignState());
-            if(franchiseMapperDto.getFrTagNo() == null || franchiseMapperDto.getFrTagNo().equals("")) {
-                franchise.setFrTagNo(franchiseMapperDto.getFrCode());
-                if(franchise.getFrTagType().equals("2")) {
-                    franchise.setFrLastTagno(franchiseMapperDto.getFrCode() + "00000");
-                }else{
-                    franchise.setFrLastTagno(franchiseMapperDto.getFrCode() + "0000");
-                }
-            }else{
-                if(optionalFranohise.get().getFrLastTagno() != null){
-                    franchise.setFrLastTagno(optionalFranohise.get().getFrLastTagno());
-                }else{
-                    if(franchise.getFrTagType().equals("2")){
-                        franchise.setFrLastTagno(franchise.getFrTagNo() + "00000");
-                    }else{
-                        franchise.setFrLastTagno(franchise.getFrTagNo() + "0000");
-                    }
-                }
-            }
 
             franchise.setModify_id(login_id);
             franchise.setModifyDateTime(LocalDateTime.now());
@@ -132,7 +139,6 @@ public class HeadService {
             franchise.setInsertDateTime(optionalFranohise.get().getInsertDateTime());
         }else{
             log.info("널입니다. : 신규생성");
-            franchise.setFrLastTagno(franchiseMapperDto.getFrTagNo()+"00000");
             if(franchiseMapperDto.getFrEstimateDuration() == null ){
                 franchise.setFrEstimateDuration(2);
             }
@@ -160,8 +166,8 @@ public class HeadService {
 
         log.info("bot_brAssignState : "+bot_brAssignState);
 
-        Optional<Franchise> optionalFranohise = findByFrCode(frCode);
-        Optional<Branch> optionalBranch = findByBrCode(brCode);
+        Optional<Franchise> optionalFranohise = franchiseRepository.findByFrCode(frCode);
+        Optional<Branch> optionalBranch = branchRepository.findByBrCode(brCode);
         if(optionalFranohise.isPresent() && optionalBranch.isPresent()){
 
             optionalFranohise.get().setFrCarculateRateBr(bot_frCarculateRateBr);
@@ -186,9 +192,34 @@ public class HeadService {
     }
 
     // 지사 저장
-    public Branch branchSave(Branch Branoh){
-        branchRepository.save(Branoh);
-        return Branoh;
+    public ResponseEntity<Map<String, Object>> branchSave(BranchMapperDto branohMapperDto, HttpServletRequest request) {
+        log.info("branchSave 호출");
+
+        AjaxResponse res = new AjaxResponse();
+
+        Branch Branoh = modelMapper.map(branohMapperDto, Branch.class);
+
+        String login_id = CommonUtils.getCurrentuser(request);
+//        log.info("현재 사용자 아이디 : "+login_id);
+
+        Optional<Branch> optionalBranoh = branchRepository.findByBrCode(branohMapperDto.getBrCode());
+        if (optionalBranoh.isPresent()) {
+//            log.info("널이 아닙니다 : 업데이트");
+            Branoh.setId(optionalBranoh.get().getId());
+
+            Branoh.setModify_id(login_id);
+            Branoh.setModifyDateTime(LocalDateTime.now());
+            Branoh.setInsert_id(optionalBranoh.get().getInsert_id());
+            Branoh.setInsertDateTime(optionalBranoh.get().getInsertDateTime());
+        } else {
+//            log.info("널입니다. : 신규생성");
+            Branoh.setInsert_id(login_id);
+            Branoh.setInsertDateTime(LocalDateTime.now());
+        }
+
+        Branch BranohSave = branchRepository.save(Branoh);
+        log.info("지사 저장 성공 : id '" + BranohSave.getBrCode() + "'");
+        return ResponseEntity.ok(res.success());
     }
 
     // 가맹점 리스트 API
@@ -202,13 +233,40 @@ public class HeadService {
     }
 
     // 가맹점코드 중복확인 API
-    public Optional<Franchise> findByFrCode(String frCode){
-        return franchiseRepository.findByFrCode(frCode);
+    public ResponseEntity<Map<String, Object>> franchiseOverlap(String frCode){
+        log.info("franchiseOverlap 호출");
+
+        log.info("가맹점 코드 중복확인");
+        AjaxResponse res = new AjaxResponse();
+
+        Optional<Franchise> franohiseOptional = franchiseRepository.findByFrCode(frCode);
+        if (franohiseOptional.isPresent()) {
+            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP003.getCode(), ResponseErrorCode.TP003.getDesc(), null, null));
+        } else {
+            log.info("중복확인 완료");
+        }
+        return ResponseEntity.ok(res.success());
+
     }
 
     // 지점코드 중복확인 API
-    public Optional<Branch> findByBrCode(String brCode){
-        return branchRepository.findByBrCode(brCode);
+    public ResponseEntity<Map<String, Object>> branchOverlap(String brCode){
+        log.info("branchOverlap 호출");
+
+        log.info("지점 코드 중복확인");
+        AjaxResponse res = new AjaxResponse();
+
+        if (brCode.equals("hr")) {
+            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP003.getCode(), ResponseErrorCode.TP003.getDesc(), "문자", "해당 코드는 본사전용 코드입니다."));
+        }
+
+        Optional<Branch> BranohOptional = branchRepository.findByBrCode(brCode);
+        if (BranohOptional.isPresent()) {
+            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP003.getCode(), ResponseErrorCode.TP003.getDesc(), null, null));
+        } else {
+            log.info("중복확인 완료");
+        }
+        return ResponseEntity.ok(res.success());
     }
 
     // 가맹점 정보 호출하기
@@ -308,11 +366,6 @@ public class HeadService {
         return itemPriceRepository.findByItemPriceByBiItemcode(biItemcode);
     }
 
-    // 상품 가격 검색
-    public ItemPriceDto findByItemPrice(String biItemcode, String closeDt) {
-        return itemPriceRepositoryCustom.findByItemPrice(biItemcode, closeDt);
-    }
-
     // 상품 가격 멀티 저장
     @Transactional(rollbackFor = SQLException.class)
     public void itemPriceSaveAll(List<ItemPrice> itemSavePrice, List<ItemPrice> itemUpdatePrice) {
@@ -329,40 +382,11 @@ public class HeadService {
             itemPriceRepository.saveAll(itemPrice);
     }
 
-    // 상품 가격 리스트 호출
-    public List<ItemPriceListDto> findByItemPriceList(String bgName, String biItemcode, String biName, String setDt) {
-        return itemPriceRepositoryCustom.findByItemPriceList(bgName, biItemcode, biName, setDt);
-    }
-
-    // 상품 가격 업데이트 때 사용
-    public Optional<ItemPrice> findByItemPriceOptional(String biItemcode, String setDt, String closeDt) {
-        return itemPriceRepository.findByItemPriceOptional(biItemcode, setDt, closeDt);
-    }
-
-    // 상품 가격 삭제
-    public void findByItemPriceDelete(List<ItemPrice> itemPrice) {
-        itemPriceRepository.deleteAll(itemPrice);
-    }
 
     // @@@@@@@@@@@@@@@@   가맹점 특정품목가격 페이지   @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     // 가맹점 특정품목가격 저장
     public void franchisePriceSave(List<FranchisePrice> franchisePriceList) {
         franchisePriceRepository.saveAll(franchisePriceList);
-    }
-
-    // 가맹점 특정품목가격 리스트
-    public List<FranchisePriceListDto> findByFranchisePriceList(String frCode) {
-        return franchisePriceRepositoryCustom.findByFranchisePriceList(frCode);
-    }
-
-    // 가맹점 특정품목가격 중복검사
-    public Optional<FranchisePrice> findByFranchisePrice(String biItemcode, String frCode) {
-        return franchisePriceRepository.findByFranchisePrice(biItemcode, frCode);
-    }
-
-    // 가맹점 특정품목가격 삭제
-    public void findByFranchisePriceDelete(List<FranchisePrice> franchisePriceList) {
-        franchisePriceRepository.deleteAll(franchisePriceList);
     }
 
     // @@@@@@@@@@@@@@@@@@@@  가맹점 접수 페이지  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -373,7 +397,7 @@ public class HeadService {
 
     // 가맹점 가격 전용 순번적용
     public List<UserItemPriceSortDto> findByUserItemPriceSortList(String frCode, String nowDate) {
-        return itemPriceRepositoryCustom.findByUserItemPriceSortList(frCode, nowDate);
+        return itemPriceRepository.findByUserItemPriceSortList(frCode, nowDate);
     }
 
     // 가맹점 접수페이지 중분류 리스트 Dto
@@ -423,21 +447,6 @@ public class HeadService {
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
-    // 지사코드로 조회하여 해당 지사에 배치된 가맹점이 존재하는지 확인하는 함수
-    public List<FranchiseSearchDto> findByFranchiseBrcode(String brCode) {
-        return franchiseRepository.findByFranchiseBrcode(brCode);
-    }
-
-    // 지사삭제
-    public void findByBranchDelete(Branch branch) {
-        branchRepository.delete(branch);
-    }
-
-    // 가맹점삭제
-    public void findByFranchiseDelete(Franchise franchise) {
-        franchiseRepository.delete(franchise);
-    }
-
     // 모바일전용 가맹점명 호출 함수
     public FranchiseNameInfoDto findByFranchiseNameInfo(String frCode) {
         return franchiseRepository.findByFranchiseNameInfo(frCode);
@@ -449,7 +458,54 @@ public class HeadService {
     }
 
     public List<ItemPriceSetDtDto> findByItemPriceSetDtList() {
-        return itemPriceRepositoryCustom.findByItemPriceSetDtList();
+        return itemPriceRepository.findByItemPriceSetDtList();
     }
 
+    // 가맹점 삭제 API
+    public ResponseEntity<Map<String, Object>> franchiseDelete(String frCode) {
+        log.info("franchiseDelete 호출");
+        log.info("요청된 가맹점코드 : " + frCode);
+
+        AjaxResponse res = new AjaxResponse();
+
+        Optional<Franchise> optionalFranchise = franchiseRepository.findByFrCode(frCode);
+        if (!optionalFranchise.isPresent()) {
+            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP005.getCode(), "삭제 할 " + ResponseErrorCode.TP005.getDesc(), "문자", "가맹점코드(3자리)  : " + frCode));
+        } else {
+            log.info("가맹점코드 : " + optionalFranchise.get().getFrCode());
+            List<RequestSearchDto> request = requestRepository.findByRequestFrCode(optionalFranchise.get().getFrCode());
+            if (request.size() == 0) {
+                log.info(optionalFranchise.get().getFrCode() + " 가맹점삭제 진행");
+                franchiseRepository.delete(optionalFranchise.get());
+            } else {
+                return ResponseEntity.ok(res.fail(ResponseErrorCode.TP011.getCode(), "해당 가맹점의 " + ResponseErrorCode.TP011.getDesc(), "문자", "가맹점코드(3자리)  : " + frCode));
+            }
+        }
+
+        return ResponseEntity.ok(res.success());
+    }
+
+    // 지사 삭제 API
+    public ResponseEntity<Map<String, Object>> branchDelete(String brCode) {
+        log.info("branchDelete 호출");
+        log.info("요청된 지사코드 : " + brCode);
+
+        AjaxResponse res = new AjaxResponse();
+
+        Optional<Branch> optionalBranch = branchRepository.findByBrCode(brCode);
+        if (!optionalBranch.isPresent()) {
+            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP005.getCode(), "삭제 할 " + ResponseErrorCode.TP005.getDesc(), "문자", "지사코드(2자리) : " + brCode));
+        } else {
+            log.info("지사코드 : " + optionalBranch.get().getBrCode());
+            List<FranchiseSearchDto> franchise = franchiseRepository.findByFranchiseBrcode(optionalBranch.get().getBrCode());
+            if (franchise.size() == 0) {
+                log.info(optionalBranch.get().getBrCode() + " 지사삭제 진행");
+                branchRepository.delete(optionalBranch.get());
+            } else {
+                return ResponseEntity.ok(res.fail("문자", "해당 지사에 배정된 가맹점이 존재합니다.", "문자", "지사코드(2자리) : " + optionalBranch.get().getBrCode()));
+            }
+        }
+
+        return ResponseEntity.ok(res.success());
+    }
 }

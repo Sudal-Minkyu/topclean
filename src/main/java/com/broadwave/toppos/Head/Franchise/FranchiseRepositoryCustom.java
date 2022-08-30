@@ -1,6 +1,7 @@
 package com.broadwave.toppos.Head.Franchise;
 
 import com.broadwave.toppos.Head.Franchise.FranchiseDtos.*;
+import com.broadwave.toppos.Head.Franchise.FranchiseDtos.head.FranchiseEventListDto;
 import com.broadwave.toppos.Head.Franchise.FranchiseDtos.head.FranchiseSearchInfoDto;
 import com.broadwave.toppos.Head.Franchise.FranchiseDtos.head.FranchiseTagNoSearchInfoDto;
 
@@ -17,6 +18,7 @@ public interface FranchiseRepositoryCustom {
 
     FranchiseInfoDto findByFranchiseInfo(String frCode);
 
+    // 지사코드로 조회하여 해당 지사에 배치된 가맹점이 존재하는지 확인하는 함수
     List<FranchiseSearchDto> findByFranchiseBrcode(String brCode);
 
     FranchiseUserDto findByFranchiseUserInfo(String frCode);
@@ -35,4 +37,7 @@ public interface FranchiseRepositoryCustom {
     List<FranchiseTagNoSearchInfoDto> findByFranchiseTagNoSearchInfo();
 
     void findByFranchiseDue(String yyyymmdd, String frCode); // proc_hc_daily_fr 프로시저 호출
+
+    List<FranchiseEventListDto> findByEventList(Long brId, String nowDate);
+
 }

@@ -431,8 +431,14 @@ function askSend() {
 }
 
 function sendMessage() {
-    const hmSendreqtimeDt = new Date($("#hmSendreqtimeDate").val() + " " + $("#hmSendreqtimeHour").val() + ":"
-        + $("#hmSendreqtimeMinute").val()).getTime();
+    const dateString = $("#hmSendreqtimeDate").val().numString();
+    const year = dateString.substring(0, 4).toInt();
+    const month = dateString.substring(4, 6).toInt() - 1;
+    const day = dateString.substring(6, 8).toInt();
+    const hour = $("#hmSendreqtimeHour").val().toInt();
+    const minute = $("#hmSendreqtimeMinute").val().toInt();
+    const hmSendreqtimeDt = new Date(year, month, day, hour, minute).getTime();
+
     const isBookSend = $("#isBookSend").is(":checked");
     const bcIdList = [];
     const gridData = grids.f.get(1);

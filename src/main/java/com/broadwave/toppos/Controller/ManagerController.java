@@ -170,6 +170,11 @@ public class ManagerController {
     public String osstatus() {
         return "manager/outsource/osstatus";
     }
+    // QR 스캔이력
+    @RequestMapping("qrhistory")
+    public String qrhistory() {
+        return "manager/inandout/qrhistory";
+    }
 
     // 입출고 현황 1 추가된 것
     // 강제 입고 현황(가맹)

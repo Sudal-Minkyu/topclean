@@ -28,6 +28,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoney;
+import com.broadwave.toppos.User.ReuqestMoney.SaveMoney.SaveMoneyRepository;
 
 /**
  * @author Minkyu
@@ -50,11 +52,12 @@ public class UncollectService {
     private final RequestDetailRepository requestDetailRepository;
 
     private final CustomerRepository customerRepository;
+    private final SaveMoneyRepository saveMoneyRepository;
 
     @Autowired
     public UncollectService(ModelMapper modelMapper, TokenProvider tokenProvider, ReceiptService receiptService,
                             RequestRepository requestRepository, FranchiseRepository franchiseRepository, CustomerRepository customerRepository,
-                            PaymentRepository paymentRepository, RequestDetailRepository requestDetailRepository){
+                            PaymentRepository paymentRepository, RequestDetailRepository requestDetailRepository, SaveMoneyRepository saveMoneyRepository){
         this.modelMapper = modelMapper;
         this.requestRepository = requestRepository;
         this.customerRepository = customerRepository;
@@ -63,6 +66,7 @@ public class UncollectService {
         this.tokenProvider = tokenProvider;
         this.paymentRepository = paymentRepository;
         this.requestDetailRepository = requestDetailRepository;
+        this.saveMoneyRepository = saveMoneyRepository;
     }
 
     // 미수관리페이지 - 고객검색 리스트 호출
@@ -198,8 +202,8 @@ public class UncollectService {
             payInfo.put("frTelNo", optionalFranchise.get().getFrTelNo());
             payInfo.put("bcName", optionalCustomer.get().getBcName());
             payInfo.put("bcHp", optionalCustomer.get().getBcHp());
+            payInfo.put("saveMoney", receiptService.findBySaveMoney(optionalCustomer.get()));
             payInfoData.add(payInfo);
-
 
             List<RequestCustomerUnCollectDto> requestCustomerUnCollectDtos;
             if(frIdList.size() == 0){
@@ -250,6 +254,8 @@ public class UncollectService {
         int realAmt = paymentUncollectMapperDto.getData().getFpRealAmt();
         log.info("현재 결제할 전체 미수금 realAmt : "+realAmt);
 
+        int saveMoney;
+        SaveMoney newSaveMoney = null;
         List<Request> requestList = requestRepository.findByRequestList(paymentUncollectMapperDto.getFrIdList());
 
         Payment payment = modelMapper.map(paymentUncollectMapperDto.getData(),Payment.class);
@@ -259,6 +265,24 @@ public class UncollectService {
 
             int fpCollectAmt = realAmt - fpAmt;
             log.info("미수완납금액 fpCollectAmt : "+fpCollectAmt);
+
+            if(paymentUncollectMapperDto.getData().getFpType().equals("03")){
+                log.info("적립금으로 결제");
+                saveMoney = receiptService.findBySaveMoney(requestList.get(0).getBcId());
+                if(saveMoney < paymentUncollectMapperDto.getData().getFpRealAmt()){
+                    return ResponseEntity.ok(res.fail("문자","결제금액이 보유한 적립금보다 낮습니다.",null,null));
+                }else{
+                    String nowDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+                    newSaveMoney = new SaveMoney();
+                    newSaveMoney.setBcId(requestList.get(0).getBcId());
+                    newSaveMoney.setFsYyyymmdd(nowDate);
+                    newSaveMoney.setFsType("2");
+                    newSaveMoney.setFsClose("N");
+                    newSaveMoney.setFsAmt(paymentUncollectMapperDto.getData().getFpRealAmt());
+                    newSaveMoney.setInsert_id(login_id);
+                    newSaveMoney.setInsert_date(LocalDateTime.now());
+                }
+            }
 
             // 결제 기본데이터
             payment.setFpInType("02"); // 미수결제이기때문에 인타입 "02"
@@ -298,6 +322,10 @@ public class UncollectService {
                 }
             }
             requestRepository.saveAll(requestList);
+
+            if(newSaveMoney != null){
+                saveMoneyRepository.save(newSaveMoney);
+            }
             data.put("frId",savePayment.getFrId());
         }
 

@@ -695,16 +695,6 @@ function makeChart(data) {
 
         var colors = chart.get("colors");
 
-        // var data = [
-        //     {
-        //         "yyyymm": "202201",
-        //         "amt": 0,
-        //         "sum_amt": 0,
-        //         "month": "1월",
-        //     },
-        // ];
-
-
         // Create axes
         var xAxis = chart.xAxes.push(am5xy.CategoryAxis.new(root, {
             categoryField: "month",

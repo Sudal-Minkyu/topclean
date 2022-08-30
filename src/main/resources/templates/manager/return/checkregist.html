@@ -28,7 +28,7 @@
 
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
-	<script src="/assets/js/toppos/manager/return/checkregist.js"></script>
+	<script src="/assets/js/toppos/manager/return/checkregist.js?22082514"></script>
     <!-- lightbox 추가 -->
     <script src="/assets/js/lightbox2/js/lightbox.js"></script>
 </th:block>
@@ -37,35 +37,21 @@
     <section class="section">
         <article class="article">
             <div class="article__header">
-                <h3 class="article__heading">확인품등록</h3>
+                <h3 class="article__heading">확인품 등록</h3>
             </div>
             <div class="article__body">
                 <div class="inquiry">
                     <div class="inquiry__condition">
                         <ul>
                             <li>
-                                <div class="inquiry__title">가맹점</div>
                                 <div class="inquiry__input">
-                                    <div class="c-select">
-                                        <select id="frList">
-                                            <option value="" data-tagno="">가맹점 선택</option>
-                                        </select>
+                                    <div class="c-radio">
+                                        <input type="radio" class="searchMethod" name="type" id="searchByTagNo" value="" checked=""/>
+                                        <label for="searchByTagNo">택번호검색</label>
                                     </div>
-                                </div>
-                            </li>
-                            <li>
-                                <div id="frTagNo" class="inquiry__title">택번호(앞)</div>
-                                <div class="inquiry__input">
-                                    <div class="inquiry__input-tag">
-                                        <input id="foreTag" type="text" style="color: black;" readonly/>
-                                    </div>
-                                </div>
-                            </li>
-                            <li>
-                                <div class="inquiry__title">택번호(뒤)</div>
-                                <div class="inquiry__input">
-                                    <div class="inquiry__input-tag">
-                                        <input id="aftTag" type="text" maxlength="5" />
+                                    <div class="c-radio">
+                                        <input type="radio" class="searchMethod" name="type" id="searchByFranchise" value="" />
+                                        <label for="searchByFranchise">가맹점선택검색</label>
                                     </div>
                                 </div>
                             </li>
@@ -78,6 +64,39 @@
                                         <span class="c-period__code">-</span>
                                         <!-- 종료일 -->
                                         <input type="text" id="filterToDt">
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="searchByTagNo">
+                                <div class="inquiry__title">택번호(전체)</div>
+                                <div class="inquiry__input">
+                                    <div class="inquiry__input-tag">
+                                        <input id="frTagNo" type="text" style="color: black;" maxlength="7"/>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="searchByFranchise" style="display: none">
+                                <div class="inquiry__input">
+                                    <div class="c-select">
+                                        <select id="frList">
+                                            <option value="" data-tagno="">가맹점 선택</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="searchByFranchise" style="display: none">
+                                <div class="inquiry__title">택번호(앞)</div>
+                                <div class="inquiry__input">
+                                    <div class="inquiry__input-tag">
+                                        <input id="foreTag" type="text" style="color: black;" readonly/>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="searchByFranchise" style="display: none">
+                                <div class="inquiry__title">택번호(뒤)</div>
+                                <div class="inquiry__input">
+                                    <div class="inquiry__input-tag">
+                                        <input id="aftTag" type="text" maxlength="5" />
                                     </div>
                                 </div>
                             </li>

@@ -21,7 +21,6 @@ const comms = {
         wares.currentData = {};
         CommonUI.ajax('/api/user/franchiseReceiptDaysList', 'GET', targetDate, function (res) {
             const data = res.sendData.monthlySummaryDaysDtos[0];
-            // console.log(data);
             if (data) {
                 wares.currentData = data;
                 wares.currentData.hsYyyymmdd = targetDate.hsYyyymmdd;
@@ -46,9 +45,13 @@ const trigs = {
             openDayBalancePop();
         });
 
+        $('#printCATBtn').on('click', function () {
+            printCAT();
+        });
+
         $('.pop__close').on('click', function () {
             $(this).parents('.pop').removeClass('active');
-        })
+        });
     },
 };
 
@@ -102,7 +105,7 @@ const calculateFields = function (data) {
         add7: data.a1 + data.a2 + data.a3 + data.a4 + data.a5 + data.a6,
 
         add8: data.b1 + data.b2 + data.b3 + data.b4 + data.b5,
-        add9: data.b9 + data.b10 + data.b11 + data.b12 + data.b13,
+        add9: data.b9 + data.b10 + data.b11 + data.b12 - data.b13,
         add11: data.b15,
         add12: data.b16 - data.b17,
         add10: data.b15 + data.b16,
@@ -119,6 +122,11 @@ const calculateFields = function (data) {
 };
 
 function openDayBalancePop() {
+    if (!wares.currentData.hsYyyymmdd) {
+        alertCaution("먼저 정산 내역을 조회해 주세요.", 1);
+        return;
+    }
+
     const _params = {
         projectName: "toppos",
         formName: "franchiseDays2",
@@ -130,6 +138,15 @@ function openDayBalancePop() {
 
     $("#dayBalance").attr("src", fullURL);
     $("#balancePop").addClass("active");
+}
+
+function printCAT() {
+    if (!wares.currentData.hsYyyymmdd) {
+        alertCaution("먼저 정산 내역을 조회해 주세요.", 1);
+        return;
+    }
+
+    CAT.CatPrintDailyStatementOfAccounts(wares.currentData);
 }
 
 
@@ -145,7 +162,6 @@ const setFieldsByEachJsonKey = function (jsonObj) {
     // jsonObj.d2 = jsonObj.d2 === "" ? "접속정보없음" : jsonObj.d2;
     const keys = Object.keys(jsonObj);
     for(const key of keys) {
-        // console.log("key", key);
         if (Number.isInteger(jsonObj[key])) {
             $('#' + key).html(jsonObj[key].toLocaleString());
         } else if (jsonObj[key].length === 19) {

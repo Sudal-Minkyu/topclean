@@ -15,7 +15,7 @@
 			<img src="/assets/images/icon__reg.svg" alt=""><span>세탁접수</span>
 		</a>
 		<a id="menuDelivery" href="/user/delivery" class="header__btn">
-			<img src="/assets/images/icon__send.svg" alt=""><span>세탁인도</span>
+			<img src="/assets/images/icon__send.svg" alt=""><span>고객 출고</span>
 		</a>
 		<a id="menuIntegrate" href="/user/integrate" class="header__btn">
 			<img src="/assets/images/icon__totalsearch.svg" alt=""><span>통합조회</span>
@@ -38,7 +38,7 @@
 				<h2 class="nav__group-title">세탁관리</h2>
 				<ul class="nav__list">
 					<li class="nav__item"><a href="/user/receiptreg" class="nav__link">세탁 접수</a></li>
-					<li class="nav__item"><a href="/user/delivery" class="nav__link">세탁 인도</a></li>
+					<li class="nav__item"><a href="/user/delivery" class="nav__link">고객 출고</a></li>
 					<li class="nav__item"><a href="/user/integrate" class="nav__link">통합 조회</a></li>
 					<li class="nav__item"><a href="/user/inspect" class="nav__link">검품이력 및 메세지 관리</a></li>
 				</ul>
@@ -98,7 +98,7 @@
 				<h2 class="nav__group-title">자주쓰는 메뉴</h2>
 				<ul class="nav__list">
 					<li class="nav__item"><a href="/user/receiptreg" class="nav__link">세탁 접수</a></li>
-					<li class="nav__item"><a href="/user/delivery" class="nav__link">세탁 인도</a></li>
+					<li class="nav__item"><a href="/user/delivery" class="nav__link">고객 출고</a></li>
 					<li class="nav__item"><a href="/user/integrate" class="nav__link">통합 조회</a></li>
 					<li class="nav__item"><a href="/user/customerlist" class="nav__link">고객 조회</a></li>
 					<li class="nav__item"><a href="/user/unpaid" class="nav__link">미수 조회</a></li>
@@ -109,7 +109,7 @@
 <!--				<h2 class="nav__group-title">최근 사용 메뉴</h2>-->
 <!--				<ul class="nav__list">-->
 <!--					<li class="nav__item"><a href="/user/receiptreg" class="nav__link">세탁 접수</a></li>-->
-<!--					<li class="nav__item"><a href="/user/delivery" class="nav__link">세탁 인도</a></li>-->
+<!--					<li class="nav__item"><a href="/user/delivery" class="nav__link">고객 출고</a></li>-->
 <!--					<li class="nav__item"><a href="/user/integrate" class="nav__link">통합 조회</a></li>-->
 <!--					<li class="nav__item"><a href="/user/customerreg" class="nav__link">고객 등록</a></li>-->
 <!--					<li class="nav__item"><a href="/user/mypage" class="nav__link">나의 정보 관리</a></li>-->
@@ -130,6 +130,10 @@
 			const parsedToken = readToken(token);
 			frTagInfo.frTagNo = parsedToken.frTagNo;
 			frTagInfo.frTagType = parsedToken.frTagType.toInt();
+
+			if (!frTagInfo.frTagType) {
+				alertCaution("인증 토큰을 찾을 수 없습니다.<br>다시 로그인 해주세요.");
+			}
 
 			$('#openNav').on('click', function() {
 				$('.nav').addClass('active');

@@ -1,4 +1,4 @@
-import {grids, runOnlyOnce} from '../../module/m_headstat.js';
+import {grids, runOnlyOnce} from '../../module/m_headstat.js?22081117';
 
 window.grids = grids;
 
@@ -11,7 +11,7 @@ $(function() {
 });
 
 const onPageLoad = function () {
-    runOnlyOnce.setXlsxTitleName('고객반품인도현황');
+    runOnlyOnce.setXlsxTitleName('고객반품현황');
 
     runOnlyOnce.makeSummaryGrid({
         url: '/api/head/headReturnReceiptList',

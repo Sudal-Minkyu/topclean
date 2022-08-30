@@ -258,6 +258,18 @@ public class RequestDetail {
     @Column(name="fd_discount_amt")
     private Integer fdDiscountAmt; // 할인금액
 
+    @Column(name="hp_id")
+    private Long hpId; // 행사마스터 PK
+
+    @Column(name="fd_promotion_type")
+    private String fdPromotionType; // 행사타입(H1 : 본사직영 수기행사 할인- 기본금액대비할인)
+
+    @Column(name="fd_promotion_discount_rate")
+    private Double fdPromotionDiscountRate; // 행사할인율
+
+    @Column(name="fd_promotion_discount_amt")
+    private Integer fdPromotionDiscountAmt; // 행사할인금액
+
     @Column(name="fd_qty")
     private Integer fdQty; // 수량
 
@@ -299,6 +311,9 @@ public class RequestDetail {
 
     @Column(name="fd_modify_amt_dt")
     private LocalDateTime fdModifyAmtDt; // 금액수정시간
+
+    @Column(name="bc_id")
+    private Long bcId; // 고객 고유값 ID
 
     @Column(name="insert_id")
     private String insert_id;

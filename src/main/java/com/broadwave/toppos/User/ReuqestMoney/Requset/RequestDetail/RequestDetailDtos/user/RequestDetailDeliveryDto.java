@@ -22,6 +22,8 @@ public class RequestDetailDeliveryDto {
     private String frRefType; // 접수타입(01:일반, 02:무인보관함, 03:배송APP)
     private String bcName; // 고객이름
 
+    private String frNo; // 접수코드
+
     private BigInteger fdId; // 접수세부테이블 고유값 ID
 
     private String frYyyymmdd; // 접수일자
@@ -67,6 +69,9 @@ public class RequestDetailDeliveryDto {
 
     private Integer fdPollutionType;
     private Integer fdPollutionBack;
+
+    private String fdPromotionType; // 행사타입(H1 : 본사직영 수기행사 할인- 기본금액대비할인)
+    private Double fdPromotionDiscountRate; // 행사할인율
 
     public Integer getFdPollutionType() {
         return fdPollutionType + fdPollutionBack;

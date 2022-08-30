@@ -5,7 +5,7 @@ let targetFieldID = ["userid", "password"];
 let vkeyProp = [];
 
 vkeyProp[0] = {
-    title : "ID를 입력해주세요",
+    title : "아이디를 입력해주세요",
 }
 
 vkeyProp[1] = {
@@ -97,7 +97,7 @@ function loginActive() {
         return false;
     }
     if ($password.val().trim() === '') {
-        alertCaution("비밀번호을 입력하세요.");
+        alertCaution("비밀번호를 입력하세요.");
         $password.trigger('focus');
         return false;
     }
@@ -119,7 +119,7 @@ function loginActive() {
         error(req) {
             if(req.status === 401){
                 $('.l-popup').removeClass('open');
-                alertCancel("비밀번호가 틀렸습니다.");
+                alertCancel("아이디 혹은 비밀번호가<br>정확하지 않습니다.");
                 $("#password").val("");
             }else{
                 ajaxErrorMsg(req);

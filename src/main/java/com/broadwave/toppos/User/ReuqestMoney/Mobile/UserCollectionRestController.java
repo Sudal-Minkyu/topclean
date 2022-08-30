@@ -1,11 +1,6 @@
 package com.broadwave.toppos.User.ReuqestMoney.Mobile;
 
-import com.broadwave.toppos.Head.Franchise.FranchiseDtos.FranchiseNameInfoDto;
-import com.broadwave.toppos.Head.HeadService.HeadService;
-import com.broadwave.toppos.User.ReuqestMoney.Mobile.QrClose.QrClose;
-import com.broadwave.toppos.User.ReuqestMoney.Mobile.QrClose.QrCloseRepository;
-import com.broadwave.toppos.User.UserService.ReceiptStateService;
-import com.broadwave.toppos.common.AjaxResponse;
+import com.broadwave.toppos.User.UserService.QrService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,9 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -30,60 +22,23 @@ import java.util.Map;
 @RequestMapping("/api/collection")
 public class UserCollectionRestController {
 
-    private final HeadService headService;
-    private final ReceiptStateService receiptStateService;
-    private final QrCloseRepository qrCloseRepository;
+    private final QrService qrService;
 
     @Autowired
-    public UserCollectionRestController(HeadService headService, ReceiptStateService receiptStateService, QrCloseRepository qrCloseRepository) {
-        this.headService = headService;
-        this.receiptStateService = receiptStateService;
-        this.qrCloseRepository = qrCloseRepository;
+    public UserCollectionRestController(QrService qrService) {
+        this.qrService = qrService;
     }
 
     // 가맹점명 호출
     @GetMapping("/info")
     public ResponseEntity<Map<String,Object>> collectInfo(@RequestParam("frCode")String frCode) {
-
-        log.info("collectInfo 호출성공");
-
-        AjaxResponse res = new AjaxResponse();
-        HashMap<String, Object> data = new HashMap<>();
-
-        FranchiseNameInfoDto franchiseNameInfoDto = headService.findByFranchiseNameInfo(frCode);
-
-        if(franchiseNameInfoDto != null){
-            data.put("frName",franchiseNameInfoDto.getFrName());
-        }else{
-            data.put("frName",null);
-        }
-
-        return ResponseEntity.ok(res.dataSendSuccess(data));
+        return qrService.collectInfo(frCode);
     }
 
     // 수거처리
     @GetMapping("/process")
     public ResponseEntity<Map<String,Object>> collectProcess(@RequestParam("frCode")String frCode) {
-
-        log.info("collectProcess 호출성공");
-
-        LocalDateTime nowDate = LocalDateTime.now();
-        log.info("현재날짜 : "+nowDate);
-        log.info("가맹코드 : "+frCode);
-
-        AjaxResponse res = new AjaxResponse();
-
-        // 수기마감 페이지에 보여줄 리스트 호출
-        int requestDetailMobileListDtos = receiptStateService.findByRequestDetailMobileCloseList(frCode);
-
-        QrClose qrClose = new QrClose();
-        qrClose.setFrCode(frCode);
-        qrClose.setFqCloseCnt(requestDetailMobileListDtos);
-        qrClose.setInsertYyyymmdd(nowDate.format(DateTimeFormatter.ofPattern("yyyyMMdd")));
-        qrClose.setInsertDt(nowDate);
-        qrCloseRepository.save(qrClose);
-
-        return ResponseEntity.ok(res.success());
+        return qrService.collectProcess(frCode);
     }
 
 

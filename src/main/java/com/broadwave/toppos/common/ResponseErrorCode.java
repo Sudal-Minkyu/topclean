@@ -37,6 +37,8 @@ public enum ResponseErrorCode {
     TP028("TP028", "대상이 아닙니다."),
     TP029("TP029", "상품을 선택해주세요."),
     TP030("TP030", "존재하지 않습니다."),
+    TP031("TP031", "실패했습니다."),
+    TP032("TP032", "확인품 등록을 할 수 없습니다.."),
     ;
 
     private String code;

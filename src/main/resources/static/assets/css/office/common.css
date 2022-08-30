@@ -2556,6 +2556,79 @@ textarea {
 }
 
 
+/* promoreg */
+.promoreg {
+	display: flex;
+	flex-wrap: wrap;
+}
+.promoreg__section {
+	flex: 4;
+	position: relative;
+}
+.promoreg__section:first-child {
+	flex: 3;
+}
+.promoreg__section + .promoreg__section {
+	margin-left: 41px;
+}
+.promoreg__section + .promoreg__section:before {
+	content: '';
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -21px;
+	width: 1px;
+	height: 100%;
+	background-color: #eaeaea;
+}
+.promoreg__article + .promoreg__article {
+	margin-top: 20px;
+}
+.promoreg__list {
+	display: flex;
+	flex-wrap: wrap;
+}
+.promoreg__select-list {
+	flex: 2;
+}
+.promoreg__detail-list {
+	flex: 3;
+	margin-left: 20px;
+}
+.promoreg__list.promoreg__list--fr .promoreg__select-list {
+	flex: 0 1 auto;
+	width: 40%;
+}
+.promoreg__list.promoreg__list--fr .promoreg__detail-list {
+	flex: 0 1 auto;
+	width: calc(60% - 20px);
+}
+.promoreg__title {
+	margin-bottom: 10px;
+}
+.promoreg__console {
+	display: flex;
+	align-items: center;
+}
+.promoreg__console.promoreg__console--right {
+	justify-content: flex-end;
+}
+.promoreg__console.promoreg__console--between {
+	justify-content: space-between;
+}
+.promoreg__console-item + .promoreg__console-item {
+	margin-left: 10px;
+}
+.promoreg__console-item {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+}
+.promoreg__console-item-title + .promoreg__console-item-input {
+	margin-left: 10px;
+}
+
+
 /* grid 컬러박스 */
 .colorSquare {
 	height: 20px;

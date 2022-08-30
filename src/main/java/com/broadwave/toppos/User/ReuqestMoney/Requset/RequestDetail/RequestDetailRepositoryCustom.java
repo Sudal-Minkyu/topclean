@@ -99,4 +99,5 @@ public interface RequestDetailRepositoryCustom {
     List<RequestRetryListSubDto> findByHeadRetrySubList(Long branchId, Long franchiseId, String frYyyymmdd); // 본사 재새탁입고현황 오른쪽 Querydsl
 
 
+    Long findByPromotionCancelCount(String promotionType, Long id, String biItemcode, String fdPriceGrade, String type); // 행사관련 품목의 접수취소시 해당 조건과 일치하는 품목 갯수 가져오는 Query
 }

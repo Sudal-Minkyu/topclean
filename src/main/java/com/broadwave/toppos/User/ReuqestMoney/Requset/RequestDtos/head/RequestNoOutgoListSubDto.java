@@ -70,6 +70,9 @@ public class RequestNoOutgoListSubDto {
     private String fdS6Dt; // 고객인도일
     private LocalDateTime fdS6Time; // 고객인도시간
 
+    private String fdPromotionType; // 행사타입(H1 : 본사직영 수기행사 할인- 기본금액대비할인)
+    private Double fdPromotionDiscountRate; // 행사할인율
+
     public Integer getFdPollutionType() {
         return fdPollutionType + fdPollutionBack;
     }

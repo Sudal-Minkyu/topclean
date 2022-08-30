@@ -1,9 +1,11 @@
 package com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos;
 
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.PhotoDto;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
 import java.util.List;
 
 /**
@@ -17,6 +19,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RequestDetailMapperDto {
+
+    private Long fdId; // 접수세부테이블 고유값 ID
 
     private String biItemcode; // 상품코드
     private String fdTag; // 택번호
@@ -59,6 +63,13 @@ public class RequestDetailMapperDto {
     private String fdDiscountGrade; // 할인등급 1:일반(할인0%), 2: vip, 3.vvip
     private Integer fdDiscountAmt; // 할인금액
     private Integer fdQty; // 수량
+
+    private Integer fdTotAmt; // 합계금액( (정상 + 수선 + 추가1 + 추가2 -할인) * 수량 )
+
+    private Long hpId; // 행사마스터 PK
+    private String fdPromotionType; // 행사타입(H1 : 본사직영 수기행사 할인- 기본금액대비할인)
+    private Double fdPromotionDiscountRate; // 행사할인율
+    private Integer fdPromotionDiscountAmt; // 행사할인금액
 
     private Integer fdRequestAmt; // 접수금액( (정상 + 수선 + 추가1 -할인) * 수량 )
 

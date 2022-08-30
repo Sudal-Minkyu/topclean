@@ -17,7 +17,7 @@
 
 <!-- 사용자 스크립트 추가 -->
 <th:block layout:fragment="script">
-	<script src="/assets/js/toppos/user/receipt/delivery.js"></script>
+	<script src="/assets/js/toppos/user/receipt/delivery.js?22082618"></script>
 	<!-- lightbox 추가 -->
 	<script src="/assets/js/lightbox2/js/lightbox.js"></script>
 </th:block>
@@ -25,7 +25,7 @@
 <div layout:fragment="content" class="content content--column">
 	<div class="content__header">
         <!-- menu명 -->
-        <h2 class="content__heading"><spans class="content__heading-home">Home</spans>&nbsp;&gt;&nbsp;세탁관리&nbsp;&gt;&nbsp;세탁인도</h2>
+        <h2 class="content__heading"><spans class="content__heading-home">Home</spans>&nbsp;&gt;&nbsp;세탁관리&nbsp;&gt;&nbsp;고객 출고</h2>
 		<!-- 검색 -->
 		<div class="search">
 			<div class="c-select">
@@ -89,7 +89,8 @@
 			</div>
 			<div class="delivery__comment">구분 : 무 - 무인택배함, 배 - 배송 App</div>
 			<div class="delivery__console">
-				<button class="c-button c-button--small c-button--solid" id="deliverLaundry">세탁물 인도</button>
+				<button id="printReceipt" class="c-button c-button--small">영수증인쇄</button>&nbsp;&nbsp;
+				<button class="c-button c-button--small c-button--solid" id="deliverLaundry">세탁물 고객 출고</button>
 				<!--<button class="c-button c-button&#45;&#45;small c-button&#45;&#45;solid" id="repay">미수 결제</button>-->
 			</div>
 		</div>
@@ -217,9 +218,15 @@
 					<div id="grid_payment" style="height: 240px;"></div>
 
 					<div class="unpaid-pop">
-						<div class="unpaid-pop__sum">
-							<div class="unpaid-pop__sum-title">미수총결제금액</div>
-							<div class="unpaid-pop__sum-money"><span id="totalUncollectAmount">0</span>원</div>
+						<div class="unpaid-pop__sum-area">
+							<div class="unpaid-pop__sum">
+								<div class="unpaid-pop__sum-title">미수총결제금액</div>
+								<div class="unpaid-pop__sum-money"><span id="totalUncollectAmount">0</span>원</div>
+							</div>
+							<div class="unpaid-pop__sum unpaid-pop__sum--light">
+								<div class="unpaid-pop__sum-title">적립금보유액</div>
+								<div class="unpaid-pop__sum-money"><span id="saveMoney">0</span>원</div>
+							</div>
 						</div>
 						<div class="unpaid-pop__payment">
 							<div class="unpaid-pop__period">
@@ -250,6 +257,12 @@
 								<div class="choice">
 									<input type="radio" name="payType" id="payType2" value="02" />
 									<label for="payType2">카드결제</label>
+								</div>
+							</div>
+							<div class="unpaid-pop__payment-select">
+								<div class="choice">
+									<input type="radio" name="payType" id="payType3" value="03" />
+									<label for="payType3">적립금결제</label>
 								</div>
 							</div>
 						</div>

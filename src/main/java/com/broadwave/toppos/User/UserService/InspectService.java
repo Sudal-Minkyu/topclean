@@ -10,10 +10,7 @@ import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Payment.PaymentRepositoryCustom;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.Request;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.Inspeot;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotInfoDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotListDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotMainListDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotMapperDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.*;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotRepositoryCustom;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.MessageHistory.MessageHistory;
@@ -28,6 +25,7 @@ import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetai
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailInspectDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailSearchDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailUpdateDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.requestDetailUpdateListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepository;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.user.RequestFdTagDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestRepository;
@@ -78,6 +76,8 @@ public class InspectService {
     private final TokenProvider tokenProvider;
 
     private final AWSS3Service awss3Service;
+    private final ReceiptService receiptService;
+
     private final PaymentRepository paymentRepository;
     private final PaymentRepositoryCustom paymentRepositoryCustom;
     private final PhotoRepository photoRepository;
@@ -90,12 +90,13 @@ public class InspectService {
     private final CustomerRepository customerRepository;
 
     @Autowired
-    public InspectService(ModelMapper modelMapper, TokenProvider tokenProvider, UserService userService, AWSS3Service awss3Service, PhotoRepository photoRepository,
+    public InspectService(ModelMapper modelMapper, TokenProvider tokenProvider, UserService userService, AWSS3Service awss3Service, ReceiptService receiptService, PhotoRepository photoRepository,
                           PaymentRepository paymentRepository, PaymentRepositoryCustom paymentRepositoryCustom, InspeotRepository inspeotRepository,
                           RequestRepository requestRepository, InspeotRepositoryCustom inspeotRepositoryCustom,
                           RequestDetailRepository requestDetailRepository, SaveMoneyRepository saveMoneyRepository, MessageHistoryRepository messageHistoryRepository,
                           CustomerRepository customerRepository){
         this.modelMapper = modelMapper;
+        this.receiptService = receiptService;
         this.inspeotRepository = inspeotRepository;
         this.awss3Service = awss3Service;
         this.tokenProvider = tokenProvider;
@@ -137,13 +138,14 @@ public class InspectService {
         List<RequestDetailSearchDto> requestDetailSearchDtoList = requestDetailRepository.requestDetailSearch(frCode, bcId, frTagNo+searchTag, filterCondition, filterFromDt, filterToDt); //  통합조회용 - 접수세부 호출
         log.info("requestDetailSearchDtoList 크기 : "+requestDetailSearchDtoList.size());
 
-
         for(RequestDetailSearchDto requestDetailDto : requestDetailSearchDtoList){
             requestDetailInfo = new HashMap<>();
 
             requestDetailInfo.put("bcName", requestDetailDto.getBcName());
+            requestDetailInfo.put("bcGrade", requestDetailDto.getBcGrade());
             requestDetailInfo.put("frYyyymmdd", requestDetailDto.getFrYyyymmdd());
             requestDetailInfo.put("frInsertDt", requestDetailDto.getFrInsertDt());
+            requestDetailInfo.put("fpId", requestDetailDto.getFpId());
 
             requestDetailInfo.put("fdId", requestDetailDto.getFdId());
             requestDetailInfo.put("frId", requestDetailDto.getFrId());
@@ -159,6 +161,7 @@ public class InspectService {
             requestDetailInfo.put("fdS4Dt", requestDetailDto.getFdS4Dt());
             requestDetailInfo.put("fdS5Dt", requestDetailDto.getFdS5Dt());
             requestDetailInfo.put("fdS6Dt", requestDetailDto.getFdS6Dt());
+            requestDetailInfo.put("fdS6Type", requestDetailDto.getFdS6Type());
             requestDetailInfo.put("fdS6Time", requestDetailDto.getFdS6Time());
             requestDetailInfo.put("fdS6CancelYn", requestDetailDto.getFdS6CancelYn());
             requestDetailInfo.put("fdS6CancelTime", requestDetailDto.getFdS6CancelTime());
@@ -180,6 +183,11 @@ public class InspectService {
             requestDetailInfo.put("fdDiscountGrade", requestDetailDto.getFdDiscountGrade());
             requestDetailInfo.put("fdDiscountAmt", requestDetailDto.getFdDiscountAmt());
             requestDetailInfo.put("fdQty", requestDetailDto.getFdQty());
+
+            requestDetailInfo.put("hpId", requestDetailDto.getHpId());
+            requestDetailInfo.put("fdPromotionType", requestDetailDto.getFdPromotionType());
+            requestDetailInfo.put("fdPromotionDiscountRate", requestDetailDto.getFdPromotionDiscountRate());
+            requestDetailInfo.put("fdPromotionDiscountAmt", requestDetailDto.getFdPromotionDiscountAmt());
 
             requestDetailInfo.put("fdRequestAmt", requestDetailDto.getFdRequestAmt());
             requestDetailInfo.put("fdSpecialYn", requestDetailDto.getFdSpecialYn());
@@ -248,7 +256,7 @@ public class InspectService {
     }
 
     //  통합조회용 - 접수 세부테이블 수정
-    public ResponseEntity<Map<String, Object>> franchiseRequestDetailUpdate(RequestDetailUpdateDto requestDetailUpdateDto, HttpServletRequest request) {
+    public ResponseEntity<Map<String, Object>> franchiseRequestDetailUpdate(requestDetailUpdateListDto requestDetailUpdateListDto, HttpServletRequest request) {
         log.info("franchiseRequestDetailUpdate 호출");
 
         AjaxResponse res = new AjaxResponse();
@@ -260,105 +268,116 @@ public class InspectService {
         log.info("현재 접속한 아이디 : "+login_id);
         log.info("현재 접속한 가맹점 코드 : "+frCode);
 
-        Optional<RequestDetail> optionalRequestDetail = requestDetailRepository.findById(requestDetailUpdateDto.getFdId());
-        if(!optionalRequestDetail.isPresent()){
-            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "수정 할 "+ ResponseErrorCode.TP022.getDesc(), null,null));
-        }else{
-            log.info("수정할 세부테이블 아이디 : "+optionalRequestDetail.get().getId());
+        log.info("requestDetailUpdateListDto : "+requestDetailUpdateListDto);
+        List<RequestDetailUpdateDto> requestDetailUpdateList = requestDetailUpdateListDto.getRequestDetailUpdateList();
+        if(requestDetailUpdateList.size() != 0){
+            for(RequestDetailUpdateDto requestDetailUpdateDto : requestDetailUpdateList){
+                Optional<RequestDetail> optionalRequestDetail = requestDetailRepository.findById(requestDetailUpdateDto.getFdId());
+                if(!optionalRequestDetail.isPresent()){
+                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP009.getCode(), "수정 할 "+ ResponseErrorCode.TP022.getDesc(), null,null));
+                }else {
+                    log.info("수정할 세부테이블 아이디 : " + optionalRequestDetail.get().getId());
 
-            Integer nowFdTotAmt = optionalRequestDetail.get().getFdTotAmt();
-            Integer updateFdTotAmt = requestDetailUpdateDto.getFdTotAmt();
+                    Integer nowFdTotAmt = optionalRequestDetail.get().getFdTotAmt();
+                    Integer updateFdTotAmt = requestDetailUpdateDto.getFdTotAmt();
 
-            // RequestDetail 수정 시작
-            optionalRequestDetail.get().setFdTotAmt(updateFdTotAmt);
+                    // RequestDetail 수정 시작
+                    optionalRequestDetail.get().setFdTotAmt(updateFdTotAmt);
 
-            optionalRequestDetail.get().setBiItemcode(requestDetailUpdateDto.getBiItemcode());
-            optionalRequestDetail.get().setFdColor(requestDetailUpdateDto.getFdColor());
-            optionalRequestDetail.get().setFdPattern(requestDetailUpdateDto.getFdPattern());
-            optionalRequestDetail.get().setFdPriceGrade(requestDetailUpdateDto.getFdPriceGrade());
-            optionalRequestDetail.get().setFdOriginAmt(requestDetailUpdateDto.getFdOriginAmt());
-            optionalRequestDetail.get().setFdNormalAmt(requestDetailUpdateDto.getFdNormalAmt());
+                    optionalRequestDetail.get().setBiItemcode(requestDetailUpdateDto.getBiItemcode());
+                    optionalRequestDetail.get().setFdColor(requestDetailUpdateDto.getFdColor());
+                    optionalRequestDetail.get().setFdPattern(requestDetailUpdateDto.getFdPattern());
+                    optionalRequestDetail.get().setFdPriceGrade(requestDetailUpdateDto.getFdPriceGrade());
+                    optionalRequestDetail.get().setFdOriginAmt(requestDetailUpdateDto.getFdOriginAmt());
+                    optionalRequestDetail.get().setFdNormalAmt(requestDetailUpdateDto.getFdNormalAmt());
 
-            optionalRequestDetail.get().setFdAdd2Amt(requestDetailUpdateDto.getFdAdd2Amt());
-            optionalRequestDetail.get().setFdAdd2Remark(requestDetailUpdateDto.getFdAdd2Remark());
-            optionalRequestDetail.get().setFdRepairRemark(requestDetailUpdateDto.getFdRepairRemark());
-            optionalRequestDetail.get().setFdRepairAmt(requestDetailUpdateDto.getFdRepairAmt());
-            optionalRequestDetail.get().setFdSpecialYn(requestDetailUpdateDto.getFdSpecialYn());
+                    optionalRequestDetail.get().setFdAdd2Amt(requestDetailUpdateDto.getFdAdd2Amt());
+                    optionalRequestDetail.get().setFdAdd2Remark(requestDetailUpdateDto.getFdAdd2Remark());
+                    optionalRequestDetail.get().setFdRepairRemark(requestDetailUpdateDto.getFdRepairRemark());
+                    optionalRequestDetail.get().setFdRepairAmt(requestDetailUpdateDto.getFdRepairAmt());
+                    optionalRequestDetail.get().setFdSpecialYn(requestDetailUpdateDto.getFdSpecialYn());
 
-            optionalRequestDetail.get().setFdAdd1Amt(requestDetailUpdateDto.getFdAdd1Amt());
-            optionalRequestDetail.get().setFdAdd1Remark(requestDetailUpdateDto.getFdAdd1Remark());
-            optionalRequestDetail.get().setFdPressed(requestDetailUpdateDto.getFdPressed());
-            optionalRequestDetail.get().setFdWhitening(requestDetailUpdateDto.getFdWhitening());
-            optionalRequestDetail.get().setFdPollution(requestDetailUpdateDto.getFdPollution());
+                    optionalRequestDetail.get().setFdAdd1Amt(requestDetailUpdateDto.getFdAdd1Amt());
+                    optionalRequestDetail.get().setFdAdd1Remark(requestDetailUpdateDto.getFdAdd1Remark());
+                    optionalRequestDetail.get().setFdPressed(requestDetailUpdateDto.getFdPressed());
+                    optionalRequestDetail.get().setFdWhitening(requestDetailUpdateDto.getFdWhitening());
+                    optionalRequestDetail.get().setFdPollution(requestDetailUpdateDto.getFdPollution());
 
-            optionalRequestDetail.get().setFdPollutionLevel(requestDetailUpdateDto.getFdPollutionLevel());
+                    optionalRequestDetail.get().setFdPollutionLevel(requestDetailUpdateDto.getFdPollutionLevel());
 
-            optionalRequestDetail.get().setFdPollutionLocFcn(requestDetailUpdateDto.getFdPollutionLocFcn());
-            optionalRequestDetail.get().setFdPollutionLocFcs(requestDetailUpdateDto.getFdPollutionLocFcs());
-            optionalRequestDetail.get().setFdPollutionLocFcb(requestDetailUpdateDto.getFdPollutionLocFcb());
-            optionalRequestDetail.get().setFdPollutionLocFlh(requestDetailUpdateDto.getFdPollutionLocFlh());
-            optionalRequestDetail.get().setFdPollutionLocFrh(requestDetailUpdateDto.getFdPollutionLocFrh());
-            optionalRequestDetail.get().setFdPollutionLocFlf(requestDetailUpdateDto.getFdPollutionLocFlf());
-            optionalRequestDetail.get().setFdPollutionLocFrf(requestDetailUpdateDto.getFdPollutionLocFrf());
+                    optionalRequestDetail.get().setFdPollutionLocFcn(requestDetailUpdateDto.getFdPollutionLocFcn());
+                    optionalRequestDetail.get().setFdPollutionLocFcs(requestDetailUpdateDto.getFdPollutionLocFcs());
+                    optionalRequestDetail.get().setFdPollutionLocFcb(requestDetailUpdateDto.getFdPollutionLocFcb());
+                    optionalRequestDetail.get().setFdPollutionLocFlh(requestDetailUpdateDto.getFdPollutionLocFlh());
+                    optionalRequestDetail.get().setFdPollutionLocFrh(requestDetailUpdateDto.getFdPollutionLocFrh());
+                    optionalRequestDetail.get().setFdPollutionLocFlf(requestDetailUpdateDto.getFdPollutionLocFlf());
+                    optionalRequestDetail.get().setFdPollutionLocFrf(requestDetailUpdateDto.getFdPollutionLocFrf());
 
-            optionalRequestDetail.get().setFdPollutionLocBcn(requestDetailUpdateDto.getFdPollutionLocBcn());
-            optionalRequestDetail.get().setFdPollutionLocBcs(requestDetailUpdateDto.getFdPollutionLocBcs());
-            optionalRequestDetail.get().setFdPollutionLocBcb(requestDetailUpdateDto.getFdPollutionLocBcb());
-            optionalRequestDetail.get().setFdPollutionLocBrh(requestDetailUpdateDto.getFdPollutionLocBrh());
-            optionalRequestDetail.get().setFdPollutionLocBlh(requestDetailUpdateDto.getFdPollutionLocBlh());
-            optionalRequestDetail.get().setFdPollutionLocBrf(requestDetailUpdateDto.getFdPollutionLocBrf());
-            optionalRequestDetail.get().setFdPollutionLocBlf(requestDetailUpdateDto.getFdPollutionLocBlf());
+                    optionalRequestDetail.get().setFdPollutionLocBcn(requestDetailUpdateDto.getFdPollutionLocBcn());
+                    optionalRequestDetail.get().setFdPollutionLocBcs(requestDetailUpdateDto.getFdPollutionLocBcs());
+                    optionalRequestDetail.get().setFdPollutionLocBcb(requestDetailUpdateDto.getFdPollutionLocBcb());
+                    optionalRequestDetail.get().setFdPollutionLocBrh(requestDetailUpdateDto.getFdPollutionLocBrh());
+                    optionalRequestDetail.get().setFdPollutionLocBlh(requestDetailUpdateDto.getFdPollutionLocBlh());
+                    optionalRequestDetail.get().setFdPollutionLocBrf(requestDetailUpdateDto.getFdPollutionLocBrf());
+                    optionalRequestDetail.get().setFdPollutionLocBlf(requestDetailUpdateDto.getFdPollutionLocBlf());
 
-            optionalRequestDetail.get().setFdStarch(requestDetailUpdateDto.getFdStarch());
-            optionalRequestDetail.get().setFdWaterRepellent(requestDetailUpdateDto.getFdWaterRepellent());
-            optionalRequestDetail.get().setFdDiscountGrade(requestDetailUpdateDto.getFdDiscountGrade());
-            optionalRequestDetail.get().setFdDiscountAmt(requestDetailUpdateDto.getFdDiscountAmt());
+                    optionalRequestDetail.get().setFdStarch(requestDetailUpdateDto.getFdStarch());
+                    optionalRequestDetail.get().setFdWaterRepellent(requestDetailUpdateDto.getFdWaterRepellent());
+                    optionalRequestDetail.get().setFdDiscountGrade(requestDetailUpdateDto.getFdDiscountGrade());
+                    optionalRequestDetail.get().setFdDiscountAmt(requestDetailUpdateDto.getFdDiscountAmt());
 
-            optionalRequestDetail.get().setFdQty(requestDetailUpdateDto.getFdQty());
-            optionalRequestDetail.get().setFdRequestAmt(requestDetailUpdateDto.getFdRequestAmt());
-            optionalRequestDetail.get().setFdRetryYn(requestDetailUpdateDto.getFdRetryYn());
-            optionalRequestDetail.get().setFdUrgentYn(requestDetailUpdateDto.getFdUrgentYn());
-            optionalRequestDetail.get().setFdUrgentType(requestDetailUpdateDto.getFdUrgentType());
-            optionalRequestDetail.get().setFdUrgentAmt(requestDetailUpdateDto.getFdUrgentAmt());
+                    optionalRequestDetail.get().setFdQty(requestDetailUpdateDto.getFdQty());
+                    optionalRequestDetail.get().setFdRequestAmt(requestDetailUpdateDto.getFdRequestAmt());
+                    optionalRequestDetail.get().setFdRetryYn(requestDetailUpdateDto.getFdRetryYn());
+                    optionalRequestDetail.get().setFdUrgentYn(requestDetailUpdateDto.getFdUrgentYn());
+                    optionalRequestDetail.get().setFdUrgentType(requestDetailUpdateDto.getFdUrgentType());
+                    optionalRequestDetail.get().setFdUrgentAmt(requestDetailUpdateDto.getFdUrgentAmt());
 
-            optionalRequestDetail.get().setFdRemark(requestDetailUpdateDto.getFdRemark());
+                    optionalRequestDetail.get().setHpId(requestDetailUpdateDto.getHpId());
+                    optionalRequestDetail.get().setFdPromotionType(requestDetailUpdateDto.getFdPromotionType());
+                    optionalRequestDetail.get().setFdPromotionDiscountRate(requestDetailUpdateDto.getFdPromotionDiscountRate());
+                    optionalRequestDetail.get().setFdPromotionDiscountAmt(requestDetailUpdateDto.getFdPromotionDiscountAmt());
 
-            optionalRequestDetail.get().setFdAgreeType(requestDetailUpdateDto.getFdAgreeType());
-            optionalRequestDetail.get().setFdSignImage(requestDetailUpdateDto.getFdSignImage());
+                    optionalRequestDetail.get().setFdRemark(requestDetailUpdateDto.getFdRemark());
 
-            optionalRequestDetail.get().setFdModifyAmtYn(requestDetailUpdateDto.getFdModifyAmtYn());
-            if(requestDetailUpdateDto.getFdModifyAmtYn().equals("Y")){
-                optionalRequestDetail.get().setFdModifyOriginalAmt(requestDetailUpdateDto.getFdModifyOriginalAmt());
-                optionalRequestDetail.get().setFdModifyAmtDt(LocalDateTime.now());
-            }
+                    optionalRequestDetail.get().setFdAgreeType(requestDetailUpdateDto.getFdAgreeType());
+                    optionalRequestDetail.get().setFdSignImage(requestDetailUpdateDto.getFdSignImage());
 
-            optionalRequestDetail.get().setModify_id(login_id);
-            optionalRequestDetail.get().setModify_date(LocalDateTime.now());
-            RequestDetail requestDetailSave = optionalRequestDetail.get();
-//            log.info("requestDetailSave : "+requestDetailSave);
+                    optionalRequestDetail.get().setFdModifyAmtYn(requestDetailUpdateDto.getFdModifyAmtYn());
+                    if (requestDetailUpdateDto.getFdModifyAmtYn().equals("Y")) {
+                        optionalRequestDetail.get().setFdModifyOriginalAmt(requestDetailUpdateDto.getFdModifyOriginalAmt());
+                        optionalRequestDetail.get().setFdModifyAmtDt(LocalDateTime.now());
+                    }
 
-            if(nowFdTotAmt>updateFdTotAmt){
-                List<PaymentCencelDto> paymentCencelDtoList = paymentRepositoryCustom.findByRequestDetailCencelDataList(frCode, optionalRequestDetail.get().getFrId().getId());
-                if(paymentCencelDtoList.size() != 0){
-                    return ResponseEntity.ok(res.fail(ResponseErrorCode.TP023.getCode(), ResponseErrorCode.TP023.getDesc(), "문자","결제 취소를 해주시길 바랍니다."));
-                }else{
-                    // 결제내용이없을때 저장 즉, 접수취소 할 수 있는 상태이면 가격이 내려가도 저장할 수 있다.
-                    // 업데이트 실행 후 마스터테이블 수정 함수호출
-                    requestDetailRepository.save(requestDetailSave);
-                    // 만약 금액이 변동되었을 시 수정후, 마스터테이블도 업데이트하기 (결제취소됬을땐 예외)
-                    userService.requestDetailUpdateFromMasterUpdate(requestDetailUpdateDto.getFrNo(), frCode);
+                    optionalRequestDetail.get().setModify_id(login_id);
+                    optionalRequestDetail.get().setModify_date(LocalDateTime.now());
+                    RequestDetail requestDetailSave = optionalRequestDetail.get();
+//                    log.info("requestDetailSave : "+requestDetailSave);
+
+                    if (nowFdTotAmt > updateFdTotAmt) {
+                        // findByRequestDetailCencelDataList -> type : "1"일땐 취소여부상관없이 모두 호출, "2"일땐 취소되지 않은 것들만 호출
+                        List<PaymentCencelDto> paymentCencelDtoList = paymentRepositoryCustom.findByRequestDetailCencelDataList(frCode, optionalRequestDetail.get().getFrId().getId(), "2");
+                        if (paymentCencelDtoList.size() != 0) {
+                            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP023.getCode(), ResponseErrorCode.TP023.getDesc(), "문자", "결제 취소를 해주시길 바랍니다."));
+                        } else {
+                            // 결제내용이없을때 저장 즉, 접수취소 할 수 있는 상태이면 가격이 내려가도 저장할 수 있다.
+                            // 업데이트 실행 후 마스터테이블 수정 함수호출
+                            requestDetailRepository.save(requestDetailSave);
+                            // 만약 금액이 변동되었을 시 수정후, 마스터테이블도 업데이트하기 (결제취소됬을땐 예외)
+                            userService.requestDetailUpdateFromMasterUpdate(requestDetailUpdateDto.getFrNo(), frCode);
+                        }
+                    } else if (nowFdTotAmt.equals(updateFdTotAmt)) {
+                        // 업데이트만 실행
+                        requestDetailRepository.save(requestDetailSave);
+                    } else {
+                        // 업데이트 실행 후 마스터테이블 수정 함수호출
+                        requestDetailRepository.save(requestDetailSave);
+
+                        // 만약 금액이 변동되었을 시 수정후, 마스터테이블도 업데이트하기 (가격이 높아졌을때만 시행, 작아지면 리턴처리)
+                        userService.requestDetailUpdateFromMasterUpdate(requestDetailUpdateDto.getFrNo(), frCode);
+                    }
                 }
-            }else if(nowFdTotAmt.equals(updateFdTotAmt)){
-                // 업데이트만 실행
-                requestDetailRepository.save(requestDetailSave);
-            }else{
-                // 업데이트 실행 후 마스터테이블 수정 함수호출
-                requestDetailRepository.save(requestDetailSave);
-
-                // 만약 금액이 변동되었을 시 수정후, 마스터테이블도 업데이트하기 (가격이 높아졌을때만 시행, 작아지면 리턴처리)
-                userService.requestDetailUpdateFromMasterUpdate(requestDetailUpdateDto.getFrNo(), frCode);
             }
-
         }
 
         return ResponseEntity.ok(res.success());
@@ -380,7 +399,7 @@ public class InspectService {
         String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
         log.info("현재 접속한 가맹점 코드 : "+frCode);
 
-        List<PaymentCencelDto> paymentCencelDtoList = paymentRepositoryCustom.findByRequestDetailCencelDataList(frCode, frId);
+        List<PaymentCencelDto> paymentCencelDtoList = paymentRepositoryCustom.findByRequestDetailCencelDataList(frCode, frId,"1");
 //        log.info("paymentCencelDtoList : "+paymentCencelDtoList);
         data.put("gridListData",paymentCencelDtoList);
 
@@ -397,13 +416,14 @@ public class InspectService {
 
     //  통합조회용 - 결제취소 요청
     @Transactional
-    public ResponseEntity<Map<String, Object>> franchiseRequestDetailCencel(Long fpId, String type, HttpServletRequest request) {
+    public ResponseEntity<Map<String, Object>> franchiseRequestDetailCencel(Long fpId, String type, Long bcId, HttpServletRequest request) {
         log.info("franchiseRequestDetailCencel 호출");
 
 //        log.info("결제 ID fpId : "+fpId);
 //        log.info("적립급/취소 타입 : "+type);
 
         AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
 
         // 클레임데이터 가져오기
         Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
@@ -485,11 +505,25 @@ public class InspectService {
                     }
                     requestRepository.saveAll(requestList);
 
+                    if(bcId == null ){
+                        data.put("uncollectMoney",0);
+                        data.put("saveMoney",0);
+                    }else{
+                        Integer uncollectMoney = 0;
+                        Integer saveMoney = 0;
+                        Optional<Customer> optionalCustomer = customerRepository.findByBcId(bcId);
+                        if(optionalCustomer.isPresent()){
+                            uncollectMoney = receiptService.findByUnCollect(optionalCustomer.get());
+                            saveMoney = receiptService.findBySaveMoney(optionalCustomer.get());
+                        }
+                        data.put("uncollectMoney",uncollectMoney);
+                        data.put("saveMoney",saveMoney);
+                    }
                 }
             }
         }
 
-        return ResponseEntity.ok(res.success());
+        return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
     // 검품등록 API(가맹점, 지사)
@@ -515,7 +549,13 @@ public class InspectService {
         RequestDetailBranchInspeotDto requestDetailBranchInspeotDto = requestDetailRepository.findByBranchInspeotDto(inspeotMapperDto.getFdId());
         if(requestDetailBranchInspeotDto == null){
             return ResponseEntity.ok(res.fail(ResponseErrorCode.TP024.getCode(),"검풍등록 할 "+ResponseErrorCode.TP024.getDesc(), "문자", "재조회 후 다시 시도해주세요."));
-        }else{
+        }
+        // 강제, 반품출고와 확인품 등록을 동시에 할 수 없도록 API 수정 - 20220826
+        else if(requestDetailBranchInspeotDto.getRequestDetail().getFdS7Type() != null){
+            return ResponseEntity.ok(res.fail("문자","강제출고 또는 반품출고로 등록된 상품은", ResponseErrorCode.TP032.getCode(), ResponseErrorCode.TP032.getDesc()));
+        }
+
+        else{
 
             if(inspeotMapperDto.getDeletePhotoList() != null) {
                 // AWS 파일 삭제
@@ -807,10 +847,14 @@ public class InspectService {
     }
 
     //  통합조회용 - 접수 취소
-    public ResponseEntity<Map<String, Object>> franchiseReceiptCancel(Long fdId, HttpServletRequest request) {
+    public ResponseEntity<Map<String, Object>> franchiseReceiptCancel(Long fdId, Long bcId, HttpServletRequest request) {
         log.info("franchiseReceiptCancel 호출");
 
         AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        log.info("fdId : "+fdId);
+        log.info("bcId : "+bcId);
 
         // 클레임데이터 가져오기
         Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
@@ -825,14 +869,67 @@ public class InspectService {
             if(!optionalRequest.isPresent()){
                 return ResponseEntity.ok(res.fail(ResponseErrorCode.TP022.getCode(),"접수취소 할 "+ResponseErrorCode.TP022.getDesc(), "문자", "재조회 후 다시 시도해주세요."));
             }else{
-                Integer fdTotAmt =  optionalRequestDetail.get().getFdTotAmt();
-                Integer frTotalAmount =  optionalRequest.get().getFrTotalAmount()-fdTotAmt;
+
+                // 행사상품 취소 관련 로직 - 시작
+                String type = null;
+                double promotionCnt;
+                double discountCnt;
+                double result;
+                int num = 0;
+                if(optionalRequestDetail.get().getFdPromotionType().equals("02") && optionalRequestDetail.get().getFdRetryYn().equals("N") &&
+                        optionalRequestDetail.get().getFdDiscountGrade().equals("1") && optionalRequestDetail.get().getFdPromotionDiscountAmt() == 0){
+                    type = "1";
+                    num = 2;
+                }
+                else if(optionalRequestDetail.get().getFdPromotionType().equals("03") && optionalRequestDetail.get().getFdRetryYn().equals("N") &&
+                        optionalRequestDetail.get().getFdPromotionDiscountAmt() == 0){
+                    type = "2";
+                    num = 3;
+                }
+
+                if(type != null){
+                    promotionCnt = (double)requestDetailRepository.findByPromotionCancelCount(
+                            optionalRequestDetail.get().getFdPromotionType(), optionalRequest.get().getId(), optionalRequestDetail.get().getBiItemcode(), optionalRequestDetail.get().getFdPriceGrade(), "1");
+
+                    discountCnt = (double)requestDetailRepository.findByPromotionCancelCount(
+                            optionalRequestDetail.get().getFdPromotionType(), optionalRequest.get().getId(), optionalRequestDetail.get().getBiItemcode(), optionalRequestDetail.get().getFdPriceGrade(), "2");
+
+                    result = Double.parseDouble(String.valueOf(promotionCnt/num-discountCnt));
+
+                    if(result <= 0) {
+                        if(type.equals("1")){
+                            return ResponseEntity.ok(res.fail("문자", "함께 1+1 적용된 상품 중에서, 금액 할인이", "문자", "적용된 상품 한개를 먼저 취소해 주세요."));
+                        }else{
+                            return ResponseEntity.ok(res.fail("문자", "함께 2+1 적용된 상품 중에서, 금액 할인이", "문자", "적용된 상품 한개를 먼저 취소해 주세요."));
+                        }
+                    }
+//                    log.info("promotionCnt : "+promotionCnt);
+//                    log.info("discountCnt : "+discountCnt);
+//                    log.info("result : "+result);
+                }
+
+                // 행사상품 취소 관련 끝
+
+                Integer fdTotAmt =  optionalRequestDetail.get().getFdTotAmt(); // 세부테이블의 총 금액
+                Integer fdNormalAmt =  optionalRequestDetail.get().getFdNormalAmt(); // 세부테이블의 노말금액
+                Integer fdDisAmt =  optionalRequestDetail.get().getFdTotAmt()-optionalRequestDetail.get().getFdNormalAmt(); // 세부테이블의 추가금액
+
+                Integer frTotalAmount =  optionalRequest.get().getFrTotalAmount()-fdTotAmt; // 마스터테이블의 총 금액
+                Integer frNormalAmount =  optionalRequest.get().getFrNormalAmount()-fdNormalAmt; // 마스터테이블의 추가금액
+                Integer frDiscountAmount =  optionalRequest.get().getFrDiscountAmount()-fdDisAmt; // 마스터테이블의 추가금액
+
                 Integer frPayAmount =  optionalRequest.get().getFrPayAmount();
                 if(frTotalAmount.equals(frPayAmount)){
                     optionalRequest.get().setFrUncollectYn("N");
                 }
+
                 optionalRequest.get().setFrQty(optionalRequest.get().getFrQty()-1);
+
+                // 22/07/22 접수취소시 마스터테이블의 금액 수정 이슈
                 optionalRequest.get().setFrTotalAmount(frTotalAmount);
+                optionalRequest.get().setFrNormalAmount(frNormalAmount);
+                optionalRequest.get().setFrDiscountAmount(frDiscountAmount);
+
                 optionalRequest.get().setModify_id(login_id);
                 optionalRequest.get().setModify_date(LocalDateTime.now());
 
@@ -842,10 +939,26 @@ public class InspectService {
                 optionalRequestDetail.get().setModify_date(LocalDateTime.now());
                 requestDetailRepository.save(optionalRequestDetail.get());
                 requestRepository.save(optionalRequest.get());
+
+                if(bcId == null ){
+                    data.put("uncollectMoney",0);
+                    data.put("saveMoney",0);
+                }else{
+                    Integer uncollectMoney = 0;
+                    Integer saveMoney = 0;
+                    Optional<Customer> optionalCustomer = customerRepository.findByBcId(bcId);
+                    if(optionalCustomer.isPresent()){
+                        uncollectMoney = receiptService.findByUnCollect(optionalCustomer.get());
+                        saveMoney = receiptService.findBySaveMoney(optionalCustomer.get());
+                    }
+                    data.put("uncollectMoney",uncollectMoney);
+                    data.put("saveMoney",saveMoney);
+                }
+
             }
         }
 
-        return ResponseEntity.ok(res.success());
+        return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
     //  통합조회용 - 인도 취소
@@ -872,6 +985,8 @@ public class InspectService {
                 optionalRequestDetail.get().setFdStateDt(LocalDateTime.now());
                 optionalRequestDetail.get().setFdPreState(fdState);
                 optionalRequestDetail.get().setFdPreStateDt(LocalDateTime.now());
+                optionalRequestDetail.get().setFdS6Dt(null);
+                optionalRequestDetail.get().setFdS6Time(null);
                 optionalRequestDetail.get().setFdS6Type(null);
                 optionalRequestDetail.get().setFdS6CancelYn("Y");
                 optionalRequestDetail.get().setFdS6CancelTime(LocalDateTime.now());
@@ -934,6 +1049,7 @@ public class InspectService {
                         return ResponseEntity.ok(res.fail(ResponseErrorCode.TP022.getCode(),"업데이트 할 "+ResponseErrorCode.TP022.getDesc(), "문자", "재조회 후 다시 시도해주세요."));
                     }else {
                         Integer frTotalAmount = optionalRequest.get().getFrTotalAmount()+fiAddAmt;
+                        optionalRequest.get().setFrDiscountAmount(optionalRequest.get().getFrDiscountAmount()+fiAddAmt);
                         optionalRequest.get().setFrTotalAmount(frTotalAmount);
                         if(frTotalAmount <= optionalRequest.get().getFrPayAmount()){
                             optionalRequest.get().setFrUncollectYn("N");
@@ -1135,6 +1251,9 @@ public class InspectService {
 
             requestDetailInfo.put("fdPollutionType", requestDetailDto.getFdPollutionType());
             requestDetailInfo.put("fdPollutionBack", requestDetailDto.getFdPollutionBack());
+
+            requestDetailInfo.put("fdPromotionType", requestDetailDto.getFdPromotionType());
+            requestDetailInfo.put("fdPromotionDiscountRate", requestDetailDto.getFdPromotionDiscountRate());
 
             List<PhotoDto> photoDtoList = photoRepository.findByPhotoDtoRequestDtlList(Long.parseLong(String.valueOf(requestDetailDto.getFdId())));
             requestDetailInfo.put("photoList", photoDtoList);

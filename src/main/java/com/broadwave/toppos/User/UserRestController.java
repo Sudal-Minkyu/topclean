@@ -8,11 +8,13 @@ import com.broadwave.toppos.Head.Franchise.FranchiseDtos.FranchiseMultiscreenDto
 import com.broadwave.toppos.Head.Franchise.FranchiseDtos.FranchiseUserDto;
 import com.broadwave.toppos.Head.HeadService.HeadService;
 import com.broadwave.toppos.Head.HeadService.NoticeService;
+import com.broadwave.toppos.Head.HeadService.PromotionService;
 import com.broadwave.toppos.Head.HeadService.SummaryService;
-import com.broadwave.toppos.Head.Item.Group.A.UserItemGroupSortDto;
-import com.broadwave.toppos.Head.Item.Group.B.UserItemGroupSListDto;
+import com.broadwave.toppos.Head.Item.Group.A.ItemGroupDtos.UserItemGroupSortDto;
+import com.broadwave.toppos.Head.Item.Group.B.ItemGroupSDtos.UserItemGroupSListDto;
 import com.broadwave.toppos.Head.Item.ItemDtos.UserItemPriceSortDto;
 import com.broadwave.toppos.Head.Notice.NoticeDtos.NoticeListDto;
+import com.broadwave.toppos.Head.Promotion.PromotionDtos.PromotionListDto;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.Manager.Calendar.BranchCalendar;
 import com.broadwave.toppos.Manager.Calendar.CalendarDtos.BranchCalendarListDto;
@@ -35,10 +37,7 @@ import com.broadwave.toppos.User.ReuqestMoney.Requset.Request;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotMainListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotMapperDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Photo.PhotoDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailFdStateCountDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailFranchiseInCountDto;
-import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.RequestDetailUpdateDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.user.*;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailSet;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.user.RequestHistoryListDto;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDtos.user.RequestListDto;
@@ -66,6 +65,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -103,6 +103,7 @@ public class UserRestController {
     private final FindService findService; // 휴무일 서비스
     private final TemplateService templateService; // 문자메세지보내기 서비스
     private final SummaryService summaryService; // 정산페이지 서비스
+    private final PromotionService promotionService; // 행사서비스
 
     private final ModelMapper modelMapper;
     private final TokenProvider tokenProvider;
@@ -112,7 +113,7 @@ public class UserRestController {
     public UserRestController(AWSS3Service awss3Service, UserService userService, ReceiptService receiptService, SortService sortService, InfoService infoService, InspectService inspectService,
                               TokenProvider tokenProvider, ModelMapper modelMapper, HeadService headService, CalendarService calendarService, ReceiptStateService receiptStateService,
                               UncollectService uncollectService, BusinessdayService businessdayService, TagNoticeService tagNoticeService, TagGalleryService tagGalleryService, NoticeService noticeService,
-                              FindService findService, TemplateService templateService, SummaryService summaryService) {
+                              FindService findService, TemplateService templateService, SummaryService summaryService, PromotionService promotionService) {
         this.awss3Service = awss3Service;
         this.userService = userService;
         this.receiptService = receiptService;
@@ -132,6 +133,7 @@ public class UserRestController {
         this.findService = findService;
         this.templateService = templateService;
         this.summaryService = summaryService;
+        this.promotionService = promotionService;
     }
 
     // 가맹점의 탭번호와 탭번호타입 호출 API -> 사용안함 22.04.22
@@ -195,8 +197,8 @@ public class UserRestController {
             HashMap<String,Object> userIndexInfo;
             if(userIndexDto != null){
                 userIndexInfo = new HashMap<>();
-                userIndexInfo.put("username", userIndexDto.getUsername());
-                userIndexInfo.put("usertel", userIndexDto.getUsertel());
+                userIndexInfo.put("frTelNo", userIndexDto.getFrTelNo());
+                userIndexInfo.put("frRpreName", userIndexDto.getFrRpreName());
                 userIndexInfo.put("brName", userIndexDto.getBrName());
                 userIndexInfo.put("frName", userIndexDto.getFrName());
 
@@ -224,14 +226,6 @@ public class UserRestController {
 
             return ResponseEntity.ok(res.dataSendSuccess(data));
         }
-
-    // 영업 마감 기능 API
-    @PostMapping("franchiseDue")
-    @ApiOperation(value = "영업마감 API" , notes = "현재 로그인한 가맹점의 영업을 마감한다.")
-    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
-    public ResponseEntity<Map<String,Object>> customerSave(@RequestParam(value="yyyymmdd", defaultValue="") String yyyymmdd, HttpServletRequest request){
-        return userService.franchiseDue(yyyymmdd, request);
-    }
 
 //@@@@@@@@@@@@@@@@@@@@@ 가맹점 고객조회 페이지 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -376,18 +370,21 @@ public class UserRestController {
             customerListInfo.put("uncollectMoney", 0);
             customerListInfo.put("saveMoney", 0);
 
-            // 세탁인도할 품목 리스트 호출
-            if(customerInfoDto.getBcId() != null){
-                RequestDetailFdStateCountDto deliveryS5 = receiptStateService.findByRequestDetailFdStateS5Count(frCode, customerInfoDto.getBcId());
-                RequestDetailFdStateCountDto deliveryS8 = receiptStateService.findByRequestDetailFdStateS8Count(frCode, customerInfoDto.getBcId());
-                customerListInfo.put("deliveryS5",deliveryS5.getCount());
-                customerListInfo.put("deliveryS8",deliveryS8.getCount());
-            }
+            // 22.07.19 해당 쿼리를 탈경우 조회가 느려질경우가 있음. API 분리 -> deliveryInfo
+//            // 세탁인도할 품목 리스트 호출
+//            if(customerInfoDto.getBcId() != null){
+//                RequestDetailFdStateCountDto deliveryS5 = receiptStateService.findByRequestDetailFdStateS5Count(frCode, customerInfoDto.getBcId());
+//                RequestDetailFdStateCountDto deliveryS8 = receiptStateService.findByRequestDetailFdStateS8Count(frCode, customerInfoDto.getBcId());
+//                customerListInfo.put("deliveryS5",deliveryS5.getCount());
+//                customerListInfo.put("deliveryS8",deliveryS8.getCount());
+//            }
 
             if(requestTemp != null){
                 customerListInfo.put("tempSaveFrNo", requestTemp.getFrNo());
+                customerListInfo.put("tempSaveBcName", requestTemp.getBcName());
             }else{
                 customerListInfo.put("tempSaveFrNo", null);
+                customerListInfo.put("tempSaveBcName", null);
             }
             customerListData.add(customerListInfo);
         }
@@ -402,6 +399,30 @@ public class UserRestController {
 
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
+
+    // 고객 선택후 세탁인도할 품목 리스트 호출
+    @GetMapping("deliveryInfo")
+    @ApiOperation(value = "고객 세탁인도할 품목 리스트 호출 API" , notes = "고객의 세탁인도할 품목 리스트 정보를 가져온다.")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
+    public ResponseEntity<Map<String,Object>> deliveryInfo(HttpServletRequest request, @RequestParam(value="bcId", defaultValue="") Long bcId){
+        log.info("deliveryInfo 호출");
+
+        // 클레임데이터 가져오기
+        Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
+        String frCode = (String) claims.get("frCode"); // 현재 가맹점의 코드(3자리) 가져오기
+        log.info("현재 접속한 가맹점 코드 : "+frCode);
+
+        AjaxResponse res = new AjaxResponse();
+        HashMap<String, Object> data = new HashMap<>();
+
+        RequestDetailFdStateCountDto deliveryS5 = receiptStateService.findByRequestDetailFdStateS5Count(frCode, bcId);
+        RequestDetailFdStateCountDto deliveryS8 = receiptStateService.findByRequestDetailFdStateS8Count(frCode, bcId);
+        data.put("deliveryS5",deliveryS5.getCount());
+        data.put("deliveryS8",deliveryS8.getCount());
+
+        return ResponseEntity.ok(res.dataSendSuccess(data));
+    }
+
 
     // 고객 리스트 API(현재 로그인한 가맹점의 대한 고객리스트만 호출한다.)
     @GetMapping("customerList")
@@ -513,19 +534,20 @@ public class UserRestController {
     @GetMapping("franchiseCheck")
     @ApiOperation(value = "가맹정 택번호 변경" , notes = "비밀번호를 가져와 확인한다.")
     @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
-    public ResponseEntity<Map<String,Object>> franchiseCheck(@RequestParam(value="password", defaultValue="") String password, HttpServletRequest request){
-        return infoService.franchiseCheck(password, request);
+    public ResponseEntity<Map<String,Object>> franchiseCheck(@RequestParam(value="password", defaultValue="") String password,
+                                                             @RequestParam(value="frLastTagno", defaultValue="") String frLastTagno, HttpServletRequest request){
+        return infoService.franchiseCheck(password, frLastTagno, request);
     }
 
     // 접수페이지 진입시 기본적으롤 받는 데이터 API (대분류 목록리스트)
     @GetMapping("itemGroupAndPriceList")
     @ApiOperation(value = "접수페이지 진입시 받아오는 API" , notes = "기본 데이터를 받는다.")
     @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
-    public ResponseEntity<Map<String,Object>> itemGroupAndPriceList(HttpServletRequest request){
+    public ResponseEntity<Map<String,Object>> itemGroupAndPriceList(HttpServletRequest request) throws ParseException {
         log.info("itemGroupAndPriceList 호출");
 
-        String nowDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-//        log.info("금일날짜 : "+nowDate);
+        String nowDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmm"));
+        log.info("금일날짜 : "+nowDate);
 
         // 클레임데이터 가져오기
         Claims claims = tokenProvider.parseClaims(request.getHeader("Authorization"));
@@ -549,7 +571,7 @@ public class UserRestController {
         data.put("userItemGroupSortData",userItemGroupSortData);
 
         // 현재 가맹점의 가격 리스트 가져오기 + 가맹점이 등록한 상품 순서 테이블 leftjoin
-        List<UserItemPriceSortDto> userItemPriceSortData = headService.findByUserItemPriceSortList(frCode, nowDate);
+        List<UserItemPriceSortDto> userItemPriceSortData = headService.findByUserItemPriceSortList(frCode, nowDate.substring(0,8));
         log.info("userItemPriceSortData : "+userItemPriceSortData);
         log.info("userItemPriceSortData 사이즈 : "+userItemPriceSortData.size());
         data.put("userItemPriceSortData",userItemPriceSortData);
@@ -581,11 +603,22 @@ public class UserRestController {
         log.info("addAmountData 사이즈 : "+addAmountData.size());
         data.put("addAmountData",addAmountData);
 
+        // 행사 관련 항목리스트
+        SimpleDateFormat dataFormat = new SimpleDateFormat("yyyyMMdd");
+        Date date = dataFormat.parse(nowDate.substring(0,8));
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+        log.info("요일 : "+dayOfWeek);
+        List<PromotionListDto> promotionData = promotionService.findByPromotionList(frCode, dayOfWeek, nowDate);
+        log.info("promotionData : "+promotionData);
+        log.info("promotionData 사이즈 : "+promotionData.size());
+        data.put("promotionData",promotionData);
 
-        Optional<BranchCalendar> optionalBranchCalendar = calendarService.branchCalendarInfo(franchiseInfoDto.getBrCode(), nowDate);
+        Optional<BranchCalendar> optionalBranchCalendar = calendarService.branchCalendarInfo(franchiseInfoDto.getBrCode(), nowDate.substring(0,8));
         if(optionalBranchCalendar.isPresent()){
             // 태그번호, 출고예정일 데이터
-            List<EtcDataDto> etcData = receiptService.findByEtc(frEstimateDuration, frCode, nowDate);
+            List<EtcDataDto> etcData = receiptService.findByEtc(frEstimateDuration, frCode, nowDate.substring(0,8));
             log.info("etcData : "+etcData.get(franchiseInfoDto.getFrEstimateDuration()));
             data.put("etcData",etcData.get(franchiseInfoDto.getFrEstimateDuration()));
         }else{
@@ -608,6 +641,7 @@ public class UserRestController {
             etcData.setFdTag(franchiseInfoDto.getFrLastTagno());
             etcData.setFrMultiscreenYn(franchiseInfoDto.getFrMultiscreenYn());
             etcData.setFrUrgentDayYn(franchiseInfoDto.getFrUrgentDayYn());
+            etcData.setFrManualPromotionYn(franchiseInfoDto.getFrManualPromotionYn());
             etcData.setFrCardTid(franchiseInfoDto.getFrUrgentDayYn());
 
             log.info("etcData : "+etcData);
@@ -617,13 +651,13 @@ public class UserRestController {
         return ResponseEntity.ok(res.dataSendSuccess(data));
     }
 
-    // 접수페이지 가맹점 세탁접수 API
+    // 1. 접수페이지 가맹점 세탁접수 API -> 이쪽 모바일메세지를 보내지않음
     @PostMapping("requestSave")
     public ResponseEntity<Map<String,Object>> requestSave(@RequestBody RequestDetailSet requestDetailSet, HttpServletRequest request){
         return receiptService.requestSave(requestDetailSet, request);
     }
 
-    // 접수페이지 접수완료시 카톡메세지
+    // 2. 접수페이지 접수완료시 카톡메세지 -> 접수완료후 화면창이 닫힐경우 고객에게 메세지를 보내는 API
     @PostMapping("requestReceiptMessage")
     @ApiOperation(value = "가맹점 접수완료 메세지" , notes = "세탁접수를 완료하면 메세지보낼 테이블에 Insert 한다")
     @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
@@ -723,6 +757,8 @@ public class UserRestController {
             for(RequestDetailDto requestDetailDto : requestDetailList){
                 requestDetailInfo = new HashMap<>();
 
+                requestDetailInfo.put("fdId", requestDetailDto.getFdId());
+
                 requestDetailInfo.put("biItemcode", requestDetailDto.getBiItemcode());
                 requestDetailInfo.put("fdTag", requestDetailDto.getFdTag());
                 requestDetailInfo.put("fdColor", requestDetailDto.getFdColor());
@@ -766,6 +802,13 @@ public class UserRestController {
                 requestDetailInfo.put("fdDiscountAmt", requestDetailDto.getFdDiscountAmt());
                 requestDetailInfo.put("fdQty", requestDetailDto.getFdQty());
 
+                requestDetailInfo.put("fdTotAmt", requestDetailDto.getFdTotAmt());
+
+                requestDetailInfo.put("hpId", requestDetailDto.getHpId());
+                requestDetailInfo.put("fdPromotionType", requestDetailDto.getFdPromotionType());
+                requestDetailInfo.put("fdPromotionDiscountRate", requestDetailDto.getFdPromotionDiscountRate());
+                requestDetailInfo.put("fdPromotionDiscountAmt", requestDetailDto.getFdPromotionDiscountAmt());
+
                 requestDetailInfo.put("fdRequestAmt", requestDetailDto.getFdRequestAmt());
 
                 requestDetailInfo.put("fdRetryYn", requestDetailDto.getFdRetryYn());
@@ -786,7 +829,7 @@ public class UserRestController {
                 requestDetailInfo.put("fdPollutionType", requestDetailDto.getFdPollutionType());
                 requestDetailInfo.put("fdPollutionBack", requestDetailDto.getFdPollutionBack());
 
-                List<PhotoDto> photoDtoList = receiptService.findByPhotoDtoRequestDtlList(requestDetailDto.getId());
+                List<PhotoDto> photoDtoList = receiptService.findByPhotoDtoRequestDtlList(requestDetailDto.getFdId());
                 requestDetailInfo.put("photoList", photoDtoList);
 
                 requestDetailListData.add(requestDetailInfo);
@@ -869,6 +912,8 @@ public class UserRestController {
 
     // 접수페이지 영수증 출력 API
     @GetMapping("requestPaymentPaper")
+    @ApiOperation(value = "영수증출력" , notes = "영수증출력 한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
     public ResponseEntity<Map<String,Object>> requestPaymentPaper(HttpServletRequest request, @RequestParam(value="frNo", defaultValue="") String frNo, @RequestParam(value="frId", defaultValue="") Long frId){
         return receiptService.requestPaymentPaper(request, frNo, frId);
     }
@@ -1011,8 +1056,8 @@ public class UserRestController {
 
     // 통합조회용 - 접수 세부테이블 수정
     @PostMapping("franchiseRequestDetailUpdate")
-    public ResponseEntity<Map<String,Object>> franchiseRequestDetailUpdate(@RequestBody RequestDetailUpdateDto requestDetailUpdateDto, HttpServletRequest request){
-        return inspectService.franchiseRequestDetailUpdate(requestDetailUpdateDto, request);
+    public ResponseEntity<Map<String,Object>> franchiseRequestDetailUpdate(@RequestBody requestDetailUpdateListDto requestDetailUpdateListDto, HttpServletRequest request){
+        return inspectService.franchiseRequestDetailUpdate(requestDetailUpdateListDto, request);
     }
 
     //  통합조회용 - 결제취소 전 결제내역리스트 요청
@@ -1026,8 +1071,10 @@ public class UserRestController {
     @ApiOperation(value = "통합조회용" , notes = "결제취소/적립금전환 요청")
     @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
     public ResponseEntity<Map<String,Object>> franchiseRequestDetailCencel(@RequestParam(value="fpId", defaultValue="") Long fpId,
-                                                                                                                @RequestParam(value="type", defaultValue="") String type, HttpServletRequest request){
-        return inspectService.franchiseRequestDetailCencel(fpId, type, request);
+                                                                                                                @RequestParam(value="type", defaultValue="") String type,
+                                                                                                                @RequestParam(value="bcId", defaultValue="") Long bcId,
+                                                                                                                HttpServletRequest request){
+        return inspectService.franchiseRequestDetailCencel(fpId, type, bcId, request);
     }
 
     // 검품 등록 API -> 지사도 사용
@@ -1062,8 +1109,8 @@ public class UserRestController {
 
     // 통합조회용 - 접수 취소
     @PostMapping("franchiseReceiptCancel")
-    public ResponseEntity<Map<String,Object>> franchiseReceiptCancel(@RequestParam(value="fdId", defaultValue="") Long fdId, HttpServletRequest request){
-        return inspectService.franchiseReceiptCancel(fdId, request);
+    public ResponseEntity<Map<String,Object>> franchiseReceiptCancel(@RequestParam(value="fdId", defaultValue="") Long fdId, @RequestParam(value="bcId", defaultValue="") Long bcId, HttpServletRequest request){
+        return inspectService.franchiseReceiptCancel(fdId, bcId, request);
     }
 
     // 통합조회용 - 인도 취소
@@ -1130,6 +1177,14 @@ public class UserRestController {
     @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
     public ResponseEntity<Map<String,Object>> franchiseReceiptCloseList(HttpServletRequest request){
         return receiptStateService.franchiseReceiptCloseList(request);
+    }
+
+    // 수기마감 - 금일영업 마감 기능 API
+    @PostMapping("franchiseDue")
+    @ApiOperation(value = "영업마감 API" , notes = "현재 로그인한 가맹점의 영업을 마감한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
+    public ResponseEntity<Map<String,Object>> customerSave(@RequestParam(value="yyyymmdd", defaultValue="") String yyyymmdd, HttpServletRequest request){
+        return userService.franchiseDue(yyyymmdd, request);
     }
 
     //  가맹점입고 - 세부테이블 지사출고상태 리스트
@@ -1343,9 +1398,7 @@ public class UserRestController {
     @GetMapping("messageCustomerList")
     @ApiOperation(value = "문자 메시지 고객리스트" , notes = "문자를 메시지 보낼 고객리스트를 호출한다.")
     @ApiImplicitParams({@ApiImplicitParam(name ="Authorization", value="JWT Token",required = true,dataType="string",paramType = "header")})
-    public ResponseEntity<Map<String,Object>> messageCustomerList(
-            @RequestParam(value="visitDayRange", defaultValue="") String visitDayRange,
-            HttpServletRequest request){
+    public ResponseEntity<Map<String,Object>> messageCustomerList(@RequestParam(value="visitDayRange", defaultValue="") String visitDayRange, HttpServletRequest request){
         return templateService.messageCustomerList(visitDayRange, request);
     }
 
@@ -1421,6 +1474,32 @@ public class UserRestController {
         return summaryService.monthlySummaryList(filterYear, request);
     }
 
-
+//    // S3 AWS 파일다운로드 테스트
+//    @GetMapping("fileDownloadTestS3")
+//    @ApiOperation(value = "S3 AWS 파일다운로드 테스트", notes = "S3 AWS 파일다운로드 테스트를 시작한다.")
+//    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", value = "JWT Token", required = true, dataType = "string", paramType = "header")})
+//    public ResponseEntity<Map<String, Object>> fileDownloadTestS3(@RequestParam("fileKey") String fileKey, @RequestParam("downloadFileName") String downloadFileName,
+//                                                                  HttpServletRequest request, HttpServletResponse response) throws Exception {
+//
+//        log.info("downloadFileName : "+downloadFileName);
+//
+//        String fileNameOrg = new String(downloadFileName.getBytes("UTF-8"), "ISO-8859-1");
+//        log.info("fileNameOrg : "+fileNameOrg);
+//
+//        String fileName = URLEncoder.encode(downloadFileName).replaceAll("\\+", "%20");
+//        log.info("fileName : "+fileName);
+//
+//        boolean result = awss3Service.download(fileKey, fileName, request, response);
+//        log.info("result : "+result);
+//
+//        AjaxResponse res = new AjaxResponse();
+//        // 다운로드 테스트중...
+//        try{
+//            return ResponseEntity.ok(res.success());
+//        }catch (Exception e){
+//            log.info("e : "+e);
+//            return null;
+//        }
+//    }
 
 }

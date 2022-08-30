@@ -11,7 +11,7 @@ import java.util.List;
  * Remark :
  */
 public interface PaymentRepositoryCustom {
-    List<PaymentCencelDto> findByRequestDetailCencelDataList(String frCode, Long frId);
+    List<PaymentCencelDto> findByRequestDetailCencelDataList(String frCode, Long frId, String type);
 
     List<PaymentCencelYnDto> findByPaymentCancelYn(List<Long> frIdList);
 

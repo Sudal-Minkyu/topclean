@@ -39,6 +39,8 @@ public class RequestOutgoListSubDto {
     private String fdColor; // 색상코드 (00:미선택 01 흰색 02:검정 03: 회색, 04 빨강 05:주황, 06: 노랑, 07 초록 08 파랑 09:남색 10 보라 11 핑크)
     private String fdPattern; // 패턴 (00: 미선택 , 01:체크, 02:혼합, 03: 줄)
 
+    private Integer fdPromotionDiscountAmt; // 행사할인금액
+
     private String fdUrgentYn; // 급세탁 여부 (Y  / N) 기본값 : N
     private String fdUrgentType; // 급세탁 타입(1: 당일세탁, 2: 특급세탁(1박2일), 3급세탁(2박3일))
 
@@ -69,6 +71,9 @@ public class RequestOutgoListSubDto {
     private String fdS3Dt; // 지사반송일
     private String fdS6Dt; // 고객인도일
     private LocalDateTime fdS6Time; // 고객인도시간
+
+    private String fdPromotionType; // 행사타입(H1 : 본사직영 수기행사 할인- 기본금액대비할인)
+    private Double fdPromotionDiscountRate; // 행사할인율
 
     public Integer getFdPollutionType() {
         return fdPollutionType + fdPollutionBack;

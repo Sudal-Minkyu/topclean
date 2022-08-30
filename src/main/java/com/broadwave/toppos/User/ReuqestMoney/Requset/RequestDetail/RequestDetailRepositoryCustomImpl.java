@@ -89,6 +89,10 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdDiscountGrade,
                         requestDetail.fdDiscountAmt,
                         requestDetail.fdQty,
+                        requestDetail.hpId,
+                        requestDetail.fdPromotionType,
+                        requestDetail.fdPromotionDiscountRate,
+                        requestDetail.fdPromotionDiscountAmt,
                         requestDetail.fdRequestAmt,
                         requestDetail.fdRetryYn,
                         requestDetail.fdUrgentYn,
@@ -96,6 +100,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdUrgentAmt,
                         requestDetail.fdRemark,
                         requestDetail.fdEstimateDt,
+                        requestDetail.fdTotAmt,
                         itemGroup.bgName,
                         itemGroupS.bsName,
                         item.biName,
@@ -133,7 +138,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdNormalAmt,
                         requestDetail.fdTotAmt
                 ));
-        query.where(requestDetail.frNo.eq(frNo));
+        query.where(requestDetail.frNo.eq(frNo).and(requestDetail.fdCancel.eq("N")));
         return query.fetch();
     }
 
@@ -145,7 +150,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         StringBuilder sb = new StringBuilder();
 
         sb.append("SELECT \n");
-        sb.append("c.bc_name, b.fr_yyyymmdd, b.fr_insert_date, a.fd_id, b.fr_id, \n");
+        sb.append("c.bc_name, c.bc_grade, b.fr_yyyymmdd, b.fr_insert_date, b.fp_id, a.fd_id, b.fr_id, \n");
         sb.append("b.fr_no, a.fd_tag, a.bi_itemcode, a.fd_state, a.fd_pre_state, \n");
         sb.append("a.fd_s2_dt, a.fd_s3_dt, a.fd_s4_dt, \n");
         sb.append("CASE WHEN a.fd_s8_dt IS NULL THEN \n");
@@ -153,9 +158,9 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         sb.append("ELSE a.fd_s7_dt end) \n");
         sb.append("ELSE a.fd_s8_dt \n");
         sb.append("END as fdS5Dt, \n");
-        sb.append("a.fd_s6_dt, a.fd_s6_time, a.fd_s6_cancel_yn, a.fd_s6_cancel_time, a.fd_cancel, a.fd_cacel_dt, a.fd_color, a.fd_pattern, a.fd_price_grade, \n");
+        sb.append("a.fd_s6_dt, a.fd_s6_type, a.fd_s6_time, a.fd_s6_cancel_yn, a.fd_s6_cancel_time, a.fd_cancel, a.fd_cacel_dt, a.fd_color, a.fd_pattern, a.fd_price_grade, \n");
         sb.append("a.fd_origin_amt, a.fd_normal_amt, a.fd_add2_amt, a.fd_add2_remark, \n");
-        sb.append("a.fd_pollution, a.fd_discount_grade, a.fd_discount_amt, a.fd_qty, a.fd_request_amt, \n");
+        sb.append("a.fd_pollution, a.fd_discount_grade, a.fd_discount_amt, a.fd_qty, IFNULL(a.hp_id,null), a.fd_promotion_type, a.fd_promotion_discount_rate, a.fd_promotion_discount_amt, a.fd_request_amt, \n");
         sb.append("a.fd_special_yn, a.fd_tot_amt, a.fd_remark, a.fd_estimate_dt, a.fd_retry_yn, a.fd_urgent_yn, a.fd_urgent_type, a.fd_urgent_amt, a.fd_pressed, \n");
         sb.append("a.fd_add1_amt, a.fd_add1_remark, a.fd_repair_amt, a.fd_repair_remark, a.fd_whitening, a.fd_pollution_level, \n");
         sb.append("a.fd_water_repellent, a.fd_starch, a.fd_pollution_loc_fcn, a.fd_pollution_loc_fcs, a.fd_pollution_loc_fcb, \n");
@@ -195,30 +200,51 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
 
         sb.append("WHERE \n");
         sb.append("b.fr_code= ?1 \n");
-        sb.append("AND a.fd_cancel='N' \n");
         sb.append("AND b.fr_confirm_yn='Y' \n");
-        sb.append("AND b.fr_yyyymmdd  <= ?2 \n");
-        sb.append("AND b.fr_yyyymmdd  >= ?3 \n");
+        if(filterCondition.equals("S6")) {
+            sb.append("AND a.fd_s6_dt  <= ?2 \n");
+            sb.append("AND a.fd_s6_dt  >= ?3 \n");
+        }else{
+            sb.append("AND b.fr_yyyymmdd  <= ?2 \n");
+            sb.append("AND b.fr_yyyymmdd  >= ?3 \n");
+        }
 
         if(!filterCondition.equals("")) {
-            if (filterCondition.equals("F")) {
-                sb.append("AND d.fi_type= ?4 \n");
-            } else if(filterCondition.equals("B")) {
-                sb.append("AND e.fi_type= ?4 \n");
-            }else {
-                sb.append("AND a.fd_state= ?4 \n");
-            }
-            if(!searchTag.equals("")) {
-                sb.append("AND a.fd_tag LIKE ?5 \n");
-                if(bcId != null){
-                    sb.append("AND c.bc_id= ?6 \n");
+            //  22/07/22 : C가 온다면 접수취소가 된 세탁물들을 조회하여 리턴해 주시기를 요청드립니다.
+            if(filterCondition.equals("C")){
+                sb.append("AND a.fd_cancel='Y' \n");
+                if(!searchTag.equals("")) {
+                    sb.append("AND a.fd_tag LIKE ?4 \n");
+                    if(bcId != null){
+                        sb.append("AND c.bc_id= ?5 \n");
+                    }
+                }else{
+                    if(bcId != null){
+                        sb.append("AND c.bc_id= ?4 \n");
+                    }
                 }
             }else{
-                if(bcId != null){
-                    sb.append("AND c.bc_id= ?5 \n");
+                sb.append("AND a.fd_cancel='N' \n");
+                if (filterCondition.equals("F")) {
+                    sb.append("AND d.fi_type= ?4 \n");
+                } else if(filterCondition.equals("B")) {
+                    sb.append("AND e.fi_type= ?4 \n");
+                } else {
+                    sb.append("AND a.fd_state= ?4 \n");
+                }
+                if(!searchTag.equals("")) {
+                    sb.append("AND a.fd_tag LIKE ?5 \n");
+                    if(bcId != null){
+                        sb.append("AND c.bc_id= ?6 \n");
+                    }
+                }else{
+                    if(bcId != null){
+                        sb.append("AND c.bc_id= ?5 \n");
+                    }
                 }
             }
         }else{
+            sb.append("AND a.fd_cancel='N' \n");
             if(!searchTag.equals("")){
                 sb.append("AND a.fd_tag LIKE ?4 \n");
                 if(bcId != null){
@@ -240,15 +266,28 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         query.setParameter(3, filterToDt);
 
         if(!filterCondition.equals("")) {
-            query.setParameter(4, filterCondition);
-            if(!searchTag.equals("")){
-                query.setParameter(5, "%"+searchTag+"%");
-                if(bcId != null){
-                    query.setParameter(6, bcId);
+            if(!filterCondition.equals("C")) {
+                query.setParameter(4, filterCondition);
+                if(!searchTag.equals("")){
+                    query.setParameter(5, "%"+searchTag+"%");
+                    if(bcId != null){
+                        query.setParameter(6, bcId);
+                    }
+                }else{
+                    if(bcId != null){
+                        query.setParameter(5, bcId);
+                    }
                 }
             }else{
-                if(bcId != null){
-                    query.setParameter(5, bcId);
+                if(!searchTag.equals("")){
+                    query.setParameter(4, "%"+searchTag+"%");
+                    if(bcId != null){
+                        query.setParameter(5, bcId);
+                    }
+                }else{
+                    if(bcId != null){
+                        query.setParameter(4, bcId);
+                    }
                 }
             }
         }else{
@@ -323,7 +362,10 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                                 .when(requestDetail.fdPollutionLocBrh.eq("Y")).then(1)
                                 .when(requestDetail.fdPollutionLocBlf.eq("Y")).then(1)
                                 .when(requestDetail.fdPollutionLocBrf.eq("Y")).then(1)
-                                .otherwise(0)
+                                .otherwise(0),
+
+                        requestDetail.fdPromotionType,
+                        requestDetail.fdPromotionDiscountRate
 
                 ));
         query.orderBy(requestDetail.id.desc());
@@ -362,7 +404,9 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         sb.append("WHEN a.fd_pollution_loc_brh = 'Y' THEN 1 \n");
         sb.append("WHEN a.fd_pollution_loc_blf = 'Y' THEN 1 \n");
         sb.append("WHEN a.fd_pollution_loc_brf = 'Y' THEN 1 \n");
-        sb.append("ELSE 0 END fdPollutionBack \n");
+        sb.append("ELSE 0 END fdPollutionBack, \n");
+
+        sb.append("a.fd_promotion_type, a.fd_promotion_discount_rate \n");
 
         sb.append("FROM fs_request_dtl a \n");
 
@@ -475,7 +519,11 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                                 .when(requestDetail.fdPollutionLocBrh.eq("Y")).then(1)
                                 .when(requestDetail.fdPollutionLocBlf.eq("Y")).then(1)
                                 .when(requestDetail.fdPollutionLocBrf.eq("Y")).then(1)
-                                .otherwise(0)
+                                .otherwise(0),
+
+                        requestDetail.fdPromotionType,
+                        requestDetail.fdPromotionDiscountRate
+
                 ));
         query.orderBy(requestDetail.id.asc());
         return query.fetch();
@@ -565,7 +613,10 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                                 .when(requestDetail.fdPollutionLocBrh.eq("Y")).then(1)
                                 .when(requestDetail.fdPollutionLocBlf.eq("Y")).then(1)
                                 .when(requestDetail.fdPollutionLocBrf.eq("Y")).then(1)
-                                .otherwise(0)
+                                .otherwise(0),
+
+                        requestDetail.fdPromotionType,
+                        requestDetail.fdPromotionDiscountRate
                 ));
         query.orderBy(requestDetail.id.asc());
 
@@ -685,7 +736,10 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                                 .when(requestDetail.fdPollutionLocBrh.eq("Y")).then(1)
                                 .when(requestDetail.fdPollutionLocBlf.eq("Y")).then(1)
                                 .when(requestDetail.fdPollutionLocBrf.eq("Y")).then(1)
-                                .otherwise(0)
+                                .otherwise(0),
+
+                        requestDetail.fdPromotionType,
+                        requestDetail.fdPromotionDiscountRate
                 ));
 //        query.groupBy(requestDetail.fdTag).orderBy(requestDetail.id.asc());
 
@@ -707,7 +761,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         StringBuilder sb = new StringBuilder();
 
         sb.append("SELECT \n");
-        sb.append("b.fr_ref_type, c.bc_name, a.fd_id, b.fr_yyyymmdd, b.fr_insert_date, a.fd_tag, \n");
+        sb.append("b.fr_ref_type, c.bc_name, a.fr_no, a.fd_id, b.fr_yyyymmdd, b.fr_insert_date, a.fd_tag, \n");
         sb.append("a.fd_color, g.bg_name, h.bs_name, f.bi_name, a.fd_state, \n");
 
         sb.append("a.fd_s2_dt, a.fd_s4_dt, \n");
@@ -746,7 +800,9 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         sb.append("WHEN a.fd_pollution_loc_brh = 'Y' THEN 1 \n");
         sb.append("WHEN a.fd_pollution_loc_blf = 'Y' THEN 1 \n");
         sb.append("WHEN a.fd_pollution_loc_brf = 'Y' THEN 1 \n");
-        sb.append("ELSE 0 END fdPollutionBack \n");
+        sb.append("ELSE 0 END fdPollutionBack, \n");
+
+        sb.append("a.fd_promotion_type, a.fd_promotion_discount_rate \n");
 
         sb.append("FROM fs_request_dtl a \n");
         sb.append("INNER JOIN fs_request b ON b.fr_id = a.fr_id \n");
@@ -756,7 +812,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         sb.append("INNER JOIN bs_item_group_s h ON f.bs_item_groupcode_s=h.bs_item_groupcode_s and f.bg_item_groupcode=h.bg_item_groupcode \n");
         sb.append("LEFT OUTER JOIN fs_request_inspect d ON d.fd_id = a.fd_id AND d.fi_type='F' \n");
         sb.append("LEFT OUTER JOIN fs_request_inspect e ON e.fd_id = a.fd_id AND e.fi_type='B' \n");
-        sb.append("WHERE b.fr_code = ?1 AND a.fd_state != 'S6' \n");
+        sb.append("WHERE b.fr_code = ?1 AND a.fd_state != 'S6' AND a.fd_cancel = 'N' \n");
         if(bcId != null){
             sb.append("AND c.bc_id= ?2 \n");
         }
@@ -904,7 +960,11 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                                 .when(requestDetail.fdPollutionLocBrh.eq("Y")).then(1)
                                 .when(requestDetail.fdPollutionLocBlf.eq("Y")).then(1)
                                 .when(requestDetail.fdPollutionLocBrf.eq("Y")).then(1)
-                                .otherwise(0)
+                                .otherwise(0),
+
+                        requestDetail.fdPromotionType,
+                        requestDetail.fdPromotionDiscountRate
+
                 ));
         query.orderBy(requestDetail.id.asc()).groupBy(requestDetail, inspeot.fdId);
         if(!searchTag.equals("")){
@@ -978,11 +1038,18 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         itemGroup.bgName,
                         itemGroupS.bsName,
                         item.biName,
+                        requestDetail.fdPriceGrade,
                         requestDetail.fdSpecialYn,
-                        requestDetail.fdTotAmt,
-                        requestDetail.fdEstimateDt
+
+                        requestDetail.fdEstimateDt,
+                        requestDetail.fdRemark,
+//                        requestDetail.fdCancel,
+
+                        requestDetail.fdNormalAmt,
+                        requestDetail.fdTotAmt
                 ));
         query.where(requestDetail.frNo.eq(frNo));
+        query.where(requestDetail.fdCancel.eq("N").and(requestDetail.fdS6Type.isNull().or(requestDetail.fdS6Type.eq("01"))));
         return query.fetch();
     }
 
@@ -1001,8 +1068,8 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         sb.append("c.bc_name, a.fd_estimate_dt, a.fd_tot_amt, a.fd_state, \n");
 
         sb.append("CASE \n");
-        sb.append("WHEN h.fi_customer_confirm IS NULL AND fd_s7_type = '01' THEN '02' \n");
-        sb.append("WHEN h.fi_customer_confirm IS NULL AND fd_s7_type = '02' THEN '04' \n");
+        sb.append("WHEN fd_s7_type = '01' THEN '02' \n");
+        sb.append("WHEN fd_s7_type = '02' THEN '04' \n");
         sb.append("WHEN h.fi_customer_confirm = 1 THEN '99' \n");
         sb.append("WHEN h.fi_customer_confirm = 2 THEN '07' \n");
         sb.append("WHEN h.fi_customer_confirm = 3 THEN '08' \n");
@@ -1027,7 +1094,9 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         sb.append("WHEN a.fd_pollution_loc_brh = 'Y' THEN 1 \n");
         sb.append("WHEN a.fd_pollution_loc_blf = 'Y' THEN 1 \n");
         sb.append("WHEN a.fd_pollution_loc_brf = 'Y' THEN 1 \n");
-        sb.append("ELSE 0 END fdPollutionBack \n");
+        sb.append("ELSE 0 END fdPollutionBack, \n");
+
+        sb.append("a.fd_promotion_type, a.fd_promotion_discount_rate \n");
 
         sb.append("FROM fs_request_dtl a \n");
         sb.append("INNER JOIN fs_request b on a.fr_id=b.fr_id \n");
@@ -1142,6 +1211,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
     // 지사강제출고 querydsl
     @Override
     public List<RequestDetailReleaseListDto> findByRequestDetailReleaseForceList(String brCode, Long frId, String fromDt, String toDt){
+
         QRequestDetail requestDetail = QRequestDetail.requestDetail;
         QRequest request = QRequest.request;
         QFranchise franchise = QFranchise.franchise;
@@ -1149,6 +1219,8 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
         QItem item = QItem.item;
         QCustomer customer = QCustomer.customer;
+        QInspeot inspeot = QInspeot.inspeot;
+
         JPQLQuery<RequestDetailReleaseListDto> query = from(requestDetail)
                 .innerJoin(requestDetail.frId, request)
                 .innerJoin(request.bcId, customer)
@@ -1156,7 +1228,9 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                 .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
                 .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
                 .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
+                .leftJoin(inspeot).on(inspeot.fdId.eq(requestDetail).and(inspeot.fiType.eq("B")))
                 .where(request.frConfirmYn.eq("Y"))
+                .where(inspeot.isNull())
                 .where(request.brCode.eq(brCode).and(requestDetail.fdCancel.eq("N")))
                 .select(Projections.constructor(RequestDetailReleaseListDto.class,
                         requestDetail.id,
@@ -1262,7 +1336,10 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                                 .when(requestDetail.fdPollutionLocBrh.eq("Y")).then(1)
                                 .when(requestDetail.fdPollutionLocBlf.eq("Y")).then(1)
                                 .when(requestDetail.fdPollutionLocBrf.eq("Y")).then(1)
-                                .otherwise(0)
+                                .otherwise(0),
+
+                        requestDetail.fdPromotionType,
+                        requestDetail.fdPromotionDiscountRate
                 ));
         query.orderBy(requestDetail.id.asc());
         query.where(requestDetail.fdState.eq("S4"));
@@ -1350,6 +1427,8 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
         QItem item = QItem.item;
         QCustomer customer = QCustomer.customer;
+        QInspeot inspeot = QInspeot.inspeot;
+
         JPQLQuery<RequestDetailBranchForceListDto> query = from(requestDetail)
                 .innerJoin(requestDetail.frId, request)
                 .innerJoin(request.bcId, customer)
@@ -1357,7 +1436,9 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                 .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
                 .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
                 .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
+                .leftJoin(inspeot).on(inspeot.fdId.eq(requestDetail).and(inspeot.fiType.eq("B")))
                 .where(request.frConfirmYn.eq("Y"))
+                .where(inspeot.isNull())
                 .where(request.brCode.eq(brCode).and(requestDetail.fdCancel.eq("N")))
                 .select(Projections.constructor(RequestDetailBranchForceListDto.class,
                         requestDetail.id,
@@ -1403,10 +1484,13 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                                 .when(requestDetail.fdPollutionLocBrh.eq("Y")).then(1)
                                 .when(requestDetail.fdPollutionLocBlf.eq("Y")).then(1)
                                 .when(requestDetail.fdPollutionLocBrf.eq("Y")).then(1)
-                                .otherwise(0)
+                                .otherwise(0),
+
+                        requestDetail.fdPromotionType,
+                        requestDetail.fdPromotionDiscountRate
                 ));
         query.orderBy(requestDetail.id.asc());
-        query.where(requestDetail.fdState.eq("S2"));
+        query.where(requestDetail.fdState.eq("S2").and(requestDetail.fdS7Type.isNull())); // 강제, 반품출고 상품은 조회안되도록 API 수정 - 20220826
         query.where(franchise.id.eq(frId));
         if(!tagNo.equals("")){
             query.where(requestDetail.fdTag.eq(tagNo));
@@ -1423,6 +1507,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
     // 가맹점반품출고 querydsl
     @Override
     public  List<RequestDetailBranchReturnListDto> findByRequestDetailBranchReturnList(String brCode, Long frId, String fromDt, String toDt, String tagNo){
+
         QRequestDetail requestDetail = QRequestDetail.requestDetail;
         QRequest request = QRequest.request;
         QFranchise franchise = QFranchise.franchise;
@@ -1430,6 +1515,8 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         QItemGroupS itemGroupS = QItemGroupS.itemGroupS;
         QItem item = QItem.item;
         QCustomer customer = QCustomer.customer;
+        QInspeot inspeot = QInspeot.inspeot;
+
         JPQLQuery<RequestDetailBranchReturnListDto> query = from(requestDetail)
                 .innerJoin(requestDetail.frId, request)
                 .innerJoin(request.bcId, customer)
@@ -1437,7 +1524,9 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                 .innerJoin(item).on(requestDetail.biItemcode.eq(item.biItemcode))
                 .innerJoin(itemGroup).on(item.bgItemGroupcode.eq(itemGroup.bgItemGroupcode))
                 .innerJoin(itemGroupS).on(item.bsItemGroupcodeS.eq(itemGroupS.bsItemGroupcodeS).and(item.bgItemGroupcode.eq(itemGroupS.bgItemGroupcode.bgItemGroupcode)))
+                .leftJoin(inspeot).on(inspeot.fdId.eq(requestDetail).and(inspeot.fiType.eq("B")))
                 .where(request.frConfirmYn.eq("Y"))
+                .where(inspeot.isNull())
                 .where(request.brCode.eq(brCode).and(requestDetail.fdCancel.eq("N")))
                 .select(Projections.constructor(RequestDetailBranchReturnListDto.class,
                         requestDetail.id,
@@ -1483,10 +1572,13 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                                 .when(requestDetail.fdPollutionLocBrh.eq("Y")).then(1)
                                 .when(requestDetail.fdPollutionLocBlf.eq("Y")).then(1)
                                 .when(requestDetail.fdPollutionLocBrf.eq("Y")).then(1)
-                                .otherwise(0)
+                                .otherwise(0),
+
+                        requestDetail.fdPromotionType,
+                        requestDetail.fdPromotionDiscountRate
                 ));
         query.orderBy(requestDetail.id.asc());
-        query.where(requestDetail.fdState.eq("S2"));
+        query.where(requestDetail.fdState.eq("S2").and(requestDetail.fdS7Type.isNull())); // 강제, 반품출고 상품은 조회안되도록 API 수정 - 20220826
         query.where(franchise.id.eq(frId));
         if(!tagNo.equals("")){
             query.where(requestDetail.fdTag.eq(tagNo));
@@ -1502,7 +1594,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
 
     // 확인품등록 querydsl
     @Override
-    public  List<RequestDetailBranchInspectListDto> findByRequestDetailBranchInspectList(String brCode, Long frId, String fromDt, String toDt, String tagNo){
+    public  List<RequestDetailBranchInspectListDto> findByRequestDetailBranchInspectList(String brCode, Long franchiseId, String fromDt, String toDt, String tagNo){
         QRequestDetail requestDetail = QRequestDetail.requestDetail;
         QRequest request = QRequest.request;
         QFranchise franchise = QFranchise.franchise;
@@ -1580,11 +1672,21 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                                 .when(requestDetail.fdPollutionLocBrh.eq("Y")).then(1)
                                 .when(requestDetail.fdPollutionLocBlf.eq("Y")).then(1)
                                 .when(requestDetail.fdPollutionLocBrf.eq("Y")).then(1)
-                                .otherwise(0)
+                                .otherwise(0),
+
+                        requestDetail.fdPromotionType,
+                        requestDetail.fdPromotionDiscountRate
                 ));
+
         query.orderBy(requestDetail.id.asc());
-        query.where(requestDetail.fdState.eq("S2"));
-        query.where(franchise.id.eq(frId));
+        query.where(requestDetail.fdState.eq("S2").and(requestDetail.fdS7Type.isNull())); // 강제, 반품출고 상품은 조회안되도록 API 수정 - 20220826
+
+        if(franchiseId==0){
+            query.where(franchise.brCode.eq(brCode));
+        }else{
+            query.where(franchise.id.eq(franchiseId));
+        }
+
         if(!tagNo.equals("")){
             query.where(requestDetail.fdTag.eq(tagNo));
         }
@@ -1665,7 +1767,10 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                                 .when(requestDetail.fdPollutionLocBrh.eq("Y")).then(1)
                                 .when(requestDetail.fdPollutionLocBlf.eq("Y")).then(1)
                                 .when(requestDetail.fdPollutionLocBrf.eq("Y")).then(1)
-                                .otherwise(0)
+                                .otherwise(0),
+
+                        requestDetail.fdPromotionType,
+                        requestDetail.fdPromotionDiscountRate
 
                 ));
         query.orderBy(requestDetail.id.asc()).groupBy(requestDetail.id);
@@ -1755,7 +1860,10 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                                 .when(requestDetail.fdPollutionLocBrh.eq("Y")).then(1)
                                 .when(requestDetail.fdPollutionLocBlf.eq("Y")).then(1)
                                 .when(requestDetail.fdPollutionLocBrf.eq("Y")).then(1)
-                                .otherwise(0)
+                                .otherwise(0),
+
+                        requestDetail.fdPromotionType,
+                        requestDetail.fdPromotionDiscountRate
                 ));
         query.orderBy(requestDetail.id.asc());
         if(frId != 0) {
@@ -1872,7 +1980,10 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                                 .when(requestDetail.fdPollutionLocBrh.eq("Y")).then(1)
                                 .when(requestDetail.fdPollutionLocBlf.eq("Y")).then(1)
                                 .when(requestDetail.fdPollutionLocBrf.eq("Y")).then(1)
-                                .otherwise(0)
+                                .otherwise(0),
+
+                        requestDetail.fdPromotionType,
+                        requestDetail.fdPromotionDiscountRate
                 ));
 
         query.orderBy(requestDetail.id.asc());
@@ -1950,7 +2061,10 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                                 .when(requestDetail.fdPollutionLocBrh.eq("Y")).then(1)
                                 .when(requestDetail.fdPollutionLocBlf.eq("Y")).then(1)
                                 .when(requestDetail.fdPollutionLocBrf.eq("Y")).then(1)
-                                .otherwise(0)
+                                .otherwise(0),
+
+                        requestDetail.fdPromotionType,
+                        requestDetail.fdPromotionDiscountRate
 
                 ));
 
@@ -2086,7 +2200,10 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                                 .when(requestDetail.fdPollutionLocBrh.eq("Y")).then(1)
                                 .when(requestDetail.fdPollutionLocBlf.eq("Y")).then(1)
                                 .when(requestDetail.fdPollutionLocBrf.eq("Y")).then(1)
-                                .otherwise(0)
+                                .otherwise(0),
+
+                        requestDetail.fdPromotionType,
+                        requestDetail.fdPromotionDiscountRate
                 ));
 
         query.orderBy(requestDetail.id.asc());
@@ -2167,7 +2284,10 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                                 .when(requestDetail.fdPollutionLocBrh.eq("Y")).then(1)
                                 .when(requestDetail.fdPollutionLocBlf.eq("Y")).then(1)
                                 .when(requestDetail.fdPollutionLocBrf.eq("Y")).then(1)
-                                .otherwise(0)
+                                .otherwise(0),
+
+                        requestDetail.fdPromotionType,
+                        requestDetail.fdPromotionDiscountRate
 
                 ));
 
@@ -2281,7 +2401,10 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                                 .when(requestDetail.fdPollutionLocBrh.eq("Y")).then(1)
                                 .when(requestDetail.fdPollutionLocBlf.eq("Y")).then(1)
                                 .when(requestDetail.fdPollutionLocBrf.eq("Y")).then(1)
-                                .otherwise(0)
+                                .otherwise(0),
+
+                        requestDetail.fdPromotionType,
+                        requestDetail.fdPromotionDiscountRate
                 ));
 
         query.orderBy(requestDetail.id.asc());
@@ -2398,7 +2521,10 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                                 .when(requestDetail.fdPollutionLocBrh.eq("Y")).then(1)
                                 .when(requestDetail.fdPollutionLocBlf.eq("Y")).then(1)
                                 .when(requestDetail.fdPollutionLocBrf.eq("Y")).then(1)
-                                .otherwise(0)
+                                .otherwise(0),
+
+                        requestDetail.fdPromotionType,
+                        requestDetail.fdPromotionDiscountRate
 
                 ));
 
@@ -2424,7 +2550,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         sb.append("INNER JOIN bs_customer d ON d.bc_id = b.bc_id \n");
         sb.append("INNER JOIN bs_item e ON e.bi_itemcode = a.bi_itemcode \n");
         sb.append("INNER JOIN bs_item_group f ON f.bg_item_groupcode = e.bg_item_groupcode \n");
-        sb.append("WHERE a.fr_no IN ?1 AND a.fd_cancel = 'N'  AND b.fr_confirm_yn = 'Y' \n");
+        sb.append("WHERE a.fr_no IN ?1 AND a.fd_cancel = 'N'  AND b.fr_confirm_yn = 'Y' AND d.bc_message_agree = 'Y' \n");
         sb.append(") \n");
         // 해당 접수건의 상품이 모두 가맹점입고 상태인것만 리스트 호출한다.
         sb.append("SELECT a.fr_code, a.fr_no, a.bc_id, a.fr_qty, a.bg_name, a.bi_name \n");
@@ -2447,6 +2573,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         QItem item = QItem.item;
         QCustomer customer = QCustomer.customer;
         QFranchise franchise = QFranchise.franchise;
+
         JPQLQuery<RequestDetailMessageDto> query = from(requestDetail)
                 .innerJoin(requestDetail.frId, request)
                 .innerJoin(request.bcId, customer)
@@ -2456,6 +2583,7 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
 
                 .where(request.frConfirmYn.eq("Y"))
                 .where(request.frCode.eq(frCode).and(requestDetail.fdCancel.eq("N")))
+                .where(customer.bcMessageAgree.eq("Y"))
                 .select(Projections.constructor(RequestDetailMessageDto.class,
                         request.id,
                         customer,
@@ -2542,7 +2670,9 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         sb.append("WHEN a.fd_pollution_loc_brh = 'Y' THEN 1 \n");
         sb.append("WHEN a.fd_pollution_loc_blf = 'Y' THEN 1 \n");
         sb.append("WHEN a.fd_pollution_loc_brf = 'Y' THEN 1 \n");
-        sb.append("ELSE 0 END fdPollutionBack \n");
+        sb.append("ELSE 0 END fdPollutionBack, \n");
+
+        sb.append("a.fd_promotion_type, a.fd_promotion_discount_rate \n");
 
         sb.append("FROM fs_request_dtl a \n");
         sb.append("INNER JOIN fs_request b on a.fr_id=b.fr_id \n");
@@ -2674,6 +2804,8 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdColor,
                         requestDetail.fdPattern,
 
+                        requestDetail.fdPromotionDiscountAmt,
+
                         requestDetail.fdUrgentYn,
                         requestDetail.fdUrgentType,
 
@@ -2719,7 +2851,10 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdS4Dt,
                         requestDetail.fdS3Dt,
                         requestDetail.fdS6Dt,
-                        requestDetail.fdS6Time
+                        requestDetail.fdS6Time,
+
+                        requestDetail.fdPromotionType,
+                        requestDetail.fdPromotionDiscountRate
 
                 ));
 
@@ -2827,6 +2962,8 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdColor,
                         requestDetail.fdPattern,
 
+                        requestDetail.fdPromotionDiscountAmt,
+
                         requestDetail.fdUrgentYn,
                         requestDetail.fdUrgentType,
 
@@ -2872,7 +3009,10 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdS4Dt,
                         requestDetail.fdS3Dt,
                         requestDetail.fdS6Dt,
-                        requestDetail.fdS6Time
+                        requestDetail.fdS6Time,
+
+                        requestDetail.fdPromotionType,
+                        requestDetail.fdPromotionDiscountRate
                 ));
 
         query.groupBy(requestDetail.id).orderBy(requestDetail.id.asc());
@@ -3023,7 +3163,10 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdS4Dt,
                         requestDetail.fdS3Dt,
                         requestDetail.fdS6Dt,
-                        requestDetail.fdS6Time
+                        requestDetail.fdS6Time,
+
+                        requestDetail.fdPromotionType,
+                        requestDetail.fdPromotionDiscountRate
 
                 ));
 
@@ -3128,7 +3271,10 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdColor,
                         requestDetail.fdPattern,
 
+                        requestDetail.fdPromotionDiscountAmt,
+
                         requestDetail.fdUrgentYn,
+
                         requestDetail.fdUrgentType,
 
                         requestDetail.fdPressed,
@@ -3173,7 +3319,10 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdS4Dt,
                         requestDetail.fdS3Dt,
                         requestDetail.fdS6Dt,
-                        requestDetail.fdS6Time
+                        requestDetail.fdS6Time,
+
+                        requestDetail.fdPromotionType,
+                        requestDetail.fdPromotionDiscountRate
 
                 ));
 
@@ -3324,7 +3473,10 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdS4Dt,
                         requestDetail.fdS3Dt,
                         requestDetail.fdS6Dt,
-                        requestDetail.fdS6Time
+                        requestDetail.fdS6Time,
+
+                        requestDetail.fdPromotionType,
+                        requestDetail.fdPromotionDiscountRate
 
                 ));
 
@@ -3430,6 +3582,8 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdColor,
                         requestDetail.fdPattern,
 
+                        requestDetail.fdPromotionDiscountAmt,
+
                         requestDetail.fdUrgentYn,
                         requestDetail.fdUrgentType,
 
@@ -3475,7 +3629,10 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
                         requestDetail.fdS4Dt,
                         requestDetail.fdS3Dt,
                         requestDetail.fdS6Dt,
-                        requestDetail.fdS6Time
+                        requestDetail.fdS6Time,
+
+                        requestDetail.fdPromotionType,
+                        requestDetail.fdPromotionDiscountRate
 
                 ));
 
@@ -3491,6 +3648,30 @@ public class RequestDetailRepositoryCustomImpl extends QuerydslRepositorySupport
         query.where(request.frYyyymmdd.eq(frYyyymmdd).and(requestDetail.fdRetryYn.eq("Y")));
 
         return query.fetch();
+    }
+
+    // 행사관련 품목의 접수취소시 해당 조건과 일치하는 품목 갯수 가져오는 Query
+    @Override
+    public Long findByPromotionCancelCount(String promotionType, Long id, String biItemcode, String fdPriceGrade, String type) {
+
+        QRequestDetail requestDetail = QRequestDetail.requestDetail;
+        QRequest request = QRequest.request;
+
+        JPQLQuery<Long> query = from(requestDetail)
+                .innerJoin(requestDetail.frId, request)
+                .select(Projections.constructor(Long.class,
+                        requestDetail.count()
+                ));
+
+        query.where(request.frConfirmYn.eq("Y").and(requestDetail.fdCancel.eq("N")));
+        query.where(request.id.eq(id).and(requestDetail.biItemcode.eq(biItemcode).and(requestDetail.fdPriceGrade.eq(fdPriceGrade))));
+        query.where(requestDetail.fdPromotionType.eq(promotionType).and(requestDetail.fdRetryYn.eq("N").and(requestDetail.fdDiscountGrade.eq("1").and(requestDetail.fdQty.eq(1)))));
+
+        if(type.equals("2")){
+            query.where(requestDetail.fdPromotionDiscountAmt.gt(0));
+        }
+
+        return query.fetchOne();
     }
 
 

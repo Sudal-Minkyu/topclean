@@ -72,7 +72,9 @@ public class IssueOutsourcingRepositoryCustomImpl extends QuerydslRepositorySupp
         sb.append("WHEN a.fd_pollution_loc_brh = 'Y' THEN 1 \n");
         sb.append("WHEN a.fd_pollution_loc_blf = 'Y' THEN 1 \n");
         sb.append("WHEN a.fd_pollution_loc_brf = 'Y' THEN 1 \n");
-        sb.append("ELSE 0 END fdPollutionBack \n");
+        sb.append("ELSE 0 END fdPollutionBack, \n");
+
+        sb.append("a.fd_promotion_type, a.fd_promotion_discount_rate \n");
 
         sb.append("FROM mr_issue_outsourcing j \n");
 
@@ -253,7 +255,11 @@ public class IssueOutsourcingRepositoryCustomImpl extends QuerydslRepositorySupp
                         requestDetail.fdS4Dt,
                         requestDetail.fdS3Dt,
                         requestDetail.fdS6Dt,
-                        requestDetail.fdS6Time
+                        requestDetail.fdS6Time,
+
+                        requestDetail.fdPromotionType,
+                        requestDetail.fdPromotionDiscountRate
+
                 ));
 
         query.groupBy(issueOutsourcing.fdId).distinct().orderBy(requestDetail.id.asc());

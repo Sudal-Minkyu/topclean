@@ -27,6 +27,9 @@ const dtos = {
         },
 
         headTagNoReceiptSearch: {
+            fdPromotionDiscountAmt: 'n', // 행사적용된 할인가격
+            fdPromotionType: 's', // 행사유형
+            fdPromotionDiscountRate: 'n', // 행사 할인율
             fdS6Type: 's',
             brName: 's',
             frName: 's',
@@ -169,7 +172,7 @@ const grids = {
                     width: 140,
                 }, {
                     dataField: 'fdEstimateDt',
-                    headerText: '인도<br>예정일',
+                    headerText: '고객출고<br>예정일',
                     width: 90,
                     dataType: 'date',
                     formatString: dateFormat,
@@ -262,6 +265,13 @@ const grids = {
                         },
                     ],
                 }, {
+                    dataField: 'fdPromotionType',
+                    headerText: '적용행사',
+                    width: 80,
+                    labelFunction(_rowIndex, _columnIndex, value, _headerText, _item) {
+                        return value ? CommonData.name.fdPromotionType[value] : '';
+                    },
+                }, {
                     dataField: 'fdNormalAmt',
                     headerText: '기본가격',
                     style: 'grid_textalign_right',
@@ -290,6 +300,9 @@ const grids = {
                     width: 80,
                     dataType: 'numeric',
                     autoThousandSeparator: 'true',
+                    labelFunction(_rowIndex, _columnIndex, value, _headerText, item) {
+                        return value + item.fdPromotionDiscountAmt;
+                    },
                 }, {
                     dataField: 'fdTotAmt',
                     headerText: '최종가격',
@@ -327,7 +340,7 @@ const grids = {
                             formatString: dateFormat,
                         }, {
                             dataField: 'fdS6Dt',
-                            headerText: '고객인도',
+                            headerText: '고객출고',
                             width: 90,
                             dataType: 'date',
                             formatString: dateFormat,
@@ -335,12 +348,12 @@ const grids = {
                     ],
                 }, {
                     dataField: 'fdS6Type',
-                    headerText: '반품인도<br>여부',
+                    headerText: '반품출고<br>여부',
                     labelFunction: processChkChar,
                     width: 70,
                 }, {
                     dataField: 'fdS6Time',
-                    headerText: '실인도<br>일시',
+                    headerText: '고객출고<br>일시',
                     width: 140,
                 },
             ];

@@ -1,5 +1,8 @@
 package com.broadwave.toppos.Head.Item.Group.C;
 
+import com.broadwave.toppos.Head.Item.Group.C.ItemDtos.ItemEventListDto;
+import com.broadwave.toppos.Head.Item.Group.C.ItemDtos.ItemListDto;
+
 import java.util.List;
 
 /**
@@ -10,4 +13,6 @@ import java.util.List;
  */
 public interface ItemRepositoryCustom {
     List<ItemListDto> findByItemList(String bgItemGroupcode, String bsItemGroupcodeS, String biItemcode, String biName);
+
+    List<ItemEventListDto> findByItemEventList(String bgItemGroupcode, String bsItemGroupcodeS);
 }

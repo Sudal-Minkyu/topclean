@@ -54,7 +54,7 @@ public class ItemPrice {
     private Integer bpPriceE; // 최종가격E
 
     @Column(name="bp_remark")
-    private String biRemark; // 특이사항
+    private String bpRemark; // 특이사항
 
     @Column(name="insert_id")
     private String insert_id;

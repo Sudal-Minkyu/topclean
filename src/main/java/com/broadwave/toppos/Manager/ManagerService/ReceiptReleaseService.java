@@ -12,6 +12,8 @@ import com.broadwave.toppos.Manager.Process.IssueOutsourcing.IssueOutsourcingDto
 import com.broadwave.toppos.Manager.Process.IssueOutsourcing.IssueOutsourcingRepository;
 import com.broadwave.toppos.Manager.outsourcingPrice.OutsourcingPriceRepository;
 import com.broadwave.toppos.Manager.outsourcingPrice.outsourcingPriceDtos.OutsourcingPriceDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotYnDto;
+import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotRepositoryCustom;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetail;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailDtos.manager.*;
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.RequestDetailRepository;
@@ -43,10 +45,6 @@ import java.util.Map;
 @Service
 public class ReceiptReleaseService {
 
-    // 현재 날짜 받아오기
-    LocalDateTime localDateTime = LocalDateTime.now();
-    private final  String nowDate = localDateTime.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-
     private final TokenProvider tokenProvider;
     private final KeyGenerateService keyGenerateService;
 
@@ -57,10 +55,12 @@ public class ReceiptReleaseService {
     private final IssueForceRepository issueForceRepository;
     private final IssueOutsourcingRepository issueOutsourcingRepository;
 
+    private final InspeotRepositoryCustom inspeotRepositoryCustom;
+
     @Autowired
     public ReceiptReleaseService(TokenProvider tokenProvider, KeyGenerateService keyGenerateService,
                                  IssueRepository issueRepository, IssueForceRepository issueForceRepository, IssueOutsourcingRepository issueOutsourcingRepository,
-                                 RequestDetailRepository requestDetailRepository, OutsourcingPriceRepository outsourcingPriceRepository){
+                                 RequestDetailRepository requestDetailRepository, OutsourcingPriceRepository outsourcingPriceRepository, InspeotRepositoryCustom inspeotRepositoryCustom){
         this.keyGenerateService = keyGenerateService;
         this.tokenProvider = tokenProvider;
         this.requestDetailRepository = requestDetailRepository;
@@ -68,6 +68,7 @@ public class ReceiptReleaseService {
         this.issueForceRepository = issueForceRepository;
         this.issueOutsourcingRepository = issueOutsourcingRepository;
         this.outsourcingPriceRepository = outsourcingPriceRepository;
+        this.inspeotRepositoryCustom = inspeotRepositoryCustom;
     }
 
     //  접수테이블의 상태 변화 API - 지사출고 실행함수
@@ -90,6 +91,8 @@ public class ReceiptReleaseService {
         log.info("현재 접속한 지사 코드 : "+brCode);
 
         List<String> miNoList = new ArrayList<>();
+
+        String nowDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 
         // stateType 상태값
         // "S2"이면 지사출고 페이지 버튼 "S2" -> "S4"
@@ -366,9 +369,10 @@ public class ReceiptReleaseService {
                     List<RequestDetail> requestDetailList = requestDetailRepository.findByRequestDetailS3List(fdIdList);
                     log.info("requestDetailList : "+requestDetailList);
                     for (RequestDetail requestDetail : requestDetailList) {
+                        InspeotYnDto inspeotYnDto = inspeotRepositoryCustom.findByInspectYn(requestDetail.getId(), "B");
 //                        log.info("가져온 frID 값 : "+requestDetail.getFrId());
-                        if(requestDetail.getFdState().equals("S2")) {
-//                log.info("가져온 frID 값 : "+requestDetailList.get(i).getFrId());
+                        if (requestDetail.getFdState().equals("S2") && inspeotYnDto == null) {
+//                            log.info("가져온 frID 값 : "+requestDetailList.get(i).getFrId());
                             requestDetail.setFdPreState(requestDetail.getFdState()); // 이전상태 값
                             requestDetail.setFdPreStateDt(LocalDateTime.now());
 
@@ -397,10 +401,11 @@ public class ReceiptReleaseService {
                     IssueForce issueForce;
                     List<IssueForce> issueForceList = new ArrayList<>();
                     List<RequestDetail> requestDetailList = requestDetailRepository.findByRequestDetailS3List(fdIdList);
-//            log.info("requestDetailList : "+requestDetailList);
+//                    log.info("requestDetailList : "+requestDetailList);
                     for (RequestDetail requestDetail : requestDetailList) {
-                        if(requestDetail.getFdState().equals("S2")) {
-//                log.info("가져온 frID 값 : "+requestDetailList.get(i).getFrId());
+                        InspeotYnDto inspeotYnDto = inspeotRepositoryCustom.findByInspectYn(requestDetail.getId(), "B");
+                        if (requestDetail.getFdState().equals("S2") && inspeotYnDto == null) {
+//                            log.info("가져온 frID 값 : "+requestDetailList.get(i).getFrId());
                             requestDetail.setFdPreState(requestDetail.getFdState()); // 이전상태 값
                             requestDetail.setFdPreStateDt(LocalDateTime.now());
 
@@ -429,8 +434,8 @@ public class ReceiptReleaseService {
                             issueForce.setMrTime(LocalDateTime.now());
                             issueForce.setInsert_id(login_id);
                             issueForceList.add(issueForce);
-                        }else{
-                            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP028.getCode(), "강제출고 "+ResponseErrorCode.TP028.getDesc(), "문자", "새로고침이후 다시 시도해주세요."));
+                        } else {
+                            return ResponseEntity.ok(res.fail(ResponseErrorCode.TP028.getCode(), "강제출고 " + ResponseErrorCode.TP028.getDesc(), "문자", "새로고침이후 다시 시도해주세요."));
                         }
                     }
                     requestDetailRepository.saveAll(requestDetailList);

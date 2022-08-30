@@ -54,6 +54,7 @@ const grids = {
             showRowNumColumn : false,
             showStateColumn : false,
             enableFilter : false,
+            showEditedCellMarker: false,
             rowHeight : 48,
             headerHeight : 48,
         };

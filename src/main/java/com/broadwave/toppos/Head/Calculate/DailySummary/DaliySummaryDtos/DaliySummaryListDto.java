@@ -44,4 +44,9 @@ public class DaliySummaryListDto {
     private Integer hsSmsAmt; // SMS발송 금액
     private Integer hsRolayltyAmtFr; // 일정산 - 가맹점 로열티 금액
 
+    private Integer hsCashSaleAmt; // 현금 결제매출
+    private Integer hsCardSaleAmt; // 카드 결제매출
+    private Integer hsPointSaleAmt; // 포인트 결제 매출
+    private Integer hsDeferredSaleAmt; // 후불 결제매출
+
 }

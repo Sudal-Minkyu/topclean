@@ -56,6 +56,7 @@ const comms = {
     getReceiptData(target) {
         CommonUI.ajax(urls.getReceiptData, "GET", target, function (res) {
             const data = res.sendData;
+            console.log(data);
             setField(data);
         });
     }
@@ -66,7 +67,7 @@ const trigs = {
 
 const wares = {
     colorName: {
-        "00": "없음", "01": "흰색", "02": "검정", "03": "회색", "04": "빨강", "05": "주황",
+        "00": "", "01": "흰색", "02": "검정", "03": "회색", "04": "빨강", "05": "주황",
         "06": "노랑", "07": "초록", "08": "파랑", "09": "남색", "10": "보라", "11": "핑크",
     },
 };
@@ -120,15 +121,27 @@ function setField(data) {
     }
 
     const frTagType = data.paymentData.franchiseTagType.length ? parseInt(data.paymentData.franchiseTagType, 10) : 2;
-    for (const {color, itemname, price, tagno} of data.items) {
-        $("#itemList").append(`
+    const $itemList = $("#itemList");
+    for (const {color, fdRemark, itemname, price, tagno} of data.items) {
+        $itemList.append(`
             <tr>
                 <td>${CommonData.formatFrTagNo(tagno, frTagType)}</td>
                 <td>${itemname}</td>
-                <td>${wares.colorName[color]}</td>
                 <td class="align-right">${price.toLocaleString()}</td>
             </tr>
         `);
+        if (color !== "00" || fdRemark) {
+            let remarkText = "";
+            if (fdRemark) {
+                remarkText = "[[ " + fdRemark + " ]]";
+            }
+            $itemList.append(`
+                <tr>
+                    <td></td>
+                    <td colspan="2">${wares.colorName[color]} ${remarkText}</td>
+                </tr>
+            `);
+        }
     }
 
     for (const obj of data.creditData) {

@@ -1,5 +1,6 @@
 package com.broadwave.toppos.Head.Branch;
 
+import com.broadwave.toppos.Head.Branch.BranchDtos.head.BranchEventListDto;
 import com.broadwave.toppos.Head.Branch.BranchDtos.head.BranchSearchInfoDto;
 import com.broadwave.toppos.Head.Branoh.BranchDtos.BranchListDto;
 import com.querydsl.core.types.Projections;
@@ -73,5 +74,18 @@ public class BranchRepositoryCustomImpl extends QuerydslRepositorySupport implem
         return query.fetch();
     }
 
+    @Override
+    public List<BranchEventListDto> findByEventList(String nowDate) {
+        QBranch branch = QBranch.branch;
+
+        JPQLQuery<BranchEventListDto> query = from(branch)
+                .where(branch.brContractFromDt.loe(nowDate).and(branch.brContractToDt.goe(nowDate)))
+                .select(Projections.constructor(BranchEventListDto.class,
+                        branch.id,
+                        branch.brName
+                ));
+
+        return query.fetch();
+    }
 
 }

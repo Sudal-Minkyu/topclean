@@ -13,6 +13,8 @@ const dtos = {
     },
     receive: {
         franchiseReceiptFranchiseInList: {
+            fdPromotionType: "s",
+            fdPromotionDiscountRate: "n",
             bcId: "n",
             fdPollutionType: "n",
             fdPollutionBack: "n",
@@ -66,7 +68,6 @@ const comms = {
             let fastItemCount = 0;
             let retryItemCount = 0;
             let totalAmount = 0;
-            console.log(data);
 
             for (const obj of data.gridListData) {
                 // 접수총액
@@ -83,6 +84,7 @@ const comms = {
             }
 
             dv.chk(data.gridListData, dtos.receive.franchiseReceiptFranchiseInList, '입고 리스트 항목 받아오기');
+            CommonUI.toppos.makeSimpleProductNameList(data.gridListData);
             grids.f.setData(0, data.gridListData);
             
             $('#totalNum').text(dataLength);
@@ -159,7 +161,7 @@ const grids = {
                     },
                 }, 
                 {
-                    dataField: "",
+                    dataField: "productName",
                     headerText: "상품명",
                     width: 150,
                     style: "color_and_name",
@@ -169,8 +171,8 @@ const grids = {
                     labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         const colorSquare =
                             `<span class="colorSquare" style="background-color: ${CommonData.name.fdColorCode[item.fdColor]}; vertical-align: middle;"></span>`;
-                        const sumName = CommonUI.toppos.makeSimpleProductName(item);
-                        return colorSquare + ` <span style="vertical-align: middle;">` + sumName + `</span>`;
+                        const productName = CommonUI.toppos.makeSimpleProductName(item);
+                        return colorSquare + ` <span style="vertical-align: middle;">` + productName + `</span>`;
                     },
                 },
                 {

@@ -1,4 +1,4 @@
-import {grids, runOnlyOnce} from '../../module/m_managerstat.js';
+import {grids, runOnlyOnce} from '../../module/m_managerstat.js?22081117';
 
 window.grids = grids;
 

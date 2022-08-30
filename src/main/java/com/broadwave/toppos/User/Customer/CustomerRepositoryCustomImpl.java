@@ -78,6 +78,7 @@ public class CustomerRepositoryCustomImpl extends QuerydslRepositorySupport impl
         QCustomer customer = QCustomer.customer;
 
         JPQLQuery<CustomerInfoDto> query = from(customer)
+                .where(customer.bcQuitYn.eq("N"))
                 .select(Projections.constructor(CustomerInfoDto.class,
                         customer.bcId,
                         customer.bcName,
@@ -154,6 +155,7 @@ public class CustomerRepositoryCustomImpl extends QuerydslRepositorySupport impl
         QCustomer customer = QCustomer.customer;
 
         JPQLQuery<CustomerMessageListDto> query = from(customer)
+                .where(customer.bcQuitYn.eq("N"))
                 .select(Projections.constructor(CustomerMessageListDto.class,
                         customer.bcId,
                         customer.bcName,
@@ -161,7 +163,7 @@ public class CustomerRepositoryCustomImpl extends QuerydslRepositorySupport impl
                 ));
 
         query.orderBy(customer.bcName.asc());
-        query.where(customer.frCode.eq(frCode));
+        query.where(customer.frCode.eq(frCode).and(customer.bcMessageAgree.eq("Y")));
 
         if (!visitDayRange.equals("0")) {
             customer.bcLastRequestDt.goe(bcLastRequestDt);
@@ -204,6 +206,8 @@ public class CustomerRepositoryCustomImpl extends QuerydslRepositorySupport impl
         if (!visitDayRange.equals("0")) {
             customer.bcLastRequestDt.goe(bcLastRequestDt);
         }
+
+        query.where(customer.bcMessageAgree.eq("Y").and(customer.bcQuitYn.eq("N")));
 
         return query.fetch();
     }

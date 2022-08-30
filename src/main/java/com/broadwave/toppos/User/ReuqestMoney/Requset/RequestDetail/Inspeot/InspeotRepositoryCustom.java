@@ -19,4 +19,6 @@ public interface InspeotRepositoryCustom {
     //  가맹검품/지사검품 조회 - 확인품 정보 요청
     InspeotInfoDto findByInspeotInfo(Long fiId, String code, String type);
 
+    InspeotYnDto findByInspectYn(Long fdId, String fiType);
+
 }

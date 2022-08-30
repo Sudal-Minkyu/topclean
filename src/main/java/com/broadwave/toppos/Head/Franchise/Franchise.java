@@ -117,8 +117,20 @@ public class Franchise {
     @Column(name="fr_last_tagno")
     private String frLastTagno; // 가맹점 태그번호
 
+    @Column(name="ft_last_tagno_modify_no")
+    private String ftLastTagnoModifyNo; // 마지막변경한 택번호저장(비번입력하여 강제변경시)
+
+    @Column(name="ft_last_tagno_modify_id")
+    private String ftLastTagnoModify_id; // 택번호변경자 ID(비번입력하여강제변경시에만)
+
+    @Column(name="ft_last_tagno_modify_dt")
+    private LocalDateTime ftLastTagnoModifyDt; // 택번호변경시간(비번입력하여강제변경시에만)
+
     @Column(name="fr_urgent_day_yn")
     private String frUrgentDayYn; // 가맹점 당일세탁 사용여부
+
+    @Column(name="fr_manual_promotion_yn")
+    private String frManualPromotionYn; // 본사용 수동 프로모션 할인기능 사용여부
 
     @Column(name="fr_card_tid")
     private String frCardTid; // 카드단말기 Tid

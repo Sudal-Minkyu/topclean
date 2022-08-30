@@ -100,6 +100,7 @@ const comms = {
         dv.chk(searchCondition, dtos.send.branchUnReleaseCurrentInputList, "디테일 그리드 검색 조건 보내기");
         CommonUI.ajax(urls.getDetailList, "GET", searchCondition, function (res) {
             const data = res.sendData.gridListData;
+            CommonUI.toppos.makeSimpleProductNameList(data);
             grids.f.setData(1, data);
         });
     },
@@ -187,7 +188,7 @@ const grids = {
                     formatString: "yyyy-mm-dd",
                 }, {
                     dataField: "fdEstimateDt",
-                    headerText: "인도예정일",
+                    headerText: "고객출고<br>예정일",
                     width: 100,
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
@@ -215,9 +216,9 @@ const grids = {
                     labelFunction(_rowIndex, _columnIndex, _value, _headerText, item) {
                         const colorSquare =
                             `<span class="colorSquare" style="background-color: ${CommonData.name.fdColorCode[item.fdColor]}; vertical-align: middle;"></span>`;
-                        const sumName = CommonUI.toppos.makeSimpleProductName(item);
-                        item.productName = sumName;
-                        return colorSquare + ` <span style="vertical-align: middle;">` + sumName + `</span>`;
+                        const productName = CommonUI.toppos.makeSimpleProductName(item);
+                        item.productName = productName;
+                        return colorSquare + ` <span style="vertical-align: middle;">` + productName + `</span>`;
                     },
                 }, {
                     dataField: "processName",
@@ -397,7 +398,7 @@ function searchOrder() {
         filterFromDt: $("#filterFromDt").val().numString(),
         filterToDt: $("#filterToDt").val().numString(),
         franchiseId: $("#frList").val(),
-        type: $("input[name='dateType']:checked").val(), // 1 접수일자, 2 인도예정일
+        type: $("input[name='dateType']:checked").val(), // 1 접수일자, 2 고객출고예정일
     };
 
     wares.currentDetail.type = searchCondition.type;

@@ -23,10 +23,16 @@ public class RequestDetailPaymentPaper {
     private String bgName; // 대분류명
     private String bsName; // 중분류명
     private String biName; // 상품명
+    private String fdPriceGrade; // 가격등급  1:일반, 2:고급: 3명품 4:아동
 
     private String fdSpecialYn;
-    private Integer fdTotAmt;
+
     private String fdEstimateDt;
+    private String fdRemark;
+//    private String fdCancel;
+
+    private Integer fdNormalAmt;
+    private Integer fdTotAmt;
 
     public String getItemName() {
         if(bsName.equals("일반")){

@@ -2,6 +2,7 @@ package com.broadwave.toppos.Head.Franchise;
 
 import com.broadwave.toppos.Head.Branch.QBranch;
 import com.broadwave.toppos.Head.Franchise.FranchiseDtos.*;
+import com.broadwave.toppos.Head.Franchise.FranchiseDtos.head.FranchiseEventListDto;
 import com.broadwave.toppos.Head.Franchise.FranchiseDtos.head.FranchiseSearchInfoDto;
 import com.broadwave.toppos.Head.Franchise.FranchiseDtos.head.FranchiseTagNoSearchInfoDto;
 import com.querydsl.core.types.Projections;
@@ -67,6 +68,7 @@ public class FranchiseRepositoryCustomImpl extends QuerydslRepositorySupport imp
 
                     franchise.frUrgentDayYn,
 
+                    franchise.frManualPromotionYn,
                     franchise.frCardTid
             ));
 
@@ -141,6 +143,7 @@ public class FranchiseRepositoryCustomImpl extends QuerydslRepositorySupport imp
 
                     franchise.frUrgentDayYn,
 
+                    franchise.frManualPromotionYn,
                     franchise.frCardTid
             ));
 
@@ -328,5 +331,19 @@ public class FranchiseRepositoryCustomImpl extends QuerydslRepositorySupport imp
         query.getSingleResult();
     }
 
+    @Override
+    public List<FranchiseEventListDto> findByEventList(Long brId, String nowDate) {
+        QFranchise franchise = QFranchise.franchise;
+
+        JPQLQuery<FranchiseEventListDto> query = from(franchise)
+                .where(franchise.frContractFromDt.loe(nowDate).and(franchise.frContractToDt.goe(nowDate)).and(franchise.brId.id.eq(brId)))
+                .select(Projections.constructor(FranchiseEventListDto.class,
+                        franchise.id,
+                        franchise.frCode,
+                        franchise.frName
+                ));
+
+        return query.fetch();
+    }
 
 }

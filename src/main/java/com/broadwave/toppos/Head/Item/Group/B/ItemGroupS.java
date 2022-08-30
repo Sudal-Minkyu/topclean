@@ -1,6 +1,7 @@
 package com.broadwave.toppos.Head.Item.Group.B;
 
 import com.broadwave.toppos.Head.Item.Group.A.ItemGroup;
+import com.broadwave.toppos.Head.Item.Group.B.ItemGroupSDtos.ItemGroupPK;
 import lombok.*;
 
 import javax.persistence.*;

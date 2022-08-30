@@ -166,7 +166,12 @@ public class MonthlySummaryRepositoryCustomImpl extends QuerydslRepositorySuppor
                         monthlySummary.hsSettleAmtBr,
                         monthlySummary.hsSettleAmtFr,
 
-                        monthlySummary.hsRolayltyAmtBr
+                        monthlySummary.hsRolayltyAmtBr,
+
+                        monthlySummary.hsCashSaleAmt,
+                        monthlySummary.hsCardSaleAmt,
+                        monthlySummary.hsPointSaleAmt,
+                        monthlySummary.hsDeferredSaleAmt
 
                 ));
 

@@ -1,8 +1,8 @@
 package com.broadwave.toppos.User.UserService;
 
 import com.broadwave.toppos.Head.HeadService.HeadService;
-import com.broadwave.toppos.Head.Item.Group.A.UserItemGroupSortDto;
-import com.broadwave.toppos.Head.Item.Group.B.ItemGroupSUserListDto;
+import com.broadwave.toppos.Head.Item.Group.A.ItemGroupDtos.UserItemGroupSortDto;
+import com.broadwave.toppos.Head.Item.Group.B.ItemGroupSDtos.ItemGroupSUserListDto;
 import com.broadwave.toppos.Jwt.token.TokenProvider;
 import com.broadwave.toppos.User.GroupSort.*;
 import com.broadwave.toppos.User.GroupSort.GroupSortDtos.GroupSortUpdateDto;

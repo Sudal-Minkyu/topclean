@@ -117,6 +117,28 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
         return query.fetch();
     }
 
+    // 한 고객의 오늘까지 포함미수금 리스트 호출
+    @Override
+    public List<RequestUnCollectDto> findByUnCollect(Customer customer){
+        QRequest request = QRequest.request;
+
+        JPQLQuery<RequestUnCollectDto> query = from(request)
+                .groupBy(request.bcId)
+                .select(Projections.constructor(RequestUnCollectDto.class,
+                        request.bcId.bcId,
+                        new CaseBuilder()
+                                .when(request.frTotalAmount.isNotNull()).then(request.frTotalAmount.sum())
+                                .otherwise(0),
+                        new CaseBuilder()
+                                .when(request.frPayAmount.isNotNull()).then(request.frPayAmount.sum())
+                                .otherwise(0)
+                ));
+
+        query.where(request.frUncollectYn.eq("Y").and(request.frConfirmYn.eq("Y").and(request.bcId.eq(customer))));
+
+        return query.fetch();
+    }
+
     // 고객리스트의 전일미수금 리스트 호출
     @Override
     public List<RequestUnCollectDto> findByBeforeUnCollectList(List<Long> customerIdList, String nowDate){
@@ -325,8 +347,7 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
         QCustomer customer = QCustomer.customer;
         QFranchise franchise = QFranchise.franchise;
 
-        JPQLQuery<RequestPaymentPaperDto> query =
-                from(request)
+        JPQLQuery<RequestPaymentPaperDto> query = from(request)
                         .innerJoin(customer).on(customer.eq(request.bcId))
                         .innerJoin(franchise).on(franchise.frCode.eq(request.frCode))
                         .select(Projections.constructor(RequestPaymentPaperDto.class,
@@ -402,13 +423,16 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
     public RequestTempDto findByRequestTemp(String frCode) {
 
         QRequest request = QRequest.request;
+        QCustomer customer = QCustomer.customer;
 
         JPQLQuery<RequestTempDto> query =
                 from(request)
+                        .innerJoin(customer).on(customer.eq(request.bcId))
                         .where(request.frCode.eq(frCode).and(request.frConfirmYn.eq("N")))
                         .groupBy(request.frNo).limit(1)
                         .select(Projections.constructor(RequestTempDto.class,
-                                request.frNo
+                                request.frNo,
+                                customer.bcName
                         ));
 
         return query.fetchOne();
@@ -573,7 +597,7 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
     }
 
 
-    // 마스터테이블의 fpId가 존재할시 해당 결제 마스터테이블의 임이의 택번호 하나를 반환하는 쿼리
+    // 마스터테이블의 fpId가 존재할시 해당 결제 마스터테이블의 임의의 택번호 하나를 반환하는 쿼리
     public RequestFdTagDto findByRequestDetailFdTag(String frCode, Long frId) {
 
         EntityManager em = getEntityManager();
@@ -696,8 +720,10 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
                                 .when(requestDetail.fdPollutionLocBrh.eq("Y")).then(1)
                                 .when(requestDetail.fdPollutionLocBlf.eq("Y")).then(1)
                                 .when(requestDetail.fdPollutionLocBrf.eq("Y")).then(1)
-                                .otherwise(0)
+                                .otherwise(0),
 
+                        requestDetail.fdPromotionType,
+                        requestDetail.fdPromotionDiscountRate
                 ));
 
         query.groupBy(requestDetail.id).distinct().orderBy(requestDetail.id.asc());
@@ -900,6 +926,8 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
                         requestDetail.fdColor,
                         requestDetail.fdPattern,
 
+                        requestDetail.fdPromotionDiscountAmt,
+
                         requestDetail.fdUrgentType,
                         requestDetail.fdUrgentYn,
 
@@ -945,7 +973,10 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
                         requestDetail.fdS4Dt,
                         requestDetail.fdS3Dt,
                         requestDetail.fdS6Dt,
-                        requestDetail.fdS6Time
+                        requestDetail.fdS6Time,
+
+                        requestDetail.fdPromotionType,
+                        requestDetail.fdPromotionDiscountRate
 
 //                        new CaseBuilder()
 //                                .when(inspeot1.isNotNull().and(inspeot2.isNotNull())).then(inspeot1.fiProgressStateDt)
@@ -1059,6 +1090,8 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
                         requestDetail.fdColor,
                         requestDetail.fdPattern,
 
+                        requestDetail.fdPromotionDiscountAmt,
+
                         requestDetail.fdUrgentType,
                         requestDetail.fdUrgentYn,
 
@@ -1103,7 +1136,10 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
                         requestDetail.fdS4Dt,
                         requestDetail.fdS3Dt,
                         requestDetail.fdS6Dt,
-                        requestDetail.fdS6Time
+                        requestDetail.fdS6Time,
+
+                        requestDetail.fdPromotionType,
+                        requestDetail.fdPromotionDiscountRate
 
                 ));
 
@@ -1208,6 +1244,8 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
                         requestDetail.fdColor,
                         requestDetail.fdPattern,
 
+                        requestDetail.fdPromotionDiscountAmt,
+
                         requestDetail.fdUrgentType,
                         requestDetail.fdUrgentYn,
 
@@ -1253,7 +1291,10 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
                         requestDetail.fdS3Dt,
                         requestDetail.fdS6Dt,
                         requestDetail.fdS6Time,
-                        requestDetail.fdS6Type
+                        requestDetail.fdS6Type,
+
+                        requestDetail.fdPromotionType,
+                        requestDetail.fdPromotionDiscountRate
 
                 ));
 
@@ -1316,6 +1357,8 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
                         requestDetail.fdColor,
                         requestDetail.fdPattern,
 
+                        requestDetail.fdPromotionDiscountAmt,
+
                         requestDetail.fdUrgentType,
                         requestDetail.fdUrgentYn,
 
@@ -1361,7 +1404,10 @@ public class RequestRepositoryCustomImpl extends QuerydslRepositorySupport imple
                         requestDetail.fdS3Dt,
                         requestDetail.fdS6Dt,
                         requestDetail.fdS6Time,
-                        requestDetail.fdS6Type
+                        requestDetail.fdS6Type,
+
+                        requestDetail.fdPromotionType,
+                        requestDetail.fdPromotionDiscountRate
 
                 ));
 

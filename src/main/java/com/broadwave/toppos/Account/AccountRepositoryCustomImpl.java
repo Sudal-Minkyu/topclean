@@ -83,8 +83,8 @@ public class AccountRepositoryCustomImpl extends QuerydslRepositorySupport imple
                 .leftJoin(franchise.brId, branch)
                 .leftJoin(userReadyCash).on(userReadyCash.frId.eq(franchise.id).and(userReadyCash.bcYyyymmdd.eq(nowDate)))
                 .select(Projections.constructor(UserIndexDto.class,
-                        account.username,
-                        account.usertel,
+                        franchise.frRpreName,
+                        franchise.frTelNo,
                         branch.brName,
                         franchise.frName,
                         userReadyCash.bcReadyAmt

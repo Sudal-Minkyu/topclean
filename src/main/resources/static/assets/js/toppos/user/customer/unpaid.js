@@ -61,6 +61,8 @@ const dtos = {
             uncollectMoney: "nr", // 미수금액
         },
         franchiseUncollectRequestDetailList: {
+            fdPromotionType: "s",
+            fdPromotionDiscountRate: "n",
             fdPollutionType: "n",
             fdPollutionBack: "n",
             frYyyymmdd: "s",
@@ -86,10 +88,11 @@ const dtos = {
 
             fdTotAmt: "n",
             fdState: "s",
-            fdS6Dt: "s", // 인도일로 수정
+            fdS6Dt: "s", // 고객출고일로 수정
         },
         franchiseUncollectPayRequestList: {
             gridListData: {
+                frPayAmount: "n", // 결제된 금액
                 frId: "nr",
                 frYyyymmdd: "sr",
                 requestDetailCount: "n", // 외 건수 requestDetailCount가 2일경우 -> 외 1건, 1일경우 그냥 상품이름만 표기하면될듯. 0일경우는 없음.
@@ -100,6 +103,7 @@ const dtos = {
                 uncollectMoney: "nr", // 미수금액
             },
             payInfoData: {
+                saveMoney: "n", // 해당 고객 적립금
                 frCode: "",
                 frName: "",
                 frBusinessNo: "",
@@ -128,7 +132,6 @@ const comms = {
         wares.searchCondition = searchCondition;
         dv.chk(searchCondition, dtos.send.franchiseUncollectCustomerList, "메인그리드 고객 필터 조건 보내기", true);
         CommonUI.ajax(urls.filterCustomerList, "GET", searchCondition, function(res) {
-            console.log(res.sendData);
             const data = res.sendData.gridListData;
             dv.chk(data, dtos.receive.franchiseUncollectCustomerList, "메인그리드 고객 리스트 받아오기", true);
             grids.f.setData(0, data);
@@ -143,6 +146,7 @@ const comms = {
         CommonUI.ajax(urls.customersUncollectedList, "GET", selectedBcId, function(res) {
             const data = res.sendData.gridListData;
             dv.chk(data, dtos.receive.franchiseUncollectRequestList, "선택된 고객의 미수금 리스트 받아오기", true);
+            CommonUI.toppos.makeSimpleProductNameList(data);
             grids.f.setData(1, data);
             grids.f.clearData(2);
             $("#totalSelectedUncollectMoney").html("0");
@@ -154,6 +158,7 @@ const comms = {
         CommonUI.ajax(urls.uncollectedListDetail, "GET", selectedFrId, function(res) {
             const data = res.sendData.gridListData;
             dv.chk(data, dtos.receive.franchiseUncollectRequestDetailList, "선택된 접수 아이디의 상세 리스트 받아오기", true);
+            CommonUI.toppos.makeSimpleProductNameList(data);
             grids.f.setData(2, data);
         });
     },
@@ -162,22 +167,25 @@ const comms = {
         CommonUI.ajax(urls.setupPaymentPop, "GET", selctedInfo, function(res) {
             const data = res.sendData;
             dv.chk(data, dtos.receive.franchiseUncollectPayRequestList, "미수 결제창 뜰 때 받아오는 항목");
-            grids.f.setData(3, data.gridListData);
-            calculateGridPayment();
-            wares.frPaymentInfo = data.payInfoData[0];
+            openPaymentPop(data);
         });
-        $("#paymentPop").addClass("active");
-        grids.f.resize(3);
     },
     sendPaidInfo(paidInfo) {
         dv.chk(paidInfo, dtos.send.franchiseUncollectPay, "미수 결제 성공 후 정보 보내기");
         CommonUI.ajax(urls.sendPaidInfo, "MAPPER", paidInfo, function(res) {
-            alertSuccess("미수 결제 완료 되었습니다.");
+            const frNo = res.sendData.frId.frNo;
             $("#paymentPop").removeClass("active");
             comms.filterCustomerList(wares.searchCondition);
             comms.customersUncollectedList({bcId: wares.customerBcId});
-            $("#payMonth").val("0");
-            $("#payType1").prop("checked", true);
+
+            alertCheck("미수 결제 완료 되었습니다.<br>고객용 영수증을 인쇄 하시겠습니까?");
+            $("#checkDelSuccessBtn").on("click", function () {
+                CommonUI.toppos.printReceipt(frNo, "", true, true, "N");
+                $('#popupId').remove();
+            });
+            $("#checkDelCancelBtn").on("click", function () {
+                CommonUI.toppos.printReceipt(frNo, "", false, true, "N");
+            });
         });
     },
 };
@@ -328,7 +336,7 @@ const grids = {
                         return CommonData.formatFrTagNo(value, frTagInfo.frTagType);
                     },
                 }, {
-                    dataField: "",
+                    dataField: "productName",
                     headerText: "상품명",
                     style: "color_and_name",
                     renderer : {
@@ -337,8 +345,8 @@ const grids = {
                     labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         const colorSquare =
                             `<span class="colorSquare" style="background-color: ${CommonData.name.fdColorCode[item.fdColor]}; vertical-align: middle;"></span>`;
-                        const sumName = CommonUI.toppos.makeSimpleProductName(item);
-                        return colorSquare + ` <span style="vertical-align: middle;">` + sumName + `</span>`;
+                        const productName = CommonUI.toppos.makeSimpleProductName(item);
+                        return colorSquare + ` <span style="vertical-align: middle;">` + productName + `</span>`;
                     },
                 }, {
                     dataField: "",
@@ -364,7 +372,7 @@ const grids = {
                     },
                 }, {
                     dataField: "fdS6Dt",
-                    headerText: "인도일",
+                    headerText: "고객출고일",
                     width: 90,
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
@@ -540,7 +548,13 @@ const trigs = {
                         $('#popupId').remove();
                     });
                 } else if ($("#payType2").is(":checked")) {
-                    alertCheck(`미수금 ${$("#totalUncollectAmount").html()}원을 결제 처리 완료합니다.`);
+                    alertCheck(`미수금 ${$("#totalUncollectAmount").html()}원을 결제 처리 하시겠습니까?`);
+                    $("#checkDelSuccessBtn").on("click", function () {
+                        uncollectPaymentStageOne();
+                        $('#popupId').remove();
+                    });
+                } else if ($("#payType3").is(":checked")) {
+                    alertCheck(`미수금 ${$("#totalUncollectAmount").html()}원을 적립금으로<br>결제 처리 하시겠습니까?`);
                     $("#checkDelSuccessBtn").on("click", function () {
                         uncollectPaymentStageOne();
                         $('#popupId').remove();
@@ -622,16 +636,6 @@ function calculateGridRequest() {
     $("#totalSelectedUncollectMoney").html(totalSelectedUncollectMoney.toLocaleString());
 }
 
-function calculateGridPayment() {
-    const items = grids.f.getData(3);
-    let totalUncollectAmount = 0;
-    items.forEach(item => {
-        totalUncollectAmount += item.uncollectMoney;
-    });
-    $("#totalUncollectAmount").html(totalUncollectAmount.toLocaleString());
-}
-
-
 function uncollectPaymentStageOne() {
     try {
         let paymentData =
@@ -655,6 +659,8 @@ function uncollectPaymentStageOne() {
             paymentData.type = "cash";
         } else if (payType === "02") {
             paymentData.type = "card";
+        } else if (payType === "03") {
+            paymentData.type = "save";
         }
 
         if (paymentData.type ==="card") {
@@ -680,14 +686,16 @@ function uncollectPaymentStageOne() {
                             alertCancel("단말기 종료키를 통해 결제가 중지되었습니다.");
                         } else {
                             alertCancel(resjson.ERRORMESSAGE);
-                            console.log(resjson);
+                            console.log("결제 실패 분석:", resjson);
                         }
                     }
                 });
             }catch (e) {
                 CommonUI.toppos.underTaker(e, "unpaid : 카드 단말 결제");
             }
-        }else if (paymentData.type ==="cash") {
+        }else if (paymentData.type === "cash") {
+            uncollectPaymentStageTwo(paymentData);
+        }else if (paymentData.type === "save") {
             uncollectPaymentStageTwo(paymentData);
         }
     }catch (e) {
@@ -769,4 +777,29 @@ function getUncollectedListDetail(item) {
         frId: item.frId
     }
     comms.uncollectedListDetail(selectedFrId);
+}
+
+/* 결제창의 상태를 초기화하고 데이터를 계산하여 배치 */
+function openPaymentPop(data) {
+    const items = data.gridListData;
+    grids.f.setData(3, items);
+    wares.frPaymentInfo = data.payInfoData[0];
+
+    let totalUncollectAmount = 0;
+    items.forEach(item => {
+        totalUncollectAmount += item.uncollectMoney;
+    });
+    $("#totalUncollectAmount").html(totalUncollectAmount.toLocaleString());
+
+    $("#saveMoney").html(wares.frPaymentInfo.saveMoney.toLocaleString());
+    if (totalUncollectAmount > wares.frPaymentInfo.saveMoney) {
+        $("#payType3").parents("div .unpaid-pop__payment-select").hide();
+    } else {
+        $("#payType3").parents("div .unpaid-pop__payment-select").show();
+    }
+
+    $("#payType1").prop("checked", true);
+    $("#payMonth").val("0");
+    $("#paymentPop").addClass("active");
+    grids.f.resize(3);
 }

@@ -1,4 +1,4 @@
-import {calculateMainPrice, calculateItemPrice, ceil100, calculatePaymentStage} from "../module/m_moneyProblem.js";
+import {calculateMainPrice, calculateItemPrice, ceil10, calculatePaymentStage} from "../module/m_moneyProblem.js";
 
 function runMoneyProblem() {
     QUnit.module('moneyProblem 돈계산', function () {
@@ -31,6 +31,7 @@ function runMoneyProblem() {
 
             const existItem = [
                 {
+                    "fdPromotionDiscountAmt": 0,
                     "fdTag": "2220020",
                     "biItemcode": "D01N004",
                     "fdColor": "00",
@@ -77,10 +78,11 @@ function runMoneyProblem() {
                     "fdPollutionLocFcb": "N",
                     "fdPollutionLocBcb": "N",
                     "_$uid": "AE21248D-71C4-EF71-1227-8C1A1ADBE61B",
-                    "sumName": "니트 상의",
+                    "productName": "니트 상의",
                     "fdUrgentAmt": 0,
                 },
                 {
+                    "fdPromotionDiscountAmt": 0,
                     "fdTag": "2220022",
                     "biItemcode": "D01L001",
                     "fdColor": "06",
@@ -127,10 +129,11 @@ function runMoneyProblem() {
                     "fdPollutionLocFcb": "N",
                     "fdPollutionLocBcb": "N",
                     "_$uid": "C0C49DAF-8729-0965-F005-8C1AD94107BB",
-                    "sumName": "롱 패딩 상의",
+                    "productName": "롱 패딩 상의",
                     "fdUrgentAmt": 0,
                 },
                 {
+                    "fdPromotionDiscountAmt": 0,
                     "fdTag": "2220023",
                     "biItemcode": "D01S002",
                     "fdColor": "00",
@@ -177,7 +180,7 @@ function runMoneyProblem() {
                     "fdPollutionLocFcb": "Y",
                     "fdPollutionLocBcb": "N",
                     "_$uid": "04B450B6-8A4A-A90A-C6C9-8C1B61420C46",
-                    "sumName": "숏 맨투맨 상의",
+                    "productName": "숏 맨투맨 상의",
                     "fdUrgentAmt": 0,
                 }
             ];
@@ -219,6 +222,7 @@ function runMoneyProblem() {
 
             const existItem = [
                 {
+                    "fdPromotionDiscountAmt": 0,
                     "fdTag": "2220024",
                     "biItemcode": "D01N004",
                     "fdColor": "00",
@@ -265,10 +269,11 @@ function runMoneyProblem() {
                     "fdPollutionLocFcb": "N",
                     "fdPollutionLocBcb": "N",
                     "_$uid": "5C9D599C-B414-F716-41C1-8CBB855770A7",
-                    "sumName": "니트 상의",
+                    "productName": "니트 상의",
                     "fdUrgentAmt": 0,
                 },
                 {
+                    "fdPromotionDiscountAmt": 0,
                     "fdTag": "2220025",
                     "biItemcode": "D01L001",
                     "fdColor": "04",
@@ -315,10 +320,11 @@ function runMoneyProblem() {
                     "fdPollutionLocFcb": "N",
                     "fdPollutionLocBcb": "N",
                     "_$uid": "D62599DC-53AF-CAEC-E3CD-8CBBDB920CEA",
-                    "sumName": "롱 패딩 상의",
+                    "productName": "롱 패딩 상의",
                     "fdUrgentAmt": 0,
                 },
                 {
+                    "fdPromotionDiscountAmt": 0,
                     "fdTag": "2220026",
                     "biItemcode": "D03N001",
                     "fdColor": "05",
@@ -367,10 +373,11 @@ function runMoneyProblem() {
                     "fdPollutionLocFcb": "N",
                     "fdPollutionLocBcb": "N",
                     "_$uid": "38C0B440-D429-7526-6E73-8CBC200D8D9B",
-                    "sumName": "면 운동화",
+                    "productName": "면 운동화",
                     "fdUrgentAmt": 0,
                 },
                 {
+                    "fdPromotionDiscountAmt": 0,
                     "fdTag": "2220027",
                     "biItemcode": "D01S002",
                     "fdColor": "07",
@@ -417,10 +424,11 @@ function runMoneyProblem() {
                     "fdPollutionLocFcb": "N",
                     "fdPollutionLocBcb": "N",
                     "_$uid": "B8FD5753-606B-0832-6370-8CBC73FD95DB",
-                    "sumName": "숏 맨투맨 상의",
+                    "productName": "숏 맨투맨 상의",
                     "fdUrgentAmt": 0,
                 },
                 {
+                    "fdPromotionDiscountAmt": 0,
                     "fdTag": "2220028",
                     "biItemcode": "D01N004",
                     "fdColor": "00",
@@ -467,126 +475,23 @@ function runMoneyProblem() {
                     "fdPollutionLocFcb": "N",
                     "fdPollutionLocBcb": "N",
                     "_$uid": "8337055D-14E2-97FD-76CC-8CBC9CF6D9B6",
-                    "sumName": "니트 상의",
+                    "productName": "니트 상의",
                     "fdUrgentAmt": 0,
                 }
             ];
 
-            const removedItem = [
-                {
-                    "fdTag": "2220027",
-                    "biItemcode": "D01S002",
-                    "fdColor": "07",
-                    "fdPattern": "00",
-                    "fdPriceGrade": "3",
-                    "fdOriginAmt": 4400,
-                    "fdNormalAmt": 11000,
-                    "fdRepairRemark": "",
-                    "fdRepairAmt": 0,
-                    "fdAdd1Remark": "",
-                    "fdSpecialYn": "N",
-                    "fdUrgentYn": "N",
-                    "fdAdd1Amt": 1000,
-                    "fdAdd2Remark": "",
-                    "fdAdd2Amt": 0,
-                    "fdPressed": 0,
-                    "fdWhitening": 0,
-                    "fdPollution": 6000,
-                    "fdPollutionLevel": 3,
-                    "fdStarch": 0,
-                    "fdWaterRepellent": 7000,
-                    "fdDiscountGrade": "1",
-                    "fdDiscountAmt": 0,
-                    "fdQty": 1,
-                    "fdRequestAmt": 25000,
-                    "fdTotAmt": 25000,
-                    "fdRetryYn": "N",
-                    "fdRemark": "",
-                    "frEstimateDate": "20220318",
-                    "photoList": [],
-                    "totAddCost": 14000,
-                    "fdPollutionLocFcn": "N",
-                    "fdPollutionLocBcn": "N",
-                    "fdPollutionLocFrh": "N",
-                    "fdPollutionLocBlh": "N",
-                    "fdPollutionLocFlh": "Y",
-                    "fdPollutionLocBrh": "N",
-                    "fdPollutionLocFcs": "N",
-                    "fdPollutionLocBcs": "N",
-                    "fdPollutionLocFrf": "N",
-                    "fdPollutionLocBlf": "N",
-                    "fdPollutionLocFlf": "N",
-                    "fdPollutionLocBrf": "N",
-                    "fdPollutionLocFcb": "N",
-                    "fdPollutionLocBcb": "N",
-                    "_$uid": "B8FD5753-606B-0832-6370-8CBC73FD95DB",
-                    "sumName": "숏 맨투맨 상의",
-                    "fdUrgentAmt": 0,
-                },
-                {
-                    "fdTag": "2220026",
-                    "biItemcode": "D03N001",
-                    "fdColor": "05",
-                    "fdPattern": "00",
-                    "fdPriceGrade": "1",
-                    "fdOriginAmt": 1200,
-                    "fdNormalAmt": 1200,
-                    "fdRepairRemark": "",
-                    "fdRepairAmt": 2000,
-                    "fdAdd1Remark": "",
-                    "fdSpecialYn": "N",
-                    "fdUrgentYn": "N",
-                    "fdAdd1Amt": 0,
-                    "fdAdd2Remark": "",
-                    "fdAdd2Amt": 0,
-                    "fdPressed": 0,
-                    "fdWhitening": 0,
-                    "fdPollution": 0,
-                    "fdPollutionLevel": 0,
-                    "fdStarch": 0,
-                    "fdWaterRepellent": 0,
-                    "fdDiscountGrade": "1",
-                    "fdDiscountAmt": 0,
-                    "fdQty": 1,
-                    "fdRequestAmt": 3200,
-                    "fdTotAmt": 3200,
-                    "fdRetryYn": "N",
-                    "fdRemark": "",
-                    "frEstimateDate": "20220318",
-                    "photoList": [],
-                    "totAddCost": 2000,
-                    "fdAgreeType": "2",
-                    "fdSignImage": "",
-                    "fdPollutionLocFcn": "N",
-                    "fdPollutionLocBcn": "N",
-                    "fdPollutionLocFrh": "N",
-                    "fdPollutionLocBlh": "N",
-                    "fdPollutionLocFlh": "N",
-                    "fdPollutionLocBrh": "N",
-                    "fdPollutionLocFcs": "N",
-                    "fdPollutionLocBcs": "N",
-                    "fdPollutionLocFrf": "N",
-                    "fdPollutionLocBlf": "N",
-                    "fdPollutionLocFlf": "N",
-                    "fdPollutionLocBrf": "N",
-                    "fdPollutionLocFcb": "N",
-                    "fdPollutionLocBcb": "N",
-                    "_$uid": "38C0B440-D429-7526-6E73-8CBC200D8D9B",
-                    "sumName": "면 운동화",
-                    "fdUrgentAmt": 0,
-                }
-            ];
+            const removedItem = [];
 
-            calculateMainPrice(existItem, removedItem);
-            assert.equal($("#totFdQty").html(), "3", "수량 검사");
-            assert.equal($("#totFdNormalAmount").html(), "8,700", "기본금액 검사");
-            assert.equal($("#totChangeAmount").html(), "0", "추가/할인금액 검사");
-            assert.equal($("#totFdRequestAmount").html(), "8,700", "합계금액 검사");
+            calculateMainPrice(existItem);
+            assert.equal($("#totFdQty").html(), "5", "수량 검사");
+            assert.equal($("#totFdNormalAmount").html(), "20,900", "기본금액 검사");
+            assert.equal($("#totChangeAmount").html(), "16,000", "추가/할인금액 검사");
+            assert.equal($("#totFdRequestAmount").html(), "36,900", "합계금액 검사");
             $(".regist__info").parent("div").remove();
         });
 
         QUnit.test('접수페이지 접수물품 가격 계산', function (assert) {
-            window.ceil100 = ceil100;
+            window.ceil10 = ceil10;
 
             window.initialData = {};
 
@@ -670,7 +575,7 @@ function runMoneyProblem() {
                     </li>
                     <li class="product-pop__price-sum">
                         <h4>최종가격</h4>
-                        <span id="sumAmt"></span>
+                        <span id="cleanRequestAmt"></span>
                         <span class="won">원</span>
                     </li>
                 </ul>
@@ -699,16 +604,16 @@ function runMoneyProblem() {
             assert.equal($("#fdNormalAmt").html(), "9,000", "기본가격 표시");
             assert.equal($("#totAddCost").html(), "21,200", "수선/추가요금 표시");
             assert.equal($("#fdDiscountAmt").html(), "0", "할인요금 표시");
-            assert.equal($("#sumAmt").html(), "30,200", "최종가격 표시");
+            assert.equal($("#cleanRequestAmt").html(), "30,200", "최종가격 표시");
 
             $("#testDiv").parent("div").remove();
             delete window.initialData;
-            delete window.ceil100;
+            delete window.ceil10;
             delete window.currentRequest;
         });
 
         QUnit.test('접수페이지 접수물품 가격 계산_220509', function (assert) {
-            window.ceil100 = ceil100;
+            window.ceil10 = ceil10;
 
             window.initialData = {};
 
@@ -766,7 +671,7 @@ function runMoneyProblem() {
                 "frEstimateDate": "20220512",
                 "photoList": [],
                 "totAddCost": 0,
-                "sumName": "군복 상의",
+                "productName": "군복 상의",
                 "fdPollutionLocFcn": "N",
                 "fdPollutionLocBcn": "N",
                 "fdPollutionLocFrh": "N",
@@ -815,7 +720,7 @@ function runMoneyProblem() {
                     </li>
                     <li class="product-pop__price-sum">
                         <h4>최종가격</h4>
-                        <span id="sumAmt"></span>
+                        <span id="cleanRequestAmt"></span>
                         <span class="won">원</span>
                     </li>
                 </ul>
@@ -831,7 +736,7 @@ function runMoneyProblem() {
             assert.equal(currentRequest.fdPriceGrade, "3", "가격 등급");
             assert.equal(currentRequest.fdNormalAmt, 9000, "가격 등급 반영 가격");
             assert.equal(currentRequest.fdDiscountGrade, "3", "할인 등급");
-            assert.equal(currentRequest.fdDiscountAmt, 12700, "할인 등급 반영 할인액");
+            assert.equal(currentRequest.fdDiscountAmt, 12750, "할인 등급 반영 할인액");
             assert.equal(currentRequest.fdPressed, 0, "다림질");
             assert.equal(currentRequest.fdRetryYn, "N", "재세탁여부");
             assert.equal(currentRequest.fdPollution, 7500, "오염금액");
@@ -840,15 +745,15 @@ function runMoneyProblem() {
             assert.equal(currentRequest.fdWaterRepellent, 0, "발수가공");
             assert.equal(currentRequest.fdStarch, 0, "풀먹임");
             assert.equal(currentRequest.totAddCost, 16500, "수선/추가 요금");
-            assert.equal(currentRequest.fdTotAmt, 12800, "최종가격");
+            assert.equal(currentRequest.fdTotAmt, 12750, "최종가격");
             assert.equal($("#fdNormalAmt").html(), "9,000", "기본가격 표시");
             assert.equal($("#totAddCost").html(), "16,500", "수선/추가요금 표시");
-            assert.equal($("#fdDiscountAmt").html(), "12,700", "할인요금 표시");
-            assert.equal($("#sumAmt").html(), "12,800", "최종가격 표시");
+            assert.equal($("#fdDiscountAmt").html(), "12,750", "할인요금 표시");
+            assert.equal($("#cleanRequestAmt").html(), "12,750", "최종가격 표시");
 
             $("#testDiv").parent("div").remove();
             delete window.initialData;
-            delete window.ceil100;
+            delete window.ceil10;
             delete window.currentRequest;
         });
 

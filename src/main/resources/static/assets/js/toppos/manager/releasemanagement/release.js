@@ -88,6 +88,7 @@ const comms = {
         dv.chk(searchCondition, dtos.send.branchReceiptBranchInList, "출고 품목 조회 조건 보내기");
         CommonUI.ajax(urls.getReceiptList, "GET", searchCondition, function (res) {
             wares.receiptList = CommonUI.toppos.killNullFromArray(res.sendData.gridListData);
+            CommonUI.toppos.makeSimpleProductNameList(wares.receiptList);
 
             $("#statPanel").html(
                 `[${$("#frList option:selected").html()}] 상품이 ${wares.receiptList.length}건 조회되었습니다.`);
@@ -191,9 +192,9 @@ const grids = {
                     labelFunction(_rowIndex, _columnIndex, _value, _headerText, item) {
                         const colorSquare =
                             `<span class="colorSquare" style="background-color: ${CommonData.name.fdColorCode[item.fdColor]}; vertical-align: middle;"></span>`;
-                        const sumName = CommonUI.toppos.makeSimpleProductName(item);
-                        item.productName = sumName;
-                        return colorSquare + ` <span style="vertical-align: middle;">` + sumName + `</span>`;
+                        const productName = CommonUI.toppos.makeSimpleProductName(item);
+                        item.productName = productName;
+                        return colorSquare + ` <span style="vertical-align: middle;">` + productName + `</span>`;
                     },
                 }, {
                     dataField: "processName",
@@ -210,7 +211,7 @@ const grids = {
                     width: 100,
                 }, {
                     dataField: "fdEstimateDt",
-                    headerText: "인도예정일",
+                    headerText: "고객출고<br>예정일",
                     width: 90,
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
@@ -404,7 +405,9 @@ const trigs = {
             inputTag();
         });
 
-        $("#inputTagNo").on("keyup", function (e) {
+        const $inputTagNo = $("#inputTagNo");
+        $inputTagNo.on("keyup", function (e) {
+            $inputTagNo.val($inputTagNo.val().numString());
             if(e.originalEvent.code === "Enter" || e.originalEvent.code === "NumpadEnter") {
                 inputTag();
             }
@@ -515,15 +518,15 @@ function getReceiptList() {
 }
 
 function inputTag() {
-    if(wares.receiptList === "") {
-        CommonUI.toppos.speak("입고된 품목을 먼저 조회해 주세요.");
-        return;
-    }
-
-    const tagNo = $("#inputTagNo").val().replace(/-/g, "");
+    const tagNo = $("#inputTagNo").val().numString().substring(0, 7);
     if(tagNo.length < 7) {
         CommonUI.toppos.speak("택번호 7자리를 입력해 주세요.");
         $("#inputTagNo").focus();
+        return;
+    }
+
+    if(wares.receiptList === "") {
+        CommonUI.toppos.speak("입고된 품목을 먼저 조회해 주세요.");
         return;
     }
 
@@ -537,6 +540,8 @@ function inputTag() {
             return;
         }
     }
+
+    console.log(tagNo);
 
     const gridItems = grids.f.getData(0);
     for(const item of gridItems) {

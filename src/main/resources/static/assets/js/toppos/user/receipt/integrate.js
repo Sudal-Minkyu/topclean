@@ -45,12 +45,14 @@ const dtos = {
         },
 
         franchiseRequestDetailCencel: { // 결제취소시
+            bcId: "n", // 고객 아이디
             fpId: "nr",
             type: "sr", // 1 = 취소, 2 = 적립금전환
         },
 
         franchiseReceiptCancel: {
             fdId: "nr",
+            bcId: "n",
         },
 
         franchiseLeadCancel: {
@@ -58,6 +60,34 @@ const dtos = {
         },
 
         franchiseRequestDetailUpdate: {
+            fpId: "n", // 미수금의 결제를 다른 세탁물이 대신한 경우 해당 결제 id
+            bcName: "s", // 고객명
+            frYyyymmdd: "s", // 등록일자
+            fdTag: "s", // 택번호
+            fdPreState: "s", // 이전 상태
+            fdState: "s", // 현재 상태
+            fdS2Dt: "s", // 지사 입고일
+            fdS3Dt: "s", // 강제 출고 입고일
+            fdS4Dt: "s", // 지사 출고일
+            fdS5Dt: "s", // 가맹점 입고일
+            fdS6Dt: "s", // 고객 인도일
+            fdCancel: "s", // 접수 취소 여부
+            fdCacelDt: "s", // 접수 취소일
+            fdEstimateDt: "s", // 출고 예정일
+            _$uid: "s", // AUI 그리드 고유 ID
+            productName: "s", // 접수 세탁물의 완성된 이름
+            frInspectBtn: "", // 가맹검품 버튼의 활성화 여부
+            brInspectBtn: "", // 확인품 버튼의 활성화 여부
+            greenBtn1: "", // 상품수정 버튼의 활성화 여부
+            redBtn1: "", // 접수취소 버튼의 활성화 여부
+            redBtn2: "", // 결제취소 버튼의 활성화 여부
+            redBtn3: "", // 출고취소 버튼의 활성화 여부
+            totAddCost: "n", // 추가금액의 합계
+            fdS6Type: "s",
+            fdPromotionType: "s",
+            bcGrade: "s",
+            fdPromotionDiscountAmt: "n",
+            fdPromotionDiscountRate: "n",
             fdModifyAmtYn: "s", // 2022.05.20 추가
             fdModifyOriginalAmt: "n", // 2022.05.20 추가
             photoList: {
@@ -136,7 +166,7 @@ const dtos = {
             fdWaterRepellent: "",
             fdStarch: "",
             _$uid: "d",
-            sumName: "d",
+            productName: "d",
             frInspectBtn: "d",
             brInspectBtn: "d",
             greenBtn1: "d",
@@ -146,7 +176,7 @@ const dtos = {
             totAddCost: "d",
             frRefType: "sr",
             frEstimateDate: "d",
-            fpCancelYn: "s", // 해당 값이 N인 경우 결제취소가 가능하여야 한다.
+            fpCancelYn: "s", // 해당 값이 N인 경우 결제취소가 가능하여야 한다. E일 경우 전부 취소된 상태이므로 열람만 가능하다.
         },
 
         franchiseRequestDetailSearch: {
@@ -201,6 +231,7 @@ const dtos = {
         franchiseDetailCencelDataList: { // 현 가맹점의 코드와 이름, 그리고 접수결제 테이블의 결제요소들
             fdTag: "s",
             gridListData: {
+                fpCancelYn: "s",
                 frCode: "",
                 frName: "",
                 fpId: "nr",
@@ -217,6 +248,20 @@ const dtos = {
         },
 
         franchiseRequestDetailSearch: { // 접수 세부 테이블의 거의 모든 요소와, 고객이름
+            frInsertDtFormatted: "s",
+            frInsertDtFormattedXlsx: "s",
+            fdS6TimeFormatted: "s",
+            fdS6TimeFormattedXlsx: "s",
+            productName: "s",
+            processName: "s",
+            fpId: "n", // 미수금의 결제를 다른 세탁물이 대신한 경우 해당 결제 id
+            hpId: "n", // 적용된 행사의 id, 없을경우 0
+            fdS6Type: "s",
+            fdCancel: "s",
+            bcGrade: "s",
+            fdPromotionType: "s",
+            fdPromotionDiscountAmt: "n",
+            fdPromotionDiscountRate: "n",
             fdModifyAmtYn: "s", // 2022.05.20 추가
             fdModifyOriginalAmt: "n", // 2022.05.20 추가
             fdUrgentType: "s",
@@ -255,7 +300,7 @@ const dtos = {
             fdS5Dt: "s",
             fdS6Dt: "s",
             fdCancel: "s",
-            fdCacelDt: "s",
+            fdCacelDt: "n",
             fdColor: "s",
             fdPattern: "s",
             fdPriceGrade: "s",
@@ -297,12 +342,10 @@ const dtos = {
             fdPollutionLocBlf: "s",
             fdWaterRepellent: "n",
             fdStarch: "n",
-            fpCancelYn: "sr",
+            fpCancelYn: "sr", // 해당 값이 N인 경우 결제취소가 가능하여야 한다. E일 경우 전부 취소된 상태이므로 열람만 가능하다.
         },
 
         customerInfo: { // 접수 페이지의 고객 정보 가져오는 부분과 동일
-            deliveryS5: "n",
-            deliveryS8: "n",
             bcWeddingAnniversary: "d",
             bcAddress: "s",
             bcGrade: "s",
@@ -315,15 +358,25 @@ const dtos = {
             uncollectMoney: "nr",
             saveMoney: "nr",
             tempSaveFrNo: "s",
+            tempSaveBcName: "s",
         },
 
         itemGroupAndPriceList: { // 접수페이지 시작때 호출되는 API와 같은 API, 이건 dto검증기를 다차원 검증 가능하도록 개량후 검증.
+            promotionData: { // 현재 적용해야할 행사가 있을 경우에 오는 모든 행사의 데이터 (이 데이터를 한번 정재하여 중복되는 biItemcode당 하나의 행사만 남겨야 함)
+                hpId: "n", // 행사의 아이디
+                hpType: "s", // 행사 유형
+                hpName: "s", // 행사명
+                biItemcode: "s", // 적용할 세탁물 상품코드
+                hiDiscountRt: "n" // 적용할 할인율
+            },
             addAmountData: {
                 baSort: "n",
                 baName: "s",
                 baRemark: "",
             },
             addCostData: {
+                bcProgramFeeBr: "n",
+                bcProgramFeeFr: "n",
                 bcSmsUnitPrice: "n",
                 bcUrgentRate1: "n",
                 bcUrgentRate2: "n",
@@ -344,7 +397,8 @@ const dtos = {
                 bcWhitening: "nr",
             },
             etcData: {
-                frCardTid: 's',
+                frManualPromotionYn: "s", // 가맹점의 수기 행사 할인 사용 가능 여부
+                frCardTid: "s",
                 frUrgentDayYn: "s",
                 frTagNo: "s",
                 frMultiscreenYn: "s", // 2022.03.10 추가
@@ -392,12 +446,21 @@ const comms = {
             initialData = req.sendData;
             dv.chk(initialData, dtos.receive.itemGroupAndPriceList, "initialData 받아오기");
 
+            if (initialData.etcData.frManualPromotionYn !== "Y") {
+                $("#manualDiscountChk").parents("li").hide();
+            }
+
             setAddMenu();
             setPreDefinedKeywords();
             getParamsAndAction();
         });
     },
 
+    /**
+     * 고객을 검색조건에 따라 검색하고, 결과가 하나일 경우 즉시선택, 여러개일 경우 팝업에 표현, 없을 경우 신규등록 물음
+     *
+     * @param params : JSON - 검색조건
+     */
     searchCustomer(params) {
         dv.chk(params, dtos.send.customerInfo, "고객검색조건 보내기");
         CommonUI.ajax(grids.s.url.read[1], "GET", params, function (res) {
@@ -413,8 +476,14 @@ const comms = {
                 $("#customerListPop").addClass("active");
             }else{
                 alertCheck("일치하는 고객 정보가 없습니다.<br>신규고객으로 등록 하시겠습니까?");
+                let additionalCondition = params.searchString;
+                if (additionalCondition.numString().length) {
+                    additionalCondition = "?bchp=" + additionalCondition.numString();
+                } else {
+                    additionalCondition = "?bcname=" + additionalCondition;
+                }
                 $("#checkDelSuccessBtn").on("click", function () {
-                    location.href="/user/customerreg";
+                    location.href="/user/customerreg" + additionalCondition;
                 });
             }
         });
@@ -425,7 +494,6 @@ const comms = {
         dv.chk(condition, dtos.send.franchiseRequestDetailSearch, "메인그리드 필터링 조건 보내기");
         CommonUI.ajax(grids.s.url.read[0], "GET", condition, function(res) {
             const gridData = res.sendData.gridListData;
-            console.log(res);
             gridData.forEach(item => {
                 if(item.fdState === "S1" && item.frFiId && item.frFiCustomerConfirm === "1") {
                     item.fdState = "F";
@@ -433,10 +501,18 @@ const comms = {
                 if(item.fdState === "S2" && item.brFiId && item.brFiCustomerConfirm === "1") {
                     item.fdState = "B";
                 }
+
+                item.frInsertDtFormatted = formatDateTime(item.frInsertDt);
+                item.frInsertDtFormattedXlsx = formatDateTimeForXlsx(item.frInsertDt);
+                item.fdS6TimeFormatted = formatDateTime(item.fdS6Time);
+                item.fdS6TimeFormattedXlsx = formatDateTimeForXlsx(item.fdS6Time);
+
+                CommonUI.toppos.makeProductName(item, initialData.userItemPriceSortData);
+                item.processName = CommonUI.toppos.processName(item);
             });
 
-
             dv.chk(gridData, dtos.receive.franchiseRequestDetailSearch, "메인그리드 조회 결과 리스트");
+
             grids.f.setData(0, gridData);
             addDistinguishableCellColor();
         });
@@ -444,7 +520,9 @@ const comms = {
 
     saveModifiedOrder(data) {
         dv.chk(data, dtos.send.franchiseRequestDetailUpdate, "상품 수정내용 저장");
-        CommonUI.ajax(grids.s.url.update[0], "MAPPER", data, function(res) {
+        const abc ={requestDetailUpdateList: [data]};
+        console.log(abc);
+        CommonUI.ajax(grids.s.url.update[0], "MAPPER", abc, function(res) {
             onCloseAddOrder();
             grids.f.updateCurrentModifyRequest();
             alertSuccess("상품 수정 내용이 반영되었습니다.");
@@ -453,10 +531,10 @@ const comms = {
 
     getPaymentList(frId) {
         const condition = {frId: frId};
-        dv.chk(condition, dtos.send.franchiseDetailCencelDataList, "결제 리스트 받아오기");
+        dv.chk(condition, dtos.send.franchiseDetailCencelDataList, "결제 리스트 받아오는 조건 보내기");
         CommonUI.ajax("/api/user/franchiseDetailCencelDataList", "GET", condition, function(res) {
             const data = res.sendData;
-            dv.chk(data, dtos.receive.franchiseDetailCencelDataList);
+            dv.chk(data, dtos.receive.franchiseDetailCencelDataList, "받아온 결제 리스트");
             collectedCancelPaymentProcess(data.fdTag);
             grids.f.setData(2, data.gridListData);
         });
@@ -464,7 +542,7 @@ const comms = {
         CommonUI.ajax("/api/user/requestCashReceiptData", "GET", condition, function(res) {
             const data = res.sendData.gridListData;
             if (data) {
-                dv.chk(data, dtos.receive.requestCashReceiptData);
+                dv.chk(data, dtos.receive.requestCashReceiptData, "현금 영수증 리스트 받아오기");
                 $(".cashReceiptPanel").show();
                 grids.f.resize(3);
                 grids.f.setData(3, data);
@@ -476,19 +554,37 @@ const comms = {
         dv.chk(target, dtos.send.franchiseRequestDetailCencel, "한 항목 결제 취소");
         const url = "/api/user/franchiseRequestDetailCencel";
         CommonUI.ajax(url, "PARAM", target, function(res) {
+            const data = res.sendData;
+            if (wares.selectedCustomer.bcId) {
+                wares.selectedCustomer.saveMoney = data.saveMoney;
+                wares.selectedCustomer.uncollectMoney = data.uncollectMoney;
+                $("#uncollectMoneyMain").html(wares.selectedCustomer.uncollectMoney.toLocaleString());
+                $("#saveMoneyMain").html(wares.selectedCustomer.saveMoney.toLocaleString());
+            }
             if(target.type === "1") {
                 alertSuccess("결제 취소를 완료하였습니다.");
             }else if(target.type === "2") {
-                alertSuccess("적립금 전환을 완료하였습니다.");
+                alertSuccess("취소 후 적립금 전환을 완료하였습니다.");
             }
             comms.getPaymentList(currentRequest.frId);
         });
     },
 
     cancelOrder(fdId) {
-        const condition = {fdId: fdId};
+        const condition = {
+            fdId: fdId,
+            bcId: wares.selectedCustomer.bcId ? wares.selectedCustomer.bcId : 0,
+        };
         dv.chk(condition, dtos.send.franchiseReceiptCancel, "접수 취소");
         CommonUI.ajax(grids.s.url.delete[0], "PARAM", condition, function(res) {
+            const data = res.sendData;
+            if (wares.selectedCustomer.bcId) {
+                wares.selectedCustomer.saveMoney = data.saveMoney;
+                wares.selectedCustomer.uncollectMoney = data.uncollectMoney;
+                $("#uncollectMoneyMain").html(wares.selectedCustomer.uncollectMoney.toLocaleString());
+                $("#saveMoneyMain").html(wares.selectedCustomer.saveMoney.toLocaleString());
+            }
+
             AUIGrid.removeRowByRowId(grids.s.id[0], currentRequest._$uid);
             AUIGrid.removeSoftRows(grids.s.id[0]);
             alertSuccess("접수 취소를 완료하였습니다.");
@@ -497,14 +593,14 @@ const comms = {
 
     cancelDeliverState(fdId) { // 현재 접수취소와 같은 url을 사용중
         const condition = {fdId: fdId};
-        dv.chk(condition, dtos.send.franchiseLeadCancel, "인도 취소");
+        dv.chk(condition, dtos.send.franchiseLeadCancel, "고객출고 취소");
         const url = "/api/user/franchiseLeadCancel";
         CommonUI.ajax(url, "PARAM", condition, function(res) {
             const tempVar = currentRequest.fdPreState;
             currentRequest.fdPreState = currentRequest.fdState;
             currentRequest.fdState = tempVar;
             AUIGrid.updateRowsById(grids.s.id[0], currentRequest);
-            alertSuccess("인도 취소를 완료하였습니다.");
+            alertSuccess("고객출 취소를 완료하였습니다.");
         });
     },
 
@@ -723,7 +819,7 @@ const grids = {
                     dataField: "bcName",
                     headerText: "고객명",
                     style: "grid_textalign_left",
-                    width: 80,
+                    width: 140,
                 }, {
                     dataField: "fdTag",
                     headerText: "택번호",
@@ -733,7 +829,7 @@ const grids = {
                         return CommonData.formatFrTagNo(value, frTagInfo.frTagType);
                     },
                 }, {
-                    dataField: "sumName",
+                    dataField: "productName",
                     headerText: "상품명",
                     style: "color_and_name",
                     renderer : {
@@ -743,13 +839,13 @@ const grids = {
                         const colorSquare =
                             `<span class="colorSquare" style="background-color: ${CommonData.name.fdColorCode[item.fdColor]}"></span>`;
                         CommonUI.toppos.makeProductName(item, initialData.userItemPriceSortData);
-                        return colorSquare + ` <span>` + item.sumName + `</span>`;
+                        return colorSquare + ` <span>` + item.productName + `</span>`;
                     }
                 }, {
-                    dataField: "",
+                    dataField: "processName",
                     headerText: "처리내역",
                     style: "grid_textalign_left",
-                    width: 100,
+                    width: 90,
                     renderer : {
                         type: "TemplateRenderer",
                     },
@@ -765,20 +861,26 @@ const grids = {
                     dataField: "fdTotAmt",
                     headerText: "접수금액",
                     style: "grid_textalign_right",
-                    width: 90,
+                    width: 80,
                     dataType: "numeric",
                     autoThousandSeparator: "true",
                 }, {
                     dataField: "fdState",
                     headerText: "현재상태",
-                    width: 85,
+                    width: 70,
+                    renderer : {
+                        type : "TemplateRenderer",
+                    },
                     labelFunction(rowIndex, columnIndex, value, headerText, item) {
-                        return CommonData.name.fdState[value];
+                        return CommonData.getFdStateName(value, item.fdS6Type);
                     },
                 }, {
                     dataField: "fdUrgentYn", // 급세탁이면 Y
                     headerText: "급",
-                    width: 35,
+                    width: 30,
+                    labelFunction(_rowIndex, _columnIndex, value, _headerText, _item) {
+                        return value === "Y" ? "√" : "";
+                    },
                 }, {
                     dataField: "fdRemark",
                     headerText: "특이사항",
@@ -806,7 +908,7 @@ const grids = {
                         } else if (item.brFiId && item.brFiCustomerConfirm === "2") {
                             template += `<button class="c-state c-state--modify" `
                                 + `onclick="openBrInspectPopFromRemark(${rowIndex})">확인품</button>`;
-                        } else if (item.brFiId && item.brFiCustomerConfirm === "3") {
+                        } else if (item.brFiId) {
                             template += `<button class="c-state c-state--cancel" `
                                 + `onclick="openBrInspectPopFromRemark(${rowIndex})">확인품</button>`;
                         }
@@ -814,21 +916,25 @@ const grids = {
                         return template + value;
                     },
                 }, {
-                    dataField: "frInsertDt",
+                    dataField: "frInsertDtFormattedXlsx",
                     headerText: "접수일자",
                     width: 68,
                     renderer : {
-                        type : "TemplateRenderer",
+                        type : "TemplateRenderer"
                     },
-                    labelFunction: formatDateTime,
+                    labelFunction(rowIndex, columnIndex, value, headerText, item ) {
+                        return item.frInsertDtFormatted;
+                    },
                 }, {
-                    dataField: "fdS6Time",
-                    headerText: "인도일자",
+                    dataField: "fdS6TimeFormattedXlsx",
+                    headerText: "고객출고",
                     width: 68,
                     renderer : {
-                        type : "TemplateRenderer",
+                        type : "TemplateRenderer"
                     },
-                    labelFunction: formatDateTime,
+                    labelFunction(rowIndex, columnIndex, value, headerText, item ) {
+                        return item.fdS6TimeFormatted;
+                    },
                 }, {
                     dataField: "fdS2Dt",
                     headerText: "지사입고",
@@ -857,7 +963,7 @@ const grids = {
                     labelFunction(rowIndex, columnIndex, value, headerText, item ) {
                         let template = "";
                         item.frInspectBtn = true;
-                        if(item.fdState === "S1" && !item.frFiId) {
+                        if(item.fdState === "S1" && !item.frFiId && item.fdCancel === "N") {
                             template = `<button class="c-state">등록</button>`;
                         } else if(item.frFiId && item.frFiCustomerConfirm === "1") {
                             template = `<button class="c-state c-state--yellow">확인</button>`;
@@ -884,7 +990,7 @@ const grids = {
                             template = `<button class="c-state c-state--yellow">확인</button>`;
                         } else if(item.brFiId && item.brFiCustomerConfirm === "2") {
                             template = `<button class="c-state c-state--modify">수락</button>`;
-                        } else if(item.brFiId && item.brFiCustomerConfirm === "3") {
+                        } else if(item.brFiId) {
                             template = `<button class="c-state c-state--cancel">거부</button>`;
                         } else {
                             item.brInspectBtn = false;
@@ -900,7 +1006,7 @@ const grids = {
                     },
                     labelFunction(rowIndex, columnIndex, value, headerText, item ) {
                         let template = "";
-                        if(["S1", "F"].includes(item.fdState)) {
+                        if(["S1", "F"].includes(item.fdState) && item.fdCancel === "N") {
                             template = `
                                 <button class="c-state c-state--modify">수정</button>
                             `;
@@ -919,12 +1025,12 @@ const grids = {
                     },
                     labelFunction(rowIndex, columnIndex, value, headerText, item ) {
                         let template = "";
-                        if(item.fpCancelYn === "Y" && ["S1", "F", "B"].includes(item.fdState)) {
+                        if( item.fpCancelYn === "Y" && ["S1", "F", "B"].includes(item.fdState) && item.fdCancel === "N" && !item.fpId) {
                             template = `
                                 <button class="c-state c-state--cancel">취소</button>
                             `;
                             item.redBtn1 = true;
-                        }else{
+                        } else {
                             item.redBtn1 = false;
                         } 
                         return template;
@@ -938,26 +1044,31 @@ const grids = {
                     },
                     labelFunction(rowIndex, columnIndex, value, headerText, item ) {
                         let template = "";
-                        if(item.fpCancelYn === "N" && item.fdState !== "S2") {
+                        if(isCancelableItem(item)) {
                             template = `
                                 <button class="c-state c-state--cancel">취소</button>
                             `;
                             item.redBtn2 = true;
-                        }else{
+                        } else if (item.fpCancelYn === "Y" || item.fpCancelYn === "N") {
+                            template = `
+                                <button class="c-state c-state--yellow">보기</button>
+                            `;
+                            item.redBtn2 = true;
+                        } else {
                             item.redBtn2 = false;
                         }
                         return template;
                     },
                 }, {
                     dataField: "redBtn3",
-                    headerText: "인도<br>취소",
+                    headerText: "출고<br>취소",
                     width: 63,
                     renderer : {
                         type: "TemplateRenderer",
                     },
                     labelFunction(rowIndex, columnIndex, value, headerText, item ) {
                         let template = "";
-                        if(item.fdState === "S6") {
+                        if(item.fdState === "S6" && item.fdCancel === "N") {
                             template = `
                                 <button class="c-state c-state--cancel">취소</button>
                             `;
@@ -978,7 +1089,7 @@ const grids = {
                 selectionMode : "singleRow",
                 noDataMessage : "출력할 데이터가 없습니다.",
                 showAutoNoDataMessage: true,
-                enableColumnResize : false,
+                enableColumnResize : true,
                 showRowAllCheckBox: false,
                 showRowCheckColumn: false,
                 showRowNumColumn : false,
@@ -999,6 +1110,7 @@ const grids = {
                 }, {
                     dataField: "bcHp",
                     headerText: "전화번호",
+                    width: 150,
                     labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         return CommonUI.formatTel(value);
                     }
@@ -1015,7 +1127,7 @@ const grids = {
                 noDataMessage : "출력할 데이터가 없습니다.",
                 rowNumHeaderText : "순번",
                 showAutoNoDataMessage: false,
-                enableColumnResize : false,
+                enableColumnResize : true,
                 showRowAllCheckBox: false,
                 showRowCheckColumn: false,
                 showRowNumColumn : false,
@@ -1029,6 +1141,10 @@ const grids = {
 
             grids.s.columnLayout[2] = [
                 {
+                    dataField: "fpCancelYn",
+                    headerText: "취소여부",
+                    width: 80,
+                }, {
                     dataField: "insertDt",
                     headerText: "승인일자",
                     dataType: "date",
@@ -1059,7 +1175,7 @@ const grids = {
                 selectionMode : "singleRow",
                 noDataMessage : "출력할 데이터가 없습니다.",
                 showAutoNoDataMessage: false,
-                enableColumnResize : false,
+                enableColumnResize : true,
                 showRowAllCheckBox: false,
                 showRowCheckColumn: false,
                 showRowNumColumn : false,
@@ -1106,7 +1222,7 @@ const grids = {
                 selectionMode : "singleRow",
                 noDataMessage : "출력할 데이터가 없습니다.",
                 showAutoNoDataMessage: false,
-                enableColumnResize : false,
+                enableColumnResize : true,
                 showRowAllCheckBox: false,
                 showRowCheckColumn: false,
                 showRowNumColumn : false,
@@ -1142,7 +1258,7 @@ const grids = {
                 selectionMode : "singleRow",
                 noDataMessage : "출력할 데이터가 없습니다.",
                 showAutoNoDataMessage: true,
-                enableColumnResize : false,
+                enableColumnResize : true,
                 showRowAllCheckBox: true,
                 showRowCheckColumn: true,
                 showRowNumColumn : false,
@@ -1190,7 +1306,7 @@ const grids = {
                 selectionMode : "singleRow",
                 noDataMessage : "출력할 데이터가 없습니다.",
                 showAutoNoDataMessage: true,
-                enableColumnResize : false,
+                enableColumnResize : true,
                 showRowAllCheckBox: false,
                 showRowCheckColumn: false,
                 showRowNumColumn : false,
@@ -1207,12 +1323,16 @@ const grids = {
             }
         },
 
-        setData(numOfGrid, data) {
-            AUIGrid.setGridData(grids.s.id[numOfGrid], data);
+        setData(gridNum, data) {
+            AUIGrid.setGridData(grids.s.id[gridNum], data);
         },
 
-        clearData(numOfGrid) {
-            AUIGrid.clearGridData(numOfGrid);
+        getData(gridNum) {
+            return AUIGrid.getGridData(grids.s.id[gridNum]);
+        },
+
+        clearData(gridNum) {
+            AUIGrid.clearGridData(gridNum);
         },
 
         switchModifyMode(isModifyMode) {
@@ -1238,25 +1358,25 @@ const grids = {
             return AUIGrid.getSelectedRows(grids.s.id[gridNum])[0];
         },
 
-        clearGrid(numOfGrid) {
-            AUIGrid.clearGridData(grids.s.id[numOfGrid]);
+        clearGrid(gridNum) {
+            AUIGrid.clearGridData(grids.s.id[gridNum]);
         },
 
-        resize(numOfGrid) {
-            AUIGrid.resize(grids.s.id[numOfGrid]);
+        resize(gridNum) {
+            AUIGrid.resize(grids.s.id[gridNum]);
         },
 
-        getRemovedCheckRows(numOfGrid) {
-            if(AUIGrid.getCheckedRowItems(grids.s.id[numOfGrid]).length){
-                AUIGrid.removeCheckedRows(grids.s.id[numOfGrid]);
+        getRemovedCheckRows(gridNum) {
+            if(AUIGrid.getCheckedRowItems(grids.s.id[gridNum]).length){
+                AUIGrid.removeCheckedRows(grids.s.id[gridNum]);
             }else{
-                AUIGrid.removeRow(grids.s.id[numOfGrid], "selectedIndex");
+                AUIGrid.removeRow(grids.s.id[gridNum], "selectedIndex");
             }
-            return AUIGrid.getRemovedItems(grids.s.id[numOfGrid]);
+            return AUIGrid.getRemovedItems(grids.s.id[gridNum]);
         },
 
-        resetChangedStatus(numOfGrid) {
-            AUIGrid.resetUpdatedItems(grids.s.id[numOfGrid]);
+        resetChangedStatus(gridNum) {
+            AUIGrid.resetUpdatedItems(grids.s.id[gridNum]);
         },
 
         updateCurrentModifyRequest() {
@@ -1267,11 +1387,30 @@ const grids = {
             return AUIGrid.getItemByRowIndex(grids.s.id[0], rowId);
         },
 
+        // 엑셀 내보내기(Export)
+        exportToXlsx() {
+            //FileSaver.js 로 로컬 다운로드가능 여부 확인
+            if(!AUIGrid.isAvailableLocalDownload(grids.s.id[0])) {
+                alertCaution("파일 다운로드가 불가능한 브라우저 입니다.", 1);
+                return;
+            }
+            let customerNamePart = "";
+            if (wares.selectedCustomer.bcId) {
+                customerNamePart = wares.selectedCustomer.bcName + "_";
+            }
+            AUIGrid.exportToXlsx(grids.s.id[0], {
+                fileName : wares.title + "_" + customerNamePart + $("input[name='filterCondition']" +
+                        "[value='" + wares.currentCondition.filterCondition + "']").siblings("label").html()
+                    + `_${wares.currentCondition.filterFromDt}_${wares.currentCondition.filterToDt}`,
+                progressBar : true,
+            });
+        },
     },
 };
 
 /* dto가 아닌 일반적인 데이터들 정의 */
 const wares = {
+    title: "통합조회",
     url: window.location.href,
     params: "", // url에 내포한 파라메터들을 담는다.
     currentCondition: {},
@@ -1326,14 +1465,13 @@ const trigs = {
                 case "greenBtn1":
                     // 수정모드 진입
                     if(e.item.greenBtn1) {
-                        modifyOrder(e.rowIndex);
+                        modifyOrder();
                     }
                     break;
                 case "redBtn1":
                     // 확인후 ajax 호출하며 그리드에서 삭제
                     if(e.item.redBtn1) {
-                        alertCheck("선택한 품목을 접수취소하시겠습니까?" 
-                            + "<br>접수취소 후에는 신규접수를 통해<br>재등록 가능합니다.");
+                        alertCheck("선택한 품목을 접수취소하시겠습니까?<br>접수취소 후에는 신규접수를 통해<br>재등록 가능합니다.");
                         $("#checkDelSuccessBtn").on("click", function() {
                             comms.cancelOrder(e.item.fdId);
                             $("#popupId").remove();
@@ -1342,14 +1480,14 @@ const trigs = {
                     break;
                 case "redBtn2":
                     if(e.item.redBtn2) {
-                        cancelPaymentPop(e.item.frId);
+                        cancelPaymentPop(e.item);
                     }
                     // 결제취소창 진입
                     break;
                 case "redBtn3":
                     // 확인후 가맹점 입고로 상태변경하여 ajax 호출
                     if(e.item.redBtn3) {
-                        alertCheck("선택한 품목을 인도취소하시겠습니까?");
+                        alertCheck("선택한 품목을 고객출고 취소하시겠습니까?");
                         $("#checkDelSuccessBtn").on("click", function() {
                             comms.cancelDeliverState(e.item.fdId);
                             $("#popupId").remove();
@@ -1390,8 +1528,13 @@ const trigs = {
         $("#vkeyboard4").on("click", function() {
             onShowVKeyboard(4);
         });
+
         $("#vkeypad0").on("click", function() {
             onShowVKeypad(0);
+        });
+
+        $("#vkeypad1").on("click", function() {
+            onShowVKeypad(1);
         });
 
         // 구 검품 이벤트
@@ -1442,16 +1585,23 @@ const trigs = {
 
         $("#searchString").on("keypress", function(e) {
             if(e.originalEvent.code === "Enter" || e.originalEvent.code === "NumpadEnter") {
-                searchCustomer();
+                mainSearch();
             }
         });
 
         $("#printReceipt").on("click", function() {
             const selectedItem = grids.f.getSelectedItem(0);
             if(selectedItem) {
-                alertCheck("영수증을 인쇄 하시겠습니까?");
-                $("#checkDelSuccessBtn").on("click", function () {
-                    CommonUI.toppos.printReceipt(selectedItem.frNo, "", true, "N");
+                alertThree("영수증을 인쇄 하시겠습니까?", "고객용", "매장용", "취소");
+                $("#popFirstBtn").on("click", function () {
+                    CommonUI.toppos.printReceipt(selectedItem.frNo, "", true, false, "N");
+                    $('#popupId').remove();
+                });
+                $("#popSecondBtn").on("click", function () {
+                    CommonUI.toppos.printReceipt(selectedItem.frNo, "", false, true, "N");
+                    $('#popupId').remove();
+                });
+                $("#popThirdBtn").on("click", function () {
                     $('#popupId').remove();
                 });
             } else {
@@ -1482,6 +1632,14 @@ const trigs = {
                 $('#popupId').remove();
             });
         });
+
+        $("#exportXlsx").on("click", function () {
+            if (grids.f.getData(0).length) {
+                grids.f.exportToXlsx();
+            } else {
+                alertCaution("다운로드할 데이터가 없습니다.<br>먼저 조회를 해주세요.", 1);
+            }
+        });
     },
     modify() {
         $("#inReceiptPop input[type='radio']").on("change", function(){
@@ -1501,13 +1659,18 @@ const trigs = {
             }else{
                 $("#waterBtn").addClass("choice-drop__btn--active");
             }
+            judgeEtcNoneOnOff();
             const $isEtcProcessChecked = $(".choice-drop__btn.etcProcess.choice-drop__btn--active").length;
-            if(!$("#processCheck input[type='checkbox']:checked").length && !$isEtcProcessChecked) {
-                $processInput.first().prop("checked", true);
-            }else if($processInput.first().is(":checked") || $isEtcProcessChecked) {
-                $processInput.first().prop("checked", false);
+            if($("#fdRetry").is(":checked") &&
+                ($("#processCheck input[type='checkbox']:checked").length > 1 || $isEtcProcessChecked)) {
+                $("#fdRetry").prop("checked", false);
             }
 
+            calculateItemPrice();
+        });
+
+        /* 수기 할인 적용, 해제시 가격 계산 */
+        $("#manualDiscountChk").on("change", function(e) {
             calculateItemPrice();
         });
 
@@ -1521,13 +1684,16 @@ const trigs = {
             }
         });
 
-        $("#etcNone").on("click", function () {
+        $("#etcNone, #fdRetry").on("click", function (e) {
             $processInput.prop("checked", false);
             $("#waterNone").prop("checked", true);
             $("#waterBtn").removeClass("choice-drop__btn--active");
             resetPollutionPop();
             resetFdRepairInputs();
             resetFdAddInputs();
+            if (e.target.id === "fdRetry") {
+                $("#fdRetry").prop("checked", true);
+            }
             // 각 내부 항목들의 초기화
             setTimeout(function () {
                 calculateItemPrice();
@@ -1537,6 +1703,10 @@ const trigs = {
         $("#urgentNone").on("click", function () {
             $urgentInput.prop("checked", false);
             calculateItemPrice();
+        });
+
+        $("#manualDiscountPercent").on("keyup", function () {
+            validateManualDiscountPercent();
         });
 
         $("#fdAdd1").on("click", function () {
@@ -1600,17 +1770,41 @@ const trigs = {
     },
     subMenu() {
         $("#transferPoint").on("click", function () {
-            alertCheck("해당 내역을 적립금으로 전환하시겠습니까?");
-            $("#checkDelSuccessBtn").on("click", function () {
-                cancelPayment("2");
-            });
+            const item = grids.f.getSelectedItem(2);
+
+            if (item) {
+                if (item.fpCancelYn === "Y") {
+                    alertCaution("이미 취소 완료된 결제 입니다.", 1);
+                    return;
+                }
+                alertCheck("해당 내역을 적립금으로 전환하시겠습니까?");
+                $("#checkDelSuccessBtn").on("click", function () {
+                    cancelPayment("2", item);
+                    $('#popupId').remove();
+                });
+            } else {
+                alertCaution("적립금 전환할 결제내역을 선택해 주세요", 1);
+            }
         });
 
         $("#refundPayment").on("click", function () {
-            alertCheck("해당 내역을 환불 하시겠습니까?");
-            $("#checkDelSuccessBtn").on("click", function () {
-                cancelPayment("1");
-            });
+            const item = grids.f.getSelectedItem(2);
+
+            if (item) {
+                if (item.fpCancelYn === "Y") {
+                    alertCaution("이미 취소 완료된 결제 입니다.", 1);
+                    return;
+                }
+
+                alertCheck("해당 내역을 환불 하시겠습니까?");
+                $("#checkDelSuccessBtn").on("click", function () {
+                    const cancelType = item.fpType === "03" ? "2" : "1";
+                    cancelPayment(cancelType, item);
+                    $('#popupId').remove();
+                });
+            } else {
+                alertCaution("환불하실 결제내역을 선택해 주세요", 1);
+            }
         });
 
         $("#frEditFiAddAmt").on("keyup", function () {
@@ -1618,7 +1812,17 @@ const trigs = {
         });
 
         $("#closePaymentPop").on("click", function () {
-            if(!AUIGrid.getGridData(grids.s.id[2]).length) { // 결제내역 전부 사라질 경우 해당 마스터테이블 결제취소 버튼 제거, 접수취소 버튼 일괄 부여
+            // 결제 취소 가능한 목록이 하나도 없을 경우 버튼을 취소 -> 보기 버튼으로 바꾸고 접수취소가 가능하게 한다.
+            const paymentGridData = AUIGrid.getGridData(grids.s.id[2]);
+            let isAllCanceled = true;
+            for (const item of paymentGridData) {
+                if (item.fpCancelYn === "N") {
+                    isAllCanceled = false;
+                    break;
+                }
+            }
+
+            if(isAllCanceled) {
                 const frId = currentRequest.frId;
                 const gridData = AUIGrid.getGridData(grids.s.id[0]);
                 gridData.forEach(item => {
@@ -1661,6 +1865,7 @@ const trigs = {
                     fiPhotoYn: wares.currentFrInspect.inspeotInfoDto.fiPhotoYn,
                 }
                 comms.deleteInspectionNeo(target);
+                $('#popupId').remove();
             });
         });
         $("#closeFrInspectEditPop").on("click", function () {
@@ -1782,8 +1987,8 @@ function onPageLoad() {
     });
 }
 
-function modifyOrder(rowIndex) {
-    currentRequest.sumName = undefined;
+function modifyOrder() {
+    currentRequest.productName = undefined;
     wares.startPrice = currentRequest.fdTotAmt;
     wares.selectedLaundry.bgCode = currentRequest.biItemcode.substr(0, 3);
 
@@ -1804,6 +2009,10 @@ function modifyOrder(rowIndex) {
 
     setBiItemList(currentRequest.biItemcode.substr(3, 1));
 
+
+    $("#class02, #class03").parents("li").css("display", "none");
+    $("#class" + currentRequest.bcGrade).parents("li").css("display", "block");
+
     wares.selectedLaundry.bgCode = currentRequest.biItemcode.substr(0, 3);
     wares.selectedLaundry.bsCode = currentRequest.biItemcode.substr(3, 1);
     $("input[name='bsItemGroupcodeS']:input[value='" + wares.selectedLaundry.bsCode + "']").prop("checked", true);
@@ -1811,7 +2020,13 @@ function modifyOrder(rowIndex) {
     $(".choice-color__input[value='" + currentRequest.fdColor + "']").prop("checked", true);
     $("input[name='fdPattern']:input[value='" + currentRequest.fdPattern +"']").prop("checked", true);
     $("input[name='fdPriceGrade']:input[value='" + currentRequest.fdPriceGrade +"']").prop("checked", true);
-    $("input[name='fdDiscountGrade']:input[value='" + currentRequest.fdDiscountGrade +"']").prop("checked", true);
+    $("input[name='fdDiscountGrade']:input[value='" + currentRequest.fdDiscountGrade +"']").first().prop("checked", true);
+
+    $("#manualDiscountPercent").val(currentRequest.fdPromotionDiscountRate);
+    /* 할인이 본사직영의 수기행사할인인 경우 해당 체크박스를 체크 */
+    if (currentRequest.fdPromotionType === "H1") {
+        $("#manualDiscountChk").prop("checked", true);
+    }
 
     if(currentRequest.fdPressed) {
         $("#fdPress").prop("checked", true);
@@ -1886,7 +2101,15 @@ function modifyOrder(rowIndex) {
         $("#urgentNone").prop("checked", false);
     }
 
+    if (["01", "02", "03"].includes(currentRequest.fdPromotionType)) {
+        $("#modifyBtn").parents("li").hide();
+        alertCaution("행사가 적용중인 상품은 수정할 수 없습니다.<br>필요시 접수취소 후 다시 접수 해주세요.", 1);
+    } else {
+        $("#modifyBtn").parents("li").show();
+    }
+
     calculateItemPrice();
+
     $('#productPop').addClass('active');
     $("#biItemList").scrollTop(0);
 }
@@ -1946,7 +2169,9 @@ function onAddOrder() {
         return false;
     }
 
-    if(currentRequest.redBtn2 && wares.startPrice > currentRequest.fdTotAmt) {
+    /* 결제를 취소할 수 있는 상황이면서, 수정 후 가격이 수정 전 가격보다 올랐을 때 */
+    if(currentRequest.fpCancelYn === "N" && currentRequest.fdState !== "S2"
+        && currentRequest.fdCancel === "N" && wares.startPrice > currentRequest.fdTotAmt) {
         alertCaution("이미 결제가 완료된 접수내역은<br>더 낮은금액으로 수정이 불가합니다." 
             + "<br>결제취소 후 수정해주세요.", 1);
         return false;
@@ -2066,7 +2291,7 @@ function onShowVKeyboard(num) {
 
 function onShowVKeypad(num) {
     const vkeypadProp = [];
-    const vkeypadTargetId = ["frEditFiAddAmt"];
+    const vkeypadTargetId = ["frEditFiAddAmt", "manualDiscountPercent"];
 
     vkeypadProp[0] = {
         title : "추가비용 입력",
@@ -2074,7 +2299,15 @@ function onShowVKeypad(num) {
             return $("#" + vkeypadTargetId).val(parseInt($("#" + vkeypadTargetId).val()).toLocaleString());
         }
     }
-    vkey.showKeypad(vkeypadTargetId[num], vkeypadProp[0]);
+
+    vkeypadProp[1] = {
+        title : "수기할인율 입력",
+        callback: validateManualDiscountPercent,
+        maxlength: 3,
+        clrfirst: true,
+    }
+
+    vkey.showKeypad(vkeypadTargetId[num], vkeypadProp[num]);
 }
 
 function mainSearch() {
@@ -2164,9 +2397,6 @@ function putCustomer() {
         $("#bcLastRequestDt").html("");
     }
 
-    // 상품수정기능 도입까지 주석
-    // $("#class02, #class03").parents("li").css("display", "none");
-    // $("#class" + wares.selectedCustomer.bcGrade).parents("li").css("display", "block");
     grids.f.clearGrid(0);
 
     let fromday = new Date();
@@ -2236,23 +2466,39 @@ function removeEventsFromElement(element) {
     element.parentNode.replaceChild(elementClone, element);
 }
 
-function cancelPaymentPop(frId) {
-    comms.getPaymentList(frId);
+/* 결제취소가 가능한 접수품인지 판단. */
+function isCancelableItem (item) {
+    return item.fpCancelYn === "N" && item.fdState !== "S2" && item.fdCancel === "N";
+}
+
+function cancelPaymentPop(item) {
+    comms.getPaymentList(item.frId);
     $(".cashReceiptPanel").hide();
+
+    if (isCancelableItem(item)) {
+        $("#transferPoint, #refundPayment").parents("li").show();
+    } else {
+        $("#transferPoint, #refundPayment").parents("li").hide();
+    }
+
     $("#paymentListPop").addClass("active");
     grids.f.resize(2);
 }
 
-function cancelPayment(cancelType) {
-    const item = grids.f.getSelectedItem(2);
+function cancelPayment(cancelType, item) {
+    if (!item.fpMonth) {
+        item.fpMonth = 0;
+    }
     if(item) {
         const target = {
             fpId: item.fpId,
-            type: cancelType
+            type: cancelType,
+            bcId: wares.selectedCustomer.bcId ? wares.selectedCustomer.bcId : 0,
         }
         if(cancelType === "1" && item.fpType === "02") {
             try {
                 const params = {
+                    fpMonth: item.fpMonth,
                     approvalTime: item.fpCatApprovaltime,
                     approvalNo: item.fpCatApprovalno,
                     totalAmount: item.fpCatTotamount,
@@ -2374,7 +2620,8 @@ function openFrInspectEditPop(item) {
 }
 
 async function openFrInspectPop() {
-    if(wares.currentFrInspect.frFiCustomerConfirm === "1" || !wares.currentFrInspect.frFiCustomerConfirm) {
+    if((wares.currentFrInspect.frFiCustomerConfirm === "1" || !wares.currentFrInspect.frFiCustomerConfirm)
+        && wares.currentFrInspect.fdCancel === "N") {
         try {
             wares.isCameraExist = true;
             wares.cameraStream = await navigator.mediaDevices.getUserMedia({
@@ -2493,7 +2740,7 @@ function openBrInspectPop() {
         }
     }
 
-    if(wares.currentBrInspect.brFiCustomerConfirm === "1") {
+    if(wares.currentBrInspect.brFiCustomerConfirm === "1" && wares.currentBrInspect.fdCancel === "N") {
         $("#brCustomerDenied").parents("li").show();
         $("#brCustomerConfirmed").parents("li").show();
         $("#brSendKakaoMsg").parents("li").show();
@@ -2640,6 +2887,7 @@ function resetFdRepairInputs() {
     currentRequest.fdRepairAmt = 0;
     currentRequest.fdRepairRemark = "";
     $("#fdRepair").prop("checked", false);
+    judgeEtcNoneOnOff();
     $("#fdRepairAmt").val(0);
     $("#fdRepairRemark").val("");
 }
@@ -2648,6 +2896,7 @@ function resetFdAddInputs() {
     currentRequest.fdAdd1Amt = 0;
     currentRequest.fdAdd1Remark = "";
     $("#fdAdd1").prop("checked", false);
+    judgeEtcNoneOnOff();
     $("#fdAdd1Amt").val(0);
     $("#fdAdd1Remark").val("");
 }
@@ -2799,9 +3048,9 @@ function sendInspectMessage(sender) {
 }
 
 function changeSearchPeriod(period) {
-    if(period !== "0") {
+    if(period) {
         let fromday = new Date();
-        fromday.setDate(fromday.getDate() - period);
+        fromday.setDate(fromday.getDate() - period.toInt());
         fromday = fromday.format("yyyy-MM-dd");
         const today = new Date().format("yyyy-MM-dd");
 
@@ -2810,10 +3059,18 @@ function changeSearchPeriod(period) {
     }
 }
 
-function formatDateTime(rowIndex, columnIndex, value, headerText, item) {
+function formatDateTime(value) {
     let result = "";
     if(typeof value === "number") {
-        result = new Date(value).format("yy.MM.dd<br>hh:mm");
+        result = new Date(value).format("yy.MM.dd<br>HH:mm");
+    }
+    return result;
+}
+
+function formatDateTimeForXlsx(value) {
+    let result = "";
+    if(typeof value === "number") {
+        result = new Date(value).format("yy.MM.dd HH:mm");
     }
     return result;
 }
@@ -2833,7 +3090,6 @@ function cancelCashReceipt() {
     if (paymentData) {
         delete paymentData["_$uid"];
         paymentData.fcCatApprovalno = paymentData.fcCatApprovalno.substring(0, 9);
-        console.log(paymentData);
         alertCheck("선택하신 현금 영수증을 취소 하시겠습니까?");
         $('#checkDelSuccessBtn').on('click', function () {
             CommonUI.toppos.cancelCashReceipt(paymentData, function () {
@@ -2844,5 +3100,27 @@ function cancelCashReceipt() {
         });
     } else {
         alertCaution("취소하실 현금영수증을 선택해 주세요.", 1);
+    }
+}
+
+/* 수기행사 할인 퍼센트 유효성 검사동작 */
+function validateManualDiscountPercent() {
+    const $manualDiscountPercent = $("#manualDiscountPercent");
+    let value = $manualDiscountPercent.val().positiveNumberInput();
+    if (value && value > 100) {
+        value = 100;
+    }
+    $manualDiscountPercent.val(value);
+
+    calculateItemPrice();
+}
+
+/* 처리내역 버튼 동작에 따라 없음 버튼에 불이 들어올지 꺼져야 할지를 판단하여 조치한다. */
+function judgeEtcNoneOnOff() {
+    const $isEtcProcessChecked = $(".choice-drop__btn.etcProcess.choice-drop__btn--active").length;
+    if(!$("#processCheck input[type='checkbox']:checked").length && !$isEtcProcessChecked) {
+        $("#etcNone").prop("checked", true);
+    }else if($("#etcNone").is(":checked") || $isEtcProcessChecked) {
+        $("#etcNone").prop("checked", false);
     }
 }

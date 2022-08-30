@@ -14,6 +14,10 @@ const dtos = {
     },
     receive: {
         getMainData: {
+            hsCashSaleAmt: 'n',    // 현금 결제액
+            hsCardSaleAmt: 'n',    // 카드 결제액
+            hsPointSaleAmt: 'n',    // 적립금 결제액
+            hsDeferredSaleAmt: 'n',    // 후불 처리액
             hsYyyymmdd: 's',    // 정산일자
             hsNormalAmt: 'n',    // 정상금액
             hsPressed: 'n',    // 다림질 요금
@@ -136,6 +140,42 @@ const grids = {
                 dataType: 'numeric',
                 autoThousandSeparator: 'true',
             }, {
+                headerText: '결제방식',
+                children: [
+                    {
+                        dataField: 'hsCashSaleAmt',
+                        headerText: '현금',
+                        style: 'grid_textalign_right',
+                        width: 95,
+                        dataType: 'numeric',
+                        autoThousandSeparator: 'true',
+                    },
+                    {
+                        dataField: 'hsCardSaleAmt',
+                        headerText: '카드',
+                        style: 'grid_textalign_right',
+                        width: 95,
+                        dataType: 'numeric',
+                        autoThousandSeparator: 'true',
+                    },
+                    {
+                        dataField: 'hsPointSaleAmt',
+                        headerText: '적립금',
+                        style: 'grid_textalign_right',
+                        width: 95,
+                        dataType: 'numeric',
+                        autoThousandSeparator: 'true',
+                    },
+                    {
+                        dataField: 'hsDeferredSaleAmt',
+                        headerText: '후불',
+                        style: 'grid_textalign_right',
+                        width: 95,
+                        dataType: 'numeric',
+                        autoThousandSeparator: 'true',
+                    },
+                ],
+            }, {
                 dataField: 'hsExceptAmt',
                 headerText: '정산 제외<br>매출',
                 style: 'grid_textalign_right',
@@ -251,6 +291,30 @@ const grids = {
                 dataField: 'hsTotAmt',
                 operation: 'SUM',
                 positionField: 'hsTotAmt',
+                style: 'grid_textalign_right',
+                formatString: '#,##0',
+            }, {
+                dataField: 'hsCashSaleAmt',
+                operation: 'SUM',
+                positionField: 'hsCashSaleAmt',
+                style: 'grid_textalign_right',
+                formatString: '#,##0',
+            }, {
+                dataField: 'hsCardSaleAmt',
+                operation: 'SUM',
+                positionField: 'hsCardSaleAmt',
+                style: 'grid_textalign_right',
+                formatString: '#,##0',
+            }, {
+                dataField: 'hsPointSaleAmt',
+                operation: 'SUM',
+                positionField: 'hsPointSaleAmt',
+                style: 'grid_textalign_right',
+                formatString: '#,##0',
+            }, {
+                dataField: 'hsDeferredSaleAmt',
+                operation: 'SUM',
+                positionField: 'hsDeferredSaleAmt',
                 style: 'grid_textalign_right',
                 formatString: '#,##0',
             }, {

@@ -79,6 +79,7 @@ public class BranchCalendarRepositoryCustomImpl extends QuerydslRepositorySuppor
                     franchise.frTelNo,
                     franchise.frMultiscreenYn,
                     franchise.frUrgentDayYn,
+                    franchise.frManualPromotionYn,
                     franchise.frCardTid
             ));
         return query.fetch();

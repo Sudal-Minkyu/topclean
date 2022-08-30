@@ -24,7 +24,7 @@ class VKeyboard {
         type: "default", // 가상키패드의 형태, "default" 기본, "plusminus" +-버튼으로 양수나 음수구분
         midprocess: "default", // 키 입력마다 페이지를 가공하는 형태, "default" 일반숫자, "none" 없음, "tel" 전화번호, "business" 사업자번호
         maxlength: 9999, // 키패드 필드의 최대 자릿수 제한 (자르기)
-        clrfirst: false,
+        clrfirst: false, // 키패드 입력을 시작할 때 입력필드를 지우고 시작하기
         callback: function() {
         }, // 가상키패드 동작이 다 끝나고 나서 실행될 기능
     }

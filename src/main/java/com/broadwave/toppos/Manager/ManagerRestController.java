@@ -13,6 +13,7 @@ import com.broadwave.toppos.Manager.outsourcingPrice.outsourcingPriceDtos.Outsou
 import com.broadwave.toppos.User.ReuqestMoney.Requset.RequestDetail.Inspeot.InspeotDtos.InspeotMapperDto;
 import com.broadwave.toppos.User.UserService.FindService;
 import com.broadwave.toppos.User.UserService.InspectService;
+import com.broadwave.toppos.User.UserService.QrService;
 import com.broadwave.toppos.User.UserService.ReceiptService;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -53,6 +54,7 @@ public class ManagerRestController {
     private final CurrentService currentService; // 현황페이지 서비스
     private final NoticeService noticeService; // 공지사항페이지 서비스
     private final HmTemplateService hmTemplateService; // 문자메세지 서비스
+    private final QrService qrService; // Qr관련 서비스
 
     private final ReceiptReleaseService receiptReleaseService; // 지사출고 전용 서비스
     private final ReceiptService receiptService; // 접수 서비스
@@ -64,7 +66,7 @@ public class ManagerRestController {
     @Autowired
     public ManagerRestController(ManagerService managerService, CalendarService calendarService, TagNoticeService tagNoticeService, TagGalleryService tagGalleryService,
                                  ReceiptReleaseService receiptReleaseService, InspectService inspectService, CurrentService currentService, NoticeService noticeService, ReceiptService receiptService,
-                                 FindService findService, HmTemplateService hmTemplateService, OutsourcingPriceService outsourcingPriceService, SummaryService summaryService) {
+                                 FindService findService, HmTemplateService hmTemplateService, QrService qrService, OutsourcingPriceService outsourcingPriceService, SummaryService summaryService) {
         this.managerService = managerService;
         this.calendarService = calendarService;
         this.tagNoticeService = tagNoticeService;
@@ -76,6 +78,7 @@ public class ManagerRestController {
         this.receiptService = receiptService;
         this.findService = findService;
         this.hmTemplateService = hmTemplateService;
+        this.qrService = qrService;
         this.outsourcingPriceService = outsourcingPriceService;
         this.summaryService = summaryService;
     }
@@ -844,6 +847,24 @@ public class ManagerRestController {
                                                                             @RequestParam("hrReceiptYyyymmdd") String hrReceiptYyyymmdd, @RequestParam("hrReceiptSaleAmt") Integer hrReceiptSaleAmt,
                                                                             @RequestParam("hrReceiptRoyaltyAmt") Integer hrReceiptRoyaltyAmt) {
         return summaryService.branchDailySummarySave(request, hsYyyymmdd, frCode, hrReceiptYyyymmdd, hrReceiptSaleAmt, hrReceiptRoyaltyAmt);
+    }
+
+
+//@@@@@@@@@@@@@@@@@@@@@ QR스캔이력 페이지 관련 API @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    // QR 건수 조회 왼쪽리스트 호출 API
+    @GetMapping("branchQrCloseCntList")
+    @ApiOperation(value = "가맹점 Qr마감 건수 리스트 호출", notes = "가맹점의 Qr마감 건수 리스트를 요청한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", value = "JWT Token", required = true, dataType = "string", paramType = "header")})
+    public ResponseEntity<Map<String, Object>> branchQrCloseCntList(@RequestParam("filterFromDt") String filterFromDt, @RequestParam("filterToDt") String filterToDt, HttpServletRequest request) {
+        return qrService.branchQrCloseCntList(filterFromDt, filterToDt, request);
+    }
+
+    // QR 건수 조회 오른쪽리스트 호출 API
+    @GetMapping("branchQrCloseCntSubList")
+    @ApiOperation(value = "가맹점 Qr마감 날짜별 리스트 호출", notes = "가맹점의 Qr마감 해당 날짜별 리스트를 요청한다.")
+    @ApiImplicitParams({@ApiImplicitParam(name = "Authorization", value = "JWT Token", required = true, dataType = "string", paramType = "header")})
+    public ResponseEntity<Map<String, Object>> branchQrCloseCntSubList(@RequestParam("insertYyyymmdd") String insertYyyymmdd, HttpServletRequest request) {
+        return qrService.branchQrCloseCntSubList(insertYyyymmdd, request);
     }
 
 }

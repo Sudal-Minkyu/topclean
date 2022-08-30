@@ -56,8 +56,6 @@ const dtos = {
         },
 
         customerInfo: { // integrate 의 customerInfo와 같은 구성
-            deliveryS5: "n",
-            deliveryS8: "n",
             bcWeddingAnniversary: "d",
             bcAddress: "s",
             bcGrade: "s",
@@ -99,8 +97,14 @@ const comms = {
                 $("#customerListPop").addClass("active");
             }else{
                 alertCheck("일치하는 고객 정보가 없습니다.<br>신규고객으로 등록 하시겠습니까?");
+                let additionalCondition = params.searchString;
+                if (additionalCondition.numString().length) {
+                    additionalCondition = "?bchp=" + additionalCondition.numString();
+                } else {
+                    additionalCondition = "?bcname=" + additionalCondition;
+                }
                 $("#checkDelSuccessBtn").on("click", function () {
-                    location.href="/user/customerreg";
+                    location.href="/user/customerreg" + additionalCondition;
                 });
             }
         });
@@ -112,6 +116,7 @@ const comms = {
         CommonUI.ajax(urls.getDetailList, "GET", filterCondition, function (res) {
             const data = res.sendData.gridListData;
             dv.chk(data, dtos.receive.franchiseObjectFind, "물건찾기 리스트 받기");
+            CommonUI.toppos.makeSimpleProductNameList(data);
             grids.f.setData(0, data);
         });
     },
@@ -160,7 +165,7 @@ const grids = {
                     formatString: "yyyy-mm-dd",
                 }, {
                     dataField: "fdEstimateDt",
-                    headerText: "인도예정일",
+                    headerText: "고객출고<br>예정일",
                     width: 90,
                     dataType: "date",
                     formatString: "yyyy-mm-dd",
@@ -182,9 +187,9 @@ const grids = {
                     labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         const colorSquare =
                             `<span class="colorSquare" style="background-color: ${CommonData.name.fdColorCode[item.fdColor]}; vertical-align: middle;"></span>`;
-                        const sumName = CommonUI.toppos.makeSimpleProductName(item);
-                        item.productName = sumName;
-                        return colorSquare + ` <span style="vertical-align: middle;">` + sumName + `</span>`;
+                        const productName = CommonUI.toppos.makeSimpleProductName(item);
+                        item.productName = productName;
+                        return colorSquare + ` <span style="vertical-align: middle;">` + productName + `</span>`;
                     },
                 }, {
                     dataField: "processName",

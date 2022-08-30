@@ -408,6 +408,9 @@ label.c-file input[type="file"],
 .c-select select::-ms-expand {
     display: none;
 }
+.c-select.c-select--width-auto {
+	width: auto;
+}
 
 /* textarea */
 textarea,

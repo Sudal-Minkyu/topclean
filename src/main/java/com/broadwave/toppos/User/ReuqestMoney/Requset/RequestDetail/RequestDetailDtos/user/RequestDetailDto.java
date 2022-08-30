@@ -18,7 +18,7 @@ import javax.persistence.Column;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RequestDetailDto {
-    private Long id; // 고유ID값
+    private Long fdId; // 고유ID값
 
     private String biItemcode; // 상품코드
     private String fdTag; // 택번호
@@ -62,6 +62,11 @@ public class RequestDetailDto {
     private Integer fdDiscountAmt; // 할인금액
     private Integer fdQty; // 수량
 
+    private Long hpId; // 행사마스터 PK
+    private String fdPromotionType; // 행사타입(H1 : 본사직영 수기행사 할인- 기본금액대비할인)
+    private Double fdPromotionDiscountRate; // 행사할인율
+    private Integer fdPromotionDiscountAmt; // 행사할인금액
+
     private Integer fdRequestAmt; // 접수금액( (정상 + 수선 + 추가1 -할인) * 수량 )
 
     private String fdRetryYn; // 재세탁 여부 (Y  / N) Y 이면 합계금액이 0이다
@@ -71,6 +76,8 @@ public class RequestDetailDto {
 
     private String fdRemark; // 특이사항
     private String frEstimateDate; // 출고예정일
+
+    private Integer fdTotAmt; // 합계금액( (정상 + 수선 + 추가1 + 추가2 -할인) * 수량 )
 
     private String bgName; // 대분류명
     private String bsName; // 중분류명
@@ -85,5 +92,6 @@ public class RequestDetailDto {
     public Integer getFdPollutionType() {
         return fdPollutionType + fdPollutionBack;
     }
+
 
 }

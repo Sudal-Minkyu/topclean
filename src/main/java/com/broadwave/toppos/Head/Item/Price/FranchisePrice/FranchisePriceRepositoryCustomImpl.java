@@ -3,6 +3,7 @@ package com.broadwave.toppos.Head.Item.Price.FranchisePrice;
 import com.broadwave.toppos.Head.Item.Group.A.QItemGroup;
 import com.broadwave.toppos.Head.Item.Group.B.QItemGroupS;
 import com.broadwave.toppos.Head.Item.Group.C.QItem;
+import com.broadwave.toppos.Head.Item.Price.FranchisePrice.FranchisePriceDtos.FranchisePriceListDto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;

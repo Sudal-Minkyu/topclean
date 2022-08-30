@@ -50,6 +50,9 @@ public class RequestDetailBranchReleaseForceCurrentRightListDto {
     private Integer fdPollutionType;
     private Integer fdPollutionBack;
 
+    private String fdPromotionType; // 행사타입(H1 : 본사직영 수기행사 할인- 기본금액대비할인)
+    private Double fdPromotionDiscountRate; // 행사할인율
+
     public Integer getFdPollutionType() {
         return fdPollutionType + fdPollutionBack;
     }

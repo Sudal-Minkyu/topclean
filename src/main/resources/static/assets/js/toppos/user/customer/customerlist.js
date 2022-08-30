@@ -17,6 +17,12 @@ $(function() {
         e.preventDefault()
     })
 
+    $("#searchCustomerField").on("keyup", function (e) {
+        if(e.originalEvent.code === "Enter" || e.originalEvent.code === "NumpadEnter") {
+            onSearchCustomer();
+        }
+    });
+
     vkey = new VKeyboard();
 
     getBoilerPlate();
@@ -140,7 +146,7 @@ gridColumnLayout[0] = [
         dataField: "bcName",
         headerText: "고객명",
         style: "grid_textalign_left",
-        width: 80,
+        width: 180,
     }, {
         dataField: "bcHp",
         headerText: "휴대폰",
@@ -152,11 +158,11 @@ gridColumnLayout[0] = [
         dataField: "bcAddress",
         headerText: "주소",
         style: "grid_textalign_left",
-        width: 190,
+        width: 220,
     }, {
         dataField: "bcGrade",
         headerText: "등급",
-        width: 60,
+        width: 50,
         labelFunction(rowIndex, columnIndex, value, headerText, item) {
             return bcGradeName[value];
         },
@@ -175,8 +181,8 @@ gridColumnLayout[0] = [
         autoThousandSeparator: "true",
     }, {
         dataField: "",
-        headerText: "적립금 조정",
-        width: 80,
+        headerText: "적립금<br>조정",
+        width: 60,
         renderer : {
             type: "TemplateRenderer",
         },
@@ -189,11 +195,11 @@ gridColumnLayout[0] = [
     }, {
         dataField: "bcMessageAgree",
         headerText: "SMS",
-        width: 50,
+        width: 40,
     }, {
         dataField: "bcAge",
         headerText: "연령/생일",
-        width: 140,
+        width: 130,
         labelFunction(rowIndex, columnIndex, value, headerText, item) {
             return value + "대/" + item.bcBirthday.substr(0, 4) + "-" +
                 item.bcBirthday.substr(4, 2) + "-" + item.bcBirthday.substr(6, 2);
@@ -207,11 +213,11 @@ gridColumnLayout[0] = [
     }, */ {
         dataField: "insertDateTime",
         headerText: "가입일자",
-        width: 100,
+        width: 90,
     }, {
         dataField: "bcQuitDate",
         headerText: "탈퇴일",
-        width: 100,
+        width: 90,
     }, {
         dataField: "",
         headerText: "수정",
@@ -236,7 +242,7 @@ gridProp[0] = {
     selectionMode : "singleRow",
     noDataMessage : "출력할 데이터가 없습니다.",
     showAutoNoDataMessage: true,
-    enableColumnResize : false,
+    enableColumnResize : true,
     showRowAllCheckBox: false,
     showRowCheckColumn: false,
     showRowNumColumn : false,

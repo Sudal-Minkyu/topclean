@@ -106,7 +106,10 @@ public class FindRepositoryCustomImpl extends QuerydslRepositorySupport implemen
                                 .when(requestDetail.fdPollutionLocBrh.eq("Y")).then(1)
                                 .when(requestDetail.fdPollutionLocBlf.eq("Y")).then(1)
                                 .when(requestDetail.fdPollutionLocBrf.eq("Y")).then(1)
-                                .otherwise(0)
+                                .otherwise(0),
+
+                        requestDetail.fdPromotionType,
+                        requestDetail.fdPromotionDiscountRate
                 ));
 
         if(!ffState.equals("00")){

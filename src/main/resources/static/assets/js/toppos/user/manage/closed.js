@@ -57,6 +57,7 @@ const comms = {
             const dataLength = data.gridListData.length;
 
             dv.chk(data.gridListData, dtos.receive.franchiseReceiptCloseList, '마감 리스트 항목 받아오기');
+            CommonUI.toppos.makeSimpleProductNameList(data.gridListData);
             grids.f.setData(0, data.gridListData);
             
             $('#totalNum').text(dataLength);
@@ -68,7 +69,7 @@ const comms = {
         dv.chk(saveData, dtos.send.franchiseStateChange, '마감 리스트 항목 보내기');
     
         CommonUI.ajax(urls.changeClosedList, "PARAM", saveData, function(res) {
-            alertSuccess("수기마감 완료");
+            alertSuccess("지사전송처리를 완료하였습니다.");
             grids.f.clearData();
             comms.getClosedList();
 
@@ -81,10 +82,31 @@ const comms = {
 
     // 금일 영업 마감
     dailyClosingProcess(targetDate) {
-        CommonUI.ajax("/api/user/franchiseDue", "PARAM", targetDate, function () {
-            alertSuccess("금일 영업 마감을 완료하였습니다.<br>일일 정산서를 통해 내역을 확인 가능합니다.<br>일단위로 언제든지 영업 재마감은 가능합니다.<br>수고하셨습니다.");
+        CommonUI.ajax('/api/user/franchiseDue', 'PARAM', targetDate, function () {
+            alertCheck("금일 영업 마감을 완료하였습니다.<br>일일 정산서를 통해 내역을 확인 가능합니다.<br>일단위로 언제든지 영업 재마감은 가능합니다.<br>일일정산서를 인쇄 하시겠습니까?");
+
+            $("#checkDelSuccessBtn").on("click", function () {
+                const printDate = {
+                    hsYyyymmdd: targetDate.yyyymmdd,
+                };
+                comms.printDailyStatementOfAccounts(printDate);
+                $('#popupId').remove();
+            });
         });
     },
+
+    printDailyStatementOfAccounts(printDate) {
+        CommonUI.ajax('/api/user/franchiseReceiptDaysList', 'GET', printDate, function (res) {
+            const data = res.sendData.monthlySummaryDaysDtos[0];
+            data.hsYyyymmdd = printDate.hsYyyymmdd;
+            data.add1 = data.a1 + data.a2 + data.a3;
+            data.add2 = data.a4 + data.a5;
+            data.add5 = data.a2 + data.a4 + data.a6;
+            data.add10 = data.b15 + data.b16;
+
+            CAT.CatPrintDailyStatementOfAccounts(data);
+        });
+    }
 };
 
 /* .s : AUI 그리드 관련 설정들
@@ -129,7 +151,7 @@ const grids = {
                         return CommonData.formatFrTagNo(value, frTagInfo.frTagType);
                     },
                 }, {
-                    dataField: "",
+                    dataField: "productName",
                     headerText: "상품명",
                     width: 160,
                     style: "color_and_name",
@@ -139,8 +161,8 @@ const grids = {
                     labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         const colorSquare =
                             `<span class="colorSquare" style="background-color: ${CommonData.name.fdColorCode[item.fdColor]}; vertical-align: middle;"></span>`;
-                        const sumName = CommonUI.toppos.makeSimpleProductName(item);
-                        return colorSquare + ` <span style="vertical-align: middle;">` + sumName + `</span>`;
+                        const productName = CommonUI.toppos.makeSimpleProductName(item);
+                        return colorSquare + ` <span style="vertical-align: middle;">` + productName + `</span>`;
                     },
                 }, {
                     dataField: "",
@@ -258,12 +280,12 @@ const trigs = {
                 const checkedItems = grids.f.getCheckedItems(0);
                 const saveDataset = makeSaveDataset(checkedItems);
                 if (checkedItems.length) {
-                    alertCheck("선택된 상품을 수기마감 하시겠습니까?");
+                    alertCheck("선택된 상품을 지사전송처리 하시겠습니까?");
                     $("#checkDelSuccessBtn").on("click", function () {
                         comms.changeClosedList(saveDataset);
                     });
                 } else {
-                    alertCaution("마감 리스트를 선택해주세요", 1);
+                    alertCaution("지사전송할 리스트를 선택해주세요", 1);
                 }
             });
 

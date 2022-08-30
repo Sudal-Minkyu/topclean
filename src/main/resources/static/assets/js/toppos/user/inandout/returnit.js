@@ -55,6 +55,7 @@ const comms = {
             const dataLength = data.gridListData.length;
 
             dv.chk(data.gridListData, dtos.receive.getReturnList, '반송 리스트 항목 받아오기');
+            CommonUI.toppos.makeSimpleProductNameList(data.gridListData);
             grids.f.setData(0, data.gridListData);
             
             $('#totalNum').text(dataLength);
@@ -120,7 +121,7 @@ const grids = {
                         return CommonData.formatFrTagNo(value, frTagInfo.frTagType);
                     },
                 }, {
-                    dataField: "",
+                    dataField: "productName",
                     headerText: "상품명",
                     style: "color_and_name",
                     width: 150,
@@ -130,8 +131,8 @@ const grids = {
                     labelFunction(rowIndex, columnIndex, value, headerText, item) {
                         const colorSquare =
                             `<span class="colorSquare" style="background-color: ${CommonData.name.fdColorCode[item.fdColor]}; vertical-align: middle;"></span>`;
-                        const sumName = CommonUI.toppos.makeSimpleProductName(item);
-                        return colorSquare + ` <span style="vertical-align: middle;">` + sumName + `</span>`;
+                        const productName = CommonUI.toppos.makeSimpleProductName(item);
+                        return colorSquare + ` <span style="vertical-align: middle;">` + productName + `</span>`;
                     },
                 }, {
                     dataField: "",

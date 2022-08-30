@@ -16,6 +16,6 @@ public interface OutsourcingPriceRepository extends JpaRepository<OutsourcingPri
 
 
 
-    @Query("select o from OutsourcingPrice o")
+    @Query("select o from Promotion o")
     List<OutsourcingPrice> findAllItemcodeAndBrCode();
 }

@@ -129,6 +129,7 @@ const comms = {
         CommonUI.ajax(urls.getMainGridList, "GET", searchCondition, function (res) {
             const data = CommonUI.toppos.killNullFromArray(res.sendData.gridListData);
             dv.chk(data, dtos.receive.branchInspectionCurrentList, "메인 그리드 받아온 리스트");
+            CommonUI.toppos.makeSimpleProductNameList(data);
             grids.f.setData(0, data);
         });
     },
@@ -235,7 +236,7 @@ const grids = {
                         return CommonData.formatBrTagNo(value);
                     },
                 }, {
-                    dataField: "",
+                    dataField: "productName",
                     headerText: "상품명",
                     style: "grid_textalign_left",
                     renderer : {
@@ -244,8 +245,8 @@ const grids = {
                     labelFunction(_rowIndex, _columnIndex, _value, _headerText, item) {
                         const colorSquare =
                             `<span class="colorSquare" style="background-color: ${CommonData.name.fdColorCode[item.fdColor]}; vertical-align: middle;"></span>`;
-                        const sumName = CommonUI.toppos.makeSimpleProductName(item);
-                        return colorSquare + ` <span style="vertical-align: middle;">` + sumName + `</span>`;
+                        const productName = CommonUI.toppos.makeSimpleProductName(item);
+                        return colorSquare + ` <span style="vertical-align: middle;">` + productName + `</span>`;
                     },
                 }, {
                     dataField: "",

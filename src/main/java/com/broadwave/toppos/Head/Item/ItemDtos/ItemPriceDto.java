@@ -29,7 +29,7 @@ public class ItemPriceDto {
     private Integer bpPriceD; // 최종가격D
     private Integer bpPriceE; // 최종가격E
 
-    private String biRemark; // 특이사항
+    private String bpRemark; // 특이사항
 
     private String insert_id;
     private LocalDateTime insertDateTime;

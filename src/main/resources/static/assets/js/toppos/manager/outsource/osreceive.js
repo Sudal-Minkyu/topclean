@@ -79,6 +79,7 @@ const comms = {
         dv.chk(searchCondition, dtos.send.branchReceiptBranchOutOutsouringList, '외주 품목 조회 조건 보내기');
         CommonUI.ajax('/api/manager/branchReceiptBranchOutOutsouringList', "GET", searchCondition, function (res) {
             wares.candidateList = CommonUI.toppos.killNullFromArray(res.sendData.gridListData);
+            CommonUI.toppos.makeSimpleProductNameList(wares.candidateList);
 
             $("#statPanel").html(
                 `[${$("#frList option:selected").html()}] 상품이 ${wares.candidateList.length}건 조회되었습니다.`);
@@ -102,17 +103,6 @@ const comms = {
             $("#exportXlsx").hide();
         });
     },
-
-    // dispatchPrint(miNoList) {
-    //     dv.chk(miNoList, dtos.send.branchDispatchPrint, "외주입고증 인쇄를 위한 miNoList 보내기");
-    //     CommonUI.ajax(urls.dispatchPrint, "GET", miNoList, function (res) {
-    //         for(const obj of res.sendData.issueDispatchDtos) {
-    //             const frCode = obj["qrcode"];
-    //             obj["qrcode"] = location.protocol+"//"+location.host+"/mobile/unAuth/qrpickup?frcode="+frCode;
-    //         }
-    //         dispatchPrintData(res.sendData.issueDispatchDtos);
-    //     });
-    // },
 };
 
 /* .s : AUI 그리드 관련 설정들
@@ -170,9 +160,9 @@ const grids = {
                     labelFunction(_rowIndex, _columnIndex, _value, _headerText, item) {
                         const colorSquare =
                             `<span class='colorSquare' style='background-color: ${CommonData.name.fdColorCode[item.fdColor]}; vertical-align: middle;'></span>`;
-                        const sumName = CommonUI.toppos.makeSimpleProductName(item);
-                        item.productName = sumName;
-                        return colorSquare + ` <span style='vertical-align: middle;'>` + sumName + `</span>`;
+                        const productName = CommonUI.toppos.makeSimpleProductName(item);
+                        item.productName = productName;
+                        return colorSquare + ` <span style='vertical-align: middle;'>` + productName + `</span>`;
                     },
                 }, {
                     dataField: 'processName',
