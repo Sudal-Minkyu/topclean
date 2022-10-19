@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/defaultmanager}" xmlns="http://www.w3.org/1999/html">
+
+<!-- 사용자 CSS 추가 -->
+<th:block layout:fragment="css">
+</th:block>
+
+<!-- 사용자 스크립트 추가 -->
+<th:block layout:fragment="script">
+    <script type="module" src="/assets/js/toppos/manager/calculate/frdaydeposit.js"></script>
+    <!-- 엑셀 다운로드 기능을 사용하기 위함 -->
+    <script src="/assets/js/filesaver/FileSaver.min.js"></script>
+</th:block>
+
+<div layout:fragment="content" class="content content--padding">
+    <section class="section">
+        <article class="article">
+            <div class="article__header">
+                <h3 class="article__heading">가맹점 일 정산 입금 등록</h3>
+            </div>
+            <div class="article__body">
+                <div class="inquiry">
+                    <div class="inquiry__condition">
+                        <ul>
+                            <li>
+                                <div class="search__period-title">정산일자</div>
+                                <div class="c-period">
+                                    <!-- 시작일 -->
+                                    <input type="text" id="filterFromDt">
+                                    <span class="c-period__code">-</span>
+                                    <!-- 종료일 -->
+                                    <input type="text" id="filterToDt">
+                                </div>
+                            </li>
+                            <li>
+                                <div class="inquiry__title">가맹점</div>
+                                <div class="inquiry__input">
+                                    <div class="c-select">
+                                        <select id="frList">
+                                            <option value="0">필수선택</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="inquiry__button">
+                        <button id="searchListBtn" class="c-button c-button--small c-button--darksolid">조회</button>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <div class="article article--flex">
+            <div class="article__body flex3">
+                <ul class="article__console article__console--top article__console--left">
+                    <l>
+                        <button type="button" id="exportXlsx"
+                                class="c-button c-button--green c-button--icon c-button--icon-excel">
+                            엑셀 다운로드</button>
+                        </li>
+                </ul>
+                <div style="height: 570px; border: 1px solid #ddd">
+                    <div id="grid_main" class="grid--header-border" style="height: 570px;"></div>
+                </div>
+            </div>
+
+            <div class="article__body">
+                <table class="c-table">
+                    <colgroup>
+                        <col style="width: 160px;">
+                        <col>
+                    </colgroup>
+                    <tbody class="align-right">
+                    <tr>
+                        <th>정산 일자</th>
+                        <td>
+                            <input id="hsYyyymmdd" type="text" class="c-date" readonly="" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>정산 대상 금액</th>
+                        <td>
+                            <input id="hsSettleAmtBr" type="text" readonly="" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>본사 로열티</th>
+                        <td>
+                            <input id="hsRolayltyAmtFr" type="text" readonly="" />
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+
+                <table class="c-table" style="margin-top: 20px;">
+                    <colgroup>
+                        <col style="width: 160px;">
+                        <col>
+                    </colgroup>
+                    <tbody class="align-right">
+                    <tr>
+                        <th>입금 일자</th>
+                        <td>
+                            <input id="hrReceiptYyyymmdd" type="text" class="c-date" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>정산액 지사 입금</th>
+                        <td>
+                            <input id="hrReceiptSaleAmt" type="text" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>본사 로열티 입금</th>
+                        <td>
+                            <input id="hrReceiptRoyaltyAmt" type="text" />
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+
+                <ul class="article__console">
+                    <li>
+                        <button id="saveDepositState" class="c-button c-button--darksolid">저장</button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+</div>
+</html>

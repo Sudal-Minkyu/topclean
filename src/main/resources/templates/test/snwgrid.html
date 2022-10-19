@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate ="~{layout/default}">
+
+<!-- 사용자 CSS 추가 -->
+<th:block layout:fragment="css">
+    <link href="../assets/css/nak_css_dir/jquery-ui.min.css" rel="stylesheet">
+</th:block>
+
+<!-- 사용자 스크립트 추가 -->
+<th:block layout:fragment="script">
+
+    <script type="text/javascript">
+
+        // AUIGrid 생성 후 반환 ID
+        let myGridID;
+        let myData;
+
+        let columnLayoutOne = [
+            {
+                dataField: "testName",
+                headerText: "성함",
+                editable: false,
+            }, {
+                dataField: "testGender",
+                headerText: "성별",
+            }, {
+                dataField: "testOld",
+                headerText: "나이",
+                editRenderer: {
+                    type: "InputEditRenderer",
+                    onlyNumeric: true,
+                    validator: function(oldValue, newValue, item, dataField, fromClipboard) {
+                        let isValid = newValue < 200;
+                        return {"validate" : isValid, "message" : "나이가 너무 많습니다."};
+                    }
+                }
+            }, {
+                dataField: "testMoney",
+                headerText: "요금",
+            }, {
+                dataField: "testGender",
+                headerText: "컬러테스트",
+                renderer: {
+                    type: "TemplateRenderer"
+                },
+                labelFunction(rowIndex, columnIndex, value, headerText, item) {
+                    let color = '#FFFFFF';
+                    if(value=="남자"){
+                        color = '#FF00FF';
+                    }else if(value=="여자"){
+                        color = '#00FFFF';
+                    }
+                    let template = `
+                        <div style="width: 70px;">
+                        <div style="background-color: ${color}; width: 25px; height: 25px; padding: 0; margin: 0; float: left;"
+                            onclick="alert('${item.testName}')"></div>${value}
+                        </div>
+                    `;
+                    return template;
+                }
+            }
+        ];
+
+        let gridOptionOne = {
+            editable : true,
+            selectionMode : "multipleRow",
+            showStateColumn : true,
+            noDataMessage : "출력할 데이터가 없습니다",
+        };
+
+        $(function () {
+            createAUIGrid(columnLayoutOne, gridOptionOne);
+        });
+
+        function createAUIGrid(columnLayout, gridOption) {
+            myGridID = AUIGrid.create("grid_one", columnLayout, gridOption);
+        }
+
+        function readListOne() {
+            $(document).ajaxSend(function(e, xhr) { xhr.setRequestHeader("Authorization",localStorage.getItem('Authorization')); });
+            $.ajax({
+                url: "/api/test/grid/list",
+                type: 'GET',
+                cache: false,
+                error: function (req) {
+                    ajaxErrorMsg(req);
+                },
+                success: function (req) {
+                    console.log(req);
+                    myData = req.sendData.gridListData;
+                    console.log(req.sendData.gridListData)
+                    AUIGrid.setGridData(myGridID, myData);
+                }
+            });
+        }
+
+        function editComplete() {
+            let createdItems = AUIGrid.getAddedRowItems(myGridID);
+            let updatedItems = AUIGrid.getEditedRowItems(myGridID);
+            let deletedItems = AUIGrid.getRemovedItems(myGridID);
+
+            console.log("---CREATED---");
+            console.log(createdItems);
+            console.log("---UPDATED---");
+            console.log(updatedItems);
+            console.log("---DELETED---");
+            console.log(deletedItems);
+
+            if(deletedItems.length){
+                let refineDeletedItems = [];
+                deletedItems.forEach(el => {
+                    refineDeletedItems.push({"testName" : el.testName});
+                    delete el ["testOld"];
+                });
+
+                console.log("---REFINED---");
+                console.log(refineDeletedItems);
+                console.log("---DELKLIS---");
+                console.log(deletedItems);
+            }
+        }
+
+        $("#dpick").datepicker();
+    </script>
+</th:block>
+
+<div layout:fragment="content" class="content padding-zero content--main">
+
+    <div class="desc">
+        <p>GRID CRUD 테스트</p>
+    </div>
+    <div>
+        <div id="grid_one"></div>
+    </div>
+    <div class="desc">
+        <input type="button" value="조회" onclick="readListOne()">
+        <input type="button" value="행 추가" onclick="AUIGrid.addRow(myGridID, {testName:'클론'})">
+        <input type="button" value="여러행 추가" onclick="AUIGrid.addRow(myGridID, [{testName:'추가행1', 'testOld': '1'},
+            {testName: '추가행2', 'testGender': '추가'}])">
+        <input type="button" value="행 삭제" onclick="AUIGrid.removeRow(myGridID, 'selectedIndex')">
+        <input type="button" value="초기화" onclick="AUIGrid.resetUpdatedItems(myGridID)">
+        <input type="button" value="완료" onclick="editComplete()">
+    </div>
+
+    <div>
+        <div id="dpick"></div>
+    </div>
+</div>
+
+</html>

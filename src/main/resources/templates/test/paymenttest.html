@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
+      layout:decorate="~{layout/default}">
+
+<!-- 사용자 CSS 추가 -->
+<th:block layout:fragment="css">
+
+</th:block>
+
+<!-- 사용자 스크립트 추가 -->
+<th:block layout:fragment="script">
+    <script src="/assets/js/toppos/CATPayment.js"></script>
+
+
+    <script type="text/javascript">
+
+        $(function () {
+
+        });
+
+        function paymentCard() {
+
+            $('#payStatus').show();
+
+            // type: card or cash
+            // franchiseNo : 가맹점코드 3자리 문자열
+            // totalAmount : 총 결제금액
+            // month : 할부 (0-일시불, 2-2개월)
+
+            let paymentData =
+                {
+                    "franchiseNo":"123",
+                    "franchiseName":"소만마을점",
+                    "businessNO": "125-55-45671",
+                    "repreName" : "김점주",
+                    "franchiseTel" : "031-4564-7894",
+                    "customerName" : "최고객",
+                    "customerTel" : "010-****-7777",
+                    "requestDt" : "2021-11-15 13:15",
+                    "totalAmount":10500,
+                    "paymentAmount":0,
+                    "addAmount":1500,
+                    "dcAmount":500,
+                    "estimateDt" : "2021-11-18",
+                    "preUncollectAmount":5000,
+                    "curUncollectAmount":0,
+                    "uncollectPayAmount":0,
+                    "totalUncollectAmount":0,
+                    "month":0,
+                    "items":[
+                        {"tagno":"1231234","color":"없음","itemname":"면 상의","specialyn":"Y","price":2500},
+                        {"tagno":"1231235","color":"남색","itemname":"청바지 하의","specialyn":"","price":3500},
+                        {"tagno":"1241236","color":"검정","itemname":"롱 오리털 코트","specialyn":"","price":4500}
+                    ]
+                };
+
+
+            if (paymentData.type ==="card") {
+                CAT.CatCredit(paymentData, function (res) {
+                    $('#resultmsg').text(res);
+                    $('#payStatus').hide();
+                    let resjson = JSON.parse(res);
+                    //결제 성공일경우 Print
+                    if (resjson.STATUS === "SUCCESS") {
+                        /* res JSSON Key List
+                            resultData = '{ ';
+                            resultData += '"STATUS":"SUCCESS",';
+                            resultData += '"APPROVALTIME":"' +FindJSONtoString("APPROVALTIME", data) + '",';
+                            resultData += '"APPROVALNO":"' +FindJSONtoString("APPROVALNO", data) + '",';
+                            resultData += '"CARDNO":"' +FindJSONtoString("CARDNO", data) + '",';
+                            resultData += '"ISSUERCODE":"' +FindJSONtoString("ISSUERCODE", data) + '",';
+                            resultData += '"ISSUERNAME":"' +FindJSONtoString("ISSUERNAME", data) + '",';
+                            resultData += '"MERCHANTNUMBER":"' +FindJSONtoString("MERCHANTNUMBER", data) + '",';
+                            resultData += '"MESSAGE1":"' +FindJSONtoString("MESSAGE1", data) + '",';
+                            resultData += '"MESSAGE2":"' +FindJSONtoString("MESSAGE2", data) + '",';
+                            resultData += '"NOTICE1":"' +FindJSONtoString("NOTICE1", data) + '",';
+                            resultData += '"TOTAMOUNT":"' +FindJSONtoString("TOTAMOUNT", data) + '",';
+                            resultData += '"VATAMOUNT":"' +FindJSONtoString("VATAMOUNT", data) + '",';
+                            resultData += '"TELEGRAMFLAG":"' +FindJSONtoString("TELEGRAMFLAG", data) + '"';
+                            resultData += '}';
+                     */
+
+                        let creditData =
+                            {
+                                "cardNo": resjson.CARDNO,
+                                "cardName": resjson.ISSUERNAME,
+                                "approvalTime": resjson.APPROVALTIME,
+                                "approvalNo": resjson.APPROVALNO
+                            };
+                        CAT.CatPrint(paymentData, creditData, "N")
+                    }
+
+                });
+            }
+            if (paymentData.type ==="cash") {
+                CAT.CatPrint(paymentData, "", "N");
+                $('#payStatus').hide();
+            }
+
+
+        }
+
+        function paymentCardCancel() {
+
+            $('#payStatus').show();
+
+            // totalAmount : 총 결제금액
+            // month : 할부 (0-일시불, 2-2개월)
+            let paymentData =
+                {
+                    "franchiseNo":"123",
+                    "franchiseName":"소만마을점",
+                    "approvalTime":"2112132021592",
+                    "approvalNo":"22381094",
+                    "totalAmount":"000010500",
+                    "vatAmount":"000000954",
+                    "month":0,
+                    "items":[
+                        {"tagno":"1231234","color":"없음","itemname":"면 상의","specialyn":"Y","price":2500},
+                        {"tagno":"1231235","color":"남색","itemname":"청바지 하의","specialyn":"","price":3500},
+                        {"tagno":"1241236","color":"검정","itemname":"롱 오리털 코트","specialyn":"","price":4500}
+                    ]
+                };
+
+
+            CAT.CatCreditCancel(paymentData, function (res) {
+
+                $('#resultmsg').text(res);
+                $('#payStatus').hide();
+
+                let resjson = JSON.parse(res);
+
+
+
+
+                //결제 성공일경우 Print
+                if (resjson.STATUS ==="SUCCESS") {
+                    let creditData =
+                        {
+                            "cardNo": resjson.CARDNO,
+                            "cardName": resjson.ISSUERNAME,
+                            "approvalTime": resjson.APPROVALTIME,
+                            "approvalNo": resjson.APPROVALNO
+                        };
+                    CAT.CatPrint(paymentData, creditData,"Y")
+                }
+
+
+            });
+        }
+        function cashdrawer(){
+            CAT.CatCashdrawer();
+        }
+
+        function paymentPrint() {
+
+            let paymentData =
+                {
+                    "franchiseNo":"123",
+                    "franchiseName":"소만마을점",
+                    "businessNO": "125-55-45671",
+                    "repreName" : "김점주",
+                    "franchiseTel" : "031-4564-7894",
+                    "customerName" : "최고객",
+                    "customerTel" : "010-****-7777",
+                    "requestDt" : "2021-11-15 13:15",
+                    "normalAmount":10500,
+                    "changeAmount":0,
+                    "totalAmount":10500,
+                    "paymentAmount":0,
+                    "estimateDt" : "2021-11-18",
+                    "preUncollectAmount":5000,
+                    "curUncollectAmount":0,
+                    "uncollectPayAmount":0,
+                    "totalUncollectAmount":0,
+                    "items":[
+                        {"tagno":"1231234","color":"없음","itemname":"면 상의","specialyn":"Y","price":2500},
+                        {"tagno":"1231235","color":"남색","itemname":"청바지 하의","specialyn":"","price":3500},
+                        {"tagno":"1241236","color":"검정","itemname":"롱 오리털 코트","specialyn":"","price":4500}
+                    ]
+                };
+                let creditData =[
+                    {
+                        "type" : "card",
+                        "cardNo": "954575******7894",
+                        "cardName": "IBK 카드",
+                        "approvalTime": "2112132021592",
+                        "approvalNo": "22381094",
+                        "month": "2",
+                        "payAmount":25000
+                    },
+                    {
+                        "type" : "card",
+                        "cardNo": "954575******7894",
+                        "cardName": "IBK 카드",
+                        "approvalTime": "2112132021592",
+                        "approvalNo": "22381094",
+                        "month": "0",
+                        "payAmount":25000
+                    },
+                    {
+                        "type" : "save",
+                        "cardNo": "",
+                        "cardName": "",
+                        "approvalTime": "",
+                        "approvalNo": "",
+                        "month": "",
+                        "payAmount": 5000
+                    },
+                    {
+                        "type" : "cash",
+                        "cardNo": "",
+                        "cardName": "",
+                        "approvalTime": "",
+                        "approvalNo": "",
+                        "month": "",
+                        "payAmount": 7500
+                    },
+                ];
+
+const temp = {
+    "creditData": [
+        {
+            "approvalNo": "61617015    ",
+            "payAmount": 500,
+            "cardName": "NH카드          ",
+            "month": 0,
+            "approvalTime": "2202171746315",
+            "type": "card",
+            "cardNo": "409216******9758"
+        },
+        {
+            "payAmount": 1000,
+            "type": "cash",
+
+        }
+    ],
+    "paymentData": {
+        "requestDt": "2022-02-17",
+        "totalUncollectAmount": 33220,
+        "changeAmount": 0,
+        "paymentAmount": 1500,
+        "customerName": "테스트",
+        "uncollectPayAmount": 0,
+        "curUncollectAmount": 8820,
+        "businessNO": "1234567890",
+        "franchiseTel": "02111222200",
+        "normalAmount": 6000,
+        "preUncollectAmount": 24400,
+        "repreName": "이태진4",
+        "customerTel": "01022221111",
+        "franchiseNo": "111",
+        "franchiseName": "브로드웨이브",
+                    "totalAmount":10500,
+            "estimateDt": "2022-02-20",
+            
+
+"items": [
+        {
+            "specialyn": "N",
+            "estimateDt": "2022-02-20",
+            "color": "00",
+            "itemname": "마 상의",
+            "price": 6000,
+            "tagno": "2220452"
+        }
+    ]
+    },
+    
+}
+
+            CAT.CatPrint_Multi(temp.paymentData, temp.creditData,"N");
+        }
+
+        function appExit() {
+            alert("종료하시겠습니까? 확인후 ");
+            cAPI.pExit();
+        }
+        function getMaccaddress() {
+            let macaddress = cAPI.getMacAddress();
+            alert ("MacAddress : " + macaddress);
+        }
+        function dispatchPrint(){
+            // 프로젝트명
+            var projectName = "toppos";
+
+            // 서식명
+            var formName = "dispatchPrint01";
+
+            // 데이터셋
+            var dataset_0 = [
+                {"barcode":"123123","outDate":"20220301","tag":"123-0-0123","type":"T01","t01Count":"1","t02Count":"2"},
+                {"barcode":"123123","outDate":"20220301","tag":"123-0-0124","type":"T02","t01Count":"1","t02Count":"2"}
+            ];
+
+            //데이터셋 Object
+            var datasetObject = {};
+
+            //데이터셋 Object에 생성된 DataSet 추가
+            datasetObject.dataset_0 = JSON.stringify(dataset_0);
+            //datasetObject.dataset_1 = JSON.stringify(dataset_1);
+            //파라미터 Object
+            var paramObject = {};
+
+            //파라미터
+            //paramObject.stDt = "2019-01-31";
+            //aramObject.endDt = "2019-12-31";
+
+            //뷰어 오픈 공통 함수 호출
+            fn_viewer_open(projectName, formName, datasetObject, paramObject);
+
+        }
+
+
+
+
+
+        function fn_viewer_open(projectName, formName, datasetObject, paramObject){
+            const _params = {
+                projectName,
+                formName,
+            };
+            for (const datasetValue in datasetObject) {
+                _params[datasetValue] = encodeURIComponent(datasetObject[datasetValue]);
+            }
+            for (const paramValue in paramObject) {
+                _params[paramValue] = paramObject[paramValue];
+            }
+
+            const _url = "https://report.topcleaners.kr:443" + "/UBIFORM/UView5/index.jsp"; //UBIFORM Viewer URL
+            //팝업 오픈 Option 해당 설정은 window.open 설정을 참조
+            //let windowoption = 'location=0, directories=0,resizable=0,status=0,toolbar=0,menubar=0, width=1280px,height=650px,left=0, top=0,scrollbars=0';  //팝업사이즈 window.open참고
+            const windowoption = 'width=1280px,height=650px';
+            const name = "printArea";// "UBF_" + n;
+            //팝업사이즈 window.open참고
+            const form = document.createElement("form");
+            form.setAttribute("method", "post");
+            form.setAttribute("action", _url);
+            const params = _params ;
+            for (const i in params) {
+                if (params.hasOwnProperty(i)) {
+                    const param = document.createElement('input');
+                    param.type = 'hidden';
+                    param.name = i;
+                    param.value = encodeURI( params[i] );
+                    form.appendChild(param);
+                }
+            }
+            document.body.appendChild(form);
+            form.setAttribute("target", name);
+            window.open("", name, windowoption);
+            form.submit();
+            document.body.removeChild(form);
+        }
+    </script>
+</th:block>
+
+<div layout:fragment="content" class="content padding-zero content--main">
+
+    <h1>결제 테스트 페이지</h1>
+    <br>
+    <div>
+        <input type="button" value="카드결제테스트" onclick="paymentCard();"/>
+        <input type="button" value="카드결제취소테스트" onclick="paymentCardCancel();"/>
+
+        <input type="button" value="인쇄테스트2" onclick="paymentPrint();"/>
+        <input type="button" value="금전함열기" onclick="cashdrawer();"/>
+        <input type="button" value="윈도우프로그램종료" onclick="appExit();"/>
+        <input type="button" value="MacAccress가져오기" onclick="getMaccaddress();"/>
+        <input type="button" value="출고증인쇄 테스트" onclick="dispatchPrint();"/>
+    </div>
+    <div>
+        <input type="button" value="로그아웃" onclick="logout()"/>
+    </div>
+
+    <div id ="payStatus" style="position: absolute; left: 25px; top: 100px; height: 300px;width: 300px;	background-color: #99ccff; display: none;" >
+        결제중 창이 닫힐때까지 카드를 빼지마세요
+    </div>
+
+    <table>
+        <tr>
+            <td align="center" colspan="4"><font size="4"><b>전문</b></font></td>
+        </tr>
+        <tr>
+            <td align="right">요청전문:</td>
+            <td colspan="3"><input id="taRequest" style="width:100%;"></input></td>
+        </tr>
+    </table>
+    <div id ="resultmsg" style="height: 300px;width: 300px;	background-color: #ffa980;">
+        결과 메세지
+    </div>
+
+
+    <iframe name="printArea" width=700 height=400 frameborder=1
+            marginheight=100 marginwidth=0 scrolling=auto style=visible:true></iframe>
+
+</div>
+</html>

@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/defaulthead}" xmlns="http://www.w3.org/1999/html">
+
+<!-- 사용자 CSS 추가 -->
+<th:block layout:fragment="css">
+    <style>
+        /* 경고창이 팝업창에 가려지는걸 방지 */
+        #popupId {
+            z-index: 1001;
+        }
+    </style>
+</th:block>
+
+<!-- 사용자 스크립트 추가 -->
+<th:block layout:fragment="script">
+    <script type="module" src="/assets/js/toppos/head/itemcontrol/promomanagement.js?22082610"></script>
+</th:block>
+
+<div layout:fragment="content" class="content content--padding">
+    <section class="section">
+        <article class="article">
+            <div class="article__header">
+                <h3 class="article__heading">행사 관리</h3>
+            </div>
+            <div class="article__body">
+                <div class="inquiry">
+                    <div class="inquiry__condition">
+                        <ul>
+                            <li>
+                                <div class="inquiry__title">적용일자</div>
+                                <div class="inquiry__input-tag">
+                                    <div>
+                                        <input type="text" class="c-date" id="filterDt">
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="inquiry__title">행사명</div>
+                                <div class="inquiry__input-tag">
+                                    <input type="text" id="filterHpName">
+                                </div>
+                            </li>
+                            <li>
+                                <div class="inquiry__title">진행여부</div>
+                                <div class="inquiry__input-tag">
+                                    <div class="c-select">
+                                        <select id="filterHpStatus">
+                                            <option value="00">전체</option>
+                                            <option value="01">진행중</option>
+                                            <option value="02">종료</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="inquiry__title">지사</div>
+                                <div class="inquiry__input">
+                                    <div class="c-select">
+                                        <select id="brList">
+                                            <option value="0">전체선택</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="inquiry__title">가맹점</div>
+                                <div class="inquiry__input">
+                                    <div class="c-select">
+                                        <select id="frList" disabled="">
+                                            <option value="0">전체선택</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="inquiry__button inquiry__button--row">
+                        <button type="button" id="searchListBtn" class="c-button c-button--solid c-button--small">조회</button>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <article class="article">
+            <div class="article__body">
+                <ul class="article__console article__console--left article__console--top">
+<!--                    <li><button type="button" class="c-button c-button&#45;&#45;green c-button&#45;&#45;icon c-button&#45;&#45;icon-excel" onclick="exportToXlsx()">엑셀 다운로드</button></li>-->
+                    <li style="margin-left: auto;">
+                        <button id="addPromoBtn" type="button" class="c-button c-button--point">신규 행사등록</button>
+                    </li>
+                </ul>
+                <div id="grid_main" class="grid--header-border" style="height: 560px;"></div>
+            </div>
+        </article>
+    </section>
+
+    <!-- 팝업 -->
+    <div class="pop" id="promoInputPop">
+        <div class="pop__box pop__box--xlarge">
+            <div class="pop__article">
+                <div class="pop__article-head">
+                    <h3 class="pop__article__header">행사정보 입력</h3>
+                </div>
+                <div class="pop__article-content">
+                    <div class="promoreg">
+                        <div class="promoreg__section">
+                            <div class="promoreg__article">
+                                <div class="promoreg__article-head">
+                                    <h4>1단계 - 행사기본정보</h4>
+                                </div>
+                                <form id="basicInfo">
+                                    <div class="promoreg__article-body">
+                                        <table class="c-table">
+                                            <colgroup>
+                                                <col style="width: 100px;">
+                                                <col>
+                                                <col style="width: 100px;">
+                                                <col>
+                                            </colgroup>
+                                            <tbody>
+                                            <tr>
+                                                <th>행사명칭</th>
+                                                <td>
+                                                    <input id="hpName" name="hpName" type="text" />
+                                                </td>
+                                                <th>행사유형</th>
+                                                <td>
+                                                    <div class="c-select">
+                                                        <select id="hpType" name="hpType">
+                                                            <option value="01">일반행사</option>
+                                                            <option value="02">1+1</option>
+                                                            <option value="03">2+1</option>
+                                                        </select>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th>행사기간(시작)</th>
+                                                <td colspan="3">
+                                                    <div class="c-select c-select--width-auto">
+                                                        <select class="startTime" id="startYear">
+                                                            <option value="">년</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="c-select c-select--width-auto">
+                                                        <select class="startTime" id="startMonth">
+                                                            <option value="">월</option>
+                                                            <option value="01">01월</option>
+                                                            <option value="02">02월</option>
+                                                            <option value="03">03월</option>
+                                                            <option value="04">04월</option>
+                                                            <option value="05">05월</option>
+                                                            <option value="06">06월</option>
+                                                            <option value="07">07월</option>
+                                                            <option value="08">08월</option>
+                                                            <option value="09">09월</option>
+                                                            <option value="10">10월</option>
+                                                            <option value="11">11월</option>
+                                                            <option value="12">12월</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="c-select c-select--width-auto">
+                                                        <select class="startTime" id="startDay">
+                                                            <option value="">일</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="c-select c-select--width-auto">
+                                                        <select class="startTime" id="startHour">
+                                                            <option value="00">00시</option>
+                                                            <option value="01">01시</option>
+                                                            <option value="02">02시</option>
+                                                            <option value="03">03시</option>
+                                                            <option value="04">04시</option>
+                                                            <option value="05">05시</option>
+                                                            <option value="06">06시</option>
+                                                            <option value="07">07시</option>
+                                                            <option value="08">08시</option>
+                                                            <option value="09">09시</option>
+                                                            <option value="10">10시</option>
+                                                            <option value="11">11시</option>
+                                                            <option value="12">12시</option>
+                                                            <option value="13">13시</option>
+                                                            <option value="14">14시</option>
+                                                            <option value="15">15시</option>
+                                                            <option value="16">16시</option>
+                                                            <option value="17">17시</option>
+                                                            <option value="18">18시</option>
+                                                            <option value="19">19시</option>
+                                                            <option value="20">20시</option>
+                                                            <option value="21">21시</option>
+                                                            <option value="22">22시</option>
+                                                            <option value="23">23시</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="c-select c-select--width-auto">
+                                                        <select class="startTime" id="startMinute">
+                                                            <option value="00">00분</option>
+                                                            <option value="30">30분</option>
+                                                        </select>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th>행사기간(종료)</th>
+                                                <td colspan="3">
+                                                    <div class="c-select c-select--width-auto">
+                                                        <select class="endTime" id="endYear">
+                                                            <option value="">년</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="c-select c-select--width-auto">
+                                                        <select class="endTime" id="endMonth">
+                                                            <option value="">월</option>
+                                                            <option value="01">01월</option>
+                                                            <option value="02">02월</option>
+                                                            <option value="03">03월</option>
+                                                            <option value="04">04월</option>
+                                                            <option value="05">05월</option>
+                                                            <option value="06">06월</option>
+                                                            <option value="07">07월</option>
+                                                            <option value="08">08월</option>
+                                                            <option value="09">09월</option>
+                                                            <option value="10">10월</option>
+                                                            <option value="11">11월</option>
+                                                            <option value="12">12월</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="c-select c-select--width-auto">
+                                                        <select class="endTime" id="endDay">
+                                                            <option value="">일</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="c-select c-select--width-auto">
+                                                        <select class="endTime" id="endHour">
+                                                            <option value="00">00시</option>
+                                                            <option value="01">01시</option>
+                                                            <option value="02">02시</option>
+                                                            <option value="03">03시</option>
+                                                            <option value="04">04시</option>
+                                                            <option value="05">05시</option>
+                                                            <option value="06">06시</option>
+                                                            <option value="07">07시</option>
+                                                            <option value="08">08시</option>
+                                                            <option value="09">09시</option>
+                                                            <option value="10">10시</option>
+                                                            <option value="11">11시</option>
+                                                            <option value="12">12시</option>
+                                                            <option value="13">13시</option>
+                                                            <option value="14">14시</option>
+                                                            <option value="15">15시</option>
+                                                            <option value="16">16시</option>
+                                                            <option value="17">17시</option>
+                                                            <option value="18">18시</option>
+                                                            <option value="19">19시</option>
+                                                            <option value="20">20시</option>
+                                                            <option value="21">21시</option>
+                                                            <option value="22">22시</option>
+                                                            <option value="23">23시</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="c-select c-select--width-auto">
+                                                        <select class="endTime" id="endMinute">
+                                                            <option value="00">00분</option>
+                                                            <option value="30">30분</option>
+                                                        </select>
+                                                    </div>
+                                                </td>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th>행사요일</th>
+                                                <td colspan="3">
+                                                    <div class="c-checkbox">
+                                                        <input type="checkbox" class="dayOfTheWeek" id="sunday" value="64">
+                                                        <label for="sunday">일</label>
+                                                    </div>
+                                                    <div class="c-checkbox">
+                                                        <input type="checkbox" class="dayOfTheWeek" id="monday" value="32">
+                                                        <label for="monday">월</label>
+                                                    </div>
+                                                    <div class="c-checkbox">
+                                                        <input type="checkbox" class="dayOfTheWeek" id="tuesday" value="16">
+                                                        <label for="tuesday">화</label>
+                                                    </div>
+                                                    <div class="c-checkbox">
+                                                        <input type="checkbox" class="dayOfTheWeek" id="wednesday" value="8">
+                                                        <label for="wednesday">수</label>
+                                                    </div>
+                                                    <div class="c-checkbox">
+                                                        <input type="checkbox" class="dayOfTheWeek" id="thursday" value="4">
+                                                        <label for="thursday">목</label>
+                                                    </div>
+                                                    <div class="c-checkbox">
+                                                        <input type="checkbox" class="dayOfTheWeek" id="friday" value="2">
+                                                        <label for="friday">금</label>
+                                                    </div>
+                                                    <div class="c-checkbox">
+                                                        <input type="checkbox" class="dayOfTheWeek" id="saturday" value="1">
+                                                        <label for="saturday">토</label>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th>진행여부</th>
+                                                <td colspan="3">
+                                                    <div class="c-select">
+                                                        <select id="hpStatus" name="hpStatus">
+                                                            <option value="01">진행</option>
+                                                            <option value="02">종료</option>
+                                                        </select>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th>행사내용</th>
+                                                <td colspan="3">
+                                                    <textarea id="hpContent" name="hpContent" style="margin-top: 5px;"></textarea>
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <div class="promoreg__article">
+                                <div class="promoreg__article-head">
+                                    <h4>2단계 - 행사 적용 가맹점</h4>
+                                </div>
+                                <div class="promoreg__article-body">
+                                    <div class="promoreg__list promoreg__list--fr">
+                                        <div class="promoreg__select-list">
+                                            <h5 class="promoreg__title">가맹점리스트</h5>
+                                            <ul class="promoreg__console promoreg__console--right">
+                                                <li class="promoreg__console-item">
+                                                    <button id="selectAllFrBtn" class="c-button c-button--small">전체선택</button>
+                                                </li>
+                                                <li class="promoreg__console-item">
+                                                    <button id="cancelAllFrBtn" class="c-button c-button--small">선택취소</button>
+                                                </li>
+                                            </ul>
+                                            <!-- 지사 선택 -->
+                                            <div id="grid_fr_list" style="height: 220px; margin-top: 10px;"></div>
+                                        </div>
+                                        <div class="promoreg__detail-list">
+                                            <div class="promoreg__console promoreg__console--between">
+                                                <div class="promoreg__console-item">
+                                                    <h5>행사 적용 가맹점 리스트(<span id="frRowCount">0</span>건)</h5>
+                                                </div>
+                                                <div class="promoreg__console-item">
+                                                    <button id="deleteFrBtn" class="c-button c-button--red c-button--small">삭제</button>
+                                                </div>
+                                            </div>
+                                            <!-- 가맹점 선택 -->
+                                            <div id="grid_fr_apply" style="height: 250px; margin-top: 10px;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="promoreg__section">
+                            <div class="promoreg__article">
+                                <div class="promoreg__article-head">
+                                    <h4>3단계 - 행사 적용 상품</h4>
+                                </div>
+                                <div class="promoreg__article-body">
+                                    <div class="promoreg__list">
+                                        <div class="promoreg__select-list">
+                                            <h5 class="promoreg__title">상품리스트</h5>
+                                            <ul class="promoreg__console promoreg__console--right">
+                                                <li class="promoreg__console-item">
+                                                    <button id="selectAllItemBtn" class="c-button c-button--small">전체선택</button>
+                                                </li>
+                                                <li class="promoreg__console-item">
+                                                    <button id="cancelAllItemBtn" class="c-button c-button--small">선택취소</button>
+                                                </li>
+                                            </ul>
+                                            <!-- 상품 선택 -->
+                                            <div id="grid_item_list" style="height: 600px; margin-top: 10px;"></div>
+                                        </div>
+
+                                        <div class="promoreg__detail-list">
+                                            <h5 class="promoreg__title">행사 적용 품목 리스트(<span id="itemRowCount">0</span>개)</h5>
+                                            <div class="promoreg__console">
+                                                <div class="promoreg__console-item">
+                                                    <div class="promoreg__console-item-title">할인율</div>
+                                                    <div class="promoreg__console-item-input">
+                                                        <input id="hiDiscountRt" type="number" /><span>&nbsp;&nbsp;%</span>
+                                                    </div>
+                                                </div>
+                                                <div class="promoreg__console-item" style="margin-left: auto;">
+                                                    <button id="applyDiscountRtCheckedBtn" class="c-button c-button--point c-button--small">할인적용</button>
+                                                </div>
+                                                <div class="promoreg__console-item">
+                                                    <button id="deleteItemBtn" class="c-button c-button--red c-button--small">삭제</button>
+                                                </div>
+                                            </div>
+                                            <!-- 할인율 적용 -->
+                                            <div id="grid_item_apply" style="height: 600px; margin-top: 10px;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <ul class="pop__console">
+                <li>
+                    <button id="savePromoBtn" type="button" class="c-button c-button--dark">저장</button>
+                </li>
+                <li>
+                    <button id="closePromoPopBtn" type="button" class="c-button">닫기</button>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+</html>

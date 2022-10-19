@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/defaultmanager}" xmlns="http://www.w3.org/1999/html">
+
+<!-- 사용자 CSS 추가 -->
+<th:block layout:fragment="css">
+</th:block>
+
+<!-- 사용자 스크립트 추가 -->
+<th:block layout:fragment="script">
+    <script type="module" src="/assets/js/toppos/manager/calculate/brmonthdepositstatus.js"></script>
+    <!-- 엑셀 다운로드 기능을 사용하기 위함 -->
+    <script src="/assets/js/filesaver/FileSaver.min.js"></script>
+</th:block>
+
+<div layout:fragment="content" class="content content--padding">
+    <section class="section">
+        <article class="article">
+            <div class="article__header">
+                <h3 class="article__heading">지사 월 정산 입금 현황</h3>
+            </div>
+            <div class="article__body">
+                <div class="inquiry">
+                    <div class="inquiry__condition">
+                        <ul>
+                            <li>
+                                <div class="inquiry__title">시작 년/월</div>
+                                <div class="c-select">
+                                    <select id="filterFromYear"></select>
+                                </div>
+                                <div class="c-select">
+                                    <select id="filterFromMonth">
+                                        <option value="01">1월</option>
+                                        <option value="02">2월</option>
+                                        <option value="03">3월</option>
+                                        <option value="04">4월</option>
+                                        <option value="05">5월</option>
+                                        <option value="06">6월</option>
+                                        <option value="07">7월</option>
+                                        <option value="08">8월</option>
+                                        <option value="09">9월</option>
+                                        <option value="10">10월</option>
+                                        <option value="11">11월</option>
+                                        <option value="12">12월</option>
+                                    </select>
+                                </div>
+                            </li>
+
+                            <li>
+                                <div class="inquiry__title">종료 년/월</div>
+                                <div class="c-select">
+                                    <select id="filterToYear"></select>
+                                </div>
+                                <div class="c-select">
+                                    <select id="filterToMonth">
+                                        <option value="01">1월</option>
+                                        <option value="02">2월</option>
+                                        <option value="03">3월</option>
+                                        <option value="04">4월</option>
+                                        <option value="05">5월</option>
+                                        <option value="06">6월</option>
+                                        <option value="07">7월</option>
+                                        <option value="08">8월</option>
+                                        <option value="09">9월</option>
+                                        <option value="10">10월</option>
+                                        <option value="11">11월</option>
+                                        <option value="12">12월</option>
+                                    </select>
+                                </div>
+                            </li>
+                            <li style="display: none">
+                                <div class="inquiry__title">가맹점</div>
+                                <div class="inquiry__input">
+                                    <div class="c-select">
+                                        <select id="frList">
+                                            <option value="0">필수선택</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="inquiry__button">
+                        <button id="searchListBtn" class="c-button c-button--small c-button--darksolid">조회</button>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <div class="article article--flex">
+            <div class="article__body flex3">
+                <ul class="article__console article__console--top article__console--left">
+                    <l>
+                        <button type="button" id="exportXlsx"
+                                class="c-button c-button--green c-button--icon c-button--icon-excel">
+                            엑셀 다운로드</button>
+                        </li>
+                </ul>
+                <div style="height: 570px; border: 1px solid #ddd">
+                    <div id="grid_main" class="grid--header-border" style="height: 570px;"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+</html>

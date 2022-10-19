@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ko"
+	  xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate ="~{layout/defaulttest}">
+
+<!-- 사용자 CSS 추가 -->
+<th:block layout:fragment="css">
+	<style>
+		#windowMask {
+			position: fixed;
+			left: 0;
+			top: 0;
+			width: 100vw;
+			height: 100vh;
+			z-index: 10;
+			background-color: rgba(0, 0, 0, .4);
+			display: none;
+		}
+		#mask{
+			position: absolute;
+			display: none;
+			left: 50%;
+			top: 50%;
+			max-width: 1000px; 
+			padding: 20px;
+			background-color: #ffffff;
+			z-index: 100;
+			font-size: 40px;
+			line-height: 1.4;
+			-webkit-border-radius: 0.625rem;
+			-moz-border-radius: 0.625rem;
+			border-radius: 0.625rem;
+			-webkit-transform: translate(-50%, -50%);
+			-moz-transform: translate(-50%, -50%);
+			-ms-transform: translate(-50%, -50%);
+			-o-transform: translate(-50%, -50%);
+			transform: translate(-50%, -50%);
+		}
+	</style>
+</th:block>
+
+<!-- 사용자 스크립트 추가 -->
+<th:block layout:fragment="script">
+	<script src="/assets/js/toppos/user/customer/customerreg.js?22090516" type="text/javascript"></script>
+	<script type="text/javascript">
+	</script>
+</th:block>
+
+<div layout:fragment="content" class="content content--padding">
+    <!-- menu명 -->
+    <h2 class="content__heading content__heading--black"><spans class="content__heading-home">Home</spans>&nbsp;&gt;&nbsp;고객관리&nbsp;&gt;&nbsp;고객등록</h2>
+	<!-- .customer 부분 팝업으로 재사용 -->
+	<div class="customer">
+		<div class="customer__header">
+			<h3>고객등록</h3>
+		</div>
+		<div class="customer__content">
+			<form id="userregForm" enctype="multipart/form-data">
+				<ul class="customer__form-list">
+					<li class="customer__form-item">
+						<h4 class="customer__form-title">고객명<span>※</span></h4>
+						<div class="customer__form-input">
+							<div class="c-text">
+								<input type="text" id="bcName" name="bcName" />
+								<button type="button" onclick="openVKeyboard(0)">키보드</button>
+							</div>
+						</div>
+					</li>
+					<li class="customer__form-item">
+						<h4 class="customer__form-title">휴대폰<span>※</span></h4>
+						<div class="customer__form-input">
+							<div class="c-text">
+								<input type="text" id="bcHp" name="bcHp" placeholder="숫자만 입력해 주세요" value="010" onkeyup="onHpChange()">
+								<button type="button" onclick="openHpVKeypad()">키보드</button>
+							</div>
+						</div>
+					</li>
+					<li class="customer__form-item">
+						<h4 class="customer__form-title">성별</h4>
+						<div class="customer__form-input">
+							<div class="c-radio">
+								<input id="female" type="radio" name="bcSex" value="0" checked>
+								<label for="female">여자</label>
+							</div>
+							<div class="c-radio">
+								<input id="male" type="radio" name="bcSex" value="1">
+								<label for="male">남자</label>
+							</div>
+						</div>
+					</li>
+					<li class="customer__form-item">
+						<h4 class="customer__form-title">주소</h4>
+						<div class="customer__form-input">
+							<div class="c-text">
+								<input type="text" id="bcAddress" name="bcAddress">
+								<button type="button" onclick="openVKeyboard(1)">키보드</button>
+							</div>
+						</div>
+					</li>
+					<li class="customer__form-item">
+						<h4 class="customer__form-title">생년월일/나이</h4>
+						<div class="customer__form-input">
+							<div class="c-select">
+								<select id="bcBirthYYYY" onchange="onYearChange(this.value)">
+									<option value="">년도</option>
+									<option th:each="i : ${#numbers.sequence(2010, 1950, -1)}"
+											th:value="${i}"
+											th:text="${i}">
+									</option>
+								</select>
+							</div>
+							
+							<div class="c-select">
+								<select id="bcBirthMM">
+									<option value="">월</option>
+									<option th:each="i : ${#numbers.sequence(1, 12, 1)}"
+											th:value="${#numbers.formatInteger(i, 2)}"
+											th:text="${i}">
+									</option>
+								</select>
+							</div>
+							
+							<div class="c-select">
+								<select id="bcBirthDD">
+									<option value="">일</option>
+									<option th:each="i : ${#numbers.sequence(1, 31, 1)}"
+											th:value="${#numbers.formatInteger(i, 2)}"
+											th:text="${i}">
+									</option>
+								</select>
+							</div>
+							
+							<div class="c-select">
+								<select id="bcAge" name="bcAge">
+									<option value="">연령대</option>
+									<option th:each="i : ${#numbers.sequence(10, 90, 10)}"
+											th:value="${i}"
+											th:text="${i}+' 대'">
+									</option>
+								</select>
+							</div>
+						</div>
+					</li>
+					<li class="customer__form-item">
+						<h4 class="customer__form-title">고객구분</h4>
+						<div class="customer__form-input">
+							<div class="c-text">
+								<input type="text" value="일반" readonly />
+							</div>
+							
+<!--							<div class="c-select">-->
+<!--								<select id="bcGrade" name="bcGrade">-->
+<!--									<option value="01">일반</option>-->
+<!--									<option value="02">VIP</option>-->
+<!--									<option value="03">VVIP</option>-->
+<!--								</select>-->
+<!--							</div>-->
+						</div>
+					</li>
+					<li class="customer__form-item">
+						<h4 class="customer__form-title">결혼기념일</h4>
+						<div class="customer__form-input">
+							<div class="c-select">
+								<select id="bcWeddingAnniversaryYYYY">
+									<option value="">년도</option>
+									<option th:each="i : ${#numbers.sequence(#dates.year(#dates.createNow()), 1950, -1)}"
+											th:value="${i}"
+											th:text="${i}">
+									</option>
+								</select>
+							</div>
+							
+							<div class="c-select">
+								<select id="bcWeddingAnniversaryMM">
+									<option value="">월</option>
+									<option th:each="i : ${#numbers.sequence(1, 12, 1)}"
+											th:value="${#numbers.formatInteger(i, 2)}"
+											th:text="${i}">
+									</option>
+								</select>
+							</div>
+							
+							<div class="c-select">
+								<select id="bcWeddingAnniversaryDD">
+									<option value="">일</option>
+									<option th:each="i : ${#numbers.sequence(1, 31, 1)}"
+											th:value="${#numbers.formatInteger(i, 2)}"
+											th:text="${i}">
+									</option>
+								</select>
+							</div>
+						</div>
+					</li>
+					<li class="customer__form-item">
+						<h4 class="customer__form-title">성향</h4>
+						<div class="customer__form-input">
+							<div class="c-select c-select--blue">
+								<select id="bcValuation" name="bcValuation">
+									<option value="1">☆☆☆☆★</option>
+									<option value="2">☆☆☆★★</option>
+									<option value="3">☆☆★★★</option>
+									<option value="4">☆★★★★</option>
+									<option value="5" selected>★★★★★</option>
+								</select>
+							</div>
+						</div>
+					</li>
+					<!-- <li class="customer__form-item">
+						팝업 사용 시 주석 풀어주세요
+						<h4 class="customer__form-title">탈퇴</h4>
+						<div class="customer__form-input">
+							<div class="c-radio">
+								<input id="yes" type="radio" name="bcMessageAgree2" value="Y">
+								<label for="yes">Y</label>
+							</div>
+							
+							<div class="c-radio">
+								<input id="no" type="radio" name="bcMessageAgree2" value="N" checked>
+								<label for="no">N</label>
+							</div>
+						</div>
+					</li> -->
+					<li class="customer__form-item">
+						<h4 class="customer__form-title">문자수신동의</h4>
+						<div class="customer__form-input">
+							<div class="c-radio">
+								<input id="yes2" type="radio" name="bcMessageAgree" value="Y">
+								<label for="yes2">동의</label>
+							</div>
+							
+							<div class="c-radio">
+								<input id="no2" type="radio" name="bcMessageAgree" value="N" checked>
+								<label for="no2">동의안함</label>
+							</div>
+						</div>
+					</li>
+					<li class="customer__form-item">
+						<h4 class="customer__form-title">동의타입</h4>
+						<div class="customer__form-input">
+							<div class="c-select">
+								<select id="bcAgreeType" name="bcAgreeType" onchange="onAgreeTypeChange(this.value)">
+									<option value="1">온라인</option>
+									<option value="2">서면</option>
+								</select>
+							</div>
+							<button class="c-button c-button--small c-button--darksolid" id="reqSign"
+									type="button" onclick="requestSign()">서명요청</button>
+							<input type="hidden" id="bcSignImage" />
+							<img id="signImage" />
+						</div>
+					</li>
+					<li class="customer__form-item customer__form-item--100">
+						<h4 class="customer__form-title">특이사항</h4>
+						<div class="customer__form-input">
+							<div class="c-textarea">
+								<textarea id="bcRemark" name="bcRemark"></textarea>
+								<button type="button" onclick="openVKeyboard(2)">키보드</button>
+							</div>
+						</div>
+					</li>
+				</ul>
+				<div class="customer__btns">
+					<button class="c-button" type="button" onclick="init()">신규</button>
+					<button class="c-button c-button--solid" type="button" onclick="saveRegister()">저장</button>
+					<button class="c-button" type="button" onclick="receiptMove()">세탁접수</button>
+				</div>
+			</form>
+		</div>
+		<div id="windowMask"></div>
+		<div id="mask">고객이 서명중입니다.<br />잠시만 기다려주세요...</div>
+		<div id="resultmsg" style="display: none">결과메세지</div>
+	</div>
+
+	<div id="VKEY"></div>
+</div>
+</html>

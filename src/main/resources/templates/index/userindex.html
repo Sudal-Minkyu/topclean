@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="ko"
+	  xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate ="~{layout/defaulttest}">
+
+<!-- 사용자 CSS 추가 -->
+<th:block layout:fragment="css">
+	<!-- lightbox 추가 -->
+	<link rel="stylesheet" href="/assets/js/lightbox2/css/lightbox.min.css" />
+</th:block>
+
+<!-- 사용자 스크립트 추가 -->
+<th:block layout:fragment="script">
+	<script type="module" src="/assets/js/toppos/index/userIndex.js"></script>
+	<!-- lightbox 추가 -->
+	<script src="/assets/js/lightbox2/js/lightbox.js"></script>
+</th:block>
+
+<div layout:fragment="content" class="content">
+	<div class="main">
+		<div class="main__header">
+			
+			<div class="marquee">
+				<div class="marquee__fade-left"></div>
+				<div class="marquee__fade-right"></div>
+				<!-- 슬라이딩 텍스트 div -->
+				<span class="marquee__text" id="slidingText"></span>
+			</div>
+
+			<div class="main__store">
+				<div class="main__storename">
+					<span id="brName" class="main__branch"></span>
+					<span id="frName" class="main__name"></span>
+				</div>
+				<ul class="main__storeinfo">
+					<li>
+						<div class="storeinfo">
+							<div class="storeinfo__title">대표이사</div>
+							<div id="frRpreName" class="storeinfo__value"><span></span></div>
+						</div>
+					</li>
+					<li>
+						<div class="storeinfo">
+							<div class="storeinfo__title">매장번호</div>
+							<div id="frTelNo" class="storeinfo__value"><span></span></div>
+						</div>
+					</li>
+				</ul>
+			</div>
+			<ul class="main__current" style="display: none">
+				<li>
+					<span class="main__currentnum">0</span>
+					<span class="main__currenttitle">무인수거함</span>
+				</li>
+				<li>
+					<span class="main__currentnum">0</span>
+					<span class="main__currenttitle">수거</span>
+				</li>
+				<li>
+					<span class="main__currentnum">0</span>
+					<span class="main__currenttitle">배달</span>
+				</li>
+			</ul>
+		</div>
+		
+		<div class="main__contents">
+			<ul class="main__quickmenu">
+				<li><a href="/user/receiptreg" class="main__quickbtn active">세탁접수</a></li>
+				<li><a href="/user/delivery" class="main__quickbtn">고객출고</a></li>
+				<li><a href="/user/integrate" class="main__quickbtn">통합조회</a></li>
+				<li><a href="/user/customerreg" class="main__quickbtn">고객등록</a></li>
+				<li><a href="/user/customerlist" class="main__quickbtn">고객관리</a></li>
+				<li><a href="/user/unpaid" class="main__quickbtn">미수조회</a></li>
+				<!-- <li><a href="#" class="main__quickbtn">무인보관함</a></li> -->
+<!--				<li><a href="/user/closed" class="main__quickbtn closing">수기마감</a></li>-->
+			</ul>
+			<div class="main__column-area">
+				<div class="main__board-area">
+					<div class="main__board">
+						<div class="main__board-header">
+							<h3><a href="#">History</a></h3>
+							<div><input type="text" class="c-date" id="historyDate" /></div>
+						</div>
+						<ul id="historyList" class="main__board-contents">
+							<li>
+								<a href="#">
+									<div class="main__board-badge">
+										<span></span>
+									</div>
+									<div class="main__board-time">
+										<span></span>
+									</div>
+									<div class="main__board-title name">
+										<span></span>
+									</div>
+									<div class="main__board-phone">
+										<span></span>
+									</div>
+								</a>
+							</li>
+							<li>
+								<a href="#">
+									<div class="main__board-badge">
+										<span></span>
+									</div>
+									<div class="main__board-time">
+										<span></span>
+									</div>
+									<div class="main__board-title name">
+										<span></span>
+									</div>
+									<div class="main__board-phone">
+										<span></span>
+									</div>
+								</a>
+							</li>
+							<li>
+								<a href="#">
+									<div class="main__board-badge">
+										<span></span>
+									</div>
+									<div class="main__board-time">
+										<span></span>
+									</div>
+									<div class="main__board-title name">
+										<span></span>
+									</div>
+									<div class="main__board-phone">
+										<span></span>
+									</div>
+								</a>
+							</li>
+							<li>
+								<a href="#">
+									<div class="main__board-badge">
+										<span></span>
+									</div>
+									<div class="main__board-time">
+										<span></span>
+									</div>
+									<div class="main__board-title name">
+										<span></span>
+									</div>
+									<div class="main__board-phone">
+										<span></span>
+									</div>
+								</a>
+							</li>
+							<li>
+								<a href="#">
+									<div class="main__board-badge">
+										<span></span>
+									</div>
+									<div class="main__board-time">
+										<span></span>
+									</div>
+									<div class="main__board-title name">
+										<span></span>
+									</div>
+									<div class="main__board-phone">
+										<span></span>
+									</div>
+								</a>
+							</li>
+						</ul>
+					</div>
+					
+					<div class="main__board">
+						<div class="main__board-header">
+							<h3><a href="./user/taglost">택 분실 게시판</a></h3>
+							<a href="./user/taglost" class="main__board-plus">더보기</a>
+						</div>
+						<ul id="taglostList" class="main__board-contents">
+							<li>
+								<a href="#">
+									<div class="main__board-title">
+										<span></span> <span></span>
+									</div>
+									<div class="main__board-date">
+										<span></span>
+									</div>
+								</a>
+							</li>
+							<li>
+								<a href="#">
+									<div class="main__board-title">
+										<span></span> <span></span>
+									</div>
+									<div class="main__board-date">
+										<span></span>
+									</div>
+								</a>
+							</li>
+							<li>
+								<a href="#">
+									<div class="main__board-title">
+										<span></span> <span></span>
+									</div>
+									<div class="main__board-date">
+										<span></span>
+									</div>
+								</a>
+							</li>
+						</ul>
+					</div>
+				</div>
+				
+				<div class="main__board-area">
+					<div class="main__board">
+						<div class="main__board-header">
+							<h3><a href="./user/noticelist">공지사항</a></h3>
+							<a href="./user/noticelist" class="main__board-plus">더보기</a>
+						</div>
+						<ul id="noticeList" class="main__board-contents">
+							<li>
+								<a href="#">
+									<div class="main__board-bcname">
+										<span></span>
+									</div>
+									<div class="main__board-title">
+										<span></span>
+									</div>
+									<div class="main__board-date">
+										<span></span>
+									</div>
+								</a>
+							</li>
+							<li>
+								<a href="#">
+									<div class="main__board-bcname">
+										<span></span>
+									</div>
+									<div class="main__board-title">
+										<span></span>
+									</div>
+									<div class="main__board-date">
+										<span></span>
+									</div>
+								</a>
+							</li>
+							<li>
+								<a href="#">
+									<div class="main__board-bcname">
+										<span></span>
+									</div>
+									<div class="main__board-title">
+										<span></span>
+									</div>
+									<div class="main__board-date">
+										<span></span>
+									</div>
+								</a>
+							</li>
+							<li>
+								<a href="#">
+									<div class="main__board-bcname">
+										<span></span>
+									</div>
+									<div class="main__board-title">
+										<span></span>
+									</div>
+									<div class="main__board-date">
+										<span></span>
+									</div>
+								</a>
+							</li>
+							<li>
+								<a href="#">
+									<div class="main__board-bcname">
+										<span></span>
+									</div>
+									<div class="main__board-title">
+										<span></span>
+									</div>
+									<div class="main__board-date">
+										<span></span>
+									</div>
+								</a>
+							</li>
+						</ul>
+					</div>
+					
+					<div class="main__board">
+						<div class="main__board-header">
+							<h3><a href="./user/integrate?week">확인품 요청</a></h3>
+							<a href="./user/integrate?week" class="main__board-plus">더보기</a>
+						</div>
+						<ul id="inspectList" class="main__board-contents">
+							<li>
+								<a href="#">
+									<div class="main__board-bcname">
+										<span></span>
+									</div>
+									<div class="main__board-bgname">
+										<span></span>
+									</div>
+									<div class="main__board-afttag">
+										<span></span>
+									</div>
+									<div class="main__board-confirm">
+										<span></span>
+									</div>
+								</a>
+							</li>
+							<li>
+								<a href="#">
+									<div class="main__board-bcname">
+										<span></span>
+									</div>
+									<div class="main__board-bgname">
+										<span></span>
+									</div>
+									<div class="main__board-afttag">
+										<span></span>
+									</div>
+									<div class="main__board-confirm">
+										<span></span>
+									</div>
+								</a>
+							</li>
+							<li>
+								<a href="#">
+									<div class="main__board-bcname">
+										<span></span>
+									</div>
+									<div class="main__board-bgname">
+										<span></span>
+									</div>
+									<div class="main__board-afttag">
+										<span></span>
+									</div>
+									<div class="main__board-confirm">
+										<span></span>
+									</div>
+								</a>
+							</li>
+						</ul>
+					</div>
+					
+					<div class="main__board" style="display: none;">
+						<div class="main__board-header">
+							<h3><a href="#">교육 콘텐츠</a></h3>
+						</div>
+						<ul class="main__board-contents">
+							<li>
+								<a href="#">
+									<div class="main__board-title">
+										<span>2022년 상반기 교육 안내입니다.</span>
+									</div>
+									<div class="main__board-date">
+										<span>2021-07-21</span>
+									</div>
+								</a>
+							</li>
+							<li>
+								<a href="#">
+									<div class="main__board-title">
+										<span>-</span>
+									</div>
+									<div class="main__board-date">
+										<span>2021-07-21</span>
+									</div>
+								</a>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+
+	<!-- 택분실 팝업 -->
+    <div id="taglostPop" class="pop">
+        <div class="pop__box">
+            <div class="pop__article">
+                <div class="tag-pop">
+                    <div class="tag-imgs">
+                        <ul id="photoList" class="tag-imgs__list">
+                        </ul>
+                    </div>
+        
+                    <div class="tag-info">
+                        <ul class="tag-info__list">
+                            <li class="tag-info__item">
+                                <div class="tag-info__title">브랜드</div>
+                                <div class="tag-info__input">
+                                    <div class="c-text">
+                                        <input id="btBrandName" type="text" readonly />
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="tag-info__item">
+                                <div class="tag-info__title">소재</div>
+                                <div class="tag-info__input">
+                                    <div class="c-text">
+                                        <input id="btMaterial" type="text" readonly />
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="tag-info__item">
+                                <div class="tag-info__title">예상지사 입고일</div>
+                                <div class="tag-info__input">
+                                    <div class="c-text">
+                                        <input id="btInputDate" type="text" readonly />
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="tag-info__item">
+                                <div class="tag-info__title">특이사항</div>
+                                <div class="tag-info__input">
+                                    <div class="c-textarea"><textarea id="btRemark" readonly></textarea></div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="pop__article">
+                <div class="tag-info">
+                    <ul class="tag-info__list">
+						<li class="tag-info__item">
+							<div class="tag-info__title">택번호입력</div>
+							<div class="tag-info__input">
+								<div class="c-text">
+									<input type="text" id="brTag" />
+									<button>키보드</button>
+								</div>
+							</div>
+						</li>
+                        <li class="tag-info__item">
+                            <div class="tag-info__title">가맹점 응답</div>
+                            <div class="tag-info__input">
+                                <div class="c-textarea"><textarea id="frResponse" readonly></textarea></div>
+                            </div>
+                            <div class="tag-info__button">
+                                <input type="checkbox" id="frCheck" />
+                                <label for="frCheck">가맹점<br />확인/해제</label>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <ul class="pop__console">
+                <li><button id="frComplete" class="c-button c-button--dark">최종확인완료</button></li>
+				<li><button id="closeTaglostPop" class="c-button">닫기</button></li>
+			</ul>
+        </div>
+    </div>
+
+	<!-- 확인품 확인/응답/보기 신규 -->
+	<div id="brInspectPop" class="pop">
+		<div class="pop__box">
+			<div id="brInspectPhotoPanel" class="pop__article">
+				<div class="tag-imgs">
+					<ul id="brPhotoList" class="tag-imgs__list">
+					</ul>
+				</div>
+			</div>
+			<div class="pop__article">
+				<div class="checkreg__comment">
+					<div class="pop__article-head">
+						<h3 class="pop__article-header">검품내용</h3>
+					</div>
+					<div class="pop__aricle-content">
+						<div class="c-text">
+							<input id="brFiComment" type="text"  readonly="readonly" />
+						</div>
+					</div>
+				</div>
+			</div>
+			<ul class="pop__console">
+				<li class="pop__console-left">
+					<div class="pop__console-cost">
+						<div class="pop__console-title">현재 접수금액</div>
+						<div class="pop__console-input">
+							<div class="c-text"><input id="brFdTotAmtInPut" type="text" readonly="readonly" /></div>
+						</div>
+					</div>
+					<div class="pop__console-cost">
+						<div class="pop__console-title">추가 비용발생</div>
+						<div class="pop__console-input">
+							<div class="c-text"><input id="brFiAddAmt" type="text" readonly="readonly" /></div>
+						</div>
+					</div>
+				</li>
+				<li><button id="brCustomerConfirmed" class="c-button c-button--darksolid">세탁진행</button></li>
+				<li><button id="brCustomerDenied" class="c-button c-button--red">고객반품</button></li>
+				<li><button id="brSendKakaoMsg" class="c-button c-button--solid">메시지 전송</button></li>
+				<li><button id="closeBrInspectPop" class="c-button">닫기</button></li>
+			</ul>
+		</div>
+	</div>
+
+	<!-- 영업준비금 입력 -->
+	<div id="readyCashPop" class="pop password" style="display: none">
+		<div class="pop__box pop__box--small">
+			<div class="pop__article">
+				<h3 class="pop__article-header">영업준비금을 입력해 주세요</h3>
+				<div class="pop__article-content">
+					<div class="c-text">
+						<input type="text" id="bcReadyAmt" placeholder="영업준비금 입력">
+						<button id="bcReadyAmtKeyboard" class="c-search__key" type="button">키보드</button>
+					</div>
+				</div>
+			</div>
+
+			<ul class="pop__console pop__console--center">
+				<li>
+					<button id="readyCashConfirm" class="c-button c-button--darksolid">확인</button>
+				</li>
+				<li>
+					<button id="readyCashLater" class="c-button c-button--red">나중에 하기</button>
+				</li>
+			</ul>
+		</div>
+	</div>
+
+</div>
+</html>

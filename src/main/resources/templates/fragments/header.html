@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<header th:fragment="headerFragment" class="header">
+	<div class="logo">
+        <!-- <img src="/assets/images/logo.svg" alt="TopPos Cleaning Up Megashop" /> -->
+        <img src="/assets/images/circle-logo.png" alt="" style="width: 36px;margin-right:5px" onclick="mainPage()">
+        <span onclick="mainPage()">TOPPOS</span>
+    </div>
+
+	<div class="info" id="logout_Form">
+		<button class="header__btn home" onclick="mainPage()">
+			<img src="/assets/images/icon__home--b.svg" alt="홈" /><span>홈</span>
+		</button>
+		<a id="menuReceiptreg" href="/user/receiptreg" class="header__btn">
+			<img src="/assets/images/icon__reg.svg" alt=""><span>세탁접수</span>
+		</a>
+		<a id="menuDelivery" href="/user/delivery" class="header__btn">
+			<img src="/assets/images/icon__send.svg" alt=""><span>고객 출고</span>
+		</a>
+		<a id="menuIntegrate" href="/user/integrate" class="header__btn">
+			<img src="/assets/images/icon__totalsearch.svg" alt=""><span>통합조회</span>
+		</a>
+		<button class="header__btn" id="openNav">
+			<img src="/assets/images/icon__menu--g.svg" alt="메뉴" /><span>메뉴</span>
+		</button>
+        <button class="header__btn" onclick="drawerOpen()">
+            <img src="/assets/images/icon__bank.svg" alt="금고열기"><span>금고</span>
+        </button>
+		<button type="button" class="header__btn" onclick="logout()">
+			<img src="/assets/images/icon__logout--g.svg" alt="로그아웃" /><span>로그아웃</span>
+		</button>
+	</div>
+	
+	<!-- nav -->
+	<nav class="nav">
+		<div class="nav__all">
+			<div class="nav__group active">
+				<h2 class="nav__group-title">세탁관리</h2>
+				<ul class="nav__list">
+					<li class="nav__item"><a href="/user/receiptreg" class="nav__link">세탁 접수</a></li>
+					<li class="nav__item"><a href="/user/delivery" class="nav__link">고객 출고</a></li>
+					<li class="nav__item"><a href="/user/integrate" class="nav__link">통합 조회</a></li>
+					<li class="nav__item"><a href="/user/inspect" class="nav__link">검품이력 및 메세지 관리</a></li>
+				</ul>
+			</div>
+			<div class="nav__group">
+				<h2 class="nav__group-title">고객관리</h2>
+				<ul class="nav__list">
+					<li class="nav__item"><a href="/user/customerlist" class="nav__link">고객 조회</a></li>
+					<li class="nav__item"><a href="/user/customerreg" class="nav__link">고객 등록</a></li>
+					<li class="nav__item"><a href="/user/unpaid" class="nav__link">미수 조회</a></li>
+				</ul>
+			</div>
+			<div class="nav__group">
+				<h2 class="nav__group-title">영업관리</h2>
+				<ul class="nav__list">
+					<li class="nav__item"><a href="/user/dailystat" class="nav__link">일일 영업일보</a></li>
+					<li class="nav__item"><a href="/user/closed" class="nav__link">가맹점 수기마감</a></li>
+				</ul>
+			</div>
+			<div class="nav__group">
+				<h2 class="nav__group-title">정산</h2>
+				<ul class="nav__list">
+					<li class="nav__item"><a href="/user/dailyaccount" class="nav__link">일일 정산서</a></li>
+					<li class="nav__item"><a href="/user/frdaybalance" class="nav__link">가맹점 일 정산 내역</a></li>
+					<li class="nav__item"><a href="/user/frmonthbalance" class="nav__link">가맹점 월 정산 내역</a></li>
+				</ul>
+			</div>
+
+			<div class="nav__group">
+				<h2 class="nav__group-title">입출고관리</h2>
+				<ul class="nav__list">
+					<li class="nav__item"><a href="/user/franchisein" class="nav__link">가맹점 입고</a></li>
+					<li class="nav__item"><a href="/user/franchiseincancel" class="nav__link">가맹점 입고 취소</a></li>
+					<li class="nav__item"><a href="/user/force" class="nav__link">가맹점 강제 입고</a></li>
+				</ul>
+			</div>
+			<div class="nav__group">
+				<h2 class="nav__group-title">게시판</h2>
+				<ul class="nav__list">
+					<li class="nav__item"><a href="/user/noticelist" class="nav__link">공지사항</a></li>
+					<li class="nav__item"><a href="/user/taglost" class="nav__link">택 분실 게시판</a></li>
+					<li class="nav__item"><a href="/user/find" class="nav__link">물건찾기</a></li>
+				</ul>
+			</div>
+			<div class="nav__group">
+				<h2 class="nav__group-title">가맹점 설정</h2>
+				<ul class="nav__list">
+					<li class="nav__item"><a href="/user/mypage" class="nav__link">나의 정보 관리</a></li>
+					<li class="nav__item"><a href="/user/itemsort" class="nav__link">상품 순서 관리</a></li>
+					<li class="nav__item"><a href="/user/message" class="nav__link">문자 메세지</a></li>
+				</ul>
+			</div>
+		</div>
+
+		<div class="nav__selection">
+			<div class="nav__group">
+				<h2 class="nav__group-title">자주쓰는 메뉴</h2>
+				<ul class="nav__list">
+					<li class="nav__item"><a href="/user/receiptreg" class="nav__link">세탁 접수</a></li>
+					<li class="nav__item"><a href="/user/delivery" class="nav__link">고객 출고</a></li>
+					<li class="nav__item"><a href="/user/integrate" class="nav__link">통합 조회</a></li>
+					<li class="nav__item"><a href="/user/customerlist" class="nav__link">고객 조회</a></li>
+					<li class="nav__item"><a href="/user/unpaid" class="nav__link">미수 조회</a></li>
+					<li class="nav__item"><a href="/user/closed" class="nav__link">가맹점 수기마감</a></li>
+				</ul>
+			</div>
+<!--			<div class="nav__group">-->
+<!--				<h2 class="nav__group-title">최근 사용 메뉴</h2>-->
+<!--				<ul class="nav__list">-->
+<!--					<li class="nav__item"><a href="/user/receiptreg" class="nav__link">세탁 접수</a></li>-->
+<!--					<li class="nav__item"><a href="/user/delivery" class="nav__link">고객 출고</a></li>-->
+<!--					<li class="nav__item"><a href="/user/integrate" class="nav__link">통합 조회</a></li>-->
+<!--					<li class="nav__item"><a href="/user/customerreg" class="nav__link">고객 등록</a></li>-->
+<!--					<li class="nav__item"><a href="/user/mypage" class="nav__link">나의 정보 관리</a></li>-->
+<!--					<li class="nav__item"><a href="/user/inspect" class="nav__link">검품이력 및 메세지 관리</a></li>-->
+<!--				</ul>-->
+<!--			</div>-->
+		</div>
+
+		<div class="nav__console">
+			<button class="nav__close" id="closeNav">메뉴 닫기</button>
+		</div>
+	</nav>
+	
+	<script type="text/javascript">
+		window.frTagInfo = {}
+		$(document).ready(function() {
+			const token = window.localStorage.getItem('Authorization');
+			const parsedToken = readToken(token);
+			frTagInfo.frTagNo = parsedToken.frTagNo;
+			frTagInfo.frTagType = parsedToken.frTagType.toInt();
+
+			if (!frTagInfo.frTagType) {
+				alertCaution("인증 토큰을 찾을 수 없습니다.<br>다시 로그인 해주세요.");
+			}
+
+			$('#openNav').on('click', function() {
+				$('.nav').addClass('active');
+			});
+			
+			$('#closeNav').on('click', function() {
+				$('.nav').removeClass('active');
+			});
+
+			$('.nav__all .nav__group-title').on('click', function() {
+				$('.nav__all .nav__group').removeClass('active');
+				$(this).parents('.nav__group').addClass('active');
+			})
+		});
+
+		function drawerOpen() {
+			CAT.CatCashdrawer();
+		}
+
+		function readToken (token) {
+			let base64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+			return JSON.parse(decodeURIComponent(atob(base64).split('').map(function(c) {
+				return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+			}).join('')));
+		}
+	</script>
+	
+	
+<!--	<script type="text/javascript">-->
+<!--		$(function() {-->
+<!--			// 저장된 쿠키의 insert_id 받아오기-->
+<!--			insert_id_Check();-->
+<!--			// 로그아웃-->
+<!--			$("#logout").on('click',function(){-->
+<!--				logout();-->
+<!--			});-->
+<!--		});-->
+
+<!--		function insert_id_Check(){-->
+<!--			const insert_id = getCookie("insert_id");-->
+<!--			if(insert_id===null){-->
+<!--				$("#logout_Form").css('display','none');-->
+<!--				$("#login_Form").css('display','block');-->
+<!--				$("#loginBtn").css('display','block');-->
+<!--				$("#registerBtn").css('display','block');-->
+<!--			}else{-->
+<!--				// $("#insert_id").text(insert_id);-->
+<!--				$("#loginBtn").css('display','none');-->
+<!--				$("#registerBtn").css('display','none');-->
+<!--				$("#login_Form").css('display','none');-->
+<!--				$("#logout_Form").css('display','block');-->
+<!--			}-->
+<!--		}-->
+<!--		function logout(){-->
+<!--			setCookie("JwtAccessToken",null, 0);-->
+<!--			setCookie("JwtRefreshAccessToken",null, 0);-->
+<!--			setCookie("JwtRefreshToken",null, 0);-->
+<!--			setCookie("insert_id",null, 0);-->
+<!--			location.href="/index"-->
+<!--		}-->
+<!--	</script>-->
+</header>
+</html>

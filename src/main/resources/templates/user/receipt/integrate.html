@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="ko"
+	  xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate ="~{layout/defaulttest}">
+
+<!-- 사용자 CSS 추가 -->
+<th:block layout:fragment="css">
+	<style>
+		.yesBlue {
+			color: #0082F0;
+			font-weight: bold;
+		}
+
+		.noRed {
+			color: #DD5257;
+			font-weight: bold;
+		}
+
+		.grid_cellcolor0.grid_grouper {
+			background-color: #dbd397!important;
+		}
+		.grid_cellcolor1.grid_grouper {
+			background-color: #93cccc!important;
+		}
+	</style>
+	<!-- lightbox 추가 -->
+    <link rel="stylesheet" href="/assets/js/lightbox2/css/lightbox.min.css" />
+</th:block>
+
+<!-- 사용자 스크립트 추가 -->
+<th:block layout:fragment="script">
+	<script type="module">
+		import {calculateItemPrice, ceil10} from "../assets/js/toppos/module/m_moneyProblem.js?22081115";
+		window.calculateItemPrice = calculateItemPrice;
+		window.ceil10 = ceil10;
+	</script>
+	<script src="/assets/js/toppos/user/receipt/integrate.js?22091317"></script>
+    <!-- lightbox 추가 -->
+    <script src="/assets/js/lightbox2/js/lightbox.js"></script>
+	<!-- 엑셀 다운로드 기능을 사용하기 위함 -->
+	<script src="/assets/js/filesaver/FileSaver.min.js"></script>
+</th:block>
+
+<div layout:fragment="content" class="content content--column">
+	<div class="content__header">
+        <!-- menu명 -->
+        <h2 class="content__heading"><spans class="content__heading-home">Home</spans>&nbsp;&gt;&nbsp;세탁관리&nbsp;&gt;&nbsp;통합조회</h2>
+		<!-- 검색 -->
+		<div class="search">
+			<div class="c-select">
+				<select id="searchType">
+                    <option value="0">통합검색</option>
+                    <option value="1">고객명</option>
+                    <option value="2">전화번호</option>
+					<option value="3">주소</option>
+					<option value="4">택번호</option>
+                </select>
+			</div>
+			
+			<div class="c-search">
+				<div class="c-search__input">
+					<input id="searchString" type="text" placeholder="검색어를 입력하세요" autocomplete="off" />
+               		<button class="c-search__key" type="button" id="vkeyboard0">키보드</button>
+				</div>
+				<button id="searchCustomer" class="c-search__bth" type="button">검색</button>
+			</div>
+			
+			<div class="search__reset">
+				<button id="resetCustomer" class="c-button c-button--darksolid c-button--small" type="button">고객 초기화</button>
+			</div>
+		</div>
+
+		<!-- 고객정보 -->
+		<div class="client">
+			<div class="client__rating">
+				<!-- 고객뱃지  -->
+				<!-- 맞는 등급 뱃지 .active 주기 -->
+				<span class="client__badge">N</span>
+				<span class="client__badge">V</span>
+				<span class="client__badge client__badge--vvip">V</span>
+				<!-- #bcGrade 등급 넣어주기 -->
+				<span id="bcGrade"></span>
+			</div>
+			<div class="client__name"><span id="bcName"></span></div>
+			<div class="client__propensity"><span style="display: none;" id="bcValuation" class="propensity__star propensity__star--0"></span></div>
+			<div class="client__address"><span id="bcAddress"></span></div>
+			<div class="client__phone"><span id="bcHp"></span></div>
+		</div>
+		
+		<!-- 검색조건 -->
+		<div class="condition condition--column" style="height: 8.9rem;">
+			<div id="filterConditionBox" class="condition__radio">
+				<div class="c-radio">
+					<input type="radio" name="filterCondition" id="filterCondition0" data-criterion="접수일" value="" checked />
+					<label for="filterCondition0">전체</label>
+				</div>
+				<div class="c-radio">
+					<input type="radio" name="filterCondition" id="filterCondition1" data-criterion="접수일" value="S1" />
+					<label for="filterCondition1">고객접수</label>
+				</div>
+				<div class="c-radio">
+					<input type="radio" name="filterCondition" id="filterCondition2" data-criterion="접수일" value="N4" />
+					<label for="filterCondition2">지사미출고</label>
+				</div>
+				<div class="c-radio">
+					<input type="radio" name="filterCondition" id="filterCondition4" data-criterion="접수일" value="S4" />
+					<label for="filterCondition4">지사출고</label>
+				</div>
+				<div class="c-radio">
+					<input type="radio" name="filterCondition" id="filterCondition5" data-criterion="접수일" value="S5" />
+					<label for="filterCondition5">가맹점입고</label>
+				</div>
+				<div class="c-radio">
+					<input type="radio" name="filterCondition" id="filterCondition6" data-criterion="고객출고일" value="S6" />
+					<label for="filterCondition6">고객출고</label>
+				</div>
+				<div class="c-radio">
+					<input type="radio" name="filterCondition" id="filterCondition8" data-criterion="접수일" value="F" />
+					<label for="filterCondition8">가맹검품</label>
+				</div>
+				<div class="c-radio">
+					<input type="radio" name="filterCondition" id="filterCondition7" data-criterion="접수일" value="B" />
+					<label for="filterCondition7">확인품</label>
+				</div>
+				<div class="c-radio">
+					<input type="radio" name="filterCondition" id="filterCondition9" data-criterion="접수일" value="C" />
+					<label for="filterCondition9">접수취소</label>
+				</div>
+			</div>
+			
+			<div class="condition__date condition__date--column">
+				<span id="criterionName" class="condition__date-title">접수일</span>
+				<div class="c-period">
+					<!-- 시작일 -->
+					<input type="text" id="filterFromDt" autocomplete="off" />
+					<span class="c-period__code">-</span>
+					<!-- 종료일 -->
+					<input type="text" id="filterToDt" autocomplete="off" />
+				</div>
+			</div>
+			
+			<div class="condition__console">
+				<div class="c-select" style="margin-right: auto;">
+					<select id="changeDateRange">
+						<option value="">기간</option>
+						<option value="0">당일</option>
+						<option value="6">일주일</option>
+						<option value="14">보름</option>
+						<option value="30">한달</option>
+					</select>
+				</div>
+				<button id="filter" class="c-button c-button--solid c-button--small">조회</button>
+			</div>
+		</div>
+
+		<!-- 고객정보2 -->
+		<ul class="client-info">
+			<li>
+				<h4>미수금</h4>
+				<p><span class="client-info__num" id="uncollectMoneyMain">0</span><span class="won">원</span></p>
+			</li>
+			<li>
+				<h4>적립금</h4>
+				<p><span class="client-info__num" id="saveMoneyMain">0</span><span class="won">원</span></p>
+			</li>
+			<li>
+				<h4>특이사항</h4>
+				<p><span id="bcRemark"></span></p>
+			</li>
+			<li>
+				<h4>최근방문일</h4>
+				<p><span class="client-info__num" id="bcLastRequestDt"></span></p>
+			</li>
+		</ul>
+	</div>
+
+	<div class="content__body">
+		<div class="content__body-console">
+			<div class="delivery__comment">구분 : 무 - 무인택배함, 배 - 배송 App</div>
+			<button type="button" id="exportXlsx"
+					class="c-button c-button--small c-button--green c-button--icon c-button--icon-excel content__console-btn--left">
+				엑셀 다운로드</button>
+			<button id="printReceipt" class="c-button c-button--small">영수증인쇄</button>
+			<button id="printReceiptAll" class="c-button c-button--small">전체 영수증인쇄</button>
+			<button id="modifyOn" class="c-button c-button--small c-button--darksolid">수정모드</button>
+			<button id="modifyOff" class="c-button c-button--small c-button--red" style="display: none">수정모드종료</button>
+		</div>
+		<!-- grid -->
+		<div id="grid_main" style="height: 606px;"></div>
+	</div>
+
+	<!-- 고객선택 팝업 -->
+    <div class="pop" id="customerListPop">
+        <div class="pop__box">
+            <div class="pop__article">
+                <h3 class="pop__article-header">고객선택</h3>
+                <div class="pop__aricle-content">
+                    <div id="grid_customerList"></div>
+                </div>
+            </div>
+
+            <ul class="pop__console">
+                <li><button class="c-button pop__close">닫기</button></li>
+                <li><button class="c-button c-button--dark" id="selectCustomer">선택</button></li>
+            </ul>
+        </div>
+    </div>
+	
+	<!-- 결제내역 팝업 -->
+	<div class="pop" id="paymentListPop">
+		<div class="pop__box">
+			<div class="pop__article">
+				<div id="collectedWarning" class="pop__aricle-content">
+					조회하신 결제 건은 TagNo : <span class="collectedTagNo"></span> 로 미수완납이 처리되어있습니다.<br>
+					TagNo : <span class="collectedTagNo"></span> 로 조회하셔서 먼저 결제취소 하신 후 시도해주세요.
+				</div>
+				<h3 class="pop__article-header">결제내역</h3>
+				<div class="pop__aricle-content">
+					<!-- 이 안에 넣어주기 -->
+		        	<div id="grid_paymentList" style="height: 300px;"></div>
+		        	<span class="pop__comment">*취소 또는 취소 후 적립금 전환 하고자 하는 결제 내역을 선택하세요.</span>
+				</div>
+				<h3 class="pop__article-header cashReceiptPanel">현금영수증 내역</h3>
+				<div class="pop__aricle-content cashReceiptPanel">
+					<div id="grid_cashReceipt" style="height: 100px;"></div>
+				</div>
+			</div>
+			
+			<ul class="pop__console">
+				<li><button class="c-button" id="closePaymentPop">닫기</button></li>
+				<li><button class="c-button c-button--dark" id="transferPoint">적립금전환</button></li>
+				<li><button class="c-button c-button--red" id="refundPayment">결제취소</button></li>
+			</ul>
+		</div>
+	</div>
+
+	<!-- 접수등록 팝업 -->
+	<div class="pop" id="productPop">
+		<div class="product-pop" id="addProductPopChild">
+			<div class="product-pop__article">
+				<div class="product-pop__article-header">
+					<h3>사이즈&amp;소재</h3>
+				</div>
+				<div class="product-pop__article-content">
+					<div class="product-pop__choice product-pop__choice--size">
+						<h4>사이즈</h4>
+						<ul>
+							<li id="sizeN">
+								<div class="choice">
+									<input type="radio" name="bsItemGroupcodeS" value="N" id="size1"
+										   onclick="setBiItemList(this.value)" />
+									<label for="size1">일반</label>
+								</div>
+							</li>
+							<li id="sizeL">
+								<div class="choice">
+									<input type="radio" name="bsItemGroupcodeS" value="L" id="size2"
+										   onclick="setBiItemList(this.value)" />
+									<label for="size2">롱</label>
+								</div>
+							</li>
+							<li id="sizeS">
+								<div class="choice">
+									<input type="radio" name="bsItemGroupcodeS" value="S" id="size3"
+										   onclick="setBiItemList(this.value)" />
+									<label for="size3">숏</label>
+								</div>
+							</li>
+						</ul>
+					</div>
+					<div class="product-pop__choice product-pop__choice--material">
+						<h4>소재(분류)</h4>
+						<ul id="biItemList">
+						</ul>
+					</div>
+				</div>
+			</div>
+
+
+			<div class="product-pop__article">
+				<div class="product-pop__article-header">
+					<h3>색상/무늬</h3>
+				</div>
+				<div class="product-pop__article-content">
+					<div class="choice-color">
+						<h4>색상</h4>
+						<ul>
+							<li>
+								<input type="radio" name="fdColor" class="choice-color__input" id="color1" value="00" checked />
+								<label for="color1" class="choice-color__label none">없음</label>
+							</li>
+							<li>
+								<input type="radio" name="fdColor" class="choice-color__input" id="color2" value="01" />
+								<label for="color2" class="choice-color__label white">흰색</label>
+							</li>
+							<li>
+								<input type="radio" name="fdColor" class="choice-color__input" id="color3" value="02" />
+								<label for="color3" class="choice-color__label black">검정</label>
+							</li>
+							<li>
+								<input type="radio" name="fdColor" class="choice-color__input" id="color4" value="03" />
+								<label for="color4" class="choice-color__label gray">회색</label>
+							</li>
+							<li>
+								<input type="radio" name="fdColor" class="choice-color__input" id="color5" value="04" />
+								<label for="color5" class="choice-color__label red">빨강</label>
+							</li>
+							<li>
+								<input type="radio" name="fdColor" class="choice-color__input" id="color6" value="05" />
+								<label for="color6" class="choice-color__label orange">주황</label>
+							</li>
+							<li>
+								<input type="radio" name="fdColor" class="choice-color__input" id="color7" value="06" />
+								<label for="color7" class="choice-color__label yellow">노랑</label>
+							</li>
+							<li>
+								<input type="radio" name="fdColor" class="choice-color__input" id="color8" value="07" />
+								<label for="color8" class="choice-color__label green">초록</label>
+							</li>
+							<li>
+								<input type="radio" name="fdColor" class="choice-color__input" id="color9" value="08" />
+								<label for="color9" class="choice-color__label blue">파랑</label>
+							</li>
+							<li>
+								<input type="radio" name="fdColor" class="choice-color__input" id="color10" value="09" />
+								<label for="color10" class="choice-color__label dark-blue">남색</label>
+							</li>
+							<li>
+								<input type="radio" name="fdColor" class="choice-color__input" id="color11" value="10" />
+								<label for="color11" class="choice-color__label purple">보라</label>
+							</li>
+							<li>
+								<input type="radio" name="fdColor" class="choice-color__input" id="color12" value="11" />
+								<label for="color12" class="choice-color__label pink">핑크</label>
+							</li>
+						</ul>
+					</div>
+
+					<div class="product-pop__choice product-pop__choice--vertical">
+						<h4>무늬</h4>
+						<ul>
+							<li>
+								<div class="choice choice--full">
+									<input type="radio" name="fdPattern" id="pattern1" value="00" checked />
+									<label for="pattern1">없음</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice choice--full">
+									<input type="radio" name="fdPattern" id="pattern2" value="01" />
+									<label for="pattern2">체크</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice choice--full">
+									<input type="radio" name="fdPattern" id="pattern3" value="02" />
+									<label for="pattern3">혼합</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice choice--full">
+									<input type="radio" name="fdPattern" id="pattern4" value="03" />
+									<label for="pattern4">줄</label>
+								</div>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+
+
+			<div class="product-pop__article">
+				<div id="inReceiptPop" class="product-pop__article-content">
+					<div class="c-text">
+						<input id="fdRemark" type="text" placeholder="브랜드, 특이사항 입력" autocomplete="off" />
+						<button id="vkeyboard1">키보드</button>
+					</div>
+
+					<div class="product-pop__choice">
+						<h4>가격등급</h4>
+						<ul>
+							<li>
+								<div class="choice">
+									<input type="radio" name="fdPriceGrade" value="1" id="price1" checked />
+									<label for="price1">일반</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice">
+									<input type="radio" name="fdPriceGrade" value="2" id="price2" />
+									<label for="price2">고급</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice">
+									<input type="radio" name="fdPriceGrade" value="3" id="price3" />
+									<label for="price3">명품</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice">
+									<input type="radio" name="fdPriceGrade" value="4" id="price4" />
+									<label for="price4">아동</label>
+								</div>
+							</li>
+						</ul>
+					</div>
+
+					<div class="product-pop__choice">
+						<h4>할인등급</h4>
+						<ul>
+							<li>
+								<div class="choice">
+									<input type="radio" name="fdDiscountGrade" value="1" id="class01" checked />
+									<label for="class01">일반</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice">
+									<input type="radio" name="fdDiscountGrade" value="2" id="class02" />
+									<label for="class02">VIP</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice">
+									<input type="radio" name="fdDiscountGrade" value="3" id="class03" />
+									<label for="class03">VVIP</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice choice--addtext">
+									<input type="radio" name="fdDiscountGrade" value="1" id="manualDiscountChk" />
+									<label for="manualDiscountChk">수기할인(%)</label>
+									<div class="c-text">
+										<input type="text" id="manualDiscountPercent" maxlength="3" value="0" autocomplete="off" />
+										<button id="vkeypad1">키보드</button>
+									</div>
+								</div>
+							</li>
+						</ul>
+					</div>
+
+					<div class="product-pop__choice">
+						<h4>긴급</h4>
+						<ul id="urgentCheck">
+							<li>
+								<div class="choice">
+									<input type="checkbox" name="urgentNone" id="urgentNone" checked />
+									<label for="urgentNone">없음</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice">
+									<input type="checkbox" name="fdUrgentType" id="fdUrgent1" value="1" />
+									<label for="fdUrgent1">당일</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice">
+									<input type="checkbox" name="fdUrgentType" id="fdUrgent2" value="2" />
+									<label for="fdUrgent2">특급(1박2일)</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice">
+									<input type="checkbox" name="fdUrgentType" id="fdUrgent3" value="3" />
+									<label for="fdUrgent3">급(2박3일)</label>
+								</div>
+							</li>
+						</ul>
+					</div>
+
+					<div class="product-pop__choice">
+						<h4>처리내역</h4>
+						<ul id="processCheck">
+							<li>
+								<div class="choice">
+									<input type="checkbox" name="etcNone" value="없음" id="etcNone" checked />
+									<label for="etcNone">없음</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice">
+									<input type="checkbox" name="fdRetry" value="재세탁" id="fdRetry" />
+									<label for="fdRetry">재세탁</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice">
+									<input type="checkbox" name="fdPress" value="다림질" id="fdPress" />
+									<label for="fdPress">다림질</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice">
+									<input type="checkbox" name="fdRepair" value="수선" id="fdRepair" />
+									<label for="fdRepair">수선</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice">
+									<input type="checkbox" name="fdAdd1" value="추가요금" id="fdAdd1" />
+									<label for="fdAdd1">추가요금</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice">
+									<input type="checkbox" name="fdWhitening" id="fdWhitening" />
+									<label for="fdWhitening">표백</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice">
+                                    <input type="checkbox" id="fdPollution" />
+                                    <label for="fdPollution">오염</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice-drop">
+									<button class="choice-drop__btn etcProcess" id="waterBtn">발수가공</button>
+									<ul class="choice-drop__content choice-drop__content--right">
+										<li class="choice-drop__item closDrop">
+											<input type="radio" id="waterNone" name="waterProcess" checked />
+											<label for="waterNone">미선택</label>
+										</li>
+										<li class="choice-drop__item">
+											<input type="radio" id="fdWaterRepellent" name="waterProcess" />
+											<label for="fdWaterRepellent">발수가공</label>
+										</li>
+										<li class="choice-drop__item">
+											<input type="radio" id="fdStarch" name="waterProcess" />
+											<label for="fdStarch">풀먹임</label>
+										</li>
+									</ul>
+								</div>
+							</li>
+						</ul>
+					</div>
+
+					<ul class="product-pop__price-list">
+						<li class="product-pop__price">
+							<h4>기본가격</h4>
+							<span id="fdNormalAmt">0</span>
+							<span class="won">원</span>
+						</li>
+						<li class="product-pop__price">
+							<h4>수선/추가요금</h4>
+							<span id="totAddCost">0</span>
+							<span class="won">원</span>
+						</li>
+						<li class="product-pop__price">
+							<h4>할인요금</h4>
+							<span id="fdDiscountAmt">0</span>
+							<span class="won">원</span>
+						</li>
+						<li class="product-pop__price-sum">
+							<h4>최종가격</h4>
+							<span id="cleanRequestAmt">0</span>
+							<span class="won">원</span>
+						</li>
+					</ul>
+				</div>
+
+				<ul class="pop__console pop__console--center">
+					<li><button class="c-button" onclick="onCloseAddOrder()">취소</button></li>
+					<li><button id="modifyBtn" class="c-button c-button--dark" onclick="onAddOrder()">수정완료</button></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+
+	<!-- 수선 팝업 -->
+	<div class="pop" id="fdRepairPop">
+		<div class="pop__box">
+			<div class="add-cost">
+				<div class="add-cost__example">
+					<div class="add-cost__example-header">
+						<h3 class="add-cost__example-heading"><span>수선 리스트</span></h3>
+					</div>
+					<div class="add-cost__example-content">
+						<ul id="repairBoilerList" class="add-cost__example-list">
+						</ul>
+					</div>
+				</div>
+
+				<div class="add-cost__input-area">
+					<div class="add-cost__input">
+						<!-- 상용구 들어갈 인풋 -->
+						<div class="c-text">
+							<input type="text" id="fdRepairRemark" class="keypad_remark" placeholder="수선 리스트 입력" autocomplete="off" />
+							<button id="vkeyboard2">키보드</button>
+						</div>
+					</div>
+
+					<div class="add-cost__keypad">
+						<!-- 숫자패드 -->
+						<div class="vkey-num active">
+							<div class="vkey-num__input">
+								<input type="text" id="fdRepairAmt" value="0" class="keypad_field" autocomplete="off" />
+							</div>
+							<div class="vkey-num__pad">
+								<button type="button" class="keypad_btn" value="1">1</button>
+								<button type="button" class="keypad_btn" value="2">2</button>
+								<button type="button" class="keypad_btn" value="3">3</button>
+								<button type="button" class="keypad_btn" value="4">4</button>
+								<button type="button" class="keypad_btn" value="5">5</button>
+								<button type="button" class="keypad_btn" value="6">6</button>
+								<button type="button" class="keypad_btn" value="7">7</button>
+								<button type="button" class="keypad_btn" value="8">8</button>
+								<button type="button" class="keypad_btn" value="9">9</button>
+								<button type="button" class="keypad_btn" value="00">00</button>
+								<button type="button" class="keypad_btn" value="0">0</button>
+								<button type="button" class="keypad_btn_backspace">←</button>
+							</div>
+						</div>
+					</div>
+
+					<ul class="pop__console pop__console--center">
+						<li><button class="c-button pop__close" id="fdRepairCancel">취소</button></li>
+						<li><button class="c-button c-button--dark pop__close" id="fdRepairComplete">추가</button></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<!-- 추가요금 팝업 -->
+	<div class="pop" id="fdAddPop">
+		<div class="pop__box">
+			<div class="add-cost">
+				<div class="add-cost__example">
+					<div class="add-cost__example-header">
+						<h3 class="add-cost__example-heading"><span>추가요금 리스트</span></h3>
+					</div>
+					<div class="add-cost__example-content">
+						<ul id="addCostBoilerList" class="add-cost__example-list">
+						</ul>
+					</div>
+				</div>
+
+				<div class="add-cost__input-area">
+					<div class="add-cost__input">
+						<!-- 상용구 들어갈 인풋 -->
+						<div class="c-text">
+							<input type="text" id="fdAdd1Remark" class="keypad_remark" placeholder="추가요금 리스트 입력" autocomplete="off" />
+							<button id="vkeyboard3">키보드</button>
+						</div>
+					</div>
+
+					<div class="add-cost__keypad">
+						<!-- 숫자패드 -->
+						<div class="vkey-num active">
+							<div class="vkey-num__input">
+								<input type="text" id="fdAdd1Amt" class="keypad_field" value="0" autocomplete="off" />
+							</div>
+							<div class="vkey-num__pad">
+								<button type="button" class="keypad_btn" value="1">1</button>
+								<button type="button" class="keypad_btn" value="2">2</button>
+								<button type="button" class="keypad_btn" value="3">3</button>
+								<button type="button" class="keypad_btn" value="4">4</button>
+								<button type="button" class="keypad_btn" value="5">5</button>
+								<button type="button" class="keypad_btn" value="6">6</button>
+								<button type="button" class="keypad_btn" value="7">7</button>
+								<button type="button" class="keypad_btn" value="8">8</button>
+								<button type="button" class="keypad_btn" value="9">9</button>
+								<button type="button" class="keypad_btn" value="00">00</button>
+								<button type="button" class="keypad_btn" value="0">0</button>
+								<button type="button" class="keypad_btn_backspace">←</button>
+							</div>
+						</div>
+					</div>
+
+					<ul class="pop__console pop__console--center">
+						<li><button class="c-button pop__close" id="fdAddCancel">취소</button></li>
+						<li><button class="c-button c-button--dark pop__close" id="fdAddComplete">추가</button></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- 오염 팝업 -->
+	<div id="fdPollutionPop" class="pop">
+		<div class="pop__box pop__box--flex">
+			<div class="pop__example">
+				<div class="pop__example-header">
+					<h3 class="pop__example-heading">오염크기</h3>
+				</div>
+				<div class="pop__example-content">
+					<ul class="pop__example-list">
+						<li class="pop__example-item">
+							<div class="choice">
+								<input type="radio" name="cleanDirt" id="pollution00" value="0" checked="" />
+								<label for="pollution00">없음</label>
+							</div>
+						</li>
+						<li class="pop__example-item">
+							<div class="choice">
+								<input type="radio" name="cleanDirt" id="pollution01" value="1" />
+								<label for="pollution01">1cm 미만</label>
+							</div>
+						</li>
+						<li class="pop__example-item">
+							<div class="choice">
+								<input type="radio" name="cleanDirt" id="pollution02" value="2" />
+								<label for="pollution02">1cm ~ 3cm 미만</label>
+							</div>
+						</li>
+						<li class="pop__example-item">
+							<div class="choice">
+								<input type="radio" name="cleanDirt" id="pollution03" value="3" />
+								<label for="pollution03">3cm ~ 7cm 미만</label>
+							</div>
+						</li>
+						<li class="pop__example-item">
+							<div class="choice">
+								<input type="radio" name="cleanDirt" id="pollution04" value="4" />
+								<label for="pollution04">7cm ~ 10cm 미만</label>
+							</div>
+						</li>
+						<li class="pop__example-item">
+							<div class="choice">
+								<input type="radio" name="cleanDirt" id="pollution05" value="5" />
+								<label for="pollution05">10cm 이상</label>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</div>
+
+			<div class="pop__example">
+				<div class="pop__example-header">
+					<h3 class="pop__example-heading">오염위치</h3>
+				</div>
+				<div class="pop__example-content">
+					<div class="pop__pollution-header">
+						<div class="choice">
+							<input type="radio" name="fb" id="foreLoc" checked="" />
+							<label for="foreLoc">앞</label>
+						</div>
+						<div class="choice">
+							<input type="radio" name="fb" id="backLoc" />
+							<label for="backLoc">뒤</label>
+						</div>
+					</div>
+					<div class="pop__pollution-content">
+						<div class="pop__position neck foreLoc">
+							<div class="c-checkbox c-checkbox--non-title">
+								<input type="checkbox" name="pollutionLoc" id="fdPollutionLocFcn">
+								<label for="fdPollutionLocFcn">앞 - 목</label>
+							</div>
+						</div>
+						<div class="pop__position neck backLoc">
+							<div class="c-checkbox c-checkbox--non-title">
+								<input type="checkbox" name="pollutionLoc" id="fdPollutionLocBcn">
+								<label for="fdPollutionLocBcn">뒤 - 목</label>
+							</div>
+						</div>
+						<div class="pop__position left-sleeve foreLoc">
+							<div class="c-checkbox c-checkbox--non-title">
+								<input type="checkbox" name="pollutionLoc" id="fdPollutionLocFrh">
+								<label for="fdPollutionLocFrh">앞 - 오른손</label>
+							</div>
+						</div>
+						<div class="pop__position left-sleeve backLoc">
+							<div class="c-checkbox c-checkbox--non-title">
+								<input type="checkbox" name="pollutionLoc" id="fdPollutionLocBlh">
+								<label for="fdPollutionLocBlh">뒤 - 왼손</label>
+							</div>
+						</div>
+						<div class="pop__position right-sleeve foreLoc">
+							<div class="c-checkbox c-checkbox--non-title">
+								<input type="checkbox" name="pollutionLoc" id="fdPollutionLocFlh">
+								<label for="fdPollutionLocFlh">앞 - 왼손</label>
+							</div>
+						</div>
+						<div class="pop__position right-sleeve backLoc">
+							<div class="c-checkbox c-checkbox--non-title">
+								<input type="checkbox" name="pollutionLoc" id="fdPollutionLocBrh">
+								<label for="fdPollutionLocBrh">뒤 - 오른손</label>
+							</div>
+						</div>
+						<div class="pop__position body foreLoc">
+							<div class="c-checkbox c-checkbox--non-title">
+								<input type="checkbox" name="pollutionLoc" id="fdPollutionLocFcs">
+								<label for="fdPollutionLocFcs">앞 - 배</label>
+							</div>
+						</div>
+						<div class="pop__position body backLoc">
+							<div class="c-checkbox c-checkbox--non-title">
+								<input type="checkbox" name="pollutionLoc" id="fdPollutionLocBcs">
+								<label for="fdPollutionLocBcs">뒤 - 배</label>
+							</div>
+						</div>
+						<div class="pop__position left-leg foreLoc">
+							<div class="c-checkbox c-checkbox--non-title">
+								<input type="checkbox" name="pollutionLoc" id="fdPollutionLocFrf">
+								<label for="fdPollutionLocFrf">앞 - 오른발</label>
+							</div>
+						</div>
+						<div class="pop__position left-leg backLoc">
+							<div class="c-checkbox c-checkbox--non-title">
+								<input type="checkbox" name="pollutionLoc" id="fdPollutionLocBlf">
+								<label for="fdPollutionLocBlf">뒤 - 왼발</label>
+							</div>
+						</div>
+						<div class="pop__position right-leg foreLoc">
+							<div class="c-checkbox c-checkbox--non-title">
+								<input type="checkbox" name="pollutionLoc" id="fdPollutionLocFlf">
+								<label for="fdPollutionLocFlf">앞 - 왼발</label>
+							</div>
+						</div>
+						<div class="pop__position right-leg backLoc">
+							<div class="c-checkbox c-checkbox--non-title">
+								<input type="checkbox" name="pollutionLoc" id="fdPollutionLocBrf">
+								<label for="fdPollutionLocBrf">뒤 - 오른발</label>
+							</div>
+						</div>
+						<div class="pop__position groin foreLoc">
+							<div class="c-checkbox c-checkbox--non-title">
+								<input type="checkbox" name="pollutionLoc" id="fdPollutionLocFcb">
+								<label for="fdPollutionLocFcb">앞 - 하의</label>
+							</div>
+						</div>
+						<div class="pop__position groin backLoc">
+							<div class="c-checkbox c-checkbox--non-title">
+								<input type="checkbox" name="pollutionLoc" id="fdPollutionLocBcb">
+								<label for="fdPollutionLocBcb">뒤 - 하의</label>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<ul class="pop__console pop__console--center pop__console--nonbg">
+				<li><button class="c-button" onclick="resetPollutionPop()">초기화</button></li>
+				<li><button class="c-button c-button--dark" onclick="confirmPollutionPop()">선택완료</button></li>
+			</ul>
+		</div>
+	</div>
+
+    <!-- 가맹검품 등록/수정/응답 신규 -->
+    <div id="frInspectEditPop" class="pop">
+        <div class="pop__box pop__box--flex">
+            <div class="checkreg__camera-area">
+                <div class="checkreg__head">
+                    <h3>카메라</h3>
+                </div>
+                <div class="checkreg__body">
+                    <div class="checkreg__camera" style="background-color: #ddd">
+						<!-- 캠 영상 들어갈 곳 -->
+						<video id="cameraScreen" playsinline="" autoplay=""></video>
+						<canvas id="cameraCanvas" style="display: none"></canvas>
+					</div>
+                    <div class="checkreg__comment">
+                        <div class="pop__article-head">
+                            <h3 class="pop__article-header">검품내용</h3>
+                            <div class="pop__article-haedconsole">
+								<button id="takePhotoBtn" class="c-button c-button--small c-button--solid">촬영</button>
+                            </div>
+                        </div>
+                        <div class="pop__aricle-content">
+							<ul class="word-list">
+								<li>
+									<button class="word-btn">파손</button>
+								</li>
+								<li>
+									<button class="word-btn">이염</button>
+								</li>
+								<li>
+									<button class="word-btn">탈색</button>
+								</li>
+								<li>
+									<button class="word-btn">수축</button>
+								</li>
+								<li>
+									<button class="word-btn">긁힘</button>
+								</li>
+								<li>
+									<button class="word-btn">올팀</button>
+								</li>
+								<li>
+									<button class="word-btn">오염</button>
+								</li>
+								<li>
+									<button class="word-btn">단추없음</button>
+								</li>
+							</ul>
+                            <div class="c-text">
+                                <input id="frEditFiComment" type="text" placeholder="검품내용 입력" autocomplete="off" />
+                                <button id="vkeyboard4">키보드</button>
+                            </div>
+                            <ul class="checkreg__camera-console">
+                                <li>
+                                    <div class="checkreg__cost">
+                                        <div class="checkreg__title">접수금액</div>
+                                        <div class="checkreg__input">
+                                            <div class="c-text">
+                                                <input id="frEditFdTotAmtInPut" type="text" readonly="readonly" autocomplete="off" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="checkreg__cost">
+                                        <div class="checkreg__title">추가비용</div>
+                                        <div class="checkreg__input">
+                                            <div class="c-text">
+                                                <input id="frEditFiAddAmt" type="text" autocomplete="off" />
+                                                <button id="vkeypad0">키보드</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="checkreg__picture-area">
+                <div class="checkreg__head">
+                    <h3>촬영된 사진</h3>
+                </div>
+                <div class="checkreg__body checkreg__body--non-padding">
+                    <ul id="frPhotoList" class="checkreg__img-list">
+                    </ul>
+                </div>
+
+                <ul class="pop__console pop__console--between pop__console--nonbg">
+                    <li><button id="commitInspect" class="c-button c-button--small">저장</button></li>
+					<li><button id="deleteInspect" class="c-button c-button--red c-button--small">삭제</button></li>
+                </ul>
+            </div>
+
+			<ul class="pop__console pop__console--100">
+				<li><button id="frCustomerConfirmed" class="c-button c-button--darksolid">세탁진행</button></li>
+				<li><button id="frCustomerDenied" class="c-button c-button--red">고객반품</button></li>
+				<li><button id="frSendKakaoMsg" class="c-button c-button--solid">메시지 전송</button></li>
+				<li><button id="closeFrInspectEditPop"class="c-button">닫기</button></li>
+			</ul>
+		</div>
+    </div>
+
+    <!-- 확인품 확인/응답/보기 신규 -->
+    <div id="brInspectPop" class="pop">
+        <div class="pop__box">
+            <div id="brInspectPhotoPanel" class="pop__article">
+                <div class="tag-imgs">
+                    <ul id="brPhotoList" class="tag-imgs__list">
+                    </ul>
+                </div>
+            </div>
+            <div class="pop__article">
+                <div class="checkreg__comment">
+                    <div class="pop__article-head">
+                        <h3 class="pop__article-header">검품내용</h3>
+                    </div>
+                    <div class="pop__aricle-content">
+                        <div class="c-text">
+                            <input id="brFiComment" type="text"  readonly="readonly" autocomplete="off" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <ul class="pop__console">
+                <li class="pop__console-left">
+					<div class="pop__console-cost">
+						<div class="pop__console-title">현재 접수금액</div>
+						<div class="pop__console-input">
+							<div class="c-text"><input id="brFdTotAmtInPut" type="text" readonly="readonly" autocomplete="off" /></div>
+						</div>
+					</div>
+					<div class="pop__console-cost">
+						<div class="pop__console-title">추가 비용발생</div>
+						<div class="pop__console-input">
+							<div class="c-text"><input id="brFiAddAmt" type="text" readonly="readonly" autocomplete="off" /></div>
+						</div>
+					</div>
+				</li>
+				<li><button id="brCustomerConfirmed" class="c-button c-button--darksolid">세탁진행</button></li>
+                <li><button id="brCustomerDenied" class="c-button c-button--red">고객반품</button></li>
+				<li><button id="brSendKakaoMsg" class="c-button c-button--solid">메시지 전송</button></li>
+				<li><button id="closeBrInspectPop" class="c-button">닫기</button></li>
+            </ul>
+        </div>
+    </div>
+
+	<!-- 가맹검품 보기(응답완료된) 신규 -->
+    <div id="frInspectViewPop" class="pop">
+        <div class="pop__box">
+            <div id="frInspectViewPhotoPanel" class="pop__article">
+                <div class="tag-imgs">
+                    <ul id="frViewPhotoList" class="tag-imgs__list">
+                    </ul>
+                </div>
+            </div>
+            <div class="pop__article">
+                <div class="checkreg__comment">
+                    <div class="pop__article-head">
+                        <h3 class="pop__article-header">검품내용</h3>
+                    </div>
+                    <div class="pop__aricle-content">
+                        <div class="c-text">
+                            <input id="frViewFiComment" type="text"  readonly="readonly" autocomplete="off" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <ul class="pop__console">
+                <li class="pop__console-left">
+					<div class="pop__console-cost">
+						<div class="pop__console-title">현재 접수금액</div>
+						<div class="pop__console-input">
+							<div class="c-text"><input id="frViewFdTotAmtInPut" type="text" readonly="readonly" autocomplete="off" /></div>
+						</div>
+					</div>
+					<div class="pop__console-cost">
+						<div class="pop__console-title">추가 비용발생</div>
+						<div class="pop__console-input">
+							<div class="c-text"><input id="frViewFiAddAmt" type="text" readonly="readonly" autocomplete="off" /></div>
+						</div>
+					</div>
+				</li>
+                <li><button id="closeFrInspectViewPop" class="c-button">닫기</button></li>
+            </ul>
+        </div>
+    </div>
+
+	<!-- 접수 사진 촬영내역 -->
+	<div id="receiptPhotoPop" class="pop">
+		<div class="pop__box">
+			<div class="pop__article">
+				<div class="tag-imgs">
+					<ul id="receiptPhotoList" class="tag-imgs__list">
+					</ul>
+				</div>
+			</div>
+			<ul class="pop__console">
+				<li>
+					<button id="closePhotoListPop" class="c-button">닫기</button>
+				</li>
+			</ul>
+		</div>
+	</div>
+	
+	<input type="hidden" id="hiddenKeypad" />
+
+	<div id="printScreen" class="loader-wrap" style="display: none;">
+		<div class="loader">
+			<div class="loader__dot"></div>
+			<div class="loader__dot"></div>
+			<div class="loader__dot"></div>
+			<div class="loader__dot"></div>
+			<div class="loader__dot"></div>
+			<div class="loader__dot"></div>
+			<div class="loader__text">단말기에 인쇄 정보를 전송중 입니다.</div>
+		</div>
+	</div>
+</div>
+</html>

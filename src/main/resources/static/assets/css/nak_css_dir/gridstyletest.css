@@ -1,0 +1,239 @@
+.aui-grid-default-header {
+    vertical-align: middle;
+}
+
+.aui-grid-default-column, .aui-grid-row-num-column, .aui-grid-row-check-column {
+    vertical-align: middle;
+    background-color: #ffffff;
+}
+
+.aui-grid-row-check-column {
+    border-right: none;
+    border-right-width: 0;
+    border-right-color: #ffffff;
+}
+
+/* 그리드에서 편집가능한 셀의 기본 색상 */
+.aui-grid-editable-column {
+    background-color: #ffffff;
+}
+
+/* 그리드에서 편집가능한 셀의 선택된 상태(해당 줄의 해당 편집가능한 셀이 선택된 상태)의 색상 */
+.aui-grid-editable-column.aui-grid-selection-row-bg {
+    background-color: #D9E5FF !important;
+}
+
+/* 그리드에서 편집가능한 셀과 같은 줄은 선택되었으나 본 셀이 선택되지는 않는 상태의 색상 */
+.aui-grid-editable-column.aui-grid-selection-row-others-bg {
+    background-color: #D9E5FF !important;
+}
+
+/* 그리드에서 편집가능한 셀의 선택된 상태(해당 줄의 해당 편집가능한 셀이 선택된 상태)의 색상 */
+.aui-grid-default-column.aui-grid-selection-row-bg {
+    background-color: #D9E5FF!important;
+}
+
+/* 그리드에서 편집가능한 셀과 같은 줄은 선택되었으나 본 셀이 선택되지는 않는 상태의 색상 */
+.aui-grid-default-column.aui-grid-selection-row-others-bg {
+    background-color: #D9E5FF!important;
+}
+
+.aui-grid-selection-header-column {
+    background: #d9e5ff !important;
+}
+
+.aui-grid-selection-row-num-column {
+    background: #d9e5ff!important;
+}
+
+/* 택번호 칼럼에 적용될 기본 스타일 정의 */
+.aui-grid-tagno-column {
+    background: #F1F8FE;
+    color: #2F73EA;
+    font-weight: 700;
+}
+
+/* 택번호 칼럼에 사용. 해당 줄이 선택되었을 때 택번호 컬럼의 스타일 정의 */
+.aui-grid-tagno-column.aui-grid-selection-row-bg, .aui-grid-tagno-column.aui-grid-selection-row-others-bg {
+    /*border: 2px solid #1e3868 !important;*/
+}
+
+.aui-grid .aui-grid-table, .aui-grid .aui-grid-table tr, .aui-grid .aui-grid-table td {
+    font-size: 15px;
+    color: #333;
+}
+
+.receiptreg-product-name {
+    text-align: left;
+}
+
+.receiptreg-product-name .aui-grid-renderer-base {
+    margin-left: 15px;
+    height: 30px;
+}
+
+.color_and_name {
+    text-align: left;
+    margin-left: 10px;
+}
+
+.aui-grid-default-header {
+    background: #f8f8f8;
+    color: #333;
+}
+
+.aui-grid-header-panel .aui-grid-table tr td {
+    border-top: 1px solid #c8c8c8;
+    border-right: none;
+    border-bottom: 1px solid #c8c8c8;
+    border-left: none;
+}
+.grid--header-border .aui-grid-header-panel .aui-grid-table tr td {
+	border-top: none;
+	border-right: 1px solid #c8c8c8;
+	border-bottom: 1px solid #c8c8c8;
+	border-left: none;
+}
+
+.aui-grid-default-header:hover {
+    background: #778da7;
+}
+
+.receiptreg-product-name .aui-img{
+    margin-right: 3px!important;
+}
+
+/* grid 컬러박스 */
+.colorSquare {
+	height: 20px;
+	width: 20px;
+	border-radius: 5px;
+	display: inline-block;
+	vertical-align: middle;
+}
+.color_and_name {
+	text-align: left;
+	margin-left: 10px;
+}
+
+/* grid 페이징 */
+/* 페이징 패널 스타일 */
+.aui-grid-paging-panel {
+	margin-top: 2.5rem;
+	background: #fff;
+	border-top: 0 none;
+	text-align: center;
+	box-sizing: border-box;
+}
+/* 페이징 넘버링 */
+.aui-grid-paging-panel .aui-grid-paging-number {
+	display: inline-block;
+	border: 1px solid #d4d9e1;
+	border-radius: 0.313rem;
+	min-width: 2.5rem;
+	color: #9a9fa8;
+	line-height: 2.375rem;
+	font-size: 1em;
+	font-weight: 400;
+	text-align: center;
+	margin: 0 3px;
+}
+.aui-grid-paging-panel .aui-grid-paging-number:hover {
+	background-color: #eaeaea;
+	border: 1px solid #aaa;
+	cursor: pointer;
+}
+/* 페이징 현재 페이지 선택 넘버링 */
+.aui-grid-paging-panel .aui-grid-paging-number-selected {
+	background: #d9e5ff !important;
+	border: 1px solid #0082f0 !important;
+	color: #0082f0 !important;
+}
+/* 페이징 이전 버튼 */
+.aui-grid-paging-panel .aui-grid-paging-prev {
+	background: url(/assets/images/icon__arrow--left.svg) 50% 50% no-repeat;
+	text-indent: -99999px;
+}
+/* 페이징 다음 버튼 */
+.aui-grid-paging-panel .aui-grid-paging-next {
+	background: url(/assets/images/icon__arrow--right.svg) 50% 50% no-repeat;
+	text-indent: -99999px;
+}
+/* 페이징 처음 버튼 */
+.aui-grid-paging-panel .aui-grid-paging-first {
+	background: url(/assets/images/icon__arrow--left2.svg) 50% 50% no-repeat;
+	text-indent: -99999px;
+}
+/* 페이징 마지막 버튼 */
+.aui-grid-paging-panel .aui-grid-paging-last {
+	background: url(/assets/images/icon__arrow--right2.svg) 50% 50% no-repeat;
+	text-indent: -99999px;
+}
+
+
+.grid_textalign_left div{
+	text-align: left;
+	padding: 0 2px!important;
+	margin-left: 4px!important;
+	box-sizing: border-box;
+}
+
+.grid_textalign_right div{
+	text-align: right;
+	padding: 0 2px!important;
+	margin-left: 4px!important;
+	box-sizing: border-box;
+}
+
+/* grid style */
+.aui-grid-body-panel .aui-grid-table tr td {
+    border: 0 none;
+    border-bottom: 1px solid #eaeaea;
+}
+.aui-grid-extra-checked-row td,
+.aui-grid-body-panel .aui-grid-table tr td:hover {
+    background-color: #d9e5ff;
+}
+
+/* 고정 칼럼과 일반 칼럼 경계선 */
+.aui-grid-fixed-column-rule {
+	background:transparent;
+	width:1px;
+}
+
+/* 고정 로우와 일반 로우 경계선 */
+.aui-grid-fixed-row-rule {
+	background:transparent;
+	height: 2px;
+}
+
+/* hover시 */
+.aui-grid-body-panel .aui-grid-table tr:hover td {
+    background-color: #f1f8fe;
+}
+
+/* tag 번호 */
+.datafield_tag {
+	background-color: #F1F8FE;
+	font-size: 16px !important;
+	font-weight: 700 !important;;
+}
+
+.grid_checkable_row td {
+	background-color: rgba(33, 163, 101, .2);
+}
+.aui-grid .aui-grid-table td.grid_notedit {
+	color: #aaa;
+}
+
+/* footer */
+.aui-grid-default-footer {
+	background-color: #fff;
+}
+.aui-grid-footer-panel .aui-grid-table tr td {
+	border-top: 1px solid #c8c8c8;
+	border-right: 0 none;
+}
+.aui-grid-footer-division-line {
+	border-top: 1px solid #c8c8c8 !important;
+}

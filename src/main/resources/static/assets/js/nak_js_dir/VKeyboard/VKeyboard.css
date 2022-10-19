@@ -1,0 +1,507 @@
+#VKEY_VKEYMAIN {
+	display: none;
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	width: 93.75%;
+	padding: 2.5rem;
+	background-color: #ebebeb;
+	border: 0.063rem solid #bdbdbd;
+	-webkit-border-radius: 0.625rem;
+	-moz-border-radius: 0.625rem;
+	border-radius: 0.625rem;
+	-webkit-box-shadow: 0 0.063rem 0.188rem rgba(0, 0, 0, 0.6);
+	-moz-box-shadow: 0 0.063rem 0.188rem rgba(0, 0, 0, 0.6);
+	box-shadow: 0 0.063rem 0.188rem rgba(0, 0, 0, 0.6);
+	-webkit-transform: translate(-50%, -50%);
+	-moz-transform: translate(-50%, -50%);
+	-ms-transform: translate(-50%, -50%);
+	-o-transform: translate(-50%, -50%);
+	transform: translate(-50%, -50%);
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	z-index: 999;
+}
+.vkey__header {
+	display: flex;
+	flex-wrap: wrap;
+	margin-bottom: 1.25rem;
+}
+#VKEY_field_title {
+	width: 100%;
+	margin-bottom: 1.5rem;
+	color: #555;
+	font-size: 1.5rem;
+	line-height: 1.5rem;
+	text-align: center;
+}
+#VKEY_field_editable {
+	flex: 1;
+    overflow-x: hidden;
+	height: 3.125rem;
+	padding: 0 1.25rem;
+	background-color: #fff;
+	color: #333;
+	font-size: 1rem;
+	line-height: 3.125rem;
+    white-space: nowrap;
+    -webkit-border-radius: 0.625rem;
+    -moz-border-radius: 0.625rem;
+    border-radius: 0.625rem;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+#VKEY_click_blocker {
+    position: absolute;
+    top: 88px;
+    left: 40px;
+    width: 930px;
+    height: 50px;
+	z-index: 100;
+	background-color: transparent;
+}
+
+.vkey__header input[type="button"] {
+	height: 3.125rem;
+	margin-left: 0.625rem;
+	padding: 0 0.625rem;
+	border: 0 none;
+	background-color: #cacaca;
+	color: #555;
+	-webkit-border-radius: 0.625rem;
+	-moz-border-radius: 0.625rem;
+	border-radius: 0.625rem;
+	-webkit-box-shadow: 0 0.063rem 0.25rem rgba(0, 0, 0, 0.6);
+	-moz-box-shadow: 0 0.063rem 0.25rem rgba(0, 0, 0, 0.6);
+	box-shadow: 0 0.063rem 0.25rem rgba(0, 0, 0, 0.6);
+	cursor: pointer;
+}
+#VKEY_btn_delete {
+	width: 5rem;
+	margin-left: 1.25rem;
+	text-indent: -99999rem;
+	background-image: url(./images/icon__back.svg);
+	background-repeat: no-repeat;
+	-webkit-background-size: 1.625rem 1.625rem;
+	background-size: 1.625rem 1.625rem;
+	background-position: center center;
+}
+
+.vkey__content {
+	display: flex;
+	flex-wrap: wrap;
+}
+.vkey__key-area {
+	flex: 1;
+}
+.vkey__tabs {
+	display: inline-flex;
+	margin-bottom: 0.938rem;
+}
+.vkey__tabs li {
+	width: 5rem;
+}
+.vkey__tabs.vkey__tabs--flex1 {
+	display: flex;
+}
+.vkey__tabs.vkey__tabs--flex1 li {
+	flex: 1;
+	width: auto;
+}
+.vkey__tabs li + li {
+	border-left: 0.125rem solid #b2b2b2;
+}
+.vkey__tabs input[type="radio"] {
+	overflow: hidden;
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    clip: rect(0, 0, 0, 0);
+}
+.vkey__tabs label {
+	display: block;
+	width: 100%;
+	height: 3.125rem;
+	background-color: #f7f7f7;
+	color: #878787;
+	font-size: 1.25rem;
+	font-weight: 700;
+	text-align: center;
+	line-height: 3.125rem;
+}
+.vkey__tabs li:first-child label {
+	border-top-left-radius: 0.625rem;
+	border-bottom-left-radius: 0.625rem;
+}
+.vkey__tabs li:last-child label {
+	border-top-right-radius: 0.625rem;
+	border-bottom-right-radius: 0.625rem;
+}
+.vkey__tabs input[type="radio"]:checked + label {
+	background-color: #004a98;
+	color: #fff;
+	-ms-filter: drop-shadow(0 0.188rem 0.188rem rgba(0, 0, 0, 0.6));
+	filter: drop-shadow(0 0.188rem 0.188rem rgba(0, 0, 0, 0.6));
+}
+.vkey__num {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+}
+.VKEY_btn_normal {
+	width:3.75rem;
+	height: 3.75rem;
+	margin: 0.313rem 0;
+	background-color: #fff;
+	border: 0.063rem solid #bdbdbd;
+	color: #000;
+	font-size: 1.5rem;
+	font-weight: 700;
+	-webkit-border-radius: 0.625rem;
+	-moz-border-radius: 0.625rem;
+	border-radius: 0.625rem;
+	-webkit-box-shadow: 0 0.063rem 0.25rem rgba(0, 0, 0, 0.6);
+	-moz-box-shadow: 0 0.063rem 0.25rem rgba(0, 0, 0, 0.6);
+	box-shadow: 0 0.063rem 0.25rem rgba(0, 0, 0, 0.6);
+}
+.vkey__pad {
+	display: flex;
+	flex-wrap: wrap;
+}
+.vkey__consonants {
+	display: flex;
+	flex-wrap: wrap;
+	width: 22.75rem;
+}
+.vkey__vowels {
+	display: flex;
+	flex-wrap: wrap;
+	width: 18rem;
+	margin-left: 1.875rem;
+}
+.vkey__consonants input + input,
+.vkey__vowels input + input {
+	margin-left: 1rem;
+}
+.vkey__consonants input:nth-child(5n + 1),
+.vkey__vowels input:nth-child(4n + 1) {
+	margin-left: 0;
+}
+.vkey__pad > input + input {
+	margin-left: 1.813rem;
+}
+.vkey__pad > input:nth-child(8n + 1) {
+	margin-left: 0;
+}
+
+.vkey__boiler {
+	width: 25rem;
+	margin-left: 2.188rem;
+}
+.VKEY_pad_boiler > div {
+	display: flex;
+	flex-wrap: wrap;
+	padding: 0.938rem 0.625rem;
+	background-color: #f7f7f7;
+	-webkit-border-radius: 0.625rem;
+	-moz-border-radius: 0.625rem;
+	border-radius: 0.625rem;
+}
+.VKEY_pad_boiler > div input {
+	width: calc(50% - 0.625rem);
+	margin: 0.625rem 0.313rem;
+}
+.VKEY_btn_boiler {
+	height: 3.75rem;
+	background-color: #fff;
+	border: 0.063rem solid #bdbdbd;
+	color: #444;
+	font-size: 1.25rem;
+	-webkit-border-radius: 0.625rem;
+	-moz-border-radius: 0.625rem;
+	border-radius: 0.625rem;
+}
+
+.vkey__console {
+	display: flex;
+	justify-content: space-between;
+	width: 100%;
+	margin-top: 1.563rem;
+}
+.vkey__movekey {
+	display: flex;
+}
+#VKEY_btn_caretleft,
+#VKEY_btn_caretright {
+	width: 5rem;
+	height: 3.125rem;
+	background-color: #cacaca;
+	background-repeat: no-repeat;
+	-webkit-background-size: 1.875rem 1.875rem;
+	background-size: 1.875rem 1.875rem;
+	background-position: center center;
+	-webkit-border-radius: 0.625rem;
+	-moz-border-radius: 0.625rem;
+	border-radius: 0.625rem;
+	text-indent: -9999rem;
+	-webkit-box-shadow: 0 0.063rem 0.25rem rgba(0, 0, 0, 0.6);
+	-moz-box-shadow: 0 0.063rem 0.25rem rgba(0, 0, 0, 0.6);
+	box-shadow: 0 0.063rem 0.25rem rgba(0, 0, 0, 0.6);
+}
+#VKEY_btn_caretleft {
+	background-image: url(./images/icon__left.svg);
+}
+#VKEY_btn_caretright {
+	margin-left: 0.625rem;
+	background-image: url(./images/icon__right.svg);
+}
+#VKEY_btn_spacer {
+	width: 30.625rem;
+	height: 3.125rem;
+	margin-left: 1.25rem;
+	background-color: #cacaca;
+	-webkit-border-radius: 0.625rem;
+	-moz-border-radius: 0.625rem;
+	border-radius: 0.625rem;
+	-webkit-box-shadow: 0 0.063rem 0.25rem rgba(0, 0, 0, 0.6);
+	-moz-box-shadow: 0 0.063rem 0.25rem rgba(0, 0, 0, 0.6);
+	box-shadow: 0 0.063rem 0.25rem rgba(0, 0, 0, 0.6);
+}
+#VKEY_btn_cancel {
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+	width: 8.75rem;
+	height: 3.125rem;
+	padding: 0 2.5rem;
+	background-color: #fff;
+	border: 0.125rem solid #bdbdbd;
+	-webkit-border-radius: 0.625rem;
+	-moz-border-radius: 0.625rem;
+	border-radius: 0.625rem;
+	color: #0082f0;
+	font-weight: 700;
+	cursor: pointer;
+}
+#VKEY_btn_complete {
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+	width: 8.75rem;
+	height: 3.125rem;
+	margin-left: 1rem;
+	padding: 0 2.5rem;
+	background-color: #0082f0;
+	border: 0 none;
+	-webkit-border-radius: 0.625rem;
+	-moz-border-radius: 0.625rem;
+	border-radius: 0.625rem;
+	color: #fff;
+	font-weight: 700;
+	cursor: pointer;
+}
+
+.VKEY_bundle_keyboard,
+.VKEY_pad_boiler {
+	display: none;
+}
+
+
+/* 숫자패드 */
+#VKEY_KEYPAD {
+	display: none;
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	width: 26.875rem;
+	padding: 2.5rem;
+	background-color: #ebebeb;
+	/*border: 0.063rem solid #bdbdbd;*/
+	-webkit-border-radius: 1.25rem;
+	-moz-border-radius: 1.25rem;
+	border-radius: 1.25rem;
+	-webkit-transform: translate(-50%, -50%);
+	-moz-transform: translate(-50%, -50%);
+	-ms-transform: translate(-50%, -50%);
+	-o-transform: translate(-50%, -50%);
+	transform: translate(-50%, -50%);
+	-webkit-box-shadow: 0 0.375rem 2.5rem rgba(0, 0, 0, .4);
+	-moz-box-shadow: 0 0.375rem 2.5rem rgba(0, 0, 0, .4);
+	box-shadow: 0 0.375rem 2.5rem rgba(0, 0, 0, .4);
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	z-index: 10;
+	
+}
+.vkey-num {
+	display: none;
+	width: 26.875rem;
+	padding: 2.5rem;
+	background-color: #ebebeb;
+	-webkit-border-radius: 1.25rem;
+	-moz-border-radius: 1.25rem;
+	border-radius: 1.25rem;
+	-webkit-box-shadow: 0 0.375rem 2.5rem rgba(0, 0, 0, .4);
+	-moz-box-shadow: 0 0.375rem 2.5rem rgba(0, 0, 0, .4);
+	box-shadow: 0 0.375rem 2.5rem rgba(0, 0, 0, .4);
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+.vkey-num.active {
+	display: block;
+}
+.vkey-num__input {
+    position: relative;
+	width: 21.875rem;
+	margin-bottom: 0.938rem;
+}
+.vkey-num__input input {
+	width: 100%;
+	height: 3.75rem;
+	background-color: #fff;
+	border: 0 none;
+	color: #000;
+	font-size: 1.875rem;
+	font-weight: 700;
+	text-align: center;
+	-webkit-border-radius: 0.625rem;
+	-moz-border-radius: 0.625rem;
+	border-radius: 0.625rem;
+}
+#VKEY_plusminus {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+#VKEY_plusminus + input {
+    width: calc(100% - 70px);
+    margin-left: 70px;
+}
+#VKEY_keypad_sign {
+    overflow: hidden;
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    clip: rect(0, 0, 0, 0);
+}
+#VKEY_keypad_sign + label {
+    display: block;
+    position: relative;
+    width: 60px;
+    height: 60px;
+    background: #fff;
+    border-radius: 0.625rem;
+}
+#VKEY_keypad_sign + label:before {
+    content: " ";
+    display: block;
+    position: absolute;
+    top: 10px;
+    left: 28px;
+    width: 4px;
+    height: 40px;
+    background-color: #333;
+    border: 0.063rem solid #bdbdbd;
+    border-radius: 4px;
+    transition: opacity .2s;
+}
+#VKEY_keypad_sign + label:after {
+    content: " ";
+    display: block;
+    position: absolute;
+    top: 28px;
+    left: 10px;
+    width: 40px;
+    height: 4px;
+    background-color: #333;
+    border-radius: 4px;
+}
+#VKEY_keypad_sign:checked + label:before {
+    opacity: 0;
+}
+.vkey-num__pad {
+	display: flex;
+	flex-wrap: wrap;
+}
+.VKEY_keypad_btn,
+.keypad_btn {
+	margin: 0.313rem 0;
+	width: 5rem;
+	height: 5rem;
+	margin-right: 0.625rem;
+	background-color: #fff;
+	border: 0.063rem solid #bdbdbd;
+	color: #000;
+	font-size: 1.5rem;
+	font-weight: 700;
+	text-align: center;
+	-webkit-border-radius: 0.625rem;
+	-moz-border-radius: 0.625rem;
+	border-radius: 0.625rem;
+	-webkit-box-shadow: 0 0.063rem 0.188rem (0, 0, 0, .4);
+	-moz-box-shadow: 0 0.063rem 0.188rem (0, 0, 0, .4);
+	box-shadow: 0 0.063rem 0.188rem (0, 0, 0, .4);
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+.VKEY_keypad_btn:nth-child(4n),
+.keypad_btn:nth-child(4n) {
+	margin-right: 0;
+}
+#VKEY_keypad_btn_backspace,
+.keypad_btn_backspace {
+	margin: 0.313rem 0;
+	width: 5rem;
+	height: 5rem;
+	background: #cacaca url(./images/icon__back.svg) no-repeat;
+	-webkit-background-size: 1.875rem 1.875rem;
+	background-size: 1.875rem 1.875rem;
+	background-position: center center;
+	border: 0.063rem solid #bdbdbd;
+	text-indent: -9999rem;
+	-webkit-border-radius: 0.625rem;
+	-moz-border-radius: 0.625rem;
+	border-radius: 0.625rem;
+	-webkit-box-shadow: 0 0.063rem 0.188rem (0, 0, 0, .4);
+	-moz-box-shadow: 0 0.063rem 0.188rem (0, 0, 0, .4);
+	box-shadow: 0 0.063rem 0.188rem (0, 0, 0, .4);
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+.vkey-num__console {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	margin-top: 0.938rem;
+}
+.vkey-num__console button {
+	width: 8.75rem;
+	height: 3.125rem;
+	border: 0.125rem solid #bdbdbd;
+	font-size: 1rem;
+	font-weight: 700;
+	text-align: center;
+	-webkit-border-radius: 0.625rem;
+	-moz-border-radius: 0.625rem;
+	border-radius: 0.625rem;
+}
+#VKEY_keypad_btn_complete {
+	background-color: #fff;
+}
+#VKEY_keypad_btn_cancel {
+	margin-left: 1.25rem;
+	background-color: #0082f0;
+	border: 0 none;
+	color: #fff;
+}

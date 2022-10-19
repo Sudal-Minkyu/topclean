@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ko"
+	  xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{layout/defaulthead}" xmlns="http://www.w3.org/1999/html">
+
+<!-- 사용자 CSS 추가 -->
+<th:block layout:fragment="css">
+
+</th:block>
+
+<!-- 사용자 스크립트 추가 -->
+<th:block layout:fragment="script">
+	
+</th:block>
+
+<div layout:fragment="content" class="content content--padding">	
+	<section class="section">
+		<article class="article">
+			<div class="article__header" style="margin-bottom: 0;">
+                <h3 class="article__heading">마스터코드 등록</h3>
+            </div>
+			<div class="article__body">
+				<div class="code">
+                    <ul class="code__list">
+                        <li class="code__item">
+                            <div class="code__category">
+                                <div class="code__title">분류</div>
+                                <div class="code__input">
+                                    <div class="c-select">
+                                        <select>
+                                            <option>option</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="code__item">
+                            <div class="code__title">코드</div>
+                            <div class="code__input">
+                                <input type="text" />
+                            </div>
+                        </li>
+                        <li class="code__item">
+                            <div class="code__title">코드명</div>
+                            <div class="code__input">
+                                <input type="text" />
+                            </div>
+                        </li>
+                        <li class="code__item code__item--100">
+                            <div class="code__title">비고</div>
+                            <div class="code__input">
+                                <textarea></textarea>
+                            </div>
+                        </li>
+                        <li class="code__item">
+                            <div class="code__title">option1</div>
+                            <div class="code__input">
+                                <input type="text" />
+                            </div>
+                        </li>
+                        <li class="code__item">
+                            <div class="code__title">option2</div>
+                            <div class="code__input">
+                                <input type="text" />
+                            </div>
+                        </li>
+                        <li class="code__item">
+                            <div class="code__title">option3</div>
+                            <div class="code__input">
+                                <input type="text" />
+                            </div>
+                        </li>
+                        <li class="code__item">
+                            <div class="code__title">option4</div>
+                            <div class="code__input">
+                                <input type="text" />
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+			</div>
+			<ul class="article__console article__console--right article__console--non-border">
+				<li><button type="button" class="c-button c-button--solid">신규</button></li>
+				<li><button class="c-button c-button--darksolid">저장</button></li>
+				<li><button class="c-button c-button--red">삭제</button></li>
+			</ul>
+		</article>
+	</section>
+	
+	<section class="section">
+		<article class="article">
+            <div class="article__header" style="margin-bottom: 0;">
+                <h3 class="article__heading">마스터코드 조회</h3>
+            </div>
+			<div class="article__body">
+				<div class="inquiry">
+                    <div class="inquiry__condition">
+                        <ul>
+                            <li>
+                                <div class="inquiry__title">검색옵션1</div>
+                                <div class="inquiry__input">
+                                    <div class="c-select">
+										<select>
+											<option>선택</option>
+										</select>
+									</div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="inquiry__title">검색옵션2</div>
+                                <div class="inquiry__input">
+									<div class="inquiry__input-tag">
+										<input type="text" />
+									</div>
+                                </div>
+                            </li>
+                            <li>
+                                <div id="frTagNo" class="inquiry__title">검색옵션3</div>
+                                <div class="inquiry__input">
+                                    <div class="inquiry__input-tag">
+                                        <input type="text" />
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="inquiry__title">검색옵션4</div>
+                                <div class="inquiry__input">
+                                    <div class="inquiry__input-tag">
+										<input type="text" />
+									</div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="inquiry__button inquiry__button--row">
+                        <button type="button" class="c-button c-button--small c-button--solid">조회</button>
+						<button type="button" class="c-button c-button--small">초기화</button>
+                    </div>
+                </div>
+			</div>
+		</article>
+		
+		<article class="article">
+			<div class="article__content">
+				<div id="grid" style="height: 290px;">그리드 영역</div>
+			</div>
+		</article>
+	</section>
+	
+	
+	
+	
+	
+
+
+	
+
+</div>
+</html>

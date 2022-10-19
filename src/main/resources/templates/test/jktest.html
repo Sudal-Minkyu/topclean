@@ -1,0 +1,1236 @@
+<!DOCTYPE html>
+<html lang="ko"
+	  xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate ="~{layout/defaulttest}">
+
+<!-- 사용자 CSS 추가 -->
+<th:block layout:fragment="css">
+	<!-- lightbox 추가 -->
+	<link rel="stylesheet" href="/assets/js/lightbox2/css/lightbox.min.css" />
+</th:block>
+
+<!-- 사용자 스크립트 추가 -->
+<th:block layout:fragment="script">
+<!--	<script src="/assets/js/toppos/user/receipt/receiptreg.js"></script>-->
+	
+	<!-- lightbox 추가 -->
+	<script src="/assets/js/lightbox2/js/lightbox.js"></script>
+	
+	<script type="text/javascript">
+	
+		// 하단 팝업 토글
+		// function toggleBottom() {
+		//    var element = document.getElementsByClassName("regist__bottom");
+		//    element[0].classList.toggle("active");
+		//
+		//    var grid = document.getElementById("grid_requestList");
+		//    grid.classList.toggle("active");
+		//
+		//    AUIGrid.resize(gridId[0]);
+		// }
+
+	
+		
+		$(function() {
+			//카테고리 선택 시 팝업 열기
+			$('.regist__category-btn').on('click', function(e) {
+				$('#productPop').addClass('active');
+				
+				e.preventDefault()
+			});
+			
+			// 팝업 닫기
+			$('.pop__close').on('click', function(e) {
+				$(this).parents('.pop').removeClass('active');
+				
+				e.preventDefault()
+			})
+			
+
+			$('.choice-drop__btn').on('click', function(e) {
+				$(this).next('.choice-drop__content').toggleClass('choice-drop__content--active');
+			})
+			
+			$('.choice-drop__item').on('click', function(e) {
+				$(this).parents('.choice-drop__content').removeClass('choice-drop__content--active');
+				$(this).parents('.choice-drop').children('.choice-drop__btn').addClass('choice-drop__btn--active');
+			})
+			
+			$('.choice-drop__item').on('click', function(e) {
+				$(this).parents('.choice-drop__content').removeClass('choice-drop__content--active');
+				$(this).parents('.choice-drop').children('.choice-drop__btn').removeClass('choice-drop__btn--active');
+			})
+			
+			
+			// 결제팝업 탭
+			const $payTabsBtn = $('.pop__pay-tabs-item');
+			const $payTabsContent = $('.pop__tabs-content');
+			
+			$payTabsBtn.on('click', function() {
+				const idx = $(this).index();
+				
+				$payTabsBtn.removeClass('active');
+				$payTabsBtn.eq(idx).addClass('active');
+				$payTabsContent.removeClass('active');
+				$payTabsContent.eq(idx).addClass('active');
+			});
+			
+			
+			// lightbox option
+			lightbox.option({
+				'maxWidth': 1100,
+				'positionFromTop': 190
+			})
+		});
+
+	</script>
+</th:block>
+
+<div layout:fragment="content" class="content">
+	<div class="regist">
+		<!-- 상단 통합검색 및 상태 -->
+		<div class="regist__header">
+			<!-- 검색 -->
+			<div class="search">
+				<div class="c-select">
+					<select id="searchType">
+	                    <option value="0">통합검색</option>
+	                    <option value="1">고객명</option>
+	                    <option value="2">전화번호</option>
+	                    <option value="3">주소</option>
+	                </select>
+				</div>
+				
+				<div class="c-search">
+					<div class="c-search__input">
+						<input id="searchCustomerField" type="text" placeholder="검색어를 입력하세요" />
+                		<button class="c-search__key" type="button" onclick="">키보드</button>
+					</div>
+					<button class="c-search__bth" type="button" onclick="onSearchCustomer()">검색</button>
+				</div>
+			</div>
+			
+			<!-- 고객정보 -->
+			<div class="client">
+				<div class="client__rating">
+					<!-- 고객뱃지  -->
+					<!-- 맞는 등급 뱃지 .active 주기 -->
+					<span class="client__badge">N</span>
+					<span class="client__badge">V</span>
+					<span class="client__badge client__badge--vvip active">V</span>
+					<!-- #bcGrade 등급 넣어주기 -->
+					<span id="bcGrade">VIP</span>
+				</div>
+				<div class="client__name"><span id="bcName">홍길동님</span></div>
+				<div class="client__propensity"><span id="bcValuation" class="propensity__star propensity__star--2"></span></div>
+				<div class="client__address"><span id="bcAddress">푸르지오 215동</span></div>
+				<div class="client__phone"><span id="bcHp">010-1234-5678</span></div>
+			</div>
+			
+			<!-- 금액 및 수량 -->
+			<div class="regist__info">
+				<ul class="regist__amount">
+					<li>
+						<h4>수량</h4>
+						<p><span id="totFdQty">999</span></p>
+					</li>
+					<li>
+						<h4>정상금액</h4>
+						<p><span id="totFdNormalAmount">999,999</span><span class="won">원</span></p>
+						
+	                	
+					</li>
+					<li>
+						<h4>할인금액</h4>
+						<p><span id="totFdDiscountAmount">999,999</span><span class="won">원</span></p>
+					</li>
+				</ul>
+				<div class="regist__sum">
+					<h4>합계금액</h4>
+					<p><span id="totFdRequestAmount">9,999,999</span><span class="won">원</span></p>
+				</div>
+			</div>
+			
+			<!-- 고객정보2 -->
+			<ul class="client-info">
+				<li>
+					<h4>미수금</h4>
+					<p><span class="client-info__num" id="미수금총액">25,000</span><span class="won">원</span></p>
+				</li>
+				<li>
+					<h4>적립금</h4>
+					<p><span class="client-info__num" id="fsAmt">25000</span><span class="won">원</span></p>
+				</li>
+				<li>
+					<h4>특이사항</h4>
+					<p><span id="bcRemark">XXXXXXXX</span></p>
+				</li>
+				<li>
+					<h4>최근방문일</h4>
+					<p><span class="client-info__num" id="최근방문일">2021-11-10</span></p>
+				</li>
+			</ul>
+		</div>
+		
+		<div class="regist__content">
+			<div class="regist__tag">
+				<div class="regist__tag-title"><h3>다음택번호</h3></div>
+				<div class="regist__tag-input">
+					<div class="c-text">
+						<input id="fdTag" type="text" />
+	                	<button type="button" onclick="">키보드</button>
+					</div>
+				</div>
+				<div class="regist__tag-button">
+					<button class="c-button c-button--solid c-button--small" type="button" onclick="onSaveFdTag()">택번호 저장</button>
+				</div>
+				<!-- 삭제버튼 추가 -->
+				<div class="regist__line-delete">
+					<button class="c-button c-button--red c-button--small">상품삭제</button>
+				</div>
+			</div>
+			
+			<div class="regist__grid" id="gridarea">
+				<!-- 중앙그리드 영역-->
+				<div id="grid_requestList"></div>
+			</div>
+			
+			<div class="regist__bottom" id="registBottom">
+				<div class="regist__bottom-console">
+					<button class="regist__bottom-btn" onclick="toggleBottom()">카테고리 접기/펴기</button>
+					<div class="regist__bottom-toggle">
+						<p>상품</p>
+						<div class="c-toggle c-toggle--vertical">
+							<input type="checkbox" id="toggle" checked />
+							<label for="toggle"></label>
+						</div>
+						<p>즐겨<br />찾기</p>
+					</div>
+				</div>
+				<!-- 대분류 -->
+				<div class="regist__category">
+					<ul>
+						<li>
+							<button type="button" class="regist__category-btn bgItemGroupcode" value=""><img src="/assets/images/category/icon__top.svg" alt="상의" /><span>상의</span></button>
+						</li>
+						<li>
+							<button type="button" class="regist__category-btn bgItemGroupcode" value=""><img src="/assets/images/category/icon__bottom.svg" alt="하의" /><span>하의</span></button>
+						</li>
+						<li>
+							<button type="button" class="regist__category-btn bgItemGroupcode" value=""><img src="/assets/images/category/icon__shose.svg" alt="운동화" /><span>운동화</span></button>
+						</li>
+						<li>
+							<button type="button" class="regist__category-btn bgItemGroupcode" value=""><img src="/assets/images/category/icon__jumper.svg" alt="점퍼" /><span>점퍼</span></button>
+						</li>
+						<li>
+							<button type="button" class="regist__category-btn bgItemGroupcode" value=""><img src="/assets/images/category/icon__shirt.svg" alt="셔츠" /><span>셔츠</span></button>
+						</li>
+						<li>
+							<button type="button" class="regist__category-btn bgItemGroupcode" value=""><img src="/assets/images/category/icon__dress.svg" alt="원피스" /><span>원피스</span></button>
+						</li>
+						<li>
+							<button type="button" class="regist__category-btn bgItemGroupcode" value=""><img src="/assets/images/category/icon__blouse.svg" alt="블라우스" /><span>블라우스</span></button>
+						</li>
+						<li>
+							<button type="button" class="regist__category-btn bgItemGroupcode" value=""><img src="/assets/images/category/icon__vest.svg" alt="조끼" /><span>조끼</span></button>
+						</li>
+						<li>
+							<button type="button" class="regist__category-btn bgItemGroupcode" value=""><img src="/assets/images/category/icon__coat.svg" alt="코트" /><span>코트</span></button>
+						</li>
+						<li>
+							<button type="button" class="regist__category-btn bgItemGroupcode" value=""><img src="/assets/images/category/icon__sweater.svg" alt="스웨터" /><span>스웨터</span></button>
+						</li>
+						<li>
+							<button type="button" class="regist__category-btn bgItemGroupcode" value=""><img src="/assets/images/category/icon__uniform.svg" alt="교복" /><span>교복</span></button>
+						</li>
+						<li>
+							<button type="button" class="regist__category-btn bgItemGroupcode" value=""><img src="/assets/images/category/icon__hanbok.svg" alt="한복" /><span>한복</span></button>
+						</li>
+						<li>
+							<button type="button" class="regist__category-btn bgItemGroupcode" value=""><img src="/assets/images/category/icon__bed.svg" alt="침구·커튼" /><span>침구·커튼</span></button>
+						</li>
+						<li>
+							<button type="button" class="regist__category-btn bgItemGroupcode" value=""><img src="/assets/images/category/icon__hat.svg" alt="모자·가방·인형" /><span>모자·가방·인형</span></button>
+						</li>
+						<li>
+							<button type="button" class="regist__category-btn bgItemGroupcode" value=""><img src="/assets/images/category/icon__iron.svg" alt="가죽·특수세탁" /><span>가죽·특수세탁</span></button>
+						</li>
+						<li>
+							<button type="button" class="regist__category-btn bgItemGroupcode" value=""><img src="/assets/images/category/icon__stroller.svg" alt="유모차·골프가방" /><span>유모차·골프가방</span></button>
+						</li>
+						<li>
+							<button type="button" class="regist__category-btn bgItemGroupcode" value=""><img src="/assets/images/category/icon__etc.svg" alt="털·부속품" /><span>털·부속품</span></button>
+						</li>
+						<li>
+							<button type="button" class="regist__category-btn bgItemGroupcode" value=""><img src="/assets/images/category/icon__handwash.svg" alt="직접세탁" /><span>직접세탁</span></button>
+						</li>
+					</ul>
+				</div>
+				
+				<div class="regist__console">
+					<ul>
+						<li><button class="c-button c-button--darksolid c-button--small" type="button" onclick="onSaveTemp()">임시저장</button></li>
+						<li><button class="c-button c-button--small" type="button" onclick="onReadTemp()">임시저장내역</button></li>
+					</ul>
+					<ul>
+						<li><button class="c-button c-button--solid" type="button" onclick="onPay()">결제하기</button></li>
+						<li><button class="c-button" type="button" onclick="onRepeatRequest()">반복접수</button></li>
+					</ul>
+				</div>
+			</div>	
+		</div>
+	</div>
+	
+	
+	<!-- 기본 팝업 -->
+	<div class="pop">
+		<div class="pop__box">
+			<div class="pop__article">
+				<h3 class="pop__article-header">고객선택</h3>
+				<div class="pop__aricle-content">
+					<!-- 이 안에 넣어주기 -->
+		        	<div id="grid_customerList"></div>
+				</div>
+			</div>
+			
+			<ul class="pop__console">
+				<li><button class="c-button pop__close" onclick="onCloseSelectCustomer()">닫기</button></li>
+				<li><button class="c-button c-button--dark pop__close" onclick="onSelectCustomer()">선택</button></li>
+			</ul>
+		</div>
+	</div>
+	
+	
+	
+	<!-- 접수등록 팝업 -->
+	<div class="pop" id="productPop">
+		<div class="product-pop">
+			<div class="product-pop__article">
+				<div class="product-pop__article-header">
+					<h3>사이즈&amp;소재</h3>
+				</div>
+				<div class="product-pop__article-content">
+					<div class="product-pop__choice product-pop__choice--size">
+						<h4>사이즈</h4>
+						<ul>
+							<li>
+								<div class="choice">
+									<input type="radio" name="size" id="size1" checked />
+									<label for="size1">일반</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice">
+									<input type="radio" name="size" id="size2" />
+									<label for="size2">롱</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice">
+									<input type="radio" name="size" id="size3" />
+									<label for="size3">숏</label>
+								</div>
+							</li>
+						</ul>
+					</div>
+					<div class="product-pop__choice product-pop__choice--material">
+						<h4>사이즈</h4>
+						<!-- 위아래 스크롤 버튼 -->
+						<div class="c-elevator">
+							<button class="c-elevator__btn up">위</button>
+							<button class="c-elevator__btn down">아래</button>
+						</div>
+						<!-- /위아래 스크롤 버튼 -->
+						<ul>
+							<li>
+								<div class="choice choice--material">
+									<input type="radio" name="material" id="material1" checked />
+									<label for="material1">
+										<span class="choice__name">면</span>
+										<span class="choice__cost">999,999</span><span>원</span>
+									</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice choice--material">
+									<input type="radio" name="material" id="material2" />
+									<label for="material2">
+										<span class="choice__name">폴리에스테르 폴리에스테르 폴리에스테르 폴리에스테르 폴리에스테르 폴리에스테르</span>
+										<span class="choice__cost">999,999</span><span>원</span>
+									</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice choice--material">
+									<input type="radio" name="material" id="material3" />
+									<label for="material3">
+										<span class="choice__name">캐시미어</span>
+										<span class="choice__cost">999,999</span><span>원</span>
+									</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice choice--material">
+									<input type="radio" name="material" id="material4" />
+									<label for="material4">
+										<span class="choice__name">면</span>
+										<span class="choice__cost">999,999</span><span>원</span>
+									</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice choice--material">
+									<input type="radio" name="material" id="material5" />
+									<label for="material5">
+										<span class="choice__name">폴리에스테르 폴리에스테르 폴리에스테르 폴리에스테르 폴리에스테르 폴리에스테르</span>
+										<span class="choice__cost">999,999</span><span>원</span>
+									</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice choice--material">
+									<input type="radio" name="material" id="material6" />
+									<label for="material6">
+										<span class="choice__name">캐시미어</span>
+										<span class="choice__cost">999,999</span><span>원</span>
+									</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice choice--material">
+									<input type="radio" name="material" id="material7" />
+									<label for="material7">
+										<span class="choice__name">면</span>
+										<span class="choice__cost">999,999</span><span>원</span>
+									</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice choice--material">
+									<input type="radio" name="material" id="material8" />
+									<label for="material8">
+										<span class="choice__name">폴리에스테르 폴리에스테르 폴리에스테르 폴리에스테르 폴리에스테르 폴리에스테르</span>
+										<span class="choice__cost">999,999</span><span>원</span>
+									</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice choice--material">
+									<input type="radio" name="material" id="material9" />
+									<label for="material9">
+										<span class="choice__name">캐시미어</span>
+										<span class="choice__cost">999,999</span><span>원</span>
+									</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice choice--material">
+									<input type="radio" name="material" id="material10" />
+									<label for="material10">
+										<span class="choice__name">폴리에스테르</span>
+										<span class="choice__cost">999,999</span><span>원</span>
+									</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice choice--material">
+									<input type="radio" name="material" id="material11" />
+									<label for="material11">
+										<span class="choice__name">캐시미어</span>
+										<span class="choice__cost">999,999</span><span>원</span>
+									</label>
+								</div>
+							</li>
+							
+							<li>
+								<div class="choice choice--material">
+									<input type="radio" name="material" id="material12" />
+									<label for="material12">
+										<span class="choice__name">캐시미어</span>
+										<span class="choice__cost">999,999</span><span>원</span>
+									</label>
+								</div>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			
+			
+			<div class="product-pop__article">
+				<div class="product-pop__article-header">
+					<h3>색상/무늬</h3>
+				</div>
+				<div class="product-pop__article-content">
+					<div class="choice-color">
+						<h4>색상</h4>
+						<ul>
+							<li>
+								<input type="radio" name="color" class="choice-color__input" id="color1" checked />
+								<label for="color1" class="choice-color__label none">없음</label>
+							</li>
+							<li>
+								<input type="radio" name="color" class="choice-color__input" id="color2" />
+								<label for="color2" class="choice-color__label white">흰색</label>
+							</li>
+							<li>
+								<input type="radio" name="color" class="choice-color__input" id="color3" />
+								<label for="color3" class="choice-color__label black">검은색</label>
+							</li>
+							<li>
+								<input type="radio" name="color" class="choice-color__input" id="color4" />
+								<label for="color4" class="choice-color__label gray">회색</label>
+							</li>
+							<li>
+								<input type="radio" name="color" class="choice-color__input" id="color5" />
+								<label for="color5" class="choice-color__label red">빨강</label>
+							</li>
+							<li>
+								<input type="radio" name="color" class="choice-color__input" id="color6" />
+								<label for="color6" class="choice-color__label orange">주황</label>
+							</li>
+							<li>
+								<input type="radio" name="color" class="choice-color__input" id="color7" />
+								<label for="color7" class="choice-color__label yellow">노랑</label>
+							</li>
+							<li>
+								<input type="radio" name="color" class="choice-color__input" id="color8" />
+								<label for="color8" class="choice-color__label green">초록</label>
+							</li>
+							<li>
+								<input type="radio" name="color" class="choice-color__input" id="color9" />
+								<label for="color9" class="choice-color__label blue">파랑</label>
+							</li>
+							<li>
+								<input type="radio" name="color" class="choice-color__input" id="color10" />
+								<label for="color10" class="choice-color__label dark-blue">남색</label>
+							</li>
+							<li>
+								<input type="radio" name="color" class="choice-color__input" id="color11" />
+								<label for="color11" class="choice-color__label purple">보라</label>
+							</li>
+							<li>
+								<input type="radio" name="color" class="choice-color__input" id="color12" />
+								<label for="color12" class="choice-color__label pink">핑크</label>
+							</li>
+						</ul>
+					</div>
+					
+					<div class="product-pop__choice product-pop__choice--vertical">
+						<h4>무늬</h4>
+						<ul>
+							<li>
+								<div class="choice choice--full">
+									<input type="radio" name="pattern" id="pattern1" checked />
+									<label for="pattern1">없음</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice choice--full">
+									<input type="radio" name="pattern" id="pattern2" />
+									<label for="pattern2">체크</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice choice--full">
+									<input type="radio" name="pattern" id="pattern3" />
+									<label for="pattern3">혼합</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice choice--full">
+									<input type="radio" name="pattern" id="pattern4" />
+									<label for="pattern4">줄</label>
+								</div>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			
+			
+			<div class="product-pop__article">
+				<div class="product-pop__article-content">
+					<div class="c-text">
+						<input type="text" placeholder="브랜드, 특이사항 입력" />
+						<button>키보드</button>
+					</div>
+					
+					<div class="product-pop__choice">
+						<h4>가격등급</h4>
+						<ul>
+							<li>
+								<div class="choice">
+									<input type="radio" name="price" id="price1" checked />
+									<label for="price1">일반</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice">
+									<input type="radio" name="price" id="price2" />
+									<label for="price2">고급</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice">
+									<input type="radio" name="price" id="price3" />
+									<label for="price3">명품</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice">
+									<input type="radio" name="price" id="price4" />
+									<label for="price4">아동</label>
+								</div>
+							</li>
+						</ul>
+					</div>
+					
+					<div class="product-pop__choice">
+						<h4>할인등급</h4>
+						<ul>
+							<li>
+								<div class="choice">
+									<input type="radio" name="class" id="class1" checked />
+									<label for="class1">없음</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice">
+									<input type="radio" name="class" id="class2" />
+									<label for="class2">VIP</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice">
+									<input type="radio" name="class" id="class3" />
+									<label for="class3">VVIP</label>
+								</div>
+							</li>
+						</ul>
+					</div>
+					
+					<div class="product-pop__choice">
+						<h4>긴급</h4>
+						<ul>
+							<li>
+								<div class="choice">
+									<input type="radio" name="urgent" id="urgent1" checked />
+									<label for="urgent1">없음</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice">
+									<input type="radio" name="urgent" id="urgent2" />
+									<label for="urgent2">급세탁</label>
+								</div>
+							</li>
+						</ul>
+					</div>
+					
+					<div class="product-pop__choice">
+						<h4>처리내역</h4>
+						<ul>
+							<li>
+								<div class="choice">
+									<input type="checkbox" name="etc" id="etc1" checked />
+									<label for="etc1">없음</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice">
+									<input type="checkbox" name="etc" id="etc2" />
+									<label for="etc2">다림질</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice">
+									<input type="checkbox" name="etc" id="etc3" />
+									<label for="etc3">재세탁</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice">
+									<input type="checkbox" name="etc" id="etc4" />
+									<label for="etc4">수선</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice">
+									<input type="checkbox" name="etc" id="etc5" />
+									<label for="etc5">추가요금</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice">
+									<input type="checkbox" name="etc" id="etc6" />
+									<label for="etc6">표백</label>
+								</div>
+							</li>
+							<li>
+								<div class="choice-drop">
+									<button class="choice-drop__btn">오염</button>
+									<ul class="choice-drop__content">
+										<li class="choice-drop__item">
+											<input type="radio" id="pollut0" name="pollut" />
+											<label for="pollut0">미선택</label>
+										</li>
+										<li class="choice-drop__item">
+											<input type="radio" id="pollut1" name="pollut" />
+											<label for="pollut1">1cm 미만</label>
+										</li>
+										<li class="choice-drop__item">
+											<input type="radio" id="pollut2" name="pollut" />
+											<label for="pollut2">1cm ~ 3cm 미만</label>
+										</li>
+										<li class="choice-drop__item">
+											<input type="radio" id="pollut3" name="pollut" />
+											<label for="pollut3">3cm ~ 7cm 미만</label>
+										</li>
+										<li class="choice-drop__item">
+											<input type="radio" id="pollut4" name="pollut" />
+											<label for="pollut4">7cm ~ 10cm 미만</label>
+										</li>
+										<li class="choice-drop__item">
+											<input type="radio" id="pollut5" name="pollut" />
+											<label for="pollut5">10cm 이상</label>
+										</li>
+									</ul>
+								</div>
+							</li>
+							<li>
+								<div class="choice-drop">
+									<button class="choice-drop__btn">발수가공</button>
+									<ul class="choice-drop__content choice-drop__content--right">
+										<li class="choice-drop__item">
+											<input type="radio" id="water1" name="water" />
+											<label for="water1">발수가공</label>
+										</li>
+										<li class="choice-drop__item">
+											<input type="radio" id="water2" name="water" />
+											<label for="water2">풀먹임</label>
+										</li>
+									</ul>
+								</div>
+							</li>
+						</ul>
+					</div>
+				
+					<ul class="product-pop__price-list">
+						<li class="product-pop__price">
+							<h4>기본가격</h4>
+							<span>99,999</span>
+							<span class="won">원</span>
+						</li>
+						<li class="product-pop__price">
+							<h4>수선/추가요금</h4>
+							<span>99,999</span>
+							<span class="won">원</span>
+						</li>
+						<li class="product-pop__price">
+							<h4>할인요금</h4>
+							<span>99,999</span>
+							<span class="won">원</span>
+						</li>
+						<li class="product-pop__price-sum">
+							<h4>최종가격</h4>
+							<span>99,999</span>
+							<span class="won">원</span>
+						</li>
+					</ul>
+				</div>
+				
+				<ul class="pop__console pop__console--center">
+					<li><button class="c-button pop__close">닫기</button></li>
+					<li><button class="c-button c-button--dark pop__close">선택완료</button></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	
+	
+	
+	<!-- 수선 및 추가요금 팝업 -->
+	<div class="pop">
+		<div class="pop__box">
+			<div class="add-cost">
+				<div class="add-cost__example">
+					<div class="add-cost__example-header">
+						<h3 class="add-cost__example-heading"><span>수선리스트</span></h3>
+					</div>
+					<div class="add-cost__example-content">
+						<ul class="add-cost__example-list">
+							<li class="add-cost__example-item">
+								<button class="add-cost__example-btn">기장</button>
+							</li>
+							<li class="add-cost__example-item">
+								<button class="add-cost__example-btn">허리</button>
+							</li>
+							<li class="add-cost__example-item">
+								<button class="add-cost__example-btn">소매</button>
+							</li>
+							<li class="add-cost__example-item">
+								<button class="add-cost__example-btn">기타</button>
+							</li>
+							<li class="add-cost__example-item">
+								<button class="add-cost__example-btn">기타2</button>
+							</li>
+						</ul>
+					</div>
+				</div>
+				
+				<div class="add-cost__input-area">
+					<div class="add-cost__input">
+						<!-- 상용구 들어갈 인풋 -->
+						<div class="c-text">
+							<input type="text" placeholder="수선 리스트 입력" />
+							<button>키보드</button>
+						</div>
+					</div>
+					
+					<div class="add-cost__keypad">
+						<!-- 숫자패드 -->
+                        <div class="vkey-num active">
+                            <div class="vkey-num__input">
+                                <input type="text" class="keypad_field" />
+                            </div>
+                            <div class="vkey-num__pad">
+                                <button type="button" class="keypad_btn" value="1">1</button>
+                                <button type="button" class="keypad_btn" value="2">2</button>
+                                <button type="button" class="keypad_btn" value="3">3</button>
+                                <button type="button" class="keypad_btn" value="4">4</button>
+                                <button type="button" class="keypad_btn" value="5">5</button>
+                                <button type="button" class="keypad_btn" value="6">6</button>
+                                <button type="button" class="keypad_btn" value="7">7</button>
+                                <button type="button" class="keypad_btn" value="8">8</button>
+                                <button type="button" class="keypad_btn" value="9">9</button>
+                                <button type="button" class="keypad_btn" value="00">00</button>
+                                <button type="button" class="keypad_btn" value="0">0</button>
+                                <button type="button" class="keypad_btn_backspace">←</button>
+                            </div>
+                        </div>
+					</div>
+					
+					<ul class="pop__console pop__console--center">
+						<li><button class="c-button pop__close">닫기</button></li>
+						<li><button class="c-button c-button--dark pop__close">추가</button></li>
+					</ul>
+					
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	
+	
+	
+	<!-- 결제팝업 -->
+	<div class="pop">
+		<div class="pop__box">
+			<div class="pop__article">
+				<div class="pop__pay">
+					<div class="pop__pay-article hold">
+						<h3 class="pop__article-header">결제창</h3>
+						<div class="pop__pay-list">
+							<dl>
+								<dt>미수금</dt>
+								<dd class="color--red"><span>9,000</span>원</dd>
+								<dt>적립금</dt>
+								<dd class="color--blue"><span>19,000</span>원</dd>
+							</dl>
+						</div>
+						<button class="c-button c-button--small c-button--darksolid">미수전액완납</button>
+					</div>
+					
+					<div class="pop__pay-article estimate">
+						<h3 class="pop__article-header">접수금액</h3>
+						<div class="pop__pay-list">
+							<dl>
+								<dt>접수금액</dt>
+								<dd><span>9,000</span>원</dd>
+								<dt>추가/할인금액</dt>
+								<dd><span>19,000</span>원</dd>
+								<dt>결제예정금액<span class="color--blue">(A)</span></dt>
+								<dd class="color--red"><span>28,000</span>원</dd>
+								<dt>적립금사용<span class="color--blue">(B)</span></dt>
+								<dd class="color--blue"><button class="c-keybtn">키보드</button><span>19,000</span>원</dd>
+								<dt>미수금결제<span>(C)</span></dt>
+								<dd class="color--red"><button class="c-cancelbtn">취소</button><span>9,000</span>원</dd>
+								<dt class="final">최종결제금액<span class="bold">(A + B + C)</span></dt>
+								<dd class="final"><span>18,000</span>원</dd>
+							</dl>
+						</div>
+					</div>
+					
+					<div class="pop__pay-tabs">
+						<button class="pop__pay-tabs-item active" data-id="tabCash">현금결제</button>
+						<button class="pop__pay-tabs-item" data-id="tabCard">카드결제</button>
+					</div>
+				</div>
+			</div>
+			
+			<div class="pop__article">
+				<div class="pop__pay">
+					<div class="pop__pay-article half">
+						<h3 class="pop__article-header">결제내역</h3>
+						<div class="pop__pay-details">
+							<!-- 그리드 들어갈 영역 -->
+						</div>
+					</div>
+					<div class="pop__pay-article half">
+						<div class="pop__tabs-content pop__cash active" id="tabCash">
+							<div class="pop__pay-cash">
+								<input type="checkbox" id="cash" />
+								<label for="cash">현금영수증발행</label>
+							</div>
+							<div class="pop__pay-list pop__pay-list--cash">
+								<dl>
+									<dt>받은돈</dt>
+									<dd class="color--blue"><button class="c-keybtn">키보드</button><span>30,000</span>원</dd>
+									<dt>거스름돈</dt>
+									<dd class="color--blue"><span>10,000</span>원</dd>
+									<dt class="final">미수발생금액</dt>
+									<dd class="final"><span>18,000</span>원</dd>
+								</dl>
+							</div>
+						</div>
+						
+						<div class="pop__tabs-content pop__card" id="tabCard">
+							<div class="pop__card-period">
+								<div class="c-select">
+									<select>
+					                    <option>일시불</option>
+					                </select>
+								</div>
+							</div>
+							<div class="pop__pay-list">
+								<dl>
+									<dt>결제금액</dt>
+									<dd class="color--blue"><button class="c-keybtn">키보드</button><span>30,000</span>원</dd>
+									<dt class="final">미수발생금액</dt>
+									<dd class="final"><span>18,000</span>원</dd>
+								</dl>
+							</div>
+						</div>
+						
+					</div>
+				</div>
+			</div>
+			
+			<ul class="pop__console">
+				<li><button class="c-button pop__close">닫기</button></li>
+				<li><button class="c-button c-button--dark pop__close">결제하기</button></li>
+			</ul>
+		</div>
+	</div>
+	
+	
+	<!-- 카메라 팝업 -->
+	<div class="pop">
+		<div class="pop__box">
+			<div class="photo">
+				<div class="photo__article">
+					<div class="photo__haed">
+						<h4>카메라</h4>
+					</div>
+					<div class="photo__content">
+						<div class="photo__take">
+							<!-- 캠 영상 들어갈 곳 -->
+							<video src=""></video>
+						</div>
+						<div class="photo__add">
+							<div class="photo__add-item">
+								<div class="photo__add-title">특이사항</div>
+								<div class="photo__add-console">
+									<div class="c-text">
+										<input type="text" />
+										<button>키보드</button>
+									</div>
+								</div>
+							</div>
+							<div class="photo__add-item">
+								<div class="photo__add-title">사용구</div>
+								<div class="photo__add-console">
+									<div class="photo__btns">
+										<button class="c-button c-button--small">구멍</button>
+										<button class="c-button c-button--small">찢어짐</button>
+										<button class="c-button c-button--small">얼룩</button>
+										<button class="c-button c-button--small c-button--solid">촬영</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<div class="photo__article">
+					<div class="photo__haed">
+						<h4>촬영된 사진</h4>
+					</div>
+					<div class="photo__list">
+						<div class="photo__picture">
+							<div class="photo__picture-head">
+								<h5 class="photo__picture-title">구멍</h5>
+								<button class="photo__picture-delete">삭제</button>
+							</div>
+							<div class="photo__picture-item">
+								<a href="/assets/images/dummy/cam.png" class="photo__img" data-lightbox="images" data-title="구멍">
+									<img src="/assets/images/dummy/cam.png" alt="" />
+								</a>
+							</div>
+						</div>
+						<div class="photo__picture">
+							<div class="photo__picture-head">
+								<h5 class="photo__picture-title">얼룩</h5>
+								<button class="photo__picture-delete">삭제</button>
+							</div>
+							<div class="photo__picture-item">
+								<a href="/assets/images/dummy/cam.png" class="photo__img" data-lightbox="images" data-title="얼룩">
+									<img src="/assets/images/dummy/cam.png" alt="" />
+								</a>
+							</div>
+						</div>
+					</div>
+					<ul class="pop__console pop__console--center">
+						<li><button class="c-button pop__close">닫기</button></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<!-- 오염 팝업 -->
+	<div class="pop">
+		<div class="pop__box pop__box--flex">
+			<div class="pop__example">
+				<div class="pop__example-header">
+					<h3 class="pop__example-heading">오염크기</h3>
+				</div>
+				<div class="pop__example-content">
+					<ul class="pop__example-list">
+						<li class="pop__example-item">
+							<div class="choice">
+								<input type="radio" name="pollution" id="pollution01" checked="" />
+								<label for="pollution01">없음</label>
+							</div>
+						</li>
+						<li class="pop__example-item">
+							<div class="choice">
+								<input type="radio" name="pollution" id="pollution02" />
+								<label for="pollution02">1cm 미만</label>
+							</div>
+						</li>
+						<li class="pop__example-item">
+							<div class="choice">
+								<input type="radio" name="pollution" id="pollution03" />
+								<label for="pollution03">1cm ~ 3cm 미만</label>
+							</div>
+						</li>
+						<li class="pop__example-item">
+							<div class="choice">
+								<input type="radio" name="pollution" id="pollution04" />
+								<label for="pollution04">3cm ~ 7cm 미만</label>
+							</div>
+						</li>
+						<li class="pop__example-item">
+							<div class="choice">
+								<input type="radio" name="pollution" id="pollution05" />
+								<label for="pollution05">7cm ~ 10cm 미만</label>
+							</div>
+						</li>
+						<li class="pop__example-item">
+							<div class="choice">
+								<input type="radio" name="pollution" id="pollution06" />
+								<label for="pollution06">10cm 이상</label>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</div>
+
+			<div class="pop__example">
+				<div class="pop__example-header">
+					<h3 class="pop__example-heading">오염위치</h3>
+				</div>
+				<div class="pop__example-content">
+					<div class="pop__pollution-header">
+						<div class="choice">
+							<input type="radio" name="fb" id="fb01" checked="" />
+							<label for="fb01">앞</label>
+						</div>
+						<div class="choice">
+							<input type="radio" name="fb" id="fb02" />
+							<label for="fb02">뒤</label>
+						</div>
+					</div>
+					<div class="pop__pollution-content">
+						<div class="pop__position neck">
+							<div class="c-checkbox c-checkbox--non-title">
+								<input type="checkbox" id="neck">
+								<label for="neck">목</label>
+							</div>
+						</div>
+						<div class="pop__position neck">
+							<div class="c-checkbox c-checkbox--non-title">
+								<input type="checkbox" id="neck2">
+								<label for="neck2">목</label>
+							</div>
+						</div>
+						<div class="pop__position left-sleeve">
+							<div class="c-checkbox c-checkbox--non-title">
+								<input type="checkbox" id="leftSleeve">
+								<label for="leftSleeve">왼쪽 소매</label>
+							</div>
+						</div>
+						<div class="pop__position left-sleeve">
+							<div class="c-checkbox c-checkbox--non-title">
+								<input type="checkbox" id="leftSleeve2">
+								<label for="leftSleeve2">왼쪽 소매</label>
+							</div>
+						</div>
+						<div class="pop__position right-sleeve">
+							<div class="c-checkbox c-checkbox--non-title">
+								<input type="checkbox" id="rightSleeve">
+								<label for="rightSleeve">오른쪽 소매</label>
+							</div>
+						</div>
+						<div class="pop__position right-sleeve">
+							<div class="c-checkbox c-checkbox--non-title">
+								<input type="checkbox" id="rightSleeve2">
+								<label for="rightSleeve2">오른쪽 소매</label>
+							</div>
+						</div>
+						<div class="pop__position body">
+							<div class="c-checkbox c-checkbox--non-title">
+								<input type="checkbox" id="body">
+								<label for="body">몸통</label>
+							</div>
+						</div>
+						<div class="pop__position body">
+							<div class="c-checkbox c-checkbox--non-title">
+								<input type="checkbox" id="body2">
+								<label for="body2">몸통</label>
+							</div>
+						</div>
+						<div class="pop__position left-leg">
+							<div class="c-checkbox c-checkbox--non-title">
+								<input type="checkbox" id="leftLeg">
+								<label for="leftLeg">왼쪽 다리</label>
+							</div>
+						</div>
+						<div class="pop__position left-leg">
+							<div class="c-checkbox c-checkbox--non-title">
+								<input type="checkbox" id="leftLeg2">
+								<label for="leftLeg2">왼쪽 다리</label>
+							</div>
+						</div>
+						<div class="pop__position right-leg">
+							<div class="c-checkbox c-checkbox--non-title">
+								<input type="checkbox" id="rightLeg">
+								<label for="rightLeg">오른쪽 다리</label>
+							</div>
+						</div>
+						<div class="pop__position right-leg">
+							<div class="c-checkbox c-checkbox--non-title">
+								<input type="checkbox" id="rightLeg2">
+								<label for="rightLeg2">오른쪽 다리</label>
+							</div>
+						</div>
+						<div class="pop__position groin">
+							<div class="c-checkbox c-checkbox--non-title">
+								<input type="checkbox" id="groin">
+								<label for="groin">사타구니</label>
+							</div>
+						</div>
+						<div class="pop__position groin">
+							<div class="c-checkbox c-checkbox--non-title">
+								<input type="checkbox" id="groin2">
+								<label for="groin2">사타구니</label>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<ul class="pop__console pop__console--center pop__console--nonbg">
+				<li><button class="c-button">닫기</button></li>
+				<li><button class="c-button c-button--dark">선택완료</button></li>
+			</ul>
+		</div>
+	</div>
+
+	<!-- 접수 사진 촬영내역 -->
+	<div class="pop">
+		<div class="pop__box">
+			<div class="pop__article">
+				<div class="tag-imgs">
+					<ul class="tag-imgs__list">
+						<li class="tag-imgs__item">
+							<a href="">
+								<img src="https://bw-toppos-images.s3.ap-northeast-2.amazonaws.com/toppos-franchise-inspection/20220323/s_7968c9b5b5d940fbb27e2a1ac9ce614b.png" alt="" class="tag-imgs__img">
+								<span class="tag-imgs__title">찢어짐</span>
+							</a>
+						</li>
+						<li class="tag-imgs__item">
+							<a href="">
+								<img src="https://bw-toppos-images.s3.ap-northeast-2.amazonaws.com/toppos-franchise-inspection/20220323/s_7968c9b5b5d940fbb27e2a1ac9ce614b.png" alt="" class="tag-imgs__img">
+								<span class="tag-imgs__title">찢어짐</span>
+							</a>
+						</li>
+						<li class="tag-imgs__item">
+							<a href="">
+								<img src="https://bw-toppos-images.s3.ap-northeast-2.amazonaws.com/toppos-franchise-inspection/20220323/s_7968c9b5b5d940fbb27e2a1ac9ce614b.png" alt="" class="tag-imgs__img">
+								<span class="tag-imgs__title">찢어짐</span>
+							</a>
+						</li>
+						<li class="tag-imgs__item">
+							<a href="">
+								<img src="https://bw-toppos-images.s3.ap-northeast-2.amazonaws.com/toppos-franchise-inspection/20220323/s_7968c9b5b5d940fbb27e2a1ac9ce614b.png" alt="" class="tag-imgs__img">
+								<span class="tag-imgs__title">찢어짐</span>
+							</a>
+						</li>
+						<li class="tag-imgs__item">
+							<a href="">
+								<img src="https://bw-toppos-images.s3.ap-northeast-2.amazonaws.com/toppos-franchise-inspection/20220323/s_7968c9b5b5d940fbb27e2a1ac9ce614b.png" alt="" class="tag-imgs__img">
+								<span class="tag-imgs__title">찢어짐</span>
+							</a>
+						</li>
+						<li class="tag-imgs__item">
+							<a href="">
+								<img src="https://bw-toppos-images.s3.ap-northeast-2.amazonaws.com/toppos-franchise-inspection/20220323/s_7968c9b5b5d940fbb27e2a1ac9ce614b.png" alt="" class="tag-imgs__img">
+								<span class="tag-imgs__title">찢어짐</span>
+							</a>
+						</li>
+						<li class="tag-imgs__item">
+							<a href="">
+								<img src="https://bw-toppos-images.s3.ap-northeast-2.amazonaws.com/toppos-franchise-inspection/20220323/s_7968c9b5b5d940fbb27e2a1ac9ce614b.png" alt="" class="tag-imgs__img">
+								<span class="tag-imgs__title">찢어짐</span>
+							</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<ul class="pop__console">
+				<li>
+					<button class="c-button pop__close">닫기</button>
+				</li>
+			</ul>
+		</div>
+	</div>
+
+	<!-- loading -->
+	<div class="loader-wrap">
+		<div class="loader">
+			<div class="loader__dot"></div>
+			<div class="loader__dot"></div>
+			<div class="loader__dot"></div>
+			<div class="loader__dot"></div>
+			<div class="loader__dot"></div>
+			<div class="loader__dot"></div>
+			<div class="loader__text">서버와 통신중입니다.</div>
+		</div>
+	</div>
+</div>
+</html>

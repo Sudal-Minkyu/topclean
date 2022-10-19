@@ -1,0 +1,59 @@
+/* 웹 카메라 촬영 스트림이 담긴다. */
+let cameraStream;
+
+/* 웹 카메라와 촬영 작업중 */
+async function onPopTakePicture(event) {
+    currentRequest = event.item;
+    // const cameraList = document.getElementById("cameraList"); 복수 카메라를 사용할 경우 해제하여 작업
+    cameraStream = await navigator.mediaDevices.getUserMedia({
+        audio: false,
+        video: {
+            width: {ideal: 4096},
+            height: {ideal: 2160}
+        },
+    });
+    /* 복수 카메라를 사용할 경우 해제하여 작업
+    let videoInput = [];
+    await navigator.mediaDevices.enumerateDevices().then(devices => {
+        for(let i = 0; i < devices.length; i++) {
+            if(devices[i].kind === "videoinput") {
+                videoInput.push({
+                    label : devices[i].label,
+                    deviceId : devices[i].deviceId
+                });
+            }
+        }
+    });
+    videoInput.forEach(e => {
+        const option = document.createElement('option');
+        option.value = e.deviceId;
+        option.text = e.label;
+        cameraList.appendChild(option);
+    });
+    */
+    $(".camBoiler").on("click", function () {
+        const $ffRemark = $("#ffRemark");
+        $ffRemark.val($ffRemark.val() + " " + this.innerHTML);
+    });
+
+    const screen = document.getElementById("cameraScreen");
+    screen.srcObject = cameraStream;
+    currentRequest.photoList.forEach(picJson => {
+        picJson.fullImage = picJson.ffPath + picJson.ffFilename;
+        picJson.thumbnailImage = picJson.ffPath + "s_" + picJson.ffFilename;
+        putTakenPictureOnTheRightSide(picJson);
+    });
+    $("#cameraPop").addClass("active");
+}
+
+/* 복수 카메라를 사용할 경우 해제하여 작업
+async function onChangeCamera(deviceId) {
+    const cameraStream = await navigator.mediaDevices.getUserMedia({audio: false, video: {
+            deviceId : deviceId ? {exact : deviceId} : undefined,
+            width: { ideal: 4096 },
+            height: { ideal: 2160 }
+        }});
+    const screen = document.getElementById("cameraScreen");
+    screen.srcObject = cameraStream;
+}
+*/

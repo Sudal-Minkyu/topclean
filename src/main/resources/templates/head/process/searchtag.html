@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/defaulthead}" xmlns="http://www.w3.org/1999/html">
+
+<!-- 사용자 CSS 추가 -->
+<th:block layout:fragment="css">
+</th:block>
+
+<!-- 사용자 스크립트 추가 -->
+<th:block layout:fragment="script">
+    <script type="module" src="/assets/js/toppos/head/process/searchtag.js?22081118"></script>
+    <!-- 엑셀 다운로드 기능을 사용하기 위함 -->
+    <script src="/assets/js/filesaver/FileSaver.min.js"></script>
+</th:block>
+
+<div layout:fragment="content" class="content content--padding">
+    <section class="section">
+        <article class="article">
+            <div class="article__header">
+                <h3 class="article__heading">TAG 번호 조회</h3>
+            </div>
+            <div class="article__body">
+                <div class="inquiry">
+                    <div class="inquiry__condition">
+                        <ul>
+                            <li>
+                                <div class="inquiry__title">지사</div>
+                                <div class="inquiry__input">
+                                    <div class="c-select">
+                                        <select id="brList">
+                                            <option value="0">전체선택</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="inquiry__title">가맹점</div>
+                                <div class="inquiry__input">
+                                    <div class="c-select">
+                                        <select id="frList" disabled="">
+                                            <option value="0">전체선택</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="doubleTag" style="display: none;">
+                                <div id="frTagNo" class="inquiry__title">택번호(앞)</div>
+                                <div class="inquiry__input">
+                                    <div class="inquiry__input-tag">
+                                        <input id="foreTag" type="text" style="color: black;" readonly/>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="doubleTag" style="display: none;">
+                                <div class="inquiry__title">택번호(뒤)</div>
+                                <div class="inquiry__input">
+                                    <div class="inquiry__input-tag">
+                                        <input id="aftTag" type="text" maxlength="5" />
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="singleTag">
+                                <div class="inquiry__title">택번호(7자리)</div>
+                                <div class="inquiry__input">
+                                    <div class="inquiry__input-tag">
+                                        <input id="fullTag" type="text" maxlength="8" />
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="inquiry__button">
+                        <button id="searchListBtn" class="c-button c-button--small c-button--darksolid">조회</button>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <div class="article">
+            <div class="article__body">
+                <div style="height: 570px; margin-top: 20px; border: 1px solid #ddd">
+                    <div id="grid_main" style="height: 570px;"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+</html>

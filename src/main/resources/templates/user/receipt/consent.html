@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate ="~{layout/login}">
+
+<!-- 사용자 CSS 추가 -->
+<th:block layout:fragment="css">
+	<style>
+		.consent {
+			overflow: hidden;
+			width: 62.5rem;
+			background-color: #fff;
+			border: 0.125rem solid #959595;
+			-webkit-border-radius: 1.25rem;
+			-moz-border-radius: 1.25rem;
+			border-radius: 1.25rem;
+		}
+		.consent__header {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			width: 60rem;
+			height: 3.75rem;
+			margin: 0 1.25rem 1.25rem 1.25rem;
+			border-bottom: 1px solid #c8c8c8;
+		}
+		.consent__heading {
+			color: #444;
+			font-size: 2rem;
+		}
+		.consent__text {
+			padding: 0 2.5rem;
+		}
+		.consent__text h3 {
+			font-size: 1.25rem;
+			margin-bottom: 0.313rem;
+		}
+		.consent__text ul {
+			padding-left: 0.625rem;
+		}
+		.consent__text ul > li {
+			font-size: 1.125rem;
+		}
+		.consent__text ul > li + li {
+			margin-top: 0.313rem;
+		}
+		.consent__text ul > li > span {
+			font-weight: 700;
+			text-decoration: underline;
+		}
+		.consent__text ul + h3 {
+			margin-top: 0.625rem;
+		}
+		.consent__text h3:last-child {
+			text-align: center;
+		}
+		.consent__console {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			width: 100%;
+			height: 4.375rem;
+			padding: 0 1.25rem;
+			margin-top: 1.25rem;
+			background-color: #dbdbdb;
+		}
+		.consent__console-text {
+			color: #333;
+			line-height: 1.4;
+		}
+		.consent__console-text h3 {
+			font-size: 1.25rem;
+			font-weight: 700;
+		}
+		.consent__console-text ul li {
+			font-size: 1rem;
+		}
+		.consent__btn {
+			width: 8rem;
+			height: 3.125rem;
+			margin-left: auto;
+			background-color: #0082f0;
+			border: 0 none;
+			color: #fff;
+			font-size: 1.25rem;
+			font-weight: 700;
+			-webkit-border-radius: 0.625rem;
+			-moz-border-radius: 0.625rem;
+			border-radius: 0.625rem;
+		}
+		a.consent__btn {
+			display: block;
+			line-height: 3.125rem;
+			text-align: center;
+		}
+		.consent__btn.consent__btn--red {
+			margin-left: 1.25rem;
+			background-color: #b82c31;
+		}
+		
+	</style>
+</th:block>
+
+<!-- 사용자 스크립트 추가 -->
+<th:block layout:fragment="script">
+    <script type="text/javascript">
+        $(function() {
+			$("#disagree").on("click", function () {
+				alertCheck("신발세탁 접수를 취소하시겠습니까?");
+				$("#checkDelSuccessBtn").on("click", function () {
+					secondcAPI.approvalCheck("cancel");
+					location.href = "/assistant";
+				});
+			});
+        });
+    </script>
+</th:block>
+
+<div layout:fragment="content" class="content">
+	<div class="consent">
+		<div class="consent__header">
+			<h1 class="consent__logo"><img src="/assets/images/logo.svg" alt="탑 크리닝업 메가샵" /></h1>
+			<h2 class="consent__heading">운동화 세탁 접수의뢰 동의서</h2>
+		</div>
+        <div class="consent__text" style="width:100%; height:593px;">
+            <h3>1. 접수 고객 동의사항</h3>
+            <ul>
+                <li>1) 모든 신발류는 기본 세탁 금지 품목입니다. 세탁물 접수 시 고객님들의 선택사항으로 하단 고지사항에 대하여 <br />동의 후 세탁을 진행합니다.</li>
+                <li>2) 명품 및 세무, 가죽, 전문 스포츠화 등 모든 신발류 전 제품에 해당합니다.</li>
+            </ul>
+            <h3>2. 고지사항</h3>
+            <ul>
+                <li>1) 신발은 표면 까짐, 수축현상, 변형, 거칠어짐, 이염, 탈색, 우글거림 등이 발생할 수 있습니다.</li>
+                <li>2) 어그 부츠와 세무, 가죽 및 스웨이드 재질 혹은 두 가지 이상의 색상으로 혼합된 제품은 변색, 물 빠짐, <br />이염(끈 및 깔창 포함), 경화(굳음) 현상이 발생할 수 있습니다.</li>
+                <li>3) 세탁 시 부착물류(레자, 큐빅 등 악세서리)는 까지거나 떨어지는 현상이 발생할 수 있습니다.</li>
+                <li>4) 신발 코 부분의 떨어짐 및 발목 뒤축 부분은(가죽, 스웨이드 심함)까짐이 발생할 수 있습니다.</li>
+                <li>5) 흰색 신발 및 캔버스화 등은 특성상 수축 또는 우글거림이나 변형이 일어날 수 있고, 밑창 부분은 접착부분의 본드에 <br />의한 누른 황변이 발생할 수 잇습니다.</li>
+                <li>6) 오래된 찌든 때, 변색된 부분 등은 완벽히 제거되지 않을 수 있습니다.(메시재질, 캔버스화 등)</li>
+                <li>7) 운동화 끈 및 깔창 등은 기본 소모품류에 속하기에 파손 및 변형될 수 있습니다. <br /><span>※ 비동의 시 세탁 접수 전 탈거(보관 불가)</span></li>
+                <li>8) 신발 밑창(또는 이음새) 부분의 접착제가 사용된 부분은 분리되거나 착용 상 경화로 인하여 세탁 시 부스러짐이나 <br />떨어짐이 발생할 수 있습니다.</li>
+            </ul>
+			<h3>※ 상단 고지사항 내용에 대하여 동의 후 세탁을 진행함으로써 어떠한 경우에도 <br />고지사항에 따른 발생 사항으로 인한 보상이 없음을 고지 드립니다.</h3>
+        </div>
+		<div class="consent__console">
+			<div class="consent__console-text">
+				<h3>상기 내용에 대한 설명을 들었으며, 세탁에 동의합니다.</h3>
+			</div>
+			<!-- 저장 버튼 -->
+		    <!-- <button id="save">save</button> -->
+		    <a href="/user/consentsign" class="consent__btn">동의</a>
+			<button id="disagree" type="button" class="consent__btn consent__btn--red">비동의</button>
+		</div>
+	</div>
+
+
+
+</div>
+</html>

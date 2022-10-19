@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ko"
+	  xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate ="~{layout/defaultmanager}">
+
+<!-- 사용자 CSS 추가 -->
+<th:block layout:fragment="css">
+    <link rel="stylesheet" href="/assets/js/summernote/summernote-lite.css">
+    <style>
+		
+    </style>
+</th:block>
+
+<!-- 사용자 스크립트 추가 -->
+<th:block layout:fragment="script">
+	<script src="/assets/js/toppos/manager/setting/board/write.js"></script>
+    <!-- 글쓰기용 js summernote 라이브러리 -->
+    <script src="/assets/js/summernote/summernote-lite.js"></script>
+</th:block>
+
+<div layout:fragment="content" class="content content--board">
+    <div class="board board--bottom-nonpadding">
+        <div class="board__header">
+            <div class="board__header-console">
+<!--                <div class="c-select">-->
+<!--                    <select id="selectBoard">-->
+<!--                        <option value="taglost">TAG 분실 게시판</option>-->
+<!--                    </select>-->
+<!--                </div>-->
+                <div class="board__header-input">
+                    <input id="subject" type="text" placeholder="제목입력" />
+                </div>
+            </div>
+        </div>
+
+        <div class="board__body">
+            <div class="board__upload">
+                <div class="board__upload-title">업로드 파일 선택</div>
+                <div class="board__upload-input">
+                    <label class="c-file">파일선택<input id="fileSelector" type="file" multiple/></label>
+                    <button type="button" id="fileListBtn" class="board__upload-count">첨부파일 <span id="fileCnt">0</span>개 (<span id="fileTotVolume">0</span>)</button>
+                </div>
+                <div id="fileListPanel" class="board__upload-list">
+                    <ul id="fileList">
+                    </ul>
+                </div>
+            </div>
+            <div id="summernote"></div>
+        </div>
+    </div>
+
+    <div class="board-view__console board-view__console--bottom">
+        <a id="previousLink" href="#" class="c-button">목록</a>
+        <button type="button" id="saveBtn" class="c-button c-button--solid">완료</button>
+    </div>
+</div>
+</html>

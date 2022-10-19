@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate ="~{layout/defaulttest}">
+
+<!-- 사용자 CSS 추가 -->
+<th:block layout:fragment="css">
+    <style>
+    </style>
+</th:block>
+
+<!-- 사용자 스크립트 추가 -->
+<th:block layout:fragment="script">
+    <script src="/assets/js/toppos/user/inandout/franchiseincancel.js?22082514"></script>
+</th:block>
+
+<div layout:fragment="content" class="content content--column">
+	<div class="content__header">
+        <!-- menu명 -->
+        <h2 class="content__heading"><spans class="content__heading-home">Home</spans>&nbsp;&gt;&nbsp;입출고관리&nbsp;&gt;&nbsp;가맹점 입고 취소</h2>
+		<!-- 검색조건 -->
+		<div class="condition condition--non-margin">
+			<div class="condition__date">
+                <div class="condition__date-title">가맹점입고일</div>
+				<div class="c-period">
+					<!-- 시작일 -->
+					<input type="text" id="filterFromDt" />
+					<span class="c-period__code">-</span>
+					<!-- 종료일 -->
+					<input type="text" id="filterToDt" />
+				</div>
+			</div>
+			
+			<div class="condition__console">
+				<button class="c-button c-button--solid c-button--small" id="searchBtn">조회</button>
+			</div>
+		</div>
+		<!-- <div class="content__header-text">
+			<h3>가맹점 입고 취소</h3>
+		</div> -->
+		<div class="content__header-btns">
+			<button class="c-button c-button--small c-button--red" id="cancelInBtn">입고취소</button>
+		</div>
+	</div>
+	
+    <div class="content__body">
+    	<!-- grid -->
+    	<div id="franchiseInList" style="height: 616px;"></div>
+    </div>
+</div>
+</html>

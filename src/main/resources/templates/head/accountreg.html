@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="ko"
+	  xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{layout/defaulthead}" xmlns="http://www.w3.org/1999/html">
+
+<!-- 사용자 CSS 추가 -->
+<th:block layout:fragment="css">
+
+</th:block>
+
+<!-- 사용자 스크립트 추가 -->
+<th:block layout:fragment="script">
+	<script src="/assets/js/toppos/head/accountreg.js?22091317"></script>
+</th:block>
+
+<div layout:fragment="content" class="content content--padding">	
+	<section class="section">
+		<article class="article">
+			<div class="article__header" style="margin-bottom: 0;">
+                <h3 class="article__heading">사용자 등록</h3>
+            </div>
+			<div class="article__body">
+				<form id="accountFormData" autocomplete="off" enctype="multipart/form-data">
+					<div class="form">
+						<ul class="form__list">
+							<li class="form__item">
+								<div class="form__title">아이디</div>
+								<div class="form__input">
+									<div class="c-text-button">
+										<input type="text" name="userid" id="userid" onkeyup="onChangeUserId()"/>
+										<input type="hidden" id="useridChecked" value="0" />
+										<button type="button" class="c-button c-button--small" id="useridCheckedBtn" onclick="useridOverlap()">중복확인</button>
+									</div>
+								</div>
+							</li>
+							<li class="form__item">
+								<div class="form__title">암호</div>
+								<div class="form__input">
+									<input type="password" id="password" name="password" />
+								</div>
+							</li>
+							<li class="form__item">
+								<div class="form__title">전화번호</div>
+								<div class="form__input">
+									<input type="text" id="usertel" name="usertel" onkeyup="formatTel(this)"/>
+								</div>
+							</li>
+						</ul>
+
+						<ul class="form__list form__list--stretch">
+							<li class="form__item">
+								<div class="form__title">이름</div>
+								<div class="form__input">
+									<input type="text" name="username" id="username" autocomplete="do-not-autofill"/>
+								</div>
+							</li>
+							<li class="form__item">
+								<div class="form__title">권한</div>
+								<div class="form__input">
+									<div class="c-select">
+										<select id="role" name="role">
+											<option value="">선택</option>
+											<option th:each ="role : ${roles}"
+													th:value="${role.getCode()}"
+													th:text="${role.getDesc()}">
+											</option>
+										</select>
+									</div>
+								</div>
+							</li>
+							<li class="form__item">
+								<div class="form__title">이메일</div>
+								<div class="form__input">
+									<input type="text" id="useremail" name="useremail" />
+								</div>
+							</li>
+						</ul>
+
+						<ul class="form__list">
+							<li class="form__item">
+								<div class="form__title">가맹점코드 3자리</div>
+								<div class="form__input">
+									<div class="c-text-button">
+										<input type="text" id="frCode" maxlength="3" name="frCode" readonly=""/>
+										<button id="frCodeBtn" type="button" class="c-button c-button--small" onclick="frListPop()" disabled="">가맹점선택</button>
+									</div>
+									<span class="text-color--red">*가맹점 권한 시 필수</span>
+								</div>
+							</li>
+							<li class="form__item">
+								<div class="form__title">지사코드 2자리</div>
+								<div class="form__input">
+									<div class="c-text-button">
+										<input type="text" id="brCode" maxlength="2" name="brCode" readonly=""/>
+										<button id="brCodeBtn" type="button" class="c-button c-button--small" onclick="brListPop()" disabled="">지사선택</button>
+									</div>
+									<span class="text-color--red">*지사 권한 시 필수</span>
+								</div>
+							</li>
+						</ul>
+
+						<ul class="form__list form__list--100">
+							<li class="form__item">
+								<div class="form__title">특이사항</div>
+								<div class="form__input">
+									<textarea  id="userremark" name="userremark"></textarea>
+								</div>
+							</li>
+						</ul>
+					</div>
+				</form>
+			</div>
+			<ul class="article__console article__console--right article__console--non-border">
+				<li><button type="button" class="c-button c-button--solid" onclick="createNewPost(0)">신규</button></li>
+				<li><button class="c-button c-button--darksolid" onclick="accountSave()">저장</button></li>
+				<li><button class="c-button c-button--red" onclick="accountRemove()">삭제</button></li>
+			</ul>
+		</article>
+	</section>
+	
+	<section class="section">
+		<article class="article">
+			<div class="article__body">
+				<div class="inquiry">
+                    <div class="inquiry__condition">
+                        <ul>
+                            <li>
+                                <div class="inquiry__title">아이디</div>
+                                <div class="inquiry__input">
+									<div class="inquiry__input-tag">
+										<input type="text" name="s_userid" id="s_userid" />
+									</div>
+                                </div>
+                            </li>
+                            <li>
+                                <div id="frTagNo" class="inquiry__title">이름</div>
+                                <div class="inquiry__input">
+                                    <div class="inquiry__input-tag">
+                                        <input type="text" name="s_username" id="s_username" />
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="inquiry__title">권한</div>
+                                <div class="inquiry__input">
+                                    <div class="c-select">
+										<select id="s_role" name="s_role">
+											<option value="">모두</option>
+											<option th:each ="role : ${roles}"
+													th:value="${role.getCode()}"
+													th:text="${role.getDesc()}">
+											</option>
+										</select>
+									</div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="inquiry__title">가맹점코드</div>
+                                <div class="inquiry__input">
+                                    <div class="inquiry__input-tag">
+										<input type="text" name="s_frCode" id="s_frCode" maxlength="3" />
+									</div>
+                                </div>
+                            </li>
+							<li>
+                                <div class="inquiry__title">지사코드</div>
+                                <div class="inquiry__input">
+                                    <div class="inquiry__input-tag">
+										<input type="text" name="s_brCode" id="s_brCode" maxlength="2" />
+									</div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="inquiry__button inquiry__button--row">
+                        <button type="button" class="c-button c-button--small c-button--solid" onclick="filterAccountList(1)">검색</button>
+						<button type="button" class="c-button c-button--small" onclick="filterAccountList(2)">초기화</button>
+                    </div>
+                </div>
+			</div>
+		</article>
+		
+		<article class="article">
+			<div class="article__content">
+				<div id="grid_accountList" style="height: 290px;"></div>
+			</div>
+		</article>
+	</section>
+	
+	
+	
+	
+	
+
+
+	<!-- 지사 팝업 -->
+	<div class="l-popup" id="branch_popup">
+		<div class="l-popup__container">
+			<div class="l-popup__head">
+				<h3 class="l-popup__heading">지사 리스트 조회</h3>
+			</div>
+			<div class="l-popup__content">
+				<div class="l-popup__section">
+					<div class="search-form search-form--right">
+						<ul class="search-form__list">
+							<li class="search-form__item">
+								<div class="search-form__title">지사명</div>
+								<div class="search-form__input">
+									<input type="text" id="pop_s_brName" class="c-text__input"/>
+								</div>
+							</li>
+							<li class="search-form__item">
+								<div class="search-form__title">지사코드</div>
+								<div class="search-form__input">
+									<input type="text" id="pop_s_brCode" maxlength="2" class="c-text__input"/>
+								</div>
+							</li>
+							<li class="search-form__item">
+								<div class="search-form__title">계약상태</div>
+								<div class="search-form__input">
+									<div class="c-select">
+										<select id="pop_s_brContractState" name="pop_s_brContractState">
+											<option value="">모두</option>
+											<option value="01">진행중</option>
+											<option value="02">계약완료</option>
+										</select>
+									</div>
+								</div>
+							</li>
+						</ul>
+						<ul class="seach-form__console">
+							<li class="search-form__btn">
+								<button class="c-button c-button--darksolid" type="button" onclick="brPopList(1)">조회</button>
+							</li>
+						</ul>
+					</div>
+				</div>
+				<div class="l-popup__section">
+					<div id="grid_branchList"></div>
+				</div>
+			</div>
+			<div class="l-popup__console">
+				<button onclick="branchClose()" class="c-button c-button--red">취소</button>
+				<button onclick="branchSelect()" class="c-button c-button--darksolid">선택</button>
+			</div>
+		</div>
+	</div>
+
+	<!-- 가맹점 팝업 -->
+	<div class="l-popup" id="franchise_popup">
+		<div class="l-popup__container">
+			<div class="l-popup__head">
+				<h3 class="l-popup__heading">가맹점 리스트 조회</h3>
+			</div>
+			<div class="l-popup__content">
+				<div class="l-popup__section">
+					<div class="search-form search-form--right">
+						<ul class="search-form__list">
+							<li class="search-form__item">
+								<div class="search-form__title">가맹점명</div>
+								<div class="search-form__input">
+									<input type="text" id="pop_s_frName" class="c-text__input" />
+								</div>
+							</li>
+							<li class="search-form__item">
+								<div class="search-form__title">가맹점코드</div>
+								<div class="search-form__input">
+									<input type="text" id="pop_s_frCode" maxlength="3" class="c-text__input" />
+								</div>
+							</li>
+							<li class="search-form__item">
+								<div class="search-form__title">계약상태</div>
+								<div class="search-form__input">
+									<div class="c-select">
+										<select id="pop_s_frContractState" name="pop_s_frContractState">
+											<option value="">모두</option>
+											<option value="01">진행중</option>
+											<option value="02">계약완료</option>
+										</select>
+									</div>
+								</div>
+							</li>
+						</ul>
+						<ul class="seach-form__console">
+							<li class="search-form__btn">
+								<button type="button" onclick="frPopList(2)" class="c-button c-button--darksolid">조회</button>
+							</li>
+						</ul>
+					</div>
+				</div>
+
+				<div class="l-popup__section">
+					<div id="grid_franchList"></div>
+				</div>
+
+			</div>
+			<div class="l-popup__console">
+				<button onclick="franchiseClose()" class="c-button c-button--red">취소</button>
+				<button onclick="franchiseSelect()" class="c-button c-button--darksolid">선택</button>
+			</div>
+		</div>
+	</div>
+
+</div>
+</html>

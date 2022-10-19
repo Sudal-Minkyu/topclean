@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate ="~{layout/defaulttest}">
+
+<!-- 사용자 CSS 추가 -->
+<th:block layout:fragment="css">
+    <style>
+        #payMonth {
+            display: none;
+        }
+    </style>
+</th:block>
+
+<!-- 사용자 스크립트 추가 -->
+<th:block layout:fragment="script">
+	<script src="/assets/js/toppos/user/customer/unpaid.js?22091615"></script>
+</th:block>
+
+<div layout:fragment="content" class="content content--column">
+	<div class="content__header">
+        <!-- menu명 -->
+        <h2 class="content__heading"><spans class="content__heading-home">Home</spans>&nbsp;&gt;&nbsp;고객관리&nbsp;&gt;&nbsp;미수 조회</h2>
+		<!-- 검색 -->
+		<div class="search">
+			<div class="c-select">
+				<select id="searchType">
+                    <option value="0">통합검색</option>
+                    <option value="1">고객명</option>
+                    <option value="2">전화번호</option>
+                    <option value="3">주소</option>
+                </select>
+			</div>
+			
+			<div class="c-search">
+				<div class="c-search__input">
+					<input id="searchCustomerField" type="text" placeholder="검색어를 입력하세요" />
+               		<button class="c-search__key" type="button" id="vkeyboard0">키보드</button>
+				</div>
+				<button class="c-search__bth" type="button" id="customerSearchBtn">검색</button>
+			</div>
+		</div>
+
+		<div class="content__header-btns">
+			<button class="c-button c-button--small c-button--darksolid" id="openPaymentPop">미수금결제</button>
+		</div>
+	</div>
+	
+    <div class="content__body">
+    	<div class="unpaid">
+            <div class="unpaid__costomer">
+                <!-- grid -->
+                <div id="grid_customer" style="height: 756px;"></div>
+                <div class="unpaid__sum">
+                    <div class="unpaid__sum-item">
+                        <div class="unpaid__sum-title">적립금총액</div>
+                        <div class="unpaid__sum-money"><span id="totalSaveMoney">0</span>원</div>
+                    </div>
+                    <div class="unpaid__sum-item">
+                        <div class="unpaid__sum-title">미수금총액</div>
+                        <div class="unpaid__sum-money"><span id="totalUncollectMoney">0</span>원</div >
+                    </div>
+                </div>
+            </div>
+            <div class="unpaid__list">
+                <div class="unpaid__breakdown">
+                    <!-- grid -->
+                    <div id="grid_request" style="height: 326px;"></div>
+                    <div class="unpaid__sum unpaid__sum--right">
+                        <div class="unpaid__sum-item">
+                            <div class="unpaid__sum-title">선택미수총액</div>
+                            <div class="unpaid__sum-money"><span id="totalSelectedUncollectMoney">0</span>원</div >
+                        </div>
+                    </div>
+                </div>
+                <div class="unpaid__detail">
+                    <h4>접수 세부내역</h4>
+                    <!-- grid -->
+                    <div id="grid_detail" style="height: 366px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 결제 팝업 -->
+    <div class="pop" id="paymentPop">
+        <div class="pop__box">
+			<div class="pop__article">
+				<h3 class="pop__article-header">결제창</h3>
+				<div class="pop__aricle-content">
+					<!-- grid -->
+                    <div id="grid_payment" style="height: 240px;"></div>
+
+                    <div class="unpaid-pop">
+                        <div class="unpaid-pop__sum-area">
+                            <div class="unpaid-pop__sum">
+                                <div class="unpaid-pop__sum-title">미수총결제금액</div>
+                                <div class="unpaid-pop__sum-money"><span id="totalUncollectAmount">0</span>원</div>
+                            </div>
+                            <div class="unpaid-pop__sum unpaid-pop__sum--light">
+                                <div class="unpaid-pop__sum-title">적립금보유액</div>
+                                <div class="unpaid-pop__sum-money"><span id="saveMoney">0</span>원</div>
+                            </div>
+                        </div>
+
+                        <div class="unpaid-pop__payment">
+                            <div class="unpaid-pop__period">
+                                <div class="c-select">
+                                    <select id="payMonth">
+                                        <option value="0">일시불</option>
+                                        <option value="2">2 개월</option>
+                                        <option value="3">3 개월</option>
+                                        <option value="4">4 개월</option>
+                                        <option value="5">5 개월</option>
+                                        <option value="6">6 개월</option>
+                                        <option value="7">7 개월</option>
+                                        <option value="8">8 개월</option>
+                                        <option value="9">9 개월</option>
+                                        <option value="10">10 개월</option>
+                                        <option value="11">11 개월</option>
+                                        <option value="12">12 개월</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="unpaid-pop__payment-select">
+                                <div class="choice">
+									<input type="radio" name="payType" id="payType1" value="01" checked="" />
+									<label for="payType1">현금결제</label>
+								</div>
+                            </div>
+                            <div class="unpaid-pop__payment-select">
+                                <div class="choice">
+									<input type="radio" name="payType" id="payType2" value="02" />
+									<label for="payType2">카드결제</label>
+								</div>
+                            </div>
+                            <div class="unpaid-pop__payment-select">
+                                <div class="choice">
+                                    <input type="radio" name="payType" id="payType3" value="03" />
+                                    <label for="payType3">적립금결제</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+				</div>
+			</div>
+			
+			<ul class="pop__console">
+                <li class="pop__console-left">
+					<p class="color--red">*미수결제는 금액을 조정하여 결제할 수 없습니다.<br />선택한 미수건의 금액이 처리됩니다.</p>
+				</li>
+				<li><button class="c-button" id="cancelPayment">닫기</button></li>
+				<li><button class="c-button c-button--dark" id="confirmPayment">결제하기</button></li>
+			</ul>
+		</div>
+    </div>
+
+    <div id ="payStatus" class="pop">
+        <p class="paycomment">결제가 진행중입니다.<br />결제 중단을 원하시면 카드 단말기의 종료 버튼을 눌러주세요.</p>
+    </div>
+</div>
+</html>

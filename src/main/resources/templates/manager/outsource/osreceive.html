@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate ="~{layout/defaultmanager}">
+
+<!-- 사용자 CSS 추가 -->
+<th:block layout:fragment="css">
+</th:block>
+
+<!-- 사용자 스크립트 추가 -->
+<th:block layout:fragment="script">
+    <script src="/assets/js/toppos/manager/outsource/osreceive.js?22082514"></script>
+</th:block>
+
+<div layout:fragment="content" class="content content--padding">
+    <section class="section">
+        <article class="article">
+            <div class="article__header">
+                <h3 class="article__heading">외주입고처리</h3>
+            </div>
+            <div class="article__body">
+                <div class="inquiry">
+                    <div class="inquiry__condition">
+                        <ul>
+                            <li>
+                                <div class="inquiry__title">외주작업유형</div>
+                                <div class="inquiry__input">
+                                    <div class="c-radio">
+                                        <input type="radio" name="type" id="type01" value="" checked=""/>
+                                        <label for="type01">통합입고</label>
+                                    </div>
+                                    <div class="c-radio">
+                                        <input type="radio" name="type" id="type02" value="" />
+                                        <label for="type02">가맹점선택입고</label>
+                                    </div>
+                                </div>
+                            </li>
+                            <li id="frSelectUI" style="display: none;">
+                                <div class="inquiry__title">가맹점</div>
+                                <div class="inquiry__input">
+                                    <div class="c-select">
+                                        <select id="frList">
+                                            <option value="0">전체</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="inquiry__title">외주출고일자</div>
+                                <div class="inquiry__input">
+                                    <div class="c-period">
+                                        <!-- 시작일 -->
+                                        <input type="text" id="filterFromDt">
+                                        <span class="c-period__code">-</span>
+                                        <!-- 종료일 -->
+                                        <input type="text" id="filterToDt">
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="inquiry__button">
+                        <button id="getListBtn" class="c-button c-button--small c-button--darksolid">조회</button>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <article class="article">
+            <div class="release-console">
+                <div class="release-console__tag">
+                    <div class="release-console__tag-title">택번호</div>
+                    <div class="release-console__tag-input">
+                        <input id="inputTagNo" type="text" />
+                    </div>
+                    <button id="inputTagBtn" class="c-button c-button--small">개별선택</button>
+                </div>
+                <div id="listStatBar" class="release-console__list">
+                    <div id="statPanel" class="release-console__comment">조회버튼을 통해 상품을 조회하세요.</div>
+                    <ul class="release-console__btn-list">
+                        <li id="addAll"><button class="release-console__btn">전체리스트 보기</button></li>
+                        <li id="clearUnchecked"><button class="release-console__btn">전체리스트 숨기기</button></li>
+                    </ul>
+                </div>
+            </div>
+        </article>
+
+        <div class="article article--flex article--non-margin">
+            <div class="article__body">
+                <div style="width: 100%; height: 500px;">
+                    <div id="grid_main" style="height: 500px;"></div>
+                </div>
+            </div>
+
+            <div class="article__body" style="flex: 0 1 auto; width: 17.5rem;">
+                <div class="article__header">
+                    <h3 class="article__heading">외주 입고 선택 품목 요약</h3>
+                </div>
+                <div class="article__body">
+                    <div id="grid_selected" style="width: 100%; height: 348px; border: 1px solid #bdbdbd;"></div>
+                    <div class="process">
+                        <div class="process__btn">
+                            <button id="receiveBtn" class="c-button">외주입고처리</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+</html>

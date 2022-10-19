@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ko"
+	  xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate ="~{layout/login}">
+
+<th:block layout:fragment="script">
+	<script src="/assets/js/min_js_dir/toppos/login.js"></script>
+</th:block>
+
+<div layout:fragment="content" class="login-wrap">
+
+	<div class="login">
+		<h1 class="login__logo">
+			<!-- <img src="/assets/images/logo__megashop.svg" alt="탑 크리닝업 메가샵" /> -->
+            <img src="/assets/images/circle-logo.png" alt="" style="width: 160px;"><br>TOPPOS
+		</h1>
+		<div class="login__form-box">
+			<div class="login__input">
+				<input type="text" id="userid" name="userid" placeholder="아이디" required >
+				<button type="button" onclick="openVKeyboard(0)">키보드</button>
+			</div>
+			<div class="login__input">
+				<input type="password" id="password" name="password" placeholder="비밀번호" required>
+				<button type="button" onclick="openVKeyboard(1)">키보드</button>
+			</div>
+			<div class="login__check">
+				<input type="checkbox" id="idSaveCheck" class="login__check-input" />
+				<label for="idSaveCheck" class="login__check-label">아이디 저장</label>
+			</div>
+			<input class="login__btn" type="button" value="로그인" onclick="loginActive()" />
+            <input id="exitProgram" type="button" value="프로그램 종료" class="login__btn login__btn--darksolid" />
+		</div>
+	</div>
+	
+	<div id="VKEY"></div>
+
+</div>
+
+
+
+</html>

@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="ko"
+	  xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate ="~{layout/defaulttest}">
+
+<!-- 사용자 CSS 추가 -->
+<th:block layout:fragment="css">
+	<style>
+		
+	</style>
+</th:block>
+
+<!-- 사용자 스크립트 추가 -->
+<th:block layout:fragment="script">
+	<!-- 사용자 스크립트 추가 -->
+	<!-- 주소 검색 -->
+	<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+	<script src="/assets/js/toppos/user/setting/mypage.js?22091611"></script>
+</th:block>
+
+<div layout:fragment="content" class="content content--padding">
+    <!-- menu명 -->
+    <h2 class="content__heading content__heading--black"><spans class="content__heading-home">Home</spans>&nbsp;&gt;&nbsp;가맹정 설정&nbsp;&gt;&nbsp;나의 정보 관리</h2>
+	<div class="c-tabs">
+		<div class="c-tabs__head">
+			<button class="c-tabs__btn active">가맹점 정보</button>
+			<button class="c-tabs__btn">비밀번호 변경</button>
+			<button class="c-tabs__btn" data-index="0">상용구 수정</button>
+			<button class="c-tabs__btn" data-index="1">수선항목 수정</button>
+			<button class="c-tabs__btn" data-index="2">추가항목 수정</button>
+			<button class="c-tabs__btn" data-index="3">영업준비금</button>
+		</div>
+		<div class="c-tabs__body">
+			<div class="c-tabs__content active">
+				<div class="c-tabs__content-header">
+					<h3 class="c-tabs__content-heading">가맹점 정보</h3>
+				</div>
+				<div class="c-tabs__content-body">
+					<div class="form">
+						<div class="form__item">
+							<div class="form__title">가맹점코드</div>
+							<div class="form__input">
+								<div class="c-text">
+									<input type="text" id="frCode" readonly name="frCode" />
+								</div>
+							</div>
+						</div>
+						<div class="form__item">
+							<div class="form__title">가맹점명</div>
+							<div class="form__input">
+								<div class="c-text">
+									<input type="text" readonly name="frName" />
+								</div>
+							</div>
+						</div>
+						<div class="form__item">
+							<div class="form__title">계약일자</div>
+							<div class="form__input">
+								<div class="c-text">
+									<input type="text" readonly name="frContractDt" />
+								</div>
+							</div>
+						</div>
+						<div class="form__item">
+							<div class="form__title">계약기간</div>
+							<div class="form__input">
+								<div class="c-text c-text--flex">
+									<input type="text" readonly name="frContractFromDt" />
+									<input type="text" readonly name="frContractToDt" />
+								</div>
+							</div>
+						</div>
+						<div class="form__item">
+							<div class="form__title">담당지사</div>
+							<div class="form__input">
+								<div class="c-text">
+									<input type="text" readonly name="brName" />
+								</div>
+							</div>
+						</div>
+						<div class="form__item">
+							<div class="form__title">정산비율</div>
+							<div class="form__input">
+								<div class="form">
+									<div class="form__item">
+										<div class="form__title">지사 :</div>
+										<div class="form__input">
+											<div class="c-text">
+												<input type="text" readonly name="frCarculateRateBr" />
+												<span>%</span>
+											</div>
+										</div>
+									</div>
+									<div class="form__item">
+										<div class="form__title">가맹 :</div>
+										<div class="form__input">
+											<div class="c-text">
+												<input type="text" readonly name="frCarculateRateFr" />
+												<span>%</span>
+											</div>
+										</div>
+									</div>
+									<div class="form__item">
+										<div class="form__title">로열티 :</div>
+										<div class="form__input">
+											<div class="c-text">
+												<input type="text" readonly name="frRoyaltyRateFr" />
+												<span>%</span>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<form id="frInfo" class="form">
+							<div class="form__item">
+								<div class="form__title">사업자번호</div>
+								<div class="form__input">
+									<div class="c-text">
+										<input type="text" id="frBusinessNo" maxlength="12" readonly />
+										<!-- <button type="button" class="keypadBtn" data-keyIndex="0">키보드</button> -->
+									</div>
+								</div>
+							</div>
+							<div class="form__item">
+								<div class="form__title">대표자</div>
+								<div class="form__input">
+									<div class="c-text">
+										<input type="text" name="frRpreName" id="frRpreName" />
+										<button type="button" class="keyboardBtn" data-keyIndex="0">키보드</button>
+									</div>
+								</div>
+							</div>
+							<div class="form__item">
+								<div class="form__title">매장전화</div>
+								<div class="form__input">
+									<div class="c-text">
+										<input type="text" name="frTelNo" id="frTelNo" />
+										<button type="button" class="keypadBtn" data-keyIndex="1">키보드</button>
+									</div>
+								</div>
+							</div>
+							<div class="form__item">
+								<div class="form">
+									<div class="form__item form__item--tag">
+										<div class="form__title">가맹점 택코드</div>
+										<div class="form__input">
+											<div class="c-text">
+												<input type="text" id="frTagNo" readonly />
+											</div>
+										</div>
+									</div>
+									<div class="form__item">
+										<div class="form__title">출고예정일계산</div>
+										<div class="form__input">
+											<div class="c-text">
+												<input type="text" id="frEstimateDurationMinus1" readonly>
+												<input type="text" id="frEstimateDuration" readonly />
+												<span>일 후 출고</span>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="form__item">
+								<div class="form__title">평일<br />영업시간</div>
+								<div class="form__input">
+									<div class="c-select" style="margin-bottom: 10px;">
+										<select id="frStatWeekday" name="frStatWeekday">
+											<option value="0">영수증미표시</option>
+											<option value="1">지정시간오픈</option>
+											<option value="2">상시오픈</option>
+											<option value="3">휴무</option>
+										</select>
+									</div>
+									<br />
+									<div class="c-select">
+										<select id="frOpenWeekdayHour" class="hourSelector">
+										</select>
+									</div>
+									<div class="c-select">
+										<select id="frOpenWeekdayMinute" class="minuteSelector">
+										</select>
+									</div>
+									<span>~</span>
+									<div class="c-select">
+										<select id="frCloseWeekdayHour" class="hourSelector">
+										</select>
+									</div>
+									<div class="c-select">
+										<select id="frCloseWeekdayMinute" class="minuteSelector">
+										</select>
+									</div>
+								</div>
+							</div>
+							<div class="form__item">
+								<div class="form__title">토요일<br />영업시간</div>
+								<div class="form__input">
+									<div class="c-select" style="margin-bottom: 10px;">
+										<select id="frStatSaturday" name="frStatSaturday">
+											<option value="0">영수증미표시</option>
+											<option value="1">지정시간오픈</option>
+											<option value="2">상시오픈</option>
+											<option value="3">휴무</option>
+										</select>
+									</div>
+									<br />
+									<div class="c-select">
+										<select id="frOpenSaturdayHour" class="hourSelector">
+										</select>
+									</div>
+									<div class="c-select">
+										<select id="frOpenSaturdayMinute" class="minuteSelector">
+										</select>
+									</div>
+									<span>~</span>
+									<div class="c-select">
+										<select id="frCloseSaturdayHour" class="hourSelector">
+										</select>
+									</div>
+									<div class="c-select">
+										<select id="frCloseSaturdayMinute" class="minuteSelector">
+										</select>
+									</div>
+								</div>
+							</div>
+							<div class="form__item">
+								<div class="form__title">공휴일<br />영업시간</div>
+								<div class="form__input">
+									<div class="c-select" style="margin-bottom: 10px;">
+										<select id="frStatHoliday" name="frStatHoliday">
+											<option value="0">영수증미표시</option>
+											<option value="1">지정시간오픈</option>
+											<option value="2">상시오픈</option>
+											<option value="3">휴무</option>
+										</select>
+									</div>
+									<br />
+									<div class="c-select">
+										<select id="frOpenHolidayHour" class="hourSelector">
+										</select>
+									</div>
+									<div class="c-select">
+										<select id="frOpenHolidayMinute" class="minuteSelector">
+										</select>
+									</div>
+									<span>~</span>
+									<div class="c-select">
+										<select id="frCloseHolidayHour" class="hourSelector">
+										</select>
+									</div>
+									<div class="c-select">
+										<select id="frCloseHolidayMinute" class="minuteSelector">
+										</select>
+									</div>
+								</div>
+							</div>
+							<div class="form__item">
+								<div class="form__title">멀티스크린</div>
+								<div class="form__input">
+									<div class="c-radio">
+										<input type="radio" name="frMultiscreenYn" id="frMultiscreenYn_Y" value="Y" />
+										<label for="frMultiscreenYn_Y">사용</label>
+									</div>
+									<div class="c-radio">
+										<input type="radio" name="frMultiscreenYn" id="frMultiscreenYn_N" value="N" />
+										<label for="frMultiscreenYn_N">미사용</label>
+									</div>
+								</div>
+							</div>
+                            <div class="form__item">
+								<div class="form__title">보증금</div>
+								<div class="form__input">
+									<div class="c-text">
+										<input type="text" name="frDepositAmount" id="frDepositAmount" />
+										<button type="button" class="keypadBtn" data-keyIndex="3">키보드</button>
+									</div>
+								</div>
+							</div>
+                            <div class="form__item">
+								<div class="form__title">임대료</div>
+								<div class="form__input">
+									<div class="c-text">
+										<input type="text" name="frRentalAmount" id="frRentalAmount" />
+										<button type="button" class="keypadBtn" data-keyIndex="4">키보드</button>
+									</div>
+								</div>
+							</div>
+							<div class="form__item form__item--no-margin">
+								<div class="form__title">주소</div>
+								<div class="form__input">
+									<div class="address">
+										<ul>
+											<li>
+												<div class="c-text address__postcode">
+													<input type="text" name="frPostNo" id="frPostNo" placeholder="우편번호" />
+												</div>
+												<button type="button" class="c-button c-button--small" onclick="execDaumPostcode()">우편번호 검색</button>
+											</li>
+											<li>
+												<div class="c-text">
+													<input type="text" name="frAddress" id="frAddress" placeholder="주소" />
+												</div>
+											</li>
+											<li>
+												<div class="c-text">
+													<input type="text" name="frAddressDetail" id="frAddressDetail" placeholder="상세주소 입력" />
+													<button type="button" class="keyboardBtn" data-keyIndex="7">키보드</button>
+												</div>
+											</li>
+										</ul>
+									</div>
+								</div>
+							</div>
+
+							<div class="form__item">
+								<div class="form__title">비고</div>
+								<div class="form__input">
+									<div class="c-textarea">
+										<textarea name="frRemark" id="frRemark" style="height: 134px;"></textarea>
+										<button type="button" class="keyboardBtn" data-keyIndex="8">키보드</button>
+									</div>
+								</div>
+							</div>
+						</form>
+					</div>
+					<div class="c-tabs__content-footer">
+						<div class="c-tabs__console">
+                            <button class="c-button" onclick="printingReport()">QR코드</button>
+							<button class="c-button c-button--solid" id="saveFrInfo">저장</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<!-- 비밀번호 변경 -->
+			<div class="c-tabs__content">
+				<div class="c-tabs__content-header">
+					<h3 class="c-tabs__content-heading">비밀번호 변경</h3>
+				</div>
+				<div class="c-tabs__content-body">
+					<div class="form">
+						<div class="form__item">
+							<div class="form__title">현재 비밀번호</div>
+							<div class="form__input">
+								<div class="c-text">
+									<input type="password" id="oldpassword" name="oldpassword" />
+									<button class="keyboardBtn" data-keyIndex="2">키보드</button>
+								</div>
+							</div>
+						</div>
+						<div class="form__item">
+						</div>
+						<div class="form__item">
+							<div class="form__title">신규 비밀번호</div>
+							<div class="form__input">
+								<div class="c-text">
+									<input type="password" id="newpassword" name="newpassword" />
+									<button class="keyboardBtn" data-keyIndex="3">키보드</button>
+								</div>
+							</div>
+						</div>
+						<div class="form__item">
+						</div>
+						<div class="form__item">
+							<div class="form__title">신규 번호확인</div>
+							<div class="form__input">
+								<div class="c-text">
+									<input type="password" id="passwordconfirm" name="passwordconfirm" />
+									<button class="keyboardBtn" data-keyIndex="4">키보드</button>
+								</div>
+							</div>
+						</div>
+						<div class="form__item">
+						</div>
+					</div>
+					<div class="c-tabs__content-footer">
+						<div class="c-tabs__console">
+							<button onclick="passwordUpdate()" class="c-button c-button--solid">저장</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="c-tabs__content">
+				<div class="c-tabs__content-header">
+					<h3 class="c-tabs__content-heading">상용구 수정</h3>
+				</div>
+				<div class="c-tabs__content-body">
+					<div class="c-tabs__body-console c-tabs__body-console--right">
+						<button class="c-button c-button--small c-button--solid openItemPop" data-index="0" id="createRow0">라인추가</button>
+						<button class="c-button c-button--small c-button--red removeRow" data-index="0" id="removeRow0">라인삭제</button>
+						<div class="c-elevator c-elevator--left-border">
+							<button class="c-elevator__btn up upRows" data-index="0" id="upRows0">위</button>
+							<button class="c-elevator__btn down downRows" data-index="0" id="downRows0">아래</button>
+						</div>
+					</div>
+					<!-- grid -->
+					<div id="grid_keyWord" style="height: 530px;"></div>
+				</div>
+				<div class="c-tabs__content-footer">
+					<div class="c-tabs__console">
+						<button class="c-button c-button--solid gridSave" data-gridnum="0">저장</button>
+					</div>
+				</div>
+			</div>
+			
+			<div class="c-tabs__content">
+				<div class="c-tabs__content-header">
+					<h3 class="c-tabs__content-heading">수선항목 수정</h3>
+				</div>
+				<div class="c-tabs__content-body">
+					<div class="c-tabs__body-console c-tabs__body-console--right">
+						<button class="c-button c-button--small c-button--solid openItemPop" data-index="1" id="createRow1">라인추가</button>
+						<button class="c-button c-button--small c-button--red removeRow" data-index="1" id="removeRow1">라인삭제</button>
+						<div class="c-elevator c-elevator--left-border">
+							<button class="c-elevator__btn up upRows" data-index="1" id="upRows1">위</button>
+							<button class="c-elevator__btn down downRows" data-index="1" id="downRows1">아래</button>
+						</div>
+					</div>
+					<!-- grid -->
+					<div id="grid_repair" style="height: 530px;"></div>
+				</div>
+				<div class="c-tabs__content-footer">
+					<div class="c-tabs__console">
+						<button class="c-button c-button--solid gridSave" data-gridnum="1">저장</button>
+					</div>
+				</div>
+			</div>
+			
+			<div class="c-tabs__content">
+				<div class="c-tabs__content-header">
+					<h3 class="c-tabs__content-heading">추가항목 수정</h3>
+				</div>
+				<div class="c-tabs__content-body">
+					<div class="c-tabs__body-console c-tabs__body-console--right">
+						<button class="c-button c-button--small c-button--solid openItemPop" data-index="2" id="createRow2">라인추가</button>
+						<button class="c-button c-button--small c-button--red removeRow" data-index="2" id="removeRow2">라인삭제</button>
+						<div class="c-elevator c-elevator--left-border">
+							<button class="c-elevator__btn up upRows" data-index="2" id="upRows2">위</button>
+							<button class="c-elevator__btn down downRows" data-index="2" id="downRows2">아래</button>
+						</div>
+					</div>
+					<!-- grid -->
+					<div id="grid_addAmount" style="height: 530px;"></div>
+				</div>
+				<div class="c-tabs__content-footer">
+					<div class="c-tabs__console">
+						<button class="c-button c-button--solid gridSave" data-gridnum="2">저장</button>
+					</div>
+				</div>
+			</div>
+
+			<!-- 영업준비금 임시 작업, 붙어있는 클래스는 마음대로 조정하셔도 됩니다. -->
+			<div class="c-tabs__content">
+				<div class="c-tabs__content-header">
+					<h3 class="c-tabs__content-heading">영업준비금</h3>
+				</div>
+				<div class="c-tabs__content-body">
+					<div class="inquiry">
+						<div class="inquiry__condition">
+							<ul>
+								<li>
+									<div class="inquiry__title">준비금 등록일</div>
+									<div class="inquiry__input-tag">
+										<div class="c-period">
+											<!-- 시작일 -->
+											<input type="text" id="filterFromDt">
+											<span class="c-period__code">-</span>
+											<!-- 종료일 -->
+											<input type="text" id="filterToDt">
+										</div>
+									</div>
+								</li>
+							</ul>
+						</div>
+						<div class="inquiry__button">
+							<button id="searchListBtn" class="c-button c-button--small c-button--darksolid">조회</button>
+						</div>
+					</div>
+
+					<div class="c-tabs__flex-layout">
+						<div class="c-tabs__inner">
+							<!-- grid -->
+							<div id="grid_readyCash" style="width: 100%; height: 550px;"></div>
+						</div>
+
+						<div class="c-tabs__inner">
+							<div class="form">
+								<div class="form__item form__item--100">
+									<div class="form__title">일자</div>
+									<div class="form__input">
+										<input type="text" id="bcYyyymmdd" class="c-date" />
+									</div>
+								</div>
+								<div class="form__item form__item--100">
+									<div class="form__title">금액</div>
+									<div class="form__input">
+										<div class="c-text" style="width:8.125rem;">
+											<input type="text" id="bcReadyAmt">
+											<button type="button" class="keypadBtn" data-keyIndex="5">키보드</button>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="c-tabs__body-console c-tabs__body-console--right" style="margin-top: 1.25rem; margin-bottom: 0;">
+								<button id="newReadyAmt" class="c-button c-button--small c-button--red">초기화</button>
+								<button id="saveReadyAmt" class="c-button c-button--small c-button--solid">저장</button>
+							</div>
+
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+    <!-- QR코드 팝업 -->
+    <div id="qrPop" class="pop">
+        <div class="pop__box">
+            <!-- iframe src에 주소 넣어주세요 -->
+            <iframe id="qrcode" src="" frameborder="0" cellspacing="0" style="width: 100%; height: 770px; border: 0 none;"></iframe>
+            <ul class="pop__console">
+				<li><button class="c-button pop__close">닫기</button></li>
+			</ul>
+        </div>
+    </div>
+	
+	<!-- 라인 추가 팝업 -->
+	<div id="linePop" class="pop">
+		<div class="pop__box">
+			<div class="pop__article">
+				<h3 class="pop__article-header">항목 추가 입력</h3>
+				<div class="pop__article-content">
+					<ul class="customer__form-list">
+						<li class="customer__form-item">
+							<h4 class="customer__form-title">항목</h4>
+							<div class="customer__form-input">
+								<div class="c-text">
+									<input type="text" id="baName" />
+									<button class="keyboardBtn" data-keyIndex="5">키보드</button>
+								</div>
+							</div>
+						</li>
+						<li class="customer__form-item customer__form-item--100">
+							<h4 class="customer__form-title">비고</h4>
+							<div class="customer__form-input">
+								<div class="c-textarea">
+									<textarea id="baRemark"></textarea>
+									<button class="keyboardBtn" data-keyIndex="6">키보드</button>
+								</div>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<ul class="pop__console">
+				<li><button class="c-button pop__close">닫기</button></li>
+				<li><button class="c-button c-button--dark pop__close" data-ismodify="" id="sendItemValue">입력</button></li>
+			</ul>
+		</div>
+	</div>
+
+    <!-- 비밀번호 확인 -->
+    <div class="pop password">
+        <div class="pop__box pop__box--small">
+            <div class="pop__article">
+                <h3 class="pop__article-header">비밀번호 확인</h3>
+                <div class="pop__article-content">
+                    <div class="c-text">
+                        <input id="entryPassword" type="password" placeholder="비밀번호 입력">
+                        <button id="entryPasswordKeyboard" class="c-search__key" type="button">키보드</button>
+                    </div>
+                </div>
+            </div>
+
+            <ul class="pop__console pop__console--center">
+                <li>
+                    <button id="entryPasswordConfirm" class="c-button c-button--darksolid">확인</button>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+</div>
+</html>

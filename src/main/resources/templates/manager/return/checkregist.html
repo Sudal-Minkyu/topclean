@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="ko"
+	  xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate ="~{layout/defaultmanager}">
+
+<!-- 사용자 CSS 추가 -->
+<th:block layout:fragment="css">
+	<!-- lightbox 추가 -->
+    <link rel="stylesheet" href="/assets/js/lightbox2/css/lightbox.min.css" />
+    <style>
+        .color_and_name {
+            text-align: left;
+            margin-left: 10px;
+        }
+
+        .yesBlue {
+			color: #0082F0;
+			font-weight: bold;
+		}
+
+		.noRed {
+			color: #DD5257;
+			font-weight: bold;
+		}
+    </style>
+</th:block>
+
+<!-- 사용자 스크립트 추가 -->
+<th:block layout:fragment="script">
+	<script src="/assets/js/toppos/manager/return/checkregist.js?22082514"></script>
+    <!-- lightbox 추가 -->
+    <script src="/assets/js/lightbox2/js/lightbox.js"></script>
+</th:block>
+
+<div layout:fragment="content" class="content content--padding">
+    <section class="section">
+        <article class="article">
+            <div class="article__header">
+                <h3 class="article__heading">확인품 등록</h3>
+            </div>
+            <div class="article__body">
+                <div class="inquiry">
+                    <div class="inquiry__condition">
+                        <ul>
+                            <li>
+                                <div class="inquiry__input">
+                                    <div class="c-radio">
+                                        <input type="radio" class="searchMethod" name="type" id="searchByTagNo" value="" checked=""/>
+                                        <label for="searchByTagNo">택번호검색</label>
+                                    </div>
+                                    <div class="c-radio">
+                                        <input type="radio" class="searchMethod" name="type" id="searchByFranchise" value="" />
+                                        <label for="searchByFranchise">가맹점선택검색</label>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="inquiry__title">입고일자</div>
+                                <div class="inquiry__input">
+                                    <div class="c-period">
+                                        <!-- 시작일 -->
+                                        <input type="text" id="filterFromDt">
+                                        <span class="c-period__code">-</span>
+                                        <!-- 종료일 -->
+                                        <input type="text" id="filterToDt">
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="searchByTagNo">
+                                <div class="inquiry__title">택번호(전체)</div>
+                                <div class="inquiry__input">
+                                    <div class="inquiry__input-tag">
+                                        <input id="frTagNo" type="text" style="color: black;" maxlength="7"/>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="searchByFranchise" style="display: none">
+                                <div class="inquiry__input">
+                                    <div class="c-select">
+                                        <select id="frList">
+                                            <option value="" data-tagno="">가맹점 선택</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="searchByFranchise" style="display: none">
+                                <div class="inquiry__title">택번호(앞)</div>
+                                <div class="inquiry__input">
+                                    <div class="inquiry__input-tag">
+                                        <input id="foreTag" type="text" style="color: black;" readonly/>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="searchByFranchise" style="display: none">
+                                <div class="inquiry__title">택번호(뒤)</div>
+                                <div class="inquiry__input">
+                                    <div class="inquiry__input-tag">
+                                        <input id="aftTag" type="text" maxlength="5" />
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="inquiry__button">
+                        <button id="searchListBtn" class="c-button c-button--small c-button--darksolid">조회</button>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <div class="article">
+            <div class="article__body">
+                <div style="height: 570px; margin-top: 20px; border: 1px solid #ddd">
+					<div id="grid_main" style="height: 570px;"></div>
+				</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 확인품등록 팝업 -->
+	<!-- <div id="checkPop" class="pop">
+		<div class="pop__box">
+			<div class="pop__article pop__article--flex">
+				<div class="pop__article-content photo">
+					<h3 class="pop__article-header">확인품등록</h3>
+					<div class="pop__article-photo" style="background-color: #ddd">
+						<video id="cameraScreen" playsinline autoplay></video>
+						<canvas id="cameraCanvas" style="display: none"></canvas>
+					</div>
+				</div>
+				
+				<div class="pop__article-content flex1">
+					<div class="pop__article-haedconsole">
+						<button class="c-button c-button--darksolid c-button--small" id="deleteInspection">삭제</button>
+					</div>
+					<div id="grid_check" style="height: 208px;"></div>
+				</div>
+			</div>
+			
+			<div class="pop__article">
+				<div class="pop__article-head">
+					<h3 class="pop__article-header">확인품내용</h3>
+					<div class="pop__article-haedconsole">
+						<div class="c-checkbox">
+							<input type="checkbox" id="isIncludeImg" />
+							<label for="isIncludeImg">사진포함</label>
+						</div>
+					</div>
+				</div>
+				
+				<div class="pop__article-content">
+					<div class="c-textarea">
+						<textarea id="fiComment"></textarea>
+					</div>
+				</div>
+			</div>
+			
+			<ul class="pop__console">
+				<li class="pop__console-left">
+					<div class="pop__console-cost">
+						<div class="pop__console-title">접수금액</div>
+						<div class="pop__console-input">
+							<div class="c-text"><input type="text" readonly="readonly" id="fdTotAmtInPut"></div>
+						</div>
+					</div>
+					<div class="pop__console-cost">
+						<div class="pop__console-title">추가비용</div>
+						<div class="pop__console-input">
+							<div class="c-text">
+								<input id="fiAddAmt" type="text" />
+							</div>
+						</div>
+					</div>
+				</li>
+				<li><button class="c-button" id="closeCheckPop">닫기</button></li> 
+				<li><button class="c-button c-button--dark" id="commitInspect">확인품등록</button></li>
+			</ul>
+		</div>
+	</div> -->
+
+    <!-- 확인품등록 신규 -->
+    <div id="checkPop" class="pop">
+        <div class="pop__box pop__box--large">
+            <div class="pop__article">
+                <div class="tag-pop">
+                    <div id="camInput" class="tag__shoot-area">
+                        <div class="tag__shooting">
+							<!-- 캠 영상 들어갈 곳 -->
+							<video id="cameraScreen" playsinline autoplay></video>
+							<canvas id="cameraCanvas" style="display: none"></canvas>
+                        </div>
+                        <button id="takePhotoBtn" class="c-button c-button--large c-button--darksolid">사진촬영</button>
+                    </div>
+                    <div class="tag-imgs">
+                        <div id="noImgScreen" class="tag-imgs__empty">사진을 촬영해주세요.<br />최대 6장까지 촬영 가능합니다.</div>
+                        <ul id="photoList" class="tag-imgs__list"></ul>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <div class="pop__article pop__article--flex">
+                <div id="receiptPhotoListAreaInPop" class="pop__article-content flex1">
+                    <div class="pop__article-head">
+                        <h3 class="pop__article-header">접수 시 사진</h3>
+                    </div>
+                    <div class="pop__article-content">
+                        <!-- 접수 시 사진 영역 -->
+                        <ul id="receiptPhotoListInPop" class="horizon-scroll">
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="pop__article-content flex1">
+                    <div class="pop__article-head">
+                        <h3 class="pop__article-header">확인품내용</h3>
+                        <span id="customerResponse"></span>
+                    </div>
+                    <div class="pop__article-content">
+                        <ul class="word-list">
+                            <li>
+                                <button class="word-btn">파손</button>
+                            </li>
+                            <li>
+                                <button class="word-btn">이염</button>
+                            </li>
+                            <li>
+                                <button class="word-btn">탈색</button>
+                            </li>
+                            <li>
+                                <button class="word-btn">수축</button>
+                            </li>
+                            <li>
+                                <button class="word-btn">긁힘</button>
+                            </li>
+                            <li>
+                                <button class="word-btn">올팀</button>
+                            </li>
+                            <li>
+                                <button class="word-btn">오염</button>
+                            </li>
+                            <li>
+                                <button class="word-btn">단추없음</button>
+                            </li>
+                        </ul>
+                        <textarea id="fiComment" class="c-textarea"></textarea>
+                    </div>
+                </div>
+			</div>
+
+            <ul class="pop__console">
+                <li class="pop__console-left pop__console-left--flex">
+					<div class="pop__console-cost">
+						<div class="pop__console-title">접수금액</div>
+						<div class="pop__console-input">
+							<div class="c-text"><input type="text" readonly="readonly" id="fdTotAmtInPut"></div>
+						</div>
+					</div>
+					<div class="pop__console-cost">
+						<div class="pop__console-title">추가비용</div>
+						<div class="pop__console-input">
+							<div class="c-text">
+								<input id="fiAddAmt" type="text">
+							</div>
+						</div>
+					</div>
+				</li>
+				<li><button class="c-button c-button--solid" id="commitInspect">저장</button></li>
+				<li><button class="c-button c-button--red" id="deleteInspect">삭제</button></li>
+				<li><button type="button" class="c-button" id="closeCheckPop">닫기</button></li>
+			</ul>
+        </div>
+    </div>
+
+    <!-- 접수 사진 촬영내역 -->
+    <div id="receiptPhotoPop" class="pop">
+        <div class="pop__box">
+            <div class="pop__article">
+                <div class="tag-imgs">
+                    <ul id="receiptPhotoList" class="tag-imgs__list tag-imgs__list--alone">
+                    </ul>
+                </div>
+            </div>
+            <ul class="pop__console">
+                <li>
+                    <button id="closePhotoListPop" class="c-button">닫기</button>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- 가맹검품 보기(응답완료된) 신규 -->
+    <div id="frInspectViewPop" class="pop">
+        <div class="pop__box">
+            <div id="frInspectViewPhotoPanel" class="pop__article">
+                <div class="tag-imgs">
+                    <ul id="frViewPhotoList" class="tag-imgs__list">
+                    </ul>
+                </div>
+            </div>
+            <div class="pop__article">
+                <div class="checkreg__comment">
+                    <div class="pop__article-head">
+                        <h3 class="pop__article-header">검품내용</h3>
+                    </div>
+                    <div class="pop__aricle-content">
+                        <textarea id="frViewFiComment" readonly="readonly"></textarea>
+                    </div>
+                </div>
+            </div>
+            <ul class="pop__console">
+                <li class="pop__console-left">
+                    <div class="pop__console-cost">
+                        <div class="pop__console-title">현재 접수금액</div>
+                        <div class="pop__console-input">
+                            <div class="c-text"><input id="frViewFdTotAmtInPut" type="text" readonly="readonly" /></div>
+                        </div>
+                    </div>
+                    <div class="pop__console-cost">
+                        <div class="pop__console-title">추가 비용발생</div>
+                        <div class="pop__console-input">
+                            <div class="c-text"><input id="frViewFiAddAmt" type="text" readonly="readonly" /></div>
+                        </div>
+                    </div>
+                </li>
+                <li><button id="closeFrInspectViewPop" class="c-button">닫기</button></li>
+            </ul>
+        </div>
+    </div>
+
+</div>
+</html>
